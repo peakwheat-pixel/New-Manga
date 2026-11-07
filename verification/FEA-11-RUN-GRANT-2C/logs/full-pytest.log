@@ -1,4 +1,4 @@
-=== python -m pytest tests -q (2026-11-07T19:21:47.5406571+08:00) ===
+=== python -m pytest tests -q (2026-11-07T20:09:41.2803041+08:00) [r1-rework] ===
 ........................................................................ [  2%]
 ........................................................................ [  4%]
 ........................................................................ [  6%]
@@ -99,7 +99,7 @@ tests/rendering/test_pillow_rendering.py::test_pillow_compositor_draws_centered_
     for red, green, blue, _alpha in image.getdata()
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-3363 passed, 10 skipped, 11 warnings in 261.08s (0:04:21)
+3363 passed, 10 skipped, 11 warnings in 286.76s (0:04:46)
 file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
 file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
 file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null

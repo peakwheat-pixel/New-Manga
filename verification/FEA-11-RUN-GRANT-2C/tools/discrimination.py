@@ -1,4 +1,4 @@
-"""FEA-11-RUN-GRANT-2C discrimination driver.
+"""FEA-11-RUN-GRANT-2C discrimination driver (Review r1 rework: + Probe-C / budget breaks).
 
 Applies one deliberate break at a time to the SHIPPED implementation, runs ONE
 target test (or test class) per break and requires it to turn RED (non-zero
@@ -10,9 +10,11 @@ Breaks (the frozen AC-2C red lines):
 * D2  renewal widens the scope instead of the frozen slice            AC-2C-3
 * D3  a refused round is wrongly treated as renewed                   AC-2C-4
 * D4  the per-Run round cap is removed                                AC-2C-5
-* D5  the round budget is removed                                     AC-2C-5
+* D5  the post-round budget guard is removed                          AC-2C-5
 * D6  a terminal Run keeps being renewed                              AC-2C-5
 * D7  the authorization result is faked as "sent = success"           AC-2C-1/6
+* D8  Probe-C: the Host installation line is removed (no wiring)      AC-2C-1 (Review r1 P1-01)
+* D9  the round budget is no longer handed to the cold fills          AC-2C-5 (Review r1 P2-01)
 
 Usage (repo root, after the delivery commits exist):
   C:/Python314/python.exe verification/FEA-11-RUN-GRANT-2C/tools/discrimination.py
@@ -44,26 +46,37 @@ TRACK_STORE = (
     "            var tracked = new TrackedRun(runId, command, scope.Clone());\n"
 )
 STOP_ON_REFUSAL = (
-    "        if (!outcome.Renewed)\n"
+    "        if (!outcome.KeepsTracking)\n"
     "        {\n"
     "            return Stop(runId, outcome);\n"
     "        }\n"
 )
 ROUNDS_CAP = (
-    "        if (tracked.Rounds >= _options.MaxRenewals)\n"
-    "        {\n"
-    "            return Stop(runId, RunGrantRenewalOutcome.Stop(\n"
-    "                RunGrantRenewalKind.StoppedRoundsExhausted, \"RENEWAL_ROUNDS_EXHAUSTED\"));\n"
-    "        }\n"
+    "            if (tracked.Attempts >= _options.MaxRenewals)\n"
+    "            {\n"
+    "                attempt = -1;\n"
+    "            }\n"
+    "            else\n"
+    "            {\n"
+    "                attempt = ++tracked.Attempts;\n"
+    "                _attempts++;\n"
+    "            }\n"
 )
 ROUND_BUDGET = (
     "        var elapsed = _timeProvider.GetElapsedTime(started);\n"
-    "        if (elapsed > RunGrantRenewalOptions.RoundBudget)\n"
+    "        if (elapsed > roundBudget)\n"
     "        {\n"
-    "            // AC-2C-5: a round that cannot finish inside the explicit budget is a typed stop +\n"
-    "            // count — never a retry and never a silent overlap with the next interval.\n"
-    "            return Stop(runId, RunGrantRenewalOutcome.Stop(\n"
-    "                RunGrantRenewalKind.StoppedBudget, \"RENEWAL_ROUND_BUDGET_EXCEEDED\"));\n"
+    "            // POST-ROUND guard (belt and braces; the cold-fill path already bounds itself). A round\n"
+    "            // that overruns skips to the NEXT interval instead of stopping: the run keeps renewing,\n"
+    "            // but the budget breach is recorded and counted, and a real mint is still counted.\n"
+    "            if (outcome.Renewed)\n"
+    "            {\n"
+    "                lock (_gate) _renewals++;\n"
+    "            }\n"
+    "\n"
+    "            return BudgetSkip(\n"
+    "                runId, \"RENEWAL_ROUND_BUDGET_EXCEEDED\",\n"
+    "                outcome.BoundPages, outcome.MintedGrants, outcome.SkippedSources);\n"
     "        }\n"
 )
 TERMINAL_GUARD = (
@@ -78,6 +91,26 @@ REAL_COUNTS_RETURN = (
     "                  + $\" minted={result.MintedGrants} bound_pages={result.BoundPages}\"\n"
     "                  + $\" skipped={result.SkippedSources}\");\n"
     "            return result;\n"
+)
+INSTALL_LINE = (
+    "    private void StartRunGrantRenewal()\n"
+    "    {\n"
+    "        _runGrantRenewal = CreateRunGrantRenewal();\n"
+    "    }\n"
+)
+COLD_BUDGET_BLOCK = (
+    "                if (roundBudget is { } totalRoundBudget)\n"
+    "                {\n"
+    "                    var remaining = totalRoundBudget - stopwatch.Elapsed;\n"
+    "                    if (remaining <= TimeSpan.Zero)\n"
+    "                    {\n"
+    "                        _warn(\"run source-read renewal on_demand_budget_exhausted\"\n"
+    "                            + \" remaining_skipped=\" + (resolution.ColdSources.Count - attempts));\n"
+    "                        break;\n"
+    "                    }\n"
+    "\n"
+    "                    if (remaining < scanTimeout) scanTimeout = remaining;\n"
+    "                }\n"
 )
 
 BREAKS = [
@@ -113,16 +146,24 @@ BREAKS = [
         "what": "删除每 Run 续期轮次上限",
         "file": RENEWAL,
         "old": ROUNDS_CAP,
-        "new": "        // DISCRIMINATION BREAK D4: the per-run round cap is removed.\n",
+        "new": "            if (tracked.Attempts >= int.MaxValue)\n"
+               "            {\n"
+               "                attempt = -1;\n"
+               "            }\n"
+               "            else\n"
+               "            {\n"
+               "                attempt = ++tracked.Attempts;\n"
+               "                _attempts++;\n"
+               "            } // DISCRIMINATION BREAK D4: cap effectively removed\n",
         "filter": "FullyQualifiedName~Renewal_DoesNotExceedTheRoundsCap",
     },
     {
         "id": "D5",
-        "what": "删除单轮预算检查（interval + round < 300s 失守）",
+        "what": "删除单轮预算的事后守护（超预算不再 skip/计数）",
         "file": RENEWAL,
         "old": ROUND_BUDGET,
         "new": "        var elapsed = _timeProvider.GetElapsedTime(started);\n"
-               "        _ = elapsed; // DISCRIMINATION BREAK D5: budget check removed.\n",
+               "        _ = elapsed; // DISCRIMINATION BREAK D5: post-round budget guard removed.\n",
         "filter": "FullyQualifiedName~Renewal_RoundOverBudget",
     },
     {
@@ -144,6 +185,25 @@ BREAKS = [
                "            return new RunAuthorizationResult(0, 0, 0, Array.Empty<string>());\n"
                "            // DISCRIMINATION BREAK D7: 'sent' reported as a fake success.\n",
         "filter": "FullyQualifiedName~AuthorizeSliceAsync_ReturnsTheRealMintAndBindCounts",
+    },
+    {
+        "id": "D8",
+        "what": "Review r1 Probe-C：Host 安装行被移除（续期不接线）",
+        "file": RUNTIME,
+        "old": INSTALL_LINE,
+        "new": "    private void StartRunGrantRenewal()\n"
+               "    {\n"
+               "        // DISCRIMINATION BREAK D8 (Probe-C): the Host installation line is removed.\n"
+               "    }\n",
+        "filter": "FullyQualifiedName~HostWiring_DispatchThenProductionTick",
+    },
+    {
+        "id": "D9",
+        "what": "Review r1 P2-01：round budget 不再传入 on-demand 冷填充",
+        "file": RUNTIME,
+        "old": COLD_BUDGET_BLOCK,
+        "new": "                // DISCRIMINATION BREAK D9: the round budget no longer bounds the cold fills.\n",
+        "filter": "FullyQualifiedName~AuthorizeSliceAsync_BoundsOnDemandScansByTheRoundBudget",
     },
 ]
 
@@ -176,7 +236,7 @@ def main() -> int:
 
     log(
         f"[{datetime.now(timezone.utc).isoformat(timespec='milliseconds')}] "
-        f"{TASK_ID} discrimination (break -> RED -> byte-restore -> GREEN)"
+        f"{TASK_ID} discrimination r1-rework (break -> RED -> byte-restore -> GREEN)"
     )
     originals: dict[Path, bytes] = {}
     normalized: dict[Path, tuple[str, str]] = {}

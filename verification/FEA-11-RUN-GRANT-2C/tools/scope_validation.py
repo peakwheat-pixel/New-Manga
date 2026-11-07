@@ -54,7 +54,12 @@ DEFAULT_CONCURRENT = (
     "verification/FEA-11-RUN-GRANT-2C-PREREQ-1/EV.md,"
     "verification/FEA-11-RUN-GRANT-2C-PREREQ-1/carrier.md,"
     "verification/FEA-11-RUN-GRANT-2C-PREREQ-1/logs/check-taskpath.log,"
-    "verification/FEA-11-RUN-GRANT-2C-PREREQ-1/logs/check.log"
+    "verification/FEA-11-RUN-GRANT-2C-PREREQ-1/logs/check.log",
+    "doc/STATUS.md",
+    "doc/plan/FEA-CONTRACT-FROZEN-C16.md",
+    "doc/reviews/FEA-11-RUN-GRANT-2C-r1.md",
+    "doc/handoffs/DSH-HANDOFF-2026-11-06.md",
+    "doc/handoffs/DSH-PROGRESS-2026-11-07.md"
 )
 
 C06 = REPO / "doc" / "plan" / "FEA-C06_SOURCE_AUTH_DRAFT.md"
@@ -138,8 +143,11 @@ def main() -> int:
     parser.add_argument("--base", default=BASE)
     parser.add_argument("--concurrent", default=DEFAULT_CONCURRENT)
     args = parser.parse_args()
+    concurrent_text = (
+        args.concurrent if isinstance(args.concurrent, str) else ",".join(args.concurrent)
+    )
     concurrent = {
-        item.strip() for item in args.concurrent.split(",") if item.strip()
+        item.strip() for item in concurrent_text.split(",") if item.strip()
     }
     lines: list[str] = []
 

@@ -14,7 +14,7 @@ base_commit: fdd170039
 branch: null
 worktree: null
 integration_commit: null
-delivery_head: e5e9c4c52
+delivery_head: 7c95bb3c4
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/FEA-11-RUN-GRANT-2C
@@ -73,4 +73,5 @@ Run 由 Core 后台串行整跑，grant 在 dispatch 前一次性铸造（`Sourc
 - **实跑门禁**：build **PASS 0/0**；Host 续期单测 **13/0/0**；回归 **32/0/7 skip**（gated 默认 skip）；gated 真 IPC **7/0/0**（同 scope 二轮 = 续期轮、new grant id、`bound_pages=1`、页可读）；定向 pytest **92 passed**；全量 pytest **3363/10**（起点 3360/10，+3 本卡）；全量 .NET **1674/0/96**（起点 1661/0/95 → +13 单测、+1 新 gated skip；Lead 给定基线 1660/0/95 亦不降）；pins **18/18**（C06 v1.3 `75f8e2b4…`、C16 v1.6 `b8f46fb1…`）；check（默认 + `-TaskPath`）**PASS(3 warnings)**；API inventory **EXIT=0**；scope **PASS**（delivery ⊆ allowed_paths、`src/**` 零 diff、禁止面零 diff、卡 status 未改）；判别性 **7/7 RED_AS_EXPECTED**；跑后 `verification/FEA-09` CLEAN。
 - **before/after**：in-process fake clock（真实装配）窗口后读 `ProviderInputError`/提交 `SOURCE_ACCESS_DENIED`+零业务写 → 续期轮（新 grant + 同一冻结 `{command, scope}`）后读/提交恢复且旧 grant 不延长；不同 scope/command 的「续期」typed 拒绝且零映射。gated 真 IPC `logs/renewal-ipc.json`（2 帧 register（run 面增量）+2 帧 authorize、wire 无路径、`reattest_frames=0`）。
 - **L-G1 口径**：**只降级不关闭**——「有续期 + 子限制」（单步 >300s / 续期失败 / L-G2 / L-G9 / L-R1 残余 / L-G16 / 未 dispatch 的 pending Run 不在范围）；未宣称「L-G1 关闭 / 任意长 Run / Run 全面恢复 / 自动恢复 / 自愈 / 自动重新授权 / 撤销后放行」。
-- **证据目录**：`verification/FEA-11-RUN-GRANT-2C/`（`EV.md`、`RESOURCE-MANIFEST.json`、`scope-validation.log`、`changed-files.txt`、`logs/**`、`tools/**`）。未 push、未建 worktree；`status` 未改（由 Lead 维护）。
+- **Review r1 返修（2026-11-07，`7c95bb3c4`）**：P1-01 补 Host 接线判别（HostRuntime 安装行 seam + 3 用例；**Probe-C 复现**：修复前全量 Host 277/0/65 全绿 → 修复后 281/2/65，新接线用例 RED；恢复 sha256 MATCH 并复绿）；P2-01 round budget 改为进入单轮前传入 mint 路径（on-demand 冷扫描 timeout=min(30s,剩余预算)，耗尽即停；超预算 → `SkippedBudget` typed skip + 计数、保留跟踪）；P3（预算 mint 计数、LedgerStatus 接线、EV/Handoff 填实、manifest 去 `__pycache__`/可到达 head、FROZEN-C16 由 Lead 处理）；判别性 **9/9**。
+- **证据目录**：`verification/FEA-11-RUN-GRANT-2C/`（`EV.md`、`RESOURCE-MANIFEST.json`、`scope-validation.log`、`changed-files.txt`、`logs/**`（含 `probe-c.log`）、`tools/**`）。未 push、未建 worktree；`status` 未改（由 Lead 维护）。

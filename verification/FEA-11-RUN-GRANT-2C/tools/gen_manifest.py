@@ -77,6 +77,9 @@ def main() -> int:
         relative = path.relative_to(EVIDENCE).as_posix()
         if relative == "RESOURCE-MANIFEST.json":
             continue
+        # Review r1 P3-04: pycache byte-code churn is not evidence (and must never enter the manifest).
+        if "__pycache__" in relative or relative.endswith(".pyc"):
+            continue
         evidence_files.append({"path": relative, "sha256": _sha256(path)})
 
     manifest = {

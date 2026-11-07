@@ -1,21 +1,21 @@
-[2026-11-07T11:21:41.722+00:00] FEA-11-RUN-GRANT-2C discrimination (break -> RED -> byte-restore -> GREEN)
-original apps/desktop-avalonia/src/NewManga.Host/Sources/RunGrantRenewal.cs sha256=63517ccb5947784293e3bea7fd0dfdd630d99011c0b080b743f3f2690c74e9a1 newline='\n'
-original apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs sha256=fce654b8e023d8e466842e4c8661883bdde157aacf12f2b57939f337aa4240f4 newline='\n'
+[2026-11-07T12:08:22.368+00:00] FEA-11-RUN-GRANT-2C discrimination r1-rework (break -> RED -> byte-restore -> GREEN)
+original apps/desktop-avalonia/src/NewManga.Host/Sources/RunGrantRenewal.cs sha256=ee114e45cb2000d8c106718f8266c36cfbb5994b3dae0fb0695d9b1523de1284 newline='\n'
+original apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs sha256=bae563e14254e0a8dd660cd7314ccf0e679292bd7599ac47a9a3d5cb0d78946e newline='\n'
 
 === D1 续期从不启动（ObserveDispatch 恒 false） ===
 file=apps/desktop-avalonia/src/NewManga.Host/Sources/RunGrantRenewal.cs filter=FullyQualifiedName~RunGrantRenewalTests
 D1 break_exit=1 RED_AS_EXPECTED=True
-  | [xUnit.net 00:00:00.35]     NewManga.Host.Tests.RunGrantRenewalTests.Renewal_RebindsAfterTheWindow_AndTheRunKeepsReading [FAIL]
-  | [xUnit.net 00:00:00.35]     NewManga.Host.Tests.RunGrantRenewalTests.Renewal_ProbeFailure_IsAFailClosedStop_NotRetry [FAIL]
-  | [xUnit.net 00:00:00.35]     NewManga.Host.Tests.RunGrantRenewalTests.Renewal_RoundOverBudget_IsATypedStop [FAIL]
-  | [xUnit.net 00:00:00.35]     NewManga.Host.Tests.RunGrantRenewalTests.Renewal_NeverWidensTheFrozenCommandOrScope [FAIL]
-  | [xUnit.net 00:00:00.35]     NewManga.Host.Tests.RunGrantRenewalTests.Renewal_DoesNotExceedTheRoundsCap [FAIL]
-  | [xUnit.net 00:00:00.37]     NewManga.Host.Tests.RunGrantRenewalTests.Renewal_StopsAtTerminalRun_AndOnShutdown [FAIL]
-D1 restore_sha256=63517ccb5947784293e3bea7fd0dfdd630d99011c0b080b743f3f2690c74e9a1 MATCH=True
+  | [xUnit.net 00:00:00.21]     NewManga.Host.Tests.RunGrantRenewalTests.Renewal_BudgetSkip_DoesNotConsumeTheGateOrStopTheRun [FAIL]
+  | [xUnit.net 00:00:00.21]     NewManga.Host.Tests.RunGrantRenewalTests.Renewal_ProbeFailure_IsAFailClosedStop_NotRetry [FAIL]
+  | [xUnit.net 00:00:00.22]     NewManga.Host.Tests.RunGrantRenewalTests.HostWiring_DispatchThenProductionTick_RenewsTheSameFrozenScope [FAIL]
+  | [xUnit.net 00:00:00.23]     NewManga.Host.Tests.RunGrantRenewalTests.Renewal_NeverWidensTheFrozenCommandOrScope [FAIL]
+  | [xUnit.net 00:00:00.23]     NewManga.Host.Tests.RunGrantRenewalTests.Renewal_DoesNotExceedTheRoundsCap [FAIL]
+  | [xUnit.net 00:00:00.39]     NewManga.Host.Tests.RunGrantRenewalTests.Renewal_StopsAtTerminalRun_AndOnShutdown [FAIL]
+D1 restore_sha256=ee114e45cb2000d8c106718f8266c36cfbb5994b3dae0fb0695d9b1523de1284 MATCH=True
 D1 restored_exit=0 GREEN_AFTER_RESTORE=True
   | 总共 1 个测试文件与指定模式相匹配。
   | 
-  | 已通过! - 失败:     0，通过:    13，已跳过:     0，总计:    13，持续时间: 39 ms - NewManga.Host.Tests.dll (net9.0)
+  | 已通过! - 失败:     0，通过:    19，已跳过:     0，总计:    19，持续时间: 225 ms - NewManga.Host.Tests.dll (net9.0)
 
 === D2 续期改用更宽的 scope（而非 Run 冻结 slice） ===
 file=apps/desktop-avalonia/src/NewManga.Host/Sources/RunGrantRenewal.cs filter=FullyQualifiedName~RunGrantRenewalTests
@@ -23,14 +23,14 @@ D2 break_exit=1 RED_AS_EXPECTED=True
   | G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
   | 总共 1 个测试文件与指定模式相匹配。
   | 
-  | 失败!  - 失败:     2，通过:    11，已跳过:     0，总计:    13，持续时间: 46 ms - NewManga.Host.Tests.dll (net9.0)
-  | [xUnit.net 00:00:00.21]     NewManga.Host.Tests.RunGrantRenewalTests.Renewal_RebindsAfterTheWindow_AndTheRunKeepsReading [FAIL]
-  | [xUnit.net 00:00:00.21]     NewManga.Host.Tests.RunGrantRenewalTests.Renewal_NeverWidensTheFrozenCommandOrScope [FAIL]
-D2 restore_sha256=63517ccb5947784293e3bea7fd0dfdd630d99011c0b080b743f3f2690c74e9a1 MATCH=True
+  | 失败!  - 失败:     2，通过:    17，已跳过:     0，总计:    19，持续时间: 238 ms - NewManga.Host.Tests.dll (net9.0)
+  | [xUnit.net 00:00:00.22]     NewManga.Host.Tests.RunGrantRenewalTests.Renewal_RebindsAfterTheWindow_AndTheRunKeepsReading [FAIL]
+  | [xUnit.net 00:00:00.24]     NewManga.Host.Tests.RunGrantRenewalTests.Renewal_NeverWidensTheFrozenCommandOrScope [FAIL]
+D2 restore_sha256=ee114e45cb2000d8c106718f8266c36cfbb5994b3dae0fb0695d9b1523de1284 MATCH=True
 D2 restored_exit=0 GREEN_AFTER_RESTORE=True
   | 总共 1 个测试文件与指定模式相匹配。
   | 
-  | 已通过! - 失败:     0，通过:    13，已跳过:     0，总计:    13，持续时间: 40 ms - NewManga.Host.Tests.dll (net9.0)
+  | 已通过! - 失败:     0，通过:    19，已跳过:     0，总计:    19，持续时间: 227 ms - NewManga.Host.Tests.dll (net9.0)
 
 === D3 typed 拒绝被当作续期成功（撤销后继续放行） ===
 file=apps/desktop-avalonia/src/NewManga.Host/Sources/RunGrantRenewal.cs filter=FullyQualifiedName~Renewal_StopsOnRevokedRegistry
@@ -38,9 +38,9 @@ D3 break_exit=1 RED_AS_EXPECTED=True
   | G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
   | 总共 1 个测试文件与指定模式相匹配。
   | 
-  | 失败!  - 失败:     1，通过:     0，已跳过:     0，总计:     1，持续时间: 10 ms - NewManga.Host.Tests.dll (net9.0)
-  | [xUnit.net 00:00:00.20]     NewManga.Host.Tests.RunGrantRenewalTests.Renewal_StopsOnRevokedRegistry_WithoutAnyRetry [FAIL]
-D3 restore_sha256=63517ccb5947784293e3bea7fd0dfdd630d99011c0b080b743f3f2690c74e9a1 MATCH=True
+  | 失败!  - 失败:     1，通过:     0，已跳过:     0，总计:     1，持续时间: 9 ms - NewManga.Host.Tests.dll (net9.0)
+  | [xUnit.net 00:00:00.19]     NewManga.Host.Tests.RunGrantRenewalTests.Renewal_StopsOnRevokedRegistry_WithoutAnyRetry [FAIL]
+D3 restore_sha256=ee114e45cb2000d8c106718f8266c36cfbb5994b3dae0fb0695d9b1523de1284 MATCH=True
 D3 restored_exit=0 GREEN_AFTER_RESTORE=True
   | 总共 1 个测试文件与指定模式相匹配。
   | 
@@ -52,27 +52,27 @@ D4 break_exit=1 RED_AS_EXPECTED=True
   | G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
   | 总共 1 个测试文件与指定模式相匹配。
   | 
-  | 失败!  - 失败:     1，通过:     0，已跳过:     0，总计:     1，持续时间: 9 ms - NewManga.Host.Tests.dll (net9.0)
-  | [xUnit.net 00:00:00.19]     NewManga.Host.Tests.RunGrantRenewalTests.Renewal_DoesNotExceedTheRoundsCap [FAIL]
-D4 restore_sha256=63517ccb5947784293e3bea7fd0dfdd630d99011c0b080b743f3f2690c74e9a1 MATCH=True
+  | 失败!  - 失败:     1，通过:     0，已跳过:     0，总计:     1，持续时间: 8 ms - NewManga.Host.Tests.dll (net9.0)
+  | [xUnit.net 00:00:00.18]     NewManga.Host.Tests.RunGrantRenewalTests.Renewal_DoesNotExceedTheRoundsCap [FAIL]
+D4 restore_sha256=ee114e45cb2000d8c106718f8266c36cfbb5994b3dae0fb0695d9b1523de1284 MATCH=True
 D4 restored_exit=0 GREEN_AFTER_RESTORE=True
   | 总共 1 个测试文件与指定模式相匹配。
   | 
-  | 已通过! - 失败:     0，通过:     1，已跳过:     0，总计:     1，持续时间: 9 ms - NewManga.Host.Tests.dll (net9.0)
+  | 已通过! - 失败:     0，通过:     1，已跳过:     0，总计:     1，持续时间: 8 ms - NewManga.Host.Tests.dll (net9.0)
 
-=== D5 删除单轮预算检查（interval + round < 300s 失守） ===
+=== D5 删除单轮预算的事后守护（超预算不再 skip/计数） ===
 file=apps/desktop-avalonia/src/NewManga.Host/Sources/RunGrantRenewal.cs filter=FullyQualifiedName~Renewal_RoundOverBudget
 D5 break_exit=1 RED_AS_EXPECTED=True
   | G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
   | 总共 1 个测试文件与指定模式相匹配。
   | 
-  | 失败!  - 失败:     1，通过:     0，已跳过:     0，总计:     1，持续时间: 9 ms - NewManga.Host.Tests.dll (net9.0)
-  | [xUnit.net 00:00:00.19]     NewManga.Host.Tests.RunGrantRenewalTests.Renewal_RoundOverBudget_IsATypedStop [FAIL]
-D5 restore_sha256=63517ccb5947784293e3bea7fd0dfdd630d99011c0b080b743f3f2690c74e9a1 MATCH=True
+  | 失败!  - 失败:     1，通过:     0，已跳过:     0，总计:     1，持续时间: 10 ms - NewManga.Host.Tests.dll (net9.0)
+  | [xUnit.net 00:00:00.28]     NewManga.Host.Tests.RunGrantRenewalTests.Renewal_RoundOverBudget_SkipsTheRoundAndKeepsTracking [FAIL]
+D5 restore_sha256=ee114e45cb2000d8c106718f8266c36cfbb5994b3dae0fb0695d9b1523de1284 MATCH=True
 D5 restored_exit=0 GREEN_AFTER_RESTORE=True
   | 总共 1 个测试文件与指定模式相匹配。
   | 
-  | 已通过! - 失败:     0，通过:     1，已跳过:     0，总计:     1，持续时间: 9 ms - NewManga.Host.Tests.dll (net9.0)
+  | 已通过! - 失败:     0，通过:     1，已跳过:     0，总计:     1，持续时间: 12 ms - NewManga.Host.Tests.dll (net9.0)
 
 === D6 终态 Run 仍被续期（生命周期失控） ===
 file=apps/desktop-avalonia/src/NewManga.Host/Sources/RunGrantRenewal.cs filter=FullyQualifiedName~Renewal_StopsAtTerminalRun
@@ -80,13 +80,13 @@ D6 break_exit=1 RED_AS_EXPECTED=True
   | G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
   | 总共 1 个测试文件与指定模式相匹配。
   | 
-  | 失败!  - 失败:     1，通过:     0，已跳过:     0，总计:     1，持续时间: 9 ms - NewManga.Host.Tests.dll (net9.0)
-  | [xUnit.net 00:00:00.19]     NewManga.Host.Tests.RunGrantRenewalTests.Renewal_StopsAtTerminalRun_AndOnShutdown [FAIL]
-D6 restore_sha256=63517ccb5947784293e3bea7fd0dfdd630d99011c0b080b743f3f2690c74e9a1 MATCH=True
+  | 失败!  - 失败:     1，通过:     0，已跳过:     0，总计:     1，持续时间: 7 ms - NewManga.Host.Tests.dll (net9.0)
+  | [xUnit.net 00:00:00.18]     NewManga.Host.Tests.RunGrantRenewalTests.Renewal_StopsAtTerminalRun_AndOnShutdown [FAIL]
+D6 restore_sha256=ee114e45cb2000d8c106718f8266c36cfbb5994b3dae0fb0695d9b1523de1284 MATCH=True
 D6 restored_exit=0 GREEN_AFTER_RESTORE=True
   | 总共 1 个测试文件与指定模式相匹配。
   | 
-  | 已通过! - 失败:     0，通过:     1，已跳过:     0，总计:     1，持续时间: 9 ms - NewManga.Host.Tests.dll (net9.0)
+  | 已通过! - 失败:     0，通过:     1，已跳过:     0，总计:     1，持续时间: 10 ms - NewManga.Host.Tests.dll (net9.0)
 
 === D7 授权结果被伪造成 0/0 成功（『发了就算成功』） ===
 file=apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs filter=FullyQualifiedName~AuthorizeSliceAsync_ReturnsTheRealMintAndBindCounts
@@ -96,12 +96,40 @@ D7 break_exit=1 RED_AS_EXPECTED=True
   | 
   | 失败!  - 失败:     1，通过:     0，已跳过:     0，总计:     1，持续时间: 11 ms - NewManga.Host.Tests.dll (net9.0)
   | [xUnit.net 00:00:00.19]     NewManga.Host.Tests.RunGrantRenewalTests.AuthorizeSliceAsync_ReturnsTheRealMintAndBindCounts [FAIL]
-D7 restore_sha256=fce654b8e023d8e466842e4c8661883bdde157aacf12f2b57939f337aa4240f4 MATCH=True
+D7 restore_sha256=bae563e14254e0a8dd660cd7314ccf0e679292bd7599ac47a9a3d5cb0d78946e MATCH=True
 D7 restored_exit=0 GREEN_AFTER_RESTORE=True
   | 总共 1 个测试文件与指定模式相匹配。
   | 
   | 已通过! - 失败:     0，通过:     1，已跳过:     0，总计:     1，持续时间: 10 ms - NewManga.Host.Tests.dll (net9.0)
-final apps/desktop-avalonia/src/NewManga.Host/Sources/RunGrantRenewal.cs sha256=63517ccb5947784293e3bea7fd0dfdd630d99011c0b080b743f3f2690c74e9a1 MATCH=True
-final apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs sha256=fce654b8e023d8e466842e4c8661883bdde157aacf12f2b57939f337aa4240f4 MATCH=True
-RESULT 7/7 RED_AS_EXPECTED + GREEN_AFTER_RESTORE
+
+=== D8 Review r1 Probe-C：Host 安装行被移除（续期不接线） ===
+file=apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs filter=FullyQualifiedName~HostWiring_DispatchThenProductionTick
+D8 break_exit=1 RED_AS_EXPECTED=True
+  | G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+  | 总共 1 个测试文件与指定模式相匹配。
+  | 
+  | 失败!  - 失败:     1，通过:     0，已跳过:     0，总计:     1，持续时间: 15 ms - NewManga.Host.Tests.dll (net9.0)
+  | [xUnit.net 00:00:00.19]     NewManga.Host.Tests.RunGrantRenewalTests.HostWiring_DispatchThenProductionTick_RenewsTheSameFrozenScope [FAIL]
+D8 restore_sha256=bae563e14254e0a8dd660cd7314ccf0e679292bd7599ac47a9a3d5cb0d78946e MATCH=True
+D8 restored_exit=0 GREEN_AFTER_RESTORE=True
+  | 总共 1 个测试文件与指定模式相匹配。
+  | 
+  | 已通过! - 失败:     0，通过:     1，已跳过:     0，总计:     1，持续时间: 41 ms - NewManga.Host.Tests.dll (net9.0)
+
+=== D9 Review r1 P2-01：round budget 不再传入 on-demand 冷填充 ===
+file=apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs filter=FullyQualifiedName~AuthorizeSliceAsync_BoundsOnDemandScansByTheRoundBudget
+D9 break_exit=1 RED_AS_EXPECTED=True
+  | G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+  | 总共 1 个测试文件与指定模式相匹配。
+  | 
+  | 失败!  - 失败:     1，通过:     0，已跳过:     0，总计:     1，持续时间: 2 s - NewManga.Host.Tests.dll (net9.0)
+  | [xUnit.net 00:00:02.29]     NewManga.Host.Tests.RunGrantRenewalTests.AuthorizeSliceAsync_BoundsOnDemandScansByTheRoundBudget [FAIL]
+D9 restore_sha256=bae563e14254e0a8dd660cd7314ccf0e679292bd7599ac47a9a3d5cb0d78946e MATCH=True
+D9 restored_exit=0 GREEN_AFTER_RESTORE=True
+  | 总共 1 个测试文件与指定模式相匹配。
+  | 
+  | 已通过! - 失败:     0，通过:     1，已跳过:     0，总计:     1，持续时间: 174 ms - NewManga.Host.Tests.dll (net9.0)
+final apps/desktop-avalonia/src/NewManga.Host/Sources/RunGrantRenewal.cs sha256=ee114e45cb2000d8c106718f8266c36cfbb5994b3dae0fb0695d9b1523de1284 MATCH=True
+final apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs sha256=bae563e14254e0a8dd660cd7314ccf0e679292bd7599ac47a9a3d5cb0d78946e MATCH=True
+RESULT 9/9 RED_AS_EXPECTED + GREEN_AFTER_RESTORE
 PASS

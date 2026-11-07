@@ -1,7 +1,12 @@
-[2026-11-07T11:31:31.227+00:00] FEA-11-RUN-GRANT-2C scope validation (delivery diff vs c5f1b416f)
+[2026-11-07T12:17:10.761+00:00] FEA-11-RUN-GRANT-2C scope validation (delivery diff vs c5f1b416f)
 card=doc/tasks/FEA-11-RUN-GRANT-2C.md card_base_commit=fdd170039 implementation_start=c5f1b416f
 release_range_files=7 non_docs=[]
-changed_count=28 delivery=28 concurrent_non_delivery=0
+changed_count=37 delivery=32 concurrent_non_delivery=5
+CONCURRENT_NON_DELIVERY doc/STATUS.md
+CONCURRENT_NON_DELIVERY doc/handoffs/DSH-HANDOFF-2026-11-06.md
+CONCURRENT_NON_DELIVERY doc/handoffs/DSH-PROGRESS-2026-11-07.md
+CONCURRENT_NON_DELIVERY doc/plan/FEA-CONTRACT-FROZEN-C16.md
+CONCURRENT_NON_DELIVERY doc/reviews/FEA-11-RUN-GRANT-2C-r1.md
 allowed_paths=12
   ALLOWED doc/tasks/FEA-11-RUN-GRANT-2C.md
   ALLOWED doc/reviews/FEA-11-RUN-GRANT-2C-*.md
@@ -26,6 +31,7 @@ ALLOWED  doc/handoffs/FEA-11-RUN-GRANT-2C-e5e9c4c52.md
 ALLOWED  doc/tasks/FEA-11-RUN-GRANT-2C.md
 ALLOWED  tests/fea11/test_source_run_grant.py
 ALLOWED  verification/FEA-11-RUN-GRANT-2C/EV.md
+ALLOWED  verification/FEA-11-RUN-GRANT-2C/RESOURCE-MANIFEST.json
 ALLOWED  verification/FEA-11-RUN-GRANT-2C/changed-files.txt
 ALLOWED  verification/FEA-11-RUN-GRANT-2C/logs/build.log
 ALLOWED  verification/FEA-11-RUN-GRANT-2C/logs/discrimination.log
@@ -35,6 +41,7 @@ ALLOWED  verification/FEA-11-RUN-GRANT-2C/logs/gates.log
 ALLOWED  verification/FEA-11-RUN-GRANT-2C/logs/host-ipc.log
 ALLOWED  verification/FEA-11-RUN-GRANT-2C/logs/host-unit.log
 ALLOWED  verification/FEA-11-RUN-GRANT-2C/logs/ipc-fixture.txt
+ALLOWED  verification/FEA-11-RUN-GRANT-2C/logs/probe-c.log
 ALLOWED  verification/FEA-11-RUN-GRANT-2C/logs/regression-74.log
 ALLOWED  verification/FEA-11-RUN-GRANT-2C/logs/regression.log
 ALLOWED  verification/FEA-11-RUN-GRANT-2C/logs/renewal-ipc.json
@@ -42,6 +49,8 @@ ALLOWED  verification/FEA-11-RUN-GRANT-2C/logs/renewal-ipc.txt
 ALLOWED  verification/FEA-11-RUN-GRANT-2C/scope-validation.log
 ALLOWED  verification/FEA-11-RUN-GRANT-2C/tools/discrimination.py
 ALLOWED  verification/FEA-11-RUN-GRANT-2C/tools/gen_manifest.py
+ALLOWED  verification/FEA-11-RUN-GRANT-2C/tools/probe-c-apply.py
+ALLOWED  verification/FEA-11-RUN-GRANT-2C/tools/probe-c-restore.py
 ALLOWED  verification/FEA-11-RUN-GRANT-2C/tools/scope_validation.py
 card_status_unchanged=True
 PROTOCOL_MINOR=3
@@ -51,4 +60,4 @@ BLOB doc/plan/FEA-C15_SOURCE_STORAGE_DRAFT.md base=b0360cc975d3 head=b0360cc975d
 BLOB doc/plan/FEA-C17_SOURCE_SYNC_DRAFT.md base=f767e158a436 head=f767e158a436 ZERO_DRIFT=True
 zero_drift_violations=[]
 out_of_scope=[]
-result=PASS changed=28 out_of_scope=[] forbidden=[] minor=3 pins_ok=True blobs_ok=True
+result=PASS changed=32 out_of_scope=[] forbidden=[] minor=3 pins_ok=True blobs_ok=True

@@ -1,19 +1,20 @@
 {
   "schema_version": 1,
   "task_id": "FEA-11-RUN-GRANT-2C",
-  "generated_at": "2026-11-07T11:32:04+00:00",
+  "generated_at": "2026-11-07T12:17:18+00:00",
   "generated_by": "l-s4b1-impl (DSH Agent Teams teammate; Lead `lead`)",
-  "delivery_head": "e5e9c4c52",
+  "delivery_head": "7c95bb3c4",
   "delivery_commits": [
     "c40489b5d",
-    "e5e9c4c52"
+    "e5e9c4c52",
+    "7c95bb3c4"
   ],
-  "repo_head_at_generation": "6d3db3b0488eb31b5458b63b9154ee8b8f5db31f",
+  "repo_head_at_generation": "7c95bb3c4234599eab404e2061d71e04edfaf9da",
   "note": "FEA-11-RUN-GRANT-2C delivery: the Host-only long-Run renewal. While a dispatched Run is NOT terminal the Host re-mints a NEW grant set for the SAME frozen {command, scope} and calls AuthorizeSourceReadForRun again (C-06 v1.3 §2.2 / C-16 v1.6 §2.4), so a multi-step Run stays authorized past the original ≤300 s window. Every round reuses the same best-effort mint+bind path (Registry.Authorize + physical facts re-checked per source); a typed refusal / revocation / generation drift / lost root / capability loss / round-budget breach / terminal Run stops the renewal with no retry and no re-attest, and no grant is ever extended, no scope widened and no identity rebuilt. Zero Core/Python change, zero Run-wire change, zero new command/capability/error code, zero App change; the ONE Python edit is the allowed in-process fake-clock test file. The frozen C-06 v1.3 and C-16 v1.6 bytes are unchanged (pins 18/18). L-G1 is DOWNGRADED (renewal exists) but NOT closed: single steps >300 s, renewal failure, L-G2/L-G9/L-R1/L-G16 remain. This is a GENERATION-TIME snapshot of the tracked delivery tree; the manifest itself is the container and is deliberately NOT hashed inside its own file list.",
   "resources": [
     {
       "resource_type": "worktree",
-      "source_path": "NOT_APPLICABLE（main worktree; delivery head e5e9c4c52）",
+      "source_path": "NOT_APPLICABLE（main worktree; delivery head 7c95bb3c4）",
       "disposition": "NOT_APPLICABLE",
       "destination_path": "NOT_APPLICABLE",
       "process_check": "未创建 linked worktree（任务要求显式不建）；实施全部在 main 工作树 apps/tests/verification/doc 内，未 push。"
@@ -30,7 +31,7 @@
       "source_path": "G:\\CODEX\\New Manga (main)",
       "disposition": "PRESERVE_REFERENCED",
       "destination_path": "Same source location",
-      "file_count": 8,
+      "file_count": 12,
       "changed_files": [
         {
           "commit": "c40489b5d",
@@ -40,17 +41,17 @@
         {
           "commit": "c40489b5d",
           "path": "apps/desktop-avalonia/src/NewManga.Host/HostOptions.cs",
-          "sha256": "eb2de39f9504dbec9da59b293c45491303e45e89c72f4b4bda4498064b33a4d8"
+          "sha256": "d6644bb84b9353ece4383817c315e56dfb854f34e0213120be5e29fff4bd9a95"
         },
         {
           "commit": "c40489b5d",
           "path": "apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs",
-          "sha256": "fce654b8e023d8e466842e4c8661883bdde157aacf12f2b57939f337aa4240f4"
+          "sha256": "bae563e14254e0a8dd660cd7314ccf0e679292bd7599ac47a9a3d5cb0d78946e"
         },
         {
           "commit": "c40489b5d",
           "path": "apps/desktop-avalonia/src/NewManga.Host/Sources/RunGrantRenewal.cs",
-          "sha256": "63517ccb5947784293e3bea7fd0dfdd630d99011c0b080b743f3f2690c74e9a1"
+          "sha256": "ee114e45cb2000d8c106718f8266c36cfbb5994b3dae0fb0695d9b1523de1284"
         },
         {
           "commit": "c40489b5d",
@@ -65,12 +66,32 @@
         {
           "commit": "e5e9c4c52",
           "path": "apps/desktop-avalonia/tests/NewManga.Host.Tests/RunGrantRenewalTests.cs",
-          "sha256": "33486176f27b486bb2dac8badec2f7f57cfabed095212f35964297e12e1d0e87"
+          "sha256": "60f59ee6b868d39e7adf09a35b064faa8d0e1a3f2c569346143474d6760cc776"
         },
         {
           "commit": "e5e9c4c52",
           "path": "tests/fea11/test_source_run_grant.py",
           "sha256": "131667e9407ba91be5f507fad0a1a497e483e50381159cac3f4bada2062e40f8"
+        },
+        {
+          "commit": "7c95bb3c4",
+          "path": "apps/desktop-avalonia/src/NewManga.Host/HostOptions.cs",
+          "sha256": "d6644bb84b9353ece4383817c315e56dfb854f34e0213120be5e29fff4bd9a95"
+        },
+        {
+          "commit": "7c95bb3c4",
+          "path": "apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs",
+          "sha256": "bae563e14254e0a8dd660cd7314ccf0e679292bd7599ac47a9a3d5cb0d78946e"
+        },
+        {
+          "commit": "7c95bb3c4",
+          "path": "apps/desktop-avalonia/src/NewManga.Host/Sources/RunGrantRenewal.cs",
+          "sha256": "ee114e45cb2000d8c106718f8266c36cfbb5994b3dae0fb0695d9b1523de1284"
+        },
+        {
+          "commit": "7c95bb3c4",
+          "path": "apps/desktop-avalonia/tests/NewManga.Host.Tests/RunGrantRenewalTests.cs",
+          "sha256": "60f59ee6b868d39e7adf09a35b064faa8d0e1a3f2c569346143474d6760cc776"
         }
       ]
     },
@@ -79,55 +100,59 @@
       "source_path": "verification/FEA-11-RUN-GRANT-2C",
       "disposition": "PRESERVE_REFERENCED",
       "destination_path": "Same source location",
-      "file_count": 19,
+      "file_count": 21,
       "files": [
         {
           "path": "changed-files.txt",
-          "sha256": "556840cc563508e0e7ba2e60fd08d837a9e9eb1e92a53d4bf5915937b0c8f6c7"
+          "sha256": "eb26ea60617a2e9b7a666fbf0b6b8de80711e57cf8e019f67394801c9e0c641b"
         },
         {
           "path": "EV.md",
-          "sha256": "e24f53afa1b698a4bf40eddf8aec77089c590e5ca5175344275af92060528c0e"
+          "sha256": "74cc2f8ab27fd46a922fb89d32086c3616a484ea9cc79be33c0a613c099c32dd"
         },
         {
           "path": "logs/build.log",
-          "sha256": "caa88e42512aefd5dffba014d13dfed763c06e1bd05c47053a804e8f87c3238a"
+          "sha256": "f3cb468dbe23391fa9cb74d17f390191a216a9278420bb62aff171e7c6d50b2a"
         },
         {
           "path": "logs/discrimination.log",
-          "sha256": "556d110fdfbb969ceec598771c4b5b71044dae3b1256adf57efbc2717d4e7d83"
+          "sha256": "9b4406f0aa022b9e01623c5debe18be9dda3aee811ab3c2c7cf37c56519a1fb2"
         },
         {
           "path": "logs/full-dotnet.log",
-          "sha256": "2051a6adb69e359594728544bc256a4a72c327701d60e196cc1b8353424af8a1"
+          "sha256": "dd7e46127d407a470947dd11bc7672c0747d10c03de269e9c3053ea338e8cc3b"
         },
         {
           "path": "logs/full-pytest.log",
-          "sha256": "e71fc911b382535cd528e5d4f0ae92e7324596584a6aee091482d33e28ef8518"
+          "sha256": "30c62ee5fcc193727d7f805cded4b42f8cdea6862574998a69cfb6168a61276d"
         },
         {
           "path": "logs/gates.log",
-          "sha256": "df274a145478f8dd051e0f8cf298fdd8d261d4bff0743f8a1adea546ee7f6684"
+          "sha256": "07ac806f17772df249e36753bb4aa940b52c9f961f491ec4130d89f8fda40498"
         },
         {
           "path": "logs/host-ipc.log",
-          "sha256": "a3488af5cf2f7965e26aa1a4f5b25c805be8b8c0fcc6f56e70bfa010cd61ddf9"
+          "sha256": "cc4dcf0a64d08ff1cb265304012c9a1cfd0d7eac9b0d4f3de8c58085cdbe779e"
         },
         {
           "path": "logs/host-unit.log",
-          "sha256": "3f9075e1f76914c4fedcedc94d371dfd6f8d8728e8744823be11bd31593c253c"
+          "sha256": "5afd9b09181b3dee553f115f026d062ad36218ddd55b0e2b4a06cf05671e825a"
         },
         {
           "path": "logs/ipc-fixture.txt",
           "sha256": "20fc0a1153035eb0e73c29e9f562e2bf74af6ce7e029895014eb50a505dab83b"
         },
         {
+          "path": "logs/probe-c.log",
+          "sha256": "7d1b4b018556ec6dde9f245458db18274286c507bb3cf86c7d6625ce9273300b"
+        },
+        {
           "path": "logs/regression-74.log",
-          "sha256": "4c23641ab7cd8dc16d6712b5f0ec9c749a9314ac80b0b4e1a357740d0b3b8cf5"
+          "sha256": "b855a67151dcf45ac07cdafcd6b86872ccffc6f9b7fb73eac32e5ea8cdbafb6d"
         },
         {
           "path": "logs/regression.log",
-          "sha256": "0db35d2bf934eb5937e100554deeef0df11e6e7010ed45b3efa7eeed1efe8c1d"
+          "sha256": "30a3eb3c5d090d377280d68a0fa2acf6ce57cfc5f6f26424feea84bb65f590c4"
         },
         {
           "path": "logs/renewal-ipc.json",
@@ -139,23 +164,27 @@
         },
         {
           "path": "scope-validation.log",
-          "sha256": "fefa83c93136cfdaad1a517962404532ea0480f75fdb6869396f2470fbada610"
-        },
-        {
-          "path": "tools/__pycache__/discrimination.cpython-314.pyc",
-          "sha256": "90500bc7a37be9b7c0a86a7b497168f4e6fd2788ca541a2fe4ac5bdcbe9b3d97"
+          "sha256": "58e56d4e48b8d1bf16372436a6ea7a25df9f3e3cb4eff3033f5a8d14b4c35f11"
         },
         {
           "path": "tools/discrimination.py",
-          "sha256": "7fa1f35cece5247d58bacfd35d5721ebfea2d2e251144ac951783a4527f1d636"
+          "sha256": "e84d0f71cacba276cb44c875402db0202b338b7cf6ab1c1ae07d71650d8be845"
         },
         {
           "path": "tools/gen_manifest.py",
-          "sha256": "5b058b8ac28607871b20a14332486d3933f618eb7a01dbe5b13d30e8ee32b016"
+          "sha256": "6ddcf3070050f5bf759e869ff88c47eb0e98d55ad2368a6fcbf5a0102f6dd4e5"
+        },
+        {
+          "path": "tools/probe-c-apply.py",
+          "sha256": "0caceb6e7bd554818b62baff9ee005825e36cfa10232560d9234841f28809011"
+        },
+        {
+          "path": "tools/probe-c-restore.py",
+          "sha256": "31eefb243b269a08e3f59d124ae00c2014873f89928be708f82f1d5a3a19fb1e"
         },
         {
           "path": "tools/scope_validation.py",
-          "sha256": "57b1cae7e0c906965415fc23d36e2056cfeaab4ba6baa2a4ef75b4a7a54b5a11"
+          "sha256": "67e7f52c55a9926595147666257c923057fb059093e31bb3c969a0d6d2d761b2"
         }
       ]
     }

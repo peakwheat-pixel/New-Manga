@@ -9,6 +9,7 @@ doc/handoffs/FEA-11-RUN-GRANT-2C-e5e9c4c52.md
 doc/tasks/FEA-11-RUN-GRANT-2C.md
 tests/fea11/test_source_run_grant.py
 verification/FEA-11-RUN-GRANT-2C/EV.md
+verification/FEA-11-RUN-GRANT-2C/RESOURCE-MANIFEST.json
 verification/FEA-11-RUN-GRANT-2C/changed-files.txt
 verification/FEA-11-RUN-GRANT-2C/logs/build.log
 verification/FEA-11-RUN-GRANT-2C/logs/discrimination.log
@@ -18,6 +19,7 @@ verification/FEA-11-RUN-GRANT-2C/logs/gates.log
 verification/FEA-11-RUN-GRANT-2C/logs/host-ipc.log
 verification/FEA-11-RUN-GRANT-2C/logs/host-unit.log
 verification/FEA-11-RUN-GRANT-2C/logs/ipc-fixture.txt
+verification/FEA-11-RUN-GRANT-2C/logs/probe-c.log
 verification/FEA-11-RUN-GRANT-2C/logs/regression-74.log
 verification/FEA-11-RUN-GRANT-2C/logs/regression.log
 verification/FEA-11-RUN-GRANT-2C/logs/renewal-ipc.json
@@ -25,4 +27,6 @@ verification/FEA-11-RUN-GRANT-2C/logs/renewal-ipc.txt
 verification/FEA-11-RUN-GRANT-2C/scope-validation.log
 verification/FEA-11-RUN-GRANT-2C/tools/discrimination.py
 verification/FEA-11-RUN-GRANT-2C/tools/gen_manifest.py
+verification/FEA-11-RUN-GRANT-2C/tools/probe-c-apply.py
+verification/FEA-11-RUN-GRANT-2C/tools/probe-c-restore.py
 verification/FEA-11-RUN-GRANT-2C/tools/scope_validation.py

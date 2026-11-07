@@ -1,4 +1,4 @@
-=== python -m pytest tests/core/test_host_control.py tests/fea11/test_source_run_grant.py -q (2026-11-07T19:26:58.3238506+08:00) ===
+=== python -m pytest tests/core/test_host_control.py tests/fea11/test_source_run_grant.py -q (2026-11-07T20:10:10.1238182+08:00) [r1-rework] ===
 ........................................................................ [ 78%]
 ....................                                                     [100%]
 ============================== warnings summary ===============================
@@ -7,5 +7,5 @@ tests/fea11/test_source_run_grant.py::test_container_grant_duplicate_member_loca
     return self._open_to_write(zinfo, force_zip64=force_zip64)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-92 passed, 1 warning in 11.13s
+92 passed, 1 warning in 12.58s
 PYTEST_TARGETED_EXIT=0
