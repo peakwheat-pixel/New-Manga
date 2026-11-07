@@ -1,0 +1,10 @@
+============================= test session starts =============================
+platform win32 -- Python 3.14.6, pytest-9.1.1, pluggy-1.6.0
+rootdir: G:\CODEX\New Manga
+configfile: pytest.ini
+plugins: anyio-4.14.2
+collected 6 items
+
+tests\fea11\test_source_gate_unify.py ......                             [100%]
+
+============================== 6 passed in 4.84s ==============================

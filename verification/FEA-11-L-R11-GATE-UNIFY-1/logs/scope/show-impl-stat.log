@@ -1,0 +1,5 @@
+1c1c9ca2f feat(fea-11-l-r11): publication gate 统一为 Core 单谓词（全链检测；legacy open / 新同步链缺行 fail-closed）
+ src/bootstrap/core_assembly.py           |  33 ++++---
+ src/bootstrap/core_service.py            |  50 +++++-----
+ src/infrastructure/sqlite/source_sync.py | 152 ++++++++++++++++++++++++++-----
+ 3 files changed, 172 insertions(+), 63 deletions(-)

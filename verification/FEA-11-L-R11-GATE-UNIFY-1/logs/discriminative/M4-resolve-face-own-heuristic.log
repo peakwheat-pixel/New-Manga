@@ -1,0 +1,19 @@
+$ C:\Python314\python.exe -m pytest tests/fea11/test_source_gate_unify.py -q -p no:cacheprovider --tb=line
+
+..F..F                                                                   [100%]
+================================== FAILURES ===================================
+E   AssertionError: assert 'no active so... page binding' == 'page binding... no read gate'
+      
+      - page binding has no read gate
+      + no active source-read grant is bound to this page binding
+---------------------------- Captured stderr call -----------------------------
+[core.schema] schema v8 already current; this session performed no write
+G:\CODEX\New Manga\tests\fea11\test_source_gate_unify.py:476: AssertionError: assert 'no active so... page binding' == 'page binding... no read gate'
+E   assert '.publication_gate_of_page(' in '    def _assert_source_sync_gate(self, page_id: str) -> None:\n        """FEA-11 (C-17 §3.3; L-R11): consume the ONE ...portError(\n                "SOURCE_ACCESS_DENIED",\n                "page binding has no read gate",\n            )\n'
+G:\CODEX\New Manga\tests\fea11\test_source_gate_unify.py:629: assert '.publication_gate_of_page(' in '    def _assert_source_sync_gate(self, page_id: str) -> None:\n        """FEA-11 (C-17 §3.3; L-R11): consume the ONE ...portError(\n                "SOURCE_ACCESS_DENIED",\n                "page binding has no read gate",\n            )\n'
+=========================== short test summary info ===========================
+FAILED tests/fea11/test_source_gate_unify.py::test_two_hop_missing_publication_fails_closed_everywhere
+FAILED tests/fea11/test_source_gate_unify.py::test_core_has_exactly_one_publication_gate_judgement
+2 failed, 4 passed in 1.20s
+
+[exit=1]

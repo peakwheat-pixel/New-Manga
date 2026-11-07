@@ -1,0 +1,16 @@
+$ C:\Python314\python.exe -m pytest tests/fea11/test_source_gate_unify.py -k hop -q -p no:cacheprovider --tb=line
+
+.F                                                                       [100%]
+================================== FAILURES ===================================
+E   AssertionError: assert 'open' == 'corrupt_chain'
+      
+      - corrupt_chain
+      + open
+---------------------------- Captured stderr call -----------------------------
+[core.schema] schema v8 already current; this session performed no write
+G:\CODEX\New Manga\tests\fea11\test_source_gate_unify.py:433: AssertionError: assert 'open' == 'corrupt_chain'
+=========================== short test summary info ===========================
+FAILED tests/fea11/test_source_gate_unify.py::test_two_hop_missing_publication_fails_closed_everywhere
+1 failed, 1 passed, 4 deselected in 0.74s
+
+[exit=1]

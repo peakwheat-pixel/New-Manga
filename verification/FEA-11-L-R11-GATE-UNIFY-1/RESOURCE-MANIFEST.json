@@ -1,0 +1,183 @@
+{
+  "schema_version": 1,
+  "task_id": "FEA-11-L-R11-GATE-UNIFY-1",
+  "generated_at": "2026-11-08T00:45:00+08:00",
+  "generated_by": "l-r11-impl (DSH Agent Teams teammate; Lead `lead`)",
+  "delivery_head": "86cd1d124",
+  "delivery_commits": [
+    "1c1c9ca2f",
+    "86cd1d124"
+  ],
+  "repo_head_at_generation": "86cd1d12449db8a5a320fe254b57bdcda385224f",
+  "note": "FEA-11-L-R11-GATE-UNIFY-1 delivery: the Core-internal publication gate is unified into the ONE predicate `source_sync.SourceSyncStore.publication_gate_of_page` (verdicts open/pending/unavailable/corrupt_chain; healthy binding + publication row state + WHOLE previous-chain walk). `core_assembly.read_gate` (Run target admission / commit guard / provider) maps corrupt_chain onto the frozen three-state `unavailable`; `core_service._assert_source_sync_gate` (resolve/reader) delegates and raises the existing SOURCE_ACCESS_DENIED family; AuthorizeSourceReadForRun keeps consuming the same injected predicate. Legacy v7/imported bindings whose whole chain never published stay open (C-16 v1.7 §2.4); a new sync chain with a missing publication row fails closed (C-17 §3.3), including two-hop chains. Zero contract byte change (pins 18/18), zero schema/migration, zero wire/command/capability/error-code/PROTOCOL_MINOR, zero dependency, zero apps change. L-R11-a (relation='added' missing-row / plan receipt), L-R11-b (write/chapter faces stay pending-only), L-R11-c (no dedicated diagnostic code), L-R11-d (no auto-repair) and L-R11-e (real v7->v8 migration fixture) remain as documented limitations: this is NOT 'C-17 §3.3 fully implemented' and NOT 'L-R11 fully closed'. This is a GENERATION-TIME snapshot of the tracked delivery tree; the manifest itself is the container and is deliberately NOT hashed inside its own file list.",
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "NOT_APPLICABLE（main worktree; delivery head 86cd1d124）",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "NOT_APPLICABLE",
+      "process_check": "未创建 linked worktree（任务要求显式不建）；实施全部在 main 工作树的 allowed_paths 内，未 push。"
+    },
+    {
+      "resource_type": "temp_workspace",
+      "source_path": "G:\\CODEX\\New Manga.workspace\\FEA-11-L-R11-GATE-UNIFY-1",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "Same source location",
+      "process_check": "任务隔离根（仓外派生产物）：`baseline/` 为判别性破坏前的 source_sync.py / core_service.py / core_assembly.py 字节快照；`mutate.py` 为判别性破坏→RED→复原→复绿脚本。未清理、未被 Git 跟踪、无 tracked 副作用。"
+    },
+    {
+      "resource_type": "repository",
+      "source_path": "G:\\CODEX\\New Manga (main)",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "Same source location",
+      "file_count": 4,
+      "changed_files": [
+        {
+          "commit": "1c1c9ca2f",
+          "path": "src/infrastructure/sqlite/source_sync.py",
+          "sha256": "f0a014a9a40a83eea5c4496e49100512932ad55225dd9f7644c969befbaa861a"
+        },
+        {
+          "commit": "1c1c9ca2f",
+          "path": "src/bootstrap/core_assembly.py",
+          "sha256": "d4b23075c97b4db60bde27a1002607d7cc17f6fc7be1e2bab0ec8ce20aa76c1a"
+        },
+        {
+          "commit": "1c1c9ca2f",
+          "path": "src/bootstrap/core_service.py",
+          "sha256": "b4176db635c3306102812ecb7cb7def4141781ad79e051986437411fe86b9474"
+        },
+        {
+          "commit": "86cd1d124",
+          "path": "tests/fea11/test_source_gate_unify.py",
+          "sha256": "2a621dc7102b887b3e3afc8214f579d1a8bbd35b3ac06652ec75201142cac62b"
+        }
+      ]
+    },
+    {
+      "resource_type": "evidence_tree",
+      "source_path": "verification/FEA-11-L-R11-GATE-UNIFY-1",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "Same source location",
+      "file_count": 30,
+      "files": [
+        {
+          "path": "verification/FEA-11-L-R11-GATE-UNIFY-1/EV.md",
+          "sha256": "49d1b64f91e89880fc1e185cebf600d910fd1e82dabe6ee74a69ed04a7227a36"
+        },
+        {
+          "path": "verification/FEA-11-L-R11-GATE-UNIFY-1/logs/discriminative/M1-no-row-is-corrupt.log",
+          "sha256": "a2954c14b5b05753d6a70c5efdda44fbace4584eb64ab92e9fcf67e8ebd12061"
+        },
+        {
+          "path": "verification/FEA-11-L-R11-GATE-UNIFY-1/logs/discriminative/M2-missing-row-is-open.log",
+          "sha256": "8347029fbb0aebb4c18c5423291779e97c9fd462e17a6bc201cc82e796ddafeb"
+        },
+        {
+          "path": "verification/FEA-11-L-R11-GATE-UNIFY-1/logs/discriminative/M3-one-hop-only.log",
+          "sha256": "0b371c5b4a55086f1c126ceeaaff0b79cc9ca858b004c37500415486dfc7ff2d"
+        },
+        {
+          "path": "verification/FEA-11-L-R11-GATE-UNIFY-1/logs/discriminative/M4-resolve-face-own-heuristic.log",
+          "sha256": "76fd4e7920050adaf3693e6112712f96243b313242dd4b187b8d56fc766d5b3e"
+        },
+        {
+          "path": "verification/FEA-11-L-R11-GATE-UNIFY-1/logs/discriminative/M5-restored-green.log",
+          "sha256": "40bc778be4167da7f4e91f09217f6322e714aeb20ce4172df207cbec3cabce33"
+        },
+        {
+          "path": "verification/FEA-11-L-R11-GATE-UNIFY-1/logs/discriminative/SUMMARY.txt",
+          "sha256": "e439e07c77178197dcb28ef4e2e572159b50f4a519948733b3895bf6d071a8f4"
+        },
+        {
+          "path": "verification/FEA-11-L-R11-GATE-UNIFY-1/logs/governance/api-inventory.log",
+          "sha256": "6d1e41178756c82c9500e141743fe5783c00f75d4ca09b4c6206323efb02e4b7"
+        },
+        {
+          "path": "verification/FEA-11-L-R11-GATE-UNIFY-1/logs/governance/check-taskpath.log",
+          "sha256": "14c26f634bb92644cb95b1f1b69ce8189c106526ea99e97c2a2297ca815439b3"
+        },
+        {
+          "path": "verification/FEA-11-L-R11-GATE-UNIFY-1/logs/governance/check.log",
+          "sha256": "14c26f634bb92644cb95b1f1b69ce8189c106526ea99e97c2a2297ca815439b3"
+        },
+        {
+          "path": "verification/FEA-11-L-R11-GATE-UNIFY-1/logs/governance/pins.log",
+          "sha256": "bbd82df4d119205b7198d08acac40ad87418d7b54dab5cd9142c02932cae7128"
+        },
+        {
+          "path": "verification/FEA-11-L-R11-GATE-UNIFY-1/logs/pytest/final-tree-fea11.log",
+          "sha256": "d983361603a69efce4c94d55050158b8d436888bd1c23934d2c81937d0b523a3"
+        },
+        {
+          "path": "verification/FEA-11-L-R11-GATE-UNIFY-1/logs/pytest/final-tree-new-file.log",
+          "sha256": "6998440ce93a50fab6d5ba2ce1a3e473bb986b6a16416d760de05de0343dbe22"
+        },
+        {
+          "path": "verification/FEA-11-L-R11-GATE-UNIFY-1/logs/pytest/full-pytest.log",
+          "sha256": "44fb193e579b3ce3741943ba85cefd56bd95f742f3094c64de634047d26a6e7a"
+        },
+        {
+          "path": "verification/FEA-11-L-R11-GATE-UNIFY-1/logs/pytest/new-file-verbose.log",
+          "sha256": "e1084d15fa5205841a1981d75c2debbda42ce8a13c17602312ca11a978367e07"
+        },
+        {
+          "path": "verification/FEA-11-L-R11-GATE-UNIFY-1/logs/pytest/targeted-gate-files.log",
+          "sha256": "9f2f1775565e81cf301d17c50381a960f21219ddf2db65e4199565438852f598"
+        },
+        {
+          "path": "verification/FEA-11-L-R11-GATE-UNIFY-1/logs/pytest/tests-fea11-full.log",
+          "sha256": "48dfaa80ec8078891d9ea0d485949b2341298e223716ab89f3ae3a2fdcce5e86"
+        },
+        {
+          "path": "verification/FEA-11-L-R11-GATE-UNIFY-1/logs/scope/delivery-commits.log",
+          "sha256": "032f447ed39c3695a4b5def25f3f3421bf2b9562ad75e01b335c8635d327da00"
+        },
+        {
+          "path": "verification/FEA-11-L-R11-GATE-UNIFY-1/logs/scope/delivery-file-sha256.log",
+          "sha256": "0f4b28f031d9854aaf405ab4780da6d5242f55f5c1ced9263bb0cfb6846b5ffb"
+        },
+        {
+          "path": "verification/FEA-11-L-R11-GATE-UNIFY-1/logs/scope/diff-check.log",
+          "sha256": "2095d5302e465922147e220c0389f7a923ea0c1509a23097f04b3c220798aef8"
+        },
+        {
+          "path": "verification/FEA-11-L-R11-GATE-UNIFY-1/logs/scope/diff-head-name-only.log",
+          "sha256": "4f8b714f86b073b0eb4ba704ea87b7ddd20f09f27a4a86799057c0575822232f"
+        },
+        {
+          "path": "verification/FEA-11-L-R11-GATE-UNIFY-1/logs/scope/diff-head-stat.log",
+          "sha256": "b8e6d56add80e664013dddf1d60b4c8d0b2abefc5cd115c1e0363f69c4317fbe"
+        },
+        {
+          "path": "verification/FEA-11-L-R11-GATE-UNIFY-1/logs/scope/git-status.log",
+          "sha256": "4ccefbfaf04238ae442b05bdc1ceb721c5825d67a3707293bdabb439023fa74b"
+        },
+        {
+          "path": "verification/FEA-11-L-R11-GATE-UNIFY-1/logs/scope/show-impl-stat.log",
+          "sha256": "48ee4e2994f8d484232afe8603d7696d09e6b15eb76a3f5e875fbe895e767d7e"
+        },
+        {
+          "path": "verification/FEA-11-L-R11-GATE-UNIFY-1/logs/scope/show-test-stat.log",
+          "sha256": "0218986eff2fb089e54b8f6add15978d338c73caf7d3d92513a117d85bf44815"
+        },
+        {
+          "path": "verification/FEA-11-L-R11-GATE-UNIFY-1/logs/scope/src-changed.log",
+          "sha256": "4f8b714f86b073b0eb4ba704ea87b7ddd20f09f27a4a86799057c0575822232f"
+        },
+        {
+          "path": "verification/FEA-11-L-R11-GATE-UNIFY-1/logs/scope/src-numstat.log",
+          "sha256": "f31a6f2ca70483fff11eebb8b3c7f3fea6dc4836f6227106f07a9555208c0327"
+        },
+        {
+          "path": "verification/FEA-11-L-R11-GATE-UNIFY-1/logs/scope/zero-drift-contracts-schema-apps.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "verification/FEA-11-L-R11-GATE-UNIFY-1/tools/gen_manifest.py",
+          "sha256": "0e10a91f8d9a02ae15fad89d9658287a8900d3d425e4c692d57f8b436387f119"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+FEA-11-L-R11-GATE-UNIFY-1 discriminative mutations
+============================================================
+pristine source_sync.py sha256 = f0a014a9a40a83eea5c4496e49100512932ad55225dd9f7644c969befbaa861a
+pristine core_service.py sha256 = b4176db635c3306102812ecb7cb7def4141781ad79e051986437411fe86b9474
+
+M1-no-row-is-corrupt: red=True exit=1 restored_sha_matches=True expected=['test_legacy_v7_bindings_stay_open_on_every_face']
+M2-missing-row-is-open: red=True exit=1 restored_sha_matches=True expected=['one_hop', 'two_hop']
+M3-one-hop-only: red=True exit=1 restored_sha_matches=True expected=['two_hop']
+M4-resolve-face-own-heuristic: red=True exit=1 restored_sha_matches=True expected=['test_core_has_exactly_one_publication_gate_judgement']
+
+after all mutations source_sync.py sha256 = f0a014a9a40a83eea5c4496e49100512932ad55225dd9f7644c969befbaa861a
+after all mutations core_service.py sha256 = b4176db635c3306102812ecb7cb7def4141781ad79e051986437411fe86b9474
+restored green test run exit=0
+
+sha256 MATCH:
+  source_sync.py  MATCH
+  core_service.py MATCH

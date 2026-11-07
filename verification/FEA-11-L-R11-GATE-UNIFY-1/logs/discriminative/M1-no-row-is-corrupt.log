@@ -1,0 +1,16 @@
+$ C:\Python314\python.exe -m pytest tests/fea11/test_source_gate_unify.py -k legacy_v7 -q -p no:cacheprovider --tb=line
+
+F                                                                        [100%]
+================================== FAILURES ===================================
+E   AssertionError: assert 'corrupt_chain' == 'open'
+      
+      - open
+      + corrupt_chain
+---------------------------- Captured stderr call -----------------------------
+[core.schema] schema v8 already current; this session performed no write
+G:\CODEX\New Manga\tests\fea11\test_source_gate_unify.py:379: AssertionError: assert 'corrupt_chain' == 'open'
+=========================== short test summary info ===========================
+FAILED tests/fea11/test_source_gate_unify.py::test_legacy_v7_bindings_stay_open_on_every_face
+1 failed, 5 deselected in 0.45s
+
+[exit=1]

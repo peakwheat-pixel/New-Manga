@@ -16,7 +16,7 @@ base_commit: 2175238ab
 branch: null
 worktree: null
 integration_commit: null
-delivery_head: null
+delivery_head: 86cd1d124
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/FEA-11-L-R11-GATE-UNIFY-1
@@ -65,22 +65,22 @@ out_of_scope:
 
 ## Acceptance Criteria（草案，冻结时定稿）
 
-- [ ] **AC-1 单谓词唯一**：Core 内只存在一处 publication-gate 判定；`read_gate`、`_assert_source_sync_gate`、
+- [x] **AC-1 单谓词唯一**：Core 内只存在一处 publication-gate 判定；`read_gate`、`_assert_source_sync_gate`、
   `AuthorizeSourceReadForRun` per-page 都消费它；静态断言无第二份「一跳 previous」判定；`read_gate` docstring 过期
-  「无行即 open」表述同步修正。判别性：复制判定或删委托 → 新用例红。 <<PENDING>>
-- [ ] **AC-2 legacy 零回归**：真实 v7→v8 migration 库中，无 publication、previous NULL 的 healthy binding →
+  「无行即 open」表述同步修正。判别性：复制判定或删委托 → 新用例红。 <<MET>>
+- [x] **AC-2 legacy 零回归**：真实 v7→v8 migration 库中，无 publication、previous NULL 的 healthy binding →
   `read_gate == "open"`；resolve/provider/target/commit/`AuthorizeSourceReadForRun` 行为与修复前一致（真实 grant 可读图）。
-  判别性：把「无行即 corrupt」→ 红。 <<PENDING>>
-- [ ] **AC-3 L-R11 一跳 fail-closed**：v8 库 B1（publication open）+ B2（healthy、无行、previous=B1）→ `read_gate` 拒绝；
+  判别性：把「无行即 corrupt」→ 红。 <<MET>>
+- [x] **AC-3 L-R11 一跳 fail-closed**：v8 库 B1（publication open）+ B2（healthy、无行、previous=B1）→ `read_gate` 拒绝；
   resolve `SOURCE_ACCESS_DENIED`；provider 在 read byte 前拒绝（0 次解码/0 次 read）；`create_run` `TARGET_NOT_FOUND`；
-  commit guard 拒绝；`AuthorizeSourceReadForRun` 整请求 typed 拒绝且零映射。判别性：分支改回 open → 红。 <<PENDING>>
-- [ ] **AC-4 全链检测（两跳）**：B3/B2 无行、B1 有行 → 同样 fail-closed。判别性：改回只查一跳 → 红。 <<PENDING>>
-- [ ] **AC-5 零漂移**：18 pins 零改动（PREREQ 后 C-16 v1.7 与实现一致）；`schema.py`/`apps/**`/依赖零 diff；无新错误码/
-  命令/能力/`PROTOCOL_MINOR`；`src/**` diff ⊆ `allowed_paths`。判别性：scope diff 检查。 <<PENDING>>
-- [ ] **AC-6 门禁/证据/不夸大**：定向 pytest（新用例 + `tests/fea11` 全量基线 + `test_source_run_grant.py`/
+  commit guard 拒绝；`AuthorizeSourceReadForRun` 整请求 typed 拒绝且零映射。判别性：分支改回 open → 红。 <<MET>>
+- [x] **AC-4 全链检测（两跳）**：B3/B2 无行、B1 有行 → 同样 fail-closed。判别性：改回只查一跳 → 红。 <<MET>>
+- [x] **AC-5 零漂移**：18 pins 零改动（PREREQ 后 C-16 v1.7 与实现一致）；`schema.py`/`apps/**`/依赖零 diff；无新错误码/
+  命令/能力/`PROTOCOL_MINOR`；`src/**` diff ⊆ `allowed_paths`。判别性：scope diff 检查。 <<MET>>
+- [x] **AC-6 门禁/证据/不夸大**：定向 pytest（新用例 + `tests/fea11` 全量基线 + `test_source_run_grant.py`/
   `test_source_resolve.py`/`test_source_rendition_*`）；全量 `pytest tests` 不降（卡面重测起点）；`check.ps1` PASS；
   `verify_pins.ps1` 18/18；API inventory PASS；scope diff；EV/Handoff 完整；卡面登记 `L-R11-a…e` limitation；
-  **不得**写「C-17 §3.3 已完全实现 / L-R11 全部关闭」。 <<PENDING>>
+  **不得**写「C-17 §3.3 已完全实现 / L-R11 全部关闭」。 <<MET>>
 
 ## 预登记 limitation（实现时如实保留）
 
@@ -97,3 +97,31 @@ out_of_scope:
 - 依赖：`FEA-11-L-R11-GATE-UNIFY-PREREQ-1`（C-16 v1.7，done 后 DSH 冻结释放）；`FEA-11-RUN-GRANT-2C`（done，共享
   `tests/fea11/test_source_run_grant.py` 基线）。
 - Release 后走实现 → 独立 Review → 集成门禁 → closeout → push。
+
+## 交付记录（Owner 回填；不改 status）
+
+- **交付完成（2026-11-08）**：`delivery_head=86cd1d124`；commit 链 `1c1c9ca2f`（实现：`source_sync.py` 单谓词
+  `_publication_gate_verdict` + `SourceSyncStore.publication_gate_of_page` + 全链 walk `_binding_chain_ids`；
+  `core_assembly.read_gate` 委托并把 `corrupt_chain`→`unavailable`；`core_service._assert_source_sync_gate` 委托并删除
+  一跳 `previous_binding_id` 启发式）→ `86cd1d124`（`tests/fea11/test_source_gate_unify.py` 6 例：真实 v7→v8 legacy /
+  一跳 / 两跳 / pending-open / 无 binding / 静态唯一性，全部真实 migrations+zip+grant+`assemble_core_services`）。
+  随后同批 docs/evidence 提交（本卡面 / Handoff / `verification/FEA-11-L-R11-GATE-UNIFY-1/**`）。实现起点实测
+  `28a2826af`（派发说明写 `8584f412f`）；落地于 Lead 并发 docs 提交 `2e4d6128e` 之上。
+- **AC 判定**：AC-1…AC-6 **全 MET**（逐项 `<<MET>>`；见 `verification/FEA-11-L-R11-GATE-UNIFY-1/EV.md` §3）。
+- **实跑门禁（before → after）**：定向 pytest **78 passed**（既有 72 + 新增 6）；`tests/fea11` 全量
+  **206 → 212 passed**；全量 `pytest tests` **3363/10 → 3369/10**（+6，不降、skip 不变）；`verify_pins.ps1`
+  **18/18**（C16 v1.7 `67286eec…`、C17 `aefa0fa5…`）；`check.ps1` 默认 + `-TaskPath` **PASS(3 warnings)×2**；
+  API inventory **EXIT=0**；scope 通过（`src/**` 仅 3 个 allowed 文件；契约/schema/apps **0 字节**；无新错误码/
+  命令/能力/`PROTOCOL_MINOR`/依赖）；build / 全量 .NET / 真实 IPC **N/A**（纯 Python Core + tests，零 App/Host/wire）。
+- **判别性**：**4/4 RED_AS_EXPECTED + 复原 sha256 2/2 MATCH + 复绿**（M1「无行即 corrupt」→ legacy RED；M2 分支改回
+  open → 一跳/两跳 RED；M3 改回一跳 → 两跳 RED、一跳 PASS；M4 resolve 面改回一跳启发式 → 静态唯一性 RED；
+  `logs/discriminative/**`）。
+- **行为口径**：正常 legacy / 导入 / sync 库零变化；仅「新同步链缺 publication 行」的损坏形态由放行变 fail-closed
+  （Run `TARGET_NOT_FOUND`、provider `INVALID_INPUT`、resolve/reader `SOURCE_ACCESS_DENIED`、
+  `AuthorizeSourceReadForRun` typed 拒绝且零映射），全部映射既有 family、无新增码。
+- **Limitation 保留**：L-R11-a（`relation='added'` 缺行不可检测 / plan receipt 未实现）、L-R11-b（写面/章级面仍
+  pending-only）、L-R11-c（无专用诊断码/无新增日志行）、L-R11-d（不自动修复损坏行）、L-R11-e（legacy 用真实
+  v7→v8 migration，非 v8 伪造）。**不夸大**：未写「C-17 §3.3 已完全实现 / L-R11 全部关闭」；实现 ≠ 集成，待独立
+  Review 与 Lead 集成门禁。
+- **证据目录**：`verification/FEA-11-L-R11-GATE-UNIFY-1/`（`EV.md`、`RESOURCE-MANIFEST.json`、`logs/**`）。未 push、
+  未建 worktree；`status` 未改（由 Lead 维护）；未自行 closeout。

@@ -1,0 +1,3 @@
+19	14	src/bootstrap/core_assembly.py
+26	24	src/bootstrap/core_service.py
+127	25	src/infrastructure/sqlite/source_sync.py
