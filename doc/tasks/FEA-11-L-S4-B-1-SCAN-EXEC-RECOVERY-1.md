@@ -10,7 +10,7 @@ owner: l-s4b1-impl
 reviewer: 独立上下文 fresh subagent（未参与实现/返修/scope review；只读交付 head；session 见 `doc/reviews/FEA-11-L-S4-B-1-SCAN-EXEC-RECOVERY-1-r1.md`）
 depends_on:
   - FEA-11-L-S4-B-AUTO-RECOVERY-1
-base_commit: null
+base_commit: 58395b9a2
 branch: null
 worktree: null
 integration_commit: null
