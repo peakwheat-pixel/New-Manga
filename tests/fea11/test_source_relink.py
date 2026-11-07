@@ -9,6 +9,8 @@ requires the resync confirmation.  A changed container never passes relink.
 from __future__ import annotations
 
 import hashlib
+from datetime import datetime
+from pathlib import Path
 
 import pytest
 
@@ -69,10 +71,14 @@ def _seed(conn, scratch_dir):
     return zip_path, page1, page2, digest
 
 
-def _scan_with_container(stack, registry, path, *, kind):
+def _scan_with_container(
+    stack, registry, path, *, kind, registry_id="reg-1", generation=1
+):
     grant_id, _facts = mint_grant(
         registry, source_id="s1", kind="zip",
         entries=[(path, path.name, 0)],
+        registry_id=registry_id,
+        generation=generation,
     )
     scan = stack["scanner"].scan(
         {
@@ -221,3 +227,254 @@ def test_repoint_with_resync_confirmation_publishes_new_binding(
     binding = stack["store"].current_binding_of_page("p1")
     assert binding["binding_version"] == 2
     assert binding["previous_binding_id"] == "pb-p1"
+
+
+# ---------------------------------------------------------------------------
+# FEA-11-L-S4-LOCATION-AUTH-REFRESH-1 (A): in-place location auth refresh
+# ---------------------------------------------------------------------------
+
+
+def _iso_timestamp(value: str) -> datetime:
+    text = value.replace("Z", "+00:00") if value.endswith("Z") else value
+    parsed = datetime.fromisoformat(text)
+    assert parsed.tzinfo is not None
+    return parsed
+
+
+def _current_location(conn, source_id: str = "s1"):
+    return conn.execute(
+        "SELECT * FROM source_locations WHERE source_id = ? AND is_current = 1",
+        (source_id,),
+    ).fetchone()
+
+
+def _all_locations(conn, source_id: str = "s1"):
+    return conn.execute(
+        "SELECT * FROM source_locations WHERE source_id = ? ORDER BY location_id",
+        (source_id,),
+    ).fetchall()
+
+
+def _refresh(repo, location, *, registry_id, generation, last_verified_at):
+    return repo.refresh_source_location_auth(
+        location["source_id"],
+        location["content_digest"],
+        int(location["volume_serial"]),
+        int(location["file_id"]),
+        registry_id,
+        generation,
+        last_verified_at,
+    )
+
+
+def test_refresh_source_location_auth_is_the_single_implementation() -> None:
+    """AC-LS4-1: the in-place refresh has exactly ONE SQL implementation.
+
+    Discriminators: restoring the old inline ``UPDATE source_locations`` in
+    ``service.py`` (or any second copy) makes the SQL count 2; deleting the
+    production call sites drops the caller count below the required two.
+    """
+    src = Path(__file__).resolve().parents[2] / "src"
+    sql_sites: list[str] = []
+    call_sites: list[str] = []
+    for path in sorted(src.rglob("*.py")):
+        relative = path.relative_to(src.parent).as_posix()
+        for number, line in enumerate(
+            path.read_text(encoding="utf-8").splitlines(), start=1
+        ):
+            if "UPDATE source_locations SET registry_id" in line:
+                sql_sites.append(f"{relative}:{number}")
+            if "refresh_source_location_auth(" in line and "def " not in line:
+                call_sites.append(f"{relative}:{number}")
+    assert len(sql_sites) == 1, sql_sites
+    assert sql_sites[0].startswith("src/infrastructure/sqlite/library.py:"), sql_sites
+    # ≥2 production callers outside the definition (the import page unit and
+    # its D-2 standalone write unit live in library.py; the C-17 apply face
+    # calls the repository directly).
+    assert any(item.startswith("src/application/sources/service.py:") for item in call_sites)
+    assert len([item for item in call_sites if item.startswith("src/")]) >= 3
+    service_text = (
+        src / "application" / "sources" / "service.py"
+    ).read_text(encoding="utf-8")
+    assert "UPDATE source_locations SET registry_id" not in service_text
+    runtime_text = (
+        src / "application" / "importing" / "referenced" / "runtime.py"
+    ).read_text(encoding="utf-8")
+    assert "UPDATE source_locations" not in runtime_text
+
+
+def test_relink_refreshes_location_auth_in_place_cross_registry(
+    conn, registry, stack, book_chapter, scratch_dir
+):
+    """AC-LS4-2: the SAME physical file re-authorized under a NEW registry is
+    re-registered in place: registry_id/last_verified_at updated, no new
+    location row, identity columns and the binding untouched."""
+    zip_path, _page1, _page2, _digest_before = _seed(conn, scratch_dir)
+    before = _current_location(conn)
+    assert before["registry_id"] == "reg-1"
+    assert before["authorization_generation"] == 1
+    assert before["last_verified_at"] is None
+    binding_before = conn.execute(
+        "SELECT authorization_generation, binding_version FROM page_bindings"
+        " WHERE page_id = 'p1'"
+    ).fetchone()
+
+    renamed = scratch_dir / "old-renamed.zip"
+    zip_path.rename(renamed)
+    grant_id, scan = _scan_with_container(
+        stack, registry, renamed, kind="relink", registry_id="reg-2"
+    )
+    _plan, dispatch = run_full_sync(
+        stack, scan, grant_ids=[grant_id], kind="relink", command="RelinkSource"
+    )
+    assert dispatch["state"] == "core-committed"
+
+    after = _current_location(conn)
+    assert after["location_id"] == before["location_id"]  # in place, same row
+    assert after["registry_id"] == "reg-2"  # the live grant's registry
+    assert after["authorization_generation"] == 1
+    assert after["last_verified_at"] is not None
+    _iso_timestamp(after["last_verified_at"])
+    # The physical identity and the observation stay identical.
+    for column in (
+        "source_id", "content_digest", "volume_serial", "file_id",
+        "size_bytes", "observed_at", "is_current", "created_at",
+    ):
+        assert after[column] == before[column], column
+    assert len(_all_locations(conn)) == 1  # never a duplicate location row
+    assert conn.execute("SELECT COUNT(*) FROM sources").fetchone()[0] == 1
+    # The refresh never rewrites bindings (old binding generation stays ≤).
+    binding_after = conn.execute(
+        "SELECT authorization_generation, binding_version FROM page_bindings"
+        " WHERE page_id = 'p1'"
+    ).fetchone()
+    assert tuple(binding_after) == tuple(binding_before)
+
+
+def test_relink_refresh_follows_same_registry_generation_bump(
+    conn, registry, stack, book_chapter, scratch_dir
+):
+    """AC-LS4-2/5: a re-authorized generation on the SAME registry is followed
+    and bindings are not lifted to the new generation."""
+    zip_path, _page1, _page2, _digest_before = _seed(conn, scratch_dir)
+    renamed = scratch_dir / "old-renamed.zip"
+    zip_path.rename(renamed)
+    grant_id, scan = _scan_with_container(
+        stack, registry, renamed, kind="relink", generation=2
+    )
+    _plan, dispatch = run_full_sync(
+        stack, scan, grant_ids=[grant_id], kind="relink", command="RelinkSource"
+    )
+    assert dispatch["state"] == "core-committed"
+    after = conn.execute(
+        "SELECT registry_id, authorization_generation, last_verified_at"
+        " FROM source_locations WHERE source_id = 's1' AND is_current = 1"
+    ).fetchone()
+    assert after["registry_id"] == "reg-1"
+    assert after["authorization_generation"] == 2
+    assert after["last_verified_at"] is not None
+    bindings = conn.execute(
+        "SELECT authorization_generation FROM page_bindings"
+        " WHERE page_id IN ('p1', 'p2')"
+    ).fetchall()
+    assert [row["authorization_generation"] for row in bindings] == [1, 1]
+
+
+def test_refresh_source_location_auth_fail_closed_guards(conn, repo):
+    """AC-LS4-4/5: identity/is_current/generation guards are fail-closed and a
+    refresh is idempotent, monotonic and audited."""
+    add_source_tree(
+        conn,
+        source_id="s1",
+        version_id="sv1",
+        digest="a" * 64,
+        entries=[("e1", "001.png", "b" * 64)],
+    )  # reg-1 / generation 1 / volume 7 / file 8 / last_verified NULL
+    location = _current_location(conn)
+    now = "2026-11-07T00:00:00.000+00:00"
+
+    def snapshot():
+        return [tuple(row) for row in conn.execute(
+            "SELECT * FROM source_locations ORDER BY location_id"
+        ).fetchall()]
+
+    baseline = snapshot()
+
+    # P2 identity mismatch: wrong digest / volume / file → zero write.
+    assert repo.refresh_source_location_auth(
+        "s1", "c" * 64, 7, 8, "reg-2", 9, now
+    ) == 0
+    assert repo.refresh_source_location_auth(
+        "s1", "a" * 64, 99, 8, "reg-2", 9, now
+    ) == 0
+    assert repo.refresh_source_location_auth(
+        "s1", "a" * 64, 7, 99, "reg-2", 9, now
+    ) == 0
+    assert repo.refresh_source_location_auth(
+        "s1", "a" * 64, 7, 8, "reg-2", 9, now
+    ) == 1  # control: the real identity DOES refresh
+    assert snapshot() != baseline
+    baseline = snapshot()
+
+    # C2 idempotent: same three values → matched 0 rows, no side effect.
+    refreshed = _current_location(conn)
+    assert _refresh(
+        repo, refreshed, registry_id="reg-2", generation=9,
+        last_verified_at=now,
+    ) == 0
+    assert snapshot() == baseline
+
+    # C1 monotonic on the SAME registry: generation cannot go backwards.
+    assert repo.refresh_source_location_auth(
+        "s1", "a" * 64, 7, 8, "reg-2", 15, "2026-11-07T00:00:01.000+00:00"
+    ) == 1
+    baseline = snapshot()
+    assert repo.refresh_source_location_auth(
+        "s1", "a" * 64, 7, 8, "reg-2", 14, "2026-11-07T00:00:02.000+00:00"
+    ) == 0
+    assert snapshot() == baseline
+    row = _current_location(conn)
+    assert row["authorization_generation"] == 15
+    assert row["last_verified_at"] == "2026-11-07T00:00:01.000+00:00"
+    _iso_timestamp(row["last_verified_at"])
+
+    # A NEW registry is a new registration: generation 1 is legal (cross-reg).
+    assert repo.refresh_source_location_auth(
+        "s1", "a" * 64, 7, 8, "reg-3", 1, "2026-11-07T00:00:03.000+00:00"
+    ) == 1
+    row = _current_location(conn)
+    assert (row["registry_id"], row["authorization_generation"]) == ("reg-3", 1)
+
+    # P3 is_current: a superseded row (same identity keys, distinct row) is
+    # never refreshed.
+    with conn:
+        conn.execute(
+            "INSERT INTO source_locations (location_id, source_id, registry_id,"
+            " authorization_generation, content_digest, volume_serial, file_id,"
+            " size_bytes, observed_at, is_current, created_at)"
+            " VALUES ('loc-old', 's1', 'reg-1', 1, ?, 1, 2, 10, ?, 0, ?)",
+            ("d" * 64, now, now),
+        )
+    baseline = snapshot()
+    assert repo.refresh_source_location_auth(
+        "s1", "d" * 64, 1, 2, "reg-9", 1, now
+    ) == 0
+    assert snapshot() == baseline
+    old = conn.execute(
+        "SELECT last_verified_at, registry_id FROM source_locations"
+        " WHERE location_id = 'loc-old'"
+    ).fetchone()
+    assert old["last_verified_at"] is None
+    assert old["registry_id"] == "reg-1"
+    # Identity + observation columns were never rewritten by any refresh above:
+    # only registry_id/authorization_generation/last_verified_at ever move.
+    row = _current_location(conn)
+    assert row["location_id"] == location["location_id"]
+    assert row["source_id"] == "s1"
+    assert row["content_digest"] == "a" * 64
+    assert (row["volume_serial"], row["file_id"]) == (7, 8)
+    assert (row["size_bytes"], row["observed_at"], row["created_at"], row["is_current"]) == (
+        location["size_bytes"], location["observed_at"],
+        location["created_at"], location["is_current"],
+    )
+

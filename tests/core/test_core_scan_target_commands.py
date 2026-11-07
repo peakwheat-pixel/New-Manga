@@ -534,3 +534,66 @@ def test_duplicate_candidates_are_deduped_and_sorted() -> None:
     assert [t["source_id"] for t in result["targets"]] == ["src-a", "src-b"]
     # First occurrence wins; the duplicate row never adds a second target.
     assert result["targets"][1]["registry_id"] == "reg"
+
+# --- AC-LS4-6 (FEA-11-L-S4 A): refresh -> cold-start enumeration closure -----
+
+
+def test_location_auth_refresh_is_followed_by_cold_start_enumeration(
+    core, server
+) -> None:
+    """The single in-place refresh implementation is what the read-only
+    enumeration observes: after a re-registration refresh the cold-start
+    target carries the NEW registry/generation while the physical identity is
+    unchanged, and enumeration itself stays zero-write."""
+    conn = core.conn
+    source_id = "src-aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
+    with conn:
+        _seed_source(conn, source_id)
+        _seed_location(conn, source_id)
+        _seed_version_entry(conn, source_id)
+        _seed_book_page(
+            conn, "book-ls4", page_id="page-ls4", chapter_id="ch-ls4"
+        )
+        _seed_binding(
+            conn, binding_id="bind-ls4", page_id="page-ls4",
+            project_id="book-ls4", source_id=source_id,
+        )
+    first = _enumerate(server)["targets"][0]
+    assert (first["registry_id"], first["generation"]) == ("registry-1", 1)
+
+    # Production single implementation (not a fixture-only SQL patch).
+    with conn:
+        changed = core.repository.refresh_source_location_auth(
+            source_id,
+            DIGEST_A,
+            1,
+            2,
+            "registry-2",
+            4,
+            "2026-11-07T00:00:00.000+00:00",
+        )
+    assert changed == 1
+    second = _enumerate(server)["targets"][0]
+    assert (second["registry_id"], second["generation"]) == ("registry-2", 4)
+    # Only the auth baseline moved: identity/projects are unchanged.
+    assert second["identity_digest"] == first["identity_digest"]
+    assert second["project_ids"] == first["project_ids"]
+
+    # The enumeration remains a zero-write read face after the refresh.
+    before = _snapshot(conn)
+    _enumerate(server)
+    assert _snapshot(conn) == before
+
+    # Discriminator: a same-registry generation regression is refused, so the
+    # enumerated generation can never go backwards.
+    with conn:
+        assert core.repository.refresh_source_location_auth(
+            source_id,
+            DIGEST_A,
+            1,
+            2,
+            "registry-2",
+            3,
+            "2026-11-07T00:00:01.000+00:00",
+        ) == 0
+    assert _enumerate(server)["targets"][0]["generation"] == 4
