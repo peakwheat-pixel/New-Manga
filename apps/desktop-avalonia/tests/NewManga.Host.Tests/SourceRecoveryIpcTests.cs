@@ -87,7 +87,7 @@ public sealed class SourceRecoveryIpcTests : IClassFixture<SourceRecoveryIpcTest
         // (2) The READ-ONLY probe decides: readable storage + failed mint → re-authorize ONLY.
         _context.ResetHostFrames();
         var diagnosisA = await _context.Recovery.DiagnoseAsync(
-            [sourceA], "SOURCE_REGISTRY_UNAVAILABLE", hostSideMintFailure: true, token);
+            [new SourceRecoveryTarget(sourceA, IsFolder: false)], "SOURCE_REGISTRY_UNAVAILABLE", hostSideMintFailure: true, cancellationToken: token);
         Assert.Equal(SourceRecoveryAction.ReauthorizeSource, diagnosisA.Action);
         Assert.Equal(1, diagnosisA.StaleEntryCount);
         Assert.Equal("book.zip", diagnosisA.SourceLeafName);
@@ -95,7 +95,7 @@ public sealed class SourceRecoveryIpcTests : IClassFixture<SourceRecoveryIpcTest
 
         // (3) The EXPLICIT action: revoke EVERY stale entry of the path, then re-register its own
         //     registered root, in that order.
-        var resultA = await _context.Recovery.ReauthorizeAsync([sourceA], token);
+        var resultA = await _context.Recovery.ReauthorizeAsync([new SourceRecoveryTarget(sourceA, IsFolder: false)], token);
         Assert.True(resultA.Ok, resultA.ErrorCode + " " + resultA.Message);
         Assert.Equal(1, resultA.RevokedCount);
         Assert.Equal(1, resultA.RegisteredCount);
@@ -161,9 +161,9 @@ public sealed class SourceRecoveryIpcTests : IClassFixture<SourceRecoveryIpcTest
         Assert.Equal("SOURCE_REGISTRY_UNAVAILABLE", failureB.Code);
 
         var diagnosisB = await _context.Recovery.DiagnoseAsync(
-            [sourceB], "SOURCE_REGISTRY_UNAVAILABLE", hostSideMintFailure: true, token);
+            [new SourceRecoveryTarget(sourceB, IsFolder: false)], "SOURCE_REGISTRY_UNAVAILABLE", hostSideMintFailure: true, cancellationToken: token);
         Assert.Equal(SourceRecoveryAction.ReauthorizeSource, diagnosisB.Action);
-        var resultB = await _context.Recovery.ReauthorizeAsync([sourceB], token);
+        var resultB = await _context.Recovery.ReauthorizeAsync([new SourceRecoveryTarget(sourceB, IsFolder: false)], token);
         Assert.True(resultB.Ok, resultB.ErrorCode + " " + resultB.Message);
         var activeB = _context.Registry.List()
             .Single(entry => entry.RevokedAt is null && IsSameRoot(entry, sourceB));
@@ -212,19 +212,20 @@ public sealed class SourceRecoveryIpcTests : IClassFixture<SourceRecoveryIpcTest
 
         var wireLines = _context.Client.Wire.Frames.Select(frame => frame.RequestLine).ToArray();
         Assert.All(wireLines, line => Assert.DoesNotContain("quarantine", line, StringComparison.OrdinalIgnoreCase));
-        // The ONLY Core-wire frames carrying a fixture path are the pre-existing Host mint payloads
-        // (`RegisterSourceReadGrant`); the App recovery face contributes ZERO path-bearing frames.
+        // r1 P2-02: the Core wire log REDACTs absolute paths before storing a frame, so "path-bearing
+        // frame" is unobservable by construction. What IS observable and is exactly the AC-LSB-7
+        // requirement: ZERO fixture-root hits in the stored wire, while `[REDACTED]` frames prove the
+        // redaction actually ran (i.e. absolute paths did reach the framer and were replaced).
         var escapedA = sourceA.Replace("\\", "\\\\", StringComparison.Ordinal);
         var escapedB = sourceB.Replace("\\", "\\\\", StringComparison.Ordinal);
-        var pathBearingCommands = wireLines
-            .Where(line => line.Contains(escapedA, StringComparison.OrdinalIgnoreCase) ||
-                           line.Contains(escapedB, StringComparison.OrdinalIgnoreCase) ||
-                           line.Contains(sourceA, StringComparison.OrdinalIgnoreCase) ||
-                           line.Contains(sourceB, StringComparison.OrdinalIgnoreCase))
-            .Select(WireCommand)
-            .Distinct()
-            .ToArray();
-        Assert.All(pathBearingCommands, command => Assert.Equal("RegisterSourceReadGrant", command));
+        var wirePathHits = wireLines.Count(line =>
+            line.Contains(escapedA, StringComparison.OrdinalIgnoreCase) ||
+            line.Contains(escapedB, StringComparison.OrdinalIgnoreCase) ||
+            line.Contains(sourceA, StringComparison.OrdinalIgnoreCase) ||
+            line.Contains(sourceB, StringComparison.OrdinalIgnoreCase));
+        var redactedFrames = wireLines.Count(line => line.Contains("[REDACTED]", StringComparison.Ordinal));
+        Assert.Equal(0, wirePathHits);
+        Assert.True(redactedFrames > 0, "the wire log must prove path redaction actually ran");
         Assert.DoesNotContain("source_revoke_root", WireCommands(wireLines));
         Assert.DoesNotContain("source_register_root", WireCommands(wireLines));
 
@@ -264,11 +265,15 @@ public sealed class SourceRecoveryIpcTests : IClassFixture<SourceRecoveryIpcTest
         };
         evidence["host_local_frames"] = new JsonArray(hostFrames.Select(name => (JsonNode)JsonValue.Create(name)!).ToArray());
         evidence["wire_commands"] = new JsonArray(WireCommands(wireLines).Select(command => (JsonNode)JsonValue.Create(command)!).ToArray());
+        evidence["wire_frame_count"] = wireLines.Length;
         evidence["sanitization"] = new JsonObject
         {
             ["recovery_texts_path_free"] = true,
             ["wire_quarantine_hits"] = 0,
-            ["wire_path_frames_only_register_grant"] = true,
+            // r1 P2-02: paths are redacted by the wire log, so the verifiable claim is 0 stored hits
+            // plus evidence that the redaction ran (>=1 `[REDACTED]` frame).
+            ["wire_path_hits"] = wirePathHits,
+            ["wire_redacted_frames"] = redactedFrames,
             ["stderr_path_hits"] = 0,
         };
         evidence["pass"] = true;
@@ -290,7 +295,8 @@ public sealed class SourceRecoveryIpcTests : IClassFixture<SourceRecoveryIpcTest
             + " -> location row in place=" + (locationBefore.LocationId == locationAfter.LocationId)
             + ", registry=" + (locationAfter.RegistryId == activeB.RegistryId) + ", gen=" + locationAfter.Generation + "\n"
             + "host_local_frames=" + string.Join(",", hostFrames) + "\n"
-            + "wire_quarantine_hits=0 stderr_path_hits=0\nPASS\n");
+            + "wire_frame_count=" + wireLines.Length + " wire_path_hits=" + wirePathHits
+            + " wire_redacted_frames=" + redactedFrames + " wire_quarantine_hits=0 stderr_path_hits=0\nPASS\n");
     }
 
     // ------------------------------------------------------------------------------------ helpers
@@ -366,6 +372,13 @@ public sealed class SourceRecoveryIpcTests : IClassFixture<SourceRecoveryIpcTest
 
         public async Task InitializeAsync()
         {
+            // r1 P3-10: xUnit constructs the class fixture even for skipped tests; without the gate
+            // every full-suite run would still spawn a real Core. Stay inert when opt-in is off.
+            if (Environment.GetEnvironmentVariable("NEWMANGA_FEA11_IPC") != "1")
+            {
+                return;
+            }
+
             var repository = Repository();
             Python = Environment.GetEnvironmentVariable("NEWMANGA_BUILD_PYTHON") ?? NewManga.Host.Tests.LocalPython.Path;
             Root = Directory.CreateDirectory(Path.Combine(
@@ -424,6 +437,11 @@ public sealed class SourceRecoveryIpcTests : IClassFixture<SourceRecoveryIpcTest
 
         public async Task DisposeAsync()
         {
+            if (Client is null)
+            {
+                return; // gate off: InitializeAsync never started the fixture
+            }
+
             if (Imports is not null)
             {
                 await Imports.DisposeAsync();

@@ -143,6 +143,9 @@ public sealed class SourceRecoveryOrchestrationTests
     private const string Path = @"C:\sources\book.zip";
     private const string OtherPath = @"C:\sources\other.zip";
 
+    private static IReadOnlyList<SourceRecoveryTarget> Target(string path, bool isFolder = false) =>
+        new[] { new SourceRecoveryTarget(path, isFolder) };
+
     private static RecoveryHostDouble Host() => new();
 
     private static CancellationToken None => CancellationToken.None;
@@ -156,7 +159,7 @@ public sealed class SourceRecoveryOrchestrationTests
         host.ProbeErrorCode = "SOURCE_REGISTRY_UNAVAILABLE";
         var recovery = new SourceRecoveryCoordinator(host.Dispatcher());
 
-        var diagnosis = await recovery.DiagnoseAsync([Path], "SOURCE_REGISTRY_UNAVAILABLE", hostSideMintFailure: true, None);
+        var diagnosis = await recovery.DiagnoseAsync(Target(Path), "SOURCE_REGISTRY_UNAVAILABLE", hostSideMintFailure: true, cancellationToken: None);
 
         Assert.Equal(SourceRecoveryAction.ResetRegistry, diagnosis.Action);
         Assert.Equal(new[] { "source_list_roots" }, host.FrameNames());
@@ -172,7 +175,7 @@ public sealed class SourceRecoveryOrchestrationTests
             host.ProbeErrorCode = probeCode;
             var recovery = new SourceRecoveryCoordinator(host.Dispatcher());
 
-            var diagnosis = await recovery.DiagnoseAsync([Path], "SOURCE_REGISTRY_UNAVAILABLE", hostSideMintFailure: true, None);
+            var diagnosis = await recovery.DiagnoseAsync(Target(Path), "SOURCE_REGISTRY_UNAVAILABLE", hostSideMintFailure: true, cancellationToken: None);
 
             Assert.False(diagnosis.HasAction);
             Assert.Equal(probeCode, diagnosis.ErrorCode);
@@ -188,9 +191,9 @@ public sealed class SourceRecoveryOrchestrationTests
         var host = Host();
         var recovery = new SourceRecoveryCoordinator(host.Dispatcher());
 
-        var coreSide = await recovery.DiagnoseAsync([Path], "SOURCE_REGISTRY_UNAVAILABLE", hostSideMintFailure: false, None);
-        var otherCode = await recovery.DiagnoseAsync([Path], "SOURCE_ACCESS_DENIED", hostSideMintFailure: true, None);
-        var noFailure = await recovery.DiagnoseAsync(null, null, hostSideMintFailure: false, None);
+        var coreSide = await recovery.DiagnoseAsync(Target(Path), "SOURCE_REGISTRY_UNAVAILABLE", hostSideMintFailure: false, cancellationToken: None);
+        var otherCode = await recovery.DiagnoseAsync(Target(Path), "SOURCE_ACCESS_DENIED", hostSideMintFailure: true, cancellationToken: None);
+        var noFailure = await recovery.DiagnoseAsync(null, null, hostSideMintFailure: false, cancellationToken: None);
 
         Assert.False(coreSide.HasAction);
         Assert.False(otherCode.HasAction);
@@ -208,7 +211,7 @@ public sealed class SourceRecoveryOrchestrationTests
         host.AddEntry(OtherPath);
         var recovery = new SourceRecoveryCoordinator(host.Dispatcher());
 
-        var diagnosis = await recovery.DiagnoseAsync([Path], "SOURCE_REGISTRY_UNAVAILABLE", hostSideMintFailure: true, None);
+        var diagnosis = await recovery.DiagnoseAsync(Target(Path), "SOURCE_REGISTRY_UNAVAILABLE", hostSideMintFailure: true, cancellationToken: None);
 
         Assert.Equal(SourceRecoveryAction.ReauthorizeSource, diagnosis.Action);
         Assert.Equal("book.zip", diagnosis.SourceLeafName);
@@ -225,7 +228,7 @@ public sealed class SourceRecoveryOrchestrationTests
         host.AddEntry(OtherPath);
         var recovery = new SourceRecoveryCoordinator(host.Dispatcher());
 
-        var diagnosis = await recovery.DiagnoseAsync([Path], "SOURCE_REGISTRY_UNAVAILABLE", hostSideMintFailure: true, None);
+        var diagnosis = await recovery.DiagnoseAsync(Target(Path), "SOURCE_REGISTRY_UNAVAILABLE", hostSideMintFailure: true, cancellationToken: None);
 
         Assert.False(diagnosis.HasAction);
         Assert.Equal(0, host.WriteFrameCount());
@@ -242,7 +245,7 @@ public sealed class SourceRecoveryOrchestrationTests
         var other = host.AddEntry(OtherPath);
         var recovery = new SourceRecoveryCoordinator(host.Dispatcher());
 
-        var result = await recovery.ReauthorizeAsync([Path], None);
+        var result = await recovery.ReauthorizeAsync(Target(Path), None);
 
         Assert.True(result.Ok, result.ErrorCode + " " + result.Message);
         Assert.Equal(2, result.RevokedCount);
@@ -281,7 +284,7 @@ public sealed class SourceRecoveryOrchestrationTests
         host.AddEntry(@"C:\SOURCES\BOOK.ZIP");
         var recovery = new SourceRecoveryCoordinator(host.Dispatcher());
 
-        var result = await recovery.ReauthorizeAsync([Path], None);
+        var result = await recovery.ReauthorizeAsync(Target(Path), None);
 
         Assert.True(result.Ok, result.ErrorCode + " " + result.Message);
         var registration = Assert.Single(host.Frames, frame => frame.Name == "source_register_root");
@@ -297,9 +300,9 @@ public sealed class SourceRecoveryOrchestrationTests
         host.AddEntry(Path);
         var recovery = new SourceRecoveryCoordinator(host.Dispatcher());
 
-        var firstRun = await recovery.ReauthorizeAsync([Path], None);
+        var firstRun = await recovery.ReauthorizeAsync(Target(Path), None);
         var activeAfterFirst = host.ActiveEntries(Path).Count;
-        var secondRun = await recovery.ReauthorizeAsync([Path], None);
+        var secondRun = await recovery.ReauthorizeAsync(Target(Path), None);
         var activeAfterSecond = host.ActiveEntries(Path).Count;
 
         Assert.True(firstRun.Ok && secondRun.Ok, firstRun.ErrorCode + "/" + secondRun.ErrorCode);
@@ -321,7 +324,7 @@ public sealed class SourceRecoveryOrchestrationTests
         host.RegisterErrorCode = "SOURCE_ACCESS_DENIED";
         var recovery = new SourceRecoveryCoordinator(host.Dispatcher());
 
-        var result = await recovery.ReauthorizeAsync([Path], None);
+        var result = await recovery.ReauthorizeAsync(Target(Path), None);
 
         Assert.False(result.Ok);
         Assert.Equal("SOURCE_ACCESS_DENIED", result.ErrorCode);
@@ -339,7 +342,7 @@ public sealed class SourceRecoveryOrchestrationTests
 
         // Retryable: clearing the register failure completes the same explicit action.
         host.RegisterErrorCode = null;
-        var retry = await recovery.ReauthorizeAsync([Path], None);
+        var retry = await recovery.ReauthorizeAsync(Target(Path), None);
         Assert.True(retry.Ok, retry.ErrorCode + " " + retry.Message);
         Assert.Single(host.ActiveEntries(Path));
     }
@@ -352,7 +355,7 @@ public sealed class SourceRecoveryOrchestrationTests
         host.RevokeErrorCode = "SOURCE_REGISTRY_BUSY";
         var recovery = new SourceRecoveryCoordinator(host.Dispatcher());
 
-        var result = await recovery.ReauthorizeAsync([Path], None);
+        var result = await recovery.ReauthorizeAsync(Target(Path), None);
 
         Assert.False(result.Ok);
         Assert.Equal("SOURCE_REGISTRY_BUSY", result.ErrorCode);
@@ -369,7 +372,7 @@ public sealed class SourceRecoveryOrchestrationTests
         host.AddEntry(OtherPath);
         var recovery = new SourceRecoveryCoordinator(host.Dispatcher());
 
-        var result = await recovery.ReauthorizeAsync([Path], None);
+        var result = await recovery.ReauthorizeAsync(Target(Path), None);
 
         Assert.False(result.Ok);
         Assert.Equal("SOURCE_REGISTRY_UNAVAILABLE", result.ErrorCode);
@@ -387,12 +390,12 @@ public sealed class SourceRecoveryOrchestrationTests
         host.AddEntry(Path);
         host.RegisterErrorCode = "SOURCE_ACCESS_DENIED";
         var recovery = new SourceRecoveryCoordinator(host.Dispatcher());
-        var partial = await recovery.ReauthorizeAsync([Path], None);
+        var partial = await recovery.ReauthorizeAsync(Target(Path), None);
         Assert.False(partial.Ok);
         Assert.Empty(host.ActiveEntries(Path));
 
         host.RegisterErrorCode = null;
-        var retry = await recovery.ReauthorizeAsync([Path], None);
+        var retry = await recovery.ReauthorizeAsync(Target(Path), None);
 
         Assert.True(retry.Ok, retry.ErrorCode + " " + retry.Message);
         Assert.Equal(0, retry.RevokedCount); // nothing left to revoke — the revokes already happened
@@ -409,11 +412,155 @@ public sealed class SourceRecoveryOrchestrationTests
         host.AddEntry(Path);
         var recovery = new SourceRecoveryCoordinator(host.Dispatcher(), () => false);
 
-        var result = await recovery.ReauthorizeAsync([Path], None);
+        var result = await recovery.ReauthorizeAsync(Target(Path), None);
 
         Assert.False(result.Ok);
         Assert.Equal("HOST_READ_ONLY", result.ErrorCode);
         Assert.Empty(host.Frames);
+    }
+
+    // ---------------------------------------------------------------- r1 P2-01: per-source attribution
+
+    [Fact]
+    public void AttributeFailedSource_TargetsOnlyTheFailingSource_AndNeverABatch()
+    {
+        var first = new ReferenceImportSource(Path, IsFolder: false);
+        var second = new ReferenceImportSource(OtherPath, IsFolder: false);
+
+        // The import coordinator reports WHICH source aborted the preview → exactly that one.
+        var attributed = SourceRecoveryCoordinator.AttributeFailedSource([first, second], second);
+        Assert.False(attributed.Ambiguous);
+        var target = Assert.Single(attributed.Targets);
+        Assert.Equal(OtherPath, target.Path);
+
+        // No attribution + single selection → that one (only candidate).
+        var single = SourceRecoveryCoordinator.AttributeFailedSource([first], failed: null);
+        Assert.False(single.Ambiguous);
+        Assert.Equal(Path, Assert.Single(single.Targets).Path);
+
+        // No attribution + batch → NO target at all (ambiguous, never "all selected").
+        var batch = SourceRecoveryCoordinator.AttributeFailedSource([first, second], failed: null);
+        Assert.True(batch.Ambiguous);
+        Assert.Empty(batch.Targets);
+    }
+
+    [Fact]
+    public async Task MultiSelectionBlocked_OffersNoAction_AndNeverProbes()
+    {
+        var host = Host();
+        host.AddEntry(Path);
+        host.AddEntry(OtherPath);
+        var recovery = new SourceRecoveryCoordinator(host.Dispatcher());
+        IReadOnlyList<SourceRecoveryTarget> both = [new SourceRecoveryTarget(Path, false), new SourceRecoveryTarget(OtherPath, false)];
+
+        var diagnosis = await recovery.DiagnoseAsync(
+            both, "SOURCE_REGISTRY_UNAVAILABLE", hostSideMintFailure: true, cancellationToken: None);
+
+        Assert.False(diagnosis.HasAction);
+        Assert.Equal(SourceRecoveryBlockReason.MultipleSources, diagnosis.BlockReason);
+        Assert.Empty(host.Frames); // not even the read-only probe runs for an unattributable batch
+    }
+
+    [Fact]
+    public async Task Reauthorize_RefusesABatchBeforeAnyWireCall()
+    {
+        // r1 P2-01 regression guard: if the action ever reverts to "all selected sources", a healthy
+        // sibling would be revoked/re-registered. The batch must be refused with ZERO writes instead.
+        var host = Host();
+        var healthy = host.AddEntry(Path);
+        var stale = host.AddEntry(OtherPath);
+        var recovery = new SourceRecoveryCoordinator(host.Dispatcher());
+        IReadOnlyList<SourceRecoveryTarget> both = [new SourceRecoveryTarget(Path, false), new SourceRecoveryTarget(OtherPath, false)];
+
+        var result = await recovery.ReauthorizeAsync(both, None);
+
+        Assert.False(result.Ok);
+        Assert.Equal("INVALID_REQUEST", result.ErrorCode);
+        Assert.Empty(host.Frames);
+        Assert.False(healthy.Revoked);
+        Assert.False(stale.Revoked);
+    }
+
+    [Fact]
+    public async Task AttributedFailure_LeavesTheHealthySiblingCompletelyUntouched()
+    {
+        var host = Host();
+        var healthy = host.AddEntry(Path);
+        var stale = host.AddEntry(OtherPath);
+        var recovery = new SourceRecoveryCoordinator(host.Dispatcher());
+
+        // The production attribution picks ONLY the failing source (other.zip) out of a 2-source
+        // selection; the healthy book.zip entry must keep its id/generation/revoked state.
+        var attribution = SourceRecoveryCoordinator.AttributeFailedSource(
+            [new ReferenceImportSource(Path, false), new ReferenceImportSource(OtherPath, false)],
+            new ReferenceImportSource(OtherPath, false));
+        var diagnosis = await recovery.DiagnoseAsync(
+            attribution.Targets, "SOURCE_REGISTRY_UNAVAILABLE", hostSideMintFailure: true, cancellationToken: None);
+        Assert.Equal(SourceRecoveryAction.ReauthorizeSource, diagnosis.Action);
+        Assert.Equal("other.zip", diagnosis.SourceLeafName);
+
+        var result = await recovery.ReauthorizeAsync(attribution.Targets, None);
+
+        Assert.True(result.Ok, result.ErrorCode + " " + result.Message);
+        Assert.True(stale.Revoked);
+        Assert.False(healthy.Revoked);                 // healthy sibling untouched
+        Assert.Equal(1, healthy.Generation);
+        // No wire frame ever names the healthy entry: its registry id is never revoked/re-registered.
+        Assert.DoesNotContain(host.Frames, frame => frame.RegistryId == healthy.RegistryId);
+        var registration = Assert.Single(host.Frames, frame => frame.Name == "source_register_root");
+        Assert.Equal(OtherPath, registration.RegisteredRoot);
+    }
+
+    [Fact]
+    public async Task FolderTarget_OffersNoAction_AndTheActionRefuses()
+    {
+        var host = Host();
+        host.AddEntry(Path);
+        var recovery = new SourceRecoveryCoordinator(host.Dispatcher());
+        IReadOnlyList<SourceRecoveryTarget> folder = [new SourceRecoveryTarget(Path, IsFolder: true)];
+
+        var diagnosis = await recovery.DiagnoseAsync(
+            folder, "SOURCE_REGISTRY_UNAVAILABLE", hostSideMintFailure: true, cancellationToken: None);
+        var result = await recovery.ReauthorizeAsync(folder, None);
+
+        Assert.Equal(SourceRecoveryBlockReason.FolderSource, diagnosis.BlockReason);
+        Assert.False(diagnosis.HasAction);
+        Assert.False(result.Ok);
+        Assert.Equal("INVALID_REQUEST", result.ErrorCode);
+        Assert.Contains("folder", result.Message);
+        Assert.Empty(host.Frames); // no revoke/register for a folder source
+    }
+
+    [Fact]
+    public async Task PlanAttribution_RemembersTheExactFailingSource_SoABatchIsNeverASelection()
+    {
+        // r1 P3-05 (real production code): SourceImportCoordinator records WHICH source aborted the
+        // preview so HostController can pin exactly that one out of a multi-source selection. Only
+        // the first failing source is attributed (the preview stops there); a failure that happens
+        // outside the per-source loop leaves the attribution null — the batch then stays ambiguous
+        // and the recovery face offers NOTHING (see AttributeFailedSource_TargetsOnlyTheFailingSource).
+        var listCalls = 0;
+        var dispatcher = new HostCommandDispatcher(core: null, hostLocal: (name, payload, token) =>
+        {
+            if (name == "source_list_roots")
+            {
+                listCalls++;
+                throw new InvalidOperationException("scripted host-local transport failure");
+            }
+
+            throw new CoreOperationException("INVALID_REQUEST", "internal", false, "scripted", null);
+        });
+        // The failing leg aborts inside the dispatcher, before any Host source coordinator call.
+        var coordinator = new SourceImportCoordinator(dispatcher, null!, "unused");
+        var first = new ReferenceImportSource(Path, IsFolder: false);
+        var second = new ReferenceImportSource(OtherPath, IsFolder: false);
+
+        var failure = await Assert.ThrowsAsync<InvalidOperationException>(
+            () => coordinator.PlanAsync("ch-1", [first, second], "skip", None));
+
+        Assert.Equal("scripted host-local transport failure", failure.Message);
+        Assert.Equal(1, listCalls);
+        Assert.Same(first, coordinator.LastPlanFailureSource); // NOT the healthy/non-failing source
     }
 
     // ---------------------------------------------------------------- AC-LSB-2/7 reset + sanitization
@@ -468,7 +615,7 @@ public sealed class SourceRecoveryOrchestrationTests
         host.AddEntry(Path);
         host.TransportErrorOn = "source_revoke_root";
         var recovery = new SourceRecoveryCoordinator(host.Dispatcher());
-        var reauthorize = await recovery.ReauthorizeAsync([Path], None);
+        var reauthorize = await recovery.ReauthorizeAsync(Target(Path), None);
         Assert.False(reauthorize.Ok);
         Assert.False(string.IsNullOrEmpty(reauthorize.ErrorCode));
         Assert.DoesNotContain(@"C:\sources", reauthorize.Message);
@@ -935,11 +1082,13 @@ public sealed class SourceRecoveryUiTests
         host.ScriptedReauthorizeResults.Enqueue(new SourceRecoveryResult(
             true, null, SourceRecoveryText.ReauthorizeSucceeded(2, 1, "book.zip"), 2, 1, "book.zip"));
         host.ScriptedReferencePlans.Enqueue(Plan());
+        // r1 P3-06: drive the action ONLY through the button's command — no explicit VM fallback.
         reauthorize.Command!.Execute(null);
         Pump();
-        await viewModel.ReauthorizeSourceAsync();
 
         Assert.Equal(1, host.SourceReauthorizeCalls);
+        Assert.False(viewModel.HasSourceRecoveryAction); // the offer was consumed by the button
+        Assert.Contains("已重新授权", viewModel.RecoveryOutcomeText);
         window.Close();
     }
 
@@ -962,13 +1111,63 @@ public sealed class SourceRecoveryUiTests
         Assert.True(confirm.IsVisible);
         host.ScriptedResetResults.Enqueue(new SourceRecoveryResult(
             true, null, SourceRecoveryText.ResetSucceeded(), 0, 0, null));
+        // r1 P3-06: only the real control drives the confirmed reset.
         confirm.Command!.Execute(null);
         Pump();
-        await viewModel.ConfirmResetSourceRegistryAsync();
 
         Assert.Equal(1, host.SourceResetCalls);
         Assert.Contains(view.GetVisualDescendants().OfType<TextBlock>(), block =>
             (block.Text ?? string.Empty).Contains("已重置", StringComparison.Ordinal));
         window.Close();
     }
+
+    // ------------------------------------------------------------------ r1 P2-01 / P3-04 / P3-07
+
+    [AvaloniaFact]
+    public async Task MultiSelectionBlocked_ShowsTheSingleSelectionHint_AndOffersNoAction()
+    {
+        var (host, viewModel, notices) = await FailPreviewAsync(
+            SourceRecoveryDiagnosis.MultipleSources("SOURCE_REGISTRY_UNAVAILABLE"));
+
+        Assert.False(viewModel.HasSourceRecoveryAction);
+        Assert.True(viewModel.HasSourceRecoveryHint); // the explanation is still shown
+        Assert.Contains("请只选择一个来源", viewModel.RecoveryOfferText);
+        Assert.Equal(0, host.SourceReauthorizeCalls);
+        Assert.Equal(0, host.SourceResetCalls);
+        Assert.DoesNotContain(@"C:\manga", string.Concat(AllVisibleText(viewModel).Concat(notices.Select(n => n.Text))));
+    }
+
+    [AvaloniaFact]
+    public async Task FolderSourceBlocked_ShowsTheFileSourceHint_AndOffersNoAction()
+    {
+        var (host, viewModel, _) = await FailPreviewAsync(
+            SourceRecoveryDiagnosis.FolderUnsupported("SOURCE_REGISTRY_UNAVAILABLE", "folder-source"));
+
+        Assert.False(viewModel.HasSourceRecoveryAction);
+        Assert.True(viewModel.HasSourceRecoveryHint);
+        Assert.Contains("folder", viewModel.RecoveryOfferText);
+        Assert.Contains("file-source", viewModel.RecoveryOfferText);
+        Assert.Equal(0, host.SourceReauthorizeCalls);
+        Assert.Equal(0, host.SourceResetCalls);
+    }
+
+    [AvaloniaFact]
+    public async Task NewPreviewClearsThePreviousRecoveryOutcome()
+    {
+        var (host, viewModel, _) = await FailPreviewAsync(
+            SourceRecoveryDiagnosis.Reauthorize("SOURCE_REGISTRY_UNAVAILABLE", "book.zip", 1));
+        host.ScriptedReauthorizeResults.Enqueue(new SourceRecoveryResult(
+            true, null, SourceRecoveryText.ReauthorizeSucceeded(1, 1, "book.zip"), 1, 1, "book.zip"));
+        host.ScriptedReferencePlans.Enqueue(Plan());
+        await viewModel.ReauthorizeSourceAsync();
+        Assert.Contains("已重新授权", viewModel.RecoveryOutcomeText);
+
+        // A brand-new preview (user picks sources again) must not show the previous episode outcome.
+        host.ScriptedReferencePlans.Enqueue(Plan());
+        await viewModel.PlanReferenceImportAsync([new ReferenceImportSource(SourcePath, IsFolder: false)]);
+
+        Assert.Empty(viewModel.RecoveryOutcomeText);
+        Assert.False(viewModel.HasSourceRecoveryOutcome);
+    }
 }
+
