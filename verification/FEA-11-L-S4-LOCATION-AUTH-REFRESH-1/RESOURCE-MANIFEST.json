@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "task_id": "FEA-11-L-S4-LOCATION-AUTH-REFRESH-1",
-  "generated_at": "2026-11-07T00:22:38+00:00",
+  "generated_at": "2026-11-07T00:23:04+00:00",
   "generated_by": "l-s4-impl (DSH Agent Teams teammate; Lead `lead`)",
   "delivery_head": "0ebb234bf",
   "delivery_commits": [
@@ -9,14 +9,15 @@
     "0ebb234bf",
     "9ef295b74",
     "8050a62ae",
-    "54ed1b5f5"
+    "54ed1b5f5",
+    "3f37b74ee"
   ],
-  "repo_head_at_generation": "54ed1b5f51c7789b042f204b1e520911a4c65e9c",
+  "repo_head_at_generation": "3f37b74ee6a2cb76742ec6be212af341061ed926",
   "note": "FEA-11-L-S4-LOCATION-AUTH-REFRESH-1 (A) delivery: the ONE in-place location-auth refresh (C-15 §2/§3.3 conformance, zero contract change) wired into the C-17 apply face and the referenced-import reuse/skip paths, plus its discriminating tests and evidence. No linked worktree, no push, no user data, no schema/migration/dependency change; the frozen contract bytes were NOT modified (pin audit is the proof). This is a GENERATION-TIME snapshot of the tracked delivery tree; the manifest itself is the container and is deliberately NOT hashed inside its own file list.",
   "resources": [
     {
       "resource_type": "worktree",
-      "source_path": "NOT_APPLICABLE（main worktree; delivery head 54ed1b5f5）",
+      "source_path": "NOT_APPLICABLE（main worktree; delivery head 3f37b74ee）",
       "disposition": "NOT_APPLICABLE",
       "destination_path": "NOT_APPLICABLE",
       "process_check": "未创建 linked worktree（任务要求显式不建）；实施全部在 main 工作树 src/tests/verification/doc 内，未 push。"
@@ -33,7 +34,7 @@
       "source_path": "G:\\CODEX\\New Manga (main)",
       "disposition": "PRESERVE_REFERENCED",
       "destination_path": "Same source location",
-      "file_count": 23,
+      "file_count": 27,
       "changed_files": [
         {
           "commit": "6dd36aad7",
@@ -113,7 +114,7 @@
         {
           "commit": "9ef295b74",
           "path": "verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/logs/gates.log",
-          "sha256": "c3649c0dd39840ca6b49cadfc1118d81f0ae392d497f068f4b810d7b7825b989"
+          "sha256": "5ba7b13c4ed78ec4f9807fb53cc8f620c66806c64134d9c57215e1688a698553"
         },
         {
           "commit": "9ef295b74",
@@ -148,7 +149,27 @@
         {
           "commit": "54ed1b5f5",
           "path": "verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/logs/gates.log",
-          "sha256": "c3649c0dd39840ca6b49cadfc1118d81f0ae392d497f068f4b810d7b7825b989"
+          "sha256": "5ba7b13c4ed78ec4f9807fb53cc8f620c66806c64134d9c57215e1688a698553"
+        },
+        {
+          "commit": "3f37b74ee",
+          "path": "doc/handoffs/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1-0ebb234bf.md",
+          "sha256": "0657f4aba8a8db4317bf25385ef333650bd1fded366cae2b54dfeb92754e2d58"
+        },
+        {
+          "commit": "3f37b74ee",
+          "path": "verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/EV.md",
+          "sha256": "db12eb842509e8178e1682871f052325f65b2cd0f662bfaf2b433dcac738591b"
+        },
+        {
+          "commit": "3f37b74ee",
+          "path": "verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/scope-validation.log",
+          "sha256": "f624c0021cd2a1c05920f043be5c4962c338b5322b50f83e821360a93e0315c1"
+        },
+        {
+          "commit": "3f37b74ee",
+          "path": "verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/tools/gen_manifest.py",
+          "sha256": "20a107801e094826773a848629aa18c00d855e7a6114f12a04c3d971f534297d"
         }
       ]
     },
@@ -185,7 +206,7 @@
         },
         {
           "path": "logs/gates.log",
-          "sha256": "c3649c0dd39840ca6b49cadfc1118d81f0ae392d497f068f4b810d7b7825b989"
+          "sha256": "5ba7b13c4ed78ec4f9807fb53cc8f620c66806c64134d9c57215e1688a698553"
         },
         {
           "path": "scope-validation.log",
