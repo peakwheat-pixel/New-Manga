@@ -1,0 +1,29 @@
+[2026-11-07T00:14:27.744+00:00] FEA-11-L-S4 (A) scope validation
+card=doc/tasks/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1.md base=55306cb84
+delivery_commits=6dd36aad7,0ebb234bf
+changed=7
+  CHANGED src/application/importing/referenced/runtime.py
+  CHANGED src/application/sources/service.py
+  CHANGED src/infrastructure/sqlite/library.py
+  CHANGED tests/core/test_core_scan_target_commands.py
+  CHANGED tests/fea09/test_import_source.py
+  CHANGED tests/fea09/test_source_sync_operations.py
+  CHANGED tests/fea11/test_source_relink.py
+allowed_paths=12
+  ALLOWED doc/tasks/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1.md
+  ALLOWED doc/reviews/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1-*.md
+  ALLOWED doc/handoffs/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1-*.md
+  ALLOWED verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/**
+  ALLOWED src/infrastructure/sqlite/library.py
+  ALLOWED src/infrastructure/sqlite/source_sync.py
+  ALLOWED src/application/sources/service.py
+  ALLOWED src/application/importing/referenced/runtime.py
+  ALLOWED tests/core/test_core_scan_target_commands.py
+  ALLOWED tests/fea11/test_source_relink.py
+  ALLOWED tests/fea09/test_import_source.py
+  ALLOWED tests/fea09/test_source_sync_operations.py
+card_status_unchanged=True
+PROTOCOL_MINOR=3
+zero_drift_violations=[]
+out_of_scope=[]
+result=PASS changed=7 out_of_scope=[] forbidden=[] minor=3

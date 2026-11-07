@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "task_id": "FEA-11-L-S4-LOCATION-AUTH-REFRESH-1",
+  "generated_at": "2026-11-07T00:20:49+00:00",
+  "generated_by": "l-s4-impl (DSH Agent Teams teammate; Lead `lead`)",
+  "delivery_head": "0ebb234bf",
+  "delivery_commits": [
+    "6dd36aad7",
+    "0ebb234bf"
+  ],
+  "repo_head_at_generation": "89757f193d26bf7ba257a37766cbffea4c1b6617",
+  "note": "FEA-11-L-S4-LOCATION-AUTH-REFRESH-1 (A) delivery: the ONE in-place location-auth refresh (C-15 §2/§3.3 conformance, zero contract change) wired into the C-17 apply face and the referenced-import reuse/skip paths, plus its discriminating tests and evidence. No linked worktree, no push, no user data, no schema/migration/dependency change; the frozen contract bytes were NOT modified (pin audit is the proof). This is a GENERATION-TIME snapshot of the tracked delivery tree.",
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "NOT_APPLICABLE（main worktree; delivery head 0ebb234bf）",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "NOT_APPLICABLE",
+      "process_check": "未创建 linked worktree（任务要求显式不建）；实施全部在 main 工作树 src/tests/verification/doc 内，未 push。"
+    },
+    {
+      "resource_type": "temp_workspace",
+      "source_path": "G:\\CODEX\\New Manga.workspace\\FEA-11-L-S4-LOCATION-AUTH-REFRESH-1",
+      "disposition": "NOT_CREATED_NO_SCRATCH",
+      "destination_path": "NOT_APPLICABLE",
+      "process_check": "本卡未产生仓外 scratch/临时产物；pytest 临时文件位于系统 tmp_path 与既有共享 fixture 根 G:/CODEX/New Manga.workspace/FEA-11/fixtures/（测试既有约定），不属本卡交付资源。"
+    },
+    {
+      "resource_type": "repository",
+      "source_path": "G:\\CODEX\\New Manga (main)",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "Same source location",
+      "file_count": 7,
+      "changed_files": [
+        {
+          "commit": "6dd36aad7",
+          "path": "src/application/importing/referenced/runtime.py",
+          "sha256": "cf956252426188c1fc53abedf54603e33675195f477de1a8775ce93f51712453"
+        },
+        {
+          "commit": "6dd36aad7",
+          "path": "src/application/sources/service.py",
+          "sha256": "6579f3a5136fa8466eeabc3d39ec3ed7cfe7a648a507c57e651c8f45839b98c0"
+        },
+        {
+          "commit": "6dd36aad7",
+          "path": "src/infrastructure/sqlite/library.py",
+          "sha256": "9c3714bea7365c13284df3641342b07946f02278638ebb5e90e71f2d37ce0456"
+        },
+        {
+          "commit": "0ebb234bf",
+          "path": "tests/core/test_core_scan_target_commands.py",
+          "sha256": "4cc66d2367b12e71028e4f74e24f90169e72cf5bfb499a601c340c58f961083a"
+        },
+        {
+          "commit": "0ebb234bf",
+          "path": "tests/fea09/test_import_source.py",
+          "sha256": "5222fa98c6d9ab00282bc6929f18308a2ad3d92b0399bd50ce3bf2f7b2448bbe"
+        },
+        {
+          "commit": "0ebb234bf",
+          "path": "tests/fea09/test_source_sync_operations.py",
+          "sha256": "f6a4ed0bd7b0f9c650ff419e25ec1f6c6b8c5806c3c16adc2c8aa1530506d5ff"
+        },
+        {
+          "commit": "0ebb234bf",
+          "path": "tests/fea11/test_source_relink.py",
+          "sha256": "de5c9addedc6a5fb400f09af6510831355e3cad3abc0885ba72522ec02ec5725"
+        }
+      ]
+    },
+    {
+      "resource_type": "evidence_tree",
+      "source_path": "verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "Same source location",
+      "file_count": 11,
+      "files": [
+        {
+          "path": "changed-files.txt",
+          "sha256": "d8d6433f55554aaa87f14dadd61784573f8a93893fcaa5b70bf9df86baf20427"
+        },
+        {
+          "path": "EV.md",
+          "sha256": "d0a08932b2dbd68c669b44f46038d9d71ae44eb0936a2bc4874374a6c25dc437"
+        },
+        {
+          "path": "logs/discrimination.log",
+          "sha256": "f287dbe155d7da13074b1e185c36a24202719df01147cb72a841811032ac424b"
+        },
+        {
+          "path": "logs/feature.log",
+          "sha256": "274e3b8bc5ebcbab242e4f60d50ab33932d05b8b917da9a5e4680dcd68b203b3"
+        },
+        {
+          "path": "logs/full-dotnet.log",
+          "sha256": "cdfba8d5daa7adca1e992702462d30bf56fdbb4a921f69b0e52ccef0c4710be2"
+        },
+        {
+          "path": "logs/full-pytest.log",
+          "sha256": "ebeedde979dd85375229db622cb95fc602b171a884757d381634327db897380b"
+        },
+        {
+          "path": "logs/gates.log",
+          "sha256": "6d81ffb03ef86598ddfc012fb6920acbf4328ecfec9914d1b185b1cc868289b2"
+        },
+        {
+          "path": "scope-validation.log",
+          "sha256": "837eae7483590e24b208078f97d1dc1078240f2fa7a0b7c04f3547b72a952b57"
+        },
+        {
+          "path": "tools/discrimination.py",
+          "sha256": "adaf714d23c336aff8b617b2d60b3af2db78fcd8af3e784ddcb7e43d0cefca52"
+        },
+        {
+          "path": "tools/gen_manifest.py",
+          "sha256": "febcfc85cd4194841811cd22741b00f64c030062d2a5157a6beaadbb3ce5a36f"
+        },
+        {
+          "path": "tools/scope_validation.py",
+          "sha256": "f5448d87ab1b840fe553183ccacabb94f86ef5bc4b1737a81c2e885ef041f8b5"
+        }
+      ]
+    }
+  ]
+}

@@ -14,7 +14,7 @@ base_commit: 55306cb84
 branch: null
 worktree: null
 integration_commit: null
-delivery_head: null
+delivery_head: 0ebb234bfd505ed72a351395b56c9a63303d5274
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1
@@ -66,14 +66,14 @@ out_of_scope:
 
 ## Acceptance Criteria（v3）
 
-- [ ] **AC-LS4-1 单点实现**：原地刷新只有一个实现（`refresh_source_location_auth`）；`service.py` 内联 UPDATE 被替换，无第二份 SQL；grep 判别用例。
-- [ ] **AC-LS4-2 重导入/relink 刷新**：同 identity 重注册后 `registry_id/authorization_generation/last_verified_at` 原地更新、**不新增 location 行**、source_id/digest/is_current 不变；判别性（删除调用 → RED）。
-- [ ] **AC-LS4-3 sync apply 刷新**：同 identity 的 apply 路径刷新（含整源 skip 一次条件刷新，D-2）；判别性。
-- [ ] **AC-LS4-4 撤销/负例 fail-closed**：撤销后不刷新、不自动放行；identity 不符/无 live grant → 零写；判别性。
-- [ ] **AC-LS4-5 幂等/单调/审计**：重复刷新幂等；generation 不倒退；`last_verified_at` 更新可审计；不越权改 binding。
-- [ ] **AC-LS4-6 枚举闭环**：重注册→刷新→冷启动/周期只读枚举切片不再丢 target（与 `test_core_scan_target_commands` 既有断言一致）。
-- [ ] **AC-LS4-7 零漂移/门禁**：pins 18/18（C15 v1.5）；check（默认 + `-TaskPath`）PASS；API inventory PASS；scope diff ⊆ allowed_paths；全量 pytest/.NET 不降（基线 **3305/10 / 1562/0/91**）；跑后恢复 `verification/FEA-09`。
-- [ ] **AC-LS4-8 不夸大**：不得写「只读切片已可恢复」（需 B）；limitation L-S4-1/L-S4-2 保留。
+- [x] **AC-LS4-1 单点实现**：原地刷新只有一个实现（`refresh_source_location_auth`）；`service.py` 内联 UPDATE 被替换，无第二份 SQL；grep 判别用例。 证据：`SqliteLibraryRepository.refresh_source_location_auth` 为全 `src/**` 唯一 `UPDATE source_locations SET registry_id` 字节（`tests/fea11/test_source_relink.py::test_refresh_source_location_auth_is_the_single_implementation` 实测 1 处 + 生产调用者 ≥3）；`service.py:504-515` 旧内联 UPDATE 删除（relink 行为不变，既有 5 例全绿）；判别性 B4（恢复第二份内联 SQL → RED）。 <<MET>>
+- [x] **AC-LS4-2 重导入/relink 刷新**：同 identity 重注册后 `registry_id/authorization_generation/last_verified_at` 原地更新、**不新增 location 行**、source_id/digest/is_current 不变；判别性（删除调用 → RED）。 证据：relink 跨 registry（rename 同 inode → `reg-2`）三列刷新、`last_verified_at` 非空 ISO、`location_id`/身份键/`observed_at`/`is_current`/binding 逐列不变、行数 1；同 registry `1→2` 跟随且 binding 代次不抬升；import 复用（同源第二 project）页单元内刷新、无新 location/source 行；判别性 B1/B2。 <<MET>>
+- [x] **AC-LS4-3 sync apply 刷新**：同 identity 的 apply 路径刷新（含整源 skip 一次条件刷新，D-2）；判别性。 证据：同容器 resync 跨 registry 在 `BEGIN IMMEDIATE` 内刷新（`tests/fea09/test_source_sync_operations.py`）；整源 skip 仅一次条件刷新且 `imported_pages=0/skipped_sources=1`、页/版本/位置计数不变；`import_as_new` 全已引用零页路径同样一次刷新（`tests/fea09/test_import_source.py`）；判别性 B1/B3。 <<MET>>
+- [x] **AC-LS4-4 撤销/负例 fail-closed**：撤销后不刷新、不自动放行；identity 不符/无 live grant → 零写；判别性。 证据：撤销 grant（plan 后 apply/start 前）→ typed `SOURCE_GRANT_REVOKED`/`SOURCE_ACCESS_DENIED`、location/binding 逐字节不变、无 operation 行；import skip 撤销 → 行 `tuple()` 全等零写；identity 不符（同 digest 拷贝新 inode、错 digest/volume/file）→ 0 行；folder 错键 → 0 行；判别性 B6/B7。 <<MET>>
+- [x] **AC-LS4-5 幂等/单调/审计**：重复刷新幂等；generation 不倒退；`last_verified_at` 更新可审计；不越权改 binding。 证据：同值重复 → `rowcount 0` + 逐行快照不变；同 registry 代次 15→14 → 0（不倒退）；跨 registry 代次 1 允许；`last_verified_at` ISO 可解析；只写三列（其余列逐列断言不变）；判别性 B5。 <<MET>>
+- [x] **AC-LS4-6 枚举闭环**：重注册→刷新→冷启动/周期只读枚举切片不再丢 target（与 `test_core_scan_target_commands` 既有断言一致）。 证据：`test_location_auth_refresh_is_followed_by_cold_start_enumeration`：生产单点刷新后 `source_list_scan_targets` 返回新 `registry_id/generation`、`identity_digest`/`project_ids` 不变、枚举零写（14 表快照）、代次回退被拒 → 枚举不倒退。 <<MET>>
+- [x] **AC-LS4-7 零漂移/门禁**：pins 18/18（C15 v1.5）；check（默认 + `-TaskPath`）PASS；API inventory PASS；scope diff ⊆ allowed_paths；全量 pytest/.NET 不降（基线 **3305/10 / 1562/0/91**）；跑后恢复 `verification/FEA-09`。 证据：`logs/gates.log`（PIN 18/18；check PASS(3 warnings)×2；API EXIT=0；`FEA09_STATUS=CLEAN`）、`scope-validation.log`（changed=7 全 ALLOWED、zero-drift 空、`PROTOCOL_MINOR=3`、卡 status 未改）、`logs/full-pytest.log`（3317/10）、`logs/full-dotnet.log`（1570/0/92；`repo_head=89757f193` 为并发 L-S1 docs-only 提交，`apps/**` 零 diff，+8/+1 归属并发 L-S1）。 <<MET>>
+- [x] **AC-LS4-8 不夸大**：不得写「只读切片已可恢复」（需 B）；limitation L-S4-1/L-S4-2 保留。 证据：EV.md §5/§7、Handoff §3、本卡「已知 limitation」原文保留；明写「零交互恢复需 B（C-16 v1.5）」「撤销后不自动放行」「不宣称 L-R1 全修」。 <<MET>>
 
 ## 已知 limitation（本卡）
 
@@ -91,4 +91,13 @@ out_of_scope:
 
 ## 交付记录（Owner 回填；不改 status）
 
-- 待实施。
+- Owner：`l-s4-impl`（DSH Agent Teams teammate；Lead `lead`）；交付日期 2026-11-07（Asia/Shanghai）。
+- 起点：`db12dc5e5`（`main`，工作树 clean）→ **delivery_head=`0ebb234bfd505ed72a351395b56c9a63303d5274`**。
+- commit 链（仅本卡字节，显式 pathspec；未 push、未建 worktree）：
+  - `6dd36aad7` — `feat(fea-11-l-s4)`: 单点原地刷新实现（`library.py`）+ `service.py` 删除内联 UPDATE 并接线 apply 写路径 + `runtime.py` import 页单元/D-2 skip 接线。
+  - `0ebb234bf` — `test(fea-11-l-s4)`: 判别测试（单点 grep、relink 刷新、幂等/单调/负例、import 复用/skip、sync apply/撤销、枚举闭环）；**`delivery_head`**。
+  - 文档提交（本卡 / `doc/handoffs/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1-0ebb234bf.md` / `verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/**`）随后同批提交，均在 `allowed_paths` 内。
+- **共享工作树披露**：`main` 同期由 `l-s1-impl` 并发使用（`1ac8cc0b7`/`b56c5a0e6`/`89757f193` 为 L-S1 字节，非本卡）；本卡 scope 按**自有 commit 链**计算。
+- **门禁实测**（`delivery_head=0ebb234bf`；均真跑）：定向（卡面命令）**26 passed**；全量 `pytest tests` → **3317 passed / 10 skipped**（基线 3305/10，+12 全为本卡测试）；全量 `dotnet test NewManga.sln -c Release` → **1570 / 0 / 92**（基线 1562/0/91；`repo_head=89757f193` 为并发 L-S1 docs-only 提交，`apps/**` 零 diff，增量不归属本卡）；`verify_pins` **18/18**；`check.ps1`（默认 + `-TaskPath`）**PASS(3 warnings)**；API inventory **EXIT=0**；scope **PASS（changed=7 全 ALLOWED；zero-drift 空；`PROTOCOL_MINOR=3`）**；判别性 **7/7 破坏点 RED_AS_EXPECTED + 7/7 字节级恢复 + 恢复后复绿**。跑后 `git checkout -- verification/FEA-09`（`FEA09_STATUS=CLEAN`）。
+- **limitation（保留）**：**L-S4-1** A 修完仍缺触发器——无既有写路径介入时冷启动/周期只读枚举不自动恢复，零交互恢复需 B（C-16 v1.5，1/18 pins，另卡）；**L-S4-2** folder 身份键未修；撤销后不自动放行/不自动重授权；D-2 使整源 skip 在「live grant + 同 identity」时写一次单行条件刷新（显式行为变化）。
+- **未解决/未宣称**：不宣称「只读切片已可恢复」、零交互自愈、L-R1 全修；`tests/fea09/test_import_source.py`/`test_source_sync_operations.py` 为按卡面 allowed 路径**新建**（起点不存在）。

@@ -1,0 +1,31 @@
+[2026-11-07T00:08:34.353+00:00] FEA-11-L-S4 discrimination start (repo=G:\CODEX\New Manga)
+case=B1 what=apply 面刷新调用被禁用（relink/resync 同身份不再刷新） file=src/application/sources/service.py target=tests/fea09/test_source_sync_operations.py::test_resync_same_identity_refreshes_the_location_auth break_exit=1 restore_sha256=MATCH status=RED_AS_EXPECTED
+  break-out: =========================== short test summary info ===========================
+  break-out: FAILED tests/fea09/test_source_sync_operations.py::test_resync_same_identity_refreshes_the_location_auth
+  break-out: 1 failed in 3.24s
+case=B2 what=import 页单元不再携带刷新（重导入新项目不刷新） file=src/application/importing/referenced/runtime.py target=tests/fea09/test_import_source.py::test_reimport_into_another_project_refreshes_location_auth_in_place break_exit=1 restore_sha256=MATCH status=RED_AS_EXPECTED
+  break-out: =========================== short test summary info ===========================
+  break-out: FAILED tests/fea09/test_import_source.py::test_reimport_into_another_project_refreshes_location_auth_in_place
+  break-out: 1 failed in 1.80s
+case=B3 what=整源 skip 的 D-2 条件刷新被删除 file=src/application/importing/referenced/runtime.py target=tests/fea09/test_import_source.py::test_whole_source_skip_refreshes_location_auth_once break_exit=1 restore_sha256=MATCH status=RED_AS_EXPECTED
+  break-out: =========================== short test summary info ===========================
+  break-out: FAILED tests/fea09/test_import_source.py::test_whole_source_skip_refreshes_location_auth_once
+  break-out: 1 failed in 0.16s
+case=B4 what=恢复第二份内联 UPDATE source_locations（单点实现被破坏） file=src/application/sources/service.py target=tests/fea11/test_source_relink.py::test_refresh_source_location_auth_is_the_single_implementation break_exit=1 restore_sha256=MATCH status=RED_AS_EXPECTED
+  break-out: =========================== short test summary info ===========================
+  break-out: FAILED tests/fea11/test_source_relink.py::test_refresh_source_location_auth_is_the_single_implementation
+  break-out: 1 failed in 0.15s
+case=B5 what=同 registry generation 单调守卫被移除（允许代次回退） file=src/infrastructure/sqlite/library.py target=tests/fea11/test_source_relink.py::test_refresh_source_location_auth_fail_closed_guards break_exit=1 restore_sha256=MATCH status=RED_AS_EXPECTED
+  break-out: =========================== short test summary info ===========================
+  break-out: FAILED tests/fea11/test_source_relink.py::test_refresh_source_location_auth_fail_closed_guards
+  break-out: 1 failed in 0.09s
+case=B6 what=物理身份三键守卫被移除（identity 不符也刷新） file=src/infrastructure/sqlite/library.py target=tests/fea11/test_source_relink.py::test_refresh_source_location_auth_fail_closed_guards break_exit=1 restore_sha256=MATCH status=RED_AS_EXPECTED
+  break-out: =========================== short test summary info ===========================
+  break-out: FAILED tests/fea11/test_source_relink.py::test_refresh_source_location_auth_fail_closed_guards
+  break-out: 1 failed in 0.10s
+case=B7 what=is_current 守卫被移除（已 supersede 的旧行也可被刷新） file=src/infrastructure/sqlite/library.py target=tests/fea11/test_source_relink.py::test_refresh_source_location_auth_fail_closed_guards break_exit=1 restore_sha256=MATCH status=RED_AS_EXPECTED
+  break-out: =========================== short test summary info ===========================
+  break-out: FAILED tests/fea11/test_source_relink.py::test_refresh_source_location_auth_fail_closed_guards
+  break-out: 1 failed in 0.09s
+restored_tree_git_status=CLEAN
+result=PASS breaks=7 statuses=RED_AS_EXPECTED,RED_AS_EXPECTED,RED_AS_EXPECTED,RED_AS_EXPECTED,RED_AS_EXPECTED,RED_AS_EXPECTED,RED_AS_EXPECTED

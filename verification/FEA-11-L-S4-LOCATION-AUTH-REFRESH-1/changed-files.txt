@@ -1,0 +1,7 @@
+src/application/importing/referenced/runtime.py
+src/application/sources/service.py
+src/infrastructure/sqlite/library.py
+tests/core/test_core_scan_target_commands.py
+tests/fea09/test_import_source.py
+tests/fea09/test_source_sync_operations.py
+tests/fea11/test_source_relink.py
