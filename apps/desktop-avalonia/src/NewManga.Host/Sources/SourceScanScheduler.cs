@@ -2015,11 +2015,20 @@ public sealed class HostSourceScanExecutor : ISourceScanExecutor
 /// typed skips (unknown source kind, &gt;20 project ids, registry missing/revoked/generation drift,
 /// malformed fields). The Core never returns paths: the local path comes from the Host registry
 /// only. The enumerator never plans, authorizes, reads content or writes any state.
+///
+/// FEA-11-L-S4-B (C-16 v1.5 §2.5) adds a bounded, read-back-verified pre-pass: when a Host is
+/// wired with a <see cref="SourceReadCoordinator"/> AND the running Core advertises
+/// <c>source.reattest/1</c>, each enumerated target whose Core-recorded registry entry is REVOKED
+/// but which has exactly ONE live re-authorized entry (see <see cref="SourceRootReattestPlanner"/>)
+/// is re-attested ONCE and then the enumeration is repeated ONCE (Core stays authoritative). The
+/// pre-pass never runs without the capability, never retries a target inside a round, and a second
+/// enumeration failure keeps the first-round result (the unverified target is not forced into the
+/// set). Without a coordinator (the legacy constructor) behaviour is byte-identical to B1.
 /// </summary>
 public sealed class HostSourceScanTargetEnumerator : ISourceScanTargetEnumerator
 {
     /// <summary>C-17 §5 / P3-4: a shared source may map to at most this many books (1..20).</summary>
-    public const int MaximumProjectIds = 20;
+    public const int MaximumProjectIds = SourceRootReattestPlanner.MaximumProjectIds;
 
     /// <summary>P3-3: the only source kinds the scan slice can enumerate; unknown kinds fail closed.</summary>
     public static readonly IReadOnlySet<string> KnownSourceKinds = new HashSet<string>(StringComparer.Ordinal)
@@ -2031,55 +2040,59 @@ public sealed class HostSourceScanTargetEnumerator : ISourceScanTargetEnumerator
 
     private readonly CoreServiceClient _core;
     private readonly SourceAccessRegistry _registry;
+    // FEA-11-L-S4-B: optional re-attest wiring. Null keeps the pre-L-S4-B behaviour exactly.
+    private readonly SourceReadCoordinator? _sources;
+    private readonly SourceScanOptions? _options;
+    private readonly Func<CancellationToken, Task<JsonElement>>? _listTargets;
+    private readonly Func<CancellationToken, Task<bool>>? _reattestCapability;
+    private readonly Action<string>? _warnLog;
 
-    public HostSourceScanTargetEnumerator(CoreServiceClient core, SourceAccessRegistry registry)
+    public HostSourceScanTargetEnumerator(
+        CoreServiceClient core,
+        SourceAccessRegistry registry,
+        SourceReadCoordinator? sources = null,
+        SourceScanOptions? options = null,
+        Func<CancellationToken, Task<JsonElement>>? listTargets = null,
+        Func<CancellationToken, Task<bool>>? reattestCapability = null,
+        Action<string>? warnLog = null)
     {
         _core = core;
         _registry = registry;
+        _sources = sources;
+        _options = options;
+        _listTargets = listTargets;
+        _reattestCapability = reattestCapability;
+        _warnLog = warnLog;
     }
 
     public async Task<SourceScanEnumerationResult> EnumerateAsync(CancellationToken cancellationToken)
     {
-        JsonElement result;
-        try
+        var first = await ReadTargetsAsync(cancellationToken).ConfigureAwait(false);
+        if (!first.Ok)
         {
-            result = await _core.ListSourceScanTargetsAsync(cancellationToken).ConfigureAwait(false);
-        }
-        catch (CoreOperationException error)
-        {
-            // Capability missing / Core typed refusal: fail closed, never probe by dispatch.
-            return SourceScanEnumerationResult.Unavailable(error.Code);
-        }
-        catch (SidecarException)
-        {
-            return SourceScanEnumerationResult.Unavailable("SOURCE_SYNC_STORAGE_FAILED");
-        }
-        catch (Exception error) when (error is IOException or UnauthorizedAccessException)
-        {
-            return SourceScanEnumerationResult.Unavailable("SOURCE_SYNC_STORAGE_FAILED");
-        }
-        catch (Exception error) when (error is not OutOfMemoryException)
-        {
-            return SourceScanEnumerationResult.Unavailable("UNKNOWN");
+            return SourceScanEnumerationResult.Unavailable(first.ErrorCode ?? "UNKNOWN");
         }
 
-        if (result.ValueKind != JsonValueKind.Object
-            || !result.TryGetProperty("targets", out var targets)
-            || targets.ValueKind != JsonValueKind.Array)
+        var targets = first.Targets;
+        var entries = SnapshotEntries();
+        if (_sources is not null && _options is not null)
         {
-            return SourceScanEnumerationResult.Unavailable("SOURCE_SYNC_STORAGE_FAILED");
-        }
-
-        if (targets.GetArrayLength() > MaximumTargets)
-        {
-            // Contract upper bound: never silently truncate an oversized enumeration.
-            return SourceScanEnumerationResult.Unavailable("SOURCE_BUDGET_EXCEEDED");
-        }
-
-        var entries = new Dictionary<string, SourceAuthorization>(StringComparer.Ordinal);
-        foreach (var entry in _registry.List())
-        {
-            entries[entry.RegistryId] = entry;
+            try
+            {
+                targets = await ReattestRevokedTargetsAsync(targets, entries, cancellationToken)
+                    .ConfigureAwait(false);
+                entries = SnapshotEntries();
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (Exception error) when (error is not OutOfMemoryException)
+            {
+                // The pre-pass is strictly additive: any unexpected failure keeps the first-round
+                // enumeration result (fail-closed, no forced target, no retry storm).
+                _warnLog?.Invoke("source reattest pre-pass failed code=" + TypedCodeOf(error));
+            }
         }
 
         var mapped = new Dictionary<string, SourceScanTarget>(StringComparer.Ordinal);
@@ -2100,6 +2113,178 @@ public sealed class HostSourceScanTargetEnumerator : ISourceScanTargetEnumerator
     }
 
     /// <summary>
+    /// FEA-11-L-S4-B: the re-attest pre-pass. Plans at most one candidate per source id from the
+    /// FIRST enumeration, probes the capability ONCE (missing/failed probe -> no mint, no send, no
+    /// file created), sends at most ONE <c>ReattestSourceLocation</c> per candidate, and — only when
+    /// at least one send succeeded — re-reads the Core-authoritative target list ONCE. A failed
+    /// second read keeps the first-round targets; a per-target refusal keeps that target's existing
+    /// typed skip and never retries.
+    /// </summary>
+    private async Task<JsonElement> ReattestRevokedTargetsAsync(
+        JsonElement targets,
+        IReadOnlyDictionary<string, SourceAuthorization> entries,
+        CancellationToken cancellationToken)
+    {
+        var entryList = entries.Values.ToArray();
+        var seen = new HashSet<string>(StringComparer.Ordinal);
+        var planned = new List<SourceRootReattestCandidate>();
+        foreach (var element in targets.EnumerateArray())
+        {
+            // Only targets the CURRENT mapping refuses are considered; a mappable target is never
+            // re-attested (the exact-match path owns it and no write happens for it).
+            if (TryMap(element, entries, out _))
+            {
+                continue;
+            }
+
+            var decision = SourceRootReattestPlanner.Plan(element, entryList);
+            if (decision.Candidate is { } candidate && seen.Add(candidate.SourceId))
+            {
+                planned.Add(candidate);
+            }
+        }
+
+        if (planned.Count == 0)
+        {
+            return targets;
+        }
+
+        if (!await ProbeReattestCapabilityAsync(cancellationToken).ConfigureAwait(false))
+        {
+            return targets;
+        }
+
+        var recovered = 0;
+        foreach (var candidate in planned)
+        {
+            try
+            {
+                var result = await _sources!.ReattestLocationAsync(
+                    candidate.LiveRegistryId,
+                    candidate.LiveGeneration,
+                    candidate.LiveRoot,
+                    candidate.Kind,
+                    candidate.SourceId,
+                    candidate.Version,
+                    _options!.MaxBytesPerSource,
+                    _options.MaxEntriesPerSource,
+                    cancellationToken).ConfigureAwait(false);
+                // updated 0 (already at the granted pair) is a success: the row is authoritative now.
+                recovered++;
+                _ = result;
+            }
+            catch (OperationCanceledException)
+            {
+                throw;
+            }
+            catch (Exception error) when (error is not OutOfMemoryException)
+            {
+                // Typed per-target skip (code only — never a path); ONE attempt, no retry.
+                _warnLog?.Invoke("source reattest skipped code=" + TypedCodeOf(error));
+            }
+        }
+
+        if (recovered == 0)
+        {
+            return targets;
+        }
+
+        var second = await ReadTargetsAsync(cancellationToken).ConfigureAwait(false);
+        return second.Ok && second.Targets.ValueKind == JsonValueKind.Array
+            ? second.Targets
+            : targets;
+    }
+
+    private async Task<bool> ProbeReattestCapabilityAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            return await (_reattestCapability ?? (token => _sources!.SupportsReattestAsync(token)))(
+                cancellationToken).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
+        catch (Exception error) when (error is not OutOfMemoryException)
+        {
+            // C-16 v1.5 §0: a probe failure means "not supported" — no send, no file, no grant.
+            _warnLog?.Invoke("source reattest capability probe failed code=" + TypedCodeOf(error));
+            return false;
+        }
+    }
+
+    private IReadOnlyDictionary<string, SourceAuthorization> SnapshotEntries()
+    {
+        var entries = new Dictionary<string, SourceAuthorization>(StringComparer.Ordinal);
+        foreach (var entry in _registry.List())
+        {
+            entries[entry.RegistryId] = entry;
+        }
+
+        return entries;
+    }
+
+    private sealed record TargetsRead(bool Ok, string? ErrorCode, JsonElement Targets)
+    {
+        public static TargetsRead Failed(string code) => new(false, code, default);
+    }
+
+    /// <summary>
+    /// The ONE read-only <c>source_list_scan_targets</c> call with the frozen fail-closed mapping
+    /// (capability missing / Core typed refusal -> Unavailable, never a probe-by-dispatch, never a
+    /// partial array).
+    /// </summary>
+    private async Task<TargetsRead> ReadTargetsAsync(CancellationToken cancellationToken)
+    {
+        JsonElement result;
+        try
+        {
+            result = _listTargets is null
+                ? await _core.ListSourceScanTargetsAsync(cancellationToken).ConfigureAwait(false)
+                : await _listTargets(cancellationToken).ConfigureAwait(false);
+        }
+        catch (CoreOperationException error)
+        {
+            return TargetsRead.Failed(error.Code);
+        }
+        catch (SidecarException)
+        {
+            return TargetsRead.Failed("SOURCE_SYNC_STORAGE_FAILED");
+        }
+        catch (Exception error) when (error is IOException or UnauthorizedAccessException)
+        {
+            return TargetsRead.Failed("SOURCE_SYNC_STORAGE_FAILED");
+        }
+        catch (Exception error) when (error is not OutOfMemoryException)
+        {
+            return TargetsRead.Failed("UNKNOWN");
+        }
+
+        if (result.ValueKind != JsonValueKind.Object
+            || !result.TryGetProperty("targets", out var targets)
+            || targets.ValueKind != JsonValueKind.Array)
+        {
+            return TargetsRead.Failed("SOURCE_SYNC_STORAGE_FAILED");
+        }
+
+        if (targets.GetArrayLength() > MaximumTargets)
+        {
+            // Contract upper bound: never silently truncate an oversized enumeration.
+            return TargetsRead.Failed("SOURCE_BUDGET_EXCEEDED");
+        }
+
+        return new TargetsRead(true, null, targets.Clone());
+    }
+
+    private static string TypedCodeOf(Exception error) => error switch
+    {
+        SourceAccessException typed => typed.Code,
+        CoreOperationException coreError => coreError.Code,
+        _ => error.GetType().Name,
+    };
+
+    /// <summary>
     /// Pure mapping step (unit-testable, zero I/O): closed Core <c>ScanTarget</c> -> Host scan target,
     /// with every fail-closed skip rule applied. Returns false when the target must be typed-skipped.
     /// </summary>
@@ -2109,61 +2294,19 @@ public sealed class HostSourceScanTargetEnumerator : ISourceScanTargetEnumerator
         out SourceScanTarget target)
     {
         target = null!;
-        if (element.ValueKind != JsonValueKind.Object)
-        {
-            return false;
-        }
-
-        var sourceId = ReadString(element, "source_id");
-        var registryId = ReadString(element, "registry_id");
-        var kind = ReadString(element, "source_kind");
-        var identityDigest = ReadString(element, "identity_digest");
-        if (string.IsNullOrWhiteSpace(sourceId) || string.IsNullOrWhiteSpace(registryId)
-            || kind is null || !KnownSourceKinds.Contains(kind)
-            || identityDigest is null || !IsLowerHex64(identityDigest))
-        {
-            return false;
-        }
-
-        if (!element.TryGetProperty("generation", out var generationElement)
-            || generationElement.ValueKind != JsonValueKind.Number
-            || !generationElement.TryGetInt32(out var generation) || generation < 1)
-        {
-            return false;
-        }
-
-        if (!element.TryGetProperty("project_ids", out var projectElements)
-            || projectElements.ValueKind != JsonValueKind.Array)
-        {
-            return false;
-        }
-
-        var projectIds = new List<string>();
-        foreach (var project in projectElements.EnumerateArray())
-        {
-            if (project.ValueKind != JsonValueKind.String || project.GetString() is not { Length: > 0 } projectId)
-            {
-                return false;
-            }
-
-            if (!projectIds.Contains(projectId, StringComparer.Ordinal))
-            {
-                projectIds.Add(projectId);
-            }
-        }
-
-        // P3-4: 1..20 unique books; more than 20 is a typed skip (never truncate, never fall back to
-        // "current" semantics).
-        if (projectIds.Count is < 1 or > MaximumProjectIds)
+        // The pre-registry shape rules live in the planner (one shared validator): non-empty
+        // source/registry id, known kind, lower-hex-64 identity digest, generation >= 1 and 1..20
+        // unique project ids. Every violation fails closed.
+        if (!SourceRootReattestPlanner.TryReadTarget(element, out var shape))
         {
             return false;
         }
 
         // Host-side authorization verification: the persisted registry must still know this target
         // and its exact generation; revoked entries are skipped (never auto re-authorized).
-        if (!entries.TryGetValue(registryId!, out var entry)
+        if (!entries.TryGetValue(shape.RegistryId, out var entry)
             || entry.RevokedAt is not null
-            || entry.Generation != generation)
+            || entry.Generation != shape.Generation)
         {
             return false;
         }
@@ -2176,23 +2319,9 @@ public sealed class HostSourceScanTargetEnumerator : ISourceScanTargetEnumerator
         }
 
         target = new SourceScanTarget(
-            sourceId!, root.Root, projectIds, "1", registryId!, generation, kind, identityDigest!);
-        return true;
-    }
-
-    private static string? ReadString(JsonElement element, string property) =>
-        element.TryGetProperty(property, out var value) && value.ValueKind == JsonValueKind.String
-            ? value.GetString()
-            : null;
-
-    private static bool IsLowerHex64(string? value)
-    {
-        if (value is not { Length: 64 }) return false;
-        foreach (var character in value)
-        {
-            if (character is not (>= '0' and <= '9') and not (>= 'a' and <= 'f')) return false;
-        }
-
+            shape.SourceId, root.Root, shape.ProjectIds,
+            SourceRootReattestPlanner.EnumeratedTargetVersion,
+            shape.RegistryId, shape.Generation, shape.Kind, shape.IdentityDigest);
         return true;
     }
 }

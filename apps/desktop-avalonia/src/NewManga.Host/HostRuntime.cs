@@ -1350,9 +1350,13 @@ public sealed class HostRuntime : IAsyncDisposable
         // FEA-11-SCAN-2 (B1): the cold-start enumerator reads the Core's authoritative scan targets
         // and re-verifies the Host's persistent registry; null keeps the SCAN-1 snapshot-only mode
         // (no enumeration command is ever sent).
+        // FEA-11-L-S4-B (C-16 v1.5 §2.5): the SAME enumerator also owns the bounded re-attest
+        // pre-pass (capability-gated, one attempt per target per round) so a source the user
+        // explicitly re-authorized through B1 is re-attested before the exact-match mapping runs.
         ISourceScanTargetEnumerator? enumerator = _options.SourceScanColdStartEnumeration
             && sources.Registry is { } registry
-                ? new HostSourceScanTargetEnumerator(core, registry)
+                ? new HostSourceScanTargetEnumerator(
+                    core, registry, sources: sources, options: scanOptions, warnLog: _log.Warn)
                 : null;
         ScanScheduler = new SourceScanScheduler(
             scanOptions,

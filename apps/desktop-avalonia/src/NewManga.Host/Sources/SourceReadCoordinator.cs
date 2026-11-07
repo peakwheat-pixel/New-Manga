@@ -56,6 +56,12 @@ public sealed class SourceReadCoordinator(
     /// <summary>C-16 v1.3 §0: the Run pre-dispatch authorization capability.</summary>
     public const string RunAuthorizationCapability = "source.read.run/1";
 
+    /// <summary>FEA-11-L-S4-B (C-16 v1.5 §0): the conditional single-row re-attest
+    /// capability. Probed before any mint/send; missing or a probe failure means
+    /// NO command is sent and no file/grant is created (the target keeps its
+    /// existing typed skip).</summary>
+    public const string ReattestCapability = "source.reattest/1";
+
     /// <summary>Frozen §2.4 request bound: 1..64 grant ids per authorization.</summary>
     public const int MaxRunGrants = 64;
 
@@ -78,6 +84,7 @@ public sealed class SourceReadCoordinator(
     private readonly Func<double> _clock = clock
         ?? (() => DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() / 1000.0);
     private bool? _runCapability;
+    private bool? _reattestCapability;
     public SourceAccessRegistry Registry { get; } = registry;
     public bool ReferencedImportEnabled => enabled();
 
@@ -118,6 +125,116 @@ public sealed class SourceReadCoordinator(
         var supported = ping.Capabilities.Contains(RunAuthorizationCapability);
         _runCapability = supported;
         return supported;
+    }
+
+    /// <summary>
+    /// FEA-11-L-S4-B (C-16 v1.5 §2.5): the closed Core response of ONE
+    /// <c>ReattestSourceLocation</c>. <see cref="Updated"/> is 0 when the row was
+    /// already at the granted auth pair (idempotent/no-op), never an error.
+    /// </summary>
+    public sealed record ReattestResult(int Updated, string Version);
+
+    /// <summary>
+    /// FEA-11-L-S4-B (C-16 v1.5 §0): the re-attest capability probe. Cached
+    /// (a running Core never changes its advertised set); computed from
+    /// <c>core.ping</c> only — never by dispatching the command, and never by
+    /// "send and look at the result".
+    /// </summary>
+    public async Task<bool> SupportsReattestAsync(CancellationToken token)
+    {
+        if (_reattestCapability is { } cached) return cached;
+        var ping = await core.PingAsync(token).ConfigureAwait(false);
+        var supported = ping.Capabilities.Contains(ReattestCapability);
+        _reattestCapability = supported;
+        return supported;
+    }
+
+    /// <summary>
+    /// FEA-11-L-S4-B (C-16 v1.5 §2.5): mint ONE short-lived witness grant over
+    /// the LIVE re-authorized entry and send exactly one
+    /// <c>ReattestSourceLocation</c>. The grant proves "same Core source + same
+    /// physical identity" to the Core; this method never authorizes, never
+    /// touches the Host Registry entry itself, never retries and never caches a
+    /// failure. A typed Core refusal propagates as
+    /// <see cref="CoreOperationException"/>/<see cref="SourceAccessException"/>
+    /// so the caller can keep the target's existing typed skip (fail-closed).
+    /// </summary>
+    public async Task<ReattestResult> ReattestLocationAsync(
+        string registryId,
+        int generation,
+        string sourcePath,
+        string sourceKind,
+        string sourceId,
+        string version,
+        long maxBytes,
+        int maxEntries,
+        CancellationToken cancellationToken = default)
+    {
+        if (!await SupportsReattestAsync(cancellationToken).ConfigureAwait(false))
+        {
+            throw new SourceAccessException("CORE_CAPABILITY_MISSING");
+        }
+
+        await _gate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            if (!await SupportsReattestAsync(cancellationToken).ConfigureAwait(false))
+            {
+                throw new SourceAccessException("CORE_CAPABILITY_MISSING");
+            }
+
+            var grantId = await IssueLockedAsync(
+                registryId, generation, sourcePath, sourceKind, sourceId, version,
+                RenditionFor(sourceKind), maxBytes: maxBytes,
+                maxDecodeBytes: maxBytes, maxEntries: maxEntries,
+                cancellationToken: cancellationToken).ConfigureAwait(false);
+            var response = await core.SendHostControlAsync(
+                "ReattestSourceLocation",
+                writer =>
+                {
+                    writer.WriteString("source_id", sourceId);
+                    writer.WriteString("grant_id", grantId);
+                },
+                cancellationToken).ConfigureAwait(false);
+            if (response.Result is not { ValueKind: JsonValueKind.Object } result)
+            {
+                throw new SourceAccessException("SOURCE_REGISTRY_UNAVAILABLE");
+            }
+
+            // Closed response shape (C-16 v1.5 §2.5): exactly
+            // {source_id, updated, version}; anything else is never guessed.
+            var names = result.EnumerateObject().Select(property => property.Name)
+                .OrderBy(name => name, StringComparer.Ordinal).ToArray();
+            if (!names.SequenceEqual(new[] { "source_id", "updated", "version" }))
+            {
+                throw new SourceAccessException("SOURCE_REGISTRY_UNAVAILABLE");
+            }
+
+            if (!result.TryGetProperty("source_id", out var echoedSource)
+                || echoedSource.ValueKind != JsonValueKind.String
+                || !string.Equals(echoedSource.GetString(), sourceId, StringComparison.Ordinal))
+            {
+                throw new SourceAccessException("SOURCE_REGISTRY_UNAVAILABLE");
+            }
+
+            if (!result.TryGetProperty("updated", out var updatedElement)
+                || updatedElement.ValueKind != JsonValueKind.Number
+                || !updatedElement.TryGetInt32(out var updated)
+                || updated is not (0 or 1))
+            {
+                throw new SourceAccessException("SOURCE_REGISTRY_UNAVAILABLE");
+            }
+
+            if (!result.TryGetProperty("version", out var versionElement)
+                || versionElement.ValueKind != JsonValueKind.String
+                || versionElement.GetString() is not { Length: > 0 } coreVersion)
+            {
+                throw new SourceAccessException("SOURCE_REGISTRY_UNAVAILABLE");
+            }
+
+            return new ReattestResult(updated, coreVersion);
+        }
+        finally { _gate.Release(); }
     }
 
     private async Task RequireCapability(CancellationToken token)
