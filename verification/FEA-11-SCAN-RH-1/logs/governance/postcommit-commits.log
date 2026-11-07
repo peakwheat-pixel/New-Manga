@@ -1,0 +1,5 @@
+=== commits d09e91d1d..HEAD ===
+1a769c9cc docs(fea-11-scan-rh): 实现卡交付记录 + EV/Handoff/Manifest（delivery fb74b4ef7；AC-RH-1…5 MET；判别性 2/2；pins 18/18）+ SCAN-2 RH-4 append-only 一行
+fb74b4ef7 test(fea-11-scan-rh): refresh 在飞重放 / 重放有界 / Dispose 取消并 join 判别用例
+938d598ac feat(fea-11-scan-rh): RH-1 refresh pending 重放 + RH-2 refresh lifetime 绑定/停机 join
+HEAD=1a769c9ccd60d90d60f247e76bbcb2f088b2f5f1
