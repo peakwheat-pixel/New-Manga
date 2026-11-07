@@ -4,7 +4,7 @@
 
 ## 当前程序
 - **V11R 程序 ACTIVE**：[V11R_PROGRAM](V11R_PROGRAM.md)；契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)。
-- 当前 Task：`FEA-11-L-R11-GATE-UNIFY-PREREQ-1` `ready`（L-R11 gate 统一契约前置：C-16 v1.7 §2.4「无 publication 行」口径澄清，1/18 pin；[卡](tasks/FEA-11-L-R11-GATE-UNIFY-PREREQ-1.md)）。已闭环：`FEA-11-RUN-GRANT-2C` done（`7c95bb3c4`；r2 approved P0/P1=0）；2C-PREREQ-1 done（C-06 v1.3+C-16 v1.6）；L-S4-B 线三卡 done。下一候选：L-R11 实现（proposed，待 PREREQ）、C-04b、SCAN-RH、UI P3；B2 延后。
+- 当前 Task：`FEA-11-L-R11-GATE-UNIFY-1` `ready`（L-R11 gate 统一实现：Core 单谓词 + 全链检测；0 pin；[卡](tasks/FEA-11-L-R11-GATE-UNIFY-1.md)）。已闭环：`FEA-11-L-R11-GATE-UNIFY-PREREQ-1` done（C-16 v1.7，`2175238ab`，1/18 pin，r1 byte-level approved P0/P1/P2=0）；`FEA-11-RUN-GRANT-2C` done（`7c95bb3c4`）；L-S4-B 线三卡 done。下一候选：C-04b residual（scope review 已 recommended：docs-only 0 pin，待冻结）、SCAN-RH、UI P3；B2 延后。
 - FEA-11 线：WATCH-1/SCAN-2/SCAN-1/MATCH-1/AC4-GAPS-1/LINEAGE-1 `done`；HOST-AUTH-1 `closed_with_limitations`；FEA-12 四卡 `done`。
 - **AC11-1 终态 MET（带 limitation）**：裁决 2026-11-06（[记录](reviews/FEA-11-AC11-1-adjudication-2026-11-06.md)）；「启动/访问前检查」= 冷启动枚举 + registry/root 核验（SCAN-2） + 每次访问/操作前 live grant+lease+digest 强验证；启动不做全量内容扫描（L-STARTUP）。
 - rolling checkpoint：[GOAL-PROGRESS](checkpoints/GOAL-PROGRESS-2026-11-02.md)。
@@ -20,7 +20,7 @@
 - 测试基线：pytest **3363/10**、.NET **1680/0/96**（2026-11-07 2C closeout Lead 实跑 + 独立 r2 复核；既有 flaky `FluentR2ReworkTests.R3001_*` 隔离复跑通过；跑后 `verification/FEA-09` 已恢复）。
 
 ## Gate 与保留项
-Technical Gate=NOT_SATISFIED；private_registry_absence=UNPROVABLE；Owner Risk Acceptance=APPROVED；Disposition=WAIVED_BY_OWNER。push `clean-snapshot-20261026`=`892b946e`、`clean-snapshot-20261102`=`ac7d488e`；**main 已于 2026-11-06 push 至 `57f62b3fe`（origin 同步，AHEAD=0）**。
+Technical Gate=NOT_SATISFIED；private_registry_absence=UNPROVABLE；Owner Risk Acceptance=APPROVED；Disposition=WAIVED_BY_OWNER。push `clean-snapshot-20261026`=`892b946e`、`clean-snapshot-20261102`=`ac7d488e`；**main 已于 2026-11-07 push 至 `07a7d746a`（2C closeout + L-R11 释放；origin 同步，AHEAD=0）**。
 
 ## 当前权威指针
 - DAG/节点：[REBASELINE_PLAN](REBASELINE_PLAN.md)（唯一权威）；主线 `main`；工作区 [WORKSPACE_GOVERNANCE](WORKSPACE_GOVERNANCE.md)。

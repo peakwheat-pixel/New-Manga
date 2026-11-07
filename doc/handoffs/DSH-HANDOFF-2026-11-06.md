@@ -217,3 +217,11 @@ git checkout -- verification/FEA-09   # .NET 全量后必须恢复
   4. 队列：L-R11、C-04b、SCAN-RH、UI P3；B2 延后。
 - **注意**：当前 AHEAD=3 的未 push 提交包含实现与证据；**不得 git reset --hard / push --force**；若中途发现需回退，先记录并交 DSH 裁决。
 - **L-G1 口径不变**：只降级不关闭（单步 >300s／续期失败／L-G2／L-G9／L-R1／L-G16／未 dispatch pending Run／L-G8 成本放大）；不得写任意长 Run/自动恢复/自动重新授权。
+
+## 18. 续接补充（2026-11-07 第 10 轮：2C closeout + push + L-R11 冻结释放）
+
+- **FEA-11-RUN-GRANT-2C done**（integration/delivery **7c95bb3c4**；卡面 closeout + Canonical Evidence 22 项 + Resource Manifest 内联）。r1 changes_requested（P1-01/P2-01/P3×5）→ 返修 7c95bb3c4 → **r2 approved（P0=0/P1=0/P2=1/P3=7）**（fresh subagent session a4410d0a…）；R2-01（P2：3 条 HostWiring 未穿过 StartInternalAsync/dispatcher runDispatched/AcceptRun 调用点）→ 登记 **L-2C-01** limitation + follow-up（r2 附加删点探针全量 Host 仍 283/0/65 绿；当前代码正确）；R2-02…R2-08 P3 保留（R2-05 文档口径已清理）。
+- **Lead 门禁实跑（2026-11-07）**：build 0/0；Host 定向 19/0/0；**Probe-C 281/2/65 → sha256 bae563e1… MATCH → 复绿 19/0/0**；gated 7/0/0；fake clock 3；全量 pytest **3363/10 EXIT=0**；全量 .NET **1680/0/96 EXIT=0**；pins 18/18；check（默认+TaskPath）PASS(3w)；API EXIT=0；scope PASS（changed=32 全 ALLOWED、src/** 零 diff）；跑后 git checkout -- verification/FEA-09（工作树 clean）。
+- **L-R11 线启动**：独立 scope review doc/reviews/L-R11-GATE-UNIFY-scope-r1.md（session 5aa2c0cf…，verdict **recommended**；方案 C：Core 单谓词 + 全链检测；**1/18 pin UNFREEZE C-16 v1.7**；新发现两跳链两面均放行、dded 缺行不可检测）；**DSH 裁决（2026-11-07）**：采纳，先 PREREQ 后实现。已建/释放：FEA-11-L-R11-GATE-UNIFY-PREREQ-1 **ready**（C-16 v1.7 §2.4 :90/:93，1 pin，owner=dsh；独立 byte-level 复核待派）+ FEA-11-L-R11-GATE-UNIFY-1 **proposed**（Core-only，0 pin，depends PREREQ+2C）；PLAN READY 节点 = PREREQ；STATUS 指针 = PREREQ。
+- **push**：1c4598e8..07a7d746a（PUSH_EXIT=0；PRE_HEAD 07a7d746a、PRE_ORIGIN f1c4598e8、AHEAD 4→0、POST_ORIGIN 07a7d746a）；含 7c95bb3c4 / 03361fec6 / 3945e1f5c / 07a7d746a（closeout + L-R11 释放）。
+- **下一轮**：实施 PREREQ（C-16 v1.7）→ 派独立 byte-level 复核（fresh subagent，未参与起草）→ 重冻/矩阵/pins 18/18 → 释放实现卡 → 实现（建议 ZCode 或 DSH + fresh Review）→ 门禁 → closeout → push；队列：C-04b residual（文档卡）、SCAN-RH（RH-1…RH-5）、UI P3（FEA-12-UI-RESIDUAL-1 已 done，需确认残余）；B2 延后。

@@ -3,16 +3,16 @@ id: FEA-11-L-R11-GATE-UNIFY-1
 title: L-R11 两读面 publication gate 统一（Core 单谓词；legacy open / 新同步链缺行 fail-closed；全链检测）
 kind: implementation
 governance_version: 3
-status: proposed
-approval: 用户 2026-11-06「自动推进/全部授权/裁决交 Codex 或 DSH，无需用户介入」；独立 scope review `doc/reviews/L-R11-GATE-UNIFY-scope-r1.md`（session `5aa2c0cf…`；recommended；方案 C 单谓词 + 全链）；**DSH 裁决（2026-11-07）**：先 `FEA-11-L-R11-GATE-UNIFY-PREREQ-1`（C-16 v1.7，1 pin）→ 本卡（Core-only，0 pin）；`added` relation 缺行检测与写面/章级面 **Out**（登记 limitation）
+status: ready
+approval: 用户 2026-11-06「自动推进/全部授权/裁决交 Codex 或 DSH，无需用户介入」；独立 scope review `doc/reviews/L-R11-GATE-UNIFY-scope-r1.md`（session `5aa2c0cf…`；recommended；方案 C 单谓词 + 全链）；**DSH 裁决（2026-11-07）**：先 `FEA-11-L-R11-GATE-UNIFY-PREREQ-1`（C-16 v1.7，1 pin；**已 done `2175238ab`，r1 byte-level approved**）→ 本卡（Core-only，0 pin）**已释放（2026-11-07）**；`added` relation 缺行检测与写面/章级面 **Out**（登记 limitation）
 suggested_owner: zcode
-owner: null
+owner: l-r11-impl
 reviewer: null
 depends_on:
   - FEA-11-RENDITION-1
   - FEA-11-RUN-GRANT-2C
   - FEA-11-L-R11-GATE-UNIFY-PREREQ-1
-base_commit: null
+base_commit: 2175238ab
 branch: null
 worktree: null
 integration_commit: null
@@ -42,9 +42,10 @@ out_of_scope:
 
 # FEA-11-L-R11-GATE-UNIFY-1：L-R11 两读面 publication gate 统一（Core-only）
 
-> **状态：`proposed`（未释放；依赖 PREREQ `FEA-11-L-R11-GATE-UNIFY-PREREQ-1`（C-16 v1.7）与 2C closeout；DSH 冻结后释放）。**
+> **状态：`ready`（已释放 2026-11-07；Owner=`l-r11-impl`；base=`2175238ab`）。** 依赖已满足：`FEA-11-L-R11-GATE-UNIFY-PREREQ-1`
+> **done**（C-16 v1.7，1 pin，r1 byte-level approved）、`FEA-11-RUN-GRANT-2C` done（共享 `tests/fea11/test_source_run_grant.py`）。
 > 依据：`doc/reviews/L-R11-GATE-UNIFY-scope-r1.md`（recommended；已复现 L-R11 一跳形态、发现两跳链两面均放行、
-> `added` 缺行不可检测）+ C-17 §3.3（`:171-173`）+ C-16 §2.4（PREREQ 澄清后）。
+> `added` 缺行不可检测）+ C-17 §3.3（`:171-173`）+ C-16 v1.7 §2.4。
 
 ## 目标
 
