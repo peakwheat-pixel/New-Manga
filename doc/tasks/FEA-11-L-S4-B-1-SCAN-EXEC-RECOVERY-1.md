@@ -3,20 +3,20 @@ id: FEA-11-L-S4-B-1-SCAN-EXEC-RECOVERY-1
 title: 扫描执行面恢复（L-S4-B-1：枚举 target 执行使用自身 live registry 身份；Host-only，零契约）
 kind: implementation
 governance_version: 3
-status: ready
+status: done
 approval: 用户 2026-11-06「自动推进/全部授权/裁决交 Codex 或 DSH」；权威 scope review `doc/reviews/FEA-11-L-S4-B-1-SCAN-EXEC-RECOVERY-1-scope-r1.md`（fresh subagent `fc6e9df6-…`，**READY-TO-FREEZE**；推荐 Host-only 形状：枚举 target 执行用其自身已核验的 live `(registry_id, generation)`，不改 `ResolveRegistryEntry` 非枚举语义；**0 UNFREEZE / 18 pins 全不变**）；Codex 不可用 → ZCode 故障转移裁决（见卡）；DSH 裁决 S-1…S-5（见下）
 suggested_owner: codex
 owner: l-s4b1-impl
-reviewer: 独立上下文 fresh subagent（未参与实现/返修/scope review；只读交付 head；session 见 `doc/reviews/FEA-11-L-S4-B-1-SCAN-EXEC-RECOVERY-1-r1.md`）
+reviewer: 独立上下文 fresh subagent（未参与实现/返修/scope review）：r1 `9403610b-…`（**approved** P0=0/P1=0/P2=0/P3=9 非阻断；reviewed_head `bcc88e4a2`）；报告 `doc/reviews/FEA-11-L-S4-B-1-SCAN-EXEC-RECOVERY-1-r1.md`
 depends_on:
   - FEA-11-L-S4-B-AUTO-RECOVERY-1
 base_commit: 58395b9a2
 branch: null
 worktree: null
-integration_commit: null
+integration_commit: bcc88e4a2
 delivery_head: bcc88e4a2
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-11-L-S4-B-1-SCAN-EXEC-RECOVERY-1
 allowed_paths:
   - doc/tasks/FEA-11-L-S4-B-1-SCAN-EXEC-RECOVERY-1.md
@@ -90,3 +90,53 @@ out_of_scope:
 - **措辞红线**：只承诺**枚举 target 的扫描执行恢复**（B1 显式重授权 → 既有 refresh/reattest → 枚举 → 下一个未被既有 backoff 抑制的 tick）；不写「Run 面恢复/自动恢复/自愈/自动重新授权/撤销后自动放行」。
 - **登记 limitation**：Run 面（`HostRuntime.RunSourceRange` 仍按路径解析，未测未修）→ 另卡 `L-S4-B-2-RUN-RANGE-RESOLVE`（若复现）；B2 `roots_available` 延后；folder（L-S4-2）；L-S4-1、L-R1、多根 first-root 保留；backoff 延迟口径已写明；revoked 行累积为 B1 既有行为（本卡只读）。
 - **证据目录**：`verification/FEA-11-L-S4-B-1-SCAN-EXEC-RECOVERY-1/`（`EV.md`、`RESOURCE-MANIFEST.json`、`scope-validation.log`、`changed-files.txt`、`logs/**`、`tools/**`）。未 push、未建 worktree；`status` 未改（由 Lead 维护）。
+
+## Review r1 处置（DSH，2026-11-07；append-only）
+
+- 独立 r1 `doc/reviews/FEA-11-L-S4-B-1-SCAN-EXEC-RECOVERY-1-r1.md`（`9403610b-…`；reviewed_head `bcc88e4a2`）：**approved，P0=0/P1=0/P2=0/P3=9 非阻断**；AC-SER-1…6 全 MET；独立复跑 Host 8/0/0、回归 123/0/1、gated IPC 4/0/0（before error→after ok）、pytest 89、pins 18/18、check/API 全 PASS；2 个破坏点独立 RED+恢复。
+- **P3 处置（登记接受，均非阻断）**：证据容器/文档精度/可维护性项（EV 与 Manifest 口径、discrimination 运行头信息、scope 工具有界性、表快照措辞、gated fixture 根等）→ 后续维护批可改进，不改变产品行为/AC 判定。
+- **Run 面**：本卡不含（`HostRuntime.RunSourceRange` 仍按路径解析，零 diff）→ 另卡 `FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1`（proposed）。
+- 不改变实现/测试字节（`bcc88e4a2`）与 AC-SER-1…6 MET 判定。
+
+## Canonical Evidence
+
+| evidence_id | AC | 路径 | commit | sha256 | class |
+|---|---|---|---|---|---|
+| EV-01 | AC-SER-5 | verification/FEA-11-L-S4-B-1-SCAN-EXEC-RECOVERY-1/changed-files.txt | 0c1390b2a | e25f4525885e663585f5b94136d1cf8285ef25053f508f3e3e4e7c0d38df84ad | CANONICAL |
+| EV-02 | AC-SER-5 | verification/FEA-11-L-S4-B-1-SCAN-EXEC-RECOVERY-1/logs/build.log | 0c1390b2a | 1e45040d243e6957dc23a0e35077e24fee55894871bb7327d7ebcfa98d85c665 | CANONICAL |
+| EV-03 | AC-SER-5 | verification/FEA-11-L-S4-B-1-SCAN-EXEC-RECOVERY-1/logs/discrimination.log | 0c1390b2a | 2e4ba50d49f114ef7c2c934bc0de023fa3349a2e25bce681ab86af5279e7de9b | CANONICAL |
+| EV-04 | AC-SER-5 | verification/FEA-11-L-S4-B-1-SCAN-EXEC-RECOVERY-1/logs/full-dotnet.log | 0c1390b2a | 09cdee66dd24710ed29675108f0660762bb1027c9e2328db443e5d0cc21a5351 | CANONICAL |
+| EV-05 | AC-SER-5 | verification/FEA-11-L-S4-B-1-SCAN-EXEC-RECOVERY-1/logs/full-pytest.log | 0c1390b2a | fb611e962c53954d98cc6fddc0b8d8e56c3440776cfd149e4f28c80a436b82e1 | CANONICAL |
+| EV-06 | AC-SER-5 | verification/FEA-11-L-S4-B-1-SCAN-EXEC-RECOVERY-1/logs/gates.log | 0c1390b2a | 9cbfcff5219c0e2d4c725b5745cb162d667a81bcbd2f1ae8c39921d22a688253 | CANONICAL |
+| EV-07 | AC-SER-5 | verification/FEA-11-L-S4-B-1-SCAN-EXEC-RECOVERY-1/logs/host-ipc.log | 0c1390b2a | c098b45270eaa21a89736c1b7ce2a4543c2bc534ab0441d0b605a0ac0be0f1c3 | CANONICAL |
+| EV-08 | AC-SER-5 | verification/FEA-11-L-S4-B-1-SCAN-EXEC-RECOVERY-1/logs/host-unit.log | 0c1390b2a | 4b5300bbc1addb21247e067cb79a15346ad79644c64246c09a3157102c843be9 | CANONICAL |
+| EV-09 | AC-SER-5 | verification/FEA-11-L-S4-B-1-SCAN-EXEC-RECOVERY-1/logs/ipc-closed-loop.json | 0c1390b2a | 1f91df56a86e2976e3b0fbb87c357211799f58ddad0fd69cb53b996d784fdb4b | CANONICAL |
+| EV-10 | AC-SER-5 | verification/FEA-11-L-S4-B-1-SCAN-EXEC-RECOVERY-1/logs/ipc-closed-loop.txt | 0c1390b2a | 91710e438431b0c4c9a7b428b57b60fa856773864311b87eb961a7d76668c305 | CANONICAL |
+| EV-11 | AC-SER-5 | verification/FEA-11-L-S4-B-1-SCAN-EXEC-RECOVERY-1/logs/ipc-fixture.txt | 0c1390b2a | 18a7aef03730dd3cb33dfc52bb5697e3b82957483cf4bb86dbca7fbbb8113e2d | CANONICAL |
+| EV-12 | AC-SER-5 | verification/FEA-11-L-S4-B-1-SCAN-EXEC-RECOVERY-1/logs/regression-74.log | 0c1390b2a | 200db0f43512671cb231d56c411992e2b921cf2e793506107c8d02df25931d71 | CANONICAL |
+| EV-13 | AC-SER-5 | verification/FEA-11-L-S4-B-1-SCAN-EXEC-RECOVERY-1/logs/regression.log | 0c1390b2a | 9c8f1770c650c1d80c66f0dd35ad9196768ab9507fdbef52c17d6d57950b78e6 | CANONICAL |
+| EV-14 | AC-SER-5 | verification/FEA-11-L-S4-B-1-SCAN-EXEC-RECOVERY-1/RESOURCE-MANIFEST.json | 0c1390b2a | 3a2d165756e96fed23ffd6539327ce2452e34ea6d649e094e7946abac62bfad1 | CANONICAL |
+| EV-15 | AC-SER-5 | verification/FEA-11-L-S4-B-1-SCAN-EXEC-RECOVERY-1/scope-validation.log | 0c1390b2a | 3ca4303f556beb14b9afef5e6c1cff9da7a6e1fa2e8e9018965495b2d63f332a | CANONICAL |
+| EV-16 | AC-SER-5 | verification/FEA-11-L-S4-B-1-SCAN-EXEC-RECOVERY-1/tools/discrimination.py | 0c1390b2a | 1d804064839cb7f02b7ebd158baca6eb186a6e561d3b61af7b071ace0f6c0c10 | CANONICAL |
+| EV-17 | AC-SER-5 | verification/FEA-11-L-S4-B-1-SCAN-EXEC-RECOVERY-1/tools/gen_manifest.py | 0c1390b2a | 324d75fe15bfeac35fec21204982f272abcf10d9440e42309f217bdb1e609c44 | CANONICAL |
+| EV-18 | AC-SER-5 | verification/FEA-11-L-S4-B-1-SCAN-EXEC-RECOVERY-1/tools/scope_validation.py | 0c1390b2a | 001ceeb3624b69796341f9bfca7f93ad418e7ba2d0a2107682077e7628593f1d | CANONICAL |
+| EV-99 | AC-SER-5 | verification/FEA-11-L-S4-B-1-SCAN-EXEC-RECOVERY-1/EV.md | 0c1390b2a | 38d73fd885c8477e3beffe7ae7ed9a9c171d03e088928e25b6c91f887823aaf9 | CANONICAL |
+
+> 证据树逐文件 sha256 以本表为准；review/handoff 不在 evidence_dir，按卡面/Handoff 引用。
+
+## Resource Manifest
+
+| resource_type | 资源 | disposition | 目标 | 完整性 | 引用/进程检查结果 |
+|---|---|---|---|---|---|
+| 无删除/移动/归档 | - | NOT_APPLICABLE | - | - | 本卡仅改 Host `SourceScanScheduler.cs` + 测试 + 卡/Handoff/证据；仓内 0 删除/0 移动/0 归档；仓外隔离根与既有 `FEA-11/fixtures`（已披露）保留 |
+
+## Closeout Record（2026-11-07）
+
+- **状态**：`done`；`delivery_head`/`integration_commit` = `bcc88e4a2`（实现 `8709d6159` + 测试 `bcc88e4a2`；docs/evidence `0c1390b2a`）。
+- **AC 判定**：AC-SER-1…AC-SER-6 **全 MET**；无 PARTIAL/BLOCKED。
+- **Review 处置**：独立 r1 **approved（P0=0/P1=0/P2=0/P3=9 非阻断）**；P3 登记接受。
+- **门禁数字（before → after；Lead 实测）**：全量 pytest **3360/10 → 3360/10**；全量 .NET **1644/0/94 → 1652/0/94**（+8 本卡 Host 测试）；Host 新单测 8/0/0；回归 123/0/1 skip；gated 真实 IPC 4/0/0（tick error→ok，`scan_frames=1`，before/after 证据）；定向 pytest 89；pins **18/18**；check（默认+`-TaskPath`）PASS；API inventory PASS；scope **24 文件全 ALLOWED**、禁止面零 diff、`CORE_PROTOCOL_MINOR=3`、C16/C17 blob 零漂移；判别性 **6/6**；跑后恢复 `verification/FEA-09`。
+- **limitations（保留）**：**Run 面未含**（`HostRuntime.RunSourceRange` 仍按路径解析；另卡 `FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1`）；B2 `roots_available` 实现延后；folder（L-S4-2）；L-S4-1/L-R1 保留；backoff 口径=「下一个未被既有 backoff 抑制的 tick」；只承诺枚举 target 的扫描执行恢复；不宣称自动恢复/自愈/自动重新授权/撤销后放行。
+- **Resource Manifest / 资源处置**：仓内删除/移动/归档 0；仓外隔离根与既有 fixtures PRESERVE_REFERENCED。
+- **指针清理**：STATUS 无活动 Task；PLAN 本节点 done；TASK_LEDGER 重生成。
+- **push**：Lead 统一 push（PRE/POST/AHEAD 记录见状态文件）。
