@@ -11,7 +11,7 @@ reviewer: 独立上下文 fresh subagent（未参与实现/返修；只读交付
 depends_on:
   - FEA-11-L-S1-REGISTRY-RESILIENCE-1
   - FEA-11-L-S4-LOCATION-AUTH-REFRESH-1
-base_commit: null
+base_commit: 3d97e3b18
 branch: null
 worktree: null
 integration_commit: null
