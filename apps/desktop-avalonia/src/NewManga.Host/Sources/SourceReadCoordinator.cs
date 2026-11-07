@@ -46,6 +46,14 @@ public sealed record RunAuthorizationResult(
     public bool Skipped => MintedGrants == 0;
 }
 
+/// <summary>
+/// FEA-11-RUN-GRANT-2C (AC-2C-5): counts-only grant ledger headroom. Renewal mints a NEW grant set
+/// every round, so the bounded ledger (<see cref="SourceReadCoordinator.MaxTrackedPayloads"/>, pruned
+/// by the pre-existing <c>PruneExpired</c>) is observable in-process. Never a wire surface and never a
+/// change to the TTL or either frozen cap.
+/// </summary>
+public sealed record RunGrantLedgerStatus(int TrackedPayloads, int TrackedGrants, int MaxTrackedPayloads);
+
 /// <summary>Host authority for source-read issuance, capability gating and revoke ACK.</summary>
 public sealed class SourceReadCoordinator(
     CoreServiceClient core,
@@ -99,6 +107,15 @@ public sealed class SourceReadCoordinator(
     {
         get { lock (_ledger) return _grants.Values.Sum(list => list.Count); }
     }
+
+    /// <summary>
+    /// FEA-11-RUN-GRANT-2C (AC-2C-5): counts-only ledger headroom for the renewal budget. Renewal mints
+    /// a NEW grant set every round; the pre-existing <see cref="PruneExpired"/> keeps the bounded ledger
+    /// under <see cref="MaxTrackedPayloads"/>. This is an in-process status only — never a wire surface,
+    /// and it changes neither the grant TTL nor either frozen cap.
+    /// </summary>
+    public RunGrantLedgerStatus LedgerStatus() =>
+        new(TrackedPayloadCount, TrackedGrantCount, MaxTrackedPayloads);
 
     /// <summary>Live import-time grant ids (templates for fresh Secret-G clones).</summary>
     public IReadOnlyList<string> IssuedGrantIds

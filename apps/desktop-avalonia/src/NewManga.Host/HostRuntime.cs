@@ -67,6 +67,13 @@ public sealed class HostRuntime : IAsyncDisposable
     /// (R-4/R-6/R-7/R1-01/R1-04). Null until the source-read stack exists.</summary>
     private RunSourceAuthorizer? _runAuthorizer;
 
+    /// <summary>
+    /// FEA-11-RUN-GRANT-2C (C-06 v1.3 §2.2 / C-16 v1.6 §2.4): the Host-only renewal loop that keeps a
+    /// dispatched, non-terminal Run authorized by re-minting its SAME frozen-scope grants before they
+    /// expire. Null when the source-read stack is off/absent or the option is disabled.
+    /// </summary>
+    private RunGrantRenewal? _runGrantRenewal;
+
     public async Task<PreparedRunPreview> PrepareRunAsync(System.Text.Json.JsonElement request,
         CancellationToken ct = default)
     {
@@ -85,10 +92,15 @@ public sealed class HostRuntime : IAsyncDisposable
         // frozen command/scope pair captured by PrepareRun. A missing/expired
         // slice is typed RUN_STALE_PREVIEW (R1-11: this API now requires the
         // same-process PrepareRunAsync; documented in the Handoff limitations).
-        await AuthorizePreparedRunForAcceptAsync(
+        var authorization = await AuthorizePreparedRunForAcceptAsync(
             _preparedSlices, _runAuthorizer, preparedRunId, ct).ConfigureAwait(false);
-        return await (CoreService ?? throw new InvalidOperationException("Core unavailable"))
+        var accepted = await (CoreService ?? throw new InvalidOperationException("Core unavailable"))
             .AcceptRunAsync(preparedRunId, generation, idempotencyKey, ct).ConfigureAwait(false);
+        // FEA-11-RUN-GRANT-2C: AcceptRun dispatches the SAME frozen command/scope, so a Run whose first
+        // round bound ≥1 page receives the Host-internal renewal as well (best-effort; never blocks the
+        // caller and never changes the accepted Run).
+        MaybeStartRunGrantRenewal(RunCommandPolicy.ReadString(accepted, "run_id"), authorization);
+        return accepted;
     }
 
     /// <summary>
@@ -98,7 +110,7 @@ public sealed class HostRuntime : IAsyncDisposable
     /// (missing/expired -&gt; typed ``RUN_STALE_PREVIEW``) and runs the same
     /// best-effort authorizer the dispatcher hook uses.
     /// </summary>
-    public static async Task AuthorizePreparedRunForAcceptAsync(
+    public static async Task<RunCommandAuthorization?> AuthorizePreparedRunForAcceptAsync(
         PreparedRunSlices slices,
         RunSourceAuthorizer? authorizer,
         string preparedRunId,
@@ -106,11 +118,14 @@ public sealed class HostRuntime : IAsyncDisposable
     {
         ArgumentNullException.ThrowIfNull(slices);
         var slice = slices.Take(preparedRunId);
-        if (authorizer is not null)
+        if (authorizer is null)
         {
-            await authorizer.AuthorizePreparedRunAsync(slice.Command, slice.Scope, token)
-                .ConfigureAwait(false);
+            return null;
         }
+
+        var result = await authorizer.AuthorizePreparedRunAsync(slice.Command, slice.Scope, token)
+            .ConfigureAwait(false);
+        return new RunCommandAuthorization(slice.Command, slice.Scope, result);
     }
 
     public HostBridgeClient? HostBridge { get; private set; }
@@ -120,6 +135,13 @@ public sealed class HostRuntime : IAsyncDisposable
     public SourceAccessRegistry? Registry { get; private set; }
 
     public SourceReadCoordinator? Sources { get; private set; }
+
+    /// <summary>
+    /// FEA-11-RUN-GRANT-2C: counts-only renewal status (in-process surface only — never a wire command,
+    /// DTO, DB row or file; no path/grant/source ids).
+    /// </summary>
+    public RunGrantRenewalStatus RunGrantRenewalStatus =>
+        _runGrantRenewal?.Status ?? RunGrantRenewalStatus.Disabled(RunGrantRenewalOptions.Default);
 
     /// <summary>FEA-11 (C-17 §5.2): the Host durable operation journal and
     /// acknowledgement coordinator (null when the source registry is off).</summary>
@@ -789,6 +811,9 @@ public sealed class HostRuntime : IAsyncDisposable
         _disposed = true;
         StopSourceWatcher();
         await StopSourceScanSchedulerAsync().ConfigureAwait(false);
+        // FEA-11-RUN-GRANT-2C (AC-2C-5): the renewal loop stops and joins BEFORE the Core/session
+        // disappears (a round in flight must not observe a torn-down session).
+        await StopRunGrantRenewalAsync().ConfigureAwait(false);
         if (HostBridge is not null)
         {
             await HostBridge.DisposeAsync().ConfigureAwait(false);
@@ -1206,6 +1231,10 @@ public sealed class HostRuntime : IAsyncDisposable
                 // orchestration over the source-read stack above. Null when the
                 // stack is off/absent -> the hook is a no-op (old behaviour).
                 _runAuthorizer = CreateRunSourceAuthorizer();
+                // FEA-11-RUN-GRANT-2C (C-06 v1.3 §2.2 / C-16 v1.6 §2.4): the Host-only renewal loop.
+                // It reuses the SAME coordinator mint+authorize path as dispatch (new grants each
+                // round); null when the source-read stack is off/absent or the option is disabled.
+                _runGrantRenewal = CreateRunGrantRenewal();
                 Commands = new HostCommandDispatcher(
                     CoreService, HostBridge, HostLocalAsync, SourceOperationJournalAsync,
                     SourceOperationCompletionAsync,
@@ -1225,7 +1254,11 @@ public sealed class HostRuntime : IAsyncDisposable
                     },
                     // FEA-11-RUN-GRANT-1 (C-16 v1.3 §2.4): the Run pre-dispatch
                     // source-read authorization hook (mint -> bind -> dispatch).
-                    RunAuthorizeAsync);
+                    // FEA-11-RUN-GRANT-2C (C-16 v1.6 §2.4): the result-returning variant hands the
+                    // frozen command/scope + counts to the post-dispatch hook (Host-internal only),
+                    // which starts renewal for a Run whose first round actually bound a page.
+                    runAuthorizeWithResult: RunAuthorizeWithResultAsync,
+                    runDispatched: RunDispatchedAsync);
             }
             catch (Exception ex) when (ex is CoreOperationException or SidecarException or OperationCanceledException)
             {
@@ -1299,6 +1332,8 @@ public sealed class HostRuntime : IAsyncDisposable
         // the scheduler never reopens a session itself).
         StopSourceWatcher();
         await StopSourceScanSchedulerAsync().ConfigureAwait(false);
+        // FEA-11-RUN-GRANT-2C: no renewal round may run after the sidecars go away.
+        await StopRunGrantRenewalAsync().ConfigureAwait(false);
         if (HostBridge is not null)
         {
             await HostBridge.DisposeAsync().ConfigureAwait(false);
@@ -1473,13 +1508,207 @@ public sealed class HostRuntime : IAsyncDisposable
     // sidecars; this class only wires the production dependencies.
     // ------------------------------------------------------------------
 
-    /// <summary>The dispatcher hook for the Run commands that trigger step
-    /// execution (R-4). Never throws for Host-side failures (R1-01).</summary>
-    private Task RunAuthorizeAsync(
-        string name, System.Text.Json.JsonElement payload, CancellationToken token) =>
-        _runAuthorizer is { } authorizer
-            ? authorizer.AuthorizeForCommandAsync(name, payload, token)
-            : Task.CompletedTask;
+    /// <summary>
+    /// FEA-11-RUN-GRANT-1 (C-16 v1.3 §2.4 / R-4): the dispatcher hook for the Run commands that trigger
+    /// step execution; never throws for Host-side failures (R1-01).
+    ///
+    /// FEA-11-RUN-GRANT-2C (C-16 v1.6 §2.4): it ALSO returns the Host-owned authorization summary —
+    /// the EXACT resolved frozen <c>{command, scope}</c> plus counts — so the post-dispatch hook can
+    /// start the renewal loop without re-deriving (and therefore without ever changing) the Run slice.
+    /// The value is opaque Host JSON; it never becomes a wire field. Null = nothing to renew.
+    /// </summary>
+    private async Task<System.Text.Json.JsonElement?> RunAuthorizeWithResultAsync(
+        string name, System.Text.Json.JsonElement payload, CancellationToken token)
+    {
+        var authorizer = _runAuthorizer;
+        if (authorizer is null)
+        {
+            return null;
+        }
+
+        var authorized = await authorizer.AuthorizeForCommandResultAsync(name, payload, token)
+            .ConfigureAwait(false);
+        return authorized is null
+            ? null
+            : System.Text.Json.JsonSerializer.SerializeToElement(new
+            {
+                command = authorized.Command,
+                scope = authorized.Scope,
+                bound_pages = authorized.Result?.BoundPages ?? 0,
+                minted = authorized.Result?.MintedGrants ?? 0,
+                skipped = authorized.Result?.SkippedSources ?? 0,
+            });
+    }
+
+    /// <summary>
+    /// FEA-11-RUN-GRANT-2C (D-5): the dispatcher post-dispatch hook. It only starts the Host-internal
+    /// renewal loop for a dispatched, non-terminal Run whose FIRST authorization round bound ≥1 page
+    /// (a managed-only or all-skipped Run has nothing to renew), using exactly the frozen
+    /// <c>{command, scope}</c> the pre-dispatch resolution produced. Best-effort bookkeeping: it never
+    /// throws, never changes the dispatched Run result, never touches the wire and never widens scope.
+    /// </summary>
+    private Task RunDispatchedAsync(
+        string name,
+        System.Text.Json.JsonElement payload,
+        System.Text.Json.JsonElement result,
+        System.Text.Json.JsonElement? authorization,
+        CancellationToken token)
+    {
+        var runId = RunCommandPolicy.ReadString(result, "run_id")
+                    ?? RunCommandPolicy.ReadString(payload, "run_id");
+        MaybeStartRunGrantRenewal(runId, ParseAuthorizationSummary(authorization));
+        return Task.CompletedTask;
+    }
+
+    /// <summary>Parses the Host-owned summary produced by <see cref="RunAuthorizeWithResultAsync"/>.</summary>
+    private static RunCommandAuthorization? ParseAuthorizationSummary(
+        System.Text.Json.JsonElement? summary)
+    {
+        if (summary is not { ValueKind: System.Text.Json.JsonValueKind.Object } value)
+        {
+            return null;
+        }
+
+        var command = RunCommandPolicy.ReadString(value, "command");
+        if (string.IsNullOrWhiteSpace(command)
+            || !value.TryGetProperty("scope", out var scope)
+            || scope.ValueKind != System.Text.Json.JsonValueKind.Object)
+        {
+            return null;
+        }
+
+        var boundPages = value.TryGetProperty("bound_pages", out var bound)
+                         && bound.ValueKind == System.Text.Json.JsonValueKind.Number
+                         && bound.TryGetInt32(out var parsed)
+            ? parsed
+            : 0;
+        return new RunCommandAuthorization(
+            command!, scope.Clone(),
+            new RunAuthorizationResult(boundPages, 0, 0, Array.Empty<string>()));
+    }
+
+    /// <summary>
+    /// FEA-11-RUN-GRANT-2C: the shared start gate for the dispatcher post-dispatch hook and the
+    /// AcceptRun path. A Run id is required (a command that never produced one cannot be renewed) and
+    /// the first round must have bound at least one page.
+    /// </summary>
+    private void MaybeStartRunGrantRenewal(
+        string? runId, RunCommandAuthorization? authorization)
+    {
+        var renewal = _runGrantRenewal;
+        if (renewal is null || authorization is null || string.IsNullOrWhiteSpace(runId))
+        {
+            return;
+        }
+
+        try
+        {
+            var boundPages = authorization.Result?.BoundPages ?? 0;
+            if (!renewal.ObserveDispatch(
+                    runId, authorization.Command, authorization.Scope, boundPages))
+            {
+                _log.Info("run grant renewal not started bound_pages=0");
+            }
+        }
+        catch (Exception error) when (error is not OutOfMemoryException)
+        {
+            _log.Warn("run grant renewal start skipped code=" + error.GetType().Name);
+        }
+    }
+
+    /// <summary>
+    /// FEA-11-RUN-GRANT-2C (AC-2C-4): ONE renewal round. It reuses the SAME best-effort authorization
+    /// path as dispatch: resolve the frozen range → bounded cold-cache fill → re-mint NEW grants
+    /// (every source re-runs <c>Registry.Authorize</c> and the physical-facts check) → exactly ONE
+    /// <c>AuthorizeSourceReadForRun</c>. A typed refusal / all-skipped round stops the renewal; it is
+    /// never retried, never re-attested and never turned into a partial mapping.
+    /// </summary>
+    private async Task<RunGrantRenewalOutcome> RenewRunGrantsAsync(
+        string runId, string command, System.Text.Json.JsonElement scope, CancellationToken token)
+    {
+        var authorizer = _runAuthorizer;
+        if (authorizer is null)
+        {
+            return RunGrantRenewalOutcome.Stop(
+                RunGrantRenewalKind.StoppedTyped, "RENEWAL_DISABLED");
+        }
+
+        var result = await authorizer.AuthorizeSliceAsync(command, scope, token).ConfigureAwait(false);
+        if (result is null)
+        {
+            return RunGrantRenewalOutcome.Stop(
+                RunGrantRenewalKind.StoppedTyped, "RENEWAL_NOT_AUTHORIZED");
+        }
+
+        if (result.Skipped || result.BoundPages <= 0)
+        {
+            return RunGrantRenewalOutcome.Stop(
+                RunGrantRenewalKind.StoppedTyped, "RENEWAL_NO_TARGETS");
+        }
+
+        return RunGrantRenewalOutcome.Success(
+            result.BoundPages, result.MintedGrants, result.SkippedSources);
+    }
+
+    /// <summary>
+    /// FEA-11-RUN-GRANT-2C: the liveness probe for one renewal round (the existing read-only
+    /// <c>GetRunSnapshot</c>). Only a positively non-terminal Run stays alive; an unknown/refused
+    /// snapshot is a fail-closed stop (never "assume alive").
+    /// </summary>
+    private async Task<RunLiveness> ProbeRunLivenessAsync(string runId, CancellationToken token)
+    {
+        var core = CoreService;
+        if (core is null)
+        {
+            return RunLiveness.Unknown;
+        }
+
+        try
+        {
+            var response = await core.SendAsync(
+                    "GetRunSnapshot", CoreProtocol.DefaultMinor,
+                    writer =>
+                    {
+                        writer.WriteStartObject();
+                        writer.WriteString("run_id", runId);
+                        writer.WriteEndObject();
+                    },
+                    _options.RequestTimeout, token)
+                .ConfigureAwait(false);
+            var snapshot = response.Result;
+            var status = snapshot is { ValueKind: System.Text.Json.JsonValueKind.Object } value
+                ? RunCommandPolicy.ReadString(value, "status")
+                : null;
+            if (status is null)
+            {
+                return RunLiveness.Unknown;
+            }
+
+            return RunGrantRenewal.IsTerminalRunStatus(status)
+                ? RunLiveness.Terminal
+                : RunLiveness.Alive;
+        }
+        catch (CoreOperationException error)
+        {
+            // A missing Run is terminal; any other typed refusal is an unknown liveness (stop).
+            return error.Code == "RUN_NOT_FOUND" ? RunLiveness.Terminal : RunLiveness.Unknown;
+        }
+        catch (Exception error) when (error is not OperationCanceledException)
+        {
+            return RunLiveness.Unknown;
+        }
+    }
+
+    /// <summary>Stops and joins the renewal loop (Host shutdown / sidecar teardown).</summary>
+    private async Task StopRunGrantRenewalAsync()
+    {
+        var renewal = _runGrantRenewal;
+        _runGrantRenewal = null;
+        if (renewal is not null)
+        {
+            await renewal.DisposeAsync().ConfigureAwait(false);
+        }
+    }
 
     /// <summary>R1-02③/R1-07: the Core read used to resolve a Run's frozen
     /// ``{command, scope}`` for control/resume/retry. Its failure is handled by
@@ -1541,6 +1770,40 @@ public sealed class HostRuntime : IAsyncDisposable
             // constant "1"); a cold source gets ONE bounded on-demand scan and is skipped on failure.
             identities: _sourceIdentities,
             onDemandScan: ScanSourceOnDemandAsync);
+    }
+
+    /// <summary>
+    /// FEA-11-RUN-GRANT-2C (C-06 v1.3 §2.2 / C-16 v1.6 §2.4): wire the Host-only renewal loop. Null
+    /// when the source-read stack is off/absent, referenced import is disabled or the option is off (in
+    /// every case the pre-dispatch authorization keeps its pre-2C single-window behaviour).
+    /// </summary>
+    private RunGrantRenewal? CreateRunGrantRenewal()
+    {
+        if (!_options.RunGrantRenewalEnabled || !_options.ReferencedImportEnabled
+            || Sources is null || Registry is null || _runAuthorizer is null)
+        {
+            return null;
+        }
+
+        var options = RunGrantRenewalOptions.Normalize(
+            true,
+            _options.RunGrantRenewalIntervalSeconds,
+            _options.RunGrantRenewalMaxRenewals,
+            out var usedFallback);
+        if (usedFallback)
+        {
+            _log.Warn(
+                "run grant renewal: invalid interval/max_renewals; falling back to defaults"
+                + " interval=" + options.IntervalSeconds + "s max=" + options.MaxRenewals);
+        }
+
+        return new RunGrantRenewal(
+            options,
+            _options.RunGrantRenewalTimeProvider,
+            ProbeRunLivenessAsync,
+            RenewRunGrantsAsync,
+            info: message => _log.Info(message),
+            warn: message => _log.Warn(message));
     }
 
     /// <summary>
@@ -1871,6 +2134,17 @@ public static class RunSourceRange
     }
 }
 
+/// <summary>
+/// FEA-11-RUN-GRANT-2C (C-16 v1.6 §2.4): the resolved frozen Run slice of ONE pre-dispatch
+/// authorization plus the best-effort mint/bind counts. <see cref="Result"/> is null when nothing could
+/// be authorized (capability/probe/snapshot failure or no Host-known source); the command/scope pair is
+/// ALWAYS the exact slice the Run dispatched with, so the renewal can never widen or change it.
+/// </summary>
+public sealed record RunCommandAuthorization(
+    string Command,
+    System.Text.Json.JsonElement Scope,
+    RunAuthorizationResult? Result);
+
 /// <summary>FEA-11-RUN-GRANT-1 (R1-01/R1-04): the Run pre-dispatch authorization
 /// orchestration. Best-effort by contract:
 ///
@@ -1947,13 +2221,26 @@ public sealed class RunSourceAuthorizer
         System.Text.Json.JsonElement payload,
         CancellationToken token)
     {
+        _ = await AuthorizeForCommandResultAsync(commandName, payload, token).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// FEA-11-RUN-GRANT-2C (C-16 v1.6 §2.4): the same best-effort dispatcher authorization, returning
+    /// the EXACT frozen <c>{command, scope}</c> slice it resolved plus the mint/bind counts. The renewal
+    /// loop is started from this slice only — never from a re-derived or widened one.
+    /// </summary>
+    public async Task<RunCommandAuthorization?> AuthorizeForCommandResultAsync(
+        string commandName,
+        System.Text.Json.JsonElement payload,
+        CancellationToken token)
+    {
         if (!_enabled || !RunCommandPolicy.TriggersStepExecution(commandName, payload))
         {
-            return; // read-only command or a non-executing control action
+            return null; // read-only command or a non-executing control action
         }
         if (!await ProbeAsync(token).ConfigureAwait(false))
         {
-            return; // R-6: no source.read.run/1 (or probe failed) -> old behaviour
+            return null; // R-6: no source.read.run/1 (or probe failed) -> old behaviour
         }
         if (commandName == "library_start_run")
         {
@@ -1965,16 +2252,16 @@ public sealed class RunSourceAuthorizer
                 // The Core dispatch will produce the authoritative
                 // INVALID_REQUEST; the pre-authorization stays out of the way.
                 _warn("run source-read authorization skipped code=INVALID_REQUEST");
-                return;
+                return null;
             }
-            await AuthorizeSliceAsync(command, scope, token).ConfigureAwait(false);
-            return;
+            var result = await AuthorizeSliceAsync(command, scope, token).ConfigureAwait(false);
+            return new RunCommandAuthorization(command, scope, result);
         }
         var runId = RunCommandPolicy.ReadString(payload, "run_id");
         if (string.IsNullOrWhiteSpace(runId))
         {
             _warn("run source-read authorization skipped code=INVALID_REQUEST");
-            return;
+            return null;
         }
         (string Command, System.Text.Json.JsonElement Scope) slice;
         try
@@ -1986,30 +2273,32 @@ public sealed class RunSourceAuthorizer
             // R1-01: a snapshot lookup failure is not a target-page refusal; the
             // Run dispatch keeps its own typed error.
             _warn("run source-read authorization skipped run_id code=" + CodeOf(error));
-            return;
+            return null;
         }
-        await AuthorizeSliceAsync(slice.Command, slice.Scope, token).ConfigureAwait(false);
+        var sliceResult = await AuthorizeSliceAsync(slice.Command, slice.Scope, token)
+            .ConfigureAwait(false);
+        return new RunCommandAuthorization(slice.Command, slice.Scope, sliceResult);
     }
 
     /// <summary>R1-02③: the AcceptRun seam (the frozen prepared slice already
     /// supplied command/scope; authorization is the same best-effort slice).</summary>
-    public Task AuthorizePreparedRunAsync(
+    public async Task<RunAuthorizationResult?> AuthorizePreparedRunAsync(
         string command,
         System.Text.Json.JsonElement scope,
         CancellationToken token) =>
         _enabled
-            ? AuthorizeSliceAsync(command, scope, token)
-            : Task.CompletedTask;
+            ? await AuthorizeSliceAsync(command, scope, token).ConfigureAwait(false)
+            : null;
 
     /// <summary>Best-effort mint+bind for one Run slice.</summary>
-    public async Task AuthorizeSliceAsync(
+    public async Task<RunAuthorizationResult?> AuthorizeSliceAsync(
         string command,
         System.Text.Json.JsonElement scope,
         CancellationToken token)
     {
         if (!_enabled || !await ProbeAsync(token).ConfigureAwait(false))
         {
-            return;
+            return null;
         }
         IReadOnlyList<SourceScanTarget> known;
         IReadOnlyList<SourceAuthorization> entries;
@@ -2021,7 +2310,7 @@ public sealed class RunSourceAuthorizer
         catch (Exception error) when (error is not OperationCanceledException)
         {
             _warn("run source-read authorization skipped registry code=" + CodeOf(error));
-            return;
+            return null;
         }
         var resolution = await ResolveWithColdCacheAsync(known, entries, scope, token)
             .ConfigureAwait(false);
@@ -2040,7 +2329,7 @@ public sealed class RunSourceAuthorizer
         var targets = resolution.Resolution.Targets;
         if (targets.Count == 0)
         {
-            return; // no Host-known source can hold this Run's referenced pages
+            return null; // no Host-known source can hold this Run's referenced pages
         }
         try
         {
@@ -2050,12 +2339,13 @@ public sealed class RunSourceAuthorizer
             {
                 _warn("run source-read authorization skipped all_sources"
                       + " mint=" + result.SkippedSources);
-                return;
+                return result;
             }
             // L-G8: the mint cost is a source-size bound; only counts are logged.
             _info($"run source-read authorization sources={targets.Count}"
                   + $" minted={result.MintedGrants} bound_pages={result.BoundPages}"
                   + $" skipped={result.SkippedSources}");
+            return result;
         }
         catch (CoreOperationException)
         {
@@ -2067,6 +2357,7 @@ public sealed class RunSourceAuthorizer
         {
             // R1-01: any other pre-authorization failure is a best-effort skip.
             _warn("run source-read authorization skipped code=" + CodeOf(error));
+            return null;
         }
     }
 

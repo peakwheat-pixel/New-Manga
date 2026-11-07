@@ -133,4 +133,26 @@ public sealed class HostOptions
 
     /// <summary>AC-W2/W5: per-source debounce window in ms (250..60000, default 2000).</summary>
     public int SourceWatchDebounceMilliseconds { get; init; } = SourceWatchOptions.DefaultDebounceMilliseconds;
+
+    // ---------------------------------------------------------------------------------------
+    // FEA-11-RUN-GRANT-2C (C-06 v1.3 §2.2 / C-16 v1.6 §2.4): Host-side Run grant renewal.
+    // Contract bounds: every renewal round mints NEW grants (each ≤300 s), never extends an
+    // existing grant, never widens the frozen {command, scope}, and never bypasses a revocation.
+    // Defaults are frozen by the card: enabled=true, interval=240 s, maxRenewals=12; an illegal
+    // pair falls back to the defaults inside RunGrantRenewalOptions.Normalize (never a start failure).
+    // ---------------------------------------------------------------------------------------
+
+    /// <summary>Master switch for the background Run grant renewal (Host-only; no wire change).</summary>
+    public bool RunGrantRenewalEnabled { get; init; } = true;
+
+    /// <summary>Renewal interval in seconds (valid range 240..249: interval + round budget &lt; 300 s).</summary>
+    public int RunGrantRenewalIntervalSeconds { get; init; } =
+        RunGrantRenewalOptions.DefaultIntervalSeconds;
+
+    /// <summary>Hard per-Run renewal round cap (≈48 minutes with the frozen defaults).</summary>
+    public int RunGrantRenewalMaxRenewals { get; init; } =
+        RunGrantRenewalOptions.DefaultMaxRenewals;
+
+    /// <summary>TimeProvider seam for the renewal loop (tests advance it; production uses the system clock).</summary>
+    public TimeProvider RunGrantRenewalTimeProvider { get; init; } = TimeProvider.System;
 }

@@ -71,6 +71,24 @@ public sealed class HostCommandDispatcher
     /// </summary>
     private readonly Func<string, JsonElement, CancellationToken, Task>? _runAuthorize;
 
+    /// <summary>
+    /// FEA-11-RUN-GRANT-2C (C-16 v1.6 §2.4): the result-returning variant of the Run pre-dispatch
+    /// hook. It performs the same best-effort authorization as <see cref="_runAuthorize"/> but also
+    /// returns the Host-owned authorization summary (the frozen command/scope plus counts) that the
+    /// post-dispatch hook uses to start the renewal loop. The payload is opaque to this project
+    /// (Host-owned JSON) and NEVER becomes a wire field or an App surface.
+    /// </summary>
+    private readonly Func<string, JsonElement, CancellationToken, Task<JsonElement?>>? _runAuthorizeWithResult;
+
+    /// <summary>
+    /// FEA-11-RUN-GRANT-2C (D-5): the Host-internal post-dispatch hook for the Run commands. It runs
+    /// AFTER the Core accepted the command (the result is already produced); a hook failure never
+    /// changes that result. Zero wire change, zero new command, zero App surface — the renewal it may
+    /// start is Host-internal.
+    /// </summary>
+    private readonly Func<string, JsonElement, JsonElement, JsonElement?, CancellationToken, Task>?
+        _runDispatched;
+
     /// <summary>The Run commands that trigger step execution (R-4). Read-only
     /// Run commands (get snapshot/projection) are deliberately absent.</summary>
     public static IReadOnlySet<string> RunAuthorizationCommands { get; } = new HashSet<string>(
@@ -90,7 +108,9 @@ public sealed class HostCommandDispatcher
             Task<(string OperationId, JsonElement Result)>>? journal = null,
         Func<string, JsonElement, CancellationToken, Task<JsonElement>>? operationJournal = null,
         Func<string, CancellationToken, Task>? capabilityGate = null,
-        Func<string, JsonElement, CancellationToken, Task>? runAuthorize = null)
+        Func<string, JsonElement, CancellationToken, Task>? runAuthorize = null,
+        Func<string, JsonElement, CancellationToken, Task<JsonElement?>>? runAuthorizeWithResult = null,
+        Func<string, JsonElement, JsonElement, JsonElement?, CancellationToken, Task>? runDispatched = null)
     {
         _core = core;
         _bridge = bridge;
@@ -99,6 +119,8 @@ public sealed class HostCommandDispatcher
         _operationJournal = operationJournal;
         _capabilityGate = capabilityGate;
         _runAuthorize = runAuthorize;
+        _runAuthorizeWithResult = runAuthorizeWithResult;
+        _runDispatched = runDispatched;
     }
 
     public IReadOnlyDictionary<string, HostCommandDescriptor> Commands => HostCommandRegistry.All;
@@ -151,13 +173,22 @@ public sealed class HostCommandDispatcher
             // failure propagates out of this try-block (the Run projection
             // keeps its code; no new Run-face code is introduced) and the Core
             // Run command is never sent.
-            if (_runAuthorize is { } runAuthorize && RunAuthorizationCommands.Contains(descriptor.Name))
+            // FEA-11-RUN-GRANT-2C: the result-returning variant additionally hands the Host-owned
+            // authorization summary to the post-dispatch hook (renewal start), never to the wire.
+            var runCommand = RunAuthorizationCommands.Contains(descriptor.Name);
+            JsonElement? authorization = null;
+            if (runCommand && _runAuthorizeWithResult is { } runAuthorizeWithResult)
+            {
+                authorization = await runAuthorizeWithResult(descriptor.Name, payload, cancellationToken)
+                    .ConfigureAwait(false);
+            }
+            else if (runCommand && _runAuthorize is { } runAuthorize)
             {
                 await runAuthorize(descriptor.Name, payload, cancellationToken)
                     .ConfigureAwait(false);
             }
 
-            return descriptor.Channel switch
+            var result = descriptor.Channel switch
             {
                 HostCommandChannel.CoreService => await InvokeCoreAsync(descriptor, payload, cancellationToken)
                     .ConfigureAwait(false),
@@ -171,6 +202,25 @@ public sealed class HostCommandDispatcher
                     .ConfigureAwait(false),
                 _ => throw new HostCommandNotSupportedException(descriptor),
             };
+
+            // FEA-11-RUN-GRANT-2C: the Host-internal post-dispatch hook. It never changes the already
+            // produced Core result, and its own failure is a best-effort skip (the Run was dispatched).
+            if (runCommand && _runDispatched is { } runDispatched)
+            {
+                try
+                {
+                    await runDispatched(
+                            descriptor.Name, payload, result.Value, authorization, cancellationToken)
+                        .ConfigureAwait(false);
+                }
+                catch (Exception error) when (error is not OperationCanceledException)
+                {
+                    // Best-effort Host bookkeeping only; the dispatch already succeeded.
+                    _ = error;
+                }
+            }
+
+            return result;
         }
         catch (CoreOperationException error) when (HostCommandRegistry.IsRunCommand(name))
         {
