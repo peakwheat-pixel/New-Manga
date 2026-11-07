@@ -2,16 +2,18 @@
 
 > 结论先行：本卡给产品装上**第一个显式**的根级恢复入口，并且只做 App 侧接线。产品内原本**没有任何**恢复路径：被替换/缺失根的**同路径重导入永久失败**（复用选择器只按「同 registry 路径串 + 非 revoked」挑条目，被替换条目永远排在复用位置；Host mint 侧逐请求重核根身份 → typed `SOURCE_REGISTRY_UNAVAILABLE`），`source_revoke_root`/`source_register_root`/`source_reset_registry` 在 App 侧 **0 调用**。本卡新增：①`ISourceImportController` 的**恢复面**（只读诊断探针 + 显式重授权 + 显式重置，**无任何路径/registry_id 入参**）；②`SourceRecoveryModels.cs` 编排（**先只读探针分流** → 文件级只给「重置」/根级只给「重授权」/其它码不给动作；重授权 = **先撤销该路径全部非撤销 stale 条目、再按条目已登记 `roots[0]` 注册一次**、部分失败 fail-closed 可重试、重复执行恒 1 条 active）；③ImportDock 的**两个显式命令** + 二次确认 + 脱敏文案（叶子名/typed 码/计数，**不显示 `quarantine_path`**）。**红线 R-1 保持**：mint/导入路径一行未改语义（复用选择器抽出为纯函数、语义逐字不变），任何错误分支**都不**调用 revoke/register/reset。
 >
-> **r1 返修（本 head）**：**P2-01** 恢复面改为**单源归因**（`SourceImportCoordinator.LastPlanFailureSource` → `AttributeFailedSource` → 唯一 target；批量/歧义在任何 wire 调用前被拒绝、健康源零撤销/零注册；folder 源拒绝并给出说明）；**P2-02** gated IPC 的「含路径帧仅 RegisterSourceReadGrant」空转断言改为真实断言（wire 存储前已脱敏为 `[REDACTED]`，可验证事实是 **fixture 根路径 0 命中 + `[REDACTED]` 帧存在**）；P3-01/02/03/04/05/06/07/08/09/10/11 逐项处置（见 §7）。**不夸大**：只承诺 **file-source 同路径恢复**；folder 身份键（L-S4-2）、零交互自动恢复枚举（L-S4-1，需 C-16 v1.5）、B2（roots 可用性投影）/B3（扫描侧投影）**仍开放**；撤销会让绑定旧 `registry_id` 的 C-17 journal 重试永久失败——**仅登记，不处理**。
+> **r2 返修（本 head）**：**R2-P2-01** 歧义分支此前不可达（`DiagnoseAsync` 先命中「空 targets」守卫才检查 `ambiguous`，而多选无法归因时 `HostController` 正是 pin 0 targets + `ambiguous=true`）→ 已把歧义判定移到空列表守卫之前：批量/歧义**仍零 wire/零撤销/零注册**，但**一定**到达 `MultipleSources` 与「请只选择一个来源重新预览」提示；新增判别点 **B6**（把守卫顺序改回 → RED）。r2 P3 残留（卡面数字/scope 快照/卡面全量命令路径）同步修正。
+>
+> **r1 返修**：**P2-01** 恢复面改为**单源归因**（`SourceImportCoordinator.LastPlanFailureSource` → `AttributeFailedSource` → 唯一 target；批量/歧义在任何 wire 调用前被拒绝、健康源零撤销/零注册；folder 源拒绝并给出说明）；**P2-02** gated IPC 的「含路径帧仅 RegisterSourceReadGrant」空转断言改为真实断言（wire 存储前已脱敏为 `[REDACTED]`，可验证事实是 **fixture 根路径 0 命中 + `[REDACTED]` 帧存在**）；P3-01/02/03/04/05/06/07/08/09/10/11 逐项处置（见 §7）。**不夸大**：只承诺 **file-source 同路径恢复**；folder 身份键（L-S4-2）、零交互自动恢复枚举（L-S4-1，需 C-16 v1.5）、B2（roots 可用性投影）/B3（扫描侧投影）**仍开放**；撤销会让绑定旧 `registry_id` 的 C-17 journal 重试永久失败——**仅登记，不处理**。
 
 | 项 | 值 |
 |---|---|
 | task | `FEA-11-L-S1-B-RECOVERY-REAUTH-1`（冻结卡 `doc/tasks/FEA-11-L-S1-B-RECOVERY-REAUTH-1.md`；卡面 `status` 未改，仍为 `ready`） |
 | Owner | `l-s1b-impl`（DSH Agent Teams teammate；Lead `lead`） |
 | base | 卡 `base_commit=3d97e3b18`；实现起点 `e0b37622b`（工作树 clean，实测）；首轮交付 head `0fdde2de8`（docs `710e749a9`） |
-| 本次 delivery_head | `e9e1132a55d8a04617b7e69e9f93f043e08f450b`（r1 修复 `019feeb6e` + r1 测试 `e9e1132a5`；r1 卡/Handoff/证据为同批文档提交） |
-| 首轮交付 | `0fdde2de8`（实现 `be3b0c242` + 测试 `0fdde2de8`）+ docs `710e749a9`；r1 审查 approved with P2/P3 |
-| 独立 Review | r1 `doc/reviews/FEA-11-L-S1-B-RECOVERY-REAUTH-1-r1.md`：**approved（P0=0/P1=0/P2=2/P3=11）**；本 head 处置 P2×2 + P3×11 |
+| 本次 delivery_head | `80d2799de7195ccdec6954b523eea6830f315335`（r2 修复 `f1272f29a` + r2 测试 `80d2799de`；r2 卡/Handoff/证据为同批文档提交） |
+| 前序交付 | 首轮 `0fdde2de8` + docs `710e749a9`（r1 审查 approved with P2/P3）；r1 `e9e1132a5` + docs `5dd6f7bb5`（r2 审查 approved with 1 P2 + 3 P3） |
+| 独立 Review | r1 `doc/reviews/FEA-11-L-S1-B-RECOVERY-REAUTH-1-r1.md`（**approved，P0=0/P1=0/P2=2/P3=11**）；r2 `doc/reviews/FEA-11-L-S1-B-RECOVERY-REAUTH-1-r2.md`（**approved，P0=0/P1=0/P2=1/P3=3**）；本 head 处置 r2 P2×1 + P3×3（见 §8） |
 | 分支/工作树 | `main` / `G:\CODEX\New Manga`（未创建 linked worktree、未 push） |
 | 隔离根 | `G:\CODEX\New Manga.workspace\FEA-11-L-S1-B-RECOVERY-REAUTH-1\`（IPC 夹具 `fixtures/ipc-*`、判别性备份 `tmp/discrimination/`、全量日志）；**未写** `verification/FEA-09/**` |
 | 契约字节 | **零变更**：`doc/plan/**`、`doc/contracts/**` 零 diff；C-16 仍 v1.4（pin `ad25fb3c89bb`）；`CORE_PROTOCOL_MINOR=3` |
@@ -22,6 +24,9 @@
 ## 1. 交付 commit 链（起点 `e0b37622b` → delivery_head `e9e1132a5`）
 
 ```text
+80d2799de test(fea-11-l-s1b): r2 P2-01 ambiguity-hint discriminators (orchestrator + real port + VM)
+f1272f29a fix(fea-11-l-s1b): r2 P2-01 ambiguous batch reaches the disclosed single-selection hint
+5dd6f7bb5 docs(fea-11-l-s1b): r1 fix record, evidence refresh and handoff
 e9e1132a5 test(fea-11-l-s1b): r1 P2-01 multi-select/folder/attribution discriminators + P2-02 real wire assertion
 019feeb6e fix(fea-11-l-s1b): r1 P2-01 per-source recovery attribution + P3-04/P3-07/P3-11 fail-closed wording
 710e749a9 docs(fea-11-l-s1b): 首轮交付卡/Handoff/证据（r1 基线）
@@ -36,22 +41,22 @@ e0b37622b （本卡实现起点，工作树 clean）
 | Gate | 命令 | 结果 | 日志 |
 |---|---|---|---|
 | 构建（AC-LSB-8） | `dotnet build apps/desktop-avalonia/NewManga.sln -c Release` | **成功 0 warning / 0 error（EXIT 0）** | `logs/build.log` |
-| VM/编排级（AC-LSB-1/2/3/4/5/6/7） | `dotnet test .../NewManga.App.Tests --filter "FullyQualifiedName~SourceRecovery"` | **PASS 43 / 0 failed / 0 skipped** | `logs/app-unit.log` |
+| VM/编排级（AC-LSB-1/2/3/4/5/6/7） | `dotnet test .../NewManga.App.Tests --filter "FullyQualifiedName~SourceRecovery"` | **PASS 47 / 0 failed / 0 skipped** | `logs/app-unit.log` |
 | gated 真实 IPC（AC-LSB-9） | `NEWMANGA_FEA11_IPC=1 dotnet test .../NewManga.Host.Tests --filter "FullyQualifiedName~SourceRecoveryIpc"` | **PASS 1 / 0 / 0**；隔离 receipt `logs/ipc-closed-loop.{json,txt}`（**wire_path_hits=0 / wire_redacted_frames=7 / wire_frame_count=77**） | `logs/host-ipc.log` |
 | 定向 Core 回归（AC-LSB-8） | `python -m pytest tests/core/test_host_control.py tests/fea11/test_source_run_grant.py -q` | **PASS 74 passed**（基线 74，不降） | `logs/feature.log` |
 | 全量 Python（AC-LSB-8） | `python -m pytest tests -q` | **PASS 3317 passed / 10 skipped**（= 基线 3317/10，零漂移） | `logs/full-pytest.log` |
-| 全量 .NET（AC-LSB-8） | `dotnet test apps/desktop-avalonia/NewManga.sln -c Release` | **PASS 1613 / 0 failed / 93 skipped**（首轮基线 1570/0/92：**+43** 本卡 App 测试、**+1** 新增 opt-in IPC skip） | `logs/full-dotnet.log` |
+| 全量 .NET（AC-LSB-8） | `dotnet test apps/desktop-avalonia/NewManga.sln -c Release` | **PASS 1617 / 0 failed / 93 skipped**（首轮基线 1570/0/92：**+47** 本卡 App 测试、**+1** 新增 opt-in IPC skip） | `logs/full-dotnet.log` |
 | 治理（AC-LSB-8） | `verify_pins.ps1` / `check.ps1`（默认 + `-TaskPath`）/ `generate_api_inventory.py --check` | **PIN AUDIT PASS（18/18）** / **PASS(3 warnings)** ×2 / **EXIT=0** | `logs/gates-governance.log` |
 | 范围（AC-LSB-8） | scope 校验（见 `scope-validation.log`） | **PASS**：全变更路径 ALLOWED、forbidden=0、禁止面 11 项 ZERO_DIFF、`CORE_PROTOCOL_MINOR=3`；1 项并发非交付显式标注 | `scope-validation.log`、`changed-files.txt` |
-| 判别性（AC-LSB-1/3/5/7 + r1 P2-01） | `discrimination.ps1`（5 破坏点 → 1 目标用例变红 → 原字节恢复） | **5/5 RED_AS_EXPECTED + 5/5 RESTORED（sha256 一致）+ final rebuild EXIT 0** | `logs/discrimination.log` |
+| 判别性（AC-LSB-1/3/5/7 + r1/r2 P2-01） | `discrimination.ps1`（6 破坏点 → 1 目标用例变红 → 原字节恢复） | **6/6 RED_AS_EXPECTED + 6/6 RESTORED（sha256 一致）+ final rebuild EXIT 0** | `logs/discrimination.log` |
 
 **数字口径（诚实记录）**：
-- 全量 .NET **1613/0/93**：基线 **1570/0/92**；差额 = **+43**（本卡 `FullyQualifiedName~SourceRecovery` 43 例，全在 `NewManga.App.Tests` 程序集）+ **+1 skipped**（新增 gated IPC 用例在未设 `NEWMANGA_FEA11_IPC=1` 时 skip）。
+- 全量 .NET **1617/0/93**：基线 **1570/0/92**；差额 = **+47**（本卡 `FullyQualifiedName~SourceRecovery` 47 例，全在 `NewManga.App.Tests` 程序集）+ **+1 skipped**（新增 gated IPC 用例在未设 `NEWMANGA_FEA11_IPC=1` 时 skip）。
 - 全量 pytest **3317/10** = 卡基线，**零 Python 改动**；跑后 `git checkout -- verification/FEA-09` → CLEAN。
-- 已知 flaky `FluentResidual2VisualEvidenceTests` **本次未命中**（全量 1613/0 无失败），未重跑凑绿。
+- 已知 flaky `FluentResidual2VisualEvidenceTests` **本次未命中**（全量 1617/0 无失败），未重跑凑绿。
 - **P3-10（r1）**：gated IPC 夹具在 `NEWMANGA_FEA11_IPC != 1` 时 `InitializeAsync` 直接返回，不再为 skipped 用例启动真实 Core。
 
-## 3. 判别性验证（5 破坏点；删掉/改坏实现必须变红）
+## 3. 判别性验证（6 破坏点；删掉/改坏实现必须变红）
 
 `discrimination.ps1` 对**已提交字节**做一次最小破坏 → 构建 → 只跑**一个**目标用例 → 必须失败 → 按原字节恢复并复核 sha256 → 最后重建。实测全部 `RED_AS_EXPECTED` + `RESTORED`：
 
@@ -62,6 +67,7 @@ e0b37622b （本卡实现起点，工作树 clean）
 | **B3**（AC-LSB-3） | **先注册后撤销**（顺序反转） | 同上 | **RED_AS_EXPECTED + RESTORED** |
 | **B4**（AC-LSB-7） | 读取并渲染响应的 `quarantine_path`（绝对路径泄漏） | `Reset_RequiresConfirmation_AndNeverSurfacesTheQuarantinePath` | **RED_AS_EXPECTED + RESTORED** |
 | **B5**（r1 P2-01） | 把恢复改回「对**全部选中** sources 执行」（`targets.Skip(1)` 批量重授权） | `Reauthorize_RefusesABatchBeforeAnyWireCall` | **RED_AS_EXPECTED + RESTORED** |
+| **B6**（r2 P2-01） | 把 `ambiguous` 判定改回「空 targets 守卫之后」（歧义提示重新不可达） | `AmbiguousBatchWithNoTargets_StillReturnsTheSingleSelectionHint_AndNeverProbes` | **RED_AS_EXPECTED + RESTORED** |
 
 > **P3-09（r1）**：日志为最终一次**干净重跑**（头部注明：早期 B4 探索性注入曾产生不可达代码 `INVALID_BUILD_FAILED`，已改为可达注入后重跑）；最终块 sha256 与交付字节一致。
 
@@ -70,7 +76,7 @@ e0b37622b （本卡实现起点，工作树 clean）
 | AC | 判定 | 关键测试/证据 |
 |---|---|---|
 | AC-LSB-1 入口仅显式 | **MET** | `FailedPreview_ExplicitReauthorize_OnlyOffersThatOneAction_AndWritesNothingYet`（失败后 `SourceReauthorizeCalls=0`/`SourceResetCalls=0`；仅 1 次只读探针）+ 真实 IPC `registry_unchanged_after_failure=true` + 判别 B1 |
-| AC-LSB-2 分流正确 | **MET** | `FileLevelProbeFailure_OffersResetOnly_AndWritesNothing`、`OtherProbeCode_OffersNoRecoveryAction_AndDisplaysOnlyThatCode`、`CoreSideFailureOrAnotherPreviewCode_OffersNothing_AndNeverProbes`、`ReadableStorage*`；**r1 P2-01**：`MultiSelectionBlocked_OffersNoAction_AndNeverProbes`（批量/歧义 → 无动作、连探针都不发）+ VM `MultiSelectionBlocked_ShowsTheSingleSelectionHint_AndOffersNoAction`；**r1 P3-04**：`FolderTarget_OffersNoAction_AndTheActionRefuses` |
+| AC-LSB-2 分流正确 | **MET** | `FileLevelProbeFailure_OffersResetOnly_AndWritesNothing`、`OtherProbeCode_OffersNoRecoveryAction_AndDisplaysOnlyThatCode`、`CoreSideFailureOrAnotherPreviewCode_OffersNothing_AndNeverProbes`、`ReadableStorage*`；**r1 P2-01**：`MultiSelectionBlocked_OffersNoAction_AndNeverProbes`（批量/歧义 → 无动作、连探针都不发）+ VM `MultiSelectionBlocked_ShowsTheSingleSelectionHint_AndOffersNoAction`；**r1 P3-04**：`FolderTarget_OffersNoAction_AndTheActionRefuses`；**r2 P2-01**：`AmbiguousBatchWithNoTargets_*`、`HostControllerAmbiguityPath_*`、VM `AmbiguousBatch_ReachesTheRealDiagnosis_*`（歧义提示可达且零 wire） |
 | AC-LSB-3 撤销→注册顺序与幂等 | **MET** | `Reauthorize_RevokesEverySamePathEntryFirst_ThenRegistersExactlyOnce`（帧序 `list→revoke→revoke→register`）、`Reauthorize_RepeatedExecution_KeepsExactlyOneActiveEntry`（active 恒 1；revoked 行累积已登记 limitation）、`Reauthorize_UsesTheRegisteredRootString_*`；判别 B2/B3 |
 | AC-LSB-4 部分失败 fail-closed | **MET** | `Reauthorize_RegisterFailure_*`（typed 码 + 「已撤销…未重新授权」+ 无回滚 + 可重试）、`Reauthorize_PartialOutcomeRetry_*`、`Reauthorize_RevokeFailure_AbortsBeforeAnyRegistration`、`RecoveryTransportFailures_BecomeTypedResults_AndNeverEscapeIntoTheUi`、VM `PartialFailure_*`；r1 P3-11 文案改为「已确认撤销 N 条（ACK 失败可能多一条持久化撤销）」 |
 | AC-LSB-5 不自动重授权 | **MET** | 计划/mint 路径零恢复命令守卫、`ReuseSelector_*`、`Reauthorize_WithNothingToRevoke_WritesNothing`、真实 IPC「失败后 registry 长度不变」；**r1 P2-01**：`AttributeFailedSource_TargetsOnlyTheFailingSource_AndNeverABatch`、`Reauthorize_RefusesABatchBeforeAnyWireCall`、`AttributedFailure_LeavesTheHealthySiblingCompletelyUntouched`、`PlanAttribution_RemembersTheExactFailingSource_*`；判别 B1/B5 |
@@ -122,3 +128,14 @@ r1 报告：`doc/reviews/FEA-11-L-S1-B-RECOVERY-REAUTH-1-r1.md`，**approved（P
 | **R-P3-09** discrimination 日志早期失败块 | P3 | **FIXED**：日志改为一次干净重跑并加头部说明（早期 B4 探索性 `INVALID_BUILD_FAILED` 已废弃）；最终块 sha256 与交付字节一致。 |
 | **R-P3-10** skip 时 fixture 仍启动 Core | P3 | **FIXED**：`InitializeAsync` 在 gate 关闭时直接返回（Dispose 亦短路），不再为 skipped 用例启动真实 Core。 |
 | **R-P3-11** revoke ACK 失败计数少算 | P3 | **登记 + 文案改进**：失败文案改为「已确认撤销 N 条（若 Host 已持久化但 ACK 失败，实际可能多一条）」；行为保持 fail-closed 可重试；limitation 登记。 |
+
+## 8. Review r2 处置（append-only）
+
+r2 报告：`doc/reviews/FEA-11-L-S1-B-RECOVERY-REAUTH-1-r2.md`，**approved（P0=0/P1=0/P2=1/P3=3）**。本 head（`80d2799de`）处置：
+
+| Finding | 等级 | 处置 |
+|---|---|---|
+| **R2-P2-01** 歧义分支 UI 提示不可达 | P2 | **FIXED**：`DiagnoseAsync` 的 `ambiguous` 判定移到「空 targets」守卫之前（`HostController` 对多选无法归因正是 pin 0 targets + `ambiguous=true`，旧顺序先返回 `NotApplicable`）；歧义分支仍**零 wire/零撤销/零注册**，非歧义空列表仍 `NotApplicable`。判别 **B6**。测试：`AmbiguousBatchWithNoTargets_StillReturnsTheSingleSelectionHint_AndNeverProbes`、`AmbiguousFalseWithNoTargets_StaysNotApplicable`、`HostControllerAmbiguityPath_YieldsTheSingleSelectionHint_WithZeroWire`、VM `AmbiguousBatch_ReachesTheRealDiagnosis_ShowsTheHint_AndNeverTouchesTheRegistry`（真实 `SourceRecoveryCoordinator`）。 |
+| **R2-P3-01** 卡面 AC-LSB-8 数字残留 | P3 | **FIXED**：改为实测 **47/1617/+47**（changed_count 以最终 scope 快照为准、不再写死旧值）。 |
+| **R2-P3-02** scope 快照早于最终 docs commit | P3 | **FIXED**：对**最终 docs commit** 重算 `scope-validation.log`/`changed-files.txt`，保留 `CONCURRENT_NON_DELIVERY ac528828b` 披露行。 |
+| **R2-P3-03** 卡内全量命令仍写仓库根 `NewManga.sln` | P3 | **FIXED**：统一为 `dotnet build/test apps/desktop-avalonia/NewManga.sln -c Release`（首轮记录行标注为历史数字）。 |

@@ -8,8 +8,10 @@ apps/desktop-avalonia/tests/NewManga.App.Tests/FakeHostController.cs
 apps/desktop-avalonia/tests/NewManga.App.Tests/SourceRecoveryUiTests.cs
 apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceRecoveryIpcTests.cs
 doc/handoffs/FEA-11-L-S1-B-RECOVERY-REAUTH-1-0fdde2de8.md
+doc/handoffs/FEA-11-L-S1-B-RECOVERY-REAUTH-1-80d2799de.md
 doc/handoffs/FEA-11-L-S1-B-RECOVERY-REAUTH-1-e9e1132a5.md
 doc/reviews/FEA-11-L-S1-B-RECOVERY-REAUTH-1-r1.md
+doc/reviews/FEA-11-L-S1-B-RECOVERY-REAUTH-1-r2.md
 doc/tasks/FEA-11-L-S1-B-RECOVERY-REAUTH-1.md
 verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/changed-files.txt
 verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/EV.md
