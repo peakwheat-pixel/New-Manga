@@ -756,6 +756,56 @@ public sealed class FakeHostController : IHostController, ISourceImportControlle
 
     public void RequestSourceScanRefresh() => SourceScanRefreshRequests++;
 
+    // FEA-11-L-S1-B-RECOVERY-REAUTH-1 (B1): scriptable explicit recovery face. The counters are the
+    // AC-LSB-1 evidence at the port boundary: a preview failure alone must leave every one of them
+    // at 0 (no automatic re-authorization / reset), and only an explicit user command may move them.
+    public int SourceRecoveryDiagnoseCalls { get; private set; }
+
+    public Queue<SourceRecoveryDiagnosis> ScriptedRecoveryDiagnoses { get; } = new();
+
+    public Func<SourceRecoveryDiagnosis>? RecoveryDiagnosisOverride { get; set; }
+
+    public int SourceReauthorizeCalls { get; private set; }
+
+    public Queue<SourceRecoveryResult> ScriptedReauthorizeResults { get; } = new();
+
+    public int SourceResetCalls { get; private set; }
+
+    /// <summary>Every confirm bit the view model actually passed to the reset action.</summary>
+    public List<bool> SourceResetConfirms { get; } = new();
+
+    public Queue<SourceRecoveryResult> ScriptedResetResults { get; } = new();
+
+    public Task<SourceRecoveryDiagnosis> DiagnoseSourceRecoveryAsync(
+        CancellationToken cancellationToken = default)
+    {
+        SourceRecoveryDiagnoseCalls++;
+        if (RecoveryDiagnosisOverride is { } diagnose) return Task.FromResult(diagnose());
+        return Task.FromResult(ScriptedRecoveryDiagnoses.Count > 0
+            ? ScriptedRecoveryDiagnoses.Dequeue()
+            : SourceRecoveryDiagnosis.NotApplicable(null));
+    }
+
+    public Task<SourceRecoveryResult> ReauthorizeSourceAsync(
+        CancellationToken cancellationToken = default)
+    {
+        SourceReauthorizeCalls++;
+        return Task.FromResult(ScriptedReauthorizeResults.Count > 0
+            ? ScriptedReauthorizeResults.Dequeue()
+            : SourceRecoveryResult.Failed("HOST_NOT_READY", SourceRecoveryText.NotReady()));
+    }
+
+    public Task<SourceRecoveryResult> ResetSourceRegistryAsync(
+        bool confirm,
+        CancellationToken cancellationToken = default)
+    {
+        SourceResetCalls++;
+        SourceResetConfirms.Add(confirm);
+        return Task.FromResult(ScriptedResetResults.Count > 0
+            ? ScriptedResetResults.Dequeue()
+            : SourceRecoveryResult.Failed("HOST_NOT_READY", SourceRecoveryText.NotReady()));
+    }
+
     public Task<IReadOnlyList<string>> GetTranslatedPageIdsAsync(
         string chapterId,
         CancellationToken cancellationToken = default)
