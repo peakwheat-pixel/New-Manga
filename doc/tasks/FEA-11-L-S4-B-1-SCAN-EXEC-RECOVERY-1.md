@@ -45,7 +45,7 @@ out_of_scope:
 | S-1 | **形状** | 采纳 scope review 推荐 **Host-only**：枚举 target 执行使用其**自身已被 `VerifyEnumeratedTarget` 核验**的 live `(registry_id, generation)`（不再走按路径 `ResolveRegistryEntry`）；**不改** `ResolveRegistryEntry` 非枚举语义。 |
 | S-2 | **零契约** | 0 UNFREEZE / 18 pins 不变；C-17 §5.3 字节零改动；无新命令/能力/错误码/schema/依赖。 |
 | S-3 | **红线** | 不得自动重新授权/自动重建 identity/删除旧 revoked 行；扫描前后 registry 结构（除既有 `last_used_at`）不变；未授权/撤销/漂移 target 仍 typed fail-closed。 |
-| S-4 | **Run 面不含** | AC-SER-5（RunSourceRange）不在本卡；Run 面若同样问题另卡（登记 limitation）。 |
+| S-4 | **Run 面不含** | Run 面（**原 AC-SER-5**；现 AC-SER-5 已重编号为「零漂移/门禁」）不在本卡；Run 面若同样问题另卡（登记 limitation）。 |
 | S-5 | **B2/folder** | B2 实现延后；folder（L-S4-2）、L-S4-1、L-R1 保留。 |
 
 ## In（冻结）
@@ -69,7 +69,7 @@ out_of_scope:
 
 ## 已知 limitation（本卡）
 
-- **Run 面（AC-SER-5 原项）不含**：`RunSourceRange` 若同路径存在 revoked 旧条目是否仍 unresolved 未测/未修 → 另卡（若复现）。
+- **Run 面（原 AC-SER-5；当前 AC-SER-5 为零漂移/门禁）不含**：`RunSourceRange` 若同路径存在 revoked 旧条目是否仍 unresolved 未测/未修 → 另卡（若复现）。
 - B2 实现延后；folder（L-S4-2）；L-S4-1（零交互恢复仅 B1 动作之后）；L-R1 未全修。
 - 非枚举 target 的 `ResolveRegistryEntry` 语义不变（C-17 §5.3 零改动）。
 
