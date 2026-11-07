@@ -3,21 +3,21 @@ id: FEA-11-L-S1-B-RECOVERY-REAUTH-1
 title: App 显式恢复/重授权入口（B1：撤销→再注册→重导入；零契约、App-only）
 kind: implementation
 governance_version: 3
-status: ready
+status: done
 approval: 用户 2026-11-06「自动推进/全部授权/裁决交 Codex 或 DSH」；权威 scope review `doc/reviews/FEA-11-L-S1-B-RECOVERY-REAUTH-1-scope-r1.md`（fresh subagent `7d2a572e-…`，**READY-WITH-UNFREEZE**；拆卡：**B1 = READY-TO-FREEZE（App-only，零契约 0/18 pins）**；B2（wire 可用性投影）/ B3（扫描侧投影）暂缓）；Codex 不可用（product limit）→ 按用户授权 ZCode 故障转移裁决（记录见卡）；DSH 裁决 D-1…D-10（见下）
 suggested_owner: zcode
 owner: l-s1b-impl
-reviewer: 独立上下文 fresh subagent（未参与实现/返修；只读交付 head；session 见 `doc/reviews/FEA-11-L-S1-B-RECOVERY-REAUTH-1-r1.md`）
+reviewer: 独立上下文 fresh subagent（未参与实现/返修/scope review）：r1 `84562d6a-…`（approved P0=0/P1=0/P2=2→已修）/ r2 `8df55bef-…`（approved P0=0/P1=0/P2=1→已修）/ r3 `2e178b6d-…`（**approved P0=0/P1=0/P2=0/P3=3 非阻断**；reviewed_head `80d2799de`）；报告 `doc/reviews/FEA-11-L-S1-B-RECOVERY-REAUTH-1-r{1,2,3}.md`
 depends_on:
   - FEA-11-L-S1-REGISTRY-RESILIENCE-1
   - FEA-11-L-S4-LOCATION-AUTH-REFRESH-1
 base_commit: 3d97e3b18
 branch: null
 worktree: null
-integration_commit: null
+integration_commit: 80d2799de7195ccdec6954b523eea6830f315335
 delivery_head: 80d2799de7195ccdec6954b523eea6830f315335
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1
 allowed_paths:
   - doc/tasks/FEA-11-L-S1-B-RECOVERY-REAUTH-1.md
@@ -172,3 +172,47 @@ out_of_scope:
 |---|---|---|---|---|---|
 | 无删除/移动/归档 | - | NOT_APPLICABLE | - | - | 本卡仅改 App 源/测试 + 卡/Handoff/证据；仓内 0 删除/0 移动/0 归档；仓外隔离根 `G:/CODEX/New Manga.workspace/FEA-11-L-S1-B-RECOVERY-REAUTH-1/` PRESERVE_REFERENCED（IPC 夹具/判别性备份/日志，无独有产品数据；详见 `RESOURCE-MANIFEST.json`） |
 
+## Review（r1→r2→r3）处置（DSH，2026-11-07；append-only）
+
+- **r1 `84562d6a-…` approved（P0=0/P1=0/P2=2/P3=11）**：R-P2-01 多选恢复面过宽/归因错误、R-P2-02 gated IPC 空转断言 → Owner 返修（`019feeb6e`/`e9e1132a5`/`5dd6f7bb5`）：单源归因、真实 wire 0 命中 + `[REDACTED]` 断言；P3×11 处置（数字/scope/folder/View/清空/构建命令/标注/skip/limitation）。
+- **r2 `8df55bef-…` approved（P0=0/P1=0/P2=1/P3=3）**：R2-P2-01 歧义提示不可达（空 targets 守卫先于 ambiguous）→ Owner 返修（`f1272f29a`/`80d2799de`/`8a249538a`）：歧义判定前移，`MultipleSources` 与单选提示可达且零 wire，加 B6 判别；P3 残留（卡数字/scope 快照/build 命令）已修。
+- **r3 `2e178b6d-…` approved（P0=0/P1=0/P2=0/P3=3）**：R2-P2-01 关闭；B6 独立 RED→恢复；无回归/红线保持；新 P3 为**证据/清单记数残留**（EV.md 旧 head/1613、Manifest `repo_head_at_generation` 指向 pre-amend docs commit、discrimination 头部 5 vs 6）→ **登记接受**（不改变产品语义/门禁/安全结论；后续维护批可清理，不重开本卡）。
+- 不改变实现/测试字节（`80d2799de`）与 AC-LSB-1…10 MET 判定。
+
+## Canonical Evidence
+
+| evidence_id | AC | 路径 | commit | sha256 | class |
+|---|---|---|---|---|---|
+| EV-01 | AC-LSB-8/9 | verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/changed-files.txt | 8a249538a | f999eb39e1d53980360ee2565f864d131dea23f5b6bbc2063ba53c057a330484 | CANONICAL |
+| EV-02 | AC-LSB-8/9 | verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/EV.md | 8a249538a | 4771837927afa34bcd34c3cf6d194960f2aa51786a51b17cedeb25e23a7437bc | CANONICAL |
+| EV-03 | AC-LSB-8/9 | verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/logs/app-unit.log | 8a249538a | 807d02f78669217283b92e1b0720f2149a68950c8d0027c4183ef8f31a212a5e | CANONICAL |
+| EV-04 | AC-LSB-8/9 | verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/logs/build.log | 8a249538a | 78dea3f0034dffef7aa03e06ad96e6af0a04cd43e37d23723921bd552f1b9a25 | CANONICAL |
+| EV-05 | AC-LSB-8/9 | verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/logs/discrimination.log | 8a249538a | d323976af9d69f33a4681337160e29aa469d03baa13ccd880357caa4f09f7870 | CANONICAL |
+| EV-06 | AC-LSB-8/9 | verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/logs/feature.log | 8a249538a | 1910f19a42189eb0ce363873955d88889e7ae094bf7616c67499eedb75893581 | CANONICAL |
+| EV-07 | AC-LSB-8/9 | verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/logs/full-dotnet.log | 8a249538a | 9566604c26f1f7b897ed2b7e66772a5f77caf3e37a9d13933a51c0f63dd38817 | CANONICAL |
+| EV-08 | AC-LSB-8/9 | verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/logs/full-pytest.log | 8a249538a | e8dbe3b2a1b04d27a3f92cf951b0bf6cc62efe65f9fbd69c54be44617df731ad | CANONICAL |
+| EV-09 | AC-LSB-8/9 | verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/logs/gates-governance.log | 8a249538a | fab572f3eea5c0b6d1ebd8fc715e351250cb134e28d53c92ba61e1b79315e31f | CANONICAL |
+| EV-10 | AC-LSB-8/9 | verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/logs/host-ipc.log | 8a249538a | 635cf1f003460016cf682d3ce0d36b56293fa12869563dd36ce559caa7e04af2 | CANONICAL |
+| EV-11 | AC-LSB-8/9 | verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/logs/ipc-closed-loop.json | 8a249538a | 95288edeb73bc292525d7a43f6f2701eda11c21123adead144fd694c11e6a7b4 | CANONICAL |
+| EV-12 | AC-LSB-8/9 | verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/logs/ipc-closed-loop.txt | 8a249538a | 406f68d7f76030446f4af3bd1d7edadfc5d2e4c00acf1356e4f62c8112f25a6b | CANONICAL |
+| EV-13 | AC-LSB-8/9 | verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/RESOURCE-MANIFEST.json | 8a249538a | 145f01e5d678d2cd75047e1bd100933c9ec3529acee70b468fd36ca0643ca27b | CANONICAL |
+| EV-14 | AC-LSB-8/9 | verification/FEA-11-L-S1-B-RECOVERY-REAUTH-1/scope-validation.log | 8a249538a | 5a871cfe502410e08fb32df5a3fea7c4c6d17ccb4bd55e3092778dd4f8634413 | CANONICAL |
+
+> 证据树逐文件 sha256 以本表为准；r3 独立复算 EV 14/14 一致。review/handoff 不在 evidence_dir，按卡面/Handoff 引用。
+
+## Resource Manifest
+
+| resource_type | 资源 | disposition | 目标 | 完整性 | 引用/进程检查结果 |
+|---|---|---|---|---|---|
+| 无删除/移动/归档 | - | NOT_APPLICABLE | - | - | 本卡仅改 App 源/测试 + 卡/Handoff/证据；仓内 0 删除/0 移动/0 归档；仓外隔离根 `G:/CODEX/New Manga.workspace/FEA-11-L-S1-B-RECOVERY-REAUTH-1/` 保留（IPC 夹具/日志/备份，无独有产品数据） |
+
+## Closeout Record（2026-11-07）
+
+- **状态**：`done`；`delivery_head`/`integration_commit` = `80d2799de7195ccdec6954b523eea6830f315335`（r1 基线 `0fdde2de8` → r1 返修 `e9e1132a5` → r2 返修 `80d2799de`；docs/evidence `8a249538a`）。
+- **AC 判定**：AC-LSB-1…AC-LSB-10 **全 MET**；无 PARTIAL/BLOCKED。
+- **Review 处置**：r1 approved（P2×2 已修）→ r2 approved（P2×1 已修）→ **r3 approved（P0=0/P1=0/P2=0/P3=3 非阻断，登记接受）**。
+- **门禁数字（before → after；Lead 实测）**：全量 pytest **3317/10 → 3317/10**；全量 .NET **1570/0/92 → 1617/0/93**（+47 本卡 App 测试、+1 opt-in skip）；定向 App `SourceRecovery` **47/0/0**；gated 真实 IPC **1/0/0**（wire 77 帧、根路径 0 命中、`[REDACTED]` 7、quarantine 0）；pins **18/18**；check（默认+`-TaskPath`）PASS；API inventory PASS；scope **changed=29 全 ALLOWED**、禁止面零 diff、`CORE_PROTOCOL_MINOR=3`；判别性 **6/6**；全量后恢复 `verification/FEA-09`。
+- **limitations（保留）**：B2/B3 未做；L-S4-1（零交互恢复）/L-S4-2（folder 身份键）；**C-17 journal 撤销撕裂（仅登记）**；`quarantine_path` 不展示；重复恢复累积 revoked 行（active 恒 1）；revoke ACK 失败计数口径；只承诺 file-source 同路径恢复；L-R1 未全修；不宣称自动恢复/根级问题全解。
+- **Resource Manifest / 资源处置**：仓内删除/移动/归档 0；仓外隔离根 PRESERVE_REFERENCED。
+- **指针清理**：STATUS 无活动 Task；PLAN 本节点 done；TASK_LEDGER 重生成。
+- **push**：Lead 统一 push（PRE/POST/AHEAD 记录见状态文件）。
