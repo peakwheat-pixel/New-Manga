@@ -359,6 +359,10 @@ _HOST_CONTROL_COMMANDS = frozenset({
     # FEA-11-RUN-GRANT-1 (C-16 v1.3 §2.4): the Run dispatch-time
     # grant->page-binding authorization command (third ``_bindings`` producer).
     "AuthorizeSourceReadForRun",
+    # FEA-11-L-S4-B (C-16 v1.5 §2.5): the conditional single-row re-attest
+    # after the user's EXPLICIT B1 re-authorization. Host-only; it never
+    # authorizes, never revives a grant and never rebuilds an identity.
+    "ReattestSourceLocation",
     # FEA-11 (C-17 §4): scan/apply/relink/repoint/resync plus the
     # ACK/recovery/failure pair ride the host-control private session.
     "ScanSourceSync", "ApplySourceSyncPlan", "RelinkSource", "RepointSource",
@@ -1510,6 +1514,22 @@ class CoreServiceServer:
                     request_id, "UNKNOWN", "internal", "Host control operation failed"
                 )
             return self._host_control_response(request_id, result, None)
+        if command == "ReattestSourceLocation":
+            # FEA-11-L-S4-B (C-16 v1.5 §2.5): host-control only (host-only and
+            # session were verified above). The closed-shape rejection is
+            # ``INVALID_REQUEST``; grant/liveness/identity refusals reuse the
+            # frozen C-16 §6 closed set through the SourceImportError envelope.
+            try:
+                result = self._reattest_source_location(payload)
+            except SourceImportError as caught:
+                return self._host_control_response(
+                    request_id, None, _source_import_error_envelope(caught)
+                )
+            except Exception:
+                return self._reject_host_control(
+                    request_id, "UNKNOWN", "internal", "Host control operation failed"
+                )
+            return self._host_control_response(request_id, result, None)
         if command in (
             "ScanSourceSync", "ApplySourceSyncPlan", "RelinkSource",
             "RepointSource", "ResyncSource", "AcknowledgeSourceOperation",
@@ -1609,6 +1629,11 @@ class CoreServiceServer:
             # authorization face. Additive only -- a missing capability makes
             # the Host skip mint/bind and dispatch exactly as before.
             "source.read.run/1",
+            # FEA-11-L-S4-B (C-16 v1.5 §0): the conditional single-row
+            # re-attest after the user's explicit B1 re-authorization. The Host
+            # probes this before minting; missing -> no send, no mint, and the
+            # target keeps its existing typed skip.
+            "source.reattest/1",
         ]
         # FEA-12 (M2-C1 rev 2.13 §5.13/§5.14): the delete/trash runtime is
         # assembled with the production library repository + managed storage,
@@ -5042,6 +5067,84 @@ class CoreServiceServer:
             )
         bound_pages = registry.authorize_run_bindings(grant_scopes, pages)
         return {"bound_pages": bound_pages}
+
+    def _reattest_source_location(self, payload: object) -> dict[str, Any]:
+        """FEA-11-L-S4-B: C-16 v1.5 §2.5 ``ReattestSourceLocation`` (host-control).
+
+        B1's EXPLICIT re-authorization only changes the Host Registry; this
+        command conditionally propagates that fact onto the Core
+        ``source_locations`` row so the Host's exact-match enumeration can find
+        the source again on cold start / the next refresh. It is NOT a recovery
+        or authorization action:
+
+        * request closed shape ``{source_id, grant_id}`` -> else
+          ``INVALID_REQUEST`` (the only shape error);
+        * grant live / unexpired / unrevoked + ``scope.source_id`` match and the
+          four physical facts equal the CURRENT location row -> else the frozen
+          C-16 §6 typed refusal with ZERO writes;
+        * the ONLY write is the two auth columns through the single
+          ``refresh_source_location_auth`` SQL (L-S4 A); ``last_verified_at`` is
+          read from the current row and written back unchanged (no audit
+          refresh, no ``now()``); no location row is added and
+          ``page_bindings`` is untouched; idempotent/monotonic (repeat ->
+          ``updated: 0`` with zero writes).
+        """
+        from application.sources.reattest import SourceLocationReattest
+
+        # ② closed shape first (host-only/session were verified by the caller).
+        if (
+            not isinstance(payload, dict)
+            or set(payload) != {"source_id", "grant_id"}
+            or not isinstance(payload.get("source_id"), str)
+            or not payload["source_id"]
+            or not isinstance(payload.get("grant_id"), str)
+            or not payload["grant_id"]
+        ):
+            raise SourceImportError(
+                "INVALID_REQUEST", "reattest request is invalid"
+            )
+        registry = getattr(self._core, "source_read_refs", None)
+        stack = getattr(self._core, "source_sync", None)
+        repository = getattr(self._core, "repository", None)
+        if (
+            registry is None
+            or not isinstance(stack, dict)
+            or stack.get("store") is None
+            or repository is None
+        ):
+            raise SourceImportError(
+                "SOURCE_REGISTRY_UNAVAILABLE", "source locations are unavailable"
+            )
+        service = SourceLocationReattest(
+            access=registry,
+            store=stack["store"],
+            repository=repository,
+            read_current_location=self._read_current_source_location_row,
+        )
+        return service.reattest(payload)
+
+    def _read_current_source_location_row(
+        self, source_id: str
+    ) -> dict[str, Any] | None:
+        """Read-only projection of the CURRENT ``source_locations`` row.
+
+        The frozen C-16 v1.5 §2.5 action clause requires reading the original
+        ``last_verified_at`` BEFORE the conditional UPDATE so it can be written
+        back unchanged. This is the ONLY new read on that table and it is not a
+        second refresh implementation: the single UPDATE SQL stays in
+        :meth:`SqliteLibraryRepository.refresh_source_location_auth`.
+        """
+        conn = getattr(self._core, "conn", None)
+        if conn is None:
+            return None
+        row = conn.execute(
+            "SELECT location_id, source_id, registry_id,"
+            " authorization_generation, content_digest, volume_serial, file_id,"
+            " size_bytes, observed_at, last_verified_at"
+            " FROM source_locations WHERE source_id = ? AND is_current = 1",
+            (source_id,),
+        ).fetchone()
+        return dict(row) if row is not None else None
 
     def _dispatch_referenced_import(
         self, command: str, raw_payload: object
