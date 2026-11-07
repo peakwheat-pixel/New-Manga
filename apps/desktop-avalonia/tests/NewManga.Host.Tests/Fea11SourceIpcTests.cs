@@ -57,7 +57,7 @@ public sealed class Fea11SourceIpcTests
         using var receiptDoc = JsonDocument.Parse(
             await File.ReadAllTextAsync(Path.Combine(root, "ipc-seed-receipt.json")));
         var receipt = receiptDoc.RootElement;
-        Assert.Equal(8, receipt.GetProperty("schema_version").GetInt32());
+        Assert.Equal(9, receipt.GetProperty("schema_version").GetInt32());
 
         var options = new CoreServiceOptions
         {

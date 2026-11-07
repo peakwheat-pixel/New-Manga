@@ -35,6 +35,12 @@ SCHEMA_VERSION_V7 = 7
 #: operations, binding publications (read gates) and revision lineage.
 #: Pure additive empty tables; v1–v7 SQL/name/checksum stay byte-identical.
 SCHEMA_VERSION_V8 = 8
+#: FEA-12-CORE-C04B-INDEX-L4-1 (frozen record §4A `L-4`): the C-04b v1.2
+#: artifact membership predicate (``media_artifacts.book_id = ?``) had no
+#: supporting index, so every book-scoped artifact query degraded to a full
+#: scan whose cost grew with the whole-library artifact count. v9 adds
+#: exactly one index; v1–v8 SQL/name/checksum stay byte-identical.
+SCHEMA_VERSION_V9 = 9
 
 MIGRATION_V1_NAME = "v1__storage_base"
 
@@ -838,6 +844,21 @@ CREATE INDEX idx_source_revision_lineage_origin ON source_revision_lineage(from_
 """
 
 
+MIGRATION_V9_NAME = "v9__media_artifacts_book_index"
+
+#: The C-04b L-4 index. ``(book_id)`` serves the preview/protected-set
+#: membership predicate (C-04b v1.2 §0 第 1 条), the delete-inventory COUNT,
+#: the artifact revision-id/pinned enumeration and the transaction's
+#: ``DELETE FROM media_artifacts WHERE book_id = ?`` (the last two walk the
+#: covering index). A bare ``CREATE INDEX`` is deliberate: a pre-existing
+#: conflicting index must fail the migration loudly instead of being recorded
+#: as applied without the index; the version gate (migrator.py) already
+#: provides idempotence, and the statement plus the ``schema_migrations`` row
+#: share one transaction, so a failure leaves the database at v8 with no
+#: index residue.
+MIGRATION_V9_SQL = "CREATE INDEX idx_media_artifacts_book ON media_artifacts(book_id);"
+
+
 def default_migrations() -> tuple[Migration, ...]:
     return (
         Migration(SCHEMA_VERSION_V1, MIGRATION_V1_NAME, MIGRATION_V1_SQL),
@@ -848,4 +869,5 @@ def default_migrations() -> tuple[Migration, ...]:
         Migration(SCHEMA_VERSION_V6, MIGRATION_V6_NAME, MIGRATION_V6_SQL),
         Migration(SCHEMA_VERSION_V7, MIGRATION_V7_NAME, MIGRATION_V7_SQL),
         Migration(SCHEMA_VERSION_V8, MIGRATION_V8_NAME, MIGRATION_V8_SQL),
+        Migration(SCHEMA_VERSION_V9, MIGRATION_V9_NAME, MIGRATION_V9_SQL),
     )

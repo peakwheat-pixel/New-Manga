@@ -626,6 +626,16 @@ def _table_names(connection: sqlite3.Connection) -> set[str]:
     }
 
 
+def _index_names(connection: sqlite3.Connection) -> set[str]:
+    return {
+        row["name"]
+        for row in connection.execute(
+            "SELECT name FROM sqlite_master WHERE type = 'index'"
+            " AND name NOT LIKE 'sqlite_%'"
+        ).fetchall()
+    }
+
+
 def _assert_v1_rows(connection: sqlite3.Connection) -> None:
     """Assert the v1-era rows only (used for the v1-start-upgrade test)."""
     assert EXPECTED, "seed functions did not record any expected values"
@@ -733,6 +743,7 @@ def test_synthetic_legacy_data_survives_full_upgrade(tmp_path: Path, version: in
     db_path = tmp_path / f"legacy-v{version}.db"
     connection = _build_legacy_database(db_path, version)
     before = _table_names(connection)
+    indexes_before = _index_names(connection)
 
     applied = MigrationRunner(connection, MIGRATIONS).apply_pending()
     assert [record.schema_version for record in applied] == list(
@@ -740,7 +751,20 @@ def test_synthetic_legacy_data_survives_full_upgrade(tmp_path: Path, version: in
     )
     after = _table_names(connection)
     new_tables = [name for name in LATEST_TABLES if name not in before]
-    assert new_tables, "starting point unexpectedly already had every latest table"
+    new_indexes = sorted(_index_names(connection) - indexes_before)
+    # Every legacy start point must gain SOMETHING: v1..v7 start points gain
+    # tables, the v8 start point gains only the v9 pure-index migration. This
+    # keeps the "an upgrade changes the schema" direction without pretending a
+    # pure-index migration adds a table.
+    assert new_tables or new_indexes, (
+        "starting point unexpectedly already had every latest table and index"
+    )
+    if version == 8:
+        # v9 is a pure-index migration: the v8 start point must still visibly
+        # gain ``idx_media_artifacts_book`` (FEA-12-CORE-C04B-INDEX-L4-1).
+        assert "idx_media_artifacts_book" in new_indexes, (
+            f"v8 start did not gain idx_media_artifacts_book: {new_indexes}"
+        )
     assert all(name in after for name in new_tables)
 
     _assert_latest(connection)
