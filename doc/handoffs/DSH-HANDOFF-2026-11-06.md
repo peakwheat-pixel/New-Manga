@@ -148,3 +148,13 @@ git checkout -- verification/FEA-09   # .NET 全量后必须恢复
 - 当前：HEAD `69913d892`（origin 同步，AHEAD=0）；无活动 Task。下一队列：L-S4-B-1（proposed）、B2（proposed，roots 可用性实现延后）、2C 长 Run 续期、L-R11、C-04b、SCAN-RH、UI P3。
 - 其他 limitation：B2 延后、folder（L-S4-2）、`source_reset_registry` 后无旧条目、L-S4-1、L-R1 未全修。
 - **push**：`4e9ab8d90..69913d892`（L-S4-B 交付 + closeout + proposed 登记）；PUSH_EXIT=0，AHEAD=0。
+
+## 14. 续接补充（2026-11-07 第 6 轮：L-S4-B-1 完成）
+
+- **FEA-11-L-S4-B-1-SCAN-EXEC-RECOVERY-1 `done`**（delivery `bcc88e4a2`；docs `0c1390b2a`）：**枚举 target 扫描执行面恢复**——`VerifyEnumeratedTarget(target, out entry)` 复用同一次 `Registry.List()` 快照中已核验的 live `(registry_id, generation)`，`ScanAsync` 枚举分支直接铸 grant（消除二次 path 解析/TOCTOU）；非枚举 `ResolveRegistryEntry` 零改动；fail-closed 矩阵不变；gated 真 IPC tick 由 `error` → `ok`（`scan_frames=1`）。**零契约 0/18 pins**。
+- 独立 r1 **approved（P0=0/P1=0/P2=0/P3=9 非阻断）**；AC-SER-1…6 全 MET；判别性 6/6。
+- **基线（本轮实测）**：全量 pytest **3360/10**；全量 .NET **1652/0/94**；pins 18/18；check PASS(3w)；API PASS；scope 24 文件全 ALLOWED。
+- **Run 面保留**：`HostRuntime.RunSourceRange` 仍按路径解析（零 diff）→ 已登记后续卡 `FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1`（proposed，需 scope review）。
+- 当前：HEAD `28163f27d`（origin 同步，AHEAD=0）；无活动 Task。下一队列：L-S4-B-2（proposed）、B2（proposed，延后）、2C 长 Run、L-R11、C-04b、SCAN-RH、UI P3。
+- 其他 limitation：B2、folder（L-S4-2）、L-S4-1、L-R1；backoff 口径「下一个未被既有 backoff 抑制的 tick」；不宣称自动恢复/自愈/自动重新授权/Run 面恢复。
+- **push**：`b3143b7ca..28163f27d`（L-S4-B-1 交付 + closeout + proposed）；PUSH_EXIT=0，AHEAD=0。
