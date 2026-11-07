@@ -20,7 +20,7 @@
 - 测试基线：pytest **3363/10**、.NET **1680/0/96**（2026-11-07 2C closeout Lead 实跑 + 独立 r2 复核；既有 flaky `FluentR2ReworkTests.R3001_*` 隔离复跑通过；跑后 `verification/FEA-09` 已恢复）。
 
 ## Gate 与保留项
-Technical Gate=NOT_SATISFIED；private_registry_absence=UNPROVABLE；Owner Risk Acceptance=APPROVED；Disposition=WAIVED_BY_OWNER。push `clean-snapshot-20261026`=`892b946e`、`clean-snapshot-20261102`=`ac7d488e`；**main 已于 2026-11-07 push 至 `07a7d746a`（2C closeout + L-R11 释放；origin 同步，AHEAD=0）**。
+Technical Gate=NOT_SATISFIED；private_registry_absence=UNPROVABLE；Owner Risk Acceptance=APPROVED；Disposition=WAIVED_BY_OWNER。push `clean-snapshot-20261026`=`892b946e`、`clean-snapshot-20261102`=`ac7d488e`；**main 已于 2026-11-08 push 至 `821aac0da`（2C closeout、C-16 v1.7、C-04b residual、SCAN-RH 冻结；origin 同步，AHEAD=0）**。
 
 ## 当前权威指针
 - DAG/节点：[REBASELINE_PLAN](REBASELINE_PLAN.md)（唯一权威）；主线 `main`；工作区 [WORKSPACE_GOVERNANCE](WORKSPACE_GOVERNANCE.md)。

@@ -245,3 +245,12 @@ git checkout -- verification/FEA-09   # .NET 全量后必须恢复
 - **L-R11 实现进行中**：Owner `l-r11-impl`（card `FEA-11-L-R11-GATE-UNIFY-1`，base `2175238ab`）。落点已确认：单谓词下沉 `src/infrastructure/sqlite/source_sync.py`（模块级 `_publication_gate_verdict` 返回 open/pending/unavailable/corrupt_chain；`page_is_sync_managed` 复用同一链 walk），`core_assembly.read_gate` 与 `core_service._assert_source_sync_gate` 委托（corrupt_chain→unavailable，保持 legacy 零漂移）。已改 `source_sync.py`/`core_assembly.py`/`core_service.py`（未提交）；预计再 2–2.5h 交付。
 - **push**：`28a2826af..3c4f62dbf`（PUSH_EXIT=0；PRE_HEAD `3c4f62dbf`、PRE_ORIGIN `28a2826af`、AHEAD 4→0、POST_ORIGIN `3c4f62dbf`；含 C-04b residual 收口 4 提交）。
 - **下一轮**：① 等 `l-r11-impl` 交付 → 派 fresh subagent 独立 Review（legacy/一跳/两跳/判别性/门禁）→ approved → closeout → push；② 冻结 `FEA-11-SCAN-RH-1`（Host-only 0 pin；待 L-R11 落地后释放）；③ C-04b UNFREEZE 后续卡（R-1/R-2/R-5/R-7/R-8）按 DSH 裁决决定是否建立；B2 延后。
+
+## 21. 续接补充（2026-11-08 第 13 轮：C-04b 收口终态 + SCAN-RH 卡冻结 + L-R11 实现中）
+
+- **C-04b residual 终态**：`FEA-12-CORE-C04B-RESIDUAL-1` done（integration `698ac9524`；closeout `63b95abda`；EV/报告终版 `87e270a93`；Canonical Evidence 指向 `87e270a93`/sha `3e22c333…`）。**P3 口径统一为保守计法 open=6（8 项：fixed=1/mitigated=1/open=6；P3-8 已按 closeout 提交链处理但按提交时点计 open）**。C-04b/M2-C1 契约字节零 diff、pins 18/18。
+- **`FEA-11-SCAN-RH-1` 已冻结**（`status: proposed`，`base_commit=a969f405f`，0 pin；DSH 裁决 D-1…D-4 全采纳）：RH-1 pending 重放 + RH-2 lifetime/停机 join（implementation）+ RH-4 表集口径订正（documentation）+ RH-3/RH-5 仅登记 limitation；`allowed_paths` 仅 `SourceScanScheduler.cs`/`HostRuntime.cs`（token 传递）/`SourceScanSchedulerTests.cs`/卡/评审/证据 + `FEA-11-SCAN-2.md` append-only 一行。**待 L-R11 收口后释放**。
+- **SCAN-RH scope review r1**（`doc/reviews/FEA-11-SCAN-RH-scope-r1.md`，session `c50bc2b0…`，recommended）已入库（含终版精修 + 实跑：`--filter SourceScan` 68/0/0、`SourceWatcher` 19/0/0、`pytest -k "scan or scheduler"` 14 passed）。
+- **L-R11 实现进行中**（Owner `l-r11-impl`）：工作树已有 `src/infrastructure/sqlite/source_sync.py`（动词 +152/−25 级）、`src/bootstrap/core_assembly.py`、`src/bootstrap/core_service.py` 改动 + 新增 `tests/fea11/test_source_gate_unify.py`（**未提交**，不得触碰）。落点：单谓词 `_publication_gate_verdict`（open/pending/unavailable/corrupt_chain）+ `SourceSyncStore.publication_gate_of_page` 唯一入口；`read_gate`/`_assert_source_sync_gate` 委托；legacy 零漂移。
+- **push**：`a4cc8a9b7..821aac0da`（含 C-04b 终态与 SCAN-RH 冻结；PUSH_EXIT=0）。当前 HEAD `821aac0da`（+ STATUS/handoff 本次 docs 提交），AHEAD→0。
+- **下一轮**：等 L-R11 交付 → 派 fresh subagent 独立 Review（legacy/一跳/两跳/判别性/全量 pytest/check/pins/scope）→ approved → closeout（卡 done/EV/Manifest/Closeout）→ push；随后释放 `FEA-11-SCAN-RH-1`（或按 DSH 裁决）。
