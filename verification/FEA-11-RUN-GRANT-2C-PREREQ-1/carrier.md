@@ -59,7 +59,8 @@ L-G1：Run 由 Core 后台单线程串行整跑（`core_service.py:1277-1319`；
 - **r5**（`doc/reviews/FEA-11-RUN-GRANT-2C-PREREQ-1-r5.md`）：`changes_requested`（P0=0/P1=0/P2=1/P3=1）——FROZEN-C06 §2 仍无 v1.3 条件行、两处 §1B 仍「待 r4 收口」。
 - **处置 5**：FROZEN-C06 §2 补 v1.3 第 7 条（⏳）、§1B 两处改「待 r6 收口」；FROZEN-C16 §1B/§10、矩阵、EV 统一。
 - **r6**（`doc/reviews/FEA-11-RUN-GRANT-2C-PREREQ-1-r6.md`）：**`approved`（P0=0/P1=0/P2=0/P3=1 非阻断，仅矩阵措辞）**；session `308751b9-…`；reviewed_head `c1e19ed82`。
-- **处置 6（落 approved）**：矩阵条件列改「r1–r5 处置后待 r6 收口」；FROZEN-C06 §2 第 7 条 → ✅、§1B/§7 → approved；FROZEN-C16 §1B/§10 → approved、§2 第 8 行 → ✅；EV 同步。**C-06/C-16 字节保持 `75f8e2b4…`/`b8f46fb1…` 不变**（2 pins 不变）。
+- **处置 6（落 approved）**：矩阵条件列 → r6 approved；FROZEN-C06 §2 第 7 条 → ✅、§1B/§7 → approved；FROZEN-C16 §1B/§10 → approved、§2 第 8 行 → ✅；EV 同步。**C-06/C-16 字节保持 `75f8e2b4…`/`b8f46fb1…` 不变**（2 pins 不变）。
+- **快照边界**：r6 报告 D 段 hash 为 `c1e19ed82` 快照（carrier `303165ab…`/EV `7fe80a90…`）；处置 6 落 approved 后 carrier/EV 字节变化（见 EV 表新值），属记录文本变更，契约字节与 pins 不变。
 
 ## 7. 证据
 

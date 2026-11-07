@@ -21,7 +21,7 @@
 | 3 | **C-03** 外观持久化 | **`FROZEN`** 2026-11-01 | ①**U-05a/U-05b** ②C-02 先冻结 | C-02 | U-05a/b |
 | 4 | **C-04b** 删除协议 | **`FROZEN`** 2026-11-01 | ①独立复核 ✅ ②C-01b 冻结 ✅ ③`G-DELETE-CONTRACT` **不阻塞**（裁定 R-1′）④DSH 批准 2.11 ✅ ⑤M2-C1 扩展为释放前置（R-2′） | C-01b | 5 项全未满足 |
 | 5 | **C-05** 页可见性 | **`FROZEN v1.2`** 2026-11-04（v1.2 UNFREEZE 重冻；v1.1 2026-11-03、v1.0 2026-11-01） | ①`VISIBLE_TYPES`/`active_runs` 经 C-01b/ADJ-001 确认（C-01b 冻结后即可） | C-01b（口径确认） | 无硬阻塞 |
-| 6 | **C-06** 授权面 v1.3（mid-run 重复建立） | **`FROZEN v1.3`** 2026-11-07（UNFREEZE 重冻；v1.0 2026-11-01 / v1.1 2026-11-03 / v1.2 2026-11-06） | ①v1.3 独立 byte-level 复核 pending（r1–r5 处置后待 r6 收口；载体 CONTRACT-UNFREEZE-2026-11-07-C06-C16-RUN-RENEWAL）②C-01b 冻结 ✅ ③`G-CONTRACT` **不阻塞**（裁定 R-1′）④C-16 v1.6 同批 ⑤18/18 | C-01b/C-16 v1.6 | `G-CONTRACT: OPEN` |
+| 6 | **C-06** 授权面 v1.3（mid-run 重复建立） | **`FROZEN v1.3`** 2026-11-07（UNFREEZE 重冻；v1.0 2026-11-01 / v1.1 2026-11-03 / v1.2 2026-11-06） | ①v1.3 独立 byte-level 复核 **r6 approved**（P0=0/P1=0/P2=0/P3=1 非阻断；载体 CONTRACT-UNFREEZE-2026-11-07-C06-C16-RUN-RENEWAL）②C-01b 冻结 ✅ ③`G-CONTRACT` **不阻塞**（裁定 R-1′）④C-16 v1.6 同批 ⑤18/18 | C-01b/C-16 v1.6 | `G-CONTRACT: OPEN` |
 | 7 | **C-07** API inventory | **`FROZEN`** 2026-11-01 | ①独立复核 ✅ ②生成脚本入库（`tools/generate_api_inventory.py`）③`--check` OK | 无 | 无硬阻塞 |
 | 8 | ~~C-08 Run 快照~~ | ~~`approved` r2~~（**已被 #12 FROZEN 取代**） | — | — | — |
 | 9 | **C-09** 删除/备份/迁移 | **`FROZEN`** 2026-11-01 | ①C-01b/C-04b/C-06/C-08/C-14 冻结 ②`G-CONTRACT` 关闭 ✅（**不再要求 `G-DELETE-CONTRACT`**——解环，见 [D07 解环](../tasks/FEA-D07-UNBLOCK.md)） | C-01b | 无（Gate 不阻塞） |
@@ -34,7 +34,7 @@
 
 
 | 15 | **C-15** Source 存储契约（DDL/迁移/完整性-可见性/Registry/跨存储次序/根级不可用拆分） | **`FROZEN v1.5`** 2026-11-07（UNFREEZE 重冻；v1.0 2026-11-03 / v1.1 2026-11-04） | ①v1.5 独立 byte-level 复核 approved（载体 CONTRACT-UNFREEZE-2026-11-07-C15）②C-16/C-17 零改动 ③18/18 ④PASS | C-01b/C-05 v1.1/C-06 v1.1/C-14 | 无（读取韧性实现归 FEA-11-L-S1-REGISTRY-RESILIENCE-1） |
-| 16 | **C-16** Source 读取/导入 wire v1.6（四维 scope/撤销/密码引用/fresh-grant resolve/异步 receipt/Run 授权建立命令/容器多成员 entry/re-attest 条件写/roots 可用性投影/mid-run 重复调用） | **`FROZEN v1.6`** 2026-11-07（UNFREEZE 重冻；v1.0/v1.1/v1.3/v1.4/v1.5 历史） | ①v1.6 独立 byte-level 复核 pending（r1–r5 处置后待 r6 收口；载体 CONTRACT-UNFREEZE-2026-11-07-C06-C16-RUN-RENEWAL）②C-15/C-17/C-06/C-07/M2-C1 零改动 ③18/18 ④PASS | C-06 v1.3/C-15 v1.5 | 无（2C 续期实现归 FEA-11-RUN-GRANT-2C） |
+| 16 | **C-16** Source 读取/导入 wire v1.6（四维 scope/撤销/密码引用/fresh-grant resolve/异步 receipt/Run 授权建立命令/容器多成员 entry/re-attest 条件写/roots 可用性投影/mid-run 重复调用） | **`FROZEN v1.6`** 2026-11-07（UNFREEZE 重冻；v1.0/v1.1/v1.3/v1.4/v1.5 历史） | ①v1.6 独立 byte-level 复核 **r6 approved**（P0=0/P1=0/P2=0/P3=1 非阻断；载体 CONTRACT-UNFREEZE-2026-11-07-C06-C16-RUN-RENEWAL）②C-15/C-17/C-06/C-07/M2-C1 零改动 ③18/18 ④PASS | C-06 v1.3/C-15 v1.5 | 无（2C 续期实现归 FEA-11-RUN-GRANT-2C） |
 
 | — | **C-17** Source 同步契约（v1.1） | **`FROZEN v1.1`**（2026-11-06 UNFREEZE 重冻；v1.0 2026-11-04） | ①契约最终字节独立 Review ②DSH 冻结记录/三指纹/pin 18 ③M2-C1 增量或无增量决定 | C-14/C-15/C-16（语义基座） | 无（实现释放归 FEA-11-SCAN-2） |
 
