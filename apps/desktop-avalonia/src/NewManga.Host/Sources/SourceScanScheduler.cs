@@ -360,6 +360,16 @@ public sealed class SourceScanScheduler : IAsyncDisposable
     private int _budgetCursor;
     private bool _paused;
 
+    // FEA-11-SCAN-RH-1 (AC-RH-2): scheduler lifetime. A refresh enumeration links its caller token
+    // with this token so DisposeAsync can cancel an in-flight enumeration first, then join it bounded,
+    // and only then tear the single-flight gate down (no ObjectDisposedException escapes the pass).
+    private readonly CancellationTokenSource _lifetimeCts = new();
+
+    // FEA-11-SCAN-RH-1 (AC-RH-2): RefreshTargetsAsync calls currently in flight (a coalesced call and
+    // a replayed pass included). DisposeAsync joins this set (2 s budget) before disposing the gate.
+    private int _activeRefreshes;
+    private TaskCompletionSource<bool>? _refreshIdle;
+
     // r2 P2-1: an App Refresh requested while a tick/refresh holds the single-flight gate is
     // coalesced here and replayed once the in-flight pass finishes (never silently lost).
     private bool _refreshPending;
@@ -679,14 +689,80 @@ public sealed class SourceScanScheduler : IAsyncDisposable
     }
 
     /// <summary>
-    /// FEA-11-SCAN-2 (B1 / AC-S2-1/2/7): cold-start or App-triggered refresh. Runs the injected
-    /// <see cref="ISourceScanTargetEnumerator"/>, merges the enumerated targets into the in-memory
-    /// target set by <c>source_id</c> (add/update only — repeated refreshes are idempotent) and
-    /// records the typed enumeration verdict on the snapshot. Single-flight with <see cref="TickAsync"/>
-    /// (a refresh never overlaps a tick; an overlapping request is merged, never queued) and never
-    /// blocks the Host start path (the caller runs it in the background).
+    /// FEA-11-SCAN-2 (B1 / AC-S2-1/2/7) / FEA-11-SCAN-RH-1 (AC-RH-1/AC-RH-2): cold-start or
+    /// App-triggered refresh. Runs the injected <see cref="ISourceScanTargetEnumerator"/>, merges the
+    /// enumerated targets into the in-memory target set by <c>source_id</c> (add/update only — repeated
+    /// refreshes are idempotent) and records the typed enumeration verdict on the snapshot. Single-flight
+    /// with <see cref="TickAsync"/> (a refresh never overlaps a tick): a request that arrives while a pass
+    /// is in flight is coalesced and replayed after the in-flight pass — never queued unboundedly, and the
+    /// replayed pass itself never replays again. Never blocks the Host start path (the caller runs it in
+    /// the background). The enumeration token links the caller token with the scheduler lifetime token so
+    /// <see cref="DisposeAsync"/> can cancel and join an in-flight refresh before the gate is torn down.
     /// </summary>
     public async Task<bool> RefreshTargetsAsync(CancellationToken cancellationToken = default)
+    {
+        CancellationToken lifetime;
+        lock (_gate)
+        {
+            // AC-RH-2: once disposed the gate is (or is about to be) torn down; a late stop-time refresh
+            // is a silent no-op instead of an escaping ObjectDisposedException.
+            if (_disposed)
+            {
+                return false;
+            }
+
+            _activeRefreshes++;
+            lifetime = _lifetimeCts.Token;
+        }
+
+        try
+        {
+            using var linked = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, lifetime);
+            bool ran;
+            bool completed;
+            try
+            {
+                (ran, completed) = await RefreshTargetsPassAsync(linked.Token).ConfigureAwait(false);
+            }
+            catch (ObjectDisposedException)
+            {
+                // The gate was disposed while this call was unwinding a shutdown; the typed verdict (if
+                // any) is already on the snapshot and a disposal detail never reaches the Host log.
+                return false;
+            }
+
+            if (completed)
+            {
+                // AC-RH-1: the pass released the single-flight gate; replay one coalesced request now.
+                await ReplayPendingRefreshAsync(linked.Token).ConfigureAwait(false);
+            }
+
+            return ran;
+        }
+        finally
+        {
+            TaskCompletionSource<bool>? idle;
+            lock (_gate)
+            {
+                _activeRefreshes--;
+                idle = _activeRefreshes == 0 ? _refreshIdle : null;
+                if (idle is not null)
+                {
+                    _refreshIdle = null;
+                }
+            }
+
+            idle?.TrySetResult(true);
+        }
+    }
+
+    /// <summary>
+    /// One refresh pass (FEA-11-SCAN-RH-1): acquires the single-flight gate, enumerates, merges and
+    /// records the typed verdict. <c>Completed</c> is true only when the pass finished its enumeration
+    /// and released the gate; a cancelled or already-disposed early return is false and leaves a
+    /// coalesced request pending (never replayed by an interrupted pass).
+    /// </summary>
+    private async Task<(bool Ran, bool Completed)> RefreshTargetsPassAsync(CancellationToken cancellationToken)
     {
         var enumerator = _enumerator;
         if (enumerator is null)
@@ -698,7 +774,7 @@ public sealed class SourceScanScheduler : IAsyncDisposable
             }
 
             _warn?.Invoke("source scan refresh unavailable code=CORE_CAPABILITY_MISSING");
-            return false;
+            return (false, false);
         }
 
         if (!await _tickGate.WaitAsync(0, cancellationToken).ConfigureAwait(false))
@@ -714,7 +790,7 @@ public sealed class SourceScanScheduler : IAsyncDisposable
             }
 
             _info?.Invoke("source scan refresh queued (in-flight pass)");
-            return false;
+            return (false, false);
         }
 
         try
@@ -725,7 +801,7 @@ public sealed class SourceScanScheduler : IAsyncDisposable
             {
                 if (_disposed || !_options.Enabled)
                 {
-                    return false;
+                    return (false, false);
                 }
 
                 now = _timeProvider.GetUtcNow();
@@ -766,7 +842,7 @@ public sealed class SourceScanScheduler : IAsyncDisposable
             {
                 if (_disposed)
                 {
-                    return false;
+                    return (false, false);
                 }
 
                 RecordEnumerationLocked(result, now);
@@ -786,7 +862,7 @@ public sealed class SourceScanScheduler : IAsyncDisposable
                 _warn?.Invoke("source scan refresh unavailable code=" + (result.ErrorCode ?? "UNKNOWN"));
             }
 
-            return result.Ok;
+            return (result.Ok, true);
         }
         finally
         {
@@ -844,8 +920,11 @@ public sealed class SourceScanScheduler : IAsyncDisposable
     }
 
     /// <summary>
-    /// r2 P2-1: replays one coalesced Refresh request. Called after a tick (or a refresh) releases
-    /// the single-flight gate; never throws into the caller (typed log only).
+    /// r2 P2-1 / FEA-11-SCAN-RH-1 (AC-RH-1): replays one coalesced Refresh request. Called after a tick
+    /// or a completed refresh pass releases the single-flight gate; the replayed pass itself never
+    /// replays again (bounded: at most one replay per completed pass, never recursive — a request that
+    /// arrives during the replay stays pending for the next pass). Never throws into the caller (typed
+    /// log only).
     /// </summary>
     private async Task ReplayPendingRefreshAsync(CancellationToken cancellationToken)
     {
@@ -863,7 +942,7 @@ public sealed class SourceScanScheduler : IAsyncDisposable
 
         try
         {
-            await RefreshTargetsAsync(cancellationToken).ConfigureAwait(false);
+            await RefreshTargetsPassAsync(cancellationToken).ConfigureAwait(false);
         }
         catch (OperationCanceledException)
         {
@@ -1046,22 +1125,51 @@ public sealed class SourceScanScheduler : IAsyncDisposable
         }
     }
 
-    /// <summary>AC-S1: stops the loop and joins it; idempotent.</summary>
+    /// <summary>
+    /// AC-S1 / FEA-11-SCAN-RH-1 (AC-RH-2): stops the loop and joins it; idempotent. The scheduler
+    /// lifetime is cancelled FIRST so an in-flight refresh enumeration observes the token; the loop, the
+    /// in-flight refresh and the hint pass are then joined (refresh/hint bounded at 2 s each, the same
+    /// budget) before the single-flight gate is disposed, so a pass still unwinding can never turn its
+    /// gate Release into an ObjectDisposedException escaping to the Host log.
+    /// </summary>
     public async ValueTask DisposeAsync()
     {
         Task? loop;
+        Task? refreshIdle;
         lock (_gate)
         {
             if (_disposed) return;
             _disposed = true;
             loop = _loopTask;
+            if (_activeRefreshes > 0)
+            {
+                _refreshIdle ??= new TaskCompletionSource<bool>(
+                    TaskCreationOptions.RunContinuationsAsynchronously);
+                refreshIdle = _refreshIdle.Task;
+            }
+            else
+            {
+                refreshIdle = null;
+            }
         }
 
         Stop();
+        try { _lifetimeCts.Cancel(); }
+        catch (ObjectDisposedException) { }
+
         if (loop is not null)
         {
             try { await loop.ConfigureAwait(false); }
             catch (Exception error) when (error is OperationCanceledException or ObjectDisposedException) { }
+        }
+
+        // AC-RH-2: bounded join of an in-flight refresh pass (cancellation above normally completes it
+        // immediately) — same 2 s budget as the hint pass below.
+        if (refreshIdle is not null)
+        {
+            try { await refreshIdle.WaitAsync(TimeSpan.FromSeconds(2)).ConfigureAwait(false); }
+            catch (Exception error) when (error is TimeoutException or OperationCanceledException
+                or ObjectDisposedException) { }
         }
 
         // r2 P3-6: observe/join an in-flight hint-triggered pass (bounded) before tearing the gate down
@@ -1076,6 +1184,7 @@ public sealed class SourceScanScheduler : IAsyncDisposable
         }
 
         _tickGate.Dispose();
+        _lifetimeCts.Dispose();
     }
 
     /// <summary>
