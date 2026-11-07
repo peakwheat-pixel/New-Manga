@@ -51,6 +51,7 @@ from infrastructure.resource_channel.source_read_refs import SourceReadGrantRegi
 from infrastructure.sqlite.migrator import MigrationRunner
 from infrastructure.sqlite.schema import default_migrations
 from infrastructure.sqlite.source_sync import SourceSyncStore
+from ports.providers.errors import ProviderInputError
 from tests.fea11.conftest import (
     NOW,
     add_referenced_page,
@@ -714,6 +715,201 @@ def test_expired_grant_is_refused_with_the_frozen_priority(real_core) -> None:
         assert _bindings(core.source_read_refs) == {}
     finally:
         core.source_read_refs._clock = original_clock
+
+
+# ---------------------------------------------------------------------------
+# FEA-11-RUN-GRANT-2C (C-06 v1.3 §2.2 / C-16 v1.6 §2.4): long-Run renewal
+# ---------------------------------------------------------------------------
+# The Host renewal LOOP is covered by the .NET ``RunGrantRenewalTests``. On the Core
+# side one renewal round is exactly "mint a NEW grant (fresh <=300 s window) and call
+# AuthorizeSourceReadForRun again with the SAME frozen {command, scope}". The time
+# dimension can only be advanced in-process (a real child-process Core cannot be
+# monkeypatched), so it is proven here with the frozen fake-clock precedent above.
+
+WORKSPACE_ROOT_2C = Path("G:/CODEX/New Manga.workspace/FEA-11-RUN-GRANT-2C")
+
+
+@pytest.fixture()
+def run_root_2c(request) -> Path:
+    root = WORKSPACE_ROOT_2C / "fixtures" / f"{request.node.name}-{uuid.uuid4().hex[:8]}"
+    root.mkdir(parents=True, exist_ok=True)
+    return root
+
+
+@pytest.fixture()
+def real_core_2c(run_root_2c: Path):
+    """The same real assembly as ``real_core``, rooted in the 2C task data root."""
+    db_path = run_root_2c / "core" / "library.db"
+    db_path.parent.mkdir(parents=True, exist_ok=True)
+    managed_root = run_root_2c / "core" / "managed"
+    managed_root.mkdir(parents=True, exist_ok=True)
+    facts = _seed_library(db_path, managed_root)
+    core = _assemble(db_path, managed_root)
+    server = CoreServiceServer(core, stdin=io.StringIO(), stdout=io.StringIO())
+    core.pipeline.set_scheduler_owner(True)
+    try:
+        yield core, server, facts
+    finally:
+        core.conn.close()
+
+
+def _page_frame(core, page_id: str = "p2"):
+    """The SAME production provider read a Run performs for a referenced page."""
+    return _handler_bound(core).__self__.deps.images.page_frame(page_id)
+
+
+def _commit_guard(core, page_id: str = "p2") -> None:
+    """The SAME commit window a Run opens (it requires a live grant-bound mapping)."""
+    with core.pipeline._catalog.source_commit_guard(page_id):
+        pass
+
+
+def _advance_grant_clock(core, seconds: int = 301):
+    """Frozen fake-clock precedent: the registry window is 300 s."""
+    original = core.source_read_refs._clock
+    core.source_read_refs._clock = lambda: time.time() + seconds
+    return original
+
+
+def test_run_read_and_commit_fail_after_the_window_with_zero_business_writes(
+    real_core_2c,
+) -> None:
+    """AC-2C-1 (before): past the 300 s window the SAME Run's referenced page can neither be
+    read (PROVIDER_FAILED path) nor committed (DB_FAILED path), and no business row is written."""
+    core, server, facts = real_core_2c
+    core_session = _open(server)
+    grant = _grant_payload(facts["archive"])
+    assert _register(server, core_session, grant)["error"] is None
+    assert _authorize(server, core_session, [grant["grant_id"]])["result"] == {
+        "bound_pages": 1
+    }
+
+    # In-window control: the provider read and the Run commit guard are both live.
+    frame = _page_frame(core)
+    assert (frame.width, frame.height) == (NEW_B["width"], NEW_B["height"])
+    _commit_guard(core)
+    before = _table_snapshot(core)
+
+    original = _advance_grant_clock(core, 301)
+    try:
+        with pytest.raises(ProviderInputError):
+            _page_frame(core)
+        with pytest.raises(SourceImportError) as refused:
+            _commit_guard(core)
+        assert refused.value.code == "SOURCE_ACCESS_DENIED"
+        with pytest.raises(SourceImportError) as expired:
+            core.source_read_refs._checked(grant["grant_id"])
+        assert expired.value.code == "SOURCE_GRANT_EXPIRED"
+        assert _table_snapshot(core) == before, (
+            "an expired window must not write any business row"
+        )
+    finally:
+        core.source_read_refs._clock = original
+
+
+def test_renewed_grant_keeps_the_same_run_readable_past_the_window(real_core_2c) -> None:
+    """AC-2C-2 (after): one renewal round (NEW grant id, SAME frozen {command, scope})
+    restores the Run's read + commit past the old window; the OLD grant is never extended."""
+    core, server, facts = real_core_2c
+    core_session = _open(server)
+    frozen_scope = {"kind": "page", "page_id": "p2"}
+    first = _grant_payload(facts["archive"])
+    assert _register(server, core_session, first)["error"] is None
+    assert _authorize(server, core_session, [first["grant_id"]], scope=frozen_scope)[
+        "result"
+    ] == {"bound_pages": 1}
+    _commit_guard(core)
+
+    original = _advance_grant_clock(core, 301)
+    try:
+        with pytest.raises(ProviderInputError):
+            _page_frame(core)
+        with pytest.raises(SourceImportError) as expired:
+            core.source_read_refs._checked(first["grant_id"])
+        assert expired.value.code == "SOURCE_GRANT_EXPIRED"
+
+        # === one renewal round: NEW grant (fresh <=300 s window) + same frozen request ===
+        renewed = _grant_payload(facts["archive"], expires_at=time.time() + 301 + 290.0)
+        assert renewed["grant_id"] != first["grant_id"]
+        assert _register(server, core_session, renewed)["error"] is None
+        authorized = _authorize(
+            server, core_session, [renewed["grant_id"]], scope=frozen_scope
+        )
+        assert authorized["error"] is None, authorized["error"]
+        assert authorized["result"] == {"bound_pages": 1}
+
+        # The same Run keeps reading and committing past the OLD window.
+        frame = _page_frame(core)
+        assert (frame.width, frame.height) == (NEW_B["width"], NEW_B["height"])
+        _commit_guard(core)
+        bound_id, _resolved = core.source_read_refs.find_bound_for_source(
+            "s1", "sv1", "se2"
+        )
+        assert bound_id == renewed["grant_id"], (
+            "the live binding must be the RENEWED grant"
+        )
+        with pytest.raises(SourceImportError) as still_expired:
+            core.source_read_refs._checked(first["grant_id"])
+        assert still_expired.value.code == "SOURCE_GRANT_EXPIRED", (
+            "the old grant must never be extended"
+        )
+    finally:
+        core.source_read_refs._clock = original
+
+
+def test_renewal_never_rebinds_a_different_scope_or_command(real_core_2c) -> None:
+    """AC-2C-3: the same new grant under a DIFFERENT scope or command is typed and writes no
+    mapping; only the Run's frozen {command, scope} may be renewed."""
+    core, server, facts = real_core_2c
+    core_session = _open(server)
+    frozen_scope = {"kind": "page", "page_id": "p2"}
+    first = _grant_payload(facts["archive"])
+    assert _register(server, core_session, first)["error"] is None
+    assert _authorize(server, core_session, [first["grant_id"]], scope=frozen_scope)[
+        "result"
+    ] == {"bound_pages": 1}
+
+    original = _advance_grant_clock(core, 301)
+    try:
+        renewed = _grant_payload(facts["archive"], expires_at=time.time() + 301 + 290.0)
+        assert _register(server, core_session, renewed)["error"] is None
+        before = _table_snapshot(core)
+
+        # A different SCOPE (the other archive member) is a typed refusal.
+        changed_scope = _authorize(
+            server,
+            core_session,
+            [renewed["grant_id"]],
+            scope={"kind": "page", "page_id": "p1"},
+        )
+        assert changed_scope["result"] is None
+        assert changed_scope["error"]["code"] == "SOURCE_ACCESS_DENIED"
+        # A different COMMAND (a region command cannot accept a page scope) is typed.
+        changed_command = _authorize(
+            server,
+            core_session,
+            [renewed["grant_id"]],
+            command="ocr_region",
+            scope=frozen_scope,
+        )
+        assert changed_command["result"] is None
+        assert changed_command["error"]["code"] == "INVALID_REQUEST"
+        assert renewed["grant_id"] not in _bindings(core.source_read_refs)
+        assert _table_snapshot(core) == before, (
+            "a refused renewal round must write nothing"
+        )
+
+        # The page stays unauthorized until the FROZEN pair is used.
+        with pytest.raises(ProviderInputError):
+            _page_frame(core)
+        frozen = _authorize(
+            server, core_session, [renewed["grant_id"]], scope=frozen_scope
+        )
+        assert frozen["error"] is None, frozen["error"]
+        assert frozen["result"] == {"bound_pages": 1}
+        _commit_guard(core)
+    finally:
+        core.source_read_refs._clock = original
 
 
 def test_revoked_grant_is_refused_with_the_frozen_priority(real_core) -> None:

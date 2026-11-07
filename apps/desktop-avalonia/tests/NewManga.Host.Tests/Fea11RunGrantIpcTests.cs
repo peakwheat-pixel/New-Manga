@@ -1330,8 +1330,184 @@ print("FEA11_RUN_GRANT_2B_SEED_OK")
         return document.RootElement.Clone();
     }
 
-    /// <summary>Aligns the isolated fixture's C-17 location rows with the real Host registry id (the
-    /// Host mints the read grant with its own registry identity; the fixture is created before it).</summary>
+    /// <summary>
+    /// FEA-11-RUN-GRANT-2C (C-16 v1.6 §2.4) real stdio IPC: the SAME frozen Run scope is authorized
+    /// TWICE — the second call is exactly what a renewal round sends (a NEW minted grant set + one
+    /// <c>AuthorizeSourceReadForRun</c>) — and the page stays readable after the second binding.
+    ///
+    /// The time dimension (expiry &gt; 300 s) cannot be advanced inside this real child-process Core, so
+    /// it is proven by the in-process fake-clock AC-2C-1/2 tests in
+    /// <c>tests/fea11/test_source_run_grant.py</c>. This test proves the Core accepts the repeated call,
+    /// that it is a NEW grant id (never an extension of the old grant), that command/scope bytes are
+    /// identical, that no wire field was added and that no path leaks.
+    /// </summary>
+    [Fea11RunGrantIpcFact]
+    public async Task RenewalMintsAndRebindsTheSameScopeTwice()
+    {
+        var directory = new DirectoryInfo(AppContext.BaseDirectory);
+        while (directory is not null && !Directory.Exists(Path.Combine(directory.FullName, ".git")))
+        {
+            directory = directory.Parent;
+        }
+        var repo = directory?.FullName ?? throw new InvalidOperationException("repository not found");
+        var python = Environment.GetEnvironmentVariable("NEWMANGA_BUILD_PYTHON") ?? "C:/Python314/python.exe";
+        var root = Path.Combine(repo + ".workspace", "FEA-11-RUN-GRANT-2C", "fixtures",
+            "ipc-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(root);
+        var receipt = await SeedAsync(repo, python, root);
+        var archive = receipt.GetProperty("archive").GetString()!;
+        var versionId = receipt.GetProperty("version_id").GetString()!;
+        var dbPath = Path.Combine(root, "library.db");
+
+        var options = new CoreServiceOptions
+        {
+            ExecutablePath = python,
+            AdditionalArguments =
+            [
+                "-X", "utf8", "-c",
+                $"import sys;sys.path.insert(0, r'{Path.Combine(repo, "src")}');"
+                + "import bootstrap.core_service as m;raise SystemExit(m.main())",
+            ],
+            DataRoot = root,
+            DerivedRoot = Path.Combine(root, "derived"),
+            CatalogDbPath = Path.Combine(root, "catalog.sqlite"),
+            StderrLogPath = Path.Combine(root, "core.stderr.log"),
+            WireLogPath = Path.Combine(root, "wire.ndjson"),
+            StartupTimeout = TimeSpan.FromSeconds(90),
+            RequestTimeout = TimeSpan.FromSeconds(60),
+        };
+
+        await using (var client = await CoreServiceClient.StartAsync(options))
+        {
+            Assert.Contains("source.read.run/1", (await client.PingAsync()).Capabilities);
+            await client.OpenHostSessionAsync();
+            var registry = new SourceAccessRegistry(root);
+            var registered = registry.Register("fea11-run-grant-2c", [root]);
+            await AlignRegistryAsync(python, dbPath, registered.RegistryId);
+            var coordinator = new SourceReadCoordinator(client, registry, () => true);
+            Assert.True(await coordinator.SupportsRunAuthorizationAsync(CancellationToken.None));
+
+            // Production version channel: the real ScanSourceSync fills the Core-authoritative
+            // version + member identities that every renewal round re-mints with.
+            var identities = new SourceIdentityCache();
+            var scanOptions = new SourceScanOptions
+            {
+                Enabled = true,
+                IntervalSeconds = 60,
+                MaxTargetsPerTick = 8,
+                MaxBytesPerSource = 256L * 1024 * 1024,
+                MaxEntriesPerSource = 10000,
+            };
+            var executor = new HostSourceScanExecutor(
+                client, coordinator, scanOptions, identities: identities);
+            var target = new SourceScanTarget("s1", archive, ["b1"], "1");
+            var scan = await executor.ScanAsync(target, CancellationToken.None);
+            Assert.Equal(SourceScanOutcomeKind.Ok, scan.Kind);
+            Assert.True(identities.TryGet("s1", out var identity));
+            Assert.Equal(versionId, identity.VersionId);
+
+            var scope = JsonSerializer.SerializeToElement(new { kind = "page", page_id = "p1" });
+            var resolution = RunSourceRange.Resolve([target], scope, registry.List(), identities);
+            var runScope = Assert.Single(resolution.Targets);
+            var entriesBefore = DescribeRegistryEntries(registry.List());
+            // The production scan above already minted ONE grant for the ScanSourceSync frame; the
+            // renewal section measures the DELTA of its own two authorization rounds.
+            var scanGrants = GrantIdsFromWire(client, "RegisterSourceReadGrant");
+            Assert.NotEmpty(scanGrants);
+
+            // Round 1 == the dispatch-time authorization.
+            var first = await coordinator.AuthorizeRunAsync([runScope], "reocr_all", scope);
+            Assert.True(first.BoundPages >= 1);
+            Assert.Equal(1, first.MintedGrants);
+            Assert.False(first.Skipped);
+            await ResolvePageAsync(client, "p1");
+            var afterFirst = GrantIdsFromWire(client, "RegisterSourceReadGrant");
+            Assert.Equal(scanGrants.Length + 1, afterFirst.Length);
+            Assert.Single(RequestLines(client, "AuthorizeSourceReadForRun"));
+
+            // Round 2 == one renewal round: SAME frozen {command, scope}, NEW grant set.
+            var second = await coordinator.AuthorizeRunAsync([runScope], "reocr_all", scope);
+            Assert.True(second.BoundPages >= 1);
+            Assert.Equal(1, second.MintedGrants);
+            Assert.False(second.Skipped);
+            await ResolvePageAsync(client, "p1");
+
+            var grants = GrantIdsFromWire(client, "RegisterSourceReadGrant");
+            Assert.Equal(scanGrants.Length + 2, grants.Length);
+            Assert.NotEqual(afterFirst[^1], grants[^1]); // a renewal is a NEW grant, never an extension
+            var authorizes = RequestLines(client, "AuthorizeSourceReadForRun");
+            Assert.Equal(2, authorizes.Length);
+            using (var firstDocument = JsonDocument.Parse(authorizes[0]))
+            using (var secondDocument = JsonDocument.Parse(authorizes[1]))
+            {
+                var firstPayload = firstDocument.RootElement.GetProperty("payload");
+                var secondPayload = secondDocument.RootElement.GetProperty("payload");
+                Assert.Equal("reocr_all", firstPayload.GetProperty("command").GetString());
+                Assert.Equal("reocr_all", secondPayload.GetProperty("command").GetString());
+                Assert.Equal(
+                    firstPayload.GetProperty("scope").GetRawText(),
+                    secondPayload.GetProperty("scope").GetRawText());
+                Assert.Equal(
+                    new[] { "command", "grant_ids", "scope" },
+                    secondPayload.EnumerateObject().Select(property => property.Name)
+                        .OrderBy(name => name, StringComparer.Ordinal).ToArray());
+                Assert.DoesNotContain(archive, authorizes[1], StringComparison.OrdinalIgnoreCase);
+                Assert.DoesNotContain(root, authorizes[1], StringComparison.OrdinalIgnoreCase);
+            }
+
+            // This card never re-attests and never touches the Host registry structure.
+            Assert.Empty(RequestLines(client, "ReattestSourceLocation"));
+            Assert.Equal(entriesBefore, DescribeRegistryEntries(registry.List()));
+
+            var wire = File.Exists(Path.Combine(root, "wire.ndjson"))
+                ? await File.ReadAllTextAsync(Path.Combine(root, "wire.ndjson"))
+                : string.Empty;
+            var stderr = File.Exists(Path.Combine(root, "core.stderr.log"))
+                ? await File.ReadAllTextAsync(Path.Combine(root, "core.stderr.log"))
+                : string.Empty;
+            Assert.DoesNotContain(root, wire, StringComparison.OrdinalIgnoreCase);
+            Assert.DoesNotContain(root, stderr, StringComparison.OrdinalIgnoreCase);
+            Assert.DoesNotContain(archive, wire, StringComparison.OrdinalIgnoreCase);
+
+            var evidence = new
+            {
+                @case = "FEA-11-RUN-GRANT-2C (real IPC: same frozen scope authorized twice == renewal "
+                    + "round; new grant id; page still readable)",
+                core = "real volatile python core (stdio IPC)",
+                command = "reocr_all",
+                rounds = 2,
+                register_frames = grants.Length - scanGrants.Length,
+                authorize_frames = authorizes.Length,
+                new_grant_id = afterFirst[^1] != grants[^1],
+                same_command_scope = true,
+                bound_pages = second.BoundPages,
+                minted_grants = second.MintedGrants,
+                resolve_p1_after_renewal = "ok",
+                reattest_frames = 0,
+                host_registry_unchanged = true,
+                wire_path_hits = 0,
+                time_dimension =
+                    "NOT in this child-process Core: proven in-process by the AC-2C-1/2 fake-clock "
+                    + "tests of tests/fea11/test_source_run_grant.py",
+            };
+            await File.WriteAllTextAsync(
+                Path.Combine(root, "renewal-ipc.json"),
+                JsonSerializer.Serialize(evidence, new JsonSerializerOptions { WriteIndented = true }));
+            await File.WriteAllTextAsync(
+                Path.Combine(root, "renewal-ipc.txt"),
+                "FEA-11-RUN-GRANT-2C real IPC (same frozen scope authorized twice == renewal round)\n"
+                + "DataRoot=" + root + "\n"
+                + "rounds=2 register_frames=" + (grants.Length - scanGrants.Length)
+                + " authorize_frames=" + authorizes.Length + "\n"
+                + "new_grant_id=" + (afterFirst[^1] != grants[^1]) + " same_command_scope=true\n"
+                + "bound_pages=" + second.BoundPages + " minted=" + second.MintedGrants
+                + " resolve_p1_after_renewal=ok\n"
+                + "reattest_frames=0 host_registry_unchanged=true wire_path_hits=0\n"
+                + "time_dimension=in-process fake clock (tests/fea11/test_source_run_grant.py)\n"
+                + "PASS\n");
+        }
+    }
+
     /// <summary>AC-RUN-5: registry STRUCTURE projection (the pre-existing last_used_at audit excluded).</summary>
     private static string[] DescribeRegistryEntries(IReadOnlyList<SourceAuthorization> entries) =>
         entries.Select(entry =>
@@ -1344,6 +1520,16 @@ print("FEA11_RUN_GRANT_2B_SEED_OK")
     private static string[] RequestLines(CoreServiceClient client, string command) =>
         client.Wire.Frames.Select(frame => frame.RequestLine)
             .Where(line => RequestCommand(line) == command).ToArray();
+
+    /// <summary>FEA-11-RUN-GRANT-2C: the Host-minted grant ids of every RegisterSourceReadGrant frame.</summary>
+    private static string[] GrantIdsFromWire(CoreServiceClient client, string command) =>
+        RequestLines(client, command)
+            .Select(line =>
+            {
+                using var document = JsonDocument.Parse(line);
+                return document.RootElement.GetProperty("payload").GetProperty("grant_id").GetString()!;
+            })
+            .ToArray();
 
     private static string? RequestCommand(string requestLine)
     {
@@ -1361,6 +1547,8 @@ print("FEA11_RUN_GRANT_2B_SEED_OK")
         }
     }
 
+    /// <summary>Aligns the isolated fixture's C-17 location rows with the real Host registry id (the
+    /// Host mints the read grant with its own registry identity; the fixture is created before it).</summary>
     private static async Task AlignRegistryAsync(string python, string dbPath, string registryId)
     {
         const string code =
