@@ -158,3 +158,13 @@ git checkout -- verification/FEA-09   # .NET 全量后必须恢复
 - 当前：HEAD `28163f27d`（origin 同步，AHEAD=0）；无活动 Task。下一队列：L-S4-B-2（proposed）、B2（proposed，延后）、2C 长 Run、L-R11、C-04b、SCAN-RH、UI P3。
 - 其他 limitation：B2、folder（L-S4-2）、L-S4-1、L-R1；backoff 口径「下一个未被既有 backoff 抑制的 tick」；不宣称自动恢复/自愈/自动重新授权/Run 面恢复。
 - **push**：`b3143b7ca..28163f27d`（L-S4-B-1 交付 + closeout + proposed）；PUSH_EXIT=0，AHEAD=0。
+
+## 15. 续接补充（2026-11-07 第 7 轮：L-S4-B-2 完成）
+
+- **FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1 `done`**（delivery `fad1ec776`；docs `ca929aade`）：**Run 源范围解析恢复**——`HostRuntime.RunSourceRange.Resolve` 对枚举 target 复用 `SourceScanScheduler.SelectEnumeratedEntry` 选自身 live `(registry_id, generation)`；非枚举保持 `ResolveRegistryEntry` 字节不变；解析失败降级 `Unresolved`（不抛）；枚举 live 但 Core version 冷 → `ColdSources`（恢复 bounded on-demand 分类）；gated 真 IPC before `Unresolved=1`/页读拒绝 → after `Targets=1`/`bound_pages=1`/resolve OK。**零契约 0/18 pins**。
+- 独立 r1 **approved（P0=0/P1=0/P2=0/P3=7 非阻断）**；AC-RUN-1…8 全 MET；判别性 5/5。
+- **基线（本轮实测）**：全量 pytest **3360/10 EXIT=0**；全量 .NET **1660/1/95 EXIT=1**——唯一失败为既有 flaky `FluentR2ReworkTests.R3001_…`（App UI 时序），隔离复跑 5×9/0/0 + App.Tests 全量 770/0/7 PASS → 非本卡回归；pins 18/18；check PASS(3w)；API PASS；scope 24 文件全 ALLOWED。
+- **L-S4-B 线收尾**：B（枚举恢复）→ B-1（扫描执行恢复）→ B-2（Run 范围解析）三卡 done；Run 面只承诺「预授权/冷源分类恢复」≠「Run 全面恢复」（managed-only Run 无需 source 授权；mint 仍 best-effort typed skip）。
+- 当前：HEAD `313f88905`（origin 同步，AHEAD=0）；无活动 Task。下一候选：B2 `roots_available`（proposed，**延后至 roots UI/消费者立项**）、2C 长 Run 续期（L-G1）、L-R11 gate 统一、C-04b residual、SCAN-RH、UI P3。
+- 其他 limitation：folder（L-S4-2）、L-S4-1、L-R1、多根 first-root；gated Core 行由测试侧 `AlignRegistryAsync` 对齐（本卡不发 reattest）。
+- **push**：`7be65026e..313f88905`（L-S4-B-2 交付 + closeout + B2 proposed）；PUSH_EXIT=0，AHEAD=0。
