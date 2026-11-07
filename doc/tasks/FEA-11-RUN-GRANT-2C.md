@@ -3,8 +3,8 @@ id: FEA-11-RUN-GRANT-2C
 title: 2C 长 Run 续期实现（Host-only 周期重铸 grant + 重发 AuthorizeSourceReadForRun；L-G1 降级）
 kind: implementation
 governance_version: 3
-status: proposed
-approval: 占位卡：依赖 `FEA-11-RUN-GRANT-2C-PREREQ-1`（C-06 v1.3 + C-16 v1.6，2 pins）done 后方可释放；权威 scope `2C-LONG-RUN-RENEWAL-scope-r1` + ZCode 裁决 `cbdf231a-…`（APPROVE 2 pins/方案 a）；旧别名 `FEA-11-2C-LONG-RUN-RENEWAL-1` 仅登记、不得并存
+status: ready
+approval: 用户 2026-11-06「自动推进/全部授权/裁决交 Codex 或 DSH」；PREREQ `FEA-11-RUN-GRANT-2C-PREREQ-1` done（C-06 v1.3 + C-16 v1.6，2 pins，`7317837d5`）；权威 scope `2C-LONG-RUN-RENEWAL-scope-r1` + ZCode 裁决 `cbdf231a-…`（APPROVE 2 pins/方案 a）；旧别名 `FEA-11-2C-LONG-RUN-RENEWAL-1` 仅登记、不得并存；DSH D-1…D-10 见下
 suggested_owner: codex
 owner: null
 reviewer: null
@@ -39,7 +39,7 @@ out_of_scope:
 
 # FEA-11-RUN-GRANT-2C：2C 长 Run 续期实现（proposed 占位）
 
-> **状态：`proposed`；依赖 PREREQ（C-06 v1.3 + C-16 v1.6）done 后释放；不得提前实施。**
+> **状态：`ready`；PREREQ（C-06 v1.3 + C-16 v1.6）已 done；按卡面 In/AC 实施（Host-only 续期）。**
 
 ## 目标（草案）
 

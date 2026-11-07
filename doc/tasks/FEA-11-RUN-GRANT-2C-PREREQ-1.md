@@ -3,20 +3,20 @@ id: FEA-11-RUN-GRANT-2C-PREREQ-1
 title: 2C 长 Run 续期契约前置（C-06 v1.3 + C-16 v1.6：mid-run 重复建立语义；2 pins）
 kind: contract
 governance_version: 3
-status: ready
+status: done
 approval: 用户 2026-11-06「自动推进/全部授权/裁决交 Codex 或 DSH」；权威 scope review `doc/reviews/2C-LONG-RUN-RENEWAL-scope-r1.md`（fresh subagent `857903ae-…`，**READY-WITH-UNFREEZE**：严格读 C-06 v1.2→v1.3 + C-16 v1.5→v1.6 **2 pins**；0-pin 解释不成立）；Codex 不可用 → ZCode 故障转移裁决（`cbdf231a-…`：**APPROVE 2 pins 路径**，D-1…D-10 见卡）；DSH 裁决 D-1…D-10（见下）
 suggested_owner: dsh
 owner: dsh
-reviewer: 独立上下文 fresh subagent（byte-level；不得参与本 UNFREEZE 起草；session 见 `doc/reviews/FEA-11-RUN-GRANT-2C-PREREQ-1-r1.md` 与载体）
+reviewer: 独立上下文 fresh subagent（byte-level；未参与起草）：r1 changes_requested（P2×4）→ 处置 → r2 changes_requested（P2×1）→ 处置 → r3 changes_requested（P2×1）→ 处置 → r4 changes_requested（P2×1）→ 处置 → r5 changes_requested（P2×1）→ 处置 → **r6 `approved`（P0=0/P1=0/P2=0/P3=1 非阻断；session `308751b9-…`；reviewed_head `c1e19ed82`）**；报告 `doc/reviews/FEA-11-RUN-GRANT-2C-PREREQ-1-r1…r6.md`；载体 §6
 depends_on:
   - FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1
 base_commit: null
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 7317837d5
+delivery_head: 7317837d5
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-11-RUN-GRANT-2C-PREREQ-1
 allowed_paths:
   - doc/tasks/FEA-11-RUN-GRANT-2C-PREREQ-1.md
@@ -64,7 +64,7 @@ out_of_scope:
 ### I-2 C-06 v1.3（`doc/plan/FEA-C06_SOURCE_AUTH_DRAFT.md`）
 - 头部状态 → `FROZEN v1.3（2026-11-07 重冻；v1.0/v1.1/v1.2 历史）`；日期行补 v1.3；载体链接。
 - §2.2 `:43` 追加 mid-run 重复建立语义（D-2 原文；只追加，不改既有句）。
-- §2.3/§3/§4/§5 零改动（`AuthorizeSourceReadForRun` 行保持）。
+- §2.3/§3/§4 零改动（`AuthorizeSourceReadForRun` 行保持）；§5 追加条件 ⑥ + §6 变更记录 v1.3 行。
 
 ### I-3 C-16 v1.6（`doc/plan/FEA-C16_SOURCE_READ_WIRE_DRAFT.md`）
 - 头部状态 → `FROZEN v1.6`；日期行补 v1.6；载体链接。
@@ -85,11 +85,11 @@ out_of_scope:
 
 ## Acceptance Criteria（v3）
 
-- [ ] **AC-T1 契约增量最小**：C-06 v1.3 只含 I-2（§2.2 一句 + 头部）；C-16 v1.6 只含 I-3（§2.4 一句 + 头部 + §10 条件/记录）；C-05/C-15/C-17/C-07/M2-C1 及其余 16 契约逐字节不变；无新命令/能力/错误码/wire 字段/TTL 变更/schema/依赖。
-- [ ] **AC-T2 安全语义明确**：两句逐字含「不延长任何 TTL/不扩 scope/不绕过撤销/不改选 command/scope/每次新铸新 grant 并顺序重验 facts/任一页不可授权整请求 typed 拒绝零映射写入」；不构成「放宽授权/长期通行证/恢复入口」。
-- [ ] **AC-T3 独立 byte-level 复核 approved**：fresh subagent 复核最终字节（diff 逐行、安全语义无放宽、16 项不变、pin 可复算）；P0/P1=0；session/reviewed_head 入载体。
-- [ ] **AC-T4 重冻与 pins**：FROZEN-C06/C16 更新；矩阵更新；`verify_pins` **18/18**（C06/C16 新值、其余 16 原值）；`check.ps1`（默认 + `-TaskPath`）PASS。
-- [ ] **AC-T5 载体与不夸大**：载体含触发/授权/变更点/安全/兼容/回退/复核要求/结果；明写「契约就绪 ≠ 实现/产品可用」「L-G1 只降级不关闭」；未改 Run wire/TTL/撤销/错误闭集/能力。
+- [x] **AC-T1 契约增量最小**：C-06 v1.3 只含 I-2（§2.2 一句 + §5 条件 ⑥ + §6 变更记录 + 头部）；C-16 v1.6 只含 I-3（§2.4 一句 + 头部 + §10 条件/记录）；C-05/C-15/C-17/C-07/M2-C1 及其余 16 契约逐字节不变；无新命令/能力/错误码/wire 字段/TTL 变更/schema/依赖。 <<MET>>
+- [x] **AC-T2 安全语义明确**：两句逐句语义等价（且更严）含「不延长任何 TTL/不扩 scope/不绕过撤销/不改选 command/scope/每次新铸新 grant 并顺序重验 facts/任一页不可授权整请求 typed 拒绝零映射写入」；不构成「放宽授权/长期通行证/恢复入口」。 <<MET>>
+- [x] **AC-T3 独立 byte-level 复核 approved**：fresh subagent 复核最终字节（diff 逐行、安全语义无放宽、16 项不变、pin 可复算）；P0/P1=0；session/reviewed_head 入载体。 <<MET>>
+- [x] **AC-T4 重冻与 pins**：FROZEN-C06/C16 更新；矩阵更新；`verify_pins` **18/18**（C06/C16 新值、其余 16 原值）；`check.ps1`（默认 + `-TaskPath`）PASS。 <<MET>>
+- [x] **AC-T5 载体与不夸大**：载体含触发/授权/变更点/安全/兼容/回退/复核要求/结果；明写「契约就绪 ≠ 实现/产品可用」「L-G1 只降级不关闭」；未改 Run wire/TTL/撤销/错误闭集/能力。 <<MET>>
 
 ## 独立复核要求（byte-level）
 
@@ -100,3 +100,41 @@ out_of_scope:
 ## ZCode 裁决记录
 
 - **已记录（`cbdf231a-…`，2026-11-07，只读）**：APPROVE 2 pins 路径（C-06 v1.3 + C-16 v1.6）；0-pin 不成立（幂等条款对象是「同请求」；「同一 binding 多份 grant」是读端选择规则）；方案 (a) 成立；红线 10 条充分；D-4b 接受「重算+单轮超限 typed skip」；接线点采 dispatcher post-dispatch；不加 TTL seam；L-G1 只降级不关闭；卡 id 采 `FEA-11-RUN-GRANT-2C`。
+
+## Review 处置（DSH，2026-11-07；append-only）
+
+- 独立 byte-level 复核 r1–r6：逐轮 `changes_requested`（记录/证据/卡一致性 + C-06 两处措辞修正，契约安全语义自 r1 起无放宽）→ 逐项处置 → **r6 `approved`（P0=0/P1=0/P2=0/P3=1 非阻断）**；session `308751b9-…`，reviewed_head `c1e19ed82`。
+- 最终字节：C-06 v1.3 sha256 `75f8e2b4…`（blob `b537e76d…`）；C-16 v1.6 sha256 `b8f46fb1…`（blob `f8f31f55…`）；其余 16 契约零字节；无新命令/能力/错误码/wire/TTL/schema/依赖。
+- ZCode 裁决（`cbdf231a-…`）：APPROVE 2 pins 路径（0-pin 不成立）；方案 (a) Host 周期重铸；红线 10 条；L-G1 只降级不关闭。
+- 不改变 AC-T1…T5 MET 判定。
+
+## Canonical Evidence
+
+| evidence_id | AC | 路径 | commit | sha256 | class |
+|---|---|---|---|---|---|
+| EV-01 | AC-T4 | verification/FEA-11-RUN-GRANT-2C-PREREQ-1/carrier.md | 7317837d5 | b10872652f2d92ce43cbe68730d098a8775f1222bc234fde5da033ad6b320c33 | CANONICAL |
+| EV-02 | AC-T4 | verification/FEA-11-RUN-GRANT-2C-PREREQ-1/changed-lines.diff | 7317837d5 | 9bacc8a0fd9b5a87355632f09521ccaba9a6105cb96062cd7c7b187380594664 | CANONICAL |
+| EV-03 | AC-T4 | verification/FEA-11-RUN-GRANT-2C-PREREQ-1/logs/check-taskpath.log | 7317837d5 | 634e072301dfad18a3f6cdaa683846173b9827cc51dd2bc053049f537f93a424 | CANONICAL |
+| EV-04 | AC-T4 | verification/FEA-11-RUN-GRANT-2C-PREREQ-1/logs/check.log | 7317837d5 | 634e072301dfad18a3f6cdaa683846173b9827cc51dd2bc053049f537f93a424 | CANONICAL |
+| EV-05 | AC-T4 | verification/FEA-11-RUN-GRANT-2C-PREREQ-1/logs/pins.log | 7317837d5 | 11bfd4130c47fa0c7da84c8ef05d9474bfd5e2624030b7196d731326b9b3af34 | CANONICAL |
+| EV-06 | AC-T4 | verification/FEA-11-RUN-GRANT-2C-PREREQ-1/other-16-pins.txt | 7317837d5 | 431acd2a381aa353c9c620d0cf5fb35940d9b43dc89bef61d53d3d5966cc441a | CANONICAL |
+| EV-07 | AC-T4 | verification/FEA-11-RUN-GRANT-2C-PREREQ-1/pre-post.sha256 | 7317837d5 | 56d4670d4eddc323cfdcea04632ddf2c3098ddf10a196f6c4a77fdcc3e4ad5a7 | CANONICAL |
+| EV-08 | AC-T4 | verification/FEA-11-RUN-GRANT-2C-PREREQ-1/EV.md | 7317837d5 | b3c56b70b2e35a088c610f9b0e969d0c5e0337c4b70b73d9093aed01aab79d7f | CANONICAL |
+
+> 证据树逐文件 sha256 以本表为准；r1–r6 报告不在 evidence_dir，按载体 §6/卡面引用。
+
+## Resource Manifest
+
+| resource_type | 资源 | disposition | 目标 | 完整性 | 引用/进程检查结果 |
+|---|---|---|---|---|---|
+| 无删除/移动/归档 | - | NOT_APPLICABLE | - | - | 本卡仅改两契约/冻结记录/矩阵/载体/卡/证据；仓内 0 删除/0 移动/0 归档；仓外隔离根 `G:/CODEX/New Manga.workspace/FEA-11-RUN-GRANT-2C-PREREQ-1/` 保留（无独有产品数据） |
+
+## Closeout Record（2026-11-07）
+
+- **状态**：`done`；delivery/integration = `7317837d5`（C-06 v1.3 + C-16 v1.6 + FROZEN×2 + 矩阵 + 载体 + r1–r6 报告 + 证据 + PREREQ 卡）。
+- **AC 判定**：AC-T1…AC-T5 **全 MET**。
+- **Review 处置**：r1–r5 changes_requested → 处置 → **r6 approved（P0=0/P1=0/P2=0/P3=1 非阻断）**。
+- **门禁数字**：pins **18/18**（C06 `99831a20…`→`75f8e2b4…`；C16 `a7f57ebd…`→`b8f46fb1…`；其余 16 项实测 UNCHANGED）；check（默认+`-TaskPath`）PASS(3 warnings)；C-06 变更 +3 行/1 处（§2.2 追加 + §5 ⑥ + §6 记录）、C-16 +2 行/2 处（§2.4 追加 + §10 ⑧ + 记录）；C-05/C-15/C-17/C-07/M2-C1 零字节；全量 pytest/.NET **NOT_RUN**（契约-only；由实现卡门禁实跑）。
+- **limitations / follow-up**：实现卡 `FEA-11-RUN-GRANT-2C` 未交付；L-G1 **只降级不关闭**（子限制：单步 >300s／续期失败／L-G2 加密／L-G9 重启／L-R1 viewer 残余／L-G16 >4096）；B2/folder/L-S4-1/L-R1 保留。
+- **指针清理**：STATUS 当前 Task → `FEA-11-RUN-GRANT-2C`（实现，base=本 closeout 提交）；PLAN 本节点 done；TASK_LEDGER 重生成。
+- **push**：Lead 统一 push（PRE/POST/AHEAD 记录见状态文件）。
