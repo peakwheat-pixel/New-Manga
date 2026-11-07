@@ -34,18 +34,43 @@ public enum SourceRecoveryAction
 }
 
 /// <summary>
-/// FEA-11-L-S1-B (AC-LSB-1/2): the sanitized outcome of the read-only diagnosis probe. It carries
-/// the typed code (for display), the LEAF name only (never a path) and the number of stale
+/// FEA-11-L-S1-B r1 P2-01/P3-04: why a diagnosis deliberately offers NO action. The recovery face
+/// is PER-SOURCE: it never acts on a batch, and (this card) it only claims file-source recovery.
+/// </summary>
+public enum SourceRecoveryBlockReason
+{
+    None = 0,
+
+    /// <summary>More than one selected source could be the failing one — ask for a single selection.</summary>
+    MultipleSources = 1,
+
+    /// <summary>The failing source is a FOLDER; folder identity keys are L-S4-2 (not this card).</summary>
+    FolderSource = 2,
+}
+
+/// <summary>
+/// FEA-11-L-S1-B (AC-LSB-1/2, r1 P2-01): one source the recovery face may act on. It carries the
+/// App's own selection path (never a wire value) plus the folder bit, so a folder failure can be
+/// refused instead of being silently treated as a file root.
+/// </summary>
+public sealed record SourceRecoveryTarget(string Path, bool IsFolder);
+
+/// <summary>
+/// FEA-11-L-S1-B (AC-LSB-1/2, r1 P2-01): the sanitized outcome of the read-only diagnosis probe. It
+/// carries the typed code (for display), the LEAF name only (never a path) and the number of stale
 /// non-revoked entries; it never carries a full path, a locator, a grant or
-/// <c>quarantine_path</c>.
+/// <c>quarantine_path</c>. It describes exactly ONE source — never a batch.
 /// </summary>
 public sealed record SourceRecoveryDiagnosis(
     SourceRecoveryAction Action,
     string? ErrorCode,
     string? SourceLeafName,
-    int StaleEntryCount)
+    int StaleEntryCount,
+    SourceRecoveryBlockReason BlockReason = SourceRecoveryBlockReason.None)
 {
     public bool HasAction => Action != SourceRecoveryAction.None;
+
+    public bool IsBlocked => BlockReason != SourceRecoveryBlockReason.None;
 
     /// <summary>Typed code only — the recovery face refuses to invent a recovery action for it.</summary>
     public static SourceRecoveryDiagnosis NotApplicable(string? errorCode) =>
@@ -56,6 +81,14 @@ public sealed record SourceRecoveryDiagnosis(
 
     public static SourceRecoveryDiagnosis Reset(string? errorCode) =>
         new(SourceRecoveryAction.ResetRegistry, errorCode, null, 0);
+
+    /// <summary>r1 P2-01: the batch cannot be attributed to one failing source → no action.</summary>
+    public static SourceRecoveryDiagnosis MultipleSources(string? errorCode) =>
+        new(SourceRecoveryAction.None, errorCode, null, 0, SourceRecoveryBlockReason.MultipleSources);
+
+    /// <summary>r1 P3-04: the failing source is a folder → no action (L-S4-2 owns folder keys).</summary>
+    public static SourceRecoveryDiagnosis FolderUnsupported(string? errorCode, string leafName) =>
+        new(SourceRecoveryAction.None, errorCode, leafName, 0, SourceRecoveryBlockReason.FolderSource);
 }
 
 /// <summary>
@@ -93,7 +126,7 @@ public static class SourceRecoveryText
 {
     public static string Code(string? code) => SourceImportText.CodeText(code);
 
-    /// <summary>AC-LSB-2 root-level branch: exactly ONE explicit action is disclosed.</summary>
+    /// <summary>AC-LSB-2 root-level branch: exactly ONE explicit action is disclosed for ONE source.</summary>
     public static string ReauthorizeOffer(string? leafName, int staleCount) =>
         (string.IsNullOrEmpty(leafName) ? "该来源" : "来源 " + leafName) +
         " 的授权与文件当前状态不一致：可重新授权此来源（撤销 " + staleCount +
@@ -106,6 +139,16 @@ public static class SourceRecoveryText
 
     public static string ResetConfirmation() =>
         "确认重置源授权存储？将丢弃全部来源授权（所有来源都需要重新授权），不可撤销。";
+
+    /// <summary>r1 P2-01: a batch is never attributed automatically — ask for a single selection.</summary>
+    public static string MultipleSourcesOffer() =>
+        "检测到多个导入来源：恢复只针对唯一的失败来源，且不会自动执行。" +
+        "请只选择一个来源重新预览后再使用恢复（多选时不会撤销或重新注册任何来源）。";
+
+    /// <summary>r1 P3-04: folder recovery is out of this card's promise (L-S4-2).</summary>
+    public static string FolderUnsupportedOffer(string? leafName) =>
+        (string.IsNullOrEmpty(leafName) ? "该来源" : "来源 " + leafName) +
+        " 是 folder：本卡只承诺 file-source 同路径恢复（folder 身份键 L-S4-2 另案），因此不提供恢复动作。";
 
     public static string ReauthorizeSucceeded(int revokedCount, int registeredCount, string? leafName) =>
         "已重新授权" + (string.IsNullOrEmpty(leafName) ? "该来源" : "来源 " + leafName) +
@@ -131,8 +174,21 @@ public static class SourceRecoveryText
     public static string RevokeFailed(int revokedCount, string code) =>
         "已撤销 " + revokedCount + " 条失效授权，未能完成全部撤销（" + code + "）：未重新授权。";
 
+    /// <summary>r1 P3-11: a revoke ACK failure can follow an already-persisted revoke; say "至少".</summary>
+    public static string RevokeFailedUnknownTail(int revokedCount, string code) =>
+        "已确认撤销 " + revokedCount + " 条失效授权（若 Host 已持久化撤销但 ACK 失败，实际可能多一条），" +
+        "未能完成全部撤销（" + code + "）：未重新授权。";
+
     public static string ResetFailed(string? code) =>
         "重置源授权存储失败（" + code + "）。";
+
+    /// <summary>r1 P2-01 defense in depth: a batch never reaches the registry.</summary>
+    public static string MultipleSourcesRefused() =>
+        "恢复动作只针对单个失败来源：多选时不会撤销或重新注册任何来源（INVALID_REQUEST）。";
+
+    /// <summary>r1 P3-04: folder roots are refused by this card's file-source promise.</summary>
+    public static string FolderUnsupportedRefused() =>
+        "folder 来源不支持该恢复：仅支持 file-source 同路径恢复（INVALID_REQUEST）。";
 }
 
 /// <summary>
@@ -210,6 +266,10 @@ internal sealed record SourceRegistryEntry(
 /// <c>source_list_roots</c>) to decide which single explicit action may be offered, and
 /// <see cref="ReauthorizeAsync"/>/<see cref="ResetRegistryAsync"/> run only when the user clicks.
 ///
+/// r1 P2-01 (attribute, never a batch): the face is PER-SOURCE. The caller supplies EXACTLY the
+/// source whose mint failed (<see cref="AttributeFailedSource"/>); a batch/ambiguous selection is
+/// refused (no action, no probe writes) instead of revoking a healthy sibling.
+///
 /// Red line R-1 (AC-LSB-5): the plan/mint path is untouched — this class is the ONLY place that
 /// calls <c>source_revoke_root</c>/<c>source_register_root</c> after a mint failure, and it never
 /// registers on behalf of a failed mint unless the user explicitly asked for it.
@@ -234,31 +294,72 @@ public sealed class SourceRecoveryCoordinator
     }
 
     /// <summary>
+    /// r1 P2-01: decide WHICH source a failed preview may be recovered for.
+    ///
+    /// The import coordinator reports the source whose mint aborted the preview
+    /// (<see cref="SourceImportCoordinator.LastPlanFailureSource"/>); that exact source is the only
+    /// recovery target. When the failure carries no source attribution (e.g. it came from outside
+    /// the per-source loop) a single-source selection is still unambiguous, while a multi-source
+    /// selection is AMBIGUOUS and yields NO targets — the face then refuses to act instead of
+    /// revoking healthy siblings.
+    /// </summary>
+    internal static (IReadOnlyList<SourceRecoveryTarget> Targets, bool Ambiguous) AttributeFailedSource(
+        IReadOnlyList<ReferenceImportSource>? selected,
+        ReferenceImportSource? failed)
+    {
+        if (failed is { } source)
+        {
+            return ([new SourceRecoveryTarget(source.Path, source.IsFolder)], false);
+        }
+
+        if (selected is { Count: 1 })
+        {
+            return ([new SourceRecoveryTarget(selected[0].Path, selected[0].IsFolder)], false);
+        }
+
+        return (Array.Empty<SourceRecoveryTarget>(), selected is { Count: > 1 });
+    }
+
+    /// <summary>
     /// AC-LSB-2: the read-only branch decision. Order matters:
     /// <list type="number">
     /// <item>the preview must have failed with the frozen <c>SOURCE_REGISTRY_UNAVAILABLE</c> on the
-    /// HOST-side mint leg; any other code (a Core-side code, an unexpected code) offers NOTHING and
-    /// no probe runs;</item>
+    /// HOST-side mint leg for exactly ONE attributed source; any other code, a batch or an
+    /// unattributed multi-selection offers NOTHING and no probe runs (r1 P2-01);</item>
+    /// <item>a FOLDER failing source offers NOTHING — this card promises file-source recovery only
+    /// (r1 P3-04);</item>
     /// <item>probe <c>source_list_roots</c> (read-only, no writes). A typed
     /// <c>SOURCE_REGISTRY_UNAVAILABLE</c> from the probe itself = FILE-LEVEL → only
     /// <see cref="SourceRecoveryAction.ResetRegistry"/>;</item>
     /// <item>a successful probe = ROOT-LEVEL → only <see cref="SourceRecoveryAction.ReauthorizeSource"/>,
-    /// and only when a non-revoked entry actually covers one of the failed sources;</item>
+    /// and only when a non-revoked entry actually covers the failed source;</item>
     /// <item>any other probe code (e.g. <c>CORE_CAPABILITY_MISSING</c>/<c>SOURCE_REGISTRY_BUSY</c>)
     /// offers NOTHING and only displays that code.</item>
     /// </list>
     /// </summary>
     public async Task<SourceRecoveryDiagnosis> DiagnoseAsync(
-        IReadOnlyList<string>? failedPaths,
+        IReadOnlyList<SourceRecoveryTarget>? targets,
         string? failureCode,
         bool hostSideMintFailure,
+        bool ambiguous = false,
         CancellationToken cancellationToken = default)
     {
         if (!string.Equals(failureCode, RegistryUnavailable, StringComparison.Ordinal) ||
             !hostSideMintFailure ||
-            failedPaths is not { Count: > 0 })
+            targets is not { Count: > 0 })
         {
             return SourceRecoveryDiagnosis.NotApplicable(failureCode);
+        }
+
+        if (ambiguous || targets.Count > 1)
+        {
+            return SourceRecoveryDiagnosis.MultipleSources(failureCode);
+        }
+
+        var target = targets[0];
+        if (target.IsFolder)
+        {
+            return SourceRecoveryDiagnosis.FolderUnsupported(failureCode, LeafName(target.Path));
         }
 
         IReadOnlyList<SourceRegistryEntry> entries;
@@ -274,28 +375,30 @@ public sealed class SourceRecoveryCoordinator
                 : SourceRecoveryDiagnosis.NotApplicable(probeCode);
         }
 
-        var stale = SelectStaleEntries(entries, failedPaths);
+        var stale = SelectStaleEntries(entries, [target.Path]);
         return stale.Count == 0
             ? SourceRecoveryDiagnosis.NotApplicable(failureCode)
             : SourceRecoveryDiagnosis.Reauthorize(failureCode, LeafName(stale[0].Root), stale.Count);
     }
 
     /// <summary>
-    /// AC-LSB-3/4/5: outcome of the single user action "re-authorize this source".
+    /// AC-LSB-3/4/5 plus r1 P2-01: outcome of the single user action "re-authorize THIS source".
     ///
-    /// EVERY non-revoked entry whose persisted single root equals one of the failed sources is
-    /// revoked FIRST (generation+1 + revoked_at, persistent) — the reuse selector only skips
-    /// REVOKED entries, so revoking just the first duplicate would leave the same permanent
-    /// failure. Only after ALL revokes succeeded is exactly ONE new entry registered per distinct
-    /// registered root, using that entry's OWN persisted <c>roots[0]</c> string.
+    /// Only the ONE attributed source is touched — a multi-target list is refused before any wire
+    /// call, and a folder target is refused (file-source promise, L-S4-2 open). For the single
+    /// path, EVERY non-revoked entry is revoked FIRST (generation+1 + revoked_at, persistent) —
+    /// the reuse selector only skips REVOKED entries, so revoking just the first duplicate would
+    /// leave the same permanent failure. Only after ALL revokes succeeded is exactly ONE new entry
+    /// registered, using that entry's OWN persisted <c>roots[0]</c> string.
     ///
     /// A revoke failure aborts before any registration (fail-closed: the path stays unusable
     /// rather than gaining a healthy entry behind a stale one). A register failure keeps the
     /// revoked facts and reports revoked-but-not-re-authorized (retryable) — never success and
-    /// never a rollback. Repeating the action leaves exactly ONE non-revoked entry for the path.
+    /// never a rollback. Repeating the action leaves exactly ONE non-revoked entry for the path
+    /// (revoked rows accumulate — registered limitation).
     /// </summary>
     public async Task<SourceRecoveryResult> ReauthorizeAsync(
-        IReadOnlyList<string>? failedPaths,
+        IReadOnlyList<SourceRecoveryTarget>? targets,
         CancellationToken cancellationToken = default)
     {
         if (!_writesAllowed())
@@ -303,11 +406,35 @@ public sealed class SourceRecoveryCoordinator
             return SourceRecoveryResult.Failed("HOST_READ_ONLY", SourceRecoveryText.ReadOnly());
         }
 
-        if (failedPaths is not { Count: > 0 })
+        if (targets is not { Count: > 0 })
         {
             return SourceRecoveryResult.Failed("INVALID_REQUEST");
         }
 
+        // r1 P2-01 defense in depth: the face never acts on a batch (no revoke/register frames).
+        if (targets.Count > 1)
+        {
+            return SourceRecoveryResult.Failed("INVALID_REQUEST", SourceRecoveryText.MultipleSourcesRefused());
+        }
+
+        var target = targets[0];
+        if (target.IsFolder)
+        {
+            return SourceRecoveryResult.Failed("INVALID_REQUEST", SourceRecoveryText.FolderUnsupportedRefused());
+        }
+
+        return await ReauthorizeSingleAsync(target, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// The single-source realization of <see cref="ReauthorizeAsync"/>: this method is the ONLY
+    /// place that may revoke/register, and it can never be handed more than one path.
+    /// </summary>
+    private async Task<SourceRecoveryResult> ReauthorizeSingleAsync(
+        SourceRecoveryTarget target,
+        CancellationToken cancellationToken)
+    {
+        var failedPaths = new[] { target.Path };
         IReadOnlyList<SourceRegistryEntry> entries;
         try
         {
@@ -343,8 +470,11 @@ public sealed class SourceRecoveryCoordinator
             catch (Exception error) when (error is not OutOfMemoryException)
             {
                 var code = TypedCodeOf(error);
+                // r1 P3-11: the Host persists the revoke BEFORE the Core ACK; an ACK failure can
+                // therefore leave one more persisted revoke than this local count. Say so instead of
+                // over-claiming either success or a rollback.
                 return new SourceRecoveryResult(
-                    false, code, SourceRecoveryText.RevokeFailed(revoked, code),
+                    false, code, SourceRecoveryText.RevokeFailedUnknownTail(revoked, code),
                     revoked, 0, LeafName(entry.Root));
             }
         }
@@ -455,7 +585,7 @@ public sealed class SourceRecoveryCoordinator
     }
 
     /// <summary>
-    /// The non-revoked entries whose SINGLE persisted root equals one of the App's failed sources.
+    /// The non-revoked entries whose SINGLE persisted root equals one of the failed sources.
     /// Only single-root entries are considered: the import face registers exactly one root per
     /// entry, and re-registering a multi-root entry's first root would silently narrow it.
     /// INTERNAL so the App tests can pin the selector directly (they never see a path through it).
@@ -475,6 +605,23 @@ public sealed class SourceRecoveryCoordinator
         }
 
         return selected;
+    }
+
+    /// <summary>
+    /// The ALREADY-revoked single-root entries of a failed path. Used ONLY as the retry leg of an
+    /// explicit re-authorization after a partial outcome (revokes done, register failed) — never to
+    /// resurrect a fresh authorization on a failure branch.
+    /// </summary>
+    internal static IReadOnlyList<SourceRegistryEntry> SelectRevokedEntries(
+        IReadOnlyList<SourceRegistryEntry> entries,
+        IReadOnlyList<string> paths)
+    {
+        var targets = new HashSet<string>(
+            paths.Select(NormalizeForCompare).Where(path => path.Length > 0),
+            StringComparer.OrdinalIgnoreCase);
+        return entries
+            .Where(entry => entry.Revoked && entry.Root.Length > 0 && targets.Contains(NormalizeForCompare(entry.Root)))
+            .ToList();
     }
 
     /// <summary>
@@ -515,26 +662,7 @@ public sealed class SourceRecoveryCoordinator
         return entries;
     }
 
-    /// <summary>
-    /// The ALREADY-revoked single-root entries of a failed path. Used ONLY as the retry leg of an
-    /// explicit re-authorization after a partial outcome (revokes done, register failed) — never to
-    /// resurrect a fresh authorization on a failure branch.
-    /// </summary>
-    internal static IReadOnlyList<SourceRegistryEntry> SelectRevokedEntries(
-        IReadOnlyList<SourceRegistryEntry> entries,
-        IReadOnlyList<string> paths)
-    {
-        var targets = new HashSet<string>(
-            paths.Select(NormalizeForCompare).Where(path => path.Length > 0),
-            StringComparer.OrdinalIgnoreCase);
-        return entries
-            .Where(entry => entry.Revoked && entry.Root.Length > 0 && targets.Contains(NormalizeForCompare(entry.Root)))
-            .ToList();
-    }
-
-    /// <summary>
-    /// Leaf display name only — the ONE path-derived string the recovery face may show.
-    /// </summary>
+    /// <summary>Leaf display name only — the ONE path-derived string the recovery face may show.</summary>
     internal static string LeafName(string root)
     {
         if (string.IsNullOrWhiteSpace(root)) return string.Empty;
@@ -552,6 +680,7 @@ public sealed class SourceRecoveryCoordinator
         ReadOnlyHostException readOnly => readOnly.Code,
         _ => SourceImportCoordinator.TypedCode(error),
     };
+
     private static string NormalizeForCompare(string path)
     {
         if (string.IsNullOrWhiteSpace(path)) return string.Empty;

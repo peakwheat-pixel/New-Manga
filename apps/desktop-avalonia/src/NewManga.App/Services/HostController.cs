@@ -1464,7 +1464,7 @@ public sealed class HostController : IHostController, ISourceImportController, I
             // is path-free, so this is the only place the App's own selection is retained; the
             // diagnosis is still only a READ-ONLY probe and re-authorization stays an explicit
             // user action (AC-LSB-1/5 — nothing below registers or revokes by itself).
-            PinPendingSourceRecovery(sources, code, hostSideMintFailure: ex is SourceAccessException);
+            PinPendingSourceRecovery(sources, code, hostSideMintFailure: ex is SourceAccessException, LastPlanFailureSourceOf(imports));
             return null;
         }
     }
@@ -1594,12 +1594,13 @@ public sealed class HostController : IHostController, ISourceImportController, I
     // READ-ONLY probe and the two actions are only reached from an explicit user command.
     // ---------------------------------------------------------------------------------------
 
-    // The App's own failed selection + failure provenance for the CURRENT preview failure. The
-    // recovery members take NO path argument (AC-LSB-6); this is the only retention of the App's
-    // own selection and it is cleared as soon as a new preview starts.
-    private IReadOnlyList<string>? _pendingRecoveryPaths;
+    // The App's own attributed failure + provenance for the CURRENT preview failure. The recovery
+    // members take NO path argument (AC-LSB-6) and act on ONE source only (r1 P2-01): this is the
+    // only retention of the App's own selection and it is cleared as soon as a new preview starts.
+    private IReadOnlyList<SourceRecoveryTarget>? _pendingRecoveryTargets;
     private string? _pendingRecoveryCode;
     private bool _pendingRecoveryHostMintFailure;
+    private bool _pendingRecoveryAmbiguous;
 
     private SourceRecoveryCoordinator? _sourceRecovery;
     private HostRuntime? _sourceRecoveryRuntime;
@@ -1628,15 +1629,24 @@ public sealed class HostController : IHostController, ISourceImportController, I
 
     private void ClearPendingSourceRecovery()
     {
-        _pendingRecoveryPaths = null;
+        _pendingRecoveryTargets = null;
         _pendingRecoveryCode = null;
         _pendingRecoveryHostMintFailure = false;
+        _pendingRecoveryAmbiguous = false;
     }
 
+    /// <summary>
+    /// r1 P2-01: pin the MINIMAL recovery attribution instead of the whole selection. The import
+    /// coordinator reports the source whose mint aborted the preview; only that source becomes a
+    /// recovery target. With no attribution, a single-source selection is still unique while a
+    /// multi-source selection is ambiguous → NO target (the face then refuses and asks for a single
+    /// selection; a healthy sibling is never revoked/re-registered).
+    /// </summary>
     private void PinPendingSourceRecovery(
         IReadOnlyList<ReferenceImportSource> sources,
         string code,
-        bool hostSideMintFailure)
+        bool hostSideMintFailure,
+        ReferenceImportSource? failedSource)
     {
         if (!string.Equals(code, SourceRecoveryCoordinator.RegistryUnavailable, StringComparison.Ordinal))
         {
@@ -1644,11 +1654,16 @@ public sealed class HostController : IHostController, ISourceImportController, I
             return;
         }
 
-        _pendingRecoveryPaths = sources.Select(source => source.Path).ToArray();
+        var attribution = SourceRecoveryCoordinator.AttributeFailedSource(sources, failedSource);
+        _pendingRecoveryTargets = attribution.Targets;
+        _pendingRecoveryAmbiguous = attribution.Ambiguous;
         _pendingRecoveryCode = code;
         _pendingRecoveryHostMintFailure = hostSideMintFailure;
     }
 
+    /// <summary>r1 P2-01: the source that aborted the last plan (null when unattributed).</summary>
+    private static ReferenceImportSource? LastPlanFailureSourceOf(SourceImportCoordinator imports) =>
+        imports.LastPlanFailureSource;
     public async Task<SourceRecoveryDiagnosis> DiagnoseSourceRecoveryAsync(
         CancellationToken cancellationToken = default)
     {
@@ -1659,7 +1674,7 @@ public sealed class HostController : IHostController, ISourceImportController, I
         }
 
         return await recovery
-            .DiagnoseAsync(_pendingRecoveryPaths, _pendingRecoveryCode, _pendingRecoveryHostMintFailure, cancellationToken)
+            .DiagnoseAsync(_pendingRecoveryTargets, _pendingRecoveryCode, _pendingRecoveryHostMintFailure, _pendingRecoveryAmbiguous, cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -1672,13 +1687,13 @@ public sealed class HostController : IHostController, ISourceImportController, I
             return SourceRecoveryResult.Failed("HOST_NOT_READY", SourceRecoveryText.NotReady());
         }
 
-        if (_pendingRecoveryPaths is not { Count: > 0 })
+        if (_pendingRecoveryTargets is not { Count: > 0 })
         {
             return SourceRecoveryResult.Failed("INVALID_REQUEST");
         }
 
         var result = await recovery
-            .ReauthorizeAsync(_pendingRecoveryPaths, cancellationToken)
+            .ReauthorizeAsync(_pendingRecoveryTargets, cancellationToken)
             .ConfigureAwait(false);
         SetLastError(result.Ok ? null : result.ErrorCode);
         if (result.Ok)

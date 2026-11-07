@@ -297,6 +297,9 @@ public sealed class ImportDockViewModel : ObservableObject
 
     public bool HasSourceRecoveryAction => _recoveryDiagnosis?.HasAction == true;
 
+    /// <summary>r1 P2-01/P3-04: the border is also shown for a blocked (no-action) explanation.</summary>
+    public bool HasSourceRecoveryHint => !string.IsNullOrEmpty(_recoveryOfferText);
+
     public bool OffersReauthorizeSource =>
         _recoveryDiagnosis?.Action == SourceRecoveryAction.ReauthorizeSource;
 
@@ -517,12 +520,20 @@ public sealed class ImportDockViewModel : ObservableObject
             }
 
             _recoveryDiagnosis = diagnosis;
-            _recoveryOfferText = diagnosis.Action switch
+            // r1 P2-01/P3-04: the recovery face is per-source and file-source only. A batch or a
+            // folder failure is explained (hint) instead of being given a broad action.
+            _recoveryOfferText = diagnosis.BlockReason switch
             {
-                SourceRecoveryAction.ReauthorizeSource =>
-                    SourceRecoveryText.ReauthorizeOffer(diagnosis.SourceLeafName, diagnosis.StaleEntryCount),
-                SourceRecoveryAction.ResetRegistry => SourceRecoveryText.ResetOffer(),
-                _ => string.Empty,
+                SourceRecoveryBlockReason.MultipleSources => SourceRecoveryText.MultipleSourcesOffer(),
+                SourceRecoveryBlockReason.FolderSource =>
+                    SourceRecoveryText.FolderUnsupportedOffer(diagnosis.SourceLeafName),
+                _ => diagnosis.Action switch
+                {
+                    SourceRecoveryAction.ReauthorizeSource =>
+                        SourceRecoveryText.ReauthorizeOffer(diagnosis.SourceLeafName, diagnosis.StaleEntryCount),
+                    SourceRecoveryAction.ResetRegistry => SourceRecoveryText.ResetOffer(),
+                    _ => string.Empty,
+                },
             };
             // AC-LSB-2 third branch: when the probe returns another typed code, THAT code is what
             // gets displayed (no recovery action) — e.g. a missing capability must never be
@@ -570,10 +581,16 @@ public sealed class ImportDockViewModel : ObservableObject
             ClearSourceRecoveryState();
             _notify(result.Message, NmStatus.Done);
             // The flow is "explicit re-authorization → preview again": the SAME user action re-runs
-            // the preview (one click, no unattended retry loop).
+            // the preview (one click, no unattended retry loop). The success text is published after
+            // that preview so its recovery-state reset cannot erase it (r1 P3-07).
             if (_referenceSources is { Count: > 0 } sources)
             {
                 await PlanReferenceImportAsync(sources).ConfigureAwait(true);
+            }
+
+            if (!HasReferenceError)
+            {
+                RecoveryOutcomeText = result.Message;
             }
         }
         finally
@@ -630,6 +647,9 @@ public sealed class ImportDockViewModel : ObservableObject
 
             ReferenceErrorText = string.Empty;
             ClearSourceRecoveryState();
+            // Publish the confirmed outcome AFTER the reset of the recovery state (the reset clears
+            // the previous outcome by design — r1 P3-07).
+            RecoveryOutcomeText = result.Message;
             _notify(result.Message, NmStatus.Done);
         }
         finally
@@ -642,6 +662,10 @@ public sealed class ImportDockViewModel : ObservableObject
     {
         _recoveryDiagnosis = null;
         _recoveryOfferText = string.Empty;
+        // r1 P3-07: a NEW preview starts a new episode — the previous action's outcome text must not
+        // linger above a fresh failure. (An explicit recovery re-sets its own outcome AFTER the
+        // automatic re-preview below.)
+        _recoveryOutcomeText = string.Empty;
         _isResetConfirmationPending = false;
         RaiseRecoveryDerived();
     }
@@ -775,6 +799,7 @@ public sealed class ImportDockViewModel : ObservableObject
         nameof(IsRecovering),
         nameof(IsResetConfirmationPending),
         nameof(HasSourceRecoveryAction),
+        nameof(HasSourceRecoveryHint),
         nameof(OffersReauthorizeSource),
         nameof(OffersResetSourceRegistry),
         nameof(CanReauthorizeSource),

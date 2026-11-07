@@ -602,6 +602,14 @@ public sealed class SourceImportCoordinator : IAsyncDisposable
     }
 
     /// <summary>
+    /// FEA-11-L-S1-B r1 P2-01: the source whose registration/mint aborted the LAST
+    /// <see cref="PlanAsync"/> (null when the plan failed elsewhere or succeeded). The preview stops
+    /// at the first failing source, so this is the ONLY source the App may attribute a root recovery
+    /// to — the recovery face never acts on the whole selection.
+    /// </summary>
+    internal ReferenceImportSource? LastPlanFailureSource { get; private set; }
+
+    /// <summary>
     /// Registers each source root (reusing an identical, non-revoked registry entry when present)
     /// and asks the Core for a plan. Typed failures propagate to the caller (the controller maps
     /// them onto <c>LastError</c>); an unparseable response returns null.
@@ -612,6 +620,7 @@ public sealed class SourceImportCoordinator : IAsyncDisposable
         string duplicatePolicy,
         CancellationToken cancellationToken)
     {
+        LastPlanFailureSource = null;
         if (string.IsNullOrWhiteSpace(chapterId) || sources.Count == 0)
         {
             return null;
@@ -620,7 +629,17 @@ public sealed class SourceImportCoordinator : IAsyncDisposable
         var grants = new List<string>();
         foreach (var source in sources)
         {
-            grants.AddRange(await IssueGrantsAsync(source, cancellationToken).ConfigureAwait(false));
+            try
+            {
+                grants.AddRange(await IssueGrantsAsync(source, cancellationToken).ConfigureAwait(false));
+            }
+            catch (Exception error) when (IsTypedFailure(error))
+            {
+                // r1 P2-01: remember exactly WHICH source aborted the preview; the caller's recovery
+                // face targets only this one (a healthy sibling is never revoked/re-registered).
+                LastPlanFailureSource = source;
+                throw;
+            }
         }
 
         var response = await _commands

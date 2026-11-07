@@ -111,11 +111,12 @@
       <TextBlock Classes="meta" Text="{Binding ReferenceErrorText}" TextWrapping="Wrap" IsVisible="{Binding HasReferenceError}" />
 
       <!-- FEA-11-L-S1-B (B1) 显式恢复入口：仅在预览以 SOURCE_REGISTRY_UNAVAILABLE 失败、
-           且只读探针诊断出唯一分支动作后出现；未点击前不会撤销/注册/重置任何授权。
-           文案只含来源叶子名 / typed 码 / 计数：不显示路径，也不显示隔离路径（quarantine_path）。 -->
+           且只读探针诊断出唯一分支动作后出现（多选/ folder 只显示说明、不给动作）；未点击前不会
+           撤销/注册/重置任何授权。文案只含来源叶子名 / typed 码 / 计数：不显示路径，也不显示
+           隔离路径（quarantine_path）。 -->
       <Border Classes="raised"
               Padding="{DynamicResource Nm.Padding.ControlSm}"
-              IsVisible="{Binding HasSourceRecoveryAction}">
+              IsVisible="{Binding HasSourceRecoveryHint}">
         <StackPanel Spacing="{DynamicResource Nm.Space.2}">
           <TextBlock Classes="meta" TextWrapping="Wrap" Text="{Binding RecoveryOfferText}" />
           <StackPanel Orientation="Horizontal"
