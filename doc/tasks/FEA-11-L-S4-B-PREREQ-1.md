@@ -3,21 +3,21 @@ id: FEA-11-L-S4-B-PREREQ-1
 title: C-16 v1.5 UNFREEZE（source.reattest/1 + ReattestSourceLocation 条件写 + roots_available 投影字段）
 kind: contract
 governance_version: 3
-status: ready
+status: done
 approval: 用户 2026-11-06「自动推进/全部授权/裁决交 Codex 或 DSH」；权威 scope review `doc/reviews/C16-V15-BATCH-scope-r1.md`（fresh subagent `6f75eb58-…`，**BLOCKED 按现卡面**；推荐 C-16 v1.5 = §0 能力 `source.reattest/1` + §2.5 条件写 `ReattestSourceLocation` + §1 `roots_available` additive；C-15/C-17/C-07/M2-C1 零字节；**1/18 pins**）；Codex 不可用 → ZCode 故障转移裁决（见卡）；DSH 裁决 D-1…D-8（见下）
 suggested_owner: dsh
 owner: dsh
-reviewer: 独立上下文 fresh subagent（byte-level；不得参与本 UNFREEZE 起草；session 见 `doc/reviews/FEA-11-L-S4-B-PREREQ-1-r1.md` 与载体）
+reviewer: 独立上下文 fresh subagent（byte-level；未参与起草）：r1–r7 `changes_requested`（记录/字节逐轮收敛）→ **r8 `approved`（P0=0/P1=0/P2=0/P3=0；session `fc11c286-…`；reviewed_head `59ba5189f`）**；报告 `doc/reviews/FEA-11-L-S4-B-PREREQ-1-r1…r8.md`；载体 §6
 depends_on:
   - FEA-11-L-S1-B-RECOVERY-REAUTH-1
   - FEA-11-L-S4-LOCATION-AUTH-REFRESH-1
 base_commit: 71d616881
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 3a475b5b9
+delivery_head: 3a475b5b9
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-11-L-S4-B-PREREQ-1
 allowed_paths:
   - doc/tasks/FEA-11-L-S4-B-PREREQ-1.md
@@ -83,11 +83,11 @@ out_of_scope:
 
 ## Acceptance Criteria（v3）
 
-- [ ] **AC-T1 契约增量最小**：C-16 v1.5 只含 I-2（能力 `source.reattest/1` + §2.5 命令 + §1 `roots_available` 字段 + §6/§7/§10 澄清）；C-15/C-17/C-06/C-07/M2-C1 及其余 17 契约逐字节不变；无新错误码/wire minor/schema/依赖。
-- [ ] **AC-T2 安全语义明确**：§2.5 明确 live grant + live 唯一非撤销条目 + 同一物理身份 + `live.CreatedAt > old.RevokedAt` + 恰一根/唯一 live + folder 排除；拒绝/无匹配零写；幂等/单调；无路径/无 registry_id 入参；不自动重新授权/不重建 identity。
-- [ ] **AC-T3 独立 byte-level 复核 approved**：fresh subagent 复核最终字节（diff 逐行、安全语义无放宽、17 项不变、pin 可复算）；P0/P1=0；session/reviewed_head 入载体。
-- [ ] **AC-T4 重冻与 pins**：FROZEN-C16 更新；矩阵更新；`verify_pins` **18/18**（C16 新值、其余 17 原值）；`check.ps1`（默认 + `-TaskPath`）PASS。
-- [ ] **AC-T5 载体与不夸大**：载体含触发/授权/变更点/安全/兼容/回退/复核要求/结果；明写「契约就绪 ≠ 实现/产品可用」；未改 C-15/C-17/错误闭集/Run wire。
+- [x] **AC-T1 契约增量最小**：C-16 v1.5 只含 I-2（能力 `source.reattest/1` + §2.5 命令 + §1 `roots_available` 字段 + §6/§7/§10 澄清）；C-15/C-17/C-06/C-07/M2-C1 及其余 17 契约逐字节不变；无新错误码/wire minor/schema/依赖。 <<MET>>
+- [x] **AC-T2 安全语义明确**：§2.5 明确 live grant + live 唯一非撤销条目 + 同一物理身份 + `live.CreatedAt > old.RevokedAt` + 恰一根/唯一 live + folder 排除；拒绝/无匹配零写；幂等/单调；无路径/无 registry_id 入参；不自动重新授权/不重建 identity。 <<MET>>
+- [x] **AC-T3 独立 byte-level 复核 approved**：fresh subagent 复核最终字节（diff 逐行、安全语义无放宽、17 项不变、pin 可复算）；P0/P1=0；session/reviewed_head 入载体。 <<MET>>
+- [x] **AC-T4 重冻与 pins**：FROZEN-C16 更新；矩阵更新；`verify_pins` **18/18**（C16 新值、其余 17 原值）；`check.ps1`（默认 + `-TaskPath`）PASS。 <<MET>>
+- [x] **AC-T5 载体与不夸大**：载体含触发/授权/变更点/安全/兼容/回退/复核要求/结果；明写「契约就绪 ≠ 实现/产品可用」；未改 C-15/C-17/错误闭集/Run wire。 <<MET>>
 
 ## 独立复核要求（byte-level）
 
@@ -100,3 +100,41 @@ out_of_scope:
 - **已记录（ZCode，2026-11-07，`subagent_zcode` 只读）**：**维持 BLOCKED 按旧卡面；接受推荐形状 b3**（C-16 v1.5 = `source.reattest/1` + §2.5 `ReattestSourceLocation` + §1 `roots_available`，**恰 1 pin**；C-17/C-07/M2-C1 零字节）；确认 b1/b2 否决正确；B2 字段随 v1.5 冻结、实现延后；背书条件写安全性（Host 签名 grant 作同一 source+四键身份证明；请求无路径；只写 registry/generation 两列（last_verified_at 原值）；复用 A 卡唯一 SQL；拒绝路径零写；幂等单调；校验顺序 host-only→shape→grant live→source_id→identity→条件 UPDATE）。
 - **C-15 零字节的条件性（ZCode 补充）**：依赖 D-6 解释背书（B1 点击=显式操作、reattest=事实传播非新恢复动作）；DSH 已在 D-6 显式背书；若后续 Review 不背书则升为 2 pins（C-16+C-15），不得把解释当既定事实。
 - **ZCode 补充 AC**：① 每轮 refresh 每 target 至多一次 reattest、无重试风暴 → 已入 L-S4-B 卡 AC-LS4B-9；②「零交互」限定为 B1 显式动作之后的传播、禁止「自动恢复/自愈」字样 → 已入 AC-LS4B-10。
+
+## Review 处置（DSH，2026-11-07；append-only）
+
+- 独立 byte-level 复核 r1–r8：逐轮 `changes_requested`（r1 P1×2：请求形状/写入值；r2 P1：`grant.created_at` 不在 grant 载荷；r3 P1：两列方案未传播；r4 P1：包级残留；r5 P1：PREREQ 卡文本）→ 逐项修正 → **r8 `approved`（P0=0/P1=0/P2=0/P3=0，仅非阻断观察）**；session `fc11c286-8b80-4276-9d57-9b4b226b30d5`，reviewed_head `59ba5189f`。
+- 最终字节：C-16 v1.5 sha256 `a7f57ebd…`（38912 B，LF，0 CRLF），blob `67c741d3…`；C-15/C-17/C-06/C-07/M2-C1 与其余 17 契约零字节；无新错误码/wire minor/schema/依赖。
+- ZCode 裁决（`74371e2a-…`）：接受 b3/1 pin；补充 AC（每轮至多一次 reattest、措辞红线）已入 L-S4-B 卡。
+- 不改变 AC-T1…T5 MET 判定。
+
+## Canonical Evidence
+
+| evidence_id | AC | 路径 | commit | sha256 | class |
+|---|---|---|---|---|---|
+| EV-01 | AC-T3/T4 | verification/FEA-11-L-S4-B-PREREQ-1/carrier.md | 3a475b5b9 | c2b12b3b08037c5b73120b692f8432c87c62b782ec9530ab07254eaea2ac057b | CANONICAL |
+| EV-02 | AC-T3/T4 | verification/FEA-11-L-S4-B-PREREQ-1/changed-lines.diff | 3a475b5b9 | 9ff9a852dccbe37c0c96947d4b66b23bd1cb87b1d51c0a73244801dc71ec317c | CANONICAL |
+| EV-03 | AC-T3/T4 | verification/FEA-11-L-S4-B-PREREQ-1/EV.md | 3a475b5b9 | 7ba032a0b136f423a35cf2925ee1157f8ec7731119f7cb16ac977aaba865bf7e | CANONICAL |
+| EV-04 | AC-T3/T4 | verification/FEA-11-L-S4-B-PREREQ-1/logs/check-taskpath.log | 3a475b5b9 | d1e251bcef74ee9f91d57c031ca40d76b1aebd2633bc65f90ecb386d5a36737d | CANONICAL |
+| EV-05 | AC-T3/T4 | verification/FEA-11-L-S4-B-PREREQ-1/logs/check.log | 3a475b5b9 | d1e251bcef74ee9f91d57c031ca40d76b1aebd2633bc65f90ecb386d5a36737d | CANONICAL |
+| EV-06 | AC-T3/T4 | verification/FEA-11-L-S4-B-PREREQ-1/logs/pins.log | 3a475b5b9 | 07c2b60cab2953f31ff614c48a6f818744cacd2cf7b02ab15bcf1b194d929a95 | CANONICAL |
+| EV-07 | AC-T3/T4 | verification/FEA-11-L-S4-B-PREREQ-1/other-17-pins.txt | 3a475b5b9 | fee1af10007dde7c9523087d7bb804d1838ef4659d791fc76fc44e9d103c1f54 | CANONICAL |
+| EV-08 | AC-T3/T4 | verification/FEA-11-L-S4-B-PREREQ-1/pre-post.sha256 | 3a475b5b9 | 57c1c2d918207cd64f36d501908648dc54fbd54a6ba6421ed9957f564373ba61 | CANONICAL |
+
+> 证据树逐文件 sha256 以本表为准；r1–r8 报告不在 evidence_dir，按载体 §6/卡面引用。
+
+## Resource Manifest
+
+| resource_type | 资源 | disposition | 目标 | 完整性 | 引用/进程检查结果 |
+|---|---|---|---|---|---|
+| 无删除/移动/归档 | - | NOT_APPLICABLE | - | - | 本卡仅改契约/冻结记录/矩阵/载体/证据；仓内 0 删除/0 移动/0 归档；仓外隔离根 `G:/CODEX/New Manga.workspace/FEA-11-L-S4-B-AUTO-RECOVERY-1/` 保留（C-16 blob 副本/日志，无独有产品数据） |
+
+## Closeout Record（2026-11-07）
+
+- **状态**：`done`；delivery/integration = `3a475b5b9`（C-16 v1.5 + FROZEN-C16 + 矩阵 + 载体 + r1–r8 报告 + 证据 + PREREQ 卡）。
+- **AC 判定**：AC-T1…AC-T5 **全 MET**。
+- **Review 处置**：r1–r7 changes_requested → 处置 → **r8 approved（P0=0/P1=0/P2=0/P3=0）**。
+- **门禁数字（before → after）**：pins **18/18 → 18/18**（C16 `ad25fb3c…`→`a7f57ebd…`；其余 17 项实测 UNCHANGED）；`check.ps1`（默认 + `-TaskPath`）PASS(3 warnings)；C-16 变更 +45/−15 行（§0 能力/§1 字段/§2.5 命令/§6/§10）；C-15/C-17/C-06/C-07/M2-C1 零字节；全量 pytest/.NET **NOT_RUN**（契约-only；由 L-S4-B 实现卡门禁实跑）。
+- **limitations / follow-up**：L-S4-B 实现未交付；B2 字段冻结但实现延后；「零交互」仅指 B1 显式动作之后的传播；C-15 零字节的解释条件性（D-6）；L-R1 未全修。
+- **指针清理**：STATUS 当前 Task → `FEA-11-L-S4-B-AUTO-RECOVERY-1`（实现，base=本 closeout 提交）；PLAN 本节点 done；TASK_LEDGER 重生成。
+- **push**：Lead 统一 push（PRE/POST/AHEAD 记录见状态文件）。
