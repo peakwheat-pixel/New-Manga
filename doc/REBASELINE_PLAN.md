@@ -50,7 +50,7 @@ READY 节点：`FEA-11-L-S4-B-1-SCAN-EXEC-RECOVERY-1`
 
 完成：FEA-10 done；FEA-11-PREREQ-1 done；FEA-11 与 HOST-AUTH-1 `closed_with_limitations`；FEA-12 四卡 done；FEA-11 承接卡 done（AC11-1 判 MET 带 L-STARTUP）；UNFREEZE C-04b v1.1+M2-C1 rev2.14（`fc9833479`）。
 
-当前 DAG：FEA-11→FEA-12 四卡 done → SCAN 线 done → RENDITION-1/UI-RESIDUAL-1 done → RUN-GRANT-1 线 done → RUN-GRANT-2A/2B done → L-S1-PREREQ-1（done，`ae8c2de07`）→ L-S1-A（done，`b56c5a0e6`）/ L-S4-A（done，`0ebb234bf`）；→ L-S1-B（done，`80d2799de`）→ L-S4-B-PREREQ（done，`3a475b5b9`）/ L-S4-B（done，`30bdeb4ce`）→ L-S4-B-1（ready，Host-only 零契约）/ B2（proposed，延后）/ 2C（长 Run）/ B2（proposed，字段已冻结、实现延后）/ 2C（长 Run）
+当前 DAG：FEA-11→FEA-12 四卡 done → SCAN 线 done → RENDITION-1/UI-RESIDUAL-1 done → RUN-GRANT-1 线 done → RUN-GRANT-2A/2B done → L-S1-PREREQ-1（done，`ae8c2de07`）→ L-S1-A（done，`b56c5a0e6`）/ L-S4-A（done，`0ebb234bf`）；→ L-S1-B（done，`80d2799de`）→ L-S4-B-PREREQ（done，`3a475b5b9`）/ L-S4-B（done，`30bdeb4ce`）→ L-S4-B-1（ready）/ B2（proposed）/ 2C（Long Run）/ B2（proposed，字段已冻结、实现延后）/ 2C（长 Run）
 
 ## 历史快照（终态节点，非当前 DAG）
 
