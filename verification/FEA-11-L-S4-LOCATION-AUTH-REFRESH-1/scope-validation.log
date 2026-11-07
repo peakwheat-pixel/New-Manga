@@ -1,7 +1,9 @@
-[2026-11-07T00:14:27.744+00:00] FEA-11-L-S4 (A) scope validation
+[2026-11-07T00:21:00.326+00:00] FEA-11-L-S4 (A) scope validation
 card=doc/tasks/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1.md base=55306cb84
-delivery_commits=6dd36aad7,0ebb234bf
-changed=7
+delivery_commits=6dd36aad7,0ebb234bf,9ef295b74
+changed=21
+  CHANGED doc/handoffs/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1-0ebb234bf.md
+  CHANGED doc/tasks/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1.md
   CHANGED src/application/importing/referenced/runtime.py
   CHANGED src/application/sources/service.py
   CHANGED src/infrastructure/sqlite/library.py
@@ -9,6 +11,18 @@ changed=7
   CHANGED tests/fea09/test_import_source.py
   CHANGED tests/fea09/test_source_sync_operations.py
   CHANGED tests/fea11/test_source_relink.py
+  CHANGED verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/EV.md
+  CHANGED verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/RESOURCE-MANIFEST.json
+  CHANGED verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/changed-files.txt
+  CHANGED verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/logs/discrimination.log
+  CHANGED verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/logs/feature.log
+  CHANGED verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/logs/full-dotnet.log
+  CHANGED verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/logs/full-pytest.log
+  CHANGED verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/logs/gates.log
+  CHANGED verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/scope-validation.log
+  CHANGED verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/tools/discrimination.py
+  CHANGED verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/tools/gen_manifest.py
+  CHANGED verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/tools/scope_validation.py
 allowed_paths=12
   ALLOWED doc/tasks/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1.md
   ALLOWED doc/reviews/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1-*.md
@@ -26,4 +40,4 @@ card_status_unchanged=True
 PROTOCOL_MINOR=3
 zero_drift_violations=[]
 out_of_scope=[]
-result=PASS changed=7 out_of_scope=[] forbidden=[] minor=3
+result=PASS changed=21 out_of_scope=[] forbidden=[] minor=3

@@ -1,3 +1,5 @@
+doc/handoffs/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1-0ebb234bf.md
+doc/tasks/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1.md
 src/application/importing/referenced/runtime.py
 src/application/sources/service.py
 src/infrastructure/sqlite/library.py
@@ -5,3 +7,15 @@ tests/core/test_core_scan_target_commands.py
 tests/fea09/test_import_source.py
 tests/fea09/test_source_sync_operations.py
 tests/fea11/test_source_relink.py
+verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/EV.md
+verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/RESOURCE-MANIFEST.json
+verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/changed-files.txt
+verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/logs/discrimination.log
+verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/logs/feature.log
+verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/logs/full-dotnet.log
+verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/logs/full-pytest.log
+verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/logs/gates.log
+verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/scope-validation.log
+verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/tools/discrimination.py
+verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/tools/gen_manifest.py
+verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/tools/scope_validation.py

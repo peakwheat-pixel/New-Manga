@@ -1,19 +1,20 @@
 {
   "schema_version": 1,
   "task_id": "FEA-11-L-S4-LOCATION-AUTH-REFRESH-1",
-  "generated_at": "2026-11-07T00:20:49+00:00",
+  "generated_at": "2026-11-07T00:21:00+00:00",
   "generated_by": "l-s4-impl (DSH Agent Teams teammate; Lead `lead`)",
-  "delivery_head": "0ebb234bf",
+  "delivery_head": "9ef295b74",
   "delivery_commits": [
     "6dd36aad7",
-    "0ebb234bf"
+    "0ebb234bf",
+    "9ef295b74"
   ],
-  "repo_head_at_generation": "89757f193d26bf7ba257a37766cbffea4c1b6617",
+  "repo_head_at_generation": "9ef295b741bc79be799834c1b3a58958741d8ec2",
   "note": "FEA-11-L-S4-LOCATION-AUTH-REFRESH-1 (A) delivery: the ONE in-place location-auth refresh (C-15 §2/§3.3 conformance, zero contract change) wired into the C-17 apply face and the referenced-import reuse/skip paths, plus its discriminating tests and evidence. No linked worktree, no push, no user data, no schema/migration/dependency change; the frozen contract bytes were NOT modified (pin audit is the proof). This is a GENERATION-TIME snapshot of the tracked delivery tree.",
   "resources": [
     {
       "resource_type": "worktree",
-      "source_path": "NOT_APPLICABLE（main worktree; delivery head 0ebb234bf）",
+      "source_path": "NOT_APPLICABLE（main worktree; delivery head 9ef295b74）",
       "disposition": "NOT_APPLICABLE",
       "destination_path": "NOT_APPLICABLE",
       "process_check": "未创建 linked worktree（任务要求显式不建）；实施全部在 main 工作树 src/tests/verification/doc 内，未 push。"
@@ -30,7 +31,7 @@
       "source_path": "G:\\CODEX\\New Manga (main)",
       "disposition": "PRESERVE_REFERENCED",
       "destination_path": "Same source location",
-      "file_count": 7,
+      "file_count": 21,
       "changed_files": [
         {
           "commit": "6dd36aad7",
@@ -66,6 +67,76 @@
           "commit": "0ebb234bf",
           "path": "tests/fea11/test_source_relink.py",
           "sha256": "de5c9addedc6a5fb400f09af6510831355e3cad3abc0885ba72522ec02ec5725"
+        },
+        {
+          "commit": "9ef295b74",
+          "path": "doc/handoffs/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1-0ebb234bf.md",
+          "sha256": "01ecc55beea940ef39610b818a2f893ae840c244a93c92933c1d221d4dd9e451"
+        },
+        {
+          "commit": "9ef295b74",
+          "path": "doc/tasks/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1.md",
+          "sha256": "95575574d4e15f3b1b2079904c37fce6880527ba1ad35760a00e5aea2b9d5d25"
+        },
+        {
+          "commit": "9ef295b74",
+          "path": "verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/EV.md",
+          "sha256": "d0a08932b2dbd68c669b44f46038d9d71ae44eb0936a2bc4874374a6c25dc437"
+        },
+        {
+          "commit": "9ef295b74",
+          "path": "verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/RESOURCE-MANIFEST.json",
+          "sha256": "f0309607f951bc290216d8aa39c0c218f4b3ff415095c2503c852b57e8fb18f3"
+        },
+        {
+          "commit": "9ef295b74",
+          "path": "verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/changed-files.txt",
+          "sha256": "0f4b55dd0fac464f617be575c6eec8a5d6fc97144388dd852c97bf89ee1133a7"
+        },
+        {
+          "commit": "9ef295b74",
+          "path": "verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/logs/discrimination.log",
+          "sha256": "f287dbe155d7da13074b1e185c36a24202719df01147cb72a841811032ac424b"
+        },
+        {
+          "commit": "9ef295b74",
+          "path": "verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/logs/feature.log",
+          "sha256": "274e3b8bc5ebcbab242e4f60d50ab33932d05b8b917da9a5e4680dcd68b203b3"
+        },
+        {
+          "commit": "9ef295b74",
+          "path": "verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/logs/full-dotnet.log",
+          "sha256": "cdfba8d5daa7adca1e992702462d30bf56fdbb4a921f69b0e52ccef0c4710be2"
+        },
+        {
+          "commit": "9ef295b74",
+          "path": "verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/logs/full-pytest.log",
+          "sha256": "ebeedde979dd85375229db622cb95fc602b171a884757d381634327db897380b"
+        },
+        {
+          "commit": "9ef295b74",
+          "path": "verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/logs/gates.log",
+          "sha256": "6d81ffb03ef86598ddfc012fb6920acbf4328ecfec9914d1b185b1cc868289b2"
+        },
+        {
+          "commit": "9ef295b74",
+          "path": "verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/scope-validation.log",
+          "sha256": "c6bfe62d8403305ee56a35b5396e52c992bbe10f7ddf39e66e9a875b845b7e39"
+        },
+        {
+          "commit": "9ef295b74",
+          "path": "verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/tools/discrimination.py",
+          "sha256": "adaf714d23c336aff8b617b2d60b3af2db78fcd8af3e784ddcb7e43d0cefca52"
+        },
+        {
+          "commit": "9ef295b74",
+          "path": "verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/tools/gen_manifest.py",
+          "sha256": "febcfc85cd4194841811cd22741b00f64c030062d2a5157a6beaadbb3ce5a36f"
+        },
+        {
+          "commit": "9ef295b74",
+          "path": "verification/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1/tools/scope_validation.py",
+          "sha256": "f5448d87ab1b840fe553183ccacabb94f86ef5bc4b1737a81c2e885ef041f8b5"
         }
       ]
     },
@@ -78,7 +149,7 @@
       "files": [
         {
           "path": "changed-files.txt",
-          "sha256": "d8d6433f55554aaa87f14dadd61784573f8a93893fcaa5b70bf9df86baf20427"
+          "sha256": "0f4b55dd0fac464f617be575c6eec8a5d6fc97144388dd852c97bf89ee1133a7"
         },
         {
           "path": "EV.md",
@@ -106,7 +177,7 @@
         },
         {
           "path": "scope-validation.log",
-          "sha256": "837eae7483590e24b208078f97d1dc1078240f2fa7a0b7c04f3547b72a952b57"
+          "sha256": "c6bfe62d8403305ee56a35b5396e52c992bbe10f7ddf39e66e9a875b845b7e39"
         },
         {
           "path": "tools/discrimination.py",
