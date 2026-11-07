@@ -3,14 +3,14 @@ id: FEA-12-CORE-C04B-RESIDUAL-3
 title: R-1 代码修复：artifact 成员谓词补 media_artifacts.book_id（与 C-04b v1.2 / 删除谓词一致）
 kind: implementation
 governance_version: 3
-status: proposed
+status: ready
 approval: 用户 AUTORUN 指令（2026-11-08，全部授权/自主裁决/不询问用户）；权威 scope review `doc/reviews/FEA-12-CORE-C04B-RESIDUAL-scope-r1.md`（§2.1 R-1 事实：`library.py:1178-1190` page/chapter join vs 删除面 `:1920-1926` 与 `:1218-1225` 的 `book_id`；§3.3 末段「先契约 → 再实现卡 → 再复核」）；**DSH 裁决（2026-11-08，裁决人=DSH）**：拆出独立实现卡，依赖 `FEA-12-CORE-C04B-RESIDUAL-2`（契约先写谓词文字）；正常数据零变化；跨书损坏行保护集合偏差修复
 suggested_owner: dsh
-owner: null
+owner: c04b-impl
 reviewer: null
 depends_on:
   - FEA-12-CORE-C04B-RESIDUAL-2
-base_commit: null
+base_commit: 26aa0ca4a
 branch: null
 worktree: null
 integration_commit: null

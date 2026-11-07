@@ -3,7 +3,7 @@ id: FEA-12-CORE-C04B-RESIDUAL-2
 title: C-04b v1.2 UNFREEZE（R-1 谓词/R-2 措辞/R-3 术语/R-4 节名/R-5 来源/R-8 单条 manifest）+ M2-C1 rev 2.15 同步
 kind: contract
 governance_version: 3
-status: ready
+status: done
 approval: 用户 AUTORUN 指令（2026-11-08，全部授权/自主裁决/不询问用户）；权威 scope review `doc/reviews/FEA-12-CORE-C04B-RESIDUAL-scope-r1.md`（session `0fc94b7f…`；verdict recommended；§3.3 给出 UNFREEZE 确切行/句与 pin 口径：**C-04b 1/18 pin + M2-C1 记录型 rev（0/18 机械 pin）**）；**DSH 裁决（2026-11-08，裁决人=DSH）**：按 AUTORUN §2 判据 (b) 立项清偿契约债务；C-04b 升 v1.2、M2-C1 升 rev 2.15（仅措辞/谓词同步，规则不变）；R-1 的**代码**修复归 `FEA-12-CORE-C04B-RESIDUAL-3`；P3-03/P3-04 类「改字节即变 pin」项不在本卡
 suggested_owner: dsh
 owner: dsh
@@ -14,10 +14,10 @@ depends_on:
 base_commit: d91d9b6cc
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 26aa0ca4a
+delivery_head: 26aa0ca4a
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-12-CORE-C04B-RESIDUAL-2
 allowed_paths:
   - doc/tasks/FEA-12-CORE-C04B-RESIDUAL-2.md
@@ -69,16 +69,16 @@ out_of_scope:
 
 | evidence_id | AC | 路径 | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-01 | AC-1..AC-6 | verification/FEA-12-CORE-C04B-RESIDUAL-2/EV.md | PENDING-COMMIT | 77646bb471934ee4796d95e986b5786c1e4b904e70b77a7e370d4bd3732b6f44 | CANONICAL |
-| EV-02 | AC-4 | verification/FEA-12-CORE-C04B-RESIDUAL-2/logs/check-taskpath.log | PENDING-COMMIT | 40fdc9d90b869bf6f5ebaef23aec0dfa6bf12f72bcc91663352840d3fd2df0ca | CANONICAL |
-| EV-03 | AC-4 | verification/FEA-12-CORE-C04B-RESIDUAL-2/logs/check.log | PENDING-COMMIT | 40fdc9d90b869bf6f5ebaef23aec0dfa6bf12f72bcc91663352840d3fd2df0ca | CANONICAL |
-| EV-04 | AC-5 | verification/FEA-12-CORE-C04B-RESIDUAL-2/logs/code-drift.log | PENDING-COMMIT | e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 | CANONICAL |
-| EV-05 | AC-1/AC-5 | verification/FEA-12-CORE-C04B-RESIDUAL-2/logs/diffstat.log | PENDING-COMMIT | 40389e9ce40431596ae9e4255e53e6e7d269e02cc1ac8a72310acb952cd4b932 | CANONICAL |
-| EV-06 | AC-5 | verification/FEA-12-CORE-C04B-RESIDUAL-2/logs/other-contracts-drift.log | PENDING-COMMIT | e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 | CANONICAL |
-| EV-07 | AC-4 | verification/FEA-12-CORE-C04B-RESIDUAL-2/logs/pins.log | PENDING-COMMIT | aedf5a6b579c255e4b1544ccc1479aaf8517d6cdd711f9e7a12018f08e6f118d | CANONICAL |
-| EV-08 | AC-5 | verification/FEA-12-CORE-C04B-RESIDUAL-2/logs/scope-changed.log | PENDING-COMMIT | 3e8141d6f581ed746c915e97865c4742ac22ef35b094144ed2e4ceed792d3d9b | CANONICAL |
-| EV-09 | AC-1 | verification/FEA-12-CORE-C04B-RESIDUAL-2/logs/sha-check.log | PENDING-COMMIT | 5a704162e2d2fe7383f9c5ead1e6385e352acfa504ea5e2abff144366e6b01ac | CANONICAL |
-| EV-10 | AC-1/AC-2 | verification/FEA-12-CORE-C04B-RESIDUAL-2/unfreeze.diff | PENDING-COMMIT | 6b6bb9ca133c37a48323213355c442ce63e7dd9dda7a499c74de022530c4e0bc | CANONICAL |
+| EV-01 | AC-1..AC-6 | verification/FEA-12-CORE-C04B-RESIDUAL-2/EV.md | 26aa0ca4a | 77646bb471934ee4796d95e986b5786c1e4b904e70b77a7e370d4bd3732b6f44 | CANONICAL |
+| EV-02 | AC-4 | verification/FEA-12-CORE-C04B-RESIDUAL-2/logs/check-taskpath.log | 26aa0ca4a | 40fdc9d90b869bf6f5ebaef23aec0dfa6bf12f72bcc91663352840d3fd2df0ca | CANONICAL |
+| EV-03 | AC-4 | verification/FEA-12-CORE-C04B-RESIDUAL-2/logs/check.log | 26aa0ca4a | 40fdc9d90b869bf6f5ebaef23aec0dfa6bf12f72bcc91663352840d3fd2df0ca | CANONICAL |
+| EV-04 | AC-5 | verification/FEA-12-CORE-C04B-RESIDUAL-2/logs/code-drift.log | 26aa0ca4a | e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 | CANONICAL |
+| EV-05 | AC-1/AC-5 | verification/FEA-12-CORE-C04B-RESIDUAL-2/logs/diffstat.log | 26aa0ca4a | 40389e9ce40431596ae9e4255e53e6e7d269e02cc1ac8a72310acb952cd4b932 | CANONICAL |
+| EV-06 | AC-5 | verification/FEA-12-CORE-C04B-RESIDUAL-2/logs/other-contracts-drift.log | 26aa0ca4a | e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 | CANONICAL |
+| EV-07 | AC-4 | verification/FEA-12-CORE-C04B-RESIDUAL-2/logs/pins.log | 26aa0ca4a | aedf5a6b579c255e4b1544ccc1479aaf8517d6cdd711f9e7a12018f08e6f118d | CANONICAL |
+| EV-08 | AC-5 | verification/FEA-12-CORE-C04B-RESIDUAL-2/logs/scope-changed.log | 26aa0ca4a | 3e8141d6f581ed746c915e97865c4742ac22ef35b094144ed2e4ceed792d3d9b | CANONICAL |
+| EV-09 | AC-1 | verification/FEA-12-CORE-C04B-RESIDUAL-2/logs/sha-check.log | 26aa0ca4a | 5a704162e2d2fe7383f9c5ead1e6385e352acfa504ea5e2abff144366e6b01ac | CANONICAL |
+| EV-10 | AC-1/AC-2 | verification/FEA-12-CORE-C04B-RESIDUAL-2/unfreeze.diff | 26aa0ca4a | 6b6bb9ca133c37a48323213355c442ce63e7dd9dda7a499c74de022530c4e0bc | CANONICAL |
 
 ## Resource Manifest
 
