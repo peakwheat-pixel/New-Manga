@@ -9,7 +9,7 @@ date: 2026-11-07
 repo: G:\CODEX\New Manga
 branch: main
 reviewed_head: 0ebb234bf
-reviewed_head_note: 实现/测试事实取 `0ebb234bfd505ed72a351395b56c9a63303d5274`（实现 `6dd36aad7` + 测试 `0ebb234bf`）；证据事实取其后的文档/证据 head `4e8bda6e1`。评审期间共享 `main` 前进到 `9dc1cb0cd`（L-S1 closeout，docs-only），`src/**`/`tests/**`/`apps/**`/契约零 diff；本报告按 `0ebb234bf` 实现字节与 `4e8bda6e1` 证据字节判定。
+reviewed_head_note: 实现/测试事实取 `0ebb234bfd505ed72a351395b56c9a63303d5274`（实现 `6dd36aad7` + 测试 `0ebb234bf`）；证据事实取其后的文档/证据 head `4e8bda6e1`。评审期间共享 `main` 前进到 `9dc1cb0cd`（L-S1 closeout，docs-only），`src/**`/`tests/**`/`apps/**`/契约零 diff；本报告首个版本随后由并发会话提交（`e3f1ff99a`/`1c4ad82a9`），最终 HEAD `1c4ad82a9`；本 Review 在最终核对后仅补充并发披露澄清（工作树 `M`，未提交），被审实现/证据字节不变。
 verdict: approved
 verdict_note: P0 = 0 / P1 = 0 / P2 = 0 / P3 = 7（全部非阻断；无功能性缺陷证据）。AC-LS4-1…8 均 MET，其中 AC-LS4-4 的 folder 子项、AC-LS4-3 的 D-2 路径口径带 P3 证据/口径附注。
 ---
@@ -37,7 +37,8 @@ verdict_note: P0 = 0 / P1 = 0 / P2 = 0 / P3 = 7（全部非阻断；无功能性
 | 实现提交 / 测试提交 | `6dd36aad7` / `0ebb234bf` | `git log` |
 | 证据 head | **`4e8bda6e1`**（最终治理 gate re-run；docs/evidence-only） | `git show --stat` |
 | 评审开始时 HEAD | `4e8bda6e1` | 实测 |
-| 评审结束时 HEAD | `9dc1cb0cd`（L-S1 closeout，docs-only） | 实测 |
+| 评审结束/本报告完成时 HEAD | `9dc1cb0cd`（L-S1 closeout，docs-only） | 实测 |
+| 最终核对 HEAD | **`1c4ad82a9`**（本报告由并发会话提交；`e3f1ff99a`/`1c4ad82a9` 均为 docs 提交） | 实测 |
 | 工作树 | 评审开始时仅 `?? doc/reviews/FEA-11-L-S1-REGISTRY-RESILIENCE-1-r1.md`；评审期间该文件被并发会话提交，另有 **`M doc/handoffs/DSH-PROGRESS-2026-11-07.md`**（非本 Review 产物）。**本 Review 未改这些字节。** | `git status --porcelain=v1` |
 | 实现/测试字节 | 工作树 7 个交付文件的 sha256 与 `0ebb234bf` / `RESOURCE-MANIFEST.json` 逐字节一致；`git diff 0ebb234bf -- src tests` 为空 | `Get-FileHash`、`git diff` |
 | `4e8bda6e1..9dc1cb0cd` | 只有 L-S1 文档/证据提交；`src/**`、`tests/**`、`apps/**`、`doc/plan/**`、`doc/contracts/**` 零 diff | `git diff --name-status` |
@@ -45,7 +46,7 @@ verdict_note: P0 = 0 / P1 = 0 / P2 = 0 / P3 = 7（全部非阻断；无功能性
 | 任务允许写入 | 仅本报告 | 任务书硬约束 |
 | 未跑项 | 全量 `dotnet test`（本 Review 未重跑；核验 Lead 证据日志）；真实 IPC 注入（本卡 Host 零改动，未要求） | 见 §5 |
 
-**并发披露（必须）**：本卡与 L-S1 共用 `main` 工作树。评审期间另一会话把 L-S1 review 入库并提交 `9dc1cb0cd`，同时修改 `doc/handoffs/DSH-PROGRESS-2026-11-07.md`（本报告落盘时仍为 `M`）。**本报告落盘后、最终核对时**，又观察到同一/另一会话已引用本报告结论，在工作树中把本卡改为 `status: done`，并修改 `doc/STATUS.md`、`doc/REBASELINE_PLAN.md`、`doc/TASK_LEDGER.md`，新增 `doc/tasks/FEA-11-L-S1-B-RECOVERY-REAUTH-1.md`（均未提交）。上述 `M`/`??`/提交**不是本 Review 产物**；本 Review 在仓库内唯一新增字节是本报告文件。`9dc1cb0cd` 与这些未提交 docs 改动均不含 `src/**`/`tests/**`/`apps/**` 变化，故对本卡代码判定无影响；但严格意义上「在 `4e8bda6e1` 上重跑门禁」应改述为「在 `4e8bda6e1` 的实现/测试字节 + 当前 docs head 上重跑」。本报告的 `status: ready` / scope 事实均以 `0ebb234bf`/`4e8bda6e1` 的已提交字节为准；未把上述并发工作树改动当作被审事实。
+**并发披露（必须）**：本卡与 L-S1 共用 `main` 工作树。评审期间另一会话把 L-S1 review 入库并提交 `9dc1cb0cd`，同时修改 `doc/handoffs/DSH-PROGRESS-2026-11-07.md`（本报告落盘时仍为 `M`）。**本报告落盘后、最终核对时**，又观察到同一/另一会话已引用本报告结论，在工作树中把本卡改为 `status: done`，并修改 `doc/STATUS.md`、`doc/REBASELINE_PLAN.md`、`doc/TASK_LEDGER.md`，新增 `doc/tasks/FEA-11-L-S1-B-RECOVERY-REAUTH-1.md`（这些写入随后由并发会话提交为 `e3f1ff99a`/`1c4ad82a9`；本报告首个版本亦由该批提交入库，最终披露澄清为工作树未提交修改；**本 Review 未执行 `git add`/`git commit`/`git push`**）。上述 `M`/`??`/提交**不是本 Review 产物**；本 Review 在仓库内唯一新增字节是本报告文件。`9dc1cb0cd` 与这些并发 docs 改动/提交均不含 `src/**`/`tests/**`/`apps/**` 变化，故对本卡代码判定无影响；但严格意义上「在 `4e8bda6e1` 上重跑门禁」应改述为「在 `4e8bda6e1` 的实现/测试字节 + 当前 docs head 上重跑」。本报告的 `status: ready` / scope 事实均以 `0ebb234bf`/`4e8bda6e1` 的已提交字节为准；未把上述并发工作树改动当作被审事实。
 
 ---
 
@@ -277,7 +278,7 @@ f5448d87ab1b840fe553183ccacabb94f86ef5bc4b1737a81c2e885ef041f8b5  tools/scope_va
 
 - 评审开始 HEAD `4e8bda6e1`，结束 `9dc1cb0cd`；期间 L-S1 closeout 提交了 5 个文档/证据文件，未触 `src/**`/`tests/**`/`apps/**`/契约。
 - `doc/handoffs/DSH-PROGRESS-2026-11-07.md` 在本 Review 期间被另一会话修改；本 Review 未读入其内容作为结论依据，也未改它。
-- 本报告落盘后、最终核对时，另一会话已把本卡工作树 `status` 改为 `done`、更新 `STATUS`/`REBASELINE_PLAN`/`TASK_LEDGER` 并新增 `FEA-11-L-S1-B-RECOVERY-REAUTH-1` 占位卡；这些是未提交的并发 docs 写入，不是本 Review 产物，也不在本 Review 的 reviewed/evidence head 内。
+- 本报告落盘后、最终核对时，另一会话已把本卡工作树 `status` 改为 `done`、更新 `STATUS`/`REBASELINE_PLAN`/`TASK_LEDGER` 并新增 `FEA-11-L-S1-B-RECOVERY-REAUTH-1` 占位卡；这些是并发 docs 写入，随后由该会话提交为 `e3f1ff99a`/`1c4ad82a9`，不是本 Review 产物，也不在本 Review 的 reviewed/evidence head 内。
 - 本 Review 的 pytest/check/pins/API 在**当前 worktree** 上跑；7 个交付文件与 `0ebb234bf` 逐字节一致（sha256/`git diff`），故等价于在交付实现/测试字节上跑。
 - 全量 pytest 的 `3317` 与证据日志一致；证据日志跑在 `0ebb234bf`（Handoff 声明），本 Review 无法从日志时间戳独立证明当时的 repo_head，但因当前字节与 `0ebb234bf` 相同，结论不变。这是 **P3 证据口径**，不是功能问题。
 
@@ -346,7 +347,7 @@ f5448d87ab1b840fe553183ccacabb94f86ef5bc4b1737a81c2e885ef041f8b5  tools/scope_va
 1. **唯一仓库写入**：本 Review 只写了 `doc/reviews/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1-r1.md` 这个文件。未修改/删除/移动任何生产代码、测试、契约、冻结记录、Task 卡、STATUS、REBASELINE_PLAN、TASK_LEDGER 或 canonical evidence 字节；未执行 `git add`/`git commit`/`git push`。
 2. **仓外临时操作**：为独立复跑，在 `%TEMP%` 创建了临时 Python 驱动与字节备份；它们不在仓库内，不作为交付物。复跑时对 3 个源文件做「备份 → 破坏 → 恢复」，7/7 恢复 sha256 MATCH，最终三文件与 `0ebb234bf` 一致；`git status` 三文件 CLEAN。未写 `logs/discrimination.log` 或任何 evidence 文件。
 3. **上下文独立**：本 Review 为 fresh subagent，未参与本卡实现、返修、scope review 或前轮审查；只读 `0ebb234bf` 实现/测试字节与 `4e8bda6e1` 证据字节。作者/实现者未参与本报告结论。
-4. **并发披露**：评审期间共享 `main` 工作树由另一会话推进：L-S1 review 从 `??` 变为提交 `9dc1cb0cd`，`doc/handoffs/DSH-PROGRESS-2026-11-07.md` 为并发 `M`。本报告落盘后、最终核对时，另一会话已引用本报告结论，在工作树中把本卡 `status` 改为 `done`、更新 `doc/STATUS.md`/`doc/REBASELINE_PLAN.md`/`doc/TASK_LEDGER.md` 并新增 `doc/tasks/FEA-11-L-S1-B-RECOVERY-REAUTH-1.md`（均未提交）。这些字节非本 Review 产物；`9dc1cb0cd` 与这些未提交 docs 改动均不含 `src/**`/`tests/**`/`apps/**`/契约变化。本 Review 的代码/测试事实仍以 `0ebb234bf` 字节、证据事实仍以 `4e8bda6e1` 字节为准，未把并发工作树改动当作被审事实。
+4. **并发披露**：评审期间共享 `main` 工作树由另一会话推进：L-S1 review 从 `??` 变为提交 `9dc1cb0cd`，`doc/handoffs/DSH-PROGRESS-2026-11-07.md` 为并发 `M`。本报告落盘后、最终核对时，另一会话已引用本报告结论，在工作树中把本卡 `status` 改为 `done`、更新 `doc/STATUS.md`/`doc/REBASELINE_PLAN.md`/`doc/TASK_LEDGER.md` 并新增 `doc/tasks/FEA-11-L-S1-B-RECOVERY-REAUTH-1.md`（随后由并发会话提交为 `e3f1ff99a`/`1c4ad82a9`；本报告首个版本入库，最终披露澄清为工作树未提交修改）。这些字节/提交非本 Review 产物；**本 Review 未执行 `git add`/`git commit`/`git push`**。`9dc1cb0cd` 与这些 docs 提交均不含 `src/**`/`tests/**`/`apps/**`/契约变化。本 Review 的代码/测试事实仍以 `0ebb234bf` 字节、证据事实仍以 `4e8bda6e1` 字节为准，未把并发工作树/提交当作被审事实。
 5. **实跑 vs NOT_RUN**：pytest 定向/全量、pins、check×2、API inventory 均本轮实跑并记录数字；**全量 `dotnet test` 未由本 Review 重跑**，只核验 Lead 证据日志（1570/0/92，repo_head=89757f193）并核对程序集汇总与归因；真实 IPC 注入未跑（本卡 Host 零改动，任务未要求）。
 6. **判别力声明**：本 Review 独立复跑了证据工具定义的全部 7 个破坏点（不仅 1–2 个），每例均 RED → 原字节恢复 sha256 MATCH → 恢复后目标用例绿；`logs/discrimination.log` 的 7/7 与独立复跑一致。该日志本身不逐例打印恢复后绿输出/原始 sha，属 P3 证据完备性，不影响判别力结论。
 7. **不夸大**：本报告不写「只读切片已可恢复」、不写「零交互自愈」、不写「L-R1 全修」；L-S4-1/L-S4-2 与撤销语义保留；D-2 行为变化明确登记。
