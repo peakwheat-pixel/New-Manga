@@ -404,6 +404,11 @@ class ReferencedImportRuntime:
             # Whole-source skip only when EVERY importable page is bound
             # (R1-I003). A partially imported source enters the per-entry loop
             # so the remaining pages are still imported (counts unchanged).
+            # FEA-11-L-S4 A / DSH D-2: the skip is still a write path for the
+            # location auth baseline — one conditional in-place refresh when a
+            # LIVE grant covers the recorded physical identity (a revoked
+            # grant refreshes nothing; no page/version/binding write happens).
+            self._refresh_skipped_source_auth(source)
             progress.outcome = "skipped"
             progress.counts["skipped_sources"] = 1
             progress.counts["pending_pages"] = 0
@@ -455,6 +460,12 @@ class ReferencedImportRuntime:
                 return
 
         existing_source_id, existing_version_id = self._existing_metadata(scanned, resolved)
+        # FEA-11-L-S4 A: a same-identity reuse with a live grant refreshes the
+        # location auth baseline; it rides the first page-unit transaction (or
+        # the one D-2 conditional write when no page unit runs at all).
+        auth_refresh = self._location_auth_refresh(
+            existing_source_id, scanned, resolved
+        )
         if source.status == "encrypted":
             # R1-I004: the encrypted plan is structural-only (no entries). After
             # the password-authorized rescan the decrypted entries become the
@@ -557,6 +568,7 @@ class ReferencedImportRuntime:
                         insert_metadata=first_page and existing_version_id is None,
                         fresh_entry_ids=fresh_entry_ids,
                         bound_entry_id=final_entry_id,
+                        auth_refresh=auth_refresh if first_page else None,
                     )
             except SourceImportError as error:
                 raise _HaltOperation(error.code) from error
@@ -587,24 +599,104 @@ class ReferencedImportRuntime:
                 progress.outcome = "unsupported"  # C-16 §4 ④
             else:
                 progress.outcome = "skipped"  # every page already referenced
+        if (
+            auth_refresh is not None
+            and progress.committed_pages == 0
+            and progress.outcome == "skipped"
+        ):
+            # D-2: no page unit ran, but a live grant still proves the same
+            # physical identity — one conditional refresh, zero page writes.
+            self._refresh_skipped_source_auth(
+                source,
+                existing_source_id=existing_source_id,
+                container_digest=scanned.container_digest,
+            )
 
     # ------------------------------------------------------------ internals
-    def _existing_metadata(self, scanned, resolved):
-        if scanned.container_digest is None:
-            return None, None
+    def _existing_source_id(self, container_digest: str, resolved) -> str | None:
+        """The source id this physical identity already has (C-15 §3.2)."""
         existing = self._repository.find_source_by_physical_identity(
-            scanned.container_digest,
+            container_digest,
             _volume_serial(resolved),
             _file_id(resolved),
         )
-        if existing is None:
+        return existing["source_id"] if existing is not None else None
+
+    def _existing_metadata(self, scanned, resolved):
+        if scanned.container_digest is None:
+            return None, None
+        existing_source_id = self._existing_source_id(
+            scanned.container_digest, resolved
+        )
+        if existing_source_id is None:
             return None, None
         version = self._repository.get_source_version_by_digest(
-            existing["source_id"], scanned.container_digest
+            existing_source_id, scanned.container_digest
         )
         if version is None:
-            return existing["source_id"], None
-        return existing["source_id"], version["version_id"]
+            return existing_source_id, None
+        return existing_source_id, version["version_id"]
+
+    def _location_auth_refresh(self, existing_source_id, scanned, resolved):
+        """Conditional in-place location-auth refresh payload (L-S4 A).
+
+        Only a same-identity reuse (an existing source for the live grant's
+        physical identity) can refresh; the identity keys reuse the exact
+        write-path algorithm of the first import (scanned container digest +
+        the resolved grant's volume/file facts), so a different physical
+        source can never be refreshed.  ``None`` = nothing to refresh.
+        """
+        if existing_source_id is None or scanned.container_digest is None:
+            return None
+        return {
+            "source_id": existing_source_id,
+            "content_digest": scanned.container_digest,
+            "volume_serial": _volume_serial(resolved),
+            "file_id": _file_id(resolved),
+            "registry_id": resolved.registry_id,
+            "authorization_generation": int(resolved.generation),
+            "last_verified_at": _utc_now(),
+        }
+
+    def _refresh_skipped_source_auth(
+        self, source, *, existing_source_id=None, container_digest=None
+    ) -> int:
+        """One conditional refresh on a zero-page import skip path (DSH D-2).
+
+        The whole-source skip / all-pages-already-referenced paths commit no
+        page unit, so this is the one place the refresh owns its single-row
+        write unit (``commit_source_location_auth_refresh``).  The grant is
+        re-resolved live right before the write: a revoked/expired grant
+        refreshes nothing and the skip outcome is unchanged (fail-closed, no
+        auto re-authorization).  Never raises — the skip stays the outcome.
+        """
+        digest = (
+            container_digest
+            if container_digest is not None
+            else source.container_digest
+        )
+        if digest is None:
+            return 0
+        try:
+            resolved = self._access.resolve(source.grant_id)
+        except SourceImportError:
+            return 0
+        source_id = existing_source_id or self._existing_source_id(
+            digest, resolved
+        )
+        if source_id is None:
+            return 0
+        return self._repository.commit_source_location_auth_refresh(
+            {
+                "source_id": source_id,
+                "content_digest": digest,
+                "volume_serial": _volume_serial(resolved),
+                "file_id": _file_id(resolved),
+                "registry_id": resolved.registry_id,
+                "authorization_generation": int(resolved.generation),
+                "last_verified_at": _utc_now(),
+            }
+        )
 
     def _encrypted_participants(
         self, scanned, existing_source_id, existing_version_id, operation
@@ -734,8 +826,14 @@ class ReferencedImportRuntime:
         insert_metadata,
         fresh_entry_ids,
         bound_entry_id,
+        auth_refresh=None,
     ):
-        """One page = one SQLite transaction (C-15 §6.4 commit unit)."""
+        """One page = one SQLite transaction (C-15 §6.4 commit unit).
+
+        ``auth_refresh`` (FEA-11-L-S4 A): optional in-place location-auth
+        refresh committed in the SAME unit as the page/binding (a refresh must
+        never be its own transaction, so a failed page unit rolls it back).
+        """
         now = _utc_now()
         final_entry_id = bound_entry_id or f"se-{uuid.uuid4().hex}"
         page_id = uuid.uuid4().hex
@@ -824,6 +922,7 @@ class ReferencedImportRuntime:
                 "created_at": now,
             },
             entries=entries,
+            auth_refresh=auth_refresh,
         )
         return page_id, final_entry_id
 

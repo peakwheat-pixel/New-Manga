@@ -497,22 +497,23 @@ class SourceSyncService:
 
         # --- new container version (and possibly a new location row).
         new_version_id = None
+        # FEA-11-L-S4-LOCATION-AUTH-REFRESH-1 (A): a live grant over the SAME
+        # physical identity as the recorded current location refreshes the
+        # auth baseline in place (C-15 §2 约束语义 / §3.3).  The payload is
+        # taken BEFORE ``_ensure_target_version`` may supersede the row, and it
+        # is only non-None when identity (digest/volume/file) is unchanged —
+        # a renamed/moved file, or the same bytes re-authorized after a
+        # re-registration.  A changed container/copy keeps the existing
+        # supersede+insert path (and therefore never gets a stale refresh).
+        auth_refresh = _location_auth_refresh(store, body, target, grant, now)
         if not same_container and target["status"] == "ok":
             new_version_id = self._ensure_target_version(
                 body, target, grant, now
             )
-        if kind == "relink" and grant is not None:
-            location = store.get_source_location_current(body["source_id"])
-            if location is not None:
-                store._conn.execute(
-                    "UPDATE source_locations SET registry_id = ?,"
-                    " authorization_generation = ?, last_verified_at = ?"
-                    " WHERE location_id = ?",
-                    (
-                        grant.registry_id, int(grant.generation), now,
-                        location["location_id"],
-                    ),
-                )
+        if auth_refresh is not None:
+            # The ONE implementation lives in the repository; this call runs
+            # inside the caller's BEGIN IMMEDIATE unit (no extra transaction).
+            self._repository.refresh_source_location_auth(**auth_refresh)
 
         diff_by_item = {item["item_id"]: item for item in body["diff"]}
         entries_by_id: dict[str, dict] = {}
@@ -932,6 +933,58 @@ def _grant_size(grant) -> int:
     if grant.container_facts is not None:
         return int(grant.container_facts.size)
     return sum(facts.size for _path, facts in grant.folder_entries)
+
+
+def _location_auth_refresh(
+    store, body: dict, target: dict, grant, now: str
+) -> dict | None:
+    """Conditional in-place location-auth refresh payload (FEA-11-L-S4 A).
+
+    Returns ``None`` — never a write — unless a LIVE grant (already resolved
+    by the caller) covers exactly the physical identity of the recorded
+    CURRENT location row:
+
+    * the scanned container digest equals the row's ``content_digest``
+      (same source content as the write path recorded it), and
+    * the grant's volume serial / file id equal the row's identity keys.
+
+    The identity keys passed on are the row's own values (never re-derived
+    from a different algorithm), so folder sources written with the import
+    identity keep matching (L-S4-2 stays out of scope).  The caller executes
+    the refresh through ``repository.refresh_source_location_auth`` inside
+    its existing write transaction; a changed container/copy keeps the
+    existing supersede+insert behaviour.
+    """
+    if grant is None or target.get("status") != "ok":
+        return None
+    facts = (
+        grant.container_facts
+        if grant.container_facts is not None
+        else (
+            grant.folder_entries[0][1] if grant.folder_entries else None
+        )
+    )
+    if facts is None:
+        # No physical identity in the grant: nothing can prove the same source.
+        return None
+    location = store.get_source_location_current(body["source_id"])
+    if location is None:
+        return None
+    if (
+        str(target["content_digest"]) != str(location["content_digest"])
+        or int(facts.volume_serial) != int(location["volume_serial"])
+        or int(facts.file_id) != int(location["file_id"])
+    ):
+        return None
+    return {
+        "source_id": body["source_id"],
+        "content_digest": location["content_digest"],
+        "volume_serial": int(location["volume_serial"]),
+        "file_id": int(location["file_id"]),
+        "registry_id": grant.registry_id,
+        "authorization_generation": int(grant.generation),
+        "last_verified_at": now,
+    }
 
 
 def _entries_from_target(target: dict) -> list[dict]:

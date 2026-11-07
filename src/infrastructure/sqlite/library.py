@@ -2297,17 +2297,60 @@ class SqliteLibraryRepository:
     ) -> int:
         """Re-registration updates the matched physical location **in place**
         (registry/generation/last_verified_at) — no duplicate location row
-        (C-15 §2 约束语义)."""
+        (C-15 §2 约束语义 / §3.3 源复用规则).
+
+        FEA-11-L-S4-LOCATION-AUTH-REFRESH-1 (A, DSH D-3/D-4): this is the ONE
+        in-place location-auth refresh implementation in Core.  It is
+        **transaction-neutral**: it never opens, commits or rolls back a
+        transaction — the caller's existing write unit owns the boundary (the
+        import page unit or the C-17 apply transaction).  Callers must hold a
+        LIVE grant for the identity they pass (resolved through the grant
+        registry; revoked/expired grants never reach this method).
+
+        Fail-closed conditions — zero write, ``rowcount == 0``:
+          * the identity ``(content_digest, volume_serial, file_id)`` does not
+            match a row of that source (P2 identity mismatch);
+          * the matched row is not the current row (P3);
+          * the SAME registry would move ``authorization_generation``
+            backwards (monotonic; cross-registry is a new registration and may
+            carry generation 1);
+          * every refreshed value is already equal (idempotent; SQLite counts
+            matched UPDATE rows, so the guard keeps a repeat at zero).
+
+        Only the three auth columns are written; ``location_id``/``source_id``/
+        the identity keys/``observed_at``/``is_current``/``size_bytes`` and
+        every ``page_bindings`` row stay untouched.
+        """
+        cursor = self._conn.execute(
+            "UPDATE source_locations SET registry_id = ?,"
+            " authorization_generation = ?, last_verified_at = ?"
+            " WHERE source_id = ? AND content_digest = ?"
+            " AND volume_serial = ? AND file_id = ? AND is_current = 1"
+            " AND (registry_id <> ? OR authorization_generation <= ?)"
+            " AND (registry_id <> ? OR authorization_generation <> ?"
+            " OR last_verified_at IS NOT ?)",
+            (
+                registry_id, authorization_generation, last_verified_at,
+                source_id, content_digest, volume_serial, file_id,
+                registry_id, authorization_generation,
+                registry_id, authorization_generation, last_verified_at,
+            ),
+        )
+        return cursor.rowcount
+
+    def commit_source_location_auth_refresh(
+        self, refresh: dict[str, Any]
+    ) -> int:
+        """One standalone conditional location-auth refresh write unit.
+
+        FEA-11-L-S4-LOCATION-AUTH-REFRESH-1 D-2: the whole-source import skip
+        path commits no page unit, so there is no existing transaction to ride
+        on; this thin wrapper gives that one conditional single-row refresh
+        its own write unit.  The SQL still lives **only** in
+        :meth:`refresh_source_location_auth` — no second implementation.
+        """
         with self._conn:
-            cursor = self._conn.execute(
-                "UPDATE source_locations SET registry_id = ?,"
-                " authorization_generation = ?, last_verified_at = ?"
-                " WHERE source_id = ? AND content_digest = ?"
-                " AND volume_serial = ? AND file_id = ?",
-                (registry_id, authorization_generation, last_verified_at,
-                 source_id, content_digest, volume_serial, file_id),
-            )
-            return cursor.rowcount
+            return self.refresh_source_location_auth(**refresh)
 
     def supersede_source_location(self, location_id: str, superseded_marker: str) -> None:
         with self._conn:
@@ -2520,6 +2563,7 @@ class SqliteLibraryRepository:
         location: dict[str, Any] | None,
         version: dict[str, Any] | None,
         entries: Sequence[dict[str, Any]] | None,
+        auth_refresh: dict[str, Any] | None = None,
     ) -> None:
         """FEA-09 one-page commit unit (C-15 §6.4/C-16 §4).
 
@@ -2528,6 +2572,11 @@ class SqliteLibraryRepository:
         healthy binding. ``SourceProjectMismatch`` and any constraint
         failure roll the whole unit back — uncommitted pages never become
         visible. Read/decode work happens outside this transaction.
+
+        ``auth_refresh`` (FEA-11-L-S4 A): an optional in-place location-auth
+        refresh payload committed in this SAME unit (C-15 §2; a refresh must
+        never be a separate transaction), routed through the single
+        :meth:`refresh_source_location_auth` implementation.
         """
         with self._conn:
             location_id: str | None = None
@@ -2600,6 +2649,10 @@ class SqliteLibraryRepository:
                 ),
             )
             self.insert_page_binding(dict(binding))
+            if auth_refresh is not None:
+                # FEA-11-L-S4 A: same transaction as the page unit — a page
+                # commit failure rolls the auth refresh back with it.
+                self.refresh_source_location_auth(**auth_refresh)
 
 
 
