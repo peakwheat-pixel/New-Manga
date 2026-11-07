@@ -750,6 +750,258 @@ public sealed class Fea11RunGrantIpcTests
             $"DataRoot={root}\n" + string.Join("\n", evidence) + "\nPASS\n");
     }
 
+    /// <summary>
+    /// FEA-11-L-S4-B-2 (AC-RUN-6) real stdio IPC closed loop: a source the user explicitly
+    /// re-authorized (B1's Registry-level revoke + ONE re-register over the SAME root) is carried by an
+    /// ENUMERATED scan target (the shape the production enumeration produces after the existing
+    /// re-attest), and the Run source-RANGE must authorize that target with its OWN live
+    /// <c>(registry_id, generation)</c> entry — not with the pre-existing path-exact
+    /// <c>ResolveRegistryEntry</c>, which meets the sibling REVOKED row first and fails closed.
+    ///
+    /// BEFORE witnesses (same fixture, no product feature flag): the path-exact resolver returns null
+    /// for the live root; a page read is typed-denied before any grant; a target pointing at the
+    /// REVOKED id stays unresolved even though a same-path live entry exists.
+    ///
+    /// AFTER: the cold enumerated target is classified COLD (not unresolved), the production
+    /// <c>ScanSourceSync</c> fills the Core-authoritative identity, <see cref="RunSourceRange.Resolve"/>
+    /// returns the live scope, <c>AuthorizeSourceReadForRun</c> binds the page and
+    /// <c>resolve_page_resource</c> reads it through that binding. The Host registry structure is
+    /// unchanged (the pre-existing mint <c>last_used_at</c> audit excluded) and the old revoked row
+    /// is still there; wire/stderr carry no fixture path; this card sends no
+    /// <c>ReattestSourceLocation</c> (that round-trip belongs to L-S4-B).
+    /// </summary>
+    [Fea11RunGrantIpcFact]
+    public async Task ReauthorizedLiveEntry_RunRangeResolvesAndBindsOverRealIpc()
+    {
+        var directory = new DirectoryInfo(AppContext.BaseDirectory);
+        while (directory is not null && !Directory.Exists(Path.Combine(directory.FullName, ".git")))
+        {
+            directory = directory.Parent;
+        }
+        var repo = directory?.FullName ?? throw new InvalidOperationException("repository not found");
+        var python = Environment.GetEnvironmentVariable("NEWMANGA_BUILD_PYTHON") ?? "C:/Python314/python.exe";
+        var root = Path.Combine(repo + ".workspace", "FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1", "fixtures",
+            "ipc-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(root);
+        var receipt = await SeedAsync(repo, python, root);
+        var archive = receipt.GetProperty("archive").GetString()!;
+        var versionId = receipt.GetProperty("version_id").GetString()!;
+        var dbPath = Path.Combine(root, "library.db");
+        var evidence = new List<string>();
+
+        var options = new CoreServiceOptions
+        {
+            ExecutablePath = python,
+            AdditionalArguments =
+            [
+                "-X", "utf8", "-c",
+                $"import sys;sys.path.insert(0, r'{Path.Combine(repo, "src")}');"
+                + "import bootstrap.core_service as m;raise SystemExit(m.main())",
+            ],
+            DataRoot = root,
+            DerivedRoot = Path.Combine(root, "derived"),
+            CatalogDbPath = Path.Combine(root, "catalog.sqlite"),
+            StderrLogPath = Path.Combine(root, "core.stderr.log"),
+            WireLogPath = Path.Combine(root, "wire.ndjson"),
+            StartupTimeout = TimeSpan.FromSeconds(90),
+            RequestTimeout = TimeSpan.FromSeconds(60),
+        };
+
+        await using (var client = await CoreServiceClient.StartAsync(options))
+        {
+            Assert.Contains("source.read.run/1", (await client.PingAsync()).Capabilities);
+            await client.OpenHostSessionAsync();
+
+            var registry = new SourceAccessRegistry(root);
+            var sources = new SourceReadCoordinator(client, registry, () => true);
+            var identities = new SourceIdentityCache();
+            var scanOptions = new SourceScanOptions
+            {
+                Enabled = true,
+                IntervalSeconds = 60,
+                MaxTargetsPerTick = 8,
+                MaxBytesPerSource = 256L * 1024 * 1024,
+                MaxEntriesPerSource = 10000,
+            };
+            var executor = new HostSourceScanExecutor(client, sources, scanOptions, identities: identities);
+
+            // The B1 explicit re-authorization shape: revoke the stale entry, register ONE new entry
+            // over the SAME root (the old row stays revoked forever). The Core location row is aligned
+            // to the live registry pair — the result the existing L-S4-B re-attest produces; this test
+            // does NOT send another reattest (its round-trip is covered by L-S4-B).
+            var oldEntry = registry.Register("fea11-l-s4b2", [archive]);
+            await AlignRegistryAsync(python, dbPath, oldEntry.RegistryId);
+            var revokedRow = registry.Revoke(oldEntry.RegistryId);
+            await Task.Delay(5);
+            var liveEntry = registry.Register("fea11-l-s4b2-reauth", [archive]);
+            await AlignRegistryAsync(python, dbPath, liveEntry.RegistryId);
+            var entries = registry.List();
+            var entriesBefore = DescribeRegistryEntries(entries);
+            var scope = JsonSerializer.SerializeToElement(new { kind = "page", page_id = "p1" });
+            var enumerated = new SourceScanTarget(
+                "s1", archive, ["b1"], "1",
+                liveEntry.RegistryId, liveEntry.Generation, "zip", new string('a', 64));
+
+            // ---- BEFORE (witnesses, no product feature flag): the pre-existing path-exact resolver is
+            // what the Run range used before this card; it returns null because of the revoked sibling.
+            Assert.Null(HostSourceScanExecutor.ResolveRegistryEntry(entries, archive));
+            Assert.Empty(RequestLines(client, "AuthorizeSourceReadForRun"));
+            var deniedBefore = await Assert.ThrowsAsync<CoreOperationException>(
+                () => ResolvePageAsync(client, "p1"));
+            Assert.Equal("SOURCE_ACCESS_DENIED", deniedBefore.Code);
+            evidence.Add("before: path_resolver=null page_read=" + deniedBefore.Code + " authorize_frames=0");
+
+            // ---- AC-RUN-2 (real state): a target pointing at the REVOKED id stays unresolved even
+            // though the same path has a live entry — a revoked target is never auto-admitted.
+            var revokedTarget = enumerated with
+            {
+                RegistryId = oldEntry.RegistryId,
+                Generation = revokedRow.Generation,
+            };
+            var revokedRange = RunSourceRange.Resolve([revokedTarget], scope, entries, identities);
+            Assert.Empty(revokedRange.Targets);
+            Assert.Equal(1, revokedRange.Unresolved);
+            Assert.Empty(revokedRange.ColdSources);
+            evidence.Add("revoked target: unresolved=1 targets=0");
+
+            // ---- AC-RUN-4: the live enumerated target has no Core version yet -> it is COLD (not
+            // unresolved), which restores the on-demand classification the old entry check shorted.
+            var cold = RunSourceRange.Resolve([enumerated], scope, entries, new SourceIdentityCache());
+            Assert.Empty(cold.Targets);
+            Assert.Equal(0, cold.Unresolved);
+            Assert.Equal("s1", Assert.Single(cold.ColdSources).SourceId);
+            evidence.Add("cold before scan: unresolved=0 cold_sources=1");
+
+            // ---- Production fill: the L-S4-B-1 execution face scans the enumerated target (its own
+            // live entry), the Core returns the authoritative version/member identities.
+            var scanOutcome = await executor.ScanAsync(enumerated, CancellationToken.None);
+            Assert.Equal(SourceScanOutcomeKind.Ok, scanOutcome.Kind);
+            Assert.True(identities.TryGet("s1", out var identity));
+            Assert.Equal(versionId, identity.VersionId);
+            Assert.Equal(2, identity.Entries.Count);
+            evidence.Add("scan: ok version=" + identity.VersionId + " entries=2");
+
+            // ---- AFTER: the Run source range resolves the same target with its OWN live pair.
+            var resolution = RunSourceRange.Resolve([enumerated], scope, entries, identities);
+            var runScope = Assert.Single(resolution.Targets);
+            Assert.Equal(0, resolution.Unresolved);
+            Assert.Empty(resolution.ColdSources);
+            Assert.Equal("s1", runScope.SourceId);
+            Assert.Equal(liveEntry.RegistryId, runScope.RegistryId);
+            Assert.Equal(liveEntry.Generation, runScope.Generation);
+            Assert.Equal(archive, runScope.Path);
+            Assert.Equal("zip", runScope.Kind);
+            Assert.Equal(versionId, runScope.Version);
+            Assert.Equal(2, runScope.ContainerEntries!.Count);
+            evidence.Add("after: targets=1 unresolved=0 registry_id=live generation=1 version=" + versionId);
+
+            // ---- Real mint + bind + page read through the live grant. The Run scope names p1 (the
+            // first archive member), so exactly that binding is what the read resolves through; the
+            // scope carries BOTH Core member identities (ContainerEntries=2), which the container
+            // member matrix of RUN-GRANT-2/2B already proves end-to-end for every member.
+            var bound = await sources.AuthorizeRunAsync([runScope], "reocr_all", scope);
+            Assert.True(bound.BoundPages >= 1);
+            Assert.Equal(1, bound.MintedGrants);
+            Assert.False(bound.Skipped);
+            await ResolvePageAsync(client, "p1");
+            evidence.Add("authorize/bind: bound_pages=" + bound.BoundPages + " minted=1 resolve p1 OK");
+
+            // One authorize command for the one range resolution; this card never re-attests.
+            Assert.Single(RequestLines(client, "AuthorizeSourceReadForRun"));
+            Assert.Empty(RequestLines(client, "ReattestSourceLocation"));
+            evidence.Add("wire: authorize_frames=1 reattest_frames=0");
+
+            // ---- AC-RUN-5 red line: no registry structural write; the old revoked row is retained.
+            Assert.Equal(entriesBefore, DescribeRegistryEntries(registry.List()));
+            var stillRevoked = registry.List().Single(entry => entry.RegistryId == oldEntry.RegistryId);
+            Assert.Equal(revokedRow.RevokedAt, stillRevoked.RevokedAt);
+            Assert.Equal(revokedRow.Generation, stillRevoked.Generation);
+            evidence.Add("host_registry_unchanged=true old_revoked_row_retained=true");
+
+            var impact = new
+            {
+                @case = "FEA-11-L-S4-B-2 AC-RUN-1/2/4/5/6 (real IPC: B1 live entry -> Run range -> "
+                    + "cold classification -> scan -> mint+bind -> resolve)",
+                core = "real volatile python core (stdio IPC)",
+                app_registration_used = false,
+                source_id = "s1",
+                old_registry_id = oldEntry.RegistryId,
+                live_registry_id = liveEntry.RegistryId,
+                live_generation = liveEntry.Generation,
+                before = new
+                {
+                    path_resolver = "null",
+                    page_read = deniedBefore.Code,
+                    authorize_frames = 0,
+                },
+                revoked_target = new
+                {
+                    targets = revokedRange.Targets.Count,
+                    unresolved = revokedRange.Unresolved,
+                    cold_sources = revokedRange.ColdSources.Count,
+                },
+                cold_before_scan = new
+                {
+                    targets = cold.Targets.Count,
+                    unresolved = cold.Unresolved,
+                    cold_sources = cold.ColdSources.Count,
+                },
+                scan = new
+                {
+                    result = scanOutcome.Kind.ToString(),
+                    version = identity.VersionId,
+                    entries = identity.Entries.Count,
+                },
+                after = new
+                {
+                    targets = resolution.Targets.Count,
+                    unresolved = resolution.Unresolved,
+                    registry_id = runScope.RegistryId,
+                    generation = runScope.Generation,
+                    version = runScope.Version,
+                    container_entries = runScope.ContainerEntries!.Count,
+                    bound_pages = bound.BoundPages,
+                    minted_grants = bound.MintedGrants,
+                    resolve_p1 = "ok",
+                },
+                reattest_frames = 0,
+                authorize_frames = 1,
+                host_registry_unchanged = true,
+                path_hits = 0,
+                reimport_or_apply = false,
+            };
+            await File.WriteAllTextAsync(
+                Path.Combine(root, "run-range-ipc.json"),
+                JsonSerializer.Serialize(impact, new JsonSerializerOptions { WriteIndented = true }));
+            await File.WriteAllTextAsync(
+                Path.Combine(root, "run-range-ipc.txt"),
+                "FEA-11-L-S4-B-2 AC-RUN-6 real IPC (B1 explicit re-auth -> enumerated "
+                + "live target -> Run range -> mint+bind -> resolve)\n"
+                + "DataRoot=" + root + "\n"
+                + "before: path_resolver=null page_read=" + deniedBefore.Code + " authorize_frames=0\n"
+                + "revoked_target: unresolved=1 targets=0\n"
+                + "cold_before_scan: unresolved=0 cold_sources=1\n"
+                + "scan: ok version=" + identity.VersionId + " entries=2\n"
+                + "after: targets=1 unresolved=0 registry_id=" + runScope.RegistryId
+                + " generation=" + runScope.Generation + "\n"
+                + "bound_pages=" + bound.BoundPages + " minted=1 resolve p1 OK\n"
+                + "host_registry_unchanged=true old_revoked_row_retained=true\n"
+                + "wire: authorize_frames=1 reattest_frames=0 path_hits=0\n"
+                + "reimport_or_apply=false\nPASS\n");
+        }
+
+        // C-16 §7: neither the wire frame log nor the Core stderr may carry the fixture path.
+        var wire = File.Exists(Path.Combine(root, "wire.ndjson"))
+            ? await File.ReadAllTextAsync(Path.Combine(root, "wire.ndjson"))
+            : string.Empty;
+        var stderr = File.Exists(Path.Combine(root, "core.stderr.log"))
+            ? await File.ReadAllTextAsync(Path.Combine(root, "core.stderr.log"))
+            : string.Empty;
+        Assert.DoesNotContain(root, wire, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain(root, stderr, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain(archive, wire, StringComparison.OrdinalIgnoreCase);
+    }
+
     /// <summary>Resolves one page through the real Core (the read the Run would perform).</summary>
     private static async Task ResolvePageAsync(CoreServiceClient client, string pageId)
     {
@@ -1080,6 +1332,35 @@ print("FEA11_RUN_GRANT_2B_SEED_OK")
 
     /// <summary>Aligns the isolated fixture's C-17 location rows with the real Host registry id (the
     /// Host mints the read grant with its own registry identity; the fixture is created before it).</summary>
+    /// <summary>AC-RUN-5: registry STRUCTURE projection (the pre-existing last_used_at audit excluded).</summary>
+    private static string[] DescribeRegistryEntries(IReadOnlyList<SourceAuthorization> entries) =>
+        entries.Select(entry =>
+                entry.RegistryId + "|" + entry.Locator + "|" + entry.Generation + "|"
+                + entry.CreatedAt + "|" + entry.RevokedAt + "|"
+                + string.Join(";", entry.Roots.Select(root =>
+                    root.Root + "|" + root.VolumeSerial + "|" + root.FileId)))
+            .ToArray();
+
+    private static string[] RequestLines(CoreServiceClient client, string command) =>
+        client.Wire.Frames.Select(frame => frame.RequestLine)
+            .Where(line => RequestCommand(line) == command).ToArray();
+
+    private static string? RequestCommand(string requestLine)
+    {
+        try
+        {
+            using var document = JsonDocument.Parse(requestLine);
+            return document.RootElement.TryGetProperty("command", out var command)
+                   && command.ValueKind == JsonValueKind.String
+                ? command.GetString()
+                : null;
+        }
+        catch (JsonException)
+        {
+            return null;
+        }
+    }
+
     private static async Task AlignRegistryAsync(string python, string dbPath, string registryId)
     {
         const string code =
