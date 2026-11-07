@@ -38,13 +38,13 @@ public sealed class RunGrantRenewalTests
         AdvancingTimeProvider? clock = null,
         RunGrantRenewalOptions? options = null,
         Func<string, CancellationToken, Task<RunLiveness>>? liveness = null,
-        Func<string, string, JsonElement, CancellationToken, Task<RunGrantRenewalOutcome>>? renew = null,
+        Func<string, string, JsonElement, TimeSpan, CancellationToken, Task<RunGrantRenewalOutcome>>? renew = null,
         List<string>? warnings = null) =>
         new(
             options ?? RunGrantRenewalOptions.Default,
             clock ?? new AdvancingTimeProvider(),
             liveness ?? ((_, _) => Task.FromResult(RunLiveness.Alive)),
-            renew ?? ((_, _, _, _) => Task.FromResult(RunGrantRenewalOutcome.Success(1, 1, 0))),
+            renew ?? ((_, _, _, _, _) => Task.FromResult(RunGrantRenewalOutcome.Success(1, 1, 0))),
             warn: message => warnings?.Add(message));
 
     // ---------------------------------------------------------------------------------------
@@ -56,7 +56,7 @@ public sealed class RunGrantRenewalTests
     {
         var renewCalls = new List<(string RunId, string Command, JsonElement Scope)>();
         await using var renewal = NewRenewal(
-            renew: (runId, command, scope, _) =>
+            renew: (runId, command, scope, _, _) =>
             {
                 renewCalls.Add((runId, command, scope.Clone()));
                 return Task.FromResult(RunGrantRenewalOutcome.Success(1, 1, 0));
@@ -94,7 +94,7 @@ public sealed class RunGrantRenewalTests
     {
         var renewCalls = new List<(string Command, string Scope)>();
         await using var renewal = NewRenewal(
-            renew: (_, command, scope, _) =>
+            renew: (_, command, scope, _, _) =>
             {
                 renewCalls.Add((command, scope.GetRawText()));
                 return Task.FromResult(RunGrantRenewalOutcome.Success(1, 1, 0));
@@ -124,7 +124,7 @@ public sealed class RunGrantRenewalTests
         var renewCalls = 0;
         var warnings = new List<string>();
         await using var renewal = NewRenewal(
-            renew: (_, _, _, _) =>
+            renew: (_, _, _, _, _) =>
             {
                 renewCalls++;
                 return Task.FromResult(RunGrantRenewalOutcome.Stop(
@@ -153,7 +153,7 @@ public sealed class RunGrantRenewalTests
         var renewCalls = 0;
         await using var renewal = NewRenewal(
             liveness: (_, _) => throw new IOException("synthetic probe failure"),
-            renew: (_, _, _, _) =>
+            renew: (_, _, _, _, _) =>
             {
                 renewCalls++;
                 return Task.FromResult(RunGrantRenewalOutcome.Success(1, 1, 0));
@@ -177,7 +177,7 @@ public sealed class RunGrantRenewalTests
         var renewCalls = 0;
         var renewal = NewRenewal(
             liveness: (_, _) => Task.FromResult(liveness),
-            renew: (_, _, _, _) =>
+            renew: (_, _, _, _, _) =>
             {
                 renewCalls++;
                 return Task.FromResult(RunGrantRenewalOutcome.Success(1, 1, 0));
@@ -218,7 +218,7 @@ public sealed class RunGrantRenewalTests
         var renewCalls = 0;
         await using var renewal = NewRenewal(
             options: options,
-            renew: (_, _, _, _) =>
+            renew: (_, _, _, _, _) =>
             {
                 renewCalls++;
                 return Task.FromResult(RunGrantRenewalOutcome.Success(1, 1, 0));
@@ -236,27 +236,76 @@ public sealed class RunGrantRenewalTests
     }
 
     [Fact]
-    public async Task Renewal_RoundOverBudget_IsATypedStop()
+    public async Task Renewal_RoundOverBudget_SkipsTheRoundAndKeepsTracking()
     {
+        // Review r1 P2-01/P3-01: a round that overruns the explicit budget is a TYPED SKIP (recorded,
+        // counted) that keeps the Run tracked for the next interval — it is not a silent stop, and a
+        // real mint that did happen is still counted.
         var clock = new AdvancingTimeProvider();
         var renewCalls = 0;
+        var budgets = new List<TimeSpan>();
+        var warnings = new List<string>();
         await using var renewal = NewRenewal(
             clock: clock,
-            renew: (_, _, _, _) =>
+            renew: (_, _, _, roundBudget, _) =>
             {
                 renewCalls++;
+                budgets.Add(roundBudget);
                 // A round that takes longer than the explicit budget: interval + round must stay < 300 s.
                 clock.AdvanceMilliseconds(
                     (RunGrantRenewalOptions.RoundBudgetSeconds + 10) * 1000);
                 return Task.FromResult(RunGrantRenewalOutcome.Success(1, 1, 0));
-            });
+            },
+            warnings: warnings);
 
         Assert.True(renewal.ObserveDispatch("run-1", "reocr_all", FrozenScope, boundPages: 1));
         var outcome = await renewal.TickAsync("run-1", CancellationToken.None);
-        Assert.Equal(RunGrantRenewalKind.StoppedBudget, outcome.Kind);
+        Assert.Equal(RunGrantRenewalKind.SkippedBudget, outcome.Kind);
         Assert.Equal("RENEWAL_ROUND_BUDGET_EXCEEDED", outcome.Code);
+        Assert.True(outcome.KeepsTracking);
+        Assert.Equal(RunGrantRenewalOptions.RoundBudget, Assert.Single(budgets));
         Assert.Equal(1, renewCalls);
-        Assert.False(renewal.IsTracking("run-1"));
+        Assert.True(renewal.IsTracking("run-1"));
+
+        var status = renewal.Status;
+        Assert.Equal(1, status.BudgetSkips);
+        Assert.Equal(1, status.Renewals);   // the real mint is counted, never swallowed
+        Assert.Equal(1, status.Attempts);
+        Assert.Equal("RENEWAL_ROUND_BUDGET_EXCEEDED", status.LastCode);
+        Assert.Contains(warnings, message =>
+            message.Contains("RENEWAL_ROUND_BUDGET_EXCEEDED", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task Renewal_BudgetSkip_DoesNotConsumeTheGateOrStopTheRun()
+    {
+        // The budget skip leaves the loop alive: a later tick (next interval) can still renew.
+        var clock = new AdvancingTimeProvider();
+        var calls = 0;
+        await using var renewal = NewRenewal(
+            clock: clock,
+            renew: (_, _, _, roundBudget, _) =>
+            {
+                calls++;
+                if (calls == 1)
+                {
+                    clock.AdvanceMilliseconds(
+                        (RunGrantRenewalOptions.RoundBudgetSeconds + 5) * 1000);
+                }
+
+                Assert.Equal(RunGrantRenewalOptions.RoundBudget, roundBudget);
+                return Task.FromResult(RunGrantRenewalOutcome.Success(1, 1, 0));
+            });
+
+        Assert.True(renewal.ObserveDispatch("run-1", "reocr_all", FrozenScope, boundPages: 1));
+        Assert.Equal(RunGrantRenewalKind.SkippedBudget,
+            (await renewal.TickAsync("run-1", CancellationToken.None)).Kind);
+        Assert.Equal(RunGrantRenewalKind.Renewed,
+            (await renewal.TickAsync("run-1", CancellationToken.None)).Kind);
+        Assert.Equal(2, calls);
+        Assert.Equal(1, renewal.Status.BudgetSkips);
+        Assert.Equal(2, renewal.Status.Renewals); // both rounds really minted; the skip is a TYPED count
+        Assert.Equal(2, renewal.Status.Attempts);
     }
 
     [Fact]
@@ -337,7 +386,8 @@ public sealed class RunGrantRenewalTests
         SourceIdentityCache cache,
         SourceScanTarget[] known,
         SourceAuthorization[] entries,
-        Func<IReadOnlyList<RunSourceScope>, string, JsonElement, CancellationToken, Task<RunAuthorizationResult>> authorize) =>
+        Func<IReadOnlyList<RunSourceScope>, string, JsonElement, CancellationToken, Task<RunAuthorizationResult>> authorize,
+        Func<SourceScanTarget, CancellationToken, Task>? onDemandScan = null) =>
         new(
             enabled: true,
             knownTargets: () => known,
@@ -347,7 +397,8 @@ public sealed class RunGrantRenewalTests
             resolveRunSlice: (_, _) => throw new InvalidOperationException("no run slice expected"),
             info: _ => { },
             warn: _ => { },
-            identities: cache);
+            identities: cache,
+            onDemandScan: onDemandScan);
 
     [Fact]
     public async Task AuthorizeSliceAsync_ReturnsTheRealMintAndBindCounts()
@@ -413,5 +464,266 @@ public sealed class RunGrantRenewalTests
             "library_get_run_snapshot",
             JsonDocument.Parse("""{"run_id":"r1"}""").RootElement.Clone(),
             CancellationToken.None));
+    }
+
+    // ---------------------------------------------------------------------------------------
+    // Review r1 P2-01: the round budget reaches the mint path (bounded on-demand cold fills).
+    // ---------------------------------------------------------------------------------------
+
+    [Fact]
+    public async Task AuthorizeSliceAsync_BoundsOnDemandScansByTheRoundBudget()
+    {
+        var cache = new SourceIdentityCache(); // cold: the source needs one on-demand scan
+        var scans = 0;
+        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+        var authorizer = NewAuthorizer(
+            probe: true,
+            cache,
+            new[] { new SourceScanTarget("s1", FixturePath, new[] { "b1" }, "1", SourceKind: "zip") },
+            new[] { RegistryEntry("reg-1", FixturePath) },
+            (_, _, _, _) => throw new InvalidOperationException("must not authorize a still-cold source"),
+            onDemandScan: async (_, token) =>
+            {
+                scans++;
+                // A scan that honors its token: the round budget must cancel it long before 2 s.
+                await Task.Delay(TimeSpan.FromSeconds(2), token);
+            });
+
+        var result = await authorizer.AuthorizeSliceAsync(
+            "reocr_all", FrozenScope, CancellationToken.None, TimeSpan.FromMilliseconds(150));
+
+        Assert.Null(result); // the source is still cold; nothing was minted
+        Assert.Equal(1, scans);
+        Assert.True(
+            stopwatch.Elapsed < TimeSpan.FromSeconds(1.5),
+            "the on-demand scan must be bounded by the round budget, not the frozen 30 s timeout");
+    }
+
+    [Fact]
+    public async Task AuthorizeSliceAsync_WithoutRoundBudget_KeepsTheFrozenOnDemandTimeout()
+    {
+        // No regression for the dispatch path: a null budget keeps the pre-2C 30 s scan timeout.
+        var cache = new SourceIdentityCache();
+        var authorizer = NewAuthorizer(
+            probe: true,
+            cache,
+            new[] { new SourceScanTarget("s1", FixturePath, new[] { "b1" }, "1", SourceKind: "zip") },
+            new[] { RegistryEntry("reg-1", FixturePath) },
+            (_, _, _, _) => Task.FromResult(new RunAuthorizationResult(1, 1, 0, Array.Empty<string>())),
+            onDemandScan: (target, _) =>
+            {
+                cache.Remember(target.SourceId, "sv-from-scan", []);
+                return Task.CompletedTask;
+            });
+
+        var result = await authorizer.AuthorizeSliceAsync(
+            "reocr_all", FrozenScope, CancellationToken.None);
+        Assert.NotNull(result);
+        Assert.Equal(1, result!.MintedGrants);
+    }
+
+    // ---------------------------------------------------------------------------------------
+    // Review r1 P1-01: HOST-WIRING tests. They drive the EXACT production entry points the
+    // dispatcher / AcceptRun paths and the renewal loop use (pre-dispatch summary -> dispatch
+    // notification -> Track -> ONE production Tick), ON the production HostRuntime instance.
+    // Removing the installation line (reviewer Probe-C: `_runGrantRenewal = null`) makes these RED.
+    // ---------------------------------------------------------------------------------------
+
+    private static HostRuntime CreateUnstartedHostRuntime(HostOptions options, HostLog log)
+    {
+        var constructor = typeof(HostRuntime).GetConstructor(
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic,
+            binder: null,
+            [typeof(HostOptions), typeof(HostLog)],
+            modifiers: null) ?? throw new InvalidOperationException("HostRuntime ctor not found");
+        return (HostRuntime)constructor.Invoke([options, log]);
+    }
+
+    private static void WritePrivate(object instance, string name, object value) =>
+        instance.GetType()
+            .GetField(name, System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!
+            .SetValue(instance, value);
+
+    private static HostRuntime CreateWiredHostRuntime(
+        string root,
+        AdvancingTimeProvider clock,
+        RunSourceAuthorizer authorizer,
+        SourceAccessRegistry registry,
+        bool renewalEnabled = true)
+    {
+        var dataRoot = Path.Combine(root, "data");
+        var logRoot = Path.Combine(root, "logs");
+        Directory.CreateDirectory(dataRoot);
+        Directory.CreateDirectory(logRoot);
+        var options = new HostOptions
+        {
+            DataRoot = dataRoot,
+            LogDirectory = logRoot,
+            MutexName = @"Local\NewManga.Host.Test." + Guid.NewGuid().ToString("N")[..12],
+            RunGrantRenewalEnabled = renewalEnabled,
+            RunGrantRenewalTimeProvider = clock,
+            RunGrantRenewalLivenessProbe = (_, _) => Task.FromResult(RunLiveness.Alive),
+        };
+        var runtime = CreateUnstartedHostRuntime(options, new HostLog(logRoot));
+        WritePrivate(runtime, "_runAuthorizer", authorizer);
+        WritePrivate(runtime, "<Registry>k__BackingField", registry);
+        WritePrivate(
+            runtime, "<Sources>k__BackingField",
+            new SourceReadCoordinator(null!, registry, () => true));
+        return runtime;
+    }
+
+    [Fact]
+    public async Task HostWiring_DispatchThenProductionTick_RenewsTheSameFrozenScope()
+    {
+        var root = Path.Combine(Path.GetTempPath(), "fea11-2c-wiring-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(root);
+        try
+        {
+            var clock = new AdvancingTimeProvider();
+            var registry = new SourceAccessRegistry(root);
+            var cache = new SourceIdentityCache();
+            Assert.True(cache.Remember("s1", "sv-core-1", []));
+            var authorizeCalls = new List<string>();
+            var authorizer = NewAuthorizer(
+                probe: true,
+                cache,
+                new[] { new SourceScanTarget("s1", FixturePath, new[] { "b1" }, "1", SourceKind: "zip") },
+                new[] { RegistryEntry("reg-1", FixturePath) },
+                (_, command, _, _) =>
+                {
+                    authorizeCalls.Add(command);
+                    return Task.FromResult(new RunAuthorizationResult(1, 1, 0, Array.Empty<string>()));
+                });
+            await using var runtime = CreateWiredHostRuntime(root, clock, authorizer, registry);
+
+            // The production installation line (same line the Host start path runs).
+            Assert.True(runtime.StartRunGrantRenewalForTests());
+            Assert.NotNull(runtime.RunGrantRenewalForTests);
+
+            // 1) The REAL dispatcher pre-dispatch summary (production method).
+            var payload = JsonDocument.Parse(
+                """
+                {"command":"reocr_all","scope":{"kind":"page","page_id":"p1"},"idempotency_key":"k"}
+                """).RootElement.Clone();
+            var summary = await runtime.AuthorizeRunCommandForTestsAsync("library_start_run", payload);
+            Assert.NotNull(summary);
+            Assert.Single(authorizeCalls); // the dispatch round minted+bound once
+
+            // 2) The REAL dispatcher post-dispatch wiring (production method): a Run whose first round
+            //    bound a page becomes TRACKED on the Host.
+            var dispatched = JsonDocument.Parse(
+                """{"run_id":"run-1","status":"pending"}""").RootElement.Clone();
+            await runtime.NotifyRunDispatchedForTestsAsync(dispatched, summary);
+            Assert.True(runtime.RunGrantRenewalForTests!.IsTracking("run-1"));
+            Assert.Equal(1, runtime.RunGrantRenewalStatus.TrackedRuns);
+
+            // 3) The AcceptRun wiring entry shares the SAME frozen-slice start gate.
+            await runtime.NotifyAcceptedRunForTestsAsync("run-2", "reocr_all", FrozenScope, boundPages: 1);
+            Assert.True(runtime.RunGrantRenewalForTests!.IsTracking("run-2"));
+
+            // 4) ONE production renewal round: the installed loop's renew delegate is the REAL
+            //    HostRuntime.RenewRunGrantsAsync (same registry-authorize + mint + ONE bind path).
+            var outcome = await runtime.TickRunGrantRenewalForTestsAsync("run-1");
+            Assert.Equal(RunGrantRenewalKind.Renewed, outcome.Kind);
+            Assert.Equal(1, outcome.BoundPages);
+            Assert.Equal(1, outcome.MintedGrants);
+            Assert.Equal(2, authorizeCalls.Count); // dispatch round + renewal round
+            Assert.All(authorizeCalls, command => Assert.Equal("reocr_all", command));
+            Assert.Equal(1, runtime.RunGrantRenewalStatus.Renewals);
+            Assert.Equal(1, runtime.RunGrantRenewalStatus.Attempts);
+        }
+        finally
+        {
+            try
+            {
+                if (Directory.Exists(root)) Directory.Delete(root, recursive: true);
+            }
+            catch (Exception error) when (error is IOException or UnauthorizedAccessException)
+            {
+                // isolated temp fixture expires with the OS temp directory
+            }
+        }
+    }
+
+    [Fact]
+    public async Task HostWiring_ManagedOnlyRun_StartsNoRenewal()
+    {
+        // AC-2C-6: a first round that bound 0 pages (managed-only / all-skipped) never starts renewal.
+        var root = Path.Combine(Path.GetTempPath(), "fea11-2c-wiring-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(root);
+        try
+        {
+            var clock = new AdvancingTimeProvider();
+            var registry = new SourceAccessRegistry(root);
+            var cache = new SourceIdentityCache();
+            Assert.True(cache.Remember("s1", "sv-core-1", []));
+            var authorizer = NewAuthorizer(
+                probe: true,
+                cache,
+                new[] { new SourceScanTarget("s1", FixturePath, new[] { "b1" }, "1", SourceKind: "zip") },
+                new[] { RegistryEntry("reg-1", FixturePath) },
+                (_, _, _, _) => throw new InvalidOperationException("must not mint"));
+            await using var runtime = CreateWiredHostRuntime(root, clock, authorizer, registry);
+            Assert.True(runtime.StartRunGrantRenewalForTests());
+
+            await runtime.NotifyAcceptedRunForTestsAsync(
+                "run-managed", "reocr_all", FrozenScope, boundPages: 0);
+            Assert.Equal(0, runtime.RunGrantRenewalStatus.TrackedRuns);
+            var tick = await runtime.TickRunGrantRenewalForTestsAsync("run-managed");
+            Assert.Equal(RunGrantRenewalKind.StoppedNotTracked, tick.Kind);
+        }
+        finally
+        {
+            try
+            {
+                if (Directory.Exists(root)) Directory.Delete(root, recursive: true);
+            }
+            catch (Exception error) when (error is IOException or UnauthorizedAccessException)
+            {
+            }
+        }
+    }
+
+    [Fact]
+    public async Task HostWiring_DisabledOption_InstallsNoLoopAndNeverTracks()
+    {
+        var root = Path.Combine(Path.GetTempPath(), "fea11-2c-wiring-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(root);
+        try
+        {
+            var clock = new AdvancingTimeProvider();
+            var registry = new SourceAccessRegistry(root);
+            var cache = new SourceIdentityCache();
+            Assert.True(cache.Remember("s1", "sv-core-1", []));
+            var authorizer = NewAuthorizer(
+                probe: true,
+                cache,
+                new[] { new SourceScanTarget("s1", FixturePath, new[] { "b1" }, "1", SourceKind: "zip") },
+                new[] { RegistryEntry("reg-1", FixturePath) },
+                (_, _, _, _) => throw new InvalidOperationException("must not mint"));
+            await using var runtime = CreateWiredHostRuntime(
+                root, clock, authorizer, registry, renewalEnabled: false);
+
+            // No loop is installed when the option is off: the "renewal disabled" direction of
+            // AC-2C-1/2 (no renewal -> the Run's window is not extended) is enforced here.
+            Assert.False(runtime.StartRunGrantRenewalForTests());
+            Assert.Null(runtime.RunGrantRenewalForTests);
+            await runtime.NotifyAcceptedRunForTestsAsync("run-1", "reocr_all", FrozenScope, boundPages: 1);
+            var tick = await runtime.TickRunGrantRenewalForTestsAsync("run-1");
+            Assert.Equal(RunGrantRenewalKind.StoppedNotTracked, tick.Kind);
+            Assert.Equal(0, runtime.RunGrantRenewalStatus.TrackedRuns);
+            Assert.False(runtime.RunGrantRenewalStatus.Enabled);
+        }
+        finally
+        {
+            try
+            {
+                if (Directory.Exists(root)) Directory.Delete(root, recursive: true);
+            }
+            catch (Exception error) when (error is IOException or UnauthorizedAccessException)
+            {
+            }
+        }
     }
 }

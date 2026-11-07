@@ -1234,7 +1234,7 @@ public sealed class HostRuntime : IAsyncDisposable
                 // FEA-11-RUN-GRANT-2C (C-06 v1.3 §2.2 / C-16 v1.6 §2.4): the Host-only renewal loop.
                 // It reuses the SAME coordinator mint+authorize path as dispatch (new grants each
                 // round); null when the source-read stack is off/absent or the option is disabled.
-                _runGrantRenewal = CreateRunGrantRenewal();
+                StartRunGrantRenewal();
                 Commands = new HostCommandDispatcher(
                     CoreService, HostBridge, HostLocalAsync, SourceOperationJournalAsync,
                     SourceOperationCompletionAsync,
@@ -1624,7 +1624,11 @@ public sealed class HostRuntime : IAsyncDisposable
     /// never retried, never re-attested and never turned into a partial mapping.
     /// </summary>
     private async Task<RunGrantRenewalOutcome> RenewRunGrantsAsync(
-        string runId, string command, System.Text.Json.JsonElement scope, CancellationToken token)
+        string runId,
+        string command,
+        System.Text.Json.JsonElement scope,
+        TimeSpan roundBudget,
+        CancellationToken token)
     {
         var authorizer = _runAuthorizer;
         if (authorizer is null)
@@ -1633,7 +1637,10 @@ public sealed class HostRuntime : IAsyncDisposable
                 RunGrantRenewalKind.StoppedTyped, "RENEWAL_DISABLED");
         }
 
-        var result = await authorizer.AuthorizeSliceAsync(command, scope, token).ConfigureAwait(false);
+        // Review r1 P2-01: the explicit round budget is passed INTO the mint path so the bounded
+        // on-demand cold fills stop before it; the round's own timing is re-checked by the loop.
+        var result = await authorizer.AuthorizeSliceAsync(command, scope, token, roundBudget)
+            .ConfigureAwait(false);
         if (result is null)
         {
             return RunGrantRenewalOutcome.Stop(
@@ -1644,6 +1651,15 @@ public sealed class HostRuntime : IAsyncDisposable
         {
             return RunGrantRenewalOutcome.Stop(
                 RunGrantRenewalKind.StoppedTyped, "RENEWAL_NO_TARGETS");
+        }
+
+        // Review r1 P3-02: the ledger headroom is a REAL status read (not a dead helper): renewal
+        // mints continuously, so the bounded ledger is observable on every successful round.
+        if (Sources is { } coordinator)
+        {
+            var ledger = coordinator.LedgerStatus();
+            _log.Info("run grant renewal ledger tracked=" + ledger.TrackedPayloads
+                + "/" + ledger.MaxTrackedPayloads + " grants=" + ledger.TrackedGrants);
         }
 
         return RunGrantRenewalOutcome.Success(
@@ -1709,6 +1725,50 @@ public sealed class HostRuntime : IAsyncDisposable
             await renewal.DisposeAsync().ConfigureAwait(false);
         }
     }
+
+    // ---------------------------------------------------------------------------------------
+    // FEA-11-RUN-GRANT-2C (Review r1 P1-01): Host-wiring test seams. They call the EXACT production
+    // entry points the dispatcher/AcceptRun paths and the renewal loop use, so removing the wiring
+    // (reviewer Probe-C: `_runGrantRenewal = null`) turns the Host-wiring test RED. Test-only surface:
+    // no production caller, no wire/UI command, no path/grant/source material.
+    // ---------------------------------------------------------------------------------------
+
+    /// <summary>Test seam: the installed renewal loop (null when disabled / not wired).</summary>
+    public RunGrantRenewal? RunGrantRenewalForTests => _runGrantRenewal;
+
+    /// <summary>Test seam: runs the production installation line; true when a loop was wired.</summary>
+    public bool StartRunGrantRenewalForTests()
+    {
+        StartRunGrantRenewal();
+        return _runGrantRenewal is not null;
+    }
+
+    /// <summary>Test seam: the production dispatcher pre-dispatch authorization summary.</summary>
+    public Task<System.Text.Json.JsonElement?> AuthorizeRunCommandForTestsAsync(
+        string name, System.Text.Json.JsonElement payload) =>
+        RunAuthorizeWithResultAsync(name, payload, CancellationToken.None);
+
+    /// <summary>Test seam: the production dispatcher post-dispatch wiring.</summary>
+    public Task NotifyRunDispatchedForTestsAsync(
+        System.Text.Json.JsonElement dispatchResult, System.Text.Json.JsonElement? authorization) =>
+        RunDispatchedAsync(
+            "library_start_run", default, dispatchResult, authorization, CancellationToken.None);
+
+    /// <summary>Test seam: the production AcceptRun wiring entry (the SAME shared start gate).</summary>
+    public Task NotifyAcceptedRunForTestsAsync(
+        string? runId, string command, System.Text.Json.JsonElement scope, int boundPages)
+    {
+        MaybeStartRunGrantRenewal(runId, new RunCommandAuthorization(
+            command, scope, new RunAuthorizationResult(boundPages, 0, 0, Array.Empty<string>())));
+        return Task.CompletedTask;
+    }
+
+    /// <summary>Test seam: ONE production renewal round through the installed loop.</summary>
+    public Task<RunGrantRenewalOutcome> TickRunGrantRenewalForTestsAsync(string runId) =>
+        _runGrantRenewal is { } renewal
+            ? renewal.TickAsync(runId, CancellationToken.None)
+            : Task.FromResult(RunGrantRenewalOutcome.Stop(
+                RunGrantRenewalKind.StoppedNotTracked, "RENEWAL_NOT_WIRED"));
 
     /// <summary>R1-02③/R1-07: the Core read used to resolve a Run's frozen
     /// ``{command, scope}`` for control/resume/retry. Its failure is handled by
@@ -1800,10 +1860,22 @@ public sealed class HostRuntime : IAsyncDisposable
         return new RunGrantRenewal(
             options,
             _options.RunGrantRenewalTimeProvider,
-            ProbeRunLivenessAsync,
+            // Test seam (Review r1 P1-01): the production probe reads the live Core's GetRunSnapshot;
+            // the wiring tests inject a scripted probe so the real Track/Tick path is drivable.
+            _options.RunGrantRenewalLivenessProbe ?? ProbeRunLivenessAsync,
             RenewRunGrantsAsync,
             info: message => _log.Info(message),
             warn: message => _log.Warn(message));
+    }
+
+    /// <summary>
+    /// FEA-11-RUN-GRANT-2C (Review r1 P1-01): the ONE production installation point of the renewal
+    /// loop. Extracted so the Host-wiring test drives exactly the same installation line the runtime
+    /// start path uses (removing / nulling this installation makes the wiring test RED).
+    /// </summary>
+    private void StartRunGrantRenewal()
+    {
+        _runGrantRenewal = CreateRunGrantRenewal();
     }
 
     /// <summary>
@@ -2291,10 +2363,16 @@ public sealed class RunSourceAuthorizer
             : null;
 
     /// <summary>Best-effort mint+bind for one Run slice.</summary>
+    /// <param name="roundBudget">
+    /// FEA-11-RUN-GRANT-2C (Review r1 P2-01): an optional whole-round budget. When supplied (renewal
+    /// only), the bounded cold-cache on-demand fills stop before it and the mint never waits for more
+    /// than the remaining budget; the pre-dispatch dispatch path passes null (unchanged behaviour).
+    /// </param>
     public async Task<RunAuthorizationResult?> AuthorizeSliceAsync(
         string command,
         System.Text.Json.JsonElement scope,
-        CancellationToken token)
+        CancellationToken token,
+        TimeSpan? roundBudget = null)
     {
         if (!_enabled || !await ProbeAsync(token).ConfigureAwait(false))
         {
@@ -2312,7 +2390,7 @@ public sealed class RunSourceAuthorizer
             _warn("run source-read authorization skipped registry code=" + CodeOf(error));
             return null;
         }
-        var resolution = await ResolveWithColdCacheAsync(known, entries, scope, token)
+        var resolution = await ResolveWithColdCacheAsync(known, entries, scope, token, roundBudget)
             .ConfigureAwait(false);
         if (resolution.Resolution.Unresolved > 0)
         {
@@ -2363,12 +2441,19 @@ public sealed class RunSourceAuthorizer
 
     /// <summary>FEA-11-RUN-GRANT-2A (S-3): resolve the range, fill cold sources with at most ONE
     /// bounded on-demand scan each (explicit budget + timeout), then resolve again. Failures, timeouts
-    /// and exhausted budgets are skips: the method never throws for Host-side reasons.</summary>
+    /// and exhausted budgets are skips: the method never throws for Host-side reasons.
+    ///
+    /// FEA-11-RUN-GRANT-2C (Review r1 P2-01): when <paramref name="roundBudget"/> is supplied (renewal
+    /// only), the cold fills share ONE explicit budget: each scan gets at most the SMALLER of the frozen
+    /// 30 s timeout and the remaining round budget, and the fill loop stops (leaving the rest cold) once
+    /// the budget is consumed. This keeps <c>interval + round &lt; 300 s</c> and never blocks the mint
+    /// gate behind 8×30 s of on-demand scanning.</summary>
     private async Task<ColdCacheResolution> ResolveWithColdCacheAsync(
         IReadOnlyList<SourceScanTarget> known,
         IReadOnlyList<SourceAuthorization> entries,
         System.Text.Json.JsonElement scope,
-        CancellationToken token)
+        CancellationToken token,
+        TimeSpan? roundBudget = null)
     {
         var resolution = RunSourceRange.Resolve(known, scope, entries, _identities);
         if (resolution.ColdSources.Count == 0 || _onDemandScan is null)
@@ -2381,6 +2466,7 @@ public sealed class RunSourceAuthorizer
             _warn($"run source-read authorization on_demand_budget_exhausted={resolution.ColdSources.Count - budget}");
         }
         var attempts = 0;
+        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
         await _onDemandGate.WaitAsync(token).ConfigureAwait(false);
         try
         {
@@ -2390,9 +2476,23 @@ public sealed class RunSourceAuthorizer
                 {
                     continue; // already filled (a concurrent slice or the periodic tick won)
                 }
+                var scanTimeout = OnDemandScanTimeout;
+                if (roundBudget is { } totalRoundBudget)
+                {
+                    var remaining = totalRoundBudget - stopwatch.Elapsed;
+                    if (remaining <= TimeSpan.Zero)
+                    {
+                        _warn("run source-read renewal on_demand_budget_exhausted"
+                            + " remaining_skipped=" + (resolution.ColdSources.Count - attempts));
+                        break;
+                    }
+
+                    if (remaining < scanTimeout) scanTimeout = remaining;
+                }
+
                 attempts++;
                 using var timeout = CancellationTokenSource.CreateLinkedTokenSource(token);
-                timeout.CancelAfter(OnDemandScanTimeout);
+                timeout.CancelAfter(scanTimeout);
                 try
                 {
                     await _onDemandScan(cold, timeout.Token).ConfigureAwait(false);

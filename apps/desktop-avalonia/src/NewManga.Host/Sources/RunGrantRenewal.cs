@@ -5,22 +5,9 @@ using NewManga.CoreClient.Wire;
 namespace NewManga.Host.Sources;
 
 /// <summary>
-/// FEA-11-RUN-GRANT-2C (C-06 v1.3 §2.2 / C-16 v1.6 §2.4): the Host-side renewal of the Run-scoped
-/// source-read authorization. A Run is executed by the Core's single background scheduler, so the
-/// grants minted before dispatch (each ≤300 s) can expire while the Run is still queued or running.
-/// While the Run is NOT terminal, the Host re-mints the grants for the SAME frozen
-/// <c>{command, scope}</c> and calls <c>AuthorizeSourceReadForRun</c> again — a NEW set of grants
-/// (new ids, new ≤300 s expiry), never an extension of an existing grant, never a widened scope, and
-/// never a rebuild of a revoked/refused authorization.
-///
-/// Contract boundaries kept here:
-/// * every round goes through the SAME best-effort authorizer as dispatch (<c>AuthorizeSliceAsync</c>),
-///   which re-runs <c>Registry.Authorize</c> + the physical facts re-check for every source;
-/// * a typed refusal / revoked registry / generation drift / lost root / Core capability loss stops
-///   the renewal immediately (no retry, no re-attest, no auto re-authorization);
-/// * one round == one <c>AuthorizeSourceReadForRun</c> (the coordinator's own mint gate serialises);
-/// * <c>interval + round budget &lt; 300 s</c> keeps a fresh grant alive across the next round;
-/// * terminal Runs / a missing Run / Host shutdown stop the loop.
+/// FEA-11-RUN-GRANT-2C (C-06 v1.3 §2.2 / C-16 v1.6 §2.4): the liveness of one dispatched Run as seen by
+/// the renewal loop. ONLY <see cref="Alive"/> keeps the loop running; anything unprovable is a
+/// fail-closed stop (never "assume alive").
 /// </summary>
 public enum RunLiveness
 {
@@ -34,14 +21,18 @@ public enum RunGrantRenewalKind
 {
     /// <summary>A new grant set was minted and bound; the Run stays tracked.</summary>
     Renewed,
+    /// <summary>
+    /// The round could not finish inside the explicit round budget (interval + round &lt; 300 s). The
+    /// round is SKIPPED (typed + counted) and the Run stays tracked for the next interval; nothing is
+    /// ever retried mid-round.
+    /// </summary>
+    SkippedBudget,
     /// <summary>The Run reached a terminal state (or disappeared).</summary>
     StoppedTerminal,
     /// <summary>The Run was never tracked / already stopped by this renewal.</summary>
     StoppedNotTracked,
     /// <summary>The per-Run round cap (<see cref="RunGrantRenewalOptions.MaxRenewals"/>) is exhausted.</summary>
     StoppedRoundsExhausted,
-    /// <summary>The round exceeded the explicit round budget (a typed stop + count, never a retry).</summary>
-    StoppedBudget,
     /// <summary>A typed authorization refusal / Host-side failure stopped the renewal.</summary>
     StoppedTyped,
     /// <summary>The liveness probe could not prove the Run alive (fail-closed stop).</summary>
@@ -57,9 +48,16 @@ public sealed record RunGrantRenewalOutcome(
 {
     public bool Renewed => Kind == RunGrantRenewalKind.Renewed;
 
+    /// <summary>True when the loop must continue (a successful round or a budget skip).</summary>
+    public bool KeepsTracking => Kind is RunGrantRenewalKind.Renewed or RunGrantRenewalKind.SkippedBudget;
+
     public static RunGrantRenewalOutcome Success(
         int boundPages, int mintedGrants, int skippedSources) =>
         new(RunGrantRenewalKind.Renewed, boundPages, mintedGrants, skippedSources);
+
+    public static RunGrantRenewalOutcome BudgetSkip(
+        string code, int boundPages = 0, int mintedGrants = 0, int skippedSources = 0) =>
+        new(RunGrantRenewalKind.SkippedBudget, boundPages, mintedGrants, skippedSources, code);
 
     public static RunGrantRenewalOutcome Stop(RunGrantRenewalKind kind, string? code = null) =>
         new(kind, Code: code);
@@ -71,27 +69,30 @@ public sealed record RunGrantRenewalStatus(
     int IntervalSeconds,
     int MaxRenewals,
     int TrackedRuns,
+    int Attempts,
     int Renewals,
+    int BudgetSkips,
     int Stops,
     string? LastCode,
     int RoundBudgetMilliseconds)
 {
     public static RunGrantRenewalStatus Disabled(RunGrantRenewalOptions options) =>
-        new(false, options.IntervalSeconds, options.MaxRenewals, 0, 0, 0, null,
+        new(false, options.IntervalSeconds, options.MaxRenewals, 0, 0, 0, 0, 0, null,
             (int)RunGrantRenewalOptions.RoundBudget.TotalMilliseconds);
 }
 
 /// <summary>
 /// FEA-11-RUN-GRANT-2C (D-4): the explicit renewal budget. The frozen grant TTL upper bound is 300 s
 /// (C-06 §2.2 / C-16 §2.4); a round must finish with room to spare before the NEXT round, so
-/// <c>interval + round budget &lt; 300 s</c> is enforced on the frozen defaults.
+/// <c>interval + round budget &lt; 300 s</c> is enforced on the frozen defaults. The per-round budget
+/// is passed INTO the mint path (bounded cold-cache on-demand scans) and re-checked after the round.
 /// </summary>
 public sealed record RunGrantRenewalOptions(bool Enabled, int IntervalSeconds, int MaxRenewals)
 {
     public const int DefaultIntervalSeconds = 240;
     public const int DefaultMaxRenewals = 12;
 
-    /// <summary>A renewal round may take at most this long before it is a typed stop + count.</summary>
+    /// <summary>The whole round (cold fills + mint + one AuthorizeSourceReadForRun) must fit in this.</summary>
     public const int RoundBudgetSeconds = 50;
 
     /// <summary>Renewing more often than this is pure mint cost; the default (240 s) is the floor.</summary>
@@ -142,7 +143,7 @@ public sealed record RunGrantRenewalOptions(bool Enabled, int IntervalSeconds, i
 /// <see cref="TimeProvider"/> and injected liveness/renew delegates.
 ///
 /// The loop is per Run and serialised by the coordinator's own mint gate; this class only decides
-/// WHEN one round runs and whether the Run stays tracked.
+/// WHEN one round runs, whether the round fits the explicit budget, and whether the Run stays tracked.
 /// </summary>
 public sealed class RunGrantRenewal : IAsyncDisposable
 {
@@ -152,20 +153,29 @@ public sealed class RunGrantRenewal : IAsyncDisposable
         public string Command { get; } = command;
         public JsonElement Scope { get; } = scope;
         public CancellationTokenSource Lifetime { get; } = new();
-        public int Rounds { get; set; }
+        public int Attempts { get; set; }
         public Task? Loop { get; set; }
     }
+
+    /// <summary>
+    /// One renewal round: (run_id, frozen command, frozen scope, round budget, token). The budget is
+    /// handed to the mint path so bounded on-demand scans stop before the interval+TTR safety bound;
+    /// the implementation must never change the command/scope.
+    /// </summary>
+    private readonly Func<string, string, JsonElement, TimeSpan, CancellationToken, Task<RunGrantRenewalOutcome>>
+        _renew;
 
     private readonly RunGrantRenewalOptions _options;
     private readonly TimeProvider _timeProvider;
     private readonly Func<string, CancellationToken, Task<RunLiveness>> _liveness;
-    private readonly Func<string, string, JsonElement, CancellationToken, Task<RunGrantRenewalOutcome>> _renew;
     private readonly Action<string>? _info;
     private readonly Action<string>? _warn;
     private readonly CancellationTokenSource _lifetime = new();
     private readonly object _gate = new();
     private readonly Dictionary<string, TrackedRun> _runs = new(StringComparer.Ordinal);
+    private int _attempts;
     private int _renewals;
+    private int _budgetSkips;
     private int _stops;
     private string? _lastCode;
     private bool _disposed;
@@ -174,7 +184,7 @@ public sealed class RunGrantRenewal : IAsyncDisposable
         RunGrantRenewalOptions options,
         TimeProvider timeProvider,
         Func<string, CancellationToken, Task<RunLiveness>> liveness,
-        Func<string, string, JsonElement, CancellationToken, Task<RunGrantRenewalOutcome>> renew,
+        Func<string, string, JsonElement, TimeSpan, CancellationToken, Task<RunGrantRenewalOutcome>> renew,
         Action<string>? info = null,
         Action<string>? warn = null)
     {
@@ -200,7 +210,9 @@ public sealed class RunGrantRenewal : IAsyncDisposable
                     _options.IntervalSeconds,
                     _options.MaxRenewals,
                     _runs.Count,
+                    _attempts,
                     _renewals,
+                    _budgetSkips,
                     _stops,
                     _lastCode,
                     (int)RunGrantRenewalOptions.RoundBudget.TotalMilliseconds);
@@ -265,28 +277,33 @@ public sealed class RunGrantRenewal : IAsyncDisposable
 
     /// <summary>
     /// ONE renewal round. Public so the whole state machine is deterministic in tests: the loop only
-    /// calls this after the interval. Every non-<see cref="RunGrantRenewalKind.Renewed"/> outcome
-    /// stops the Run's loop (fail-closed, never retried).
+    /// calls this after the interval. Every attempt (success, budget skip or failure) counts toward
+    /// the hard per-Run round cap; a failure stops the loop, a budget skip keeps it for the next
+    /// interval (never a mid-round retry).
     /// </summary>
     public async Task<RunGrantRenewalOutcome> TickAsync(string runId, CancellationToken token)
     {
+        int attempt;
         TrackedRun? tracked;
         lock (_gate)
         {
             if (!_runs.TryGetValue(runId, out tracked))
             {
-                return RunGrantRenewalOutcome.Stop(
-                    RunGrantRenewalKind.StoppedNotTracked, "RENEWAL_NOT_TRACKED");
+                return NotTracked();
+            }
+
+            if (tracked.Attempts >= _options.MaxRenewals)
+            {
+                attempt = -1;
+            }
+            else
+            {
+                attempt = ++tracked.Attempts;
+                _attempts++;
             }
         }
 
-        if (tracked is null)
-        {
-            return RunGrantRenewalOutcome.Stop(
-                RunGrantRenewalKind.StoppedNotTracked, "RENEWAL_NOT_TRACKED");
-        }
-
-        if (tracked.Rounds >= _options.MaxRenewals)
+        if (attempt < 0)
         {
             return Stop(runId, RunGrantRenewalOutcome.Stop(
                 RunGrantRenewalKind.StoppedRoundsExhausted, "RENEWAL_ROUNDS_EXHAUSTED"));
@@ -320,16 +337,22 @@ public sealed class RunGrantRenewal : IAsyncDisposable
                 RunGrantRenewalKind.StoppedLivenessUnknown, "RENEWAL_PROBE_UNKNOWN"));
         }
 
+        // PRE-ROUND budget: the frozen interval already guarantees interval + RoundBudget < 300 s
+        // (options validation); the explicit round budget is handed to the mint path so bounded
+        // cold-cache on-demand scans cannot burn past it.
+        var roundBudget = RunGrantRenewalOptions.RoundBudget;
         var started = _timeProvider.GetTimestamp();
         RunGrantRenewalOutcome outcome;
         try
         {
-            outcome = await _renew(runId, tracked.Command, tracked.Scope, token)
+            outcome = await _renew(runId, tracked.Command, tracked.Scope, roundBudget, token)
                 .ConfigureAwait(false);
         }
         catch (OperationCanceledException)
         {
-            throw;
+            // The caller's token wins; a budget-cancelled round is handled by the elapsed check.
+            if (token.IsCancellationRequested) throw;
+            return BudgetSkip(runId, "RENEWAL_ROUND_CANCELLED");
         }
         catch (CoreOperationException error)
         {
@@ -346,31 +369,62 @@ public sealed class RunGrantRenewal : IAsyncDisposable
         }
 
         var elapsed = _timeProvider.GetElapsedTime(started);
-        if (elapsed > RunGrantRenewalOptions.RoundBudget)
+        if (elapsed > roundBudget)
         {
-            // AC-2C-5: a round that cannot finish inside the explicit budget is a typed stop +
-            // count — never a retry and never a silent overlap with the next interval.
-            return Stop(runId, RunGrantRenewalOutcome.Stop(
-                RunGrantRenewalKind.StoppedBudget, "RENEWAL_ROUND_BUDGET_EXCEEDED"));
+            // POST-ROUND guard (belt and braces; the cold-fill path already bounds itself). A round
+            // that overruns skips to the NEXT interval instead of stopping: the run keeps renewing,
+            // but the budget breach is recorded and counted, and a real mint is still counted.
+            if (outcome.Renewed)
+            {
+                lock (_gate) _renewals++;
+            }
+
+            return BudgetSkip(
+                runId, "RENEWAL_ROUND_BUDGET_EXCEEDED",
+                outcome.BoundPages, outcome.MintedGrants, outcome.SkippedSources);
         }
 
-        if (!outcome.Renewed)
+        if (!outcome.KeepsTracking)
         {
             return Stop(runId, outcome);
         }
 
-        lock (_gate)
+        if (outcome.Kind == RunGrantRenewalKind.SkippedBudget)
         {
-            if (!_runs.ContainsKey(runId)) return outcome;
-            tracked.Rounds++;
-            _renewals++;
+            return BudgetSkip(
+                runId, outcome.Code ?? "RENEWAL_ROUND_SKIPPED_BUDGET",
+                outcome.BoundPages, outcome.MintedGrants, outcome.SkippedSources);
         }
+
+        lock (_gate) _renewals++;
 
         _info?.Invoke("run grant renewal round counts_only"
             + " minted=" + outcome.MintedGrants
             + " bound_pages=" + outcome.BoundPages
             + " skipped=" + outcome.SkippedSources);
         return outcome;
+    }
+
+    private static RunGrantRenewalOutcome NotTracked() =>
+        RunGrantRenewalOutcome.Stop(RunGrantRenewalKind.StoppedNotTracked, "RENEWAL_NOT_TRACKED");
+
+    private RunGrantRenewalOutcome BudgetSkip(
+        string runId, string code, int boundPages = 0, int mintedGrants = 0, int skippedSources = 0)
+    {
+        lock (_gate)
+        {
+            if (!_runs.ContainsKey(runId))
+            {
+                return NotTracked();
+            }
+
+            _budgetSkips++;
+            _lastCode = code;
+        }
+
+        _warn?.Invoke("run grant renewal round skipped code=" + code
+            + " minted=" + mintedGrants + " bound_pages=" + boundPages);
+        return RunGrantRenewalOutcome.BudgetSkip(code, boundPages, mintedGrants, skippedSources);
     }
 
     private RunGrantRenewalOutcome Stop(string runId, RunGrantRenewalOutcome outcome)
@@ -409,7 +463,7 @@ public sealed class RunGrantRenewal : IAsyncDisposable
                     .ConfigureAwait(false);
                 var outcome = await TickAsync(tracked.RunId, tracked.Lifetime.Token)
                     .ConfigureAwait(false);
-                if (!outcome.Renewed) return;
+                if (!outcome.KeepsTracking) return;
             }
         }
         catch (OperationCanceledException)

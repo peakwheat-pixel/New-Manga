@@ -155,4 +155,11 @@ public sealed class HostOptions
 
     /// <summary>TimeProvider seam for the renewal loop (tests advance it; production uses the system clock).</summary>
     public TimeProvider RunGrantRenewalTimeProvider { get; init; } = TimeProvider.System;
+
+    /// <summary>
+    /// Test seam (FEA-11-RUN-GRANT-2C Review r1 P1-01): overrides the per-round Run liveness probe.
+    /// Null (production) uses the read-only <c>GetRunSnapshot</c> probe on the live Core; the wiring
+    /// tests inject a scripted probe so the REAL dispatch → Track → Tick path is drivable without a Core.
+    /// </summary>
+    public Func<string, CancellationToken, Task<RunLiveness>>? RunGrantRenewalLivenessProbe { get; init; }
 }
