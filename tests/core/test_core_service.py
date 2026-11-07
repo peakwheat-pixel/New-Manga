@@ -158,6 +158,7 @@ def test_dispatch_pure_functions(tmp_path: Path) -> None:
             # R-12 (approved additive widening): C-16 v1.3 §0 capability.
             "library.list_books", "source.read/1", "source.resolve-secret/1",
             "source.read.run/1",
+            "source.reattest/1",
             "library.delete.preview/1", "library.trash.read/1",
             "library.trash.write/1",
             "source.sync.scan/1", "source.sync.plan/1", "source.sync.apply/1",
@@ -254,6 +255,7 @@ def test_real_subprocess_e2e_round_trip(tmp_path: Path) -> None:
             # R-12 (approved additive widening): C-16 v1.3 §0 capability.
             "library.list_books", "source.read/1", "source.resolve-secret/1",
             "source.read.run/1",
+            "source.reattest/1",
             "library.delete.preview/1", "library.trash.read/1",
             "library.trash.write/1",
             "source.sync.scan/1", "source.sync.plan/1",

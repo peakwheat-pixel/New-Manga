@@ -337,6 +337,7 @@ def test_wire_ping_advertises_source_read_capability():
         # advertisement (C-16 v1.3 §0); no other expectation is relaxed.
         "library.list_books", "source.read/1", "source.resolve-secret/1",
         "source.read.run/1",
+        "source.reattest/1",
     ]
 
 
