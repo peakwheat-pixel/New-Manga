@@ -105,3 +105,16 @@ AC-F1/F2/F5 MET；AC-F3 → `NOT_APPLICABLE` + re-home `FEA-11-HOST-AUTH-3`；AC
 - **allowed_paths 收窄**：`Views/Fluent/**` + `ViewModels/Fluent/**`（原草案 `Views/**` 会踩 `Views/V2/**`，与 RESIDUAL-2 禁令冲突）。
 - **冻结基线**：`.NET 1705/0/98`、pytest `3390/10`、pins 18/18（STATUS:20 现网值，> plan §11.4 的 1691/0/96）。
 - **done 口径不变**：`FEA-06-RESIDUAL-2` done 时必须显式声明「done 不覆盖 BLOCKED 表」+ 逐格 before/after + 格 3 re-home 具名卡；原生项 NA（保留 `NOT_RUN`）。
+
+### 7.5 `FEA-06-RESIDUAL-2` → `done`（2026-11-08，integration `ddc29ecb3`）
+
+| 项 | before | after | 依据 |
+|---|---|---|---|
+| front matter `status` | `closed_with_limitations` | `done` | 用户 2026-11-08 指令（R2）+ 本节 |
+| BLOCKED 表 6 格 | 全部 BLOCKED | 4 格关闭、1 格 re-home（`FEA-06-RESIDUAL-4`）、1 格拆为「Tab/a11y 关闭 + 原生 NA」 | 承接卡 `FEA-06-RESIDUAL-3`（`ddc29ecb3`；r4 approved P0=0/P1=0） |
+| 显式声明 | — | **本卡 done 不覆盖 BLOCKED 表** | ADJ §11.3 / 评审 R3-006 |
+| limitation | 原生 DPI/a11y | 原 limitation 字节保留；新增 L-R3-1…L-R3-7 并具名 re-home | 不改历史字节 |
+
+### 7.6 `FEA-06-RESIDUAL-3`：`ready` → `done`（2026-11-08）
+
+Review 链 r1→r2→r3→**r4 approved（P0=0/P1=0/P2=0/P3=5）**；AC-1…AC-6 MET；格 3 与原生项不在本卡（re-home / NA）。

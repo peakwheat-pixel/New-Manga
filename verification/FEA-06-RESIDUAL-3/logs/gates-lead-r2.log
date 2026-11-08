@@ -1,0 +1,35 @@
+=== Lead gates (r2 head) 2026-11-08T15:03:40.5742355+08:00 HEAD=5cabc1ebd ===
+=== scope diff (9429fc210..HEAD) ===
+=== forbidden ===
+(empty) OK
+=== build ===
+    0 个错误
+
+已用时间 00:00:01.93
+BUILD_EXIT=0
+=== full dotnet ===
+
+已通过! - 失败:     0，通过:    21，已跳过:     0，总计:    21，持续时间: 95 ms - NewManga.Appearance.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:    38，已跳过:     0，总计:    38，持续时间: 301 ms - NewManga.Presentation.Avalonia.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   253，已跳过:     0，总计:   253，持续时间: 721 ms - NewManga.ThemeEngine.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   117，已跳过:     0，总计:   117，持续时间: 1 s - NewManga.DesignSystem.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:    31，已跳过:     0，总计:    31，持续时间: 4 s - NewManga.ApplicationCore.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   300，已跳过:    67，总计:   367，持续时间: 10 s - NewManga.Host.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   167，已跳过:    24，总计:   191，持续时间: 16 s - NewManga.CoreClient.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   803，已跳过:     7，总计:   810，持续时间: 2 m 59 s - NewManga.App.Tests.dll (net9.0)
+
+DOTNET_EXIT=0
+=== restore FEA-09 ===
+RESTORE_EXIT=0
+=== pytest ===
+
+3390 passed, 10 skipped in 259.43s (0:04:19)
+
+PYTEST_EXIT=0
+=== pins/check/api ===
+PIN AUDIT: PASS (all 18)
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6960 bytes / 64 lines
+Governance check: PASS (3 warnings)
+OK: rendered counts match FEA-C07 doc
+API_EXIT=0
+?? verification/FEA-06-RESIDUAL-3/logs/

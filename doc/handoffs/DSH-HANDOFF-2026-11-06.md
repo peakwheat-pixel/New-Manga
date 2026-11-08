@@ -376,3 +376,14 @@ ameof(ListStatusText)，修「进入回收站 bar 仍显示 N/M 作品」「返�
 - **指针**：PLAN `READY 节点：无`（HOST-AUTH-1 行改 done）；STATUS「无活动 Task + 下一候选 R2」；`task_ledger.py --write` 重跑；新增 3 张 `proposed` re-home 卡（HOST-AUTH-3/4/5，**须先 scope review**）。
 - **下一轮**：R2 `FEA-06-RESIDUAL-3` 的独立 scope review → 冻结 → 实现（5 个依赖格 + Tab 遍历 + a11y 属性；仅原生 a11y/200% DPI/原生截图走 NA）。
 - **未做**：R2/R3/R4 未开始；AC-F3/F4 未实现（re-home，`NOT_RUN`）；未改契约/pins。
+
+## 31. 续接补充（2026-11-08 第 23 轮：R2 `FEA-06-RESIDUAL-3` done + `FEA-06-RESIDUAL-2` 翻 done）
+
+- **R2 全链**：实现 `a2b51c79d` → r1 CR（P1×2：页码 1-based、webtoon 末页残留）→ 返修 `fc6712e94` → r2 CR（P1×1：终态释放过宽 ⇒ 继续/重试 enabled-but-inert）→ 返修 `5cabc1ebd` → r3 CR（P1×1：C061 子 Run 在 `run_id` 未被跟踪）→ 返修 `ddc29ecb3` → **r4 approved（P0=0/P1=0/P2=0/P3=5）**。
+- **三轮 P1 均为真缺陷且由变异实测判别**（页码对 Core 1-based `page_order` +1；webtoon 末页 stale bitmap；C061 子 Run 未跟踪 ⇒ 重试进度不可见）。
+- **交付**：4 格关闭（批量矩阵/吸顶 + RunProjectionBar、Reader 双页/webtoon、书架自洽聚合、Console 9 行）+ **Tab 遍历/a11y 属性/UIA 树**（方案 a）；**格 3 re-home `FEA-06-RESIDUAL-4`**（需 C-07 additive）；**原生 a11y/200% DPI/原生截图 NA（NOT_RUN）**；L-R3-1…7 登记。
+- **Lead 门禁（一手，head `ddc29ecb3`）**：build 0/0；全量 .NET **1731/0/98**；pytest **3390/10**；pins 18/18；check PASS；API EXIT 0；diff 24 文件 ⊆ allowed_paths；禁止面零 diff；FEA-09 已恢复。
+- **翻转**：`FEA-06-RESIDUAL-2` `closed_with_limitations` → `done`（BLOCKED 表逐格 before/after + 显式「done 不覆盖 BLOCKED 表」；ADJ §7.5；原 limitation 字节保留）。
+- **指针**：PLAN 行改 done；STATUS 无活动 Task + 下一候选 R3；ledger 重跑；review 链 r1–r4 落盘 `doc/reviews/FEA-06-RESIDUAL-3-r{1..4}.md`。
+- **下一轮**：R3 `FEA-11-RESIDUAL-4A`（AC11-7 诊断接线 / AC11-9 生产链路 / L-M4 / folder relink 判别 + L-S4-2 / AC11-5 回填）→ 翻 `FEA-11`；随后 R4 `FEA-07-RESIDUAL-2`。
+- **未做**：R3/R4 未开始；格 3 未做（re-home）；原生项 `NOT_RUN`；未改契约/pins。

@@ -1,0 +1,60 @@
+=== Lead gates 2026-11-08T13:06:07.9800715+08:00 HEAD=a2b51c79d ===
+=== scope diff ===
+apps/desktop-avalonia/src/NewManga.App/ViewModels/Fluent/FluentRunProjection.cs
+apps/desktop-avalonia/src/NewManga.App/ViewModels/Fluent/ReaderViewModel.cs
+apps/desktop-avalonia/src/NewManga.App/ViewModels/Fluent/ShelfViewModel.cs
+apps/desktop-avalonia/src/NewManga.App/ViewModels/Fluent/WorkbenchViewModel.cs
+apps/desktop-avalonia/src/NewManga.App/Views/Fluent/ReaderPageView.cs
+apps/desktop-avalonia/src/NewManga.App/Views/Fluent/SettingsPageView.cs
+apps/desktop-avalonia/src/NewManga.App/Views/Fluent/ShelfPageView.cs
+apps/desktop-avalonia/src/NewManga.App/Views/Fluent/WorkbenchPageView.cs
+apps/desktop-avalonia/tests/NewManga.App.Tests/FluentPageTests.cs
+apps/desktop-avalonia/tests/NewManga.App.Tests/FluentResidual3Tests.cs
+apps/desktop-avalonia/tests/NewManga.App.Tests/FluentResidual3VisualEvidenceTests.cs
+apps/desktop-avalonia/tests/NewManga.App.Tests/FluentResidualBatchATests.cs
+verification/FEA-06-RESIDUAL-3/baseline/host-commands.txt
+verification/FEA-06-RESIDUAL-3/visuals/01-shelf-default.png
+verification/FEA-06-RESIDUAL-3/visuals/02-shelf-readonly.png
+verification/FEA-06-RESIDUAL-3/visuals/03-workbench-page.png
+verification/FEA-06-RESIDUAL-3/visuals/04-workbench-batch-empty.png
+verification/FEA-06-RESIDUAL-3/visuals/05-workbench-batch-matrix.png
+verification/FEA-06-RESIDUAL-3/visuals/06-console-nine-rows.png
+verification/FEA-06-RESIDUAL-3/visuals/07-reader-single.png
+verification/FEA-06-RESIDUAL-3/visuals/08-reader-double.png
+verification/FEA-06-RESIDUAL-3/visuals/09-reader-webtoon.png
+verification/FEA-06-RESIDUAL-3/visuals/inventory.md
+=== forbidden surfaces ===
+(empty) OK
+=== build ===
+    0 个错误
+
+已用时间 00:00:02.27
+BUILD_EXIT=0
+=== full dotnet ===
+
+已通过! - 失败:     0，通过:    21，已跳过:     0，总计:    21，持续时间: 89 ms - NewManga.Appearance.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:    38，已跳过:     0，总计:    38，持续时间: 285 ms - NewManga.Presentation.Avalonia.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   253，已跳过:     0，总计:   253，持续时间: 923 ms - NewManga.ThemeEngine.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   117，已跳过:     0，总计:   117，持续时间: 1 s - NewManga.DesignSystem.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:    31，已跳过:     0，总计:    31，持续时间: 4 s - NewManga.ApplicationCore.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   300，已跳过:    67，总计:   367，持续时间: 9 s - NewManga.Host.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   167，已跳过:    24，总计:   191，持续时间: 16 s - NewManga.CoreClient.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   795，已跳过:     7，总计:   802，持续时间: 3 m 2 s - NewManga.App.Tests.dll (net9.0)
+
+DOTNET_EXIT=0
+=== restore FEA-09 ===
+RESTORE_EXIT=0
+=== pytest ===
+
+3390 passed, 10 skipped in 269.50s (0:04:29)
+
+PYTEST_EXIT=0
+=== pins/check/api ===
+PIN AUDIT: PASS (all 18)
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6960 bytes / 64 lines
+Governance check: PASS (3 warnings)
+OK: rendered counts match FEA-C07 doc
+API_EXIT=0
+=== git status ===
+?? verification/FEA-06-RESIDUAL-3/logs/
+=== done ===

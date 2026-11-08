@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "task_id": "FEA-06-RESIDUAL-3",
+  "implementation_commit": "ddc29ecb3",
+  "base_commit": "9429fc210",
+  "note": "Fluent visual/state residual (UI-only, 0 pin). Closes 4 of 6 BLOCKED cells + Tab traversal/a11y attributes; cell 3 re-homed to FEA-06-RESIDUAL-4 (needs C-07 additive); native a11y/DPI/screenshots NOT_RUN. Evidence includes opt-in 9 PNGs (pixels are NOT acceptance criteria) + inventory + host-command baseline + lead gate logs. No contract/wire/schema/dependency/DesignSystem change; 18 pins unchanged; verification/FEA-06 and FEA-06-RESIDUAL-2 untouched.",
+  "resources": [
+    { "resource_type": "worktree", "source_path": "NOT_APPLICABLE (main; base 9429fc210, impl ddc29ecb3)", "disposition": "NOT_APPLICABLE", "destination_path": "NOT_APPLICABLE", "process_check": "No linked worktree created." },
+    { "resource_type": "test-fixture", "source_path": "apps/desktop-avalonia/tests/NewManga.App.Tests/** (in-memory fakes)", "disposition": "NOT_APPLICABLE", "destination_path": "NOT_APPLICABLE", "process_check": "All tests use FakeHostController/headless Avalonia; no real IPC, no binary fixture." },
+    { "resource_type": "user-data", "source_path": "NOT_APPLICABLE", "disposition": "NOT_APPLICABLE", "destination_path": "NOT_APPLICABLE", "process_check": "No real user data / AppData / external volume touched." },
+    { "resource_type": "tracked-side-effect", "source_path": "verification/FEA-09/logs/wire-redacted.ndjson", "disposition": "NOT_APPLICABLE", "destination_path": "NOT_APPLICABLE", "process_check": "Pre-existing WireLogSourceRedactionTests side effect; restored with `git checkout -- verification/FEA-09` after each full .NET run." }
+  ],
+  "closeout_counts": { "deleted": 0, "moved": 0, "migrated": 0, "archived": 0 }
+}

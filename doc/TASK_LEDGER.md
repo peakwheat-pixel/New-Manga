@@ -7,30 +7,30 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | metric | value |
 |---|---:|
 | task files | 551 |
-| terminal | 536 |
-| non-terminal | 14 |
-| non-terminal named in the plan | 2 |
+| terminal | 537 |
+| non-terminal | 13 |
+| non-terminal named in the plan | 1 |
 | non-terminal outside the plan | 12 |
-| task files tracked by git | 549 |
-| task files untracked (drafts) | 2 |
-| non-terminal tracked by git | 12 |
+| task files tracked by git | 551 |
+| task files untracked (drafts) | 0 |
+| non-terminal tracked by git | 13 |
 
 ## By status
 
 | status | count | terminal |
 |---|---:|---|
-| `done` | 454 | yes |
-| `closed_with_limitations` | 45 | yes |
+| `done` | 456 | yes |
+| `closed_with_limitations` | 44 | yes |
 | `cancelled` | 18 | yes |
 | `historical` | 11 | yes |
 | `superseded` | 8 | yes |
 | `proposed` | 6 | no |
 | `in_progress` | 2 | no |
 | `in_review` | 2 | no |
-| `ready` | 2 | no |
 | `(none)` | 1 | no |
 | `approved` | 1 | no |
 | `blocked` | 1 | no |
+| `ready` | 1 | no |
 
 ## Non-terminal tasks
 
@@ -48,7 +48,6 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `FEA-11-HOST-AUTH-5` | `proposed` | no |
 | `FEA-11-L-S1-B2-ROOTS-AVAILABILITY-1` | `proposed` | no |
 | `GIT-CLEAN-CORE-ENV-2` | `proposed` | no |
-| `FEA-06-RESIDUAL-3` | `ready` | mentioned |
 | `GIT-CLEAN-RUST-CAPACITY-DESIGN-1` | `ready` | no |
 
 ## What this ledger does not say
