@@ -1,0 +1,75 @@
+{
+  "metric": "FEA-07 hot frontend switch under real synthetic scale",
+  "ac": "FEA-07-RESIDUAL-2 AC-R4a-3 (recorded, not part of the W-5 gate)",
+  "machine": "HOME-MY",
+  "os": "Microsoft Windows NT 10.0.26300.0",
+  "dotnet": "9.0.11",
+  "config": "headless Avalonia UI thread; FakeHostController.ReadySnapshot(N books)",
+  "warmupSwitches": 2,
+  "measuredSwitches": 10,
+  "loads": [
+    {
+      "label": "n50",
+      "books": 50,
+      "booksInSnapshot": 50,
+      "coldFirstSwitchMs": 1242.23,
+      "p50Ms": 283.82,
+      "p95Ms": 1196.19,
+      "maxMs": 1196.19,
+      "samplesMs": [
+        939.35,
+        203.87,
+        1196.19,
+        163.6,
+        778.12,
+        276.62,
+        767.36,
+        214.73,
+        770.88,
+        283.82
+      ]
+    },
+    {
+      "label": "n200",
+      "books": 200,
+      "booksInSnapshot": 200,
+      "coldFirstSwitchMs": 1218.66,
+      "p50Ms": 864.82,
+      "p95Ms": 2617.77,
+      "maxMs": 2617.77,
+      "samplesMs": [
+        2188.2,
+        542.9,
+        2331.6,
+        615.76,
+        2617.77,
+        433.03,
+        2188.94,
+        864.82,
+        2189.95,
+        530.38
+      ]
+    },
+    {
+      "label": "n500",
+      "books": 500,
+      "booksInSnapshot": 500,
+      "coldFirstSwitchMs": 2639.19,
+      "p50Ms": 1859.72,
+      "p95Ms": 5668.25,
+      "maxMs": 5668.25,
+      "samplesMs": [
+        5668.25,
+        1859.72,
+        4249.27,
+        1852.79,
+        5018.51,
+        1509.15,
+        5505.2,
+        1182.52,
+        5638.5,
+        1592.27
+      ]
+    }
+  ]
+}

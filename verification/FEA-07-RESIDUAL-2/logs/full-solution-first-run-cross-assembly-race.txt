@@ -1,0 +1,6 @@
+[xUnit.net 00:00:33.51]     NewManga.App.Tests.FluentResidual2VisualEvidenceTests.Captures_Residual2_Visual_Inventory_Only_When_Opted_In [FAIL]
+失败 NewManga.App.Tests.FluentResidual2VisualEvidenceTests.Captures_Residual2_Visual_Inventory_Only_When_Opted_In [23 s]
+Expected: ""
+Actual:   "M verification/FEA-09/logs/wire-redacted."···
+at NewManga.App.Tests.FluentResidual2VisualEvidenceTests.Captures_Residual2_Visual_Inventory_Only_When_Opted_In()
+失败!  - 失败:     1，通过:   814，已跳过:     7，总计:   822，持续时间: 4 m 27 s - NewManga.App.Tests.dll (net9.0)
