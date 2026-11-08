@@ -1,0 +1,8 @@
+# FEA-11-RESIDUAL-4A mutation M3: projection returns every binding
+# expected: AC-R3-1 projection test RED, then restored GREEN
+
+[mutated] exit=1 verdict=RED
+[mutated] raw console output omitted (Windows console encoding); verdict above is authoritative
+
+[restored] exit=0 verdict=GREEN
+[restored] raw console output omitted (Windows console encoding); verdict above is authoritative

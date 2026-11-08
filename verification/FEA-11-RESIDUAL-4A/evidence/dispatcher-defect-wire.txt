@@ -1,0 +1,19 @@
+# FEA-11-RESIDUAL-4A AC-R3-2: WIRE evidence of the dispatcher defect
+# source: G:\CODEX\New Manga.workspace\FEA-11\fixtures\r4a-production-cf192b1afd274121b6fef9be123dca9e\logs\wire\core-service.ndjson
+# format: timestamp | command | error | note
+
+2026-11-08T08:52:39.0544820+00:00 | core.ping | error=- | valid frame
+2026-11-08T08:52:39.2448953+00:00 | core.ping | error=- | valid frame
+2026-11-08T08:52:40.2934892+00:00 | resolve_page_resource | error=SOURCE_ACCESS_DENIED | valid frame
+2026-11-08T08:52:40.2980194+00:00 | core.ping | error=- | valid frame
+2026-11-08T08:52:40.3291008+00:00 | RegisterSourceReadGrant | error=- | valid frame
+2026-11-08T08:52:40.3303676+00:00 | ? | error=INVALID_JSON | the PRODUCTION DISPATCHER frame: InvokeHostControlAsync writes a complete payload object into SendHostControlAsync's already-opened payload object
+2026-11-08T08:52:40.3473268+00:00 | ScanSourceSync | error=- | valid frame
+2026-11-08T08:52:40.6343529+00:00 | ? | error=INVALID_JSON | the PRODUCTION DISPATCHER frame: InvokeHostControlAsync writes a complete payload object into SendHostControlAsync's already-opened payload object
+2026-11-08T08:52:40.6365096+00:00 | core.ping | error=- | valid frame
+2026-11-08T08:52:40.6671496+00:00 | ResyncSource | error=- | valid frame
+2026-11-08T08:52:40.6770831+00:00 | resolve_page_resource | error=SOURCE_ACCESS_DENIED | valid frame
+2026-11-08T08:52:40.6928828+00:00 | AcknowledgeSourceOperation | error=- | valid frame
+2026-11-08T08:52:40.7239425+00:00 | resolve_page_resource | error=- | valid frame
+2026-11-08T08:52:40.7295112+00:00 | resolve_page_resource | error=- | valid frame
+2026-11-08T08:52:41.7341751+00:00 | core.ping | error=- | valid frame

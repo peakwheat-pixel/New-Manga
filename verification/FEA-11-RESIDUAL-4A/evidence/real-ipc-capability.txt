@@ -1,0 +1,4 @@
+DataRoot=G:\CODEX\New Manga.workspace\FEA-11\fixtures\r4a-production-0b8f9b9349c54f2bbfe8c4f17b551cd6
+scan_without_capability=CORE_CAPABILITY_MISSING
+zero_wire_frames=1
+PASS

@@ -1,0 +1,43 @@
+........................................................................ [ 33%]
+........................................................................ [ 66%]
+........................................................................ [ 99%]
+.                                                                        [100%]
+============================== warnings summary ===============================
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_scan_same_container_direct_continuation without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_scan_changed_container_diff_classifications without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_scan_same_mtime_size_bytes_changed_discovered without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_scan_expired_grant_typed_refusal without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_scan_scope_all_requires_frozen_reference_books without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_missing_source_observation_path without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_stale_apply_zero_write_baseline without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_full_sync_publishes_new_generation_and_gates without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests/fea11/test_source_run_grant.py::test_container_grant_duplicate_member_locators_are_legitimate
+  C:\Python314\Lib\zipfile\__init__.py:1730: UserWarning: Duplicate name: 'same.png'
+    return self._open_to_write(zinfo, force_zip64=force_zip64)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+217 passed, 9 warnings in 15.24s

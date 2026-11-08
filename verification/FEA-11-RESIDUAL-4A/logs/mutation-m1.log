@@ -1,0 +1,8 @@
+# FEA-11-RESIDUAL-4A mutation M1: folder relink refusal disabled
+# expected: AC-R3-3 discrimination test RED, then restored GREEN
+
+[mutated] exit=1 verdict=RED
+raw console output omitted (Windows console encoding); verdict above is authoritative
+
+[restored] exit=0 verdict=GREEN
+raw console output omitted (Windows console encoding); verdict above is authoritative
