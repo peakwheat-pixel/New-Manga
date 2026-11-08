@@ -315,3 +315,23 @@ eady，Owner **l-r11-impl**，base 2175238ab；Core-only 0 pin；allowed：sourc
   - (e) UI L3 真机：仅真机可验 → **不做**（`FEA-12-UI` 卡已记 NOT_RUN limitation）；
   - 其余已登记 P3（SCAN-RH P3-1/P3-3、2C R2-02…08、L-R11 P3、C-04b R4-002/003/004/005、RESIDUAL-1 P3）均**非阻塞、已留痕**，不再逐项开卡。
   - **结论：可推进项耗尽（停止条件①）**；后续仅在出现新需求/新证据（如 roots UI 立项、真机环境、RH-3 有真实生产者）时再开卡。
+
+## 27. 续接补充（2026-11-08 第 19 轮：**推翻 §26「耗尽」结论** + FEA-12-UI-RESIDUAL-2 done）
+
+- **⚠ 上轮结论被推翻（如实记录）**：§26 判「可推进项耗尽（停止条件①）」**是错的**。本轮按「先核实，不要相信叙述」重做候选面：并行派两个独立只读审计（用户可见价值面 / 工程契约债务面），两者均 HAS_CANDIDATE；DSH 逐行复核确认两条**未登记**的用户可见缺陷（①回收站恢复成功后书架不刷新；②回收站假空态 + 「加载更多」不可达）。**教训**：卡面 label（如「登记 follow-up」）与 P3 清单**不能**当作穷尽证据，必须回到真实代码链 + 独立上下文复核（本轮 4 个独立只读子代理：2 审计 + 2 scope review + 1 Review）。
+- **门禁一手复跑（HEAD 54e5d69db）**：build 0/0；全量 .NET **1683/0/96**；全量 pytest **3390/10**；pins 18/18；check PASS(3w)；跑后 git checkout -- verification/FEA-09。→ 基线从「叙述」变为一手事实（同时发现 STATUS/AUTORUN 的 3369 漂移，见下）。
+- **FEA-12-UI-RESIDUAL-2 done**（integration/delivery **85356c22a**；冻结卡 7c63bc50；closeout **5f3431dfd**）：App-only 三条修复 ——
+  - **A（AC-R1/R2）**：TrashViewModel 构造增可选 Func<Task>? onBooksRestored，RestoreSelectedAsync 在 SucceededIds.Count>0 时 wait 该回调；LibraryViewModel 装配 () => RefreshAsync()（orceHostRead:true）。覆盖 RecycleBinView.axaml:120 绑定的唯一活动入口；部分成功刷新、全失败不刷新不伪报；**不用 event**（async void 竞态）。
+  - **B（AC-R3/R4）**：IsEmpty 增 && _nextCursor is null；ShowList 改 (Items.Count > 0 || HasMore)；恢复与彻底删除两条路径同构覆盖；不改 XAML、不自动重载。
+  - **A′（AC-R6，第二轮独立评审发现）**：IsRecycleBinView setter 补 
+ameof(BookCountText)、
+ameof(ListStatusText)，修「进入回收站 bar 仍显示 N/M 作品」「返回后残留『回收站』」。
+  - 零 XAML/契约/wire/schema/依赖变更；**0 pin、无 UNFREEZE**；死代码 RecycleRestoreCommand 按裁决保留（L-3）。
+- **Review 链**：冻结前两轮独立 scope review（402ec34a-…、986a9e4c-…）均 **READY-TO-FREEZE**（第二轮独立发现 A′ 并指出「只断 RefreshCalls/Snapshot.Books 会假绿」）；实现后独立 Review r1 **approved（P0=0/P1=0/P2=1/P3=5；session 897f3928-…）**；**7 组变异实测：M1/M2/M3/M4/M5/M6b 共 15 RED**，逐字节复原 sha256 MATCH 后 74 全绿；**M6a 0 RED → 登记 L-4（ShowList 能力/probe 短路子句仅结构性保护、无变异判别）**。
+- **Lead 集成门禁（亲自实跑）**：build 0/0；定向 **74/0/0**；全量 .NET **1691/0/96**（+8 新用例、0 failed）；全量 pytest **3390/10**（不降）；pins **18/18**；check（默认 + -TaskPath）PASS(3w)×2；generate_api_inventory.py --check EXIT=0；scope 5 文件 ⊆ allowed_paths、禁止面零 diff；跑后 FEA-09 已恢复。
+- **AC/证据**：AC-R1…AC-R6 全 MET（AC-R3 的 ShowList 短路子句按 **L-4** 降级表述）；erification/FEA-12-UI-RESIDUAL-2/ EV-01…EV-26（含 reviewer 变异日志逐字节归档、Lead 门禁日志、changed-files、Resource Manifest）；closeout_counts = deleted/moved/migrated/archived = 0/0/0。
+- **limitation（保留，不得夸大）**：**L-2**（恢复后 RefreshAsync 按既有语义自动选中 Books[0]，接受不修）、**L-3**（RecycleRestoreCommand 死代码另卡）、**L-4**（ShowList 短路子句无判别测试，P3-01）、**L-5**（回调异常面 + RefreshAsync 无重入闸，既有结构）、**L-6**（T2 等待谓词不判别）、**L-7**（T7 一处空断言；ListStatusText 无 UI 消费者）、**L-8**（证据级别 VM headless；真实 IPC 与 L3/L4 真机 **NOT_RUN**）。FEA-12-UI 的 L1/L2/L3/L8 原样保留。
+- **口径红线**：**不得**写「回收站已完全修复 / UI L1–L10 已关闭 / AC-R3 回归栅栏已被变异钉住」。
+- **文档对账（本轮）**：STATUS 测试基线 3369→**3390/10**（.NET 1691/0/96）；DSH-AUTORUN-PROMPT → **v1.1**（基线同步、§7 队列快照刷新并标注 §26 结论被推翻）；STATUS push 指针改为引用 §27（不再写死过期 sha）。**README 漂移已登记未改**（.NET 258/258、pytest 2773、managed copy 与 AD-003/实际基线冲突）→ 下一轮 docs 卡候选②。
+- **下一候选（需先 scope review）**：① **2C typed-stop / 预算守卫次序残项**（Host-only：RunGrantRenewal.cs:371-390 事后预算守卫先于 !outcome.KeepsTracking ⇒ typed 停止被改写成 budget skip，违背 AC-2C-4「typed→Stop 不重试」；登记 FEA-11-RUN-GRANT-2C-r2.md:159 R2-03，同族 R2-02/R2-04；0 pin）；② **README 基线/AD-003 对账**（docs，0 pin）；③ L-4 的补测试（补「已加载行 + 能力翻转 + RefreshAsync」用例）。
+- **push**：PRE_HEAD=85356c22a、PRE_ORIGIN=54e5d69db、AHEAD_BEFORE=2 → **push1 54e5d69db..5f3431dfd（PUSH1_EXIT=0）**；本节提交 → push2（记录见 §27 push 记录补行）；目标 HEAD=origin、AHEAD=0。
