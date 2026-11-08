@@ -322,7 +322,13 @@ public sealed class WorkbenchViewModel : FluentViewModel
     public Task<bool> ContinueRunAsync(CancellationToken cancellationToken = default) =>
         SendRunControlAsync(RunControlAction.Resume, CanContinue, cancellationToken);
 
-    /// <summary>AC-2：重试失败目标（C061；IdempotencyKey 必需且本 VM 自持、复用同键）。</summary>
+    /// <summary>
+    /// AC-2：重试失败目标（C061；IdempotencyKey 必需且本 VM 自持，成功后轮换 —— 见下）。
+    /// <para>r3-P1：Core 的 C061 返回 <c>{"run_id": child, "status": ...}</c>，**没有** <c>new_run_id</c>
+    /// （<c>src/bootstrap/core_service.py:6216-6220</c>；契约 C061 行 <c>RunControlInfo{run_id,status}</c>，
+    /// <c>V11R_COMMAND_CONTRACT_V1.md:143</c>）→ C061 成功后必须把 <c>result.RunId</c>（子 Run）
+    /// 显式采用为被跟踪的 RunId，否则会继续轮询已终态的父 Run。</para>
+    /// </summary>
     public async Task<bool> RetryFailedAsync(CancellationToken cancellationToken = default)
     {
         if (_host is null || string.IsNullOrWhiteSpace(_runId) || !CanRetryFailed)
@@ -340,9 +346,13 @@ public sealed class WorkbenchViewModel : FluentViewModel
                 return false;
             }
 
+            // r3-P2：C061 成功后轮换 retry 意图键 —— 同一 key 会命中 Core 已接受的旧 record
+            // （重放同一个 child / IDEMPOTENCY_KEY_REUSED），下一次重试必须是新意图。
+            _retryIdempotencyKey = null;
             Status = $"重试已提交（{result.RunId} · {result.Status}）。";
-            TrackRunControlResult(result);
-            // 重试可能创建子 Run / 恢复执行：重新跟踪投影（终态时曾被停表，r2-P1）。
+            // r3-P1：C061 的 run_id 就是子 Run（契约无 new_run_id）→ adoptResultRunId。
+            TrackRunControlResult(result, adoptResultRunId: true);
+            // 子 Run 需要重新轮询投影（父 Run 终态时曾停表，r2-P1）。
             StartRunPolling();
             await PollRunProjectionAsync(cancellationToken);
             return true;
@@ -422,18 +432,23 @@ public sealed class WorkbenchViewModel : FluentViewModel
     }
 
     /// <summary>
-    /// r2-P1：控制/重试结果可能带回子 Run（C057 restart / C061 的 <c>new_run_id</c>）。若带回，
-    /// 则改为跟踪子 Run（否则后续投影/控制仍打到已停止的父 Run）；没有子 Run 时保持当前 RunId。
+    /// 采用控制结果里带回的子 Run（否则后续投影/控制仍打到已停止的父 Run）。
+    /// <para>C057 restart 子 Run 在 <c>new_run_id</c>；<b>C061 的子 Run 就是 <c>run_id</c></b>
+    /// （契约 C061 只返回 <c>{run_id,status}</c>，见 <c>V11R_COMMAND_CONTRACT_V1.md:143</c>），
+    /// 因此 C061 调用方传 <paramref name="adoptResultRunId"/>=true。</para>
     /// </summary>
-    private void TrackRunControlResult(RunControlInfo result)
+    private void TrackRunControlResult(RunControlInfo result, bool adoptResultRunId = false)
     {
-        if (string.IsNullOrWhiteSpace(result.NewRunId) ||
-            string.Equals(result.NewRunId, _runId, StringComparison.Ordinal))
+        var candidate = adoptResultRunId && !string.IsNullOrWhiteSpace(result.RunId)
+            ? result.RunId
+            : result.NewRunId;
+        if (string.IsNullOrWhiteSpace(candidate) ||
+            string.Equals(candidate, _runId, StringComparison.Ordinal))
         {
             return;
         }
 
-        _runId = result.NewRunId;
+        _runId = candidate;
         _runTrackingChapterId = _chapterId;
         _retryIdempotencyKey = null;
         Changed(nameof(RunId));

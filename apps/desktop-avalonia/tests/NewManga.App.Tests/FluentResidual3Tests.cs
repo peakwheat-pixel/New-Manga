@@ -487,13 +487,89 @@ public sealed class FluentResidual3Tests : IDisposable
 
         // 点「重试失败」→ 必须真发 1 帧 C061（而不是因 RunId 被清空直接 return）。
         var trackedRunId = viewModel.RunId;
-        host.ScriptedControlRuns.Enqueue(new RunControlInfo("run-42", "running"));
+        // r3-P1：真实 C061 形状 —— Core 只返回 {"run_id": child, "status"}，**没有** new_run_id
+        // （src/bootstrap/core_service.py:6216-6220；契约 V11R_COMMAND_CONTRACT_V1.md:143）。
+        host.ScriptedControlRuns.Enqueue(new RunControlInfo("child-run-1", "pending"));
         view.RetryRunButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
         RunJobs();
         var retried = Assert.Single(host.RetriedFailedRuns);
-        Assert.Equal(trackedRunId, retried.RunId);
-        Assert.False(string.IsNullOrWhiteSpace(retried.IdempotencyKey));
-        Assert.Empty(host.ControlRunRequests); // 重试走 C061，不是 C057
+        Assert.Equal(trackedRunId, retried.RunId);                                  // 帧打在父 Run 上
+        Assert.False(string.IsNullOrWhiteSpace(retried.IdempotencyKey));            // ④ 幂等键非空
+        Assert.Empty(host.ControlRunRequests);                                      // C061，不是 C057
+
+        // r3-P1：C061 的 run_id 就是子 Run → 必须被采用并恢复轮询，后续请求/轮询都指向 child。
+        Assert.Equal("child-run-1", viewModel.RunId);                               // ①
+        Assert.True(viewModel.IsRunPolling);                                        // ②
+        await viewModel.TickRunPollForTestAsync();                                  // ③ 生产 tick
+        Assert.Equal("child-run-1", host.TaskProjectionRequests.Last());
+
+        // r3-P2：retry 幂等键必须轮换 —— 再制造一次可重试终态，第二次重试要用**新的** key。
+        host.ScriptedTaskProjections.Enqueue(Projection(
+            runId: "child-run-1",
+            runStatus: "completed_with_failures",
+            counts: new RunCountsInfo(3, 1, 2, 0, 0, 0, 0),
+            controls: new RunControlsInfo(false, false, false, false, false, true)));
+        await viewModel.TickRunPollForTestAsync();
+        RunJobs();
+        Assert.True(view.RetryRunButton.IsEnabled);
+        host.ScriptedControlRuns.Enqueue(new RunControlInfo("child-run-2", "pending"));
+        view.RetryRunButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        RunJobs();
+        Assert.Equal(2, host.RetriedFailedRuns.Count);
+        Assert.NotEqual(host.RetriedFailedRuns[0].IdempotencyKey, host.RetriedFailedRuns[1].IdempotencyKey);
+        Assert.Equal("child-run-2", viewModel.RunId);
+
+        viewModel.StopRunPolling();
+        shell.Close();
+    }
+
+    // ---------------------------------------------------------------------------------------
+    // r3-P1：重试出的子 Run 的投影必须真正驱动状态（父 Run 终态后不再抢跑）
+    // ---------------------------------------------------------------------------------------
+
+    [AvaloniaFact]
+    public async Task R3008_RetryChildRun_ProjectionDrivesStatus()
+    {
+        var host = new FakeHostController(FakeHostController.ReadySnapshot("Sample"));
+        host.ChapterPagesByChapter["chapter-key"] = [new ChapterPageSummary("page-1", "one.png", 1)];
+        host.RegionsByPage["page-1"] = new RegionPageProjection([], null);
+        var shell = CreateShell(host);
+        shell.Navigate(FluentPage.Workbench);
+        await shell.WorkbenchView.LoadAsync("chapter-key");
+        RunJobs();
+        shell.WorkbenchView.SelectTab(WorkbenchViewTab.Batch);
+        RunJobs();
+
+        var viewModel = shell.WorkbenchViewModel;
+        var view = shell.WorkbenchView;
+        view.BatchStartButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        RunJobs();
+        host.ScriptedTaskProjections.Enqueue(Projection(
+            runStatus: "completed_with_failures",
+            counts: new RunCountsInfo(2, 1, 1, 0, 0, 0, 0),
+            controls: new RunControlsInfo(false, false, false, false, false, true)));
+        await viewModel.TickRunPollForTestAsync();
+        RunJobs();
+        host.ScriptedControlRuns.Enqueue(new RunControlInfo("child-run-1", "pending"));
+        view.RetryRunButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        RunJobs();
+        Assert.Equal("child-run-1", viewModel.RunId);
+
+        // 子 Run 投影 running → 状态/进度条必须来自 child（而不是残留的父终态投影）。
+        host.ScriptedTaskProjections.Enqueue(Projection(
+            runId: "child-run-1",
+            runStatus: "running",
+            progress: 0.25,
+            controls: new RunControlsInfo(true, true, false, false, false, false)));
+        await viewModel.TickRunPollForTestAsync();
+        RunJobs();
+
+        Assert.Equal("child-run-1", host.TaskProjectionRequests.Last());
+        Assert.Equal("child-run-1", viewModel.RunProjection!.RunId);
+        Assert.Equal("running", viewModel.RunProjection!.RunStatus);
+        Assert.Equal("25%", viewModel.RunProjection!.OverallProgress);
+        Assert.True(view.PauseRunButton.IsEnabled);
+        Assert.Contains("25%", Assert.IsType<TextBlock>(view.RunBar.Child).Text ?? string.Empty, StringComparison.Ordinal);
 
         viewModel.StopRunPolling();
         shell.Close();
