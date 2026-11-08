@@ -67,7 +67,14 @@ public sealed class LibraryViewModel : ObservableObject
         _state = state;
         _notify = notify;
         _requestConfirm = requestConfirm;
-        Trash = new TrashViewModel(_trashController, () => _controller.Snapshot.WritesAllowed, notify);
+        // FEA-12-UI-RESIDUAL-2 (AC-R1/R2): a successful restore on the recycle-bin page must put the
+        // shelf back in sync. RefreshAsync() reads the Host for real (forceHostRead: true) because the
+        // restore changed the Core shelf -- reusing the pre-trash snapshot would keep the stale list.
+        Trash = new TrashViewModel(
+            _trashController,
+            () => _controller.Snapshot.WritesAllowed,
+            notify,
+            onBooksRestored: () => RefreshAsync());
 
         ImportDock = new ImportDockViewModel(
             controller,
@@ -427,7 +434,12 @@ public sealed class LibraryViewModel : ObservableObject
                     nameof(ShowSideDetail),
                     nameof(ShowOverlayDetail),
                     nameof(ShowPageBulkBar),
-                    nameof(ShowBooksGrid));
+                    nameof(ShowBooksGrid),
+                    // FEA-12-UI-RESIDUAL-2 (AC-R6 / A′): the resident library bar binds these two, and
+                    // BookCountText derives from IsRecycleBinView. Without re-raising them the bar keeps
+                    // "N / M 作品" while the recycle bin is open and keeps "回收站" after leaving it.
+                    nameof(BookCountText),
+                    nameof(ListStatusText));
             }
         }
     }

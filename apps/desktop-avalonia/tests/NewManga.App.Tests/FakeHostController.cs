@@ -1686,6 +1686,16 @@ public sealed class FakeHostController : IHostController, ISourceImportControlle
 
     public Queue<TrashWriteResult> ScriptedRestores { get; } = new();
 
+    /// <summary>
+    /// FEA-12-UI-RESIDUAL-2 (AC-R1) test support — <b>default OFF</b> so every existing test keeps the
+    /// old (asymmetric) fake behavior. When true, a successful restore also puts the restored books back
+    /// into <see cref="Snapshot"/>.Books, mirroring the soft delete's removal below; a test then proves
+    /// that the shelf really re-reads the Core after a restore instead of reusing the pre-trash snapshot.
+    /// The restored row is rebuilt minimally (id as title): tests must pre-seed
+    /// <see cref="Snapshot"/> WITHOUT the book before triggering the restore.
+    /// </summary>
+    public bool RestoreRepopulatesSnapshot { get; set; }
+
     /// <summary>Default list page returned when no scripted page is queued.</summary>
     public IReadOnlyList<TrashEntry> DefaultTrashEntries { get; set; } = Array.Empty<TrashEntry>();
 
@@ -1756,12 +1766,32 @@ public sealed class FakeHostController : IHostController, ISourceImportControlle
     {
         TrashFrames.Add(TrashWireCommands.RestoreFromTrash);
         TrashFramePayloads.Add(TrashPayloads.MoveOrRestore(bookIds, idempotencyKey));
-        if (ScriptedRestores.Count > 0)
+        var result = ScriptedRestores.Count > 0
+            ? ScriptedRestores.Dequeue()
+            : new TrashWriteResult(true, null, null, bookIds.ToArray(), Array.Empty<TrashItemIssue>());
+
+        // FEA-12-UI-RESIDUAL-2 (AC-R1): default-OFF test support. The real Core puts the restored books
+        // back on the shelf (that is the whole point of a restore); the fake only does it when a test
+        // asks for it, so the shelf-refresh assertions cannot piggyback on the write frame alone.
+        if (RestoreRepopulatesSnapshot && result.SucceededIds.Count > 0)
         {
-            return Task.FromResult(ScriptedRestores.Dequeue());
+            var onShelf = new HashSet<string>(Snapshot.Books.Select(book => book.BookId), StringComparer.Ordinal);
+            var restored = result.SucceededIds
+                .Where(bookId => onShelf.Add(bookId))
+                .Select(bookId => new BookSummary(
+                    bookId,
+                    bookId,
+                    string.Empty,
+                    false,
+                    false,
+                    null,
+                    "2026-11-08T00:00:00Z",
+                    "2026-11-08T00:00:00Z"))
+                .ToArray();
+            Snapshot = Snapshot with { Books = Snapshot.Books.Concat(restored).ToArray() };
         }
 
-        return Task.FromResult(new TrashWriteResult(true, null, null, bookIds.ToArray(), Array.Empty<TrashItemIssue>()));
+        return Task.FromResult(result);
     }
 
     public Task<TrashPreviewResult> PreviewPermanentDeleteAsync(

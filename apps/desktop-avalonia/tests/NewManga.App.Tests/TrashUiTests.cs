@@ -43,6 +43,40 @@ public sealed class TrashUiTests
             ? payload.EnumerateObject().Select(property => property.Name).ToArray()
             : Array.Empty<string>();
 
+    /// <summary>
+    /// FEA-12-UI-RESIDUAL-2: drains command-triggered async work deterministically (the restore command is
+    /// fire-and-forget by design). Never returns silently: a missed condition fails the test.
+    /// </summary>
+    private static async Task WaitUntilAsync(Func<bool> condition, string because, int timeoutMs = 5000)
+    {
+        var deadline = DateTime.UtcNow.AddMilliseconds(timeoutMs);
+        while (DateTime.UtcNow < deadline)
+        {
+            if (condition())
+            {
+                return;
+            }
+
+            await Task.Delay(10);
+        }
+
+        Assert.True(condition(), because + "（等待超时）");
+    }
+
+    /// <summary>Records every raised <see cref="System.ComponentModel.INotifyPropertyChanged"/> name.</summary>
+    private static List<string> TrackPropertyChanges(NewManga.App.Shell.V2.ObservableObject source)
+    {
+        var names = new List<string>();
+        source.PropertyChanged += (_, args) =>
+        {
+            if (!string.IsNullOrEmpty(args.PropertyName))
+            {
+                names.Add(args.PropertyName);
+            }
+        };
+        return names;
+    }
+
     // ── AC1: single data source, capability-first, one list frame, no total ────────────────
 
     [Fact]
@@ -908,5 +942,313 @@ public sealed class TrashUiTests
         Assert.DoesNotContain("HOST_READ_ONLY", trash.CapabilityMessage, StringComparison.Ordinal);
         Assert.False(trash.ShowList);
         Assert.False(trash.ShowEmptyState);
+    }
+
+    // ── FEA-12-UI-RESIDUAL-2: A (restore → shelf), B (empty state / cursor honesty), A′ (bar copy) ──
+
+    /// <summary>
+    /// AC-R1 / I-1 (defect A): the REAL entry chain — shelf → 回收站 → select → the restore button's
+    /// own <c>Trash.RestoreCommand</c> → back to the shelf. The restored book must reappear in the shelf
+    /// ViewModel (<c>Books</c> / <c>AllBooks</c> / <c>BookCountText</c>), not merely in the fake's snapshot:
+    /// a frame-count-only (or Snapshot.Books-only) assertion stays green even when the shelf never re-reads
+    /// the Core. The default-OFF fake repopulate switch is turned on AND the snapshot is pre-seeded
+    /// WITHOUT the book, so the assertion can only pass through a real shelf refresh.
+    /// </summary>
+    [Fact]
+    public async Task RestoreFromRecycleBin_ThroughTheRealCommands_ReputsTheBookOnTheShelf()
+    {
+        var fake = V2Fixture.Create();
+        fake.DefaultTrashEntries = new[] { TrashBook0, TrashBook1 };
+        fake.RestoreRepopulatesSnapshot = true;
+        // Pre-seed BEFORE any recovery trigger: book-0 already sits in the recycle bin, so the startup
+        // snapshot does not list it (the shelf must learn about it from the post-restore refresh).
+        fake.Snapshot = fake.Snapshot with
+        {
+            Books = fake.Snapshot.Books.Where(book => book.BookId != "book-0").ToArray(),
+        };
+        var library = new LibraryViewModel(fake, new ShellState(), (_, _) => { }, _ => { });
+
+        await library.InitializeAsync();
+        Assert.DoesNotContain(library.AllBooks, book => book.BookId == "book-0");
+        Assert.Equal(0, fake.RefreshCalls);
+        Assert.Equal("3 / 3 作品", library.BookCountText);
+
+        library.ShowRecycleBinCommand.Execute(null);
+        await WaitUntilAsync(() => library.Trash.Items.Count == 2, "回收站首帧未加载");
+        Assert.True(library.IsRecycleBinView);
+
+        library.Trash.Items.First(row => row.BookId == "book-0").IsSelected = true;
+        Assert.True(library.Trash.CanRestore);
+
+        library.Trash.RestoreCommand.Execute(null); // the real 恢复 button binding
+        await WaitUntilAsync(
+            () => fake.RefreshCalls == 1 && library.Trash.Items.Count == 1,
+            "恢复成功后书架未刷新，或回收站行未移除");
+        Assert.DoesNotContain(library.Trash.Items, row => row.BookId == "book-0");
+
+        library.CloseRecycleBinCommand.Execute(null);
+
+        Assert.False(library.IsRecycleBinView);
+        Assert.Contains(library.Books, book => book.BookId == "book-0");
+        Assert.Contains(library.AllBooks, book => book.BookId == "book-0");
+        Assert.Equal(4, library.Books.Count);
+        Assert.Equal(4, library.AllBooks.Count);
+        Assert.Equal("4 / 4 作品", library.BookCountText);
+        Assert.DoesNotContain("回收站", library.BookCountText, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// AC-R2 / I-1 (defect A boundary): only a restore with at least one succeeded item refreshes the
+    /// shelf. A full failure must not re-read (RefreshCalls unchanged), must not claim success and must
+    /// keep the rows with their per-item reasons; a partial success refreshes exactly once and keeps BOTH
+    /// numbers in the status copy.
+    /// </summary>
+    [Fact]
+    public async Task RestoreFailureBoundary_OnlySuccessRefreshes_AndBothCountsStayHonest()
+    {
+        // (a) ALL FAILED: no shelf read, no success claim, rows retained with reasons.
+        var failing = V2Fixture.Create();
+        failing.DefaultTrashEntries = new[] { TrashBook0, TrashBook1 };
+        var failNotices = new List<(string Text, NmStatus Status)>();
+        var failLibrary = new LibraryViewModel(
+            failing, new ShellState(), (text, status) => failNotices.Add((text, status)), _ => { });
+        await failLibrary.InitializeAsync();
+        failLibrary.ShowRecycleBinCommand.Execute(null);
+        await WaitUntilAsync(() => failLibrary.Trash.Items.Count == 2, "回收站首帧未加载");
+        failLibrary.Trash.Items[0].IsSelected = true;
+        failLibrary.Trash.Items[1].IsSelected = true;
+        failing.ScriptedRestores.Enqueue(new TrashWriteResult(
+            false,
+            TrashErrorCodes.TrashEntryNotFound,
+            "all conflicts",
+            Array.Empty<string>(),
+            new[]
+            {
+                new TrashItemIssue("book-0", "TRASH_ENTRY_NOT_FOUND", TrashCopy.RestoreReason("TRASH_ENTRY_NOT_FOUND")),
+                new TrashItemIssue("book-1", "TRASH_ENTRY_NOT_FOUND", TrashCopy.RestoreReason("TRASH_ENTRY_NOT_FOUND")),
+            }));
+
+        failLibrary.Trash.RestoreCommand.Execute(null);
+        await WaitUntilAsync(() => failLibrary.Trash.HasStatus, "全失败恢复未结束");
+
+        Assert.Equal(0, failing.RefreshCalls); // full failure never refreshes the shelf
+        Assert.Equal(2, failLibrary.Trash.Items.Count); // rows are retained
+        Assert.All(failLibrary.Trash.Items, row => Assert.True(row.HasConflict));
+        Assert.StartsWith("已恢复 0 项", failLibrary.Trash.StatusMessage, StringComparison.Ordinal);
+        Assert.Contains("2 项未恢复", failLibrary.Trash.StatusMessage, StringComparison.Ordinal);
+        Assert.DoesNotContain(failNotices, notice => notice.Status == NmStatus.Done);
+        Assert.Contains(failNotices, notice =>
+            notice.Status == NmStatus.Failed && notice.Text.Contains("未恢复", StringComparison.Ordinal));
+
+        // (b) PARTIAL: one restored + one conflict → exactly one shelf read, both numbers present.
+        var partial = V2Fixture.Create();
+        partial.DefaultTrashEntries = new[] { TrashBook0, TrashBook1 };
+        var partialLibrary = new LibraryViewModel(partial, new ShellState(), (_, _) => { }, _ => { });
+        await partialLibrary.InitializeAsync();
+        partialLibrary.ShowRecycleBinCommand.Execute(null);
+        await WaitUntilAsync(() => partialLibrary.Trash.Items.Count == 2, "回收站首帧未加载");
+        partialLibrary.Trash.Items[0].IsSelected = true;
+        partialLibrary.Trash.Items[1].IsSelected = true;
+        partial.ScriptedRestores.Enqueue(new TrashWriteResult(
+            false,
+            TrashErrorCodes.TrashEntryNotFound,
+            "partial",
+            new[] { "book-1" },
+            new[]
+            {
+                new TrashItemIssue("book-0", "TRASH_ENTRY_NOT_FOUND", TrashCopy.RestoreReason("TRASH_ENTRY_NOT_FOUND")),
+            }));
+
+        partialLibrary.Trash.RestoreCommand.Execute(null);
+        await WaitUntilAsync(() => partial.RefreshCalls == 1, "部分成功后书架未刷新");
+
+        Assert.Equal(1, partial.RefreshCalls); // partial success refreshes exactly once
+        Assert.Single(partialLibrary.Trash.Items);
+        Assert.Equal("book-0", partialLibrary.Trash.Items[0].BookId);
+        Assert.Contains("已恢复 1 项", partialLibrary.Trash.StatusMessage, StringComparison.Ordinal);
+        Assert.Contains("1 项未恢复", partialLibrary.Trash.StatusMessage, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// AC-R3 / AC-R4 (defect B, RESTORE path): page 1 carries an opaque cursor. Restoring every loaded
+    /// row empties the page but does NOT empty the recycle bin — the list container (which owns the
+    /// 加载更多 button) must stay visible and LoadMore must replay the very same cursor as a second frame.
+    /// </summary>
+    [Fact]
+    public async Task RestoreEmptyingTheFirstPage_KeepsTheListAndTheCursorHonest()
+    {
+        var (trash, fake, _) = NewTrash();
+        fake.DefaultTrashCursor = "cursor-opaque-1";
+
+        await trash.EnterAsync();
+        Assert.Equal(2, trash.Items.Count);
+        Assert.True(trash.HasMore);
+
+        // The second page is queued only now: the scripted queue feeds the NEXT list call (LoadMore).
+        fake.ScriptedTrashPages.Enqueue(new TrashListResult(
+            true, null, null, new[] { new TrashEntry("book-2", "汉江之夜", "2026-10-30T10:00:00Z") }, null));
+
+        trash.Items[0].IsSelected = true;
+        trash.Items[1].IsSelected = true;
+        await trash.RestoreSelectedAsync();
+
+        Assert.Empty(trash.Items);
+        Assert.True(trash.HasMore);
+        Assert.False(trash.IsEmpty);
+        Assert.False(trash.ShowEmptyState);
+        Assert.True(trash.ShowList);
+        Assert.False(trash.HasError);
+
+        await trash.LoadMoreAsync();
+
+        Assert.Equal(new string?[] { null, "cursor-opaque-1" }, fake.TrashListCursors);
+        Assert.Single(trash.Items);
+        Assert.Equal("book-2", trash.Items[0].BookId);
+        Assert.False(trash.HasMore);
+    }
+
+    /// <summary>
+    /// AC-R4 (defect B, PERMANENT-DELETE path): the same two-page script, but the rows leave one by one
+    /// through the single-book permanent-delete flow (<c>ConfirmDeleteCommand</c> → <c>RemoveDeletedRow</c>).
+    /// Emptying the first page must not pretend the recycle bin is empty there either.
+    /// </summary>
+    [Fact]
+    public async Task PermanentDeleteEmptyingTheFirstPage_KeepsTheListAndTheCursorHonest()
+    {
+        var (trash, fake, _) = NewTrash();
+        fake.DefaultTrashCursor = "cursor-opaque-1";
+
+        await trash.EnterAsync();
+        Assert.Equal(2, trash.Items.Count);
+        Assert.True(trash.HasMore);
+        Assert.True(trash.ShowList);
+
+        // The second page is queued only now: the scripted queue feeds the NEXT list call (LoadMore).
+        fake.ScriptedTrashPages.Enqueue(new TrashListResult(
+            true, null, null, new[] { new TrashEntry("book-2", "汉江之夜", "2026-10-30T10:00:00Z") }, null));
+
+        foreach (var bookId in new[] { "book-0", "book-1" })
+        {
+            await trash.BeginPermanentDeleteAsync(trash.Items.Single(row => row.BookId == bookId));
+            trash.UnderstandIrrecoverable = true;
+            Assert.True(trash.CanConfirmDelete);
+            trash.ConfirmDeleteCommand.Execute(null);
+            await WaitUntilAsync(
+                () => trash.Items.All(row => row.BookId != bookId),
+                "彻底删除未移除该行");
+        }
+
+        Assert.Empty(trash.Items);
+        Assert.True(trash.HasMore);
+        Assert.False(trash.IsEmpty);
+        Assert.False(trash.ShowEmptyState);
+        Assert.True(trash.ShowList);
+        Assert.Equal(2, fake.TrashFrames.Count(frame => frame == TrashWireCommands.DeletePermanently));
+
+        await trash.LoadMoreAsync();
+
+        Assert.Equal(new string?[] { null, "cursor-opaque-1" }, fake.TrashListCursors);
+        Assert.Single(trash.Items);
+        Assert.Equal("book-2", trash.Items[0].BookId);
+        Assert.False(trash.HasMore);
+    }
+
+    /// <summary>
+    /// AC-R3: the empty state is honest ONLY with "0 rows AND no cursor"; the capability-missing and
+    /// probe-failure states keep their short-circuit order (they own the surface, never the empty state).
+    /// </summary>
+    [Fact]
+    public async Task EmptyStateIsHonestOnlyWhenThereIsNeitherRowNorCursor()
+    {
+        // (a) 0 rows + no cursor → the empty state is real.
+        var (emptyTrash, _, _) = NewTrash(fake => fake.DefaultTrashEntries = Array.Empty<TrashEntry>());
+        await emptyTrash.EnterAsync();
+        Assert.True(emptyTrash.IsEmpty);
+        Assert.True(emptyTrash.ShowEmptyState);
+        Assert.False(emptyTrash.ShowList);
+        Assert.False(emptyTrash.HasMore);
+
+        // (b) READ capability missing → typed capability state; no list, no empty state (regression fence).
+        var (capabilityTrash, _, _) = NewTrash(fake => fake.TrashCapabilities = new TrashCapabilityState(
+            true, false, false, false, TrashErrorCodes.CapabilityMissing, "缺 library.trash.read/1"));
+        await capabilityTrash.EnterAsync();
+        Assert.True(capabilityTrash.ShowCapabilityState);
+        Assert.False(capabilityTrash.ShowList);
+        Assert.False(capabilityTrash.ShowEmptyState);
+        Assert.False(capabilityTrash.IsEmpty);
+
+        // (c) probe failed → independent failure state; no list, no empty state (regression fence).
+        var (probeTrash, _, _) = NewTrash(fake => fake.TrashCapabilities =
+            TrashCapabilityState.Unavailable(TrashErrorCodes.CoreUnavailable, "Core 通道不可用"));
+        await probeTrash.EnterAsync();
+        Assert.True(probeTrash.IsProbeFailed);
+        Assert.False(probeTrash.ShowList);
+        Assert.False(probeTrash.ShowEmptyState);
+        Assert.False(probeTrash.IsEmpty);
+    }
+
+    /// <summary>
+    /// AC-R6 (A′): the resident library bar copy follows the recycle-bin view in BOTH directions. Entering
+    /// shows 回收站 (with a PropertyChanged on both bar properties); leaving restores "N / M 作品" whose
+    /// numbers match the refreshed Books/AllBooks. The shell-level Esc path is covered in V2ShellUiTests.
+    /// </summary>
+    [Fact]
+    public async Task BookCountText_FollowsTheRecycleBinView_BothWays()
+    {
+        var fake = V2Fixture.Create();
+        fake.DefaultTrashEntries = new[] { TrashBook0, TrashBook1 };
+        var library = new LibraryViewModel(fake, new ShellState(), (_, _) => { }, _ => { });
+        await library.InitializeAsync();
+        var changes = TrackPropertyChanges(library);
+        Assert.Equal("4 / 4 作品", library.BookCountText);
+
+        library.ShowRecycleBinCommand.Execute(null);
+
+        Assert.Equal("回收站", library.BookCountText);
+        Assert.Contains(nameof(LibraryViewModel.BookCountText), changes);
+        Assert.Contains(nameof(LibraryViewModel.ListStatusText), changes);
+        await WaitUntilAsync(() => library.Trash.Items.Count == 2, "回收站首帧未加载");
+
+        changes.Clear();
+        library.CloseRecycleBinCommand.Execute(null);
+
+        Assert.False(library.IsRecycleBinView);
+        Assert.Equal($"{library.Books.Count} / {library.AllBooks.Count} 作品", library.BookCountText);
+        Assert.Equal("4 / 4 作品", library.BookCountText);
+        Assert.Contains(nameof(LibraryViewModel.BookCountText), changes);
+        Assert.DoesNotContain("回收站", library.BookCountText, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// AC-R1 + AC-R6 interlock (A′ regression fence): the post-restore refresh happens WHILE the recycle
+    /// bin is open — the exact sequence that used to freeze the resident bar on 回收站 after returning to
+    /// the shelf. The bar must never keep the recycle-bin copy once the shelf is back.
+    /// </summary>
+    [Fact]
+    public async Task ReturningToTheShelfAfterAnInRecycleBinRefresh_NeverLeavesTheRecycleBinCopy()
+    {
+        var fake = V2Fixture.Create();
+        fake.DefaultTrashEntries = new[] { TrashBook0, TrashBook1 };
+        var library = new LibraryViewModel(fake, new ShellState(), (_, _) => { }, _ => { });
+        await library.InitializeAsync();
+        library.ShowRecycleBinCommand.Execute(null);
+        await WaitUntilAsync(() => library.Trash.Items.Count == 2, "回收站首帧未加载");
+
+        library.Trash.Items[0].IsSelected = true;
+        library.Trash.RestoreCommand.Execute(null);
+        await WaitUntilAsync(() => fake.RefreshCalls == 1, "回收站内的书架刷新未发生");
+
+        // The shelf refresh ran inside the recycle bin: the resident bar must say 回收站 right now.
+        Assert.Equal("回收站", library.BookCountText);
+
+        var changes = TrackPropertyChanges(library);
+        library.CloseRecycleBinCommand.Execute(null);
+
+        // The bar is bound to PropertyChanged, not re-read on demand: leaving MUST re-raise the property.
+        Assert.Contains(nameof(LibraryViewModel.BookCountText), changes);
+        Assert.Equal($"{library.Books.Count} / {library.AllBooks.Count} 作品", library.BookCountText);
+        Assert.Equal("4 / 4 作品", library.BookCountText);
+        Assert.DoesNotContain("回收站", library.BookCountText, StringComparison.Ordinal);
+        Assert.DoesNotContain("回收站", library.ListStatusText, StringComparison.Ordinal);
     }
 }

@@ -21,6 +21,15 @@ public sealed class TrashViewModel : ObservableObject
     private readonly ITrashController? _trash;
     private readonly Func<bool> _writesAllowed;
     private readonly Action<string, NmStatus> _notify;
+
+    /// <summary>
+    /// FEA-12-UI-RESIDUAL-2 (AC-R1/R2): awaited after a restore that really succeeded (partial success
+    /// included, full failure excluded), so the host-side shelf re-reads the Core. Optional on purpose
+    /// (null = no shelf to notify), which keeps every existing construction site working unchanged.
+    /// An awaitable callback is used instead of a C# <c>event</c>: an async void subscriber would race
+    /// the headless assertions and could not express "refresh finished".
+    /// </summary>
+    private readonly Func<Task>? _onBooksRestored;
     private readonly List<TrashEntry> _loaded = new();
     private readonly List<TrashItemRowViewModel> _selectionOrder = new();
 
@@ -68,11 +77,13 @@ public sealed class TrashViewModel : ObservableObject
     public TrashViewModel(
         ITrashController? trash,
         Func<bool> writesAllowed,
-        Action<string, NmStatus> notify)
+        Action<string, NmStatus> notify,
+        Func<Task>? onBooksRestored = null)
     {
         _trash = trash;
         _writesAllowed = writesAllowed;
         _notify = notify;
+        _onBooksRestored = onBooksRestored;
 
         RefreshCommand = new RelayCommand(() => _ = RefreshAsync());
         LoadMoreCommand = new RelayCommand(() => _ = LoadMoreAsync());
@@ -213,13 +224,24 @@ public sealed class TrashViewModel : ObservableObject
 
     public bool CanPreview => _previewAvailable && _trash is not null;
 
-    public bool IsEmpty => !IsLoading && !HasError && !_capabilityMissing && !_probeFailed && Items.Count == 0;
+    /// <summary>
+    /// AC-R3 (FEA-12-UI-RESIDUAL-2): only "no rows AND no next cursor" is truly empty. A restore or a
+    /// permanent delete can empty the loaded page while the opaque cursor still points at more entries,
+    /// and claiming "回收站是空的" then would be a lie.
+    /// </summary>
+    public bool IsEmpty => !IsLoading && !HasError && !_capabilityMissing && !_probeFailed &&
+        Items.Count == 0 && _nextCursor is null;
 
     public string LoadedCountText => _loadedCountText;
 
     public bool HasMore => _nextCursor is not null;
 
-    public bool ShowList => !IsLoading && !HasError && !_capabilityMissing && !_probeFailed && Items.Count > 0;
+    /// <summary>
+    /// AC-R3/R4 (FEA-12-UI-RESIDUAL-2): the list container also holds the "加载更多" button, so it must
+    /// stay visible while a next cursor exists even if the loaded rows were just emptied.
+    /// </summary>
+    public bool ShowList => !IsLoading && !HasError && !_capabilityMissing && !_probeFailed &&
+        (Items.Count > 0 || HasMore);
 
     public bool ShowEmptyState => IsEmpty;
 
@@ -596,6 +618,14 @@ public sealed class TrashViewModel : ObservableObject
         RaiseStates();
         OnPropertyChanged(nameof(StatusMessage), nameof(HasStatus), nameof(LoadedCountText),
             nameof(SelectionCount), nameof(HasSelection), nameof(SelectionSummary), nameof(CanRestore));
+
+        // AC-R1/R2 (FEA-12-UI-RESIDUAL-2): a successful (partial included) restore really changed the
+        // Core shelf, so the shelf must re-read it. A fully failed batch never reaches this point with a
+        // non-empty SucceededIds set and therefore never triggers a refresh.
+        if (result.SucceededIds.Count > 0 && _onBooksRestored is not null)
+        {
+            await _onBooksRestored().ConfigureAwait(true);
+        }
     }
 
     // ── permanent delete: disclosure → understood gate → digest-bound frame ───────────

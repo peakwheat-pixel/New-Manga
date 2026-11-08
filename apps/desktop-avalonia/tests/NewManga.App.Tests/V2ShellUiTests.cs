@@ -613,6 +613,45 @@ public sealed class V2ShellUiTests
         window.Close();
     }
 
+    /// <summary>
+    /// FEA-12-UI-RESIDUAL-2 AC-R6 (A′): Esc is the second way back to the shelf (the 返回书架 button path
+    /// is covered in TrashUiTests). The resident library bar must show 回收站 while the recycle bin is
+    /// open, and Esc must re-raise it back to "N / M 作品" — never leave the recycle-bin copy behind.
+    /// </summary>
+    [AvaloniaFact]
+    public async Task RecycleBin_BookCountText_FollowsTheEscPathBackToTheShelf()
+    {
+        var controller = V2Fixture.Create();
+        controller.DefaultTrashEntries = new[] { new TrashEntry("book-0", "夜光列车", "2026-11-01T10:00:00Z") };
+        var (window, shell) = await HostReadyAsync(controller);
+        var library = shell.ViewModel.Library;
+        var barCopy = new List<string>();
+        library.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName == nameof(LibraryViewModel.BookCountText))
+            {
+                barCopy.Add(library.BookCountText);
+            }
+        };
+        Assert.Equal("4 / 4 作品", library.BookCountText);
+
+        library.ShowRecycleBinCommand.Execute(null);
+        Dispatcher.UIThread.RunJobs();
+        Assert.True(library.IsRecycleBinView);
+        Assert.Equal("回收站", library.BookCountText);
+        Assert.Contains("回收站", barCopy);
+
+        Assert.True(shell.HandleKeyForTest(Key.Escape, KeyModifiers.None));
+        Dispatcher.UIThread.RunJobs();
+
+        Assert.False(library.IsRecycleBinView);
+        Assert.Equal($"{library.Books.Count} / {library.AllBooks.Count} 作品", library.BookCountText);
+        Assert.Equal("4 / 4 作品", library.BookCountText);
+        Assert.DoesNotContain("回收站", library.BookCountText, StringComparison.Ordinal);
+        Assert.Contains("4 / 4 作品", barCopy); // the PropertyChanged really reached the bound bar value
+        window.Close();
+    }
+
     [AvaloniaFact]
     public async Task MoveToTrash_DangerConfirm_EscapeAndEnterWriteNothing_ThenExplicitConfirmMoves()
     {
