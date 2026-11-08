@@ -345,3 +345,22 @@ ameof(ListStatusText)，修「进入回收站 bar 仍显示 N/M 作品」「返�
 - **产出 2**：[DSH-AUTORUN-PROMPT-RESIDUAL-CLOSEOUT](DSH-AUTORUN-PROMPT-RESIDUAL-CLOSEOUT.md)：可直接粘贴的专用持续推进提示词（队列/流水线/门禁/红线/停止条件/已知坑）。
 - **指针**：STATUS 增「残余收口 PLAN」行；DSH-AUTORUN-PROMPT §7 增独立程序指引。
 - **未做**：未创建任何 R0–R4 卡文件（按流程，立项前必须先派独立 scope review）；未改任何节点 closed_with_limitations 状态；未改契约/pins。
+
+## 29. 续接补充（2026-11-08 第 21 轮：残余收口 R0 裁决 v2 + R1 冻结）
+
+- **固定核实**：HEAD=origin=`4070f0043`，AHEAD=0，工作树 clean；check PASS(3w)；pins 18/18；PLAN `READY 节点：无`。
+- **R0（`RESIDUAL-WAIVER-1`）**：独立 scope review **`NOT_RECOMMENDED`**（session `4092531d-…`）→ **DSH 采纳并改写为 v2**：
+  - 4 项被误判为「不可工程闭环」（FEA-07 AC1 的 A03/ACK/Run、AC2 的单写 owner、FEA-06-RESIDUAL-2 的 Tab 遍历/a11y 属性）→ **改判 C1，进实现卡**；
+  - 2 项契约依据被推翻（PDF 插页在 C-15 §3.2 `:230` 覆盖内有 matcher 消费者；folder relink 在 C-17 `:278` 允许「能证明同一」）→ **不再 NA**；
+  - 「无硬件」事实错误（本机实测 **2 个活动显示器** + 仓库记录 3 个虚拟适配器）→ 改口径为「**原生交互矩阵未执行**」；
+  - 基线漂移（STATUS `:20` 写 1683，实际 1691）→ **本轮已修正**；
+  - 治理冲突（翻 done 需改写 17 条历史 AC 行 vs `09_COLLABORATION:79` 与 HOST-AUTH-1 Codex 终裁）→ **以用户 2026-11-08 指令为新授权**，按节点逐个翻转 + 逐条 before/after 登记 + 不改 Review/证据字节（`doc/reviews/ADJ-2026-11-RESIDUAL-WAIVER.md` §3）。
+  - 产出：`doc/reviews/ADJ-2026-11-RESIDUAL-WAIVER.md`（v2，12 项裁决表 + 翻转矩阵 + 边界）、`doc/reviews/RESIDUAL-WAIVER-1-scope-r1.md`（评审原文落盘）、PLAN 追加 §11 v2 修订。
+- **R1（`FEA-11-HOST-AUTH-2`）**：独立 scope review **`READY-TO-FREEZE`**（session `bd32e3f6-…`）→ **DSH 冻结**（base `4070f0043`，0 pin）：
+  - 契约：C-17 `:161`/`:169` 经独立复核确属**冻结字节**（pin `aefa0fa5…` 实测一致、v1.0 逐行比对未变）→ 遵守型修复，**无需 UNFREEZE**；
+  - 缺陷确认：ACK/recovery 均以 journal 原 authorization 发送（`SourceOperationCoordinator.cs:172-174`、`:232-233`），无 Registry 重验、无 fresh mint；
+  - 卡面 AC-F1…AC-F5 + 实现口径（Prepare seam、先落盘、锁内 state 守卫、拒绝码复用）+ **窄口径 done**：limitation {1,2,5,P2-7} 关闭、**{3,4,6,7,8,9} re-home**（3/4 属 C-17 UNFREEZE 类）。
+  - 评审原文：`doc/reviews/FEA-11-HOST-AUTH-2-scope-r1.md`；卡：`doc/tasks/FEA-11-HOST-AUTH-2.md`。
+- **指针**：PLAN `READY 节点：FEA-11-HOST-AUTH-2`（未加行）；STATUS 当前 Task 指向本卡；`task_ledger.py --write` 已重跑。
+- **下一轮**：R1 实现（fresh 授权 + 拒绝矩阵 + gated e2e + 崩溃点）→ 独立 Review → 集成门禁 → `FEA-11-HOST-AUTH-1` append-only 翻 done → push。
+- **未做**：未开 R2/R3/R4 卡（按流程先 scope review）；未改任何节点终态；未改契约/pins。

@@ -140,3 +140,36 @@
 | FEA-07 | R4 | AC1/AC2/AC5 | **done** | AC3/4/6 MET + 3 项 NOT_APPLICABLE |
 
 > 若某项裁决被用户否决（要求真机实测），则该节点保持 `closed_with_limitations`，并在 PLAN 行注明「待硬件」。这是唯一被允许的不完成情形，且必须写明原因。
+
+---
+
+## 11. v2 修订（2026-11-08，R0 scope review NOT_RECOMMENDED → DSH 采纳）
+
+> 本节**覆盖**上文 §2/§3–§6 的分类与卡片范围；裁决明细见 `doc/reviews/ADJ-2026-11-RESIDUAL-WAIVER.md`、评审原文见 `doc/reviews/RESIDUAL-WAIVER-1-scope-r1.md`。
+
+### 11.1 裁决口径修正（关键）
+
+- **不得再以「无硬件」为唯一理由**：本机实测 2 个活动显示器、仓库记录 3 个虚拟适配器 → 原生项正确状态是「**原生交互矩阵未执行**」，不是「没有硬件」；`GOAL-PROGRESS:311` 的「本机可能无双屏」是推测。
+- **C1 不得写成 C4/C3**（会把未做的工作合法化）：FEA-07 AC1 的 A03/ACK/Run、AC2 的 `(SessionId,RegionId)` 单写 owner/Host 生命周期、FEA-06-RESIDUAL-2 的 Tab 遍历/a11y 属性、FEA-11 的 folder relink 判别测试 → **全部进实现卡**。
+- **契约误读纠正**：PDF 插页（L-M1）在 C-15 §3.2 `:230` 覆盖范围内且有 matcher 消费者 → 不是「能力外/无消费者」，只能 BLOCKED 或产品显式决定；folder relink 在 C-17 `:278` 允许「能证明同一」→ 不是「C-15 冻结规则」。
+- **翻 done 的治理前置**：需改写 17 条历史 AC 行，冲突 `09_COLLABORATION:79` 与 HOST-AUTH-1 Codex 终裁 → 以**用户 2026-11-08 指令为新授权**，按节点逐个翻转、逐条登记 before/after、不改任何 Review/证据字节（见 ADJ §3）。
+
+### 11.2 卡片范围修订（v2）
+
+| 卡 | v2 范围（增量以加粗标出） |
+|---|---|
+| R0 | 已执行：ADJ v2 + 评审落盘（不以 task 卡形式，见 ADJ §6 DSH 说明） |
+| **R1** `FEA-11-HOST-AUTH-2` | 已冻结（AC-F1…F5）：ACK/recovery fresh 授权 + 拒绝矩阵 + gated e2e + 崩溃点 + 条件性 HostRuntime e2e；**窄口径 done**（limitation {1,2,5,P2-7} 关闭，{3,4,6,7,8,9} re-home） |
+| **R2** `FEA-06-RESIDUAL-3` | 5 个依赖格 **+ 完整 Tab 遍历 + a11y 属性/UIA 树断言**；仅原生 a11y 行为/200% DPI/原生截图走 NA |
+| **R3** `FEA-11-RESIDUAL-4A` | AC11-7 诊断接线、AC11-9 生产链路、L-M4 重算、AC11-5/8 回填 **+ folder relink 判别测试 + 成员重排/多项目 + L-S4-2 缺陷登记**；L-M1 默认 BLOCKED（不 NA） |
+| **R4** `FEA-07-RESIDUAL-2` | AC3 崩溃注入（含**暂停期间保护状态**）、AC4 启动矩阵、AC6 真实负载 **+ AC1 的 A03/ACK 重连/Run gated 用例 + AC2 的 `(SessionId,RegionId)` 单写 owner/Host 生命周期实现**；仅原生 IME/AC5 矩阵/真实双屏落位走 NA |
+
+### 11.3 done 口径（统一，防假 done）
+
+- 节点 `done` 前置：该节点**全部 C1 项完成并 MET** + 可 NA 项有 `<<NOT_APPLICABLE: 原生交互未执行（保留 NOT_RUN）+ 用户 2026-11-08 授权豁免>>` + **其余 limitation 逐项 re-home 到具名后续卡**。
+- `FEA-06-RESIDUAL-2` 的 6 行 BLOCKED 表**不被 AC 门禁看见**：done 记录必须显式声明「done 不覆盖 BLOCKED 表」，且 5 个依赖格必须先做完。
+- 禁止：先改状态后补证据；把 `NOT_RUN` 写成 PASS；把「done」读成「可发布」。
+
+### 11.4 基线重钉
+
+pytest **3390/10**、.NET **1691/0/96**、pins **18/18**、check PASS(3w)（本轮实测；`doc/STATUS.md:20` 的 1683 已在本轮校正）。
