@@ -1,17 +1,42 @@
 # FEA-11-RESIDUAL-4A：缺陷、裁决与 re-home（证据侧）
 
 > 本文件是 `doc/tasks/FEA-11-RESIDUAL-4A.md` 交付记录的**证据侧附件**：逐条给出 file:line、复现方式、影响与处置。
-> 本卡**不改 Core 语义、不改冻结契约字节、不改 `IHostController`**；下列缺陷均只登记，不修复（除 Core 死 seam 的删除）。
+> 本卡**不改 Core 语义、不改冻结契约字节、不改 `IHostController`**；除 Core 死 seam 删除与 D-1（DSH 2026-11-08 授权扩域）外，下列缺陷均只登记、不修复。
 
-## D-1（本卡新发现）生产 dispatcher 的 host-control payload 双重 object ⇒ `INVALID_JSON`
+## D-1（已修复，DSH 2026-11-08 授权扩域）wire 帧合法性：dispatcher host-control payload 嵌套 + 两处 capability ping payload 未闭合
+
+> **口径（DSH 红线）**：「dispatcher 的 host-control 路径与 capability ping 帧此前不合法，现已修复并有判别测试」；**不外推**到全 wire，不写「FEA-11 完全实现」。这是**两处独立缺陷**（wire 帧合法性）。
+
+### D-1a dispatcher host-control payload 双重 object
 
 - **位置**：`apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandDispatcher.cs`
-  - `InvokeHostControlAsync`（`:319-391`）把 `WriteCorePayload(descriptor.Name, args, writer)`（`:469-889`，**自带 `WriteStartObject/WriteEndObject`**）交给 `CoreServiceClient.SendHostControlAsync`（`CoreServiceClient.cs:551-611`，其回调**已处于 `"payload"` 对象内部**，见 `:585-588`）。
-  - journal 分支（`:341-370`）同样把 `finalPayload.WriteTo(writer)`（完整 object）写入已打开的 payload 对象。
-- **后果**：`source_scan_sync`、`source_relink/repoint/resync`、`source_apply_sync_plan` 经 `HostCommandDispatcher.InvokeAsync` 时，Core 收到非法帧并回 `INVALID_JSON`（`test/python` 侧对应 `Object must be valid JSON`）。生产 UI 未覆盖该路径（现有 gated 证据均为 Core 直连或 orchestrator 直连）。
-- **证据**：`verification/FEA-11-RESIDUAL-4A/evidence/dispatcher-defect-wire.txt`（真实 wire：`? | INVALID_JSON` 紧邻随后的直连有效帧）+ `logs/fea11-ipc-r4a.log`（测试记录 `dispatcher_scan_defect=INVALID_JSON` / `dispatcher_apply_defect=INVALID_JSON`）。
-- **修复（需 DSH 授权；不在本卡 allowed_paths）**：把 host-control 分支改为写**字段**（与手写 payload 的既有调用一致），或让 `SendHostControlAsync` 接受完整 object；≤2 行。修好后把 `Fea11Residual4AIpcTests` 的 scan/apply 切回全 dispatcher 路径（测试已留 branch 与证据键）。
-- **处置**：本卡如实记录、不修；AC-R3-2 的主链路以 `HostOperationOrchestrator`（生产编排）+ `Commands.InvokeAsync`（plan/preview/confirm/ACK/resolve）覆盖，未伪造。
+  - `InvokeHostControlAsync` 非 journal 分支把 `WriteCorePayload`（自带 `WriteStartObject/WriteEndObject`）交给 `CoreServiceClient.SendHostControlAsync`（`CoreServiceClient.cs:585-588` 已打开 `"payload"` 对象）⇒ 帧非法；
+  - journal 分支把 `finalPayload.WriteTo(writer)`（完整 object）写入已打开的 payload 对象 ⇒ 同类。
+- **修法（本次）**：新增 `WriteHostControlPayload`（把 app-channel 产物按**字段**平铺进已打开 envelope payload）与 `WriteFlattened`（journal 分支平铺）；`WriteCorePayload` 与 app-channel wire 形状**零改动**。
+- **判别测试**：`Fea11Residual4AIpcTests.ProductionDispatcherHostControlPayloadIsFlattened`（gated）——scan 经 dispatcher 不抛 `INVALID_JSON`、wire `payload` 为字段平铺、全 wire 无 `INVALID_JSON`。
+- **变异 M4**（还原嵌套写法）：`logs/mutation-d1-m4.log` —— RED → 逐字节复原 → GREEN，sha256 `bccc264d…c94f9` 前后一致。
+
+### D-1b 两处 capability ping payload 未闭合
+
+- **位置**：`apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs`
+  - `SourceSyncCapabilityAsync`（原 `:1016-1020`）：`writer => writer.WriteStartObject()` 缺 `WriteEndObject()`；`CoreProtocol.BuildRequest`（`CoreProtocol.cs:33-34`）的 payload 回调必须写**完整 object** ⇒ core.ping 帧未闭合 ⇒ `INVALID_JSON`；
+  - `RunCapabilityProbeAsync`（原 `:1082-1086`）同型（其 `catch (CoreOperationException)` 会静默降级）。
+- **影响（限定该路径）**：`source_scan_sync` 的 dispatcher capability gate 走 `SourceSyncCapabilityAsync`（`RequiredCapabilities("source_scan_sync")` 为空，见 `HostCommandRegistry.cs:94-101`）⇒ **修复前，任何 source-sync host-control 命令都不可能经生产 dispatcher 跑通**；AC-R3-2 此前的"经生产 dispatcher"路径从未跑通（仅限该路径，不外推其它命令族）。
+- **修法（本次，授权严格两处）**：两处回调补 `WriteEndObject()`；HostRuntime 其它逻辑零改动。
+- **变异 M5**（还原未闭合）：`logs/mutation-d1-m5.log` —— gated 3 用例 RED → 逐字节复原 → GREEN，sha256 `8226278…54e1` 前后一致。
+
+### before / after（D-1 修复）
+
+| 门禁 | before | after |
+|---|---|---|
+| gated `Fea11Residual4AIpcTests` | 2 passed（含 `dispatcher_*_defect=INVALID_JSON` fallback；**全 dispatcher 路径不通**） | **3 passed / 0 failed**（全 dispatcher，无 fallback） |
+| 判别测试 `ProductionDispatcherHostControlPayloadIsFlattened` | 不存在 | 1 passed（变异 M4 RED→绿） |
+| `dotnet test NewManga.Host.Tests` | 301 / 0 / 69 | 301 / 0 / 70（+1 gated skip） |
+| 全量 .NET `NewManga.sln` | 1732 / 0 / 100 | 见 §D-1 after 数字（本次复跑） |
+| `pytest tests/fea11` | 217 passed | 217 passed |
+| `pytest tests` | 3395 / 10 skipped | 3395 / 10 skipped |
+
+**证据**：`logs/fea11-ipc-r4a.log`（3/3 全 dispatcher）、`logs/mutation-d1-m4.log`、`logs/mutation-d1-m5.log`；修复前的真实 wire 保留为 before 证据：`evidence/dispatcher-defect-wire.txt`。
 
 ## D-2 `needs_confirmation` 零生产者（→ `FEA-11-DIAG-SURFACE-1`）
 
@@ -46,4 +71,5 @@
 
 ## D-7 变异自检
 
-见 `verification/FEA-11-RESIDUAL-4A/logs/mutation-m1.log` / `mutation-m2.log` / `mutation-m3.log`（临时变异 → 观察 RED → `git checkout --` 复原 → 复绿）。
+- AC 层（前次）：`logs/mutation-m1.log`（删 folder 拒绝分支 → AC-R3-3 RED）、`mutation-m2.log`（ACK 前放行 gate → AC-R3-2 RED）、`mutation-m3.log`（投影返回全部页 → AC-R3-1 RED）；均逐字节复原并复绿。
+- D-1 层（本次）：`logs/mutation-d1-m4.log`（还原 dispatcher 嵌套 → 判别测试 RED）、`mutation-d1-m5.log`（还原 capability ping 未闭合 → gated 3 用例 RED）；均记录变异前/变异后/复原后 sha256（复原后与变异前一致），复原后 GREEN。

@@ -351,7 +351,7 @@ public sealed class HostCommandDispatcher
                     $"{descriptor.Name} requires a running core_service")
                 : (finalPayload, ct) => coreForJournal.SendHostControlAsync(
                     descriptor.CoreCommand!,
-                    writer => finalPayload.WriteTo(writer),
+                    writer => WriteFlattened(finalPayload, writer),
                     TimeSpan.FromSeconds(120),
                     coreForJournal.HostSession,
                     ct);
@@ -377,7 +377,7 @@ public sealed class HostCommandDispatcher
 
         var response = await core.SendHostControlAsync(
                 descriptor.CoreCommand!,
-                writer => WriteCorePayload(descriptor.Name, args, writer),
+                writer => WriteHostControlPayload(descriptor.Name, args, writer),
                 TimeSpan.FromSeconds(60),
                 core.HostSession,
                 cancellationToken)
@@ -455,6 +455,50 @@ public sealed class HostCommandDispatcher
 
             default:
                 throw new HostCommandNotSupportedException(descriptor);
+        }
+    }
+
+    /// <summary>
+    /// FEA-11-RESIDUAL-4A D-1 (authorized fix): the HOST-CONTROL payload writer.
+    ///
+    /// <c>CoreServiceClient.SendHostControlAsync</c> has ALREADY opened the
+    /// envelope's <c>"payload"</c> object (CoreServiceClient.cs:585-588), so a
+    /// host-control payload callback must write the payload's FIELDS into that
+    /// object — never a second complete object. Before this fix the host-control
+    /// branch handed <see cref="WriteCorePayload"/> (which writes its own
+    /// <c>WriteStartObject</c>/<c>WriteEndObject</c>) to that callback, so the
+    /// Core received a doubly nested / malformed payload and answered
+    /// <c>INVALID_JSON</c>; the same defect class as the R1 ACK/recovery
+    /// six-field flattening in <c>SourceOperationCoordinator</c>.
+    ///
+    /// The unchanged <see cref="WriteCorePayload"/> stays the APP-channel
+    /// writer (<c>CoreServiceClient.SendAsync</c> expects a complete payload
+    /// object), so the frozen wire shapes of the application channel are
+    /// untouched.
+    /// </summary>
+    private static void WriteHostControlPayload(
+        string name, JsonElement args, Utf8JsonWriter writer)
+    {
+        var buffer = new System.Buffers.ArrayBufferWriter<byte>();
+        using (var probe = new Utf8JsonWriter(buffer))
+        {
+            WriteCorePayload(name, args, probe);
+        }
+        using var document = JsonDocument.Parse(buffer.WrittenMemory);
+        WriteFlattened(document.RootElement, writer);
+    }
+
+    /// <summary>Write the FIELDS of one payload object into an already-opened
+    /// payload object (the host-control envelope contract).</summary>
+    private static void WriteFlattened(JsonElement payload, Utf8JsonWriter writer)
+    {
+        if (payload.ValueKind != JsonValueKind.Object)
+        {
+            return;
+        }
+        foreach (var property in payload.EnumerateObject())
+        {
+            property.WriteTo(writer);
         }
     }
 

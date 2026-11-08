@@ -82,25 +82,16 @@ public sealed class Fea11Residual4AIpcTests
             ["grant_ids"] = new[] { grantId },
             ["missing"] = Array.Empty<object>(),
         };
-        JsonElement scan;
-        try
-        {
-            scan = await InvokeAsync(runtime, "source_scan_sync", scanArgs);
-            evidence.Add("scan_via=dispatcher");
-        }
-        catch (CoreOperationException error)
-        {
-            // KNOWN DEFECT (recorded, not fixed here — HostCommandDispatcher.cs
-            // is outside this card's allowed_paths): InvokeHostControlAsync hands
-            // SendHostControlAsync a COMPLETE payload object (WriteCorePayload
-            // writes its own WriteStartObject) although SendHostControlAsync has
-            // already opened the payload object, so the real Core rejects the
-            // frame as INVALID_JSON. The chain evidence continues through the
-            // SAME production Core client (no job is faked).
-            Assert.Equal("INVALID_JSON", error.Code);
-            evidence.Add("dispatcher_scan_defect=" + error.Code);
-            scan = await ScanDirectAsync(runtime, sourceId, grantId);
-        }
+        // The FULL production dispatcher path (FEA-11-RESIDUAL-4A D-1 fix):
+        // no direct-client fallback any more.
+        var scan = await InvokeAsync(runtime, "source_scan_sync", scanArgs);
+        evidence.Add("scan_via=dispatcher");
+        // Wire-level proof (D-1): the dispatcher wrote the scan payload as
+        // FIELDS into the host-control envelope (the Core answered a valid frame).
+        var scanWire = await LastHostControlPayloadAsync(runtime, "ScanSourceSync");
+        Assert.Equal(sourceId, scanWire.GetProperty("source_id").GetString());
+        Assert.Equal("current", scanWire.GetProperty("scope").GetString());
+        Assert.Equal(grantId, scanWire.GetProperty("grant_ids")[0].GetString());
         var scanPath = Path.Combine(root, "scan.json");
         await File.WriteAllTextAsync(scanPath, scan.GetRawText());
         evidence.Add("scan_changed=" + scan.GetProperty("totals").GetProperty("changed").GetInt32());
@@ -131,8 +122,10 @@ public sealed class Fea11Residual4AIpcTests
             });
         evidence.Add("plan_confirmed=1");
 
-        // (3) Apply through the production journal orchestrator (Host-signed
-        // authorization; the caller never supplies operation/authorization).
+        // (3) Apply through the production journal branch of the SAME
+        // dispatcher (FEA-11-RESIDUAL-4A D-1 fix: the Host-signed payload is
+        // flattened into the host-control envelope; the caller never supplies
+        // operation/authorization).
         var applyArgs = new Dictionary<string, object?>
         {
             ["plan_id"] = planId,
@@ -143,21 +136,19 @@ public sealed class Fea11Residual4AIpcTests
                 ["authorizations"] = scan.GetProperty("authorizations").Clone(),
             },
         };
-        string operationId;
-        try
-        {
-            var applied = await InvokeAsync(runtime, "source_resync", applyArgs);
-            operationId = applied.GetProperty("operation_id").GetString()!;
-            evidence.Add("apply_via=dispatcher");
-        }
-        catch (CoreOperationException error)
-        {
-            // Same KNOWN DEFECT as the scan step (the journal branch writes the
-            // complete payload object into the already-opened payload object).
-            Assert.Equal("INVALID_JSON", error.Code);
-            evidence.Add("dispatcher_apply_defect=" + error.Code);
-            operationId = await ApplyDirectAsync(runtime, applyArgs, scan);
-        }
+        var applied = await InvokeAsync(runtime, "source_resync", applyArgs);
+        var operationId = applied.GetProperty("operation_id").GetString()!;
+        evidence.Add("apply_via=dispatcher");
+        // Wire-level proof (D-1): the journal branch flattened the Host-signed
+        // payload (plan/operation/authorization) into the host-control envelope.
+        var applyWire = await LastHostControlPayloadAsync(runtime, "ResyncSource");
+        Assert.Equal(planId, applyWire.GetProperty("plan_id").GetString());
+        Assert.Equal(operationId,
+            applyWire.GetProperty("operation_id").GetString());
+        Assert.Equal(JsonValueKind.Object,
+            applyWire.GetProperty("authorization").ValueKind);
+        Assert.False(await WireHasInvalidJsonAsync(runtime),
+            "the Core must not refuse any dispatcher frame as INVALID_JSON");
         Assert.NotNull(runtime.Operations!.Get(operationId));
         Assert.Equal("core-committed", runtime.Operations!.Get(operationId)!.State);
         evidence.Add("apply=core-committed");
@@ -299,67 +290,73 @@ public sealed class Fea11Residual4AIpcTests
             + "\nzero_wire_frames=1\nPASS\n");
     }
 
-    // ------------------------------------------------------------- helpers
-
-    private static async Task<JsonElement> ScanDirectAsync(
-        HostRuntime runtime, string sourceId, string grantId)
+    /// <summary>
+    /// FEA-11-RESIDUAL-4A D-1 discrimination: one host-control command through
+    /// the PRODUCTION dispatcher must reach the real Core as a VALID frame whose
+    /// <c>payload</c> carries FLAT fields.
+    ///
+    /// Before the fix the dispatcher wrote a second complete payload object into
+    /// the already-opened envelope, so the Core answered <c>INVALID_JSON</c> and
+    /// no host-control command ever completed through the dispatcher.
+    /// Mutation self-check: restoring the nested writer turns this test RED.
+    /// </summary>
+    [Fea11Residual4AIpcFact]
+    public async Task ProductionDispatcherHostControlPayloadIsFlattened()
     {
-        var response = await runtime.CoreService!.SendHostControlAsync(
-            "ScanSourceSync", writer =>
-            {
-                writer.WriteString("source_id", sourceId);
-                writer.WriteStartArray("project_ids");
-                writer.WriteStringValue("b1");
-                writer.WriteEndArray();
-                writer.WriteString("scope", "current");
-                writer.WriteString("kind", "resync");
-                writer.WriteStartArray("grant_ids");
-                writer.WriteStringValue(grantId);
-                writer.WriteEndArray();
-                writer.WriteStartArray("missing");
-                writer.WriteEndArray();
-            }, TimeSpan.FromSeconds(90), runtime.CoreService.HostSession,
-            CancellationToken.None);
-        return response.Result?.Clone()
-            ?? throw new InvalidOperationException("scan returned no result");
-    }
-
-    private static async Task<string> ApplyDirectAsync(
-        HostRuntime runtime, Dictionary<string, object?> applyArgs, JsonElement scan)
-    {
-        async Task Capability(string name, CancellationToken token) =>
-            await runtime.CoreService!.RequireCapabilitiesAsync(
-                HostCommandRegistry.RequiredCapabilities(name), token);
-        async Task<JsonElement> Lookup(string operationId, CancellationToken token)
+        await using var fixture = await ProductionHostFixture.CreateAsync();
+        var runtime = fixture.Runtime;
+        var root = fixture.Root;
+        var seed = fixture.Seed;
+        var sourceId = seed.GetProperty("source_id").GetString()!;
+        var newZip = seed.GetProperty("new_zip").GetString()!;
+        var registered = runtime.Registry!.Register("fea11-r4a-wire", [root]);
+        var rendition = JsonSerializer.SerializeToElement(new Dictionary<string, object?>
         {
-            var response = await runtime.CoreService!.SendAsync(
-                "source_get_operation", 3, writer =>
-                {
-                    writer.WriteStartObject();
-                    writer.WriteString("operation_id", operationId);
-                    writer.WriteEndObject();
-                }, TimeSpan.FromSeconds(60), token);
-            return response.Result!.Value.Clone();
-        }
+            ["decoder"] = "zip",
+            ["scale"] = 1.0,
+            ["params_digest"] = new string('a', 64),
+        });
+        var grantId = await runtime.Sources!.IssueAsync(
+            registered.RegistryId, registered.Generation, newZip, "zip",
+            sourceId, sourceId + "-candidate", rendition);
 
-        var orchestrator = new HostOperationOrchestrator(
-            runtime.Operations!, runtime.Registry!, Capability, Lookup);
-        var (operationId, _) = await orchestrator.ApplyAsync(
-            "source_resync",
-            JsonSerializer.SerializeToElement(applyArgs),
-            (finalPayload, token) => runtime.CoreService!.SendHostControlAsync(
-                "ResyncSource",
-                writer =>
-                {
-                    // The host-control envelope already opened the payload object.
-                    foreach (var property in finalPayload.EnumerateObject())
-                    {
-                        property.WriteTo(writer);
-                    }
-                }, TimeSpan.FromSeconds(90), runtime.CoreService.HostSession, token),
-            CancellationToken.None);
-        return operationId;
+        var scan = await InvokeAsync(runtime, "source_scan_sync",
+            new Dictionary<string, object?>
+            {
+                ["source_id"] = sourceId,
+                ["project_ids"] = new[] { "b1" },
+                ["scope"] = "current",
+                ["kind"] = "resync",
+                ["grant_ids"] = new[] { grantId },
+                ["missing"] = Array.Empty<object>(),
+            });
+        Assert.Equal(sourceId,
+            scan.GetProperty("source").GetProperty("source_id").GetString());
+
+        var payload = await LastHostControlPayloadAsync(runtime, "ScanSourceSync");
+        // Flat, frozen ScanSourceSync request fields (C-17 §5.1).
+        Assert.Equal(sourceId, payload.GetProperty("source_id").GetString());
+        Assert.Equal("current", payload.GetProperty("scope").GetString());
+        Assert.Equal("resync", payload.GetProperty("kind").GetString());
+        Assert.Equal(grantId, payload.GetProperty("grant_ids")[0].GetString());
+        Assert.Equal(JsonValueKind.Array, payload.GetProperty("missing").ValueKind);
+        // No nested payload object anywhere (the pre-fix double-object shape).
+        foreach (var property in payload.EnumerateObject())
+        {
+            Assert.False(
+                property.Value.ValueKind == JsonValueKind.Object
+                && property.Value.TryGetProperty("source_id", out _),
+                "nested payload object detected under '" + property.Name + "'");
+        }
+        Assert.False(await WireHasInvalidJsonAsync(runtime),
+            "the Core must not refuse any dispatcher frame as INVALID_JSON");
+
+        await File.WriteAllTextAsync(Path.Combine(root, "real-ipc.txt"),
+            "DataRoot=" + root + "\nhostcontrol_payload=flattened\n"
+            + "invalid_json_frames=0\nPASS\n");
     }
+
+    // ------------------------------------------------------------- helpers
 
     private static async Task<JsonElement> InvokeAsync(
         HostRuntime runtime, string name, object? args)
@@ -370,6 +367,75 @@ public sealed class Fea11Residual4AIpcTests
         var result = await runtime.Commands!.InvokeAsync(
             name, element, CancellationToken.None);
         return result.Value.Clone();
+    }
+
+    /// <summary>
+    /// FEA-11-RESIDUAL-4A D-1: read back the LAST host-control wire frame for
+    /// one command from the Host's own wire evidence and return its
+    /// <c>payload</c> object. This is the machine check that the dispatcher
+    /// wrote the payload FIELDS into the envelope (flattened) instead of a
+    /// second complete object (which the Core rejected as INVALID_JSON).
+    /// </summary>
+    private static async Task<JsonElement> LastHostControlPayloadAsync(
+        HostRuntime runtime, string command)
+    {
+        var wirePath = Path.Combine(runtime.WireEvidenceDirectory,
+            "core-service.ndjson");
+        Assert.True(File.Exists(wirePath), "wire evidence missing: " + wirePath);
+        JsonElement? found = null;
+        foreach (var line in await File.ReadAllLinesAsync(wirePath))
+        {
+            if (string.IsNullOrWhiteSpace(line)) continue;
+            using var row = JsonDocument.Parse(line);
+            if (!row.RootElement.TryGetProperty("request", out var requestText)
+                || requestText.ValueKind != JsonValueKind.String)
+            {
+                continue;
+            }
+            using var request = JsonDocument.Parse(requestText.GetString()!);
+            var root = request.RootElement;
+            if (root.ValueKind != JsonValueKind.Object
+                || !root.TryGetProperty("command", out var commandText)
+                || commandText.GetString() != command)
+            {
+                continue;
+            }
+            if (root.TryGetProperty("payload", out var payload)
+                && payload.ValueKind == JsonValueKind.Object)
+            {
+                found = payload.Clone();
+            }
+        }
+        Assert.True(found.HasValue, "no valid wire frame for " + command);
+        return found!.Value;
+    }
+
+    /// <summary>True when the Host's own wire evidence contains an
+    /// <c>INVALID_JSON</c> refusal from the Core (the pre-fix dispatcher shape).</summary>
+    private static async Task<bool> WireHasInvalidJsonAsync(HostRuntime runtime)
+    {
+        var wirePath = Path.Combine(runtime.WireEvidenceDirectory,
+            "core-service.ndjson");
+        if (!File.Exists(wirePath)) return false;
+        foreach (var line in await File.ReadAllLinesAsync(wirePath))
+        {
+            if (string.IsNullOrWhiteSpace(line)) continue;
+            using var row = JsonDocument.Parse(line);
+            if (!row.RootElement.TryGetProperty("response", out var responseText)
+                || responseText.ValueKind != JsonValueKind.String)
+            {
+                continue;
+            }
+            using var response = JsonDocument.Parse(responseText.GetString()!);
+            if (response.RootElement.TryGetProperty("error", out var error)
+                && error.ValueKind == JsonValueKind.Object
+                && error.TryGetProperty("code", out var code)
+                && code.GetString() == "INVALID_JSON")
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static async Task<JsonElement> ResolveAsync(HostRuntime runtime) =>

@@ -1015,7 +1015,11 @@ public sealed class HostRuntime : IAsyncDisposable
             {
                 var ping = await CoreService.SendAsync(
                         "core.ping", 3,
-                        writer => writer.WriteStartObject(),
+                        // FEA-11-RESIDUAL-4A D-1 (authorized): BuildRequest expects a
+                        // COMPLETE payload object; an unclosed object produced an
+                        // INVALID_JSON frame and made every source-sync dispatcher
+                        // command fail in its capability gate before dispatch.
+                        writer => { writer.WriteStartObject(); writer.WriteEndObject(); },
                         _options.RequestTimeout, token)
                     .ConfigureAwait(false);
                 var advertised = new HashSet<string>(StringComparer.Ordinal);
@@ -1081,7 +1085,10 @@ public sealed class HostRuntime : IAsyncDisposable
                 {
                     var ping = await CoreService.SendAsync(
                             "core.ping", 3,
-                            writer => writer.WriteStartObject(),
+                            // FEA-11-RESIDUAL-4A D-1 (authorized): same unclosed-payload
+                            // defect as SourceSyncCapabilityAsync above; the Run probe
+                            // must send a complete ping payload too.
+                            writer => { writer.WriteStartObject(); writer.WriteEndObject(); },
                             _options.RequestTimeout, CancellationToken.None)
                         .ConfigureAwait(false);
                     if (ping.Result?.ValueKind == System.Text.Json.JsonValueKind.Object

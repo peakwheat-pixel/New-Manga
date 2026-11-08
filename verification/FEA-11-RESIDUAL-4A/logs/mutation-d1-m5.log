@@ -1,0 +1,9 @@
+# FEA-11-RESIDUAL-4A D-1 mutation m5
+# target: G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Host\HostRuntime.cs
+# sha256(before)=8226278422ccf4c479df9cb4a5c16ff64902833f4ae495094e1bc230556c54e1
+# expected: RED under mutation, GREEN after byte-identical restore
+
+# sha256(mutated)=8ba5e31f4095f249324328f8c63b75f778332ee72e9fef7d870560ec4d9603b2
+[mutated] exit=1 verdict=RED
+[restored] exit=0 verdict=GREEN
+# sha256(after)=8226278422ccf4c479df9cb4a5c16ff64902833f4ae495094e1bc230556c54e1 byte_identical=True

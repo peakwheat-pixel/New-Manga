@@ -1,0 +1,12 @@
+# FEA-11-RESIDUAL-4A D-1 AFTER fix: host-control payloads are FLAT fields
+# source: G:\CODEX\New Manga.workspace\FEA-11\fixtures\r4a-production-db833794f08b4933b32937844a696c33\logs\wire\core-service.ndjson
+# format: timestamp | command | payload_keys | error
+
+2026-11-08T09:08:31.2276583+00:00 | core.ping | payload_keys=[] | error=-
+2026-11-08T09:08:31.4078403+00:00 | core.ping | payload_keys=[] | error=-
+2026-11-08T09:08:32.1439863+00:00 | core.ping | payload_keys=[] | error=-
+2026-11-08T09:08:32.1763309+00:00 | core.ping | payload_keys=[] | error=-
+2026-11-08T09:08:32.1927282+00:00 | ScanSourceSync | payload_keys=[grant_ids,kind,missing,project_ids,scope,source_id] | error=-
+2026-11-08T09:08:32.4905740+00:00 | core.ping | payload_keys=[] | error=-
+2026-11-08T09:08:32.5239608+00:00 | ResyncSource | payload_keys=[authorization,grant_ids,operation_id,plan_digest,plan_id] | error=-
+2026-11-08T09:08:33.1359748+00:00 | core.ping | payload_keys=[] | error=-

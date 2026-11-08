@@ -94,18 +94,19 @@ out_of_scope:
 - `needs_confirmation` 零生产者 → **具名缺陷 re-home `FEA-11-DIAG-SURFACE-1`**（需 C-17 additive；本卡不改 Core 语义）。
 - limitation：投影是 **operation 作用域**（无全局枚举）。
 
-### AC-R3-2（AC11-9 Host 级生产链路）— 已做（带具名缺陷）
+### AC-R3-2（AC11-9 Host 级生产链路）— 已做（全 dispatcher；D-1 已修复，2026-11-08 DSH 授权扩域）
 - 新增 `apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11Residual4AIpcTests.cs`（gated `NEWMANGA_FEA11_IPC=1`，默认 skip + 原因）：复用 Fea09 launcher 手法（csc launcher + 仓内 `src` prelude；仓库无 `Fea11ProductionFixture`），`HostRuntime.StartAsync` 起真实 Host + 真实 Python Core；bundled sidecar 未使用/未修改。
-- `ProductionDispatcherFullSyncChain_NewKeyOldDigestConserved`：scan→plan→preview→confirm→apply→ACK→resolve 全链。plan/preview/confirm/ACK/resolve 经生产 `HostRuntime.Commands.InvokeAsync`；apply 经生产 `HostOperationOrchestrator`（Host 自签 + durable journal）；scan 经生产 Core 客户端（dispatcher 缺陷，见下）。断言：ACK 前 resolve → `SOURCE_ACCESS_DENIED`；ACK 后 → `page-rendition-v2-*` 新键 + `ReadPageImageAsync` 新字节解码 4×3 蓝色（新容器）≠ 旧红色；旧 binding `verified_digest`（旧已发布摘要）不变（superseded）、旧 entry `content_digest` 不变、`page-rendition-p1` 从不出现在 `rendition_cache`；两 zip 的 sha256/size/mtime + zip 集合前后一致；`Registry.Revoke` 后 Host 发 grant → `SOURCE_GRANT_REVOKED`。
+- `ProductionDispatcherFullSyncChain_NewKeyOldDigestConserved`：scan→plan→preview→confirm→apply→ACK→resolve **全部经生产 `HostRuntime.Commands.InvokeAsync`**（apply 走 dispatcher 的 journal 分支 + `HostOperationOrchestrator`，Host 自签）。断言：ACK 前 resolve → `SOURCE_ACCESS_DENIED`；ACK 后 → `page-rendition-v2-*` 新键 + `ReadPageImageAsync` 新字节解码 4×3 蓝色（新容器）≠ 旧红色；旧 binding `verified_digest`（旧已发布摘要）不变（superseded）、旧 entry `content_digest` 不变、`page-rendition-p1` 从不出现在 `rendition_cache`；两 zip 的 sha256/size/mtime + zip 集合前后一致；`Registry.Revoke` 后 Host 发 grant → `SOURCE_GRANT_REVOKED`；wire 级断言 scan/apply payload 为**字段平铺**且全 wire 无 `INVALID_JSON`。
 - `ProductionDispatcherMissingCapabilityFailsClosed`：生产 dispatcher + Host capability gate（注入探测结果）→ `CORE_CAPABILITY_MISSING` 且 **零 wire 帧**。
-- **具名缺陷（本卡新发现，不修）**：`HostCommandDispatcher.InvokeHostControlAsync` 把完整 payload object（`WriteCorePayload` 自带 `WriteStartObject`）交给已打开 payload 的 `SendHostControlAsync` ⇒ Core 回 `INVALID_JSON`；`source_scan_sync` 与 journal 分支的 `source_*` apply 均受影响。`HostCommandDispatcher.cs` **不在本卡 allowed_paths** → 待 DSH 授权（≤2 行）。证据：`verification/FEA-11-RESIDUAL-4A/evidence/dispatcher-defect-wire.txt`。
+- `ProductionDispatcherHostControlPayloadIsFlattened`（D-1 判别测试，gated）：host-control 命令经 dispatcher 的 wire `payload` 为字段平铺、无嵌套、无 `INVALID_JSON`。
+- **D-1（本卡新发现，已修复，DSH 授权扩域）**：两处**独立的 wire 帧合法性缺陷** —— ① `HostCommandDispatcher.InvokeHostControlAsync` 把完整 payload object 交给已打开 payload 的 `SendHostControlAsync`（现改为 `WriteHostControlPayload`/`WriteFlattened` 平铺，app-channel 不变）；② `HostRuntime.SourceSyncCapabilityAsync` 与 `RunCapabilityProbeAsync` 的 `core.ping` payload 未闭合（补 `WriteEndObject`，严格两处）。修复前**该 dispatcher host-control 路径**从未跑通（不外推其它命令族）。证据与 before/after：`verification/FEA-11-RESIDUAL-4A/DEFECTS.md` D-1、`logs/mutation-d1-m{4,5}.log`、`logs/fea11-ipc-r4a.log`（3/3）。
 - **限制**：seeded 旧绑定无 import-time grant mapping（C-16 R1-I002）⇒ sync 前对旧绑定的 Core resolve 为 typed `SOURCE_ACCESS_DENIED`；"旧绑定字节/摘要"以源文件字节 + DB 旧行记录，**未伪称已 resolve 旧绑定**。
 
 ### AC-R3-3（AC11-6 folder 用例）— 已做
 - `tests/fea11/test_source_relink.py` 新增 4 用例：`test_folder_relink_is_typed_refused`（`SOURCE_SYNC_STATE_CONFLICT` + "folder relink cannot prove the same physical source" + 零 binding 写）、`test_folder_resync_is_a_real_escape_path`（folder 新增成员 → 新 version + 新页 + 旧页顺序不变）、`test_member_reorder_keeps_bound_page_user_order`（SC-S11）、`test_scope_current_resync_leaves_the_other_project_untouched`（多项目只改确认集合）。
 - `tests/fea11/conftest.py`：`add_source_tree(..., source_kind="zip")`（folder 场景诚实播种，默认行为不变）。
 - **不改** `src/application/sources/service.py` 拒绝分支与身份模型。
-- `L-S4-2` 具名缺陷登记：`src/application/importing/referenced/runtime.py:978-991`（folder identity 取首成员 `folder_entries[0][1].volume_serial/_file_id`、`_container_size` 为成员和）vs `doc/contracts/FEA-C15_…:216`（目录 identity）；另 `scanner.py` 的 authorizations/`_resolve_grants` 同取首成员。详见 `verification/FEA-11-RESIDUAL-4A/DEFECTS.md`。
+- `L-S4-2` 具名缺陷登记：`src/application/importing/referenced/runtime.py:978-991`（folder identity 取首成员 `folder_entries[0][1].volume_serial/_file_id`、`_container_size` 为成员和）vs `doc/plan/FEA-C15_SOURCE_STORAGE_DRAFT.md:216`（目录 identity）；另 `scanner.py` 的 authorizations/`_resolve_grants` 同取首成员。详见 `verification/FEA-11-RESIDUAL-4A/DEFECTS.md`。
 
 ### AC-R3-4（L-M4 裁决）— 裁决：不实现
 - **书面裁决**：L-M4「按冻结参数重算旧证据」不是 0 pin 项 —— `FEA-11-MATCH-1.md:188` 自述需旧字节 + 新 grant；C-17 `:213` 的 `ScanSourceSync` 请求闭集只给目标侧 `grant_ids`、`:238` `SourceBase` 仅 (source_id, version_id, content_digest)；`scanner.py:540-587` 只保留首个 grant、`:324-328/:401-407` 旧条目只从 DB 行读 ⇒ 实现必须改 pinned C-17（18 pins 之一）。
@@ -119,16 +120,17 @@ out_of_scope:
 - `verification/FEA-11-RESIDUAL-4A/`：`README.md`（索引）、`DEFECTS.md`（缺陷/re-home/裁决）、`tools/`（`build_plan_body.py`/`inspect_state.py`/`probe_png.py`）、`logs/`（pytest/Host 定向/全量 .NET/gated IPC）、`evidence/`（真实运行输出 + wire 证据）。
 - HOST-AUTH-1 陈旧表述：核对 `doc/STATUS.md:8` 与 `doc/REBASELINE_PLAN.md:14/53` 已为 `done`（ADJ §7.7 已修正）→ 本卡无需再次修改，登记于 `DEFECTS.md`。
 
-### 门禁数字（本卡实跑，Windows 本机，2026-11-08）
+### 门禁数字（本卡实跑，Windows 本机，2026-11-08；D-1 修复后复跑）
 - `pytest tests/fea11 -q` → **217 passed / 0 failed**（`logs/pytest-fea11.log`）。
 - `pytest tests -q` → **3395 passed / 10 skipped**（基线 3390/10；+5 = 本卡 4 个 folder/SC-S11/多项目用例 + 1 个不扩 V(p,t) 用例；`logs/pytest-full.log`）。
-- `dotnet test NewManga.Host.Tests` → **301 passed / 0 failed / 69 skipped**（基线 300/0/67；+1 非 gated 投影测试、+2 gated skipped；`logs/dotnet-host-tests.log`）。
-- `dotnet test apps/desktop-avalonia/NewManga.sln -c Release` → **1732 passed / 0 failed / 100 skipped**（基线 1731/0/98；同上 +1/+2；`logs/dotnet-full.log`；跑后 `verification/FEA-09` 已恢复）。
-- `NEWMANGA_FEA11_IPC=1` 定向 `Fea11Residual4AIpcTests` → **2 passed / 0 failed**（默认 skip 且带原因；`logs/fea11-ipc-r4a.log`）。
-- 变异自检（3 项，见 `logs/mutation-m{1,2,3}.log`）：删 folder 拒绝分支 → AC-R3-3 RED；ACK 前放行 gate → AC-R3-2 RED；投影改返回全部页 → AC-R3-1 RED；复原后复绿。
+- `dotnet test NewManga.Host.Tests` → **301 passed / 0 failed / 70 skipped**（基线 300/0/67；+1 非 gated 投影测试、+3 gated skipped；`logs/dotnet-host-tests.log`）。
+- `dotnet test apps/desktop-avalonia/NewManga.sln -c Release` → **1732 passed / 0 failed / 101 skipped**（基线 1731/0/98；+1 passed、+3 gated skipped；`logs/dotnet-full.log`；跑后 `verification/FEA-09` 已恢复）。
+- `NEWMANGA_FEA11_IPC=1` 定向 `Fea11Residual4AIpcTests` → **3 passed / 0 failed**（全 dispatcher，无直连 fallback；默认 skip 且带原因；`logs/fea11-ipc-r4a.log`）。
+- 变异自检（5 项，逐字节复原 + sha256 前后一致 + 复绿）：`logs/mutation-m{1,2,3}.log`（AC 层：删 folder 拒绝分支 → AC-R3-3 RED；ACK 前放行 gate → AC-R3-2 RED；投影改返回全部页 → AC-R3-1 RED）+ `logs/mutation-d1-m{4,5}.log`（D-1 层：还原 dispatcher 嵌套 → 判别测试 RED；还原 capability ping 未闭合 → gated 3 用例 RED）。
+- `check.ps1` PASS（3 warnings）；`verify_pins.ps1` **18/18 PASS**（C-07/API inventory pin 未动）。
 
 ### 待 DSH 处置（本卡不越界）
-1. `HostCommandDispatcher.cs` host-control payload 双重 object 缺陷：授权修复后把 `Fea11Residual4AIpcTests` 的 scan/apply 改回全 dispatcher 路径（测试已留 `dispatcher_*_defect` 证据与分支）。
+1. （已关闭）D-1：**DSH 2026-11-08 授权扩域修复**（`HostCommandDispatcher.cs` 平铺 + `HostRuntime.cs` 严格两处 ping 闭合），before 证据保留在 `verification/FEA-11-RESIDUAL-4A/evidence/dispatcher-defect-wire.txt`。
 2. `FEA-11-DIAG-SURFACE-1`（`needs_confirmation` 零生产者 / 管理诊断全局面，需 C-17 additive）。
 3. `FEA-11-LEGACY-RECOMPUTE-1`（C-17 UNFREEZE + 新 capability）、`FEA-11-PDF-RECONCILE-1`（L-M1）。
 4. `L-S4-2` folder identity 缺陷（本卡只登记，未修）。
