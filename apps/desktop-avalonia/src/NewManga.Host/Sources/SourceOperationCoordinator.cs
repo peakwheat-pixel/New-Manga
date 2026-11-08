@@ -535,6 +535,90 @@ public sealed class SourceOperationCoordinator
         }
     }
 
+    /// <summary>
+    /// FEA-11-RESIDUAL-4A AC-R3-1 (AC11-7; C-17 §5.3 lines 255-257): one page
+    /// of a committed operation receipt whose binding status is a
+    /// management-facing diagnostic (<c>missing</c> / <c>needs_confirmation</c>).
+    /// </summary>
+    public sealed record BindingDiagnostic(
+        string OperationId,
+        string PageId,
+        string BindingId,
+        int BindingVersion,
+        string SourceId,
+        string VersionId,
+        string EntryId,
+        string Status);
+
+    /// <summary>
+    /// FEA-11-RESIDUAL-4A AC-R3-1: the READ-ONLY diagnostic projection of a
+    /// durable operation journal entry.
+    ///
+    /// It reads the durable journal's <c>CommitReceipt</c> bindings and returns
+    /// only the pages whose <c>status</c> is <c>missing</c> or
+    /// <c>needs_confirmation</c> (the two management diagnosis states C-17 §5.3
+    /// names). It deliberately:
+    ///
+    /// <list type="bullet">
+    /// <item>adds no Core command, capability or wire field — the receipt is
+    /// already journaled by <see cref="MarkCommitted"/>;</item>
+    /// <item>does not touch <c>IHostController</c> (the C-07 pin stays at
+    /// 18/18);</item>
+    /// <item>does not widen V(p,t): a missing page keeps whatever visibility
+    /// the frozen C-05 P8 rules give it (normally invisible in the reader /
+    /// chapter-page projections) and this projection never publishes it;</item>
+    /// <item>is operation-scoped by design (the journal is keyed by operation
+    /// id; there is no global enumeration).</item>
+    /// </list>
+    ///
+    /// A journal entry without a committed receipt yields an empty projection;
+    /// a receipt that is not valid JSON is a typed conflict (a corrupt durable
+    /// record is never silently reported as "nothing to diagnose").
+    /// </summary>
+    public IReadOnlyList<BindingDiagnostic> ListBindingDiagnostics(string operationId)
+    {
+        var entry = Get(operationId);
+        if (entry?.CommitReceiptJson is null) return Array.Empty<BindingDiagnostic>();
+        JsonDocument document;
+        try
+        {
+            document = JsonDocument.Parse(entry.CommitReceiptJson);
+        }
+        catch (JsonException)
+        {
+            throw new SourceAccessException("SOURCE_SYNC_STATE_CONFLICT");
+        }
+        using (document)
+        {
+            var root = document.RootElement;
+            if (root.ValueKind != JsonValueKind.Object
+                || !root.TryGetProperty("bindings", out var bindings)
+                || bindings.ValueKind != JsonValueKind.Array)
+            {
+                return Array.Empty<BindingDiagnostic>();
+            }
+            var rows = new List<BindingDiagnostic>();
+            foreach (var binding in bindings.EnumerateArray())
+            {
+                var status = StringField(binding, "status");
+                if (status is not ("missing" or "needs_confirmation")) continue;
+                rows.Add(new BindingDiagnostic(
+                    entry.OperationId,
+                    StringField(binding, "page_id") ?? string.Empty,
+                    StringField(binding, "binding_id") ?? string.Empty,
+                    NumberField(binding, "binding_version"),
+                    StringField(binding, "source_id") ?? string.Empty,
+                    StringField(binding, "version_id") ?? string.Empty,
+                    StringField(binding, "entry_id") ?? string.Empty,
+                    status));
+            }
+            // Deterministic order: the receipt order is not part of the frozen
+            // shape, the management projection must be stable.
+            rows.Sort((left, right) => string.CompareOrdinal(left.PageId, right.PageId));
+            return rows;
+        }
+    }
+
     // ------------------------------------------------------- completion material
 
     private sealed record AuthorizationBaseline(string RegistryId, int Generation, string IdentityDigest);
@@ -682,6 +766,14 @@ public sealed class SourceOperationCoordinator
         && value.ValueKind == JsonValueKind.String
             ? value.GetString()
             : null;
+
+    private static int NumberField(JsonElement element, string key) =>
+        element.ValueKind == JsonValueKind.Object
+        && element.TryGetProperty(key, out var value)
+        && value.ValueKind == JsonValueKind.Number
+        && value.TryGetInt32(out var parsed)
+            ? parsed
+            : 0;
 
     // ------------------------------------------------------------- journal
 

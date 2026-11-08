@@ -1027,24 +1027,16 @@ class SourceSyncStore:
         )
 
     # ------------------------------------------------------- diagnostics
-    def tombstone_pages_of_source(
-        self, source_id: str, project_ids: Sequence[str]
-    ) -> list[dict[str, Any]]:
-        """Diagnostic projection: pages of this source whose binding is
-        missing (AC11-7) — management-facing, does not change visibility."""
-        if not project_ids:
-            return []
-        marks = ",".join("?" for _ in project_ids)
-        return _rows(
-            self._conn.execute(
-                "SELECT b.page_id, b.project_id, b.binding_id, b.status,"
-                " p.deleted_at FROM page_bindings b"
-                " JOIN pages p ON p.page_id = b.page_id"
-                " WHERE b.source_id = ? AND b.status = 'missing'"
-                f" AND b.project_id IN ({marks})",
-                [source_id, *project_ids],
-            )
-        )
+    #
+    # FEA-11-RESIDUAL-4A AC-R3-1 (AC11-7) disposition: the former
+    # ``tombstone_pages_of_source`` helper was a zero-caller dead seam. The
+    # management diagnosis face is now the Host-side read-only projection of
+    # the durable operation receipt
+    # (``SourceOperationCoordinator.ListBindingDiagnostics``), which reads the
+    # frozen ``CommitReceipt.bindings[].status`` (C-17 §5.3) and adds no Core
+    # command/capability/wire field. The dead helper was DELETED rather than
+    # wired: attaching a consumer here would have required a new Core command
+    # (C-17 additive = 1 pin) and still could not widen V(p,t) (C-05 P8).
 
 
 class SourceSyncLineageFacts:

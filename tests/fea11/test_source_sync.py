@@ -1800,3 +1800,66 @@ def test_multi_project_final_item_drift_leaves_both_projects_untouched(
             (page_id,),
         ).fetchone()[0] == 1
     assert _full_snapshot(conn) == baseline
+
+
+# ---------------------------------------------------------------------------
+# FEA-11-RESIDUAL-4A AC-R3-1 (AC11-7): the management diagnosis face did NOT
+# widen V(p,t); the Core dead seam is gone.
+# ---------------------------------------------------------------------------
+
+
+def test_missing_binding_is_diagnosable_without_widening_v_pt(
+    conn, repo, book_chapter
+):
+    """AC-R3-1: a missing binding is a management diagnosis, never a
+    visibility grant.
+
+    The frozen V(p,t) projection keeps a missing-bound page invisible in
+    ``get_page``/``list_pages`` (C-05 P8) while the page row, its order and
+    any manual work are preserved. The former zero-caller Core seam
+    ``tombstone_pages_of_source`` was DELETED — the diagnosis face is the
+    Host read-only projection of the durable operation receipt
+    (``SourceOperationCoordinator.ListBindingDiagnostics``), which adds no Core
+    command/capability/wire field.
+    """
+    from pathlib import Path
+
+    page1, page2 = png_bytes(color=(255, 0, 0)), png_bytes(color=(0, 255, 0))
+    add_source_tree(
+        conn,
+        source_id="s1",
+        version_id="sv1",
+        digest=_digest(b"container"),
+        entries=[
+            ("e1", "001.png", _digest(page1)),
+            ("e2", "002.png", _digest(page2)),
+        ],
+    )
+    add_referenced_page(
+        conn, "p1", "c1", "b1", order=1, source_id="s1", version_id="sv1",
+        entry_id="e1", digest=_digest(page1),
+    )
+    add_referenced_page(
+        conn, "p2", "c1", "b1", order=2, source_id="s1", version_id="sv1",
+        entry_id="e2", digest=_digest(page2), binding_status="missing",
+    )
+
+    # Both pages still EXIST (metadata, manual work and user order preserved).
+    stored = conn.execute(
+        "SELECT page_id, sort_order FROM pages WHERE chapter_id = 'c1'"
+        " ORDER BY sort_order"
+    ).fetchall()
+    assert [row["page_id"] for row in stored] == ["p1", "p2"]
+
+    # ...but V(p,t) does not show the missing-bound page (no widening).
+    assert repo.get_page("p1") is not None
+    assert repo.get_page("p2") is None
+    assert [page.page_id for page in repo.list_pages("c1")] == ["p1"]
+
+    # The Core dead seam was DELETED (AC-R3-1 disposition), not wired: a
+    # consumer here would have required a new Core command (1 pin).
+    source = (
+        Path(__file__).resolve().parents[2]
+        / "src" / "infrastructure" / "sqlite" / "source_sync.py"
+    )
+    assert "def tombstone_pages_of_source" not in source.read_text(encoding="utf-8")

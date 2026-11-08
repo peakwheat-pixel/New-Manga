@@ -290,16 +290,20 @@ def add_source_tree(
     legacy_v7_evidence: bool = True,
     registry_id: str = "reg-1",
     generation: int = 1,
+    source_kind: str = "zip",
 ) -> str:
     """sources + current location + one version + entries.
 
     ``legacy_v7_evidence`` writes the honest v7 shape: pixel/orientation
     NULL and (by default) width/height present only when a page was bound.
+    ``source_kind`` lets folder-source cases (FEA-11-RESIDUAL-4A AC-R3-3)
+    seed an honest ``sources.source_kind`` row; the physical identity columns
+    still describe the recorded location.
     """
     conn.execute(
         "INSERT INTO sources (source_id, source_kind, created_at, updated_at)"
-        " VALUES (?, 'zip', ?, ?)",
-        (source_id, NOW, NOW),
+        " VALUES (?, ?, ?, ?)",
+        (source_id, source_kind, NOW, NOW),
     )
     conn.execute(
         "INSERT INTO source_locations (location_id, source_id, registry_id,"

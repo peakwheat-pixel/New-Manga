@@ -1,8 +1,11 @@
 using System.Diagnostics;
 using System.Text.Json;
+using NewManga.App.Services;
 using NewManga.CoreClient;
+using NewManga.CoreClient.Commands;
 using NewManga.CoreClient.Wire;
 using NewManga.Host.Sources;
+using NewManga.Host.Tests.Support;
 using Xunit;
 
 namespace NewManga.Host.Tests;
@@ -351,6 +354,110 @@ public sealed class Fea11SourceIpcTests
             $"DataRoot={root}\nnew_container_scan_changed=1\npending_gate=SOURCE_ACCESS_DENIED\n"
             + $"ack_commit_digest={commitDigest}\nnew_binding_resource={afterResource}\n"
             + "source_conserved=1\nPASS\n");
+    }
+
+    /// <summary>
+    /// FEA-11-RESIDUAL-4A AC-R3-1 (AC11-7; C-17 §5.3 lines 255-257): the Host
+    /// read-only diagnosis projection of the durable operation journal.
+    ///
+    /// It is deliberately NOT gated: it never starts a Core. The projection
+    /// reads the journal entry's already-recorded <c>CommitReceipt</c> and
+    /// reports only the <c>missing</c> / <c>needs_confirmation</c> bindings,
+    /// proving that:
+    /// <list type="bullet">
+    /// <item>the diagnosis face needs no new Core command, capability or wire
+    /// field (the receipt is journaled by the apply path);</item>
+    /// <item><see cref="IHostController"/> keeps no source-diagnosis member
+    /// (C-07 pin untouched);</item>
+    /// <item>the projection is operation-scoped, stable and read-only — it
+    /// never mutates the journal state.</item>
+    /// </list>
+    /// The separate "V(p,t) is not widened" assertion lives on the Core side
+    /// (``tests/fea11/test_source_sync.py``: a missing-bound page stays
+    /// invisible to ``get_page``/``list_pages``).
+    /// </summary>
+    [Fact]
+    public void OperationJournalProjectionReportsOnlyDiagnosticBindings()
+    {
+        Assert.True(
+            OperatingSystem.IsWindows(),
+            "reason: the source-operation journal is DPAPI CurrentUser (Windows only)");
+        var dataRoot = HostFixture.NewDataRoot("fea11-journal-diagnostics");
+        var operations = new SourceOperationCoordinator(null, dataRoot);
+
+        // The journal is the ONLY source: an operation whose commit receipt is
+        // not recorded yet projects nothing (never a global page scan).
+        var pending = operations.Begin(
+            "plan-r3-pending", new string('a', 64), "resync", new string('b', 64));
+        operations.Authorize(
+            pending.OperationId,
+            "{\"operation_id\":\"" + pending.OperationId + "\"}",
+            "host-receipt-r3-pending");
+        Assert.Empty(operations.ListBindingDiagnostics(pending.OperationId));
+
+        var operation = operations.Begin(
+            "plan-r3", new string('a', 64), "resync", new string('b', 64));
+        operations.Authorize(
+            operation.OperationId,
+            "{\"operation_id\":\"" + operation.OperationId + "\"}",
+            "host-receipt-r3");
+        var receipt = """
+        {"operation_id":"op-receipt","bindings":[
+          {"page_id":"p2","binding_id":"pb-p2","binding_version":1,"source_id":"s1","version_id":"sv1","entry_id":"e2","status":"missing"},
+          {"page_id":"p1","binding_id":"pb-p1","binding_version":2,"source_id":"s1","version_id":"sv2","entry_id":"e1","status":"needs_confirmation"},
+          {"page_id":"p3","binding_id":"pb-p3","binding_version":1,"source_id":"s1","version_id":"sv1","entry_id":"e3","status":"healthy"}
+        ]}
+        """;
+        operations.MarkCommitted(operation.OperationId, new string('c', 64), receipt);
+
+        var diagnostics = operations.ListBindingDiagnostics(operation.OperationId);
+        // Only the two diagnostic statuses; deterministic page order.
+        Assert.Equal(new[] { "p1", "p2" }, diagnostics.Select(row => row.PageId).ToArray());
+        Assert.Equal(
+            new[] { "needs_confirmation", "missing" },
+            diagnostics.Select(row => row.Status).ToArray());
+        Assert.Equal(operation.OperationId, diagnostics[0].OperationId);
+        Assert.Equal("pb-p1", diagnostics[0].BindingId);
+        Assert.Equal(2, diagnostics[0].BindingVersion);
+        Assert.Equal("s1", diagnostics[0].SourceId);
+        Assert.Equal("sv2", diagnostics[0].VersionId);
+        Assert.Equal("e1", diagnostics[0].EntryId);
+
+        // Read-only + operation-scoped: an unknown id is an empty projection,
+        // and reading twice never moves the journal state.
+        Assert.Empty(operations.ListBindingDiagnostics("op-" + new string('0', 32)));
+        Assert.Equal(
+            diagnostics.Select(row => row.PageId).ToArray(),
+            operations.ListBindingDiagnostics(operation.OperationId)
+                .Select(row => row.PageId).ToArray());
+        Assert.Equal("core-committed", operations.Get(operation.OperationId)!.State);
+
+        // A corrupt durable receipt is a typed conflict, never a silent
+        // "nothing to diagnose".
+        var corrupt = operations.Begin(
+            "plan-r3-corrupt", new string('a', 64), "resync", new string('b', 64));
+        operations.Authorize(
+            corrupt.OperationId,
+            "{\"operation_id\":\"" + corrupt.OperationId + "\"}",
+            "host-receipt-corrupt");
+        operations.MarkCommitted(corrupt.OperationId, new string('c', 64), "not-json");
+        var conflict = Assert.Throws<SourceAccessException>(
+            () => operations.ListBindingDiagnostics(corrupt.OperationId));
+        Assert.Equal("SOURCE_SYNC_STATE_CONFLICT", conflict.Code);
+
+        // No new command and no IHostController surface: the diagnosis face is
+        // Host-internal only (0 pin; the C-07 pin stays 18/18).
+        Assert.Throws<HostCommandUnknownException>(
+            () => HostCommandRegistry.Get("source_binding_diagnostics"));
+        var hostControllerMethods = typeof(IHostController)
+            .GetMethods()
+            .Select(method => method.Name)
+            .ToArray();
+        Assert.DoesNotContain(
+            hostControllerMethods,
+            name => name.Contains("Source", StringComparison.Ordinal)
+                || name.Contains("Sync", StringComparison.Ordinal)
+                || name.Contains("Missing", StringComparison.Ordinal));
     }
 
     private static async Task RunPythonAsync(

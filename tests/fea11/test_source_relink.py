@@ -15,6 +15,7 @@ from pathlib import Path
 import pytest
 
 from tests.fea11.conftest import (
+    NOW,
     add_referenced_page,
     add_source_tree,
     build_plan_body,
@@ -477,4 +478,247 @@ def test_refresh_source_location_auth_fail_closed_guards(conn, repo):
         location["size_bytes"], location["observed_at"],
         location["created_at"], location["is_current"],
     )
+
+
+# ---------------------------------------------------------------------------
+# FEA-11-RESIDUAL-4A AC-R3-3 (AC11-6): folder sources, SC-S11 reorder and
+# multi-project confirmation scope.
+# ---------------------------------------------------------------------------
+
+
+def _folder_seed(conn, scratch_dir):
+    """One REAL folder source: two member PNGs + the recorded
+    ``folder-manifest/1`` content digest of those very bytes (C-15 §3.1)."""
+    from application.importing.referenced.model import folder_manifest_digest
+
+    folder = scratch_dir / "folder-source"
+    folder.mkdir(parents=True, exist_ok=True)
+    page1, page2 = png_bytes(color=(255, 0, 0)), png_bytes(color=(0, 255, 0))
+    members = {"001.png": page1, "002.png": page2}
+    for name, data in members.items():
+        (folder / name).write_bytes(data)
+    manifest = [
+        {"rel_path": name, "size_bytes": len(data), "sha256": _digest(data)}
+        for name, data in sorted(members.items())
+    ]
+    add_source_tree(
+        conn,
+        source_id="s1",
+        version_id="sv1",
+        digest=folder_manifest_digest(manifest),
+        entries=[
+            ("e1", "001.png", _digest(page1)),
+            ("e2", "002.png", _digest(page2)),
+        ],
+        legacy_v7_evidence=False,
+        source_kind="folder",
+    )
+    add_referenced_page(
+        conn, "p1", "c1", "b1", order=1, source_id="s1", version_id="sv1",
+        entry_id="e1", digest=_digest(page1),
+    )
+    add_referenced_page(
+        conn, "p2", "c1", "b1", order=2, source_id="s1", version_id="sv1",
+        entry_id="e2", digest=_digest(page2),
+    )
+    return folder, members
+
+
+def _scan_with_folder(stack, registry, folder, *, kind, names):
+    """Scan a folder source through a REAL folder grant over its members."""
+    entries = [
+        (Path(folder) / name, name, index) for index, name in enumerate(names)
+    ]
+    grant_id, _facts = mint_grant(
+        registry, source_id="s1", kind="folder", entries=entries
+    )
+    scan = stack["scanner"].scan(
+        {
+            "source_id": "s1", "project_ids": ["b1"], "scope": "current",
+            "kind": kind, "grant_ids": [grant_id], "missing": [],
+        }
+    )
+    return grant_id, scan
+
+
+def _page_order(conn, page_ids=("p1", "p2")):
+    marks = ",".join("?" for _ in page_ids)
+    return {
+        row["page_id"]: (row["sort_order"], row["source_order"])
+        for row in conn.execute(
+            f"SELECT page_id, sort_order, source_order FROM pages"
+            f" WHERE page_id IN ({marks})",
+            list(page_ids),
+        ).fetchall()
+    }
+
+
+def _binding_snapshot(conn):
+    return [
+        tuple(row)
+        for row in conn.execute(
+            "SELECT * FROM page_bindings ORDER BY binding_id"
+        ).fetchall()
+    ]
+
+
+def test_folder_relink_is_typed_refused(
+    conn, registry, stack, book_chapter, scratch_dir
+):
+    """AC-R3-3 ①/R7-05: a folder source's relink is a TYPED refusal.
+
+    A folder grant carries per-member identity only (no ``container_facts``),
+    so "the SAME physical directory" cannot be proven; the frozen contract
+    sends the caller to repoint/resync (C-17 §5.3) instead of silently
+    keeping a binding it cannot stand behind. Zero writes on refusal.
+    """
+    folder, _members = _folder_seed(conn, scratch_dir)
+    before = _binding_snapshot(conn)
+    grant_id, scan = _scan_with_folder(
+        stack, registry, folder, kind="relink", names=["001.png", "002.png"]
+    )
+    assert scan["totals"] == {
+        "unchanged": 2, "added": 0, "missing": 0, "changed": 0, "ambiguous": 0,
+    }
+    with pytest.raises(SourceSyncError) as error:
+        run_full_sync(
+            stack, scan, grant_ids=[grant_id], kind="relink",
+            command="RelinkSource",
+        )
+    assert error.value.code == "SOURCE_SYNC_STATE_CONFLICT"
+    assert "folder relink cannot prove" in str(error.value)
+    # The refusal wrote nothing: every binding row is byte-identical.
+    assert _binding_snapshot(conn) == before
+
+
+def test_folder_resync_is_a_real_escape_path(
+    conn, registry, stack, book_chapter, scratch_dir
+):
+    """AC-R3-3 ②: the escape path the refusal points at really works.
+
+    After the relink refusal the SAME folder source goes through resync: the
+    new member is added, a new source version is published and the already
+    bound pages keep their user order. (The folder identity defect itself,
+    ``L-S4-2``, is registered as a defect — not fixed here.)
+    """
+    folder, _members = _folder_seed(conn, scratch_dir)
+    before = _page_order(conn)
+    assert before == {"p1": (1, 1), "p2": (2, 2)}
+    (folder / "003.png").write_bytes(png_bytes(color=(0, 0, 255)))
+
+    grant_id, scan = _scan_with_folder(
+        stack, registry, folder, kind="resync",
+        names=["001.png", "002.png", "003.png"],
+    )
+    assert scan["totals"]["added"] == 1
+    _plan, dispatch = run_full_sync(
+        stack, scan, grant_ids=[grant_id], kind="resync",
+        command="ResyncSource",
+    )
+    assert dispatch["state"] == "core-committed"
+
+    # A real new version was published and the added member became a page.
+    versions = conn.execute(
+        "SELECT version_id FROM source_versions WHERE source_id = 's1'"
+    ).fetchall()
+    assert len(versions) == 2
+    assert conn.execute(
+        "SELECT COUNT(*) FROM pages WHERE chapter_id = 'c1'"
+    ).fetchone()[0] == 3
+    # The already-bound pages were never reordered by the folder resync.
+    assert _page_order(conn) == before
+
+
+def test_member_reorder_keeps_bound_page_user_order(
+    conn, registry, stack, book_chapter, scratch_dir
+):
+    """AC-R3-3 ③ (SC-S11): a container member REORDER is not a page reorder.
+
+    The same two members are written in the opposite order, so the container
+    bytes (and therefore the version) change while the bound pages keep their
+    PageId, ``sort_order`` and ``source_order``.
+    """
+    zip_path, page1, page2, _digest_before = _seed(conn, scratch_dir)
+    before = _page_order(conn)
+    assert before == {"p1": (1, 1), "p2": (2, 2)}
+    reordered = write_zip(
+        scratch_dir / "reordered.zip",
+        [("002.png", page2), ("001.png", page1)],
+    )
+    assert reordered.read_bytes() != zip_path.read_bytes()
+
+    grant_id, scan = _scan_with_container(stack, registry, reordered, kind="resync")
+    assert scan["totals"]["unchanged"] == 2
+    _plan, dispatch = run_full_sync(
+        stack, scan, grant_ids=[grant_id], kind="resync", command="ResyncSource"
+    )
+    assert dispatch["state"] == "core-committed"
+    assert _page_order(conn) == before
+
+
+def test_scope_current_resync_leaves_the_other_project_untouched(
+    conn, registry, stack, book_chapter, scratch_dir
+):
+    """AC-R3-3 ④: only the confirmed set moves.
+
+    ``b1`` and ``b2`` share the source; a ``scope=current`` resync confirms
+    only ``b1``'s pages. The new member lands in ``b1`` while ``b2``'s page,
+    binding and order stay byte-identical.
+    """
+    zip_path, page1, page2, _digest_before = _seed(conn, scratch_dir)
+    conn.execute(
+        "INSERT INTO books (book_id, title, created_at, updated_at)"
+        " VALUES ('b2', 'Other', ?, ?)",
+        (NOW, NOW),
+    )
+    conn.execute(
+        "INSERT INTO chapters (chapter_id, book_id, title, created_at, updated_at)"
+        " VALUES ('c2', 'b2', 'Ch', ?, ?)",
+        (NOW, NOW),
+    )
+    add_referenced_page(
+        conn, "p3", "c2", "b2", order=1, source_id="s1", version_id="sv1",
+        entry_id="e1", digest=_digest(page1),
+    )
+    conn.commit()
+    other_order_before = _page_order(conn, ("p3",))
+    other_page_before = tuple(conn.execute(
+        "SELECT sort_order, source_order, source_hash FROM pages"
+        " WHERE page_id = 'p3'"
+    ).fetchone())
+    other_binding_before = [
+        tuple(row) for row in conn.execute(
+            "SELECT * FROM page_bindings WHERE page_id = 'p3'"
+        ).fetchall()
+    ]
+
+    new_zip = write_zip(
+        scratch_dir / "new.zip",
+        [("001.png", page1), ("002.png", page2),
+         ("003.png", png_bytes(color=(0, 0, 255)))],
+    )
+    grant_id, scan = _scan_with_container(stack, registry, new_zip, kind="resync")
+    assert scan["totals"]["added"] == 1
+    _plan, dispatch = run_full_sync(
+        stack, scan, grant_ids=[grant_id], kind="resync", command="ResyncSource"
+    )
+    assert dispatch["state"] == "core-committed"
+
+    # The confirmed project gained exactly one page...
+    assert conn.execute(
+        "SELECT COUNT(*) FROM pages WHERE chapter_id = 'c1'"
+    ).fetchone()[0] == 3
+    # ...and the project outside the confirmation set is untouched.
+    assert _page_order(conn, ("p3",)) == other_order_before
+    assert tuple(conn.execute(
+        "SELECT sort_order, source_order, source_hash FROM pages"
+        " WHERE page_id = 'p3'"
+    ).fetchone()) == other_page_before
+    assert [
+        tuple(row) for row in conn.execute(
+            "SELECT * FROM page_bindings WHERE page_id = 'p3'"
+        ).fetchall()
+    ] == other_binding_before
+    assert stack["store"].current_binding_of_page("p3")["status"] == "healthy"
+
 
