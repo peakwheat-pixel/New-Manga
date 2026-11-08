@@ -148,3 +148,15 @@ Review 链 r1 changes_requested（P1=1：D-1c）→ **r2 approved（P0/P1/P2=0�
   4. **AC4 加最小 `StartupDiagnostics` sink**（App 侧 ≤5 行接线）；不改 `tools/e2e/**`/`scripts/**`。
   5. **拆分**：`FEA-07-RESIDUAL-2`（R4a，headless：AC2/AC6/AC8，已冻结 ready）与 `FEA-07-RESIDUAL-3`（R4b，gated/进程：AC1/AC3/AC4，proposed）；**两卡都 MET 后 FEA-07 翻 done**。
 - 口径更正：FEA-07 的 ADJ 锚点是 §2（W-01…W-05）+ §4 矩阵，非 §7.4。
+
+### 7.11 `FEA-07-RESIDUAL-2`（R4a）→ `done`（2026-11-08，integration `a03a6794a`）
+
+| 项 | before | after | 依据 |
+|---|---|---|---|
+| front matter `status` | `ready` | `done` | 本节 |
+| AC-R4a-1…4 | `- [ ]` | `- [x] … <<MET>>` | AC2 窗口层机制/生命周期/AC6 指标/AC8 证据 |
+| allowed_paths | 无 `PresentationWindow.cs` | **已扩域**（+26/−5，净 +21；DSH 授权留痕） | 本行 |
+| P2-01 | canonical 默认 JSON 为 r1 旧 schema | 用 r2 代码重生成并重签 | DSH |
+| limitation | — | L-R4a-1（生产跨窗未接线）、L-R4a-2（gap 门槛仅串行 perf 门禁）、L-R4a-3（规模 p95 超门槛只记录）、L-R4a-4（pytest 既有 flaky） | 本卡 closeout |
+
+### 7.12 `FEA-07-RESIDUAL-3`（R4b）进入 READY 队列（proposed → 待 scope review）

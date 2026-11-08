@@ -398,3 +398,13 @@ ameof(ListStatusText)，修「进入回收站 bar 仍显示 N/M 作品」「返�
 - **指针**：PLAN `READY 节点：无`、FEA-11 行 done；STATUS 无活动 Task + 下一候选 R4；ledger 重跑；review 链 r1/r2 落盘。
 - **下一轮（最后 1 节点）**：R4 `FEA-07-RESIDUAL-2`：AC1 的 A03/ACK/Run gated、AC2 的 `(SessionId,RegionId)` 单写 owner + Host 生命周期、AC3 崩溃注入 + 保护状态、AC4 启动矩阵、AC6 真实负载；原生 IME/AC5 矩阵 NA；完成后翻 `FEA-07`。
 - **未做**：R4 未开始；D-5 limitation 与三张 re-home 卡未建（具名登记）；崩溃点/原生项 `NOT_RUN`；未改契约/pins。
+
+## 33. 续接补充（2026-11-08 第 25 轮：R4a `FEA-07-RESIDUAL-2` done）
+
+- **R4a 全链**：`85207730e`（feat）→ `9ec6b196b`（docs）→ r1 approved（P2×4）→ `bacf6c307`（r1 返修）→ r2 **changes_requested（P1×1：gap 门槛 full-suite 不稳定）** → `a03a6794a` + `ac0dca1bd`（gap 门槛移入 gated 性能门禁）→ **r3 approved（P0=0/P1=0/P2=1/P3=3）**。
+- **交付**：AC2 窗口层 draft owner（`DraftOwnershipRegistry` + `WindowBroker` 薄转发 + `PresentationWindow` 暴露/`Floating` 只读；构造即注册角色；跨 Session 同 Region 只读；显式转移幂等；64 并发唯一 owner）+ AC2 生命周期断言（Host 不被 Start/Dispose）+ AC6（p95 3 次中位 ≤1000ms 不变；`uiThreadSchedulingGapMs` 仅 gated 串行 perf 门禁 700ms；真实规模 N∈{50,200,500} 只记录）+ AC8 证据。
+- **关键工程决策**：gap 指标负载敏感（满载 472–619 ms）→ **默认套件只记录、断言移入 `NEWMANGA_FEA07_PERF=1` 专用门禁**（串行；worst 291–341 ms ≤700）。
+- **Lead 门禁（一手，head `ac0dca1bd`）**：build 0/0；全量 .NET **1779/0/103**；perf gated 1/1；pins **18/18**；check PASS；API EXIT 0；diff 50 文件；禁止面零 diff；FEA-09 已恢复。
+- **limitation**：L-R4a-1（生产跨窗未接线：`RegisterSecondary` 零调用、无 Floating 实例）、L-R4a-2（gap 门槛仅串行 perf 门禁）、L-R4a-3（规模 p95 超 1000ms 只记录）、L-R4a-4（pytest 1 既有 flaky，隔离 16 passed）。
+- **下一轮**：R4b `FEA-07-RESIDUAL-3`（AC1 gated 真库 A03/ACK、AC3 跨进程崩溃注入、AC4 真实入口 + `StartupDiagnostics` sink + 9 类 warning 矩阵）→ 独立 scope review → 冻结 → 实现 → Review → 门禁 → **两卡都 MET 后 `FEA-07` 翻 done**（最后 1 节点）。
+- **未做**：R4b 未开始；原生 IME/双屏/DPI NA（`NOT_RUN`）；未改契约/pins。
