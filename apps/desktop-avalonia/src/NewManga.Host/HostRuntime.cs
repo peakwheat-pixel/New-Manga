@@ -1192,11 +1192,17 @@ public sealed class HostRuntime : IAsyncDisposable
                                     "RecordSourceOperationFailure",
                                     writer =>
                                     {
-                                        writer.WriteStartObject();
+                                        // FEA-11-RESIDUAL-4A D-1c (authorized): the
+                                        // host-control envelope already opened the
+                                        // payload object; writing a COMPLETE object
+                                        // here nested it and threw on the client
+                                        // (same defect class as D-1a). Fields are
+                                        // flattened exactly as the frozen contract
+                                        // expects (Core record_failure requires
+                                        // exactly these three keys).
                                         writer.WriteString("operation_id", journaled.OperationId);
                                         writer.WriteString("request_digest", journaled.RequestDigest);
                                         writer.WriteString("code", code);
-                                        writer.WriteEndObject();
                                     },
                                     _options.RequestTimeout, CoreService.HostSession, token)
                                 .ConfigureAwait(false);

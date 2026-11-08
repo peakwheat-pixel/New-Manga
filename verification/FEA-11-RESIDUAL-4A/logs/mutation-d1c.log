@@ -1,0 +1,11 @@
+# FEA-11-RESIDUAL-4A D-1c mutation: nested RecordSourceOperationFailure payload
+# target: G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Host\HostRuntime.cs
+# sha256(before)=f64728dee8919e0b0ec59f57b94ba0d1e7b238c205d570c8b4cc32e39c438aa5
+# expected: gated failure-path + non-gated sentinel RED, restored GREEN
+
+# sha256(mutated)=2eea136b56783452ae149db01f6a4f45a312b34a831ad02903495fb59cf74d86
+[mutated] FullyQualifiedName~ProductionDispatcherFailureRecordIsFlattenedAndKeepsGatesPending exit=1 verdict=RED
+[mutated] FullyQualifiedName~FailureRecordHostControlPayloadStaysFlat exit=1 verdict=RED
+[restored] FullyQualifiedName~ProductionDispatcherFailureRecordIsFlattenedAndKeepsGatesPending exit=0 verdict=GREEN
+[restored] FullyQualifiedName~FailureRecordHostControlPayloadStaysFlat exit=0 verdict=GREEN
+# sha256(after)=f64728dee8919e0b0ec59f57b94ba0d1e7b238c205d570c8b4cc32e39c438aa5 byte_identical=True

@@ -1,0 +1,14 @@
+DataRoot=G:\CODEX\New Manga.workspace\FEA-11\fixtures\r4a-production-9ed6b6ae5725410890cb5f38c221a1f1
+pre_sync_resolve=SOURCE_ACCESS_DENIED
+scan_via=dispatcher
+scan_changed=0
+plan_confirmed=1
+apply_via=dispatcher
+apply=core-committed
+pending_gate=SOURCE_ACCESS_DENIED
+ack=acknowledged
+new_resource=page-rendition-v2-107fbf668dbbf6369747d5faebbd4885df0dc634f2de3911e7834358602f3669
+old_digest_immutable=1
+source_conserved=1
+revoked_registry=SOURCE_GRANT_REVOKED
+PASS

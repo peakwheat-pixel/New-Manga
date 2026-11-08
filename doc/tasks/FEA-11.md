@@ -275,7 +275,7 @@ FEA-11 实施/返修期间经 DSH 批准的窄批写域（超出卡内逐文件�
 | AC11-6 | `- [ ]` + 双 `<<PARTIAL>>` | `- [x] … <<MET>>` | 本卡 AC-R3-3：folder relink typed 拒绝 / folder resync 逃生路径 / SC-S11 成员重排保序 / 多项目不误改（`tests/fea11/test_source_relink.py`）；`L-S4-2` 以具名缺陷登记 |
 | AC11-7 | `- [ ]` + 双 `<<PARTIAL>>` | `- [x] … <<MET>>` | 本卡 AC-R3-1：Host journal 只读投影（`SourceOperationCoordinator.ListBindingDiagnostics`，operation 作用域）；不扩 V(p,t)（`tests/fea11/test_source_sync.py`）；Core 死 seam `tombstone_pages_of_source` 删除；`needs_confirmation` 零生产者 → 具名 re-home `FEA-11-DIAG-SURFACE-1` |
 | AC11-8 | `- [ ]` + 双 `<<PARTIAL>>` | `- [x] … <<MET>>` | `FEA-11-HOST-AUTH-1` done（`5cbec0e82`；AC3 MET）+ 承接 `FEA-11-HOST-AUTH-2` `f7016d3fb`（ACK fresh + gated 2/2 + 二次 0 帧）；崩溃点矩阵 `NOT_RUN` → 具名 re-home `FEA-11-HOST-AUTH-3`（不得写 PASS） |
-| AC11-9 | `- [ ]` + 双 `<<PARTIAL>>` | `- [x] … <<MET>>` | 本卡 AC-R3-2：gated（`NEWMANGA_FEA11_IPC=1`）HostRuntime + 生产 journal/dispatcher 全链路 + 新 v2 键/新字节/旧摘要不可变/源守恒/撤销 fail-closed（`Fea11Residual4AIpcTests.cs`）；**dispatcher host-control payload 缺陷已具名登记，待 DSH 授权修复** |
+| AC11-9 | `- [ ]` + 双 `<<PARTIAL>>` | `- [x] … <<MET>>` | 本卡 AC-R3-2：gated（`NEWMANGA_FEA11_IPC=1`）HostRuntime + 生产 journal/dispatcher 全链路 + 新 v2 键/新字节/旧摘要不可变/源守恒/撤销 fail-closed（`Fea11Residual4AIpcTests.cs`）；**D-1a/D-1b 已修复（`5c2ac5eeb`）；D-1c（P1-1 残留）已修复（`RecordSourceOperationFailure` payload 平铺），并有 gated/哨兵判别测试** |
 | AC11-10 | `- [ ]` + `<<PARTIAL>>` | `- [x] … <<MET>>` | 范围/冻结/迁移证据由 R3 head 的 DSH closeout 完成（EV/Manifest/独立 Review 属 DSH 职责；`check.ps1`/pins 18/18 由 DSH 复核） |
 
 - **L-STARTUP（AC11-1 子项）**：`NOT_APPLICABLE: 契约解释+产品范围（AD-003 §3.6 / C-01b SC-25 四项组合不含启动全量扫描；保留 NOT_RUN）`；整 AC 不写 NA。

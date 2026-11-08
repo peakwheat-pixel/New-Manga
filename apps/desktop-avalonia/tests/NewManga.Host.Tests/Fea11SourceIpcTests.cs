@@ -460,6 +460,55 @@ public sealed class Fea11SourceIpcTests
                 || name.Contains("Missing", StringComparison.Ordinal));
     }
 
+    /// <summary>
+    /// FEA-11-RESIDUAL-4A D-1c source sentinel (NOT gated): the
+    /// `RecordSourceOperationFailure` host-control callback must write FLAT
+    /// payload fields. Writing a complete object into the already-opened
+    /// envelope payload nested it and the client threw, so a failure record was
+    /// never delivered (same defect class as D-1a).
+    ///
+    /// This sentinel runs in the default gate; the gated
+    /// `Fea11Residual4AIpcTests.ProductionDispatcherFailureRecordIsFlattenedAndKeepsGatesPending`
+    /// proves the real Core chain (typed result + gates remain pending).
+    /// </summary>
+    [Fact]
+    public void FailureRecordHostControlPayloadStaysFlat()
+    {
+        var repo = RepositoryRoot();
+        var path = Path.Combine(repo, "apps", "desktop-avalonia", "src",
+            "NewManga.Host", "HostRuntime.cs");
+        Assert.True(File.Exists(path), "HostRuntime.cs not found: " + path);
+        var text = File.ReadAllText(path);
+        var start = text.IndexOf(
+            "\"RecordSourceOperationFailure\"", StringComparison.Ordinal);
+        Assert.True(start >= 0,
+            "the RecordSourceOperationFailure call site is missing");
+        var end = text.IndexOf(
+            "_options.RequestTimeout", start, StringComparison.Ordinal);
+        Assert.True(end > start,
+            "the RecordSourceOperationFailure callback end is missing");
+        var callback = text[start..end];
+        // Flat fields only: a complete object here nests the payload and throws
+        // on the client (Utf8JsonWriter cannot start an object without a name).
+        Assert.DoesNotContain("WriteStartObject", callback);
+        Assert.DoesNotContain("WriteEndObject", callback);
+        Assert.Contains("\"operation_id\"", callback);
+        Assert.Contains("\"request_digest\"", callback);
+        Assert.Contains("\"code\"", callback);
+    }
+
+    private static string RepositoryRoot()
+    {
+        var directory = new DirectoryInfo(AppContext.BaseDirectory);
+        while (directory is not null
+               && !Directory.Exists(Path.Combine(directory.FullName, ".git")))
+        {
+            directory = directory.Parent;
+        }
+        return directory?.FullName
+            ?? throw new InvalidOperationException("repository not found");
+    }
+
     private static async Task RunPythonAsync(
         string python, string cwd, string script, params string[] arguments)
     {

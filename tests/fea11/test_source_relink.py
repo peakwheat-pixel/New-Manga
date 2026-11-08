@@ -720,5 +720,3 @@ def test_scope_current_resync_leaves_the_other_project_untouched(
         ).fetchall()
     ] == other_binding_before
     assert stack["store"].current_binding_of_page("p3")["status"] == "healthy"
-
-

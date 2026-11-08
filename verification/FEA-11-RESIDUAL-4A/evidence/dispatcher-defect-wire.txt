@@ -1,19 +1,37 @@
-# FEA-11-RESIDUAL-4A AC-R3-2: WIRE evidence of the dispatcher defect
+# FEA-11-RESIDUAL-4A (D-1 BEFORE fix) WIRE evidence — two INDEPENDENT defect classes
 # source: G:\CODEX\New Manga.workspace\FEA-11\fixtures\r4a-production-cf192b1afd274121b6fef9be123dca9e\logs\wire\core-service.ndjson
 # format: timestamp | command | error | note
-
-2026-11-08T08:52:39.0544820+00:00 | core.ping | error=- | valid frame
+#
+# Attribution (corrected after review r1 P2-2):
+#   D-1b capability ping frame (HostRuntime.SourceSyncCapabilityAsync):
+#         `writer => writer.WriteStartObject()` was UNCLOSED, so the Core answered
+#         INVALID_JSON ON THE WIRE (the `<invalid frame>` rows below). This blocked
+#         every source-sync dispatcher command inside its capability gate before any
+#         business frame was sent.
+#   D-1a dispatcher host-control payload (HostCommandDispatcher.InvokeHostControlAsync):
+#         a complete payload object was nested into the already-opened envelope
+#         payload, which threw ON THE CLIENT (Utf8JsonWriter) => NO Core frame was
+#         produced for that dispatch. The `<invalid frame>` rows below are therefore
+#         D-1b ping frames, never D-1a scan/apply frames.
+#   AFTER fix: evidence/d-1-fixed-wire.txt (flat fields), evidence/after-full-chain.txt
+#   and evidence/after-failure-record.txt.
+#
+2026-11-08T08:52:39.0544820+00:00 | core.ping | error=- | valid frame (capability probe before the defect path)
 2026-11-08T08:52:39.2448953+00:00 | core.ping | error=- | valid frame
-2026-11-08T08:52:40.2934892+00:00 | resolve_page_resource | error=SOURCE_ACCESS_DENIED | valid frame
+2026-11-08T08:52:40.2934892+00:00 | resolve_page_resource | error=SOURCE_ACCESS_DENIED | valid frame (seeded legacy binding has no import-time grant mapping)
 2026-11-08T08:52:40.2980194+00:00 | core.ping | error=- | valid frame
 2026-11-08T08:52:40.3291008+00:00 | RegisterSourceReadGrant | error=- | valid frame
-2026-11-08T08:52:40.3303676+00:00 | ? | error=INVALID_JSON | the PRODUCTION DISPATCHER frame: InvokeHostControlAsync writes a complete payload object into SendHostControlAsync's already-opened payload object
-2026-11-08T08:52:40.3473268+00:00 | ScanSourceSync | error=- | valid frame
-2026-11-08T08:52:40.6343529+00:00 | ? | error=INVALID_JSON | the PRODUCTION DISPATCHER frame: InvokeHostControlAsync writes a complete payload object into SendHostControlAsync's already-opened payload object
+2026-11-08T08:52:40.3303676+00:00 | <invalid frame> | error=INVALID_JSON | D-1b: UNCLOSED core.ping payload (capability gate) => Core refused the frame
+2026-11-08T08:52:40.3473268+00:00 | ScanSourceSync | error=- | valid frame (direct client fallback used by the PRE-FIX test; not the dispatcher)
+2026-11-08T08:52:40.6343529+00:00 | <invalid frame> | error=INVALID_JSON | D-1b again (capability gate for the apply dispatch)
 2026-11-08T08:52:40.6365096+00:00 | core.ping | error=- | valid frame
-2026-11-08T08:52:40.6671496+00:00 | ResyncSource | error=- | valid frame
-2026-11-08T08:52:40.6770831+00:00 | resolve_page_resource | error=SOURCE_ACCESS_DENIED | valid frame
+2026-11-08T08:52:40.6671496+00:00 | ResyncSource | error=- | valid frame (direct orchestrator fallback used by the PRE-FIX test; not the dispatcher)
+2026-11-08T08:52:40.6770831+00:00 | resolve_page_resource | error=SOURCE_ACCESS_DENIED | valid frame (pending publication gate)
 2026-11-08T08:52:40.6928828+00:00 | AcknowledgeSourceOperation | error=- | valid frame
-2026-11-08T08:52:40.7239425+00:00 | resolve_page_resource | error=- | valid frame
+2026-11-08T08:52:40.7239425+00:00 | resolve_page_resource | error=- | valid frame (gate opened after the ACK)
 2026-11-08T08:52:40.7295112+00:00 | resolve_page_resource | error=- | valid frame
 2026-11-08T08:52:41.7341751+00:00 | core.ping | error=- | valid frame
+#
+# Conclusion: before the fix the PRODUCTION DISPATCHER host-control path never
+# completed (D-1b blocked it at the capability gate; D-1a would have nested the
+# payload next). Other command families are NOT in scope of this evidence.

@@ -141,7 +141,15 @@ public sealed class Fea11Residual4AIpcTests
         evidence.Add("apply_via=dispatcher");
         // Wire-level proof (D-1): the journal branch flattened the Host-signed
         // payload (plan/operation/authorization) into the host-control envelope.
+        // This is the journal-branch coverage: a nested payload would show a
+        // single object value here (or throw earlier).
         var applyWire = await LastHostControlPayloadAsync(runtime, "ResyncSource");
+        Assert.Equal(
+            new[] { "authorization", "grant_ids", "operation_id", "plan_digest", "plan_id" },
+            applyWire.EnumerateObject()
+                .Select(property => property.Name)
+                .OrderBy(name => name, StringComparer.Ordinal)
+                .ToArray());
         Assert.Equal(planId, applyWire.GetProperty("plan_id").GetString());
         Assert.Equal(operationId,
             applyWire.GetProperty("operation_id").GetString());
@@ -356,6 +364,131 @@ public sealed class Fea11Residual4AIpcTests
             + "invalid_json_frames=0\nPASS\n");
     }
 
+    /// <summary>
+    /// FEA-11-RESIDUAL-4A D-1c discrimination: `source_record_operation_failure`
+    /// through the production dispatcher must write FLAT payload fields
+    /// (<c>operation_id</c>/<c>request_digest</c>/<c>code</c>), let the real Core
+    /// record the failure as a valid typed result, and keep the publication gates
+    /// PENDING (a failed operation never opens the read gate).
+    ///
+    /// Before the fix the callback wrote a complete nested object into the
+    /// already-opened payload, so the client threw (an object cannot start
+    /// without a property name) and the failure was never recorded.
+    /// </summary>
+    [Fea11Residual4AIpcFact]
+    public async Task ProductionDispatcherFailureRecordIsFlattenedAndKeepsGatesPending()
+    {
+        await using var fixture = await ProductionHostFixture.CreateAsync();
+        var runtime = fixture.Runtime;
+        var root = fixture.Root;
+        var seed = fixture.Seed;
+        var sourceId = seed.GetProperty("source_id").GetString()!;
+        var newZip = seed.GetProperty("new_zip").GetString()!;
+        var registered = runtime.Registry!.Register("fea11-r4a-failure", [root]);
+        var rendition = JsonSerializer.SerializeToElement(new Dictionary<string, object?>
+        {
+            ["decoder"] = "zip",
+            ["scale"] = 1.0,
+            ["params_digest"] = new string('a', 64),
+        });
+        var grantId = await runtime.Sources!.IssueAsync(
+            registered.RegistryId, registered.Generation, newZip, "zip",
+            sourceId, sourceId + "-candidate", rendition);
+
+        // --- Publish a new binding first, so a PENDING publication gate exists.
+        var scan = await InvokeAsync(runtime, "source_scan_sync",
+            new Dictionary<string, object?>
+            {
+                ["source_id"] = sourceId,
+                ["project_ids"] = new[] { "b1" },
+                ["scope"] = "current",
+                ["kind"] = "resync",
+                ["grant_ids"] = new[] { grantId },
+                ["missing"] = Array.Empty<object>(),
+            });
+        var scanPath = Path.Combine(root, "scan.json");
+        await File.WriteAllTextAsync(scanPath, scan.GetRawText());
+        var bodyPath = Path.Combine(root, "plan-body.json");
+        await RunPythonAsync(fixture.Python, fixture.Repo,
+            Path.Combine(fixture.Repo, "verification", "FEA-11-RESIDUAL-4A",
+                "tools", "build_plan_body.py"),
+            "--scan-json", scanPath, "--out", bodyPath);
+        using var bodyDocument = JsonDocument.Parse(
+            await File.ReadAllTextAsync(bodyPath));
+        var body = bodyDocument.RootElement;
+        var planId = body.GetProperty("plan_id").GetString()!;
+        await InvokeAsync(runtime, "source_plan_sync", body.GetProperty("plan_body"));
+        var preview = await InvokeAsync(runtime, "source_preview_sync_plan",
+            new Dictionary<string, object?>
+            {
+                ["plan_id"] = planId,
+                ["plan_digest"] = body.GetProperty("plan_digest").GetString(),
+            });
+        var planDigest = preview.GetProperty("plan_digest").GetString()!;
+        await InvokeAsync(runtime, "source_confirm_sync_plan",
+            new Dictionary<string, object?>
+            {
+                ["plan_id"] = planId,
+                ["plan_digest"] = planDigest,
+                ["confirmation"] = body.GetProperty("confirmation"),
+            });
+        var applied = await InvokeAsync(runtime, "source_resync",
+            new Dictionary<string, object?>
+            {
+                ["plan_id"] = planId,
+                ["plan_digest"] = planDigest,
+                ["grant_ids"] = new[] { grantId },
+                ["authorization"] = new Dictionary<string, object?>
+                {
+                    ["authorizations"] = scan.GetProperty("authorizations").Clone(),
+                },
+            });
+        var operationId = applied.GetProperty("operation_id").GetString()!;
+        Assert.Equal("core-committed", runtime.Operations!.Get(operationId)!.State);
+        var pendingBefore = await Assert.ThrowsAsync<CoreOperationException>(
+            () => ResolveAsync(runtime));
+        Assert.Equal("SOURCE_ACCESS_DENIED", pendingBefore.Code);
+
+        // --- The production dispatcher records the failure (D-1c path).
+        var failed = await InvokeAsync(runtime, "source_record_operation_failure",
+            new Dictionary<string, object?>
+            {
+                ["operation_id"] = operationId,
+                ["code"] = "SOURCE_SYNC_UNSTABLE",
+            });
+        Assert.Equal("failed", failed.GetProperty("State").GetString());
+        Assert.Equal("failed", runtime.Operations!.Get(operationId)!.State);
+
+        // Wire: FLAT fields, exactly the frozen three-key shape.
+        var failurePayload = await LastHostControlPayloadAsync(
+            runtime, "RecordSourceOperationFailure");
+        Assert.Equal(
+            new[] { "code", "operation_id", "request_digest" },
+            failurePayload.EnumerateObject()
+                .Select(property => property.Name)
+                .OrderBy(name => name, StringComparer.Ordinal)
+                .ToArray());
+        Assert.Equal(operationId,
+            failurePayload.GetProperty("operation_id").GetString());
+        Assert.Equal("SOURCE_SYNC_UNSTABLE",
+            failurePayload.GetProperty("code").GetString());
+        Assert.False(await WireHasInvalidJsonAsync(runtime),
+            "the Core must not refuse the failure frame as INVALID_JSON");
+        Assert.Null(await WireResponseErrorForAsync(
+            runtime, "RecordSourceOperationFailure"));
+
+        // The failed operation keeps the gates PENDING (a failure never opens
+        // reads); the Host journal state is terminal.
+        var pendingAfter = await Assert.ThrowsAsync<CoreOperationException>(
+            () => ResolveAsync(runtime));
+        Assert.Equal("SOURCE_ACCESS_DENIED", pendingAfter.Code);
+
+        await File.WriteAllTextAsync(Path.Combine(root, "real-ipc.txt"),
+            "DataRoot=" + root + "\nfailure_record_via=dispatcher\n"
+            + "failure_payload=flattened\nfailure_state=failed\n"
+            + "gates_pending=SOURCE_ACCESS_DENIED\nPASS\n");
+    }
+
     // ------------------------------------------------------------- helpers
 
     private static async Task<JsonElement> InvokeAsync(
@@ -436,6 +569,46 @@ public sealed class Fea11Residual4AIpcTests
             }
         }
         return false;
+    }
+
+    /// <summary>Error code of the LAST wire response for one command, or null
+    /// when the Core answered it successfully (a valid typed result).</summary>
+    private static async Task<string?> WireResponseErrorForAsync(
+        HostRuntime runtime, string command)
+    {
+        var wirePath = Path.Combine(runtime.WireEvidenceDirectory,
+            "core-service.ndjson");
+        if (!File.Exists(wirePath)) return null;
+        string? found = null;
+        foreach (var line in await File.ReadAllLinesAsync(wirePath))
+        {
+            if (string.IsNullOrWhiteSpace(line)) continue;
+            using var row = JsonDocument.Parse(line);
+            if (!row.RootElement.TryGetProperty("request", out var requestText)
+                || requestText.ValueKind != JsonValueKind.String)
+            {
+                continue;
+            }
+            using var request = JsonDocument.Parse(requestText.GetString()!);
+            if (!request.RootElement.TryGetProperty("command", out var commandText)
+                || commandText.GetString() != command)
+            {
+                continue;
+            }
+            found = null;
+            if (row.RootElement.TryGetProperty("response", out var responseText)
+                && responseText.ValueKind == JsonValueKind.String)
+            {
+                using var response = JsonDocument.Parse(responseText.GetString()!);
+                if (response.RootElement.TryGetProperty("error", out var error)
+                    && error.ValueKind == JsonValueKind.Object
+                    && error.TryGetProperty("code", out var code))
+                {
+                    found = code.GetString();
+                }
+            }
+        }
+        return found;
     }
 
     private static async Task<JsonElement> ResolveAsync(HostRuntime runtime) =>

@@ -1,0 +1,6 @@
+DataRoot=G:\CODEX\New Manga.workspace\FEA-11\fixtures\r4a-production-02628ff074444fe3ac31cbdfdff0411d
+failure_record_via=dispatcher
+failure_payload=flattened
+failure_state=failed
+gates_pending=SOURCE_ACCESS_DENIED
+PASS
