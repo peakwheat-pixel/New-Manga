@@ -4,7 +4,7 @@
 
 ## 当前程序
 - **V11R 程序 ACTIVE**：[V11R_PROGRAM](V11R_PROGRAM.md)；契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)。
-- 当前 Task：**无活动 Task**（下一候选 R4 `FEA-07-RESIDUAL-2` proposed（[卡](tasks/FEA-07-RESIDUAL-2.md)），需 scope review；有序队列见 handoff §32）。已闭环：`FEA-11-RESIDUAL-4A` done（`fbe337f95`；FEA-11 翻 done）、`FEA-06-RESIDUAL-3`（`ddc29ecb3`）、`FEA-11-HOST-AUTH-2`（`f7016d3fb`）、`FEA-12-UI-RESIDUAL-2`（`85356c22a`）、UI-RESIDUAL-1（`8e3bd03d6`）。
+- 当前 Task：**`FEA-07-RESIDUAL-2` ready**（收口 A：AC2 窗口 owner/生命周期 + AC6 指标 + AC8；[卡](tasks/FEA-07-RESIDUAL-2.md)）。已闭环：`FEA-11-RESIDUAL-4A`（`fbe337f95`；FEA-11 翻 done）、`FEA-06-RESIDUAL-3`（`ddc29ecb3`）、`FEA-11-HOST-AUTH-2`（`f7016d3fb`）、`FEA-12-UI-RESIDUAL-2`（`85356c22a`）、UI-RESIDUAL-1（`8e3bd03d6`）。
 - FEA-11 线：WATCH-1/SCAN-2/SCAN-1/MATCH-1/AC4-GAPS-1/LINEAGE-1 `done`；HOST-AUTH-1 `done`；FEA-12 四卡 `done`。
 - **AC11-1 终态 MET（带 limitation）**：裁决 2026-11-06（[记录](reviews/FEA-11-AC11-1-adjudication-2026-11-06.md)）；「启动/访问前检查」= 冷启动枚举 + registry/root 核验（SCAN-2） + 每次访问/操作前 live grant+lease+digest 强验证；启动不做全量内容扫描（L-STARTUP）。
 - rolling checkpoint：[GOAL-PROGRESS](checkpoints/GOAL-PROGRESS-2026-11-02.md)。

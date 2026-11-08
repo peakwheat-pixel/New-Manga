@@ -138,3 +138,13 @@ Review 链 r1→r2→r3→**r4 approved（P0=0/P1=0/P2=0/P3=5）**；AC-1…AC-6
 ### 7.9 `FEA-11-RESIDUAL-4A`：`ready` → `done`（2026-11-08）
 
 Review 链 r1 changes_requested（P1=1：D-1c）→ **r2 approved（P0/P1/P2=0）**；AC-R3-1…R3-6 全 MET；D-1 三处 wire 帧缺陷（D-1a/D-1b/D-1c）修复并有判别测试。
+
+### 7.10 `FEA-07` 收口：拆分与冻结（2026-11-08）
+
+- 独立 scope review（`doc/reviews/FEA-07-RESIDUAL-2-scope-r1.md`，`NOT_RECOMMENDED`）→ **DSH 采纳**：
+  1. **AC2 冻结解释**：「第二窗口」= 独立 OS 窗口（`WindowBroker.Floating`）→ 只读/独立 Session；同 Session 主画布+浮动面板 = 同一窗口内面板 → 按 **C-13 SC-D03** 共享 DraftId 可编辑；**只引用不复述**。
+  2. **AC3 可做**：FEA-11 的 grant 阻塞不迁移（崩溃对象是 `switch-journal.json`）→ 外部驱动 park/kill/recover。
+  3. **AC6 改口径**：1000 ms 门槛不变（W-5），p95 改 **3 次中位数**；新增 `uiThreadSchedulingGapMs`（首轮基线定标）；真实规模 N∈{50,200,500}。
+  4. **AC4 加最小 `StartupDiagnostics` sink**（App 侧 ≤5 行接线）；不改 `tools/e2e/**`/`scripts/**`。
+  5. **拆分**：`FEA-07-RESIDUAL-2`（R4a，headless：AC2/AC6/AC8，已冻结 ready）与 `FEA-07-RESIDUAL-3`（R4b，gated/进程：AC1/AC3/AC4，proposed）；**两卡都 MET 后 FEA-07 翻 done**。
+- 口径更正：FEA-07 的 ADJ 锚点是 §2（W-01…W-05）+ §4 矩阵，非 §7.4。
