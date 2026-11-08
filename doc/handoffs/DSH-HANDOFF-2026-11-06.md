@@ -387,3 +387,14 @@ ameof(ListStatusText)，修「进入回收站 bar 仍显示 N/M 作品」「返�
 - **指针**：PLAN 行改 done；STATUS 无活动 Task + 下一候选 R3；ledger 重跑；review 链 r1–r4 落盘 `doc/reviews/FEA-06-RESIDUAL-3-r{1..4}.md`。
 - **下一轮**：R3 `FEA-11-RESIDUAL-4A`（AC11-7 诊断接线 / AC11-9 生产链路 / L-M4 / folder relink 判别 + L-S4-2 / AC11-5 回填）→ 翻 `FEA-11`；随后 R4 `FEA-07-RESIDUAL-2`。
 - **未做**：R3/R4 未开始；格 3 未做（re-home）；原生项 `NOT_RUN`；未改契约/pins。
+
+## 32. 续接补充（2026-11-08 第 24 轮：R3 `FEA-11-RESIDUAL-4A` done + `FEA-11` 翻 done）
+
+- **R3 全链**：实现 `a74c40766` → docs `3e87e4025` → **D-1 三处 wire 帧缺陷修复**（DSH 三次授权扩域：`HostCommandDispatcher.cs`、`HostRuntime.cs` 两处 ping、`HostRuntime.cs` RecordSourceOperationFailure）`5c2ac5eeb`/`fbe337f95` → r1 changes_requested（P1=1）→ 返修 → **r2 approved（P0=0/P1=0/P2=0/P3=4）**。
+- **交付**：AC11-1/3/4/5/8 **仅回填**；AC11-6（folder relink typed 拒绝/resync 逃逸/SC-S11 保序/多项目）4 类 pytest；AC11-9 **Host 级 gated 全链 4/4**（scan→plan→preview→confirm→apply→ACK→resolve + 旧/新字节不可变 + 守恒 + fail-closed）；AC11-7 **Host journal 只读投影（operation 作用域）**；L-M4/L-M1/`needs_confirmation` 具名 re-home；L-STARTUP 子项 NA。
+- **三类 wire 帧缺陷（真实、均修 + 判别测试）**：**D-1a** dispatcher host-control payload 嵌套（客户端 `InvalidOperationException`）；**D-1b** 两处 capability ping payload 未闭合（`INVALID_JSON`）；**D-1c** `RecordSourceOperationFailure` 嵌套。修复后 gated 全链路首次走通。
+- **Lead 门禁（一手，head `fbe337f95`）**：build 0/0；全量 .NET **1733 passed / 0 failed / 102 skipped**；pytest **3395/10**；fea11 **217**；gated **4/4**；pins **18/18**；check PASS；API EXIT 0；diff 33 文件；禁止面零 diff；`git diff --check` 0；FEA-09 已恢复。
+- **翻转**：`FEA-11` `closed_with_limitations` → `done`（AC11-1…10 MET；L-STARTUP NA；L-M1/L-M4/needs_confirmation re-home；L-1…L-11 原文保留；ADJ §7.8）。
+- **指针**：PLAN `READY 节点：无`、FEA-11 行 done；STATUS 无活动 Task + 下一候选 R4；ledger 重跑；review 链 r1/r2 落盘。
+- **下一轮（最后 1 节点）**：R4 `FEA-07-RESIDUAL-2`：AC1 的 A03/ACK/Run gated、AC2 的 `(SessionId,RegionId)` 单写 owner + Host 生命周期、AC3 崩溃注入 + 保护状态、AC4 启动矩阵、AC6 真实负载；原生 IME/AC5 矩阵 NA；完成后翻 `FEA-07`。
+- **未做**：R4 未开始；D-5 limitation 与三张 re-home 卡未建（具名登记）；崩溃点/原生项 `NOT_RUN`；未改契约/pins。

@@ -9,7 +9,7 @@
 |FEA-CONTRACT-WRAP-1|FEA-C14-DRAFT|done（L-3 Errata + PLAN 预算；R2 approved `6cfe7ab92`）|
 |FEA-C11-PREREQ-1|FEA-C10-DRAFT|approved（U-09 前置登记：L-1/L-2/L-5 → 候选 Task 前置与 AC；r1 approved；待集成收口）|
 |FEA-11-PREREQ-1|FEA-09、FEA-10|**done**（C-17 v1.0 FROZEN；pins 18/18；r1+轻量复核 approved P0/P1=0；集成提交见 Task）|
-|FEA-11|FEA-09、FEA-10、FEA-11-PREREQ-1|**closed_with_limitations**（用户裁决；L-1…L-11；r1–r7）||
+|FEA-11|FEA-09、FEA-10、FEA-11-PREREQ-1|**done**（2026-11-08 翻转：R4A `fbe337f95`；AC11-1…10 MET；L-STARTUP 子项 NA；L-M1/L-M4/needs_confirmation re-home；L-1…L-11 原文保留）||
 |FEA-11-SCAN-1|FEA-11|**done**（r2 窄面 approved；delivery `7080167e1`；AC-S1…S6 全 MET；AC11-1 终态 MET 带 limitation）|
 |FEA-11-HOST-AUTH-1|FEA-11-PREREQ-1|**done**（2026-11-08：AC3 MET（fresh+重发/恢复 e2e）；崩溃点 re-home HOST-AUTH-3；`f7016d3fb`）||
 |FEA-11-LINEAGE-1|FEA-11-PREREQ-1|**done**（r4 approved；delivery `90a8c8218`；r7 硬约束解除；残余 L4-L11 见卡）||
@@ -46,11 +46,11 @@
 
 **V11R 程序**：[V11R_PROGRAM](V11R_PROGRAM.md) 为**唯一活动任务 DAG**（V1.1 整改 + 新 Avalonia UI/UX + Theme Studio）；接口契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)；设计基线 `doc/design/redesign-v1/40-fusion/`。历史节点原状保留；READY 节点由本 Plan 维护。
 
-READY 节点：FEA-11-RESIDUAL-4A
+READY 节点：无
 
 （C-04b v1.2 done 26aa0ca4a；R-1 代码修复 0 pin，Owner c04b-impl）
 
-完成：FEA-10 done；FEA-11-PREREQ-1 done；FEA-11 `closed_with_limitations`（R3 收口进行）、HOST-AUTH-1 done；FEA-12 四卡 done；FEA-11 承接卡 done（AC11-1 判 MET 带 L-STARTUP）；UNFREEZE C-04b v1.1+M2-C1 rev2.14（`fc9833479`）。
+完成：FEA-10 done；FEA-11-PREREQ-1 done；FEA-11 done、HOST-AUTH-1 done；FEA-12 四卡 done；FEA-11 承接卡 done（AC11-1 判 MET 带 L-STARTUP）；UNFREEZE C-04b v1.1+M2-C1 rev2.14（`fc9833479`）。
 
 当前 DAG：FEA-11→FEA-12 四卡 done → SCAN 线 done → RENDITION-1/UI-RESIDUAL-1 done → RUN-GRANT-1/2A/2B done → L-S1*/L-S4* done → 2C-PREREQ-1/2C done → L-R11/SCAN-RH/C-04b residual/INDEX-L4-1 done → **FEA-12-UI-RESIDUAL-2 done（回收站恢复后书架刷新 + 空态/计数诚实性；`85356c22a`）**；下一候选：2C-RESIDUAL-1（typed-stop 次序）/ README 对账。B2 延后（无消费者）。
 

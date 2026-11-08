@@ -1,0 +1,65 @@
+=== Lead gates 2026-11-08T17:15:53.4713302+08:00 HEAD=5c2ac5eeb ===
+=== diff vs base 89ef7a868 ===
+apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandDispatcher.cs
+apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs
+apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs
+apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11Residual4AIpcTests.cs
+apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11SourceIpcTests.cs
+doc/tasks/FEA-11-RESIDUAL-4A.md
+doc/tasks/FEA-11.md
+src/infrastructure/sqlite/source_sync.py
+tests/fea11/conftest.py
+tests/fea11/test_source_relink.py
+tests/fea11/test_source_sync.py
+verification/FEA-11-RESIDUAL-4A/DEFECTS.md
+verification/FEA-11-RESIDUAL-4A/README.md
+verification/FEA-11-RESIDUAL-4A/evidence/d-1-fixed-wire.txt
+verification/FEA-11-RESIDUAL-4A/evidence/dispatcher-defect-wire.txt
+verification/FEA-11-RESIDUAL-4A/evidence/real-ipc-capability.txt
+verification/FEA-11-RESIDUAL-4A/evidence/real-ipc-full-chain.txt
+verification/FEA-11-RESIDUAL-4A/logs/dotnet-full.log
+verification/FEA-11-RESIDUAL-4A/logs/dotnet-host-tests.log
+verification/FEA-11-RESIDUAL-4A/logs/fea11-ipc-r4a.log
+verification/FEA-11-RESIDUAL-4A/logs/mutation-d1-m4.log
+verification/FEA-11-RESIDUAL-4A/logs/mutation-d1-m5.log
+verification/FEA-11-RESIDUAL-4A/logs/mutation-m1.log
+verification/FEA-11-RESIDUAL-4A/logs/mutation-m2.log
+verification/FEA-11-RESIDUAL-4A/logs/mutation-m3.log
+verification/FEA-11-RESIDUAL-4A/logs/pytest-fea11.log
+verification/FEA-11-RESIDUAL-4A/logs/pytest-full.log
+verification/FEA-11-RESIDUAL-4A/tools/build_plan_body.py
+verification/FEA-11-RESIDUAL-4A/tools/inspect_state.py
+verification/FEA-11-RESIDUAL-4A/tools/probe_png.py
+=== forbidden surfaces ===
+(empty) OK
+=== build ===
+    0 个错误
+
+已用时间 00:00:05.66
+BUILD_EXIT=0
+=== full dotnet ===
+
+已通过! - 失败:     0，通过:    21，已跳过:     0，总计:    21，持续时间: 98 ms - NewManga.Appearance.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:    38，已跳过:     0，总计:    38，持续时间: 288 ms - NewManga.Presentation.Avalonia.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   253，已跳过:     0，总计:   253，持续时间: 938 ms - NewManga.ThemeEngine.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   117，已跳过:     0，总计:   117，持续时间: 1 s - NewManga.DesignSystem.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:    31，已跳过:     0，总计:    31，持续时间: 4 s - NewManga.ApplicationCore.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   301，已跳过:    70，总计:   371，持续时间: 10 s - NewManga.Host.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   167，已跳过:    24，总计:   191，持续时间: 17 s - NewManga.CoreClient.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   804，已跳过:     7，总计:   811，持续时间: 3 m 2 s - NewManga.App.Tests.dll (net9.0)
+
+DOTNET_EXIT=0
+=== restore FEA-09 ===
+RESTORE_EXIT=0
+=== pytest ===
+
+3395 passed, 10 skipped in 255.59s (0:04:15)
+
+PYTEST_EXIT=0
+=== pins/check/api ===
+PIN AUDIT: PASS (all 18)
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6850 bytes / 64 lines
+Governance check: PASS (3 warnings)
+OK: rendered counts match FEA-C07 doc
+API_EXIT=0
+?? verification/FEA-11-RESIDUAL-4A/logs/gates-lead-final.log

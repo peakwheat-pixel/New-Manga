@@ -15,8 +15,8 @@ depends_on:
 base_commit: null
 branch: null
 worktree: null
-integration_commit: 3a9e68bf5
-delivery_head: 3e675de5
+integration_commit: fbe337f95
+delivery_head: fbe337f95
 canonical_evidence_status: complete
 resource_closeout_status: complete
 evidence_dir: verification/FEA-11
@@ -181,11 +181,21 @@ commit 暂为 pending（"不 commit/push" 约束；DSH 集成提交后回填）�
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-AC11-MATRIX | AC11-1…10（逐 AC 状态与证据索引） | verification/FEA-11/AC-MATRIX.md | pending | b9de1dbf3002e821e6d3b6239a958524acf99018451ddc130dc03bfcdc39d9fd | CANONICAL |
+| EV-AC11-MATRIX | AC11-1…10（逐 AC 状态与证据索引） | verification/FEA-11/AC-MATRIX.md | - | `e443c40a9d661cb592414016950a2daff2da3720dd5a9e4aa16b3191683d069f` | CANONICAL |
 | EV-AC11-C6-FINAL | AC11-1…10（终版门禁：pytest 3042 / IPC 3/3 / check / pins） | verification/FEA-11/logs/dsh-C6-final.log | pending | 11f1ddca340fd7f5e7623b4bcde46fc1a4f26776e3a7bd8c451c6882e0325ac9 | CANONICAL |
 | EV-AC11-C6-GATES | AC11-1…10（早期门禁基线） | verification/FEA-11/logs/dsh-C6-gates.log | pending | efc283ec3f1acb54c899de33c97647126b9193e421b97de6e424db3bd783f30a | SOURCE_PIN |
 | EV-AC11-PHASEB-MAIN | AC11-2/4/5/6/8（主套件回归） | verification/FEA-11/logs/dsh-phaseB-main.log | pending | 9046e7caa61c49724f7b3ddbd67edde787dd27791ecb7d1c27e61d2a572e7256 | SOURCE_PIN |
 | EV-AC11-PHASEB-PROVIDERS | AC11-10（providers 回归） | verification/FEA-11/logs/dsh-phaseB-providers.log | pending | 63f3e76f9022247e78f5233d4553b987dacf1fceb5a0da00c19e73851070a4fb | SOURCE_PIN |
+| EV-FLIP-01 | AC11-10（done 翻转补齐） | verification/FEA-11/DELIVERY-MANIFEST.json | - | b81db084b05a9ab8606a55d2c162d95ca9583ad2b95e07535ed1cd83ee40c17e | CANONICAL |
+| EV-FLIP-02 | AC11-10（done 翻转补齐） | verification/FEA-11/RESOURCE-MANIFEST.json | - | c76cb8096addedad27653a1bda5a257f46950cff7bec3cd41c4856a71b9611c3 | CANONICAL |
+| EV-FLIP-03 | AC11-10（done 翻转补齐） | verification/FEA-11/changed-files.txt | - | b8a05373f42469933f6b9df78ca575b783f706a6e2e33229b4718d92d7f2cbb0 | CANONICAL |
+| EV-FLIP-04 | AC11-10（done 翻转补齐） | verification/FEA-11/logs/dsh-C6-r2.log | - | dc67366002fdd80963164ce498739ecdae03bd9d2637580bdca8ea6cf516c405 | CANONICAL |
+| EV-FLIP-05 | AC11-10（done 翻转补齐） | verification/FEA-11/logs/dsh-C6-r3.log | - | 16e5ee9ef0c34a97c19512ee9eb1cd1bbe9853031a4573d0756d84f3a3a21407 | CANONICAL |
+| EV-FLIP-06 | AC11-10（done 翻转补齐） | verification/FEA-11/logs/dsh-C6-r4.log | - | fe9bba66425714c267e0e618b64893034f039f3dad251bb2f774de428ebd6e4d | CANONICAL |
+| EV-FLIP-07 | AC11-10（done 翻转补齐） | verification/FEA-11/logs/dsh-C6-r5.log | - | e1f6ecba079208a0da3a1c99a58d0e22bff47b91be2bf77761e848f66816051f | CANONICAL |
+| EV-FLIP-08 | AC11-10（done 翻转补齐） | verification/FEA-11/logs/dsh-C6-r6.log | - | 87268285cee1017fbc6babcc52b94c74b43766e039bd458bcdd90bf04807891f | CANONICAL |
+| EV-FLIP-09 | AC11-10（done 翻转补齐） | verification/FEA-11/logs/dsh-C6-r7.log | - | edfd4e09f9c49e6f97370db2297022f99302975b8a13ad1cbb50a4fb03bdc18f | CANONICAL |
+| EV-FLIP-R01 | AC11-10（done 翻转补齐） | verification/FEA-11/EV.md | - | 77db7339bbd1fdaee0e07556dd9f08015de1e478d3caafd5e593a4daedbe6aef | CANONICAL |
 
 ## Review r1 处置（DSH，2026-11-05）
 
@@ -281,3 +291,22 @@ FEA-11 实施/返修期间经 DSH 批准的窄批写域（超出卡内逐文件�
 - **L-STARTUP（AC11-1 子项）**：`NOT_APPLICABLE: 契约解释+产品范围（AD-003 §3.6 / C-01b SC-25 四项组合不含启动全量扫描；保留 NOT_RUN）`；整 AC 不写 NA。
 - **L-M1 / L-M4**：BLOCKED 具名 re-home —— L-M1 → `FEA-11-PDF-RECONCILE-1`；L-M4 → `FEA-11-LEGACY-RECOMPUTE-1`（需 C-17 UNFREEZE + 新 capability；本卡未实现、未重算旧证据）。
 - `status: closed_with_limitations → done` 只表示 AC 行按 ADJ §3 翻转；历史 limitation 原文（§Closeout Record L-1…L-11）逐字保留；`Technical Gate=NOT_SATISFIED`、真机/原生 `NOT_RUN` 不变。
+
+## Resource Manifest
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| worktree | NOT_APPLICABLE（main；历史实施 head `3e675de5`，本卡 closeout `fbe337f95`） | NOT_APPLICABLE | — | — | 未创建 linked worktree |
+| temp | `G:\CODEX\New Manga.workspace\FEA-11\**`（历史 gated IPC 隔离根/评审 scratch） | PRESERVE_REFERENCED | `G:\CODEX\New Manga.workspace\FEA-11` | `verification/FEA-11/EV.md` | 仓外隔离根；不触碰真实数据；保留 |
+| test-fixture | `tests/fea11/**` + Host.Tests | NOT_APPLICABLE | — | — | 无真实用户数据 |
+| user-data | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 未触碰真实用户数据/AppData/外部卷/回收站 |
+| tracked-side-effect | `verification/FEA-09/logs/wire-redacted.ndjson` | NOT_APPLICABLE | — | — | 既有副作用；每次全量后恢复 |
+
+## Closeout 补充（DSH，2026-11-08：`closed_with_limitations` → `done` 翻转记录，append-only）
+
+- **授权依据**：用户 2026-11-08 残余收口指令（R3）+ DSH 裁决（`doc/reviews/ADJ-2026-11-RESIDUAL-WAIVER.md` §3/§7.8：新授权可翻转终态；不改历史 Review/证据字节）。
+- **AC 行 before/after**：AC11-1/3/4/5/6/7/8/9/10 `- [ ]` → `- [x] … <<MET>>`（逐条依据承接卡：SCAN-1/WATCH-1/SCAN-2、MATCH-1、AC4-GAPS-1、LINEAGE-1、HOST-AUTH-1/2、R4A）；`[x]` 行不带原因；limitation 仅在本段与 EV 中保留。
+- **L-STARTUP**：AC11-1 的启动全量扫描子项标 `NOT_APPLICABLE: 契约解释+产品范围（AD-003 §3.6 / C-01b SC-25 四项组合不含启动全量扫描；保留 NOT_RUN）`。
+- **re-home**：L-M1 → `FEA-11-PDF-RECONCILE-1`；L-M4 → `FEA-11-LEGACY-RECOMPUTE-1`（C-17 UNFREEZE + 新 capability）；`needs_confirmation` 零生产者 → `FEA-11-DIAG-SURFACE-1`（C-17 additive）；`L-S4-2` 缺陷登记；崩溃点矩阵 `NOT_RUN`（`FEA-11-HOST-AUTH-3`）。
+- **证据刷新**：`integration_commit`/`delivery_head` → `fbe337f95`；AC-MATRIX pin 按当前字节重签；evidence_dir 全部文件登记；Resource Manifest 补齐。
+- **口径**：不宣称「FEA-11 完全实现 / 全部 limitation 关闭 / 可发布」；`Technical Gate=NOT_SATISFIED` 不变；原生/真机 `NOT_RUN`。

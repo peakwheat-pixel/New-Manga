@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "task_id": "FEA-11-RESIDUAL-4A",
+  "implementation_commit": "fbe337f95",
+  "base_commit": "89ef7a868",
+  "note": "FEA-11 closure (0 pin). AC11-1/3/4/5/8 backfilled; AC11-6 folder cases; AC11-9 Host-level gated full chain; AC11-7 Host journal read-only projection; L-M4/L-M1/needs_confirmation re-homed. D-1a/D-1b/D-1c wire-frame defects fixed with discriminating tests. No contract/wire/schema change; 18 pins unchanged.",
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "NOT_APPLICABLE (main; base 89ef7a868, impl fbe337f95)",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "NOT_APPLICABLE",
+      "process_check": "No linked worktree created."
+    },
+    {
+      "resource_type": "temp",
+      "source_path": "G:\\\\CODEX\\\\New Manga.workspace\\\\FEA-11\\\\fixtures",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:\\\\CODEX\\\\New Manga.workspace\\\\FEA-11\\\\fixtures",
+      "process_check": "Out-of-repo gated IPC fixture roots; no real user data; preserved for audit."
+    },
+    {
+      "resource_type": "test-fixture",
+      "source_path": "tests/fea11/** and NewManga.Host.Tests",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "NOT_APPLICABLE",
+      "process_check": "Headless/gated tests with temp roots; no real data."
+    },
+    {
+      "resource_type": "user-data",
+      "source_path": "NOT_APPLICABLE",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "NOT_APPLICABLE",
+      "process_check": "No real user data / AppData / external volume / recycle bin touched."
+    },
+    {
+      "resource_type": "tracked-side-effect",
+      "source_path": "verification/FEA-09/logs/wire-redacted.ndjson",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "NOT_APPLICABLE",
+      "process_check": "Pre-existing side effect; restored with git checkout after full runs."
+    }
+  ],
+  "closeout_counts": {
+    "deleted": 0,
+    "moved": 0,
+    "migrated": 0,
+    "archived": 0
+  }
+}

@@ -3,7 +3,7 @@ id: FEA-11-RESIDUAL-4A
 title: FEA-11 收口（AC11-7 诊断出口 / AC11-9 Host 级生产链路 / AC11-6 folder 用例 / L-M4 裁决 / AC 回填）
 kind: implementation
 governance_version: 3
-status: ready
+status: done
 approval: 用户 2026-11-08 残余收口指令（R3）；独立 scope review `doc/reviews/FEA-11-RESIDUAL-4A-scope-r1.md`（session `88de37b5-…`，verdict **NOT_RECOMMENDED** → DSH 按其 §5 改写后冻结）；DSH 2026-11-08 裁决（ADJ §7.7）：0 pin、窄口径 done（L-M1/L-M4 具名 re-home）
 suggested_owner: dsh
 owner: fea11-residual4a-impl
@@ -13,10 +13,10 @@ depends_on:
 base_commit: c5bd49276
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: fbe337f95
+delivery_head: fbe337f95
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-11-RESIDUAL-4A
 allowed_paths:
   - doc/tasks/FEA-11-RESIDUAL-4A.md
@@ -62,12 +62,12 @@ out_of_scope:
 
 ## Acceptance Criteria（冻结）
 
-- [ ] **AC-R3-1（AC11-7 诊断出口）**：Host 只读投影从 durable journal/receipt 读 `bindings[].status ∈ {missing,needs_confirmation}`，**不新增 Core 命令/能力/wire 字段、不改 `IHostController`**；断言「不扩 V(p,t)」（缺失页在 reader/`list_chapter_pages` 仍不可见）；Core 死 seam `tombstone_pages_of_source` **接线或删除**二选一并记录；`needs_confirmation` 零生产者作为具名缺陷登记（→ `FEA-11-DIAG-SURFACE-1`，需 C-17 additive）。 <<MET>>
-- [ ] **AC-R3-2（AC11-9 Host 级生产链路）**：gated（`NEWMANGA_FEA11_IPC=1`）经 `Fea09ProductionFixture` launcher + `HostRuntime/Commands.InvokeAsync` 生产 dispatcher 完成 scan→plan→preview→confirm→apply→ACK→resolve；**sync 前**读出旧绑定字节（记录 resource id + sha256），**ACK 后**断言新键/新字节 + 旧资源键/摘要不可变；源 hash/mtime/文件数守恒、应用零写源；缺能力/撤销 fail-closed；默认 skip 且逐条记原因。 <<MET>>
-- [ ] **AC-R3-3（AC11-6）**：folder relink **typed 拒绝**判别用例 + folder **resync 成功**用例 + **SC-S11 成员重排保序** + **多项目不误改**；`L-S4-2` 以缺陷登记（`runtime.py:986-991` vs C-15:216 逐项）；**不改 Core 语义**。 <<MET>>
-- [ ] **AC-R3-4（L-M4 裁决）**：书面裁决（实现须写 pin 与 UNFREEZE → 明确不做）；re-home `FEA-11-LEGACY-RECOMPUTE-1`（含 reopen 条件：C-17 UNFREEZE + 新 capability）；**不得**出现「已按冻结参数重算旧证据」表述。 <<MET>>
-- [ ] **AC-R3-5（回填与翻转）**：AC11-1/3/4/5/8 逐条 before/after 登记（append-only，不改历史 Review/证据字节）；`[x] <<MET>>` 不带原因；L-STARTUP 子项 NA；L-M1/L-M4 具名 re-home；`check.ps1` PASS 且 `done` 无 `<<PARTIAL>>/<<BLOCKED>>`。 <<MET>>
-- [ ] **AC-R3-6（证据与治理）**：EV + Resource Manifest 在 R3 head 重生成；pins 18/18 保持（或显式登记变更）；修正 STATUS/PLAN 的 HOST-AUTH-1 陈旧表述；最终 head 取得独立 Review；全量 pytest ≥3390/10、.NET ≥1731/0/98 不降。 <<MET>>
+- [x] **AC-R3-1（AC11-7 诊断出口）**：Host 只读投影从 durable journal/receipt 读 `bindings[].status ∈ {missing,needs_confirmation}`，**不新增 Core 命令/能力/wire 字段、不改 `IHostController`**；断言「不扩 V(p,t)」（缺失页在 reader/`list_chapter_pages` 仍不可见）；Core 死 seam `tombstone_pages_of_source` **接线或删除**二选一并记录；`needs_confirmation` 零生产者作为具名缺陷登记（→ `FEA-11-DIAG-SURFACE-1`，需 C-17 additive）。 <<MET>>
+- [x] **AC-R3-2（AC11-9 Host 级生产链路）**：gated（`NEWMANGA_FEA11_IPC=1`）经 `Fea09ProductionFixture` launcher + `HostRuntime/Commands.InvokeAsync` 生产 dispatcher 完成 scan→plan→preview→confirm→apply→ACK→resolve；**sync 前**读出旧绑定字节（记录 resource id + sha256），**ACK 后**断言新键/新字节 + 旧资源键/摘要不可变；源 hash/mtime/文件数守恒、应用零写源；缺能力/撤销 fail-closed；默认 skip 且逐条记原因。 <<MET>>
+- [x] **AC-R3-3（AC11-6）**：folder relink **typed 拒绝**判别用例 + folder **resync 成功**用例 + **SC-S11 成员重排保序** + **多项目不误改**；`L-S4-2` 以缺陷登记（`runtime.py:986-991` vs C-15:216 逐项）；**不改 Core 语义**。 <<MET>>
+- [x] **AC-R3-4（L-M4 裁决）**：书面裁决（实现须写 pin 与 UNFREEZE → 明确不做）；re-home `FEA-11-LEGACY-RECOMPUTE-1`（含 reopen 条件：C-17 UNFREEZE + 新 capability）；**不得**出现「已按冻结参数重算旧证据」表述。 <<MET>>
+- [x] **AC-R3-5（回填与翻转）**：AC11-1/3/4/5/8 逐条 before/after 登记（append-only，不改历史 Review/证据字节）；`[x] <<MET>>` 不带原因；L-STARTUP 子项 NA；L-M1/L-M4 具名 re-home；`check.ps1` PASS 且 `done` 无 `<<PARTIAL>>/<<BLOCKED>>`。 <<MET>>
+- [x] **AC-R3-6（证据与治理）**：EV + Resource Manifest 在 R3 head 重生成；pins 18/18 保持（或显式登记变更）；修正 STATUS/PLAN 的 HOST-AUTH-1 陈旧表述；最终 head 取得独立 Review；全量 pytest ≥3390/10、.NET ≥1731/0/98 不降。 <<MET>>
 
 ## 实现口径
 
@@ -137,3 +137,68 @@ out_of_scope:
 3. `FEA-11-LEGACY-RECOMPUTE-1`（C-17 UNFREEZE + 新 capability）、`FEA-11-PDF-RECONCILE-1`（L-M1）。
 4. `L-S4-2` folder identity 缺陷（本卡只登记，未修）。
 5. FEA-11 卡的 EV/Manifest/独立 Review 与 `check.ps1` 终验。
+
+## Canonical Evidence
+
+> `commit`：实现文件填其所在提交；closeout 证据填 `-`（sha 见 handoff §32）。sha256 为工作树字节口径。
+
+| evidence_id | AC/Gate | path | commit | sha256 | class |
+|---|---|---|---|---|---|
+| EV-01 | AC-R3-1 | apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs | fbe337f95 | 460e21157ec737dc6582777fa458f8b898d91033655b4bfa0e33a8bda68cd636 | SOURCE_PIN |
+| EV-02 | D-1a/AC-R3-2 | apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandDispatcher.cs | fbe337f95 | e892abaa50aa6d57f48f64321f49cc6ac1f657353bd43a535897a90a533a3996 | SOURCE_PIN |
+| EV-03 | D-1b/D-1c/AC-R3-2 | apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs | fbe337f95 | a468708cf292be384d47dff0abf408992c3483573ca74519ccf6ec2b5922d5b0 | SOURCE_PIN |
+| EV-04 | AC-R3-2 | apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11Residual4AIpcTests.cs | fbe337f95 | 678449c45ca3edae33a570b96cb607f05f924ba0ef2c86f094dad479bbacaf49 | SOURCE_PIN |
+| EV-05 | D-1c 哨兵 | apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11SourceIpcTests.cs | fbe337f95 | fbe69495b5853d80735080e5786c841372d3c5c5b8db1b7b53884eda510de2ec | SOURCE_PIN |
+| EV-06 | AC-R3-3 | tests/fea11/test_source_relink.py | fbe337f95 | 7849b5234d05fbc18df003a7e2f3efcbfed8c516729609b33d5e1ab9916c6ee9 | SOURCE_PIN |
+| EV-07 | AC-R3-3/AC-R3-1 | tests/fea11/test_source_sync.py | fbe337f95 | 1f554802efd16639cc3340bf677d879d96a8753600fd6c74bbcf5dd006d586ef | SOURCE_PIN |
+| EV-08 | AC-R3-3 | tests/fea11/conftest.py | fbe337f95 | e50945922830f43d1321d559fe975fa3b0267fd05c8072e8b81b223620143077 | SOURCE_PIN |
+| EV-09 | AC-R3-1（死 seam 删除） | src/infrastructure/sqlite/source_sync.py | fbe337f95 | 02ca3cf1ec4529195fa9d40702ac91dd15d12dc5df303bc2be740d9b76f49ccc | SOURCE_PIN |
+| EV-10 | Review r1 | doc/reviews/FEA-11-RESIDUAL-4A-r1.md | - | f456c14f22b9ad31270f8a98899a933fdd75dee0cc4d76c1e24f4f57ff20b340 | CANONICAL |
+| EV-11 | Review r2（approved） | doc/reviews/FEA-11-RESIDUAL-4A-r2.md | - | d55b39054320f19ab23b17e5fdb587481a297ebf38ff7080e1ab3c4b8e057a5e | CANONICAL |
+| EV-12 | 冻结面 | doc/reviews/FEA-11-RESIDUAL-4A-scope-r1.md | - | 75a60efa344a43136822bfd17cb2942589a22dee82005a989e384e67454c39a5 | CANONICAL |
+| EV-13 | AC-R3-6（证据） | verification/FEA-11-RESIDUAL-4A/DEFECTS.md | - | a8dddd75850986981ef1ccd0305fedcd6c260ad53b78f8774153d6a8a01265f6 | CANONICAL |
+| EV-14 | AC-R3-6（证据） | verification/FEA-11-RESIDUAL-4A/README.md | - | dfd35087b6d2ea96ed6bf1f2a10ca6752ea0b3c1b4389a4af2e88e81d924fcf7 | CANONICAL |
+| EV-15 | AC-R3-6（证据） | verification/FEA-11-RESIDUAL-4A/evidence/after-failure-record.txt | - | 4d040078933ac9e08f8c13bade941702efa337125854f0ce542ba34ca976322b | CANONICAL |
+| EV-16 | AC-R3-6（证据） | verification/FEA-11-RESIDUAL-4A/evidence/after-full-chain.txt | - | 6e173752d2369dd32a46bf2bd0b523cb8386763cf581a4ef83ed97674f246a60 | CANONICAL |
+| EV-17 | AC-R3-6（证据） | verification/FEA-11-RESIDUAL-4A/evidence/d-1-fixed-wire.txt | - | fc9cf9d4bc7d6311732ffb40ff6e00568a17845972d310b3a21dfdd1f10097be | CANONICAL |
+| EV-18 | AC-R3-6（证据） | verification/FEA-11-RESIDUAL-4A/evidence/dispatcher-defect-wire.txt | - | b4ba2c925e7fd2d4bf8f66afc8712ae6ae22500a8409151dc51609289a4630f5 | CANONICAL |
+| EV-19 | AC-R3-6（证据） | verification/FEA-11-RESIDUAL-4A/evidence/real-ipc-capability.txt | - | b3925e52525f69186e32caee220147dfcc39eaf1b948ba6e63c4c875c58dfca2 | CANONICAL |
+| EV-20 | AC-R3-6（证据） | verification/FEA-11-RESIDUAL-4A/evidence/real-ipc-full-chain.txt | - | a8244c164188eca78a615c15f762e09915b36dbb19904db650cacd858dbc76a7 | CANONICAL |
+| EV-21 | AC-R3-6（证据） | verification/FEA-11-RESIDUAL-4A/logs/dotnet-full.log | - | 4ab84520ee6db5efefce4fb3eacc5371d82731446c7c286cd46c7fa9181d0a74 | CANONICAL |
+| EV-22 | AC-R3-6（证据） | verification/FEA-11-RESIDUAL-4A/logs/dotnet-host-tests.log | - | e749f00507da8437f9b742bca9b2e909c8092109111a5f9ca874667cc724a4a6 | CANONICAL |
+| EV-23 | AC-R3-6（证据） | verification/FEA-11-RESIDUAL-4A/logs/fea11-ipc-r4a.log | - | 9ca0d7e9c30b417b71325c391f72ffd4626139ae416cd3193b031e495853f6b1 | CANONICAL |
+| EV-24 | AC-R3-6（证据） | verification/FEA-11-RESIDUAL-4A/logs/gates-lead-final.log | - | 7c612117d6ca32a1e49379102c0a853f6346a4acef9bc4a7fc7693678721aaee | CANONICAL |
+| EV-25 | AC-R3-6（证据） | verification/FEA-11-RESIDUAL-4A/logs/gates-lead-final2.log | - | f7d043e8c38edec3d78cf9f59b0528352817d52673818d705c9d780add9dc826 | CANONICAL |
+| EV-26 | AC-R3-6（证据） | verification/FEA-11-RESIDUAL-4A/logs/mutation-d1-m4.log | - | ff7babe482bd1c5f9073d3232495e1887f5cc0033afea555839b55804fce2656 | CANONICAL |
+| EV-27 | AC-R3-6（证据） | verification/FEA-11-RESIDUAL-4A/logs/mutation-d1-m5.log | - | 441752c1ea4c80f16580148f166097630860b88002054016b686b2e818de3ac9 | CANONICAL |
+| EV-28 | AC-R3-6（证据） | verification/FEA-11-RESIDUAL-4A/logs/mutation-d1c.log | - | a840297f29bd7d53cb3b8153917f4bc13ed963de154c691ee0460e48716b2d1b | CANONICAL |
+| EV-29 | AC-R3-6（证据） | verification/FEA-11-RESIDUAL-4A/logs/mutation-m1.log | - | cbe89bebcf3e0fffff9dcb3654eb6c615c3ae1dbd19937e2de5925127164e668 | CANONICAL |
+| EV-30 | AC-R3-6（证据） | verification/FEA-11-RESIDUAL-4A/logs/mutation-m2.log | - | b644dcdc6e2d3d4b0f972302e28dba790fae9659f85b861d46740669585d6c8b | CANONICAL |
+| EV-31 | AC-R3-6（证据） | verification/FEA-11-RESIDUAL-4A/logs/mutation-m3.log | - | f98e5e2828bcb96abfb735f8721a3d025abafc18d840a7a63697e97ffd49b602 | CANONICAL |
+| EV-32 | AC-R3-6（证据） | verification/FEA-11-RESIDUAL-4A/logs/pytest-fea11.log | - | a266b4ad1fd4d0c8bbe2f29e028a81d4c1b9ff60abdf4edd7b5925e802b9ce1b | CANONICAL |
+| EV-33 | AC-R3-6（证据） | verification/FEA-11-RESIDUAL-4A/logs/pytest-full.log | - | 8bd642b033c7fbeea7f8cd8d726ecf0d52d1bdff30e267e631d712f018c8ffb0 | CANONICAL |
+| EV-34 | AC-R3-6（证据） | verification/FEA-11-RESIDUAL-4A/tools/build_plan_body.py | - | 4f740b3897184b98c5fdf51ddb1fdd522210b3c0e141c48da349b5fa7d8c5276 | CANONICAL |
+| EV-35 | AC-R3-6（证据） | verification/FEA-11-RESIDUAL-4A/tools/inspect_state.py | - | 9b0ebdd94e145c122974d058387f908be5e7f857876083681f132919642e3e42 | CANONICAL |
+| EV-36 | AC-R3-6（证据） | verification/FEA-11-RESIDUAL-4A/tools/probe_png.py | - | df907742f54a06017c2386fcb46eb4e2aeab0ceb896bff85c46ab8b66b70896a | CANONICAL |
+| EV-RM | AC-R3-6（资源清单） | verification/FEA-11-RESIDUAL-4A/RESOURCE-MANIFEST.json | - | e67e131a449de0970701804b76e2574ef6027563ed8a909835225402e4723bf6 | CANONICAL |
+
+## Resource Manifest
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| worktree | NOT_APPLICABLE（main；base `89ef7a868`，impl `fbe337f95`） | NOT_APPLICABLE | — | — | 未创建 linked worktree |
+| temp | `G:\CODEX\New Manga.workspace\FEA-11\fixtures\r4a-*`（gated IPC 隔离数据根） | PRESERVE_REFERENCED | `G:\CODEX\New Manga.workspace\FEA-11\fixtures` | `verification/FEA-11-RESIDUAL-4A/RESOURCE-MANIFEST.json` | 仓外隔离根；不触碰真实数据；保留供审计 |
+| test-fixture | `tests/fea11/**` + Host.Tests（headless/gated） | NOT_APPLICABLE | — | — | 无真实用户数据；gated 用临时根 |
+| user-data | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 未触碰真实用户数据/AppData/外部卷/回收站 |
+| tracked-side-effect | `verification/FEA-09/logs/wire-redacted.ndjson` | NOT_APPLICABLE | — | — | 既有副作用；每次全量后 `git checkout -- verification/FEA-09` |
+
+## Closeout Record
+
+- **Closeout date / DSH**：2026-11-08。
+- **终态**：`done`；`integration_commit` = `delivery_head` = **`fbe337f95`**（feat `a74c40766` + docs `3e87e4025` + D-1 三处修复 `5c2ac5eeb`/`fbe337f95`）。
+- **Review 链**：r1 changes_requested（P0=0/**P1=1**/P2=3/P3=9）→ 返修 → **r2 approved（P0=0/P1=0/P2=0/P3=4）**。
+- **AC 定稿**：AC-R3-1…AC-R3-6 全 MET（含 DSH closeout 面）。
+- **门禁（Lead 一手）**：build 0/0；全量 .NET **1733/0/102**；pytest **3395/10**；fea11 **217**；gated **4/4**；pins **18/18**；check PASS；API EXIT 0；diff 33 文件；禁止面零 diff；`git diff --check` 0；FEA-09 已恢复。
+- **重大发现（三类 D-1 wire 帧缺陷，均修复 + 判别测试）**：D-1a dispatcher host-control payload 嵌套（客户端异常）；D-1b 两处 capability ping payload 未闭合（`INVALID_JSON`）；D-1c `RecordSourceOperationFailure` 嵌套（客户端异常）。**口径**：只写「上述路径此前不合法，现已修复」，不外推到其它命令族。
+- **limitation / re-home**：D-5（seed 旧绑定无 import-time grant 映射 → sync 前未 resolve 旧绑定，只记录 DB 旧行/摘要 + 源字节）→ 接受为 limitation，另立「真实 import→sync」gated 卡；`needs_confirmation` 零生产者 → `FEA-11-DIAG-SURFACE-1`；L-M4 → `FEA-11-LEGACY-RECOMPUTE-1`（C-17 UNFREEZE）；L-M1 → `FEA-11-PDF-RECONCILE-1`；`L-S4-2` 缺陷登记；崩溃点 `NOT_RUN`（HOST-AUTH-3）。
+- **行文**：不得写「FEA-11 完全实现 / C-17 §3.3 完全实现 / RH-3 已清理」；只写「AC11-1/3/4/5/8 回填；AC11-6/7/9 达成；L-STARTUP 子项 NA；L-M1/L-M4 re-home」。

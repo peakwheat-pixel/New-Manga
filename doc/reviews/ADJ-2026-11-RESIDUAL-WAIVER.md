@@ -124,3 +124,17 @@ Review 链 r1→r2→r3→**r4 approved（P0=0/P1=0/P2=0/P3=5）**；AC-1…AC-6
 - 独立 scope review（`doc/reviews/FEA-11-RESIDUAL-4A-scope-r1.md`，`NOT_RECOMMENDED`）→ **DSH 采纳其 §5 后冻结**：AC11-1/3/4/5/8 **仅回填**；AC11-6 **纯测试**（4 类用例 + `L-S4-2` 登记）；AC11-9 **纯测试**（Host 级 gated，复用 `Fea09ProductionFixture`；仓库无 `Fea11ProductionFixture`）；AC11-7 **Host journal 只读投影（operation 作用域）**，`needs_confirmation` 零生产者缺陷 re-home `FEA-11-DIAG-SURFACE-1`（需 C-17 additive）；**L-M4 不实现** → re-home `FEA-11-LEGACY-RECOMPUTE-1`（需 C-17 UNFREEZE）；**L-M1** → `FEA-11-PDF-RECONCILE-1`；L-STARTUP 子项 `NOT_APPLICABLE`（契约解释+产品范围，保留 NOT_RUN）。
 - **口径**：`[x] <<MET>>` 不得带原因；limitation 只进 closeout/EV；不把任何整 AC 写 NA。
 - 治理修正：`doc/STATUS.md:8`、`doc/REBASELINE_PLAN.md:53` 的 HOST-AUTH-1 陈旧表述已改为 `done`（实际 `5cbec0e82` 已翻）。
+
+### 7.8 `FEA-11` → `done`（2026-11-08，integration `fbe337f95`）
+
+| 项 | before | after | 依据 |
+|---|---|---|---|
+| front matter `status` | `closed_with_limitations` | `done` | 用户 2026-11-08 指令（R3）+ 本节 |
+| AC11-1/3/4/5/6/7/8/9/10 | `- [ ]` | `- [x] … <<MET>>` | 承接卡（SCAN-1/WATCH-1/SCAN-2、MATCH-1、AC4-GAPS-1、LINEAGE-1、HOST-AUTH-1/2）+ R4A |
+| L-STARTUP 子项 | PARTIAL | `NOT_APPLICABLE`（契约解释+产品范围，保留 NOT_RUN） | ADJ W-08 |
+| L-M1 / L-M4 / needs_confirmation | open | re-home `FEA-11-PDF-RECONCILE-1` / `FEA-11-LEGACY-RECOMPUTE-1` / `FEA-11-DIAG-SURFACE-1` | R4A scope review + 本节 |
+| 历史 Review/证据字节 | 不变 | 不变（只 append-only + AC 行 + pin 重签） | §3 |
+
+### 7.9 `FEA-11-RESIDUAL-4A`：`ready` → `done`（2026-11-08）
+
+Review 链 r1 changes_requested（P1=1：D-1c）→ **r2 approved（P0/P1/P2=0）**；AC-R3-1…R3-6 全 MET；D-1 三处 wire 帧缺陷（D-1a/D-1b/D-1c）修复并有判别测试。
