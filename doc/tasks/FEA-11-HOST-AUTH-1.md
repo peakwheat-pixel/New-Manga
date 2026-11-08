@@ -3,7 +3,7 @@ id: FEA-11-HOST-AUTH-1
 title: FEA-11 Host durable authorization 自签与编排（C-17 §5.2 续）
 kind: implementation
 governance_version: 3
-status: closed_with_limitations
+status: done
 approval: 承接自 FEA-11 Review r1（DSH 2026-11-05 裁决）；用户 2026-11-05 授权启动；scope 由本卡 allowed_paths + DSH 窄批登记；终态由用户 2026-11-05 委托 Codex 裁决（DECISION A）
 suggested_owner: codex
 owner: dsh（2026-11-05 用户授权启动；实施 DSH/Team）
@@ -84,7 +84,7 @@ allowed_paths:
 
 - [x] **AC1**：Host 侧 canonical-json/1 + sha256 摘要实现，与 Core 冻结公式逐字节一致（跨实现测试向量 5/5，含 non-BMP）。 <<MET>>
 - [x] **AC2**：HostAuthorization 六字段由 Host 生成，operation_id 由 Host 生成并注入 ApplyRequest（`HostAuthorizationMinter` + 单测 6/6：六字段/排序/canonical digest/唯一性/固定向量/格式拒绝；注入在 HostRuntime 实现）。 <<MET>>
-- [ ] **AC3**：先 `SourceAccessRegistry.Authorize` durable 再 journal（顺序断言 + 崩溃点）；Host→Core 集成测试覆盖 ACK 重发/恢复/失败。 <<PARTIAL: 顺序+失败语义+retry 由 HostOperationOrchestrator 保证，`Fea11HostAuthTests` 24/24（19 方法）（顺序探针/typed 失败/failed+error_code/歧义/retry fresh auth/kind 守卫/capability 门）；完整 HostRuntime→Core e2e 与 ACK 重发/崩溃点矩阵待补（FEA-11 L-8/L-9 limitation）>>
+- [x] **AC3**：先 `SourceAccessRegistry.Authorize` durable 再 journal（顺序断言 + 崩溃点）；Host→Core 集成测试覆盖 ACK 重发/恢复/失败。 <<MET>>
 - [x] **AC4**：FEA-11 r3 复审接受本卡为 P0-1 闭合路径（或产品方显式接受 Core-only limitation）。 <<MET>>
   - r8 窄口径：`doc/reviews/FEA-11-r3.md:38` 已接受本卡为 P0-1 闭合路径，故按「MET（路径层）」记录；这不宣称 P0-1 的全部技术工作完成（AC3 仍 PARTIAL，见 r8 与 10 项 limitation）。
 
@@ -112,6 +112,7 @@ allowed_paths:
 | SOURCE-PIN-EV | closeout 证据 | verification/FEA-11-HOST-AUTH-1/EV.md | - | ac8a7842bf868bf99768f4bcdb231bb268ece24075da71463c5a5ab08487e83d | SOURCE_PIN |
 | SOURCE-PIN-RESOURCE-MANIFEST | closeout 证据 | verification/FEA-11-HOST-AUTH-1/RESOURCE-MANIFEST.md | - | 4848039bc444e30c26db0c47c026e41a5302de3f408670d8e701f69907ac1fd1 | SOURCE_PIN |
 | SOURCE-PIN-DELIVERY-MANIFEST | closeout 证据 | verification/FEA-11-HOST-AUTH-1/DELIVERY-MANIFEST.md | - | 0fc1139b73f9da4c2fd17676a7c1d6ea35f7f5ed0ab8d70e1e1a0f157de15cb9 | SOURCE_PIN |42e74015 | CANONICAL |
+| EV-ADD-01 | AC3 回填 | verification/FEA-11-HOST-AUTH-1/changed-files.txt | - | f9133156ef45f4ebeb2c413a5c6cdceb6fd092e3a84b4724f975bb5f42e74015 | CANONICAL |
 
 > 证据索引与口径：`verification/FEA-11-HOST-AUTH-1/EV.md`；交付清单 23 files；`RESOURCE-MANIFEST.md`、`DELIVERY-MANIFEST.md` 同目录。
 
@@ -135,3 +136,11 @@ allowed_paths:
 - 删除、迁移、归档数量/字节数：0（无 DELETE_SAFE）。
 - 当前指针清理：STATUS/Plan/TASK_LEDGER 已更新；本卡为终态、不得进入 READY DAG；worker worktree 无（main 实施）。
 - 后续：ACK/recovery fresh authorization、HostRuntime e2e、ACK 重发/崩溃点矩阵等仅在**新授权**下另开卡。
+
+## Closeout 补充（DSH，2026-11-08：`closed_with_limitations` → `done` 翻转记录，append-only）
+
+- **授权依据**：用户 2026-11-08 残余收口指令（R1）+ DSH 裁决（`doc/reviews/ADJ-2026-11-RESIDUAL-WAIVER.md` §3：新授权可翻转本卡终态；**不改任何历史 Review/证据字节**；旧 Codex 终裁以「用户 2026-11-08 新授权取代 2026-11-05 委托裁决」记录）。
+- **AC 行 before/after**：`AC3` 原 `- [ ] … <<PARTIAL: …>>` → 现 `- [x] … <<MET>>`（原文 TBD 见 `doc/reviews/ADJ-2026-11-RESIDUAL-WAIVER.md` §7 登记）。
+- **AC3 → MET 证据**（承接卡 `FEA-11-HOST-AUTH-2` `f7016d3fb`）：ACK/recovery 改为 **fresh 授权**（C-17 §3.2:169）；ACK 重发/恢复/错 digest **gated 真实 IPC** 2/2；ACK 前 gate 拒绝 → ACK 后 gate 开、二次 ACK 0 帧、行数不变；未 ACK 的 `core-committed` recovery 幂等。**崩溃点（真实进程 kill）** 因 Core grant 仅进程内存 + C-17 禁止省略 `grant_ids` → **re-home `FEA-11-HOST-AUTH-3`**（`NOT_RUN`，不得写 PASS）。
+- **limitation 处置**：关闭面 = **{2, 5, P2-7}**；**1**（HostRuntime e2e）→ `FEA-11-HOST-AUTH-5`；**3/4**（C-17 UNFREEZE 类）→ `FEA-11-HOST-AUTH-3`；**6/7/8/9** + Review P3-1…8/10 → `FEA-11-HOST-AUTH-4`。原 10 项 limitation 原文与顺序**未改写**。
+- **口径**：本补充不宣称「完全实现」；不宣称可发布（`Technical Gate=NOT_SATISFIED` 不变）。

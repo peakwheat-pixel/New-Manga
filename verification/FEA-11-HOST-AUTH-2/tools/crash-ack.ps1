@@ -15,10 +15,10 @@
 # AC's literal kill (entireProcessTree:true) also kills the Python Core, and the Core
 # keeps source-read grants ONLY in process memory
 # (src/infrastructure/resource_channel/source_read_refs.py::SourceReadGrantRegistry).
-# C-17 §3.2:169 / runtime.py::_verify_fresh re-resolve every CompletionRequest
+# C-17 §5.2:258 / runtime.py::_verify_fresh re-resolve every CompletionRequest
 # grant_id, so a NEW process cannot re-verify the fresh authorization for an
 # operation whose apply-time grant died with the Core (typed SOURCE_GRANT_EXPIRED),
-# and dropping grant_ids would be the security relaxation C-17 §3.2:248 forbids.
+# and dropping grant_ids would be the security relaxation C-17 §5.2:258 / §5.3:276 forbids.
 # This is a CROSS-CARD blocker (Core grant durability or a Host-only kill with an
 # externally supervised Core) — reported to DSH, NOT worked around here.
 # ---------------------------------------------------------------------------
@@ -52,7 +52,7 @@ $testProject = Join-Path $repo 'apps\desktop-avalonia\tests\NewManga.Host.Tests\
 
 Write-Host "CRASH_POINT phase=park state=$statePath"
 
-# Phase 1 (+2): the two env-gated facts live in Fea11HostAuthIpcTests
+# Phase 1 (+2): the two env-gated facts are NOT IMPLEMENTED yet (planned names: CrashPoint_Park/CrashPoint_Recover); this script is a SKELETON carried by FEA-11-HOST-AUTH-3
 # (NEWMANGA_FEA11_CRASH_PHASE=park|recover). `park` drives the REAL chain to
 # journal=core-committed, writes park.json ({data_root, operation_id,
 # commit_digest, grant_ids, page_id}) and then blocks on $releaseFile so the kill

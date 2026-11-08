@@ -11,7 +11,7 @@
 |FEA-11-PREREQ-1|FEA-09、FEA-10|**done**（C-17 v1.0 FROZEN；pins 18/18；r1+轻量复核 approved P0/P1=0；集成提交见 Task）|
 |FEA-11|FEA-09、FEA-10、FEA-11-PREREQ-1|**closed_with_limitations**（用户裁决；L-1…L-11；r1–r7）||
 |FEA-11-SCAN-1|FEA-11|**done**（r2 窄面 approved；delivery `7080167e1`；AC-S1…S6 全 MET；AC11-1 终态 MET 带 limitation）|
-|FEA-11-HOST-AUTH-1|FEA-11-PREREQ-1|**closed_with_limitations**（Codex 裁决 A；r8 approved；AC3 PARTIAL+10 limitation；`cbd561b4`）||
+|FEA-11-HOST-AUTH-1|FEA-11-PREREQ-1|**done**（2026-11-08：AC3 MET（fresh+重发/恢复 e2e）；崩溃点 re-home HOST-AUTH-3；`f7016d3fb`）||
 |FEA-11-LINEAGE-1|FEA-11-PREREQ-1|**done**（r4 approved；delivery `90a8c8218`；r7 硬约束解除；残余 L4-L11 见卡）||
 |FEA-12-PREREQ-1|—|**done**（r2 approved；delivery `3e37c595b`；M2-C1 rev 2.13 + Host 投影；R-002 移交 CORE）||
 |FEA-12-CORE|FEA-12-PREREQ-1、FEA-11-LINEAGE-1|**done**（r4 approved；UNFREEZE `fc9833479`；`51e139eff`；AC1–AC12 MET）||
@@ -46,7 +46,7 @@
 
 **V11R 程序**：[V11R_PROGRAM](V11R_PROGRAM.md) 为**唯一活动任务 DAG**（V1.1 整改 + 新 Avalonia UI/UX + Theme Studio）；接口契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)；设计基线 `doc/design/redesign-v1/40-fusion/`。历史节点原状保留；READY 节点由本 Plan 维护。
 
-READY 节点：FEA-11-HOST-AUTH-2
+READY 节点：无
 
 （C-04b v1.2 done 26aa0ca4a；R-1 代码修复 0 pin，Owner c04b-impl）
 

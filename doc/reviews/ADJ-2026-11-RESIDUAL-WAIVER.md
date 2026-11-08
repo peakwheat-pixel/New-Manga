@@ -74,3 +74,22 @@ R0 v1 把 10 项笼统判为「不可 CI 关闭」。独立评审给出反证：
 
 - 评审建议「R0 应立可校验 Task 卡」。**DSH 裁决**：R0 是**纯裁决+文件**（无实现、无状态翻转），按 `09_COLLABORATION` 以本 ADJ + handoff 记录即可；机器可校验性由 R1–R4 的实现卡在 closeout 时引用本 ADJ 达成（避免为一张纯文档卡再走一轮完整流水线）。
 - 评审建议「原生项标 BLOCKED 而非 NA」。**DSH 裁决**：在**翻 done 之前**它们确实是 BLOCKED；翻 done 时 `check.ps1` 不接受 BLOCKED，故必须二选一：保持 `closed_with_limitations`（不翻），或按用户授权以 `NOT_APPLICABLE: 原因（保留 NOT_RUN + reopen 条件）` 落地。本程序采用后者，且**逐条保留 reopen 条件**，不把 NA 写成通过。
+
+## 7. 节点翻转登记（append-only，逐条 before/after）
+
+### 7.1 `FEA-11-HOST-AUTH-1`：`closed_with_limitations` → `done`（2026-11-08）
+
+| 项 | before | after | 依据 |
+|---|---|---|---|
+| front matter `status` | `closed_with_limitations` | `done` | 用户 2026-11-08 指令（R1）+ 本节 |
+| AC3 行 | `- [ ] **AC3**：… <<PARTIAL: 顺序+失败语义+retry … 完整 HostRuntime→Core e2e 与 ACK 重发/崩溃点矩阵待补（FEA-11 L-8/L-9 limitation）>>` | `- [x] **AC3**：… <<MET>>` | 承接卡 `FEA-11-HOST-AUTH-2` `f7016d3fb`（fresh 授权 + gated ACK 重发/恢复 2/2）；崩溃点 re-home `FEA-11-HOST-AUTH-3` |
+| 历史 Review/证据字节 | 不变 | 不变 | 只 append-only closeout 段 |
+| Codex 2026-11-05 终裁 | 有效 | **被用户 2026-11-08 新授权取代**（终裁原文保留） | 用户指令优先 |
+
+### 7.2 `FEA-11-HOST-AUTH-2`：`ready` → `done`（2026-11-08，integration `f7016d3fb`）
+
+AC-F1/F2/F5 MET；AC-F3 → `NOT_APPLICABLE` + re-home `FEA-11-HOST-AUTH-3`；AC-F4 → `NOT_APPLICABLE` + re-home `FEA-11-HOST-AUTH-5`。re-home 载体：`FEA-11-HOST-AUTH-3/4/5`（`proposed`，须先 scope review）。
+
+### 7.3 未翻转（保持现状）
+
+`FEA-11`、`FEA-06-RESIDUAL-2`、`FEA-07` 仍为 `closed_with_limitations`（R2/R3/R4 未完成）。

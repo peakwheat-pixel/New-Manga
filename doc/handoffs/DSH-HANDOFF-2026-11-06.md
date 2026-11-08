@@ -364,3 +364,15 @@ ameof(ListStatusText)，修「进入回收站 bar 仍显示 N/M 作品」「返�
 - **指针**：PLAN `READY 节点：FEA-11-HOST-AUTH-2`（未加行）；STATUS 当前 Task 指向本卡；`task_ledger.py --write` 已重跑。
 - **下一轮**：R1 实现（fresh 授权 + 拒绝矩阵 + gated e2e + 崩溃点）→ 独立 Review → 集成门禁 → `FEA-11-HOST-AUTH-1` append-only 翻 done → push。
 - **未做**：未开 R2/R3/R4 卡（按流程先 scope review）；未改任何节点终态；未改契约/pins。
+
+## 30. 续接补充（2026-11-08 第 22 轮：R1 `FEA-11-HOST-AUTH-2` done + `FEA-11-HOST-AUTH-1` 翻 done）
+
+- **R1 实现**：`f7016d3fb`（Host ACK/recovery fresh 授权；0 pin；8 文件 +1557/−37）。**独立 Review r1 `approved`（P0=0/P1=0/P2=5/P3=9）**；7 组变异 5 组 RED（M4/M6 存活 → 登记 P3-2/3）。
+- **重大发现（既存 latent bug，已修）**：ACK/recovery 的 payload writer 多写一层对象，与 `SendHostControlAsync` 的 `payload` 信封冲突 ⇒ **生产 coordinator 路径从未发出过一帧**（真实 wire 必抛 `InvalidOperationException`）。修复后 wire `payload` = C-17 §5.2:258 六字段；gated 真实 IPC 用例由此首次跑通。
+- **AC 定稿**：AC-F1/F2/F5 **MET**；**AC-F3（真实进程 kill 崩溃点）/ AC-F4（HostRuntime 全链路 e2e）→ `NOT_APPLICABLE` + re-home**：`FEA-11-HOST-AUTH-3`（崩溃/grant 语义 + limitation 3/4）、`FEA-11-HOST-AUTH-5`（全链路 e2e）、`FEA-11-HOST-AUTH-4`（limitation 6/7/8/9 + Review P3）。**不写 MET**。
+- **AC-F3 阻塞（独立复核成立）**：Core source-read grant **仅进程内存**（`src/infrastructure/resource_channel/source_read_refs.py:106-121`），C-17 **§5.2:258 / §5.3:276** 禁止省略 `grant_ids` ⇒ 整树 kill 后新 Core 无 grant。评审同时纠正了实现者/脚本对 §3.2:169/:248 与 `ports.py:28-31` 的错误引用（已在本轮修正 README 与 `crash-ack.ps1`）。
+- **`FEA-11-HOST-AUTH-1` → `done`**（AC3 PARTIAL→MET；limitation 关闭面 {2,5,P2-7}；1→HOST-AUTH-5、3/4→HOST-AUTH-3、6/7/8/9→HOST-AUTH-4）；授权依据=用户 2026-11-08 指令 + ADJ §3/§7（逐条 before/after 已登记，历史 Review/证据字节未改）。
+- **Lead 门禁（一手）**：build 0/0；全量 .NET **1705/0/98**（基线 1691/96，+14/+2）；pytest **3390/10**；Host 定向 300/0/67；gated 2/2；pins 18/18；check×2 PASS；API EXIT 0；scope 8 文件 ⊆ allowed_paths、禁止面零 diff；FEA-09 已恢复。
+- **指针**：PLAN `READY 节点：无`（HOST-AUTH-1 行改 done）；STATUS「无活动 Task + 下一候选 R2」；`task_ledger.py --write` 重跑；新增 3 张 `proposed` re-home 卡（HOST-AUTH-3/4/5，**须先 scope review**）。
+- **下一轮**：R2 `FEA-06-RESIDUAL-3` 的独立 scope review → 冻结 → 实现（5 个依赖格 + Tab 遍历 + a11y 属性；仅原生 a11y/200% DPI/原生截图走 NA）。
+- **未做**：R2/R3/R4 未开始；AC-F3/F4 未实现（re-home，`NOT_RUN`）；未改契约/pins。

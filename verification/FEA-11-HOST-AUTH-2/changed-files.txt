@@ -1,0 +1,8 @@
+5	1	apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs
+340	36	apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs
+528	0	apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11HostAuthIpcTests.cs
+316	0	apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11HostAuthTests.cs
+95	0	verification/FEA-11-HOST-AUTH-2/README.md
+85	0	verification/FEA-11-HOST-AUTH-2/tools/build_plan_body.py
+65	0	verification/FEA-11-HOST-AUTH-2/tools/count_bindings.py
+123	0	verification/FEA-11-HOST-AUTH-2/tools/crash-ack.ps1

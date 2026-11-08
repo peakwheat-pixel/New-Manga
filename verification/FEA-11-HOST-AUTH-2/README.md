@@ -29,7 +29,7 @@
 
 **顺带修掉一个既存 latent bug（同一文件、允许路径内）**：`AcknowledgeAsync`/`RecoverAsync` 的 payload 写入器原本调用
 `writer.WriteStartObject()/WriteEndObject()`，而 `CoreServiceClient.SendHostControlAsync` 的信封已经打开了 `payload`
-对象 → 真实 wifi 上必定抛 `InvalidOperationException: Cannot write the start of an object or array without a property name`
+对象 → 真实 wire 上必定抛 `InvalidOperationException: Cannot write the start of an object or array without a property name`
 （即 ACK/recovery 在真实 IPC 上**从未**跑通过）。现改为平铺 `CompletionRequest` 六字段（C-17 §5.2:258），wire 形状不变。
 
 ## 2. 默认门禁测试（不依赖 Core）
