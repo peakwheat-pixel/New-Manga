@@ -334,4 +334,4 @@ ameof(ListStatusText)，修「进入回收站 bar 仍显示 N/M 作品」「返�
 - **口径红线**：**不得**写「回收站已完全修复 / UI L1–L10 已关闭 / AC-R3 回归栅栏已被变异钉住」。
 - **文档对账（本轮）**：STATUS 测试基线 3369→**3390/10**（.NET 1691/0/96）；DSH-AUTORUN-PROMPT → **v1.1**（基线同步、§7 队列快照刷新并标注 §26 结论被推翻）；STATUS push 指针改为引用 §27（不再写死过期 sha）。**README 漂移已登记未改**（.NET 258/258、pytest 2773、managed copy 与 AD-003/实际基线冲突）→ 下一轮 docs 卡候选②。
 - **下一候选（需先 scope review）**：① **2C typed-stop / 预算守卫次序残项**（Host-only：RunGrantRenewal.cs:371-390 事后预算守卫先于 !outcome.KeepsTracking ⇒ typed 停止被改写成 budget skip，违背 AC-2C-4「typed→Stop 不重试」；登记 FEA-11-RUN-GRANT-2C-r2.md:159 R2-03，同族 R2-02/R2-04；0 pin）；② **README 基线/AD-003 对账**（docs，0 pin）；③ L-4 的补测试（补「已加载行 + 能力翻转 + RefreshAsync」用例）。
-- **push**：PRE_HEAD=85356c22a、PRE_ORIGIN=54e5d69db、AHEAD_BEFORE=2 → **push1 54e5d69db..5f3431dfd（PUSH1_EXIT=0）**；本节提交 → push2（记录见 §27 push 记录补行）；目标 HEAD=origin、AHEAD=0。
+- **push**：PRE_HEAD=85356c22a、PRE_ORIGIN=54e5d69db、AHEAD_BEFORE=2 → **push1 54e5d69db..5f3431dfd（PUSH1_EXIT=0）**；本节提交 **73462ac33** → **push2 5f3431dfd..73462ac33（PUSH2_EXIT=0）**；POST_ORIGIN=73462ac33、POST_AHEAD=0；最终 HEAD=origin，工作树 clean。
