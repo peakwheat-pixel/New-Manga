@@ -93,3 +93,15 @@ AC-F1/F2/F5 MET；AC-F3 → `NOT_APPLICABLE` + re-home `FEA-11-HOST-AUTH-3`；AC
 ### 7.3 未翻转（保持现状）
 
 `FEA-11`、`FEA-06-RESIDUAL-2`、`FEA-07` 仍为 `closed_with_limitations`（R2/R3/R4 未完成）。
+
+### 7.4 `FEA-06-RESIDUAL-2` 的 BLOCKED 表重开与 `FEA-06-RESIDUAL-3` 冻结（2026-11-08）
+
+- 独立 scope review（`doc/reviews/FEA-06-RESIDUAL-3-scope-r1.md`，`NOT_RECOMMENDED`）→ **DSH 采纳其 5 项改写后冻结 `FEA-06-RESIDUAL-3`（ready）**：
+  1. **格 3（RegionBox 冲突态「查看对照」）降级 re-home** → `FEA-06-RESIDUAL-4`：补数据必须过 `IHostController`（C-07 additive），违反本卡 0 pin。
+  2. **格 4（书架满态统计）改口径**：FEA-12 四卡是删除/回收站线、冻结命令表无 statistics 命令 → 改为既有投影自洽聚合（`FilteredBooks.Count / Books.Count` + `ΣPageCount`，null→「—」）。
+  3. **格 2 依赖归属更正**：阅读器数据面由 `READER-LIBRARY-WIRE-1`/`READER-PROGRESS-1` 交付（早于 FEA-09）→ 该格是纯 UI 缺口。
+  4. **Tab 遍历口径裁决（方案 a）**：`03-accessibility.md:13` 优先 → `Tab` 仅三空间遍历；Studio 断言 `Tab`=模式切换 + 补页签条 `←/→`；**不改全局 Tab 绑定**（避免触 03 冻结 + FEA-07 输入路由）。
+  5. **术语落表**：七状态 = `Queued/Running/Done/Failed/Blocked/Stale/Skipped`；9 行 = `RunId/RunStatus/OverallProgress/CurrentPageId/CurrentStepType/Completed/Failed/Skipped/Blocked`。
+- **allowed_paths 收窄**：`Views/Fluent/**` + `ViewModels/Fluent/**`（原草案 `Views/**` 会踩 `Views/V2/**`，与 RESIDUAL-2 禁令冲突）。
+- **冻结基线**：`.NET 1705/0/98`、pytest `3390/10`、pins 18/18（STATUS:20 现网值，> plan §11.4 的 1691/0/96）。
+- **done 口径不变**：`FEA-06-RESIDUAL-2` done 时必须显式声明「done 不覆盖 BLOCKED 表」+ 逐格 before/after + 格 3 re-home 具名卡；原生项 NA（保留 `NOT_RUN`）。
