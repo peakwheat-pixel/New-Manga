@@ -72,6 +72,38 @@ default: startup.log was not written
 - **复原**：`sha256` `07c93db9b979a16fbd2746383ede35f9535b6bd4012e11bb5dc52980f3ac2ce3` **MATCH**（`git diff --stat` = `+2` 行）
   → 复绿 `logs/mutation-3-restored-green.log`：**1 passed / 0 failed / 0 skipped**。
 
+## ④ AC4 / r1 P1：去掉「显式 `--log-dir` 拥有全部日志文件」→ 红线回归（真实 `%APPDATA%` 增长）
+
+**故障注入 M4**（`apps/desktop-avalonia/src/NewManga.App/Views/MainWindow.axaml.cs`：把 r1 的三行判定改回硬编码
+`Path.Combine(GetFolderPath(ApplicationData), "com.newmanga.desktop", "logs")`）。
+
+- **RED 形态一（只回退产品契约，保留 env 纵深防御）** `logs/mutation-4-p1-appdata-isolation-removed.log`：
+
+```
+shell-legacy: window-material.log must land inside the isolated --log-dir
+失败! - 失败: 1，通过: 0，已跳过: 0，总计: 1
+```
+
+- **RED 形态二（产品契约 + env 注入同时移除 = r0 回归现场）** `logs/mutation-4b-p1-redline-regression.log`：
+
+```
+shell-legacy: window-material.log must land inside the isolated --log-dir
+失败! - 失败: 1，通过: 0，已跳过: 0，总计: 1
+real window-material.log lines BEFORE: 14275
+real window-material.log lines AFTER : 14276 (delta=+1)
+```
+
+  即：这正是 r0（返修前）的红线违规形态 —— legacy 用例把 1 行写进真实
+  `%APPDATA%\com.newmanga.desktop\logs\window-material.log`；r1 修复后同一用例为 `delta=0`。
+
+- **复原**：`MainWindow.axaml.cs` sha256 `90b68c04358be00d721da635b29df39e601fa168eed5c1a81f69a73c8bf014b1` **MATCH**
+  + `StartupDiagnosticsTests.cs` sha256 `2f49e007415ef7f64eb06b96a1cc9f42e72b326fc364798693ebc57c2fb352b2` **MATCH**
+  → 复绿 `logs/mutation-4-restored-green.log`：**14 passed / 0 failed / 0 skipped**，
+  真实 `%APPDATA%` 行数 `14276 → 14276`（delta=0）。
+
+> 说明：M4b 的 **+1 行是本次变异实验主动造成的**（就是为了记录红线回归现场）。该行不做删除（删除又是一次真实目录写入），
+> 已在 README §6 / DEFECTS D-R4b-2 如实登记：`14275`（r1 修复后基线）→ M4b 实验 `+1` → `14276`，其后所有运行 `delta=0`。
+
 ## 汇总
 
 | # | AC | 故障注入 | RED 证据 | 复原 sha256 | 复绿 |
@@ -79,3 +111,4 @@ default: startup.log was not written
 | ① | AC1 / A03 | 切换后写 `regions.text_json` | `logs/mutation-1-a03-real-write.log`（+ ①b 删断言仍 RED） | `74cdba4d…` MATCH | 1/0/0 |
 | ② | AC3 | 恢复直接采用 journal target | `logs/mutation-2-ac3-adopt-target.log`（脚本 exit 12） | `a0d0b421…` MATCH | 脚本 exit 0 |
 | ③ | AC4 | 删除 `StartupDiagnostics.Install` 接线 | `logs/mutation-3-ac4-sink-removed.log`（startup.log 缺失） | `07c93db9…` MATCH | 1/0/0 |
+| ④ | AC4 / r1 P1 | 去掉「`--log-dir` 拥有全部日志」+（M4b）去掉 env 隔离 | `logs/mutation-4-p1-appdata-isolation-removed.log`、`logs/mutation-4b-p1-redline-regression.log`（真实 `%APPDATA%` +1 行） | `90b68c04…` / `2f49e007…` MATCH | 14/0/0 |

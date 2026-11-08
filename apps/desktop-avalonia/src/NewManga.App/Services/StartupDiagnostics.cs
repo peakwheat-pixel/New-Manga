@@ -31,6 +31,7 @@ public static class StartupDiagnostics
     private static TextWriterTraceListener? _listener;
     private static StreamWriter? _writer;
     private static string? _path;
+    private static bool _autoFlushBeforeInstall;
 
     /// <summary>实际写入的绝对路径（未安装时为 null）。</summary>
     public static string? LogPath
@@ -84,6 +85,7 @@ public static class StartupDiagnostics
                 };
                 var listener = new StartupLogListener(writer);
                 Trace.Listeners.Add(listener);
+                _autoFlushBeforeInstall = Trace.AutoFlush;
                 Trace.AutoFlush = true;
                 _writer = writer;
                 _listener = listener;
@@ -138,6 +140,9 @@ public static class StartupDiagnostics
                 listener.Flush();
                 listener.Close();
                 listener.Dispose();
+                // P3-03: Install 会把进程级 Trace.AutoFlush 置 true；撤掉 sink 时恢复调用前的值，
+                // 避免测试给同进程的其它 Trace 使用者留下全局副作用。
+                Trace.AutoFlush = _autoFlushBeforeInstall;
             }
 
             _writer = null;

@@ -32,6 +32,7 @@ allowed_paths:
   - apps/desktop-avalonia/tests/NewManga.App.Tests/**
   - apps/desktop-avalonia/src/NewManga.App/Services/StartupDiagnostics.cs
   - apps/desktop-avalonia/src/NewManga.App/App.axaml.cs
+  - apps/desktop-avalonia/src/NewManga.App/Views/MainWindow.axaml.cs
   - verification/FEA-07-RESIDUAL-3/**
 out_of_scope:
   - 原生 IME、AC5 双屏/拔屏/DPI 100–200% 矩阵、真实双屏 broker 落位（`NOT_APPLICABLE: 原生交互未执行（保留 NOT_RUN）+ 用户 2026-11-08 授权豁免`）
@@ -65,3 +66,18 @@ out_of_scope:
 
 - 不得写「FEA-07 完全实现 / AC5 达成 / 生产双屏可用」；只写「AC1/AC3/AC4 达成（gated/进程级）；AC5 与原生项 NA（NOT_RUN）；AC2/AC6/AC8 见 R4a」。
 - `NOT_RUN` 不得写成 PASS；skip 不得写成 PASS。
+
+## r1 返修（2026-11-08，独立 Review r1 approved P0=0/P1=0；DSH 把 P2-01 升格 P1）
+
+> 本节只追加；不改上方 AC 冻结行与 `status`（由 DSH 关账）。
+
+| # | finding | 修复 | 判别证据 |
+|---|---|---|---|
+| P1-01（升格） | 红线「不得触碰真实用户数据/AppData」：`--shell=legacy` 的 `window-material.log` 每次运行向真实 `%APPDATA%\com.newmanga.desktop\logs\` 追加 1 行（r1 度量 14,272→14,275），且两处注释称「不写真实 %APPDATA%」为假 | **DSH 裁决 A，授权扩域单文件**：`src/NewManga.App/Views/MainWindow.axaml.cs` 的 `WriteMaterialDiagnostics` 改为「显式 `--log-dir` 时 `LogDirectory` 拥有全部日志文件（含本文件）；无 `--log-dir` 保留历史每用户位置」（+5/−1：3 语义行 + 2 注释）。测试/脚本侧再注入隔离 `APPDATA`/`LOCALAPPDATA`/`USERPROFILE` 并用同一环境字典回读子进程值；两处注释改真 | 真实 `%APPDATA%` 行数 `14275 → 14275`（delta=0，gated fact 14/14 与 `startup-matrix.ps1` 4/4 各一次）；legacy 的 `window-material.log` 落隔离 `--log-dir`（1 行）；变异 M4/M4b RED（M4b 现场 `+1` 行）→ sha256 MATCH → 复绿 |
+| P2-03 | AC3「暂停期采用最新状态」只改 `appearance.Mode`，未覆盖真实保护状态 | recover 前用**独立 sqlite 连接**改真实 `library.db`：新增 revision 3 设为 current + 翻转 `inpaint_locked`；恢复后断言仍是新值（不回写旧快照） | `logs/mutation-2-restored-green.log` / `evidence/crash-switch-r4b.json`（`recover.pausedRevisionId` / `pausedInpaintLocked` / `currentRevisionAfterRecovery`） |
+| P3-01 | 卡面 `sfx_locked` 笔误 | erratum 登记：真实列为 `region_locked`（+ `translation_locked`/`inpaint_locked` + `sfx_policy`） | `DEFECTS.md` D-R4b-6、`README.md` §3/§6.5 |
+| P3-02 | 回填脚本数字为「见下」占位 | 脚本内置实际数字（1791/0/107、3395/0/10）并改为幂等（已是 `- [x]` 时跳过不报错） | `tools/backfill-fea07.py` |
+| P3-03 | `ResetForTests` 留下 `Trace.AutoFlush` 全局副作用 | 安装时保存调用前的值，`ResetForTests` 还原 | `StartupDiagnosticsTests.ResetForTests_RestoresTheProcessWideTraceAutoFlushFlag` |
+| P3-05 | 崩溃证据未显式写 testhost 是否消失 | 证据 JSON 增 `kill.testhostGone`，`realDeathProven` = launcher/ testhost/ heartbeat 三者合取 | `evidence/crash-switch-r4b.json`、`README.md` §4 |
+
+- 未改：`status`、AC 冻结行、契约/pins、禁止面；`FEA-07`/`FEA-07-RESIDUAL-3` 的 status 由 DSH 关账。

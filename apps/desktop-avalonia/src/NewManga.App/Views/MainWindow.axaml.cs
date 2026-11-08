@@ -884,7 +884,11 @@ public partial class MainWindow : Window
     {
         try
         {
-            var root = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "com.newmanga.desktop", "logs");
+            // FEA-07 W-9 (isolation): an explicit `--log-dir` owns EVERY log file, this one included; with no
+            // `--log-dir` the shipped per-user location (and therefore the release default) is unchanged.
+            var root = string.IsNullOrWhiteSpace(_options.LogDirectory)
+                ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "com.newmanga.desktop", "logs")
+                : Path.GetFullPath(_options.LogDirectory);
             Directory.CreateDirectory(root);
             DiagnosticsPath = Path.Combine(root, "window-material.log");
             File.AppendAllText(DiagnosticsPath, $"{DateTime.UtcNow:o} {MaterialDiagnostics}{Environment.NewLine}");

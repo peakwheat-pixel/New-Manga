@@ -1,6 +1,6 @@
-2026-11-08T14:52:03.488Z INFO startup-diagnostics: sink v1 installed (G:\CODEX\New Manga.workspace\FEA-07-RESIDUAL-3\startup-matrix\presentation-host-20261108-225203-fa75f8\logs\startup.log)
-2026-11-08T14:52:03.510Z INFO startup: shell=PresentationHost requested=builtin.current-v2 effective=builtin.current-v2 fallback=False
-2026-11-08T14:52:03.510Z INFO startup: theme.frontendId 'builtin.current-v2' (persisted appearance settings) selects the Current V2 shell
+2026-11-08T16:23:04.956Z INFO startup-diagnostics: sink v1 installed (G:\CODEX\New Manga.workspace\FEA-07-RESIDUAL-3\startup-matrix\presentation-host-20261109-002304-5b9d33\logs\startup.log)
+2026-11-08T16:23:04.978Z INFO startup: shell=PresentationHost requested=builtin.current-v2 effective=builtin.current-v2 fallback=False
+2026-11-08T16:23:04.978Z INFO startup: theme.frontendId 'builtin.current-v2' (persisted appearance settings) selects the Current V2 shell
 [Binding]An error occurred binding 'Source' to 'CurrentPage.Image' at 'CurrentPage': 'Value is null.' (Image #56568702)
 [Binding]An error occurred binding 'IsEnabled' to 'IsEnabled' at 'IsEnabled': 'Could not find a matching property accessor for 'IsEnabled' on 'NewManga.App.ViewModels.V2.Studio.StudioPageViewModel'.' (Button #29522533)
 [Binding]An error occurred binding 'IsEnabled' to 'IsEnabled' at 'IsEnabled': 'Could not find a matching property accessor for 'IsEnabled' on 'NewManga.App.ViewModels.V2.Studio.StudioPageViewModel'.' (Button #48248613)

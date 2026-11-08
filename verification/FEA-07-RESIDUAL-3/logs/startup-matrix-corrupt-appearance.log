@@ -1,9 +1,9 @@
-2026-11-08T14:52:10.496Z INFO startup-diagnostics: sink v1 installed (G:\CODEX\New Manga.workspace\FEA-07-RESIDUAL-3\startup-matrix\corrupt-appearance-20261108-225210-64d385\logs\startup.log)
-2026-11-08T14:52:10.523Z INFO startup: shell=Default requested=builtin.current-v2 effective=builtin.current-v2 fallback=True
-2026-11-08T14:52:10.523Z INFO startup: theme.frontendId 'builtin.current-v2' (persisted appearance settings) selects the Current V2 shell
-2026-11-08T14:52:10.523Z INFO startup: appearance: appearance document is not valid JSON ('t' is an invalid start of a property name. Expected a '"'. LineNumber: 0 | BytePositionInLine: 2.); shipped defaults are used
-2026-11-08T14:52:10.523Z INFO startup: startup fallback: appearance document fell back field-by-field; starting 'builtin.current-v2' (fail-safe)
-2026-11-08T14:52:10.523Z WARN startup fell back to the Current V2 shell: builtin.current-v2
+2026-11-08T16:23:12.502Z INFO startup-diagnostics: sink v1 installed (G:\CODEX\New Manga.workspace\FEA-07-RESIDUAL-3\startup-matrix\corrupt-appearance-20261109-002311-4aeff8\logs\startup.log)
+2026-11-08T16:23:12.528Z INFO startup: shell=Default requested=builtin.current-v2 effective=builtin.current-v2 fallback=True
+2026-11-08T16:23:12.528Z INFO startup: theme.frontendId 'builtin.current-v2' (persisted appearance settings) selects the Current V2 shell
+2026-11-08T16:23:12.528Z INFO startup: appearance: appearance document is not valid JSON ('t' is an invalid start of a property name. Expected a '"'. LineNumber: 0 | BytePositionInLine: 2.); shipped defaults are used
+2026-11-08T16:23:12.528Z INFO startup: startup fallback: appearance document fell back field-by-field; starting 'builtin.current-v2' (fail-safe)
+2026-11-08T16:23:12.528Z WARN startup fell back to the Current V2 shell: builtin.current-v2
 [Binding]An error occurred binding 'Source' to 'CurrentPage.Image' at 'CurrentPage': 'Value is null.' (Image #7338273)
 [Binding]An error occurred binding 'IsEnabled' to 'IsEnabled' at 'IsEnabled': 'Could not find a matching property accessor for 'IsEnabled' on 'NewManga.App.ViewModels.V2.Studio.StudioPageViewModel'.' (Button #53027730)
 [Binding]An error occurred binding 'IsEnabled' to 'IsEnabled' at 'IsEnabled': 'Could not find a matching property accessor for 'IsEnabled' on 'NewManga.App.ViewModels.V2.Studio.StudioPageViewModel'.' (Button #18271853)

@@ -1,0 +1,12 @@
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Release\net9.0\NewManga.App.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+[xUnit.net 00:00:11.05]     NewManga.App.Tests.StartupDiagnosticsTests.RealProcessLaunchMatrix_ExitZeroAndDiagnosableStartupLog [FAIL]
+  失败 NewManga.App.Tests.StartupDiagnosticsTests.RealProcessLaunchMatrix_ExitZeroAndDiagnosableStartupLog [10 s]
+  错误消息:
+   shell-legacy: window-material.log must land inside the isolated --log-dir
+  堆栈跟踪:
+     at NewManga.App.Tests.StartupDiagnosticsTests.RealProcessLaunchMatrix_ExitZeroAndDiagnosableStartupLog()
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+失败!  - 失败:     1，通过:     0，已跳过:     0，总计:     1，持续时间: 10 s - NewManga.App.Tests.dll (net9.0)

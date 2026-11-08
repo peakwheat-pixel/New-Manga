@@ -40,6 +40,11 @@ function Log([string]$message) {
 $exe = Join-Path $repo "apps/desktop-avalonia/src/NewManga.App/bin/$Configuration/net9.0/NewManga.App.exe"
 $workspace = Join-Path ($repo + '.workspace') 'FEA-07-RESIDUAL-3/startup-matrix'
 
+# 红线（P1-01）：真实用户目录下既有 legacy 诊断日志的行数基线；整轮矩阵前后必须**不变**。
+# 解析走 .NET 的 KnownFolder（与本脚本自身 APPDATA env 无关），测的就是真实用户目录。
+$realMaterialLog = Join-Path ([Environment]::GetFolderPath([Environment+SpecialFolder]::ApplicationData)) 'com.newmanga.desktop\logs\window-material.log'
+$realMaterialLinesBefore = if (Test-Path $realMaterialLog) { @([System.IO.File]::ReadAllLines($realMaterialLog)).Count } else { 0 }
+
 $cases = @(
     [ordered]@{ name = 'default'; extra = @(); corrupt = $false; marker = 'startup: shell=Default'; fallback = 'fallback=False' },
     [ordered]@{ name = 'presentation-host'; extra = @('--presentation-host=true'); corrupt = $false; marker = 'startup: shell=PresentationHost'; fallback = 'fallback=False' },
@@ -92,6 +97,44 @@ try {
         $startInfo.RedirectStandardError = $true
         $startInfo.WorkingDirectory = Split-Path -Parent $exe
 
+        # r1 (P1-01) 红线加固 —— 纵深防御：子进程的 APPDATA/LOCALAPPDATA/USERPROFILE 也指向本用例隔离根。
+        # 真正阻止写真实用户目录的是产品契约「显式 --log-dir 拥有全部日志文件」（含 legacy 的 window-material.log）；
+        # env 注入是第二道闸。注入后用**同一环境字典**回读子进程值确认生效。
+        $isolatedAppData = Join-Path $root 'appdata'
+        $isolatedLocalAppData = Join-Path $root 'localappdata'
+        $isolatedProfile = Join-Path $root 'userprofile'
+        foreach ($dir in @($isolatedAppData, $isolatedLocalAppData, $isolatedProfile)) {
+            New-Item -ItemType Directory -Force -Path $dir | Out-Null
+        }
+        $startInfo.Environment['APPDATA'] = $isolatedAppData
+        $startInfo.Environment['LOCALAPPDATA'] = $isolatedLocalAppData
+        $startInfo.Environment['USERPROFILE'] = $isolatedProfile
+
+        $probeFile = Join-Path $root 'env-probe.txt'
+        $probeInfo = [System.Diagnostics.ProcessStartInfo]::new('pwsh')
+        # 注意：-Command 载荷内部用**双引号**。用单引号包路径时，外层命令行引用会让子进程把路径当相对路径
+        # （实测：WriteAllText('C:\..') 被解析成 "<cwd>\ C:\.."），探针因此静默失败。
+        $probeCommand = '[System.IO.File]::WriteAllText("' + $probeFile + '", $env:APPDATA + "|" + $env:LOCALAPPDATA)'
+        foreach ($a in @('-NoProfile', '-Command', $probeCommand)) { $probeInfo.ArgumentList.Add($a) }
+        $probeInfo.UseShellExecute = $false
+        $probeInfo.CreateNoWindow = $true
+        $probeInfo.Environment['APPDATA'] = $isolatedAppData
+        $probeInfo.Environment['LOCALAPPDATA'] = $isolatedLocalAppData
+        $probeInfo.Environment['USERPROFILE'] = $isolatedProfile
+        $probe = [System.Diagnostics.Process]::Start($probeInfo)
+        $probe.WaitForExit(60000) | Out-Null
+        if (-not (Test-Path $probeFile)) {
+            $failures.Add("$($case.name): the child environment probe produced no output")
+            $envProbe = '<missing>'
+        }
+        else {
+            $envProbe = [System.IO.File]::ReadAllText($probeFile)
+            if (-not ($envProbe.StartsWith([System.IO.Path]::GetFullPath($isolatedAppData), [System.StringComparison]::OrdinalIgnoreCase))) {
+                $failures.Add("$($case.name): injected APPDATA did not reach the child ($envProbe)")
+            }
+        }
+        Log "case=$($case.name) env-probe=$envProbe"
+
         $timer = [System.Diagnostics.Stopwatch]::StartNew()
         $process = [System.Diagnostics.Process]::Start($startInfo)
         $stdout = $process.StandardOutput.ReadToEndAsync()
@@ -119,8 +162,28 @@ try {
         if (-not $matched) { $failures.Add("$($case.name): startup.log has no '$($case.marker)' line") }
         if (-not $fallbackMatched) { $failures.Add("$($case.name): startup.log has no '$($case.fallback)' line") }
 
+        # 隔离直接证据：sink 安装行必须指向本用例的隔离 log 目录。
+        $sinkLine = 'startup-diagnostics: sink v1 installed (' + [System.IO.Path]::GetFullPath($startupPath) + ')'
+        if (-not $startupText.Contains($sinkLine)) {
+            $failures.Add("$($case.name): startup.log install line does not point at the isolated log dir")
+        }
+
+        # legacy 外壳的历史诊断文件（window-material.log）现在也受 --log-dir 契约约束：落隔离目录。
+        $isolatedMaterial = Join-Path $logDir 'window-material.log'
+        $isolatedMaterialLines = if (Test-Path $isolatedMaterial) { @([System.IO.File]::ReadAllLines($isolatedMaterial)).Count } else { 0 }
+        if ($case.name -eq 'shell-legacy' -and $isolatedMaterialLines -le 0) {
+            $failures.Add("$($case.name): window-material.log did not land inside the isolated --log-dir")
+        }
+
+        # 红线：真实 %APPDATA% 的 window-material.log 行数不得增长。
+        $realLinesNow = if (Test-Path $script:realMaterialLog) { @([System.IO.File]::ReadAllLines($script:realMaterialLog)).Count } else { 0 }
+        if ($realLinesNow -ne $script:realMaterialLinesBefore) {
+            $failures.Add("$($case.name): the real %APPDATA% window-material.log grew $($script:realMaterialLinesBefore) -> $realLinesNow")
+        }
+
         Log ("case=$($case.name) exit=$exitCode fatal=$fatalExists startupBytes=$($startupText.Length) " +
-             "matched=$matched fallback=$fallbackMatched elapsedMs=$($timer.ElapsedMilliseconds)")
+             "matched=$matched fallback=$fallbackMatched isolatedMaterialLines=$isolatedMaterialLines " +
+             "realAppDataMaterialLines=$realLinesNow elapsedMs=$($timer.ElapsedMilliseconds)")
 
         $results.Add([ordered]@{
             name = $case.name
@@ -133,6 +196,11 @@ try {
             expectedMarker = $case.marker
             fallbackMatched = $fallbackMatched
             expectedFallback = $case.fallback
+            isolatedLogDir = $logDir
+            isolatedAppData = $isolatedAppData
+            childEnvironmentProbe = $envProbe
+            isolatedMaterialLines = $isolatedMaterialLines
+            realAppDataMaterialLines = $realLinesNow
             elapsedMs = $timer.ElapsedMilliseconds
             root = $root
         })
@@ -142,13 +210,26 @@ try {
             [System.Text.UTF8Encoding]::new($false))
     }
 
+    $realMaterialLinesAfter = if (Test-Path $realMaterialLog) { @([System.IO.File]::ReadAllLines($realMaterialLog)).Count } else { 0 }
+    if ($realMaterialLinesAfter -ne $realMaterialLinesBefore) {
+        $failures.Add("red line: the real %APPDATA% window-material.log grew $realMaterialLinesBefore -> $realMaterialLinesAfter")
+    }
+    Log "red line: real %APPDATA% window-material.log lines $realMaterialLinesBefore -> $realMaterialLinesAfter (delta=$($realMaterialLinesAfter - $realMaterialLinesBefore))"
+
     $evidence = [ordered]@{
         task = 'FEA-07-RESIDUAL-3'
         ac = 'AC-R4b-3 (AC4 real startup entry + diagnostics sink)'
-        mode = 'real process, four argument sets, isolated data root / theme home / log dir'
+        mode = 'real process, four argument sets, isolated data root / theme home / log dir / child APPDATA'
         generatedAt = (Get-Date).ToString('o')
         executable = $exe
         exitAfterMs = $ExitAfterMs
+        realUserProfileWindowMaterialLog = [ordered]@{
+            path = $realMaterialLog
+            linesBefore = $realMaterialLinesBefore
+            linesAfter = $realMaterialLinesAfter
+            delta = $realMaterialLinesAfter - $realMaterialLinesBefore
+            untouched = ($realMaterialLinesAfter -eq $realMaterialLinesBefore)
+        }
         cases = @($results)
         failures = @($failures)
         verdict = $(if ($failures.Count -eq 0) { 'PASS' } else { 'FAIL' })
@@ -162,7 +243,7 @@ try {
         exit 12
     }
 
-    Log 'PASS: 4/4 real startup cases -> exit_code=0, no fatal.log, startup.log carries the expected diagnostic line'
+    Log 'PASS: 4/4 real startup cases -> exit_code=0, no fatal.log, startup.log carries the expected diagnostic line, legacy window-material.log inside the isolated --log-dir, real %APPDATA% untouched'
     exit 0
 }
 finally {

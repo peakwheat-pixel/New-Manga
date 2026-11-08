@@ -13,6 +13,16 @@ namespace NewManga.App.Tests;
 /// FEA-07 AC4（A07）诊断面：<c>StartupDiagnostics</c> 最小 sink 的行为、9 类外观 warning 的逐项
 /// fail-safe，以及 4 组参数的真实进程入口（无桌面会话/未开门禁时 skip + reason）。
 /// </summary>
+/// <remarks>
+/// r1（P1-01）红线加固：真实进程用例**不写真实用户目录**。
+/// <list type="bullet">
+/// <item>产物隔离：每组用例的 <c>--data-root</c>/<c>--log-dir</c>/<c>--theme-home</c> 全在临时根；
+/// 产品侧契约由 <c>MainWindow.WriteMaterialDiagnostics</c> 遵守「显式 <c>--log-dir</c> 拥有全部日志文件」保证
+/// （<c>--shell=legacy</c> 的 <c>window-material.log</c> 因此落隔离目录）。</item>
+/// <item>纵深防御：子进程额外注入隔离的 <c>APPDATA</c>/<c>LOCALAPPDATA</c>，并用同一环境字典回读子进程值确认注入生效。</item>
+/// <item>红线证据：断言真实 <c>%APPDATA%\com.newmanga.desktop\logs\window-material.log</c> 的行数前后**不增长**。</item>
+/// </list>
+/// </remarks>
 public sealed class StartupDiagnosticsTests : IDisposable
 {
     private readonly string _root;
@@ -103,6 +113,26 @@ public sealed class StartupDiagnosticsTests : IDisposable
         StartupDiagnostics.Report(null);
     }
 
+    /// <summary>P3-03: 移除 sink 必须把进程级 <see cref="Trace.AutoFlush"/> 还原（不留全局副作用）。</summary>
+    [Fact]
+    public void ResetForTests_RestoresTheProcessWideTraceAutoFlushFlag()
+    {
+        var before = Trace.AutoFlush;
+        try
+        {
+            Trace.AutoFlush = false;
+            Assert.True(StartupDiagnostics.Install(Path.Combine(_root, "logs-autoflush")));
+            Assert.True(Trace.AutoFlush);
+            StartupDiagnostics.ResetForTests();
+            Assert.False(Trace.AutoFlush);
+        }
+        finally
+        {
+            StartupDiagnostics.ResetForTests();
+            Trace.AutoFlush = before;
+        }
+    }
+
     // ------------------------------------------------- 9 类 warning 逐项 fail-safe
 
     private static readonly (string Label, string Json, string Token)[] WarningClasses =
@@ -170,6 +200,11 @@ public sealed class StartupDiagnosticsTests : IDisposable
         var executable = RealStartupProcessFixture.LocateAppExecutable();
         Assert.True(File.Exists(executable), $"App executable not found: {executable}");
 
+        // 红线（P1-01）：真实用户目录的既有日志行数必须在整轮矩阵前后**不增长**。
+        var realMaterialLog = RealStartupProcessFixture.RealWindowMaterialLogPath();
+        var realLinesBefore = RealStartupProcessFixture.CountLines(realMaterialLog);
+        Assert.True(realLinesBefore >= 0, "the real window-material.log could not be measured");
+
         var cases = new (string Name, string[] ExtraArgs, bool CorruptDocument, string Expected)[]
         {
             ("default", Array.Empty<string>(), false, "startup: shell=Default"),
@@ -192,6 +227,9 @@ public sealed class StartupDiagnosticsTests : IDisposable
                     "{ this is not a json appearance document");
             }
 
+            // 纵深防御：子进程的 APPDATA/LOCALAPPDATA 也指向本用例的隔离根。
+            var environment = RealStartupProcessFixture.CreateIsolatedChildEnvironment(root);
+
             var arguments = new List<string>
             {
                 "--data-root=" + Path.Combine(root, "data"),
@@ -203,7 +241,7 @@ public sealed class StartupDiagnosticsTests : IDisposable
             arguments.AddRange(extraArgs);
 
             var (exitCode, timedOut, stdout, stderr) =
-                RealStartupProcessFixture.Run(executable, arguments, TimeSpan.FromSeconds(120));
+                RealStartupProcessFixture.Run(executable, arguments, TimeSpan.FromSeconds(120), environment);
             Assert.False(timedOut, $"{name}: the real process did not exit (stdout:{stdout} stderr:{stderr})");
             Assert.True(exitCode == 0, $"{name}: exit_code={exitCode} stdout:{stdout} stderr:{stderr}");
 
@@ -214,6 +252,12 @@ public sealed class StartupDiagnosticsTests : IDisposable
             Assert.True(File.Exists(startupLog), $"{name}: startup.log was not written");
             var log = File.ReadAllText(startupLog);
             Assert.Contains(expected, log, StringComparison.Ordinal);
+
+            // 隔离直接证据：sink 的安装行必须指向本用例的隔离 log 目录（子进程确实用了我们给的值）。
+            Assert.Contains(
+                "startup-diagnostics: sink v1 installed (" + startupLog + ")",
+                log,
+                StringComparison.Ordinal);
             if (corruptDocument)
             {
                 Assert.Contains("fallback=True", log, StringComparison.Ordinal);
@@ -223,12 +267,39 @@ public sealed class StartupDiagnosticsTests : IDisposable
                 Assert.Contains("fallback=False", log, StringComparison.Ordinal);
             }
 
+            // legacy 外壳的历史诊断文件现在也受 `--log-dir` 契约约束：落隔离目录，不落真实 %APPDATA%。
+            var isolatedMaterial = Path.Combine(logDirectory, "window-material.log");
+            var isolatedMaterialLines = RealStartupProcessFixture.CountLines(isolatedMaterial);
+            if (name == "shell-legacy")
+            {
+                Assert.True(isolatedMaterialLines > 0,
+                    "shell-legacy: window-material.log must land inside the isolated --log-dir");
+            }
+
+            var realLinesNow = RealStartupProcessFixture.CountLines(realMaterialLog);
+            Assert.True(realLinesNow == realLinesBefore,
+                $"{name}: the real %APPDATA% window-material.log grew {realLinesBefore} -> {realLinesNow}");
+
             evidence.Add(
                 $"{name}: exit_code={exitCode} fatal_log=false startup_rows={log.Split('\n').Length} " +
-                $"matched='{expected}'");
+                $"matched='{expected}' isolated_material_lines={isolatedMaterialLines} " +
+                $"real_appdata_material_lines={realLinesNow} (baseline {realLinesBefore})");
         }
 
-        // 证据落在隔离临时根下（AC8/W-9：不写真实 %APPDATA%）。
+        // 纵深防御回读：用与用例相同的环境字典启动子进程，确认注入的 APPDATA/LOCALAPPDATA 真的到达子进程。
+        var probeRoot = Path.Combine(_root, "default");
+        var probe = RealStartupProcessFixture.ProbeChildEnvironment(probeRoot, TimeSpan.FromSeconds(60));
+        Assert.StartsWith(Path.GetFullPath(probeRoot), Path.GetFullPath(probe.AppData), StringComparison.OrdinalIgnoreCase);
+        Assert.StartsWith(Path.GetFullPath(probeRoot), Path.GetFullPath(probe.LocalAppData), StringComparison.OrdinalIgnoreCase);
+        evidence.Add($"env-probe: APPDATA={probe.AppData} LOCALAPPDATA={probe.LocalAppData}");
+
+        var realLinesAfter = RealStartupProcessFixture.CountLines(realMaterialLog);
+        Assert.True(realLinesAfter == realLinesBefore,
+            $"the real %APPDATA% window-material.log grew {realLinesBefore} -> {realLinesAfter} " +
+            "during the AC4 real-process matrix");
+        evidence.Add($"real-appdata: window-material.log lines {realLinesBefore} -> {realLinesAfter} (delta=0)");
+
+        // 证据落在隔离临时根下。
         var evidencePath = Path.Combine(_root, "startup-process-matrix.txt");
         File.WriteAllText(evidencePath, string.Join(Environment.NewLine, evidence) + Environment.NewLine + "PASS");
         Assert.Contains("PASS", File.ReadAllText(evidencePath), StringComparison.Ordinal);
@@ -313,12 +384,78 @@ public sealed class FEA07StartupProcessFactAttribute : FactAttribute
     }
 }
 
-/// <summary>4 组参数真实进程矩阵的启动器（隔离临时根；不写真实 %APPDATA%）。</summary>
+/// <summary>4 组参数真实进程矩阵的启动器（隔离数据根 / 隔离 log 目录 / 隔离子进程 APPDATA + 红线计数）。</summary>
 internal static class RealStartupProcessFixture
 {
+    private const string IsolatedAppDataDirectoryName = "appdata";
+    private const string IsolatedLocalAppDataDirectoryName = "localappdata";
+
     /// <summary>App 可执行文件位于测试输出目录（App 项目是 Exe，随引用复制）。</summary>
     public static string LocateAppExecutable() =>
         Path.Combine(AppContext.BaseDirectory, OperatingSystem.IsWindows() ? "NewManga.App.exe" : "NewManga.App");
+
+    /// <summary>真实用户目录下的既有 legacy 诊断日志（红线计数对象）。</summary>
+    public static string RealWindowMaterialLogPath() => Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+        "com.newmanga.desktop",
+        "logs",
+        "window-material.log");
+
+    /// <summary>行数（不存在 = 0；读失败 = -1，调用方按「无法测量」判失败，不静默放行）。</summary>
+    public static int CountLines(string path)
+    {
+        try
+        {
+            return File.Exists(path) ? File.ReadLines(path).Count() : 0;
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            return -1;
+        }
+    }
+
+    /// <summary>
+    /// 纵深防御：给子进程一组隔离的 <c>APPDATA</c>/<c>LOCALAPPDATA</c>（指向本用例的临时根）。
+    /// 真正阻止写真实用户目录的是「显式 <c>--log-dir</c> 拥有全部日志文件」的产品契约；env 注入是第二道闸。
+    /// </summary>
+    public static IReadOnlyDictionary<string, string> CreateIsolatedChildEnvironment(string caseRoot)
+    {
+        var appData = Path.Combine(caseRoot, IsolatedAppDataDirectoryName);
+        var localAppData = Path.Combine(caseRoot, IsolatedLocalAppDataDirectoryName);
+        var profile = Path.Combine(caseRoot, "userprofile");
+        Directory.CreateDirectory(appData);
+        Directory.CreateDirectory(localAppData);
+        Directory.CreateDirectory(profile);
+        return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["APPDATA"] = appData,
+            ["LOCALAPPDATA"] = localAppData,
+            ["USERPROFILE"] = profile,
+        };
+    }
+
+    /// <summary>用同一环境字典回读子进程的 APPDATA/LOCALAPPDATA，确认注入确实到达子进程。</summary>
+    public static (string AppData, string LocalAppData) ProbeChildEnvironment(string caseRoot, TimeSpan timeout)
+    {
+        var environment = CreateIsolatedChildEnvironment(caseRoot);
+        var probe = Path.Combine(caseRoot, "env-probe.txt");
+        var isWindows = OperatingSystem.IsWindows();
+        var shell = isWindows ? "pwsh" : "sh";
+        // Double quotes inside the -Command payload: the outer cmdline quoting keeps a single
+        // argument (a single-quoted path here silently loses its quoting and the child resolves a
+        // relative path against its cwd).
+        var script = isWindows
+            ? "[System.IO.File]::WriteAllText(\"" + probe + "\", $env:APPDATA + \"|\" + $env:LOCALAPPDATA)"
+            : "printf '%s|%s' \"$APPDATA\" \"$LOCALAPPDATA\" > '" + probe + "'";
+        var arguments = isWindows ? new[] { "-NoProfile", "-Command", script } : new[] { "-c", script };
+        var (exitCode, timedOut, stdout, stderr) = Run(shell, arguments, timeout, environment);
+        Assert.False(timedOut, "the environment probe did not exit");
+        Assert.True(exitCode == 0, $"the environment probe failed ({exitCode}): {stdout}{stderr}");
+        Assert.True(File.Exists(probe), "the environment probe wrote no output");
+        var parts = File.ReadAllText(probe).Split('|');
+        Assert.True(parts.Length == 2, "the environment probe produced an unexpected shape: " + string.Join("|", parts));
+        return (parts[0], parts[1]);
+    }
 
     /// <summary>
     /// Windows 服务会话（session 0）没有交互桌面：真实窗口用例必须 skip 而不是伪装成 PASS。
@@ -349,7 +486,8 @@ internal static class RealStartupProcessFixture
     public static (int ExitCode, bool TimedOut, string Stdout, string Stderr) Run(
         string executable,
         IReadOnlyList<string> arguments,
-        TimeSpan timeout)
+        TimeSpan timeout,
+        IReadOnlyDictionary<string, string>? environment = null)
     {
         var startInfo = new ProcessStartInfo(executable)
         {
@@ -362,6 +500,14 @@ internal static class RealStartupProcessFixture
         foreach (var argument in arguments)
         {
             startInfo.ArgumentList.Add(argument);
+        }
+
+        if (environment is not null)
+        {
+            foreach (var (key, value) in environment)
+            {
+                startInfo.Environment[key] = value;
+            }
         }
 
         using var process = Process.Start(startInfo)

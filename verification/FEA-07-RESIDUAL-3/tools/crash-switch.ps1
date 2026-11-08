@@ -147,8 +147,22 @@ try {
     if ($null -ne $testHostProcess) {
         $testHostExited = $testHostProcess.WaitForExit(30000)
     }
-    if (-not $launcherExited -or -not $testHostExited) {
-        Log "FATAL(10): the parked processes did not really die (launcher=$launcherExited testhost=$testHostExited)"
+    # P3-05: 「真死」显式三件套 —— launcher WaitForExit + testhost 已消失 + heartbeat frozen。
+    $testHostGone = $true
+    try {
+        $stillThere = [System.Diagnostics.Process]::GetProcessById($testHostId)
+        $testHostGone = $stillThere.HasExited
+    }
+    catch [System.ArgumentException] {
+        $testHostGone = $true
+    }
+    catch {
+        $testHostGone = $false
+        $killErrors.Add("testhost-liveness: $($_.Exception.Message)")
+    }
+    if (-not $launcherExited -or -not $testHostExited -or -not $testHostGone) {
+        Log ("FATAL(10): the parked processes did not really die " +
+             "(launcherExited=$launcherExited testhostExited=$testHostExited testhostGone=$testHostGone)")
         exit 10
     }
 
@@ -159,7 +173,8 @@ try {
         Log "FATAL(10): heartbeat kept advancing after the kill ($frozen1 -> $frozen2); the process is not really dead"
         exit 10
     }
-    Log "process really dead: testhost pid=$testHostId exited, heartbeat frozen at $frozen1 (kill errors: $($killErrors -join '; '))"
+    Log ("process really dead: launcherExited=$launcherExited testhostExited=$testHostExited " +
+         "testhostGone=$testHostGone heartbeat frozen at $frozen1 (kill errors: $($killErrors -join '; '))")
 
     if (-not (Test-Path $journalPath)) {
         Log "FATAL(11): the killed run left no switch journal at $journalPath"
@@ -210,8 +225,15 @@ try {
     if ($recoverState.journalStage -ne 'RolledBack') { $failures.Add("journal stage is '$($recoverState.journalStage)', expected RolledBack") }
     if ($recoverState.finalFrontendId -ne 'builtin.current-v2') { $failures.Add("final frontend is '$($recoverState.finalFrontendId)', expected the last committed frontend") }
     if ($recoverState.finalFrontendId -eq $parkState.target) { $failures.Add('appearance.FrontendId was polluted by the interrupted target') }
-    if ($recoverState.latestModePreserved -ne 'Light') { $failures.Add("latest protected state was not adopted ('$($recoverState.latestModePreserved)')") }
+    if ($recoverState.latestModePreserved -ne 'Light') { $failures.Add("latest appearance state was not adopted ('$($recoverState.latestModePreserved)')") }
     if (-not $recoverState.secondRecoveryChangedNothing) { $failures.Add('a second recovery changed state') }
+    # P2-03: 暂停期保护状态 = 真实 library.db 的 current/inpaint 锁（不只是 appearance 配置）。
+    if ([string]::IsNullOrWhiteSpace([string]$recoverState.pausedRevisionId)) { $failures.Add('no paused protected-state revision was recorded') }
+    if ([string]$recoverState.currentRevisionAfterRecovery -ne [string]$recoverState.pausedRevisionId) {
+        $failures.Add("recovery did not adopt the paused current_revision_id ('$($recoverState.currentRevisionAfterRecovery)' != '$($recoverState.pausedRevisionId)')")
+    }
+    if ([string]$recoverState.pausedInpaintLocked -ne '1') { $failures.Add("paused inpaint lock was not preserved ('$($recoverState.pausedInpaintLocked)')") }
+    if ([int]$recoverState.crashWindowProtectedColumnDiffs -ne 0) { $failures.Add("park/kill window changed protected columns ($($recoverState.crashWindowProtectedColumnDiffs) diffs)") }
     if ([int]$recoverState.protectedColumnDiffs -ne 0) { $failures.Add("protected columns changed ($($recoverState.protectedColumnDiffs) diffs)") }
     if ([int]$recoverState.protectedColumns -le 0) { $failures.Add('no protected columns were compared') }
 
@@ -237,10 +259,11 @@ try {
             api = 'Process.Kill(entireProcessTree: true)'
             launcherExited = $launcherExited
             testHostExited = $testHostExited
+            testhostGone = $testHostGone
             heartbeatFrozenAt = $frozen1
             heartbeatFrozen = ($frozen1 -eq $frozen2)
             killErrors = @($killErrors)
-            realDeathProven = ($frozen1 -eq $frozen2)
+            realDeathProven = ($launcherExited -and $testHostExited -and $testHostGone -and ($frozen1 -eq $frozen2))
         }
         journalAfterKill = [ordered]@{
             stage = $journalAfterKill.Stage
@@ -261,7 +284,7 @@ try {
         exit 12
     }
 
-    Log 'PASS: park -> kill(entireProcessTree) -> recover verified (journal RolledBack, last committed frontend restored, latest protected state adopted, protected columns untouched)'
+    Log 'PASS: park -> kill(entireProcessTree) -> recover verified (launcher WaitForExit + testhost gone + heartbeat frozen; journal RolledBack; last committed frontend restored; paused real-DB protected state adopted, not the old snapshot; protected columns untouched)'
     exit 0
 }
 finally {

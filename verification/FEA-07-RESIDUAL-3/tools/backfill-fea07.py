@@ -52,7 +52,8 @@ APPEND = """
 - 未变更：AC7 保持 `<<MET>>`；上方 r1–r12 Review 链、Canonical Evidence 表与 `verification/FEA-07/**` 字节不动；`doc/plan/**`、`doc/contracts/**`、18 pins 零 diff（0 pin）。
 - 口径：本节不写「FEA-07 完全实现 / AC5 达成 / 生产双屏可用」；只写「AC1/AC3/AC4 达成（gated/进程级）；AC5 与原生项 NA（`NOT_RUN`）；AC2/AC6/AC8 见 R4a」。`skip` 与 `NOT_RUN` 都不写成 PASS。
 - 证据强度边界（如实登记）：(a) 冻结卡列的 `region_candidates` 表在冻结 schema 中不存在，候选 store = `step_result_candidates[_v5]`（V5 迁移改名），故「旧结果仅 candidate」断言为「候选存量 0 → 0、零解析、陈旧 base 未进入 `current_revision_id`」；(b) AC1 的 50 次往返在 Host 侧驱动生产切换事务（journal + 唯一写者），UI 侧 layout/Loaded/render 门禁由既有 headless 用例覆盖；(c) AC4 真实进程矩阵需要交互桌面会话，无会话时 gated fact skip + reason（本次有会话，实跑 4/4）。
-- 测试基线（本卡执行）：Host **302/0/72**（基线 302/0/71，+1 gated skip）、App **828/0/11**（基线 816/0/8，+12 passed、+3 gated skip）、全量 sln 见下、pytest 见下；gated 实跑：AC1 1/1、AC3 脚本 exit 0、AC4 真实进程 4/4 与 gated fact 1/1。
+- 测试基线（本卡执行）：Host **302/0/72**（基线 302/0/71，+1 gated skip）、App **828/0/11**（基线 816/0/8，+12 passed、+3 gated skip）、全量 sln **1791/0/107**（基线 1779/0/103，0 failed）、pytest **3395 passed / 0 failed / 10 skipped**（基线 3394/1 既有 flaky/10；本轮既有 flaky 未复现，零 Python diff）；gated 实跑：AC1 1/1、AC3 `crash-switch.ps1` exit 0、AC4 真实进程 4/4 + gated fact 1/1；变异自检 **4** 组 RED → sha256 MATCH → 复绿（明细 `verification/FEA-07-RESIDUAL-3/mutation-selfcheck.md`）。
+- **r1 返修（2026-11-08，独立 Review r1 approved P0=0/P1=0，但 DSH 把 P2-01 升格为 P1）**：红线「不得触碰真实用户数据/AppData」——`--shell=legacy` 的 `window-material.log` 曾硬编码真实 `%APPDATA%`（`MainWindow.WriteMaterialDiagnostics`）。DSH 裁决 A（授权扩域该单文件）：改为「显式 `--log-dir` 拥有全部日志文件（含本文件），无 `--log-dir` 保留历史每用户位置」，diff **+5/−1**（3 语义行 + 2 理由注释）。测试/脚本侧再注入隔离 `APPDATA`/`LOCALAPPDATA`/`USERPROFILE` 并回读子进程值；红线断言 = 真实 `%APPDATA%` 行数 **14275 → 14275（delta=0）**（gated fact 14/14 与 `startup-matrix.ps1` 4/4 各一次）。变异 M4/M4b（回退产品契约 / 再回退 env 隔离 = r0 现场）→ 用例 RED 且真实日志 `+1` 行（主动实验所致，不删除，其后基线 14276 且 delta=0）。同批 P2-03（AC3「暂停期采用最新状态」改为真实 `library.db` 的 `current_revision_id` + `inpaint_locked`，不再只改 appearance `Mode`）、P3-01（`sfx_locked` → `region_locked` erratum）、P3-02（本节数字与实际一致）、P3-03（`ResetForTests` 还原 `Trace.AutoFlush`）、P3-05（崩溃证据 JSON 增 `testhostGone=true`）。
 """
 
 
@@ -61,13 +62,17 @@ def main() -> int:
     lines = text.split("\n")
     flipped = []
     for index, line in enumerate(lines):
-        if not line.startswith("- [ ] "):
+        # 幂等：既可以是待翻转的 `- [ ]`，也可以已经是 `- [x]`（重跑不报错）。
+        if not (line.startswith("- [ ] ") or line.startswith("- [x] ")):
             continue
         for anchor, addition in AC_BACKFILL.items():
-            if anchor in line:
-                new = line.replace("- [ ] ", "- [x] ", 1) + addition
-                lines[index] = new
+            if anchor not in line:
+                continue
+            if line.startswith("- [ ] "):
+                lines[index] = line.replace("- [ ] ", "- [x] ", 1) + addition
                 flipped.append(anchor)
+            else:
+                flipped.append(anchor)  # already flipped by an earlier run
     missing = [anchor for anchor in AC_BACKFILL if anchor not in flipped]
     if missing:
         print("MISSING AC ANCHORS: " + ", ".join(missing))
@@ -76,7 +81,7 @@ def main() -> int:
     if "## FEA-07-RESIDUAL-3（R4b）回填登记（2026-11-08，append-only）" not in updated:
         updated = updated.rstrip("\n") + "\n" + APPEND
     TASK.write_text(updated, encoding="utf-8", newline="\n")
-    print("flipped=" + str(len(flipped)) + " appended=" + str(updated != text))
+    print("satisfied=" + str(len(flipped)) + " appended=" + str(updated != text))
     return 0
 
 

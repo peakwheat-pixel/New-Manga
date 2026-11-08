@@ -154,10 +154,25 @@ public sealed class Fea07Residual3CrashTests
         appearance.Reload();
         Assert.Equal(Fea07CrashFixture.TargetFrontendId, appearance.FrontendId);
 
-        // 1) 「暂停期保护状态」第二条的前半：暂停期间**外部**改了非 frontend 设置（最新状态）。
+        // 1) 「暂停期保护状态」第二条的前半：暂停期间**外部**同时改了两样东西 ——
+        //    (a) 真实 library.db 的保护状态（独立 sqlite 连接：新 revision 成为 current + 翻转 inpaint_locked），
+        //    (b) appearance 的非 frontend 设置（Mode）。恢复必须采用这些**最新状态**，不回写旧快照。
+        var crashSnapshotPath = Path.Combine(root, "protected-before.json");
+        Assert.True(File.Exists(crashSnapshotPath), "the parked run wrote no protected-column snapshot");
+        var crashBefore = JsonSerializer.Deserialize<Dictionary<string, string>>(
+            await File.ReadAllTextAsync(crashSnapshotPath))!;
+        var afterCrash = await Fea07CrashFixture.SnapshotProtectedAsync(repo, python, dbPath, root, "after-crash");
+        var crashDiff = Fea07CrashFixture.Diff(crashBefore, afterCrash);
+        Assert.True(crashDiff.Count == 0,
+            "the park/kill window wrote protected columns:\n" + string.Join("\n", crashDiff));
+
+        var paused = await Fea07CrashFixture.MutateProtectedStateDuringPauseAsync(repo, python, dbPath, root);
         await appearance.SaveAsync(appearance.Settings with { Mode = AppearanceMode.Light });
         appearance.Reload();
         Assert.Equal(AppearanceMode.Light, appearance.Settings.Mode);
+        var afterPause = await Fea07CrashFixture.SnapshotProtectedAsync(repo, python, dbPath, root, "after-pause");
+        Assert.Equal(paused.RevisionId, afterPause.GetValueOrDefault("regions.r-crash-1.current_revision_id"));
+        Assert.Equal("1", afterPause.GetValueOrDefault("regions.r-crash-1.inpaint_locked"));
 
         // 2) 新进程走生产恢复入口（与 App.OnFrameworkInitializationCompleted 同一调用）。
         var themeHome = new ThemeHomePaths(
@@ -186,19 +201,20 @@ public sealed class Fea07Residual3CrashTests
         appearance.Reload();
         Assert.Equal(Fea07CrashFixture.PreviousFrontendId, appearance.FrontendId);
 
-        // 5) 「暂停期保护状态」第一条：整个 park/kill/recover 窗口零写保护列（内嵌 Python 逐列比对）。
-        var beforeSnapshotPath = Path.Combine(root, "protected-before.json");
-        Assert.True(File.Exists(beforeSnapshotPath), "the parked run wrote no protected-column snapshot");
-        var before = JsonSerializer.Deserialize<Dictionary<string, string>>(
-            await File.ReadAllTextAsync(beforeSnapshotPath))!;
-        var after = await Fea07CrashFixture.SnapshotProtectedAsync(repo, python, dbPath, root, "after");
-        var diff = Fea07CrashFixture.Diff(before, after);
+        // 5) 「暂停期保护状态」：恢复窗口零写保护列 + 采用暂停期最新保护状态（不回写旧快照）。
+        var afterRecover = await Fea07CrashFixture.SnapshotProtectedAsync(repo, python, dbPath, root, "after-recover");
+        var diff = Fea07CrashFixture.Diff(afterPause, afterRecover);
         Assert.True(diff.Count == 0,
-            "the crash/rollback window wrote protected columns:\n" + string.Join("\n", diff));
-        Assert.Equal("0", after.GetValueOrDefault("region_candidates.row_count"));
-        Assert.Equal("rr-crash-2", after.GetValueOrDefault("regions.r-crash-1.current_revision_id"));
-        Assert.Equal("1", after.GetValueOrDefault("regions.r-crash-1.region_locked"));
-        Assert.Equal("1", after.GetValueOrDefault("regions.r-crash-1.translation_locked"));
+            "the recovery window wrote protected columns:\n" + string.Join("\n", diff));
+        Assert.Equal("0", afterRecover.GetValueOrDefault("region_candidates.row_count"));
+        // 最新状态被采用：current 仍是暂停期新 revision、inpaint 锁仍是暂停期的值、text 是暂停期文本。
+        Assert.Equal(paused.RevisionId,
+            afterRecover.GetValueOrDefault("regions.r-crash-1.current_revision_id"));
+        Assert.Equal("1", afterRecover.GetValueOrDefault("regions.r-crash-1.inpaint_locked"));
+        Assert.Equal(paused.TextJson, afterRecover.GetValueOrDefault("regions.r-crash-1.text_json"));
+        // 不回写旧快照：没有回到崩溃前的 rr-crash-2 / inpaint_locked=0。
+        Assert.NotEqual("rr-crash-2", afterRecover.GetValueOrDefault("regions.r-crash-1.current_revision_id"));
+        Assert.NotEqual("0", afterRecover.GetValueOrDefault("regions.r-crash-1.inpaint_locked"));
 
         // 6) 证据（隔离根，不写跟踪文件）。
         var evidencePath = Path.Combine(root, "recover-evidence.json");
@@ -211,10 +227,15 @@ public sealed class Fea07Residual3CrashTests
             journalFailure = recovered.Failure,
             finalFrontendId = appearance.FrontendId,
             latestModePreserved = appearance.Settings.Mode.ToString(),
-            secondRecoveryChangedNothing = true,
+            pausedRevisionId = paused.RevisionId,
+            pausedInpaintLocked = afterRecover.GetValueOrDefault("regions.r-crash-1.inpaint_locked"),
+            pausedTextJson = afterRecover.GetValueOrDefault("regions.r-crash-1.text_json"),
+            currentRevisionAfterRecovery = afterRecover.GetValueOrDefault("regions.r-crash-1.current_revision_id"),
+            crashWindowProtectedColumnDiffs = crashDiff.Count,
             protectedColumnDiffs = diff.Count,
-            protectedColumns = after.Count,
-            candidateRows = after.GetValueOrDefault("region_candidates.row_count"),
+            protectedColumns = afterRecover.Count,
+            secondRecoveryChangedNothing = true,
+            candidateRows = afterRecover.GetValueOrDefault("region_candidates.row_count"),
         }, new JsonSerializerOptions { WriteIndented = true }));
         Assert.Contains("\"status\": \"ok\"", await File.ReadAllTextAsync(evidencePath), StringComparison.Ordinal);
     }
@@ -272,6 +293,9 @@ public sealed class Fea07Residual3CrashTests
         }
     }
 }
+
+/// <summary>暂停期外部写入后的真实保护状态（用于「恢复采用最新状态、不回写旧快照」断言）。</summary>
+internal sealed record PausedProtectionState(string RevisionId, int InpaintLocked, string TextJson);
 
 /// <summary>park 阶段的 gated fact：<c>NEWMANGA_FEA07_CRASH=1</c> 且 phase=park。</summary>
 public sealed class Fea07CrashParkFactAttribute : FactAttribute
@@ -397,6 +421,51 @@ print("RESULT_JSON:" + json.dumps(out, ensure_ascii=False, sort_keys=True))
         Assert.NotEmpty(snapshot);
         Console.WriteLine($"FEA-07-RESIDUAL-3 protected snapshot '{label}': {snapshot.Count} columns");
         return snapshot;
+    }
+
+    /// <summary>暂停期外部写入（独立 sqlite 连接，不经 App/Host）：新 revision 成为 current + 翻转 inpaint 锁。</summary>
+    public static async Task<PausedProtectionState> MutateProtectedStateDuringPauseAsync(
+        string repo, string python, string dbPath, string root)
+    {
+        var element = await RunPythonForJsonAsync(
+            repo,
+            python,
+            $$"""
+import json
+import sqlite3
+import sys
+
+NOW = "2026-02-02T00:00:00+00:00"
+conn = sqlite3.connect(r"{{dbPath}}", isolation_level=None)
+conn.row_factory = sqlite3.Row
+conn.execute("PRAGMA foreign_keys = ON")
+conn.execute(
+    "INSERT INTO region_revisions (region_revision_id,region_id,revision_no,snapshot_json,origin,"
+    " review_state,is_pinned,created_at)"
+    " VALUES ('rr-crash-paused','r-crash-1',3,?, 'user','confirmed',0,?)",
+    ('{"text":["paused-latest-state"],"v":3}', NOW))
+conn.execute(
+    "UPDATE regions SET current_revision_id='rr-crash-paused', inpaint_locked=1, text_json=?"
+    " WHERE region_id='r-crash-1'",
+    ('{"text":["paused-latest-state"],"v":3}',))
+conn.commit()
+row = conn.execute(
+    "SELECT current_revision_id,inpaint_locked,text_json FROM regions WHERE region_id='r-crash-1'"
+).fetchone()
+conn.close()
+print("RESULT_JSON:" + json.dumps({
+    "revision_id": row["current_revision_id"],
+    "inpaint_locked": row["inpaint_locked"],
+    "text_json": row["text_json"],
+    "revision_count": 3,
+}, ensure_ascii=False))
+""",
+            root);
+
+        return new PausedProtectionState(
+            element.GetProperty("revision_id").GetString()!,
+            element.GetProperty("inpaint_locked").GetInt32(),
+            element.GetProperty("text_json").GetString()!);
     }
 
     public static async Task RunPythonAsync(string repo, string python, string script, string root)

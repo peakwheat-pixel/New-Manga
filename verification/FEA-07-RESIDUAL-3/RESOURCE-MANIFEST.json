@@ -51,7 +51,15 @@
       "disposition": "NOT_APPLICABLE",
       "destination_path": "—",
       "sha256_or_manifest": "—",
-      "reference_or_process_check": "未触碰用户源文件/书籍/外部卷/回收站；AC4 的 default / --presentation-host / 坏外观文档 三组真实进程用例全部使用隔离 --data-root/--log-dir/--theme-home。唯一例外：既有产品行为 `--shell=legacy` 会向 %APPDATA%\\com.newmanga.desktop\\logs\\window-material.log 追加一行（MainWindow.WriteMaterialDiagnostics 硬编码该路径；该目录与文件 2026-10-27 起已存在），未修改用户数据内容，登记为 DEFECTS D-R4b-2（不在本卡 allowed_paths，未修）"
+      "reference_or_process_check": "未触碰用户源文件/书籍/外部卷/回收站；AC4 四组真实进程用例全部使用隔离 --data-root/--log-dir/--theme-home，r1 起再向子进程注入隔离 APPDATA/LOCALAPPDATA/USERPROFILE。r0 的既有越界（--shell=legacy 写真实 %APPDATA%\\com.newmanga.desktop\\logs\\window-material.log 一行）已在 r1 修复：显式 --log-dir 拥有全部日志文件（MainWindow.WriteMaterialDiagnostics，DSH 裁决 A 扩域）。r1 红线度量 14275 -> 14275（delta=0）；变异 M4b 主动回退现场 14275 -> 14276（+1，实验所致、不删除，其后基线 14276 且 delta=0）。登记 DEFECTS D-R4b-2"
+    },
+    {
+      "resource_type": "source-change-extended-scope",
+      "source_path": "apps/desktop-avalonia/src/NewManga.App/Views/MainWindow.axaml.cs",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "同上（仓库内生产侧文件）",
+      "sha256_or_manifest": "diff +5/-1（3 语义行 + 2 理由注释）；提交后见 git show --stat",
+      "reference_or_process_check": "r1 P1-01 红线修复，DSH 2026-11-08 裁决 A 书面授权扩域（仅该文件该一处）；未改组合根逻辑、未改 *.axaml、未动其它 src/NewManga.App/**、未动契约/pins"
     },
     {
       "resource_type": "tracked-side-effect",
@@ -65,12 +73,13 @@
   "gateChecks": {
     "dotnetBuild": "Release 0 warnings / 0 errors",
     "hostTests": "302 passed / 0 failed / 72 skipped（基线 302/0/71）",
-    "appTests": "828 passed / 0 failed / 11 skipped（基线 816/0/8）",
-    "fullSolution": "1791 passed / 0 failed / 107 skipped（基线 1779/0/103）",
+    "appTests": "829 passed / 0 failed / 11 skipped（基线 816/0/8）",
+    "fullSolution": "1792 passed / 0 failed / 107 skipped（基线 1779/0/103；首轮并发写入假红登记 D-R4b-8）",
     "pytest": "3395 passed / 0 failed / 10 skipped（基线 3394/1 既有 flaky/10）",
     "gatedAc1": "1 passed（NEWMANGA_FEA07_A03=1）",
-    "gatedAc3": "crash-switch.ps1 exit 0（park -> Kill(entireProcessTree) -> recover）",
-    "gatedAc4": "startup-matrix.ps1 exit 0（4/4 cases）、gated fact 1 passed",
-    "mutations": "3 组 RED -> sha256 MATCH -> 复绿（另附 ①b 双检出点判别）"
+    "gatedAc3": "crash-switch.ps1 exit 0（park -> Kill(entireProcessTree) -> recover；testhostGone=true；暂停期真实 DB 保护状态被采用）",
+    "gatedAc4": "startup-matrix.ps1 exit 0（4/4 cases）、gated fact 14 passed；真实 %APPDATA% window-material.log 历次 delta=0",
+    "redLine": "AC4 真实进程矩阵：真实用户目录零增长（r1 修复后，基线 14275/14340 均 delta=0）；变异 M4b 现场 +1 行已如实登记；既有 headless legacy 用例 +16/轮 属 D-R4b-7（既有隔离缺口，非 r1 回归）",
+    "mutations": "4 组 RED -> sha256 MATCH -> 复绿（另附 ①b 双检出点判别）"
   }
 }

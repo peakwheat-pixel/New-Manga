@@ -1,18 +1,25 @@
 {
   "task": "FEA-07-RESIDUAL-3",
   "ac": "AC-R4b-3 (AC4 real startup entry + diagnostics sink)",
-  "mode": "real process, four argument sets, isolated data root / theme home / log dir",
-  "generatedAt": "2026-11-08T22:52:13.9120140+08:00",
+  "mode": "real process, four argument sets, isolated data root / theme home / log dir / child APPDATA",
+  "generatedAt": "2026-11-09T00:23:15.9208823+08:00",
   "executable": "G:\\CODEX\\New Manga\\apps\\desktop-avalonia\\src\\NewManga.App\\bin\\Release\\net9.0\\NewManga.App.exe",
   "exitAfterMs": 2500,
+  "realUserProfileWindowMaterialLog": {
+    "path": "C:\\Users\\49745\\AppData\\Roaming\\com.newmanga.desktop\\logs\\window-material.log",
+    "linesBefore": 14340,
+    "linesAfter": 14340,
+    "delta": 0,
+    "untouched": true
+  },
   "cases": [
     {
       "name": "default",
       "arguments": [
-        "--data-root=G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\default-20261108-225159-1f24fa\\data",
-        "--log-dir=G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\default-20261108-225159-1f24fa\\logs",
-        "--theme-home=G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\default-20261108-225159-1f24fa\\theme",
-        "--mutex-name=Local\\NewManga.Fea07Startup.e12e9caa7475",
+        "--data-root=G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\default-20261109-002300-0399bd\\data",
+        "--log-dir=G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\default-20261109-002300-0399bd\\logs",
+        "--theme-home=G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\default-20261109-002300-0399bd\\theme",
+        "--mutex-name=Local\\NewManga.Fea07Startup.2630c721ee80",
         "--exit-after=2500"
       ],
       "exitCode": 0,
@@ -23,16 +30,21 @@
       "expectedMarker": "startup: shell=Default",
       "fallbackMatched": true,
       "expectedFallback": "fallback=False",
-      "elapsedMs": 3788,
-      "root": "G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\default-20261108-225159-1f24fa"
+      "isolatedLogDir": "G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\default-20261109-002300-0399bd\\logs",
+      "isolatedAppData": "G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\default-20261109-002300-0399bd\\appdata",
+      "childEnvironmentProbe": "G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\default-20261109-002300-0399bd\\appdata|G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\default-20261109-002300-0399bd\\localappdata",
+      "isolatedMaterialLines": 0,
+      "realAppDataMaterialLines": 14340,
+      "elapsedMs": 3853,
+      "root": "G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\default-20261109-002300-0399bd"
     },
     {
       "name": "presentation-host",
       "arguments": [
-        "--data-root=G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\presentation-host-20261108-225203-fa75f8\\data",
-        "--log-dir=G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\presentation-host-20261108-225203-fa75f8\\logs",
-        "--theme-home=G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\presentation-host-20261108-225203-fa75f8\\theme",
-        "--mutex-name=Local\\NewManga.Fea07Startup.c55107e4c22b",
+        "--data-root=G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\presentation-host-20261109-002304-5b9d33\\data",
+        "--log-dir=G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\presentation-host-20261109-002304-5b9d33\\logs",
+        "--theme-home=G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\presentation-host-20261109-002304-5b9d33\\theme",
+        "--mutex-name=Local\\NewManga.Fea07Startup.2629c5492283",
         "--exit-after=2500",
         "--presentation-host=true"
       ],
@@ -44,16 +56,21 @@
       "expectedMarker": "startup: shell=PresentationHost",
       "fallbackMatched": true,
       "expectedFallback": "fallback=False",
-      "elapsedMs": 3781,
-      "root": "G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\presentation-host-20261108-225203-fa75f8"
+      "isolatedLogDir": "G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\presentation-host-20261109-002304-5b9d33\\logs",
+      "isolatedAppData": "G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\presentation-host-20261109-002304-5b9d33\\appdata",
+      "childEnvironmentProbe": "G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\presentation-host-20261109-002304-5b9d33\\appdata|G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\presentation-host-20261109-002304-5b9d33\\localappdata",
+      "isolatedMaterialLines": 0,
+      "realAppDataMaterialLines": 14340,
+      "elapsedMs": 3806,
+      "root": "G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\presentation-host-20261109-002304-5b9d33"
     },
     {
       "name": "shell-legacy",
       "arguments": [
-        "--data-root=G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\shell-legacy-20261108-225206-8f5971\\data",
-        "--log-dir=G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\shell-legacy-20261108-225206-8f5971\\logs",
-        "--theme-home=G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\shell-legacy-20261108-225206-8f5971\\theme",
-        "--mutex-name=Local\\NewManga.Fea07Startup.2a281abe9c60",
+        "--data-root=G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\shell-legacy-20261109-002308-f6a42b\\data",
+        "--log-dir=G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\shell-legacy-20261109-002308-f6a42b\\logs",
+        "--theme-home=G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\shell-legacy-20261109-002308-f6a42b\\theme",
+        "--mutex-name=Local\\NewManga.Fea07Startup.f00de897e849",
         "--exit-after=2500",
         "--shell=legacy"
       ],
@@ -65,16 +82,21 @@
       "expectedMarker": "startup: shell=Legacy",
       "fallbackMatched": true,
       "expectedFallback": "fallback=False",
-      "elapsedMs": 3207,
-      "root": "G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\shell-legacy-20261108-225206-8f5971"
+      "isolatedLogDir": "G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\shell-legacy-20261109-002308-f6a42b\\logs",
+      "isolatedAppData": "G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\shell-legacy-20261109-002308-f6a42b\\appdata",
+      "childEnvironmentProbe": "G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\shell-legacy-20261109-002308-f6a42b\\appdata|G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\shell-legacy-20261109-002308-f6a42b\\localappdata",
+      "isolatedMaterialLines": 1,
+      "realAppDataMaterialLines": 14340,
+      "elapsedMs": 3178,
+      "root": "G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\shell-legacy-20261109-002308-f6a42b"
     },
     {
       "name": "corrupt-appearance",
       "arguments": [
-        "--data-root=G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\corrupt-appearance-20261108-225210-64d385\\data",
-        "--log-dir=G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\corrupt-appearance-20261108-225210-64d385\\logs",
-        "--theme-home=G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\corrupt-appearance-20261108-225210-64d385\\theme",
-        "--mutex-name=Local\\NewManga.Fea07Startup.8428b6156ebc",
+        "--data-root=G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\corrupt-appearance-20261109-002311-4aeff8\\data",
+        "--log-dir=G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\corrupt-appearance-20261109-002311-4aeff8\\logs",
+        "--theme-home=G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\corrupt-appearance-20261109-002311-4aeff8\\theme",
+        "--mutex-name=Local\\NewManga.Fea07Startup.ac433b51d2d0",
         "--exit-after=2500"
       ],
       "exitCode": 0,
@@ -85,8 +107,13 @@
       "expectedMarker": "startup: appearance: appearance document is not valid JSON",
       "fallbackMatched": true,
       "expectedFallback": "fallback=True",
-      "elapsedMs": 3809,
-      "root": "G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\corrupt-appearance-20261108-225210-64d385"
+      "isolatedLogDir": "G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\corrupt-appearance-20261109-002311-4aeff8\\logs",
+      "isolatedAppData": "G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\corrupt-appearance-20261109-002311-4aeff8\\appdata",
+      "childEnvironmentProbe": "G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\corrupt-appearance-20261109-002311-4aeff8\\appdata|G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\corrupt-appearance-20261109-002311-4aeff8\\localappdata",
+      "isolatedMaterialLines": 0,
+      "realAppDataMaterialLines": 14340,
+      "elapsedMs": 3794,
+      "root": "G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\corrupt-appearance-20261109-002311-4aeff8"
     }
   ],
   "failures": [],
