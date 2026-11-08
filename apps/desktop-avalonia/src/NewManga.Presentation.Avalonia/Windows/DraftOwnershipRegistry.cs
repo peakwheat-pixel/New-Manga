@@ -55,6 +55,9 @@ public enum DraftDenialReason
 
     /// <summary>No owner exists for the key yet.</summary>
     UnknownKey = 5,
+
+    /// <summary>The window token has no registered role, so its transfer outcome cannot be decided.</summary>
+    UnknownWindow = 6,
 }
 
 /// <summary>
@@ -108,13 +111,11 @@ public sealed class DraftWriteRejectedException : InvalidOperationException
 }
 
 /// <summary>
-/// FEA-07-RESIDUAL-2 AC-R4a-1: thread-safe <c>(SessionId, RegionId)</c> draft ownership registry for the
-/// window layer. It routes the rules by reference — C-13 SC-D03
+/// FEA-07-RESIDUAL-2 AC-R4a-1: thread-safe <c>(SessionId, RegionId)</c> draft ownership store for the
+/// window layer. The rules are routed by reference — C-13 SC-D03
 /// (<c>doc/plan/FEA-C13_DRAFT_PROTECTION_DRAFT.md:55-66</c>) and the frozen R4a interpretation
-/// (<c>doc/tasks/FEA-07-RESIDUAL-2.md:45</c>) — and only encodes them mechanically:
-/// one owner per key across OS windows, one window may claim the same key repeatedly (panels of that
-/// window share one <see cref="DraftOwnershipResult.DraftId"/>), an explicit transfer moves the owner and
-/// is idempotent, release makes the key claimable again, and concurrent callers produce exactly one owner.
+/// (<c>doc/tasks/FEA-07-RESIDUAL-2.md:45</c>) — and this type only exposes the mechanical API:
+/// <see cref="TryClaim"/>, <see cref="Release"/>, <see cref="RequestTransfer"/> plus read views.
 /// Results are immutable; state is only mutated under <c>_sync</c>.
 /// </summary>
 public sealed class DraftOwnershipRegistry
@@ -138,9 +139,9 @@ public sealed class DraftOwnershipRegistry
     }
 
     /// <summary>
-    /// Claims the key for <paramref name="windowToken"/>. The same window (including a second panel of it)
-    /// gets <see cref="DraftClaimStatus.Shared"/> and the existing draft id; a different window gets a
-    /// read-only result instead of a second owner.
+    /// Returns the ownership outcome of one claim attempt for <paramref name="windowToken"/>;
+    /// <see cref="DraftOwnershipResult.CanEdit"/> tells whether that window may submit draft writes and
+    /// <see cref="DraftOwnershipResult.DraftId"/> is the draft identity the outcome refers to.
     /// </summary>
     public DraftOwnershipResult TryClaim(DraftKey key, string windowToken, WindowRole role)
     {
@@ -192,9 +193,11 @@ public sealed class DraftOwnershipRegistry
     }
 
     /// <summary>
-    /// Explicit ownership transfer. Only the current owner may move the key, the draft id is preserved, and
-    /// repeating the same transfer is an idempotent <see cref="DraftClaimStatus.Retained"/> (same owner, same
-    /// draft id, no error) instead of a second mutation.
+    /// Explicit ownership request. The draft id is preserved; repeating an already-satisfied request is an
+    /// idempotent <see cref="DraftClaimStatus.Retained"/> instead of a second mutation, and the returned
+    /// <see cref="DraftOwnershipResult.CanEdit"/> is scoped to the requesting window (a former owner that
+    /// repeats the request is not told it may write). A target token whose role is unknown is refused typed
+    /// (<see cref="DraftDenialReason.UnknownWindow"/>) rather than guessed.
     /// </summary>
     public DraftOwnershipResult RequestTransfer(DraftKey key, string windowToken, string targetWindowToken)
     {
@@ -209,9 +212,24 @@ public sealed class DraftOwnershipRegistry
                 return Result(key, windowToken, KnownRole(windowToken), DraftClaimStatus.ReadOnly, false, null, null, null, DraftDenialReason.UnknownKey);
             }
 
+            if (!_windowRoles.TryGetValue(targetWindowToken, out var targetRole))
+            {
+                return Result(key, targetWindowToken, WindowRole.Main, DraftClaimStatus.ReadOnly, false, owner.DraftId, owner.WindowToken, key.SessionId, DraftDenialReason.UnknownWindow);
+            }
+
             if (string.Equals(owner.WindowToken, targetWindowToken, StringComparison.Ordinal))
             {
-                return Result(key, targetWindowToken, KnownRole(targetWindowToken), DraftClaimStatus.Retained, true, owner.DraftId, owner.WindowToken, key.SessionId, DraftDenialReason.None);
+                var requesterIsOwner = string.Equals(owner.WindowToken, windowToken, StringComparison.Ordinal);
+                return Result(
+                    key,
+                    targetWindowToken,
+                    targetRole,
+                    DraftClaimStatus.Retained,
+                    requesterIsOwner,
+                    owner.DraftId,
+                    owner.WindowToken,
+                    key.SessionId,
+                    requesterIsOwner ? DraftDenialReason.None : DraftDenialReason.NotOwner);
             }
 
             if (!string.Equals(owner.WindowToken, windowToken, StringComparison.Ordinal))
@@ -219,7 +237,6 @@ public sealed class DraftOwnershipRegistry
                 return Result(key, windowToken, KnownRole(windowToken), DraftClaimStatus.ReadOnly, false, owner.DraftId, owner.WindowToken, key.SessionId, DraftDenialReason.NotOwner);
             }
 
-            var targetRole = KnownRole(targetWindowToken);
             if (targetRole == WindowRole.Floating)
             {
                 return Result(key, targetWindowToken, targetRole, DraftClaimStatus.ReadOnly, false, owner.DraftId, owner.WindowToken, key.SessionId, DraftDenialReason.FloatingWindowReadOnly);
@@ -227,6 +244,22 @@ public sealed class DraftOwnershipRegistry
 
             owner.WindowToken = targetWindowToken;
             return Result(key, targetWindowToken, targetRole, DraftClaimStatus.Transferred, true, owner.DraftId, owner.WindowToken, key.SessionId, DraftDenialReason.None);
+        }
+    }
+
+    /// <summary>
+    /// Reads whether <paramref name="windowToken"/> owns <paramref name="key"/> right now. A caller uses this
+    /// to re-check a cached ownership result before writing, because a transfer may have moved it since.
+    /// </summary>
+    public bool IsCurrentOwner(DraftKey key, string windowToken)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(windowToken);
+        ValidateKey(key);
+
+        lock (_sync)
+        {
+            return _owners.TryGetValue(key, out var owner)
+                && string.Equals(owner.WindowToken, windowToken, StringComparison.Ordinal);
         }
     }
 
@@ -348,21 +381,26 @@ public sealed class DraftOwnershipRegistry
 
 /// <summary>
 /// FEA-07-RESIDUAL-2 AC-R4a-1: per-window view of the shared <see cref="DraftOwnershipRegistry"/> exposed
-/// as <c>PresentationWindow.DraftOwnership</c>. The window identity and role are fixed at construction, so a
-/// <see cref="WindowRole.Floating"/> window stays read-only for every claim it makes — the write gate
-/// (<see cref="EnsureWritable"/>) then fails typed instead of reaching the Host.
+/// as <c>PresentationWindow.DraftOwnership</c>. The window identity and role are fixed and registered at
+/// construction, so a <see cref="WindowRole.Floating"/> window stays read-only for every claim it makes and
+/// a transfer target is never guessed — the write gate (<see cref="EnsureWritable"/>) then fails typed
+/// instead of reaching the Host.
 /// </summary>
 public sealed class DraftOwnershipScope
 {
     private readonly WindowBroker _broker;
 
-    /// <summary>Creates the view for one OS window identity.</summary>
+    /// <summary>Creates the view for one OS window identity and registers its role before any claim.</summary>
     public DraftOwnershipScope(WindowBroker broker, string windowToken, WindowRole role)
     {
         _broker = broker ?? throw new ArgumentNullException(nameof(broker));
         ArgumentException.ThrowIfNullOrWhiteSpace(windowToken);
         WindowToken = windowToken;
         Role = role;
+        // R1 P2-003: the role has to be known before the first claim, otherwise an explicit transfer to a
+        // not-yet-claimed token would fall back to a guessed role and could hand edit rights to a
+        // read-only window.
+        _broker.Drafts.RememberWindow(windowToken, role);
     }
 
     /// <summary>Window identity this scope claims with.</summary>
@@ -390,16 +428,30 @@ public sealed class DraftOwnershipScope
         _broker.ReleaseDraft(key, WindowToken);
 
     /// <summary>
-    /// Typed write gate. Callers run it before any Host draft write; a read-only scope or claim throws
-    /// <see cref="DraftWriteRejectedException"/> so the write never starts (zero Host writes).
+    /// Typed write gate. Callers run it before any Host draft write; it throws
+    /// <see cref="DraftWriteRejectedException"/> when this scope is read-only, when the result was issued to
+    /// another window, or when the key is no longer owned by this window (a transfer may have moved it), so
+    /// the write never starts (zero Host writes).
     /// </summary>
     public void EnsureWritable(DraftOwnershipResult result)
     {
         ArgumentNullException.ThrowIfNull(result);
 
-        if (!CanEdit || !result.CanEdit)
+        var belongsHere = string.Equals(result.WindowToken, WindowToken, StringComparison.Ordinal);
+        if (belongsHere && result.CanEdit && CanEdit && _broker.Drafts.IsCurrentOwner(result.Key, WindowToken))
         {
-            throw new DraftWriteRejectedException(result);
+            return;
         }
+
+        // A result issued to another window, or one whose edit rights were lost to a later transfer, is a
+        // NotOwner refusal; an already read-only result keeps its own typed reason.
+        var denial = !belongsHere || result.CanEdit ? DraftDenialReason.NotOwner : result.Denial;
+
+        throw new DraftWriteRejectedException(result with
+        {
+            CanEdit = false,
+            Status = DraftClaimStatus.ReadOnly,
+            Denial = denial,
+        });
     }
 }

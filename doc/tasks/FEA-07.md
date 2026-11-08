@@ -402,7 +402,7 @@ allowed_paths:
 
 | AC | before | after | 依据与证据 |
 |---|---|---|---|
-| AC2 | `- [ ]` + `<<PARTIAL: … 真实双屏 broker 归属与 (SessionId,RegionId) 单写 owner 集成待补>>` | `- [x] … <<MET>>`（窗口层 owner + 生命周期；双屏原生落位 = NA，唯一登记在 AC5 行） | 新增 `Presentation.Avalonia/Windows/DraftOwnershipRegistry.cs`（+ `DraftOwnershipScope`）、`WindowBroker` 薄转发、`PresentationWindow.DraftOwnership`（DSH 2026-11-08 批准单文件 +21 行扩域）；C-13 SC-D03 `doc/plan/FEA-C13_DRAFT_PROTECTION_DRAFT.md:55-66` **只引用不复述**；测试 22+5（定向）+ 7（窗口级）+ 3（生命周期） |
+| AC2 | `- [ ]` + `<<PARTIAL: … 真实双屏 broker 归属与 (SessionId,RegionId) 单写 owner 集成待补>>` | `- [x] … <<MET>>`（窗口层 owner + 生命周期；双屏原生落位 = NA，唯一登记在 AC5 行） | 新增 `Presentation.Avalonia/Windows/DraftOwnershipRegistry.cs`（+ `DraftOwnershipScope`）、`WindowBroker` 薄转发、`PresentationWindow.DraftOwnership`（DSH 2026-11-08 批准单文件 +21 行扩域）；C-13 SC-D03 `doc/plan/FEA-C13_DRAFT_PROTECTION_DRAFT.md:55-66` **只引用不复述**；测试 定向 **33**（registry 23 + scope 5 + broker 转发 5）+ 窗口级 **8** + 生命周期 **3**（r1 后） |
 | AC6 | `- [ ]` + `<<PARTIAL: p95 PASS 单次口径…UI freeze 为上限估计、真实规模合成负载与真机指标待补（R-009）>>` | `- [x] … <<MET>>`（门槛 1000 ms 不变；3 次独立运行 p95 中位数；`uiThreadSchedulingGapMs`；N∈{50,200,500} 记录；冷启动单列） | `tests/NewManga.App.Tests/PerformanceBaselineTests.cs`；`evidence/performance-baseline-r4a.json`（中位 p95 378.86 ms，worst gap 208.56 ms）、`evidence/performance-scale-r4a.json` |
 | AC8 | `- [ ]` + `<<PARTIAL: … 原生双屏/拔屏/DPI 矩阵 blocked（D-1，无截图证据）>>` | `- [x] … <<MET>>`（证据索引/门禁/基线/变异；原生矩阵与截图 NA 见 AC5 行） | `verification/FEA-07-RESIDUAL-2/README.md`、`RESOURCE-MANIFEST.json`、`logs/governance.log`（`check.ps1` PASS(3)、pins 18/18）、`mutation-selfcheck.md` |
 | AC5 / AC1-IME / AC2-双屏（NA 三条） | blocked/待补 表述分散在 AC1/AC2/AC5 | **只在 AC5 行登记一次** = `NOT_APPLICABLE`（保留 `NOT_RUN`，不写成 PASS） | 用户 2026-11-08 授权豁免；`doc/reviews/ADJ-2026-11-RESIDUAL-WAIVER.md` §7.10 |
@@ -410,4 +410,5 @@ allowed_paths:
 - 未变更：AC1/AC3/AC4 仍 `- [ ]` + 原 `<<PARTIAL…>>`（R4b 承接）；AC7 保持 `<<MET>>`；上方 r1–r12 Review 链、Canonical Evidence 表与 `verification/FEA-07/**` 字节不动。
 - 口径：本节不写「FEA-07 完全实现 / 全部 limitation 关闭 / 可发布」；只登记 AC2/AC6/AC8 达成与 NA 边界（规模负载超门槛数字已在 AC6 行如实登记）。
 - 测试基线：定向 65/0/0（+27）、App 815/0/7（+11）、全量 **1771/0/102**（基线 1733/0/102，skip 不变）；pytest 零 Python 改动未跑。
+- **r1 返修（2026-11-08，独立 Review approved P0=0/P1=0/P2=4/P3=12）**：AC-R4a-1 加固（`DraftOwnershipScope` 构造即注册角色 = P2-003；`EnsureWritable` 绑窗口身份 + 实时 owner = P3-010；幂等转移按请求方给 `CanEdit` = P3-001；类注释去复述 = P3-008）；AC-R4a-3 补 **UI gap 400 ms 三轮定标**证据（worst 249.44 ms，余量 37.64%，门槛不变 = P2-004）；卡面/README 口径改 +26/−5（净 +21）；明示 **L-R4a-1**（生产组合根未注入共享 registry / `RegisterSecondary` 零调用 / 无 Floating 生产实例 ⇒ 跨窗接线待多窗口功能卡）。r1 后：定向 **71/0/0**、App **816/0/7**、全量见 `verification/FEA-07-RESIDUAL-2/logs/full-solution-tests.log`；变异 5 组 RED→sha256 MATCH→复绿。AC2/AC6/AC8 判定不变。
 

@@ -185,17 +185,44 @@ public sealed class DraftOwnershipRegistryTests
         Assert.Equal(DraftClaimStatus.Transferred, first.Status);
         Assert.Equal(DraftClaimStatus.Retained, second.Status);
         Assert.Equal(DraftClaimStatus.Retained, third.Status);
-        Assert.True(second.CanEdit && third.CanEdit);
+        // R1 P3-001: a repeat by the FORMER owner changes nothing and must not report edit rights,
+        // otherwise a stale caller could believe it still owns the draft.
+        Assert.False(second.CanEdit);
+        Assert.False(third.CanEdit);
+        Assert.Equal(DraftDenialReason.NotOwner, second.Denial);
         Assert.Equal(first.OwnerWindowToken, second.OwnerWindowToken);
         Assert.Equal(first.OwnerWindowToken, third.OwnerWindowToken);
         Assert.Equal(owner.DraftId, third.DraftId);
         Assert.Equal(1, registry.Count);
+
+        // The current owner repeating the same request is the idempotent no-op with edit rights.
+        var byNewOwner = registry.RequestTransfer(Key(), "window-inspector", "window-inspector");
+        Assert.Equal(DraftClaimStatus.Retained, byNewOwner.Status);
+        Assert.True(byNewOwner.CanEdit);
+        Assert.Equal(DraftDenialReason.None, byNewOwner.Denial);
+        Assert.Equal(owner.DraftId, byNewOwner.DraftId);
 
         // A transfer never creates a second draft row: the same key keeps exactly one draft id.
         var snapshot = registry.Snapshot();
         Assert.Single(snapshot);
         Assert.Equal(owner.DraftId, snapshot[0].DraftId);
         Assert.Equal("window-inspector", snapshot[0].OwnerWindowToken);
+    }
+
+    [Fact]
+    public void ExplicitTransfer_ToUnknownWindow_IsTypedRefusalWithoutGuessingARole()
+    {
+        var registry = new DraftOwnershipRegistry();
+        registry.TryClaim(Key(), "window-main", WindowRole.Main);
+
+        // R1 P2-003: an unregistered token has no known role; the registry refuses typed instead of
+        // falling back to "Main" and silently treating the target as editable.
+        var transfer = registry.RequestTransfer(Key(), "window-main", "window-never-seen");
+
+        Assert.Equal(DraftClaimStatus.ReadOnly, transfer.Status);
+        Assert.False(transfer.CanEdit);
+        Assert.Equal(DraftDenialReason.UnknownWindow, transfer.Denial);
+        Assert.Equal("window-main", registry.Snapshot().Single().OwnerWindowToken);
     }
 
     [Fact]

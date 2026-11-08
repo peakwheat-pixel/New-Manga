@@ -1,3 +1,4 @@
+====== FEA-07-RESIDUAL-2 r1 gate run (post-rework) ======
 === tools/governance/check.ps1 ===
 Governance scope: 15 current documents; no historical directory scan.
 Task: doc\tasks\FEA-07-RESIDUAL-2.md
@@ -5,7 +6,13 @@ WARN: 存在 15 个非终态 Task（见 TASK_LEDGER）；状态字段不能证�
 WARN: doc/STATUS.md 已达到预算的 80%：3069 bytes / 28 lines
 WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6893 bytes / 64 lines
 Governance check: PASS (3 warnings)
-
+=== tools/governance/check.ps1 -TaskPath doc/tasks/FEA-07.md ===
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-07.md
+WARN: 存在 15 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3069 bytes / 28 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6893 bytes / 64 lines
+Governance check: PASS (3 warnings)
 === tools/governance/verify_pins.ps1 ===
 OK C01b 3c9f5af7d74f
 OK C02 bb365ca891a7

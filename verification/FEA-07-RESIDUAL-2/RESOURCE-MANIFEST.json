@@ -5,7 +5,7 @@
   "generated_by": "fea07-residual2-impl (DSH 派发的 headless 实现者)",
   "implementation_commit": "85207730e",
   "base_commit": "0a39a78f0",
-  "note": "FEA-07 closure A (0 pin, headless-only). AC-R4a-1 window-layer draft owner registry + broker forwarding + PresentationWindow exposure (DSH-approved single-file expansion, +21 additive lines); AC-R4a-2 host lifecycle invariants; AC-R4a-3 AC6 three-run median p95 gate (1000 ms unchanged) + uiThreadSchedulingGapMs (calibrated 400 ms) + N in {50,200,500} real synthetic scale recorded; AC-R4a-4 evidence/governance (FEA-07 append-only backfill for AC2/AC6/AC8, NA lines written once in the AC5 row). No contract/plan/pin change; 18/18 pins unchanged; native dual-screen/IME items NA (NOT_RUN) per 2026-11-08 user waiver.",
+  "note": "FEA-07 closure A (0 pin, headless-only). AC-R4a-1 window-layer draft owner store + scope + broker forwarding + PresentationWindow exposure (DSH-approved single-file expansion, +26/-5 = net +21 additive lines, no functional deletion); AC-R4a-2 host lifecycle invariants; AC-R4a-3 AC6 three-run median p95 gate (1000 ms unchanged) + uiThreadSchedulingGapMs (calibrated 400 ms, 3-round calibration evidence worst 249.44 ms) + N in {50,200,500} real synthetic scale recorded; AC-R4a-4 evidence/governance (FEA-07 append-only backfill for AC2/AC6/AC8, NA lines written once in the AC5 row). r1 rework: scope registers its role at construction (P2-003), transfer snapshot answers per requester (P3-001), EnsureWritable binds window identity + live owner (P3-010), class comment de-duplicates C-13 rules (P3-008), ui-gap calibration evidence (P2-004). Residual L-R4a-1 recorded: production composition root does not inject a shared registry, RegisterSecondary has zero callers, no Floating production instance, so cross-window wiring is re-homed to the multi-window feature card. No contract/plan/pin change; 18/18 pins unchanged; native dual-screen/IME items NA (NOT_RUN) per 2026-11-08 user waiver.",
   "resources": [
     {
       "resource_type": "worktree",
@@ -48,6 +48,13 @@
       "disposition": "NOT_APPLICABLE",
       "destination_path": "NOT_APPLICABLE",
       "process_check": "Pre-existing side effect of NewManga.CoreClient.Tests during full runs; restored with git checkout -- verification/FEA-09 after the full run (zero diff)."
+    },
+    {
+      "resource_type": "tool",
+      "source_path": "verification/FEA-07-RESIDUAL-2/tools/calibrate-ui-gap.ps1",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "verification/FEA-07-RESIDUAL-2/tools/calibrate-ui-gap.ps1",
+      "process_check": "Task-local calibration runner (3 independent rounds); writes only into this evidence directory, reads the committed test command, touches no user data."
     }
   ],
   "closeout_counts": {

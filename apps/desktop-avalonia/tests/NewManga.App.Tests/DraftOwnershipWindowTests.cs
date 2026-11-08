@@ -229,6 +229,9 @@ public sealed class DraftOwnershipWindowTests : IDisposable
             Assert.Equal(DraftClaimStatus.Transferred, transfer.Status);
             Assert.True(transfer.CanEdit);
             Assert.Equal(DraftClaimStatus.Retained, idempotent.Status);
+            // R1 P3-001: the former owner repeating the request must not be told it may still write.
+            Assert.False(idempotent.CanEdit);
+            Assert.Equal(DraftDenialReason.NotOwner, idempotent.Denial);
             Assert.Equal(claim.DraftId, transfer.DraftId);
             Assert.Equal(target.WindowToken, transfer.OwnerWindowToken);
 
@@ -245,6 +248,37 @@ public sealed class DraftOwnershipWindowTests : IDisposable
         {
             owner.Close();
             target.Close();
+        }
+    }
+
+    [AvaloniaFact]
+    public void TransferToAConstructedButUnclaimedFloatingWindow_IsRefusedAndTheOwnerKeepsEdit()
+    {
+        var registry = new DraftOwnershipRegistry();
+        var owner = CreateWindow(registry);
+        // R1 P2-003 ordering case: the floating window is constructed but never claims anything.
+        var floating = CreateWindow(registry, WindowRole.Floating);
+        try
+        {
+            var claim = owner.DraftOwnership.TryClaimDraft(Key);
+            Assert.True(claim.CanEdit);
+
+            var transfer = owner.DraftOwnership.RequestDraftTransfer(Key, floating.WindowToken);
+
+            Assert.Equal(DraftClaimStatus.ReadOnly, transfer.Status);
+            Assert.False(transfer.CanEdit);
+            Assert.Equal(DraftDenialReason.FloatingWindowReadOnly, transfer.Denial);
+            // The original owner was not robbed of the draft.
+            Assert.True(registry.IsCurrentOwner(Key, owner.WindowToken));
+            Assert.False(registry.IsCurrentOwner(Key, floating.WindowToken));
+            var ownerClaim = owner.DraftOwnership.TryClaimDraft(Key);
+            Assert.True(ownerClaim.CanEdit);
+            Assert.Equal(claim.DraftId, ownerClaim.DraftId);
+        }
+        finally
+        {
+            owner.Close();
+            floating.Close();
         }
     }
 

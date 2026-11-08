@@ -1,0 +1,77 @@
+# uiThreadSchedulingGapMs 定标（FEA-07-RESIDUAL-2 AC-R4a-3 / r1 P2-004）
+# 命令：dotnet test apps/desktop-avalonia/tests/NewManga.App.Tests/NewManga.App.Tests.csproj -c Release --filter "FullyQualifiedName~HotSwitch_P95MedianOfThreeIndependentRuns"，每轮独立进程。
+
+round 1: worstGap=249.44 ms; runGaps=[249.44, 207.34, 199]; heartbeatTicks=[122, 117, 117]; medianP95=401.28 ms; passed=True
+round 2: worstGap=223.3 ms; runGaps=[223.3, 197.6, 202.19]; heartbeatTicks=[124, 120, 115]; medianP95=387.99 ms; passed=True
+round 3: worstGap=227.85 ms; runGaps=[227.85, 203.81, 206.42]; heartbeatTicks=[121, 118, 116]; medianP95=389.47 ms; passed=True
+
+worstGap=249.44 ms; budget=400 ms; margin=37.64%; verdict=KEEP 400 ms（余量 37.64% ≥ 10%）
+json: G:\CODEX\New Manga\verification\FEA-07-RESIDUAL-2\evidence\ui-gap-calibration-r4a.json
+
+{
+  "metric": "FEA-07-RESIDUAL-2 AC-R4a-3 uiThreadSchedulingGapMs calibration",
+  "budgetUiThreadSchedulingGapMs": 400,
+  "independentRounds": 3,
+  "frozenTest": "NewManga.App.Tests.PerformanceBaselineTests.HotSwitch_P95MedianOfThreeIndependentRuns_StaysWithinTheFrozenW5Budget",
+  "command": "dotnet test apps/desktop-avalonia/tests/NewManga.App.Tests/NewManga.App.Tests.csproj -c Release --filter FullyQualifiedName~HotSwitch_P95MedianOfThreeIndependentRuns",
+  "heartbeatIntervalMs": 5,
+  "perRoundShape": "4 warmup + 20 measured one-way switches; 3 sub-runs per round (the frozen median gate)",
+  "rounds": [
+    {
+      "round": 1,
+      "worstGapMs": 249.44,
+      "runGapsMs": [
+        249.44,
+        207.34,
+        199.0
+      ],
+      "uiThreadHeartbeatTicks": [
+        122,
+        117,
+        117
+      ],
+      "medianP95Ms": 401.28,
+      "worstRunP95Ms": 455.57,
+      "passed": true
+    },
+    {
+      "round": 2,
+      "worstGapMs": 223.3,
+      "runGapsMs": [
+        223.3,
+        197.6,
+        202.19
+      ],
+      "uiThreadHeartbeatTicks": [
+        124,
+        120,
+        115
+      ],
+      "medianP95Ms": 387.99,
+      "worstRunP95Ms": 436.9,
+      "passed": true
+    },
+    {
+      "round": 3,
+      "worstGapMs": 227.85,
+      "runGapsMs": [
+        227.85,
+        203.81,
+        206.42
+      ],
+      "uiThreadHeartbeatTicks": [
+        121,
+        118,
+        116
+      ],
+      "medianP95Ms": 389.47,
+      "worstRunP95Ms": 425.11,
+      "passed": true
+    }
+  ],
+  "worstGapMs": 249.44,
+  "marginPercent": 37.64,
+  "verdict": "KEEP 400 ms（余量 37.64% ≥ 10%）",
+  "history": "Pre-rework ad-hoc observations: 215.28 ms (Background-priority heartbeat) and 232.90 ms (Normal-priority heartbeat). They are quoted here as history only; this file is the committed calibration evidence.",
+  "notes": "Any future budget change must keep the frozen 1000 ms p95 gate and the 3-run median shape untouched; only this calibrated gap budget may move, with DSH sign-off."
+}

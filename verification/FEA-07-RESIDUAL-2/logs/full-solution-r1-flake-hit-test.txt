@@ -1,0 +1,5 @@
+[xUnit.net 00:02:32.36]     NewManga.App.Tests.FluentR2ReworkTests.R3001_OtherControlPress_Wheel_AndShellHandledKey_WakeHiddenBarsAndRenewDeadline(mode: Reduce, categories: All, input: 0) [FAIL]
+失败 NewManga.App.Tests.FluentR2ReworkTests.R3001_OtherControlPress_Wheel_AndShellHandledKey_WakeHiddenBarsAndRenewDeadline(mode: Reduce, categories: All, input: 0) [381 ms]
+target=Avalonia.Controls.Button; bounds=931, 372, 117, 35; point=1205.5, 457.5; hit=NewManga.DesignSystem.Controls.ReaderPage
+at NewManga.App.Tests.FluentR2ReworkTests.R3001_OtherControlPress_Wheel_AndShellHandledKey_WakeHiddenBarsAndRenewDeadline(MotionMode mode, MotionCategories categories, Int32 input)
+失败!  - 失败:     1，通过:   815，已跳过:     7，总计:   823，持续时间: 4 m 27 s - NewManga.App.Tests.dll (net9.0)
