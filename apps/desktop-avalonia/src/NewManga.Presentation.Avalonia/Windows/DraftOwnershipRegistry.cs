@@ -214,7 +214,9 @@ public sealed class DraftOwnershipRegistry
 
             if (!_windowRoles.TryGetValue(targetWindowToken, out var targetRole))
             {
-                return Result(key, targetWindowToken, WindowRole.Main, DraftClaimStatus.ReadOnly, false, owner.DraftId, owner.WindowToken, key.SessionId, DraftDenialReason.UnknownWindow);
+                // R2-008: the target role is genuinely unknown here, so the diagnostic field must say exactly
+                // that instead of guessing Main (which would read like an editable window).
+                return Result(key, targetWindowToken, WindowRole.Unknown, DraftClaimStatus.ReadOnly, false, owner.DraftId, owner.WindowToken, key.SessionId, DraftDenialReason.UnknownWindow);
             }
 
             if (string.Equals(owner.WindowToken, targetWindowToken, StringComparison.Ordinal))
@@ -250,8 +252,10 @@ public sealed class DraftOwnershipRegistry
     /// <summary>
     /// Reads whether <paramref name="windowToken"/> owns <paramref name="key"/> right now. A caller uses this
     /// to re-check a cached ownership result before writing, because a transfer may have moved it since.
+    /// When <paramref name="draftId"/> is supplied the current draft identity must match too, so a result from
+    /// before a release + reclaim (same window, new draft id) is not mistaken for a live claim.
     /// </summary>
-    public bool IsCurrentOwner(DraftKey key, string windowToken)
+    public bool IsCurrentOwner(DraftKey key, string windowToken, string? draftId = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(windowToken);
         ValidateKey(key);
@@ -259,7 +263,8 @@ public sealed class DraftOwnershipRegistry
         lock (_sync)
         {
             return _owners.TryGetValue(key, out var owner)
-                && string.Equals(owner.WindowToken, windowToken, StringComparison.Ordinal);
+                && string.Equals(owner.WindowToken, windowToken, StringComparison.Ordinal)
+                && (draftId is null || string.Equals(owner.DraftId, draftId, StringComparison.Ordinal));
         }
     }
 
@@ -430,15 +435,20 @@ public sealed class DraftOwnershipScope
     /// <summary>
     /// Typed write gate. Callers run it before any Host draft write; it throws
     /// <see cref="DraftWriteRejectedException"/> when this scope is read-only, when the result was issued to
-    /// another window, or when the key is no longer owned by this window (a transfer may have moved it), so
-    /// the write never starts (zero Host writes).
+    /// another window, or when the key/draft identity is no longer owned by this window (a transfer or a
+    /// release + reclaim may have moved it), so the write never starts (zero Host writes).
     /// </summary>
     public void EnsureWritable(DraftOwnershipResult result)
     {
         ArgumentNullException.ThrowIfNull(result);
 
         var belongsHere = string.Equals(result.WindowToken, WindowToken, StringComparison.Ordinal);
-        if (belongsHere && result.CanEdit && CanEdit && _broker.Drafts.IsCurrentOwner(result.Key, WindowToken))
+        // R2-005: compare the draft id as well — a release + reclaim by the same window yields a NEW draft id,
+        // so a result cached from the previous claim must not reopen the write path.
+        if (belongsHere
+            && result.CanEdit
+            && CanEdit
+            && _broker.Drafts.IsCurrentOwner(result.Key, WindowToken, result.DraftId))
         {
             return;
         }

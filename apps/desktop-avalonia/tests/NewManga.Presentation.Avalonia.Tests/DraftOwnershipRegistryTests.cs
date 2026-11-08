@@ -222,6 +222,8 @@ public sealed class DraftOwnershipRegistryTests
         Assert.Equal(DraftClaimStatus.ReadOnly, transfer.Status);
         Assert.False(transfer.CanEdit);
         Assert.Equal(DraftDenialReason.UnknownWindow, transfer.Denial);
+        // R2-008: the diagnostic role field says Unknown instead of guessing an editable Main role.
+        Assert.Equal(WindowRole.Unknown, transfer.WindowRole);
         Assert.Equal("window-main", registry.Snapshot().Single().OwnerWindowToken);
     }
 

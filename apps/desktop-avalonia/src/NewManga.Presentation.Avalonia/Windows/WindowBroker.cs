@@ -11,6 +11,13 @@ public enum WindowRole
 
     /// <summary>Independent read-only or detached-session window.</summary>
     Floating = 2,
+
+    /// <summary>
+    /// Diagnostic-only role for a token whose role is genuinely unknown (never registered). It is never a live
+    /// window role: broker registrations and scope construction always carry a real role, and a result carrying
+    /// <see cref="Unknown"/> means "this token was not registered", not "treat it as a main window".
+    /// </summary>
+    Unknown = 3,
 }
 
 /// <summary>One tracked window; <see cref="Token"/> is an opaque identity for tests/diagnostics.</summary>

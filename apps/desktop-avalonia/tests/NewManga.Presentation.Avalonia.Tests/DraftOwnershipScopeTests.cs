@@ -115,4 +115,24 @@ public sealed class DraftOwnershipScopeTests
         inspector.EnsureWritable(inspector.TryClaimDraft(Key));
         Assert.Throws<DraftWriteRejectedException>(() => owner.EnsureWritable(claim));
     }
+
+    [Fact]
+    public void EnsureWritable_RejectsAStaleResultAfterReleaseAndReclaim()
+    {
+        var registry = new DraftOwnershipRegistry();
+        var (scope, _) = CreateScope(registry, "window-main", WindowRole.Main);
+        var staleClaim = scope.TryClaimDraft(Key);
+        Assert.True(staleClaim.CanEdit);
+
+        Assert.True(scope.ReleaseDraft(Key));
+        var reclaimed = scope.TryClaimDraft(Key);
+        Assert.True(reclaimed.CanEdit);
+        Assert.NotEqual(staleClaim.DraftId, reclaimed.DraftId);
+
+        // R2-005: same window, but a different draft identity — the pre-release result must not write.
+        var refusal = Assert.Throws<DraftWriteRejectedException>(() => scope.EnsureWritable(staleClaim));
+
+        Assert.Equal(DraftDenialReason.NotOwner, refusal.Reason);
+        scope.EnsureWritable(reclaimed);
+    }
 }
