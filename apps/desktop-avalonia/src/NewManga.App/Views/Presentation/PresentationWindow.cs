@@ -27,6 +27,7 @@ namespace NewManga.App.Views.Presentation;
 /// </summary>
 public sealed class PresentationWindow : Window
 {
+    private static long s_windowSequence;
     private readonly FrontendHostCoordinator _coordinator;
     private readonly Func<IReadOnlyList<Control>>? _allContentProvider;
     private FluentShellSurface? _fullScreenOwner;
@@ -36,6 +37,8 @@ public sealed class PresentationWindow : Window
     /// FEA-07 R-002: every cached content tree the composition root keeps for state preservation (the
     /// window closes only after all of them report no unsaved edits / active runs, not just the visible tree).
     /// </param>
+    /// <param name="role">AC-R4a-1: window role; <see cref="WindowRole.Floating"/> is constructed read-only.</param>
+    /// <param name="drafts">Optional shared draft registry (default one per window); C-13 SC-D03 by reference.</param>
     public PresentationWindow(
         AppOptions options,
         FrontendSelection selection,
@@ -44,7 +47,9 @@ public sealed class PresentationWindow : Window
         SwitchJournal journal,
         Func<string, Control> contentFactory,
         WindowStateMemento? initialMemento = null,
-        Func<IReadOnlyList<Control>>? allContentProvider = null)
+        Func<IReadOnlyList<Control>>? allContentProvider = null,
+        WindowRole role = WindowRole.Main,
+        DraftOwnershipRegistry? drafts = null)
         : this(
             options,
             selection,
@@ -55,7 +60,9 @@ public sealed class PresentationWindow : Window
             initialMemento,
             allContentProvider,
             beforeJournalCommit: null,
-            beforeCommit: null)
+            beforeCommit: null,
+            role: role,
+            drafts: drafts)
     {
     }
 
@@ -74,7 +81,9 @@ public sealed class PresentationWindow : Window
         WindowStateMemento? initialMemento,
         Func<IReadOnlyList<Control>>? allContentProvider,
         Action? beforeJournalCommit,
-        Action? beforeCommit)
+        Action? beforeCommit,
+        WindowRole role = WindowRole.Main,
+        DraftOwnershipRegistry? drafts = null)
     {
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(selection);
@@ -135,13 +144,25 @@ public sealed class PresentationWindow : Window
             windowModeSnapshot: CaptureWindowMode,
             beforeContentCommit: beforeCommit);
 
-        Broker = new WindowBroker();
-        Broker.RegisterMain("presentation-main");
+        Broker = new WindowBroker(drafts ?? new DraftOwnershipRegistry());
+        WindowToken = $"presentation-{role.ToString().ToLowerInvariant()}-{Interlocked.Increment(ref s_windowSequence)}";
+        Broker.RegisterMain(WindowToken);
+        // FEA-07-RESIDUAL-2 AC-R4a-1: window-scoped draft ownership; a Floating window is read-only here.
+        DraftOwnership = new DraftOwnershipScope(Broker, WindowToken, role);
         Closing += OnClosing;
     }
 
     /// <summary>FEA-07 window broker: the stable main window is registered once; secondary windows are tracked.</summary>
     public WindowBroker Broker { get; }
+
+    /// <summary>
+    /// FEA-07-RESIDUAL-2 AC-R4a-1: draft ownership view of this OS window (C-13 SC-D03
+    /// <c>doc/plan/FEA-C13_DRAFT_PROTECTION_DRAFT.md:55-66</c> by reference; not restated here).
+    /// </summary>
+    public DraftOwnershipScope DraftOwnership { get; }
+
+    /// <summary>Opaque identity of this OS window in <see cref="DraftOwnership"/>.</summary>
+    public string WindowToken { get; }
 
     /// <summary>
     /// FEA-07 exit coordination (proposal §7.3): closing the stable window asks the process-level

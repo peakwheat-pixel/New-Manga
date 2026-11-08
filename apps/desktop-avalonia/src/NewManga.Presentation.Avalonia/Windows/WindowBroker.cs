@@ -26,6 +26,24 @@ public sealed class WindowBroker
     private readonly List<WindowRegistration> _windows = new();
     private readonly object _sync = new();
 
+    /// <summary>Keeps the historical per-broker draft registry (FEA-07-RESIDUAL-2 AC-R4a-1).</summary>
+    public WindowBroker()
+        : this(new DraftOwnershipRegistry())
+    {
+    }
+
+    /// <summary>Creates a broker forwarding draft ownership to a (process-shared) registry.</summary>
+    public WindowBroker(DraftOwnershipRegistry drafts)
+    {
+        Drafts = drafts ?? throw new ArgumentNullException(nameof(drafts));
+    }
+
+    /// <summary>
+    /// FEA-07-RESIDUAL-2 AC-R4a-1: draft ownership registry this broker forwards to. The rules themselves
+    /// are routed by reference (C-13 SC-D03, <c>doc/plan/FEA-C13_DRAFT_PROTECTION_DRAFT.md:55-66</c>).
+    /// </summary>
+    public DraftOwnershipRegistry Drafts { get; }
+
     public WindowRegistration? Main { get; private set; }
 
     public IReadOnlyList<WindowRegistration> Windows
@@ -117,4 +135,22 @@ public sealed class WindowBroker
             }
         }
     }
+
+    // ---------------------------------------------------------------------------------------------
+    // FEA-07-RESIDUAL-2 AC-R4a-1: thin forwards to the draft ownership registry. The broker itself keeps
+    // tracking window identity only; ownership semantics live in DraftOwnershipRegistry (C-13 SC-D03
+    // referenced at doc/plan/FEA-C13_DRAFT_PROTECTION_DRAFT.md:55-66, not restated here).
+    // ---------------------------------------------------------------------------------------------
+
+    /// <summary>Claims one draft key for a window token (thin forward).</summary>
+    public DraftOwnershipResult TryClaimDraft(DraftKey key, string windowToken, WindowRole role) =>
+        Drafts.TryClaim(key, windowToken, role);
+
+    /// <summary>Releases one draft key held by a window token (thin forward).</summary>
+    public bool ReleaseDraft(DraftKey key, string windowToken) =>
+        Drafts.Release(key, windowToken);
+
+    /// <summary>Requests an explicit draft ownership transfer (thin forward).</summary>
+    public DraftOwnershipResult RequestDraftTransfer(DraftKey key, string windowToken, string targetWindowToken) =>
+        Drafts.RequestTransfer(key, windowToken, targetWindowToken);
 }

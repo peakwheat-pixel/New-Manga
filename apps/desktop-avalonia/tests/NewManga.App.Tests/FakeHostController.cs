@@ -1122,7 +1122,26 @@ public sealed class FakeHostController : IHostController, ISourceImportControlle
         RevisionsByRegion[regionId] = new RegionRevisionHistory(regionId, revisionNo, rows);
     }
 
-    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
+    /// <summary>
+    /// FEA-07-RESIDUAL-2 AC-R4a-2: number of times anything disposed the Host. The stable presentation
+    /// window must leave this at zero — a window that wrongly disposed the Host turns the lifecycle test red.
+    /// </summary>
+    public int DisposeCalls { get; private set; }
+
+    /// <summary>FEA-07-RESIDUAL-2 AC-R4a-2: makes a wrongful window-driven disposal fail loudly once.</summary>
+    public Exception? DisposeException { get; set; }
+
+    public ValueTask DisposeAsync()
+    {
+        DisposeCalls++;
+        if (DisposeException is { } failure)
+        {
+            DisposeException = null;
+            return ValueTask.FromException(failure);
+        }
+
+        return ValueTask.CompletedTask;
+    }
 
     /// <summary>CHAPTER-SELECTOR-1: resolve the scripted book that owns a chapter id.</summary>
     private ReaderBookData? ResolveBookForChapter(string chapterId)
@@ -1632,13 +1651,26 @@ public sealed class FakeHostController : IHostController, ISourceImportControlle
     /// <summary>Drafts returned by ListDraftsAsync for every session; default empty.</summary>
     public IReadOnlyList<Draft> ScriptedDrafts { get; set; } = Array.Empty<Draft>();
 
+    /// <summary>
+    /// FEA-07-RESIDUAL-2 AC-R4a-1: every draft frame that reached the Host, in order
+    /// (<c>open</c>/<c>patch</c>/<c>discard</c>). A window whose claim is read-only must leave this empty —
+    /// the typed gate has to refuse before any Host write exists.
+    /// </summary>
+    public List<string> DraftWriteLog { get; } = new();
+
     public Task<DraftLease?> OpenDraftAsync(string sessionId, string pageId, string? regionId,
-        string? baseRevisionId, int pageBindingVersion, CancellationToken cancellationToken = default) =>
-        Task.FromResult(DraftLeasesByPageRegion.TryGetValue(pageId + "|" + regionId, out var lease) ? lease : null);
+        string? baseRevisionId, int pageBindingVersion, CancellationToken cancellationToken = default)
+    {
+        DraftWriteLog.Add("open");
+        return Task.FromResult(DraftLeasesByPageRegion.TryGetValue(pageId + "|" + regionId, out var lease) ? lease : null);
+    }
 
     public Task<Draft?> PatchDraftAsync(string draftId, string sessionId, DraftPatchRequest patch,
-        int? undoCursor = null, CancellationToken cancellationToken = default) =>
-        Task.FromResult<Draft?>(null);
+        int? undoCursor = null, CancellationToken cancellationToken = default)
+    {
+        DraftWriteLog.Add("patch");
+        return Task.FromResult<Draft?>(null);
+    }
 
     public Task<RegionCandidate?> PrepareCandidateAsync(string regionId, DraftPatchRequest patch,
         string origin, string? draftId = null, string? baseRevisionId = null,
@@ -1657,7 +1689,11 @@ public sealed class FakeHostController : IHostController, ISourceImportControlle
         Task.FromResult(ScriptedDrafts);
 
     public Task DiscardDraftAsync(string draftId, string sessionId,
-        CancellationToken cancellationToken = default) => Task.CompletedTask;
+        CancellationToken cancellationToken = default)
+    {
+        DraftWriteLog.Add("discard");
+        return Task.CompletedTask;
+    }
 
     // ── FEA-12-UI: scriptable trash face (separate from the frozen IHostController) ──────────
 
