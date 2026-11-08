@@ -1,19 +1,19 @@
-[2026-11-09T00:23:16.275+08:00] repo=G:\CODEX\New Manga
-[2026-11-09T00:23:16.278+08:00] root=G:\CODEX\New Manga.workspace\FEA-07-RESIDUAL-3\crash\20261109-002316-05b2fd
-[2026-11-09T00:23:16.278+08:00] python=C:/Python314/python.exe
-[2026-11-09T00:23:16.279+08:00] phase=park starting (production switch parks before the journal commit)
-[2026-11-09T00:23:17.609+08:00] park reached: pid=42932 stage=Rendered target=builtin.fluent appearance.frontendId=builtin.fluent heartbeat=1
-[2026-11-09T00:23:19.222+08:00] heartbeat advancing before kill: 8 -> 16
-[2026-11-09T00:23:19.223+08:00] phase=kill Kill(entireProcessTree:true) launcher pid=49268 testhost pid=42932
-[2026-11-09T00:23:19.260+08:00] testhost pid=42932 was already gone (kill via the launcher tree)
-[2026-11-09T00:23:20.466+08:00] process really dead: launcherExited=True testhostExited=True testhostGone=True heartbeat frozen at 16 (kill errors: )
-[2026-11-09T00:23:20.468+08:00] journal after kill: stage=Rendered target=builtin.fluent previous=builtin.current-v2
-[2026-11-09T00:23:20.468+08:00] phase=recover starting (new process; production App.RecoverInterruptedSwitch)
-[2026-11-09T00:23:21.809+08:00] recover exit code=0
-[2026-11-09T00:23:21.809+08:00] recover stdout: G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Release\net9.0\NewManga.App.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+[2026-11-09T01:41:11.378+08:00] repo=G:\CODEX\New Manga
+[2026-11-09T01:41:11.381+08:00] root=G:\CODEX\New Manga.workspace\FEA-07-RESIDUAL-3\crash\20261109-014111-c3a45c
+[2026-11-09T01:41:11.381+08:00] python=C:/Python314/python.exe
+[2026-11-09T01:41:11.381+08:00] phase=park starting (production switch parks before the journal commit)
+[2026-11-09T01:41:12.714+08:00] park reached: pid=52528 stage=Rendered target=builtin.fluent appearance.frontendId=builtin.fluent heartbeat=1
+[2026-11-09T01:41:14.333+08:00] heartbeat advancing before kill: 8 -> 16
+[2026-11-09T01:41:14.334+08:00] phase=kill Kill(entireProcessTree:true) launcher pid=3964 testhost pid=52528
+[2026-11-09T01:41:14.370+08:00] testhost pid=52528 was already gone (kill via the launcher tree)
+[2026-11-09T01:41:15.575+08:00] process really dead: launcherExited=True testhostExited=True testhostGone=True heartbeat frozen at 16 (kill errors: )
+[2026-11-09T01:41:15.577+08:00] journal after kill: stage=Rendered target=builtin.fluent previous=builtin.current-v2
+[2026-11-09T01:41:15.577+08:00] phase=recover starting (new process; production App.RecoverInterruptedSwitch)
+[2026-11-09T01:41:16.910+08:00] recover exit code=0
+[2026-11-09T01:41:16.910+08:00] recover stdout: G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Release\net9.0\NewManga.App.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
 总共 1 个测试文件与指定模式相匹配。
 
-已通过! - 失败:     0，通过:     1，已跳过:     0，总计:     1，持续时间: 317 ms - NewManga.App.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:     1，已跳过:     0，总计:     1，持续时间: 315 ms - NewManga.App.Tests.dll (net9.0)
 
-[2026-11-09T00:23:21.813+08:00] recover evidence: status=ok journalStage=RolledBack finalFrontendId=builtin.current-v2 latestMode=Light secondRecoveryChangedNothing=True protectedColumnDiffs=0
-[2026-11-09T00:23:21.828+08:00] PASS: park -> kill(entireProcessTree) -> recover verified (launcher WaitForExit + testhost gone + heartbeat frozen; journal RolledBack; last committed frontend restored; paused real-DB protected state adopted, not the old snapshot; protected columns untouched)
+[2026-11-09T01:41:16.913+08:00] recover evidence: status=ok journalStage=RolledBack finalFrontendId=builtin.current-v2 latestMode=Light secondRecoveryChangedNothing=True protectedColumnDiffs=0
+[2026-11-09T01:41:16.929+08:00] PASS: park -> kill(entireProcessTree) -> recover verified (launcher WaitForExit + testhost gone + heartbeat frozen; journal RolledBack; last committed frontend restored; paused real-DB protected state adopted, not the old snapshot; protected columns untouched)

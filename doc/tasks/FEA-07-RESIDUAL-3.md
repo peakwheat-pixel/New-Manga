@@ -81,3 +81,18 @@ out_of_scope:
 | P3-05 | 崩溃证据未显式写 testhost 是否消失 | 证据 JSON 增 `kill.testhostGone`，`realDeathProven` = launcher/ testhost/ heartbeat 三者合取 | `evidence/crash-switch-r4b.json`、`README.md` §4 |
 
 - 未改：`status`、AC 冻结行、契约/pins、禁止面；`FEA-07`/`FEA-07-RESIDUAL-3` 的 status 由 DSH 关账。
+
+## r2 返修（2026-11-09，独立 Review r2 changes_requested P0=0/P1=1/P2=1/P3=4）
+
+> 本节只追加；仍在 DSH 已授权的单文件（`MainWindow.axaml.cs`）范围内。
+
+| # | finding | 修复 | 判别证据 |
+|---|---|---|---|
+| P1-01 | `MainWindow.axaml.cs` 的 `PropertyChanged`→`RenderScaling` 分支仍硬编码真实 `%APPDATA%`，**绕过 `--log-dir`**，与 r1 的注释/DEFECTS 口径矛盾 | 抽出 `internal static ResolveDiagnosticsRoot(AppOptions)`；材质行（`WriteMaterialDiagnostics`）与缩放行（新 `AppendScalingDiagnostics`）**共用**同一解析：显式 `--log-dir` → 该目录，无 → 历史每用户位置 | `MaterialDiagnosticsRoot_IsSharedByBothBranches`（纯函数）+ `ScalingDiagnosticsLandInTheIsolatedLogDirectory`（真实 `MainWindow` 驱动缩放写入口）；变异 M5（回退该分支为硬编码）→ RED 且真实日志 **+2 行** → sha256 MATCH → 复绿 |
+| P2-01 | r1 的「env 注入 = 隔离保证」结论错误（App 实测 `GetFolderPath(ApplicationData)` 可为空 → 落 cwd 相对路径）；M4 的 RED 被描述成「双闸独立」 | env 注入降级为「App 侧实见环境」记录：`startup.log` 新增 `startup-diagnostics: isolation log-dir=… appdata=… cwd=…`；隔离断言改为 **App 可见**（install 行 + isolation 行 log-dir 一致、appdata 不被指向用例根、cwd 下无 `com.newmanga.desktop`、`window-material.log` 只在隔离目录、真实 `%APPDATA%` 行数不增长） | gated fact 16/16 与 `startup-matrix.ps1` 4/4 各 `delta=0`；脚本 `appdataSeen=` 为空（实证 App 侧解析为空而非隔离）；M4 的 RED 明确由「隔离目录断言 + `--log-dir` 契约」承担 |
+| P3-01 | AC4 表基线 `14275` 与证据 `14340` 不一致 | README 表改为按轮次标注（`14275`/`14340`/`14406`/`14411`），逐轮标注 `delta=0` | `README.md` §5 |
+| P3-02 | `mutation-4b` 日志缺 BEFORE/AFTER | 重跑 M4/M4b 并把 `real window-material.log lines BEFORE/AFTER … (delta=…)` 写入同一日志 | `logs/mutation-4b-p1-redline-regression.log` |
+| P3-03 | 回填脚本 APPEND 不能生成当前尾部 | `APPEND` 更新为含 r1/r2 条目 + 实际数字，保持幂等（`- [x]` 时跳过） | `tools/backfill-fea07.py` |
+| P3-04 | D-R4b-7 表述模糊、README「所有 r1 运行 delta=0」过宽 | D-R4b-7 精确为「`+16 行/轮 App.Tests`（对照实测）」；README 限定为「M4b 之后基线起」 | `DEFECTS.md` D-R4b-7、`README.md` §6.6/§6.7 |
+
+- 未改：`status`、AC 冻结行、契约/pins、禁止面；扩域仍限 `MainWindow.axaml.cs` 的 `window-material` 两处写入分支。

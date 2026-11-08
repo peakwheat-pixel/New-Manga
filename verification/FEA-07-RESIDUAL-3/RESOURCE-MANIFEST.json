@@ -73,13 +73,13 @@
   "gateChecks": {
     "dotnetBuild": "Release 0 warnings / 0 errors",
     "hostTests": "302 passed / 0 failed / 72 skipped（基线 302/0/71）",
-    "appTests": "829 passed / 0 failed / 11 skipped（基线 816/0/8）",
-    "fullSolution": "1792 passed / 0 failed / 107 skipped（基线 1779/0/103；首轮并发写入假红登记 D-R4b-8）",
+    "appTests": "831 passed / 0 failed / 11 skipped（基线 816/0/8）",
+    "fullSolution": "1794 passed / 0 failed / 107 skipped（基线 1779/0/103；r1 首轮并发写入假红登记 D-R4b-8）",
     "pytest": "3395 passed / 0 failed / 10 skipped（基线 3394/1 既有 flaky/10）",
     "gatedAc1": "1 passed（NEWMANGA_FEA07_A03=1）",
     "gatedAc3": "crash-switch.ps1 exit 0（park -> Kill(entireProcessTree) -> recover；testhostGone=true；暂停期真实 DB 保护状态被采用）",
-    "gatedAc4": "startup-matrix.ps1 exit 0（4/4 cases）、gated fact 14 passed；真实 %APPDATA% window-material.log 历次 delta=0",
-    "redLine": "AC4 真实进程矩阵：真实用户目录零增长（r1 修复后，基线 14275/14340 均 delta=0）；变异 M4b 现场 +1 行已如实登记；既有 headless legacy 用例 +16/轮 属 D-R4b-7（既有隔离缺口，非 r1 回归）",
-    "mutations": "4 组 RED -> sha256 MATCH -> 复绿（另附 ①b 双检出点判别）"
+    "gatedAc4": "startup-matrix.ps1 exit 0（4/4 cases）、gated fact 16 passed；两条 window-material 分支（材质行 + RenderScaling 行）均受 --log-dir 约束",
+    "redLine": "隔离主闸 = 产品契约「显式 --log-dir 拥有全部日志文件」（两条分支）；env 注入仅记录 App 实见值（不是隔离保证，见 D-R4b-2/D-R4b-9）。历轮基线 14275/14340/14406/14411/14443，每轮修复态 delta=0；变异实验（M4/M4b/M5）的行数增量如实登记且不删除；既有 headless legacy 用例 +16/轮 属 D-R4b-7",
+    "mutations": "5 组 RED -> sha256 MATCH -> 复绿（①/①b 双检出点、②、③、④ M4/M4b、⑤ M5 RenderScaling 分支）"
   }
 }

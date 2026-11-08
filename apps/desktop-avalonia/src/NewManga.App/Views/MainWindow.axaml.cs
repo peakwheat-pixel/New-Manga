@@ -151,15 +151,10 @@ public partial class MainWindow : Window
                     InvalidateVisual();
                     WriteMaterialDiagnostics();
                 }, DispatcherPriority.Render);
-                try
-                {
-                    var root = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "com.newmanga.desktop", "logs");
-                    Directory.CreateDirectory(root);
-                    File.AppendAllText(Path.Combine(root, "window-material.log"), $"{DateTime.UtcNow:o} scaling {previous:0.##} -> {RenderScaling:0.##}{Environment.NewLine}");
-                }
-                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
-                {
-                }
+                // FEA-07 W-9 (r2 P1-01): the scaling line goes through the SAME root resolution as
+                // WriteMaterialDiagnostics — an explicit `--log-dir` owns every log file of this window,
+                // including both window-material branches.
+                AppendScalingDiagnostics(previous, RenderScaling);
             }
         };
         Loaded += OnLoaded;
@@ -880,15 +875,24 @@ public partial class MainWindow : Window
 
     public string? DiagnosticsPath { get; private set; }
 
+    /// <summary>
+    /// FEA-07 W-9（隔离）：显式 <c>--log-dir</c> 拥有**全部**日志文件 —— 包括本窗口 <c>window-material.log</c>
+    /// 的两条写入分支（<c>Opened</c> 的材质行 + <c>RenderScaling</c> 变化行）；无 <c>--log-dir</c> 时保留历史上的
+    /// 每用户位置（发行默认行为不变）。两条分支都只经此方法解析根目录，禁止再各自拼路径。
+    /// </summary>
+    internal static string ResolveDiagnosticsRoot(AppOptions options)
+    {
+        ArgumentNullException.ThrowIfNull(options);
+        return string.IsNullOrWhiteSpace(options.LogDirectory)
+            ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "com.newmanga.desktop", "logs")
+            : Path.GetFullPath(options.LogDirectory);
+    }
+
     private void WriteMaterialDiagnostics()
     {
         try
         {
-            // FEA-07 W-9 (isolation): an explicit `--log-dir` owns EVERY log file, this one included; with no
-            // `--log-dir` the shipped per-user location (and therefore the release default) is unchanged.
-            var root = string.IsNullOrWhiteSpace(_options.LogDirectory)
-                ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "com.newmanga.desktop", "logs")
-                : Path.GetFullPath(_options.LogDirectory);
+            var root = ResolveDiagnosticsRoot(_options);
             Directory.CreateDirectory(root);
             DiagnosticsPath = Path.Combine(root, "window-material.log");
             File.AppendAllText(DiagnosticsPath, $"{DateTime.UtcNow:o} {MaterialDiagnostics}{Environment.NewLine}");
@@ -896,6 +900,26 @@ public partial class MainWindow : Window
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException)
         {
             DiagnosticsPath = null;
+        }
+    }
+
+    /// <summary>
+    /// DPI/缩放变化行：与 <see cref="WriteMaterialDiagnostics"/> 共用 <see cref="ResolveDiagnosticsRoot"/>
+    /// （r2 P1-01 修复点；此前该分支硬编码真实 <c>%APPDATA%</c>，绕过了 <c>--log-dir</c>）。
+    /// </summary>
+    internal void AppendScalingDiagnostics(double previous, double current)
+    {
+        try
+        {
+            var root = ResolveDiagnosticsRoot(_options);
+            Directory.CreateDirectory(root);
+            File.AppendAllText(
+                Path.Combine(root, "window-material.log"),
+                $"{DateTime.UtcNow:o} scaling {previous:0.##} -> {current:0.##}{Environment.NewLine}");
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException)
+        {
+            // Diagnostics are best-effort and never block the window.
         }
     }
 }

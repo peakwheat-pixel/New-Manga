@@ -1,4 +1,5 @@
-2026-11-08T16:23:09.063Z INFO startup-diagnostics: sink v1 installed (G:\CODEX\New Manga.workspace\FEA-07-RESIDUAL-3\startup-matrix\shell-legacy-20261109-002308-f6a42b\logs\startup.log)
-2026-11-08T16:23:09.085Z INFO startup: shell=Legacy requested=builtin.current-v2 effective=builtin.current-v2 fallback=False
-2026-11-08T16:23:09.085Z INFO startup: theme.frontendId 'builtin.current-v2' (persisted appearance settings) selects the Current V2 shell
+2026-11-08T17:41:04.418Z INFO startup-diagnostics: sink v1 installed (G:\CODEX\New Manga.workspace\FEA-07-RESIDUAL-3\startup-matrix\shell-legacy-20261109-014104-ec0cf3\logs\startup.log)
+2026-11-08T17:41:04.421Z INFO startup-diagnostics: isolation log-dir=G:\CODEX\New Manga.workspace\FEA-07-RESIDUAL-3\startup-matrix\shell-legacy-20261109-014104-ec0cf3\logs appdata= cwd=G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\bin\Release\net9.0
+2026-11-08T17:41:04.441Z INFO startup: shell=Legacy requested=builtin.current-v2 effective=builtin.current-v2 fallback=False
+2026-11-08T17:41:04.441Z INFO startup: theme.frontendId 'builtin.current-v2' (persisted appearance settings) selects the Current V2 shell
 

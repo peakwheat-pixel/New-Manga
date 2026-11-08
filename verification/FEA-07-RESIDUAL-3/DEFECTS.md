@@ -23,13 +23,33 @@
 - **r1 变异证据**：把三行改回硬编码（M4，保留 env 隔离）→ 隔离目录断言 RED；再把 env 隔离也去掉（M4b = r0 现场）→
   真实 `%APPDATA%` `14275 → 14276`（**+1**）且用例 RED（`logs/mutation-4b-p1-redline-regression.log`）；
   复原后两文件 sha256 MATCH、复绿 delta=0（`logs/mutation-4-restored-green.log`）。
-- **残留说明（如实登记）**：M4b 主动造成的 **+1 行不删除**（删除本身就是又一次真实目录写入）；此后基线为 `14276`，
-  所有 r1 运行均 `delta=0`。
-- **测试侧第二道闸（纵深防御）**：`StartupDiagnosticsTests` 与 `startup-matrix.ps1` 还向子进程注入隔离的
-  `APPDATA`/`LOCALAPPDATA`/`USERPROFILE`，并用同一环境字典回读子进程值确认注入生效。实测口径更正：
-  **单独注入 `APPDATA` 不足以改变** `Environment.GetFolderPath(ApplicationData)`（CSIDL/KnownFolder）；
-  `APPDATA`+`USERPROFILE` 同时注入时该 API 返回隔离路径。因此「产品契约（`--log-dir` 拥有全部日志）」是主闸，
-  env 注入是第二道闸 —— 这也是变异 M4（只回退产品契约、保留 env 隔离）仍 RED 的原因：隔离目录断言直接失败。
+- **残留说明（如实登记）**：变异实验（M4b/M4b-r2）主动造成的行数增量**不删除**（删除本身就是又一次真实目录写入）；
+  每轮实验后以当时行数为新基线，其后所有修复态运行均 `delta=0`（r2 末轮基线 `14443`）。
+- **测试侧「第二道闸」（r1 表述）→ 已按 r2 P2-01 更正**：r1 曾声称「向子进程注入 `APPDATA`/`USERPROFILE` 可让
+  `GetFolderPath(ApplicationData)` 返回隔离路径」——**该结论不成立**。r2 实测（真实 App 进程、无 `--log-dir`）：
+  注入后该 API 返回**空**，`Path.Combine("", "com.newmanga.desktop", "logs")` 于是落成 **cwd 相对路径**
+  （`<cwd>\com.newmanga.desktop\logs\window-material.log`）。因此：
+  - **隔离的主闸只是产品契约**「显式 `--log-dir` 拥有全部日志文件」；env 注入不是隔离保证，仅供
+    `startup.log` 的 `startup-diagnostics: isolation log-dir=… appdata=… cwd=…` 行记录 App 侧实见值；
+  - 断言改为 **App 可见**：install 行指向隔离 log 目录；isolation 行 `log-dir=` 与之一致且 `appdata=` 不被指向
+    用例根；**cwd 下不得出现 `com.newmanga.desktop`**；`window-material.log` 只出现在隔离 `--log-dir`；
+    真实 `%APPDATA%` 行数不增长；
+  - M4 的 RED 由「隔离目录断言 + `--log-dir` 契约」承担，**不宣称两道闸独立**。
+
+## D-R4b-9（r2 已修，扩域内）`RenderScaling` 分支曾绕过 `--log-dir`（window-material 的第二条写入分支）
+
+- **事实（r2 P1-01）**：`MainWindow.axaml.cs` 的 `PropertyChanged`→`RenderScaling` 分支（原 `:156-158`）在 r1 之后
+  仍硬编码 `GetFolderPath(ApplicationData)\com.newmanga.desktop\logs\window-material.log`，与 r1 写在
+  `WriteMaterialDiagnostics` 上的「owns EVERY log file」注释直接矛盾；真实 DPI 变化时仍会写真实 `%APPDATA%`。
+- **r2 修复**：抽出 `internal static ResolveDiagnosticsRoot(AppOptions)`；`WriteMaterialDiagnostics`（材质行）与新的
+  `AppendScalingDiagnostics`（缩放行）**共用**该解析。`MainWindow.axaml.cs` 相对 r0 累计 **+38/−10**
+  （含 r1 的 +5/−1；r2 主要是把两条分支收口到一个 helper + 理由注释）。
+- **r2 断言**：`MaterialDiagnosticsRoot_IsSharedByBothBranches`（纯函数：有/无 `--log-dir` 两种结果）+
+  `ScalingDiagnosticsLandInTheIsolatedLogDirectory`（真实 `MainWindow` 驱动缩放写入口 → 落隔离 `--log-dir`、
+  2 行且都是 `scaling` 行、cwd 无 `com.newmanga.desktop`、真实 `%APPDATA%` 行数不增长）。
+- **r2 变异 M5**：把 `AppendScalingDiagnostics` 回退为硬编码 → 该用例 **RED** 且真实日志 **+2 行**
+  （`logs/mutation-5-r2-scalings-branch-hardcoded.log`）→ 复原 sha256 `0c4b818f…` MATCH → 复绿
+  （`logs/mutation-5-restored-green.log`）。
 
 ## D-R4b-6（erratum，P3-01）卡面把 `region_locked` 写成 `sfx_locked`
 
@@ -62,11 +82,12 @@
   既有 App.Tests 里有一批用例构造并显示 legacy `MainWindow`（`MainWindow`/`--shell=legacy` 面共 16 个文件命中，
   其中 `StartupCompatibilityMatrixTests`(5)、`FluentShellTests`(1)、`AppOptionsCliRobustnessTests`(1) 等）且**不传** `--log-dir`
   ⇒ 每次显示会向真实 `%APPDATA%\com.newmanga.desktop\logs\window-material.log` 追加 1 行。
-- **度量（r1 返修期间）**：`14276 → 14340`（**+64**），分布在两轮 App.Tests + 两轮全量 sln + pytest 之间；
-  **对照实验**：只跑一轮 `NewManga.App.Tests`（默认门禁，无 gated）→ `14340 → 14356`（**+16 行/轮**）；
-  单独只跑 `StartupCompatibilityMatrixTests`（2 例、7 个 shell、无 `Show()`）→ **delta=0**，说明触发点是 `Show()` 而非构造。
-- **与 r1 的关系**：**与 r1 的 P1 无关**（r1 只改「有 `--log-dir` 时」的行为；这些用例没有 `--log-dir`，修复前后同样写真实路径，
-  属**既有**测试隔离缺口）。AC4 红线断言（gated fact 14/14、`startup-matrix.ps1` 4/4）在各次运行均为 **delta=0**。
+- **精确表述（r2 P3-04）**：**每轮 `NewManga.App.Tests`（默认门禁）稳定 `+16 行`**（对照实验 `14340 → 14356`）；
+  r1 期间累计 `14276 → 14340` 的 **+64** 来自多轮 App.Tests + 全量 sln 的同一机制（不是一次性事件）。
+  单独只跑 `StartupCompatibilityMatrixTests`（2 例、7 个 shell、**无** `Show()`）→ **delta=0**，说明触发点是 `Show()` 而非构造。
+- **与 r1/r2 的关系**：**与 r1 的 P1、r2 的 P1-01 无关**（两轮修复只改「有 `--log-dir` 时」的行为；这些用例没有 `--log-dir`，
+  修复前后同样写历史每用户位置，属**既有**测试隔离缺口）。AC4 红线断言（gated fact 16/16、`startup-matrix.ps1` 4/4）
+  在各次运行均为 **delta=0**。
 - **为什么不修**：修复方式是给这些既有用例补 `--log-dir`（`tests/NewManga.App.Tests/**` 虽在 allowed_paths，但属新增改动面、
   超出 r1 的 finding 范围，且会改动多份既有测试）。建议另立卡：`--log-dir`（或测试用 `--home-root`）覆盖全部既有 UI 用例。
 - **影响**：不影响产品行为（发行版无 `--log-dir` 时历史位置是刻意保留的默认）；只影响「测试是否触碰真实用户目录」的纯度。

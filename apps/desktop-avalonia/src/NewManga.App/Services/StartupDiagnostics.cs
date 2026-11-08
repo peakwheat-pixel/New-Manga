@@ -93,6 +93,14 @@ public static class StartupDiagnostics
 
                 // 首行固定版本标记：证据侧据此判定 sink 真的接上了（而不是「文件恰好存在」）。
                 Trace.TraceInformation($"startup-diagnostics: sink v1 installed ({path})");
+                // r2：App 可见的隔离事实（供真实进程用例断言）。注意：仅注入 APPDATA/LOCALAPPDATA 环境变量
+                // **不能**让 GetFolderPath(ApplicationData) 重定向（实测可能返回空 → 落成 cwd 相对路径），
+                // 所以隔离的主闸是「显式 --log-dir 拥有全部日志文件」这条产品契约，而不是环境变量。
+                Trace.TraceInformation(
+                    "startup-diagnostics: isolation " +
+                    $"log-dir={logDirectory} " +
+                    $"appdata={Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)} " +
+                    $"cwd={Directory.GetCurrentDirectory()}");
                 return true;
             }
             catch (Exception ex) when (ex is IOException

@@ -95,11 +95,13 @@ try {
         $startInfo.CreateNoWindow = $true
         $startInfo.RedirectStandardOutput = $true
         $startInfo.RedirectStandardError = $true
-        $startInfo.WorkingDirectory = Split-Path -Parent $exe
+        $childCwd = Split-Path -Parent $exe
+        $startInfo.WorkingDirectory = $childCwd
 
-        # r1 (P1-01) 红线加固 —— 纵深防御：子进程的 APPDATA/LOCALAPPDATA/USERPROFILE 也指向本用例隔离根。
-        # 真正阻止写真实用户目录的是产品契约「显式 --log-dir 拥有全部日志文件」（含 legacy 的 window-material.log）；
-        # env 注入是第二道闸。注入后用**同一环境字典**回读子进程值确认生效。
+        # r1/r2 (P1-01) 红线：**主闸是产品契约**「显式 --log-dir 拥有全部日志文件」（含 legacy 的
+        # window-material.log 两条分支：材质行 + RenderScaling 行）。下面注入 APPDATA/LOCALAPPDATA/USERPROFILE
+        # 只是让子进程暴露在隔离环境里，**不是隔离保证**（r2 实测：App 的 GetFolderPath(ApplicationData)
+        # 可能返回空 → 落成 cwd 相对路径）。隔离证据改为 App 可见断言（见下面 sink 行 / cwd / 唯一文件）。
         $isolatedAppData = Join-Path $root 'appdata'
         $isolatedLocalAppData = Join-Path $root 'localappdata'
         $isolatedProfile = Join-Path $root 'userprofile'
@@ -109,31 +111,6 @@ try {
         $startInfo.Environment['APPDATA'] = $isolatedAppData
         $startInfo.Environment['LOCALAPPDATA'] = $isolatedLocalAppData
         $startInfo.Environment['USERPROFILE'] = $isolatedProfile
-
-        $probeFile = Join-Path $root 'env-probe.txt'
-        $probeInfo = [System.Diagnostics.ProcessStartInfo]::new('pwsh')
-        # 注意：-Command 载荷内部用**双引号**。用单引号包路径时，外层命令行引用会让子进程把路径当相对路径
-        # （实测：WriteAllText('C:\..') 被解析成 "<cwd>\ C:\.."），探针因此静默失败。
-        $probeCommand = '[System.IO.File]::WriteAllText("' + $probeFile + '", $env:APPDATA + "|" + $env:LOCALAPPDATA)'
-        foreach ($a in @('-NoProfile', '-Command', $probeCommand)) { $probeInfo.ArgumentList.Add($a) }
-        $probeInfo.UseShellExecute = $false
-        $probeInfo.CreateNoWindow = $true
-        $probeInfo.Environment['APPDATA'] = $isolatedAppData
-        $probeInfo.Environment['LOCALAPPDATA'] = $isolatedLocalAppData
-        $probeInfo.Environment['USERPROFILE'] = $isolatedProfile
-        $probe = [System.Diagnostics.Process]::Start($probeInfo)
-        $probe.WaitForExit(60000) | Out-Null
-        if (-not (Test-Path $probeFile)) {
-            $failures.Add("$($case.name): the child environment probe produced no output")
-            $envProbe = '<missing>'
-        }
-        else {
-            $envProbe = [System.IO.File]::ReadAllText($probeFile)
-            if (-not ($envProbe.StartsWith([System.IO.Path]::GetFullPath($isolatedAppData), [System.StringComparison]::OrdinalIgnoreCase))) {
-                $failures.Add("$($case.name): injected APPDATA did not reach the child ($envProbe)")
-            }
-        }
-        Log "case=$($case.name) env-probe=$envProbe"
 
         $timer = [System.Diagnostics.Stopwatch]::StartNew()
         $process = [System.Diagnostics.Process]::Start($startInfo)
@@ -162,10 +139,27 @@ try {
         if (-not $matched) { $failures.Add("$($case.name): startup.log has no '$($case.marker)' line") }
         if (-not $fallbackMatched) { $failures.Add("$($case.name): startup.log has no '$($case.fallback)' line") }
 
-        # 隔离直接证据：sink 安装行必须指向本用例的隔离 log 目录。
+        # 隔离直接证据（r2 App 可见探针）：
+        #  (a) sink 安装行必须指向本用例的隔离 log 目录；
+        #  (b) sink isolation 行给出 App 实见的 log-dir/appdata/cwd，且 appdata 不得被指向本用例根。
         $sinkLine = 'startup-diagnostics: sink v1 installed (' + [System.IO.Path]::GetFullPath($startupPath) + ')'
         if (-not $startupText.Contains($sinkLine)) {
             $failures.Add("$($case.name): startup.log install line does not point at the isolated log dir")
+        }
+        $isolationLine = ($startupText -split "`n" | Where-Object { $_.Contains('startup-diagnostics: isolation') } | Select-Object -Last 1)
+        if (-not $isolationLine) {
+            $failures.Add("$($case.name): startup.log carries no App-visible isolation line")
+            $appDataSeen = '<missing>'
+        }
+        else {
+            if (-not $isolationLine.Contains('log-dir=' + [System.IO.Path]::GetFullPath($logDir))) {
+                $failures.Add("$($case.name): the App-visible isolation line does not point at the isolated log dir")
+            }
+            $appDataToken = ($isolationLine -split ' ' | Where-Object { $_.StartsWith('appdata=') } | Select-Object -First 1)
+            $appDataSeen = if ($appDataToken) { $appDataToken.Substring('appdata='.Length) } else { '' }
+            if ($appDataSeen -and $appDataSeen.StartsWith([System.IO.Path]::GetFullPath($root), [System.StringComparison]::OrdinalIgnoreCase)) {
+                $failures.Add("$($case.name): the App-visible appdata was redirected into the case root ('$appDataSeen')")
+            }
         }
 
         # legacy 外壳的历史诊断文件（window-material.log）现在也受 --log-dir 契约约束：落隔离目录。
@@ -173,6 +167,18 @@ try {
         $isolatedMaterialLines = if (Test-Path $isolatedMaterial) { @([System.IO.File]::ReadAllLines($isolatedMaterial)).Count } else { 0 }
         if ($case.name -eq 'shell-legacy' -and $isolatedMaterialLines -le 0) {
             $failures.Add("$($case.name): window-material.log did not land inside the isolated --log-dir")
+        }
+
+        # r2：window-material.log 只允许出现在隔离 --log-dir 内；子进程 cwd 下不得出现 com.newmanga.desktop。
+        $strayMaterial = [System.Collections.Generic.List[string]]::new()
+        $cwdNamespace = Join-Path $childCwd 'com.newmanga.desktop'
+        if (Test-Path $cwdNamespace) { $strayMaterial.Add($cwdNamespace) }
+        if (Test-Path $cwdNamespace) {
+            Get-ChildItem -Recurse -File -Path $cwdNamespace -Filter 'window-material.log' -ErrorAction SilentlyContinue |
+                ForEach-Object { $strayMaterial.Add($_.FullName) }
+        }
+        if ($strayMaterial.Count -gt 0) {
+            $failures.Add("$($case.name): writes outside the isolated --log-dir: $($strayMaterial -join '; ')")
         }
 
         # 红线：真实 %APPDATA% 的 window-material.log 行数不得增长。
@@ -183,6 +189,7 @@ try {
 
         Log ("case=$($case.name) exit=$exitCode fatal=$fatalExists startupBytes=$($startupText.Length) " +
              "matched=$matched fallback=$fallbackMatched isolatedMaterialLines=$isolatedMaterialLines " +
+             "appdataSeen=$appDataSeen strayOutsideIsolation=$($strayMaterial.Count) " +
              "realAppDataMaterialLines=$realLinesNow elapsedMs=$($timer.ElapsedMilliseconds)")
 
         $results.Add([ordered]@{
@@ -197,8 +204,11 @@ try {
             fallbackMatched = $fallbackMatched
             expectedFallback = $case.fallback
             isolatedLogDir = $logDir
-            isolatedAppData = $isolatedAppData
-            childEnvironmentProbe = $envProbe
+            appVisibleIsolationLine = $isolationLine
+            appVisibleAppData = $appDataSeen
+            injectedAppData = $isolatedAppData
+            childCwd = $childCwd
+            strayOutsideIsolation = @($strayMaterial)
             isolatedMaterialLines = $isolatedMaterialLines
             realAppDataMaterialLines = $realLinesNow
             elapsedMs = $timer.ElapsedMilliseconds

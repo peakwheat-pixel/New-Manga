@@ -1,6 +1,7 @@
-2026-11-08T16:23:00.889Z INFO startup-diagnostics: sink v1 installed (G:\CODEX\New Manga.workspace\FEA-07-RESIDUAL-3\startup-matrix\default-20261109-002300-0399bd\logs\startup.log)
-2026-11-08T16:23:00.911Z INFO startup: shell=Default requested=builtin.current-v2 effective=builtin.current-v2 fallback=False
-2026-11-08T16:23:00.911Z INFO startup: theme.frontendId 'builtin.current-v2' (persisted appearance settings) selects the Current V2 shell
+2026-11-08T17:40:56.784Z INFO startup-diagnostics: sink v1 installed (G:\CODEX\New Manga.workspace\FEA-07-RESIDUAL-3\startup-matrix\default-20261109-014056-57f038\logs\startup.log)
+2026-11-08T17:40:56.787Z INFO startup-diagnostics: isolation log-dir=G:\CODEX\New Manga.workspace\FEA-07-RESIDUAL-3\startup-matrix\default-20261109-014056-57f038\logs appdata= cwd=G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\bin\Release\net9.0
+2026-11-08T17:40:56.806Z INFO startup: shell=Default requested=builtin.current-v2 effective=builtin.current-v2 fallback=False
+2026-11-08T17:40:56.806Z INFO startup: theme.frontendId 'builtin.current-v2' (persisted appearance settings) selects the Current V2 shell
 [Binding]An error occurred binding 'Source' to 'CurrentPage.Image' at 'CurrentPage': 'Value is null.' (Image #47024465)
 [Binding]An error occurred binding 'IsEnabled' to 'IsEnabled' at 'IsEnabled': 'Could not find a matching property accessor for 'IsEnabled' on 'NewManga.App.ViewModels.V2.Studio.StudioPageViewModel'.' (Button #40214598)
 [Binding]An error occurred binding 'IsEnabled' to 'IsEnabled' at 'IsEnabled': 'Could not find a matching property accessor for 'IsEnabled' on 'NewManga.App.ViewModels.V2.Studio.StudioPageViewModel'.' (Button #53027730)

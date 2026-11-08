@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using Avalonia.Headless.XUnit;
 using NewManga.App.Services;
+using NewManga.App.Views;
 using NewManga.Appearance;
 using Xunit;
 
@@ -14,13 +16,19 @@ namespace NewManga.App.Tests;
 /// fail-safe，以及 4 组参数的真实进程入口（无桌面会话/未开门禁时 skip + reason）。
 /// </summary>
 /// <remarks>
-/// r1（P1-01）红线加固：真实进程用例**不写真实用户目录**。
+/// r1/r2（P1-01）红线加固：真实进程用例**不写真实用户目录**。
 /// <list type="bullet">
 /// <item>产物隔离：每组用例的 <c>--data-root</c>/<c>--log-dir</c>/<c>--theme-home</c> 全在临时根；
-/// 产品侧契约由 <c>MainWindow.WriteMaterialDiagnostics</c> 遵守「显式 <c>--log-dir</c> 拥有全部日志文件」保证
+/// 产品侧契约由 <c>MainWindow</c> 的**两条** <c>window-material.log</c> 写入分支
+/// （<c>WriteMaterialDiagnostics</c> 材质行 + <c>AppendScalingDiagnostics</c> 缩放行，共用
+/// <c>ResolveDiagnosticsRoot</c>）遵守「显式 <c>--log-dir</c> 拥有全部日志文件」保证
 /// （<c>--shell=legacy</c> 的 <c>window-material.log</c> 因此落隔离目录）。</item>
-/// <item>纵深防御：子进程额外注入隔离的 <c>APPDATA</c>/<c>LOCALAPPDATA</c>，并用同一环境字典回读子进程值确认注入生效。</item>
-/// <item>红线证据：断言真实 <c>%APPDATA%\com.newmanga.desktop\logs\window-material.log</c> 的行数前后**不增长**。</item>
+/// <item>App 可见探针：<c>startup.log</c> 的 install 行必须指向隔离 <c>--log-dir</c>，<c>isolation</c> 行给出
+/// App 侧实见的 <c>log-dir</c>/<c>appdata</c>/<c>cwd</c>；并断言 **cwd 下不出现 <c>com.newmanga.desktop</c>**
+/// （env 注入<b>不是</b>隔离保证：实测只注入 <c>APPDATA</c>/<c>USERPROFILE</c> 时 App 的
+/// <c>GetFolderPath(ApplicationData)</c> 可能返回空 → 落成 cwd 相对路径）。</item>
+/// <item>红线证据：断言真实 <c>%APPDATA%\com.newmanga.desktop\logs\window-material.log</c> 的行数前后**不增长**，
+/// 且 <c>window-material.log</c> 只出现在隔离 <c>--log-dir</c> 内。</item>
 /// </list>
 /// </remarks>
 public sealed class StartupDiagnosticsTests : IDisposable
@@ -133,6 +141,67 @@ public sealed class StartupDiagnosticsTests : IDisposable
         }
     }
 
+    // ------------------------------- legacy 窗口 window-material 两条分支的根目录解析（r2 P1-01）
+
+    /// <summary>
+    /// r2 P1-01：`window-material.log` 的**两条**写入分支（材质行 + RenderScaling 行）都必须走同一个
+    /// `ResolveDiagnosticsRoot`：显式 `--log-dir` → 该目录；无 `--log-dir` → 历史每用户位置。
+    /// </summary>
+    [Fact]
+    public void MaterialDiagnosticsRoot_IsSharedByBothBranches()
+    {
+        var logDirectory = Path.Combine(_root, "logs-root");
+
+        var withLogDir = MainWindow.ResolveDiagnosticsRoot(AppOptions.Parse(["--log-dir=" + logDirectory]));
+        Assert.Equal(Path.GetFullPath(logDirectory), withLogDir);
+
+        var withoutLogDir = MainWindow.ResolveDiagnosticsRoot(AppOptions.Parse(Array.Empty<string>()));
+        var perUser = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            "com.newmanga.desktop",
+            "logs");
+        Assert.Equal(perUser, withoutLogDir);
+        Assert.NotEqual(withLogDir, withoutLogDir);
+    }
+
+    /// <summary>
+    /// r2 P1-01 判别：真实 `MainWindow` 的 RenderScaling 行（此前硬编码真实 `%APPDATA%`）必须落隔离
+    /// `--log-dir`；cwd 下不得出现 `com.newmanga.desktop`，真实 `%APPDATA%` 行数不得增长。
+    /// （该分支只在真实 DPI 变化时触发，故在此直接驱动它使用的写入方法。）
+    /// </summary>
+    [AvaloniaFact]
+    public void ScalingDiagnosticsLandInTheIsolatedLogDirectory()
+    {
+        var realMaterialLog = RealStartupProcessFixture.RealWindowMaterialLogPath();
+        var realLinesBefore = RealStartupProcessFixture.CountLines(realMaterialLog);
+        var cwdMarker = Path.Combine(Directory.GetCurrentDirectory(), "com.newmanga.desktop");
+        var cwdMarkerExisted = Directory.Exists(cwdMarker);
+
+        var logDirectory = Path.Combine(_root, "logs-scaling");
+        var window = new MainWindow(
+            NullHostController.Instance,
+            AppOptions.Parse(["--log-dir=" + logDirectory]));
+        try
+        {
+            window.AppendScalingDiagnostics(1.0, 1.5);
+            window.AppendScalingDiagnostics(1.5, 2.0);
+        }
+        finally
+        {
+            window.Close();
+        }
+
+        var isolatedMaterial = Path.Combine(logDirectory, "window-material.log");
+        Assert.True(File.Exists(isolatedMaterial), "the scaling line must land inside the isolated --log-dir");
+        var lines = File.ReadAllLines(isolatedMaterial);
+        Assert.Equal(2, lines.Length);
+        Assert.All(lines, line => Assert.Contains("scaling ", line, StringComparison.Ordinal));
+
+        Assert.False(Directory.Exists(cwdMarker), "no com.newmanga.desktop may appear under the process cwd");
+        Assert.Equal(cwdMarkerExisted, Directory.Exists(cwdMarker));
+        Assert.Equal(realLinesBefore, RealStartupProcessFixture.CountLines(realMaterialLog));
+    }
+
     // ------------------------------------------------- 9 类 warning 逐项 fail-safe
 
     private static readonly (string Label, string Json, string Token)[] WarningClasses =
@@ -213,6 +282,8 @@ public sealed class StartupDiagnosticsTests : IDisposable
             ("corrupt-appearance", Array.Empty<string>(), true, "startup: appearance: appearance document is not valid JSON"),
         };
 
+        var executableDirectory = Path.GetDirectoryName(Path.GetFullPath(executable))
+            ?? throw new InvalidOperationException("the app executable has no directory");
         var evidence = new List<string>();
         foreach (var (name, extraArgs, corruptDocument, expected) in cases)
         {
@@ -227,7 +298,9 @@ public sealed class StartupDiagnosticsTests : IDisposable
                     "{ this is not a json appearance document");
             }
 
-            // 纵深防御：子进程的 APPDATA/LOCALAPPDATA 也指向本用例的隔离根。
+            // 注：这里注入 APPDATA/LOCALAPPDATA/USERPROFILE 只是**记录 App 侧实见的环境**，不是隔离保证
+            // （实测 App 的 GetFolderPath(ApplicationData) 可能返回空 → cwd 相对路径）。真正的隔离证据是
+            // 下面「App 可见 isolation 行 + cwd 断言 + 真实 %APPDATA% 行数 + 唯一 window-material.log」。
             var environment = RealStartupProcessFixture.CreateIsolatedChildEnvironment(root);
 
             var arguments = new List<string>
@@ -276,6 +349,15 @@ public sealed class StartupDiagnosticsTests : IDisposable
                     "shell-legacy: window-material.log must land inside the isolated --log-dir");
             }
 
+            // r2：window-material.log 只能出现在隔离 --log-dir 内；cwd 与真实 %APPDATA% 都不得新增。
+            var strayMaterial = RealStartupProcessFixture.FindStrayWindowMaterialLogs(executableDirectory);
+            Assert.True(strayMaterial.Count == 0,
+                $"{name}: window-material.log appeared outside the isolated --log-dir: " +
+                string.Join("; ", strayMaterial));
+            var cwdNamespace = Path.Combine(executableDirectory, "com.newmanga.desktop");
+            Assert.False(Directory.Exists(cwdNamespace),
+                $"{name}: com.newmanga.desktop must not appear under the child's cwd ({cwdNamespace})");
+
             var realLinesNow = RealStartupProcessFixture.CountLines(realMaterialLog);
             Assert.True(realLinesNow == realLinesBefore,
                 $"{name}: the real %APPDATA% window-material.log grew {realLinesBefore} -> {realLinesNow}");
@@ -283,15 +365,29 @@ public sealed class StartupDiagnosticsTests : IDisposable
             evidence.Add(
                 $"{name}: exit_code={exitCode} fatal_log=false startup_rows={log.Split('\n').Length} " +
                 $"matched='{expected}' isolated_material_lines={isolatedMaterialLines} " +
+                $"stray_material_files={strayMaterial.Count} cwd_namespace=false " +
                 $"real_appdata_material_lines={realLinesNow} (baseline {realLinesBefore})");
         }
 
-        // 纵深防御回读：用与用例相同的环境字典启动子进程，确认注入的 APPDATA/LOCALAPPDATA 真的到达子进程。
-        var probeRoot = Path.Combine(_root, "default");
-        var probe = RealStartupProcessFixture.ProbeChildEnvironment(probeRoot, TimeSpan.FromSeconds(60));
-        Assert.StartsWith(Path.GetFullPath(probeRoot), Path.GetFullPath(probe.AppData), StringComparison.OrdinalIgnoreCase);
-        Assert.StartsWith(Path.GetFullPath(probeRoot), Path.GetFullPath(probe.LocalAppData), StringComparison.OrdinalIgnoreCase);
-        evidence.Add($"env-probe: APPDATA={probe.AppData} LOCALAPPDATA={probe.LocalAppData}");
+        // App 可见探针（r2）：sink 的 isolation 行给出 App 侧实见的 log-dir / appdata / cwd。
+        var legacyStartupLog = File.ReadAllText(Path.Combine(_root, "shell-legacy", "logs", StartupDiagnostics.FileName));
+        var isolationLine = legacyStartupLog
+            .Split('\n')
+            .Select(line => line.TrimEnd('\r'))
+            .LastOrDefault(line => line.Contains("startup-diagnostics: isolation", StringComparison.Ordinal));
+        Assert.True(isolationLine is not null, "startup.log carries no App-visible isolation line");
+        var expectedLogDir = Path.Combine(_root, "shell-legacy", "logs");
+        Assert.Contains("log-dir=" + expectedLogDir, isolationLine!, StringComparison.Ordinal);
+        // env 注入不是隔离保证：这里只把 App 实见的 appdata 记录下来，并断言它不在用例隔离根之内
+        // （可能为空串 —— 那会落成 cwd 相对路径，已由上面的 cwd 断言拦住）。
+        var appDataSeen = isolationLine!
+            .Split(' ')
+            .FirstOrDefault(token => token.StartsWith("appdata=", StringComparison.Ordinal))?
+            ["appdata=".Length..] ?? string.Empty;
+        Assert.False(
+            appDataSeen.StartsWith(Path.GetFullPath(_root), StringComparison.OrdinalIgnoreCase),
+            "the App-visible appdata must not be redirected into the case root (env injection is not isolation)");
+        evidence.Add($"app-visible isolation line: {isolationLine!.Trim()}");
 
         var realLinesAfter = RealStartupProcessFixture.CountLines(realMaterialLog);
         Assert.True(realLinesAfter == realLinesBefore,
@@ -434,27 +530,34 @@ internal static class RealStartupProcessFixture
         };
     }
 
-    /// <summary>用同一环境字典回读子进程的 APPDATA/LOCALAPPDATA，确认注入确实到达子进程。</summary>
-    public static (string AppData, string LocalAppData) ProbeChildEnvironment(string caseRoot, TimeSpan timeout)
+    /// <summary>
+    /// 列出**不该存在**的 <c>window-material.log</c>：子进程 cwd（可执行文件目录）下任意位置。
+    /// 真实用户目录那一路不用「存在性」判断（该文件早已存在），改用**行数不增长**断言（r2）。
+    /// </summary>
+    public static IReadOnlyList<string> FindStrayWindowMaterialLogs(string childWorkingDirectory) =>
+        EnumerateWindowMaterialLogs(childWorkingDirectory).ToArray();
+
+    private static IEnumerable<string> EnumerateWindowMaterialLogs(string directory)
     {
-        var environment = CreateIsolatedChildEnvironment(caseRoot);
-        var probe = Path.Combine(caseRoot, "env-probe.txt");
-        var isWindows = OperatingSystem.IsWindows();
-        var shell = isWindows ? "pwsh" : "sh";
-        // Double quotes inside the -Command payload: the outer cmdline quoting keeps a single
-        // argument (a single-quoted path here silently loses its quoting and the child resolves a
-        // relative path against its cwd).
-        var script = isWindows
-            ? "[System.IO.File]::WriteAllText(\"" + probe + "\", $env:APPDATA + \"|\" + $env:LOCALAPPDATA)"
-            : "printf '%s|%s' \"$APPDATA\" \"$LOCALAPPDATA\" > '" + probe + "'";
-        var arguments = isWindows ? new[] { "-NoProfile", "-Command", script } : new[] { "-c", script };
-        var (exitCode, timedOut, stdout, stderr) = Run(shell, arguments, timeout, environment);
-        Assert.False(timedOut, "the environment probe did not exit");
-        Assert.True(exitCode == 0, $"the environment probe failed ({exitCode}): {stdout}{stderr}");
-        Assert.True(File.Exists(probe), "the environment probe wrote no output");
-        var parts = File.ReadAllText(probe).Split('|');
-        Assert.True(parts.Length == 2, "the environment probe produced an unexpected shape: " + string.Join("|", parts));
-        return (parts[0], parts[1]);
+        if (!Directory.Exists(directory))
+        {
+            yield break;
+        }
+
+        IEnumerable<string> found;
+        try
+        {
+            found = Directory.EnumerateFiles(directory, "window-material.log", SearchOption.AllDirectories);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            yield break;
+        }
+
+        foreach (var path in found)
+        {
+            yield return path;
+        }
     }
 
     /// <summary>
