@@ -427,8 +427,10 @@ public sealed class FluentResidual3Tests : IDisposable
         Assert.Single(host.StartRunRequests);
         Assert.False(start.IsEnabled);
 
-        // 终态投影 → 释放跟踪 + 停表，同一章节也可再次开始（投影保留为最终诚实快照）。
-        host.ScriptedTaskProjections.Enqueue(Projection(runStatus: "completed"));
+        // 终态（无任何可用控制动作）→ 释放跟踪 + 停表，同一章节也可再次开始（投影保留为最终诚实快照）。
+        host.ScriptedTaskProjections.Enqueue(Projection(
+            runStatus: "completed",
+            controls: new RunControlsInfo(false, false, false, false, false, false)));
         await viewModel.TickRunPollForTestAsync();
         RunJobs();
         Assert.Null(viewModel.RunId);
@@ -444,6 +446,166 @@ public sealed class FluentResidual3Tests : IDisposable
         Assert.NotEqual(host.StartRunRequests[0].IdempotencyKey, host.StartRunRequests[1].IdempotencyKey);
         viewModel.StopRunPolling();
 
+        shell.Close();
+    }
+
+    // ---------------------------------------------------------------------------------------
+    // r2-P1：终态集合对齐 Core —— completed_with_failures 可重试、interrupted 可继续，均必须真发帧
+    // ---------------------------------------------------------------------------------------
+
+    [AvaloniaFact]
+    public async Task R3008_CompletedWithFailures_RetryFailedSendsOneFrame()
+    {
+        var host = new FakeHostController(FakeHostController.ReadySnapshot("Sample"));
+        host.ChapterPagesByChapter["chapter-key"] = [new ChapterPageSummary("page-1", "one.png", 1)];
+        host.RegionsByPage["page-1"] = new RegionPageProjection([], null);
+        var shell = CreateShell(host);
+        shell.Navigate(FluentPage.Workbench);
+        await shell.WorkbenchView.LoadAsync("chapter-key");
+        RunJobs();
+        shell.WorkbenchView.SelectTab(WorkbenchViewTab.Batch);
+        RunJobs();
+
+        var viewModel = shell.WorkbenchViewModel;
+        var view = shell.WorkbenchView;
+        view.BatchStartButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        RunJobs();
+
+        // Core 契约：completed_with_failures && has_failures ⇒ can_retry_failed（projection.py:437-438）。
+        host.ScriptedTaskProjections.Enqueue(Projection(
+            runStatus: "completed_with_failures",
+            counts: new RunCountsInfo(3, 1, 2, 0, 0, 0, 0),
+            controls: new RunControlsInfo(false, false, false, false, false, true)));
+        await viewModel.TickRunPollForTestAsync();
+        RunJobs();
+
+        // 终态后停表，但仍有可用动作 → 必须保留 RunId，否则「重试失败」enabled-but-inert。
+        Assert.False(viewModel.IsRunPolling);
+        Assert.False(string.IsNullOrEmpty(viewModel.RunId));
+        Assert.True(view.RetryRunButton.IsEnabled);
+        Assert.Contains("仍可重试", viewModel.Status, StringComparison.Ordinal);
+
+        // 点「重试失败」→ 必须真发 1 帧 C061（而不是因 RunId 被清空直接 return）。
+        var trackedRunId = viewModel.RunId;
+        host.ScriptedControlRuns.Enqueue(new RunControlInfo("run-42", "running"));
+        view.RetryRunButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        RunJobs();
+        var retried = Assert.Single(host.RetriedFailedRuns);
+        Assert.Equal(trackedRunId, retried.RunId);
+        Assert.False(string.IsNullOrWhiteSpace(retried.IdempotencyKey));
+        Assert.Empty(host.ControlRunRequests); // 重试走 C061，不是 C057
+
+        viewModel.StopRunPolling();
+        shell.Close();
+    }
+
+    [AvaloniaFact]
+    public async Task R3008_Interrupted_ContinueSendsOneFrame()
+    {
+        var host = new FakeHostController(FakeHostController.ReadySnapshot("Sample"));
+        host.ChapterPagesByChapter["chapter-key"] = [new ChapterPageSummary("page-1", "one.png", 1)];
+        host.RegionsByPage["page-1"] = new RegionPageProjection([], null);
+        var shell = CreateShell(host);
+        shell.Navigate(FluentPage.Workbench);
+        await shell.WorkbenchView.LoadAsync("chapter-key");
+        RunJobs();
+        shell.WorkbenchView.SelectTab(WorkbenchViewTab.Batch);
+        RunJobs();
+
+        var viewModel = shell.WorkbenchViewModel;
+        var view = shell.WorkbenchView;
+        view.BatchStartButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        RunJobs();
+
+        // Core 契约：interrupted 是**可恢复**态（projection.py:432-435），不是终态。
+        host.ScriptedTaskProjections.Enqueue(Projection(
+            runStatus: "interrupted",
+            counts: new RunCountsInfo(2, 1, 0, 0, 1, 0, 0),
+            controls: new RunControlsInfo(false, false, true, true, true, false)));
+        await viewModel.TickRunPollForTestAsync();
+        RunJobs();
+
+        Assert.True(viewModel.IsRunPolling);          // 非终态：轮询继续
+        Assert.False(string.IsNullOrEmpty(viewModel.RunId));
+        Assert.True(view.ContinueRunButton.IsEnabled);
+
+        // 点「继续」→ 必须真发 1 帧 C057（continue = 冻结枚举 Resume）。
+        var trackedRunId = viewModel.RunId;
+        host.ScriptedControlRuns.Enqueue(new RunControlInfo("run-42", "running"));
+        view.ContinueRunButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        RunJobs();
+        var control = Assert.Single(host.ControlRunRequests);
+        Assert.Equal(trackedRunId, control.RunId);
+        Assert.Equal(RunControlAction.Resume, control.Action);
+
+        viewModel.StopRunPolling();
+        shell.Close();
+    }
+
+    // ---------------------------------------------------------------------------------------
+    // P3-1（r2）：书架预览缩略图页码同样 1-based（ShelfPageView 预览页标签此前无判别）
+    // ---------------------------------------------------------------------------------------
+
+    [AvaloniaFact]
+    public async Task P3001_ShelfPreviewThumbnails_RenderOneBasedPageOrder()
+    {
+        var host = new FakeHostController(FakeHostController.ReadySnapshot("Sample"));
+        host.ChaptersByBook["book-0"] = [new ChapterSummary("chapter-key", "第 1 章", "1", 0)];
+        host.ChapterPagesByChapter["chapter-key"] =
+        [
+            new ChapterPageSummary("page-1", "one.png", 1),
+            new ChapterPageSummary("page-2", "two.png", 2),
+        ];
+        var shell = CreateShell(host);
+        await shell.ShelfViewModel.SelectBookAsync(shell.ShelfViewModel.Books[0]);
+        RunJobs();
+
+        var thumbLabels = shell.ShelfView.GetVisualDescendants().OfType<StreamingThumb>()
+            .Select(thumb => (thumb.Child as TextBlock)?.Text ?? string.Empty).ToArray();
+        Assert.Equal(new[] { "第 1 页", "第 2 页" }, thumbLabels);
+        Assert.DoesNotContain("第 3 页", thumbLabels);
+
+        shell.Close();
+    }
+
+    // ---------------------------------------------------------------------------------------
+    // P3-5（r2）：同章节刷新不得清 RunId / 停轮询（只有章节切换才释放跟踪）
+    // ---------------------------------------------------------------------------------------
+
+    [AvaloniaFact]
+    public async Task P3009_SameChapterRefresh_KeepsRunTrackingAndPolling()
+    {
+        var host = new FakeHostController(FakeHostController.ReadySnapshot("Sample"));
+        host.ChapterPagesByChapter["chapter-key"] = [new ChapterPageSummary("page-1", "one.png", 1)];
+        host.RegionsByPage["page-1"] = new RegionPageProjection([], null);
+        var shell = CreateShell(host);
+        shell.Navigate(FluentPage.Workbench);
+        await shell.WorkbenchView.LoadAsync("chapter-key");
+        RunJobs();
+        shell.WorkbenchView.SelectTab(WorkbenchViewTab.Batch);
+        RunJobs();
+
+        var viewModel = shell.WorkbenchViewModel;
+        shell.WorkbenchView.BatchStartButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        RunJobs();
+        var trackedRunId = viewModel.RunId;
+        Assert.False(string.IsNullOrEmpty(trackedRunId));
+        Assert.True(viewModel.IsRunPolling);
+        var pollsBeforeRefresh = host.TaskProjectionRequests.Count;
+
+        // 同章节刷新（刷新按钮/重新加载同一章）→ 不得清 RunId、不得停轮询。
+        await shell.WorkbenchView.LoadAsync("chapter-key");
+        RunJobs();
+        Assert.Equal(trackedRunId, viewModel.RunId);
+        Assert.True(viewModel.IsRunPolling);
+        Assert.False(shell.WorkbenchView.BatchStartButton.IsEnabled);
+
+        // 轮询仍生效：驱动一次生产 tick 必须真的再发一次投影请求。
+        await viewModel.TickRunPollForTestAsync();
+        Assert.True(host.TaskProjectionRequests.Count > pollsBeforeRefresh,
+            $"polling stopped after same-chapter refresh ({pollsBeforeRefresh} -> {host.TaskProjectionRequests.Count})");
+
+        viewModel.StopRunPolling();
         shell.Close();
     }
 

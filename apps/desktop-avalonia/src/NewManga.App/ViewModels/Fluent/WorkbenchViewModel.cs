@@ -230,20 +230,29 @@ public sealed class WorkbenchViewModel : FluentViewModel
 
             RunProjection = FluentRunProjection.From(projection);
             Status = RunProjection.BarText;
-            // R3-007：终态后释放跟踪的 RunId 并停止轮询，使「开始处理」重新可用（投影保留为最终诚实快照）。
-            // 同时轮换意图键：下一次 Run 是新的意图，不能复用旧 Run 的幂等键。
+            // R3-007：终态后不再需要 1s 轮询（Run 已结束），但**只有没有任何可用控制动作时**才释放
+            // 跟踪的 RunId（r2-P1）：completed_with_failures 仍可能 can_retry_failed（Core
+            // projection.py:437-438），若此时释放 RunId，「重试失败」会 enabled-but-inert。
             if (FluentRunProjection.IsTerminalRunStatus(projection.RunStatus))
             {
                 var finishedRunId = _runId;
-                _runId = null;
-                _runTrackingChapterId = null;
-                _startIdempotencyKey = null;
-                _startIdempotencyChapterId = null;
-                _retryIdempotencyKey = null;
                 StopRunPolling();
-                Changed(nameof(RunId));
-                Changed(nameof(RunBarText));
-                Status = $"Run {finishedRunId ?? "?"} 已结束（{RunProjection.RunStatusText}）；可再次开始处理。";
+                if (RunProjection.HasActionableControl)
+                {
+                    Status = $"Run {finishedRunId ?? "?"} 已结束（{RunProjection.RunStatusText}）；仍可重试失败目标。";
+                }
+                else
+                {
+                    // 无可用动作：释放跟踪 + 轮换意图键（下一次 Run 是新的意图，不能复用旧键）。
+                    _runId = null;
+                    _runTrackingChapterId = null;
+                    _startIdempotencyKey = null;
+                    _startIdempotencyChapterId = null;
+                    _retryIdempotencyKey = null;
+                    Changed(nameof(RunId));
+                    Changed(nameof(RunBarText));
+                    Status = $"Run {finishedRunId ?? "?"} 已结束（{RunProjection.RunStatusText}）；可再次开始处理。";
+                }
             }
 
             return true;
@@ -332,6 +341,9 @@ public sealed class WorkbenchViewModel : FluentViewModel
             }
 
             Status = $"重试已提交（{result.RunId} · {result.Status}）。";
+            TrackRunControlResult(result);
+            // 重试可能创建子 Run / 恢复执行：重新跟踪投影（终态时曾被停表，r2-P1）。
+            StartRunPolling();
             await PollRunProjectionAsync(cancellationToken);
             return true;
         }
@@ -363,6 +375,9 @@ public sealed class WorkbenchViewModel : FluentViewModel
             }
 
             Status = $"Run 控制已接受（{result.Status}）。";
+            TrackRunControlResult(result);
+            // 继续/恢复后 Run 重新运行：确保 1s 投影轮询处于运行态（r2-P1）。
+            StartRunPolling();
             await PollRunProjectionAsync(cancellationToken);
             return true;
         }
@@ -404,6 +419,25 @@ public sealed class WorkbenchViewModel : FluentViewModel
         Changed(nameof(CanStop));
         Changed(nameof(CanContinue));
         Changed(nameof(CanRetryFailed));
+    }
+
+    /// <summary>
+    /// r2-P1：控制/重试结果可能带回子 Run（C057 restart / C061 的 <c>new_run_id</c>）。若带回，
+    /// 则改为跟踪子 Run（否则后续投影/控制仍打到已停止的父 Run）；没有子 Run 时保持当前 RunId。
+    /// </summary>
+    private void TrackRunControlResult(RunControlInfo result)
+    {
+        if (string.IsNullOrWhiteSpace(result.NewRunId) ||
+            string.Equals(result.NewRunId, _runId, StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        _runId = result.NewRunId;
+        _runTrackingChapterId = _chapterId;
+        _retryIdempotencyKey = null;
+        Changed(nameof(RunId));
+        Changed(nameof(RunBarText));
     }
 
     public async Task LoadAsync(string? chapterId, CancellationToken cancellationToken = default)

@@ -217,12 +217,23 @@ public sealed class FluentRunProjection
     };
 
     /// <summary>
-    /// R3-007：Run 是否已到终态（Core <c>run_status</c> 词汇）。终态后 Workbench 释放跟踪的 RunId
-    /// 并停止轮询，使「开始处理」重新可用（同一章节可再次提交新的 Run）。
+    /// R3-007 / r2-P1：Core 的**终态**集合，逐字对齐
+    /// <c>src/application/tasks/projection.py:163-171</c> 的 <c>_TERMINAL_STATUSES</c>：
+    /// <c>completed</c> / <c>completed_with_failures</c> / <c>failed</c> / <c>cancelled</c>。
+    /// <para><c>interrupted</c> **不是**终态：Core 在 <c>projection.py:432-435</c> 为它提供
+    /// can_continue / can_restart / can_abandon（可恢复）；<c>done</c>/<c>error</c>/<c>canceled</c>/
+    /// <c>stopped</c> 不是 Core 产出的 <c>run_status</c> 词汇，也不得当作终态。</para>
     /// </summary>
     public static bool IsTerminalRunStatus(string? status) => status?.Trim().ToLowerInvariant() is
-        "completed" or "done" or "completed_with_failures" or "failed" or "error" or "interrupted" or
-        "cancelled" or "canceled" or "stopped";
+        "completed" or "completed_with_failures" or "failed" or "cancelled";
+
+    /// <summary>
+    /// r2-P1：此投影是否仍有 **UI 可执行的控制动作**（暂停/停止/继续/重试失败）。
+    /// 终态但仍有动作时（典型：<c>completed_with_failures</c> 且 <c>can_retry_failed</c>，见
+    /// <c>projection.py:437-438</c>）**不得**释放跟踪的 RunId，否则按钮会 enabled-but-inert。
+    /// </summary>
+    public bool HasActionableControl =>
+        Controls.CanPause || Controls.CanStop || Controls.CanContinue || Controls.CanRetryFailed;
 
     private static string Value(string? value) => string.IsNullOrWhiteSpace(value) ? Missing : value!;
 
