@@ -1,0 +1,11 @@
+14	2	apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/LibraryViewModel.cs
+33	3	apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/TrashViewModel.cs
+33	3	apps/desktop-avalonia/tests/NewManga.App.Tests/FakeHostController.cs
+342	0	apps/desktop-avalonia/tests/NewManga.App.Tests/TrashUiTests.cs
+39	0	apps/desktop-avalonia/tests/NewManga.App.Tests/V2ShellUiTests.cs
+ .../ViewModels/V2/Library/LibraryViewModel.cs      |  16 +-
+ .../ViewModels/V2/Library/TrashViewModel.cs        |  36 ++-
+ .../tests/NewManga.App.Tests/FakeHostController.cs |  36 ++-
+ .../tests/NewManga.App.Tests/TrashUiTests.cs       | 342 +++++++++++++++++++++
+ .../tests/NewManga.App.Tests/V2ShellUiTests.cs     |  39 +++
+ 5 files changed, 461 insertions(+), 8 deletions(-)

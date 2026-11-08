@@ -1,0 +1,51 @@
+  正在确定要还原的项目…
+  所有项目均是最新的，无法还原。
+  NewManga.CoreClient -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.CoreClient\bin\Release\net9.0\NewManga.CoreClient.dll
+  NewManga.Appearance -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Appearance\bin\Release\net9.0\NewManga.Appearance.dll
+  NewManga.ApplicationCore -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.ApplicationCore\bin\Release\net9.0\NewManga.ApplicationCore.dll
+  NewManga.DesignSystem -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.DesignSystem\bin\Release\net9.0\NewManga.DesignSystem.dll
+  NewManga.Host -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Host\bin\Release\net9.0\NewManga.Host.dll
+  NewManga.ThemeEngine -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.ThemeEngine\bin\Release\net9.0\NewManga.ThemeEngine.dll
+  NewManga.Presentation.Avalonia -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Presentation.Avalonia\bin\Release\net9.0\NewManga.Presentation.Avalonia.dll
+  NewManga.App -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\bin\Release\net9.0\NewManga.App.dll
+  NewManga.App.Tests -> G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Release\net9.0\NewManga.App.Tests.dll
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Release\net9.0\NewManga.App.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+[xUnit.net 00:00:11.94]     NewManga.App.Tests.TrashUiTests.ProbeFailure_CoreUnavailable_IsIndependentFailureState_NotCapabilityMissing [FAIL]
+  失败 NewManga.App.Tests.TrashUiTests.ProbeFailure_CoreUnavailable_IsIndependentFailureState_NotCapabilityMissing [< 1 ms]
+  错误消息:
+   Assert.False() Failure
+Expected: False
+Actual:   True
+  堆栈跟踪:
+     at NewManga.App.Tests.TrashUiTests.ProbeFailure_CoreUnavailable_IsIndependentFailureState_NotCapabilityMissing()
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:11.95]     NewManga.App.Tests.TrashUiTests.EmptyStateIsHonestOnlyWhenThereIsNeitherRowNorCursor [FAIL]
+[xUnit.net 00:00:11.95]     NewManga.App.Tests.TrashUiTests.ReadCapabilityMissing_ShowsTypedGap_FailsClosed_NoReadOnlyBanner [FAIL]
+  失败 NewManga.App.Tests.TrashUiTests.EmptyStateIsHonestOnlyWhenThereIsNeitherRowNorCursor [< 1 ms]
+  错误消息:
+   Assert.False() Failure
+Expected: False
+Actual:   True
+  堆栈跟踪:
+     at NewManga.App.Tests.TrashUiTests.EmptyStateIsHonestOnlyWhenThereIsNeitherRowNorCursor()
+--- End of stack trace from previous location ---
+  失败 NewManga.App.Tests.TrashUiTests.ReadCapabilityMissing_ShowsTypedGap_FailsClosed_NoReadOnlyBanner [< 1 ms]
+  错误消息:
+   Assert.False() Failure
+Expected: False
+Actual:   True
+  堆栈跟踪:
+     at NewManga.App.Tests.TrashUiTests.ReadCapabilityMissing_ShowsTypedGap_FailsClosed_NoReadOnlyBanner()
+--- End of stack trace from previous location ---
+[xUnit.net 00:00:11.95]     NewManga.App.Tests.TrashUiTests.HostReadOnly_PlusReadCapabilityMissing_ShowsCapabilityStateAndReadOnlyReason [FAIL]
+  失败 NewManga.App.Tests.TrashUiTests.HostReadOnly_PlusReadCapabilityMissing_ShowsCapabilityStateAndReadOnlyReason [< 1 ms]
+  错误消息:
+   Assert.False() Failure
+Expected: False
+Actual:   True
+  堆栈跟踪:
+     at NewManga.App.Tests.TrashUiTests.HostReadOnly_PlusReadCapabilityMissing_ShowsCapabilityStateAndReadOnlyReason()
+--- End of stack trace from previous location ---
+
+失败!  - 失败:     4，通过:    70，已跳过:     0，总计:    74，持续时间: 11 s - NewManga.App.Tests.dll (net9.0)

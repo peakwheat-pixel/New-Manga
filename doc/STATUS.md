@@ -4,7 +4,7 @@
 
 ## 当前程序
 - **V11R 程序 ACTIVE**：[V11R_PROGRAM](V11R_PROGRAM.md)；契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)。
-- 当前 Task：**`FEA-12-UI-RESIDUAL-2` ready**（回收站恢复后书架不刷新/空态与计数诚实性；[卡](tasks/FEA-12-UI-RESIDUAL-2.md)）。已闭环：INDEX-L4-1（`e593cc9d7`，L-4 已修）、RESIDUAL-3（`25dc1523c`）、RESIDUAL-2（`26aa0ca4a`）、SCAN-RH-1（`fb74b4ef7`）、L-R11（`86cd1d124`）、C-04b docs（`698ac9524`）、C-16 v1.7（`2175238ab`）、2C（`7c95bb3c4`）、UI-RESIDUAL-1（`8e3bd03d6`）。
+- 当前 Task：**无活动 Task**（下一候选=2C typed-stop 残项 proposed，需 scope review；[B2 卡](tasks/FEA-11-L-S1-B2-ROOTS-AVAILABILITY-1.md) 延后=无消费者）。已闭环：`FEA-12-UI-RESIDUAL-2` done（`85356c22a`）、UI-RESIDUAL-1（`8e3bd03d6`）、INDEX-L4-1（`e593cc9d7`）、RESIDUAL-3（`25dc1523c`）、RESIDUAL-2（`26aa0ca4a`）、SCAN-RH-1（`fb74b4ef7`）、L-R11（`86cd1d124`）。
 - FEA-11 线：WATCH-1/SCAN-2/SCAN-1/MATCH-1/AC4-GAPS-1/LINEAGE-1 `done`；HOST-AUTH-1 `closed_with_limitations`；FEA-12 四卡 `done`。
 - **AC11-1 终态 MET（带 limitation）**：裁决 2026-11-06（[记录](reviews/FEA-11-AC11-1-adjudication-2026-11-06.md)）；「启动/访问前检查」= 冷启动枚举 + registry/root 核验（SCAN-2） + 每次访问/操作前 live grant+lease+digest 强验证；启动不做全量内容扫描（L-STARTUP）。
 - rolling checkpoint：[GOAL-PROGRESS](checkpoints/GOAL-PROGRESS-2026-11-02.md)。
@@ -20,7 +20,7 @@
 - 测试基线：pytest **3390/10**、.NET **1683/0/96**（2026-11-08 INDEX-L4-1 closeout 与 §27 复核 Lead 实跑；起点 3363/10；既有 flaky `FluentR2ReworkTests.R3001_*` 隔离复跑通过；跑后 `verification/FEA-09` 已恢复）。
 
 ## Gate 与保留项
-Technical Gate=NOT_SATISFIED；private_registry_absence=UNPROVABLE；Owner Risk Acceptance=APPROVED；Disposition=WAIVED_BY_OWNER。push `clean-snapshot-20261026`=`892b946e`、`clean-snapshot-20261102`=`ac7d488e`；**main 已于 2026-11-08 push 至 `015d70a16`（2C/L-R11/C-04b/C-16 v1.7/SCAN-RH 全部收口；origin 同步，AHEAD=0）**。
+Technical Gate=NOT_SATISFIED；private_registry_absence=UNPROVABLE；Owner Risk Acceptance=APPROVED；Disposition=WAIVED_BY_OWNER。push `clean-snapshot-20261026`=`892b946e`、`clean-snapshot-20261102`=`ac7d488e`；**main 2026-11-08 push（2C/L-R11/C-04b/SCAN-RH/INDEX-L4-1/UI-RESIDUAL-2；§27；AHEAD=0）**。
 
 ## 当前权威指针
 - DAG/节点：[REBASELINE_PLAN](REBASELINE_PLAN.md)（唯一权威）；主线 `main`；工作区 [WORKSPACE_GOVERNANCE](WORKSPACE_GOVERNANCE.md)。

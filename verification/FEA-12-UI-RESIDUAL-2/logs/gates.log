@@ -1,0 +1,165 @@
+=== FEA-12-UI-RESIDUAL-2 integration gates (Lead DSH) 2026-11-08T09:22:18.3311385+08:00 HEAD=85356c22a ===
+=== scope check (impl commit diff) ===
+apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/LibraryViewModel.cs
+apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/TrashViewModel.cs
+apps/desktop-avalonia/tests/NewManga.App.Tests/FakeHostController.cs
+apps/desktop-avalonia/tests/NewManga.App.Tests/TrashUiTests.cs
+apps/desktop-avalonia/tests/NewManga.App.Tests/V2ShellUiTests.cs
+=== forbidden surface diff ===
+(empty) OK
+=== check.ps1 default ===
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-12-UI-RESIDUAL-2.md
+WARN: 存在 10 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3134 bytes / 27 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6943 bytes / 64 lines
+Governance check: PASS (3 warnings)
+CHECK_EXIT=0
+=== check.ps1 -TaskPath ===
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-12-UI-RESIDUAL-2.md
+WARN: 存在 10 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3134 bytes / 27 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6943 bytes / 64 lines
+Governance check: PASS (3 warnings)
+CHECK_TASK_EXIT=0
+=== pins ===
+OK C01b 3c9f5af7d74f
+OK C02 bb365ca891a7
+OK C03 b77e7968a00b
+OK C04b 4b304c0c315f
+OK C05 f6e6f3cb1fe1
+OK C06 75f8e2b4eb80
+OK C07 3fdb44e49afe
+OK C08 453f993c1a16
+OK C09 dc51226b336c
+OK C10 ec8fd862f95f
+OK C11 44f4273f7ad1
+OK C12 f49835860143
+OK C13 8faf1e805eac
+OK C14 05056cbf65f9
+OK C15 f9e376a0ed4c
+OK C16 67286eeca8cb
+OK C17 aefa0fa5b17e
+OK FEA01 0370c18932b1
+PIN AUDIT: PASS (all 18)
+PINS_EXIT=0
+=== api inventory ===
+OK: rendered counts match FEA-C07 doc
+| 接口 | 方法数 | 属性/事件/字段数 |
+|---|---|---|
+| IReaderProgressSink | 1 | 0 |
+| IHostController | 54 | 4 |
+| IRunController | 6 | 0 |
+| **合计** | **61** | — |
+
+## IReaderProgressSink
+
+| # | 成员 | 返回类型 |
+|---|---|---|
+| 1 | `SaveReadingProgressAsync` | `Task<ReaderProgressSaveResult>` |
+
+## IHostController
+
+| # | 成员 | 返回类型 |
+|---|---|---|
+| 1 | `StartAsync` | `Task` |
+| 2 | `RefreshBooksAsync` | `Task` |
+| 3 | `TryChineseRoundTripAsync` | `Task<bool>` |
+| 4 | `TryCreateBookAsync` | `Task<bool>` |
+| 5 | `CreateChapterAsync` | `Task<ChapterSummary?>` |
+| 6 | `LoadReaderBookAsync` | `Task<ReaderBookData?>` |
+| 7 | `ListChaptersAsync` | `Task<IReadOnlyList<ChapterSummary>>` |
+| 8 | `ListChapterPagesAsync` | `Task<IReadOnlyList<ChapterPageSummary>>` |
+| 9 | `LoadPageRegionsAsync` | `Task<RegionPageProjection?>` |
+| 10 | `LoadRegionRevisionsAsync` | `Task<RegionRevisionHistory?>` |
+| 11 | `ReadPageImageAsync` | `Task<byte[]?>` |
+| 12 | `SetRegionTypeAsync` | `Task<RegionOperationResult>` |
+| 13 | `RestoreRegionRevisionAsync` | `Task<RegionOperationResult>` |
+| 14 | `RerenderPageAsync` | `Task<PageRerenderOutcome>` |
+| 15 | `ListCredentialTargetsAsync` | `Task<IReadOnlyList<CredentialTargetOption>>` |
+| 16 | `PutCredentialAsync` | `Task<CredentialOperationResult>` |
+| 17 | `ClearCredentialAsync` | `Task<CredentialOperationResult>` |
+| 18 | `ListProviderProfilesAsync` | `Task<IReadOnlyList<ProviderProfileInfo>>` |
+| 19 | `SaveProviderProfileAsync` | `Task<SettingsProfileResult>` |
+| 20 | `DeleteProviderProfileAsync` | `Task<SettingsProfileResult>` |
+| 21 | `ListNetworkProfilesAsync` | `Task<IReadOnlyList<NetworkProfileInfo>>` |
+| 22 | `SaveNetworkProfileAsync` | `Task<SettingsProfileResult>` |
+| 23 | `DeleteNetworkProfileAsync` | `Task<SettingsProfileResult>` |
+| 24 | `SetNetworkDefaultAsync` | `Task<SettingsProfileResult>` |
+| 25 | `TestNetworkProfileAsync` | `Task<NetworkTestInfo?>` |
+| 26 | `ResolveNetworkProfileAsync` | `Task<NetworkResolveInfo?>` |
+| 27 | `SetProviderBindingAsync` | `Task<SettingsProfileResult>` |
+| 28 | `ClearProviderBindingAsync` | `Task<SettingsProfileResult>` |
+| 29 | `ResolveProviderBindingAsync` | `Task<ProviderBindingResult?>` |
+| 30 | `ImportFilesAsync` | `Task<ImportOutcome>` |
+| 31 | `ImportFolderAsync` | `Task<ImportOutcome>` |
+| 32 | `GetTranslatedPageIdsAsync` | `Task<IReadOnlyList<string>>` |
+| 33 | `StartExportAsync` | `Task<ExportStartInfo?>` |
+| 34 | `GetExportSnapshotAsync` | `Task<ExportSnapshotInfo?>` |
+| 35 | `GetExportHistoryAsync` | `Task<IReadOnlyList<ExportHistoryEntry>>` |
+| 36 | `CancelExportAsync` | `Task<ExportSnapshotInfo?>` |
+| 37 | `RevealExportFolderAsync` | `Task<bool>` |
+| 38 | `ListBackupsAsync` | `Task<IReadOnlyList<BackupPackageInfo>>` |
+| 39 | `CreateBackupAsync` | `Task<BackupPackageInfo?>` |
+| 40 | `DeleteBackupAsync` | `Task<bool>` |
+| 41 | `RetryPendingCleanupsAsync` | `Task<CleanupOutcomeInfo?>` |
+| 42 | `ListPluginsAsync` | `Task<PluginListInfo>` |
+| 43 | `SetPluginsGlobalEnabledAsync` | `Task<bool?>` |
+| 44 | `SetPluginEnabledAsync` | `Task<bool?>` |
+| 45 | `GetCleanupPreviewAsync` | `Task<CleanupPreviewInfo>` |
+| 46 | `RunCleanupAsync` | `Task<CleanupOutcomeInfo?>` |
+| 47 | `OpenDraftAsync` | `Task<DraftLease?>` |
+| 48 | `PatchDraftAsync` | `Task<Draft?>` |
+| 49 | `PrepareCandidateAsync` | `Task<RegionCandidate?>` |
+| 50 | `ApplyCandidatesAsync` | `Task<IReadOnlyDictionary<string, string>>` |
+| 51 | `GetDraftAsync` | `Task<Draft?>` |
+| 52 | `ListDraftsAsync` | `Task<IReadOnlyList<Draft>>` |
+| 53 | `DiscardDraftAsync` | `Task` |
+| 54 | `RestoreBackupAsync` | `Task<string?>` |
+| — | `Snapshot`（属性） | `HostViewSnapshot` |
+| — | `StartRequests`（属性） | `int` |
+| — | `ExportDirectorySuggestion`（属性） | `string` |
+| — | `Changed`（事件） | `EventHandler?` |
+
+## IRunController
+
+| # | 成员 | 返回类型 |
+|---|---|---|
+| 1 | `StartRunAsync` | `Task<RunStartInfo?>` |
+| 2 | `ControlRunAsync` | `Task<RunControlInfo?>` |
+| 3 | `ResumeBlockedRunAsync` | `Task<RunControlInfo?>` |
+| 4 | `GetRunSnapshotAsync` | `Task<RunSnapshotInfo?>` |
+| 5 | `GetTaskProjectionAsync` | `Task<TaskProjectionInfo?>` |
+| 6 | `RetryFailedTargetsAsync` | `Task<RunControlInfo?>` |
+
+API_EXIT=0
+=== build ===
+    0 个警告
+    0 个错误
+
+已用时间 00:00:03.15
+BUILD_EXIT=0
+=== full dotnet test ===
+
+已通过! - 失败:     0，通过:    21，已跳过:     0，总计:    21，持续时间: 53 ms - NewManga.Appearance.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:    38，已跳过:     0，总计:    38，持续时间: 296 ms - NewManga.Presentation.Avalonia.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   253，已跳过:     0，总计:   253，持续时间: 847 ms - NewManga.ThemeEngine.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   117，已跳过:     0，总计:   117，持续时间: 1 s - NewManga.DesignSystem.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:    31，已跳过:     0，总计:    31，持续时间: 4 s - NewManga.ApplicationCore.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   286，已跳过:    65，总计:   351，持续时间: 9 s - NewManga.Host.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   167，已跳过:    24，总计:   191，持续时间: 17 s - NewManga.CoreClient.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   778，已跳过:     7，总计:   785，持续时间: 2 m 57 s - NewManga.App.Tests.dll (net9.0)
+
+DOTNET_EXIT=0
+=== restore FEA-09 ===
+RESTORE_EXIT=0
+=== full pytest ===
+
+3390 passed, 10 skipped in 254.51s (0:04:14)
+
+PYTEST_EXIT=0
+=== git status ===
+?? doc/reviews/FEA-12-UI-RESIDUAL-2-r1.md
+?? verification/FEA-12-UI-RESIDUAL-2/
+=== done ===

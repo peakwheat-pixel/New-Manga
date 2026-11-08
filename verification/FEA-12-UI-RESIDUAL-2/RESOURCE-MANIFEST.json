@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "task_id": "FEA-12-UI-RESIDUAL-2",
+  "generated_at": "2026-11-08T09:35:00+08:00",
+  "generated_by": "DSH (Lead/Architect/Integrator) — closeout integration",
+  "note": "App-only fix for three user-visible/behavioural defects (A restore→shelf not refreshed; B empty state / paging dishonesty; A′ BookCountText not re-raised). Implementation commit 85356c22a (5 files, +461/-8). No user data / AppData / external volume / real recycle bin / original file touched; no delete/move/migrate/archive; no delete-marker change; zero contract/wire/schema/dependency change; 18 pins unchanged. Evidence logs are canonical copies inside this directory (EV-*). The reviewer's raw mutation logs were produced in the out-of-repo scratch root G:/CODEX/New Manga.workspace/temp/residual2-review/ and are archived here byte-for-byte (provenance: independent review session 897f3928-3df7-4336-ad18-036b486ecc6a).",
+  "implementation_commit": "85356c22a",
+  "base_commit": "54e5d69db",
+  "source_pins": [
+    { "path": "apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/TrashViewModel.cs", "bytes": 45841, "sha256": "b47532bcfce1f423c211c63f9c1cf09dfb7c9d2e8ca940f916bc7cf376af3df1", "git_blob": "7add89c5639905d6498ebc33b8df7370d1f2aa0b" },
+    { "path": "apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Library/LibraryViewModel.cs", "bytes": 56531, "sha256": "98f4fbf29f8e634556b0eb4c6660df062ffee1b31080ccaf9bc5df7472e5c9ba", "git_blob": "4750eba4bcc336559f1cd05faec5aa03a7fe3dfb" },
+    { "path": "apps/desktop-avalonia/tests/NewManga.App.Tests/FakeHostController.cs", "bytes": 85031, "sha256": "5a9aa45910f2eaaf2fc75c4a6fe00c490ffba73f86ed4920bb17d7e268835caa", "git_blob": "3c2bf0492d2cefe53ab2bf4a488105e69b5daea1" },
+    { "path": "apps/desktop-avalonia/tests/NewManga.App.Tests/TrashUiTests.cs", "bytes": 62088, "sha256": "f8fdbce8d069f79e0a3c75d2672931c3c88785b2f115011693180182d1cce3d1", "git_blob": "3bdbbd29bae30c6481aa299730974f1dcb1f27eb" },
+    { "path": "apps/desktop-avalonia/tests/NewManga.App.Tests/V2ShellUiTests.cs", "bytes": 58499, "sha256": "3a7b9cb6fd0e22f2bc07c2162e17f844d136d4471b85db71dee12183e367f990", "git_blob": "4323805e0d271d9db9550320751ea08241a2d75f" }
+  ],
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "NOT_APPLICABLE (main worktree; base 54e5d69db, implementation head 85356c22a)",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "NOT_APPLICABLE",
+      "process_check": "No linked worktree created; all work in the main worktree; `git worktree list` has no entry for this card."
+    },
+    {
+      "resource_type": "temp",
+      "source_path": "G:\\CODEX\\New Manga.workspace\\temp\\residual2-review\\",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "G:\\CODEX\\New Manga.workspace\\temp\\residual2-review\\",
+      "process_check": "Out-of-repo reviewer scratch root (pristine copies + M1..M6b logs + full-sln.log); canonical copies archived byte-for-byte under verification/FEA-12-UI-RESIDUAL-2/logs/reviewer-mutations/. Preserved for audit, not deleted."
+    },
+    {
+      "resource_type": "test-fixture",
+      "source_path": "apps/desktop-avalonia/tests/NewManga.App.Tests/FakeHostController.cs (in-memory fake; new RestoreRepopulatesSnapshot default OFF)",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "NOT_APPLICABLE",
+      "process_check": "All 8 new tests use the existing in-memory FakeHostController; the only new fake knob defaults to false so the 770 pre-existing App tests are unaffected (full App suite green). No Avalonia window except the pre-existing shell fixture in V2ShellUiTests; no real IPC; no binary fixture."
+    },
+    {
+      "resource_type": "user-data",
+      "source_path": "NOT_APPLICABLE",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "NOT_APPLICABLE",
+      "process_check": "No real user data / AppData / external volume / real recycle bin / original file was read or written; tests are VM-level with fakes; no delete frame introduced (existing ZeroPurge/ZeroBatch tests still green)."
+    },
+    {
+      "resource_type": "build-artifact",
+      "source_path": "apps/desktop-avalonia/**/bin/Release, **/obj (pre-existing build directories)",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "NOT_APPLICABLE",
+      "process_check": "dotnet build/test artifacts stay in the existing build directories; nothing added to the delivery."
+    },
+    {
+      "resource_type": "tracked-side-effect",
+      "source_path": "verification/FEA-09/logs/wire-redacted.ndjson (pre-existing WireLogSourceRedactionTests side effect)",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "NOT_APPLICABLE",
+      "process_check": "Every full .NET run rewrites this tracked file (pre-existing, documented by FEA-11-RENDITION-1); restored with `git checkout -- verification/FEA-09` (EXIT=0) after the Lead full run; final worktree contains only this card's files."
+    }
+  ],
+  "closeout_counts": { "deleted": 0, "moved": 0, "migrated": 0, "archived": 0 },
+  "closeout_note": "No delete/move/migrate/archive performed. Evidence level: VM-level fake-controller headless; real Core/IPC end-to-end and L3/L4 real-device walkthrough remain NOT_RUN for this card."
+}

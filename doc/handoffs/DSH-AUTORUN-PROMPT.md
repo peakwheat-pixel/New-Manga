@@ -1,4 +1,4 @@
-# DSH 持续自动推进指令（AUTORUN，v1 · 2026-11-08）
+# DSH 持续自动推进指令（AUTORUN，v1.1 · 2026-11-08；§27 更新基线与队列快照）
 
 > 用途：新开 DSH 会话时**整段粘贴**给 DSH，即可在本仓库持续自动推进，无需人工介入。
 > 本文件是操作指令，不是事实来源；事实以 Git、`doc/STATUS.md`、`doc/REBASELINE_PLAN.md`、`doc/TASK_LEDGER.md`、各 Task 卡与 `verification/**` 为准。
@@ -41,7 +41,7 @@
 2. **裁决与释放**：你裁决并冻结卡面；需要改契约时**先做契约前置卡**（UNFREEZE 载体 + 独立 byte-level 复核 + 重冻 + pin 重算）。
 3. **实现**：spawn teammate（`fresh`，如 `<卡>-impl`）或自派 subagent；**只写 allowed_paths**；显式 pathspec 提交；不得 `git add -A`。
 4. **独立 Review**：**必须**是未参与实现的 fresh subagent；复跑判别性（改坏→RED→**逐字节复原 sha MATCH**→复绿）与关键门禁；报告写 `<卡>-r1.md`；`P0/P1` 必须为 0 才可 `approved`。
-5. **集成门禁（你亲自跑）**：`check.ps1`（默认 + `-TaskPath`）、`verify_pins.ps1` 18/18、全量 pytest、全量 .NET（跑后**必须** `git checkout -- verification/FEA-09`）、`generate_api_inventory.py --check`、scope diff ⊆ allowed_paths、契约/schema/依赖零漂移。基线**不得下降**（当前：pytest **3369/10**、.NET **1683/0/96**）。
+5. **集成门禁（你亲自跑）**：`check.ps1`（默认 + `-TaskPath`）、`verify_pins.ps1` 18/18、全量 pytest、全量 .NET（跑后**必须** `git checkout -- verification/FEA-09`）、`generate_api_inventory.py --check`、scope diff ⊆ allowed_paths、契约/schema/依赖零漂移。基线**不得下降**（当前：pytest **3390/10**、.NET **1691/0/96**；2026-11-08 §27 复核）。
 6. **Closeout**：卡 `status: done` + `integration_commit`/`delivery_head` + `canonical_evidence_status: complete` + `resource_closeout_status: complete` + `## Canonical Evidence`（逐文件 commit+sha256，`commit` 填**该文件所在提交**）+ `## Resource Manifest` + `## Closeout Record`（含 P0/P1/P2/P3 与 limitations）。
 7. **push**：记录 `PRE_HEAD / PRE_ORIGIN / AHEAD / PUSH_EXIT / POST_ORIGIN / POST_AHEAD` 到 handoff 新 §；只 stage 本轮文件（避免混入并发产物）。
 
@@ -67,15 +67,16 @@
 - SCAN-RH：RH-3/RH-5 仅登记；**不得**写「RH-3 已清理 / RH-5 已补 seam / SCAN-2 残余已全部解决」。
 - 所有卡：未落地的不写「已修复」；不把 `NOT_RUN` 写成 PASS；limitation 必须逐条保留。
 
-## 7. 当前队列状态（2026-11-08 快照，供立项参考）
+## 7. 当前队列状态（2026-11-08 §27 快照，供立项参考）
 
-- 已完成并 push：2C / C-16 v1.7（L-R11 PREREQ）/ L-R11 gate 统一 / C-04b residual / SCAN-RH / UI P3。HEAD `1ab3e265b`，`AHEAD=0`，工作树 clean。
+- 已完成并 push：2C / C-16 v1.7（L-R11 PREREQ）/ L-R11 gate 统一 / C-04b residual（R-1…R-8 + L-3）/ SCAN-RH / UI P3 / INDEX-L4-1（v9 索引，L-4）/ **FEA-12-UI-RESIDUAL-2（回收站恢复后书架刷新 + 空态/计数诚实性 + A′，`85356c22a`）**。HEAD 与 `AHEAD` 以 `git` 为准（§27 时点 `54e5d69db` + 本卡 closeout，AHEAD=0，工作树 clean）。
 - `READY 节点：无`；`STATUS：无活动 Task`。
-- 可按 §2 自选的候选：**(b)** C-04b 5 处措辞（`R-2/R-5/R-7/R-8`=C-04b 1/18 pin + `R-1` 另需 M2-C1 记录型 rev）；**(c)** RH-3 根治（C-17 additive UNFREEZE）；**(d)** B2（不建议）；**(e)** UI L3 真机（不做，记 NOT_RUN）。
-- 结论：若你判定 (b) 值得做 → 立 `FEA-12-CORE-C04B-RESIDUAL-2`（UNFREEZE）+ `/3`（artifact 谓词代码，0 pin + 契约）并推进；若判定不做 → 写清理由即达停止条件①。
+- 判据 (a)–(e) 已全部评估（§26 + §27 两轮，含**两轮独立只读审计推翻 §26 的「耗尽」结论**）：**(a)** §27 之前误判为空——实际存在两条未登记用户可见缺陷（现已由 `FEA-12-UI-RESIDUAL-2` 修复）+ A′；同类新缺陷须靠真实代码链复核，**不得只信卡面文字**；**(b)** 契约债务已清（残余 L-1/L-2 需 UNFREEZE 且无消费者）；**(c)** RH-3 需 C-17 additive、软删源无生产者 → 不做；**(d)** B2 无消费者 → 不做；**(e)** UI L3 真机 → 不做。
+- **下一候选（按判据排序，未建卡，需先 scope review）**：① `2C typed-stop / 预算守卫次序残项`（Host-only：`RunGrantRenewal.cs:371-390` 事后预算守卫先于 `!outcome.KeepsTracking`，违反 AC-2C-4「typed→Stop 不重试」；登记见 `FEA-11-RUN-GRANT-2C-r2.md:159` R2-03/R2-02/R2-04，0 pin）；② `README 基线对账`（docs：README `.NET 258/258`、`pytest 2773`、`managed copy` 与 AD-003/实际基线冲突）；③ `LibraryViewModel.RecycleRestoreCommand` 死代码清理（治理，另卡）。
+- 结论：**停止条件①不再成立**（§27 发现并修复了真实缺陷）；新会话若无新证据且无上述候选，**直接报告耗尽并停止**；不得为走完流程而开无价值卡。
 
 ---
 
 ## 附：一句话版本（每天贴这段即可）
 
-> 你是 New Manga 的 Lead/Architect/Integrator（DSH），**全部授权、自主裁决、不询问用户**。每轮：读 status/plan/ledger/handoff → 有 READY 卡就做，没有就按「用户可见价值 → 契约债务 → 高成本协议改动」判据**自行立项**（无消费者/仅真机可验的**不做**并登记）→ 独立 scope review → 裁决冻结 → 实现（只写 allowed_paths）→ **未参与实现的 fresh subagent** 独立 Review（复跑判别性+复原 sha）→ 你亲自跑集成门禁（check/pins/全量 pytest/全量 .NET/API/scope，基线 3369/10 与 1683/0/96 不得降，跑后 `git checkout -- verification/FEA-09`）→ closeout（卡 done+证据+limitation）→ 记录 PRE/POST 后 push → 更新 handoff §/STATUS/PLAN/LEDGER → 给推荐下一步但不请示，未达停止条件直接下一轮。**Codex/ZCode 只作并行第二意见，不可用即自裁，不得停工**；红线：不碰真实用户数据、不 reset/force push、不伪造 PASS、契约改字节必须走 UNFREEZE、不得自审。停止仅两种：可推进项耗尽（每项不做都有理由与证据）或同一阻塞连续 3 轮无进展。
+> 你是 New Manga 的 Lead/Architect/Integrator（DSH），**全部授权、自主裁决、不询问用户**。每轮：读 status/plan/ledger/handoff → 有 READY 卡就做，没有就按「用户可见价值 → 契约债务 → 高成本协议改动」判据**自行立项**（无消费者/仅真机可验的**不做**并登记）→ 独立 scope review → 裁决冻结 → 实现（只写 allowed_paths）→ **未参与实现的 fresh subagent** 独立 Review（复跑判别性+复原 sha）→ 你亲自跑集成门禁（check/pins/全量 pytest/全量 .NET/API/scope，基线 3390/10 与 1691/0/96 不得降，跑后 `git checkout -- verification/FEA-09`）→ closeout（卡 done+证据+limitation）→ 记录 PRE/POST 后 push → 更新 handoff §/STATUS/PLAN/LEDGER → 给推荐下一步但不请示，未达停止条件直接下一轮。**Codex/ZCode 只作并行第二意见，不可用即自裁，不得停工**；红线：不碰真实用户数据、不 reset/force push、不伪造 PASS、契约改字节必须走 UNFREEZE、不得自审。停止仅两种：可推进项耗尽（每项不做都有理由与证据）或同一阻塞连续 3 轮无进展。
