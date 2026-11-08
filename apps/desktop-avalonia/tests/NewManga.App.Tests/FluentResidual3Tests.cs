@@ -98,20 +98,20 @@ public sealed class FluentResidual3Tests : IDisposable
             controls ?? new RunControlsInfo(true, true, false, false, false, true));
     }
 
-    /// <summary>七状态行（术语落表顺序）+ 填充行，让矩阵可滚动以验证吸顶。</summary>
+    /// <summary>七状态行（术语落表顺序）+ 填充行，让矩阵可滚动以验证吸顶。PageOrder 用真实 1-based。</summary>
     private static IReadOnlyList<RunRowInfo> SevenStateRows()
     {
         var rows = new List<RunRowInfo>();
         var statuses = new[] { "queued", "running", "done", "failed", "blocked", "stale", "skipped" };
         for (var index = 0; index < statuses.Length; index++)
         {
-            rows.Add(new RunRowInfo($"page-{index + 1}", index, $"p{index + 1}.png", statuses[index],
+            rows.Add(new RunRowInfo($"page-{index + 1}", index + 1, $"p{index + 1}.png", statuses[index],
                 false, false, statuses[index] == "failed" ? "PROVIDER_NOT_CONFIGURED" : null));
         }
 
         for (var index = 0; index < 24; index++)
         {
-            rows.Add(new RunRowInfo($"filler-{index}", 7 + index, $"f{index}.png", "queued", false, false, null));
+            rows.Add(new RunRowInfo($"filler-{index}", 8 + index, $"f{index}.png", "queued", false, false, null));
         }
 
         return rows;
@@ -298,6 +298,152 @@ public sealed class FluentResidual3Tests : IDisposable
         RunJobs();
         Assert.True(shell.WorkbenchViewModel.IsRunPolling);
         shell.WorkbenchViewModel.StopRunPolling();
+        shell.Close();
+    }
+
+    // ---------------------------------------------------------------------------------------
+    // R3-001（r1 P1）：Core page_order 是 1-based —— 矩阵与页面条都不得再 +1
+    // ---------------------------------------------------------------------------------------
+
+    [AvaloniaFact]
+    public async Task R3001_OneBasedPageOrder_IsRenderedVerbatim_InMatrixAndPageStrip()
+    {
+        var host = new FakeHostController(FakeHostController.ReadySnapshot("Sample"));
+        // Core list_chapter_pages 的 pages.sort_order 从 1 开始（tests/library/test_import_images.py:42 `(1,1)`）。
+        host.ChapterPagesByChapter["chapter-key"] =
+        [
+            new ChapterPageSummary("page-1", "one.png", 1),
+            new ChapterPageSummary("page-2", "two.png", 2),
+        ];
+        host.RegionsByPage["page-1"] = new RegionPageProjection([], null);
+        host.RegionsByPage["page-2"] = new RegionPageProjection([], null);
+        var shell = CreateShell(host);
+        shell.Navigate(FluentPage.Workbench);
+        await shell.WorkbenchView.LoadAsync("chapter-key");
+        RunJobs();
+
+        // 页面条：1-based sort_order 直接渲染为 第 1 页 / 第 2 页（旧实现 +1 → 第 2 页 / 第 3 页）。
+        var stripLabels = shell.WorkbenchView.GetVisualDescendants().OfType<Button>()
+            .Select(button => button.Content?.ToString() ?? string.Empty).ToArray();
+        Assert.Contains("第 1 页", stripLabels);
+        Assert.Contains("第 2 页", stripLabels);
+        Assert.DoesNotContain("第 3 页", stripLabels);
+
+        // 矩阵：注入 PageOrder=1 / 5 → 可见文本必须是「第 1 页」「第 5 页」（旧实现 +1 → 第 2 页 / 第 6 页）。
+        shell.WorkbenchView.SelectTab(WorkbenchViewTab.Batch);
+        RunJobs();
+        shell.WorkbenchView.BatchStartButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        RunJobs();
+        var rows = new[]
+        {
+            new RunRowInfo("page-1", 1, "one.png", "done", false, false, null),
+            new RunRowInfo("page-5", 5, "five.png", "done", false, false, null),
+        };
+        host.ScriptedTaskProjections.Enqueue(Projection(rows));
+        await shell.WorkbenchViewModel.TickRunPollForTestAsync();
+        shell.WorkbenchViewModel.StopRunPolling();
+        RunJobs();
+
+        var rowsHost = shell.WorkbenchView.BatchMatrixRowsHost;
+        Assert.Equal(2, rowsHost.Children.Count);
+        var firstTexts = rowsHost.Children[0].GetVisualDescendants().OfType<TextBlock>()
+            .Select(block => block.Text ?? string.Empty).ToArray();
+        var secondTexts = rowsHost.Children[1].GetVisualDescendants().OfType<TextBlock>()
+            .Select(block => block.Text ?? string.Empty).ToArray();
+        Assert.Contains("第 1 页", firstTexts);
+        Assert.DoesNotContain("第 2 页", firstTexts);
+        Assert.Contains("第 5 页", secondTexts);
+        Assert.DoesNotContain("第 6 页", secondTexts);
+        Assert.Equal(new[] { 1, 5 },
+            shell.WorkbenchViewModel.RunProjection!.Rows.Select(row => row.Order).ToArray());
+
+        shell.Close();
+    }
+
+    // ---------------------------------------------------------------------------------------
+    // R3-007（r1 P2）：Run 结束后必须释放跟踪 —— 切章节 / 终态后「开始处理」可再次使用
+    // ---------------------------------------------------------------------------------------
+
+    [AvaloniaFact]
+    public async Task R3007_AfterSuccessfulRun_ChapterSwitch_AllowsANewRun()
+    {
+        var host = new FakeHostController(FakeHostController.ReadySnapshot("Sample"));
+        host.ChapterPagesByChapter["chapter-a"] = [new ChapterPageSummary("page-a", "a.png", 1)];
+        host.ChapterPagesByChapter["chapter-b"] = [new ChapterPageSummary("page-b", "b.png", 1)];
+        host.RegionsByPage["page-a"] = new RegionPageProjection([], null);
+        host.RegionsByPage["page-b"] = new RegionPageProjection([], null);
+        var shell = CreateShell(host);
+        shell.Navigate(FluentPage.Workbench);
+        await shell.WorkbenchView.LoadAsync("chapter-a");
+        RunJobs();
+        shell.WorkbenchView.SelectTab(WorkbenchViewTab.Batch);
+        RunJobs();
+
+        var viewModel = shell.WorkbenchViewModel;
+        var start = shell.WorkbenchView.BatchStartButton;
+        Assert.True(start.IsEnabled);
+        start.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        RunJobs();
+        Assert.Single(host.StartRunRequests);
+        Assert.False(string.IsNullOrEmpty(viewModel.RunId));
+        Assert.False(start.IsEnabled);
+
+        // 切章节 → 释放旧 Run 跟踪（R3-007）：RunId 清空、轮询停止、「开始处理」重新可用。
+        await shell.WorkbenchView.LoadAsync("chapter-b");
+        RunJobs();
+        Assert.Null(viewModel.RunId);
+        Assert.False(viewModel.IsRunPolling);
+        Assert.True(start.IsEnabled);
+
+        // 新章节可再次提交；意图键必须是新的（不能沿用旧 Run 的幂等键）。
+        start.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        RunJobs();
+        Assert.Equal(2, host.StartRunRequests.Count);
+        Assert.NotEqual(host.StartRunRequests[0].IdempotencyKey, host.StartRunRequests[1].IdempotencyKey);
+        Assert.Equal("chapter-b", host.StartRunRequests[1].Scope["chapter_id"]?.ToString());
+        Assert.True(viewModel.IsRunPolling);
+        viewModel.StopRunPolling();
+
+        shell.Close();
+    }
+
+    [AvaloniaFact]
+    public async Task R3007_TerminalProjection_ReleasesRunTracking_AndAllowsANewRun()
+    {
+        var host = new FakeHostController(FakeHostController.ReadySnapshot("Sample"));
+        host.ChapterPagesByChapter["chapter-key"] = [new ChapterPageSummary("page-1", "one.png", 1)];
+        host.RegionsByPage["page-1"] = new RegionPageProjection([], null);
+        var shell = CreateShell(host);
+        shell.Navigate(FluentPage.Workbench);
+        await shell.WorkbenchView.LoadAsync("chapter-key");
+        RunJobs();
+        shell.WorkbenchView.SelectTab(WorkbenchViewTab.Batch);
+        RunJobs();
+
+        var viewModel = shell.WorkbenchViewModel;
+        var start = shell.WorkbenchView.BatchStartButton;
+        start.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        RunJobs();
+        Assert.Single(host.StartRunRequests);
+        Assert.False(start.IsEnabled);
+
+        // 终态投影 → 释放跟踪 + 停表，同一章节也可再次开始（投影保留为最终诚实快照）。
+        host.ScriptedTaskProjections.Enqueue(Projection(runStatus: "completed"));
+        await viewModel.TickRunPollForTestAsync();
+        RunJobs();
+        Assert.Null(viewModel.RunId);
+        Assert.False(viewModel.IsRunPolling);
+        Assert.True(start.IsEnabled);
+        Assert.Equal("completed", viewModel.RunProjection!.RunStatus);
+        Assert.Equal("completed", viewModel.RunProjection!.Lines.First(line => line.Label == "RunStatus").Value);
+
+        // 再次提交 → 新 RunId + 新意图键（终态后轮换）。
+        start.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        RunJobs();
+        Assert.Equal(2, host.StartRunRequests.Count);
+        Assert.NotEqual(host.StartRunRequests[0].IdempotencyKey, host.StartRunRequests[1].IdempotencyKey);
+        viewModel.StopRunPolling();
+
         shell.Close();
     }
 
@@ -549,6 +695,51 @@ public sealed class FluentResidual3Tests : IDisposable
     }
 
     // ---------------------------------------------------------------------------------------
+    // R3-002（r1 P1）：webtoon 末页必须彻底清空第二页 —— 不得残留上一页 bitmap
+    // ---------------------------------------------------------------------------------------
+
+    [AvaloniaFact]
+    public async Task R3002_WebtoonLastPage_ClearsStaleSecondaryImage()
+    {
+        var host = new FakeHostController(FakeHostController.ReadySnapshot());
+        host.ReaderBooksByChapterId["chapter-key"] = new ReaderBookData(
+            "book-1", "Sample", "chapter-key", "第 1 章", "webtoon_vertical",
+            [
+                new ReaderPageData("page-1", 0, 320, 480, _ => Task.FromResult<byte[]?>(TinyPng)),
+                new ReaderPageData("page-2", 1, 320, 480, _ => Task.FromResult<byte[]?>(TinyPng)),
+                new ReaderPageData("page-3", 2, 320, 480, _ => Task.FromResult<byte[]?>(TinyPng)),
+            ]);
+        var shell = CreateShell(host);
+        shell.Navigate(FluentPage.Reader);
+        await shell.ReaderViewModel.LoadAsync("book-1", "chapter-key");
+        RunJobs();
+
+        var viewModel = shell.ReaderViewModel;
+        var view = shell.ReaderView;
+        Assert.True(viewModel.IsWebtoon);
+        Assert.Equal("page-2", viewModel.SecondaryPageId);
+        Assert.NotNull(view.WebtoonSecondaryImage.Source);
+        Assert.True(view.WebtoonSecondaryImage.IsVisible);
+
+        // 中间页：page-3 成为后继页（第二页仍在显示）。
+        Assert.True(await viewModel.NavigateAsync(1));
+        RunJobs();
+        Assert.Equal("page-3", viewModel.SecondaryPageId);
+        Assert.NotNull(view.WebtoonSecondaryImage.Source);
+
+        // 末页：后继页不存在 → webtoon 第二页必须彻底清空（旧实现只清 Source，残留 bitmap 会继续显示）。
+        Assert.True(await viewModel.NavigateAsync(1));
+        RunJobs();
+        Assert.Null(viewModel.SecondaryPageId);
+        Assert.Null(viewModel.PageBytesSecondary);
+        Assert.Null(view.WebtoonSecondaryImage.Source);
+        Assert.False(view.WebtoonSecondaryImage.IsVisible);
+        Assert.True(view.WebtoonPrimaryImage.IsVisible);
+
+        shell.Close();
+    }
+
+    // ---------------------------------------------------------------------------------------
     // AC-4（格 4）：状态条 = "Filtered / Books 部作品" + ΣPageCount（null → 「—」且不计入），三态
     // ---------------------------------------------------------------------------------------
 
@@ -683,7 +874,8 @@ public sealed class FluentResidual3Tests : IDisposable
             var visited = TabSweep(shell, (focusSet.Count * 2) + 8);
             Assert.NotEmpty(visited);
 
-            // A1：S ⊇ F(P) —— 每个 Tab 落点都必须是可聚焦+可见+可用的控件（不得落进隐藏/禁用）。
+            // A1（卡面口径 S ⊇ F(P)；r1 R3-005 修正断言方向）：**全部**可见可聚焦控件都必须被
+            // Tab 遍历覆盖，且每个落点仍在 S 内（不得落进隐藏/禁用）。
             foreach (var stop in visited)
             {
                 Assert.Contains(stop, focusSet);
@@ -691,16 +883,17 @@ public sealed class FluentResidual3Tests : IDisposable
                 Assert.True(stop.IsEffectivelyEnabled, $"{page}: focus landed on a disabled control {stop.GetType().Name}");
             }
 
+            var unreached = focusSet.Except(visited).ToList();
+            Assert.True(unreached.Count == 0,
+                $"{page}: Tab traversal missed {unreached.Count}/{focusSet.Count} focusable controls: " +
+                string.Join(", ", unreached.Take(20).Select(control => control.GetType().FullName)));
+
             // 无连续重复（Tab 必须真正移动焦点）。
             for (var index = 1; index < visited.Count; index++)
             {
                 Assert.False(ReferenceEquals(visited[index], visited[index - 1]),
                     $"{page}: Tab did not move focus at step {index} ({visited[index].GetType().FullName})");
             }
-
-            // 覆盖性：至少遍历到多个不同控件（不是空转）。
-            Assert.True(visited.Distinct().Count() >= Math.Min(5, focusSet.Count),
-                $"{page}: Tab traversal visited only {visited.Distinct().Count()} of {focusSet.Count} focusable controls");
         }
 
         shell.Close();
@@ -796,9 +989,12 @@ public sealed class FluentResidual3Tests : IDisposable
                 }
 
                 var controlType = peer.GetAutomationControlType();
-                // 设计系统 ReaderPage 是只读文档面（自定义 Border，peer 无标准控件类型 = None）；
-                // 其文件不在本卡 allowed_paths，且已有可读名（"当前漫画页面"）。其余 Tab 落点必须命中白名单。
-                var customDocumentSurface = controlType == AutomationControlType.None && stop is ReaderPage;
+                // L-R3-2：设计系统 ReaderPage 是只读文档面（自定义 Border，automation peer 无标准
+                // 控件类型 = None）。不扩域改 DesignSystem（不在本卡 allowed_paths），DS 修复 re-home；
+                // 例外必须显式登记，不得静默豁免（见 verification/FEA-06-RESIDUAL-3/limitations.md）。
+                var customDocumentSurfaceTypes = new HashSet<Type> { typeof(ReaderPage) };
+                var customDocumentSurface = controlType == AutomationControlType.None &&
+                    customDocumentSurfaceTypes.Contains(stop.GetType());
                 if (!whitelist.Contains(controlType) && !customDocumentSurface)
                 {
                     offWhitelist.Add($"{page}: {stop.GetType().FullName} type={controlType}");

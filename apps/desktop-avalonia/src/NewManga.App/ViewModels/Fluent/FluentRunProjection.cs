@@ -140,7 +140,11 @@ public sealed class FluentRunProjection
             var kind = MapStatus(row.Status);
             rows.Add(new FluentRunRow(
                 row.PageId,
-                row.PageOrder ?? index,
+                // R3-001：Core 的 page_order 是 **1-based**（src/application/tasks/projection.py:206-207 的
+                // fallback `index + 1`；DB pages.sort_order 亦从 1 开始，见
+                // tests/library/test_import_images.py:42 `(1, 1)`）。这里在映射边界就归一为
+                // 「1-based 显示序」，视图直接渲染 `第 {Order} 页`，不再额外 +1（旧实现会显示第 2 页）。
+                row.PageOrder is > 0 ? row.PageOrder.Value : index + 1,
                 string.IsNullOrWhiteSpace(row.Filename) ? Missing : row.Filename,
                 kind,
                 StatusCatalog.Label(kind),
@@ -212,12 +216,23 @@ public sealed class FluentRunProjection
         _ => state!,
     };
 
+    /// <summary>
+    /// R3-007：Run 是否已到终态（Core <c>run_status</c> 词汇）。终态后 Workbench 释放跟踪的 RunId
+    /// 并停止轮询，使「开始处理」重新可用（同一章节可再次提交新的 Run）。
+    /// </summary>
+    public static bool IsTerminalRunStatus(string? status) => status?.Trim().ToLowerInvariant() is
+        "completed" or "done" or "completed_with_failures" or "failed" or "error" or "interrupted" or
+        "cancelled" or "canceled" or "stopped";
+
     private static string Value(string? value) => string.IsNullOrWhiteSpace(value) ? Missing : value!;
 
     private static string Count(int? value) => value?.ToString() ?? Missing;
 }
 
-/// <summary>One row of the AC-1 batch matrix: real Host row fields + the frozen status channel.</summary>
+/// <summary>
+/// One row of the AC-1 batch matrix: real Host row fields + the frozen status channel.
+/// <see cref="Order"/> is the 1-based display/business order (= Core <c>page_order</c>, R3-001).
+/// </summary>
 public sealed record FluentRunRow(
     string PageId,
     int Order,

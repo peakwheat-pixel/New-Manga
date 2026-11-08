@@ -31,6 +31,7 @@ public enum WorkbenchViewTab
 /// Fluent ScrollViewer 模板 → 无 ScrollContentPresenter，永远不可滚动）。这里继承 ScrollViewer 并把
 /// StyleKey 复位为基类型，既复用 <c>fluent-batch-matrix</c> 样式，又真正获得可滚动模板（0 pin：
 /// DesignSystem 目录不在本卡 allowed_paths，故在 App 侧修正）。
+/// L-R3-3：DS 侧 <c>BatchMatrix</c> 缺 ControlTheme 的问题保留为 DS 回修项（本卡只做 App 侧规避）。
 /// </summary>
 internal sealed class FluentBatchMatrix : ScrollViewer
 {
@@ -565,7 +566,8 @@ public sealed class WorkbenchPageView : UserControl
         var line = new Grid { ColumnDefinitions = new ColumnDefinitions("140,180,*") };
         line.Classes.Add("fluent-batch-matrix-row");
         AutomationProperties.SetName(line, row.AccessibleName);
-        line.Children.Add(FluentUi.Text($"第 {row.Order + 1} 页", "fluent-subtle-text"));
+        // R3-001：row.Order 已在映射边界归一为 1-based（= Core page_order），这里不得再 +1。
+        line.Children.Add(FluentUi.Text($"第 {row.Order} 页", "fluent-subtle-text"));
 
         var status = FluentUi.Stack("fluent-page-toolbar", Orientation.Horizontal);
         var glyph = new StatusGlyph { Status = row.Status };
@@ -619,8 +621,11 @@ public sealed class WorkbenchPageView : UserControl
         _pageStrip.Children.Clear();
         foreach (var page in _viewModel.Pages)
         {
-            var button = FluentUi.Button($"第 {page.SortOrder + 1} 页", "fluent-secondary",
-                () => RequestPage(page.PageId), $"打开第 {page.SortOrder + 1} 页");
+            // R3-001：ChapterPageSummary.SortOrder 来自 Core list_chapter_pages 的 1-based
+            // pages.sort_order（tests/library/test_import_images.py:42 `(1,1)`），不得再 +1。
+            var label = $"第 {page.SortOrder} 页";
+            var button = FluentUi.Button(label, "fluent-secondary",
+                () => RequestPage(page.PageId), $"打开{label}");
             button.Classes.Set("selected", _viewModel.SelectedPage?.PageId == page.PageId);
             _pageStrip.Children.Add(button);
         }

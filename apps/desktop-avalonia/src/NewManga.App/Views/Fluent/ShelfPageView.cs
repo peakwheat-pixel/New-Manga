@@ -389,8 +389,10 @@ public sealed class ShelfPageView : UserControl
 
             foreach (var page in _viewModel.PreviewPages)
             {
-                var thumb = new StreamingThumb { Child = FluentUi.Text($"第 {page.SortOrder + 1} 页", "fluent-subtle-text") };
-                Avalonia.Automation.AutomationProperties.SetName(thumb, $"第 {page.SortOrder + 1} 页");
+                // R3-001：pages.sort_order 是 1-based（Core list_chapter_pages 原样投影），不得再 +1。
+                var label = $"第 {page.SortOrder} 页";
+                var thumb = new StreamingThumb { Child = FluentUi.Text(label, "fluent-subtle-text") };
+                Avalonia.Automation.AutomationProperties.SetName(thumb, label);
                 _pageThumbHost.Children.Add(thumb);
             }
         }

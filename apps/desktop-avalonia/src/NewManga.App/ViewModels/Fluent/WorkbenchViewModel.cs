@@ -37,6 +37,7 @@ public sealed class WorkbenchViewModel : FluentViewModel
     private double _filmStripScrollOffset;
     private FluentRunProjection? _runProjection;
     private string? _runId;
+    private string? _runTrackingChapterId;
     private string? _startIdempotencyKey;
     private string? _startIdempotencyChapterId;
     private string? _retryIdempotencyKey;
@@ -182,6 +183,7 @@ public sealed class WorkbenchViewModel : FluentViewModel
             }
 
             _runId = started.RunId;
+            _runTrackingChapterId = _chapterId;
             _retryIdempotencyKey = null;
             RunProjection = null;
             Changed(nameof(RunId));
@@ -228,6 +230,22 @@ public sealed class WorkbenchViewModel : FluentViewModel
 
             RunProjection = FluentRunProjection.From(projection);
             Status = RunProjection.BarText;
+            // R3-007：终态后释放跟踪的 RunId 并停止轮询，使「开始处理」重新可用（投影保留为最终诚实快照）。
+            // 同时轮换意图键：下一次 Run 是新的意图，不能复用旧 Run 的幂等键。
+            if (FluentRunProjection.IsTerminalRunStatus(projection.RunStatus))
+            {
+                var finishedRunId = _runId;
+                _runId = null;
+                _runTrackingChapterId = null;
+                _startIdempotencyKey = null;
+                _startIdempotencyChapterId = null;
+                _retryIdempotencyKey = null;
+                StopRunPolling();
+                Changed(nameof(RunId));
+                Changed(nameof(RunBarText));
+                Status = $"Run {finishedRunId ?? "?"} 已结束（{RunProjection.RunStatusText}）；可再次开始处理。";
+            }
+
             return true;
         }
         catch (Exception exception)
@@ -355,8 +373,44 @@ public sealed class WorkbenchViewModel : FluentViewModel
         }
     }
 
+    /// <summary>
+    /// R3-007：chapter 变化时释放 Run 跟踪（同一章节的刷新不清，避免刷新丢掉正在运行的 Run）。
+    /// 清空 = RunId/投影/轮询/start+retry 意图键全部轮换；投影条回到诚实空态。
+    /// </summary>
+    private void ResetRunTrackingIfChapterChanged(string? chapterId)
+    {
+        if (string.Equals(_runTrackingChapterId, chapterId, StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        var hadRun = _runId is not null;
+        StopRunPolling();
+        _runId = null;
+        _runTrackingChapterId = null;
+        _runProjection = null;
+        _startIdempotencyKey = null;
+        _startIdempotencyChapterId = null;
+        _retryIdempotencyKey = null;
+        if (hadRun)
+        {
+            Changed(nameof(RunId));
+        }
+
+        Changed(nameof(RunProjection));
+        Changed(nameof(HasRunProjection));
+        Changed(nameof(RunBarText));
+        Changed(nameof(CanPause));
+        Changed(nameof(CanStop));
+        Changed(nameof(CanContinue));
+        Changed(nameof(CanRetryFailed));
+    }
+
     public async Task LoadAsync(string? chapterId, CancellationToken cancellationToken = default)
     {
+        // R3-007：章节切换 = 新的运行意图。释放旧 Run 的跟踪（RunId/投影/轮询/意图键），
+        // 避免首次 Run 之后「开始处理」在新章节被永久禁用。
+        ResetRunTrackingIfChapterChanged(chapterId);
         _chapterId = chapterId;
         if (_host is null || string.IsNullOrWhiteSpace(chapterId))
         {

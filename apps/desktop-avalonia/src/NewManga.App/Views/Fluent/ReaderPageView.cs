@@ -190,6 +190,9 @@ public sealed class ReaderPageView : UserControl
     /// <summary>AC-3：webtoon 连续页滚动面（滚动偏移 → SaveReadingProgressAsync 的 scrollOffsetY）。</summary>
     public ScrollViewer WebtoonScroll => _webtoonScroll;
     public StackPanel WebtoonPanel => _webtoonPanel;
+    /// <summary>R3-002 证据入口：webtoon 第二页 Image（末页/单页/失败时必须无 Source 且不可见）。</summary>
+    public Image WebtoonSecondaryImage => _webtoonImageSecondary;
+    public Image WebtoonPrimaryImage => _webtoonImagePrimary;
     public Border SideRail => _sideRailHost;
     public StackPanel TopBar => _topBar;
     public StackPanel BottomBar => _bottomBar;
@@ -419,7 +422,9 @@ public sealed class ReaderPageView : UserControl
             }
             else
             {
-                _pageImageSecondary.Source = null;
+                // R3-002：末页 / 单页章节 / 第二页读取失败时，第二页必须**彻底**清空
+                // （bitmap/bytes/size/可见性），否则 webtoon 分支会用残留 bitmap 继续显示上一页。
+                ClearSecondaryImage();
             }
 
             _pageImage.RenderTransform = new ScaleTransform(_viewModel.Zoom, _viewModel.Zoom);
@@ -428,7 +433,8 @@ public sealed class ReaderPageView : UserControl
             _pageSurface.IsVisible = !webtoon;
             _pageImageSecondary.IsVisible = !webtoon && _viewModel.DoublePage && _pageImageSecondary.Source is not null;
 
-            // webtoon 连续页：把已加载的两页纵向堆叠；逻辑像素尺寸来自 Host 投影（保证真实滚动范围）。
+            // webtoon 连续页：当前页 + 后继页纵向堆叠（L-R3-1：本卡口径仅两页连续；全章长滚动/
+            // 窗口化加载 re-home FEA-06-RESIDUAL-5）。逻辑像素尺寸来自 Host 投影，保证真实滚动范围。
             _webtoonScroll.IsVisible = webtoon;
             _webtoonImagePrimary.Source = _bitmap;
             _webtoonImageSecondary.Source = _bitmapSecondary;
@@ -442,6 +448,7 @@ public sealed class ReaderPageView : UserControl
         {
             _pageSurface.IsVisible = false;
             _webtoonScroll.IsVisible = false;
+            ClearSecondaryImage();
         }
 
         _progress.Value = _viewModel.Progress;
@@ -504,6 +511,23 @@ public sealed class ReaderPageView : UserControl
         using var stream = new MemoryStream(bytes, writable: false);
         bitmap = new Bitmap(stream);
         target.Source = bitmap;
+    }
+
+    /// <summary>
+    /// R3-002（AC-3）：把第二页的所有状态彻底清空——双页 Image、webtoon 第二页 Image、
+    /// 缓存的字节/bitmap 与逻辑尺寸。缺失分支只清 Source 会让 webtoon 继续渲染上一页的残留 bitmap。
+    /// </summary>
+    private void ClearSecondaryImage()
+    {
+        _pageImageSecondary.Source = null;
+        _pageImageSecondary.IsVisible = false;
+        _webtoonImageSecondary.Source = null;
+        _webtoonImageSecondary.IsVisible = false;
+        _webtoonImageSecondary.Width = double.NaN;
+        _webtoonImageSecondary.Height = double.NaN;
+        _bitmapSecondary?.Dispose();
+        _bitmapSecondary = null;
+        _imageBytesSecondary = null;
     }
 
     private void ApplyWebtoonLogicalSizes()

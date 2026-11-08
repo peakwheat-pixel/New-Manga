@@ -17,8 +17,76 @@ using NewManga.App.Services;
 using NewManga.App.ViewModels.Fluent;
 using NewManga.App.Views.Fluent;
 using NewManga.CoreClient;
+using Xunit;
+using Xunit.Sdk;
 
 namespace NewManga.App.Tests;
+
+/// <summary>
+/// R3-013：AC-6 证据测试的 self-skip 属性。
+/// <para>为什么不用 <c>[AvaloniaFact(Skip=...)]</c>：`AvaloniaFactAttribute` 是 sealed，无法在 discovery
+/// 期按磁盘状态（.git 是否存在）决定 Skip；动态 `SkipException` 在本仓库的 Avalonia+Xunit 适配链路里
+/// 会被记为失败（实测）。因此复刻 Avalonia 的 discoverer 接线
+/// （<c>XunitTestCaseDiscoverer = AvaloniaUIFactDiscoverer</c>，它会创建在 Avalonia Dispatcher 上运行的
+/// <c>AvaloniaTestCase</c>），并在特性构造时按显式前置条件设置 <see cref="FactAttribute.Skip"/>。</para>
+/// </summary>
+[AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+[XunitTestCaseDiscoverer("Avalonia.Headless.XUnit.AvaloniaUIFactDiscoverer", "Avalonia.Headless.XUnit")]
+public sealed class GitBackedAvaloniaFactAttribute : FactAttribute
+{
+    public GitBackedAvaloniaFactAttribute()
+    {
+        if (!FluentResidual3EvidencePreconditions.IsSatisfied(out var reason))
+        {
+            Skip = reason;
+        }
+    }
+}
+
+/// <summary>AC-6 证据测试的显式前置条件：Git checkout + 仓库任务卡（repository root 定位）。</summary>
+internal static class FluentResidual3EvidencePreconditions
+{
+    public static bool IsSatisfied(out string reason)
+    {
+        var root = FindRepositoryRoot();
+        if (root is null)
+        {
+            reason = "reason: needs repository root (doc/tasks/FEA-06-RESIDUAL-3.md not found from the test output directory)";
+            return false;
+        }
+
+        if (!HasGitMetadata(root))
+        {
+            reason = $"reason: needs a Git checkout (.git missing at {root}); evidence zero-write gate uses git status";
+            return false;
+        }
+
+        reason = string.Empty;
+        return true;
+    }
+
+    public static string? FindRepositoryRoot()
+    {
+        // 注意：本方法也在 **[GitBackedAvaloniaFact] 特性构造时（discovery 阶段）**执行，此时
+        // AppContext.BaseDirectory 指向 vstest/discovery 宿主目录而**不是**测试输出目录；
+        // 因此以测试程序集自身的 Location（bin/…/net9.0）为起点向上找仓库标记。
+        var assemblyDirectory = Path.GetDirectoryName(typeof(FluentResidual3EvidencePreconditions).Assembly.Location);
+        var cursor = new DirectoryInfo(string.IsNullOrEmpty(assemblyDirectory) ? AppContext.BaseDirectory : assemblyDirectory!);
+        while (cursor is not null && !File.Exists(Path.Combine(cursor.FullName, "doc", "tasks", "FEA-06-RESIDUAL-3.md")))
+        {
+            cursor = cursor.Parent;
+        }
+
+        return cursor?.FullName;
+    }
+
+    /// <summary>仓库根必须有 .git（普通 checkout 是目录，worktree 是 gitdir 指针文件）。</summary>
+    public static bool HasGitMetadata(string root)
+    {
+        var git = Path.Combine(root, ".git");
+        return Directory.Exists(git) || File.Exists(git);
+    }
+}
 
 /// <summary>
 /// FEA-06-RESIDUAL-3 AC-6：证据/门禁。默认运行**零仓库写入**（跑前后
@@ -34,10 +102,15 @@ public sealed class FluentResidual3VisualEvidenceTests
 
     private sealed record Shot(string Name, string State, Bitmap Image);
 
-    [AvaloniaFact]
+    [GitBackedAvaloniaFact]
     public async Task Captures_Residual3_Visual_Inventory_Only_When_Opted_In()
     {
-        var root = RepositoryRoot();
+        // R3-013：前置条件（Git checkout + 任务卡定位）由 [GitBackedAvaloniaFact] 在 discovery 期求值，
+        // 不满足即 Skip；这里再取一次仓库根用于证据路径。
+        var root = FluentResidual3EvidencePreconditions.FindRepositoryRoot()
+            ?? throw new DirectoryNotFoundException(
+                "unreachable: [GitBackedAvaloniaFact] already skipped a non-repository checkout");
+
         var visuals = Path.Combine(root, "verification", "FEA-06-RESIDUAL-3", "visuals");
         var statusBefore = Git(root, "status", "--porcelain", "--", "verification");
         var visualsBefore = Directory.Exists(visuals)
@@ -135,7 +208,7 @@ public sealed class FluentResidual3VisualEvidenceTests
 
         yield return ("03-workbench-page", "workbench · 页面（画布 + 检查器）", async (shell, host) =>
         {
-            host.ChapterPagesByChapter["chapter-key"] = [new ChapterPageSummary("page-1", "one.png", 0)];
+            host.ChapterPagesByChapter["chapter-key"] = [new ChapterPageSummary("page-1", "one.png", 1)];
             host.RegionsByPage["page-1"] = new RegionPageProjection(
                 [new RegionSummary("region-1", "speech", "keep", "detect", 1,
                     new RegionGeometrySummary(0.1, 0.1, 0.4, 0.2, []))],
@@ -149,7 +222,7 @@ public sealed class FluentResidual3VisualEvidenceTests
 
         yield return ("04-workbench-batch-empty", "workbench · 批量空态（无假数据）", async (shell, host) =>
         {
-            host.ChapterPagesByChapter["chapter-key"] = [new ChapterPageSummary("page-1", "one.png", 0)];
+            host.ChapterPagesByChapter["chapter-key"] = [new ChapterPageSummary("page-1", "one.png", 1)];
             host.RegionsByPage["page-1"] = new RegionPageProjection([], null);
             shell.Navigate(FluentPage.Workbench);
             await shell.WorkbenchView.LoadAsync("chapter-key");
@@ -158,7 +231,7 @@ public sealed class FluentResidual3VisualEvidenceTests
 
         yield return ("05-workbench-batch-matrix", "workbench · 批量矩阵七状态（吸顶表头）", async (shell, host) =>
         {
-            host.ChapterPagesByChapter["chapter-key"] = [new ChapterPageSummary("page-1", "one.png", 0)];
+            host.ChapterPagesByChapter["chapter-key"] = [new ChapterPageSummary("page-1", "one.png", 1)];
             host.RegionsByPage["page-1"] = new RegionPageProjection([], null);
             shell.Navigate(FluentPage.Workbench);
             await shell.WorkbenchView.LoadAsync("chapter-key");
@@ -169,7 +242,7 @@ public sealed class FluentResidual3VisualEvidenceTests
 
         yield return ("06-console-nine-rows", "console · 9 行 Run 投影", async (shell, host) =>
         {
-            host.ChapterPagesByChapter["chapter-key"] = [new ChapterPageSummary("page-1", "one.png", 0)];
+            host.ChapterPagesByChapter["chapter-key"] = [new ChapterPageSummary("page-1", "one.png", 1)];
             host.RegionsByPage["page-1"] = new RegionPageProjection([], null);
             shell.Navigate(FluentPage.Workbench);
             await shell.WorkbenchView.LoadAsync("chapter-key");
@@ -233,7 +306,7 @@ public sealed class FluentResidual3VisualEvidenceTests
     {
         var statuses = new[] { "queued", "running", "done", "failed", "blocked", "stale", "skipped" };
         var rows = statuses.Select((status, index) => new RunRowInfo(
-            $"page-{index + 1}", index, $"p{index + 1}.png", status, false, false,
+            $"page-{index + 1}", index + 1, $"p{index + 1}.png", status, false, false,
             status == "failed" ? "PROVIDER_NOT_CONFIGURED" : null)).ToArray();
         return new TaskProjectionInfo(
             "run-evidence",
@@ -288,17 +361,6 @@ public sealed class FluentResidual3VisualEvidenceTests
         Dispatcher.UIThread.RunJobs(DispatcherPriority.Render);
         Dispatcher.UIThread.RunJobs(DispatcherPriority.Loaded);
         Dispatcher.UIThread.RunJobs();
-    }
-
-    private static string RepositoryRoot()
-    {
-        var cursor = new DirectoryInfo(AppContext.BaseDirectory);
-        while (cursor is not null && !File.Exists(Path.Combine(cursor.FullName, "doc", "tasks", "FEA-06-RESIDUAL-3.md")))
-        {
-            cursor = cursor.Parent;
-        }
-
-        return cursor?.FullName ?? throw new DirectoryNotFoundException("could not locate the New Manga repository root");
     }
 
     private static string Git(string workingDirectory, params string[] arguments)
