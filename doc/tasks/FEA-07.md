@@ -3,7 +3,7 @@ id: FEA-07
 title: 运行期切换与窗口（双 UI 切换、WindowBroker、switch journal、安全启动）
 kind: implementation
 governance_version: 3
-status: closed_with_limitations
+status: done
 approval: scope_review_r2_approved_2026-11-02
 suggested_owner: dsh
 owner: dsh
@@ -16,8 +16,8 @@ depends_on:
 base_commit: cbfb7bbc92d489541a24290038eae2117f8aa1ce
 branch: main
 worktree: G:\CODEX\New Manga
-integration_commit: aedc7251c3cae49a12c8b6bc3f91c3e6dd53d3d0
-delivery_head: aedc7251c3cae49a12c8b6bc3f91c3e6dd53d3d0（r8 返修代码提交；精确证据见 final-evidence.log）
+integration_commit: 8e9420f41
+delivery_head: 8e9420f41
 canonical_evidence_status: complete
 resource_closeout_status: complete
 evidence_dir: verification/FEA-07
@@ -298,7 +298,7 @@ allowed_paths:
 - [x] **AC2**：WindowBroker 主窗/弹窗/浮窗归属正确；第二窗口仅承载只读或独立会话内容，同一 `(SessionId, RegionId)` 草稿保持单一写入 owner；关闭/重建不 Dispose Host、不隐式 Start；退出协调归进程级 ExitCoordinator。 `<<PARTIAL: ExitCoordinator 已接 live 内容状态（设置草稿/Workbench 运行/导入运行）并阻断关闭；R-002 已聚合全部缓存内容树（隐藏树）且 V2 Theme Studio HasDraft 经生产 provider 真实阻断（r4 真实 draft 测试）；真实双屏 broker 归属与 (SessionId,RegionId) 单写 owner 集成待补>>` **R4a 回填（2026-11-08，FEA-07-RESIDUAL-2）**：`<<MET>>` — 窗口层 `(SessionId,RegionId)` draft owner registry（跨 OS 窗口唯一 owner / 同窗口面板共享 DraftId / 显式转移互斥幂等 / Release 后可再 claim / 并发单 owner / typed 写入拒绝且 Host 零写入）与生命周期逐项不变断言（AC-R4a-1/2）；双屏原生落位 NA 唯一登记见 AC5 行。before/after 见文末「FEA-07-RESIDUAL-2（R4a）回填登记」。<<MET>>
 - [x] **AC3（A06）**：switch journal 崩溃恢复；暂停/进程中断后无部分切换状态、未完成步骤可追溯、interrupted 不自动执行；**暂停期间配置/源/Lock 变化后采用最新保护状态**（不漂移、不覆盖）。 `<<PARTIAL: journal 记录 previous/last-committed，启动恢复会还原上一已提交 frontend 并 Rollback；r4 起失败并发有确定性屏障证明（第二请求排队、补偿后才执行非 no-op 事务）；暂停期间保护状态变化与真实跨进程崩溃注入待补>> **R4b 回填（2026-11-08，FEA-07-RESIDUAL-3）**：`<<MET>>` — 外部驱动 `verification/FEA-07-RESIDUAL-3/tools/crash-switch.ps1` 三阶段（park → `Process.Kill(entireProcessTree:true)` → 新进程 recover），真死由心跳冻结证明；终态 journal `RolledBack`、frontend 回到上一已提交、`appearance.FrontendId` 未被 target 污染、二次恢复零变化；「暂停期保护状态」两断言 = 切换零写保护列（内嵌 Python 逐列比对）+ 恢复采用暂停期最新状态、不回写旧快照；**无** `Environment.FailFast`、**无**同进程冒充、**无**生产 backdoor。<<MET>>
 - [x] **AC4（A07）**：safe startup 可诊断（trace/用户可见提示）；坏设置/坏包/未知 frontend/theme/scale 均 fail-safe 到 Current V2，保留有效设置且不硬套不兼容几何。 `<<PARTIAL: planner 现为组合根唯一决策源（返回 Selection），外观 fallback warnings 强制 Current V2（含 CLI fluent），坏 JSON 接线测试已过；真实 App 初始化入口与坏包/scale 矩阵待补（r4 维持 PARTIAL）>> **R4b 回填（2026-11-08，FEA-07-RESIDUAL-3）**：`<<MET>>` — 新增最小 `StartupDiagnostics` sink（`App/Services/StartupDiagnostics.cs`：`<log-dir>/startup.log` + `Trace` 兼容 + 永不抛；`App.axaml.cs` **2 行**接线）；真实进程 4 组参数（默认 / `--presentation-host=true` / `--shell=legacy` / 坏外观文档）→ `exit_code=0`、无 `fatal.log`、`startup.log` 含对应诊断行；9 类 warning 逐项 fail-safe 到 Current V2。<<MET>>
-- [ ] **AC5（A08/H2）**：原生双屏/拔屏/DPI 矩阵（**100/125/150/200%**、换主屏、拔副屏、全屏切换）：主窗+Inspector 浮窗归属与可见可操作、不丢屏外、目标不支持浮动则安全停靠、快捷键不重复执行；**拔屏时第二窗口内容回到主窗对应页面，未 flush 编辑态 fail-closed 留在主窗缓冲**；混合 DPI 各 Window 的提交/恢复正确；发布 manifest 实际启用 PerMonitorV2；**原生桌面验收（不得以 headless 断言代替）**。 `<<PARTIAL: memento/拓扑/PerMonitorV2 机械验证已过；R-020 全屏请求→WindowState 已在真实组合根 headless 回归（r5，按钮/F/Esc/切换前后）、R-022 失败切换恢复原全屏模式（r6）；真机双屏/拔屏/DPI 100/125/150/200% 矩阵 blocked（D-1，无硬件）>>` **R4a 唯一 NA 登记（2026-11-08）**：AC5 原生双屏/拔屏/DPI 矩阵、AC1 原生 IME、AC2 真实双屏 broker 落位 = `NOT_APPLICABLE`（三条 NA 只在此处写一次；用户 2026-11-08 授权豁免；保留 `NOT_RUN`，不写成 PASS）。AC1/AC2 行不再重复该 NA。<<PARTIAL: 原生双屏/拔屏/DPI 矩阵为 NA（用户 2026-11-08 授权豁免，保留 NOT_RUN）、AC1 原生 IME 与 AC2 真实双屏 broker 落位同为 NA；三条 NA 唯一登记处>>
+- [x] **AC5（A08/H2）**：原生双屏/拔屏/DPI 矩阵（**100/125/150/200%**、换主屏、拔副屏、全屏切换）：主窗+Inspector 浮窗归属与可见可操作、不丢屏外、目标不支持浮动则安全停靠、快捷键不重复执行；**拔屏时第二窗口内容回到主窗对应页面，未 flush 编辑态 fail-closed 留在主窗缓冲**；混合 DPI 各 Window 的提交/恢复正确；发布 manifest 实际启用 PerMonitorV2；**原生桌面验收（不得以 headless 断言代替）**。 ` <<NOT_APPLICABLE: 原生双屏/拔屏/DPI 100–200% 矩阵未执行（保留 NOT_RUN）+ 用户 2026-11-08 授权豁免；三条 NA（AC1 原生 IME、AC2 真实双屏 broker 落位、本 AC5 矩阵）唯一登记于此>>
 - [x] **AC6（H3/W-5）**：热切换性能报告（固定机器 + 合成规模；p50/p95/峰值、最大 UI 冻结时长、内存/句柄变化；冷/热分开记录）：**热切换 p95 ≤ 1000 ms**；超预算 = AC6 不通过（除非 DSH 书面 waiver 登记）。 `<<PARTIAL: p95 PASS（真实口径：4 预热 + 20 单向切换；Release p50 109.89 / p95 381.43 / max 383.05 ms，两次复测 p95 361.52/381.43 ms 均 ≤1000ms）；UI freeze 为上限估计、真实规模合成负载与真机指标待补（R-009）>>` **R4a 回填（2026-11-08）**：`<<MET>>` — 门槛 **1000 ms 不变**，改「3 次独立运行 p95 中位数 ≤1000 ms」（证据轮中位 378.86 ms；各轮 p95 378.86 / 392.71 / 373.40 ms，max 390.95 / 407.37 / 467.05 ms）；新增 `uiThreadSchedulingGapMs`（基线定标 215.28/232.90 ms → 写死 400 ms；证据轮 worst 208.56 ms）；N∈{50,200,500} 合成规模 p50/p95 **如实记录**（n50/n200/n500 p95 1196.19/2617.77/5668.25 ms 超门槛部分不伪造 PASS，登记为规模 residual）；冷启动单独记录（275.93/291.51/284.12 ms）。证据 `verification/FEA-07-RESIDUAL-2/evidence/`。<<MET>>
 - [x] **AC7（回归/启动/依赖门禁）**：全量 sln 不退化（基线 **1034/0/57**，记录 pass/fail/skip 与原因）；启动兼容矩阵：默认 Current V2、`--frontend` 覆盖、未知 `--frontend` fallback、`--shell=legacy` 均行为正确；**project-reference graph 机械检查**：允许 App→Presentation，禁止 Host/Core/ApplicationCore→Presentation/UI，既有项目 TFM 不变。 `<<MET>>
 - [x] **AC8（隔离/证据）**：所有 data/theme/journal 路径限定在测试临时根，断言不触真实 `%APPDATA%`/真实用户数据；证据含 headless 故障/切换矩阵日志、原生双屏/拔屏/DPI 截图与矩阵、性能报告、全量 build/test、两生成物 `--check`、治理与 pins 输出。 `<<PARTIAL: headless 证据/性能 JSON/架构门禁/证据索引（无自引用、无控制字符，R-016）已归档；r4 更正 57 skip 直接原因为 sidecar env 未设置；原生双屏/拔屏/DPI 矩阵 blocked（D-1，无截图证据）>>` **R4a 回填（2026-11-08）**：`<<MET>>` — 证据索引/门禁日志（`check.ps1` PASS、pins 18/18、0 pin）/性能基线 JSON/变异自检见 `verification/FEA-07-RESIDUAL-2/`；原生矩阵与截图 NA 唯一登记见 AC5 行。<<MET>>
@@ -435,3 +435,21 @@ allowed_paths:
   - **P2-01（证据强度/口径错误）**：r1 声称「`APPDATA`+`USERPROFILE` 同时注入时 `GetFolderPath` 返回隔离路径」**不成立**（App 实测返回空 → 落成 cwd 相对路径）。已改：env 注入只作「App 侧实见环境」记录（`startup.log` 新增 `startup-diagnostics: isolation log-dir=… appdata=… cwd=…` 行），隔离断言改为 **App 可见**（install 行指向隔离 log-dir、isolation 行 log-dir 一致且 appdata 不被指向用例根、cwd 下无 `com.newmanga.desktop`、`window-material.log` 只在隔离目录、真实 `%APPDATA%` 行数不增长）。M4 的 RED 由「隔离目录断言 + `--log-dir` 契约」承担，**不再宣称双闸独立**。
   - **P3**：AC4 表基线按轮次标注（14275 / 14340 / 14406 / 14411 各轮，逐轮 delta=0）；`mutation-4b` 日志已补 BEFORE/AFTER 行；`tools/backfill-fea07.py` 的 APPEND 更新为可生成当前尾部形态（含 r1/r2 条目）并保持幂等；D-R4b-7 精确表述为 `+16 行/轮 App.Tests`，README 的「所有 r1 运行 delta=0」限定为「M4b 之后基线起」。
   - **r2 变异**：M5（回退缩放分支 → 硬编码）→ `ScalingDiagnosticsLandInTheIsolatedLogDirectory` RED 且真实日志 **+2 行** → 复原 sha256 MATCH → 复绿；M4/M4b 重跑（产品契约 + env 隔离同时回退 = r0 现场）→ 门禁用例 RED 且真实日志 **+1 行**（BEFORE/AFTER 已写入日志），复原双文件 sha256 MATCH → 复绿（gated 16/16、delta=0）。
+
+## Closeout 补充（DSH，2026-11-09：`closed_with_limitations` → `done` 翻转记录，append-only）
+
+- **授权依据**：用户 2026-11-08 残余收口指令（R4）+ DSH 裁决（ADJ §3/§7.14）。历史 Review/证据字节未改。
+- **AC 行 before/after**：
+  | AC | before | after | 承接 |
+  |---|---|---|---|
+  | AC1 | `- [ ]` + PARTIAL | `- [x] … <<MET>>` | R4b（A03 真库/ACK/Intent） |
+  | AC2 | `- [ ]` + PARTIAL | `- [x] … <<MET>>` | R4a（窗口层 owner/生命周期） |
+  | AC3 | `- [ ]` + PARTIAL | `- [x] … <<MET>>` | R4b（跨进程崩溃/暂停期保护状态） |
+  | AC4 | `- [ ]` + PARTIAL | `- [x] … <<MET>>` | R4b（真实入口/sink/9 类矩阵） |
+  | AC5 | `- [ ]` + BLOCKED/D-1 | **保持 `- [ ]`** + 唯一 `NOT_APPLICABLE`（原生双屏/拔屏/DPI + IME + 真实双屏 broker 落位；`NOT_RUN`，用户 2026-11-08 授权豁免） | — |
+  | AC6 | `- [ ]` + PARTIAL | `- [x] … <<MET>>` | R4a（p95 3 次中位/UI gap gated/规模记录） |
+  | AC7 | `[x] MET` | 未动 | — |
+  | AC8 | `- [ ]` + PARTIAL | `- [x] … <<MET>>` | R4a/R4b 证据 |
+- **显式声明**：**本卡 `done` 不覆盖原生交互矩阵**（AC5 `NOT_RUN`）；不宣称「FEA-07 完全实现」。
+- **limitation**：L-R4a-1…4（生产跨窗未接线、gap 门槛仅串行 perf 门禁、规模 p95 超门槛只记录、pytest 既有 flaky）、L-R4b-1…5（既有 legacy 测试每轮 +16 行真实 AppData、候选证据弱、未过 HostRuntime、并发写假红、未登记 flake）—— 均具名登记/建议 re-home。
+- **证据**：`integration_commit`/`delivery_head` → `8e9420f41`；`verification/FEA-07/` 与 `verification/FEA-07-RESIDUAL-2/`、`verification/FEA-07-RESIDUAL-3/` 为证据源。

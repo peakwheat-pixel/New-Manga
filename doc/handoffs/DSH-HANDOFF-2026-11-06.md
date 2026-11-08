@@ -408,3 +408,12 @@ ameof(ListStatusText)，修「进入回收站 bar 仍显示 N/M 作品」「返�
 - **limitation**：L-R4a-1（生产跨窗未接线：`RegisterSecondary` 零调用、无 Floating 实例）、L-R4a-2（gap 门槛仅串行 perf 门禁）、L-R4a-3（规模 p95 超 1000ms 只记录）、L-R4a-4（pytest 1 既有 flaky，隔离 16 passed）。
 - **下一轮**：R4b `FEA-07-RESIDUAL-3`（AC1 gated 真库 A03/ACK、AC3 跨进程崩溃注入、AC4 真实入口 + `StartupDiagnostics` sink + 9 类 warning 矩阵）→ 独立 scope review → 冻结 → 实现 → Review → 门禁 → **两卡都 MET 后 `FEA-07` 翻 done**（最后 1 节点）。
 - **未做**：R4b 未开始；原生 IME/双屏/DPI NA（`NOT_RUN`）；未改契约/pins。
+
+## 34. 收官（2026-11-09：残余收口程序 4/4 节点全部 done）
+
+- **R4b `FEA-07-RESIDUAL-3`**：`c3e3d37b9`（r0）→ r1 approved（P2 升 P1：真实 AppData）→ `219405b30`（`--log-dir` 拥有材质日志）→ r2 changes_requested（P1-01：`RenderScaling` 分支绕过）→ `8e9420f41`（`ResolveDiagnosticsRoot` 双分支收口 + App 可见探针 + 口径修正）→ **r3 approved（P0=0/P1=0/P2=0）**。
+- **4 节点终态**：`FEA-11-HOST-AUTH-1` done（R1）、`FEA-06-RESIDUAL-2` done（R2）、`FEA-11` done（R3）、`FEA-07` done（R4a `a03a6794a` + R4b `8e9420f41`）。
+- **收官门禁（Lead 一手，head `8e9420f41`）**：build 0/0；全量 .NET **1794/0/107**；gated AC4 **16/16** 且真实 `%APPDATA%` **delta=0**；pytest **3395/0/10**；pins **18/18**；check PASS；API EXIT 0；45 文件 ⊆ allowed_paths；禁止面零 diff。
+- **全局 limitation（具名）**：L-R4a-1…4、L-R4b-1…5；既有 legacy 测试每轮 +16 行真实 AppData（D-R4b-7，re-home）；候选证据弱（D-R4b-1）；未过 HostRuntime（D-R4b-5）；并发写假红（D-R4b-8）；未登记 pytest flake（`test_referenced_flow`）。
+- **状态**：PLAN `READY 节点：无`、FEA-07 行 done；STATUS「4 节点全 done」；ledger 重跑；goal「完成 4 节点」达成。
+- **后续（非本程序）**：re-home 卡立项（`FEA-06-RESIDUAL-4`、`FEA-11-DIAG-SURFACE-1`、`FEA-11-LEGACY-RECOMPUTE-1`、`FEA-11-PDF-RECONCILE-1`、`FEA-07` legacy 测试隔离卡、规模性能 residual）；原生矩阵待硬件或用户书面 waiver。

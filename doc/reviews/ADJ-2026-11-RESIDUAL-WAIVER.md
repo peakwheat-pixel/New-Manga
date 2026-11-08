@@ -165,3 +165,21 @@ Review 链 r1 changes_requested（P1=1：D-1c）→ **r2 approved（P0/P1/P2=0�
 
 - scope 依据：**同一独立 scope review** `doc/reviews/FEA-07-RESIDUAL-2-scope-r1.md` §3（AC3 崩溃最小方案）、§4（AC4/AC6 增量）、§5.2（R4b 面）+ 风险 R-1…R-9；DSH 采纳并冻结：AC1 gated 真库 A03 + ACK/Intent；AC3 外部驱动 park/kill/recover + 暂停期保护状态两断言；AC4 最小 `StartupDiagnostics` sink（`App.axaml.cs` ≤5 行）+ 4 组真实进程 + 9 类 warning 矩阵。
 - 0 pin；禁止面含 `doc/plan/**`、`doc/contracts/**`、18 pins、`tools/e2e/**`、`scripts/**`、`src/**`、`Switching/**`；`App.axaml.cs` 仅 ≤5 行接线。
+
+### 7.14 `FEA-07` → `done`（2026-11-09，integration `8e9420f41`）—— 残余收口程序 4/4 节点完成
+
+| 项 | before | after | 依据 |
+|---|---|---|---|
+| front matter `status` | `closed_with_limitations` | `done` | 用户 2026-11-08 指令（R4）+ 本节 |
+| AC1/AC2/AC3/AC4/AC6/AC8 | PARTIAL/BLOCKED | `[x] … <<MET>>`（R4a：AC2/AC6/AC8；R4b：AC1/AC3/AC4） | 两卡 Review approved |
+| AC5 | BLOCKED/D-1 | **唯一 `NOT_APPLICABLE`**（原生矩阵；`NOT_RUN`） | ADJ W-05 |
+| limitation | 原生/真机 | L-R4a-1…4 + L-R4b-1…5 具名登记；既有 legacy 测试隔离缺口 re-home | 本卡 closeout |
+| 显式声明 | — | **done 不覆盖原生交互矩阵** | 本节 |
+
+### 7.15 `FEA-07-RESIDUAL-3`（R4b）：`ready` → `done`（2026-11-09）
+
+Review 链 r1 approved（P2 升 P1：真实 AppData 写入）→ 返修 → r2 changes_requested（P1-01：RenderScaling 分支绕过 `--log-dir`）→ 返修 → **r3 approved（P0=0/P1=0/P2=0/P3=4）**；gated AC4 16/16 且真实 AppData delta=0。
+
+### 7.16 残余收口程序收官（4 节点全部 done）
+
+`FEA-11-HOST-AUTH-1`（R1）、`FEA-06-RESIDUAL-2`（R2）、`FEA-11`（R3）、`FEA-07`（R4a+R4b）均已 `done`；各节点均经独立上下文 Review（P0/P1=0）与 Lead 亲自门禁；0 pin 全局保持（18/18）。

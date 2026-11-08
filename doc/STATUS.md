@@ -4,7 +4,7 @@
 
 ## 当前程序
 - **V11R 程序 ACTIVE**：[V11R_PROGRAM](V11R_PROGRAM.md)；契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)。
-- 当前 Task：**`FEA-07-RESIDUAL-3` ready**（收口 B：AC1 gated 真库/ACK、AC3 跨进程崩溃、AC4 真实入口+sink+矩阵；[卡](tasks/FEA-07-RESIDUAL-3.md)）。已闭环：`FEA-07-RESIDUAL-2`（`a03a6794a`/`ac0dca1bd`）、`FEA-11-RESIDUAL-4A`（`fbe337f95`）、`FEA-06-RESIDUAL-3`（`ddc29ecb3`）、`FEA-11-HOST-AUTH-2`（`f7016d3fb`）、`FEA-12-UI-RESIDUAL-2`（`85356c22a`）。
+- 当前 Task：**全部 4 节点已 done**（残余收口程序收官；R0 裁决/R1 HOST-AUTH-2/R2 FEA-06-RESIDUAL-3/R3 FEA-11-RESIDUAL-4A/R4a FEA-07-RESIDUAL-2/R4b FEA-07-RESIDUAL-3 全闭环）。节点：`FEA-11-HOST-AUTH-1` done、`FEA-06-RESIDUAL-2` done、`FEA-11` done、`FEA-07` done。下一候选（proposed，待 scope review）：[`FEA-07-RESIDUAL-4`](tasks/FEA-07-RESIDUAL-4.md)（既有 headless 用例真实 AppData 隔离 + FEA-07 后续 residual）。
 - FEA-11 线：WATCH-1/SCAN-2/SCAN-1/MATCH-1/AC4-GAPS-1/LINEAGE-1 `done`；HOST-AUTH-1 `done`；FEA-12 四卡 `done`。
 - **AC11-1 终态 MET（带 limitation）**：裁决 2026-11-06（[记录](reviews/FEA-11-AC11-1-adjudication-2026-11-06.md)）；「启动/访问前检查」= 冷启动枚举 + registry/root 核验（SCAN-2） + 每次访问/操作前 live grant+lease+digest 强验证；启动不做全量内容扫描（L-STARTUP）。
 - rolling checkpoint：[GOAL-PROGRESS](checkpoints/GOAL-PROGRESS-2026-11-02.md)。
@@ -17,7 +17,7 @@
 
 ## 保留与已知限制
 - 台账 [TASK_LEDGER](TASK_LEDGER.md)；DIR-4/5=2/1000；真机端到端 run-i18 7/7、run-i36 10/10。
-- 测试基线：pytest **3394/1（既有 flaky）/10**、.NET **1779/0/103**（2026-11-08 R4a 起；flaky `test_plugin_sandbox.py::test_sandbox_job_kills_grandchildren` 隔离 16 passed；跑后 `verification/FEA-09` 已恢复）。
+- 测试基线：pytest **3395/10**（既有未登记 flake `test_referenced_flow` 隔离复跑绿）、.NET **1794/0/107**（2026-11-09 R4b 收官；跑后 `verification/FEA-09` 已恢复）。
 
 ## Gate 与保留项
 Technical Gate=NOT_SATISFIED；private_registry_absence=UNPROVABLE；Owner Risk Acceptance=APPROVED；Disposition=WAIVED_BY_OWNER。push `clean-snapshot-20261026`=`892b946e`、`clean-snapshot-20261102`=`ac7d488e`；**main 2026-11-08 push（2C/L-R11/C-04b/SCAN-RH/INDEX-L4-1/UI-RESIDUAL-2；§27；AHEAD=0）**。
