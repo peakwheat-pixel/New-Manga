@@ -1,6 +1,7 @@
 using System.IO;
 using System.Text.Json;
 using Avalonia;
+using Avalonia.Automation;
 using Avalonia.Controls;
 using Avalonia.Animation;
 using Avalonia.Headless.XUnit;
@@ -116,13 +117,32 @@ public sealed class FluentResidualBatchATests : IDisposable
     [AvaloniaFact]
     public void I12_ConsolePlaceholder_KeepsHonestNoDataCopy()
     {
+        // FEA-06-RESIDUAL-3（改写，原断言「端口尚未接入」占位文案）：Run 投影端口自本卡起已接入，
+        // 但"无假数据"不变量保留——无投影时 9 行全部显示「—」，且不出现任何推测百分比。
         var shell = CreateShell(new FakeHostController(FakeHostController.ReadySnapshot()));
         shell.Navigate("console");
         Dispatcher.UIThread.RunJobs();
 
-        var content = Assert.IsType<StackPanel>(shell.WorkbenchView.CurrentViewContent);
-        Assert.Contains(content.GetVisualDescendants().OfType<TextBlock>(),
-            block => block.Text?.Contains("端口尚未接入", StringComparison.Ordinal) == true);
+        var content = shell.WorkbenchView.CurrentViewContent!;
+        var texts = content.GetVisualDescendants().OfType<TextBlock>()
+            .Select(block => block.Text ?? string.Empty).ToArray();
+        Assert.DoesNotContain(texts, text => text.Contains("端口尚未接入", StringComparison.Ordinal));
+        Assert.Contains(texts, text => text.Contains("当前没有 Run 投影", StringComparison.Ordinal));
+        foreach (var field in FluentRunProjection.LineLabels)
+        {
+            var value = shell.WorkbenchView.ConsoleRunValue(field);
+            Assert.NotNull(value);
+            Assert.Equal(FluentRunProjection.Missing, value!.Text);
+        }
+
+        Assert.DoesNotContain(texts, text => text.Contains('%'));
+        Assert.All(new[]
+        {
+            shell.WorkbenchView.PauseRunButton,
+            shell.WorkbenchView.StopRunButton,
+            shell.WorkbenchView.ContinueRunButton,
+            shell.WorkbenchView.RetryRunButton,
+        }, button => Assert.False(button.IsEnabled));
     }
 
     // ---------------------------------------------------------------- I-14：源不可用警示本体
@@ -575,21 +595,31 @@ public sealed class FluentResidualBatchATests : IDisposable
             empty => empty.Title == "未选章节");
         emptyShell.Close();
 
-        // 行 2（空·批量无 Run）：批量空态卡 + 禁用「开始处理」占位（动作归 B-2）。
+        // 行 2（空·批量无 Run）：FEA-06-RESIDUAL-3 改写——按类型/AutomationProperties.Name 定位；
+        // "开始处理"不再是禁用占位（真实动作已接线），但未 Run 时不得出现任何矩阵数据格（无假数据）。
         shell.WorkbenchView.SelectTab(WorkbenchViewTab.Batch);
         Dispatcher.UIThread.RunJobs();
         var batchContent = shell.WorkbenchView.CurrentViewContent!;
         Assert.Contains(batchContent.GetVisualDescendants().OfType<EmptyState>(),
             empty => empty.Title == "没有正在处理的批量任务");
-        var start = FindButton(shell.WorkbenchView, "开始处理");
-        Assert.NotNull(start);
-        Assert.False(start!.IsEnabled);
+        var start = Assert.Single(shell.WorkbenchView.GetVisualDescendants().OfType<Button>(),
+            button => AutomationProperties.GetName(button) == "开始处理");
+        Assert.True(start.IsEnabled);
+        Assert.Empty(shell.WorkbenchView.BatchMatrixRowsHost.Children);
+        Assert.False(shell.WorkbenchView.BatchTableHost.IsVisible);
 
-        // 行 9（运行中·控制台）：Run 控制禁用占位（数据归 B-2）。
+        // 行 9（运行中·控制台）：FEA-06-RESIDUAL-3 改写——按 AutomationProperties.Name 定位；
+        // 无投影时控制按钮全部禁用（可用性只取自 TaskProjectionInfo.Controls），9 行显示「—」。
         shell.WorkbenchView.SelectTab(WorkbenchViewTab.Console);
         Dispatcher.UIThread.RunJobs();
-        Assert.False(FindButton(shell.WorkbenchView, "暂停")!.IsEnabled);
-        Assert.False(FindButton(shell.WorkbenchView, "停止")!.IsEnabled);
+        Assert.False(Assert.Single(shell.WorkbenchView.GetVisualDescendants().OfType<Button>(),
+            button => AutomationProperties.GetName(button) == "暂停当前 Run").IsEnabled);
+        Assert.False(Assert.Single(shell.WorkbenchView.GetVisualDescendants().OfType<Button>(),
+            button => AutomationProperties.GetName(button) == "停止当前 Run").IsEnabled);
+        Assert.False(shell.WorkbenchView.ContinueRunButton.IsEnabled);
+        Assert.False(shell.WorkbenchView.RetryRunButton.IsEnabled);
+        Assert.All(FluentRunProjection.LineLabels, field =>
+            Assert.Equal(FluentRunProjection.Missing, shell.WorkbenchView.ConsoleRunValue(field)!.Text));
     }
 
     [AvaloniaFact]

@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Text.Json;
+using Avalonia.Threading;
 using NewManga.App.Services;
 using NewManga.CoreClient;
 using NewManga.CoreClient.Wire;
@@ -8,8 +9,15 @@ namespace NewManga.App.ViewModels.Fluent;
 
 public sealed class WorkbenchViewModel : FluentViewModel
 {
+    /// <summary>AC-1：批量「开始处理」的冻结命令名（Host <c>library_start_run</c>, command=translate_all）。</summary>
+    public const string TranslateAllCommand = "translate_all";
+
+    /// <summary>AC-1：Run 投影轮询窗口（设计 02 §2；冻结 1s，不得加速/降频）。</summary>
+    public static readonly TimeSpan RunPollInterval = TimeSpan.FromSeconds(1);
+
     private readonly IHostController? _host;
     private readonly string _sessionId;
+    private readonly DispatcherTimer _runPollTimer;
     private string? _chapterId;
     private string? _pageId;
     private ChapterPageSummary? _selectedPage;
@@ -27,6 +35,13 @@ public sealed class WorkbenchViewModel : FluentViewModel
     private bool _isApplying;
     private bool _isInspectorCollapsed;
     private double _filmStripScrollOffset;
+    private FluentRunProjection? _runProjection;
+    private string? _runId;
+    private string? _startIdempotencyKey;
+    private string? _startIdempotencyChapterId;
+    private string? _retryIdempotencyKey;
+    private bool _runPollInFlight;
+    private int _runPollAttempts;
 
     public WorkbenchViewModel(IHostController? host, string sessionId)
     {
@@ -34,6 +49,9 @@ public sealed class WorkbenchViewModel : FluentViewModel
         _sessionId = sessionId;
         State = FluentPageState.Empty;
         Status = "从书架选择章节以开始编辑。";
+        // AC-1：Run 投影来自 Host 的 C060 读面；这里只做 1s 轮询，不派生/不推测任何进度值。
+        _runPollTimer = new DispatcherTimer { Interval = RunPollInterval };
+        _runPollTimer.Tick += (_, _) => _ = PollRunProjectionFromTimerAsync();
     }
 
     public ObservableCollection<ChapterPageSummary> Pages { get; } = new();
@@ -76,6 +94,266 @@ public sealed class WorkbenchViewModel : FluentViewModel
     public bool HasUnsavedDraft => CurrentDraft is not null && !string.Equals(DraftText, _persistedDraftText, StringComparison.Ordinal);
     public string ErrorCategory { get; private set; } = string.Empty;
     public IReadOnlyList<string> ErrorCodes => DraftErrorMap.Codes;
+
+    // ------------------------------------------------------------------------------------------
+    // AC-1 (格 1) / AC-2 (格 5): Run 投影两控制面。数据只来自 Host 的 C060 读面；无投影时诚实空态。
+    // ------------------------------------------------------------------------------------------
+
+    /// <summary>当前跟踪的 Run id（StartRun 的真实返回；null = 本会话尚未提交批量 Run）。</summary>
+    public string? RunId => _runId;
+
+    /// <summary>最近一次成功轮询得到的投影映射；null = 尚无投影（不得伪造进度）。</summary>
+    public FluentRunProjection? RunProjection
+    {
+        get => _runProjection;
+        private set
+        {
+            if (Set(ref _runProjection, value))
+            {
+                Changed(nameof(HasRunProjection));
+                Changed(nameof(RunBarText));
+                Changed(nameof(CanPause));
+                Changed(nameof(CanStop));
+                Changed(nameof(CanContinue));
+                Changed(nameof(CanRetryFailed));
+            }
+        }
+    }
+
+    public bool HasRunProjection => _runProjection is not null;
+
+    /// <summary>1s 轮询是否在跑（detach / 切前端必须停止；停止后不再发任何投影请求）。</summary>
+    public bool IsRunPolling => _runPollTimer.IsEnabled;
+
+    public TimeSpan RunPollIntervalValue => _runPollTimer.Interval;
+
+    /// <summary>累计发出的 C060 投影请求数（证据计数；拒绝也计数，不隐藏失败）。</summary>
+    public int RunPollAttempts => _runPollAttempts;
+
+    /// <summary>
+    /// 两控制面共用的 Run 投影条文案。没有投影时返回诚实空文案（有 RunId 时只披露「已提交、等待投影」，
+    /// 绝不虚构百分比）；调用方按页面语境追加既有空态文案。
+    /// </summary>
+    public string RunBarText => _runProjection is { } projection && projection.RunId != FluentRunProjection.Missing
+        ? projection.BarText
+        : _runId is { Length: > 0 } runId
+            ? $"Run {runId} · 等待 Host 投影…"
+            : string.Empty;
+
+    /// <summary>AC-2：控制可用性完全取自 <see cref="FluentRunProjection.Controls"/>。</summary>
+    public bool CanPause => _runProjection?.Controls.CanPause == true;
+    public bool CanStop => _runProjection?.Controls.CanStop == true;
+    public bool CanContinue => _runProjection?.Controls.CanContinue == true;
+    public bool CanRetryFailed => _runProjection?.Controls.CanRetryFailed == true;
+
+    /// <summary>
+    /// AC-1：批量空态「开始处理」。恰好一次 <c>StartRunAsync</c>（command=translate_all + chapter scope）；
+    /// 意图键由本 VM 自持，失败重试复用同一个 key（Core 以同 key 复用已接受的 run）。
+    /// </summary>
+    public async Task<bool> StartRunAsync(CancellationToken cancellationToken = default)
+    {
+        if (_host is null || IsReadOnly || string.IsNullOrWhiteSpace(_chapterId))
+        {
+            return false;
+        }
+
+        if (!string.Equals(_startIdempotencyChapterId, _chapterId, StringComparison.Ordinal))
+        {
+            // 新的章节意图 = 新的意图键；同一意图内的重试复用同一 key。
+            _startIdempotencyChapterId = _chapterId;
+            _startIdempotencyKey = null;
+        }
+
+        _startIdempotencyKey ??= Guid.NewGuid().ToString("N");
+        var request = new RunStartRequest(
+            TranslateAllCommand,
+            new Dictionary<string, object?> { ["kind"] = "chapter", ["chapter_id"] = _chapterId },
+            null,
+            _startIdempotencyKey);
+
+        try
+        {
+            var started = await _host.StartRunAsync(request, cancellationToken);
+            if (started is null || string.IsNullOrWhiteSpace(started.RunId))
+            {
+                Error = $"批量 Run 未启动（{_host.Snapshot.LastError ?? "HOST_NOT_READY"}）；可重试，重试复用同一意图键。";
+                Status = Error;
+                return false;
+            }
+
+            _runId = started.RunId;
+            _retryIdempotencyKey = null;
+            RunProjection = null;
+            Changed(nameof(RunId));
+            Changed(nameof(RunBarText));
+            Status = $"批量 Run 已提交（{started.RunId}），等待 Host 投影…";
+            StartRunPolling();
+            return true;
+        }
+        catch (Exception exception)
+        {
+            Error = $"批量 Run 提交失败（{exception.GetType().Name}），未创建 Run。";
+            Status = Error;
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// AC-1：一次 C060 投影读取。拒绝（null）时保留上一次诚实投影，不用 0/推测值覆盖。
+    /// 由 1s <see cref="DispatcherTimer"/> 与定向测试共同驱动。
+    /// </summary>
+    public async Task<bool> PollRunProjectionAsync(CancellationToken cancellationToken = default)
+    {
+        if (_host is null || string.IsNullOrWhiteSpace(_runId) || _runPollInFlight)
+        {
+            return false;
+        }
+
+        _runPollInFlight = true;
+        _runPollAttempts++;
+        Changed(nameof(RunPollAttempts));
+        try
+        {
+            var projection = await _host.GetTaskProjectionAsync(_runId, cancellationToken);
+            if (projection is null)
+            {
+                // Host 拒绝：保留最后已知投影（不覆盖为假数据）；拒绝原因已在 Snapshot.LastError。
+                if (_runProjection is null)
+                {
+                    Status = $"Run 投影暂不可用（{_host.Snapshot.LastError ?? "HOST_NOT_READY"}）；未显示虚构进度。";
+                }
+
+                return false;
+            }
+
+            RunProjection = FluentRunProjection.From(projection);
+            Status = RunProjection.BarText;
+            return true;
+        }
+        catch (Exception exception)
+        {
+            if (_runProjection is null)
+            {
+                Status = $"Run 投影读取失败（{exception.GetType().Name}）；未显示虚构进度。";
+            }
+
+            return false;
+        }
+        finally
+        {
+            _runPollInFlight = false;
+        }
+    }
+
+    /// <summary>AC-1：启动 1s 轮询（detach/切前端由视图调用 <see cref="StopRunPolling"/>）。</summary>
+    public void StartRunPolling()
+    {
+        if (_host is null || string.IsNullOrWhiteSpace(_runId))
+        {
+            return;
+        }
+
+        _runPollTimer.Start();
+        Changed(nameof(IsRunPolling));
+    }
+
+    /// <summary>AC-1：停止轮询；停止后计时器不再触发投影请求（泄漏回归）。</summary>
+    public void StopRunPolling()
+    {
+        if (!_runPollTimer.IsEnabled)
+        {
+            return;
+        }
+
+        _runPollTimer.Stop();
+        Changed(nameof(IsRunPolling));
+    }
+
+    /// <summary>Timer tick 本体（测试可经 <see cref="TickRunPollForTestAsync"/> 驱动同一路径）。</summary>
+    private async Task PollRunProjectionFromTimerAsync()
+    {
+        if (!_runPollTimer.IsEnabled)
+        {
+            return;
+        }
+
+        await PollRunProjectionAsync();
+    }
+
+    /// <summary>Test seam：驱动生产 tick 处理路径（不是绕过计时器的第二实现）。</summary>
+    internal Task TickRunPollForTestAsync() => PollRunProjectionFromTimerAsync();
+
+    /// <summary>AC-2：暂停。禁用态（投影不允许）不发任何帧。</summary>
+    public Task<bool> PauseRunAsync(CancellationToken cancellationToken = default) =>
+        SendRunControlAsync(RunControlAction.Pause, CanPause, cancellationToken);
+
+    /// <summary>AC-2：停止。禁用态不发任何帧。</summary>
+    public Task<bool> StopRunAsync(CancellationToken cancellationToken = default) =>
+        SendRunControlAsync(RunControlAction.Stop, CanStop, cancellationToken);
+
+    /// <summary>AC-2：继续（Core <c>continue</c>，冻结枚举 <see cref="RunControlAction.Resume"/>）。</summary>
+    public Task<bool> ContinueRunAsync(CancellationToken cancellationToken = default) =>
+        SendRunControlAsync(RunControlAction.Resume, CanContinue, cancellationToken);
+
+    /// <summary>AC-2：重试失败目标（C061；IdempotencyKey 必需且本 VM 自持、复用同键）。</summary>
+    public async Task<bool> RetryFailedAsync(CancellationToken cancellationToken = default)
+    {
+        if (_host is null || string.IsNullOrWhiteSpace(_runId) || !CanRetryFailed)
+        {
+            return false;
+        }
+
+        _retryIdempotencyKey ??= Guid.NewGuid().ToString("N");
+        try
+        {
+            var result = await _host.RetryFailedTargetsAsync(_runId, _retryIdempotencyKey, cancellationToken);
+            if (result is null)
+            {
+                Status = $"重试失败目标被拒绝（{_host.Snapshot.LastError ?? "HOST_NOT_READY"}）。";
+                return false;
+            }
+
+            Status = $"重试已提交（{result.RunId} · {result.Status}）。";
+            await PollRunProjectionAsync(cancellationToken);
+            return true;
+        }
+        catch (Exception exception)
+        {
+            Status = $"重试失败目标失败（{exception.GetType().Name}）。";
+            return false;
+        }
+    }
+
+    private async Task<bool> SendRunControlAsync(
+        RunControlAction action,
+        bool allowedByProjection,
+        CancellationToken cancellationToken)
+    {
+        // AC-2 红线：控制可用性只取自投影；未允许 = fail-closed，绝不发帧。
+        if (_host is null || string.IsNullOrWhiteSpace(_runId) || !allowedByProjection)
+        {
+            return false;
+        }
+
+        try
+        {
+            var result = await _host.ControlRunAsync(_runId, action, null, cancellationToken);
+            if (result is null)
+            {
+                Status = $"Run 控制被拒绝（{_host.Snapshot.LastError ?? "HOST_NOT_READY"}）。";
+                return false;
+            }
+
+            Status = $"Run 控制已接受（{result.Status}）。";
+            await PollRunProjectionAsync(cancellationToken);
+            return true;
+        }
+        catch (Exception exception)
+        {
+            Status = $"Run 控制失败（{exception.GetType().Name}）。";
+            return false;
+        }
+    }
 
     public async Task LoadAsync(string? chapterId, CancellationToken cancellationToken = default)
     {

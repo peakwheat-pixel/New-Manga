@@ -25,6 +25,20 @@ public enum WorkbenchViewTab
     Console,
 }
 
+/// <summary>
+/// AC-1（格 1）：批量矩阵的滚动面。
+/// 设计系统的 <c>BatchMatrix : ScrollViewer</c> 没有自己的 ControlTheme（StyleKey=派生类型 → 取不到
+/// Fluent ScrollViewer 模板 → 无 ScrollContentPresenter，永远不可滚动）。这里继承 ScrollViewer 并把
+/// StyleKey 复位为基类型，既复用 <c>fluent-batch-matrix</c> 样式，又真正获得可滚动模板（0 pin：
+/// DesignSystem 目录不在本卡 allowed_paths，故在 App 侧修正）。
+/// </summary>
+internal sealed class FluentBatchMatrix : ScrollViewer
+{
+    public FluentBatchMatrix() => Classes.Add("fluent-batch-matrix");
+
+    protected override Type StyleKeyOverride => typeof(ScrollViewer);
+}
+
 /// <summary>Fluent Workbench page backed exclusively by Host projections and the seven Draft ports.</summary>
 public sealed class WorkbenchPageView : UserControl
 {
@@ -54,10 +68,31 @@ public sealed class WorkbenchPageView : UserControl
     private readonly Border _loadingHost;
     private readonly Border _dialogScrim;
     private readonly FluentDialog _leaveDialog;
+    private readonly RunProjectionBar _runBar;
+    private readonly StackPanel _batchLayout;
+    private readonly StackPanel _consoleLayout;
+    private readonly RunProjectionBar _consoleRunBar;
+    private readonly Dictionary<string, TextBlock> _consoleValues = new(StringComparer.Ordinal);
+    // 下列控件在 BuildBatchLayout/BuildConsoleLayout 中创建（构造函数调用一次），因此不标 readonly。
+    private Border _batchEmptyHost = null!;
+    private Grid _batchTable = null!;
+    private Grid _batchHeader = null!;
+    private FluentBatchMatrix _batchMatrix = null!;
+    private StackPanel _batchRows = null!;
+    private TextBlock _batchHint = null!;
+    private Button _batchStart = null!;
+    private StackPanel _consoleTable = null!;
+    private TextBlock _consoleHint = null!;
+    private Border _consoleErrorHost = null!;
+    private Button _pauseRun = null!;
+    private Button _stopRun = null!;
+    private Button _continueRun = null!;
+    private Button _retryRun = null!;
     private string? _pendingPageId;
     private TextBox? _draftInput;
     private WorkbenchViewTab _activeTab;
     private double _tabTransitionMs;
+    private bool _suspendRender;
 
     public WorkbenchPageView(WorkbenchViewModel viewModel, Action backToShelf, Action? openConsole = null)
     {
@@ -114,7 +149,16 @@ public sealed class WorkbenchPageView : UserControl
         _loadingHost = new Border { IsVisible = false };
         _leaveDialog = new FluentDialog { IsOpen = false };
         _dialogScrim = new Border { Classes = { "fluent-modal-scrim" }, IsVisible = false };
+        // AC-1：Run 投影条（两控制面共用同一绑定源；无投影时保持既有诚实空态）。
+        _runBar = new RunProjectionBar();
+        AutomationProperties.SetName(_runBar, "Run 投影条");
+        _runBar.Child = FluentUi.Text("Run 投影：当前没有活动任务投影。", "fluent-status-text");
+        _consoleRunBar = new RunProjectionBar();
+        AutomationProperties.SetName(_consoleRunBar, "控制台 Run 投影条");
+        _consoleRunBar.Child = FluentUi.Text("当前没有运行中的任务", "fluent-status-text");
         _pageLayout = BuildPageLayout();
+        _batchLayout = BuildBatchLayout();
+        _consoleLayout = BuildConsoleLayout();
         _root.Children.Add(BuildToolbar());
         _root.Children.Add(BuildTabs());
         _root.Children.Add(_statusHost);
@@ -129,9 +173,27 @@ public sealed class WorkbenchPageView : UserControl
             {
                 _activeTab = _viewModel.IsBatch ? WorkbenchViewTab.Batch : WorkbenchViewTab.Page;
             }
-            if (args.PropertyName != nameof(WorkbenchViewModel.DraftText)) Render();
+            if (args.PropertyName != nameof(WorkbenchViewModel.DraftText) && !_suspendRender) Render();
         };
         _canvas.SizeChanged += (_, _) => RenderRegions();
+        // AC-1：1s Run 投影轮询只在工作台挂载期间运行；detach/切前端必须停表（泄漏回归）。
+        // detach 期间禁止 Render：此时视觉树正在被移除，改子控件会触发 Avalonia
+        // "root could not be found" 内部异常（RESIDUAL-1 计时器泄漏回归的同源风险）。
+        AttachedToVisualTree += (_, _) =>
+        {
+            _suspendRender = false;
+            if (_viewModel.RunId is { Length: > 0 })
+            {
+                _viewModel.StartRunPolling();
+            }
+
+            Render();
+        };
+        DetachedFromVisualTree += (_, _) =>
+        {
+            _suspendRender = true;
+            _viewModel.StopRunPolling();
+        };
         Render();
     }
 
@@ -146,6 +208,22 @@ public sealed class WorkbenchPageView : UserControl
     public Ellipse DirtyDot => _dirtyDot;
     public TextBlock DirtyStatus => _dirtyStatus;
     public ScrollViewer FilmStripScroll => _filmScroll;
+    // ---- AC-1/AC-2 control-surface seams (evidence + headless assertions) ----
+    public RunProjectionBar RunBar => _runBar;
+    public RunProjectionBar ConsoleRunBar => _consoleRunBar;
+    public Control BatchMatrixHeader => _batchHeader;
+    public ScrollViewer BatchMatrixScroll => _batchMatrix;
+    public StackPanel BatchMatrixRowsHost => _batchRows;
+    public Control BatchTableHost => _batchTable;
+    public Button BatchStartButton => _batchStart;
+    public TextBlock BatchHint => _batchHint;
+    public StackPanel ConsoleRunLinesHost => _consoleTable;
+    public TextBlock ConsoleRunHint => _consoleHint;
+    public Button PauseRunButton => _pauseRun;
+    public Button StopRunButton => _stopRun;
+    public Button ContinueRunButton => _continueRun;
+    public Button RetryRunButton => _retryRun;
+    public TextBlock? ConsoleRunValue(string field) => _consoleValues.GetValueOrDefault(field);
     public event Action<WorkbenchViewTab>? TabChanged;
 
     public void SelectConsoleTab() => SelectTab(WorkbenchViewTab.Console);
@@ -220,6 +298,10 @@ public sealed class WorkbenchPageView : UserControl
         AddTab("页面", WorkbenchViewTab.Page);
         AddTab("批量", WorkbenchViewTab.Batch);
         AddTab("控制台", WorkbenchViewTab.Console);
+        // AC-5（方案 a / 设计 03 §2）：焦点在页签条时 ←/→ 切页签；无修饰 Tab 保持全局
+        // studio.mode.toggle 语义（本卡不改全局 Tab 绑定）。
+        _tabStrip.AddHandler(Avalonia.Input.InputElement.KeyDownEvent, OnTabStripKeyDown,
+            Avalonia.Interactivity.RoutingStrategies.Bubble);
         return _tabStrip;
 
         void AddTab(string label, WorkbenchViewTab tab)
@@ -228,6 +310,52 @@ public sealed class WorkbenchPageView : UserControl
             button.Classes.Set("selected", tab == _activeTab);
             _tabStrip.Children.Add(button);
         }
+    }
+
+    /// <summary>
+    /// AC-5：页签条聚焦时 <c>←</c>/<c>→</c> 切换页签并移动焦点（设计 03 §2 冻结行）。
+    /// 只处理页签条内部的按键；其他控件上的方向键语义不变。
+    /// </summary>
+    private void OnTabStripKeyDown(object? sender, Avalonia.Input.KeyEventArgs args)
+    {
+        if (args.Handled || args.Key is not (Avalonia.Input.Key.Left or Avalonia.Input.Key.Right))
+        {
+            return;
+        }
+
+        var focused = Avalonia.Controls.TopLevel.GetTopLevel(this)?.FocusManager?.GetFocusedElement() as Avalonia.Controls.Control;
+        if (focused is null)
+        {
+            return;
+        }
+
+        var tabs = _tabStrip.Children.OfType<Button>().ToArray();
+        var current = -1;
+        for (var index = 0; index < tabs.Length; index++)
+        {
+            if (ReferenceEquals(tabs[index], focused) ||
+                Avalonia.VisualTree.VisualExtensions.GetVisualAncestors(focused).Contains(tabs[index]))
+            {
+                current = index;
+                break;
+            }
+        }
+
+        if (current < 0)
+        {
+            return;
+        }
+
+        args.Handled = true;
+        var delta = args.Key == Avalonia.Input.Key.Right ? 1 : -1;
+        var next = Math.Clamp(current + delta, 0, tabs.Length - 1);
+        if (next == current)
+        {
+            return;
+        }
+
+        SelectTab((WorkbenchViewTab)next);
+        tabs[next].Focus(Avalonia.Input.NavigationMethod.Tab);
     }
 
     private Control BuildMainLayout()
@@ -250,11 +378,7 @@ public sealed class WorkbenchPageView : UserControl
         main.Children.Add(leftCard);
 
         var center = FluentUi.Stack("fluent-page-layout");
-        var runBar = new RunProjectionBar
-        {
-            Child = FluentUi.Text("Run 投影：当前没有活动任务投影。", "fluent-status-text"),
-        };
-        center.Children.Add(runBar);
+        center.Children.Add(_runBar);
         var canvasSurface = new SurfaceCard
         {
             Child = new ScrollViewer
@@ -274,47 +398,189 @@ public sealed class WorkbenchPageView : UserControl
         return main;
     }
 
-    private Control BuildBatchLayout()
+    /// <summary>
+    /// AC-1（格 1）：批量矩阵 = 吸顶表头 + 真实 Run 投影行。表头**移出** ScrollViewer（独立 Grid 行），
+    /// 因此内容滚动时表头的屏幕坐标不变；无投影时只显示诚实空态，不显示矩阵数据格。
+    /// </summary>
+    private StackPanel BuildBatchLayout()
     {
-        // I-13（9 行状态表·空（批量无 Run）行）：视觉骨架。批量 Run 数据与「开始处理」动作归 B-2；
-        // 主按钮按占位禁用并披露原因，不显示矩阵数据格、不用模拟数据充数（设计 06 §3）。
-        var content = FluentUi.Stack("fluent-page-layout");
-        content.Children.Add(FluentUi.Text("批量处理", "fluent-page-title"));
-        content.Children.Add(FluentUi.Empty("没有正在处理的批量任务",
-            "批量 Run 投影来自 Host 的 step_flow 端口；当前端口尚未接入。", null, null));
-        var start = FluentUi.Button("开始处理", "fluent-primary", null, "开始处理");
-        start.IsEnabled = false;
-        ToolTip.SetTip(start, "批量 Run 端口尚未接入（B-2）；按钮为视觉骨架，不会触发任何动作。");
-        content.Children.Add(start);
-        return new BatchMatrix { Content = content };
+        var layout = FluentUi.Stack("fluent-page-layout");
+        layout.Children.Add(FluentUi.Text("批量处理", "fluent-page-title"));
+
+        _batchHeader = new Grid { ColumnDefinitions = new ColumnDefinitions("140,180,*") };
+        _batchHeader.Classes.Add("fluent-batch-matrix-header");
+        AutomationProperties.SetName(_batchHeader, "批量矩阵表头");
+        _batchHeader.Children.Add(FluentUi.Text("页", "fluent-status-text"));
+        var statusHeader = FluentUi.Text("状态", "fluent-status-text");
+        Grid.SetColumn(statusHeader, 1);
+        _batchHeader.Children.Add(statusHeader);
+        var errorHeader = FluentUi.Text("错误", "fluent-status-text");
+        Grid.SetColumn(errorHeader, 2);
+        _batchHeader.Children.Add(errorHeader);
+
+        _batchRows = FluentUi.Stack("fluent-page-layout");
+        _batchMatrix = new FluentBatchMatrix
+        {
+            Content = _batchRows,
+            VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+            HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
+            MaxHeight = 360,
+        };
+        _batchTable = new Grid { RowDefinitions = new RowDefinitions("Auto,*") };
+        _batchTable.Children.Add(_batchHeader);
+        Grid.SetRow(_batchMatrix, 1);
+        _batchTable.Children.Add(_batchMatrix);
+        _batchTable.IsVisible = false;
+        layout.Children.Add(_batchTable);
+
+        _batchEmptyHost = new Border();
+        layout.Children.Add(_batchEmptyHost);
+
+        // AC-1：批量空态「开始处理」→ 恰好 1 次 StartRunAsync（translate_all + chapter scope）。
+        _batchStart = FluentUi.Button("开始处理", "fluent-primary",
+            () => _ = _viewModel.StartRunAsync(), "开始处理");
+        _batchStart.IsEnabled = false;
+        layout.Children.Add(_batchStart);
+
+        _batchHint = FluentUi.Text(string.Empty, "fluent-subtle-text");
+        layout.Children.Add(_batchHint);
+        return layout;
     }
 
-    private Control BuildConsoleLayout()
+    /// <summary>
+    /// AC-2（格 5）：9 行控制台表（冻结顺序 RunId/RunStatus/OverallProgress/CurrentPageId/
+    /// CurrentStepType/Completed/Failed/Skipped/Blocked），逐字段取自 Host 投影；缺失显示「—」。
+    /// 控制按钮 IsEnabled 完全取自 <c>TaskProjectionInfo.Controls</c>。
+    /// </summary>
+    private StackPanel BuildConsoleLayout()
     {
-        var content = FluentUi.Stack("fluent-page-layout");
-        content.Children.Add(FluentUi.Text("Run 控制台", "fluent-page-title"));
-        content.Children.Add(new RunProjectionBar
+        var layout = FluentUi.Stack("fluent-page-layout");
+        layout.Children.Add(FluentUi.Text("Run 控制台", "fluent-page-title"));
+        layout.Children.Add(_consoleRunBar);
+
+        _consoleTable = FluentUi.Stack("fluent-page-layout");
+        AutomationProperties.SetName(_consoleTable, "Run 九行状态表");
+        foreach (var label in FluentRunProjection.LineLabels)
         {
-            Child = FluentUi.Text("当前没有运行中的任务", "fluent-status-text"),
-        });
-        content.Children.Add(FluentUi.Text("Run 状态与错误由 Host 投影提供；当前端口尚未接入。", "fluent-subtle-text"));
-        // I-13（9 行状态表·运行中行）：Run 控制（暂停/停止/重试）视觉骨架，禁用并披露原因；数据归 B-2。
-        var runControls = FluentUi.Stack("fluent-page-toolbar", Orientation.Horizontal);
-        var pause = FluentUi.Button("暂停", "fluent-secondary", null, "暂停当前 Run");
-        var stop = FluentUi.Button("停止", "fluent-danger", null, "停止当前 Run");
-        pause.IsEnabled = false;
-        stop.IsEnabled = false;
-        ToolTip.SetTip(pause, "Run 控制端口尚未接入（B-2）；按钮为视觉骨架。");
-        ToolTip.SetTip(stop, "Run 控制端口尚未接入（B-2）；按钮为视觉骨架。");
-        runControls.Children.Add(pause);
-        runControls.Children.Add(stop);
-        content.Children.Add(runControls);
-        if (_viewModel.State == FluentPageState.Error && !string.IsNullOrWhiteSpace(_viewModel.Error))
-        {
-            content.Children.Add(FluentUi.Button("查看工作台错误", "fluent-secondary",
-                () => SelectTab(WorkbenchViewTab.Page), "切换到工作台页面查看错误"));
+            var row = new Grid { ColumnDefinitions = new ColumnDefinitions("160,*") };
+            row.Children.Add(FluentUi.Text(label, "fluent-status-text"));
+            var value = FluentUi.Text(FluentRunProjection.Missing, "fluent-subtle-text");
+            AutomationProperties.SetName(value, $"Run 投影字段 {label}");
+            Grid.SetColumn(value, 1);
+            row.Children.Add(value);
+            _consoleValues[label] = value;
+            _consoleTable.Children.Add(row);
         }
-        return content;
+
+        layout.Children.Add(_consoleTable);
+
+        _consoleHint = FluentUi.Text(string.Empty, "fluent-subtle-text");
+        layout.Children.Add(_consoleHint);
+
+        _pauseRun = FluentUi.Button("暂停", "fluent-secondary", () => _ = _viewModel.PauseRunAsync(), "暂停当前 Run");
+        _stopRun = FluentUi.Button("停止", "fluent-danger", () => _ = _viewModel.StopRunAsync(), "停止当前 Run");
+        _continueRun = FluentUi.Button("继续", "fluent-secondary", () => _ = _viewModel.ContinueRunAsync(), "继续当前 Run");
+        _retryRun = FluentUi.Button("重试", "fluent-secondary", () => _ = _viewModel.RetryFailedAsync(), "重试失败目标");
+        foreach (var button in new[] { _pauseRun, _stopRun, _continueRun, _retryRun })
+        {
+            button.IsEnabled = false;
+        }
+
+        var runControls = FluentUi.Stack("fluent-page-toolbar", Orientation.Horizontal);
+        runControls.Children.Add(_pauseRun);
+        runControls.Children.Add(_stopRun);
+        runControls.Children.Add(_continueRun);
+        runControls.Children.Add(_retryRun);
+        layout.Children.Add(runControls);
+
+        _consoleErrorHost = new Border { IsVisible = false };
+        layout.Children.Add(_consoleErrorHost);
+        return layout;
+    }
+
+    /// <summary>AC-1/AC-2：两控制面共用一次投影读取；无投影时保持诚实空态（不伪造进度/控制可用性）。</summary>
+    private void RenderRunSurfaces()
+    {
+        var projection = _viewModel.RunProjection;
+        var barText = _viewModel.RunBarText;
+        _runBar.Child = FluentUi.Text(
+            string.IsNullOrEmpty(barText) ? "Run 投影：当前没有活动任务投影。" : barText,
+            "fluent-status-text");
+        _consoleRunBar.Child = FluentUi.Text(
+            string.IsNullOrEmpty(barText) ? "当前没有运行中的任务" : barText,
+            "fluent-status-text");
+
+        foreach (var label in FluentRunProjection.LineLabels)
+        {
+            var value = projection?.Lines.FirstOrDefault(line => line.Label == label)?.Value
+                ?? FluentRunProjection.Missing;
+            _consoleValues[label].Text = value;
+        }
+
+        _consoleHint.Text = projection is null
+            ? "当前没有 Run 投影：以上 9 行显示「—」，不显示推测进度。"
+            : $"Run 投影来自 Host 的 library_get_task_projection（1s 轮询，最近一次 RunPollAttempts={_viewModel.RunPollAttempts}）。";
+
+        // AC-2：控制可用性完全取自 TaskProjectionInfo.Controls（无投影 = 全部禁用）。
+        _pauseRun.IsEnabled = _viewModel.CanPause;
+        _stopRun.IsEnabled = _viewModel.CanStop;
+        _continueRun.IsEnabled = _viewModel.CanContinue;
+        _retryRun.IsEnabled = _viewModel.CanRetryFailed;
+
+        _consoleErrorHost.IsVisible = _viewModel.State == FluentPageState.Error && !string.IsNullOrWhiteSpace(_viewModel.Error);
+        _consoleErrorHost.Child = _consoleErrorHost.IsVisible
+            ? FluentUi.Button("查看工作台错误", "fluent-secondary",
+                () => SelectTab(WorkbenchViewTab.Page), "切换到工作台页面查看错误")
+            : null;
+
+        // AC-1：矩阵行只在真实投影存在时渲染；否则只保留诚实空态。
+        var hasRows = projection is { HasRows: true };
+        _batchTable.IsVisible = hasRows;
+        _batchEmptyHost.IsVisible = !hasRows;
+        if (hasRows)
+        {
+            _batchRows.Children.Clear();
+            foreach (var row in projection!.Rows)
+            {
+                _batchRows.Children.Add(BuildMatrixRow(row));
+            }
+        }
+        else
+        {
+            _batchEmptyHost.Child = FluentUi.Empty("没有正在处理的批量任务",
+                "批量 Run 由 Host 的 library_start_run / library_get_task_projection 提供；开始后按 1s 轮询真实投影。",
+                null, null);
+        }
+
+        // AC-1：「开始处理」只在没有活动 Run 且可写时可用；提交后按钮禁用，避免重复 StartRun。
+        _batchStart.IsEnabled = !_viewModel.IsReadOnly && _chapterId is not null && _viewModel.RunId is null;
+        _batchHint.Text = _viewModel.RunId is null
+            ? "开始处理会提交 translate_all（chapter scope）并轮询真实投影；没有投影时不显示任何矩阵数据格。"
+            : $"活动 Run：{_viewModel.RunId} · 轮询 {_viewModel.RunPollAttempts} 次 · {(projection is null ? "等待首帧投影" : "已绑定投影")}";
+    }
+
+    /// <summary>AC-1：矩阵一行 = 页 / 状态（符号+文案+状态色）/ 错误码；三者都不是"仅颜色"通道。</summary>
+    private Control BuildMatrixRow(FluentRunRow row)
+    {
+        var line = new Grid { ColumnDefinitions = new ColumnDefinitions("140,180,*") };
+        line.Classes.Add("fluent-batch-matrix-row");
+        AutomationProperties.SetName(line, row.AccessibleName);
+        line.Children.Add(FluentUi.Text($"第 {row.Order + 1} 页", "fluent-subtle-text"));
+
+        var status = FluentUi.Stack("fluent-page-toolbar", Orientation.Horizontal);
+        var glyph = new StatusGlyph { Status = row.Status };
+        status.Children.Add(glyph);
+        var label = FluentUi.Text(row.StatusLabel, "fluent-status-text");
+        label.Classes.Add(StatusCatalog.ClassName(row.Status));
+        AutomationProperties.SetName(label, $"{row.AccessibleName} · {row.StatusKey}");
+        status.Children.Add(label);
+        Grid.SetColumn(status, 1);
+        line.Children.Add(status);
+
+        var error = FluentUi.Text(row.ErrorCell, "fluent-subtle-text");
+        Grid.SetColumn(error, 2);
+        line.Children.Add(error);
+        return line;
     }
 
     private Control BuildLeaveOverlay()
@@ -344,10 +610,11 @@ public sealed class WorkbenchPageView : UserControl
         }
         _mainHost.Content = _activeTab switch
         {
-            WorkbenchViewTab.Batch => BuildBatchLayout(),
-            WorkbenchViewTab.Console => BuildConsoleLayout(),
+            WorkbenchViewTab.Batch => _batchLayout,
+            WorkbenchViewTab.Console => _consoleLayout,
             _ => _pageLayout,
         };
+        RenderRunSurfaces();
 
         _pageStrip.Children.Clear();
         foreach (var page in _viewModel.Pages)

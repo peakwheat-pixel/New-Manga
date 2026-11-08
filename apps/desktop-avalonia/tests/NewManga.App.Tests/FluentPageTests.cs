@@ -168,9 +168,14 @@ public sealed class FluentPageTests
         Assert.Equal(FluentPage.Workbench, shell.CurrentPage);
         Assert.Equal(WorkbenchViewTab.Console, shell.WorkbenchView.ActiveTab);
         Assert.Equal(3, shell.WorkbenchView.ViewTabs.Children.Count);
+        // FEA-06-RESIDUAL-3（改写，原为本索引断言 consoleContent.Children[1]）：改为按类型 +
+        // AutomationProperties.Name 定位 Run 投影条，并保留"无假数据"不变量（空态诚实、无推测进度）。
         var consoleContent = Assert.IsType<StackPanel>(shell.WorkbenchView.CurrentViewContent);
-        var runBar = Assert.IsType<RunProjectionBar>(consoleContent.Children[1]);
-        Assert.Equal("当前没有运行中的任务", Assert.IsType<TextBlock>(runBar.Child).Text);
+        var runBar = consoleContent.GetVisualDescendants().OfType<RunProjectionBar>()
+            .FirstOrDefault(bar => AutomationProperties.GetName(bar) == "控制台 Run 投影条");
+        Assert.NotNull(runBar);
+        Assert.Equal("当前没有运行中的任务", Assert.IsType<TextBlock>(runBar!.Child).Text);
+        Assert.DoesNotContain("%", Assert.IsType<TextBlock>(runBar.Child).Text, StringComparison.Ordinal);
         Assert.True(shell.FindControl<Button>("NavSettings")!.IsVisible);
 
         shell.FindControl<Button>("SettingsCommandButton")!.RaiseEvent(

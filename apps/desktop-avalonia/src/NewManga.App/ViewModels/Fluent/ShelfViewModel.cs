@@ -43,6 +43,26 @@ public sealed class ShelfViewModel : FluentViewModel
         private set => Set(ref _previewPages, value);
     }
 
+    // ------------------------------------------------------------------------------------------
+    // AC-4（格 4）：书架满态统计 = 既有投影的自洽聚合（零新增命令）；PageCount 为 null 不计入。
+    // ------------------------------------------------------------------------------------------
+
+    /// <summary>AC-4：筛选后作品的 <c>ΣPageCount</c>（<c>PageCount==null</c> 不计入）。</summary>
+    public int FilteredPageCountTotal =>
+        FilteredBooks.Sum(book => book.PageCount ?? 0);
+
+    /// <summary>AC-4：筛选后作品是否存在真实 PageCount（全为 null =「—」，不显示 0 冒充统计）。</summary>
+    public bool HasPageCountData => FilteredBooks.Any(book => book.PageCount is not null);
+
+    /// <summary>AC-4：<c>ΣPageCount</c> 文案；缺失显示「—」而非 0。</summary>
+    public string PageCountTotalText => HasPageCountData ? FilteredPageCountTotal.ToString() : "—";
+
+    /// <summary>
+    /// AC-4：状态条 = <c>"{FilteredBooks.Count} / {Books.Count} 部作品"</c> + <c>ΣPageCount</c>。
+    /// 只聚合既有 <c>BookSummary.PageCount</c>（Core 真算）与 <c>Books.Count</c>，不新增命令。
+    /// </summary>
+    public string StatsLine => $"{FilteredBooks.Count()} / {Books.Count} 部作品 · 总页数 {PageCountTotalText}";
+
     public string Search
     {
         get => _search;
@@ -50,7 +70,7 @@ public sealed class ShelfViewModel : FluentViewModel
         {
             if (Set(ref _search, value ?? string.Empty))
             {
-                Changed(nameof(FilteredBooks));
+                NotifyFilterChanged();
                 UpdateState();
             }
         }
@@ -79,13 +99,13 @@ public sealed class ShelfViewModel : FluentViewModel
     public bool FavoritesOnly
     {
         get => _favoritesOnly;
-        set { if (Set(ref _favoritesOnly, value)) { Changed(nameof(FilteredBooks)); UpdateState(); } }
+        set { if (Set(ref _favoritesOnly, value)) { NotifyFilterChanged(); UpdateState(); } }
     }
 
     public bool ArchivedOnly
     {
         get => _archivedOnly;
-        set { if (Set(ref _archivedOnly, value)) { Changed(nameof(FilteredBooks)); UpdateState(); } }
+        set { if (Set(ref _archivedOnly, value)) { NotifyFilterChanged(); UpdateState(); } }
     }
 
     public void ClearFilters()
@@ -93,7 +113,7 @@ public sealed class ShelfViewModel : FluentViewModel
         Search = string.Empty;
         FavoritesOnly = false;
         ArchivedOnly = false;
-        Changed(nameof(FilteredBooks));
+        NotifyFilterChanged();
         UpdateState();
     }
 
@@ -148,7 +168,9 @@ public sealed class ShelfViewModel : FluentViewModel
         {
             await _host.RefreshBooksAsync(cancellationToken);
             UpdateState();
-            ViewStatus = $"{Books.Count} 部作品 · {_host.Snapshot.StatusLine}";
+            NotifyFilterChanged();
+            // AC-4：部作品/ΣPageCount 聚合由状态条 StatsLine 呈现，这里只保留 Host 状态行，避免重复计数。
+            ViewStatus = _host.Snapshot.StatusLine;
         }
         catch (Exception ex)
         {
@@ -308,7 +330,7 @@ public sealed class ShelfViewModel : FluentViewModel
         finally
         {
             IsImporting = false;
-            Changed(nameof(FilteredBooks));
+            NotifyFilterChanged();
         }
     }
 
@@ -343,10 +365,20 @@ public sealed class ShelfViewModel : FluentViewModel
     private void OnHostChanged(object? sender, EventArgs args)
     {
         Changed(nameof(Books));
-        Changed(nameof(FilteredBooks));
+        NotifyFilterChanged();
         Changed(nameof(IsReadOnly));
         ViewStatus = _host?.Snapshot.StatusLine ?? string.Empty;
         UpdateState();
+    }
+
+    /// <summary>AC-4：筛选/数据面变化时同时刷新列表与状态条聚合（同一自洽投影）。</summary>
+    private void NotifyFilterChanged()
+    {
+        Changed(nameof(FilteredBooks));
+        Changed(nameof(FilteredPageCountTotal));
+        Changed(nameof(HasPageCountData));
+        Changed(nameof(PageCountTotalText));
+        Changed(nameof(StatsLine));
     }
 
     private void UpdateState()

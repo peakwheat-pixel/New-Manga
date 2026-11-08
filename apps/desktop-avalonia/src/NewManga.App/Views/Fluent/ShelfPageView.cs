@@ -154,6 +154,8 @@ public sealed class ShelfPageView : UserControl
     public Border DetailPane => _details;
     public Button DetailPaneToggle => _detailToggle;
     public ScrollViewer ListScroll => _listScroll;
+    /// <summary>AC-4：状态条（"N / M 部作品 · 总页数 Σ"）；证据/断言入口。</summary>
+    public TextBlock StatusTextBlock => _status;
 
     /// <summary>IN-1.1 证据入口：渐变装饰层、其画刷与循环驱动器（供有效属性/泄漏断言使用）。</summary>
     internal Border DecorativeLayer => _decorativeLayer;
@@ -200,11 +202,24 @@ public sealed class ShelfPageView : UserControl
         (Control?)_gridHost.Children.OfType<BookCard>().FirstOrDefault(button => button.Tag is BookSummary item && item.BookId == bookId)
         ?? _listHost.Children.OfType<BookRow>().FirstOrDefault(button => button.Tag is BookSummary item && item.BookId == bookId);
 
+    /// <summary>
+    /// FEA-06-RESIDUAL-3 AC-5 A3：SearchField 的真实 Tab 落点是其内部 TextBox（DesignSystem 控件，
+    /// 不在本卡 allowed_paths）；在视图侧把同一语义名补到内部输入框，保证 Tab 落点有可读名。
+    /// </summary>
+    private static void NameSearchInput(SearchField field, string name)
+    {
+        if (field.Child is Control input)
+        {
+            AutomationProperties.SetName(input, name);
+        }
+    }
+
     private Control BuildToolbar()
     {
         var toolbar = FluentUi.Stack("fluent-page-toolbar", Orientation.Horizontal);
         toolbar.Children.Add(FluentUi.Text("书架", "fluent-page-title"));
         var search = FluentUi.Search("搜索书架", "搜索作品");
+        NameSearchInput(search, "搜索书架");
         search.PropertyChanged += (_, args) =>
         {
             if (args.Property == SearchField.TextProperty) _viewModel.Search = search.Text ?? string.Empty;
@@ -385,9 +400,13 @@ public sealed class ShelfPageView : UserControl
         _importFilesButton.IsEnabled = !_viewModel.IsReadOnly && _viewModel.SelectedChapter is not null;
         _importFolderButton.IsEnabled = !_viewModel.IsReadOnly && _viewModel.SelectedChapter is not null;
 
-        _status.Text = _viewModel.IsReadOnly
-            ? $"只读 · {_viewModel.ViewStatus}"
-            : _viewModel.ViewStatus;
+        // AC-4（格 4）：状态条 = "{FilteredBooks.Count} / {Books.Count} 部作品" + ΣPageCount
+        // （PageCount==null → 「—」且不计入）；全零/空集不显示 0 冒充统计。
+        var stats = _viewModel.StatsLine;
+        var statusLine = string.IsNullOrWhiteSpace(_viewModel.ViewStatus)
+            ? stats
+            : $"{_viewModel.ViewStatus} · {stats}";
+        _status.Text = _viewModel.IsReadOnly ? $"只读 · {statusLine}" : statusLine;
         _status.Classes.Set("failed", _viewModel.State == FluentPageState.Error);
 
         // I-1：Render 重建列表内容会重置滚动，这里从 UI memento 恢复列表滚动偏移。

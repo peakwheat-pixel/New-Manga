@@ -52,6 +52,7 @@ public sealed class SettingsPageView : UserControl
         _dirtyDot[!Shape.FillProperty] = new DynamicResourceExtension("Nm.Color.Status.Blocked");
         AutomationProperties.SetName(_dirtyDot, "有未保存的设置修改");
         _search = FluentUi.Search("搜索设置", "搜索设置分组");
+        NameSearchInput(_search, "搜索设置");
         _search.PropertyChanged += (_, args) =>
         {
             if (args.Property != SearchField.TextProperty) return;
@@ -327,6 +328,18 @@ public sealed class SettingsPageView : UserControl
         if (!string.IsNullOrWhiteSpace(_viewModel.Search) && _contentHost.Child is Control filtered)
         {
             ApplyFieldSearch(filtered, _viewModel.Search);
+        }
+    }
+
+    /// <summary>
+    /// FEA-06-RESIDUAL-3 AC-5 A3：SearchField 的真实 Tab 落点是其内部 TextBox（DesignSystem 控件，
+    /// 不在本卡 allowed_paths）；在视图侧把同一语义名补到内部输入框，保证 Tab 落点有可读名。
+    /// </summary>
+    private static void NameSearchInput(SearchField field, string name)
+    {
+        if (field.Child is Control input)
+        {
+            AutomationProperties.SetName(input, name);
         }
     }
 

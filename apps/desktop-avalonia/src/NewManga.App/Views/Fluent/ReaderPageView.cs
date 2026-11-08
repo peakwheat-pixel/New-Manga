@@ -12,6 +12,7 @@ using Avalonia.Automation;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
 using NewManga.App.Controls;
+using NewManga.App.Services;
 using NewManga.App.ViewModels.Fluent;
 using NewManga.Appearance;
 using NewManga.DesignSystem.Controls;
@@ -40,6 +41,12 @@ public sealed class ReaderPageView : UserControl
     private readonly StackPanel _bottomBar;
     private readonly DsReaderPage _pageSurface;
     private readonly Image _pageImage;
+    private readonly Image _pageImageSecondary;
+    private readonly StackPanel _pagedPanel;
+    private readonly ScrollViewer _webtoonScroll;
+    private readonly StackPanel _webtoonPanel;
+    private readonly Image _webtoonImagePrimary;
+    private readonly Image _webtoonImageSecondary;
     private readonly Border _messageHost;
     private readonly Border _sourceWarningHost;
     private readonly Border _sideRailHost;
@@ -47,6 +54,8 @@ public sealed class ReaderPageView : UserControl
     private readonly PageThumbStrip _thumbStrip;
     private readonly ReaderProgressBar _progress;
     private readonly DispatcherTimer _autoHideTimer;
+    // 字段初始化器必须在任何 lambda 捕获之前完成（_webtoonScroll.ScrollChanged 会用到这里）。
+    private readonly DispatcherTimer _scrollProgressTimer = new() { Interval = TimeSpan.FromMilliseconds(600) };
     private readonly FluentVisibilityMotion _topMotion;
     private readonly FluentVisibilityMotion _bottomMotion;
     private IFluentMotionClock _motionClock = FluentRenderClock.Instance;
@@ -57,6 +66,8 @@ public sealed class ReaderPageView : UserControl
     internal bool IdleTimerEnabled => _autoHideTimer.IsEnabled;
     private byte[]? _imageBytes;
     private Bitmap? _bitmap;
+    private byte[]? _imageBytesSecondary;
+    private Bitmap? _bitmapSecondary;
 
     public ReaderPageView(ReaderViewModel viewModel, Action back, Action<bool> setFullScreen)
     {
@@ -64,11 +75,56 @@ public sealed class ReaderPageView : UserControl
         _back = back;
         _setFullScreen = setFullScreen;
         Focusable = true;
+        // AC-5 A3：ReaderPageView 自身是 Tab 落点（Focusable=true），必须有语义名而不是类型名。
+        AutomationProperties.SetName(this, "阅读器");
         _pageImage = new Image { Stretch = Stretch.Uniform, HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
             VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center };
-        _pageSurface = new DsReaderPage { Child = _pageImage, Classes = { "fluent-reader-page" } };
+        // AC-3（格 2）：双页模式的第二页（仅双页模式下可见；单页模式不显示、不加载）。
+        _pageImageSecondary = new Image { Stretch = Stretch.Uniform, IsVisible = false,
+            HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
+            VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center };
+        AutomationProperties.SetName(_pageImageSecondary, "后一页");
+        _pagedPanel = new StackPanel
+        {
+            Orientation = Orientation.Horizontal,
+            HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center,
+            VerticalAlignment = Avalonia.Layout.VerticalAlignment.Center,
+        };
+        _pagedPanel.Children.Add(_pageImage);
+        _pagedPanel.Children.Add(_pageImageSecondary);
+        _pageSurface = new DsReaderPage { Child = _pagedPanel, Classes = { "fluent-reader-page" } };
         _pageSurface.Focusable = true;
         AutomationProperties.SetName(_pageSurface, "当前漫画页面");
+        // AC-3：webtoon 连续页滚动面（Layout=webtoon_vertical / IsWebtoon）；
+        // 滚动偏移写回 SaveReadingProgressAsync 的 scrollOffsetY（逻辑页像素）。
+        _webtoonImagePrimary = new Image { Stretch = Stretch.Uniform, HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center };
+        _webtoonImageSecondary = new Image { Stretch = Stretch.Uniform, HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center };
+        AutomationProperties.SetName(_webtoonImagePrimary, "连续滚动当前页");
+        AutomationProperties.SetName(_webtoonImageSecondary, "连续滚动后一页");
+        _webtoonPanel = new StackPanel { Orientation = Orientation.Vertical };
+        _webtoonPanel.Children.Add(_webtoonImagePrimary);
+        _webtoonPanel.Children.Add(_webtoonImageSecondary);
+        _webtoonScroll = new ScrollViewer
+        {
+            Content = _webtoonPanel,
+            IsVisible = false,
+            HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
+            VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+        };
+        AutomationProperties.SetName(_webtoonScroll, "连续页滚动区");
+        _webtoonScroll.ScrollChanged += (_, _) =>
+        {
+            if (!_viewModel.IsWebtoon)
+            {
+                return;
+            }
+
+            // AC-3：只把真实用户滚动写回进度（布局 clamp 造成的 0 偏移同样合法，不伪造）。
+            _viewModel.SetScrollOffset(_webtoonScroll.Offset.Y);
+            // 停止滚动 600ms 后写回（同一保存路径；不新增 Host 端口）。
+            _scrollProgressTimer.Stop();
+            _scrollProgressTimer.Start();
+        };
         _messageHost = new Border { IsVisible = false };
         _sourceWarningHost = new Border { IsVisible = false };
         _sideRailHost = BuildSideRail();
@@ -94,6 +150,12 @@ public sealed class ReaderPageView : UserControl
         _bottomMotion = new FluentVisibilityMotion(_bottomBar);
         _autoHideTimer = new DispatcherTimer { Interval = ToolBarAutoHideInterval };
         _autoHideTimer.Tick += (_, _) => CheckIdleDeadline();
+        // AC-3：滚动模式下停止滚动 600ms 后写回进度（scrollOffsetY=当前滚动偏移）。
+        _scrollProgressTimer.Tick += (_, _) =>
+        {
+            _scrollProgressTimer.Stop();
+            _ = SaveScrollProgressAsync();
+        };
         _viewModel.PropertyChanged += OnViewModelPropertyChanged;
         KeyDown += OnKeyDown;
         _pageSurface.DoubleTapped += (_, _) => _viewModel.ToggleDoublePage();
@@ -112,6 +174,7 @@ public sealed class ReaderPageView : UserControl
         DetachedFromVisualTree += (_, _) =>
         {
             _autoHideTimer.Stop(); _idleDeadline = null;
+            _scrollProgressTimer.Stop();
             _cancelPageTurnDecor?.Invoke(); _cancelPageTurnDecor = null;
         };
         ApplyToolBarsMotionMode();
@@ -122,11 +185,26 @@ public sealed class ReaderPageView : UserControl
 
     public ReaderViewModel ViewModel => _viewModel;
     public Image PageImage => _pageImage;
+    public Image PageImageSecondary => _pageImageSecondary;
     public DsReaderPage PageSurface => _pageSurface;
+    /// <summary>AC-3：webtoon 连续页滚动面（滚动偏移 → SaveReadingProgressAsync 的 scrollOffsetY）。</summary>
+    public ScrollViewer WebtoonScroll => _webtoonScroll;
+    public StackPanel WebtoonPanel => _webtoonPanel;
     public Border SideRail => _sideRailHost;
     public StackPanel TopBar => _topBar;
     public StackPanel BottomBar => _bottomBar;
     public TimeSpan AutoHideTimerInterval => _autoHideTimer.Interval;
+    /// <summary>AC-3 证据：滚动进度写回的去抖窗口（停止滚动后 600ms 保存）。</summary>
+    public TimeSpan ScrollProgressSaveDelay => _scrollProgressTimer.Interval;
+
+    /// <summary>AC-3：立即冲刷滚动进度（测试/离开页面时用同一保存路径，不另建实现）。</summary>
+    internal Task<bool> FlushScrollProgressAsync()
+    {
+        _scrollProgressTimer.Stop();
+        return SaveScrollProgressAsync();
+    }
+
+    private Task<bool> SaveScrollProgressAsync() => _viewModel.SaveScrollProgressAsync();
 
     public async Task LoadAsync(string? bookId, string? chapterId, CancellationToken cancellationToken = default)
     {
@@ -180,6 +258,7 @@ public sealed class ReaderPageView : UserControl
     {
         var grid = new Grid();
         grid.Children.Add(_pageSurface);
+        grid.Children.Add(_webtoonScroll);
         grid.Children.Add(_messageHost);
         grid.Children.Add(_sideRailHost);
         grid.Children.Add(_sideRailRestore);
@@ -329,23 +408,40 @@ public sealed class ReaderPageView : UserControl
         var title = _topBar.Children.OfType<TextBlock>().FirstOrDefault(block => block.Classes.Contains("fluent-reader-title"));
         if (title is not null) title.Text = book is null ? "阅读器" : $"{book.BookTitle} · {book.ChapterTitle} · {_viewModel.PageLabel}";
 
+        // AC-3（格 2）：双页 / webtoon 连续页都加载 Pages[i] + Pages[i+1]；单页只显示当前页。
         if (_viewModel.PageBytes is { Length: > 0 } bytes)
         {
-            if (_imageBytes is null || !_imageBytes.AsSpan().SequenceEqual(bytes))
+            ApplyImageBytes(_pageImage, bytes, ref _imageBytes, ref _bitmap);
+            var secondary = _viewModel.PageBytesSecondary;
+            if (secondary is { Length: > 0 })
             {
-                _bitmap?.Dispose();
-                _imageBytes = bytes;
-                using var stream = new MemoryStream(bytes, writable: false);
-                _bitmap = new Bitmap(stream);
-                _pageImage.Source = _bitmap;
+                ApplyImageBytes(_pageImageSecondary, secondary, ref _imageBytesSecondary, ref _bitmapSecondary);
+            }
+            else
+            {
+                _pageImageSecondary.Source = null;
             }
 
             _pageImage.RenderTransform = new ScaleTransform(_viewModel.Zoom, _viewModel.Zoom);
-            _pageSurface.IsVisible = true;
+            _pageImageSecondary.RenderTransform = new ScaleTransform(_viewModel.Zoom, _viewModel.Zoom);
+            var webtoon = _viewModel.IsWebtoon;
+            _pageSurface.IsVisible = !webtoon;
+            _pageImageSecondary.IsVisible = !webtoon && _viewModel.DoublePage && _pageImageSecondary.Source is not null;
+
+            // webtoon 连续页：把已加载的两页纵向堆叠；逻辑像素尺寸来自 Host 投影（保证真实滚动范围）。
+            _webtoonScroll.IsVisible = webtoon;
+            _webtoonImagePrimary.Source = _bitmap;
+            _webtoonImageSecondary.Source = _bitmapSecondary;
+            _webtoonImageSecondary.IsVisible = _bitmapSecondary is not null;
+            if (webtoon)
+            {
+                ApplyWebtoonLogicalSizes();
+            }
         }
         else
         {
             _pageSurface.IsVisible = false;
+            _webtoonScroll.IsVisible = false;
         }
 
         _progress.Value = _viewModel.Progress;
@@ -392,6 +488,46 @@ public sealed class ReaderPageView : UserControl
         if (status is not null)
         {
             status.Text = _viewModel.IsSavingProgress ? "进度写回中…" : _viewModel.Status;
+        }
+    }
+
+    private static void ApplyImageBytes(Image target, byte[] bytes, ref byte[]? cached, ref Bitmap? bitmap)
+    {
+        if (cached is not null && cached.AsSpan().SequenceEqual(bytes))
+        {
+            target.Source = bitmap;
+            return;
+        }
+
+        bitmap?.Dispose();
+        cached = bytes;
+        using var stream = new MemoryStream(bytes, writable: false);
+        bitmap = new Bitmap(stream);
+        target.Source = bitmap;
+    }
+
+    private void ApplyWebtoonLogicalSizes()
+    {
+        var pages = _viewModel.Book?.Pages;
+        if (pages is null)
+        {
+            return;
+        }
+
+        var index = _viewModel.PageIndex;
+        SizeImage(_webtoonImagePrimary, pages.ElementAtOrDefault(index));
+        SizeImage(_webtoonImageSecondary,
+            _viewModel.PageBytesSecondary is { Length: > 0 } ? pages.ElementAtOrDefault(index + 1) : null);
+
+        static void SizeImage(Image image, ReaderPageData? page)
+        {
+            if (page is null)
+            {
+                return;
+            }
+
+            image.Width = page.WidthPx > 0 ? page.WidthPx : 320;
+            image.Height = page.HeightPx > 0 ? page.HeightPx : 480;
         }
     }
 
