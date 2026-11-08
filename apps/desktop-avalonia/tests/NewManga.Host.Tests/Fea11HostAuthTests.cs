@@ -1,4 +1,6 @@
+using System.Globalization;
 using System.Text.Json;
+using NewManga.CoreClient.Commands;
 using NewManga.CoreClient.Wire;
 using NewManga.Host.Sources;
 
@@ -475,5 +477,319 @@ public sealed class Fea11HostAuthTests : IDisposable
         var journaled = _operations.Get(operationId)!;
         Assert.Equal("failed", journaled.State);
         Assert.NotNull(journaled.CommitDigest);
+    }
+}
+
+/// <summary>
+/// FEA-11-HOST-AUTH-2 (C-17 §3.2:161/:169): ACK/recovery must not replay the
+/// authorization the apply journaled. <c>PrepareCompletion</c> re-reads the LIVE
+/// registry (advancing <c>LastUsedAt</c>), re-mints with the live generation plus
+/// the COMMITTED baseline identity digest, keeps the operation id / request digest
+/// / host receipt identity, and persists the fresh bytes BEFORE any Core frame.
+///
+/// Default gate: the seam is deliberately Core-free (<c>CoreServiceClient</c> is
+/// sealed and cannot be faked), so the real Core round-trips live in the gated
+/// <c>Fea11HostAuthIpcTests</c>.
+/// </summary>
+public sealed class Fea11HostAuth2FreshCompletionTests : IDisposable
+{
+    private const string PlanId = "pl-fresh";
+    private const string Kind = "resync";
+
+    private readonly string _root;
+    private readonly string _sourceRoot;
+    private readonly string _planDigest = new('a', 64);
+    private readonly string _identityDigest = new('d', 64);
+    private readonly string _commitDigest = new('e', 64);
+    private readonly SourceAccessRegistry _registry;
+    private readonly SourceOperationCoordinator _operations;
+
+    public Fea11HostAuth2FreshCompletionTests()
+    {
+        _root = Path.Combine(Path.GetTempPath(), "nm-fea11-fresh-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(_root);
+        _sourceRoot = Path.Combine(_root, "source");
+        Directory.CreateDirectory(_sourceRoot);
+        _registry = new SourceAccessRegistry(_root);
+        _registry.Register("loc-fresh", [_sourceRoot]);
+        _operations = new SourceOperationCoordinator(null, _root, null, _registry);
+    }
+
+    public void Dispose()
+    {
+        try { Directory.Delete(_root, recursive: true); } catch { /* best effort */ }
+    }
+
+    private sealed record JournaledOperation(
+        string OperationId, string ApplyAuthorizationJson, string HostReceiptId, string RequestDigest);
+
+    private string JournalPath(string operationId) =>
+        Path.Combine(_root, "host", "source-operations", operationId + ".v1.dat");
+
+    /// <summary>A NEW coordinator over the same data root: proves the journal bytes
+    /// (not an in-memory field) carry the fresh authorization.</summary>
+    private SourceOperationCoordinator AfterRestart() =>
+        new(null, _root, null, _registry);
+
+    private JournaledOperation JournalCommittedOperation(
+        int? baselineGeneration = null,
+        string? requestDigest = null,
+        Func<string, string, string>? receiptFactory = null)
+    {
+        var live = _registry.List().Single();
+        var minted = HostAuthorizationMinter.Mint(PlanId, _planDigest, Kind,
+        [
+            new Dictionary<string, object?>
+            {
+                ["registry_id"] = live.RegistryId,
+                ["generation"] = baselineGeneration ?? live.Generation,
+                ["identity_digest"] = _identityDigest,
+            },
+        ]);
+        _operations.Begin(PlanId, _planDigest, Kind,
+            requestDigest ?? minted.RequestDigest, minted.OperationId, ["g-1"]);
+        var applyAuthorizationJson = CanonicalJson.Text(minted.Authorization);
+        _operations.Authorize(minted.OperationId, applyAuthorizationJson, minted.HostReceiptId);
+        _operations.MarkCommitted(minted.OperationId, _commitDigest,
+            receiptFactory is null
+                ? OperationReceipt(minted.OperationId, minted.RequestDigest)
+                : receiptFactory(minted.OperationId, minted.RequestDigest));
+        return new JournaledOperation(
+            minted.OperationId, applyAuthorizationJson, minted.HostReceiptId, minted.RequestDigest);
+    }
+
+    /// <summary>The frozen <c>source_get_operation</c> Operation DTO shape.</summary>
+    private string OperationReceipt(
+        string operationId, string requestDigest, string state = "core-committed") =>
+        JsonSerializer.Serialize(new Dictionary<string, object?>
+        {
+            ["operation_id"] = operationId,
+            ["plan_id"] = PlanId,
+            ["plan_digest"] = _planDigest,
+            ["request_digest"] = requestDigest,
+            ["kind"] = Kind,
+            ["origin"] = "core",
+            ["state"] = state,
+            ["commit"] = new Dictionary<string, object?>
+            {
+                ["operation_id"] = operationId,
+                ["plan_id"] = PlanId,
+                ["plan_digest"] = _planDigest,
+                ["request_digest"] = requestDigest,
+                ["bindings"] = Array.Empty<object>(),
+                ["committed_at"] = "2026-11-08T00:00:00.000Z",
+            },
+            ["commit_digest"] = _commitDigest,
+            ["error_code"] = null,
+            ["retryable"] = false,
+            ["acknowledged_at"] = null,
+        });
+
+    private string DivergentReceipt(string operationId, string requestDigest, string field)
+    {
+        var receipt = JsonSerializer.Deserialize<Dictionary<string, object?>>(
+            OperationReceipt(operationId, requestDigest))!;
+        receipt[field] = field switch
+        {
+            "state" => "acknowledged",
+            "kind" => "relink",
+            "plan_id" => "pl-other",
+            _ => new string('9', 64),
+        };
+        return JsonSerializer.Serialize(receipt);
+    }
+
+    [Fact]
+    public void PrepareCompletion_ReauthorizesTheLiveRegistryAndReSignsTheJournal()
+    {
+        var journaled = JournalCommittedOperation();
+        var lastUsedAtBefore = _registry.List().Single().LastUsedAt;
+        var journalBytesBefore = Convert.ToHexString(
+            File.ReadAllBytes(JournalPath(journaled.OperationId)));
+
+        var material = _operations.PrepareCompletion(journaled.OperationId);
+
+        // (a) the LIVE registry was re-authorized: LastUsedAt advanced.
+        var live = _registry.List().Single();
+        Assert.NotEqual(lastUsedAtBefore, live.LastUsedAt);
+
+        // (b) the FRESH authorization is durable: a brand-new coordinator over the
+        // same data root reads it back (no in-memory illusion, C-17:160 先落盘).
+        var onDisk = AfterRestart().Get(journaled.OperationId)!;
+        Assert.Equal("core-committed", onDisk.State);
+        Assert.NotEqual(journaled.ApplyAuthorizationJson, onDisk.AuthorizationJson);
+        Assert.NotEqual(journalBytesBefore, Convert.ToHexString(
+            File.ReadAllBytes(JournalPath(journaled.OperationId))));
+
+        using var apply = JsonDocument.Parse(journaled.ApplyAuthorizationJson);
+        using var fresh = JsonDocument.Parse(onDisk.AuthorizationJson!);
+        var applyRoot = apply.RootElement;
+        var freshRoot = fresh.RootElement;
+
+        // (c) identity is reused, never re-invented.
+        Assert.Equal(applyRoot.GetProperty("operation_id").GetString(),
+            freshRoot.GetProperty("operation_id").GetString());
+        Assert.Equal(applyRoot.GetProperty("request_digest").GetString(),
+            freshRoot.GetProperty("request_digest").GetString());
+        Assert.Equal(applyRoot.GetProperty("host_receipt_id").GetString(),
+            freshRoot.GetProperty("host_receipt_id").GetString());
+        Assert.Equal(journaled.OperationId, freshRoot.GetProperty("operation_id").GetString());
+        Assert.Equal(journaled.RequestDigest, freshRoot.GetProperty("request_digest").GetString());
+        Assert.Equal(journaled.HostReceiptId, freshRoot.GetProperty("host_receipt_id").GetString());
+        Assert.Equal(journaled.HostReceiptId, onDisk.HostReceiptId);
+
+        // (d) re-signed: authorized_at is strictly later than the apply one.
+        var applyAt = DateTimeOffset.Parse(applyRoot.GetProperty("authorized_at").GetString()!,
+            CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal);
+        var freshAt = DateTimeOffset.Parse(freshRoot.GetProperty("authorized_at").GetString()!,
+            CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal);
+        Assert.True(freshAt > applyAt, $"fresh authorized_at {freshAt:O} must be later than {applyAt:O}");
+
+        // (e) live generation + committed baseline identity digest.
+        var baseline = applyRoot.GetProperty("authorizations").EnumerateArray().Single();
+        var refreshed = freshRoot.GetProperty("authorizations").EnumerateArray().Single();
+        Assert.Equal(live.RegistryId, refreshed.GetProperty("registry_id").GetString());
+        Assert.Equal(live.Generation, refreshed.GetProperty("generation").GetInt32());
+        Assert.Equal(_identityDigest, refreshed.GetProperty("identity_digest").GetString());
+        Assert.Equal(baseline.GetProperty("identity_digest").GetString(),
+            refreshed.GetProperty("identity_digest").GetString());
+
+        // (f) C-17 §5.2:264 authorization_digest = sha256(canonical(authorizations)).
+        var canonicalAuthorizations = freshRoot.GetProperty("authorizations").EnumerateArray()
+            .Select(item => new Dictionary<string, object?>
+            {
+                ["registry_id"] = item.GetProperty("registry_id").GetString(),
+                ["generation"] = item.GetProperty("generation").GetInt32(),
+                ["identity_digest"] = item.GetProperty("identity_digest").GetString(),
+            })
+            .ToList();
+        var expectedDigest = CanonicalJson.Sha256Hex(canonicalAuthorizations);
+        Assert.Equal(expectedDigest, onDisk.AuthorizationDigest);
+        Assert.Equal(expectedDigest, freshRoot.GetProperty("authorization_digest").GetString());
+        Assert.Equal(expectedDigest, material.AuthorizationDigest);
+        Assert.Equal(onDisk.AuthorizationJson, material.AuthorizationJson);
+    }
+
+    [Fact]
+    public async Task AcknowledgeAsync_PersistsTheFreshAuthorizationBeforeTheCoreCall()
+    {
+        var journaled = JournalCommittedOperation();
+        // No Core client at all: reaching the wire surfaces CORE_UNAVAILABLE.
+        var error = await Assert.ThrowsAsync<SourceAccessException>(
+            () => _operations.AcknowledgeAsync(journaled.OperationId));
+        Assert.Equal("CORE_UNAVAILABLE", error.Code);
+
+        // ... yet the journal is ALREADY durable with the fresh authorization and
+        // still core-committed (a retry/recovery can finish the operation).
+        var onDisk = AfterRestart().Get(journaled.OperationId)!;
+        Assert.Equal("core-committed", onDisk.State);
+        Assert.Null(onDisk.AcknowledgedAt);
+        Assert.NotEqual(journaled.ApplyAuthorizationJson, onDisk.AuthorizationJson);
+        using var fresh = JsonDocument.Parse(onDisk.AuthorizationJson!);
+        Assert.Equal(journaled.HostReceiptId,
+            fresh.RootElement.GetProperty("host_receipt_id").GetString());
+    }
+
+    [Theory]
+    [InlineData("revoked", "SOURCE_GRANT_REVOKED")]
+    [InlineData("registry-missing", "SOURCE_ACCESS_DENIED")]
+    [InlineData("root-identity-changed", "SOURCE_REGISTRY_UNAVAILABLE")]
+    [InlineData("baseline-generation-newer", "SOURCE_GRANT_REVOKED")]
+    [InlineData("digest-not-reproducible", "SOURCE_SYNC_STATE_CONFLICT")]
+    public void PrepareCompletion_RefusalMatrix_IsTypedAndLeavesTheJournalUntouched(
+        string scenario, string expectedCode)
+    {
+        var live = _registry.List().Single();
+        var journaled = scenario switch
+        {
+            "baseline-generation-newer" => JournalCommittedOperation(
+                baselineGeneration: live.Generation + 4),
+            "digest-not-reproducible" => JournalCommittedOperation(
+                requestDigest: new string('f', 64)),
+            _ => JournalCommittedOperation(),
+        };
+        switch (scenario)
+        {
+            case "revoked":
+                _registry.Revoke(live.RegistryId);
+                break;
+            case "registry-missing":
+                _registry.Reset(confirm: true);
+                break;
+            case "root-identity-changed":
+                // Two live directories can never share a file id: the registered
+                // root's physical identity is provably replaced.
+                Directory.Move(_sourceRoot, _sourceRoot + "-moved");
+                Directory.CreateDirectory(_sourceRoot);
+                break;
+        }
+        var journalBytesBefore = Convert.ToHexString(
+            File.ReadAllBytes(JournalPath(journaled.OperationId)));
+
+        var error = Assert.Throws<SourceAccessException>(
+            () => _operations.PrepareCompletion(journaled.OperationId));
+
+        Assert.Equal(expectedCode, error.Code);
+        // Zero Core call: a Core attempt would have surfaced CORE_UNAVAILABLE.
+        Assert.NotEqual("CORE_UNAVAILABLE", error.Code);
+        // Journal state AND authorization bytes are untouched.
+        Assert.Equal(journalBytesBefore, Convert.ToHexString(
+            File.ReadAllBytes(JournalPath(journaled.OperationId))));
+        var entry = AfterRestart().Get(journaled.OperationId)!;
+        Assert.Equal("core-committed", entry.State);
+        Assert.Equal(journaled.ApplyAuthorizationJson, entry.AuthorizationJson);
+    }
+
+    [Theory]
+    [InlineData("request_digest")]
+    [InlineData("operation_id")]
+    [InlineData("plan_id")]
+    [InlineData("kind")]
+    [InlineData("commit_digest")]
+    [InlineData("state")]
+    public void PrepareCompletion_RejectsADivergentCoreReceipt_WithZeroJournalWrites(string field)
+    {
+        // AC-F1c / limitation 5: the durable Core receipt is re-checked against the
+        // journal before ANY completion (C-17 §3.2:160/:164).
+        var journaled = JournalCommittedOperation(
+            receiptFactory: (operationId, requestDigest) =>
+                DivergentReceipt(operationId, requestDigest, field));
+        var journalBytesBefore = Convert.ToHexString(
+            File.ReadAllBytes(JournalPath(journaled.OperationId)));
+
+        var error = Assert.Throws<SourceAccessException>(
+            () => _operations.PrepareCompletion(journaled.OperationId));
+
+        Assert.Equal("SOURCE_SYNC_STATE_CONFLICT", error.Code);
+        Assert.Equal("core-committed", AfterRestart().Get(journaled.OperationId)!.State);
+        Assert.Equal(journalBytesBefore, Convert.ToHexString(
+            File.ReadAllBytes(JournalPath(journaled.OperationId))));
+    }
+
+    [Fact]
+    public void PrepareCompletion_RecoverySemantics_AcceptAHostAuthorizedJournal()
+    {
+        var live = _registry.List().Single();
+        var minted = HostAuthorizationMinter.Mint(PlanId, _planDigest, Kind,
+        [
+            new Dictionary<string, object?>
+            {
+                ["registry_id"] = live.RegistryId,
+                ["generation"] = live.Generation,
+                ["identity_digest"] = _identityDigest,
+            },
+        ]);
+        _operations.Begin(PlanId, _planDigest, Kind, minted.RequestDigest, minted.OperationId);
+        _operations.Authorize(minted.OperationId, CanonicalJson.Text(minted.Authorization),
+            minted.HostReceiptId);
+
+        // ACK semantics refuse a not-yet-committed operation ...
+        var ackError = Assert.Throws<SourceAccessException>(
+            () => _operations.PrepareCompletion(minted.OperationId));
+        Assert.Equal("SOURCE_OPERATION_NOT_FOUND", ackError.Code);
+        // ... recovery semantics (core-committed/host-authorized/failed) accept it.
+        var material = _operations.PrepareCompletion(minted.OperationId, recovery: true);
+        Assert.Equal(minted.OperationId, material.OperationId);
+        Assert.Equal("host-authorized", AfterRestart().Get(minted.OperationId)!.State);
     }
 }

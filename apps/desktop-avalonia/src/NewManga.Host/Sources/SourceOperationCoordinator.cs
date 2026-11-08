@@ -35,15 +35,33 @@ public sealed class SourceOperationCoordinator
     private readonly CoreServiceClient? core;
     private readonly string directory;
     private readonly Func<bool> enabled;
+    private readonly SourceAccessRegistry? registry;
     private readonly object gate = new();
 
     public SourceOperationCoordinator(
-        CoreServiceClient? core, string dataRoot, Func<bool>? enabled = null)
+        CoreServiceClient? core, string dataRoot, Func<bool>? enabled = null,
+        SourceAccessRegistry? registry = null)
     {
         this.core = core;
         directory = Path.Combine(dataRoot, "host", "source-operations");
         this.enabled = enabled ?? (() => true);
+        this.registry = registry;
     }
+
+    /// <summary>
+    /// FEA-11-HOST-AUTH-2 (C-17 §3.2:161/:169): the FRESH completion material
+    /// produced by <see cref="PrepareCompletion"/>. ACK/recovery send this record
+    /// (never the authorization the apply journaled); the journal already holds
+    /// these bytes before the Core call is made.
+    /// </summary>
+    public sealed record CompletionMaterial(
+        string OperationId,
+        string RequestDigest,
+        string CommitDigest,
+        string HostReceiptId,
+        string AuthorizationJson,
+        string AuthorizationDigest,
+        IReadOnlyList<string> GrantIds);
 
     /// <summary>One durable operation journal entry (closed shape, C-17 §5.2).</summary>
     public sealed record JournalEntry(
@@ -154,45 +172,169 @@ public sealed class SourceOperationCoordinator
         }
     }
 
+    /// <summary>
+    /// FEA-11-HOST-AUTH-2 (C-17 §3.2:161/:169): ACK/recovery must NOT replay the
+    /// authorization the apply journaled — the Host re-reads the live
+    /// <see cref="SourceAccessRegistry"/> under the journal lock, re-authorizes
+    /// every committed registry (advancing <c>LastUsedAt</c>), re-mints the SAME
+    /// operation id / request digest / host receipt id with the LIVE generation
+    /// plus the COMMITTED BASELINE identity digest, guards the reproduced request
+    /// digest and persists the fresh <c>AuthorizationJson/AuthorizationDigest</c>
+    /// (C-17:160 "先落盘") before the Core is called.
+    ///
+    /// Deliberately Core-free: the default gate has to prove the fresh path
+    /// without a Python Core (<c>CoreServiceClient</c> is sealed).
+    /// </summary>
+    /// <param name="operationId">The journaled operation.</param>
+    /// <param name="recovery">ACK semantics (<c>core-committed</c> only) vs
+    /// recovery semantics (<c>core-committed</c>/<c>host-authorized</c>/<c>failed</c>).</param>
+    public CompletionMaterial PrepareCompletion(string operationId, bool recovery = false)
+    {
+        RequireEnabled();
+        var accessRegistry = registry
+            ?? throw new SourceAccessException("SOURCE_REGISTRY_UNAVAILABLE");
+        JournalEntry entry;
+        lock (gate)
+        {
+            entry = Read(operationId);
+            if (recovery)
+            {
+                RequireState(entry, "core-committed", "host-authorized", "failed");
+            }
+            else
+            {
+                RequireState(entry, "core-committed");
+            }
+            if (string.IsNullOrWhiteSpace(entry.AuthorizationJson)
+                || string.IsNullOrWhiteSpace(entry.HostReceiptId))
+            {
+                throw new SourceAccessException("SOURCE_OPERATION_NOT_FOUND");
+            }
+        }
+
+        var baselines = ReadAuthorizationBaselines(entry, out var previousAuthorizedAt);
+        // AC-F1c (C-17:160/:164, limitation 5): the durable Core receipt must
+        // still describe THIS operation before any completion is re-authorized.
+        VerifyOperationReceipt(entry.CommitReceiptJson, entry, entry.CommitDigest);
+
+        var fresh = new List<Dictionary<string, object?>>();
+        var known = accessRegistry.List().ToDictionary(item => item.RegistryId, item => item);
+        foreach (var baseline in baselines)
+        {
+            if (!known.TryGetValue(baseline.RegistryId, out var live))
+            {
+                // C-17:169 "Registry 丢失拒绝" (a dropped registry would relax the ACK).
+                throw new SourceAccessException("SOURCE_ACCESS_DENIED");
+            }
+            if (live.RevokedAt is not null)
+            {
+                throw new SourceAccessException("SOURCE_GRANT_REVOKED");
+            }
+            // C-17:169: a fresh generation may be >= the committed baseline, never below.
+            if (baseline.Generation > live.Generation)
+            {
+                throw new SourceAccessException("SOURCE_GRANT_REVOKED");
+            }
+            var roots = live.Roots
+                .Where(root => root.Readable)
+                .Select(root => root.Root)
+                .ToArray();
+            if (roots.Length == 0)
+            {
+                throw new SourceAccessException("SOURCE_REGISTRY_UNAVAILABLE");
+            }
+            // C-17:169 "generation 变大时 Host 必须锁后取得当前明确授权": the
+            // CURRENT generation is authorized (SOURCE_GRANT_REVOKED /
+            // SOURCE_REGISTRY_BUSY / SOURCE_REGISTRY_UNAVAILABLE are its refusals).
+            accessRegistry.Authorize(baseline.RegistryId, live.Generation, roots);
+            fresh.Add(new Dictionary<string, object?>
+            {
+                ["registry_id"] = baseline.RegistryId,
+                ["generation"] = live.Generation,
+                ["identity_digest"] = baseline.IdentityDigest,
+            });
+        }
+
+        // The reproducible request digest proves plan/kind/operation identity did
+        // not drift since the apply (C-17:169).
+        var minted = HostAuthorizationMinter.Mint(
+            entry.PlanId, entry.PlanDigest, entry.Kind, fresh,
+            now: AuthorizationAfter(previousAuthorizedAt),
+            operationId: entry.OperationId,
+            hostReceiptId: entry.HostReceiptId);
+        if (!string.Equals(minted.RequestDigest, entry.RequestDigest, StringComparison.Ordinal))
+        {
+            throw new SourceAccessException("SOURCE_SYNC_STATE_CONFLICT");
+        }
+
+        var authorizationJson = CanonicalJson.Text(minted.Authorization);
+        lock (gate)
+        {
+            var current = Read(operationId);
+            // C-17 §3.2: a concurrent MarkFailed must never be overwritten by the
+            // fresh authorization of a state the caller no longer owns.
+            if (!string.Equals(current.State, entry.State, StringComparison.Ordinal))
+            {
+                throw new SourceAccessException("SOURCE_SYNC_STATE_CONFLICT");
+            }
+            Write(current with
+            {
+                AuthorizationJson = authorizationJson,
+                // C-17 §5.2:264 — journal keeps the wire authorization_digest
+                // (<c>sha256(canonical(authorizations))</c>), never a digest of
+                // the surrounding envelope.
+                AuthorizationDigest = minted.AuthorizationDigest,
+                UpdatedAt = UtcNow(),
+            });
+        }
+
+        return new CompletionMaterial(
+            entry.OperationId,
+            minted.RequestDigest,
+            entry.CommitDigest ?? string.Empty,
+            minted.HostReceiptId,
+            authorizationJson,
+            minted.AuthorizationDigest,
+            string.IsNullOrWhiteSpace(entry.GrantIds)
+                ? Array.Empty<string>()
+                : entry.GrantIds.Split(',', StringSplitOptions.RemoveEmptyEntries));
+    }
+
     /// <summary>FEA-11: Host durable ACK first, then tell the Core; the ACK
-    /// opens the read gate (C-17 §3.3) and is idempotent on replay.</summary>
+    /// opens the read gate (C-17 §3.3) and is idempotent on replay. From
+    /// FEA-11-HOST-AUTH-2 on, the wire authorization is the FRESH one.</summary>
     public async Task<JournalEntry> AcknowledgeAsync(
         string operationId, CancellationToken cancellationToken = default)
     {
         RequireEnabled();
-        JournalEntry committed;
         lock (gate)
         {
-            committed = Read(operationId);
-            if (committed.State == "acknowledged") return committed;
-            RequireState(committed, "core-committed");
+            var early = Read(operationId);
+            if (early.State == "acknowledged") return early;
         }
 
+        // C-17:160/:169 — durable FRESH authorization before any Core frame.
+        var material = PrepareCompletion(operationId);
         var client = core ?? throw new SourceAccessException("CORE_UNAVAILABLE");
-        var authorizationJson = committed.AuthorizationJson
-            ?? throw new SourceAccessException("SOURCE_OPERATION_NOT_FOUND");
-        using var authorization = JsonDocument.Parse(authorizationJson);
-        var grantIds = string.IsNullOrWhiteSpace(committed.GrantIds)
-            ? Array.Empty<string>()
-            : committed.GrantIds.Split(',', StringSplitOptions.RemoveEmptyEntries);
+        using var authorization = JsonDocument.Parse(material.AuthorizationJson);
         await client.SendHostControlAsync(
                 "AcknowledgeSourceOperation",
                 writer =>
                 {
-                    writer.WriteStartObject();
-                    writer.WriteString("operation_id", committed.OperationId);
-                    writer.WriteString("request_digest", committed.RequestDigest);
-                    writer.WriteString("commit_digest", committed.CommitDigest ?? string.Empty);
-                    writer.WriteString("host_receipt_id", committed.HostReceiptId ?? string.Empty);
+                    // The host-control envelope already opened the payload object
+                    // (CompletionRequest fields are written flat — C-17 §5.2).
+                    writer.WriteString("operation_id", material.OperationId);
+                    writer.WriteString("request_digest", material.RequestDigest);
+                    writer.WriteString("commit_digest", material.CommitDigest);
+                    writer.WriteString("host_receipt_id", material.HostReceiptId);
                     writer.WriteStartArray("grant_ids");
-                    foreach (var grantId in grantIds)
+                    foreach (var grantId in material.GrantIds)
                     {
                         writer.WriteStringValue(grantId);
                     }
                     writer.WriteEndArray();
                     writer.WritePropertyName("authorization");
                     authorization.RootElement.WriteTo(writer);
-                    writer.WriteEndObject();
                 },
                 TimeSpan.FromSeconds(60),
                 client.HostSession,
@@ -200,9 +342,15 @@ public sealed class SourceOperationCoordinator
             .ConfigureAwait(false);
 
         // The Core accepted the ACK: record the Host-side durable acknowledgement.
+        // The state is re-read INSIDE the lock so a concurrent MarkFailed
+        // (core-committed -> failed) can never be regressed to acknowledged.
         lock (gate)
         {
             var current = Read(operationId);
+            if (current.State != "core-committed")
+            {
+                throw new SourceAccessException("SOURCE_SYNC_STATE_CONFLICT");
+            }
             var next = current with
             {
                 State = "acknowledged",
@@ -215,7 +363,10 @@ public sealed class SourceOperationCoordinator
     }
 
     /// <summary>FEA-11: finish a recovery after a crash (C-17 §5.2); the Core
-    /// recovery closes the pending gates, the Host journal records the state.</summary>
+    /// recovery closes the pending gates, the Host journal records the state.
+    /// FEA-11-HOST-AUTH-2: the receipt re-read now VERIFIES every field against
+    /// the journal (AC-F1c) and the CompletionRequest carries a FRESH
+    /// authorization, never the apply-time one.</summary>
     public async Task<JournalEntry> RecoverAsync(
         string operationId, CancellationToken cancellationToken = default)
     {
@@ -229,13 +380,10 @@ public sealed class SourceOperationCoordinator
         }
 
         var client = core ?? throw new SourceAccessException("CORE_UNAVAILABLE");
-        var authorizationJson = entry.AuthorizationJson
-            ?? throw new SourceAccessException("SOURCE_OPERATION_NOT_FOUND");
         // r3 P1-02: the crash window between the Core COMMIT and the Host
         // MarkCommitted leaves CommitDigest empty. Re-read the Core receipt
         // first (C-17 §3.2) instead of sending an empty digest.
-        var commitDigest = entry.CommitDigest;
-        if (string.IsNullOrWhiteSpace(commitDigest))
+        if (string.IsNullOrWhiteSpace(entry.CommitDigest))
         {
             var lookup = await client.SendAsync(
                     "source_get_operation", 3,
@@ -250,11 +398,14 @@ public sealed class SourceOperationCoordinator
             var receiptJson = lookup.Result?.ValueKind == JsonValueKind.Object
                 ? lookup.Result.Value.GetRawText()
                 : null;
-            commitDigest = lookup.Result?.ValueKind == JsonValueKind.Object
+            var commitDigest = lookup.Result?.ValueKind == JsonValueKind.Object
                 && lookup.Result.Value.TryGetProperty("commit_digest", out var digest)
                 && digest.ValueKind == JsonValueKind.String
                     ? digest.GetString()
                     : throw new SourceAccessException("SOURCE_OPERATION_NOT_FOUND");
+            // AC-F1c: the re-read receipt must describe THIS operation before it is
+            // persisted — a mismatch leaves the journal byte-identical.
+            VerifyOperationReceipt(receiptJson, entry, commitDigest);
             lock (gate)
             {
                 var current = Read(entry.OperationId);
@@ -266,28 +417,27 @@ public sealed class SourceOperationCoordinator
                 });
             }
         }
-        using var authorization = JsonDocument.Parse(authorizationJson);
-        var grantIds = string.IsNullOrWhiteSpace(entry.GrantIds)
-            ? Array.Empty<string>()
-            : entry.GrantIds.Split(',', StringSplitOptions.RemoveEmptyEntries);
+
+        // C-17:160/:169 — durable FRESH authorization before any Core frame.
+        var material = PrepareCompletion(operationId, recovery: true);
+        using var authorization = JsonDocument.Parse(material.AuthorizationJson);
         await client.SendHostControlAsync(
                 "CompleteSourceOperationRecovery",
                 writer =>
                 {
-                    writer.WriteStartObject();
-                    writer.WriteString("operation_id", entry.OperationId);
-                    writer.WriteString("request_digest", entry.RequestDigest);
-                    writer.WriteString("commit_digest", commitDigest ?? string.Empty);
-                    writer.WriteString("host_receipt_id", entry.HostReceiptId ?? string.Empty);
+                    // Flat CompletionRequest fields (the envelope opened `payload`).
+                    writer.WriteString("operation_id", material.OperationId);
+                    writer.WriteString("request_digest", material.RequestDigest);
+                    writer.WriteString("commit_digest", material.CommitDigest);
+                    writer.WriteString("host_receipt_id", material.HostReceiptId);
                     writer.WriteStartArray("grant_ids");
-                    foreach (var grantId in grantIds)
+                    foreach (var grantId in material.GrantIds)
                     {
                         writer.WriteStringValue(grantId);
                     }
                     writer.WriteEndArray();
                     writer.WritePropertyName("authorization");
                     authorization.RootElement.WriteTo(writer);
-                    writer.WriteEndObject();
                 },
                 TimeSpan.FromSeconds(60),
                 client.HostSession,
@@ -297,6 +447,12 @@ public sealed class SourceOperationCoordinator
         lock (gate)
         {
             var current = Read(operationId);
+            // core-committed/failed are still recoverable; acknowledged/recovered
+            // are terminal (a concurrent completion won the race).
+            if (current.State is not ("core-committed" or "host-authorized" or "failed"))
+            {
+                throw new SourceAccessException("SOURCE_SYNC_STATE_CONFLICT");
+            }
             var next = current with { State = "recovered", UpdatedAt = UtcNow() };
             Write(next);
             return next;
@@ -378,6 +534,154 @@ public sealed class SourceOperationCoordinator
             return Read(operationId);
         }
     }
+
+    // ------------------------------------------------------- completion material
+
+    private sealed record AuthorizationBaseline(string RegistryId, int Generation, string IdentityDigest);
+
+    /// <summary>
+    /// C-17 §5.2 / FEA-11-HOST-AUTH-2: the committed baseline of the apply-time
+    /// authorization is the ONLY thing a completion may inherit (registry id +
+    /// identity digest); the generation is deliberately re-read live.
+    /// </summary>
+    private static List<AuthorizationBaseline> ReadAuthorizationBaselines(
+        JournalEntry entry, out string? previousAuthorizedAt)
+    {
+        previousAuthorizedAt = null;
+        var baselines = new List<AuthorizationBaseline>();
+        try
+        {
+            using var document = JsonDocument.Parse(entry.AuthorizationJson!);
+            var root = document.RootElement;
+            if (root.ValueKind != JsonValueKind.Object)
+            {
+                throw new SourceAccessException("SOURCE_SYNC_STATE_CONFLICT");
+            }
+            previousAuthorizedAt = StringField(root, "authorized_at");
+            if (!root.TryGetProperty("authorizations", out var authorizations)
+                || authorizations.ValueKind != JsonValueKind.Array)
+            {
+                throw new SourceAccessException("SOURCE_SYNC_STATE_CONFLICT");
+            }
+            foreach (var item in authorizations.EnumerateArray())
+            {
+                var registryId = StringField(item, "registry_id");
+                var identityDigest = StringField(item, "identity_digest");
+                var generation = item.ValueKind == JsonValueKind.Object
+                    && item.TryGetProperty("generation", out var generationValue)
+                    && generationValue.ValueKind == JsonValueKind.Number
+                    && generationValue.TryGetInt32(out var parsed)
+                        ? parsed
+                        : 0;
+                if (string.IsNullOrWhiteSpace(registryId)
+                    || string.IsNullOrWhiteSpace(identityDigest) || generation < 1)
+                {
+                    throw new SourceAccessException("SOURCE_SYNC_STATE_CONFLICT");
+                }
+                baselines.Add(new AuthorizationBaseline(registryId, generation, identityDigest));
+            }
+            if (!string.Equals(StringField(root, "operation_id"), entry.OperationId,
+                    StringComparison.Ordinal)
+                || !string.Equals(StringField(root, "request_digest"), entry.RequestDigest,
+                    StringComparison.Ordinal)
+                || !string.Equals(StringField(root, "host_receipt_id"), entry.HostReceiptId,
+                    StringComparison.Ordinal))
+            {
+                throw new SourceAccessException("SOURCE_SYNC_STATE_CONFLICT");
+            }
+        }
+        catch (JsonException)
+        {
+            throw new SourceAccessException("SOURCE_SYNC_STATE_CONFLICT");
+        }
+        if (baselines.Count == 0)
+        {
+            throw new SourceAccessException("SOURCE_SYNC_STATE_CONFLICT");
+        }
+        return baselines;
+    }
+
+    /// <summary>
+    /// C-17:169 requires a re-signed <c>authorized_at</c>. The millisecond clock
+    /// is coarse enough that a fast ACK could otherwise carry the apply timestamp
+    /// verbatim, so the fresh stamp is forced strictly later than the previous one.
+    /// </summary>
+    private static DateTimeOffset? AuthorizationAfter(string? previousAuthorizedAt)
+    {
+        if (previousAuthorizedAt is null) return null;
+        if (!DateTimeOffset.TryParse(previousAuthorizedAt, CultureInfo.InvariantCulture,
+                DateTimeStyles.AdjustToUniversal, out var previous))
+        {
+            return null;
+        }
+        return DateTimeOffset.UtcNow <= previous ? previous.AddMilliseconds(1) : null;
+    }
+
+    /// <summary>
+    /// FEA-11-HOST-AUTH-2 AC-F1c (C-17 §3.2:160/:164, limitation 5): the durable
+    /// Core operation receipt is re-checked against the journal before any
+    /// completion. Any mismatch is a typed refusal with ZERO journal writes.
+    /// </summary>
+    private static void VerifyOperationReceipt(
+        string? receiptJson, JournalEntry entry, string? commitDigest)
+    {
+        if (string.IsNullOrWhiteSpace(receiptJson)) return;
+        JsonDocument document;
+        try
+        {
+            document = JsonDocument.Parse(receiptJson);
+        }
+        catch (JsonException)
+        {
+            throw new SourceAccessException("SOURCE_SYNC_STATE_CONFLICT");
+        }
+        using (document)
+        {
+            var row = document.RootElement;
+            if (row.ValueKind != JsonValueKind.Object)
+            {
+                throw new SourceAccessException("SOURCE_SYNC_STATE_CONFLICT");
+            }
+            RequireReceiptValue(row, "operation_id", entry.OperationId);
+            RequireReceiptValue(row, "plan_id", entry.PlanId);
+            RequireReceiptValue(row, "plan_digest", entry.PlanDigest);
+            RequireReceiptValue(row, "request_digest", entry.RequestDigest);
+            RequireReceiptValue(row, "kind", entry.Kind);
+            if (!string.IsNullOrWhiteSpace(commitDigest))
+            {
+                RequireReceiptValue(row, "commit_digest", commitDigest);
+            }
+            // Only a committed (not yet completed) operation may be completed.
+            var state = StringField(row, "state");
+            if (state is not ("core-committed" or "failed"))
+            {
+                throw new SourceAccessException("SOURCE_SYNC_STATE_CONFLICT");
+            }
+            if (row.TryGetProperty("commit", out var commit)
+                && commit.ValueKind == JsonValueKind.Object)
+            {
+                RequireReceiptValue(commit, "operation_id", entry.OperationId);
+                RequireReceiptValue(commit, "plan_id", entry.PlanId);
+                RequireReceiptValue(commit, "plan_digest", entry.PlanDigest);
+                RequireReceiptValue(commit, "request_digest", entry.RequestDigest);
+            }
+        }
+    }
+
+    private static void RequireReceiptValue(JsonElement element, string field, string expected)
+    {
+        if (!string.Equals(StringField(element, field), expected, StringComparison.Ordinal))
+        {
+            throw new SourceAccessException("SOURCE_SYNC_STATE_CONFLICT");
+        }
+    }
+
+    private static string? StringField(JsonElement element, string key) =>
+        element.ValueKind == JsonValueKind.Object
+        && element.TryGetProperty(key, out var value)
+        && value.ValueKind == JsonValueKind.String
+            ? value.GetString()
+            : null;
 
     // ------------------------------------------------------------- journal
 

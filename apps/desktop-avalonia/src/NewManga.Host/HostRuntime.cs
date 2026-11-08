@@ -1223,7 +1223,11 @@ public sealed class HostRuntime : IAsyncDisposable
                 Sources = new SourceReadCoordinator(CoreService, Registry,
                         () => _options.ReferencedImportEnabled);
                     Operations = new SourceOperationCoordinator(
-                        CoreService, _options.DataRoot, () => _options.ReferencedImportEnabled);
+                        CoreService, _options.DataRoot, () => _options.ReferencedImportEnabled,
+                        // FEA-11-HOST-AUTH-2 (C-17 §3.2:161/:169): ACK/recovery re-read
+                        // and re-authorize this registry instead of replaying the
+                        // authorization the apply journaled.
+                        Registry);
                 }
                 catch (Exception error) when (error is SourceAccessException or IOException or UnauthorizedAccessException)
                 { _log.Warn("source registry unavailable"); }
