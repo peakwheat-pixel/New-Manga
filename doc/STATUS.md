@@ -25,3 +25,4 @@ Technical Gate=NOT_SATISFIED；private_registry_absence=UNPROVABLE；Owner Risk 
 ## 当前权威指针
 - DAG/节点：[REBASELINE_PLAN](REBASELINE_PLAN.md)（唯一权威）；主线 `main`；工作区 [WORKSPACE_GOVERNANCE](WORKSPACE_GOVERNANCE.md)。
 - 恢复点：rolling checkpoint + 各 Task 卡与 `verification/**`。
+- 残余收口：[PLAN](plan/RESIDUAL-CLOSEOUT-PLAN-2026-11-08.md)（4 节点→done，6 卡方案）。

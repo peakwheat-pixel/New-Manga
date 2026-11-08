@@ -335,3 +335,13 @@ ameof(ListStatusText)，修「进入回收站 bar 仍显示 N/M 作品」「返�
 - **文档对账（本轮）**：STATUS 测试基线 3369→**3390/10**（.NET 1691/0/96）；DSH-AUTORUN-PROMPT → **v1.1**（基线同步、§7 队列快照刷新并标注 §26 结论被推翻）；STATUS push 指针改为引用 §27（不再写死过期 sha）。**README 漂移已登记未改**（.NET 258/258、pytest 2773、managed copy 与 AD-003/实际基线冲突）→ 下一轮 docs 卡候选②。
 - **下一候选（需先 scope review）**：① **2C typed-stop / 预算守卫次序残项**（Host-only：RunGrantRenewal.cs:371-390 事后预算守卫先于 !outcome.KeepsTracking ⇒ typed 停止被改写成 budget skip，违背 AC-2C-4「typed→Stop 不重试」；登记 FEA-11-RUN-GRANT-2C-r2.md:159 R2-03，同族 R2-02/R2-04；0 pin）；② **README 基线/AD-003 对账**（docs，0 pin）；③ L-4 的补测试（补「已加载行 + 能力翻转 + RefreshAsync」用例）。
 - **push**：PRE_HEAD=85356c22a、PRE_ORIGIN=54e5d69db、AHEAD_BEFORE=2 → **push1 54e5d69db..5f3431dfd（PUSH1_EXIT=0）**；本节提交 **73462ac33** → **push2 5f3431dfd..73462ac33（PUSH2_EXIT=0）**；POST_ORIGIN=73462ac33、POST_AHEAD=0；最终 HEAD=origin，工作树 clean。
+
+## 28. 续接补充（2026-11-08 第 20 轮：残余收口方案 + 专用 AUTORUN 提示词）
+
+- **本轮性质**：用户要求「把 4 个 closed_with_limitations 彻底解决」，本轮只产出**方案与提示词**（未开实现卡，未改节点状态）。
+- **产出 1**：[RESIDUAL-CLOSEOUT-PLAN-2026-11-08](../plan/RESIDUAL-CLOSEOUT-PLAN-2026-11-08.md)：把 4 节点残余分为 C1 工程可闭环 / C2 契约对齐 / C3 设计选择·范围外 / C4 硬件，逐项给关闭路径；定义「彻底解决」= done 或 done+waiver（C3/C4 标 NOT_APPLICABLE: 原因），禁止伪造硬件 PASS。
+  - 关键判断：**只有 R1（FEA-11-HOST-AUTH-2）能不依赖 waiver 直接翻 done**；FEA-06-RESIDUAL-2 的 6 个 BLOCKED 格中 **5 格依赖已 done**（FEA-09/10/12）可补做；FEA-11 与 FEA-07 各有 C3/C4 项必须走裁决。
+  - 卡片序列：R0 RESIDUAL-WAIVER-1（治理，10 项裁决）→ R1 FEA-11-HOST-AUTH-2 → R2 FEA-06-RESIDUAL-3 → R3 FEA-11-RESIDUAL-4A → R4 FEA-07-RESIDUAL-2；每卡完成即翻对应节点（append-only），预计 6–8 轮。
+- **产出 2**：[DSH-AUTORUN-PROMPT-RESIDUAL-CLOSEOUT](DSH-AUTORUN-PROMPT-RESIDUAL-CLOSEOUT.md)：可直接粘贴的专用持续推进提示词（队列/流水线/门禁/红线/停止条件/已知坑）。
+- **指针**：STATUS 增「残余收口 PLAN」行；DSH-AUTORUN-PROMPT §7 增独立程序指引。
+- **未做**：未创建任何 R0–R4 卡文件（按流程，立项前必须先派独立 scope review）；未改任何节点 closed_with_limitations 状态；未改契约/pins。

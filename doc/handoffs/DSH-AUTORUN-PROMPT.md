@@ -73,6 +73,7 @@
 - `READY 节点：无`；`STATUS：无活动 Task`。
 - 判据 (a)–(e) 已全部评估（§26 + §27 两轮，含**两轮独立只读审计推翻 §26 的「耗尽」结论**）：**(a)** §27 之前误判为空——实际存在两条未登记用户可见缺陷（现已由 `FEA-12-UI-RESIDUAL-2` 修复）+ A′；同类新缺陷须靠真实代码链复核，**不得只信卡面文字**；**(b)** 契约债务已清（残余 L-1/L-2 需 UNFREEZE 且无消费者）；**(c)** RH-3 需 C-17 additive、软删源无生产者 → 不做；**(d)** B2 无消费者 → 不做；**(e)** UI L3 真机 → 不做。
 - **下一候选（按判据排序，未建卡，需先 scope review）**：① `2C typed-stop / 预算守卫次序残项`（Host-only：`RunGrantRenewal.cs:371-390` 事后预算守卫先于 `!outcome.KeepsTracking`，违反 AC-2C-4「typed→Stop 不重试」；登记见 `FEA-11-RUN-GRANT-2C-r2.md:159` R2-03/R2-02/R2-04，0 pin）；② `README 基线对账`（docs：README `.NET 258/258`、`pytest 2773`、`managed copy` 与 AD-003/实际基线冲突）；③ `LibraryViewModel.RecycleRestoreCommand` 死代码清理（治理，另卡）。
+- **另有独立程序**：4 个 closed_with_limitations 节点的收口方案见 [RESIDUAL-CLOSEOUT-PLAN](../plan/RESIDUAL-CLOSEOUT-PLAN-2026-11-08.md) 与专用提示词 [DSH-AUTORUN-PROMPT-RESIDUAL-CLOSEOUT](DSH-AUTORUN-PROMPT-RESIDUAL-CLOSEOUT.md)（R0 waiver → R1 HOST-AUTH-2 → R2 RESIDUAL-3 → R3 11-RESIDUAL-4A → R4 07-RESIDUAL-2，目标 4 节点全 done）。
 - 结论：**停止条件①不再成立**（§27 发现并修复了真实缺陷）；新会话若无新证据且无上述候选，**直接报告耗尽并停止**；不得为走完流程而开无价值卡。
 
 ---
