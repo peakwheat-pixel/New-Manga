@@ -1,0 +1,75 @@
+{
+  "metric": "FEA-07-RESIDUAL-2 AC-R4a-3 uiThreadSchedulingGapMs environment sensitivity (r2 R2-001)",
+  "why": "Review r2 proved the gap assertion is unstable in the default suite: parallel full-suite load pushes the same metric from ~250 ms (idle) to >500 ms. The gap assertion therefore only runs in the dedicated serial perf gate (NEWMANGA_FEA07_PERF=1); the default suite records the value and never asserts it.",
+  "heartbeatIntervalMs": 5,
+  "measurementShape": "3 sub-runs per measurement, each 4 warmup + 20 measured one-way switches (frozen median p95 gate shape)",
+
+  "reviewR2Observations": {
+    "parallelFullSuite": {
+      "result": "1777 passed / 1 failed / 102 skipped",
+      "worstGapMs": 513.55,
+      "note": "Independent Review r2 run; the failing assertion was the r1 default-suite gap gate."
+    },
+    "isolatedRepeatsUnderLoad": {
+      "failures": 3,
+      "runs": 4,
+      "worstGapMs": [437.34, 471.81],
+      "note": "3 of 4 isolated repeats failed the 400 ms gate while the machine was loaded."
+    }
+  },
+
+  "idleSerialBaseline": {
+    "source": "evidence/ui-gap-calibration-r4a.json (r1 committed calibration, idle machine)",
+    "roundsWorstGapMs": [249.44, 223.30, 227.85],
+    "worstGapMs": 249.44,
+    "note": "Basis of the original 400 ms budget (1.60x, margin 37.64%)."
+  },
+
+  "loadedSerialObservations": {
+    "gatedRoundsWith400Budget": {
+      "source": "logs/perf-gate-round1.log (first gated attempt, budget 400, external application using the machine)",
+      "runGapsMs": [460.88, 376.05, 420.99],
+      "worstGapMs": 460.88,
+      "outcome": "RED at the 400 ms budget — this is the flakiness R2-001 reported."
+    },
+    "gatedRoundsFinal700Budget": {
+      "source": "evidence/perf-gate-r2a.json (3 rounds, serial, budget 700)",
+      "roundsWorstGapMs": [340.90, 308.29, 282.75],
+      "worstGapMs": 340.90,
+      "marginPercent": 51.3,
+      "outcome": "PASS"
+    },
+    "rawCalibrationFinalCode": {
+      "source": "evidence/ui-gap-calibration-r4a.json (raw mode, default suite records only)",
+      "roundsWorstGapMs": [454.61, 372.13, 300.12],
+      "worstGapMs": 454.61,
+      "note": "Serial runs, machine still busy with an external application."
+    }
+  },
+
+  "parallelFullSuiteRecordedByFinalCode": {
+    "source": "evidence/fullrun-recorded-gap-metrics-r2a.json (full solution run #1 of the two final runs)",
+    "gapGateApplied": false,
+    "runGapsMs": [472.34, 510.22, 515.71],
+    "worstGapMs": 515.71,
+    "medianP95Ms": 529.58,
+    "note": "Matches Review r2's 513.55 ms almost exactly; recorded, never asserted."
+  },
+
+  "mutationEvidenceGapAssertionInDefaultSuite": {
+    "source": "evidence/loaded-fullrun-gap-metrics-r2a.json + logs/mutation-gap-default-full-run-r2a.log",
+    "mutated": "r1-style gap assertion moved back into the default suite",
+    "runGapsMs": [491.75, 457.55, 619.00],
+    "worstGapMs": 619.00,
+    "outcome": "RED under parallel full-suite load: 'ui thread scheduling gap 619.0 ms exceeds the calibrated 400 ms budget'",
+    "note": "Recorded as environment-sensitivity evidence; not a green requirement (r2 R2-001)."
+  },
+
+  "conclusion": {
+    "defaultSuite": "records uiThreadSchedulingGapMs only (gapGateApplied=false) — any load above the idle baseline is visible in the JSON without flaking the gate",
+    "serialPerfGateBudgetMs": 700,
+    "serialPerfGateBudgetBasis": "1.52x the worst loaded serial observation (460.88) and 2.81x the idle worst (249.44); the final 3-round gated evidence worst is 340.90 (margin 51.3%)",
+    "appliesTo": "serial/idle perf-gate runs only (verification/FEA-07-RESIDUAL-2/tools/verify-fea07-perf.ps1, NEWMANGA_FEA07_PERF=1)",
+    "frozenUnchanged": "1000 ms p95 median-of-three gate, 3-run median shape and the scale-record-only clause are NOT touched"
+  }
+}

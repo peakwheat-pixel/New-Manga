@@ -1,0 +1,75 @@
+# FEA-07-RESIDUAL-2 AC-R4a-3 专用性能门禁（串行；NEWMANGA_FEA07_PERF=1）
+# 用例：FullyQualifiedName~Gated_HotSwitch_UiThreadSchedulingGapStaysWithinThePerfGateBudget
+# 说明：默认套件只记录 uiThreadSchedulingGapMs；本门禁才断言 gap budget（负载敏感）。
+
+round 1: exit=0 worstGap=340.9 ms; gapP95=340.9 ms; runGaps=[284.12, 340.9, 300.94]; medianP95=543.69 ms; p95Passed=True; gapPassed=True
+round 2: exit=0 worstGap=308.29 ms; gapP95=308.29 ms; runGaps=[291.51, 308.29, 278.05]; medianP95=516.76 ms; p95Passed=True; gapPassed=True
+round 3: exit=0 worstGap=282.75 ms; gapP95=282.75 ms; runGaps=[282.75, 241.9, 237.91]; medianP95=472.02 ms; p95Passed=True; gapPassed=True
+
+worstGap=340.9 ms; gapP95=340.9 ms; budget=700 ms; margin=51.3%; verdict=PASS (serial perf gate)
+json: G:\CODEX\New Manga\verification\FEA-07-RESIDUAL-2\evidence\perf-gate-r2a.json
+
+{
+  "metric": "FEA-07-RESIDUAL-2 AC-R4a-3 dedicated serial performance gate",
+  "gateVariable": "NEWMANGA_FEA07_PERF=1",
+  "frozenTest": "NewManga.App.Tests.PerformanceBaselineTests.Gated_HotSwitch_UiThreadSchedulingGapStaysWithinThePerfGateBudget",
+  "command": "pwsh -NoProfile -File verification/FEA-07-RESIDUAL-2/tools/verify-fea07-perf.ps1",
+  "serial": true,
+  "rounds": [
+    {
+      "round": 1,
+      "exitCode": 0,
+      "worstGapMs": 340.9,
+      "gapP95Ms": 340.9,
+      "runGapsMs": [
+        284.12,
+        340.9,
+        300.94
+      ],
+      "medianP95Ms": 543.69,
+      "worstRunP95Ms": 565.02,
+      "p95Passed": true,
+      "gapPassed": true,
+      "passed": true
+    },
+    {
+      "round": 2,
+      "exitCode": 0,
+      "worstGapMs": 308.29,
+      "gapP95Ms": 308.29,
+      "runGapsMs": [
+        291.51,
+        308.29,
+        278.05
+      ],
+      "medianP95Ms": 516.76,
+      "worstRunP95Ms": 534.1,
+      "p95Passed": true,
+      "gapPassed": true,
+      "passed": true
+    },
+    {
+      "round": 3,
+      "exitCode": 0,
+      "worstGapMs": 282.75,
+      "gapP95Ms": 282.75,
+      "runGapsMs": [
+        282.75,
+        241.9,
+        237.91
+      ],
+      "medianP95Ms": 472.02,
+      "worstRunP95Ms": 541.27,
+      "p95Passed": true,
+      "gapPassed": true,
+      "passed": true
+    }
+  ],
+  "worstGapMs": 340.9,
+  "gapP95Ms": 340.9,
+  "uiThreadSchedulingGapBudgetMs": 700.0,
+  "marginPercent": 51.3,
+  "verdict": "PASS (serial perf gate)",
+  "appliesTo": "serial/idle perf-gate runs only; the default suite records uiThreadSchedulingGapMs without asserting it",
+  "loadedConditionNote": "The same metric is load-sensitive: the parallel full-suite run recorded 513.55 ms (Review r2) and isolated repeats under load recorded 437.34 / 471.81 ms; see evidence/ui-gap-loaded-condition-r2a.json."
+}

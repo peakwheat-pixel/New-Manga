@@ -1,67 +1,71 @@
 {
-  "metric": "FEA-07-RESIDUAL-2 AC-R4a-3 uiThreadSchedulingGapMs calibration",
-  "budgetUiThreadSchedulingGapMs": 400,
+  "metric": "FEA-07-RESIDUAL-2 AC-R4a-3 uiThreadSchedulingGapMs raw calibration",
+  "mode": "raw (no gap assertion; the assertion is only in the gated serial perf gate)",
+  "perfGateBudgetMs": 700.0,
   "independentRounds": 3,
   "frozenTest": "NewManga.App.Tests.PerformanceBaselineTests.HotSwitch_P95MedianOfThreeIndependentRuns_StaysWithinTheFrozenW5Budget",
   "command": "dotnet test apps/desktop-avalonia/tests/NewManga.App.Tests/NewManga.App.Tests.csproj -c Release --filter FullyQualifiedName~HotSwitch_P95MedianOfThreeIndependentRuns",
   "heartbeatIntervalMs": 5,
   "perRoundShape": "4 warmup + 20 measured one-way switches; 3 sub-runs per round (the frozen median gate)",
+  "appliesTo": "serial/idle runs; the default suite never asserts the gap (r2 R2-001)",
   "rounds": [
     {
       "round": 1,
-      "worstGapMs": 249.44,
+      "worstGapMs": 454.61,
       "runGapsMs": [
-        249.44,
-        207.34,
-        199.0
+        454.61,
+        296.03,
+        301.07
       ],
       "uiThreadHeartbeatTicks": [
-        122,
-        117,
-        117
+        129,
+        132,
+        123
       ],
-      "medianP95Ms": 401.28,
-      "worstRunP95Ms": 455.57,
-      "passed": true
+      "medianP95Ms": 571.89,
+      "worstRunP95Ms": 668.8,
+      "gapGateApplied": false,
+      "p95Passed": true
     },
     {
       "round": 2,
-      "worstGapMs": 223.3,
+      "worstGapMs": 372.13,
       "runGapsMs": [
-        223.3,
-        197.6,
-        202.19
+        328.0,
+        372.13,
+        246.74
       ],
       "uiThreadHeartbeatTicks": [
-        124,
-        120,
-        115
+        130,
+        129,
+        126
       ],
-      "medianP95Ms": 387.99,
-      "worstRunP95Ms": 436.9,
-      "passed": true
+      "medianP95Ms": 553.41,
+      "worstRunP95Ms": 583.64,
+      "gapGateApplied": false,
+      "p95Passed": true
     },
     {
       "round": 3,
-      "worstGapMs": 227.85,
+      "worstGapMs": 300.12,
       "runGapsMs": [
-        227.85,
-        203.81,
-        206.42
+        228.75,
+        300.12,
+        284.39
       ],
       "uiThreadHeartbeatTicks": [
-        121,
-        118,
-        116
+        128,
+        130,
+        134
       ],
-      "medianP95Ms": 389.47,
-      "worstRunP95Ms": 425.11,
-      "passed": true
+      "medianP95Ms": 557.52,
+      "worstRunP95Ms": 570.47,
+      "gapGateApplied": false,
+      "p95Passed": true
     }
   ],
-  "worstGapMs": 249.44,
-  "marginPercent": 37.64,
-  "verdict": "KEEP 400 ms（余量 37.64% ≥ 10%）",
-  "history": "Pre-rework ad-hoc observations: 215.28 ms (Background-priority heartbeat) and 232.90 ms (Normal-priority heartbeat). They are quoted here as history only; this file is the committed calibration evidence.",
-  "notes": "Any future budget change must keep the frozen 1000 ms p95 gate and the 3-run median shape untouched; only this calibrated gap budget may move, with DSH sign-off."
+  "worstGapMs": 454.61,
+  "gapP95Ms": 454.61,
+  "marginVsPerfGateBudgetPercent": 35.06,
+  "note": "Raw calibration only. The gated assertion and its verdict live in evidence/perf-gate-r2a.json (tools/verify-fea07-perf.ps1)."
 }

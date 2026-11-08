@@ -1,0 +1,390 @@
+  正在确定要还原的项目…
+  所有项目均是最新的，无法还原。
+  NewManga.Appearance -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Appearance\bin\Release\net9.0\NewManga.Appearance.dll
+  NewManga.ApplicationCore -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.ApplicationCore\bin\Release\net9.0\NewManga.ApplicationCore.dll
+  NewManga.DesignSystem -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.DesignSystem\bin\Release\net9.0\NewManga.DesignSystem.dll
+  NewManga.CoreClient -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.CoreClient\bin\Release\net9.0\NewManga.CoreClient.dll
+  NewManga.Appearance.Tests -> G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Appearance.Tests\bin\Release\net9.0\NewManga.Appearance.Tests.dll
+  NewManga.ApplicationCore.Tests -> G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.ApplicationCore.Tests\bin\Release\net9.0\NewManga.ApplicationCore.Tests.dll
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Appearance.Tests\bin\Release\net9.0\NewManga.Appearance.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.ApplicationCore.Tests\bin\Release\net9.0\NewManga.ApplicationCore.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+  NewManga.Presentation.Avalonia -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Presentation.Avalonia\bin\Release\net9.0\NewManga.Presentation.Avalonia.dll
+  NewManga.ThemeEngine -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.ThemeEngine\bin\Release\net9.0\NewManga.ThemeEngine.dll
+  NewManga.DesignSystem.Tests -> G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.DesignSystem.Tests\bin\Release\net9.0\NewManga.DesignSystem.Tests.dll
+  NewManga.Host -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Host\bin\Release\net9.0\NewManga.Host.dll
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.DesignSystem.Tests\bin\Release\net9.0\NewManga.DesignSystem.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+  NewManga.CoreClient.Tests -> G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.CoreClient.Tests\bin\Release\net9.0\NewManga.CoreClient.Tests.dll
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.CoreClient.Tests\bin\Release\net9.0\NewManga.CoreClient.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+总共 1 个测试文件与指定模式相匹配。
+  NewManga.ThemeEngine.Tests -> G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.ThemeEngine.Tests\bin\Release\net9.0\NewManga.ThemeEngine.Tests.dll
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.ThemeEngine.Tests\bin\Release\net9.0\NewManga.ThemeEngine.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+  NewManga.App -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\bin\Release\net9.0\NewManga.App.dll
+  NewManga.Presentation.Avalonia.Tests -> G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Presentation.Avalonia.Tests\bin\Release\net9.0\NewManga.Presentation.Avalonia.Tests.dll
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Presentation.Avalonia.Tests\bin\Release\net9.0\NewManga.Presentation.Avalonia.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+总共 1 个测试文件与指定模式相匹配。
+总共 1 个测试文件与指定模式相匹配。
+
+已通过! - 失败:     0，通过:    21，已跳过:     0，总计:    21，持续时间: 222 ms - NewManga.Appearance.Tests.dll (net9.0)
+[xUnit.net 00:00:00.34]     NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.Fea12Core_DeleteTrashCapabilityProbe_OldCoreFailsClosedBeforeAnyCommandFrame [SKIP]
+[xUnit.net 00:00:00.34]     NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.DomainServices_CoverEveryCommandExactlyOnce [SKIP]
+[xUnit.net 00:00:00.34]     NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.NotSupportedSurface_ReturnsTypedErrorsWithReasons [SKIP]
+[xUnit.net 00:00:00.34]     NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.ChineseTitle_ThroughCommandDispatcher_RoundTripsWithoutMojibake [SKIP]
+[xUnit.net 00:00:00.37]     NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.TwelveImplementedCommands_ExecuteAgainstFrozenSidecars [SKIP]
+[xUnit.net 00:00:00.37]     NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.Fea12NewCommands_FrozenCoreFailsClosedWithTypedError [SKIP]
+  已跳过 NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.Fea12Core_DeleteTrashCapabilityProbe_OldCoreFailsClosedBeforeAnyCommandFrame [1 ms]
+  已跳过 NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.DomainServices_CoverEveryCommandExactlyOnce [1 ms]
+  已跳过 NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.NotSupportedSurface_ReturnsTypedErrorsWithReasons [1 ms]
+  已跳过 NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.ChineseTitle_ThroughCommandDispatcher_RoundTripsWithoutMojibake [1 ms]
+  已跳过 NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.TwelveImplementedCommands_ExecuteAgainstFrozenSidecars [1 ms]
+  已跳过 NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.Fea12NewCommands_FrozenCoreFailsClosedWithTypedError [1 ms]
+[xUnit.net 00:00:00.39]     NewManga.CoreClient.Tests.Commands.CommandWiringB1Tests.B1Commands_RejectInvalidArgumentsBeforeAnyCoreFrame [SKIP]
+  已跳过 NewManga.CoreClient.Tests.Commands.CommandWiringB1Tests.B1Commands_RejectInvalidArgumentsBeforeAnyCoreFrame [1 ms]
+[xUnit.net 00:00:00.40]     NewManga.CoreClient.Tests.Commands.CommandWiringB1Tests.B1Commands_ExecuteAgainstFrozenCore [SKIP]
+[xUnit.net 00:00:00.40]     NewManga.CoreClient.Tests.CoreServiceIntegrationTests.RawUtf8Request_ReplicatesUnknownError [SKIP]
+[xUnit.net 00:00:00.40]     NewManga.CoreClient.Tests.CoreServiceIntegrationTests.ChineseTitle_CreateThenList_RoundTripsExactly_AndWireIsAsciiEscaped [SKIP]
+[xUnit.net 00:00:00.40]     NewManga.CoreClient.Tests.CoreServiceIntegrationTests.Ping_ReturnsReady_WithProtocol23 [SKIP]
+[xUnit.net 00:00:00.40]     NewManga.CoreClient.Tests.CoreServiceIntegrationTests.WireFrames_AreSingleLineUtf8AndAsciiForEveryEscapedRequest [SKIP]
+  已跳过 NewManga.CoreClient.Tests.Commands.CommandWiringB1Tests.B1Commands_ExecuteAgainstFrozenCore [1 ms]
+  已跳过 NewManga.CoreClient.Tests.CoreServiceIntegrationTests.RawUtf8Request_ReplicatesUnknownError [1 ms]
+  已跳过 NewManga.CoreClient.Tests.CoreServiceIntegrationTests.ChineseTitle_CreateThenList_RoundTripsExactly_AndWireIsAsciiEscaped [1 ms]
+  已跳过 NewManga.CoreClient.Tests.CoreServiceIntegrationTests.Ping_ReturnsReady_WithProtocol23 [1 ms]
+  已跳过 NewManga.CoreClient.Tests.CoreServiceIntegrationTests.WireFrames_AreSingleLineUtf8AndAsciiForEveryEscapedRequest [1 ms]
+
+已通过! - 失败:     0，通过:    72，已跳过:     0，总计:    72，持续时间: 600 ms - NewManga.Presentation.Avalonia.Tests.dll (net9.0)
+  NewManga.Host.Tests -> G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+  NewManga.App.Tests -> G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Release\net9.0\NewManga.App.Tests.dll
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Release\net9.0\NewManga.App.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+总共 1 个测试文件与指定模式相匹配。
+
+已通过! - 失败:     0，通过:   253，已跳过:     0，总计:   253，持续时间: 1 s - NewManga.ThemeEngine.Tests.dll (net9.0)
+[xUnit.net 00:00:00.36]     NewManga.Host.Tests.GrantIssuerTests.ShellActions_Open_Whitelisted_Directories_And_Refuse_Outside_Paths [SKIP]
+[xUnit.net 00:00:00.36]     NewManga.Host.Tests.GrantIssuerTests.Export_GrantRegisters_ThenCoreFailsTyped_OnMissingTranslatedPages [SKIP]
+[xUnit.net 00:00:00.36]     NewManga.Host.Tests.GrantIssuerTests.Import_IntoNewChapter_Executes_AndRegistersGrant [SKIP]
+[xUnit.net 00:00:00.36]     NewManga.Host.Tests.GrantIssuerTests.ShellActions_RealOpener_OpensExplorer_WhenEnabled [SKIP]
+  已跳过 NewManga.Host.Tests.GrantIssuerTests.ShellActions_Open_Whitelisted_Directories_And_Refuse_Outside_Paths [1 ms]
+  已跳过 NewManga.Host.Tests.GrantIssuerTests.Export_GrantRegisters_ThenCoreFailsTyped_OnMissingTranslatedPages [1 ms]
+  已跳过 NewManga.Host.Tests.GrantIssuerTests.Import_IntoNewChapter_Executes_AndRegistersGrant [1 ms]
+  已跳过 NewManga.Host.Tests.GrantIssuerTests.ShellActions_RealOpener_OpensExplorer_WhenEnabled [1 ms]
+
+已通过! - 失败:     0，通过:   117，已跳过:     0，总计:   117，持续时间: 3 s - NewManga.DesignSystem.Tests.dll (net9.0)
+[xUnit.net 00:00:01.68]     NewManga.Host.Tests.RealTranslateProviderTests.RealOpenCodeProvider_HostConfiguration [SKIP]
+  已跳过 NewManga.Host.Tests.RealTranslateProviderTests.RealOpenCodeProvider_HostConfiguration [1 ms]
+[xUnit.net 00:00:02.50]     NewManga.Host.Tests.SourceRecoveryIpcTests.SamePathReplacement_IsRecoveredOnlyByAnExplicitReauthorization [SKIP]
+
+已通过! - 失败:     0，通过:    31，已跳过:     0，总计:    31，持续时间: 5 s - NewManga.ApplicationCore.Tests.dll (net9.0)
+  已跳过 NewManga.Host.Tests.SourceRecoveryIpcTests.SamePathReplacement_IsRecoveredOnlyByAnExplicitReauthorization [1 ms]
+[xUnit.net 00:00:03.72]     NewManga.Host.Tests.HostReaderChaptersIntegrationTests.ConcurrentChapterAndProjectionReads_AreSerialized [SKIP]
+[xUnit.net 00:00:03.72]     NewManga.Host.Tests.HostReaderChaptersIntegrationTests.ListChapters_MatchesReaderProjection [SKIP]
+  已跳过 NewManga.Host.Tests.HostReaderChaptersIntegrationTests.ConcurrentChapterAndProjectionReads_AreSerialized [1 ms]
+  已跳过 NewManga.Host.Tests.HostReaderChaptersIntegrationTests.ListChapters_MatchesReaderProjection [1 ms]
+[xUnit.net 00:00:03.92]     NewManga.Host.Tests.StartupSelfCheckTests.MajorMismatch_DowngradesToReadOnly_AndRefusesWrites [SKIP]
+[xUnit.net 00:00:03.92]     NewManga.Host.Tests.StartupSelfCheckTests.RealHost_PassesCheapChecks_AndStaysWritable [SKIP]
+[xUnit.net 00:00:03.92]     NewManga.Host.Tests.StartupSelfCheckTests.MissingCapability_DowngradesToReadOnly_AndRefusesWrites [SKIP]
+[xUnit.net 00:00:03.92]     NewManga.Host.Tests.HostReaderProgressIntegrationTests.SaveReadingProgress_PersistsAcrossHostRestart_AndResumes [SKIP]
+[xUnit.net 00:00:03.92]     NewManga.Host.Tests.HostReaderProgressIntegrationTests.SaveReadingProgress_UnknownPage_IsTypedCoreRejection [SKIP]
+[xUnit.net 00:00:03.92]     NewManga.Host.Tests.HostReaderProgressIntegrationTests.SaveReadingProgress_ReadOnlyHost_IsTypedRefusal_NoCoreCall [SKIP]
+  已跳过 NewManga.Host.Tests.StartupSelfCheckTests.MajorMismatch_DowngradesToReadOnly_AndRefusesWrites [1 ms]
+  已跳过 NewManga.Host.Tests.StartupSelfCheckTests.RealHost_PassesCheapChecks_AndStaysWritable [1 ms]
+  已跳过 NewManga.Host.Tests.StartupSelfCheckTests.MissingCapability_DowngradesToReadOnly_AndRefusesWrites [1 ms]
+  已跳过 NewManga.Host.Tests.HostReaderProgressIntegrationTests.SaveReadingProgress_PersistsAcrossHostRestart_AndResumes [1 ms]
+  已跳过 NewManga.Host.Tests.HostReaderProgressIntegrationTests.SaveReadingProgress_UnknownPage_IsTypedCoreRejection [1 ms]
+  已跳过 NewManga.Host.Tests.HostReaderProgressIntegrationTests.SaveReadingProgress_ReadOnlyHost_IsTypedRefusal_NoCoreCall [1 ms]
+[xUnit.net 00:00:04.14]     NewManga.Host.Tests.Fea09RealIpcTests.ReferencedImportAndResolveOverRealStdio [SKIP]
+[xUnit.net 00:00:04.14]     NewManga.Host.Tests.ExportStalePolicyWireTests.BothPolicies_AreSentToTheCore_AsStartExportFrames [SKIP]
+  已跳过 NewManga.Host.Tests.Fea09RealIpcTests.ReferencedImportAndResolveOverRealStdio [1 ms]
+  已跳过 NewManga.Host.Tests.ExportStalePolicyWireTests.BothPolicies_AreSentToTheCore_AsStartExportFrames [1 ms]
+[xUnit.net 00:00:05.65]     NewManga.Host.Tests.Fea09UiImportIpcProductionTests.A_OrdinarySuccessAndWholeSourceSkip [SKIP]
+[xUnit.net 00:00:05.65]     NewManga.Host.Tests.Fea09UiImportIpcProductionTests.B_AesTypedUnsupported [SKIP]
+[xUnit.net 00:00:05.65]     NewManga.Host.Tests.Fea09UiImportIpcProductionTests.C_SingleEncryptedSourceWrongPasswordThenRetry [SKIP]
+[xUnit.net 00:00:05.65]     NewManga.Host.Tests.Fea09UiImportIpcProductionTests.D_CancelAfterOneCommitThenRetryConservesPages [SKIP]
+[xUnit.net 00:00:05.65]     NewManga.Host.Tests.Fea09UiImportIpcProductionTests.E_ChangedSourceBeforeConfirmIsRejectedByRealCore [SKIP]
+[xUnit.net 00:00:05.65]     NewManga.Host.Tests.Fea09UiImportIpcProductionTests.F_FolderUsesHostEnumerationAndOrdering [SKIP]
+[xUnit.net 00:00:05.65]     NewManga.Host.Tests.Fea09UiImportIpcProductionTests.G_SecretCapabilityMissingCleansUp [SKIP]
+[xUnit.net 00:00:05.65]     NewManga.Host.Tests.Fea09UiImportIpcProductionTests.H_SecretRegistrationRefusedCleansUp [SKIP]
+[xUnit.net 00:00:05.65]     NewManga.Host.Tests.Fea09UiImportIpcProductionTests.I_SecretStartRefusedCleansUp [SKIP]
+  已跳过 NewManga.Host.Tests.Fea09UiImportIpcProductionTests.A_OrdinarySuccessAndWholeSourceSkip [1 ms]
+  已跳过 NewManga.Host.Tests.Fea09UiImportIpcProductionTests.B_AesTypedUnsupported [1 ms]
+  已跳过 NewManga.Host.Tests.Fea09UiImportIpcProductionTests.C_SingleEncryptedSourceWrongPasswordThenRetry [1 ms]
+  已跳过 NewManga.Host.Tests.Fea09UiImportIpcProductionTests.D_CancelAfterOneCommitThenRetryConservesPages [1 ms]
+  已跳过 NewManga.Host.Tests.Fea09UiImportIpcProductionTests.E_ChangedSourceBeforeConfirmIsRejectedByRealCore [1 ms]
+  已跳过 NewManga.Host.Tests.Fea09UiImportIpcProductionTests.F_FolderUsesHostEnumerationAndOrdering [1 ms]
+  已跳过 NewManga.Host.Tests.Fea09UiImportIpcProductionTests.G_SecretCapabilityMissingCleansUp [1 ms]
+  已跳过 NewManga.Host.Tests.Fea09UiImportIpcProductionTests.H_SecretRegistrationRefusedCleansUp [1 ms]
+  已跳过 NewManga.Host.Tests.Fea09UiImportIpcProductionTests.I_SecretStartRefusedCleansUp [1 ms]
+[xUnit.net 00:00:05.65]     NewManga.Host.Tests.Fea09UiImportIpcProductionTests.J_SecretReplanFailedCleansUp [SKIP]
+[xUnit.net 00:00:05.65]     NewManga.Host.Tests.Fea09UiImportIpcProductionTests.Z_AuditRequestsResponsesLogsRegistryExceptionsAndEvidence [SKIP]
+  已跳过 NewManga.Host.Tests.Fea09UiImportIpcProductionTests.J_SecretReplanFailedCleansUp [1 ms]
+  已跳过 NewManga.Host.Tests.Fea09UiImportIpcProductionTests.Z_AuditRequestsResponsesLogsRegistryExceptionsAndEvidence [1 ms]
+[xUnit.net 00:00:09.76]     NewManga.CoreClient.Tests.Commands.RunBindingFixTests.StartRun_InvalidOverrides_AreRejectedBeforeAnyCoreFrame [SKIP]
+[xUnit.net 00:00:07.72]     NewManga.Host.Tests.Fea11WatchHostRuntimeTests.Ready_ArmsWatcher_RealFileEventProducesHint_DisposeDisarms [SKIP]
+[xUnit.net 00:00:07.72]     NewManga.Host.Tests.Fea11ScanIpcTests.RealImportThenEnumeration_SharedSource_UsesAllScope_AndCoreSourceId [SKIP]
+[xUnit.net 00:00:07.72]     NewManga.Host.Tests.Fea11ScanIpcTests.PeriodicScan_DetectsMissingThenChanged_WithZeroCoreWrites [SKIP]
+[xUnit.net 00:00:07.72]     NewManga.Host.Tests.Fea11ScanIpcTests.ReauthorizedSource_IsReattested_ThenEnumerated_WithoutReimport [SKIP]
+[xUnit.net 00:00:07.72]     NewManga.Host.Tests.Fea11ScanIpcTests.ColdStartEnumeration_WithoutAppRegistration_IsReadOnly [SKIP]
+[xUnit.net 00:00:07.72]     NewManga.Host.Tests.Fea11RunGrantIpcTests.FolderSourceMintsABindableGrantThroughTheProductionRange [SKIP]
+[xUnit.net 00:00:07.72]     NewManga.Host.Tests.Fea11RunGrantIpcTests.MintBindResolveAndRevoke_TypedWithNoPathLeak [SKIP]
+[xUnit.net 00:00:07.72]     NewManga.Host.Tests.Fea11RunGrantIpcTests.ReauthorizedLiveEntry_RunRangeResolvesAndBindsOverRealIpc [SKIP]
+[xUnit.net 00:00:07.72]     NewManga.Host.Tests.Fea11RunGrantIpcTests.RenewalMintsAndRebindsTheSameScopeTwice [SKIP]
+  已跳过 NewManga.Host.Tests.Fea11WatchHostRuntimeTests.Ready_ArmsWatcher_RealFileEventProducesHint_DisposeDisarms [1 ms]
+  已跳过 NewManga.Host.Tests.Fea11ScanIpcTests.RealImportThenEnumeration_SharedSource_UsesAllScope_AndCoreSourceId [1 ms]
+  已跳过 NewManga.Host.Tests.Fea11ScanIpcTests.PeriodicScan_DetectsMissingThenChanged_WithZeroCoreWrites [1 ms]
+  已跳过 NewManga.Host.Tests.Fea11ScanIpcTests.ReauthorizedSource_IsReattested_ThenEnumerated_WithoutReimport [1 ms]
+  已跳过 NewManga.Host.Tests.Fea11ScanIpcTests.ColdStartEnumeration_WithoutAppRegistration_IsReadOnly [1 ms]
+  已跳过 NewManga.Host.Tests.Fea11RunGrantIpcTests.FolderSourceMintsABindableGrantThroughTheProductionRange [1 ms]
+  已跳过 NewManga.Host.Tests.Fea11RunGrantIpcTests.MintBindResolveAndRevoke_TypedWithNoPathLeak [1 ms]
+  已跳过 NewManga.Host.Tests.Fea11RunGrantIpcTests.ReauthorizedLiveEntry_RunRangeResolvesAndBindsOverRealIpc [1 ms]
+  已跳过 NewManga.Host.Tests.Fea11RunGrantIpcTests.RenewalMintsAndRebindsTheSameScopeTwice [1 ms]
+[xUnit.net 00:00:07.72]     NewManga.Host.Tests.Fea11RunGrantIpcTests.ProductionScanVersionChannelDrivesImageFolderAndEveryArchiveMember [SKIP]
+[xUnit.net 00:00:07.72]     NewManga.Host.Tests.Fea11RunGrantIpcTests.ContainerMemberEntriesAuthorizeEveryMemberOverRealIpc [SKIP]
+[xUnit.net 00:00:07.72]     NewManga.Host.Tests.Fea11RunGrantIpcTests.CoreAdvertisesTheRunAuthorizationCapability_AndRefusesWithoutGrants [SKIP]
+  已跳过 NewManga.Host.Tests.Fea11RunGrantIpcTests.ProductionScanVersionChannelDrivesImageFolderAndEveryArchiveMember [1 ms]
+  已跳过 NewManga.Host.Tests.Fea11RunGrantIpcTests.ContainerMemberEntriesAuthorizeEveryMemberOverRealIpc [1 ms]
+  已跳过 NewManga.Host.Tests.Fea11RunGrantIpcTests.CoreAdvertisesTheRunAuthorizationCapability_AndRefusesWithoutGrants [1 ms]
+[xUnit.net 00:00:07.97]     NewManga.Host.Tests.Fea10RunIpcTests.PrepareAcceptAndReplayAfterCoreRestart [SKIP]
+  已跳过 NewManga.Host.Tests.Fea10RunIpcTests.PrepareAcceptAndReplayAfterCoreRestart [1 ms]
+[xUnit.net 00:00:07.97]     NewManga.Host.Tests.Fea11SourceIpcTests.ScanWithAHostIssuedGrant_WorksEndToEnd [SKIP]
+[xUnit.net 00:00:07.97]     NewManga.Host.Tests.Fea11SourceIpcTests.FullSyncChain_PublishesNewGeneration_AndResolvesV2 [SKIP]
+[xUnit.net 00:00:08.05]     NewManga.Host.Tests.Fea11SourceIpcTests.HostControlSurfaceRefusesWithoutGrant_AndUnknownOperationsTyped [SKIP]
+[xUnit.net 00:00:08.55]     NewManga.Host.Tests.SourceRegistryResilienceTests.Ipc_MixedRegistry_ListRegisterMintSucceedAndMissingRootIsTyped [SKIP]
+  已跳过 NewManga.Host.Tests.Fea11SourceIpcTests.ScanWithAHostIssuedGrant_WorksEndToEnd [1 ms]
+  已跳过 NewManga.Host.Tests.Fea11SourceIpcTests.FullSyncChain_PublishesNewGeneration_AndResolvesV2 [1 ms]
+  已跳过 NewManga.Host.Tests.Fea11SourceIpcTests.HostControlSurfaceRefusesWithoutGrant_AndUnknownOperationsTyped [1 ms]
+  已跳过 NewManga.Host.Tests.SourceRegistryResilienceTests.Ipc_MixedRegistry_ListRegisterMintSucceedAndMissingRootIsTyped [1 ms]
+  已跳过 NewManga.CoreClient.Tests.Commands.RunBindingFixTests.StartRun_InvalidOverrides_AreRejectedBeforeAnyCoreFrame [1 ms]
+[xUnit.net 00:00:08.81]     NewManga.Host.Tests.ExportE2ETests.Export_Zip_Produces_RealArtifact_AndSnapshotHistory [SKIP]
+[xUnit.net 00:00:08.81]     NewManga.Host.Tests.ExportE2ETests.Export_Cancel_LeavesNoArtifact [SKIP]
+[xUnit.net 00:00:08.81]     NewManga.Host.Tests.Fea11Scan2HostRuntimeTests.Ready_StartsBackgroundEnumeration_WithoutBlocking [SKIP]
+  已跳过 NewManga.Host.Tests.ExportE2ETests.Export_Zip_Produces_RealArtifact_AndSnapshotHistory [1 ms]
+  已跳过 NewManga.Host.Tests.ExportE2ETests.Export_Cancel_LeavesNoArtifact [1 ms]
+  已跳过 NewManga.Host.Tests.Fea11Scan2HostRuntimeTests.Ready_StartsBackgroundEnumeration_WithoutBlocking [1 ms]
+[xUnit.net 00:00:08.98]     NewManga.Host.Tests.LegacyShellRealTests.LegacyShellRunning_ForcesReadOnlyMode_AndBlocksWrites [SKIP]
+  已跳过 NewManga.Host.Tests.LegacyShellRealTests.LegacyShellRunning_ForcesReadOnlyMode_AndBlocksWrites [1 ms]
+[xUnit.net 00:00:09.37]     NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionReads_SerializeOnTheCorePipe [SKIP]
+[xUnit.net 00:00:09.37]     NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionWrites_ReadOnlyHost_AreTypedRefusals_WithZeroCoreFrames [SKIP]
+[xUnit.net 00:00:09.37]     NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionReadWriteFace_ExecutesAgainstFrozenCore_AndProjectsOverlayGeometry [SKIP]
+  已跳过 NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionReads_SerializeOnTheCorePipe [1 ms]
+  已跳过 NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionWrites_ReadOnlyHost_AreTypedRefusals_WithZeroCoreFrames [1 ms]
+  已跳过 NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionReadWriteFace_ExecutesAgainstFrozenCore_AndProjectsOverlayGeometry [1 ms]
+[xUnit.net 00:00:09.37]     NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionWrite_StaleExpectedRevision_IsTypedInputRevisionChanged [SKIP]
+[xUnit.net 00:00:09.37]     NewManga.Host.Tests.CredentialPortTests.CredentialPutAndClear_AgainstFrozenSidecar_FullChain [SKIP]
+[xUnit.net 00:00:09.40]     NewManga.Host.Tests.Fea11Residual4AIpcTests.ProductionDispatcherMissingCapabilityFailsClosed [SKIP]
+  已跳过 NewManga.Host.Tests.HostRegionWorkbenchIntegrationTests.RegionWrite_StaleExpectedRevision_IsTypedInputRevisionChanged [1 ms]
+  已跳过 NewManga.Host.Tests.CredentialPortTests.CredentialPutAndClear_AgainstFrozenSidecar_FullChain [1 ms]
+  已跳过 NewManga.Host.Tests.Fea11Residual4AIpcTests.ProductionDispatcherMissingCapabilityFailsClosed [1 ms]
+[xUnit.net 00:00:09.40]     NewManga.Host.Tests.Fea11Residual4AIpcTests.ProductionDispatcherFullSyncChain_NewKeyOldDigestConserved [SKIP]
+[xUnit.net 00:00:09.40]     NewManga.Host.Tests.Fea11Residual4AIpcTests.ProductionDispatcherHostControlPayloadIsFlattened [SKIP]
+[xUnit.net 00:00:09.40]     NewManga.Host.Tests.Fea11Residual4AIpcTests.ProductionDispatcherFailureRecordIsFlattenedAndKeepsGatesPending [SKIP]
+[xUnit.net 00:00:10.88]     NewManga.Host.Tests.Fea12TrashUiIpcTests.TrashFlow_OverRealIpc_DisclosesBindsDigestAndNeverUsesPurgeOrBatch [SKIP]
+  已跳过 NewManga.Host.Tests.Fea11Residual4AIpcTests.ProductionDispatcherFullSyncChain_NewKeyOldDigestConserved [1 ms]
+  已跳过 NewManga.Host.Tests.Fea11Residual4AIpcTests.ProductionDispatcherHostControlPayloadIsFlattened [1 ms]
+  已跳过 NewManga.Host.Tests.Fea11Residual4AIpcTests.ProductionDispatcherFailureRecordIsFlattenedAndKeepsGatesPending [1 ms]
+  已跳过 NewManga.Host.Tests.Fea12TrashUiIpcTests.TrashFlow_OverRealIpc_DisclosesBindsDigestAndNeverUsesPurgeOrBatch [1 ms]
+[xUnit.net 00:00:15.01]     NewManga.CoreClient.Tests.Commands.RunBindingFixTests.StartRun_DefaultDisabled_OmitsProviderBindings [SKIP]
+[xUnit.net 00:00:15.01]     NewManga.CoreClient.Tests.Commands.RunBindingFixTests.StartRun_InjectsDefaultBindings_WhenOverridesAbsentOrEmpty [SKIP]
+[xUnit.net 00:00:15.01]     NewManga.CoreClient.Tests.Commands.RunBindingFixTests.StartRun_KeepsExplicitUserBindings_AndOtherOverrides [SKIP]
+[xUnit.net 00:00:12.94]     NewManga.Host.Tests.WritePolicyTests.DefaultStart_IsReadWrite_AndCanCreateBook [SKIP]
+[xUnit.net 00:00:12.94]     NewManga.Host.Tests.WritePolicyTests.ExplicitParityFalse_RefusesWrites_WithTypedReadOnlyError [SKIP]
+[xUnit.net 00:00:12.95]     NewManga.Host.Tests.WritePolicyTests.FirstRunBackup_CreatesRealBackupFile_OnFirstWritableStartWithCatalog [SKIP]
+[xUnit.net 00:00:12.96]     NewManga.Host.Tests.Fea09UiImportIpcTests.AesZipPlanIsTypedUnsupportedOverRealStdio [SKIP]
+[xUnit.net 00:00:12.96]     NewManga.Host.Tests.Fea09UiImportIpcTests.CancelKeepsCommittedPagesOverRealStdio [SKIP]
+[xUnit.net 00:00:12.96]     NewManga.Host.Tests.Fea09UiImportIpcTests.EncryptedZipPasswordRetryOverRealStdio [SKIP]
+  已跳过 NewManga.Host.Tests.WritePolicyTests.DefaultStart_IsReadWrite_AndCanCreateBook [1 ms]
+  已跳过 NewManga.Host.Tests.WritePolicyTests.ExplicitParityFalse_RefusesWrites_WithTypedReadOnlyError [1 ms]
+  已跳过 NewManga.Host.Tests.WritePolicyTests.FirstRunBackup_CreatesRealBackupFile_OnFirstWritableStartWithCatalog [1 ms]
+  已跳过 NewManga.Host.Tests.Fea09UiImportIpcTests.AesZipPlanIsTypedUnsupportedOverRealStdio [1 ms]
+  已跳过 NewManga.Host.Tests.Fea09UiImportIpcTests.CancelKeepsCommittedPagesOverRealStdio [1 ms]
+  已跳过 NewManga.Host.Tests.Fea09UiImportIpcTests.EncryptedZipPasswordRetryOverRealStdio [1 ms]
+[xUnit.net 00:00:12.96]     NewManga.Host.Tests.Fea09UiImportIpcTests.PlanPreviewConfirmAndReceiptOverRealStdio [SKIP]
+[xUnit.net 00:00:12.96]     NewManga.Host.Tests.Fea09UiImportIpcTests.WriteEvidenceAndAssertZeroPasswordLeakage [SKIP]
+[xUnit.net 00:00:12.97]     NewManga.Host.Tests.Fea11HostAuthIpcTests.Recovery_UsesAFreshAuthorization_AfterAWrongDigestRefusal [SKIP]
+  已跳过 NewManga.Host.Tests.Fea09UiImportIpcTests.PlanPreviewConfirmAndReceiptOverRealStdio [1 ms]
+  已跳过 NewManga.Host.Tests.Fea09UiImportIpcTests.WriteEvidenceAndAssertZeroPasswordLeakage [1 ms]
+  已跳过 NewManga.Host.Tests.Fea11HostAuthIpcTests.Recovery_UsesAFreshAuthorization_AfterAWrongDigestRefusal [1 ms]
+[xUnit.net 00:00:12.97]     NewManga.Host.Tests.Fea11HostAuthIpcTests.Ack_SendsAFreshAuthorization_ThenOpensTheGateExactlyOnce [SKIP]
+[xUnit.net 00:00:12.97]     NewManga.Host.Tests.HostRuntimeIntegrationTests.ReadOnlyUntilParity_Ready_WithBothSidecars_AndWriteBlocked [SKIP]
+[xUnit.net 00:00:12.98]     NewManga.Host.Tests.HostRuntimeIntegrationTests.ParityReached_ChineseRoundTrip_IsExact_ThroughHost [SKIP]
+[xUnit.net 00:00:12.98]     NewManga.Host.Tests.HostRuntimeIntegrationTests.SecondInstance_IsAlreadyRunning_WithoutSpawningSidecars [SKIP]
+  已跳过 NewManga.Host.Tests.Fea11HostAuthIpcTests.Ack_SendsAFreshAuthorization_ThenOpensTheGateExactlyOnce [1 ms]
+  已跳过 NewManga.Host.Tests.HostRuntimeIntegrationTests.ReadOnlyUntilParity_Ready_WithBothSidecars_AndWriteBlocked [1 ms]
+  已跳过 NewManga.Host.Tests.HostRuntimeIntegrationTests.ParityReached_ChineseRoundTrip_IsExact_ThroughHost [1 ms]
+  已跳过 NewManga.Host.Tests.HostRuntimeIntegrationTests.SecondInstance_IsAlreadyRunning_WithoutSpawningSidecars [1 ms]
+
+已通过! - 失败:     0，通过:   302，已跳过:    71，总计:   373，持续时间: 12 s - NewManga.Host.Tests.dll (net9.0)
+  已跳过 NewManga.CoreClient.Tests.Commands.RunBindingFixTests.StartRun_DefaultDisabled_OmitsProviderBindings [1 ms]
+  已跳过 NewManga.CoreClient.Tests.Commands.RunBindingFixTests.StartRun_InjectsDefaultBindings_WhenOverridesAbsentOrEmpty [1 ms]
+  已跳过 NewManga.CoreClient.Tests.Commands.RunBindingFixTests.StartRun_KeepsExplicitUserBindings_AndOtherOverrides [1 ms]
+[xUnit.net 00:00:22.48]     NewManga.CoreClient.Tests.SidecarFailureTests.StartupTimeout_IsTyped_NotAHang [SKIP]
+  已跳过 NewManga.CoreClient.Tests.SidecarFailureTests.StartupTimeout_IsTyped_NotAHang [1 ms]
+[xUnit.net 00:00:25.45]     NewManga.CoreClient.Tests.Commands.S4RegionReaderCommandTests.RegionWriteFace_AndReaderProgressFace_ExecuteAgainstFrozenCore [SKIP]
+  已跳过 NewManga.CoreClient.Tests.Commands.S4RegionReaderCommandTests.RegionWriteFace_AndReaderProgressFace_ExecuteAgainstFrozenCore [1 ms]
+[xUnit.net 00:00:25.48]     NewManga.CoreClient.Tests.Commands.CommandWiringB2Tests.ListRegionRevisions_ExecutesAgainstRegionFixture [SKIP]
+[xUnit.net 00:00:25.48]     NewManga.CoreClient.Tests.Commands.CommandWiringB2Tests.B2Commands_ExecuteAgainstFrozenCore [SKIP]
+[xUnit.net 00:00:25.48]     NewManga.CoreClient.Tests.Commands.CommandWiringB2Tests.B2Commands_RejectInvalidArgumentsBeforeAnyCoreFrame [SKIP]
+[xUnit.net 00:00:25.48]     NewManga.CoreClient.Tests.HostBridgeIntegrationTests.WireFrames_AreSingleLineJson_AsciiOnly [SKIP]
+[xUnit.net 00:00:25.48]     NewManga.CoreClient.Tests.HostBridgeIntegrationTests.TypedErrors_UnknownResource_AndCoreOwnedPathSmuggling [SKIP]
+[xUnit.net 00:00:25.48]     NewManga.CoreClient.Tests.HostBridgeIntegrationTests.Ping_IssueResolveRevoke_FullLifecycle [SKIP]
+  已跳过 NewManga.CoreClient.Tests.Commands.CommandWiringB2Tests.ListRegionRevisions_ExecutesAgainstRegionFixture [1 ms]
+  已跳过 NewManga.CoreClient.Tests.Commands.CommandWiringB2Tests.B2Commands_ExecuteAgainstFrozenCore [1 ms]
+  已跳过 NewManga.CoreClient.Tests.Commands.CommandWiringB2Tests.B2Commands_RejectInvalidArgumentsBeforeAnyCoreFrame [1 ms]
+  已跳过 NewManga.CoreClient.Tests.HostBridgeIntegrationTests.WireFrames_AreSingleLineJson_AsciiOnly [1 ms]
+  已跳过 NewManga.CoreClient.Tests.HostBridgeIntegrationTests.TypedErrors_UnknownResource_AndCoreOwnedPathSmuggling [1 ms]
+  已跳过 NewManga.CoreClient.Tests.HostBridgeIntegrationTests.Ping_IssueResolveRevoke_FullLifecycle [1 ms]
+
+已通过! - 失败:     0，通过:   167，已跳过:    24，总计:   191，持续时间: 25 s - NewManga.CoreClient.Tests.dll (net9.0)
+[xUnit.net 00:00:24.67]     NewManga.App.Tests.StartupSelfCheckUiTests.SelfCheckFailure_IsVisibleInTheSnapshot [SKIP]
+[xUnit.net 00:00:24.67]     NewManga.App.Tests.RunControllerHostIntegrationTests.RunCommands_WhenReadOnly_PublishHostReadOnly [SKIP]
+[xUnit.net 00:00:24.67]     NewManga.App.Tests.RunControllerHostIntegrationTests.RunCommands_StartSuccessfulRun_ProjectRealPerPageState_AndReuseKey [SKIP]
+  已跳过 NewManga.App.Tests.StartupSelfCheckUiTests.SelfCheckFailure_IsVisibleInTheSnapshot [1 ms]
+  已跳过 NewManga.App.Tests.RunControllerHostIntegrationTests.RunCommands_WhenReadOnly_PublishHostReadOnly [1 ms]
+  已跳过 NewManga.App.Tests.RunControllerHostIntegrationTests.RunCommands_StartSuccessfulRun_ProjectRealPerPageState_AndReuseKey [1 ms]
+[xUnit.net 00:00:24.67]     NewManga.App.Tests.RunControllerHostIntegrationTests.RunCommands_MapCoreErrors_AndReuseIdempotencyKeys [SKIP]
+  已跳过 NewManga.App.Tests.RunControllerHostIntegrationTests.RunCommands_MapCoreErrors_AndReuseIdempotencyKeys [1 ms]
+[xUnit.net 00:00:27.62]     NewManga.App.Tests.WritePolicyUiIntegrationTests.DefaultController_IsWritable_AndParityFalse_IsReadOnlyWithReason [SKIP]
+  已跳过 NewManga.App.Tests.WritePolicyUiIntegrationTests.DefaultController_IsWritable_AndParityFalse_IsReadOnlyWithReason [1 ms]
+[xUnit.net 00:01:44.47]     NewManga.App.Tests.CreateChapterHostIntegrationTests.HostController_CreateChapter_SucceedsThenMapsCoreFailures [SKIP]
+[xUnit.net 00:01:44.47]     NewManga.App.Tests.CreateChapterHostIntegrationTests.HostController_CreateChapter_WhenReadOnly_PublishesHostReadOnly [SKIP]
+  已跳过 NewManga.App.Tests.CreateChapterHostIntegrationTests.HostController_CreateChapter_SucceedsThenMapsCoreFailures [1 ms]
+  已跳过 NewManga.App.Tests.CreateChapterHostIntegrationTests.HostController_CreateChapter_WhenReadOnly_PublishesHostReadOnly [1 ms]
+[xUnit.net 00:02:13.02]     NewManga.App.Tests.PerformanceBaselineTests.Gated_HotSwitch_UiThreadSchedulingGapStaysWithinThePerfGateBudget [SKIP]
+  已跳过 NewManga.App.Tests.PerformanceBaselineTests.Gated_HotSwitch_UiThreadSchedulingGapStaysWithinThePerfGateBudget [1 ms]
+[xUnit.net 00:04:28.37]     NewManga.App.Tests.PerformanceBaselineTests.HotSwitch_P95MedianOfThreeIndependentRuns_StaysWithinTheFrozenW5Budget [FAIL]
+  失败 NewManga.App.Tests.PerformanceBaselineTests.HotSwitch_P95MedianOfThreeIndependentRuns_StaysWithinTheFrozenW5Budget [32 s]
+  错误消息:
+   ui thread scheduling gap 619.0 ms exceeds the calibrated 400 ms budget (metrics: C:\Users\49745\AppData\Local\Temp\r2-mutation-gap-default-metrics.json)
+  堆栈跟踪:
+     at NewManga.App.Tests.PerformanceBaselineTests.HotSwitch_P95MedianOfThreeIndependentRuns_StaysWithinTheFrozenW5Budget()
+--- End of stack trace from previous location ---
+  标准输出消息:
+ {
+   "metric": "FEA-07 hot frontend switch",
+   "ac": "FEA-07 AC6 / W-5 \u002B FEA-07-RESIDUAL-2 AC-R4a-3",
+   "suite": "default",
+   "machine": "HOME-MY",
+   "os": "Microsoft Windows NT 10.0.26300.0",
+   "dotnet": "9.0.11",
+   "config": "headless Avalonia UI thread; real AppShellV2/FluentShellSurface factories",
+   "warmupSwitches": 4,
+   "measuredSwitches": 20,
+   "independentRuns": 3,
+   "budgetP95Ms": 1000,
+   "gapGateApplied": false,
+   "gapRecordedOnlyNote": "uiThreadSchedulingGapMs is recorded in the default suite; its assertion lives in the gated perf test (NEWMANGA_FEA07_PERF=1) because the metric is load-sensitive.",
+   "uiThreadSchedulingGapPerfGateBudgetMs": 400,
+   "runs": [
+     {
+       "run": 1,
+       "coldFirstSwitchMs": 253.21,
+       "p50Ms": 248.65,
+       "p95Ms": 748.34,
+       "maxMs": 775.78,
+       "uiThreadSchedulingGapMs": 491.75,
+       "uiThreadHeartbeatTicks": 128,
+       "samplesMs": [
+         530.44,
+         126.4,
+         488.38,
+         177.75,
+         748.34,
+         133,
+         514.05,
+         116.63,
+         718.48,
+         143.26,
+         533.96,
+         248.65,
+         454.65,
+         167.3,
+         496.3,
+         136.61,
+         775.78,
+         105.79,
+         498.93,
+         150.35
+       ],
+       "managedMemoryDeltaBytes": -458496,
+       "handleDelta": 0
+     },
+     {
+       "run": 2,
+       "coldFirstSwitchMs": 390.11,
+       "p50Ms": 378.5,
+       "p95Ms": 712.54,
+       "maxMs": 716.62,
+       "uiThreadSchedulingGapMs": 457.55,
+       "uiThreadHeartbeatTicks": 128,
+       "samplesMs": [
+         530.57,
+         139,
+         536.96,
+         180.02,
+         712.54,
+         119.77,
+         516.45,
+         112.06,
+         505.01,
+         378.5,
+         496.08,
+         116.21,
+         487.25,
+         208.94,
+         653.56,
+         128.48,
+         716.62,
+         106.32,
+         458.48,
+         142.81
+       ],
+       "managedMemoryDeltaBytes": -51176,
+       "handleDelta": -2
+     },
+     {
+       "run": 3,
+       "coldFirstSwitchMs": 478.46,
+       "p50Ms": 189.86,
+       "p95Ms": 780.93,
+       "maxMs": 945.42,
+       "uiThreadSchedulingGapMs": 619,
+       "uiThreadHeartbeatTicks": 130,
+       "samplesMs": [
+         485.36,
+         121.09,
+         470.64,
+         180.95,
+         777.18,
+         142.67,
+         573.82,
+         115.5,
+         780.93,
+         144.81,
+         485.65,
+         121.78,
+         714.93,
+         189.86,
+         567.86,
+         149.45,
+         945.42,
+         126.31,
+         519.29,
+         183.89
+       ],
+       "managedMemoryDeltaBytes": 0,
+       "handleDelta": -3
+     }
+   ],
+   "medianP50Ms": 248.65,
+   "medianP95Ms": 748.34,
+   "worstRunP95Ms": 780.93,
+   "worstUiThreadSchedulingGapMs": 619,
+   "p95Passed": true,
+   "passed": true
+ }
+ metrics-path: C:\Users\49745\AppData\Local\Temp\r2-mutation-gap-default-metrics.json
+
+
+
+失败!  - 失败:     1，通过:   815，已跳过:     8，总计:   824，持续时间: 6 m 25 s - NewManga.App.Tests.dll (net9.0)

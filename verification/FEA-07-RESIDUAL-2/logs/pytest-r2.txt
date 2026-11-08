@@ -1,0 +1,7 @@
+pytest evidence
+Lead r2 gate (2026-11-08): pytest tests -q = 3394 passed / 1 failed / 10 skipped
+failed test (pre-existing flaky, not this card): test_plugin_sandbox.py::test_sandbox_job_kills_grandchildren
+isolated rerun of that file: 16 passed
+--- this card's zero-Python-diff verification (yong coding agent, 2026-11-08) ---
+git diff --name-only bf4207d4a..HEAD -- tests/ src/  => (empty)
+git status --porcelain -- tests/ src/  => (empty)
