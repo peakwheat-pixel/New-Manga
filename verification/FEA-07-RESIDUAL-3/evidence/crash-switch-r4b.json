@@ -1,0 +1,46 @@
+{
+  "task": "FEA-07-RESIDUAL-3",
+  "ac": "AC-R4b-2 (AC3 cross-process crash injection)",
+  "mode": "external park/kill/recover (three separate processes)",
+  "generatedAt": "2026-11-08T23:04:05.9803035+08:00",
+  "root": "G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\crash\\20261108-230400-d7f2f9",
+  "park": {
+    "pid": 3716,
+    "launcherPid": 8432,
+    "stage": "Rendered",
+    "target": "builtin.fluent",
+    "previous": "builtin.current-v2",
+    "appearanceFrontendAtPark": "builtin.fluent",
+    "heartbeatBefore": 18
+  },
+  "kill": {
+    "api": "Process.Kill(entireProcessTree: true)",
+    "launcherExited": true,
+    "testHostExited": true,
+    "heartbeatFrozenAt": 18,
+    "heartbeatFrozen": true,
+    "killErrors": [],
+    "realDeathProven": true
+  },
+  "journalAfterKill": {
+    "stage": "Rendered",
+    "target": "builtin.fluent",
+    "previous": "builtin.current-v2"
+  },
+  "recover": {
+    "status": "ok",
+    "target": "builtin.fluent",
+    "previous": "builtin.current-v2",
+    "journalStage": "RolledBack",
+    "journalFailure": "startup recovery: interrupted switch to 'builtin.fluent' at Rendered; previous='builtin.current-v2'",
+    "finalFrontendId": "builtin.current-v2",
+    "latestModePreserved": "Light",
+    "secondRecoveryChangedNothing": true,
+    "protectedColumnDiffs": 0,
+    "protectedColumns": 11,
+    "candidateRows": "0"
+  },
+  "exitCode": 0,
+  "failures": [],
+  "verdict": "PASS"
+}

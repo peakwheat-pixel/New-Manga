@@ -1,0 +1,76 @@
+{
+  "task": "FEA-07-RESIDUAL-3",
+  "title": "FEA-07 收口 B（AC1 gated 真库 A03/ACK + AC3 跨进程崩溃 + AC4 真实入口/诊断 sink/矩阵）",
+  "generatedAt": "2026-11-08",
+  "baseCommit": "8855baaac",
+  "pins": 0,
+  "resources": [
+    {
+      "resource_type": "worktree",
+      "source_path": "NOT_APPLICABLE（main checkout G:\\CODEX\\New Manga；base 8855baaac）",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "—",
+      "sha256_or_manifest": "—",
+      "reference_or_process_check": "未创建/未删除 linked worktree；main 内联实施；派生夹具落在 G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\（WORKSPACE_GOVERNANCE）"
+    },
+    {
+      "resource_type": "evidence",
+      "source_path": "verification/FEA-07-RESIDUAL-3/**",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "verification/FEA-07-RESIDUAL-3",
+      "sha256_or_manifest": "verification/FEA-07-RESIDUAL-3/RESOURCE-MANIFEST.json",
+      "reference_or_process_check": "被本卡 README/DEFECTS/mutation-selfcheck 与 doc/tasks/FEA-07.md R4b 回填节引用；原地保留，不归档"
+    },
+    {
+      "resource_type": "tool",
+      "source_path": "verification/FEA-07-RESIDUAL-3/tools/**（crash-switch.ps1 / startup-matrix.ps1 / backfill-fea07.py）",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "verification/FEA-07-RESIDUAL-3/tools",
+      "sha256_or_manifest": "verification/FEA-07-RESIDUAL-3/RESOURCE-MANIFEST.json",
+      "reference_or_process_check": "卡内运行脚本；只写隔离 workspace 与本证据目录；未改 tools/e2e/**、apps/desktop-avalonia/scripts/**；原地保留"
+    },
+    {
+      "resource_type": "temp",
+      "source_path": "G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\（fixtures/a03-*、crash/*、startup-matrix/*、mutation-backup/）",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "—",
+      "sha256_or_manifest": "—",
+      "reference_or_process_check": "测试/脚本临时根（真实 library.db、switch journal、appearance store、心跳/park 文件）；位于仓外 workspace，不写仓库跟踪文件；crash/ 与 startup-matrix/ 的每次运行目录保留为一次性证据，可安全清理"
+    },
+    {
+      "resource_type": "test-fixture",
+      "source_path": "apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea07Residual3IpcTests.cs、apps/desktop-avalonia/tests/NewManga.Host.Tests/Support/Fea07Residual3Support.cs、apps/desktop-avalonia/tests/NewManga.App.Tests/Fea07Residual3CrashTests.cs、apps/desktop-avalonia/tests/NewManga.App.Tests/StartupDiagnosticsTests.cs",
+      "disposition": "PRESERVE_REFERENCED",
+      "destination_path": "同上（仓库内测试侧文件）",
+      "sha256_or_manifest": "见 doc/tasks/FEA-07-RESIDUAL-3.md 证据表与 git show --stat",
+      "reference_or_process_check": "四个测试文件全部为**测试侧**新增；生产侧只新增 Services/StartupDiagnostics.cs 并在 App.axaml.cs 加 2 行接线；未改既有测试断言"
+    },
+    {
+      "resource_type": "user-data",
+      "source_path": "%APPDATA%\\NewManga、%APPDATA%\\com.newmanga.desktop",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "—",
+      "sha256_or_manifest": "—",
+      "reference_or_process_check": "未触碰用户源文件/书籍/外部卷/回收站；AC4 的 default / --presentation-host / 坏外观文档 三组真实进程用例全部使用隔离 --data-root/--log-dir/--theme-home。唯一例外：既有产品行为 `--shell=legacy` 会向 %APPDATA%\\com.newmanga.desktop\\logs\\window-material.log 追加一行（MainWindow.WriteMaterialDiagnostics 硬编码该路径；该目录与文件 2026-10-27 起已存在），未修改用户数据内容，登记为 DEFECTS D-R4b-2（不在本卡 allowed_paths，未修）"
+    },
+    {
+      "resource_type": "tracked-side-effect",
+      "source_path": "verification/FEA-09/logs/wire-redacted.ndjson",
+      "disposition": "NOT_APPLICABLE",
+      "destination_path": "—",
+      "sha256_or_manifest": "—",
+      "reference_or_process_check": "既有副作用（NewManga.CoreClient.Tests 全量运行时重写）；全量后已执行 `git checkout -- verification/FEA-09`，零 diff（git status 无该路径）"
+    }
+  ],
+  "gateChecks": {
+    "dotnetBuild": "Release 0 warnings / 0 errors",
+    "hostTests": "302 passed / 0 failed / 72 skipped（基线 302/0/71）",
+    "appTests": "828 passed / 0 failed / 11 skipped（基线 816/0/8）",
+    "fullSolution": "1791 passed / 0 failed / 107 skipped（基线 1779/0/103）",
+    "pytest": "3395 passed / 0 failed / 10 skipped（基线 3394/1 既有 flaky/10）",
+    "gatedAc1": "1 passed（NEWMANGA_FEA07_A03=1）",
+    "gatedAc3": "crash-switch.ps1 exit 0（park -> Kill(entireProcessTree) -> recover）",
+    "gatedAc4": "startup-matrix.ps1 exit 0（4/4 cases）、gated fact 1 passed",
+    "mutations": "3 组 RED -> sha256 MATCH -> 复绿（另附 ①b 双检出点判别）"
+  }
+}

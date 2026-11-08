@@ -1,0 +1,26 @@
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Release\net9.0\NewManga.App.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+[xUnit.net 00:00:23.09]     NewManga.App.Tests.Fea07Residual3CrashTests.Park_ProductionSwitchStopsBetweenPersistedTargetAndJournalCommit [SKIP]
+[xUnit.net 00:00:23.09]     NewManga.App.Tests.Fea07Residual3CrashTests.Recover_NewProcessRollsBackAndAdoptsTheLatestProtectedState [SKIP]
+[xUnit.net 00:00:23.09]     NewManga.App.Tests.RunControllerHostIntegrationTests.RunCommands_WhenReadOnly_PublishHostReadOnly [SKIP]
+[xUnit.net 00:00:23.09]     NewManga.App.Tests.RunControllerHostIntegrationTests.RunCommands_StartSuccessfulRun_ProjectRealPerPageState_AndReuseKey [SKIP]
+[xUnit.net 00:00:23.09]     NewManga.App.Tests.RunControllerHostIntegrationTests.RunCommands_MapCoreErrors_AndReuseIdempotencyKeys [SKIP]
+  已跳过 NewManga.App.Tests.Fea07Residual3CrashTests.Park_ProductionSwitchStopsBetweenPersistedTargetAndJournalCommit [1 ms]
+  已跳过 NewManga.App.Tests.Fea07Residual3CrashTests.Recover_NewProcessRollsBackAndAdoptsTheLatestProtectedState [1 ms]
+  已跳过 NewManga.App.Tests.RunControllerHostIntegrationTests.RunCommands_WhenReadOnly_PublishHostReadOnly [1 ms]
+  已跳过 NewManga.App.Tests.RunControllerHostIntegrationTests.RunCommands_StartSuccessfulRun_ProjectRealPerPageState_AndReuseKey [1 ms]
+  已跳过 NewManga.App.Tests.RunControllerHostIntegrationTests.RunCommands_MapCoreErrors_AndReuseIdempotencyKeys [1 ms]
+[xUnit.net 00:00:23.10]     NewManga.App.Tests.StartupDiagnosticsTests.RealProcessLaunchMatrix_ExitZeroAndDiagnosableStartupLog [SKIP]
+  已跳过 NewManga.App.Tests.StartupDiagnosticsTests.RealProcessLaunchMatrix_ExitZeroAndDiagnosableStartupLog [1 ms]
+[xUnit.net 00:00:48.12]     NewManga.App.Tests.CreateChapterHostIntegrationTests.HostController_CreateChapter_SucceedsThenMapsCoreFailures [SKIP]
+[xUnit.net 00:00:48.12]     NewManga.App.Tests.CreateChapterHostIntegrationTests.HostController_CreateChapter_WhenReadOnly_PublishesHostReadOnly [SKIP]
+  已跳过 NewManga.App.Tests.CreateChapterHostIntegrationTests.HostController_CreateChapter_SucceedsThenMapsCoreFailures [1 ms]
+  已跳过 NewManga.App.Tests.CreateChapterHostIntegrationTests.HostController_CreateChapter_WhenReadOnly_PublishesHostReadOnly [1 ms]
+[xUnit.net 00:02:01.25]     NewManga.App.Tests.WritePolicyUiIntegrationTests.DefaultController_IsWritable_AndParityFalse_IsReadOnlyWithReason [SKIP]
+  已跳过 NewManga.App.Tests.WritePolicyUiIntegrationTests.DefaultController_IsWritable_AndParityFalse_IsReadOnlyWithReason [1 ms]
+[xUnit.net 00:02:01.82]     NewManga.App.Tests.PerformanceBaselineTests.Gated_HotSwitch_UiThreadSchedulingGapStaysWithinThePerfGateBudget [SKIP]
+  已跳过 NewManga.App.Tests.PerformanceBaselineTests.Gated_HotSwitch_UiThreadSchedulingGapStaysWithinThePerfGateBudget [1 ms]
+[xUnit.net 00:04:34.00]     NewManga.App.Tests.StartupSelfCheckUiTests.SelfCheckFailure_IsVisibleInTheSnapshot [SKIP]
+  已跳过 NewManga.App.Tests.StartupSelfCheckUiTests.SelfCheckFailure_IsVisibleInTheSnapshot [1 ms]
+
+已通过! - 失败:     0，通过:   828，已跳过:    11，总计:   839，持续时间: 4 m 33 s - NewManga.App.Tests.dll (net9.0)

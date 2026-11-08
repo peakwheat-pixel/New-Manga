@@ -1,0 +1,27 @@
+  正在确定要还原的项目…
+  所有项目均是最新的，无法还原。
+  NewManga.CoreClient -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.CoreClient\bin\Release\net9.0\NewManga.CoreClient.dll
+  NewManga.ApplicationCore -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.ApplicationCore\bin\Release\net9.0\NewManga.ApplicationCore.dll
+  NewManga.Appearance -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Appearance\bin\Release\net9.0\NewManga.Appearance.dll
+  NewManga.DesignSystem -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.DesignSystem\bin\Release\net9.0\NewManga.DesignSystem.dll
+  NewManga.Host -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Host\bin\Release\net9.0\NewManga.Host.dll
+  NewManga.ThemeEngine -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.ThemeEngine\bin\Release\net9.0\NewManga.ThemeEngine.dll
+  NewManga.Presentation.Avalonia -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Presentation.Avalonia\bin\Release\net9.0\NewManga.Presentation.Avalonia.dll
+  NewManga.App -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\bin\Release\net9.0\NewManga.App.dll
+  NewManga.Host.Tests -> G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+[xUnit.net 00:00:03.66]     NewManga.Host.Tests.Fea07Residual3IpcTests.A03_RealHostCore_FiftyRoundTripsAndAckReplay_KeepProtectedColumnsIdentical [FAIL]
+  失败 NewManga.Host.Tests.Fea07Residual3IpcTests.A03_RealHostCore_FiftyRoundTripsAndAckReplay_KeepProtectedColumnsIdentical [3 s]
+  错误消息:
+   Assert.Equal() Failure: Strings differ
+                     ↓ (pos 10)
+Expected: "{"text":["protected-pause-state"],"v":2}"
+Actual:   "{"text":["mutation-leak"],"v":99}"
+                     ↑ (pos 10)
+  堆栈跟踪:
+     at NewManga.Host.Tests.Fea07Residual3IpcTests.A03_RealHostCore_FiftyRoundTripsAndAckReplay_KeepProtectedColumnsIdentical()
+   at NewManga.Host.Tests.Fea07Residual3IpcTests.A03_RealHostCore_FiftyRoundTripsAndAckReplay_KeepProtectedColumnsIdentical()
+--- End of stack trace from previous location ---
+
+失败!  - 失败:     1，通过:     0，已跳过:     0，总计:     1，持续时间: 3 s - NewManga.Host.Tests.dll (net9.0)

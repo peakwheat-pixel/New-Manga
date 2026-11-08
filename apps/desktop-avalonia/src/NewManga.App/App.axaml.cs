@@ -41,6 +41,7 @@ public partial class App : Application
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             var options = AppOptionsStore.Current;
+            StartupDiagnostics.Install(options.ToHostOptions().LogDirectory); // FEA-07 AC4: <log-dir>/startup.log sink
 
             // V11R-C-3: the old theme-pack startup hook is retired. `--theme` stays as a compatibility
             // argument: LegacyStartupTheme maps it through the ThemeEngine migration table and carries the
@@ -75,6 +76,7 @@ public partial class App : Application
             // back to the last committed frontend before the startup decision is made.
             RecoverInterruptedSwitch(themeHome, appearance);
             var startupPlan = SafeStartupPlanner.Plan(options, appearance.Settings, appearance.Warnings);
+            StartupDiagnostics.Report(startupPlan); // FEA-07 AC4: diagnosable safe-startup decision (Trace → startup.log)
             foreach (var diagnostic in startupPlan.Diagnostics)
             {
                 Trace.TraceInformation("startup: " + diagnostic);

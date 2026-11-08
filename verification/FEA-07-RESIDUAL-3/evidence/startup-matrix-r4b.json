@@ -1,0 +1,94 @@
+{
+  "task": "FEA-07-RESIDUAL-3",
+  "ac": "AC-R4b-3 (AC4 real startup entry + diagnostics sink)",
+  "mode": "real process, four argument sets, isolated data root / theme home / log dir",
+  "generatedAt": "2026-11-08T22:52:13.9120140+08:00",
+  "executable": "G:\\CODEX\\New Manga\\apps\\desktop-avalonia\\src\\NewManga.App\\bin\\Release\\net9.0\\NewManga.App.exe",
+  "exitAfterMs": 2500,
+  "cases": [
+    {
+      "name": "default",
+      "arguments": [
+        "--data-root=G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\default-20261108-225159-1f24fa\\data",
+        "--log-dir=G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\default-20261108-225159-1f24fa\\logs",
+        "--theme-home=G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\default-20261108-225159-1f24fa\\theme",
+        "--mutex-name=Local\\NewManga.Fea07Startup.e12e9caa7475",
+        "--exit-after=2500"
+      ],
+      "exitCode": 0,
+      "fatalLog": false,
+      "startupLogWritten": true,
+      "startupLogBytes": 2560,
+      "matched": true,
+      "expectedMarker": "startup: shell=Default",
+      "fallbackMatched": true,
+      "expectedFallback": "fallback=False",
+      "elapsedMs": 3788,
+      "root": "G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\default-20261108-225159-1f24fa"
+    },
+    {
+      "name": "presentation-host",
+      "arguments": [
+        "--data-root=G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\presentation-host-20261108-225203-fa75f8\\data",
+        "--log-dir=G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\presentation-host-20261108-225203-fa75f8\\logs",
+        "--theme-home=G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\presentation-host-20261108-225203-fa75f8\\theme",
+        "--mutex-name=Local\\NewManga.Fea07Startup.c55107e4c22b",
+        "--exit-after=2500",
+        "--presentation-host=true"
+      ],
+      "exitCode": 0,
+      "fatalLog": false,
+      "startupLogWritten": true,
+      "startupLogBytes": 2578,
+      "matched": true,
+      "expectedMarker": "startup: shell=PresentationHost",
+      "fallbackMatched": true,
+      "expectedFallback": "fallback=False",
+      "elapsedMs": 3781,
+      "root": "G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\presentation-host-20261108-225203-fa75f8"
+    },
+    {
+      "name": "shell-legacy",
+      "arguments": [
+        "--data-root=G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\shell-legacy-20261108-225206-8f5971\\data",
+        "--log-dir=G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\shell-legacy-20261108-225206-8f5971\\logs",
+        "--theme-home=G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\shell-legacy-20261108-225206-8f5971\\theme",
+        "--mutex-name=Local\\NewManga.Fea07Startup.2a281abe9c60",
+        "--exit-after=2500",
+        "--shell=legacy"
+      ],
+      "exitCode": 0,
+      "fatalLog": false,
+      "startupLogWritten": true,
+      "startupLogBytes": 452,
+      "matched": true,
+      "expectedMarker": "startup: shell=Legacy",
+      "fallbackMatched": true,
+      "expectedFallback": "fallback=False",
+      "elapsedMs": 3207,
+      "root": "G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\shell-legacy-20261108-225206-8f5971"
+    },
+    {
+      "name": "corrupt-appearance",
+      "arguments": [
+        "--data-root=G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\corrupt-appearance-20261108-225210-64d385\\data",
+        "--log-dir=G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\corrupt-appearance-20261108-225210-64d385\\logs",
+        "--theme-home=G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\corrupt-appearance-20261108-225210-64d385\\theme",
+        "--mutex-name=Local\\NewManga.Fea07Startup.8428b6156ebc",
+        "--exit-after=2500"
+      ],
+      "exitCode": 0,
+      "fatalLog": false,
+      "startupLogWritten": true,
+      "startupLogBytes": 3026,
+      "matched": true,
+      "expectedMarker": "startup: appearance: appearance document is not valid JSON",
+      "fallbackMatched": true,
+      "expectedFallback": "fallback=True",
+      "elapsedMs": 3809,
+      "root": "G:\\CODEX\\New Manga.workspace\\FEA-07-RESIDUAL-3\\startup-matrix\\corrupt-appearance-20261108-225210-64d385"
+    }
+  ],
+  "failures": [],
+  "verdict": "PASS"
+}
