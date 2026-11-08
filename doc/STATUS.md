@@ -4,8 +4,8 @@
 
 ## 当前程序
 - **V11R 程序 ACTIVE**：[V11R_PROGRAM](V11R_PROGRAM.md)；契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)。
-- 当前 Task：**无活动 Task**（下一候选 R3 `FEA-11-RESIDUAL-4A`，需 scope review；[B2 卡](tasks/FEA-11-L-S1-B2-ROOTS-AVAILABILITY-1.md) 延后=无消费者）。已闭环：`FEA-06-RESIDUAL-3` done（`ddc29ecb3`；RESIDUAL-2 翻 done）、`FEA-11-HOST-AUTH-2`（`f7016d3fb`）、`FEA-12-UI-RESIDUAL-2`（`85356c22a`）、UI-RESIDUAL-1（`8e3bd03d6`）、INDEX-L4-1（`e593cc9d7`）。
-- FEA-11 线：WATCH-1/SCAN-2/SCAN-1/MATCH-1/AC4-GAPS-1/LINEAGE-1 `done`；HOST-AUTH-1 `closed_with_limitations`；FEA-12 四卡 `done`。
+- 当前 Task：**`FEA-11-RESIDUAL-4A` ready**（FEA-11 收口：AC11-7 诊断/AC11-9 Host 链路/AC11-6 folder 用例/回填；[卡](tasks/FEA-11-RESIDUAL-4A.md)）。已闭环：`FEA-06-RESIDUAL-3`（`ddc29ecb3`；RESIDUAL-2 翻 done）、`FEA-11-HOST-AUTH-2` done（`f7016d3fb`；HOST-AUTH-1 翻 done）、`FEA-12-UI-RESIDUAL-2`（`85356c22a`）、UI-RESIDUAL-1（`8e3bd03d6`）、INDEX-L4-1（`e593cc9d7`）。
+- FEA-11 线：WATCH-1/SCAN-2/SCAN-1/MATCH-1/AC4-GAPS-1/LINEAGE-1 `done`；HOST-AUTH-1 `done`；FEA-12 四卡 `done`。
 - **AC11-1 终态 MET（带 limitation）**：裁决 2026-11-06（[记录](reviews/FEA-11-AC11-1-adjudication-2026-11-06.md)）；「启动/访问前检查」= 冷启动枚举 + registry/root 核验（SCAN-2） + 每次访问/操作前 live grant+lease+digest 强验证；启动不做全量内容扫描（L-STARTUP）。
 - rolling checkpoint：[GOAL-PROGRESS](checkpoints/GOAL-PROGRESS-2026-11-02.md)。
 - **Gate**：`G-CONTRACT`/`G-DELETE-CONTRACT` ✅ CLOSED（[裁定](plan/GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md)，L-1…L-9 保留）；FEA-12 四表 DDL 未冻；裁决 [ADJ-2026-11-01](reviews/ADJ-2026-11-01-FEA-DECISIONS.md)、[ADJ-2026-11-05](reviews/ADJ-2026-11-05-FEA-12-SCOPE.md)。

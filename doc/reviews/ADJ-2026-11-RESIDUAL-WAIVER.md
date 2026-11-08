@@ -118,3 +118,9 @@ AC-F1/F2/F5 MET；AC-F3 → `NOT_APPLICABLE` + re-home `FEA-11-HOST-AUTH-3`；AC
 ### 7.6 `FEA-06-RESIDUAL-3`：`ready` → `done`（2026-11-08）
 
 Review 链 r1→r2→r3→**r4 approved（P0=0/P1=0/P2=0/P3=5）**；AC-1…AC-6 MET；格 3 与原生项不在本卡（re-home / NA）。
+
+### 7.7 `FEA-11` 收口卡冻结（`FEA-11-RESIDUAL-4A`，2026-11-08）
+
+- 独立 scope review（`doc/reviews/FEA-11-RESIDUAL-4A-scope-r1.md`，`NOT_RECOMMENDED`）→ **DSH 采纳其 §5 后冻结**：AC11-1/3/4/5/8 **仅回填**；AC11-6 **纯测试**（4 类用例 + `L-S4-2` 登记）；AC11-9 **纯测试**（Host 级 gated，复用 `Fea09ProductionFixture`；仓库无 `Fea11ProductionFixture`）；AC11-7 **Host journal 只读投影（operation 作用域）**，`needs_confirmation` 零生产者缺陷 re-home `FEA-11-DIAG-SURFACE-1`（需 C-17 additive）；**L-M4 不实现** → re-home `FEA-11-LEGACY-RECOMPUTE-1`（需 C-17 UNFREEZE）；**L-M1** → `FEA-11-PDF-RECONCILE-1`；L-STARTUP 子项 `NOT_APPLICABLE`（契约解释+产品范围，保留 NOT_RUN）。
+- **口径**：`[x] <<MET>>` 不得带原因；limitation 只进 closeout/EV；不把任何整 AC 写 NA。
+- 治理修正：`doc/STATUS.md:8`、`doc/REBASELINE_PLAN.md:53` 的 HOST-AUTH-1 陈旧表述已改为 `done`（实际 `5cbec0e82` 已翻）。
