@@ -14,7 +14,8 @@
 | 数据安全 | `source_sha256_unchanged=1`、`rows_unchanged=1`（bindings/publications） |
 | gate | `gates_open=1`（`check_gate.py` 实查 `read_binding_publications.read_gate`，0 pending） |
 | 幂等 | `second_call_idempotent=1`（二次 recover 0 新 wire 帧） |
-| 全量基线（最终 head 重跑） | pytest **3468/0/10**（`logs/pytest-full.log`）；.NET 8 项目见 `logs/dotnet-full-console.log` 与 `logs/dotnet-*.log` |
+| **崩溃反例** | `-Negative` 模式：phase 间替换源文件 → **`SOURCE_ACCESS_DENIED` typed 拒绝**（`logs/crash-driver-negative.log`，EXIT 0） |
+| 全量基线（最终 head 重跑） | pytest **3468/0/10**（`logs/pytest-full.log`）；.NET 8 项目 **fresh build 1811/0/109**（`logs/dotnet-full-console.log` 与 `logs/dotnet-*.log`） |
 
 ## 断言全部由事实计算（P0 修复）
 
@@ -46,7 +47,8 @@ CHECK commit_digest_match / distinct_host_pid / distinct_core_session /
 
 ```powershell
 $env:NEWMANGA_FEA11_IPC='1'; $env:NEWMANGA_BUILD_PYTHON='C:/Python314/python.exe'
-pwsh -NoProfile -File verification/FEA-11-HOST-AUTH-3/tools/crash-ack.ps1   # EXIT 0 = PASS
+pwsh -NoProfile -File verification/FEA-11-HOST-AUTH-3/tools/crash-ack.ps1            # EXIT 0 = PASS（正例）
+pwsh -NoProfile -File verification/FEA-11-HOST-AUTH-3/tools/crash-ack.ps1 -Negative  # EXIT 0 = NEGATIVE_PASS（反例）
 python -m pytest tests/fea11 -q
 ```
 
