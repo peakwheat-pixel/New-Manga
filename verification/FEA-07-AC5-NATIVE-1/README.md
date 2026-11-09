@@ -81,3 +81,9 @@
 
 - 说明：全屏与「Reader 内 F 键」相关，属于需要**真实章节内容**的子项；本卡在隔离空库下执行，故如实记 `NOT_RUN`，未写成 PASS。
 - 未 flush 编辑态使用 OS 级显示移除（`/internal`）驱动（物理拔线已在 §5 单独验证）；两者结论一致（进程存活、窗口/内容不丢）。
+
+## 7. 全屏（Reader-only）尝试与结论
+
+- 全屏实现位于 Reader 页：`ReaderWorkbenchPages.cs:2599`（`WindowState.FullScreen`）、热键 `Key.F:2649`；主窗 `F11` 实测无效果（`evidence/extra-fullscreen-*.json` 中 `afterFKey/afterEsc` 与最大化态一致）。
+- 触发全屏需要**真实章节内容**；本卡在隔离空库下尝试用「导入文件夹」UIA 自动化灌入合成漫画（2 话 × 3 页，ASCII 路径），文件夹选择对话框自动化多次未能稳定完成（日志见 `evidence/attempts/`）。
+- 结论：**`NOT_RUN`**（未写 PASS）。补齐条件：在应用里手动导入一个漫画文件夹（两次点击），或由环境提供已导入库，即可补测 Reader 全屏。

@@ -240,6 +240,11 @@ out_of_scope:
 | EV-AC5-EX67 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-103745-unsaved-after-unplug.png | - | b1812c6320c6282b41320249ff6e14d8f2e4109703040b4761cdb4e8de92857a | CANONICAL |
 | EV-AC5-EX68 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-103745-unsaved-before.png | - | f96cc778419fa92e3a7527c45f31d03e30b8a30e22ebe523a911fc3b0e057bc6 | CANONICAL |
 
+| EV-AC5-AT01 | 全屏尝试记录 | verification/FEA-07-AC5-NATIVE-1/evidence/attempts/seed2.log | - | 757c1f4fd40778210a0619e701858dbc31a91cecb61dad3194c66e397851ffd0 | CANONICAL |
+| EV-AC5-AT02 | 全屏尝试记录 | verification/FEA-07-AC5-NATIVE-1/evidence/attempts/seed2.log.err | - | d2ea1a7a4c3f1ad3d6f9643545b44cc46c127b80495bd61b124457b08e452b39 | CANONICAL |
+| EV-AC5-AT03 | 全屏尝试记录 | verification/FEA-07-AC5-NATIVE-1/evidence/attempts/seed3.log | - | 3c72196f1a8a8bb6c689360538e07cd44e6f3b87c53bc90606e32d42ac6bea7a | CANONICAL |
+| EV-AC5-AT04 | 全屏尝试记录 | verification/FEA-07-AC5-NATIVE-1/evidence/attempts/seed3.log.err | - | d2ea1a7a4c3f1ad3d6f9643545b44cc46c127b80495bd61b124457b08e452b39 | CANONICAL |
+
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
@@ -274,3 +279,9 @@ out_of_scope:
 
 - 证据：`evidence/extra-*.json`、`evidence/unsaved-edit-unplug-*.json`、`evidence/screenshots/*`（含 before/after、palette、typed、unplug）。
 - 诚实性：全屏依赖真实章节内容 → `NOT_RUN`，未写 PASS。
+
+### 全屏（Reader-only）尝试与结论
+
+- 全屏只在 Reader 页：`ReaderWorkbenchPages.cs:2599`（`WindowState.FullScreen`）+ 热键 `Key.F:2649`；主窗 `F11` 实测无效。
+- 需真实章节内容；已尝试「导入文件夹」UIA 自动化灌入合成漫画（ASCII 路径、2 话×3 页），文件夹对话框自动化多次未稳定完成（`evidence/attempts/seed*.log`）。
+- 结论：**`NOT_RUN`**，不写 PASS；补齐条件 = 人工导入一个漫画文件夹（两次点击）或提供已导入库。
