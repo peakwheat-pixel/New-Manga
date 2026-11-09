@@ -410,7 +410,43 @@ public sealed class HostRuntime : IAsyncDisposable
     {
         RequireWritesAllowed();
         var core = CoreService ?? throw NotReady();
-        return await core.RestoreBackupAsync(backupId, cancellationToken).ConfigureAwait(false);
+        var result = await core.RestoreBackupAsync(backupId, cancellationToken).ConfigureAwait(false);
+        // FEA-13-SRC-6 (AC3): after a successful Core restore the encrypted source-access
+        // snapshot is handed over; importing it is Host-side and NEVER turns a successful
+        // data restore into a failure (rejection is reported, not thrown).
+        ImportSourceAccessHandoff(backupId);
+        return result;
+    }
+
+    /// <summary>
+    /// FEA-13-SRC-6 (AC3/AC4): import one restore handoff into the live registry. A missing
+    /// handoff (a package without the source-access segment) is a no-op.
+    /// </summary>
+    public SourceAccessRestoreOutcome? ImportSourceAccessHandoff(string backupId)
+    {
+        var registry = Registry;
+        var dataRoot = _options.DataRoot;
+        if (registry is null || string.IsNullOrWhiteSpace(dataRoot)) return null;
+        var outcome = SourceAccessRestore.TryImportFromHandoff(
+            dataRoot, backupId, registry, message => _log.Info(message));
+        if (outcome.Status is "rejected")
+        {
+            _log.Warn($"source-access handoff rejected: backup={backupId} reason={outcome.Reason}");
+        }
+        return outcome;
+    }
+
+    /// <summary>FEA-13-SRC-6 (AC4): startup catch-up for handoffs that were never consumed.</summary>
+    public IReadOnlyList<SourceAccessRestoreOutcome> ImportPendingSourceAccessHandoffs()
+    {
+        var registry = Registry;
+        var dataRoot = _options.DataRoot;
+        if (registry is null || string.IsNullOrWhiteSpace(dataRoot))
+        {
+            return Array.Empty<SourceAccessRestoreOutcome>();
+        }
+        return SourceAccessRestore.TryImportPending(
+            dataRoot, registry, message => _log.Info(message));
     }
 
     private void RequireWritesAllowed()

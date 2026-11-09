@@ -10,6 +10,9 @@ public sealed record SourceAuthorization(string RegistryId, string Locator, int 
     string LastUsedAt, string? RevokedAt, SourceRoot[] Roots, object? IdentityFacts = null);
 internal sealed record RegistrySnapshot(int FormatVersion, string WrittenAt, SourceAuthorization[] Entries);
 
+/// <summary>FEA-13-SRC-6: outcome of merging a restored snapshot into the live registry.</summary>
+public sealed record ImportOutcome(int Imported, int Unchanged, int Conflicts, string Status, string? Reason);
+
 /// <summary>Host-only encrypted registry. Every operation reloads under mutex + exclusive lock file.</summary>
 public sealed class SourceAccessRegistry
 {
@@ -154,32 +157,7 @@ public sealed class SourceAccessRegistry
         {
             SourceSecurity.RejectReparseAncestors(RegistryPath);
             var bytes = File.ReadAllBytes(RegistryPath);
-            if (bytes.Length < 12 || bytes.Length > 4 * 1024 * 1024 || !bytes.AsSpan(0, Magic.Length).SequenceEqual(Magic))
-                throw new InvalidDataException();
-            var length = BinaryPrimitives.ReadUInt32LittleEndian(bytes.AsSpan(Magic.Length, 4));
-            var plaintext = _protector.Unprotect(bytes[(Magic.Length + 4)..]);
-            RegistrySnapshot? snapshot;
-            try
-            {
-                if (plaintext.Length != length) throw new InvalidDataException();
-                snapshot = JsonSerializer.Deserialize<RegistrySnapshot>(plaintext, Json);
-            }
-            finally { CryptographicOperations.ZeroMemory(plaintext); }
-            if (snapshot is null || snapshot.FormatVersion != 1 || snapshot.Entries is null
-                || snapshot.Entries.Select(e => e.RegistryId).Distinct().Count() != snapshot.Entries.Length)
-                throw new InvalidDataException();
-            foreach (var entry in snapshot.Entries)
-            {
-                if (entry.Generation < 1 || string.IsNullOrEmpty(entry.RegistryId) || entry.Roots is null || entry.Roots.Length == 0)
-                    throw new InvalidDataException();
-                foreach (var root in entry.Roots)
-                {
-                    // Persisted ROOT SHAPE only (a file-format invariant); the root's live identity is
-                    // deliberately NOT probed here — see VerifyRootIdentity / C-15 v1.5 §5.
-                    if (root.Root != SourceSecurity.Normalize(root.Root) || !root.Readable) throw new InvalidDataException();
-                }
-            }
-            return snapshot;
+            return ParseSnapshot(bytes, _protector);
         }
         catch (Exception error) when (error is not OutOfMemoryException)
         {
@@ -189,6 +167,109 @@ public sealed class SourceAccessRegistry
             throw new SourceAccessException("SOURCE_REGISTRY_UNAVAILABLE");
         }
     }
+
+    /// <summary>
+    /// FEA-13-SRC-6 (C-09 SC-B07 ④): byte-level snapshot parser shared by the live file and
+    /// the restore HANDOFF. Magic/length/DPAPI/JSON/shape rules are identical, so a snapshot
+    /// that cannot be read as the live file cannot be imported either.
+    /// </summary>
+    internal static RegistrySnapshot ParseSnapshot(byte[] fileBytes, ISecretProtector protector)
+    {
+        if (fileBytes.Length < 12 || fileBytes.Length > 4 * 1024 * 1024
+            || !fileBytes.AsSpan(0, Magic.Length).SequenceEqual(Magic))
+            throw new InvalidDataException();
+        var length = BinaryPrimitives.ReadUInt32LittleEndian(fileBytes.AsSpan(Magic.Length, 4));
+        var plaintext = protector.Unprotect(fileBytes[(Magic.Length + 4)..]);
+        RegistrySnapshot? snapshot;
+        try
+        {
+            if (plaintext.Length != length) throw new InvalidDataException();
+            snapshot = JsonSerializer.Deserialize<RegistrySnapshot>(plaintext, Json);
+        }
+        finally { CryptographicOperations.ZeroMemory(plaintext); }
+        if (snapshot is null || snapshot.FormatVersion != 1 || snapshot.Entries is null
+            || snapshot.Entries.Select(e => e.RegistryId).Distinct().Count() != snapshot.Entries.Length)
+            throw new InvalidDataException();
+        foreach (var entry in snapshot.Entries)
+        {
+            if (entry.Generation < 1 || string.IsNullOrEmpty(entry.RegistryId)
+                || entry.Roots is null || entry.Roots.Length == 0)
+                throw new InvalidDataException();
+            foreach (var root in entry.Roots)
+            {
+                // Persisted ROOT SHAPE only (a file-format invariant); the root's live
+                // identity is deliberately NOT probed here (C-15 v1.5 §5).
+                if (root.Root != SourceSecurity.Normalize(root.Root) || !root.Readable)
+                    throw new InvalidDataException();
+            }
+        }
+        return snapshot;
+    }
+
+    /// <summary>
+    /// FEA-13-SRC-6 (AC3/AC4): merge a restored snapshot into the LIVE registry.
+    ///
+    /// Only entries whose ``registry_id`` does not exist live are imported. A live entry
+    /// always wins: a newer/equal generation, a revoked live entry, or a revoked candidate
+    /// is a CONFLICT and is never overwritten or revived. A failed validation writes nothing.
+    /// </summary>
+    public ImportOutcome ImportRestoredSnapshot(byte[] handoffBytes)
+    {
+        RegistrySnapshot candidate;
+        try
+        {
+            candidate = ParseSnapshot(handoffBytes, _protector);
+        }
+        catch (Exception error) when (error is not OutOfMemoryException)
+        {
+            return new ImportOutcome(0, 0, 0, "rejected", "registry_corrupt_or_unprotectable");
+        }
+
+        try
+        {
+            return Locked(() =>
+            {
+                var live = Load();
+                var liveById = live.Entries.ToDictionary(item => item.RegistryId, StringComparer.Ordinal);
+                var imported = new List<SourceAuthorization>();
+                var unchanged = 0;
+                var conflicts = 0;
+                foreach (var entry in candidate.Entries)
+                {
+                    if (!liveById.TryGetValue(entry.RegistryId, out var liveEntry))
+                    {
+                        imported.Add(entry);
+                        continue;
+                    }
+                    if (liveEntry.Generation >= entry.Generation
+                        || liveEntry.RevokedAt is not null
+                        || entry.RevokedAt is not null)
+                    {
+                        conflicts++;
+                        continue;
+                    }
+                    unchanged++;
+                }
+                if (imported.Count == 0)
+                {
+                    return new ImportOutcome(0, unchanged, conflicts, "unchanged", null);
+                }
+                Save(new RegistrySnapshot(
+                    live.FormatVersion,
+                    DateTimeOffset.UtcNow.ToString("O"),
+                    live.Entries.Concat(imported).ToArray()));
+                return new ImportOutcome(imported.Count, unchanged, conflicts, "imported", null);
+            });
+        }
+        catch (SourceAccessException)
+        {
+            return new ImportOutcome(0, 0, 0, "rejected", "registry_unavailable");
+        }
+    }
+
+    /// <summary>FEA-13-SRC-6: does the live registry already know ``registryId``?</summary>
+    public bool Contains(string registryId) => Locked(() => Load().Entries.Any(
+        entry => string.Equals(entry.RegistryId, registryId, StringComparison.Ordinal)));
 
     private void Save(RegistrySnapshot snapshot)
     {
