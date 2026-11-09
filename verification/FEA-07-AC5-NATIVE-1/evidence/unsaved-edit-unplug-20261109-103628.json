@@ -1,0 +1,119 @@
+{
+  "case": "unsaved-edit-unplug",
+  "capturedAt": "2026-11-09T10:36:43.6624642+08:00",
+  "app": {
+    "pid": 48284,
+    "exe": "G:\\CODEX\\New Manga\\apps\\desktop-avalonia\\src\\NewManga.App\\bin\\Release\\net9.0\\NewManga.App.exe",
+    "args": [
+      "--data-root",
+      "C:\\Users\\49745\\AppData\\Local\\Temp\\nm-fea07-unsaved-20261109-103628\\data",
+      "--log-dir",
+      "C:\\Users\\49745\\AppData\\Local\\Temp\\nm-fea07-unsaved-20261109-103628\\logs",
+      "--theme-home",
+      "C:\\Users\\49745\\AppData\\Local\\Temp\\nm-fea07-unsaved-20261109-103628\\theme",
+      "--shell=v2"
+    ],
+    "dataRoot": "C:\\Users\\49745\\AppData\\Local\\Temp\\nm-fea07-unsaved-20261109-103628\\data"
+  },
+  "before": {
+    "displays": [
+      {
+        "device": "\\\\.\\DISPLAY1",
+        "width": 2560,
+        "height": 1440,
+        "x": 0,
+        "y": 0
+      },
+      {
+        "device": "\\\\.\\DISPLAY2",
+        "width": 3840,
+        "height": 2160,
+        "x": 2560,
+        "y": 0
+      }
+    ],
+    "paletteValues": [
+      "",
+      ""
+    ],
+    "window": {
+      "left": 104,
+      "top": 104
+    }
+  },
+  "afterUnplug": {
+    "displaySwitch": "",
+    "displays": {
+      "device": "\\\\.\\DISPLAY1",
+      "width": 2560,
+      "height": 1440,
+      "x": 0,
+      "y": 0
+    },
+    "paletteValues": [
+      "",
+      ""
+    ],
+    "appAlive": true,
+    "window": {
+      "left": 104,
+      "top": 104,
+      "width": 1116,
+      "height": 799,
+      "dpi": 96,
+      "percent": 100
+    }
+  },
+  "afterRestore": {
+    "displays": [
+      {
+        "device": "\\\\.\\DISPLAY1",
+        "width": 2560,
+        "height": 1440,
+        "x": 0,
+        "y": 0
+      },
+      {
+        "device": "\\\\.\\DISPLAY2",
+        "width": 3840,
+        "height": 2160,
+        "x": 2560,
+        "y": 0
+      }
+    ],
+    "paletteValues": [
+      "",
+      ""
+    ],
+    "appAlive": true,
+    "window": {
+      "left": 104,
+      "top": 104,
+      "width": 1116,
+      "height": 799,
+      "dpi": 96,
+      "percent": 100
+    }
+  },
+  "bufferRetainedAfterUnplug": false,
+  "screenshots": [
+    {
+      "file": "20261109-103628-unsaved-before.png",
+      "width": 2560,
+      "height": 1440,
+      "sha256": "779154e1c6e064ca5cd84945d54317378e5fab501ea4134bebee33d48dddd89e"
+    },
+    {
+      "file": "20261109-103628-unsaved-after-unplug.png",
+      "width": 2560,
+      "height": 1440,
+      "sha256": "14dff23b6a25435a3f0933537bfe545c041eefa77920e3fa9d807f8002729a7d"
+    },
+    {
+      "file": "20261109-103628-unsaved-after-restore.png",
+      "width": 2560,
+      "height": 1440,
+      "sha256": "4d4112110f165bbfd0dc6547e649df786e4b8d72293c935630c7934622016a05"
+    }
+  ]
+}

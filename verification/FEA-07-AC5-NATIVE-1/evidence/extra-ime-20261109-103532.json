@@ -1,0 +1,46 @@
+{
+  "mode": "ime",
+  "capturedAt": "2026-11-09T10:35:33.0683272+08:00",
+  "displaysBefore": [
+    {
+      "device": "\\\\.\\DISPLAY1",
+      "adapter": "NVIDIA GeForce RTX 5070 Ti",
+      "width": 2560,
+      "height": 1440,
+      "x": 0,
+      "y": 0,
+      "primary": true
+    },
+    {
+      "device": "\\\\.\\DISPLAY2",
+      "adapter": "NVIDIA GeForce RTX 5070 Ti",
+      "width": 3840,
+      "height": 2160,
+      "x": 2560,
+      "y": 0,
+      "primary": false
+    }
+  ],
+  "pid": 36148,
+  "editCount": 2,
+  "keyboard": {
+    "loaded": 134481924,
+    "previous": 134481924
+  },
+  "committedValue": "你好",
+  "imeComposed": true,
+  "screenshots": [
+    {
+      "file": "20261109-103532-ime-palette.png",
+      "width": 2560,
+      "height": 1440,
+      "sha256": "5a8fd6918233d1f125965e8ace712d6758bf1e7f31ffdce9172e94381418a033"
+    },
+    {
+      "file": "20261109-103532-ime-typed.png",
+      "width": 2560,
+      "height": 1440,
+      "sha256": "4ec517ad6522e45260ed37a2c54f1827908d6c095809d0f5d8f10400a9d2673f"
+    }
+  ]
+}

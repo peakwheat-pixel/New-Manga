@@ -50,9 +50,9 @@ out_of_scope:
 ## Acceptance Criteria（冻结）
 
 - [ ] **AC-N1（混合 DPI 拓扑）**：2K 置原生 2560×1440、4K 置原生 3840×2160，扩展排列；在两屏分别设置 100%/125%/150%/175%/200%（4K）与 100%/125%/150%（2K），逐组合记录每屏 `dpi/scale/rect/primary`；应用窗口在两屏间移动后 DPI 正确切换（无模糊/无错位）。 <<PARTIAL: 7/15 混合 DPI 组合已执行（4K 100/125/150/175/200 × 2K 100/125/150 子集），DPI 切换与屏幕内 containment 全部通过；其余组合与「无模糊/无错位」客观断言未做>>
-- [ ] **AC-N2（浮动窗口归属）**：Inspector 浮窗置于副屏 → 可见/可操作；主窗与浮窗跨屏拖动不丢屏外；目标屏不支持浮动时安全停靠（回主窗）；快捷键不重复执行。 <<PARTIAL: 主窗跨屏归属/可见/contained 已验；Inspector 浮窗不存在（RegisterSecondary 零生产调用）→ 该子项 NOT_APPLICABLE；可操作性与快捷键未执行>>
+- [ ] **AC-N2（浮动窗口归属）**：Inspector 浮窗置于副屏 → 可见/可操作；主窗与浮窗跨屏拖动不丢屏外；目标屏不支持浮动时安全停靠（回主窗）；快捷键不重复执行。 <<PARTIAL: 主窗跨屏归属/可见/contained 已验；Inspector 浮窗不存在（RegisterSecondary 零生产调用）→ 该子项 NOT_APPLICABLE；中文 IME 组合输入已验（命令面板输入「你好」）；快捷键「不重复执行」未单独断言>>
 - [ ] **AC-N3（拔屏/换主屏）**：OS 级禁用副屏（并尽量物理拔线）→ 第二窗口内容回主窗对应页面；未 flush 编辑态 fail-closed 留在主窗缓冲（不丢不覆盖）；换主屏后布局/全屏状态正确。 <<PARTIAL: OS 级拔屏（DisplaySwitch /internal）已验且自动迁移窗口；物理拔屏已执行：拔后主窗被系统最小化（需手动恢复，D-AC5-1）、恢复后回主屏、重插后自动回 4K 原几何；未 flush 编辑态 fail-closed 未执行>>
-- [ ] **AC-N4（manifest/PerMonitorV2 与提交恢复）**：发布 manifest 实际启用 PerMonitorV2（读实际 exe manifest 断言，不只看 csproj）；混合 DPI 下窗口位置/大小提交与恢复正确；恢复点（分辨率/缩放/排列/主屏）在结束时逐项还原并校验。 <<PARTIAL: PerMonitorV2（app.manifest + exe 内嵌）与跨 DPI 几何保持已验；重启窗口几何持久化 → NOT_APPLICABLE（产品无实现）；恢复点按用户决定保留原生 2K>>
+- [ ] **AC-N4（manifest/PerMonitorV2 与提交恢复）**：发布 manifest 实际启用 PerMonitorV2（读实际 exe manifest 断言，不只看 csproj）；混合 DPI 下窗口位置/大小提交与恢复正确；恢复点（分辨率/缩放/排列/主屏）在结束时逐项还原并校验。 <<PARTIAL: PerMonitorV2（app.manifest + exe 内嵌）与跨 DPI 几何保持已验；换主屏双向 rc=0 且应用存活；重启窗口几何持久化 → NOT_APPLICABLE（产品无实现）；恢复点按用户决定保留原生 2K>>
 - [ ] **AC-N5（证据/审查/翻转）**：真实桌面截图（每案例 ≥1，含两块屏与窗口位置）+ 逐案例 JSON + 恢复点 JSON + 失败/跳过原因；独立上下文 Review；`FEA-07` AC5 行 append-only 从 `NOT_APPLICABLE` 翻 `[x] <<PARTIAL: 证据/工具齐；r1 Review changes_requested 已处置，r2 复审未完成>>
 
 ## 实现口径
@@ -171,6 +171,75 @@ out_of_scope:
 | EV-AC5-P04 | AC-N3 / 缺陷 | verification/FEA-07-AC5-NATIVE-1/evidence/physical-unplug-before.log | - | 17b14460587876746b4d179272fb310a9f97a536b8f3ae1c403103fc19dd5c02 | CANONICAL |
 | EV-AC5-P05 | AC-N3 / 缺陷 | verification/FEA-07-AC5-NATIVE-1/DEFECTS.md | - | 0713df0828b05dd54d36eb2048b525a4158e7dd8e7d83d19d1d1e0031facf886 | CANONICAL |
 
+| EV-AC5-EX01 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/extra-fullscreen-20261109-103425.json | - | 8dc8fa4c68555eacb8f09e954b4eae9d722debbdc1273e202011bd5873a1c6a9 | CANONICAL |
+| EV-AC5-EX02 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/extra-fullscreen-20261109-103453.json | - | 6038a0ddbae43f0176bc31a8720654e6221ca1d284028f4cde06271cf64bb165 | CANONICAL |
+| EV-AC5-EX03 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/extra-ime-20261109-103532.json | - | f03c60cdf40f50e1be371ff3a1b5bbceba0d672cc9b957bfb15cd315acbae543 | CANONICAL |
+| EV-AC5-EX04 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/extra-primary-switch-20261109-103517.json | - | 5055c17af7b6121be303f6ca5982e0f4a525911395d3a5ddecd7b27d179fd5f6 | CANONICAL |
+| EV-AC5-EX05 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/extra-theme-draft-unplug-20261109-103548.json | - | 031e32886b305813f79aad5b104ead4c251c5cb98666e654058bd6719cdbb2e1 | CANONICAL |
+| EV-AC5-EX06 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/unsaved-edit-unplug-20261109-103628.json | - | 62bc95591d880eb61e7a775a10bbdca3440535a9f88ddb8ddfc51f245f78d324 | CANONICAL |
+| EV-AC5-EX07 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/unsaved-edit-unplug-20261109-103656.json | - | b9cf4a1aefc50260b9f6b43eaf2c01877f5a2144975e2bd1c92851f4858c9c8e | CANONICAL |
+| EV-AC5-EX08 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/unsaved-edit-unplug-20261109-103718.json | - | d30462a62dd9ab3afa88bc2dd0407af8ec774d732f3e6b2b3f84919df6fe1c08 | CANONICAL |
+| EV-AC5-EX09 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/unsaved-edit-unplug-20261109-103745.json | - | cd4fac4740ff9f92650ebf30ce73ddff7d3f1539824d390775cf3f87d0a28bce | CANONICAL |
+| EV-AC5-EX10 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-085421-mon1-back.png | - | 0e0f681aaa0f9db7cc239416f7164365d19297de06bac7ef775528821da0b03e | CANONICAL |
+| EV-AC5-EX11 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-085421-mon1-before.png | - | 885d7016c5126075c99be0808c9b813d629c89820cb033f9b9d46fc8a78a4b9f | CANONICAL |
+| EV-AC5-EX12 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-085421-mon1-placed.png | - | 4e1cadab36ab96af14b6d75cc02fc9d1fcca0ec6eecf7e560f86236f0893e98d | CANONICAL |
+| EV-AC5-EX13 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-085421-mon2-placed.png | - | 2c549ba00b01a07de78fc1085dd4f307d8d92d2671de47bea72d4cf16f97e85f | CANONICAL |
+| EV-AC5-EX14 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-085421-straddle.png | - | 293bb07348888049e68a2472bc43d6159aa0da25605417f940a7f92197832fb9 | CANONICAL |
+| EV-AC5-EX15 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-085525-drag-mon1.png | - | 1769bd646a8a767267e591bd23da831d82baf1728f6364227314fb865ca57c0e | CANONICAL |
+| EV-AC5-EX16 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-085525-drag-mon2.png | - | d16dc103df2c088647ee72c311fc8914317d2415cc443a0489c93b73868690f9 | CANONICAL |
+| EV-AC5-EX17 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-093107-drag-mon1.png | - | 786c84b9847bf7251ff3deb45c28f0a0bbf330a74c34b10f574609457a275348 | CANONICAL |
+| EV-AC5-EX18 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-093107-drag-mon2.png | - | 7a2a61a5d4470b40a6077d9f56c5ce29f8fad9524c04d38b9959de95b98699b1 | CANONICAL |
+| EV-AC5-EX19 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-093132-drag-mon1.png | - | 15bed2b88c103666d5c86da9c18b8c95273754b0c98b2aaf621ecdb9c2240c61 | CANONICAL |
+| EV-AC5-EX20 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-093132-drag-mon2.png | - | 4b469c67f8a549fd1293a5a3aaa823941ce22536f83e80d4c40eb9c558503db5 | CANONICAL |
+| EV-AC5-EX21 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-093156-drag-mon1.png | - | cfd15509fcefa374699994c76ce1e9138279577135089e710cdeeefb3a70e4da | CANONICAL |
+| EV-AC5-EX22 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-093156-drag-mon2.png | - | d313c23e3a7141bcb70c1f67a66068b1220942840fad70a309e7abda7b203ce7 | CANONICAL |
+| EV-AC5-EX23 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-093255-undock-after.png | - | 5047d1d64a3ffe27b89cb0a92316abf8553ef812ee7c53f857567ccff41591f4 | CANONICAL |
+| EV-AC5-EX24 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-093255-undock-before.png | - | 783950b92fb876f309c7aa2f394ff65e5975440e620053b1e7d4719671fc9a08 | CANONICAL |
+| EV-AC5-EX25 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-093255-undock-restored.png | - | b9c8ae1a2a63d73c90ecd84694711ef0a8346aa97f5d24cff2d1834b1a8d50fd | CANONICAL |
+| EV-AC5-EX26 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-093322-undock-after.png | - | 8c3f9ae7a4542a177a87940c55aa5588a7e0905e893d087b1337367c91e3bbbd | CANONICAL |
+| EV-AC5-EX27 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-093322-undock-before.png | - | 742c71435b24d065b6fc681d44a30a5efb89b3395eda01c2db9df59b8973e4e1 | CANONICAL |
+| EV-AC5-EX28 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-093322-undock-restored.png | - | 73bc3051e7892c6159559b6442d349a443493fc52a24679080b441f255a33a9a | CANONICAL |
+| EV-AC5-EX29 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-100407-drag-mon1.png | - | 3e953d8457c17c572fb8191a0214b39e6bfeb577d91ede70373ab9d6c18a867b | CANONICAL |
+| EV-AC5-EX30 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-100932-drag-mon1.png | - | c72d1b58b081251a30188831e562b8853e3a1ecfca10444c6adcf12ec59eba12 | CANONICAL |
+| EV-AC5-EX31 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-100932-drag-mon2.png | - | d2d562b9c956959a1707c0794606fe15a47f5c86c720d15bc94ad1907bb4537c | CANONICAL |
+| EV-AC5-EX32 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-100958-drag-mon1.png | - | d4f3b5f237fba4f0eac3d0555f2d8482a082026410265f33343a71faad2f40ab | CANONICAL |
+| EV-AC5-EX33 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-100958-drag-mon2.png | - | 9483be596b4b3fdb6e1fe643a106cc20a3d020c3b21ac731f014af8b84d7ecf2 | CANONICAL |
+| EV-AC5-EX34 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-101032-drag-mon1.png | - | 26aa4fefb96b00d7683f7ac6fc76484da010afbb7d779b7c75ebf79fe01e00ac | CANONICAL |
+| EV-AC5-EX35 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-101032-drag-mon2.png | - | fa1a7975d5395f52b5dd32fabb13c98e6772eb9c6a52d0153a04bf7da2cca6ad | CANONICAL |
+| EV-AC5-EX36 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-101630-mon1-back.png | - | 50c385f172705c39901e37f98f7caf3c65e0ae09913a4b8cca9a2c8777aee432 | CANONICAL |
+| EV-AC5-EX37 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-101630-mon1-before.png | - | be6cc96ca475f7acf667a1f19e67a517e5140ebe1aab55548697e702f99ba0a2 | CANONICAL |
+| EV-AC5-EX38 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-101630-mon1-placed.png | - | eeb99db52ee437d42a1779764af5ab16b75b0852d6685a99dade3b6b5cb3696c | CANONICAL |
+| EV-AC5-EX39 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-101630-mon2-placed.png | - | 424dee0183a8a165ec959a205cd463fb7be6a36203199b4a1b58d75166ecf33a | CANONICAL |
+| EV-AC5-EX40 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-101630-straddle.png | - | 74ff51d3b9a6607e3d5c68e8e75ab36b12499be395372cc1cb61eec9e2dc0e63 | CANONICAL |
+| EV-AC5-EX41 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-102130-phys-on4k.png | - | 4588c52b8e9e039996723a8e83425f55ec2640489178a083712e1448cd3d7370 | CANONICAL |
+| EV-AC5-EX42 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-102803-after-physical-unplug.png | - | f7615e01b22ae2a83eb63d54dd5c405ffb191e023ab6cf71a8031926168636e2 | CANONICAL |
+| EV-AC5-EX43 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-102834-after-unplug-restored-window.png | - | a3b4eece709f468c0570e9e88a6759cb9b427feb0d77e1837684ea5651a0afbc | CANONICAL |
+| EV-AC5-EX44 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-103127-after-replug.png | - | e8d88694df436ab94882950bfa269083c5198f7ba92931e0ea212744dd988e8b | CANONICAL |
+| EV-AC5-EX45 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-103425-fullscreen-f11.png | - | b7e89f53ca59bc151f5644f151d894390a60b98b0c59754486f6038df6ac7779 | CANONICAL |
+| EV-AC5-EX46 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-103425-fullscreen-max.png | - | b7e89f53ca59bc151f5644f151d894390a60b98b0c59754486f6038df6ac7779 | CANONICAL |
+| EV-AC5-EX47 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-103453-fullscreen-esc.png | - | bc1f606ca307a73817d1a03a438c4edcad007726043c2f38f23ea118abaf4291 | CANONICAL |
+| EV-AC5-EX48 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-103453-fullscreen-fkey.png | - | 73b4319fe5c6ba32da0f74afdd440014baa88958eaae1143c2269ae8757d16ed | CANONICAL |
+| EV-AC5-EX49 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-103453-fullscreen-max.png | - | b7e89f53ca59bc151f5644f151d894390a60b98b0c59754486f6038df6ac7779 | CANONICAL |
+| EV-AC5-EX50 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-103517-primary-switch-after.png | - | 0c5507f728d82d1854f3dd03189f7d1c4c8e52444f88db90a1746ed400fd71de | CANONICAL |
+| EV-AC5-EX51 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-103517-primary-switch-before.png | - | 71664376dbbb0b28c958bff23887ba5631265193aad0f24e8d93de367a493ab7 | CANONICAL |
+| EV-AC5-EX52 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-103532-ime-palette.png | - | 5a8fd6918233d1f125965e8ace712d6758bf1e7f31ffdce9172e94381418a033 | CANONICAL |
+| EV-AC5-EX53 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-103532-ime-typed.png | - | 4ec517ad6522e45260ed37a2c54f1827908d6c095809d0f5d8f10400a9d2673f | CANONICAL |
+| EV-AC5-EX54 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-103548-theme-draft-unplug-after-unplug.png | - | 417954d12197c61bb510fda39b9cb0af9a62c74e09d8f3539456ca1c07938ed0 | CANONICAL |
+| EV-AC5-EX55 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-103548-theme-draft-unplug-draft.png | - | b23ab2b3a459b0c87ced2eb31639cdc1ae444cd96908aa4cceef4885169da0ba | CANONICAL |
+| EV-AC5-EX56 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-103548-theme-draft-unplug-studio.png | - | 9d17f62fbf1a78cfe0aa0330dd70981868233499b3bbfb65917cc64cb0fc1268 | CANONICAL |
+| EV-AC5-EX57 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-103628-unsaved-after-restore.png | - | 4d4112110f165bbfd0dc6547e649df786e4b8d72293c935630c7934622016a05 | CANONICAL |
+| EV-AC5-EX58 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-103628-unsaved-after-unplug.png | - | 14dff23b6a25435a3f0933537bfe545c041eefa77920e3fa9d807f8002729a7d | CANONICAL |
+| EV-AC5-EX59 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-103628-unsaved-before.png | - | 779154e1c6e064ca5cd84945d54317378e5fab501ea4134bebee33d48dddd89e | CANONICAL |
+| EV-AC5-EX60 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-103656-unsaved-after-restore.png | - | 3d53122bc2f98a23003160ca3c85581cb7c89f1cef9db716b1e40f0cb3b787d0 | CANONICAL |
+| EV-AC5-EX61 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-103656-unsaved-after-unplug.png | - | 492c05181433d199dd8991586360337cc1b4cd99d2e2f528b0542ea6de0764ed | CANONICAL |
+| EV-AC5-EX62 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-103656-unsaved-before.png | - | 185bcbfce09e067532529518a9bdd15a894d3bb8dcf4f2684da1c96289bf557c | CANONICAL |
+| EV-AC5-EX63 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-103718-unsaved-after-restore.png | - | 48409871523893a103c5facf440ec215c02e61464e624b4e2dbef274c05f2abe | CANONICAL |
+| EV-AC5-EX64 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-103718-unsaved-after-unplug.png | - | cbea929a6e3fbdc89c45021c4824ed2b9ec432e65a778c033002d02ea62882f5 | CANONICAL |
+| EV-AC5-EX65 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-103718-unsaved-before.png | - | 48aed862ded92fe9dde463e34714ee743430f325d3b79310564935e9307dcf7f | CANONICAL |
+| EV-AC5-EX66 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-103745-unsaved-after-restore.png | - | b1b8b1e17ead502deb59d940c5dab365ca9a8d44ad4ec24fd69c3f4eb8239878 | CANONICAL |
+| EV-AC5-EX67 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-103745-unsaved-after-unplug.png | - | b1812c6320c6282b41320249ff6e14d8f2e4109703040b4761cdb4e8de92857a | CANONICAL |
+| EV-AC5-EX68 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/screenshots/20261109-103745-unsaved-before.png | - | f96cc778419fa92e3a7527c45f31d03e30b8a30e22ebe523a911fc3b0e057bc6 | CANONICAL |
+
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
@@ -193,3 +262,15 @@ out_of_scope:
 - 证据：`evidence/physical-state-*.json`（4 份）、`evidence/physical-unplug-before.log`、`evidence/screenshots/*phys*.png`。
 - 缺陷登记：`DEFECTS.md` **D-AC5-1**（物理移除事件下主窗被最小化而非自动迁移；OS 级 `/internal` 会自动迁移 → 产品缺口/limitation，建议 re-home 窗口管理卡）。
 - 过程说明：首次 `physical-unplug-probe.ps1` 因用户拔线晚于脚本 240s 等待窗口而超时（未产出 JSON，失败日志保留）；随后用 `capture-physical-state.ps1` 直接抓取状态完成取证。
+
+## 追加原生子项（2026-11-09）
+
+| 子项 | 方法 | 结果 |
+|---|---|---|
+| 中文 IME | 命令面板 Ctrl+K → 激活 `00000804` 布局 → `nihao`+空格 | ✅ 组合出「你好」（`evidence/extra-ime-*.json`） |
+| 换主屏 | `CDS_SET_PRIMARY` 切 4K 主屏 → 恢复 AOC | ✅ 双向 rc=0、应用存活、几何/DPI 正确（`evidence/extra-primary-switch-*.json`） |
+| 全屏切换 | 最大化按钮 + F11 + F/Esc | ⚠️ **NOT_RUN**：全屏仅 Reader 页（`ReaderWorkbenchPages.cs:2599` / `:2649`），空库无章节；F11 无效果 |
+| 未 flush 编辑 + 拔屏 | 命令面板未提交输入 `draft` → `/internal` 移除第二屏 → 重读缓冲 | ✅ 缓冲保留、进程存活（`evidence/unsaved-edit-unplug-*.json`） |
+
+- 证据：`evidence/extra-*.json`、`evidence/unsaved-edit-unplug-*.json`、`evidence/screenshots/*`（含 before/after、palette、typed、unplug）。
+- 诚实性：全屏依赖真实章节内容 → `NOT_RUN`，未写 PASS。

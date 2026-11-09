@@ -1,0 +1,177 @@
+{
+  "themeHome": "C:\\Users\\49745\\AppData\\Local\\Temp\\nm-fea07-uia-20261109-103332\\theme",
+  "pid": 60936,
+  "dataRoot": "C:\\Users\\49745\\AppData\\Local\\Temp\\nm-fea07-uia-20261109-103332\\data",
+  "window": "New Manga",
+  "logDir": "C:\\Users\\49745\\AppData\\Local\\Temp\\nm-fea07-uia-20261109-103332\\logs",
+  "controls": [
+    {
+      "type": "Button",
+      "name": "最小化",
+      "automationId": "Minimize",
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "Button",
+      "name": "最大化",
+      "automationId": "Maximize",
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "Button",
+      "name": "关闭",
+      "automationId": "Close",
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "Button",
+      "name": "资料柜空间",
+      "automationId": "",
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "Button",
+      "name": "工位空间",
+      "automationId": "",
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "Button",
+      "name": "控制台空间",
+      "automationId": "",
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "Button",
+      "name": "作用域：未选择对象",
+      "automationId": "",
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "Button",
+      "name": "需要我处理：待办事项",
+      "automationId": "",
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "Button",
+      "name": "命令面板（Ctrl+K）",
+      "automationId": "",
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "Button",
+      "name": "主题工作室",
+      "automationId": "ThemeStudioButton",
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "Button",
+      "name": "深色",
+      "automationId": "ThemeToggleButton",
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "Button",
+      "name": "键位速查（F1）",
+      "automationId": "",
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "Button",
+      "name": "全部 0",
+      "automationId": "",
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "Button",
+      "name": "收藏 0",
+      "automationId": "",
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "Button",
+      "name": "已归档 0",
+      "automationId": "",
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "Button",
+      "name": "导入文件",
+      "automationId": "",
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "Button",
+      "name": "导入文件夹",
+      "automationId": "",
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "Button",
+      "name": "新建作品",
+      "automationId": "",
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "Button",
+      "name": "回收站",
+      "automationId": "",
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "Button",
+      "name": "重试",
+      "automationId": "ActionButton",
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "Button",
+      "name": "新建作品",
+      "automationId": "ActionButton",
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "Edit",
+      "name": "",
+      "automationId": "",
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "MenuItem",
+      "name": "系统",
+      "automationId": "Item 1",
+      "enabled": true,
+      "offscreen": false
+    },
+    {
+      "type": "ComboBox",
+      "name": "",
+      "automationId": "",
+      "enabled": true,
+      "offscreen": false
+    }
+  ]
+}

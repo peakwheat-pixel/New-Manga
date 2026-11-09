@@ -1,0 +1,92 @@
+{
+  "mode": "theme-draft-unplug",
+  "capturedAt": "2026-11-09T10:35:48.8456749+08:00",
+  "displaysBefore": [
+    {
+      "device": "\\\\.\\DISPLAY1",
+      "adapter": "NVIDIA GeForce RTX 5070 Ti",
+      "width": 2560,
+      "height": 1440,
+      "x": 0,
+      "y": 0,
+      "primary": true
+    },
+    {
+      "device": "\\\\.\\DISPLAY2",
+      "adapter": "NVIDIA GeForce RTX 5070 Ti",
+      "width": 3840,
+      "height": 2160,
+      "x": 2560,
+      "y": 0,
+      "primary": false
+    }
+  ],
+  "pid": 56528,
+  "themeFilesBefore": null,
+  "clickedForDraft": "资料柜空间",
+  "themeUnchangedBeforeUnplug": true,
+  "unplug": {
+    "displaySwitch": "",
+    "displays": {
+      "device": "\\\\.\\DISPLAY1",
+      "adapter": "NVIDIA GeForce RTX 5070 Ti",
+      "width": 2560,
+      "height": 1440,
+      "x": 0,
+      "y": 0,
+      "primary": true
+    },
+    "window": {
+      "left": 182,
+      "top": 182,
+      "width": 1116,
+      "height": 799,
+      "dpi": 96,
+      "percent": 100,
+      "zoomed": false
+    },
+    "appAlive": true,
+    "themeFilesAfterUnplug": null,
+    "themeUnchanged": true
+  },
+  "afterRestore": [
+    {
+      "device": "\\\\.\\DISPLAY1",
+      "adapter": "NVIDIA GeForce RTX 5070 Ti",
+      "width": 2560,
+      "height": 1440,
+      "x": 0,
+      "y": 0,
+      "primary": true
+    },
+    {
+      "device": "\\\\.\\DISPLAY2",
+      "adapter": "NVIDIA GeForce RTX 5070 Ti",
+      "width": 3840,
+      "height": 2160,
+      "x": 2560,
+      "y": 0,
+      "primary": false
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "20261109-103548-theme-draft-unplug-studio.png",
+      "width": 2560,
+      "height": 1440,
+      "sha256": "9d17f62fbf1a78cfe0aa0330dd70981868233499b3bbfb65917cc64cb0fc1268"
+    },
+    {
+      "file": "20261109-103548-theme-draft-unplug-draft.png",
+      "width": 2560,
+      "height": 1440,
+      "sha256": "b23ab2b3a459b0c87ced2eb31639cdc1ae444cd96908aa4cceef4885169da0ba"
+    },
+    {
+      "file": "20261109-103548-theme-draft-unplug-after-unplug.png",
+      "width": 2560,
+      "height": 1440,
+      "sha256": "417954d12197c61bb510fda39b9cb0af9a62c74e09d8f3539456ca1c07938ed0"
+    }
+  ]
+}

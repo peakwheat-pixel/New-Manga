@@ -69,3 +69,15 @@
 
 - 证据：`evidence/physical-state-*.json`（4 份）、`evidence/physical-unplug-before.log`、`evidence/screenshots/*phys*.png`。
 - 与 OS 级 `/internal` 拔屏对比：OS 级会自动迁移窗口；物理移除事件下应用被 OS 最小化、需手动恢复 → 登记 D-AC5-1（P3，产品缺口/limitation）。
+
+## 6. 追加原生子项（2026-11-09）
+
+| 子项 | 方法 | 结果 |
+|---|---|---|
+| **中文 IME 输入** | 命令面板（Ctrl+K）聚焦 Edit → 载入 `00000804` 键盘布局并激活 → 逐键 `nihao` + 空格提交 | ✅ **组合成功，值 = "你好"**（`evidence/extra-ime-*.json`，`imeComposed=true`） |
+| **换主屏** | `ChangeDisplaySettingsEx(CDS_SET_PRIMARY)` 把 4K 设为主屏 → 采样 → 恢复 AOC 为主屏 | ✅ 双向 `rc=0`、应用存活、窗口/DPI 正确（`evidence/extra-primary-switch-*.json` + before/after 截图） |
+| **全屏切换** | 最大化按钮 + `F11` + `F`/`Esc` 键盘 | ⚠️ **NOT_RUN**：应用全屏仅在 **Reader 页**实现（`ReaderWorkbenchPages.cs:2599 WindowState.FullScreen`，热键 `Key.F:2649`）；隔离空库无章节可开阅读器 → 无法触发；`F11` 实测无效果 |
+| **未 flush 编辑态 + 拔屏** | 命令面板输入未提交文本 `draft` → `DisplaySwitch /internal`（移除第二屏）→ 重新读取输入缓冲 | ✅ **缓冲保留**（`bufferRetainedAfterUnplug=true`）、进程存活（`evidence/unsaved-edit-unplug-*.json` + 截图） |
+
+- 说明：全屏与「Reader 内 F 键」相关，属于需要**真实章节内容**的子项；本卡在隔离空库下执行，故如实记 `NOT_RUN`，未写成 PASS。
+- 未 flush 编辑态使用 OS 级显示移除（`/internal`）驱动（物理拔线已在 §5 单独验证）；两者结论一致（进程存活、窗口/内容不丢）。

@@ -1,0 +1,81 @@
+{
+  "mode": "fullscreen",
+  "capturedAt": "2026-11-09T10:34:53.3996906+08:00",
+  "displaysBefore": [
+    {
+      "device": "\\\\.\\DISPLAY1",
+      "adapter": "NVIDIA GeForce RTX 5070 Ti",
+      "width": 2560,
+      "height": 1440,
+      "x": 0,
+      "y": 0,
+      "primary": true
+    },
+    {
+      "device": "\\\\.\\DISPLAY2",
+      "adapter": "NVIDIA GeForce RTX 5070 Ti",
+      "width": 3840,
+      "height": 2160,
+      "x": 2560,
+      "y": 0,
+      "primary": false
+    }
+  ],
+  "pid": 45296,
+  "before": {
+    "left": 130,
+    "top": 130,
+    "width": 1116,
+    "height": 799,
+    "dpi": 96,
+    "percent": 100,
+    "zoomed": false
+  },
+  "maximized": {
+    "left": -8,
+    "top": -8,
+    "width": 2576,
+    "height": 1408,
+    "dpi": 96,
+    "percent": 100,
+    "zoomed": true
+  },
+  "afterFKey": {
+    "left": -8,
+    "top": -8,
+    "width": 2576,
+    "height": 1408,
+    "dpi": 96,
+    "percent": 100,
+    "zoomed": true
+  },
+  "afterEsc": {
+    "left": -8,
+    "top": -8,
+    "width": 2576,
+    "height": 1408,
+    "dpi": 96,
+    "percent": 100,
+    "zoomed": true
+  },
+  "screenshots": [
+    {
+      "file": "20261109-103453-fullscreen-max.png",
+      "width": 2560,
+      "height": 1440,
+      "sha256": "b7e89f53ca59bc151f5644f151d894390a60b98b0c59754486f6038df6ac7779"
+    },
+    {
+      "file": "20261109-103453-fullscreen-fkey.png",
+      "width": 2560,
+      "height": 1440,
+      "sha256": "73b4319fe5c6ba32da0f74afdd440014baa88958eaae1143c2269ae8757d16ed"
+    },
+    {
+      "file": "20261109-103453-fullscreen-esc.png",
+      "width": 2560,
+      "height": 1440,
+      "sha256": "bc1f606ca307a73817d1a03a438c4edcad007726043c2f38f23ea118abaf4291"
+    }
+  ]
+}

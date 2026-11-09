@@ -1,0 +1,124 @@
+{
+  "mode": "primary-switch",
+  "capturedAt": "2026-11-09T10:35:17.6405014+08:00",
+  "displaysBefore": [
+    {
+      "device": "\\\\.\\DISPLAY1",
+      "adapter": "NVIDIA GeForce RTX 5070 Ti",
+      "width": 2560,
+      "height": 1440,
+      "x": 0,
+      "y": 0,
+      "primary": true
+    },
+    {
+      "device": "\\\\.\\DISPLAY2",
+      "adapter": "NVIDIA GeForce RTX 5070 Ti",
+      "width": 3840,
+      "height": 2160,
+      "x": 2560,
+      "y": 0,
+      "primary": false
+    }
+  ],
+  "pid": 33556,
+  "before": {
+    "displays": [
+      {
+        "device": "\\\\.\\DISPLAY1",
+        "adapter": "NVIDIA GeForce RTX 5070 Ti",
+        "width": 2560,
+        "height": 1440,
+        "x": 0,
+        "y": 0,
+        "primary": true
+      },
+      {
+        "device": "\\\\.\\DISPLAY2",
+        "adapter": "NVIDIA GeForce RTX 5070 Ti",
+        "width": 3840,
+        "height": 2160,
+        "x": 2560,
+        "y": 0,
+        "primary": false
+      }
+    ],
+    "window": {
+      "left": 286,
+      "top": 286,
+      "width": 1116,
+      "height": 799,
+      "dpi": 96,
+      "percent": 100,
+      "zoomed": false
+    }
+  },
+  "setPrimary": "rc=0",
+  "after": {
+    "displays": [
+      {
+        "device": "\\\\.\\DISPLAY1",
+        "adapter": "NVIDIA GeForce RTX 5070 Ti",
+        "width": 2560,
+        "height": 1440,
+        "x": 0,
+        "y": 0,
+        "primary": true
+      },
+      {
+        "device": "\\\\.\\DISPLAY2",
+        "adapter": "NVIDIA GeForce RTX 5070 Ti",
+        "width": 3840,
+        "height": 2160,
+        "x": 2560,
+        "y": 0,
+        "primary": false
+      }
+    ],
+    "window": {
+      "left": 286,
+      "top": 286,
+      "width": 1116,
+      "height": 799,
+      "dpi": 96,
+      "percent": 100,
+      "zoomed": false
+    },
+    "appAlive": true
+  },
+  "restorePrimary": "rc=0",
+  "restored": [
+    {
+      "device": "\\\\.\\DISPLAY1",
+      "adapter": "NVIDIA GeForce RTX 5070 Ti",
+      "width": 2560,
+      "height": 1440,
+      "x": 0,
+      "y": 0,
+      "primary": true
+    },
+    {
+      "device": "\\\\.\\DISPLAY2",
+      "adapter": "NVIDIA GeForce RTX 5070 Ti",
+      "width": 3840,
+      "height": 2160,
+      "x": 2560,
+      "y": 0,
+      "primary": false
+    }
+  ],
+  "screenshots": [
+    {
+      "file": "20261109-103517-primary-switch-before.png",
+      "width": 2560,
+      "height": 1440,
+      "sha256": "71664376dbbb0b28c958bff23887ba5631265193aad0f24e8d93de367a493ab7"
+    },
+    {
+      "file": "20261109-103517-primary-switch-after.png",
+      "width": 2560,
+      "height": 1440,
+      "sha256": "0c5507f728d82d1854f3dd03189f7d1c4c8e52444f88db90a1746ed400fd71de"
+    }
+  ]
+}
