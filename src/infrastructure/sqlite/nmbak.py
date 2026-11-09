@@ -168,6 +168,7 @@ class NmbakBackupService:
         app_version: str | None = None,
         is_run_active: Callable[[], bool] | None = None,
         data_root: Path | None = None,
+        database_id_reader: Callable[[], str | None] | None = None,
     ) -> None:
         self._conn = conn
         self._backup_root = Path(backup_root)
@@ -178,6 +179,9 @@ class NmbakBackupService:
         # ``<data_root>/backups`` is the default layout, so the parent of the
         # backup root is the data root unless the caller says otherwise.
         self._data_root = Path(data_root) if data_root else self._backup_root.parent
+        # FEA-13-ID-3: the library identity is read lazily, never cached here --
+        # a pre-migration backup honestly reports unknown before the back-fill.
+        self._database_id_reader = database_id_reader
 
     # ------------------------------------------------------------------
     # queries
@@ -207,6 +211,7 @@ class NmbakBackupService:
                     "size_bytes": path.stat().st_size,
                     "schema_version": int(manifest.get("schema_version") or 0),
                     "verified": bool(manifest.get("verified")),
+                    "database_id": manifest.get("database_id"),
                 }
             )
         return entries
@@ -258,9 +263,9 @@ class NmbakBackupService:
             manifest = {
                 "format": FORMAT_NAME_V2,
                 "version": FORMAT_VERSION_V2,
-                # FEA-13-ID-3 fills the real identity once the primitive lands;
-                # until then every v2 package truthfully reports "unknown".
-                "database_id": None,
+                # FEA-13-ID-3: the package names the library it belongs to;
+                # ``None`` means the identity was still unknown at create time.
+                "database_id": self._current_database_id(),
                 "app_version": self._app_version,
                 "schema_version": schema_version,
                 "created_at": created_at,
@@ -348,6 +353,18 @@ class NmbakBackupService:
                 "BACKUP_RESTORE_BUSY", "a pipeline run is active; restore refused"
             )
         manifest = self._verify_package(target)
+        package_database_id = manifest.get("database_id")
+        current_database_id = self._current_database_id()
+        if (
+            package_database_id
+            and current_database_id
+            and str(package_database_id) != str(current_database_id)
+        ):
+            raise NmbakBackupError(
+                "BACKUP_DATABASE_MISMATCH",
+                "backup belongs to a different database: "
+                f"{package_database_id} != {current_database_id}",
+            )
         pre_restore = self.create(
             "pre_restore", f"automatic before restore of {backup_id}"
         )
@@ -690,6 +707,18 @@ class NmbakBackupService:
                 }
             )
         return written
+
+    def _current_database_id(self) -> str | None:
+        reader = self._database_id_reader
+        if reader is None:
+            return None
+        try:
+            value = reader()
+        except Exception:  # pragma: no cover - identity read must never fail a backup
+            return None
+        if isinstance(value, str) and value.strip():
+            return value.strip()
+        return None
 
     def _present_categories(self) -> list[str]:
         """Every category root that exists in the data root (0 files allowed)."""

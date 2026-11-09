@@ -447,6 +447,7 @@ _BACKUP_ERROR_RULES: dict[str, tuple[str, bool]] = {
     "BACKUP_NOT_FOUND": ("not_found", False),
     "BACKUP_CORRUPT": ("validation", False),
     "BACKUP_FORMAT_UNSUPPORTED": ("validation", False),
+    "BACKUP_DATABASE_MISMATCH": ("conflict", False),
     "BACKUP_RESTORE_BUSY": ("conflict", True),
     "BACKUP_RESTORE_INCOMPLETE": ("conflict", False),
     "BACKUP_RESTORE_REQUIRES_CONFIRMATION": ("validation", False),

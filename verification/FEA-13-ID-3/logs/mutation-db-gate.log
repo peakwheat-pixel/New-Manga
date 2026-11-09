@@ -1,0 +1,37 @@
+# command: python -m pytest tests/storage/test_nmbak_identity.py -q  # after mutation: cross-database gate disabled (expected RED)
+# shell: pwsh 7.6.8 / python 3.14
+# time: 2026-11-09T21:27:40.0252449+08:00
+# batch: fea-13-id-3
+# EXIT=1
+....F.                                                                   [100%]
+================================== FAILURES ===================================
+____________ test_restore_rejects_a_package_from_another_database _____________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-1846/test_restore_rejects_a_package0')
+
+    def test_restore_rejects_a_package_from_another_database(tmp_path):
+        # Database A produces a package.
+        conn_a, data_root_a, managed_a = _open(tmp_path / "a")
+        identity_a = ensure_database_id(conn_a)
+        service_a = _service(conn_a, data_root_a, managed_a, reader=lambda: read_database_id(conn_a))
+        created = service_a.create("manual", "database A")
+    
+        # Database B has its own identity.
+        conn_b, data_root_b, managed_b = _open(tmp_path / "b")
+        identity_b = ensure_database_id(conn_b)
+        assert identity_b != identity_a
+        package_a = data_root_a / "backups" / f"{created['backup_id']}.nmbak"
+        target = data_root_b / "backups" / package_a.name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_bytes(package_a.read_bytes())
+        package_bytes = hashlib.sha256(target.read_bytes()).hexdigest()
+        service_b = _service(conn_b, data_root_b, managed_b, reader=lambda: read_database_id(conn_b))
+    
+>       with pytest.raises(NmbakBackupError) as caught:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE NmbakBackupError
+
+tests\storage\test_nmbak_identity.py:147: Failed
+=========================== short test summary info ===========================
+FAILED tests/storage/test_nmbak_identity.py::test_restore_rejects_a_package_from_another_database
+1 failed, 5 passed in 0.69s

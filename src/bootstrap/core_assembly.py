@@ -133,6 +133,7 @@ from application.importing.referenced.pdf_probe import PdfiumSourceInspector
 from application.importing.referenced.planner import ReferencedImportPlanner
 from application.importing.referenced.runtime import ReferencedImportRuntime
 from infrastructure.sqlite.regions import SqliteRegionRepository
+from infrastructure.sqlite.identity import ensure_database_id, read_database_id
 from infrastructure.sqlite.nmbak import NmbakBackupService
 from infrastructure.plugins.sandbox import AppContainerSandbox
 from infrastructure.plugins.service import PluginService
@@ -1196,6 +1197,11 @@ def assemble_core_services(
         # pending DDL. That is intentional (schema bootstrap must not be skipped)
         # but was invisible, so the log now states the seam explicitly: schema
         # creation/upgrade is the only write such a session performs.
+        # FEA-13-ID-3 (C-01b SC-18): the library identity is created on the
+        # first writable boot; a legacy library is back-filled here, after the
+        # schema is at its target version (the pre-migration hook therefore
+        # honestly reports the identity as unknown).
+        database_id = ensure_database_id(conn)
         if applied:
             print(
                 "[core.schema] applied "
@@ -1927,6 +1933,8 @@ def assemble_core_services(
                 # FEA-13-COV-2: settings/drafts/plugins coverage needs the root,
                 # not just <data_root>/backups (the default parent inference).
                 data_root=data_root,
+                # FEA-13-ID-3: manifest/list identity (lazy read, never cached).
+                database_id_reader=lambda: read_database_id(conn),
             ),
             # PLUGIN-RUNTIME-1 (D4): the plugin root is
             # ``<data_root>/plugins`` -- the app-data plugin directory the

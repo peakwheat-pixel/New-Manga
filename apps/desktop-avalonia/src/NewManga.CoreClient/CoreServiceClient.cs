@@ -37,7 +37,11 @@ public sealed record BackupPackageInfo(
     string CreatedAt,
     long SizeBytes,
     int SchemaVersion,
-    bool Verified);
+    bool Verified,
+    // FEA-13-ID-3 (C-01b SC-18): the library identity the package belongs to.
+    // Null means "unknown" (a legacy package created before the primitive);
+    // it must never be read as a mismatch.
+    string? DatabaseId = null);
 
 /// <summary>
 /// REALUSE-DATA-SAFETY-4 AC1: one removable cache target from <c>cleanup.preview</c>. Only a
@@ -1626,7 +1630,8 @@ public sealed class CoreServiceClient : IAsyncDisposable
             element.TryGetProperty("schema_version", out var schema) && schema.ValueKind == JsonValueKind.Number
                 ? schema.GetInt32()
                 : 0,
-            ReadBool(element, "verified"));
+            ReadBool(element, "verified"),
+            ReadString(element, "database_id"));
     }
 
     private static BookSummary ParseBook(JsonElement element)
