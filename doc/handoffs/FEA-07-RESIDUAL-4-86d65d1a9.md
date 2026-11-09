@@ -32,7 +32,7 @@ L-R4b-1 / D-R4b-7 已修复：默认 `NewManga.App.Tests` 中 16 处 legacy `Mai
 | AC-R4-2 | harness `-Capture` → 全量 `App.Tests` → `-Verify`（静默树） | 同上 | **836 passed / 2 failed（既有）/ 11 skipped / 849**；**delta=0**（14544 → 14544） | `evidence/appdata-before.json`、`logs/appdata-isolation.log`、`logs/full-solution.log` |
 | AC-R4-3 | `-SelfTest` | 同上 | 追加 1 行 → 检出 `delta=1` / EXIT 1；无变化 → EXIT 0 | `logs/appdata-isolation-selftest.log` |
 | AC-R4-4 | `LegacyMainWindow_Show_WritesMaterialLogOnlyUnderIsolatedLogDir` | 同上 | 隔离目录 ≥1 行；真实 AppData 不变；cwd 无 `com.newmanga.desktop` | 测试通过日志见 full-solution.log |
-| AC-R4-5 | `dotnet build sln`；全量 `NewManga.sln --no-build`；`check.ps1`；`verify_pins` | 同上 | build 0/0；sln **1799 passed / 2 failed（既有）/ 107 skipped**；check PASS；pins 18/18 | `logs/build.log`、`logs/full-solution.log`、`logs/governance.log` |
+| AC-R4-5 | `dotnet build sln`；全量 `NewManga.sln --no-build`；`check.ps1`；`verify_pins` | 同上 | build 0/0；sln **1799 passed / 2 failed（既有）/ 107 skipped**（base 1796/2/107）；check PASS；pins 18/18 | `logs/build.log`、`logs/full-solution.log`、`logs/governance.log` |
 | AC-R4-6 | 卡 + `DEFECTS.md` + EV 表 + 本 Handoff | 同上 | 已登记 | 卡、`DEFECTS.md` |
 | E3 定向 | 6 文件 + 新测试 `--filter` | 同上 | **46 passed / 0 failed** | 本次运行输出 |
 | E8 pytest | L-R4b-5 单 node 隔离复跑（仅登记，不跑全量） | 同上 | `1 passed in 0.12s` | `DEFECTS.md` |
@@ -44,7 +44,7 @@ L-R4b-1 / D-R4b-7 已修复：默认 `NewManga.App.Tests` 中 16 处 legacy `Mai
 - `V2ConformanceTests.AppCSharp_OutsideShellLayout_HasNoRawDesignValues`（`Shell/V2/ImmersiveReaderWindow.cs` literal brush/color）
 - `FluentPageTests.FluentShell_BreakpointsA11yShortcutsAndReducedMotion_AreExplicit`（Expected 17 / Actual 18）
 
-两者在 base `a49311cbe` 上 `git stash` 全部改动后同样失败，改动前后计数完全相同（836/2/11/849）。建议另立回归修复卡；本卡 AC-R4-5 以「不新增失败」为准。
+两者在 base `a49311cbe` 上同样失败（输入未变：相关产品/测试文件零 diff、`5108c6640` 是 base 祖先、HEAD 复现同消息）。base 计数（去掉本卡新增 3 测试）为 **833/2/11/846**（全量 sln 1796/2/107），交付 **836/2/11/849**（1799/2/107）。建议另立回归修复卡；本卡 AC-R4-5 以「不新增失败」为准。
 
 ## 接收方式
 

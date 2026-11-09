@@ -48,33 +48,33 @@ out_of_scope:
 
 ## 实现记录（delivery `86d65d1a9`）
 
-- 6 个既有测试文件的 **11 处** `new AppOptions()` → `LegacyUiTestOptions.Isolated()`（唯一临时根：`%TEMP%\nm-legacy-ui-<guid>` + `--data-root` + `--log-dir`；进程退出清理）。
-- 新增 `LegacyWindowIsolationTests.cs`：`AllDefaultSuiteLegacyWindowShows_AreExplicitlyIsolated`（源扫描守卫，出现「默认 AppOptions + MainWindow」即 RED）、`IsolatedOptions_PointAtTemporaryDirectoriesOnly`、`LegacyMainWindow_Show_WritesMaterialLogOnlyUnderIsolatedLogDir`（隔离目录 ≥1 行、真实 AppData 只读不变、cwd 无标记）。
+- 6 个既有测试文件的 **11 处** `new AppOptions()` → `LegacyUiTestOptions.Isolated()`（唯一临时根：`%TEMP%\nm-legacy-ui-<guid>` + `--data-root` + `--log-dir` + `--theme-home`；进程退出清理）。
+- 新增 `LegacyWindowIsolationTests.cs`：`AllDefaultSuiteLegacyWindowShows_AreExplicitlyIsolated`（源扫描守卫：剥离注释后检查 6 个已知文件的默认构造；全仓守卫为 follow-up）、`IsolatedOptions_PointAtTemporaryDirectoriesOnly`、`LegacyMainWindow_Show_WritesMaterialLogOnlyUnderIsolatedLogDir`（隔离目录 ≥1 行、真实 AppData 只读不变、cwd 无标记）。
 - 新增 `verification/FEA-07-RESIDUAL-4/tools/appdata-isolation-check.ps1`：两棵 AppData 树快照（文件集/长度/材质行数/startup.log 存在性）+ `-Verify`（delta≠0 或采集失败 → EXIT 1）+ `-SelfTest`（追加 1 行必须检出）。
-- 结果：全量 `App.Tests` **836 passed / 2 failed（既有）/ 11 skipped / 849**，真实 AppData **delta=0**（14544 → 14544）；全量 `sln` **1799 passed / 2 failed / 107 skipped**。详见 `verification/FEA-07-RESIDUAL-4/`。
+- 结果：交付全量 `App.Tests` **836 passed / 2 failed（既有）/ 11 skipped / 849**（base 833/2/11/846），真实 AppData **delta=0**（14544 → 14544）；全量 `sln` **1799 passed / 2 failed / 107 skipped**（base 1796/2/107）。详见 `verification/FEA-07-RESIDUAL-4/`。
 
 ## Acceptance Criteria
 
-- [x] **AC-R4-1（站点完整）**：默认套件所有真实 `MainWindow.Show()` 站点（16 处 / 6 文件）使用显式隔离 `--log-dir`；新增源扫描守卫，出现默认 `AppOptions` + `Show()` 即 RED。 <<MET>>
+- [x] **AC-R4-1（站点完整）**：默认套件已知 16 处 / 6 文件 legacy `MainWindow.Show()` 站点全部使用显式隔离 `--log-dir`；新增源扫描守卫覆盖这 6 个文件（剥离注释后匹配）；全仓构造守卫登记为 follow-up `R-LEGACY-GUARD`。 <<MET>>
 - [x] **AC-R4-2（真实 AppData 零写入，强断言）**：默认 `NewManga.App.Tests` 整轮前后两棵 AppData 树（相对路径集合、字节长度、`window-material.log` 行数、`startup.log` 存在性）delta=0；harness delta≠0 → exit 1，采集失败 fail closed。 <<MET>>
-- [x] **AC-R4-3（harness 自检可判别）**：隔离副本追加 1 行 → `delta=1`/exit 1；无变化 → exit 0；全程不碰真实 AppData。 <<MET>>
+- [x] **AC-R4-3（harness 自检可判别）**：以**子进程**对隔离根验证：追加 1 行 → `-Verify` 真实 EXIT 1；以新基线比较 → EXIT 0；全程不碰真实 AppData。 <<MET>>
 - [x] **AC-R4-4（产品契约仍成立）**：真实 `MainWindow` + `--log-dir=<temp>` + `Show()` → `<temp>/window-material.log` ≥1 行；真实 `%APPDATA%` 行数不变；cwd 无 `com.newmanga.desktop`；未用「去掉 `--log-dir`」做变异。 <<MET>>
-- [x] **AC-R4-5（回归/门禁）**：diff ⊆ `allowed_paths`；`out_of_scope` 零 diff；build 0/0；`NewManga.App.Tests` **不新增失败**（改动前后同 836/2/11/849，2 个既有失败见 DEFECTS）；全量 `sln` 不新增失败（1799/2/107；基线 1794/0/107 为 R4b 时点，其后 V2-F11 引入同一 2 个既有失败并已登记）；`check.ps1`（默认 + `-TaskPath`）PASS；pins 18/18；`git status` 仅预期文件。 <<MET>>
+- [x] **AC-R4-5（回归/门禁）**：diff ⊆ `allowed_paths`；`out_of_scope` 零 diff；build 0/0；`NewManga.App.Tests` **不新增失败**（base 833/2/11/846 → 交付 836/2/11/849，新增 3 测试通过、失败/跳过数不变；2 个既有失败见 DEFECTS）；全量 `sln` base 1796/2/107 → 交付 1799/2/107；`check.ps1`（默认 + `-TaskPath`）PASS；pins 18/18；`git status` 仅预期文件。 <<MET>>
 - [x] **AC-R4-6（residual 处置/证据）**：卡与 DEFECTS 明确 D-R4b-7 resolved；L-R4b-2 `SPLIT`、L-R4b-3 `SPLIT/DEFER`、L-R4b-4 `DEFER`、L-R4b-5 `已登记`、L-R4a-3 `DROP`；EV 表 + Resource Manifest + Handoff 齐全；Owner 不翻 `status`（由 DSH 收口）。 <<MET>>
 
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-R4-README | AC1–AC6 | `verification/FEA-07-RESIDUAL-4/README.md` | `86d65d1a9` | `21108f93c9455ed9f7373d18a12a1662e436c62ffbbe8e992d4040b57f34a9cb` | CANONICAL |
-| EV-R4-DEFECTS | AC1–AC6 | `verification/FEA-07-RESIDUAL-4/DEFECTS.md` | `86d65d1a9` | `1b78707f5368b466df9bae91cccd901f132d375b2d1e12d1ed24dd9bf78ace8c` | CANONICAL |
-| EV-R4-SNAPSHOT | AC2 | `verification/FEA-07-RESIDUAL-4/evidence/appdata-before.json` | `86d65d1a9` | `00436c80a58d0ad6cca83a6097ee85d04b9cf099d66e5d617530dddf534944c2` | CANONICAL |
-| EV-R4-ZEROWRITE | AC2 | `verification/FEA-07-RESIDUAL-4/logs/appdata-isolation.log` | `86d65d1a9` | `bf089e3eb60ecc1efd5b1913f3ba806508a34235e57e0d815f8e7111f5990127` | CANONICAL |
-| EV-R4-SELFTEST | AC3 | `verification/FEA-07-RESIDUAL-4/logs/appdata-isolation-selftest.log` | `86d65d1a9` | `584f976cc7fa48d9dbdc54de3acb9c66a25ed63295006715dcbef6c4c7d56f80` | CANONICAL |
-| EV-R4-BUILD | AC5 | `verification/FEA-07-RESIDUAL-4/logs/build.log` | `86d65d1a9` | `41c2453b767d0c10746adf33955c6b7af153a8fd6e77922bcd158871e554dad8` | CANONICAL |
-| EV-R4-APPTESTS | AC2,AC5 | `verification/FEA-07-RESIDUAL-4/logs/full-solution.log` | `86d65d1a9` | `8b999e104b0dc3e571658c9b2c48f0ce6f4d4205fbed13d737fe5abc47301501` | CANONICAL |
-| EV-R4-GOV | AC5 | `verification/FEA-07-RESIDUAL-4/logs/governance.log` | `86d65d1a9` | `39c6523c926e5bce49dec3d242e1358ac4d498a5bbbfb68cf26add54c8a94ea1` | CANONICAL |
-| EV-R4-HARNESS | AC2,AC3 | `verification/FEA-07-RESIDUAL-4/tools/appdata-isolation-check.ps1` | `86d65d1a9` | `da2a12f58ec6458c8aa799d10bfede8358d9ffcc4623677489dd760dbb43c9a9` | CANONICAL |
+| EV-R4-README | AC1–AC6 | `verification/FEA-07-RESIDUAL-4/README.md` | `86d65d1a9` | `a1b8bfc58004da49aaaccbdab890065cd38d91d83ad06f93d596066eed9c6314` | CANONICAL |
+| EV-R4-DEFECTS | AC1–AC6 | `verification/FEA-07-RESIDUAL-4/DEFECTS.md` | `86d65d1a9` | `ce788bd5f2f50653eb0f435d8f339dc01ab0b6e40edbca5c515340d25941d58f` | CANONICAL |
+| EV-R4-SNAPSHOT | AC2 | `verification/FEA-07-RESIDUAL-4/evidence/appdata-before.json` | `86d65d1a9` | `307d92f92f8521b2aa31ef8088d01e30374d92fa51990ec39fc4389df7136072` | CANONICAL |
+| EV-R4-ZEROWRITE | AC2 | `verification/FEA-07-RESIDUAL-4/logs/appdata-isolation.log` | `86d65d1a9` | `7c2acb1b76bd9a3ee3a0de6b692a7d85dc895d06591505251e17e607cae920f4` | CANONICAL |
+| EV-R4-SELFTEST | AC3 | `verification/FEA-07-RESIDUAL-4/logs/appdata-isolation-selftest.log` | `86d65d1a9` | `a53c6d054de6aa8f25c35441a1088e01b915d647d8ae16c6097bbb1b8eb7e6c1` | CANONICAL |
+| EV-R4-BUILD | AC5 | `verification/FEA-07-RESIDUAL-4/logs/build.log` | `86d65d1a9` | `0ed88800078379243372886e43a3dc84e4f5a6fcd5dfe401dc4532f6de018e70` | CANONICAL |
+| EV-R4-APPTESTS | AC2,AC5 | `verification/FEA-07-RESIDUAL-4/logs/full-solution.log` | `86d65d1a9` | `05b3dc8edca15a4f5bdb90b5fa31aa7d46a3f332d725fe23e0124cb80902a9ac` | CANONICAL |
+| EV-R4-GOV | AC5 | `verification/FEA-07-RESIDUAL-4/logs/governance.log` | `86d65d1a9` | `7a5e93123406047778c4f909e269db9ba8d7b469bdbd73668ba388abb589a1eb` | CANONICAL |
+| EV-R4-HARNESS | AC2,AC3 | `verification/FEA-07-RESIDUAL-4/tools/appdata-isolation-check.ps1` | `86d65d1a9` | `e1e73f1137b34e74035953ab562974e02a4918ed4df18391f4ce2ade63c955e5` | CANONICAL |
 
 ## 证据计划（原始计划，已执行）
 
@@ -115,6 +115,7 @@ E4/E5 在静默树执行（运行期间不写 `verification/**`）；证据在�
 | L-R4b-4 | DEFER | 运行纪律规避 + 测试卫生另案 |
 | L-R4b-5 | 登记 | `DEFECTS.md`（完整 node id/错误/隔离复跑） |
 | L-R4a-3 | DROP | 产品性能卡/维持只记录 |
+| R-LEGACY-GUARD（全仓构造守卫） | follow-up | 另立回归保护卡：扫描全仓 `new MainWindow(` 并要求 options 显式隔离（本卡守卫仅覆盖 6 个已知文件） |
 
 ## Resource Manifest
 

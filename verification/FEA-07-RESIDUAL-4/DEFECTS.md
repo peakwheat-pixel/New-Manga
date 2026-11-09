@@ -1,30 +1,35 @@
 # FEA-07-RESIDUAL-4 缺陷与残余登记
 
 - Task：`FEA-07-RESIDUAL-4`（L-R4b-1-only；scope review r1 缩窄）
-- Base：`a49311cbe`（冻结申请 `77a7459ab`；冻结提交 `5ca20036c`）
+- Base：`77a7459ab`（冻结申请；冻结提交 `5ca20036c`）
 - 日期：2026-11-09
 
 ## D-R4b-7（本卡修复目标）— **resolved**
 
 - **现象（修复前）**：默认 `NewManga.App.Tests` 中 16 处 legacy `MainWindow.Show()` 使用默认 `AppOptions`（无 `--log-dir`），`MainWindow.ResolveDiagnosticsRoot` 回退真实 `%APPDATA%\com.newmanga.desktop\logs`，每轮稳定追加约 16 行 `window-material.log`（`FEA-07-RESIDUAL-3` 实测 `14340 → 14356`）。
 - **关键纠正**：仅补 `--data-root` 不能隔离该文件；诊断根只读 `LogDirectory`（`AppOptions.cs:343-348`）。
-- **修复**：6 个既有测试文件的 11 处构造改为 `LegacyUiTestOptions.Isolated()`（唯一临时根 + `--data-root` + `--log-dir`）；新增 `LegacyWindowIsolationTests.cs`（源扫描守卫 + helper 目录断言 + 真实 `Show()` 隔离判别）。
+- **修复**：6 个既有测试文件的 11 处构造改为 `LegacyUiTestOptions.Isolated()`（唯一临时根 + `--data-root` + `--log-dir` + `--theme-home`）；新增 `LegacyWindowIsolationTests.cs`（剥离注释的源扫描守卫 + helper 目录断言 + 真实 `Show()` 隔离判别）。
 - **判别证据**：
-  - 改动后全量 `NewManga.App.Tests`：**836 passed / 2 failed（既有）/ 11 skipped / 849 total**；真实 `%APPDATA%` 两棵树 `delta=0`（`window-material.log` 14544 → 14544；`startup.log` 不存在）。
-  - harness 自检：向隔离副本追加 1 行 → 检出 `delta=1` 且 exit 1；无变化 → exit 0（非空断言）。
-  - 证据：`evidence/appdata-before.json`、`logs/appdata-isolation.log`、`logs/appdata-isolation-selftest.log`、`logs/app-tests-full.log`。
+  - 交付全量 `NewManga.App.Tests`：**836 passed / 2 failed（既有）/ 11 skipped / 849**；真实 `%APPDATA%` 两棵树 `delta=0`（`window-material.log` 14544 → 14544；`startup.log` 不存在）。
+  - base（去掉本卡新增的 3 个测试）：**833 passed / 2 failed / 11 skipped / 846**（全量 sln **1796/2/107** → 交付 **1799/2/107**）。
+  - harness 自检：子进程对「追加 1 行」的隔离根返回真实 **EXIT 1**；对新基线返回 **EXIT 0**。
+  - 证据：`evidence/appdata-before.json`、`logs/appdata-isolation.log`、`logs/appdata-isolation-selftest.log`、`logs/full-solution.log`。
 
 ## 既有失败（base 对照，**非本卡引入**）
 
-在 base `a49311cbe` 上 `git stash` 全部改动后复跑，两个用例同样失败：
-
-| 用例 | 失败 | 证据 |
+| 用例 | 失败 | 依据 |
 |---|---|---|
-| `V2ConformanceTests.AppCSharp_OutsideShellLayout_HasNoRawDesignValues` | `Shell/V2/ImmersiveReaderWindow.cs` 存在 literal brush/color 设计值 | base 与改动后均失败；`V2ConformanceTests.cs:185` |
-| `FluentPageTests.FluentShell_BreakpointsA11yShortcutsAndReducedMotion_AreExplicit` | `Expected: 17 / Actual: 18` | base 与改动后均失败 |
+| `V2ConformanceTests.AppCSharp_OutsideShellLayout_HasNoRawDesignValues` | `Shell/V2/ImmersiveReaderWindow.cs` 存在 literal brush/color（`ImmersiveReaderWindow.cs:23`） | `git diff a49311cbe..HEAD` 对 `V2ConformanceTests.cs`、`ImmersiveReaderWindow.cs` 为空；`5108c6640` 是 base 祖先；HEAD 复现同消息 |
+| `FluentPageTests.FluentShell_BreakpointsA11yShortcutsAndReducedMotion_AreExplicit` | `Expected: 17 / Actual: 18`（`FluentPageTests.cs:132`） | 同上（`FluentShell.axaml.cs`/`FluentShellSurface.axaml.cs` 零 diff） |
 
 - **处置**：本卡为纯测试隔离，不修上述产品/测试断言（App 源码与 `FluentPageTests` 不在本卡 `allowed_paths`）。**建议另立回归修复卡**（`FEA-07-V2-F11-1` 之后的既有回归债务）。
-- **本卡 AC-R4-5 口径**：以「**不新增失败**」为准——改动前后同为 2 failed / 836 passed / 11 skipped / 849（新增 3 个测试通过）。
+- **本卡 AC-R4-5 口径**：以「**不新增失败**」为准——base 833/2/11/846 → 交付 836/2/11/849（新增 3 个测试通过，失败数与跳过数不变）。
+
+## R-LEGACY-GUARD（回归保护 follow-up，本卡不做）
+
+- **现状**：本卡守卫只覆盖被实测的 6 个 legacy-show 文件；全仓仍存在 15 处「构造 `MainWindow` 但从不 `Show()`」的默认 `AppOptions` 用法（`ReaderChapterSelectorTests.cs`、`ReaderLibraryTests.cs`、`ReaderProgressTests.cs` 等），以及 `AppOptions.Parse(Array.Empty<string>())` / `AppOptionsStore.Current` 等别名形态。
+- **风险**：未来在这些文件加 `Show()` 或新增测试文件使用默认构造，会绕过本卡守卫。
+- **处置**：登记为 follow-up（repo-wide construction guard：扫描全仓 `new MainWindow(` 并要求 options 实参显式隔离）；不在本卡 `allowed_paths` 内（需改本卡外文件）。
 
 ## L-R4b-5（pytest 未登记 flake）— 已登记，**零代码**
 

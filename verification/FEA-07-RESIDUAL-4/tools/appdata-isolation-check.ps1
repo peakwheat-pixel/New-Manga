@@ -13,11 +13,12 @@
   Modes (exactly one):
     -Capture <json>   write a baseline snapshot
     -Verify  <json>   capture now, compare with baseline; any delta -> EXIT 1 (fail closed)
-    -SelfTest         prove the comparator is not a no-op: append one line to an isolated temp copy
-                      must report a delta and EXIT 1; a clean compare must EXIT 0. Never touches the
-                      real %APPDATA%.
+    -SelfTest         prove the comparator is not a no-op and that the delta path really exits 1:
+                      run -Verify in a child process against an isolated temp root, once after
+                      appending one line (must EXIT 1) and once unchanged (must EXIT 0).
+                      Never touches the real %APPDATA%.
 
-  -RootOverride <dir> is for the self-test only (expects <dir>\com.newmanga.desktop and <dir>\NewManga).
+  -RootOverride <dir> redirects both trees (self-test / isolated verification only).
 #>
 [CmdletBinding(DefaultParameterSetName = 'Capture')]
 param(
@@ -37,6 +38,23 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $script:exitCode = 0
+
+function Write-Log {
+    param([string]$Text)
+    if ($LogPath) {
+        $dir = Split-Path -Parent $LogPath
+        if ($dir -and -not (Test-Path -LiteralPath $dir)) { New-Item -ItemType Directory -Force -Path $dir | Out-Null }
+        Add-Content -LiteralPath $LogPath -Value $Text -Encoding utf8
+    }
+    Write-Host $Text
+}
+
+function Write-Header {
+    param([string]$Mode)
+    Write-Log "# appdata-isolation-check mode=$Mode time=$((Get-Date).ToString('o'))"
+    Write-Log "# shell=$($PSVersionTable.PSVersion) / $($PSVersionTable.PSEdition) rootOverride=$RootOverride"
+    Write-Log "# script=$PSCommandPath"
+}
 
 function Get-DataRoots {
     param([string]$OverrideRoot)
@@ -79,6 +97,22 @@ function Get-Snapshot {
     return $snap
 }
 
+function ConvertTo-Hashtable {
+    param($Node)
+    if ($null -eq $Node) { return $null }
+    if ($Node -is [System.Collections.IDictionary]) {
+        $table = @{}
+        foreach ($key in $Node.Keys) { $table[$key] = ConvertTo-Hashtable $Node[$key] }
+        return $table
+    }
+    if ($Node -is [System.Management.Automation.PSCustomObject]) {
+        $table = @{}
+        foreach ($property in $Node.PSObject.Properties) { $table[$property.Name] = ConvertTo-Hashtable $property.Value }
+        return $table
+    }
+    return $Node
+}
+
 function Compare-Snapshots {
     param($Before, $After)
     $diffs = [System.Collections.Generic.List[string]]::new()
@@ -114,44 +148,56 @@ function Compare-Snapshots {
     return $diffs
 }
 
-function Write-Log {
-    param([string]$Text)
-    if ($LogPath) {
-        $dir = Split-Path -Parent $LogPath
-        if ($dir -and -not (Test-Path -LiteralPath $dir)) { New-Item -ItemType Directory -Force -Path $dir | Out-Null }
-        Add-Content -LiteralPath $LogPath -Value $Text -Encoding utf8
+function Start-VerifyChild {
+    param([string]$Snapshot, [string]$Root)
+    $childLog = Join-Path $Root ('child-' + [guid]::NewGuid().ToString('N') + '.log')
+    $pwshPath = (Get-Process -Id $PID).Path
+    $arguments = @('-NoProfile', '-File', "`"$PSCommandPath`"", '-Verify', "`"$Snapshot`"", '-RootOverride', "`"$Root`"", '-LogPath', "`"$childLog`"")
+    $process = Start-Process -FilePath $pwshPath -ArgumentList $arguments -Wait -PassThru -NoNewWindow
+    if (Test-Path -LiteralPath $childLog) {
+        Get-Content -LiteralPath $childLog | ForEach-Object { Write-Log "  [child] $_" }
     }
-    Write-Host $Text
+    return $process.ExitCode
 }
 
 try {
     switch ($PSCmdlet.ParameterSetName) {
         'Capture' {
-            $snap = Get-Snapshot
+            Write-Header -Mode 'Capture'
+            $snap = Get-Snapshot -SnapshotRootOverride $RootOverride
             $dir = Split-Path -Parent $Capture
             if ($dir -and -not (Test-Path -LiteralPath $dir)) { New-Item -ItemType Directory -Force -Path $dir | Out-Null }
             $snap | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $Capture -Encoding utf8
             Write-Log "SNAPSHOT OK -> $Capture"
+            Write-Log "EXIT=0"
         }
         'Verify' {
+            Write-Header -Mode 'Verify'
             if (-not (Test-Path -LiteralPath $Verify -PathType Leaf)) {
                 Write-Log "FAIL: baseline snapshot missing: $Verify"
+                Write-Log "EXIT=1"
                 $script:exitCode = 1
                 break
             }
-            $before = Get-Content -LiteralPath $Verify -Raw | ConvertFrom-Json
-            $after = Get-Snapshot
+            $before = ConvertTo-Hashtable (Get-Content -LiteralPath $Verify -Raw | ConvertFrom-Json)
+            $after = Get-Snapshot -SnapshotRootOverride $RootOverride
+            $beforeLines = $before.roots.'com.newmanga.desktop'.windowMaterialLines
+            $afterLines = $after.roots.'com.newmanga.desktop'.windowMaterialLines
+            Write-Log "before: $beforeLines window-material lines; after: $afterLines window-material lines"
             $diffs = Compare-Snapshots -Before $before -After $after
             if ($diffs.Count -gt 0) {
                 Write-Log "DELTA DETECTED ($($diffs.Count) item(s)) — real AppData was written:"
                 foreach ($diff in $diffs) { Write-Log "  - $diff" }
+                Write-Log "EXIT=1"
                 $script:exitCode = 1
             }
             else {
                 Write-Log "ZERO-WRITE OK: com.newmanga.desktop + NewManga unchanged (delta=0)"
+                Write-Log "EXIT=0"
             }
         }
         'SelfTest' {
+            Write-Header -Mode 'SelfTest'
             $tempRoot = Join-Path ([System.IO.Path]::GetTempPath()) ('nm-r4-selftest-' + [guid]::NewGuid().ToString('N'))
             $legacyLogs = Join-Path $tempRoot 'com.newmanga.desktop\logs'
             New-Item -ItemType Directory -Force -Path $legacyLogs | Out-Null
@@ -161,24 +207,30 @@ try {
             try {
                 $before = Get-Snapshot -SnapshotRootOverride $tempRoot
                 $before | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $snapshotPath -Encoding utf8
+
                 Add-Content -LiteralPath $materialLog -Value 'line-4' -Encoding utf8
-                $after = Get-Snapshot -SnapshotRootOverride $tempRoot
-                $diffs = Compare-Snapshots -Before $before -After $after
-                $detected = ($diffs | Where-Object { $_ -match 'window-material\.log lines: 3 -> 4' }).Count -gt 0
-                if (-not $detected) {
-                    Write-Log "SELFTEST FAIL: appended line was not detected (would be a silent pass)"
+                $childDirty = Start-VerifyChild -Snapshot $snapshotPath -Root $tempRoot
+                if ($childDirty -ne 1) {
+                    Write-Log "SELFTEST FAIL: changed root must make -Verify exit 1, got EXIT=$childDirty"
+                    Write-Log "EXIT=1"
                     $script:exitCode = 1
                     break
                 }
-                Write-Log "SELFTEST KILL: appended line detected as delta -> EXIT 1 by design"
-                $clean = Get-Snapshot -SnapshotRootOverride $tempRoot
-                $cleanDiffs = Compare-Snapshots -Before $after -After $clean
-                if ($cleanDiffs.Count -ne 0) {
-                    Write-Log "SELFTEST FAIL: clean compare reported $($cleanDiffs.Count) difference(s)"
+                Write-Log "SELFTEST KILL: appended line detected by child -Verify -> EXIT 1 (real exit code)"
+
+                # Re-baseline after the append, then prove an unchanged root exits 0 against its own baseline.
+                $afterDirty = Get-Snapshot -SnapshotRootOverride $tempRoot
+                $dirtySnapshotPath = Join-Path $tempRoot 'after-dirty.json'
+                $afterDirty | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $dirtySnapshotPath -Encoding utf8
+                $childClean = Start-VerifyChild -Snapshot $dirtySnapshotPath -Root $tempRoot
+                if ($childClean -ne 0) {
+                    Write-Log "SELFTEST FAIL: unchanged root must make -Verify exit 0, got EXIT=$childClean"
+                    Write-Log "EXIT=1"
                     $script:exitCode = 1
                     break
                 }
-                Write-Log "SELFTEST OK: no-change compare delta=0 -> EXIT 0"
+                Write-Log "SELFTEST OK: unchanged root -> child -Verify EXIT 0"
+                Write-Log "EXIT=0"
             }
             finally {
                 if (Test-Path -LiteralPath $tempRoot) { Remove-Item -LiteralPath $tempRoot -Recurse -Force }
@@ -188,6 +240,7 @@ try {
 }
 catch {
     Write-Log "FAIL: $($_.Exception.Message)"
+    Write-Log "EXIT=1"
     $script:exitCode = 1
 }
 

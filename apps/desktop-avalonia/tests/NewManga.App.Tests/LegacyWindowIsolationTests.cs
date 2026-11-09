@@ -1,3 +1,4 @@
+using System.Text;
 using System.Text.RegularExpressions;
 using Avalonia.Headless.XUnit;
 using Avalonia.Threading;
@@ -12,9 +13,16 @@ namespace NewManga.App.Tests;
 ///
 /// <para>
 /// Legacy <see cref="MainWindow"/> resolves its diagnostics root from <c>AppOptions.LogDirectory</c>
-/// only; <c>--data-root</c> alone does NOT isolate that file. Every test that calls
-/// <see cref="MainWindow.Show"/> in the default suite must therefore pass an explicit isolated
-/// <c>--log-dir</c> (see <see cref="LegacyUiTestOptions.Isolated"/>).
+/// only; <c>--data-root</c> alone does NOT isolate that file. Every test in the six known
+/// legacy-show files must pass an explicit isolated <c>--log-dir</c> (see
+/// <see cref="LegacyUiTestOptions.Isolated"/>).
+/// </para>
+///
+/// <para>
+/// Scope note: this guard covers the six files measured to call <see cref="MainWindow.Show"/> in the
+/// default suite (see <c>verification/FEA-07-RESIDUAL-4/</c>). A repo-wide construction guard is
+/// registered as a follow-up residual (the repo still has non-Show default constructions elsewhere);
+/// do not read this guard as a whole-repo proof.
 /// </para>
 /// </summary>
 public sealed class LegacyWindowIsolationTests
@@ -26,7 +34,7 @@ public sealed class LegacyWindowIsolationTests
         ("LegacyAppearanceSyncTests.cs", 1),
         ("ImportExportUiTests.cs", 3),
         ("RegionWorkbenchUiTests.cs", 1),
-        ("ThemeRetirementR4Tests.cs", 2),
+        ("ThemeRetirementR4Tests.cs", 4),
     };
 
     [Fact]
@@ -41,15 +49,15 @@ public sealed class LegacyWindowIsolationTests
         {
             var path = Path.Combine(testsDirectory, file);
             Assert.True(File.Exists(path), "missing legacy UI test source: " + path);
-            var text = File.ReadAllText(path);
+            var code = StripComments(File.ReadAllText(path));
 
             Assert.False(
-                defaultOptions.IsMatch(text),
+                defaultOptions.IsMatch(code),
                 file + " still constructs a legacy MainWindow with the default AppOptions (real %APPDATA% log root). "
                 + "Use LegacyUiTestOptions.Isolated() instead.");
 
             var isolated = Regex.Matches(
-                text,
+                code,
                 @"LegacyUiTestOptions\.Isolated\s*\(",
                 RegexOptions.CultureInvariant).Count;
             Assert.True(
@@ -106,6 +114,57 @@ public sealed class LegacyWindowIsolationTests
         }
     }
 
+    /// <summary>Removes // line comments and /* */ block comments so the guard does not match commented-out code.</summary>
+    private static string StripComments(string text)
+    {
+        var builder = new StringBuilder(text.Length);
+        var inBlock = false;
+        var inLine = false;
+        for (var i = 0; i < text.Length; i++)
+        {
+            var current = text[i];
+            if (inLine)
+            {
+                if (current == '\n')
+                {
+                    inLine = false;
+                    builder.Append(current);
+                }
+
+                continue;
+            }
+
+            if (inBlock)
+            {
+                if (current == '*' && i + 1 < text.Length && text[i + 1] == '/')
+                {
+                    inBlock = false;
+                    i++;
+                }
+
+                continue;
+            }
+
+            if (current == '/' && i + 1 < text.Length && text[i + 1] == '/')
+            {
+                inLine = true;
+                i++;
+                continue;
+            }
+
+            if (current == '/' && i + 1 < text.Length && text[i + 1] == '*')
+            {
+                inBlock = true;
+                i++;
+                continue;
+            }
+
+            builder.Append(current);
+        }
+
+        return builder.ToString();
+    }
+
     private static int CountLines(string path)
     {
         if (!File.Exists(path))
@@ -146,6 +205,7 @@ public sealed class LegacyWindowIsolationTests
 /// <summary>
 /// Shared isolated options for default-suite legacy <see cref="MainWindow"/> tests. Each call creates a
 /// unique temporary root (so parallel tests cannot collide) and registers cleanup on process exit.
+/// Isolates the log root, the data root and the theme home so no default user path is used.
 /// </summary>
 internal static class LegacyUiTestOptions
 {
@@ -157,7 +217,9 @@ internal static class LegacyUiTestOptions
     {
         var root = Path.Combine(Path.GetTempPath(), "nm-legacy-ui-" + Guid.NewGuid().ToString("N"));
         var logs = Path.Combine(root, "logs");
+        var theme = Path.Combine(root, "theme");
         Directory.CreateDirectory(logs);
+        Directory.CreateDirectory(theme);
 
         lock (Gate)
         {
@@ -173,6 +235,7 @@ internal static class LegacyUiTestOptions
         {
             "--data-root", Path.Combine(root, "data"),
             "--log-dir", logs,
+            "--theme-home", theme,
         });
     }
 
