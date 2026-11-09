@@ -14,7 +14,7 @@ base_commit: 892cb99df
 branch: null
 worktree: null
 integration_commit: null
-delivery_head: pending
+delivery_head: 00f14179a
 canonical_evidence_status: complete
 resource_closeout_status: pending
 evidence_dir: verification/FEA-13-COV-2
