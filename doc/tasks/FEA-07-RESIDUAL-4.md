@@ -66,15 +66,15 @@ out_of_scope:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-R4-README | AC1–AC6 | `verification/FEA-07-RESIDUAL-4/README.md` | `86d65d1a9` | `a1b8bfc58004da49aaaccbdab890065cd38d91d83ad06f93d596066eed9c6314` | CANONICAL |
-| EV-R4-DEFECTS | AC1–AC6 | `verification/FEA-07-RESIDUAL-4/DEFECTS.md` | `86d65d1a9` | `ce788bd5f2f50653eb0f435d8f339dc01ab0b6e40edbca5c515340d25941d58f` | CANONICAL |
-| EV-R4-SNAPSHOT | AC2 | `verification/FEA-07-RESIDUAL-4/evidence/appdata-before.json` | `86d65d1a9` | `307d92f92f8521b2aa31ef8088d01e30374d92fa51990ec39fc4389df7136072` | CANONICAL |
-| EV-R4-ZEROWRITE | AC2 | `verification/FEA-07-RESIDUAL-4/logs/appdata-isolation.log` | `86d65d1a9` | `7c2acb1b76bd9a3ee3a0de6b692a7d85dc895d06591505251e17e607cae920f4` | CANONICAL |
-| EV-R4-SELFTEST | AC3 | `verification/FEA-07-RESIDUAL-4/logs/appdata-isolation-selftest.log` | `86d65d1a9` | `a53c6d054de6aa8f25c35441a1088e01b915d647d8ae16c6097bbb1b8eb7e6c1` | CANONICAL |
-| EV-R4-BUILD | AC5 | `verification/FEA-07-RESIDUAL-4/logs/build.log` | `86d65d1a9` | `0ed88800078379243372886e43a3dc84e4f5a6fcd5dfe401dc4532f6de018e70` | CANONICAL |
-| EV-R4-APPTESTS | AC2,AC5 | `verification/FEA-07-RESIDUAL-4/logs/full-solution.log` | `86d65d1a9` | `05b3dc8edca15a4f5bdb90b5fa31aa7d46a3f332d725fe23e0124cb80902a9ac` | CANONICAL |
-| EV-R4-GOV | AC5 | `verification/FEA-07-RESIDUAL-4/logs/governance.log` | `86d65d1a9` | `7a5e93123406047778c4f909e269db9ba8d7b469bdbd73668ba388abb589a1eb` | CANONICAL |
-| EV-R4-HARNESS | AC2,AC3 | `verification/FEA-07-RESIDUAL-4/tools/appdata-isolation-check.ps1` | `86d65d1a9` | `e1e73f1137b34e74035953ab562974e02a4918ed4df18391f4ce2ade63c955e5` | CANONICAL |
+| EV-R4-README | AC1–AC6 | `verification/FEA-07-RESIDUAL-4/README.md` | `-` | `a1b8bfc58004da49aaaccbdab890065cd38d91d83ad06f93d596066eed9c6314` | CANONICAL |
+| EV-R4-DEFECTS | AC1–AC6 | `verification/FEA-07-RESIDUAL-4/DEFECTS.md` | `-` | `ce788bd5f2f50653eb0f435d8f339dc01ab0b6e40edbca5c515340d25941d58f` | CANONICAL |
+| EV-R4-SNAPSHOT | AC2 | `verification/FEA-07-RESIDUAL-4/evidence/appdata-before.json` | `-` | `d149e51bb1ca2762a0cbc86ccaef376ffaeeff583d56230675ed545aed82ff99` | CANONICAL |
+| EV-R4-ZEROWRITE | AC2 | `verification/FEA-07-RESIDUAL-4/logs/appdata-isolation.log` | `-` | `e64e0771fe5baaa11c018fdb0725a2bf61030a43df9cb78acecf6c6ca9c3b27a` | CANONICAL |
+| EV-R4-SELFTEST | AC3 | `verification/FEA-07-RESIDUAL-4/logs/appdata-isolation-selftest.log` | `-` | `199ad22d6ef97dd6e093aafe4b930b2e1feb21d56a850d5a77bf331a54ba739e` | CANONICAL |
+| EV-R4-BUILD | AC5 | `verification/FEA-07-RESIDUAL-4/logs/build.log` | `-` | `0ed88800078379243372886e43a3dc84e4f5a6fcd5dfe401dc4532f6de018e70` | CANONICAL |
+| EV-R4-APPTESTS | AC2,AC5 | `verification/FEA-07-RESIDUAL-4/logs/full-solution.log` | `-` | `05b3dc8edca15a4f5bdb90b5fa31aa7d46a3f332d725fe23e0124cb80902a9ac` | CANONICAL |
+| EV-R4-GOV | AC5 | `verification/FEA-07-RESIDUAL-4/logs/governance.log` | `-` | `df767d07991ad9a45ac37692aefb30622d00122dbe993ce80363a947e14a3f46` | CANONICAL |
+| EV-R4-HARNESS | AC2,AC3 | `verification/FEA-07-RESIDUAL-4/tools/appdata-isolation-check.ps1` | `-` | `e1e73f1137b34e74035953ab562974e02a4918ed4df18391f4ce2ade63c955e5` | CANONICAL |
 
 ## 证据计划（原始计划，已执行）
 
