@@ -1,13 +1,13 @@
-# command: python -m pytest tests/storage/test_nmbak_coverage.py -q  # after mutation: deferred_categories emptied (expected RED)
+# command: python -m pytest tests/storage/test_nmbak_coverage.py -q  # after mutation: restore writes extras back (expected RED)
 # shell: pwsh 7.6.8 / python 3.14
-# time: 2026-11-09T20:48:21.1033355+08:00
-# batch: fea-13-cov-2
+# time: 2026-11-09T21:14:53.1201294+08:00
+# batch: fea-13-cov-2-r2
 # EXIT=1
-..F.                                                                     [100%]
+..F.....                                                                 [100%]
 ================================== FAILURES ===================================
 __________ test_restore_defers_extras_and_leaves_them_byte_identical __________
 
-workspace = {'conn': <infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x0000022BD6573D90>, 'service': <infrastru...ath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-1817/test_restore_defers_extras_and0/data/managed'), ...}
+workspace = {'conn': <infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x00000221FFEA3250>, 'service': <infrastru...ath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-1835/test_restore_defers_extras_and0/data/managed'), ...}
 
     def test_restore_defers_extras_and_leaves_them_byte_identical(workspace):
         package, manifest, _names = _create(workspace)
@@ -35,18 +35,29 @@ workspace = {'conn': <infrastructure.sqlite.connection.ThreadRoutedConnection ob
     
         report = workspace["service"].restore(package.stem, confirm_restore=True)
     
->       assert report["deferred_categories"] == [
+        assert report["deferred_categories"] == [
             "drafts",
             "plugins",
             "settings",
             "trash-manifest",
         ]
-E       AssertionError: assert [] == ['drafts', 'p...ash-manifest']
-E         
-E         Right contains 4 more items, first extra item: 'drafts'
-E         Use -v to get more diff
+        after = {
+            path.relative_to(data_root).as_posix(): path.read_bytes()
+            for path in data_root.rglob("*")
+            if path.is_file() and path.suffix in {".json"}
+        }
+        # Only library.db may change; every JSON byte stays exactly as it was.
+        for relative, payload in before.items():
+            if relative == "library.db":
+                continue
+>           assert after[relative] == payload, relative
+E           AssertionError: settings/provider_profiles.json
+E           assert b'{"restored":true}' == b'{"format_ve... ["CHANGED"]}'
+E             
+E             At index 2 diff: b'r' != b'f'
+E             Use -v to get more diff
 
-tests\storage\test_nmbak_coverage.py:176: AssertionError
+tests\storage\test_nmbak_coverage.py:191: AssertionError
 =========================== short test summary info ===========================
 FAILED tests/storage/test_nmbak_coverage.py::test_restore_defers_extras_and_leaves_them_byte_identical
-1 failed, 3 passed in 0.84s
+1 failed, 7 passed in 1.22s

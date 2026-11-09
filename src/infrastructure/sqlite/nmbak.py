@@ -249,14 +249,12 @@ class NmbakBackupService:
                 workdir, revision_refs + page_original_refs
             )
             extras = self._collect_extras()
-            skipped_categories = self._skipped_categories(extras)
-            if skipped_categories:
-                raise NmbakBackupError(
-                    "BACKUP_CREATE_FAILED",
-                    "required backup categories missing: "
-                    + ", ".join(skipped_categories),
-                )
             extras_written = self._copy_extras(workdir, extras)
+            # R-001 (FEA-13-COV-2 review): a category root that exists but holds
+            # zero files is a NORMAL state (``drafts/`` survives a clean
+            # shutdown; ``plugins/`` may be empty). It is still "included";
+            # only a real read/collect error fails the create.
+            present_categories = self._present_categories()
             manifest = {
                 "format": FORMAT_NAME_V2,
                 "version": FORMAT_VERSION_V2,
@@ -277,10 +275,16 @@ class NmbakBackupService:
                 "page_original_total_bytes": sum(
                     item["size_bytes"] for item in page_original_refs
                 ),
-                "included_categories": sorted(
-                    {item["category"] for item in extras_written}
-                ),
-                "skipped_categories": skipped_categories,
+                "included_categories": present_categories,
+                # Present-but-empty roots (a clean-shutdown ``drafts/``) are
+                # still covered; they simply have no member to copy.
+                "empty_categories": [
+                    category
+                    for category in present_categories
+                    if category
+                    not in {item["category"] for item in extras_written}
+                ],
+                "skipped_categories": [],
                 "excluded_categories": [dict(item) for item in EXCLUDED_CATEGORIES],
                 "extras": extras_written,
                 "extras_total_bytes": sum(
@@ -629,10 +633,17 @@ class NmbakBackupService:
             directory = self._data_root / category
             if directory.is_dir():
                 for path in sorted(directory.rglob("*")):
-                    if path.is_file():
-                        collected.append(
-                            (category, path.relative_to(directory).as_posix(), path)
-                        )
+                    # R-002: the running journal's `.lock/` is transient process
+                    # state, never user data; `.tmp` files are in-flight writes.
+                    relative = path.relative_to(directory)
+                    if any(part == ".lock" for part in relative.parts):
+                        continue
+                    if path.name.endswith(".tmp"):
+                        continue
+                    # R-008: never follow links out of the category root.
+                    if path.is_symlink() or not path.is_file():
+                        continue
+                    collected.append((category, relative.as_posix(), path))
         trash = self._managed_root / "trash-manifest.json"
         if trash.is_file():
             collected.append((TRASH_MANIFEST_CATEGORY, "trash-manifest.json", trash))
@@ -659,17 +670,17 @@ class NmbakBackupService:
             )
         return written
 
-    def _skipped_categories(self, entries: list[tuple[str, str, Path]]) -> list[str]:
-        """Present category roots that produced no member (a required gap)."""
-        included = {category for category, _, _ in entries}
+    def _present_categories(self) -> list[str]:
+        """Every category root that exists in the data root (0 files allowed)."""
         present: list[str] = []
         if (self._data_root / SETTINGS_CATEGORY).is_dir():
             present.append(SETTINGS_CATEGORY)
-        if (self._data_root / DRAFTS_CATEGORY).is_dir():
-            present.append(DRAFTS_CATEGORY)
-        if (self._data_root / PLUGINS_CATEGORY).is_dir():
-            present.append(PLUGINS_CATEGORY)
-        return [category for category in present if category not in included]
+        for category in (DRAFTS_CATEGORY, PLUGINS_CATEGORY):
+            if (self._data_root / category).is_dir():
+                present.append(category)
+        if (self._managed_root / "trash-manifest.json").is_file():
+            present.append(TRASH_MANIFEST_CATEGORY)
+        return sorted(present)
 
     def _zip_directory(self, workdir: Path, target: Path) -> None:
         with zipfile.ZipFile(target, "w", zipfile.ZIP_DEFLATED, allowZip64=True) as archive:
@@ -843,8 +854,8 @@ class NmbakBackupService:
                     category = str(item.get("category") or "")
                     if category not in EXTRAS_CATEGORIES:
                         raise NmbakBackupError(
-                            "BACKUP_CORRUPT",
-                            f"{package.name}: unknown extras category {category!r}",
+                            "BACKUP_FORMAT_UNSUPPORTED",
+                            f"{package.name}: unsupported extras category {category!r}",
                         )
                     relative = _managed_relative_path(
                         item.get("relative_path"),
@@ -877,6 +888,32 @@ class NmbakBackupService:
                             "BACKUP_CORRUPT",
                             f"{package.name}: unexpected extras member {member_name}",
                         )
+                # R-007: the declared category sets must agree with the members
+                # actually listed, and a verified package never reports a skip.
+                declared_included = manifest.get("included_categories")
+                if declared_included is not None:
+                    included_set = {str(item) for item in declared_included}
+                    actual_categories = {
+                        str(item.get("category")) for item in manifest.get("extras") or []
+                    }
+                    empty_categories = {
+                        str(item) for item in manifest.get("empty_categories") or []
+                    }
+                    if (
+                        actual_categories - included_set
+                        or empty_categories - included_set
+                        or (actual_categories & empty_categories)
+                        or (actual_categories | empty_categories) != included_set
+                    ):
+                        raise NmbakBackupError(
+                            "BACKUP_CORRUPT",
+                            f"{package.name}: category declarations do not match extras",
+                        )
+                if manifest.get("skipped_categories"):
+                    raise NmbakBackupError(
+                        "BACKUP_CORRUPT",
+                        f"{package.name}: skipped_categories must be empty in a verified package",
+                    )
                 for name in names:
                     if name.startswith(MANAGED_PREFIX) and name not in allowed:
                         raise NmbakBackupError(

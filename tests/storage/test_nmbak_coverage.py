@@ -213,3 +213,89 @@ def test_tampered_extras_member_is_corrupt(workspace):
         workspace["service"].restore(package.stem, confirm_restore=True)
 
     assert caught.value.code == "BACKUP_CORRUPT"
+
+
+def _rewrite_manifest(package: Path, mutate) -> None:
+    with zipfile.ZipFile(package) as archive:
+        infos = archive.infolist()
+        payloads = {info.filename: archive.read(info.filename) for info in infos}
+    manifest = json.loads(payloads[MANIFEST_NAME])
+    mutate(manifest)
+    payloads[MANIFEST_NAME] = json.dumps(manifest, ensure_ascii=False).encode("utf-8")
+    temporary = package.with_name(".rewrite.nmbak")
+    with zipfile.ZipFile(temporary, "w", zipfile.ZIP_DEFLATED, allowZip64=True) as archive:
+        for info in infos:
+            archive.writestr(info, payloads[info.filename])
+    temporary.replace(package)
+
+
+def test_empty_category_roots_are_included_with_zero_files(workspace):
+    """R-001: a clean shutdown leaves an EMPTY drafts/ -- that must still backup."""
+    data_root = workspace["data_root"]
+    for directory in (data_root / "drafts", data_root / "plugins"):
+        for path in directory.rglob("*"):
+            if path.is_file():
+                path.unlink()
+
+    _package, manifest, names = _create(workspace)
+
+    assert manifest["included_categories"] == [
+        "drafts",
+        "plugins",
+        "settings",
+        "trash-manifest",
+    ]
+    assert manifest["skipped_categories"] == []
+    assert not any(name.startswith(EXTRAS_PREFIX + "drafts/") for name in names)
+    assert not any(name.startswith(EXTRAS_PREFIX + "plugins/") for name in names)
+
+
+def test_running_journal_lock_is_not_packaged(workspace):
+    """R-002: `.lock/pid` is transient process state, not user data."""
+    data_root = workspace["data_root"]
+    lock_dir = data_root / "drafts" / ".lock"
+    lock_dir.mkdir(parents=True, exist_ok=True)
+    (lock_dir / "pid").write_text("12345", encoding="utf-8")
+    (data_root / "drafts" / "book-1" / "draft-1.json.tmp").write_text("x", encoding="utf-8")
+
+    _package, manifest, names = _create(workspace)
+
+    assert not any(".lock" in name for name in names)
+    assert not any(name.endswith(".tmp") for name in names)
+    assert "drafts" in manifest["included_categories"]
+
+
+def test_included_categories_mismatch_is_corrupt(workspace):
+    """R-007: declared categories must match the packaged members."""
+    package, _manifest, _names = _create(workspace)
+    _rewrite_manifest(
+        package,
+        lambda manifest: manifest.__setitem__("included_categories", ["settings"]),
+    )
+
+    with pytest.raises(NmbakBackupError) as caught:
+        workspace["service"].restore(package.stem, confirm_restore=True)
+
+    assert caught.value.code == "BACKUP_CORRUPT"
+
+
+def test_unknown_extras_category_is_forward_compatible(workspace):
+    """R-007: a newer package with a new category is unsupported, not corrupt."""
+    package, _manifest, _names = _create(workspace)
+
+    def add_future(manifest: dict) -> None:
+        manifest["extras"].append(
+            {
+                "category": "future",
+                "relative_path": "x.json",
+                "sha256": "0" * 64,
+                "size_bytes": 0,
+            }
+        )
+
+    _rewrite_manifest(package, add_future)
+
+    with pytest.raises(NmbakBackupError) as caught:
+        workspace["service"].restore(package.stem, confirm_restore=True)
+
+    assert caught.value.code == "BACKUP_FORMAT_UNSUPPORTED"
