@@ -196,3 +196,10 @@ Review 链 r1 approved（P2 升 P1：真实 AppData 写入）→ 返修 → r2 c
 - 修复：`TryOpenImmersiveReader()` 捕获显示失败 → 恢复主窗（不残留最小化）、状态栏常驻提示、写 `immersive-open.log`、reader 入口不再抛未处理异常、失败回退来源页；`OpenImmersiveReader()` 成功路径不变。
 - 回归：`F11HotkeyTests` 9/9（含新增故障注入 + 日志断言）；全量 .NET 除 1 例既有并发 flake（单独运行通过）外全绿。
 - 原生复测：本会话键盘无法进入应用（浏览器 F11 正常、应用无事件/状态/日志）→ AC5 记 `PARTIAL`，需本地控制台补测；**未写 PASS**。
+
+### 7.19 `FEA-07-IMMERSIVE-F11-1` r1 处置与关账裁决（2026-11-09）
+
+- r1（独立子代理，`c298fe8f6`）= `changes_requested`：P1=1（R-001 证据表与 AC 不对应）、P2=4（R-002 Minimized 断言恒真、R-003 成功不清提示、R-004 静默不可见无兜底、R-005 terminal 早于 Review）、P3=6。
+- 整改（`dc3526b76`）：状态文本收敛到 `RefreshStatusText()`（成功清提示）；`Show()` 后校验 `IsVisible`，不可见即走同一 fallback；`_openingImmersive` 重入保护；`LastImmersiveWindow` 成功后发布；restore 二次异常保护；日志兜底扩到 `NotSupportedException`/`SecurityException`；测试改为 **先最小化** 再注入失败并断言恢复 `Normal`、断言状态栏文本、覆盖 reader 入口与「失败→成功」重试。
+- 证据表重映射：AC1–AC3 → headless 运行记录（9/9）；AC3 成功路径 → 20/20；AC4 → 测试源；AC5 → 原生 NOT_RUN JSON；早期构建 JSON 标 SUPERSEDED。
+- **关账裁决（DSH）**：用户 2026-11-09 的任务定义明确包含兜底分支（“失败时主窗不消失且给出提示”），未要求原生必达；本会话键盘不可达属环境阻塞，AC5 记 `PARTIAL`，任务以 `closed_with_limitations` 收口，不写 PASS。
