@@ -203,3 +203,9 @@ Review 链 r1 approved（P2 升 P1：真实 AppData 写入）→ 返修 → r2 c
 - 整改（`dc3526b76`）：状态文本收敛到 `RefreshStatusText()`（成功清提示）；`Show()` 后校验 `IsVisible`，不可见即走同一 fallback；`_openingImmersive` 重入保护；`LastImmersiveWindow` 成功后发布；restore 二次异常保护；日志兜底扩到 `NotSupportedException`/`SecurityException`；测试改为 **先最小化** 再注入失败并断言恢复 `Normal`、断言状态栏文本、覆盖 reader 入口与「失败→成功」重试。
 - 证据表重映射：AC1–AC3 → headless 运行记录（9/9）；AC3 成功路径 → 20/20；AC4 → 测试源；AC5 → 原生 NOT_RUN JSON；早期构建 JSON 标 SUPERSEDED。
 - **关账裁决（DSH）**：用户 2026-11-09 的任务定义明确包含兜底分支（“失败时主窗不消失且给出提示”），未要求原生必达；本会话键盘不可达属环境阻塞，AC5 记 `PARTIAL`，任务以 `closed_with_limitations` 收口，不写 PASS。
+
+### 7.20 `FEA-07-IMMERSIVE-F11-1` r2 处置（2026-11-09）
+
+- r2 = `changes_requested`：P1=1（N-001 原生证据壳错误）、P2=2（N-002 证据未绑定壳/args、N-003 `IsVisible` 分支零测试）、P3=6。
+- 整改：legacy 壳原生复测（F11→全屏、Esc 恢复，JSON 记录 `shell/args`）；补静默不可见回归（`ImmersiveShowOverride = _ => { }`）与 `TryOpenImmersiveReader()==false` 断言；失败提示统一走 `RefreshStatusText()`（N-008）；证据表去空行重排（N-005）；修正 `approval` 去重（N-007）；D-AC5-2 记录更正（删除 `-32000` 误述）；display 试验产物移出仓库（N-009）。
+- 关账口径：AC5 `PARTIAL`（legacy 成功路径已验证；物理 2K/4K 复测时不在系统中，全屏落在 1920×1080；v2 默认壳无入口）；不写 PASS。

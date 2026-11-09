@@ -6,13 +6,13 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 
 | metric | value |
 |---|---:|
-| task files | 557 |
+| task files | 558 |
 | terminal | 542 |
-| non-terminal | 14 |
+| non-terminal | 15 |
 | non-terminal named in the plan | 1 |
-| non-terminal outside the plan | 13 |
+| non-terminal outside the plan | 14 |
 | task files tracked by git | 557 |
-| task files untracked (drafts) | 0 |
+| task files untracked (drafts) | 1 |
 | non-terminal tracked by git | 14 |
 
 ## By status
@@ -23,8 +23,8 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `closed_with_limitations` | 44 | yes |
 | `cancelled` | 18 | yes |
 | `historical` | 11 | yes |
+| `proposed` | 8 | no |
 | `superseded` | 8 | yes |
-| `proposed` | 7 | no |
 | `in_progress` | 2 | no |
 | `in_review` | 2 | no |
 | `(none)` | 1 | no |
@@ -44,6 +44,7 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `GIT-CLEAN-RUST-ISOLATION-1` | `in_review` | no |
 | `FEA-06-RESIDUAL-4` | `proposed` | no |
 | `FEA-07-RESIDUAL-4` | `proposed` | no |
+| `FEA-07-V2-F11-1` | `proposed` | no |
 | `FEA-11-HOST-AUTH-3` | `proposed` | no |
 | `FEA-11-HOST-AUTH-4` | `proposed` | no |
 | `FEA-11-HOST-AUTH-5` | `proposed` | no |
