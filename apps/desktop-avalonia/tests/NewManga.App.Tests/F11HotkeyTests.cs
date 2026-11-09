@@ -244,6 +244,12 @@ public sealed class F11HotkeyTests
             var window = new MainWindow(controller, AppOptions.Parse(new[] { "--log-dir", logDir }));
             window.Show();
             Dispatcher.UIThread.RunJobs();
+
+            // R-002: start minimized so the "not left minimized" assertion has discriminating power.
+            window.WindowState = WindowState.Minimized;
+            Dispatcher.UIThread.RunJobs();
+            Assert.Equal(WindowState.Minimized, window.WindowState);
+
             window.ImmersiveShowOverride = _ => throw new InvalidOperationException("show failed (test)");
 
             Assert.True(window.TryHandleGlobalKey(Key.F11));
@@ -253,7 +259,8 @@ public sealed class F11HotkeyTests
             Assert.Null(window.LastImmersiveWindow);
             Assert.NotNull(window.ImmersiveOpenFailure);
             Assert.Contains("show failed (test)", window.ImmersiveOpenFailure);
-            Assert.NotEqual(WindowState.Minimized, window.WindowState);
+            Assert.Equal(WindowState.Normal, window.WindowState); // R-002: restore actually happened
+            Assert.Contains("全屏阅读器打开失败", window.StatusText); // R-008: visible hint
             Assert.Equal("bookshelf", window.CurrentPage);
             Assert.Null(window.ImmersiveRestorePage);
 
@@ -262,11 +269,35 @@ public sealed class F11HotkeyTests
             Assert.True(File.Exists(logFile), $"missing {logFile}");
             Assert.Contains("show failed (test)", File.ReadAllText(logFile));
 
-            // The reader-page entry path is equally safe (it goes through the same fallback).
-            Assert.False(window.TryOpenImmersiveReader());
+            // R-010: the reader-page entry goes through the same fallback and never throws.
+            var readerEntryThrew = false;
+            try
+            {
+                window.Reader.RequestImmersive();
+            }
+            catch (InvalidOperationException)
+            {
+                readerEntryThrew = true;
+            }
+
             Dispatcher.UIThread.RunJobs();
+            Assert.False(readerEntryThrew);
             Assert.Null(window.LastImmersiveWindow);
-            Assert.NotEqual(WindowState.Minimized, window.WindowState);
+            Assert.Contains("全屏阅读器打开失败", window.StatusText);
+
+            // R-003: a later successful open clears the sticky failure hint.
+            window.ImmersiveShowOverride = null;
+            window.Navigate("bookshelf");
+            Dispatcher.UIThread.RunJobs();
+            Assert.True(window.TryHandleGlobalKey(Key.F11));
+            await window.LastImmersiveToggle;
+            Dispatcher.UIThread.RunJobs();
+            Assert.NotNull(window.LastImmersiveWindow);
+            Assert.Null(window.ImmersiveOpenFailure);
+            Assert.DoesNotContain("全屏阅读器打开失败", window.StatusText);
+
+            window.LastImmersiveWindow!.Close();
+            Dispatcher.UIThread.RunJobs();
             window.Close();
         }
         finally

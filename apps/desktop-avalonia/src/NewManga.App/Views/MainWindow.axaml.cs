@@ -259,6 +259,29 @@ public partial class MainWindow : Window
     /// <summary>FEA-07-IMMERSIVE-F11-1: last immersive open failure text (null after a success).</summary>
     public string? ImmersiveOpenFailure { get; private set; }
 
+    /// <summary>FEA-07-IMMERSIVE-F11-1: visible status-bar text (tests assert the failure hint).</summary>
+    internal string StatusText => _status.Text ?? string.Empty;
+
+    /// <summary>FEA-07-IMMERSIVE-F11-1: guards nested F11 presses while the immersive window opens.</summary>
+    private bool _openingImmersive;
+
+    /// <summary>
+    /// FEA-07-IMMERSIVE-F11-1 (R-003): single place that computes the status-bar text — a sticky
+    /// immersive failure keeps the hint, otherwise the Host state wins.
+    /// </summary>
+    private void RefreshStatusText()
+    {
+        _status.Text = ImmersiveOpenFailure is null
+            ? _controller.Snapshot.State switch
+            {
+                HostViewState.Ready => "Host 就绪",
+                HostViewState.AlreadyRunning => "已有实例运行",
+                HostViewState.Failed => "Host 失败（只读骨架仍可用）",
+                _ => "启动中…",
+            }
+            : "全屏阅读器打开失败（已恢复主窗）：" + ImmersiveOpenFailure;
+    }
+
     /// <summary>
     /// FEA-07-IMMERSIVE-F11-1: test/ops seam overriding the immersive window show step so the
     /// fallback path is regression-tested headlessly (production leaves this null).
@@ -503,6 +526,13 @@ public partial class MainWindow : Window
     /// </summary>
     public bool TryOpenImmersiveReader()
     {
+        // FEA-07-IMMERSIVE-F11-1 (R-009): ignore nested F11 presses while a show is in flight.
+        if (_openingImmersive)
+        {
+            return false;
+        }
+
+        _openingImmersive = true;
         try
         {
             OpenImmersiveReader();
@@ -514,9 +544,21 @@ public partial class MainWindow : Window
             ImmersiveOpenFailure = $"{error.GetType().Name}: {error.Message}";
             System.Diagnostics.Trace.TraceError($"immersive.open.failed: {error}");
             LogImmersiveFailure(error);
-            RestoreMainWindowAfterImmersiveFailure();
+            try
+            {
+                RestoreMainWindowAfterImmersiveFailure();
+            }
+            catch (InvalidOperationException)
+            {
+                // The main window was already closed; the hint below is all that is left to do.
+            }
+
             _status.Text = "全屏阅读器打开失败（已恢复主窗）：" + error.Message;
             return false;
+        }
+        finally
+        {
+            _openingImmersive = false;
         }
     }
 
@@ -525,7 +567,6 @@ public partial class MainWindow : Window
     {
         var window = CreateImmersiveWindow();
 
-        LastImmersiveWindow = window;
         // F11-HOTKEY-1: closing (Esc / F11 / toolbar) restores the page F11 came from, if any.
         window.Closed += (_, _) => OnImmersiveWindowClosed(window);
         try
@@ -538,10 +579,16 @@ public partial class MainWindow : Window
             {
                 window.Show();
             }
+
+            // FEA-07-IMMERSIVE-F11-1 (R-004): a show that silently left the window invisible is a
+            // failure too — the fallback must also cover "no window, main window still minimized".
+            if (!window.IsVisible)
+            {
+                throw new InvalidOperationException("immersive window did not become visible");
+            }
         }
         catch
         {
-            LastImmersiveWindow = null;
             try
             {
                 window.Close();
@@ -554,7 +601,11 @@ public partial class MainWindow : Window
             throw;
         }
 
+        // Publish only after a successful show so a nested toggle cannot orphan a visible window.
+        LastImmersiveWindow = window;
         ImmersiveOpenFailure = null;
+        // R-003: a later success clears the sticky failure hint.
+        RefreshStatusText();
         return window;
     }
 
@@ -605,7 +656,7 @@ public partial class MainWindow : Window
                 Path.Combine(root, "immersive-open.log"),
                 $"{DateTime.UtcNow:o} {error.GetType().Name}: {error.Message}{Environment.NewLine}");
         }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException)
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException or NotSupportedException or System.Security.SecurityException)
         {
             // Diagnostics are best-effort and never block the window.
         }
@@ -905,17 +956,8 @@ public partial class MainWindow : Window
         {
             await _controller.StartAsync();
             await Bookshelf.RefreshAsync();
-            // FEA-07-IMMERSIVE-F11-1: a failed immersive open keeps a sticky visible hint instead of
-            // being overwritten by the next Host status refresh.
-            _status.Text = ImmersiveOpenFailure is null
-                ? _controller.Snapshot.State switch
-                {
-                    HostViewState.Ready => "Host 就绪",
-                    HostViewState.AlreadyRunning => "已有实例运行",
-                    HostViewState.Failed => "Host 失败（只读骨架仍可用）",
-                    _ => "启动中…",
-                }
-                : "全屏阅读器打开失败（已恢复主窗）";
+            // FEA-07-IMMERSIVE-F11-1: sticky failure hint survives Host state refreshes.
+            RefreshStatusText();
             BookshelfPageControl.ApplyTheme();
             if (string.Equals(CurrentPage, "reader", StringComparison.Ordinal))
             {
