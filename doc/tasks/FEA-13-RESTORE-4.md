@@ -96,6 +96,24 @@ out_of_scope:
 - 冲突判定依赖行/文件对比，不做字段级自动合并（裁决 §2.2）。
 - 回退：`git revert`；运行期失败按 marker 判定。
 
+## Review 处置计划（r1 changes_requested：P0=0/P1=2/P2=6/P3=5）
+
+| Finding | 级别 | 处置计划（下一轮实施） |
+|---|---|---|
+| R4-001 merge 路径不做跨库门禁与 run 门禁 | P1 | `_merge_restore` 前置：`_verify_package` 后的 `database_id` 对比（复用 nmbak 逻辑）+ `_has_active_run(conn)` → `BACKUP_RESTORE_BUSY`；与 overwrite 同口径 |
+| R4-002 L-5 门不可达/调度线程绕过 | P1 | restore 窗口内：① dispatch 门保留；② `_merge_restore`/overwrite 入口 `_has_active_run` + 设置进程级 `_restore_maintenance_active`；③ 调度器写路径（`core_service` 内 run 提交）检查同一 flag；④ 说明串行 serve 下门主要保护「同进程线程/嵌套调用」，跨进程写由 Host 单连接模型保证（登记） |
+| R4-003 mode 不参与判定、校验在 COMMIT 后 | P2 | `apply_restore`：仅 `mode=use_backup` 时使用 `use_backup_keys`；mode 校验移到函数入口（任何写之前）；非法 mode → ValueError 先抛 |
+| R4-004 managed_root=None → managed 层不可见 | P2 | `_merge_restore` 传 `service._managed_root`（或公共访问器）；本轮先让计划包含 managed 项（应用仍 deferred，登记后续） |
+| R4-005 marker 缺 digest/窗口/清理 | P2 | marker 增加 `plan_digest`（items+summary 的 sha256）与 `applied` 计数；COMMIT 后立即写 `committed`（已有）；启动期清理 staging 残留（`list_backups`/装配时扫描 `*.restore-staging-*`）登记后续 |
+| R4-006 RESTORE_PLAN_STALE 无抛出点 | P2 | 预览时记录 `package_sha256` 入 plan；应用前对比当前包 sha，不一致 → `RESTORE_PLAN_STALE`（标记该项、其余继续） |
+| R4-007 `_replace_row` 列序错位 | P2 | 用列名 dict 映射（backup 行按列名取值，再按 live 列名组装参数） |
+| R4-008 undo 无 fsync | P2 | 写 undo JSON 后 `flush`+`os.fsync`；文件写入失败 → 该项 fail-closed |
+| P3-1 AC1 测试未比 mtime/仅 2 表 | P3 | 补 mtime 断言 + 覆盖 7 表行动作 |
+| P3-2 ADJ 文档在 diff 不在 allowed_paths | P3 | `allowed_paths` 增加 `doc/reviews/ADJ-2026-11-09-FEA13-RESTORE-MODEL.md`（本卡前置裁决） |
+| P3-3 L-5 读命令也阻断、backup.delete 豁免 | P3 | 豁免集放宽为只读命令（`*.list`/`*.get`/`core.ping`）；`backup.delete` 移出豁免 |
+| P3-4 staging 非应用源/残留无清理 | P3 | 说明 staging 为「复制+校验的提交凭据」（应用走 ATTACH 原包）；清理登记启动期 |
+| P3-5 C# 无 PlanRestoreAsync/RestoreAsync(mode)/V11R 登记 | P3 | C# 客户端增加 `mode` 参数与 `PlanRestoreAsync` 骨架（allowed_paths 含 C# 文件）；wire 文档登记后续 |
+
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
