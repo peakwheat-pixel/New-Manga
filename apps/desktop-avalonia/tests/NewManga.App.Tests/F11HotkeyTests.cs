@@ -46,7 +46,7 @@ public sealed class F11HotkeyTests
     {
         var controller = new FakeHostController(FakeHostController.ReadySnapshot("BOOK-FIXTURE-1 日漫_JA 测试书"));
         controller.ReaderBook = withBook ? FakeBook() : null;
-        return new MainWindow(controller, new AppOptions());
+        return new MainWindow(controller, LegacyUiTestOptions.Isolated());
     }
 
     [AvaloniaFact]

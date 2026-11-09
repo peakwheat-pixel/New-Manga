@@ -1,0 +1,2 @@
+SELFTEST KILL: appended line detected as delta -> EXIT 1 by design
+SELFTEST OK: no-change compare delta=0 -> EXIT 0

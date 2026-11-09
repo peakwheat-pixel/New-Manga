@@ -69,7 +69,7 @@ public sealed class ImportExportUiTests
     {
         var host = ReadyHost();
         var picker = new FakePicker();
-        var window = new MainWindow(host, new AppOptions(), picker);
+        var window = new MainWindow(host, LegacyUiTestOptions.Isolated(), picker);
         window.Show();
         Pump();
         return (window, host, picker);
@@ -306,7 +306,7 @@ public sealed class ImportExportUiTests
         host.ExportDirectorySuggestionValue = Path.Combine(Path.GetTempPath(), "import-export-ui-exports");
         host.TranslatedPagesByChapter["ch-1"] = new[] { "p1", "p2" };
         var picker = new FakePicker();
-        var window = new MainWindow(host, new AppOptions(), picker);
+        var window = new MainWindow(host, LegacyUiTestOptions.Isolated(), picker);
         window.Show();
         Pump();
         return (window, host, picker);
@@ -461,7 +461,7 @@ public sealed class ImportExportUiTests
         host.ReaderBook = ExportBook();
         host.ExportDirectorySuggestionValue = Path.Combine(Path.GetTempPath(), "import-export-ui-exports");
         var picker = new FakePicker();
-        var window = new MainWindow(host, new AppOptions(), picker);
+        var window = new MainWindow(host, LegacyUiTestOptions.Isolated(), picker);
         window.Show();
         Pump();
         await window.LoadReaderAsync(null, null);

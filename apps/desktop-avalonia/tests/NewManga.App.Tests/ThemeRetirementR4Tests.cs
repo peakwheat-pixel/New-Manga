@@ -53,7 +53,7 @@ public sealed class ThemeRetirementR4Tests
     public void Window_chrome_is_visual_only_and_keeps_real_window_behaviour()
     {
         var controller = new FakeHostController(FakeHostController.ReadySnapshot());
-        var window = new MainWindow(controller, new AppOptions());
+        var window = new MainWindow(controller, LegacyUiTestOptions.Isolated());
         var decorations = window.SystemDecorations;
         var canResize = window.CanResize;
 
@@ -84,7 +84,7 @@ public sealed class ThemeRetirementR4Tests
     {
         var gate = new TaskCompletionSource();
         var controller = new FakeHostController(FakeHostController.ReadySnapshot()) { StartGate = gate.Task };
-        var window = new MainWindow(controller, new AppOptions());
+        var window = new MainWindow(controller, LegacyUiTestOptions.Isolated());
 
         window.Show();
         Dispatcher.UIThread.RunJobs();
@@ -118,7 +118,7 @@ public sealed class ThemeRetirementR4Tests
         Assert.True(manager.Initialize(AppearanceMode.Dark), manager.LastError);
         var gate = new TaskCompletionSource();
         var controller = new FakeHostController(FakeHostController.ReadySnapshot()) { StartGate = gate.Task };
-        var window = AppShellV2.CreateRoot(controller, new AppOptions(), picker: null, themeManager: manager);
+        var window = AppShellV2.CreateRoot(controller, LegacyUiTestOptions.Isolated(), picker: null, themeManager: manager);
         var contentBefore = window.Content;
 
         window.Show();
@@ -167,7 +167,7 @@ public sealed class ThemeRetirementR4Tests
         Assert.True(manager.Initialize(AppearanceMode.Dark), manager.LastError);
         var window = AppShellV2.CreateRoot(
             new FakeHostController(FakeHostController.ReadySnapshot()),
-            new AppOptions(),
+            LegacyUiTestOptions.Isolated(),
             picker: null,
             themeManager: manager);
         var decorations = window.SystemDecorations;

@@ -484,7 +484,7 @@ public sealed class CredentialUiTests
         var controller = new FakeHostController(FakeHostController.ReadySnapshot("book"));
         controller.CredentialTargets.Add(new CredentialTargetOption(
             CredentialKinds.ProviderApi, "profile-1", "DeepSeek", "missing"));
-        var window = new MainWindow(controller, new AppOptions());
+        var window = new MainWindow(controller, LegacyUiTestOptions.Isolated());
         window.Show();
         try
         {

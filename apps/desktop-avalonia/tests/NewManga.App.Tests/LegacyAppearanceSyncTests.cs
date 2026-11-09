@@ -80,7 +80,7 @@ public sealed class LegacyAppearanceSyncTests
     private static MainWindow CreateWindow(DesignSystemThemeManager manager)
     {
         var controller = new FakeHostController(FakeHostController.ReadySnapshot());
-        return new MainWindow(controller, new AppOptions(), themeManager: manager);
+        return new MainWindow(controller, LegacyUiTestOptions.Isolated(), themeManager: manager);
     }
 
     private static Color ResolvedColor(string key)

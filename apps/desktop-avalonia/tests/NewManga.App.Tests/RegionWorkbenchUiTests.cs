@@ -279,7 +279,7 @@ public sealed class RegionWorkbenchUiTests
     public void MainWindow_WorkbenchNavigation_LoadsTheRealRegionChain()
     {
         var host = CreateHost();
-        var window = new MainWindow(host, new AppOptions());
+        var window = new MainWindow(host, LegacyUiTestOptions.Isolated());
         window.Show();
         Pump();
         window.Navigate("workbench");
