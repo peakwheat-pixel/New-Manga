@@ -1,0 +1,40 @@
+{
+  "case": "f11-native-after-fix",
+  "capturedAt": "2026-11-09T15:04:19.2582643+08:00",
+  "pid": 52436,
+  "immersiveWindows": [],
+  "immersiveCount": 0,
+  "mainWindow": {
+    "left": 150,
+    "top": 174,
+    "width": 1116,
+    "height": 799,
+    "hasCaption": true,
+    "showCmd": 1,
+    "minimized": false
+  },
+  "statusHint": [],
+  "hintVisible": false,
+  "statusTextsSample": [
+    "资料柜",
+    "1",
+    "工位",
+    "2",
+    "控制台",
+    "3",
+    "资料柜",
+    "›",
+    "测试",
+    "›",
+    "1",
+    "本章 169 页 · 1"
+  ],
+  "logFile": "G:\\CODEX\\New Manga.workspace\\FEA-07-IMMERSIVE-F11-1\\native-sticky\\logs\\immersive-open.log",
+  "logExists": false,
+  "logLines": null,
+  "mainNotMinimized": true,
+  "screenshot": {
+    "file": "G:\\CODEX\\New Manga.workspace\\FEA-07-IMMERSIVE-F11-1\\shots\\20261109-150418-after-f11.png",
+    "sha256": "dc8246bc12282906f6cdcb85e8aab7fdff5d4b99cd066bdff65d14ffcf8e8e0a"
+  }
+}

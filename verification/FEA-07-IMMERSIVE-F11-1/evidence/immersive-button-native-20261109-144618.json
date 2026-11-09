@@ -1,0 +1,44 @@
+{
+  "case": "immersive-button-native",
+  "capturedAt": "2026-11-09T14:47:43.4562894+08:00",
+  "app": {
+    "pid": 39576,
+    "exe": "G:\\CODEX\\New Manga\\apps\\desktop-avalonia\\src\\NewManga.App\\bin\\Release\\net9.0\\NewManga.App.exe",
+    "args": [
+      "--data-root",
+      "G:\\CODEX\\New Manga.workspace\\FEA-07-AC5-NATIVE-1\\reader-session\\data",
+      "--log-dir",
+      "G:\\CODEX\\New Manga.workspace\\FEA-07-IMMERSIVE-F11-1\\btn-20261109-144618\\logs",
+      "--theme-home",
+      "G:\\CODEX\\New Manga.workspace\\FEA-07-IMMERSIVE-F11-1\\btn-20261109-144618\\theme",
+      "--shell=v2"
+    ],
+    "sidecar": "G:\\CODEX\\New Manga.workspace\\FEA-07-AC5-NATIVE-1\\sidecar",
+    "dataRoot": "G:\\CODEX\\New Manga.workspace\\FEA-07-AC5-NATIVE-1\\reader-session\\data",
+    "logDir": "G:\\CODEX\\New Manga.workspace\\FEA-07-IMMERSIVE-F11-1\\btn-20261109-144618\\logs"
+  },
+  "buttonFound": false,
+  "buttonInvoked": false,
+  "immersive": null,
+  "mainWindow": {
+    "left": 156,
+    "top": 156,
+    "width": 1116,
+    "height": 799,
+    "showCmd": 1,
+    "minimized": false
+  },
+  "fallbackTexts": [],
+  "fallbackVisible": false,
+  "mainNotMinimized": true,
+  "screenshots": [
+    {
+      "file": "G:\\CODEX\\New Manga.workspace\\FEA-07-IMMERSIVE-F11-1\\shots\\20261109-144704-button-before.png",
+      "sha256": "c47ba0a2cc4d4968408e353f24ff1a8c298f10f1c58531fab87b1c835ffb9c1c"
+    },
+    {
+      "file": "G:\\CODEX\\New Manga.workspace\\FEA-07-IMMERSIVE-F11-1\\shots\\20261109-144743-button-after.png",
+      "sha256": "6f28265e555ea9aaae0dd9f3590c667fb3de664f84a4e93e2ab824a8adea5e14"
+    }
+  ]
+}

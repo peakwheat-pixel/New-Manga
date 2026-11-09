@@ -1,0 +1,46 @@
+{
+  "case": "f11-fallback-native",
+  "capturedAt": "2026-11-09T14:45:53.9171891+08:00",
+  "app": {
+    "pid": 45568,
+    "exe": "G:\\CODEX\\New Manga\\apps\\desktop-avalonia\\src\\NewManga.App\\bin\\Release\\net9.0\\NewManga.App.exe",
+    "args": [
+      "--data-root",
+      "G:\\CODEX\\New Manga.workspace\\FEA-07-AC5-NATIVE-1\\reader-session\\data",
+      "--log-dir",
+      "G:\\CODEX\\New Manga.workspace\\FEA-07-IMMERSIVE-F11-1\\run-20261109-144502\\logs",
+      "--theme-home",
+      "G:\\CODEX\\New Manga.workspace\\FEA-07-IMMERSIVE-F11-1\\run-20261109-144502\\theme",
+      "--shell=v2"
+    ],
+    "sidecar": "G:\\CODEX\\New Manga.workspace\\FEA-07-AC5-NATIVE-1\\sidecar",
+    "dataRoot": "G:\\CODEX\\New Manga.workspace\\FEA-07-AC5-NATIVE-1\\reader-session\\data",
+    "logDir": "G:\\CODEX\\New Manga.workspace\\FEA-07-IMMERSIVE-F11-1\\run-20261109-144502\\logs"
+  },
+  "postMessageRc": 3,
+  "immersive": null,
+  "mainWindow": {
+    "left": 338,
+    "top": 338,
+    "width": 1116,
+    "height": 799,
+    "showCmd": 1,
+    "minimized": false
+  },
+  "statusTexts": [
+    "Host 就绪",
+    "作用域 本章 169 页 · 1 · Host 就绪"
+  ],
+  "fallbackVisible": false,
+  "mainNotMinimized": true,
+  "screenshots": [
+    {
+      "file": "G:\\CODEX\\New Manga.workspace\\FEA-07-IMMERSIVE-F11-1\\shots\\20261109-144514-before-f11.png",
+      "sha256": "1bb5fc986e13c2660058943db9a808bcb210ca2303d35fb6b21b4496a1112fbb"
+    },
+    {
+      "file": "G:\\CODEX\\New Manga.workspace\\FEA-07-IMMERSIVE-F11-1\\shots\\20261109-144553-after-f11.png",
+      "sha256": "a59523090eb3f0c750f6ddb74154bdf9367cb299f9f0d990843d3d04336e2d98"
+    }
+  ]
+}

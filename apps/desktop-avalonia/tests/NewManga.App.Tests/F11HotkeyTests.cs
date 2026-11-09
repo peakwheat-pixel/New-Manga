@@ -228,4 +228,57 @@ public sealed class F11HotkeyTests
         Assert.Equal("bookshelf", window.CurrentPage);
         window.Close();
     }
+
+    [AvaloniaFact]
+    public async Task F11_WhenImmersiveShowThrows_RestoresMainWindowAndReportsFailure()
+    {
+        var logDir = Path.Combine(Path.GetTempPath(), "nm-immersive-f11-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(logDir);
+        try
+        {
+            var controller = new FakeHostController(
+                FakeHostController.ReadySnapshot("BOOK-FIXTURE-1 日漫_JA 测试书"))
+            {
+                ReaderBook = FakeBook(),
+            };
+            var window = new MainWindow(controller, AppOptions.Parse(new[] { "--log-dir", logDir }));
+            window.Show();
+            Dispatcher.UIThread.RunJobs();
+            window.ImmersiveShowOverride = _ => throw new InvalidOperationException("show failed (test)");
+
+            Assert.True(window.TryHandleGlobalKey(Key.F11));
+            await window.LastImmersiveToggle;
+            Dispatcher.UIThread.RunJobs();
+
+            Assert.Null(window.LastImmersiveWindow);
+            Assert.NotNull(window.ImmersiveOpenFailure);
+            Assert.Contains("show failed (test)", window.ImmersiveOpenFailure);
+            Assert.NotEqual(WindowState.Minimized, window.WindowState);
+            Assert.Equal("bookshelf", window.CurrentPage);
+            Assert.Null(window.ImmersiveRestorePage);
+
+            // AC2: the failure is written to the owned log root, not only to the trace listener.
+            var logFile = Path.Combine(logDir, "immersive-open.log");
+            Assert.True(File.Exists(logFile), $"missing {logFile}");
+            Assert.Contains("show failed (test)", File.ReadAllText(logFile));
+
+            // The reader-page entry path is equally safe (it goes through the same fallback).
+            Assert.False(window.TryOpenImmersiveReader());
+            Dispatcher.UIThread.RunJobs();
+            Assert.Null(window.LastImmersiveWindow);
+            Assert.NotEqual(WindowState.Minimized, window.WindowState);
+            window.Close();
+        }
+        finally
+        {
+            try
+            {
+                Directory.Delete(logDir, recursive: true);
+            }
+            catch (IOException)
+            {
+                // A locked log file must not fail the test.
+            }
+        }
+    }
 }

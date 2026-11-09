@@ -102,7 +102,9 @@ public partial class MainWindow : Window
             // READER-PROGRESS-1 AC1: the page persists its position through the controller seam.
             ProgressSink = _controller,
         };
-        Reader.ImmersiveRequested += (_, _) => OpenImmersiveReader();
+        // FEA-07-IMMERSIVE-F11-1 / D-AC5-2: never let a failed immersive open escape as an
+        // unhandled UI-event exception; the fallback restores the main window and reports.
+        Reader.ImmersiveRequested += (_, _) => TryOpenImmersiveReader();
         Reader.SetExportController(_controller, _filePicker);
         // CHAPTER-SELECTOR-1: book-card double-click / detail action opens that exact book, and the
         // reader's chapter picker re-loads the chosen chapter.
@@ -254,6 +256,15 @@ public partial class MainWindow : Window
     /// <summary>F11-HOTKEY-1: last F11 toggle task (headless tests / evidence await this).</summary>
     public Task LastImmersiveToggle { get; private set; } = Task.CompletedTask;
 
+    /// <summary>FEA-07-IMMERSIVE-F11-1: last immersive open failure text (null after a success).</summary>
+    public string? ImmersiveOpenFailure { get; private set; }
+
+    /// <summary>
+    /// FEA-07-IMMERSIVE-F11-1: test/ops seam overriding the immersive window show step so the
+    /// fallback path is regression-tested headlessly (production leaves this null).
+    /// </summary>
+    internal Action<ReaderWindow>? ImmersiveShowOverride { get; set; }
+
     /// <summary>
     /// F11-HOTKEY-1 AC1/AC2: one application-level F11 press.
     /// Behaviour (Record Decision): bare F11 only (no modifiers); ignored while a text input has
@@ -328,7 +339,17 @@ public partial class MainWindow : Window
             await EnsureReaderLoadedAsync().ConfigureAwait(true);
         }
 
-        OpenImmersiveReader();
+        if (!TryOpenImmersiveReader())
+        {
+            // FEA-07-IMMERSIVE-F11-1: do not leave the user on the reader page after a failed open.
+            if (!string.Equals(origin, "reader", StringComparison.Ordinal))
+            {
+                Navigate(origin);
+            }
+
+            return;
+        }
+
         if (!string.Equals(origin, "reader", StringComparison.Ordinal))
         {
             _pageBeforeImmersive = origin;
@@ -475,8 +496,70 @@ public partial class MainWindow : Window
         }
     }
 
-    /// <summary>READER-LIBRARY-WIRE-1 AC2: instantiate the immersive window for the active source.</summary>
+    /// <summary>
+    /// FEA-07-IMMERSIVE-F11-1 (D-AC5-2): opens the immersive window and, when the show step fails,
+    /// restores the main window, keeps it out of the minimized state, logs the failure and shows a
+    /// visible hint instead of leaving a half-open fullscreen session behind.
+    /// </summary>
+    public bool TryOpenImmersiveReader()
+    {
+        try
+        {
+            OpenImmersiveReader();
+            return true;
+        }
+        catch (Exception error) when (error is not OutOfMemoryException)
+        {
+            LastImmersiveWindow = null;
+            ImmersiveOpenFailure = $"{error.GetType().Name}: {error.Message}";
+            System.Diagnostics.Trace.TraceError($"immersive.open.failed: {error}");
+            LogImmersiveFailure(error);
+            RestoreMainWindowAfterImmersiveFailure();
+            _status.Text = "全屏阅读器打开失败（已恢复主窗）：" + error.Message;
+            return false;
+        }
+    }
+
+    /// <summary>READER-LIBRARY-WIRE-1 AC2: instantiate and show the immersive window for the active source.</summary>
     public ReaderWindow OpenImmersiveReader()
+    {
+        var window = CreateImmersiveWindow();
+
+        LastImmersiveWindow = window;
+        // F11-HOTKEY-1: closing (Esc / F11 / toolbar) restores the page F11 came from, if any.
+        window.Closed += (_, _) => OnImmersiveWindowClosed(window);
+        try
+        {
+            if (ImmersiveShowOverride is { } show)
+            {
+                show(window);
+            }
+            else
+            {
+                window.Show();
+            }
+        }
+        catch
+        {
+            LastImmersiveWindow = null;
+            try
+            {
+                window.Close();
+            }
+            catch (InvalidOperationException)
+            {
+                // The window never became visible; nothing left to close.
+            }
+
+            throw;
+        }
+
+        ImmersiveOpenFailure = null;
+        return window;
+    }
+
+    /// <summary>FEA-07-IMMERSIVE-F11-1: builds the immersive window for the active reader source.</summary>
+    private ReaderWindow CreateImmersiveWindow()
     {
         var window = Reader.LibraryBook is { } book
             ? new ReaderWindow(Reader.ViewModel, book, Reader.ProgressSink)
@@ -493,11 +576,39 @@ public partial class MainWindow : Window
             window.Page.SetBookContext(loadedBook.BookTitle, loadedBook.ChapterTitle);
         }
 
-        LastImmersiveWindow = window;
-        // F11-HOTKEY-1: closing (Esc / F11 / toolbar) restores the page F11 came from, if any.
-        window.Closed += (_, _) => OnImmersiveWindowClosed(window);
-        window.Show();
         return window;
+    }
+
+    /// <summary>FEA-07-IMMERSIVE-F11-1: a failed open must never leave the main window minimized.</summary>
+    private void RestoreMainWindowAfterImmersiveFailure()
+    {
+        Show();
+        if (WindowState == WindowState.Minimized)
+        {
+            WindowState = WindowState.Normal;
+        }
+
+        Activate();
+    }
+
+    /// <summary>
+    /// FEA-07-IMMERSIVE-F11-1: best-effort evidence of an immersive open failure. Shares
+    /// <see cref="ResolveDiagnosticsRoot"/> so an explicit <c>--log-dir</c> owns this file too.
+    /// </summary>
+    private void LogImmersiveFailure(Exception error)
+    {
+        try
+        {
+            var root = ResolveDiagnosticsRoot(_options);
+            Directory.CreateDirectory(root);
+            File.AppendAllText(
+                Path.Combine(root, "immersive-open.log"),
+                $"{DateTime.UtcNow:o} {error.GetType().Name}: {error.Message}{Environment.NewLine}");
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or ArgumentException)
+        {
+            // Diagnostics are best-effort and never block the window.
+        }
     }
 
     public void ApplyTheme()
@@ -794,13 +905,17 @@ public partial class MainWindow : Window
         {
             await _controller.StartAsync();
             await Bookshelf.RefreshAsync();
-            _status.Text = _controller.Snapshot.State switch
-            {
-                HostViewState.Ready => "Host 就绪",
-                HostViewState.AlreadyRunning => "已有实例运行",
-                HostViewState.Failed => "Host 失败（只读骨架仍可用）",
-                _ => "启动中…",
-            };
+            // FEA-07-IMMERSIVE-F11-1: a failed immersive open keeps a sticky visible hint instead of
+            // being overwritten by the next Host status refresh.
+            _status.Text = ImmersiveOpenFailure is null
+                ? _controller.Snapshot.State switch
+                {
+                    HostViewState.Ready => "Host 就绪",
+                    HostViewState.AlreadyRunning => "已有实例运行",
+                    HostViewState.Failed => "Host 失败（只读骨架仍可用）",
+                    _ => "启动中…",
+                }
+                : "全屏阅读器打开失败（已恢复主窗）";
             BookshelfPageControl.ApplyTheme();
             if (string.Equals(CurrentPage, "reader", StringComparison.Ordinal))
             {

@@ -189,3 +189,10 @@ Review 链 r1 approved（P2 升 P1：真实 AppData 写入）→ 返修 → r2 c
 - 新卡 `FEA-07-AC5-NATIVE-1`（`closed_with_limitations`，integration `0bcdeb9fc`）执行：7 组混合 DPI 拖动（4K 100/125/150/175/200 × 2K 100/125/150 子集）、OS 级拔屏（成功 1 次、失败 1 次如实保留）、逐屏缩放 UIA 切换、PerMonitorV2 源码+exe 证据、窗口持久化探测（产品无实现）。
 - `FEA-07` 的 AC5 行**保持 `[x] <<NOT_APPLICABLE: ...>>`**（不改为 MET）；理由按本卡收窄为「原生矩阵已部分执行；Inspector 浮窗不存在、未 flush 编辑态/IME/换主屏/全屏/物理拔线未执行（NOT_RUN）；用户授权豁免保留」。
 - 未做项不写成 PASS；`FEA-07` 节点状态保持 `done`（不重开节点）。
+
+### 7.18 `FEA-07-IMMERSIVE-F11-1`：F11 沉浸显示失败兜底（2026-11-09）
+
+- 缺陷 D-AC5-2：真实桌面按 F11 后主窗被最小化、沉浸 `ReaderWindow` 未出现（`FEA-07-AC5-NATIVE-1/DEFECTS.md`）。
+- 修复：`TryOpenImmersiveReader()` 捕获显示失败 → 恢复主窗（不残留最小化）、状态栏常驻提示、写 `immersive-open.log`、reader 入口不再抛未处理异常、失败回退来源页；`OpenImmersiveReader()` 成功路径不变。
+- 回归：`F11HotkeyTests` 9/9（含新增故障注入 + 日志断言）；全量 .NET 除 1 例既有并发 flake（单独运行通过）外全绿。
+- 原生复测：本会话键盘无法进入应用（浏览器 F11 正常、应用无事件/状态/日志）→ AC5 记 `PARTIAL`，需本地控制台补测；**未写 PASS**。

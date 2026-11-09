@@ -1,0 +1,100 @@
+---
+id: FEA-07-IMMERSIVE-F11-1
+title: 修复 F11 沉浸模式在真实桌面不出现窗口（显示失败兜底 + 主窗恢复 + 错误可见）
+kind: fix
+governance_version: 3
+status: closed_with_limitations
+approval: 用户 2026-11-09 明示任务定义（范围冻结：`OpenImmersiveReader()` 显示失败兜底与错误可见化；`ReaderWindow.Show()` 失败时恢复主窗、不得停留最小化；记录异常到日志；保留 headless 回归。验收：真实桌面 F11 → 无边框全屏窗口覆盖 2560×1440、Esc/F11 退出、主窗恢复原页；失败时主窗不消失且给出提示。证据：`verification/FEA-07-AC5-NATIVE-1/DEFECTS.md` D-AC5-2 + `evidence/watch-immersive-*`）
+suggested_owner: dsh
+owner: dsh
+reviewer: 独立上下文 fresh subagent（实现交付后指派）
+depends_on:
+  - FEA-07
+base_commit: 70a89d009
+branch: null
+worktree: null
+integration_commit: null
+delivery_head: null
+canonical_evidence_status: complete
+resource_closeout_status: complete
+evidence_dir: verification/FEA-07-IMMERSIVE-F11-1
+allowed_paths:
+  - apps/desktop-avalonia/src/NewManga.App/Views/MainWindow.axaml.cs
+  - apps/desktop-avalonia/tests/NewManga.App.Tests/F11HotkeyTests.cs
+  - doc/tasks/FEA-07-IMMERSIVE-F11-1.md
+  - doc/reviews/FEA-07-IMMERSIVE-F11-1-*.md
+  - doc/reviews/ADJ-2026-11-RESIDUAL-WAIVER.md
+  - doc/handoffs/FEA-07-IMMERSIVE-F11-1-*.md
+  - doc/STATUS.md
+  - doc/REBASELINE_PLAN.md
+  - doc/TASK_LEDGER.md
+  - verification/FEA-07-IMMERSIVE-F11-1/**
+out_of_scope:
+  - 不改冻结契约/pins/依赖/`tools/e2e/**`/`scripts/**`
+  - 不改沉浸窗口视觉/交互语义（无边框 + FullScreen 行为按现状保留）
+  - 不做显示拓扑/DPI 相关改动（属 FEA-07-AC5-NATIVE-1）
+---
+
+# FEA-07-IMMERSIVE-F11-1
+
+## 背景（缺陷 D-AC5-2）
+
+`verification/FEA-07-AC5-NATIVE-1/DEFECTS.md` 记录了 D-AC5-2：真实桌面上按 F11（手动/注入均验证）后，**主窗被最小化、沉浸 `ReaderWindow` 未出现**；浏览器 F11 可全屏，说明远程键盘正常，问题在应用侧。
+
+代码路径：`MainWindow.TryHandleGlobalKey` → `ToggleImmersiveAsync` → `OpenImmersiveReader()`（`new ReaderWindow(...)` + `window.Show()`；`ReaderWindow` 构造设 `SystemDecorations.None` + `WindowState.FullScreen`）。
+
+## 范围（冻结）
+
+1. `OpenImmersiveReader()` 显示失败兜底与错误可见化；
+2. `ReaderWindow.Show()` 失败时**恢复主窗**（不得停留在最小化）；
+3. 记录异常到日志；
+4. 保留 headless 回归。
+
+## AC
+
+- [x] **AC1**：`OpenImmersiveReader()` 在 `Show()` 抛异常时捕获，恢复主窗（`WindowState` 不残留 `Minimized`），不向 UI 事件处理器抛出未处理异常。 <<MET>>
+- [x] **AC2**：失败时给出可见提示（状态栏文本）并写入日志（`Trace` 错误）。 <<MET>>
+- [x] **AC3**：成功路径保持原行为（`LastImmersiveWindow` 设置、`Closed → OnImmersiveWindowClosed`、F11/Esc 退出、页面恢复）。 <<MET>>
+- [x] **AC4**：新增 headless 回归：注入显示失败 → `TryOpenImmersiveReader` 返回 false、`ImmersiveOpenFailure` 非空、主窗未最小化、`LastImmersiveWindow` 为 null；既有 `F11HotkeyTests` 全绿。 <<MET>>
+- [ ] **AC5**：真实桌面复测（F11 → 无边框全屏覆盖 2560×1440 / Esc 退出 / 主窗恢复）；若本会话仍无法显示成功，必须记录失败提示可见与主窗保持，作为兜底验收证据，不写 PASS。 <<PARTIAL: headless 回归与兜底已验证；本会话键盘未进入应用（浏览器 F11 正常、应用无状态栏/日志/窗口事件），真实桌面 F11 全屏/退出无法在本环境复测，需本地控制台补测>>
+
+## 证据
+
+- 缺陷证据：`verification/FEA-07-AC5-NATIVE-1/DEFECTS.md`（D-AC5-2）、`evidence/watch-immersive-*.json`、`evidence/post-f11-*.json`、`evidence/press-f11-*.json`。
+- 本卡证据目录：`verification/FEA-07-IMMERSIVE-F11-1/`（测试输出、真实桌面复测 JSON/截图）。
+
+## 实施结果（2026-11-09，DSH）
+
+### 代码
+- `MainWindow.TryOpenImmersiveReader()`：捕获 `Show()` 失败（`Exception` 除 OOM），置空 `LastImmersiveWindow`、写 `ImmersiveOpenFailure`、`Trace.TraceError`、写 `immersive-open.log`（共用 `ResolveDiagnosticsRoot`，`--log-dir` 拥有）、`RestoreMainWindowAfterImmersiveFailure()`（`Show()` + 最小化则恢复 `Normal` + `Activate()`）、状态栏提示「全屏阅读器打开失败（已恢复主窗）：…」。
+- `Reader.ImmersiveRequested` 入口改走 `TryOpenImmersiveReader()`（不再从 UI 事件抛未处理异常）。
+- `ToggleImmersiveAsync`：失败时回退到来源页（不把用户留在 reader 页）。
+- 失败提示常驻：`StartHostAsync` 状态赋值在 `ImmersiveOpenFailure != null` 时保留失败提示，不被 Host 状态刷新覆盖。
+- `OpenImmersiveReader()` 保留原签名，成功路径行为不变；`ImmersiveShowOverride`（internal）为 headless 故障注入缝。
+
+### 测试
+- 新增 `F11_WhenImmersiveShowThrows_RestoresMainWindowAndReportsFailure`：注入显示失败 → `LastImmersiveWindow=null`、`ImmersiveOpenFailure` 含原因、主窗未最小化、页面回退 bookshelf、`immersive-open.log` 含异常；reader 页入口路径同样兜底。
+- `F11HotkeyTests` 9/9 通过；全量 .NET：`NewManga.App.Tests 832/0`、`Host 302/0`、`ApplicationCore 31/0`、`DesignSystem/Appearance/ThemeEngine/Presentation` 通过；`CoreClient.Tests` 1 例 `ModelsBuild_BookRun_WithoutInjectedBindings_StillFailsOcrWithProviderNotConfigured` 在全量并发下失败、**单独运行通过** → 归为既有并发 flake（与本次 App-only 变更无关）。
+
+### 原生复测（AC5）
+- 新构建真实桌面：应用置顶后用户按 F11 → 无沉浸窗口、主窗**未最小化**、状态栏无失败提示、`immersive-open.log` 未生成 ⇒ **键盘事件未进入应用**（同会话浏览器 F11 可全屏；UIA `FocusedElement` 停留在浏览器输入框）。
+- 结论：AC5 `PARTIAL`（headless 兜底已验证；真实桌面全屏/退出/失败提示需在本地控制台会话补测），**不写 PASS**。
+- 证据：`evidence/f11-native-after-fix-*.json`、`evidence/f11-fallback-native-*.json`、`evidence/immersive-button-native-*.json`、`%TEMP%`/workspace 截图（含用户内容，仅存仓外）。
+
+## Canonical Evidence
+
+| evidence_id | AC/Gate | path | commit | sha256 | class |
+|---|---|---|---|---|---|
+| EV-IF11-01 | AC1/AC2/AC3 | `verification/FEA-07-IMMERSIVE-F11-1/evidence/f11-native-after-fix-20261109-150419.json` | - | 1547664d4d7fd52b36d0ef7bc936ad932601f5f03dc33d1b35984a48be61e2b0 | CANONICAL |
+| EV-IF11-02 | AC5 | `verification/FEA-07-IMMERSIVE-F11-1/evidence/f11-fallback-native-20261109-144502.json` | - | 884567d6b8ab3c997a79ca34e8f4bdcb34371c762eacbb767b067ffdd4bb92b0 | CANONICAL |
+| EV-IF11-03 | AC5 | `verification/FEA-07-IMMERSIVE-F11-1/evidence/immersive-button-native-20261109-144618.json` | - | 91123ae4493a1f7461914b3c153c1e490cdf5fd8b3c09f4bab173d55bd8a2d16 | CANONICAL |
+| EV-IF11-04 | 工具 | `verification/FEA-07-IMMERSIVE-F11-1/tools/verify-f11-fallback.ps1` | - | 1a09b75b3f796ebb3ea8a8f25dc984c2a23ed37a3cabbf7fe8738f6522c732b1 | CANONICAL |
+| EV-IF11-05 | 工具 | `verification/FEA-07-IMMERSIVE-F11-1/tools/capture-after-f11.ps1` | - | 7f11daa72938d24417e903c6b7131159842f6a507c88316b7948bd3b5c5b8720 | CANONICAL |
+
+## Resource Manifest
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| user-data | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 应用一律 `--data-root` 隔离；复测期间 UI 显示既有 169 页（AD-003 引用，不复制） |
+| display-settings | 未变更 | NOT_APPLICABLE | — | — | 本次未改分辨率/缩放；2K 100% / 4K 150% 保持 |
+| tracked-side-effect | 无 | NOT_APPLICABLE | — | — | 单测 `--log-dir` 指向临时目录并清理 |
