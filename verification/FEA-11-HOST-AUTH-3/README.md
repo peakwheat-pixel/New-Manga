@@ -15,7 +15,7 @@
 | gate | `gates_open=1`（`check_gate.py` 实查 `read_binding_publications.read_gate`，0 pending） |
 | 幂等 | `second_call_idempotent=1`（二次 recover 0 新 wire 帧） |
 | **崩溃反例** | `-Negative` 模式：phase 间替换源文件 → **`SOURCE_ACCESS_DENIED` typed 拒绝**（`logs/crash-driver-negative.log`，EXIT 0） |
-| 全量基线（最终 head 重跑） | pytest **3468/0/10**（`logs/pytest-full.log`）；.NET 8 项目 **fresh build 1811/0/109**（`logs/dotnet-full-console.log` 与 `logs/dotnet-*.log`） |
+| 全量基线（门禁运行 head `caaaddc53` 重跑） | pytest **3468/0/10**（`logs/pytest-full.log`）；.NET 8 项目 **fresh build 1811/0/109**（`logs/dotnet-full-console.log` 与 `logs/dotnet-*.log`） |
 
 ## 断言全部由事实计算（P0 修复）
 
