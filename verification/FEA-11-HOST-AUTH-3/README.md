@@ -28,7 +28,7 @@ CHECK commit_digest_match / distinct_host_pid / distinct_core_session /
       page_bindings_fields_unchanged / journal_present  → 全部 =1
 ```
 
-## 逐项门禁记录（最终 head）
+## 逐项门禁记录（门禁运行 head = `caaaddc53`；`delivery_head` = `e9ffad62c`）
 
 | 步骤 | 命令 | 时间（+08:00） | head | EXIT |
 |---|---|---|---|---|
