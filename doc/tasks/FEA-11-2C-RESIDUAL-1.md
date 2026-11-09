@@ -14,7 +14,7 @@ base_commit: ac64cb134
 branch: null
 worktree: null
 integration_commit: null
-delivery_head: pending
+delivery_head: a2c4c1d8c
 canonical_evidence_status: complete
 resource_closeout_status: pending
 evidence_dir: verification/FEA-11-2C-RESIDUAL-1
