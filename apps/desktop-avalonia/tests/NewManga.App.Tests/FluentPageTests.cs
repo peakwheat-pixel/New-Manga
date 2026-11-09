@@ -132,10 +132,9 @@ public sealed class FluentPageTests
         // FEA-15-PREREQ-1: 18 gestures are the authoritative ShellKeyMap size;
         // the old 17 was stale. Also pin that no two commands share a gesture.
         Assert.Equal(18, shell.ShellKeyMap.Definitions.Count(command => command.HasGesture));
-        var gestures = shell.ShellKeyMap.Definitions
-            .SelectMany(command => command.Gestures)
-            .ToList();
-        Assert.Equal(gestures.Count, gestures.Distinct().Count());
+        // The domain rule is scope-aware (a cross-scope reuse is legal); an
+        // empty Conflicts list is the authoritative "no duplicate gesture".
+        Assert.Empty(shell.ShellKeyMap.Conflicts);
 
         Assert.True(shell.HandleKeyForTest(Key.D2, KeyModifiers.Control));
         Assert.Equal(FluentPage.Workbench, shell.CurrentPage);

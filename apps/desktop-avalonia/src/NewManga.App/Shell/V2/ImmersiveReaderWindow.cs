@@ -1,7 +1,6 @@
-using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Controls;
 using Avalonia.Input;
-using Avalonia.Media;
+using Avalonia.Markup.Xaml.MarkupExtensions;
 using NewManga.App.ViewModels.V2.Library;
 using NewManga.App.Views.V2.Library;
 
@@ -10,7 +9,7 @@ namespace NewManga.App.Shell.V2;
 /// <summary>
 /// FEA-07-V2-F11-1: borderless fullscreen reader host for the default V2 shell. The shell view model
 /// only raises <c>ImmersiveReaderRequested</c>; the composition root creates this window (mirroring the
-/// legacy <c>ReaderWindow</c> behaviour: no decorations, black background, Esc/F11 closes and the shell
+/// legacy <c>ReaderWindow</c> behaviour: no decorations, design-system canvas backdrop, Esc/F11 closes and the shell
 /// page the user came from stays untouched).
 /// </summary>
 public sealed class ImmersiveReaderWindow : Window

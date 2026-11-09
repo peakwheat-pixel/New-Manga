@@ -1,7 +1,7 @@
 # FEA-15-PREREQ-1 证据索引
 
 - Task：`FEA-15-PREREQ-1`（修复既有 2 个 App.Tests 失败；FEA-15 集成验收前置）
-- Base：`417d9c442`；日期：2026-11-09；证据批次：`fea-15-prereq-1-r2`
+- Base：`417d9c442`；日期：2026-11-09；证据批次：`fea-15-prereq-1`（日志头 batch 与之一致）
 
 ## 修复口径
 
@@ -20,7 +20,7 @@
 | AC2 FluentPage | 通过（18 + 去重断言） | 同上 |
 | AC3 构建与全量 | `dotnet build` 0/0；App.Tests 全量 **838 passed / 0 failed / 11 skipped** | `logs/dotnet-build.log`、`logs/dotnet-test-app-full.log` |
 | AC4 门禁 | `check.ps1` 默认 + `-TaskPath` PASS；pins 18/18 | 卡/Handoff |
-| 变异判别 | ①恢复 `Background = Brushes.Green;` → V2Conformance **1 failed**；②断言改回 17 → FluentPage **1 failed**；复原 + `-t:Rebuild` 后复绿 | `logs/mutation-literal-brush.log`、`logs/mutation-stale-count.log` |
+| 变异判别 | ①恢复 literal brush（`Background = Brushes.Green;`）→ V2Conformance **1 failed**；②断言改回 17 → FluentPage **1 failed**；复原 + `-t:Rebuild` 后复绿 | `logs/mutation-literal-brush.log`、`logs/mutation-stale-count.log` |
 
 ## 命令
 
