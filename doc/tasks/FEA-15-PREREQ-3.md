@@ -72,7 +72,6 @@ out_of_scope:
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| worktree | `G:\CODEX\New Manga.workspace\FEA-15-PREREQ-3`（detached @ `afbc7e411`） | PRESERVE_REFERENCED | `G:\CODEX\New Manga.workspace\FEA-15-PREREQ-3` | — | 已用于 AC1 构建；删除需 inventory 流程 |
 | logs | `verification/FEA-15-PREREQ-3/logs/clean-worktree-build.log` | PRESERVE_REFERENCED | `verification/FEA-15-PREREQ-3/logs/clean-worktree-build.log` | `e4d0c5db818946906ee571d4d265674ce0e7de370119dcd1638e86bb2e0b411b` | 证据 |
 | build | worktree `bin,obj` | NOT_APPLICABLE | — | — | 一律不提交（workspace 内） |
 | user-data | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 未访问真实库 |
