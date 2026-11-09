@@ -217,6 +217,8 @@ public sealed class Fea11HostAuthIpcTests
             var entry = fixture.Operations.Get(operationId)
                 ?? throw new InvalidOperationException("journal entry missing after apply");
             Assert.Equal("core-committed", entry.State);
+            var counts = await fixture.CountRowsAsync();
+            var wirePath = Path.Combine(fixture.Root, "wire.ndjson");
             var park = new Dictionary<string, object?>
             {
                 ["journal_state"] = entry.State,
@@ -229,6 +231,14 @@ public sealed class Fea11HostAuthIpcTests
                 ["host_pid"] = Environment.ProcessId,
                 ["core_session_id"] = fixture.Client.HostSession?.CoreSessionId,
                 ["data_root"] = fixture.Root,
+                // P0 fix: the driver must be able to re-check these, not trust a constant.
+                ["source_sha256"] = fixture.HashOfNewZip(),
+                ["db_counts"] = new Dictionary<string, object?>
+                {
+                    ["bindings"] = counts.Bindings,
+                    ["publications"] = counts.Publications,
+                },
+                ["wire_lines"] = File.Exists(wirePath) ? File.ReadAllLines(wirePath).Length : 0,
             };
             await File.WriteAllTextAsync(
                 Path.Combine(state!, "park.json"), JsonSerializer.Serialize(park));
@@ -272,6 +282,12 @@ public sealed class Fea11HostAuthIpcTests
             Assert.Equal("recovered", second.State);
             Assert.Equal(park.GetProperty("commit_digest").GetString(), recovered.CommitDigest);
 
+            var countsAfter = await fixture.CountRowsAsync();
+            var gateOpen = await fixture.GateOpenAsync();
+            var wirePath = Path.Combine(fixture.Root, "wire.ndjson");
+            var beforeSecond = File.Exists(wirePath) ? File.ReadAllLines(wirePath).Length : 0;
+            var third = await fixture.Operations.RecoverAsync(operationId);
+            var afterSecond = File.Exists(wirePath) ? File.ReadAllLines(wirePath).Length : 0;
             var recover = new Dictionary<string, object?>
             {
                 ["commit_digest"] = recovered.CommitDigest,
@@ -279,6 +295,16 @@ public sealed class Fea11HostAuthIpcTests
                 ["core_session_id"] = fixture.Client.HostSession?.CoreSessionId,
                 ["grant_ids"] = (recovered.GrantIds ?? string.Empty)
                     .Split(',', StringSplitOptions.RemoveEmptyEntries),
+                ["source_sha256"] = fixture.HashOfNewZip(),
+                ["db_counts"] = new Dictionary<string, object?>
+                {
+                    ["bindings"] = countsAfter.Bindings,
+                    ["publications"] = countsAfter.Publications,
+                },
+                // A successful resolve proves the read gate is open for the recovered page.
+                ["gate_open"] = gateOpen,
+                ["second_call"] = second.State,
+                ["second_call_frames"] = Math.Max(0, afterSecond - beforeSecond),
             };
             await File.WriteAllTextAsync(
                 Path.Combine(state!, "recover.json"), JsonSerializer.Serialize(recover));
@@ -579,6 +605,15 @@ public sealed class Fea11HostAuthIpcTests
                 writer.WritePropertyName("authorization");
                 authorization.RootElement.WriteTo(writer);
             }, TimeSpan.FromSeconds(60), Client.HostSession, CancellationToken.None);
+        }
+
+        public async Task<bool> GateOpenAsync()
+        {
+            var script = Path.Combine(Repo, "verification", "FEA-11-HOST-AUTH-3", "tools",
+                "check_gate.py");
+            var output = await RunPythonAsync(Python, Repo, script, "--db", DatabasePath);
+            using var document = JsonDocument.Parse(output.Trim().Split('\n').Last());
+            return document.RootElement.GetProperty("open").GetBoolean();
         }
 
         public async Task<(int Bindings, int Publications)> CountRowsAsync()

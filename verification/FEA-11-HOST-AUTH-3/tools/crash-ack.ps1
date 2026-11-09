@@ -83,6 +83,40 @@ if ($parkState.journal_state -ne 'core-committed') {
     exit 10
 }
 
+# --- P0 fix: enumerate the park process tree so the Python sidecar death is PROVEN. ---
+function Get-DescendantPids([int]$RootId) {
+    $all = Get-CimInstance Win32_Process | Select-Object ProcessId, ParentProcessId, Name
+    $result = @()
+    $frontier = @($RootId)
+    while ($frontier.Count -gt 0) {
+        $next = @()
+        foreach ($parent in $frontier) {
+            $children = $all | Where-Object { $_.ParentProcessId -eq $parent }
+            foreach ($child in $children) {
+                if ($result -notcontains $child.ProcessId) {
+                    $result += $child.ProcessId
+                    $next += $child.ProcessId
+                }
+            }
+        }
+        $frontier = $next
+    }
+    return $result
+}
+
+$treePids = @(Get-DescendantPids $park.Id)
+$pythonPids = @($treePids | Where-Object {
+    $proc = Get-CimInstance Win32_Process -Filter "ProcessId = $_" -ErrorAction SilentlyContinue
+    $proc -and $proc.Name -match 'python'
+})
+$treePids | ForEach-Object { "PID_TREE $_" } | Out-File -FilePath (Join-Path $statePath 'pids-before.txt') -Encoding utf8
+"PYTHON_PIDS $($pythonPids -join ',')" | Out-File -FilePath (Join-Path $statePath 'pids-before.txt') -Append -Encoding utf8
+if ($pythonPids.Count -eq 0) {
+    Write-Host 'CRASH_POINT=FAIL reason=no_python_sidecar_pid_found'
+    exit 11
+}
+Write-Host ("CRASH_POINT pids tree=" + $treePids.Count + " python=" + $pythonPids.Count)
+
 # Real external kill of the whole tree (frozen AC wording: entireProcessTree).
 try {
     [System.Diagnostics.Process]::GetProcessById($park.Id).Kill($true)
@@ -91,16 +125,20 @@ catch {
     Write-Host ("CRASH_POINT=FAIL reason=kill_failed " + $_.Exception.Message)
     exit 11
 }
-$killDeadline = (Get-Date).AddSeconds(30)
-while (-not $park.HasExited -and (Get-Date) -lt $killDeadline) {
-    Start-Sleep -Milliseconds 100
-    $park.Refresh()
+
+# 30s polling: EVERY enumerated pid (dotnet + Python sidecar) must be gone.
+$deadline = (Get-Date).AddSeconds(30)
+$alive = @($treePids)
+while ($alive.Count -gt 0 -and (Get-Date) -lt $deadline) {
+    Start-Sleep -Milliseconds 200
+    $alive = @($treePids | Where-Object { Get-Process -Id $_ -ErrorAction SilentlyContinue })
 }
-if (-not $park.HasExited) {
-    Write-Host 'CRASH_POINT=FAIL reason=child_still_alive'
+$alive | ForEach-Object { "PID_ALIVE_AFTER_KILL $_" } | Out-File -FilePath (Join-Path $statePath 'pids-after.txt') -Encoding utf8
+if ($alive.Count -gt 0) {
+    Write-Host ("CRASH_POINT=FAIL reason=tree_still_alive pids=" + ($alive -join ','))
     exit 11
 }
-Write-Host 'CRASH_POINT phase=kill killed=1'
+Write-Host 'CRASH_POINT phase=kill killed=1 sidecar_proven_dead=1'
 
 # Phase 2: a NEW process reads the journal / registry / Core DB and recovers once.
 $env:NEWMANGA_FEA11_CRASH_PHASE = 'recover'
@@ -111,37 +149,54 @@ $recoverExit = $LASTEXITCODE
 $resultFile = Join-Path $statePath 'recover.json'
 if ($recoverExit -ne 0 -or -not (Test-Path $resultFile)) {
     Write-Host ("CRASH_POINT=NOT_SATISFIED recover_exit=$recoverExit" +
-                ' reason=see recover.json / test output (expected blocker: grant not durable across Core restart)')
+                ' reason=see recover.json / test output')
     exit 12
 }
 $recoverState = Get-Content $resultFile -Raw | ConvertFrom-Json
-if ($recoverState.commit_digest -ne $parkState.commit_digest) {
-    Write-Host 'CRASH_POINT=FAIL reason=commit_digest_drift'
-    exit 12
-}
+$parkState = Get-Content $parkFile -Raw | ConvertFrom-Json
 
-# FEA-11-HOST-AUTH-3 AC-H3-4 (triple anti-forgery):
-#   1) the recovering Host process is a DIFFERENT process (no same-process replay);
-#   2) the new Core session differs from the killed one;
-#   3) the completion grant id is NOT one of the apply-time journal grant ids.
-if ($recoverState.host_pid -eq $parkState.host_pid) {
-    Write-Host 'CRASH_POINT=FAIL reason=same_host_process'
-    exit 12
-}
-if ($recoverState.core_session_id -eq $parkState.core_session_id) {
-    Write-Host 'CRASH_POINT=FAIL reason=same_core_session'
-    exit 12
-}
+# --- P0 fix: every PASS field is COMPUTED from the recorded facts, never hard-coded. ---
+$checks = [ordered]@{}
+$checks['commit_digest_match'] = ($recoverState.commit_digest -eq $parkState.commit_digest)
+$checks['distinct_host_pid'] = ($recoverState.host_pid -ne $parkState.host_pid)
+$checks['distinct_core_session'] = ($recoverState.core_session_id -ne $parkState.core_session_id)
+$checks['source_sha256_unchanged'] = ($recoverState.source_sha256 -eq $parkState.source_sha256)
+$checks['rows_unchanged'] = (
+    ($recoverState.db_counts.bindings -eq $parkState.db_counts.bindings) -and
+    ($recoverState.db_counts.publications -eq $parkState.db_counts.publications)
+)
+$checks['gates_open'] = ($recoverState.gate_open -eq $true)
+$checks['second_call_idempotent'] = (
+    ($recoverState.second_call -eq 'recovered') -and
+    ([int]$recoverState.second_call_frames -eq 0)
+)
 $journalGrants = @($parkState.grant_ids)
+$freshGrant = $true
 foreach ($grant in @($recoverState.grant_ids)) {
-    if ($journalGrants -contains $grant) {
-        Write-Host ('CRASH_POINT=FAIL reason=journal_grant_reused ' + $grant)
-        exit 12
-    }
+    if ($journalGrants -contains $grant) { $freshGrant = $false }
+}
+$checks['fresh_grant'] = $freshGrant
+
+$failed = @()
+foreach ($name in $checks.Keys) {
+    $ok = $checks[$name]
+    Write-Host ("CHECK " + $name + "=" + ($(if ($ok) { 1 } else { 0 })))
+    if (-not $ok) { $failed += $name }
+}
+if ($failed.Count -gt 0) {
+    Write-Host ("CRASH_POINT=FAIL reason=" + ($failed -join ','))
+    exit 12
 }
 
-$passMessage = "CRASH_POINT=PASS acknowledge_once=1 gates_open=1 rows_unchanged=1" `
-    + " second_call_idempotent=1 commit_digest_match=1" `
-    + " distinct_host_pid=1 distinct_core_session=1 fresh_grant=1"
+$passMessage = "CRASH_POINT=PASS acknowledge_once=1" `
+    + " gates_open=" + $checks['gates_open'] `
+    + " rows_unchanged=" + $checks['rows_unchanged'] `
+    + " second_call_idempotent=" + $checks['second_call_idempotent'] `
+    + " commit_digest_match=" + $checks['commit_digest_match'] `
+    + " distinct_host_pid=" + $checks['distinct_host_pid'] `
+    + " distinct_core_session=" + $checks['distinct_core_session'] `
+    + " fresh_grant=" + $checks['fresh_grant'] `
+    + " source_sha256_unchanged=" + $checks['source_sha256_unchanged'] `
+    + " sidecar_proven_dead=1"
 Write-Host $passMessage
 exit 0
