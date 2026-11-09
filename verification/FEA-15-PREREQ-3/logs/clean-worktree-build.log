@@ -1,0 +1,48 @@
+# command: (clean worktree) dotnet build apps/desktop-avalonia/NewManga.sln -c Release --nologo
+# shell: pwsh 7.6.8 / dotnet
+# time: 2026-11-09T23:06:12.9812626+08:00
+# worktree: G:\CODEX\New Manga.workspace\FEA-15-PREREQ-3 @ afbc7e411
+# EXIT=0
+  正在确定要还原的项目…
+  已还原 G:\CODEX\New Manga.workspace\FEA-15-PREREQ-3\apps\desktop-avalonia\src\NewManga.ApplicationCore\NewManga.ApplicationCore.csproj (用时 1.86 秒)。
+  已还原 G:\CODEX\New Manga.workspace\FEA-15-PREREQ-3\apps\desktop-avalonia\src\NewManga.Host\NewManga.Host.csproj (用时 1.86 秒)。
+  已还原 G:\CODEX\New Manga.workspace\FEA-15-PREREQ-3\apps\desktop-avalonia\src\NewManga.Appearance\NewManga.Appearance.csproj (用时 1.86 秒)。
+  已还原 G:\CODEX\New Manga.workspace\FEA-15-PREREQ-3\apps\desktop-avalonia\src\NewManga.CoreClient\NewManga.CoreClient.csproj (用时 1.86 秒)。
+  已还原 G:\CODEX\New Manga.workspace\FEA-15-PREREQ-3\apps\desktop-avalonia\src\NewManga.DesignSystem\NewManga.DesignSystem.csproj (用时 1.88 秒)。
+  已还原 G:\CODEX\New Manga.workspace\FEA-15-PREREQ-3\apps\desktop-avalonia\src\NewManga.ThemeEngine\tools\NewManga.ThemeEngine.ThemeGen\NewManga.ThemeEngine.ThemeGen.csproj (用时 1.88 秒)。
+  已还原 G:\CODEX\New Manga.workspace\FEA-15-PREREQ-3\apps\desktop-avalonia\src\NewManga.DesignSystem\tools\NewManga.DesignSystem.TokenGen\NewManga.DesignSystem.TokenGen.csproj (用时 1.88 秒)。
+  已还原 G:\CODEX\New Manga.workspace\FEA-15-PREREQ-3\apps\desktop-avalonia\src\NewManga.Presentation.Avalonia\NewManga.Presentation.Avalonia.csproj (用时 1.88 秒)。
+  已还原 G:\CODEX\New Manga.workspace\FEA-15-PREREQ-3\apps\desktop-avalonia\src\NewManga.ThemeEngine\NewManga.ThemeEngine.csproj (用时 1.88 秒)。
+  已还原 G:\CODEX\New Manga.workspace\FEA-15-PREREQ-3\apps\desktop-avalonia\tests\NewManga.ApplicationCore.Tests\NewManga.ApplicationCore.Tests.csproj (用时 1.9 秒)。
+  已还原 G:\CODEX\New Manga.workspace\FEA-15-PREREQ-3\apps\desktop-avalonia\tests\NewManga.CoreClient.Tests\NewManga.CoreClient.Tests.csproj (用时 1.9 秒)。
+  已还原 G:\CODEX\New Manga.workspace\FEA-15-PREREQ-3\apps\desktop-avalonia\tests\NewManga.Appearance.Tests\NewManga.Appearance.Tests.csproj (用时 1.9 秒)。
+  已还原 G:\CODEX\New Manga.workspace\FEA-15-PREREQ-3\apps\desktop-avalonia\tests\NewManga.Presentation.Avalonia.Tests\NewManga.Presentation.Avalonia.Tests.csproj (用时 1.9 秒)。
+  已还原 G:\CODEX\New Manga.workspace\FEA-15-PREREQ-3\apps\desktop-avalonia\tests\NewManga.ThemeEngine.Tests\NewManga.ThemeEngine.Tests.csproj (用时 1.9 秒)。
+  已还原 G:\CODEX\New Manga.workspace\FEA-15-PREREQ-3\apps\desktop-avalonia\tests\NewManga.DesignSystem.Tests\NewManga.DesignSystem.Tests.csproj (用时 1.9 秒)。
+  已还原 G:\CODEX\New Manga.workspace\FEA-15-PREREQ-3\apps\desktop-avalonia\src\NewManga.App\NewManga.App.csproj (用时 1.91 秒)。
+  已还原 G:\CODEX\New Manga.workspace\FEA-15-PREREQ-3\apps\desktop-avalonia\tests\NewManga.App.Tests\NewManga.App.Tests.csproj (用时 1.91 秒)。
+  已还原 G:\CODEX\New Manga.workspace\FEA-15-PREREQ-3\apps\desktop-avalonia\tests\NewManga.Host.Tests\NewManga.Host.Tests.csproj (用时 1.91 秒)。
+  NewManga.Appearance -> G:\CODEX\New Manga.workspace\FEA-15-PREREQ-3\apps\desktop-avalonia\src\NewManga.Appearance\bin\Release\net9.0\NewManga.Appearance.dll
+  NewManga.ApplicationCore -> G:\CODEX\New Manga.workspace\FEA-15-PREREQ-3\apps\desktop-avalonia\src\NewManga.ApplicationCore\bin\Release\net9.0\NewManga.ApplicationCore.dll
+  NewManga.CoreClient -> G:\CODEX\New Manga.workspace\FEA-15-PREREQ-3\apps\desktop-avalonia\src\NewManga.CoreClient\bin\Release\net9.0\NewManga.CoreClient.dll
+  NewManga.DesignSystem -> G:\CODEX\New Manga.workspace\FEA-15-PREREQ-3\apps\desktop-avalonia\src\NewManga.DesignSystem\bin\Release\net9.0\NewManga.DesignSystem.dll
+  NewManga.Appearance.Tests -> G:\CODEX\New Manga.workspace\FEA-15-PREREQ-3\apps\desktop-avalonia\tests\NewManga.Appearance.Tests\bin\Release\net9.0\NewManga.Appearance.Tests.dll
+  NewManga.ApplicationCore.Tests -> G:\CODEX\New Manga.workspace\FEA-15-PREREQ-3\apps\desktop-avalonia\tests\NewManga.ApplicationCore.Tests\bin\Release\net9.0\NewManga.ApplicationCore.Tests.dll
+  NewManga.CoreClient.Tests -> G:\CODEX\New Manga.workspace\FEA-15-PREREQ-3\apps\desktop-avalonia\tests\NewManga.CoreClient.Tests\bin\Release\net9.0\NewManga.CoreClient.Tests.dll
+  NewManga.Host -> G:\CODEX\New Manga.workspace\FEA-15-PREREQ-3\apps\desktop-avalonia\src\NewManga.Host\bin\Release\net9.0\NewManga.Host.dll
+  NewManga.Presentation.Avalonia -> G:\CODEX\New Manga.workspace\FEA-15-PREREQ-3\apps\desktop-avalonia\src\NewManga.Presentation.Avalonia\bin\Release\net9.0\NewManga.Presentation.Avalonia.dll
+  NewManga.DesignSystem.TokenGen -> G:\CODEX\New Manga.workspace\FEA-15-PREREQ-3\apps\desktop-avalonia\src\NewManga.DesignSystem\tools\NewManga.DesignSystem.TokenGen\bin\Release\net9.0\NewManga.DesignSystem.TokenGen.dll
+  NewManga.ThemeEngine -> G:\CODEX\New Manga.workspace\FEA-15-PREREQ-3\apps\desktop-avalonia\src\NewManga.ThemeEngine\bin\Release\net9.0\NewManga.ThemeEngine.dll
+  NewManga.DesignSystem.Tests -> G:\CODEX\New Manga.workspace\FEA-15-PREREQ-3\apps\desktop-avalonia\tests\NewManga.DesignSystem.Tests\bin\Release\net9.0\NewManga.DesignSystem.Tests.dll
+  NewManga.ThemeEngine.ThemeGen -> G:\CODEX\New Manga.workspace\FEA-15-PREREQ-3\apps\desktop-avalonia\src\NewManga.ThemeEngine\tools\NewManga.ThemeEngine.ThemeGen\bin\Release\net9.0\NewManga.ThemeEngine.ThemeGen.dll
+  NewManga.Presentation.Avalonia.Tests -> G:\CODEX\New Manga.workspace\FEA-15-PREREQ-3\apps\desktop-avalonia\tests\NewManga.Presentation.Avalonia.Tests\bin\Release\net9.0\NewManga.Presentation.Avalonia.Tests.dll
+  NewManga.ThemeEngine.Tests -> G:\CODEX\New Manga.workspace\FEA-15-PREREQ-3\apps\desktop-avalonia\tests\NewManga.ThemeEngine.Tests\bin\Release\net9.0\NewManga.ThemeEngine.Tests.dll
+  NewManga.App -> G:\CODEX\New Manga.workspace\FEA-15-PREREQ-3\apps\desktop-avalonia\src\NewManga.App\bin\Release\net9.0\NewManga.App.dll
+  NewManga.Host.Tests -> G:\CODEX\New Manga.workspace\FEA-15-PREREQ-3\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll
+  NewManga.App.Tests -> G:\CODEX\New Manga.workspace\FEA-15-PREREQ-3\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Release\net9.0\NewManga.App.Tests.dll
+
+已成功生成。
+    0 个警告
+    0 个错误
+
+已用时间 00:00:10.50

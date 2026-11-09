@@ -88,3 +88,7 @@
 ## 2026-11-09 迁入（FEA-15 前置）
 
 |FEA-15-PREREQ-1|—|**done**（修复 2 个既有 App.Tests 失败；r1 approved；`f7134ba83`）|
+
+## 2026-11-09 迁入（FEA-15 基线）
+
+|FEA-15-PREREQ-2|—|**done**（基线：pytest 3446/0/10、.NET 1804/0/107）|
