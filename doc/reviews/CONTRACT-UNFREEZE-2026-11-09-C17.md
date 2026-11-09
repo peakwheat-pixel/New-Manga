@@ -56,11 +56,15 @@
 
 | 项 | 值 |
 |---|---|
-| 复核 head | 待填 |
-| 复核结论 | 待填 |
-| v1.2 工作树 pin | 待填 |
-| v1.2 blob ID / blob SHA-256 | 待填 |
-| verify_pins | 待填（须 18/18） |
+| 草案提交 | `1ca0c4fa4edd23fb8a4136f987ddc578a25e07e7` |
+| 复核（r1） | `doc/reviews/C17-v1.2-byte-review.md` — CHANGES_REQUESTED（P0=0/P1=1/P2=4/P3=6） |
+| 复核（r2，处置后） | `doc/reviews/C17-v1.2-byte-review-r2.md` — **APPROVE**（P0/P1/P2 未闭合=0；越界无；语义自洽） |
+| 被审字节 SHA-256 | `cdeee4872e29b56c7d67de65dabd6ca9b31006eecde61d99b83e29fe5a4fc96c` |
+| v1.2 工作树 pin | `cdeee4872e29b56c7d67de65dabd6ca9b31006eecde61d99b83e29fe5a4fc96c` |
+| v1.2 blob ID | `2cccc3c68f17467e5345680edf62f408451d84b4` |
+| v1.2 blob SHA-256（LF） | `e809cfb33b8b792b5dd063a14d8b25dacc5fb2c4c41fae71406144bfcdaea143` |
+| verify_pins | **PASS (all 18)**（C17 重算，其余 17 零变化） |
+| 冻结记录 | `doc/plan/FEA-CONTRACT-FROZEN-C17.md` v1.2 附录 |
 
 ## 7. 不构成什么
 

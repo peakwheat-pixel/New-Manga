@@ -8,15 +8,15 @@
 
 | 项 | 值 |
 |---|---|
-| 最终 ID / 冻结版本 / 时间 | **C-17 v1.1 / 2026-11-06（DSH UNFREEZE 重冻；v1.0 于 2026-11-04）** |
-| 最终语义 commit（v1.0） | `e94c4b8d8f8c0baae857d3335d7aa6f2533a84c6`（v1.0 冻结提交） |
+| 最终 ID / 冻结版本 / 时间 | **C-17 v1.2 / 2026-11-09（DSH UNFREEZE 重冻；v1.1 于 2026-11-06；v1.0 于 2026-11-04）** |
+| 最终语义 commit（v1.0） | `e94c4b8d8f8c0baae857d3335d7aa6f2533a84c6`（v1.0 冻结提交）；v1.2 语义 commit `1ca0c4fa4edd23fb8a4136f987ddc578a25e07e7` |
 | 实际 reviewed_head | r1 `69d7c31ee60318c6f8a042c60c3f749a0ffda6a6`（ZCode 契约 Review r1）；轻量复核 `c7940fa7179e2b1d029fa58fb09e9a8dea13f5eb` |
 | Reviewer 身份/来源/报告 | **ZCode 全新上下文**（r1 session `sess_ec2aaf7b-c0cd-4c1c-8696-436c55733bf3`；轻量 session `sess_39a3cee4-31a4-4f5c-a4b0-fcf3a328d1f6`；未参与起草/返修）；报告 `doc/reviews/FEA-11-PREREQ-1-r1.md`、`doc/reviews/FEA-11-PREREQ-1-r1-light.md`；结论 approved（r1 P0/P1=0、P2=6 已处置；轻量 P0/P1/P2=0） |
-| sha256（v1.1 最终工作树 pin） | `aefa0fa5b17e0f10d9f23aebc3146c98c3c2bc170f2a18154d56a148e9701a59` |
-| git blob ID（v1.1） | `f767e158a43652ea092066081e53fa0810e395fb` |
-| blob 内容 SHA-256（v1.1，LF Git blob） | `83c05ae9f575600ba93ea325b86214bd1d3207fa6f276c2bdbef5c976dccb9e8` |
+| sha256（v1.2 最终工作树 pin） | `cdeee4872e29b56c7d67de65dabd6ca9b31006eecde61d99b83e29fe5a4fc96c` |
+| git blob ID（v1.2） | `2cccc3c68f17467e5345680edf62f408451d84b4` |
+| blob 内容 SHA-256（v1.2，LF Git blob） | `e809cfb33b8b792b5dd063a14d8b25dacc5fb2c4c41fae71406144bfcdaea143` |
 
-历史（v1.0，仅追溯）：工作树 pin `86b89ff8…`；blob ID `9c6394bf…`；blob SHA-256 `b6766e1a…`；提交 `e94c4b8`。
+历史（仅追溯）：v1.1 工作树 pin `aefa0fa5…`；blob ID `f767e158…`；blob SHA-256 `83c05ae9…`。v1.0 工作树 pin `86b89ff8…`；blob ID `9c6394bf…`；blob SHA-256 `b6766e1a…`；提交 `e94c4b8`。
 | 迁移版本与登记名 | **v8 / v8__source_sync（DSH 冻结；已核对 schema.py/migrator.py 未占用 v8；v1–v7 SQL/checksum 不变）** |
 | per-command / 默认 minor / 文档 rev | 新面 2.3 / 默认 3 不变 / C-17 v1.1；M2-C1 rev 2.14 现状 **无增量（NO_INCREMENT）** |
 
@@ -66,3 +66,11 @@
 3. Reviewer逐条核对§9清单并复跑隔离命令，报告身份/来源、Architecture/Verification、未跑项及P0/P1；DSH处置findings，有返修就新head复核。
 4. approved后，仅做明确记录的冻结元数据编辑；复核差异、实际读取新旧blob字节，最后编辑后算三指纹；最终pin写本记录（v1.1 已为 18/18 口径，v1.0 时代“仅追加第18项”为历史描述）。
 5. 18/18 + check + 范围/资源/集成验证后，由DSH更新Task/STATUS/PLAN并done。之后才释放FEA-11 scope-r2，不能从本草案直接启动生产实施。
+
+## 附录 · v1.2 UNFREEZE 重冻记录（2026-11-09）
+
+- 载体：`doc/reviews/CONTRACT-UNFREEZE-2026-11-09-C17.md`；触发：`FEA-11-HOST-AUTH-3` scope review r1 `NEEDS_UNFREEZE` → ZCode 独立裁决批准「C-17 单 pin ADDITIVE_UNFREEZE（路线 B + D-4 合批）」。
+- 变更性质：**单 pin additive**——新增只读 host-control 命令 `GetSourceSyncPlanMaterialized / source_get_sync_plan_materialized` + `SourceSyncPlanMaterialization` DTO + 2 错误码（`SOURCE_PLAN_NOT_FOUND`/`SOURCE_PLAN_UNAVAILABLE`）+ §4 host-control 枚举与 capability 串 `source.sync.plan-materialization/1` + §5.3 只读守卫 + §9 v1.2 适用声明；**不动**六字段 `CompletionRequest`/HostJournal/C-16 grant/§6 CAS/§7 lineage/SQL/DDL/P1/P2/P4/P5/P6。
+- 独立复核：`doc/reviews/C17-v1.2-byte-review.md`（r1 CHANGES_REQUESTED，P0=0/P1=1/P2=4/P3=6）→ 处置 → `doc/reviews/C17-v1.2-byte-review-r2.md`（**APPROVE**；P0/P1/P2 未闭合=0；越界无；语义自洽；被审字节 SHA-256 `cdeee487…`）。
+- 冻结字节三指纹：工作树 `cdeee4872e29b56c7d67de65dabd6ca9b31006eecde61d99b83e29fe5a4fc96c` / blob ID `2cccc3c68f17467e5345680edf62f408451d84b4` / blob SHA-256 `e809cfb33b8b792b5dd063a14d8b25dacc5fb2c4c41fae71406144bfcdaea143`（LF，58134 bytes）。
+- `verify_pins`：C17 pin 已重算；其余 17 pins 零变化（`truth 17 OK + C17 OK = 18/18`）。

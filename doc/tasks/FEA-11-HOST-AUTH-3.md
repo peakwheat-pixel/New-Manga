@@ -3,7 +3,7 @@ id: FEA-11-HOST-AUTH-3
 title: 跨进程崩溃恢复的 grant 语义（原 FEA-11-HOST-AUTH-2 AC-F3）+ limitation 3/4（C-17 UNFREEZE 类）
 kind: implementation
 governance_version: 3
-status: blocked
+status: proposed
 approval: 占位卡 re-home（`FEA-11-HOST-AUTH-2` R1-P2-1 + DSH 2026-11-08 裁决）；独立 scope review r1 结论 **NEEDS_UNFREEZE**（`doc/reviews/FEA-11-HOST-AUTH-3-scope-r1.md`，head `461684432`）：真实跨进程恢复在冻结字节下不可达，唯一不破坏架构的载体 = **C-17 单 pin ADDITIVE_UNFREEZE**（路线 B + D-4 合批）；**未过 UNFREEZE 流程前不得实施**
 suggested_owner: dsh
 owner: null
@@ -70,6 +70,6 @@ out_of_scope:
 | R-01 | 期望码 **`SOURCE_ACCESS_DENIED`**（非 `SOURCE_GRANT_EXPIRED`），须落进 AC |
 | R-03 | 另立缺陷卡（契约允许全缺失源空 `grant_ids` 但 Core 拒绝、分支不可达） |
 
-**恢复条件（当前仍 blocked）**：C-17 UNFREEZE 程序完成（载体草案 → 独立 byte-level 复核 → 重冻 → pin 重算 → 复冻记录）且 `verify_pins` 18/18 重新全绿。
+**恢复条件（已满足 2026-11-09）**：C-17 UNFREEZE 程序已完成（`doc/reviews/CONTRACT-UNFREEZE-2026-11-09-C17.md` §6 复冻记录；r2 byte-review APPROVE；`verify_pins` **18/18**）。卡状态转 `proposed`：**scope 仍未冻结，不得实施**；须另立 scope review 冻结实现范围后释放。
 
 **风险（裁决附带）**：新只读命令须 host-only + closed shape + wirelog 脱敏断言；崩溃注入须断言 Python sidecar 确被杀（否则记 NOT_RUN，不得冒充 PASS）。
