@@ -389,7 +389,6 @@ public sealed class Fea11HostAuthIpcTests
                 Assert.Contains("source.sync.apply/1", (await client.PingAsync()).Capabilities);
                 await client.OpenHostSessionAsync();
                 var registry = new SourceAccessRegistry(root);
-                var registered = registry.Register("fea11-hostauth-ipc", [root]);
                 var sources = new SourceReadCoordinator(client, registry, () => true);
                 var operations = new SourceOperationCoordinator(client, root, () => true, registry, sources);
                 var rendition = JsonSerializer.SerializeToElement(new Dictionary<string, object?>
@@ -400,6 +399,9 @@ public sealed class Fea11HostAuthIpcTests
                 });
                 var sourceId = seed.GetProperty("source_id").GetString()!;
                 var newZip = seed.GetProperty("new_zip").GetString()!;
+                // Production registers ONE root == the user-selected SOURCE (the container
+                // file itself), never the data root: recovery re-mints from roots[0].
+                var registered = registry.Register("fea11-hostauth-ipc", [newZip]);
                 var newGrant = string.Empty;
                 JsonElement scan = default;
                 if (!reuse)
