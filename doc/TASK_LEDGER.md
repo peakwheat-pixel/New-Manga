@@ -24,11 +24,11 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `cancelled` | 18 | yes |
 | `historical` | 11 | yes |
 | `superseded` | 8 | yes |
-| `proposed` | 6 | no |
+| `proposed` | 5 | no |
+| `blocked` | 2 | no |
 | `in_review` | 2 | no |
 | `(none)` | 1 | no |
 | `approved` | 1 | no |
-| `blocked` | 1 | no |
 | `ready` | 1 | no |
 
 ## Non-terminal tasks
@@ -36,11 +36,11 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | task | status | in plan |
 |---|---|---|
 | `GIT-CLEAN-PUBLICATION-DIAG-1` | `approved` | no |
+| `FEA-11-HOST-AUTH-3` | `blocked` | no |
 | `NEW-MANGA-V1-FULL-AUDIT` | `blocked` | own row |
 | `GIT-CLEAN-PUBLICATION-1` | `in_review` | no |
 | `GIT-CLEAN-RUST-ISOLATION-1` | `in_review` | no |
 | `FEA-06-RESIDUAL-4` | `proposed` | no |
-| `FEA-11-HOST-AUTH-3` | `proposed` | no |
 | `FEA-11-HOST-AUTH-4` | `proposed` | no |
 | `FEA-11-HOST-AUTH-5` | `proposed` | no |
 | `FEA-11-L-S1-B2-ROOTS-AVAILABILITY-1` | `proposed` | no |

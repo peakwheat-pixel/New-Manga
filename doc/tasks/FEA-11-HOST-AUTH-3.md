@@ -3,8 +3,8 @@ id: FEA-11-HOST-AUTH-3
 title: 跨进程崩溃恢复的 grant 语义（原 FEA-11-HOST-AUTH-2 AC-F3）+ limitation 3/4（C-17 UNFREEZE 类）
 kind: implementation
 governance_version: 3
-status: proposed
-approval: 占位卡：由 `FEA-11-HOST-AUTH-2` Review r1（R1-P2-1）与 DSH 2026-11-08 裁决 re-home；**scope 未冻结，不得实施**；须先独立 scope review
+status: blocked
+approval: 占位卡 re-home（`FEA-11-HOST-AUTH-2` R1-P2-1 + DSH 2026-11-08 裁决）；独立 scope review r1 结论 **NEEDS_UNFREEZE**（`doc/reviews/FEA-11-HOST-AUTH-3-scope-r1.md`，head `461684432`）：真实跨进程恢复在冻结字节下不可达，唯一不破坏架构的载体 = **C-17 单 pin ADDITIVE_UNFREEZE**（路线 B + D-4 合批）；**未过 UNFREEZE 流程前不得实施**
 suggested_owner: dsh
 owner: null
 reviewer: null
@@ -49,3 +49,13 @@ out_of_scope:
 
 - 真实进程 kill 后新进程恢复/ACK 成功一次、gate 全开、行数不变、幂等、`commit_digest` 一致；或（若走 UNFREEZE）契约载体 + 独立 byte-level 复核 + 重冻 + pin 重算。
 - 不得以「同进程新 coordinator」冒充；不得伪造 PASS。
+
+## Scope review 结论（2026-11-09，r1：doc/reviews/FEA-11-HOST-AUTH-3-scope-r1.md）
+
+- **verdict：NEEDS_UNFREEZE**。阻塞事实 1/2/3 均成立，但卡面三处须改写（以报告为准）：
+  1. **错误码纠正**：整树 kill 后新进程 resolve 抛 **SOURCE_ACCESS_DENIED**（"source-read grant is not registered"，source_read_refs.py:855-861），**不是** SOURCE_GRANT_EXPIRED（该码仅用于「已注册但过期」/「注册窗口非法」）；报告已实测复现。
+  2. **最省载体**：不是「journal 扩展」，而是**新增一条只读计划物化投影命令**——Core 已把 PlanBody 持久化在 source_sync_plans.body_json，读回成本极低；Host 侧现有路径缺 ersion_id/ntries。
+  3. **limitation 3（retry 命令）与 AC-F3 无因果关系**，应拆出本卡（否则一张可单 pin 的卡被拖成多 pin UNFREEZE）；D-3 同理拆出。
+- **推荐载体**：C-17 **单 pin ADDITIVE_UNFREEZE**（路线 B + D-4 合批）；A（grant 持久化/重绑定）与 C（改崩溃口径）需用户/架构裁决，本卡不建议。
+- **阻塞条件**：UNFREEZE 流程（载体草案 → 独立 byte-level 复核 → 重冻 → pin 重算 → 复冻记录）未完成前，本卡不得实施。恢复条件：UNFREEZE 冻结记录落盘且 erify_pins 18/18 重新全绿。
+- **本卡不构成**：不批准任何实现；不构成对卡面 pproval 的解冻。
