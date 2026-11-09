@@ -405,6 +405,12 @@ public sealed class SourceOperationCoordinator
                 // (<c>sha256(canonical(authorizations))</c>), never a digest of
                 // the surrounding envelope.
                 AuthorizationDigest = minted.AuthorizationDigest,
+                // FEA-11-HOST-AUTH-3: the journal records the FRESH recovery grants so a
+                // crash audit can prove the completion used re-minted grants (never the
+                // apply-time ids). Null keeps the existing value (legacy callers).
+                GrantIds = recoveryGrantIds is null
+                    ? current.GrantIds
+                    : string.Join(",", recoveryGrantIds),
                 UpdatedAt = UtcNow(),
             });
         }

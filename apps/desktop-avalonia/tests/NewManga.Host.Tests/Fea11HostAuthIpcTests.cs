@@ -199,6 +199,96 @@ public sealed class Fea11HostAuthIpcTests
         DateTimeOffset.Parse(element.GetString()!, CultureInfo.InvariantCulture,
             DateTimeStyles.AdjustToUniversal);
 
+    /// <summary>
+    /// FEA-11-HOST-AUTH-3 AC-H3-4 phase 1: drive the REAL chain to journal
+    /// <c>core-committed</c>, persist the park facts, then block so the external driver can
+    /// kill the WHOLE process tree (dotnet + Python Core). This test never self-terminates
+    /// on purpose: only the kill ends it.
+    /// </summary>
+    [Fea11IpcFact]
+    public async Task CrashPoint_Park()
+    {
+        var state = Environment.GetEnvironmentVariable("NEWMANGA_FEA11_CRASH_STATE");
+        Assert.False(string.IsNullOrWhiteSpace(state), "NEWMANGA_FEA11_CRASH_STATE is required");
+        var fixture = await IpcFixture.CreateAsync();
+        try
+        {
+            var operationId = await fixture.ApplyAsync();
+            var entry = fixture.Operations.Get(operationId)
+                ?? throw new InvalidOperationException("journal entry missing after apply");
+            Assert.Equal("core-committed", entry.State);
+            var park = new Dictionary<string, object?>
+            {
+                ["journal_state"] = entry.State,
+                ["operation_id"] = operationId,
+                ["commit_digest"] = entry.CommitDigest,
+                ["grant_ids"] = (entry.GrantIds ?? string.Empty)
+                    .Split(',', StringSplitOptions.RemoveEmptyEntries),
+                ["plan_id"] = entry.PlanId,
+                ["plan_digest"] = entry.PlanDigest,
+                ["host_pid"] = Environment.ProcessId,
+                ["core_session_id"] = fixture.Client.HostSession?.CoreSessionId,
+                ["data_root"] = fixture.Root,
+            };
+            await File.WriteAllTextAsync(
+                Path.Combine(state!, "park.json"), JsonSerializer.Serialize(park));
+            // Park: the external driver kills this tree; nothing else ends the test.
+            var deadline = DateTime.UtcNow.AddMinutes(5);
+            while (DateTime.UtcNow < deadline)
+            {
+                await Task.Delay(200);
+            }
+        }
+        finally
+        {
+            await fixture.DisposeAsync();
+        }
+    }
+
+    /// <summary>
+    /// FEA-11-HOST-AUTH-3 AC-H3-4 phase 2: a NEW process (new PID, new Host session) opens
+    /// the SAME data root with a NEW Core, recovers the parked operation exactly once using
+    /// FRESH re-minted grants, and persists the recovery facts for the driver's
+    /// triple anti-forgery check.
+    /// </summary>
+    [Fea11IpcFact]
+    public async Task CrashPoint_Recover()
+    {
+        var state = Environment.GetEnvironmentVariable("NEWMANGA_FEA11_CRASH_STATE");
+        Assert.False(string.IsNullOrWhiteSpace(state), "NEWMANGA_FEA11_CRASH_STATE is required");
+        var parkPath = Path.Combine(state!, "park.json");
+        Assert.True(File.Exists(parkPath), "phase 1 must park before recovery");
+        using var parkDocument = JsonDocument.Parse(await File.ReadAllTextAsync(parkPath));
+        var park = parkDocument.RootElement;
+        var root = park.GetProperty("data_root").GetString()!;
+        var operationId = park.GetProperty("operation_id").GetString()!;
+        var fixture = await IpcFixture.CreateAsync(root);
+        try
+        {
+            var recovered = await fixture.Operations.RecoverAsync(operationId);
+            Assert.Equal("recovered", recovered.State);
+            // Idempotent: the second call returns the same state.
+            var second = await fixture.Operations.RecoverAsync(operationId);
+            Assert.Equal("recovered", second.State);
+            Assert.Equal(park.GetProperty("commit_digest").GetString(), recovered.CommitDigest);
+
+            var recover = new Dictionary<string, object?>
+            {
+                ["commit_digest"] = recovered.CommitDigest,
+                ["host_pid"] = Environment.ProcessId,
+                ["core_session_id"] = fixture.Client.HostSession?.CoreSessionId,
+                ["grant_ids"] = (recovered.GrantIds ?? string.Empty)
+                    .Split(',', StringSplitOptions.RemoveEmptyEntries),
+            };
+            await File.WriteAllTextAsync(
+                Path.Combine(state!, "recover.json"), JsonSerializer.Serialize(recover));
+        }
+        finally
+        {
+            await fixture.DisposeAsync();
+        }
+    }
+
     private sealed class Fea11IpcFactAttribute : FactAttribute
     {
         public Fea11IpcFactAttribute()
@@ -247,20 +337,35 @@ public sealed class Fea11HostAuthIpcTests
         public JsonElement Scan { get; }
         public string DatabasePath => Path.Combine(Root, "library.db");
 
-        public static async Task<IpcFixture> CreateAsync()
+        public static async Task<IpcFixture> CreateAsync(string? existingRoot = null)
         {
             var repo = RepositoryRoot();
             var python = Environment.GetEnvironmentVariable("NEWMANGA_BUILD_PYTHON")
                 ?? "C:/Python314/python.exe";
-            var root = Path.Combine(repo + ".workspace", "FEA-11", "fixtures",
-                "host-auth-ipc-" + Guid.NewGuid().ToString("N"));
+            var reuse = !string.IsNullOrWhiteSpace(existingRoot);
+            var root = reuse
+                ? existingRoot!
+                : Path.Combine(repo + ".workspace", "FEA-11", "fixtures",
+                    "host-auth-ipc-" + Guid.NewGuid().ToString("N"));
             Directory.CreateDirectory(root);
-            await RunPythonAsync(python, repo, "tests/fea11/support/ipc_seed.py",
-                "--data-root", root, "--db", Path.Combine(root, "library.db"));
-            using var seedDocument = JsonDocument.Parse(await File.ReadAllTextAsync(
-                Path.Combine(root, "ipc-seed-receipt.json")));
-            var seed = seedDocument.RootElement.Clone();
-            Assert.Equal(9, seed.GetProperty("schema_version").GetInt32());
+            JsonElement seed;
+            if (!reuse)
+            {
+                await RunPythonAsync(python, repo, "tests/fea11/support/ipc_seed.py",
+                    "--data-root", root, "--db", Path.Combine(root, "library.db"));
+                using var seedDocument = JsonDocument.Parse(await File.ReadAllTextAsync(
+                    Path.Combine(root, "ipc-seed-receipt.json")));
+                seed = seedDocument.RootElement.Clone();
+                Assert.Equal(9, seed.GetProperty("schema_version").GetInt32());
+            }
+            else
+            {
+                // Crash/recovery fixture: the PRECEDING process seeded this root; the
+                // seed receipt is re-read for the (unchanged) source identity only.
+                using var seedDocument = JsonDocument.Parse(await File.ReadAllTextAsync(
+                    Path.Combine(root, "ipc-seed-receipt.json")));
+                seed = seedDocument.RootElement.Clone();
+            }
 
             var client = await CoreServiceClient.StartAsync(new CoreServiceOptions
             {
@@ -295,13 +400,21 @@ public sealed class Fea11HostAuthIpcTests
                 });
                 var sourceId = seed.GetProperty("source_id").GetString()!;
                 var newZip = seed.GetProperty("new_zip").GetString()!;
-                var newGrant = await sources.IssueAsync(
-                    registered.RegistryId, registered.Generation, newZip, "zip",
-                    sourceId, sourceId + "-candidate", rendition);
-                var scan = await ScanAsync(client, seed, newGrant);
+                var newGrant = string.Empty;
+                JsonElement scan = default;
+                if (!reuse)
+                {
+                    newGrant = await sources.IssueAsync(
+                        registered.RegistryId, registered.Generation, newZip, "zip",
+                        sourceId, sourceId + "-candidate", rendition);
+                    scan = await ScanAsync(client, seed, newGrant);
+                }
                 var fixture = new IpcFixture(repo, python, root, client, registry, sources,
                     operations, seed, newZip, Hash(newZip), newGrant, scan);
-                await fixture.PlanAsync();
+                if (!reuse)
+                {
+                    await fixture.PlanAsync();
+                }
                 return fixture;
             }
             catch

@@ -59,10 +59,11 @@ Write-Host "CRASH_POINT phase=park state=$statePath"
 # below is not a self-inflicted in-process shutdown.
 $env:NEWMANGA_FEA11_CRASH_PHASE = 'park'
 $env:NEWMANGA_FEA11_CRASH_STATE = $statePath
-$park = Start-Process -FilePath 'dotnet' -PassThru -NoNewWindow -ArgumentList @(
-    'test', $testProject, '-c', 'Release', '--nologo',
+$parkArgs = @(
+    'test', ('"' + $testProject + '"'), '-c', 'Release', '--nologo',
     '--filter', 'FullyQualifiedName~Fea11HostAuthIpcTests.CrashPoint_Park'
 )
+$park = Start-Process -FilePath 'dotnet' -PassThru -NoNewWindow -ArgumentList $parkArgs
 
 $deadline = (Get-Date).AddMinutes(5)
 while (-not (Test-Path $parkFile) -and (Get-Date) -lt $deadline -and -not $park.HasExited) {
@@ -139,7 +140,8 @@ foreach ($grant in @($recoverState.grant_ids)) {
     }
 }
 
-Write-Host ("CRASH_POINT=PASS acknowledge_once=1 gates_open=1 rows_unchanged=1"
-            + " second_call_idempotent=1 commit_digest_match=1"
-            + " distinct_host_pid=1 distinct_core_session=1 fresh_grant=1")
+$passMessage = "CRASH_POINT=PASS acknowledge_once=1 gates_open=1 rows_unchanged=1" `
+    + " second_call_idempotent=1 commit_digest_match=1" `
+    + " distinct_host_pid=1 distinct_core_session=1 fresh_grant=1"
+Write-Host $passMessage
 exit 0
