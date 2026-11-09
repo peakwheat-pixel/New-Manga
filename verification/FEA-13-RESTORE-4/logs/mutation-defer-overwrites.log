@@ -1,15 +1,16 @@
-# command: python -m pytest tests/storage/test_nmbak_merge_restore.py -q  # after mutation: defer also applies conflicts (expected RED)
+# command: python -m pytest tests/storage/test_nmbak_merge_restore.py -q  # after mutation: defer also applies selected conflicts (expected RED)
 # shell: pwsh 7.6.8 / python 3.14
-# time: 2026-11-09T21:51:10.9101717+08:00
-# batch: fea-13-restore-4
+# time: 2026-11-09T22:05:58.3095108+08:00
+# batch: fea-13-restore-4-r2
 # EXIT=1
-.F..                                                                     [100%]
+....F..                                                                  [100%]
 ================================== FAILURES ===================================
-___________ test_defer_applies_adds_only_and_never_overwrites_live ____________
+____________________ test_defer_ignores_use_backup_entries ____________________
 
-tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-1861/test_defer_applies_adds_only_a0')
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-1881/test_defer_ignores_use_backup_0')
 
-    def test_defer_applies_adds_only_and_never_overwrites_live(tmp_path):
+    def test_defer_ignores_use_backup_entries(tmp_path):
+        """R4-003: entries are only honoured in use_backup mode."""
         conn, data_root, managed_root = _open(tmp_path)
         _seed(conn, managed_root)
         service = _service(conn, data_root, managed_root)
@@ -18,19 +19,25 @@ tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest
             conn.execute("UPDATE books SET title = 'CHANGED' WHERE book_id = 'book-1'")
         context = service.extract_for_plan(created["backup_id"])
         try:
-            plan = plan_restore(conn, context["database_path"], managed_root=managed_root,
-                                backup_entries=context["managed_entries"])
-            report = apply_restore(conn, context["database_path"], plan["items"], mode="defer")
+            plan = plan_restore(conn, context["database_path"])
+            report = apply_restore(
+                conn,
+                context["database_path"],
+                plan["items"],
+                mode="defer",
+                use_backup_keys={("books", "book-1")},  # must be ignored under defer
+                undo_root=service.plan_undo_root(created["backup_id"]),
+            )
         finally:
             service.cleanup_plan(context)
     
->       assert report["failed"] == []
+>       assert report["applied"] == []
 E       AssertionError: assert [{'kind': 'ro...nflict', ...}] == []
 E         
 E         Left contains one more item: {'kind': 'row', 'table': 'books', 'key': 'book-1', 'action': 'conflict', ...}
 E         Use -v to get more diff
 
-tests\storage\test_nmbak_merge_restore.py:173: AssertionError
+tests\storage\test_nmbak_merge_restore.py:264: AssertionError
 =========================== short test summary info ===========================
-FAILED tests/storage/test_nmbak_merge_restore.py::test_defer_applies_adds_only_and_never_overwrites_live
-1 failed, 3 passed in 0.71s
+FAILED tests/storage/test_nmbak_merge_restore.py::test_defer_ignores_use_backup_entries
+1 failed, 6 passed in 1.27s

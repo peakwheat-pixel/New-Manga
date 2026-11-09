@@ -407,9 +407,14 @@ _CLEANUP_COMMANDS = frozenset({
 #: SETTINGS-OPEN-C-2-BACKUP (design §3.4): the backup/restore face. Same
 #: ordinary application-channel precedent as cleanup/settings.get -- the
 #: frozen host-control envelope is not widened.
-_RESTORE_LOCK_EXEMPT = frozenset(
-    {"backup.list", "backup.create", "backup.delete"}
-)
+def _restore_lock_exempt(command: str) -> bool:
+    """Commands that may run while a merge restore holds the window.
+
+    Read-only surfaces (``*.list``/``core.ping``) are harmless, and
+    ``backup.create`` only reads the live database to snapshot it; every other
+    write command fails closed.
+    """
+    return command in {"core.ping", "backup.create"} or command.endswith(".list")
 _BACKUP_COMMANDS = frozenset({
     "backup.create",
     "backup.list",
@@ -3188,7 +3193,11 @@ class CoreServiceServer:
             if mode == "overwrite":
                 return service.restore(backup_id, confirm_restore=True)
             return self._merge_restore(
-                service, backup_id, mode, payload.get("entries") or []
+                service,
+                backup_id,
+                mode,
+                payload.get("entries") or [],
+                payload.get("expected_package_sha256"),
             )
         finally:
             self._restore_maintenance_active = False
@@ -3199,6 +3208,7 @@ class CoreServiceServer:
         backup_id: str,
         mode: str,
         entries: list[Any],
+        expected_package_sha256: str | None = None,
     ) -> dict[str, Any]:
         """FEA-13-RESTORE-4: merge restore (default defer, UseBackup per item)."""
         from application.maintenance.restore_plan import apply_restore, plan_restore
@@ -3206,8 +3216,35 @@ class CoreServiceServer:
         import hashlib as _hashlib
         import shutil as _shutil
 
+        # R4-001: the merge path must honour the same gates as overwrite.
+        package_manifest = service._verify_package(service._resolve(backup_id))
+        package_database_id = package_manifest.get("database_id")
+        current_database_id = service._current_database_id()
+        if (
+            package_database_id
+            and current_database_id
+            and str(package_database_id).strip() != str(current_database_id).strip()
+        ):
+            raise NmbakBackupError(
+                "BACKUP_DATABASE_MISMATCH",
+                f"backup belongs to another database: {package_database_id}",
+            )
+        if service._is_run_active():
+            raise NmbakBackupError(
+                "BACKUP_RESTORE_BUSY", "a pipeline run is active; restore refused"
+            )
+
         context = service.extract_for_plan(backup_id)
         try:
+            # R4-006: a stale preview (the package changed after the plan was
+            # shown) must be refused instead of applied to the new bytes.
+            if expected_package_sha256 and (
+                str(expected_package_sha256).strip() != context["package_sha256"]
+            ):
+                raise NmbakBackupError(
+                    "RESTORE_PLAN_STALE",
+                    "the package changed since the plan was previewed; re-preview",
+                )
             # staging: copy the packaged DB under the backup root and verify it
             # before anything touches the live database.
             staging = service.plan_staging_root(backup_id)
@@ -3221,6 +3258,17 @@ class CoreServiceServer:
                 raise NmbakBackupError(
                     "BACKUP_CORRUPT", "staging copy digest mismatch"
                 )
+            # The plan is read-only, so it is computed before the marker is
+            # written; the marker then carries its digest for auditability.
+            plan = plan_restore(
+                service.connection,
+                context["database_path"],
+                managed_root=service._managed_root,
+                backup_entries=context["managed_entries"],
+            )
+            plan_digest = _hashlib.sha256(
+                json.dumps(plan["items"], sort_keys=True).encode("utf-8")
+            ).hexdigest()
             marker = service.plan_marker_path(backup_id)
             marker.write_text(
                 json.dumps(
@@ -3228,16 +3276,12 @@ class CoreServiceServer:
                         "backup_id": backup_id,
                         "state": "staging",
                         "staged_digest": staged_digest,
+                        "plan_digest": plan_digest,
+                        "package_sha256": context["package_sha256"],
                     },
                     ensure_ascii=False,
                 ),
                 encoding="utf-8",
-            )
-            plan = plan_restore(
-                service.connection,
-                context["database_path"],
-                managed_root=None,
-                backup_entries=context["managed_entries"],
             )
             selected = set()
             for entry in entries:
@@ -3263,6 +3307,8 @@ class CoreServiceServer:
                         "backup_id": backup_id,
                         "state": "committed",
                         "staged_digest": staged_digest,
+                        "plan_digest": plan_digest,
+                        "package_sha256": context["package_sha256"],
                         "applied": len(report.get("applied") or []),
                     },
                     ensure_ascii=False,
@@ -6191,6 +6237,13 @@ class CoreServiceServer:
         try:
             if not payload_is_object:
                 raise PipelineError("INVALID_REQUEST", "payload must be a JSON object")
+            # FEA-13-RESTORE-4 / L-5: no run may be started or driven while the
+            # merge restore owns the database.
+            if getattr(self, "_restore_maintenance_active", False):
+                raise PipelineError(
+                    "RESTORE_IN_PROGRESS",
+                    "a merge restore is in progress; run commands are refused",
+                )
             if command in {"AcceptRun", "StartRun", "ControlRun", "ResumeBlockedRun", "RetryFailedTargets"}:
                 if not self._run_owner and not self._serving:
                     self._start_run_scheduler()
@@ -7791,7 +7844,7 @@ class CoreServiceServer:
         # FEA-13-RESTORE-4 / L-5: the merge-restore window is exclusive. Every
         # command outside the exemption set fails closed instead of running
         # against a database that is being replaced.
-        if getattr(self, "_restore_maintenance_active", False) and command not in _RESTORE_LOCK_EXEMPT:
+        if getattr(self, "_restore_maintenance_active", False) and not _restore_lock_exempt(command):
             return (
                 {
                     "protocol": PROTOCOL_NAME,

@@ -135,7 +135,7 @@ def test_write_commands_fail_closed_during_the_maintenance_window(core):
     server = CoreServiceServer(core)
     server._restore_maintenance_active = True
     try:
-        response = _request(server, "books.list", {})
+        response = _request(server, "cleanup.run", {})
         assert response["error"]["code"] == "RESTORE_IN_PROGRESS"
         assert response["error"]["category"] == "conflict"
 
@@ -175,3 +175,50 @@ def test_marker_stays_staging_when_the_apply_crashes(core, monkeypatch):
     assert title == "AFTER"  # the live database was never touched
     # The maintenance window is released even on failure.
     assert server._restore_maintenance_active is False
+
+
+def test_merge_restore_refuses_a_package_from_another_database(core):
+    """R4-001: the merge path applies the same database gate as overwrite."""
+    from infrastructure.sqlite.identity import ensure_database_id
+
+    server = CoreServiceServer(core)
+    _seed_book(core.conn, "BEFORE")
+    backup_id = _create_backup(server)
+    # Pretend the live library belongs to another database than the package.
+    with core.conn:
+        core.conn.execute(
+            "UPDATE application_metadata SET value_json = ? WHERE metadata_key = 'database_id'",
+            ('"another-database"',),
+        )
+
+    response = _request(
+        server,
+        "backup.restore",
+        {"backup_id": backup_id, "confirm_restore": True, "mode": "defer"},
+    )
+
+    assert response["error"]["code"] == "BACKUP_DATABASE_MISMATCH"
+    title = core.conn.execute("SELECT title FROM books WHERE book_id = 'book-1'").fetchone()[0]
+    assert title == "BEFORE"
+
+
+def test_stale_preview_is_refused(core):
+    """R4-006: a preview digest that no longer matches refuses the apply."""
+    server = CoreServiceServer(core)
+    _seed_book(core.conn, "BEFORE")
+    backup_id = _create_backup(server)
+
+    response = _request(
+        server,
+        "backup.restore",
+        {
+            "backup_id": backup_id,
+            "confirm_restore": True,
+            "mode": "defer",
+            "expected_package_sha256": "0" * 64,
+        },
+    )
+
+    assert response["error"]["code"] == "RESTORE_PLAN_STALE"
+    title = core.conn.execute("SELECT title FROM books WHERE book_id = 'book-1'").fetchone()[0]
+    assert title == "BEFORE"

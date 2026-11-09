@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import shutil
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -166,9 +167,10 @@ def _preserve_row(conn, undo_root: Path, table: str, key: str) -> Path:
     payload = dict(zip(columns, tuple(row))) if row is not None else None
     target = Path(undo_root) / "rows" / table / f"{key}.json"
     target.parent.mkdir(parents=True, exist_ok=True)
-    target.write_text(
-        json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
-    )
+    with target.open("w", encoding="utf-8") as handle:
+        handle.write(json.dumps(payload, ensure_ascii=False, indent=2))
+        handle.flush()
+        os.fsync(handle.fileno())
     return target
 
 
@@ -186,21 +188,26 @@ def _insert_row(conn, table: str, key: str) -> None:
 
 def _replace_row(conn, table: str, key: str) -> None:
     key_column = dict(RESTORE_TABLES)[table]
-    columns = _table_columns(conn, "main", table)
-    assignments = ", ".join(f"{column} = ?" for column in columns if column != key_column)
-    conn.execute(
-        f"UPDATE main.{table} SET {assignments} WHERE {key_column} = ?",
-        (_backup_row_values(conn, table, key, columns, key_column) + (key,)),
-    )
-
-
-def _backup_row_values(conn, table, key, columns, key_column) -> tuple:
+    live_columns = _table_columns(conn, "main", table)
+    backup_columns = _table_columns(conn, "restore_src", table)
     row = conn.execute(
         f"SELECT * FROM restore_src.{table} WHERE {key_column} = ?", (key,)
     ).fetchone()
-    values = tuple(row)
-    index = columns.index(key_column)
-    return tuple(value for position, value in enumerate(values) if position != index)
+    if row is None:  # pragma: no cover - the plan was built from this database
+        raise RuntimeError(f"backup row disappeared: {table}/{key}")
+    # R4-007: map by column NAME so a schema that gained/lost columns between
+    # the package and the live library can never shift values into the wrong
+    # column.
+    source = dict(zip(backup_columns, tuple(row)))
+    assignments = ", ".join(
+        f"{column} = ?" for column in live_columns if column != key_column
+    )
+    params = tuple(
+        source[column] for column in live_columns if column != key_column
+    ) + (key,)
+    conn.execute(
+        f"UPDATE main.{table} SET {assignments} WHERE {key_column} = ?", params
+    )
 
 
 def apply_restore(
@@ -217,6 +224,8 @@ def apply_restore(
     """Apply a plan. ``mode="defer"`` applies adds; ``UseBackup`` keys are
     applied only after their live value has been preserved.
     """
+    if mode not in {"defer", "use_backup"}:
+        raise ValueError(f"unsupported restore mode: {mode}")
     use_backup_keys = use_backup_keys or set()
     normalized = [
         item if isinstance(item, RestoreItem) else RestoreItem(**item) for item in items
@@ -229,7 +238,10 @@ def apply_restore(
         conn.execute("BEGIN IMMEDIATE")
         try:
             for item in normalized:
-                selected = (item.table, item.key) in use_backup_keys
+                selected = mode == "use_backup" and (
+                    item.table,
+                    item.key,
+                ) in use_backup_keys
                 if item.kind == "row":
                     if item.action == ACTION_ADD or (
                         selected and item.action == ACTION_CONFLICT

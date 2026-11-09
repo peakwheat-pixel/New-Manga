@@ -106,6 +106,12 @@ def _snapshot(conn, managed_root: Path, package: Path) -> dict:
             if path.is_file()
         },
         "package": hashlib.sha256(package.read_bytes()).hexdigest(),
+        "package_mtime": package.stat().st_mtime_ns,
+        "managed_mtime": {
+            path.relative_to(managed_root).as_posix(): path.stat().st_mtime_ns
+            for path in managed_root.rglob("*")
+            if path.is_file()
+        },
     }
 
 
@@ -231,3 +237,74 @@ def test_use_backup_without_undo_area_fails_closed_per_item(tmp_path):
     assert report["failed"] and "undo" in report["failed"][0]["error"]
     title = conn.execute("SELECT title FROM books WHERE book_id = 'book-1'").fetchone()[0]
     assert title == "CHANGED"  # nothing was overwritten
+
+
+def test_defer_ignores_use_backup_entries(tmp_path):
+    """R4-003: entries are only honoured in use_backup mode."""
+    conn, data_root, managed_root = _open(tmp_path)
+    _seed(conn, managed_root)
+    service = _service(conn, data_root, managed_root)
+    created = service.create("manual", "before edits")
+    with conn:
+        conn.execute("UPDATE books SET title = 'CHANGED' WHERE book_id = 'book-1'")
+    context = service.extract_for_plan(created["backup_id"])
+    try:
+        plan = plan_restore(conn, context["database_path"])
+        report = apply_restore(
+            conn,
+            context["database_path"],
+            plan["items"],
+            mode="defer",
+            use_backup_keys={("books", "book-1")},  # must be ignored under defer
+            undo_root=service.plan_undo_root(created["backup_id"]),
+        )
+    finally:
+        service.cleanup_plan(context)
+
+    assert report["applied"] == []
+    title = conn.execute("SELECT title FROM books WHERE book_id = 'book-1'").fetchone()[0]
+    assert title == "CHANGED"
+
+
+def test_defer_applies_backup_only_rows(tmp_path):
+    """R4-005 of the review: an ``add`` item is actually inserted by defer."""
+    conn, data_root, managed_root = _open(tmp_path)
+    _seed(conn, managed_root)
+    service = _service(conn, data_root, managed_root)
+    created = service.create("manual", "with row")
+    # Remove the whole seeded tree (children first) so defer has real adds.
+    with conn:
+        for statement in (
+            "DELETE FROM artifact_revisions WHERE artifact_id = 'art-1'",
+            "DELETE FROM media_artifacts WHERE artifact_id = 'art-1'",
+            "DELETE FROM pages WHERE page_id = 'page-1'",
+            "DELETE FROM chapters WHERE chapter_id = 'chapter-1'",
+            "DELETE FROM books WHERE book_id = 'book-1'",
+        ):
+            conn.execute(statement)
+    context = service.extract_for_plan(created["backup_id"])
+    try:
+        plan = plan_restore(conn, context["database_path"])
+        report = apply_restore(conn, context["database_path"], plan["items"], mode="defer")
+    finally:
+        service.cleanup_plan(context)
+
+    added_tables = {item["table"] for item in report["applied"]}
+    assert {"books", "chapters", "pages", "media_artifacts", "artifact_revisions"} <= added_tables
+    assert conn.execute("SELECT COUNT(*) FROM books").fetchone()[0] == 1
+
+
+def test_mode_is_validated_before_any_write(tmp_path):
+    conn, data_root, managed_root = _open(tmp_path)
+    _seed(conn, managed_root)
+    service = _service(conn, data_root, managed_root)
+    created = service.create("manual", "mode")
+    context = service.extract_for_plan(created["backup_id"])
+    try:
+        plan = plan_restore(conn, context["database_path"])
+        with pytest.raises(ValueError):
+            apply_restore(conn, context["database_path"], plan["items"], mode="bogus")
+    finally:
+        service.cleanup_plan(context)
+    title = conn.execute("SELECT title FROM books WHERE book_id = 'book-1'").fetchone()[0]
+    assert title == "B"  # nothing was written by the rejected call

@@ -1,0 +1,41 @@
+# command: python -m pytest tests/core/test_core_restore_plan.py -q  # after mutation: merge cross-database gate disabled (expected RED)
+# shell: pwsh 7.6.8 / python 3.14
+# time: 2026-11-09T22:05:58.3095108+08:00
+# batch: fea-13-restore-4-r2
+# EXIT=1
+.....F.                                                                  [100%]
+================================== FAILURES ===================================
+_________ test_merge_restore_refuses_a_package_from_another_database __________
+
+core = CoreServices(conn=<infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x0000017864AE3890>, repository=<...ice object at 0x0000017864C15A30>, plugins=<infrastructure.plugins.service.PluginService object at 0x0000017864C0F2F0>)
+
+    def test_merge_restore_refuses_a_package_from_another_database(core):
+        """R4-001: the merge path applies the same database gate as overwrite."""
+        from infrastructure.sqlite.identity import ensure_database_id
+    
+        server = CoreServiceServer(core)
+        _seed_book(core.conn, "BEFORE")
+        backup_id = _create_backup(server)
+        # Pretend the live library belongs to another database than the package.
+        with core.conn:
+            core.conn.execute(
+                "UPDATE application_metadata SET value_json = ? WHERE metadata_key = 'database_id'",
+                ('"another-database"',),
+            )
+    
+        response = _request(
+            server,
+            "backup.restore",
+            {"backup_id": backup_id, "confirm_restore": True, "mode": "defer"},
+        )
+    
+>       assert response["error"]["code"] == "BACKUP_DATABASE_MISMATCH"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: 'NoneType' object is not subscriptable
+
+tests\core\test_core_restore_plan.py:200: TypeError
+---------------------------- Captured stderr setup ----------------------------
+[core.schema] applied 9 migration(s) up to v9; schema bootstrap is the only write a read-only session performs (user rows and managed originals are never modified)
+=========================== short test summary info ===========================
+FAILED tests/core/test_core_restore_plan.py::test_merge_restore_refuses_a_package_from_another_database
+1 failed, 6 passed in 1.68s
