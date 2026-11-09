@@ -121,6 +121,10 @@ def materialize(store, payload: object) -> dict:
     if status not in {"ok", "missing", "encrypted", "unsupported"}:
         raise SourceSyncError("SOURCE_PLAN_UNAVAILABLE", "plan target status is invalid")
     missing = status == "missing"
+    if not missing and not isinstance(target.get("entries"), list):
+        raise SourceSyncError(
+            "SOURCE_PLAN_UNAVAILABLE", "plan target entries are unreadable"
+        )
     entries = [] if missing else _entries_of(target)
     version_id = None if missing else target.get("version_id")
     content_digest = None if missing else target.get("content_digest")

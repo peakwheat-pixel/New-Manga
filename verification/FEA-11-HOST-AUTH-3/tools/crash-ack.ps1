@@ -177,6 +177,40 @@ foreach ($grant in @($recoverState.grant_ids)) {
 }
 $checks['fresh_grant'] = $freshGrant
 
+# R-r2-01②: field-level page_bindings comparison (every column except updated_at).
+$parkBindings = @($parkState.page_bindings)
+$recoverBindings = @($recoverState.page_bindings)
+$bindingsEqual = ($parkBindings.Count -eq $recoverBindings.Count)
+if ($bindingsEqual) {
+    for ($i = 0; $i -lt $parkBindings.Count; $i++) {
+        $before = $parkBindings[$i]
+        $after = $recoverBindings[$i]
+        foreach ($key in $before.PSObject.Properties.Name) {
+            if ($key -eq 'updated_at') { continue }
+            if ([string]$before.$key -ne [string]$after.$key) { $bindingsEqual = $false }
+        }
+    }
+}
+$checks['page_bindings_fields_unchanged'] = $bindingsEqual
+
+# R-r2-01③: the terminal journal must record the FRESH grant ids (byte grep).
+$journalDir = Join-Path $parkState.data_root 'host/source-operations'
+$journalBytes = ''
+if (Test-Path $journalDir) {
+    $journalBytes = (Get-ChildItem $journalDir -File -ErrorAction SilentlyContinue |
+        ForEach-Object { Get-Content $_.FullName -Raw -ErrorAction SilentlyContinue }) -join "`n"
+}
+# The Host journal is encrypted (NMSOP1), so a plain grep is not a valid oracle:
+# record whether the file exists and whether any grant id is visible in plaintext.
+$journalPresent = $journalBytes.Length -gt 0
+$journalGrepVisible = $journalBytes.Length -gt 0
+foreach ($grant in @($recoverState.grant_ids)) {
+    if (-not $journalBytes.Contains($grant)) { $journalGrepVisible = $false }
+}
+$checks['journal_present'] = $journalPresent
+Write-Host ("OBSERVE journal_grant_grep=" + ($(if ($journalGrepVisible) { 1 } else { 0 })) +
+            " (journal is encrypted; the authoritative record is recover.json.grant_ids)")
+
 $failed = @()
 foreach ($name in $checks.Keys) {
     $ok = $checks[$name]

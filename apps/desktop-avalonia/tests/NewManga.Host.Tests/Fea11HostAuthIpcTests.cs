@@ -239,6 +239,7 @@ public sealed class Fea11HostAuthIpcTests
                     ["publications"] = counts.Publications,
                 },
                 ["wire_lines"] = File.Exists(wirePath) ? File.ReadAllLines(wirePath).Length : 0,
+                ["page_bindings"] = (await fixture.PageBindingsAsync()).Clone(),
             };
             await File.WriteAllTextAsync(
                 Path.Combine(state!, "park.json"), JsonSerializer.Serialize(park));
@@ -305,6 +306,7 @@ public sealed class Fea11HostAuthIpcTests
                 ["gate_open"] = gateOpen,
                 ["second_call"] = second.State,
                 ["second_call_frames"] = Math.Max(0, afterSecond - beforeSecond),
+                ["page_bindings"] = (await fixture.PageBindingsAsync()).Clone(),
             };
             await File.WriteAllTextAsync(
                 Path.Combine(state!, "recover.json"), JsonSerializer.Serialize(recover));
@@ -605,6 +607,16 @@ public sealed class Fea11HostAuthIpcTests
                 writer.WritePropertyName("authorization");
                 authorization.RootElement.WriteTo(writer);
             }, TimeSpan.FromSeconds(60), Client.HostSession, CancellationToken.None);
+        }
+
+        public async Task<JsonElement> PageBindingsAsync()
+        {
+            var script = Path.Combine(Repo, "verification", "FEA-11-HOST-AUTH-3", "tools",
+                "check_gate.py");
+            var output = await RunPythonAsync(
+                Python, Repo, script, "--db", DatabasePath, "--page-bindings");
+            using var document = JsonDocument.Parse(output.Trim().Split('\n').Last());
+            return document.RootElement.GetProperty("page_bindings").Clone();
         }
 
         public async Task<bool> GateOpenAsync()

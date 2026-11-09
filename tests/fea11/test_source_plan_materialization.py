@@ -308,8 +308,8 @@ def test_body_budget_over_eight_mebibytes_is_typed(tmp_path):
     """R-r1-09: a >8MiB projection is SOURCE_BUDGET_EXCEEDED (never truncated)."""
     conn, store = _real_store(tmp_path)
     big_entries = [
-        {"entry_id": f"e-{index}", "locator": "x" * 200, "ordinal": index}
-        for index in range(60000)
+        {"entry_id": f"e-{index}", "locator": "x" * 1100, "ordinal": index}
+        for index in range(9000)
     ]
     body = json.dumps(
         {

@@ -1634,34 +1634,54 @@ public sealed class CoreServiceClient : IAsyncDisposable
             throw Malformed("materialization result is not an object");
         }
 
-        var entries = new List<SourcePlanMaterializedEntry>();
-        if (result.TryGetProperty("entries", out var entriesJson) && entriesJson.ValueKind == JsonValueKind.Array)
+        // R-r1-11: a required field that is missing/wrong-typed is a malformed response,
+        // never a silent empty string / zero.
+        string RequireText(string name)
         {
-            foreach (var item in entriesJson.EnumerateArray())
+            var value = ReadString(result, name);
+            if (string.IsNullOrWhiteSpace(value))
             {
-                entries.Add(new SourcePlanMaterializedEntry(
-                    ReadString(item, "entry_id") ?? string.Empty,
-                    ReadString(item, "locator") ?? string.Empty,
-                    item.TryGetProperty("ordinal", out var ordinal) && ordinal.ValueKind == JsonValueKind.Number
-                        ? ordinal.GetInt32()
-                        : 0,
-                    ReadString(item, "content_digest_kind") ?? string.Empty,
-                    ReadString(item, "content_digest")));
+                throw Malformed($"materialization result is missing {name}");
             }
+            return value;
+        }
+
+        if (!result.TryGetProperty("entries", out var entriesJson)
+            || entriesJson.ValueKind != JsonValueKind.Array)
+        {
+            throw Malformed("materialization result is missing entries");
+        }
+        var entries = new List<SourcePlanMaterializedEntry>();
+        foreach (var item in entriesJson.EnumerateArray())
+        {
+            var entryId = ReadString(item, "entry_id");
+            var locator = ReadString(item, "locator");
+            var kind = ReadString(item, "content_digest_kind");
+            var ordinal = item.TryGetProperty("ordinal", out var ordinalJson)
+                && ordinalJson.ValueKind == JsonValueKind.Number
+                    ? ordinalJson.GetInt32()
+                    : (int?)null;
+            if (string.IsNullOrWhiteSpace(entryId) || string.IsNullOrWhiteSpace(locator)
+                || string.IsNullOrWhiteSpace(kind) || ordinal is null)
+            {
+                throw Malformed("materialization entry is malformed");
+            }
+            entries.Add(new SourcePlanMaterializedEntry(
+                entryId, locator, ordinal.Value, kind, ReadString(item, "content_digest")));
         }
 
         return new SourceSyncPlanMaterialization(
-            ReadString(result, "format") ?? string.Empty,
-            ReadString(result, "plan_id") ?? string.Empty,
-            ReadString(result, "plan_digest") ?? string.Empty,
-            ReadString(result, "kind") ?? string.Empty,
-            ReadString(result, "source_id") ?? string.Empty,
+            RequireText("format"),
+            RequireText("plan_id"),
+            RequireText("plan_digest"),
+            RequireText("kind"),
+            RequireText("source_id"),
             ReadString(result, "version_id"),
             ReadString(result, "content_digest"),
             entries,
-            ReadString(result, "reference_set_digest") ?? string.Empty,
-            ReadString(result, "state") ?? string.Empty,
-            ReadString(result, "expires_at") ?? string.Empty);
+            RequireText("reference_set_digest"),
+            RequireText("state"),
+            RequireText("expires_at"));
     }
 
     public async Task ShutdownAsync(CancellationToken cancellationToken = default)
