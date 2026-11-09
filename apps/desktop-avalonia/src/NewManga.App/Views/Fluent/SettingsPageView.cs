@@ -326,8 +326,12 @@ public sealed class SettingsPageView : UserControl
             DisableWriteControls(content);
         }
 
-        if (!string.IsNullOrWhiteSpace(_viewModel.Search) && _contentHost.Child is Control filtered)
+        if (!string.IsNullOrWhiteSpace(_viewModel.Search)
+            && _contentHost.Child is Control filtered
+            && _viewModel.SelectedGroup != SettingsGroupId.Typography)
         {
+            // R-008: the 字体 group's rows all belong to the matched topic; filtering
+            // them by their token labels would hide every row after the group matched.
             ApplyFieldSearch(filtered, _viewModel.Search);
         }
     }
@@ -609,9 +613,13 @@ public sealed class SettingsPageView : UserControl
             {
                 detail += $"；缩放 {line.Scale?.ToString("0.##") ?? "—"} / 行高 {line.LineHeight?.ToString("0.##") ?? "—"}";
             }
-            stack.Children.Add(FluentUi.Field(
+            var field = FluentUi.Field(
                 line.TokenKey,
-                FluentUi.Text($"{line.StackRaw}\n{detail}", "fluent-subtle-text")));
+                FluentUi.Text($"{line.StackRaw}\n{detail}", "fluent-subtle-text"));
+            // R-006: the row is announced with its resolved family, not just the token key.
+            Avalonia.Automation.AutomationProperties.SetName(
+                field, $"{line.TokenKey} 实际使用 {line.ResolvedFamily}");
+            stack.Children.Add(field);
         }
 
         // Local preview: the font is applied to the SAMPLES only (never to app resources).

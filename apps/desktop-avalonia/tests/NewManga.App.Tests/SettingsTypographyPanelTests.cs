@@ -110,7 +110,10 @@ public sealed class SettingsTypographyPanelTests
             .Select(item =>
             {
                 var info = new FileInfo(item);
-                return $"{item}|{(info.Exists ? info.Length : 0)}|{(info.Exists ? info.LastWriteTimeUtc.Ticks : 0)}";
+                if (!info.Exists) return $"{item}|<dir>";
+                var hash = Convert.ToHexString(
+                    System.Security.Cryptography.SHA256.HashData(File.ReadAllBytes(item)));
+                return $"{item}|{info.Length}|{info.LastWriteTimeUtc.Ticks}|{hash}";
             });
         return string.Join("\n", entries);
     }
