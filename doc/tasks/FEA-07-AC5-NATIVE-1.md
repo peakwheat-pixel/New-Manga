@@ -3,7 +3,7 @@ id: FEA-07-AC5-NATIVE-1
 title: FEA-07 AC5 原生双屏矩阵（真实 2K+4K、混合 DPI、拔屏、IME）
 kind: verification
 governance_version: 3
-status: ready
+status: closed_with_limitations
 approval: 用户 2026-11-09 明示「我有硬件双屏，一个 2k 一个 4k」，并授权脚本切换显示模式/缩放并记录恢复点；scope = FEA-07 AC5 冻结矩阵（`doc/tasks/FEA-07.md` AC5 行）；0 pin（验证卡，不改产品语义）
 suggested_owner: dsh
 owner: dsh
@@ -13,10 +13,10 @@ depends_on:
 base_commit: b6cd53260
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 0bcdeb9fc
+delivery_head: 0bcdeb9fc
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-07-AC5-NATIVE-1
 allowed_paths:
   - doc/tasks/FEA-07-AC5-NATIVE-1.md
@@ -49,11 +49,11 @@ out_of_scope:
 
 ## Acceptance Criteria（冻结）
 
-- [ ] **AC-N1（混合 DPI 拓扑）**：2K 置原生 2560×1440、4K 置原生 3840×2160，扩展排列；在两屏分别设置 100%/125%/150%/175%/200%（4K）与 100%/125%/150%（2K），逐组合记录每屏 `dpi/scale/rect/primary`；应用窗口在两屏间移动后 DPI 正确切换（无模糊/无错位）。
-- [ ] **AC-N2（浮动窗口归属）**：Inspector 浮窗置于副屏 → 可见/可操作；主窗与浮窗跨屏拖动不丢屏外；目标屏不支持浮动时安全停靠（回主窗）；快捷键不重复执行。
-- [ ] **AC-N3（拔屏/换主屏）**：OS 级禁用副屏（并尽量物理拔线）→ 第二窗口内容回主窗对应页面；未 flush 编辑态 fail-closed 留在主窗缓冲（不丢不覆盖）；换主屏后布局/全屏状态正确。
-- [ ] **AC-N4（manifest/PerMonitorV2 与提交恢复）**：发布 manifest 实际启用 PerMonitorV2（读实际 exe manifest 断言，不只看 csproj）；混合 DPI 下窗口位置/大小提交与恢复正确；恢复点（分辨率/缩放/排列/主屏）在结束时逐项还原并校验。
-- [ ] **AC-N5（证据/审查/翻转）**：真实桌面截图（每案例 ≥1，含两块屏与窗口位置）+ 逐案例 JSON + 恢复点 JSON + 失败/跳过原因；独立上下文 Review；`FEA-07` AC5 行 append-only 从 `NOT_APPLICABLE` 翻 `[x] <<MET>>`（或按实测登记 limitation + 剩余 NA 子项），ADJ 登记。
+- [ ] **AC-N1（混合 DPI 拓扑）**：2K 置原生 2560×1440、4K 置原生 3840×2160，扩展排列；在两屏分别设置 100%/125%/150%/175%/200%（4K）与 100%/125%/150%（2K），逐组合记录每屏 `dpi/scale/rect/primary`；应用窗口在两屏间移动后 DPI 正确切换（无模糊/无错位）。 <<PARTIAL: 7/15 混合 DPI 组合已执行（4K 100/125/150/175/200 × 2K 100/125/150 子集），DPI 切换与屏幕内 containment 全部通过；其余组合与「无模糊/无错位」客观断言未做>>
+- [ ] **AC-N2（浮动窗口归属）**：Inspector 浮窗置于副屏 → 可见/可操作；主窗与浮窗跨屏拖动不丢屏外；目标屏不支持浮动时安全停靠（回主窗）；快捷键不重复执行。 <<PARTIAL: 主窗跨屏归属/可见/contained 已验；Inspector 浮窗不存在（RegisterSecondary 零生产调用）→ 该子项 NOT_APPLICABLE；可操作性与快捷键未执行>>
+- [ ] **AC-N3（拔屏/换主屏）**：OS 级禁用副屏（并尽量物理拔线）→ 第二窗口内容回主窗对应页面；未 flush 编辑态 fail-closed 留在主窗缓冲（不丢不覆盖）；换主屏后布局/全屏状态正确。 <<PARTIAL: OS 级拔屏（DisplaySwitch /internal）已验：窗口回主屏且进程存活；物理拔线与未 flush 编辑态 fail-closed 未执行>>
+- [ ] **AC-N4（manifest/PerMonitorV2 与提交恢复）**：发布 manifest 实际启用 PerMonitorV2（读实际 exe manifest 断言，不只看 csproj）；混合 DPI 下窗口位置/大小提交与恢复正确；恢复点（分辨率/缩放/排列/主屏）在结束时逐项还原并校验。 <<PARTIAL: PerMonitorV2（app.manifest + exe 内嵌）与跨 DPI 几何保持已验；重启窗口几何持久化 → NOT_APPLICABLE（产品无实现）；恢复点按用户决定保留原生 2K>>
+- [ ] **AC-N5（证据/审查/翻转）**：真实桌面截图（每案例 ≥1，含两块屏与窗口位置）+ 逐案例 JSON + 恢复点 JSON + 失败/跳过原因；独立上下文 Review；`FEA-07` AC5 行 append-only 从 `NOT_APPLICABLE` 翻 `[x] <<PARTIAL: 证据/工具齐；r1 Review changes_requested 已处置，r2 复审未完成>>
 
 ## 实现口径
 
@@ -104,3 +104,73 @@ out_of_scope:
 - 未 flush 编辑态 fail-closed、原生 IME、换主屏/全屏子项：`NOT_RUN`。
 - 物理拔线未做（用 OS 级显示移除模拟）。
 - 缩放切换依赖 UIA（系统未提供脚本 API）；证据含每次切换前后 DPI 采样。
+## 覆盖补齐与复判（2026-11-09，r1 Review 后）
+
+### 混合 DPI 矩阵（7 组，真实 OS 鼠标拖动）
+| 2K / 4K 缩放 | 2K 窗口 | 拖到 4K 后 | DPI | contained |
+|---|---|---|---|---|
+| 100 / 150 | 1408×792 | 2112×1188 | 96→144 | 是 |
+| 100 / 125 | 1408×792 | 1760×990 | 96→120 | 是 |
+| 100 / 200 | 1408×792 | 2816×1584 | 96→192 | 是 |
+| 150 / 200 | 1558×792 | 2077×1056 | 144→192 | 是 |
+| 100 / 175 | 1408×792 | 2464×1386 | 96→168 | 是 |
+| 100 / 100 | 1408×792 | 1408×792 | 96→96 | 是 |
+| 125 / 150 | 1408×792 | 1690×950 | 120→144 | 是 |
+
+- 覆盖 4K 100/125/150/175/200 与 2K 100/125/150 的组合子集（7/15）；未做组合记 `NOT_RUN`，不写 MET。
+- 证据：`evidence/matrix-summary.json`、`evidence/screenshots/*drag*.png`。
+
+### 拔屏（OS 级）
+- 第 1 次 `/internal` 3.5s 内未生效（`undock-os-20261109-093255.json`：仍有 2 屏、窗口未回主屏）→ **如实保留失败**；第 2 次成功（`...093322.json`）：窗口 (703,134) 1728×972@100%、完全在主屏内、进程存活。
+- 物理拔线未做（`NOT_RUN`）；未 flush 编辑态 fail-closed 未做（`NOT_RUN`）。
+
+### 窗口几何持久化（P1-03 处置）
+- `evidence/window-persistence-20261109-101115.json`：移到 4K (3600,300) 2700×1500 → 关闭 → 重开，窗口未恢复（默认 (208,208) 1116×799）。
+- 全仓无窗口几何持久化实现 ⇒ 该子项 `NOT_APPLICABLE: 产品未实现窗口几何持久化`；跨 DPI 几何保持已由 7 组拖动覆盖。
+
+### 实际 exe manifest（P2-01 处置）
+- `evidence/exe-manifest.txt`：exe sha256 `1bfd0f40…`，内嵌 manifest 含 `dpiAware true/pm` + `dpiAwareness PerMonitorV2`。
+
+### 恢复点（P1-04 处置）
+- 用户 2026-11-09 决定**保留 AOC 原生 2560×1440**；缩放已恢复 2K 100% / 4K 150%；原始状态 JSON 保留可回滚。
+
+### AC 复判（不写成 MET 的子项）
+- **AC-N1**：`PARTIAL` —— 7/15 组合 + DPI 切换 + contained；「无模糊/无错位」无客观断言。
+- **AC-N2**：`PARTIAL/NA` —— 主窗归属/可见/contained 已验；Inspector 浮窗不存在（`RegisterSecondary` 零生产调用）→ 子项 NA；可操作性/快捷键 `NOT_RUN`。
+- **AC-N3**：`PARTIAL` —— OS 级拔屏已验；物理拔线、未 flush 编辑 fail-closed `NOT_RUN`。
+- **AC-N4**：`PARTIAL/NA` —— PerMonitorV2（源码+exe）与跨 DPI 几何 MET；重启窗口持久化 NA；恢复点按用户决定保留原生 2K。
+- **AC-N5**：`PARTIAL` —— 证据齐；r1 changes_requested 处置已落，r2 待审。
+
+### 限制
+- Inspector 浮窗不存在；未 flush 编辑态、原生 IME、换主屏、全屏、物理拔线：`NOT_RUN`。
+- 缩放切换依赖 Windows 设置 UI 自动化（`SET_DPI_SCALE` rc=87；注册表广播无效）。
+- 本卡 `closed_with_limitations`：**不宣称 AC5 完全实现**；`FEA-07` AC5 行保持 `[x] <<NOT_APPLICABLE: ...>>`，理由按 ADJ §7.17 收窄。
+
+## Canonical Evidence
+
+| evidence_id | AC/Gate | path | commit | sha256 | class |
+|---|---|---|---|---|---|
+| EV-AC5-02 | AC-N1/N2/N3 | verification/FEA-07-AC5-NATIVE-1/evidence/matrix-summary.json | 0bcdeb9fc | 886d86e2b7920a797f5436d658e0d52def222d0737edc4810da8750dfd9b264a | CANONICAL |
+| EV-AC5-03 | AC-N3 | verification/FEA-07-AC5-NATIVE-1/evidence/undock-os-20261109-093322.json | 0bcdeb9fc | 03b829e1c32629a8552080406f83ef245133e42750f5bd1d1ac1f6efe150f5b2 | CANONICAL |
+| EV-AC5-04 | AC-N4 | verification/FEA-07-AC5-NATIVE-1/evidence/exe-manifest.txt | - | 6585d60816068d1f0f89be7fce6f868d87c7233fa08013b51e7cd87a14dc158a | CANONICAL |
+| EV-AC5-05 | AC-N4 | verification/FEA-07-AC5-NATIVE-1/evidence/window-persistence-20261109-101115.json | - | 49465a71c57713c5c97ed1be934f610760524f48d2991a8298bc3af8d42e3556 | CANONICAL |
+| EV-AC5-06 | AC-N5 | verification/FEA-07-AC5-NATIVE-1/README.md | 0bcdeb9fc | 4aec163ec936e192d7a7989634da03e3d6224bcf4d4bd52d0c155aafcea3f15e | CANONICAL |
+
+| EV-AC5-P01 | 过程记录 | verification/FEA-07-AC5-NATIVE-1/evidence/display-state-before-native-20261109-084020.json | - | 2482237f8a64d272fbd29ecec127011f6851d0c50ffab562a07a94cd2d5b626c | CANONICAL |
+| EV-AC5-P02 | 过程记录 | verification/FEA-07-AC5-NATIVE-1/evidence/display-state-after-aoc-native-20261109-084031.json | - | b38d7962e0412e3f66229eb67a903efd9a4a58ca511ab26821ee823335064b34 | CANONICAL |
+| EV-AC5-P03 | 过程记录 | verification/FEA-07-AC5-NATIVE-1/evidence/display-state-truth-check-20261109-092900.json | - | 81251e2ebd306103593d08cc04b41458f8acc3cc435e008726527a26c0b53697 | CANONICAL |
+| EV-AC5-P04 | 过程记录 | verification/FEA-07-AC5-NATIVE-1/evidence/display-state-after-100-20261109-092913.json | - | 5690e89461c6a26a42da2f56453ece9f08211cd89098ff6ce6b5daa4441ac5be | CANONICAL |
+| EV-AC5-P05 | 过程记录 | verification/FEA-07-AC5-NATIVE-1/evidence/display-state-after-undock-20261109-093308.json | - | 8fcfc0cd821171f4e420ad54785fe73c5c9595edbcc841b50737f183c9d22bce | CANONICAL |
+| EV-AC5-P06 | 过程记录 | verification/FEA-07-AC5-NATIVE-1/evidence/display-state-after-undock2-20261109-093337.json | - | 8e8dfcac5320f3114123436e67be1b4bc3c00dd8724f586004d9b6fc71df1a2d | CANONICAL |
+| EV-AC5-P07 | 过程记录 | verification/FEA-07-AC5-NATIVE-1/evidence/displays-after-uia-125-20261109-092837.json | - | 88a68a3c033634e521d6942f109068a86761e4b80c115d974cc95df801c6401c | CANONICAL |
+| EV-AC5-P08 | 过程记录 | verification/FEA-07-AC5-NATIVE-1/evidence/displays-baseline-20261109-083908.json | - | c8d2847354640e21b8b9fb9d75ec763af88e35b43cc1f4d9f4838da1ad764476 | CANONICAL |
+
+## Resource Manifest
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| worktree | NOT_APPLICABLE（main；base `b6cd53260`） | NOT_APPLICABLE | — | — | 未创建 worktree |
+| temp | `%TEMP%\nm-fea07-*`（应用隔离根/截图中转） | NOT_APPLICABLE | — | — | 关闭应用后由 OS 清理；不触真实书籍/DB |
+| display-settings | 2K/4K 模式与缩放（临时切换） | NOT_APPLICABLE | 2K 100% / 4K 150%；AOC 保留原生 2560×1440（用户决定） | NOT_APPLICABLE | 每次切换有 before/after DPI 采样；恢复点 `verification/FEA-07-AC5-NATIVE-1/evidence/display-state-before-native-20261109-084020.json` 保留 |
+| user-data | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 应用均用隔离 `--data-root` |
+| tracked-side-effect | 无 | NOT_APPLICABLE | — | — | 无 |

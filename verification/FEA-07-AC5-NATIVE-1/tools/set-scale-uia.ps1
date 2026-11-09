@@ -55,6 +55,8 @@ function Get-AllDpi {
 $before = @(Get-AllDpi)
 Write-Host ("before: " + (($before | ForEach-Object { "{0}x{1}@{2}%({3},{4})" -f $_.width,$_.height,$_.percent,$_.left,$_.top }) -join ' | '))
 
+Get-Process SystemSettings -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+Start-Sleep -Milliseconds 800
 Start-Process 'ms-settings:display'
 $win = $null
 for ($i = 0; $i -lt ($TimeoutSec * 2); $i++) {
@@ -65,7 +67,15 @@ for ($i = 0; $i -lt ($TimeoutSec * 2); $i++) {
   if ($win) { break }
 }
 if (-not $win) { throw 'settings window not found' }
-Start-Sleep -Milliseconds 2000
+$pageReady = $false
+for ($i = 0; $i -lt 30; $i++) {
+  Start-Sleep -Milliseconds 700
+  $cbCond = New-Object System.Windows.Automation.PropertyCondition([System.Windows.Automation.AutomationElement]::ControlTypeProperty, [System.Windows.Automation.ControlType]::ComboBox)
+  $cbs = $win.FindAll([System.Windows.Automation.TreeScope]::Descendants, $cbCond)
+  foreach ($c in $cbs) { if ($c.Current.Name -eq '缩放') { $pageReady = $true; break } }
+  if ($pageReady) { break }
+}
+if (-not $pageReady) { throw 'display page not ready (scale combo missing)' }
 
 function Find-Item($root, [string]$name, $controlType) {
   $cond = New-Object System.Windows.Automation.PropertyCondition([System.Windows.Automation.AutomationElement]::ControlTypeProperty, $controlType)
