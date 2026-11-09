@@ -93,3 +93,16 @@
 - **失效引用 errata（用户 2026-11-01 U-10：失效引用通过追加 errata 澄清）**：C-09 **草案**内指向 `FEA-D07-UNBLOCK.md` 的相对链接在其所在目录（`doc/plan/`）下解析失败；真实位置是 `doc/tasks/FEA-D07-UNBLOCK.md`。因草案字节已冻结（pin `dc51226b…`），**不修改草案字节**，以本条澄清：该引用应读作 `../tasks/FEA-D07-UNBLOCK.md`。
 
 §6「不构成 `G-DELETE-CONTRACT` 的关闭（D06 仍有 4 项缺口）」为**冻结时**状态描述；现行 `G-DELETE-CONTRACT` **CLOSED（2026-11-01）**、`G-CONTRACT` **CLOSED**；`G-DELETE-IMPL` 仍 **OPEN**（未释放实现）。C-09 草案字节未改（pin `dc51226b…`）。
+
+## 9. Errata（2026-11-09，ADJ-2026-11-09-FEA13-ERRATA-AND-SPLIT）
+
+> **append-only**：本节不修改上方冻结字节、不修改契约草案 FEA-C09_DELETE_BACKUP_MIGRATION_DRAFT.md；18 pins 不变（C-09 pin 仍为 dc51226b336ce6af60fb6586bdeeb3660dff07011b415c52ac41d042cb9a4ec6）。依据：[FEA-13 scope review r1](../reviews/FEA-13-scope-r1.md) + 裁决 [ADJ-2026-11-09](../reviews/ADJ-2026-11-09-FEA13-ERRATA-AND-SPLIT.md)。
+
+| # | 条款 | errata 内容 |
+|---|---|---|
+| D1 | SC-B07 | ackup/1 真实字面值 = `format:"nm-backup"` + `format_version:1`（不是冻结正文所写的 `format:"nmbak"+version:1`）；ackup/2 = `format:"nmbak"` + `version:2`。读取端**双字面值/双键名兼容**；写端**只写 v2**；v1 包恢复后**不就地升级**（包字节/mtime 不变）。 |
+| D2 | SC-B01a | 「完整归属表」补齐 `<data_root>/drafts/**`（与 C-01b SC-10b 对齐）与 `<data_root>/plugins/**`（存在才入）；每项须 sha256 + size_bytes。不新增要求。 |
+| D3 | SC-B01a | 该行 settings/*.json **仅指** Core `<data_root>/settings/` 下的 provider/network/binding 配置；%APPDATA%/NewManga 外观设置**不入包、恢复不改外观**（范围缩减澄清；不新增 Host→Core staging 输入面）。 |
+| D4 | SC-B08 | 保留策略补强：①手动备份包不参与自动年龄判定；②最近一次 restore 的 pre_restore 包与最近一个 erified=true 包**不得被自动轮转删除**（ADJ-001「保留恢复链」）。落地于 FEA-13-SCHED-5 AC。 |
+
+**范围裁定**：FEA-13 走「全部 errata（0 pin）」路径；拆 6 片（首片 FEA-13-BK2-1），数据根迁移单列。见 [ADJ-2026-11-09](../reviews/ADJ-2026-11-09-FEA13-ERRATA-AND-SPLIT.md) §2。

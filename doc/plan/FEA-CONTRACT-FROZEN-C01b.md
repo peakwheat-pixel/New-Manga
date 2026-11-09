@@ -73,3 +73,11 @@ C-01b 的以下条款**依赖 ADJ-001 的 PD 语义**，而 ADJ-001 的 `G-DELET
 | 日期 | 变更 | 记录 |
 |---|---|---|
 | 2026-11-01 | 建立：冻结字节 pin、条件 4/4 核验、依赖注明（SC-30/31/33）、后果与边界 | DSH |
+
+## Errata（2026-11-09，ADJ-2026-11-09-FEA13-ERRATA-AND-SPLIT）
+
+> **append-only**：不改上方冻结字节、不改 C-01b 草案；18 pins 不变。依据：[FEA-13 scope review r1](../reviews/FEA-13-scope-r1.md)。
+
+| 条款 | errata 内容 |
+|---|---|
+| SC-14 | 状态标注 `[现行]` → **`[新增]`**：代码当前是**整库覆盖式** restore（src/infrastructure/sqlite/nmbak.py:19-22、src/infrastructure/sqlite/backup.py），并**非**「恢复默认逐项 Defer、不得整库覆盖」；merge restore / 默认 defer 是 FEA-13 的**新增**能力（片 4），不是回归保护。 |
