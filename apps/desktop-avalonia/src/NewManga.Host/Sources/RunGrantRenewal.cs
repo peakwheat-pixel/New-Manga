@@ -371,12 +371,29 @@ public sealed class RunGrantRenewal : IAsyncDisposable
         var elapsed = _timeProvider.GetElapsedTime(started);
         if (elapsed > roundBudget)
         {
-            // POST-ROUND guard (belt and braces; the cold-fill path already bounds itself). A round
-            // that overruns skips to the NEXT interval instead of stopping: the run keeps renewing,
-            // but the budget breach is recorded and counted, and a real mint is still counted.
+            // POST-ROUND guard (belt and braces; the cold-fill path already bounds itself).
+            // Priority (FEA-11-2C-RESIDUAL-1 / R2C-03): a typed stop must never be rewritten into a
+            // budget skip — the stop code is the actionable diagnosis. Only a successful round is
+            // downgraded to the typed budget skip (while still counting the real mint); an internal
+            // budget skip keeps its own code.
             if (outcome.Renewed)
             {
                 lock (_gate) _renewals++;
+                return BudgetSkip(
+                    runId, "RENEWAL_ROUND_BUDGET_EXCEEDED",
+                    outcome.BoundPages, outcome.MintedGrants, outcome.SkippedSources);
+            }
+
+            if (!outcome.KeepsTracking)
+            {
+                return Stop(runId, outcome);
+            }
+
+            if (outcome.Kind == RunGrantRenewalKind.SkippedBudget)
+            {
+                return BudgetSkip(
+                    runId, outcome.Code ?? "RENEWAL_ROUND_BUDGET_EXCEEDED",
+                    outcome.BoundPages, outcome.MintedGrants, outcome.SkippedSources);
             }
 
             return BudgetSkip(

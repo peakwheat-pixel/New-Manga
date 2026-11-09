@@ -277,6 +277,83 @@ public sealed class RunGrantRenewalTests
     }
 
     [Fact]
+    public async Task Renewal_RoundOverBudget_KeepsTheTypedStopInsteadOfRewritingIt()
+    {
+        // FEA-11-2C-RESIDUAL-1 / R2C-03: a typed stop that finishes over the explicit round budget
+        // must stay a typed STOP (actionable diagnosis), not be rewritten to a budget skip.
+        var clock = new AdvancingTimeProvider();
+        await using var renewal = NewRenewal(
+            clock: clock,
+            renew: (_, _, _, _, _) =>
+            {
+                clock.AdvanceMilliseconds((RunGrantRenewalOptions.RoundBudgetSeconds + 10) * 1000);
+                return Task.FromResult(RunGrantRenewalOutcome.Stop(
+                    RunGrantRenewalKind.StoppedTyped, "SOURCE_GRANT_DENIED"));
+            });
+
+        Assert.True(renewal.ObserveDispatch("run-typed", "reocr_all", FrozenScope, boundPages: 1));
+        var outcome = await renewal.TickAsync("run-typed", CancellationToken.None);
+
+        Assert.Equal(RunGrantRenewalKind.StoppedTyped, outcome.Kind);
+        Assert.Equal("SOURCE_GRANT_DENIED", outcome.Code);
+        Assert.False(outcome.KeepsTracking);
+        Assert.False(renewal.IsTracking("run-typed"));
+
+        var status = renewal.Status;
+        Assert.Equal(1, status.Stops);
+        Assert.Equal(0, status.BudgetSkips);
+        Assert.Equal("SOURCE_GRANT_DENIED", status.LastCode);
+    }
+
+    [Fact]
+    public async Task Renewal_RoundOverBudget_KeepsATerminalStopInsteadOfRewritingIt()
+    {
+        var clock = new AdvancingTimeProvider();
+        await using var renewal = NewRenewal(
+            clock: clock,
+            renew: (_, _, _, _, _) =>
+            {
+                clock.AdvanceMilliseconds((RunGrantRenewalOptions.RoundBudgetSeconds + 10) * 1000);
+                return Task.FromResult(RunGrantRenewalOutcome.Stop(
+                    RunGrantRenewalKind.StoppedTerminal, "RENEWAL_RUN_TERMINAL"));
+            });
+
+        Assert.True(renewal.ObserveDispatch("run-terminal", "reocr_all", FrozenScope, boundPages: 1));
+        var outcome = await renewal.TickAsync("run-terminal", CancellationToken.None);
+
+        Assert.Equal(RunGrantRenewalKind.StoppedTerminal, outcome.Kind);
+        Assert.Equal("RENEWAL_RUN_TERMINAL", outcome.Code);
+        Assert.Equal(1, renewal.Status.Stops);
+        Assert.Equal(0, renewal.Status.BudgetSkips);
+    }
+
+    [Fact]
+    public async Task Renewal_RoundOverBudget_KeepsTheInternalBudgetSkipCode()
+    {
+        // A round that already classified itself as a budget skip keeps its own code; the post-round
+        // guard must not overwrite it with the generic RENEWAL_ROUND_BUDGET_EXCEEDED.
+        var clock = new AdvancingTimeProvider();
+        await using var renewal = NewRenewal(
+            clock: clock,
+            renew: (_, _, _, _, _) =>
+            {
+                clock.AdvanceMilliseconds((RunGrantRenewalOptions.RoundBudgetSeconds + 10) * 1000);
+                return Task.FromResult(RunGrantRenewalOutcome.BudgetSkip(
+                    "RENEWAL_ROUND_CANCELLED", boundPages: 1, mintedGrants: 0, skippedSources: 0));
+            });
+
+        Assert.True(renewal.ObserveDispatch("run-skip", "reocr_all", FrozenScope, boundPages: 1));
+        var outcome = await renewal.TickAsync("run-skip", CancellationToken.None);
+
+        Assert.Equal(RunGrantRenewalKind.SkippedBudget, outcome.Kind);
+        Assert.Equal("RENEWAL_ROUND_CANCELLED", outcome.Code);
+        Assert.True(outcome.KeepsTracking);
+        Assert.True(renewal.IsTracking("run-skip"));
+        Assert.Equal(1, renewal.Status.BudgetSkips);
+        Assert.Equal("RENEWAL_ROUND_CANCELLED", renewal.Status.LastCode);
+    }
+
+    [Fact]
     public async Task Renewal_BudgetSkip_DoesNotConsumeTheGateOrStopTheRun()
     {
         // The budget skip leaves the loop alive: a later tick (next interval) can still renew.
