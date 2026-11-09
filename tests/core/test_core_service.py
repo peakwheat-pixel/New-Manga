@@ -165,6 +165,8 @@ def test_dispatch_pure_functions(tmp_path: Path) -> None:
             "source.sync.relink/1", "source.sync.repoint/1",
             "source.sync.resync/1", "source.sync.operation/1",
             "source.sync.enumerate/1",
+            # FEA-11-HOST-AUTH-3 (C-17 v1.2): the read-only plan materialization face.
+            "source.sync.plan-materialization/1",
         ]
 
         # 6. ListBooks on empty repository
@@ -262,6 +264,8 @@ def test_real_subprocess_e2e_round_trip(tmp_path: Path) -> None:
             "source.sync.apply/1", "source.sync.relink/1",
             "source.sync.repoint/1", "source.sync.resync/1",
             "source.sync.operation/1", "source.sync.enumerate/1",
+            # FEA-11-HOST-AUTH-3 (C-17 v1.2): the read-only plan materialization face.
+            "source.sync.plan-materialization/1",
         ]
 
         # 1b. core.detect in the REAL production assembly (M2-PROD-DETECT-3):

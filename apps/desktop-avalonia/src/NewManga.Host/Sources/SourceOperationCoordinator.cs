@@ -492,6 +492,9 @@ public sealed class SourceOperationCoordinator
             var next = current with
             {
                 State = "acknowledged",
+                // FEA-11-HOST-AUTH-3: the terminal record names the FRESH grants the
+                // completion used (never the apply-time ids).
+                GrantIds = string.Join(",", recoveryGrants),
                 AcknowledgedAt = UtcNow(),
                 UpdatedAt = UtcNow(),
             };
@@ -596,7 +599,13 @@ public sealed class SourceOperationCoordinator
             {
                 throw new SourceAccessException("SOURCE_SYNC_STATE_CONFLICT");
             }
-            var next = current with { State = "recovered", UpdatedAt = UtcNow() };
+            var next = current with
+            {
+                State = "recovered",
+                // FEA-11-HOST-AUTH-3: same fresh-grant record for recovery.
+                GrantIds = string.Join(",", recoveryGrants),
+                UpdatedAt = UtcNow(),
+            };
             Write(next);
             return next;
         }

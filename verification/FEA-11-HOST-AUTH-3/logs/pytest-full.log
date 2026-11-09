@@ -1,0 +1,349 @@
+# command: python -m pytest -q (full)
+# shell: pwsh 7.6.8 / python 3.14
+# time: 2026-11-10T00:17:53.0653348+08:00
+# EXIT=1
+........................................................................ [  2%]
+........................................................................ [  4%]
+........................................................................ [  6%]
+......................................FF................................ [  8%]
+........................................................................ [ 10%]
+........................................................................ [ 12%]
+........................................................................ [ 14%]
+........................................................................ [ 16%]
+........................................................................ [ 18%]
+........................................................................ [ 20%]
+........................................................................ [ 22%]
+........................................................................ [ 24%]
+........................................................................ [ 26%]
+........................................................................ [ 29%]
+........................................................................ [ 31%]
+........................................................................ [ 33%]
+........................................................................ [ 35%]
+........................................................................ [ 37%]
+........................................................................ [ 39%]
+........................................................................ [ 41%]
+........................................................................ [ 43%]
+........................................................................ [ 45%]
+........................................................................ [ 47%]
+........................................................................ [ 49%]
+........................................................................ [ 51%]
+........................................................................ [ 53%]
+........................................................................ [ 56%]
+........................................................................ [ 58%]
+........................................................................ [ 60%]
+.....................s.................................................. [ 62%]
+.............................................sssss...................... [ 64%]
+........................................................................ [ 66%]
+........................................................................ [ 68%]
+........................................................................ [ 70%]
+........................................................................ [ 72%]
+........................................................................ [ 74%]
+........................................................................ [ 76%]
+........................................................................ [ 78%]
+...............................................................s........ [ 80%]
+........................................................................ [ 83%]
+........................................................................ [ 85%]
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+........................................................................ [ 87%]
+........................................................................ [ 89%]
+........................................................................ [ 91%]
+........................................................................ [ 93%]
+........................................................................ [ 95%]
+........................................................................ [ 97%]
+........................................................................ [ 99%]
+............                                                             [100%]
+================================== FAILURES ===================================
+________________________ test_dispatch_pure_functions _________________________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-1919/test_dispatch_pure_functions0')
+
+    def test_dispatch_pure_functions(tmp_path: Path) -> None:
+        data_root = tmp_path / "data"
+        core = assemble_production_core(data_root)
+        try:
+            server = CoreServiceServer(core)
+    
+            # 1. Invalid JSON
+            res, exit_flag = server.dispatch_request("not-a-json")
+            assert not exit_flag
+            assert res["result"] is None
+            assert res["error"]["code"] == "INVALID_JSON"
+    
+            # 2. Unsupported protocol name
+            bad_proto_req = json.dumps({
+                "protocol": "other.protocol",
+                "version": {"major": 2, "minor": 0},
+                "request_id": "req-1",
+                "command": "core.ping",
+                "payload": {},
+            })
+            res, exit_flag = server.dispatch_request(bad_proto_req)
+            assert not exit_flag
+            assert res["request_id"] == "req-1"
+            assert res["result"] is None
+            assert res["error"]["code"] == E_PROTOCOL_VERSION_UNSUPPORTED
+    
+            # 3. Major 1 clients are rejected after the Run runtime version bump.
+            bad_ver_req = json.dumps({
+                "protocol": PROTOCOL_NAME,
+                "version": {"major": 1, "minor": 6},
+                "request_id": "req-2",
+                "command": "core.ping",
+                "payload": {},
+            })
+            res, exit_flag = server.dispatch_request(bad_ver_req)
+            assert not exit_flag
+            assert res["request_id"] == "req-2"
+            assert res["result"] is None
+            assert res["error"]["code"] == E_PROTOCOL_VERSION_UNSUPPORTED
+            assert res["error"]["category"] == "validation"
+            assert res["error"]["retryable"] is False
+    
+            # 3b. Malformed versions (string, missing, None, boolean, string major)
+            for bad_ver in ["1.0", None, {}, {"major": True}, {"major": "1"}, {"minor": 0}]:
+                bad_req = json.dumps({
+                    "protocol": PROTOCOL_NAME,
+                    "version": bad_ver,
+                    "request_id": "req-bad-ver",
+                    "command": "core.ping",
+                    "payload": {},
+                })
+                res, exit_flag = server.dispatch_request(bad_req)
+                assert not exit_flag
+                assert res["request_id"] == "req-bad-ver"
+                assert res["result"] is None
+                assert res["error"]["code"] == E_PROTOCOL_VERSION_UNSUPPORTED
+                assert res["error"]["category"] == "validation"
+                assert res["error"]["retryable"] is False
+    
+            # 4. Unknown command
+            unknown_cmd_req = json.dumps({
+                "protocol": PROTOCOL_NAME,
+                "version": {"major": 2, "minor": 0},
+                "request_id": "req-3",
+                "command": "UnknownOperation",
+                "payload": {},
+            })
+            res, exit_flag = server.dispatch_request(unknown_cmd_req)
+            assert not exit_flag
+            assert res["request_id"] == "req-3"
+            assert res["result"] is None
+            assert res["error"]["code"] == E_UNKNOWN_COMMAND
+    
+            # 5. core.ping
+            ping_req = json.dumps({
+                "protocol": PROTOCOL_NAME,
+                "version": {"major": 2, "minor": 0},
+                "request_id": "req-4",
+                "command": "core.ping",
+                "payload": {},
+            })
+            res, exit_flag = server.dispatch_request(ping_req)
+            assert not exit_flag
+            assert res["request_id"] == "req-4"
+            assert res["error"] is None
+            assert res["result"]["status"] == "ready"
+            # M2-PROD-DETECT-3: protocol minor bump 1.0 -> 1.1 (core.detect added);
+            # M2-SETTINGS-IPC-CHANNEL: 1.1 -> 2 (settings.get/update_section added)
+            # M2-REGION-RETYPE-CORE: 2 -> 3 (set_region_type/list_regions added)
+            # M2-RC4-DOMAIN-COMMANDS: 3 -> 4 (three domain commands)
+            # M2-PAGE-RESOURCE-RESOLVE-1: 4 -> 5 (resolve_page_resource added)
+            assert res["result"]["protocol_version"] == {"major": 2, "minor": 3}
+            # FEA-12 (M2-C1 rev 2.13): the delete-preview / trash capability names
+            # join the advertised set between the base face and the sync face.
+>           assert res["result"]["capabilities"] == [
+                # R-12 (approved additive widening): C-16 v1.3 ��0 capability.
+                "library.list_books", "source.read/1", "source.resolve-secret/1",
+                "source.read.run/1",
+                "source.reattest/1",
+                "library.delete.preview/1", "library.trash.read/1",
+                "library.trash.write/1",
+                "source.sync.scan/1", "source.sync.plan/1", "source.sync.apply/1",
+                "source.sync.relink/1", "source.sync.repoint/1",
+                "source.sync.resync/1", "source.sync.operation/1",
+                "source.sync.enumerate/1",
+            ]
+E           AssertionError: assert ['library.lis...eview/1', ...] == ['library.lis...eview/1', ...]
+E             
+E             Left contains one more item: 'source.sync.plan-materialization/1'
+E             Use -v to get more diff
+
+tests\core\test_core_service.py:157: AssertionError
+---------------------------- Captured stderr call -----------------------------
+[core.schema] applied 9 migration(s) up to v9; schema bootstrap is the only write a read-only session performs (user rows and managed originals are never modified)
+_____________________ test_real_subprocess_e2e_round_trip _____________________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-1919/test_real_subprocess_e2e_round0')
+
+    def test_real_subprocess_e2e_round_trip(tmp_path: Path) -> None:
+        """AC4 discriminating test: spawns real subprocess and tests request/response."""
+        data_root = tmp_path / "data_e2e"
+        data_root.mkdir(parents=True, exist_ok=True)
+    
+        repo_root = Path(__file__).resolve().parents[2]
+        src_root = repo_root / "src"
+    
+        env = os.environ.copy()
+        # DSH r1 R5: keep the e2e hermetic -- a host-level detector env must
+        # never turn this subprocess into a real model load (the NOT_CONFIGURED
+        # assertion below would then fail or hang on weights resolution).
+        env.pop("NEWMANGA_DETECTOR_WEIGHTS", None)
+        env.pop("NEWMANGA_DETECTOR_BACKEND", None)
+        env["NEWMANGA_DATA_ROOT"] = str(data_root)
+        env["PYTHONPATH"] = str(src_root)
+        env["PYTHONDONTWRITEBYTECODE"] = "1"
+    
+        proc = subprocess.Popen(
+            [sys.executable, "-m", "bootstrap.core_service"],
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            bufsize=1,
+            env=env,
+            cwd=str(repo_root),
+        )
+    
+        def send_and_recv(cmd_obj: dict) -> dict:
+            line = json.dumps(cmd_obj) + "\n"
+            proc.stdin.write(line)  # type: ignore[union-attr]
+            proc.stdin.flush()  # type: ignore[union-attr]
+            resp_line = proc.stdout.readline()  # type: ignore[union-attr]
+            return json.loads(resp_line)
+    
+        try:
+            # 1. ping
+            ping_resp = send_and_recv({
+                "protocol": PROTOCOL_NAME,
+                "version": {"major": 2, "minor": 0},
+                "request_id": "p-1",
+                "command": "core.ping",
+                "payload": {},
+            })
+            assert ping_resp["request_id"] == "p-1"
+            assert ping_resp["error"] is None
+            assert ping_resp["result"]["status"] == "ready"
+            # M2-PROD-DETECT-3: protocol minor bump 1.0 -> 1.1 (core.detect added);
+            # M2-SETTINGS-IPC-CHANNEL: 1.1 -> 2 (settings.get/update_section added)
+            # M2-REGION-RETYPE-CORE: 2 -> 3 (set_region_type/list_regions added)
+            # M2-PAGE-RESOURCE-RESOLVE-1: 4 -> 5 (resolve_page_resource added)
+            assert ping_resp["result"]["protocol_version"] == {"major": 2, "minor": 3}
+>           assert ping_resp["result"]["capabilities"] == [
+                # R-12 (approved additive widening): C-16 v1.3 ��0 capability.
+                "library.list_books", "source.read/1", "source.resolve-secret/1",
+                "source.read.run/1",
+                "source.reattest/1",
+                "library.delete.preview/1", "library.trash.read/1",
+                "library.trash.write/1",
+                "source.sync.scan/1", "source.sync.plan/1",
+                "source.sync.apply/1", "source.sync.relink/1",
+                "source.sync.repoint/1", "source.sync.resync/1",
+                "source.sync.operation/1", "source.sync.enumerate/1",
+            ]
+E           AssertionError: assert ['library.lis...eview/1', ...] == ['library.lis...eview/1', ...]
+E             
+E             Left contains one more item: 'source.sync.plan-materialization/1'
+E             Use -v to get more diff
+
+tests\core\test_core_service.py:254: AssertionError
+============================== warnings summary ===============================
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_scan_same_container_direct_continuation without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_scan_changed_container_diff_classifications without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_scan_same_mtime_size_bytes_changed_discovered without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_scan_expired_grant_typed_refusal without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_scan_scope_all_requires_frozen_reference_books without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_missing_source_observation_path without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_stale_apply_zero_write_baseline without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_full_sync_publishes_new_generation_and_gates without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests/core/test_rc4_stdio_render_preview.py::test_production_stdio_decodes_nmfr_renders_text_and_publishes_readable_preview
+  G:\CODEX\New Manga\tests\core\test_rc4_stdio_render_preview.py:245: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+    for px in rendered.crop((20, 20, 150, 120)).convert("RGB").getdata()
+
+tests/fea11/test_source_run_grant.py::test_container_grant_duplicate_member_locators_are_legitimate
+  C:\Python314\Lib\zipfile\__init__.py:1730: UserWarning: Duplicate name: 'same.png'
+    return self._open_to_write(zinfo, force_zip64=force_zip64)
+
+tests/rendering/test_pillow_rendering.py::test_pillow_compositor_draws_centered_stroked_text_into_real_png
+  G:\CODEX\New Manga\tests\rendering\test_pillow_rendering.py:94: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+    for red, green, blue, _alpha in image.getdata()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/core/test_core_service.py::test_dispatch_pure_functions - Assert...
+FAILED tests/core/test_core_service.py::test_real_subprocess_e2e_round_trip
+2 failed, 3459 passed, 10 skipped, 11 warnings in 272.43s (0:04:32)
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
