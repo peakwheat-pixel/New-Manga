@@ -1,8 +1,12 @@
+# command: mutation-v3-corrupt.log
+# shell: pwsh 7.6.8 / python 3.14
+# time: 2026-11-09T20:35:19.0066168+08:00
+# EXIT=1
 .F..                                                                     [100%]
 ================================== FAILURES ===================================
 ____ test_unsupported_v2_major_version_is_typed_and_has_zero_side_effects _____
 
-workspace = {'conn': <infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x0000011BD1DE3B10>, 'service': <infrastru...dowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-1790/test_unsupported_v2_major_vers0/managed'), ...}
+workspace = {'conn': <infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x000001896CA63C50>, 'service': <infrastru...dowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-1804/test_unsupported_v2_major_vers0/managed'), ...}
 
     def test_unsupported_v2_major_version_is_typed_and_has_zero_side_effects(workspace):
         workspace["seed_page"]("page-1", b"PAGE-ONE")
@@ -31,4 +35,4 @@ E         + BACKUP_CORRUPT
 tests\storage\test_nmbak_format.py:195: AssertionError
 =========================== short test summary info ===========================
 FAILED tests/storage/test_nmbak_format.py::test_unsupported_v2_major_version_is_typed_and_has_zero_side_effects
-1 failed, 3 passed in 0.80s
+1 failed, 3 passed in 2.52s

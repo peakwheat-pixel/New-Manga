@@ -1,4 +1,4 @@
-"""``.nmbak`` backup package v1 (SETTINGS-OPEN-C-2-BACKUP, design §3).
+"""``.nmbak`` backup package: writes backup/2, reads backup/1 read-only.
 
 One backup = one zip container holding the whole recoverable state:
 
@@ -9,17 +9,22 @@ One backup = one zip container holding the whole recoverable state:
     └── managed/...              # managed copies referenced by current/pinned
                                  # artifact revisions (storage-relative paths)
 
-Frozen semantics this module owns (design §3.1–§3.5):
+Frozen semantics this module owns (design §3.1–§3.5, C-09 SC-B07, FEA-13-BK2-1):
 
 - **create** writes the zip atomically (temp file + ``os.replace``), reads it
   back and only reports ``verified=True`` when the read-back digest matches;
+  the writer emits **backup/2** only (``format:"nmbak"``, ``version:2``);
+- **version negotiation** accepts backup/1 (``format:"nm-backup"``,
+  ``format_version:1``) read-only — a legacy package is restored byte-for-byte
+  and never upgraded in place; any other format/version is the typed,
+  non-retryable ``BACKUP_FORMAT_UNSUPPORTED`` (a newer package is not corrupt);
 - **list** is a pure directory scan; a package whose manifest cannot be read is
   still listed with ``verified=False`` (hiding it would look like "the backup
   vanished");
 - **restore** is overwrite-only, always preceded by a ``pre_restore`` package
   (a restore without a rollback point is refused), refuses to run while a
   pipeline Run is active (``BACKUP_RESTORE_BUSY``), and validates the package
-  (``BACKUP_CORRUPT``) before touching anything;
+  (``BACKUP_CORRUPT`` / ``BACKUP_FORMAT_UNSUPPORTED``) before touching anything;
 - every failure is typed (``NmbakBackupError.code``).
 
 The service never touches user source files (they are outside the managed
@@ -63,21 +68,6 @@ _BACKUP_ID = re.compile(r"[0-9a-f]{32}")
 
 def _utc_now() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="milliseconds")
-
-
-def _as_int(value: object) -> int | None:
-    """Version fields are ints in current writers but ``str`` in some historical
-    packages; negotiation must accept both and reject everything else."""
-    if isinstance(value, bool):
-        return None
-    if isinstance(value, int):
-        return value
-    if isinstance(value, str):
-        try:
-            return int(value.strip())
-        except ValueError:
-            return None
-    return None
 
 
 class NmbakBackupError(RuntimeError):
@@ -611,32 +601,45 @@ class NmbakBackupService:
         fmt = payload.get("format")
         if fmt == FORMAT_NAME_V2:
             version = payload.get("version")
-            if _as_int(version) == FORMAT_VERSION_V2:
-                return payload
-            raise NmbakBackupError(
-                "BACKUP_FORMAT_UNSUPPORTED",
-                f"{name}: backup/2 version {version!r} is not supported",
-            )
+            if not isinstance(version, int) or isinstance(version, bool):
+                raise NmbakBackupError(
+                    "BACKUP_CORRUPT",
+                    f"{name}: backup/2 manifest has no integer version",
+                )
+            if version != FORMAT_VERSION_V2:
+                raise NmbakBackupError(
+                    "BACKUP_FORMAT_UNSUPPORTED",
+                    f"{name}: backup/2 version {version} is not supported",
+                )
+            return payload
         if fmt == FORMAT_NAME:
             legacy = payload.get("format_version")
-            if _as_int(legacy) == FORMAT_VERSION:
-                return payload
-            raise NmbakBackupError(
-                "BACKUP_FORMAT_UNSUPPORTED",
-                f"{name}: backup/1 format_version {legacy!r} is not supported",
-            )
+            if not isinstance(legacy, int) or isinstance(legacy, bool):
+                raise NmbakBackupError(
+                    "BACKUP_CORRUPT",
+                    f"{name}: backup/1 manifest has no integer format_version",
+                )
+            if legacy != FORMAT_VERSION:
+                raise NmbakBackupError(
+                    "BACKUP_FORMAT_UNSUPPORTED",
+                    f"{name}: backup/1 format_version {legacy} is not supported",
+                )
+            return payload
         raise NmbakBackupError(
             "BACKUP_FORMAT_UNSUPPORTED",
             f"{name}: unknown backup format {fmt!r}",
         )
 
     def _verify_package(self, package: Path) -> dict:
-        """Full validation before restore (§3.1 rules); raises BACKUP_CORRUPT."""
+        """Full validation before restore (§3.1 rules).
+
+        Structural failures raise ``BACKUP_CORRUPT``; an intact package in a
+        format/version this build does not support raises
+        ``BACKUP_FORMAT_UNSUPPORTED`` (negotiation happens in
+        :meth:`_negotiate_manifest`).
+        """
         manifest = self._read_manifest(package)
-        try:
-            database_sha = str(manifest.get("database_sha256") or "")
-        except (TypeError, ValueError) as error:
-            raise NmbakBackupError("BACKUP_CORRUPT", f"{package.name}: bad manifest") from error
+        database_sha = str(manifest.get("database_sha256") or "")
         try:
             with zipfile.ZipFile(package, "r") as archive:
                 names = set(archive.namelist())

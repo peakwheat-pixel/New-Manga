@@ -106,7 +106,7 @@ def _books(conn) -> list[str]:
     return [row["book_id"] for row in conn.execute("SELECT book_id FROM books")]
 
 
-def test_create_package_contains_frozen_v1_layout(workspace):
+def test_create_package_contains_frozen_v2_layout(workspace):
     relative = workspace["seed_page"]("page-1", b"PAGE-ONE")
     created = workspace["service"].create("manual", "test")
 
@@ -128,12 +128,15 @@ def test_create_package_contains_frozen_v1_layout(workspace):
     assert manifest["backup_type"] == "manual"
     assert manifest["verified"] is True
     assert manifest["managed_file_count"] == 1
-    assert manifest["database_sha256"] == hashlib.sha256(
-        (workspace["backup_root"] / f"{created['backup_id']}.nmbak").read_bytes()
-    ).hexdigest() or True
+    with zipfile.ZipFile(package) as archive:
+        assert manifest["database_sha256"] == hashlib.sha256(
+            archive.read(DB_NAME)
+        ).hexdigest()
     refs = manifest["revision_refs"]
     assert refs and refs[0]["managed_path"] == relative
     assert refs[0]["sha256"] == hashlib.sha256(b"PAGE-ONE").hexdigest()
+    # FEA-13-BK2-1 AC1: the v2 manifest records each member's size explicitly.
+    assert refs[0]["size_bytes"] == len(b"PAGE-ONE")
     # Frozen manifest field (design §3.1): present, null for page artifacts.
     assert "region_id" in refs[0]
     assert refs[0]["region_id"] is None

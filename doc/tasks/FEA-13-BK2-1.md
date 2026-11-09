@@ -66,10 +66,10 @@ out_of_scope:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-BK2-README | AC1–AC6 | `verification/FEA-13-BK2-1/README.md` | `-` | `017258736df5df3ebdc5107763be6ed41ae2dc684897a79937616915fe78ac90` | CANONICAL |
-| EV-BK2-SUITE | AC1–AC4,AC6 | `verification/FEA-13-BK2-1/logs/pytest-backup-suite.log` | `-` | `76760d13222b5c3d154e55a014def7d99d35123ddb931c5b89ae5301310d6929` | CANONICAL |
-| EV-BK2-MUT-V3 | AC5 | `verification/FEA-13-BK2-1/logs/mutation-v3-corrupt.log` | `-` | `9b4119aea9181b7d315fe95c810623bae195fadd0eb2a6a4df732243dfbcf882` | CANONICAL |
-| EV-BK2-MUT-WRITER | AC5 | `verification/FEA-13-BK2-1/logs/mutation-writer-version.log` | `-` | `2fe45c4be6dd20a21a9760b932ed108c894a178e0f8740040955874c08f9e566` | CANONICAL |
+| EV-BK2-README | AC1–AC6 | `verification/FEA-13-BK2-1/README.md` | `-` | `d0c4c81c13909a18bbaf4f00b1386ab8e8a46b368d9365e3e75a8eff1982eacc` | CANONICAL |
+| EV-BK2-SUITE | AC1–AC4,AC6 | `verification/FEA-13-BK2-1/logs/pytest-backup-suite.log` | `-` | `dc2504990c5a5718cfc5b8de6b17e8bd49c383dab58a1d32cac83853677d53b2` | CANONICAL |
+| EV-BK2-MUT-V3 | AC5 | `verification/FEA-13-BK2-1/logs/mutation-v3-corrupt.log` | `-` | `e6d2673ebecd8d5b60a8e400e991286cc7c91318d6f7d23cdd9a761a4bde9a09` | CANONICAL |
+| EV-BK2-MUT-WRITER | AC5 | `verification/FEA-13-BK2-1/logs/mutation-writer-version.log` | `-` | `d45e64ce73e6cd2f70c99a41aa3dd186906dc36bb90c672443d12520411da89c` | CANONICAL |
 ## 证据计划
 
 | # | 命令 | 判别 |
@@ -86,6 +86,22 @@ out_of_scope:
 - **`test_nmbak_backup.py:122-123`** 的 v1 布局断言改为 v2 布局断言（在 allowed_paths 内）。
 - 回退：`git revert` 单提交；不涉及数据迁移。
 
+## Review 处置（r1，独立子代理 doc/reviews/FEA-13-BK2-1-r1.md：approved P0=0/P1=0/P2=3/P3=9）
+
+| Finding | 处置 |
+|---|---|
+| R-001（P2）v1 golden 由 v2 relabel 合成、未覆盖无 `page_original_refs` 旧包 | README §证据局限如实登记；base-writer golden 与历史包回放列入片 2/后续残余（reviewer 探针已证行为正确） |
+| R-002（P2）mutation 日志缺命令头/EXIT；README 25/25 与 64 passed 口径不一致 | 3 份日志全部重生成（`# command/# shell/# time/# EXIT=`）；README 口径统一为「备份相关 5 文件 64 passed」 |
+| R-003（P2）SC-B07 ④ 加密源授权元数据未实现却写「SC-B07 落地」 | 措辞收窄为 **②③⑤⑥**；④ 与 SC-B01 源授权元数据入包归片 2（`FEA-13-COV-2`）/独立裁决，README 与 Handoff 同步 |
+| R-004（P3）module/`_verify_package` docstring 陈旧 + 死 except | 已更新 docstring、删除死 `except (TypeError, ValueError)` |
+| R-005（P3）`_as_int` 接受 `"2"` 无历史依据 | 删除 `_as_int`；版本字段只接受 int（bool 排除） |
+| R-006（P3）缺 version 归 unsupported 而非 corrupt | 已知 format 但版本字段缺失/非整数 → `BACKUP_CORRUPT`；整数但不受支持 → `BACKUP_FORMAT_UNSUPPORTED` |
+| R-007（P3）AC1 未断言 size_bytes；`... or True` 恒真断言 | 补 `size_bytes` 断言；恒真断言改为对 zip 内 `library.db` 的 sha256 正确断言 |
+| R-008（P3）测试名仍写 v1 | 改为 `test_create_package_contains_frozen_v2_layout` |
+| R-009（P3）wire 端到端不在 allowed_paths | 登记残余（wire envelope 用例另案） |
+| R-010（P3）旧注释/设计文档未更新 | 登记残余（`core_service.py` 仅允许映射一行，注释另案） |
+| R-011（P3）STATUS/PLAN/LEDGER 越出 allowed_paths | 属 DSH 生命周期写入惯例（先例 `7abc9194a`），登记不改 |
+| R-012（P3）C-09 §9 控制字符 | append-only 记录，不改字节约；登记 |
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |

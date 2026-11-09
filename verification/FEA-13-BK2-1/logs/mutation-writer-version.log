@@ -1,8 +1,12 @@
+# command: mutation-writer-version.log
+# shell: pwsh 7.6.8 / python 3.14
+# time: 2026-11-09T20:35:19.0066168+08:00
+# EXIT=1
 F                                                                        [100%]
 ================================== FAILURES ===================================
-________________ test_create_package_contains_frozen_v1_layout ________________
+________________ test_create_package_contains_frozen_v2_layout ________________
 
-self = <infrastructure.sqlite.nmbak.NmbakBackupService object at 0x0000021BC243A900>
+self = <infrastructure.sqlite.nmbak.NmbakBackupService object at 0x00000174D39CA900>
 backup_type = 'manual', source_reason = 'test'
 
     def create(self, backup_type: str, source_reason: str = "") -> dict:
@@ -74,18 +78,18 @@ backup_type = 'manual', source_reason = 'test'
             try:
 >               self._verify_package(temporary)
 
-src\infrastructure\sqlite\nmbak.py:260: 
+src\infrastructure\sqlite\nmbak.py:250: 
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-src\infrastructure\sqlite\nmbak.py:635: in _verify_package
+src\infrastructure\sqlite\nmbak.py:641: in _verify_package
     manifest = self._read_manifest(package)
                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-src\infrastructure\sqlite\nmbak.py:598: in _read_manifest
+src\infrastructure\sqlite\nmbak.py:588: in _read_manifest
     return self._negotiate_manifest(package, payload)
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
-self = <infrastructure.sqlite.nmbak.NmbakBackupService object at 0x0000021BC243A900>
-package = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-1791/test_create_package_contains_f0/backups/.6acc928a6e5d4295ad85be5fff3a2bd3.tmp-fd96edffb4d2423cb9e134d25e6f0092.nmbak')
+self = <infrastructure.sqlite.nmbak.NmbakBackupService object at 0x00000174D39CA900>
+package = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-1805/test_create_package_contains_f0/backups/.566f1bcd99614ee3b024df358acc5c8e.tmp-665dcb50e0204d6393b051ecbe7d38a1.nmbak')
 payload = {'format': 'nmbak', 'version': 1, 'database_id': None, 'app_version': '0.1.0', ...}
 
     def _negotiate_manifest(self, package: Path, payload: dict) -> dict:
@@ -102,21 +106,25 @@ payload = {'format': 'nmbak', 'version': 1, 'database_id': None, 'app_version': 
         fmt = payload.get("format")
         if fmt == FORMAT_NAME_V2:
             version = payload.get("version")
-            if _as_int(version) == FORMAT_VERSION_V2:
-                return payload
->           raise NmbakBackupError(
-                "BACKUP_FORMAT_UNSUPPORTED",
-                f"{name}: backup/2 version {version!r} is not supported",
-            )
-E           infrastructure.sqlite.nmbak.NmbakBackupError: BACKUP_FORMAT_UNSUPPORTED: .6acc928a6e5d4295ad85be5fff3a2bd3.tmp-fd96edffb4d2423cb9e134d25e6f0092.nmbak: backup/2 version 1 is not supported
+            if not isinstance(version, int) or isinstance(version, bool):
+                raise NmbakBackupError(
+                    "BACKUP_CORRUPT",
+                    f"{name}: backup/2 manifest has no integer version",
+                )
+            if version != FORMAT_VERSION_V2:
+>               raise NmbakBackupError(
+                    "BACKUP_FORMAT_UNSUPPORTED",
+                    f"{name}: backup/2 version {version} is not supported",
+                )
+E               infrastructure.sqlite.nmbak.NmbakBackupError: BACKUP_FORMAT_UNSUPPORTED: .566f1bcd99614ee3b024df358acc5c8e.tmp-665dcb50e0204d6393b051ecbe7d38a1.nmbak: backup/2 version 1 is not supported
 
-src\infrastructure\sqlite\nmbak.py:616: NmbakBackupError
+src\infrastructure\sqlite\nmbak.py:610: NmbakBackupError
 
 The above exception was the direct cause of the following exception:
 
-workspace = {'conn': <infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x0000021BC243A510>, 'service': <infrastru...dowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-1791/test_create_package_contains_f0/managed'), ...}
+workspace = {'conn': <infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x00000174D39CA510>, 'service': <infrastru...dowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-1805/test_create_package_contains_f0/managed'), ...}
 
-    def test_create_package_contains_frozen_v1_layout(workspace):
+    def test_create_package_contains_frozen_v2_layout(workspace):
         relative = workspace["seed_page"]("page-1", b"PAGE-ONE")
 >       created = workspace["service"].create("manual", "test")
                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -124,7 +132,7 @@ workspace = {'conn': <infrastructure.sqlite.connection.ThreadRoutedConnection ob
 tests\storage\test_nmbak_backup.py:111: 
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
-self = <infrastructure.sqlite.nmbak.NmbakBackupService object at 0x0000021BC243A900>
+self = <infrastructure.sqlite.nmbak.NmbakBackupService object at 0x00000174D39CA900>
 backup_type = 'manual', source_reason = 'test'
 
     def create(self, backup_type: str, source_reason: str = "") -> dict:
@@ -200,9 +208,9 @@ backup_type = 'manual', source_reason = 'test'
                     "BACKUP_CREATE_FAILED",
                     f"read-back verification failed: {error.detail}",
                 ) from error
-E               infrastructure.sqlite.nmbak.NmbakBackupError: BACKUP_CREATE_FAILED: read-back verification failed: .6acc928a6e5d4295ad85be5fff3a2bd3.tmp-fd96edffb4d2423cb9e134d25e6f0092.nmbak: backup/2 version 1 is not supported
+E               infrastructure.sqlite.nmbak.NmbakBackupError: BACKUP_CREATE_FAILED: read-back verification failed: .566f1bcd99614ee3b024df358acc5c8e.tmp-665dcb50e0204d6393b051ecbe7d38a1.nmbak: backup/2 version 1 is not supported
 
-src\infrastructure\sqlite\nmbak.py:262: NmbakBackupError
+src\infrastructure\sqlite\nmbak.py:252: NmbakBackupError
 =========================== short test summary info ===========================
-FAILED tests/storage/test_nmbak_backup.py::test_create_package_contains_frozen_v1_layout
-1 failed, 20 deselected in 0.67s
+FAILED tests/storage/test_nmbak_backup.py::test_create_package_contains_frozen_v2_layout
+1 failed, 20 deselected in 0.31s
