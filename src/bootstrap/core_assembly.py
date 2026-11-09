@@ -1924,6 +1924,9 @@ def assemble_core_services(
                 Path(managed_root),
                 app_version=_APP_VERSION,
                 is_run_active=lambda: _has_active_run(conn),
+                # FEA-13-COV-2: settings/drafts/plugins coverage needs the root,
+                # not just <data_root>/backups (the default parent inference).
+                data_root=data_root,
             ),
             # PLUGIN-RUNTIME-1 (D4): the plugin root is
             # ``<data_root>/plugins`` -- the app-data plugin directory the

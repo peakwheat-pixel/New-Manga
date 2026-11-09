@@ -1,0 +1,37 @@
+# command: python -m pytest tests/storage/test_nmbak_coverage.py -q  # after mutation: extras sha check disabled (expected RED)
+# shell: pwsh 7.6.8 / python 3.14
+# time: 2026-11-09T20:48:52.7147144+08:00
+# batch: fea-13-cov-2
+# EXIT=1
+...F                                                                     [100%]
+================================== FAILURES ===================================
+___________________ test_tampered_extras_member_is_corrupt ____________________
+
+workspace = {'conn': <infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x0000015A427629E0>, 'service': <infrastru...ath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-1820/test_tampered_extras_member_is0/data/managed'), ...}
+
+    def test_tampered_extras_member_is_corrupt(workspace):
+        package, _manifest, _names = _create(workspace)
+        with zipfile.ZipFile(package) as archive:
+            infos = archive.infolist()
+            payloads = {info.filename: archive.read(info.filename) for info in infos}
+        target = next(
+            name for name in payloads if name.startswith(EXTRAS_PREFIX + "settings/")
+        )
+        # Same length, different bytes: only the sha256 check can catch this, so the
+        # test discriminates the digest validation itself (not just the size check).
+        original = payloads[target]
+        payloads[target] = bytes([original[0] ^ 0x01]) + original[1:]
+        temporary = package.with_name(".tampered.nmbak")
+        with zipfile.ZipFile(temporary, "w", zipfile.ZIP_DEFLATED, allowZip64=True) as archive:
+            for info in infos:
+                archive.writestr(info, payloads[info.filename])
+        temporary.replace(package)
+    
+>       with pytest.raises(NmbakBackupError) as caught:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE NmbakBackupError
+
+tests\storage\test_nmbak_coverage.py:212: Failed
+=========================== short test summary info ===========================
+FAILED tests/storage/test_nmbak_coverage.py::test_tampered_extras_member_is_corrupt
+1 failed, 3 passed in 0.75s

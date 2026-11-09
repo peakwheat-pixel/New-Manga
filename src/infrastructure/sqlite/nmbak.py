@@ -63,6 +63,36 @@ FORMAT_VERSION = 1
 FORMAT_NAME_V2 = "nmbak"
 FORMAT_VERSION_V2 = 2
 BACKUP_TYPES = frozenset({"manual", "automatic", "pre_migration", "pre_restore"})
+
+# FEA-13-COV-2 (C-09 SC-B01a): every covered category is copied under this
+# package prefix and validated member-by-member on restore.
+EXTRAS_PREFIX = "extras/"
+SETTINGS_CATEGORY = "settings"
+DRAFTS_CATEGORY = "drafts"
+PLUGINS_CATEGORY = "plugins"
+TRASH_MANIFEST_CATEGORY = "trash-manifest"
+EXTRAS_CATEGORIES = frozenset(
+    {SETTINGS_CATEGORY, DRAFTS_CATEGORY, PLUGINS_CATEGORY, TRASH_MANIFEST_CATEGORY}
+)
+SETTINGS_FILES = (
+    "provider_profiles.json",
+    "network_profiles.json",
+    "provider_capability_bindings.json",
+)
+#: Categories that are deliberately NOT packaged, each with the honest reason
+#: (the manifest records this list so a restore never silently "loses" them).
+EXCLUDED_CATEGORIES = (
+    {"category": "catalog", "reason": "catalog.sqlite is rebuildable from library.db"},
+    {"category": "derived", "reason": "derived cache is rebuildable"},
+    {
+        "category": "external_source_files",
+        "reason": "referenced sources live outside the data root",
+    },
+    {
+        "category": "os_credential_vault",
+        "reason": "OS-managed secrets never enter a package",
+    },
+)
 _BACKUP_ID = re.compile(r"[0-9a-f]{32}")
 
 
@@ -137,6 +167,7 @@ class NmbakBackupService:
         *,
         app_version: str | None = None,
         is_run_active: Callable[[], bool] | None = None,
+        data_root: Path | None = None,
     ) -> None:
         self._conn = conn
         self._backup_root = Path(backup_root)
@@ -144,6 +175,9 @@ class NmbakBackupService:
         self._managed_root = Path(managed_root)
         self._app_version = app_version
         self._is_run_active = is_run_active or (lambda: False)
+        # ``<data_root>/backups`` is the default layout, so the parent of the
+        # backup root is the data root unless the caller says otherwise.
+        self._data_root = Path(data_root) if data_root else self._backup_root.parent
 
     # ------------------------------------------------------------------
     # queries
@@ -214,6 +248,15 @@ class NmbakBackupService:
             managed_files = self._copy_managed_files(
                 workdir, revision_refs + page_original_refs
             )
+            extras = self._collect_extras()
+            skipped_categories = self._skipped_categories(extras)
+            if skipped_categories:
+                raise NmbakBackupError(
+                    "BACKUP_CREATE_FAILED",
+                    "required backup categories missing: "
+                    + ", ".join(skipped_categories),
+                )
+            extras_written = self._copy_extras(workdir, extras)
             manifest = {
                 "format": FORMAT_NAME_V2,
                 "version": FORMAT_VERSION_V2,
@@ -233,6 +276,15 @@ class NmbakBackupService:
                 "page_original_count": len(page_original_refs),
                 "page_original_total_bytes": sum(
                     item["size_bytes"] for item in page_original_refs
+                ),
+                "included_categories": sorted(
+                    {item["category"] for item in extras_written}
+                ),
+                "skipped_categories": skipped_categories,
+                "excluded_categories": [dict(item) for item in EXCLUDED_CATEGORIES],
+                "extras": extras_written,
+                "extras_total_bytes": sum(
+                    item["size_bytes"] for item in extras_written
                 ),
                 "verified": False,
             }
@@ -322,6 +374,9 @@ class NmbakBackupService:
                     "restored": restored_schema,
                 },
                 "managed_consistency": consistency,
+                "deferred_categories": sorted(
+                    {item.get("category") for item in manifest.get("extras") or []}
+                ),
             }
             missing = len(consistency.get("missing") or [])
             if missing:
@@ -551,6 +606,71 @@ class NmbakBackupService:
             )
         return copied
 
+    # ------------------------------------------------------------------
+    # coverage extras (C-09 SC-B01a; FEA-13-COV-2)
+    # ------------------------------------------------------------------
+    def _collect_extras(self) -> list[tuple[str, str, Path]]:
+        """Every covered non-managed file as (category, package-relative, absolute).
+
+        Coverage follows C-09 SC-B01a: Core ``<data_root>/settings`` provider/
+        network/binding JSON (the appearance settings under
+        ``%APPDATA%/NewManga`` are deliberately OUT -- ADJ-2026-11-09 D3),
+        ``<data_root>/drafts/**``, ``<data_root>/plugins/**`` and the managed
+        ``trash-manifest.json``. Absent paths are simply not covered; a present
+        category that cannot be collected fails the whole create.
+        """
+        collected: list[tuple[str, str, Path]] = []
+        settings_dir = self._data_root / SETTINGS_CATEGORY
+        for name in SETTINGS_FILES:
+            candidate = settings_dir / name
+            if candidate.is_file():
+                collected.append((SETTINGS_CATEGORY, name, candidate))
+        for category in (DRAFTS_CATEGORY, PLUGINS_CATEGORY):
+            directory = self._data_root / category
+            if directory.is_dir():
+                for path in sorted(directory.rglob("*")):
+                    if path.is_file():
+                        collected.append(
+                            (category, path.relative_to(directory).as_posix(), path)
+                        )
+        trash = self._managed_root / "trash-manifest.json"
+        if trash.is_file():
+            collected.append((TRASH_MANIFEST_CATEGORY, "trash-manifest.json", trash))
+        return collected
+
+    def _copy_extras(
+        self,
+        workdir: Path,
+        entries: list[tuple[str, str, Path]],
+    ) -> list[dict]:
+        written: list[dict] = []
+        for category, relative, absolute in entries:
+            member = f"{EXTRAS_PREFIX}{category}/{relative}"
+            destination = workdir / member
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(absolute, destination)
+            written.append(
+                {
+                    "category": category,
+                    "relative_path": relative,
+                    "sha256": sha256_file(destination),
+                    "size_bytes": destination.stat().st_size,
+                }
+            )
+        return written
+
+    def _skipped_categories(self, entries: list[tuple[str, str, Path]]) -> list[str]:
+        """Present category roots that produced no member (a required gap)."""
+        included = {category for category, _, _ in entries}
+        present: list[str] = []
+        if (self._data_root / SETTINGS_CATEGORY).is_dir():
+            present.append(SETTINGS_CATEGORY)
+        if (self._data_root / DRAFTS_CATEGORY).is_dir():
+            present.append(DRAFTS_CATEGORY)
+        if (self._data_root / PLUGINS_CATEGORY).is_dir():
+            present.append(PLUGINS_CATEGORY)
+        return [category for category in present if category not in included]
+
     def _zip_directory(self, workdir: Path, target: Path) -> None:
         with zipfile.ZipFile(target, "w", zipfile.ZIP_DEFLATED, allowZip64=True) as archive:
             for path in sorted(workdir.rglob("*")):
@@ -715,6 +835,47 @@ class NmbakBackupService:
                         raise NmbakBackupError(
                             "BACKUP_CORRUPT",
                             f"{package.name}: managed_files entry not in revision_refs {item.get('managed_path')}",
+                        )
+                # FEA-13-COV-2: extras members are validated member-by-member
+                # (digest + size) and an unexpected extras member is corruption.
+                allowed_extras: set[str] = set()
+                for item in manifest.get("extras") or []:
+                    category = str(item.get("category") or "")
+                    if category not in EXTRAS_CATEGORIES:
+                        raise NmbakBackupError(
+                            "BACKUP_CORRUPT",
+                            f"{package.name}: unknown extras category {category!r}",
+                        )
+                    relative = _managed_relative_path(
+                        item.get("relative_path"),
+                        context=f"{package.name}: extras",
+                    )
+                    member = f"{EXTRAS_PREFIX}{category}/{relative.as_posix()}"
+                    allowed_extras.add(member)
+                    if member not in names:
+                        raise NmbakBackupError(
+                            "BACKUP_CORRUPT",
+                            f"{package.name}: missing extras member {member}",
+                        )
+                    extra_bytes = archive.read(member)
+                    if hashlib.sha256(extra_bytes).hexdigest() != item.get("sha256"):
+                        raise NmbakBackupError(
+                            "BACKUP_CORRUPT",
+                            f"{package.name}: extras sha256 mismatch {member}",
+                        )
+                    if len(extra_bytes) != item.get("size_bytes"):
+                        raise NmbakBackupError(
+                            "BACKUP_CORRUPT",
+                            f"{package.name}: extras size mismatch {member}",
+                        )
+                for member_name in names:
+                    if (
+                        member_name.startswith(EXTRAS_PREFIX)
+                        and member_name not in allowed_extras
+                    ):
+                        raise NmbakBackupError(
+                            "BACKUP_CORRUPT",
+                            f"{package.name}: unexpected extras member {member_name}",
                         )
                 for name in names:
                     if name.startswith(MANAGED_PREFIX) and name not in allowed:

@@ -1,0 +1,52 @@
+# command: python -m pytest tests/storage/test_nmbak_coverage.py -q  # after mutation: deferred_categories emptied (expected RED)
+# shell: pwsh 7.6.8 / python 3.14
+# time: 2026-11-09T20:48:21.1033355+08:00
+# batch: fea-13-cov-2
+# EXIT=1
+..F.                                                                     [100%]
+================================== FAILURES ===================================
+__________ test_restore_defers_extras_and_leaves_them_byte_identical __________
+
+workspace = {'conn': <infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x0000022BD6573D90>, 'service': <infrastru...ath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-1817/test_restore_defers_extras_and0/data/managed'), ...}
+
+    def test_restore_defers_extras_and_leaves_them_byte_identical(workspace):
+        package, manifest, _names = _create(workspace)
+        data_root = workspace["data_root"]
+    
+        # Change the live copies after the backup: a deferred restore must not
+        # overwrite them (merge semantics belong to FEA-13-RESTORE-4).
+        (data_root / "settings" / "provider_profiles.json").write_text(
+            json.dumps({"format_version": 1, "profiles": ["CHANGED"]}), encoding="utf-8"
+        )
+        (data_root / "drafts" / "book-1" / "draft-1.json").write_text(
+            '{"text":"changed"}', encoding="utf-8"
+        )
+        (data_root / "plugins" / "demo" / "plugin.json").write_text(
+            '{"name":"changed"}', encoding="utf-8"
+        )
+        (data_root / "managed" / "trash-manifest.json").write_text(
+            '{"entries":[],"pending_cleanups":{"x":1}}', encoding="utf-8"
+        )
+        before = {
+            path.relative_to(data_root).as_posix(): path.read_bytes()
+            for path in data_root.rglob("*")
+            if path.is_file() and path.suffix in {".json"}
+        }
+    
+        report = workspace["service"].restore(package.stem, confirm_restore=True)
+    
+>       assert report["deferred_categories"] == [
+            "drafts",
+            "plugins",
+            "settings",
+            "trash-manifest",
+        ]
+E       AssertionError: assert [] == ['drafts', 'p...ash-manifest']
+E         
+E         Right contains 4 more items, first extra item: 'drafts'
+E         Use -v to get more diff
+
+tests\storage\test_nmbak_coverage.py:176: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/storage/test_nmbak_coverage.py::test_restore_defers_extras_and_leaves_them_byte_identical
+1 failed, 3 passed in 0.84s
