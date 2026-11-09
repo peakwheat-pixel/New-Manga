@@ -4,7 +4,7 @@
 
 ## 当前程序
 - **V11R 程序 ACTIVE**：[V11R_PROGRAM](V11R_PROGRAM.md)；契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)。
-- 当前 Task：[FEA-DOC-RECONCILE-1](tasks/FEA-DOC-RECONCILE-1.md) in_progress（文档对账：四表 DDL 口径 / C11 DAG 行 / GOV-11·D07 关闭 / BRIDGE 裁决）。下一候选 [FEA-07-RESIDUAL-4](tasks/FEA-07-RESIDUAL-4.md)（proposed，需 scope review）。
+- 当前 Task：**无活动 Task**（FEA-DOC-RECONCILE-1 已 done：文档对账 7 项 + GOV-11/D07 关闭 + BRIDGE 裁决）。下一候选 [FEA-07-RESIDUAL-4](tasks/FEA-07-RESIDUAL-4.md)（proposed，需 scope review）。
 - FEA-11 线：WATCH-1/SCAN-2/SCAN-1/MATCH-1/AC4-GAPS-1/LINEAGE-1 `done`；HOST-AUTH-1 `done`；FEA-12 四卡 `done`。
 - **AC11-1 终态 MET（带 limitation）**：裁决 2026-11-06（[记录](reviews/FEA-11-AC11-1-adjudication-2026-11-06.md)）；「启动/访问前检查」= 冷启动枚举 + registry/root 核验（SCAN-2） + 每次访问/操作前 live grant+lease+digest 强验证；启动不做全量内容扫描（L-STARTUP）。
 - rolling checkpoint：[GOAL-PROGRESS](checkpoints/GOAL-PROGRESS-2026-11-02.md)。
@@ -26,3 +26,4 @@ Technical Gate=NOT_SATISFIED；private_registry_absence=UNPROVABLE；Owner Risk 
 - DAG/节点：[REBASELINE_PLAN](REBASELINE_PLAN.md)（唯一权威）；主线 `main`；工作区 [WORKSPACE_GOVERNANCE](WORKSPACE_GOVERNANCE.md)。
 - 恢复点：rolling checkpoint + 各 Task 卡与 `verification/**`。
 - 残余收口：[PLAN](plan/RESIDUAL-CLOSEOUT-PLAN-2026-11-08.md)（4 节点→done，6 卡方案）。
+

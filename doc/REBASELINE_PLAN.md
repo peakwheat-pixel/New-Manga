@@ -8,7 +8,7 @@
 |---|---|---|
 |FEA-CONTRACT-WRAP-1|FEA-C14-DRAFT|done（L-3 Errata + PLAN 预算；R2 approved `6cfe7ab92`）|
 |FEA-C11-PREREQ-1|FEA-C10-DRAFT|**done**（集成 `b7018e19b`；U-09 前置登记 L-1/L-2/L-5；r1 approved；2026-11-02 收口）|
-|FEA-DOC-RECONCILE-1|—|in_progress（文档对账；含 FEA-02-BRIDGE 裁决=不独立释放；0 源码/契约字节）|
+|FEA-DOC-RECONCILE-1|—|**done**（文档对账 7 项；GOV-11/D07 关闭；BRIDGE 不独立释放；r3 approved）|
 |FEA-11-PREREQ-1|FEA-09、FEA-10|**done**（C-17 v1.0 FROZEN；pins 18/18；r1+轻量复核 approved P0/P1=0；集成提交见 Task）|
 |FEA-11|FEA-09、FEA-10、FEA-11-PREREQ-1|**done**（2026-11-08 翻转：R4A `fbe337f95`；AC11-1…10 MET；L-STARTUP 子项 NA；L-M1/L-M4/needs_confirmation re-home；L-1…L-11 原文保留）||
 |FEA-11-SCAN-1|FEA-11|**done**（r2 窄面 approved；delivery `7080167e1`；AC-S1…S6 全 MET；AC11-1 终态 MET 带 limitation）|

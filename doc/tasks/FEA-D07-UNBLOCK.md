@@ -13,8 +13,8 @@ depends_on:
 base_commit: 11b4f4061
 branch: null
 worktree: null
-integration_commit: b6ada81e8
-delivery_head: b6ada81e8
+integration_commit: c22aea60c
+delivery_head: c22aea60c
 canonical_evidence_status: complete
 resource_closeout_status: complete
 evidence_dir: verification/FEA-D07-UNBLOCK
@@ -89,3 +89,4 @@ allowed_paths:
 - 待关闭时填写。
 - **2026-11-09 / DSH（FEA-DOC-RECONCILE-1 对账关闭）**：AC8 行原有勾选与标记不一致（`[ ]` + `<<MET>>`），本轮修正为 `[x] <<MET>>`；判定依据为 [GATE-DELETE-CONTRACT-CLOSURE-2026-11-01](../plan/GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md)（`G-DELETE-CONTRACT` 于 2026-11-01 **✅ CLOSED**，D04–D07 四包条款级承载经 r3 approved 复核）。测试表 AC8 的 `NOT_RUN` 为当时记录，原字节保留，不据此判 PASS。AC1–AC8 全部 MET，故置 `done`。
 - **口径补充（2026-11-09，Review REC-06）**：Gate 裁定中 **D07 行 7 为「⚠ 部分」**，由保留项 **L-5** 明文认定关闭（`GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md:30,39-40`）；本卡 AC8「全部覆盖」应读作该裁定口径，不表示 D07 逐项无保留，也不表示四表 DDL 已因此冻结。以上为本轮新增说明，不改写既有字节。
+
