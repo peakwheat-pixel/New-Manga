@@ -177,6 +177,8 @@ class _NmbakMigrationBackup:
             self._backup_root,
             self._managed_root,
             app_version=self._app_version,
+            data_root=self._backup_root.parent,
+            database_id_reader=lambda: read_database_id(self._conn),
         )
         created = service.create(backup_type, source_reason)
         return str(created["backup_id"])
@@ -1199,9 +1201,11 @@ def assemble_core_services(
         # creation/upgrade is the only write such a session performs.
         # FEA-13-ID-3 (C-01b SC-18): the library identity is created on the
         # first writable boot; a legacy library is back-filled here, after the
-        # schema is at its target version (the pre-migration hook therefore
-        # honestly reports the identity as unknown).
-        database_id = ensure_database_id(conn)
+        # schema is at its target version. The pre-migration hook reads the
+        # identity lazily: on a brand-new library it is still unknown at that
+        # moment, while every later upgrade packages the existing identity.
+        from infrastructure.sqlite.identity import read_database_id  # noqa: F401  (used by the hook below)
+        ensure_database_id(conn)
         if applied:
             print(
                 "[core.schema] applied "

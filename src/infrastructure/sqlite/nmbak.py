@@ -355,10 +355,12 @@ class NmbakBackupService:
         manifest = self._verify_package(target)
         package_database_id = manifest.get("database_id")
         current_database_id = self._current_database_id()
+        package_identity = str(package_database_id).strip() if package_database_id else None
+        current_identity = str(current_database_id).strip() if current_database_id else None
         if (
-            package_database_id
-            and current_database_id
-            and str(package_database_id) != str(current_database_id)
+            package_identity
+            and current_identity
+            and package_identity != current_identity
         ):
             raise NmbakBackupError(
                 "BACKUP_DATABASE_MISMATCH",

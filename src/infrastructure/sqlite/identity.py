@@ -45,6 +45,13 @@ def ensure_database_id(conn, *, uuid_factory=uuid.uuid4) -> str:
 
     ``INSERT OR IGNORE`` makes concurrent/first-boot races harmless: the first
     writer wins and every caller reads back the single stored value.
+
+    Contract: call this with **no active caller transaction**. It owns a
+    ``with conn:`` block, so calling it inside a migration transaction would
+    commit that transaction early (the assembly calls it after
+    ``apply_pending`` has committed). A corrupted stored value reads as
+    ``None`` (unknown) rather than raising -- identity must never block a
+    backup, and the mismatch gate treats unknown as "cannot compare".
     """
     existing = read_database_id(conn)
     if existing is not None:

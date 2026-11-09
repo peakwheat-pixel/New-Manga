@@ -163,3 +163,54 @@ def test_restore_allows_unknown_identity_on_either_side(tmp_path):
     report = service_unknown.restore(created["backup_id"], confirm_restore=True)
 
     assert report["restored_from"] == created["backup_id"]
+
+
+def test_pre_migration_package_carries_the_existing_identity(tmp_path):
+    """R-001: the migration hook is a real backup service; its packages must
+    name the library identity instead of silently writing ``null``."""
+    from bootstrap.core_assembly import _NmbakMigrationBackup
+
+    conn, data_root, managed = _open(tmp_path)
+    identity = ensure_database_id(conn)
+    backup_root = data_root / "backups"
+    hook = _NmbakMigrationBackup(
+        conn, backup_root, managed, app_version="0.1.0"
+    )
+
+    backup_id = hook.create_backup("pre_migration", "test pre-migration")
+
+    assert backup_id
+    package = backup_root / f"{backup_id}.nmbak"
+    with zipfile.ZipFile(package) as archive:
+        manifest = json.loads(archive.read(MANIFEST_NAME))
+    assert manifest["database_id"] == identity
+
+
+def test_v1_package_without_identity_is_unknown_and_still_restores(tmp_path):
+    """R-005: a legacy package has no database_id key -> unknown -> not blocked."""
+    conn, data_root, managed = _open(tmp_path)
+    identity = ensure_database_id(conn)
+    service = _service(
+        conn, data_root, managed, reader=lambda: read_database_id(conn)
+    )
+    created = service.create("manual", "legacy shape")
+    package = data_root / "backups" / f"{created['backup_id']}.nmbak"
+
+    with zipfile.ZipFile(package) as archive:
+        infos = archive.infolist()
+        payloads = {info.filename: archive.read(info.filename) for info in infos}
+    manifest = json.loads(payloads[MANIFEST_NAME])
+    manifest.pop("database_id", None)
+    manifest.pop("version", None)
+    manifest["format"] = "nm-backup"
+    manifest["format_version"] = 1
+    payloads[MANIFEST_NAME] = json.dumps(manifest, ensure_ascii=False).encode("utf-8")
+    temporary = package.with_name(".legacy.nmbak")
+    with zipfile.ZipFile(temporary, "w", zipfile.ZIP_DEFLATED, allowZip64=True) as archive:
+        for info in infos:
+            archive.writestr(info, payloads[info.filename])
+    temporary.replace(package)
+
+    assert identity  # the current library DOES have an identity
+    report = service.restore(package.stem, confirm_restore=True)
+    assert report["restored_from"] == package.stem

@@ -1,13 +1,13 @@
 # command: python -m pytest tests/storage/test_nmbak_identity.py -q  # after mutation: cross-database gate disabled (expected RED)
 # shell: pwsh 7.6.8 / python 3.14
-# time: 2026-11-09T21:27:40.0252449+08:00
-# batch: fea-13-id-3
+# time: 2026-11-09T21:34:54.0904032+08:00
+# batch: fea-13-id-3-r2
 # EXIT=1
-....F.                                                                   [100%]
+....F...                                                                 [100%]
 ================================== FAILURES ===================================
 ____________ test_restore_rejects_a_package_from_another_database _____________
 
-tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-1846/test_restore_rejects_a_package0')
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-1852/test_restore_rejects_a_package0')
 
     def test_restore_rejects_a_package_from_another_database(tmp_path):
         # Database A produces a package.
@@ -34,4 +34,4 @@ E       Failed: DID NOT RAISE NmbakBackupError
 tests\storage\test_nmbak_identity.py:147: Failed
 =========================== short test summary info ===========================
 FAILED tests/storage/test_nmbak_identity.py::test_restore_rejects_a_package_from_another_database
-1 failed, 5 passed in 0.69s
+1 failed, 7 passed in 2.33s

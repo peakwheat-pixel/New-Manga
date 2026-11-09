@@ -70,9 +70,9 @@ out_of_scope:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-ID3-README | AC1–AC6 | `verification/FEA-13-ID-3/README.md` | `-` | `b2dfe9619fb863aaf51b973c932bafdaba98b912c8c6b68fca93e8a9808fd5e9` | CANONICAL |
-| EV-ID3-SUITE | AC1–AC5 | `verification/FEA-13-ID-3/logs/pytest-backup-suite.log` | `-` | `db2682d3618344d3625c146d1209477e4a61c1eb9a7bdf14892e8588b8a33114` | CANONICAL |
-| EV-ID3-MUT | AC4（变异判别） | `verification/FEA-13-ID-3/logs/mutation-db-gate.log` | `-` | `6fcc5b0c6b8fe3e2ebeb10154841ca26de7233ebb0e7b0d60bce1c649c9d2c89` | CANONICAL |
+| EV-ID3-README | AC1–AC6 | `verification/FEA-13-ID-3/README.md` | `-` | `0c8169ad706c753b87f4e3f18e05f7633a8d2b5f4d9d5497cf7943396d2ab618` | CANONICAL |
+| EV-ID3-SUITE | AC1–AC5 | `verification/FEA-13-ID-3/logs/pytest-backup-suite.log` | `-` | `9c42206c40c5917230934da391fbdf4f3f44bdc718a5368770c6978a36d134e7` | CANONICAL |
+| EV-ID3-MUT | AC4（变异判别） | `verification/FEA-13-ID-3/logs/mutation-db-gate.log` | `-` | `edf86bd141491ebb3bc4b037c70deb9de90719942d64ae1d938d25c41e26a47c` | CANONICAL |
 | EV-ID3-BUILD | AC5,AC6 | `verification/FEA-13-ID-3/logs/build.log` | `-` | `a1f492e5bed7ba67708748a6553ee858f491eabe64fdb298f7ab6de1702aacef` | CANONICAL |
 ## 证据计划
 
@@ -91,6 +91,16 @@ out_of_scope:
 - 跨库检查只作用于「双方均已知」；unknown 不阻断（避免旧包全部不可恢复）。
 - 回退：`git revert`；`database_id` 键可保留（无破坏性）。
 
+## Review 处置（r1，独立子代理 doc/reviews/FEA-13-ID-3-r1.md：changes_requested；P0=0/P1=0/P2=1/P3=4）
+
+| Finding | 处置 |
+|---|---|
+| R-001（P2）pre-migration 钩子未传身份 → 迁移包恒 
+ull、绕过门禁、注释假陈述 | **已修**：_NmbakMigrationBackup 传 database_id_reader=lambda: read_database_id(conn) + data_root；新增「pre_migration 包携带真实身份」用例；注释改为「首次启动时 unknown、后续升级携带身份」 |
+| R-002（P3）门禁只信 manifest 字段；比较未 strip 不对称 | **已修**：两侧 str(...).strip() 后再比较；manifest 无签名的纵深防御登记后续（README） |
+| R-003（P3）database_id 返回值未使用；日志/注释失真 | **部分修**：注释与 import 修正；日志句（「no write」）为既有装配日志，登记后续（不改变正确性） |
+| R-004（P3）with conn: 事务契约未声明 | **已修**：identity.py docstring 明确「必须在无活跃调用方事务时调用」并说明损坏值降级 unknown |
+| R-005（P3）证据缺口：v1 包 unknown 断言；C# 解析测试；wire 行 | **部分修**：新增 v1 包 identity unknown 且放行用例；C# 解析测试（不在 allowed_paths）与 wire 行同步登记残余 |
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
