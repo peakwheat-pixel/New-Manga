@@ -3,21 +3,21 @@ id: FEA-13-ID-3
 title: DatabaseId 原语 + manifest/恢复过滤 + backup.list 投影（FEA-13 片 3）
 kind: implementation
 governance_version: 3
-status: in_review
+status: done
 approval: `FEA-13-scope-r1.md` §7 片 3 + `ADJ-2026-11-09-FEA13-ERRATA-AND-SPLIT`；依赖 `FEA-13-BK2-1`、`FEA-13-COV-2`（done）；DSH 裁决错误码 `BACKUP_DATABASE_MISMATCH`（conflict、非 retryable）
 suggested_owner: dsh
 owner: dsh
-reviewer: 待指派（必须独立上下文）
+reviewer: 独立上下文子代理 r1/r2（`doc/reviews/FEA-13-ID-3-r1.md`、`-r2.md`；r1 changes_requested → 处置；r2 **approved**，均非实现会话）
 depends_on:
   - FEA-13-BK2-1
   - FEA-13-COV-2
 base_commit: 54453abb3
 branch: null
 worktree: null
-integration_commit: null
+integration_commit: 67bccb08d
 delivery_head: 3d8b5507e
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/FEA-13-ID-3
 allowed_paths:
   - doc/tasks/FEA-13-ID-3.md
@@ -95,7 +95,7 @@ out_of_scope:
 
 | Finding | 处置 |
 |---|---|
-| R-001（P2）pre-migration 钩子未传身份 → 迁移包恒 
+| R-001（P2）pre-migration 钩子未传身份 → 迁移包恒 `null`、绕过门禁、注释假陈述 | **已修**：`_NmbakMigrationBackup` 传 `database_id_reader=lambda: read_database_id(conn)` + `data_root`；新增「pre_migration 包携带真实身份」用例（r2 反证旧代码必红）；注释改为「首次启动时 unknown、后续升级携带身份」 |
 ull、绕过门禁、注释假陈述 | **已修**：_NmbakMigrationBackup 传 database_id_reader=lambda: read_database_id(conn) + data_root；新增「pre_migration 包携带真实身份」用例；注释改为「首次启动时 unknown、后续升级携带身份」 |
 | R-002（P3）门禁只信 manifest 字段；比较未 strip 不对称 | **已修**：两侧 str(...).strip() 后再比较；manifest 无签名的纵深防御登记后续（README） |
 | R-003（P3）database_id 返回值未使用；日志/注释失真 | **部分修**：注释与 import 修正；日志句（「no write」）为既有装配日志，登记后续（不改变正确性） |
@@ -112,4 +112,11 @@ ull、绕过门禁、注释假陈述 | **已修**：_NmbakMigrationBackup 传 da
 
 ## Closeout Record
 
-- 待独立 Review 通过后由 DSH 填写。
+## Closeout Record
+
+- **2026-11-09 / DSH（关账）**：AC1–AC6 全部 MET；C-01b SC-18 身份原语落地（无新 DDL，schema v9）。
+- **Review**：r1 独立子代理 changes_requested（P0=0/P1=0/P2=1/P3=4；R-001 pre-migration 钩子未传身份）→ 处置；r2 独立子代理 **approved**（FIXED 3 / PARTIAL 2 / OPEN 0；无新增 P0/P1；AC3 由 PARTIAL 转 MET）。
+- **P3 残余处置**：N-001 卡表截断已修；N-002 死 import 已删；N-003 注释区分「全新库 no-op」与「旧库首次升级写 null」；R-003 的「no write」日志句与 R-005 的 C# 解析测试/wire 行同步登记后续（README）。
+- **门禁**：备份面 7 文件 **82 passed**（EXIT 0）；变异（关闭跨库门禁）1 failed/7 passed（EXIT 1，复原后 8 passed）；dotnet build 0/0；Host 备份相邻 3 passed/1 skipped；check.ps1 默认 + -TaskPath PASS（3 warnings）；erify_pins 18/18。
+- **交付/集成**：实现 `3d8b5507e`；r2 返修 `67bccb08d`（`integration_commit`）；本收口提交仅翻转状态、指针与 P3 nit 修复。
+- **边界**：0 契约字节、0 pin 重算；diff ⊆ allowed_paths（core_service.py 仅映射一行）。

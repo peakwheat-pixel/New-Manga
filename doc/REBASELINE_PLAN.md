@@ -14,7 +14,7 @@
 |FEA-11-HOST-AUTH-3|FEA-11-HOST-AUTH-2|**blocked**（C-17 单 pin additive UNFREEZE 未完成；scope r1 NEEDS_UNFREEZE）|
 |FEA-13-BK2-1|—|**done**（backup/2 写端+协商+v1 adapter；r1/r2 approved；`7fc975e46`）|
 |FEA-13-COV-2|FEA-13-BK2-1|**done**（覆盖清单二期：settings/drafts/plugins/trash-manifest + verified + defer；r2 approved）|
-|FEA-13-ID-3|FEA-13-BK2-1、FEA-13-COV-2|**in_review**（DatabaseId 原语 + manifest/list/restore 过滤）|
+|FEA-13-ID-3|FEA-13-BK2-1、FEA-13-COV-2|**done**（DatabaseId 原语 + manifest/list/restore 过滤；r2 approved；`67bccb08d`）|
 |FEA-11-PREREQ-1|FEA-09、FEA-10|**done**（C-17 v1.0 FROZEN；pins 18/18；r1+轻量复核 approved P0/P1=0；集成提交见 Task）|
 |FEA-11|FEA-09、FEA-10、FEA-11-PREREQ-1|**done**（2026-11-08 翻转：R4A `fbe337f95`；AC11-1…10 MET；L-STARTUP 子项 NA；L-M1/L-M4/needs_confirmation re-home；L-1…L-11 原文保留）||
 |FEA-11-SCAN-1|FEA-11|**done**（r2 窄面 approved；delivery `7080167e1`；AC-S1…S6 全 MET；AC11-1 终态 MET 带 limitation）|

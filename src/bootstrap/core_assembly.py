@@ -1200,11 +1200,10 @@ def assemble_core_services(
         # but was invisible, so the log now states the seam explicitly: schema
         # creation/upgrade is the only write such a session performs.
         # FEA-13-ID-3 (C-01b SC-18): the library identity is created on the
-        # first writable boot; a legacy library is back-filled here, after the
-        # schema is at its target version. The pre-migration hook reads the
-        # identity lazily: on a brand-new library it is still unknown at that
-        # moment, while every later upgrade packages the existing identity.
-        from infrastructure.sqlite.identity import read_database_id  # noqa: F401  (used by the hook below)
+        # first writable boot (a brand-new library is a no-op in the hook, so
+        # nothing is packaged); a legacy library is back-filled here, after the
+        # schema is at its target version, so its FIRST upgrade packages the
+        # identity as unknown while every subsequent upgrade carries it.
         ensure_database_id(conn)
         if applied:
             print(
