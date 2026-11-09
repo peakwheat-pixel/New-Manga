@@ -23,17 +23,16 @@ allowed_paths:
   - doc/tasks/FEA-13-SRC-6.md
   - doc/reviews/FEA-13-SRC-6-*.md
   - doc/handoffs/FEA-13-SRC-6-*.md
-  - doc/STATUS.md
-  - doc/REBASELINE_PLAN.md
-  - doc/TASK_LEDGER.md
   - verification/FEA-13-SRC-6/**
-  - src/infrastructure/sqlite/nmbak.py
-  - src/application/maintenance/restore_plan.py
-  - src/bootstrap/core_assembly.py
-  - tests/storage/test_nmbak_source_access.py
-  - tests/application/test_restore_plan_source_access.py
   - apps/desktop-avalonia/src/NewManga.Host/Sources/SourceAccessRegistry.cs
+  - apps/desktop-avalonia/src/NewManga.Host/Sources/SourceAccessRestore.cs
   - apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs
+  - src/infrastructure/sqlite/nmbak.py
+  - tests/storage/test_nmbak_source_access.py
+  - tests/storage/test_nmbak_backup.py
+  - tests/storage/test_nmbak_coverage.py
+  - tests/core/test_core_backup_wire.py
+  - apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceAccessRestoreTests.cs
   - apps/desktop-avalonia/tests/NewManga.Host.Tests/SourceRegistryTests.cs
 out_of_scope:
   - **实现范围以本卡冻结为准**（scope 冻结 2026-11-10，DSH）
@@ -66,40 +65,43 @@ out_of_scope:
 
 - 待 scope review 冻结（当前仅占位；不得实施）。
 
-## Scope 冻结（2026-11-10，DSH）
+## Scope 冻结（2026-11-10，DSH；依据 `doc/reviews/FEA-13-SRC-6-scope-r1.md` READY-TO-FREEZE）
 
-**契约依据**：C-09 `SC-B01` 备份覆盖清单的「必须包含」已列「源引用与授权元数据（AD-003 §3.3；Host 私有 registry 随备份纳入，备份包内加密）」→ **契约预留成立，无需 UNFREEZE**；C-06/C-17 零字节改动。
+**契约依据**：C-09 `SC-B01`/`SC-B01a`/`SC-B07 ④` 已要求「源引用与授权元数据…备份包内加密」→ **无需 UNFREEZE**；C-06/C-17 零字节、零新命令、零新错误码、零 DDL。
 
-**实现骨架**（3 段）：
+**交接面（四段，字节语义固定）**：
 
-| 段 | 内容 |
-|---|---|
-| Host staging | `SourceAccessRegistry` 新增只读导出：把 `<dataRoot>/host/source-access/registry.v1.dat`（DPAPI 密文）**原字节**复制到 Core 可读 staging（不解密、不改清单）；打包后 staging 清理 |
-| Core 打包 | `nmbak` 新增 extras 分类 `source-access`（`extras/source-access/registry.v1.dat`）+ manifest `included_categories` 记录；`EXCLUDED_CATEGORIES` 不新增排除；extras 覆盖面校验沿用 COV-2 |
-| 恢复反向 | 解包 → `restore_plan` 把该段写回 `<dataRoot>/host/source-access/registry.v1.dat`；目标已存在时**先 quarantine 旧文件再写**（`SourceAccessRegistry` 既有 quarantine 目录），跨机/跨用户解密失败 → Host typed `SOURCE_REGISTRY_UNAVAILABLE`（不清空原文件） |
+| 方向 | 产物 | 写入方 | 读取方 | 字节语义 |
+|---|---|---|---|---|
+| 导出 | `<DataRoot>/host/source-access/registry.v1.dat`（`NMSAR1` + DPAPI 密文） | Host `Save`（既有） | Core `nmbak`（**只读，不解密/不解析**） | 原字节 |
+| 包内段 | `extras/source-access/registry.v1.dat` + manifest `extras` 项（sha256/size） | Core `nmbak` | restore/Host | 与源逐字节相同 |
+| 恢复 handoff | `<backup_root>/restore-handoff/<backup_id>/source-access/registry.v1.dat` + `handoff.json` | Core `nmbak.restore`（DB/managed 成功后） | Host `SourceAccessRestore` | 原字节 + 摘要 |
+| 导入 live | `<DataRoot>/host/source-access/registry.v1.dat` | Host `ImportRestoredSnapshot`（原子 Save） | Host | 合并后快照 |
 
-**语义边界**：同机同用户恢复有效；跨机/跨用户须重授权（DPAPI CurrentUser 绑定，不得写成通用跨机恢复）。
+**关键边界**：registry 不存在 = 合法空（不伪装 empty）；存在但读失败 = `BACKUP_CREATE_FAILED`；损坏但仍可读 = 入包（由 Host 导入时 typed 拒绝）；并发按 C-15 `:309` 原子替换；Host 导入只**新增缺失 registry_id**，不覆盖/不复活 live 条目；失败时 live **零写**；跨机/他用户 DPAPI = typed `SOURCE_ACCESS_DENIED` + `NOT_RUN` 真实跨机。
 
-## Acceptance Criteria（scope 冻结）
+## Acceptance Criteria（6 条，依 scope r1 §3）
 
-- [ ] **AC-S6-1 打包零改源**：包内含 `extras/source-access/registry.v1.dat`，其字节 SHA-256 == 源文件（DPAPI 密文原样，无明文 identity/roots 泄漏）；manifest 记录 category；打包前后源 registry 文件 SHA-256 不变。 <<MET>>
-- [ ] **AC-S6-2 同机恢复可用**：解包写回后 `SourceAccessRegistry.List()` 返回与备份前一致的 `registry_id/generation/roots/identity`；恢复前后 `library.db` 业务行数不变。 <<MET>>
-- [ ] **AC-S6-3 跨机/跨用户负例**：以不同 protector（模拟 DPAPI 失败）导入 → typed `SOURCE_REGISTRY_UNAVAILABLE`；原 registry 不被清空（quarantine 保留），零未处理异常。 <<MET>>
-- [ ] **AC-S6-4 冲突处置**：目标已有 registry 时，旧文件先 quarantine 再写回（不静默覆盖）；恢复计划记录该动作。 <<MET>>
-- [ ] **AC-S6-5 门禁/契约/不夸大**：`check.ps1`（默认 + `-TaskPath`）PASS；`verify_pins` 18/18（C-09/C-06/C-17 字节零变化）；`diff ⊆ allowed_paths`；全量 pytest/.NET 不低于当轮基线；gated/跨机用例默认 skip 且逐条原因。 <<MET>>
+- [ ] **AC1 入包段与加密不可读**：manifest extras 恰一项 `source-access/registry.v1.dat`（sha256/size 一致）；包内成员与源逐字节相同且以 `NMSAR1\0` 开头；字节中无明文 registry_id/locator/绝对路径；Core 代码库 `grep CryptProtectData\|CryptUnprotectData src/` = 0；创建前后源文件字节 + mtime 不变。
+- [ ] **AC2 缺失/不可读/空边界**：(a) 读失败→`BACKUP_CREATE_FAILED` 无包、源不变；(b) 缺失→create 成功、无段、restore 后 live 不变（`not_present`）；(c) 空 entries（文件存在）→ 有成员、导入 `unchanged` 零写。
+- [ ] **AC3 恢复后授权可用**：第二 DataRoot overwrite restore + handoff → Host 导入后 `List()` 含条目、`Authorize` 成功；重复导入 `Imported=0`+live 零写；空 live 首次导入恰好一次；导入拒绝不反向失败数据恢复。
+- [ ] **AC4 revoked/代次/冲突**：live 新代次/revoked 不被包内旧代次覆盖；包内 revoked 导入为 revoked；`Reset(true)` + receipt 后启动 `TryImportPending` 不复活；read-only 模式零写。
+- [ ] **AC5 跨机/版本/identity 负例**：DPAPI 不可解 → `rejected`/`SOURCE_ACCESS_DENIED`/`dpapi_unprotectable`；版本 `NMSAR2` → `registry_version_unsupported`；截断 → `registry_corrupt`；identity 变更 → `SOURCE_REGISTRY_UNAVAILABLE`；均 live 零写；真实跨机 `NOT_RUN`。
+- [ ] **AC6 门禁/证据/变异**：定向 pytest/.NET 0 failed；`check.ps1`（默认 + `-TaskPath`）PASS；`verify_pins` 18/18；diff ⊆ 14 paths；证据含 README/日志/字节探针/正负例/≥3 变异日志（含 `EXIT=` 与复原绿）；0 契约/0 pin/0 DDL/0 新 wire/0 新码。
 
-## 证据计划
+## 证据计划（L2，依 scope r1 §4）
 
-L2 正/负 fixture（构造最小 registry.v1.dat + 假 DPAPI protector）：E1 包内段字节/SHA 与 manifest；E2 恢复后 List/行数；E3 跨机 typed 拒绝 + 原文件保留；E4 冲突 quarantine；E5 零写（打包前后源 SHA）；E6 全量门禁日志。
+fixtures：`F-POS-DPAPI`（真实 DPAPI）、`F-POS-FAKE`（Passthrough/fake 密文）、`F-ABSENT`、`F-EMPTY`、`F-FOREIGN-DPAPI`（必败 protector）、`F-NMSAR2`、`F-CORRUPT`、`F-TAMPER`。证据：`verification/FEA-13-SRC-6/`（README AC 映射、pytest/dotnet/门禁日志、加密段字节探针、handoff/导入正负例、≥3 变异日志）。跨机 = `NOT_RUN` + 原因。
 
 ## 风险与回退
 
 | 风险 | 处置 |
 |---|---|
-| DPAPI 跨机/跨用户 | 只声明同机同用户；跨机 typed 拒绝 + 文档 limitation |
-| registry.dat 版本演进 | 只做原字节搬运，不解析内部格式（版本由 Host 自己校验） |
-| 与 FEA-15 验收交互 | FEA-15 登记「跨机恢复不支持」已知 limitation（本卡不阻塞验收） |
-| 回退 | evalue revert 实现提交；无 schema/契约字节变更 |
+| DPAPI 跨机/他用户 | 只声明同机同用户；typed 拒绝 + `NOT_RUN` 真实跨机；FEA-15 登记 limitation |
+| 旧二进制读新包 | 未知 extras 类别 → `BACKUP_FORMAT_UNSUPPORTED`（COV-2 既有前向兼容），发布说明写明 |
+| registry 版本演进 | Core 只复制字节；Host 导入校验 `NMSAR1`/JSON `format_version` |
+| merge restore | 本卡不创建 handoff（§5.4），不表现为静默成功 |
+| 回退 | `git revert` 实现提交；无 schema/契约字节变更 |
 
 ## Resource Manifest
 
