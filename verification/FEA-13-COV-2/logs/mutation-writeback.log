@@ -1,13 +1,13 @@
-# command: python -m pytest tests/storage/test_nmbak_coverage.py -q  # after mutation: restore writes extras back (expected RED)
+# command: python -m pytest tests/storage/test_nmbak_coverage.py -q  # after mutation: restore copies REAL extras bytes back (expected RED)
 # shell: pwsh 7.6.8 / python 3.14
-# time: 2026-11-09T21:14:53.1201294+08:00
-# batch: fea-13-cov-2-r2
+# time: 2026-11-09T21:23:13.9265192+08:00
+# batch: fea-13-cov-2-r3
 # EXIT=1
 ..F.....                                                                 [100%]
 ================================== FAILURES ===================================
 __________ test_restore_defers_extras_and_leaves_them_byte_identical __________
 
-workspace = {'conn': <infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x00000221FFEA3250>, 'service': <infrastru...ath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-1835/test_restore_defers_extras_and0/data/managed'), ...}
+workspace = {'conn': <infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x000001E9D1E03390>, 'service': <infrastru...ath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-1841/test_restore_defers_extras_and0/data/managed'), ...}
 
     def test_restore_defers_extras_and_leaves_them_byte_identical(workspace):
         package, manifest, _names = _create(workspace)
@@ -51,13 +51,13 @@ workspace = {'conn': <infrastructure.sqlite.connection.ThreadRoutedConnection ob
             if relative == "library.db":
                 continue
 >           assert after[relative] == payload, relative
-E           AssertionError: settings/provider_profiles.json
-E           assert b'{"restored":true}' == b'{"format_ve... ["CHANGED"]}'
+E           AssertionError: managed/trash-manifest.json
+E           assert b'{"entries":...cleanups":{}}' == b'{"entries":...ups":{"x":1}}'
 E             
-E             At index 2 diff: b'r' != b'f'
+E             At index 34 diff: b'}' != b'"'
 E             Use -v to get more diff
 
 tests\storage\test_nmbak_coverage.py:191: AssertionError
 =========================== short test summary info ===========================
 FAILED tests/storage/test_nmbak_coverage.py::test_restore_defers_extras_and_leaves_them_byte_identical
-1 failed, 7 passed in 1.22s
+1 failed, 7 passed in 1.20s

@@ -640,14 +640,35 @@ class NmbakBackupService:
                         continue
                     if path.name.endswith(".tmp"):
                         continue
-                    # R-008: never follow links out of the category root.
+                    # R-008: never follow links/junctions out of the category
+                    # root. ``Path.is_symlink()`` is False for a Windows
+                    # directory junction, so every path component is checked
+                    # for a reparse point before a file is collected.
                     if path.is_symlink() or not path.is_file():
+                        continue
+                    if self._crosses_reparse_point(directory, relative):
                         continue
                     collected.append((category, relative.as_posix(), path))
         trash = self._managed_root / "trash-manifest.json"
         if trash.is_file():
             collected.append((TRASH_MANIFEST_CATEGORY, "trash-manifest.json", trash))
         return collected
+
+    @staticmethod
+    def _crosses_reparse_point(root: Path, relative: Path) -> bool:
+        """True when any component below ``root`` is a symlink/junction."""
+        current = root
+        for part in relative.parts:
+            current = current / part
+            try:
+                if current.is_symlink():
+                    return True
+                is_junction = getattr(current, "is_junction", None)
+                if callable(is_junction) and is_junction():
+                    return True
+            except OSError:
+                return True
+        return False
 
     def _copy_extras(
         self,

@@ -20,7 +20,7 @@
 - `verified=true`：read-back 校验通过 + extras 成员 sha256/size + **类别声明交叉校验**（`included_categories == extras ∪ empty_categories`，`skipped_categories` 为空）。
 - 未知 extras 类别（更新版本的包）→ `BACKUP_FORMAT_UNSUPPORTED`（前向兼容，不伪装 corrupt）。
 - restore：**不写回** extras（延迟到片 4），report 含 `deferred_categories`。
-- 安全边界：extras 收集跳过 `is_symlink()`（不把 data root 外内容读入包）；额外 ACL/符号链接回归登记 UNKNOWN。
+- 安全边界：extras 收集跳过 `is_symlink()` **与 Windows junction/reparse point**（逐路径组件检查 `is_junction`；r2 探针证实 junction 已不再逃逸）；真实 junction 回归依赖本机权限，登记 UNKNOWN。
 
 ## 判别证据
 
@@ -30,7 +30,7 @@
 | AC2 排除项 | `catalog`/`derived` 不在包内；`excluded_categories` 四项均有 reason | 同上 |
 | AC3 verified 语义 | 收集/读取错误 → `BACKUP_CREATE_FAILED` 且无包产出；空目录不失败；类别声明不一致 → `BACKUP_CORRUPT` | 同上（新增 4 例） |
 | AC4 restore 延迟写回 | restore 后 settings/drafts/plugins/trash-manifest 字节不变；`deferred_categories` = 4 类 | 同上 |
-| AC5 变异判别 | ①禁用 extras sha 校验（同长篡改）→ **1 failed / 3 passed**；②**restore 写回 extras（真实变异）→ 1 failed / 7 passed**；复原后 8 passed | `logs/mutation-extras-sha.log`、`logs/mutation-writeback.log` |
+| AC5 变异判别 | ①禁用 extras sha 校验（同长篡改）→ **1 failed / 3 passed**；②**restore 真实复制包内 extras 字节写回** → **1 failed / 7 passed**（失败快照证明写回的是包内原字节而非标记）；复原后 8 passed | `logs/mutation-extras-sha.log`、`logs/mutation-writeback.log` |
 | AC6 门禁 | `check.ps1` 默认 + `-TaskPath` PASS；pins 18/18 | 卡/Handoff |
 
 ## 命令
@@ -42,6 +42,6 @@ python -m pytest tests/storage/test_nmbak_backup.py tests/storage/test_nmbak_for
 ## 残余 / 未覆盖
 
 - **SC-B01 ④「源引用/授权元数据入包」**：写域在 Host 侧，不在本片；按 `doc/reviews/FEA-13-COV-2-sc01-decision.md` 单列 `FEA-13-SRC-6`（proposed）。
-- **真实 Windows ACL 不可读目录 / 真实符号链接**：CI 无法稳定构造，`UNKNOWN`；代码已跳过 symlink。
+- **真实 Windows ACL 不可读目录 / 真实符号链接 / junction**：CI 无法稳定构造，`UNKNOWN`；代码已跳过 symlink 与 junction（r2 探针验过 junction 修复）。
 - **性能/IO**：`_verify_package` 逐成员 `archive.read` 且 create read-back 再跑一次；restore `extractall` 解出永不写回的 extras（双倍 temp IO）→ 登记，优化归片 5。
 - `tests/storage` 全量未跑（环境 >10 分钟），备份面 6 文件 74 passed 覆盖改动面。

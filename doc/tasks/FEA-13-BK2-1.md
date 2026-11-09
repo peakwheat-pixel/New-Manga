@@ -92,7 +92,7 @@ out_of_scope:
 |---|---|
 | R-001（P2）v1 golden 由 v2 relabel 合成、未覆盖无 `page_original_refs` 旧包 | README §证据局限如实登记；base-writer golden 与历史包回放列入片 2/后续残余（reviewer 探针已证行为正确） |
 | R-002（P2）mutation 日志缺命令头/EXIT；README 25/25 与 64 passed 口径不一致 | 3 份日志全部重生成（`# command/# shell/# time/# EXIT=`）；README 口径统一为「备份相关 5 文件 64 passed」 |
-| R-003（P2）SC-B07 ④ 加密源授权元数据未实现却写「SC-B07 落地」 | 措辞收窄为 **②③⑤⑥**；④ 与 SC-B01 源授权元数据入包归片 2（`FEA-13-COV-2`）/独立裁决，README 与 Handoff 同步 |
+| R-003（P2）SC-B07 ④ 加密源授权元数据未实现却写「SC-B07 落地」 | 措辞收窄为 **②③⑤⑥**；④ 与 SC-B01 源授权元数据入包**不在本片、也不在 6 片拆分内**，按 `doc/reviews/FEA-13-COV-2-sc01-decision.md` 单列 `FEA-13-SRC-6`（proposed），README 与 Handoff 同步 |
 | R-004（P3）module/`_verify_package` docstring 陈旧 + 死 except | 已更新 docstring、删除死 `except (TypeError, ValueError)` |
 | R-005（P3）`_as_int` 接受 `"2"` 无历史依据 | 删除 `_as_int`；版本字段只接受 int（bool 排除） |
 | R-006（P3）缺 version 归 unsupported 而非 corrupt | 已知 format 但版本字段缺失/非整数 → `BACKUP_CORRUPT`；整数但不受支持 → `BACKUP_FORMAT_UNSUPPORTED` |

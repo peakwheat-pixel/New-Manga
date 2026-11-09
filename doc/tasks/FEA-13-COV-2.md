@@ -3,20 +3,20 @@ id: FEA-13-COV-2
 title: 覆盖清单二期（settings/drafts/plugins/trash-manifest 入包 + verified 语义 + restore 延迟写回）（FEA-13 片 2）
 kind: implementation
 governance_version: 3
-status: in_review
+status: done
 approval: 裁决 `ADJ-2026-11-09-FEA13-ERRATA-AND-SPLIT`（D2 补 drafts/plugins；D3 外观设置不入包）+ `FEA-13-scope-r1.md` §7 片 2；依赖 `FEA-13-BK2-1`（manifest v2 + v1 adapter，done）
 suggested_owner: dsh
 owner: dsh
-reviewer: 待指派（必须独立上下文）
+reviewer: 独立上下文子代理 r1/r1b/r2（`doc/reviews/FEA-13-COV-2-r1.md`、`-r1b.md`、`-r2.md`；r1/r1b changes_requested → 处置；r2 **approved**，均非实现会话）
 depends_on:
   - FEA-13-BK2-1
 base_commit: 892cb99df
 branch: null
 worktree: null
-integration_commit: null
+integration_commit: f86105707
 delivery_head: 00f14179a
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/FEA-13-COV-2
 allowed_paths:
   - doc/tasks/FEA-13-COV-2.md
@@ -73,10 +73,10 @@ out_of_scope:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-COV-README | AC1–AC6 | `verification/FEA-13-COV-2/README.md` | `-` | `3c6997cba053f9d3befe7ea96aec33240afe8fe18bfd0bd69ed2edc4606b594a` | CANONICAL |
-| EV-COV-SUITE | AC1–AC4,AC6 | `verification/FEA-13-COV-2/logs/pytest-backup-suite.log` | `-` | `9749fb42dbc0e16553863276e3a2d9c1f21c693edb6fc01f0e07da8e0bd27e51` | CANONICAL |
+| EV-COV-README | AC1–AC6 | `verification/FEA-13-COV-2/README.md` | `-` | `2bf601fd2576f9f5bde6c5ea2bd9852ae6891f3fb98ec24e11a2f2d887efef60` | CANONICAL |
+| EV-COV-SUITE | AC1–AC4,AC6 | `verification/FEA-13-COV-2/logs/pytest-backup-suite.log` | `-` | `d03a08b96fd270028dd6e2a2d673ff1ae31eae53d774df98e0322355398911ca` | CANONICAL |
 | EV-COV-MUT-SHA | AC5 | `verification/FEA-13-COV-2/logs/mutation-extras-sha.log` | `-` | `d0e681e6f0d2459b36c25d32443a574d3f4b384d7c0f01885395725509926830` | CANONICAL |
-| EV-COV-MUT-WRITEBACK | AC5 | `verification/FEA-13-COV-2/logs/mutation-writeback.log` | `-` | `96258775e7e57494b50ca01914c956859efb91cb251793767ae675c9b0516cbd` | CANONICAL |
+| EV-COV-MUT-WRITEBACK | AC5 | `verification/FEA-13-COV-2/logs/mutation-writeback.log` | `-` | `1c0cc4e9fbe917ff6a3846e469fd5f93bb5f9e3e4ab9934905dfb9bddf94ddde` | CANONICAL |
 ## 证据计划
 
 | # | 命令/步骤 | 判别 |
@@ -121,4 +121,12 @@ out_of_scope:
 
 ## Closeout Record
 
-- 待独立 Review 通过后由 DSH 填写。
+## Closeout Record
+
+- **2026-11-09 / DSH（关账）**：AC1–AC6 全部 MET；C-09 SC-B01a 覆盖清单二期落地（SC-B01 ④ 单列 FEA-13-SRC-6）。
+- **Review**：r1 独立子代理 changes_requested（P0=0/P1=1/P2=3/P3=4）→ 处置；r1b 另一独立子代理 changes_requested（P0=0/P1=1/P2=3/P3=3，P1 独立吻合）→ 同批处置；r2 独立子代理 **approved**（FIXED 5 / PARTIAL 3 / OPEN 0；无新增 P0/P1）。
+- **P1 修复**：空 drafts/plugins 不再阻断 create/restore/pre-migration（_present_categories + mpty_categories；仅真实收集错误失败）。
+- **P3 残余处置**：N-001 已同步 BK2-1 措辞（④ 单列裁决）；N-002 已加 junction/reparse point 防护；R-005 已补**真实**「复制包内 extras 字节写回」变异日志；R-004 由 FEA-13-COV-2-sc01-decision.md 裁决；性能/IO 优化（逐成员 read、extractall extras）登记至片 5。
+- **门禁**：备份面 6 文件 **74 passed**（EXIT 0）；变异① 1 failed/3 passed、变异②（真实写回）1 failed/7 passed（均 EXIT 1，复原后 8 passed）；check.ps1 默认 + -TaskPath PASS（3 warnings）；erify_pins 18/18；ledger 一致。
+- **交付/集成**：实现 `00f14179a`；r2 返修 `f86105707`（`integration_commit`）；本收口提交仅翻转状态与指针。
+- **边界**：0 契约字节、0 pin 重算；diff ⊆ allowed_paths（core_assembly.py 仅 data_root 传参一处）。
