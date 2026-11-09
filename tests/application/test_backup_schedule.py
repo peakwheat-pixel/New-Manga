@@ -75,3 +75,20 @@ def test_select_prunable_never_touches_manual_or_protected_packages() -> None:
     prunable = select_prunable(entries, keep=1, protected_ids={"a3"})
 
     assert [entry["backup_id"] for entry in prunable] == ["a2", "a1"]
+
+
+def test_select_prunable_covers_core_package_types_except_manual() -> None:
+    entries = [
+        {"backup_id": "m1", "backup_type": "manual", "created_at": "2026-11-09T06:00:00+00:00"},
+        {"backup_id": "pm1", "backup_type": "pre_migration", "created_at": "2026-11-09T01:00:00+00:00"},
+        {"backup_id": "pr1", "backup_type": "pre_restore", "created_at": "2026-11-09T02:00:00+00:00"},
+        {"backup_id": "a1", "backup_type": "automatic", "created_at": "2026-11-09T03:00:00+00:00"},
+        {"backup_id": "a2", "backup_type": "automatic", "created_at": "2026-11-09T04:00:00+00:00"},
+    ]
+
+    prunable = select_prunable(entries, keep=2, protected_ids={"pr1"})
+
+    ids = [entry["backup_id"] for entry in prunable]
+    assert "m1" not in ids, "manual packages are never pruned"
+    assert "pr1" not in ids, "the last restore's pre_restore is protected"
+    assert ids == ["pm1"]

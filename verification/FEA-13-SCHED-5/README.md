@@ -23,13 +23,13 @@
 
 | AC | 结果 | 证据 |
 |---|---|---|
-| AC1 调度模型 | daily/weekly/custom/disabled 的 `due()` 与解析容错；注入时钟 | `logs/pytest-backup-suite.log`（108 passed） |
-| AC2 错过计划 receipt | 超龄/首次 → receipt `created_first`/`created` 带 `next_due`；disabled → `disabled` | 同上 |
+| AC1 调度模型 | daily/weekly/custom/disabled 的 `due()` 与解析容错；注入时钟 | `logs/pytest-backup-suite.log`（111 passed） |
+| AC2 错过计划 receipt | 超龄/首次 → receipt `created_first`/`created`/`missed_or_due`（年龄 ≥2× 间隔）带 `next_due`（从 last 起算）；not-due → `not_due`；空库 → `empty_library`；disabled → `disabled` | 同上 |
 | AC3 保留 + D4 | N 可配置；手动包永不删；最旧 `pre_restore`（保护集）在轮转后仍在 | 同上（`test_retention_protects_the_recovery_chain`） |
 | AC4 手动不重置 | 手动备份后不再产生新 automatic（只看 automatic 年龄） | 同上（`test_manual_backup_does_not_reset_the_automatic_schedule`） |
 | AC5 失败语义 | create 抛错 → 启动继续；连续 3 次 → receipt `degraded` | 同上（`test_failure_degrades_to_notice_without_aborting_startup`） |
-| AC6 门禁 | 备份面 10 文件 **110 passed**；`check.ps1`/pins 见卡与 Handoff | `logs/pytest-backup-suite.log` |
-| 变异判别 | ①去掉 D4 保护 → **1 failed**；②忽略 disabled → **1 failed**；复原后 13 passed | `logs/mutation-no-d4-protection.log`、`logs/mutation-disabled-ignored.log` |
+| AC6 门禁 | 备份面 10 文件 **111 passed**；`check.ps1`/pins 见卡与 Handoff | `logs/pytest-backup-suite.log` |
+| 变异判别 | ①去掉 D4 保护 → **1 failed**；②忽略 disabled → **1 failed**；复原后 15 passed | `logs/mutation-no-d4-protection.log`、`logs/mutation-disabled-ignored.log` |
 
 ## 命令
 
@@ -42,5 +42,5 @@ python -m pytest tests/application/test_backup_schedule.py tests/infrastructure/
 - **变异②（手动包参与计时）不可判别**：手动包与自动包创建时间几乎相同，「手动后立即 ensure」场景下两种实现都不轮转；改为代码审查 + 语义断言覆盖（README 登记）。真实判别需要注入时钟到 `_ensure_automatic_backup`，登记后续。
 - **`daily` 与 `custom_hours(24)` 等价**：`daily` 保留以兼容旧 knob；无独立时区/整点调度（weekday 字段已建模但未参与判定，登记）。
 - **Host 侧无定时器**：已核实（Core 独占），未新增。
-- `tests/storage` 全量未跑（环境 >10 分钟），备份面 10 文件 **110 passed** 覆盖改动面。
+- `tests/storage` 全量未跑（环境 >10 分钟），备份面 10 文件 **111 passed** 覆盖改动面。
 - P3 残余（r1）：`_prune_automatic_backups`/`_package_age_hours` 死代码、weekday 未参与判定、治理指针越 allowed_paths、`sqlite3.Error` 穿透、AC4 弱用例——已登记。

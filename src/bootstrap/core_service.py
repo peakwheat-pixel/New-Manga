@@ -176,7 +176,7 @@ import tempfile
 import threading
 import time
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from typing import Any, Callable, TextIO
 
 from application.editing.errors import (
@@ -8149,6 +8149,15 @@ def _ensure_automatic_backup(core) -> None:
             return protected
 
         if books == 0:
+            _write_backup_receipt(
+                conn,
+                {
+                    "kind": "empty_library",
+                    "status": "skipped",
+                    "next_due": None,
+                    "message": "an empty library has nothing to protect yet",
+                },
+            )
             prune(entries, protections())
             return
         automatic = [
@@ -8188,11 +8197,15 @@ def _ensure_automatic_backup(core) -> None:
                 {
                     "kind": "not_due",
                     "status": "skipped",
-                    "next_due": next_due(now, effective).isoformat(
-                        timespec="milliseconds"
-                    )
-                    if next_due(now, effective)
-                    else None,
+                    "next_due": (
+                        last + timedelta(hours=effective.interval_hours())
+                    ).isoformat(timespec="milliseconds")
+                    if last is not None
+                    else (
+                        next_due(now, effective).isoformat(timespec="milliseconds")
+                        if next_due(now, effective)
+                        else None
+                    ),
                     "message": "the newest automatic package is still fresh",
                 },
             )
