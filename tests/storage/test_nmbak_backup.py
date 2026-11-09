@@ -22,7 +22,8 @@ if str(SRC_ROOT) not in sys.path:
 
 from infrastructure.sqlite.nmbak import (  # noqa: E402
     DB_NAME,
-    FORMAT_NAME,
+    FORMAT_NAME_V2,
+    FORMAT_VERSION_V2,
     MANIFEST_NAME,
     MANAGED_PREFIX,
     NmbakBackupError,
@@ -119,8 +120,11 @@ def test_create_package_contains_frozen_v1_layout(workspace):
         assert "library.db.sidecar.json" in names
         assert MANAGED_PREFIX + relative in names
         manifest = json.loads(archive.read(MANIFEST_NAME))
-    assert manifest["format"] == FORMAT_NAME
-    assert manifest["format_version"] == 1
+    assert manifest["format"] == FORMAT_NAME_V2
+    assert manifest["version"] == FORMAT_VERSION_V2
+    assert "format_version" not in manifest
+    # FEA-13-ID-3 fills the real DatabaseId; until then v2 truthfully says unknown.
+    assert manifest["database_id"] is None
     assert manifest["backup_type"] == "manual"
     assert manifest["verified"] is True
     assert manifest["managed_file_count"] == 1

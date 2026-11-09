@@ -51,14 +51,33 @@ MANIFEST_NAME = "manifest.json"
 DB_NAME = "library.db"
 SIDECAR_NAME = "library.db.sidecar.json"
 MANAGED_PREFIX = "managed/"
+# backup/1 legacy literal -- READ-ONLY compatibility path (ADJ-2026-11-09 D1).
 FORMAT_NAME = "nm-backup"
 FORMAT_VERSION = 1
+# backup/2 write-end literal: the writer only ever emits v2 (C-09 SC-B07).
+FORMAT_NAME_V2 = "nmbak"
+FORMAT_VERSION_V2 = 2
 BACKUP_TYPES = frozenset({"manual", "automatic", "pre_migration", "pre_restore"})
 _BACKUP_ID = re.compile(r"[0-9a-f]{32}")
 
 
 def _utc_now() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="milliseconds")
+
+
+def _as_int(value: object) -> int | None:
+    """Version fields are ints in current writers but ``str`` in some historical
+    packages; negotiation must accept both and reject everything else."""
+    if isinstance(value, bool):
+        return None
+    if isinstance(value, int):
+        return value
+    if isinstance(value, str):
+        try:
+            return int(value.strip())
+        except ValueError:
+            return None
+    return None
 
 
 class NmbakBackupError(RuntimeError):
@@ -206,8 +225,11 @@ class NmbakBackupService:
                 workdir, revision_refs + page_original_refs
             )
             manifest = {
-                "format": FORMAT_NAME,
-                "format_version": FORMAT_VERSION,
+                "format": FORMAT_NAME_V2,
+                "version": FORMAT_VERSION_V2,
+                # FEA-13-ID-3 fills the real identity once the primitive lands;
+                # until then every v2 package truthfully reports "unknown".
+                "database_id": None,
                 "app_version": self._app_version,
                 "schema_version": schema_version,
                 "created_at": created_at,
@@ -569,23 +591,52 @@ class NmbakBackupService:
                 payload = json.loads(archive.read(MANIFEST_NAME).decode("utf-8"))
         except (KeyError, OSError, zipfile.BadZipFile, json.JSONDecodeError) as error:
             raise NmbakBackupError("BACKUP_CORRUPT", f"{package.name}: {error}") from error
-        if not isinstance(payload, dict) or payload.get("format") != FORMAT_NAME:
-            raise NmbakBackupError("BACKUP_CORRUPT", f"{package.name}: not a nm-backup")
-        return payload
+        if not isinstance(payload, dict):
+            raise NmbakBackupError(
+                "BACKUP_CORRUPT", f"{package.name}: manifest is not an object"
+            )
+        return self._negotiate_manifest(package, payload)
+
+    def _negotiate_manifest(self, package: Path, payload: dict) -> dict:
+        """C-09 SC-B07 version negotiation (write-end v2, backup/1 read-only).
+
+        ADJ-2026-11-09 D1 fixes the literals: backup/1 is
+        ``format:"nm-backup" + format_version:1`` and backup/2 is
+        ``format:"nmbak" + version:2``. Any other format/version is a typed,
+        non-retryable ``BACKUP_FORMAT_UNSUPPORTED`` -- never disguised as
+        corruption: the package may be perfectly intact and simply newer than
+        this build.
+        """
+        name = package.name
+        fmt = payload.get("format")
+        if fmt == FORMAT_NAME_V2:
+            version = payload.get("version")
+            if _as_int(version) == FORMAT_VERSION_V2:
+                return payload
+            raise NmbakBackupError(
+                "BACKUP_FORMAT_UNSUPPORTED",
+                f"{name}: backup/2 version {version!r} is not supported",
+            )
+        if fmt == FORMAT_NAME:
+            legacy = payload.get("format_version")
+            if _as_int(legacy) == FORMAT_VERSION:
+                return payload
+            raise NmbakBackupError(
+                "BACKUP_FORMAT_UNSUPPORTED",
+                f"{name}: backup/1 format_version {legacy!r} is not supported",
+            )
+        raise NmbakBackupError(
+            "BACKUP_FORMAT_UNSUPPORTED",
+            f"{name}: unknown backup format {fmt!r}",
+        )
 
     def _verify_package(self, package: Path) -> dict:
         """Full validation before restore (§3.1 rules); raises BACKUP_CORRUPT."""
         manifest = self._read_manifest(package)
         try:
-            format_version = int(manifest.get("format_version"))
             database_sha = str(manifest.get("database_sha256") or "")
         except (TypeError, ValueError) as error:
             raise NmbakBackupError("BACKUP_CORRUPT", f"{package.name}: bad manifest") from error
-        if format_version != FORMAT_VERSION:
-            raise NmbakBackupError(
-                "BACKUP_CORRUPT",
-                f"{package.name}: unsupported format_version {format_version}",
-            )
         try:
             with zipfile.ZipFile(package, "r") as archive:
                 names = set(archive.namelist())

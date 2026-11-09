@@ -1,0 +1,208 @@
+F                                                                        [100%]
+================================== FAILURES ===================================
+________________ test_create_package_contains_frozen_v1_layout ________________
+
+self = <infrastructure.sqlite.nmbak.NmbakBackupService object at 0x0000021BC243A900>
+backup_type = 'manual', source_reason = 'test'
+
+    def create(self, backup_type: str, source_reason: str = "") -> dict:
+        if backup_type not in BACKUP_TYPES:
+            raise NmbakBackupError(
+                "BACKUP_CREATE_FAILED", f"unsupported backup_type: {backup_type}"
+            )
+        backup_id = uuid.uuid4().hex
+        target = self._backup_root / f"{backup_id}.nmbak"
+        temporary = self._backup_root / f".{backup_id}.tmp-{uuid.uuid4().hex}.nmbak"
+        workdir = Path(tempfile.mkdtemp(prefix=f".nmbak-{backup_id}-", dir=self._backup_root))
+        try:
+            self._write_database(workdir / DB_NAME)
+            schema_version = verify_backup_file(workdir / DB_NAME)
+            created_at = _utc_now()
+            database_sha = sha256_file(workdir / DB_NAME)
+            sidecar = {
+                "schema_version": schema_version,
+                "database_hash": database_sha,
+                "app_version": self._app_version,
+                "created_at": created_at,
+            }
+            (workdir / SIDECAR_NAME).write_text(
+                json.dumps(sidecar, ensure_ascii=False, indent=2), encoding="utf-8"
+            )
+            revision_refs = self._revision_refs()
+            # REALUSE-DATA-SAFETY-1 AC2: imported page originals live in
+            # ``pages.managed_original_ref`` -- NOT in ``artifact_revisions``
+            # (a library that never ran a pipeline has zero artifact rows but
+            # 100 MB of managed originals). Backing up only revision_refs
+            # produced a "verified" package that silently lost every original
+            # page, which is exactly the user data the product promises to keep.
+            page_original_refs = self._page_original_refs()
+            managed_files = self._copy_managed_files(
+                workdir, revision_refs + page_original_refs
+            )
+            manifest = {
+                "format": FORMAT_NAME_V2,
+                "version": 1,
+                # FEA-13-ID-3 fills the real identity once the primitive lands;
+                # until then every v2 package truthfully reports "unknown".
+                "database_id": None,
+                "app_version": self._app_version,
+                "schema_version": schema_version,
+                "created_at": created_at,
+                "backup_type": backup_type,
+                "source_reason": source_reason,
+                "database_sha256": database_sha,
+                "managed_file_count": len(managed_files),
+                "managed_total_bytes": sum(item["size_bytes"] for item in managed_files),
+                "revision_refs": revision_refs,
+                "page_original_refs": page_original_refs,
+                "page_original_count": len(page_original_refs),
+                "page_original_total_bytes": sum(
+                    item["size_bytes"] for item in page_original_refs
+                ),
+                "verified": False,
+            }
+            (workdir / MANIFEST_NAME).write_text(
+                json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8"
+            )
+            self._zip_directory(workdir, temporary)
+            # AC1 read-back self check: the package must pass exactly the same
+            # validation a restore performs (`_verify_package`), so a package
+            # we cannot verify can never be reported as a usable backup. A
+            # missing current/pinned managed source already fails below in
+            # `_copy_managed_files`; this catches every other drift (digest,
+            # manifest/member mismatch, unexpected managed members).
+            try:
+>               self._verify_package(temporary)
+
+src\infrastructure\sqlite\nmbak.py:260: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\infrastructure\sqlite\nmbak.py:635: in _verify_package
+    manifest = self._read_manifest(package)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\infrastructure\sqlite\nmbak.py:598: in _read_manifest
+    return self._negotiate_manifest(package, payload)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.nmbak.NmbakBackupService object at 0x0000021BC243A900>
+package = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-1791/test_create_package_contains_f0/backups/.6acc928a6e5d4295ad85be5fff3a2bd3.tmp-fd96edffb4d2423cb9e134d25e6f0092.nmbak')
+payload = {'format': 'nmbak', 'version': 1, 'database_id': None, 'app_version': '0.1.0', ...}
+
+    def _negotiate_manifest(self, package: Path, payload: dict) -> dict:
+        """C-09 SC-B07 version negotiation (write-end v2, backup/1 read-only).
+    
+        ADJ-2026-11-09 D1 fixes the literals: backup/1 is
+        ``format:"nm-backup" + format_version:1`` and backup/2 is
+        ``format:"nmbak" + version:2``. Any other format/version is a typed,
+        non-retryable ``BACKUP_FORMAT_UNSUPPORTED`` -- never disguised as
+        corruption: the package may be perfectly intact and simply newer than
+        this build.
+        """
+        name = package.name
+        fmt = payload.get("format")
+        if fmt == FORMAT_NAME_V2:
+            version = payload.get("version")
+            if _as_int(version) == FORMAT_VERSION_V2:
+                return payload
+>           raise NmbakBackupError(
+                "BACKUP_FORMAT_UNSUPPORTED",
+                f"{name}: backup/2 version {version!r} is not supported",
+            )
+E           infrastructure.sqlite.nmbak.NmbakBackupError: BACKUP_FORMAT_UNSUPPORTED: .6acc928a6e5d4295ad85be5fff3a2bd3.tmp-fd96edffb4d2423cb9e134d25e6f0092.nmbak: backup/2 version 1 is not supported
+
+src\infrastructure\sqlite\nmbak.py:616: NmbakBackupError
+
+The above exception was the direct cause of the following exception:
+
+workspace = {'conn': <infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x0000021BC243A510>, 'service': <infrastru...dowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-1791/test_create_package_contains_f0/managed'), ...}
+
+    def test_create_package_contains_frozen_v1_layout(workspace):
+        relative = workspace["seed_page"]("page-1", b"PAGE-ONE")
+>       created = workspace["service"].create("manual", "test")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\storage\test_nmbak_backup.py:111: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.nmbak.NmbakBackupService object at 0x0000021BC243A900>
+backup_type = 'manual', source_reason = 'test'
+
+    def create(self, backup_type: str, source_reason: str = "") -> dict:
+        if backup_type not in BACKUP_TYPES:
+            raise NmbakBackupError(
+                "BACKUP_CREATE_FAILED", f"unsupported backup_type: {backup_type}"
+            )
+        backup_id = uuid.uuid4().hex
+        target = self._backup_root / f"{backup_id}.nmbak"
+        temporary = self._backup_root / f".{backup_id}.tmp-{uuid.uuid4().hex}.nmbak"
+        workdir = Path(tempfile.mkdtemp(prefix=f".nmbak-{backup_id}-", dir=self._backup_root))
+        try:
+            self._write_database(workdir / DB_NAME)
+            schema_version = verify_backup_file(workdir / DB_NAME)
+            created_at = _utc_now()
+            database_sha = sha256_file(workdir / DB_NAME)
+            sidecar = {
+                "schema_version": schema_version,
+                "database_hash": database_sha,
+                "app_version": self._app_version,
+                "created_at": created_at,
+            }
+            (workdir / SIDECAR_NAME).write_text(
+                json.dumps(sidecar, ensure_ascii=False, indent=2), encoding="utf-8"
+            )
+            revision_refs = self._revision_refs()
+            # REALUSE-DATA-SAFETY-1 AC2: imported page originals live in
+            # ``pages.managed_original_ref`` -- NOT in ``artifact_revisions``
+            # (a library that never ran a pipeline has zero artifact rows but
+            # 100 MB of managed originals). Backing up only revision_refs
+            # produced a "verified" package that silently lost every original
+            # page, which is exactly the user data the product promises to keep.
+            page_original_refs = self._page_original_refs()
+            managed_files = self._copy_managed_files(
+                workdir, revision_refs + page_original_refs
+            )
+            manifest = {
+                "format": FORMAT_NAME_V2,
+                "version": 1,
+                # FEA-13-ID-3 fills the real identity once the primitive lands;
+                # until then every v2 package truthfully reports "unknown".
+                "database_id": None,
+                "app_version": self._app_version,
+                "schema_version": schema_version,
+                "created_at": created_at,
+                "backup_type": backup_type,
+                "source_reason": source_reason,
+                "database_sha256": database_sha,
+                "managed_file_count": len(managed_files),
+                "managed_total_bytes": sum(item["size_bytes"] for item in managed_files),
+                "revision_refs": revision_refs,
+                "page_original_refs": page_original_refs,
+                "page_original_count": len(page_original_refs),
+                "page_original_total_bytes": sum(
+                    item["size_bytes"] for item in page_original_refs
+                ),
+                "verified": False,
+            }
+            (workdir / MANIFEST_NAME).write_text(
+                json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8"
+            )
+            self._zip_directory(workdir, temporary)
+            # AC1 read-back self check: the package must pass exactly the same
+            # validation a restore performs (`_verify_package`), so a package
+            # we cannot verify can never be reported as a usable backup. A
+            # missing current/pinned managed source already fails below in
+            # `_copy_managed_files`; this catches every other drift (digest,
+            # manifest/member mismatch, unexpected managed members).
+            try:
+                self._verify_package(temporary)
+            except NmbakBackupError as error:
+>               raise NmbakBackupError(
+                    "BACKUP_CREATE_FAILED",
+                    f"read-back verification failed: {error.detail}",
+                ) from error
+E               infrastructure.sqlite.nmbak.NmbakBackupError: BACKUP_CREATE_FAILED: read-back verification failed: .6acc928a6e5d4295ad85be5fff3a2bd3.tmp-fd96edffb4d2423cb9e134d25e6f0092.nmbak: backup/2 version 1 is not supported
+
+src\infrastructure\sqlite\nmbak.py:262: NmbakBackupError
+=========================== short test summary info ===========================
+FAILED tests/storage/test_nmbak_backup.py::test_create_package_contains_frozen_v1_layout
+1 failed, 20 deselected in 0.67s
