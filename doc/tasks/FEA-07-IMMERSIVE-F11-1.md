@@ -7,7 +7,7 @@ status: closed_with_limitations
 approval: 用户 2026-11-09 明示任务定义（含兜底分支，未要求原生必达）；DSH 裁决 AC5=PARTIAL、以 closed_with_limitations 收口（ADJ §7.19/§7.20）（范围冻结：`OpenImmersiveReader()` 显示失败兜底与错误可见化；`ReaderWindow.Show()` 失败时恢复主窗、不得停留最小化；记录异常到日志；保留 headless 回归。验收：真实桌面 F11 → 无边框全屏窗口覆盖 2560×1440、Esc/F11 退出、主窗恢复原页；失败时主窗不消失且给出提示。证据：`verification/FEA-07-AC5-NATIVE-1/DEFECTS.md` D-AC5-2 + `evidence/watch-immersive-*`）
 suggested_owner: dsh
 owner: dsh
-reviewer: 独立子代理 r1/r2/r3 = changes_requested（R-001…R-011、N-001…N-018）；r4 待审；报告见 doc/reviews/FEA-07-IMMERSIVE-F11-1-r{1,2,3}.md
+reviewer: 独立子代理 r1/r2/r3 = changes_requested；**r4 = approved（P0/P1/P2=0，P3=4 非阻断）**；报告见 doc/reviews/FEA-07-IMMERSIVE-F11-1-r{1,2,3,4}.md
 depends_on:
   - FEA-07
 base_commit: 70a89d009
@@ -41,6 +41,8 @@ out_of_scope:
 
 ## 背景（缺陷 D-AC5-2）
 
+> 注（N-021）：下文「主窗被最小化/无沉浸窗」是早期 **v2 壳** 采样，已由 `verification/FEA-07-AC5-NATIVE-1/DEFECTS.md` 的「D-AC5-2 更正」段判定为 v2 壳预期结果（`-32000` 属 D-AC5-1）；详见本卡「原生复测（AC5）—— 更正后结论」。
+
 `verification/FEA-07-AC5-NATIVE-1/DEFECTS.md` 记录了 D-AC5-2：真实桌面上按 F11（手动/注入均验证）后，**主窗被最小化、沉浸 `ReaderWindow` 未出现**；浏览器 F11 可全屏，说明远程键盘正常，问题在应用侧。
 
 代码路径：`MainWindow.TryHandleGlobalKey` → `ToggleImmersiveAsync` → `OpenImmersiveReader()`（`new ReaderWindow(...)` + `window.Show()`；`ReaderWindow` 构造设 `SystemDecorations.None` + `WindowState.FullScreen`）。
@@ -62,7 +64,7 @@ out_of_scope:
 
 ## 证据
 
-- 缺陷证据：`verification/FEA-07-AC5-NATIVE-1/DEFECTS.md`（D-AC5-2）、`evidence/watch-immersive-*.json`、`evidence/post-f11-*.json`、`evidence/press-f11-*.json`。
+- 缺陷证据：`verification/FEA-07-AC5-NATIVE-1/DEFECTS.md`（D-AC5-2，含 append-only 更正段）；`watch-immersive-*`/`post-f11-*`/`press-f11-*` 为 **v2 壳历史采样（superseded）**，不得作为当前结论。
 - 本卡证据目录：`verification/FEA-07-IMMERSIVE-F11-1/`（测试输出、真实桌面复测 JSON/截图）。
 
 ## 实施结果（2026-11-09，DSH）
@@ -123,3 +125,4 @@ out_of_scope:
 - Review：r1/r2/r3 均 changes_requested → 逐轮整改（R-001…R-011、N-001…N-018）；r4 复审增量。
 - Limitations：默认 v2 壳无 F11 入口（另立 `FEA-07-V2-F11-1` proposed）；物理 2K/4K 复测时不在系统中（仅 Mi TV 1920×1080），未验证 2560×1440 覆盖；Esc/恢复为 legacy 壳 + PostMessage 注入验证（非物理键盘）。
 - 残余用户动作：恢复 4K 分辨率/缩放（当前系统仅 1 屏 1920×1080，`moved-evidence/MANIFEST.md` 记录了被移出的显示试验产物）。
+- 记录精度注（r4 P3）：`coversPrimary` 按 2560×1440 硬编码计算（1920×1080 会话恒 false，不代表未铺满）；截图为桌面截图、含用户其他应用且被遮挡，可见性结论依据 Win32 窗口采样而非目视；Esc 行为由 `afterEsc` 字段与截图佐证（PostMessage 注入，非物理键盘）。
