@@ -1,0 +1,193 @@
+{
+  "label": "after-physical-unplug",
+  "capturedAt": "2026-11-09T10:28:04.1868783+08:00",
+  "pid": 36572,
+  "displays": [
+    {
+      "device": "\\\\.\\DISPLAY1",
+      "adapter": "NVIDIA GeForce RTX 5070 Ti",
+      "state": "active",
+      "role": "primary",
+      "width": 2560,
+      "height": 1440,
+      "x": 0,
+      "y": 0,
+      "hz": 144
+    },
+    {
+      "device": "\\\\.\\DISPLAY2",
+      "adapter": "NVIDIA GeForce RTX 5070 Ti",
+      "state": "active",
+      "role": "-",
+      "width": 1920,
+      "height": 1080,
+      "x": 2560,
+      "y": 0,
+      "hz": 60
+    },
+    {
+      "device": "\\\\.\\DISPLAY3",
+      "adapter": "NVIDIA GeForce RTX 5070 Ti",
+      "state": "inactive",
+      "role": "-",
+      "width": 0,
+      "height": 0,
+      "x": 0,
+      "y": 0,
+      "hz": 0
+    },
+    {
+      "device": "\\\\.\\DISPLAY4",
+      "adapter": "NVIDIA GeForce RTX 5070 Ti",
+      "state": "inactive",
+      "role": "-",
+      "width": 0,
+      "height": 0,
+      "x": 0,
+      "y": 0,
+      "hz": 0
+    },
+    {
+      "device": "\\\\.\\DISPLAY5",
+      "adapter": "MuMu Virtual Display Adapter",
+      "state": "inactive",
+      "role": "-",
+      "width": 0,
+      "height": 0,
+      "x": 0,
+      "y": 0,
+      "hz": 0
+    },
+    {
+      "device": "\\\\.\\DISPLAY6",
+      "adapter": "MuMu Virtual Display Adapter",
+      "state": "inactive",
+      "role": "-",
+      "width": 0,
+      "height": 0,
+      "x": 0,
+      "y": 0,
+      "hz": 0
+    },
+    {
+      "device": "\\\\.\\DISPLAY7",
+      "adapter": "MuMu Virtual Display Adapter",
+      "state": "inactive",
+      "role": "-",
+      "width": 0,
+      "height": 0,
+      "x": 0,
+      "y": 0,
+      "hz": 0
+    },
+    {
+      "device": "\\\\.\\DISPLAY8",
+      "adapter": "MuMu Virtual Display Adapter",
+      "state": "inactive",
+      "role": "-",
+      "width": 0,
+      "height": 0,
+      "x": 0,
+      "y": 0,
+      "hz": 0
+    },
+    {
+      "device": "\\\\.\\DISPLAY9",
+      "adapter": "MuMu Virtual Display Adapter",
+      "state": "inactive",
+      "role": "-",
+      "width": 0,
+      "height": 0,
+      "x": 0,
+      "y": 0,
+      "hz": 0
+    },
+    {
+      "device": "\\\\.\\DISPLAY10",
+      "adapter": "MuMu Virtual Display Adapter",
+      "state": "inactive",
+      "role": "-",
+      "width": 0,
+      "height": 0,
+      "x": 0,
+      "y": 0,
+      "hz": 0
+    },
+    {
+      "device": "\\\\.\\DISPLAY11",
+      "adapter": "MuMu Virtual Display Adapter",
+      "state": "inactive",
+      "role": "-",
+      "width": 0,
+      "height": 0,
+      "x": 0,
+      "y": 0,
+      "hz": 0
+    },
+    {
+      "device": "\\\\.\\DISPLAY12",
+      "adapter": "MuMu Virtual Display Adapter",
+      "state": "inactive",
+      "role": "-",
+      "width": 0,
+      "height": 0,
+      "x": 0,
+      "y": 0,
+      "hz": 0
+    },
+    {
+      "device": "\\\\.\\DISPLAY13",
+      "adapter": "MuMu Virtual Display Adapter",
+      "state": "inactive",
+      "role": "-",
+      "width": 0,
+      "height": 0,
+      "x": 0,
+      "y": 0,
+      "hz": 0
+    },
+    {
+      "device": "\\\\.\\DISPLAY14",
+      "adapter": "MuMu Virtual Display Adapter",
+      "state": "inactive",
+      "role": "-",
+      "width": 0,
+      "height": 0,
+      "x": 0,
+      "y": 0,
+      "hz": 0
+    },
+    {
+      "device": "\\\\.\\DISPLAY15",
+      "adapter": "OrayIddDriver Device",
+      "state": "inactive",
+      "role": "-",
+      "width": 0,
+      "height": 0,
+      "x": 0,
+      "y": 0,
+      "hz": 0
+    },
+    {
+      "device": "\\\\.\\DISPLAY16",
+      "adapter": "OrayIddDriver Device",
+      "state": "inactive",
+      "role": "-",
+      "width": 0,
+      "height": 0,
+      "x": 0,
+      "y": 0,
+      "hz": 0
+    }
+  ],
+  "activeCount": 2,
+  "has4k": false,
+  "window": null,
+  "appAlive": true,
+  "screenshot": {
+    "file": "20261109-102803-after-physical-unplug.png",
+    "width": 2560,
+    "height": 1440,
+    "sha256": "f7615e01b22ae2a83eb63d54dd5c405ffb191e023ab6cf71a8031926168636e2"
+  }
+}

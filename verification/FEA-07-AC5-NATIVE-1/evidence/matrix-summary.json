@@ -464,6 +464,54 @@
     "Inspector floating window not verifiable: WindowBroker.RegisterSecondary has zero production callers -> NOT_APPLICABLE.",
     "Window geometry is NOT persisted across restart (probe evidence); cross-DPI geometry preservation verified instead.",
     "Unsaved-edit fail-closed, native IME, primary switch, fullscreen, physical cable unplug: NOT_RUN.",
-    "AOC kept at native 2560x1440 per user decision (2026-11-09); original 1920x1080 restore point retained."
+    "AOC kept at native 2560x1440 per user decision (2026-11-09); original 1920x1080 restore point retained.",
+    "Physical unplug executed: window on 4K got minimized (iconic, -32000) after cable removal; app stayed alive; manual restore put it on primary (1728x972@100%, contained); replug restored window to 4K at previous geometry."
+  ],
+  "physicalUnplug": [
+    {
+      "file": "physical-state-after-physical-unplug-20261109-102803.json",
+      "label": "after-physical-unplug",
+      "capturedAt": "2026-11-09T10:28:04.1868783+08:00",
+      "activeCount": 2,
+      "has4k": false,
+      "window": null,
+      "appAlive": true
+    },
+    {
+      "file": "physical-state-after-replug-20261109-103127.json",
+      "label": "after-replug",
+      "capturedAt": "2026-11-09T10:31:28.3255487+08:00",
+      "activeCount": 2,
+      "has4k": true,
+      "window": {
+        "left": 3616,
+        "top": 200,
+        "width": 2592,
+        "height": 1458,
+        "dpi": 144,
+        "percent": 150,
+        "hwnd": 25888738,
+        "containedInPrimary": false
+      },
+      "appAlive": true
+    },
+    {
+      "file": "physical-state-after-unplug-restored-window-20261109-102834.json",
+      "label": "after-unplug-restored-window",
+      "capturedAt": "2026-11-09T10:28:34.8882653+08:00",
+      "activeCount": 2,
+      "has4k": false,
+      "window": {
+        "left": 703,
+        "top": 134,
+        "width": 1728,
+        "height": 972,
+        "dpi": 96,
+        "percent": 100,
+        "hwnd": 25888738,
+        "containedInPrimary": true
+      },
+      "appAlive": true
+    }
   ]
 }

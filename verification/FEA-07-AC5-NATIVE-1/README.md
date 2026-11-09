@@ -57,3 +57,15 @@
 - `evidence/undock-os-*.json`（拔屏）
 - `evidence/scale-uia-*.json`（逐屏缩放切换记录）
 - `evidence/screenshots/*.png`（7+ 张，逐图 SHA256 见 JSON）
+
+## 5. 物理拔屏（2026-11-09，用户手动拔 4K 线）
+
+| 阶段 | 拓扑 | 主窗 | 判定 |
+|---|---|---|---|
+| 拔屏前 | AOC 2K(主) + **4K** | 4K 上 (3616,200) 2592×1458@150% | 就位 |
+| **拔掉 4K** | AOC 2K(主) + Mi TV 1080p | **最小化**（iconic，-32000,-32000），进程存活 | 未自动迁移（D-AC5-1） |
+| 手动恢复 | 同上 | 主屏 (703,134) 1728×972@100%，完全在主屏内 | 可恢复、可用 |
+| **插回 4K** | AOC 2K(主) + **4K** | **自动回到 4K 原几何** (3616,200) 2592×1458@150% | 恢复正确 |
+
+- 证据：`evidence/physical-state-*.json`（4 份）、`evidence/physical-unplug-before.log`、`evidence/screenshots/*phys*.png`。
+- 与 OS 级 `/internal` 拔屏对比：OS 级会自动迁移窗口；物理移除事件下应用被 OS 最小化、需手动恢复 → 登记 D-AC5-1（P3，产品缺口/limitation）。

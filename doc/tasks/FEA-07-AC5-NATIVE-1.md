@@ -51,7 +51,7 @@ out_of_scope:
 
 - [ ] **AC-N1（混合 DPI 拓扑）**：2K 置原生 2560×1440、4K 置原生 3840×2160，扩展排列；在两屏分别设置 100%/125%/150%/175%/200%（4K）与 100%/125%/150%（2K），逐组合记录每屏 `dpi/scale/rect/primary`；应用窗口在两屏间移动后 DPI 正确切换（无模糊/无错位）。 <<PARTIAL: 7/15 混合 DPI 组合已执行（4K 100/125/150/175/200 × 2K 100/125/150 子集），DPI 切换与屏幕内 containment 全部通过；其余组合与「无模糊/无错位」客观断言未做>>
 - [ ] **AC-N2（浮动窗口归属）**：Inspector 浮窗置于副屏 → 可见/可操作；主窗与浮窗跨屏拖动不丢屏外；目标屏不支持浮动时安全停靠（回主窗）；快捷键不重复执行。 <<PARTIAL: 主窗跨屏归属/可见/contained 已验；Inspector 浮窗不存在（RegisterSecondary 零生产调用）→ 该子项 NOT_APPLICABLE；可操作性与快捷键未执行>>
-- [ ] **AC-N3（拔屏/换主屏）**：OS 级禁用副屏（并尽量物理拔线）→ 第二窗口内容回主窗对应页面；未 flush 编辑态 fail-closed 留在主窗缓冲（不丢不覆盖）；换主屏后布局/全屏状态正确。 <<PARTIAL: OS 级拔屏（DisplaySwitch /internal）已验：窗口回主屏且进程存活；物理拔线与未 flush 编辑态 fail-closed 未执行>>
+- [ ] **AC-N3（拔屏/换主屏）**：OS 级禁用副屏（并尽量物理拔线）→ 第二窗口内容回主窗对应页面；未 flush 编辑态 fail-closed 留在主窗缓冲（不丢不覆盖）；换主屏后布局/全屏状态正确。 <<PARTIAL: OS 级拔屏（DisplaySwitch /internal）已验且自动迁移窗口；物理拔屏已执行：拔后主窗被系统最小化（需手动恢复，D-AC5-1）、恢复后回主屏、重插后自动回 4K 原几何；未 flush 编辑态 fail-closed 未执行>>
 - [ ] **AC-N4（manifest/PerMonitorV2 与提交恢复）**：发布 manifest 实际启用 PerMonitorV2（读实际 exe manifest 断言，不只看 csproj）；混合 DPI 下窗口位置/大小提交与恢复正确；恢复点（分辨率/缩放/排列/主屏）在结束时逐项还原并校验。 <<PARTIAL: PerMonitorV2（app.manifest + exe 内嵌）与跨 DPI 几何保持已验；重启窗口几何持久化 → NOT_APPLICABLE（产品无实现）；恢复点按用户决定保留原生 2K>>
 - [ ] **AC-N5（证据/审查/翻转）**：真实桌面截图（每案例 ≥1，含两块屏与窗口位置）+ 逐案例 JSON + 恢复点 JSON + 失败/跳过原因；独立上下文 Review；`FEA-07` AC5 行 append-only 从 `NOT_APPLICABLE` 翻 `[x] <<PARTIAL: 证据/工具齐；r1 Review changes_requested 已处置，r2 复审未完成>>
 
@@ -165,6 +165,12 @@ out_of_scope:
 | EV-AC5-P07 | 过程记录 | verification/FEA-07-AC5-NATIVE-1/evidence/displays-after-uia-125-20261109-092837.json | - | 88a68a3c033634e521d6942f109068a86761e4b80c115d974cc95df801c6401c | CANONICAL |
 | EV-AC5-P08 | 过程记录 | verification/FEA-07-AC5-NATIVE-1/evidence/displays-baseline-20261109-083908.json | - | c8d2847354640e21b8b9fb9d75ec763af88e35b43cc1f4d9f4838da1ad764476 | CANONICAL |
 
+| EV-AC5-P01 | AC-N3（物理拔屏） | verification/FEA-07-AC5-NATIVE-1/evidence/physical-state-after-physical-unplug-20261109-102803.json | - | f313a2b72f7dac8d35bfabb7af5f2765fc7a0e7042db28fa45d8445c569a319e | CANONICAL |
+| EV-AC5-P02 | AC-N3（物理拔屏） | verification/FEA-07-AC5-NATIVE-1/evidence/physical-state-after-replug-20261109-103127.json | - | 2ae901ca671f84fb33fa8b923e8ffb2213ee826a8114f51a5c5115df414c01a3 | CANONICAL |
+| EV-AC5-P03 | AC-N3（物理拔屏） | verification/FEA-07-AC5-NATIVE-1/evidence/physical-state-after-unplug-restored-window-20261109-102834.json | - | 7d6a2cc54a701ba52386c1443253f7ba6df50d40b052712748ea6c9a5e1c5677 | CANONICAL |
+| EV-AC5-P04 | AC-N3 / 缺陷 | verification/FEA-07-AC5-NATIVE-1/evidence/physical-unplug-before.log | - | 17b14460587876746b4d179272fb310a9f97a536b8f3ae1c403103fc19dd5c02 | CANONICAL |
+| EV-AC5-P05 | AC-N3 / 缺陷 | verification/FEA-07-AC5-NATIVE-1/DEFECTS.md | - | 0713df0828b05dd54d36eb2048b525a4158e7dd8e7d83d19d1d1e0031facf886 | CANONICAL |
+
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
@@ -174,3 +180,16 @@ out_of_scope:
 | display-settings | 2K/4K 模式与缩放（临时切换） | NOT_APPLICABLE | 2K 100% / 4K 150%；AOC 保留原生 2560×1440（用户决定） | NOT_APPLICABLE | 每次切换有 before/after DPI 采样；恢复点 `verification/FEA-07-AC5-NATIVE-1/evidence/display-state-before-native-20261109-084020.json` 保留 |
 | user-data | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 应用均用隔离 `--data-root` |
 | tracked-side-effect | 无 | NOT_APPLICABLE | — | — | 无 |
+
+## 物理拔屏与重插（2026-11-09，用户手动拔 4K 线）
+
+| 阶段 | 拓扑 | 主窗 | 判定 |
+|---|---|---|---|
+| 拔屏前 | AOC 2K(主) + 4K | 4K 上 (3616,200) 2592×1458@150% | 就位 |
+| 拔掉 4K | AOC 2K(主) + Mi TV 1080p | **最小化**（iconic，-32000,-32000），进程存活 | 未自动迁移（D-AC5-1） |
+| 手动恢复 | 同上 | 主屏 (703,134) 1728×972@100%，完全在主屏内 | 可恢复、可用 |
+| 插回 4K | AOC 2K(主) + 4K | 自动回到 4K 原几何 (3616,200) 2592×1458@150% | 恢复正确 |
+
+- 证据：`evidence/physical-state-*.json`（4 份）、`evidence/physical-unplug-before.log`、`evidence/screenshots/*phys*.png`。
+- 缺陷登记：`DEFECTS.md` **D-AC5-1**（物理移除事件下主窗被最小化而非自动迁移；OS 级 `/internal` 会自动迁移 → 产品缺口/limitation，建议 re-home 窗口管理卡）。
+- 过程说明：首次 `physical-unplug-probe.ps1` 因用户拔线晚于脚本 240s 等待窗口而超时（未产出 JSON，失败日志保留）；随后用 `capture-physical-state.ps1` 直接抓取状态完成取证。

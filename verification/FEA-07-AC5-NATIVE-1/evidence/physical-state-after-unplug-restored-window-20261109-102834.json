@@ -1,0 +1,202 @@
+{
+  "label": "after-unplug-restored-window",
+  "capturedAt": "2026-11-09T10:28:34.8882653+08:00",
+  "pid": 36572,
+  "displays": [
+    {
+      "device": "\\\\.\\DISPLAY1",
+      "adapter": "NVIDIA GeForce RTX 5070 Ti",
+      "state": "active",
+      "role": "primary",
+      "width": 2560,
+      "height": 1440,
+      "x": 0,
+      "y": 0,
+      "hz": 144
+    },
+    {
+      "device": "\\\\.\\DISPLAY2",
+      "adapter": "NVIDIA GeForce RTX 5070 Ti",
+      "state": "active",
+      "role": "-",
+      "width": 1920,
+      "height": 1080,
+      "x": 2560,
+      "y": 0,
+      "hz": 60
+    },
+    {
+      "device": "\\\\.\\DISPLAY3",
+      "adapter": "NVIDIA GeForce RTX 5070 Ti",
+      "state": "inactive",
+      "role": "-",
+      "width": 0,
+      "height": 0,
+      "x": 0,
+      "y": 0,
+      "hz": 0
+    },
+    {
+      "device": "\\\\.\\DISPLAY4",
+      "adapter": "NVIDIA GeForce RTX 5070 Ti",
+      "state": "inactive",
+      "role": "-",
+      "width": 0,
+      "height": 0,
+      "x": 0,
+      "y": 0,
+      "hz": 0
+    },
+    {
+      "device": "\\\\.\\DISPLAY5",
+      "adapter": "MuMu Virtual Display Adapter",
+      "state": "inactive",
+      "role": "-",
+      "width": 0,
+      "height": 0,
+      "x": 0,
+      "y": 0,
+      "hz": 0
+    },
+    {
+      "device": "\\\\.\\DISPLAY6",
+      "adapter": "MuMu Virtual Display Adapter",
+      "state": "inactive",
+      "role": "-",
+      "width": 0,
+      "height": 0,
+      "x": 0,
+      "y": 0,
+      "hz": 0
+    },
+    {
+      "device": "\\\\.\\DISPLAY7",
+      "adapter": "MuMu Virtual Display Adapter",
+      "state": "inactive",
+      "role": "-",
+      "width": 0,
+      "height": 0,
+      "x": 0,
+      "y": 0,
+      "hz": 0
+    },
+    {
+      "device": "\\\\.\\DISPLAY8",
+      "adapter": "MuMu Virtual Display Adapter",
+      "state": "inactive",
+      "role": "-",
+      "width": 0,
+      "height": 0,
+      "x": 0,
+      "y": 0,
+      "hz": 0
+    },
+    {
+      "device": "\\\\.\\DISPLAY9",
+      "adapter": "MuMu Virtual Display Adapter",
+      "state": "inactive",
+      "role": "-",
+      "width": 0,
+      "height": 0,
+      "x": 0,
+      "y": 0,
+      "hz": 0
+    },
+    {
+      "device": "\\\\.\\DISPLAY10",
+      "adapter": "MuMu Virtual Display Adapter",
+      "state": "inactive",
+      "role": "-",
+      "width": 0,
+      "height": 0,
+      "x": 0,
+      "y": 0,
+      "hz": 0
+    },
+    {
+      "device": "\\\\.\\DISPLAY11",
+      "adapter": "MuMu Virtual Display Adapter",
+      "state": "inactive",
+      "role": "-",
+      "width": 0,
+      "height": 0,
+      "x": 0,
+      "y": 0,
+      "hz": 0
+    },
+    {
+      "device": "\\\\.\\DISPLAY12",
+      "adapter": "MuMu Virtual Display Adapter",
+      "state": "inactive",
+      "role": "-",
+      "width": 0,
+      "height": 0,
+      "x": 0,
+      "y": 0,
+      "hz": 0
+    },
+    {
+      "device": "\\\\.\\DISPLAY13",
+      "adapter": "MuMu Virtual Display Adapter",
+      "state": "inactive",
+      "role": "-",
+      "width": 0,
+      "height": 0,
+      "x": 0,
+      "y": 0,
+      "hz": 0
+    },
+    {
+      "device": "\\\\.\\DISPLAY14",
+      "adapter": "MuMu Virtual Display Adapter",
+      "state": "inactive",
+      "role": "-",
+      "width": 0,
+      "height": 0,
+      "x": 0,
+      "y": 0,
+      "hz": 0
+    },
+    {
+      "device": "\\\\.\\DISPLAY15",
+      "adapter": "OrayIddDriver Device",
+      "state": "inactive",
+      "role": "-",
+      "width": 0,
+      "height": 0,
+      "x": 0,
+      "y": 0,
+      "hz": 0
+    },
+    {
+      "device": "\\\\.\\DISPLAY16",
+      "adapter": "OrayIddDriver Device",
+      "state": "inactive",
+      "role": "-",
+      "width": 0,
+      "height": 0,
+      "x": 0,
+      "y": 0,
+      "hz": 0
+    }
+  ],
+  "activeCount": 2,
+  "has4k": false,
+  "window": {
+    "left": 703,
+    "top": 134,
+    "width": 1728,
+    "height": 972,
+    "dpi": 96,
+    "percent": 100,
+    "hwnd": 25888738,
+    "containedInPrimary": true
+  },
+  "appAlive": true,
+  "screenshot": {
+    "file": "20261109-102834-after-unplug-restored-window.png",
+    "width": 2560,
+    "height": 1440,
+    "sha256": "a3b4eece709f468c0570e9e88a6759cb9b427feb0d77e1837684ea5651a0afbc"
+  }
+}
