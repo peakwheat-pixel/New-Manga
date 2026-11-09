@@ -160,6 +160,12 @@ public sealed class AppShellViewModel : ObservableObject
 
     public ShellState State { get; }
 
+    /// <summary>
+    /// FEA-07-V2-F11-1: raised on a bare F11 so the composition root can toggle the immersive
+    /// reader window. The shell view model never creates windows itself.
+    /// </summary>
+    public event EventHandler? ImmersiveReaderRequested;
+
     public LibraryViewModel Library { get; }
 
     public ConsoleViewModel Console { get; }
@@ -976,6 +982,19 @@ public sealed class AppShellViewModel : ObservableObject
 
     private bool HandleKeyCore(Key key, KeyModifiers modifiers, bool isTextInputFocused)
     {
+        // FEA-07-V2-F11-1: bare F11 toggles the immersive reader. Modified F11 / text-input focus is
+        // never consumed here so those chords keep their own semantics.
+        if (key == Key.F11)
+        {
+            if (modifiers != KeyModifiers.None || isTextInputFocused || IsConfirmOpen || IsPaletteOpen)
+            {
+                return false;
+            }
+
+            ImmersiveReaderRequested?.Invoke(this, EventArgs.Empty);
+            return true;
+        }
+
         if (IsConfirmOpen)
         {
             if (key == Key.Escape)
@@ -1165,6 +1184,9 @@ public sealed class AppShellViewModel : ObservableObject
                 return;
             case ShellCommandIds.LibraryOpenReader:
                 _ = Library.OpenReaderAsync();
+                return;
+            case ShellCommandIds.LibraryImmersiveReader:
+                ImmersiveReaderRequested?.Invoke(this, EventArgs.Empty);
                 return;
             case ShellCommandIds.LibraryClearSelection:
                 State.ClearMultiPage();

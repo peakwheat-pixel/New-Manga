@@ -32,6 +32,9 @@ public static class ShellCommandIds
     public const string LibraryNewBook = "library.new.book";
     public const string LibraryNewChapter = "library.new.chapter";
     public const string LibraryOpenReader = "library.reader.open";
+
+    /// <summary>FEA-07-V2-F11-1: F11 opens the immersive reader in the default V2 shell.</summary>
+    public const string LibraryImmersiveReader = "library.reader.immersive";
     public const string LibraryClearSelection = "library.selection.clear";
 
     public const string StudioPage = "studio.page";
@@ -105,6 +108,7 @@ public static class ShellCommands
         Define(ShellCommandIds.LibraryNewBook, "新建作品", "资料柜 · — · 作品", SpaceId.Library, null, null),
         Define(ShellCommandIds.LibraryNewChapter, "新建章节", "资料柜 · — · 章节", SpaceId.Library, null, null),
         Define(ShellCommandIds.LibraryOpenReader, "阅读选中章节", "资料柜 · — · 阅读", SpaceId.Library, null, null),
+        Define(ShellCommandIds.LibraryImmersiveReader, "沉浸阅读", "资料柜 · — · 阅读", SpaceId.Library, null, new ShellKeyGesture(Key.F11)),
         Define(ShellCommandIds.LibraryClearSelection, "清除多选", "资料柜 · — · 选择", SpaceId.Library, null, null),
 
         // ── Studio mode switch actions (content itself belongs to ui-studio B-3/B-4) ─────────

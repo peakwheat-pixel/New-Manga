@@ -181,6 +181,7 @@ public partial class App : Application
         }
 
         WireThemeStudio(shell, application, themeManager, appearance, themeHome, options);
+        WireImmersiveReader(shell, root);
 
         return root;
     }
@@ -503,4 +504,33 @@ public partial class App : Application
             "settings" or "console" => SpaceId.Console,
             _ => (SpaceId?)null,
         };
+
+    /// <summary>
+    /// FEA-07-V2-F11-1: owns the single immersive reader window for the V2 shell. F11 opens it
+    /// borderless/fullscreen; F11 or Esc inside closes it and the shell page stays where the user left it.
+    /// </summary>
+    private static void WireImmersiveReader(AppShellV2 shell, Window host)
+    {
+        ImmersiveReaderWindow? open = null;
+        shell.ViewModel.ImmersiveReaderRequested += (_, _) =>
+        {
+            if (open is { IsVisible: true })
+            {
+                open.Close();
+                return;
+            }
+
+            var window = new ImmersiveReaderWindow(shell.ViewModel.Library.Reader);
+            open = window;
+            window.Closed += (_, _) =>
+            {
+                if (ReferenceEquals(open, window))
+                {
+                    open = null;
+                }
+            };
+            window.Show(host);
+        };
+    }
+
 }

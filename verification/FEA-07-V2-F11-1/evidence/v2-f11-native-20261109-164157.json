@@ -1,0 +1,52 @@
+{
+  "case": "v2-f11-native",
+  "capturedAt": "2026-11-09T16:42:11.7202828+08:00",
+  "app": {
+    "pid": 47776,
+    "exe": "G:\\CODEX\\New Manga\\apps\\desktop-avalonia\\src\\NewManga.App\\bin\\Release\\net9.0\\NewManga.App.exe",
+    "args": [
+      "--data-root",
+      "G:\\CODEX\\New Manga.workspace\\FEA-07-AC5-NATIVE-1\\reader-session\\data",
+      "--log-dir",
+      "G:\\CODEX\\New Manga.workspace\\FEA-07-V2-F11-1\\run-20261109-164157\\logs",
+      "--theme-home",
+      "G:\\CODEX\\New Manga.workspace\\FEA-07-V2-F11-1\\run-20261109-164157\\theme"
+    ],
+    "shell": "v2(default)",
+    "logDir": "G:\\CODEX\\New Manga.workspace\\FEA-07-V2-F11-1\\run-20261109-164157\\logs"
+  },
+  "postMessageRc": 3,
+  "immersive": {
+    "left": 0,
+    "top": 0,
+    "width": 1920,
+    "height": 1080,
+    "hasCaption": false,
+    "title": "阅读器"
+  },
+  "afterEsc": {
+    "extra": 0,
+    "main": {
+      "left": 26,
+      "top": 26,
+      "width": 1116,
+      "height": 799,
+      "hasCaption": true,
+      "showCmd": 1
+    },
+    "screenshot": {
+      "file": "G:\\CODEX\\New Manga.workspace\\FEA-07-V2-F11-1\\shots\\20261109-164211-v2-after-esc.png",
+      "sha256": "4c05dd9d35491b9bea0076348b991b934db59c1fe655654ef0710c4a7b14c806"
+    }
+  },
+  "screenshots": [
+    {
+      "file": "G:\\CODEX\\New Manga.workspace\\FEA-07-V2-F11-1\\shots\\20261109-164208-v2-before.png",
+      "sha256": "b8e66aab4cee146fbc536fb50ea9ceaa9c8b1c2ec84022629e4c17434cddc016"
+    },
+    {
+      "file": "G:\\CODEX\\New Manga.workspace\\FEA-07-V2-F11-1\\shots\\20261109-164208-v2-after.png",
+      "sha256": "797ffd498cf0564a7b97e283366d2885cd39fa6c9f421a34eabb2ecf38988e64"
+    }
+  ]
+}
