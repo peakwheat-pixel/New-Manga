@@ -1,0 +1,46 @@
+# command: NEWMANGA_FEA11_IPC=1 pwsh -File crash-ack.ps1 (attempt 3)
+# shell: pwsh 7.6.8 / python 3.14
+# time: 2026-11-09T23:59:38.4217975+08:00
+# EXIT=12
+CRASH_POINT phase=park state=G:\CODEX\New Manga.workspace\FEA-11\fixtures\host-auth-crash-1c5eaf7b9e0448028ee0345e2ce7a5a8
+  正在确定要还原的项目…
+  所有项目均是最新的，无法还原。
+  NewManga.CoreClient -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.CoreClient\bin\Release\net9.0\NewManga.CoreClient.dll
+  NewManga.ApplicationCore -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.ApplicationCore\bin\Release\net9.0\NewManga.ApplicationCore.dll
+  NewManga.Appearance -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Appearance\bin\Release\net9.0\NewManga.Appearance.dll
+  NewManga.DesignSystem -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.DesignSystem\bin\Release\net9.0\NewManga.DesignSystem.dll
+  NewManga.Host -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Host\bin\Release\net9.0\NewManga.Host.dll
+  NewManga.ThemeEngine -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.ThemeEngine\bin\Release\net9.0\NewManga.ThemeEngine.dll
+  NewManga.Presentation.Avalonia -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Presentation.Avalonia\bin\Release\net9.0\NewManga.Presentation.Avalonia.dll
+  NewManga.App -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\bin\Release\net9.0\NewManga.App.dll
+  NewManga.Host.Tests -> G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+CRASH_POINT park journal_state=core-committed operation_id=op-7af6a02ed9642101f9fb110cf1f59e32 commit_digest=d03da5d25f468c65095af656359f91078f65ce0842b0ffcfe72b2b00a67874f0
+CRASH_POINT phase=kill killed=1
+  正在确定要还原的项目…
+  所有项目均是最新的，无法还原。
+  NewManga.CoreClient -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.CoreClient\bin\Release\net9.0\NewManga.CoreClient.dll
+  NewManga.ApplicationCore -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.ApplicationCore\bin\Release\net9.0\NewManga.ApplicationCore.dll
+  NewManga.Appearance -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Appearance\bin\Release\net9.0\NewManga.Appearance.dll
+  NewManga.DesignSystem -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.DesignSystem\bin\Release\net9.0\NewManga.DesignSystem.dll
+  NewManga.Host -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Host\bin\Release\net9.0\NewManga.Host.dll
+  NewManga.Presentation.Avalonia -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Presentation.Avalonia\bin\Release\net9.0\NewManga.Presentation.Avalonia.dll
+  NewManga.ThemeEngine -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.ThemeEngine\bin\Release\net9.0\NewManga.ThemeEngine.dll
+  NewManga.App -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\bin\Release\net9.0\NewManga.App.dll
+  NewManga.Host.Tests -> G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+[xUnit.net 00:00:00.67]     NewManga.Host.Tests.Fea11HostAuthIpcTests.CrashPoint_Recover [FAIL]
+  失败 NewManga.Host.Tests.Fea11HostAuthIpcTests.CrashPoint_Recover [566 ms]
+  错误消息:
+   NewManga.Host.Sources.SourceAccessException : CORE_UNAVAILABLE
+  堆栈跟踪:
+     at NewManga.Host.Sources.SourceOperationCoordinator.MintRecoveryGrantsAsync(JournalEntry entry, CancellationToken cancellationToken)
+   at NewManga.Host.Sources.SourceOperationCoordinator.RecoverAsync(String operationId, CancellationToken cancellationToken)
+   at NewManga.Host.Tests.Fea11HostAuthIpcTests.CrashPoint_Recover()
+   at NewManga.Host.Tests.Fea11HostAuthIpcTests.CrashPoint_Recover()
+--- End of stack trace from previous location ---
+
+失败!  - 失败:     1，通过:     0，已跳过:     0，总计:     1，持续时间: 566 ms - NewManga.Host.Tests.dll (net9.0)
+CRASH_POINT=NOT_SATISFIED recover_exit=1 reason=see recover.json / test output (expected blocker: grant not durable across Core restart)

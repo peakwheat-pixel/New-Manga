@@ -391,7 +391,7 @@ public sealed class Fea11HostAuthIpcTests
                 var registry = new SourceAccessRegistry(root);
                 var registered = registry.Register("fea11-hostauth-ipc", [root]);
                 var sources = new SourceReadCoordinator(client, registry, () => true);
-                var operations = new SourceOperationCoordinator(client, root, () => true, registry);
+                var operations = new SourceOperationCoordinator(client, root, () => true, registry, sources);
                 var rendition = JsonSerializer.SerializeToElement(new Dictionary<string, object?>
                 {
                     ["decoder"] = "zip",

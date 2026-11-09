@@ -1579,7 +1579,7 @@ public sealed class CoreServiceClient : IAsyncDisposable
     /// Zero writes; the returned data is NOT an authorization -- the caller still mints a fresh
     /// grant through the existing C-16 validation path.
     /// </summary>
-    public const string SourceGetSyncPlanMaterializedCommand = "source_get_sync_plan_materialized";
+    public const string SourceGetSyncPlanMaterializedCommand = "GetSourceSyncPlanMaterialized";
 
     /// <summary>FEA-11-HOST-AUTH-3: the additive capability gating the projection.</summary>
     public const string SourcePlanMaterializationCapability = "source.sync.plan-materialization/1";
