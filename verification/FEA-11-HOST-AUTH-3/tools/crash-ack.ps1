@@ -1,3 +1,7 @@
+param(
+    [switch]$Negative
+)
+
 # FEA-11-HOST-AUTH-2 AC-F3 crash-point driver (SKELETON — NOT RUN this round)
 #
 # C-17 §3.3 crash row: "Host 收 Core receipt 前后、Host ACK 落盘前 | Core pending gate；
@@ -140,11 +144,50 @@ if ($alive.Count -gt 0) {
 }
 Write-Host 'CRASH_POINT phase=kill killed=1 sidecar_proven_dead=1'
 
+# R-r2-01 crash counter-example: replace the source BETWEEN the phases; the recovery
+# must fail CLOSED with a typed refusal (never a silent ACK of a changed file).
+$negativeBackup = $null
+if ($Negative) {
+    $sourcePath = $parkState.source_path
+    if (-not (Test-Path $sourcePath)) {
+        Write-Host ('CRASH_POINT=FAIL reason=source_path_missing ' + $sourcePath)
+        exit 13
+    }
+    $negativeBackup = $sourcePath + '.original'
+    Copy-Item $sourcePath $negativeBackup -Force
+    $other = Get-ChildItem $parkState.data_root -Filter '*.zip' |
+        Where-Object { $_.FullName -ne $sourcePath } | Select-Object -First 1
+    if (-not $other) {
+        Write-Host 'CRASH_POINT=FAIL reason=no_alternate_source'
+        exit 13
+    }
+    Copy-Item $other.FullName $sourcePath -Force
+    Write-Host ('CRASH_POINT phase=replace source_replaced=1 other=' + $other.Name)
+}
+$env:NEWMANGA_FEA11_CRASH_NEGATIVE = if ($Negative) { '1' } else { '0' }
+
 # Phase 2: a NEW process reads the journal / registry / Core DB and recovers once.
 $env:NEWMANGA_FEA11_CRASH_PHASE = 'recover'
 & dotnet test $testProject -c Release --nologo `
     --filter 'FullyQualifiedName~Fea11HostAuthIpcTests.CrashPoint_Recover'
 $recoverExit = $LASTEXITCODE
+
+if ($Negative) {
+    $negativeFile = Join-Path $statePath 'negative.json'
+    if ($recoverExit -ne 0 -or -not (Test-Path $negativeFile)) {
+        Write-Host ('CRASH_POINT=FAIL reason=negative_was_not_refused exit=' + $recoverExit)
+        exit 12
+    }
+    $negativeState = Get-Content $negativeFile -Raw | ConvertFrom-Json
+    if ([string]::IsNullOrWhiteSpace($negativeState.rejected_code)) {
+        Write-Host 'CRASH_POINT=FAIL reason=negative_without_typed_code'
+        exit 12
+    }
+    Write-Host ('CHECK negative_typed_refusal=1 code=' + $negativeState.rejected_code)
+    if ($null -ne $negativeBackup) { Copy-Item $negativeBackup $sourcePath -Force }
+    Write-Host 'CRASH_POINT=NEGATIVE_PASS'
+    exit 0
+}
 
 $resultFile = Join-Path $statePath 'recover.json'
 if ($recoverExit -ne 0 -or -not (Test-Path $resultFile)) {

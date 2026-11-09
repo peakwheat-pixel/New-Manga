@@ -232,6 +232,7 @@ public sealed class Fea11HostAuthIpcTests
                 ["core_session_id"] = fixture.Client.HostSession?.CoreSessionId,
                 ["data_root"] = fixture.Root,
                 // P0 fix: the driver must be able to re-check these, not trust a constant.
+                ["source_path"] = fixture.NewZip,
                 ["source_sha256"] = fixture.HashOfNewZip(),
                 ["db_counts"] = new Dictionary<string, object?>
                 {
@@ -276,6 +277,36 @@ public sealed class Fea11HostAuthIpcTests
         var fixture = await IpcFixture.CreateAsync(root);
         try
         {
+            var negative = Environment.GetEnvironmentVariable("NEWMANGA_FEA11_CRASH_NEGATIVE") == "1";
+            if (negative)
+            {
+                // R-r2-01①② crash counter-example: the source was replaced between phases,
+                // so the recovery must fail CLOSED (typed SourceAccessException OR a Core
+                // typed refusal) -- never a silent ACK of a changed file.
+                string? rejectedCode = null;
+                try
+                {
+                    await fixture.Operations.RecoverAsync(operationId);
+                }
+                catch (SourceAccessException caught)
+                {
+                    rejectedCode = caught.Code;
+                }
+                catch (NewManga.CoreClient.Wire.CoreOperationException caught)
+                {
+                    rejectedCode = caught.Code;
+                }
+                Assert.False(string.IsNullOrWhiteSpace(rejectedCode),
+                    "the replaced source must be refused, not silently recovered");
+                await File.WriteAllTextAsync(
+                    Path.Combine(state!, "negative.json"),
+                    JsonSerializer.Serialize(new Dictionary<string, object?>
+                    {
+                        ["rejected_code"] = rejectedCode,
+                        ["host_pid"] = Environment.ProcessId,
+                    }));
+                return;
+            }
             var recovered = await fixture.Operations.RecoverAsync(operationId);
             Assert.Equal("recovered", recovered.State);
             // Idempotent: the second call returns the same state.
