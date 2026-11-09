@@ -75,10 +75,10 @@ public static class TypographyResolver
             }
             missing.Add(segment);
         }
-        var fallback = resolved is not null
-            && GenericFamilies.Contains(resolved, StringComparer.OrdinalIgnoreCase)
-            && segments.Count > 0
-            && missing.Count == segments.Count - 1;
+        // DSH ruling (2026-11-10): "fallback" = the requested first family was not used,
+        // i.e. at least one stack segment was missing. Landing on a generic tail is the
+        // same fact, so it does not need a second flag.
+        var fallback = missing.Count > 0 || resolved is null;
         return new TypographyLine(
             tokenKey,
             stackRaw ?? string.Empty,
@@ -107,16 +107,24 @@ public sealed class AvaloniaTypographySource : ITypographySource
     public TypographySnapshot Read()
     {
         var lines = new List<TypographyLine>();
-        var missingTokens = new List<string>();
-        foreach (var tokenKey in new[] { "Nm.FontFamily.Ui", "Nm.FontFamily.Data", "Nm.FontFamily.Display" })
+        foreach (var (tokenKey, sizeKey, heightKey) in new[]
+                 {
+                     ("Nm.FontFamily.Ui", "Nm.FontSize.Md", "Nm.LineHeight.Body"),
+                     ("Nm.FontFamily.Data", "Nm.FontSize.Md", "Nm.LineHeight.Data"),
+                     ("Nm.FontFamily.Display", "Nm.FontSize.Xl", "Nm.LineHeight.Display"),
+                 })
         {
             var stack = _resourceLookup(tokenKey);
             if (string.IsNullOrWhiteSpace(stack))
             {
-                missingTokens.Add(tokenKey);
                 continue;
             }
-            lines.Add(TypographyResolver.Resolve(tokenKey, stack, IsInstalled));
+            lines.Add(TypographyResolver.Resolve(
+                tokenKey,
+                stack,
+                IsInstalled,
+                scale: ReadNumber(sizeKey),
+                lineHeight: ReadNumber(heightKey)));
         }
         if (lines.Count == 0)
         {
@@ -126,6 +134,17 @@ public sealed class AvaloniaTypographySource : ITypographySource
                 "当前主题未初始化（缺少 Nm.FontFamily.* 资源）。");
         }
         return new TypographySnapshot(lines, true, null);
+    }
+
+    private double? ReadNumber(string tokenKey)
+    {
+        var raw = _resourceLookup(tokenKey);
+        if (string.IsNullOrWhiteSpace(raw)) return null;
+        return double.TryParse(
+            raw, System.Globalization.NumberStyles.Float,
+            System.Globalization.CultureInfo.InvariantCulture, out var value)
+            ? value
+            : null;
     }
 
     private static string? DefaultLookup(string tokenKey)
@@ -138,7 +157,7 @@ public sealed class AvaloniaTypographySource : ITypographySource
         return value switch
         {
             string text => text,
-            FontFamily family => family.Name,
+            FontFamily family => family.FamilyNames?.ToString() ?? family.Name,
             _ => value.ToString(),
         };
     }

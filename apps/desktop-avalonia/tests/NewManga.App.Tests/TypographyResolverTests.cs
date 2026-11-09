@@ -21,7 +21,8 @@ public sealed class TypographyResolverTests
 
         Assert.Equal("Installed B", line.ResolvedFamily);
         Assert.Equal(["Missing A"], line.Missing);
-        Assert.False(line.Fallback);
+        // DSH 裁决：fallback = 请求的首族未被使用（至少一段缺失）。
+        Assert.True(line.Fallback);
         Assert.Equal("\"Missing A\", Installed B, sans-serif", line.StackRaw);
     }
 

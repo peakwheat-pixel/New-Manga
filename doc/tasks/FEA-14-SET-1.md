@@ -96,7 +96,7 @@ FEA 线 S5 剩余六切片（SET/FONT/LIB/READ/EDIT/AI）尚未建卡；本卡�
 
 ## Acceptance Criteria
 
-- 待 scope review 冻结（当前仅占位；不得实施）。
+- 已冻结并按窄化口径实现（字体组只读投影；r1 findings 处置中）。
 
 ## Resource Manifest
 
