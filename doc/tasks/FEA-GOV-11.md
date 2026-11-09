@@ -3,7 +3,7 @@ id: FEA-GOV-11
 title: 冻结执行待命（等待用户 4 项裁决）
 kind: governance
 governance_version: 3
-status: in_progress
+status: done
 approval: follow_up_of_FEA-GOV-10_2026-11-01
 suggested_owner: dsh
 owner: dsh-lead
@@ -44,9 +44,9 @@ FEA-GOV-10 完成：**11 份已起草契约全部 `approved`**（C-01b/C-02/C-03
 
 ## 验收标准
 
-- [ ] **AC1 冻结 C-01b**：用户回 `R` 后，C-01b 冻结记录落盘（4 条条件逐条勾选）。 <<PARTIAL: 待用户裁决>>
-- [ ] **AC2 冻结 C-02/C-03/C-11**：U-04/U-05a/U-05b 裁决后冻结。 <<PARTIAL: 待用户裁决>>
-- [ ] **AC3 释放第一个实现候选**：按 C-11 §7 选候选 → 建卡 → 派独立 Review。**7 份契约已冻结，C-11 已可用**；候选选择待 DSH 提名 + 用户确认（FEA-01/FEA-04b 涉及产品取舍）。 <<PARTIAL: 待选候选>>
+- [x] **AC1 冻结 C-01b**：用户回 `R` 后，C-01b 冻结记录落盘（4 条条件逐条勾选）。 <<MET>>
+- [x] **AC2 冻结 C-02/C-03/C-11**：U-04/U-05a/U-05b 裁决后冻结。 <<MET>>
+- [x] **AC3 释放第一个实现候选**：按 C-11 §7 选候选 → 建卡 → 派独立 Review。**7 份契约已冻结，C-11 已可用**；候选选择待 DSH 提名 + 用户确认（FEA-01/FEA-04b 涉及产品取舍）。 <<MET>>
 
 ## 禁止范围
 
@@ -75,3 +75,4 @@ FEA-GOV-10 完成：**11 份已起草契约全部 `approved`**（C-01b/C-02/C-03
 ## Closeout Record
 
 - Closeout date / DSH：待关闭时填写。
+- **2026-11-09 / DSH（FEA-DOC-RECONCILE-1 对账关闭）**：4 项待裁决输入已全部由 [ADJ-2026-11-01](../reviews/ADJ-2026-11-01-FEA-DECISIONS.md) 裁决并落盘——`R` = C1=D 零字节 / C3=是；U-04 = 批准（per-scheme + 令牌强制）；U-05a = 纳入（三态三类）；U-05b = 保留（转只读）。C-01b / C-02 / C-03 / C-11 冻结记录均已产出：`doc/plan/FEA-CONTRACT-FROZEN-C01b.md:38`、`FEA-CONTRACT-FROZEN-C02.md:34`、`FEA-CONTRACT-FROZEN-C03.md:35`、`FEA-CONTRACT-FROZEN-C11.md`。AC3 已由 `FEA-01-FREEZE-1`（集成 `bf1c8eb00`）及其后续实现线（FEA-02…FEA-12 done）实际完成。测试表 `NOT_RUN` 为 2026-11-01 当时记录，原字节保留；本轮不改写历史字节。状态 `done` 依据：AC1–AC3 均 MET，且冻结矩阵 §2 的 8 步已由各冻结记录与实现线取代执行。

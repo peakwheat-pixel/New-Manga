@@ -126,3 +126,8 @@ out_of_scope:
 - Limitations：默认 v2 壳无 F11 入口（另立 `FEA-07-V2-F11-1` proposed）；物理 2K/4K 复测时不在系统中（仅 Mi TV 1920×1080），未验证 2560×1440 覆盖；Esc/恢复为 legacy 壳 + PostMessage 注入验证（非物理键盘）。
 - 残余用户动作：恢复 4K 分辨率/缩放（当前系统仅 1 屏 1920×1080，`moved-evidence/MANIFEST.md` 记录了被移出的显示试验产物）。
 - 记录精度注（r4 P3）：`coversPrimary` 按 2560×1440 硬编码计算（1920×1080 会话恒 false，不代表未铺满）；截图为桌面截图、含用户其他应用且被遮挡，可见性结论依据 Win32 窗口采样而非目视；Esc 行为由 `afterEsc` 字段与截图佐证（PostMessage 注入，非物理键盘）。
+
+## 对账补充（2026-11-09 / FEA-DOC-RECONCILE-1，append-only）
+
+- limitation 第 1 项「默认 v2 壳无 F11 入口（另立 `FEA-07-V2-F11-1` proposed）」**已由 `FEA-07-V2-F11-1` 关闭**：该卡 `done`（2026-11-09；默认 v2 壳 F11 沉浸阅读入口，无边框全屏、Esc/F11 退出、页面不丢；AOC 2560×1440 主屏复验 `EV-V2F-05`）。
+- 本卡 `status` 保持 `closed_with_limitations`：其余 limitation（物理 2K/4K 未验证、Esc/恢复为 legacy 壳 + PostMessage 注入）不变；不改写上方原始 Limitations 与 Closeout 字节，不写 PASS。

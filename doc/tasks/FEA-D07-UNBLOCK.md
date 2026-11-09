@@ -3,7 +3,7 @@ id: FEA-D07-UNBLOCK
 title: D07 解环（修正 C-09 冻结前置 + 补齐五项 D07 条款）
 kind: docs
 governance_version: 3
-status: in_progress
+status: done
 approval: user_ruling_2026-11-01_option_1
 suggested_owner: dsh
 owner: dsh-lead
@@ -51,7 +51,7 @@ allowed_paths:
 - [x] **AC5 补 `backup/2` 格式契约**：与 `backup/1` 的关系、版本协商、旧包读取（legacy adapter）。 <<MET>>
 - [x] **AC6 补自动备份调度归属**：归 Core 还是 Host、与用户手动备份的关系、与 `DatabaseId` 的关系（引用 C-01b SC-18 不复写）。 <<MET>>
 - [x] **AC7 独立复核** `approved`（P0/P1 = 0）后冻结 C-09。 <<MET>>
-- [ ] **AC8 重新判定 `G-DELETE-CONTRACT`**：仅在 D04/D05/D06/D07 **全部**覆盖后关闭；不引入「部分关闭」。 <<MET>>
+- [x] **AC8 重新判定 `G-DELETE-CONTRACT`**：仅在 D04/D05/D06/D07 **全部**覆盖后关闭；不引入「部分关闭」。 <<MET>>
 
 ## 禁止范围
 
@@ -86,3 +86,4 @@ allowed_paths:
 ## Closeout Record
 
 - 待关闭时填写。
+- **2026-11-09 / DSH（FEA-DOC-RECONCILE-1 对账关闭）**：AC8 行原有勾选与标记不一致（`[ ]` + `<<MET>>`），本轮修正为 `[x] <<MET>>`；判定依据为 [GATE-DELETE-CONTRACT-CLOSURE-2026-11-01](../plan/GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md)（`G-DELETE-CONTRACT` 于 2026-11-01 **✅ CLOSED**，D04–D07 四包条款级承载经 r3 approved 复核）。测试表 AC8 的 `NOT_RUN` 为当时记录，原字节保留，不据此判 PASS。AC1–AC8 全部 MET，故置 `done`。

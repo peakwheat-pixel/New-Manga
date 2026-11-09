@@ -142,3 +142,7 @@ out_of_scope:
 - **Resource Manifest / 资源处置**：仓内删除/移动/归档 0；仓外隔离根 `G:/CODEX/New Manga.workspace/FEA-11-RUN-GRANT-2/`（IPC 夹具/门禁日志/复核备份，无独有产品数据）→ `PRESERVE_REFERENCED`；Manifest 已披露 generation-time snapshot 与 integration/ 排除。
 - **指针清理**：STATUS 当前 Task → 无活动 Task；PLAN 本节点 done；TASK_LEDGER 重生成。
 - **push**：Lead 统一 push（PRE/POST/AHEAD 记录见状态文件/后续回填）。
+
+## 对账注记（2026-11-09 / FEA-DOC-RECONCILE-1，append-only）
+
+- front matter `title` 末尾的「proposed，待依赖」为 2026-11-06 释放前的历史描述，**不反映当前状态**；本卡 `status: done`（`integration_commit` = `0180089894b2286d8ff6a94289b84dd318871d18`）为准。按 append-only 规则不改写 title 字节，改由本注记消除歧义。

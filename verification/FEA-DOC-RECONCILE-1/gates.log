@@ -1,0 +1,32 @@
+# FEA-DOC-RECONCILE-1 gate log (2026-11-09T17:34:58.8124313+08:00)
+BASE_COMMIT=9b0683822
+--- check.ps1 ---
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-DOC-RECONCILE-1.md
+WARN: 存在 13 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：2997 bytes / 28 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6985 bytes / 63 lines
+Governance check: PASS (3 warnings)
+
+--- check.ps1 -TaskPath ---
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-DOC-RECONCILE-1.md
+WARN: 存在 13 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：2997 bytes / 28 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6985 bytes / 63 lines
+Governance check: PASS (3 warnings)
+
+--- verify_pins.ps1 (tail) ---
+OK C17 aefa0fa5b17e
+OK FEA01 0370c18932b1
+PIN AUDIT: PASS (all 18)
+
+--- git status --short ---
+ M doc/REBASELINE_PLAN.md
+ M doc/STATUS.md
+ M doc/TASK_LEDGER.md
+ M doc/tasks/FEA-07-IMMERSIVE-F11-1.md
+ M doc/tasks/FEA-11-RUN-GRANT-2.md
+ M doc/tasks/FEA-D07-UNBLOCK.md
+ M doc/tasks/FEA-GOV-11.md
+?? doc/tasks/FEA-DOC-RECONCILE-1.md
