@@ -1,0 +1,69 @@
+---
+task_id: FEA-DOC-RECONCILE-1
+author: DSH（Lead / Integrator）
+recipient: DeepSeek Harness
+base_commit: 9b0683822
+delivery_head: d91dbe444
+status: delivered
+---
+
+# Handoff：FEA-DOC-RECONCILE-1（FEA 线文档对账）
+
+## 交付结果
+
+对账 7 项（见 Task 卡 §对账清单），**0 源码 / 0 契约字节 / 0 pin 重算**，全部为文档与卡级状态修正。交付提交 `d91dbe444`（9 files, +175/−23），基线 `9b0683822`。
+
+| 变更路径 | 内容 |
+|---|---|
+| `doc/STATUS.md` | 当前 Task 指向本卡；「FEA-12 四表 DDL 未冻」→「四表 DDL 已冻（C-15 v7 + FEA-11-PREREQ-1 v8+）」 |
+| `doc/REBASELINE_PLAN.md` | `FEA-C11-PREREQ-1` 行翻 `done`（集成 `b7018e19b`）；新增本卡 DAG 行（含 FEA-02-BRIDGE 裁决）；腾预算时把 C-04b 注记并入「完成」行（信息未丢） |
+| `doc/tasks/FEA-GOV-11.md` | `status: done`；AC1–AC3 `<<MET>>`；Closeout 追加（引 `ADJ-2026-11-01-FEA-DECISIONS.md` 与 4 份冻结记录） |
+| `doc/tasks/FEA-D07-UNBLOCK.md` | `status: done`；AC8 `[x] <<MET>>`（原 `[ ]`+`<<MET>>` 矛盾）；Closeout 追加（引 Gate 关闭裁定） |
+| `doc/tasks/FEA-07-IMMERSIVE-F11-1.md` | append-only「对账补充」：v2 壳 F11 入口 limitation 由 `FEA-07-V2-F11-1` 关闭；status 不变 |
+| `doc/tasks/FEA-11-RUN-GRANT-2.md` | append-only「对账注记」：title 中「proposed，待依赖」为历史描述 |
+| `doc/TASK_LEDGER.md` | 重生成（GOV-11/D07 退出非终态；本卡入 plan-row） |
+| `doc/tasks/FEA-DOC-RECONCILE-1.md` | 新建对账卡（governance v3，AC1–AC8 MET / AC9 PARTIAL 待 Review） |
+| `verification/FEA-DOC-RECONCILE-1/gates.log` | 门禁原始输出（check / check -TaskPath / pins / git status） |
+
+## 验证证据
+
+| AC/场景 | 实际命令/步骤 | 环境与被测 commit | 结果 | 日志/产物 |
+|---|---|---|---|---|
+| AC1–AC7 | 逐项 diff 对照 Task 卡 §对账清单「事实依据」列 | `d91dbe444` | PASS | Task 卡 §对账清单 |
+| AC8 check | `pwsh -NoProfile -File tools/governance/check.ps1` | 仓库根 `d91dbe444` | **PASS（3 warnings）** | `verification/FEA-DOC-RECONCILE-1/gates.log` |
+| AC8 check -TaskPath | `... check.ps1 -TaskPath doc/tasks/FEA-DOC-RECONCILE-1.md` | 同上 | PASS（3 warnings） | 同上 |
+| AC8 pins | `pwsh -NoProfile -File tools/governance/verify_pins.ps1` | 同上 | **PASS 18/18** | 同上 |
+| AC8 ledger | `python tools/governance/task_ledger.py --write` | Python 3.14.6 | PASS（ledger 重生成） | `doc/TASK_LEDGER.md` |
+| AC8 预算 | STATUS 2997 B/28 行（≤3200/45）；PLAN 6985 B/63 行（≤7000/64） | 同上 | PASS | gates.log |
+| AC9 独立 Review | fresh subagent 只读审查 | 交付 head | NOT_RUN（交付后立即指派） | `doc/reviews/FEA-DOC-RECONCILE-1-r1.md` |
+
+未运行项：真实构建/测试套件（本轮 0 源码改动，不适用）；`FEA-07-AC5-NATIVE-1` 与 `FEA-06-RESIDUAL-1` 未处理（用户动作/残余承接未变，超出对账范围）。
+
+## 接收方式
+
+- 分支 `main`，无 worktree；基线 `9b0683822` → 交付 `d91dbe444`。
+- 复核命令：`git show --stat d91dbe444`、`git diff 9b0683822..d91dbe444 -- doc/`、两条门禁命令。
+- 关键事实核对点（Review 建议逐项验证）：`FEA-CONTRACT-FROZEN-C15.md:43,50`、`FEA-11-PREREQ-1.md:65`（v8 DDL AC-P1 MET）、`FEA-C11-PREREQ-1.md` Closeout 2026-11-02（`b7018e19b`）、`doc/reviews/ADJ-2026-11-01-FEA-DECISIONS.md`（R/U-04/U-05a/U-05b）、`doc/plan/GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md`（Gate CLOSED）、`doc/tasks/FEA-07-V2-F11-1.md`（done + 2K 复验）。
+- 下一接收者需确认：append-only 边界（是否误改历史字节）、STATUS/PLAN 指针唯一性、预算是否可接受。
+
+## 下一任务建议（必填）
+
+- Task ID / 标题：`FEA-07-RESIDUAL-4`（既有 headless 用例真实 AppData 隔离 + FEA-07 后续 residual 收口）的 **scope review**；候选 `2C-RESIDUAL-1`（typed-stop 次序）可并行提名。
+- 推荐 Agent / Reviewer：DSH 指派独立上下文 Owner；Reviewer 为非实现会话的独立子 agent 或 ZCode/Codex。
+- 推荐原因与前置依赖：DAG/STATUS 已指名的下一候选；scope 未冻结前不得实施。依赖 `FEA-07`（done）与 `FEA-07-RESIDUAL-3`（done）。
+- Recovery point：仓库 `G:\CODEX\New Manga`、`main`、固定 base `d91dbe444`；不创建 worktree（待 scope 冻结后由 DSH 决定）。
+- 允许修改路径：待 scope review 冻结；预估 `apps/desktop-avalonia/tests/**` 与 `verification/FEA-07-RESIDUAL-4/**`。
+- 禁止范围与新增授权条件：不得改契约字节；不得把 `NOT_RUN` 写 PASS；scope 未冻结不得实施。
+- 交付物：scope review 报告 `doc/reviews/FEA-07-RESIDUAL-4-scope-r1.md`；冻结后建卡并实施。
+- 验证命令、环境与完成 Gate：`check.ps1`（默认 + `-TaskPath`）、`verify_pins` 18/18、全量 pytest ≥3395/10、全量 .NET ≥1794/0/107、`generate_api_inventory.py --check`、scope ⊆ allowed_paths。
+- 可直接转发给 Agent 的指令：见本 Handoff 末行。
+
+> 可直接转发：`只读 scope review：对 FEA-07-RESIDUAL-4（headless 用例真实 AppData 隔离 + FEA-07 后续 residual）做独立 scope review，冻结 base=d91dbe444。输出 doc/reviews/FEA-07-RESIDUAL-4-scope-r1.md，含 allowed_paths、AC、证据计划、风险与 verdict（READY-TO-FREEZE / NOT_RECOMMENDED）。不改任何生产源码/契约；门禁 check.ps1 + verify_pins 只读复核。`
+
+## 风险与遗留
+
+- **对账范围限于文档**：不推进 S5，不释放 FEA-13/14/15；FEA-02-BRIDGE 裁决为「不独立释放」，若后续发现退出协调缺口需另立卡。
+- **未处理项**：`FEA-07-AC5-NATIVE-1`（用户需恢复 4K 分辨率）、`FEA-06-RESIDUAL-1`（残余承接关系未变）、`2C-RESIDUAL-1`/README 对账（候选未建卡）。
+- **PLAN 预算**：6985/7000 bytes，接近上限；下次要加 DAG 行必须先腾空间。
+- **append-only 解释**：GOV-11/D07 的 AC 勾选与标记为状态转换必要修正（原 AC 文本未改），测试表 `NOT_RUN` 历史记录原样保留并在 Closeout 说明。
+- 用户动作：`FEA-07-AC5-NATIVE-1` 记录的系统显示设置未恢复（仅 1 屏 1920×1080），需用户恢复 4K 并核验。
