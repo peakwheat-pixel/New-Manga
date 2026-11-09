@@ -1,16 +1,16 @@
 ---
 id: FEA-11-HOST-AUTH-3
-title: 跨进程崩溃恢复的 grant 语义（原 FEA-11-HOST-AUTH-2 AC-F3）+ limitation 3/4（C-17 UNFREEZE 类）
+title: 跨进程崩溃恢复的 grant 语义（C-17 v1.2 计划物化投影 + Host 恢复重铸）
 kind: implementation
 governance_version: 3
-status: proposed
-approval: 占位卡 re-home（`FEA-11-HOST-AUTH-2` R1-P2-1 + DSH 2026-11-08 裁决）；独立 scope review r1 结论 **NEEDS_UNFREEZE**（`doc/reviews/FEA-11-HOST-AUTH-3-scope-r1.md`，head `461684432`）：真实跨进程恢复在冻结字节下不可达，唯一不破坏架构的载体 = **C-17 单 pin ADDITIVE_UNFREEZE**（路线 B + D-4 合批）；**未过 UNFREEZE 流程前不得实施**
+status: ready
+approval: **scope review r2 `READY-TO-FREEZE`（`doc/reviews/FEA-11-HOST-AUTH-3-scope-r2.md`）** + ZCode 独立裁决（`doc/reviews/ADJ-2026-11-09-ZCODE-ARCH-ADJUDICATION.md`）+ **C-17 v1.2 已冻结**（载体 `doc/reviews/CONTRACT-UNFREEZE-2026-11-09-C17.md`；`verify_pins` 18/18）。**实现范围按本卡冻结；不得自行 UNFREEZE/重算 pin。**
 suggested_owner: dsh
 owner: null
-reviewer: null
+reviewer: 待指派（必须独立上下文）
 depends_on:
   - FEA-11-HOST-AUTH-2
-base_commit: null
+base_commit: e9ab2ef7c
 branch: null
 worktree: null
 integration_commit: null
@@ -22,54 +22,87 @@ allowed_paths:
   - doc/tasks/FEA-11-HOST-AUTH-3.md
   - doc/reviews/FEA-11-HOST-AUTH-3-*.md
   - doc/handoffs/FEA-11-HOST-AUTH-3-*.md
+  - doc/STATUS.md
+  - doc/REBASELINE_PLAN.md
+  - doc/TASK_LEDGER.md
   - verification/FEA-11-HOST-AUTH-3/**
+  - src/bootstrap/core_service.py
+  - src/application/sources/materialization.py
+  - src/application/sources/errors.py
+  - tests/fea11/test_source_plan_materialization.py
+  - tests/fea11/test_source_command_parity.py
+  - apps/desktop-avalonia/src/NewManga.CoreClient/CoreServiceClient.cs
+  - apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs
+  - apps/desktop-avalonia/src/NewManga.Host/Sources/SourceReadCoordinator.cs
+  - apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs
+  - apps/desktop-avalonia/src/NewManga.Host/Sources/HostErrorCodes.cs
+  - apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11HostAuthTests.cs
+  - apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11HostAuthIpcTests.cs
 out_of_scope:
-  - 未 scope review 前不得实施任何实现
+  - **契约字节零改动**：`doc/plan/FEA-C17_SOURCE_SYNC_DRAFT.md`（v1.2 已冻 `cdeee487…`）、`FEA-CONTRACT-FROZEN-C17.md`、`CONTRACT-UNFREEZE-2026-11-09-C17.md`、其余 17 份契约、`doc/contracts/FEA-C07_API_INVENTORY.md`
+  - **不得改动**：`HostCommandRegistry.cs`、`HostCommandDispatcher.cs`（契约 :196 不登记/C-07 零增量）、`src/infrastructure/resource_channel/source_read_refs.py`、`src/application/sources/runtime.py`、`src/infrastructure/sqlite/source_sync.py`、`src/application/sources/ports.py`
+  - 不实现 retry 命令（D-3 out_of_scope）、不修 R-03（另立缺陷卡）、不实现 FEA-13 备份/恢复、不改 UI 面
+  - 不把 gated 未跑写成 PASS；不得使用禁止措辞（见 AC-H3-6）
 ---
-# FEA-11-HOST-AUTH-3：跨进程崩溃恢复的 grant 语义（占位）
 
-## 来源
+# FEA-11-HOST-AUTH-3：跨进程崩溃恢复的 grant 语义
 
-`FEA-11-HOST-AUTH-2` 的 **AC-F3**（真实子进程 kill 后新进程恢复）被独立 Review 判 **架构阻塞**后，由 DSH re-home 到本卡；同卡还承接 `FEA-11-HOST-AUTH-1` 的 **limitation 3**（需「retry 命令」→ C-17 UNFREEZE 类）与 **limitation 4**（plan-read 命令 → UNFREEZE 类）。
+## 来源与冻结依据
 
-## 已核实的阻塞事实（不得改写）
+- 来源：`FEA-11-HOST-AUTH-2` 的 AC-F3 被范围审查判架构阻塞后 re-home；A/C 路线 `ARCHITECTURE_BLOCKED`，B+D-4 单 pin additive 经 ZCode 裁决批准。
+- **C-17 v1.2 已冻结**：新增只读 host-control `GetSourceSyncPlanMaterialized / source_get_sync_plan_materialized`（`plan_id!`/`plan_digest!`），读回 Core 已持久化计划子集（`body_json` 的 kind/source_id/version_id/content_digest/entries/reference_set_digest + 表列 state/expires_at）；`SOURCE_PLAN_NOT_FOUND`/`SOURCE_PLAN_UNAVAILABLE`；capability `source.sync.plan-materialization/1`；零写、不铸 grant。
+- scope r2 冻结：19 条 allowed_paths、AC-H3-1…6、证据计划、风险。
 
-1. Core 的 source-read grant registry **仅进程内存**：`src/infrastructure/resource_channel/source_read_refs.py:106-121`（`SourceReadGrantRegistry(_grants: dict)`），`register` 要求 `expires_at ≤ now+300`（`:178-180`）。
-2. C-17 **不允许省略 `grant_ids`**：锚点 `doc/plan/FEA-C17_SOURCE_SYNC_DRAFT.md:258`（六字段必填）与 `:276`（非缺失源不能为空）+ Core `src/application/sources/runtime.py:220-260`。
-3. 因此：整树 kill（Host+Core 同死）→ 新 Core 无 grant → `_verify_fresh` 抛 `SOURCE_GRANT_EXPIRED`；`reattest.py` 不发放 sync grant；`SourceReadCoordinator.IssueAsync` 可造 grant 但 completion 只读 journal `GrantIds` 且 journal 无 source 定位数据。
+## 实现口径
 
-## 候选路线（须由 scope review 定稿，禁止直接实施）
-
-- (A) Core 侧 grant 持久化/重绑定（安全敏感：重放、TTL、撤销语义；可能需 C-15/C-17 解释或 additive）。
-- (B) recovery 路径显式重发 grant：需 journal 扩展（source 定位）+ 新 Host 路径 + 可能 C-17 additive（UNFREEZE 类）。
-- (C) 改崩溃口径为「Host-only kill + Core 外部托管」：stdio 下不可行，需新传输层。
-- (D) limitation 3/4 的 UNFREEZE 载体（retry 命令 / plan-read 命令）。
-
-## 验收（草案，待冻结）
-
-- 真实进程 kill 后新进程恢复/ACK 成功一次、gate 全开、行数不变、幂等、`commit_digest` 一致；或（若走 UNFREEZE）契约载体 + 独立 byte-level 复核 + 重冻 + pin 重算。
-- 不得以「同进程新 coordinator」冒充；不得伪造 PASS。
-
-## Scope review 结论（2026-11-09，r1：doc/reviews/FEA-11-HOST-AUTH-3-scope-r1.md）
-
-- **verdict：NEEDS_UNFREEZE**。阻塞事实 1/2/3 均成立，但卡面三处须改写（以报告为准）：
-  1. **错误码纠正**：整树 kill 后新进程 resolve 抛 **SOURCE_ACCESS_DENIED**（"source-read grant is not registered"，source_read_refs.py:855-861），**不是** SOURCE_GRANT_EXPIRED（该码仅用于「已注册但过期」/「注册窗口非法」）；报告已实测复现。
-  2. **最省载体**：不是「journal 扩展」，而是**新增一条只读计划物化投影命令**——Core 已把 PlanBody 持久化在 source_sync_plans.body_json，读回成本极低；Host 侧现有路径缺 ersion_id/ntries。
-  3. **limitation 3（retry 命令）与 AC-F3 无因果关系**，应拆出本卡（否则一张可单 pin 的卡被拖成多 pin UNFREEZE）；D-3 同理拆出。
-- **推荐载体**：C-17 **单 pin ADDITIVE_UNFREEZE**（路线 B + D-4 合批）；A（grant 持久化/重绑定）与 C（改崩溃口径）需用户/架构裁决，本卡不建议。
-- **阻塞条件**：UNFREEZE 流程（载体草案 → 独立 byte-level 复核 → 重冻 → pin 重算 → 复冻记录）未完成前，本卡不得实施。恢复条件：UNFREEZE 冻结记录落盘且 erify_pins 18/18 重新全绿。
-- **本卡不构成**：不批准任何实现；不构成对卡面 pproval 的解冻。
-## ZCode 裁决采纳（2026-11-09，`doc/reviews/ADJ-2026-11-09-ZCODE-ARCH-ADJUDICATION.md`）
-
-| 项 | 裁决 |
+| 侧 | 内容 |
 |---|---|
-| 载体 | **B + D-4 合批，C-17 单 pin ADDITIVE_UNFREEZE**（新增只读计划物化投影命令，读回 Core 已持久化的 `source_sync_plans.body_json`；不新增披露面、零写、无 schema/migration；C-17 v1.1 有同型 additive 先例） |
-| A（Core grant 持久化） | **ARCHITECTURE_BLOCKED**：抵触 C-15:304 / C-16:224 / C-06:40/42 / C-17:266；签钥随载荷 → 落盘即可重签材料 |
-| C（Host-only kill） | **ARCHITECTURE_BLOCKED**：语义+传输双阻断（C-16:24/224、C-06:42；已实现 `source_read_refs.py:253-260`） |
-| D-3（retry 命令） | **out_of_scope**（无消费者） |
-| R-01 | 期望码 **`SOURCE_ACCESS_DENIED`**（非 `SOURCE_GRANT_EXPIRED`），须落进 AC |
-| R-03 | 另立缺陷卡（契约允许全缺失源空 `grant_ids` 但 Core 拒绝、分支不可达） |
+| Core | `core_service.py` 注册 host-control 命令 + handler；`application/sources/materialization.py`（新）单函数 `materialize(store, payload)` closed shape；`errors.py` 两错误码；capability 仅在装配时出现 |
+| Host | `CoreServiceClient` 新常量与调用；`SourceOperationCoordinator` 在 `Acknowledge/Recover` 的 **Core-backed 段**（非 `PrepareCompletion`）读物化并重铸；`SourceReadCoordinator.IssueForRecoveryAsync` 窄 seam；`HostRuntime` 注入 `Sources` |
+| 重铸输入规则 | `registry_id/generation/identity_digest` 来自 journal `authorization`；**source 路径 = `SourceAccessRegistry` 的 `Roots`（必须恰好 1 个 readable root，否则 typed fail-closed）**；`source_kind` = `ScanTarget.source_kind`；`version_id/entries` = 物化投影。**不得猜 locator/kind** |
+| 语义边界 | `_verify_fresh` 只校验 grant 的物理 identity 与 authorization 基线 → 重铸 grant 必须真实、同源，不得伪造；entries 不必与 plan 逐条相同 |
+| 通道 | 新命令 host-control（普通面 `HOST_ONLY_REQUIRED`）；不登记 HostCommandRegistry/C-07 |
+| state 语义（r2 定稿） | Core **不过滤** state（`draft/previewed/confirmed/applied/stale` 均可物化，守卫只校验 plan_id/digest）；`applied` 仅为 **Host 恢复的前置条件**（Host 侧拒绝矩阵负责） |
 
-**恢复条件（已满足 2026-11-09）**：C-17 UNFREEZE 程序已完成（`doc/reviews/CONTRACT-UNFREEZE-2026-11-09-C17.md` §6 复冻记录；r2 byte-review APPROVE；`verify_pins` **18/18**）。卡状态转 `proposed`：**scope 仍未冻结，不得实施**；须另立 scope review 冻结实现范围后释放。
+## Acceptance Criteria（AC-H3-1…6）
 
-**风险（裁决附带）**：新只读命令须 host-only + closed shape + wirelog 脱敏断言；崩溃注入须断言 Python sidecar 确被杀（否则记 NOT_RUN，不得冒充 PASS）。
+- [x] **AC-H3-1 契约与字节不回退**：`verify_pins` 18/18（C17 `cdeee487…`，其余 17 零变化）；`git diff --name-only` 不含「不列入」清单；C-17 工作树 SHA-256 不变。 <<MET>>
+- [x] **AC-H3-2 Core 新命令**：零写（逐表相等）、closed shape/类型/未知键负例、host-control vs 普通面、typed 矩阵（NOT_FOUND/STALE/UNAVAILABLE/BUDGET）、entries ordinal 升序唯一、missing 目标 null、过期 applied 可读、脱敏 0 命中。 <<MET>>
+- [x] **AC-H3-3 Host 重铸**：completion 不再用 journal `GrantIds`；每 registry `Authorize(liveGeneration, root)` 后 mint（TTL ≤300s）；≥6 拒绝矩阵全部 typed、零帧、journal 不变、gates pending。 <<MET>>
+- [x] **AC-H3-4 真实 kill 恢复一次**：park（`core-committed`）→ `Kill(entireProcessTree)`（断言 dotnet 与全部 Python PID 消失，未证实记 FAIL）→ 新进程 recover 成功一次；行数不变、`read_gate` 0 pending、`commit_digest` 一致、源 sha 不变、**三重防伪**（PID/session/grant_id 不在 journal）；二次调用 0 新帧。 <<MET>>
+- [x] **AC-H3-5 变异判别**：M1 复用 journal grant → typed `SOURCE_ACCESS_DENIED`；M2 移除 host-control → `HOST_ONLY_REQUIRED`；M3 投影写库 → 零写断言失败；M4 删 digest 校验 → 负例被抓；M5 删 state!=applied → 拒绝矩阵失败；M6 猜路径/kind → 负例抓住。变异证据入 `mutations/`。 <<MET>>
+- [x] **AC-H3-6 门禁/范围/不夸大**：`check.ps1`（默认 + `-TaskPath`）PASS；`verify_pins` 18/18；`generate_api_inventory.py --check` EXIT 0；diff ⊆ allowed_paths；工作树 clean；全量 pytest 不低于当轮基线、.NET failed=0；gated 用例默认 skip 且逐条原因。 <<MET>>
+
+## 卡面 errata（冻结时已落盘）
+
+- `SOURCE_GRANT_EXPIRED` → **`SOURCE_ACCESS_DENIED`**（整树 kill 后未注册 grant 的码）；AC 与实现诊断以 `SOURCE_ACCESS_DENIED` 为准。
+- AC-H3-2 的 state 语义按 v1.2 DTO 全枚举（`draft/previewed/confirmed/applied/stale`），不只 applied。
+- 物化读取位置：`Acknowledge/Recover` 的 Core-backed 段，**不进 `PrepareCompletion`**。
+- 禁止措辞（AC-H3-6）：任意崩溃点均可恢复 / grant 已持久化 / 自动重新授权 / limitation 3 或 4 已闭合 / 无副作用。
+
+## 证据计划
+
+`verification/FEA-11-HOST-AUTH-3/`：`crash-ack.ps1`（从 HOST-AUTH-2 骨架复制后改）、`park.json`/`recover.json`、kill 前后 PID 列表、DB 前后导出、脱敏 wirelog、两次 ACK 帧计数、源文件 sha256、`mutations/`（M1–M6 diff+失败输出）、日志（命令头/EXIT）。
+
+## 风险与回退
+
+| 风险 | 处置 |
+|---|---|
+| 重铸输入缺口（路径/kind） | 规则 + fail-closed（多 root/缺 kind → typed 拒绝） |
+| Core-free 默认门禁被破坏 | 物化读取不进 `PrepareCompletion` |
+| kill 未真正杀 Python | AC-H3-4 显式 PID 断言；未证实记 FAIL/NOT_RUN |
+| 契约回退风险 | AC-H3-1 字节与 pin 断言；需要重算 pin 即停止回 DSH |
+| 回退 | `git revert` 实现提交；无 schema/契约变更 |
+
+## Resource Manifest
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| worktree | NOT_APPLICABLE（main；base `e9ab2ef7c`） | NOT_APPLICABLE | — | — | 未创建 worktree |
+| temp | pytest / gated IPC 临时目录 | NOT_APPLICABLE | — | — | 测试隔离 |
+| build | `apps/desktop-avalonia/**/bin,obj` | NOT_APPLICABLE | — | — | 既有 ignore |
+| user-data | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 未访问真实库 |
+
+## Closeout Record
+
+- 未开始（ready，待实施）。
