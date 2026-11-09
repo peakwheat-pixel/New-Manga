@@ -1,0 +1,21 @@
+# command: dotnet build -c Debug -t:Rebuild + dotnet test (no --no-build) for all 8 projects
+# shell: pwsh 7.6.8
+# time: 2026-11-10T01:01:12.2231673+08:00
+
+已用时间 00:00:11.48
+=== NewManga.App.Tests EXIT=0
+已通过! - 失败:     0，通过:   838，已跳过:    11，总计:   849，持续时间: 4 m 29 s - NewManga.App.Tests.dll (net9.0)
+=== NewManga.Appearance.Tests EXIT=0
+已通过! - 失败:     0，通过:    21，已跳过:     0，总计:    21，持续时间: 143 ms - NewManga.Appearance.Tests.dll (net9.0)
+=== NewManga.ApplicationCore.Tests EXIT=0
+已通过! - 失败:     0，通过:    31，已跳过:     0，总计:    31，持续时间: 5 s - NewManga.ApplicationCore.Tests.dll (net9.0)
+=== NewManga.CoreClient.Tests EXIT=0
+已通过! - 失败:     0，通过:   167，已跳过:    24，总计:   191，持续时间: 16 s - NewManga.CoreClient.Tests.dll (net9.0)
+=== NewManga.DesignSystem.Tests EXIT=0
+已通过! - 失败:     0，通过:   117，已跳过:     0，总计:   117，持续时间: 2 s - NewManga.DesignSystem.Tests.dll (net9.0)
+=== NewManga.Host.Tests EXIT=0
+已通过! - 失败:     0，通过:   312，已跳过:    74，总计:   386，持续时间: 8 s - NewManga.Host.Tests.dll (net9.0)
+=== NewManga.Presentation.Avalonia.Tests EXIT=0
+已通过! - 失败:     0，通过:    72，已跳过:     0，总计:    72，持续时间: 306 ms - NewManga.Presentation.Avalonia.Tests.dll (net9.0)
+=== NewManga.ThemeEngine.Tests EXIT=0
+已通过! - 失败:     0，通过:   253，已跳过:     0，总计:   253，持续时间: 1 s - NewManga.ThemeEngine.Tests.dll (net9.0)

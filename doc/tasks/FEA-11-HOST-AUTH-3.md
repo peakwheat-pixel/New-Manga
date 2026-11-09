@@ -63,7 +63,7 @@ out_of_scope:
 | Core | `core_service.py` 注册 host-control 命令 + handler；`application/sources/materialization.py`（新）单函数 `materialize(store, payload)` closed shape；`errors.py` 两错误码；capability 仅在装配时出现 |
 | Host | `CoreServiceClient` 新常量与调用；`SourceOperationCoordinator` 在 `Acknowledge/Recover` 的 **Core-backed 段**（非 `PrepareCompletion`）读物化并重铸；`SourceReadCoordinator.IssueForRecoveryAsync` 窄 seam；`HostRuntime` 注入 `Sources` |
 | 重铸输入规则 | `registry_id/generation/identity_digest` 来自 journal `authorization`；**source 路径 = `SourceAccessRegistry` 的 `Roots`（必须恰好 1 个 readable root，否则 typed fail-closed）**；`source_kind` = `ScanTarget.source_kind`；`version_id/entries` = 物化投影。**不得猜 locator/kind** |
-| 语义边界 | `_verify_fresh` 只校验 grant 的物理 identity 与 authorization 基线 → 重铸 grant 必须真实、同源，不得伪造；entries 不必与 plan 逐条相同 |
+| 语义边界 | `_verify_fresh` 只校验 grant 的物理 identity 与 authorization 基线 → 重铸 grant 必须真实、同源，不得伪造；entries 不必与 plan 逐条相同。**冻结矩阵「source 不符」在冻结面不可实现**（Host journal 无 source 字段，物化是唯一 source 权威）——登记 limitation。 |
 | 通道 | 新命令 host-control（普通面 `HOST_ONLY_REQUIRED`）；不登记 HostCommandRegistry/C-07 |
 | state 语义（r2 定稿） | Core **不过滤** state（`draft/previewed/confirmed/applied/stale` 均可物化，守卫只校验 plan_id/digest）；`applied` 仅为 **Host 恢复的前置条件**（Host 侧拒绝矩阵负责） |
 

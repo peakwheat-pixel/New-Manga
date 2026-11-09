@@ -8,22 +8,23 @@
 
 | 项 | 结果 |
 |---|---|
-| `crash-ack.ps1` 两阶段驱动 | **PASS**（`logs/crash-driver-attempt10.log`，EXIT 0） |
+| `crash-ack.ps1` 两阶段驱动 | **PASS**（`logs/crash-driver-attempt12.log`，EXIT 0，head `0bcf9ba70`） |
 | 三重防伪 | host PID 不同 / Core session 不同 / 重铸 grant ∉ journal（`fresh_grant=1`） |
 | 进程死亡证明 | park 进程树 **12–13 PID（含 1 Python sidecar）** 枚举 → kill 后 30s 轮询断言全灭（`pids-before.txt`/`pids-after.txt`） |
 | 数据安全 | `source_sha256_unchanged=1`、`rows_unchanged=1`（bindings/publications） |
 | gate | `gates_open=1`（`check_gate.py` 实查 `read_binding_publications.read_gate`，0 pending） |
 | 幂等 | `second_call_idempotent=1`（二次 recover 0 新 wire 帧） |
-| 全量基线 | pytest 3461/0/10（`logs/pytest-full.log`）；.NET 8 项目 1810/0/109（`logs/dotnet-*.log`） |
+| 全量基线（最终 head 重跑） | pytest **3468/0/10**（`logs/pytest-full.log`）；.NET 8 项目见 `logs/dotnet-full-console.log` 与 `logs/dotnet-*.log` |
 
 ## 断言全部由事实计算（P0 修复）
 
-驱动脚本 `tools/crash-ack.ps1` 的 PASS 行由 8 个 `CHECK` 结果拼接，**不是常量**：
+驱动脚本 `tools/crash-ack.ps1` 的 PASS 行由 **10** 个 `CHECK` 结果拼接，**不是常量**：
 
 ```
 CHECK commit_digest_match / distinct_host_pid / distinct_core_session /
       source_sha256_unchanged / rows_unchanged / gates_open /
-      second_call_idempotent / fresh_grant  → 全部 =1
+      second_call_idempotent / fresh_grant /
+      page_bindings_fields_unchanged / journal_present  → 全部 =1
 ```
 
 ## 崩溃证据归档（每次运行）

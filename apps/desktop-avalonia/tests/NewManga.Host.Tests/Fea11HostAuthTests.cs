@@ -882,18 +882,22 @@ public sealed class Fea11HostAuth3RecoveryRefusalTests : IDisposable
             scanTargetsProvider: (_) => Task.FromResult(targets ?? Targets("folder")));
     }
 
-    private string CommittedOperation(SourceOperationCoordinator operations)
+    private string CommittedOperation(
+        SourceOperationCoordinator operations,
+        int baselineCount = 1)
     {
-        var live = _registry.List().Single();
-        var minted = HostAuthorizationMinter.Mint(PlanId, PlanDigest, Kind,
-        [
-            new Dictionary<string, object?>
+        var lives = _registry.List().Take(Math.Max(1, baselineCount)).ToArray();
+        var baselines = new List<Dictionary<string, object?>>();
+        foreach (var live in lives)
+        {
+            baselines.Add(new Dictionary<string, object?>
             {
                 ["registry_id"] = live.RegistryId,
                 ["generation"] = live.Generation,
                 ["identity_digest"] = IdentityDigest,
-            },
-        ]);
+            });
+        }
+        var minted = HostAuthorizationMinter.Mint(PlanId, PlanDigest, Kind, baselines);
         operations.Begin(PlanId, PlanDigest, Kind, minted.RequestDigest, minted.OperationId, ["g-1"]);
         operations.Authorize(minted.OperationId, CanonicalJson.Text(minted.Authorization), minted.HostReceiptId);
         var receipt = JsonSerializer.Serialize(new Dictionary<string, object?>
@@ -1005,4 +1009,17 @@ public sealed class Fea11HostAuth3RecoveryRefusalTests : IDisposable
             () => detached.AcknowledgeAsync(operationId));
         Assert.Equal("SOURCE_ACCESS_DENIED", error.Code);
     }
+
+    [Fact]
+    public async Task Recovery_RefusesAMultiBaselineJournal()
+    {
+        Register(_root);
+        var second = Path.Combine(_root, "second");
+        Directory.CreateDirectory(second);
+        _registry.Register("loc-2", [second]);
+        var operations = NewCoordinator(Material());
+        var operationId = CommittedOperation(operations, baselineCount: 2);
+        await AssertRefused(operations, operationId, "SOURCE_ACCESS_DENIED");
+    }
 }
+
