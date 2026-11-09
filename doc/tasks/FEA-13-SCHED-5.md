@@ -70,8 +70,8 @@ out_of_scope:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-S5-README | AC1–AC6 | `verification/FEA-13-SCHED-5/README.md` | `-` | `5eaf0a1be4d694cb56889a5574e78b59c54a16bb956f1f9d665392936b43509b` | CANONICAL |
-| EV-S5-SUITE | AC1–AC5 | `verification/FEA-13-SCHED-5/logs/pytest-backup-suite.log` | `-` | `fc80dc45108eafc3578b76c0b1a0bc71f3e0017e40121f193d11e3955ca18bcb` | CANONICAL |
+| EV-S5-README | AC1–AC6 | `verification/FEA-13-SCHED-5/README.md` | `-` | `3bfa0a07f8999fd13c5e2a11f451f15102a07f9ae184750ca926a61975e81605` | CANONICAL |
+| EV-S5-SUITE | AC1–AC5 | `verification/FEA-13-SCHED-5/logs/pytest-backup-suite.log` | `-` | `dbad9228e53d4c944cf7998b1366316ed903bc21d302ca6a7adcc676661af33c` | CANONICAL |
 | EV-S5-MUT1 | AC3 D4 | `verification/FEA-13-SCHED-5/logs/mutation-no-d4-protection.log` | `-` | `4030f756877ef854810d29af8da7073d96d404299e0335dcfe45b96897d9c337` | CANONICAL |
 | EV-S5-MUT2 | AC1 disabled | `verification/FEA-13-SCHED-5/logs/mutation-disabled-ignored.log` | `-` | `12feeca06b559b4c012442f698efe2c7d56168ab2dfc8bcdc111a1e127347668` | CANONICAL |
 ## 证据计划
@@ -92,6 +92,19 @@ out_of_scope:
 - 保留策略变更可能删包：D4 保护集优先于数量上限（protected 永不删）。
 - 回退：`git revert`；配置键可保留。
 
+## Review 处置（r1，独立子代理 doc/reviews/FEA-13-SCHED-5-r1.md：approved_with_conditions；P0=0/P1=0/P2=3/P3=6）
+
+| Finding | 处置 |
+|---|---|
+| S5-001 receipt 覆盖声明不符（not-due/books==0 不写） | **已修**：not-due 分支写 kind=not_due receipt（含 next_due）；desktop/README 声明同步 |
+| S5-002 AC2 的 missed_or_due 未实现 | **已修**：超龄轮转时 receipt kind=missed_or_due；新增用例 |
+| S5-003 保留预算不再覆盖 pre_migration/pre_restore | **已修**：select_prunable 恢复三类（手动永不删；D4 保护仍生效） |
+| S5-004 死代码 _prune_automatic_backups/_package_age_hours | 登记残余（测试仍引用，保留） |
+| S5-005 weekly weekday 未参与判定 | 登记残余（当前按 7×24h 间隔；整点调度后续） |
+| S5-006 disabled 下 restore 可用无用例 | **已补**用例 |
+| S5-007 治理指针越 allowed_paths | 登记（DSH 生命周期写入惯例） |
+| S5-008 sqlite3.Error 穿透 | 登记（旧代码同类暴露，非本片引入） |
+| S5-009 AC4 弱用例 | 登记（README 已自认变异不可判别） |
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |

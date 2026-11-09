@@ -379,3 +379,45 @@ def test_retention_protects_the_recovery_chain(tmp_path: Path) -> None:
         assert len(automatic_left) < len(autos)
     finally:
         core.conn.close()
+
+
+def test_disabled_schedule_keeps_restore_usable(tmp_path: Path) -> None:
+    """S5-006: disabling automatic backups must not disable restore."""
+    from bootstrap.core_service import _read_metadata_json
+
+    core = assemble_production_core(tmp_path / "data")
+    try:
+        _seed_book(core)
+        with core.conn as conn:
+            conn.execute(
+                "INSERT INTO application_metadata (metadata_key, value_json, updated_at)"
+                " VALUES ('backup.auto_enabled', 'false', ?)",
+                (NOW,),
+            )
+        _ensure_automatic_backup(core)
+
+        manual = core.backup.create("manual", "explicit user backup")
+        report = core.backup.restore(manual["backup_id"], confirm_restore=True)
+
+        assert report["restored_from"] == manual["backup_id"]
+        assert _read_metadata_json(core.conn, "backup.last_receipt")["kind"] == "disabled"
+    finally:
+        core.conn.close()
+
+
+def test_missed_schedule_receipt_uses_the_ac_kind(tmp_path: Path, monkeypatch) -> None:
+    """S5-002: an overdue plan is reported as ``missed_or_due``."""
+    import bootstrap.core_service as core_service
+    from bootstrap.core_service import _read_metadata_json
+
+    core = assemble_production_core(tmp_path / "data")
+    try:
+        _seed_book(core)
+        _ensure_automatic_backup(core)
+        monkeypatch.setattr(core_service, "_AUTOMATIC_BACKUP_REFRESH_HOURS", 0.0)
+        _ensure_automatic_backup(core)
+
+        receipt = _read_metadata_json(core.conn, "backup.last_receipt")
+        assert receipt["kind"] == "missed_or_due"
+    finally:
+        core.conn.close()

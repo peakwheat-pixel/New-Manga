@@ -8183,6 +8183,19 @@ def _ensure_automatic_backup(core) -> None:
                 "custom_hours", hours=max(0, int(_AUTOMATIC_BACKUP_REFRESH_HOURS))
             )
         if not effective.due(now, last):
+            _write_backup_receipt(
+                conn,
+                {
+                    "kind": "not_due",
+                    "status": "skipped",
+                    "next_due": next_due(now, effective).isoformat(
+                        timespec="milliseconds"
+                    )
+                    if next_due(now, effective)
+                    else None,
+                    "message": "the newest automatic package is still fresh",
+                },
+            )
             prune(entries, protections())
             return
         due_at = next_due(now, effective)
@@ -8224,7 +8237,11 @@ def _ensure_automatic_backup(core) -> None:
         _write_backup_receipt(
             conn,
             {
-                "kind": "created" if newest is not None else "created_first",
+                "kind": (
+                "missed_or_due"
+                if newest is not None and reason.startswith("missed schedule")
+                else ("created" if newest is not None else "created_first")
+            ),
                 "status": "ok",
                 "backup_id": created["backup_id"],
                 "size_bytes": created["size_bytes"],

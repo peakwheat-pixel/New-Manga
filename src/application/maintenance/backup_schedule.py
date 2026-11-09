@@ -111,8 +111,12 @@ def select_prunable(
     Manual packages are never candidates, and neither are protected ids (the
     newest verified package and the last restore's ``pre_restore`` -- D4).
     """
+    # The retention budget covers every Core-created package type (the old
+    # ``_AUTOMATIC_BACKUP_KEEP`` behaviour), never a manual package.
     automatic = [
-        entry for entry in entries if entry.get("backup_type") == "automatic"
+        entry
+        for entry in entries
+        if entry.get("backup_type") in {"automatic", "pre_migration", "pre_restore"}
     ]
     automatic.sort(key=lambda entry: str(entry.get("created_at") or ""), reverse=True)
     # The newest ``keep`` packages are retained; a protected package that falls
