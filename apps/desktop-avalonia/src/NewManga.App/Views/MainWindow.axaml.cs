@@ -553,7 +553,8 @@ public partial class MainWindow : Window
                 // The main window was already closed; the hint below is all that is left to do.
             }
 
-            _status.Text = "全屏阅读器打开失败（已恢复主窗）：" + error.Message;
+            // N-008: keep the failure hint on the single status writer (RefreshStatusText).
+            RefreshStatusText();
             return false;
         }
         finally

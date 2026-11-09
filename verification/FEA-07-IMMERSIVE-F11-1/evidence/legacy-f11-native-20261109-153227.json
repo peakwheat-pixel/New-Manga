@@ -1,0 +1,78 @@
+{
+  "case": "legacy-f11-native",
+  "capturedAt": "2026-11-09T15:32:37.8467162+08:00",
+  "app": {
+    "pid": 58544,
+    "exe": "G:\\CODEX\\New Manga\\apps\\desktop-avalonia\\src\\NewManga.App\\bin\\Release\\net9.0\\NewManga.App.exe",
+    "args": [
+      "--shell=legacy",
+      "--data-root",
+      "G:\\CODEX\\New Manga.workspace\\FEA-07-AC5-NATIVE-1\\reader-session\\data",
+      "--log-dir",
+      "G:\\CODEX\\New Manga.workspace\\FEA-07-IMMERSIVE-F11-1\\legacy-20261109-153227\\logs",
+      "--theme-home",
+      "G:\\CODEX\\New Manga.workspace\\FEA-07-IMMERSIVE-F11-1\\legacy-20261109-153227\\theme"
+    ],
+    "shell": "legacy",
+    "sidecar": "G:\\CODEX\\New Manga.workspace\\FEA-07-AC5-NATIVE-1\\sidecar",
+    "dataRoot": "G:\\CODEX\\New Manga.workspace\\FEA-07-AC5-NATIVE-1\\reader-session\\data",
+    "logDir": "G:\\CODEX\\New Manga.workspace\\FEA-07-IMMERSIVE-F11-1\\legacy-20261109-153227\\logs"
+  },
+  "navSample": [
+    "书架",
+    "工作台",
+    "阅读器",
+    "设置",
+    "换主题",
+    "导入文件",
+    "导入文件夹",
+    "新建",
+    "刷新",
+    "全部",
+    "未分类"
+  ],
+  "postMessageRc": 3,
+  "immersive": {
+    "left": 0,
+    "top": 0,
+    "width": 1920,
+    "height": 1080,
+    "hasCaption": false,
+    "title": "阅读器",
+    "coversPrimary": false
+  },
+  "mainWindow": {
+    "left": 320,
+    "top": 106,
+    "width": 1280,
+    "height": 820,
+    "showCmd": 1,
+    "minimized": false
+  },
+  "statusHint": [],
+  "hintVisible": false,
+  "statusSample": [
+    "New Manga",
+    "书架",
+    "工作台",
+    "阅读器",
+    "设置",
+    "Host 就绪",
+    "换主题",
+    "Esc 退出 · F fit · H 隐藏 UI",
+    "测试 · 1 · 169 页 · rtl",
+    "书：测试 · 章：1"
+  ],
+  "logFile": "G:\\CODEX\\New Manga.workspace\\FEA-07-IMMERSIVE-F11-1\\legacy-20261109-153227\\logs\\immersive-open.log",
+  "logExists": false,
+  "screenshots": [
+    {
+      "file": "G:\\CODEX\\New Manga.workspace\\FEA-07-IMMERSIVE-F11-1\\shots\\20261109-153236-legacy-before.png",
+      "sha256": "1d3cc20a5f7ca7996785bc5e5245d1d03b4818f76a9ea9f00814f08a639c642f"
+    },
+    {
+      "file": "G:\\CODEX\\New Manga.workspace\\FEA-07-IMMERSIVE-F11-1\\shots\\20261109-153237-legacy-after.png",
+      "sha256": "43fc1e62ddac8a6b37296f695e356dc554df5faebec98dd85a92c605ac6cbd69"
+    }
+  ]
+}

@@ -285,6 +285,16 @@ public sealed class F11HotkeyTests
             Assert.Null(window.LastImmersiveWindow);
             Assert.Contains("全屏阅读器打开失败", window.StatusText);
 
+            // N-003: a show that silently returns without making the window visible must also fall
+            // back (the original D-AC5-2 observation was "no window", not necessarily a thrown error).
+            window.ImmersiveShowOverride = _ => { };
+            Assert.False(window.TryOpenImmersiveReader()); // N-006: the bool contract is asserted
+            Dispatcher.UIThread.RunJobs();
+            Assert.Null(window.LastImmersiveWindow);
+            Assert.Contains("did not become visible", window.ImmersiveOpenFailure);
+            Assert.Contains("全屏阅读器打开失败", window.StatusText);
+            Assert.Equal(WindowState.Normal, window.WindowState);
+
             // R-003: a later successful open clears the sticky failure hint.
             window.ImmersiveShowOverride = null;
             window.Navigate("bookshelf");
