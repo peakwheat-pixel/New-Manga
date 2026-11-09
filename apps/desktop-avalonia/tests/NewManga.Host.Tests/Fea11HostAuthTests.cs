@@ -1,3 +1,4 @@
+using NewManga.CoreClient;
 using System.Globalization;
 using System.Text.Json;
 using NewManga.CoreClient.Commands;
@@ -16,6 +17,7 @@ public sealed class Fea11HostAuthTests : IDisposable
     private readonly string _root;
     private readonly SourceOperationCoordinator _operations;
     private readonly SourceAccessRegistry _registry;
+    private readonly List<string> _extraRoots = new();
 
     public Fea11HostAuthTests()
     {
@@ -29,6 +31,10 @@ public sealed class Fea11HostAuthTests : IDisposable
     public void Dispose()
     {
         try { Directory.Delete(_root, recursive: true); } catch { /* best effort */ }
+        foreach (var extra in _extraRoots)
+        {
+            try { Directory.Delete(extra, recursive: true); } catch { /* best effort */ }
+        }
     }
 
     private JsonElement CallerPayload(string? planDigest = null)
@@ -791,5 +797,212 @@ public sealed class Fea11HostAuth2FreshCompletionTests : IDisposable
         var material = _operations.PrepareCompletion(minted.OperationId, recovery: true);
         Assert.Equal(minted.OperationId, material.OperationId);
         Assert.Equal("host-authorized", AfterRestart().Get(minted.OperationId)!.State);
+    }
+}
+
+/// <summary>
+/// FEA-11-HOST-AUTH-3 (C-17 v1.2 / AC-H3-3): the recovery re-mint refusal matrix.
+/// The materialized subset and the Core scan targets are injected so every refusal is
+/// exercised without a Python Core; a refusal must be typed and must never reach the
+/// wire (the journal stays core-committed with a fresh, un-ACKed authorization).
+/// </summary>
+public sealed class Fea11HostAuth3RecoveryRefusalTests : IDisposable
+{
+    private const string PlanId = "pl-1";
+    private static readonly string PlanDigest = new string('a', 64);
+    private static readonly string IdentityDigest = new string('d', 64);
+    private static readonly string CommitDigest = new string('e', 64);
+    private const string Kind = "resync";
+    private const string SourceId = "src-0123456789abcdef";
+    private const string VersionId = "ver-001";
+
+    private readonly string _root;
+    private readonly SourceAccessRegistry _registry;
+    private readonly SourceOperationCoordinator _operations;
+
+    public Fea11HostAuth3RecoveryRefusalTests()
+    {
+        _root = Path.Combine(Path.GetTempPath(), "nm-fea11-hostauth3-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(_root);
+        _registry = new SourceAccessRegistry(_root);
+        _operations = new SourceOperationCoordinator(null, _root, null, _registry);
+    }
+
+    public void Dispose()
+    {
+        try { Directory.Delete(_root, recursive: true); } catch { /* best effort */ }
+    }
+
+    private static JsonElement Targets(string? kind)
+    {
+        var target = new Dictionary<string, object?> { ["source_id"] = SourceId };
+        if (kind is not null)
+        {
+            target["source_kind"] = kind;
+        }
+        return JsonSerializer.SerializeToElement(new Dictionary<string, object?>
+        {
+            ["targets"] = new[] { target },
+        });
+    }
+
+    private static CoreServiceClient.SourceSyncPlanMaterialization Material(
+        string state = "applied",
+        string? sourceId = SourceId,
+        string? versionId = VersionId)
+        => new(
+            "source-sync-plan-materialization/1",
+            PlanId,
+            PlanDigest,
+            Kind,
+            sourceId ?? string.Empty,
+            sourceId is null ? null : versionId,
+            sourceId is null ? null : new string('c', 64),
+            Array.Empty<CoreServiceClient.SourcePlanMaterializedEntry>(),
+            new string('b', 64),
+            state,
+            "2026-11-09T12:00:00+00:00");
+
+    private void Register(params string[] roots)
+    {
+        _registry.Register("loc-1", roots);
+    }
+
+    private SourceOperationCoordinator NewCoordinator(
+        CoreServiceClient.SourceSyncPlanMaterialization material,
+        JsonElement? targets = null)
+    {
+        return new SourceOperationCoordinator(
+            null,
+            _root,
+            null,
+            _registry,
+            reads: null,
+            materializeProvider: (_, _, _) => Task.FromResult(material),
+            scanTargetsProvider: (_) => Task.FromResult(targets ?? Targets("folder")));
+    }
+
+    private string CommittedOperation(SourceOperationCoordinator operations)
+    {
+        var live = _registry.List().Single();
+        var minted = HostAuthorizationMinter.Mint(PlanId, PlanDigest, Kind,
+        [
+            new Dictionary<string, object?>
+            {
+                ["registry_id"] = live.RegistryId,
+                ["generation"] = live.Generation,
+                ["identity_digest"] = IdentityDigest,
+            },
+        ]);
+        operations.Begin(PlanId, PlanDigest, Kind, minted.RequestDigest, minted.OperationId, ["g-1"]);
+        operations.Authorize(minted.OperationId, CanonicalJson.Text(minted.Authorization), minted.HostReceiptId);
+        var receipt = JsonSerializer.Serialize(new Dictionary<string, object?>
+        {
+            ["operation_id"] = minted.OperationId,
+            ["plan_id"] = PlanId,
+            ["plan_digest"] = PlanDigest,
+            ["request_digest"] = minted.RequestDigest,
+            ["kind"] = Kind,
+            ["origin"] = "core",
+            ["state"] = "core-committed",
+            ["commit"] = new Dictionary<string, object?>
+            {
+                ["operation_id"] = minted.OperationId,
+                ["plan_id"] = PlanId,
+                ["plan_digest"] = PlanDigest,
+                ["request_digest"] = minted.RequestDigest,
+                ["commit_digest"] = CommitDigest,
+                ["bindings"] = Array.Empty<object>(),
+                ["committed_at"] = "2026-11-09T00:00:00+00:00",
+            },
+            ["commit_digest"] = CommitDigest,
+            ["retryable"] = false,
+        });
+        operations.MarkCommitted(minted.OperationId, CommitDigest, receipt);
+        return minted.OperationId;
+    }
+
+    private async Task AssertRefused(
+        SourceOperationCoordinator operations,
+        string operationId,
+        string expectedCode)
+    {
+        var error = await Assert.ThrowsAsync<SourceAccessException>(
+            () => operations.AcknowledgeAsync(operationId));
+        Assert.Equal(expectedCode, error.Code);
+        var onDisk = new SourceOperationCoordinator(null, _root).Get(operationId)!;
+        Assert.Equal("core-committed", onDisk.State);
+        Assert.Null(onDisk.AcknowledgedAt);
+    }
+
+    [Fact]
+    public async Task Recovery_RefusesANonAppliedPlan()
+    {
+        Register(_root);
+        var operations = NewCoordinator(Material(state: "confirmed"));
+        var operationId = CommittedOperation(operations);
+        await AssertRefused(operations, operationId, "SOURCE_PLAN_STALE");
+    }
+
+    [Fact]
+    public async Task Recovery_RefusesWhenThePlanHasNoSourceOrVersion()
+    {
+        Register(_root);
+        var operations = NewCoordinator(Material(sourceId: null));
+        var operationId = CommittedOperation(operations);
+        await AssertRefused(operations, operationId, "SOURCE_PLAN_UNAVAILABLE");
+    }
+
+    [Fact]
+    public async Task Recovery_RefusesAnUnknownCoreSourceKind()
+    {
+        Register(_root);
+        var operations = NewCoordinator(Material(), Targets(null));
+        var operationId = CommittedOperation(operations);
+        await AssertRefused(operations, operationId, "SOURCE_ACCESS_DENIED");
+    }
+
+    [Fact]
+    public async Task Recovery_RefusesWhenTheMintSeamIsUnavailable()
+    {
+        // The registry authorizes, but no mint seam (reads) is wired: the recovery must
+        // fail closed instead of silently falling back to the journal grants.
+        Register(_root);
+        var operations = NewCoordinator(Material());
+        var operationId = CommittedOperation(operations);
+        await AssertRefused(operations, operationId, "CORE_UNAVAILABLE");
+    }
+
+    [Fact]
+    public async Task Recovery_RefusesARevokedRegistry()
+    {
+        Register(_root);
+        var operations = NewCoordinator(Material());
+        var operationId = CommittedOperation(operations);
+        _registry.Revoke(_registry.List().Single().RegistryId);
+        await AssertRefused(operations, operationId, "SOURCE_GRANT_REVOKED");
+    }
+
+    [Fact]
+    public async Task Recovery_RefusesAMissingRegistry()
+    {
+        Register(_root);
+        var operations = NewCoordinator(Material());
+        var operationId = CommittedOperation(operations);
+        // A different data root = a registry that does not know this baseline.
+        var otherRoot = Path.Combine(_root, "other-data");
+        Directory.CreateDirectory(otherRoot);
+        var emptyRegistry = new SourceAccessRegistry(otherRoot);
+        var detached = new SourceOperationCoordinator(
+            null,
+            _root,
+            null,
+            emptyRegistry,
+            reads: null,
+            materializeProvider: (_, _, _) => Task.FromResult(Material()),
+            scanTargetsProvider: (_) => Task.FromResult(Targets("folder")));
+        var error = await Assert.ThrowsAsync<SourceAccessException>(
+            () => detached.AcknowledgeAsync(operationId));
+        Assert.Equal("SOURCE_ACCESS_DENIED", error.Code);
     }
 }

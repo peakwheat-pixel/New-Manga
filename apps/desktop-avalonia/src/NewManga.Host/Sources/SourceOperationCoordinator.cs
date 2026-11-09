@@ -37,18 +37,24 @@ public sealed class SourceOperationCoordinator
     private readonly Func<bool> enabled;
     private readonly SourceAccessRegistry? registry;
     private readonly SourceReadCoordinator? reads;
+    private readonly Func<string, string, CancellationToken, Task<CoreServiceClient.SourceSyncPlanMaterialization>>? materializeProvider;
+    private readonly Func<CancellationToken, Task<JsonElement>>? scanTargetsProvider;
     private readonly object gate = new();
 
     public SourceOperationCoordinator(
         CoreServiceClient? core, string dataRoot, Func<bool>? enabled = null,
         SourceAccessRegistry? registry = null,
-        SourceReadCoordinator? reads = null)
+        SourceReadCoordinator? reads = null,
+        Func<string, string, CancellationToken, Task<CoreServiceClient.SourceSyncPlanMaterialization>>? materializeProvider = null,
+        Func<CancellationToken, Task<JsonElement>>? scanTargetsProvider = null)
     {
         this.core = core;
         directory = Path.Combine(dataRoot, "host", "source-operations");
         this.enabled = enabled ?? (() => true);
         this.registry = registry;
         this.reads = reads;
+        this.materializeProvider = materializeProvider;
+        this.scanTargetsProvider = scanTargetsProvider;
     }
 
     /// <summary>
@@ -204,12 +210,13 @@ public sealed class SourceOperationCoordinator
     {
         var accessRegistry = registry
             ?? throw new SourceAccessException("SOURCE_REGISTRY_UNAVAILABLE");
-        var client = core ?? throw new SourceAccessException("CORE_UNAVAILABLE");
-        var readsCoordinator = reads
-            ?? throw new SourceAccessException("CORE_UNAVAILABLE");
 
-        var material = await client
-            .GetSourceSyncPlanMaterializedAsync(entry.PlanId, entry.PlanDigest, cancellationToken)
+        var materialize = materializeProvider
+            ?? (core is null
+                ? throw new SourceAccessException("CORE_UNAVAILABLE")
+                : (Func<string, string, CancellationToken, Task<CoreServiceClient.SourceSyncPlanMaterialization>>)
+                    core.GetSourceSyncPlanMaterializedAsync);
+        var material = await materialize(entry.PlanId, entry.PlanDigest, cancellationToken)
             .ConfigureAwait(false);
         // Host recovery precondition (scope r2): only an applied plan may re-mint.
         if (!string.Equals(material.State, "applied", StringComparison.Ordinal))
@@ -222,7 +229,11 @@ public sealed class SourceOperationCoordinator
         }
 
         // source_kind is Core-authoritative (C-17 v1.1 §5.2 ScanTarget); never guessed.
-        var targets = await client.ListSourceScanTargetsAsync(cancellationToken).ConfigureAwait(false);
+        var scanTargets = scanTargetsProvider
+            ?? (core is null
+                ? throw new SourceAccessException("CORE_UNAVAILABLE")
+                : (Func<CancellationToken, Task<JsonElement>>)core.ListSourceScanTargetsAsync);
+        var targets = await scanTargets(cancellationToken).ConfigureAwait(false);
         string? sourceKind = null;
         if (targets.ValueKind == JsonValueKind.Object
             && targets.TryGetProperty("targets", out var targetsJson)
@@ -277,6 +288,8 @@ public sealed class SourceOperationCoordinator
             {
                 throw new SourceAccessException("SOURCE_ACCESS_DENIED");
             }
+            var readsCoordinator = reads
+                ?? throw new SourceAccessException("CORE_UNAVAILABLE");
             var grantId = await readsCoordinator
                 .IssueForRecoveryAsync(
                     baseline.RegistryId,
