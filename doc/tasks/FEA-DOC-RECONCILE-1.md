@@ -110,15 +110,16 @@ out_of_scope:
 | EV-RECON-IMMERSIVE | AC5 | `doc/tasks/FEA-07-IMMERSIVE-F11-1.md` | `-` | `4ea62822594e29c479f304d3fab4893811da569b8e573ee999ca838d685db1b2` | CANONICAL |
 | EV-RECON-RG2 | AC6 | `doc/tasks/FEA-11-RUN-GRANT-2.md` | `-` | `83d15cbd086ae30323aff8cde51c25186dbba42377a5ffeaf9f7de6739b9dfd3` | CANONICAL |
 | EV-RECON-GATE | AC8 | `verification/FEA-DOC-RECONCILE-1/gates-3.log` | `-` | `79fa4682c747f8f2386d2b376f36e9bb1fab78d7de3f98e8a11e61c7a4c80e75` | CANONICAL |
-| EV-RECON-GATE-R2 | AC8（历史） | `verification/FEA-DOC-RECONCILE-1/gates-2.log` | `b6ada81e8` | `d6626c58c4a23cc312542836fccde0df07fa4845e131044d5655ec52d14767e3` | HISTORICAL |
-| EV-RECON-GATE-R1 | AC8（历史） | `verification/FEA-DOC-RECONCILE-1/gates.log` | `d91dbe444` | `c5fcd1f78fdf233503acd2562ca093a5cb5a87cc03eaecba4dcd78ef9b579d7a` | HISTORICAL |
+| EV-RECON-GATE-R2 | AC8（历史） | `verification/FEA-DOC-RECONCILE-1/gates-2.log` | `b6ada81e8` | `d6626c58c4a23cc312542836fccde0df07fa4845e131044d5655ec52d14767e3` | CANONICAL |
+| EV-RECON-GATE-R1 | AC8（历史） | `verification/FEA-DOC-RECONCILE-1/gates.log` | `d91dbe444` | `c5fcd1f78fdf233503acd2562ca093a5cb5a87cc03eaecba4dcd78ef9b579d7a` | CANONICAL |
+| EV-RECON-MANIFEST | AC8 | `verification/FEA-DOC-RECONCILE-1/agent-output-manifest.md` | `-` | `53049877ac35fca0834835c13eef5cd9bd2a8a5d1a41c017ac32c4d976c6707a` | SOURCE_PIN |
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | worktree | NOT_APPLICABLE（main；base `9b0683822`） | NOT_APPLICABLE | — | — | 未创建 worktree |
-| agent-output | `G:\CODEX\New Manga.workspace\agent-output\fea-status-2026-11-09\` | PRESERVE_REFERENCED | 原位 | 图/报告 6 文件 | 被本卡 §来源引用，保留 |
+| agent-output | `G:\CODEX\New Manga.workspace\agent-output\fea-status-2026-11-09` | PRESERVE_REFERENCED | `G:\CODEX\New Manga.workspace\agent-output\fea-status-2026-11-09` | `verification/FEA-DOC-RECONCILE-1/agent-output-manifest.md` | 目录存在；6 个产物哈希见 manifest；被本卡 §来源引用，保留 |
 | temp | `%TEMP%\fea-shots`、`%TEMP%\chrome-prof-fea*` | NOT_APPLICABLE | — | — | 截图用临时 profile，OS 清理 |
 | build/artifact | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 本轮无构建 |
 | user-data | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 未访问用户数据 |
