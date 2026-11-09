@@ -6,13 +6,13 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 
 | metric | value |
 |---|---:|
-| task files | 568 |
+| task files | 569 |
 | terminal | 556 |
-| non-terminal | 11 |
-| non-terminal named in the plan | 2 |
+| non-terminal | 12 |
+| non-terminal named in the plan | 3 |
 | non-terminal outside the plan | 9 |
 | task files tracked by git | 568 |
-| task files untracked (drafts) | 0 |
+| task files untracked (drafts) | 1 |
 | non-terminal tracked by git | 11 |
 
 ## By status
@@ -24,7 +24,7 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `cancelled` | 18 | yes |
 | `historical` | 11 | yes |
 | `superseded` | 8 | yes |
-| `proposed` | 5 | no |
+| `proposed` | 6 | no |
 | `blocked` | 2 | no |
 | `in_review` | 2 | no |
 | `(none)` | 1 | no |
@@ -44,6 +44,7 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `FEA-11-HOST-AUTH-4` | `proposed` | no |
 | `FEA-11-HOST-AUTH-5` | `proposed` | no |
 | `FEA-11-L-S1-B2-ROOTS-AVAILABILITY-1` | `proposed` | no |
+| `FEA-13-SRC-6` | `proposed` | own row |
 | `GIT-CLEAN-CORE-ENV-2` | `proposed` | no |
 | `GIT-CLEAN-RUST-CAPACITY-DESIGN-1` | `ready` | no |
 

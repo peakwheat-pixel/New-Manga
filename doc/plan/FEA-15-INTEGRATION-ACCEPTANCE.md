@@ -15,6 +15,7 @@
 | A5 | 全量测试基线 | pytest + .NET 全绿 | ✅ 已验（pytest 3446/0/10；.NET 1804/0/107；`FEA-15-PREREQ-2`） |
 | A6 | 契约与 pin | 18 pins 全绿、无 UNFREEZE 未决 | ✅ `verify_pins` 18/18 |
 | A7 | FEA-14 领域能力 | 六切片（LIB/READ/EDIT/AI/FONT/SET）按各自冻结 Task 验收 | ⛔ 未开始（每切片需单独冻结；见 §3） |
+| A8 | 已知 limitation 登记 | 逐项列明并指向后续卡 | ◐ 「源授权元数据未入包」→ `FEA-13-SRC-6`（ZCode 裁决 2026-11-09：同机恢复有效、跨机须重授权） |
 
 ## 2. 本次可验收子集（不依赖 FEA-14）
 

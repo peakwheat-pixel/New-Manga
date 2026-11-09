@@ -59,3 +59,17 @@ out_of_scope:
 - **推荐载体**：C-17 **单 pin ADDITIVE_UNFREEZE**（路线 B + D-4 合批）；A（grant 持久化/重绑定）与 C（改崩溃口径）需用户/架构裁决，本卡不建议。
 - **阻塞条件**：UNFREEZE 流程（载体草案 → 独立 byte-level 复核 → 重冻 → pin 重算 → 复冻记录）未完成前，本卡不得实施。恢复条件：UNFREEZE 冻结记录落盘且 erify_pins 18/18 重新全绿。
 - **本卡不构成**：不批准任何实现；不构成对卡面 pproval 的解冻。
+## ZCode 裁决采纳（2026-11-09，`doc/reviews/ADJ-2026-11-09-ZCODE-ARCH-ADJUDICATION.md`）
+
+| 项 | 裁决 |
+|---|---|
+| 载体 | **B + D-4 合批，C-17 单 pin ADDITIVE_UNFREEZE**（新增只读计划物化投影命令，读回 Core 已持久化的 `source_sync_plans.body_json`；不新增披露面、零写、无 schema/migration；C-17 v1.1 有同型 additive 先例） |
+| A（Core grant 持久化） | **ARCHITECTURE_BLOCKED**：抵触 C-15:304 / C-16:224 / C-06:40/42 / C-17:266；签钥随载荷 → 落盘即可重签材料 |
+| C（Host-only kill） | **ARCHITECTURE_BLOCKED**：语义+传输双阻断（C-16:24/224、C-06:42；已实现 `source_read_refs.py:253-260`） |
+| D-3（retry 命令） | **out_of_scope**（无消费者） |
+| R-01 | 期望码 **`SOURCE_ACCESS_DENIED`**（非 `SOURCE_GRANT_EXPIRED`），须落进 AC |
+| R-03 | 另立缺陷卡（契约允许全缺失源空 `grant_ids` 但 Core 拒绝、分支不可达） |
+
+**恢复条件（当前仍 blocked）**：C-17 UNFREEZE 程序完成（载体草案 → 独立 byte-level 复核 → 重冻 → pin 重算 → 复冻记录）且 `verify_pins` 18/18 重新全绿。
+
+**风险（裁决附带）**：新只读命令须 host-only + closed shape + wirelog 脱敏断言；崩溃注入须断言 Python sidecar 确被杀（否则记 NOT_RUN，不得冒充 PASS）。
