@@ -13,7 +13,7 @@ base_commit: 417d9c442
 branch: null
 worktree: null
 integration_commit: null
-delivery_head: null
+delivery_head: f7134ba83
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/FEA-15-PREREQ-1
