@@ -1,0 +1,38 @@
+{
+  "label": "matrix-mixed-dpi-move",
+  "capturedAt": "2026-11-09T08:54:22.8173609+08:00",
+  "session": 1,
+  "displayCount": 2,
+  "displays": [
+    {
+      "gdiDevice": "\\\\.\\DISPLAY1",
+      "friendlyName": "AG273QS3R4B",
+      "devicePath": "\\\\?\\DISPLAY#AOC2730#5&65845b8&2&UID4355#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}",
+      "left": 0,
+      "top": 0,
+      "width": 2560,
+      "height": 1440,
+      "primary": true,
+      "dpi": 96,
+      "scalePercent": 100.0,
+      "refreshHz": 165.0,
+      "outputTechnology": 10,
+      "scalingMode": 1
+    },
+    {
+      "gdiDevice": "\\\\.\\DISPLAY2",
+      "friendlyName": "PHL 279M1RV",
+      "devicePath": "\\\\?\\DISPLAY#PHLC254#5&65845b8&2&UID4357#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}",
+      "left": 2560,
+      "top": 0,
+      "width": 3840,
+      "height": 2160,
+      "primary": false,
+      "dpi": 144,
+      "scalePercent": 150.0,
+      "refreshHz": 119.994,
+      "outputTechnology": 10,
+      "scalingMode": 1
+    }
+  ]
+}

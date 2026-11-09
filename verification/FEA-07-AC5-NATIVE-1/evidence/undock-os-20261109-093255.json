@@ -1,0 +1,138 @@
+{
+  "case": "undock-os-disable",
+  "capturedAt": "2026-11-09T09:33:08.0705961+08:00",
+  "app": {
+    "pid": 36712,
+    "exe": "G:\\CODEX\\New Manga\\apps\\desktop-avalonia\\src\\NewManga.App\\bin\\Release\\net9.0\\NewManga.App.exe",
+    "args": [
+      "--data-root",
+      "C:\\Users\\49745\\AppData\\Local\\Temp\\nm-fea07-undock2-20261109-093255\\data",
+      "--log-dir",
+      "C:\\Users\\49745\\AppData\\Local\\Temp\\nm-fea07-undock2-20261109-093255\\logs",
+      "--theme-home",
+      "C:\\Users\\49745\\AppData\\Local\\Temp\\nm-fea07-undock2-20261109-093255\\theme",
+      "--shell=v2"
+    ]
+  },
+  "before": [
+    {
+      "device": "\\\\.\\DISPLAY1",
+      "width": 2560,
+      "height": 1440,
+      "hz": 165,
+      "x": 0,
+      "y": 0,
+      "dpi": 96,
+      "percent": 100,
+      "primary": true
+    },
+    {
+      "device": "\\\\.\\DISPLAY2",
+      "width": 3840,
+      "height": 2160,
+      "hz": 120,
+      "x": 2560,
+      "y": 0,
+      "dpi": 144,
+      "percent": 150,
+      "primary": false
+    }
+  ],
+  "afterDisable": [
+    {
+      "device": "\\\\.\\DISPLAY1",
+      "width": 2560,
+      "height": 1440,
+      "hz": 165,
+      "x": 0,
+      "y": 0,
+      "dpi": 96,
+      "percent": 100,
+      "primary": true
+    },
+    {
+      "device": "\\\\.\\DISPLAY2",
+      "width": 3840,
+      "height": 2160,
+      "hz": 120,
+      "x": 2560,
+      "y": 0,
+      "dpi": 144,
+      "percent": 150,
+      "primary": false
+    }
+  ],
+  "afterReenable": [
+    {
+      "device": "\\\\.\\DISPLAY1",
+      "width": 2560,
+      "height": 1440,
+      "hz": 165,
+      "x": 0,
+      "y": 0,
+      "dpi": 96,
+      "percent": 100,
+      "primary": true
+    },
+    {
+      "device": "\\\\.\\DISPLAY2",
+      "width": 3840,
+      "height": 2160,
+      "hz": 120,
+      "x": 2560,
+      "y": 0,
+      "dpi": 144,
+      "percent": 150,
+      "primary": false
+    }
+  ],
+  "window": {
+    "onSecondary": {
+      "left": 3616,
+      "top": 200,
+      "width": 2592,
+      "height": 1458,
+      "dpi": 144,
+      "percent": 150
+    },
+    "afterDisable": {
+      "left": 3616,
+      "top": 200,
+      "width": 2592,
+      "height": 1458,
+      "dpi": 144,
+      "percent": 150,
+      "appAlive": true,
+      "containedInPrimary": false
+    },
+    "afterReenable": {
+      "left": 3616,
+      "top": 200,
+      "width": 2592,
+      "height": 1458,
+      "dpi": 144,
+      "percent": 150,
+      "appAlive": true
+    }
+  },
+  "screenshots": [
+    {
+      "file": "20261109-093255-undock-before.png",
+      "width": 3840,
+      "height": 2160,
+      "sha256": "783950b92fb876f309c7aa2f394ff65e5975440e620053b1e7d4719671fc9a08"
+    },
+    {
+      "file": "20261109-093255-undock-after.png",
+      "width": 2560,
+      "height": 1440,
+      "sha256": "5047d1d64a3ffe27b89cb0a92316abf8553ef812ee7c53f857567ccff41591f4"
+    },
+    {
+      "file": "20261109-093255-undock-restored.png",
+      "width": 2560,
+      "height": 1440,
+      "sha256": "b9c8ae1a2a63d73c90ecd84694711ef0a8346aa97f5d24cff2d1834b1a8d50fd"
+    }
+  ]
+}

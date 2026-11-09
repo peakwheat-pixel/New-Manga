@@ -1,0 +1,8 @@
+{"monitors":[
+{"device":"","left":0,"top":0,"right":0,"bottom":0,"width":0,"height":0,"dpi":96,"scalePercent":100,"primary":false},
+{"device":"","left":0,"top":0,"right":0,"bottom":0,"width":0,"height":0,"dpi":144,"scalePercent":150,"primary":false}
+],"paths":[
+{"gdiDevice":"\\.\DISPLAY1","friendlyName":"AG273QS3R4B","devicePath":"\\\\?\\DISPLAY#AOC2730#5&65845b8&2&UID4355#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}","outputTechnology":10,"rotation":1,"scaling":4,"refreshHz":59.951},
+{"gdiDevice":"\\.\DISPLAY2","friendlyName":"PHL 279M1RV","devicePath":"\\\\?\\DISPLAY#PHLC254#5&65845b8&2&UID4357#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}","outputTechnology":10,"rotation":1,"scaling":1,"refreshHz":119.994}
+],"error":""}
+

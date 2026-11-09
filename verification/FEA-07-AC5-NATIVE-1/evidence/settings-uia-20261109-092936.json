@@ -1,0 +1,134 @@
+[
+  {
+    "type": "ControlType.ListItem",
+    "name": "显示器 1",
+    "patterns": "SelectionItem",
+    "offscreen": false
+  },
+  {
+    "type": "ControlType.ListItem",
+    "name": "显示器 2",
+    "patterns": "SelectionItem",
+    "offscreen": false
+  },
+  {
+    "type": "ControlType.ListItem",
+    "name": "显示器 3",
+    "patterns": "SelectionItem",
+    "offscreen": false
+  },
+  {
+    "type": "ControlType.ListItem",
+    "name": "将桌面扩展到此显示器",
+    "patterns": "SelectionItem",
+    "offscreen": false
+  },
+  {
+    "type": "ControlType.ListItem",
+    "name": "125%",
+    "patterns": "SelectionItem",
+    "offscreen": false
+  },
+  {
+    "type": "ControlType.Button",
+    "name": "缩放",
+    "patterns": "Invoke",
+    "offscreen": false
+  },
+  {
+    "type": "ControlType.Button",
+    "name": "高级显示器设置",
+    "patterns": "Invoke",
+    "offscreen": true
+  },
+  {
+    "type": "ControlType.ComboBox",
+    "name": "多显示器",
+    "patterns": "ExpandCollapse",
+    "offscreen": false
+  },
+  {
+    "type": "ControlType.ComboBox",
+    "name": "缩放",
+    "patterns": "ExpandCollapse",
+    "offscreen": false
+  },
+  {
+    "type": "ControlType.ComboBox",
+    "name": "显示器分辨率",
+    "patterns": "ExpandCollapse",
+    "offscreen": true
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "选择显示器以更改其设置。拖动显示器以重新排列它们。",
+    "patterns": "",
+    "offscreen": false
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "多显示器",
+    "patterns": "",
+    "offscreen": false
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "选择显示器的呈现模式",
+    "patterns": "",
+    "offscreen": false
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "缩放和布局",
+    "patterns": "",
+    "offscreen": false
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "缩放",
+    "patterns": "",
+    "offscreen": false
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "显示器分辨率",
+    "patterns": "",
+    "offscreen": true
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "调整分辨率以适合所连接的显示器",
+    "patterns": "",
+    "offscreen": true
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "高级显示器设置",
+    "patterns": "",
+    "offscreen": true
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "显示器信息，刷新率",
+    "patterns": "",
+    "offscreen": true
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "轻松调整显示器亮度设置",
+    "patterns": "",
+    "offscreen": true
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "轻松设置双显示器",
+    "patterns": "",
+    "offscreen": true
+  },
+  {
+    "type": "ControlType.Text",
+    "name": "正在设置多个显示器",
+    "patterns": "",
+    "offscreen": true
+  }
+]

@@ -1,0 +1,34 @@
+{
+  "label": "before-native",
+  "capturedAt": "2026-11-09T08:40:20.9611728+08:00",
+  "displays": [
+    {
+      "device": "\\\\.\\DISPLAY1",
+      "role": "primary",
+      "adapter": "NVIDIA GeForce RTX 5070 Ti",
+      "width": 1920,
+      "height": 1080,
+      "refreshHz": 59,
+      "x": 0,
+      "y": 0,
+      "bitsPerPel": 32,
+      "orientation": 0,
+      "dpi": 96,
+      "scalePercent": 100
+    },
+    {
+      "device": "\\\\.\\DISPLAY2",
+      "role": "secondary",
+      "adapter": "NVIDIA GeForce RTX 5070 Ti",
+      "width": 3840,
+      "height": 2160,
+      "refreshHz": 120,
+      "x": 1920,
+      "y": 0,
+      "bitsPerPel": 32,
+      "orientation": 0,
+      "dpi": 144,
+      "scalePercent": 150
+    }
+  ]
+}

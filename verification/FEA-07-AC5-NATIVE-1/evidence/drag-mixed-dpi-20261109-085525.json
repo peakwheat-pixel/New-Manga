@@ -1,0 +1,94 @@
+{
+  "case": "drag-mixed-dpi",
+  "capturedAt": "2026-11-09T08:55:34.9801522+08:00",
+  "app": {
+    "exe": "G:\\CODEX\\New Manga\\apps\\desktop-avalonia\\src\\NewManga.App\\bin\\Release\\net9.0\\NewManga.App.exe",
+    "pid": 18176,
+    "args": [
+      "--data-root",
+      "C:\\Users\\49745\\AppData\\Local\\Temp\\nm-fea07-drag-20261109-085525\\data",
+      "--log-dir",
+      "C:\\Users\\49745\\AppData\\Local\\Temp\\nm-fea07-drag-20261109-085525\\logs",
+      "--theme-home",
+      "C:\\Users\\49745\\AppData\\Local\\Temp\\nm-fea07-drag-20261109-085525\\theme",
+      "--shell=v2"
+    ]
+  },
+  "monitors": {
+    "primary": {
+      "gdiDevice": "\\\\.\\DISPLAY1",
+      "friendlyName": "AG273QS3R4B",
+      "devicePath": "\\\\?\\DISPLAY#AOC2730#5&65845b8&2&UID4355#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}",
+      "left": 0,
+      "top": 0,
+      "width": 2560,
+      "height": 1440,
+      "primary": true,
+      "dpi": 96,
+      "scalePercent": 100.0,
+      "refreshHz": 165.0,
+      "outputTechnology": 10,
+      "scalingMode": 1
+    },
+    "secondary": {
+      "gdiDevice": "\\\\.\\DISPLAY2",
+      "friendlyName": "PHL 279M1RV",
+      "devicePath": "\\\\?\\DISPLAY#PHLC254#5&65845b8&2&UID4357#{e6f07b5f-ee97-4a90-b076-33f57bf4eaa7}",
+      "left": 2560,
+      "top": 0,
+      "width": 3840,
+      "height": 2160,
+      "primary": false,
+      "dpi": 144,
+      "scalePercent": 150.0,
+      "refreshHz": 119.994,
+      "outputTechnology": 10,
+      "scalingMode": 1
+    }
+  },
+  "steps": [
+    {
+      "step": "placed-mon1",
+      "left": 576,
+      "top": 120,
+      "width": 1408,
+      "height": 792,
+      "dpi": 96,
+      "scalePercent": 100,
+      "right": 1984,
+      "bottom": 912,
+      "cursor": "none"
+    },
+    {
+      "step": "after-drag",
+      "left": 3424,
+      "top": 279,
+      "width": 2112,
+      "height": 1188,
+      "dpi": 144,
+      "scalePercent": 150,
+      "right": 5536,
+      "bottom": 1467,
+      "cursor": "drag 1280,134 -> 4480,300"
+    }
+  ],
+  "containment": {
+    "placed-mon1": true,
+    "after-drag": true
+  },
+  "drag": "dragged 1280,134 -> 4480,300",
+  "screenshots": [
+    {
+      "file": "20261109-085525-drag-mon1.png",
+      "width": 2560,
+      "height": 1440,
+      "sha256": "1769bd646a8a767267e591bd23da831d82baf1728f6364227314fb865ca57c0e"
+    },
+    {
+      "file": "20261109-085525-drag-mon2.png",
+      "width": 3840,
+      "height": 2160,
+      "sha256": "d16dc103df2c088647ee72c311fc8914317d2415cc443a0489c93b73868690f9"
+    }
+  ]
+}

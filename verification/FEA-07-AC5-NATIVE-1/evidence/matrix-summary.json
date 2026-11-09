@@ -1,0 +1,275 @@
+{
+  "card": "FEA-07-AC5-NATIVE-1",
+  "capturedAt": "2026-11-09",
+  "manifest": "app.manifest dpiAware true/pm + dpiAwareness PerMonitorV2",
+  "dragCases": [
+    {
+      "file": "drag-mixed-dpi-20261109-085525.json",
+      "capturedAt": "2026-11-09T08:55:34.9801522+08:00",
+      "primary": {
+        "friendlyName": "AG273QS3R4B",
+        "width": 2560,
+        "height": 1440,
+        "scalePercent": 100.0
+      },
+      "secondary": {
+        "friendlyName": "PHL 279M1RV",
+        "width": 3840,
+        "height": 2160,
+        "scalePercent": 150.0
+      },
+      "steps": [
+        {
+          "step": "placed-mon1",
+          "left": 576,
+          "top": 120,
+          "width": 1408,
+          "height": 792,
+          "dpi": 96,
+          "scalePercent": 100
+        },
+        {
+          "step": "after-drag",
+          "left": 3424,
+          "top": 279,
+          "width": 2112,
+          "height": 1188,
+          "dpi": 144,
+          "scalePercent": 150
+        }
+      ],
+      "containment": {
+        "placed-mon1": true,
+        "after-drag": true
+      }
+    },
+    {
+      "file": "drag-mixed-dpi-20261109-093107.json",
+      "capturedAt": "2026-11-09T09:31:17.0681970+08:00",
+      "primary": {
+        "friendlyName": "AG273QS3R4B",
+        "width": 2560,
+        "height": 1440,
+        "scalePercent": 100.0
+      },
+      "secondary": {
+        "friendlyName": "PHL 279M1RV",
+        "width": 3840,
+        "height": 2160,
+        "scalePercent": 125.0
+      },
+      "steps": [
+        {
+          "step": "placed-mon1",
+          "left": 576,
+          "top": 120,
+          "width": 1408,
+          "height": 792,
+          "dpi": 96,
+          "scalePercent": 100
+        },
+        {
+          "step": "after-drag",
+          "left": 3600,
+          "top": 282,
+          "width": 1760,
+          "height": 990,
+          "dpi": 120,
+          "scalePercent": 125
+        }
+      ],
+      "containment": {
+        "placed-mon1": true,
+        "after-drag": true
+      }
+    },
+    {
+      "file": "drag-mixed-dpi-20261109-093132.json",
+      "capturedAt": "2026-11-09T09:31:41.3389448+08:00",
+      "primary": {
+        "friendlyName": "AG273QS3R4B",
+        "width": 2560,
+        "height": 1440,
+        "scalePercent": 100.0
+      },
+      "secondary": {
+        "friendlyName": "PHL 279M1RV",
+        "width": 3840,
+        "height": 2160,
+        "scalePercent": 200.0
+      },
+      "steps": [
+        {
+          "step": "placed-mon1",
+          "left": 576,
+          "top": 120,
+          "width": 1408,
+          "height": 792,
+          "dpi": 96,
+          "scalePercent": 100
+        },
+        {
+          "step": "after-drag",
+          "left": 3072,
+          "top": 272,
+          "width": 2816,
+          "height": 1584,
+          "dpi": 192,
+          "scalePercent": 200
+        }
+      ],
+      "containment": {
+        "placed-mon1": true,
+        "after-drag": true
+      }
+    },
+    {
+      "file": "drag-mixed-dpi-20261109-093156.json",
+      "capturedAt": "2026-11-09T09:32:05.5878004+08:00",
+      "primary": {
+        "friendlyName": "AG273QS3R4B",
+        "width": 2560,
+        "height": 1440,
+        "scalePercent": 150.0
+      },
+      "secondary": {
+        "friendlyName": "PHL 279M1RV",
+        "width": 3840,
+        "height": 2160,
+        "scalePercent": 200.0
+      },
+      "steps": [
+        {
+          "step": "placed-mon1",
+          "left": 576,
+          "top": 120,
+          "width": 1558,
+          "height": 792,
+          "dpi": 144,
+          "scalePercent": 150
+        },
+        {
+          "step": "after-drag",
+          "left": 3541,
+          "top": 281,
+          "width": 2077,
+          "height": 1056,
+          "dpi": 192,
+          "scalePercent": 200
+        }
+      ],
+      "containment": {
+        "placed-mon1": true,
+        "after-drag": true
+      }
+    }
+  ],
+  "undockCases": [
+    {
+      "file": "undock-os-20261109-093255.json",
+      "window": {
+        "onSecondary": {
+          "left": 3616,
+          "top": 200,
+          "width": 2592,
+          "height": 1458,
+          "dpi": 144,
+          "percent": 150
+        },
+        "afterDisable": {
+          "left": 3616,
+          "top": 200,
+          "width": 2592,
+          "height": 1458,
+          "dpi": 144,
+          "percent": 150,
+          "appAlive": true,
+          "containedInPrimary": false
+        },
+        "afterReenable": {
+          "left": 3616,
+          "top": 200,
+          "width": 2592,
+          "height": 1458,
+          "dpi": 144,
+          "percent": 150,
+          "appAlive": true
+        }
+      },
+      "afterDisable": [
+        {
+          "device": "\\\\.\\DISPLAY1",
+          "width": 2560,
+          "height": 1440,
+          "hz": 165,
+          "x": 0,
+          "y": 0,
+          "dpi": 96,
+          "percent": 100,
+          "primary": true
+        },
+        {
+          "device": "\\\\.\\DISPLAY2",
+          "width": 3840,
+          "height": 2160,
+          "hz": 120,
+          "x": 2560,
+          "y": 0,
+          "dpi": 144,
+          "percent": 150,
+          "primary": false
+        }
+      ]
+    },
+    {
+      "file": "undock-os-20261109-093322.json",
+      "window": {
+        "onSecondary": {
+          "left": 3616,
+          "top": 200,
+          "width": 2592,
+          "height": 1458,
+          "dpi": 144,
+          "percent": 150
+        },
+        "afterDisable": {
+          "left": 703,
+          "top": 134,
+          "width": 1728,
+          "height": 972,
+          "dpi": 96,
+          "percent": 100,
+          "appAlive": true,
+          "containedInPrimary": true
+        },
+        "afterReenable": {
+          "left": 3616,
+          "top": 200,
+          "width": 2592,
+          "height": 1458,
+          "dpi": 144,
+          "percent": 150,
+          "appAlive": true
+        }
+      },
+      "afterDisable": [
+        {
+          "device": "\\\\.\\DISPLAY1",
+          "width": 2560,
+          "height": 1440,
+          "hz": 59,
+          "x": 0,
+          "y": 0,
+          "dpi": 96,
+          "percent": 100,
+          "primary": true
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "DPI scale changes performed via Windows Settings UIA (set-scale-uia.ps1); DisplayConfig SET_DPI_SCALE rc=87 unsupported; registry DpiValue broadcast ineffective.",
+    "Inspector floating window not verifiable: WindowBroker.RegisterSecondary has zero production callers (L-R4a-1).",
+    "Unsaved-edit fail-closed NOT_RUN; physical cable unplug not done (OS-level DisplaySwitch /internal used)."
+  ]
+}

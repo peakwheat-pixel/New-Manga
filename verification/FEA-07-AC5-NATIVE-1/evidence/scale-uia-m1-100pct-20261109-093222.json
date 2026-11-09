@@ -1,0 +1,50 @@
+{
+  "action": "set-scale-uia",
+  "capturedAt": "2026-11-09T09:32:22.5008906+08:00",
+  "monitorNumber": 1,
+  "targetPercent": 100,
+  "before": [
+    {
+      "left": 0,
+      "top": 0,
+      "width": 2560,
+      "height": 1440,
+      "dpi": 144,
+      "percent": 150
+    },
+    {
+      "left": 2560,
+      "top": 0,
+      "width": 3840,
+      "height": 2160,
+      "dpi": 192,
+      "percent": 200
+    }
+  ],
+  "after": [
+    {
+      "left": 0,
+      "top": 0,
+      "width": 2560,
+      "height": 1440,
+      "dpi": 96,
+      "percent": 100
+    },
+    {
+      "left": 2560,
+      "top": 0,
+      "width": 3840,
+      "height": 2160,
+      "dpi": 192,
+      "percent": 200
+    }
+  ],
+  "changed": [
+    {
+      "left": 0,
+      "width": 2560,
+      "before": 150,
+      "after": 100
+    }
+  ]
+}

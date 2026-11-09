@@ -1,0 +1,9 @@
+{
+  "action": "set-scale-uia",
+  "capturedAt": "2026-11-09T09:28:29.6275480+08:00",
+  "targetPercent": 125,
+  "selected": "125%",
+  "dpi": 96,
+  "percent": 100.0,
+  "ok": false
+}
