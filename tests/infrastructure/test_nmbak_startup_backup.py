@@ -240,3 +240,142 @@ def test_stale_package_does_not_rotate_for_an_empty_library(
         assert len(list(backups.glob("*.nmbak"))) == 1
     finally:
         core.conn.close()
+
+
+# ---------------------------------------------------------------------------
+# FEA-13-SCHED-5: schedule-driven automatic backups, receipts and retention.
+# ---------------------------------------------------------------------------
+
+
+def _seed_book(core) -> None:
+    with core.conn as conn:
+        conn.execute(
+            "INSERT INTO books (book_id, title, created_at, updated_at)"
+            " VALUES ('b1', 'x', ?, ?)",
+            (NOW, NOW),
+        )
+
+
+def test_manual_backup_does_not_reset_the_automatic_schedule(tmp_path: Path) -> None:
+    core = assemble_production_core(tmp_path / "data")
+    try:
+        service = core.backup
+        _seed_book(core)
+        _ensure_automatic_backup(core)
+        automatic = [e for e in service.list_backups() if e.get("backup_type") == "automatic"]
+        assert len(automatic) == 1
+
+        service.create("manual", "user made this")
+        _ensure_automatic_backup(core)
+
+        automatic_after = [
+            e for e in service.list_backups() if e.get("backup_type") == "automatic"
+        ]
+        assert len(automatic_after) == 1, "a manual package must not reset the clock"
+    finally:
+        core.conn.close()
+
+
+def test_disabled_schedule_creates_nothing_and_writes_a_receipt(tmp_path: Path) -> None:
+    from bootstrap.core_service import _read_metadata_json
+
+    core = assemble_production_core(tmp_path / "data")
+    try:
+        _seed_book(core)
+        with core.conn as conn:
+            conn.execute(
+                "INSERT INTO application_metadata (metadata_key, value_json, updated_at)"
+                " VALUES ('backup.auto_enabled', 'false', ?)",
+                (NOW,),
+            )
+
+        _ensure_automatic_backup(core)
+
+        assert not [
+            e for e in core.backup.list_backups() if e.get("backup_type") == "automatic"
+        ]
+        receipt = _read_metadata_json(core.conn, "backup.last_receipt")
+        assert receipt["kind"] == "disabled"
+        assert receipt["next_due"] is None
+    finally:
+        core.conn.close()
+
+
+def test_creation_writes_a_typed_receipt(tmp_path: Path) -> None:
+    from bootstrap.core_service import _read_metadata_json
+
+    core = assemble_production_core(tmp_path / "data")
+    try:
+        _seed_book(core)
+        _ensure_automatic_backup(core)
+
+        receipt = _read_metadata_json(core.conn, "backup.last_receipt")
+        assert receipt["kind"] in {"created", "created_first"}
+        assert receipt["status"] == "ok"
+        assert receipt["next_due"]
+        assert receipt["backup_id"]
+    finally:
+        core.conn.close()
+
+
+def test_failure_degrades_to_notice_without_aborting_startup(tmp_path: Path, monkeypatch) -> None:
+    from bootstrap.core_service import _read_metadata_json
+    from infrastructure.sqlite.nmbak import NmbakBackupError
+
+    core = assemble_production_core(tmp_path / "data")
+    try:
+        _seed_book(core)
+
+        def boom(*_args, **_kwargs):
+            raise NmbakBackupError("BACKUP_CREATE_FAILED", "disk full")
+
+        monkeypatch.setattr(core.backup, "create", boom)
+
+        _ensure_automatic_backup(core)  # must not raise
+        receipt = _read_metadata_json(core.conn, "backup.last_receipt")
+        assert receipt["kind"] == "failed"
+        assert receipt["status"] == "failed"
+
+        for _ in range(2):
+            _ensure_automatic_backup(core)
+        degraded = _read_metadata_json(core.conn, "backup.last_receipt")
+        assert degraded["status"] == "degraded"
+        assert degraded["failures"] >= 3
+    finally:
+        core.conn.close()
+
+
+def test_retention_protects_the_recovery_chain(tmp_path: Path) -> None:
+    from bootstrap.core_service import _write_metadata_json
+
+    core = assemble_production_core(tmp_path / "data")
+    try:
+        service = core.backup
+        _seed_book(core)
+        manual = service.create("manual", "user made this")
+        autos = [
+            service.create("automatic", f"auto {index}")["backup_id"]
+            for index in range(7)
+        ]
+        newest_verified = max(
+            (e for e in service.list_backups() if e.get("verified")),
+            key=lambda item: str(item.get("created_at") or ""),
+        )["backup_id"]
+        # Pick the OLDEST automatic package as the last restore's pre_restore:
+        # it falls outside the kept window, so only D4 protection can save it.
+        pre_restore = autos[0]
+        _write_metadata_json(core.conn, "backup.keep_count", 3)
+        _write_metadata_json(core.conn, "backup.last_restore_pre_restore_id", pre_restore)
+
+        _ensure_automatic_backup(core)
+
+        remaining = {e["backup_id"] for e in service.list_backups()}
+        assert manual["backup_id"] in remaining, "manual packages are never pruned"
+        assert newest_verified in remaining, "the newest verified package is protected"
+        assert pre_restore in remaining, "the last restore's pre_restore is protected"
+        automatic_left = [
+            e for e in service.list_backups() if e.get("backup_type") == "automatic"
+        ]
+        assert len(automatic_left) < len(autos)
+    finally:
+        core.conn.close()

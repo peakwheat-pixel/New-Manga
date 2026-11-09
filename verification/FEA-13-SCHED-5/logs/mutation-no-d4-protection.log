@@ -1,0 +1,48 @@
+# command: python -m pytest tests/infrastructure/test_nmbak_startup_backup.py -q -k retention  # after mutation: D4 protection removed (expected RED)
+# shell: pwsh 7.6.8 / python 3.14
+# time: 2026-11-09T22:17:51.5665743+08:00
+# batch: fea-13-sched-5
+# EXIT=1
+F                                                                        [100%]
+================================== FAILURES ===================================
+_________________ test_retention_protects_the_recovery_chain __________________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-1899/test_retention_protects_the_re0')
+
+    def test_retention_protects_the_recovery_chain(tmp_path: Path) -> None:
+        from bootstrap.core_service import _write_metadata_json
+    
+        core = assemble_production_core(tmp_path / "data")
+        try:
+            service = core.backup
+            _seed_book(core)
+            manual = service.create("manual", "user made this")
+            autos = [
+                service.create("automatic", f"auto {index}")["backup_id"]
+                for index in range(7)
+            ]
+            newest_verified = max(
+                (e for e in service.list_backups() if e.get("verified")),
+                key=lambda item: str(item.get("created_at") or ""),
+            )["backup_id"]
+            # Pick the OLDEST automatic package as the last restore's pre_restore:
+            # it falls outside the kept window, so only D4 protection can save it.
+            pre_restore = autos[0]
+            _write_metadata_json(core.conn, "backup.keep_count", 3)
+            _write_metadata_json(core.conn, "backup.last_restore_pre_restore_id", pre_restore)
+    
+            _ensure_automatic_backup(core)
+    
+            remaining = {e["backup_id"] for e in service.list_backups()}
+            assert manual["backup_id"] in remaining, "manual packages are never pruned"
+            assert newest_verified in remaining, "the newest verified package is protected"
+>           assert pre_restore in remaining, "the last restore's pre_restore is protected"
+E           AssertionError: the last restore's pre_restore is protected
+E           assert '64034895a4df43f5aed73b179dc2a36b' in {'00d4c9f8376c47f49c0f2037a2b68db0', '03f86de3e11b49f6bbbef0d999685df5', '36be633cc7134229a2c4529f208d218d', '46d953b1f4f84d958daca2795c837fea'}
+
+tests\infrastructure\test_nmbak_startup_backup.py:375: AssertionError
+---------------------------- Captured stderr call -----------------------------
+[core.schema] applied 9 migration(s) up to v9; schema bootstrap is the only write a read-only session performs (user rows and managed originals are never modified)
+=========================== short test summary info ===========================
+FAILED tests/infrastructure/test_nmbak_startup_backup.py::test_retention_protects_the_recovery_chain
+1 failed, 12 deselected in 0.84s

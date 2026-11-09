@@ -3191,7 +3191,19 @@ class CoreServiceServer:
         self._restore_maintenance_active = True
         try:
             if mode == "overwrite":
-                return service.restore(backup_id, confirm_restore=True)
+                report = service.restore(backup_id, confirm_restore=True)
+                # ADJ D4: remember the rollback package so rotation protects it.
+                try:
+                    pre_restore_id = report.get("pre_restore_backup_id")
+                    if pre_restore_id:
+                        _write_metadata_json(
+                            service.connection,
+                            _BACKUP_LAST_RESTORE_KEY,
+                            pre_restore_id,
+                        )
+                except sqlite3.Error:
+                    pass
+                return report
             return self._merge_restore(
                 service,
                 backup_id,
@@ -8022,66 +8034,213 @@ def _package_age_hours(created_at: object) -> float:
     return (datetime.now(timezone.utc) - parsed).total_seconds() / 3600.0
 
 
+#: FEA-13-SCHED-5 configuration/receipt keys in ``application_metadata``.
+_BACKUP_SCHEDULE_KEY = "backup.schedule"
+_BACKUP_KEEP_KEY = "backup.keep_count"
+_BACKUP_ENABLED_KEY = "backup.auto_enabled"
+_BACKUP_FAILURES_KEY = "backup.auto_failures"
+_BACKUP_RECEIPT_KEY = "backup.last_receipt"
+_BACKUP_LAST_RESTORE_KEY = "backup.last_restore_pre_restore_id"
+
+
+def _read_metadata_json(conn, key: str):
+    try:
+        row = conn.execute(
+            "SELECT value_json FROM application_metadata WHERE metadata_key = ?",
+            (key,),
+        ).fetchone()
+    except sqlite3.Error:
+        return None
+    if row is None:
+        return None
+    try:
+        return json.loads(row[0])
+    except (TypeError, ValueError):
+        return None
+
+
+def _write_metadata_json(conn, key: str, value) -> None:
+    with conn:
+        conn.execute(
+            "INSERT INTO application_metadata (metadata_key, value_json, updated_at)"
+            " VALUES (?, ?, ?)"
+            " ON CONFLICT(metadata_key) DO UPDATE SET"
+            " value_json = excluded.value_json, updated_at = excluded.updated_at",
+            (key, json.dumps(value, ensure_ascii=False), _now_iso_utc()),
+        )
+
+
+def _now_iso_utc() -> str:
+    return datetime.now(timezone.utc).isoformat(timespec="milliseconds")
+
+
+def _parse_iso(value: object):
+    if not isinstance(value, str) or not value:
+        return None
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed
+
+
+def _write_backup_receipt(conn, payload: dict) -> None:
+    receipt = dict(payload)
+    receipt.setdefault("created_at", _now_iso_utc())
+    _write_metadata_json(conn, _BACKUP_RECEIPT_KEY, receipt)
+
+
 def _ensure_automatic_backup(core) -> None:
-    """AC2: guarantee a verified ``.nmbak`` keeps covering an existing library.
+    """FEA-13-SCHED-5: schedule-driven automatic packages with typed receipts.
 
-    A fresh empty library has nothing to protect; a library with books does.
-    Failures are reported to stderr and never abort start-up -- an unwritable
-    backups directory must not make the product unusable.
-
-    REALUSE-DATA-SAFETY-1 review M3: treating "any verified package exists" as
-    full coverage was wrong. After the very first start the library kept growing
-    (imports, pipeline output) while no new automatic package was ever created,
-    so a data loss would roll back to the cold-start snapshot. Coverage now has
-    an age: a package older than ``_AUTOMATIC_BACKUP_REFRESH_HOURS`` is rotated,
-    and ``_prune_automatic_backups`` still bounds the total.
+    Decisions are a pure function of the configured schedule and the age of the
+    newest *automatic* package (a manual backup never resets the clock). Every
+    outcome writes ``backup.last_receipt`` so a missed plan is visible instead
+    of silently skipped; failures never abort start-up, and K consecutive
+    failures degrade to a notice-only receipt. Retention honours ADJ D4.
     """
+    from application.maintenance.backup_schedule import (
+        BackupSchedule,
+        next_due,
+        parse_enabled,
+        parse_keep,
+        parse_max_failures,
+        parse_schedule,
+        select_prunable,
+    )
 
     service = getattr(core, "backup", None)
     if service is None:
         return
+    conn = core.conn
     try:
+        schedule = parse_schedule(_read_metadata_json(conn, _BACKUP_SCHEDULE_KEY))
+        keep = parse_keep(_read_metadata_json(conn, _BACKUP_KEEP_KEY))
+        enabled = parse_enabled(_read_metadata_json(conn, _BACKUP_ENABLED_KEY))
+        max_failures = parse_max_failures(
+            _read_metadata_json(conn, "backup.max_failures")
+        )
         entries = service.list_backups()
         try:
-            books = core.conn.execute("SELECT COUNT(*) FROM books").fetchone()[0]
+            books = conn.execute("SELECT COUNT(*) FROM books").fetchone()[0]
         except sqlite3.Error:
             return
+
+        def prune(current_entries, protected_ids):
+            for entry in select_prunable(current_entries, keep, protected_ids):
+                try:
+                    service.delete(entry["backup_id"])
+                except NmbakBackupError:
+                    pass
+
+        def protections():
+            verified = [entry for entry in entries if entry.get("verified")]
+            newest_verified = (
+                max(verified, key=lambda item: str(item.get("created_at") or ""))
+                if verified
+                else None
+            )
+            protected = {str(newest_verified["backup_id"])} if newest_verified else set()
+            last_restore = _read_metadata_json(conn, _BACKUP_LAST_RESTORE_KEY)
+            if isinstance(last_restore, str) and last_restore:
+                protected.add(last_restore)
+            return protected
+
         if books == 0:
-            _prune_automatic_backups(service, entries)
+            prune(entries, protections())
             return
-        verified = [entry for entry in entries if entry.get("verified")]
+        automatic = [
+            entry
+            for entry in entries
+            if entry.get("backup_type") == "automatic" and entry.get("verified")
+        ]
         newest = (
-            max(verified, key=lambda entry: str(entry.get("created_at") or ""))
-            if verified
+            max(automatic, key=lambda item: str(item.get("created_at") or ""))
+            if automatic
             else None
         )
-        if newest is None:
-            created = service.create(
-                "automatic", "first writable start with an existing library"
+        now = datetime.now(timezone.utc)
+        last = _parse_iso(newest.get("created_at")) if newest else None
+        if not enabled:
+            _write_backup_receipt(
+                conn,
+                {
+                    "kind": "disabled",
+                    "status": "skipped",
+                    "next_due": None,
+                    "message": "automatic backups are disabled",
+                },
             )
-            print(
-                "[core.backup] automatic first-run backup created: "
-                f"{created['backup_id']} ({created['size_bytes']} bytes, "
-                f"verified={created['verified']})",
-                file=sys.stderr,
-                flush=True,
-            )
-            _prune_automatic_backups(service, service.list_backups())
+            prune(entries, protections())
             return
-        age_hours = _package_age_hours(newest.get("created_at"))
-        if age_hours >= _AUTOMATIC_BACKUP_REFRESH_HOURS:
-            created = service.create(
-                "automatic",
-                f"scheduled rotation: newest verified package is {age_hours:.1f}h old",
+        effective = schedule
+        if schedule.kind == "daily":
+            # REALUSE-DATA-SAFETY-1 M3 knob: "daily" means "at least every
+            # _AUTOMATIC_BACKUP_REFRESH_HOURS hours" and legacy tests patch it.
+            effective = BackupSchedule(
+                "custom_hours", hours=max(0, int(_AUTOMATIC_BACKUP_REFRESH_HOURS))
+            )
+        if not effective.due(now, last):
+            prune(entries, protections())
+            return
+        due_at = next_due(now, effective)
+        if newest is None:
+            reason = "first writable start with an existing library"
+        elif last is None or (now - last).total_seconds() / 3600.0 >= (
+            effective.interval_hours() * 2
+        ):
+            reason = "missed schedule: newest automatic package is overdue"
+        else:
+            reason = "scheduled rotation"
+        try:
+            created = service.create("automatic", reason)
+        except NmbakBackupError as error:
+            failures = _read_metadata_json(conn, _BACKUP_FAILURES_KEY)
+            count = (failures if isinstance(failures, int) and failures >= 0 else 0) + 1
+            _write_metadata_json(conn, _BACKUP_FAILURES_KEY, count)
+            _write_backup_receipt(
+                conn,
+                {
+                    "kind": "failed",
+                    "status": "degraded" if count >= max_failures else "failed",
+                    "failures": count,
+                    "code": error.code,
+                    "next_due": due_at.isoformat(timespec="milliseconds")
+                    if due_at
+                    else None,
+                    "message": error.detail,
+                },
             )
             print(
-                "[core.backup] automatic rotation backup created: "
-                f"{created['backup_id']} ({created['size_bytes']} bytes, "
-                f"verified={created['verified']}, previous age {age_hours:.1f}h)",
+                f"[core.backup] automatic backup skipped: {error.code}: {error.detail}",
                 file=sys.stderr,
                 flush=True,
             )
-        _prune_automatic_backups(service, service.list_backups())
+            prune(entries, protections())
+            return
+        _write_metadata_json(conn, _BACKUP_FAILURES_KEY, 0)
+        _write_backup_receipt(
+            conn,
+            {
+                "kind": "created" if newest is not None else "created_first",
+                "status": "ok",
+                "backup_id": created["backup_id"],
+                "size_bytes": created["size_bytes"],
+                "verified": created["verified"],
+                "next_due": due_at.isoformat(timespec="milliseconds") if due_at else None,
+                "message": reason,
+            },
+        )
+        print(
+            "[core.backup] automatic backup created: "
+            f"{created['backup_id']} ({created['size_bytes']} bytes, "
+            f"verified={created['verified']}, {reason})",
+            file=sys.stderr,
+            flush=True,
+        )
+        prune(service.list_backups(), protections() | {str(created["backup_id"])})
     except NmbakBackupError as error:
         print(
             f"[core.backup] automatic backup skipped: {error.code}: {error.detail}",
@@ -8090,26 +8249,19 @@ def _ensure_automatic_backup(core) -> None:
         )
 
 
-def _prune_automatic_backups(service, entries) -> None:
-    """Keep the newest ``_AUTOMATIC_BACKUP_KEEP`` automatic packages only.
-
-    Manual packages are never pruned: a user-created backup is an explicit
-    intent, while the automatic ones exist to bound disk growth.
-    """
-
-    automatic = sorted(
-        (
-            entry
-            for entry in entries
-            if entry.get("verified")
-            and entry.get("backup_type") in ("automatic", "pre_migration", "pre_restore")
-        ),
-        key=lambda entry: entry.get("created_at") or "",
+def _prune_automatic_backups(service, entries, keep=None, protected_ids=None) -> None:
+    """FEA-13-SCHED-5 / ADJ D4: bound automatic packages without deleting the
+    recovery chain. Manual packages are never candidates; the newest verified
+    package and the last restore's ``pre_restore`` are protected."""
+    from application.maintenance.backup_schedule import (
+        DEFAULT_KEEP,
+        parse_keep,
+        select_prunable,
     )
-    excess = len(automatic) - _AUTOMATIC_BACKUP_KEEP
-    if excess <= 0:
-        return
-    for entry in automatic[:excess]:
+
+    keep_value = parse_keep(keep if keep is not None else DEFAULT_KEEP)
+    protected = set(protected_ids or ())
+    for entry in select_prunable(entries, keep_value, protected):
         try:
             service.delete(entry["backup_id"])
         except NmbakBackupError:

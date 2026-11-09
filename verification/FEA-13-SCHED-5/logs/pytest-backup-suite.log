@@ -1,0 +1,8 @@
+# command: python -m pytest tests/application/test_backup_schedule.py tests/infrastructure/test_nmbak_startup_backup.py tests/storage/test_nmbak_backup.py tests/storage/test_nmbak_format.py tests/storage/test_nmbak_coverage.py tests/storage/test_nmbak_identity.py tests/storage/test_nmbak_merge_restore.py tests/storage/test_backup_restore.py tests/core/test_core_backup_wire.py tests/core/test_core_restore_plan.py -q
+# shell: pwsh 7.6.8 / python 3.14
+# time: 2026-11-09T22:18:01.9728204+08:00
+# batch: fea-13-sched-5-r2
+# EXIT=0
+........................................................................ [ 66%]
+....................................                                     [100%]
+108 passed in 12.54s

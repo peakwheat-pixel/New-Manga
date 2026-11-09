@@ -1,0 +1,38 @@
+# command: python -m pytest tests/infrastructure/test_nmbak_startup_backup.py -q -k disabled  # after mutation: disabled flag ignored (expected RED)
+# shell: pwsh 7.6.8 / python 3.14
+# time: 2026-11-09T22:17:28.8231007+08:00
+# batch: fea-13-sched-5
+# EXIT=1
+F                                                                        [100%]
+================================== FAILURES ===================================
+_________ test_disabled_schedule_creates_nothing_and_writes_a_receipt _________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-1896/test_disabled_schedule_creates0')
+
+    def test_disabled_schedule_creates_nothing_and_writes_a_receipt(tmp_path: Path) -> None:
+        from bootstrap.core_service import _read_metadata_json
+    
+        core = assemble_production_core(tmp_path / "data")
+        try:
+            _seed_book(core)
+            with core.conn as conn:
+                conn.execute(
+                    "INSERT INTO application_metadata (metadata_key, value_json, updated_at)"
+                    " VALUES ('backup.auto_enabled', 'false', ?)",
+                    (NOW,),
+                )
+    
+            _ensure_automatic_backup(core)
+    
+>           assert not [
+                e for e in core.backup.list_backups() if e.get("backup_type") == "automatic"
+            ]
+E           AssertionError: assert not [{'backup_id': '77ccb4674c414185a7c90ce2e11a799e', 'backup_type': 'automatic', 'created_at': '2026-11-09T14:17:32.470+00:00', 'size_bytes': 15960, ...}]
+
+tests\infrastructure\test_nmbak_startup_backup.py:294: AssertionError
+---------------------------- Captured stderr call -----------------------------
+[core.schema] applied 9 migration(s) up to v9; schema bootstrap is the only write a read-only session performs (user rows and managed originals are never modified)
+[core.backup] automatic backup created: 77ccb4674c414185a7c90ce2e11a799e (15960 bytes, verified=True, first writable start with an existing library)
+=========================== short test summary info ===========================
+FAILED tests/infrastructure/test_nmbak_startup_backup.py::test_disabled_schedule_creates_nothing_and_writes_a_receipt
+1 failed, 12 deselected in 0.78s

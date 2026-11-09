@@ -79,3 +79,8 @@
 |THEME-MACOS-1、THEME-MACOS-LAYOUTS-1|—|superseded（均并入 THEME-MACOS-2：`ec7316738`/`0e1f71151`；原证据保留）|
 
 > **续表说明**：上文第 62 行的空行原样继承自旧 `REBASELINE_PLAN.md` 的表格（迁移要求不改原字节），其后 17 行为同一张表的续表（GFM 下无表头渲染）；如需重排请在**另一次**独立变更中进行，不要改动本迁入块的 31 行。
+
+## 2026-11-09 迁入（PLAN 当前 DAG 表压缩；节点已 done，原行迁此）
+
+|FEA-09-UI-1|FEA-09|**done**（`b14e04da`；AC1–5 MET；r4 approved）|
+|FEA-06-PREREQ-1|FEA-04b|**done**（impl-r4 approved；AC1/AC3/AC5 residual 转 PREREQ-2，Q-33）|

@@ -16,6 +16,7 @@
 |FEA-13-COV-2|FEA-13-BK2-1|**done**（覆盖清单二期：settings/drafts/plugins/trash-manifest + verified + defer；r2 approved）|
 |FEA-13-ID-3|FEA-13-BK2-1、FEA-13-COV-2|**done**（DatabaseId 原语 + manifest/list/restore 过滤；r2 approved；`67bccb08d`）|
 |FEA-13-RESTORE-4|FEA-13-BK2-1、FEA-13-COV-2、FEA-13-ID-3|**done**（merge restore：plan/defer/UseBackup + staging/marker/L-5；r2 approve；`fcccf4604`）|
+|FEA-13-SCHED-5|FEA-13-BK2-1…RESTORE-4|**in_review**（调度/保留/失败语义；D4 保护；receipt）|
 |FEA-11-PREREQ-1|FEA-09、FEA-10|**done**（C-17 v1.0 FROZEN；pins 18/18；r1+轻量复核 approved P0/P1=0；集成提交见 Task）|
 |FEA-11|FEA-09、FEA-10、FEA-11-PREREQ-1|**done**（2026-11-08 翻转：R4A `fbe337f95`；AC11-1…10 MET；L-STARTUP 子项 NA；L-M1/L-M4/needs_confirmation re-home；L-1…L-11 原文保留）||
 |FEA-11-SCAN-1|FEA-11|**done**（r2 窄面 approved；delivery `7080167e1`；AC-S1…S6 全 MET；AC11-1 终态 MET 带 limitation）|
@@ -40,9 +41,7 @@
 |FEA-07|FEA-00A-IMPL-1、FEA-04、FEA-05-PORT-1、FEA-06|**done**（2026-11-09 翻转：R4a `a03a6794a` + R4b `8e9420f41`；AC1–AC4/AC6–AC8 MET；AC5 原生矩阵 NA/NOT_RUN；L-R4a-1…4 + L-R4b-1…5 具名登记）|
 |FEA-06-RESIDUAL-2|FEA-06-RESIDUAL-1|**done**（2026-11-08 翻转：RESIDUAL-3 `ddc29ecb3` 关 4 格 + Tab/a11y；格 3→RESIDUAL-4；原生 NA）|
 |D-14-STATUS-COLOR-FIX|FEA-06-RESIDUAL-2|**done**（D-14 裁决 A 实施 `5ecc1e4c6`+证据补正 `075dc1682`；impl-r3 approved（ZCode，P0=0/P1=0/P2=2）；集成 `e36a7442b`；全量 **1292/0/57**）|
-|FEA-06-PREREQ-1|FEA-04b|**done**（impl-r4 approved；AC1/AC3/AC5 residual 转 PREREQ-2，Q-33）|
 |FEA-06-PREREQ-2|FEA-06-PREREQ-1|**done**（集成 `92cac5ab1`；scope-r4 + impl-r2 approved；全量 1022/0/57；Fluent 激活/V2 并存 + W-9 承接，W-12/W-13 写域登记）|
-|FEA-09-UI-1|FEA-09|**done**（`b14e04da`；AC1–5 MET；r4 approved）|
 |FEA-10-PREREQ-1|FEA-01-FREEZE-1|**done**（C-08 块②协议注册；集成 `728c8bb0`；impl r1 approved）|
 |FEA-10|FEA-00A、03、09、FEA-10-PREREQ-1|**done**（最终 head `290717f1`，delivery `d1972f0f`；7 轮独立 Review approved P0/P1=0；AC1–AC10 MET；债务 R-005…R-016/F5-01…03）|
 |FEA-C10-DRAFT|—|**done**（C-10 **FROZEN** v5，`T=4 DIP`；pin `ec8fd862…`；[冻结记录](plan/FEA-CONTRACT-FROZEN-C10.md)）|
