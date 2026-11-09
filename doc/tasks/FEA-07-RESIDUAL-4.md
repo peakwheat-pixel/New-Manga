@@ -3,21 +3,21 @@ id: FEA-07-RESIDUAL-4
 title: 默认套件 legacy MainWindow.Show() 真实 AppData 零写入（L-R4b-1 / D-R4b-7）
 kind: implementation
 governance_version: 3
-status: in_review
+status: done
 approval: scope review r1（`doc/reviews/FEA-07-RESIDUAL-4-scope-r1.md`，独立上下文；verdict **NOT_RECOMMENDED（现卡按现文，6 项混装）→ 缩窄为 L-R4b-1-only 后 READY-TO-FREEZE**）+ DSH 2026-11-09 冻结裁决：按该报告 §3/§4/§10 缩窄；L-R4b-2/3/4 拆分或降级、L-R4b-5 仅登记、L-R4a-3 移出；base `77a7459ab`
 suggested_owner: dsh
 owner: dsh
-reviewer: 待指派（必须独立上下文，不得为实现会话/实例）
+reviewer: 独立上下文子代理 r1/r2（`doc/reviews/FEA-07-RESIDUAL-4-r1.md`、`-r2.md`；均非实现会话）
 depends_on:
   - FEA-07
   - FEA-07-RESIDUAL-3
 base_commit: 77a7459ab
 branch: null
 worktree: null
-integration_commit: null
+integration_commit: 7aa1e5778
 delivery_head: 86d65d1a9
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/FEA-07-RESIDUAL-4
 allowed_paths:
   - doc/tasks/FEA-07-RESIDUAL-4.md
@@ -123,10 +123,15 @@ E4/E5 在静默树执行（运行期间不写 `verification/**`）；证据在�
 |---|---|---|---|---|---|
 | worktree | NOT_APPLICABLE（main；base `77a7459ab`） | NOT_APPLICABLE | — | — | 未创建 worktree |
 | temp | `%TEMP%\nm-legacy-ui-<guid>`（测试隔离根，进程退出清理） | NOT_APPLICABLE | — | — | 仅测试临时目录；进程退出删除 |
-| build | `apps/desktop-avalonia/**/bin|obj`（既有构建产物） | NOT_APPLICABLE | — | — | 仓库既有 ignore；未额外归档 |
+| build | `apps/desktop-avalonia/**/bin,obj`（既有构建产物） | NOT_APPLICABLE | — | — | 仓库既有 ignore；未额外归档 |
 | user-data | 真实 `%APPDATA%` 只读比较 | NOT_APPLICABLE | — | — | 未写入；harness delta=0 |
-| evidence | `verification/FEA-07-RESIDUAL-4/**` | PRESERVE_REFERENCED | 原位 | `README.md`/`DEFECTS.md` 内哈希 | 被本卡 EV 引用 |
+| evidence | `verification/FEA-07-RESIDUAL-4/**` | PRESERVE_REFERENCED | `verification/FEA-07-RESIDUAL-4` | `verification/FEA-07-RESIDUAL-4/README.md` | 目录存在；EV 表 9 个 sha256 已登记 |
 
 ## Closeout Record
 
-- 待独立 Review 通过后由 DSH 填写。
+- **2026-11-09 / DSH（关账）**：D-R4b-7 **resolved**；AC-R4-1…AC-R4-6 全部 MET。
+- **Review**：r1（独立子代理）= approved 附条件（P0=0/P1=0/P2=3/P3=4）→ 返修；r2（另一独立子代理，head `df0593ac0`）= **approved**（r1 findings FIXED 6 / PARTIAL 1 / OPEN 0；新增 P2=2 为证据收尾类）→ N-01 已处置（`logs/governance.log` 重生成，check PASS/EXIT 0；EV-GOV 哈希同步）、N-02 已处置（`verification/FEA-09/logs/wire-redacted.ndjson` 已恢复）；P3 处置（self-test 日志重生成、EV commit 列改 `-` 仅以 sha256 为依据）。
+- **门禁**：`check.ps1` 默认 + `-TaskPath` PASS（3 warnings）；`verify_pins` 18/18；`App.Tests` 836/2/11/849（base 833/2/11/846）；全量 sln 1799/2/107（base 1796/2/107）；真实 `%APPDATA%` delta=0（14544 → 14544）。
+- **0 源码/契约改动**：仅 6 个测试文件 + 新增测试 + `verification/**`；App 生产文件、sln、契约、pins、Python 零 diff。
+- **交付/集成**：实现 `86d65d1a9`；最终证据与复审提交 `7aa1e5778`（`integration_commit`）；本收口提交仅翻转状态与指针。
+- **残余**：既有 2 个回归失败（`V2ConformanceTests`/`FluentPageTests`）建议另立修复卡；`R-LEGACY-GUARD`（全仓构造守卫）follow-up；L-R4b-2/3/4 已 re-home；L-R4a-3 DROP。
