@@ -24,3 +24,11 @@
 ew ReaderWindow(...) + window.Show()；ReaderWindow 构造设 SystemDecorations.None + WindowState.FullScreen，ReaderWorkbenchPages.cs:2596-2598）。
 - 推断：ReaderWindow.Show() 在本机（远程会话/无本地控制台）下无法完成全屏窗口创建（可能抛异常），主窗被系统最小化而非恢复。
 - 结论：**产品缺陷候选（需本地控制台复现确认）**；AC5 的「全屏切换」子项记 NOT_RUN，不写 PASS。
+
+
+## D-AC5-2 更正（2026-11-09，append-only，原文保留）
+
+- 原记录中「按下 F11 后主窗被最小化 rect(-32000,-32000)」**不成立**：该坐标只出现在 D-AC5-1 拔屏记录；F11 相关证据分别是 `239,322 1116×799`（press-f11-112923）、`-8,-8 2576×1408`（watch-immersive-140944，最大化）与无窗口列表（post-f11-140533）。
+- 根因更正：上述 F11 观测均在默认 **`--shell=v2`** 壳采集，该壳不创建 `MainWindow`，而 F11/沉浸实现只存在于 legacy 壳 ⇒ 「无沉浸窗」是 v2 壳的预期结果，不能推断键盘/系统异常。
+- legacy 壳实测（`--shell=legacy`）：F11 → 无边框全屏「阅读器」（无标题栏、1920×1080，当时唯一显示）、Esc 关闭、主窗恢复（`verification/FEA-07-IMMERSIVE-F11-1/evidence/legacy-f11-native-20261109-154752.json`）。
+- 用户可见缺口：默认 v2 壳无 F11 入口 → 另立 `doc/tasks/FEA-07-V2-F11-1.md`（proposed，待用户裁决）。

@@ -1,0 +1,109 @@
+{
+  "case": "legacy-f11-native",
+  "capturedAt": "2026-11-09T15:48:03.4075483+08:00",
+  "app": {
+    "pid": 48120,
+    "exe": "G:\\CODEX\\New Manga\\apps\\desktop-avalonia\\src\\NewManga.App\\bin\\Release\\net9.0\\NewManga.App.exe",
+    "args": [
+      "--shell=legacy",
+      "--data-root",
+      "G:\\CODEX\\New Manga.workspace\\FEA-07-AC5-NATIVE-1\\reader-session\\data",
+      "--log-dir",
+      "G:\\CODEX\\New Manga.workspace\\FEA-07-IMMERSIVE-F11-1\\legacy-20261109-154752\\logs",
+      "--theme-home",
+      "G:\\CODEX\\New Manga.workspace\\FEA-07-IMMERSIVE-F11-1\\legacy-20261109-154752\\theme"
+    ],
+    "shell": "legacy",
+    "sidecar": "G:\\CODEX\\New Manga.workspace\\FEA-07-AC5-NATIVE-1\\sidecar",
+    "dataRoot": "G:\\CODEX\\New Manga.workspace\\FEA-07-AC5-NATIVE-1\\reader-session\\data",
+    "logDir": "G:\\CODEX\\New Manga.workspace\\FEA-07-IMMERSIVE-F11-1\\legacy-20261109-154752\\logs"
+  },
+  "navSample": [
+    "书架",
+    "工作台",
+    "阅读器",
+    "设置",
+    "换主题",
+    "导入文件",
+    "导入文件夹",
+    "新建",
+    "刷新",
+    "全部",
+    "未分类"
+  ],
+  "postMessageRc": 3,
+  "immersive": {
+    "left": 0,
+    "top": 0,
+    "width": 1920,
+    "height": 1080,
+    "hasCaption": false,
+    "title": "阅读器",
+    "coversPrimary": false
+  },
+  "mainWindow": {
+    "left": 320,
+    "top": 106,
+    "width": 1280,
+    "height": 820,
+    "showCmd": 1,
+    "minimized": false
+  },
+  "statusHint": [],
+  "hintVisible": false,
+  "statusSample": [
+    "New Manga",
+    "书架",
+    "工作台",
+    "阅读器",
+    "设置",
+    "Host 就绪",
+    "换主题",
+    "Esc 退出 · F fit · H 隐藏 UI",
+    "测试 · 1 · 169 页 · rtl",
+    "书：测试 · 章：1"
+  ],
+  "logFile": "G:\\CODEX\\New Manga.workspace\\FEA-07-IMMERSIVE-F11-1\\legacy-20261109-154752\\logs\\immersive-open.log",
+  "logExists": false,
+  "screenshots": [
+    {
+      "file": "G:\\CODEX\\New Manga.workspace\\FEA-07-IMMERSIVE-F11-1\\shots\\20261109-154801-legacy-before.png",
+      "sha256": "2fa910836fa1736309d5a3ac9626f4c77c9152f6a26b513b8e52c09e5657b82c"
+    },
+    {
+      "file": "G:\\CODEX\\New Manga.workspace\\FEA-07-IMMERSIVE-F11-1\\shots\\20261109-154803-legacy-after.png",
+      "sha256": "1773a1ced8eaac76be1df9ea0e1f3fb6bb7275e9961ac55e5f7e27bf8eea39df"
+    }
+  ],
+  "afterEsc": {
+    "extraWindows": 0,
+    "main": {
+      "left": 320,
+      "top": 106,
+      "width": 1280,
+      "height": 820,
+      "hasCaption": true,
+      "showCmd": 1
+    },
+    "screenshot": {
+      "file": "G:\\CODEX\\New Manga.workspace\\FEA-07-IMMERSIVE-F11-1\\shots\\20261109-154806-legacy-after-esc.png",
+      "sha256": "2d355e31b26aa7ad6dc9a8c7746eecc43e78bac3c8d939f03042fe7f3e9fbf8e"
+    }
+  },
+  "build": {
+    "exeSha256": "956fb76e4f603c3cef7ad6a541261fae3acbd2a22e9fa6f54087ada0f550392e",
+    "exeMtime": "2026-11-09T15:37:45.3684374+08:00",
+    "repoHead": "9d4b4c8ea4ff72294fad87db3d5830b75e0521e3"
+  },
+  "displaysNow": [
+    {
+      "gdiDevice": "\\\\.\\DISPLAY1",
+      "friendlyName": "Mi TV",
+      "width": 1920,
+      "height": 1080,
+      "dpi": 96,
+      "scalePercent": 100.0,
+      "primary": true
+    }
+  ]
+}

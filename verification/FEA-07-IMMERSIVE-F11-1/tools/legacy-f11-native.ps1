@@ -139,6 +139,35 @@ if ($immersive) {
   [LF]::Key([IntPtr][int64]$immersive[0], 0x1B) | Out-Null  # Esc
   Start-Sleep -Seconds 2
   $extra = @([LF]::V([uint32]$proc.Id) | Where-Object { ($_ -split '\|',8)[7] -ne 'New Manga' }).Count
-  Write-Host "after ESC extra=$extra"
+  $afterMain = $null
+  foreach ($l in [LF]::V([uint32]$proc.Id)) { $p = $l -split '\|',8; if ($p[7] -eq 'New Manga') { $afterMain = $p } }
+  $afterShot = Capture 'legacy-after-esc'
+  # N-012: persist the post-Esc state instead of only printing it.
+  $doc.afterEsc = [ordered]@{
+    extraWindows = $extra
+    main = if ($afterMain) { [ordered]@{ left=[int]$afterMain[1]; top=[int]$afterMain[2]; width=[int]$afterMain[3]; height=[int]$afterMain[4]; hasCaption=($afterMain[5] -eq '1'); showCmd=[int]$afterMain[6] } } else { $null }
+    screenshot = $afterShot
+  }
+} else {
+  $doc.afterEsc = [ordered]@{ extraWindows = $null; main = $null; screenshot = $null; note = 'immersive not opened; Esc not sent' }
 }
+
+# N-012: bind the artefact to the build and the live topology.
+$doc.build = [ordered]@{
+  exeSha256 = (Get-FileHash -Algorithm SHA256 -Path $exe).Hash.ToLowerInvariant()
+  exeMtime = (Get-Item $exe).LastWriteTime.ToString('o')
+  repoHead = (& git -C $repo rev-parse HEAD).Trim()
+}
+$probeOut = Join-Path $root 'probe'
+& pwsh -NoProfile -File (Join-Path $repo 'verification/FEA-07-AC5-NATIVE-1/tools/probe-displays.ps1') -OutDir $probeOut -Label 'legacy-session' 2>&1 | Out-Null
+$probeFile = Get-ChildItem $probeOut -Filter 'displays-legacy-session-*.json' -ErrorAction SilentlyContinue | Sort-Object LastWriteTime | Select-Object -Last 1
+if ($probeFile) {
+  $probeJson = Get-Content -Raw $probeFile.FullName | ConvertFrom-Json
+  $doc.displaysNow = @($probeJson.displays | ForEach-Object { [ordered]@{ gdiDevice=$_.gdiDevice; friendlyName=$_.friendlyName; width=$_.width; height=$_.height; dpi=$_.dpi; scalePercent=$_.scalePercent; primary=$_.primary } })
+} else {
+  $doc.displaysNow = @()
+}
+$doc | ConvertTo-Json -Depth 9 | Set-Content -Path $out -Encoding UTF8
+Write-Host "saved (with afterEsc/build/displays): $out"
+
 if (-not $proc.HasExited) { $proc.Kill($true); $proc.WaitForExit(5000) | Out-Null; Write-Host 'app closed' }
