@@ -28,9 +28,22 @@ CHECK commit_digest_match / distinct_host_pid / distinct_core_session /
       page_bindings_fields_unchanged / journal_present  → 全部 =1
 ```
 
+## 逐项门禁记录（最终 head）
+
+| 步骤 | 命令 | 时间（+08:00） | head | EXIT |
+|---|---|---|---|---|
+| 治理默认 | `pwsh -NoProfile -File tools/governance/check.ps1` | 01:2x | `c20145bf2` | 0 |
+| 治理指定卡 | `... check.ps1 -TaskPath doc/tasks/FEA-11-HOST-AUTH-3.md` | 01:2x | `c20145bf2` | 0 |
+| 契约 pin | `pwsh -NoProfile -File tools/governance/verify_pins.ps1` | 01:2x | `c20145bf2` | 0（18/18） |
+| API 清单 | `python tools/generate_api_inventory.py --check` | 01:1x | `c20145bf2` | 0 |
+| 全量 pytest | `python -m pytest -q` | 00:5x | `bb24cb99a` | 0（3468/0/10） |
+| 崩溃正例 | `crash-ack.ps1`（gated） | 01:0x | `c20145bf2` | 0（10 CHECK） |
+| 崩溃反例 | `crash-ack.ps1 -Negative`（gated） | 01:09 | `c20145bf2` | 0（NEGATIVE_PASS） |
+
 ## 崩溃证据归档（每次运行）
 
-`crash/<run-id>/`：`park.json`、`recover.json`、`pids-before.txt`、`pids-after.txt`、`library.db`（前后同名副本）、`wire-redacted.ndjson`。
+`crash/<run-id>/`：`park.json`、`recover.json`、`pids-before.txt`、`pids-after.txt`、`library.db`、`wire-redacted.ndjson`（`signature` 已由 `tools/redact_signature.py` 脱敏）。
+说明：`kill.json`/`db_before`/`db_after`/`frames.txt`/`sha256.txt` 以 `park.json`/`recover.json` 的内嵌字段（`source_sha256`、`db_counts`、`wire_lines`、`second_call_frames`）表达，未单独成文件；`4a18…`/`8e63…` 为负例/早期运行归档。
 
 ## 变异判别
 
