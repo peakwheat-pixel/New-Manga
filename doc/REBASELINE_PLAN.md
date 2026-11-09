@@ -52,7 +52,7 @@
 
 **V11R 程序**：[V11R_PROGRAM](V11R_PROGRAM.md) 为**唯一活动任务 DAG**（V1.1 整改 + 新 Avalonia UI/UX + Theme Studio）；接口契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)；设计基线 `doc/design/redesign-v1/40-fusion/`。历史节点原状保留；READY 节点由本 Plan 维护。
 
-READY 节点：FEA-14-SET-1
+READY 节点：无
 
 ## 历史快照（终态节点，非当前 DAG）
 

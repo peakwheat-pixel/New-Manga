@@ -3,10 +3,10 @@ id: FEA-14-SET-1
 title: FEA-14 切片 1：设置/字体面板（可切换前端架构线 S5 收口切片）
 kind: implementation
 governance_version: 3
-status: ready
+status: in_progress
 approval: **scope review r1（`doc/reviews/FEA-14-SET-1-scope-r1.md`）**：卡面「字体选择+持久化」= NEEDS_UNFREEZE；DSH 2026-11-10 采纳 **§1.6 窄化口径**（字体组 = 只读投影 + 回退解析 + 本地样例预览，零写入/零新持久化/零契约字节）→ **READY-TO-FREEZE**，按本卡冻结实施。
 suggested_owner: zcode
-owner: null
+owner: dsh
 reviewer: null
 depends_on:
   - FEA-13-SRC-6
