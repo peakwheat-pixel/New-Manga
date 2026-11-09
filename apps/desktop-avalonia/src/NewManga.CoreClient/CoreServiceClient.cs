@@ -1572,6 +1572,98 @@ public sealed class CoreServiceClient : IAsyncDisposable
         return RequireResult(response, SourceListScanTargetsCommand);
     }
 
+    /// <summary>
+    /// FEA-11-HOST-AUTH-3 (C-17 v1.2 §5.1): the read-only plan materialization projection
+    /// (<c>source_get_sync_plan_materialized</c>, host-control, closed shape). Host-internal:
+    /// deliberately NOT registered on the Host command dispatcher / C-07 and it has no UI face.
+    /// Zero writes; the returned data is NOT an authorization -- the caller still mints a fresh
+    /// grant through the existing C-16 validation path.
+    /// </summary>
+    public const string SourceGetSyncPlanMaterializedCommand = "source_get_sync_plan_materialized";
+
+    /// <summary>FEA-11-HOST-AUTH-3: the additive capability gating the projection.</summary>
+    public const string SourcePlanMaterializationCapability = "source.sync.plan-materialization/1";
+
+    /// <summary>One projected plan target entry (Core-authoritative locator/ordinal).</summary>
+    public sealed record SourcePlanMaterializedEntry(
+        string EntryId,
+        string Locator,
+        int Ordinal,
+        string ContentDigestKind,
+        string? ContentDigest);
+
+    /// <summary>The projected plan subset the recovery path re-mints grants from.</summary>
+    public sealed record SourceSyncPlanMaterialization(
+        string Format,
+        string PlanId,
+        string PlanDigest,
+        string Kind,
+        string SourceId,
+        string? VersionId,
+        string? ContentDigest,
+        IReadOnlyList<SourcePlanMaterializedEntry> Entries,
+        string ReferenceSetDigest,
+        string State,
+        string ExpiresAt);
+
+    /// <summary>
+    /// FEA-11-HOST-AUTH-3: read back the persisted plan subset (C-17 v1.2). Capability is probed
+    /// first (never by dispatching the command and interpreting UNKNOWN_COMMAND).
+    /// </summary>
+    public async Task<SourceSyncPlanMaterialization> GetSourceSyncPlanMaterializedAsync(
+        string planId,
+        string planDigest,
+        CancellationToken cancellationToken = default)
+    {
+        await RequireCapabilitiesAsync(new[] { SourcePlanMaterializationCapability }, cancellationToken)
+            .ConfigureAwait(false);
+        var response = await SendHostControlAsync(
+                SourceGetSyncPlanMaterializedCommand,
+                writer =>
+                {
+                    writer.WriteString("plan_id", planId);
+                    writer.WriteString("plan_digest", planDigest);
+                },
+                _options.RequestTimeout,
+                HostSession,
+                cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, SourceGetSyncPlanMaterializedCommand);
+        if (result.ValueKind != JsonValueKind.Object)
+        {
+            throw Malformed("materialization result is not an object");
+        }
+
+        var entries = new List<SourcePlanMaterializedEntry>();
+        if (result.TryGetProperty("entries", out var entriesJson) && entriesJson.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var item in entriesJson.EnumerateArray())
+            {
+                entries.Add(new SourcePlanMaterializedEntry(
+                    ReadString(item, "entry_id") ?? string.Empty,
+                    ReadString(item, "locator") ?? string.Empty,
+                    item.TryGetProperty("ordinal", out var ordinal) && ordinal.ValueKind == JsonValueKind.Number
+                        ? ordinal.GetInt32()
+                        : 0,
+                    ReadString(item, "content_digest_kind") ?? string.Empty,
+                    ReadString(item, "content_digest")));
+            }
+        }
+
+        return new SourceSyncPlanMaterialization(
+            ReadString(result, "format") ?? string.Empty,
+            ReadString(result, "plan_id") ?? string.Empty,
+            ReadString(result, "plan_digest") ?? string.Empty,
+            ReadString(result, "kind") ?? string.Empty,
+            ReadString(result, "source_id") ?? string.Empty,
+            ReadString(result, "version_id"),
+            ReadString(result, "content_digest"),
+            entries,
+            ReadString(result, "reference_set_digest") ?? string.Empty,
+            ReadString(result, "state") ?? string.Empty,
+            ReadString(result, "expires_at") ?? string.Empty);
+    }
+
     public async Task ShutdownAsync(CancellationToken cancellationToken = default)
     {
         if (_disposed)

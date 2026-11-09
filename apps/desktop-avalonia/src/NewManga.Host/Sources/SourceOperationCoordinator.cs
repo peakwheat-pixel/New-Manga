@@ -36,16 +36,19 @@ public sealed class SourceOperationCoordinator
     private readonly string directory;
     private readonly Func<bool> enabled;
     private readonly SourceAccessRegistry? registry;
+    private readonly SourceReadCoordinator? reads;
     private readonly object gate = new();
 
     public SourceOperationCoordinator(
         CoreServiceClient? core, string dataRoot, Func<bool>? enabled = null,
-        SourceAccessRegistry? registry = null)
+        SourceAccessRegistry? registry = null,
+        SourceReadCoordinator? reads = null)
     {
         this.core = core;
         directory = Path.Combine(dataRoot, "host", "source-operations");
         this.enabled = enabled ?? (() => true);
         this.registry = registry;
+        this.reads = reads;
     }
 
     /// <summary>
@@ -188,7 +191,112 @@ public sealed class SourceOperationCoordinator
     /// <param name="operationId">The journaled operation.</param>
     /// <param name="recovery">ACK semantics (<c>core-committed</c> only) vs
     /// recovery semantics (<c>core-committed</c>/<c>host-authorized</c>/<c>failed</c>).</param>
-    public CompletionMaterial PrepareCompletion(string operationId, bool recovery = false)
+    /// <summary>
+    /// FEA-11-HOST-AUTH-3 (C-17 v1.2 / AC-H3-3): re-mint FRESH source-read grants for an
+    /// already committed operation after the process tree died. Inputs: the Core materialized
+    /// plan subset (version + entries) and the registry's single readable root. The normal
+    /// Authorize/Issue validation still applies; no journal grant id is reused and no locator,
+    /// kind or path is guessed (a multi-root registry fails closed).
+    /// </summary>
+    private async Task<IReadOnlyList<string>> MintRecoveryGrantsAsync(
+        JournalEntry entry,
+        CancellationToken cancellationToken)
+    {
+        var accessRegistry = registry
+            ?? throw new SourceAccessException("SOURCE_REGISTRY_UNAVAILABLE");
+        var client = core ?? throw new SourceAccessException("CORE_UNAVAILABLE");
+        var readsCoordinator = reads
+            ?? throw new SourceAccessException("CORE_UNAVAILABLE");
+
+        var material = await client
+            .GetSourceSyncPlanMaterializedAsync(entry.PlanId, entry.PlanDigest, cancellationToken)
+            .ConfigureAwait(false);
+        // Host recovery precondition (scope r2): only an applied plan may re-mint.
+        if (!string.Equals(material.State, "applied", StringComparison.Ordinal))
+        {
+            throw new SourceAccessException("SOURCE_PLAN_STALE");
+        }
+        if (string.IsNullOrWhiteSpace(material.SourceId) || string.IsNullOrWhiteSpace(material.VersionId))
+        {
+            throw new SourceAccessException("SOURCE_PLAN_UNAVAILABLE");
+        }
+
+        // source_kind is Core-authoritative (C-17 v1.1 §5.2 ScanTarget); never guessed.
+        var targets = await client.ListSourceScanTargetsAsync(cancellationToken).ConfigureAwait(false);
+        string? sourceKind = null;
+        if (targets.ValueKind == JsonValueKind.Object
+            && targets.TryGetProperty("targets", out var targetsJson)
+            && targetsJson.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var target in targetsJson.EnumerateArray())
+            {
+                if (target.TryGetProperty("source_id", out var sourceId)
+                    && sourceId.ValueKind == JsonValueKind.String
+                    && string.Equals(sourceId.GetString(), material.SourceId, StringComparison.Ordinal))
+                {
+                    sourceKind = target.TryGetProperty("source_kind", out var kind)
+                        && kind.ValueKind == JsonValueKind.String
+                        ? kind.GetString()
+                        : null;
+                    break;
+                }
+            }
+        }
+        if (string.IsNullOrWhiteSpace(sourceKind))
+        {
+            throw new SourceAccessException("SOURCE_ACCESS_DENIED");
+        }
+
+        var entries = material.Entries
+            .Select(item => new SourceIdentityEntry(item.EntryId, item.Locator, item.Ordinal))
+            .ToArray();
+
+        var baselines = ReadAuthorizationBaselines(entry, out _);
+        var known = accessRegistry.List().ToDictionary(item => item.RegistryId, item => item);
+        var grants = new List<string>();
+        foreach (var baseline in baselines)
+        {
+            if (!known.TryGetValue(baseline.RegistryId, out var live))
+            {
+                throw new SourceAccessException("SOURCE_ACCESS_DENIED");
+            }
+            if (live.RevokedAt is not null)
+            {
+                throw new SourceAccessException("SOURCE_GRANT_REVOKED");
+            }
+            var roots = live.Roots
+                .Where(root => root.Readable)
+                .Select(root => root.Root)
+                .ToArray();
+            if (roots.Length == 0)
+            {
+                throw new SourceAccessException("SOURCE_REGISTRY_UNAVAILABLE");
+            }
+            // R-r2-03: exactly one readable root, otherwise the source path would be guessed.
+            if (roots.Length != 1)
+            {
+                throw new SourceAccessException("SOURCE_ACCESS_DENIED");
+            }
+            var grantId = await readsCoordinator
+                .IssueForRecoveryAsync(
+                    baseline.RegistryId,
+                    live.Generation,
+                    roots[0],
+                    sourceKind,
+                    material.SourceId,
+                    material.VersionId,
+                    entries,
+                    cancellationToken)
+                .ConfigureAwait(false);
+            grants.Add(grantId);
+        }
+        return grants;
+    }
+
+    public CompletionMaterial PrepareCompletion(
+        string operationId,
+        bool recovery = false,
+        IReadOnlyList<string>? recoveryGrantIds = null)
     {
         RequireEnabled();
         var accessRegistry = registry
@@ -295,9 +403,12 @@ public sealed class SourceOperationCoordinator
             minted.HostReceiptId,
             authorizationJson,
             minted.AuthorizationDigest,
-            string.IsNullOrWhiteSpace(entry.GrantIds)
+            // FEA-11-HOST-AUTH-3 (AC-H3-3): the recovery path re-mints fresh grants and
+            // NEVER reuses the apply-time journal grant ids.
+            recoveryGrantIds
+            ?? (string.IsNullOrWhiteSpace(entry.GrantIds)
                 ? Array.Empty<string>()
-                : entry.GrantIds.Split(',', StringSplitOptions.RemoveEmptyEntries));
+                : entry.GrantIds.Split(',', StringSplitOptions.RemoveEmptyEntries)));
     }
 
     /// <summary>FEA-11: Host durable ACK first, then tell the Core; the ACK
@@ -307,14 +418,22 @@ public sealed class SourceOperationCoordinator
         string operationId, CancellationToken cancellationToken = default)
     {
         RequireEnabled();
+        JournalEntry early;
         lock (gate)
         {
-            var early = Read(operationId);
+            early = Read(operationId);
             if (early.State == "acknowledged") return early;
         }
 
-        // C-17:160/:169 — durable FRESH authorization before any Core frame.
-        var material = PrepareCompletion(operationId);
+        // C-17:160/:169 — the fresh authorization is durable BEFORE any Core frame. It stays
+        // Core-free on purpose (C-17 §5.2 "先落盘"): a recovery after a crash must find it.
+        var prepared = PrepareCompletion(operationId);
+
+        // FEA-11-HOST-AUTH-3 (AC-H3-3): the completion itself carries FRESH re-minted grants
+        // (materialized plan subset + single readable root); journal ids are never reused.
+        var recoveryGrants = await MintRecoveryGrantsAsync(early, cancellationToken)
+            .ConfigureAwait(false);
+        var material = prepared with { GrantIds = recoveryGrants };
         var client = core ?? throw new SourceAccessException("CORE_UNAVAILABLE");
         using var authorization = JsonDocument.Parse(material.AuthorizationJson);
         await client.SendHostControlAsync(
@@ -418,8 +537,13 @@ public sealed class SourceOperationCoordinator
             }
         }
 
-        // C-17:160/:169 — durable FRESH authorization before any Core frame.
-        var material = PrepareCompletion(operationId, recovery: true);
+        // C-17:160/:169 — the fresh authorization is durable BEFORE any Core frame (Core-free).
+        var prepared = PrepareCompletion(operationId, recovery: true);
+
+        // FEA-11-HOST-AUTH-3 (AC-H3-3): fresh re-minted grants; journal ids are never reused.
+        var recoveryGrants = await MintRecoveryGrantsAsync(entry, cancellationToken)
+            .ConfigureAwait(false);
+        var material = prepared with { GrantIds = recoveryGrants };
         using var authorization = JsonDocument.Parse(material.AuthorizationJson);
         await client.SendHostControlAsync(
                 "CompleteSourceOperationRecovery",

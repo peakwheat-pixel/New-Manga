@@ -490,6 +490,36 @@ public sealed class SourceReadCoordinator(
     }
 
     /// <summary>
+    /// FEA-11-HOST-AUTH-3 (C-17 v1.2 / AC-H3-3): the NARROW recovery mint. It re-mints a fresh
+    /// source-read grant for an already-persisted plan after the process tree died, using the
+    /// Core-authoritative materialized subset (version + entries) and the registry's single
+    /// readable root. It never revives a grant and never rebuilds an identity: the normal
+    /// <see cref="IssueAsync"/> validation (registry/generation/identity) still applies.
+    /// </summary>
+    public async Task<string> IssueForRecoveryAsync(
+        string registryId,
+        int generation,
+        string sourcePath,
+        string sourceKind,
+        string sourceId,
+        string version,
+        IReadOnlyList<SourceIdentityEntry>? entries,
+        CancellationToken cancellationToken = default)
+    {
+        return await IssueAsync(
+                registryId,
+                generation,
+                sourcePath,
+                sourceKind,
+                sourceId,
+                version,
+                RenditionFor(sourceKind),
+                containerEntries: entries,
+                cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    /// <summary>
     /// FEA-11-RUN-GRANT-2 (2B, C-16 v1.4 §2 / card S-5): the container-entry plan for ONE
     /// mint. Only the container kinds (zip/cbz/pdf) carry member entries, and only from the
     /// Core-authoritative scan identity — the Host NEVER infers, renumbers or guesses a

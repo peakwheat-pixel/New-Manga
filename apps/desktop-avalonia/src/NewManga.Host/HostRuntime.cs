@@ -1240,7 +1240,10 @@ public sealed class HostRuntime : IAsyncDisposable
                         // FEA-11-HOST-AUTH-2 (C-17 §3.2:161/:169): ACK/recovery re-read
                         // and re-authorize this registry instead of replaying the
                         // authorization the apply journaled.
-                        Registry);
+                        Registry,
+                        // FEA-11-HOST-AUTH-3 (C-17 v1.2 / AC-H3-3): the recovery path re-mints
+                        // fresh grants through the SAME coordinator (Sources is built above).
+                        Sources);
                 }
                 catch (Exception error) when (error is SourceAccessException or IOException or UnauthorizedAccessException)
                 { _log.Warn("source registry unavailable"); }
