@@ -1,11 +1,9 @@
-SNAPSHOT OK -> verification\FEA-07-RESIDUAL-4\evidence\appdata-before.json
-ZERO-WRITE OK: com.newmanga.desktop + NewManga unchanged (delta=0)
-# appdata-isolation-check mode=Capture time=2026-11-09T19:05:27.2603968+08:00
+# appdata-isolation-check mode=Capture time=2026-11-09T19:22:13.0417626+08:00
 # shell=7.6.8 / Core rootOverride=
 # script=G:\CODEX\New Manga\verification\FEA-07-RESIDUAL-4\tools\appdata-isolation-check.ps1
 SNAPSHOT OK -> verification\FEA-07-RESIDUAL-4\evidence\appdata-before.json
 EXIT=0
-# appdata-isolation-check mode=Verify time=2026-11-09T19:10:57.4353835+08:00
+# appdata-isolation-check mode=Verify time=2026-11-09T19:22:13.4926249+08:00
 # shell=7.6.8 / Core rootOverride=
 # script=G:\CODEX\New Manga\verification\FEA-07-RESIDUAL-4\tools\appdata-isolation-check.ps1
 before: 14544 window-material lines; after: 14544 window-material lines

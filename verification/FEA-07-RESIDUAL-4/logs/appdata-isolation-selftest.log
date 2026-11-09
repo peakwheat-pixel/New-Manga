@@ -1,21 +1,8 @@
-SELFTEST KILL: appended line detected as delta -> EXIT 1 by design
-SELFTEST OK: no-change compare delta=0 -> EXIT 0
-# appdata-isolation-check mode=SelfTest time=2026-11-09T19:04:44.5523342+08:00
+# appdata-isolation-check mode=SelfTest time=2026-11-09T19:22:11.4705367+08:00
 # shell=7.6.8 / Core rootOverride=
 # script=G:\CODEX\New Manga\verification\FEA-07-RESIDUAL-4\tools\appdata-isolation-check.ps1
-  [child] # appdata-isolation-check mode=Verify time=2026-11-09T19:04:44.9517675+08:00
-  [child] # shell=7.6.8 / Core rootOverride=C:\Users\49745\AppData\Local\Temp\nm-r4-selftest-946e01a55e8b46a78e40049e03b7b1cb
-  [child] # script=G:\CODEX\New Manga\verification\FEA-07-RESIDUAL-4\tools\appdata-isolation-check.ps1
-  [child] before: 3 window-material lines; after: 4 window-material lines
-  [child] ZERO-WRITE OK: com.newmanga.desktop + NewManga unchanged (delta=0)
-  [child] EXIT=0
-SELFTEST FAIL: changed root must make -Verify exit 1, got EXIT=0
-EXIT=1
-# appdata-isolation-check mode=SelfTest time=2026-11-09T19:05:06.7381154+08:00
-# shell=7.6.8 / Core rootOverride=
-# script=G:\CODEX\New Manga\verification\FEA-07-RESIDUAL-4\tools\appdata-isolation-check.ps1
-  [child] # appdata-isolation-check mode=Verify time=2026-11-09T19:05:07.1265575+08:00
-  [child] # shell=7.6.8 / Core rootOverride=C:\Users\49745\AppData\Local\Temp\nm-r4-selftest-80c5696972e449588a8b3da0636ae0bf
+  [child] # appdata-isolation-check mode=Verify time=2026-11-09T19:22:11.8659068+08:00
+  [child] # shell=7.6.8 / Core rootOverride=C:\Users\49745\AppData\Local\Temp\nm-r4-selftest-7bc1fba803c34ab0bb143230f548b398
   [child] # script=G:\CODEX\New Manga\verification\FEA-07-RESIDUAL-4\tools\appdata-isolation-check.ps1
   [child] before: 3 window-material lines; after: 4 window-material lines
   [child] DELTA DETECTED (2 item(s)) — real AppData was written:
@@ -23,30 +10,8 @@ EXIT=1
   [child]   - com.newmanga.desktop window-material.log lines: 3 -> 4
   [child] EXIT=1
 SELFTEST KILL: appended line detected by child -Verify -> EXIT 1 (real exit code)
-  [child] # appdata-isolation-check mode=Verify time=2026-11-09T19:05:07.6717339+08:00
-  [child] # shell=7.6.8 / Core rootOverride=C:\Users\49745\AppData\Local\Temp\nm-r4-selftest-80c5696972e449588a8b3da0636ae0bf
-  [child] # script=G:\CODEX\New Manga\verification\FEA-07-RESIDUAL-4\tools\appdata-isolation-check.ps1
-  [child] before: 3 window-material lines; after: 4 window-material lines
-  [child] DELTA DETECTED (2 item(s)) — real AppData was written:
-  [child]   - com.newmanga.desktop size changed: logs\window-material.log 24 -> 32
-  [child]   - com.newmanga.desktop window-material.log lines: 3 -> 4
-  [child] EXIT=1
-SELFTEST FAIL: unchanged root must make -Verify exit 0, got EXIT=1
-EXIT=1
-# appdata-isolation-check mode=SelfTest time=2026-11-09T19:05:20.2838648+08:00
-# shell=7.6.8 / Core rootOverride=
-# script=G:\CODEX\New Manga\verification\FEA-07-RESIDUAL-4\tools\appdata-isolation-check.ps1
-  [child] # appdata-isolation-check mode=Verify time=2026-11-09T19:05:20.6712681+08:00
-  [child] # shell=7.6.8 / Core rootOverride=C:\Users\49745\AppData\Local\Temp\nm-r4-selftest-4db70b56b87f4d23b23fed4574d910f5
-  [child] # script=G:\CODEX\New Manga\verification\FEA-07-RESIDUAL-4\tools\appdata-isolation-check.ps1
-  [child] before: 3 window-material lines; after: 4 window-material lines
-  [child] DELTA DETECTED (2 item(s)) — real AppData was written:
-  [child]   - com.newmanga.desktop size changed: logs\window-material.log 24 -> 32
-  [child]   - com.newmanga.desktop window-material.log lines: 3 -> 4
-  [child] EXIT=1
-SELFTEST KILL: appended line detected by child -Verify -> EXIT 1 (real exit code)
-  [child] # appdata-isolation-check mode=Verify time=2026-11-09T19:05:21.2250687+08:00
-  [child] # shell=7.6.8 / Core rootOverride=C:\Users\49745\AppData\Local\Temp\nm-r4-selftest-4db70b56b87f4d23b23fed4574d910f5
+  [child] # appdata-isolation-check mode=Verify time=2026-11-09T19:22:12.4675226+08:00
+  [child] # shell=7.6.8 / Core rootOverride=C:\Users\49745\AppData\Local\Temp\nm-r4-selftest-7bc1fba803c34ab0bb143230f548b398
   [child] # script=G:\CODEX\New Manga\verification\FEA-07-RESIDUAL-4\tools\appdata-isolation-check.ps1
   [child] before: 4 window-material lines; after: 4 window-material lines
   [child] ZERO-WRITE OK: com.newmanga.desktop + NewManga unchanged (delta=0)

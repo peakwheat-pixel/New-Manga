@@ -1,4 +1,4 @@
-# governance/pins (2026-11-09T19:17:46.5736204+08:00) shell=7.6.8
+# governance/pins (2026-11-09T19:22:20.2485775+08:00) shell=7.6.8
 --- check.ps1 ---
 Governance scope: 15 current documents; no historical directory scan.
 Task: doc\tasks\FEA-07-RESIDUAL-4.md
@@ -8,10 +8,7 @@ WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6730 bytes / 64 lines
 FAIL: Evidence SHA-256 不匹配：verification/FEA-07-RESIDUAL-4/evidence/appdata-before.json
 FAIL: Evidence SHA-256 不匹配：verification/FEA-07-RESIDUAL-4/logs/appdata-isolation.log
 FAIL: Evidence SHA-256 不匹配：verification/FEA-07-RESIDUAL-4/logs/appdata-isolation-selftest.log
-FAIL: Evidence SHA-256 不匹配：verification/FEA-07-RESIDUAL-4/logs/build.log
-FAIL: Evidence SHA-256 不匹配：verification/FEA-07-RESIDUAL-4/logs/full-solution.log
-FAIL: Evidence SHA-256 不匹配：verification/FEA-07-RESIDUAL-4/tools/appdata-isolation-check.ps1
-Governance check: FAIL (6 errors, 3 warnings)
+Governance check: FAIL (3 errors, 3 warnings)
 
 EXIT=1
 --- check -TaskPath ---
@@ -23,10 +20,7 @@ WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6730 bytes / 64 lines
 FAIL: Evidence SHA-256 不匹配：verification/FEA-07-RESIDUAL-4/evidence/appdata-before.json
 FAIL: Evidence SHA-256 不匹配：verification/FEA-07-RESIDUAL-4/logs/appdata-isolation.log
 FAIL: Evidence SHA-256 不匹配：verification/FEA-07-RESIDUAL-4/logs/appdata-isolation-selftest.log
-FAIL: Evidence SHA-256 不匹配：verification/FEA-07-RESIDUAL-4/logs/build.log
-FAIL: Evidence SHA-256 不匹配：verification/FEA-07-RESIDUAL-4/logs/full-solution.log
-FAIL: Evidence SHA-256 不匹配：verification/FEA-07-RESIDUAL-4/tools/appdata-isolation-check.ps1
-Governance check: FAIL (6 errors, 3 warnings)
+Governance check: FAIL (3 errors, 3 warnings)
 
 EXIT=1
 --- verify_pins ---
