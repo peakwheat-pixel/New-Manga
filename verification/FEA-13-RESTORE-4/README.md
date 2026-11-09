@@ -41,6 +41,8 @@ dotnet build apps/desktop-avalonia/NewManga.sln -c Debug --nologo
 - **managed 文件的 apply**：本片 `apply_restore` 对 managed 项一律 deferred（需要 staging 复制语义），真正写回归后续切片；`UseBackup` 对 managed 项同样 deferred。
 - **真实进程 kill 崩溃注入**：以 monkeypatch 抛错模拟 apply 崩溃（marker=`staging`、live 不变）；真实 kill 注入登记为部署态验证。
 - **staging 残留清理**：marker/`staging` 目录的启动期清理未实现（登记后续）。
+- **COMMIT→committed marker 窗口**：apply 已提交但 committed marker 未写时崩溃，重启会看到 `staging`；数据已提交、仅审计状态歧义，登记后续（r2 N5）。
+- **wire 预览命令**：`RESTORE_PLAN_STALE` 依赖调用方自带 `expected_package_sha256`；无 `backup.plan` 命令回传 digest（r2 N6，登记后续）。
 - **C# 客户端**：未加 `PlanRestoreAsync`/`RestoreAsync(mode)`（登记后续，wire 字段已支持）。
 - **region 字段级自动合并**、跨机恢复、UI 冲突面板：裁决 §3 后续。
 - wire 文档（V11R `backup.restore` 行）未同步 `mode/entries` 字段（按需后续）。

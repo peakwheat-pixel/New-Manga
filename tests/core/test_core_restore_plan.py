@@ -222,3 +222,44 @@ def test_stale_preview_is_refused(core):
     assert response["error"]["code"] == "RESTORE_PLAN_STALE"
     title = core.conn.execute("SELECT title FROM books WHERE book_id = 'book-1'").fetchone()[0]
     assert title == "BEFORE"
+
+
+def test_pipeline_commands_fail_closed_during_the_maintenance_window(core):
+    """R4-002: the pipeline entry (PrepareRun/AcceptRun/...) honours L-5 too."""
+    server = CoreServiceServer(core)
+    server._restore_maintenance_active = True
+    try:
+        response = _request(
+            server,
+            "PrepareRun",
+            {"command": "start_run", "scope": {}},
+            "req-pipeline-1",
+        )
+        assert response["error"]["code"] == "RESTORE_IN_PROGRESS"
+    finally:
+        server._restore_maintenance_active = False
+
+
+def test_merge_restore_refuses_while_a_run_is_active(core):
+    """R4-001: an active pipeline run blocks the merge path as well."""
+    server = CoreServiceServer(core)
+    _seed_book(core.conn, "BEFORE")
+    backup_id = _create_backup(server)
+    with core.conn:
+        core.conn.execute(
+            "INSERT INTO pipeline_runs (run_id, command_type, scope_type,"
+            " requested_targets_json, settings_snapshot_json,"
+            " provider_binding_snapshot_json, context_policy_json, status,"
+            " run_json, updated_at)"
+            " VALUES ('run-busy', 'translate', 'book', '[]', '{}', '{}', '{}',"
+            " 'running', '{}', ?)",
+            (NOW,),
+        )
+
+    response = _request(
+        server,
+        "backup.restore",
+        {"backup_id": backup_id, "confirm_restore": True, "mode": "defer"},
+    )
+
+    assert response["error"]["code"] == "BACKUP_RESTORE_BUSY"

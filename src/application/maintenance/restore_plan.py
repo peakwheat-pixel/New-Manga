@@ -276,8 +276,6 @@ def apply_restore(
             raise
     finally:
         conn.execute("DETACH DATABASE restore_src")
-    if mode not in {"defer", "use_backup"}:
-        raise ValueError(f"unsupported restore mode: {mode}")
     return {
         "mode": mode,
         "applied": applied,

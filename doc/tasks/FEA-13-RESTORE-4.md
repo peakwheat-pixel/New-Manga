@@ -3,11 +3,11 @@ id: FEA-13-RESTORE-4
 title: merge restore（RestorePlan/默认 defer/UseBackup 前保全）+ staging/commit marker + L-5 维护锁（FEA-13 片 4）
 kind: implementation
 governance_version: 3
-status: in_review
+status: done
 approval: `FEA-13-scope-r1.md` §7 片 4 + 冲突模型裁决 `ADJ-2026-11-09-FEA13-RESTORE-MODEL.md`（三层模型、defer 默认、UseBackup 保全、L-5 fail-closed、staging/marker）；依赖片 1–3（done）
 suggested_owner: dsh
 owner: dsh
-reviewer: 待指派（必须独立上下文）
+reviewer: 独立上下文子代理 r1/r2（`doc/reviews/FEA-13-RESTORE-4-r1.md`、`-r2.md`；r1 changes_requested → 处置；r2 **approve**，均非实现会话）
 depends_on:
   - FEA-13-BK2-1
   - FEA-13-COV-2
@@ -15,10 +15,10 @@ depends_on:
 base_commit: 0dc4ff85f
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: f9ebce677
+integration_commit: fcccf4604
+delivery_head: fcccf4604
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/FEA-13-RESTORE-4
 allowed_paths:
   - doc/tasks/FEA-13-RESTORE-4.md
@@ -65,7 +65,7 @@ out_of_scope:
 - [x] **AC1 只读预览**：`plan_restore` 前后 DB 行数/managed 文件/包字节与 mtime 全不变；逐项动作可判别。 <<MET>>
 - [x] **AC2 默认 defer**：本片用例中 add 项被应用、conflict/keep 保留 live 现值；整库不被覆盖（live 独有行仍在）。 <<MET>>
 - [x] **AC3 UseBackup 保全**：指定项覆盖前，live 现值保存为可恢复副本；保全失败则该项不覆盖。 <<MET>>
-- [x] **AC4 过期拒绝**：非法 mode → `INVALID_REQUEST`；`RESTORE_PLAN_STALE` 已注册（**端到端用例未做，登记 PARTIAL**）。 <<MET>>
+- [x] **AC4 过期/非法输入**：非法 mode → `INVALID_REQUEST`；`expected_package_sha256` 不匹配 → `RESTORE_PLAN_STALE`（零写，新增用例）。 <<MET>>
 - [x] **AC5 L-5 锁 + staging/marker**：restore 期间写命令 fail-closed；staging 校验通过才写 marker；marker 前/后崩溃注入可判定、旧根可读。 <<MET>>
 - [x] **AC6 门禁**：定向 pytest 全绿；`dotnet build` 0/0；`check.ps1`（默认 + `-TaskPath`）PASS；pins 18/18；diff ⊆ allowed_paths。 <<MET>>
 
@@ -73,8 +73,8 @@ out_of_scope:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-R4-README | AC1–AC5 | `verification/FEA-13-RESTORE-4/README.md` | `-` | `632efc5fc173dae87fe12060572c4983a5d311029fd0328f3ae6ef23b1570609` | CANONICAL |
-| EV-R4-SUITE | AC1–AC5,AC6 | `verification/FEA-13-RESTORE-4/logs/pytest-restore-suite.log` | `-` | `68668e8843c01d222f71763a8e9299800677b46a4ee28857482fd147d0f1e6d4` | CANONICAL |
+| EV-R4-README | AC1–AC5 | `verification/FEA-13-RESTORE-4/README.md` | `-` | `1bf9843a7ad38305b324996f7c22671f6d582b2168f2adcef7622909eddbc744` | CANONICAL |
+| EV-R4-SUITE | AC1–AC5,AC6 | `verification/FEA-13-RESTORE-4/logs/pytest-restore-suite.log` | `-` | `b6c63e859341ff123c1095b873fbd346ce548c4c292257f0b08ce2e4ac486815` | CANONICAL |
 | EV-R4-BUILD | AC6 | `verification/FEA-13-RESTORE-4/logs/build.log` | `-` | `3a6cbfe78107126654e1da38b2ccd0da48ffe7835f3579ec24f1875d612dab6a` | CANONICAL |
 | EV-R4-MUT1 | 变异判别 | `verification/FEA-13-RESTORE-4/logs/mutation-defer-overwrites.log` | `-` | `095c5901aa81850de0e20ba8f6edcf3f34691e2b129f03f7c250234961c24ae3` | CANONICAL |
 | EV-R4-MUT2 | 变异判别 | `verification/FEA-13-RESTORE-4/logs/mutation-no-lock.log` | `-` | `c1bac687e55d9cf1eda2cfc77234c362b75cc94c263e72dff4ec26dc0ce58ed2` | CANONICAL |
@@ -127,4 +127,12 @@ out_of_scope:
 
 ## Closeout Record
 
-- 待独立 Review 通过后由 DSH 填写。
+## Closeout Record
+
+- **2026-11-09 / DSH（关账）**：AC1–AC6 全部 MET；FEA-13 片 4（最高风险片）落地。
+- **Review**：r1 changes_requested（P0=0/**P1=2**/P2=6/P3=5；AC4 FAIL）→ 处置；r2 **approve**（FIXED 8 / PARTIAL 5 / OPEN 0；无新增 P0/P1；AC1–AC6 全 MET）。
+- **P1 修复**：merge 路径补齐跨库门禁（BACKUP_DATABASE_MISMATCH）与 run 门禁（BACKUP_RESTORE_BUSY）；L-5 增加 pipeline 命令入口门（Prepare/Accept/Start/Control…）。
+- **P3 残余处置**：死 mode 校验已删；pipeline 门与 BUSY 门补用例；README 口径/COMMIT→marker 窗口/wire 预览缺口/C# 骨架/C# 测试等登记后续。
+- **门禁**：备份/恢复面 9 文件 **98 passed**（EXIT 0）；变异①defer 覆盖 **1 failed/6 passed**、②关闭 L-5 **1 failed/6 passed**、③关闭跨库门禁 **1 failed/6 passed**（均 EXIT 1，复原后 14 passed）；dotnet build 0/0；check.ps1 默认 + -TaskPath PASS（3 warnings）；erify_pins 18/18。
+- **交付/集成**：实现 `f9ebce677`；r2 返修 `fcccf4604`（`integration_commit`）；本收口提交仅翻转状态与指针。
+- **边界**：0 契约字节、0 pin；diff ⊆ allowed_paths（含 ADJ 裁决文档）。
