@@ -3,10 +3,10 @@ id: FEA-13-SRC-6
 title: SC-B01 ④ 源引用/授权元数据入包（包内加密段；Host staging 交接面）
 kind: implementation
 governance_version: 3
-status: ready
+status: in_progress
 approval: **ZCode 独立裁决 2026-11-09（`doc/reviews/ADJ-2026-11-09-ZCODE-ARCH-ADJUDICATION.md`）**：单列立项（「必须包含」项，非不做）；**不阻塞 FEA-15 正式验收**（验收登记为已知 limitation）；排在 `FEA-11-HOST-AUTH-3` 之后（同域 SourceAccessRegistry/Host 授权）
 suggested_owner: zcode（Host/C# 主责域）
-owner: null
+owner: dsh
 reviewer: null
 depends_on:
   - FEA-13-COV-2

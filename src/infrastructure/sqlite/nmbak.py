@@ -71,8 +71,20 @@ SETTINGS_CATEGORY = "settings"
 DRAFTS_CATEGORY = "drafts"
 PLUGINS_CATEGORY = "plugins"
 TRASH_MANIFEST_CATEGORY = "trash-manifest"
+#: C-09 SC-B01 / SC-B07 (4): the Host-private source-access registry rides the package
+#: as OPAQUE DPAPI ciphertext. Core never decrypts or parses it (no DPAPI call exists in
+#: Core); the Host validates and merges it after an overwrite restore.
+SOURCE_ACCESS_CATEGORY = "source-access"
+SOURCE_ACCESS_FILE = "registry.v1.dat"
+SOURCE_ACCESS_MAX_BYTES = 4 * 1024 * 1024
 EXTRAS_CATEGORIES = frozenset(
-    {SETTINGS_CATEGORY, DRAFTS_CATEGORY, PLUGINS_CATEGORY, TRASH_MANIFEST_CATEGORY}
+    {
+        SETTINGS_CATEGORY,
+        DRAFTS_CATEGORY,
+        PLUGINS_CATEGORY,
+        TRASH_MANIFEST_CATEGORY,
+        SOURCE_ACCESS_CATEGORY,
+    }
 )
 SETTINGS_FILES = (
     "provider_profiles.json",
@@ -416,9 +428,68 @@ class NmbakBackupService:
                     f"restored from {backup_id}, but {missing} revision refs are missing "
                     f"from the managed root; rollback package: {pre_restore['backup_id']}",
                 )
+            # FEA-13-SRC-6 (AC3): the encrypted snapshot is handed to the Host only
+            # AFTER the data restore succeeded; a handoff failure is a typed
+            # BACKUP_RESTORE_INCOMPLETE (never a silent "restored" claim).
+            handoff = self._write_source_access_handoff(
+                backup_id, restore_dir, manifest
+            )
+            if handoff is not None:
+                report["source_access_handoff"] = handoff
             return report
         finally:
             self._remove_tree(restore_dir)
+
+    def _write_source_access_handoff(
+        self, backup_id: str, restore_dir: Path, manifest: dict
+    ) -> dict | None:
+        """Copy the package's source-access segment into the Host handoff directory.
+
+        The Host is the only party that can decrypt it (DPAPI CurrentUser). The
+        handoff is idempotent: a rerun rewrites the same bytes and metadata.
+        """
+        members = [
+            item
+            for item in (manifest.get("extras") or [])
+            if str(item.get("category")) == SOURCE_ACCESS_CATEGORY
+        ]
+        if not members:
+            return None
+        source = (
+            restore_dir
+            / EXTRAS_PREFIX
+            / SOURCE_ACCESS_CATEGORY
+            / SOURCE_ACCESS_FILE
+        )
+        if not source.is_file():
+            raise NmbakBackupError(
+                "BACKUP_RESTORE_INCOMPLETE",
+                f"source-access member is missing from {backup_id}",
+            )
+        handoff_root = self._backup_root / "restore-handoff" / backup_id
+        destination_dir = handoff_root / SOURCE_ACCESS_CATEGORY
+        try:
+            destination_dir.mkdir(parents=True, exist_ok=True)
+            destination = destination_dir / SOURCE_ACCESS_FILE
+            shutil.copyfile(source, destination)
+            digest = sha256_file(destination)
+        except OSError as error:
+            raise NmbakBackupError(
+                "BACKUP_RESTORE_INCOMPLETE",
+                f"source-access handoff failed for {backup_id}: {error}",
+            ) from error
+        handoff = {
+            "backup_id": backup_id,
+            "member": f"{EXTRAS_PREFIX}{SOURCE_ACCESS_CATEGORY}/{SOURCE_ACCESS_FILE}",
+            "sha256": digest,
+            "size_bytes": destination.stat().st_size,
+            "database_id": self._current_database_id(),
+            "created_at": _utc_now(),
+        }
+        (handoff_root / "handoff.json").write_text(
+            json.dumps(handoff, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
+        return handoff
 
     # ------------------------------------------------------------------
     # merge-restore planning support (FEA-13-RESTORE-4)
@@ -737,7 +808,45 @@ class NmbakBackupService:
         trash = self._managed_root / "trash-manifest.json"
         if trash.is_file():
             collected.append((TRASH_MANIFEST_CATEGORY, "trash-manifest.json", trash))
+        registry = self._source_access_registry()
+        if registry is not None:
+            collected.append((SOURCE_ACCESS_CATEGORY, SOURCE_ACCESS_FILE, registry))
         return collected
+
+    def _source_access_registry(self) -> Path | None:
+        """The Host source-access registry file, or None when absent.
+
+        FEA-13-SRC-6 (AC2): an ABSENT file is a legitimate empty registry (no member,
+        category not declared); a present-but-unreadable file or one that crosses a
+        reparse point fails the create with ``BACKUP_CREATE_FAILED``. The bytes are
+        copied verbatim: Core has no DPAPI dependency and never parses the snapshot.
+        """
+        directory = self._data_root / "host" / "source-access"
+        registry = directory / SOURCE_ACCESS_FILE
+        if not registry.exists():
+            return None
+        relative = Path(SOURCE_ACCESS_FILE)
+        try:
+            if registry.is_symlink() or self._crosses_reparse_point(directory, relative):
+                raise NmbakBackupError(
+                    "BACKUP_CREATE_FAILED",
+                    "source-access registry crosses a reparse point",
+                )
+            if registry.stat().st_size > SOURCE_ACCESS_MAX_BYTES:
+                raise NmbakBackupError(
+                    "BACKUP_CREATE_FAILED",
+                    "source-access registry exceeds the 4 MiB limit",
+                )
+            with registry.open("rb") as handle:
+                handle.read(1)
+        except NmbakBackupError:
+            raise
+        except OSError as error:
+            raise NmbakBackupError(
+                "BACKUP_CREATE_FAILED",
+                f"source-access registry is unreadable: {error}",
+            ) from error
+        return registry
 
     @staticmethod
     def _crosses_reparse_point(root: Path, relative: Path) -> bool:
@@ -798,6 +907,8 @@ class NmbakBackupService:
                 present.append(category)
         if (self._managed_root / "trash-manifest.json").is_file():
             present.append(TRASH_MANIFEST_CATEGORY)
+        if (self._data_root / "host" / "source-access" / SOURCE_ACCESS_FILE).is_file():
+            present.append(SOURCE_ACCESS_CATEGORY)
         return sorted(present)
 
     def _zip_directory(self, workdir: Path, target: Path) -> None:
