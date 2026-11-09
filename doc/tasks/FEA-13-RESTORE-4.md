@@ -16,7 +16,7 @@ base_commit: 0dc4ff85f
 branch: null
 worktree: null
 integration_commit: null
-delivery_head: pending
+delivery_head: f9ebce677
 canonical_evidence_status: complete
 resource_closeout_status: pending
 evidence_dir: verification/FEA-13-RESTORE-4
