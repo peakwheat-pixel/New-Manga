@@ -9,7 +9,7 @@
 |FEA-CONTRACT-WRAP-1|FEA-C14-DRAFT|done（L-3 Errata + PLAN 预算；R2 approved `6cfe7ab92`）|
 |FEA-C11-PREREQ-1|FEA-C10-DRAFT|**done**（集成 `b7018e19b`；U-09 前置登记 L-1/L-2/L-5；r1 approved；2026-11-02 收口）|
 |FEA-DOC-RECONCILE-1|—|**done**（文档对账 7 项；GOV-11/D07 关闭；BRIDGE 不独立释放；r3 approved）|
-|FEA-07-RESIDUAL-4|FEA-07、FEA-07-RESIDUAL-3|**ready**（L-R4b-1 legacy MainWindow Show 隔离；scope r1 缩窄冻结；base `77a7459ab`）|
+|FEA-07-RESIDUAL-4|FEA-07、FEA-07-RESIDUAL-3|**in_review**（L-R4b-1 隔离；delivery `86d65d1a9`；真实 AppData delta=0；待独立 Review）|
 |FEA-11-PREREQ-1|FEA-09、FEA-10|**done**（C-17 v1.0 FROZEN；pins 18/18；r1+轻量复核 approved P0/P1=0；集成提交见 Task）|
 |FEA-11|FEA-09、FEA-10、FEA-11-PREREQ-1|**done**（2026-11-08 翻转：R4A `fbe337f95`；AC11-1…10 MET；L-STARTUP 子项 NA；L-M1/L-M4/needs_confirmation re-home；L-1…L-11 原文保留）||
 |FEA-11-SCAN-1|FEA-11|**done**（r2 窄面 approved；delivery `7080167e1`；AC-S1…S6 全 MET；AC11-1 终态 MET 带 limitation）|
@@ -48,7 +48,7 @@
 
 **V11R 程序**：[V11R_PROGRAM](V11R_PROGRAM.md) 为**唯一活动任务 DAG**（V1.1 整改 + 新 Avalonia UI/UX + Theme Studio）；接口契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)；设计基线 `doc/design/redesign-v1/40-fusion/`。历史节点原状保留；READY 节点由本 Plan 维护。
 
-READY 节点：FEA-07-RESIDUAL-4
+READY 节点：无
 
 完成（FEA-10/11/12、C-04b 提交）：见 [GOAL-PROGRESS §198](checkpoints/GOAL-PROGRESS-2026-11-02.md)。
 
