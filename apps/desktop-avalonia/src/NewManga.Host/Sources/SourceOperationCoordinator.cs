@@ -182,22 +182,6 @@ public sealed class SourceOperationCoordinator
     }
 
     /// <summary>
-    /// FEA-11-HOST-AUTH-2 (C-17 §3.2:161/:169): ACK/recovery must NOT replay the
-    /// authorization the apply journaled — the Host re-reads the live
-    /// <see cref="SourceAccessRegistry"/> under the journal lock, re-authorizes
-    /// every committed registry (advancing <c>LastUsedAt</c>), re-mints the SAME
-    /// operation id / request digest / host receipt id with the LIVE generation
-    /// plus the COMMITTED BASELINE identity digest, guards the reproduced request
-    /// digest and persists the fresh <c>AuthorizationJson/AuthorizationDigest</c>
-    /// (C-17:160 "先落盘") before the Core is called.
-    ///
-    /// Deliberately Core-free: the default gate has to prove the fresh path
-    /// without a Python Core (<c>CoreServiceClient</c> is sealed).
-    /// </summary>
-    /// <param name="operationId">The journaled operation.</param>
-    /// <param name="recovery">ACK semantics (<c>core-committed</c> only) vs
-    /// recovery semantics (<c>core-committed</c>/<c>host-authorized</c>/<c>failed</c>).</param>
-    /// <summary>
     /// FEA-11-HOST-AUTH-3 (C-17 v1.2 / AC-H3-3): re-mint FRESH source-read grants for an
     /// already committed operation after the process tree died. Inputs: the Core materialized
     /// plan subset (version + entries) and the registry's single readable root. The normal
@@ -312,6 +296,22 @@ public sealed class SourceOperationCoordinator
         return grants;
     }
 
+    /// <summary>
+    /// FEA-11-HOST-AUTH-2 (C-17 §3.2:161/:169): ACK/recovery must NOT replay the
+    /// authorization the apply journaled — the Host re-reads the live
+    /// <see cref="SourceAccessRegistry"/> under the journal lock, re-authorizes
+    /// every committed registry (advancing <c>LastUsedAt</c>), re-mints the SAME
+    /// operation id / request digest / host receipt id with the LIVE generation
+    /// plus the COMMITTED BASELINE identity digest, guards the reproduced request
+    /// digest and persists the fresh <c>AuthorizationJson/AuthorizationDigest</c>
+    /// (C-17:160 "先落盘") before the Core is called.
+    ///
+    /// Deliberately Core-free: the default gate has to prove the fresh path
+    /// without a Python Core (<c>CoreServiceClient</c> is sealed).
+    /// </summary>
+    /// <param name="operationId">The journaled operation.</param>
+    /// <param name="recovery">ACK semantics (<c>core-committed</c> only) vs
+    /// recovery semantics (<c>core-committed</c>/<c>host-authorized</c>/<c>failed</c>).</param>
     public CompletionMaterial PrepareCompletion(
         string operationId,
         bool recovery = false)

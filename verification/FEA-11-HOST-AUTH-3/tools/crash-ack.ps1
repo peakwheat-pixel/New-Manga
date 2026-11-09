@@ -188,6 +188,25 @@ if ($failed.Count -gt 0) {
     exit 12
 }
 
+# --- R-r1-05: archive the complete crash evidence under verification/ (frozen AC). ---
+$runId = Split-Path $statePath -Leaf
+$archive = Join-Path $repo ("verification" + [IO.Path]::DirectorySeparatorChar + "FEA-11-HOST-AUTH-3" + [IO.Path]::DirectorySeparatorChar + "crash" + [IO.Path]::DirectorySeparatorChar + $runId)
+New-Item -ItemType Directory -Force -Path $archive | Out-Null
+Copy-Item $parkFile (Join-Path $archive 'park.json') -Force
+Copy-Item $resultFile (Join-Path $archive 'recover.json') -Force
+foreach ($name in @('pids-before.txt', 'pids-after.txt')) {
+    $source = Join-Path $statePath $name
+    if (Test-Path $source) { Copy-Item $source (Join-Path $archive $name) -Force }
+}
+$dataRoot = $parkState.data_root
+if (Test-Path $dataRoot) {
+    Copy-Item (Join-Path $dataRoot 'library.db') (Join-Path $archive 'library.db') -Force -ErrorAction SilentlyContinue
+    if (Test-Path (Join-Path $dataRoot 'wire.ndjson')) {
+        Copy-Item (Join-Path $dataRoot 'wire.ndjson') (Join-Path $archive 'wire-redacted.ndjson') -Force
+    }
+}
+Write-Host ("CRASH_EVIDENCE archived=" + $archive)
+
 $passMessage = "CRASH_POINT=PASS acknowledge_once=1" `
     + " gates_open=" + $checks['gates_open'] `
     + " rows_unchanged=" + $checks['rows_unchanged'] `
