@@ -150,7 +150,7 @@ out_of_scope:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-AC5-02 | AC-N1/N2/N3 | verification/FEA-07-AC5-NATIVE-1/evidence/matrix-summary.json | 0bcdeb9fc | 886d86e2b7920a797f5436d658e0d52def222d0737edc4810da8750dfd9b264a | CANONICAL |
+| EV-AC5-02 | AC-N1/N2/N3 | verification/FEA-07-AC5-NATIVE-1/evidence/matrix-summary.json | 0bcdeb9fc | ac328dd8f480f637fc246d24fa15ce8bc72fe374b611f742fa4a0cf510609a80 | CANONICAL |
 | EV-AC5-03 | AC-N3 | verification/FEA-07-AC5-NATIVE-1/evidence/undock-os-20261109-093322.json | 0bcdeb9fc | 03b829e1c32629a8552080406f83ef245133e42750f5bd1d1ac1f6efe150f5b2 | CANONICAL |
 | EV-AC5-04 | AC-N4 | verification/FEA-07-AC5-NATIVE-1/evidence/exe-manifest.txt | - | 6585d60816068d1f0f89be7fce6f868d87c7233fa08013b51e7cd87a14dc158a | CANONICAL |
 | EV-AC5-05 | AC-N4 | verification/FEA-07-AC5-NATIVE-1/evidence/window-persistence-20261109-101115.json | - | 49465a71c57713c5c97ed1be934f610760524f48d2991a8298bc3af8d42e3556 | CANONICAL |
