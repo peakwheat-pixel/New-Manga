@@ -462,6 +462,16 @@ class NmbakBackupService:
         root.mkdir(parents=True, exist_ok=True)
         return root
 
+    def plan_staging_root(self, backup_id: str) -> Path:
+        """Staging area for the merge-restore commit protocol."""
+        root = self._backup_root / f".restore-staging-{backup_id}"
+        root.mkdir(parents=True, exist_ok=True)
+        return root
+
+    def plan_marker_path(self, backup_id: str) -> Path:
+        """Commit marker: ``staging`` while applying, ``committed`` after."""
+        return self._backup_root / f".restore-{backup_id}.json"
+
     @staticmethod
     def cleanup_plan(context: dict) -> None:
         workdir = context.get("workdir")

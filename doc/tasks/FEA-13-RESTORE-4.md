@@ -3,7 +3,7 @@ id: FEA-13-RESTORE-4
 title: merge restore（RestorePlan/默认 defer/UseBackup 前保全）+ staging/commit marker + L-5 维护锁（FEA-13 片 4）
 kind: implementation
 governance_version: 3
-status: in_progress
+status: in_review
 approval: `FEA-13-scope-r1.md` §7 片 4 + 冲突模型裁决 `ADJ-2026-11-09-FEA13-RESTORE-MODEL.md`（三层模型、defer 默认、UseBackup 保全、L-5 fail-closed、staging/marker）；依赖片 1–3（done）
 suggested_owner: dsh
 owner: dsh
@@ -16,8 +16,8 @@ base_commit: 0dc4ff85f
 branch: null
 worktree: null
 integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
+delivery_head: pending
+canonical_evidence_status: complete
 resource_closeout_status: pending
 evidence_dir: verification/FEA-13-RESTORE-4
 allowed_paths:
@@ -64,10 +64,19 @@ out_of_scope:
 - [x] **AC1 只读预览**：`plan_restore` 前后 DB 行数/managed 文件/包字节与 mtime 全不变；逐项动作可判别。 <<MET>>
 - [x] **AC2 默认 defer**：本片用例中 add 项被应用、conflict/keep 保留 live 现值；整库不被覆盖（live 独有行仍在）。 <<MET>>
 - [x] **AC3 UseBackup 保全**：指定项覆盖前，live 现值保存为可恢复副本；保全失败则该项不覆盖。 <<MET>>
-- [x] **AC4 过期拒绝**：预览后修改包字节 → 该包/项 `RESTORE_PLAN_STALE`，其余项继续。 <<MET>>
+- [ ] **AC4 过期拒绝**：非法 mode → `INVALID_REQUEST`；`RESTORE_PLAN_STALE` 已注册（**端到端用例未做，登记 PARTIAL**）。 <<PARTIAL: RESTORE_PLAN_STALE 已注册但端到端用例未做（登记后续）>>
 - [x] **AC5 L-5 锁 + staging/marker**：restore 期间写命令 fail-closed；staging 校验通过才写 marker；marker 前/后崩溃注入可判定、旧根可读。 <<MET>>
 - [x] **AC6 门禁**：定向 pytest 全绿；`dotnet build` 0/0；`check.ps1`（默认 + `-TaskPath`）PASS；pins 18/18；diff ⊆ allowed_paths。 <<MET>>
 
+## Canonical Evidence
+
+| evidence_id | AC/Gate | path | commit | sha256 | class |
+|---|---|---|---|---|---|
+| EV-R4-README | AC1–AC5 | `verification/FEA-13-RESTORE-4/README.md` | `-` | `6fe5d254c740a75d750e420e7c45248a1284d7941bc4424291a5d8909a6c1330` | CANONICAL |
+| EV-R4-SUITE | AC1–AC5,AC6 | `verification/FEA-13-RESTORE-4/logs/pytest-restore-suite.log` | `-` | `62c5f602d84addfafb395c37bda83eb5c038578fcb5d178b91ee8a8c42f80400` | CANONICAL |
+| EV-R4-BUILD | AC6 | `verification/FEA-13-RESTORE-4/logs/build.log` | `-` | `09134b519f8145bcc051f6cc74ae9958e0e35351f7300f831fbdc273366c3c6f` | CANONICAL |
+| EV-R4-MUT1 | 变异判别 | `verification/FEA-13-RESTORE-4/logs/mutation-defer-overwrites.log` | `-` | `db5da2a496be460cb190fcc83a48882908de7e274bbd6b71462694331231bdc3` | CANONICAL |
+| EV-R4-MUT2 | 变异判别 | `verification/FEA-13-RESTORE-4/logs/mutation-no-lock.log` | `-` | `7e249a0eca0949e880fea451172ffba36e96388abd20f0076c594df2847ec400` | CANONICAL |
 ## 证据计划
 
 | # | 命令/步骤 | 判别 |

@@ -1,0 +1,28 @@
+# command: python -m pytest tests/core/test_core_restore_plan.py -q  # after mutation: L-5 window disabled (expected RED)
+# shell: pwsh 7.6.8 / python 3.14
+# time: 2026-11-09T21:51:10.9101717+08:00
+# batch: fea-13-restore-4
+# EXIT=1
+...F                                                                     [100%]
+================================== FAILURES ===================================
+________ test_write_commands_fail_closed_during_the_maintenance_window ________
+
+core = CoreServices(conn=<infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x0000019681098C30>, repository=<...ice object at 0x00000196810FB230>, plugins=<infrastructure.plugins.service.PluginService object at 0x00000196810F89D0>)
+
+    def test_write_commands_fail_closed_during_the_maintenance_window(core):
+        server = CoreServiceServer(core)
+        server._restore_maintenance_active = True
+        try:
+            response = _request(server, "books.list", {})
+>           assert response["error"]["code"] == "RESTORE_IN_PROGRESS"
+E           AssertionError: assert 'UNKNOWN_COMMAND' == 'RESTORE_IN_PROGRESS'
+E             
+E             - RESTORE_IN_PROGRESS
+E             + UNKNOWN_COMMAND
+
+tests\core\test_core_restore_plan.py:139: AssertionError
+---------------------------- Captured stderr setup ----------------------------
+[core.schema] applied 9 migration(s) up to v9; schema bootstrap is the only write a read-only session performs (user rows and managed originals are never modified)
+=========================== short test summary info ===========================
+FAILED tests/core/test_core_restore_plan.py::test_write_commands_fail_closed_during_the_maintenance_window
+1 failed, 3 passed in 1.33s

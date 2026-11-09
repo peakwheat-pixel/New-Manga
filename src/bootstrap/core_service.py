@@ -407,6 +407,9 @@ _CLEANUP_COMMANDS = frozenset({
 #: SETTINGS-OPEN-C-2-BACKUP (design §3.4): the backup/restore face. Same
 #: ordinary application-channel precedent as cleanup/settings.get -- the
 #: frozen host-control envelope is not widened.
+_RESTORE_LOCK_EXEMPT = frozenset(
+    {"backup.list", "backup.create", "backup.delete"}
+)
 _BACKUP_COMMANDS = frozenset({
     "backup.create",
     "backup.list",
@@ -3176,13 +3179,19 @@ class CoreServiceServer:
                 "BACKUP_RESTORE_REQUIRES_CONFIRMATION", "confirm_restore must be true"
             )
         mode = payload.get("mode", "overwrite")
-        if mode == "overwrite":
-            return service.restore(backup_id, confirm_restore=True)
-        if mode not in {"defer", "use_backup"}:
+        if mode not in {"overwrite", "defer", "use_backup"}:
             raise NmbakBackupError(
                 "INVALID_REQUEST", f"unsupported restore mode: {mode!r}"
             )
-        return self._merge_restore(service, backup_id, mode, payload.get("entries") or [])
+        self._restore_maintenance_active = True
+        try:
+            if mode == "overwrite":
+                return service.restore(backup_id, confirm_restore=True)
+            return self._merge_restore(
+                service, backup_id, mode, payload.get("entries") or []
+            )
+        finally:
+            self._restore_maintenance_active = False
 
     def _merge_restore(
         self,
@@ -3194,8 +3203,36 @@ class CoreServiceServer:
         """FEA-13-RESTORE-4: merge restore (default defer, UseBackup per item)."""
         from application.maintenance.restore_plan import apply_restore, plan_restore
 
+        import hashlib as _hashlib
+        import shutil as _shutil
+
         context = service.extract_for_plan(backup_id)
         try:
+            # staging: copy the packaged DB under the backup root and verify it
+            # before anything touches the live database.
+            staging = service.plan_staging_root(backup_id)
+            staged_db = staging / "library.db"
+            _shutil.copyfile(context["database_path"], staged_db)
+            staged_digest = _hashlib.sha256(staged_db.read_bytes()).hexdigest()
+            expected_digest = _hashlib.sha256(
+                context["database_path"].read_bytes()
+            ).hexdigest()
+            if staged_digest != expected_digest:
+                raise NmbakBackupError(
+                    "BACKUP_CORRUPT", "staging copy digest mismatch"
+                )
+            marker = service.plan_marker_path(backup_id)
+            marker.write_text(
+                json.dumps(
+                    {
+                        "backup_id": backup_id,
+                        "state": "staging",
+                        "staged_digest": staged_digest,
+                    },
+                    ensure_ascii=False,
+                ),
+                encoding="utf-8",
+            )
             plan = plan_restore(
                 service.connection,
                 context["database_path"],
@@ -3219,6 +3256,19 @@ class CoreServiceServer:
             report["package_sha256"] = context["package_sha256"]
             report["plan_summary"] = plan["summary"]
             report["undo_root"] = str(undo_root)
+            report["staging_root"] = str(staging)
+            marker.write_text(
+                json.dumps(
+                    {
+                        "backup_id": backup_id,
+                        "state": "committed",
+                        "staged_digest": staged_digest,
+                        "applied": len(report.get("applied") or []),
+                    },
+                    ensure_ascii=False,
+                ),
+                encoding="utf-8",
+            )
             return report
         finally:
             service.cleanup_plan(context)
@@ -7738,6 +7788,28 @@ class CoreServiceServer:
         version = request.get("version")
         requested_minor = version.get("minor") if isinstance(version, dict) else None
         command = request.get("command")
+        # FEA-13-RESTORE-4 / L-5: the merge-restore window is exclusive. Every
+        # command outside the exemption set fails closed instead of running
+        # against a database that is being replaced.
+        if getattr(self, "_restore_maintenance_active", False) and command not in _RESTORE_LOCK_EXEMPT:
+            return (
+                {
+                    "protocol": PROTOCOL_NAME,
+                    "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                    "request_id": request.get("request_id"),
+                    "result": None,
+                    "error": make_error_envelope(
+                        code="RESTORE_IN_PROGRESS",
+                        category="conflict",
+                        message=(
+                            "a merge restore is in progress; write commands are "
+                            "refused until it finishes"
+                        ),
+                        retryable=True,
+                    ),
+                },
+                False,
+            )
         response, should_exit = self._dispatch_request(raw_line)
         if command in {"PrepareRun", "AcceptRun"}:
             response_minor = 12
