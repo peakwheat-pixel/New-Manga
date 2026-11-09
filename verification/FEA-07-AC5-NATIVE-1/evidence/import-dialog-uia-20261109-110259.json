@@ -1,0 +1,1022 @@
+[
+  {
+    "hwnd": "63573878",
+    "title": "导入文件夹（按文件名顺序导入）",
+    "rect": "242,265 1200x720",
+    "kind": "window"
+  },
+  {
+    "hwnd": "63573878",
+    "title": "导入文件夹（按文件名顺序导入）",
+    "rect": "-",
+    "kind": "Button",
+    "name": "帮助(&H)",
+    "id": "HelpButton"
+  },
+  {
+    "hwnd": "63573878",
+    "title": "导入文件夹（按文件名顺序导入）",
+    "rect": "-",
+    "kind": "Button",
+    "name": "视图滑块",
+    "id": "SplitMenuButton"
+  },
+  {
+    "hwnd": "63573878",
+    "title": "导入文件夹（按文件名顺序导入）",
+    "rect": "-",
+    "kind": "Button",
+    "name": "组织​​",
+    "id": "{7DDC1264-7E4D-4F74-BBC0-D191987C8D0F}"
+  },
+  {
+    "hwnd": "63573878",
+    "title": "导入文件夹（按文件名顺序导入）",
+    "rect": "-",
+    "kind": "Button",
+    "name": "新建​​文件夹​​",
+    "id": "{E44616AD-6DF1-4B94-85A4-E465AE8A19DB}"
+  },
+  {
+    "hwnd": "63573878",
+    "title": "导入文件夹（按文件名顺序导入）",
+    "rect": "-",
+    "kind": "Button",
+    "name": "搜索",
+    "id": "SearchBoxSearchButton"
+  },
+  {
+    "hwnd": "63573878",
+    "title": "导入文件夹（按文件名顺序导入）",
+    "rect": "-",
+    "kind": "Edit",
+    "name": "搜索框",
+    "id": "SearchEditBox"
+  },
+  {
+    "hwnd": "63573878",
+    "title": "导入文件夹（按文件名顺序导入）",
+    "rect": "-",
+    "kind": "Text",
+    "name": "没有与搜索条件匹配的项。",
+    "id": "EmptyTextFocusable"
+  },
+  {
+    "hwnd": "63573878",
+    "title": "导入文件夹（按文件名顺序导入）",
+    "rect": "-",
+    "kind": "Tree",
+    "name": "应用程序控件",
+    "id": "AppControlsModuleInner"
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "234,234 1116x799",
+    "kind": "window"
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Button",
+    "name": "帮助(&H)",
+    "id": "HelpButton"
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Button",
+    "name": "视图滑块",
+    "id": "SplitMenuButton"
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Button",
+    "name": "组织​​",
+    "id": "{7DDC1264-7E4D-4F74-BBC0-D191987C8D0F}"
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Button",
+    "name": "新建​​文件夹​​",
+    "id": "{E44616AD-6DF1-4B94-85A4-E465AE8A19DB}"
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Button",
+    "name": "搜索",
+    "id": "SearchBoxSearchButton"
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Button",
+    "name": "资料柜空间",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Button",
+    "name": "工位空间",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Button",
+    "name": "控制台空间",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Button",
+    "name": "资料柜",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Button",
+    "name": "测试",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Button",
+    "name": "作用域：未选择对象",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Button",
+    "name": "需要我处理：待办事项",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Button",
+    "name": "命令面板（Ctrl+K）",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Button",
+    "name": "主题工作室",
+    "id": "ThemeStudioButton"
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Button",
+    "name": "深色",
+    "id": "ThemeToggleButton"
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Button",
+    "name": "键位速查（F1）",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Button",
+    "name": "关闭",
+    "id": "ActionButton"
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Button",
+    "name": "全部",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Button",
+    "name": "收藏",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Button",
+    "name": "已归档",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Button",
+    "name": "导入文件",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Button",
+    "name": "导入文件夹",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Button",
+    "name": "新建作品",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Button",
+    "name": "回收站",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Button",
+    "name": "打开作品：测试",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Button",
+    "name": "阅读",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Button",
+    "name": "新建章节",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Button",
+    "name": "导入文件",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Button",
+    "name": "移入回收站",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Button",
+    "name": "回收站",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Button",
+    "name": "打开章节：1",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Button",
+    "name": "关闭",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Button",
+    "name": "开始导入",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Button",
+    "name": "重试失败",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Button",
+    "name": "跳过失败",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Button",
+    "name": "选择源并预览",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Button",
+    "name": "选择目录并预览",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Button",
+    "name": "确认导入",
+    "id": "ConfirmReferenceButton"
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Button",
+    "name": "取消导入",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Button",
+    "name": "重新预览",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Edit",
+    "name": "搜索框",
+    "id": "SearchEditBox"
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Edit",
+    "name": "",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "没有与搜索条件匹配的项。",
+    "id": "EmptyTextFocusable"
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "资料柜",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "1",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "工位",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "2",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "控制台",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "3",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "资料柜",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "›",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "测试",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "›",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "1",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "本章 0 页 · 1",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "待办",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "命令",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "Ctrl+K",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "主题工作室",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "浅色",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "F1",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "●",
+    "id": "SymbolText"
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "已新建章节《1》",
+    "id": "MessageText"
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "关闭",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "资料柜",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "1 / 1 作品",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "最近更新",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "全部 1",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "收藏 0",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "已归档 0",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "导入文件",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "导入文件夹",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "新建作品",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "回收站",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "测",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "测试",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "页数未知",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "测试",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "页数未知 · 未收藏",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "阅读",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "新建章节",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "导入文件",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "移入回收站",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "回收站",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "阅读进度",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "进度未知（Core 未就绪或无阅读投影）",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "章节账本",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "1 章",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "01",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "1",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "0 页",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "页",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "0 页",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "当前章节没有页面：用「导入文件 / 导入文件夹」添加页面；导入结果逐文件显示，不伪造。",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "导入到「1」",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "已导入 0 · 跳过 0 · 失败 0 · 待处理 1",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "关闭",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "目标章节：1",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "开始导入",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "重试失败",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "跳过失败",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "◐",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "ゲーム オブ ファミリア-家族戦記- 13",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "导入中…",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "每个文件单独调用 Host 导入命令，状态为真实结果（已导入 / 跳过重复 / 失败 + 错误码）；文件夹为单次调用，显示聚合结果。路径不显示（隐私）。",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "引用源导入（引用原文件）",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "先预览导入计划（源只读、不复制不覆盖），确认后由 Host 提交；AES 加密 ZIP 显示为「不支持」。路径与密码不显示、不记录。",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "选择源并预览",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "选择目录并预览",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "确认导入",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "取消导入",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "重新预览",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "",
+    "id": "ReferenceProgressText"
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "●",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "Host 就绪",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Text",
+    "name": "作用域 本章 0 页 · 1 · Host 就绪",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "ComboBox",
+    "name": "",
+    "id": ""
+  },
+  {
+    "hwnd": "54397794",
+    "title": "New Manga",
+    "rect": "-",
+    "kind": "Tree",
+    "name": "应用程序控件",
+    "id": "AppControlsModuleInner"
+  }
+]

@@ -1,0 +1,14 @@
+{
+  "action": "open-immersive",
+  "capturedAt": "2026-11-09T11:12:01.8618795+08:00",
+  "pid": 8148,
+  "doubleClickAt": [
+    792,
+    673
+  ],
+  "found": false,
+  "screenshot": {
+    "file": "G:\\CODEX\\New Manga.workspace\\FEA-07-AC5-NATIVE-1\\ac5-fullscreen\\20261109-111201-immersive-open.png",
+    "sha256": "3701720c733b6e8bfe8289acfb5fe08ee7fd0a352aed28f12d065571c010b57a"
+  }
+}

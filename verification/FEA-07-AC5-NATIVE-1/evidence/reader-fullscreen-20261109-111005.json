@@ -1,0 +1,59 @@
+{
+  "case": "reader-fullscreen",
+  "capturedAt": "2026-11-09T11:10:05.5233536+08:00",
+  "pid": 8148,
+  "stepsClicked": [
+    "打开作品：测试",
+    "打开章节：1",
+    "阅读"
+  ],
+  "before": {
+    "left": 234,
+    "top": 234,
+    "width": 1116,
+    "height": 799,
+    "zoomed": false,
+    "hasCaption": true,
+    "dpi": 96,
+    "percent": 100
+  },
+  "fullscreen": {
+    "left": 234,
+    "top": 234,
+    "width": 1116,
+    "height": 799,
+    "zoomed": false,
+    "hasCaption": true,
+    "dpi": 96,
+    "percent": 100,
+    "coversMonitor": false
+  },
+  "afterEsc": {
+    "left": 234,
+    "top": 234,
+    "width": 1116,
+    "height": 799,
+    "zoomed": false,
+    "hasCaption": true
+  },
+  "screenshots": [
+    {
+      "step": "before",
+      "shot": "G:\\CODEX\\New Manga.workspace\\FEA-07-AC5-NATIVE-1\\ac5-fullscreen\\20261109-111001-reader-before.png",
+      "sha256": "d2d8d51c484f370b84037f908b0072801fb1b3aff64a13a4623afab245e3e8b0",
+      "note": "contains user-provided manga content; kept outside repo"
+    },
+    {
+      "step": "fullscreen",
+      "shot": "G:\\CODEX\\New Manga.workspace\\FEA-07-AC5-NATIVE-1\\ac5-fullscreen\\20261109-111003-reader-fullscreen.png",
+      "sha256": "247bb11446312c8caab940adba534edec5828803fdd1a410d4399c199cfc12a9",
+      "note": "same"
+    },
+    {
+      "step": "after-esc",
+      "shot": "G:\\CODEX\\New Manga.workspace\\FEA-07-AC5-NATIVE-1\\ac5-fullscreen\\20261109-111005-reader-after-esc.png",
+      "sha256": "e7ec06704f5a8bf6ca3a891f988688e28940e88d6573472fb31c5d1652654732",
+      "note": "same"
+    }
+  ]
+}

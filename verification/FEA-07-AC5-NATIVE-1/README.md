@@ -87,3 +87,15 @@
 - 全屏实现位于 Reader 页：`ReaderWorkbenchPages.cs:2599`（`WindowState.FullScreen`）、热键 `Key.F:2649`；主窗 `F11` 实测无效果（`evidence/extra-fullscreen-*.json` 中 `afterFKey/afterEsc` 与最大化态一致）。
 - 触发全屏需要**真实章节内容**；本卡在隔离空库下尝试用「导入文件夹」UIA 自动化灌入合成漫画（2 话 × 3 页，ASCII 路径），文件夹选择对话框自动化多次未能稳定完成（日志见 `evidence/attempts/`）。
 - 结论：**`NOT_RUN`**（未写 PASS）。补齐条件：在应用里手动导入一个漫画文件夹（两次点击），或由环境提供已导入库，即可补测 Reader 全屏。
+
+### 全屏（沉浸 ReaderWindow）实测结果 —— `NOT_RUN` + 缺陷候选 D-AC5-2
+
+- 实现事实：沉浸窗口为独立 `ReaderWindow`（`ReaderWorkbenchPages.cs:2576-2602`：`SystemDecorations.None` + `WindowState.FullScreen`），入口为 Reader 页按钮/双击或应用级 `F11`（`MainWindow.TryHandleGlobalKey` → `ToggleImmersiveAsync` → `OpenImmersiveReader`）。
+- 已导入真实内容（169 页）并打开 Reader 页（封面/第 1 页可见），随后尝试：
+  1. **用户手动 F11**（点击画面后）→ 无窗口出现；
+  2. 自动化 `SendKeys(F11)`（焦点在按钮，确认非文本框、`GetForegroundWindow` 为应用）→ 6s×200ms 轮询内无新顶层窗口；
+  3. 双击页面图像 → 无沉浸窗口；
+  4. 对照实验：`SendKeys(RIGHT)` 翻页后 **wire 无新 `resolve_page_resource`** ⇒ 键盘事件未送达 Reader（本会话输入路由异常）。
+- wire 旁证：11:22:04–05 出现 `resolve_page_resource` + `SaveReadingProgress`（`ReaderWindow.Closed` 才 flush）⇒ 说明 F11 路径**部分执行过**（窗口创建/关闭），但未在桌面保持可见。
+- 结论：**`NOT_RUN`**，不写 PASS；登记 **D-AC5-2**（沉浸全屏在本会话无法出现，疑似 `OpenImmersiveReader` 在本会话抛异常或输入未送达；需在**本地控制台会话**复现确认是环境还是产品缺陷）。
+- 判定材料：`evidence/probe-f11-*.json`、`evidence/open-immersive-*.json`、`evidence/reader-fullscreen*.json`；截图含用户漫画内容，仅存仓外 `G:\CODEX\New Manga.workspace\FEA-07-AC5-NATIVE-1\ac5-fullscreen\`（哈希已记录）。

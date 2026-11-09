@@ -245,6 +245,13 @@ out_of_scope:
 | EV-AC5-AT03 | 全屏尝试记录 | verification/FEA-07-AC5-NATIVE-1/evidence/attempts/seed3.log | - | 3c72196f1a8a8bb6c689360538e07cd44e6f3b87c53bc90606e32d42ac6bea7a | CANONICAL |
 | EV-AC5-AT04 | 全屏尝试记录 | verification/FEA-07-AC5-NATIVE-1/evidence/attempts/seed3.log.err | - | d2ea1a7a4c3f1ad3d6f9643545b44cc46c127b80495bd61b124457b08e452b39 | CANONICAL |
 
+| EV-AC5-FS01 | 全屏/导入尝试 | verification/FEA-07-AC5-NATIVE-1/evidence/probe-f11-20261109-112323.json | - | ac4acfc73849bbcfb6a41e8d2d3aa45f70d082060e849556afdee6e2751a8919 | CANONICAL |
+| EV-AC5-FS02 | 全屏/导入尝试 | verification/FEA-07-AC5-NATIVE-1/evidence/open-immersive-20261109-111201.json | - | 48601f503603ca2f910342b41139d5848d6d1ec55634637099053d03a2781fda | CANONICAL |
+| EV-AC5-FS03 | 全屏/导入尝试 | verification/FEA-07-AC5-NATIVE-1/evidence/open-immersive-20261109-111244.json | - | 984d975ac5b4c1d92e249ee620f298d5932bb7447cdaf861474e744fffbec334 | CANONICAL |
+| EV-AC5-FS04 | 全屏/导入尝试 | verification/FEA-07-AC5-NATIVE-1/evidence/reader-fullscreen-20261109-111005.json | - | cb015416bb8410638d82820dbc4c2485554440d0ecf7e95c215cf3a49124ce54 | CANONICAL |
+| EV-AC5-FS05 | 全屏/导入尝试 | verification/FEA-07-AC5-NATIVE-1/evidence/finish-import-20261109-110424.json | - | f7b684588ff8afb1d0cdea45c7d351aedea2858ea582fd27706291e7a05b9b9e | CANONICAL |
+| EV-AC5-FS06 | 全屏/导入尝试 | verification/FEA-07-AC5-NATIVE-1/evidence/import-dialog-uia-20261109-110259.json | - | b0a79e902e64566ab9fdb5b23c9a9a048165856756a49900f43e9c2587872153 | CANONICAL |
+
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
@@ -285,3 +292,15 @@ out_of_scope:
 - 全屏只在 Reader 页：`ReaderWorkbenchPages.cs:2599`（`WindowState.FullScreen`）+ 热键 `Key.F:2649`；主窗 `F11` 实测无效。
 - 需真实章节内容；已尝试「导入文件夹」UIA 自动化灌入合成漫画（ASCII 路径、2 话×3 页），文件夹对话框自动化多次未稳定完成（`evidence/attempts/seed*.log`）。
 - 结论：**`NOT_RUN`**，不写 PASS；补齐条件 = 人工导入一个漫画文件夹（两次点击）或提供已导入库。
+
+### 全屏（沉浸 ReaderWindow）实测结果 —— `NOT_RUN` + 缺陷候选 D-AC5-2
+
+- 实现事实：沉浸窗口为独立 `ReaderWindow`（`ReaderWorkbenchPages.cs:2576-2602`：`SystemDecorations.None` + `WindowState.FullScreen`），入口为 Reader 页按钮/双击或应用级 `F11`（`MainWindow.TryHandleGlobalKey` → `ToggleImmersiveAsync` → `OpenImmersiveReader`）。
+- 已导入真实内容（169 页）并打开 Reader 页（封面/第 1 页可见），随后尝试：
+  1. **用户手动 F11**（点击画面后）→ 无窗口出现；
+  2. 自动化 `SendKeys(F11)`（焦点在按钮，确认非文本框、`GetForegroundWindow` 为应用）→ 6s×200ms 轮询内无新顶层窗口；
+  3. 双击页面图像 → 无沉浸窗口；
+  4. 对照实验：`SendKeys(RIGHT)` 翻页后 **wire 无新 `resolve_page_resource`** ⇒ 键盘事件未送达 Reader（本会话输入路由异常）。
+- wire 旁证：11:22:04–05 出现 `resolve_page_resource` + `SaveReadingProgress`（`ReaderWindow.Closed` 才 flush）⇒ 说明 F11 路径**部分执行过**（窗口创建/关闭），但未在桌面保持可见。
+- 结论：**`NOT_RUN`**，不写 PASS；登记 **D-AC5-2**（沉浸全屏在本会话无法出现，疑似 `OpenImmersiveReader` 在本会话抛异常或输入未送达；需在**本地控制台会话**复现确认是环境还是产品缺陷）。
+- 判定材料：`evidence/probe-f11-*.json`、`evidence/open-immersive-*.json`、`evidence/reader-fullscreen*.json`；截图含用户漫画内容，仅存仓外 `G:\CODEX\New Manga.workspace\FEA-07-AC5-NATIVE-1\ac5-fullscreen\`（哈希已记录）。

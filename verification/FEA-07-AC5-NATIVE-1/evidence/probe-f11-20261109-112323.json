@@ -1,0 +1,14 @@
+{
+  "case": "probe-f11",
+  "capturedAt": "2026-11-09T11:23:23.7067805+08:00",
+  "pid": 8148,
+  "beforeWindows": [
+    "54397794|478|299|1116|799|1|New Manga|Avalonia-d77bf741-0880-46d4-bf57-c833e624ef9d|0"
+  ],
+  "found": false,
+  "immersive": null,
+  "screenshot": {
+    "file": "G:\\CODEX\\New Manga.workspace\\FEA-07-AC5-NATIVE-1\\ac5-fullscreen\\20261109-112323-f11-notfound.png",
+    "sha256": "2f625557f937c9cf695ed4a61644abe9687f44c64d953602e2ff3a0be9b386b5"
+  }
+}

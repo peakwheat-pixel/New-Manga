@@ -1,0 +1,13 @@
+{
+  "action": "finish-import",
+  "capturedAt": "2026-11-09T11:04:24.5556361+08:00",
+  "clicked": [
+    "选择目录并预览",
+    "选择源并预览"
+  ],
+  "screenshots": [
+    "G:\\CODEX\\New Manga\\verification\\FEA-07-AC5-NATIVE-1\\evidence\\screenshots\\20261109-110407-finish-after-error.png",
+    "G:\\CODEX\\New Manga\\verification\\FEA-07-AC5-NATIVE-1\\evidence\\screenshots\\20261109-110411-finish-after-pick.png",
+    "G:\\CODEX\\New Manga\\verification\\FEA-07-AC5-NATIVE-1\\evidence\\screenshots\\20261109-110424-finish-final.png"
+  ]
+}
