@@ -40,3 +40,13 @@ out_of_scope:
 ## 拟做（待 scope review 冻结）
 1. 默认套件真实 AppData 零写入（第一优先，红线级）；
 2. 其余 residual 按 review 结论拆分/降级/立项。
+
+## Scope review 结论（2026-11-09，r1）
+
+- 报告：`doc/reviews/FEA-07-RESIDUAL-4-scope-r1.md`（独立上下文子代理；base `a49311cbe`；`check.ps1` PASS / `verify_pins` 18/18）。
+- **verdict：`NOT_RECOMMENDED`（现卡按现文：6 项 residual 混装）**；缩窄为 **L-R4b-1-only** 后 `READY-TO-FREEZE`。
+- **L-R4b-1 仍存在（未修）**：默认 `NewManga.App.Tests` 有 **16 处** legacy `MainWindow.Show()` 未传 `--log-dir`（6 文件；清单见报告 §2.1），`MainWindow.ResolveDiagnosticsRoot` 无 `--log-dir` 时回退真实 `%APPDATA%\com.newmanga.desktop\logs`，每次 `Show()` 写 1 行。**仅补 `--data-root` 不能隔离**（P1/S-03）。
+- 建议范围（报告 §3）：11 条写域 = 6 个既有测试文件（CredentialUi/F11Hotkey/LegacyAppearanceSync/ImportExportUi/RegionWorkbenchUi/ThemeRetirementR4）+ 新增 `LegacyWindowIsolationTests.cs` + 卡/评审/Handoff/`verification/FEA-07-RESIDUAL-4/**`；App 生产文件、共享组合根、PLAN/STATUS、契约/Python 零 diff。
+- 建议 AC（报告 §4）：6 条 —— 站点完整、默认套件真实 AppData 零写入强断言（两棵树 delta=0，fail closed）、harness 自检可判别、真实 MainWindow `Show()` 隔离、回归门禁、residual 处置与证据。
+- re-home（报告 §2.2）：L-R4b-2 → 候选证据另卡（SPLIT）；L-R4b-3 → HostRuntime 强化（SPLIT）+ 真实 DPI（DEFER，AC5 豁免）；L-R4b-4 → 运行纪律（DEFER）；L-R4b-5 → 本卡仅登记（零代码）；L-R4a-3 → 产品性能卡（DROP）。
+- **释放前置**：`doc/REBASELINE_PLAN.md` 预算余 11 B/1 行，须先腾挪；冻结与释放由 DSH 裁决。`status` 保持 `proposed`，未冻结前不得实施。
