@@ -207,5 +207,5 @@ Review 链 r1 approved（P2 升 P1：真实 AppData 写入）→ 返修 → r2 c
 ### 7.20 `FEA-07-IMMERSIVE-F11-1` r2 处置（2026-11-09）
 
 - r2 = `changes_requested`：P1=1（N-001 原生证据壳错误）、P2=2（N-002 证据未绑定壳/args、N-003 `IsVisible` 分支零测试）、P3=6。
-- 整改：legacy 壳原生复测（F11→全屏、Esc 恢复，JSON 记录 `shell/args`）；补静默不可见回归（`ImmersiveShowOverride = _ => { }`）与 `TryOpenImmersiveReader()==false` 断言；失败提示统一走 `RefreshStatusText()`（N-008）；证据表去空行重排（N-005）；修正 `approval` 去重（N-007）；D-AC5-2 记录更正（删除 `-32000` 误述）；display 试验产物移出仓库（N-009）。
+- 整改：legacy 壳原生复测（F11→全屏、Esc 恢复，JSON 记录 `shell/args`）；补静默不可见回归（`ImmersiveShowOverride = _ => { }`）与 `TryOpenImmersiveReader()==false` 断言；失败提示统一走 `RefreshStatusText()`（N-008）；证据表去空行重排（N-005）；修正 `approval` 去重（N-007）；D-AC5-2 记录在 `verification/FEA-07-AC5-NATIVE-1/DEFECTS.md` **追加**「D-AC5-2 更正」段（原文保留、append-only；`-32000` 属 D-AC5-1）；display 试验产物移出仓库（N-009）。
 - 关账口径：AC5 `PARTIAL`（legacy 成功路径已验证；物理 2K/4K 复测时不在系统中，全屏落在 1920×1080；v2 默认壳无入口）；不写 PASS。

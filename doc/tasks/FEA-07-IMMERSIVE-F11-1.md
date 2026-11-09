@@ -7,14 +7,14 @@ status: closed_with_limitations
 approval: 用户 2026-11-09 明示任务定义（含兜底分支，未要求原生必达）；DSH 裁决 AC5=PARTIAL、以 closed_with_limitations 收口（ADJ §7.19/§7.20）（范围冻结：`OpenImmersiveReader()` 显示失败兜底与错误可见化；`ReaderWindow.Show()` 失败时恢复主窗、不得停留最小化；记录异常到日志；保留 headless 回归。验收：真实桌面 F11 → 无边框全屏窗口覆盖 2560×1440、Esc/F11 退出、主窗恢复原页；失败时主窗不消失且给出提示。证据：`verification/FEA-07-AC5-NATIVE-1/DEFECTS.md` D-AC5-2 + `evidence/watch-immersive-*`）
 suggested_owner: dsh
 owner: dsh
-reviewer: 独立子代理 r1 = changes_requested（R-001…R-011）；r2 待审（同一 head）
+reviewer: 独立子代理 r1/r2/r3 = changes_requested（R-001…R-011、N-001…N-018）；r4 待审；报告见 doc/reviews/FEA-07-IMMERSIVE-F11-1-r{1,2,3}.md
 depends_on:
   - FEA-07
 base_commit: 70a89d009
 branch: null
 worktree: null
-integration_commit: b4f801e2f
-delivery_head: b4f801e2f
+integration_commit: 61e324e1d
+delivery_head: 61e324e1d
 canonical_evidence_status: complete
 resource_closeout_status: complete
 evidence_dir: verification/FEA-07-IMMERSIVE-F11-1
@@ -23,6 +23,8 @@ allowed_paths:
   - apps/desktop-avalonia/tests/NewManga.App.Tests/F11HotkeyTests.cs
   - doc/tasks/FEA-07-IMMERSIVE-F11-1.md
   - doc/reviews/FEA-07-IMMERSIVE-F11-1-*.md
+  - doc/tasks/FEA-07-V2-F11-1.md
+  - verification/FEA-07-AC5-NATIVE-1/DEFECTS.md
   - doc/reviews/ADJ-2026-11-RESIDUAL-WAIVER.md
   - doc/handoffs/FEA-07-IMMERSIVE-F11-1-*.md
   - doc/STATUS.md
@@ -76,32 +78,48 @@ out_of_scope:
 - 新增 `F11_WhenImmersiveShowThrows_RestoresMainWindowAndReportsFailure`：注入显示失败 → `LastImmersiveWindow=null`、`ImmersiveOpenFailure` 含原因、主窗未最小化、页面回退 bookshelf、`immersive-open.log` 含异常；reader 页入口路径同样兜底。
 - `F11HotkeyTests` 9/9 通过；全量 .NET：`NewManga.App.Tests 832/0`、`Host 302/0`、`ApplicationCore 31/0`、`DesignSystem/Appearance/ThemeEngine/Presentation` 通过；`CoreClient.Tests` 1 例 `ModelsBuild_BookRun_WithoutInjectedBindings_StillFailsOcrWithProviderNotConfigured` 在全量并发下失败、**单独运行通过** → 归为既有并发 flake（与本次 App-only 变更无关）。
 
-### 原生复测（AC5）
-- 新构建真实桌面：应用置顶后用户按 F11 → 无沉浸窗口、主窗**未最小化**、状态栏无失败提示、`immersive-open.log` 未生成 ⇒ **键盘事件未进入应用**（同会话浏览器 F11 可全屏；UIA `FocusedElement` 停留在浏览器输入框）。
-- 结论：AC5 `PARTIAL`（headless 兜底已验证；真实桌面全屏/退出/失败提示需在本地控制台会话补测），**不写 PASS**。
-- 证据：`evidence/f11-native-after-fix-*.json`、`evidence/f11-fallback-native-*.json`、`evidence/immersive-button-native-*.json`、`%TEMP%`/workspace 截图（含用户内容，仅存仓外）。
+### 原生复测（AC5）—— 更正后结论（2026-11-09 r3）
+
+- **历史（已更正）**：早期原生尝试在默认 `--shell=v2` 壳采集；该壳不创建 `MainWindow`，F11/沉浸实现只在 legacy 壳 ⇒ 当时「无窗口/未最小化/无提示/无日志」不能推出「键盘未进入应用」。该旧归因已废弃。
+- **legacy 壳实测**（`--shell=legacy`，唯一承载被修复代码的壳）：
+  - F11（`PostMessage VK_F11`，rc=3）→ 打开**无边框全屏「阅读器」窗口**（`hasCaption=false`、`title=阅读器`、`0,0 1920×1080`）；
+  - **Esc → 关闭**：`afterEsc.extraWindows=0`，主窗恢复 `320,106 1280×820`（有标题栏、`showCmd=1`、非最小化），并有 Esc 后截图；
+  - 证据记录 `build.repoHead/exeSha256/exeMtime` 与 `displaysNow`（当时唯一显示：Mi TV 1920×1080@100%）。
+  - 证据：`evidence/legacy-f11-native-20261109-154752.json`。
+- **未达成项**：物理 2K/4K 在复测时不在系统中（`displaysNow` 仅 Mi TV 1920×1080），故「覆盖 2560×1440」未验证；默认 v2 壳无 F11 入口，另立 `FEA-07-V2-F11-1`（proposed，待用户裁决）。
+- 结论：AC5 `PARTIAL`；**不写 PASS**。
 
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-IF11-01 | AC1/AC2/AC3（headless 兜底） | `verification/FEA-07-IMMERSIVE-F11-1/evidence/f11-tests-run.txt` | b4f801e2f | 162cd2ea863c34ec3a23fbdb2e3afc5c2c3aa92762a9dadbbd43285249e48149 | CANONICAL |
-| EV-IF11-02 | AC3（成功路径兼容） | `verification/FEA-07-IMMERSIVE-F11-1/evidence/reader-immersive-tests-run.txt` | b4f801e2f | 6a354d1739a9ab8bd106903a7f6068f9ee675e7d0dfd1b3efaacd5c9bdc5c634 | CANONICAL |
-| EV-IF11-03 | AC4（回归测试源） | `apps/desktop-avalonia/tests/NewManga.App.Tests/F11HotkeyTests.cs` | b4f801e2f | e3e5db89f34f1a081163a748b8444b8843b112e4c623c53507d2fee5715f95d6 | CANONICAL |
-| EV-IF11-04 | AC1/AC2（实现） | `apps/desktop-avalonia/src/NewManga.App/Views/MainWindow.axaml.cs` | b4f801e2f | 2cc3ccc9396d6865990420a675ab68a5c65e92ed653efe11b967978248ba0129 | CANONICAL |
-| EV-IF11-05 | AC5（legacy 原生成功路径） | `verification/FEA-07-IMMERSIVE-F11-1/evidence/legacy-f11-native-20261109-153227.json` | b4f801e2f | 228b520008363ba68195f7370eb8709e543f8b0e7fa3723bc9413857649c802b | CANONICAL |
-| EV-IF11-06 | AC5（v2 壳无入口，superseded 采样） | `verification/FEA-07-IMMERSIVE-F11-1/evidence/f11-native-after-fix-20261109-150419.json` | b4f801e2f | 1547664d4d7fd52b36d0ef7bc936ad932601f5f03dc33d1b35984a48be61e2b0 | CANONICAL |
-| EV-IF11-07 | 工具（legacy 原生复测） | `verification/FEA-07-IMMERSIVE-F11-1/tools/legacy-f11-native.ps1` | b4f801e2f | cc154de16d7a3cb516f165a5f68b9a0de2acc5381af71a3ba1b52941e0eb2c3b | CANONICAL |
-| EV-IF11-08 | 工具（抓取，含 args 缺陷见 N-002） | `verification/FEA-07-IMMERSIVE-F11-1/tools/capture-after-f11.ps1` | b4f801e2f | 7f11daa72938d24417e903c6b7131159842f6a507c88316b7948bd3b5c5b8720 | CANONICAL |
-| EV-IF11-09 | AC5 历史采样（同 pid 早期截图，已替代） | `verification/FEA-07-IMMERSIVE-F11-1/evidence/f11-native-after-fix-20261109-150101.json` | b4f801e2f | 51b4218316d7c8b9adca0e7be7f7cfbf5dd816ed70dd5b682660ef567d26ce9e | CANONICAL |
-| EV-IF11-10 | AC5（v2 原生按 F11 无窗口） | `verification/FEA-07-IMMERSIVE-F11-1/evidence/f11-fallback-native-20261109-144502.json` | b4f801e2f | 884567d6b8ab3c997a79ca34e8f4bdcb34371c762eacbb767b067ffdd4bb92b0 | CANONICAL |
-| EV-IF11-11 | 工具（按钮入口复测） | `verification/FEA-07-IMMERSIVE-F11-1/tools/verify-immersive-button.ps1` | b4f801e2f | fcf48bf87abb2ebdbe599131d51a029126a6105445afbb9cf874fcd28e50950f | CANONICAL |
-| EV-IF11-12 | AC5（v2 按钮入口无入口） | `verification/FEA-07-IMMERSIVE-F11-1/evidence/immersive-button-native-20261109-144618.json` | b4f801e2f | 91123ae4493a1f7461914b3c153c1e490cdf5fd8b3c09f4bab173d55bd8a2d16 | CANONICAL |
-| EV-IF11-13 | 工具（v2 按钮入口复测） | `verification/FEA-07-IMMERSIVE-F11-1/tools/verify-f11-fallback.ps1` | b4f801e2f | 1a09b75b3f796ebb3ea8a8f25dc984c2a23ed37a3cabbf7fe8738f6522c732b1 | CANONICAL |
+| EV-IF11-01 | AC1/AC2/AC3（headless 兜底） | `verification/FEA-07-IMMERSIVE-F11-1/evidence/f11-tests-run.txt` | 61e324e1d | 702851c202480a61e1087ae781888910b63365d001fd78c1670f274362d8f61a | CANONICAL |
+| EV-IF11-02 | AC3（成功路径兼容） | `verification/FEA-07-IMMERSIVE-F11-1/evidence/reader-immersive-tests-run.txt` | 61e324e1d | e5db8c47cbb092a6e3399e743431bb572208c42797075604bbaf22ba2894da9f | CANONICAL |
+| EV-IF11-03 | AC4（回归测试源） | `apps/desktop-avalonia/tests/NewManga.App.Tests/F11HotkeyTests.cs` | 61e324e1d | e3e5db89f34f1a081163a748b8444b8843b112e4c623c53507d2fee5715f95d6 | CANONICAL |
+| EV-IF11-04 | AC1/AC2（实现） | `apps/desktop-avalonia/src/NewManga.App/Views/MainWindow.axaml.cs` | 61e324e1d | 2cc3ccc9396d6865990420a675ab68a5c65e92ed653efe11b967978248ba0129 | CANONICAL |
+| EV-IF11-05 | AC5（legacy 原生成功 + afterEsc/build/displays） | `verification/FEA-07-IMMERSIVE-F11-1/evidence/legacy-f11-native-20261109-154752.json` | 61e324e1d | af7c632ae14f8461b062e68e67a1d0cb247df8d6cad2fdf2144891dd722eb06d | CANONICAL |
+| EV-IF11-06 | AC5（v2 壳采样，已 superseded） | `verification/FEA-07-IMMERSIVE-F11-1/evidence/f11-native-after-fix-20261109-150419.json` | 61e324e1d | 1547664d4d7fd52b36d0ef7bc936ad932601f5f03dc33d1b35984a48be61e2b0 | CANONICAL |
+| EV-IF11-07 | 工具（legacy 原生复测） | `verification/FEA-07-IMMERSIVE-F11-1/tools/legacy-f11-native.ps1` | 61e324e1d | f0d3e9d631560203b61767d1d91dd68720d627584bf7744161a6e4a63d758f75 | CANONICAL |
+| EV-IF11-08 | 工具（抓取，shell/args 见 N-002 注） | `verification/FEA-07-IMMERSIVE-F11-1/tools/capture-after-f11.ps1` | 61e324e1d | 7f11daa72938d24417e903c6b7131159842f6a507c88316b7948bd3b5c5b8720 | CANONICAL |
+| EV-IF11-09 | AC5 历史采样（同 pid 早期截图） | `verification/FEA-07-IMMERSIVE-F11-1/evidence/f11-native-after-fix-20261109-150101.json` | 61e324e1d | 51b4218316d7c8b9adca0e7be7f7cfbf5dd816ed70dd5b682660ef567d26ce9e | CANONICAL |
+| EV-IF11-10 | AC5（v2 按 F11 无窗口） | `verification/FEA-07-IMMERSIVE-F11-1/evidence/f11-fallback-native-20261109-144502.json` | 61e324e1d | 884567d6b8ab3c997a79ca34e8f4bdcb34371c762eacbb767b067ffdd4bb92b0 | CANONICAL |
+| EV-IF11-11 | 工具（v2 按钮入口复测） | `verification/FEA-07-IMMERSIVE-F11-1/tools/verify-immersive-button.ps1` | 61e324e1d | fcf48bf87abb2ebdbe599131d51a029126a6105445afbb9cf874fcd28e50950f | CANONICAL |
+| EV-IF11-12 | AC5（v2 按钮入口无入口） | `verification/FEA-07-IMMERSIVE-F11-1/evidence/immersive-button-native-20261109-144618.json` | 61e324e1d | 91123ae4493a1f7461914b3c153c1e490cdf5fd8b3c09f4bab173d55bd8a2d16 | CANONICAL |
+| EV-IF11-13 | 工具（v2 fallback 探针） | `verification/FEA-07-IMMERSIVE-F11-1/tools/verify-f11-fallback.ps1` | 61e324e1d | 1a09b75b3f796ebb3ea8a8f25dc984c2a23ed37a3cabbf7fe8738f6522c732b1 | CANONICAL |
+| EV-IF11-14 | AC5（legacy 首轮采样，已被 05 取代） | `verification/FEA-07-IMMERSIVE-F11-1/evidence/legacy-f11-native-20261109-153227.json` | 61e324e1d | 228b520008363ba68195f7370eb8709e543f8b0e7fa3723bc9413857649c802b | CANONICAL |
+
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | user-data | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 应用一律 `--data-root` 隔离；复测期间 UI 显示既有 169 页（AD-003 引用，不复制） |
-| display-settings | 复测期间做过模式/缩放试验（ChangeDisplaySettingsEx / Settings UIA） | PRESERVE_UNKNOWN | G:\CODEX\New Manga.workspace\FEA-07-IMMERSIVE-F11-1\moved-evidence | verification/FEA-07-IMMERSIVE-F11-1/evidence/legacy-f11-native-20261109-153227.json | 试验产物已移出仓库；复测时物理 2K/4K 从系统消失（仅剩 Mi TV 1920×1080），**未恢复到 3840×2160@150%**，需用户恢复并核验 |
+| display-settings | 复测期间做过模式/缩放试验（ChangeDisplaySettingsEx / Settings UIA） | PRESERVE_UNKNOWN | G:\CODEX\New Manga.workspace\FEA-07-IMMERSIVE-F11-1\moved-evidence | G:\CODEX\New Manga.workspace\FEA-07-IMMERSIVE-F11-1\moved-evidence\MANIFEST.md | 试验产物已移出仓库；复测时物理 2K/4K 从系统消失（仅剩 Mi TV 1920×1080），**未恢复到 3840×2160@150%**，需用户恢复并核验 |
 | tracked-side-effect | 无 | NOT_APPLICABLE | — | — | 单测 `--log-dir` 指向临时目录并清理 |
+
+## Closeout Record
+
+- 日期：2026-11-09（Asia/Shanghai）；关账人：DSH（Lead/Integrator）。
+- 状态：`closed_with_limitations`（AC1–AC4 MET；AC5 PARTIAL）。
+- Review：r1/r2/r3 均 changes_requested → 逐轮整改（R-001…R-011、N-001…N-018）；r4 复审增量。
+- Limitations：默认 v2 壳无 F11 入口（另立 `FEA-07-V2-F11-1` proposed）；物理 2K/4K 复测时不在系统中（仅 Mi TV 1920×1080），未验证 2560×1440 覆盖；Esc/恢复为 legacy 壳 + PostMessage 注入验证（非物理键盘）。
+- 残余用户动作：恢复 4K 分辨率/缩放（当前系统仅 1 屏 1920×1080，`moved-evidence/MANIFEST.md` 记录了被移出的显示试验产物）。
