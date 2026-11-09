@@ -3,19 +3,19 @@ id: FEA-13-BK2-1
 title: backup/2 写端 + 版本协商 + backup/1 只读 adapter（FEA-13 首片）
 kind: implementation
 governance_version: 3
-status: in_review
+status: done
 approval: 裁决 `ADJ-2026-11-09-FEA13-ERRATA-AND-SPLIT`（D1–D5 errata，0 pin；D1 定 v1/v2 字面值）+ 独立 scope review `doc/reviews/FEA-13-scope-r1.md` §7 片 1 + DSH 2026-11-09 扩域：`src/bootstrap/core_service.py` **仅**错误码映射表新增一行（`BACKUP_FORMAT_UNSUPPORTED`），不改其它
 suggested_owner: dsh
 owner: dsh
-reviewer: 待指派（必须独立上下文）
+reviewer: 独立上下文子代理 r1/r2（`doc/reviews/FEA-13-BK2-1-r1.md`、`-r2.md`；r1 approved、r2 approved，均非实现会话）
 depends_on: []
 base_commit: 1aad960b8
 branch: null
 worktree: null
-integration_commit: null
+integration_commit: 7fc975e46
 delivery_head: ac1882fc8
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/FEA-13-BK2-1
 allowed_paths:
   - doc/tasks/FEA-13-BK2-1.md
@@ -106,7 +106,9 @@ out_of_scope:
 | R-014（P3，r2）test 模块 docstring 仍写 v1 | 已改为 backup/2 v2 |
 | R-015（P3，r2）README 局限第 1 条与既有测试不符 | 已更正：`test_old_package_without_page_originals_still_restores` 覆盖旧包；仍缺 base-writer 字节 golden（登记片 2/后续） |
 
-**r2 复审**（独立子代理 `doc/reviews/FEA-13-BK2-1-r2.md`，head `389f30309`）：**approved**（FIXED 7 / PARTIAL 5 / OPEN 0；无新增 P0/P1）。r2 的 5 项 PARTIAL 已在本轮逐项处置：R-001 措辞更正 + 残余登记、R-002 日志重采（真实命令头/批次标注/口径并列）、R-003 措辞改为「④ 不在 6 片拆分内，独立裁决」、R-006 新增缺失/非整数负测、R-007 新增 page_original_refs digest/size 断言。AC1–AC6 维持 MET。## Resource Manifest
+**r2 复审**（独立子代理 `doc/reviews/FEA-13-BK2-1-r2.md`，head `389f30309`）：**approved**（FIXED 7 / PARTIAL 5 / OPEN 0；无新增 P0/P1）。r2 的 5 项 PARTIAL 已在本轮逐项处置：R-001 措辞更正 + 残余登记、R-002 日志重采（真实命令头/批次标注/口径并列）、R-003 措辞改为「④ 不在 6 片拆分内，独立裁决」、R-006 新增缺失/非整数负测、R-007 新增 page_original_refs digest/size 断言。AC1–AC6 维持 MET。
+
+## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
@@ -117,4 +119,9 @@ out_of_scope:
 
 ## Closeout Record
 
-- 待独立 Review 通过后由 DSH 填写。
+- **2026-11-09 / DSH（关账）**：AC1–AC6 全部 MET；C-09 SC-B07 的 ②③⑤⑥ 落地（④ 独立裁决）。
+- **Review**：r1 独立子代理 **approved**（P0=0/P1=0/P2=3/P3=9）→ 处置；r2 独立子代理 **approved**（FIXED 7 / PARTIAL 5 / OPEN 0；无新增 P0/P1）→ 5 项 PARTIAL 逐项处置（负测、page-original 断言、日志头、措辞收窄、旧包覆盖更正）。
+- **门禁**：备份相关 5 文件 **66 passed**（EXIT 0）；变异① 1 failed/5 passed（EXIT 1）、变异② 1 failed（EXIT 1）、复原 27 passed（EXIT 0）；check.ps1 默认 + -TaskPath PASS（3 warnings）；erify_pins 18/18。
+- **残余**：base-writer 字节 golden（片 2/后续）；SC-B07 ④ 独立裁决；wire envelope 端到端（另案）；core_service.py:6959-6962 注释更新（另案，片内仅允许映射一行）。
+- **交付/集成**：实现 `ac1882fc8`；r2 返修 `389f30309`；r3 处置 `7fc975e46`（`integration_commit`）。本收口提交仅翻转状态与指针。
+- **边界**：0 契约字节、0 pin 重算、0 C# 改动；diff ⊆ allowed_paths（`core_service.py` 仅映射一行 + 注释未动）。
