@@ -1,3 +1,4 @@
+using Avalonia.Markup.Xaml.MarkupExtensions;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
@@ -20,7 +21,9 @@ public sealed class ImmersiveReaderWindow : Window
         Title = "阅读器";
         SystemDecorations = SystemDecorations.None;
         WindowState = WindowState.FullScreen;
-        Background = Brushes.Black;
+        // FEA-15-PREREQ-1: no raw design values in App C# -- the immersive
+        // backdrop comes from the design-system canvas token.
+        this[!BackgroundProperty] = new DynamicResourceExtension("Nm.Color.Bg.Canvas");
         Content = new ReaderOverlay { DataContext = reader };
         KeyDown += (_, e) =>
         {

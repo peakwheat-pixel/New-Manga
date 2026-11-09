@@ -129,7 +129,13 @@ public sealed class FluentPageTests
         Assert.Contains("Medium", shell.StatusText, StringComparison.Ordinal);
         Assert.Equal("Medium · 1024–1279", shell.FindControl<TextBlock>("FluentBreakpointText")!.Text);
         Assert.Equal("导航到书架", AutomationProperties.GetName(shell.NavigationButton(FluentPage.Library)!));
-        Assert.Equal(17, shell.ShellKeyMap.Definitions.Count(command => command.HasGesture));
+        // FEA-15-PREREQ-1: 18 gestures are the authoritative ShellKeyMap size;
+        // the old 17 was stale. Also pin that no two commands share a gesture.
+        Assert.Equal(18, shell.ShellKeyMap.Definitions.Count(command => command.HasGesture));
+        var gestures = shell.ShellKeyMap.Definitions
+            .SelectMany(command => command.Gestures)
+            .ToList();
+        Assert.Equal(gestures.Count, gestures.Distinct().Count());
 
         Assert.True(shell.HandleKeyForTest(Key.D2, KeyModifiers.Control));
         Assert.Equal(FluentPage.Workbench, shell.CurrentPage);
