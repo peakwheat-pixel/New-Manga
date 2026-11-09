@@ -3,20 +3,20 @@ id: FEA-11-2C-RESIDUAL-1
 title: 2C 残余：预算超限分支不得吞掉 typed stop（RunGrantRenewal 停止优先序）+ 判别测试
 kind: implementation
 governance_version: 3
-status: in_review
+status: done
 approval: DAG 指名候选（`REBASELINE_PLAN` 当前 DAG 末段「下一候选 2C-RESIDUAL-1（typed-stop）」）+ `FEA-11-RUN-GRANT-2C-r1.md` R2C-03（P3，保留为候选）；DSH 2026-11-09 范围冻结：只改 Host 停止分类优先序 + 判别测试，0 契约 pin（C-06/C-16 已冻，遵守型），0 wire 变更
 suggested_owner: dsh
 owner: dsh
-reviewer: 待指派（必须独立上下文）
+reviewer: 独立上下文子代理 r1（`doc/reviews/FEA-11-2C-RESIDUAL-1-r1.md`，会话 `1db3c6a7-…`；approved P0=0/P1=0/P2=0/P3=4）
 depends_on:
   - FEA-11-RUN-GRANT-2C
 base_commit: ac64cb134
 branch: null
 worktree: null
-integration_commit: null
+integration_commit: a2c4c1d8c
 delivery_head: a2c4c1d8c
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/FEA-11-2C-RESIDUAL-1
 allowed_paths:
   - doc/tasks/FEA-11-2C-RESIDUAL-1.md
@@ -65,11 +65,11 @@ POST-ROUND 预算判定的优先级改为：
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-2C-README | AC1–AC5 | `verification/FEA-11-2C-RESIDUAL-1/README.md` | `-` | `349b524e3361c00458f8c1b499174b9cf0c8a24c85f95b4b0b53f7f1a86159f8` | CANONICAL |
-| EV-2C-MUTATION | AC4 | `verification/FEA-11-2C-RESIDUAL-1/logs/mutation-red.log` | `-` | `f22c768c3bb95695e1bb14b38d07b124c8d5ab9967f0b62e41088192f6e3a405` | CANONICAL |
-| EV-2C-GREEN | AC1,AC2,AC3 | `verification/FEA-11-2C-RESIDUAL-1/logs/renewal-tests-green.log` | `-` | `b796cf664f020f8e047e8a6cd3bfc88fc047142c541fb7328b8d052229ee4d2a` | CANONICAL |
-| EV-2C-FULL | AC5 | `verification/FEA-11-2C-RESIDUAL-1/logs/full-solution.log` | `-` | `899a31c693b3f17bf4bd92ad5ed4c1feea48c24da1d1503516b2d44dd09cdc8d` | CANONICAL |
-| EV-2C-BUILD | AC5 | `verification/FEA-11-2C-RESIDUAL-1/logs/build.log` | `-` | `76a55c39609f4a3ddd825765b6e3835c8e39cd5c87f9464563b8b176bb6c5879` | CANONICAL |
+| EV-2C-README | AC1–AC5 | `verification/FEA-11-2C-RESIDUAL-1/README.md` | `a2c4c1d8c` | `349b524e3361c00458f8c1b499174b9cf0c8a24c85f95b4b0b53f7f1a86159f8` | CANONICAL |
+| EV-2C-MUTATION | AC4 | `verification/FEA-11-2C-RESIDUAL-1/logs/mutation-red.log` | `-` | `6643af566c1ab9de6aafa3b091b15b1a470b2ea0d45260074991d0b6469901c1` | CANONICAL |
+| EV-2C-GREEN | AC1,AC2,AC3 | `verification/FEA-11-2C-RESIDUAL-1/logs/renewal-tests-green.log` | `-` | `a386d3517a196ca9c6c601b6654b1a1ef499241e4f10b68f5df607db9f8dc5b2` | CANONICAL |
+| EV-2C-FULL | AC5 | `verification/FEA-11-2C-RESIDUAL-1/logs/full-solution.log` | `-` | `6482fcfc5f4082d51ae6ec6f60a83e9e24d80c1ec5d1c8b2a9b07ae977832656` | CANONICAL |
+| EV-2C-BUILD | AC5 | `verification/FEA-11-2C-RESIDUAL-1/logs/build.log` | `-` | `7eab842c3d9cde0309068c777ec55f2e34887ad2e4541ab756e56d10a28e735e` | CANONICAL |
 ## 证据计划
 
 | # | 命令 | 判别 |
@@ -96,4 +96,9 @@ POST-ROUND 预算判定的优先级改为：
 
 ## Closeout Record
 
-- 待独立 Review 通过后由 DSH 填写。
+- **2026-11-09 / DSH（关账）**：2C 残余 R2C-03 已修（预算超限分支保留 typed stop）；AC1–AC5 全部 MET。
+- **Review**：独立子代理 r1 = **approved**（P0=0/P1=0/P2=0/P3=4），报告 `doc/reviews/FEA-11-2C-RESIDUAL-1-r1.md`；审查者独立重做变异（2 failed/2 passed）并复跑 22/22。
+- **P3 处置**：R-01 证据 pin 可复现性 → EV-2C-README 填 `commit=a2c4c1d8c`（LF 走 blob 回退），4 份日志为 CRLF、pin 可复现；R-02 四份 CANONICAL 日志补命令头/shell/时间戳/EXIT 并重钉哈希；R-03（两条路径 `Code=null` 兜底值不同）与 R-04（兜底分支不可达）登记为残余，不引入行为改动。
+- **残余**：R-03/R-04 为非阻断代码一致性 nit；FEA-12-UI-RESIDUAL-2 的 P3-01（ShowList 守卫）另案；本卡不再扩大范围。
+- **门禁**：build 0/0；`RunGrantRenewalTests` 22/22；变异 RED 2/4；Host.Tests 305/0/72；全量 sln 1802/2/107（App.Tests 既有 2 失败）；`check.ps1` 默认 + `-TaskPath` PASS；pins 18/18。
+- **交付/集成**：实现 `a2c4c1d8c`；本收口提交仅翻转状态、指针与证据日志头。
