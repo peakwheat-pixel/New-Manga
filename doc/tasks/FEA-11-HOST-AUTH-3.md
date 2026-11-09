@@ -3,7 +3,7 @@ id: FEA-11-HOST-AUTH-3
 title: 跨进程崩溃恢复的 grant 语义（C-17 v1.2 计划物化投影 + Host 恢复重铸）
 kind: implementation
 governance_version: 3
-status: in_progress
+status: done
 approval: **scope review r2 `READY-TO-FREEZE`（`doc/reviews/FEA-11-HOST-AUTH-3-scope-r2.md`）** + ZCode 独立裁决（`doc/reviews/ADJ-2026-11-09-ZCODE-ARCH-ADJUDICATION.md`）+ **C-17 v1.2 已冻结**（载体 `doc/reviews/CONTRACT-UNFREEZE-2026-11-09-C17.md`；`verify_pins` 18/18）。**实现范围按本卡冻结；不得自行 UNFREEZE/重算 pin。**
 suggested_owner: dsh
 owner: dsh
@@ -13,10 +13,10 @@ depends_on:
 base_commit: e9ab2ef7c
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: e9ffad62c
+delivery_head: e9ffad62c
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-11-HOST-AUTH-3
 allowed_paths:
   - doc/tasks/FEA-11-HOST-AUTH-3.md
@@ -82,6 +82,74 @@ out_of_scope:
 - AC-H3-2 的 state 语义按 v1.2 DTO 全枚举（`draft/previewed/confirmed/applied/stale`），不只 applied。
 - 物化读取位置：`Acknowledge/Recover` 的 Core-backed 段，**不进 `PrepareCompletion`**。
 - 禁止措辞（AC-H3-6）：任意崩溃点均可恢复 / grant 已持久化 / 自动重新授权 / limitation 3 或 4 已闭合 / 无副作用。
+
+## Canonical Evidence
+
+| evidence_id | AC/Gate | path | commit | sha256 | class |
+|---|---|---|---|---|---|
+| EV-H3-001 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/crash/host-auth-crash-289e5a14b37c4a679bb9259131638718/library.db` | `-` | `aa02017b8a05c98b6de1704007b5483b838bbbd7f7e362dcc118e9a31024d142` | CANONICAL |
+| EV-H3-002 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/crash/host-auth-crash-289e5a14b37c4a679bb9259131638718/park.json` | `-` | `af58fb989983e8aab76179df7014aea7ccd93de97927d17caaabc9f81c641d03` | CANONICAL |
+| EV-H3-003 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/crash/host-auth-crash-289e5a14b37c4a679bb9259131638718/pids-after.txt` | `-` | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` | CANONICAL |
+| EV-H3-004 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/crash/host-auth-crash-289e5a14b37c4a679bb9259131638718/pids-before.txt` | `-` | `60d672fc657f6f1cc226001d764adc034a673701aae27e47fbcc315940c934c3` | CANONICAL |
+| EV-H3-005 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/crash/host-auth-crash-289e5a14b37c4a679bb9259131638718/recover.json` | `-` | `4acfd914d6ecfad3f3a3a51ed3013b9f483d02c5a9308613921120f732c23d88` | CANONICAL |
+| EV-H3-006 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/crash/host-auth-crash-289e5a14b37c4a679bb9259131638718/wire-redacted.ndjson` | `-` | `2d88a55fbaa4fcfd8ff8233f73935ad25a0fd9a828931a2dc011bb3a5b51ea15` | CANONICAL |
+| EV-H3-007 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/crash/host-auth-crash-4a181a677b4a486ab99b1ff4ecb8277c/library.db` | `-` | `3755a76d9c5f54c086133b75af95742a50379c80b0089ebc4f65e813a8228efe` | CANONICAL |
+| EV-H3-008 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/crash/host-auth-crash-4a181a677b4a486ab99b1ff4ecb8277c/park.json` | `-` | `d7deaa222463bf0bd3a9b8e9b014f708b7d4d244cea70f2f8a926793418aabcf` | CANONICAL |
+| EV-H3-009 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/crash/host-auth-crash-4a181a677b4a486ab99b1ff4ecb8277c/pids-after.txt` | `-` | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` | CANONICAL |
+| EV-H3-010 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/crash/host-auth-crash-4a181a677b4a486ab99b1ff4ecb8277c/pids-before.txt` | `-` | `5b04b13948ff455e4cc8c0291bc5f43b2a1d01de889827ca734f894d81818558` | CANONICAL |
+| EV-H3-011 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/crash/host-auth-crash-4a181a677b4a486ab99b1ff4ecb8277c/recover.json` | `-` | `e081243fdb642c6094ca350d66ab85198f7dfc5d465d118e296877ab342c3ec8` | CANONICAL |
+| EV-H3-012 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/crash/host-auth-crash-4a181a677b4a486ab99b1ff4ecb8277c/wire-redacted.ndjson` | `-` | `2998e17213b66049d773579069fabdd614ae0464d6545f9d252f3cef506d79a5` | CANONICAL |
+| EV-H3-013 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/crash/host-auth-crash-588f690edfca4e89b2acbb3ed49c9f11/library.db` | `-` | `4647a4e6742e396a3d7ffac84acbef7d02de2b10494f6683d46812e1e1a0871c` | CANONICAL |
+| EV-H3-014 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/crash/host-auth-crash-588f690edfca4e89b2acbb3ed49c9f11/park.json` | `-` | `174068628208d986014be041f465a53dc8d959b4bd88635ec63bb66208fce032` | CANONICAL |
+| EV-H3-015 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/crash/host-auth-crash-588f690edfca4e89b2acbb3ed49c9f11/pids-after.txt` | `-` | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` | CANONICAL |
+| EV-H3-016 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/crash/host-auth-crash-588f690edfca4e89b2acbb3ed49c9f11/pids-before.txt` | `-` | `24ccf76dae7d0e4317b19e1f54b3582845401362d890f47105655a48baa212b4` | CANONICAL |
+| EV-H3-017 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/crash/host-auth-crash-588f690edfca4e89b2acbb3ed49c9f11/recover.json` | `-` | `5e0129d6447e90be793086878a3b2ccd40a3ed7aed6fefcabfac7a640cdf216a` | CANONICAL |
+| EV-H3-018 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/crash/host-auth-crash-588f690edfca4e89b2acbb3ed49c9f11/wire-redacted.ndjson` | `-` | `707ccbc1634e04f54431b6cefb40e1f242d36f969fd3e6bfe325e110b65dc37c` | CANONICAL |
+| EV-H3-019 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/crash/host-auth-crash-8e633dd6851e46b7a01f15e4f3d0e195/library.db` | `-` | `1cc4d385599b0be196a682ba6e1c20d135af4bad1d859a4067459a8ea5337b5d` | CANONICAL |
+| EV-H3-020 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/crash/host-auth-crash-8e633dd6851e46b7a01f15e4f3d0e195/park.json` | `-` | `64a605fd4cda3cd704dff468a967dfdc7ca0365ef874a109947b0faf3f6ca2c9` | CANONICAL |
+| EV-H3-021 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/crash/host-auth-crash-8e633dd6851e46b7a01f15e4f3d0e195/pids-after.txt` | `-` | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` | CANONICAL |
+| EV-H3-022 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/crash/host-auth-crash-8e633dd6851e46b7a01f15e4f3d0e195/pids-before.txt` | `-` | `d6ed0b433e31aa14f6133022bd84a8f73160df3f0f82b15b6086f6d006d09732` | CANONICAL |
+| EV-H3-023 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/crash/host-auth-crash-8e633dd6851e46b7a01f15e4f3d0e195/recover.json` | `-` | `d027fee77bcb66a0b7429fc9b293822fc82c58f481c8611f9e971994019724bd` | CANONICAL |
+| EV-H3-024 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/crash/host-auth-crash-8e633dd6851e46b7a01f15e4f3d0e195/wire-redacted.ndjson` | `-` | `691d9700ce21ada1c964ca101f72e110e89ef66fcdeccd6ac5dd93b2bb89ebdd` | CANONICAL |
+| EV-H3-025 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/crash/host-auth-crash-e8e38b84342040ca9659432306239ffa/library.db` | `-` | `917d258849909713f23ed28722dd4e5ace618b7c9faa5f9e73baf039fc04831e` | CANONICAL |
+| EV-H3-026 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/crash/host-auth-crash-e8e38b84342040ca9659432306239ffa/park.json` | `-` | `7100c891670a5e0e468b1f575ae0d4c68aba3797a5595b1ae8ca83b995d1e041` | CANONICAL |
+| EV-H3-027 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/crash/host-auth-crash-e8e38b84342040ca9659432306239ffa/pids-after.txt` | `-` | `e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855` | CANONICAL |
+| EV-H3-028 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/crash/host-auth-crash-e8e38b84342040ca9659432306239ffa/pids-before.txt` | `-` | `6e01c0482f562f11c86e8adb103df9b91a8632b0415a086d96f347b5935f7f83` | CANONICAL |
+| EV-H3-029 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/crash/host-auth-crash-e8e38b84342040ca9659432306239ffa/recover.json` | `-` | `a26bc794515ff20b8ee4fd266950d6bad268fb3793fb5862b25888c74d3daee1` | CANONICAL |
+| EV-H3-030 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/crash/host-auth-crash-e8e38b84342040ca9659432306239ffa/wire-redacted.ndjson` | `-` | `d67defc19a8f8b02ad6e9558a1ba0297008328e8651a02473442fd4b9653648d` | CANONICAL |
+| EV-H3-031 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/logs/crash-driver-attempt10.log` | `-` | `55e5f17520524daa90a0e1ce47daafc35c8ee664a5ce4e170cf3f0cd95a4759d` | CANONICAL |
+| EV-H3-032 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/logs/crash-driver-attempt11.log` | `-` | `4234811a666bc27711a8bb5f031fe6d1907d10cfe8ba2cdd8c72f46feb8fabcc` | CANONICAL |
+| EV-H3-033 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/logs/crash-driver-attempt12.log` | `-` | `acb30d7389f9ce57458fab7a841c8e6f0005cdde10247cb3ab49b87b9e52a35e` | CANONICAL |
+| EV-H3-034 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/logs/crash-driver-attempt2.log` | `-` | `f1da91873d1abb248f0fc7e3c9a40cbb914bc254a9fa6db9165656c7d87f934e` | CANONICAL |
+| EV-H3-035 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/logs/crash-driver-attempt3.log` | `-` | `3e1466b908dfb677c1a2ada9d58fe42dc8760120d3edda2208aeafc017689f45` | CANONICAL |
+| EV-H3-036 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/logs/crash-driver-attempt4.log` | `-` | `bdd4a6f56baa10312cd8e960b61fbbef85d18081f2abf88067133b23e3ebec22` | CANONICAL |
+| EV-H3-037 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/logs/crash-driver-attempt5.log` | `-` | `4da4ebdd03a6ef205bba7d9ca58569594ff98a4e4093716c6375f45ffb1defef` | CANONICAL |
+| EV-H3-038 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/logs/crash-driver-attempt6.log` | `-` | `ce5f163a08f86be37434e5276ef9a013fa9bc140fd9ab7d7af3ac939576202ae` | CANONICAL |
+| EV-H3-039 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/logs/crash-driver-attempt7.log` | `-` | `d4d0e19cd0d35d24d78a63b857f3518752389a62cfaccb71b8551d4a6d2293f9` | CANONICAL |
+| EV-H3-040 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/logs/crash-driver-attempt8.log` | `-` | `5e922b21e9e2f3ea69814f1d12788ad76f36c4d3a8393dc61e09f358fd4f0635` | CANONICAL |
+| EV-H3-041 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/logs/crash-driver-attempt9.log` | `-` | `5c4da01cab84a5de1af727a451c15d13e7692d8448aa210978c353b67456e1e5` | CANONICAL |
+| EV-H3-042 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/logs/crash-driver-negative.log` | `-` | `e7a3cbd50840c754ad2a77735b3d6789dbcb5e310d9e604f3e3f351099aaed8c` | CANONICAL |
+| EV-H3-043 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/logs/dotnet-full-console.log` | `-` | `353e5226bcee55b69740397d30c5e16d7e01600953c0adf3c39a1556cd0ee729` | CANONICAL |
+| EV-H3-044 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/logs/dotnet-NewManga.App.Tests.log` | `-` | `8f0677206bfe44d3f243ae8b7e58f04ef49dda60ab512523bc14cee878dd8949` | CANONICAL |
+| EV-H3-045 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/logs/dotnet-NewManga.Appearance.Tests.log` | `-` | `080915a9d69eb081a9095980db774870818baefb2f47c105b031bd005400a18f` | CANONICAL |
+| EV-H3-046 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/logs/dotnet-NewManga.ApplicationCore.Tests.log` | `-` | `62c202de8bf9d5ebabb4f5a2c875b77a3a19fbf850f363f7aaa17d8134dd5c85` | CANONICAL |
+| EV-H3-047 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/logs/dotnet-NewManga.CoreClient.Tests.log` | `-` | `5737f83eacf273a054f3a51c2d7ae24ae6474140da4b8b507527860a4c6b2990` | CANONICAL |
+| EV-H3-048 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/logs/dotnet-NewManga.DesignSystem.Tests.log` | `-` | `0e83aa60daace8bf893fcf65b0d000cda2c061de2e4dc7fe001c569ec5f379b6` | CANONICAL |
+| EV-H3-049 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/logs/dotnet-NewManga.Host.Tests.log` | `-` | `64de275f2026fe83112e4ced69b704aae20d13b41b1762838f7ee3d7cbdff871` | CANONICAL |
+| EV-H3-050 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/logs/dotnet-NewManga.Presentation.Avalonia.Tests.log` | `-` | `18cc43aaf1c40148cde99439cf726d7331b878a8fc3b9d61dcbe2167a5839ece` | CANONICAL |
+| EV-H3-051 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/logs/dotnet-NewManga.ThemeEngine.Tests.log` | `-` | `8cdd1cc0fee3ab592f2e49d401f5d6806051f68c09218574237e5ca72ec18dc8` | CANONICAL |
+| EV-H3-052 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/logs/pytest-full.log` | `-` | `8a0e57138247136d44a15068e9e0f6252ce2e65c1453123ebfaa503b94da0ff8` | CANONICAL |
+| EV-H3-053 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/mutations/M1-journal-grant-reuse.log` | `-` | `c76a71c183b7ce2821ec89459e414c1de50abbfaabd8486eaa0220257aef48ed` | CANONICAL |
+| EV-H3-054 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/mutations/M2-host-control-removed.log` | `-` | `7efcd68b2e14652eac10bacaf62df5e119390ad1186a3e14c8840fb07efbe157` | CANONICAL |
+| EV-H3-055 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/mutations/M3-projection-writes.log` | `-` | `8e0299ec632506d29a4b274fe38fdf034597e11d02e8d3ee26909bb0ac06ace2` | CANONICAL |
+| EV-H3-056 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/mutations/M4-digest-check-removed.log` | `-` | `024dfe863f033c191e1d2379c48f14246e554d23d9a4c517f4480707607e3d64` | CANONICAL |
+| EV-H3-057 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/mutations/M5-applied-precondition-removed.log` | `-` | `f876871a67ba634246f4982795acc0341588fff985788630068af3b5b9d5894d` | CANONICAL |
+| EV-H3-058 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/mutations/M6-guessed-source-kind.log` | `-` | `962fcffd095f73f57036253250bde39d036e5d8001e17ebf97f895f26923b438` | CANONICAL |
+| EV-H3-059 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/README.md` | `-` | `d51e2f43286c8bc9c70757f788fab2a7f058802d16b223e423577a2a266ce09c` | CANONICAL |
+| EV-H3-060 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/tools/__pycache__/redact_signature.cpython-314.pyc` | `-` | `92fa0742f213584b6c24effe658e3839a3c9742d0d2ec85bbc44de8e952c6268` | CANONICAL |
+| EV-H3-061 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/tools/check_gate.py` | `-` | `1cfc83218522ee582f195b0650519d9a4ca9baeef44e4fd61e621db17c1aa180` | CANONICAL |
+| EV-H3-062 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/tools/crash-ack.ps1` | `-` | `43bb77e1c2bd4b9fcd34aa7c568b7476e2807345b13a765f289a6945806fca15` | CANONICAL |
+| EV-H3-063 | AC-H3-1…6 | `verification/FEA-11-HOST-AUTH-3/tools/redact_signature.py` | `-` | `33469b9e99e96e49c752806849444d7643c00938f384602d4ced3530758d1423` | CANONICAL |
 
 ## 证据计划
 

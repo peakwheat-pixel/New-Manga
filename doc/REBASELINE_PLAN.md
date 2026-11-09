@@ -11,7 +11,7 @@
 |FEA-DOC-RECONCILE-1|—|**done**（文档对账 7 项；GOV-11/D07 关闭；BRIDGE 不独立释放；r3 approved）|
 |FEA-07-RESIDUAL-4|FEA-07、FEA-07-RESIDUAL-3|**done**（L-R4b-1 隔离；真实 AppData delta=0；r2 approved；`7aa1e5778`）|
 |FEA-11-2C-RESIDUAL-1|FEA-11-RUN-GRANT-2C|**done**（预算超限保留 typed stop；+3 判别测试；r1 approved；`a2c4c1d8c`）|
-|FEA-11-HOST-AUTH-3|FEA-11-HOST-AUTH-2|**in_progress**（Core+Host 恢复重铸已落；崩溃注入/变异/证据待补）|
+|FEA-11-HOST-AUTH-3|FEA-11-HOST-AUTH-2|**done**（C-17 v1.2 载体；5 轮独立 Review；崩溃正/反例 PASS）|
 |FEA-13-BK2-1|—|**done**（backup/2 + 协商 + v1 adapter；`7fc975e46`）|
 |FEA-13-COV-2|FEA-13-BK2-1|**done**（覆盖清单二期 + verified/defer）|
 |FEA-13-ID-3|FEA-13-BK2-1、FEA-13-COV-2|**done**（DatabaseId；`67bccb08d`）|
