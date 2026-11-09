@@ -14,7 +14,7 @@
 | AC3 恢复后授权可用 | overwrite restore → handoff → Host 导入 `List()`/`Authorize`；幂等/零写 | **PASS**（`logs/pytest-src6.log` + `logs/dotnet-restore-tests.log`） |
 | AC4 revoked/代次/冲突 | live 优先、候选 revoked 不复活、receipt 防启动复活、read-only 零写 | **PASS**（`logs/dotnet-restore-tests.log`） |
 | AC5 跨机/版本/identity 负例 | 注入必败 protector → `SOURCE_ACCESS_DENIED`/`dpapi_unprotectable`；NMSAR2 → `registry_version_unsupported`；截断 → Host 边界 `handoff_corrupt`（registry 级为 `registry_corrupt`）；live 零写 | **PASS（simulated）**；**真实跨机 DPAPI = NOT_RUN**（单机无法构造；不得记 PASS） |
-| AC6 门禁/证据/变异 | `check.ps1` 默认 + `-TaskPath` PASS；`verify_pins` 18/18；定向 pytest/.NET 0 failed；diff ⊆ 14 paths；≥3 变异 RED | **PASS** |
+| AC6 门禁/证据/变异 | `check.ps1` 默认 + `-TaskPath` PASS；`verify_pins` 18/18；定向 pytest/.NET 0 failed；diff ⊆ 14 paths；**2 变异真实 RED + 1 变异不可判别（无效，已登记）** | **PASS** |
 
 ## 门禁（本目录日志）
 
@@ -22,8 +22,8 @@
 |---|---|---|
 | `logs/pytest-src6.log` | 新测试 7 passed | 0 |
 | `logs/pytest-nmbak-suite.log` | nmbak 全套 54 passed | 0 |
-| `logs/dotnet-restore-tests.log` | Host 导入测试 7 passed | 0 |
-| `logs/dotnet-host-tests.log` | Host.Tests 全量 319 / 0 / 74 | 0 |
+| `logs/dotnet-restore-tests.log` | Host 导入测试 9 passed | 0 |
+| `logs/dotnet-host-tests.log` | Host.Tests 全量 321 / 0 / 74（总计 395） | 0 |
 | `logs/gates-check.log` | check.ps1 默认 + `-TaskPath` | 0 |
 | `logs/gates-pins.log` | verify_pins 18/18 | 0 |
 
