@@ -54,7 +54,8 @@ public static partial class SourceAccessRestore
         string dataRoot,
         string backupId,
         SourceAccessRegistry registry,
-        Action<string>? log = null)
+        Action<string>? log = null,
+        bool force = false)
     {
         var id = backupId ?? string.Empty;
         if (!BackupIdPattern().IsMatch(id))
@@ -66,7 +67,9 @@ public static partial class SourceAccessRestore
         {
             return new SourceAccessRestoreOutcome("not_present", null, null, 0, 0, 0);
         }
-        if (File.Exists(Path.Combine(root, ReceiptFileName)))
+        // A receipt marks a consumed handoff (startup scans must not revive a reset
+        // registry). An EXPLICIT restore of the same package may re-import it.
+        if (!force && File.Exists(Path.Combine(root, ReceiptFileName)))
         {
             return new SourceAccessRestoreOutcome("unchanged", null, null, 0, 0, 0);
         }

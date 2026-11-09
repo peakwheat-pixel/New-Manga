@@ -175,9 +175,16 @@ public sealed class SourceAccessRegistry
     /// </summary>
     internal static RegistrySnapshot ParseSnapshot(byte[] fileBytes, ISecretProtector protector)
     {
-        if (fileBytes.Length < 12 || fileBytes.Length > 4 * 1024 * 1024
-            || !fileBytes.AsSpan(0, Magic.Length).SequenceEqual(Magic))
+        if (fileBytes.Length < 12 || fileBytes.Length > 4 * 1024 * 1024)
             throw new InvalidDataException();
+        if (!fileBytes.AsSpan(0, Magic.Length).SequenceEqual(Magic))
+        {
+            // A different snapshot version (NMSAR2+) is unsupported, not corrupt.
+            if (fileBytes.Length >= Magic.Length
+                && fileBytes.AsSpan(0, 5).SequenceEqual(Magic.AsSpan(0, 5)))
+                throw new NotSupportedException();
+            throw new InvalidDataException();
+        }
         var length = BinaryPrimitives.ReadUInt32LittleEndian(fileBytes.AsSpan(Magic.Length, 4));
         var plaintext = protector.Unprotect(fileBytes[(Magic.Length + 4)..]);
         RegistrySnapshot? snapshot;
@@ -220,9 +227,18 @@ public sealed class SourceAccessRegistry
         {
             candidate = ParseSnapshot(handoffBytes, _protector);
         }
+        catch (CryptographicException)
+        {
+            // Another Windows user / another machine: DPAPI CurrentUser cannot unprotect.
+            return new ImportOutcome(0, 0, 0, "rejected", "dpapi_unprotectable");
+        }
+        catch (NotSupportedException)
+        {
+            return new ImportOutcome(0, 0, 0, "rejected", "registry_version_unsupported");
+        }
         catch (Exception error) when (error is not OutOfMemoryException)
         {
-            return new ImportOutcome(0, 0, 0, "rejected", "registry_corrupt_or_unprotectable");
+            return new ImportOutcome(0, 0, 0, "rejected", "registry_corrupt");
         }
 
         try
@@ -241,11 +257,16 @@ public sealed class SourceAccessRegistry
                         imported.Add(entry);
                         continue;
                     }
-                    if (liveEntry.Generation >= entry.Generation
-                        || liveEntry.RevokedAt is not null
-                        || entry.RevokedAt is not null)
+                    if (liveEntry.RevokedAt is not null || entry.RevokedAt is not null)
                     {
                         conflicts++;
+                        continue;
+                    }
+                    if (liveEntry.Generation >= entry.Generation)
+                    {
+                        // Live wins; an identical/older candidate is simply not imported.
+                        if (liveEntry.Generation == entry.Generation) unchanged++;
+                        else conflicts++;
                         continue;
                     }
                     unchanged++;

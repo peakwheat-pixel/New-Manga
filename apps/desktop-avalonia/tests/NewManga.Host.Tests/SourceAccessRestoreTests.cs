@@ -208,4 +208,58 @@ public sealed class SourceAccessRestoreTests : IDisposable
         Assert.Equal("rejected", outcome.Status);
         Assert.Equal("handoff_corrupt", outcome.Reason);
     }
+
+    [Fact]
+    public void ExplicitForceReimportsAfterAReceipt()
+    {
+        var source = NewRegistry("live-f");
+        source.Register("loc-live", [ _sourceRoot ]);
+        var backupId = BuildHandoff(source);
+        var target = DataRootRegistry();
+
+        var first = SourceAccessRestore.TryImportFromHandoff(_root + "/data", backupId, target);
+        Assert.Equal("imported", first.Status);
+
+        // Startup scan respects the receipt...
+        var pending = SourceAccessRestore.TryImportPending(_root + "/data", target);
+        Assert.All(pending, outcome => Assert.Equal("unchanged", outcome.Status));
+
+        // ...but an EXPLICIT restore of the same package re-imports it, and the merge
+        // reports the already-present entry as Unchanged (not a Conflict).
+        var forced = SourceAccessRestore.TryImportFromHandoff(
+            _root + "/data", backupId, target, force: true);
+        Assert.Equal("unchanged", forced.Status);
+        Assert.Equal(0, forced.Conflicts);
+        Assert.Equal(1, forced.Unchanged);
+    }
+
+    [Fact]
+    public void UnsupportedSnapshotVersionIsRejectedDistinctly()
+    {
+        var source = NewRegistry("live-g");
+        source.Register("loc-live", [ _sourceRoot ]);
+        var backupId = BuildHandoff(source);
+        var segment = Path.Combine(
+            SourceAccessRestore.HandoffRoot(_root + "/data", backupId),
+            "source-access", "registry.v1.dat");
+        var bytes = File.ReadAllBytes(segment);
+        // Flip the magic to NMSAR2 and keep the length/sha consistent with the manifest.
+        bytes[5] = (byte)'2';
+        File.WriteAllBytes(segment, bytes);
+        var manifestPath = Path.Combine(
+            SourceAccessRestore.HandoffRoot(_root + "/data", backupId), "handoff.json");
+        var manifest = System.Text.Json.Nodes.JsonNode.Parse(File.ReadAllText(manifestPath))!;
+        var sha = Convert.ToHexString(
+            System.Security.Cryptography.SHA256.HashData(bytes)).ToLowerInvariant();
+        manifest["sha256"] = sha;
+        manifest["size_bytes"] = bytes.Length;
+        File.WriteAllText(manifestPath, manifest.ToJsonString());
+
+        var target = DataRootRegistry();
+        var outcome = SourceAccessRestore.TryImportFromHandoff(_root + "/data", backupId, target);
+
+        Assert.Equal("rejected", outcome.Status);
+        Assert.Equal("registry_version_unsupported", outcome.Reason);
+        Assert.Empty(target.List());
+    }
 }

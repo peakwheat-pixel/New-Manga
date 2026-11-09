@@ -431,11 +431,9 @@ class NmbakBackupService:
             # FEA-13-SRC-6 (AC3): the encrypted snapshot is handed to the Host only
             # AFTER the data restore succeeded; a handoff failure is a typed
             # BACKUP_RESTORE_INCOMPLETE (never a silent "restored" claim).
-            handoff = self._write_source_access_handoff(
-                backup_id, restore_dir, manifest
-            )
-            if handoff is not None:
-                report["source_access_handoff"] = handoff
+            # FEA-13-SRC-6 (R-002): the handoff is a Host-side file contract, NOT a wire
+            # field; the restore report shape stays byte-compatible (0 new wire).
+            self._write_source_access_handoff(backup_id, restore_dir, manifest)
             return report
         finally:
             self._remove_tree(restore_dir)

@@ -428,7 +428,7 @@ public sealed class HostRuntime : IAsyncDisposable
         var dataRoot = _options.DataRoot;
         if (registry is null || string.IsNullOrWhiteSpace(dataRoot)) return null;
         var outcome = SourceAccessRestore.TryImportFromHandoff(
-            dataRoot, backupId, registry, message => _log.Info(message));
+            dataRoot, backupId, registry, message => _log.Info(message), force: true);
         if (outcome.Status is "rejected")
         {
             _log.Warn($"source-access handoff rejected: backup={backupId} reason={outcome.Reason}");
@@ -1280,6 +1280,17 @@ public sealed class HostRuntime : IAsyncDisposable
                         // FEA-11-HOST-AUTH-3 (C-17 v1.2 / AC-H3-3): the recovery path re-mints
                         // fresh grants through the SAME coordinator (Sources is built above).
                         Sources);
+                    // FEA-13-SRC-6 (R-001): consume any handoff that a crashed restore left
+                    // behind. Best effort: a bad handoff never blocks startup, and the
+                    // import itself is fail-closed (live zero-write on refusal).
+                    try
+                    {
+                        ImportPendingSourceAccessHandoffs();
+                    }
+                    catch (Exception error)
+                    {
+                        _log.Warn("source-access handoff catch-up failed: " + error.Message);
+                    }
                 }
                 catch (Exception error) when (error is SourceAccessException or IOException or UnauthorizedAccessException)
                 { _log.Warn("source registry unavailable"); }

@@ -31,7 +31,7 @@
 
 | 变异 | 判别 | 结果 |
 |---|---|---|
-| MA 冲突 guard 禁用（live 被覆盖） | `LiveEntryWinsOverAnOlderOrRevokedCandidate` | **RED**（EXIT 1） |
+| MA 冲突 guard 禁用 | `LiveEntryWinsOverAnOlderOrRevokedCandidate` | **无效（NOT RED，EXIT 0）**——该变异在当前合并语义下不可判别（generation 检查先行）；R-005 如实登记，不得据此声称判别力 |
 | MB 异机 DPAPI 失败映射为 no-op | `ForeignDpapiSnapshotIsRejected` | **RED**（EXIT 1） |
 | MC 包内写明文 stub | `test_registry_is_packaged_verbatim` 等 | **RED**（3 failed） |
 
