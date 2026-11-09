@@ -4,7 +4,7 @@
 
 ## 当前程序
 - **V11R 程序 ACTIVE**：[V11R_PROGRAM](V11R_PROGRAM.md)；契约 [V11R_AVALONIA_CONTRACT](plan/V11R_AVALONIA_CONTRACT.md)。
-- 当前 Task：**无活动 Task**（FEA-13 全片 + FEA-15-PREREQ-1 完成）。下一候选：[FEA-11-HOST-AUTH-3](tasks/FEA-11-HOST-AUTH-3.md)（`blocked`）或 FEA-14 切片/FEA-15 集成验收。
+- 当前 Task：**无活动 Task**（FEA-13 全片 + FEA-15 前置两项完成；全量基线全绿）。下一候选：FEA-14 切片 scope 或 FEA-15 集成验收。
 - FEA-11 线：WATCH-1/SCAN-2/SCAN-1/MATCH-1/AC4-GAPS-1/LINEAGE-1 `done`；HOST-AUTH-1 `done`；FEA-12 四卡 `done`。
 - **AC11-1 终态 MET（带 limitation）**：裁决 2026-11-06（[记录](reviews/FEA-11-AC11-1-adjudication-2026-11-06.md)）；「启动/访问前检查」= 冷启动枚举 + registry/root 核验（SCAN-2） + 每次访问/操作前 live grant+lease+digest 强验证；启动不做全量内容扫描（L-STARTUP）。
 - rolling checkpoint：[GOAL-PROGRESS](checkpoints/GOAL-PROGRESS-2026-11-02.md)。
@@ -17,7 +17,7 @@
 
 ## 保留与已知限制
 - 台账 [TASK_LEDGER](TASK_LEDGER.md)；DIR-4/5=2/1000；真机端到端 run-i18 7/7、run-i36 10/10。
-- 测试基线：pytest **3395/10**（既有未登记 flake `test_referenced_flow` 隔离复跑绿）、.NET **1794/0/107**（2026-11-09 R4b 收官；跑后 `verification/FEA-09` 已恢复）。
+- 测试基线（2026-11-09 FEA-15-PREREQ-2 实测）：pytest **3446 passed / 0 failed / 10 skipped**（3456 collected）；.NET **1804 passed / 0 failed / 107 skipped**（8 项目；App.Tests 838/0/11）。
 
 ## Gate 与保留项
 Technical Gate=NOT_SATISFIED；private_registry_absence=UNPROVABLE；Owner Risk Acceptance=APPROVED；Disposition=WAIVED_BY_OWNER。push `clean-snapshot-20261026`=`892b946e`、`clean-snapshot-20261102`=`ac7d488e`；**main 2026-11-08 push（2C/L-R11/C-04b/SCAN-RH/INDEX-L4-1/UI-RESIDUAL-2；§27；AHEAD=0）**。

@@ -84,3 +84,7 @@
 
 |FEA-09-UI-1|FEA-09|**done**（`b14e04da`；AC1–5 MET；r4 approved）|
 |FEA-06-PREREQ-1|FEA-04b|**done**（impl-r4 approved；AC1/AC3/AC5 residual 转 PREREQ-2，Q-33）|
+
+## 2026-11-09 迁入（FEA-15 前置）
+
+|FEA-15-PREREQ-1|—|**done**（修复 2 个既有 App.Tests 失败；r1 approved；`f7134ba83`）|
