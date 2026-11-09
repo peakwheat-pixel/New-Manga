@@ -1303,3 +1303,11 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 交付：ImportDock 引用源导入最小接线（plan/密码/取消/进度/汇总）；独立 `ISourceImportController`；旧 managed 路径保留；未 push。
 - 限制：多加密源逐源确认；folder 交 Host EnumerateFolder；Registry 审计 opaque；UI 控件级证据；FEA-09 证据复写债务候选。
 - 下一步：无 Active Task；下一候选按 PLAN 需 DSH Appointment。
+
+## 198. PLAN 完成段与当前 DAG 迁移（2026-11-09，DSH 治理操作）
+
+> 来源：`doc/REBASELINE_PLAN.md` 2026-11-09 版「完成：」与「当前 DAG：」两段。为 PLAN 防膨胀预算（7000 B / 64 行）腾挪，原文逐字迁入本 checkpoint，PLAN 保留短指针并新增 ready 节点行。
+
+**完成段原文**：FEA-10 done；FEA-11-PREREQ-1 done；FEA-11 done、HOST-AUTH-1 done；FEA-12 四卡 done；FEA-11 承接卡 done（AC11-1 判 MET 带 L-STARTUP）；UNFREEZE C-04b v1.1+M2-C1 rev2.14（`fc9833479`）；C-04b v1.2 `26aa0ca4a`（Owner c04b-impl）、R-1 0 pin。
+
+**当前 DAG 原文**：FEA-11→FEA-12 四卡 done → SCAN 线 done → RENDITION-1/UI-RESIDUAL-1 done → RUN-GRANT-1/2A/2B done → L-S1*/L-S4* done → 2C-PREREQ-1/2C done → L-R11/SCAN-RH/C-04b residual/INDEX-L4-1 done → **FEA-12-UI-RESIDUAL-2 done（回收站恢复后书架刷新 + 空态/计数诚实性；`85356c22a`）**；下一候选：2C-RESIDUAL-1（typed-stop 次序）/ README 对账。B2 延后（无消费者）。
