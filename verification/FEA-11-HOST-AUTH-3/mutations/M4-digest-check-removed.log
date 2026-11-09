@@ -1,0 +1,17 @@
+# command: M4: remove the plan_digest check; pytest tests/fea11/test_source_plan_materialization.py -q (expected RED)
+# shell: pwsh 7.6.8
+# time: 2026-11-09T23:53:21.9469906+08:00
+# EXIT=1
+.........F....                                                           [100%]
+================================== FAILURES ===================================
+________________________ test_digest_mismatch_is_stale ________________________
+
+    def test_digest_mismatch_is_stale():
+>       with pytest.raises(SourceSyncError) as caught:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE SourceSyncError
+
+tests\fea11\test_source_plan_materialization.py:120: Failed
+=========================== short test summary info ===========================
+FAILED tests/fea11/test_source_plan_materialization.py::test_digest_mismatch_is_stale
+1 failed, 13 passed in 0.10s

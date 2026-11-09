@@ -1,0 +1,32 @@
+# command: M3: make the projection write; pytest tests/fea11/test_source_plan_materialization.py -q (expected RED)
+# shell: pwsh 7.6.8
+# time: 2026-11-09T23:53:21.9469906+08:00
+# EXIT=1
+F.............                                                           [100%]
+================================== FAILURES ===================================
+______ test_projection_returns_the_persisted_subset_with_sorted_entries _______
+
+    def test_projection_returns_the_persisted_subset_with_sorted_entries():
+        result = _call({"plan_id": "plan-1", "plan_digest": DIGEST})
+    
+        assert result["format"] == FORMAT
+        assert result["plan_id"] == "plan-1"
+        assert result["kind"] == "relink"
+        assert result["version_id"] == "ver-001"
+        assert [entry["ordinal"] for entry in result["entries"]] == [1, 2]
+        assert result["state"] == "applied"
+        assert result["expires_at"]
+    
+        # M3 judgement: the projection performs ZERO writes on the store.
+        store = _FakeStore({"plan-1": _row()})
+        materialize(store, {"plan_id": "plan-1", "plan_digest": DIGEST})
+>       assert store.writes == []
+E       AssertionError: assert ['mark_applied'] == []
+E         
+E         Left contains one more item: 'mark_applied'
+E         Use -v to get more diff
+
+tests\fea11\test_source_plan_materialization.py:90: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/fea11/test_source_plan_materialization.py::test_projection_returns_the_persisted_subset_with_sorted_entries
+1 failed, 13 passed in 0.10s

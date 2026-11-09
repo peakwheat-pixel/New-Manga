@@ -1,0 +1,29 @@
+# command: M2: remove GetSourceSyncPlanMaterialized from _HOST_CONTROL_COMMANDS; pytest tests/fea11/test_source_command_parity.py -q (expected RED)
+# shell: pwsh 7.6.8
+# time: 2026-11-09T23:53:21.9469906+08:00
+# EXIT=1
+..F                                                                      [100%]
+================================== FAILURES ===================================
+__________ test_plan_materialization_command_rides_host_control_only __________
+
+    def test_plan_materialization_command_rides_host_control_only():
+        """C-17 v1.2 (FEA-11-HOST-AUTH-3): the read-only projection is host-control.
+    
+        It must be in ``_HOST_CONTROL_COMMANDS`` and never on the application
+        channel, and it must NOT add a HostCommandRegistry/C-07 entry.
+        """
+        text = (REPO / "src/bootstrap/core_service.py").read_text(encoding="utf-8")
+        app_start = text.index("_SOURCE_SYNC_APP_COMMANDS = frozenset({")
+        app_end = text.index("})", app_start)
+        host_start = text.index("_HOST_CONTROL_COMMANDS = frozenset({")
+        host_end = text.index("})", host_start)
+        app = set(re.findall(r'"([A-Za-z0-9_.]+)"', text[app_start:app_end]))
+        hostctl = set(re.findall(r'"([A-Za-z0-9_.]+)"', text[host_start:host_end]))
+    
+>       assert "GetSourceSyncPlanMaterialized" in hostctl
+E       AssertionError: assert 'GetSourceSyncPlanMaterialized' in {'AcknowledgeSourceOperation', 'ApplySourceSyncPlan', 'AuthorizeSourceReadForRun', 'CloseHostSession', 'CompleteSourceOperationRecovery', 'OpenHostSession', ...}
+
+tests\fea11\test_source_command_parity.py:81: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/fea11/test_source_command_parity.py::test_plan_materialization_command_rides_host_control_only
+1 failed, 2 passed in 0.08s

@@ -19,11 +19,27 @@ DIGEST = "a" * 64
 
 
 class _FakeStore:
+    """Read-tracking fake: the projection must ONLY ever call ``get_plan`` (M3)."""
+
     def __init__(self, rows: dict[str, dict]) -> None:
         self._rows = rows
+        self.writes: list[str] = []
 
     def get_plan(self, plan_id: str):
         return self._rows.get(plan_id)
+
+    # Every plausible write the projection must never perform.
+    def mark_previewed(self, *_args, **_kwargs):
+        self.writes.append("mark_previewed")
+
+    def mark_confirmed(self, *_args, **_kwargs):
+        self.writes.append("mark_confirmed")
+
+    def mark_applied(self, *_args, **_kwargs):
+        self.writes.append("mark_applied")
+
+    def insert_receipt(self, *_args, **_kwargs):
+        self.writes.append("insert_receipt")
 
 
 def _row(*, state: str = "applied", digest: str = DIGEST, body: dict | None = None) -> dict:
@@ -67,6 +83,11 @@ def test_projection_returns_the_persisted_subset_with_sorted_entries():
     assert [entry["ordinal"] for entry in result["entries"]] == [1, 2]
     assert result["state"] == "applied"
     assert result["expires_at"]
+
+    # M3 judgement: the projection performs ZERO writes on the store.
+    store = _FakeStore({"plan-1": _row()})
+    materialize(store, {"plan_id": "plan-1", "plan_digest": DIGEST})
+    assert store.writes == []
 
 
 @pytest.mark.parametrize(
