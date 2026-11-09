@@ -1,0 +1,16 @@
+# command: check.ps1（默认 + -TaskPath）
+# shell: pwsh 7.6.8 / .NET 9
+# time: 2026-11-10T02:37:51.5607393+08:00
+# EXIT=0
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-14-SET-1.md
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：2929 bytes / 29 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6735 bytes / 61 lines
+Governance check: PASS (3 warnings)
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-14-SET-1.md
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：2929 bytes / 29 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6735 bytes / 61 lines
+Governance check: PASS (3 warnings)
