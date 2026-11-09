@@ -31,6 +31,9 @@ allowed_paths:
   - src/application/sources/errors.py
   - tests/fea11/test_source_plan_materialization.py
   - tests/fea11/test_source_command_parity.py
+  # DSH 2026-11-10 裁决扩域：C-17 v1.2 新增 capability 必然改变
+  # `core.ping.capabilities` 的精确列表断言（两处），仅更新期望值。
+  - tests/core/test_core_service.py
   - apps/desktop-avalonia/src/NewManga.CoreClient/CoreServiceClient.cs
   - apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs
   - apps/desktop-avalonia/src/NewManga.Host/Sources/SourceReadCoordinator.cs

@@ -184,3 +184,45 @@ def test_entry_budget_is_enforced_without_truncation():
     with pytest.raises(SourceSyncError) as caught:
         _call({"plan_id": "plan-1", "plan_digest": DIGEST}, rows={"plan-1": _row(body=body)})
     assert caught.value.code == "SOURCE_BUDGET_EXCEEDED"
+
+
+@pytest.mark.parametrize("field", ["kind", "source_id", "reference_set_digest"])
+def test_missing_required_body_field_is_unavailable(field):
+    """R-r1-03: a contract-required body field missing -> SOURCE_PLAN_UNAVAILABLE.
+
+    The projection must never emit a silent ``None`` for a required field.
+    """
+    body = {
+        "kind": "relink",
+        "source_id": "src-0123456789abcdef",
+        "reference_set_digest": "b" * 64,
+        "target": {
+            "status": "ok",
+            "version_id": "ver-001",
+            "content_digest": "c" * 64,
+            "entries": [],
+        },
+    }
+    body.pop(field)
+    with pytest.raises(SourceSyncError) as caught:
+        _call({"plan_id": "plan-1", "plan_digest": DIGEST}, rows={"plan-1": _row(body=body)})
+    assert caught.value.code == "SOURCE_PLAN_UNAVAILABLE"
+
+
+def test_expired_applied_plan_is_still_projected():
+    """R-r1-03: ACK/recovery is not gated by the plan TTL once applied (C-17 :270)."""
+    row = _row(state="applied")
+    row["expires_at"] = "2020-01-01T00:00:00+00:00"
+    result = _call({"plan_id": "plan-1", "plan_digest": DIGEST}, rows={"plan-1": row})
+    assert result["state"] == "applied"
+    assert result["expires_at"] == "2020-01-01T00:00:00+00:00"
+
+
+def test_projection_carries_no_absolute_path_or_secret():
+    """R-r1-03: the response never leaks an absolute path / secret_ref / signing key."""
+    result = _call({"plan_id": "plan-1", "plan_digest": DIGEST})
+    text = json.dumps(result)
+    assert "source-v" not in text or ":\\" not in text
+    for forbidden in ("secret_ref", "signing_key", "signature"):
+        assert forbidden not in text
+    assert "\\" not in text

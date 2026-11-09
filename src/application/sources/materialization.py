@@ -102,6 +102,18 @@ def materialize(store, payload: object) -> dict:
         body = None
     if not isinstance(body, dict):
         raise SourceSyncError("SOURCE_PLAN_UNAVAILABLE", "plan body is unreadable")
+    # R-r1-03: every contract-required body field must be present; a missing/invalid
+    # field is an unavailable body, never a silent ``None`` in the response.
+    for field_name, expected in (
+        ("kind", str),
+        ("source_id", str),
+        ("reference_set_digest", str),
+    ):
+        value = body.get(field_name)
+        if not isinstance(value, expected) or not value:
+            raise SourceSyncError(
+                "SOURCE_PLAN_UNAVAILABLE", f"plan body {field_name} is unreadable"
+            )
     target = body.get("target")
     if not isinstance(target, dict):
         raise SourceSyncError("SOURCE_PLAN_UNAVAILABLE", "plan target is unreadable")

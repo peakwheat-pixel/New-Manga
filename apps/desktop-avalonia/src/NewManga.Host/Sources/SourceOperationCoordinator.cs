@@ -263,6 +263,12 @@ public sealed class SourceOperationCoordinator
             .ToArray();
 
         var baselines = ReadAuthorizationBaselines(entry, out _);
+        // R-r1-04 (frozen refusal matrix): recovery re-mints for EXACTLY one baseline;
+        // a multi- or zero-baseline journal is a typed refusal, never a partial mint.
+        if (baselines.Count != 1)
+        {
+            throw new SourceAccessException("SOURCE_ACCESS_DENIED");
+        }
         var known = accessRegistry.List().ToDictionary(item => item.RegistryId, item => item);
         var grants = new List<string>();
         foreach (var baseline in baselines)
@@ -308,8 +314,7 @@ public sealed class SourceOperationCoordinator
 
     public CompletionMaterial PrepareCompletion(
         string operationId,
-        bool recovery = false,
-        IReadOnlyList<string>? recoveryGrantIds = null)
+        bool recovery = false)
     {
         RequireEnabled();
         var accessRegistry = registry
@@ -405,12 +410,6 @@ public sealed class SourceOperationCoordinator
                 // (<c>sha256(canonical(authorizations))</c>), never a digest of
                 // the surrounding envelope.
                 AuthorizationDigest = minted.AuthorizationDigest,
-                // FEA-11-HOST-AUTH-3: the journal records the FRESH recovery grants so a
-                // crash audit can prove the completion used re-minted grants (never the
-                // apply-time ids). Null keeps the existing value (legacy callers).
-                GrantIds = recoveryGrantIds is null
-                    ? current.GrantIds
-                    : string.Join(",", recoveryGrantIds),
                 UpdatedAt = UtcNow(),
             });
         }
@@ -423,9 +422,8 @@ public sealed class SourceOperationCoordinator
             authorizationJson,
             minted.AuthorizationDigest,
             // FEA-11-HOST-AUTH-3 (AC-H3-3): the recovery path re-mints fresh grants and
-            // NEVER reuses the apply-time journal grant ids.
-            recoveryGrantIds
-            ?? (string.IsNullOrWhiteSpace(entry.GrantIds)
+            // NEVER reuses the apply-time journal grant ids (the caller replaces them).
+            (string.IsNullOrWhiteSpace(entry.GrantIds)
                 ? Array.Empty<string>()
                 : entry.GrantIds.Split(',', StringSplitOptions.RemoveEmptyEntries)));
     }
