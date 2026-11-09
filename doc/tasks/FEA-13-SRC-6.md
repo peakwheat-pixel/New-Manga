@@ -82,12 +82,12 @@ out_of_scope:
 
 ## Acceptance Criteria（6 条，依 scope r1 §3）
 
-- [ ] **AC1 入包段与加密不可读**：manifest extras 恰一项 `source-access/registry.v1.dat`（sha256/size 一致）；包内成员与源逐字节相同且以 `NMSAR1\0` 开头；字节中无明文 registry_id/locator/绝对路径；Core 代码库 `grep CryptProtectData\|CryptUnprotectData src/` = 0；创建前后源文件字节 + mtime 不变。
-- [ ] **AC2 缺失/不可读/空边界**：(a) 读失败→`BACKUP_CREATE_FAILED` 无包、源不变；(b) 缺失→create 成功、无段、restore 后 live 不变（`not_present`）；(c) 空 entries（文件存在）→ 有成员、导入 `unchanged` 零写。
-- [ ] **AC3 恢复后授权可用**：第二 DataRoot overwrite restore + handoff → Host 导入后 `List()` 含条目、`Authorize` 成功；重复导入 `Imported=0`+live 零写；空 live 首次导入恰好一次；导入拒绝不反向失败数据恢复。
-- [ ] **AC4 revoked/代次/冲突**：live 新代次/revoked 不被包内旧代次覆盖；包内 revoked 导入为 revoked；`Reset(true)` + receipt 后启动 `TryImportPending` 不复活；read-only 模式零写。
-- [ ] **AC5 跨机/版本/identity 负例**：DPAPI 不可解 → `rejected`/`SOURCE_ACCESS_DENIED`/`dpapi_unprotectable`；版本 `NMSAR2` → `registry_version_unsupported`；截断 → `registry_corrupt`；identity 变更 → `SOURCE_REGISTRY_UNAVAILABLE`；均 live 零写；真实跨机 `NOT_RUN`。
-- [ ] **AC6 门禁/证据/变异**：定向 pytest/.NET 0 failed；`check.ps1`（默认 + `-TaskPath`）PASS；`verify_pins` 18/18；diff ⊆ 14 paths；证据含 README/日志/字节探针/正负例/≥3 变异日志（含 `EXIT=` 与复原绿）；0 契约/0 pin/0 DDL/0 新 wire/0 新码。
+- [x] **AC1 入包段与加密不可读**：manifest extras 恰一项 `source-access/registry.v1.dat`（sha256/size 一致）；包内成员与源逐字节相同且以 `NMSAR1\0` 开头；字节中无明文 registry_id/locator/绝对路径；Core 代码库 `grep CryptProtectData\|CryptUnprotectData src/` = 0；创建前后源文件字节 + mtime 不变。 <<MET>>
+- [x] **AC2 缺失/不可读/空边界**：(a) 读失败→`BACKUP_CREATE_FAILED` 无包、源不变；(b) 缺失→create 成功、无段、restore 后 live 不变（`not_present`）；(c) 空 entries（文件存在）→ 有成员、导入 `unchanged` 零写。 <<MET>>
+- [x] **AC3 恢复后授权可用**：第二 DataRoot overwrite restore + handoff → Host 导入后 `List()` 含条目、`Authorize` 成功；重复导入 `Imported=0`+live 零写；空 live 首次导入恰好一次；导入拒绝不反向失败数据恢复。 <<MET>>
+- [x] **AC4 revoked/代次/冲突**：live 新代次/revoked 不被包内旧代次覆盖；包内 revoked 导入为 revoked；`Reset(true)` + receipt 后启动 `TryImportPending` 不复活；read-only 模式零写。 <<MET>>
+- [x] **AC5 跨机/版本/identity 负例**：DPAPI 不可解 → `rejected`/`SOURCE_ACCESS_DENIED`/`dpapi_unprotectable`；版本 `NMSAR2` → `registry_version_unsupported`；截断 → `registry_corrupt`；identity 变更 → `SOURCE_REGISTRY_UNAVAILABLE`；均 live 零写；真实跨机 `NOT_RUN`。 <<MET: simulated 负例通过；真实跨机 NOT_RUN>>
+- [x] **AC6 门禁/证据/变异**：定向 pytest/.NET 0 failed；`check.ps1`（默认 + `-TaskPath`）PASS；`verify_pins` 18/18；diff ⊆ 14 paths；证据含 README/日志/字节探针/正负例/≥3 变异日志（含 `EXIT=` 与复原绿）；0 契约/0 pin/0 DDL/0 新 wire/0 新码。 <<MET>>
 
 ## 证据计划（L2，依 scope r1 §4）
 

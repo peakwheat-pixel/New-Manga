@@ -1,0 +1,6 @@
+# command: mutation A (conflict guard disabled) -> dotnet test --filter LiveEntryWins... (expected RED)
+# shell: pwsh 7.6.8
+# time: 2026-11-10T01:51:39.7869745+08:00
+# EXIT=1
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Debug\net9.0\NewManga.Host.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+找不到提供的测试源文件“G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Debug\net9.0\NewManga.Host.Tests.dll”。

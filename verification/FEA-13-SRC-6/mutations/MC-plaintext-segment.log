@@ -1,0 +1,74 @@
+# command: mutation C (plaintext stub instead of the opaque segment) -> pytest test_nmbak_source_access (expected RED)
+# shell: pwsh 7.6.8
+# time: 2026-11-10T01:52:06.9130822+08:00
+# EXIT=1
+F.F..F.                                                                  [100%]
+================================== FAILURES ===================================
+_____________________ test_registry_is_packaged_verbatim ______________________
+
+workspace = {'conn': <infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x0000025B2072E3C0>, 'service': <infrastru...ath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-1943/test_registry_is_packaged_verb0/data/managed'), ...}
+
+    def test_registry_is_packaged_verbatim(workspace):
+        """AC1: bytes verbatim, manifest digest/size, no plaintext leak, source untouched."""
+        registry = workspace["registry"]
+        before_bytes = registry.read_bytes()
+        before_mtime = registry.stat().st_mtime_ns
+    
+        package, manifest, names = _create(workspace)
+    
+        member = f"{EXTRAS_PREFIX}{SOURCE_ACCESS_CATEGORY}/{SOURCE_ACCESS_FILE}"
+        assert member in names
+        with zipfile.ZipFile(package) as archive:
+            packed = archive.read(member)
+>       assert packed == before_bytes
+E       assert b'{"entries":...t_version":1}' == b'NMSAR1\x00\...phertext-0f3c'
+E         
+E         At index 0 diff: b'{' != b'N'
+E         Use -v to get more diff
+
+tests\storage\test_nmbak_source_access.py:102: AssertionError
+____________________ test_empty_registry_is_still_packaged ____________________
+
+workspace = {'conn': <infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x0000025B207B0410>, 'service': <infrastru...ath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-1943/test_empty_registry_is_still_p0/data/managed'), ...}
+
+    def test_empty_registry_is_still_packaged(workspace):
+        """AC2(c): an existing-but-empty snapshot is packaged (presence is what matters)."""
+        workspace["registry"].write_bytes(_snapshot(b""))
+    
+        _package, manifest, names = _create(workspace)
+    
+        member = f"{EXTRAS_PREFIX}{SOURCE_ACCESS_CATEGORY}/{SOURCE_ACCESS_FILE}"
+        assert member in names
+        extras = [item for item in manifest["extras"] if item["category"] == SOURCE_ACCESS_CATEGORY]
+>       assert extras and extras[0]["size_bytes"] == len(_snapshot(b""))
+E       AssertionError: assert ([{'category': 'source-access', 'relative_path': 'registry.v1.dat', 'sha256': '31ae480df6dfe9e5004cf937afb2f13a1f81d93a4a9dc867a8949c8896bfae7c', 'size_bytes': 33}] and 33 == 11)
+E        +  where 11 = len(b'NMSAR1\x00\x00\x00\x00\x00')
+E        +    where b'NMSAR1\x00\x00\x00\x00\x00' = _snapshot(b'')
+
+tests\storage\test_nmbak_source_access.py:140: AssertionError
+_______________ test_overwrite_restore_writes_the_host_handoff ________________
+
+workspace = {'conn': <infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x0000025B2073E210>, 'service': <infrastru...ath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-1943/test_overwrite_restore_writes_0/data/managed'), ...}
+
+    def test_overwrite_restore_writes_the_host_handoff(workspace):
+        """AC3: after a successful overwrite restore the segment lands in the handoff dir."""
+        created = workspace["service"].create("manual", "handoff")
+        backup_id = created["backup_id"]
+    
+        report = workspace["service"].restore(backup_id, confirm_restore=True)
+    
+        handoff_root = workspace["backup_root"] / "restore-handoff" / backup_id
+        segment = handoff_root / SOURCE_ACCESS_CATEGORY / SOURCE_ACCESS_FILE
+        assert segment.is_file()
+>       assert segment.read_bytes() == workspace["registry"].read_bytes()
+E       assert b'{"entries":...t_version":1}' == b'NMSAR1\x00\...phertext-0f3c'
+E         
+E         At index 0 diff: b'{' != b'N'
+E         Use -v to get more diff
+
+tests\storage\test_nmbak_source_access.py:180: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/storage/test_nmbak_source_access.py::test_registry_is_packaged_verbatim
+FAILED tests/storage/test_nmbak_source_access.py::test_empty_registry_is_still_packaged
+FAILED tests/storage/test_nmbak_source_access.py::test_overwrite_restore_writes_the_host_handoff
+3 failed, 4 passed in 0.65s
