@@ -17,7 +17,7 @@ base_commit: cf563a711
 branch: null
 worktree: null
 integration_commit: null
-delivery_head: null
+delivery_head: 4befab5f3
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/FEA-13-SCHED-5
