@@ -63,3 +63,24 @@ def test_host_source_sync_commands_split_across_the_two_core_channels():
             assert core_name in hostctl, (host_name, core_name)
         elif host_name in read_commands:
             assert core_name in app, (host_name, core_name)
+
+def test_plan_materialization_command_rides_host_control_only():
+    """C-17 v1.2 (FEA-11-HOST-AUTH-3): the read-only projection is host-control.
+
+    It must be in ``_HOST_CONTROL_COMMANDS`` and never on the application
+    channel, and it must NOT add a HostCommandRegistry/C-07 entry.
+    """
+    text = (REPO / "src/bootstrap/core_service.py").read_text(encoding="utf-8")
+    app_start = text.index("_SOURCE_SYNC_APP_COMMANDS = frozenset({")
+    app_end = text.index("})", app_start)
+    host_start = text.index("_HOST_CONTROL_COMMANDS = frozenset({")
+    host_end = text.index("})", host_start)
+    app = set(re.findall(r'"([A-Za-z0-9_.]+)"', text[app_start:app_end]))
+    hostctl = set(re.findall(r'"([A-Za-z0-9_.]+)"', text[host_start:host_end]))
+
+    assert "GetSourceSyncPlanMaterialized" in hostctl
+    assert "GetSourceSyncPlanMaterialized" not in app
+    host = _host_bindings()
+    assert "GetSourceSyncPlanMaterialized" not in host.values(), (
+        "the projection is Host-internal; it must not become a C-07/UI command"
+    )

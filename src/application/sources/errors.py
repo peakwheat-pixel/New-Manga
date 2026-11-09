@@ -25,6 +25,8 @@ SOURCE_SYNC_ERROR_RULES: dict[str, tuple[str, bool]] = {
     "SOURCE_PLAN_STALE": ("conflict", True),
     "SOURCE_OPERATION_CONFLICT": ("conflict", False),
     "SOURCE_OPERATION_NOT_FOUND": ("not_found", False),
+    "SOURCE_PLAN_NOT_FOUND": ("not_found", False),
+    "SOURCE_PLAN_UNAVAILABLE": ("internal", True),
     "SOURCE_ACCESS_DENIED": ("authorization", False),
     "SOURCE_GRANT_EXPIRED": ("authorization", True),
     "SOURCE_GRANT_REVOKED": ("authorization", False),

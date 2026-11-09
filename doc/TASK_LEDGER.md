@@ -26,10 +26,11 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `superseded` | 8 | yes |
 | `proposed` | 6 | no |
 | `in_review` | 2 | no |
-| `ready` | 2 | no |
 | `(none)` | 1 | no |
 | `approved` | 1 | no |
 | `blocked` | 1 | no |
+| `in_progress` | 1 | no |
+| `ready` | 1 | no |
 
 ## Non-terminal tasks
 
@@ -37,6 +38,7 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 |---|---|---|
 | `GIT-CLEAN-PUBLICATION-DIAG-1` | `approved` | no |
 | `NEW-MANGA-V1-FULL-AUDIT` | `blocked` | own row |
+| `FEA-11-HOST-AUTH-3` | `in_progress` | own row |
 | `GIT-CLEAN-PUBLICATION-1` | `in_review` | no |
 | `GIT-CLEAN-RUST-ISOLATION-1` | `in_review` | no |
 | `FEA-06-RESIDUAL-4` | `proposed` | no |
@@ -45,7 +47,6 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `FEA-11-L-S1-B2-ROOTS-AVAILABILITY-1` | `proposed` | no |
 | `FEA-13-SRC-6` | `proposed` | own row |
 | `GIT-CLEAN-CORE-ENV-2` | `proposed` | no |
-| `FEA-11-HOST-AUTH-3` | `ready` | own row |
 | `GIT-CLEAN-RUST-CAPACITY-DESIGN-1` | `ready` | no |
 
 ## What this ledger does not say

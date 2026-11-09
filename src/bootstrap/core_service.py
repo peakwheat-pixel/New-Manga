@@ -368,6 +368,9 @@ _HOST_CONTROL_COMMANDS = frozenset({
     "ScanSourceSync", "ApplySourceSyncPlan", "RelinkSource", "RepointSource",
     "ResyncSource", "AcknowledgeSourceOperation",
     "CompleteSourceOperationRecovery", "RecordSourceOperationFailure",
+    # FEA-11-HOST-AUTH-3 (C-17 v1.2 §5.1): read-only plan materialization for
+    # Host recovery re-minting; host-control only, closed shape, zero writes.
+    "GetSourceSyncPlanMaterialized",
 })
 #: FEA-11 (C-17 §4/§5.1): the plan lifecycle/query face stays on the
 #: ordinary Request/Response channel (protocol minor 3, additive).
@@ -1545,6 +1548,7 @@ class CoreServiceServer:
             "ScanSourceSync", "ApplySourceSyncPlan", "RelinkSource",
             "RepointSource", "ResyncSource", "AcknowledgeSourceOperation",
             "CompleteSourceOperationRecovery", "RecordSourceOperationFailure",
+            "GetSourceSyncPlanMaterialized",
         ):
             # FEA-11 (C-17 §4/§5.1): the source-sync host-control face. The
             # session was verified above; typed failures map through the
@@ -1673,6 +1677,7 @@ class CoreServiceServer:
                     "source.sync.apply/1", "source.sync.relink/1",
                     "source.sync.repoint/1", "source.sync.resync/1",
                     "source.sync.operation/1", "source.sync.enumerate/1",
+            "source.sync.plan-materialization/1",
                 )
             )
         return {
@@ -5377,6 +5382,12 @@ class CoreServiceServer:
             "ResyncSource",
         ):
             return self._commit_source_sync(stack["service"].apply(command, payload))
+        if command == "GetSourceSyncPlanMaterialized":
+            # C-17 v1.2 §5.3: single SELECT projection, zero writes; the caller
+            # re-mints a fresh grant through the C-16 path afterwards.
+            from application.sources.materialization import materialize
+
+            return materialize(stack["store"], payload)
         if command == "AcknowledgeSourceOperation":
             return self._commit_source_sync(stack["operations"].acknowledge(payload))
         if command == "CompleteSourceOperationRecovery":

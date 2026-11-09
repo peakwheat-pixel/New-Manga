@@ -3,10 +3,10 @@ id: FEA-11-HOST-AUTH-3
 title: 跨进程崩溃恢复的 grant 语义（C-17 v1.2 计划物化投影 + Host 恢复重铸）
 kind: implementation
 governance_version: 3
-status: ready
+status: in_progress
 approval: **scope review r2 `READY-TO-FREEZE`（`doc/reviews/FEA-11-HOST-AUTH-3-scope-r2.md`）** + ZCode 独立裁决（`doc/reviews/ADJ-2026-11-09-ZCODE-ARCH-ADJUDICATION.md`）+ **C-17 v1.2 已冻结**（载体 `doc/reviews/CONTRACT-UNFREEZE-2026-11-09-C17.md`；`verify_pins` 18/18）。**实现范围按本卡冻结；不得自行 UNFREEZE/重算 pin。**
 suggested_owner: dsh
-owner: null
+owner: dsh
 reviewer: 待指派（必须独立上下文）
 depends_on:
   - FEA-11-HOST-AUTH-2
