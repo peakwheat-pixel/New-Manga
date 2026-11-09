@@ -13,7 +13,7 @@ base_commit: 1aad960b8
 branch: null
 worktree: null
 integration_commit: null
-delivery_head: pending
+delivery_head: ac1882fc8
 canonical_evidence_status: complete
 resource_closeout_status: pending
 evidence_dir: verification/FEA-13-BK2-1
