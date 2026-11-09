@@ -101,3 +101,11 @@ r1 报告保留原字节（`doc/reviews/FEA-DOC-RECONCILE-1-r1.md`），随 head
 | P3-01/P3-02/P3-03 | 版本记法、D07 L-5 口径已在 r2 修；预算登记 §残余 R-4 |
 
 当前门禁证据：`verification/FEA-DOC-RECONCILE-1/gates-3.log`（r2 的 `gates-2.log` 与 `gates.log` 转为 HISTORICAL）。
+
+## r4 收口记录（2026-11-09）
+
+- 复审结果：r2（head `b6ada81e8`）= **approved**（11 FIXED / 2 PARTIAL / 0 OPEN，PARTIAL 两项随后由 r3 修）；r3（head `c22aea60c`）= **approved**（22 FIXED / 0 OPEN；新增 P3×5 非阻断，已在本轮处置 reviewer 引用、AC8 证据入口、写域、交付指针时点；gates-3 的提交前标注如实保留）。
+- 收口提交：`236d5a853`（AC1–AC9 MET、`status: done`、GOV-11/D07 交付指针、台账重生成）与 `e0dc4a74c`（对账卡门禁：evidence class、仓外产物 manifest 登记）。
+- 最终门禁：`check.ps1` PASS（3 warnings）、`check.ps1 -TaskPath doc/tasks/FEA-DOC-RECONCILE-1.md` PASS、`verify_pins` 18/18 PASS；STATUS 2985 B/29 行、PLAN 6989 B/63 行（预算内，PLAN 余 11 B/1 行）。
+- 交付边界：本轮全部改动限于 `doc/**` 与 `verification/**`；0 源码、0 契约字节、0 pin 重算、未 push。
+- 下一接收者：先处理 PLAN 预算结构性风险（§残余 R-4），再对 `FEA-07-RESIDUAL-4` 做 scope review。
