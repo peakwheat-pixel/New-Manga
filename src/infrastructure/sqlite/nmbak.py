@@ -183,6 +183,11 @@ class NmbakBackupService:
         # a pre-migration backup honestly reports unknown before the back-fill.
         self._database_id_reader = database_id_reader
 
+    @property
+    def connection(self):
+        """The live library connection (used by the merge-restore planner)."""
+        return self._conn
+
     # ------------------------------------------------------------------
     # queries
     # ------------------------------------------------------------------
@@ -414,6 +419,57 @@ class NmbakBackupService:
             return report
         finally:
             self._remove_tree(restore_dir)
+
+    # ------------------------------------------------------------------
+    # merge-restore planning support (FEA-13-RESTORE-4)
+    # ------------------------------------------------------------------
+    def extract_for_plan(self, backup_id: str) -> dict:
+        """Extract a verified package for read-only planning.
+
+        The caller owns the returned ``workdir`` (delete it when done). This
+        method never touches the live database or the package bytes: it only
+        verifies and unpacks into a fresh temporary directory.
+        """
+        target = self._resolve(backup_id)
+        if not target.is_file():
+            raise NmbakBackupError("BACKUP_NOT_FOUND", backup_id)
+        manifest = self._verify_package(target)
+        workdir = Path(
+            tempfile.mkdtemp(prefix=f".nmbak-plan-{backup_id}-", dir=self._backup_root)
+        )
+        try:
+            self._extract_package(target, workdir)
+        except Exception:
+            self._remove_tree(workdir)
+            raise
+        entries: dict[str, str] = {}
+        for ref in manifest.get("revision_refs") or []:
+            entries[str(ref["managed_path"])] = str(ref["sha256"])
+        for entry in manifest.get("page_original_refs") or []:
+            entries[str(entry["managed_path"])] = str(entry["sha256"])
+        return {
+            "backup_id": backup_id,
+            "workdir": workdir,
+            "database_path": workdir / DB_NAME,
+            "managed_entries": entries,
+            "manifest": manifest,
+            "package_sha256": sha256_file(target),
+        }
+
+    def plan_undo_root(self, backup_id: str) -> Path:
+        """Where UseBackup preserves the live value before overwriting it."""
+        root = self._backup_root / "restore-undo" / backup_id
+        root.mkdir(parents=True, exist_ok=True)
+        return root
+
+    @staticmethod
+    def cleanup_plan(context: dict) -> None:
+        workdir = context.get("workdir")
+        if workdir is not None:
+            try:
+                NmbakBackupService._remove_tree(Path(workdir))
+            except OSError:
+                pass
 
     # ------------------------------------------------------------------
     # delete

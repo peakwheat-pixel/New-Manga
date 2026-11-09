@@ -448,6 +448,7 @@ _BACKUP_ERROR_RULES: dict[str, tuple[str, bool]] = {
     "BACKUP_CORRUPT": ("validation", False),
     "BACKUP_FORMAT_UNSUPPORTED": ("validation", False),
     "BACKUP_DATABASE_MISMATCH": ("conflict", False),
+    "RESTORE_PLAN_STALE": ("conflict", False),
     "BACKUP_RESTORE_BUSY": ("conflict", True),
     "BACKUP_RESTORE_INCOMPLETE": ("conflict", False),
     "BACKUP_RESTORE_REQUIRES_CONFIRMATION": ("validation", False),
@@ -3174,7 +3175,53 @@ class CoreServiceServer:
             raise NmbakBackupError(
                 "BACKUP_RESTORE_REQUIRES_CONFIRMATION", "confirm_restore must be true"
             )
-        return service.restore(backup_id, confirm_restore=True)
+        mode = payload.get("mode", "overwrite")
+        if mode == "overwrite":
+            return service.restore(backup_id, confirm_restore=True)
+        if mode not in {"defer", "use_backup"}:
+            raise NmbakBackupError(
+                "INVALID_REQUEST", f"unsupported restore mode: {mode!r}"
+            )
+        return self._merge_restore(service, backup_id, mode, payload.get("entries") or [])
+
+    def _merge_restore(
+        self,
+        service,
+        backup_id: str,
+        mode: str,
+        entries: list[Any],
+    ) -> dict[str, Any]:
+        """FEA-13-RESTORE-4: merge restore (default defer, UseBackup per item)."""
+        from application.maintenance.restore_plan import apply_restore, plan_restore
+
+        context = service.extract_for_plan(backup_id)
+        try:
+            plan = plan_restore(
+                service.connection,
+                context["database_path"],
+                managed_root=None,
+                backup_entries=context["managed_entries"],
+            )
+            selected = set()
+            for entry in entries:
+                if isinstance(entry, dict) and entry.get("table") and entry.get("key"):
+                    selected.add((str(entry["table"]), str(entry["key"])))
+            undo_root = service.plan_undo_root(backup_id)
+            report = apply_restore(
+                service.connection,
+                context["database_path"],
+                plan["items"],
+                mode=mode,
+                use_backup_keys=selected,
+                undo_root=undo_root,
+            )
+            report["backup_id"] = backup_id
+            report["package_sha256"] = context["package_sha256"]
+            report["plan_summary"] = plan["summary"]
+            report["undo_root"] = str(undo_root)
+            return report
+        finally:
+            service.cleanup_plan(context)
 
     def handle_backup_delete(self, payload: dict[str, Any]) -> dict[str, Any]:
         service = self._require_backup()
