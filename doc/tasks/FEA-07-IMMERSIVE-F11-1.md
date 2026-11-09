@@ -130,4 +130,4 @@ out_of_scope:
 ## 对账补充（2026-11-09 / FEA-DOC-RECONCILE-1，append-only）
 
 - limitation 第 1 项「默认 v2 壳无 F11 入口（另立 `FEA-07-V2-F11-1` proposed）」**已由 `FEA-07-V2-F11-1` 关闭**：该卡 `done`（2026-11-09；默认 v2 壳 F11 沉浸阅读入口，无边框全屏、Esc/F11 退出、页面不丢；AOC 2560×1440 主屏复验 `EV-V2F-05`）。
-- 本卡 `status` 保持 `closed_with_limitations`：其余 limitation（物理 2K/4K 未验证、Esc/恢复为 legacy 壳 + PostMessage 注入）不变；不改写上方原始 Limitations 与 Closeout 字节，不写 PASS。
+- 本卡 `status` 保持 `closed_with_limitations`：其余 limitation（物理 2K/4K 未验证、Esc/恢复为 legacy 壳 + PostMessage 注入）不变——其中「物理 2K/4K」**仅指本卡 legacy 壳路径**；v2 壳 2K 已由 `FEA-07-V2-F11-1` 于 AOC 2560×1440 主屏物理复验（`EV-V2F-05`）。不改写上方原始 Limitations 与 Closeout 字节，不写 PASS。

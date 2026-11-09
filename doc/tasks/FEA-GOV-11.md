@@ -76,3 +76,4 @@ FEA-GOV-10 完成：**11 份已起草契约全部 `approved`**（C-01b/C-02/C-03
 
 - Closeout date / DSH：待关闭时填写。
 - **2026-11-09 / DSH（FEA-DOC-RECONCILE-1 对账关闭）**：4 项待裁决输入已全部由 [ADJ-2026-11-01](../reviews/ADJ-2026-11-01-FEA-DECISIONS.md) 裁决并落盘——`R` = C1=D 零字节 / C3=是；U-04 = 批准（per-scheme + 令牌强制）；U-05a = 纳入（三态三类）；U-05b = 保留（转只读）。C-01b / C-02 / C-03 / C-11 冻结记录均已产出：`doc/plan/FEA-CONTRACT-FROZEN-C01b.md:38`、`FEA-CONTRACT-FROZEN-C02.md:34`、`FEA-CONTRACT-FROZEN-C03.md:35`、`FEA-CONTRACT-FROZEN-C11.md`。AC3 已由 `FEA-01-FREEZE-1`（集成 `bf1c8eb00`）及其后续实现线（FEA-02…FEA-12 done）实际完成。测试表 `NOT_RUN` 为 2026-11-01 当时记录，原字节保留；本轮不改写历史字节。状态 `done` 依据：AC1–AC3 均 MET，且冻结矩阵 §2 的 8 步已由各冻结记录与实现线取代执行。
+- **证据更正（2026-11-09，Review REC-08）**：AC3「首个实现候选」的主证据应为 **`FEA-02-CORE`**（独立 Review + 集成 `135479270`，按 [ADJ-2026-11-01](../reviews/ADJ-2026-11-01-FEA-DECISIONS.md) U-12）；`FEA-01-FREEZE-1`（`bf1c8eb00`）是冻结链末环/前置，不是实现候选。以上为本轮新增更正，不改写前句字节。

@@ -28,6 +28,7 @@ allowed_paths:
   - doc/REBASELINE_PLAN.md
   - doc/TASK_LEDGER.md
   - doc/00_INDEX.md
+  - doc/handoffs/FEA-DOC-RECONCILE-1-*.md
   - verification/FEA-DOC-RECONCILE-1/**
 out_of_scope:
   - 不改任何 `doc/plan/FEA-CONTRACT-FROZEN-*`、`doc/contracts/**`、18 pins（只引用，不重算）
@@ -47,23 +48,23 @@ out_of_scope:
 
 | # | 问题 | 处置 | 事实依据 |
 |---|---|---|---|
-| 1 | `STATUS:11` 写「FEA-12 四表 DDL 未冻」 | 改为「四表 DDL 已冻（C-15 v7 + FEA-11-PREREQ-1 v8+）」 | `FEA-CONTRACT-FROZEN-C15.md:43,50`；`FEA-11-PREREQ-1.md:45,65`；`tests/fea11/test_v8_migration.py` |
+| 1 | `STATUS:11` 写「FEA-12 四表 DDL 未冻」 | 改为「四表 DDL 已冻（C-15 = schema v7；C-17 v1.1 = schema v8；L-1 前置已满足）」 | `FEA-CONTRACT-FROZEN-C15.md:43,50`；`FEA-CONTRACT-FROZEN-C17.md:20`；`FEA-11-PREREQ-1.md:45,65`；`tests/fea11/test_v8_migration.py`（v8 建 4 表） |
 | 2 | `FEA-C11-PREREQ-1` 卡 done、DAG 行仍 `approved（待集成收口）` | PLAN 行翻 `done`（集成 `b7018e19b`） | 卡 Closeout 2026-11-02：交付 `b7018e19b` 已在 main，证据 sha256 一致 |
-| 3 | `FEA-GOV-11` 长期 `in_progress`（等 4 项裁决） | AC1–AC3 标 `<<MET>>` + 关闭记录 + `done` | `ADJ-2026-11-01-FEA-DECISIONS.md`：R=C1=D/C3=是、U-04 批准、U-05a 纳入、U-05b 保留；C-01b/C-02/C-03/C-11 已 FROZEN；FEA-01-FREEZE-1 done |
-| 4 | `FEA-D07-UNBLOCK` AC8 为 `[ ] <<MET>>`（矛盾），状态 `in_progress` | AC8 改 `[x] <<MET>>` + 证据 + `done` | `GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md`（2026-11-01 CLOSED） |
-| 5 | `FEA-07-IMMERSIVE-F11-1` limitation「默认 v2 壳无 F11 入口」已由 `FEA-07-V2-F11-1` 收口，卡未记录 | append-only 关闭该条 limitation；status 保持 `closed_with_limitations` | `FEA-07-V2-F11-1` done（`9b0683822` 链，2K 复验） |
+| 3 | `FEA-GOV-11` 长期 `in_progress`（等 4 项裁决） | AC1–AC3 标 `<<MET>>` + 关闭记录 + `done` | `ADJ-2026-11-01-FEA-DECISIONS.md`：R=C1=D/C3=是、U-04 批准、U-05a 纳入、U-05b 保留；C-01b/C-02/C-03/C-11 已 FROZEN；首个实现候选 `FEA-02-CORE` done（集成 `135479270`） |
+| 4 | `FEA-D07-UNBLOCK` AC8 为 `[ ] <<MET>>`（矛盾），状态 `in_progress` | AC8 改 `[x] <<MET>>` + 证据 + `done`（Closeout 披露 D07 行 7 为 L-5 认定的「部分」） | `GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md:14,30,39-40`（2026-11-01 CLOSED；L-5 认定） |
+| 5 | `FEA-07-IMMERSIVE-F11-1` limitation「默认 v2 壳无 F11 入口」已由 `FEA-07-V2-F11-1` 收口，卡未记录 | append-only 关闭该条 limitation；status 保持 `closed_with_limitations`；补「本卡 legacy 壳」限定 | `FEA-07-V2-F11-1` done（`9b0683822` 链，AOC 2560×1440 `EV-V2F-05`） |
 | 6 | `FEA-11-RUN-GRANT-2` title 仍带「proposed，待依赖」而 status=done | 追加对账注记（不改 title 字节） | 卡 front matter `status: done` |
-| 7 | `FEA-02-BRIDGE` 无卡、无 DAG 行 | PLAN 明确裁决：不独立释放（由现有装配与 FEA-05/06/07 生命周期断言覆盖），无缺口 | 方案 §15.6；`FEA-04.md:46`；`FEA-07-RESIDUAL-2` 标题含生命周期断言 |
+| 7 | `FEA-02-BRIDGE` 无卡、无 DAG 行 | PLAN 记结论「不独立释放」；**依据登记在本卡**：退出协调由 `FEA-07` 已交付的 `ExitCoordinator`（AC2 `FEA-07.md:298`）与 `FEA-07-RESIDUAL-2` AC-R4a-2（`:50`）覆盖；残余风险另卡 | 方案 §15.6 `:922`；`FEA-04.md:46`（原文为「Host 生命周期/`ExitCoordinator` 部分未实施」，仅支持本卡不依赖）；`git grep 生命周期断言 -- doc/tasks` 仅命中 FEA-07 两卡 |
 
 ## Acceptance Criteria
 
 - [x] **AC1 STATUS 四表 DDL 口径**：`STATUS:11` 不再声称未冻，且四个表名/版本可追溯。 <<MET>>
 - [x] **AC2 C11-PREREQ-1 DAG 行**：`REBASELINE_PLAN` 该行 `done` + 集成 `b7018e19b`，与卡 Closeout 一致。 <<MET>>
-- [x] **AC3 GOV-11 收口**：AC1–AC3 标 `<<MET>>` 并引裁决记录；`status: done`；测试表不再 `NOT_RUN`。 <<MET>>
-- [x] **AC4 D07-UNBLOCK 收口**：AC8 一致性修复（`[x] <<MET>>`）+ Gate 关闭证据；`status: done`。 <<MET>>
-- [x] **AC5 IMMERSIVE limitation 关闭记录**：追加一节记录「v2 壳入口」limitation 由 V2-F11-1 关闭；status 保持 `closed_with_limitations`（其余 limitation 不动）。 <<MET>>
+- [x] **AC3 GOV-11 收口**：AC1–AC3 标 `<<MET>>` 并引裁决记录；`status: done`；测试表 `NOT_RUN` 原样保留（append-only，不据此判 PASS）。 <<MET>>
+- [x] **AC4 D07-UNBLOCK 收口**：AC8 一致性修复（`[x] <<MET>>`）+ Gate 关闭证据（含 D07 行 7「部分」的 L-5 口径）；`status: done`。 <<MET>>
+- [x] **AC5 IMMERSIVE limitation 关闭记录**：追加一节记录「v2 壳入口」limitation 由 V2-F11-1 关闭（补 legacy 壳限定）；status 保持 `closed_with_limitations`（其余 limitation 不动）。 <<MET>>
 - [x] **AC6 RUN-GRANT-2 注记**：卡内追加 title 历史描述说明。 <<MET>>
-- [x] **AC7 BRIDGE 裁决**：PLAN 写明不独立释放及依据，不留悬空节点。 <<MET>>
+- [x] **AC7 BRIDGE 裁决**：PLAN 记结论（不独立释放），依据（`FEA-07` `ExitCoordinator` AC2 + `FEA-07-RESIDUAL-2` AC-R4a-2）登记于本卡 §对账清单 #7，不留悬空节点。 <<MET>>
 - [x] **AC8 门禁不降**：`verify_pins` 18/18、`check.ps1` PASS、ledger 重生成、STATUS/PLAN 未超防膨胀预算、0 源码/契约字节改动。 <<MET>>
 - [ ] **AC9 独立 Review**：非本会话的独立上下文审查交付 head。 <<PARTIAL: 待指派>>
 
@@ -81,20 +82,32 @@ out_of_scope:
 | AC1–AC7 | 逐项 diff 对照上表事实依据 | 只读 + 文档 | PASS | 本卡 §对账清单 |
 | AC8 | `pwsh -NoProfile -File tools/governance/check.ps1` | 仓库根 | PASS（3 warnings，预算内） | `verification/FEA-DOC-RECONCILE-1/gates.log` |
 | AC8 | `pwsh -NoProfile -File tools/governance/verify_pins.ps1` | 仓库根 | PASS 18/18 | 同上 |
-| AC8 | `python tools/governance/task_ledger.py --write` | Python 3.14 | PASS（ledger 重生成） | `doc/TASK_LEDGER.md` |
-| AC9 | 独立 Review（fresh subagent，只读） | 交付 head | NOT_RUN | `doc/reviews/FEA-DOC-RECONCILE-1-r1.md` |
+| AC8 | `python tools/governance/task_ledger.py --write`（**提交后**重跑；修 REC-02） | Python 3.14 | PASS（分项与 HEAD 一致） | `doc/TASK_LEDGER.md` |
+| AC9 | 独立 Review r1（fresh subagent，只读） | head `4d64bfdcb` | **changes_requested**（P0=0/P1=1/P2=4/P3=8） | `doc/reviews/FEA-DOC-RECONCILE-1-r1.md` |
+| AC9 | 返修后 r2 复审 | 返修 head | 待跑 | 待写 |
+
+## 残余 / 未闭环（登记，不在本轮范围）
+
+| # | 项 | 状态 | 处置建议 |
+|---|---|---|---|
+| R-1 | `doc/AD-003_REFERENCED_SOURCE_ARCHITECTURE.md:128` 仍写「四表 DDL 仍未冻结」 | **过期口径**（C-15/C-17 已冻） | 不在本卡 allowed_paths；需 AD-003 errata 专项（下次对账或 AD 文档维护卡） |
+| R-2 | `doc/plan/FEA-C11_IMPL_PREREQS.md:24` L-1 仍写「DDL 未冻结」 | **过期口径**（L-1 前置已满足） | 需 L-1 解除记录或 errata；本卡只登记不改契约前置文档 |
+| R-3 | `doc/REBASELINE_PLAN.md:12` 写「C-17 v1.0 FROZEN」（现状 v1.1） | 既有文本，改动前已存在 | 下次 PLAN 变更时一并更正 |
+| R-4 | PLAN 预算仅剩约 4 bytes / 1 行（6996/7000，63/64 行） | 结构性风险 | 释放下一 Task 前把「完成：」长段迁至 checkpoint/TASK_LEDGER |
+| R-5 | `FEA-07-AC5-NATIVE-1` 用户显示设置未复位；`FEA-06-RESIDUAL-1` 残余承接未变 | 明确不处理 | 维持原状，用户动作与后续 residual 卡承接 |
 
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-RECON-STATUS | AC1,AC3,AC4,AC5,AC6 | `doc/STATUS.md` | `-` | `db73b5236301591fd51e67a0d740a2db4a3966498040c3512c340003a35dcfe2` | CANONICAL |
-| EV-RECON-PLAN | AC2,AC7 | `doc/REBASELINE_PLAN.md` | `-` | `816e6e1d8df512eff27293a27479408709a5966ad4e9374424007bb26a196891` | CANONICAL |
-| EV-RECON-GOV11 | AC3 | `doc/tasks/FEA-GOV-11.md` | `-` | `ace803570181ca8502286ec5d70cf1c676d2662dd372a55de72ccd2af86b9fa7` | CANONICAL |
-| EV-RECON-D07 | AC4 | `doc/tasks/FEA-D07-UNBLOCK.md` | `-` | `32386b2c998fff325e573b2d5640a9c877a20ceb77b09858c48d868ebca7c181` | CANONICAL |
-| EV-RECON-IMMERSIVE | AC5 | `doc/tasks/FEA-07-IMMERSIVE-F11-1.md` | `-` | `3fa51eadbe0c9ec6ab93d87d2b00ce3dc1fe0a0dc063d435585426a7a60bf59d` | CANONICAL |
+| EV-RECON-STATUS | AC1,AC3,AC4,AC5,AC6 | `doc/STATUS.md` | `-` | `0f282ae5d3b732a876dc8f970d942bf5cb971ddc1659e0736c1348907a42b81f` | CANONICAL |
+| EV-RECON-PLAN | AC2,AC7 | `doc/REBASELINE_PLAN.md` | `-` | `c61845d68bb0b5d96f19e04231a68e8f7856ea577dbd0ab30a07b45cb51ac9a1` | CANONICAL |
+| EV-RECON-GOV11 | AC3 | `doc/tasks/FEA-GOV-11.md` | `-` | `2614725589d410127eb45c15e92c86016c0fe80221f7f5dc10b9774cb009661b` | CANONICAL |
+| EV-RECON-D07 | AC4 | `doc/tasks/FEA-D07-UNBLOCK.md` | `-` | `58fcf1a8c02eae11feddd5d5cac988e16d616900cfb7737af873f61b2bf966c6` | CANONICAL |
+| EV-RECON-IMMERSIVE | AC5 | `doc/tasks/FEA-07-IMMERSIVE-F11-1.md` | `-` | `4ea62822594e29c479f304d3fab4893811da569b8e573ee999ca838d685db1b2` | CANONICAL |
 | EV-RECON-RG2 | AC6 | `doc/tasks/FEA-11-RUN-GRANT-2.md` | `-` | `83d15cbd086ae30323aff8cde51c25186dbba42377a5ffeaf9f7de6739b9dfd3` | CANONICAL |
-| EV-RECON-GATE | AC8 | `verification/FEA-DOC-RECONCILE-1/gates.log` | `-` | `c5fcd1f78fdf233503acd2562ca093a5cb5a87cc03eaecba4dcd78ef9b579d7a` | CANONICAL |
+| EV-RECON-GATE | AC8 | `verification/FEA-DOC-RECONCILE-1/gates-2.log` | `-` | `d6626c58c4a23cc312542836fccde0df07fa4845e131044d5655ec52d14767e3` | CANONICAL |
+| EV-RECON-GATE-R1 | AC8（历史） | `verification/FEA-DOC-RECONCILE-1/gates.log` | `d91dbe444` | `c5fcd1f78fdf233503acd2562ca093a5cb5a87cc03eaecba4dcd78ef9b579d7a` | HISTORICAL |
 
 ## Resource Manifest
 

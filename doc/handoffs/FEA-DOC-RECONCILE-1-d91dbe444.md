@@ -16,7 +16,7 @@ status: delivered
 | 变更路径 | 内容 |
 |---|---|
 | `doc/STATUS.md` | 当前 Task 指向本卡；「FEA-12 四表 DDL 未冻」→「四表 DDL 已冻（C-15 v7 + FEA-11-PREREQ-1 v8+）」 |
-| `doc/REBASELINE_PLAN.md` | `FEA-C11-PREREQ-1` 行翻 `done`（集成 `b7018e19b`）；新增本卡 DAG 行（含 FEA-02-BRIDGE 裁决）；腾预算时把 C-04b 注记并入「完成」行（信息未丢） |
+| `doc/REBASELINE_PLAN.md` | `FEA-C11-PREREQ-1` 行翻 `done`（集成 `b7018e19b`）；新增本卡 DAG 行（含 FEA-02-BRIDGE 裁决）；腾预算时把 C-04b 注记并入「完成」行，**r2 已补回 `Owner c04b-impl` 署名** |
 | `doc/tasks/FEA-GOV-11.md` | `status: done`；AC1–AC3 `<<MET>>`；Closeout 追加（引 `ADJ-2026-11-01-FEA-DECISIONS.md` 与 4 份冻结记录） |
 | `doc/tasks/FEA-D07-UNBLOCK.md` | `status: done`；AC8 `[x] <<MET>>`（原 `[ ]`+`<<MET>>` 矛盾）；Closeout 追加（引 Gate 关闭裁定） |
 | `doc/tasks/FEA-07-IMMERSIVE-F11-1.md` | append-only「对账补充」：v2 壳 F11 入口 limitation 由 `FEA-07-V2-F11-1` 关闭；status 不变 |
@@ -67,3 +67,23 @@ status: delivered
 - **PLAN 预算**：6985/7000 bytes，接近上限；下次要加 DAG 行必须先腾空间。
 - **append-only 解释**：GOV-11/D07 的 AC 勾选与标记为状态转换必要修正（原 AC 文本未改），测试表 `NOT_RUN` 历史记录原样保留并在 Closeout 说明。
 - 用户动作：`FEA-07-AC5-NATIVE-1` 记录的系统显示设置未恢复（仅 1 屏 1920×1080），需用户恢复 4K 并核验。
+
+## r2 返修记录（Review r1 = changes_requested，P0=0/P1=1/P2=4/P3=8）
+
+| Finding | 处置 |
+|---|---|
+| REC-01（P1）AC7 要求 PLAN 载依据 | AC7 改为「PLAN 记结论，依据登记于本卡 §对账清单 #7」；PLAN 预算仅剩 4 B 无法再载依据 |
+| REC-02（P2）ledger 分项数字 | 提交后重跑 `task_ledger.py --write` 并随 r2 提交 |
+| REC-03（P2）AC3 子句假 | AC3 改为「测试表 `NOT_RUN` 原样保留（append-only，不据此判 PASS）」 |
+| REC-04（P2）STATUS 的 L-1 冲突 | 改为「四表 DDL 已冻 = L-1 前置已满足（C-15 schema v7 + C-17 v1.1 schema v8；L-2…L-9 保留）」；AD-003/FEA-C11_IMPL_PREREQS 过期口径登记为卡 §残余 R-1/R-2（不在 allowed_paths） |
+| REC-05（P2）BRIDGE 依据 | 改引 `FEA-07.md:298`（AC2 `ExitCoordinator`）与 `FEA-07-RESIDUAL-2.md:50`（AC-R4a-2）；结论改「不独立释放；退出协调由 FEA-07 已交付实现覆盖，残余风险另卡」 |
+| REC-06（P3）D07 L-5 口径 | D07 Closeout 追加口径补充（D07 行 7 = 「部分」，由 L-5 认定） |
+| REC-07（P3）Owner 署名 | PLAN「完成」行补回 `Owner c04b-impl` |
+| REC-08（P3）GOV-11 AC3 主证据 | GOV-11 Closeout 追加证据更正（主证据 `FEA-02-CORE` `135479270`） |
+| REC-09（P3）版本记法 | STATUS 改为「C-15 schema v7 + C-17 v1.1 schema v8」；PLAN:12 的 C-17 v1.0 登记为卡 §残余 R-3 |
+| REC-10（P3）IMMERSIVE 限定 | 追加「仅指本卡 legacy 壳；v2 壳 2K 已由 `EV-V2F-05` 复验」 |
+| REC-11（P3）PLAN 预算 | 登记为卡 §残余 R-4（6994/7000 B，63/64 行） |
+| REC-12（P3）handoffs 不在 allowed_paths | allowed_paths 增 `doc/handoffs/FEA-DOC-RECONCILE-1-*.md` |
+| REC-13（P3）gates.log 无 EXIT/shell 头 | 新增 `verification/FEA-DOC-RECONCILE-1/gates-2.log`（含 shell 头、逐命令 EXIT、预算实测）；gates.log 保留为 HISTORICAL |
+
+r1 报告保留原字节（`doc/reviews/FEA-DOC-RECONCILE-1-r1.md`），随 head 变化降为历史；当前结论以 rev 后的 r2 报告为准。

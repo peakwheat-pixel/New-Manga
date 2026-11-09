@@ -49,7 +49,7 @@
 
 READY 节点：无
 
-完成：FEA-10 done；FEA-11-PREREQ-1 done；FEA-11 done、HOST-AUTH-1 done；FEA-12 四卡 done；FEA-11 承接卡 done（AC11-1 判 MET 带 L-STARTUP）；UNFREEZE C-04b v1.1+M2-C1 rev2.14（`fc9833479`）；C-04b v1.2 done `26aa0ca4a`、R-1 修复 0 pin。
+完成：FEA-10 done；FEA-11-PREREQ-1 done；FEA-11 done、HOST-AUTH-1 done；FEA-12 四卡 done；FEA-11 承接卡 done（AC11-1 判 MET 带 L-STARTUP）；UNFREEZE C-04b v1.1+M2-C1 rev2.14（`fc9833479`）；C-04b v1.2 `26aa0ca4a`（Owner c04b-impl）、R-1 0 pin。
 
 当前 DAG：FEA-11→FEA-12 四卡 done → SCAN 线 done → RENDITION-1/UI-RESIDUAL-1 done → RUN-GRANT-1/2A/2B done → L-S1*/L-S4* done → 2C-PREREQ-1/2C done → L-R11/SCAN-RH/C-04b residual/INDEX-L4-1 done → **FEA-12-UI-RESIDUAL-2 done（回收站恢复后书架刷新 + 空态/计数诚实性；`85356c22a`）**；下一候选：2C-RESIDUAL-1（typed-stop 次序）/ README 对账。B2 延后（无消费者）。
 
