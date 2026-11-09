@@ -1,0 +1,15 @@
+{
+  "action": "press-f11-sendinput",
+  "capturedAt": "2026-11-09T11:29:23.6240237+08:00",
+  "pid": 8148,
+  "sendInputReturned": 2,
+  "found": false,
+  "windows": [
+    "54397794|239|322|1116|799|1|New Manga"
+  ],
+  "immersive": null,
+  "screenshot": {
+    "file": "G:\\CODEX\\New Manga.workspace\\FEA-07-AC5-NATIVE-1\\ac5-fullscreen\\20261109-112923-f11-sendinput.png",
+    "sha256": "4dfc53c08b1b82743adaa31f85969aef114f4c904532253ff95c86c22641a072"
+  }
+}

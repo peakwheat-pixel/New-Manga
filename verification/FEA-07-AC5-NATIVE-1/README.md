@@ -99,3 +99,10 @@
 - wire 旁证：11:22:04–05 出现 `resolve_page_resource` + `SaveReadingProgress`（`ReaderWindow.Closed` 才 flush）⇒ 说明 F11 路径**部分执行过**（窗口创建/关闭），但未在桌面保持可见。
 - 结论：**`NOT_RUN`**，不写 PASS；登记 **D-AC5-2**（沉浸全屏在本会话无法出现，疑似 `OpenImmersiveReader` 在本会话抛异常或输入未送达；需在**本地控制台会话**复现确认是环境还是产品缺陷）。
 - 判定材料：`evidence/probe-f11-*.json`、`evidence/open-immersive-*.json`、`evidence/reader-fullscreen*.json`；截图含用户漫画内容，仅存仓外 `G:\CODEX\New Manga.workspace\FEA-07-AC5-NATIVE-1\ac5-fullscreen\`（哈希已记录）。
+
+### D-AC5-2 补充：F11 可送达但沉浸窗口不出（2026-11-09 14:10）
+
+- 用户在浏览器按 F11 可全屏 ⇒ **远程键盘正常**；点击应用窗口后再按 F11 → **主窗被最小化、无沉浸窗口**。
+- 自动化：`SendInput`（rc=2 事件）、`PostMessage WM_KEYUP/DOWN`（rc=3）均只造成主窗最小化；100ms 轮询 4 分钟无新顶层窗口（`evidence/watch-immersive-20261109-140944.json`）。
+- 推断：`OpenImmersiveReader()` 的 `window.Show()`（FullScreen + 无边框 `ReaderWindow`）在本会话未完成；主窗被系统最小化而非恢复 ⇒ 产品缺陷候选（需本地控制台复现）。
+- AC5「全屏切换」子项：**`NOT_RUN`**（不写 PASS）。

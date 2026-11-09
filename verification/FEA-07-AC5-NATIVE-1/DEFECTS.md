@@ -12,3 +12,15 @@
 ## 过程缺陷（非产品）
 
 - `physical-unplug-probe.ps1` 首次等待窗口 240s 超时（用户拔线晚于脚本窗口），未产出 JSON；失败日志已保留为 `evidence/physical-unplug-before.log`，随后用 `capture-physical-state.ps1` 直接抓状态完成取证。
+
+## D-AC5-2（P2，产品缺陷候选：F11 沉浸模式不出现窗口）
+
+- 触发：应用已加载真实书（169 页）、当前在资料柜/Reader 页，前台激活应用窗口后按 **F11**（用户手动；浏览器 F11 可全屏 ⇒ 远程键盘正常）。
+- 观测（vidence/watch-immersive-20261109-140944.json、vidence/post-f11-20261109-140533.json、vidence/press-f11-20261109-112923.json）：
+  - 按下 F11 后 **主窗被最小化**（rect (-32000,-32000)），**未出现任何沉浸窗口**（100ms 轮询 4 分钟无新顶层窗口）；
+  - SendInput（返回 2 事件）与 PostMessage WM_KEYDOWN/UP(F11)（rc=3）同样只导致主窗最小化、无沉浸窗口；
+  - Reader 页「沉浸模式 (Esc/H/F)」按钮在 UIA 中不可见（SetHudVisible 控制）。
+- 代码路径：MainWindow.TryHandleGlobalKey → ToggleImmersiveAsync → OpenImmersiveReader()（
+ew ReaderWindow(...) + window.Show()；ReaderWindow 构造设 SystemDecorations.None + WindowState.FullScreen，ReaderWorkbenchPages.cs:2596-2598）。
+- 推断：ReaderWindow.Show() 在本机（远程会话/无本地控制台）下无法完成全屏窗口创建（可能抛异常），主窗被系统最小化而非恢复。
+- 结论：**产品缺陷候选（需本地控制台复现确认）**；AC5 的「全屏切换」子项记 NOT_RUN，不写 PASS。

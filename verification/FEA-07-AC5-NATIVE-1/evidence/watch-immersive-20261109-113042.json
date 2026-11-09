@@ -1,0 +1,24 @@
+{
+  "action": "watch-immersive",
+  "capturedAt": "2026-11-09T11:30:42.3346025+08:00",
+  "pid": 8148,
+  "found": true,
+  "immersive": {
+    "hwnd": 95163102,
+    "left": 791,
+    "top": 562,
+    "width": 313,
+    "height": 45,
+    "hasCaption": false,
+    "title": "",
+    "coversPrimary": false
+  },
+  "screenshot": {
+    "file": "G:\\CODEX\\New Manga.workspace\\FEA-07-AC5-NATIVE-1\\ac5-fullscreen\\20261109-113042-watch-immersive.png",
+    "sha256": "25b9cdb078ccfe7be43cc462ed035e757bbf92e1febf9627fe98339945c3e67c"
+  },
+  "windows": [
+    "95163102|791|562|313|45|0|",
+    "54397794|63|484|1116|797|1|New Manga"
+  ]
+}

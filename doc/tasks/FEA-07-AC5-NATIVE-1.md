@@ -252,6 +252,12 @@ out_of_scope:
 | EV-AC5-FS05 | 全屏/导入尝试 | verification/FEA-07-AC5-NATIVE-1/evidence/finish-import-20261109-110424.json | - | f7b684588ff8afb1d0cdea45c7d351aedea2858ea582fd27706291e7a05b9b9e | CANONICAL |
 | EV-AC5-FS06 | 全屏/导入尝试 | verification/FEA-07-AC5-NATIVE-1/evidence/import-dialog-uia-20261109-110259.json | - | b0a79e902e64566ab9fdb5b23c9a9a048165856756a49900f43e9c2587872153 | CANONICAL |
 
+| EV-AC5-FS01 | 全屏尝试 | verification/FEA-07-AC5-NATIVE-1/evidence/watch-immersive-20261109-113042.json | - | 15009ed2868acfe476e1363a1b620e6ff87b39656bd4a99f5cd80213a0b9f5d7 | CANONICAL |
+| EV-AC5-FS02 | 全屏尝试 | verification/FEA-07-AC5-NATIVE-1/evidence/watch-immersive-20261109-140944.json | - | f08edd2f90b46ac2834e1f2eb6fd587ea428b9d40feda91cf9480dfa7e07e090 | CANONICAL |
+| EV-AC5-FS03 | 全屏尝试 | verification/FEA-07-AC5-NATIVE-1/evidence/post-f11-20261109-140533.json | - | 5828c1373a66b5ce8307fc1bc067614eb901986f6370d9889ab83fa4b098c167 | CANONICAL |
+| EV-AC5-FS04 | 全屏尝试 | verification/FEA-07-AC5-NATIVE-1/evidence/press-f11-20261109-112923.json | - | e6be76474b48ca41e16e4908937706c440d8983247fbaed67a19d061ffa366e5 | CANONICAL |
+| EV-AC5-FS05 | 全屏尝试 | verification/FEA-07-AC5-NATIVE-1/evidence/dblclick-immersive-20261109-113204.json | - | 3701a33f411e4f5639fb337962910a98287359acfc36ba05d1856daf31fb3431 | CANONICAL |
+
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
@@ -304,3 +310,10 @@ out_of_scope:
 - wire 旁证：11:22:04–05 出现 `resolve_page_resource` + `SaveReadingProgress`（`ReaderWindow.Closed` 才 flush）⇒ 说明 F11 路径**部分执行过**（窗口创建/关闭），但未在桌面保持可见。
 - 结论：**`NOT_RUN`**，不写 PASS；登记 **D-AC5-2**（沉浸全屏在本会话无法出现，疑似 `OpenImmersiveReader` 在本会话抛异常或输入未送达；需在**本地控制台会话**复现确认是环境还是产品缺陷）。
 - 判定材料：`evidence/probe-f11-*.json`、`evidence/open-immersive-*.json`、`evidence/reader-fullscreen*.json`；截图含用户漫画内容，仅存仓外 `G:\CODEX\New Manga.workspace\FEA-07-AC5-NATIVE-1\ac5-fullscreen\`（哈希已记录）。
+
+### D-AC5-2 补充：F11 可送达但沉浸窗口不出（2026-11-09 14:10）
+
+- 用户在浏览器按 F11 可全屏 ⇒ **远程键盘正常**；点击应用窗口后再按 F11 → **主窗被最小化、无沉浸窗口**。
+- 自动化：`SendInput`（rc=2 事件）、`PostMessage WM_KEYUP/DOWN`（rc=3）均只造成主窗最小化；100ms 轮询 4 分钟无新顶层窗口（`evidence/watch-immersive-20261109-140944.json`）。
+- 推断：`OpenImmersiveReader()` 的 `window.Show()`（FullScreen + 无边框 `ReaderWindow`）在本会话未完成；主窗被系统最小化而非恢复 ⇒ 产品缺陷候选（需本地控制台复现）。
+- AC5「全屏切换」子项：**`NOT_RUN`**（不写 PASS）。
