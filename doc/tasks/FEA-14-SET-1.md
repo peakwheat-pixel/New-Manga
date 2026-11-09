@@ -61,11 +61,11 @@ out_of_scope:
 
 ## Acceptance Criteria（6 条，依 scope r1 §3）
 
-- [ ] **AC1 投影正确性**：注入 `ITypographySource` 已知快照 → 「字体」组渲染 3 行（token key / 主题栈原文 / 解析实际族 + 缩放/行高）；source 返回 null/Unavailable → 稳定占位态。 <<MET>>
-- [ ] **AC2 回退解析纯函数矩阵**：`TypographyResolver.Resolve(["Missing A","Installed B","sans-serif"])` → `resolved="Installed B"`、`missing=["Missing A"]`、`fallback` 标记正确；全缺失 → generic。 <<MET>>
-- [ ] **AC3 零全局副作用**：渲染/切换前后 `Application.Current.Resources[NmKeys.FontFamily.*]` 与 `Application.Styles` 引用/值不变；样例控件自定义字体不外溢。 <<MET>>
-- [ ] **AC4 无 AppData 写入**：测试前后真实 `%APPDATA%\NewManga` 的 `presentation-settings.json`/`themes\` 字节与 mtime 不变（复用既有 red-line 断言）。 <<MET>>
-- [ ] **AC5 UI/逻辑分离 + 只读门禁 + a11y**：`SettingsViewModel` 可在无 Avalonia Application 的测试中构造（fake source）；组枚举/搜索命中（`字体`/`typography.ui`）/只读态；Host 只读时一致。 <<MET>>
+- [x] **AC1 投影正确性**：注入 `ITypographySource` 已知快照 → 「字体」组渲染 3 行（token key / 主题栈原文 / 解析实际族 + 缩放/行高）；source 返回 null/Unavailable → 稳定占位态。 <<MET>>
+- [x] **AC2 回退解析纯函数矩阵**：`TypographyResolver.Resolve(["Missing A","Installed B","sans-serif"])` → `resolved="Installed B"`、`missing=["Missing A"]`、`fallback` 标记正确；全缺失 → generic。 <<MET>>
+- [x] **AC3 零全局副作用**：渲染/切换前后 `Application.Current.Resources[NmKeys.FontFamily.*]` 与 `Application.Styles` 引用/值不变；样例控件自定义字体不外溢。 <<MET>>
+- [x] **AC4 无 AppData 写入**：测试前后真实 `%APPDATA%\NewManga` 的 `presentation-settings.json`/`themes\` 字节与 mtime 不变（复用既有 red-line 断言）。 <<MET>>
+- [x] **AC5 UI/逻辑分离 + 只读门禁 + a11y**：`SettingsViewModel` 可在无 Avalonia Application 的测试中构造（fake source）；组枚举/搜索命中（`字体`/`typography.ui`）/只读态；Host 只读时一致。 <<MET>>
 - [ ] **AC6 边界与零契约变更**：`git diff --name-only` 不含 `doc/plan/**`、`doc/contracts/**`、`tools/governance/**`、`doc/tasks/FEA-13*`；`verify_pins` 18/18；`check.ps1`（默认 + `-TaskPath`）PASS；diff ⊆ 16 paths。 <<MET>>
 
 ## 证据计划（L2）

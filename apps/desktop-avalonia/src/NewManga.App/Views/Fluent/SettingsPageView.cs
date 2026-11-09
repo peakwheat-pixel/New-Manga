@@ -313,6 +313,7 @@ public sealed class SettingsPageView : UserControl
         _contentHost.Child = _viewModel.SelectedGroup switch
         {
             SettingsGroupId.Appearance => BuildAppearanceGroup(),
+            SettingsGroupId.Typography => BuildTypographyGroup(),
             SettingsGroupId.Providers => BuildProviderGroup(),
             SettingsGroupId.Network => BuildNetworkGroup(),
             SettingsGroupId.Backup => BuildBackupGroup(),
@@ -575,6 +576,66 @@ public sealed class SettingsPageView : UserControl
             stack.Children.Add(new SettingsGroup { Child = card });
         }
 
+        return new SettingsGroup { Child = stack };
+    }
+
+    /// <summary>
+    /// FEA-14-SET-1 (AC1/AC3/AC4): the read-only 字体 group. It projects the current
+    /// theme's font stacks with a fallback explanation and renders LOCAL preview samples.
+    /// It never sets Application resources/styles or writes settings (the theme is the
+    /// only writer); the preview fonts are applied to the sample controls only.
+    /// </summary>
+    private Control BuildTypographyGroup()
+    {
+        var stack = FluentUi.Stack("fluent-page-layout");
+        stack.Children.Add(FluentUi.Text("字体", "fluent-page-title"));
+        stack.Children.Add(FluentUi.Text(
+            _viewModel.TypographySourceNotice, "fluent-subtle-text"));
+
+        if (!_viewModel.TypographyAvailable)
+        {
+            stack.Children.Add(FluentUi.Text(
+                _viewModel.TypographyUnavailableReason ?? "当前主题未初始化。",
+                "fluent-subtle-text"));
+            return new SettingsGroup { Child = stack };
+        }
+
+        foreach (var line in _viewModel.TypographyLines)
+        {
+            var detail = line.Missing.Count == 0
+                ? $"实际使用：{line.ResolvedFamily}"
+                : $"实际使用：{line.ResolvedFamily}（缺失：{string.Join("、", line.Missing)}）";
+            if (line.Scale is not null || line.LineHeight is not null)
+            {
+                detail += $"；缩放 {line.Scale?.ToString("0.##") ?? "—"} / 行高 {line.LineHeight?.ToString("0.##") ?? "—"}";
+            }
+            stack.Children.Add(FluentUi.Field(
+                line.TokenKey,
+                FluentUi.Text($"{line.StackRaw}\n{detail}", "fluent-subtle-text")));
+        }
+
+        // Local preview: the font is applied to the SAMPLES only (never to app resources).
+        stack.Children.Add(FluentUi.Text("样例预览", "fluent-subtle-text"));
+        var primary = _viewModel.TypographyLines.FirstOrDefault();
+        foreach (var (label, sample) in new[]
+                 {
+                     ("中文", "永字体样式预览"),
+                     ("拉丁", "The quick brown fox jumps over the lazy dog."),
+                     ("数字", "0123456789 1.25 × 1.6"),
+                 })
+        {
+            var text = FluentUi.Text(sample, "fluent-subtle-text");
+            text.Text = sample;
+            if (primary is not null && !string.IsNullOrWhiteSpace(primary.ResolvedFamily))
+            {
+                text.FontFamily = new Avalonia.Media.FontFamily(primary.ResolvedFamily);
+            }
+            stack.Children.Add(FluentUi.Field(label, text));
+        }
+
+        stack.Children.Add(FluentUi.Text(
+            "字体族属于视觉主题；切换主题见「外观」组。此处只读展示，不写入任何设置。",
+            "fluent-subtle-text"));
         return new SettingsGroup { Child = stack };
     }
 

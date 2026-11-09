@@ -11,6 +11,7 @@ namespace NewManga.App.ViewModels.Fluent;
 public enum SettingsGroupId
 {
     Appearance,
+    Typography,
     Providers,
     Network,
     Backup,
@@ -22,6 +23,7 @@ public sealed class SettingsViewModel : FluentViewModel
     private readonly IHostController? _host;
     private readonly AppearanceCoordinator? _appearance;
     private readonly DesignSystemThemeManager? _themeManager;
+    private readonly ITypographySource? _typography;
     private AppearanceSettings _draft;
     /// <summary>R-017: the canonical settings the draft was last synchronized from (frontend-switch detection).</summary>
     private AppearanceSettings _observedSettings;
@@ -33,11 +35,13 @@ public sealed class SettingsViewModel : FluentViewModel
     private NetworkProfileInfo? _selectedNetwork;
     private BackupPackageInfo? _selectedBackup;
 
-    public SettingsViewModel(IHostController? host, AppearanceCoordinator? appearance, DesignSystemThemeManager? themeManager)
+    public SettingsViewModel(IHostController? host, AppearanceCoordinator? appearance, DesignSystemThemeManager? themeManager,
+        ITypographySource? typography = null)
     {
         _host = host;
         _appearance = appearance;
         _themeManager = themeManager;
+        _typography = typography;
         _draft = appearance?.Settings ?? AppearanceDefaults.Settings;
         _observedSettings = _draft;
         State = host is null ? FluentPageState.Error : FluentPageState.Ready;
@@ -69,12 +73,26 @@ public sealed class SettingsViewModel : FluentViewModel
         .Where(group => string.IsNullOrWhiteSpace(Search) || GroupLabel(group).Contains(Search, StringComparison.CurrentCultureIgnoreCase) ||
             SearchFields(group).Any(fieldName => fieldName.Contains(Search, StringComparison.CurrentCultureIgnoreCase)))
         .ToArray();
+    /// <summary>FEA-14-SET-1 (AC1): the read-only typography projection rows.</summary>
+    public IReadOnlyList<TypographyLine> TypographyLines => TypographySnapshot.Lines;
+
+    public bool TypographyAvailable => TypographySnapshot.Available;
+
+    public string? TypographyUnavailableReason => TypographySnapshot.UnavailableReason;
+
+    public string TypographySourceNotice =>
+        "字体族属于视觉主题；切换主题见「外观」组。此处只读展示当前实际使用的字体。";
+
+    private TypographySnapshot TypographySnapshot =>
+        (_typography ?? new AvaloniaTypographySource()).Read();
+
     public string Version => typeof(SettingsViewModel).Assembly.GetName().Version?.ToString() ?? "未知";
     public string License => "GPL-3.0（组件许可详见随包声明）";
 
     public static string GroupLabel(SettingsGroupId group) => group switch
     {
         SettingsGroupId.Appearance => "外观",
+        SettingsGroupId.Typography => "字体",
         SettingsGroupId.Providers => "Provider 与凭据",
         SettingsGroupId.Network => "网络",
         SettingsGroupId.Backup => "备份与恢复",
@@ -84,6 +102,11 @@ public sealed class SettingsViewModel : FluentViewModel
 
     private static IReadOnlyList<string> SearchFields(SettingsGroupId group) => group switch
     {
+        SettingsGroupId.Typography =>
+        [
+            "字体", "typography.ui", "typography.data", "typography.display",
+            "font family", "回退",
+        ],
         SettingsGroupId.Appearance => ["theme.visualThemeId", "theme.frontendId", "appearance.mode", "appearance.contrast",
             "appearance.followSystemAccent", "motion.mode", "motion.categories.navigation", "motion.categories.feedback",
             "motion.categories.decorative", "corners.scale", "material.acrylicStrength", "material.micaEnabled",
