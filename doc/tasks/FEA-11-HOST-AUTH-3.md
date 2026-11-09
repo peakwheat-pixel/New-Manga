@@ -70,7 +70,7 @@ out_of_scope:
 ## Acceptance Criteria（AC-H3-1…6）
 
 - [x] **AC-H3-1 契约与字节不回退**：`verify_pins` 18/18（C17 `cdeee487…`，其余 17 零变化）；`git diff --name-only` 不含「不列入」清单；C-17 工作树 SHA-256 不变。 <<MET>>
-- [x] **AC-H3-2 Core 新命令**：零写（逐表相等）、closed shape/类型/未知键负例、host-control vs 普通面、typed 矩阵（NOT_FOUND/STALE/UNAVAILABLE/BUDGET）、entries ordinal 升序唯一、missing 目标 null、过期 applied 可读、脱敏 0 命中。 <<MET>>
+- [x] **AC-H3-2 Core 新命令**：零写（逐表相等）、closed shape/类型/未知键负例、host-control vs 普通面、typed 矩阵（NOT_FOUND/STALE/UNAVAILABLE/BUDGET）、entries ordinal 升序唯一、missing 目标 null、过期 applied 可读、脱敏器命中面（敏感键/Bearer/sk- 形态）0 命中，归档 wirelog 的裸 `signature` 由 `tools/redact_signature.py` 重脱敏（10 条 → `[redacted]`，0 明文）。 <<MET>>
 - [x] **AC-H3-3 Host 重铸**：completion 不再用 journal `GrantIds`（`MintRecoveryGrantsAsync` + `prepared with { GrantIds = recoveryGrants }`）；每 registry `Authorize(liveGeneration, 唯一 readable root)` 后 mint（TTL ≤300s 沿 `IssueAsync`）；**拒绝矩阵 7 例全部 typed（含多 baseline）**（state≠applied→`SOURCE_PLAN_STALE`、无 source/version→`SOURCE_PLAN_UNAVAILABLE`、kind 缺失→`SOURCE_ACCESS_DENIED`、撤销→`SOURCE_GRANT_REVOKED`、registry 缺失→`SOURCE_ACCESS_DENIED`、mint seam 不可用→`CORE_UNAVAILABLE`；journal 保持 core-committed、未 ACK）。 <<MET>>
 - [x] **AC-H3-4 真实 kill 恢复一次**：park（`core-committed`）→ `Kill(entireProcessTree)`（断言 dotnet 与全部 Python PID 消失，未证实记 FAIL）→ 新进程 recover 成功一次；行数不变、`read_gate` 0 pending、`commit_digest` 一致、源 sha 不变、**三重防伪**（PID/session/grant_id 不在 journal）；二次调用 0 新帧。**实测 PASS（2026-11-10，驱动 attempt 6）**：`CRASH_POINT=PASS acknowledge_once=1 gates_open=1 rows_unchanged=1 second_call_idempotent=1 commit_digest_match=1 distinct_host_pid=1 distinct_core_session=1 fresh_grant=1`；日志 `logs/crash-driver-attempt12.log`（**10 个 CHECK 全部由记录事实计算**：含 page_bindings 字段级对拍与 journal 存在性；journal 加密故 grant 明文 grep 记 OBSERVE，权威记录为 recover.json）。修复链：host-control 命令名 CamelCase、fixture `reads` 接线、fixture 生产语义注册源路径（ZCode 裁决 E′）、终态 journal 记录重铸 grants、驱动真实 PID 树枚举（12 pid / 1 python，30s 轮询证明 sidecar 全灭）+ DB 行数/源 sha/gate 查询 + page_bindings 字段级对拍。**崩溃反例已实测**（`crash-ack.ps1 -Negative`）：phase 间替换源文件 → recover 被 typed 拒绝（`CHECK negative_typed_refusal=1 code=SOURCE_ACCESS_DENIED` + `CRASH_POINT=NEGATIVE_PASS`，`logs/crash-driver-negative.log`）。 <<MET>>
 - [x] **AC-H3-5 变异判别**：M1（复用 journal grant）由拒绝矩阵第 6 例判别（mint seam 不可用时抛 `CORE_UNAVAILABLE` 而非回退）；M2（移除 host-control）→ parity 测试 RED；M3（投影写库）→ 零写断言 RED；M4（删 digest 校验）→ STALE 用例 RED；M5（删 applied 前置）→ 拒绝矩阵第 1 例 RED；M6（猜 kind）→ 第 3 例 RED。证据：`verification/FEA-11-HOST-AUTH-3/mutations/M2…M6*.log`。 <<MET>>
@@ -108,4 +108,7 @@ out_of_scope:
 
 ## Closeout Record
 
-- 未开始（ready，待实施）。
+- 结论：**完成**。C-17 v1.2 additive 载体 + Host 恢复重铸 + 真实崩溃正/反例 + 变异判别 + 全量门禁，全部经 **5 轮独立上下文 Review**（r1→r5）收敛。
+- 核心证据：`logs/crash-driver-attempt12.log`（10 CHECK 全 =1，`CRASH_POINT=PASS`）、`logs/crash-driver-negative.log`（`NEGATIVE_PASS` / `SOURCE_ACCESS_DENIED`）、`logs/pytest-full.log`（3468/0/10）、`logs/dotnet-full-console.log`（fresh build 1811/0/109）、`mutations/M1…M6`、`crash/<run-id>/`（每次运行归档）。
+- 残余 limitation（已登记，非阻塞）：①`signature` 裸值不在 C-16 §7 脱敏器命中面（归档由本卡工具重脱敏，脱敏器本身另立缺陷卡）；②Host journal 无 source 字段，冻结矩阵「source 不符」在冻结面不可实现；③多 baseline/多 root 均 fail-closed，会话层并发 recover 未建模。
+- 生命周期：scope r2 冻结 → 实现（Core/Host/测试/证据）→ 5 轮 Review → 收口；`verify_pins` 18/18、C-17 字节零变化、diff ⊆ allowed_paths。

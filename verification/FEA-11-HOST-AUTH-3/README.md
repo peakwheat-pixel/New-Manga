@@ -8,7 +8,7 @@
 
 | 项 | 结果 |
 |---|---|
-| `crash-ack.ps1` 两阶段驱动 | **PASS**（`logs/crash-driver-attempt12.log`，EXIT 0，head `0bcf9ba70`） |
+| `crash-ack.ps1` 两阶段驱动 | **PASS**（`logs/crash-driver-attempt12.log`，EXIT 0，head `caaaddc53`） |
 | 三重防伪 | host PID 不同 / Core session 不同 / 重铸 grant ∉ journal（`fresh_grant=1`） |
 | 进程死亡证明 | park 进程树 **12–13 PID（含 1 Python sidecar）** 枚举 → kill 后 30s 轮询断言全灭（`pids-before.txt`/`pids-after.txt`） |
 | 数据安全 | `source_sha256_unchanged=1`、`rows_unchanged=1`（bindings/publications） |
@@ -32,13 +32,13 @@ CHECK commit_digest_match / distinct_host_pid / distinct_core_session /
 
 | 步骤 | 命令 | 时间（+08:00） | head | EXIT |
 |---|---|---|---|---|
-| 治理默认 | `pwsh -NoProfile -File tools/governance/check.ps1` | 01:2x | `c20145bf2` | 0 |
-| 治理指定卡 | `... check.ps1 -TaskPath doc/tasks/FEA-11-HOST-AUTH-3.md` | 01:2x | `c20145bf2` | 0 |
-| 契约 pin | `pwsh -NoProfile -File tools/governance/verify_pins.ps1` | 01:2x | `c20145bf2` | 0（18/18） |
-| API 清单 | `python tools/generate_api_inventory.py --check` | 01:1x | `c20145bf2` | 0 |
+| 治理默认 | `pwsh -NoProfile -File tools/governance/check.ps1` | 01:2x | `caaaddc53` | 0 |
+| 治理指定卡 | `... check.ps1 -TaskPath doc/tasks/FEA-11-HOST-AUTH-3.md` | 01:2x | `caaaddc53` | 0 |
+| 契约 pin | `pwsh -NoProfile -File tools/governance/verify_pins.ps1` | 01:2x | `caaaddc53` | 0（18/18） |
+| API 清单 | `python tools/generate_api_inventory.py --check` | 01:1x | `caaaddc53` | 0 |
 | 全量 pytest | `python -m pytest -q` | 00:5x | `bb24cb99a` | 0（3468/0/10） |
-| 崩溃正例 | `crash-ack.ps1`（gated） | 01:0x | `c20145bf2` | 0（10 CHECK） |
-| 崩溃反例 | `crash-ack.ps1 -Negative`（gated） | 01:09 | `c20145bf2` | 0（NEGATIVE_PASS） |
+| 崩溃正例 | `crash-ack.ps1`（gated） | 01:0x | `caaaddc53` | 0（10 CHECK） |
+| 崩溃反例 | `crash-ack.ps1 -Negative`（gated） | 01:09 | `caaaddc53` | 0（NEGATIVE_PASS） |
 
 ## 崩溃证据归档（每次运行）
 

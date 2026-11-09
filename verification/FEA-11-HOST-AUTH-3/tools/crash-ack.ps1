@@ -282,6 +282,9 @@ if (Test-Path $dataRoot) {
         Copy-Item (Join-Path $dataRoot 'wire.ndjson') (Join-Path $archive 'wire-redacted.ndjson') -Force
     }
 }
+# Archived evidence must not carry live signing material (C-16 §7 screen does not
+# cover a bare ``signature`` field): run the deterministic redactor on the archive.
+& python (Join-Path $repo 'verification/FEA-11-HOST-AUTH-3/tools/redact_signature.py') $archive | Out-Null
 Write-Host ("CRASH_EVIDENCE archived=" + $archive)
 
 $passMessage = "CRASH_POINT=PASS acknowledge_once=1" `
