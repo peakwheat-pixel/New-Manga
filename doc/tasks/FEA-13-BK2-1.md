@@ -66,10 +66,10 @@ out_of_scope:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-BK2-README | AC1–AC6 | `verification/FEA-13-BK2-1/README.md` | `-` | `d0c4c81c13909a18bbaf4f00b1386ab8e8a46b368d9365e3e75a8eff1982eacc` | CANONICAL |
-| EV-BK2-SUITE | AC1–AC4,AC6 | `verification/FEA-13-BK2-1/logs/pytest-backup-suite.log` | `-` | `dc2504990c5a5718cfc5b8de6b17e8bd49c383dab58a1d32cac83853677d53b2` | CANONICAL |
-| EV-BK2-MUT-V3 | AC5 | `verification/FEA-13-BK2-1/logs/mutation-v3-corrupt.log` | `-` | `e6d2673ebecd8d5b60a8e400e991286cc7c91318d6f7d23cdd9a761a4bde9a09` | CANONICAL |
-| EV-BK2-MUT-WRITER | AC5 | `verification/FEA-13-BK2-1/logs/mutation-writer-version.log` | `-` | `d45e64ce73e6cd2f70c99a41aa3dd186906dc36bb90c672443d12520411da89c` | CANONICAL |
+| EV-BK2-README | AC1–AC6 | `verification/FEA-13-BK2-1/README.md` | `-` | `c1a2cfca2160b4f73088c8042047488bd83c22938234f78d9064cf723ae0be4d` | CANONICAL |
+| EV-BK2-SUITE | AC1–AC4,AC6 | `verification/FEA-13-BK2-1/logs/pytest-backup-suite.log` | `-` | `901f5377d6e2ba933b99fe50a5b4d9686ad263f9a2e8e02bc76d50a3ad2045b1` | CANONICAL |
+| EV-BK2-MUT-V3 | AC5 | `verification/FEA-13-BK2-1/logs/mutation-v3-corrupt.log` | `-` | `6cc1f94fcc3f914a5923d6bbda0d034e8335b29fb7f1cca73c9154a57438e485` | CANONICAL |
+| EV-BK2-MUT-WRITER | AC5 | `verification/FEA-13-BK2-1/logs/mutation-writer-version.log` | `-` | `57de51bacae5d7db59397b3d4e0387b96719085603620994b19d9a1a714d36b0` | CANONICAL |
 ## 证据计划
 
 | # | 命令 | 判别 |
@@ -102,7 +102,11 @@ out_of_scope:
 | R-010（P3）旧注释/设计文档未更新 | 登记残余（`core_service.py` 仅允许映射一行，注释另案） |
 | R-011（P3）STATUS/PLAN/LEDGER 越出 allowed_paths | 属 DSH 生命周期写入惯例（先例 `7abc9194a`），登记不改 |
 | R-012（P3）C-09 §9 控制字符 | append-only 记录，不改字节约；登记 |
-## Resource Manifest
+| R-013（P3，r2）`_negotiate_manifest` docstring 与 corrupt 分支矛盾 | 已改写为「两类失败分离」的完整描述 |
+| R-014（P3，r2）test 模块 docstring 仍写 v1 | 已改为 backup/2 v2 |
+| R-015（P3，r2）README 局限第 1 条与既有测试不符 | 已更正：`test_old_package_without_page_originals_still_restores` 覆盖旧包；仍缺 base-writer 字节 golden（登记片 2/后续） |
+
+**r2 复审**（独立子代理 `doc/reviews/FEA-13-BK2-1-r2.md`，head `389f30309`）：**approved**（FIXED 7 / PARTIAL 5 / OPEN 0；无新增 P0/P1）。r2 的 5 项 PARTIAL 已在本轮逐项处置：R-001 措辞更正 + 残余登记、R-002 日志重采（真实命令头/批次标注/口径并列）、R-003 措辞改为「④ 不在 6 片拆分内，独立裁决」、R-006 新增缺失/非整数负测、R-007 新增 page_original_refs digest/size 断言。AC1–AC6 维持 MET。## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|

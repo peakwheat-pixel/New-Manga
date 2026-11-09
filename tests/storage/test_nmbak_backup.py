@@ -1,4 +1,4 @@
-"""SETTINGS-OPEN-C-2-BACKUP: .nmbak v1 package create/list/restore/delete.
+"""FEA-13-BK2-1: .nmbak backup/2 package create/list/restore/delete (writes v2).
 
 Real SQLite + real managed filesystem, no mocks: the package is a zip the
 tests open and inspect, and restores are asserted against observable state

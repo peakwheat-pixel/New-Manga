@@ -1,6 +1,7 @@
-# command: pytest-backup-suite.log
+# command: python -m pytest tests/storage/test_nmbak_backup.py tests/storage/test_nmbak_format.py tests/storage/test_backup_restore.py tests/core/test_core_backup_wire.py tests/infrastructure/test_nmbak_startup_backup.py -q
 # shell: pwsh 7.6.8 / python 3.14
-# time: 2026-11-09T20:35:19.0066168+08:00
+# time: 2026-11-09T20:41:39.5894206+08:00
+# batch: fea-13-bk2-1-r3
 # EXIT=0
-................................................................         [100%]
-64 passed in 7.96s
+..................................................................       [100%]
+66 passed in 8.06s

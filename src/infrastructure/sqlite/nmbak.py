@@ -592,10 +592,15 @@ class NmbakBackupService:
 
         ADJ-2026-11-09 D1 fixes the literals: backup/1 is
         ``format:"nm-backup" + format_version:1`` and backup/2 is
-        ``format:"nmbak" + version:2``. Any other format/version is a typed,
-        non-retryable ``BACKUP_FORMAT_UNSUPPORTED`` -- never disguised as
-        corruption: the package may be perfectly intact and simply newer than
-        this build.
+        ``format:"nmbak" + version:2``.
+
+        Two failure classes are kept distinct:
+
+        * a well-formed package whose integer format/version is simply not
+          supported by this build -> ``BACKUP_FORMAT_UNSUPPORTED`` (typed,
+          non-retryable; the package is intact, just newer than us);
+        * a manifest that is missing the version field or stores it as a
+          non-integer -> ``BACKUP_CORRUPT`` (the manifest is malformed).
         """
         name = package.name
         fmt = payload.get("format")

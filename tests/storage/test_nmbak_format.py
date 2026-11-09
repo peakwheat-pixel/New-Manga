@@ -224,3 +224,40 @@ def test_format_error_is_registered_as_validation_not_retryable():
     from bootstrap.core_service import _BACKUP_ERROR_RULES
 
     assert _BACKUP_ERROR_RULES["BACKUP_FORMAT_UNSUPPORTED"] == ("validation", False)
+
+def test_known_format_with_missing_or_non_integer_version_is_corrupt(workspace):
+    """R-006: a malformed version field is corruption, not "app too old"."""
+    workspace["seed_page"]("page-1", b"PAGE-ONE")
+    service = workspace["service"]
+    created = service.create("manual", "bad version")
+    package = workspace["backup_root"] / f"{created['backup_id']}.nmbak"
+
+    _rewrite_manifest(package, lambda payload: payload.pop("version", None))
+    with pytest.raises(NmbakBackupError) as missing:
+        service.restore(created["backup_id"], confirm_restore=True)
+    assert missing.value.code == "BACKUP_CORRUPT"
+
+    _rewrite_manifest(package, lambda payload: payload.__setitem__("version", "2"))
+    with pytest.raises(NmbakBackupError) as non_integer:
+        service.restore(created["backup_id"], confirm_restore=True)
+    assert non_integer.value.code == "BACKUP_CORRUPT"
+
+
+def test_page_original_refs_record_digest_and_size(workspace):
+    """R-007: each v2 member carries sha256 + size_bytes, including page originals."""
+    relative = workspace["seed_page"]("page-1", b"PAGE-ONE")
+    digest = hashlib.sha256(b"PAGE-ONE").hexdigest()
+    conn = workspace["conn"]
+    with conn:
+        conn.execute(
+            "UPDATE pages SET managed_original_ref = ?, source_hash = ? WHERE page_id = ?",
+            (relative, digest, "page-1"),
+        )
+    created = workspace["service"].create("manual", "page originals")
+    package = workspace["backup_root"] / f"{created['backup_id']}.nmbak"
+    with zipfile.ZipFile(package) as archive:
+        manifest = json.loads(archive.read(MANIFEST_NAME))
+    originals = manifest["page_original_refs"]
+    assert originals and originals[0]["managed_path"] == relative
+    assert originals[0]["sha256"] == digest
+    assert originals[0]["size_bytes"] == len(b"PAGE-ONE")
