@@ -1,6 +1,6 @@
 # command: pwsh tools/governance/verify_pins.ps1
 # shell: pwsh 7.6.8 / python 3.14 / .NET 9
-# time: 2026-11-10T01:52:37.7247741+08:00
+# time: 2026-11-10T02:10:29.5789952+08:00
 # EXIT=0
 OK C01b 3c9f5af7d74f
 OK C02 bb365ca891a7

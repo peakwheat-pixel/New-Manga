@@ -1,6 +1,6 @@
 # command: pwsh tools/governance/check.ps1（默认 + -TaskPath）
 # shell: pwsh 7.6.8 / python 3.14 / .NET 9
-# time: 2026-11-10T01:52:37.3786259+08:00
+# time: 2026-11-10T02:10:29.2294105+08:00
 # EXIT=0
 Governance scope: 15 current documents; no historical directory scan.
 Task: doc\tasks\FEA-13-SRC-6.md

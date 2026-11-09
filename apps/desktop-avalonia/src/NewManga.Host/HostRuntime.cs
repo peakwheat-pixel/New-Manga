@@ -436,9 +436,14 @@ public sealed class HostRuntime : IAsyncDisposable
         return outcome;
     }
 
-    /// <summary>FEA-13-SRC-6 (AC4): startup catch-up for handoffs that were never consumed.</summary>
+    /// <summary>FEA-13-SRC-6 (AC4): startup catch-up for handoffs that were never consumed.
+    /// Read-only hosts must not write the registry (the import is skipped entirely).</summary>
     public IReadOnlyList<SourceAccessRestoreOutcome> ImportPendingSourceAccessHandoffs()
     {
+        if (!Policy.WritesAllowed)
+        {
+            return Array.Empty<SourceAccessRestoreOutcome>();
+        }
         var registry = Registry;
         var dataRoot = _options.DataRoot;
         if (registry is null || string.IsNullOrWhiteSpace(dataRoot))

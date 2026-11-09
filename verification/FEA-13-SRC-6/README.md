@@ -13,7 +13,7 @@
 | AC2 缺失/不可读/空边界 | 缺失无段、空 entries 入包、不可读 `BACKUP_CREATE_FAILED` | **PASS** |
 | AC3 恢复后授权可用 | overwrite restore → handoff → Host 导入 `List()`/`Authorize`；幂等/零写 | **PASS**（`logs/pytest-src6.log` + `logs/dotnet-restore-tests.log`） |
 | AC4 revoked/代次/冲突 | live 优先、候选 revoked 不复活、receipt 防启动复活、read-only 零写 | **PASS**（`logs/dotnet-restore-tests.log`） |
-| AC5 跨机/版本/identity 负例 | 注入必败 protector → `SOURCE_ACCESS_DENIED`/`dpapi_unprotectable`；截断 → `handoff_corrupt`；live 零写 | **PASS（simulated）**；**真实跨机 DPAPI = NOT_RUN**（单机无法构造；不得记 PASS） |
+| AC5 跨机/版本/identity 负例 | 注入必败 protector → `SOURCE_ACCESS_DENIED`/`dpapi_unprotectable`；NMSAR2 → `registry_version_unsupported`；截断 → Host 边界 `handoff_corrupt`（registry 级为 `registry_corrupt`）；live 零写 | **PASS（simulated）**；**真实跨机 DPAPI = NOT_RUN**（单机无法构造；不得记 PASS） |
 | AC6 门禁/证据/变异 | `check.ps1` 默认 + `-TaskPath` PASS；`verify_pins` 18/18；定向 pytest/.NET 0 failed；diff ⊆ 14 paths；≥3 变异 RED | **PASS** |
 
 ## 门禁（本目录日志）
@@ -27,13 +27,15 @@
 | `logs/gates-check.log` | check.ps1 默认 + `-TaskPath` | 0 |
 | `logs/gates-pins.log` | verify_pins 18/18 | 0 |
 
-## 变异（`mutations/`）
+## 变异（`mutations/`；MA 无效已如实登记）
 
 | 变异 | 判别 | 结果 |
 |---|---|---|
 | MA 冲突 guard 禁用 | `LiveEntryWinsOverAnOlderOrRevokedCandidate` | **无效（NOT RED，EXIT 0）**——该变异在当前合并语义下不可判别（generation 检查先行）；R-005 如实登记，不得据此声称判别力 |
 | MB 异机 DPAPI 失败映射为 no-op | `ForeignDpapiSnapshotIsRejected` | **RED**（EXIT 1） |
 | MC 包内写明文 stub | `test_registry_is_packaged_verbatim` 等 | **RED**（3 failed） |
+
+> 判别力声明：MB/MC 为真实 RED；MA 在当前合并语义下**不可判别**（不等于判别力成立），仅登记为无效变异。
 
 ## 交接面（四段）
 

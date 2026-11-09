@@ -264,8 +264,13 @@ public sealed class SourceAccessRegistry
                     }
                     if (liveEntry.Generation >= entry.Generation)
                     {
-                        // Live wins; an identical/older candidate is simply not imported.
-                        if (liveEntry.Generation == entry.Generation) unchanged++;
+                        // Live wins. Same generation with identical content is a benign
+                        // no-op; a same-generation entry whose roots DIFFER is a conflict
+                        // (two divergent histories), and an older candidate is a conflict.
+                        var sameShape = liveEntry.Generation == entry.Generation
+                            && liveEntry.Roots.Select(root => root.Root)
+                                .SequenceEqual(entry.Roots.Select(root => root.Root));
+                        if (sameShape) unchanged++;
                         else conflicts++;
                         continue;
                     }

@@ -1,6 +1,6 @@
 # command: python -m pytest tests/storage/test_nmbak_backup.py tests/storage/test_nmbak_format.py tests/storage/test_nmbak_coverage.py tests/storage/test_nmbak_source_access.py tests/core/test_core_backup_wire.py -q
 # shell: pwsh 7.6.8 / python 3.14 / .NET 9
-# time: 2026-11-10T01:52:21.4047463+08:00
+# time: 2026-11-10T02:10:15.0947325+08:00
 # EXIT=0
 ......................................................                   [100%]
-54 passed in 5.20s
+54 passed in 5.74s

@@ -182,7 +182,9 @@ def test_overwrite_restore_writes_the_host_handoff(workspace):
     assert handoff["backup_id"] == backup_id
     assert handoff["member"] == f"{EXTRAS_PREFIX}{SOURCE_ACCESS_CATEGORY}/{SOURCE_ACCESS_FILE}"
     assert handoff["sha256"] == hashlib.sha256(segment.read_bytes()).hexdigest()
-    assert report["source_access_handoff"]["sha256"] == handoff["sha256"]
+    # R-002: the restore REPORT shape is unchanged (the handoff is a Host file contract,
+    # never a wire field).
+    assert "source_access_handoff" not in report
 
 
 def test_restore_without_the_segment_writes_no_handoff(workspace):
