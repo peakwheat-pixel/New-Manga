@@ -87,3 +87,17 @@ status: delivered
 | REC-13（P3）gates.log 无 EXIT/shell 头 | 新增 `verification/FEA-DOC-RECONCILE-1/gates-2.log`（含 shell 头、逐命令 EXIT、预算实测）；gates.log 保留为 HISTORICAL |
 
 r1 报告保留原字节（`doc/reviews/FEA-DOC-RECONCILE-1-r1.md`），随 head 变化降为历史；当前结论以 rev 后的 r2 报告为准。
+
+## r3 返修记录（第二独立审查者 `FEA-DOC-RECONCILE-1-review.md`，P0=0/P1=2/P2=4/P3=3）
+
+| Finding | 处置 |
+|---|---|
+| P1-01（P1）GOV-11/D07 翻 done 但 front matter 仍 `pending`/`null` | 两卡 `integration_commit`/`delivery_head` = `b6ada81e8`；`canonical_evidence_status`/`resource_closeout_status` = `complete`；Canonical Evidence 表填实（GOV-11：ADJ + C-01b/C-02/C-03/C-11 + FEA-02-CORE；D07：C-09 FROZEN + Gate 裁定）；GOV-11 `reviewer` 改为独立 Review 指针 |
+| P1-02（P1）AC3 自设条件与事实相反 | 已在 r2 改为「测试表 `NOT_RUN` 原样保留（append-only，不据此判 PASS）」 |
+| P2-01（P2）ledger 不可复现 | 已在 r2 提交后重跑，现 559 tracked / 0 untracked / 13 non-terminal tracked |
+| P2-02（P2）四表名不可追溯 + AD-003 冲突 | 卡 §对账清单 #1 已列四表名（v7：`source_entries`/`page_bindings`；v8：`source_sync_plans`/`source_operations` + `source_binding_publications`/`source_revision_lineage`）；AD-003 过期口径登记为 §残余 R-1 |
+| P2-03（P2）AC7 PLAN 载依据 | 已在 r2 改为「PLAN 记结论、依据在卡内」 |
+| P2-04（P2）GOV-11 AC3 主证据 | 已在 r2 追加证据更正（`FEA-02-CORE` `135479270`） |
+| P3-01/P3-02/P3-03 | 版本记法、D07 L-5 口径已在 r2 修；预算登记 §残余 R-4 |
+
+当前门禁证据：`verification/FEA-DOC-RECONCILE-1/gates-3.log`（r2 的 `gates-2.log` 与 `gates.log` 转为 HISTORICAL）。

@@ -48,7 +48,7 @@ out_of_scope:
 
 | # | 问题 | 处置 | 事实依据 |
 |---|---|---|---|
-| 1 | `STATUS:11` 写「FEA-12 四表 DDL 未冻」 | 改为「四表 DDL 已冻（C-15 = schema v7；C-17 v1.1 = schema v8；L-1 前置已满足）」 | `FEA-CONTRACT-FROZEN-C15.md:43,50`；`FEA-CONTRACT-FROZEN-C17.md:20`；`FEA-11-PREREQ-1.md:45,65`；`tests/fea11/test_v8_migration.py`（v8 建 4 表） |
+| 1 | `STATUS:11` 写「FEA-12 四表 DDL 未冻」 | 改为「四表 DDL 已冻 = L-1 前置已满足（C-15 schema v7：`source_entries`/`page_bindings`；C-17 v1.1 schema v8：`source_sync_plans`/`source_operations`，并增 `source_binding_publications`/`source_revision_lineage`）」 | `FEA-CONTRACT-FROZEN-C15.md:43,50`；`FEA-CONTRACT-FROZEN-C17.md:20`；`FEA-11-PREREQ-1.md:45,65`；`tests/fea11/test_v8_migration.py`；`src/infrastructure/sqlite/schema.py:757-871` |
 | 2 | `FEA-C11-PREREQ-1` 卡 done、DAG 行仍 `approved（待集成收口）` | PLAN 行翻 `done`（集成 `b7018e19b`） | 卡 Closeout 2026-11-02：交付 `b7018e19b` 已在 main，证据 sha256 一致 |
 | 3 | `FEA-GOV-11` 长期 `in_progress`（等 4 项裁决） | AC1–AC3 标 `<<MET>>` + 关闭记录 + `done` | `ADJ-2026-11-01-FEA-DECISIONS.md`：R=C1=D/C3=是、U-04 批准、U-05a 纳入、U-05b 保留；C-01b/C-02/C-03/C-11 已 FROZEN；首个实现候选 `FEA-02-CORE` done（集成 `135479270`） |
 | 4 | `FEA-D07-UNBLOCK` AC8 为 `[ ] <<MET>>`（矛盾），状态 `in_progress` | AC8 改 `[x] <<MET>>` + 证据 + `done`（Closeout 披露 D07 行 7 为 L-5 认定的「部分」） | `GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md:14,30,39-40`（2026-11-01 CLOSED；L-5 认定） |
@@ -102,11 +102,12 @@ out_of_scope:
 |---|---|---|---|---|---|
 | EV-RECON-STATUS | AC1,AC3,AC4,AC5,AC6 | `doc/STATUS.md` | `-` | `0f282ae5d3b732a876dc8f970d942bf5cb971ddc1659e0736c1348907a42b81f` | CANONICAL |
 | EV-RECON-PLAN | AC2,AC7 | `doc/REBASELINE_PLAN.md` | `-` | `c61845d68bb0b5d96f19e04231a68e8f7856ea577dbd0ab30a07b45cb51ac9a1` | CANONICAL |
-| EV-RECON-GOV11 | AC3 | `doc/tasks/FEA-GOV-11.md` | `-` | `2614725589d410127eb45c15e92c86016c0fe80221f7f5dc10b9774cb009661b` | CANONICAL |
-| EV-RECON-D07 | AC4 | `doc/tasks/FEA-D07-UNBLOCK.md` | `-` | `58fcf1a8c02eae11feddd5d5cac988e16d616900cfb7737af873f61b2bf966c6` | CANONICAL |
+| EV-RECON-GOV11 | AC3 | `doc/tasks/FEA-GOV-11.md` | `-` | `c5ae480f183bb19d5ea59adc5c994152ff55dba9ba4680168a72feeb637848e7` | CANONICAL |
+| EV-RECON-D07 | AC4 | `doc/tasks/FEA-D07-UNBLOCK.md` | `-` | `13ff390356f6e563b09c834e9147fdf368cba5927b5c02e5a5dbee993ebb4653` | CANONICAL |
 | EV-RECON-IMMERSIVE | AC5 | `doc/tasks/FEA-07-IMMERSIVE-F11-1.md` | `-` | `4ea62822594e29c479f304d3fab4893811da569b8e573ee999ca838d685db1b2` | CANONICAL |
 | EV-RECON-RG2 | AC6 | `doc/tasks/FEA-11-RUN-GRANT-2.md` | `-` | `83d15cbd086ae30323aff8cde51c25186dbba42377a5ffeaf9f7de6739b9dfd3` | CANONICAL |
-| EV-RECON-GATE | AC8 | `verification/FEA-DOC-RECONCILE-1/gates-2.log` | `-` | `d6626c58c4a23cc312542836fccde0df07fa4845e131044d5655ec52d14767e3` | CANONICAL |
+| EV-RECON-GATE | AC8 | `verification/FEA-DOC-RECONCILE-1/gates-3.log` | `-` | `79fa4682c747f8f2386d2b376f36e9bb1fab78d7de3f98e8a11e61c7a4c80e75` | CANONICAL |
+| EV-RECON-GATE-R2 | AC8（历史） | `verification/FEA-DOC-RECONCILE-1/gates-2.log` | `b6ada81e8` | `d6626c58c4a23cc312542836fccde0df07fa4845e131044d5655ec52d14767e3` | HISTORICAL |
 | EV-RECON-GATE-R1 | AC8（历史） | `verification/FEA-DOC-RECONCILE-1/gates.log` | `d91dbe444` | `c5fcd1f78fdf233503acd2562ca093a5cb5a87cc03eaecba4dcd78ef9b579d7a` | HISTORICAL |
 
 ## Resource Manifest

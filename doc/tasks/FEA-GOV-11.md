@@ -7,16 +7,16 @@ status: done
 approval: follow_up_of_FEA-GOV-10_2026-11-01
 suggested_owner: dsh
 owner: dsh-lead
-reviewer: null
+reviewer: 独立上下文 Review：本卡关闭依据为 `FEA-DOC-RECONCILE-1` r1/r2 复审（`doc/reviews/FEA-DOC-RECONCILE-1-r{1,2}.md`），非本会话自审
 depends_on:
   - FEA-GOV-10
 base_commit: f9eb0f859
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: b6ada81e8
+delivery_head: b6ada81e8
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-GOV-11
 allowed_paths:
   - doc/tasks/FEA-GOV-11.md
@@ -66,7 +66,12 @@ FEA-GOV-10 完成：**11 份已起草契约全部 `approved`**（C-01b/C-02/C-03
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| - | - | - | `-` | `-` | CANONICAL |
+| EV-GOV11-ADJ | AC1,AC2 | `doc/reviews/ADJ-2026-11-01-FEA-DECISIONS.md` | `-` | `d7e02d5970430c180f564103dc761a1af20f7559b5ab6576a4c8be5abc3675d7` | CANONICAL |
+| EV-GOV11-C01B | AC1 | `doc/plan/FEA-CONTRACT-FROZEN-C01b.md` | `-` | `6623a6ac299192b4ff73aa4a2aedf99dac1ef8d3b5aeaa9956f02f32e971615b` | CANONICAL |
+| EV-GOV11-C02 | AC2 | `doc/plan/FEA-CONTRACT-FROZEN-C02.md` | `-` | `ffe2585df9475e60dcd0e10e903937cca099d5b46c9f4cd7d57916b8153cb552` | CANONICAL |
+| EV-GOV11-C03 | AC2 | `doc/plan/FEA-CONTRACT-FROZEN-C03.md` | `-` | `2927dca3f9dd68cb8edfaf3f65e77cf2b6ff11aa6fcac239733982a6fa4acbf7` | CANONICAL |
+| EV-GOV11-C11 | AC2,AC3 | `doc/plan/FEA-CONTRACT-FROZEN-C11.md` | `-` | `beff813bcbe9b8ecbd5aaf268403dd07f2bf6499793515c8e9a37799bb617b5a` | CANONICAL |
+| EV-GOV11-IMPL | AC3 | `doc/tasks/FEA-02-CORE.md` | `-` | `78d8a4881e4b6639fdbf8826e25a4c088eb005559b72daf971bfbcb73947cd94` | CANONICAL |
 
 ## Resource Manifest
 

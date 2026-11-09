@@ -13,10 +13,10 @@ depends_on:
 base_commit: 11b4f4061
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: b6ada81e8
+delivery_head: b6ada81e8
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-D07-UNBLOCK
 allowed_paths:
   - doc/tasks/FEA-D07-UNBLOCK.md
@@ -72,7 +72,8 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| - | - | - | `-` | `-` | CANONICAL |
+| EV-D07-CONTRACT | AC1–AC6 | `doc/plan/FEA-CONTRACT-FROZEN-C09.md` | `-` | `a3bc17fddb96fc82727aef92caa3552d694e0ea82a154e143bd114d78babc445` | CANONICAL |
+| EV-D07-GATE | AC8 | `doc/plan/GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md` | `-` | `855b5ade844aab43b3ae70acbad060e7b6361136bc4ba9573d22393f6c1cb4cb` | CANONICAL |
 
 ## Resource Manifest
 
