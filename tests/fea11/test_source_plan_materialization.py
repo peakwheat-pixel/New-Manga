@@ -226,3 +226,115 @@ def test_projection_carries_no_absolute_path_or_secret():
     for forbidden in ("secret_ref", "signing_key", "signature"):
         assert forbidden not in text
     assert "\\" not in text
+
+
+def _real_store(tmp_path):
+    """A REAL SQLite store over the migrated schema (R-r1-09: no fake store)."""
+    from infrastructure.sqlite.connection import open_database
+    from infrastructure.sqlite.migrator import MigrationRunner
+    from infrastructure.sqlite.schema import default_migrations
+    from infrastructure.sqlite.source_sync import SourceSyncStore
+
+    db_path = tmp_path / "library.db"
+    conn, _opened = open_database(
+        db_path,
+        latest_known_schema_version=max(m.schema_version for m in default_migrations()),
+    )
+    MigrationRunner(conn, default_migrations()).apply_pending()
+    with conn:
+        conn.execute(
+            "INSERT OR IGNORE INTO sources (source_id, source_kind, display_name,"
+            " created_at, updated_at) VALUES (?, 'zip', 'seed', ?, ?)",
+            ("src-0123456789abcdef", "2026-11-09T00:00:00+00:00", "2026-11-09T00:00:00+00:00"),
+        )
+    return conn, SourceSyncStore(conn)
+
+
+def _table_fingerprints(conn) -> dict[str, str]:
+    import hashlib
+
+    tables = [
+        row[0]
+        for row in conn.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'"
+        )
+    ]
+    fingerprints: dict[str, str] = {}
+    for table in tables:
+        rows = [tuple(row) for row in conn.execute(f"SELECT * FROM {table}")]
+        payload = json.dumps(rows, ensure_ascii=False, default=str)
+        fingerprints[table] = hashlib.sha256(payload.encode("utf-8")).hexdigest()
+    return fingerprints
+
+
+def test_projection_writes_nothing_to_a_real_sqlite_store(tmp_path):
+    """R-r1-09: every table fingerprint is identical before and after the projection."""
+    import hashlib
+
+    conn, store = _real_store(tmp_path)
+    body = json.dumps(
+        {
+            "kind": "relink",
+            "source_id": "src-0123456789abcdef",
+            "reference_set_digest": "b" * 64,
+            "target": {
+                "status": "ok",
+                "version_id": "ver-001",
+                "content_digest": "c" * 64,
+                "entries": [],
+            },
+        }
+    )
+    store.insert_plan(
+        plan_id="plan-1",
+        source_id="src-0123456789abcdef",
+        kind="relink",
+        plan_digest=DIGEST,
+        body_json=body,
+        created_at="2026-11-09T00:00:00+00:00",
+        expires_at="2026-11-09T01:00:00+00:00",
+    )
+    before = _table_fingerprints(conn)
+
+    result = materialize(store, {"plan_id": "plan-1", "plan_digest": DIGEST})
+
+    assert result["plan_id"] == "plan-1"
+    assert _table_fingerprints(conn) == before
+    # The connection itself still sees the same row (no rollback/transaction leftover).
+    assert store.get_plan("plan-1")["state"] in {"draft", "previewed", "confirmed", "applied", "stale"}
+
+
+def test_body_budget_over_eight_mebibytes_is_typed(tmp_path):
+    """R-r1-09: a >8MiB projection is SOURCE_BUDGET_EXCEEDED (never truncated)."""
+    conn, store = _real_store(tmp_path)
+    big_entries = [
+        {"entry_id": f"e-{index}", "locator": "x" * 200, "ordinal": index}
+        for index in range(60000)
+    ]
+    body = json.dumps(
+        {
+            "kind": "relink",
+            "source_id": "src-0123456789abcdef",
+            "reference_set_digest": "b" * 64,
+            "target": {
+                "status": "ok",
+                "version_id": "ver-001",
+                "content_digest": "c" * 64,
+                "entries": big_entries,
+            },
+        }
+    )
+    assert len(body.encode("utf-8")) > 8 * 1024 * 1024
+    store.insert_plan(
+        plan_id="plan-big",
+        source_id="src-0123456789abcdef",
+        kind="relink",
+        plan_digest=DIGEST,
+        body_json=body,
+        created_at="2026-11-09T00:00:00+00:00",
+        expires_at="2026-11-09T01:00:00+00:00",
+    )
+
+    with pytest.raises(SourceSyncError) as caught:
+        materialize(store, {"plan_id": "plan-big", "plan_digest": DIGEST})
+    assert caught.value.code == "SOURCE_BUDGET_EXCEEDED"
