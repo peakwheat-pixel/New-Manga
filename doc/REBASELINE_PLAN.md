@@ -48,12 +48,12 @@
 |FEA-14-FONT-1 / FEA-14-LIB-1|FEA-14-S5-PREQ-1|**closed_with_limitations**（r5；v11 + P1–P4；r3；v12 + P5–P8）|
 |FEA-14-EDIT-1|FEA-14-S5-PREQ-1|**closed_with_limitations**（r2；v13 + P16–P20）|
 |FEA-14-AI-1|FEA-14-S5-PREQ-1|**closed_with_limitations**（r2；v14 + P21–P25；S5 25/25 落地）|
-|FEA-15-ACCEPT-1|FEA-14-AI-1|**in_progress**（A1–A7 正式验收；缺口披露）|
+|FEA-15-ACCEPT-1|FEA-14-AI-1|**in_review**（A1–A7 证据待独立审查）|
 |NEW-MANGA-V1-FULL-AUDIT|—|blocked（素材不传播；resume=in_progress）|
 
 ## 当前活动程序（FEA 线 S5 + FEA-15 验收）
 **FEA 线 S5**：FEA-14 七切片经 PREQ-1 冻结；FEA-15 A2–A4 机测推进；V11R 收官。
-当前活动：`FEA-15-ACCEPT-1`（in_progress；A1–A7 正式验收）
+当前活动：`FEA-15-ACCEPT-1`（in_review；证据待独立审查）
 READY 节点：无
 ## 历史快照（终态节点，非当前 DAG）
 

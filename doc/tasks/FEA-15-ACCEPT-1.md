@@ -3,18 +3,18 @@ id: FEA-15-ACCEPT-1
 title: FEA-15 集成正式验收（A1–A7 执行与缺口披露）
 kind: acceptance
 governance_version: 3
-status: in_progress
+status: in_review
 approval: **DSH 2026-11-10 冻结**；2026-11-10 用户授权接续，ZCode 独立会话裁决改派 Codex 并在 main 主树串行执行（见 `verification/FEA-15-ACCEPT-1/appointment.md`）
 suggested_owner: codex
 owner: codex
-reviewer: null
+reviewer: ZCode 独立会话（待派发）
 depends_on:
   - FEA-14-AI-1
 base_commit: 164ebabcfa90b92fc46c07238280960fc01f7423
 branch: main
 worktree: G:/CODEX/New Manga
 integration_commit: null
-delivery_head: null
+delivery_head: 6ad10aacf886a3c2b98ff3434070edf6b31dbf36
 canonical_evidence_status: complete
 resource_closeout_status: pending
 evidence_dir: verification/FEA-15-ACCEPT-1
@@ -92,6 +92,31 @@ FEA-14 S5 七切片（SET/PREQ/EXPORT/READ/FONT/LIB/EDIT/AI 相关实现卡）�
 | EV-03 | AC1/A5、AC3 | `verification/FEA-15-ACCEPT-1/dotnet-full.log` | `8cad6d68c1e455c087a20346c9b1c0217bef129e` | `593aac3963b8c2e5fbb857ceab0f1ee6e82fa2d29cf6931d45240029a0f42c70` | CANONICAL |
 | EV-04 | AC1/A6、AC2、AC3、AC5、AC6 | `verification/FEA-15-ACCEPT-1/README.md` | `b7344445e3abc520c4d03fcb642b97880fe47738` | `fb83fda733f031e6ff2672a42c6b42b4445677c26afd9b917b1f62244904c77c` | CANONICAL |
 | EV-05 | AC2、AC3、AC4 | `doc/plan/FEA-15-INTEGRATION-ACCEPTANCE.md` | `b7344445e3abc520c4d03fcb642b97880fe47738` | `e60dfcaf686fa4955c870c5ea64d0f31ff8e5bf7b9b93350f55b79d4ea773ddb` | CANONICAL |
+
+| SRC-01 | supporting | `verification/FEA-15-ACCEPT-1/appointment.md` | `d63d735a712dbe47100db2e72b4d59a73dfd1f62` | `c612cd90459e3a763fed72ce404c79fe0194d26c2fa39edd978b1a62a04ea734` | SOURCE_PIN |
+| SRC-02 | supporting | `verification/FEA-15-ACCEPT-1/checkpoint.md` | `8cad6d68c1e455c087a20346c9b1c0217bef129e` | `f41211d4ad72f0704e322d631166a30ffffdf72d29193e612ab1c98c253c918b` | SOURCE_PIN |
+| SRC-03 | supporting | `verification/FEA-15-ACCEPT-1/desktop-fixture.log` | `b7344445e3abc520c4d03fcb642b97880fe47738` | `4563351238439f26e562d1bd4eaa1307cbb4aaf0f0a5f42a32b3fe4d892a9f23` | SOURCE_PIN |
+| SRC-04 | supporting | `verification/FEA-15-ACCEPT-1/dotnet-host-control.log` | `b7344445e3abc520c4d03fcb642b97880fe47738` | `0ce018b15aa1413d02eeaf27b04afe3758ccb2d94bd8bdd882d3fcf29b5530ec` | SOURCE_PIN |
+| SRC-05 | supporting | `verification/FEA-15-ACCEPT-1/dotnet-repo-root-control.log` | `b7344445e3abc520c4d03fcb642b97880fe47738` | `350714949785ccc0ebe86abbca6e3e5620a8f22191681f66cf5e7b16b5b66b3c` | SOURCE_PIN |
+| SRC-06 | supporting | `verification/FEA-15-ACCEPT-1/environment.log` | `8cad6d68c1e455c087a20346c9b1c0217bef129e` | `48c63a11f745fb2f0a19c1bd9724ef73c54d2177d3957cf7804e6d96533249e5` | SOURCE_PIN |
+| SRC-07 | supporting | `verification/FEA-15-ACCEPT-1/fixture-observation.log` | `8cad6d68c1e455c087a20346c9b1c0217bef129e` | `f54409a15d7b09d01eff581862fb65a78365ec7b4b469e0013f6419a377e48ab` | SOURCE_PIN |
+| SRC-08 | supporting | `verification/FEA-15-ACCEPT-1/gates-control.log` | `b7344445e3abc520c4d03fcb642b97880fe47738` | `d285e23e58a2e199ee496ee1d06ae8868beec6785af7bad64415a3638c7b4d5c` | SOURCE_PIN |
+| SRC-09 | supporting | `verification/FEA-15-ACCEPT-1/gates-post.log` | `8cad6d68c1e455c087a20346c9b1c0217bef129e` | `ecf9ddec5e642729f549f825517031160d6f94bf3b51f87d0f90deb47dd85155` | SOURCE_PIN |
+| SRC-10 | supporting | `verification/FEA-15-ACCEPT-1/gates.log` | `8cad6d68c1e455c087a20346c9b1c0217bef129e` | `c679bae936f129da2ca0f040b1a283439ec63521f48dfed48538155addd55204` | SOURCE_PIN |
+| SRC-11 | supporting | `verification/FEA-15-ACCEPT-1/plugin-control.log` | `b7344445e3abc520c4d03fcb642b97880fe47738` | `86422c6a9f385699d2614067b0600dcf9740244fe98750a48bfcf8d80e55232e` | SOURCE_PIN |
+| SRC-12 | supporting | `verification/FEA-15-ACCEPT-1/plugin-fixture.log` | `b7344445e3abc520c4d03fcb642b97880fe47738` | `1e31fb17a31330689f7203e831a1007c1fa849e9555b93b5d06ce060e9f439ed` | SOURCE_PIN |
+| SRC-13 | supporting | `verification/FEA-15-ACCEPT-1/pytest-collect.log` | `8cad6d68c1e455c087a20346c9b1c0217bef129e` | `d003d929526724852521fbf066bfb350f4e66c0a204ae22fec191a73dbca47d4` | SOURCE_PIN |
+| SRC-14 | supporting | `verification/FEA-15-ACCEPT-1/pytest-full.log` | `8cad6d68c1e455c087a20346c9b1c0217bef129e` | `6b35d5b03fd0de2a21cbae7498bf6c544812fc9e162b4cac636ab899a564df70` | SOURCE_PIN |
+| SRC-15 | supporting | `verification/FEA-15-ACCEPT-1/pytest-main-targeted.log` | `8cad6d68c1e455c087a20346c9b1c0217bef129e` | `cb03bae893412b20c44325963bc98c83186f64f99b83f2508f150ef73a7eb59e` | SOURCE_PIN |
+| SRC-16 | supporting | `verification/FEA-15-ACCEPT-1/python-acl-observation.log` | `8cad6d68c1e455c087a20346c9b1c0217bef129e` | `4ef940a1bb3dfd567f7cf2be23679d344c578db6989c620b3a288fbfbbe8a385` | SOURCE_PIN |
+| SRC-17 | supporting | `verification/FEA-15-ACCEPT-1/source-fixture.log` | `b7344445e3abc520c4d03fcb642b97880fe47738` | `3a57402b7e2df428f7a26f178a323739c96e958c35602e8b3c1dfae2dce53035` | SOURCE_PIN |
+| SRC-18 | supporting | `verification/FEA-15-ACCEPT-1/ui-process-smoke.log` | `b7344445e3abc520c4d03fcb642b97880fe47738` | `2d884177ccba432dc5c9e33e4a06a6212ff2f022c76b0ce600ebbec67804eedf` | SOURCE_PIN |
+| SRC-19 | supporting | `verification/FEA-15-ACCEPT-1/v7-repro-2.log` | `8cad6d68c1e455c087a20346c9b1c0217bef129e` | `8e0abc01bec34b3e38cc3a9e6117d34f443529552d60405ca2860c271779a6e6` | SOURCE_PIN |
+| SRC-20 | supporting | `verification/FEA-15-ACCEPT-1/v7-repro.log` | `8cad6d68c1e455c087a20346c9b1c0217bef129e` | `3a1ec6a9963c803310368015b8df9010c18001346e3809ab430918d25566d1a4` | SOURCE_PIN |
+| SRC-21 | supporting | `verification/FEA-15-ACCEPT-1/v7-v14-probe.log` | `8cad6d68c1e455c087a20346c9b1c0217bef129e` | `bf1413267cffabc37b9f58e19526ae1e2ff4c0b98df9278f8c619d3e2cfe9dd7` | SOURCE_PIN |
+| SRC-22 | supporting | `verification/FEA-15-ACCEPT-1/zcode-evidence-decision.log` | `b7344445e3abc520c4d03fcb642b97880fe47738` | `43dd07630a3ab0ba2a675778a361b02df50e9bf644f004eb3ceb2e0082a6aa2e` | SOURCE_PIN |
+| SRC-23 | supporting | `verification/FEA-15-ACCEPT-1/zcode-second-decision-raw.log` | `8cad6d68c1e455c087a20346c9b1c0217bef129e` | `b3a9c528617876ab3675407fecccc1bc50bda175842e0597eea27363385e0986` | SOURCE_PIN |
+| SRC-24 | supporting | `verification/FEA-15-ACCEPT-1/zcode-serial-decision-raw.log` | `8cad6d68c1e455c087a20346c9b1c0217bef129e` | `a614b38f124c83557ff548d99a4e74c25dbd6fefe7857c3ec633a7fdbdd4fa4b` | SOURCE_PIN |
 
 ## Closeout Record
 
