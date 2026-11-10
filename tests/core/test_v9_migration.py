@@ -196,12 +196,12 @@ def test_v9_shape_and_v1_v8_bytes_are_frozen() -> None:
     # pre-existing conflicting index must abort instead of "silently already
     # indexed" (frozen record §4A L-4 / scope review §2.4).
     assert "IF NOT EXISTS" not in MIGRATION_V9_SQL.upper()
-    assert len(MIGRATIONS) == 9
-    assert [m.schema_version for m in MIGRATIONS] == list(range(1, 10))
+    assert len(MIGRATIONS) >= 9
+    assert [m.schema_version for m in MIGRATIONS] == list(range(1, 11))
     assert tuple(
         (m.schema_version, m.migration_name, m.checksum) for m in MIGRATIONS[:8]
     ) == FROZEN_V1_V8
-    assert MIGRATIONS[-1] == Migration(SCHEMA_VERSION_V9, MIGRATION_V9_NAME, MIGRATION_V9_SQL)
+    assert MIGRATIONS[8] == Migration(SCHEMA_VERSION_V9, MIGRATION_V9_NAME, MIGRATION_V9_SQL)
 
 
 # ---------------------------------------------------------------------------
@@ -218,10 +218,10 @@ def test_upgrade_from_legacy_version_creates_the_book_index(tmp_path, start: int
     assert [record.schema_version for record in applied] == list(
         range(start + 1, LATEST + 1)
     )
-    assert applied[-1].schema_version == 9
-    assert applied[-1].migration_name == MIGRATION_V9_NAME
-    assert _max_version(conn) == 9
-    assert _metadata_version(conn) == 9
+    assert applied[-1].schema_version == LATEST
+    assert next(record for record in applied if record.schema_version == 9).migration_name == MIGRATION_V9_NAME
+    assert _max_version(conn) == LATEST
+    assert _metadata_version(conn) == LATEST
     assert INDEX_NAME in _index_names(conn)
     assert [row["name"] for row in conn.execute(f"PRAGMA index_info({INDEX_NAME})")] == [
         "book_id"
@@ -233,7 +233,7 @@ def test_upgrade_from_legacy_version_creates_the_book_index(tmp_path, start: int
     # A second open of the already-migrated file neither re-runs nor errors.
     reopened, opened = open_database(db, latest_known_schema_version=LATEST)
     assert opened.state is SchemaState.READY
-    assert opened.schema_version == 9
+    assert opened.schema_version == LATEST
     assert opened.writable is True
     assert MigrationRunner(reopened, MIGRATIONS).apply_pending() == []
     assert INDEX_NAME in _index_names(reopened)
@@ -250,9 +250,9 @@ def test_v8_upgrade_preserves_rows_and_query_results(tmp_path) -> None:
     assert before["pointers_a"], "seed must produce non-trivial preview rows"
 
     applied = MigrationRunner(conn, MIGRATIONS).apply_pending()
-    assert [record.schema_version for record in applied] == [9]
-    assert _max_version(conn) == 9
-    assert _metadata_version(conn) == 9
+    assert [record.schema_version for record in applied] == [9, 10]
+    assert _max_version(conn) == LATEST
+    assert _metadata_version(conn) == LATEST
     assert INDEX_NAME in _index_names(conn)
     assert _snapshot(conn, repo) == before
     conn.close()
@@ -310,7 +310,7 @@ def test_old_v8_runner_refuses_the_v9_database(tmp_path) -> None:
     stale = _connect(db)
     with pytest.raises(SchemaTooNewError):
         MigrationRunner(stale, V8).apply_pending()
-    assert _max_version(stale) == 9
+    assert _max_version(stale) == LATEST
     stale.close()
     conn.close()
 
@@ -323,7 +323,7 @@ def test_open_database_reports_too_new_to_a_v8_reader(tmp_path) -> None:
 
     opened_conn, opened = open_database(db, latest_known_schema_version=8)
     assert opened.state is SchemaState.TOO_NEW
-    assert opened.schema_version == 9
+    assert opened.schema_version == LATEST
     assert opened.writable is False
     with pytest.raises(sqlite3.OperationalError):
         opened_conn.execute(

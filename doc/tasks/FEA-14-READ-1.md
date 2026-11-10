@@ -44,6 +44,7 @@ allowed_paths:
   - apps/desktop-avalonia/tests/NewManga.App.Tests/ReaderBookmarkTests.cs
   - apps/desktop-avalonia/tests/NewManga.Host.Tests/ReadWireTests.cs
   - tests/storage/test_reading_preferences.py
+  - tests/core/test_v9_migration.py
   - tests/core/test_read_wire.py
 out_of_scope:
   - 不改冻结契约字节（C-07 的 pin 按实现落地更新并记录；不改 C-02/C-03/P15 等）
