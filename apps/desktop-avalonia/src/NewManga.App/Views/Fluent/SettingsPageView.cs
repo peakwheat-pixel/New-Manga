@@ -619,7 +619,9 @@ public sealed class SettingsPageView : UserControl
             var field = FluentUi.Field(
                 line.TokenKey,
                 FluentUi.Text($"{line.StackRaw}\n{detail}", "fluent-subtle-text"));
-            // R-006: the row is announced with its resolved family, not just the token key.
+            // R-006: the row is announced with its resolved family, not just the token key,
+            // and (as a read-only field) it participates in Tab navigation.
+            field.Focusable = true;
             Avalonia.Automation.AutomationProperties.SetName(
                 field, $"{line.TokenKey} 实际使用 {line.ResolvedFamily}");
             stack.Children.Add(field);

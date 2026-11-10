@@ -9,7 +9,11 @@ namespace NewManga.App.Services;
 /// <param name="Missing">Installed-unknown families walked before the resolved one.</param>
 /// <param name="Scale">The typography scale for this face, when the theme exposes one.</param>
 /// <param name="LineHeight">The line-height preset for this face, when exposed.</param>
-/// <param name="Fallback">True when the stack degraded to its generic tail.</param>
+/// <param name="Fallback">
+/// True when at least one stack segment before the resolved family was missing, i.e. the
+/// first requested family was not used. Landing on a generic tail with no missing segment
+/// is NOT a fallback (DSH ruling 2026-11-10, recorded in the task card).
+/// </param>
 public sealed record TypographyLine(
     string TokenKey,
     string StackRaw,
@@ -35,9 +39,10 @@ public interface ITypographySource
 ///
 /// The resolver never mutates or installs anything; it only answers "which family would
 /// this machine actually render, and which stack segments would silently fall through".
-/// A stack whose every segment is missing reports the generic tail with
-/// <paramref name="fallback"/> set, so the UI can explain the degradation instead of
-/// pretending the requested family is in use.
+/// `Fallback` means at least one segment was missing before the resolved family (the first
+/// requested family was not used); a stack that lands on its generic tail without any
+/// missing segment is reported as not a fallback. The UI can therefore explain a
+/// degradation instead of pretending the requested family is in use.
 /// </summary>
 public static class TypographyResolver
 {
@@ -97,12 +102,17 @@ public static class TypographyResolver
 /// </summary>
 public sealed class AvaloniaTypographySource : ITypographySource
 {
-    /// <summary>R-010: the three font-family tokens the projection must cover as a set.</summary>
+    /// <summary>
+    /// R2-003: the face→size pairing comes from <c>ThemeTokenBaseline.LineHeightTiers</c>
+    /// (Display ↔ Nm.FontSize.Xxl / Nm.LineHeight.Display, Data ↔ Nm.FontSize.Sm /
+    /// Nm.LineHeight.Data, Body ↔ Nm.FontSize.Md / Nm.LineHeight.Body). Keeping the pair
+    /// aligned with the design-system tier table avoids silently wrong scale values.
+    /// </summary>
     private static readonly (string TokenKey, string SizeKey, string HeightKey)[] FontTokens =
     [
         ("Nm.FontFamily.Ui", "Nm.FontSize.Md", "Nm.LineHeight.Body"),
-        ("Nm.FontFamily.Data", "Nm.FontSize.Md", "Nm.LineHeight.Data"),
-        ("Nm.FontFamily.Display", "Nm.FontSize.Xl", "Nm.LineHeight.Display"),
+        ("Nm.FontFamily.Data", "Nm.FontSize.Sm", "Nm.LineHeight.Data"),
+        ("Nm.FontFamily.Display", "Nm.FontSize.Xxl", "Nm.LineHeight.Display"),
     ];
 
     private readonly Func<string, string?> _resourceLookup;
@@ -168,6 +178,11 @@ public sealed class AvaloniaTypographySource : ITypographySource
         {
             string text => text,
             FontFamily family => family.FamilyNames?.ToString() ?? family.Name,
+            // R2-002: numeric tokens are read as doubles. Format them with the invariant
+            // culture so a comma-decimal locale (e.g. de-DE) cannot turn 1.45 into "1,45"
+            // and make ReadNumber's invariant parse drop the value.
+            IFormattable formattable => formattable.ToString(
+                null, System.Globalization.CultureInfo.InvariantCulture),
             _ => value.ToString(),
         };
     }

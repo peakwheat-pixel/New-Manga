@@ -8,6 +8,7 @@ using NewManga.App.ViewModels.Fluent;
 using NewManga.App.Views.Fluent;
 using NewManga.CoreClient;
 using NewManga.DesignSystem.Controls;
+using NewManga.DesignSystem.Theming;
 
 namespace NewManga.App.Tests;
 
@@ -134,6 +135,61 @@ public sealed class SettingsTypographyPanelTests
         Assert.Equal(before, after);
     }
 
+    [AvaloniaFact]
+    public void TheSourceProjectsTheRealThemeResources()
+    {
+        // R2-001: the production source path (real ResourceDictionary values: FontFamily +
+        // double) must project three lines with the full stack and the scale/line-height values.
+        var application = Application.Current!;
+        using var theme = new DesignSystemThemeManager(application);
+        Assert.True(theme.Initialize(AppearanceMode.Dark), theme.LastError);
+
+        var snapshot = new AvaloniaTypographySource().Read();
+
+        Assert.True(snapshot.Available);
+        Assert.Equal(3, snapshot.Lines.Count);
+        // Full stack, not just FontFamily.Name (the first family).
+        Assert.Contains(",", snapshot.Lines[0].StackRaw);
+        Assert.All(snapshot.Lines, line =>
+        {
+            Assert.NotNull(line.Scale);
+            Assert.NotNull(line.LineHeight);
+        });
+        // R2-003: the face→size pairing follows ThemeTokenBaseline.LineHeightTiers:
+        // Data ↔ Nm.FontSize.Sm (12), Display ↔ Nm.FontSize.Xxl (24).
+        Assert.Equal(12, snapshot.Lines[1].Scale);
+        Assert.Equal(24, snapshot.Lines[2].Scale);
+    }
+
+    [AvaloniaFact]
+    public void TheSourceIsIndependentOfTheCurrentCulture()
+    {
+        // R2-002: numeric token values are formatted invariantly, so a comma-decimal locale
+        // (de-DE) must not turn the line-height/scale projection into nulls.
+        var application = Application.Current!;
+        using var theme = new DesignSystemThemeManager(application);
+        Assert.True(theme.Initialize(AppearanceMode.Dark), theme.LastError);
+        var previous = System.Globalization.CultureInfo.CurrentCulture;
+        try
+        {
+            System.Globalization.CultureInfo.CurrentCulture =
+                new System.Globalization.CultureInfo("de-DE");
+
+            var snapshot = new AvaloniaTypographySource().Read();
+
+            Assert.True(snapshot.Available);
+            Assert.All(snapshot.Lines, line =>
+            {
+                Assert.NotNull(line.Scale);
+                Assert.NotNull(line.LineHeight);
+            });
+        }
+        finally
+        {
+            System.Globalization.CultureInfo.CurrentCulture = previous;
+        }
+    }
+
     private static string Fingerprint(string directory)
     {
         if (!Directory.Exists(directory)) return "<absent>";
@@ -153,7 +209,7 @@ public sealed class SettingsTypographyPanelTests
 }
 
 /// <summary>
-/// FEA-14-SET-1 (AC1/AC3/AC5/AC8): the view-level render tests. They live in the same
+/// FEA-14-SET-1 (AC1/AC3/AC5): the view-level render tests. They live in the same
 /// frozen test file (the card's allowed_paths list one panel test file) so the
 /// projection, the read-once contract and the zero-global-side-effect claim are all
 /// exercised against a real <see cref="SettingsPageView"/> under the Avalonia headless harness.
@@ -211,10 +267,35 @@ public sealed class SettingsTypographyRenderTests
         // The resolved family and the missing segment are explained in the row text.
         Assert.Contains(texts, text => text.Contains("Installed B"));
         Assert.Contains(texts, text => text.Contains("Missing A"));
+        // AC1: scale/line-height are rendered, not swallowed by the projection.
+        Assert.Contains(texts, text => text.Contains("缩放 14"));
+        Assert.Contains(texts, text => text.Contains("行高 1.6"));
         // The panel states that family selection belongs to the visual theme.
         Assert.Contains(texts, text => text.Contains("视觉主题"));
         // R-015: the sample block says which face it previews.
         Assert.Contains(texts, text => text.Contains("样例预览（使用 Nm.FontFamily.Ui 的实际字体）"));
+        // The three Chinese/Latin/number samples render, in the resolved family.
+        Assert.Contains(texts, text => text == "永字体样式预览");
+        Assert.Contains(texts, text => text == "The quick brown fox jumps over the lazy dog.");
+        Assert.Contains(texts, text => text == "0123456789 1.25 × 1.6");
+        var sample = window.GetVisualDescendants()
+            .OfType<TextBlock>()
+            .First(block => block.Text == "永字体样式预览");
+        Assert.Equal("Installed B", sample.FontFamily?.Name);
+
+        // R2-007: exactly three projection rows (each labelled with its token key).
+        var projectionFields = window.GetVisualDescendants()
+            .OfType<SettingsField>()
+            .Where(field => ProjectionLabel(field) is not null)
+            .ToList();
+        Assert.Equal(3, projectionFields.Count);
+        // R-006: every row is announced with its resolved family and is a Tab stop.
+        Assert.All(projectionFields, field =>
+        {
+            var name = Avalonia.Automation.AutomationProperties.GetName(field);
+            Assert.Contains("实际使用", name);
+            Assert.True(field.Focusable, "the read-only projection row must participate in Tab navigation");
+        });
     }
 
     [AvaloniaFact]
@@ -242,12 +323,17 @@ public sealed class SettingsTypographyRenderTests
     [AvaloniaFact]
     public void RenderingTheTypographyGroupDoesNotMutateGlobalResourcesOrStyles()
     {
-        var application = Application.Current;
-        Assert.NotNull(application);
-        var resourcesBefore = application!.Resources.Count;
-        var styleKeysBefore = application.Styles
-            .Select(style => style.GetHashCode())
-            .ToList();
+        // AC3: the real test Application's tokens live in MergedDictionaries, so counting
+        // direct Resources entries (0 == 0) would be vacuous. Save the actual font-family
+        // resource objects and the Styles sequence, render the group, then compare identity.
+        var application = Application.Current!;
+        using var theme = new DesignSystemThemeManager(application);
+        Assert.True(theme.Initialize(AppearanceMode.Dark), theme.LastError);
+
+        Assert.True(application.Resources.TryGetResource("Nm.FontFamily.Ui", null, out var uiBefore));
+        Assert.True(application.Resources.TryGetResource("Nm.FontFamily.Data", null, out var dataBefore));
+        Assert.True(application.Resources.TryGetResource("Nm.FontFamily.Display", null, out var displayBefore));
+        var stylesBefore = application.Styles.ToList();
 
         var viewModel = NewViewModel(Snapshot());
         viewModel.SelectedGroup = SettingsGroupId.Typography;
@@ -257,9 +343,47 @@ public sealed class SettingsTypographyRenderTests
         window.Measure(new Size(960, 720));
 
         Assert.Same(application, Application.Current);
-        Assert.Equal(resourcesBefore, application.Resources.Count);
-        Assert.Equal(styleKeysBefore, application.Styles.Select(style => style.GetHashCode()).ToList());
+        Assert.True(application.Resources.TryGetResource("Nm.FontFamily.Ui", null, out var uiAfter));
+        Assert.True(application.Resources.TryGetResource("Nm.FontFamily.Data", null, out var dataAfter));
+        Assert.True(application.Resources.TryGetResource("Nm.FontFamily.Display", null, out var displayAfter));
+        Assert.Same(uiBefore, uiAfter);
+        Assert.Same(dataBefore, dataAfter);
+        Assert.Same(displayBefore, displayAfter);
+        Assert.Equal(stylesBefore, application.Styles.ToList());
+
+        // The sample font is local to the sample control: it carries the resolved family while
+        // the global Nm.FontFamily.Ui resource still holds the theme's original object.
+        var sample = window.GetVisualDescendants()
+            .OfType<TextBlock>()
+            .First(block => block.Text == "永字体样式预览");
+        Assert.Equal("Installed B", sample.FontFamily?.Name);
+        Assert.NotSame(uiBefore, sample.FontFamily);
     }
+
+    [AvaloniaFact]
+    public void AnUnavailableThemeRendersTheStablePlaceholderWithoutRows()
+    {
+        var viewModel = NewViewModel(new TypographySnapshot(
+            Array.Empty<TypographyLine>(), false, "当前主题未初始化（缺少 Nm.FontFamily.* 资源）。"));
+        viewModel.SelectedGroup = SettingsGroupId.Typography;
+        var view = new SettingsPageView(viewModel);
+        var window = new Window { Content = view, Width = 960, Height = 720 };
+        window.Show();
+
+        var texts = window.GetVisualDescendants().OfType<TextBlock>()
+            .Select(block => block.Text ?? string.Empty)
+            .ToList();
+        Assert.Contains(texts, text => text.Contains("未初始化"));
+        Assert.Equal(0, window.GetVisualDescendants()
+            .OfType<SettingsField>()
+            .Count(field => ProjectionLabel(field) is not null));
+    }
+
+    private static string? ProjectionLabel(SettingsField field) =>
+        field.Children.OfType<TextBlock>()
+            .FirstOrDefault()?.Text is { } label && label.StartsWith("Nm.FontFamily.", StringComparison.Ordinal)
+            ? label
+            : null;
 
     [AvaloniaFact]
     public void SearchingForTheTopicStillShowsTheProjectionRows()
