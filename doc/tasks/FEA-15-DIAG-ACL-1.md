@@ -3,14 +3,14 @@ id: FEA-15-DIAG-ACL-1
 title: FEA-15 测试失败与资源影响只读诊断
 kind: diagnosis
 governance_version: 3
-status: ready
+status: in_progress
 approval: ZCode 2026-11-11 冻结并释放；依赖 FEA-15-ACCEPT-1 带限制终态
 suggested_owner: codex
 owner: codex
 reviewer: null
 depends_on:
   - FEA-15-ACCEPT-1
-base_commit: 78f394ceb47efca21c009e15fe4402589afc3eed
+base_commit: 1e4542a047e991a5f10b0b213ca5a96eafe919a4
 branch: main
 worktree: G:/CODEX/New Manga
 integration_commit: null
@@ -65,3 +65,4 @@ out_of_scope:
 ## Closeout Record
 
 - 2026-11-11：ZCode 冻结诊断范围并释放 `ready`；与 FEA-15-ACCEPT-1 终态及唯一当前指针原子切换；未执行。
+- 2026-11-11：Codex 认领 `in_progress`；实测 main 基线 `1e4542a047e991a5f10b0b213ca5a96eafe919a4`，工作树干净；范围不变。
