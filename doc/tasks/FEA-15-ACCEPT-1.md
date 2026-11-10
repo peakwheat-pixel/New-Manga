@@ -93,6 +93,8 @@ FEA-14 S5 七切片（SET/PREQ/EXPORT/READ/FONT/LIB/EDIT/AI 相关实现卡）�
 | EV-04 | AC1/A6、AC2、AC3、AC5、AC6 | `verification/FEA-15-ACCEPT-1/README.md` | `b7344445e3abc520c4d03fcb642b97880fe47738` | `fb83fda733f031e6ff2672a42c6b42b4445677c26afd9b917b1f62244904c77c` | CANONICAL |
 | EV-05 | AC2、AC3、AC4 | `doc/plan/FEA-15-INTEGRATION-ACCEPTANCE.md` | `b7344445e3abc520c4d03fcb642b97880fe47738` | `e60dfcaf686fa4955c870c5ea64d0f31ff8e5bf7b9b93350f55b79d4ea773ddb` | CANONICAL |
 
+| evidence_id | AC/Gate | path | commit | sha256 | class |
+|---|---|---|---|---|---|
 | SRC-01 | supporting | `verification/FEA-15-ACCEPT-1/appointment.md` | `d63d735a712dbe47100db2e72b4d59a73dfd1f62` | `c612cd90459e3a763fed72ce404c79fe0194d26c2fa39edd978b1a62a04ea734` | SOURCE_PIN |
 | SRC-02 | supporting | `verification/FEA-15-ACCEPT-1/checkpoint.md` | `8cad6d68c1e455c087a20346c9b1c0217bef129e` | `f41211d4ad72f0704e322d631166a30ffffdf72d29193e612ab1c98c253c918b` | SOURCE_PIN |
 | SRC-03 | supporting | `verification/FEA-15-ACCEPT-1/desktop-fixture.log` | `b7344445e3abc520c4d03fcb642b97880fe47738` | `4563351238439f26e562d1bd4eaa1307cbb4aaf0f0a5f42a32b3fe4d892a9f23` | SOURCE_PIN |
@@ -124,3 +126,4 @@ FEA-14 S5 七切片（SET/PREQ/EXPORT/READ/FONT/LIB/EDIT/AI 相关实现卡）�
 - 2026-11-10 Codex 认领（`in_progress`），ZCode 独立会话 `sess_2a802094-24f6-4254-9bfa-33cad3a6bf4e` 裁决；主树串行，执行基线 `164ebabcfa90b92fc46c07238280960fc01f7423`。冻结范围不变。
 - 2026-11-10 验证进行中：隔离 Release 构建 0 警告/0 错误 EXIT 0；pytest 全量 3515 passed/16 failed/12 skipped EXIT 1；.NET 八项目中 App 与 Host 失败、整体 EXIT 1。日志、隔离限制与 NOT_RUN 见 `verification/FEA-15-ACCEPT-1/README.md`；失败及下一步已交 ZCode 独立会话裁决，未作验收通过结论。
 - 2026-11-10 补充证据：四项 App 仓库定位对照 4/4；Host 两项对照 1/1，ACL 异常仍存；专用 venv 插件对照 6 passed/10 failed；legacy/Fluent 仅隐藏进程级 EXIT 0，可见窗口与页面交互 NOT_RUN。现有结论为全量基线未满足、归因部分未定，最终验收结论待上下文独立 Review 与 ZCode 裁决。
+- r1 P3-4：Handoff 对变更路径的概括句已由 r1 使用 `git diff --name-status` 核实；报告及具体范围见 `doc/reviews/FEA-15-ACCEPT-1-r1.md`。
