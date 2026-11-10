@@ -17,7 +17,7 @@ C-07（应用端口与兼容面）要求「由代码生成的方法清单」，�
 | 接口 | 成员数 |
 |---|---|
 | IReaderProgressSink | 1 |
-| IHostController | 54 |
+| IHostController | 61 |
 | IRunController | 6 |
 | **合计** | **61**（另有 4 个非方法成员：`HostViewSnapshot Snapshot`、`event EventHandler? Changed`、`int StartRequests`、`string ExportDirectorySuggestion`，均属 `IHostController`） |
 
