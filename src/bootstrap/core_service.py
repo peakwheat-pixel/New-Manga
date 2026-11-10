@@ -5021,6 +5021,84 @@ class CoreServiceServer:
         })
         return result
 
+    # FEA-14-READ-1 (PREQ P9-P15): the READ wire face. Additive commands on the
+    # ordinary Request/Response channel (protocol minor 3); the old reader
+    # commands keep their frozen semantics.
+    def _extras_book_id(self, payload: dict[str, Any], keys: set[str], message: str) -> str:
+        if set(payload) != keys or not isinstance(payload.get("book_id"), str) or not payload["book_id"]:
+            raise P16WireError("INVALID_REQUEST", "validation", message)
+        return payload["book_id"]
+
+    def _extras_prefs(self, payload: dict[str, Any]) -> dict[str, Any]:
+        prefs = payload.get("prefs")
+        if not isinstance(prefs, dict) or set(prefs) - {"mode", "direction", "zoom", "double_page", "layout"}:
+            raise P16WireError("INVALID_REQUEST", "validation", "Reading preferences payload is invalid")
+        return prefs
+
+    def handle_get_reading_preferences(self, payload: dict[str, Any]) -> dict[str, Any]:
+        book_id = self._extras_book_id(payload, {"book_id"}, "Reading preferences request is invalid")
+        return self._core.reading_extras.get_preferences(book_id)
+
+    def handle_save_reading_preferences(self, payload: dict[str, Any]) -> dict[str, Any]:
+        book_id = self._extras_book_id(payload, {"book_id", "prefs"}, "Reading preferences request is invalid")
+        prefs = self._extras_prefs(payload)
+        try:
+            saved = self._core.reading_extras.save_preferences(book_id, **prefs)
+        except (TypeError, ValueError) as error:
+            raise P16WireError("INVALID_REQUEST", "validation", "Reading preferences values are invalid") from error
+        return {"saved": True, **saved}
+
+    def handle_list_bookmarks(self, payload: dict[str, Any]) -> dict[str, Any]:
+        book_id = self._extras_book_id(payload, {"book_id"}, "Bookmark list request is invalid")
+        return {"bookmarks": self._core.reading_extras.list_bookmarks(book_id)}
+
+    def handle_create_bookmark(self, payload: dict[str, Any]) -> dict[str, Any]:
+        if set(payload) - {"book_id", "chapter_id", "page_id", "side", "note"} or not {"book_id", "chapter_id", "page_id"}.issubset(payload):
+            raise P16WireError("INVALID_REQUEST", "validation", "Bookmark create request is invalid")
+        for key in ("book_id", "chapter_id", "page_id"):
+            if not isinstance(payload.get(key), str) or not payload[key]:
+                raise P16WireError("INVALID_REQUEST", "validation", "Bookmark create request is invalid")
+        side = payload.get("side")
+        if side is not None and not isinstance(side, str):
+            raise P16WireError("INVALID_REQUEST", "validation", "Bookmark create request is invalid")
+        note = payload.get("note")
+        if note is not None and not isinstance(note, str):
+            raise P16WireError("INVALID_REQUEST", "validation", "Bookmark create request is invalid")
+        try:
+            bookmark = self._core.reading_extras.create_bookmark(
+                payload["book_id"], chapter_id=payload["chapter_id"], page_id=payload["page_id"],
+                side=side, note=note,
+            )
+        except ValueError as error:
+            raise P16WireError("INVALID_REQUEST", "validation", "Bookmark values are invalid") from error
+        return {"bookmark_id": bookmark["bookmark_id"]}
+
+    def handle_delete_bookmark(self, payload: dict[str, Any]) -> dict[str, Any]:
+        if set(payload) != {"bookmark_id"} or not isinstance(payload.get("bookmark_id"), str) or not payload["bookmark_id"]:
+            raise P16WireError("INVALID_REQUEST", "validation", "Bookmark delete request is invalid")
+        return {"deleted": self._core.reading_extras.delete_bookmark(payload["bookmark_id"])}
+
+    def handle_get_book_reading_progress(self, payload: dict[str, Any]) -> dict[str, Any]:
+        book_id = self._extras_book_id(payload, {"book_id"}, "Book progress request is invalid")
+        progress = self._core.reading_extras.book_progress(book_id)
+        return {
+            "read_pages": progress.get("completed_chapters", 0),
+            "total_pages": progress.get("total_chapters", 0),
+            "percent": progress.get("progress_percent", 0.0),
+            "finished": bool(progress.get("total_chapters", 0) and progress.get("completed_chapters", 0) == progress.get("total_chapters", 0)),
+        }
+
+    def handle_reset_reading_progress(self, payload: dict[str, Any]) -> dict[str, Any]:
+        if set(payload) - {"book_id", "confirm"} or not isinstance(payload.get("book_id"), str) or not payload["book_id"]:
+            raise P16WireError("INVALID_REQUEST", "validation", "Reading progress reset request is invalid")
+        confirm = payload.get("confirm", False)
+        if not isinstance(confirm, bool):
+            raise P16WireError("INVALID_REQUEST", "validation", "Reading progress reset request is invalid")
+        try:
+            removed = self._core.reading_extras.reset_book_progress(payload["book_id"], confirm=confirm)
+        except ValueError as error:
+            raise P16WireError("INVALID_REQUEST", "validation", "Reading progress reset requires confirmation") from error
+        return {"reset": removed}
     def _register_export_target(self, payload: dict[str, Any]) -> dict[str, Any]:
         fields = {"grant_id", "session_id", "target_path", "format", "replace_existing", "expires_at", "signing_key", "signature"}
         if set(payload) != fields:
@@ -6801,13 +6879,30 @@ class CoreServiceServer:
                 "error": error,
             }, False)
 
-        if command in ("GetReaderProjection", "SaveReadingProgress", "StartExport",
-                       "GetExportSnapshot", "GetExportHistory", "CancelExport"):
+        if command in ("GetReaderProjection", "SaveReadingProgress",
+                       "GetReadingPreferences", "SaveReadingPreferences",
+                       "ListBookmarks", "CreateBookmark", "DeleteBookmark",
+                       "GetBookReadingProgress", "ResetReadingProgress",
+                       "StartExport", "GetExportSnapshot", "GetExportHistory", "CancelExport"):
             try:
                 if not isinstance(raw_payload, dict):
                     raise P16WireError("INVALID_REQUEST", "validation", "Request payload must be an object")
                 if command == "GetReaderProjection":
                     result = self.handle_get_reader_projection(payload)
+                elif command == "GetReadingPreferences":
+                    result = self.handle_get_reading_preferences(payload)
+                elif command == "SaveReadingPreferences":
+                    result = self.handle_save_reading_preferences(payload)
+                elif command == "ListBookmarks":
+                    result = self.handle_list_bookmarks(payload)
+                elif command == "CreateBookmark":
+                    result = self.handle_create_bookmark(payload)
+                elif command == "DeleteBookmark":
+                    result = self.handle_delete_bookmark(payload)
+                elif command == "GetBookReadingProgress":
+                    result = self.handle_get_book_reading_progress(payload)
+                elif command == "ResetReadingProgress":
+                    result = self.handle_reset_reading_progress(payload)
                 elif command == "SaveReadingProgress":
                     result = self.handle_save_reading_progress(payload)
                 elif command == "StartExport":

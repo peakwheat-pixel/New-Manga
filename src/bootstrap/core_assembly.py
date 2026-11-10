@@ -50,7 +50,7 @@ from application.maintenance import TrashService
 from application.maintenance.cleanup import CleanupService
 from application.maintenance.diagnostics import BoundedErrorLog, DiagnosticsService
 from application.maintenance.trash import _JsonTrashManifest
-from application.reading.service import ReadingService
+from application.reading.service import ReadingExtrasService, ReadingService
 from application.rendering.service import RenderService
 from application.resource_channel.dto import E_NOT_FOUND, TypedResourceChannelError
 from application.tasks.service import PipelineService
@@ -118,6 +118,7 @@ from infrastructure.sqlite.migrator import (
     read_schema_version,
 )
 from infrastructure.sqlite.reading_export import (
+    SqliteReadingExtrasStore,
     SqliteExportHistoryStore,
     SqliteReadingProgressStore,
     import_legacy_export_history,
@@ -835,6 +836,7 @@ class CoreServices:
     #: cleanup face and never touches it from any other surface.
     cleanup: CleanupService
     reading: ReadingService
+    reading_extras: ReadingExtrasService
     export_service: ExportService
     diagnostics: DiagnosticsService
     library: LibraryService
@@ -1845,6 +1847,7 @@ def assemble_core_services(
         import_legacy_export_history(conn, data_root / "export_history.json")
 
         reading = ReadingService(SqliteReadingProgressStore(conn))
+        reading_extras = ReadingExtrasService(SqliteReadingExtrasStore(conn))
         export_history_store = SqliteExportHistoryStore(conn)
         export_service = ExportService(
             export_history_store, pdf_composer=QtFreePdfComposer(), plugins=plugins
@@ -1888,6 +1891,7 @@ def assemble_core_services(
             trash=trash,
             cleanup=cleanup,
             reading=reading,
+            reading_extras=reading_extras,
             export_service=export_service,
             diagnostics=diagnostics,
             library=library,
