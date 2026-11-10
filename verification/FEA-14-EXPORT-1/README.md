@@ -14,7 +14,15 @@
 | AC3 scope 三档与顺序预览 | 三档可见 + 顺序预览与请求一致 | **MET（带 limitation）**：`Reader_ExportScopeSelector_ShowsThreeScopesAndOrderPreview`、`Reader_ExportCurrentPageScope_SendsOnlyTheLoadedPage`、`Reader_ExportSelectionScope_FallsBackToChapterWithNotice`；「已选页」在阅读器无多选 → 不可用并回退整章；当前页未定位时提示回退（R-005） |
 | AC4 取消保护 | 取消不发布新文件、不改既有目标、history/snapshot 为 cancelled | **MET**：`test_cancel_before_replace_publishes_nothing`（auto-rename 目标不创建、旧文件字节不变、history=cancelled）。口径（r2 R2-002 确认）：单文件原子发布、无部分成功文件；卡面标题/Scope §4 已同步。 |
 | AC5 零 wire/零 DDL/旧签名 | 无 `IHostController` 签名变更、无 schema 变更；`--check` EXIT 0（1/54/6=61）；pins 18/18 | **MET**：`logs/api-inventory.log` EXIT 0；`logs/gates-pins.log` PASS (all 18)；`git diff` 无 `IHostController.cs`/`schema.py` |
-| AC6 门禁与证据 | `check.ps1`（默认 + TaskPath）PASS；定向/全量测试 0 failed；证据含 EXIT + NOT_RUN | **MET**：`logs/gates-check.log` PASS；定向 27/0；App.Tests 全量 **865/0/11**；pytest 全量 **3477/0/10** |
+| AC6 门禁与证据 | `check.ps1`（默认 + TaskPath）PASS；定向/全量测试 0 failed；证据含 EXIT + NOT_RUN | **MET**：`logs/gates-check.log` PASS；定向 29/0；App.Tests 全量 **867/0/11**；pytest 全量 **3477/0/10** |
+
+## r3 复核与收口处置（2026-11-10）
+
+- r3：**approved**（P0/P1/P2=0；P3=5），报告 `doc/reviews/FEA-14-EXPORT-1-r3.md`；R2-001/R2-002/R2-005 全部 CLOSED（R2-001 经收口前探针：旧 target 不变、sibling 生成、越界/已存在负例 typed 拒绝）。
+- R3-003（证据不一致）已修：重跑定向 29/0 并写入 `logs/dotnet-export-tests.log`（含最终 run 与 EXIT）；本 README AC6 行与门禁表数字统一为 29/867；EV-EX1-003 hash 已随日志刷新。
+- R3-002 已修：取消测试增加旧目标 mtime 断言；卡面背景段旧措辞更新。
+- R3-001/R3-005 登记：`publish_to` 无父目录句柄（resolve→replace 极小 TOCTOU，已由父目录 resolve/reparse + 发布后校验缓解）；源码顺序断言属脆弱守卫；真实 Host+Core E2E 仍 NOT_RUN。
+- R3-004 收口时填：卡面 `delivery_head`/`integration_commit` 指向被 r3 审的 head `0720686a6`；logs 生成于该 head 之前（字节未变）。
 
 ## r2 处置记录（2026-11-10，对 `22683068e` 的 approved + P2 残余）
 

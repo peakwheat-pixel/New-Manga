@@ -3,20 +3,20 @@ id: FEA-14-EXPORT-1
 title: FEA-14 切片 EXPORT-1：导出范围/顺序预览/同名冲突默认不覆盖/取消保护
 kind: implementation
 governance_version: 3
-status: in_review
+status: done
 approval: **DSH 2026-11-10 冻结**（依据 `ADJ-2026-11-10-FEA14-S5-SCOPE` §2.1/§2.2 与 PREQ 共用 wire 口径；FEA-00 §12.2/§15.6 EXPORT 切片；只读侦察 `recon.md` §2.7）
 suggested_owner: dsh
 owner: dsh
-reviewer: null
+reviewer: r3 独立复核 approved（`doc/reviews/FEA-14-EXPORT-1-r3.md`，P0/P1/P2=0；P3=5 登记）
 depends_on:
   - FEA-14-S5-PREQ-1
 base_commit: 5459c9220
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 0720686a6
+delivery_head: 0720686a6
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-14-EXPORT-1
 allowed_paths:
   - doc/tasks/FEA-14-EXPORT-1.md
@@ -56,7 +56,7 @@ out_of_scope:
 - 端口齐全：`IHostController` 已有 `ExportDirectorySuggestion` / `GetTranslatedPageIdsAsync` / `StartExportAsync` / `GetExportSnapshotAsync` / `GetExportHistoryAsync` / `CancelExportAsync` / `RevealExportFolderAsync`。
 - Core `ExportService` 已支持：scope 由调用方按顺序传入（`orderedPageIds`）、`overwrite_policy`（overwrite/skip/auto-rename，**默认 OVERWRITE**）、取消需调用方 cancel 谓词、`export_history` + `scope_snapshot_json`。
 - UI `ExportPanel` 已有 format/PDF 模式/进度/取消/历史/打开目录；**无** scope 三档选择、无顺序预览、无冲突计划提示。
-- 缺口（对 FEA-00 §12.2/§15.6 的 EXPORT 项）：同名冲突**默认不覆盖**、scope 三档可见、order 预览、取消保留已成功文件的可判别证据。
+- 缺口（对 FEA-00 §12.2/§15.6 的 EXPORT 项）：同名冲突**默认不覆盖**、scope 三档可见、order 预览、取消决策的可判别证据（取消保护，不产生/不破坏文件）。
 
 ## Scope 冻结（2026-11-10，DSH）
 
@@ -65,6 +65,14 @@ out_of_scope:
 3. **scope 三档 + 顺序预览（UI）**：`ExportPanel` 显示「当前页 / 已选页 / 整章」范围与导出顺序（由 `orderedPageIds`/`GetTranslatedPageIdsAsync` 投影），可切换；不新增命令。
 4. **取消保护**：取消不发布新文件、既有目标字节/mtime 不变、typed 状态为 cancelled；导出是单文件原子发布，**不存在「部分成功文件」**故不报告完成数量（r2 R2-002 口径）。补可判别测试。
 5. 零 DDL、零新 wire、旧签名不变。
+
+## r3 复核与收口（2026-11-10）
+
+- r3：**approved**（P0/P1/P2=0；P3=5），报告 `doc/reviews/FEA-14-EXPORT-1-r3.md`。R2-001/R2-002/R2-005 全部 CLOSED；R2-001 经收口前探针（旧 target 不变、sibling 生成、越界/已存在负例 typed 拒绝）。
+- R3-003（证据不一致）已修：定向 29/0 重跑并写入 `logs/dotnet-export-tests.log`；README AC6/门禁表统一 29/867；EV-EX1-003 hash 已刷新。
+- R3-002 已修：取消测试增加旧目标 mtime 断言；背景段旧措辞更新。
+- R3-001/R3-005 登记：`publish_to` 无父目录句柄（resolve→replace 极小 TOCTOU，已由 resolve/reparse + 发布后校验缓解）；源码顺序断言属脆弱守卫；真实 Host+Core E2E 仍 NOT_RUN。
+- 证据：`verification/FEA-14-EXPORT-1/`（README + 7 份日志）；Canonical Evidence 7 行 hash 与文件一致。
 
 ## r2 处置记录（2026-11-10，对 `22683068e` 的 approved + P2 残余）
 
@@ -136,12 +144,16 @@ out_of_scope:
 |---|---|---|---|---|---|
 | EV-EX1-001 | AC1-AC6 | `verification/FEA-14-EXPORT-1/logs/api-inventory.log` | `-` | `2245baa2a0ef67e32d2f0657446801f7abef27e775702c9b380e109953aa5097` | CANONICAL |
 | EV-EX1-002 | AC1-AC6 | `verification/FEA-14-EXPORT-1/logs/dotnet-app-tests.log` | `-` | `f0493b6c09a27f75cb4ebe394247a36b3a9d9b1832d74946480791ecc58925e9` | CANONICAL |
-| EV-EX1-003 | AC1-AC6 | `verification/FEA-14-EXPORT-1/logs/dotnet-export-tests.log` | `-` | `79bf469ff03f019a525f84bf282922f2592aa95b7193e866fddc3416d12204fd` | CANONICAL |
+| EV-EX1-003 | AC1-AC6 | `verification/FEA-14-EXPORT-1/logs/dotnet-export-tests.log` | `-` | `9019c2df287ae3bf030218809e9f6769764dac2a0d94ecaa2f6ede4b34c2306a` | CANONICAL |
 | EV-EX1-004 | AC1-AC6 | `verification/FEA-14-EXPORT-1/logs/gates-check.log` | `-` | `027b714c43833229e0373aa0f6d608bf7a65154c26aaef486c82e2893b4a4614` | CANONICAL |
 | EV-EX1-005 | AC1-AC6 | `verification/FEA-14-EXPORT-1/logs/gates-pins.log` | `-` | `97e550f7f1a5660ac2f727f549971239b69e555510243edbb0da8206b2224314` | CANONICAL |
 | EV-EX1-006 | AC1-AC6 | `verification/FEA-14-EXPORT-1/logs/pytest-full.log` | `-` | `58f9593dbc1af403739a231a0127eff278e7383b2955c21126edb8620e42a0f8` | CANONICAL |
-| EV-EX1-007 | AC1-AC6 | `verification/FEA-14-EXPORT-1/README.md` | `-` | `fc998ad2bcddee1b0fca268db1ea178b39f2edd5776704fb807849b082e5981c` | CANONICAL |
+| EV-EX1-007 | AC1-AC6 | `verification/FEA-14-EXPORT-1/README.md` | `-` | `02797f4f42ce2f647b0396555bbc7b2b9b5ed32e707503ae6a44ab49b6f3985d` | CANONICAL |
 
 ## Closeout Record
 
-- 未开始（2026-11-10 scope 冻结，`ready`）。
+- 结论：**完成**（2026-11-10）。3 轮独立复核：r1 changes_requested（P1=1：runner 未按 AUTO_RENAME 路径发布）→ r1 处置 → r2 **approved**（P2 残余：sibling 发布安全校验、AC4 口径）→ r2 处置 → **r3 approved**（P0/P1/P2=0；P3=5 登记）。
+- 交付：Core 默认 `AUTO_RENAME` + runner 按解析路径发布（`_publish_to`→`ResolvedExportTarget.publish_to`）；Host `ExportPathPolicy` auto-rename；UI scope 三档/顺序预览/完成态路径/取消保护；零新 wire/零 DDL/旧签名不变。
+- 证据：定向 29/0；App.Tests 全量 867/0/11；pytest 全量 3477/0/10；`check.ps1`（默认 + TaskPath）PASS；`verify_pins` 18/18；API `--check` EXIT 0。
+- 残余 limitation（不阻断）：真实 Host+Core E2E = NOT_RUN（`NEWMANGA_EXPORT_SIDECAR_DIR`/`NEWMANGA_EXPORT_DATA_ROOT` 未设置）；真实 UI 截图 = NOT_RUN；阅读器多选未实现（已选页档不可用）；`publish_to` resolve→replace 极小 TOCTOU；源码顺序断言脆弱；并发压力未测。
+- 零契约字节（C-07/C-02/C-03/P15 未改）；未 push。

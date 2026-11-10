@@ -4,8 +4,8 @@
 
 ## 当前程序
 - **FEA 线 ACTIVE（S5）**：[FEA-00 方案](design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md)；V11R 程序已收官（v0.1.1）。
-- 当前 Task：[FEA-14-EXPORT-1](tasks/FEA-14-EXPORT-1.md) **in_review**（导出收口；零 DDL/wire）。
-- 刚收口：`FEA-14-S5-PREQ-1` / `FEA-14-SET-1` 均 `done`（r2/r3 approved；C-07 v1.2；`5459c9220`/`c543b51cc`）。
+- 当前 Task：[FEA-15-A2-1](tasks/FEA-15-A2-1.md) **ready**（A2 安装冒烟）。
+- 刚收口：`FEA-14-EXPORT-1` `done`（r3 approved；`0720686a6`；默认不覆盖/scope 预览/取消保护）。
 - FEA-11 线：WATCH-1/SCAN-2/SCAN-1/MATCH-1/AC4-GAPS-1/LINEAGE-1 `done`；HOST-AUTH-1 `done`；FEA-12 四卡 `done`。
 - **AC11-1 终态 MET（带 limitation）**：裁决 2026-11-06（[记录](reviews/FEA-11-AC11-1-adjudication-2026-11-06.md)）；「启动/访问前检查」= 冷启动枚举 + registry/root 核验（SCAN-2） + 每次访问/操作前 live grant+lease+digest 强验证；启动不做全量内容扫描（L-STARTUP）。
 - rolling checkpoint：[GOAL-PROGRESS](checkpoints/GOAL-PROGRESS-2026-11-02.md)。

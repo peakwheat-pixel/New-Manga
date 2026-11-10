@@ -315,6 +315,7 @@ def test_original_mode_never_triggers_stale_check(tmp_path, service, pages):
 def test_cancel_before_replace_publishes_nothing(tmp_path, service, pages):
     target = tmp_path / "cancelled.zip"
     target.write_bytes(b"OLD-TARGET")
+    before_mtime = target.stat().st_mtime_ns
     calls = {"n": 0}
 
     def cancel() -> bool:
@@ -324,6 +325,7 @@ def test_cancel_before_replace_publishes_nothing(tmp_path, service, pages):
     with pytest.raises(ExportCancelledError):
         service.export(_request(tmp_path, pages, output_path=target, cancel=cancel))
     assert target.read_bytes() == b"OLD-TARGET"
+    assert target.stat().st_mtime_ns == before_mtime  # R3-002: cancelled export never touches it
     assert not list(tmp_path.glob(".cancelled.zip*")), "temp file left behind"
     # FEA-14-EXPORT-1 AC4: cancellation must not publish the auto-renamed target either.
     assert not (tmp_path / "cancelled (1).zip").exists(), "cancelled export left a new file"
