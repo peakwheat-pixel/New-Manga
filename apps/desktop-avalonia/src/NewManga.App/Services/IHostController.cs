@@ -202,7 +202,7 @@ public interface IHostController : IReaderProgressSink, IRunController, IAsyncDi
     Task<BookReadingProgressInfo?> GetBookReadingProgressAsync(string bookId, CancellationToken cancellationToken = default);
 
     /// <summary>FEA-14-READ-1 (PREQ P15): reset one book's reading progress.</summary>
-    Task<int> ResetReadingProgressAsync(string bookId, bool confirm = true, CancellationToken cancellationToken = default);
+    Task<int> ResetReadingProgressAsync(string bookId, bool confirm = false, CancellationToken cancellationToken = default);
     Task<RegionPageProjection?> LoadPageRegionsAsync(
         string pageId,
         CancellationToken cancellationToken = default);

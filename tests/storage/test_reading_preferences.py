@@ -129,16 +129,24 @@ def test_book_progress_and_reset_requires_confirm(tmp_path):
         "INSERT INTO chapters (chapter_id, book_id, title, chapter_type, sort_order, created_at, updated_at)"
         " VALUES ('c2', 'b1', 'Ch 2', 'paged', 2, '2026-01-01', '2026-01-01')"
     )
+    for index in (1, 2):
+        conn.execute(
+            "INSERT INTO pages (page_id, chapter_id, sort_order, created_at, updated_at)"
+            " VALUES (?, 'c1', ?, '2026-01-01', '2026-01-01')",
+            (f"c1p{index}", index),
+        )
     conn.execute(
         "INSERT INTO reading_progress (progress_id, book_id, chapter_id, mode,"
         " last_page_id, scroll_offset_x, scroll_offset_y, progress_percent, updated_at)"
-        " VALUES ('p1', 'b1', 'c1', 'original', 'page-1', 0.0, 0.0, 100.0, '2026-01-01')"
+        " VALUES ('p1', 'b1', 'c1', 'original', 'c1p2', 0.0, 0.0, 100.0, '2026-01-01')"
     )
     conn.commit()
     progress = service.book_progress("b1")
-    assert progress["total_chapters"] == 2
-    assert progress["completed_chapters"] == 1
-    assert progress["progress_percent"] == 50.0
+    # R-001: page based -- c1 has 2 pages and is fully read.
+    assert progress["total_pages"] == 2
+    assert progress["read_pages"] == 2
+    assert progress["progress_percent"] == 100.0
+    assert progress["finished"] is True
 
     with pytest.raises(ValueError):
         service.reset_book_progress("b1")

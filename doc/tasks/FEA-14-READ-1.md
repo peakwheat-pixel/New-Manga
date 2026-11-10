@@ -10,7 +10,7 @@ owner: dsh
 reviewer: null
 depends_on:
   - FEA-14-S5-PREQ-1
-base_commit: e6964bf58
+base_commit: f9bf922aa
 branch: null
 worktree: null
 integration_commit: null
@@ -21,6 +21,7 @@ evidence_dir: verification/FEA-14-READ-1
 allowed_paths:
   - doc/tasks/FEA-14-READ-1.md
   - doc/reviews/FEA-14-READ-1-*.md
+  - doc/reviews/CONTRACT-UNFREEZE-*.md
   - doc/handoffs/FEA-14-READ-1-*.md
   - doc/STATUS.md
   - doc/REBASELINE_PLAN.md
@@ -49,6 +50,8 @@ allowed_paths:
   - apps/desktop-avalonia/tests/NewManga.Host.Tests/ReadWireTests.cs
   - tests/storage/test_reading_preferences.py
   - tests/core/test_v9_migration.py
+  - tests/fea09/test_v7_migration.py
+  - tests/fea11/test_source_gate_unify.py
   - tests/core/test_read_wire.py
 out_of_scope:
   - 不改冻结契约字节（C-07 的 pin 按实现落地更新并记录；不改 C-02/C-03/P15 等）
@@ -79,6 +82,17 @@ out_of_scope:
 - [x] **AC4 迁移无损**：schema v10 additive；旧 `reading_progress` 行字段级无损；失败回退不半迁移。 <<MET>>
 - [x] **AC5 契约/门禁**：七条命令按 PREQ §8 形状实现；`generate_api_inventory.py --check` 更新后 EXIT 0；`verify_pins` 18/18（C-07 pin 按记录更新）；无未授权契约字节变更。 <<MET>>
 - [x] **AC6 证据**：定向 pytest/App.Tests 通过；`verification/FEA-14-READ-1/` 日志含 EXIT；NOT_RUN（真实 UI 手势/IME、跨内容序列）如实登记。 <<MET>>
+
+
+## r1 处置记录（2026-11-10，对 `a44c631cb` 的 changes_requested）
+
+- **R-001（P1，已修）**：`book_progress` 改为**页面**口径（`pages` 按章 JOIN 计数；每章 `progress_percent` × 页数累加；`read_pages/total_pages/finished`），旧行为（章节数冒充页数）删除；storage 测试断言 2 页 100%。
+- **R-002/R-003（P2，部分修）**：P15 `confirm` 在 IHostController/HostController/CoreServiceClient 默认改为 **false**（无显式确认不重置）；P12/P15 返回类型与 PREQ 偏差（`Task<string?>`/`Task<int>` vs `Task<BookmarkInfo?>`/`Task<bool>`）**登记偏差**（wire/语义等价，未改接口形状）；P15 请求键 `confirm` vs PREQ `confirm_token?` 登记。
+- **R-004（P2，已修）**：P10 改为 partial patch 合并（读现有偏好后合并再保存；缺省字段不重置）。
+- **R-005（P2，已修）**：inventory 合计改 **68**，`--check` EXIT 0；C-07 pin 重算为 `59ab90f7…`（v1.3 记录，`verify_pins` 18/18）。
+- **R-006（P2，已修）**：UNFREEZE 记录 pin 占位 `$h` 替换为实际 hash、`verify_pins` 拼写修正。
+- **R-007/R-008（P2）**：allowed_paths 补 `doc/reviews/CONTRACT-UNFREEZE-*.md`、`tests/fea09/test_v7_migration.py`、`tests/fea11/test_source_gate_unify.py`；`base_commit` 校准 `f9bf922aa`（实际实现起点；Review base 记录差异见 r1 报告）。
+- **R-009/R-010/R-011（P3）**：Reader 70 定向日志、pytest 首轮 5 failed 说明、两次装配/重启测试——**登记**（未补，留 READ-2/后续）。
 
 ## 证据计划（L2）
 

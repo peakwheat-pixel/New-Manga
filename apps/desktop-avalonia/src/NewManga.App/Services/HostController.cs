@@ -533,7 +533,7 @@ public sealed class HostController : IHostController, ISourceImportController, I
 
     /// <summary>FEA-14-READ-1 (PREQ P15): reset one book's reading progress.</summary>
     public async Task<int> ResetReadingProgressAsync(
-        string bookId, bool confirm = true, CancellationToken cancellationToken = default)
+        string bookId, bool confirm = false, CancellationToken cancellationToken = default)
     {
         if (_runtime is null || !_runtime.Result.IsReady || string.IsNullOrWhiteSpace(bookId))
         {

@@ -625,9 +625,15 @@ class SqliteReadingExtrasStore:
         return cursor.rowcount > 0
 
     def book_progress(self, book_id: str) -> dict[str, object]:
-        total = self._conn.execute(
+        # FEA-14-READ-1 AC3 (R-001): whole-book progress is PAGE based, not
+        # chapter based. A chapter at 50% contributes half its page count.
+        total_pages = int(self._conn.execute(
+            "SELECT COUNT(*) FROM pages p JOIN chapters c ON p.chapter_id = c.chapter_id"
+            " WHERE c.book_id = ? AND p.deleted_at IS NULL", (book_id,)
+        ).fetchone()[0])
+        total_chapters = int(self._conn.execute(
             "SELECT COUNT(*) FROM chapters WHERE book_id = ?", (book_id,)
-        ).fetchone()[0]
+        ).fetchone()[0])
         rows = self._conn.execute(
             "SELECT chapter_id, mode, progress_percent FROM reading_progress WHERE book_id = ?",
             (book_id,),
@@ -635,13 +641,26 @@ class SqliteReadingExtrasStore:
         completed: dict[str, float] = {}
         for chapter_id, _mode, percent in rows:
             completed[str(chapter_id)] = max(completed.get(str(chapter_id), 0.0), float(percent))
-        completed_chapters = sum(1 for value in completed.values() if value >= 100.0)
-        percent = (sum(min(value, 100.0) for value in completed.values()) / (total * 100.0) * 100.0) if total else 0.0
+        read_pages = 0.0
+        completed_chapters = 0
+        for chapter_id, percent in completed.items():
+            chapter_pages = int(self._conn.execute(
+                "SELECT COUNT(*) FROM pages WHERE chapter_id = ? AND deleted_at IS NULL",
+                (chapter_id,),
+            ).fetchone()[0])
+            clamped = min(max(percent, 0.0), 100.0)
+            read_pages += clamped / 100.0 * chapter_pages
+            if clamped >= 100.0:
+                completed_chapters += 1
+        percent = (read_pages / total_pages * 100.0) if total_pages else 0.0
         return {
             "book_id": book_id,
-            "total_chapters": int(total),
+            "total_pages": total_pages,
+            "read_pages": int(round(read_pages)),
+            "total_chapters": total_chapters,
             "completed_chapters": completed_chapters,
             "progress_percent": round(min(percent, 100.0), 2),
+            "finished": bool(total_pages and read_pages >= total_pages),
             "last_chapter_id": (rows[-1][0] if rows else None),
         }
 

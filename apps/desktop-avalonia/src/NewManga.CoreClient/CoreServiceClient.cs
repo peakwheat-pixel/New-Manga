@@ -1473,7 +1473,7 @@ public sealed class CoreServiceClient : IAsyncDisposable
 
     /// <summary>FEA-14-READ-1 (PREQ P15): reset one book's reading progress (explicit confirm).</summary>
     public async Task<int> ResetReadingProgressAsync(
-        string bookId, bool confirm = true, CancellationToken cancellationToken = default)
+        string bookId, bool confirm = false, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(bookId))
         {
