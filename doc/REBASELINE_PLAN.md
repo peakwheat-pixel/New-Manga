@@ -47,14 +47,13 @@
 |FEA-15-A2-1|FEA-14-EXPORT-1|**done**（r2 approved；四页 4/4；双根隔离）|
 |FEA-15-A3-1|FEA-15-A2-1|**closed_with_limitations**（r3 approved；四壳/四页 4/4；AC3 limitation）|
 |FEA-15-A4-1|FEA-15-A3-1|**done**（r2 approved；v8→v9 35 表守恒；pre_restore 回退）|
-|FEA-14-READ-1|FEA-14-S5-PREQ-1|**closed_with_limitations**（r4 approved；wire P9–P15 + v10；AC1–3 UI limitation → READ-2）|
+|FEA-14-READ-1|FEA-14-S5-PREQ-1|**closed_with_limitations**（r4 approved；wire P9–P15 + v10；UI → READ-2）|
 |NEW-MANGA-V1-FULL-AUDIT|—|blocked（素材不传播；resume=in_progress）|
 
 ## 当前活动程序（FEA 线 S5 + FEA-15 验收）
 
 **FEA 线 S5**：FEA-14 七切片经 PREQ-1 口径/共用 wire 冻结；FEA-15 A2/A3/A4 机测推进；V11R 已收官。
-
-当前活动：`FEA-14-READ-2`（in_review；VM 层完成，UI 控件 limitation）
+当前活动：`FEA-14-READ-2`（in_review；UI 控件 limitation）
 READY 节点：无
 ## 历史快照（终态节点，非当前 DAG）
 
