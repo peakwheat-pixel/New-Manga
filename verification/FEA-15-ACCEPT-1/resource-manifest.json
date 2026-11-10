@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "task_id": "FEA-15-ACCEPT-1",
+  "resources": [
+    {
+      "resource_type": "task_workspace",
+      "source_path": "G:\\CODEX\\New Manga.workspace\\FEA-15-ACCEPT-1",
+      "destination_path": "G:\\CODEX\\New Manga.workspace\\FEA-15-ACCEPT-1",
+      "disposition": "PRESERVE_UNKNOWN",
+      "manifest_path": "verification/FEA-15-ACCEPT-1/workspace-inventory-nofollow.md",
+      "process_check": "按原位置保留；无清理；清单不跟随链接，所有权和进程占用未全面证明。",
+      "deleted": false,
+      "moved": false,
+      "modified": false
+    },
+    {
+      "resource_type": "clean_worktree",
+      "source_path": "G:\\CODEX\\New Manga.workspace\\FEA-15-ACCEPT-1\\clean-tree",
+      "destination_path": "G:\\CODEX\\New Manga.workspace\\FEA-15-ACCEPT-1\\clean-tree",
+      "disposition": "PRESERVE_REFERENCED",
+      "manifest_path": "verification/FEA-15-ACCEPT-1/workspace-inventory-nofollow.md",
+      "process_check": "固定提交的构建与验证证据；不移除，不执行 prune。",
+      "deleted": false,
+      "moved": false,
+      "modified": false
+    },
+    {
+      "resource_type": "shared_fixture_candidates",
+      "source_path": "G:\\CODEX\\New Manga.workspace\\FEA-11\\fixtures",
+      "destination_path": "G:\\CODEX\\New Manga.workspace\\FEA-11\\fixtures",
+      "disposition": "PRESERVE_UNKNOWN",
+      "manifest_path": "verification/FEA-15-ACCEPT-1/fixture-observation.log",
+      "process_check": "62 项仅按时间窗口观察，不能证明归属；整目录保持原位，不清理。",
+      "deleted": false,
+      "moved": false,
+      "modified": false
+    },
+    {
+      "resource_type": "python_executable_acl",
+      "source_path": "C:\\Python314\\python.exe",
+      "destination_path": "C:\\Python314\\python.exe",
+      "disposition": "PRESERVE_UNKNOWN",
+      "manifest_path": "verification/FEA-15-ACCEPT-1/python-acl-observation.log",
+      "process_check": "缺运行前 ACL 快照，不能归属现有 ACE；不修改或撤销。",
+      "deleted": false,
+      "moved": false,
+      "modified": false
+    },
+    {
+      "resource_type": "python_directory_acl",
+      "source_path": "C:\\Python314",
+      "destination_path": "C:\\Python314",
+      "disposition": "PRESERVE_UNKNOWN",
+      "manifest_path": "verification/FEA-15-ACCEPT-1/python-acl-observation.log",
+      "process_check": "缺运行前 ACL 快照，不能归属现有 ACE；不修改或撤销。",
+      "deleted": false,
+      "moved": false,
+      "modified": false
+    },
+    {
+      "resource_type": "appcontainer_profiles",
+      "source_path": "用户级 AppContainer profiles（具体实例与路径未知；*）",
+      "destination_path": "用户级 AppContainer profiles（具体实例与路径未知；*）",
+      "disposition": "PRESERVE_UNKNOWN",
+      "manifest_path": "verification/FEA-15-ACCEPT-1/python-acl-observation.log",
+      "process_check": "测试可能创建或复用；无事前清单，未知实例不作存在性断言，保留且不清理。",
+      "deleted": false,
+      "moved": false,
+      "modified": false
+    },
+    {
+      "resource_type": "user_data",
+      "source_path": "真实用户数据（只读元数据观察）",
+      "destination_path": "NOT_APPLICABLE",
+      "disposition": "NOT_APPLICABLE",
+      "manifest_path": "",
+      "process_check": "不对真实用户数据执行迁移或清理；进程冒烟仅记录目录元数据指纹。",
+      "deleted": false,
+      "moved": false,
+      "modified": false
+    }
+  ],
+  "closeout_counts": {
+    "deleted": 0,
+    "moved": 0,
+    "migrated": 0,
+    "archived": 0
+  },
+  "notes": "未知 profile 为描述性集合，不是假定的具体磁盘路径；当前未核实实例或来源。"
+}
