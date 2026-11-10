@@ -520,6 +520,118 @@ public sealed class HostRuntime : IAsyncDisposable
         }
     }
 
+    /// <summary>FEA-14-READ-1 (PREQ P9): per-book reading preferences.</summary>
+    public async Task<ReadingPreferencesInfo?> GetReadingPreferencesAsync(
+        string bookId, CancellationToken cancellationToken = default)
+    {
+        await _readerIoGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            var core = CoreService ?? throw NotReady();
+            return await core.GetReadingPreferencesAsync(bookId, cancellationToken).ConfigureAwait(false);
+        }
+        finally
+        {
+            _readerIoGate.Release();
+        }
+    }
+
+    /// <summary>FEA-14-READ-1 (PREQ P10): persist one book's reading preferences.</summary>
+    public async Task<bool> SaveReadingPreferencesAsync(
+        string bookId, ReadingPreferencesPatch patch, CancellationToken cancellationToken = default)
+    {
+        await _readerIoGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            var core = CoreService ?? throw NotReady();
+            return await core.SaveReadingPreferencesAsync(bookId, patch, cancellationToken).ConfigureAwait(false);
+        }
+        finally
+        {
+            _readerIoGate.Release();
+        }
+    }
+
+    /// <summary>FEA-14-READ-1 (PREQ P11): list one book's bookmarks.</summary>
+    public async Task<IReadOnlyList<BookmarkInfo>> ListBookmarksAsync(
+        string bookId, CancellationToken cancellationToken = default)
+    {
+        await _readerIoGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            var core = CoreService ?? throw NotReady();
+            return await core.ListBookmarksAsync(bookId, cancellationToken).ConfigureAwait(false);
+        }
+        finally
+        {
+            _readerIoGate.Release();
+        }
+    }
+
+    /// <summary>FEA-14-READ-1 (PREQ P12): create one bookmark.</summary>
+    public async Task<string?> CreateBookmarkAsync(
+        string bookId, string chapterId, string pageId, string? side = null, string? note = null,
+        CancellationToken cancellationToken = default)
+    {
+        await _readerIoGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            var core = CoreService ?? throw NotReady();
+            return await core.CreateBookmarkAsync(bookId, chapterId, pageId, side, note, cancellationToken).ConfigureAwait(false);
+        }
+        finally
+        {
+            _readerIoGate.Release();
+        }
+    }
+
+    /// <summary>FEA-14-READ-1 (PREQ P13): delete one bookmark.</summary>
+    public async Task<bool> DeleteBookmarkAsync(string bookmarkId, CancellationToken cancellationToken = default)
+    {
+        await _readerIoGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            var core = CoreService ?? throw NotReady();
+            return await core.DeleteBookmarkAsync(bookmarkId, cancellationToken).ConfigureAwait(false);
+        }
+        finally
+        {
+            _readerIoGate.Release();
+        }
+    }
+
+    /// <summary>FEA-14-READ-1 (PREQ P14): whole-book reading progress.</summary>
+    public async Task<BookReadingProgressInfo?> GetBookReadingProgressAsync(
+        string bookId, CancellationToken cancellationToken = default)
+    {
+        await _readerIoGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            var core = CoreService ?? throw NotReady();
+            return await core.GetBookReadingProgressAsync(bookId, cancellationToken).ConfigureAwait(false);
+        }
+        finally
+        {
+            _readerIoGate.Release();
+        }
+    }
+
+    /// <summary>FEA-14-READ-1 (PREQ P15): reset one book's reading progress.</summary>
+    public async Task<int> ResetReadingProgressAsync(
+        string bookId, bool confirm = true, CancellationToken cancellationToken = default)
+    {
+        await _readerIoGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            var core = CoreService ?? throw NotReady();
+            return await core.ResetReadingProgressAsync(bookId, confirm, cancellationToken).ConfigureAwait(false);
+        }
+        finally
+        {
+            _readerIoGate.Release();
+        }
+    }
+
     /// <summary>
     /// READER-LIBRARY-WIRE-1: ordered reader projection (pages + layout) for one chapter.
     /// READER-PROGRESS-1: <paramref name="startPosition"/> defaults to <c>resume</c> so the Core echoes

@@ -38,6 +38,8 @@ allowed_paths:
   - apps/desktop-avalonia/src/NewManga.App/Services/HostController.cs
   - apps/desktop-avalonia/src/NewManga.App/Services/NullHostController.cs
   - apps/desktop-avalonia/src/NewManga.CoreClient/Commands/ReadCommands.cs
+  - apps/desktop-avalonia/src/NewManga.CoreClient/CoreServiceClient.cs
+  - apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs
   - apps/desktop-avalonia/src/NewManga.App/ViewModels/Fluent/ReaderViewModel.cs
   - apps/desktop-avalonia/src/NewManga.App/Views/ReaderWorkbenchPages.cs
   - apps/desktop-avalonia/tests/NewManga.App.Tests/ReaderPreferenceTests.cs

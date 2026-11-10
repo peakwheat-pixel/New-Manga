@@ -1319,6 +1319,180 @@ public sealed class CoreServiceClient : IAsyncDisposable
             ReadString(result, "preview_error"));
     }
 
+    /// <summary>FEA-14-READ-1 (PREQ P9): per-book reading preferences.</summary>
+    public async Task<ReadingPreferencesInfo?> GetReadingPreferencesAsync(
+        string bookId, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(bookId))
+        {
+            throw new ArgumentException("book_id is required", nameof(bookId));
+        }
+        var response = await SendAsync(
+                "GetReadingPreferences", CoreProtocol.DefaultMinor,
+                writer => { writer.WriteStartObject(); writer.WriteString("book_id", bookId); writer.WriteEndObject(); },
+                _options.RequestTimeout, cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, "GetReadingPreferences");
+        return new ReadingPreferencesInfo(
+            ReadString(result, "book_id") ?? bookId,
+            ReadString(result, "mode") ?? "original",
+            ReadString(result, "direction") ?? "ltr",
+            result.TryGetProperty("zoom", out var zoom) && zoom.ValueKind == JsonValueKind.Number ? zoom.GetDouble() : 1.0,
+            result.TryGetProperty("double_page", out var doublePage) && doublePage.ValueKind == JsonValueKind.True,
+            ReadString(result, "layout") ?? "single",
+            ReadString(result, "updated_at") ?? string.Empty,
+            result.TryGetProperty("is_default", out var isDefault) && isDefault.ValueKind == JsonValueKind.True);
+    }
+
+    /// <summary>FEA-14-READ-1 (PREQ P10): persist one book's reading preferences.</summary>
+    public async Task<bool> SaveReadingPreferencesAsync(
+        string bookId, ReadingPreferencesPatch patch, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(bookId))
+        {
+            throw new ArgumentException("book_id is required", nameof(bookId));
+        }
+        ArgumentNullException.ThrowIfNull(patch);
+        var response = await SendAsync(
+                "SaveReadingPreferences", CoreProtocol.DefaultMinor,
+                writer =>
+                {
+                    writer.WriteStartObject();
+                    writer.WriteString("book_id", bookId);
+                    writer.WriteStartObject("prefs");
+                    if (patch.Mode is not null) writer.WriteString("mode", patch.Mode);
+                    if (patch.Direction is not null) writer.WriteString("direction", patch.Direction);
+                    if (patch.Zoom is not null) writer.WriteNumber("zoom", patch.Zoom.Value);
+                    if (patch.DoublePage is not null) writer.WriteBoolean("double_page", patch.DoublePage.Value);
+                    if (patch.Layout is not null) writer.WriteString("layout", patch.Layout);
+                    writer.WriteEndObject();
+                    writer.WriteEndObject();
+                },
+                _options.RequestTimeout, cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, "SaveReadingPreferences");
+        return result.TryGetProperty("saved", out var saved) && saved.ValueKind == JsonValueKind.True;
+    }
+
+    /// <summary>FEA-14-READ-1 (PREQ P11): list one book's bookmarks.</summary>
+    public async Task<IReadOnlyList<BookmarkInfo>> ListBookmarksAsync(
+        string bookId, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(bookId))
+        {
+            throw new ArgumentException("book_id is required", nameof(bookId));
+        }
+        var response = await SendAsync(
+                "ListBookmarks", CoreProtocol.DefaultMinor,
+                writer => { writer.WriteStartObject(); writer.WriteString("book_id", bookId); writer.WriteEndObject(); },
+                _options.RequestTimeout, cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, "ListBookmarks");
+        var bookmarks = new List<BookmarkInfo>();
+        if (result.TryGetProperty("bookmarks", out var array) && array.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var item in array.EnumerateArray())
+            {
+                if (item.ValueKind != JsonValueKind.Object) continue;
+                bookmarks.Add(new BookmarkInfo(
+                    ReadString(item, "bookmark_id") ?? string.Empty,
+                    ReadString(item, "book_id") ?? string.Empty,
+                    ReadString(item, "chapter_id") ?? string.Empty,
+                    ReadString(item, "page_id") ?? string.Empty,
+                    ReadString(item, "side"),
+                    ReadString(item, "note"),
+                    ReadString(item, "created_at") ?? string.Empty));
+            }
+        }
+        return bookmarks;
+    }
+
+    /// <summary>FEA-14-READ-1 (PREQ P12): create one bookmark.</summary>
+    public async Task<string?> CreateBookmarkAsync(
+        string bookId, string chapterId, string pageId, string? side = null, string? note = null,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(bookId) || string.IsNullOrWhiteSpace(chapterId) || string.IsNullOrWhiteSpace(pageId))
+        {
+            throw new ArgumentException("book_id, chapter_id and page_id are required", nameof(bookId));
+        }
+        var response = await SendAsync(
+                "CreateBookmark", CoreProtocol.DefaultMinor,
+                writer =>
+                {
+                    writer.WriteStartObject();
+                    writer.WriteString("book_id", bookId);
+                    writer.WriteString("chapter_id", chapterId);
+                    writer.WriteString("page_id", pageId);
+                    if (side is not null) writer.WriteString("side", side);
+                    if (note is not null) writer.WriteString("note", note);
+                    writer.WriteEndObject();
+                },
+                _options.RequestTimeout, cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, "CreateBookmark");
+        return ReadString(result, "bookmark_id");
+    }
+
+    /// <summary>FEA-14-READ-1 (PREQ P13): delete one bookmark.</summary>
+    public async Task<bool> DeleteBookmarkAsync(string bookmarkId, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(bookmarkId))
+        {
+            throw new ArgumentException("bookmark_id is required", nameof(bookmarkId));
+        }
+        var response = await SendAsync(
+                "DeleteBookmark", CoreProtocol.DefaultMinor,
+                writer => { writer.WriteStartObject(); writer.WriteString("bookmark_id", bookmarkId); writer.WriteEndObject(); },
+                _options.RequestTimeout, cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, "DeleteBookmark");
+        return result.TryGetProperty("deleted", out var deleted) && deleted.ValueKind == JsonValueKind.True;
+    }
+
+    /// <summary>FEA-14-READ-1 (PREQ P14): whole-book reading progress.</summary>
+    public async Task<BookReadingProgressInfo?> GetBookReadingProgressAsync(
+        string bookId, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(bookId))
+        {
+            throw new ArgumentException("book_id is required", nameof(bookId));
+        }
+        var response = await SendAsync(
+                "GetBookReadingProgress", CoreProtocol.DefaultMinor,
+                writer => { writer.WriteStartObject(); writer.WriteString("book_id", bookId); writer.WriteEndObject(); },
+                _options.RequestTimeout, cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, "GetBookReadingProgress");
+        return new BookReadingProgressInfo(
+            ReadInt(result, "read_pages"),
+            ReadInt(result, "total_pages"),
+            result.TryGetProperty("percent", out var percent) && percent.ValueKind == JsonValueKind.Number ? percent.GetDouble() : 0.0,
+            result.TryGetProperty("finished", out var finished) && finished.ValueKind == JsonValueKind.True);
+    }
+
+    /// <summary>FEA-14-READ-1 (PREQ P15): reset one book's reading progress (explicit confirm).</summary>
+    public async Task<int> ResetReadingProgressAsync(
+        string bookId, bool confirm = true, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(bookId))
+        {
+            throw new ArgumentException("book_id is required", nameof(bookId));
+        }
+        var response = await SendAsync(
+                "ResetReadingProgress", CoreProtocol.DefaultMinor,
+                writer =>
+                {
+                    writer.WriteStartObject();
+                    writer.WriteString("book_id", bookId);
+                    writer.WriteBoolean("confirm", confirm);
+                    writer.WriteEndObject();
+                },
+                _options.RequestTimeout, cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, "ResetReadingProgress");
+        return ReadInt(result, "reset");
+    }
     /// <summary>Reader projection read face (<c>GetReaderProjection</c>, mode=original, start=beginning).</summary>
     public async Task<ReaderProjection> GetReaderProjectionAsync(
         string chapterId,
@@ -1899,3 +2073,21 @@ public static class DeleteTrashWireTargets
     /// <summary>C-09 SC-B06 capability of the trash write face (<c>MoveToTrash</c>/<c>RestoreFromTrash</c>/<c>PurgeTrash</c>).</summary>
     public const string TrashWriteCapability = "library.trash.write/1";
 }
+
+/// <summary>FEA-14-READ-1: per-book reading preferences (PREQ P9/P10).</summary>
+public sealed record ReadingPreferencesInfo(
+    string BookId, string Mode, string Direction, double Zoom,
+    bool DoublePage, string Layout, string UpdatedAt, bool IsDefault);
+
+/// <summary>FEA-14-READ-1: partial preferences patch (only non-null fields are sent).</summary>
+public sealed record ReadingPreferencesPatch(
+    string? Mode = null, string? Direction = null, double? Zoom = null,
+    bool? DoublePage = null, string? Layout = null);
+
+/// <summary>FEA-14-READ-1: one bookmark (PREQ P11/P12).</summary>
+public sealed record BookmarkInfo(
+    string BookmarkId, string BookId, string ChapterId, string PageId,
+    string? Side, string? Note, string CreatedAt);
+
+/// <summary>FEA-14-READ-1: whole-book reading progress (PREQ P14).</summary>
+public sealed record BookReadingProgressInfo(int ReadPages, int TotalPages, double Percent, bool Finished);
