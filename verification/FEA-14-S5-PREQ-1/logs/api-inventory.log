@@ -1,5 +1,4 @@
-FEA-14-S5-PREQ-1 API inventory | 2026-11-10T09:45:04.4442368+08:00 | HEAD=b7aaccfbc3290eb0ac29902834e4054404925f30
-OK: rendered counts match FEA-C07 doc
+FEA-14-S5-PREQ-1 API inventory | 2026-11-10T10:03:00.4578012+08:00 | HEAD=5459c92201a7138b971fc39b95642cbe0d69dc00
 | 接口 | 方法数 | 属性/事件/字段数 |
 |---|---|---|
 | IReaderProgressSink | 1 | 0 |
@@ -9,6 +8,7 @@ OK: rendered counts match FEA-C07 doc
 
 ## IReaderProgressSink
 
+OK: rendered counts match FEA-C07 doc
 | # | 成员 | 返回类型 |
 |---|---|---|
 | 1 | `SaveReadingProgressAsync` | `Task<ReaderProgressSaveResult>` |

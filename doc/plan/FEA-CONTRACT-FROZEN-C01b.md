@@ -76,7 +76,7 @@ C-01b 的以下条款**依赖 ADJ-001 的 PD 语义**，而 ADJ-001 的 `G-DELET
 
 ## Errata（2026-11-09，ADJ-2026-11-09-FEA13-ERRATA-AND-SPLIT）
 
-> **append-only**：不改上方冻结字节、不改 C-01b 草案；18 pins 不变。依据：[FEA-13 scope review r1](../reviews/FEA-13-scope-r1.md)。
+> **append-only**：不改上方冻结字节、不改 C-01b 草案；C-01b 契约草案字节与 pin 不变（C-07 的 v1.2 pin 变更见 CONTRACT-UNFREEZE-2026-11-10-C07）。依据：[FEA-13 scope review r1](../reviews/FEA-13-scope-r1.md)。
 
 | 条款 | errata 内容 |
 |---|---|
@@ -84,7 +84,7 @@ C-01b 的以下条款**依赖 ADJ-001 的 PD 语义**，而 ADJ-001 的 `G-DELET
 
 ## Errata（2026-11-10，ADJ-2026-11-10-FEA14-NEW-DATA-CATEGORIES）
 
-> **append-only**：本节不修改上方冻结字节与 C-01b 草案（pin 仍 `3c9f5af7…`）；18 pins 不变。依据：[S5 口径裁决](../reviews/ADJ-2026-11-10-FEA14-S5-SCOPE.md) + [新数据类别 errata](../reviews/ADJ-2026-11-10-FEA14-NEW-DATA-CATEGORIES.md)。
+> **append-only**：本节不修改上方冻结字节与 C-01b 草案（pin 仍 `3c9f5af7…`）；C-01b 契约草案字节与 pin 不变（C-07 的 v1.2 pin 变更见 CONTRACT-UNFREEZE-2026-11-10-C07）。依据：[S5 口径裁决](../reviews/ADJ-2026-11-10-FEA14-S5-SCOPE.md) + [新数据类别 errata](../reviews/ADJ-2026-11-10-FEA14-NEW-DATA-CATEGORIES.md)。
 
 | 条款 | errata 内容 |
 |---|---|

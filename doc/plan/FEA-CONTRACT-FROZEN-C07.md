@@ -22,9 +22,9 @@
 
 | 项 | 值 |
 |---|---|
-| 最后一次独立复核 | v1.0：r2 approved（FEA-GOV-10-r2）；v1.1：**r3 approved（FEA-05-PORT-1，P0/P1=0，P2×11 接受）**；v1.2：UNFREEZE 复核进行中（`doc/reviews/CONTRACT-UNFREEZE-2026-11-10-C07.md` §4/§5） |
+| 最后一次独立复核 | v1.0：r2 approved（FEA-GOV-10-r2）；v1.1：**r3 approved（FEA-05-PORT-1，P0/P1=0，P2×11 接受）**；v1.2：**r2 approved**（`doc/reviews/FEA-14-S5-PREQ-1-wire-review-r2.md`，P0/P1/P2=0，6×P3 不阻断；r1 changes_requested → 处置 → r2 approved） |
 | 复核后到冻结的改动 | v1.1：Draft 端口 7 方法 + 统计/成员表（UNFREEZE 范围）；v1.2：新增「S5 计划追加」节（25 条计划命令；代码未变、统计不变） |
-| 处置 | v1.1 **已重冻**（2026-11-02，r3 approved）；v1.2 **UNFREEZE 已登记**（2026-11-10，PREQ AC2；独立复核通过后完成）；pin = 当前文件 SHA-256 |
+| 处置 | v1.1 **已重冻**（2026-11-02，r3 approved）；v1.2 **UNFREEZE 已生效**（2026-11-10，PREQ AC2；r2 approved，本记录 §1 与 §5 已登记）；pin = 当前文件 SHA-256 |
 
 **为什么必须有这一节**：冻结条件①是「独立复核通过」，若冻结字节 ≠ 复核字节，该条件在证据上不覆盖被冻内容。本节的目的是把差异显式化，而不是掩盖它。
 
@@ -48,17 +48,6 @@
 
 - **不构成**实现授权（实现须按 C-11 选候选 → 建 Task → 独立 Review）。
 - **不构成**远端 push 授权。
-
-## 5. v1.2 UNFREEZE 变更记录（2026-11-10，`FEA-14-S5-PREQ-1`）
-
-| 项 | 值 |
-|---|---|
-| 任务 | `FEA-14-S5-PREQ-1`（AC2 共用 wire 契约包） |
-| 载体 | [CONTRACT-UNFREEZE-2026-11-10-C07](../reviews/CONTRACT-UNFREEZE-2026-11-10-C07.md) |
-| 变更 | inventory 新增「S5 计划追加」节（25 条计划命令）+ 状态行 v1.2 注记；代码/旧签名/统计零改动 |
-| pin | 旧 `3fdb44e4…` → 新 pin 见 §1（以 UNFREEZE 载体 §1 为准） |
-| 复核 | r1 `changes_requested`（R-001 wire 缺 minor/payload 等，见 `FEA-14-S5-PREQ-1-wire-review-r1.md`）→ 处置后待 r2；通过后在载体 §5 与本记录 §1B 回填 approved |
-| 不构成 | 不构成实现授权 / 正式验收 / push 授权 |
 
 ## 1A. pin 修正记录（2026-11-01，**保留原值**）
 
@@ -89,3 +78,4 @@
 | 2026-11-01 | 建立：冻结字节 pin、条件核验、依赖与后果 | DSH |
 | 2026-11-01 | pin 修正：原 pin 指向冻结前草案（状态行改动前），改为最终字节 `17c8f7016a368a0a827e9a656f9126d9949564aed9d5dc31462c0b5787f1b0c5`；新增 §1A 修正记录与纪律（见上） | DSH |
 | 2026-11-02 | **UNFREEZE v1.0→v1.1（FEA-05-PORT-1）**：`IHostController` 47→54（+7 Draft 端口）、合计 54→61、变更类别 11→18；pin 重算为 `5c48083f…`（原 v1.0 pin `17c8f701…` 保留于 §1A 历史行，不静默替换）；UNFREEZE 载体 `doc/reviews/CONTRACT-UNFREEZE-2026-11-02.md`；重新独立复核（`FEA-05-PORT-1-impl-r*`） | DSH |
+| 2026-11-10 | **UNFREEZE v1.1→v1.2（FEA-14-S5-PREQ-1）**：inventory 新增「S5 计划追加」节（25 条计划命令：FONT 4 / LIB 4 / READ 7 / EDIT 5 / AI 5），**代码/旧 54 签名/统计零改动**（`--check` 仍 1/54/6=61）；pin 重算为 `5673b1c4…`（v1.1 pin `3fdb44e4…` 保留，r1 锚 `c67c40e7…` 保留为未冻结中间值）；载体 [CONTRACT-UNFREEZE-2026-11-10-C07](../reviews/CONTRACT-UNFREEZE-2026-11-10-C07.md)；独立复核 r1 `changes_requested` → 处置 → **r2 `approved`**（P0/P1/P2=0，6×P3 不阻断） | DSH |

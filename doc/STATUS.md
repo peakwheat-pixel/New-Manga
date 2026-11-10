@@ -4,8 +4,8 @@
 
 ## 当前程序
 - **FEA 线 ACTIVE（S5）**：[FEA-00 方案](design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md)；V11R 程序已收官（v0.1.1）。
-- 当前 Task：[FEA-14-S5-PREQ-1](tasks/FEA-14-S5-PREQ-1.md) **in_progress**（七切片口径/共用 wire/errata/设置存储形状/DDL v10；AC1/AC4/AC5 已落，AC2/AC3 待续）。
-- 刚收口：[FEA-14-SET-1](tasks/FEA-14-SET-1.md) `done`（r3 approved，P0/P1/P2=0；`c543b51cc`；字体只读投影）。
+- 当前 Task：[FEA-14-EXPORT-1](tasks/FEA-14-EXPORT-1.md) **ready**（导出收口；零 DDL/零新 wire）。
+- 刚收口：`FEA-14-S5-PREQ-1` / `FEA-14-SET-1` 均 `done`（r2/r3 approved；C-07 v1.2；`5459c9220`/`c543b51cc`）。
 - FEA-11 线：WATCH-1/SCAN-2/SCAN-1/MATCH-1/AC4-GAPS-1/LINEAGE-1 `done`；HOST-AUTH-1 `done`；FEA-12 四卡 `done`。
 - **AC11-1 终态 MET（带 limitation）**：裁决 2026-11-06（[记录](reviews/FEA-11-AC11-1-adjudication-2026-11-06.md)）；「启动/访问前检查」= 冷启动枚举 + registry/root 核验（SCAN-2） + 每次访问/操作前 live grant+lease+digest 强验证；启动不做全量内容扫描（L-STARTUP）。
 - rolling checkpoint：[GOAL-PROGRESS](checkpoints/GOAL-PROGRESS-2026-11-02.md)。
@@ -14,12 +14,13 @@
 - 审查报告在 `doc/reviews/`；`verify_pins.ps1` 18/18 PASS（机械校验，不替代复核）。
 
 ## 近期完成
+- **FEA-14-S5-PREQ-1** `done`（`5459c9220`；r2 approved；C-07 UNFREEZE v1.2 pin `5673b1c4…`；wire 25 条 + errata 0 pin + DDL v10 计划）。
 - **FEA-14-SET-1** `done`（`c543b51cc`；3 轮独立复核；字体只读投影；零契约字节）。
 - **FEA-10** `done`（`d1972f0f`；P0/P1=0）；**FEA-09-UI-1** `done`（`b14e04da`）；**FEA-09** `done`（`87ca5070`）。
 
 ## 保留与已知限制
 - 台账 [TASK_LEDGER](TASK_LEDGER.md)；DIR-4/5=2/1000；真机端到端 run-i18 7/7、run-i36 10/10。
-- 测试基线（2026-11-10 FEA-14-SET-1 实测）：pytest 3446/0/10（3456 collected）；.NET 1804/0/107（8 项目）；App.Tests 858/0/11。
+- 测试基线（2026-11-10）：pytest 3446/0/10（3456 collected）；.NET 1804/0/107（8 项目）；App.Tests 858/0/11。
 
 ## Gate 与保留项
 Technical Gate=NOT_SATISFIED；private_registry_absence=UNPROVABLE；Owner Risk Acceptance=APPROVED；Disposition=WAIVED_BY_OWNER。push `clean-snapshot-20261026`=`892b946e`、`clean-snapshot-20261102`=`ac7d488e`；**main 2026-11-08 push（2C/L-R11/C-04b/SCAN-RH/INDEX-L4-1/UI-RESIDUAL-2；§27；AHEAD=0）**。

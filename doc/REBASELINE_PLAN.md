@@ -42,16 +42,17 @@
 |FEA-10-PREREQ-1|FEA-01-FREEZE-1|**done**（C-08 块②协议注册；集成 `728c8bb0`；impl r1 approved）|
 |FEA-10|FEA-00A、03、09、FEA-10-PREREQ-1|**done**（最终 head `290717f1`，delivery `d1972f0f`；7 轮独立 Review approved P0/P1=0；AC1–AC10 MET；债务 R-005…R-016/F5-01…03）|
 |FEA-C10-DRAFT|—|**done**（C-10 **FROZEN** v5，`T=4 DIP`；pin `ec8fd862…`；[冻结记录](plan/FEA-CONTRACT-FROZEN-C10.md)）|
-|FEA-14-SET-1|FEA-13-SRC-6|**done**（r3 独立复核 approved，P0/P1/P2=0；delivery `c543b51cc`；字体只读投影 AC1–AC6，AC4 指定 artefact NOT_RUN）|
+|FEA-14-SET-1|FEA-13-SRC-6|**done**（r3 approved；delivery `c543b51cc`）|
+|FEA-14-S5-PREQ-1|FEA-14-SET-1|**done**（r2 approved；C-07 UNFREEZE v1.2；wire 25 条 + errata 0 pin + DDL v10 计划；delivery `5459c9220`）|
 |NEW-MANGA-V1-FULL-AUDIT|—|blocked（素材不传播；resume=in_progress）|
 
 ## 当前活动程序（FEA 线 S5）
 
 **FEA 线 S5 收口**：FEA-14 七切片（LIB/READ/EDIT/AI/FONT/SET/EXPORT，FEA-00 §12.2/§15.6）经 `FEA-14-S5-PREQ-1` 统一口径与共用 wire 后逐片冻结；V11R 程序已收官（v0.1.1），历史节点原状保留。
 
-READY 节点：无
+READY 节点：FEA-14-EXPORT-1
 
-当前活动：`FEA-14-S5-PREQ-1`（in_progress；后续切片由该卡裁决后登记）
+当前活动：无（EXPORT-1 ready，待实现）
 
 ## 历史快照（终态节点，非当前 DAG）
 

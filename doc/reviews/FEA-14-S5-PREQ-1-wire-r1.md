@@ -85,6 +85,8 @@
 
 ## 8. Per-command wire 映射（25 条；R-001 处置）
 
+> **计划值声明（R2-004）**：minor=3、Core wire 名与 payload 键为**计划值**，尚未在真实 Core 协议上验证（NOT_RUN）。实现卡落地时必须用真实 `core_service` 验证并为每个命令回填实测 minor、通道（app/host-control）与 payload 值类型；若与计划不符，须在实现卡内记录差异并更新本表。本清单不被 C-07 pin 覆盖（pin 只覆盖 inventory 文档）。
+
 约定：Host command id 为 Host 侧注册表键（`HostCommandRegistry`）；Core wire 为 Core 命令名；**minor 为计划值 `3`**（当前活跃 2.3 协议；settings 面 7、delete 面 10 的既有约定不适用于本包新增面；实现卡若需 Core 侧新 minor，须按 Core 协议流程并在卡内记录，不得静默改）。payload 为 JSON 键（snake_case）；请求/响应键形状为实现下限，实现卡可加**可选**键但不得改已有键名/语义。
 
 | # | 命令 | Host command id | Core wire | minor | request keys | response keys |

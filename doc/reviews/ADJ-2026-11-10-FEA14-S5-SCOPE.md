@@ -67,7 +67,7 @@ status: in_progress
 ### 2.6 DDL v10 计划（本卡 AC5 的执行口径）
 
 - `schema.py` 现 v9；v10 为**additive** 迁移（新表/新列 + 索引），不属于 C-15 v7 冻结 DDL 块（先例：`FEA-12-CORE-C04B-INDEX-L4-1`，0 pin）；
-- 逐切片计划：FONT（`font_assets` 或等价，家族/变体/sha256/许可/字节数）、READ（`reading_bookmarks`、`reading_preferences`、`reading_progress` additive 列）、EDIT（`issue_markers`）、AI（`prompt_templates` 若落库；否则 settings section）、LIB（`chapters.kind/custom_rank`、`books.normalized_title` 唯一索引等）；
+- 逐切片计划：FONT（`font_assets` 或等价，家族/变体/sha256/许可/字节数）、READ（`reading_bookmarks`、`reading_preferences`、`reading_progress` additive 列）、EDIT（`issue_markers`）、AI（`prompt_templates`——**统一落库，仅用户自建行；内置模板为 Core 常量、不落库不备份**，见 `ADJ-2026-11-10-FEA14-NEW-DATA-CATEGORIES`）、LIB（`chapters.kind/custom_rank`、`books.normalized_title` 唯一索引等）；
 - 每张表须有迁移前 `pre_migration` 备份、失败回退、旧库升级守恒断言；旧 binary 拒写新 schema 语义沿用既有测试。
 
 ## 3. 待用户裁决的产品取舍（不在本卡决定）

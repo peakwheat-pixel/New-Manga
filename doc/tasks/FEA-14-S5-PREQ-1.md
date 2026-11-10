@@ -3,20 +3,20 @@ id: FEA-14-S5-PREQ-1
 title: FEA-14 S5 口径与地基（七切片裁决 / 共用 wire / 新数据类别 errata / 设置存储形状 / DDL v10 计划）
 kind: decision
 governance_version: 3
-status: in_progress
+status: done
 approval: **DSH 2026-11-10 裁决**（依据只读侦察 `G:\CODEX\New Manga.workspace\temp\FEA-14-planning\recon.md`）：FEA-00 §12.2/§15.6 为**七切片**（LIB/READ/EDIT/AI/FONT/SET/EXPORT）；`FEA-14-SET-1` 为 SET 视觉子集；本卡为 S5 其余切片提供统一口径与共用 wire，**不写产品代码**。
 suggested_owner: dsh
 owner: dsh
-reviewer: null
+reviewer: r2 独立复核（`doc/reviews/FEA-14-S5-PREQ-1-wire-review-r2.md`，approved：P0/P1/P2=0；6×P3 残余登记）
 depends_on:
   - FEA-14-SET-1
 base_commit: c543b51cc
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 5459c9220
+delivery_head: 5459c9220
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-14-S5-PREQ-1
 allowed_paths:
   - doc/tasks/FEA-14-S5-PREQ-1.md
@@ -62,11 +62,11 @@ out_of_scope:
 ## Acceptance Criteria
 
 - [x] **AC1 七切片裁决**：`doc/reviews/ADJ-2026-11-10-FEA14-S5-SCOPE.md` 记录（a）七切片清单（含 EXPORT）与依赖顺序；（b）`FEA-14-SET-1` = SET 视觉子集、真实 SET 另立卡的裁决；（c）`FEA-15-INTEGRATION-ACCEPTANCE.md` §3 的 append-only 注记（不改原句）。`check.ps1` 通过。 <<MET>>
-- [ ] **AC2 共用 wire 契约包 + 一次 UNFREEZE**：五切片的命令面清单（`FONT/LIB/READ/EDIT/AI` 各自命令、域、minor、payload 形状）落盘；按 `FEA-CONTRACT-FROZEN-C07.md:43` 在同一 Task 内重跑 inventory 脚本、更新清单、重算 C-07 pin；UNFREEZE 记录含**独立上下文复核**（非本卡作者会话）与 `verify_pins` 全绿（18 pins 计数不变或按裁决记录新数）。
-- [ ] **AC3 新数据类别 errata**：C-01b SC-10b + C-09 SC-B01a 的 append-only errata（`fonts/`、`bookmarks`、`issue_markers`、`prompt_templates` 四类的备份默认包含/清理不删/恢复过滤语义），不改历史冻结字节。
-- [x] **AC4 设置存储形状**：一页形状（settings section 白名单新增项、数据根指针字段、切换入口语义、迁移约束）落盘，显式写明 MIGRATE-6 释放条件满足情况；不改实现。 <<MET `verification/FEA-14-S5-PREQ-1/settings-storage-shape.md`>>
-- [x] **AC5 DDL v10 计划**：逐表/列/迁移步骤/回退/备份归属清单；声明「v10 不属于 C-15 v7 冻结 DDL 块」；不改 schema.py。 <<MET `verification/FEA-14-S5-PREQ-1/ddl-v10-plan.md`>>
-- [x] **AC6 门禁与零改动**：`check.ps1`（默认 + `-TaskPath`）PASS；`verify_pins` 在 AC2 前 18/18、AC2 后按记录；`git status --short` 的全部改动（含 untracked）⊆ allowed_paths；无产品代码 diff；无 DDL 改动。 <<MET（2026-11-10：check PASS、pins 18/18、无 src/apps/DDL diff；`git status --short` 逐项核对 ⊆ allowed_paths）>>
+- [x] **AC2 共用 wire 契约包 + 一次 UNFREEZE**：五切片的命令面清单（`FONT/LIB/READ/EDIT/AI` 各自命令、域、minor、payload 形状）落盘；按 `FEA-CONTRACT-FROZEN-C07.md:43` 在同一 Task 内重跑 inventory 脚本、更新清单、重算 C-07 pin；UNFREEZE 记录含**独立上下文复核**（非本卡作者会话）与 `verify_pins` 全绿（18 pins 计数不变或按裁决记录新数）。 <<MET>>
+- [x] **AC3 新数据类别 errata**：C-01b SC-10b + C-09 SC-B01a 的 append-only errata（`fonts/`、`bookmarks`、`issue_markers`、`prompt_templates` 四类的备份默认包含/清理不删/恢复过滤语义），不改历史冻结字节。 <<MET>>
+- [x] **AC4 设置存储形状**：一页形状（settings section 白名单新增项、数据根指针字段、切换入口语义、迁移约束）落盘，显式写明 MIGRATE-6 释放条件满足情况；不改实现。 <<MET>>
+- [x] **AC5 DDL v10 计划**：逐表/列/迁移步骤/回退/备份归属清单；声明「v10 不属于 C-15 v7 冻结 DDL 块」；不改 schema.py。 <<MET>>
+- [x] **AC6 门禁与零改动**：`check.ps1`（默认 + `-TaskPath`）PASS；`verify_pins` 在 AC2 前 18/18、AC2 后按记录；`git status --short` 的全部改动（含 untracked）⊆ allowed_paths；无产品代码 diff；无 DDL 改动。 <<MET>>
 
 ## 交付物
 
@@ -93,10 +93,24 @@ out_of_scope:
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | worktree | NOT_APPLICABLE（文档卡，无需 worktree） | NOT_APPLICABLE | — | — | 未创建 |
-| temp | `G:\CODEX\New Manga.workspace\temp\FEA-14-planning\recon.md` | keep-evidence（本卡依据） | — | — | 只读 |
+| temp | `G:\CODEX\New Manga.workspace\temp\FEA-14-planning\recon.md` | NOT_APPLICABLE | — | — | 只读 |
 | build | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 无构建 |
 | user-data | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 未访问 |
 
+## Canonical Evidence
+
+| evidence_id | AC/Gate | path | commit | sha256 | class |
+|---|---|---|---|---|---|
+| EV-PREQ-001 | AC1-AC6 | `verification/FEA-14-S5-PREQ-1/ddl-v10-plan.md` | `-` | `8c029240ee7ecafb4a7c28ee2242b3c8bd381f5e71e1b4b5101e8ba60d441f26` | CANONICAL |
+| EV-PREQ-002 | AC1-AC6 | `verification/FEA-14-S5-PREQ-1/logs/api-inventory.log` | `-` | `659dd4be134019fc854996d8228369315885a4f6ded4cf24bd5cba9918989736` | CANONICAL |
+| EV-PREQ-003 | AC1-AC6 | `verification/FEA-14-S5-PREQ-1/logs/gates-check.log` | `-` | `3a18137b01cd33cd75b1c3839a381d3ec24521bb1f5a0bcc9c616b7b6b6e6d20` | CANONICAL |
+| EV-PREQ-004 | AC1-AC6 | `verification/FEA-14-S5-PREQ-1/logs/gates-pins.log` | `-` | `3ffe78af7f0068a8ab90d3d2c4ada229c340a756333d8e4a74fc67656f379cbd` | CANONICAL |
+| EV-PREQ-005 | AC1-AC6 | `verification/FEA-14-S5-PREQ-1/settings-storage-shape.md` | `-` | `d58391a5b0b978462a0ec618b8e20838e75848781ce15f2e64bd719af1b7394f` | CANONICAL |
+
 ## Closeout Record
 
-- 未开始（2026-11-10 scope 冻结，`in_progress`）。
+- 结论：**完成**（2026-11-10）。AC1–AC6 全部 MET；r1 changes_requested → 处置 → **r2 approved**（P0/P1/P2=0，6×P3 不阻断）。
+- 交付：C-07 UNFREEZE v1.2（pin `3fdb44e4…`→`5673b1c4…`；代码/统计零改动）；wire 25 条 + per-command 映射；C-01b/C-09 append-only errata（契约草案零字节、pins 不变）；设置存储形状；DDL v10 计划。
+- 证据：`verification/FEA-14-S5-PREQ-1/`（形状/计划/3 份门禁日志）；`--check` EXIT 0（1/54/6=61）、`verify_pins` 18/18、`check.ps1`（默认 + TaskPath）PASS。
+- 残余 limitation（不阻断，已登记）：wire §8 的 minor=3 / Core wire 名 / payload 键为计划值，待各实现卡用真实 Core 协议验证回填（NOT_RUN）；冻结记录 §5 编号与原变更表已合并（v1.2 行）；C01b/C09 errata 为 0 pin 文字锚点。
+- 不构成：不构成任何切片实现授权/正式验收/push 授权。

@@ -96,7 +96,7 @@
 
 ## 9. Errata（2026-11-09，ADJ-2026-11-09-FEA13-ERRATA-AND-SPLIT）
 
-> **append-only**：本节不修改上方冻结字节、不修改契约草案 FEA-C09_DELETE_BACKUP_MIGRATION_DRAFT.md；18 pins 不变（C-09 pin 仍为 dc51226b336ce6af60fb6586bdeeb3660dff07011b415c52ac41d042cb9a4ec6）。依据：[FEA-13 scope review r1](../reviews/FEA-13-scope-r1.md) + 裁决 [ADJ-2026-11-09](../reviews/ADJ-2026-11-09-FEA13-ERRATA-AND-SPLIT.md)。
+> **append-only**：本节不修改上方冻结字节、不修改契约草案 FEA-C09_DELETE_BACKUP_MIGRATION_DRAFT.md；C-09 契约草案字节与 pin 仍为 dc51226b336ce6af60fb6586bdeeb3660dff07011b415c52ac41d042cb9a4ec6（C-07 的 v1.2 pin 变更见 CONTRACT-UNFREEZE-2026-11-10-C07）。依据：[FEA-13 scope review r1](../reviews/FEA-13-scope-r1.md) + 裁决 [ADJ-2026-11-09](../reviews/ADJ-2026-11-09-FEA13-ERRATA-AND-SPLIT.md)。
 
 | # | 条款 | errata 内容 |
 |---|---|---|

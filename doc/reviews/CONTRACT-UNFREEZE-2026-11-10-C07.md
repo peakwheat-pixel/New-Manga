@@ -53,6 +53,13 @@
   - 处置后 pin 重算为 `5673b1c4…`（r1 锚 `c67c40e7…` 保留为未冻结中间值）。
 - **待 r2 复核**（对处置后字节）；r2 approved 后本 UNFREEZE 视为生效，并在本文件与冻结记录 §1B 回填 approved。
 
+### r2（2026-11-10，同一 fresh 独立上下文子 agent 续接 r1，未参与本卡写作）
+
+- 报告：`doc/reviews/FEA-14-S5-PREQ-1-wire-review-r2.md`。
+- 结论：**approved**（P0=0 / P1=0 / P2=0 / P3=6 不阻断）。r1 的 R-001…R-005 全部 CLOSED；P3 残余（旧条件句/`builtin` 措辞、冻结 §5 重复编号、C01b/C09「18 pins 不变」措辞、§8 计划值未验证且不受 pin 覆盖、AC6 证据恒真、SC-11 外部字体源边界）已在本轮收口提交中处置或登记。
+- 复核门禁：`generate_api_inventory.py --check` EXIT 0（1/54/6=61）；`verify_pins` 18/18 PASS（C07=`5673b1c4…`）；`check.ps1` 默认 + `-TaskPath` PASS；提交 13 文件全部 ⊆ allowed_paths（OUT=0）；无 src/apps/schema/DDL diff。
+- **本 UNFREEZE 状态：已生效**（2026-11-10）。
+
 ## 6. 不构成什么
 
 - 不构成任何切片实现授权；

@@ -1,17 +1,28 @@
-FEA-14-S5-PREQ-1 check.ps1 (default + -TaskPath) | 2026-11-10T09:45:11.1201563+08:00 | HEAD=b7aaccfbc3290eb0ac29902834e4054404925f30
+FEA-14-S5-PREQ-1 check.ps1 (default + -TaskPath PREQ/EXPORT-1) | 2026-11-10T10:03:01.2979629+08:00 | HEAD=5459c92201a7138b971fc39b95642cbe0d69dc00
 === default ===
 Governance scope: 15 current documents; no historical directory scan.
-Task: doc\tasks\FEA-14-S5-PREQ-1.md
+Task: doc\tasks\FEA-14-EXPORT-1.md
 WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
-WARN: doc/STATUS.md 已达到预算的 80%：3133 bytes / 30 lines
-WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6791 bytes / 63 lines
+WARN: doc/STATUS.md 已达到预算的 80%：3184 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6826 bytes / 64 lines
 Governance check: PASS (3 warnings)
 EXIT=0
-=== -TaskPath ===
+=== TaskPath PREQ ===
 Governance scope: 15 current documents; no historical directory scan.
 Task: doc\tasks\FEA-14-S5-PREQ-1.md
 WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
-WARN: doc/STATUS.md 已达到预算的 80%：3133 bytes / 30 lines
-WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6791 bytes / 63 lines
+WARN: doc/STATUS.md 已达到预算的 80%：3184 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6826 bytes / 64 lines
+FAIL: Evidence SHA-256 不匹配：verification/FEA-14-S5-PREQ-1/logs/api-inventory.log
+FAIL: Evidence SHA-256 不匹配：verification/FEA-14-S5-PREQ-1/logs/gates-check.log
+FAIL: Evidence SHA-256 不匹配：verification/FEA-14-S5-PREQ-1/logs/gates-pins.log
+Governance check: FAIL (3 errors, 3 warnings)
+EXIT=1
+=== TaskPath EXPORT-1 ===
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-14-EXPORT-1.md
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3184 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6826 bytes / 64 lines
 Governance check: PASS (3 warnings)
 EXIT=0
