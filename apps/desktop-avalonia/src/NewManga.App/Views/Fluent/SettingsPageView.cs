@@ -614,7 +614,9 @@ public sealed class SettingsPageView : UserControl
                 : $"实际使用：{line.ResolvedFamily}（缺失：{string.Join("、", line.Missing)}）";
             if (line.Scale is not null || line.LineHeight is not null)
             {
-                detail += $"；缩放 {line.Scale?.ToString("0.##") ?? "—"} / 行高 {line.LineHeight?.ToString("0.##") ?? "—"}";
+                // R3-002: token numbers render invariantly, so a comma-decimal UI culture
+                // cannot make the read-only projection disagree with the token values.
+                detail += $"；缩放 {FormatTokenNumber(line.Scale)} / 行高 {FormatTokenNumber(line.LineHeight)}";
             }
             var field = FluentUi.Field(
                 line.TokenKey,
@@ -650,6 +652,10 @@ public sealed class SettingsPageView : UserControl
             "fluent-subtle-text"));
         return new SettingsGroup { Child = stack };
     }
+
+    /// <summary>R3-002: design-token numbers use the invariant decimal point.</summary>
+    private static string FormatTokenNumber(double? value) =>
+        value?.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture) ?? "—";
 
     private Control BuildAboutGroup()
     {
