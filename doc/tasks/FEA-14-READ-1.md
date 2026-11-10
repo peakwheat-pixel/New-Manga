@@ -3,7 +3,7 @@ id: FEA-14-READ-1
 title: FEA-14 切片 READ-1：按书阅读偏好 + 书签 + 整书进度（复用 PREQ 预冻结 wire）
 kind: implementation
 governance_version: 3
-status: ready
+status: in_review
 approval: **DSH 2026-11-10 冻结**（`ADJ-2026-11-10-FEA14-S5-SCOPE` §2.1/§2.2；PREQ-1 wire 预冻结 P9–P15；侦察 `recon.md` §2.4）
 suggested_owner: dsh
 owner: dsh
@@ -73,12 +73,12 @@ out_of_scope:
 
 ## Acceptance Criteria
 
-- [ ] **AC1 偏好持久化**：按书 mode/direction/zoom/doublePage/layout 保存后在重启/重新加载恢复（隔离数据根，两次进程/两次装配）。
-- [ ] **AC2 书签**：新增（双页 left/right/both）、列表、删除；删除不影响漫画/进度/人工修改；跨书隔离。
-- [ ] **AC3 整书进度**：按页面数计算并显示（与章内进度分列）；最后一页 → 已读完；重置需确认且可从记录中确认。
-- [ ] **AC4 迁移无损**：schema v10 additive；旧 `reading_progress` 行字段级无损；失败回退不半迁移。
-- [ ] **AC5 契约/门禁**：七条命令按 PREQ §8 形状实现；`generate_api_inventory.py --check` 更新后 EXIT 0；`verify_pins` 18/18（C-07 pin 按记录更新）；无未授权契约字节变更。
-- [ ] **AC6 证据**：定向 pytest/App.Tests 通过；`verification/FEA-14-READ-1/` 日志含 EXIT；NOT_RUN（真实 UI 手势/IME、跨内容序列）如实登记。
+- [ ] **AC1 偏好持久化**：按书 mode/direction/zoom/doublePage/layout 保存后在重启/重新加载恢复（隔离数据根，两次进程/两次装配）。 <<PARTIAL: Core schema v10 + P9/P10 wire 已验证；Fluent UI 未接线>>
+- [ ] **AC2 书签**：新增（双页 left/right/both）、列表、删除；删除不影响漫画/进度/人工修改；跨书隔离。 <<PARTIAL: Core + P11–P13 wire 完整（CRUD/跨书/非法 side）；Fluent UI 书签面板未接线>>
+- [ ] **AC3 整书进度**：按页面数计算并显示（与章内进度分列）；最后一页 → 已读完；重置需确认且可从记录中确认。 <<PARTIAL: Core 计算 + P14/P15 wire（reset 需 confirm）已验证；UI 显示/确认未接线>>
+- [x] **AC4 迁移无损**：schema v10 additive；旧 `reading_progress` 行字段级无损；失败回退不半迁移。 <<MET>>
+- [x] **AC5 契约/门禁**：七条命令按 PREQ §8 形状实现；`generate_api_inventory.py --check` 更新后 EXIT 0；`verify_pins` 18/18（C-07 pin 按记录更新）；无未授权契约字节变更。 <<MET>>
+- [x] **AC6 证据**：定向 pytest/App.Tests 通过；`verification/FEA-14-READ-1/` 日志含 EXIT；NOT_RUN（真实 UI 手势/IME、跨内容序列）如实登记。 <<MET>>
 
 ## 证据计划（L2）
 
@@ -101,6 +101,16 @@ out_of_scope:
 | user-data | `%APPDATA%\com.newmanga.desktop` | NOT_APPLICABLE | — | — | 只读指纹（测试用隔离根） |
 | build | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 复用现有 .NET / Python 环境 |
 | worktree | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 主树实现 |
+
+## Canonical Evidence
+
+| evidence_id | AC/Gate | path | commit | sha256 | class |
+|---|---|---|---|---|---|
+| EV-RD-001 | READ-1 | `verification/FEA-14-READ-1/logs/dotnet-app-tests.log` | `-` | `ce9a0f3e62e5e4b33a6dc54e44b55d5323851a2755226f5f32899d4760c85838` | CANONICAL |
+| EV-RD-002 | READ-1 | `verification/FEA-14-READ-1/logs/pytest-full.log` | `-` | `8c61189ab93f9dc09e24339f622099a831e1432ec1cfa9954104bd250d4b4fab` | CANONICAL |
+| EV-RD-003 | READ-1 | `verification/FEA-14-READ-1/logs/read-wire.log` | `-` | `5eabf16881205b9a80730ba1ba0df816667cf024eaf13e1788b8a9d2c901e454` | CANONICAL |
+| EV-RD-004 | READ-1 | `verification/FEA-14-READ-1/logs/reading-storage.log` | `-` | `b0ab413835300ddc9291937e3c3f617da3a13d0f78edc5d943a032e878c40130` | CANONICAL |
+| EV-RD-005 | READ-1 | `verification/FEA-14-READ-1/README.md` | `-` | `894f387ca6d9edd03702b2e467e3cdcf7538a923da141c4e3e62c815218ec6f1` | CANONICAL |
 
 ## Closeout Record
 
