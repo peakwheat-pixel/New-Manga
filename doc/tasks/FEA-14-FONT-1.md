@@ -3,7 +3,7 @@ id: FEA-14-FONT-1
 title: FEA-14 切片 FONT-1：Core 字体库（安装/列举/预览/删除 + 内置字体）
 kind: implementation
 governance_version: 3
-status: ready
+status: in_review
 approval: **DSH 2026-11-10 冻结**（`ADJ-2026-11-10-FEA14-S5-SCOPE` §2.1/§2.2；PREQ-1 wire 预冻结 FONT P1–P4；侦察 `recon.md` §2.3）
 suggested_owner: dsh
 owner: dsh
@@ -65,12 +65,12 @@ FEA-14 S5 FONT 切片（FEA-00 §12.2/§15.6）需要字体库数据面：安装
 
 ## Acceptance Criteria
 
-- [ ] **AC1 字体安装**：合法字体文件 → 复制到受管 `fonts/`、行记录（family/weight/style/sha256）；重复安装同 sha256 幂等；越界/非字体文件拒绝（typed）。
-- [ ] **AC2 删除**：删除行 + 受管文件；不存在 → typed 错误；不触碰用户源文件。
-- [ ] **AC3 列举/目录**：列举返回已安装字体（含内置条目，缺省空）；目录查询按 family/weight 过滤；数据与磁盘一致。
-- [ ] **AC4 迁移无损**：schema v11 additive；既有用户数据行不受影响。
-- [ ] **AC5 契约/门禁**：P1–P4 按 PREQ §8 形状；`generate_api_inventory.py --check` EXIT 0；`verify_pins` 18/18（C-07 pin 更新记录）。
-- [ ] **AC6 证据**：定向 pytest/App.Tests 通过；`verification/FEA-14-FONT-1/` 日志含 EXIT；NOT_RUN（真实字体渲染/随包字体）如实登记。
+- [x] **AC1 字体安装**：合法字体文件 → 复制到受管 `fonts/`、行记录（family/weight/style/sha256）；重复安装同 sha256 幂等；越界/非字体文件拒绝（typed）。 <<MET>>
+- [x] **AC2 删除**：删除行 + 受管文件；不存在 → typed 错误；不触碰用户源文件。 <<MET>>
+- [x] **AC3 列举/目录**：列举返回已安装字体（含内置条目，缺省空）；目录查询按 family/weight 过滤；数据与磁盘一致。 <<MET>>
+- [x] **AC4 迁移无损**：schema v11 additive；既有用户数据行不受影响。 <<MET>>
+- [x] **AC5 契约/门禁**：P1–P4 按 PREQ §8 形状；`generate_api_inventory.py --check` EXIT 0；`verify_pins` 18/18（C-07 pin 更新记录）。 <<MET>>
+- [x] **AC6 证据**：定向 pytest/App.Tests 通过；`verification/FEA-14-FONT-1/` 日志含 EXIT；NOT_RUN（真实字体渲染/随包字体）如实登记。 <<MET>>
 
 ## 证据计划（L2）
 
@@ -93,6 +93,15 @@ FEA-14 S5 FONT 切片（FEA-00 §12.2/§15.6）需要字体库数据面：安装
 | user-data | `%APPDATA%\com.newmanga.desktop` | NOT_APPLICABLE | — | — | 只读；测试用隔离根 |
 | build | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 复用现有环境 |
 | worktree | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 主树实现 |
+
+## Canonical Evidence
+
+| evidence_id | AC/Gate | path | commit | sha256 | class |
+|---|---|---|---|---|---|
+| EV-FN-001 | FONT-1 | `verification/FEA-14-FONT-1/logs/dotnet-app-tests.log` | `-` | `fd837f5fe5af02719c261db4f2e5043619eb95e3da21917c727cec1571b5696a` | CANONICAL |
+| EV-FN-002 | FONT-1 | `verification/FEA-14-FONT-1/logs/pins-api.log` | `-` | `9d798a9b0a0637abe5ddc41b74f2915997cb933ef4be16fa9da064531336b5e6` | CANONICAL |
+| EV-FN-003 | FONT-1 | `verification/FEA-14-FONT-1/logs/pytest-font.log` | `-` | `2fdfb7359e36fea2284dc29ddaae41977171a306627afb9e265538bf8fcfcb55` | CANONICAL |
+| EV-FN-004 | FONT-1 | `verification/FEA-14-FONT-1/README.md` | `-` | `ad3fb403d6401dc35c1542fdd06713d43542366bef919196496da5f7eb5d6b20` | CANONICAL |
 
 ## Closeout Record
 
