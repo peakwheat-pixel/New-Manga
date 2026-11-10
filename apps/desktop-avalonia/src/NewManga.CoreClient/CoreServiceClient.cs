@@ -1693,11 +1693,13 @@ public sealed class CoreServiceClient : IAsyncDisposable
                 _options.RequestTimeout, cancellationToken)
             .ConfigureAwait(false);
         var result = RequireResult(response, "CreateChapterWithMetadata");
+        // R-03: P8 returns sort_order (the appended position) -- never import_order,
+        // which is not part of the P8 response.
         return new ChapterSummary(
             ReadString(result, "chapter_id") ?? string.Empty,
             ReadString(result, "title") ?? string.Empty,
             ReadString(result, "number") ?? string.Empty,
-            ReadInt(result, "import_order"));
+            ReadInt(result, "sort_order"));
     }
 
     /// <summary>Reader projection read face (<c>GetReaderProjection</c>, mode=original, start=beginning).</summary>

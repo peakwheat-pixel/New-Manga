@@ -180,7 +180,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Any, Callable, TextIO
 
 from application.fonts.service import FontLibraryError
-from application.library.errors import ChapterNotFound
+from application.library.errors import BookNotFound, ChapterNotFound
 from application.editing.errors import (
     DraftError,
     GuardStatus,
@@ -5150,7 +5150,7 @@ class CoreServiceServer:
             raise P16WireError("INVALID_REQUEST", "validation", "Book metadata patch is invalid")
         try:
             self._core.library.patch_book_metadata(payload["book_id"], patch)
-        except ChapterNotFound:
+        except BookNotFound:
             raise P16WireError("TARGET_NOT_FOUND", "not_found", "Book was not found")
         except (TypeError, ValueError) as error:
             raise P16WireError("INVALID_REQUEST", "validation", "Book metadata values are invalid") from error
@@ -5160,11 +5160,13 @@ class CoreServiceServer:
         if set(payload) != {"book_id", "ordered_ids"} or not isinstance(payload.get("book_id"), str) or not payload["book_id"]:
             raise P16WireError("INVALID_REQUEST", "validation", "Chapter reorder request is invalid")
         ordered = payload.get("ordered_ids")
-        if not isinstance(ordered, list) or not ordered or not all(isinstance(item, str) and item for item in ordered):
+        # R-13: an empty list is the only way to express "reorder an empty book";
+        # a non-empty book still fails the exact-cover check below.
+        if not isinstance(ordered, list) or not all(isinstance(item, str) and item for item in ordered):
             raise P16WireError("INVALID_REQUEST", "validation", "Chapter reorder request is invalid")
         try:
             self._core.library.reorder_chapters_strict(payload["book_id"], list(ordered))
-        except ChapterNotFound:
+        except BookNotFound:
             raise P16WireError("TARGET_NOT_FOUND", "not_found", "Book was not found")
         except (TypeError, ValueError) as error:
             raise P16WireError("INVALID_REQUEST", "validation", "Ordered chapter ids are invalid") from error
@@ -5198,13 +5200,16 @@ class CoreServiceServer:
         if not isinstance(number, str):
             raise P16WireError("INVALID_REQUEST", "validation", "Create chapter request is invalid")
         import_order = payload.get("import_order")
-        if import_order is not None and (not isinstance(import_order, int) or import_order < 0):
+        # R-13: bool is an int subclass in Python; reject it explicitly.
+        if import_order is not None and (
+            isinstance(import_order, bool) or not isinstance(import_order, int) or import_order < 0
+        ):
             raise P16WireError("INVALID_REQUEST", "validation", "Create chapter request is invalid")
         try:
             chapter = self._core.library.create_chapter_with_metadata(
                 payload["book_id"], title, kind=kind, number=number, import_order=import_order,
             )
-        except ChapterNotFound:
+        except BookNotFound:
             raise P16WireError("TARGET_NOT_FOUND", "not_found", "Book was not found")
         except (TypeError, ValueError) as error:
             raise P16WireError("INVALID_REQUEST", "validation", "Create chapter values are invalid") from error
@@ -5213,6 +5218,7 @@ class CoreServiceServer:
             "title": chapter.title,
             "kind": chapter.chapter_type.value,
             "number": chapter.chapter_number,
+            "sort_order": chapter.sort_order,
         }
 
     def _register_export_target(self, payload: dict[str, Any]) -> dict[str, Any]:

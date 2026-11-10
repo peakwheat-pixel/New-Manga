@@ -32,12 +32,30 @@ def _service(tmp_path: Path):
 
 def test_v12_adds_custom_rank_and_keeps_legacy_rows(tmp_path):
     conn = sqlite3.connect(tmp_path / "library.db")
+    conn.row_factory = sqlite3.Row
     MigrationRunner(conn, MIGRATIONS[:-1]).apply_pending()
     assert read_schema_version(conn) == LATEST - 1
+    # R-10: a real v11 chapter row must survive the migration with custom_rank NULL.
+    conn.execute(
+        "INSERT INTO books (book_id, title, created_at, updated_at)"
+        " VALUES ('legacy-b', 'Legacy', '2026-01-01', '2026-01-01')"
+    )
+    conn.execute(
+        "INSERT INTO chapters (chapter_id, book_id, title, chapter_number, subtitle,"
+        " import_order, sort_order, chapter_type, reading_direction, notes, created_at, updated_at)"
+        " VALUES ('legacy-c', 'legacy-b', 'Old Ch', '3', '', 1, 1, 'paged', 'rtl', 'n',"
+        " '2026-01-01', '2026-01-01')"
+    )
+    conn.commit()
     MigrationRunner(conn, MIGRATIONS).apply_pending()
     assert read_schema_version(conn) == LATEST
     columns = {row[1] for row in conn.execute("pragma table_info(chapters)")}
     assert "custom_rank" in columns
+    row = conn.execute(
+        "SELECT title, chapter_number, notes, custom_rank FROM chapters WHERE chapter_id = 'legacy-c'"
+    ).fetchone()
+    assert row["title"] == "Old Ch" and row["chapter_number"] == "3" and row["notes"] == "n"
+    assert row["custom_rank"] is None
 
 
 def test_patch_book_keeps_unprovided_fields(tmp_path):
@@ -102,3 +120,46 @@ def test_create_chapter_with_metadata(tmp_path):
     assert service.get_chapter(chapter.chapter_id).title == "Extra"
     with pytest.raises(Exception):
         service.create_chapter_with_metadata("missing-book", "x")
+
+
+def test_patch_book_tags_replaces_associations(tmp_path):
+    conn, service = _service(tmp_path)
+    book = service.create_book("Book")
+    first = service.create_tag("first")
+    second = service.create_tag("second")
+    service.patch_book_metadata(book.book_id, {"tags": [first.tag_id]})
+    assert [tag.tag_id for tag in service.tags_of_book(book.book_id)] == [first.tag_id]
+    # R-02: replacement (not append) and validation-before-write.
+    service.patch_book_metadata(book.book_id, {"tags": [second.tag_id]})
+    assert [tag.tag_id for tag in service.tags_of_book(book.book_id)] == [second.tag_id]
+    with pytest.raises(Exception):
+        service.patch_book_metadata(book.book_id, {"tags": ["missing-tag"]})
+    assert [tag.tag_id for tag in service.tags_of_book(book.book_id)] == [second.tag_id]
+
+
+def test_create_with_import_order_keeps_sort_order_unique(tmp_path):
+    conn, service = _service(tmp_path)
+    book = service.create_book("Book")
+    first = service.create_chapter(book.book_id, "Ch 1")
+    second = service.create_chapter(book.book_id, "Ch 2")
+    created = service.create_chapter_with_metadata(book.book_id, "Extra", import_order=1)
+    # R-04: import_order is provenance; sort_order must stay appended/unique.
+    assert created.import_order == 1
+    assert created.sort_order == max(first.sort_order, second.sort_order) + 1
+    orders = [chapter.sort_order for chapter in service.list_chapters(book.book_id)]
+    assert len(set(orders)) == len(orders), "sort_order must stay unique"
+
+
+def test_patch_chapter_rejects_non_integer_custom_rank(tmp_path):
+    conn, service = _service(tmp_path)
+    book = service.create_book("Book")
+    chapter = service.create_chapter(book.book_id, "Ch 1")
+    # R-13: bool/float/str/negative must raise instead of being silently coerced.
+    for bad in (True, 1.5, -1, "3"):
+        with pytest.raises(ValueError):
+            service.patch_chapter_metadata(chapter.chapter_id, {"custom_rank": bad})
+    assert service.get_chapter(chapter.chapter_id).custom_rank is None
+    service.patch_chapter_metadata(chapter.chapter_id, {"custom_rank": 0})
+    assert service.get_chapter(chapter.chapter_id).custom_rank == 0
+    service.patch_chapter_metadata(chapter.chapter_id, {"custom_rank": None})
+    assert service.get_chapter(chapter.chapter_id).custom_rank is None

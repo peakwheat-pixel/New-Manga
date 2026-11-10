@@ -19,9 +19,7 @@ from application.library.errors import (
     TagNotFound,
 )
 from application.library.ports import LibraryRepository
-from datetime import datetime, timezone
-
-from domain.books.entities import Book, Chapter, ChapterType, ReadingDirection, Tag
+from domain.books.entities import Book, Chapter, ChapterType, ReadingDirection, Tag, utc_now
 
 
 def _new_id() -> str:
@@ -204,15 +202,39 @@ class LibraryService:
     # ------------------------------------------------------------------
     # FEA-14-LIB-1 (PREQ LIB P5-P8): metadata patches, strict reorder, create.
     # ------------------------------------------------------------------
-    def patch_book_metadata(self, book_id: str, patch: dict[str, str]) -> Book:
+    def patch_book_metadata(self, book_id: str, patch: dict[str, object]) -> Book:
         allowed = {"title", "author", "series_title", "description", "notes",
-                   "original_title", "publisher"}
+                   "original_title", "publisher", "tags"}
         unknown = set(patch) - allowed
         if unknown:
             raise ValueError(f"unknown book metadata fields: {sorted(unknown)}")
-        if "title" in patch and not str(patch["title"]).strip():
+        tags = patch.get("tags")
+        if tags is not None and not (
+            isinstance(tags, list) and all(isinstance(item, str) and item for item in tags)
+        ):
+            raise ValueError("book tags must be a list of tag ids")
+        text_patch = {
+            key: str(value) for key, value in patch.items() if key != "tags"
+        }
+        if "title" in text_patch and not text_patch["title"].strip():
             raise ValueError("book title must not be empty")
-        return self.update_book(book_id, **{key: str(value) for key, value in patch.items()})
+        book = self.update_book(book_id, **text_patch) if text_patch else self.get_book(book_id)
+        if tags is not None:
+            self._replace_book_tags(book_id, list(tags))
+        return book
+
+    def _replace_book_tags(self, book_id: str, tag_ids: list[str]) -> None:
+        """FEA-14-LIB-1 (PREQ LIB P5): replace the book's tag associations.
+
+        The whole replacement validates first (unknown tag ids fail before any
+        write), so a bad id can never leave the book half-tagged.
+        """
+        for tag_id in tag_ids:
+            self._require_tag(tag_id)
+        for tag in self._repo.list_tags_of_book(book_id):
+            self._repo.remove_book_tag(book_id, tag.tag_id)
+        for tag_id in tag_ids:
+            self._repo.add_book_tag(book_id, tag_id)
 
     def patch_chapter_metadata(self, chapter_id: str, patch: dict[str, object]) -> Chapter:
         allowed = {"kind", "custom_rank", "number", "title", "subtitle", "notes"}
@@ -228,7 +250,12 @@ class LibraryService:
                 chapter.reading_direction = ReadingDirection.RTL
         if "custom_rank" in patch:
             value = patch["custom_rank"]
-            chapter.custom_rank = None if value is None else int(value)
+            # R-13: no silent int() coercion of bool/float; null clears the rank.
+            if value is not None and (
+                isinstance(value, bool) or not isinstance(value, int) or value < 0
+            ):
+                raise ValueError("custom_rank must be a non-negative integer or null")
+            chapter.custom_rank = value
         if "number" in patch:
             chapter.chapter_number = str(patch["number"])
         if "title" in patch:
@@ -240,7 +267,7 @@ class LibraryService:
             chapter.subtitle = str(patch["subtitle"])
         if "notes" in patch:
             chapter.notes = str(patch["notes"])
-        chapter.updated_at = datetime.now(timezone.utc).isoformat()
+        chapter.updated_at = utc_now()
         self._repo.update_chapter(chapter)
         return chapter
 
@@ -266,8 +293,9 @@ class LibraryService:
             chapter_type=ChapterType(kind) if kind else None,
         )
         if import_order is not None:
+            # R-04: only the provenance order is user-supplied; sort_order stays
+            # the appended next value so two chapters can never collide.
             chapter.import_order = int(import_order)
-            chapter.sort_order = int(import_order)
             self._repo.update_chapter(chapter)
         return chapter
 

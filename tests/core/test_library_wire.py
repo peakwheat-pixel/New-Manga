@@ -86,3 +86,49 @@ def test_library_wire_reorder_and_create_and_errors(tmp_path):
 
     missing = _rpc(server, "UpdateChapterMetadata", {"chapter_id": "nope", "patch": {"notes": "x"}})
     assert missing["error"] is not None and missing["error"]["code"] == "TARGET_NOT_FOUND"
+
+
+def test_library_wire_missing_book_is_typed_and_tags_replace(tmp_path):
+    core, server = _server(tmp_path)
+    for command, payload in (
+        ("UpdateBookMetadata", {"book_id": "nope", "patch": {"title": "x"}}),
+        ("ReorderChapters", {"book_id": "nope", "ordered_ids": ["c"]}),
+        ("CreateChapterWithMetadata", {"book_id": "nope", "title": "x"}),
+    ):
+        response = _rpc(server, command, payload)
+        assert response["error"] is not None, command
+        assert response["error"]["code"] == "TARGET_NOT_FOUND", (command, response["error"])
+
+    book = core.library.create_book("Tags Book")
+    first = core.library.create_tag("t1")
+    second = core.library.create_tag("t2")
+    updated = _rpc(server, "UpdateBookMetadata", {
+        "book_id": book.book_id, "patch": {"tags": [first.tag_id]},
+    })
+    assert updated["error"] is None
+    assert [tag.tag_id for tag in core.library.tags_of_book(book.book_id)] == [first.tag_id]
+    replaced = _rpc(server, "UpdateBookMetadata", {
+        "book_id": book.book_id, "patch": {"tags": [second.tag_id]},
+    })
+    assert replaced["error"] is None
+    assert [tag.tag_id for tag in core.library.tags_of_book(book.book_id)] == [second.tag_id]
+
+
+def test_library_wire_empty_book_reorder_and_strict_types(tmp_path):
+    core, server = _server(tmp_path)
+    empty = core.library.create_book("Empty Book")
+    # R-13: an empty ordered_ids list is the only encoding of "reorder empty book".
+    noop = _rpc(server, "ReorderChapters", {"book_id": empty.book_id, "ordered_ids": []})
+    assert noop["error"] is None and noop["result"]["updated"] is True
+    created = _rpc(server, "CreateChapterWithMetadata", {"book_id": empty.book_id, "title": "Ch"})
+    assert created["error"] is None
+    assert created["result"]["sort_order"] == 1
+    not_covered = _rpc(server, "ReorderChapters", {"book_id": empty.book_id, "ordered_ids": []})
+    assert not_covered["error"] is not None and not_covered["error"]["code"] == "INVALID_REQUEST"
+    # R-13: bool/float import_order must not slip through isinstance(int).
+    for bad in (True, 1.0, "1"):
+        response = _rpc(server, "CreateChapterWithMetadata", {
+            "book_id": empty.book_id, "title": "x", "import_order": bad,
+        })
+        assert response["error"] is not None, bad
+        assert response["error"]["code"] == "INVALID_REQUEST", (bad, response["error"])
