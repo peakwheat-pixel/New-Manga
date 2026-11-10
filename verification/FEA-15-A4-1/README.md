@@ -28,7 +28,8 @@
 
 - **真实用户库升级**：使用合成 v8 旧库（项目自身迁移定义 + seed 数据），未使用真实用户库副本。
 - **跨机恢复**（DPAPI CurrentUser 限制）：NOT_RUN（A2/A3 既有登记继续有效）。
-- **交互式恢复 UI**：NOT_RUN（未启动真实 UI 会话；Host 入口仅由既有测试覆盖）。\n- **managed 文件为合成 fixture**：`ensure_managed_files` 按旧库 seed 的 `managed_original_ref`/`managed_path` 写入 `A4-managed-fixture:` 前缀字节，**不是真实用户 managed 原图**；仅用于验证备份/恢复/回退的路径与内容一致性，不冒充真实内容。
+- **交互式恢复 UI**：NOT_RUN（未启动真实 UI 会话；Host 入口仅由既有测试覆盖）。
+- **managed 文件为合成 fixture**：`ensure_managed_files` 按旧库 seed 的 `managed_original_ref`/`managed_path` 写入 `A4-managed-fixture:` 前缀字节，**不是真实用户 managed 原图**；仅用于验证备份/恢复/回退的路径与内容一致性，不冒充真实内容。
 - 恢复/回退的返回 dict 键名（`status`/`restored_backup_id`）在当前实现为空，关键断言使用 `pre_restore_backup_id` 与 `list_backups`（已注明，不冒充完整投影）。
 
 ## 复现
