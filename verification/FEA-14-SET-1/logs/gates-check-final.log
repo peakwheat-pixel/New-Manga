@@ -1,0 +1,18 @@
+FEA-14-SET-1 check.ps1 (default + -TaskPath) | 2026-11-10T08:55:11.3276871+08:00 | HEAD=19d7d2f90887bcf61c86c38b1375e03277d07933
+
+=== default ===
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-14-SET-1.md
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：2920 bytes / 29 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6705 bytes / 61 lines
+Governance check: PASS (3 warnings)
+EXIT=0
+=== -TaskPath ===
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-14-SET-1.md
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：2920 bytes / 29 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6705 bytes / 61 lines
+Governance check: PASS (3 warnings)
+EXIT=0

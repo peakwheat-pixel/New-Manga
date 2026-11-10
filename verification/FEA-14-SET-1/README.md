@@ -26,8 +26,9 @@
 | `logs/ipc-replay.log` | 字体组切换/渲染期间 `FakeHostController` 命令计数增量 0（1 passed） | 0 |
 | `logs/api-inventory.log` | `python tools/generate_api_inventory.py --check`（1/54/6=61） | 0 |
 | `logs/mutations-replay.log` | M1/M2 patch 重放：各 2 failed（RED），复原后 6 passed | 0 |
-| `logs/dotnet-app-tests-final.log` | **主树交付 head 全量 App.Tests**（收口时生成；worktree 环境不做全量证据） | 见文件 |
-| `logs/gates-check-final.log` / `logs/gates-pins-final.log` | **主树交付 head** 的 `check.ps1`（默认 + `-TaskPath`）与 `verify_pins` 18/18 | 见文件 |
+| `logs/dotnet-app-tests-final.log` | **主树交付 head 全量 App.Tests：858 passed / 0 failed / 11 skipped（869 total，EXIT 0）** | 0 |
+| `logs/dotnet-typography-final.log` | **主树定向 35 passed / 0 failed**（TypographyResolver + Panel/Render + SettingsDraftSync + FluentResidualSettingsLeave） | 0 |
+| `logs/gates-check-final.log` / `logs/gates-pins-final.log` | **主树** `check.ps1`（默认 + `-TaskPath`）PASS（3 warnings：11 非终态/STATUS 80%/PLAN 80%）；`verify_pins` **PIN AUDIT: PASS (all 18)** | 0 / 0 |
 
 > 说明：全量 App.Tests 与治理门禁的最终证据在**主树交付 head** 上生成并记录（`*-final.log`）；worktree 中的全量运行不作为证据（worktree 会改变若干路径敏感测试的仓库根探测结果）。
 

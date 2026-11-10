@@ -1,4 +1,5 @@
-FEA-14-SET-1 API inventory | 2026-11-10T08:36:20.5796174+08:00 | HEAD=4b8f2831c24af6b772e38ded0ab281922fba6cfc
+FEA-14-SET-1 API inventory (delivery tree) | 2026-11-10T08:55:19.8502970+08:00 | HEAD=19d7d2f90887bcf61c86c38b1375e03277d07933
+
 OK: rendered counts match FEA-C07 doc
 | 接口 | 方法数 | 属性/事件/字段数 |
 |---|---|---|
