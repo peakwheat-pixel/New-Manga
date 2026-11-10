@@ -127,8 +127,12 @@ def test_delete_reports_typed_failure_when_managed_copy_is_stuck(tmp_path):
         with pytest.raises(FontLibraryError) as caught:
             service.delete_asset(asset["asset_id"])
         assert caught.value.code == "FONT_DELETE_FAILED"
+        # R3-001: the row stays active so the delete can be retried.
+        assert service.list_assets() and service.list_assets()[0]["asset_id"] == asset["asset_id"]
     finally:
         try:
             managed.chmod(0o666)
         except OSError:
             pass
+    assert service.delete_asset(asset["asset_id"]) is True
+    assert service.list_assets() == []

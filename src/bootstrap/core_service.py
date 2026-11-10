@@ -5130,7 +5130,8 @@ class CoreServiceServer:
         try:
             deleted = self._core.fonts.delete_asset(payload["asset_id"])
         except FontLibraryError as error:
-            raise P16WireError(error.code, "not_found", str(error)) from error
+            category = "not_found" if error.code == "FONT_NOT_FOUND" else "write"
+            raise P16WireError(error.code, category, str(error)) from error
         return {"deleted": deleted}
 
     def handle_refresh_font_assets(self, payload: dict[str, Any]) -> dict[str, Any]:
