@@ -34,14 +34,15 @@
 | `issue_markers`（新表） | 表 | `id`、`book_id`、`chapter_id`、`page_id`、`position_x/position_y`（整页标记可空）、`kind`、`note`（可空）、`state`（open/resolved）、`created_at`、`resolved_at` |
 | 索引 | 索引 | `(book_id, state)`、`(page_id)` |
 
-### 2.4 AI（`FEA-14-AI-1`，条件性）
+### 2.4 AI（`FEA-14-AI-1`）
 
 | 对象 | 类型 | 列/说明 |
 |---|---|---|
-| `prompt_templates`（新表，**若落库**） | 表 | `id`、`name`（唯一）、`body`、`builtin`（bool；内置只读）、`version`（不可变）、`created_at`、`updated_at`、`deleted_at` |
+| `prompt_templates`（新表） | 表 | `id`、`name`（唯一）、`body`、`version`（不可变）、`created_at`、`updated_at`、`deleted_at`；**只存用户自建模板** |
+| 内置模板 | 不落库 | Core 代码常量（只读、可复制为自建副本）；`ListPromptTemplates` 返回常量与库内行的合并投影 |
 | 引用 | 表/列 | 删除前引用检查（译文/任务/规则引用），须选替代 |
 
-> 若产品裁决选择 settings 存储，则本表不建，改在设置 `ai` section 登记模板引用键；**二选一在 AI-1 冻结时定**。
+> R-004 裁决后取消「settings 或 DB 二选一」：模板统一落库，内置模板不入库（见 `ADJ-2026-11-10-FEA14-NEW-DATA-CATEGORIES` §2）。
 
 ### 2.5 LIB（`FEA-14-LIB-1`，需先 LIB-PREREQ 裁决）
 

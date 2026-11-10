@@ -23,9 +23,13 @@ allowed_paths:
   - doc/reviews/FEA-14-S5-PREQ-1-*.md
   - doc/handoffs/FEA-14-S5-PREQ-1-*.md
   - doc/reviews/ADJ-2026-11-10-FEA14-S5-SCOPE.md
+  - doc/reviews/ADJ-2026-11-10-FEA14-NEW-DATA-CATEGORIES.md
+  - doc/reviews/CONTRACT-UNFREEZE-*.md
   - verification/FEA-14-S5-PREQ-1/**
   - doc/plan/FEA-15-INTEGRATION-ACCEPTANCE.md
   - doc/plan/FEA-CONTRACT-FROZEN-C07.md
+  - doc/plan/FEA-CONTRACT-FROZEN-C01b.md
+  - doc/plan/FEA-CONTRACT-FROZEN-C09.md
   - doc/plan/FEA-C07_API_INVENTORY.md
   - doc/plan/FEA-C01b_STORAGE_CONTRACT_DRAFT.md
   - doc/plan/FEA-C09_DELETE_BACKUP_MIGRATION_DRAFT.md
@@ -58,11 +62,11 @@ out_of_scope:
 ## Acceptance Criteria
 
 - [x] **AC1 七切片裁决**：`doc/reviews/ADJ-2026-11-10-FEA14-S5-SCOPE.md` 记录（a）七切片清单（含 EXPORT）与依赖顺序；（b）`FEA-14-SET-1` = SET 视觉子集、真实 SET 另立卡的裁决；（c）`FEA-15-INTEGRATION-ACCEPTANCE.md` §3 的 append-only 注记（不改原句）。`check.ps1` 通过。 <<MET>>
-- [ ] **AC2 共用 wire 契约包 + 一次 UNFREEZE**：五切片的命令面清单（`FONT/LIB/READ/EDIT/AI` 各自命令、域、minor、payload 形状）落盘；按 `FEA-CONTRACT-FROZEN-C07.md:42` 在同一 Task 内重跑 inventory 脚本、更新清单、重算 C-07 pin；UNFREEZE 记录含**独立上下文复核**（非本卡作者会话）与 `verify_pins` 全绿（18 pins 计数不变或按裁决记录新数）。
+- [ ] **AC2 共用 wire 契约包 + 一次 UNFREEZE**：五切片的命令面清单（`FONT/LIB/READ/EDIT/AI` 各自命令、域、minor、payload 形状）落盘；按 `FEA-CONTRACT-FROZEN-C07.md:43` 在同一 Task 内重跑 inventory 脚本、更新清单、重算 C-07 pin；UNFREEZE 记录含**独立上下文复核**（非本卡作者会话）与 `verify_pins` 全绿（18 pins 计数不变或按裁决记录新数）。
 - [ ] **AC3 新数据类别 errata**：C-01b SC-10b + C-09 SC-B01a 的 append-only errata（`fonts/`、`bookmarks`、`issue_markers`、`prompt_templates` 四类的备份默认包含/清理不删/恢复过滤语义），不改历史冻结字节。
 - [x] **AC4 设置存储形状**：一页形状（settings section 白名单新增项、数据根指针字段、切换入口语义、迁移约束）落盘，显式写明 MIGRATE-6 释放条件满足情况；不改实现。 <<MET `verification/FEA-14-S5-PREQ-1/settings-storage-shape.md`>>
 - [x] **AC5 DDL v10 计划**：逐表/列/迁移步骤/回退/备份归属清单；声明「v10 不属于 C-15 v7 冻结 DDL 块」；不改 schema.py。 <<MET `verification/FEA-14-S5-PREQ-1/ddl-v10-plan.md`>>
-- [x] **AC6 门禁与零改动**：`check.ps1`（默认 + `-TaskPath`）PASS；`verify_pins` 在 AC2 前 18/18、AC2 后按记录；`git diff --name-only` ⊆ allowed_paths；无产品代码 diff；无 DDL 改动。 <<MET（2026-11-10：check PASS、pins 18/18、无 src/apps/DDL diff）>>
+- [x] **AC6 门禁与零改动**：`check.ps1`（默认 + `-TaskPath`）PASS；`verify_pins` 在 AC2 前 18/18、AC2 后按记录；`git status --short` 的全部改动（含 untracked）⊆ allowed_paths；无产品代码 diff；无 DDL 改动。 <<MET（2026-11-10：check PASS、pins 18/18、无 src/apps/DDL diff；`git status --short` 逐项核对 ⊆ allowed_paths）>>
 
 ## 交付物
 

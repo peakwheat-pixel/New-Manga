@@ -1,6 +1,6 @@
 # FEA-C07 应用端口清单（由代码生成）
 
-状态：**FROZEN / 冻结于 2026-11-01（[冻结记录](FEA-CONTRACT-FROZEN-C07.md)）**（本文档是脚本输出的**人工整理版**：统计表加了非方法成员说明、表头补了参数口径，成员行与脚本 stdout 一一对应）
+状态：**FROZEN / 冻结于 2026-11-01（[冻结记录](FEA-CONTRACT-FROZEN-C07.md)）**；**2026-11-10 UNFREEZE v1.2**（新增「S5 计划追加」节，代码统计不变，见 [UNFREEZE 载体](../reviews/CONTRACT-UNFREEZE-2026-11-10-C07.md)）（本文档是脚本输出的**人工整理版**：统计表加了非方法成员说明、表头补了参数口径；**正式成员表与脚本 stdout 一一对应**，「S5 计划追加」节属人工预冻结、不计入统计，实现卡落地时并入正式表并重算）
 生成日期：2026-11-02；生成时 HEAD：`a740f855f`（FEA-05-PORT-1 追加 Draft 端口后重算）
 生成方式：`python tools/generate_api_inventory.py`（解析 `apps/desktop-avalonia/src/NewManga.App/Services/{IHostController.cs,RunContracts.cs}` 的 interface 块，输出成员名 + 返回类型）；**不是**手工枚举。重跑同一命令应得到同一集合。
 
@@ -98,6 +98,40 @@ C-07（应用端口与兼容面）要求「由代码生成的方法清单」，�
 | 4 | `GetRunSnapshotAsync` | `Task<RunSnapshotInfo?>` |
 | 5 | `GetTaskProjectionAsync` | `Task<TaskProjectionInfo?>` |
 | 6 | `RetryFailedTargetsAsync` | `Task<RunControlInfo?>` |
+
+## S5 计划追加（FEA-14-S5-PREQ-1，2026-11-10 UNFREEZE；**尚未实现**）
+
+> 本节由 [UNFREEZE 载体](../reviews/CONTRACT-UNFREEZE-2026-11-10-C07.md) 引入：为 FEA-14 S5 五切片**预冻结**命令面，避免每切片各走一次 UNFREEZE。**本节成员尚未存在于代码**，不计入上方统计（统计仍是代码实测 61）；各实现卡落地时按冻结记录 §3 重跑脚本、把这些行并入正式成员表并重算统计/pin。旧 54 个方法签名不变。
+
+| # | 计划命令 | 计划返回类型 | 切片 | 语义摘要 |
+|---|---|---|---|---|
+| P1 | `ListFontAssetsAsync` | `Task<IReadOnlyList<FontAssetInfo>>` | FONT-1 | 列出用户字体库资产 |
+| P2 | `ImportFontAssetAsync` | `Task<FontAssetInfo?>` | FONT-1 | 导入字体文件（复制+sha256；原文件不动；≤50MB/≤200；逐文件拒绝） |
+| P3 | `DeleteFontAssetAsync` | `Task<bool>` | FONT-1 | 软删库内资产（不删原文件） |
+| P4 | `RefreshFontAssetsAsync` | `Task<FontRefreshInfo>` | FONT-1 | 重扫 `fonts/` 并报告可用/失败 |
+| P5 | `UpdateBookMetadataAsync` | `Task<bool>` | LIB-1 | 书元数据 patch（重名规范化唯一约束） |
+| P6 | `ReorderChaptersAsync` | `Task<bool>` | LIB-1 | 章/卷/番外排序（自定义排序保位/数字排序重排） |
+| P7 | `UpdateChapterMetadataAsync` | `Task<bool>` | LIB-1 | 章元数据/类型/编号 patch |
+| P8 | `CreateChapterWithMetadataAsync` | `Task<ChapterSummary?>` | LIB-1 | 带 kind/编号创建（不改既有 `CreateChapterAsync`） |
+| P9 | `GetReadingPreferencesAsync` | `Task<ReadingPreferencesInfo?>` | READ-1 | 按书阅读偏好读 |
+| P10 | `SaveReadingPreferencesAsync` | `Task<bool>` | READ-1 | 按书阅读偏好写（单写者） |
+| P11 | `ListBookmarksAsync` | `Task<IReadOnlyList<BookmarkInfo>>` | READ-1 | 书签列表 |
+| P12 | `CreateBookmarkAsync` | `Task<BookmarkInfo?>` | READ-1 | 新建书签（双页 left/right/both） |
+| P13 | `DeleteBookmarkAsync` | `Task<bool>` | READ-1 | 删书签（不影响漫画/进度/人工修改） |
+| P14 | `GetBookReadingProgressAsync` | `Task<BookProgressInfo?>` | READ-1 | 整书总进度（按页面数） |
+| P15 | `ResetReadingProgressAsync` | `Task<bool>` | READ-1 | 重置进度（需确认） |
+| P16 | `ListIssueMarkersAsync` | `Task<IReadOnlyList<IssueMarkerInfo>>` | EDIT-1 | 问题标记列表（默认待处理） |
+| P17 | `CreateIssueMarkerAsync` | `Task<IssueMarkerInfo?>` | EDIT-1 | 新建整页/位置标记 |
+| P18 | `ResolveIssueMarkerAsync` | `Task<bool>` | EDIT-1 | 标记解决 |
+| P19 | `ReopenIssueMarkerAsync` | `Task<bool>` | EDIT-1 | 标记重开 |
+| P20 | `DeleteIssueMarkerAsync` | `Task<bool>` | EDIT-1 | 删除标记（不影响漫画/人工修改） |
+| P21 | `ListPromptTemplatesAsync` | `Task<IReadOnlyList<PromptTemplateInfo>>` | AI-1 | 模板列表（内置只读+自建） |
+| P22 | `SavePromptTemplateAsync` | `Task<PromptTemplateInfo?>` | AI-1 | 保存自建模板（内置不可覆盖） |
+| P23 | `DeletePromptTemplateAsync` | `Task<PromptTemplateDeleteResult>` | AI-1 | 删除（须选替代；仍有引用不删） |
+| P24 | `CopyBuiltinPromptTemplateAsync` | `Task<PromptTemplateInfo?>` | AI-1 | 复制内置为可编辑副本 |
+| P25 | `GetPromptTemplateReferencesAsync` | `Task<IReadOnlyList<PromptTemplateReference>>` | AI-1 | 删除前引用清单 |
+
+计划追加合计 **25** 条（FONT 4 / LIB 4 / READ 7 / EDIT 5 / AI 5）；实现完成后 `IHostController` 目标 54+25=79，三接口合计 61+25=86（以各卡实测为准）。
 
 ## 与 C-07 冻结面的关系
 

@@ -12,7 +12,9 @@
 | 项 | 值 |
 |---|---|
 | 文件 | `doc/plan/FEA-C07_API_INVENTORY.md` |
-| sha256（冻结后最终字节） | `3fdb44e49afe9fb25e715c5a41bd247cee269c194d045e1f79946f25067dd714` |
+| sha256（冻结后最终字节） | `5673b1c4b53e69ec36f1897ea5bb0ba8eeedbf437320381ee1b2a04448bf2aa6`（v1.2，2026-11-10 UNFREEZE：S5 计划追加节；r1 处置后字节） |
+| 前一 pin（v1.1，保留原值） | `3fdb44e49afe9fb25e715c5a41bd247cee269c194d045e1f79946f25067dd714` |
+| r1 复核锚（未冻结，处置前字节） | `c67c40e72938ac3d5284d778758a17e66f65d760c38e2aa7c6da548a79f47550` |
 
 **冻结语义**：条款字节自本记录起不得改动；修订须走 UNFREEZE 载体（`doc/reviews/CONTRACT-UNFREEZE-<DATE>.md`）+ 重新独立复核 + 重新冻结。
 
@@ -20,9 +22,9 @@
 
 | 项 | 值 |
 |---|---|
-| 最后一次独立复核 | v1.0：r2 approved（FEA-GOV-10-r2）；v1.1：**r3 approved（FEA-05-PORT-1，P0/P1=0，P2×11 接受）** |
-| 复核后到冻结的改动 | v1.1：Draft 端口 7 方法 + 统计/成员表（UNFREEZE 范围） |
-| 处置 | v1.1 **已重冻**（2026-11-02，r3 approved）；pin = 当前文件 SHA-256 |
+| 最后一次独立复核 | v1.0：r2 approved（FEA-GOV-10-r2）；v1.1：**r3 approved（FEA-05-PORT-1，P0/P1=0，P2×11 接受）**；v1.2：UNFREEZE 复核进行中（`doc/reviews/CONTRACT-UNFREEZE-2026-11-10-C07.md` §4/§5） |
+| 复核后到冻结的改动 | v1.1：Draft 端口 7 方法 + 统计/成员表（UNFREEZE 范围）；v1.2：新增「S5 计划追加」节（25 条计划命令；代码未变、统计不变） |
+| 处置 | v1.1 **已重冻**（2026-11-02，r3 approved）；v1.2 **UNFREEZE 已登记**（2026-11-10，PREQ AC2；独立复核通过后完成）；pin = 当前文件 SHA-256 |
 
 **为什么必须有这一节**：冻结条件①是「独立复核通过」，若冻结字节 ≠ 复核字节，该条件在证据上不覆盖被冻内容。本节的目的是把差异显式化，而不是掩盖它。
 
@@ -30,21 +32,33 @@
 
 | # | C-07 条件 | 状态 | 证据 |
 |---|---|---|---|
-| 1 | 独立复核通过 | ✅ | r1（P1 生成脚本缺失）→ 入库脚本 → r2 [approved](../reviews/FEA-GOV-10-r2.md)（P0×0 / P1×0 / P2×3） |
+| 1 | 独立复核通过 | ✅ | r1（P1 生成脚本缺失）→ 入库脚本 → r2 [approved](../reviews/FEA-GOV-10-r2.md)（P0×0 / P1×0 / P2×3）；v1.2 UNFREEZE 复核：见载体 §4/§5 |
 | 2 | 生成脚本入库 | ✅ | [`tools/generate_api_inventory.py`](../../tools/generate_api_inventory.py)（177 行，UTF-8 stdout 固定） |
-| 3 | `--check` 通过 | ✅ | `python tools/generate_api_inventory.py --check` → EXIT=0，1/47/6 = 54 与文档一致 |
-| 4 | `check.ps1` PASS | ✅ | 冻结时 PASS（3 persistent warnings） |
+| 3 | `--check` 通过 | ✅ | `python tools/generate_api_inventory.py --check` → EXIT=0，**1/54/6 = 61**（代码实测；「S5 计划追加」节不计入脚本统计） |
+| 4 | `check.ps1` PASS | ✅ | 冻结时 PASS；2026-11-10 UNFREEZE 后 `check.ps1`（默认 + `-TaskPath`）PASS（3 persistent warnings） |
 
 ## 3. 依赖与后果
 
 - **无上游依赖**（清单只读代码）。
 - **下游**：所有涉及 `IHostController`/`IRunController`/`IReaderProgressSink` 的实现 Task（须按清单保持旧签名）。
 - **实现注意**：清单是**基线**；新增/删除端口方法须在同一 Task 内重跑脚本并更新清单，diff 即审查信号。
+- **v1.2 计划追加节**（`## S5 计划追加`）：25 条命令为**预冻结名单**，实现卡落地时须（a）把对应行从「计划追加」移入正式成员表；（b）重跑脚本并把统计从 61 更新为实测值；（c）重算 pin 并在实现卡内记录。计划节本身不改变旧签名与 `--check` 基线 61。
 
 ## 4. 不构成什么
 
 - **不构成**实现授权（实现须按 C-11 选候选 → 建 Task → 独立 Review）。
 - **不构成**远端 push 授权。
+
+## 5. v1.2 UNFREEZE 变更记录（2026-11-10，`FEA-14-S5-PREQ-1`）
+
+| 项 | 值 |
+|---|---|
+| 任务 | `FEA-14-S5-PREQ-1`（AC2 共用 wire 契约包） |
+| 载体 | [CONTRACT-UNFREEZE-2026-11-10-C07](../reviews/CONTRACT-UNFREEZE-2026-11-10-C07.md) |
+| 变更 | inventory 新增「S5 计划追加」节（25 条计划命令）+ 状态行 v1.2 注记；代码/旧签名/统计零改动 |
+| pin | 旧 `3fdb44e4…` → 新 pin 见 §1（以 UNFREEZE 载体 §1 为准） |
+| 复核 | r1 `changes_requested`（R-001 wire 缺 minor/payload 等，见 `FEA-14-S5-PREQ-1-wire-review-r1.md`）→ 处置后待 r2；通过后在载体 §5 与本记录 §1B 回填 approved |
+| 不构成 | 不构成实现授权 / 正式验收 / push 授权 |
 
 ## 1A. pin 修正记录（2026-11-01，**保留原值**）
 

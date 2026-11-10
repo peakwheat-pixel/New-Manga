@@ -106,3 +106,12 @@
 | D4 | SC-B08 | 保留策略补强：①手动备份包不参与自动年龄判定；②最近一次 restore 的 pre_restore 包与最近一个 erified=true 包**不得被自动轮转删除**（ADJ-001「保留恢复链」）。落地于 FEA-13-SCHED-5 AC。 |
 
 **范围裁定**：FEA-13 走「全部 errata（0 pin）」路径；拆 6 片（首片 FEA-13-BK2-1），数据根迁移单列。见 [ADJ-2026-11-09](../reviews/ADJ-2026-11-09-FEA13-ERRATA-AND-SPLIT.md) §2。
+
+## 10. Errata（2026-11-10，ADJ-2026-11-10-FEA14-NEW-DATA-CATEGORIES）
+
+> **append-only**：本节不修改上方冻结字节与 C-09 草案（pin 仍 `dc51226b…`）；18 pins 不变。依据：[S5 口径裁决](../reviews/ADJ-2026-11-10-FEA14-S5-SCOPE.md) + [新数据类别 errata](../reviews/ADJ-2026-11-10-FEA14-NEW-DATA-CATEGORIES.md)。
+
+| 条款 | errata 内容 |
+|---|---|
+| SC-B01a | 归属表增补：`fonts/`（用户字体资产，入包且需扩 `nmbak` 显式白名单；不随包商业/系统字体）、`prompt_templates` 用户自建行（随 `library.db`）；内置模板不落库、不备份。恢复冲突 defer、缺失 typed 报告、不写回用户原始字体目录。 |
+| SC-B01 | 清理纪律：`fonts/`、书签/标记/模板不得被 `cleanup.py` 缓存清理误删；`fonts/` 资产删除只删库内副本与条目，不删原始导入文件。 |

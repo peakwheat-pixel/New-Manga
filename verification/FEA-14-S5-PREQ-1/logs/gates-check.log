@@ -1,0 +1,17 @@
+FEA-14-S5-PREQ-1 check.ps1 (default + -TaskPath) | 2026-11-10T09:45:11.1201563+08:00 | HEAD=b7aaccfbc3290eb0ac29902834e4054404925f30
+=== default ===
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-14-S5-PREQ-1.md
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3133 bytes / 30 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6791 bytes / 63 lines
+Governance check: PASS (3 warnings)
+EXIT=0
+=== -TaskPath ===
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-14-S5-PREQ-1.md
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3133 bytes / 30 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6791 bytes / 63 lines
+Governance check: PASS (3 warnings)
+EXIT=0

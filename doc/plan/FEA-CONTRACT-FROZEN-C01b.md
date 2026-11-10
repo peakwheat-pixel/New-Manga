@@ -81,3 +81,12 @@ C-01b 的以下条款**依赖 ADJ-001 的 PD 语义**，而 ADJ-001 的 `G-DELET
 | 条款 | errata 内容 |
 |---|---|
 | SC-14 | 状态标注 `[现行]` → **`[新增]`**：代码当前是**整库覆盖式** restore（src/infrastructure/sqlite/nmbak.py:19-22、src/infrastructure/sqlite/backup.py），并**非**「恢复默认逐项 Defer、不得整库覆盖」；merge restore / 默认 defer 是 FEA-13 的**新增**能力（片 4），不是回归保护。 |
+
+## Errata（2026-11-10，ADJ-2026-11-10-FEA14-NEW-DATA-CATEGORIES）
+
+> **append-only**：本节不修改上方冻结字节与 C-01b 草案（pin 仍 `3c9f5af7…`）；18 pins 不变。依据：[S5 口径裁决](../reviews/ADJ-2026-11-10-FEA14-S5-SCOPE.md) + [新数据类别 errata](../reviews/ADJ-2026-11-10-FEA14-NEW-DATA-CATEGORIES.md)。
+
+| 条款 | errata 内容 |
+|---|---|
+| SC-10b | 增补四类应用内数据（`fonts/` 用户字体资产、`reading_bookmarks`、`issue_markers`、`prompt_templates` 用户自建行）默认包含于备份；内置提示词模板不落库、不备份。 |
+| SC-11 | 澄清优先级：用户导入字体资产属 SC-10b「应用内数据」默认包含；SC-11 的「独立可选项」保留为备份预览中的显式排除（排除后该类别不覆盖于 verified，SC-13），外部原文件仍默认不包含。 |
