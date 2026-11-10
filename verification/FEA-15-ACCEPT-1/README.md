@@ -10,11 +10,15 @@
 - 原测试 `tests/fea11/conftest.py` 硬编码共享 `G:/CODEX/New Manga.workspace/FEA-11/fixtures` 且不清理。`fixture-observation.log` 按本次测试时窗列出 62 个候选目录；仅时间相关，未证明独占归属，未清理。后续须先裁定隔离方案。
 - 插件沙箱测试会调用 `icacls /grant`，尝试在 Python 解释器和其目录授予 AppContainer 访问权限，`close()` 不撤销授权。事后只读检查 `C:/Python314/python.exe` 与 `C:/Python314` 可见多个 AppContainer SID 的 ACL；运行前未采集 ACL 快照，不能判定本次新增项，也不能声称未修改系统 ACL。未删除或修改这些授权；须由 ZCode 裁决资源处置与后续安全测试方法。
 - 旧安装包 `G:/CODEX/New Manga.workspace/FEA-15-A2-1/out/NewManga-0.1.1-setup.exe` 存在，SHA-256 `486a22758c03c8cd2383b6cb05f6e91524cf5545094ef1533d89f73814d3ba10`；其基线之后产品代码已有变化，不能证明当前 HEAD 的安装。当前 HEAD 安装、真实双入口 UI 和真实用户库升级/回退均尚未实测，不得记 PASS。
+- 当前构建的 legacy/Fluent 两入口以隐藏窗口、各自隔离 data/theme/log/TEMP 和 mutex 启动，2 秒仍存活、退出码均 0，进程级结果 EXIT 0；日志未匹配 fatal/unhandled，真实 data/theme 目录的文件名/大小/mtime 元数据指纹前后一致（不等于内容逐字节证明）。详见 `ui-process-smoke.log`。因隐藏窗口，视觉可见性、用户导航和四页交互仍为 NOT_RUN；进程级结果不等于 UI 验收通过。
 - 主树既有 App/Host Release 测试程序集哈希与隔离树新构建程序集不同；为保护未跟踪的既有构建产物，未覆盖它们，也未将旧程序集执行结果冒充当前版本对照。
+- 仓外 `git archive` 对照：首次全仓解包因历史文件名不兼容 Windows 而 EXIT 1，保留不完整结果（`source-fixture.log`）；仅提取 `apps/desktop-avalonia` 并在夹具根建空 `.git` 目录后，4 项 App 仓库定位测试 4 passed、EXIT 0（`dotnet-repo-root-control.log`）。这支持原失败与 linked worktree 的 `.git` 形态相关；该对照是构造环境，不是完整主树测试。
+- 同一对照夹具中两项 Host 样例：仓库定位样例 passed，ACL 样例仍 `UnauthorizedAccessException`，共 1 passed / 1 failed、EXIT 1（`dotnet-host-control.log`）；不能据此归因全部 123 项 Host 失败。
+- 仓外固定版本插件源码和专用 Python venv 对照：解释器解析到任务目录，沙箱测试 6 passed / 10 failed、EXIT 1（`plugin-fixture.log`、`plugin-control.log`）；它仍依赖系统 Python 标准库和用户包，不能单独判定根因。AppContainer profile 属用户级系统资源，测试可创建或复用 profile，未做事前清单、未清理或断言无副作用。所有夹具、虚拟环境、档案和输出保留，未清理。
 - 默认与指定 Task 的 `check.ps1` 均 PASS（3 warnings，EXIT 0）；`verify_pins.ps1` 18/18 PASS、EXIT 0。以上为认领后的执行结果；最终门禁仍需重跑并留日志。
 
 ## NOT_RUN / 待定
 
-- 当前 HEAD 安装包安装、四页面真实会话、双 UI 真实会话：尚未执行；隔离及旧安装包适用性待裁决。
+- 当前 HEAD 安装包安装、四页面真实交互、双 UI 可见窗口会话：NOT_RUN；旧安装包仅作历史参考。两入口隐藏进程级冒烟另见上文。
 - 当前 v14 真实用户库升级及 `pre_restore` 回退：尚未执行。A4-1 合成 v8→v9 历史演练不能代替它。
 - 最终独立 Review、阶段验收结论、最终门禁与 canonical evidence：尚未执行。

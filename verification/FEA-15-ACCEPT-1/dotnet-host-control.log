@@ -1,0 +1,31 @@
+time=2026-11-10T23:42:03.9701441+08:00 HEAD=8cad6d68c1e455c087a20346c9b1c0217bef129e fixture_source=d63d735a712dbe47100db2e72b4d59a73dfd1f62 archive_only=apps/desktop-avalonia fake_empty_git_directory=true command=dotnet test Host.Tests -c Release --filter FullyQualifiedName~Fea11SourceIpcTests.FailureRecordHostControlPayloadStaysFlat|FullyQualifiedName~RunGrantRenewalTests.HostWiring_ManagedOnlyRun_StartsNoRenewal
+  正在确定要还原的项目…
+  已还原 G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\desktop-fixture\apps\desktop-avalonia\tests\NewManga.Host.Tests\NewManga.Host.Tests.csproj (用时 229 毫秒)。
+  8 个项目(共 9 个)是最新的，无法还原。
+  NewManga.CoreClient -> G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\desktop-fixture\apps\desktop-avalonia\src\NewManga.CoreClient\bin\Release\net9.0\NewManga.CoreClient.dll
+  NewManga.ApplicationCore -> G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\desktop-fixture\apps\desktop-avalonia\src\NewManga.ApplicationCore\bin\Release\net9.0\NewManga.ApplicationCore.dll
+  NewManga.Appearance -> G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\desktop-fixture\apps\desktop-avalonia\src\NewManga.Appearance\bin\Release\net9.0\NewManga.Appearance.dll
+  NewManga.DesignSystem -> G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\desktop-fixture\apps\desktop-avalonia\src\NewManga.DesignSystem\bin\Release\net9.0\NewManga.DesignSystem.dll
+  NewManga.Host -> G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\desktop-fixture\apps\desktop-avalonia\src\NewManga.Host\bin\Release\net9.0\NewManga.Host.dll
+  NewManga.Presentation.Avalonia -> G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\desktop-fixture\apps\desktop-avalonia\src\NewManga.Presentation.Avalonia\bin\Release\net9.0\NewManga.Presentation.Avalonia.dll
+  NewManga.ThemeEngine -> G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\desktop-fixture\apps\desktop-avalonia\src\NewManga.ThemeEngine\bin\Release\net9.0\NewManga.ThemeEngine.dll
+  NewManga.App -> G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\desktop-fixture\apps\desktop-avalonia\src\NewManga.App\bin\Release\net9.0\NewManga.App.dll
+  NewManga.Host.Tests -> G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\desktop-fixture\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll
+G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\desktop-fixture\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+[xUnit.net 00:00:00.65]     NewManga.Host.Tests.RunGrantRenewalTests.HostWiring_ManagedOnlyRun_StartsNoRenewal [FAIL]
+  失败 NewManga.Host.Tests.RunGrantRenewalTests.HostWiring_ManagedOnlyRun_StartsNoRenewal [66 ms]
+  错误消息:
+   System.UnauthorizedAccessException : Attempted to perform an unauthorized operation.
+  堆栈跟踪:
+     at System.Security.AccessControl.Win32.SetSecurityInfo(ResourceType type, String name, SafeHandle handle, SecurityInfos securityInformation, SecurityIdentifier owner, SecurityIdentifier group, GenericAcl sacl, GenericAcl dacl)
+   at System.Security.AccessControl.NativeObjectSecurity.Persist(String name, SafeHandle handle, AccessControlSections includeSections, Object exceptionContext)
+   at System.Security.AccessControl.NativeObjectSecurity.Persist(String name, AccessControlSections includeSections)
+   at System.Security.AccessControl.FileSystemSecurity.Persist(String fullPath)
+   at NewManga.Host.Sources.SourceSecurity.PrivateDirectory(String directory)
+   at NewManga.Host.Sources.SourceAccessRegistry..ctor(String dataRoot, ISecretProtector protector)
+   at NewManga.Host.Tests.RunGrantRenewalTests.HostWiring_ManagedOnlyRun_StartsNoRenewal()
+--- End of stack trace from previous location ---
+
+失败!  - 失败:     1，通过:     1，已跳过:     0，总计:     2，持续时间: 70 ms - NewManga.Host.Tests.dll (net9.0)
+finished=2026-11-10T23:42:08.9502581+08:00 EXIT=1

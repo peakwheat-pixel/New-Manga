@@ -76,7 +76,7 @@ FEA-14 S5 七切片（SET/PREQ/EXPORT/READ/FONT/LIB/EDIT/AI 相关实现卡）�
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| temp | `G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\`（隔离根） | PRESERVE_UNKNOWN | — | — | 仓外测试数据与日志暂保留；另有 FEA-11 测试硬编码共享 fixtures，候选清单见 `verification/FEA-15-ACCEPT-1/fixture-observation.log`，归属未证明，不清理 |
+| temp | `G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\`（隔离根） | PRESERVE_UNKNOWN | — | — | 仓外测试数据、源码档案/对照夹具（含解包失败副本）和专用 Python venv 暂保留；另有 FEA-11 测试硬编码共享 fixtures，候选清单见 `verification/FEA-15-ACCEPT-1/fixture-observation.log`，归属未证明，不清理 |
 | user-data | `%APPDATA%\com.newmanga.desktop` | NOT_APPLICABLE | — | — | 只读；不写真实用户数据 |
 | build | `G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree\apps\desktop-avalonia` | PRESERVE_REFERENCED | — | — | Release 构建产物，暂供复核 |
 | worktree | `G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree` | PRESERVE_REFERENCED | — | — | detached `d63d735a712dbe47100db2e72b4d59a73dfd1f62`；主树为任务写入树，不执行清理 |

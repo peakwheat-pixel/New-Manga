@@ -10,7 +10,7 @@
 |---|---|---|---|
 | A1 | 隔离干净构建 | 全新 worktree / 无 bin,obj 下 Release 构建 0 错误 0 警告 | 已执行：`d63d735a7` 干净 worktree，0 警告/0 错误，EXIT 0；见 `verification/FEA-15-ACCEPT-1/build.log`。 |
 | A2 | 安装 | 真实安装包安装 + 启动 + 四页面可达 | 当前 HEAD 安装及四页 **NOT_RUN**：缺当前版本安装交付物；历史 setup 仅作旧版本参考，不代表当前产品字节。 |
-| A3 | 双 UI 回归 | legacy `MainWindow.Show()` 与 Fluent shell 两套入口冒烟 + 关键路径测试 | 部分：A3-1 为较早版本的真实进程证据；当前 HEAD 真实会话尚未实测。App.Tests 本次 884/4/11，4 项仓库定位失败。 |
+| A3 | 双 UI 回归 | legacy `MainWindow.Show()` 与 Fluent shell 两套入口冒烟 + 关键路径测试 | 部分：当前构建两入口隐藏进程级冒烟 EXIT 0；可见窗口与四页交互 NOT_RUN。App.Tests 全量 884/4/11，4 项在构造的仓库定位对照中 4/4 PASS；A3-1 是早期版本证据。 |
 | A4 | 升级与回退报告 | 旧库升级（FEA-13 迁移/备份/恢复证据）+ 回退（pre_restore）可执行 | 部分：A4-1 合成库 v8→v9 + pre_restore 演练；当前 v14 真实用户库升级及回退 **NOT_RUN**。内存 v7→v14 查询探针仅是有限补充。 |
 | A5 | 全量测试基线 | pytest + .NET 全绿 | 不满足：当前复跑 pytest 3515/16/12、EXIT 1；.NET 8 项目中 2 项失败、EXIT 1；原因和适用范围待复核。 |
 | A6 | 契约与 pin | 18 pins 全绿、无 UNFREEZE 未决 | pins 18/18 PASS；无未决 UNFREEZE 的人工核对待完成。 |

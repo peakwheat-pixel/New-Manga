@@ -1,0 +1,10 @@
+time=2026-11-10T23:49:10.7324628+08:00 HEAD=8cad6d68c1e455c087a20346c9b1c0217bef129e binary_source=d63d735a712dbe47100db2e72b4d59a73dfd1f62 exe=G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree\apps\desktop-avalonia\src\NewManga.App\bin\Release\net9.0\NewManga.App.exe windowstyle=Hidden
+case=legacy args=--data-root="G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\ui-legacy\data" --theme-home="G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\ui-legacy\theme" --log-dir="G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\ui-legacy\logs" --mutex-name=NewManga-FEA15-ACCEPT1-legacy-269043067 --exit-after=6000 --shell=legacy
+case=legacy pid=40560 alive_after_2s=True main_window_handle=657956 exited=True exit_code=0
+case=fluent args=--data-root="G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\ui-fluent\data" --theme-home="G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\ui-fluent\theme" --log-dir="G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\ui-fluent\logs" --mutex-name=NewManga-FEA15-ACCEPT1-fluent-1442648655 --exit-after=6000 --frontend=builtin.fluent
+case=fluent pid=20740 alive_after_2s=True main_window_handle=461166 exited=True exit_code=0
+real_data_metadata_before=6E0C9E79FD8925543638CBCDB95AFB9B1BD48A920F03849D77E5464967C77798 after=6E0C9E79FD8925543638CBCDB95AFB9B1BD48A920F03849D77E5464967C77798; real_theme_metadata_before=B50C6CE4D14225B58B963D1FB81CCAAAE81CBA42E85C677D22C89C9DA90A7D73 after=B50C6CE4D14225B58B963D1FB81CCAAAE81CBA42E85C677D22C89C9DA90A7D73
+finished=2026-11-10T23:49:25.5394301+08:00 EXIT=0 scope=process_only; visible_window_and_page_interaction=NOT_RUN
+inspection=2026-11-10T23:49:52.1643173+08:00 HEAD=8cad6d68c1e455c087a20346c9b1c0217bef129e pattern=fatal|unhandled
+case=legacy RG_EXIT=1 match_count=0; EXIT=0 when RG_EXIT is 1 (no match)
+case=fluent RG_EXIT=1 match_count=0; EXIT=0 when RG_EXIT is 1 (no match)
