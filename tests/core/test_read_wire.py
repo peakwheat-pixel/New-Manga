@@ -100,3 +100,35 @@ def test_book_progress_and_reset_require_confirm(tmp_path):
 
     invalid = _rpc(server, "GetReadingPreferences", {"book_id": ""})
     assert invalid["error"] is not None and invalid["error"]["code"] == "INVALID_REQUEST"
+
+
+def test_book_progress_wire_is_page_based(tmp_path):
+    server = _server(tmp_path)
+    import sqlite3 as _sqlite
+    conn = _sqlite.connect(tmp_path / "data" / "library.db")
+    conn.execute(
+        "INSERT INTO books (book_id, title, created_at, updated_at)"
+        " VALUES ('bp', 'Book', '2026-01-01', '2026-01-01')"
+    )
+    conn.execute(
+        "INSERT INTO chapters (chapter_id, book_id, title, chapter_type, sort_order, created_at, updated_at)"
+        " VALUES ('bp-c1', 'bp', 'Ch 1', 'paged', 1, '2026-01-01', '2026-01-01')"
+    )
+    for index in (1, 2):
+        conn.execute(
+            "INSERT INTO pages (page_id, chapter_id, sort_order, created_at, updated_at)"
+            " VALUES (?, 'bp-c1', ?, '2026-01-01', '2026-01-01')",
+            (f"bp-p{index}", index),
+        )
+    conn.execute(
+        "INSERT INTO reading_progress (progress_id, book_id, chapter_id, mode,"
+        " last_page_id, scroll_offset_x, scroll_offset_y, progress_percent, updated_at)"
+        " VALUES ('bp-r1', 'bp', 'bp-c1', 'original', 'bp-p1', 0.0, 0.0, 50.0, '2026-01-01')"
+    )
+    conn.commit()
+    response = _rpc(server, "GetBookReadingProgress", {"book_id": "bp"})
+    assert response["error"] is None
+    assert response["result"]["total_pages"] == 2
+    assert response["result"]["read_pages"] == 1
+    assert response["result"]["percent"] == 50.0
+    assert response["result"]["finished"] is False

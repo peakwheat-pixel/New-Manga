@@ -20,7 +20,8 @@
 | 文件 | 内容 | EXIT |
 |---|---|---|
 | `logs/dotnet-app-tests.log` | App.Tests 全量 **867 passed / 0 failed / 11 skipped**；Reader 定向 70 passed | 0 |
-| `logs/pytest-full.log` | pytest 全量 **3487 passed / 0 failed / 10 skipped**（含 core 1034 / storage 173 定向基线） | 0 |
+| `logs/pytest-full.log` | pytest 全量最终 **3487 passed / 0 failed / 10 skipped**（首轮 5 failed/3482 passed：v10 适配 `fea09/test_v7_migration.py`、`fea11/test_source_gate_unify.py` 的 latest 断言；修复后全绿，日志保留两段） | 0 |
+| `logs/reader-targeted.log` | App.Tests Reader 定向 **70 passed / 0 failed** | 0 |
 | `logs/read-wire.log` | `tests/core/test_read_wire.py` 3 passed（P9–P15 往返） | 0 |
 | `logs/reading-storage.log` | `tests/storage/test_reading_preferences.py` 5 passed | 0 |
 

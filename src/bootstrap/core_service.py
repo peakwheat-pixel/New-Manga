@@ -5082,10 +5082,10 @@ class CoreServiceServer:
         book_id = self._extras_book_id(payload, {"book_id"}, "Book progress request is invalid")
         progress = self._core.reading_extras.book_progress(book_id)
         return {
-            "read_pages": progress.get("completed_chapters", 0),
-            "total_pages": progress.get("total_chapters", 0),
+            "read_pages": progress.get("read_pages", 0),
+            "total_pages": progress.get("total_pages", 0),
             "percent": progress.get("progress_percent", 0.0),
-            "finished": bool(progress.get("total_chapters", 0) and progress.get("completed_chapters", 0) == progress.get("total_chapters", 0)),
+            "finished": bool(progress.get("finished", False)),
         }
 
     def handle_reset_reading_progress(self, payload: dict[str, Any]) -> dict[str, Any]:

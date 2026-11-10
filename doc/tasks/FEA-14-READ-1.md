@@ -80,7 +80,7 @@ out_of_scope:
 - [ ] **AC2 书签**：新增（双页 left/right/both）、列表、删除；删除不影响漫画/进度/人工修改；跨书隔离。 <<PARTIAL: Core + P11–P13 wire 完整（CRUD/跨书/非法 side）；Fluent UI 书签面板未接线>>
 - [ ] **AC3 整书进度**：按页面数计算并显示（与章内进度分列）；最后一页 → 已读完；重置需确认且可从记录中确认。 <<PARTIAL: Core 计算 + P14/P15 wire（reset 需 confirm）已验证；UI 显示/确认未接线>>
 - [x] **AC4 迁移无损**：schema v10 additive；旧 `reading_progress` 行字段级无损；失败回退不半迁移。 <<MET>>
-- [x] **AC5 契约/门禁**：七条命令按 PREQ §8 形状实现；`generate_api_inventory.py --check` 更新后 EXIT 0；`verify_pins` 18/18（C-07 pin 按记录更新）；无未授权契约字节变更。 <<MET>>
+- [ ] **AC5 契约/门禁**：七条命令按 PREQ §8 形状实现；`generate_api_inventory.py --check` 更新后 EXIT 0；`verify_pins` 18/18（C-07 pin 按记录更新）；无未授权契约字节变更。 <<PARTIAL: 七命令实现 + inventory 68 + pin 18/18 已完成；P12/P15 返回类型与 P15 confirm/confirm_token 偏差已登记（未改接口形状）>>
 - [x] **AC6 证据**：定向 pytest/App.Tests 通过；`verification/FEA-14-READ-1/` 日志含 EXIT；NOT_RUN（真实 UI 手势/IME、跨内容序列）如实登记。 <<MET>>
 
 
@@ -93,6 +93,15 @@ out_of_scope:
 - **R-006（P2，已修）**：UNFREEZE 记录 pin 占位 `$h` 替换为实际 hash、`verify_pins` 拼写修正。
 - **R-007/R-008（P2）**：allowed_paths 补 `doc/reviews/CONTRACT-UNFREEZE-*.md`、`tests/fea09/test_v7_migration.py`、`tests/fea11/test_source_gate_unify.py`；`base_commit` 校准 `f9bf922aa`（实际实现起点；Review base 记录差异见 r1 报告）。
 - **R-009/R-010/R-011（P3）**：Reader 70 定向日志、pytest 首轮 5 failed 说明、两次装配/重启测试——**登记**（未补，留 READ-2/后续）。
+
+
+## r2 处置记录（2026-11-10，对 `d0b77ed1a` 的 changes_requested）
+
+- **R-001（P1，已修）**：`core_service.handle_get_book_reading_progress` 同步为页面口径（`read_pages/total_pages/finished` 直接映射 store）；新增 wire 测试 `test_book_progress_wire_is_page_based`（2 页 50% → read_pages=1 / percent=50 / finished=false）。
+- **R-004（P2，已修）**：`ReadingExtrasService.save_preferences` 增加 partial 合并（读取已存偏好后补默认值；显式传入字段覆盖）；新增 `test_partial_preferences_patch_keeps_other_fields`。
+- **R-002（P2）**：P12/P15 返回类型与 `confirm_token` 偏差仍**登记偏差**（AC5 据此改 PARTIAL，不再声称「按 PREQ §8 形状」MET）。
+- **R-006（P2/P3，已修）**：UNFREEZE 记录 `vverify_pins` → `verify_pins`。
+- **R-009/R-010/R-011（P3，部分补）**：新增 Reader 定向日志（70 passed）；README 补 pytest 首轮 5 failed 说明；新增 `test_preferences_survive_reopen_two_assemblies`（两次装配重启）。
 
 ## 证据计划（L2）
 
@@ -123,8 +132,9 @@ out_of_scope:
 | EV-RD-001 | READ-1 | `verification/FEA-14-READ-1/logs/dotnet-app-tests.log` | `-` | `ce9a0f3e62e5e4b33a6dc54e44b55d5323851a2755226f5f32899d4760c85838` | CANONICAL |
 | EV-RD-002 | READ-1 | `verification/FEA-14-READ-1/logs/pytest-full.log` | `-` | `8c61189ab93f9dc09e24339f622099a831e1432ec1cfa9954104bd250d4b4fab` | CANONICAL |
 | EV-RD-003 | READ-1 | `verification/FEA-14-READ-1/logs/read-wire.log` | `-` | `5eabf16881205b9a80730ba1ba0df816667cf024eaf13e1788b8a9d2c901e454` | CANONICAL |
-| EV-RD-004 | READ-1 | `verification/FEA-14-READ-1/logs/reading-storage.log` | `-` | `b0ab413835300ddc9291937e3c3f617da3a13d0f78edc5d943a032e878c40130` | CANONICAL |
-| EV-RD-005 | READ-1 | `verification/FEA-14-READ-1/README.md` | `-` | `894f387ca6d9edd03702b2e467e3cdcf7538a923da141c4e3e62c815218ec6f1` | CANONICAL |
+| EV-RD-004 | READ-1 | `verification/FEA-14-READ-1/logs/reader-targeted.log` | `-` | `29321d45c43c4e8ad09101f0d3f78aadc14300e5f0bbc207a524d348b1edb18d` | CANONICAL |
+| EV-RD-005 | READ-1 | `verification/FEA-14-READ-1/logs/reading-storage.log` | `-` | `b0ab413835300ddc9291937e3c3f617da3a13d0f78edc5d943a032e878c40130` | CANONICAL |
+| EV-RD-006 | READ-1 | `verification/FEA-14-READ-1/README.md` | `-` | `ae1778f70eb79ebd2c97ed3b33a819a75b5c4800ac50151e0eb83cbb284b670d` | CANONICAL |
 
 ## Closeout Record
 

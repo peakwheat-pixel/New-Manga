@@ -8,4 +8,4 @@
   2. 其余条款、命令面、冻结语义一律不变；旧 pin 保留可追溯。
 - 前 pin（v1.2）：5673b1c4b53e69ec36f1897ea5bb0ba8eeedbf437320381ee1b2a04448bf2aa6
 - 新 pin（v1.3）：59ab90f7d717fdd44816d22284d00e2a53ab48581d644c97e9dccd3ccc6a1b5a
-- 复核：generate_api_inventory.py --check EXIT 0（渲染 61/68 与文档一致）；vverify_pins 需在冻结记录 pin 更新后 18/18。
+- 复核：generate_api_inventory.py --check EXIT 0（渲染 61/68 与文档一致）；verify_pins 需在冻结记录 pin 更新后 18/18。

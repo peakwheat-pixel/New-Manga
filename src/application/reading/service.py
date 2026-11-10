@@ -560,6 +560,15 @@ class ReadingExtrasService:
         from datetime import datetime, timezone
         import uuid
 
+        # FEA-14-READ-1 (R-004): partial patch -- omitted fields keep the stored value.
+        existing = self._store.load_preferences(book_id)
+        if existing is not None:
+            mode = existing.mode if mode == "original" and existing.mode != "original" else mode
+            direction = existing.direction if direction == "ltr" and existing.direction != "ltr" else direction
+            zoom = existing.zoom if zoom == 1.0 and existing.zoom != 1.0 else zoom
+            double_page = existing.double_page if not double_page and existing.double_page else double_page
+            layout = existing.layout if layout == "single" and existing.layout != "single" else layout
+
         if mode not in self.MODES:
             raise ValueError(f"unknown reading mode: {mode!r}")
         if direction not in self.DIRECTIONS:

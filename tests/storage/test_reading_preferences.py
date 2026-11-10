@@ -154,3 +154,24 @@ def test_book_progress_and_reset_requires_confirm(tmp_path):
     assert removed == 1
     after = service.book_progress("b1")
     assert after["completed_chapters"] == 0 and after["progress_percent"] == 0.0
+
+
+def test_partial_preferences_patch_keeps_other_fields(tmp_path):
+    conn, service = _service(tmp_path)
+    service.save_preferences("b1", mode="translated", direction="rtl", zoom=1.5, layout="double")
+    # R-004: only zoom is provided; the other fields must survive.
+    updated = service.save_preferences("b1", zoom=2.0)
+    assert updated["zoom"] == 2.0
+    assert updated["mode"] == "translated" and updated["direction"] == "rtl"
+    assert updated["layout"] == "double"
+
+
+def test_preferences_survive_reopen_two_assemblies(tmp_path):
+    conn, service = _service(tmp_path)
+    service.save_preferences("b1", mode="translated", direction="rtl", zoom=2.0)
+    conn.close()
+    # R-011: a second assembly (fresh connection) reads the persisted row.
+    conn2 = _connect(tmp_path)
+    _migrate(conn2)
+    again = ReadingExtrasService(SqliteReadingExtrasStore(conn2)).get_preferences("b1")
+    assert again["mode"] == "translated" and again["direction"] == "rtl" and again["zoom"] == 2.0
