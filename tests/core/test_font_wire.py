@@ -63,8 +63,9 @@ def test_font_wire_import_list_delete(tmp_path):
 
     deleted = _rpc(server, "DeleteFontAsset", {"asset_id": asset_id})
     assert deleted["result"]["deleted"] is True
+    # R1-002: deleting an unknown/already-deleted asset is a typed error.
     again = _rpc(server, "DeleteFontAsset", {"asset_id": asset_id})
-    assert again["result"]["deleted"] is False
+    assert again["error"] is not None and again["error"]["code"] == "FONT_NOT_FOUND"
 
 
 def test_font_wire_refresh_and_invalid_payloads(tmp_path):

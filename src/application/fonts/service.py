@@ -64,10 +64,21 @@ def _now() -> str:
 
 
 def _font_format(path: Path) -> str:
+    """Return the format only when BOTH the magic bytes and the extension agree.
+
+    R1-001: accepting the extension alone let any payload renamed to ``.ttf``
+    through; the magic must be present and must match the suffix.
+    """
+    suffix = path.suffix.lower()
+    if suffix not in FONT_EXTENSIONS:
+        return ""
     with path.open("rb") as handle:
         head = handle.read(4)
-    suffix = path.suffix.lower()
-    return FONT_MAGIC.get(head) or (suffix if suffix in FONT_EXTENSIONS else "")
+    magic = FONT_MAGIC.get(head)
+    if magic is None:
+        return ""
+    aliases = {".ttf": {".ttf"}, ".otf": {".otf"}, ".woff": {".woff"}, ".woff2": {".woff2"}}
+    return suffix if suffix in aliases.get(magic, set()) else ""
 
 
 def _family_from_stem(stem: str) -> tuple[str, str]:
@@ -94,8 +105,11 @@ class FontLibraryService:
     def fonts_root(self) -> Path:
         return self._fonts_root
 
-    def list_assets(self) -> list[dict]:
-        return [asset.to_dict() for asset in self._store.list_assets()]
+    def list_assets(self, family: str | None = None) -> list[dict]:
+        assets = [asset for asset in self._store.list_assets() if asset.state != "deleted"]
+        if family is not None:
+            assets = [asset for asset in assets if asset.family == family]
+        return [asset.to_dict() for asset in assets]
 
     def import_asset(self, source_path: str, license_note: str | None = None) -> dict:
         path = Path(source_path)
@@ -136,8 +150,13 @@ class FontLibraryService:
     def delete_asset(self, asset_id: str) -> bool:
         asset = self._store.get_asset(asset_id)
         if asset is None or asset.state == "deleted":
-            return False
+            raise FontLibraryError("FONT_NOT_FOUND", "font asset was not found")
         self._store.soft_delete(asset_id, _now())
+        managed = self._fonts_root / asset.managed_path
+        try:
+            managed.unlink(missing_ok=True)
+        except OSError:
+            pass
         return True
 
     def refresh_assets(self) -> dict:

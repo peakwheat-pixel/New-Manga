@@ -81,16 +81,28 @@ def test_import_rejects_invalid_sources(tmp_path):
         service.import_asset(str(bad))
     assert caught.value.code == "FONT_FORMAT_UNSUPPORTED"
 
+    # R1-001: renaming arbitrary bytes to .ttf must NOT pass the magic check.
+    disguised = tmp_path / "disguised.ttf"
+    disguised.write_bytes(b"NOT-A-FONT-PAYLOAD")
+    with pytest.raises(FontLibraryError) as caught:
+        service.import_asset(str(disguised))
+    assert caught.value.code == "FONT_FORMAT_UNSUPPORTED"
 
-def test_delete_is_soft_and_keeps_source_file(tmp_path):
+
+def test_delete_removes_managed_copy_and_keeps_source_file(tmp_path):
     conn, service = _service(tmp_path)
     source = _font_file(tmp_path)
     asset = service.import_asset(str(source))
+    managed = service.fonts_root / asset["managed_path"]
+    assert managed.is_file()
     assert service.delete_asset(asset["asset_id"]) is True
-    assert service.delete_asset(asset["asset_id"]) is False
     assert source.is_file(), "the user's source font file must never be deleted"
+    assert not managed.exists(), "the managed copy is library data and is removed"
     listed = {item["asset_id"]: item for item in service.list_assets()}
-    assert listed[asset["asset_id"]]["state"] == "deleted"
+    assert asset["asset_id"] not in listed, "deleted assets are not listed"
+    with pytest.raises(FontLibraryError) as caught:
+        service.delete_asset(asset["asset_id"])
+    assert caught.value.code == "FONT_NOT_FOUND"
 
 
 def test_refresh_reports_available_and_missing(tmp_path):

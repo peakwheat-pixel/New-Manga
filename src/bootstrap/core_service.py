@@ -5127,7 +5127,11 @@ class CoreServiceServer:
     def handle_delete_font_asset(self, payload: dict[str, Any]) -> dict[str, Any]:
         if set(payload) != {"asset_id"} or not isinstance(payload.get("asset_id"), str) or not payload["asset_id"]:
             raise P16WireError("INVALID_REQUEST", "validation", "Font delete request is invalid")
-        return {"deleted": self._core.fonts.delete_asset(payload["asset_id"])}
+        try:
+            deleted = self._core.fonts.delete_asset(payload["asset_id"])
+        except FontLibraryError as error:
+            raise P16WireError(error.code, "not_found", str(error)) from error
+        return {"deleted": deleted}
 
     def handle_refresh_font_assets(self, payload: dict[str, Any]) -> dict[str, Any]:
         if set(payload) != set():
