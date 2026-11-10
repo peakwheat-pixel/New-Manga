@@ -510,3 +510,113 @@ def default_progress_store() -> ProgressDocumentStore:
     root = os.environ.get("NEWMANGA_DATA_ROOT")
     base = Path(root) if root else Path.home() / ".newmanga"
     return JsonProgressDocumentStore(base / "reading_progress.json")
+
+class ReadingExtrasService:
+    """FEA-14-READ-1: per-book preferences, bookmarks and whole-book progress."""
+
+    MODES = {"original", "translated"}
+    DIRECTIONS = {"ltr", "rtl", "vertical"}
+    LAYOUTS = {"single", "double", "continuous"}
+    SIDES = {None, "left", "right", "both"}
+
+    def __init__(self, store) -> None:
+        self._store = store
+
+    def get_preferences(self, book_id: str) -> dict:
+        preferences = self._store.load_preferences(book_id)
+        if preferences is None:
+            return {
+                "book_id": book_id,
+                "mode": "original",
+                "direction": "ltr",
+                "zoom": 1.0,
+                "double_page": False,
+                "layout": "single",
+                "updated_at": "",
+                "is_default": True,
+            }
+        return {
+            "book_id": preferences.book_id,
+            "mode": preferences.mode,
+            "direction": preferences.direction,
+            "zoom": preferences.zoom,
+            "double_page": preferences.double_page,
+            "layout": preferences.layout,
+            "updated_at": preferences.updated_at,
+            "is_default": False,
+        }
+
+    def save_preferences(
+        self,
+        book_id: str,
+        *,
+        mode: str = "original",
+        direction: str = "ltr",
+        zoom: float = 1.0,
+        double_page: bool = False,
+        layout: str = "single",
+    ) -> dict:
+        from application.reading.ports import ReadingPreferences
+        from datetime import datetime, timezone
+        import uuid
+
+        if mode not in self.MODES:
+            raise ValueError(f"unknown reading mode: {mode!r}")
+        if direction not in self.DIRECTIONS:
+            raise ValueError(f"unknown reading direction: {direction!r}")
+        if layout not in self.LAYOUTS:
+            raise ValueError(f"unknown reading layout: {layout!r}")
+        zoom_value = float(zoom)
+        if not 0.0 < zoom_value <= 8.0:
+            raise ValueError(f"zoom out of range: {zoom!r}")
+        preferences = ReadingPreferences(
+            book_id=book_id,
+            mode=mode,
+            direction=direction,
+            zoom=zoom_value,
+            double_page=bool(double_page),
+            layout=layout,
+            updated_at=datetime.now(timezone.utc).isoformat(),
+        )
+        self._store.save_preferences(preferences)
+        return self.get_preferences(book_id)
+
+    def list_bookmarks(self, book_id: str) -> list[dict]:
+        return list(self._store.list_bookmarks(book_id))
+
+    def create_bookmark(
+        self,
+        book_id: str,
+        *,
+        chapter_id: str,
+        page_id: str,
+        side: str | None = None,
+        note: str | None = None,
+    ) -> dict:
+        from datetime import datetime, timezone
+        import uuid
+
+        if side not in self.SIDES:
+            raise ValueError(f"unknown bookmark side: {side!r}")
+        bookmark = {
+            "bookmark_id": uuid.uuid4().hex,
+            "book_id": book_id,
+            "chapter_id": chapter_id,
+            "page_id": page_id,
+            "side": side,
+            "note": note,
+            "created_at": datetime.now(timezone.utc).isoformat(),
+        }
+        self._store.add_bookmark(bookmark)
+        return bookmark
+
+    def delete_bookmark(self, bookmark_id: str) -> bool:
+        return bool(self._store.delete_bookmark(bookmark_id))
+
+    def book_progress(self, book_id: str) -> dict:
+        return dict(self._store.book_progress(book_id))
+
+    def reset_book_progress(self, book_id: str, *, confirm: bool = False) -> int:
+        if not confirm:
+            raise ValueError("reset reading progress requires explicit confirmation")
+        return int(self._store.reset_book_progress(book_id))

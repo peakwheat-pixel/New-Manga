@@ -533,3 +533,121 @@ def import_legacy_export_history(conn: sqlite3.Connection, path: str | Path) -> 
             ),
         )
     return len(validated_records)
+
+class SqliteReadingExtrasStore:
+    """FEA-14-READ-1: schema v10 preferences/bookmarks + whole-book progress."""
+
+    def __init__(self, conn: sqlite3.Connection) -> None:
+        self._conn = conn
+
+    def load_preferences(self, book_id: str) -> ReadingPreferences | None:
+        from application.reading.ports import ReadingPreferences
+
+        row = self._conn.execute(
+            "SELECT book_id, mode, direction, zoom, double_page, layout, updated_at"
+            " FROM reading_preferences WHERE book_id = ?",
+            (book_id,),
+        ).fetchone()
+        if row is None:
+            return None
+        return ReadingPreferences(
+            book_id=str(row[0]),
+            mode=str(row[1]),
+            direction=str(row[2]),
+            zoom=float(row[3]),
+            double_page=bool(row[4]),
+            layout=str(row[5]),
+            updated_at=str(row[6]),
+        )
+
+    def save_preferences(self, preferences) -> None:
+        self._conn.execute(
+            "INSERT INTO reading_preferences"
+            " (book_id, mode, direction, zoom, double_page, layout, updated_at)"
+            " VALUES (?, ?, ?, ?, ?, ?, ?)"
+            " ON CONFLICT(book_id) DO UPDATE SET"
+            " mode = excluded.mode, direction = excluded.direction, zoom = excluded.zoom,"
+            " double_page = excluded.double_page, layout = excluded.layout,"
+            " updated_at = excluded.updated_at",
+            (
+                preferences.book_id,
+                preferences.mode,
+                preferences.direction,
+                float(preferences.zoom),
+                1 if preferences.double_page else 0,
+                preferences.layout,
+                preferences.updated_at,
+            ),
+        )
+        self._conn.commit()
+
+    def list_bookmarks(self, book_id: str) -> list[dict[str, object]]:
+        rows = self._conn.execute(
+            "SELECT bookmark_id, book_id, chapter_id, page_id, side, note, created_at"
+            " FROM reading_bookmarks WHERE book_id = ? ORDER BY created_at, bookmark_id",
+            (book_id,),
+        ).fetchall()
+        return [
+            {
+                "bookmark_id": str(row[0]),
+                "book_id": str(row[1]),
+                "chapter_id": str(row[2]),
+                "page_id": str(row[3]),
+                "side": row[4],
+                "note": row[5],
+                "created_at": str(row[6]),
+            }
+            for row in rows
+        ]
+
+    def add_bookmark(self, bookmark: dict[str, object]) -> None:
+        self._conn.execute(
+            "INSERT INTO reading_bookmarks"
+            " (bookmark_id, book_id, chapter_id, page_id, side, note, created_at)"
+            " VALUES (?, ?, ?, ?, ?, ?, ?)",
+            (
+                bookmark["bookmark_id"],
+                bookmark["book_id"],
+                bookmark["chapter_id"],
+                bookmark["page_id"],
+                bookmark.get("side"),
+                bookmark.get("note"),
+                bookmark["created_at"],
+            ),
+        )
+        self._conn.commit()
+
+    def delete_bookmark(self, bookmark_id: str) -> bool:
+        cursor = self._conn.execute(
+            "DELETE FROM reading_bookmarks WHERE bookmark_id = ?", (bookmark_id,)
+        )
+        self._conn.commit()
+        return cursor.rowcount > 0
+
+    def book_progress(self, book_id: str) -> dict[str, object]:
+        total = self._conn.execute(
+            "SELECT COUNT(*) FROM chapters WHERE book_id = ?", (book_id,)
+        ).fetchone()[0]
+        rows = self._conn.execute(
+            "SELECT chapter_id, mode, progress_percent FROM reading_progress WHERE book_id = ?",
+            (book_id,),
+        ).fetchall()
+        completed: dict[str, float] = {}
+        for chapter_id, _mode, percent in rows:
+            completed[str(chapter_id)] = max(completed.get(str(chapter_id), 0.0), float(percent))
+        completed_chapters = sum(1 for value in completed.values() if value >= 100.0)
+        percent = (sum(min(value, 100.0) for value in completed.values()) / (total * 100.0) * 100.0) if total else 0.0
+        return {
+            "book_id": book_id,
+            "total_chapters": int(total),
+            "completed_chapters": completed_chapters,
+            "progress_percent": round(min(percent, 100.0), 2),
+            "last_chapter_id": (rows[-1][0] if rows else None),
+        }
+
+    def reset_book_progress(self, book_id: str) -> int:
+        cursor = self._conn.execute(
+            "DELETE FROM reading_progress WHERE book_id = ?", (book_id,)
+        )
+        self._conn.commit()
+        return cursor.rowcount

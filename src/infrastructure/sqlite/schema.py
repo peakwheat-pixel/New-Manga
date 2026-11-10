@@ -42,6 +42,11 @@ SCHEMA_VERSION_V8 = 8
 #: exactly one index; v1–v8 SQL/name/checksum stay byte-identical.
 SCHEMA_VERSION_V9 = 9
 
+#: FEA-14-READ-1 (PREQ DDL v10 plan): per-book reading preferences, bookmarks
+#: and the additive anchor/viewport columns on the existing progress rows.
+#: Additive only; v1–v9 SQL/name/checksum stay byte-identical.
+SCHEMA_VERSION_V10 = 10
+
 MIGRATION_V1_NAME = "v1__storage_base"
 
 MIGRATION_V1_SQL = """
@@ -859,6 +864,37 @@ MIGRATION_V9_NAME = "v9__media_artifacts_book_index"
 MIGRATION_V9_SQL = "CREATE INDEX idx_media_artifacts_book ON media_artifacts(book_id);"
 
 
+MIGRATION_V10_NAME = "v10__reading_preferences_bookmarks"
+
+#: FEA-14-READ-1 scope §1 / PREQ DDL v10 plan: per-book reading preferences
+#: (mode/direction/zoom/double-page/layout), bookmarks (left/right/both), and
+#: the additive anchor/viewport columns on the existing progress rows. Every
+#: statement is additive; v1–v9 checksums stay byte-identical.
+MIGRATION_V10_SQL = """
+CREATE TABLE reading_preferences (
+    book_id TEXT PRIMARY KEY CHECK (length(book_id) > 0),
+    mode TEXT NOT NULL DEFAULT 'original' CHECK (mode IN ('original', 'translated')),
+    direction TEXT NOT NULL DEFAULT 'ltr' CHECK (direction IN ('ltr', 'rtl', 'vertical')),
+    zoom REAL NOT NULL DEFAULT 1.0 CHECK (zoom > 0.0 AND zoom <= 8.0),
+    double_page INTEGER NOT NULL DEFAULT 0 CHECK (double_page IN (0, 1)),
+    layout TEXT NOT NULL DEFAULT 'single' CHECK (layout IN ('single', 'double', 'continuous')),
+    updated_at TEXT NOT NULL
+);
+CREATE TABLE reading_bookmarks (
+    bookmark_id TEXT PRIMARY KEY CHECK (length(bookmark_id) > 0),
+    book_id TEXT NOT NULL,
+    chapter_id TEXT NOT NULL,
+    page_id TEXT NOT NULL,
+    side TEXT CHECK (side IS NULL OR side IN ('left', 'right', 'both')),
+    note TEXT,
+    created_at TEXT NOT NULL
+);
+CREATE INDEX idx_reading_bookmarks_book ON reading_bookmarks(book_id);
+ALTER TABLE reading_progress ADD COLUMN anchor_json TEXT;
+ALTER TABLE reading_progress ADD COLUMN viewport_json TEXT;
+"""
+
+
 def default_migrations() -> tuple[Migration, ...]:
     return (
         Migration(SCHEMA_VERSION_V1, MIGRATION_V1_NAME, MIGRATION_V1_SQL),
@@ -870,4 +906,5 @@ def default_migrations() -> tuple[Migration, ...]:
         Migration(SCHEMA_VERSION_V7, MIGRATION_V7_NAME, MIGRATION_V7_SQL),
         Migration(SCHEMA_VERSION_V8, MIGRATION_V8_NAME, MIGRATION_V8_SQL),
         Migration(SCHEMA_VERSION_V9, MIGRATION_V9_NAME, MIGRATION_V9_SQL),
+        Migration(SCHEMA_VERSION_V10, MIGRATION_V10_NAME, MIGRATION_V10_SQL),
     )

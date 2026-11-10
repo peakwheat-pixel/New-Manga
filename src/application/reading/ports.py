@@ -112,3 +112,33 @@ class JsonProgressDocumentStore:
         except BaseException:
             temp.unlink(missing_ok=True)
             raise
+
+@dataclass(frozen=True)
+class ReadingPreferences:
+    """FEA-14-READ-1: per-book reading preferences (schema v10)."""
+
+    book_id: str
+    mode: str = "original"
+    direction: str = "ltr"
+    zoom: float = 1.0
+    double_page: bool = False
+    layout: str = "single"
+    updated_at: str = ""
+
+
+class ReadingExtrasStore(Protocol):
+    """SQLite-backed per-book reading extras (FEA-14-READ-1)."""
+
+    def load_preferences(self, book_id: str) -> ReadingPreferences | None: ...
+
+    def save_preferences(self, preferences: ReadingPreferences) -> None: ...
+
+    def list_bookmarks(self, book_id: str) -> list[dict[str, object]]: ...
+
+    def add_bookmark(self, bookmark: dict[str, object]) -> None: ...
+
+    def delete_bookmark(self, bookmark_id: str) -> bool: ...
+
+    def book_progress(self, book_id: str) -> dict[str, object]: ...
+
+    def reset_book_progress(self, book_id: str) -> int: ...
