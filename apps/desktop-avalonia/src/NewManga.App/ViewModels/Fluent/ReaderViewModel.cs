@@ -1,4 +1,5 @@
 using NewManga.App.Services;
+using NewManga.CoreClient;
 
 namespace NewManga.App.ViewModels.Fluent;
 
@@ -96,6 +97,97 @@ public sealed class ReaderViewModel : FluentViewModel
     public double Progress => PageCount < 2 ? 0 : PageIndex * 100d / (PageCount - 1);
     public string AccessiblePageName => PageCount == 0 ? "本章节暂无页面" : $"第 {PageIndex + 1} 页，共 {PageCount} 页";
 
+    /// <summary>FEA-14-READ-2: whole-book progress (page based, PREQ P14).</summary>
+    public BookReadingProgressInfo? BookProgress { get; private set; }
+    public string BookProgressLabel => BookProgress is null
+        ? string.Empty
+        : BookProgress.Finished
+            ? $"已读完（{BookProgress.ReadPages}/{BookProgress.TotalPages} 页）"
+            : $"整书进度 {BookProgress.Percent:0.#}%（{BookProgress.ReadPages}/{BookProgress.TotalPages} 页）";
+    public bool HasBookProgress => BookProgress is not null;
+
+    /// <summary>FEA-14-READ-2 (PREQ P9): apply the stored per-book preferences.</summary>
+    public async Task ApplyReadingPreferencesAsync(CancellationToken cancellationToken = default)
+    {
+        if (_host is null || Book is null)
+        {
+            return;
+        }
+        var preferences = await _host.GetReadingPreferencesAsync(Book.BookId, cancellationToken);
+        if (preferences is null)
+        {
+            return;
+        }
+        Zoom = preferences.Zoom;
+        DoublePage = preferences.DoublePage;
+        ReverseDirection = preferences.Direction == "rtl";
+        if (!string.IsNullOrWhiteSpace(preferences.Layout))
+        {
+            Layout = preferences.Layout;
+        }
+        BookProgress = await _host.GetBookReadingProgressAsync(Book.BookId, cancellationToken);
+        Changed(nameof(BookProgress));
+        Changed(nameof(BookProgressLabel));
+        Changed(nameof(HasBookProgress));
+    }
+
+    /// <summary>FEA-14-READ-2 (PREQ P10): persist only the changed fields (partial patch).</summary>
+    public async Task SaveReadingPreferencesAsync(CancellationToken cancellationToken = default)
+    {
+        if (_host is null || Book is null)
+        {
+            return;
+        }
+        var patch = new ReadingPreferencesPatch(
+            Zoom: Zoom,
+            DoublePage: DoublePage,
+            Layout: Layout,
+            Direction: ReverseDirection ? "rtl" : "ltr");
+        await _host.SaveReadingPreferencesAsync(Book.BookId, patch, cancellationToken);
+    }
+
+    /// <summary>FEA-14-READ-2 (PREQ P12): bookmark the current page.</summary>
+    public async Task<string?> CreateBookmarkAsync(string? side = null, string? note = null, CancellationToken cancellationToken = default)
+    {
+        if (_host is null || Book is null || PageId is null)
+        {
+            return null;
+        }
+        return await _host.CreateBookmarkAsync(Book.BookId, Book.ChapterId, PageId, side, note, cancellationToken);
+    }
+
+    /// <summary>FEA-14-READ-2 (PREQ P11): list this book's bookmarks.</summary>
+    public async Task<IReadOnlyList<BookmarkInfo>> ListBookmarksAsync(CancellationToken cancellationToken = default)
+    {
+        if (_host is null || Book is null)
+        {
+            return Array.Empty<BookmarkInfo>();
+        }
+        return await _host.ListBookmarksAsync(Book.BookId, cancellationToken);
+    }
+
+    /// <summary>FEA-14-READ-2 (PREQ P13): delete one bookmark.</summary>
+    public async Task<bool> DeleteBookmarkAsync(string bookmarkId, CancellationToken cancellationToken = default)
+    {
+        if (_host is null || string.IsNullOrWhiteSpace(bookmarkId))
+        {
+            return false;
+        }
+        return await _host.DeleteBookmarkAsync(bookmarkId, cancellationToken);
+    }
+
+    public async Task ResetReadingProgressAsync(bool confirm = false, CancellationToken cancellationToken = default)
+    {
+        if (_host is null || Book is null || !confirm)
+        {
+            return;
+        }
+        await _host.ResetReadingProgressAsync(Book.BookId, confirm: true, cancellationToken);
+        BookProgress = new BookReadingProgressInfo(0, BookProgress?.TotalPages ?? 0, 0, false);
+        Changed(nameof(BookProgress));
+        Changed(nameof(BookProgressLabel));
+    }
+
     public async Task LoadAsync(string? bookId, string? chapterId, CancellationToken cancellationToken = default)
     {
         _requestedBookId = bookId;
@@ -128,6 +220,7 @@ public sealed class ReaderViewModel : FluentViewModel
             PageIndex = Math.Clamp(loaded.InitialPageIndex, 0, loaded.Pages.Count - 1);
             _scrollOffset = loaded.InitialScrollOffsetY;
             await LoadCurrentPageAsync(cancellationToken);
+            await ApplyReadingPreferencesAsync(cancellationToken);
             // AC-3：Layout / IsWebtoon / DoublePage 任一变化都会改变「第二页」的存在性，
             // 让视图（滚动区）在加载完成后重新求值一次。
             Changed(nameof(IsWebtoon));

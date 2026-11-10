@@ -185,26 +185,46 @@ public sealed class FakeHostController : IHostController, ISourceImportControlle
     /// <summary>CHAPTER-SELECTOR-1: number of ListChaptersAsync calls (tests/evidence).</summary>
     public int ChapterListCalls { get; private set; }
 
-    public Task<ReadingPreferencesInfo?> GetReadingPreferencesAsync(string bookId, CancellationToken cancellationToken = default) =>
-        Task.FromResult<ReadingPreferencesInfo?>(null);
+    // FEA-14-READ-2: scriptable READ wire surface.
+    public ReadingPreferencesInfo? ReadingPreferences { get; set; }
+    public BookReadingProgressInfo? BookProgress { get; set; }
+    public List<BookmarkInfo> Bookmarks { get; } = new();
+    public ReadingPreferencesPatch? LastSavedPreferences { get; private set; }
+    public bool LastResetConfirmed { get; private set; }
 
-    public Task<bool> SaveReadingPreferencesAsync(string bookId, ReadingPreferencesPatch patch, CancellationToken cancellationToken = default) =>
-        Task.FromResult(false);
+    public Task<ReadingPreferencesInfo?> GetReadingPreferencesAsync(string bookId, CancellationToken cancellationToken = default) =>
+        Task.FromResult(ReadingPreferences);
+
+    public Task<bool> SaveReadingPreferencesAsync(string bookId, ReadingPreferencesPatch patch, CancellationToken cancellationToken = default)
+    {
+        LastSavedPreferences = patch;
+        return Task.FromResult(true);
+    }
 
     public Task<IReadOnlyList<BookmarkInfo>> ListBookmarksAsync(string bookId, CancellationToken cancellationToken = default) =>
-        Task.FromResult<IReadOnlyList<BookmarkInfo>>(Array.Empty<BookmarkInfo>());
+        Task.FromResult<IReadOnlyList<BookmarkInfo>>(Bookmarks.ToArray());
 
-    public Task<string?> CreateBookmarkAsync(string bookId, string chapterId, string pageId, string? side = null, string? note = null, CancellationToken cancellationToken = default) =>
-        Task.FromResult<string?>(null);
+    public Task<string?> CreateBookmarkAsync(string bookId, string chapterId, string pageId, string? side = null, string? note = null, CancellationToken cancellationToken = default)
+    {
+        var bookmark = new BookmarkInfo(Guid.NewGuid().ToString("N"), bookId, chapterId, pageId, side, note, "2026-01-01");
+        Bookmarks.Add(bookmark);
+        return Task.FromResult<string?>(bookmark.BookmarkId);
+    }
 
-    public Task<bool> DeleteBookmarkAsync(string bookmarkId, CancellationToken cancellationToken = default) =>
-        Task.FromResult(false);
+    public Task<bool> DeleteBookmarkAsync(string bookmarkId, CancellationToken cancellationToken = default)
+    {
+        var removed = Bookmarks.RemoveAll(item => item.BookmarkId == bookmarkId) > 0;
+        return Task.FromResult(removed);
+    }
 
     public Task<BookReadingProgressInfo?> GetBookReadingProgressAsync(string bookId, CancellationToken cancellationToken = default) =>
-        Task.FromResult<BookReadingProgressInfo?>(null);
+        Task.FromResult(BookProgress);
 
-    public Task<int> ResetReadingProgressAsync(string bookId, bool confirm = true, CancellationToken cancellationToken = default) =>
-        Task.FromResult(0);
+    public Task<int> ResetReadingProgressAsync(string bookId, bool confirm = false, CancellationToken cancellationToken = default)
+    {
+        LastResetConfirmed = confirm;
+        return Task.FromResult(confirm ? 1 : 0);
+    }
     public Task<ReaderBookData?> LoadReaderBookAsync(
         string? bookId = null,
         string? chapterId = null,

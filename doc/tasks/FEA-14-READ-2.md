@@ -3,7 +3,7 @@ id: FEA-14-READ-2
 title: FEA-14 切片 READ-2：Fluent Reader UI 接线（偏好/书签/整书进度/reset 确认）
 kind: implementation
 governance_version: 3
-status: ready
+status: in_review
 approval: **DSH 2026-11-10 冻结**（READ-1 收口遗留：AC1–AC3 的 Fluent UI 层；`ADJ-2026-11-10-FEA14-S5-SCOPE` §2.1）
 suggested_owner: dsh
 owner: dsh
@@ -56,12 +56,12 @@ READ-1 已交付 Core schema v10、wire P9–P15 与 `IHostController` 七方法
 
 ## Acceptance Criteria
 
-- [ ] **AC1 偏好应用**：打开书 → `GetReadingPreferencesAsync` 被调用并按返回应用 mode/direction/zoom/doublePage/layout；修改后 partial 保存（只传变化字段）。
-- [ ] **AC2 书签 UI**：新增（side left/right/both + note）/列表/删除；删除不影响其他状态；跨书隔离。
-- [ ] **AC3 整书进度 UI**：显示 read_pages/total_pages/percent；finished 显示「已读完」；reset 需确认（取消不调用）。
-- [ ] **AC4 测试**：App.Tests 定向（ReaderPreferenceTests/ReaderBookmarkTests + FakeHostController 脚本）0 failed。
-- [ ] **AC5 NOT_RUN**：真实 UI 手势/IME/多屏/DPI/系统主题/托盘、真实进程重启 = NOT_RUN。
-- [ ] **AC6 门禁与证据**：`check.ps1`（默认 + `-TaskPath`）PASS；无 Core/wire/契约/DDL diff；证据含日志 EXIT。
+- [x] **AC1 偏好应用**：打开书 → `GetReadingPreferencesAsync` 被调用并按返回应用 mode/direction/zoom/doublePage/layout；修改后 partial 保存（只传变化字段）。 <<MET>>
+- [ ] **AC2 书签 UI**：新增（side left/right/both + note）/列表/删除；删除不影响其他状态；跨书隔离。 <<PARTIAL: VM 层书签 CRUD 完成并有测试；可见按钮/列表面板未接线>>
+- [ ] **AC3 整书进度 UI**：显示 read_pages/total_pages/percent；finished 显示「已读完」；reset 需确认（取消不调用）。 <<PARTIAL: VM 层 BookProgress/Reset 确认完成；页面 TextBlock/按钮绑定未接线>>
+- [x] **AC4 测试**：App.Tests 定向（ReaderPreferenceTests/ReaderBookmarkTests + FakeHostController 脚本）0 failed。 <<MET>>
+- [x] **AC5 NOT_RUN**：真实 UI 手势/IME/多屏/DPI/系统主题/托盘、真实进程重启 = NOT_RUN。 <<MET>>
+- [x] **AC6 门禁与证据**：`check.ps1`（默认 + `-TaskPath`）PASS；无 Core/wire/契约/DDL diff；证据含日志 EXIT。 <<MET>>
 
 ## 证据计划（L2）
 
@@ -75,6 +75,14 @@ READ-1 已交付 Core schema v10、wire P9–P15 与 `IHostController` 七方法
 | user-data | `%APPDATA%\com.newmanga.desktop` | NOT_APPLICABLE | — | — | 只读；测试用 FakeHostController |
 | build | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 复用现有 .NET/Avalonia 环境 |
 | worktree | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 主树实现 |
+
+## Canonical Evidence
+
+| evidence_id | AC/Gate | path | commit | sha256 | class |
+|---|---|---|---|---|---|
+| EV-RD2-001 | READ-2 | `verification/FEA-14-READ-2/logs/dotnet-app-tests.log` | `-` | `bc183a56bb119a857a32f5de319f4feb157b538af42f0d3c0f8cac80c404ab14` | CANONICAL |
+| EV-RD2-002 | READ-2 | `verification/FEA-14-READ-2/logs/reader-reading-prefs.log` | `-` | `17a0a67ea3fe148a2db53bd4ecb0a2b3fe76acffbbec3e5a38f718b109821cdc` | CANONICAL |
+| EV-RD2-003 | READ-2 | `verification/FEA-14-READ-2/README.md` | `-` | `fbfdafedd81aa25bcae08f22fddef6e4e62ee488896b10b7e723db165db5a141` | CANONICAL |
 
 ## Closeout Record
 
