@@ -1,11 +1,11 @@
-FEA-14-EDIT-1 pins/api | 2026-11-10T17:00:18.8026021+08:00 | HEAD=9a968c3e4d2ec18f0a64e4b16067fe0813c574cc | dirty=[?? verification/FEA-14-EDIT-1/]
+FEA-14-EDIT-1 pins/api | 2026-11-10T17:27:57.5133168+08:00 | HEAD=a89b3421c626b8ee08842c1ebc3447a2d7996d9d | dirty=[M verification/FEA-14-EDIT-1/logs/dotnet-app-tests.log; M verification/FEA-14-EDIT-1/logs/pytest-edit.log; M verification/FEA-14-EDIT-1/logs/regression-v13.log]
 OK C01b 3c9f5af7d74f
 OK C02 bb365ca891a7
 OK C03 b77e7968a00b
 OK C04b 4b304c0c315f
 OK C05 f6e6f3cb1fe1
 OK C06 75f8e2b4eb80
-OK C07 bb7759126620
+OK C07 89781583964e
 OK C08 453f993c1a16
 OK C09 dc51226b336c
 OK C10 ec8fd862f95f
@@ -26,4 +26,4 @@ PIN_EXIT=0
 | **合计** | **81** | — |
 OK: rendered counts match FEA-C07 doc
 API_CHECK_EXIT=0
-C07_PIN=bb77591266208b763c4d4478dd88e525c1b2ddd4934c2e3b1f05ccd3e4c1ef34
+C07_PIN=89781583964eb81db0e12974fdd03adc44231461ac3b2fad65f0eacdb74261c6
