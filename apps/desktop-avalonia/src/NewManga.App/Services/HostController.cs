@@ -765,6 +765,98 @@ public sealed class HostController : IHostController, ISourceImportController, I
         }
     }
 
+    public async Task<IReadOnlyList<PromptTemplateInfo>> ListPromptTemplatesAsync(
+        CancellationToken cancellationToken = default)
+    {
+        if (_runtime is null || !_runtime.Result.IsReady)
+        {
+            return Array.Empty<PromptTemplateInfo>();
+        }
+        var runtime = _runtime;
+        try
+        {
+            return await runtime.ListPromptTemplatesAsync(cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (ex is CoreOperationException or SidecarException or BridgeException or OperationCanceledException or IOException)
+        {
+            return Array.Empty<PromptTemplateInfo>();
+        }
+    }
+
+    public async Task<PromptTemplateInfo?> SavePromptTemplateAsync(
+        string name, string body, string? templateId = null, CancellationToken cancellationToken = default)
+    {
+        if (_runtime is null || !_runtime.Result.IsReady
+            || string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(body))
+        {
+            return null;
+        }
+        var runtime = _runtime;
+        try
+        {
+            return await runtime.SavePromptTemplateAsync(name, body, templateId, cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (ex is CoreOperationException or SidecarException or BridgeException or OperationCanceledException or IOException)
+        {
+            return null;
+        }
+    }
+
+    public async Task<PromptTemplateDeleteResult> DeletePromptTemplateAsync(
+        string templateId, string replacementId, CancellationToken cancellationToken = default)
+    {
+        if (_runtime is null || !_runtime.Result.IsReady
+            || string.IsNullOrWhiteSpace(templateId) || string.IsNullOrWhiteSpace(replacementId))
+        {
+            return new PromptTemplateDeleteResult(false);
+        }
+        var runtime = _runtime;
+        try
+        {
+            return await runtime.DeletePromptTemplateAsync(templateId, replacementId, cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (ex is CoreOperationException or SidecarException or BridgeException or OperationCanceledException or IOException)
+        {
+            return new PromptTemplateDeleteResult(false);
+        }
+    }
+
+    public async Task<PromptTemplateInfo?> CopyBuiltinPromptTemplateAsync(
+        string builtinId, string? name = null, CancellationToken cancellationToken = default)
+    {
+        if (_runtime is null || !_runtime.Result.IsReady || string.IsNullOrWhiteSpace(builtinId))
+        {
+            return null;
+        }
+        var runtime = _runtime;
+        try
+        {
+            return await runtime.CopyBuiltinPromptTemplateAsync(builtinId, name, cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (ex is CoreOperationException or SidecarException or BridgeException or OperationCanceledException or IOException)
+        {
+            return null;
+        }
+    }
+
+    public async Task<IReadOnlyList<PromptTemplateReference>> GetPromptTemplateReferencesAsync(
+        string templateId, CancellationToken cancellationToken = default)
+    {
+        if (_runtime is null || !_runtime.Result.IsReady || string.IsNullOrWhiteSpace(templateId))
+        {
+            return Array.Empty<PromptTemplateReference>();
+        }
+        var runtime = _runtime;
+        try
+        {
+            return await runtime.GetPromptTemplateReferencesAsync(templateId, cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (ex is CoreOperationException or SidecarException or BridgeException or OperationCanceledException or IOException)
+        {
+            return Array.Empty<PromptTemplateReference>();
+        }
+    }
+
     public async Task<ReaderProgressSaveResult> SaveReadingProgressAsync(
         string chapterId,
         string pageId,

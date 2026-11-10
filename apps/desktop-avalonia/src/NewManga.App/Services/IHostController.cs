@@ -244,6 +244,21 @@ public interface IHostController : IReaderProgressSink, IRunController, IAsyncDi
     /// <summary>FEA-14-EDIT-1 (PREQ EDIT P20): delete an issue marker (marker row only).</summary>
     Task<bool> DeleteIssueMarkerAsync(string markerId, CancellationToken cancellationToken = default);
 
+    /// <summary>FEA-14-AI-1 (PREQ AI P21): list builtin + user prompt templates.</summary>
+    Task<IReadOnlyList<PromptTemplateInfo>> ListPromptTemplatesAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>FEA-14-AI-1 (PREQ AI P22): create/update a user prompt template.</summary>
+    Task<PromptTemplateInfo?> SavePromptTemplateAsync(string name, string body, string? templateId = null, CancellationToken cancellationToken = default);
+
+    /// <summary>FEA-14-AI-1 (PREQ AI P23): delete a user template (replacement is mandatory).</summary>
+    Task<PromptTemplateDeleteResult> DeletePromptTemplateAsync(string templateId, string replacementId, CancellationToken cancellationToken = default);
+
+    /// <summary>FEA-14-AI-1 (PREQ AI P24): copy a builtin into an editable template.</summary>
+    Task<PromptTemplateInfo?> CopyBuiltinPromptTemplateAsync(string builtinId, string? name = null, CancellationToken cancellationToken = default);
+
+    /// <summary>FEA-14-AI-1 (PREQ AI P25): references that precede/prevent a delete.</summary>
+    Task<IReadOnlyList<PromptTemplateReference>> GetPromptTemplateReferencesAsync(string templateId, CancellationToken cancellationToken = default);
+
     Task<RegionPageProjection?> LoadPageRegionsAsync(
         string pageId,
         CancellationToken cancellationToken = default);

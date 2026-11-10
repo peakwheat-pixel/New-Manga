@@ -53,6 +53,7 @@ SCHEMA_VERSION_V11 = 11
 #: FEA-14-LIB-1 (PREQ LIB P7): user-defined chapter rank. Additive only.
 SCHEMA_VERSION_V12 = 12
 SCHEMA_VERSION_V13 = 13
+SCHEMA_VERSION_V14 = 14
 
 MIGRATION_V1_NAME = "v1__storage_base"
 
@@ -958,6 +959,34 @@ CREATE INDEX idx_issue_markers_page ON issue_markers(page_id);
 """
 
 
+#: FEA-14-AI-1 scope §1 / PREQ DDL v10 plan §2.4: user-authored prompt templates
+#: (builtin ones stay Core constants and never land here) plus the reference
+#: rows delete must reassign. Additive: v1-v13 checksums stay byte-identical.
+MIGRATION_V14_NAME = "v14__prompt_templates"
+
+MIGRATION_V14_SQL = """
+CREATE TABLE prompt_templates (
+    template_id TEXT PRIMARY KEY CHECK (length(template_id) > 0),
+    name TEXT NOT NULL CHECK (length(name) > 0),
+    body TEXT NOT NULL CHECK (length(body) > 0),
+    version INTEGER NOT NULL CHECK (version >= 1),
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    deleted_at TEXT
+);
+CREATE UNIQUE INDEX idx_prompt_templates_name ON prompt_templates(name) WHERE deleted_at IS NULL;
+CREATE TABLE prompt_template_references (
+    template_id TEXT NOT NULL CHECK (length(template_id) > 0),
+    kind TEXT NOT NULL CHECK (length(kind) > 0),
+    owner_id TEXT NOT NULL CHECK (length(owner_id) > 0),
+    label TEXT NOT NULL DEFAULT '',
+    PRIMARY KEY (template_id, kind, owner_id)
+);
+CREATE INDEX idx_prompt_template_references_template
+    ON prompt_template_references(template_id);
+"""
+
+
 def default_migrations() -> tuple[Migration, ...]:
     return (
         Migration(SCHEMA_VERSION_V1, MIGRATION_V1_NAME, MIGRATION_V1_SQL),
@@ -973,4 +1002,5 @@ def default_migrations() -> tuple[Migration, ...]:
         Migration(SCHEMA_VERSION_V11, MIGRATION_V11_NAME, MIGRATION_V11_SQL),
         Migration(SCHEMA_VERSION_V12, MIGRATION_V12_NAME, MIGRATION_V12_SQL),
         Migration(SCHEMA_VERSION_V13, MIGRATION_V13_NAME, MIGRATION_V13_SQL),
+        Migration(SCHEMA_VERSION_V14, MIGRATION_V14_NAME, MIGRATION_V14_SQL),
     )

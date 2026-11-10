@@ -138,6 +138,21 @@ public sealed class NullHostController : IHostController, ISourceImportControlle
     public Task<bool> DeleteIssueMarkerAsync(string markerId, CancellationToken cancellationToken = default) =>
         Task.FromResult(false);
 
+    public Task<IReadOnlyList<PromptTemplateInfo>> ListPromptTemplatesAsync(CancellationToken cancellationToken = default) =>
+        Task.FromResult<IReadOnlyList<PromptTemplateInfo>>(Array.Empty<PromptTemplateInfo>());
+
+    public Task<PromptTemplateInfo?> SavePromptTemplateAsync(string name, string body, string? templateId = null, CancellationToken cancellationToken = default) =>
+        Task.FromResult<PromptTemplateInfo?>(null);
+
+    public Task<PromptTemplateDeleteResult> DeletePromptTemplateAsync(string templateId, string replacementId, CancellationToken cancellationToken = default) =>
+        Task.FromResult(new PromptTemplateDeleteResult(false));
+
+    public Task<PromptTemplateInfo?> CopyBuiltinPromptTemplateAsync(string builtinId, string? name = null, CancellationToken cancellationToken = default) =>
+        Task.FromResult<PromptTemplateInfo?>(null);
+
+    public Task<IReadOnlyList<PromptTemplateReference>> GetPromptTemplateReferencesAsync(string templateId, CancellationToken cancellationToken = default) =>
+        Task.FromResult<IReadOnlyList<PromptTemplateReference>>(Array.Empty<PromptTemplateReference>());
+
     public Task<ReaderBookData?> LoadReaderBookAsync(
         string? bookId = null,
         string? chapterId = null,

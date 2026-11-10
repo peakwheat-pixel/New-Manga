@@ -46,6 +46,15 @@ public sealed record IssueMarkerInfo(
     IssueMarkerPosition? Position = null,
     string? ResolvedAt = null);
 
+/// <summary>FEA-14-AI-1 (PREQ AI P21): one prompt template row (builtin or user).</summary>
+public sealed record PromptTemplateInfo(string TemplateId, string Name, int Version, bool Builtin);
+
+/// <summary>FEA-14-AI-1 (PREQ AI P23): outcome of a template delete.</summary>
+public sealed record PromptTemplateDeleteResult(bool Deleted);
+
+/// <summary>FEA-14-AI-1 (PREQ AI P25): one durable pointer at a template.</summary>
+public sealed record PromptTemplateReference(string Kind, string OwnerId, string Label);
+
 /// <summary>
 /// REALUSE-DATA-SAFETY-1 AC2: one <c>.nmbak</c> package row from <c>backup.list</c> /
 /// <c>backup.create</c>. <see cref="Verified"/> is the Core's read-back verdict, never optimism.
@@ -1868,6 +1877,142 @@ public sealed class CoreServiceClient : IAsyncDisposable
             return null;
         }
         return new IssueMarkerPosition(ReadDouble(position, "x"), ReadDouble(position, "y"));
+    }
+
+    /// <summary>FEA-14-AI-1 (PREQ AI P21): list builtin + user prompt templates.</summary>
+    public async Task<IReadOnlyList<PromptTemplateInfo>> ListPromptTemplatesAsync(
+        CancellationToken cancellationToken = default)
+    {
+        var response = await SendAsync(
+                "ListPromptTemplates", CoreProtocol.DefaultMinor,
+                writer => { writer.WriteStartObject(); writer.WriteEndObject(); },
+                _options.RequestTimeout, cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, "ListPromptTemplates");
+        var templates = new List<PromptTemplateInfo>();
+        if (result.TryGetProperty("templates", out var array) && array.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var item in array.EnumerateArray())
+            {
+                if (item.ValueKind != JsonValueKind.Object) continue;
+                templates.Add(new PromptTemplateInfo(
+                    ReadString(item, "template_id") ?? string.Empty,
+                    ReadString(item, "name") ?? string.Empty,
+                    ReadInt(item, "version"),
+                    ReadBool(item, "builtin")));
+            }
+        }
+        return templates;
+    }
+
+    /// <summary>FEA-14-AI-1 (PREQ AI P22): create/update a user template.</summary>
+    public async Task<PromptTemplateInfo?> SavePromptTemplateAsync(
+        string name, string body, string? templateId = null, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(body))
+        {
+            throw new ArgumentException("name and body are required", nameof(name));
+        }
+        var response = await SendAsync(
+                "SavePromptTemplate", CoreProtocol.DefaultMinor,
+                writer =>
+                {
+                    writer.WriteStartObject();
+                    if (templateId is not null) writer.WriteString("template_id", templateId);
+                    writer.WriteString("name", name);
+                    writer.WriteString("body", body);
+                    writer.WriteEndObject();
+                },
+                _options.RequestTimeout, cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, "SavePromptTemplate");
+        var savedId = ReadString(result, "template_id");
+        if (savedId is null) return null;
+        return new PromptTemplateInfo(savedId, name, ReadInt(result, "version"), false);
+    }
+
+    /// <summary>FEA-14-AI-1 (PREQ AI P23): delete a user template with a mandatory replacement.</summary>
+    public async Task<PromptTemplateDeleteResult> DeletePromptTemplateAsync(
+        string templateId, string replacementId, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(templateId) || string.IsNullOrWhiteSpace(replacementId))
+        {
+            throw new ArgumentException("template_id and replacement_id are required", nameof(templateId));
+        }
+        var response = await SendAsync(
+                "DeletePromptTemplate", CoreProtocol.DefaultMinor,
+                writer =>
+                {
+                    writer.WriteStartObject();
+                    writer.WriteString("template_id", templateId);
+                    writer.WriteString("replacement_id", replacementId);
+                    writer.WriteEndObject();
+                },
+                _options.RequestTimeout, cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, "DeletePromptTemplate");
+        return new PromptTemplateDeleteResult(ReadBool(result, "deleted"));
+    }
+
+    /// <summary>FEA-14-AI-1 (PREQ AI P24): copy a builtin into an editable template.</summary>
+    public async Task<PromptTemplateInfo?> CopyBuiltinPromptTemplateAsync(
+        string builtinId, string? name = null, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(builtinId))
+        {
+            throw new ArgumentException("builtin_id is required", nameof(builtinId));
+        }
+        var response = await SendAsync(
+                "CopyBuiltinPromptTemplate", CoreProtocol.DefaultMinor,
+                writer =>
+                {
+                    writer.WriteStartObject();
+                    writer.WriteString("builtin_id", builtinId);
+                    if (name is not null) writer.WriteString("name", name);
+                    writer.WriteEndObject();
+                },
+                _options.RequestTimeout, cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, "CopyBuiltinPromptTemplate");
+        var copiedId = ReadString(result, "template_id");
+        if (copiedId is null) return null;
+        // P24's wire response only carries template_id; refresh through P21 for the
+        // Core-assigned name (a null name defaults to "<builtin> (copy)" in Core).
+        return new PromptTemplateInfo(copiedId, name ?? string.Empty, 1, false);
+    }
+
+    /// <summary>FEA-14-AI-1 (PREQ AI P25): references that block/precede a delete.</summary>
+    public async Task<IReadOnlyList<PromptTemplateReference>> GetPromptTemplateReferencesAsync(
+        string templateId, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(templateId))
+        {
+            throw new ArgumentException("template_id is required", nameof(templateId));
+        }
+        var response = await SendAsync(
+                "GetPromptTemplateReferences", CoreProtocol.DefaultMinor,
+                writer =>
+                {
+                    writer.WriteStartObject();
+                    writer.WriteString("template_id", templateId);
+                    writer.WriteEndObject();
+                },
+                _options.RequestTimeout, cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, "GetPromptTemplateReferences");
+        var references = new List<PromptTemplateReference>();
+        if (result.TryGetProperty("references", out var array) && array.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var item in array.EnumerateArray())
+            {
+                if (item.ValueKind != JsonValueKind.Object) continue;
+                references.Add(new PromptTemplateReference(
+                    ReadString(item, "kind") ?? string.Empty,
+                    ReadString(item, "owner_id") ?? string.Empty,
+                    ReadString(item, "label") ?? string.Empty));
+            }
+        }
+        return references;
     }
 
     /// <summary>Reader projection read face (<c>GetReaderProjection</c>, mode=original, start=beginning).</summary>

@@ -181,6 +181,7 @@ from typing import Any, Callable, TextIO
 
 from application.fonts.service import FontLibraryError
 from application.editing.issue_markers import IssueMarkerError
+from application.ai.prompt_templates import PromptTemplateError
 from application.library.errors import BookNotFound, ChapterNotFound, TagNotFound
 from application.editing.errors import (
     DraftError,
@@ -5315,6 +5316,87 @@ class CoreServiceServer:
         category = "not_found" if error.code == "TARGET_NOT_FOUND" else "validation"
         return P16WireError(error.code, category, str(error))
 
+    # FEA-14-AI-1 (PREQ AI P21-P25): prompt templates (schema v14). No network or
+    # model call happens here -- PREQ §6 keeps this a pure data face.
+    def handle_list_prompt_templates(self, payload: dict[str, Any]) -> dict[str, Any]:
+        if set(payload) != set():
+            raise P16WireError("INVALID_REQUEST", "validation", "Prompt template list request is invalid")
+        templates, builtin_count = self._core.prompt_templates.list_templates()
+        return {"templates": templates, "builtin_count": builtin_count}
+
+    def handle_save_prompt_template(self, payload: dict[str, Any]) -> dict[str, Any]:
+        allowed = {"template_id", "name", "body"}
+        if set(payload) - allowed:
+            raise P16WireError("INVALID_REQUEST", "validation", "Prompt template save request is invalid")
+        name = payload.get("name")
+        body = payload.get("body")
+        template_id = payload.get("template_id")
+        if not isinstance(name, str) or not isinstance(body, str):
+            raise P16WireError("INVALID_REQUEST", "validation", "Prompt template save request is invalid")
+        if template_id is not None and (not isinstance(template_id, str) or not template_id):
+            raise P16WireError("INVALID_REQUEST", "validation", "Prompt template save request is invalid")
+        try:
+            template = self._core.prompt_templates.save_template(name, body, template_id)
+        except PromptTemplateError as error:
+            raise self._prompt_template_wire_error(error) from error
+        return {"template_id": template.template_id, "version": template.version}
+
+    def handle_delete_prompt_template(self, payload: dict[str, Any]) -> dict[str, Any]:
+        if set(payload) != {"template_id", "replacement_id"}:
+            raise P16WireError("INVALID_REQUEST", "validation", "Prompt template delete request is invalid")
+        template_id = payload.get("template_id")
+        replacement_id = payload.get("replacement_id")
+        if (
+            not isinstance(template_id, str) or not template_id
+            or not isinstance(replacement_id, str) or not replacement_id
+        ):
+            raise P16WireError("INVALID_REQUEST", "validation", "Prompt template delete request is invalid")
+        try:
+            self._core.prompt_templates.delete_template(template_id, replacement_id)
+        except PromptTemplateError as error:
+            raise self._prompt_template_wire_error(error) from error
+        return {"deleted": True}
+
+    def handle_copy_builtin_prompt_template(self, payload: dict[str, Any]) -> dict[str, Any]:
+        allowed = {"builtin_id", "name"}
+        if set(payload) - allowed:
+            raise P16WireError("INVALID_REQUEST", "validation", "Prompt template copy request is invalid")
+        builtin_id = payload.get("builtin_id")
+        name = payload.get("name")
+        if not isinstance(builtin_id, str) or not builtin_id:
+            raise P16WireError("INVALID_REQUEST", "validation", "Prompt template copy request is invalid")
+        if name is not None and not isinstance(name, str):
+            raise P16WireError("INVALID_REQUEST", "validation", "Prompt template copy request is invalid")
+        try:
+            template = self._core.prompt_templates.copy_builtin(builtin_id, name)
+        except PromptTemplateError as error:
+            raise self._prompt_template_wire_error(error) from error
+        return {"template_id": template.template_id}
+
+    def handle_get_prompt_template_references(self, payload: dict[str, Any]) -> dict[str, Any]:
+        if set(payload) != {"template_id"} or not isinstance(payload.get("template_id"), str) or not payload["template_id"]:
+            raise P16WireError("INVALID_REQUEST", "validation", "Prompt template reference request is invalid")
+        try:
+            references = self._core.prompt_templates.list_references(payload["template_id"])
+        except PromptTemplateError as error:
+            raise self._prompt_template_wire_error(error) from error
+        return {
+            "references": [
+                {"kind": reference.kind, "owner_id": reference.owner_id, "label": reference.label}
+                for reference in references
+            ]
+        }
+
+    @staticmethod
+    def _prompt_template_wire_error(error: PromptTemplateError) -> P16WireError:
+        if error.code == "TARGET_NOT_FOUND":
+            category = "not_found"
+        elif error.code == "TEMPLATE_NAME_EXISTS":
+            category = "conflict"
+        else:
+            category = "validation"
+        return P16WireError(error.code, category, str(error))
+
     def _register_export_target(self, payload: dict[str, Any]) -> dict[str, Any]:
         fields = {"grant_id", "session_id", "target_path", "format", "replace_existing", "expires_at", "signing_key", "signature"}
         if set(payload) != fields:
@@ -7100,6 +7182,7 @@ class CoreServiceServer:
                        "ListBookmarks", "CreateBookmark", "DeleteBookmark",
                        "GetBookReadingProgress", "ResetReadingProgress",
                        "ListIssueMarkers", "CreateIssueMarker", "ResolveIssueMarker", "ReopenIssueMarker", "DeleteIssueMarker",
+                       "ListPromptTemplates", "SavePromptTemplate", "DeletePromptTemplate", "CopyBuiltinPromptTemplate", "GetPromptTemplateReferences",
                        "StartExport", "GetExportSnapshot", "GetExportHistory", "CancelExport"):
             try:
                 if not isinstance(raw_payload, dict):
@@ -7146,6 +7229,16 @@ class CoreServiceServer:
                     result = self.handle_reopen_issue_marker(payload)
                 elif command == "DeleteIssueMarker":
                     result = self.handle_delete_issue_marker(payload)
+                elif command == "ListPromptTemplates":
+                    result = self.handle_list_prompt_templates(payload)
+                elif command == "SavePromptTemplate":
+                    result = self.handle_save_prompt_template(payload)
+                elif command == "DeletePromptTemplate":
+                    result = self.handle_delete_prompt_template(payload)
+                elif command == "CopyBuiltinPromptTemplate":
+                    result = self.handle_copy_builtin_prompt_template(payload)
+                elif command == "GetPromptTemplateReferences":
+                    result = self.handle_get_prompt_template_references(payload)
                 elif command == "SaveReadingProgress":
                     result = self.handle_save_reading_progress(payload)
                 elif command == "StartExport":

@@ -3,14 +3,14 @@ id: FEA-14-AI-1
 title: FEA-14 切片 AI-1：提示词模板（复用 PREQ 预冻结 wire P21–P25）
 kind: implementation
 governance_version: 3
-status: ready
+status: in_review
 approval: **DSH 2026-11-10 冻结**（`ADJ-2026-11-10-FEA14-S5-SCOPE` §2.1/§2.2；PREQ-1 wire 预冻结 AI P21–P25；DDL v10 计划 §2.4）
 suggested_owner: dsh
 owner: dsh
 reviewer: null
 depends_on:
   - FEA-14-S5-PREQ-1
-base_commit: 54b87dcc9
+base_commit: 36c4376d1
 branch: null
 worktree: null
 integration_commit: null
@@ -80,12 +80,22 @@ FEA-14 S5 AI 切片需要「提示词模板」数据面：列出（内置只读 
 
 ## Acceptance Criteria
 
-- [ ] **AC1 数据面/v14**：`prompt_templates`（唯一 name、version、软删）+ `prompt_template_references` additive 建表 + 索引；v1–v13 迁移 NAME/SQL 逐字节不变；旧库升级行级无损；repository 五路径一致。 <<PENDING>>
-- [ ] **AC2 P21/P24 列表与复制**：列表 = 内置常量 + 未软删自建（`builtin` 标记、`builtin_count` 正确）；P24 复制内置得到自建副本（version=1、name 缺省/重名规则）。 <<PENDING>>
-- [ ] **AC3 P22 保存**：新建（version=1）与更新（version+1）、`name` 唯一（重名 typed）、body 非空、内置不可覆盖。 <<PENDING>>
-- [ ] **AC4 P23/P25 删除与引用**：P25 列出 `{kind,owner_id,label}`；P23 强制 replacement（缺失/无效/等于自身 → typed），引用重指派后软删（引用行指向 replacement、目标不再可见）。 <<PENDING>>
-- [ ] **AC5 契约/门禁**：C-07 UNFREEZE v1.8（79/86）成员表逐行 = 脚本 stdout、S5 计划节清空、pin 重算；`--check` EXIT 0；`verify_pins` 18/18。 <<PENDING>>
-- [ ] **AC6 证据**：定向 pytest/回归/App.Tests 通过；`verification/FEA-14-AI-1/` 日志含 EXIT；NOT_RUN 如实登记。 <<PENDING>>
+- [x] **AC1 数据面/v14**：`prompt_templates`（唯一 name、version、软删）+ `prompt_template_references` additve 建表 + 索引；v1–v13 迁移 NAME/SQL 逐字节不变；旧库升级行级无损；repository 五路径一致。 <<MET>>
+- [x] **AC2 P21/P24 列表与复制**：列表 = 内置常量 + 未软删自建（`builtin` 标记、`builtin_count` 正确）；P24 复制内置得到自建副本（version=1、name 缺省/重名规则）。 <<MET>>
+- [x] **AC3 P22 保存**：新建（version=1）与更新（version+1）、`name` 唯一（重名 typed `TEMPLATE_NAME_EXISTS`/conflict）、body 非空、内置不可覆盖。 <<MET>>
+- [x] **AC4 P23/P25 删除与引用**：P25 列出 `{kind,owner_id,label}`；P23 强制 replacement（缺失/无效/等于自身/内置 → typed），引用重指派后软删（引用行指向 replacement、目标不再可见）。 <<MET>>
+- [x] **AC5 契约/门禁**：C-07 UNFREEZE **v1.8**（79/86）成员表逐行 = 脚本 stdout（`ALL_MATCH: True`）、S5 计划节 25/25 全部落地无待实现行、pin `58dbae4c…`；`--check` EXIT 0；`verify_pins` 18/18。 <<MET>>
+- [x] **AC6 证据**：定向 pytest/回归/App.Tests 通过；`verification/FEA-14-AI-1/` 日志含 EXIT；NOT_RUN 如实登记。 <<MET>>
+
+## 实现说明（2026-11-10）
+
+- **wire 形状**：P21 `{}` → `{templates:[{template_id,name,version,builtin}],builtin_count}`；P22 `{template_id?,name,body}` → `{template_id,version}`；P23 `{template_id,replacement_id}` → `{deleted:true}`；P24 `{builtin_id,name?}` → `{template_id}`；P25 `{template_id}` → `{references:[{kind,owner_id,label}]}`。
+- **typed 错误**：不存在（模板/内置/替代）→ `TARGET_NOT_FOUND/not_found`；名称重复 → `TEMPLATE_NAME_EXISTS/conflict`；字段/内置只读/自替代/空 replacement → `INVALID_REQUEST/validation`；无 `UNKNOWN/internal` 逃逸（service 只抛 `PromptTemplateError`）。
+- **数据面**：schema **v14** 仅新增 `prompt_templates` + `prompt_template_references` + 两索引；name 唯一索引仅覆盖未软删行（软删不占用名字）；v1–v13 迁移字节不变。
+- **内置模板**：Core 常量（`BUILTIN_PROMPT_TEMPLATES`，本卡 2 条），不落库；P21 合并投影回 `builtin_count`；P22/P23 对内置 id typed 拒绝；P24 复制为自建 version=1（缺省名 `"<builtin> (copy)"`）。
+- **删除语义**：P23 强制 replacement（必填、存在、非自身、非内置）；引用行在同一事务 `UPDATE OR REPLACE` 重指派后目标软删；引用表由后续卡（译文/任务/规则）写入，本卡不创建。
+- **C-07**：UNFREEZE v1.8（74→79 / 81→86），S5 计划 **25/25 全部落地**；pin `58dbae4c…`。
+- **Host**：`IHostController` 5 方法 + DTO（`PromptTemplateInfo`/`PromptTemplateDeleteResult`/`PromptTemplateReference`）六处一致；NullHost 降级返回空/false/null 不抛；P24 客户端仅得 `template_id`（Core 侧分配 name 由 P21 刷新，登记 limitation）。
 
 ## 证据计划（L2）
 
@@ -117,4 +127,4 @@ FEA-14 S5 AI 切片需要「提示词模板」数据面：列出（内置只读 
 
 ## Closeout Record
 
-- 2026-11-10 scope 冻结（`ready`）。未开始。
+- 2026-11-10 scope 冻结（`ready`）→ 实现（schema v14 + `PromptTemplateService` + wire P21–P25 + Host 六处 + C-07 v1.8）→ **r1 独立复核待派发**。未 push。

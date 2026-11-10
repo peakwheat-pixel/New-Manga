@@ -358,6 +358,67 @@ public sealed class FakeHostController : IHostController, ISourceImportControlle
         return true;
     }
 
+    // FEA-14-AI-1 (PREQ AI P21-P25): prompt-template ports over an in-memory
+    // catalog. The builtin rows are fixed; user rows carry a bumping version so
+    // UI tests can assert save/delete wiring without a live Core.
+    public List<PromptTemplateInfo> PromptTemplates { get; } = new()
+    {
+        new PromptTemplateInfo("builtin-fake", "Fake builtin", 1, true),
+    };
+    public PromptTemplateInfo? LastSavedPromptTemplate { get; private set; }
+    public (string TemplateId, string ReplacementId)? LastDeletedPromptTemplate { get; private set; }
+    public (string BuiltinId, string? Name)? LastCopiedPromptTemplate { get; private set; }
+    public List<PromptTemplateReference> PromptTemplateReferences { get; } = new();
+    private int _promptTemplateSequence;
+
+    public Task<IReadOnlyList<PromptTemplateInfo>> ListPromptTemplatesAsync(CancellationToken cancellationToken = default)
+        => Task.FromResult<IReadOnlyList<PromptTemplateInfo>>(PromptTemplates.ToList());
+
+    public Task<PromptTemplateInfo?> SavePromptTemplateAsync(
+        string name, string body, string? templateId = null, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(body))
+        {
+            return Task.FromResult<PromptTemplateInfo?>(null);
+        }
+        var existing = templateId is null ? null : PromptTemplates.FirstOrDefault(t => t.TemplateId == templateId);
+        if (existing is not null && existing.Builtin)
+        {
+            return Task.FromResult<PromptTemplateInfo?>(null);
+        }
+        var saved = existing is null
+            ? new PromptTemplateInfo($"fake-template-{++_promptTemplateSequence}", name, 1, false)
+            : new PromptTemplateInfo(existing.TemplateId, name, existing.Version + 1, false);
+        PromptTemplates.RemoveAll(template => template.TemplateId == saved.TemplateId);
+        PromptTemplates.Add(saved);
+        LastSavedPromptTemplate = saved;
+        return Task.FromResult<PromptTemplateInfo?>(saved);
+    }
+
+    public Task<PromptTemplateDeleteResult> DeletePromptTemplateAsync(
+        string templateId, string replacementId, CancellationToken cancellationToken = default)
+    {
+        LastDeletedPromptTemplate = (templateId, replacementId);
+        var removed = PromptTemplates.RemoveAll(template => template.TemplateId == templateId && !template.Builtin) > 0;
+        return Task.FromResult(new PromptTemplateDeleteResult(removed));
+    }
+
+    public Task<PromptTemplateInfo?> CopyBuiltinPromptTemplateAsync(
+        string builtinId, string? name = null, CancellationToken cancellationToken = default)
+    {
+        LastCopiedPromptTemplate = (builtinId, name);
+        var builtin = PromptTemplates.FirstOrDefault(template => template.TemplateId == builtinId && template.Builtin);
+        if (builtin is null) return Task.FromResult<PromptTemplateInfo?>(null);
+        var copy = new PromptTemplateInfo(
+            $"fake-template-{++_promptTemplateSequence}", name ?? $"{builtin.Name} (copy)", 1, false);
+        PromptTemplates.Add(copy);
+        return Task.FromResult<PromptTemplateInfo?>(copy);
+    }
+
+    public Task<IReadOnlyList<PromptTemplateReference>> GetPromptTemplateReferencesAsync(
+        string templateId, CancellationToken cancellationToken = default)
+        => Task.FromResult<IReadOnlyList<PromptTemplateReference>>(PromptTemplateReferences.ToList());
+
     public Task<ReaderBookData?> LoadReaderBookAsync(
         string? bookId = null,
         string? chapterId = null,

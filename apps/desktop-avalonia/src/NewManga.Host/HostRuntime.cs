@@ -740,6 +740,45 @@ public sealed class HostRuntime : IAsyncDisposable
         return await core.DeleteIssueMarkerAsync(markerId, cancellationToken).ConfigureAwait(false);
     }
 
+    /// <summary>FEA-14-AI-1 (PREQ AI P21): list builtin + user prompt templates.</summary>
+    public async Task<IReadOnlyList<PromptTemplateInfo>> ListPromptTemplatesAsync(CancellationToken cancellationToken = default)
+    {
+        var core = CoreService ?? throw NotReady();
+        return await core.ListPromptTemplatesAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>FEA-14-AI-1 (PREQ AI P22): create/update a user prompt template.</summary>
+    public async Task<PromptTemplateInfo?> SavePromptTemplateAsync(
+        string name, string body, string? templateId = null, CancellationToken cancellationToken = default)
+    {
+        var core = CoreService ?? throw NotReady();
+        return await core.SavePromptTemplateAsync(name, body, templateId, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>FEA-14-AI-1 (PREQ AI P23): delete a user template with a mandatory replacement.</summary>
+    public async Task<PromptTemplateDeleteResult> DeletePromptTemplateAsync(
+        string templateId, string replacementId, CancellationToken cancellationToken = default)
+    {
+        var core = CoreService ?? throw NotReady();
+        return await core.DeletePromptTemplateAsync(templateId, replacementId, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>FEA-14-AI-1 (PREQ AI P24): copy a builtin into an editable template.</summary>
+    public async Task<PromptTemplateInfo?> CopyBuiltinPromptTemplateAsync(
+        string builtinId, string? name = null, CancellationToken cancellationToken = default)
+    {
+        var core = CoreService ?? throw NotReady();
+        return await core.CopyBuiltinPromptTemplateAsync(builtinId, name, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>FEA-14-AI-1 (PREQ AI P25): references that precede/prevent a delete.</summary>
+    public async Task<IReadOnlyList<PromptTemplateReference>> GetPromptTemplateReferencesAsync(
+        string templateId, CancellationToken cancellationToken = default)
+    {
+        var core = CoreService ?? throw NotReady();
+        return await core.GetPromptTemplateReferencesAsync(templateId, cancellationToken).ConfigureAwait(false);
+    }
+
     public async Task<ReaderProjection> GetReaderProjectionAsync(
         string chapterId,
         string startPosition = ReaderStartPosition.Resume,

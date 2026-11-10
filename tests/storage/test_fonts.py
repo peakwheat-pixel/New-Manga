@@ -47,7 +47,7 @@ def _service(tmp_path: Path):
 def test_v11_creates_font_assets_table(tmp_path):
     conn = _connect(tmp_path)
     _migrate(conn)
-    assert read_schema_version(conn) == LATEST == 13
+    assert read_schema_version(conn) == LATEST == 14
     tables = {row[0] for row in conn.execute("select name from sqlite_master where type='table'")}
     assert "font_assets" in tables
 

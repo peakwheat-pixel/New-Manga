@@ -12,7 +12,8 @@
 | 项 | 值 |
 |---|---|
 | 文件 | `doc/plan/FEA-C07_API_INVENTORY.md` |
-| sha256（冻结后最终字节） | `89781583964eb81db0e12974fdd03adc44231461ac3b2fad65f0eacdb74261c6`（v1.7，2026-11-10 UNFREEZE：EDIT-1 P16–P20 落地统计 74/81 并并入正式成员表（74 方法 + 4 非方法成员，与脚本 stdout 逐行一致）；r1 处置后删除「S5 计划追加」节残留的 P16–P18 三行（统计/成员表不变）；载体 `doc/reviews/CONTRACT-UNFREEZE-2026-11-10-EDIT1.md`） |
+| sha256（冻结后最终字节） | `58dbae4c14d7ec4b946bbf27a237415b938a7160e9c8b311db6dd0377da9dfef`（v1.8，2026-11-10 UNFREEZE：AI-1 P21–P25 落地统计 79/86 并并入正式成员表（79 方法 + 4 非方法成员，与脚本 stdout 逐行一致），S5 计划节 25/25 全部落地；载体 `doc/reviews/CONTRACT-UNFREEZE-2026-11-10-AI1.md`） |
+| 前一 pin（v1.7，保留原值） | `89781583964eb81db0e12974fdd03adc44231461ac3b2fad65f0eacdb74261c6`（v1.7：EDIT-1 P16–P20 落地 74/81；已由 r2 approved 重冻） |
 | 前一 pin（v1.6，保留原值） | `7c033bf76af1726b71e1ce92a5b3c221d880cf7a36bfc44ef3d4467582d5457d`（v1.6：LIB-1 成员表同步 P1–P15，69/76；已由 r3 approved 重冻） |
 | 前一 pin（v1.5，保留原值） | `9c1eb974342af889c8c3acb8b7f7d7893ba44f05ee4b32c871116e249b321d74`（v1.5：LIB-1 P5–P8 落地统计 69/76；载体 `doc/reviews/CONTRACT-UNFREEZE-2026-11-10-LIB1.md`） |
 | 前一 pin（v1.4，保留原值） | `8d92a32feed771e416d1c1c003ec806e0c5c4712209fd2e097c0a723252bab5c`（v1.4：FONT-1 P1–P4 落地统计 65/72；载体 `doc/reviews/CONTRACT-UNFREEZE-2026-11-10-FONT1.md`） |
@@ -27,9 +28,9 @@
 
 | 项 | 值 |
 |---|---|
-| 最后一次独立复核 | v1.0：r2 approved（FEA-GOV-10-r2）；v1.1：**r3 approved（FEA-05-PORT-1，P0/P1=0，P2×11 接受）**；v1.2：**r2 approved**（`doc/reviews/FEA-14-S5-PREQ-1-wire-review-r2.md`）；v1.3：READ-1 r2 approved（`doc/reviews/FEA-14-READ-1-r2.md`）；v1.4：FONT-1 r5 approved（`doc/reviews/FEA-14-FONT-1-r5.md`）；v1.5/v1.6：LIB-1 r1 `changes_requested` → r1 处置 → r2 `changes_requested` → r2 处置 → **r3 `approved`**（`doc/reviews/FEA-14-LIB-1-r3.md`，P0/P1/P2=0；P3=1 accepted；被审 head `de595f69d`，覆盖 v1.6 字节）；v1.7：EDIT-1 实现落地 → **r2 `approved`**（`doc/reviews/FEA-14-EDIT-1-r2.md`，P0/P1/P2=0；P3=1 accepted；被审 head `54b87dcc9`，覆盖 v1.7 字节；r1 发现 C-07 S5 节残留 P16–P18 行 → 已删除并重算 pin `89781583…`） |
+| 最后一次独立复核 | v1.0：r2 approved（FEA-GOV-10-r2）；v1.1：**r3 approved（FEA-05-PORT-1，P0/P1=0，P2×11 接受）**；v1.2：**r2 approved**（`doc/reviews/FEA-14-S5-PREQ-1-wire-review-r2.md`）；v1.3：READ-1 r2 approved（`doc/reviews/FEA-14-READ-1-r2.md`）；v1.4：FONT-1 r5 approved（`doc/reviews/FEA-14-FONT-1-r5.md`）；v1.5/v1.6：LIB-1 r1 `changes_requested` → r1 处置 → r2 `changes_requested` → r2 处置 → **r3 `approved`**（`doc/reviews/FEA-14-LIB-1-r3.md`，P0/P1/P2=0；P3=1 accepted；被审 head `de595f69d`，覆盖 v1.6 字节）；v1.7：EDIT-1 实现落地 → **r2 `approved`**（`doc/reviews/FEA-14-EDIT-1-r2.md`，P0/P1/P2=0；P3=1 accepted；被审 head `54b87dcc9`，覆盖 v1.7 字节；r1 发现 C-07 S5 节残留 P16–P18 行 → 已删除并重算 pin `89781583…`）；v1.8：AI-1 实现落地（74→79 / 81→86；本记录由 v1.8 行登记，r1 复核待派发） |
 | 复核后到冻结的改动 | v1.1：Draft 端口 7 方法 + 统计/成员表；v1.2：新增「S5 计划追加」节；v1.3：READ-1 统计 61/68；v1.4：FONT-1 统计 65/72；v1.5：LIB-1 统计 69/76；v1.6：P1–P15 成员表同步；v1.7：EDIT-1 统计 74/81 + P16–P20 成员表并入（S5 节只剩 P21–P25） |
-| 处置 | v1.1 **已重冻**（2026-11-02，r3 approved）；v1.2 **UNFREEZE 已生效**（2026-11-10，PREQ AC2）；v1.3–v1.5 已随各自实现卡重算 pin；**v1.6 已重冻**（2026-11-10，LIB-1 r3 approved）；**v1.7 随 EDIT-1 实现落地重算 pin**（`89781583…`；r1 处置后已修正 S5 节残留行，字节以此为准），**已由 EDIT-1 r2 approved 重冻** |
+| 处置 | v1.1 **已重冻**（2026-11-02，r3 approved）；v1.2 **UNFREEZE 已生效**（2026-11-10，PREQ AC2）；v1.3–v1.5 已随各自实现卡重算 pin；**v1.6 已重冻**（2026-11-10，LIB-1 r3 approved）；**v1.7 随 EDIT-1 实现落地重算 pin**（`89781583…`；r1 处置后已修正 S5 节残留行，字节以此为准），**已由 EDIT-1 r2 approved 重冻**；**v1.8 随 AI-1 实现落地重算 pin**（`58dbae4c…`），待 AI-1 r1 复核后重冻 |
 
 **为什么必须有这一节**：冻结条件①是「独立复核通过」，若冻结字节 ≠ 复核字节，该条件在证据上不覆盖被冻内容。本节的目的是把差异显式化，而不是掩盖它。
 
@@ -39,7 +40,7 @@
 |---|---|---|---|
 | 1 | 独立复核通过 | ✅ | r1（P1 生成脚本缺失）→ 入库脚本 → r2 [approved](../reviews/FEA-GOV-10-r2.md)（P0×0 / P1×0 / P2×3）；v1.2 UNFREEZE 复核：见载体 §4/§5；v1.7：EDIT-1 r2 approved（`doc/reviews/FEA-14-EDIT-1-r2.md`） |
 | 2 | 生成脚本入库 | ✅ | [`tools/generate_api_inventory.py`](../../tools/generate_api_inventory.py)（177 行，UTF-8 stdout 固定） |
-| 3 | `--check` 通过 | ✅ | `python tools/generate_api_inventory.py --check` → EXIT=0，**1/74/6 = 81**（代码实测；「S5 计划追加」节剩余 P21–P25 不计入脚本统计；v1.6 起正式成员表逐行与 stdout 一致，计数一致不等于成员表一致） |
+| 3 | `--check` 通过 | ✅ | `python tools/generate_api_inventory.py --check` → EXIT=0，**1/79/6 = 86**（代码实测；v1.8 起「S5 计划追加」节 25/25 已全部落地、无待实现行；v1.6 起正式成员表逐行与 stdout 一致，计数一致不等于成员表一致） |
 | 4 | `check.ps1` PASS | ✅ | 冻结时 PASS；2026-11-10 UNFREEZE 后 `check.ps1`（默认 + `-TaskPath`）PASS（3 persistent warnings） |
 
 ## 3. 依赖与后果
@@ -47,7 +48,7 @@
 - **无上游依赖**（清单只读代码）。
 - **下游**：所有涉及 `IHostController`/`IRunController`/`IReaderProgressSink` 的实现 Task（须按清单保持旧签名）。
 - **实现注意**：清单是**基线**；新增/删除端口方法须在同一 Task 内重跑脚本并更新清单，diff 即审查信号。
-- **S5 计划追加节**（`## S5 计划追加`）：25 条命令为**预冻结名单**。实现卡落地时须（a）把对应行从「计划追加」移入正式成员表；（b）重跑脚本并把统计更新为实测值；（c）重算 pin 并在实现卡内记录。**已落地 20 条**（READ-1 P9–P15 → v1.3；FONT-1 P1–P4 → v1.4；LIB-1 P5–P8 → v1.5 统计、v1.6 成员表同步；EDIT-1 P16–P20 → v1.7），剩余 AI-1 P21–P25 共 5 条留在计划节；计划节本身不改变旧签名。
+- **S5 计划追加节**（`## S5 计划追加`）：25 条命令为**预冻结名单**。实现卡落地时须（a）把对应行从「计划追加」移入正式成员表；（b）重跑脚本并把统计更新为实测值；（c）重算 pin 并在实现卡内记录。**已全部落地 25/25**（READ-1 P9–P15 → v1.3；FONT-1 P1–P4 → v1.4；LIB-1 P5–P8 → v1.5 统计、v1.6 成员表同步；EDIT-1 P16–P20 → v1.7；AI-1 P21–P25 → v1.8），计划节自此无待实现行；计划节本身不改变旧签名。
 
 ## 4. 不构成什么
 
@@ -92,3 +93,4 @@
 | 2026-11-10 | **v1.6 重冻（LIB-1 r3 approved）**：r3 独立复核 `approved`（P0/P1/P2=0，P3=1 accepted），逐行核对 C-07 成员表 = stdout、pin = 文件 SHA-256、冻结记录 §1–§5 自洽；C-07 字节自 v1.6 起未再改，pin 保持 `7c033bf7…`；报告 `doc/reviews/FEA-14-LIB-1-r3.md`（被审 head `de595f69d`） | DSH |
 | 2026-11-10 | **UNFREEZE v1.6→v1.7（FEA-14-EDIT-1）**：`IHostController` 69→**74**、合计 76→**81**（P16–P20 落地：`ListIssueMarkersAsync`/`CreateIssueMarkerAsync`/`ResolveIssueMarkerAsync`/`ReopenIssueMarkerAsync`/`DeleteIssueMarkerAsync`）；成员表按脚本 stdout 重建为 74 方法 + 4 非方法成员（`ALL_MATCH: True`）；S5 计划节只剩 P21–P25（已落地 20/25）；pin `89781583…`（v1.6 `7c033bf7…` 保留；r1 处置把初值 `bb775912…` 修正为 `89781583…`，差异仅 S5 节删除残留的 P16–P18 三行）；载体 [CONTRACT-UNFREEZE-2026-11-10-EDIT1](../reviews/CONTRACT-UNFREEZE-2026-11-10-EDIT1.md)；复核：`--check` EXIT 0、`verify_pins` 18/18，独立复核随 EDIT-1 r2 | DSH |
 | 2026-11-10 | **v1.7 重冻（EDIT-1 r2 approved）**：r2 独立复核 `approved`（P0/P1/P2=0；P3=1 accepted：卡片 closeout 文字旧，已随收口更新），逐项关闭 r1 的 F-01–F-05；C-07 S5 计划节只剩 P21–P25、成员表 74+4 与 stdout 逐行一致、pin `89781583…` = 文件 SHA-256；报告 `doc/reviews/FEA-14-EDIT-1-r2.md`（被审 head `54b87dcc9`） | DSH |
+| 2026-11-10 | **UNFREEZE v1.7→v1.8（FEA-14-AI-1）**：`IHostController` 74→**79**、合计 81→**86**（P21–P25 落地：`ListPromptTemplatesAsync`/`SavePromptTemplateAsync`/`DeletePromptTemplateAsync`/`CopyBuiltinPromptTemplateAsync`/`GetPromptTemplateReferencesAsync`）；成员表按脚本 stdout 重建为 79 方法 + 4 非方法成员（`ALL_MATCH: True`）；S5 计划节 **25/25 全部落地**、无待实现行；pin `58dbae4c…`（v1.7 `89781583…` 保留）；载体 [CONTRACT-UNFREEZE-2026-11-10-AI1](../reviews/CONTRACT-UNFREEZE-2026-11-10-AI1.md)；复核：`--check` EXIT 0、`verify_pins` 18/18，独立复核随 AI-1 r1 | DSH |
