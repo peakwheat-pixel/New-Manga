@@ -16,7 +16,7 @@ worktree: G:/CODEX/New Manga
 integration_commit: null
 delivery_head: ab31381fa92fdb5d1311f1b2cc42c892f84f58d1
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/FEA-15-ACCEPT-1
 allowed_paths:
   - doc/tasks/FEA-15-ACCEPT-1.md
@@ -56,7 +56,7 @@ FEA-14 S5 七切片（SET/PREQ/EXPORT/READ/FONT/LIB/EDIT/AI 相关实现卡）�
 - [x] **AC2 A2 安装**：安装产物存在则实测安装/启动/四页可达；不存在则 NOT_RUN + 缺口登记（含缺失的打包交付物）。 <<MET>>
 - [x] **AC3 A3/A4 真实层**：双入口冒烟与旧库升级/回退的真实层证据；不可得项 NOT_RUN 并给出可用替代证据（App/Host 测试层、FEA-13 五片）。 <<MET>>
 - [x] **AC4 A7 汇总与矩阵**：七切片状态/limitation/NOT_RUN 汇总进 `FEA-15-INTEGRATION-ACCEPTANCE.md`，矩阵状态列更新。 <<MET>>
-- [ ] **AC5 结论与门禁**：验收结论（通过/带 limitation/不通过）+ `check.ps1`（默认 + `-TaskPath`）+ pins；diff ⊆ allowed_paths。 <<PARTIAL: 验收结论和最终审查由 ZCode 独立会话裁决；最终门禁待固定交付 head 后复核>>
+- [x] **AC5 结论与门禁**：验收结论（通过/带 limitation/不通过）+ `check.ps1`（默认 + `-TaskPath`）+ pins；diff ⊆ allowed_paths。 <<MET>>
 - [x] **AC6 证据**：`verification/FEA-15-ACCEPT-1/` 日志含 EXIT/时点；NOT_RUN 如实登记。 <<MET>>
 
 ## 证据计划（L2）
@@ -74,14 +74,7 @@ FEA-14 S5 七切片（SET/PREQ/EXPORT/READ/FONT/LIB/EDIT/AI 相关实现卡）�
 
 ## Resource Manifest
 
-| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
-|---|---|---|---|---|---|
-| temp | `G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\`（隔离根） | PRESERVE_UNKNOWN | — | — | 仓外测试数据、源码档案/对照夹具（含解包失败副本）和专用 Python venv 暂保留；另有 FEA-11 测试硬编码共享 fixtures，候选清单见 `verification/FEA-15-ACCEPT-1/fixture-observation.log`，归属未证明，不清理 |
-| user-data | `%APPDATA%\com.newmanga.desktop` | NOT_APPLICABLE | — | — | 只读；不写真实用户数据 |
-| build | `G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree\apps\desktop-avalonia` | PRESERVE_REFERENCED | — | — | Release 构建产物，暂供复核 |
-| worktree | `G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree` | PRESERVE_REFERENCED | — | — | detached `d63d735a712dbe47100db2e72b4d59a73dfd1f62`；主树为任务写入树，不执行清理 |
-| runtime ACL | `C:\Python314\python.exe`、`C:\Python314` | PRESERVE_UNKNOWN | — | `verification/FEA-15-ACCEPT-1/python-acl-observation.log` | 插件测试会尝试授予 AppContainer 权限；无运行前 ACL 快照，新增项与归属不明，不擅自撤销 |
-| AppContainer profile | 当前用户 profile（测试涉及的插件 profile） | PRESERVE_UNKNOWN | — | — | 测试可创建或复用；无事前清单，不推断新增项，不清理 |
+资源及原位保留处置见 `verification/FEA-15-ACCEPT-1/resource-manifest.json`；未知用户级 AppContainer profile 以描述性集合登记，不虚构具体实例或路径。
 
 ## Canonical Evidence
 
@@ -120,6 +113,9 @@ FEA-14 S5 七切片（SET/PREQ/EXPORT/READ/FONT/LIB/EDIT/AI 相关实现卡）�
 | SRC-23 | supporting | `verification/FEA-15-ACCEPT-1/zcode-second-decision-raw.log` | `8cad6d68c1e455c087a20346c9b1c0217bef129e` | `b3a9c528617876ab3675407fecccc1bc50bda175842e0597eea27363385e0986` | SOURCE_PIN |
 | SRC-24 | supporting | `verification/FEA-15-ACCEPT-1/zcode-serial-decision-raw.log` | `8cad6d68c1e455c087a20346c9b1c0217bef129e` | `a614b38f124c83557ff548d99a4e74c25dbd6fefe7857c3ec633a7fdbdd4fa4b` | SOURCE_PIN |
 | SRC-25 | AC5 门禁 | `verification/FEA-15-ACCEPT-1/gates-final.log` | `18e01a3edeae1775c078c7463724aa754d21ec0d` | `85543378d25c0ec63a157f587001594ce840a7765c1921b5db241f6907b437c0` | SOURCE_PIN |
+| SRC-26 | 资源清单 | `verification/FEA-15-ACCEPT-1/resource-manifest.json` | `1ecd613325cf69db7900fabb5fedb2302e47e84f` | `27e8b3f7d0a611f9dfd079ab9f21685aeae65f46ce84363700ca400cedf0abd1` | SOURCE_PIN |
+| SRC-27 | 资源清点（不完整） | `verification/FEA-15-ACCEPT-1/workspace-inventory.md` | `1ecd613325cf69db7900fabb5fedb2302e47e84f` | `f56912112752805ac068f88d22f2c635725e9add2a44cfbe43c543abb251e043` | SOURCE_PIN |
+| SRC-28 | 资源清点（不跟随链接） | `verification/FEA-15-ACCEPT-1/workspace-inventory-nofollow.md` | `1ecd613325cf69db7900fabb5fedb2302e47e84f` | `b7ad18fd2a74e982b3a7644f5f15de6b42835636568cab98efa95f49c3ac1c83` | SOURCE_PIN |
 
 ## Closeout Record
 
@@ -130,3 +126,5 @@ FEA-14 S5 七切片（SET/PREQ/EXPORT/READ/FONT/LIB/EDIT/AI 相关实现卡）�
 - r1 P3-4：Handoff 对变更路径的概括句已由 r1 使用 `git diff --name-status` 核实；报告及具体范围见 `doc/reviews/FEA-15-ACCEPT-1-r1.md`。
 - r1（独立 ZCode `sess_88acf941-2220-4c42-a4bf-ca95923a8cfe`，reviewed head `e55a23dc9b7c701e31360a9e41b9fc4a88d0bf30`）approved 附条件；P2-2/P3-1/2/3 已修正，P2-1 跨 checkout hash 风险已登记、治理修复待另行释放；条件与新 head 须经 r2 独立复核，未集成。
 - r1 处置后 `ab31381fa92fdb5d1311f1b2cc42c892f84f58d1` 上默认及指定 Task 治理检查、18 pins 均 EXIT 0（`gates-final.log`；生成时该日志尚未登记，故 4 条警告）。本次登记日志后须再复核；AC5 仍待最终结论和 r2。
+- 2026-11-11：r2 独立复核 `approved`（`sess_88acf941-2220-4c42-a4bf-ca95923a8cfe`；reviewed `d0d8a3ab1b3d9877ef6f33a4f67ee36052cad0d1`；0 P0/P1/P2），ZCode [最终裁决](../reviews/FEA-15-ACCEPT-1-final-adjudication.md)授权 `closed_with_limitations`。`d0d8a3ab1` 00:23 登记后默认和指定 Task 检查 PASS（3 warnings、EXIT 0），pins 18/18 EXIT 0；r1/r2 已核验 diff ⊆ allowed_paths。
+- 保留限制：pytest 16 failed、.NET 127 failed 原样保留，根因未定项待 DIAG；当前版本安装、可见 UI、真实库升级/回退 NOT_RUN；r2 指出 30 条 pin 中 27 条跨 checkout 工作区哈希不可复现，待 pin 口径治理。62 个共享 fixture 候选、系统 Python ACL、AppContainer profile 维持 `PRESERVE_UNKNOWN`；构建 worktree 维持 `PRESERVE_REFERENCED`；未清理任何资源。
