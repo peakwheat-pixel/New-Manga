@@ -1,0 +1,105 @@
+{
+  "ac": "A3-AC1/AC2/AC3",
+  "exe": "G:\\CODEX\\New Manga.workspace\\FEA-15-A2-1\\out\\NewManga-0.1.1-win-x64\\app\\NewManga.App.exe",
+  "iso_root": "G:\\CODEX\\New Manga.workspace\\FEA-15-A3-1\\iso",
+  "cases": [
+    {
+      "case": "shell.legacy",
+      "args": "--shell=legacy",
+      "window_handle": 67703052,
+      "window_found": true,
+      "exit_code": 0,
+      "exited": true
+    },
+    {
+      "case": "shell.current-v2",
+      "args": "--frontend=builtin.current-v2",
+      "window_handle": 19006476,
+      "window_found": true,
+      "exit_code": 0,
+      "exited": true
+    },
+    {
+      "case": "shell.fluent",
+      "args": "--frontend=builtin.fluent",
+      "window_handle": 34606288,
+      "window_found": true,
+      "exit_code": 0,
+      "exited": true
+    },
+    {
+      "case": "shell.presentation-host",
+      "args": "--presentation-host=true --frontend=builtin.fluent",
+      "window_handle": 14159454,
+      "window_found": true,
+      "exit_code": 0,
+      "exited": true
+    },
+    {
+      "case": "page.bookshelf",
+      "args": "--frontend=builtin.fluent --page=bookshelf",
+      "window_handle": 9699996,
+      "window_found": true,
+      "exit_code": 0,
+      "exited": true
+    },
+    {
+      "case": "page.workbench",
+      "args": "--frontend=builtin.fluent --page=workbench",
+      "window_handle": 51973638,
+      "window_found": true,
+      "exit_code": 0,
+      "exited": true
+    },
+    {
+      "case": "page.reader",
+      "args": "--frontend=builtin.fluent --page=reader",
+      "window_handle": 36965272,
+      "window_found": true,
+      "exit_code": 0,
+      "exited": true
+    },
+    {
+      "case": "page.settings",
+      "args": "--frontend=builtin.fluent --page=settings",
+      "window_handle": 9896604,
+      "window_found": true,
+      "exit_code": 0,
+      "exited": true
+    }
+  ],
+  "shells_ok": true,
+  "pages_ok": true,
+  "real_appdata": {
+    "data_root": {
+      "before": {
+        "exists": true,
+        "files": 524,
+        "bytes": 209813373.0,
+        "digest": "4c8b0da76dcce3b505b0d1a3961b6351c688481949f377f67cd39877825e6f18"
+      },
+      "after": {
+        "exists": true,
+        "files": 524,
+        "bytes": 209813456.0,
+        "digest": "6e0c9e79fd8925543638cbcdb95afb9b1bd48a920f03849d77e5464967c77798"
+      }
+    },
+    "theme_root": {
+      "before": {
+        "exists": true,
+        "files": 1,
+        "bytes": 359.0,
+        "digest": "b50c6ce4d14225b58b963d1fb81ccaaae81cba42e85c677d22c89c9da90a7d73"
+      },
+      "after": {
+        "exists": true,
+        "files": 1,
+        "bytes": 359.0,
+        "digest": "b50c6ce4d14225b58b963d1fb81ccaaae81cba42e85c677d22c89c9da90a7d73"
+      }
+    },
+    "unchanged": false
+  },
+  "generated_at_utc": "2026-11-10T04:22:25.7751605Z"
+}

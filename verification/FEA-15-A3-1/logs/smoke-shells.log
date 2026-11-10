@@ -1,3 +1,14 @@
 FEA-15-A3-1 four-shell/four-page smoke | 2026-11-10T12:15:14.5269533+08:00 | HEAD=a9518a7e23686029885c164314a212cb5320cbad
 shells_ok=True pages_ok=True appdata_unchanged=False
 EXIT=1
+=== r1 fix rerun 2026-11-10T12:21:28.2150379+08:00 ===
+case=shell.legacy window=True exit=0
+case=shell.current-v2 window=True exit=0
+case=shell.fluent window=True exit=0
+case=shell.presentation-host window=True exit=0
+case=page.bookshelf window=True exit=0
+case=page.workbench window=True exit=0
+case=page.reader window=True exit=0
+case=page.settings window=True exit=0
+shells_ok=True pages_ok=True appdata_unchanged=False
+EXIT=1

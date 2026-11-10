@@ -55,7 +55,7 @@ function Invoke-Case([string]$name, [string[]]$extraArgs) {
         exit_code = $code
         exited = $exited
     }
-    Write-Output "case=$name window=$($row.window_found) exit=$code"
+    Write-Host "case=$name window=$($row.window_found) exit=$code"
     Start-Sleep -Milliseconds 300
     return $row
 }
