@@ -100,6 +100,13 @@ FEA-14 S5 FONT 切片（FEA-00 §12.2/§15.6）需要字体库数据面：安装
 - **R3-002（P3，已修）**：wire 删除错误按 code 映射类别——`FONT_NOT_FOUND` → `not_found`；`FONT_DELETE_FAILED` → `write` + retryable。
 - **R3-003（P3，已修）**：日志 HEAD/Canonical 行数说明修正（Canonical 实际 5 行 EV-FN-001..005）。
 
+
+## r4 处置记录（2026-11-10，对 `2bec370e7` 的 changes_requested）
+
+- **R4-001（P2，已修）**：`FONT_DELETE_FAILED` 的 category 由未登记的 `write` 改为既有 taxonomy **`internal`**；卡面「+ retryable」措辞删除（retryable 由 code 表达）。
+- **R4-002（P3，登记）**：wire 级 `FONT_DELETE_FAILED` 负例未补（wire P1 不回 managed_path，测试无法定位受管文件；storage 层已覆盖失败/重试）；登记。
+- **R4-003（P3，登记）**：pytest-font.log/App 全量日志 HEAD 为生成时工作树；Canonical 5 行正确。
+
 ## 证据计划（L2）
 
 `verification/FEA-14-FONT-1/`：`logs/`（pytest 定向/全量、App.Tests、门禁、API inventory、pins）、字体 fixture 清单与 sha256、NOT_RUN、复现命令。
@@ -128,9 +135,9 @@ FEA-14 S5 FONT 切片（FEA-00 §12.2/§15.6）需要字体库数据面：安装
 |---|---|---|---|---|---|
 | EV-FN-001 | FONT-1 | `verification/FEA-14-FONT-1/logs/dotnet-app-tests.log` | `-` | `fd837f5fe5af02719c261db4f2e5043619eb95e3da21917c727cec1571b5696a` | CANONICAL |
 | EV-FN-002 | FONT-1 | `verification/FEA-14-FONT-1/logs/pins-api.log` | `-` | `9d798a9b0a0637abe5ddc41b74f2915997cb933ef4be16fa9da064531336b5e6` | CANONICAL |
-| EV-FN-003 | FONT-1 | `verification/FEA-14-FONT-1/logs/pytest-font.log` | `-` | `4c53213e55003d08f53435c35f91eb710bfeb218e4f0eeb7543116372084995d` | CANONICAL |
+| EV-FN-003 | FONT-1 | `verification/FEA-14-FONT-1/logs/pytest-font.log` | `-` | `6321dedf6973a44d8e1f818e3758e4cb0e02f804a855a5513db5a1b159680c9b` | CANONICAL |
 | EV-FN-004 | FONT-1 | `verification/FEA-14-FONT-1/logs/regression-v11.log` | `-` | `9934a4a4e67b8cc4435fbd0fd63a9232ced1e3ecd40d8dcb70d0e354fa081d37` | CANONICAL |
-| EV-FN-005 | FONT-1 | `verification/FEA-14-FONT-1/README.md` | `-` | `c121f34035de7fc015faf8917af73e6ac3f33e49acc80be94e8840042c1cdb60` | CANONICAL |
+| EV-FN-005 | FONT-1 | `verification/FEA-14-FONT-1/README.md` | `-` | `56581d3f17faae7cec09ed8ecb9f26a8e6fad66acb726529474a0007706fd29e` | CANONICAL |
 
 ## Closeout Record
 
