@@ -14,7 +14,7 @@ base_commit: 164ebabcfa90b92fc46c07238280960fc01f7423
 branch: main
 worktree: G:/CODEX/New Manga
 integration_commit: null
-delivery_head: 6ad10aacf886a3c2b98ff3434070edf6b31dbf36
+delivery_head: ab31381fa92fdb5d1311f1b2cc42c892f84f58d1
 canonical_evidence_status: complete
 resource_closeout_status: pending
 evidence_dir: verification/FEA-15-ACCEPT-1
@@ -119,6 +119,7 @@ FEA-14 S5 七切片（SET/PREQ/EXPORT/READ/FONT/LIB/EDIT/AI 相关实现卡）�
 | SRC-22 | supporting | `verification/FEA-15-ACCEPT-1/zcode-evidence-decision.log` | `b7344445e3abc520c4d03fcb642b97880fe47738` | `43dd07630a3ab0ba2a675778a361b02df50e9bf644f004eb3ceb2e0082a6aa2e` | SOURCE_PIN |
 | SRC-23 | supporting | `verification/FEA-15-ACCEPT-1/zcode-second-decision-raw.log` | `8cad6d68c1e455c087a20346c9b1c0217bef129e` | `b3a9c528617876ab3675407fecccc1bc50bda175842e0597eea27363385e0986` | SOURCE_PIN |
 | SRC-24 | supporting | `verification/FEA-15-ACCEPT-1/zcode-serial-decision-raw.log` | `8cad6d68c1e455c087a20346c9b1c0217bef129e` | `a614b38f124c83557ff548d99a4e74c25dbd6fefe7857c3ec633a7fdbdd4fa4b` | SOURCE_PIN |
+| SRC-25 | AC5 门禁 | `verification/FEA-15-ACCEPT-1/gates-final.log` | `18e01a3edeae1775c078c7463724aa754d21ec0d` | `85543378d25c0ec63a157f587001594ce840a7765c1921b5db241f6907b437c0` | SOURCE_PIN |
 
 ## Closeout Record
 
@@ -128,3 +129,4 @@ FEA-14 S5 七切片（SET/PREQ/EXPORT/READ/FONT/LIB/EDIT/AI 相关实现卡）�
 - 2026-11-10 补充证据：四项 App 仓库定位对照 4/4；Host 两项对照 1/1，ACL 异常仍存；专用 venv 插件对照 6 passed/10 failed；legacy/Fluent 仅隐藏进程级 EXIT 0，可见窗口与页面交互 NOT_RUN。现有结论为全量基线未满足、归因部分未定，最终验收结论待上下文独立 Review 与 ZCode 裁决。
 - r1 P3-4：Handoff 对变更路径的概括句已由 r1 使用 `git diff --name-status` 核实；报告及具体范围见 `doc/reviews/FEA-15-ACCEPT-1-r1.md`。
 - r1（独立 ZCode `sess_88acf941-2220-4c42-a4bf-ca95923a8cfe`，reviewed head `e55a23dc9b7c701e31360a9e41b9fc4a88d0bf30`）approved 附条件；P2-2/P3-1/2/3 已修正，P2-1 跨 checkout hash 风险已登记、治理修复待另行释放；条件与新 head 须经 r2 独立复核，未集成。
+- r1 处置后 `ab31381fa92fdb5d1311f1b2cc42c892f84f58d1` 上默认及指定 Task 治理检查、18 pins 均 EXIT 0（`gates-final.log`；生成时该日志尚未登记，故 4 条警告）。本次登记日志后须再复核；AC5 仍待最终结论和 r2。
