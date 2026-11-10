@@ -8,8 +8,8 @@
 
 | AC | 判别 | 结果 |
 |---|---|---|
-| AC1 四壳冒烟 | legacy / current-v2 / fluent / presentation-host 各 EXIT 0 + 窗口句柄 | **MET**：4/4 `window=True, exit=0`（handles 11338770 / 19991586 / 13569630 / 11535378） |
-| AC2 Fluent 四页 | bookshelf/workbench/reader/settings 各 EXIT 0 + 窗口句柄 | **MET**：4/4 `window=True, exit=0`（handles 20188194 / 50924522 / 46270880 / 16388062） |
+| AC1 四壳冒烟 | legacy / current-v2 / fluent / presentation-host 各 EXIT 0 + 窗口句柄 | **MET**：4/4 `window=True, exit=0`（handles **67703052 / 19006476 / 34606288 / 14159454**（重跑修复后 JSON）） |
+| AC2 Fluent 四页 | bookshelf/workbench/reader/settings 各 EXIT 0 + 窗口句柄 | **MET**：4/4 `window=True, exit=0`（handles **9699996 / 51973638 / 36965272 / 9896604**（重跑修复后 JSON）） |
 | AC3 隔离 | 真实双根 AppData 前后一致 | **PARTIAL**：`%APPDATA%\NewManga`（1 文件/359 B/digest `b50c6ce4…`）不变；`%APPDATA%\com.newmanga.desktop` 文件数 524 不变但 **`logs/window-material.log` 每次冒烟追加 83 B**（原 1,206,936 → 首轮 1,207,019 → 重跑后 1,207,102；累计 +166 B），data bytes 209,813,290→209,813,456，digest 变。该日志路径固定真实 data root、不被 `--data-root` 重定向（limitation，见下） |
 | AC4 headless 关键路径 | FluentShellTests / StartupCompatibilityMatrixTests / PresentationHostCompositionTests | **MET**：14 passed / 0 failed（`logs/dotnet-headless.log`） |
 | AC5 NOT_RUN 登记 | 真实手势/IME/多屏/DPI/系统主题/托盘 | **MET（登记）**：见 NOT_RUN |
