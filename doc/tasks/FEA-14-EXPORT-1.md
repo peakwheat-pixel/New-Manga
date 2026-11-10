@@ -1,6 +1,6 @@
 ---
 id: FEA-14-EXPORT-1
-title: FEA-14 切片 EXPORT-1：导出范围/顺序预览/同名冲突默认不覆盖/取消保留成功文件
+title: FEA-14 切片 EXPORT-1：导出范围/顺序预览/同名冲突默认不覆盖/取消保护
 kind: implementation
 governance_version: 3
 status: in_review
@@ -30,6 +30,7 @@ allowed_paths:
   - src/application/export/ports.py
   - src/infrastructure/export/jobs.py
   - src/infrastructure/export/qt_free.py
+  - src/infrastructure/export/target_refs.py
   - src/bootstrap/core_service.py
   - apps/desktop-avalonia/src/NewManga.App/Services/HostController.cs
   - apps/desktop-avalonia/src/NewManga.App/Services/ImportExportContracts.cs
@@ -62,8 +63,16 @@ out_of_scope:
 1. **默认不覆盖**：Core `ExportRequest.overwrite_policy` 默认由 `OVERWRITE` 改为 `AUTO_RENAME`（保留用户已有文件；同名时新产物自动改名）。显式 `overwrite` 仅保留为既有接口语义（不新增 UI 开关），且不得成为默认。
 2. **Host 冲突计划**：`HostController.StartExportAsync` 在目标路径已存在时按默认策略处理（自动改名），不覆盖既有文件；`ExportSnapshotInfo.OutputPath` 反映最终文件名。
 3. **scope 三档 + 顺序预览（UI）**：`ExportPanel` 显示「当前页 / 已选页 / 整章」范围与导出顺序（由 `orderedPageIds`/`GetTranslatedPageIdsAsync` 投影），可切换；不新增命令。
-4. **取消保留成功文件**：取消时已完成页/已成功文件保留（typed 报告完成数量，不静默删除）；补可判别测试。
+4. **取消保护**：取消不发布新文件、既有目标字节/mtime 不变、typed 状态为 cancelled；导出是单文件原子发布，**不存在「部分成功文件」**故不报告完成数量（r2 R2-002 口径）。补可判别测试。
 5. 零 DDL、零新 wire、旧签名不变。
+
+## r2 处置记录（2026-11-10，对 `22683068e` 的 approved + P2 残余）
+
+- **R2-001（P2，已修）**：AUTO_RENAME sibling 发布恢复路径安全校验——`ResolvedExportTarget.publish_to`（`src/infrastructure/export/target_refs.py`：authorized parent resolve/reparse、published 父目录一致、不存在/非 symlink、发布后 entry 校验）；`_publish_to` 调用它。
+- **R2-002（P2，已修）**：front-matter title 与 Scope §4 改为「取消保护」口径（单文件原子发布无部分成功文件）；AC4/README 一致。
+- **R2-005（P3，已补）**：新增当前页未定位提示测试、完成态输出路径去重测试。
+- **R2-003/R2-004/R2-006/R2-007（P3）**：TOCTOU 极小窗口、源码断言脆弱性、provenance、E2E NOT_RUN——已登记，不阻断。
+- 其它 r1 findings 已在前一轮处置；r2 门禁：定向 dotnet 29/0、pytest 定向 177、全量见证据日志。
 
 ## r1 处置记录（2026-11-10，对 `863d1b4f5` 的 changes_requested；报告 `doc/reviews/FEA-14-EXPORT-1-r1.md`）
 
@@ -126,12 +135,12 @@ out_of_scope:
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
 | EV-EX1-001 | AC1-AC6 | `verification/FEA-14-EXPORT-1/logs/api-inventory.log` | `-` | `2245baa2a0ef67e32d2f0657446801f7abef27e775702c9b380e109953aa5097` | CANONICAL |
-| EV-EX1-002 | AC1-AC6 | `verification/FEA-14-EXPORT-1/logs/dotnet-app-tests.log` | `-` | `2075dc7bea84c93ac7624b2c5ab409f7aef23d31e127714eb3c3b539d5c10b42` | CANONICAL |
+| EV-EX1-002 | AC1-AC6 | `verification/FEA-14-EXPORT-1/logs/dotnet-app-tests.log` | `-` | `f0493b6c09a27f75cb4ebe394247a36b3a9d9b1832d74946480791ecc58925e9` | CANONICAL |
 | EV-EX1-003 | AC1-AC6 | `verification/FEA-14-EXPORT-1/logs/dotnet-export-tests.log` | `-` | `79bf469ff03f019a525f84bf282922f2592aa95b7193e866fddc3416d12204fd` | CANONICAL |
 | EV-EX1-004 | AC1-AC6 | `verification/FEA-14-EXPORT-1/logs/gates-check.log` | `-` | `027b714c43833229e0373aa0f6d608bf7a65154c26aaef486c82e2893b4a4614` | CANONICAL |
 | EV-EX1-005 | AC1-AC6 | `verification/FEA-14-EXPORT-1/logs/gates-pins.log` | `-` | `97e550f7f1a5660ac2f727f549971239b69e555510243edbb0da8206b2224314` | CANONICAL |
-| EV-EX1-006 | AC1-AC6 | `verification/FEA-14-EXPORT-1/logs/pytest-full.log` | `-` | `f4af756ae630ab6b84b4776e6822f44b05c78f4208c92e2eb190b3417a62fbe9` | CANONICAL |
-| EV-EX1-007 | AC1-AC6 | `verification/FEA-14-EXPORT-1/README.md` | `-` | `d050dbe13cad2759d8cde3731ac0b01b96b461dae174f32ea7a364e4d5f2759d` | CANONICAL |
+| EV-EX1-006 | AC1-AC6 | `verification/FEA-14-EXPORT-1/logs/pytest-full.log` | `-` | `58f9593dbc1af403739a231a0127eff278e7383b2955c21126edb8620e42a0f8` | CANONICAL |
+| EV-EX1-007 | AC1-AC6 | `verification/FEA-14-EXPORT-1/README.md` | `-` | `fc998ad2bcddee1b0fca268db1ea178b39f2edd5776704fb807849b082e5981c` | CANONICAL |
 
 ## Closeout Record
 

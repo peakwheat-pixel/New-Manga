@@ -484,6 +484,64 @@ public sealed class ImportExportUiTests
     }
 
     [AvaloniaFact]
+    public async Task Reader_ExportCurrentPageNotLocated_FallsBackWithNotice()
+    {
+        var (window, host, _) = OpenReaderWithExport();
+        // The reader reports p1 as the current page, but the translated scope excludes it.
+        host.TranslatedPagesByChapter["ch-1"] = new[] { "p9", "p10" };
+        await window.LoadReaderAsync(null, null);
+        Pump();
+        Click(window.Reader.ExportButton);
+        await window.Reader.LastExportOperation;
+        Pump();
+        var panel = window.Reader.ExportPanelControl!;
+
+        panel.AutoPoll = false;
+        panel.ScopeSelector.SelectedIndex = 0;
+        Pump();
+
+        Assert.Equal(1, panel.ScopeSelector.SelectedIndex);
+        Assert.Contains("当前页未定位", panel.StatusText.Text);
+    }
+
+    [AvaloniaFact]
+    public async Task Reader_ExportCompletedStatus_DoesNotRepeatTheOutputPath()
+    {
+        var (window, host, _) = OpenReaderWithExport();
+        await window.LoadReaderAsync(null, null);
+        Pump();
+        Click(window.Reader.ExportButton);
+        await window.Reader.LastExportOperation;
+        Pump();
+        var panel = window.Reader.ExportPanelControl!;
+        panel.AutoPoll = false;
+        var output = Path.Combine(host.ExportDirectorySuggestionValue, "done.zip");
+        host.ScriptedSnapshots.Enqueue(ExportSnapshotInfo.FromState(
+            "exp-dup", ExportJobState.Completed, 2, 2, output, "abc", format: "zip"));
+
+        Click(panel.StartButton);
+        await panel.LastOperation;
+        Pump();
+        await panel.TickAsync();
+        Pump();
+
+        Assert.Equal(1, CountOccurrences(panel.StatusText.Text ?? string.Empty, output));
+    }
+
+    private static int CountOccurrences(string text, string value)
+    {
+        var count = 0;
+        var index = 0;
+        while ((index = text.IndexOf(value, index, StringComparison.Ordinal)) >= 0)
+        {
+            count++;
+            index += value.Length;
+        }
+
+        return count;
+    }
+
+    [AvaloniaFact]
     public async Task Reader_ExportCancel_WhileRunning_MarksRecordCancelled()
     {
         var (window, host, _) = OpenReaderWithExport();

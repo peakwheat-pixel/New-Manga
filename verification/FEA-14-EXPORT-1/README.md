@@ -9,12 +9,22 @@
 
 | AC | 判别 | 结果 |
 |---|---|---|
-| AC1 默认不覆盖 | 同名目标存在 → 默认 auto-rename，旧文件字节/mtime 不变；`overwrite_policy` 默认 `AUTO_RENAME`；**runner 路径同样不覆盖** | **MET**：`test_default_policy_never_replaces_an_existing_target`（含 mtime）、`test_runtime_publishes_the_auto_renamed_path_without_touching_the_minted_target`（R-001：P16 runner 发布到 `(1)` 路径，旧 target 保持 `OLD`）、`test_overwrite_policy_replaces_existing_target`（显式覆盖语义） |
+| AC1 默认不覆盖 | 同名目标存在 → 默认 auto-rename，旧文件字节/mtime 不变；`overwrite_policy` 默认 `AUTO_RENAME`；**runner 路径同样不覆盖且保留父目录授权校验** | **MET**：`test_default_policy_never_replaces_an_existing_target`（含 mtime）、`test_runtime_publishes_the_auto_renamed_path_without_touching_the_minted_target`（R-001：P16 runner 发布到 `(1)` 路径，旧 target 保持 `OLD`；R2-001：sibling 发布走 `ResolvedExportTarget.publish_to`，保留 resolve/reparse/发布后校验）、显式覆盖语义测试 |
 | AC2 Host 冲突计划 | Host 在注册 target ref 前 auto-rename，永不发已存在路径；最终路径可读回 | **MET（helper + 源码顺序测试）**：`ExportPathPolicyTests`（4，含自由/已存在/二次冲突/目录同名）+ `HostStartExportResolvesTheNameBeforeMintingTheTargetRef`（源码断言 policy 先于 mint）；完整 Host+C core E2E **NOT_RUN**（需环境变量，本机未设置）；UI 完成态显示实际 `OutputPath`（不重复） |
 | AC3 scope 三档与顺序预览 | 三档可见 + 顺序预览与请求一致 | **MET（带 limitation）**：`Reader_ExportScopeSelector_ShowsThreeScopesAndOrderPreview`、`Reader_ExportCurrentPageScope_SendsOnlyTheLoadedPage`、`Reader_ExportSelectionScope_FallsBackToChapterWithNotice`；「已选页」在阅读器无多选 → 不可用并回退整章；当前页未定位时提示回退（R-005） |
-| AC4 取消保护 | 取消不发布新文件、不改既有目标、history/snapshot 为 cancelled | **MET**：`test_cancel_before_replace_publishes_nothing`（auto-rename 目标不创建、旧文件字节不变、history=cancelled）。口径说明（r1 R-003）：导出是**单文件原子发布**，不存在「部分成功文件」，故判据为「不产生/不破坏文件 + typed cancelled」 |
+| AC4 取消保护 | 取消不发布新文件、不改既有目标、history/snapshot 为 cancelled | **MET**：`test_cancel_before_replace_publishes_nothing`（auto-rename 目标不创建、旧文件字节不变、history=cancelled）。口径（r2 R2-002 确认）：单文件原子发布、无部分成功文件；卡面标题/Scope §4 已同步。 |
 | AC5 零 wire/零 DDL/旧签名 | 无 `IHostController` 签名变更、无 schema 变更；`--check` EXIT 0（1/54/6=61）；pins 18/18 | **MET**：`logs/api-inventory.log` EXIT 0；`logs/gates-pins.log` PASS (all 18)；`git diff` 无 `IHostController.cs`/`schema.py` |
 | AC6 门禁与证据 | `check.ps1`（默认 + TaskPath）PASS；定向/全量测试 0 failed；证据含 EXIT + NOT_RUN | **MET**：`logs/gates-check.log` PASS；定向 27/0；App.Tests 全量 **865/0/11**；pytest 全量 **3477/0/10** |
+
+## r2 处置记录（2026-11-10，对 `22683068e` 的 approved + P2 残余）
+
+- **R2-001（P2，已修）**：AUTO_RENAME 发布跳过 mint target-context 后缺少路径安全校验。修复：`ResolvedExportTarget.publish_to(temp, published)`（`src/infrastructure/export/target_refs.py`）——校验 authorized parent 的 `resolve`/reparse、published 父目录一致、published 不存在/非 symlink、`os.replace` 后 `_validate_published_entry`；`_publish_to` 的 sibling 分支改为调用它。
+- **R2-002（P2，已修）**：卡面 front-matter title 与 Scope §4 改为「取消保护（不发布/不破坏/typed cancelled；单文件原子发布无部分成功文件）」；AC4/README 口径一致。
+- **R2-005（P3，已补）**：新增 `Reader_ExportCurrentPageNotLocated_FallsBackWithNotice`（当前页未定位→提示并回退整章）与 `Reader_ExportCompletedStatus_DoesNotRepeatTheOutputPath`（完成态输出路径仅出现一次）。
+- **R2-003（P3，残余登记）**：`publish_to` 的 exists→`os.replace` 仍有极小 TOCTOU 窗口（单进程/本地盘内可接受；未做压力测试）。
+- **R2-004（P3，残余登记）**：源码顺序断言使用精确字符串，属脆弱但可用的接线守卫。
+- **R2-006（P3，收口时填）**：`delivery_head`/Canonical commit 在收口提交补；logs HEAD 为提交前 head（字节未变）。
+- **R2-007（P3）**：真实 Host+Core E2E 仍 NOT_RUN（env 未设置）。
 
 ## r1 处置记录（2026-11-10，对 `863d1b4f5` 的 changes_requested）
 
@@ -32,9 +42,9 @@
 
 | 日志 | 内容 | EXIT |
 |---|---|---|
-| `logs/dotnet-export-tests.log` | App.Tests 定向导出 **27 passed / 0 failed**（ImportExportUiTests + PdfExportUiTests + ExportStalePolicyTests + ExportPathPolicyTests） | 0 |
-| `logs/dotnet-app-tests.log` | App.Tests 全量 **865 passed / 0 failed / 11 skipped**（876 total） | 0 |
-| `logs/pytest-full.log` | pytest 全量 **3477 passed / 0 failed / 10 skipped**（含首轮失败与修复后 full run 两段记录） | 0 |
+| `logs/dotnet-export-tests.log` | App.Tests 定向导出 **29 passed / 0 failed**（ImportExportUiTests + PdfExportUiTests + ExportStalePolicyTests + ExportPathPolicyTests） | 0 |
+| `logs/dotnet-app-tests.log` | App.Tests 全量 **867 passed / 0 failed / 11 skipped**（878 total） | 0 |
+| `logs/pytest-full.log` | pytest 全量 **3477 passed / 0 failed / 10 skipped**（含首轮失败与修复后 full run 多段记录） | 0 |
 | `logs/gates-check.log` | `check.ps1` 默认 + `-TaskPath doc/tasks/FEA-14-EXPORT-1.md` PASS（3 warnings） | 0 |
 | `logs/gates-pins.log` | `verify_pins` **PIN AUDIT: PASS (all 18)** | 0 |
 | `logs/api-inventory.log` | `generate_api_inventory.py --check` EXIT 0（代码实测 1/54/6=61，计划节不计入） | 0 |

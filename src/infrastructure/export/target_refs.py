@@ -89,6 +89,27 @@ class ResolvedExportTarget:
         _validate_target_entry(self.path, self.replace_existing)
         os.replace(temporary, self.path)
 
+    def publish_to(self, temporary: Path, published: Path) -> None:
+        """Publish to an AUTO_RENAME sibling inside the same authorized parent.
+
+        FEA-14-EXPORT-1 (R2-001): an AUTO_RENAME publish bypasses ``hold_parent``
+        (which revalidates the minted path, not the renamed sibling), so the
+        parent-authorization checks are applied here instead: resolved parent,
+        no reparse components on either side, no pre-existing published entry,
+        and a post-publish entry validation. The renamed file can therefore
+        never land outside the authorized folder or onto an existing file.
+        """
+        authorized_parent = self.path.parent.resolve(strict=True)
+        _reject_reparse_components(authorized_parent)
+        published_parent = published.parent.resolve(strict=True)
+        if _normalized_path(published_parent) != _normalized_path(authorized_parent):
+            raise ExportTargetRefError("REF_SCOPE_DENIED")
+        _reject_reparse_components(published_parent)
+        if published.exists() or published.is_symlink():
+            raise ExportTargetRefError("REF_SCOPE_DENIED")
+        os.replace(temporary, published)
+        _validate_published_entry(published, authorized_parent)
+
 
 class ExportTargetGrantRegistry:
     """Validates registered host grants and atomically consumes each ref once.

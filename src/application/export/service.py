@@ -770,18 +770,14 @@ def _publish_to(final_path: Path, temp: Path, target) -> None:
 
     When the resolved path is the authorized target itself, keep the target's own
     publish (it revalidates the parent handle and the final entry). An AUTO_RENAME
-    sibling must stay in the same authorized parent and must not already exist, so
-    the renamed publish can never land on an existing user file.
+    sibling goes through the target's ``publish_to``, which keeps the parent
+    authorization (resolved parent, reparse rejection, published-entry validation)
+    so the renamed file can never land outside the authorized folder.
     """
-    authorized_parent = target.path.parent
     if os.path.normcase(str(final_path)) == os.path.normcase(str(target.path)):
         target.publish(temp)
         return
-    if os.path.normcase(str(final_path.parent)) != os.path.normcase(str(authorized_parent)):
-        raise ExportError(f"auto-rename target left the authorized folder: {final_path}")
-    if final_path.exists():
-        raise ExportError(f"auto-rename target already exists: {final_path}")
-    os.replace(temp, final_path)
+    target.publish_to(temp, final_path)
 
 
 class P16ExportRuntime:

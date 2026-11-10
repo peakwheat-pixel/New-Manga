@@ -504,8 +504,8 @@ public sealed class ExportPanel : Border
             }
             else if (requested == 0 && !currentKnown)
             {
-                // R-005: the reader did not report a current page; say so instead of silently
-                // exporting the whole chapter under the "current page" label.
+                // R-005: the reader did not report a current page; say so and fall back.
+                _scopeSelector.SelectedIndex = 1;
                 _status.Text = "当前页未定位；已回退为整章导出";
             }
 
