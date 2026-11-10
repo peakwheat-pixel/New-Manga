@@ -115,7 +115,7 @@ C-07（应用端口与兼容面）要求「由代码生成的方法清单」，�
 | — | `Snapshot`（属性） | `HostViewSnapshot` |
 | — | `StartRequests`（属性） | `int` |
 | — | `ExportDirectorySuggestion`（属性） | `string` |
-| — | `Changed`（属性） | `EventHandler?` |
+| — | `Changed`（事件） | `EventHandler?` |
 
 ## IRunController
 

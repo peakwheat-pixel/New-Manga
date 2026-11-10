@@ -63,20 +63,45 @@ public sealed class PromptTemplatePortTests
     }
 
     [Fact]
-    public async Task FakeHost_DeleteRecordsTheReplacementAndHidesTheTemplate()
+    public async Task FakeHost_DeleteRecordsTheReplacementAndMovesReferences()
     {
         var host = new FakeHostController(FakeHostController.ReadySnapshot("book"));
         var created = await host.SavePromptTemplateAsync("Del", "body", cancellationToken: CancellationToken.None);
         var replacement = await host.SavePromptTemplateAsync("Keep", "body", cancellationToken: CancellationToken.None);
+        var reference = new PromptTemplateReference("translation", "owner-1", "Chapter 1");
+        host.PromptTemplateReferencesByTemplate[created!.TemplateId] = new List<PromptTemplateReference> { reference };
 
         var result = await host.DeletePromptTemplateAsync(
-            created!.TemplateId, replacement!.TemplateId, CancellationToken.None);
+            created.TemplateId, replacement!.TemplateId, CancellationToken.None);
         Assert.True(result.Deleted);
         Assert.Equal((created.TemplateId, replacement.TemplateId), host.LastDeletedPromptTemplate);
         Assert.DoesNotContain(host.PromptTemplates, template => template.TemplateId == created.TemplateId);
 
-        host.PromptTemplateReferences.Add(new PromptTemplateReference("translation", "owner-1", "Chapter 1"));
-        var references = await host.GetPromptTemplateReferencesAsync(created.TemplateId, CancellationToken.None);
-        Assert.Equal(new PromptTemplateReference("translation", "owner-1", "Chapter 1"), Assert.Single(references));
+        // F-07 (r1): references move to the replacement, exactly like the Core.
+        Assert.Empty(await host.GetPromptTemplateReferencesAsync(created.TemplateId, CancellationToken.None));
+        Assert.Equal(reference, Assert.Single(
+            await host.GetPromptTemplateReferencesAsync(replacement.TemplateId, CancellationToken.None)));
+    }
+
+    [Fact]
+    public async Task FakeHost_RejectsTheSameSaveAndDeleteCasesAsTheCore()
+    {
+        var host = new FakeHostController(FakeHostController.ReadySnapshot("book"));
+        var first = await host.SavePromptTemplateAsync("First", "body", cancellationToken: CancellationToken.None);
+        var second = await host.SavePromptTemplateAsync("Second", "body", cancellationToken: CancellationToken.None);
+
+        // unknown id is not a create; a duplicate name is refused
+        Assert.Null(await host.SavePromptTemplateAsync(
+            "Unknown", "body", "missing-template", CancellationToken.None));
+        Assert.Null(await host.SavePromptTemplateAsync(
+            second!.Name, "body", cancellationToken: CancellationToken.None));
+
+        // replacement must be present, non-builtin and different from the target
+        Assert.False((await host.DeletePromptTemplateAsync(
+            first!.TemplateId, first.TemplateId, CancellationToken.None)).Deleted);
+        Assert.False((await host.DeletePromptTemplateAsync(
+            first.TemplateId, "missing-template", CancellationToken.None)).Deleted);
+        Assert.False((await host.DeletePromptTemplateAsync(
+            first.TemplateId, "builtin-fake", CancellationToken.None)).Deleted);
     }
 }

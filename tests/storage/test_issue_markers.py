@@ -55,6 +55,9 @@ def _seed(tmp_path: Path):
 
 
 def test_v13_adds_issue_markers_and_keeps_legacy_rows(tmp_path):
+    # F-06 (AI-1 r1): this test now runs v13 -> latest (v14+); the assertions pin
+    # the v13 table/index shape plus "existing rows are untouched", so the name
+    # stays scoped to the v13 contribution it guards.
     conn = sqlite3.connect(tmp_path / "library.db")
     conn.row_factory = sqlite3.Row
     MigrationRunner(conn, MIGRATIONS[:-1]).apply_pending()

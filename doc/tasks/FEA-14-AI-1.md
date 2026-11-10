@@ -78,6 +78,21 @@ FEA-14 S5 AI 切片需要「提示词模板」数据面：列出（内置只读 
 - **内置模板**：只读；P22 指向内置 id → typed 拒绝；P23 删除内置 → typed 拒绝；P24 以 `builtin_id` 复制为自建（`name` 缺省 = 内置名 + " copy"，重名 → typed 拒绝）。
 - **版本**：自建模板 `version` 从 1 起，P22 更新已存在模板时 `version+1`（不可回退、不可指定）；`name` 全局唯一（软删后不占用）。
 - **引用表**：本卡不创建引用行；P25 对无引用模板返回空数组，P23 的重指派路径用测试 fixture 直接插入引用行验证。
+- **版本口径（F-08，r1 裁决）**：DDL 计划 §2.4 的「`version`（不可变）」裁决为「**调用方不可指定，由 Core 单调 +1 管理**」，不是「永不变化」；P22 更新必然 version+1、P24 副本 version=1。以此为跨卡口径，避免与 DDL 计划静默分叉。
+
+## r1 处置记录（2026-11-10，对 `41d54395a` 的 changes_requested）
+
+r1 结论 `changes_requested`（P0=0 / P1=0 / P2=2 / P3=7；报告 `doc/reviews/FEA-14-AI-1-r1.md`）。
+
+- **F-01（P2，已修）**：P23 的「引用重指派 + 软删」原为两次 store 调用（各自 `with self._conn` 提交），故障时半删。改为 store 单一事务方法 `delete_with_reassign(template_id, replacement_id, deleted_at)`（同一 `with self._conn` 内 UPDATE refs + UPDATE templates），service 只调该方法；补故障注入测试（代理连接在软删语句抛错 → 整体回滚：引用仍指向目标、目标仍可见）。
+- **F-02（P2，已修）**：C-07 v1.8 重建成员表时把 `Changed` 误标为「属性」（v1.7 原字节为「事件」）。改回「事件」后逐行脚本 `ALL_MATCH: True`；pin `58dbae4c…`→`8ccaba05…`；FROZEN §1/§1B/§2 条件 3/§5、UNFREEZE 载体、README、卡面 AC5 同步。
+- **F-03（P3，登记）**：`UPDATE OR REPLACE` 在 replacement 已存在同 `(kind,owner_id)` 引用时会覆盖该行 label（引用身份不丢）；本卡引用写入方未启用，AI-2/维护卡可改 UPSERT 合并策略。
+- **F-04（P3，接受）**：P22 no-op 保存也 version+1（卡面已写明「每次保存 +1」）。
+- **F-05（P3，登记）**：`name` 唯一仅覆盖未软删行、不覆盖内置名、未做大小写/空白规范化（重名规范化待 ADJ 裁决；留 AI-2/后续 errata）。
+- **F-06（P3，已修/说明）**：`test_issue_markers` 的 v13 迁移测试现跨 v13→v14（LATEST 断言已适配），补注释说明断言口径为「v13 表/索引存在 + 旧行无损」。
+- **F-07（P3，已修）**：Fake 与 Core 语义对齐——未知 id 保存返回 null、名称唯一校验、delete 校验 replacement（必填/非自身/存在/非内置）、引用按模板 id 存储；端口测试同步。
+- **F-08（P3，已裁决登记）**：见「裁决」的版本口径。
+- **F-09（P3，已修）**：`test_upgrade_schema_data.py` 的 `LATEST_TABLES` 补 v10–v14 新表（font_assets/reading_preferences/reading_bookmarks/issue_markers/prompt_templates/prompt_template_references），消除既有表覆盖漂移。
 
 ## Acceptance Criteria
 
@@ -85,7 +100,7 @@ FEA-14 S5 AI 切片需要「提示词模板」数据面：列出（内置只读 
 - [x] **AC2 P21/P24 列表与复制**：列表 = 内置常量 + 未软删自建（`builtin` 标记、`builtin_count` 正确）；P24 复制内置得到自建副本（version=1、name 缺省/重名规则）。 <<MET>>
 - [x] **AC3 P22 保存**：新建（version=1）与更新（version+1）、`name` 唯一（重名 typed `TEMPLATE_NAME_EXISTS`/conflict）、body 非空、内置不可覆盖。 <<MET>>
 - [x] **AC4 P23/P25 删除与引用**：P25 列出 `{kind,owner_id,label}`；P23 强制 replacement（缺失/无效/等于自身/内置 → typed），引用重指派后软删（引用行指向 replacement、目标不再可见）。 <<MET>>
-- [x] **AC5 契约/门禁**：C-07 UNFREEZE **v1.8**（79/86）成员表逐行 = 脚本 stdout（`ALL_MATCH: True`）、S5 计划节 25/25 全部落地无待实现行、pin `58dbae4c…`；`--check` EXIT 0；`verify_pins` 18/18。 <<MET>>
+- [x] **AC5 契约/门禁**：C-07 UNFREEZE **v1.8**（79/86）成员表逐行 = 脚本 stdout（`ALL_MATCH: True`，含 `Changed（事件）`）、S5 计划节 25/25 全部落地无待实现行、pin `8ccaba05…`；`--check` EXIT 0；`verify_pins` 18/18。 <<MET>>
 - [x] **AC6 证据**：定向 pytest/回归/App.Tests 通过；`verification/FEA-14-AI-1/` 日志含 EXIT；NOT_RUN 如实登记。 <<MET>>
 
 ## 实现说明（2026-11-10）
@@ -95,7 +110,7 @@ FEA-14 S5 AI 切片需要「提示词模板」数据面：列出（内置只读 
 - **数据面**：schema **v14** 仅新增 `prompt_templates` + `prompt_template_references` + 两索引；name 唯一索引仅覆盖未软删行（软删不占用名字）；v1–v13 迁移字节不变。
 - **内置模板**：Core 常量（`BUILTIN_PROMPT_TEMPLATES`，本卡 2 条），不落库；P21 合并投影回 `builtin_count`；P22/P23 对内置 id typed 拒绝；P24 复制为自建 version=1（缺省名 `"<builtin> (copy)"`）。
 - **删除语义**：P23 强制 replacement（必填、存在、非自身、非内置）；引用行在同一事务 `UPDATE OR REPLACE` 重指派后目标软删；引用表由后续卡（译文/任务/规则）写入，本卡不创建。
-- **C-07**：UNFREEZE v1.8（74→79 / 81→86），S5 计划 **25/25 全部落地**；pin `58dbae4c…`。
+- **C-07**：UNFREEZE v1.8（74→79 / 81→86），S5 计划 **25/25 全部落地**；pin `8ccaba05…`（r1 处置修正 `Changed（事件）` 行后重算）。
 - **Host**：`IHostController` 5 方法 + DTO（`PromptTemplateInfo`/`PromptTemplateDeleteResult`/`PromptTemplateReference`）六处一致；NullHost 降级返回空/false/null 不抛；P24 客户端仅得 `template_id`（Core 侧分配 name 由 P21 刷新，登记 limitation）。
 
 ## 证据计划（L2）

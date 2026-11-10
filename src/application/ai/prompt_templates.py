@@ -118,10 +118,10 @@ class PromptTemplateService:
         replacement = self._repo.get_template(replacement_id)
         if replacement is None:
             raise PromptTemplateError("TARGET_NOT_FOUND", "Replacement template was not found")
-        # Reassign then soft delete: callers never observe dangling references.
-        self._repo.reassign_references(template.template_id, replacement.template_id)
-        template.deleted_at = utc_now()
-        self._repo.update_template(template)
+        # F-01 (r1): reassign references AND soft-delete the target in ONE store
+        # transaction, so a failure can never leave references moved while the
+        # template is still visible.
+        self._repo.delete_with_reassign(template.template_id, replacement.template_id, utc_now())
         return True
 
     # ------------------------------------------------------------------

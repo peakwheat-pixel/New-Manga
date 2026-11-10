@@ -368,7 +368,8 @@ public sealed class FakeHostController : IHostController, ISourceImportControlle
     public PromptTemplateInfo? LastSavedPromptTemplate { get; private set; }
     public (string TemplateId, string ReplacementId)? LastDeletedPromptTemplate { get; private set; }
     public (string BuiltinId, string? Name)? LastCopiedPromptTemplate { get; private set; }
-    public List<PromptTemplateReference> PromptTemplateReferences { get; } = new();
+    /// <summary>References per template id (mirrors the Core's per-template read).</summary>
+    public Dictionary<string, List<PromptTemplateReference>> PromptTemplateReferencesByTemplate { get; } = new(StringComparer.Ordinal);
     private int _promptTemplateSequence;
 
     public Task<IReadOnlyList<PromptTemplateInfo>> ListPromptTemplatesAsync(CancellationToken cancellationToken = default)
@@ -382,7 +383,18 @@ public sealed class FakeHostController : IHostController, ISourceImportControlle
             return Task.FromResult<PromptTemplateInfo?>(null);
         }
         var existing = templateId is null ? null : PromptTemplates.FirstOrDefault(t => t.TemplateId == templateId);
+        // F-07 (r1): mirror the Core -- an unknown id cannot be "created", and a
+        // builtin cannot be overwritten.
+        if (templateId is not null && existing is null)
+        {
+            return Task.FromResult<PromptTemplateInfo?>(null);
+        }
         if (existing is not null && existing.Builtin)
+        {
+            return Task.FromResult<PromptTemplateInfo?>(null);
+        }
+        // name stays unique among live user templates (builtin names are read-only).
+        if (PromptTemplates.Any(t => !t.Builtin && t.Name == name && t.TemplateId != templateId))
         {
             return Task.FromResult<PromptTemplateInfo?>(null);
         }
@@ -399,8 +411,26 @@ public sealed class FakeHostController : IHostController, ISourceImportControlle
         string templateId, string replacementId, CancellationToken cancellationToken = default)
     {
         LastDeletedPromptTemplate = (templateId, replacementId);
-        var removed = PromptTemplates.RemoveAll(template => template.TemplateId == templateId && !template.Builtin) > 0;
-        return Task.FromResult(new PromptTemplateDeleteResult(removed));
+        var target = PromptTemplates.FirstOrDefault(template => template.TemplateId == templateId);
+        // F-07 (r1): reject the same cases the Core rejects instead of silently
+        // reporting success (missing/self/builtin/unknown replacement).
+        if (target is null || target.Builtin || string.IsNullOrWhiteSpace(replacementId)
+            || replacementId == templateId
+            || !PromptTemplates.Any(template => template.TemplateId == replacementId && !template.Builtin))
+        {
+            return Task.FromResult(new PromptTemplateDeleteResult(false));
+        }
+        PromptTemplates.RemoveAll(template => template.TemplateId == templateId);
+        if (PromptTemplateReferencesByTemplate.TryGetValue(templateId, out var references))
+        {
+            PromptTemplateReferencesByTemplate.Remove(templateId);
+            var moved = PromptTemplateReferencesByTemplate.TryGetValue(replacementId, out var existingRefs)
+                ? existingRefs
+                : new List<PromptTemplateReference>();
+            moved.AddRange(references);
+            PromptTemplateReferencesByTemplate[replacementId] = moved;
+        }
+        return Task.FromResult(new PromptTemplateDeleteResult(true));
     }
 
     public Task<PromptTemplateInfo?> CopyBuiltinPromptTemplateAsync(
@@ -409,15 +439,22 @@ public sealed class FakeHostController : IHostController, ISourceImportControlle
         LastCopiedPromptTemplate = (builtinId, name);
         var builtin = PromptTemplates.FirstOrDefault(template => template.TemplateId == builtinId && template.Builtin);
         if (builtin is null) return Task.FromResult<PromptTemplateInfo?>(null);
-        var copy = new PromptTemplateInfo(
-            $"fake-template-{++_promptTemplateSequence}", name ?? $"{builtin.Name} (copy)", 1, false);
+        var resolvedName = name ?? $"{builtin.Name} (copy)";
+        if (PromptTemplates.Any(t => !t.Builtin && t.Name == resolvedName))
+        {
+            return Task.FromResult<PromptTemplateInfo?>(null);
+        }
+        var copy = new PromptTemplateInfo($"fake-template-{++_promptTemplateSequence}", resolvedName, 1, false);
         PromptTemplates.Add(copy);
         return Task.FromResult<PromptTemplateInfo?>(copy);
     }
 
     public Task<IReadOnlyList<PromptTemplateReference>> GetPromptTemplateReferencesAsync(
         string templateId, CancellationToken cancellationToken = default)
-        => Task.FromResult<IReadOnlyList<PromptTemplateReference>>(PromptTemplateReferences.ToList());
+        => Task.FromResult<IReadOnlyList<PromptTemplateReference>>(
+            PromptTemplateReferencesByTemplate.TryGetValue(templateId, out var references)
+                ? references.ToList()
+                : new List<PromptTemplateReference>());
 
     public Task<ReaderBookData?> LoadReaderBookAsync(
         string? bookId = null,

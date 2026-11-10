@@ -96,6 +96,19 @@ class SqlitePromptTemplateStore:
                 (replacement_id, source_id),
             )
 
+    def delete_with_reassign(self, template_id: str, replacement_id: str, deleted_at: str) -> None:
+        """Reassign references and soft-delete the target in ONE transaction."""
+        with self._conn:
+            self._conn.execute(
+                "UPDATE OR REPLACE prompt_template_references SET template_id = ?"
+                " WHERE template_id = ?",
+                (replacement_id, template_id),
+            )
+            self._conn.execute(
+                "UPDATE prompt_templates SET deleted_at = ? WHERE template_id = ?",
+                (deleted_at, template_id),
+            )
+
 
 def _template_from_row(row) -> PromptTemplate:
     return PromptTemplate(

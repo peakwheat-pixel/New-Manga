@@ -9,5 +9,5 @@
   3. 「S5 计划追加」节 **25/25 全部落地**、无待实现行（P1–P25 全部并入正式成员表）。
   4. 冻结记录 `doc/plan/FEA-CONTRACT-FROZEN-C07.md` §1 pin 链补 v1.7 原值 + v1.8；§1B/§2 条件 3（`1/79/6=86`）/§3/§5 同步。
 - 前 pin（v1.7）：`89781583964eb81db0e12974fdd03adc44231461ac3b2fad65f0eacdb74261c6`
-- 新 pin（v1.8）：`58dbae4c14d7ec4b946bbf27a237415b938a7160e9c8b311db6dd0377da9dfef`
-- 复核：`generate_api_inventory.py --check` EXIT 0；`verify_pins` 18/18；v1.8 字节由 FEA-14-AI-1 r1 独立复核覆盖。
+- 新 pin（v1.8）：`8ccaba05cbc21eec04a366f8bfa2be2dea4515ba90e6d5aab95b11a7c47f0509`（r1 独立复核发现成员表 `Changed` 被重建脚本误标为「属性」→ 改回「事件」并重算；初值 `58dbae4c…` 仅历史，不作校验基准）
+- 复核：`generate_api_inventory.py --check` EXIT 0；`verify_pins` 18/18；v1.8 字节由 FEA-14-AI-1 r2 独立复核覆盖。

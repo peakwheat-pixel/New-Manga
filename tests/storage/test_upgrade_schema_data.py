@@ -94,6 +94,13 @@ LATEST_TABLES = (
     "source_operations",
     "source_binding_publications",
     "source_revision_lineage",
+    # F-09 (AI-1 r1): keep this list current with the additive v10-v14 tables.
+    "font_assets",
+    "reading_preferences",
+    "reading_bookmarks",
+    "issue_markers",
+    "prompt_templates",
+    "prompt_template_references",
 )
 
 BOOK_ID = "book-legacy"

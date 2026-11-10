@@ -160,6 +160,50 @@ def test_copy_builtin_and_delete_with_replacement(tmp_path):
     assert caught.value.code == "TARGET_NOT_FOUND"
 
 
+def test_delete_reassign_and_soft_delete_are_atomic(tmp_path):
+    conn, service = _service(tmp_path)
+    target = service.save_template("Target", "body")
+    replacement = service.save_template("Replacement", "body")
+    with conn:
+        conn.execute(
+            "INSERT INTO prompt_template_references (template_id, kind, owner_id, label)"
+            " VALUES (?, 'translation', 'owner-x', 'label')",
+            (target.template_id,),
+        )
+
+    class _FailingConnection:
+        """Rollback probe: fail on the soft-delete half of the delete transaction."""
+
+        def __init__(self, real) -> None:
+            self._real = real
+
+        def execute(self, sql, params=()):
+            if sql.lstrip().upper().startswith("UPDATE PROMPT_TEMPLATES"):
+                raise RuntimeError("injected failure")
+            return self._real.execute(sql, params)
+
+        def __enter__(self):
+            return self._real.__enter__()
+
+        def __exit__(self, *args):
+            return self._real.__exit__(*args)
+
+    store = service._repo
+    real = store._conn
+    store._conn = _FailingConnection(real)
+    try:
+        with pytest.raises(RuntimeError):
+            service.delete_template(target.template_id, replacement.template_id)
+    finally:
+        store._conn = real
+
+    # F-01 (r1): rolled back -- the reference still points at the target and the
+    # target is still visible; no half-deleted state.
+    assert service.list_references(target.template_id)[0].label == "label"
+    visible, _ = service.list_templates()
+    assert target.template_id in {item["template_id"] for item in visible}
+
+
 def test_delete_without_references_still_requires_replacement(tmp_path):
     conn, service = _service(tmp_path)
     first = service.save_template("First", "body")
