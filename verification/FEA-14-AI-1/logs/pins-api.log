@@ -1,0 +1,29 @@
+FEA-14-AI-1 pins/api | 2026-11-10T17:59:00.7214283+08:00 | HEAD=aac1aba9d3f84e82f60ac891cc19a78a7e3474d8 | dirty=[?? verification/FEA-14-AI-1/]
+OK C01b 3c9f5af7d74f
+OK C02 bb365ca891a7
+OK C03 b77e7968a00b
+OK C04b 4b304c0c315f
+OK C05 f6e6f3cb1fe1
+OK C06 75f8e2b4eb80
+OK C07 58dbae4c14d7
+OK C08 453f993c1a16
+OK C09 dc51226b336c
+OK C10 ec8fd862f95f
+OK C11 44f4273f7ad1
+OK C12 f49835860143
+OK C13 8faf1e805eac
+OK C14 05056cbf65f9
+OK C15 f9e376a0ed4c
+OK C16 67286eeca8cb
+OK C17 cdeee4872e29
+OK FEA01 0370c18932b1
+PIN AUDIT: PASS (all 18)
+PIN_EXIT=0
+| 接口 | 方法数 | 属性/事件/字段数 |
+| IReaderProgressSink | 1 | 0 |
+| IHostController | 79 | 4 |
+| IRunController | 6 | 0 |
+| **合计** | **86** | — |
+OK: rendered counts match FEA-C07 doc
+API_CHECK_EXIT=0
+C07_PIN=58dbae4c14d7ec4b946bbf27a237415b938a7160e9c8b311db6dd0377da9dfef

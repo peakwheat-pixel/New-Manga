@@ -125,6 +125,11 @@ FEA-14 S5 AI 切片需要「提示词模板」数据面：列出（内置只读 
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
+| EV-AI-001 | AI-1 | `verification/FEA-14-AI-1/logs/dotnet-app-tests.log` | `-` | `9e0b27e3f6b6cd2c95fdb4a036571bb204d54835db20a99132d2bcbaa32236b7` | CANONICAL |
+| EV-AI-002 | AI-1 | `verification/FEA-14-AI-1/logs/pins-api.log` | `-` | `5dc7a4ba377c2cf6f6ca5b622f5be206b9aac0282b5f1248a57aee96aa22b9f2` | CANONICAL |
+| EV-AI-003 | AI-1 | `verification/FEA-14-AI-1/logs/pytest-ai.log` | `-` | `656c9f3f64b0e2753a2b6c67b33e21b7f6f27bb26bbd0eb7fe38b7b58b367b5a` | CANONICAL |
+| EV-AI-004 | AI-1 | `verification/FEA-14-AI-1/logs/regression-v14.log` | `-` | `bc9cfe64c67504afb7eeed171ec30ca20e8bc2e7daa0cabcccfea8df81307e7c` | CANONICAL |
+| EV-AI-005 | AI-1 | `verification/FEA-14-AI-1/README.md` | `-` | `aa51cfd07adf05fc41ddabe5b16dd61d7a4be6dde110d79fa7f8f4aa3945b657` | CANONICAL |
 
 ## Closeout Record
 
