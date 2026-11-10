@@ -1,50 +1,56 @@
 # FEA-14-LIB-1 证据索引（书/章元数据编辑与顺序）
 
 - Task：`FEA-14-LIB-1`（FEA-14 S5 LIB 切片；复用 PREQ 预冻结 wire P5–P8）
-- Head：`8e39bb72c`（FONT-1 收口后起点；实现提交见下）
+- 实现提交：`00a99622a`（r1 处置后；base `f97f54476`；更早实现提交 `83e45cfe5` 的 r1 findings 已全部处置）
 - 日期：2026-11-10
+- 日志生成口径：4 个 Canonical 日志均于本轮门禁在 **`00a99622a`** 生成，头行记录生成时 HEAD 与 `git status --short`（同批顺序生成，故后生成的日志会看到前序日志未提交；产品字节均为 `00a99622a`）。README 与证据表在日志之后写入，属证据簿记，不含产品字节。
 
 ## 结论状态
 
 | AC | 判别 | 结果 |
 |---|---|---|
-| AC1 书元数据 | patch 部分字段（其余保留）；title 非空；无书 typed | **MET**：`LibraryService.patch_book_metadata`（白名单 title/author/series_title/description/notes/original_title/publisher；`apply_edit` 保留未提供字段；空 title → ValueError；未知字段 → ValueError；无书 → `BookNotFound`）；wire P5 映射 TARGET_NOT_FOUND/INVALID_REQUEST |
-| AC2 章元数据 | kind/custom_rank/number/title/subtitle/notes；非法 kind 拒绝；无章 typed | **MET**：`patch_chapter_metadata`（kind→chapter_type 并维护方向不变量：webtoon→vertical、离开 webtoon→rtl；custom_rank/number/title/subtitle/notes；标题非空；未知字段拒绝）；wire P7 |
-| AC3 章重排 | `ordered_ids` 必须全覆盖（缺/多/重复 → typed）；sort_order 连续；读取顺序一致 | **MET**：`reorder_chapters_strict`（重复 → ValueError；集合不等 → ValueError；成功后 `list_chapters` 与请求一致；未知章 → `ChapterNotFound`）；wire P6 |
-| AC4 创建带元数据章 | title/kind/number/import_order 落库；返回 chapter_id/title/kind/number；父书不存在 typed | **MET**：`create_chapter_with_metadata`（继承书默认 kind；import_order 覆盖 import/sort order）；wire P8 返回四字段；无书 → TARGET_NOT_FOUND |
-| AC5 迁移/契约/门禁 | v12 additive（旧行无损）；P5–P8 按 PREQ §8；inventory EXIT 0；pins 18/18 | **MET**：v12 `chapters.custom_rank`（additive；v9/v10/v11 证据测试与 fea09/fea11 适配后 **1245 passed**）；wire 四命令；inventory **69/76**；C-07 UNFREEZE **v1.5**（`9c1eb974…`，前 pin v1.4 保留）；`verify_pins` 18/18 |
+| AC1 书元数据 | patch 部分字段（其余保留）；title 非空；tags 替换语义；无书 typed | **MET**：`LibraryService.patch_book_metadata`（白名单 title/author/series_title/description/notes/original_title/publisher/**tags**；`apply_edit` 保留未提供字段；空 title → ValueError；未知字段 → ValueError；tags 为 tag id 列表，`_replace_book_tags` **先全量校验再删旧/加新**）；wire P5：无书 → `TARGET_NOT_FOUND`，非法值 → `INVALID_REQUEST`，tags t1→t2 替换实测 |
+| AC2 章元数据 | kind/custom_rank/number/title/subtitle/notes；非法 kind 拒绝；无章 typed | **MET**：`patch_chapter_metadata`（kind→chapter_type 并维护方向不变量：webtoon→vertical、离开 webtoon→rtl；custom_rank 仅接受非负整数或 null（bool/float/str/负值 → ValueError）；number/title/subtitle/notes；标题非空；未知字段拒绝）；wire P7 无章 → `TARGET_NOT_FOUND` |
+| AC3 章重排 | `ordered_ids` 必须全覆盖（缺/多/重复 → typed）；空书 `[]` no-op；sort_order 连续；读取顺序一致 | **MET**：`reorder_chapters_strict`（重复 → ValueError；集合不等 → ValueError；空书 `[]` → 成功 no-op）；wire P6 未知/缺失/重复 id → `INVALID_REQUEST`（该路径**不会**返回 `ChapterNotFound`），无书 → `TARGET_NOT_FOUND`；成功后 `list_chapters` 顺序与请求一致 |
+| AC4 创建带元数据章 | title/kind/number/import_order 落库；返回 chapter_id/title/kind/number；父书不存在 typed | **MET（带 limitation）**：`create_chapter_with_metadata`（继承书默认 kind；`import_order` 仅记录来源顺序，**不覆盖** `sort_order`）；wire P8 返回 chapter_id/title/kind/number/**sort_order**；无书 → `TARGET_NOT_FOUND`；bool/float/str `import_order` → `INVALID_REQUEST`。**limitation**：Host `ChapterSummary` 仅四字段，`kind` 不投影（LIB-2 扩展 DTO） |
+| AC5 迁移/契约/门禁 | v12 additive（旧行无损）；P5–P8 按 PREQ §8；inventory EXIT 0；pins 18/18 | **MET**：v12 `chapters.custom_rank`（additive；v1–v11 迁移字节未变；旧 v11 书/章行升级后字段保留、`custom_rank IS NULL`）；wire 四命令；inventory **69/76** 且正式成员表与脚本 stdout 逐行一致；C-07 UNFREEZE **v1.6**（pin `7c033bf7…`，v1.3–v1.5 原值保留）；`verify_pins` 18/18 |
 | AC6 证据 | 定向/全量测试、日志 EXIT、NOT_RUN | **MET**：见下表与 NOT_RUN |
 
 ## 门禁与证据（本目录）
 
 | 文件 | 内容 | EXIT |
 |---|---|---|
-| `logs/pytest-lib.log` | `test_library_metadata.py` + `test_library_wire.py` **7 passed** | 0 |
-| `logs/regression-v12.log` | v12 回归：storage+core+fea09+fea11 **1245 passed** | 0 |
-| `logs/dotnet-app-tests.log` | App.Tests 全量 **874 passed / 0 failed / 11 skipped** | 0 |
-| `logs/pins-api.log` | `verify_pins` 18/18、`generate_api_inventory.py --check` EXIT 0（69/76） | 0 |
+| `logs/pytest-lib.log` | `test_library_metadata.py` + `test_library_wire.py` **12 passed** | 0 |
+| `logs/regression-v12.log` | v12 回归：storage+core+fea09+fea11 **1250 passed** | 0 |
+| `logs/dotnet-app-tests.log` | App.Tests 全量 **877 passed / 0 failed / 11 skipped**（4m43s） | 0 |
+| `logs/pins-api.log` | `verify_pins` 18/18（C07=`7c033bf76af1`）、`generate_api_inventory.py --check` EXIT 0（69/76） | 0 |
 
-**实现提交**：Core（schema v12 + service + wire + 测试）与 Host 三层 + C-07 UNFREEZE v1.5（见 git log）。
+**r1 处置后同步更新**：`doc/plan/FEA-C07_API_INVENTORY.md`（正式成员表 = 脚本 stdout，69 方法 + 4 非方法成员；S5 计划节仅剩 P16–P25）、`doc/plan/FEA-CONTRACT-FROZEN-C07.md`（§1 pin 链 v1.3–v1.6、§1B、§2 条件 3 `1/69/6=76`、§3、§5）、`doc/reviews/CONTRACT-UNFREEZE-2026-11-10-LIB1.md`（v1.6 附录）。
 
 ## 设计说明与 limitation
 
-- 书 tags 关联未在 P5 patch 中做替换（PREQ 的 `tags` 字段留 LIB-2/UI 卡；patch 白名单不含 tags，未知字段会拒绝——已披露）。
-- `chapters.custom_rank` 为新增列（v12 additive）；`chapters.chapter_number` 继续承载 P7 `number`。
+- **tags 替换语义**：P5 `patch{tags:[tag_id…]}` 为**全量替换**（删除既有 book_tags 关联后重建）；先校验全部 tag id 再写，未知 id 不会产生半标记；tag 名称/UI 管理仍留 LIB-2。
+- **`import_order` vs `sort_order`**：`import_order` 是来源顺序（可重复，P8 允许），`sort_order` 是显示/读取顺序（创建时追加 max+1、重排时连续重写，保证唯一）。
+- **`custom_rank`**：v12 additive 列；本卡只写入/读回，不参与排序、不投影到 Host——P6「自定义排序保位/数字排序重排」登记为 LIB-2 输入（R-12）。
+- **R-11 三项 deferral**（不改变 PREQ 预冻结 wire 形状）：① `kind` 按既有 `ChapterType`（paged/webtoon），DDL 计划的 volume/episode/extra 随 Volume 实体另行裁决；② `number` 落 `chapters.chapter_number` 自由文本，`number_value` 数字排序列推迟；③ `books.normalized_title` 唯一索引与重名规范化待用户裁决（ADJ §3）。
 - 章 kind 变更会同步 reading_direction（webtoon↔vertical 不变量），避免实体校验失败。
 - 不做 Volume 实体（PREQ 未纳入，另行裁决）；不做批量重排 UI。
 
 ## NOT_RUN（不得记 PASS）
 
 - LIB 可见 UI（书架/工作台账单的元数据编辑与拖拽重排）= NOT_RUN（FEA-14-LIB-2/UI 卡）。
-- tags 替换语义（P5 patch `tags`）= NOT_RUN（登记；需明确 tag 关联写语义）。
+- tags 的 UI 管理与筛选 = NOT_RUN（数据面已实现并测试）。
+- Host↔Core 进程级联调：4 个新 `CoreServiceClient` 方法未对活 Core 调用（C# 侧现有 3 个端口测试覆盖 NullHost 降级/Fake 记录/投影，不覆盖真实 IPC 映射）。
 - Volume 实体 = NOT_RUN（未纳入本卡范围）。
-- 真实大库（万级章）重排性能未压测。
+- 真实大库（万级章）重排性能未压测；sqlite 磁盘写失败/半迁移未演练。
+- FEA-15 正式验收声明未审。
 
 ## 复现
 
 ```powershell
 python -m pytest tests/storage/test_library_metadata.py tests/core/test_library_wire.py -q
 python -m pytest tests/storage tests/core tests/fea09/test_v7_migration.py tests/fea11/test_source_gate_unify.py -q
+dotnet test apps/desktop-avalonia/tests/NewManga.App.Tests/NewManga.App.Tests.csproj --nologo
 python tools/generate_api_inventory.py --check
 pwsh -NoProfile -File tools/governance/verify_pins.ps1
 ```

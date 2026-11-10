@@ -1,11 +1,11 @@
-FEA-14-LIB-1 pins/api | 2026-11-10T14:59:36.5461247+08:00
+FEA-14-LIB-1 pins/api | 2026-11-10T15:38:15.8571842+08:00 | HEAD=00a99622ad9b06b6b27ca34a5b4c192a87a60f9b | dirty=[M verification/FEA-14-LIB-1/README.md; M verification/FEA-14-LIB-1/logs/dotnet-app-tests.log; M verification/FEA-14-LIB-1/logs/pins-api.log; M verification/FEA-14-LIB-1/logs/pytest-lib.log; M verification/FEA-14-LIB-1/logs/regression-v12.log]
 OK C01b 3c9f5af7d74f
 OK C02 bb365ca891a7
 OK C03 b77e7968a00b
 OK C04b 4b304c0c315f
 OK C05 f6e6f3cb1fe1
 OK C06 75f8e2b4eb80
-OK C07 9c1eb974342a
+OK C07 7c033bf76af1
 OK C08 453f993c1a16
 OK C09 dc51226b336c
 OK C10 ec8fd862f95f
@@ -18,5 +18,12 @@ OK C16 67286eeca8cb
 OK C17 cdeee4872e29
 OK FEA01 0370c18932b1
 PIN AUDIT: PASS (all 18)
-PINS_EXIT=0
-API_EXIT=0
+PIN_EXIT=0
+| 接口 | 方法数 | 属性/事件/字段数 |
+| IReaderProgressSink | 1 | 0 |
+| IHostController | 69 | 4 |
+| IRunController | 6 | 0 |
+| **合计** | **76** | — |
+OK: rendered counts match FEA-C07 doc
+API_CHECK_EXIT=0
+C07_PIN=7c033bf76af1726b71e1ce92a5b3c221d880cf7a36bfc44ef3d4467582d5457d

@@ -133,12 +133,14 @@ R-12：`custom_rank` 本卡只做写入与持久化；读取投影、参与排�
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-LB-001 | LIB-1 | `verification/FEA-14-LIB-1/logs/dotnet-app-tests.log` | `-` | `4987dccef65de79af3491054ee4990d6008ba723c77dc4d3adba554eb5f33da5` | CANONICAL |
-| EV-LB-002 | LIB-1 | `verification/FEA-14-LIB-1/logs/pins-api.log` | `-` | `6546b28c059bc7abb357decb6976061db20b344a4b45e17dba218a05d7822c6b` | CANONICAL |
-| EV-LB-003 | LIB-1 | `verification/FEA-14-LIB-1/logs/pytest-lib.log` | `-` | `ce38561c691b5c16c8fdb233738783c531ee810c99826a190bb197191a166ed0` | CANONICAL |
-| EV-LB-004 | LIB-1 | `verification/FEA-14-LIB-1/logs/regression-v12.log` | `-` | `2723cbd1f3c7f45cd5b5510619e480f7dfdd879ad57077dc18d8372b1db0e1fd` | CANONICAL |
-| EV-LB-005 | LIB-1 | `verification/FEA-14-LIB-1/README.md` | `-` | `c4580ee64982b33c1d0ff668db4fdc49a0c7bacbd09753c2386183268ed2bc4a` | CANONICAL |
+| EV-LB-001 | LIB-1 | `verification/FEA-14-LIB-1/logs/dotnet-app-tests.log` | `00a99622a` | `7695faec735b7a4d6950e2810821e3417c61028e6b0bb492a27b305ec341f105` | CANONICAL |
+| EV-LB-002 | LIB-1 | `verification/FEA-14-LIB-1/logs/pins-api.log` | `00a99622a` | `609df8f5ab131cfb4098969b35c224cb6bbaa4ccdba102503ce65fb936f307e8` | CANONICAL |
+| EV-LB-003 | LIB-1 | `verification/FEA-14-LIB-1/logs/pytest-lib.log` | `00a99622a` | `0e1600a9f8ce3ee26ccd367f75c47d20f1106e6c118c1a74279aa0acbc46566f` | CANONICAL |
+| EV-LB-004 | LIB-1 | `verification/FEA-14-LIB-1/logs/regression-v12.log` | `00a99622a` | `aafd54835faec39fc97d7a767a064e119adba3ffef6975a6dc8b0948100cf461` | CANONICAL |
+| EV-LB-005 | LIB-1 | `verification/FEA-14-LIB-1/README.md` | `00a99622a` | `5ee2332e61af90cfb1bfbbb39251bfec52f051f3b859cb4bd23c7acd3ab97a97` | CANONICAL |
 
 ## Closeout Record
 
-- 未开始（2026-11-10 scope 冻结，`ready`）。
+- 2026-11-10：scope 冻结（`ready`）→ 实现 `83e45cfe5` → **r1 `changes_requested`**（P0=0 / P1=2 / P2=4 / P3=7，`doc/reviews/FEA-14-LIB-1-r1.md`）。
+- 2026-11-10：r1 全部 findings 处置（见「r1 处置记录」与「范围裁决」）；产品/文档提交 `00a99622a`（+ C-07 v1.6 pin `7c033bf7…`），证据日志于 `00a99622a` 重生成（本提交随附）。
+- 当前状态：**r2 独立复核待派发**；`closed_with_limitations`/`done` 待 r2 approved 后收口。未 push。
