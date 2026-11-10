@@ -1,0 +1,36 @@
+FEA-15-A4-1 drill | 2026-11-10T12:28:53.6080958+08:00 | HEAD=64f39a1509547e539940c841112553645831531c
+Traceback (most recent call last):
+  File "G:\CODEX\New Manga\verification\FEA-15-A4-1\scripts\a4_upgrade_restore.py", line 185, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "G:\CODEX\New Manga\verification\FEA-15-A4-1\scripts\a4_upgrade_restore.py", line 112, in main
+    manual = backup_service.create("manual", "FEA-15-A4-1 drill before mutation")
+  File "G:\CODEX\New Manga\src\infrastructure\sqlite\nmbak.py", line 249, in create
+    self._write_database(workdir / DB_NAME)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "G:\CODEX\New Manga\src\infrastructure\sqlite\nmbak.py", line 623, in _write_database
+    self._conn._current().backup(out)
+    ^^^^^^^^^^^^^^^^^^^
+AttributeError: 'sqlite3.Connection' object has no attribute '_current'
+EXIT=1
+=== retry 2026-11-10T12:29:08.4176911+08:00 ===
+Traceback (most recent call last):
+  File "G:\CODEX\New Manga\verification\FEA-15-A4-1\scripts\a4_upgrade_restore.py", line 195, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "G:\CODEX\New Manga\verification\FEA-15-A4-1\scripts\a4_upgrade_restore.py", line 122, in main
+    manual = backup_service.create("manual", "FEA-15-A4-1 drill before mutation")
+  File "G:\CODEX\New Manga\src\infrastructure\sqlite\nmbak.py", line 269, in create
+    page_original_refs = self._page_original_refs()
+  File "G:\CODEX\New Manga\src\infrastructure\sqlite\nmbak.py", line 659, in _page_original_refs
+    raise NmbakBackupError(
+    ...<2 lines>...
+    )
+infrastructure.sqlite.nmbak.NmbakBackupError: BACKUP_CREATE_FAILED: managed original missing for page page-1: managed/page-1.png
+EXIT=1
+=== retry2 2026-11-10T12:29:32.0859151+08:00 ===
+{"migrated_schema": 9, "row_counts_conserved": false, "pre_restore_listed": true, "rollback_restored_mutated_state": true, "real_appdata_unchanged": true}
+EXIT=1
+=== retry3 (exclude schema_migrations) 2026-11-10T12:29:39.1342612+08:00 ===
+{"migrated_schema": 9, "row_counts_conserved": true, "pre_restore_listed": true, "rollback_restored_mutated_state": true, "real_appdata_unchanged": true}
+EXIT=0
