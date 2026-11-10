@@ -140,11 +140,11 @@ r1 结论 `changes_requested`（P0=0 / P1=0 / P2=2 / P3=7；报告 `doc/reviews/
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-AI-001 | AI-1 | `verification/FEA-14-AI-1/logs/dotnet-app-tests.log` | `-` | `5278fe8851a234e100cd4e99205a512059009b38a495e23c81f6c310bd0df207` | CANONICAL |
-| EV-AI-002 | AI-1 | `verification/FEA-14-AI-1/logs/pins-api.log` | `-` | `3c56cbfda61abcab33d6c6d15213a30640b4ccbca02d4d1534e266f626db8e05` | CANONICAL |
-| EV-AI-003 | AI-1 | `verification/FEA-14-AI-1/logs/pytest-ai.log` | `-` | `5da9767fc2b13c1d8036ed6cce6e5f734cb83ec276f38dfae7884cb36c924ff9` | CANONICAL |
-| EV-AI-004 | AI-1 | `verification/FEA-14-AI-1/logs/regression-v14.log` | `-` | `897610b7b0c01f0cc363688f785e8788c4bddb883570b8f8940a4f31bb3de443` | CANONICAL |
-| EV-AI-005 | AI-1 | `verification/FEA-14-AI-1/README.md` | `-` | `a54622d8f8977ca4ad0ec548e8a0fd12499c20f13e88b013dd4250fce35a70d6` | CANONICAL |
+| EV-AI-001 | AI-1 | `verification/FEA-14-AI-1/logs/dotnet-app-tests.log` | `17618c0fb` | `5278fe8851a234e100cd4e99205a512059009b38a495e23c81f6c310bd0df207` | CANONICAL |
+| EV-AI-002 | AI-1 | `verification/FEA-14-AI-1/logs/pins-api.log` | `17618c0fb` | `3c56cbfda61abcab33d6c6d15213a30640b4ccbca02d4d1534e266f626db8e05` | CANONICAL |
+| EV-AI-003 | AI-1 | `verification/FEA-14-AI-1/logs/pytest-ai.log` | `17618c0fb` | `5da9767fc2b13c1d8036ed6cce6e5f734cb83ec276f38dfae7884cb36c924ff9` | CANONICAL |
+| EV-AI-004 | AI-1 | `verification/FEA-14-AI-1/logs/regression-v14.log` | `17618c0fb` | `897610b7b0c01f0cc363688f785e8788c4bddb883570b8f8940a4f31bb3de443` | CANONICAL |
+| EV-AI-005 | AI-1 | `verification/FEA-14-AI-1/README.md` | `17618c0fb` | `a54622d8f8977ca4ad0ec548e8a0fd12499c20f13e88b013dd4250fce35a70d6` | CANONICAL |
 
 ## Closeout Record
 
