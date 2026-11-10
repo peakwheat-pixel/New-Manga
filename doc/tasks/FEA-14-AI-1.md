@@ -45,6 +45,7 @@ allowed_paths:
   - tests/storage/test_prompt_templates.py
   - tests/core/test_prompt_template_wire.py
   - tests/storage/test_fonts.py
+  - tests/storage/test_issue_markers.py
   - tests/storage/test_upgrade_schema_data.py
   - tests/fea09/test_v7_migration.py
   - tests/fea11/test_source_gate_unify.py

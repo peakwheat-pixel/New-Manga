@@ -58,7 +58,7 @@ def test_v13_adds_issue_markers_and_keeps_legacy_rows(tmp_path):
     conn = sqlite3.connect(tmp_path / "library.db")
     conn.row_factory = sqlite3.Row
     MigrationRunner(conn, MIGRATIONS[:-1]).apply_pending()
-    assert read_schema_version(conn) == LATEST - 1 == 12
+    assert read_schema_version(conn) == LATEST - 1 == 13
     # A real v12 book/chapter/page row must survive the v13 table creation.
     conn.execute(
         "INSERT INTO books (book_id, title, created_at, updated_at)"
@@ -80,7 +80,7 @@ def test_v13_adds_issue_markers_and_keeps_legacy_rows(tmp_path):
         for table in ("books", "chapters", "pages")
     }
     MigrationRunner(conn, MIGRATIONS).apply_pending()
-    assert read_schema_version(conn) == LATEST == 13
+    assert read_schema_version(conn) == LATEST == 14
     tables = {row["name"] for row in conn.execute("SELECT name FROM sqlite_master WHERE type='table'")}
     assert "issue_markers" in tables
     indexes = {row["name"] for row in conn.execute("SELECT name FROM sqlite_master WHERE type='index'")}
