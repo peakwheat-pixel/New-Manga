@@ -97,6 +97,18 @@ public sealed class NullHostController : IHostController, ISourceImportControlle
 
     public Task<int> ResetReadingProgressAsync(string bookId, bool confirm = true, CancellationToken cancellationToken = default) =>
         Task.FromResult(0);
+    public Task<IReadOnlyList<FontAssetInfo>> ListFontAssetsAsync(CancellationToken cancellationToken = default) =>
+        Task.FromResult<IReadOnlyList<FontAssetInfo>>(Array.Empty<FontAssetInfo>());
+
+    public Task<FontAssetInfo?> ImportFontAssetAsync(string sourcePath, string? licenseNote = null, CancellationToken cancellationToken = default) =>
+        Task.FromResult<FontAssetInfo?>(null);
+
+    public Task<bool> DeleteFontAssetAsync(string assetId, CancellationToken cancellationToken = default) =>
+        Task.FromResult(false);
+
+    public Task<FontRefreshInfo> RefreshFontAssetsAsync(CancellationToken cancellationToken = default) =>
+        Task.FromResult(new FontRefreshInfo(0, Array.Empty<FontRefreshFailure>()));
+
     public Task<ReaderBookData?> LoadReaderBookAsync(
         string? bookId = null,
         string? chapterId = null,

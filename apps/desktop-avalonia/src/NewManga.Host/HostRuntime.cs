@@ -638,6 +638,35 @@ public sealed class HostRuntime : IAsyncDisposable
     /// the persisted page (book, chapter, mode) and never mutates it on read.
     /// CHAPTER-SELECTOR-1: serialized on the same reader I/O gate as page reads.
     /// </summary>
+    /// <summary>FEA-14-FONT-1 (PREQ FONT P1): list user-imported font assets.</summary>
+    public async Task<IReadOnlyList<FontAssetInfo>> ListFontAssetsAsync(CancellationToken cancellationToken = default)
+    {
+        var core = CoreService ?? throw NotReady();
+        return await core.ListFontAssetsAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>FEA-14-FONT-1 (PREQ FONT P2): import one font file.</summary>
+    public async Task<FontAssetInfo?> ImportFontAssetAsync(
+        string sourcePath, string? licenseNote = null, CancellationToken cancellationToken = default)
+    {
+        var core = CoreService ?? throw NotReady();
+        return await core.ImportFontAssetAsync(sourcePath, licenseNote, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>FEA-14-FONT-1 (PREQ FONT P3): soft-delete one font asset.</summary>
+    public async Task<bool> DeleteFontAssetAsync(string assetId, CancellationToken cancellationToken = default)
+    {
+        var core = CoreService ?? throw NotReady();
+        return await core.DeleteFontAssetAsync(assetId, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>FEA-14-FONT-1 (PREQ FONT P4): rescan the managed fonts directory.</summary>
+    public async Task<FontRefreshInfo> RefreshFontAssetsAsync(CancellationToken cancellationToken = default)
+    {
+        var core = CoreService ?? throw NotReady();
+        return await core.RefreshFontAssetsAsync(cancellationToken).ConfigureAwait(false);
+    }
+
     public async Task<ReaderProjection> GetReaderProjectionAsync(
         string chapterId,
         string startPosition = ReaderStartPosition.Resume,

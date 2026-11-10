@@ -549,6 +549,75 @@ public sealed class HostController : IHostController, ISourceImportController, I
             return 0;
         }
     }
+    public async Task<IReadOnlyList<FontAssetInfo>> ListFontAssetsAsync(CancellationToken cancellationToken = default)
+    {
+        if (_runtime is null || !_runtime.Result.IsReady)
+        {
+            return Array.Empty<FontAssetInfo>();
+        }
+        var runtime = _runtime;
+        try
+        {
+            return await runtime.ListFontAssetsAsync(cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (ex is CoreOperationException or SidecarException or BridgeException or OperationCanceledException or IOException)
+        {
+            return Array.Empty<FontAssetInfo>();
+        }
+    }
+
+    public async Task<FontAssetInfo?> ImportFontAssetAsync(
+        string sourcePath, string? licenseNote = null, CancellationToken cancellationToken = default)
+    {
+        if (_runtime is null || !_runtime.Result.IsReady || string.IsNullOrWhiteSpace(sourcePath))
+        {
+            return null;
+        }
+        var runtime = _runtime;
+        try
+        {
+            return await runtime.ImportFontAssetAsync(sourcePath, licenseNote, cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (ex is CoreOperationException or SidecarException or BridgeException or OperationCanceledException or IOException)
+        {
+            return null;
+        }
+    }
+
+    public async Task<bool> DeleteFontAssetAsync(string assetId, CancellationToken cancellationToken = default)
+    {
+        if (_runtime is null || !_runtime.Result.IsReady || string.IsNullOrWhiteSpace(assetId))
+        {
+            return false;
+        }
+        var runtime = _runtime;
+        try
+        {
+            return await runtime.DeleteFontAssetAsync(assetId, cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (ex is CoreOperationException or SidecarException or BridgeException or OperationCanceledException or IOException)
+        {
+            return false;
+        }
+    }
+
+    public async Task<FontRefreshInfo> RefreshFontAssetsAsync(CancellationToken cancellationToken = default)
+    {
+        if (_runtime is null || !_runtime.Result.IsReady)
+        {
+            return new FontRefreshInfo(0, Array.Empty<FontRefreshFailure>());
+        }
+        var runtime = _runtime;
+        try
+        {
+            return await runtime.RefreshFontAssetsAsync(cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (ex is CoreOperationException or SidecarException or BridgeException or OperationCanceledException or IOException)
+        {
+            return new FontRefreshInfo(0, Array.Empty<FontRefreshFailure>());
+        }
+    }
+
     public async Task<ReaderProgressSaveResult> SaveReadingProgressAsync(
         string chapterId,
         string pageId,

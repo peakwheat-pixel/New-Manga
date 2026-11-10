@@ -225,6 +225,32 @@ public sealed class FakeHostController : IHostController, ISourceImportControlle
         LastResetConfirmed = confirm;
         return Task.FromResult(confirm ? 1 : 0);
     }
+    public List<FontAssetInfo> FontAssets { get; } = new();
+    public FontAssetInfo? LastImportedFont { get; private set; }
+    public int FontRefreshCalls { get; private set; }
+
+    public Task<IReadOnlyList<FontAssetInfo>> ListFontAssetsAsync(CancellationToken cancellationToken = default) =>
+        Task.FromResult<IReadOnlyList<FontAssetInfo>>(FontAssets.ToArray());
+
+    public Task<FontAssetInfo?> ImportFontAssetAsync(string sourcePath, string? licenseNote = null, CancellationToken cancellationToken = default)
+    {
+        LastImportedFont = new FontAssetInfo(Guid.NewGuid().ToString("N"), "FakeFont", "Regular", "ttf", "sha", 10, "active");
+        FontAssets.Add(LastImportedFont);
+        return Task.FromResult<FontAssetInfo?>(LastImportedFont);
+    }
+
+    public Task<bool> DeleteFontAssetAsync(string assetId, CancellationToken cancellationToken = default)
+    {
+        var removed = FontAssets.RemoveAll(item => item.AssetId == assetId) > 0;
+        return Task.FromResult(removed);
+    }
+
+    public Task<FontRefreshInfo> RefreshFontAssetsAsync(CancellationToken cancellationToken = default)
+    {
+        FontRefreshCalls++;
+        return Task.FromResult(new FontRefreshInfo(FontAssets.Count, Array.Empty<FontRefreshFailure>()));
+    }
+
     public Task<ReaderBookData?> LoadReaderBookAsync(
         string? bookId = null,
         string? chapterId = null,

@@ -203,6 +203,18 @@ public interface IHostController : IReaderProgressSink, IRunController, IAsyncDi
 
     /// <summary>FEA-14-READ-1 (PREQ P15): reset one book's reading progress.</summary>
     Task<int> ResetReadingProgressAsync(string bookId, bool confirm = false, CancellationToken cancellationToken = default);
+    /// <summary>FEA-14-FONT-1 (PREQ FONT P1): list user-imported font assets.</summary>
+    Task<IReadOnlyList<FontAssetInfo>> ListFontAssetsAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>FEA-14-FONT-1 (PREQ FONT P2): import one font file.</summary>
+    Task<FontAssetInfo?> ImportFontAssetAsync(string sourcePath, string? licenseNote = null, CancellationToken cancellationToken = default);
+
+    /// <summary>FEA-14-FONT-1 (PREQ FONT P3): soft-delete one font asset.</summary>
+    Task<bool> DeleteFontAssetAsync(string assetId, CancellationToken cancellationToken = default);
+
+    /// <summary>FEA-14-FONT-1 (PREQ FONT P4): rescan the managed fonts directory.</summary>
+    Task<FontRefreshInfo> RefreshFontAssetsAsync(CancellationToken cancellationToken = default);
+
     Task<RegionPageProjection?> LoadPageRegionsAsync(
         string pageId,
         CancellationToken cancellationToken = default);

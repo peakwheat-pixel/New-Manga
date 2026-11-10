@@ -1493,6 +1493,99 @@ public sealed class CoreServiceClient : IAsyncDisposable
         var result = RequireResult(response, "ResetReadingProgress");
         return ReadInt(result, "reset");
     }
+    /// <summary>FEA-14-FONT-1 (PREQ FONT P1): list user-imported font assets.</summary>
+    public async Task<IReadOnlyList<FontAssetInfo>> ListFontAssetsAsync(CancellationToken cancellationToken = default)
+    {
+        var response = await SendAsync(
+                "ListFontAssets", CoreProtocol.DefaultMinor,
+                writer => { writer.WriteStartObject(); writer.WriteEndObject(); },
+                _options.RequestTimeout, cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, "ListFontAssets");
+        var assets = new List<FontAssetInfo>();
+        if (result.TryGetProperty("assets", out var array) && array.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var item in array.EnumerateArray())
+            {
+                if (item.ValueKind != JsonValueKind.Object) continue;
+                assets.Add(new FontAssetInfo(
+                    ReadString(item, "asset_id") ?? string.Empty,
+                    ReadString(item, "family") ?? string.Empty,
+                    ReadString(item, "subfamily") ?? string.Empty,
+                    ReadString(item, "format") ?? string.Empty,
+                    ReadString(item, "sha256") ?? string.Empty,
+                    ReadInt(item, "size_bytes"),
+                    ReadString(item, "state") ?? string.Empty));
+            }
+        }
+        return assets;
+    }
+
+    /// <summary>FEA-14-FONT-1 (PREQ FONT P2): import one font file (copy + SHA-256).</summary>
+    public async Task<FontAssetInfo?> ImportFontAssetAsync(
+        string sourcePath, string? licenseNote = null, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(sourcePath))
+        {
+            throw new ArgumentException("source_path is required", nameof(sourcePath));
+        }
+        var response = await SendAsync(
+                "ImportFontAsset", CoreProtocol.DefaultMinor,
+                writer =>
+                {
+                    writer.WriteStartObject();
+                    writer.WriteString("source_path", sourcePath);
+                    if (licenseNote is not null) writer.WriteString("license_note", licenseNote);
+                    writer.WriteEndObject();
+                },
+                _options.RequestTimeout, cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, "ImportFontAsset");
+        return new FontAssetInfo(
+            ReadString(result, "asset_id") ?? string.Empty,
+            ReadString(result, "family") ?? string.Empty,
+            ReadString(result, "subfamily") ?? string.Empty, string.Empty, string.Empty, 0, "active");
+    }
+
+    /// <summary>FEA-14-FONT-1 (PREQ FONT P3): soft-delete one font asset.</summary>
+    public async Task<bool> DeleteFontAssetAsync(string assetId, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(assetId))
+        {
+            throw new ArgumentException("asset_id is required", nameof(assetId));
+        }
+        var response = await SendAsync(
+                "DeleteFontAsset", CoreProtocol.DefaultMinor,
+                writer => { writer.WriteStartObject(); writer.WriteString("asset_id", assetId); writer.WriteEndObject(); },
+                _options.RequestTimeout, cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, "DeleteFontAsset");
+        return result.TryGetProperty("deleted", out var deleted) && deleted.ValueKind == JsonValueKind.True;
+    }
+
+    /// <summary>FEA-14-FONT-1 (PREQ FONT P4): rescan the managed fonts directory.</summary>
+    public async Task<FontRefreshInfo> RefreshFontAssetsAsync(CancellationToken cancellationToken = default)
+    {
+        var response = await SendAsync(
+                "RefreshFontAssets", CoreProtocol.DefaultMinor,
+                writer => { writer.WriteStartObject(); writer.WriteEndObject(); },
+                _options.RequestTimeout, cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, "RefreshFontAssets");
+        var failed = new List<FontRefreshFailure>();
+        if (result.TryGetProperty("failed", out var array) && array.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var item in array.EnumerateArray())
+            {
+                if (item.ValueKind != JsonValueKind.Object) continue;
+                failed.Add(new FontRefreshFailure(
+                    ReadString(item, "path") ?? string.Empty,
+                    ReadString(item, "code") ?? string.Empty));
+            }
+        }
+        return new FontRefreshInfo(ReadInt(result, "available"), failed);
+    }
+
     /// <summary>Reader projection read face (<c>GetReaderProjection</c>, mode=original, start=beginning).</summary>
     public async Task<ReaderProjection> GetReaderProjectionAsync(
         string chapterId,
@@ -2091,3 +2184,14 @@ public sealed record BookmarkInfo(
 
 /// <summary>FEA-14-READ-1: whole-book reading progress (PREQ P14).</summary>
 public sealed record BookReadingProgressInfo(int ReadPages, int TotalPages, double Percent, bool Finished);
+
+/// <summary>FEA-14-FONT-1: one user-imported font asset.</summary>
+public sealed record FontAssetInfo(
+    string AssetId, string Family, string Subfamily, string Format,
+    string Sha256, int SizeBytes, string State);
+
+/// <summary>FEA-14-FONT-1: one failed entry of a fonts refresh.</summary>
+public sealed record FontRefreshFailure(string Path, string Code);
+
+/// <summary>FEA-14-FONT-1: result of a fonts refresh.</summary>
+public sealed record FontRefreshInfo(int Available, IReadOnlyList<FontRefreshFailure> Failed);
