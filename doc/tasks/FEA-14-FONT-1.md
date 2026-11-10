@@ -3,20 +3,20 @@ id: FEA-14-FONT-1
 title: FEA-14 切片 FONT-1：Core 字体库（安装/列举/预览/删除 + 内置字体）
 kind: implementation
 governance_version: 3
-status: in_review
+status: closed_with_limitations
 approval: **DSH 2026-11-10 冻结**（`ADJ-2026-11-10-FEA14-S5-SCOPE` §2.1/§2.2；PREQ-1 wire 预冻结 FONT P1–P4；侦察 `recon.md` §2.3）
 suggested_owner: dsh
 owner: dsh
-reviewer: null
+reviewer: r5 独立复核 approved（`doc/reviews/FEA-14-FONT-1-r5.md`，P0/P1/P2=0；P3=2 登记）
 depends_on:
   - FEA-14-S5-PREQ-1
 base_commit: 24637d1b4
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 8e39bb72c
+delivery_head: 8e39bb72c
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-14-FONT-1
 allowed_paths:
   - doc/tasks/FEA-14-FONT-1.md
@@ -107,6 +107,13 @@ FEA-14 S5 FONT 切片（FEA-00 §12.2/§15.6）需要字体库数据面：安装
 - **R4-002（P3，登记）**：wire 级 `FONT_DELETE_FAILED` 负例未补（wire P1 不回 managed_path，测试无法定位受管文件；storage 层已覆盖失败/重试）；登记。
 - **R4-003（P3，登记）**：pytest-font.log/App 全量日志 HEAD 为生成时工作树；Canonical 5 行正确。
 
+
+## r5 复核与收口（2026-11-10）
+
+- r5：**approved**（P0/P1/P2=0，P3=2），报告 `doc/reviews/FEA-14-FONT-1-r5.md`。
+- R5-001（P3，已处理）：r3 历史记录标注「已被 R4-001 修正」，`write`/`retryable` 措辞作废。
+- R5-002（P3，登记）：pytest/App 日志 HEAD 为生成时工作树；Canonical 5 行正确；wire 失败负例留 FONT-2。
+
 ## 证据计划（L2）
 
 `verification/FEA-14-FONT-1/`：`logs/`（pytest 定向/全量、App.Tests、门禁、API inventory、pins）、字体 fixture 清单与 sha256、NOT_RUN、复现命令。
@@ -141,4 +148,7 @@ FEA-14 S5 FONT 切片（FEA-00 §12.2/§15.6）需要字体库数据面：安装
 
 ## Closeout Record
 
-- 未开始（2026-11-10 scope 冻结，`ready`）。
+- 结论：**完成（带 limitation）**（2026-11-10）。r1–r4 changes_requested（严格格式/删除语义/list 过滤/删除顺序/category）→ **r5 approved**（P0/P1/P2=0，P3=2 登记）。
+- 交付：schema **v11** `font_assets` + `FontLibraryService`（导入/软删+受管删除/refresh，严格魔数+扩展名、≤50MB/≤200、sha256、typed 错误）+ wire P1–P4 + Host 三层 4 方法 + C-07 UNFREEZE v1.4（65/72，pin `8d92a32f…`）；定向 8 passed、v11 回归 1235、App 874/0/11、pins 18/18。
+- **Limitation**：FONT-2 范围（字体渲染消费、Fluent 设置页字体 UI、字体家族/字重元数据解析需 fontTools、内置字体需授权记录——**不随包任何字体**）；wire 级 FONT_DELETE_FAILED 负例未补（storage 已覆盖）；大文件/并发/占用文件未压测；日志 HEAD 为生成时工作树。
+- 零未授权契约字节（C-07 仅统计节，UNFREEZE v1.4 记录在案）；未 push。
