@@ -131,6 +131,7 @@ class Chapter:
     chapter_type: ChapterType = ChapterType.PAGED
     reading_direction: ReadingDirection = ReadingDirection.RTL
     notes: str = ""
+    custom_rank: int | None = None
     created_at: str = field(default_factory=utc_now)
     updated_at: str = field(default_factory=utc_now)
     deleted_at: str | None = None

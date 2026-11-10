@@ -12,7 +12,7 @@
 | 项 | 值 |
 |---|---|
 | 文件 | `doc/plan/FEA-C07_API_INVENTORY.md` |
-| sha256（冻结后最终字节） | `8d92a32feed771e416d1c1c003ec806e0c5c4712209fd2e097c0a723252bab5c`（v1.4，2026-11-10 UNFREEZE：FONT-1 P1–P4 落地统计 65/72；载体 `doc/reviews/CONTRACT-UNFREEZE-2026-11-10-FONT1.md`） |
+| sha256（冻结后最终字节） | `9c1eb974342af889c8c3acb8b7f7d7893ba44f05ee4b32c871116e249b321d74`（v1.5，2026-11-10 UNFREEZE：LIB-1 P5–P8 落地统计 69/76；载体 `doc/reviews/CONTRACT-UNFREEZE-2026-11-10-LIB1.md`） |
 | 前一 pin（v1.2 保留） | `5673b1c4b53e69ec36f1897ea5bb0ba8eeedbf437320381ee1b2a04448bf2aa6` |
 | 前一 pin（v1.1，保留原值） | `3fdb44e49afe9fb25e715c5a41bd247cee269c194d045e1f79946f25067dd714` |
 | r1 复核锚（未冻结，处置前字节） | `c67c40e72938ac3d5284d778758a17e66f65d760c38e2aa7c6da548a79f47550` |

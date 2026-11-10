@@ -618,6 +618,80 @@ public sealed class HostController : IHostController, ISourceImportController, I
         }
     }
 
+    public async Task<bool> UpdateBookMetadataAsync(
+        string bookId, IReadOnlyDictionary<string, string> patch, CancellationToken cancellationToken = default)
+    {
+        if (_runtime is null || !_runtime.Result.IsReady || string.IsNullOrWhiteSpace(bookId) || patch.Count == 0)
+        {
+            return false;
+        }
+        var runtime = _runtime;
+        try
+        {
+            return await runtime.UpdateBookMetadataAsync(bookId, patch, cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (ex is CoreOperationException or SidecarException or BridgeException or OperationCanceledException or IOException)
+        {
+            return false;
+        }
+    }
+
+    public async Task<bool> ReorderChaptersAsync(
+        string bookId, IReadOnlyList<string> orderedChapterIds, CancellationToken cancellationToken = default)
+    {
+        if (_runtime is null || !_runtime.Result.IsReady || string.IsNullOrWhiteSpace(bookId) || orderedChapterIds.Count == 0)
+        {
+            return false;
+        }
+        var runtime = _runtime;
+        try
+        {
+            return await runtime.ReorderChaptersAsync(bookId, orderedChapterIds, cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (ex is CoreOperationException or SidecarException or BridgeException or OperationCanceledException or IOException)
+        {
+            return false;
+        }
+    }
+
+    public async Task<bool> UpdateChapterMetadataAsync(
+        string chapterId, IReadOnlyDictionary<string, object?> patch, CancellationToken cancellationToken = default)
+    {
+        if (_runtime is null || !_runtime.Result.IsReady || string.IsNullOrWhiteSpace(chapterId) || patch.Count == 0)
+        {
+            return false;
+        }
+        var runtime = _runtime;
+        try
+        {
+            return await runtime.UpdateChapterMetadataAsync(chapterId, patch, cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (ex is CoreOperationException or SidecarException or BridgeException or OperationCanceledException or IOException)
+        {
+            return false;
+        }
+    }
+
+    public async Task<ChapterSummary?> CreateChapterWithMetadataAsync(
+        string bookId, string title, string? kind = null, string? number = null, int? importOrder = null,
+        CancellationToken cancellationToken = default)
+    {
+        if (_runtime is null || !_runtime.Result.IsReady || string.IsNullOrWhiteSpace(bookId) || string.IsNullOrWhiteSpace(title))
+        {
+            return null;
+        }
+        var runtime = _runtime;
+        try
+        {
+            return await runtime.CreateChapterWithMetadataAsync(
+                bookId, title, kind, number, importOrder, cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (ex is CoreOperationException or SidecarException or BridgeException or OperationCanceledException or IOException)
+        {
+            return null;
+        }
+    }
+
     public async Task<ReaderProgressSaveResult> SaveReadingProgressAsync(
         string chapterId,
         string pageId,

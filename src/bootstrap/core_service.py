@@ -180,6 +180,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Any, Callable, TextIO
 
 from application.fonts.service import FontLibraryError
+from application.library.errors import ChapterNotFound
 from application.editing.errors import (
     DraftError,
     GuardStatus,
@@ -5139,6 +5140,81 @@ class CoreServiceServer:
             raise P16WireError("INVALID_REQUEST", "validation", "Font refresh request is invalid")
         return self._core.fonts.refresh_assets()
 
+    # FEA-14-LIB-1 (PREQ LIB P5-P8): book/chapter metadata patches + strict
+    # reorder + create-with-metadata. Additive commands on the ordinary channel.
+    def handle_update_book_metadata(self, payload: dict[str, Any]) -> dict[str, Any]:
+        if set(payload) != {"book_id", "patch"} or not isinstance(payload.get("book_id"), str) or not payload["book_id"]:
+            raise P16WireError("INVALID_REQUEST", "validation", "Book metadata request is invalid")
+        patch = payload.get("patch")
+        if not isinstance(patch, dict) or not patch:
+            raise P16WireError("INVALID_REQUEST", "validation", "Book metadata patch is invalid")
+        try:
+            self._core.library.patch_book_metadata(payload["book_id"], patch)
+        except ChapterNotFound:
+            raise P16WireError("TARGET_NOT_FOUND", "not_found", "Book was not found")
+        except (TypeError, ValueError) as error:
+            raise P16WireError("INVALID_REQUEST", "validation", "Book metadata values are invalid") from error
+        return {"updated": True}
+
+    def handle_reorder_chapters(self, payload: dict[str, Any]) -> dict[str, Any]:
+        if set(payload) != {"book_id", "ordered_ids"} or not isinstance(payload.get("book_id"), str) or not payload["book_id"]:
+            raise P16WireError("INVALID_REQUEST", "validation", "Chapter reorder request is invalid")
+        ordered = payload.get("ordered_ids")
+        if not isinstance(ordered, list) or not ordered or not all(isinstance(item, str) and item for item in ordered):
+            raise P16WireError("INVALID_REQUEST", "validation", "Chapter reorder request is invalid")
+        try:
+            self._core.library.reorder_chapters_strict(payload["book_id"], list(ordered))
+        except ChapterNotFound:
+            raise P16WireError("TARGET_NOT_FOUND", "not_found", "Book was not found")
+        except (TypeError, ValueError) as error:
+            raise P16WireError("INVALID_REQUEST", "validation", "Ordered chapter ids are invalid") from error
+        return {"updated": True}
+
+    def handle_update_chapter_metadata(self, payload: dict[str, Any]) -> dict[str, Any]:
+        if set(payload) != {"chapter_id", "patch"} or not isinstance(payload.get("chapter_id"), str) or not payload["chapter_id"]:
+            raise P16WireError("INVALID_REQUEST", "validation", "Chapter metadata request is invalid")
+        patch = payload.get("patch")
+        if not isinstance(patch, dict) or not patch:
+            raise P16WireError("INVALID_REQUEST", "validation", "Chapter metadata patch is invalid")
+        try:
+            self._core.library.patch_chapter_metadata(payload["chapter_id"], patch)
+        except ChapterNotFound:
+            raise P16WireError("TARGET_NOT_FOUND", "not_found", "Chapter was not found")
+        except (TypeError, ValueError) as error:
+            raise P16WireError("INVALID_REQUEST", "validation", "Chapter metadata values are invalid") from error
+        return {"updated": True}
+
+    def handle_create_chapter_with_metadata(self, payload: dict[str, Any]) -> dict[str, Any]:
+        allowed = {"book_id", "title", "kind", "number", "import_order"}
+        if set(payload) - allowed or not isinstance(payload.get("book_id"), str) or not payload["book_id"]:
+            raise P16WireError("INVALID_REQUEST", "validation", "Create chapter request is invalid")
+        title = payload.get("title")
+        if not isinstance(title, str) or not title.strip():
+            raise P16WireError("INVALID_REQUEST", "validation", "Create chapter request is invalid")
+        kind = payload.get("kind")
+        if kind is not None and kind not in ("paged", "webtoon"):
+            raise P16WireError("INVALID_REQUEST", "validation", "Create chapter request is invalid")
+        number = payload.get("number", "")
+        if not isinstance(number, str):
+            raise P16WireError("INVALID_REQUEST", "validation", "Create chapter request is invalid")
+        import_order = payload.get("import_order")
+        if import_order is not None and (not isinstance(import_order, int) or import_order < 0):
+            raise P16WireError("INVALID_REQUEST", "validation", "Create chapter request is invalid")
+        try:
+            chapter = self._core.library.create_chapter_with_metadata(
+                payload["book_id"], title, kind=kind, number=number, import_order=import_order,
+            )
+        except ChapterNotFound:
+            raise P16WireError("TARGET_NOT_FOUND", "not_found", "Book was not found")
+        except (TypeError, ValueError) as error:
+            raise P16WireError("INVALID_REQUEST", "validation", "Create chapter values are invalid") from error
+        return {
+            "chapter_id": chapter.chapter_id,
+            "title": chapter.title,
+            "kind": chapter.chapter_type.value,
+            "number": chapter.chapter_number,
+        }
+
     def _register_export_target(self, payload: dict[str, Any]) -> dict[str, Any]:
         fields = {"grant_id", "session_id", "target_path", "format", "replace_existing", "expires_at", "signing_key", "signature"}
         if set(payload) != fields:
@@ -6919,7 +6995,7 @@ class CoreServiceServer:
                 "error": error,
             }, False)
 
-        if command in ("GetReaderProjection", "SaveReadingProgress", "ListFontAssets", "ImportFontAsset", "DeleteFontAsset", "RefreshFontAssets",
+        if command in ("GetReaderProjection", "SaveReadingProgress", "ListFontAssets", "ImportFontAsset", "DeleteFontAsset", "RefreshFontAssets", "UpdateBookMetadata", "ReorderChapters", "UpdateChapterMetadata", "CreateChapterWithMetadata",
                        "GetReadingPreferences", "SaveReadingPreferences",
                        "ListBookmarks", "CreateBookmark", "DeleteBookmark",
                        "GetBookReadingProgress", "ResetReadingProgress",
@@ -6929,6 +7005,14 @@ class CoreServiceServer:
                     raise P16WireError("INVALID_REQUEST", "validation", "Request payload must be an object")
                 if command == "GetReaderProjection":
                     result = self.handle_get_reader_projection(payload)
+                elif command == "UpdateBookMetadata":
+                    result = self.handle_update_book_metadata(payload)
+                elif command == "ReorderChapters":
+                    result = self.handle_reorder_chapters(payload)
+                elif command == "UpdateChapterMetadata":
+                    result = self.handle_update_chapter_metadata(payload)
+                elif command == "CreateChapterWithMetadata":
+                    result = self.handle_create_chapter_with_metadata(payload)
                 elif command == "ListFontAssets":
                     result = self.handle_list_font_assets(payload)
                 elif command == "ImportFontAsset":

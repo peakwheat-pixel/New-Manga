@@ -3,7 +3,7 @@ id: FEA-14-LIB-1
 title: FEA-14 切片 LIB-1：书/章元数据编辑与顺序（复用 PREQ 预冻结 wire P5–P8）
 kind: implementation
 governance_version: 3
-status: ready
+status: in_review
 approval: **DSH 2026-11-10 冻结**（`ADJ-2026-11-10-FEA14-S5-SCOPE` §2.1/§2.2；PREQ-1 wire 预冻结 LIB P5–P8；侦察 `recon.md` §2.2）
 suggested_owner: dsh
 owner: dsh
@@ -63,12 +63,12 @@ FEA-14 S5 LIB 切片（FEA-00 §12.2/§15.6）需要书/章元数据编辑与章
 
 ## Acceptance Criteria
 
-- [ ] **AC1 书元数据**：patch 部分字段（其余保留）；title 非空校验；tags 替换语义；无书 → typed 错误。
-- [ ] **AC2 章元数据**：kind（paged/webtoon）/custom_rank/number/title/subtitle/notes 更新；非法 kind 拒绝；无章 → typed。
-- [ ] **AC3 章重排**：`ordered_ids` 必须覆盖全书章（缺/多/重复 → typed）；sort_order 连续重写；重排后读取顺序一致。
-- [ ] **AC4 创建带元数据章**：title/kind/number/import_order 落库；返回 chapter_id/title/kind/number；父书不存在 → typed。
-- [ ] **AC5 迁移/契约/门禁**：v12 additive（旧行字段级无损）；P5–P8 按 PREQ §8 形状；`generate_api_inventory.py --check` EXIT 0；`verify_pins` 18/18（C-07 pin 更新记录）。
-- [ ] **AC6 证据**：定向 pytest/App.Tests 通过；`verification/FEA-14-LIB-1/` 日志含 EXIT；NOT_RUN（LIB-2 UI/Volume 实体）如实登记。
+- [x] **AC1 书元数据**：patch 部分字段（其余保留）；title 非空校验；tags 替换语义；无书 → typed 错误。 <<MET>>
+- [x] **AC2 章元数据**：kind（paged/webtoon）/custom_rank/number/title/subtitle/notes 更新；非法 kind 拒绝；无章 → typed。 <<MET>>
+- [x] **AC3 章重排**：`ordered_ids` 必须覆盖全书章（缺/多/重复 → typed）；sort_order 连续重写；重排后读取顺序一致。 <<MET>>
+- [x] **AC4 创建带元数据章**：title/kind/number/import_order 落库；返回 chapter_id/title/kind/number；父书不存在 → typed。 <<MET>>
+- [x] **AC5 迁移/契约/门禁**：v12 additive（旧行字段级无损）；P5–P8 按 PREQ §8 形状；`generate_api_inventory.py --check` EXIT 0；`verify_pins` 18/18（C-07 pin 更新记录）。 <<MET>>
+- [x] **AC6 证据**：定向 pytest/App.Tests 通过；`verification/FEA-14-LIB-1/` 日志含 EXIT；NOT_RUN（LIB-2 UI/Volume 实体）如实登记。 <<MET>>
 
 ## 证据计划（L2）
 
@@ -91,6 +91,16 @@ FEA-14 S5 LIB 切片（FEA-00 §12.2/§15.6）需要书/章元数据编辑与章
 | user-data | `%APPDATA%\com.newmanga.desktop` | NOT_APPLICABLE | — | — | 只读；测试用隔离根 |
 | build | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 复用现有环境 |
 | worktree | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 主树实现 |
+
+## Canonical Evidence
+
+| evidence_id | AC/Gate | path | commit | sha256 | class |
+|---|---|---|---|---|---|
+| EV-LB-001 | LIB-1 | `verification/FEA-14-LIB-1/logs/dotnet-app-tests.log` | `-` | `4987dccef65de79af3491054ee4990d6008ba723c77dc4d3adba554eb5f33da5` | CANONICAL |
+| EV-LB-002 | LIB-1 | `verification/FEA-14-LIB-1/logs/pins-api.log` | `-` | `6546b28c059bc7abb357decb6976061db20b344a4b45e17dba218a05d7822c6b` | CANONICAL |
+| EV-LB-003 | LIB-1 | `verification/FEA-14-LIB-1/logs/pytest-lib.log` | `-` | `ce38561c691b5c16c8fdb233738783c531ee810c99826a190bb197191a166ed0` | CANONICAL |
+| EV-LB-004 | LIB-1 | `verification/FEA-14-LIB-1/logs/regression-v12.log` | `-` | `2723cbd1f3c7f45cd5b5510619e480f7dfdd879ad57077dc18d8372b1db0e1fd` | CANONICAL |
+| EV-LB-005 | LIB-1 | `verification/FEA-14-LIB-1/README.md` | `-` | `c4580ee64982b33c1d0ff668db4fdc49a0c7bacbd09753c2386183268ed2bc4a` | CANONICAL |
 
 ## Closeout Record
 

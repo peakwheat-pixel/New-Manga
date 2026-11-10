@@ -1586,6 +1586,120 @@ public sealed class CoreServiceClient : IAsyncDisposable
         return new FontRefreshInfo(ReadInt(result, "available"), failed);
     }
 
+    /// <summary>FEA-14-LIB-1 (PREQ LIB P5): patch book display metadata.</summary>
+    public async Task<bool> UpdateBookMetadataAsync(
+        string bookId, IReadOnlyDictionary<string, string> patch, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(bookId) || patch.Count == 0)
+        {
+            throw new ArgumentException("book_id and a non-empty patch are required", nameof(bookId));
+        }
+        var response = await SendAsync(
+                "UpdateBookMetadata", CoreProtocol.DefaultMinor,
+                writer =>
+                {
+                    writer.WriteStartObject();
+                    writer.WriteString("book_id", bookId);
+                    writer.WriteStartObject("patch");
+                    foreach (var pair in patch) writer.WriteString(pair.Key, pair.Value);
+                    writer.WriteEndObject();
+                    writer.WriteEndObject();
+                },
+                _options.RequestTimeout, cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, "UpdateBookMetadata");
+        return result.TryGetProperty("updated", out var updated) && updated.ValueKind == JsonValueKind.True;
+    }
+
+    /// <summary>FEA-14-LIB-1 (PREQ LIB P6): reorder a book's chapters.</summary>
+    public async Task<bool> ReorderChaptersAsync(
+        string bookId, IReadOnlyList<string> orderedChapterIds, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(bookId) || orderedChapterIds.Count == 0)
+        {
+            throw new ArgumentException("book_id and ordered_ids are required", nameof(bookId));
+        }
+        var response = await SendAsync(
+                "ReorderChapters", CoreProtocol.DefaultMinor,
+                writer =>
+                {
+                    writer.WriteStartObject();
+                    writer.WriteString("book_id", bookId);
+                    writer.WriteStartArray("ordered_ids");
+                    foreach (var id in orderedChapterIds) writer.WriteStringValue(id);
+                    writer.WriteEndArray();
+                    writer.WriteEndObject();
+                },
+                _options.RequestTimeout, cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, "ReorderChapters");
+        return result.TryGetProperty("updated", out var updated) && updated.ValueKind == JsonValueKind.True;
+    }
+
+    /// <summary>FEA-14-LIB-1 (PREQ LIB P7): patch chapter metadata.</summary>
+    public async Task<bool> UpdateChapterMetadataAsync(
+        string chapterId, IReadOnlyDictionary<string, object?> patch, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(chapterId) || patch.Count == 0)
+        {
+            throw new ArgumentException("chapter_id and a non-empty patch are required", nameof(chapterId));
+        }
+        var response = await SendAsync(
+                "UpdateChapterMetadata", CoreProtocol.DefaultMinor,
+                writer =>
+                {
+                    writer.WriteStartObject();
+                    writer.WriteString("chapter_id", chapterId);
+                    writer.WriteStartObject("patch");
+                    foreach (var pair in patch)
+                    {
+                        switch (pair.Value)
+                        {
+                            case null: writer.WriteNull(pair.Key); break;
+                            case int intValue: writer.WriteNumber(pair.Key, intValue); break;
+                            default: writer.WriteString(pair.Key, pair.Value.ToString()); break;
+                        }
+                    }
+                    writer.WriteEndObject();
+                    writer.WriteEndObject();
+                },
+                _options.RequestTimeout, cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, "UpdateChapterMetadata");
+        return result.TryGetProperty("updated", out var updated) && updated.ValueKind == JsonValueKind.True;
+    }
+
+    /// <summary>FEA-14-LIB-1 (PREQ LIB P8): create a chapter with metadata.</summary>
+    public async Task<ChapterSummary?> CreateChapterWithMetadataAsync(
+        string bookId, string title, string? kind = null, string? number = null, int? importOrder = null,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(bookId) || string.IsNullOrWhiteSpace(title))
+        {
+            throw new ArgumentException("book_id and title are required", nameof(bookId));
+        }
+        var response = await SendAsync(
+                "CreateChapterWithMetadata", CoreProtocol.DefaultMinor,
+                writer =>
+                {
+                    writer.WriteStartObject();
+                    writer.WriteString("book_id", bookId);
+                    writer.WriteString("title", title);
+                    if (kind is not null) writer.WriteString("kind", kind);
+                    if (number is not null) writer.WriteString("number", number);
+                    if (importOrder is not null) writer.WriteNumber("import_order", importOrder.Value);
+                    writer.WriteEndObject();
+                },
+                _options.RequestTimeout, cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, "CreateChapterWithMetadata");
+        return new ChapterSummary(
+            ReadString(result, "chapter_id") ?? string.Empty,
+            ReadString(result, "title") ?? string.Empty,
+            ReadString(result, "number") ?? string.Empty,
+            ReadInt(result, "import_order"));
+    }
+
     /// <summary>Reader projection read face (<c>GetReaderProjection</c>, mode=original, start=beginning).</summary>
     public async Task<ReaderProjection> GetReaderProjectionAsync(
         string chapterId,

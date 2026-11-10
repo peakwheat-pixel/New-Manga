@@ -617,6 +617,12 @@ def _seed_v5(connection: sqlite3.Connection) -> None:
     )
 
 
+
+
+def _column_names(connection: sqlite3.Connection, table: str) -> set[str]:
+    return {str(row[1]) for row in connection.execute(f"PRAGMA table_info({table})")}
+
+
 def _table_names(connection: sqlite3.Connection) -> set[str]:
     return {
         row["name"]
@@ -744,6 +750,7 @@ def test_synthetic_legacy_data_survives_full_upgrade(tmp_path: Path, version: in
     connection = _build_legacy_database(db_path, version)
     before = _table_names(connection)
     indexes_before = _index_names(connection)
+    columns_before = _column_names(connection, 'chapters')
 
     applied = MigrationRunner(connection, MIGRATIONS).apply_pending()
     assert [record.schema_version for record in applied] == list(
@@ -752,11 +759,12 @@ def test_synthetic_legacy_data_survives_full_upgrade(tmp_path: Path, version: in
     after = _table_names(connection)
     new_tables = [name for name in LATEST_TABLES if name not in before]
     new_indexes = sorted(_index_names(connection) - indexes_before)
+    new_columns = _column_names(connection, 'chapters') - columns_before
     # Every legacy start point must gain SOMETHING: v1..v7 start points gain
     # tables, the v8 start point gains only the v9 pure-index migration. This
     # keeps the "an upgrade changes the schema" direction without pretending a
     # pure-index migration adds a table.
-    assert new_tables or new_indexes, (
+    assert new_tables or new_indexes or new_columns, (
         "starting point unexpectedly already had every latest table and index"
     )
     if version == 8:

@@ -19,6 +19,8 @@ from application.library.errors import (
     TagNotFound,
 )
 from application.library.ports import LibraryRepository
+from datetime import datetime, timezone
+
 from domain.books.entities import Book, Chapter, ChapterType, ReadingDirection, Tag
 
 
@@ -198,6 +200,77 @@ class LibraryService:
             self._repo.update_chapter(chapter)
             reordered.append(chapter)
         return reordered
+
+    # ------------------------------------------------------------------
+    # FEA-14-LIB-1 (PREQ LIB P5-P8): metadata patches, strict reorder, create.
+    # ------------------------------------------------------------------
+    def patch_book_metadata(self, book_id: str, patch: dict[str, str]) -> Book:
+        allowed = {"title", "author", "series_title", "description", "notes",
+                   "original_title", "publisher"}
+        unknown = set(patch) - allowed
+        if unknown:
+            raise ValueError(f"unknown book metadata fields: {sorted(unknown)}")
+        if "title" in patch and not str(patch["title"]).strip():
+            raise ValueError("book title must not be empty")
+        return self.update_book(book_id, **{key: str(value) for key, value in patch.items()})
+
+    def patch_chapter_metadata(self, chapter_id: str, patch: dict[str, object]) -> Chapter:
+        allowed = {"kind", "custom_rank", "number", "title", "subtitle", "notes"}
+        unknown = set(patch) - allowed
+        if unknown:
+            raise ValueError(f"unknown chapter metadata fields: {sorted(unknown)}")
+        chapter = self.get_chapter(chapter_id)
+        if "kind" in patch:
+            chapter.chapter_type = ChapterType(str(patch["kind"]))
+            if chapter.chapter_type is ChapterType.WEBTOON:
+                chapter.reading_direction = ReadingDirection.VERTICAL
+            elif chapter.reading_direction is ReadingDirection.VERTICAL:
+                chapter.reading_direction = ReadingDirection.RTL
+        if "custom_rank" in patch:
+            value = patch["custom_rank"]
+            chapter.custom_rank = None if value is None else int(value)
+        if "number" in patch:
+            chapter.chapter_number = str(patch["number"])
+        if "title" in patch:
+            title = str(patch["title"])
+            if not title.strip():
+                raise ValueError("chapter title must not be empty")
+            chapter.title = title
+        if "subtitle" in patch:
+            chapter.subtitle = str(patch["subtitle"])
+        if "notes" in patch:
+            chapter.notes = str(patch["notes"])
+        chapter.updated_at = datetime.now(timezone.utc).isoformat()
+        self._repo.update_chapter(chapter)
+        return chapter
+
+    def reorder_chapters_strict(self, book_id: str, ordered_chapter_ids: list[str]) -> list[Chapter]:
+        existing = [chapter.chapter_id for chapter in self.list_chapters(book_id)]
+        if len(set(ordered_chapter_ids)) != len(ordered_chapter_ids):
+            raise ValueError("ordered chapter ids must not contain duplicates")
+        if set(ordered_chapter_ids) != set(existing):
+            raise ValueError("ordered chapter ids must cover exactly the book's chapters")
+        return self.reorder_chapters(book_id, ordered_chapter_ids)
+
+    def create_chapter_with_metadata(
+        self,
+        book_id: str,
+        title: str,
+        *,
+        kind: str | None = None,
+        number: str = "",
+        import_order: int | None = None,
+    ) -> Chapter:
+        chapter = self.create_chapter(
+            book_id, title, chapter_number=number,
+            chapter_type=ChapterType(kind) if kind else None,
+        )
+        if import_order is not None:
+            chapter.import_order = int(import_order)
+            chapter.sort_order = int(import_order)
+            self._repo.update_chapter(chapter)
+        return chapter
+
 
     # ------------------------------------------------------------------
     # tags (AC-LIB-002)
@@ -428,3 +501,4 @@ def decode_trash_cursor(cursor: str) -> tuple[str, str] | None:
     ):
         return None
     return decoded[0], decoded[1]
+

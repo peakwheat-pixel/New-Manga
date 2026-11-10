@@ -104,6 +104,7 @@ class SqliteLibraryRepository:
             chapter_type=ChapterType(row["chapter_type"]),
             reading_direction=ReadingDirection(row["reading_direction"]),
             notes=row["notes"],
+            custom_rank=row["custom_rank"] if "custom_rank" in row.keys() else None,
             created_at=row["created_at"],
             updated_at=row["updated_at"],
             deleted_at=row["deleted_at"],
@@ -213,20 +214,20 @@ class SqliteLibraryRepository:
     _CHAPTER_COLUMNS = (
         "chapter_id, book_id, title, chapter_number, subtitle, import_order,"
         " sort_order, chapter_type, reading_direction, notes, created_at,"
-        " updated_at, deleted_at"
-    )
+        " updated_at, deleted_at, custom_rank")
 
     def add_chapter(self, chapter: Chapter) -> None:
         with self._conn:
             self._conn.execute(
                 "INSERT INTO chapters (" + self._CHAPTER_COLUMNS + ")"
-                " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 (
                     chapter.chapter_id, chapter.book_id, chapter.title,
                     chapter.chapter_number, chapter.subtitle, chapter.import_order,
                     chapter.sort_order, chapter.chapter_type.value,
                     chapter.reading_direction.value, chapter.notes,
                     chapter.created_at, chapter.updated_at, chapter.deleted_at,
+                    chapter.custom_rank,
                 ),
             )
 
@@ -250,13 +251,13 @@ class SqliteLibraryRepository:
             self._conn.execute(
                 "UPDATE chapters SET title = ?, chapter_number = ?, subtitle = ?,"
                 " import_order = ?, sort_order = ?, chapter_type = ?,"
-                " reading_direction = ?, notes = ?, updated_at = ?, deleted_at = ?"
+                " reading_direction = ?, notes = ?, custom_rank = ?, updated_at = ?, deleted_at = ?"
                 " WHERE chapter_id = ?",
                 (
                     chapter.title, chapter.chapter_number, chapter.subtitle,
                     chapter.import_order, chapter.sort_order,
                     chapter.chapter_type.value, chapter.reading_direction.value,
-                    chapter.notes, chapter.updated_at, chapter.deleted_at,
+                    chapter.notes, chapter.custom_rank, chapter.updated_at, chapter.deleted_at,
                     chapter.chapter_id,
                 ),
             )

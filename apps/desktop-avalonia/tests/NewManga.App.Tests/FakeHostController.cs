@@ -251,6 +251,32 @@ public sealed class FakeHostController : IHostController, ISourceImportControlle
         return Task.FromResult(new FontRefreshInfo(FontAssets.Count, Array.Empty<FontRefreshFailure>()));
     }
 
+    public bool UpdateBookMetadataResult { get; set; } = true;
+    public bool LastReorderCalled { get; private set; }
+    public (string BookId, IReadOnlyDictionary<string, string> Patch)? LastBookMetadata { get; private set; }
+    public (string ChapterId, IReadOnlyDictionary<string, object?> Patch)? LastChapterMetadata { get; private set; }
+
+    public Task<bool> UpdateBookMetadataAsync(string bookId, IReadOnlyDictionary<string, string> patch, CancellationToken cancellationToken = default)
+    {
+        LastBookMetadata = (bookId, patch);
+        return Task.FromResult(UpdateBookMetadataResult);
+    }
+
+    public Task<bool> ReorderChaptersAsync(string bookId, IReadOnlyList<string> orderedChapterIds, CancellationToken cancellationToken = default)
+    {
+        LastReorderCalled = true;
+        return Task.FromResult(UpdateBookMetadataResult);
+    }
+
+    public Task<bool> UpdateChapterMetadataAsync(string chapterId, IReadOnlyDictionary<string, object?> patch, CancellationToken cancellationToken = default)
+    {
+        LastChapterMetadata = (chapterId, patch);
+        return Task.FromResult(UpdateBookMetadataResult);
+    }
+
+    public Task<ChapterSummary?> CreateChapterWithMetadataAsync(string bookId, string title, string? kind = null, string? number = null, int? importOrder = null, CancellationToken cancellationToken = default) =>
+        Task.FromResult<ChapterSummary?>(new ChapterSummary("new-chapter", title, number ?? string.Empty, importOrder ?? 0));
+
     public Task<ReaderBookData?> LoadReaderBookAsync(
         string? bookId = null,
         string? chapterId = null,

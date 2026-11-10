@@ -667,6 +667,40 @@ public sealed class HostRuntime : IAsyncDisposable
         return await core.RefreshFontAssetsAsync(cancellationToken).ConfigureAwait(false);
     }
 
+    /// <summary>FEA-14-LIB-1 (PREQ LIB P5): patch book display metadata.</summary>
+    public async Task<bool> UpdateBookMetadataAsync(
+        string bookId, IReadOnlyDictionary<string, string> patch, CancellationToken cancellationToken = default)
+    {
+        var core = CoreService ?? throw NotReady();
+        return await core.UpdateBookMetadataAsync(bookId, patch, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>FEA-14-LIB-1 (PREQ LIB P6): reorder a book's chapters.</summary>
+    public async Task<bool> ReorderChaptersAsync(
+        string bookId, IReadOnlyList<string> orderedChapterIds, CancellationToken cancellationToken = default)
+    {
+        var core = CoreService ?? throw NotReady();
+        return await core.ReorderChaptersAsync(bookId, orderedChapterIds, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>FEA-14-LIB-1 (PREQ LIB P7): patch chapter metadata.</summary>
+    public async Task<bool> UpdateChapterMetadataAsync(
+        string chapterId, IReadOnlyDictionary<string, object?> patch, CancellationToken cancellationToken = default)
+    {
+        var core = CoreService ?? throw NotReady();
+        return await core.UpdateChapterMetadataAsync(chapterId, patch, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>FEA-14-LIB-1 (PREQ LIB P8): create a chapter with metadata.</summary>
+    public async Task<ChapterSummary?> CreateChapterWithMetadataAsync(
+        string bookId, string title, string? kind = null, string? number = null, int? importOrder = null,
+        CancellationToken cancellationToken = default)
+    {
+        var core = CoreService ?? throw NotReady();
+        return await core.CreateChapterWithMetadataAsync(
+            bookId, title, kind, number, importOrder, cancellationToken).ConfigureAwait(false);
+    }
+
     public async Task<ReaderProjection> GetReaderProjectionAsync(
         string chapterId,
         string startPosition = ReaderStartPosition.Resume,

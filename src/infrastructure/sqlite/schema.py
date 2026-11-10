@@ -50,6 +50,9 @@ SCHEMA_VERSION_V10 = 10
 #: FEA-14-FONT-1: user-imported font assets (PREQ FONT P1-P4). Additive only.
 SCHEMA_VERSION_V11 = 11
 
+#: FEA-14-LIB-1 (PREQ LIB P7): user-defined chapter rank. Additive only.
+SCHEMA_VERSION_V12 = 12
+
 MIGRATION_V1_NAME = "v1__storage_base"
 
 MIGRATION_V1_SQL = """
@@ -873,6 +876,11 @@ MIGRATION_V10_NAME = "v10__reading_preferences_bookmarks"
 #: (mode/direction/zoom/double-page/layout), bookmarks (left/right/both), and
 #: the additive anchor/viewport columns on the existing progress rows. Every
 #: statement is additive; v1–v9 checksums stay byte-identical.
+MIGRATION_V12_NAME = "v12__chapters_custom_rank"
+
+MIGRATION_V12_SQL = "ALTER TABLE chapters ADD COLUMN custom_rank INTEGER;"
+
+
 MIGRATION_V11_NAME = "v11__font_assets"
 
 MIGRATION_V11_SQL = """
@@ -932,4 +940,5 @@ def default_migrations() -> tuple[Migration, ...]:
         Migration(SCHEMA_VERSION_V9, MIGRATION_V9_NAME, MIGRATION_V9_SQL),
         Migration(SCHEMA_VERSION_V10, MIGRATION_V10_NAME, MIGRATION_V10_SQL),
         Migration(SCHEMA_VERSION_V11, MIGRATION_V11_NAME, MIGRATION_V11_SQL),
+        Migration(SCHEMA_VERSION_V12, MIGRATION_V12_NAME, MIGRATION_V12_SQL),
     )
