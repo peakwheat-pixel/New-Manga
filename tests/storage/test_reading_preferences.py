@@ -186,3 +186,33 @@ def test_explicit_default_values_can_reset_preferences(tmp_path):
     )
     assert reset["mode"] == "original" and reset["direction"] == "ltr"
     assert reset["zoom"] == 1.0 and reset["double_page"] is False and reset["layout"] == "single"
+
+
+def test_book_progress_rounds_pages_before_finished(tmp_path):
+    conn, service = _service(tmp_path)
+    conn.execute(
+        "INSERT INTO books (book_id, title, created_at, updated_at)"
+        " VALUES ('b2', 'Book', '2026-01-01', '2026-01-01')"
+    )
+    conn.execute(
+        "INSERT INTO chapters (chapter_id, book_id, title, chapter_type, sort_order, created_at, updated_at)"
+        " VALUES ('c3', 'b2', 'Ch', 'paged', 1, '2026-01-01', '2026-01-01')"
+    )
+    for index in (1, 2):
+        conn.execute(
+            "INSERT INTO pages (page_id, chapter_id, sort_order, created_at, updated_at)"
+            " VALUES (?, 'c3', ?, '2026-01-01', '2026-01-01')",
+            (f"c3p{index}", index),
+        )
+    conn.execute(
+        "INSERT INTO reading_progress (progress_id, book_id, chapter_id, mode,"
+        " last_page_id, scroll_offset_x, scroll_offset_y, progress_percent, updated_at)"
+        " VALUES ('p2', 'b2', 'c3', 'original', 'c3p2', 0.0, 0.0, 99.6, '2026-01-01')"
+    )
+    conn.commit()
+    progress = service.book_progress("b2")
+    # R4-002: pages are rounded first; 99.6% of 2 pages rounds to 2 -> finished.
+    assert progress["read_pages"] == 2
+    assert progress["total_pages"] == 2
+    assert progress["finished"] is True
+    assert progress["progress_percent"] == 99.6

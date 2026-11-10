@@ -11,6 +11,8 @@
 | AC1 偏好持久化 | 按书 mode/direction/zoom/double_page/layout 保存后恢复 | **PARTIAL**：Core schema v10 `reading_preferences` + `ReadingExtrasService` + wire P9/P10 已验证（保存→再次读取一致、默认偏好、非法值拒绝）；**Fluent Reader UI 尚未读取/应用偏好**（见 limitation） |
 | AC2 书签 | 新增（left/right/both）/列表/删除；跨书隔离 | **PARTIAL**：Core + wire P11–P13 完整（创建/列表/删除/跨书隔离/非法 side 拒绝，wire 测试通过）；**UI 书签面板未接**（limitation） |
 | AC3 整书进度 | 按页面数计算；reset 需 confirm | **PARTIAL**：`book_progress` **页面口径**（pages JOIN、per-chapter percent×pages、read_pages/total_pages/finished）+ wire P14/P15（reset 需 confirm，未确认 → `INVALID_REQUEST`）已验证；**UI 未显示/未接 reset 确认**（limitation） |
+> 口径（R4-002）：`finished` 按**取整后的页数**判定（99.6% × 2 页 → read_pages=2 → finished=true；percent 保留 99.6 连续值）。
+
 | AC4 迁移无损 | schema v10 additive；旧 reading_progress 行字段级无损 | **MET**：`test_v10_migration_preserves_legacy_progress_rows`（v9→v10 旧行 `progress_percent` 保留、新列 NULL）；core 全量 1034 passed |
 | AC5 契约/门禁 | 七命令实现 + inventory/pin 更新；偏差登记 | **PARTIAL**：7 命令（PascalCase wire + minor 3）实现；`generate_api_inventory.py --check` EXIT 0（IHostController 61 / 合计 68）；C-07 UNFREEZE v1.3 pin **`59ab90f7…`**（最终字节）；`verify_pins` 18/18。**P12/P15 返回类型（`Task<string?>`/`Task<int>`）与 P15 `confirm` vs `confirm_token?` 属已登记偏差，未按 PREQ §8 完全对齐** |
 | AC6 证据 | 定向/全量测试、日志含 EXIT、NOT_RUN 登记 | **MET**：见下表与 NOT_RUN（全量日志见 `logs/`） |

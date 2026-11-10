@@ -3,20 +3,20 @@ id: FEA-14-READ-1
 title: FEA-14 切片 READ-1：按书阅读偏好 + 书签 + 整书进度（复用 PREQ 预冻结 wire）
 kind: implementation
 governance_version: 3
-status: in_review
+status: closed_with_limitations
 approval: **DSH 2026-11-10 冻结**（`ADJ-2026-11-10-FEA14-S5-SCOPE` §2.1/§2.2；PREQ-1 wire 预冻结 P9–P15；侦察 `recon.md` §2.4）
 suggested_owner: dsh
 owner: dsh
-reviewer: null
+reviewer: r4 独立复核 approved（`doc/reviews/FEA-14-READ-1-r4.md`，P0/P1/P2=0；P3=2 已补/登记）
 depends_on:
   - FEA-14-S5-PREQ-1
 base_commit: f9bf922aa
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 4de1c54f0
+delivery_head: 4de1c54f0
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-14-READ-1
 allowed_paths:
   - doc/tasks/FEA-14-READ-1.md
@@ -112,6 +112,14 @@ out_of_scope:
 - **R3-004（P3，已修）**：README AC3 改为页面口径描述。
 - **R3-005（P3，登记）**：provenance 注记（用户 base 82ea 在实现之后；Reader 日志 HEAD=d0b、App 日志 HEAD=82ea、卡面 base=f9bf）——按 r3 报告为准，不追改历史日志。
 
+
+## r4 复核与收口（2026-11-10）
+
+- r4：**approved**（P0/P1/P2=0，P3=2），报告 `doc/reviews/FEA-14-READ-1-r4.md`。
+- R4-001（P3，已补）：新增 wire 层 P10 partial/presence 测试 `test_save_preferences_wire_is_partial_presence_based`（只传 zoom 保留其余；显式默认值重置）。
+- R4-002（P3，已补）：新增 99.6%/2 页边界测试；README 注明「finished 按取整后页数判定」。
+- AC1–AC3 的 Fluent UI 接线 → `FEA-14-READ-2`（ready 冻结）。
+
 ## 证据计划（L2）
 
 `verification/FEA-14-READ-1/`：`logs/`（pytest 定向/全量、App.Tests 定向、门禁、API inventory、pins）、迁移前后行数/字段表、JSON 摘要、NOT_RUN、复现命令。
@@ -143,8 +151,11 @@ out_of_scope:
 | EV-RD-003 | READ-1 | `verification/FEA-14-READ-1/logs/read-wire.log` | `-` | `5eabf16881205b9a80730ba1ba0df816667cf024eaf13e1788b8a9d2c901e454` | CANONICAL |
 | EV-RD-004 | READ-1 | `verification/FEA-14-READ-1/logs/reader-targeted.log` | `-` | `29321d45c43c4e8ad09101f0d3f78aadc14300e5f0bbc207a524d348b1edb18d` | CANONICAL |
 | EV-RD-005 | READ-1 | `verification/FEA-14-READ-1/logs/reading-storage.log` | `-` | `b0ab413835300ddc9291937e3c3f617da3a13d0f78edc5d943a032e878c40130` | CANONICAL |
-| EV-RD-006 | READ-1 | `verification/FEA-14-READ-1/README.md` | `-` | `a8a339a8cda66e8e5bfad5745e55b5a488500c04d4ab93e58b313616e152c2b3` | CANONICAL |
+| EV-RD-006 | READ-1 | `verification/FEA-14-READ-1/README.md` | `-` | `fbfc3ac0ea8554ccf2b2e6f8ca18f2537f23b34b4debe8afec8f3afebb9f5bbb` | CANONICAL |
 
 ## Closeout Record
 
-- 未开始（2026-11-10 scope 冻结，`ready`）。
+- 结论：**完成（带 limitation）**（2026-11-10）。r1 changes_requested（P1 P14 页面口径）→ r2/r3/r4 闭环 → **r4 approved**（P0/P1/P2=0，P3=2）。
+- 交付：Core schema v10（preferences/bookmarks/anchor 列）+ `ReadingExtrasService` + wire P9–P15 + `IHostController` 七方法 + C-07 inventory 61/68 + pin v1.3 `59ab90f7…`；定向 14 passed、core 1034、App 867/0/11、pytest 3487/0/10；check/pins/API 全绿。
+- **Limitation（AC1/AC2/AC3/AC5 PARTIAL）**：Fluent Reader UI 未接线（偏好应用/书签面板/整书进度显示/reset 确认）→ 另立 `FEA-14-READ-2`；P12/P15 返回类型与 `confirm_token` 偏差已登记（未按 PREQ §8 完全对齐）；真实 UI 手势/IME/多屏/DPI/主题/托盘与真实进程重启 = NOT_RUN。
+- 零未授权契约字节（C-07 仅统计节，UNFREEZE v1.3 记录在案）；未 push。

@@ -132,3 +132,24 @@ def test_book_progress_wire_is_page_based(tmp_path):
     assert response["result"]["read_pages"] == 1
     assert response["result"]["percent"] == 50.0
     assert response["result"]["finished"] is False
+
+
+def test_save_preferences_wire_is_partial_presence_based(tmp_path):
+    server = _server(tmp_path)
+    first = _rpc(server, "SaveReadingPreferences", {
+        "book_id": "bw", "prefs": {"mode": "translated", "direction": "rtl", "zoom": 2.0, "layout": "double"},
+    })
+    assert first["error"] is None
+    second = _rpc(server, "SaveReadingPreferences", {"book_id": "bw", "prefs": {"zoom": 1.25}})
+    assert second["error"] is None
+    read = _rpc(server, "GetReadingPreferences", {"book_id": "bw"})
+    result = read["result"]
+    assert result["zoom"] == 1.25
+    assert result["mode"] == "translated" and result["direction"] == "rtl" and result["layout"] == "double"
+    # Explicit defaults must reset (presence, not value-equality heuristic).
+    reset = _rpc(server, "SaveReadingPreferences", {
+        "book_id": "bw", "prefs": {"mode": "original", "direction": "ltr", "zoom": 1.0, "double_page": False, "layout": "single"},
+    })
+    assert reset["error"] is None
+    again = _rpc(server, "GetReadingPreferences", {"book_id": "bw"})["result"]
+    assert again["mode"] == "original" and again["direction"] == "ltr" and again["zoom"] == 1.0
