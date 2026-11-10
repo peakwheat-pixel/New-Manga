@@ -175,3 +175,14 @@ def test_preferences_survive_reopen_two_assemblies(tmp_path):
     _migrate(conn2)
     again = ReadingExtrasService(SqliteReadingExtrasStore(conn2)).get_preferences("b1")
     assert again["mode"] == "translated" and again["direction"] == "rtl" and again["zoom"] == 2.0
+
+
+def test_explicit_default_values_can_reset_preferences(tmp_path):
+    conn, service = _service(tmp_path)
+    service.save_preferences("b1", mode="translated", direction="rtl", zoom=2.0, double_page=True, layout="double")
+    # R3-001: explicit defaults must reset, not be ignored as "not provided".
+    reset = service.save_preferences(
+        "b1", mode="original", direction="ltr", zoom=1.0, double_page=False, layout="single"
+    )
+    assert reset["mode"] == "original" and reset["direction"] == "ltr"
+    assert reset["zoom"] == 1.0 and reset["double_page"] is False and reset["layout"] == "single"

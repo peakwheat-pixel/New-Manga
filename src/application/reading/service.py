@@ -550,24 +550,31 @@ class ReadingExtrasService:
         self,
         book_id: str,
         *,
-        mode: str = "original",
-        direction: str = "ltr",
-        zoom: float = 1.0,
-        double_page: bool = False,
-        layout: str = "single",
+        mode: str | None = None,
+        direction: str | None = None,
+        zoom: float | None = None,
+        double_page: bool | None = None,
+        layout: str | None = None,
     ) -> dict:
         from application.reading.ports import ReadingPreferences
         from datetime import datetime, timezone
         import uuid
 
-        # FEA-14-READ-1 (R-004): partial patch -- omitted fields keep the stored value.
+        # FEA-14-READ-1 (R3-001): explicit presence -- None means 'not provided';
+        # any explicit value (including the defaults) overrides the stored value,
+        # so a caller can deliberately reset a field back to its default.
         existing = self._store.load_preferences(book_id)
         if existing is not None:
-            mode = existing.mode if mode == "original" and existing.mode != "original" else mode
-            direction = existing.direction if direction == "ltr" and existing.direction != "ltr" else direction
-            zoom = existing.zoom if zoom == 1.0 and existing.zoom != 1.0 else zoom
-            double_page = existing.double_page if not double_page and existing.double_page else double_page
-            layout = existing.layout if layout == "single" and existing.layout != "single" else layout
+            mode = existing.mode if mode is None else mode
+            direction = existing.direction if direction is None else direction
+            zoom = existing.zoom if zoom is None else zoom
+            double_page = existing.double_page if double_page is None else double_page
+            layout = existing.layout if layout is None else layout
+        mode = "original" if mode is None else mode
+        direction = "ltr" if direction is None else direction
+        zoom = 1.0 if zoom is None else zoom
+        double_page = False if double_page is None else double_page
+        layout = "single" if layout is None else layout
 
         if mode not in self.MODES:
             raise ValueError(f"unknown reading mode: {mode!r}")

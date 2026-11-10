@@ -653,14 +653,15 @@ class SqliteReadingExtrasStore:
             if clamped >= 100.0:
                 completed_chapters += 1
         percent = (read_pages / total_pages * 100.0) if total_pages else 0.0
+        read_pages_int = int(round(read_pages))
         return {
             "book_id": book_id,
             "total_pages": total_pages,
-            "read_pages": int(round(read_pages)),
+            "read_pages": read_pages_int,
             "total_chapters": total_chapters,
             "completed_chapters": completed_chapters,
             "progress_percent": round(min(percent, 100.0), 2),
-            "finished": bool(total_pages and read_pages >= total_pages),
+            "finished": bool(total_pages and read_pages_int >= total_pages),
             "last_chapter_id": (rows[-1][0] if rows else None),
         }
 

@@ -103,6 +103,15 @@ out_of_scope:
 - **R-006（P2/P3，已修）**：UNFREEZE 记录 `vverify_pins` → `verify_pins`。
 - **R-009/R-010/R-011（P3，部分补）**：新增 Reader 定向日志（70 passed）；README 补 pytest 首轮 5 failed 说明；新增 `test_preferences_survive_reopen_two_assemblies`（两次装配重启）。
 
+
+## r3 处置记录（2026-11-10，对 `e7dcfaeda` 的 changes_requested）
+
+- **R3-001（P2，已修）**：P10 partial 改为 **None 哨兵/presence 合并**——`save_preferences` 参数默认 `None`；显式传入（含默认值）覆盖、未提供保留已存值；新增 `test_explicit_default_values_can_reset_preferences`（translated/rtl/zoom2/double → 显式传默认五字段 → 全部回默认）。
+- **R3-002（P2，已修）**：README AC5 改 **PARTIAL** 并写实际 pin `59ab90f7…`，与卡面一致；README canonical hash 随之刷新。
+- **R3-003（P3，已修）**：`book_progress` 取整统一——`read_pages_int=int(round())`，`finished = read_pages_int >= total_pages`（2 页 99.6% 不再出现 read_pages=2/finished=false 矛盾）。
+- **R3-004（P3，已修）**：README AC3 改为页面口径描述。
+- **R3-005（P3，登记）**：provenance 注记（用户 base 82ea 在实现之后；Reader 日志 HEAD=d0b、App 日志 HEAD=82ea、卡面 base=f9bf）——按 r3 报告为准，不追改历史日志。
+
 ## 证据计划（L2）
 
 `verification/FEA-14-READ-1/`：`logs/`（pytest 定向/全量、App.Tests 定向、门禁、API inventory、pins）、迁移前后行数/字段表、JSON 摘要、NOT_RUN、复现命令。
@@ -134,7 +143,7 @@ out_of_scope:
 | EV-RD-003 | READ-1 | `verification/FEA-14-READ-1/logs/read-wire.log` | `-` | `5eabf16881205b9a80730ba1ba0df816667cf024eaf13e1788b8a9d2c901e454` | CANONICAL |
 | EV-RD-004 | READ-1 | `verification/FEA-14-READ-1/logs/reader-targeted.log` | `-` | `29321d45c43c4e8ad09101f0d3f78aadc14300e5f0bbc207a524d348b1edb18d` | CANONICAL |
 | EV-RD-005 | READ-1 | `verification/FEA-14-READ-1/logs/reading-storage.log` | `-` | `b0ab413835300ddc9291937e3c3f617da3a13d0f78edc5d943a032e878c40130` | CANONICAL |
-| EV-RD-006 | READ-1 | `verification/FEA-14-READ-1/README.md` | `-` | `ae1778f70eb79ebd2c97ed3b33a819a75b5c4800ac50151e0eb83cbb284b670d` | CANONICAL |
+| EV-RD-006 | READ-1 | `verification/FEA-14-READ-1/README.md` | `-` | `a8a339a8cda66e8e5bfad5745e55b5a488500c04d4ab93e58b313616e152c2b3` | CANONICAL |
 
 ## Closeout Record
 
