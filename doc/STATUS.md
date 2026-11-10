@@ -4,8 +4,8 @@
 
 ## 当前程序
 - **FEA 线 ACTIVE（S5）**：[FEA-00 方案](design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md)；V11R 程序已收官（v0.1.1）。
-- 当前 Task：[FEA-14-LIB-1](tasks/FEA-14-LIB-1.md) **in_review**（书/章元数据编辑与顺序）。
-- 刚收口：`FEA-14-FONT-1` closed_with_limitations（r5；v11 字体库）；`FEA-14-READ-2`/`-READ-1` closed_with_limitations。
+- 当前 Task：[FEA-14-EDIT-1](tasks/FEA-14-EDIT-1.md) **ready**（问题标记 P16–P20；v13 additive）。
+- 刚收口：`FEA-14-LIB-1`/`-FONT-1`/`-READ-2`/`-READ-1` closed_with_limitations（r3/r5/r3/r4）。
 - FEA-11 线：WATCH-1/SCAN-2/SCAN-1/MATCH-1/AC4-GAPS-1/LINEAGE-1 `done`；HOST-AUTH-1 `done`；FEA-12 四卡 `done`。
 - **AC11-1 终态 MET（带 limitation）**：裁决 2026-11-06（[记录](reviews/FEA-11-AC11-1-adjudication-2026-11-06.md)）；「启动/访问前检查」= 冷启动枚举 + registry/root 核验（SCAN-2） + 每次访问/操作前 live grant+lease+digest 强验证；启动不做全量内容扫描（L-STARTUP）。
 - rolling checkpoint：[GOAL-PROGRESS](checkpoints/GOAL-PROGRESS-2026-11-02.md)。
@@ -20,7 +20,7 @@
 
 ## 保留与已知限制
 - 台账 [TASK_LEDGER](TASK_LEDGER.md)；DIR-4/5=2/1000；真机端到端 run-i18 7/7、run-i36 10/10。
-- 测试基线（2026-11-10）：pytest 3446/0/10（3456 collected）；.NET 1804/0/107（8 项目）；App.Tests 858/0/11。
+- 测试基线（2026-11-10）：pytest 3446/0/10（3456 collected）；.NET 1804/0/107（8 项目）；App.Tests 878/0/11。
 
 ## Gate 与保留项
 Technical Gate=NOT_SATISFIED；private_registry_absence=UNPROVABLE；Owner Risk Acceptance=APPROVED；Disposition=WAIVED_BY_OWNER。push `clean-snapshot-20261026`=`892b946e`、`clean-snapshot-20261102`=`ac7d488e`；**main 2026-11-08 push（2C/L-R11/C-04b/SCAN-RH/INDEX-L4-1/UI-RESIDUAL-2；§27；AHEAD=0）**。

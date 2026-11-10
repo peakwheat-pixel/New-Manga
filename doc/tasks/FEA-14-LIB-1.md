@@ -3,20 +3,20 @@ id: FEA-14-LIB-1
 title: FEA-14 切片 LIB-1：书/章元数据编辑与顺序（复用 PREQ 预冻结 wire P5–P8）
 kind: implementation
 governance_version: 3
-status: in_review
+status: closed_with_limitations
 approval: **DSH 2026-11-10 冻结**（`ADJ-2026-11-10-FEA14-S5-SCOPE` §2.1/§2.2；PREQ-1 wire 预冻结 LIB P5–P8；侦察 `recon.md` §2.2）
 suggested_owner: dsh
 owner: dsh
-reviewer: null
+reviewer: r3 独立复核 approved（`doc/reviews/FEA-14-LIB-1-r3.md`，P0/P1/P2=0；P3=1 accepted）
 depends_on:
   - FEA-14-S5-PREQ-1
 base_commit: 8e39bb72c
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: e49855485
+delivery_head: de595f69d
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-14-LIB-1
 allowed_paths:
   - doc/tasks/FEA-14-LIB-1.md
@@ -119,6 +119,11 @@ r2 结论 `changes_requested`（P0=0 / P1=1 / P2=2 / P3=4；报告 `doc/reviews/
 - **R2-006（P3，已修；P3-4）**：`schema.py` 的 V12 常量块移到 V11 之后，文件顺序恢复 V10→V11→V12（`default_migrations()` 顺序不变）。
 - **R2-007（P3，已修；README 表述）**：README AC1 的「非法值 → INVALID_REQUEST」拆分：未知字段/非字符串 → `INVALID_REQUEST`；未知 tag id → `TARGET_NOT_FOUND`。
 
+## r3 复核与收口（2026-11-10）
+
+- r3：**approved**（P0=0 / P1=0 / P2=0 / **P3=1 accepted**；报告 `doc/reviews/FEA-14-LIB-1-r3.md`，被审 head `de595f69d`，产品提交 `e49855485`）。R2-001–R2-007 全部关闭，r1 R-01/R-03/R-05–R-13 无回退；C-07 正式表逐行 `ALL_MATCH: True`、pin `7c033bf7…` 不变、32/32 文件 ⊆ allowed_paths、5/5 证据 SHA 匹配；门禁复跑 13/1251/878/18/69-76 全 EXIT 0。
+- **R3-001（P3，accepted 登记，不阻断）**：P7/P8 缺 SQLite 64 位边界校验——wire 传 `import_order=2^63` 会先创建后更新失败留下残行、`2^63−1` 会使后续 `max+1` 溢出；`custom_rank=2^63` → `UNKNOWN/internal`（未落库）。Host C# `int` 上限 2^31−1，生产 Host 不可达。**处置**：登记为 LIB-2 输入（`import_order`/`custom_rank` 加 64 位上界、P8 创建+更新入同一事务、`OverflowError` → `INVALID_REQUEST`）；本卡不修，NOT_RUN 如实保留。
+
 ## 证据计划（L2）
 
 `verification/FEA-14-LIB-1/`：`logs/`（pytest 定向/全量、App.Tests、门禁、API inventory、pins、v12 回归）、迁移前后字段表、NOT_RUN、复现命令。
@@ -153,6 +158,8 @@ r2 结论 `changes_requested`（P0=0 / P1=1 / P2=2 / P3=4；报告 `doc/reviews/
 
 ## Closeout Record
 
-- 2026-11-10：scope 冻结（`ready`）→ 实现 `83e45cfe5` → **r1 `changes_requested`**（P0=0 / P1=2 / P2=4 / P3=7，`doc/reviews/FEA-14-LIB-1-r1.md`）→ r1 处置（`00a99622a` + 证据 `e779674d5`）→ **r2 `changes_requested`**（P0=0 / P1=1 / P2=2 / P3=4，`doc/reviews/FEA-14-LIB-1-r2.md`；R-01/R-03/R-05–R-13 确认关闭）。
-- 2026-11-10：r2 全部 findings 处置（见「r2 处置记录」）；产品/文档提交 `e49855485`，证据日志于该 head 重生成（随附证据提交）。
-- 当前状态：**r3 独立复核待派发**；`closed_with_limitations`/`done` 待 r3 approved 后收口。未 push。
+- 2026-11-10：scope 冻结（`ready`）→ 实现 `83e45cfe5` → **r1 `changes_requested`**（P0=0 / P1=2 / P2=4 / P3=7，`doc/reviews/FEA-14-LIB-1-r1.md`）→ r1 处置（`00a99622a` + 证据 `e779674d5`）→ **r2 `changes_requested`**（P0=0 / P1=1 / P2=2 / P3=4，`doc/reviews/FEA-14-LIB-1-r2.md`；R-01/R-03/R-05–R-13 确认关闭）→ r2 处置（`e49855485` + 证据 `de595f69d`）→ **r3 `approved`**（P0/P1/P2=0；P3=1 accepted，`doc/reviews/FEA-14-LIB-1-r3.md`）。
+- 结论：**完成（带 limitation）**（2026-11-10）。交付 head `de595f69d`（r3 被审字节）；收口提交只含卡面/STATUS/PLAN/ledger/C-07 记录/本报告，无产品字节。
+- 交付：schema **v12**（仅 additive `chapters.custom_rank`）+ `LibraryService.patch_book_metadata`（含 tags 全量替换/先校验后写）、`patch_chapter_metadata`（kind/方向不变量/custom_rank 严格类型）、`reorder_chapters_strict`、`create_chapter_with_metadata`（`import_order`/`sort_order` 分离取序）+ wire P5–P8 + Host 六处端口（P5 patch 支持 tags 与空 `ordered_ids`）+ C-07 UNFREEZE v1.6（69/76，pin `7c033bf7…`）；定向 13、回归 1251、App 878/0/11、pins 18/18。
+- **Limitation**：① Host `ChapterSummary` 不投影 `kind`（LIB-2 扩 DTO）；② `custom_rank` write-only、P6 自定义/数字排序未实现（LIB-2 输入）；③ R-11 三项 deferral（kind 语义体积、`number_value`、`books.normalized_title` 唯一索引）；④ R3-001 64 位边界校验缺失（LIB-2 输入）；⑤ 真实 Host↔Core 进程级联调、LIB UI/tags UI、Volume 实体、万级章性能 = NOT_RUN。
+- 零未授权契约字节（C-07 仅 UNFREEZE v1.2–v1.6 记录在案）；未 push。
