@@ -45,14 +45,22 @@ public sealed class ReaderReadingPreferencesTests
     public async Task SavePreferencesSendsThePartialPatch()
     {
         var host = HostWithBook();
+        host.ReadingPreferences = new ReadingPreferencesInfo(
+            "b1", "original", "ltr", 1.0, false, "single", "2026-01-01", true);
         var viewModel = new ReaderViewModel(host);
         await viewModel.LoadAsync("b1", "c1");
 
         viewModel.ZoomBy(1.0);
         await viewModel.SaveReadingPreferencesAsync();
 
-        Assert.NotNull(host.LastSavedPreferences);
-        Assert.Equal(2.0, host.LastSavedPreferences!.Zoom);
+        // R1-001: only the changed field is sent (partial), the rest stay null.
+        var patch = host.LastSavedPreferences;
+        Assert.NotNull(patch);
+        Assert.Equal(2.0, patch!.Zoom);
+        Assert.Null(patch.Mode);
+        Assert.Null(patch.Direction);
+        Assert.Null(patch.DoublePage);
+        Assert.Null(patch.Layout);
     }
 
     [Fact]
@@ -83,6 +91,26 @@ public sealed class ReaderReadingPreferencesTests
 
         Assert.True(await viewModel.DeleteBookmarkAsync(bookmarkId!));
         Assert.Empty(await viewModel.ListBookmarksAsync());
+    }
+
+
+
+    [Fact]
+    public async Task ApplyReadingPreferencesAppliesModeAndVerticalDirection()
+    {
+        var host = HostWithBook();
+        host.ReadingPreferences = new ReadingPreferencesInfo(
+            "b1", "translated", "vertical", 1.25, false, "single", "2026-01-01", false);
+        var viewModel = new ReaderViewModel(host);
+
+        await viewModel.LoadAsync("b1", "c1");
+
+        Assert.Equal("translated", viewModel.Mode);
+        Assert.True(viewModel.VerticalDirection);
+        Assert.False(viewModel.ReverseDirection);
+
+        await viewModel.SaveReadingPreferencesAsync();
+        Assert.Null(host.LastSavedPreferences); // nothing dirty -> no save
     }
 
 }

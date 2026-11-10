@@ -106,6 +106,16 @@ public sealed class ReaderViewModel : FluentViewModel
             : $"整书进度 {BookProgress.Percent:0.#}%（{BookProgress.ReadPages}/{BookProgress.TotalPages} 页）";
     public bool HasBookProgress => BookProgress is not null;
 
+    private string _mode = "original";
+    private bool _verticalDirection;
+    private (string Mode, string Direction, double Zoom, bool DoublePage, string Layout)? _appliedPreferences;
+
+    /// <summary>FEA-14-READ-2: reading content mode (original/translated).</summary>
+    public string Mode { get => _mode; private set => Set(ref _mode, value); }
+
+    /// <summary>FEA-14-READ-2: vertical reading direction (webtoon); mutually exclusive with RTL.</summary>
+    public bool VerticalDirection { get => _verticalDirection; private set => Set(ref _verticalDirection, value); }
+
     /// <summary>FEA-14-READ-2 (PREQ P9): apply the stored per-book preferences.</summary>
     public async Task ApplyReadingPreferencesAsync(CancellationToken cancellationToken = default)
     {
@@ -118,13 +128,17 @@ public sealed class ReaderViewModel : FluentViewModel
         {
             return;
         }
+        Mode = preferences.Mode;
         Zoom = preferences.Zoom;
         DoublePage = preferences.DoublePage;
         ReverseDirection = preferences.Direction == "rtl";
+        VerticalDirection = preferences.Direction == "vertical";
         if (!string.IsNullOrWhiteSpace(preferences.Layout))
         {
             Layout = preferences.Layout;
         }
+        _appliedPreferences = (preferences.Mode, preferences.Direction, preferences.Zoom,
+            preferences.DoublePage, preferences.Layout);
         BookProgress = await _host.GetBookReadingProgressAsync(Book.BookId, cancellationToken);
         Changed(nameof(BookProgress));
         Changed(nameof(BookProgressLabel));
@@ -138,12 +152,22 @@ public sealed class ReaderViewModel : FluentViewModel
         {
             return;
         }
+        // R1-001: send ONLY the fields that differ from the applied snapshot.
+        var direction = VerticalDirection ? "vertical" : ReverseDirection ? "rtl" : "ltr";
+        var applied = _appliedPreferences;
+        string? mode = applied is null || applied.Value.Mode != Mode ? Mode : null;
+        double? zoom = applied is null || applied.Value.Zoom != Zoom ? Zoom : null;
+        bool? doublePage = applied is null || applied.Value.DoublePage != DoublePage ? DoublePage : null;
+        string? layout = applied is null || applied.Value.Layout != Layout ? Layout : null;
+        string? sentDirection = applied is null || applied.Value.Direction != direction ? direction : null;
+        if (mode is null && zoom is null && doublePage is null && layout is null && sentDirection is null)
+        {
+            return;
+        }
         var patch = new ReadingPreferencesPatch(
-            Zoom: Zoom,
-            DoublePage: DoublePage,
-            Layout: Layout,
-            Direction: ReverseDirection ? "rtl" : "ltr");
+            Mode: mode, Zoom: zoom, DoublePage: doublePage, Layout: layout, Direction: sentDirection);
         await _host.SaveReadingPreferencesAsync(Book.BookId, patch, cancellationToken);
+        _appliedPreferences = (Mode, direction, Zoom, DoublePage, Layout);
     }
 
     /// <summary>FEA-14-READ-2 (PREQ P12): bookmark the current page.</summary>
