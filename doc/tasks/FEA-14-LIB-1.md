@@ -145,14 +145,14 @@ r2 结论 `changes_requested`（P0=0 / P1=1 / P2=2 / P3=4；报告 `doc/reviews/
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-LB-001 | LIB-1 | `verification/FEA-14-LIB-1/logs/dotnet-app-tests.log` | `00a99622a` | `7695faec735b7a4d6950e2810821e3417c61028e6b0bb492a27b305ec341f105` | CANONICAL |
-| EV-LB-002 | LIB-1 | `verification/FEA-14-LIB-1/logs/pins-api.log` | `00a99622a` | `609df8f5ab131cfb4098969b35c224cb6bbaa4ccdba102503ce65fb936f307e8` | CANONICAL |
-| EV-LB-003 | LIB-1 | `verification/FEA-14-LIB-1/logs/pytest-lib.log` | `00a99622a` | `0e1600a9f8ce3ee26ccd367f75c47d20f1106e6c118c1a74279aa0acbc46566f` | CANONICAL |
-| EV-LB-004 | LIB-1 | `verification/FEA-14-LIB-1/logs/regression-v12.log` | `00a99622a` | `aafd54835faec39fc97d7a767a064e119adba3ffef6975a6dc8b0948100cf461` | CANONICAL |
-| EV-LB-005 | LIB-1 | `verification/FEA-14-LIB-1/README.md` | `00a99622a` | `5ee2332e61af90cfb1bfbbb39251bfec52f051f3b859cb4bd23c7acd3ab97a97` | CANONICAL |
+| EV-LB-001 | LIB-1 | `verification/FEA-14-LIB-1/logs/dotnet-app-tests.log` | `e49855485` | `093e6c5c53b4f1dd757ad3cc944eefdbe6fad3b964e92a532a8f5f9199f3daa2` | CANONICAL |
+| EV-LB-002 | LIB-1 | `verification/FEA-14-LIB-1/logs/pins-api.log` | `e49855485` | `891f5fb0de74a32d594b9089d22dd0e4bdaa9ebecc653816395b5ae7a733fb20` | CANONICAL |
+| EV-LB-003 | LIB-1 | `verification/FEA-14-LIB-1/logs/pytest-lib.log` | `e49855485` | `1355515127b5e6836265c3a89164274d5cabfdb85fa0493ee568f04c648aa47e` | CANONICAL |
+| EV-LB-004 | LIB-1 | `verification/FEA-14-LIB-1/logs/regression-v12.log` | `e49855485` | `5df2c633d5227642c50698108b8eb38b0a25e3f1dc64941f74eb0b37b127ca7d` | CANONICAL |
+| EV-LB-005 | LIB-1 | `verification/FEA-14-LIB-1/README.md` | `e49855485` | `85026cdad1fe2e0f7495c04934d85a57358abc6e33c37310d3d2de52d380740f` | CANONICAL |
 
 ## Closeout Record
 
-- 2026-11-10：scope 冻结（`ready`）→ 实现 `83e45cfe5` → **r1 `changes_requested`**（P0=0 / P1=2 / P2=4 / P3=7，`doc/reviews/FEA-14-LIB-1-r1.md`）。
-- 2026-11-10：r1 全部 findings 处置（见「r1 处置记录」与「范围裁决」）；产品/文档提交 `00a99622a`（+ C-07 v1.6 pin `7c033bf7…`），证据日志于 `00a99622a` 重生成（本提交随附）。
-- 当前状态：**r2 独立复核待派发**；`closed_with_limitations`/`done` 待 r2 approved 后收口。未 push。
+- 2026-11-10：scope 冻结（`ready`）→ 实现 `83e45cfe5` → **r1 `changes_requested`**（P0=0 / P1=2 / P2=4 / P3=7，`doc/reviews/FEA-14-LIB-1-r1.md`）→ r1 处置（`00a99622a` + 证据 `e779674d5`）→ **r2 `changes_requested`**（P0=0 / P1=1 / P2=2 / P3=4，`doc/reviews/FEA-14-LIB-1-r2.md`；R-01/R-03/R-05–R-13 确认关闭）。
+- 2026-11-10：r2 全部 findings 处置（见「r2 处置记录」）；产品/文档提交 `e49855485`，证据日志于该 head 重生成（随附证据提交）。
+- 当前状态：**r3 独立复核待派发**；`closed_with_limitations`/`done` 待 r3 approved 后收口。未 push。
