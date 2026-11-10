@@ -129,9 +129,6 @@ C-07（应用端口与兼容面）要求「由代码生成的方法清单」，�
 
 | # | 计划命令 | 计划返回类型 | 切片 | 语义摘要 |
 |---|---|---|---|---|
-| P16 | `ListIssueMarkersAsync` | `Task<IReadOnlyList<IssueMarkerInfo>>` | EDIT-1 | 问题标记列表（默认待处理） |
-| P17 | `CreateIssueMarkerAsync` | `Task<IssueMarkerInfo?>` | EDIT-1 | 新建整页/位置标记 |
-| P18 | `ResolveIssueMarkerAsync` | `Task<bool>` | EDIT-1 | 标记解决 |
 | P21 | `ListPromptTemplatesAsync` | `Task<IReadOnlyList<PromptTemplateInfo>>` | AI-1 | 模板列表（内置只读+自建） |
 | P22 | `SavePromptTemplateAsync` | `Task<PromptTemplateInfo?>` | AI-1 | 保存自建模板（内置不可覆盖） |
 | P23 | `DeletePromptTemplateAsync` | `Task<PromptTemplateDeleteResult>` | AI-1 | 删除（须选替代；仍有引用不删） |

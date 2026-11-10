@@ -73,12 +73,21 @@ def test_v13_adds_issue_markers_and_keeps_legacy_rows(tmp_path):
         " VALUES ('legacy-p', 'legacy-c', 1, '2026-01-01', '2026-01-01')"
     )
     conn.commit()
+    # F-04 (r1): take a row-level snapshot of the pre-v13 tables and compare it
+    # after the upgrade, not just one column.
+    rows_before = {
+        table: [tuple(row) for row in conn.execute(f"SELECT * FROM {table} ORDER BY rowid")]
+        for table in ("books", "chapters", "pages")
+    }
     MigrationRunner(conn, MIGRATIONS).apply_pending()
     assert read_schema_version(conn) == LATEST == 13
     tables = {row["name"] for row in conn.execute("SELECT name FROM sqlite_master WHERE type='table'")}
     assert "issue_markers" in tables
     indexes = {row["name"] for row in conn.execute("SELECT name FROM sqlite_master WHERE type='index'")}
     assert {"idx_issue_markers_book_state", "idx_issue_markers_page"} <= indexes
+    for table, expected in rows_before.items():
+        actual = [tuple(row) for row in conn.execute(f"SELECT * FROM {table} ORDER BY rowid")]
+        assert actual == expected, f"v13 must not change existing {table} rows"
     assert conn.execute("SELECT title FROM chapters WHERE chapter_id='legacy-c'").fetchone()["title"] == "Old Ch"
     assert conn.execute("SELECT COUNT(*) FROM issue_markers").fetchone()[0] == 0
 

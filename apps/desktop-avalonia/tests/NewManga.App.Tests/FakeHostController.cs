@@ -295,9 +295,12 @@ public sealed class FakeHostController : IHostController, ISourceImportControlle
     }
 
     // FEA-14-EDIT-1 (PREQ EDIT P16-P20): issue-marker ports. The fake keeps a
-    // per-call ledger so UI tests can assert the command was issued, and models
-    // the state machine over its in-memory marker list.
+    // per-call ledger so UI tests can assert the command was issued, tracks the
+    // owning book per marker (the Core lists per book), and mirrors the Core's
+    // "missing/null state means open" default so a UI test cannot pass on a
+    // fake that is laxer than the real projection.
     public List<IssueMarkerInfo> IssueMarkers { get; } = new();
+    private readonly Dictionary<string, string> _issueMarkerBooks = new(StringComparer.Ordinal);
     public (string BookId, string? State)? LastIssueMarkerList { get; private set; }
     public (string BookId, string ChapterId, string PageId, string Kind, string? Note, IssueMarkerPosition? Position)? LastIssueMarkerCreate { get; private set; }
     public List<(string Command, string MarkerId)> IssueMarkerCommands { get; } = new();
@@ -305,8 +308,10 @@ public sealed class FakeHostController : IHostController, ISourceImportControlle
     public Task<IReadOnlyList<IssueMarkerInfo>> ListIssueMarkersAsync(string bookId, string? state = null, CancellationToken cancellationToken = default)
     {
         LastIssueMarkerList = (bookId, state);
+        var effectiveState = state ?? "open";
         IReadOnlyList<IssueMarkerInfo> markers = IssueMarkers
-            .Where(marker => state is null || marker.State == state)
+            .Where(marker => _issueMarkerBooks.TryGetValue(marker.MarkerId, out var owner) && owner == bookId)
+            .Where(marker => marker.State == effectiveState)
             .ToList();
         return Task.FromResult(markers);
     }
@@ -320,6 +325,7 @@ public sealed class FakeHostController : IHostController, ISourceImportControlle
             $"marker-{IssueMarkers.Count + 1}", chapterId, pageId, kind, note, "open",
             "2026-11-10T00:00:00.000+00:00", position);
         IssueMarkers.Add(marker);
+        _issueMarkerBooks[marker.MarkerId] = bookId;
         return Task.FromResult<string?>(marker.MarkerId);
     }
 
@@ -339,6 +345,7 @@ public sealed class FakeHostController : IHostController, ISourceImportControlle
     {
         IssueMarkerCommands.Add(("DeleteIssueMarker", markerId));
         var removed = IssueMarkers.RemoveAll(marker => marker.MarkerId == markerId) > 0;
+        _issueMarkerBooks.Remove(markerId);
         return Task.FromResult(removed);
     }
 

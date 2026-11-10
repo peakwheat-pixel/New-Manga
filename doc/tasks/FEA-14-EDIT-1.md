@@ -85,7 +85,7 @@ FEA-14 S5 EDIT 切片需要「问题标记」数据面：列出/新建/解决/�
 - [x] **AC2 P16 列表**：按 `book_id` + 可选 `state` 列标记；默认仅 open；排序稳定（`created_at` + `marker_id`）；响应含 PREQ 字段（`position` 仅位置标记出现、`resolved_at` 仅已解决出现）。 <<MET>>
 - [x] **AC3 P17 新建**：校验书/章/页存在且归属一致；`position` 成对且 0–1（bool/字符串/越界拒绝）；成功返回 `marker_id` 且 `state=open`、`created_at` 有值。 <<MET>>
 - [x] **AC4 P18–P20 状态/删除**：resolve/reopen 状态迁移与 `resolved_at` 语义（重复操作幂等）；delete 物理删除后不可见、不影响书/章/页/其他数据。 <<MET>>
-- [x] **AC5 契约/门禁**：C-07 UNFREEZE **v1.7**（74/81）成员表逐行 = 脚本 stdout（`ALL_MATCH: True`）、pin `bb775912…`；`--check` EXIT 0；`verify_pins` 18/18。 <<MET>>
+- [x] **AC5 契约/门禁**：C-07 UNFREEZE **v1.7**（74/81）成员表逐行 = 脚本 stdout（`ALL_MATCH: True`）、S5 计划节仅 P21–P25、pin `89781583…`；`--check` EXIT 0；`verify_pins` 18/18。 <<MET>>
 - [x] **AC6 证据**：定向 pytest/回归/App.Tests 通过；`verification/FEA-14-EDIT-1/` 日志含 EXIT；NOT_RUN 如实登记。 <<MET>>
 
 ## 实现说明（2026-11-10）
@@ -94,7 +94,9 @@ FEA-14 S5 EDIT 切片需要「问题标记」数据面：列出/新建/解决/�
 - **typed 错误**：书/章/页/标记不存在（含章不属于书、页不属于章、undefined 状态）→ `TARGET_NOT_FOUND/not_found`；字段形状/类型/位置→ `INVALID_REQUEST/validation`。无 `UNKNOWN/internal` 逃逸路径（service 只抛 `IssueMarkerError`）。
 - **数据面**：schema **v13** 仅新增 `issue_markers` 表 + `idx_issue_markers_book_state`/`idx_issue_markers_page`；表级 CHECK 保证位置成对且 0–1；v1–v12 迁移字节不变。
 - **删除语义**：标记是用户工作产物、非受保护内容（ADJ-001 不适用），P20 物理删行；测试断言书/章/页行数不变。
-- **C-07**：UNFREEZE v1.7（69→74 / 76→81），成员表按脚本 stdout 重建（74+4 行），S5 计划节只剩 AI-1 P21–P25；pin `bb775912…`。
+- **状态机/边界**：resolve/reopen 幂等（状态不变时不改 `resolved_at`）；`state` 缺省或显式 `null` 均按 `open`（与 Core 默认一致），空串/大小写/非字符串 → `INVALID_REQUEST`。
+- **删除清理 limitation（F-05，r1 登记）**：`issue_markers` 无外键，book 永久删除事务不清理 marker 行（与 v10 `reading_bookmarks` 既有先例一致）；`list_markers` 的 `book_exists`（`deleted_at IS NULL`）守卫保证已删书的标记不在 UI 复现，孤儿行留给后续删除/清理卡处理（不阻断本卡）。
+- **C-07**：UNFREEZE v1.7（69→74 / 76→81），成员表按脚本 stdout 重建（74+4 行），S5 计划节只剩 AI-1 P21–P25；pin `89781583…`（r1 处置后重算）。
 - **Host**：`IHostController` 5 方法 + DTO（`IssueMarkerInfo`/`IssueMarkerPosition`）在 HostController/NullHostController/HostRuntime/CoreServiceClient/Fake 六处一致；NullHost 降级返回空/false/null 不抛。
 
 ## 证据计划（L2）

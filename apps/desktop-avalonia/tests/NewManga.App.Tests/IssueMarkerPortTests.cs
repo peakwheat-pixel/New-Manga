@@ -82,6 +82,24 @@ public sealed class IssueMarkerPortTests
     }
 
     [Fact]
+    public async Task FakeHost_ListFiltersByBookAndDefaultsToOpen()
+    {
+        // F-03 (r1): the fake must not be laxer than the Core projection -- the
+        // list is per book and a missing state means "open".
+        var host = new FakeHostController(FakeHostController.ReadySnapshot("book"));
+        var first = await host.CreateIssueMarkerAsync(
+            "book-0", "chapter-1", "page-1", "kind", cancellationToken: CancellationToken.None);
+        await host.CreateIssueMarkerAsync(
+            "book-1", "chapter-2", "page-2", "kind", cancellationToken: CancellationToken.None);
+
+        Assert.Single(await host.ListIssueMarkersAsync("book-0", cancellationToken: CancellationToken.None));
+        Assert.Empty(await host.ListIssueMarkersAsync("book-2", cancellationToken: CancellationToken.None));
+        Assert.True(await host.ResolveIssueMarkerAsync(Assert.IsType<string>(first), CancellationToken.None));
+        Assert.Empty(await host.ListIssueMarkersAsync("book-0", cancellationToken: CancellationToken.None));
+        Assert.Single(await host.ListIssueMarkersAsync("book-0", "resolved", CancellationToken.None));
+    }
+
+    [Fact]
     public async Task FakeHost_StateCommands_ReportMissingMarkers()
     {
         var host = new FakeHostController(FakeHostController.ReadySnapshot("book"));
