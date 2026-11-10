@@ -1,0 +1,16 @@
+diff --git a/apps/desktop-avalonia/src/NewManga.App/Services/TypographySnapshot.cs b/apps/desktop-avalonia/src/NewManga.App/Services/TypographySnapshot.cs
+index f16e839f3..c830a7f33 100644
+--- a/apps/desktop-avalonia/src/NewManga.App/Services/TypographySnapshot.cs
++++ b/apps/desktop-avalonia/src/NewManga.App/Services/TypographySnapshot.cs
+@@ -60,9 +60,10 @@ public static class TypographyResolver
+             .Where(segment => segment.Length > 0)
+             .ToList();
+         var missing = new List<string>();
+-        string? resolved = null;
++        string? resolved = segments.Count > 0 ? segments[0] : null; // mutation M2: stack head taken as truth
+         foreach (var segment in segments)
+         {
++            if (resolved is not null) break; // mutation M2: never probe further
+             if (GenericFamilies.Contains(segment, StringComparer.OrdinalIgnoreCase))
+             {
+                 resolved = segment;

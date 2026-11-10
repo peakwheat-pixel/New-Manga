@@ -1,0 +1,45 @@
+FEA-14-SET-1 typography fallback evidence (L2-4)
+time=2026-11-10T08:58:00+08:00
+HEAD=b0d5c7d6af90185e662dcceafac0defa43e05e3e
+
+## 1. Real Avalonia 11.3.22 FamilyNames behaviour (workspace probe, not repo code)
+probe=G:\CODEX\New Manga.workspace\temp\FEA-14-familynames-probe
+
+raw=[Segoe UI Variable Text, Microsoft YaHei UI, Noto Sans SC, system-ui, sans-serif]
+  Name=[Segoe UI Variable Text]
+  FamilyNames.Count=5
+  FamilyNames.ToString()=[Segoe UI Variable Text, Microsoft YaHei UI, Noto Sans SC, system-ui, sans-serif]
+  seg[0]=[Segoe UI Variable Text]
+  seg[1]=[Microsoft YaHei UI]
+  seg[2]=[Noto Sans SC]
+  seg[3]=[system-ui]
+  seg[4]=[sans-serif]
+
+raw=[Segoe UI]
+  Name=[Segoe UI]
+  FamilyNames.Count=1
+  FamilyNames.ToString()=[Segoe UI]
+  seg[0]=[Segoe UI]
+
+raw=["Segoe UI", Microsoft YaHei UI]
+  Name=["Segoe UI"]
+  FamilyNames.Count=2
+  FamilyNames.ToString()=["Segoe UI", Microsoft YaHei UI]
+  seg[0]=["Segoe UI"]
+  seg[1]=[Microsoft YaHei UI]
+
+Avalonia version: 11.3.22.0
+
+## 2. Environment facts (environment-dependent)
+WindowsFontsFileCount=367
+
+## 3. Targeted matrix + panel/render tests
+
+G:\CODEX\New Manga.workspace\worktrees\FEA-14-SET-1-p3\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+
+已通过! - 失败:     0，通过:    20，已跳过:     0，总计:    20，持续时间: 852 ms - NewManga.App.Tests.dll (net9.0)
+EXIT=0
+
+## 4. Real FontManager standalone probe: NOT_RUN
+The standalone probe only references Avalonia.Base, so FontManager.Current cannot be initialised outside an Avalonia platform. The production probe path (TryGetGlyphTypeface) is exercised by the headless tests above (TheSourceProjectsTheRealThemeResources / TheSourceIsIndependentOfTheCurrentCulture) and by the resolver matrix. Recorded as NOT_RUN rather than PASS.

@@ -64,9 +64,9 @@ out_of_scope:
 - [x] **AC1 投影正确性**：注入 `ITypographySource` 已知快照 → 「字体」组渲染 3 行（token key / 主题栈原文 / 解析实际族 + 缩放/行高）；source 返回 null/Unavailable → 稳定占位态。 <<MET>>
 - [x] **AC2 回退解析纯函数矩阵**：`TypographyResolver.Resolve(["Missing A","Installed B","sans-serif"])` → `resolved="Installed B"`、`missing=["Missing A"]`、`fallback` 标记正确；全缺失 → generic。 <<MET>>
 - [x] **AC3 零全局副作用**：渲染/切换前后 `Application.Current.Resources[NmKeys.FontFamily.*]` 与 `Application.Styles` 引用/值不变；样例控件自定义字体不外溢。 <<MET>>
-- [x] **AC4 无 AppData 写入**：测试前后真实 `%APPDATA%\NewManga` 的 `presentation-settings.json`/`themes\` 字节与 mtime 不变（复用既有 red-line 断言）。 <<MET>>
-- [x] **AC5 UI/逻辑分离 + 只读门禁 + a11y**：`SettingsViewModel` 可在无 Avalonia Application 的测试中构造（fake source）；组枚举/搜索命中（`字体`/`typography.ui`）/只读态；Host 只读时一致。 <<MET>>
-- [x] **AC6 边界与零契约变更**：`git diff --name-only` 不含 `doc/plan/**`、`doc/contracts/**`、`tools/governance/**`、`doc/tasks/FEA-13*`；`verify_pins` 18/18；`check.ps1`（默认 + `-TaskPath`）PASS；diff ⊆ 16 paths。 <<MET>>
+- [x] **AC4 无 AppData 写入**：测试前后真实 `%APPDATA%\NewManga` 的 `presentation-settings.json`/`themes\` 字节与 mtime 不变（复用既有 red-line 断言）。 <<MET（theme-settings.json 全量 sha256+size+mtime 基线前后不变，`logs/appdata-redline.log`）；指定 artefact `presentation-settings.json`/`themes\` 本机不存在 → 该两项 **NOT_RUN**，不冒充 PASS>>
+- [x] **AC5 UI/逻辑分离 + 只读门禁 + a11y**：`SettingsViewModel` 可在无 Avalonia Application 的测试中构造（fake source）；组枚举/搜索命中（`字体`/`typography.ui`）/只读态；Host 只读时一致。 <<MET（投影行 a11y 名含解析族、`Focusable=true`；Host `WritesAllowed=false` 的字体组视图测试仍 NOT_RUN）>>
+- [x] **AC6 边界与零契约变更**：`git diff --name-only` 不含 `doc/plan/**`、`doc/contracts/**`、`tools/governance/**`、`doc/tasks/FEA-13*`；`verify_pins` 18/18；`check.ps1`（默认 + `-TaskPath`）PASS；diff ⊆ 16 allowed_paths。 <<MET（r2 R2-004：`caee4c86a` 新增的渲染测试文件越界；P3 已把渲染测试并入 allowed 的 `SettingsTypographyPanelTests.cs` 并删除该文件，交付链 diff 重新落入 16 条 allowed_paths；主树 pins 18/18、check PASS、禁改目录 0）>>
 
 ## 证据计划（L2）
 
@@ -79,34 +79,46 @@ out_of_scope:
 | 用户预期「设置页能选字体」 | 文案与 scope 明确「字体族属主题」；选择功能须 UNFREEZE（另立卡） |
 | 字体探测慢/跨平台 | 纯函数 resolver + 注入 source；探测失败 → 缺失列表 + generic |
 | AppData 写入 | 只读 + red-line 断言（AC4） |
+| locale 小数格式（R2-002） | 资源数值 typed 化 + `InvariantCulture`；de-DE 测试覆盖 |
+| face→size 映射漂移（R2-003） | 对齐 `ThemeTokenBaseline.LineHeightTiers`；真实资源断言 Data=12/Display=24 |
 | 回退 | `git revert` 实现提交；零契约/schema 变更 |
 
-## 背景
+## r1/r2 处置记录（2026-11-10）
 
-FEA 线 S5 剩余六切片（SET/FONT/LIB/READ/EDIT/AI）尚未建卡；本卡为**第一切片占位**，用于 DAG 推进与范围冻结入口。FEA-13（备份/恢复/迁移）已收口（SRC-6 完成于 2026-11-10）。
+- **r1 复审**（`doc/reviews/FEA-14-SET-1-r1.md`，对 `64c32fa47`）：changes_requested（P0=0/P1=2/P2=7/P3=6）。处置：R-001 完整字体栈（`FamilyNames`，非首族）、R-002 缩放/行高真实读取、R-003/004/005 渲染与资源/指纹判别力、R-006 a11y 名称、R-007 fallback 裁决、R-008 搜索不过滤、R-009/R-014 文档与卡面。
+- **r2 复审**（`doc/reviews/FEA-14-SET-1-r2.md`，对 `caee4c86a`）：changes_requested（P0=0/P1=1/P2=6/P3=4）。R-001/R-008 CLOSED；处置如下：
+  - R2-001（P1）真实资源路径：新增 `TheSourceProjectsTheRealThemeResources`（真实 `ResourceDictionary`：`FontFamily` + `double` → 3 行/完整栈/scale/lineHeight）。
+  - R2-002 locale：资源数值按 `InvariantCulture` 格式化，de-DE 下不再丢行高；`TheSourceIsIndependentOfTheCurrentCulture` 覆盖。
+  - R2-003 tier 对齐：face→size 遵循 `ThemeTokenBaseline.LineHeightTiers`（Data→`Nm.FontSize.Sm`=12、Display→`Nm.FontSize.Xxl`=24、Ui→`Nm.FontSize.Md`）。
+  - R2-004 写域：`caee4c86a` 新增的渲染测试文件不在 allowed_paths；P3 已把渲染测试并入 allowed 的 `SettingsTypographyPanelTests.cs` 并删除该文件，交付链 diff 重新落入 16 条 allowed_paths。
+  - R2-005/R2-007：AC3 改为真实资源对象 `Assert.Same` + Styles 引用序列 + 样例字体不外溢；渲染断言补 3 行/缩放/行高/样例/占位分支/a11y。
+  - R2-006：AC4 以真实 `theme-settings.json` 的 sha256+size+mtime 基线为证据，指定 artefact 不存在 → 记 NOT_RUN（不冒充 PASS）。
+  - R2-008 裁决记录：见下。R2-009 证据刷新：`verification/FEA-14-SET-1/` 已按本 head 重跑；R2-010：R-012 已由 P3 修复（组合根注入 + 单次读取）；R2-011 残余登记见下。
+- **DSH 裁决（R-007 fallback 语义，2026-11-10）**：`Fallback=true` ⟺ 解析族之前**至少一个栈段缺失**（即首个请求族未被使用）；栈仅落到 generic 尾巴且无缺失段 → `Fallback=false`。该裁决定义同步到 scope AC2 口径、实现（`TypographyResolver.Resolve`）、测试与 `TypographyLine.Fallback` XML doc。
+- **残余（不阻断，已登记）**：R-006 的 Host `WritesAllowed=false` 字体组视图测试、`SettingsField` 组件级 Tab 语义（组件不在本卡 allowed_paths）→ NOT_RUN；R2-011 的 R-015 样例「按 face 各一行」未做，改为标注「样例使用 `Nm.FontFamily.Ui` 实际字体」；R-011 单 generic 栈无单测（行为已正确）。
 
-## 预估范围（待 scope review）
+## 背景与切片口径（2026-11-10 更新）
 
-| 项 | 预估 |
-|---|---|
-| 设置面板 | Fluent 风格设置页与既有 settings IPC 面的对齐（C-03/P15） |
-| 字体 | 字体选择/预览与 Theme Studio 的边界 |
-| 契约 | 若需新命令/字段 → 先 scope 裁决（可能触发 UNFREEZE） |
-| 证据 | 截图基线 + 交互测试 + 门禁 |
+- FEA 线 S5 原文为**七切片**（FEA-00 §12.2/§15.6：LIB/READ/EDIT/AI/FONT/SET/**EXPORT**）；`doc/plan/FEA-15-INTEGRATION-ACCEPTANCE.md` §3 与旧卡面写「六切片」并漏掉 EXPORT。
+- 本卡是 **SET 视觉子集（设置页字体只读投影）**，不是真实 SET（托盘/退出协调/启动页/语言/通知/更新/诊断预览）——真实 SET 另立卡；EXPORT 是否纳入 S5 由 `FEA-14-S5-PREQ` 裁决（append-only errata，已 MET 的 AC 字节不动）。
+- FEA-13（备份/恢复/迁移）已收口（SRC-6 完成于 2026-11-10）。
 
-## Acceptance Criteria
+## 交付链与证据（2026-11-10）
 
-- 已冻结并按窄化口径实现（字体组只读投影；r1 findings 处置中）。
+- `64c32fa47`（首版+证据）→ `a0e59ac3b`（r1 处置）→ `caee4c86a`（r1 P2 判别力）→ `4b8f2831c`（P3 清理）→ `b0d5c7d6a`（r2 处置）。
+- 证据索引：`verification/FEA-14-SET-1/README.md`；变异 patch 与重放脚本、AppData 红线脚本在 `verification/FEA-14-SET-1/{mutations,scripts}/`。
+- 最终交付 head、全量测试/门禁日志与 `canonical_evidence_status` 在收口提交中刷新（`*-final.log`）。
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| worktree | NOT_APPLICABLE（proposed 占位） | NOT_APPLICABLE | — | — | 未创建 worktree |
-| temp | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 无 |
-| build | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 无构建 |
-| user-data | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 未访问真实数据 |
+| worktree | `G:\CODEX\New Manga.workspace\worktrees\FEA-14-SET-1-p3`（detached，P3 + r2 修复的隔离构建树） | keep-until-closeout（收口后按 WORKSPACE_GOVERNANCE 移除；无独有未提交内容） | — | 无 | 仅用于构建/测试；最终证据不在 worktree |
+| temp | `G:\CODEX\New Manga.workspace\temp\FEA-14-familynames-probe`、`...\temp\FEA-14-planning` | keep-evidence（仓外探针/规划，被证据或后续裁决引用） | — | 无 | 只读被测程序集，不污染仓库 |
+| build | worktree `bin/obj`（可重建） | reclaimable | — | 无 | 不在仓库、不被证据引用 |
+| user-data | `%APPDATA%\NewManga`（真实目录，只读访问） | read-only-observed | — | `logs/appdata-redline.log` 记录 sha256/size/mtime | 测试前后 `UNCHANGED`；未写入 |
 
 ## Closeout Record
 
-- 未开始（proposed）。
+- 2026-11-10：**进行中**。r1/r2 findings 已处置（见「r1/r2 处置记录」）；证据目录已按 r2 处置 head 刷新（定向 20 passed、变异 M1/M2 RED、AppData 指纹不变、IPC 0 命令、API inventory EXIT 0）。
+- 待办：r3 独立复核（对 `b0d5c7d6a` 之后的新 head）→ 主树最终全量/门禁日志（`logs/*-final.log`）→ 填 `delivery_head`/`canonical_evidence_status`/`integration_commit` → STATUS/PLAN/ledger 切换。

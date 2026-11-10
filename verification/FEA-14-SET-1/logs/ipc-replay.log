@@ -1,0 +1,28 @@
+FEA-14-SET-1 IPC replay (L2-3) | 2026-11-10T08:52:44.9896085+08:00 | HEAD=b0d5c7d6af90185e662dcceafac0defa43e05e3e
+scope=the 字体 group switch/render issues no IHostController command (page construction loads settings lists first, then the delta is asserted)
+
+  正在确定要还原的项目…
+  所有项目均是最新的，无法还原。
+  NewManga.CoreClient -> G:\CODEX\New Manga.workspace\worktrees\FEA-14-SET-1-p3\apps\desktop-avalonia\src\NewManga.CoreClient\bin\Debug\net9.0\NewManga.CoreClient.dll
+  NewManga.ApplicationCore -> G:\CODEX\New Manga.workspace\worktrees\FEA-14-SET-1-p3\apps\desktop-avalonia\src\NewManga.ApplicationCore\bin\Debug\net9.0\NewManga.ApplicationCore.dll
+  NewManga.Appearance -> G:\CODEX\New Manga.workspace\worktrees\FEA-14-SET-1-p3\apps\desktop-avalonia\src\NewManga.Appearance\bin\Debug\net9.0\NewManga.Appearance.dll
+  NewManga.DesignSystem -> G:\CODEX\New Manga.workspace\worktrees\FEA-14-SET-1-p3\apps\desktop-avalonia\src\NewManga.DesignSystem\bin\Debug\net9.0\NewManga.DesignSystem.dll
+  NewManga.Host -> G:\CODEX\New Manga.workspace\worktrees\FEA-14-SET-1-p3\apps\desktop-avalonia\src\NewManga.Host\bin\Debug\net9.0\NewManga.Host.dll
+  NewManga.ThemeEngine -> G:\CODEX\New Manga.workspace\worktrees\FEA-14-SET-1-p3\apps\desktop-avalonia\src\NewManga.ThemeEngine\bin\Debug\net9.0\NewManga.ThemeEngine.dll
+  NewManga.Presentation.Avalonia -> G:\CODEX\New Manga.workspace\worktrees\FEA-14-SET-1-p3\apps\desktop-avalonia\src\NewManga.Presentation.Avalonia\bin\Debug\net9.0\NewManga.Presentation.Avalonia.dll
+  NewManga.App -> G:\CODEX\New Manga.workspace\worktrees\FEA-14-SET-1-p3\apps\desktop-avalonia\src\NewManga.App\bin\Debug\net9.0\NewManga.App.dll
+  NewManga.App.Tests -> G:\CODEX\New Manga.workspace\worktrees\FEA-14-SET-1-p3\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll
+G:\CODEX\New Manga.workspace\worktrees\FEA-14-SET-1-p3\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 9.0.11)
+[xUnit.net 00:00:00.05]   Discovering: NewManga.App.Tests
+[xUnit.net 00:00:00.11]   Discovered:  NewManga.App.Tests
+[xUnit.net 00:00:00.12]   Starting:    NewManga.App.Tests
+[xUnit.net 00:00:00.71]   Finished:    NewManga.App.Tests
+  已通过 NewManga.App.Tests.SettingsTypographyRenderTests.OpeningTheTypographyGroupIssuesNoHostCommands [379 ms]
+
+测试运行成功。
+测试总数: 1
+     通过数: 1
+总时间: 1.0440 秒
+EXIT=0

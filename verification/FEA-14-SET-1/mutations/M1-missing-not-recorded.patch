@@ -1,0 +1,13 @@
+diff --git a/apps/desktop-avalonia/src/NewManga.App/Services/TypographySnapshot.cs b/apps/desktop-avalonia/src/NewManga.App/Services/TypographySnapshot.cs
+index f16e839f3..e2d59cd41 100644
+--- a/apps/desktop-avalonia/src/NewManga.App/Services/TypographySnapshot.cs
++++ b/apps/desktop-avalonia/src/NewManga.App/Services/TypographySnapshot.cs
+@@ -73,7 +73,7 @@ public static class TypographyResolver
+                 resolved = segment;
+                 break;
+             }
+-            missing.Add(segment);
++            // mutation M1: a missing segment is not recorded.
+         }
+         // DSH ruling (2026-11-10): "fallback" = the requested first family was not used,
+         // i.e. at least one stack segment was missing. Landing on a generic tail is the
