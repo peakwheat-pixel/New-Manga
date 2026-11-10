@@ -3,20 +3,20 @@ id: FEA-14-AI-1
 title: FEA-14 切片 AI-1：提示词模板（复用 PREQ 预冻结 wire P21–P25）
 kind: implementation
 governance_version: 3
-status: in_review
+status: closed_with_limitations
 approval: **DSH 2026-11-10 冻结**（`ADJ-2026-11-10-FEA14-S5-SCOPE` §2.1/§2.2；PREQ-1 wire 预冻结 AI P21–P25；DDL v10 计划 §2.4）
 suggested_owner: dsh
 owner: dsh
-reviewer: null
+reviewer: r2 独立复核 approved（`doc/reviews/FEA-14-AI-1-r2.md`，P0/P1/P2=0；P3=7 登记/接受）
 depends_on:
   - FEA-14-S5-PREQ-1
 base_commit: 36c4376d1
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 1b5bdb1f2
+delivery_head: 2737d035a
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-14-AI-1
 allowed_paths:
   - doc/tasks/FEA-14-AI-1.md
@@ -148,4 +148,8 @@ r1 结论 `changes_requested`（P0=0 / P1=0 / P2=2 / P3=7；报告 `doc/reviews/
 
 ## Closeout Record
 
-- 2026-11-10 scope 冻结（`ready`）→ 实现（schema v14 + `PromptTemplateService` + wire P21–P25 + Host 六处 + C-07 v1.8）→ **r1 独立复核待派发**。未 push。
+- 2026-11-10：scope 冻结（`ready`）→ 实现 `13d9e39e1`（schema v14 + `PromptTemplateService` + wire P21–P25 + Host 六处 + C-07 v1.8）→ v14 适配修复 `aac1aba9d` → 证据 `9e1ec59f7`/pin `41d54395a` → r1 `changes_requested`（P2=2/P3=7，`doc/reviews/FEA-14-AI-1-r1.md`）→ r1 处置 `1b5bdb1f2`（P23 单事务/C-07 `Changed（事件）`/pin `8ccaba05…`/Fake 语义/LATEST_TABLES）→ 证据 `17618c0fb`/pin `2737d035a` → **r2 `approved`**（P0/P1/P2=0；P3=7 登记/接受，`doc/reviews/FEA-14-AI-1-r2.md`）。
+- 结论：**完成（带 limitation）**（2026-11-10）。交付 head `2737d035a`（r2 被审字节）；收口提交只含卡面/STATUS/PLAN/ledger/C-07 记录/报告，无产品字节。
+- 交付：schema **v14**（`prompt_templates` + `prompt_template_references`）+ `PromptTemplateService`（内置只读/版本 +1/name 唯一/删除强制替代 + 单事务重指派与软删）+ wire P21–P25 + Host 六处 5 方法（`PromptTemplateInfo`/`PromptTemplateDeleteResult`/`PromptTemplateReference`）+ C-07 UNFREEZE v1.8（79/86，S5 计划 25/25 全部落地）；定向 8、回归 1268、App 888/0/11、pins 18/18、API 79/86。
+- **Limitation**：① P24 客户端只回 `template_id`（name 需 P21 刷新）；② 引用写入方（译文/任务/规则）留后续卡；③ `UPDATE OR REPLACE` 在 replacement 已有同 `(kind,owner_id)` 引用时覆盖该行 label（F-03 登记）；④ name 唯一/规范化范围（未覆盖内置名、无大小写/空白规范化，F-05 登记，待 ADJ）；⑤ DDL「version 不可变」已裁决为调用方不可指定/Core 单调 +1（F-08）；⑥ 死方法 `reassign_references`（N-01）与 `test_issue_markers` 旧注释（F-06 残余）留维护卡；⑦ 真实 Host↔Core IPC、P24 活 Core 端到端、模板 UI/AI-2、真实 AI/网络、并发/大库 = NOT_RUN。
+- 零未授权契约字节（C-07 仅 UNFREEZE v1.8 记录在案）；未 push。
