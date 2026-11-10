@@ -66,6 +66,7 @@ from application.export.service import (  # noqa: E402
     ExportFormat,
     ExportPage,
     ExportRequest,
+    OverwritePolicy,
     StaleExportError,
     StalePolicy,
 )
@@ -346,6 +347,9 @@ def test_ac1_zip_export_history_reconciles_with_output(core) -> None:
             output_path=target,
             pages=snapshot_pages,
             mode="original",
+            # FEA-14-EXPORT-1: the default is now AUTO_RENAME; this acceptance test pins the
+            # explicit-overwrite history snapshot it was written to verify.
+            overwrite_policy=OverwritePolicy.OVERWRITE,
         )
     )
     assert result.status.value == "completed"

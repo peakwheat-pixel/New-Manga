@@ -1,0 +1,17 @@
+FEA-14-EXPORT-1 check.ps1 | 2026-11-10T10:31:54.4104227+08:00 | HEAD=30af54a3c8d43dc207bf17c26dcb24c94ad7a6e9
+=== default ===
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-14-EXPORT-1.md
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3184 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6826 bytes / 64 lines
+Governance check: PASS (3 warnings)
+EXIT=0
+=== -TaskPath ===
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-14-EXPORT-1.md
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3184 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6826 bytes / 64 lines
+Governance check: PASS (3 warnings)
+EXIT=0

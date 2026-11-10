@@ -1836,7 +1836,12 @@ public sealed class HostController : IHostController, ISourceImportController, I
             var request = ImportExportPayloads.StartExportRequest(
                 bookId, new[] { chapterId }, orderedPageIds, format,
                 stalePolicy: effectiveStalePolicy, pdfContent: pdfContent);
-            var started = await grants.StartExportAsync(request, targetPath, cancellationToken).ConfigureAwait(false);
+            // FEA-14-EXPORT-1 (AC2): default is NOT to replace an existing user file. The Host
+            // resolves the name collision itself (auto-rename), so the Core target ref is
+            // minted for a path that does not exist yet (replace_existing=false) and the
+            // publish step cannot overwrite the old bytes.
+            var effectiveTarget = ExportPathPolicy.NextFreeExportPath(targetPath);
+            var started = await grants.StartExportAsync(request, effectiveTarget, cancellationToken).ConfigureAwait(false);
             SetLastError(null);
             return ExportStartInfo.FromJson(started);
         }

@@ -417,6 +417,73 @@ public sealed class ImportExportUiTests
     }
 
     [AvaloniaFact]
+    public async Task Reader_ExportScopeSelector_ShowsThreeScopesAndOrderPreview()
+    {
+        var (window, host, _) = OpenReaderWithExport();
+        await window.LoadReaderAsync(null, null);
+        Pump();
+        Click(window.Reader.ExportButton);
+        await window.Reader.LastExportOperation;
+        Pump();
+        var panel = window.Reader.ExportPanelControl!;
+        panel.AutoPoll = false;
+
+        var scopes = panel.ScopeSelector.ItemsSource!.OfType<string>().ToList();
+        Assert.Equal(3, scopes.Count);
+        Assert.Contains("整章（2 页）", scopes);
+        Assert.Contains("当前页（p1）", scopes);
+        Assert.Contains("1.p1", panel.OrderPreview.Text);
+        Assert.Contains("2.p2", panel.OrderPreview.Text);
+    }
+
+    [AvaloniaFact]
+    public async Task Reader_ExportCurrentPageScope_SendsOnlyTheLoadedPage()
+    {
+        var (window, host, _) = OpenReaderWithExport();
+        await window.LoadReaderAsync(null, null);
+        Pump();
+        Click(window.Reader.ExportButton);
+        await window.Reader.LastExportOperation;
+        Pump();
+        var panel = window.Reader.ExportPanelControl!;
+        panel.AutoPoll = false;
+        panel.ScopeSelector.SelectedIndex = 0;
+        Pump();
+
+        Click(panel.StartButton);
+        await panel.LastOperation;
+        Pump();
+
+        var startCall = Assert.Single(host.StartExportCalls);
+        Assert.Equal(new[] { "p1" }, startCall.PageIds);
+        Assert.Contains("当前页（p1）", panel.ScopeSelector.ItemsSource!.OfType<string>());
+    }
+
+    [AvaloniaFact]
+    public async Task Reader_ExportSelectionScope_FallsBackToChapterWithNotice()
+    {
+        var (window, host, _) = OpenReaderWithExport();
+        await window.LoadReaderAsync(null, null);
+        Pump();
+        Click(window.Reader.ExportButton);
+        await window.Reader.LastExportOperation;
+        Pump();
+        var panel = window.Reader.ExportPanelControl!;
+        panel.AutoPoll = false;
+        panel.ScopeSelector.SelectedIndex = 2; // "selection" is unavailable in the reader
+        Pump();
+
+        Assert.Equal(1, panel.ScopeSelector.SelectedIndex);
+        Assert.Contains("暂不支持多选", panel.StatusText.Text);
+
+        Click(panel.StartButton);
+        await panel.LastOperation;
+        Pump();
+        var startCall = Assert.Single(host.StartExportCalls);
+        Assert.Equal(new[] { "p1", "p2" }, startCall.PageIds);
+    }
+
+    [AvaloniaFact]
     public async Task Reader_ExportCancel_WhileRunning_MarksRecordCancelled()
     {
         var (window, host, _) = OpenReaderWithExport();
@@ -497,5 +564,76 @@ public sealed class ImportExportUiTests
         Assert.Contains("导出被拒绝", panel.StatusText.Text);
         Assert.Null(panel.ActiveExportId);
         Assert.Single(host.StartExportCalls);
+    }
+}
+
+/// <summary>
+/// FEA-14-EXPORT-1 (AC2): the Host-side export name policy never hands an existing path to
+/// the export chain, so a user file can never be replaced by a same-named export.
+/// </summary>
+public sealed class ExportPathPolicyTests
+{
+    [Fact]
+    public void AFreeTargetIsUsedAsIs()
+    {
+        var directory = CreateTempDirectory();
+        try
+        {
+            var target = Path.Combine(directory, "book.zip");
+            Assert.Equal(target, ExportPathPolicy.NextFreeExportPath(target));
+        }
+        finally
+        {
+            Directory.Delete(directory, recursive: true);
+        }
+    }
+
+    [Fact]
+    public void AnExistingTargetMovesToTheFirstFreeSiblingAndKeepsItsBytes()
+    {
+        var directory = CreateTempDirectory();
+        try
+        {
+            var target = Path.Combine(directory, "book.zip");
+            File.WriteAllBytes(target, new byte[] { 1, 2, 3 });
+
+            var first = ExportPathPolicy.NextFreeExportPath(target);
+            Assert.Equal(Path.Combine(directory, "book (1).zip"), first);
+            Assert.False(File.Exists(first));
+            Assert.Equal(new byte[] { 1, 2, 3 }, File.ReadAllBytes(target));
+
+            File.WriteAllBytes(first, new byte[] { 4 });
+            var second = ExportPathPolicy.NextFreeExportPath(target);
+            Assert.Equal(Path.Combine(directory, "book (2).zip"), second);
+            Assert.False(File.Exists(second));
+        }
+        finally
+        {
+            Directory.Delete(directory, recursive: true);
+        }
+    }
+
+    [Fact]
+    public void ADirectoryNamedLikeTheTargetIsSkipped()
+    {
+        var directory = CreateTempDirectory();
+        try
+        {
+            var target = Path.Combine(directory, "book.zip");
+            Directory.CreateDirectory(target);
+            var free = ExportPathPolicy.NextFreeExportPath(target);
+            Assert.Equal(Path.Combine(directory, "book (1).zip"), free);
+        }
+        finally
+        {
+            Directory.Delete(directory, recursive: true);
+        }
+    }
+
+    private static string CreateTempDirectory()
+    {
+        var path = Path.Combine(Path.GetTempPath(), "nm-export-path-" + Guid.NewGuid().ToString("N"));
+        Directory.CreateDirectory(path);
+        return path;
     }
 }

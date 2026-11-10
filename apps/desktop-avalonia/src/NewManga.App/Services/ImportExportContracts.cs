@@ -413,3 +413,36 @@ internal static class ExportJson
         _ => ExportJobState.Unknown,
     };
 }
+
+/// <summary>
+/// FEA-14-EXPORT-1 (AC2): Host-side export name policy. The Host must never let an
+/// export replace an existing user file; a taken target is moved to the first free
+/// <c>name (n).ext</c> sibling, and only a path that does not exist is handed to the
+/// Core target-ref chain (which mints <c>replace_existing=false</c> for it).
+/// </summary>
+public static class ExportPathPolicy
+{
+    /// <summary>The first free <c>name (n).ext</c> sibling for a requested export target.</summary>
+    public static string NextFreeExportPath(string targetPath)
+    {
+        var full = Path.GetFullPath(targetPath);
+        if (!File.Exists(full) && !Directory.Exists(full))
+        {
+            return full;
+        }
+
+        var directory = Path.GetDirectoryName(full) ?? string.Empty;
+        var stem = Path.GetFileNameWithoutExtension(full);
+        var extension = Path.GetExtension(full);
+        for (var index = 1; index < 10_000; index++)
+        {
+            var candidate = Path.Combine(directory, $"{stem} ({index}){extension}");
+            if (!File.Exists(candidate) && !Directory.Exists(candidate))
+            {
+                return candidate;
+            }
+        }
+
+        throw new IOException("no free export path slot");
+    }
+}

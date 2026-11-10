@@ -2101,7 +2101,13 @@ public sealed class ReaderPage : UserControl
         }
 
         _exportPanel.IsVisible = true;
-        await _exportPanel.PrepareAsync(book.BookId, book.BookTitle, book.ChapterId, book.ChapterTitle);
+        // FEA-14-EXPORT-1 (AC3): the reader's current page feeds the "current page" export scope.
+        var currentPageId = book.Pages.Count > 0 &&
+            ViewModel.CurrentPageIndex >= 0 &&
+            ViewModel.CurrentPageIndex < book.Pages.Count
+            ? book.Pages[ViewModel.CurrentPageIndex].PageId
+            : null;
+        await _exportPanel.PrepareAsync(book.BookId, book.BookTitle, book.ChapterId, book.ChapterTitle, currentPageId);
     }
 
     public void RequestImmersive() => ImmersiveRequested?.Invoke(this, EventArgs.Empty);

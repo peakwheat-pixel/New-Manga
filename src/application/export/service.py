@@ -162,7 +162,11 @@ class ExportRequest:
     output_path: Path
     pages: tuple[ExportPage, ...]
     mode: str = "original"
-    overwrite_policy: OverwritePolicy = OverwritePolicy.OVERWRITE
+    # FEA-14-EXPORT-1 (AC1): the default must never overwrite an existing user file.
+    # AUTO_RENAME keeps the existing bytes and writes the new export under the first
+    # free "name (n).ext" slot; an explicit OVERWRITE remains available for callers
+    # that really mean it (the Core StartExport command now passes AUTO_RENAME too).
+    overwrite_policy: OverwritePolicy = OverwritePolicy.AUTO_RENAME
     stale_policy: StalePolicy = StalePolicy.ABORT
     pipeline_run_id: str | None = None
     render_profile_snapshot: dict | None = None

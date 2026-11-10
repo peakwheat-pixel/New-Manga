@@ -1,0 +1,514 @@
+FEA-14-EXPORT-1 pytest full | 2026-11-10T10:20:42.9498812+08:00 | HEAD=30af54a3c8d43dc207bf17c26dcb24c94ad7a6e9
+........................................................................ [  2%]
+........................................................................ [  4%]
+........................................................................ [  6%]
+........................................................................ [  8%]
+........................................................................ [ 10%]
+........................................................................ [ 12%]
+........................................................................ [ 14%]
+........................................................................ [ 16%]
+........................................................................ [ 18%]
+........................................................................ [ 20%]
+........................................................................ [ 22%]
+........................................................................ [ 24%]
+........................................................................ [ 26%]
+........................................................................ [ 28%]
+........................................................................ [ 31%]
+........................................................................ [ 33%]
+........................................................................ [ 35%]
+........................................................................ [ 37%]
+........................................................................ [ 39%]
+........................................................................ [ 41%]
+........................................................................ [ 43%]
+........................................................................ [ 45%]
+........................................................................ [ 47%]
+........................................................................ [ 49%]
+........................................................................ [ 51%]
+........................................................................ [ 53%]
+..........................................................F............. [ 55%]
+........................................................................ [ 57%]
+........................................................................ [ 59%]
+............................s........................................... [ 62%]
+....................................................sssss............... [ 64%]
+........................................................................ [ 66%]
+........................................................................ [ 68%]
+........................................................................ [ 70%]
+........................................................................ [ 72%]
+........................................................................ [ 74%]
+........................................................................ [ 76%]
+........................................................................ [ 78%]
+......................................................................s. [ 80%]
+........................................................................ [ 82%]
+........................................................................ [ 84%]
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+........................................................................ [ 86%]
+........................................................................ [ 88%]
+........................................................................ [ 90%]
+........................................................................ [ 93%]
+........................................................................ [ 95%]
+........................................................................ [ 97%]
+........................................................................ [ 99%]
+...........................                                              [100%]
+================================== FAILURES ===================================
+_____________ test_ac1_zip_export_history_reconciles_with_output ______________
+
+core = CoreServices(conn=<infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x000001C9BC198A50>, repository=<...ice object at 0x000001C9BC1357D0>, plugins=<infrastructure.plugins.service.PluginService object at 0x000001C9BC136A50>)
+
+    def test_ac1_zip_export_history_reconciles_with_output(core) -> None:
+        """AC1(a)(b): one zip export -> exactly one history row whose fields
+        (format, page scope, terminal state, timestamps, file hash, output
+        path) match the request, and whose zip entries match the page scope by
+        name (order-prefixed, Unicode preserved) and by exact bytes."""
+        seed = _seed_chapter_with_translated_page(core, translated_payloads=[TRANS_R1])
+        exports = core.data_root / "exports"
+        target = exports / "lineage.zip"
+    
+        snapshot_pages = _snapshot_export_pages(core, seed.snapshot)
+        result = core.export_service.export(
+            ExportRequest(
+                book_id=seed.book.book_id,
+                chapter_id=seed.chapter.chapter_id,
+                format=ExportFormat.ZIP,
+                output_path=target,
+                pages=snapshot_pages,
+                mode="original",
+            )
+        )
+        assert result.status.value == "completed"
+    
+        history = core.export_service.history()
+        assert len(history) == 1, f"exactly one completed export expected, got {len(history)}"
+        row = history[0]
+        assert row.export_id == result.export_id and row.export_id.startswith("exp-")
+        assert row.book_id == seed.book.book_id
+        assert row.chapter_id == seed.chapter.chapter_id
+        assert row.export_type == "zip"
+        assert row.status == "completed"
+        assert row.output_path == str(target)
+        assert row.detail == ""
+    
+        scope = json.loads(row.scope_snapshot_json)
+        expected_page_ids = [seed.page_a.page_id, seed.page_b.page_id]
+        assert scope["page_ids"] == expected_page_ids
+        assert scope["filenames"] == [FILENAME_A, FILENAME_B]
+        assert scope["mode"] == "original"
+>       assert scope["overwrite_policy"] == "overwrite"
+E       AssertionError: assert 'auto_rename' == 'overwrite'
+E         
+E         - overwrite
+E         + auto_rename
+
+tests\m2_acceptance\test_reader_export_lineage_library_pagecount.py:369: AssertionError
+---------------------------- Captured stderr setup ----------------------------
+[core.schema] applied 9 migration(s) up to v9; schema bootstrap is the only write a read-only session performs (user rows and managed originals are never modified)
+============================== warnings summary ===============================
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_scan_same_container_direct_continuation without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_scan_changed_container_diff_classifications without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_scan_same_mtime_size_bytes_changed_discovered without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_scan_expired_grant_typed_refusal without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_scan_scope_all_requires_frozen_reference_books without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_missing_source_observation_path without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_stale_apply_zero_write_baseline without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_full_sync_publishes_new_generation_and_gates without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests/core/test_rc4_stdio_render_preview.py::test_production_stdio_decodes_nmfr_renders_text_and_publishes_readable_preview
+  G:\CODEX\New Manga\tests\core\test_rc4_stdio_render_preview.py:245: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+    for px in rendered.crop((20, 20, 150, 120)).convert("RGB").getdata()
+
+tests/fea11/test_source_run_grant.py::test_container_grant_duplicate_member_locators_are_legitimate
+  C:\Python314\Lib\zipfile\__init__.py:1730: UserWarning: Duplicate name: 'same.png'
+    return self._open_to_write(zinfo, force_zip64=force_zip64)
+
+tests/rendering/test_pillow_rendering.py::test_pillow_compositor_draws_centered_stroked_text_into_real_png
+  G:\CODEX\New Manga\tests\rendering\test_pillow_rendering.py:94: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+    for red, green, blue, _alpha in image.getdata()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac1_zip_export_history_reconciles_with_output
+1 failed, 3475 passed, 10 skipped, 11 warnings in 290.62s (0:04:50)
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+EXIT=1
+=== rerun for failure summary 2026-11-10T10:26:10.8856736+08:00 ===
+........................................................................ [  2%]
+........................................................................ [  4%]
+........................................................................ [  6%]
+........................................................................ [  8%]
+........................................................................ [ 10%]
+........................................................................ [ 12%]
+........................................................................ [ 14%]
+........................................................................ [ 16%]
+........................................................................ [ 18%]
+........................................................................ [ 20%]
+........................................................................ [ 22%]
+........................................................................ [ 24%]
+........................................................................ [ 26%]
+........................................................................ [ 28%]
+........................................................................ [ 31%]
+........................................................................ [ 33%]
+........................................................................ [ 35%]
+........................................................................ [ 37%]
+........................................................................ [ 39%]
+........................................................................ [ 41%]
+........................................................................ [ 43%]
+........................................................................ [ 45%]
+........................................................................ [ 47%]
+........................................................................ [ 49%]
+........................................................................ [ 51%]
+........................................................................ [ 53%]
+..........................................................F............. [ 55%]
+........................................................................ [ 57%]
+........................................................................ [ 59%]
+............................s........................................... [ 62%]
+....................................................sssss............... [ 64%]
+........................................................................ [ 66%]
+........................................................................ [ 68%]
+........................................................................ [ 70%]
+........................................................................ [ 72%]
+........................................................................ [ 74%]
+........................................................................ [ 76%]
+........................................................................ [ 78%]
+......................................................................s. [ 80%]
+........................................................................ [ 82%]
+........................................................................ [ 84%]
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+........................................................................ [ 86%]
+........................................................................ [ 88%]
+........................................................................ [ 90%]
+........................................................................ [ 93%]
+........................................................................ [ 95%]
+........................................................................ [ 97%]
+........................................................................ [ 99%]
+...........................                                              [100%]
+================================== FAILURES ===================================
+E   AssertionError: assert 'auto_rename' == 'overwrite'
+      
+      - overwrite
+      + auto_rename
+---------------------------- Captured stderr setup ----------------------------
+[core.schema] applied 9 migration(s) up to v9; schema bootstrap is the only write a read-only session performs (user rows and managed originals are never modified)
+G:\CODEX\New Manga\tests\m2_acceptance\test_reader_export_lineage_library_pagecount.py:369: AssertionError: assert 'auto_rename' == 'overwrite'
+============================== warnings summary ===============================
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_scan_same_container_direct_continuation without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_scan_changed_container_diff_classifications without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_scan_same_mtime_size_bytes_changed_discovered without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_scan_expired_grant_typed_refusal without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_scan_scope_all_requires_frozen_reference_books without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_missing_source_observation_path without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_stale_apply_zero_write_baseline without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_full_sync_publishes_new_generation_and_gates without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests/core/test_rc4_stdio_render_preview.py::test_production_stdio_decodes_nmfr_renders_text_and_publishes_readable_preview
+  G:\CODEX\New Manga\tests\core\test_rc4_stdio_render_preview.py:245: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+    for px in rendered.crop((20, 20, 150, 120)).convert("RGB").getdata()
+
+tests/fea11/test_source_run_grant.py::test_container_grant_duplicate_member_locators_are_legitimate
+  C:\Python314\Lib\zipfile\__init__.py:1730: UserWarning: Duplicate name: 'same.png'
+    return self._open_to_write(zinfo, force_zip64=force_zip64)
+
+tests/rendering/test_pillow_rendering.py::test_pillow_compositor_draws_centered_stroked_text_into_real_png
+  G:\CODEX\New Manga\tests\rendering\test_pillow_rendering.py:94: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+    for red, green, blue, _alpha in image.getdata()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac1_zip_export_history_reconciles_with_output
+1 failed, 3475 passed, 10 skipped, 11 warnings in 275.90s (0:04:35)
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+EXIT=1
+=== final full run 2026-11-10T10:31:46.4232285+08:00 | HEAD=30af54a3c8d43dc207bf17c26dcb24c94ad7a6e9 ===
+........................................................................ [  2%]
+........................................................................ [  4%]
+........................................................................ [  6%]
+........................................................................ [  8%]
+........................................................................ [ 10%]
+........................................................................ [ 12%]
+........................................................................ [ 14%]
+........................................................................ [ 16%]
+........................................................................ [ 18%]
+........................................................................ [ 20%]
+........................................................................ [ 22%]
+........................................................................ [ 24%]
+........................................................................ [ 26%]
+........................................................................ [ 28%]
+........................................................................ [ 31%]
+........................................................................ [ 33%]
+........................................................................ [ 35%]
+........................................................................ [ 37%]
+........................................................................ [ 39%]
+........................................................................ [ 41%]
+........................................................................ [ 43%]
+........................................................................ [ 45%]
+........................................................................ [ 47%]
+........................................................................ [ 49%]
+........................................................................ [ 51%]
+........................................................................ [ 53%]
+........................................................................ [ 55%]
+........................................................................ [ 57%]
+........................................................................ [ 59%]
+............................s........................................... [ 62%]
+....................................................sssss............... [ 64%]
+........................................................................ [ 66%]
+........................................................................ [ 68%]
+........................................................................ [ 70%]
+........................................................................ [ 72%]
+........................................................................ [ 74%]
+........................................................................ [ 76%]
+........................................................................ [ 78%]
+......................................................................s. [ 80%]
+........................................................................ [ 82%]
+........................................................................ [ 84%]
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+........................................................................ [ 86%]
+........................................................................ [ 88%]
+........................................................................ [ 90%]
+........................................................................ [ 93%]
+........................................................................ [ 95%]
+........................................................................ [ 97%]
+........................................................................ [ 99%]
+...........................                                              [100%]
+============================== warnings summary ===============================
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_scan_same_container_direct_continuation without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_scan_changed_container_diff_classifications without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_scan_same_mtime_size_bytes_changed_discovered without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_scan_expired_grant_typed_refusal without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_scan_scope_all_requires_frozen_reference_books without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_missing_source_observation_path without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_stale_apply_zero_write_baseline without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_full_sync_publishes_new_generation_and_gates without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests/core/test_rc4_stdio_render_preview.py::test_production_stdio_decodes_nmfr_renders_text_and_publishes_readable_preview
+  G:\CODEX\New Manga\tests\core\test_rc4_stdio_render_preview.py:245: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+    for px in rendered.crop((20, 20, 150, 120)).convert("RGB").getdata()
+
+tests/fea11/test_source_run_grant.py::test_container_grant_duplicate_member_locators_are_legitimate
+  C:\Python314\Lib\zipfile\__init__.py:1730: UserWarning: Duplicate name: 'same.png'
+    return self._open_to_write(zinfo, force_zip64=force_zip64)
+
+tests/rendering/test_pillow_rendering.py::test_pillow_compositor_draws_centered_stroked_text_into_real_png
+  G:\CODEX\New Manga\tests\rendering\test_pillow_rendering.py:94: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+    for red, green, blue, _alpha in image.getdata()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+3476 passed, 10 skipped, 11 warnings in 280.48s (0:04:40)
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+EXIT=0

@@ -282,6 +282,11 @@ public sealed class ExportPanel : Border
     private string? _requestedPdfContent;
     private string? _bookId;
     private string? _chapterId;
+    private string? _currentPageId;
+    // FEA-14-EXPORT-1 (AC3): scope choice + the ordered page preview it will export.
+    private readonly ComboBox _scopeSelector;
+    private readonly TextBlock _orderPreview;
+    private bool _refreshingScope;
     private string _bookTitle = string.Empty;
     private string _chapterTitle = string.Empty;
     private IReadOnlyList<string> _translated = Array.Empty<string>();
@@ -358,6 +363,28 @@ public sealed class ExportPanel : Border
         _pdfModeRow = new StackPanel { Spacing = 4, IsVisible = false };
         _pdfModeRow.Children.Add(Ui.Text("PDF 内容模式", 11, "TextSecondary"));
         _pdfModeRow.Children.Add(_pdfModeSelector);
+        // FEA-14-EXPORT-1 (AC3): the export scope is explicit and the ordered preview shows
+        // exactly which pages (and in which order) the next export will send.
+        _scopeSelector = new ComboBox
+        {
+            Name = "ExportScopeSelector",
+            MinWidth = 300,
+            ItemsSource = new List<string>
+            {
+                "当前页（阅读器当前页）",
+                "整章（全部已翻译页）",
+                "已选页（阅读器暂不支持多选）",
+            },
+            SelectedIndex = 1,
+        };
+        _scopeSelector.SelectionChanged += (_, _) => RefreshScopeUi();
+        _orderPreview = Ui.Text(string.Empty, 11, "TextSecondary");
+        _orderPreview.Name = "ExportOrderPreview";
+        _orderPreview.TextWrapping = TextWrapping.Wrap;
+        var scopeRow = new StackPanel { Spacing = 4 };
+        scopeRow.Children.Add(Ui.Text("导出范围", 11, "TextSecondary"));
+        scopeRow.Children.Add(_scopeSelector);
+        scopeRow.Children.Add(_orderPreview);
         var formatRow = new StackPanel { Spacing = 4 };
         formatRow.Children.Add(Ui.Text("导出格式", 11, "TextSecondary"));
         formatRow.Children.Add(_formatSelector);
@@ -376,6 +403,7 @@ public sealed class ExportPanel : Border
             "支持 ZIP 图片包与 PDF（image_only 无损图片 / searchable_dual_layer 可搜索 CJK 文本层）；导出由 Host 签发目标 grant，产物写入 Host 数据根 exports/。",
             11,
             "TextSecondary"));
+        body.Children.Add(scopeRow);
         body.Children.Add(formatRow);
         body.Children.Add(_pdfModeRow);
         body.Children.Add(_status);
@@ -385,6 +413,7 @@ public sealed class ExportPanel : Border
         body.Children.Add(_history);
         body.Children.Add(buttons);
         Child = body;
+        RefreshScopeUi();
     }
 
     public Button StartButton => _start;
@@ -423,6 +452,70 @@ public sealed class ExportPanel : Border
 
     public IReadOnlyList<string> TranslatedPageIds => _translated;
 
+    /// <summary>FEA-14-EXPORT-1 (AC3): scope selector (0 = current page, 1 = chapter, 2 = selection).</summary>
+    public ComboBox ScopeSelector => _scopeSelector;
+
+    /// <summary>FEA-14-EXPORT-1 (AC3): the ordered page preview for the selected scope.</summary>
+    public TextBlock OrderPreview => _orderPreview;
+
+    /// <summary>FEA-14-EXPORT-1: the page ids the next export will send for the selected scope.</summary>
+    public IReadOnlyList<string> SelectedPageIds()
+    {
+        if (_translated.Count == 0)
+        {
+            return Array.Empty<string>();
+        }
+
+        if (_scopeSelector.SelectedIndex == 0 &&
+            !string.IsNullOrWhiteSpace(_currentPageId) &&
+            _translated.Contains(_currentPageId, StringComparer.Ordinal))
+        {
+            return new[] { _currentPageId };
+        }
+
+        return _translated;
+    }
+
+    /// <summary>FEA-14-EXPORT-1 (AC3): refresh the scope labels and the ordered preview.</summary>
+    private void RefreshScopeUi()
+    {
+        if (_refreshingScope)
+        {
+            return;
+        }
+
+        _refreshingScope = true;
+        try
+        {
+            var currentKnown = !string.IsNullOrWhiteSpace(_currentPageId) &&
+                _translated.Contains(_currentPageId, StringComparer.Ordinal);
+            var requested = _scopeSelector.SelectedIndex;
+            _scopeSelector.ItemsSource = new List<string>
+            {
+                currentKnown ? $"当前页（{_currentPageId}）" : "当前页（未定位）",
+                $"整章（{_translated.Count} 页）",
+                "已选页（阅读器暂不支持多选）",
+            };
+            _scopeSelector.SelectedIndex = requested is 0 or 1 ? requested : 1;
+            if (requested == 2)
+            {
+                // no multi-select in the reader: fall back to the chapter scope with a notice.
+                _status.Text = "阅读器暂不支持多选；已回退为整章导出";
+            }
+
+            var scopePages = SelectedPageIds();
+            _orderPreview.Text = scopePages.Count == 0
+                ? "导出顺序：（无）"
+                : "导出顺序：" + string.Join(
+                    " → ",
+                    scopePages.Select((id, index) => $"{index + 1}.{id}"));
+        }
+        finally
+        {
+            _refreshingScope = false;
+        }
+    }
+
     /// <summary>Tests disable the internal timer and drive <see cref="TickAsync"/> deterministically.</summary>
     public bool AutoPoll { get; set; } = true;
 
@@ -452,13 +545,22 @@ public sealed class ExportPanel : Border
         }
     }
 
-    /// <summary>AC2: load the reader context (book/chapter + its translated pages + history).</summary>
-    public async Task PrepareAsync(string bookId, string bookTitle, string chapterId, string chapterTitle)
+    /// <summary>
+    /// AC2: load the reader context (book/chapter + its translated pages + history).
+    /// FEA-14-EXPORT-1 (AC3): the reader's current page id feeds the "current page" scope.
+    /// </summary>
+    public async Task PrepareAsync(
+        string bookId,
+        string bookTitle,
+        string chapterId,
+        string chapterTitle,
+        string? currentPageId = null)
     {
         _bookId = bookId;
         _bookTitle = string.IsNullOrWhiteSpace(bookTitle) ? "未命名" : bookTitle;
         _chapterId = chapterId;
         _chapterTitle = string.IsNullOrWhiteSpace(chapterTitle) ? "第 1 章" : chapterTitle;
+        _currentPageId = currentPageId;
         _exportId = null;
         _last = null;
         _requestedPdfContent = null;
@@ -471,6 +573,7 @@ public sealed class ExportPanel : Border
         _context.Text = $"{_bookTitle} · {_chapterTitle}";
         _status.Text = "正在读取可导出的翻译页…";
         _translated = await _controller.GetTranslatedPageIdsAsync(chapterId);
+        RefreshScopeUi();
         await RefreshHistoryAsync();
         if (string.IsNullOrWhiteSpace(_controller.ExportDirectorySuggestion))
         {
@@ -506,7 +609,8 @@ public sealed class ExportPanel : Border
             return;
         }
 
-        if (_translated.Count == 0)
+        var scopePages = SelectedPageIds();
+        if (scopePages.Count == 0)
         {
             _status.Text = "没有可导出的翻译页：请先翻译该章";
             return;
@@ -531,7 +635,7 @@ public sealed class ExportPanel : Border
             var started = await _controller.StartExportAsync(
                 _bookId,
                 _chapterId,
-                _translated,
+                scopePages,
                 target,
                 SelectedFormat,
                 _requestedPdfContent);
@@ -656,6 +760,12 @@ public sealed class ExportPanel : Border
         }
 
         _cancel.IsEnabled = snapshot.IsActive;
+        // FEA-14-EXPORT-1 (AC2): a completed export reports the actual (possibly auto-renamed)
+        // output path, so the user can see that an existing file was never replaced.
+        if (snapshot.State == ExportJobState.Completed && !string.IsNullOrWhiteSpace(snapshot.OutputPath))
+        {
+            _status.Text += $"\n输出：{snapshot.OutputPath}";
+        }
     }
 
     private void StartTimer()

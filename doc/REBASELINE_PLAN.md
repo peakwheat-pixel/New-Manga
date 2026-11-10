@@ -50,9 +50,9 @@
 
 **FEA 线 S5 收口**：FEA-14 七切片（LIB/READ/EDIT/AI/FONT/SET/EXPORT，FEA-00 §12.2/§15.6）经 `FEA-14-S5-PREQ-1` 统一口径与共用 wire 后逐片冻结；V11R 程序已收官（v0.1.1），历史节点原状保留。
 
-READY 节点：FEA-14-EXPORT-1
+READY 节点：无
 
-当前活动：无（EXPORT-1 ready，待实现）
+当前活动：`FEA-14-EXPORT-1`（in_review；导出收口实现完成，待独立 Review）
 
 ## 历史快照（终态节点，非当前 DAG）
 

@@ -189,8 +189,28 @@ def test_output_into_missing_directory_is_created(tmp_path, service, pages):
 def test_overwrite_policy_replaces_existing_target(tmp_path, service, pages):
     target = tmp_path / "out.txt"
     target.write_bytes(b"OLD")
-    service.export(_request(tmp_path, pages, fmt=ExportFormat.TEXT, output_path=target))
+    service.export(
+        _request(
+            tmp_path,
+            pages,
+            fmt=ExportFormat.TEXT,
+            output_path=target,
+            overwrite_policy=OverwritePolicy.OVERWRITE,
+        )
+    )
     assert b"OLD" not in target.read_bytes()
+
+
+def test_default_policy_never_replaces_an_existing_target(tmp_path, service, pages):
+    # FEA-14-EXPORT-1 AC1: no explicit policy means AUTO_RENAME, never replacement.
+    target = tmp_path / "default.zip"
+    target.write_bytes(b"OLD")
+    result = service.export(_request(tmp_path, pages, output_path=target))
+    assert target.read_bytes() == b"OLD", "the existing user file must stay byte-identical"
+    assert result.status.value == "completed"
+    assert result.output_path is not None and result.output_path != target
+    assert result.output_path.name == "default (1).zip"
+    assert result.output_path.exists()
 
 
 def test_skip_policy_keeps_existing_target_and_records_skipped(tmp_path, service, pages):
@@ -303,6 +323,8 @@ def test_cancel_before_replace_publishes_nothing(tmp_path, service, pages):
         service.export(_request(tmp_path, pages, output_path=target, cancel=cancel))
     assert target.read_bytes() == b"OLD-TARGET"
     assert not list(tmp_path.glob(".cancelled.zip*")), "temp file left behind"
+    # FEA-14-EXPORT-1 AC4: cancellation must not publish the auto-renamed target either.
+    assert not (tmp_path / "cancelled (1).zip").exists(), "cancelled export left a new file"
     assert service.history()[0].status == "cancelled"
 
 

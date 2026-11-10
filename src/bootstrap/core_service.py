@@ -5914,7 +5914,12 @@ class CoreServiceServer:
         request = ExportRequest(
             book_id=book_id, chapter_id=page_chapter[ordered_ids[0]],
             format=format_value, output_path=target.path, pages=tuple(export_pages),
-            mode="translated", overwrite_policy=OverwritePolicy.OVERWRITE,
+            # FEA-14-EXPORT-1 (AC1): the wire carries no overwrite flag; the Core must still
+            # default to never replacing an existing user file. The resolved target ref has
+            # already been validated (replace_existing=false when absent, or a Host-side
+            # auto-renamed path), so AUTO_RENAME here is a second line of defence for the
+            # window between ref validation and publish.
+            mode="translated", overwrite_policy=OverwritePolicy.AUTO_RENAME,
             stale_policy=StalePolicy.ABORT if stale == "abort" else StalePolicy.CONTINUE,
             format_options=options,
             text_content_factory=(lambda effective: self._text_export_bytes(fmt, effective, text_pages)) if fmt == "text" else None,
