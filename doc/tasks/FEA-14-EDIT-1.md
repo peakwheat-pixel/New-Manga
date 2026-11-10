@@ -123,11 +123,11 @@ FEA-14 S5 EDIT 切片需要「问题标记」数据面：列出/新建/解决/�
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-ED-001 | EDIT-1 | `verification/FEA-14-EDIT-1/logs/dotnet-app-tests.log` | `-` | `3ef45722b341164fafdf50570c025f197d58a22163119bbcbdb380e52bf6093d` | CANONICAL |
-| EV-ED-002 | EDIT-1 | `verification/FEA-14-EDIT-1/logs/pins-api.log` | `-` | `0068c8348a18b0f7a4ebfe2a95acb6c9d8543d02e5e60aafd87917133a0872ee` | CANONICAL |
-| EV-ED-003 | EDIT-1 | `verification/FEA-14-EDIT-1/logs/pytest-edit.log` | `-` | `fe154f3c3011d909e19e2c6d733562fc983ad8f390878cfe4e365ff04b1d32c1` | CANONICAL |
-| EV-ED-004 | EDIT-1 | `verification/FEA-14-EDIT-1/logs/regression-v13.log` | `-` | `c6de17db08c49b950de1747cab26d0d85006adf4853b4ea575d07d0ef8d7dc17` | CANONICAL |
-| EV-ED-005 | EDIT-1 | `verification/FEA-14-EDIT-1/README.md` | `-` | `713a19f60851638e651c92f6d7b477b26881b6074ae7829788ac8e50518576b1` | CANONICAL |
+| EV-ED-001 | EDIT-1 | `verification/FEA-14-EDIT-1/logs/dotnet-app-tests.log` | `f803416b7` | `3ef45722b341164fafdf50570c025f197d58a22163119bbcbdb380e52bf6093d` | CANONICAL |
+| EV-ED-002 | EDIT-1 | `verification/FEA-14-EDIT-1/logs/pins-api.log` | `f803416b7` | `0068c8348a18b0f7a4ebfe2a95acb6c9d8543d02e5e60aafd87917133a0872ee` | CANONICAL |
+| EV-ED-003 | EDIT-1 | `verification/FEA-14-EDIT-1/logs/pytest-edit.log` | `f803416b7` | `fe154f3c3011d909e19e2c6d733562fc983ad8f390878cfe4e365ff04b1d32c1` | CANONICAL |
+| EV-ED-004 | EDIT-1 | `verification/FEA-14-EDIT-1/logs/regression-v13.log` | `f803416b7` | `c6de17db08c49b950de1747cab26d0d85006adf4853b4ea575d07d0ef8d7dc17` | CANONICAL |
+| EV-ED-005 | EDIT-1 | `verification/FEA-14-EDIT-1/README.md` | `f803416b7` | `713a19f60851638e651c92f6d7b477b26881b6074ae7829788ac8e50518576b1` | CANONICAL |
 
 ## Closeout Record
 
