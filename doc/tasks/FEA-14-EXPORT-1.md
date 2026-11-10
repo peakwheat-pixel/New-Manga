@@ -22,6 +22,9 @@ allowed_paths:
   - doc/tasks/FEA-14-EXPORT-1.md
   - doc/reviews/FEA-14-EXPORT-1-*.md
   - doc/handoffs/FEA-14-EXPORT-1-*.md
+  - doc/STATUS.md
+  - doc/REBASELINE_PLAN.md
+  - doc/TASK_LEDGER.md
   - verification/FEA-14-EXPORT-1/**
   - src/application/export/service.py
   - src/application/export/ports.py
