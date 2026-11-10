@@ -60,7 +60,7 @@ READ-1 已交付 Core schema v10、wire P9–P15 与 `IHostController` 七方法
 - [x] **AC1 偏好应用**：打开书 → `GetReadingPreferencesAsync` 被调用并按返回应用 mode/direction/zoom/doublePage/layout；修改后 partial 保存（只传变化字段）。 <<MET>>
 - [ ] **AC2 书签 UI**：新增（side left/right/both + note）/列表/删除；删除不影响其他状态；跨书隔离。 <<PARTIAL: VM 层书签 CRUD 完成并有测试；可见按钮/列表面板未接线>>
 - [ ] **AC3 整书进度 UI**：显示 read_pages/total_pages/percent；finished 显示「已读完」；reset 需确认（取消不调用）。 <<PARTIAL: VM 层 BookProgress/Reset 确认完成；页面 TextBlock/按钮绑定未接线>>
-- [x] **AC4 测试**：App.Tests 定向（ReaderReadingPreferencesTests + FakeHostController 脚本）**5 passed / 0 failed**。 <<MET>>
+- [x] **AC4 测试**：App.Tests 定向（ReaderReadingPreferencesTests + FakeHostController 脚本）**6 passed / 0 failed**。 <<MET>>
 - [x] **AC5 NOT_RUN**：真实 UI 手势/IME/多屏/DPI/系统主题/托盘、真实进程重启 = NOT_RUN。 <<MET>>
 - [x] **AC6 门禁与证据**：`check.ps1`（默认 + `-TaskPath`）PASS；无 Core/wire/契约/DDL diff；证据含日志 EXIT。 <<MET>>
 
@@ -72,6 +72,13 @@ READ-1 已交付 Core schema v10、wire P9–P15 与 `IHostController` 七方法
 - **R1-003（P3，已补）**：partial 负向断言/mode/vertical/无变化不发送测试。
 - **R1-004（P3，已修）**：AC4 测试名改为 `ReaderReadingPreferencesTests`（5 passed）。
 - **R1-005（P3，已修）**：`base_commit` 校准 `034962ea7`。
+
+
+## r2 处置记录（2026-11-10，对 `9b1837e00` 的 changes_requested）
+
+- **R2-001（P2，已修）**：README AC4/日志说明改为 **6 passed**、App 全量重跑 **873 passed / 0 failed / 11 skipped**（新增 mode/vertical 保存测试）；Canonical 3 行刷新。
+- **R2-002（P3，已修）**：`Mode`/`VerticalDirection` 改为可写（public set），提供用户修改路径。
+- **R2-003（P3，已补）**：新增 `ChangingModeOrVerticalSendsOnlyThatField`（改 Mode → 只发 Mode；改 VerticalDirection → Direction=vertical 且 Mode null）。
 
 ## 证据计划（L2）
 
@@ -90,9 +97,9 @@ READ-1 已交付 Core schema v10、wire P9–P15 与 `IHostController` 七方法
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-RD2-001 | READ-2 | `verification/FEA-14-READ-2/logs/dotnet-app-tests.log` | `-` | `bc183a56bb119a857a32f5de319f4feb157b538af42f0d3c0f8cac80c404ab14` | CANONICAL |
-| EV-RD2-002 | READ-2 | `verification/FEA-14-READ-2/logs/reader-reading-prefs.log` | `-` | `c8a3fdf95213fb46edcf6103a47fc702bd549f1f6662b409ace7f1876d8d3efa` | CANONICAL |
-| EV-RD2-003 | READ-2 | `verification/FEA-14-READ-2/README.md` | `-` | `fbfdafedd81aa25bcae08f22fddef6e4e62ee488896b10b7e723db165db5a141` | CANONICAL |
+| EV-RD2-001 | READ-2 | `verification/FEA-14-READ-2/logs/dotnet-app-tests.log` | `-` | `2958f7b6a7e420bb5786c34b8a0ed13340a2ddb1aaa7843d41b63ef5b841845e` | CANONICAL |
+| EV-RD2-002 | READ-2 | `verification/FEA-14-READ-2/logs/reader-reading-prefs.log` | `-` | `81a1d57212d03d2ad5ab44c712027232f2b799369f9f45c9b521c2e32732d780` | CANONICAL |
+| EV-RD2-003 | READ-2 | `verification/FEA-14-READ-2/README.md` | `-` | `4214695f37a7ae21e57727fd883a73f25580385b2c80c76f42ea82a6139d8259` | CANONICAL |
 
 ## Closeout Record
 

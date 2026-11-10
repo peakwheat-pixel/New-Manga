@@ -111,10 +111,10 @@ public sealed class ReaderViewModel : FluentViewModel
     private (string Mode, string Direction, double Zoom, bool DoublePage, string Layout)? _appliedPreferences;
 
     /// <summary>FEA-14-READ-2: reading content mode (original/translated).</summary>
-    public string Mode { get => _mode; private set => Set(ref _mode, value); }
+    public string Mode { get => _mode; set => Set(ref _mode, value); }
 
     /// <summary>FEA-14-READ-2: vertical reading direction (webtoon); mutually exclusive with RTL.</summary>
-    public bool VerticalDirection { get => _verticalDirection; private set => Set(ref _verticalDirection, value); }
+    public bool VerticalDirection { get => _verticalDirection; set => Set(ref _verticalDirection, value); }
 
     /// <summary>FEA-14-READ-2 (PREQ P9): apply the stored per-book preferences.</summary>
     public async Task ApplyReadingPreferencesAsync(CancellationToken cancellationToken = default)

@@ -113,4 +113,28 @@ public sealed class ReaderReadingPreferencesTests
         Assert.Null(host.LastSavedPreferences); // nothing dirty -> no save
     }
 
+
+
+    [Fact]
+    public async Task ChangingModeOrVerticalSendsOnlyThatField()
+    {
+        var host = HostWithBook();
+        host.ReadingPreferences = new ReadingPreferencesInfo(
+            "b1", "original", "ltr", 1.0, false, "single", "2026-01-01", true);
+        var viewModel = new ReaderViewModel(host);
+        await viewModel.LoadAsync("b1", "c1");
+
+        viewModel.Mode = "translated";
+        await viewModel.SaveReadingPreferencesAsync();
+        Assert.NotNull(host.LastSavedPreferences);
+        Assert.Equal("translated", host.LastSavedPreferences!.Mode);
+        Assert.Null(host.LastSavedPreferences.Zoom);
+        Assert.Null(host.LastSavedPreferences.Direction);
+
+        viewModel.VerticalDirection = true;
+        await viewModel.SaveReadingPreferencesAsync();
+        Assert.Equal("vertical", host.LastSavedPreferences!.Direction);
+        Assert.Null(host.LastSavedPreferences.Mode);
+    }
+
 }
