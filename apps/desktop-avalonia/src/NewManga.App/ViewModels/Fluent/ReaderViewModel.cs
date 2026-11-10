@@ -65,7 +65,18 @@ public sealed class ReaderViewModel : FluentViewModel
     public double Zoom { get => _zoom; private set => Set(ref _zoom, Math.Clamp(value, 0.2, 5)); }
     public bool IsFullScreen { get => _isFullScreen; set => Set(ref _isFullScreen, value); }
     public bool DoublePage { get => _doublePage; set => Set(ref _doublePage, value); }
-    public bool ReverseDirection { get => _reverseDirection; set => Set(ref _reverseDirection, value); }
+    public bool ReverseDirection
+    {
+        get => _reverseDirection;
+        set
+        {
+            if (value)
+            {
+                VerticalDirection = false;
+            }
+            Set(ref _reverseDirection, value);
+        }
+    }
     public string Layout { get => _layout; set => Set(ref _layout, value); }
     public byte[]? PageBytes { get => _pageBytes; private set => Set(ref _pageBytes, value); }
 
@@ -111,10 +122,25 @@ public sealed class ReaderViewModel : FluentViewModel
     private (string Mode, string Direction, double Zoom, bool DoublePage, string Layout)? _appliedPreferences;
 
     /// <summary>FEA-14-READ-2: reading content mode (original/translated).</summary>
-    public string Mode { get => _mode; set => Set(ref _mode, value); }
+    public string Mode
+    {
+        get => _mode;
+        set => Set(ref _mode, value is "original" or "translated" ? value : "original");
+    }
 
     /// <summary>FEA-14-READ-2: vertical reading direction (webtoon); mutually exclusive with RTL.</summary>
-    public bool VerticalDirection { get => _verticalDirection; set => Set(ref _verticalDirection, value); }
+    public bool VerticalDirection
+    {
+        get => _verticalDirection;
+        set
+        {
+            if (value)
+            {
+                ReverseDirection = false;
+            }
+            Set(ref _verticalDirection, value);
+        }
+    }
 
     /// <summary>FEA-14-READ-2 (PREQ P9): apply the stored per-book preferences.</summary>
     public async Task ApplyReadingPreferencesAsync(CancellationToken cancellationToken = default)

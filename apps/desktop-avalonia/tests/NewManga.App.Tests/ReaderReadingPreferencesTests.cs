@@ -137,4 +137,26 @@ public sealed class ReaderReadingPreferencesTests
         Assert.Null(host.LastSavedPreferences.Mode);
     }
 
+
+
+    [Fact]
+    public void ReadingPropertiesEnforceDomainAndExclusion()
+    {
+        var host = HostWithBook();
+        var viewModel = new ReaderViewModel(host);
+
+        viewModel.Mode = "bogus";
+        Assert.Equal("original", viewModel.Mode);
+        viewModel.Mode = "translated";
+        Assert.Equal("translated", viewModel.Mode);
+
+        viewModel.VerticalDirection = true;
+        Assert.True(viewModel.VerticalDirection);
+        Assert.False(viewModel.ReverseDirection);
+
+        viewModel.ReverseDirection = true;
+        Assert.True(viewModel.ReverseDirection);
+        Assert.False(viewModel.VerticalDirection);
+    }
+
 }

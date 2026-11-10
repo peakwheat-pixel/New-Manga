@@ -3,20 +3,20 @@ id: FEA-14-READ-2
 title: FEA-14 切片 READ-2：Fluent Reader UI 接线（偏好/书签/整书进度/reset 确认）
 kind: implementation
 governance_version: 3
-status: in_review
+status: closed_with_limitations
 approval: **DSH 2026-11-10 冻结**（READ-1 收口遗留：AC1–AC3 的 Fluent UI 层；`ADJ-2026-11-10-FEA14-S5-SCOPE` §2.1）
 suggested_owner: dsh
 owner: dsh
-reviewer: null
+reviewer: r3 独立复核 approved（`doc/reviews/FEA-14-READ-2-r3.md`，P0/P1/P2=0；P3=3 已修/登记）
 depends_on:
   - FEA-14-READ-1
 base_commit: 034962ea7
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: bd6aa5246
+delivery_head: bd6aa5246
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-14-READ-2
 allowed_paths:
   - doc/tasks/FEA-14-READ-2.md
@@ -80,6 +80,14 @@ READ-1 已交付 Core schema v10、wire P9–P15 与 `IHostController` 七方法
 - **R2-002（P3，已修）**：`Mode`/`VerticalDirection` 改为可写（public set），提供用户修改路径。
 - **R2-003（P3，已补）**：新增 `ChangingModeOrVerticalSendsOnlyThatField`（改 Mode → 只发 Mode；改 VerticalDirection → Direction=vertical 且 Mode null）。
 
+
+## r3 复核与收口（2026-11-10）
+
+- r3：**approved**（P0/P1/P2=0，P3=3），报告 `doc/reviews/FEA-14-READ-2-r3.md`。
+- R3-001（P3，已处理）：日志重生并注明「生成于收口提交前工作树，basis HEAD=bd6aa5246」；App 全量注明未重跑。
+- R3-002（P3，已修）：`Mode` 值域（仅 original/translated）+ `VerticalDirection`/`ReverseDirection` 互斥（View 层约束）；新增 `ReadingPropertiesEnforceDomainAndExclusion` 测试。
+- R3-003（P3，已修）：README AC1 补 Mode/VerticalDirection 与 7 tests。
+
 ## 证据计划（L2）
 
 `verification/FEA-14-READ-2/`：`logs/`（App.Tests 定向/全量、门禁）、截图/NOT_RUN 声明（无交互会话则 NOT_RUN）、复现命令。
@@ -98,9 +106,12 @@ READ-1 已交付 Core schema v10、wire P9–P15 与 `IHostController` 七方法
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
 | EV-RD2-001 | READ-2 | `verification/FEA-14-READ-2/logs/dotnet-app-tests.log` | `-` | `2958f7b6a7e420bb5786c34b8a0ed13340a2ddb1aaa7843d41b63ef5b841845e` | CANONICAL |
-| EV-RD2-002 | READ-2 | `verification/FEA-14-READ-2/logs/reader-reading-prefs.log` | `-` | `81a1d57212d03d2ad5ab44c712027232f2b799369f9f45c9b521c2e32732d780` | CANONICAL |
-| EV-RD2-003 | READ-2 | `verification/FEA-14-READ-2/README.md` | `-` | `4214695f37a7ae21e57727fd883a73f25580385b2c80c76f42ea82a6139d8259` | CANONICAL |
+| EV-RD2-002 | READ-2 | `verification/FEA-14-READ-2/logs/reader-reading-prefs.log` | `-` | `8975130f6c6521db02e896f7fd37fcf6072a135970ed4bbff6d2b620b4e1135e` | CANONICAL |
+| EV-RD2-003 | READ-2 | `verification/FEA-14-READ-2/README.md` | `-` | `24f81162b214aabd50ed6aed05caedc6002c1fdc9a82430408dd8d9566265612` | CANONICAL |
 
 ## Closeout Record
 
-- 未开始（2026-11-10 scope 冻结，`ready`）。
+- 结论：**完成（带 limitation）**（2026-11-10）。r1（dirty partial 名不副实）/r2（证据不同步）/r3（View 约束）→ **r3 approved**（P0/P1/P2=0）。
+- 交付：ReaderViewModel 应用偏好（Mode/Zoom/DoublePage/rtl/vertical/Layout）、dirty-only partial 保存、书签 CRUD、整书进度 label、reset 确认；7 个 VM 测试、App 全量 873/0/11。
+- **Limitation（AC2/AC3 PARTIAL）**：书签面板/整书进度显示/reset 确认的**可见控件**未接线（VM 行为与测试已覆盖）→ 另立 UI 控件卡；真实 UI 手势/IME/多屏/DPI/主题/托盘、真实进程重启、可见 UI 截图 = NOT_RUN。
+- 门禁：check（默认 + TaskPath）PASS、pins 18/18、API `--check` EXIT 0；未改 Core/wire/契约/DDL；未 push。

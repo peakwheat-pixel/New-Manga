@@ -8,10 +8,10 @@
 
 | AC | 判别 | 结果 |
 |---|---|---|
-| AC1 偏好应用 | 打开书 → `GetReadingPreferencesAsync` 应用 mode/direction/zoom/doublePage/layout；修改后 partial 保存 | **MET（VM 层）**：`ReaderViewModel.LoadAsync` 后调用 `ApplyReadingPreferencesAsync`（应用 Zoom/DoublePage/ReverseDirection/Layout）；`SaveReadingPreferencesAsync` 发 `ReadingPreferencesPatch`（partial）；测试 `LoadAppliesStoredPreferencesAndBookProgress`、`SavePreferencesSendsThePartialPatch` |
+| AC1 偏好应用 | 打开书 → `GetReadingPreferencesAsync` 应用 mode/direction/zoom/doublePage/layout；修改后 partial 保存 | **MET（VM 层）**：`ReaderViewModel.LoadAsync` 后调用 `ApplyReadingPreferencesAsync`（应用 **Mode**/Zoom/DoublePage/ReverseDirection(rtl)/**VerticalDirection**(vertical)/Layout）；`SaveReadingPreferencesAsync` 发 `ReadingPreferencesPatch`（partial）；测试 `LoadAppliesStoredPreferencesAndBookProgress`、`SavePreferencesSendsThePartialPatch` |
 | AC2 书签 UI | 新增（left/right/both + note）/列表/删除 | **PARTIAL**：VM 层 `CreateBookmarkAsync`/`ListBookmarksAsync`/`DeleteBookmarkAsync` 完成并有往返测试；**可见按钮/列表面板未接线**（limitation） |
 | AC3 整书进度 UI | 显示 read_pages/total_pages/percent；finished 显示已读完；reset 确认 | **PARTIAL**：VM 层 `BookProgress`/`BookProgressLabel`（含「已读完」）与 `ResetReadingProgressAsync(confirm)` 完成（取消不调用；测试 `ResetRequiresExplicitConfirmation`）；**页面 TextBlock/按钮绑定未接线**（limitation） |
-| AC4 测试 | App.Tests 定向 | **MET**：`ReaderReadingPreferencesTests` **6 passed / 0 failed**（偏好应用、dirty-only partial、reset 确认、书签往返、mode/vertical 应用与保存） |
+| AC4 测试 | App.Tests 定向 | **MET**：`ReaderReadingPreferencesTests` **7 passed / 0 failed**（偏好应用、dirty-only partial、reset 确认、书签往返、mode/vertical 应用与保存） |
 | AC5 NOT_RUN | 真实 UI 手势/IME/多屏/DPI/主题/托盘、真实进程重启 | **MET（登记）**：见 NOT_RUN |
 | AC6 门禁与证据 | check PASS；无 Core/wire/契约/DDL diff；证据含 EXIT | **MET**：仅 App VM/测试改动；check（默认 + TaskPath）PASS |
 
@@ -19,8 +19,8 @@
 
 | 文件 | 内容 | EXIT |
 |---|---|---|
-| `logs/dotnet-app-tests.log` | App.Tests 全量 **873 passed / 0 failed / 11 skipped**（含 Reader 相关） | 0 |
-| `logs/reader-reading-prefs.log` | `ReaderReadingPreferencesTests` 6 passed | 0 |
+| `logs/dotnet-app-tests.log` | App.Tests 全量 **873 passed / 0 failed / 11 skipped**（生成于 r2 提交前工作树；final 未重跑，见 NOT_RUN） | 0 |
+| `logs/reader-reading-prefs.log` | `ReaderReadingPreferencesTests` 7 passed（生成于收口提交前工作树，basis HEAD=bd6aa5246） | 0 |
 
 ## limitation（不阻断 VM 层交付，阻 AC2/AC3 的可见 UI）
 
