@@ -83,18 +83,18 @@
   },
   "row_counts_conserved": true,
   "manual_backup": {
-    "backup_id": "cf0744d045db49a587a1d78e8d926838",
-    "path": "cf0744d045db49a587a1d78e8d926838.nmbak",
-    "size_bytes": 17629,
-    "created_at": "2026-11-10T04:29:39.542+00:00",
+    "backup_id": "097938fa332e4fc181aa1c604ca54b2a",
+    "path": "097938fa332e4fc181aa1c604ca54b2a.nmbak",
+    "size_bytes": 17628,
+    "created_at": "2026-11-10T04:33:58.886+00:00",
     "verified": true
   },
   "manual_backup_listing": [
     {
-      "backup_id": "cf0744d045db49a587a1d78e8d926838",
+      "backup_id": "097938fa332e4fc181aa1c604ca54b2a",
       "backup_type": "manual",
-      "created_at": "2026-11-10T04:29:39.542+00:00",
-      "size_bytes": 17629,
+      "created_at": "2026-11-10T04:33:58.886+00:00",
+      "size_bytes": 17628,
       "schema_version": 9,
       "verified": true,
       "database_id": null
@@ -140,7 +140,7 @@
   },
   "restore_result": {
     "status": null,
-    "pre_restore_backup_id": "14190f2926bb40f2bcca3b28bb306639",
+    "pre_restore_backup_id": "b3257d9d9795429eae26fcef58f78ed7",
     "pre_restore_listed": true
   },
   "restored_counts": {
@@ -183,7 +183,7 @@
   "rollback_result": {
     "status": null,
     "restored_backup_id": null,
-    "pre_restore_backup_id": "c999f4297d0d4f0b8128edba2f236e7d"
+    "pre_restore_backup_id": "9c889deb9d324d1f944f500f425a4392"
   },
   "rollback_counts": {
     "books": 1,
@@ -223,6 +223,23 @@
     "source_revision_lineage": 0
   },
   "rollback_restored_mutated_state": true,
+  "table_count": 35,
+  "schema_migrations_excluded": true,
+  "title": {
+    "before": "旧书",
+    "mutated": "旧书 [a4-mutated]",
+    "restored": "旧书",
+    "rollback": "旧书 [a4-mutated]"
+  },
+  "title_restored_is_before": true,
+  "title_rollback_is_mutated": true,
+  "managed_digest": {
+    "before": "a710caee705fd515ebe8866afceafdaf0e4bf31e6ae27a241e9b87198cf63278",
+    "restored": "a710caee705fd515ebe8866afceafdaf0e4bf31e6ae27a241e9b87198cf63278",
+    "rollback": "a710caee705fd515ebe8866afceafdaf0e4bf31e6ae27a241e9b87198cf63278"
+  },
+  "managed_restored_matches_before": true,
+  "managed_rollback_matches_mutated": true,
   "real_appdata": {
     "before": {
       "data_root": {

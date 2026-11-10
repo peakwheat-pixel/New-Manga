@@ -87,6 +87,14 @@ def ensure_managed_files(conn, managed_root: Path) -> int:
             target.write_bytes(b"A4-managed-fixture:" + ref.encode())
             created += 1
     return created
+
+def content_digest(root: Path) -> str:
+    """Path+content SHA-256 digest (mtime-independent) for managed-file comparisons."""
+    entries = []
+    for path in sorted(root.rglob("*")):
+        if path.is_file():
+            entries.append(f"{path.relative_to(root).as_posix()}|{hashlib.sha256(path.read_bytes()).hexdigest()}")
+    return hashlib.sha256("\n".join(entries).encode()).hexdigest()
 def table_counts(conn: sqlite3.Connection) -> dict:
     names = [
         row[0]
@@ -137,6 +145,9 @@ def main() -> int:
     routed = ThreadRoutedConnection(_open_plain)
     conn = routed
     managed_created = ensure_managed_files(conn, DATA / "managed")
+    managed_before = content_digest(DATA / "managed")
+    title_before = conn.execute("select title from books limit 1").fetchone()
+    title_before = title_before[0] if title_before is not None else None
     backup_service = NmbakBackupService(
         conn,
         backup_root=DATA / "backups",
@@ -154,14 +165,22 @@ def main() -> int:
         conn.commit()
         mutated = True
     mutated_counts = table_counts(conn)
+    title_mutated = conn.execute("select title from books limit 1").fetchone()
+    title_mutated = title_mutated[0] if title_mutated is not None else None
 
     restored = backup_service.restore(manual["backup_id"], confirm_restore=True)
     pre_restore_id = restored.get("pre_restore_backup_id")
     restored_counts = table_counts(conn)
+    title_restored = conn.execute("select title from books limit 1").fetchone()
+    title_restored = title_restored[0] if title_restored is not None else None
+    managed_restored = content_digest(DATA / "managed")
     backups_after_restore = backup_service.list_backups()
 
     rollback = backup_service.restore(pre_restore_id, confirm_restore=True)
     rollback_counts = table_counts(conn)
+    title_rollback = conn.execute("select title from books limit 1").fetchone()
+    title_rollback = title_rollback[0] if title_rollback is not None else None
+    managed_rollback = content_digest(DATA / "managed")
     backups_after_rollback = backup_service.list_backups()
     after = {"data_root": fingerprint(real_data), "theme_root": fingerprint(real_theme)}
 
@@ -192,6 +211,14 @@ def main() -> int:
         },
         "rollback_counts": rollback_counts,
         "rollback_restored_mutated_state": rollback_counts == mutated_counts,
+        "table_count": len(legacy_counts),
+        "schema_migrations_excluded": True,
+        "title": {"before": title_before, "mutated": title_mutated, "restored": title_restored, "rollback": title_rollback},
+        "title_restored_is_before": title_restored == title_before,
+        "title_rollback_is_mutated": title_rollback == title_mutated,
+        "managed_digest": {"before": managed_before, "restored": managed_restored, "rollback": managed_rollback},
+        "managed_restored_matches_before": managed_restored == managed_before,
+        "managed_rollback_matches_mutated": managed_rollback == managed_restored,
         "real_appdata": {
             "before": before,
             "after": after,
@@ -205,6 +232,10 @@ def main() -> int:
         "pre_restore_listed": result["restore_result"]["pre_restore_listed"],
         "rollback_restored_mutated_state": result["rollback_restored_mutated_state"],
         "real_appdata_unchanged": result["real_appdata"]["unchanged"],
+        "table_count": result["table_count"],
+        "title_restored_is_before": result["title_restored_is_before"],
+        "title_rollback_is_mutated": result["title_rollback_is_mutated"],
+        "managed_restored_matches_before": result["managed_restored_matches_before"],
     }, ensure_ascii=False))
     ok = (
         migrated_schema == latest
@@ -212,6 +243,10 @@ def main() -> int:
         and result["restore_result"]["pre_restore_listed"]
         and result["rollback_restored_mutated_state"]
         and result["real_appdata"]["unchanged"]
+        and result["title_restored_is_before"]
+        and result["title_rollback_is_mutated"]
+        and result["managed_restored_matches_before"]
+        and result["managed_rollback_matches_mutated"]
     )
     return 0 if ok else 1
 

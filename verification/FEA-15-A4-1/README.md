@@ -8,9 +8,9 @@
 
 | AC | 判别 | 结果 |
 |---|---|---|
-| AC1 隔离旧库升级 | 旧库（v8）→ 当前 schema（v9）；34 张业务表行数守恒；真实 %APPDATA% 不变 | **MET**：legacy_schema=8 → migrated_schema=9（applied `[9]`）；`row_counts_conserved=true`（books/chapters/pages/artifact_revisions/regions/pipeline_runs/reading_progress/export_history 等 34 表逐表一致）；真实双根 digests 前后一致 |
+| AC1 隔离旧库升级 | v8→v9；**35 张业务表**（排除 schema_migrations）行数守恒；真实 %APPDATA% 不变 | **MET**：legacy_schema=8 → migrated_schema=9（applied `[9]`）；`row_counts_conserved=true`（**35 表**逐表一致；`schema_migrations` 因迁移自身新增行而排除）；**直接调用生产 `MigrationRunner`（不启动 App——A3 已证明 `window-material.log` 会写真实根）**；真实双根 digests 前后一致 |
 | AC2 备份 | 隔离根内创建备份包（size/sha256/schema/verified） | **MET**：manual `cf0744d0…`，17,629 B，`schema_version=9`，`verified=true`；`list_backups` 可见 |
-| AC3 恢复 + pre_restore | 恢复备份 → 自动生成 `pre_restore` 包且可读 | **MET**：restore 后 `pre_restore_backup_id=14190f29…` 且 `list_backups` 列出；恢复后 34 表 counts 一致 |
+| AC3 恢复 + pre_restore | 恢复备份 → 自动生成 `pre_restore` 包且可读；数据与备份一致 | **MET**：restore 后 `pre_restore_backup_id=14190f29…` 且 `list_backups` 列出；35 表 counts 一致；`title_restored_is_before=true`（恢复后 title 回到备份时值） |
 | AC4 回退 | 用 `pre_restore` 恢复到恢复前状态；数据一致 | **MET**：`restore(pre_restore)` 再生成 `pre_restore c999f42…`；`rollback_counts == mutated_counts`（回退恢复到修改后状态）；受保护内容（managed fixture 文件）随包校验 |
 | AC5 NOT_RUN | 真实用户库/跨机/交互恢复 UI | **MET（登记）**：见 NOT_RUN |
 | AC6 门禁与证据 | check PASS；无产品代码/契约/DDL diff；证据含 EXIT | **MET**：`logs/`（drill/pytest）、`a4-result.json`；check（默认 + TaskPath）PASS |
@@ -28,7 +28,7 @@
 
 - **真实用户库升级**：使用合成 v8 旧库（项目自身迁移定义 + seed 数据），未使用真实用户库副本。
 - **跨机恢复**（DPAPI CurrentUser 限制）：NOT_RUN（A2/A3 既有登记继续有效）。
-- **交互式恢复 UI**：NOT_RUN（未启动真实 UI 会话；Host 入口仅由既有测试覆盖）。
+- **交互式恢复 UI**：NOT_RUN（未启动真实 UI 会话；Host 入口仅由既有测试覆盖）。\n- **managed 文件为合成 fixture**：`ensure_managed_files` 按旧库 seed 的 `managed_original_ref`/`managed_path` 写入 `A4-managed-fixture:` 前缀字节，**不是真实用户 managed 原图**；仅用于验证备份/恢复/回退的路径与内容一致性，不冒充真实内容。
 - 恢复/回退的返回 dict 键名（`status`/`restored_backup_id`）在当前实现为空，关键断言使用 `pre_restore_backup_id` 与 `list_backups`（已注明，不冒充完整投影）。
 
 ## 复现

@@ -34,3 +34,9 @@ EXIT=1
 === retry3 (exclude schema_migrations) 2026-11-10T12:29:39.1342612+08:00 ===
 {"migrated_schema": 9, "row_counts_conserved": true, "pre_restore_listed": true, "rollback_restored_mutated_state": true, "real_appdata_unchanged": true}
 EXIT=0
+=== r1 fix rerun 2026-11-10T12:33:50.0126445+08:00 ===
+{"migrated_schema": 9, "row_counts_conserved": true, "pre_restore_listed": true, "rollback_restored_mutated_state": true, "real_appdata_unchanged": true, "table_count": 35, "title_restored_is_before": true, "title_rollback_is_mutated": true, "managed_restored_matches_before": false}
+EXIT=1
+=== r1 fix2 (content digest) 2026-11-10T12:33:58.4731291+08:00 ===
+{"migrated_schema": 9, "row_counts_conserved": true, "pre_restore_listed": true, "rollback_restored_mutated_state": true, "real_appdata_unchanged": true, "table_count": 35, "title_restored_is_before": true, "title_rollback_is_mutated": true, "managed_restored_matches_before": true}
+EXIT=0
