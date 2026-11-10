@@ -58,7 +58,6 @@ READY 节点：无
 ## 历史快照（终态节点，非当前 DAG）
 
 已终止节点 370+ 项（明细见 [TASK_LEDGER](TASK_LEDGER.md) 与各 Task 卡）。仍影响当前决策的终态约束：
-
 - WORKSPACE-CONSOLIDATION-1：closed_with_limitations（r212），18 项受保护资源；不得清理/GC/prune。
 - WORKSPACE-CLEANUP-TOOL-HARDENING-1 done（`368c07809`）；DECLARATION-REMEDIATION-1 done（`bb7887442`），残余 fail-closed；不因工具修复获得删除授权。
 - 冻结 DAG 完整源：`fdca2057e:doc/REBASELINE_PLAN.md`（SHA-256 `1d2c83431273512787e58037260f1b27a2a0c3dab01e921e167fd6b51cf16ed7`）。
