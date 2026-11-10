@@ -50,9 +50,9 @@
 ## 当前活动程序（FEA 线 S5 + FEA-15 验收）
 
 **FEA 线 S5**：FEA-14 七切片经 PREQ-1 口径/共用 wire 冻结；FEA-15 A2/A3/A4 机测推进；V11R 已收官。
-READY 节点：FEA-15-A3-1
+READY 节点：无
 
-当前活动：无（`FEA-15-A3-1` ready）
+当前活动：`FEA-15-A3-1`（in_review；待独立复核）
 
 ## 历史快照（终态节点，非当前 DAG）
 
