@@ -82,4 +82,4 @@ $summary=[ordered]@{
   license_copy_ok=$installJson.license_copy_ok
   generated_at_utc=[DateTime]::UtcNow.ToString('o')
 }
-$summary|ConvertTo-Json -Depth 4|Set-Content $Out -Encoding utf8; $summary|ConvertTo-Json -Compress
+$summary|ConvertTo-Json -Depth 6|Set-Content $Out -Encoding utf8; $summary|ConvertTo-Json -Depth 6 -Compress
