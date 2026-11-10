@@ -15,7 +15,7 @@ branch: main
 worktree: G:/CODEX/New Manga
 integration_commit: null
 delivery_head: null
-canonical_evidence_status: pending
+canonical_evidence_status: complete
 resource_closeout_status: pending
 evidence_dir: verification/FEA-15-ACCEPT-1
 allowed_paths:
@@ -52,12 +52,12 @@ FEA-14 S5 七切片（SET/PREQ/EXPORT/READ/FONT/LIB/EDIT/AI 相关实现卡）�
 
 ## Acceptance Criteria
 
-- [ ] **AC1 A1/A5/A6 复核**：干净构建、全量基线、18 pins 三项给出复核时点与 EXIT；与本卡 head 一致或说明差异。 <<PENDING>>
-- [ ] **AC2 A2 安装**：安装产物存在则实测安装/启动/四页可达；不存在则 NOT_RUN + 缺口登记（含缺失的打包交付物）。 <<PENDING>>
-- [ ] **AC3 A3/A4 真实层**：双入口冒烟与旧库升级/回退的真实层证据；不可得项 NOT_RUN 并给出可用替代证据（App/Host 测试层、FEA-13 五片）。 <<PENDING>>
-- [ ] **AC4 A7 汇总与矩阵**：七切片状态/limitation/NOT_RUN 汇总进 `FEA-15-INTEGRATION-ACCEPTANCE.md`，矩阵状态列更新。 <<PENDING>>
-- [ ] **AC5 结论与门禁**：验收结论（通过/带 limitation/不通过）+ `check.ps1`（默认 + `-TaskPath`）+ pins；diff ⊆ allowed_paths。 <<PENDING>>
-- [ ] **AC6 证据**：`verification/FEA-15-ACCEPT-1/` 日志含 EXIT/时点；NOT_RUN 如实登记。 <<PENDING>>
+- [ ] **AC1 A1/A5/A6 复核**：干净构建、全量基线、18 pins 三项给出复核时点与 EXIT；与本卡 head 一致或说明差异。 <<PARTIAL: 构建和 pins PASS；pytest 与 .NET 全量 EXIT 1，部分失败根因仍待诊断>>
+- [x] **AC2 A2 安装**：安装产物存在则实测安装/启动/四页可达；不存在则 NOT_RUN + 缺口登记（含缺失的打包交付物）。 <<MET>>
+- [x] **AC3 A3/A4 真实层**：双入口冒烟与旧库升级/回退的真实层证据；不可得项 NOT_RUN 并给出可用替代证据（App/Host 测试层、FEA-13 五片）。 <<MET>>
+- [x] **AC4 A7 汇总与矩阵**：七切片状态/limitation/NOT_RUN 汇总进 `FEA-15-INTEGRATION-ACCEPTANCE.md`，矩阵状态列更新。 <<MET>>
+- [ ] **AC5 结论与门禁**：验收结论（通过/带 limitation/不通过）+ `check.ps1`（默认 + `-TaskPath`）+ pins；diff ⊆ allowed_paths。 <<PARTIAL: 验收结论和最终审查由 ZCode 独立会话裁决；最终门禁待固定交付 head 后复核>>
+- [x] **AC6 证据**：`verification/FEA-15-ACCEPT-1/` 日志含 EXIT/时点；NOT_RUN 如实登记。 <<MET>>
 
 ## 证据计划（L2）
 
@@ -81,14 +81,21 @@ FEA-14 S5 七切片（SET/PREQ/EXPORT/READ/FONT/LIB/EDIT/AI 相关实现卡）�
 | build | `G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree\apps\desktop-avalonia` | PRESERVE_REFERENCED | — | — | Release 构建产物，暂供复核 |
 | worktree | `G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree` | PRESERVE_REFERENCED | — | — | detached `d63d735a712dbe47100db2e72b4d59a73dfd1f62`；主树为任务写入树，不执行清理 |
 | runtime ACL | `C:\Python314\python.exe`、`C:\Python314` | PRESERVE_UNKNOWN | — | `verification/FEA-15-ACCEPT-1/python-acl-observation.log` | 插件测试会尝试授予 AppContainer 权限；无运行前 ACL 快照，新增项与归属不明，不擅自撤销 |
+| AppContainer profile | 当前用户 profile（测试涉及的插件 profile） | PRESERVE_UNKNOWN | — | — | 测试可创建或复用；无事前清单，不推断新增项，不清理 |
 
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
+| EV-01 | AC1/A1 | `verification/FEA-15-ACCEPT-1/build.log` | `8cad6d68c1e455c087a20346c9b1c0217bef129e` | `afb50adff42c1417c0a1a15cec693b15204d7b7d7d4d1417ea0c2bd8abf9ae90` | CANONICAL |
+| EV-02 | AC1/A5、AC6 | `verification/FEA-15-ACCEPT-1/pytest-full-retry.log` | `8cad6d68c1e455c087a20346c9b1c0217bef129e` | `3f2fe9639e3f349af6f57cd4c4d54da536f655a3b7ed44306cb70136435ccb0b` | CANONICAL |
+| EV-03 | AC1/A5、AC3 | `verification/FEA-15-ACCEPT-1/dotnet-full.log` | `8cad6d68c1e455c087a20346c9b1c0217bef129e` | `593aac3963b8c2e5fbb857ceab0f1ee6e82fa2d29cf6931d45240029a0f42c70` | CANONICAL |
+| EV-04 | AC1/A6、AC2、AC3、AC5、AC6 | `verification/FEA-15-ACCEPT-1/README.md` | `b7344445e3abc520c4d03fcb642b97880fe47738` | `fb83fda733f031e6ff2672a42c6b42b4445677c26afd9b917b1f62244904c77c` | CANONICAL |
+| EV-05 | AC2、AC3、AC4 | `doc/plan/FEA-15-INTEGRATION-ACCEPTANCE.md` | `b7344445e3abc520c4d03fcb642b97880fe47738` | `e60dfcaf686fa4955c870c5ea64d0f31ff8e5bf7b9b93350f55b79d4ea773ddb` | CANONICAL |
 
 ## Closeout Record
 
 - 2026-11-10 scope 冻结（`ready`）。未开始。
 - 2026-11-10 Codex 认领（`in_progress`），ZCode 独立会话 `sess_2a802094-24f6-4254-9bfa-33cad3a6bf4e` 裁决；主树串行，执行基线 `164ebabcfa90b92fc46c07238280960fc01f7423`。冻结范围不变。
 - 2026-11-10 验证进行中：隔离 Release 构建 0 警告/0 错误 EXIT 0；pytest 全量 3515 passed/16 failed/12 skipped EXIT 1；.NET 八项目中 App 与 Host 失败、整体 EXIT 1。日志、隔离限制与 NOT_RUN 见 `verification/FEA-15-ACCEPT-1/README.md`；失败及下一步已交 ZCode 独立会话裁决，未作验收通过结论。
+- 2026-11-10 补充证据：四项 App 仓库定位对照 4/4；Host 两项对照 1/1，ACL 异常仍存；专用 venv 插件对照 6 passed/10 failed；legacy/Fluent 仅隐藏进程级 EXIT 0，可见窗口与页面交互 NOT_RUN。现有结论为全量基线未满足、归因部分未定，最终验收结论待上下文独立 Review 与 ZCode 裁决。
