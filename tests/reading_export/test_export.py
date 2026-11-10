@@ -205,8 +205,10 @@ def test_default_policy_never_replaces_an_existing_target(tmp_path, service, pag
     # FEA-14-EXPORT-1 AC1: no explicit policy means AUTO_RENAME, never replacement.
     target = tmp_path / "default.zip"
     target.write_bytes(b"OLD")
+    before_mtime = target.stat().st_mtime_ns
     result = service.export(_request(tmp_path, pages, output_path=target))
     assert target.read_bytes() == b"OLD", "the existing user file must stay byte-identical"
+    assert target.stat().st_mtime_ns == before_mtime, "the existing user file must not be touched"
     assert result.status.value == "completed"
     assert result.output_path is not None and result.output_path != target
     assert result.output_path.name == "default (1).zip"
@@ -326,6 +328,49 @@ def test_cancel_before_replace_publishes_nothing(tmp_path, service, pages):
     # FEA-14-EXPORT-1 AC4: cancellation must not publish the auto-renamed target either.
     assert not (tmp_path / "cancelled (1).zip").exists(), "cancelled export left a new file"
     assert service.history()[0].status == "cancelled"
+
+
+def test_runtime_publishes_the_auto_renamed_path_without_touching_the_minted_target(
+    tmp_path, service, pages,
+):
+    # FEA-14-EXPORT-1 R-001: the P16 runner must publish to the AUTO_RENAME path. The minted
+    # target (which HostIssuer may have minted with replace_existing=True in a TOCTOU window)
+    # must keep its old bytes; the completed snapshot/history point at the renamed file.
+    import time
+
+    from application.export import JsonHistoryDocumentStore
+    from application.export.service import P16ExportRuntime
+    from infrastructure.export.jobs import JsonExportJobStore
+    from infrastructure.export.target_refs import ResolvedExportTarget
+
+    target = tmp_path / "runtime.zip"
+    target.write_bytes(b"OLD")
+    runtime = P16ExportRuntime(
+        service,
+        JsonHistoryDocumentStore(tmp_path / "runtime-history.json"),
+        JsonExportJobStore(tmp_path / "runtime-jobs.json"),
+    )
+    started = runtime.start(
+        _request(tmp_path, pages, output_path=target),
+        ResolvedExportTarget(target, replace_existing=True),
+    )
+    export_id = started["export_id"]
+    snapshot = runtime.snapshot(export_id)
+    deadline = time.time() + 10
+    while time.time() < deadline and snapshot.get("status") not in (
+        "completed", "failed", "cancelled", "skipped",
+    ):
+        time.sleep(0.02)
+        snapshot = runtime.snapshot(export_id)
+
+    assert snapshot["status"] == "completed", snapshot
+    renamed = tmp_path / "runtime (1).zip"
+    assert target.read_bytes() == b"OLD", "the minted target must never be overwritten"
+    assert renamed.exists() and renamed.stat().st_size > 0
+    assert snapshot["output"]["output_path"] == str(renamed)
+    record = runtime.history()[0]
+    assert record["output_path"] == str(renamed)
+    assert record["status"] == "completed"
 
 
 def test_failure_mid_export_keeps_old_target_and_records_failed(tmp_path, service, pages):

@@ -324,8 +324,15 @@ class ExportService:
                 return result
 
         temp_path: Path | None = None
+        # FEA-14-EXPORT-1 (R-001): an AUTO_RENAME target resolves to a sibling the minted
+        # target never named. The minted target-context revalidates that original path and
+        # would reject the correctly published sibling, so it is skipped for the renamed
+        # case; _publish_to revalidates the authorized parent for the sibling instead.
+        target_context = request.target_context
+        if target_context is not None and os.path.normcase(str(target.path)) != os.path.normcase(str(request.output_path)):
+            target_context = None
         try:
-            with request.target_context() if request.target_context else nullcontext():
+            with target_context() if target_context else nullcontext():
                 temp_path = _new_temp(target.path)
                 file_hash = self._write_content(temp_path, request)
                 self._check_cancel(request)
@@ -758,6 +765,25 @@ def _comic_info_xml(request: ExportRequest) -> str:
     return '<?xml version="1.0" encoding="utf-8"?>\n' + ET.tostring(root, encoding="unicode")
 
 
+def _publish_to(final_path: Path, temp: Path, target) -> None:
+    """Publish the staged file to the resolved export path (FEA-14-EXPORT-1 R-001).
+
+    When the resolved path is the authorized target itself, keep the target's own
+    publish (it revalidates the parent handle and the final entry). An AUTO_RENAME
+    sibling must stay in the same authorized parent and must not already exist, so
+    the renamed publish can never land on an existing user file.
+    """
+    authorized_parent = target.path.parent
+    if os.path.normcase(str(final_path)) == os.path.normcase(str(target.path)):
+        target.publish(temp)
+        return
+    if os.path.normcase(str(final_path.parent)) != os.path.normcase(str(authorized_parent)):
+        raise ExportError(f"auto-rename target left the authorized folder: {final_path}")
+    if final_path.exists():
+        raise ExportError(f"auto-rename target already exists: {final_path}")
+    os.replace(temp, final_path)
+
+
 class P16ExportRuntime:
     """Durable progress/event wrapper around the existing atomic exporter."""
 
@@ -834,7 +860,8 @@ class P16ExportRuntime:
                 on_page_complete=lambda page_id: self._page_completed(export_id, page_id),
                 before_publish=lambda: self._check_before_publish(cancel),
                 target_context=target.hold_parent,
-                publish_temp=lambda temp, _target: self._publish_and_mark(export_id, temp, target, cancel),
+                publish_temp=lambda temp, resolved: self._publish_and_mark(
+                    export_id, temp, target, resolved, cancel),
             )
             thread = threading.Thread(
                 target=self._run, args=(export_id, request, cancel),
@@ -972,7 +999,9 @@ class P16ExportRuntime:
         if cancel.is_set():
             raise ExportCancelledError("export cancelled before publication")
 
-    def _publish_and_mark(self, export_id: str, temp: Path, target, cancel: threading.Event) -> None:
+    def _publish_and_mark(
+        self, export_id: str, temp: Path, target, resolved: Path, cancel: threading.Event,
+    ) -> None:
         # Serialize the last cancellation check, atomic replace and durable
         # publishing snapshot so CancelExport observes exactly one side of
         # the publication boundary.
@@ -982,22 +1011,23 @@ class P16ExportRuntime:
             job = self._find(export_id)
             if job is None:
                 raise RuntimeError("export job disappeared before publication")
+            final_path = Path(resolved)
             expected_hash = _hash_file(temp)
             job["publication_intent"] = {
-                "path": str(target.path), "sha256": expected_hash,
+                "path": str(final_path), "sha256": expected_hash,
                 "staging_path": str(temp),
             }
             self._job_store.write(self._jobs)
-            target.publish(temp)
+            _publish_to(final_path, temp, target)
             output = job["history"]
             fmt = output["format"]
             snapshot = job["snapshot"]
             snapshot.update(
                 status="publishing", current_page_id=None,
-                output={"format": fmt, "output_path": str(target.path), "sha256": expected_hash},
+                output={"format": fmt, "output_path": str(final_path), "sha256": expected_hash},
             )
             output["status"] = "publishing"
-            output["output_path"] = str(target.path)
+            output["output_path"] = str(final_path)
             output["sha256"] = snapshot["output"]["sha256"]
             self._job_store.write(self._jobs)
             event = {

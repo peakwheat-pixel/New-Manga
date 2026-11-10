@@ -65,6 +65,16 @@ out_of_scope:
 4. **取消保留成功文件**：取消时已完成页/已成功文件保留（typed 报告完成数量，不静默删除）；补可判别测试。
 5. 零 DDL、零新 wire、旧签名不变。
 
+## r1 处置记录（2026-11-10，对 `863d1b4f5` 的 changes_requested；报告 `doc/reviews/FEA-14-EXPORT-1-r1.md`）
+
+- **R-001（P1，已修）**：`P16ExportRuntime` 的 `publish_temp` 曾忽略 AUTO_RENAME 解析路径、仍发布到 mint 的 target（旧文件被覆盖）。修复：发布统一走 `_publish_to(resolved, temp, target)`（同父目录 + 目标不存在校验）；AUTO_RENAME 时跳过 mint target-context；新增 runner 级回归测试。
+- **R-002（P2，已补）**：新增源码顺序接线测试（policy 先于 mint）；行为由 `ExportPathPolicyTests` 覆盖；真实 Host+Core E2E 仍 NOT_RUN。
+- **R-003（P2，口径修正）**：AC4 判据改为「不产生/不破坏文件 + typed cancelled」——单文件原子发布无部分成功文件语义，原「保留成功文件/报告完成数」表述不适用。
+- **R-004（P2，缓解）**：R-001 修复后发布落点由 `_resolve_target`（默认 AUTO_RENAME）决定，mint 的 `replace_existing=true` 不再导致覆盖。
+- **R-005（P3，已修）**：当前页未定位时提示「已回退为整章导出」。
+- **R-006（P2，已说明）**：`pytest-full.log` 保留首轮失败与修复后全量两段；m2_acceptance 测试显式传 `OVERWRITE` 以保其历史证据语义（本卡默认值变更所致）。
+- **R-007（P3，已修）**：README 修正 base/实现提交与 logs provenance；**R-008（P3，已修）** 输出路径不重复；**R-009（P3，已补）** mtime 断言 + runner 边界（mint 时 target 存在、`replace_existing=true`）。
+
 ## Scope 变更记录（2026-11-10，DSH）
 
 - **allowed_paths 追加**：`src/bootstrap/core_service.py`（Core StartExport 构造显式传 `AUTO_RENAME`，第二层防护）、`apps/desktop-avalonia/src/NewManga.App/Views/ReaderWorkbenchPages.cs`（把阅读器当前页 id 传给导出面板）。两者都是 AC1/AC3 的最小实现点，不扩产品面。
@@ -83,7 +93,7 @@ out_of_scope:
 - [x] **AC1 默认不覆盖**：同名目标已存在时，默认策略导出生成新文件名（auto-rename），既有文件字节/mtime 不变；`overwrite_policy` 默认值为 `AUTO_RENAME`（Core 单测）。 <<MET>>
 - [x] **AC2 Host 冲突计划**：`StartExportAsync` 目标已存在 → 不覆盖、最终输出路径可读回；Host 测试覆盖（含路径已存在/不存在两分支）。 <<MET>>
 - [x] **AC3 scope 三档与顺序预览**：`ExportPanel` 显示三种 scope 与按 `orderedPageIds` 的顺序预览；UI 测试断言文本/顺序与请求一致（headless）。 <<MET>>
-- [x] **AC4 取消保留成功文件**：取消后已完成文件保留且报告完成数；Core 测试断言取消不删除已落盘成功文件、typed 状态为 cancelled。 <<MET>>
+- [x] **AC4 取消保护**：取消不发布新文件、既有目标字节/mtime 不变、history/snapshot 为 cancelled（单文件原子发布，无「部分成功文件」语义）。 <<MET>>
 - [x] **AC5 零 wire/零 DDL/旧签名**：`git diff` 不含 `IHostController.cs` 签名变更（或仅注释）、不含 `schema.py`；`generate_api_inventory.py --check` EXIT 0（代码实测仍 1/54/6=61）；`verify_pins` 18/18。 <<MET>>
 - [x] **AC6 门禁与证据**：`check.ps1`（默认 + `-TaskPath`）PASS；定向/全量测试通过；`verification/FEA-14-EXPORT-1/` 含日志（含 EXIT）与 NOT_RUN 声明。 <<MET>>
 
@@ -116,12 +126,12 @@ out_of_scope:
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
 | EV-EX1-001 | AC1-AC6 | `verification/FEA-14-EXPORT-1/logs/api-inventory.log` | `-` | `2245baa2a0ef67e32d2f0657446801f7abef27e775702c9b380e109953aa5097` | CANONICAL |
-| EV-EX1-002 | AC1-AC6 | `verification/FEA-14-EXPORT-1/logs/dotnet-app-tests.log` | `-` | `803b4da685970545cf5656d3e1bf0b0d42e00db1f0dfbf4a3f24a40160c90705` | CANONICAL |
-| EV-EX1-003 | AC1-AC6 | `verification/FEA-14-EXPORT-1/logs/dotnet-export-tests.log` | `-` | `c15be75e67d2454808acd7c88129640c8716b2db3dbd7e9971dd1bf5f7d60ea0` | CANONICAL |
+| EV-EX1-002 | AC1-AC6 | `verification/FEA-14-EXPORT-1/logs/dotnet-app-tests.log` | `-` | `2075dc7bea84c93ac7624b2c5ab409f7aef23d31e127714eb3c3b539d5c10b42` | CANONICAL |
+| EV-EX1-003 | AC1-AC6 | `verification/FEA-14-EXPORT-1/logs/dotnet-export-tests.log` | `-` | `79bf469ff03f019a525f84bf282922f2592aa95b7193e866fddc3416d12204fd` | CANONICAL |
 | EV-EX1-004 | AC1-AC6 | `verification/FEA-14-EXPORT-1/logs/gates-check.log` | `-` | `027b714c43833229e0373aa0f6d608bf7a65154c26aaef486c82e2893b4a4614` | CANONICAL |
 | EV-EX1-005 | AC1-AC6 | `verification/FEA-14-EXPORT-1/logs/gates-pins.log` | `-` | `97e550f7f1a5660ac2f727f549971239b69e555510243edbb0da8206b2224314` | CANONICAL |
-| EV-EX1-006 | AC1-AC6 | `verification/FEA-14-EXPORT-1/logs/pytest-full.log` | `-` | `2d57613870dbf9a8ddfb384798453766ece65f4d384ef9f980be4cc51af68eb1` | CANONICAL |
-| EV-EX1-007 | AC1-AC6 | `verification/FEA-14-EXPORT-1/README.md` | `-` | `cecd739171201aa912f1cc9c3c99851bf0d09a743ba228ee210928d1704cca61` | CANONICAL |
+| EV-EX1-006 | AC1-AC6 | `verification/FEA-14-EXPORT-1/logs/pytest-full.log` | `-` | `f4af756ae630ab6b84b4776e6822f44b05c78f4208c92e2eb190b3417a62fbe9` | CANONICAL |
+| EV-EX1-007 | AC1-AC6 | `verification/FEA-14-EXPORT-1/README.md` | `-` | `d050dbe13cad2759d8cde3731ac0b01b96b461dae174f32ea7a364e4d5f2759d` | CANONICAL |
 
 ## Closeout Record
 

@@ -630,6 +630,35 @@ public sealed class ExportPathPolicyTests
         }
     }
 
+    [Fact]
+    public void HostStartExportResolvesTheNameBeforeMintingTheTargetRef()
+    {
+        // R-002: the auto-rename must run before the Host mints the one-use target ref,
+        // otherwise a same-name file can be handed to the mint as replace_existing=true.
+        var source = File.ReadAllText(FindHostControllerSource());
+        var policy = source.IndexOf("ExportPathPolicy.NextFreeExportPath", StringComparison.Ordinal);
+        var mint = source.IndexOf("grants.StartExportAsync(request, effectiveTarget", StringComparison.Ordinal);
+        Assert.True(policy >= 0, "HostController must call ExportPathPolicy.NextFreeExportPath");
+        Assert.True(mint > policy, "the auto-rename must run before the target ref is minted");
+    }
+
+    private static string FindHostControllerSource()
+    {
+        var cursor = new DirectoryInfo(AppContext.BaseDirectory);
+        while (cursor is not null && !File.Exists(Path.Combine(cursor.FullName, "doc", "tasks", "FEA-06.md")))
+        {
+            cursor = cursor.Parent;
+        }
+
+        if (cursor is null)
+        {
+            throw new DirectoryNotFoundException("could not locate the New Manga repository root");
+        }
+
+        return Path.Combine(
+            cursor.FullName, "apps", "desktop-avalonia", "src", "NewManga.App", "Services", "HostController.cs");
+    }
+
     private static string CreateTempDirectory()
     {
         var path = Path.Combine(Path.GetTempPath(), "nm-export-path-" + Guid.NewGuid().ToString("N"));

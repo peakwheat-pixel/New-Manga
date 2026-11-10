@@ -502,6 +502,12 @@ public sealed class ExportPanel : Border
                 // no multi-select in the reader: fall back to the chapter scope with a notice.
                 _status.Text = "阅读器暂不支持多选；已回退为整章导出";
             }
+            else if (requested == 0 && !currentKnown)
+            {
+                // R-005: the reader did not report a current page; say so instead of silently
+                // exporting the whole chapter under the "current page" label.
+                _status.Text = "当前页未定位；已回退为整章导出";
+            }
 
             var scopePages = SelectedPageIds();
             _orderPreview.Text = scopePages.Count == 0
@@ -761,8 +767,11 @@ public sealed class ExportPanel : Border
 
         _cancel.IsEnabled = snapshot.IsActive;
         // FEA-14-EXPORT-1 (AC2): a completed export reports the actual (possibly auto-renamed)
-        // output path, so the user can see that an existing file was never replaced.
-        if (snapshot.State == ExportJobState.Completed && !string.IsNullOrWhiteSpace(snapshot.OutputPath))
+        // output path, so the user can see that an existing file was never replaced. Skip the
+        // suffix when the status line already contains that path (no duplicate path text).
+        if (snapshot.State == ExportJobState.Completed &&
+            !string.IsNullOrWhiteSpace(snapshot.OutputPath) &&
+            !_status.Text.Contains(snapshot.OutputPath, StringComparison.Ordinal))
         {
             _status.Text += $"\n输出：{snapshot.OutputPath}";
         }
