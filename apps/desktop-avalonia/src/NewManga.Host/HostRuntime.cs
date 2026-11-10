@@ -669,7 +669,7 @@ public sealed class HostRuntime : IAsyncDisposable
 
     /// <summary>FEA-14-LIB-1 (PREQ LIB P5): patch book display metadata.</summary>
     public async Task<bool> UpdateBookMetadataAsync(
-        string bookId, IReadOnlyDictionary<string, string> patch, CancellationToken cancellationToken = default)
+        string bookId, IReadOnlyDictionary<string, object?> patch, CancellationToken cancellationToken = default)
     {
         var core = CoreService ?? throw NotReady();
         return await core.UpdateBookMetadataAsync(bookId, patch, cancellationToken).ConfigureAwait(false);

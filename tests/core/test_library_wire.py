@@ -112,6 +112,20 @@ def test_library_wire_missing_book_is_typed_and_tags_replace(tmp_path):
     })
     assert replaced["error"] is None
     assert [tag.tag_id for tag in core.library.tags_of_book(book.book_id)] == [second.tag_id]
+    # R-02 (r2): unknown tag ids are typed and must not half-write text fields.
+    half = core.library.create_book("HalfWrite")
+    unknown_tag = _rpc(server, "UpdateBookMetadata", {
+        "book_id": half.book_id, "patch": {"title": "HalfWrite!", "tags": ["missing-tag"]},
+    })
+    assert unknown_tag["error"] is not None
+    assert unknown_tag["error"]["code"] == "TARGET_NOT_FOUND", unknown_tag["error"]
+    assert core.library.get_book(half.book_id).title == "HalfWrite"
+    # R-05 (r2): P5 text values are strings; no silent coercion.
+    non_string = _rpc(server, "UpdateBookMetadata", {
+        "book_id": half.book_id, "patch": {"title": 5},
+    })
+    assert non_string["error"] is not None
+    assert non_string["error"]["code"] == "INVALID_REQUEST", non_string["error"]
 
 
 def test_library_wire_empty_book_reorder_and_strict_types(tmp_path):
@@ -132,3 +146,12 @@ def test_library_wire_empty_book_reorder_and_strict_types(tmp_path):
         })
         assert response["error"] is not None, bad
         assert response["error"]["code"] == "INVALID_REQUEST", (bad, response["error"])
+    # P3 (r2): P7 text fields are strings only (same rule as P5).
+    p7_book = core.library.create_book("P7 Book")
+    p7_chapter = core.library.create_chapter(p7_book.book_id, "C")
+    for key in ("kind", "number", "title", "subtitle", "notes"):
+        non_string = _rpc(server, "UpdateChapterMetadata", {
+            "chapter_id": p7_chapter.chapter_id, "patch": {key: 5},
+        })
+        assert non_string["error"] is not None, key
+        assert non_string["error"]["code"] == "INVALID_REQUEST", (key, non_string["error"])

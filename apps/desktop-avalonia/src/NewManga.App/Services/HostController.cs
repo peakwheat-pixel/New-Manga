@@ -619,7 +619,7 @@ public sealed class HostController : IHostController, ISourceImportController, I
     }
 
     public async Task<bool> UpdateBookMetadataAsync(
-        string bookId, IReadOnlyDictionary<string, string> patch, CancellationToken cancellationToken = default)
+        string bookId, IReadOnlyDictionary<string, object?> patch, CancellationToken cancellationToken = default)
     {
         if (_runtime is null || !_runtime.Result.IsReady || string.IsNullOrWhiteSpace(bookId) || patch.Count == 0)
         {
@@ -639,7 +639,9 @@ public sealed class HostController : IHostController, ISourceImportController, I
     public async Task<bool> ReorderChaptersAsync(
         string bookId, IReadOnlyList<string> orderedChapterIds, CancellationToken cancellationToken = default)
     {
-        if (_runtime is null || !_runtime.Result.IsReady || string.IsNullOrWhiteSpace(bookId) || orderedChapterIds.Count == 0)
+        // R-13/P3 (r2): an empty list is the only encoding of "reorder an empty
+        // book" (Core no-op); do not reject it here, only a missing book id.
+        if (_runtime is null || !_runtime.Result.IsReady || string.IsNullOrWhiteSpace(bookId))
         {
             return false;
         }

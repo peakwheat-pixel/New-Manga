@@ -14,7 +14,7 @@ if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
 
 from application.library.service import LibraryService  # noqa: E402
-from application.library.errors import ChapterNotFound  # noqa: E402
+from application.library.errors import ChapterNotFound, TagNotFound  # noqa: E402
 from infrastructure.sqlite.library import SqliteLibraryRepository  # noqa: E402
 from infrastructure.sqlite.migrator import MigrationRunner, read_schema_version  # noqa: E402
 from infrastructure.sqlite.schema import default_migrations  # noqa: E402
@@ -132,9 +132,17 @@ def test_patch_book_tags_replaces_associations(tmp_path):
     # R-02: replacement (not append) and validation-before-write.
     service.patch_book_metadata(book.book_id, {"tags": [second.tag_id]})
     assert [tag.tag_id for tag in service.tags_of_book(book.book_id)] == [second.tag_id]
-    with pytest.raises(Exception):
+    with pytest.raises(TagNotFound):
         service.patch_book_metadata(book.book_id, {"tags": ["missing-tag"]})
     assert [tag.tag_id for tag in service.tags_of_book(book.book_id)] == [second.tag_id]
+    # R-02 (r2): an unknown tag id must fail before the text fields are written.
+    half = service.create_book("HalfWrite")
+    with pytest.raises(TagNotFound):
+        service.patch_book_metadata(half.book_id, {"title": "HalfWrite!", "tags": ["missing-tag"]})
+    assert service.get_book(half.book_id).title == "HalfWrite"
+    # R-05 (r2): P5 text fields are strings only; no silent str() coercion.
+    with pytest.raises(ValueError):
+        service.patch_book_metadata(half.book_id, {"title": 5})
 
 
 def test_create_with_import_order_keeps_sort_order_unique(tmp_path):
@@ -150,6 +158,24 @@ def test_create_with_import_order_keeps_sort_order_unique(tmp_path):
     assert len(set(orders)) == len(orders), "sort_order must stay unique"
 
 
+def test_repeated_import_order_keeps_sort_order_appended(tmp_path):
+    conn, service = _service(tmp_path)
+    book = service.create_book("Book")
+    service.create_chapter(book.book_id, "C1")
+    service.create_chapter(book.book_id, "C2")
+    # R-04 (r2): three P8 creates may share the same caller import_order...
+    extras = [
+        service.create_chapter_with_metadata(book.book_id, f"Extra {index}", import_order=1)
+        for index in range(3)
+    ]
+    tail = service.create_chapter(book.book_id, "Tail")
+    chapters = service.list_chapters(book.book_id)
+    assert [chapter.sort_order for chapter in chapters] == [1, 2, 3, 4, 5, 6]
+    assert [chapter.import_order for chapter in extras] == [1, 1, 1]
+    # ...while import_order keeps its own max+1 provenance sequence.
+    assert tail.import_order == 3
+
+
 def test_patch_chapter_rejects_non_integer_custom_rank(tmp_path):
     conn, service = _service(tmp_path)
     book = service.create_book("Book")
@@ -163,3 +189,7 @@ def test_patch_chapter_rejects_non_integer_custom_rank(tmp_path):
     assert service.get_chapter(chapter.chapter_id).custom_rank == 0
     service.patch_chapter_metadata(chapter.chapter_id, {"custom_rank": None})
     assert service.get_chapter(chapter.chapter_id).custom_rank is None
+    # P3 (r2): text fields are strings only.
+    for key in ("kind", "number", "title", "subtitle", "notes"):
+        with pytest.raises(ValueError):
+            service.patch_chapter_metadata(chapter.chapter_id, {key: 5})

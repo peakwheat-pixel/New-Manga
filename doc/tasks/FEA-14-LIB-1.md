@@ -68,7 +68,7 @@ FEA-14 S5 LIB 切片（FEA-00 §12.2/§15.6）需要书/章元数据编辑与章
 ## Scope 冻结（2026-11-10，DSH）
 
 1. Core：`LibraryMetadataService`（书 patch：title/author/series_title/description/notes/tags；章 patch：kind/custom_rank/number/title/subtitle/notes；重排：ordered_ids 全量校验；创建带元数据章）。
-2. 数据面：`books` 加 `author/series_title/description/notes` 列（additive migration v12）；`chapters.custom_rank` 列；`book_tags` 既有表复用。
+2. 数据面：复用既有 `books` 元数据列（`author/series_title/description/notes` 自 v2 迁移起已存在）；v12 仅 additive 增加 `chapters.custom_rank` 列；`book_tags` 既有表复用（P5 tags 全量替换）。
 3. Host：P5–P8 四条命令（additive；旧签名不变），按 C-07 冻结记录流程更新 inventory 并重算 pin。
 4. 证据：pytest 定向/全量、App.Tests、check/pins/API inventory。
 
@@ -84,9 +84,9 @@ FEA-14 S5 LIB 切片（FEA-00 §12.2/§15.6）需要书/章元数据编辑与章
 ## r1 处置记录（2026-11-10，对 `83e45cfe5` 的 changes_requested）
 
 - **R-01（P1，已修）**：P5/P6/P8 的“书不存在”改捕 `BookNotFound`（`ChapterNotFound` 兄弟类，原实现逃逸到泛化兜底 → `UNKNOWN/internal`）；补 wire 负例：三条命令传 `book_id="nope"` → `TARGET_NOT_FOUND/not_found`。
-- **R-02（P1，已修）**：P5 实现 `tags` 替换语义——`patch_book_metadata` 白名单加入 `tags`（tag id 列表），`_replace_book_tags` **先全量校验再删旧/加新**（未知 id 不会留下半标记）；补 t1→t2 替换与未知 tag 拒绝测试。
+- **R-02（P1，已修 + r2 补修）**：P5 实现 `tags` 替换语义——`patch_book_metadata` 白名单加入 `tags`（tag id 列表），`_replace_book_tags` **先全量校验再删旧/加新**；r2 补修：未知 tag id 的 `TagNotFound` 映射为 `TARGET_NOT_FOUND/not_found`，tag id 校验前移到任何写入之前（半写消除），文本字段只接受 `str`（拒绝隐式 `str()` 强转）；补 t1→t2 替换、未知 tag typed、半写与类型负例。
 - **R-03（P2，已修）**：Core P8 响应增加可选键 `sort_order`；`CoreServiceClient.CreateChapterWithMetadataAsync` 改读该键（原读不存在的 `import_order` → `SortOrder` 恒 0）；`kind` 仍不投影，登记 limitation（既有 DTO 仅四字段）。
-- **R-04（P2，已修）**：`create_chapter_with_metadata` 不再用 `import_order` 覆盖 `sort_order`——`import_order` 仅记录来源顺序，`sort_order` 保持追加（max+1）；补「重复 import_order 不破坏 sort_order 唯一」测试。
+- **R-04（P2，已修 + r2 补修）**：`create_chapter_with_metadata` 不再用 `import_order` 覆盖 `sort_order`；r2 补修：`create_chapter` 的 `import_order` 与 `sort_order` 各自取自己的 max+1（`sort_order` 不再受重复/较小 `import_order` 影响），补「三次同 `import_order=1` + 随后普通创建 → sort_order 1..6 唯一」测试。
 - **R-05（P2，已修）**：C-07 正式成员表按脚本 stdout 重建并同步 P1–P15（69 方法 + 4 非方法成员，逐行一致，核对脚本 `ALL_MATCH: True`）；「S5 计划追加」节只留 P16–P25；统计/变更类别/§2/§3 口径同步；UNFREEZE **v1.6**（pin `7c033bf76af1…`）。
 - **R-06（P2，已修）**：allowed_paths 补 8 项（schema.py、entities.py、UNFREEZE 载体、4 个 v12 适配测试、新增 C# 端口测试）；登记“释放清单不完整”更正，不追溯判为越权内容。
 - **R-07（P3，已修）**：冻结记录 §1 补 v1.3–v1.6 pin 链（v1.3 `59ab90f7…` / v1.4 `8d92a32f…` / v1.5 `9c1eb974…` / v1.6 `7c033bf7…`，原值保留）、§1B 复核引用、§2 条件 3 改 **1/69/6=76**、§3 已落地 15 条口径、§5 补 v1.3–v1.6 四行。
@@ -106,6 +106,18 @@ R-11 不让 PREQ/DDL 与实现静默分叉，三项正式登记为 deferral（�
 3. `books.normalized_title` 唯一索引推迟；重名规范化（含是否 NFKC）待用户裁决（ADJ §3）。
 
 R-12：`custom_rank` 本卡只做写入与持久化；读取投影、参与排序、UI 拖拽留 LIB-2；AC3 不声称自定义排序语义。
+
+## r2 处置记录（2026-11-10，对 `e779674d5` 的 changes_requested）
+
+r2 结论 `changes_requested`（P0=0 / P1=1 / P2=2 / P3=4；报告 `doc/reviews/FEA-14-LIB-1-r2.md`）；R-01/R-03/R-05–R-13 均确认关闭，以下为残余与新增。
+
+- **R2-001（P1，已修；R-02 残余）**：`TagNotFound`（`LibraryError`，非 `ValueError`）原先逃逸为 `UNKNOWN/internal`；P5 handler 增捕 → `TARGET_NOT_FOUND/not_found`。tag id 全量校验前移到**任何写入之前**（消除 `{"title":…,"tags":[missing]}` 的半写），P5 文本字段只接受 `str`；补 wire 未知 tag typed + title 不变负例、storage `pytest.raises(TagNotFound)` + 半写断言。
+- **R2-002（P2，已修；R-04 残余）**：`create_chapter` 原用 `max(import_order)+1` 同时作为 `sort_order`，重复/较小 `import_order` 会撞序；改为 `import_order` 取 `max(import_order)+1`、`sort_order` 取 `max(sort_order)+1` 两个独立值。补「两次普通创建 + 三次 `import_order=1` + 一次普通创建 → sort_order 1..6 唯一、import_order=3」测试。
+- **R2-003（P3，已修；P3-1）**：Host P5 端口 patch 类型统一为 `IReadOnlyDictionary<string, object?>`（可表达 tags 字符串数组；`CoreServiceClient` 序列化 string/字符串数组并拒绝其他类型）；Host/`CoreServiceClient` 不再拒绝空 `ordered_ids`（空书 no-op 可达）；Fake 增 `LastReorderIds`；C# 测试覆盖 tags patch 与空列表 no-op。
+- **R2-004（P3，已修；P3-2）**：Fake `CreateChapterWithMetadataAsync` 改按 Core 语义返回**追加** `sort_order`（`ChaptersByBook` 的 max+1，忽略 `importOrder`），测试断言 2（seed c1 sort=1）而非 7；真实 `CoreServiceClient` IPC 映射仍 NOT_RUN（不伪造覆盖）。
+- **R2-005（P3，已修；P3-3）**：卡面 Scope §2 更正为「`books` 四列自 v2 已存在；v12 仅加 `chapters.custom_rank`」。
+- **R2-006（P3，已修；P3-4）**：`schema.py` 的 V12 常量块移到 V11 之后，文件顺序恢复 V10→V11→V12（`default_migrations()` 顺序不变）。
+- **R2-007（P3，已修；README 表述）**：README AC1 的「非法值 → INVALID_REQUEST」拆分：未知字段/非字符串 → `INVALID_REQUEST`；未知 tag id → `TARGET_NOT_FOUND`。
 
 ## 证据计划（L2）
 

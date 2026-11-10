@@ -26,9 +26,9 @@
 
 | 项 | 值 |
 |---|---|
-| 最后一次独立复核 | v1.0：r2 approved（FEA-GOV-10-r2）；v1.1：**r3 approved（FEA-05-PORT-1，P0/P1=0，P2×11 接受）**；v1.2：**r2 approved**（`doc/reviews/FEA-14-S5-PREQ-1-wire-review-r2.md`，P0/P1/P2=0，6×P3 不阻断；r1 changes_requested → 处置 → r2 approved）；v1.3：READ-1 r2 approved（`doc/reviews/FEA-14-READ-1-r2.md`）；v1.4：FONT-1 r5 approved（`doc/reviews/FEA-14-FONT-1-r5.md`）；v1.5/v1.6：LIB-1 r1 `changes_requested`（`doc/reviews/FEA-14-LIB-1-r1.md`，R-05/R-07 指出本记录缺 v1.3–v1.5 行与成员表未同步）→ 处置 → **r2 待派发（v1.5/v1.6 字节由该 r2 覆盖）** |
-| 复核后到冻结的改动 | v1.1：Draft 端口 7 方法 + 统计/成员表（UNFREEZE 范围）；v1.2：新增「S5 计划追加」节（25 条计划命令；代码未变、统计不变）；v1.3：READ-1 统计 61/68；v1.4：FONT-1 统计 65/72；v1.5：LIB-1 统计 69/76；v1.6：P1–P15 成员表同步（计数不变，仍 69/76） |
-| 处置 | v1.1 **已重冻**（2026-11-02，r3 approved）；v1.2 **UNFREEZE 已生效**（2026-11-10，PREQ AC2；r2 approved，本记录 §1 与 §5 已登记）；v1.3–v1.5 已随各自实现卡重算 pin（当时未回填本记录，由 v1.6 行补齐并保留原值）；v1.6 pin = 当前文件 SHA-256，随 LIB-1 r2 复核后收口 |
+| 最后一次独立复核 | v1.0：r2 approved（FEA-GOV-10-r2）；v1.1：**r3 approved（FEA-05-PORT-1，P0/P1=0，P2×11 接受）**；v1.2：**r2 approved**（`doc/reviews/FEA-14-S5-PREQ-1-wire-review-r2.md`，P0/P1/P2=0，6×P3 不阻断；r1 changes_requested → 处置 → r2 approved）；v1.3：READ-1 r2 approved（`doc/reviews/FEA-14-READ-1-r2.md`）；v1.4：FONT-1 r5 approved（`doc/reviews/FEA-14-FONT-1-r5.md`）；v1.5/v1.6：LIB-1 r1 `changes_requested` → r1 处置（`00a99622a`）→ **r2 `changes_requested`**（`doc/reviews/FEA-14-LIB-1-r2.md`，P1=1/P2=2/P3=4，R-02/R-04 残余 + 4×P3；R-01/R-03/R-05–R-13 确认关闭）→ r2 处置（仅产品/证据字节，C-07 未再改）→ **r3 待派发（v1.5/v1.6 字节由 r3 覆盖）** |
+| 复核后到冻结的改动 | v1.1：Draft 端口 7 方法 + 统计/成员表（UNFREEZE 范围）；v1.2：新增「S5 计划追加」节（25 条计划命令；代码未变、统计不变）；v1.3：READ-1 统计 61/68；v1.4：FONT-1 统计 65/72；v1.5：LIB-1 统计 69/76；v1.6：P1–P15 成员表同步（计数不变，仍 69/76）；r1/r2 处置均未再改 C-07 字节（pin 保持 `7c033bf7…`） |
+| 处置 | v1.1 **已重冻**（2026-11-02，r3 approved）；v1.2 **UNFREEZE 已生效**（2026-11-10，PREQ AC2；r2 approved，本记录 §1 与 §5 已登记）；v1.3–v1.5 已随各自实现卡重算 pin（当时未回填本记录，由 v1.6 行补齐并保留原值）；v1.6 pin = 当前文件 SHA-256；**v1.6 字节尚未获 approved**（r2 changes_requested 归因产品残余，C-07 本身已由 r2 确认逐行/统计/pin 一致），待 r3 复核后收口 |
 
 **为什么必须有这一节**：冻结条件①是「独立复核通过」，若冻结字节 ≠ 复核字节，该条件在证据上不覆盖被冻内容。本节的目的是把差异显式化，而不是掩盖它。
 
@@ -87,3 +87,4 @@
 | 2026-11-10 | **UNFREEZE v1.3→v1.4（FEA-14-FONT-1）**：统计 61→**65**、合计 68→**72**（P1–P4 落地）；pin `8d92a32f…`；载体 [CONTRACT-UNFREEZE-2026-11-10-FONT1](../reviews/CONTRACT-UNFREEZE-2026-11-10-FONT1.md)；卡面复核 r5 approved（`doc/reviews/FEA-14-FONT-1-r5.md`） | DSH |
 | 2026-11-10 | **UNFREEZE v1.4→v1.5（FEA-14-LIB-1）**：统计 65→**69**、合计 72→**76**（P5–P8 落地）；pin `9c1eb974…`；载体 [CONTRACT-UNFREEZE-2026-11-10-LIB1](../reviews/CONTRACT-UNFREEZE-2026-11-10-LIB1.md)；LIB-1 r1 复核指出本记录缺 v1.3/v1.4/v1.5 行、S5 节与成员表未同步（R-05/R-07） | DSH |
 | 2026-11-10 | **UNFREEZE v1.5→v1.6（FEA-14-LIB-1 r1 处置）**：正式成员表按脚本 stdout 重建并同步 P1–P15（**69 方法 + 4 非方法成员，逐行一致**），统计不变（69/76）；「S5 计划追加」节改为只列剩余 P16–P25；§1 pin 链补齐 v1.3–v1.6 原值、§1B/§2/§3 口径同步；pin `7c033bf7…`（v1.5 `9c1eb974…` 保留）；载体 [CONTRACT-UNFREEZE-2026-11-10-LIB1](../reviews/CONTRACT-UNFREEZE-2026-11-10-LIB1.md)（v1.6 附录） | DSH |
+| 2026-11-10 | **v1.6 待重冻（LIB-1 r2 `changes_requested`）**：r2 独立复核确认 C-07 成员表逐行等于 stdout、统计/pin/§1B/§2/§3/§5 自洽（v1.6 字节本身无 finding）；阻断项均为产品残余（R-02 未知 tag typed/半写、R-04 sort_order 撞序）与 4×P3。r2 处置只改产品/测试/证据字节，**C-07 字节未变、pin 仍 `7c033bf7…`**；待 r3 独立复核覆盖 v1.6 后重冻收口；报告 `doc/reviews/FEA-14-LIB-1-r2.md` | DSH |

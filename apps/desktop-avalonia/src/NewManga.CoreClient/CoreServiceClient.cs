@@ -1588,11 +1588,21 @@ public sealed class CoreServiceClient : IAsyncDisposable
 
     /// <summary>FEA-14-LIB-1 (PREQ LIB P5): patch book display metadata.</summary>
     public async Task<bool> UpdateBookMetadataAsync(
-        string bookId, IReadOnlyDictionary<string, string> patch, CancellationToken cancellationToken = default)
+        string bookId, IReadOnlyDictionary<string, object?> patch, CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(bookId) || patch.Count == 0)
         {
             throw new ArgumentException("book_id and a non-empty patch are required", nameof(bookId));
+        }
+        // P3 (r2): the Host port must be able to express P5's tags list, so the
+        // patch carries object values: strings (text fields) or tag-id arrays.
+        foreach (var pair in patch)
+        {
+            if (pair.Value is not null and not string and not IReadOnlyList<string>)
+            {
+                throw new ArgumentException(
+                    $"unsupported book metadata value for '{pair.Key}'", nameof(patch));
+            }
         }
         var response = await SendAsync(
                 "UpdateBookMetadata", CoreProtocol.DefaultMinor,
@@ -1601,7 +1611,26 @@ public sealed class CoreServiceClient : IAsyncDisposable
                     writer.WriteStartObject();
                     writer.WriteString("book_id", bookId);
                     writer.WriteStartObject("patch");
-                    foreach (var pair in patch) writer.WriteString(pair.Key, pair.Value);
+                    foreach (var pair in patch)
+                    {
+                        switch (pair.Value)
+                        {
+                            case null:
+                                writer.WriteNull(pair.Key);
+                                break;
+                            case string text:
+                                writer.WriteString(pair.Key, text);
+                                break;
+                            case IReadOnlyList<string> tagIds:
+                                writer.WriteStartArray(pair.Key);
+                                foreach (var tagId in tagIds) writer.WriteStringValue(tagId);
+                                writer.WriteEndArray();
+                                break;
+                            default:
+                                throw new ArgumentException(
+                                    $"unsupported book metadata value for '{pair.Key}'", nameof(patch));
+                        }
+                    }
                     writer.WriteEndObject();
                     writer.WriteEndObject();
                 },
@@ -1615,9 +1644,10 @@ public sealed class CoreServiceClient : IAsyncDisposable
     public async Task<bool> ReorderChaptersAsync(
         string bookId, IReadOnlyList<string> orderedChapterIds, CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrWhiteSpace(bookId) || orderedChapterIds.Count == 0)
+        // R-13/P3 (r2): an empty list is the empty-book no-op; only the book id is required.
+        if (string.IsNullOrWhiteSpace(bookId))
         {
-            throw new ArgumentException("book_id and ordered_ids are required", nameof(bookId));
+            throw new ArgumentException("book_id is required", nameof(bookId));
         }
         var response = await SendAsync(
                 "ReorderChapters", CoreProtocol.DefaultMinor,

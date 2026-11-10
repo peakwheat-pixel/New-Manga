@@ -143,8 +143,14 @@ class LibraryService:
         existing = [
             chapter for chapter in self._repo.list_chapters(book_id) if not chapter.deleted
         ]
-        next_order = (
+        next_import_order = (
             max((chapter.import_order for chapter in existing), default=0) + 1
+        )
+        # R-04 (r2): sort_order is the display/read order and must stay unique.
+        # It can diverge from import_order once a caller sets a specific
+        # import_order, so derive it from the maximum sort_order, not import_order.
+        next_sort_order = (
+            max((chapter.sort_order for chapter in existing), default=0) + 1
         )
         chapter = Chapter(
             chapter_id=_new_id(),
@@ -152,8 +158,8 @@ class LibraryService:
             title=title,
             chapter_number=chapter_number,
             subtitle=subtitle,
-            import_order=next_order,
-            sort_order=next_order,
+            import_order=next_import_order,
+            sort_order=next_sort_order,
             chapter_type=resolved_type,
             reading_direction=direction,
             notes=notes,
@@ -213,14 +219,23 @@ class LibraryService:
             isinstance(tags, list) and all(isinstance(item, str) and item for item in tags)
         ):
             raise ValueError("book tags must be a list of tag ids")
+        for key, value in patch.items():
+            if key != "tags" and not isinstance(value, str):
+                raise ValueError(f"book metadata field {key!r} must be a string")
+        # R-02 (r2): validate every tag id BEFORE any write so an unknown id can
+        # never leave the book's text fields half-updated.
+        tag_ids = list(tags) if tags is not None else None
+        if tag_ids is not None:
+            for tag_id in tag_ids:
+                self._require_tag(tag_id)
         text_patch = {
             key: str(value) for key, value in patch.items() if key != "tags"
         }
         if "title" in text_patch and not text_patch["title"].strip():
             raise ValueError("book title must not be empty")
         book = self.update_book(book_id, **text_patch) if text_patch else self.get_book(book_id)
-        if tags is not None:
-            self._replace_book_tags(book_id, list(tags))
+        if tag_ids is not None:
+            self._replace_book_tags(book_id, tag_ids)
         return book
 
     def _replace_book_tags(self, book_id: str, tag_ids: list[str]) -> None:
@@ -241,9 +256,14 @@ class LibraryService:
         unknown = set(patch) - allowed
         if unknown:
             raise ValueError(f"unknown chapter metadata fields: {sorted(unknown)}")
+        # P3 (r2): text fields are strings only; no silent str() coercion (same
+        # rule as P5). custom_rank is handled separately below.
+        for key in ("kind", "number", "title", "subtitle", "notes"):
+            if key in patch and not isinstance(patch[key], str):
+                raise ValueError(f"chapter metadata field {key!r} must be a string")
         chapter = self.get_chapter(chapter_id)
         if "kind" in patch:
-            chapter.chapter_type = ChapterType(str(patch["kind"]))
+            chapter.chapter_type = ChapterType(patch["kind"])
             if chapter.chapter_type is ChapterType.WEBTOON:
                 chapter.reading_direction = ReadingDirection.VERTICAL
             elif chapter.reading_direction is ReadingDirection.VERTICAL:
@@ -257,16 +277,16 @@ class LibraryService:
                 raise ValueError("custom_rank must be a non-negative integer or null")
             chapter.custom_rank = value
         if "number" in patch:
-            chapter.chapter_number = str(patch["number"])
+            chapter.chapter_number = patch["number"]
         if "title" in patch:
-            title = str(patch["title"])
+            title = patch["title"]
             if not title.strip():
                 raise ValueError("chapter title must not be empty")
             chapter.title = title
         if "subtitle" in patch:
-            chapter.subtitle = str(patch["subtitle"])
+            chapter.subtitle = patch["subtitle"]
         if "notes" in patch:
-            chapter.notes = str(patch["notes"])
+            chapter.notes = patch["notes"]
         chapter.updated_at = utc_now()
         self._repo.update_chapter(chapter)
         return chapter

@@ -109,7 +109,7 @@ public sealed class NullHostController : IHostController, ISourceImportControlle
     public Task<FontRefreshInfo> RefreshFontAssetsAsync(CancellationToken cancellationToken = default) =>
         Task.FromResult(new FontRefreshInfo(0, Array.Empty<FontRefreshFailure>()));
 
-    public Task<bool> UpdateBookMetadataAsync(string bookId, IReadOnlyDictionary<string, string> patch, CancellationToken cancellationToken = default) =>
+    public Task<bool> UpdateBookMetadataAsync(string bookId, IReadOnlyDictionary<string, object?> patch, CancellationToken cancellationToken = default) =>
         Task.FromResult(false);
 
     public Task<bool> ReorderChaptersAsync(string bookId, IReadOnlyList<string> orderedChapterIds, CancellationToken cancellationToken = default) =>

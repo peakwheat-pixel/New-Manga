@@ -215,8 +215,8 @@ public interface IHostController : IReaderProgressSink, IRunController, IAsyncDi
     /// <summary>FEA-14-FONT-1 (PREQ FONT P4): rescan the managed fonts directory.</summary>
     Task<FontRefreshInfo> RefreshFontAssetsAsync(CancellationToken cancellationToken = default);
 
-    /// <summary>FEA-14-LIB-1 (PREQ LIB P5): patch book display metadata.</summary>
-    Task<bool> UpdateBookMetadataAsync(string bookId, IReadOnlyDictionary<string, string> patch, CancellationToken cancellationToken = default);
+    /// <summary>FEA-14-LIB-1 (PREQ LIB P5): patch book display metadata (string values, or a tag-id list for <c>tags</c>).</summary>
+    Task<bool> UpdateBookMetadataAsync(string bookId, IReadOnlyDictionary<string, object?> patch, CancellationToken cancellationToken = default);
 
     /// <summary>FEA-14-LIB-1 (PREQ LIB P6): reorder a book's chapters.</summary>
     Task<bool> ReorderChaptersAsync(string bookId, IReadOnlyList<string> orderedChapterIds, CancellationToken cancellationToken = default);

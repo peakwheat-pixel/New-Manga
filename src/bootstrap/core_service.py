@@ -180,7 +180,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Any, Callable, TextIO
 
 from application.fonts.service import FontLibraryError
-from application.library.errors import BookNotFound, ChapterNotFound
+from application.library.errors import BookNotFound, ChapterNotFound, TagNotFound
 from application.editing.errors import (
     DraftError,
     GuardStatus,
@@ -5152,6 +5152,8 @@ class CoreServiceServer:
             self._core.library.patch_book_metadata(payload["book_id"], patch)
         except BookNotFound:
             raise P16WireError("TARGET_NOT_FOUND", "not_found", "Book was not found")
+        except TagNotFound:
+            raise P16WireError("TARGET_NOT_FOUND", "not_found", "Tag was not found")
         except (TypeError, ValueError) as error:
             raise P16WireError("INVALID_REQUEST", "validation", "Book metadata values are invalid") from error
         return {"updated": True}

@@ -876,32 +876,6 @@ MIGRATION_V10_NAME = "v10__reading_preferences_bookmarks"
 #: (mode/direction/zoom/double-page/layout), bookmarks (left/right/both), and
 #: the additive anchor/viewport columns on the existing progress rows. Every
 #: statement is additive; v1–v9 checksums stay byte-identical.
-MIGRATION_V12_NAME = "v12__chapters_custom_rank"
-
-MIGRATION_V12_SQL = "ALTER TABLE chapters ADD COLUMN custom_rank INTEGER;"
-
-
-MIGRATION_V11_NAME = "v11__font_assets"
-
-MIGRATION_V11_SQL = """
-CREATE TABLE font_assets (
-    asset_id TEXT PRIMARY KEY CHECK (length(asset_id) > 0),
-    family TEXT NOT NULL DEFAULT '',
-    subfamily TEXT NOT NULL DEFAULT '',
-    format TEXT NOT NULL,
-    sha256 TEXT NOT NULL,
-    size_bytes INTEGER NOT NULL,
-    managed_path TEXT NOT NULL,
-    license_note TEXT NOT NULL DEFAULT '',
-    state TEXT NOT NULL DEFAULT 'active' CHECK (state IN ('active', 'missing', 'deleted')),
-    created_at TEXT NOT NULL,
-    deleted_at TEXT
-);
-CREATE INDEX idx_font_assets_state ON font_assets(state);
-CREATE UNIQUE INDEX idx_font_assets_sha ON font_assets(sha256) WHERE state != 'deleted';
-"""
-
-
 MIGRATION_V10_SQL = """
 CREATE TABLE reading_preferences (
     book_id TEXT PRIMARY KEY CHECK (length(book_id) > 0),
@@ -925,6 +899,35 @@ CREATE INDEX idx_reading_bookmarks_book ON reading_bookmarks(book_id);
 ALTER TABLE reading_progress ADD COLUMN anchor_json TEXT;
 ALTER TABLE reading_progress ADD COLUMN viewport_json TEXT;
 """
+
+
+MIGRATION_V11_NAME = "v11__font_assets"
+
+MIGRATION_V11_SQL = """
+CREATE TABLE font_assets (
+    asset_id TEXT PRIMARY KEY CHECK (length(asset_id) > 0),
+    family TEXT NOT NULL DEFAULT '',
+    subfamily TEXT NOT NULL DEFAULT '',
+    format TEXT NOT NULL,
+    sha256 TEXT NOT NULL,
+    size_bytes INTEGER NOT NULL,
+    managed_path TEXT NOT NULL,
+    license_note TEXT NOT NULL DEFAULT '',
+    state TEXT NOT NULL DEFAULT 'active' CHECK (state IN ('active', 'missing', 'deleted')),
+    created_at TEXT NOT NULL,
+    deleted_at TEXT
+);
+CREATE INDEX idx_font_assets_state ON font_assets(state);
+CREATE UNIQUE INDEX idx_font_assets_sha ON font_assets(sha256) WHERE state != 'deleted';
+"""
+
+
+#: FEA-14-LIB-1 scope §2 / PREQ LIB P5-P8: the only additive DDL this card
+#: contributes is chapters.custom_rank (user rank, nullable for old rows).
+#: v1-v11 checksums stay byte-identical.
+MIGRATION_V12_NAME = "v12__chapters_custom_rank"
+
+MIGRATION_V12_SQL = "ALTER TABLE chapters ADD COLUMN custom_rank INTEGER;"
 
 
 def default_migrations() -> tuple[Migration, ...]:

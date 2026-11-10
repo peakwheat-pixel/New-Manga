@@ -253,10 +253,11 @@ public sealed class FakeHostController : IHostController, ISourceImportControlle
 
     public bool UpdateBookMetadataResult { get; set; } = true;
     public bool LastReorderCalled { get; private set; }
-    public (string BookId, IReadOnlyDictionary<string, string> Patch)? LastBookMetadata { get; private set; }
+    public IReadOnlyList<string>? LastReorderIds { get; private set; }
+    public (string BookId, IReadOnlyDictionary<string, object?> Patch)? LastBookMetadata { get; private set; }
     public (string ChapterId, IReadOnlyDictionary<string, object?> Patch)? LastChapterMetadata { get; private set; }
 
-    public Task<bool> UpdateBookMetadataAsync(string bookId, IReadOnlyDictionary<string, string> patch, CancellationToken cancellationToken = default)
+    public Task<bool> UpdateBookMetadataAsync(string bookId, IReadOnlyDictionary<string, object?> patch, CancellationToken cancellationToken = default)
     {
         LastBookMetadata = (bookId, patch);
         return Task.FromResult(UpdateBookMetadataResult);
@@ -265,6 +266,7 @@ public sealed class FakeHostController : IHostController, ISourceImportControlle
     public Task<bool> ReorderChaptersAsync(string bookId, IReadOnlyList<string> orderedChapterIds, CancellationToken cancellationToken = default)
     {
         LastReorderCalled = true;
+        LastReorderIds = orderedChapterIds;
         return Task.FromResult(UpdateBookMetadataResult);
     }
 
@@ -274,8 +276,23 @@ public sealed class FakeHostController : IHostController, ISourceImportControlle
         return Task.FromResult(UpdateBookMetadataResult);
     }
 
-    public Task<ChapterSummary?> CreateChapterWithMetadataAsync(string bookId, string title, string? kind = null, string? number = null, int? importOrder = null, CancellationToken cancellationToken = default) =>
-        Task.FromResult<ChapterSummary?>(new ChapterSummary("new-chapter", title, number ?? string.Empty, importOrder ?? 0));
+    public Task<ChapterSummary?> CreateChapterWithMetadataAsync(string bookId, string title, string? kind = null, string? number = null, int? importOrder = null, CancellationToken cancellationToken = default)
+    {
+        // R-04/P3-2 (r2): the Core appends sort_order (max+1) and never uses the
+        // caller's import_order as the display order. Model the appended value so
+        // UI tests cannot assert the old sort_order=import_order mix-up.
+        var existing = ChaptersByBook.TryGetValue(bookId, out var chapters)
+            ? chapters
+            : Array.Empty<ChapterSummary>();
+        var maxSortOrder = 0;
+        foreach (var chapter in existing)
+        {
+            if (chapter.SortOrder > maxSortOrder) maxSortOrder = chapter.SortOrder;
+        }
+        var created = new ChapterSummary("new-chapter", title, number ?? string.Empty, maxSortOrder + 1);
+        ChaptersByBook[bookId] = new List<ChapterSummary>(existing) { created };
+        return Task.FromResult<ChapterSummary?>(created);
+    }
 
     public Task<ReaderBookData?> LoadReaderBookAsync(
         string? bookId = null,
