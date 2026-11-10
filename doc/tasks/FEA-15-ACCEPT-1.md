@@ -3,16 +3,16 @@ id: FEA-15-ACCEPT-1
 title: FEA-15 集成正式验收（A1–A7 执行与缺口披露）
 kind: acceptance
 governance_version: 3
-status: ready
-approval: **DSH 2026-11-10 冻结**（FEA-15 §S5 正式验收；依据 `doc/plan/FEA-15-INTEGRATION-ACCEPTANCE.md` 与 `FEA-15-PREREQ-3` 验收矩阵）
-suggested_owner: dsh
-owner: dsh
+status: in_progress
+approval: **DSH 2026-11-10 冻结**；2026-11-10 用户授权接续，ZCode 独立会话裁决改派 Codex 并在 main 主树串行执行（见 `verification/FEA-15-ACCEPT-1/appointment.md`）
+suggested_owner: codex
+owner: codex
 reviewer: null
 depends_on:
   - FEA-14-AI-1
-base_commit: 2737d035a
-branch: null
-worktree: null
+base_commit: 164ebabcfa90b92fc46c07238280960fc01f7423
+branch: main
+worktree: G:/CODEX/New Manga
 integration_commit: null
 delivery_head: null
 canonical_evidence_status: pending
@@ -89,3 +89,4 @@ FEA-14 S5 七切片（SET/PREQ/EXPORT/READ/FONT/LIB/EDIT/AI 相关实现卡）�
 ## Closeout Record
 
 - 2026-11-10 scope 冻结（`ready`）。未开始。
+- 2026-11-10 Codex 认领（`in_progress`），ZCode 独立会话 `sess_2a802094-24f6-4254-9bfa-33cad3a6bf4e` 裁决；主树串行，执行基线 `164ebabcfa90b92fc46c07238280960fc01f7423`。冻结范围不变。
