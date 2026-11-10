@@ -7,7 +7,7 @@ status: in_review
 approval: **DSH 2026-11-10 冻结**；2026-11-10 用户授权接续，ZCode 独立会话裁决改派 Codex 并在 main 主树串行执行（见 `verification/FEA-15-ACCEPT-1/appointment.md`）
 suggested_owner: codex
 owner: codex
-reviewer: ZCode 独立会话（待派发）
+reviewer: ZCode 独立会话 sess_88acf941-2220-4c42-a4bf-ca95923a8cfe（r1；r2 待复审）
 depends_on:
   - FEA-14-AI-1
 base_commit: 164ebabcfa90b92fc46c07238280960fc01f7423
@@ -90,7 +90,7 @@ FEA-14 S5 七切片（SET/PREQ/EXPORT/READ/FONT/LIB/EDIT/AI 相关实现卡）�
 | EV-01 | AC1/A1 | `verification/FEA-15-ACCEPT-1/build.log` | `8cad6d68c1e455c087a20346c9b1c0217bef129e` | `afb50adff42c1417c0a1a15cec693b15204d7b7d7d4d1417ea0c2bd8abf9ae90` | CANONICAL |
 | EV-02 | AC1/A5、AC6 | `verification/FEA-15-ACCEPT-1/pytest-full-retry.log` | `8cad6d68c1e455c087a20346c9b1c0217bef129e` | `3f2fe9639e3f349af6f57cd4c4d54da536f655a3b7ed44306cb70136435ccb0b` | CANONICAL |
 | EV-03 | AC1/A5、AC3 | `verification/FEA-15-ACCEPT-1/dotnet-full.log` | `8cad6d68c1e455c087a20346c9b1c0217bef129e` | `593aac3963b8c2e5fbb857ceab0f1ee6e82fa2d29cf6931d45240029a0f42c70` | CANONICAL |
-| EV-04 | AC1/A6、AC2、AC3、AC5、AC6 | `verification/FEA-15-ACCEPT-1/README.md` | `b7344445e3abc520c4d03fcb642b97880fe47738` | `fb83fda733f031e6ff2672a42c6b42b4445677c26afd9b917b1f62244904c77c` | CANONICAL |
+| EV-04 | AC1/A6、AC2、AC3、AC5、AC6 | `verification/FEA-15-ACCEPT-1/README.md` | `e0bfd4c6ea8d18020b71be9215cccdace6247cfe` | `e4405800496b0004990c81d2b98051e89ec9feb3cdca3c2899e510add4368a1d` | CANONICAL |
 | EV-05 | AC2、AC3、AC4 | `doc/plan/FEA-15-INTEGRATION-ACCEPTANCE.md` | `b7344445e3abc520c4d03fcb642b97880fe47738` | `e60dfcaf686fa4955c870c5ea64d0f31ff8e5bf7b9b93350f55b79d4ea773ddb` | CANONICAL |
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
@@ -127,3 +127,4 @@ FEA-14 S5 七切片（SET/PREQ/EXPORT/READ/FONT/LIB/EDIT/AI 相关实现卡）�
 - 2026-11-10 验证进行中：隔离 Release 构建 0 警告/0 错误 EXIT 0；pytest 全量 3515 passed/16 failed/12 skipped EXIT 1；.NET 八项目中 App 与 Host 失败、整体 EXIT 1。日志、隔离限制与 NOT_RUN 见 `verification/FEA-15-ACCEPT-1/README.md`；失败及下一步已交 ZCode 独立会话裁决，未作验收通过结论。
 - 2026-11-10 补充证据：四项 App 仓库定位对照 4/4；Host 两项对照 1/1，ACL 异常仍存；专用 venv 插件对照 6 passed/10 failed；legacy/Fluent 仅隐藏进程级 EXIT 0，可见窗口与页面交互 NOT_RUN。现有结论为全量基线未满足、归因部分未定，最终验收结论待上下文独立 Review 与 ZCode 裁决。
 - r1 P3-4：Handoff 对变更路径的概括句已由 r1 使用 `git diff --name-status` 核实；报告及具体范围见 `doc/reviews/FEA-15-ACCEPT-1-r1.md`。
+- r1（独立 ZCode `sess_88acf941-2220-4c42-a4bf-ca95923a8cfe`，reviewed head `e55a23dc9b7c701e31360a9e41b9fc4a88d0bf30`）approved 附条件；P2-2/P3-1/2/3 已修正，P2-1 跨 checkout hash 风险已登记、治理修复待另行释放；条件与新 head 须经 r2 独立复核，未集成。
