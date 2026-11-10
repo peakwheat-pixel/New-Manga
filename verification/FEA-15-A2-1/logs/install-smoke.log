@@ -1,0 +1,3 @@
+FEA-15-A2-1 install-smoke | 2026-11-10T11:47:41.0586739+08:00
+{"ac":"AC4","launched_from_install_dir":true,"package_variant":"base","exe":"G:\\CODEX\\New Manga.workspace\\FEA-15-A2-1\\install\\app\\NewManga.App.exe","window_handle_found":true,"window_handle":48237546,"console_window_count":0,"exit_code":0,"exit_ok":true,"residual_processes":0,"install_dir_after":false,"sidecar_bundled":true,"sidecar_files":1956,"sidecar_bytes":195388870.0,"models_bundled":false,"license_copy_ok":true,"generated_at_utc":"2026-11-10T03:47:52.5226983Z"}
+EXIT=0

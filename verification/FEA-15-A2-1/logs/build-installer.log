@@ -1,0 +1,76 @@
+FEA-15-A2-1 build-installer | 2026-11-10T11:46:21.2622136+08:00
+makensis v3.13 (2560 bytes, sha256 4ec390d0f96f9728507fbc2f4e91311dd90bfc6c8ddfe2159357b3651ae151c0)
+stage: 1970 files / 232958209 bytes / manifest sha256 83152cb1abb1a0cb14b17caa4c9015562b860e7f4f59abd2d7af53f867398542
+building NewManga-0.1.1-setup.exe into G:\CODEX\New Manga.workspace\FEA-15-A2-1\out
+Command line defined: "VERSION=0.1.1"
+Command line defined: "VERSION4=0.1.1.0"
+Command line defined: "STAGE_DIR=G:\CODEX\New Manga.workspace\FEA-15-A2-1\out\NewManga-0.1.1-win-x64"
+Command line defined: "OUT_FILE=G:\CODEX\New Manga.workspace\FEA-15-A2-1\out\NewManga-0.1.1-setup.exe"
+Command line defined: "INSTALL_SIZE_KB=227499"
+Command line defined: "LICENSE_FILE=G:\CODEX\New Manga.workspace\FEA-15-A2-1\out\NewManga-0.1.1-win-x64\NOTICE.md"
+Command line defined: "ICON_FILE=G:\CODEX\New Manga\apps\desktop\src-tauri\icons\icon.ico"
+Processing config: C:\Users\49745\AppData\Local\tauri\NSIS\nsisconf.nsh
+Processing script file: "G:\CODEX\New Manga\packaging\nsis\installer.nsi" (UTF8)
+
+Processed 1 file, writing output (x86-unicode):
+
+Output: "G:\CODEX\New Manga.workspace\FEA-15-A2-1\out\NewManga-0.1.1-setup.exe"
+Install: 5 pages (320 bytes), 1 section (2072 bytes), 2667 instructions (74676 bytes), 2067 strings (87302 bytes), 2 language tables (604 bytes).
+Uninstall: 2 pages (192 bytes), 1 section (2072 bytes), 73 instructions (2044 bytes), 162 strings (4320 bytes), 2 language tables (500 bytes).
+Datablock optimizer saved 17108 KiB (~7.5%).
+
+Using lzma (compress whole) compression.
+
+EXE header size:               44544 / 38912 bytes
+Install code:                          (165438 bytes)
+Install data:                          (215521598 bytes)
+Uninstall code+data:                   (13840 bytes)
+Compressed data:            75318197 / 215700876 bytes
+CRC (0xAE8F791C):                  4 / 4 bytes
+
+Total size:                 75362745 / 215739792 bytes (34.9%)
+installer: G:\CODEX\New Manga.workspace\FEA-15-A2-1\out\NewManga-0.1.1-setup.exe (75,362,745 bytes, 71.87 MB)
+sha256: 486a22758c03c8cd2383b6cb05f6e91524cf5545094ef1533d89f73814d3ba10
+authenticode: NotSigned (unsigned release by design)
+build info: G:\CODEX\New Manga.workspace\FEA-15-A2-1\out\build-info.json
+{
+  "task": "NSIS-INSTALLER-1",
+  "variant": "base",
+  "version": "0.1.1",
+  "version4": "0.1.1.0",
+  "installer": {
+    "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-A2-1\\out\\NewManga-0.1.1-setup.exe",
+    "file_name": "NewManga-0.1.1-setup.exe",
+    "bytes": 75362745,
+    "mb": 71.87,
+    "sha256": "486a22758c03c8cd2383b6cb05f6e91524cf5545094ef1533d89f73814d3ba10",
+    "build_seconds": 53.68,
+    "authenticode_status": "NotSigned",
+    "file_version": "0.1.1",
+    "product_name": "New Manga",
+    "product_version": "0.1.1",
+    "description": "New Manga setup (per-user, unsigned)"
+  },
+  "stage": {
+    "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-A2-1\\out\\NewManga-0.1.1-win-x64",
+    "file_count": 1970,
+    "bytes": 232958209.0,
+    "mb": 222.17,
+    "manifest_sha256": "83152cb1abb1a0cb14b17caa4c9015562b860e7f4f59abd2d7af53f867398542",
+    "install_size_kb": 227499,
+    "version_json": {
+      "version": "0.1.1",
+      "variant": "base",
+      "license": "GPL-3.0-or-later"
+    }
+  },
+  "toolchain": {
+    "makensis": "C:\\Users\\49745\\AppData\\Local\\tauri\\NSIS\\makensis.exe",
+    "makensis_version": "v3.13",
+    "makensis_sha256": "4ec390d0f96f9728507fbc2f4e91311dd90bfc6c8ddfe2159357b3651ae151c0",
+    "nsi_script": "G:\\CODEX\\New Manga\\packaging\\nsis\\installer.nsi",
+    "icon": "G:\\CODEX\\New Manga\\apps\\desktop\\src-tauri\\icons\\icon.ico"
+  },
+  "generated_at_utc": "2026-11-10T03:47:25.0997188Z"
+}
+EXIT=0

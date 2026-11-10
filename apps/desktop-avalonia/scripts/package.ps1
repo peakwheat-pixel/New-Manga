@@ -4,7 +4,12 @@
   [string]$SidecarDir='',
   [string]$BuildPython=$( if ($env:NEWMANGA_BUILD_PYTHON) { $env:NEWMANGA_BUILD_PYTHON } else { 'python' } ),
   [switch]$WithModels,
-  [int]$MaxZipMB=0
+  [int]$MaxZipMB=0,
+  # FEA-15-A2-1: trimming analysis warnings (IL2026, Avalonia XAML loader / JsonSerializer
+  # reflection) are suppressed for the publish only -- the installer smoke then verifies the
+  # trimmed build actually starts. -NoTrim publishes without trimming as a fallback path.
+  [switch]$SuppressTrimWarnings,
+  [switch]$NoTrim
 )
 $ErrorActionPreference='Stop'
 $root=Resolve-Path (Join-Path $PSScriptRoot '..'); $repo=Resolve-Path (Join-Path $root '..\..')
@@ -17,8 +22,15 @@ if(Test-Path $stage){Remove-Item $stage -Recurse -Force}
 New-Item -ItemType Directory -Force (Join-Path $stage 'app')|Out-Null
 
 # ---- 1) Avalonia Host/App (single-file self-contained) ----------------------
+$publishArgs = if ($NoTrim) {
+  @('-p:PublishTrimmed=false', '-p:PublishReadyToRun=false', '-p:EnableCompressionInSingleFile=false')
+} else {
+  $args = @('-p:PublishTrimmed=true', '-p:IncludeNativeLibrariesForSelfExtract=true', '-p:PublishReadyToRun=true', '-p:EnableCompressionInSingleFile=true')
+  if ($SuppressTrimWarnings) { $args += '-p:SuppressTrimAnalysisWarnings=true' }
+  $args
+}
 Push-Location $root
-& dotnet publish src/NewManga.App/NewManga.App.csproj -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -p:PublishTrimmed=true -p:IncludeNativeLibrariesForSelfExtract=true -p:PublishReadyToRun=true -p:EnableCompressionInSingleFile=true -o (Join-Path $stage 'app') 2>&1 | Tee-Object -FilePath (Join-Path $OutputRoot "publish-$variant.log") | Out-Null
+& dotnet publish src/NewManga.App/NewManga.App.csproj -c Release -r win-x64 --self-contained -p:PublishSingleFile=true @publishArgs -o (Join-Path $stage 'app') 2>&1 | Tee-Object -FilePath (Join-Path $OutputRoot "publish-$variant.log") | Out-Null
 if ($LASTEXITCODE -ne 0) { throw 'dotnet publish failed' }
 Pop-Location
 

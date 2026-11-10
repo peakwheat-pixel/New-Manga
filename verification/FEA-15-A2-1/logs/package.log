@@ -1,0 +1,35 @@
+FEA-15-A2-1 package | 2026-11-10T11:44:34.4264198+08:00 | HEAD=5509e180e968838de38020e7563952bdee9cb443 | sidecar=399492B/d08e0951
+Exception: G:\CODEX\New Manga\apps\desktop-avalonia\scripts\package.ps1:22
+Line |
+  22 |  if ($LASTEXITCODE -ne 0) { throw 'dotnet publish failed' }
+     |                             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | dotnet publish failed
+EXIT=1
+=== retry with -SuppressTrimWarnings 2026-11-10T11:45:31.6196417+08:00 ===
+sidecar build: d08e095164100fc2cbbb78c265c8371464fb8dd8de84e857a63a31430c48929a (399492 bytes, HEAD=5509e180e968838de38020e7563952bdee9cb443)
+警告: GPU device probe unavailable; VERSION.json devices=null
+{
+  "ac": "AC2",
+  "variant": "base",
+  "version": "0.1.1",
+  "zip": "G:\\CODEX\\New Manga.workspace\\FEA-15-A2-1\\out\\NewManga-0.1.1-win-x64.zip",
+  "zip_bytes": 110246583,
+  "zip_mb": 105.14,
+  "max_zip_mb": 150,
+  "uncompressed_bytes": 232576545.0,
+  "uncompressed_mb": 221.8,
+  "file_count": 1969,
+  "sidecar_bytes": 195388870.0,
+  "sidecar_mb": 186.34,
+  "models_bundled": false,
+  "models_bytes": 0,
+  "licenses_byte_identical": true,
+  "license_hashes": {
+    "NOTICE.md": "81ebf5abbccf0adbc4d297a1ed5d5ffc26029c25a65872fb645b3f0d9cc9ff3d",
+    "LICENSE": "fb981668c18a279e285fc4d83fba1e836cc84dd4daa73c9697d3cfd2d8aca6e0",
+    "LICENSE-AGPL-3.0.txt": "e0eedba615d5cd1b986afb6c5b3a4b1ae33713e7e9dc74d19daec5e3221f9d2e",
+    "THIRD_PARTY_LICENSES.md": "ee5393685aa9f098ea590e39ce93d0934bbbfe02ffcf3795a4227e49fab2618c"
+  },
+  "generated_at_utc": "2026-11-10T03:46:09.9010640Z"
+}
+EXIT=0

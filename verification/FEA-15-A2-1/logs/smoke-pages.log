@@ -1,0 +1,66 @@
+FEA-15-A2-1 four-page smoke | 2026-11-10T11:48:07.3226980+08:00
+=== install ===
+{
+  "sidecar_files": 1956,
+  "version": "0.1.1",
+  "models_bundled": false,
+  "license_copy_ok": true,
+  "install_dir": "G:\\CODEX\\New Manga.workspace\\FEA-15-A2-1\\install",
+  "sidecar_bytes": 195388870.0,
+  "variant": "base",
+  "sidecar_bundled": true,
+  "data_root_created": false,
+  "installed": true,
+  "first_run_backup": null,
+  "exe": "G:\\CODEX\\New Manga.workspace\\FEA-15-A2-1\\install\\app\\NewManga.App.exe",
+  "data_root": "C:\\Users\\49745\\AppData\\Roaming\\com.newmanga.desktop"
+}
+INSTALL_EXIT=0
+=== pages ===
+pages_ok=False appdata_unchanged=True
+page=bookshelf window=False exit=2
+page=workbench window=False exit=2
+page=reader window=False exit=2
+page=settings window=False exit=2
+PAGES_EXIT=1
+=== uninstall ===
+{
+  "install_dir": "G:\\CODEX\\New Manga.workspace\\FEA-15-A2-1\\install",
+  "install_dir_exists": false,
+  "processes": 0,
+  "data_root": "C:\\Users\\49745\\AppData\\Roaming\\com.newmanga.desktop",
+  "uninstalled": true,
+  "data_root_exists": true
+}
+UNINSTALL_EXIT=0
+=== retry with quoted paths 2026-11-10T11:48:27.1563116+08:00 ===
+{
+  "data_root_created": false,
+  "install_dir": "G:\\CODEX\\New Manga.workspace\\FEA-15-A2-1\\install",
+  "variant": "base",
+  "installed": true,
+  "sidecar_bundled": true,
+  "license_copy_ok": true,
+  "version": "0.1.1",
+  "exe": "G:\\CODEX\\New Manga.workspace\\FEA-15-A2-1\\install\\app\\NewManga.App.exe",
+  "sidecar_files": 1956,
+  "first_run_backup": null,
+  "models_bundled": false,
+  "data_root": "C:\\Users\\49745\\AppData\\Roaming\\com.newmanga.desktop",
+  "sidecar_bytes": 195388870.0
+}
+pages_ok=True appdata_unchanged=True
+page=bookshelf window=True exit=0
+page=workbench window=True exit=0
+page=reader window=True exit=0
+page=settings window=True exit=0
+PAGES_EXIT=0
+{
+  "install_dir_exists": false,
+  "data_root": "C:\\Users\\49745\\AppData\\Roaming\\com.newmanga.desktop",
+  "install_dir": "G:\\CODEX\\New Manga.workspace\\FEA-15-A2-1\\install",
+  "processes": 0,
+  "uninstalled": true,
+  "data_root_exists": true
+}
+UNINSTALL_EXIT=0
