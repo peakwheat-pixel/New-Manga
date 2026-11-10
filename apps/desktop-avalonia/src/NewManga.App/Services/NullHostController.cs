@@ -77,6 +77,26 @@ public sealed class NullHostController : IHostController, ISourceImportControlle
     public Task<bool> TryChineseRoundTripAsync(string title, CancellationToken cancellationToken = default) =>
         Task.FromResult(false);
 
+    public Task<ReadingPreferencesInfo?> GetReadingPreferencesAsync(string bookId, CancellationToken cancellationToken = default) =>
+        Task.FromResult<ReadingPreferencesInfo?>(null);
+
+    public Task<bool> SaveReadingPreferencesAsync(string bookId, ReadingPreferencesPatch patch, CancellationToken cancellationToken = default) =>
+        Task.FromResult(false);
+
+    public Task<IReadOnlyList<BookmarkInfo>> ListBookmarksAsync(string bookId, CancellationToken cancellationToken = default) =>
+        Task.FromResult<IReadOnlyList<BookmarkInfo>>(Array.Empty<BookmarkInfo>());
+
+    public Task<string?> CreateBookmarkAsync(string bookId, string chapterId, string pageId, string? side = null, string? note = null, CancellationToken cancellationToken = default) =>
+        Task.FromResult<string?>(null);
+
+    public Task<bool> DeleteBookmarkAsync(string bookmarkId, CancellationToken cancellationToken = default) =>
+        Task.FromResult(false);
+
+    public Task<BookReadingProgressInfo?> GetBookReadingProgressAsync(string bookId, CancellationToken cancellationToken = default) =>
+        Task.FromResult<BookReadingProgressInfo?>(null);
+
+    public Task<int> ResetReadingProgressAsync(string bookId, bool confirm = true, CancellationToken cancellationToken = default) =>
+        Task.FromResult(0);
     public Task<ReaderBookData?> LoadReaderBookAsync(
         string? bookId = null,
         string? chapterId = null,

@@ -43,6 +43,8 @@ allowed_paths:
   - apps/desktop-avalonia/src/NewManga.App/ViewModels/Fluent/ReaderViewModel.cs
   - apps/desktop-avalonia/src/NewManga.App/Views/ReaderWorkbenchPages.cs
   - apps/desktop-avalonia/tests/NewManga.App.Tests/ReaderPreferenceTests.cs
+  - apps/desktop-avalonia/tests/NewManga.App.Tests/FakeHostController.cs
+  - apps/desktop-avalonia/tests/NewManga.App.Tests/ImportExportUiTests.cs
   - apps/desktop-avalonia/tests/NewManga.App.Tests/ReaderBookmarkTests.cs
   - apps/desktop-avalonia/tests/NewManga.Host.Tests/ReadWireTests.cs
   - tests/storage/test_reading_preferences.py

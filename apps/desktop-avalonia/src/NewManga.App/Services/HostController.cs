@@ -417,6 +417,138 @@ public sealed class HostController : IHostController, ISourceImportController, I
     /// READER-PROGRESS-1: persist one reading position. Typed degradation only — nothing is thrown
     /// into the UI: no Core = NotReady, parity not reached = ReadOnly, Core rejection = Failed(code).
     /// </summary>
+    /// <summary>FEA-14-READ-1 (PREQ P9): per-book reading preferences.</summary>
+    public async Task<ReadingPreferencesInfo?> GetReadingPreferencesAsync(
+        string bookId, CancellationToken cancellationToken = default)
+    {
+        if (_runtime is null || !_runtime.Result.IsReady || string.IsNullOrWhiteSpace(bookId))
+        {
+            return null;
+        }
+        var runtime = _runtime;
+        try
+        {
+            return await runtime.GetReadingPreferencesAsync(bookId, cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (ex is CoreOperationException or SidecarException or BridgeException or OperationCanceledException or IOException)
+        {
+            return null;
+        }
+    }
+
+    /// <summary>FEA-14-READ-1 (PREQ P10): persist one book's reading preferences.</summary>
+    public async Task<bool> SaveReadingPreferencesAsync(
+        string bookId, ReadingPreferencesPatch patch, CancellationToken cancellationToken = default)
+    {
+        if (_runtime is null || !_runtime.Result.IsReady || string.IsNullOrWhiteSpace(bookId))
+        {
+            return false;
+        }
+        var runtime = _runtime;
+        try
+        {
+            return await runtime.SaveReadingPreferencesAsync(bookId, patch, cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (ex is CoreOperationException or SidecarException or BridgeException or OperationCanceledException or IOException)
+        {
+            return false;
+        }
+    }
+
+    /// <summary>FEA-14-READ-1 (PREQ P11): list one book's bookmarks.</summary>
+    public async Task<IReadOnlyList<BookmarkInfo>> ListBookmarksAsync(
+        string bookId, CancellationToken cancellationToken = default)
+    {
+        if (_runtime is null || !_runtime.Result.IsReady || string.IsNullOrWhiteSpace(bookId))
+        {
+            return Array.Empty<BookmarkInfo>();
+        }
+        var runtime = _runtime;
+        try
+        {
+            return await runtime.ListBookmarksAsync(bookId, cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (ex is CoreOperationException or SidecarException or BridgeException or OperationCanceledException or IOException)
+        {
+            return Array.Empty<BookmarkInfo>();
+        }
+    }
+
+    /// <summary>FEA-14-READ-1 (PREQ P12): create one bookmark.</summary>
+    public async Task<string?> CreateBookmarkAsync(
+        string bookId, string chapterId, string pageId, string? side = null, string? note = null,
+        CancellationToken cancellationToken = default)
+    {
+        if (_runtime is null || !_runtime.Result.IsReady)
+        {
+            return null;
+        }
+        var runtime = _runtime;
+        try
+        {
+            return await runtime.CreateBookmarkAsync(bookId, chapterId, pageId, side, note, cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (ex is CoreOperationException or SidecarException or BridgeException or OperationCanceledException or IOException)
+        {
+            return null;
+        }
+    }
+
+    /// <summary>FEA-14-READ-1 (PREQ P13): delete one bookmark.</summary>
+    public async Task<bool> DeleteBookmarkAsync(string bookmarkId, CancellationToken cancellationToken = default)
+    {
+        if (_runtime is null || !_runtime.Result.IsReady || string.IsNullOrWhiteSpace(bookmarkId))
+        {
+            return false;
+        }
+        var runtime = _runtime;
+        try
+        {
+            return await runtime.DeleteBookmarkAsync(bookmarkId, cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (ex is CoreOperationException or SidecarException or BridgeException or OperationCanceledException or IOException)
+        {
+            return false;
+        }
+    }
+
+    /// <summary>FEA-14-READ-1 (PREQ P14): whole-book reading progress.</summary>
+    public async Task<BookReadingProgressInfo?> GetBookReadingProgressAsync(
+        string bookId, CancellationToken cancellationToken = default)
+    {
+        if (_runtime is null || !_runtime.Result.IsReady || string.IsNullOrWhiteSpace(bookId))
+        {
+            return null;
+        }
+        var runtime = _runtime;
+        try
+        {
+            return await runtime.GetBookReadingProgressAsync(bookId, cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (ex is CoreOperationException or SidecarException or BridgeException or OperationCanceledException or IOException)
+        {
+            return null;
+        }
+    }
+
+    /// <summary>FEA-14-READ-1 (PREQ P15): reset one book's reading progress.</summary>
+    public async Task<int> ResetReadingProgressAsync(
+        string bookId, bool confirm = true, CancellationToken cancellationToken = default)
+    {
+        if (_runtime is null || !_runtime.Result.IsReady || string.IsNullOrWhiteSpace(bookId))
+        {
+            return 0;
+        }
+        var runtime = _runtime;
+        try
+        {
+            return await runtime.ResetReadingProgressAsync(bookId, confirm, cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (ex is CoreOperationException or SidecarException or BridgeException or OperationCanceledException or IOException)
+        {
+            return 0;
+        }
+    }
     public async Task<ReaderProgressSaveResult> SaveReadingProgressAsync(
         string chapterId,
         string pageId,

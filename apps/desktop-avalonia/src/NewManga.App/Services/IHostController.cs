@@ -183,6 +183,26 @@ public interface IHostController : IReaderProgressSink, IRunController, IAsyncDi
         CancellationToken cancellationToken = default);
 
     /// <summary>AC1: live regions + page pixel extent (<c>list_regions</c>); null when unavailable.</summary>
+    /// <summary>FEA-14-READ-1 (PREQ P9): per-book reading preferences.</summary>
+    Task<ReadingPreferencesInfo?> GetReadingPreferencesAsync(string bookId, CancellationToken cancellationToken = default);
+
+    /// <summary>FEA-14-READ-1 (PREQ P10): persist one book's reading preferences.</summary>
+    Task<bool> SaveReadingPreferencesAsync(string bookId, ReadingPreferencesPatch patch, CancellationToken cancellationToken = default);
+
+    /// <summary>FEA-14-READ-1 (PREQ P11): list one book's bookmarks.</summary>
+    Task<IReadOnlyList<BookmarkInfo>> ListBookmarksAsync(string bookId, CancellationToken cancellationToken = default);
+
+    /// <summary>FEA-14-READ-1 (PREQ P12): create one bookmark.</summary>
+    Task<string?> CreateBookmarkAsync(string bookId, string chapterId, string pageId, string? side = null, string? note = null, CancellationToken cancellationToken = default);
+
+    /// <summary>FEA-14-READ-1 (PREQ P13): delete one bookmark.</summary>
+    Task<bool> DeleteBookmarkAsync(string bookmarkId, CancellationToken cancellationToken = default);
+
+    /// <summary>FEA-14-READ-1 (PREQ P14): whole-book reading progress.</summary>
+    Task<BookReadingProgressInfo?> GetBookReadingProgressAsync(string bookId, CancellationToken cancellationToken = default);
+
+    /// <summary>FEA-14-READ-1 (PREQ P15): reset one book's reading progress.</summary>
+    Task<int> ResetReadingProgressAsync(string bookId, bool confirm = true, CancellationToken cancellationToken = default);
     Task<RegionPageProjection?> LoadPageRegionsAsync(
         string pageId,
         CancellationToken cancellationToken = default);
