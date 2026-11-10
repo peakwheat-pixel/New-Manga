@@ -180,6 +180,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Any, Callable, TextIO
 
 from application.fonts.service import FontLibraryError
+from application.editing.issue_markers import IssueMarkerError
 from application.library.errors import BookNotFound, ChapterNotFound, TagNotFound
 from application.editing.errors import (
     DraftError,
@@ -5223,6 +5224,97 @@ class CoreServiceServer:
             "sort_order": chapter.sort_order,
         }
 
+    # FEA-14-EDIT-1 (PREQ EDIT P16-P20): issue markers (schema v13).
+    def handle_list_issue_markers(self, payload: dict[str, Any]) -> dict[str, Any]:
+        allowed = {"book_id", "state"}
+        if set(payload) - allowed or not isinstance(payload.get("book_id"), str) or not payload["book_id"]:
+            raise P16WireError("INVALID_REQUEST", "validation", "Issue marker list request is invalid")
+        state = payload.get("state")
+        if state is not None and not isinstance(state, str):
+            raise P16WireError("INVALID_REQUEST", "validation", "Issue marker state must be a string")
+        try:
+            markers = self._core.issue_markers.list_markers(payload["book_id"], state)
+        except IssueMarkerError as error:
+            raise self._issue_marker_wire_error(error) from error
+        return {"markers": [self._issue_marker_payload(marker) for marker in markers]}
+
+    def handle_create_issue_marker(self, payload: dict[str, Any]) -> dict[str, Any]:
+        allowed = {"book_id", "chapter_id", "page_id", "kind", "note", "position"}
+        required = ("book_id", "chapter_id", "page_id", "kind")
+        if set(payload) - allowed or any(
+            not isinstance(payload.get(name), str) or not payload[name] for name in required
+        ):
+            raise P16WireError("INVALID_REQUEST", "validation", "Issue marker create request is invalid")
+        note = payload.get("note")
+        if note is not None and not isinstance(note, str):
+            raise P16WireError("INVALID_REQUEST", "validation", "Issue marker note must be a string")
+        raw_position = payload.get("position")
+        position: tuple[Any, Any] | None = None
+        if raw_position is not None:
+            if not isinstance(raw_position, dict) or set(raw_position) != {"x", "y"}:
+                raise P16WireError("INVALID_REQUEST", "validation", "Issue marker position must be {x, y}")
+            position = (raw_position["x"], raw_position["y"])
+        try:
+            marker = self._core.issue_markers.create_marker(
+                payload["book_id"], payload["chapter_id"], payload["page_id"], payload["kind"],
+                note=note, position=position,
+            )
+        except IssueMarkerError as error:
+            raise self._issue_marker_wire_error(error) from error
+        return {"marker_id": marker.marker_id}
+
+    def handle_resolve_issue_marker(self, payload: dict[str, Any]) -> dict[str, Any]:
+        marker_id = self._issue_marker_id(payload)
+        try:
+            self._core.issue_markers.resolve_marker(marker_id)
+        except IssueMarkerError as error:
+            raise self._issue_marker_wire_error(error) from error
+        return {"resolved": True}
+
+    def handle_reopen_issue_marker(self, payload: dict[str, Any]) -> dict[str, Any]:
+        marker_id = self._issue_marker_id(payload)
+        try:
+            self._core.issue_markers.reopen_marker(marker_id)
+        except IssueMarkerError as error:
+            raise self._issue_marker_wire_error(error) from error
+        return {"reopened": True}
+
+    def handle_delete_issue_marker(self, payload: dict[str, Any]) -> dict[str, Any]:
+        marker_id = self._issue_marker_id(payload)
+        try:
+            self._core.issue_markers.delete_marker(marker_id)
+        except IssueMarkerError as error:
+            raise self._issue_marker_wire_error(error) from error
+        return {"deleted": True}
+
+    @staticmethod
+    def _issue_marker_id(payload: dict[str, Any]) -> str:
+        if set(payload) != {"marker_id"} or not isinstance(payload.get("marker_id"), str) or not payload["marker_id"]:
+            raise P16WireError("INVALID_REQUEST", "validation", "Issue marker request is invalid")
+        return payload["marker_id"]
+
+    @staticmethod
+    def _issue_marker_payload(marker: Any) -> dict[str, Any]:
+        data: dict[str, Any] = {
+            "marker_id": marker.marker_id,
+            "chapter_id": marker.chapter_id,
+            "page_id": marker.page_id,
+            "kind": marker.kind,
+            "note": marker.note,
+            "state": marker.state.value,
+            "created_at": marker.created_at,
+        }
+        if marker.position is not None:
+            data["position"] = marker.position
+        if marker.resolved_at is not None:
+            data["resolved_at"] = marker.resolved_at
+        return data
+
+    @staticmethod
+    def _issue_marker_wire_error(error: IssueMarkerError) -> P16WireError:
+        category = "not_found" if error.code == "TARGET_NOT_FOUND" else "validation"
+        return P16WireError(error.code, category, str(error))
+
     def _register_export_target(self, payload: dict[str, Any]) -> dict[str, Any]:
         fields = {"grant_id", "session_id", "target_path", "format", "replace_existing", "expires_at", "signing_key", "signature"}
         if set(payload) != fields:
@@ -7007,6 +7099,7 @@ class CoreServiceServer:
                        "GetReadingPreferences", "SaveReadingPreferences",
                        "ListBookmarks", "CreateBookmark", "DeleteBookmark",
                        "GetBookReadingProgress", "ResetReadingProgress",
+                       "ListIssueMarkers", "CreateIssueMarker", "ResolveIssueMarker", "ReopenIssueMarker", "DeleteIssueMarker",
                        "StartExport", "GetExportSnapshot", "GetExportHistory", "CancelExport"):
             try:
                 if not isinstance(raw_payload, dict):
@@ -7043,6 +7136,16 @@ class CoreServiceServer:
                     result = self.handle_get_book_reading_progress(payload)
                 elif command == "ResetReadingProgress":
                     result = self.handle_reset_reading_progress(payload)
+                elif command == "ListIssueMarkers":
+                    result = self.handle_list_issue_markers(payload)
+                elif command == "CreateIssueMarker":
+                    result = self.handle_create_issue_marker(payload)
+                elif command == "ResolveIssueMarker":
+                    result = self.handle_resolve_issue_marker(payload)
+                elif command == "ReopenIssueMarker":
+                    result = self.handle_reopen_issue_marker(payload)
+                elif command == "DeleteIssueMarker":
+                    result = self.handle_delete_issue_marker(payload)
                 elif command == "SaveReadingProgress":
                     result = self.handle_save_reading_progress(payload)
                 elif command == "StartExport":

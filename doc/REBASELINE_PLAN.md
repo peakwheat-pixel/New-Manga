@@ -47,13 +47,13 @@
 |FEA-14-READ-1|FEA-14-S5-PREQ-1|**closed_with_limitations**（r4；v10+wire）|
 |FEA-14-READ-2|FEA-14-READ-1|**closed_with_limitations**（r3）|
 |FEA-14-FONT-1 / FEA-14-LIB-1|FEA-14-S5-PREQ-1|**closed_with_limitations**（r5；v11 + P1–P4；r3；v12 + P5–P8）|
-|FEA-14-EDIT-1|FEA-14-S5-PREQ-1|**ready**（v13 issue_markers；P16–P20）|
+|FEA-14-EDIT-1|FEA-14-S5-PREQ-1|**in_review**（v13 issue_markers；P16–P20）|
 |NEW-MANGA-V1-FULL-AUDIT|—|blocked（素材不传播；resume=in_progress）|
 
 ## 当前活动程序（FEA 线 S5 + FEA-15 验收）
 **FEA 线 S5**：FEA-14 七切片经 PREQ-1 冻结；FEA-15 A2–A4 机测推进；V11R 收官。
 当前活动：`FEA-14-EDIT-1`（ready；v13 + P16–P20）
-READY 节点：`FEA-14-EDIT-1`
+READY 节点：无
 ## 历史快照（终态节点，非当前 DAG）
 
 已终止节点 370+ 项（明细见 [TASK_LEDGER](TASK_LEDGER.md) 与各 Task 卡）。仍影响当前决策的终态约束：

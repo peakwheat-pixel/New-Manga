@@ -121,6 +121,23 @@ public sealed class NullHostController : IHostController, ISourceImportControlle
     public Task<ChapterSummary?> CreateChapterWithMetadataAsync(string bookId, string title, string? kind = null, string? number = null, int? importOrder = null, CancellationToken cancellationToken = default) =>
         Task.FromResult<ChapterSummary?>(null);
 
+    public Task<IReadOnlyList<IssueMarkerInfo>> ListIssueMarkersAsync(string bookId, string? state = null, CancellationToken cancellationToken = default) =>
+        Task.FromResult<IReadOnlyList<IssueMarkerInfo>>(Array.Empty<IssueMarkerInfo>());
+
+    public Task<string?> CreateIssueMarkerAsync(
+        string bookId, string chapterId, string pageId, string kind,
+        string? note = null, IssueMarkerPosition? position = null, CancellationToken cancellationToken = default) =>
+        Task.FromResult<string?>(null);
+
+    public Task<bool> ResolveIssueMarkerAsync(string markerId, CancellationToken cancellationToken = default) =>
+        Task.FromResult(false);
+
+    public Task<bool> ReopenIssueMarkerAsync(string markerId, CancellationToken cancellationToken = default) =>
+        Task.FromResult(false);
+
+    public Task<bool> DeleteIssueMarkerAsync(string markerId, CancellationToken cancellationToken = default) =>
+        Task.FromResult(false);
+
     public Task<ReaderBookData?> LoadReaderBookAsync(
         string? bookId = null,
         string? chapterId = null,

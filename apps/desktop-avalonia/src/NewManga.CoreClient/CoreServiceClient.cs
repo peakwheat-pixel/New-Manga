@@ -27,6 +27,25 @@ public sealed record BookSummary(
 /// <summary>One chapter row from the Core <c>list_chapters</c> read face.</summary>
 public sealed record ChapterSummary(string ChapterId, string Title, string ChapterNumber, int SortOrder);
 
+/// <summary>FEA-14-EDIT-1 (PREQ EDIT P16): relative page point of a marker (0..1).</summary>
+public sealed record IssueMarkerPosition(double X, double Y);
+
+/// <summary>
+/// FEA-14-EDIT-1 (PREQ EDIT P16): one editing issue marker. <see cref="Position"/>
+/// is null for whole-page markers; <see cref="Note"/>/<see cref="ResolvedAt"/>
+/// are null until set.
+/// </summary>
+public sealed record IssueMarkerInfo(
+    string MarkerId,
+    string ChapterId,
+    string PageId,
+    string Kind,
+    string? Note,
+    string State,
+    string CreatedAt,
+    IssueMarkerPosition? Position = null,
+    string? ResolvedAt = null);
+
 /// <summary>
 /// REALUSE-DATA-SAFETY-1 AC2: one <c>.nmbak</c> package row from <c>backup.list</c> /
 /// <c>backup.create</c>. <see cref="Verified"/> is the Core's read-back verdict, never optimism.
@@ -1730,6 +1749,125 @@ public sealed class CoreServiceClient : IAsyncDisposable
             ReadString(result, "title") ?? string.Empty,
             ReadString(result, "number") ?? string.Empty,
             ReadInt(result, "sort_order"));
+    }
+
+    /// <summary>FEA-14-EDIT-1 (PREQ EDIT P16): list a book's issue markers (default state=open).</summary>
+    public async Task<IReadOnlyList<IssueMarkerInfo>> ListIssueMarkersAsync(
+        string bookId, string? state = null, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(bookId))
+        {
+            throw new ArgumentException("book_id is required", nameof(bookId));
+        }
+        var response = await SendAsync(
+                "ListIssueMarkers", CoreProtocol.DefaultMinor,
+                writer =>
+                {
+                    writer.WriteStartObject();
+                    writer.WriteString("book_id", bookId);
+                    if (state is not null) writer.WriteString("state", state);
+                    writer.WriteEndObject();
+                },
+                _options.RequestTimeout, cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, "ListIssueMarkers");
+        var markers = new List<IssueMarkerInfo>();
+        if (result.TryGetProperty("markers", out var array) && array.ValueKind == JsonValueKind.Array)
+        {
+            foreach (var item in array.EnumerateArray())
+            {
+                if (item.ValueKind != JsonValueKind.Object) continue;
+                markers.Add(new IssueMarkerInfo(
+                    ReadString(item, "marker_id") ?? string.Empty,
+                    ReadString(item, "chapter_id") ?? string.Empty,
+                    ReadString(item, "page_id") ?? string.Empty,
+                    ReadString(item, "kind") ?? string.Empty,
+                    ReadString(item, "note"),
+                    ReadString(item, "state") ?? string.Empty,
+                    ReadString(item, "created_at") ?? string.Empty,
+                    ReadIssueMarkerPosition(item),
+                    ReadString(item, "resolved_at")));
+            }
+        }
+        return markers;
+    }
+
+    /// <summary>FEA-14-EDIT-1 (PREQ EDIT P17): create a marker; returns its id.</summary>
+    public async Task<string?> CreateIssueMarkerAsync(
+        string bookId, string chapterId, string pageId, string kind,
+        string? note = null, IssueMarkerPosition? position = null,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(bookId) || string.IsNullOrWhiteSpace(chapterId)
+            || string.IsNullOrWhiteSpace(pageId) || string.IsNullOrWhiteSpace(kind))
+        {
+            throw new ArgumentException("book_id, chapter_id, page_id and kind are required", nameof(bookId));
+        }
+        var response = await SendAsync(
+                "CreateIssueMarker", CoreProtocol.DefaultMinor,
+                writer =>
+                {
+                    writer.WriteStartObject();
+                    writer.WriteString("book_id", bookId);
+                    writer.WriteString("chapter_id", chapterId);
+                    writer.WriteString("page_id", pageId);
+                    writer.WriteString("kind", kind);
+                    if (note is not null) writer.WriteString("note", note);
+                    if (position is not null)
+                    {
+                        writer.WriteStartObject("position");
+                        writer.WriteNumber("x", position.X);
+                        writer.WriteNumber("y", position.Y);
+                        writer.WriteEndObject();
+                    }
+                    writer.WriteEndObject();
+                },
+                _options.RequestTimeout, cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, "CreateIssueMarker");
+        return ReadString(result, "marker_id");
+    }
+
+    /// <summary>FEA-14-EDIT-1 (PREQ EDIT P18): resolve a marker.</summary>
+    public async Task<bool> ResolveIssueMarkerAsync(string markerId, CancellationToken cancellationToken = default)
+        => await SendIssueMarkerStateAsync("ResolveIssueMarker", "resolved", markerId, cancellationToken).ConfigureAwait(false);
+
+    /// <summary>FEA-14-EDIT-1 (PREQ EDIT P19): reopen a marker.</summary>
+    public async Task<bool> ReopenIssueMarkerAsync(string markerId, CancellationToken cancellationToken = default)
+        => await SendIssueMarkerStateAsync("ReopenIssueMarker", "reopened", markerId, cancellationToken).ConfigureAwait(false);
+
+    /// <summary>FEA-14-EDIT-1 (PREQ EDIT P20): delete a marker (marker row only).</summary>
+    public async Task<bool> DeleteIssueMarkerAsync(string markerId, CancellationToken cancellationToken = default)
+        => await SendIssueMarkerStateAsync("DeleteIssueMarker", "deleted", markerId, cancellationToken).ConfigureAwait(false);
+
+    private async Task<bool> SendIssueMarkerStateAsync(
+        string command, string trueProperty, string markerId, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(markerId))
+        {
+            throw new ArgumentException("marker_id is required", nameof(markerId));
+        }
+        var response = await SendAsync(
+                command, CoreProtocol.DefaultMinor,
+                writer =>
+                {
+                    writer.WriteStartObject();
+                    writer.WriteString("marker_id", markerId);
+                    writer.WriteEndObject();
+                },
+                _options.RequestTimeout, cancellationToken)
+            .ConfigureAwait(false);
+        var result = RequireResult(response, command);
+        return ReadBool(result, trueProperty);
+    }
+
+    private static IssueMarkerPosition? ReadIssueMarkerPosition(JsonElement item)
+    {
+        if (!item.TryGetProperty("position", out var position) || position.ValueKind != JsonValueKind.Object)
+        {
+            return null;
+        }
+        return new IssueMarkerPosition(ReadDouble(position, "x"), ReadDouble(position, "y"));
     }
 
     /// <summary>Reader projection read face (<c>GetReaderProjection</c>, mode=original, start=beginning).</summary>

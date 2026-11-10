@@ -210,7 +210,7 @@ def _seed_v7_legacy_library(db_path: Path, root: Path) -> dict:
     )
     conn.commit()
     applied = MigrationRunner(conn, MIGRATIONS).apply_pending()
-    assert [record.schema_version for record in applied] == [8, 9, 10, 11, 12]
+    assert [record.schema_version for record in applied] == [8, 9, 10, 11, 12, 13]
     conn.close()
     return facts
 

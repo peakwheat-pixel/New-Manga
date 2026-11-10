@@ -294,6 +294,63 @@ public sealed class FakeHostController : IHostController, ISourceImportControlle
         return Task.FromResult<ChapterSummary?>(created);
     }
 
+    // FEA-14-EDIT-1 (PREQ EDIT P16-P20): issue-marker ports. The fake keeps a
+    // per-call ledger so UI tests can assert the command was issued, and models
+    // the state machine over its in-memory marker list.
+    public List<IssueMarkerInfo> IssueMarkers { get; } = new();
+    public (string BookId, string? State)? LastIssueMarkerList { get; private set; }
+    public (string BookId, string ChapterId, string PageId, string Kind, string? Note, IssueMarkerPosition? Position)? LastIssueMarkerCreate { get; private set; }
+    public List<(string Command, string MarkerId)> IssueMarkerCommands { get; } = new();
+
+    public Task<IReadOnlyList<IssueMarkerInfo>> ListIssueMarkersAsync(string bookId, string? state = null, CancellationToken cancellationToken = default)
+    {
+        LastIssueMarkerList = (bookId, state);
+        IReadOnlyList<IssueMarkerInfo> markers = IssueMarkers
+            .Where(marker => state is null || marker.State == state)
+            .ToList();
+        return Task.FromResult(markers);
+    }
+
+    public Task<string?> CreateIssueMarkerAsync(
+        string bookId, string chapterId, string pageId, string kind,
+        string? note = null, IssueMarkerPosition? position = null, CancellationToken cancellationToken = default)
+    {
+        LastIssueMarkerCreate = (bookId, chapterId, pageId, kind, note, position);
+        var marker = new IssueMarkerInfo(
+            $"marker-{IssueMarkers.Count + 1}", chapterId, pageId, kind, note, "open",
+            "2026-11-10T00:00:00.000+00:00", position);
+        IssueMarkers.Add(marker);
+        return Task.FromResult<string?>(marker.MarkerId);
+    }
+
+    public Task<bool> ResolveIssueMarkerAsync(string markerId, CancellationToken cancellationToken = default)
+    {
+        IssueMarkerCommands.Add(("ResolveIssueMarker", markerId));
+        return Task.FromResult(ReplaceMarkerState(markerId, "resolved"));
+    }
+
+    public Task<bool> ReopenIssueMarkerAsync(string markerId, CancellationToken cancellationToken = default)
+    {
+        IssueMarkerCommands.Add(("ReopenIssueMarker", markerId));
+        return Task.FromResult(ReplaceMarkerState(markerId, "open"));
+    }
+
+    public Task<bool> DeleteIssueMarkerAsync(string markerId, CancellationToken cancellationToken = default)
+    {
+        IssueMarkerCommands.Add(("DeleteIssueMarker", markerId));
+        var removed = IssueMarkers.RemoveAll(marker => marker.MarkerId == markerId) > 0;
+        return Task.FromResult(removed);
+    }
+
+    private bool ReplaceMarkerState(string markerId, string state)
+    {
+        var index = IssueMarkers.FindIndex(marker => marker.MarkerId == markerId);
+        if (index < 0) return false;
+        var current = IssueMarkers[index];
+        IssueMarkers[index] = current with { State = state, ResolvedAt = state == "resolved" ? "2026-11-10T00:01:00.000+00:00" : null };
+        return true;
+    }
+
     public Task<ReaderBookData?> LoadReaderBookAsync(
         string? bookId = null,
         string? chapterId = null,

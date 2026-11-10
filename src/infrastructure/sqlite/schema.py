@@ -52,6 +52,7 @@ SCHEMA_VERSION_V11 = 11
 
 #: FEA-14-LIB-1 (PREQ LIB P7): user-defined chapter rank. Additive only.
 SCHEMA_VERSION_V12 = 12
+SCHEMA_VERSION_V13 = 13
 
 MIGRATION_V1_NAME = "v1__storage_base"
 
@@ -930,6 +931,33 @@ MIGRATION_V12_NAME = "v12__chapters_custom_rank"
 MIGRATION_V12_SQL = "ALTER TABLE chapters ADD COLUMN custom_rank INTEGER;"
 
 
+#: FEA-14-EDIT-1 scope §1 / PREQ DDL v10 plan §2.3: issue markers (whole-page or
+#: one relative point). Additive: new table + two indexes, v1-v12 checksums stay
+#: byte-identical. Markers are user work product, not protected content.
+MIGRATION_V13_NAME = "v13__issue_markers"
+
+MIGRATION_V13_SQL = """
+CREATE TABLE issue_markers (
+    marker_id TEXT PRIMARY KEY CHECK (length(marker_id) > 0),
+    book_id TEXT NOT NULL,
+    chapter_id TEXT NOT NULL,
+    page_id TEXT NOT NULL,
+    position_x REAL,
+    position_y REAL,
+    kind TEXT NOT NULL CHECK (length(kind) > 0),
+    note TEXT,
+    state TEXT NOT NULL DEFAULT 'open' CHECK (state IN ('open', 'resolved')),
+    created_at TEXT NOT NULL,
+    resolved_at TEXT,
+    CHECK ((position_x IS NULL) = (position_y IS NULL)),
+    CHECK (position_x IS NULL OR (position_x >= 0.0 AND position_x <= 1.0)),
+    CHECK (position_y IS NULL OR (position_y >= 0.0 AND position_y <= 1.0))
+);
+CREATE INDEX idx_issue_markers_book_state ON issue_markers(book_id, state);
+CREATE INDEX idx_issue_markers_page ON issue_markers(page_id);
+"""
+
+
 def default_migrations() -> tuple[Migration, ...]:
     return (
         Migration(SCHEMA_VERSION_V1, MIGRATION_V1_NAME, MIGRATION_V1_SQL),
@@ -944,4 +972,5 @@ def default_migrations() -> tuple[Migration, ...]:
         Migration(SCHEMA_VERSION_V10, MIGRATION_V10_NAME, MIGRATION_V10_SQL),
         Migration(SCHEMA_VERSION_V11, MIGRATION_V11_NAME, MIGRATION_V11_SQL),
         Migration(SCHEMA_VERSION_V12, MIGRATION_V12_NAME, MIGRATION_V12_SQL),
+        Migration(SCHEMA_VERSION_V13, MIGRATION_V13_NAME, MIGRATION_V13_SQL),
     )

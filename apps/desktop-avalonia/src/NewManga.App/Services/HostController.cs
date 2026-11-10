@@ -694,6 +694,77 @@ public sealed class HostController : IHostController, ISourceImportController, I
         }
     }
 
+    public async Task<IReadOnlyList<IssueMarkerInfo>> ListIssueMarkersAsync(
+        string bookId, string? state = null, CancellationToken cancellationToken = default)
+    {
+        if (_runtime is null || !_runtime.Result.IsReady || string.IsNullOrWhiteSpace(bookId))
+        {
+            return Array.Empty<IssueMarkerInfo>();
+        }
+        var runtime = _runtime;
+        try
+        {
+            return await runtime.ListIssueMarkersAsync(bookId, state, cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (ex is CoreOperationException or SidecarException or BridgeException or OperationCanceledException or IOException)
+        {
+            return Array.Empty<IssueMarkerInfo>();
+        }
+    }
+
+    public async Task<string?> CreateIssueMarkerAsync(
+        string bookId, string chapterId, string pageId, string kind,
+        string? note = null, IssueMarkerPosition? position = null, CancellationToken cancellationToken = default)
+    {
+        if (_runtime is null || !_runtime.Result.IsReady
+            || string.IsNullOrWhiteSpace(bookId) || string.IsNullOrWhiteSpace(chapterId)
+            || string.IsNullOrWhiteSpace(pageId) || string.IsNullOrWhiteSpace(kind))
+        {
+            return null;
+        }
+        var runtime = _runtime;
+        try
+        {
+            return await runtime.CreateIssueMarkerAsync(
+                bookId, chapterId, pageId, kind, note, position, cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (ex is CoreOperationException or SidecarException or BridgeException or OperationCanceledException or IOException)
+        {
+            return null;
+        }
+    }
+
+    public async Task<bool> ResolveIssueMarkerAsync(string markerId, CancellationToken cancellationToken = default)
+        => await SendIssueMarkerCommandAsync(
+            static (runtime, id, ct) => runtime.ResolveIssueMarkerAsync(id, ct), markerId, cancellationToken).ConfigureAwait(false);
+
+    public async Task<bool> ReopenIssueMarkerAsync(string markerId, CancellationToken cancellationToken = default)
+        => await SendIssueMarkerCommandAsync(
+            static (runtime, id, ct) => runtime.ReopenIssueMarkerAsync(id, ct), markerId, cancellationToken).ConfigureAwait(false);
+
+    public async Task<bool> DeleteIssueMarkerAsync(string markerId, CancellationToken cancellationToken = default)
+        => await SendIssueMarkerCommandAsync(
+            static (runtime, id, ct) => runtime.DeleteIssueMarkerAsync(id, ct), markerId, cancellationToken).ConfigureAwait(false);
+
+    private async Task<bool> SendIssueMarkerCommandAsync(
+        Func<HostRuntime, string, CancellationToken, Task<bool>> send,
+        string markerId, CancellationToken cancellationToken)
+    {
+        if (_runtime is null || !_runtime.Result.IsReady || string.IsNullOrWhiteSpace(markerId))
+        {
+            return false;
+        }
+        var runtime = _runtime;
+        try
+        {
+            return await send(runtime, markerId, cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (ex is CoreOperationException or SidecarException or BridgeException or OperationCanceledException or IOException)
+        {
+            return false;
+        }
+    }
+
     public async Task<ReaderProgressSaveResult> SaveReadingProgressAsync(
         string chapterId,
         string pageId,

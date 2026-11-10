@@ -701,6 +701,45 @@ public sealed class HostRuntime : IAsyncDisposable
             bookId, title, kind, number, importOrder, cancellationToken).ConfigureAwait(false);
     }
 
+    public async Task<IReadOnlyList<IssueMarkerInfo>> ListIssueMarkersAsync(
+        string bookId, string? state = null, CancellationToken cancellationToken = default)
+    {
+        var core = CoreService ?? throw NotReady();
+        return await core.ListIssueMarkersAsync(bookId, state, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>FEA-14-EDIT-1 (PREQ EDIT P17): create an issue marker.</summary>
+    public async Task<string?> CreateIssueMarkerAsync(
+        string bookId, string chapterId, string pageId, string kind,
+        string? note = null, IssueMarkerPosition? position = null,
+        CancellationToken cancellationToken = default)
+    {
+        var core = CoreService ?? throw NotReady();
+        return await core.CreateIssueMarkerAsync(
+            bookId, chapterId, pageId, kind, note, position, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>FEA-14-EDIT-1 (PREQ EDIT P18): resolve an issue marker.</summary>
+    public async Task<bool> ResolveIssueMarkerAsync(string markerId, CancellationToken cancellationToken = default)
+    {
+        var core = CoreService ?? throw NotReady();
+        return await core.ResolveIssueMarkerAsync(markerId, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>FEA-14-EDIT-1 (PREQ EDIT P19): reopen an issue marker.</summary>
+    public async Task<bool> ReopenIssueMarkerAsync(string markerId, CancellationToken cancellationToken = default)
+    {
+        var core = CoreService ?? throw NotReady();
+        return await core.ReopenIssueMarkerAsync(markerId, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>FEA-14-EDIT-1 (PREQ EDIT P20): delete an issue marker.</summary>
+    public async Task<bool> DeleteIssueMarkerAsync(string markerId, CancellationToken cancellationToken = default)
+    {
+        var core = CoreService ?? throw NotReady();
+        return await core.DeleteIssueMarkerAsync(markerId, cancellationToken).ConfigureAwait(false);
+    }
+
     public async Task<ReaderProjection> GetReaderProjectionAsync(
         string chapterId,
         string startPosition = ReaderStartPosition.Resume,

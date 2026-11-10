@@ -41,6 +41,7 @@ from typing import Any
 
 from application.editing.service import RegionEditingService, effective_sfx_policy
 from application.editing.drafts import DraftProtectionService
+from application.editing.issue_markers import IssueMarkerService
 from application.export import ExportService
 from application.importing.documents import ImportDocumentsUseCase
 from application.importing.images.ports import ImageDecoder
@@ -119,6 +120,7 @@ from infrastructure.sqlite.migrator import (
     read_schema_version,
 )
 from infrastructure.sqlite.fonts import SqliteFontAssetStore
+from infrastructure.sqlite.issue_markers import SqliteIssueMarkerStore
 from infrastructure.sqlite.reading_export import (
     SqliteReadingExtrasStore,
     SqliteExportHistoryStore,
@@ -840,6 +842,8 @@ class CoreServices:
     reading: ReadingService
     reading_extras: ReadingExtrasService
     fonts: FontLibraryService
+    #: FEA-14-EDIT-1 (PREQ EDIT P16-P20): issue markers over schema v13.
+    issue_markers: IssueMarkerService
     export_service: ExportService
     diagnostics: DiagnosticsService
     library: LibraryService
@@ -1852,6 +1856,7 @@ def assemble_core_services(
         reading = ReadingService(SqliteReadingProgressStore(conn))
         reading_extras = ReadingExtrasService(SqliteReadingExtrasStore(conn))
         fonts = FontLibraryService(SqliteFontAssetStore(conn), Path(data_root))
+        issue_markers = IssueMarkerService(SqliteIssueMarkerStore(conn))
         export_history_store = SqliteExportHistoryStore(conn)
         export_service = ExportService(
             export_history_store, pdf_composer=QtFreePdfComposer(), plugins=plugins
@@ -1897,6 +1902,7 @@ def assemble_core_services(
             reading=reading,
             reading_extras=reading_extras,
             fonts=fonts,
+            issue_markers=issue_markers,
             export_service=export_service,
             diagnostics=diagnostics,
             library=library,

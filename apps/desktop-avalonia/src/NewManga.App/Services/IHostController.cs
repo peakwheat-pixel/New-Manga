@@ -227,6 +227,23 @@ public interface IHostController : IReaderProgressSink, IRunController, IAsyncDi
     /// <summary>FEA-14-LIB-1 (PREQ LIB P8): create a chapter with metadata.</summary>
     Task<ChapterSummary?> CreateChapterWithMetadataAsync(string bookId, string title, string? kind = null, string? number = null, int? importOrder = null, CancellationToken cancellationToken = default);
 
+    /// <summary>FEA-14-EDIT-1 (PREQ EDIT P16): list a book's issue markers (default state=open).</summary>
+    Task<IReadOnlyList<IssueMarkerInfo>> ListIssueMarkersAsync(string bookId, string? state = null, CancellationToken cancellationToken = default);
+
+    /// <summary>FEA-14-EDIT-1 (PREQ EDIT P17): create an issue marker; returns its id.</summary>
+    Task<string?> CreateIssueMarkerAsync(
+        string bookId, string chapterId, string pageId, string kind,
+        string? note = null, IssueMarkerPosition? position = null, CancellationToken cancellationToken = default);
+
+    /// <summary>FEA-14-EDIT-1 (PREQ EDIT P18): resolve an issue marker.</summary>
+    Task<bool> ResolveIssueMarkerAsync(string markerId, CancellationToken cancellationToken = default);
+
+    /// <summary>FEA-14-EDIT-1 (PREQ EDIT P19): reopen an issue marker.</summary>
+    Task<bool> ReopenIssueMarkerAsync(string markerId, CancellationToken cancellationToken = default);
+
+    /// <summary>FEA-14-EDIT-1 (PREQ EDIT P20): delete an issue marker (marker row only).</summary>
+    Task<bool> DeleteIssueMarkerAsync(string markerId, CancellationToken cancellationToken = default);
+
     Task<RegionPageProjection?> LoadPageRegionsAsync(
         string pageId,
         CancellationToken cancellationToken = default);
