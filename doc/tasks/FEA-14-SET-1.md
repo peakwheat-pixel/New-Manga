@@ -3,20 +3,20 @@ id: FEA-14-SET-1
 title: FEA-14 切片 1：设置/字体面板（可切换前端架构线 S5 收口切片）
 kind: implementation
 governance_version: 3
-status: in_progress
+status: done
 approval: **scope review r1（`doc/reviews/FEA-14-SET-1-scope-r1.md`）**：卡面「字体选择+持久化」= NEEDS_UNFREEZE；DSH 2026-11-10 采纳 **§1.6 窄化口径**（字体组 = 只读投影 + 回退解析 + 本地样例预览，零写入/零新持久化/零契约字节）→ **READY-TO-FREEZE**，按本卡冻结实施。
 suggested_owner: zcode
 owner: dsh
-reviewer: null
+reviewer: r3 独立复核（`doc/reviews/FEA-14-SET-1-r3.md`，approved：P0/P1/P2=0；P3=6 残余已登记）
 depends_on:
   - FEA-13-SRC-6
 base_commit: c4e40509b
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: c543b51cc
+delivery_head: c543b51cc
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-14-SET-1
 allowed_paths:
   - doc/tasks/FEA-14-SET-1.md
@@ -42,7 +42,7 @@ out_of_scope:
   - 不实现持久化重启读回（该口径下不存在新字段）
 ---
 
-# FEA-14-SET-1：设置/字体面板（占位）
+# FEA-14-SET-1：设置/字体面板（字体只读投影）
 
 ## Scope 冻结（2026-11-10，DSH；依据 `doc/reviews/FEA-14-SET-1-scope-r1.md`）
 
@@ -105,20 +105,22 @@ out_of_scope:
 
 ## 交付链与证据（2026-11-10）
 
-- `64c32fa47`（首版+证据）→ `a0e59ac3b`（r1 处置）→ `caee4c86a`（r1 P2 判别力）→ `4b8f2831c`（P3 清理）→ `b0d5c7d6a`（r2 处置）。
+- `64c32fa47`（首版+证据）→ `a0e59ac3b`（r1 处置）→ `caee4c86a`（r1 P2 判别力）→ `4b8f2831c`（P3 清理）→ `b0d5c7d6a`（r2 处置）→ `128469abd`/`396e31efe`（主树最终证据）→ **`c543b51cc`（r3 处置 + r3 报告；delivery_head / integration_commit）**。
 - 证据索引：`verification/FEA-14-SET-1/README.md`；变异 patch 与重放脚本、AppData 红线脚本在 `verification/FEA-14-SET-1/{mutations,scripts}/`。
-- 最终交付 head、全量测试/门禁日志与 `canonical_evidence_status` 在收口提交中刷新（`*-final.log`）。
+- 最终证据（交付树）：`logs/dotnet-app-tests-final.log`（858/0/11）、`logs/dotnet-typography-final.log`（定向 41/0）、`logs/gates-check-final.log`、`logs/gates-pins-final.log`（18/18）、`logs/api-inventory.log`（EXIT 0）、`logs/appdata-redline.log`（UNCHANGED）、`logs/ipc-replay.log`（0 命令）、`logs/mutations-replay.log`（M1/M2 RED）。
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| worktree | `G:\CODEX\New Manga.workspace\worktrees\FEA-14-SET-1-p3`（detached，P3 + r2 修复的隔离构建树） | keep-until-closeout（收口后按 WORKSPACE_GOVERNANCE 移除；无独有未提交内容） | — | 无 | 仅用于构建/测试；最终证据不在 worktree |
+| worktree | `G:\CODEX\New Manga.workspace\worktrees\FEA-14-SET-1-p3`（detached，P3 + r2/r3 修复的隔离构建树） | **keep**（提交已全部快进进入 main，无独有提交；按 WORKTREE_SAFETY_INVENTORY 规则暂不删除） | — | 无 | 仅用于构建/测试；最终证据在主树 |
 | temp | `G:\CODEX\New Manga.workspace\temp\FEA-14-familynames-probe`、`...\temp\FEA-14-planning` | keep-evidence（仓外探针/规划，被证据或后续裁决引用） | — | 无 | 只读被测程序集，不污染仓库 |
 | build | worktree `bin/obj`（可重建） | reclaimable | — | 无 | 不在仓库、不被证据引用 |
 | user-data | `%APPDATA%\NewManga`（真实目录，只读访问） | read-only-observed | — | `logs/appdata-redline.log` 记录 sha256/size/mtime | 测试前后 `UNCHANGED`；未写入 |
 
 ## Closeout Record
 
-- 2026-11-10：**进行中**。r1/r2 findings 已处置（见「r1/r2 处置记录」）；证据目录已按 r2 处置 head 刷新（定向 20 passed、变异 M1/M2 RED、AppData 指纹不变、IPC 0 命令、API inventory EXIT 0）。
-- 待办：r3 独立复核（对 `b0d5c7d6a` 之后的新 head）→ 主树最终全量/门禁日志（`logs/*-final.log`）→ 填 `delivery_head`/`canonical_evidence_status`/`integration_commit` → STATUS/PLAN/ledger 切换。
+- 结论：**完成**（2026-11-10）。3 轮独立复核：r1 changes_requested（P1=2）→ r2 changes_requested（P1=1）→ **r3 approved（P0/P1/P2=0；P3=6 均为文档/证据精度与已登记残余）**。
+- 交付证据：AC1–AC6 逐项见卡面与 `verification/FEA-14-SET-1/README.md`；交付树全量 App.Tests **858/0/11**、定向 **41/0**、`verify_pins` **18/18**、`check.ps1`（默认 + `-TaskPath`）PASS、API inventory EXIT 0、变异 M1/M2 RED、AppData 指纹 UNCHANGED、IPC 0 命令。
+- 残余 limitation（不阻断，已登记）：Host `WritesAllowed=false` 字体组视图测试 = NOT_RUN；真实 Tab 遍历 = NOT_RUN；样例按 face 各一行未做（改为标注 Ui 面）；单 generic 栈无单测（行为已正确）；真实 UI 截图 / 真实用户主题包经 ThemeService 应用后投影 / `%APPDATA%\NewManga` 指定 artefact = NOT_RUN（本机不存在）；R3-003 共享 `Application.Initialize(Dark)` 不在测试内还原（全量绿，属顺序依赖风险提示）。
+- 零契约字节（C-03/C-02/P15/C-07 未改）；18 pins 全绿；未 push（本次无 push 授权动作）。
