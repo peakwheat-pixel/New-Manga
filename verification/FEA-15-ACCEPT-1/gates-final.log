@@ -1,0 +1,38 @@
+time=2026-11-11T00:21:39.3049599+08:00 HEAD=ab31381fa92fdb5d1311f1b2cc42c892f84f58d1
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-15-ACCEPT-1.md
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3196 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6983 bytes / 64 lines
+WARN: evidence_dir 含未登记过程文件（归入 workspace 或列为 SOURCE_PIN）：G:\CODEX\New Manga\verification\FEA-15-ACCEPT-1\gates-final.log
+Governance check: PASS (4 warnings)
+DEFAULT_EXIT=0
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-15-ACCEPT-1.md
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3196 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6983 bytes / 64 lines
+WARN: evidence_dir 含未登记过程文件（归入 workspace 或列为 SOURCE_PIN）：G:\CODEX\New Manga\verification\FEA-15-ACCEPT-1\gates-final.log
+Governance check: PASS (4 warnings)
+TASK_EXIT=0
+OK C01b 3c9f5af7d74f
+OK C02 bb365ca891a7
+OK C03 b77e7968a00b
+OK C04b 4b304c0c315f
+OK C05 f6e6f3cb1fe1
+OK C06 75f8e2b4eb80
+OK C07 8ccaba05cbc2
+OK C08 453f993c1a16
+OK C09 dc51226b336c
+OK C10 ec8fd862f95f
+OK C11 44f4273f7ad1
+OK C12 f49835860143
+OK C13 8faf1e805eac
+OK C14 05056cbf65f9
+OK C15 f9e376a0ed4c
+OK C16 67286eeca8cb
+OK C17 cdeee4872e29
+OK FEA01 0370c18932b1
+PIN AUDIT: PASS (all 18)
+PINS_EXIT=0
+finished=2026-11-11T00:21:44.6884036+08:00 EXIT=0
