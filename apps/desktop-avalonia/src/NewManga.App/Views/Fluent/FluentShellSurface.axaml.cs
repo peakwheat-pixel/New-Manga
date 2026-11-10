@@ -119,7 +119,9 @@ public partial class FluentShellSurface : UserControl, IPresentationExitState
         _shelfModel = new ShelfViewModel(host);
         _workbenchModel = new WorkbenchViewModel(host, Guid.NewGuid().ToString("N"));
         _readerModel = new FluentReaderViewModel(host);
-        _settingsModel = new SettingsViewModel(host, appearance, themeManager);
+        // R-012: inject the app-side source at the composition root instead of letting every
+        // projection read construct a fresh Avalonia source.
+        _settingsModel = new SettingsViewModel(host, appearance, themeManager, new AvaloniaTypographySource());
         var picker = new AvaloniaFilePickerGateway(_ => TopLevel.GetTopLevel(this));
         // I-12：错误卡「打开控制台」入口走 shell 空间导航（进入 Console 空间，含导航/空间选中态更新）。
         var openConsole = () => NavigateSpace(SpaceId.Console);

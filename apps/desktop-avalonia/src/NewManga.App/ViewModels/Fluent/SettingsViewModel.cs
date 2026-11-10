@@ -34,6 +34,8 @@ public sealed class SettingsViewModel : FluentViewModel
     private ProviderProfileInfo? _selectedProvider;
     private NetworkProfileInfo? _selectedNetwork;
     private BackupPackageInfo? _selectedBackup;
+    /// <summary>R-012: the projection is probed once per group render, not on every property read.</summary>
+    private TypographySnapshot? _typographySnapshot;
 
     public SettingsViewModel(IHostController? host, AppearanceCoordinator? appearance, DesignSystemThemeManager? themeManager,
         ITypographySource? typography = null)
@@ -83,8 +85,24 @@ public sealed class SettingsViewModel : FluentViewModel
     public string TypographySourceNotice =>
         "字体族属于视觉主题；切换主题见「外观」组。此处只读展示当前实际使用的字体。";
 
-    private TypographySnapshot TypographySnapshot =>
+    /// <summary>
+    /// FEA-14-SET-1 (R-012): re-read the projection once and return it, so one group render
+    /// cannot probe the installed-font set several times (or return inconsistent rows).
+    /// </summary>
+    public TypographySnapshot ReadTypographySnapshot()
+    {
+        _typographySnapshot = ReadTypography();
+        Changed(nameof(TypographyLines));
+        Changed(nameof(TypographyAvailable));
+        Changed(nameof(TypographyUnavailableReason));
+        return _typographySnapshot;
+    }
+
+    private TypographySnapshot ReadTypography() =>
         (_typography ?? new AvaloniaTypographySource()).Read();
+
+    private TypographySnapshot TypographySnapshot =>
+        _typographySnapshot ??= ReadTypography();
 
     public string Version => typeof(SettingsViewModel).Assembly.GetName().Version?.ToString() ?? "未知";
     public string License => "GPL-3.0（组件许可详见随包声明）";
@@ -417,6 +435,9 @@ public sealed class SettingsViewModel : FluentViewModel
         Draft = Equals(previous with { FrontendId = settings.FrontendId }, settings)
             ? Draft with { FrontendId = settings.FrontendId }
             : settings;
+        // R-012: a canonical appearance change may re-compose the visual theme, so the next
+        // group render must re-probe instead of showing the previous theme's projection.
+        _typographySnapshot = null;
         Changed(nameof(IsDirty));
     }
 }

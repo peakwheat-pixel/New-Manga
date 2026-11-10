@@ -97,6 +97,14 @@ public static class TypographyResolver
 /// </summary>
 public sealed class AvaloniaTypographySource : ITypographySource
 {
+    /// <summary>R-010: the three font-family tokens the projection must cover as a set.</summary>
+    private static readonly (string TokenKey, string SizeKey, string HeightKey)[] FontTokens =
+    [
+        ("Nm.FontFamily.Ui", "Nm.FontSize.Md", "Nm.LineHeight.Body"),
+        ("Nm.FontFamily.Data", "Nm.FontSize.Md", "Nm.LineHeight.Data"),
+        ("Nm.FontFamily.Display", "Nm.FontSize.Xl", "Nm.LineHeight.Display"),
+    ];
+
     private readonly Func<string, string?> _resourceLookup;
 
     public AvaloniaTypographySource(Func<string, string?>? resourceLookup = null)
@@ -107,16 +115,13 @@ public sealed class AvaloniaTypographySource : ITypographySource
     public TypographySnapshot Read()
     {
         var lines = new List<TypographyLine>();
-        foreach (var (tokenKey, sizeKey, heightKey) in new[]
-                 {
-                     ("Nm.FontFamily.Ui", "Nm.FontSize.Md", "Nm.LineHeight.Body"),
-                     ("Nm.FontFamily.Data", "Nm.FontSize.Md", "Nm.LineHeight.Data"),
-                     ("Nm.FontFamily.Display", "Nm.FontSize.Xl", "Nm.LineHeight.Display"),
-                 })
+        var missingTokens = new List<string>();
+        foreach (var (tokenKey, sizeKey, heightKey) in FontTokens)
         {
             var stack = _resourceLookup(tokenKey);
             if (string.IsNullOrWhiteSpace(stack))
             {
+                missingTokens.Add(tokenKey);
                 continue;
             }
             lines.Add(TypographyResolver.Resolve(
@@ -126,13 +131,18 @@ public sealed class AvaloniaTypographySource : ITypographySource
                 scale: ReadNumber(sizeKey),
                 lineHeight: ReadNumber(heightKey)));
         }
-        if (lines.Count == 0)
+
+        // R-010: a partially initialised theme must not look like a complete three-row
+        // projection. Missing tokens are surfaced in the reason instead of silently
+        // dropping a row (the dead `missingTokens` collector from r1 is now used).
+        if (missingTokens.Count > 0)
         {
-            return new TypographySnapshot(
-                Array.Empty<TypographyLine>(),
-                false,
-                "当前主题未初始化（缺少 Nm.FontFamily.* 资源）。");
+            var reason = missingTokens.Count == FontTokens.Length
+                ? "当前主题未初始化（缺少 Nm.FontFamily.* 资源）。"
+                : $"当前主题字体 token 不完整（缺少 {string.Join("、", missingTokens)}）；请先初始化或重新应用视觉主题。";
+            return new TypographySnapshot(lines, false, reason);
         }
+
         return new TypographySnapshot(lines, true, null);
     }
 

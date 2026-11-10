@@ -591,20 +591,23 @@ public sealed class SettingsPageView : UserControl
     /// </summary>
     private Control BuildTypographyGroup()
     {
+        // R-012: read the projection exactly once for this render. The source probes the
+        // installed-font set, so repeated property reads would re-probe on the UI thread.
+        var snapshot = _viewModel.ReadTypographySnapshot();
         var stack = FluentUi.Stack("fluent-page-layout");
         stack.Children.Add(FluentUi.Text("字体", "fluent-page-title"));
         stack.Children.Add(FluentUi.Text(
             _viewModel.TypographySourceNotice, "fluent-subtle-text"));
 
-        if (!_viewModel.TypographyAvailable)
+        if (!snapshot.Available)
         {
             stack.Children.Add(FluentUi.Text(
-                _viewModel.TypographyUnavailableReason ?? "当前主题未初始化。",
+                snapshot.UnavailableReason ?? "当前主题未初始化。",
                 "fluent-subtle-text"));
             return new SettingsGroup { Child = stack };
         }
 
-        foreach (var line in _viewModel.TypographyLines)
+        foreach (var line in snapshot.Lines)
         {
             var detail = line.Missing.Count == 0
                 ? $"实际使用：{line.ResolvedFamily}"
@@ -623,8 +626,8 @@ public sealed class SettingsPageView : UserControl
         }
 
         // Local preview: the font is applied to the SAMPLES only (never to app resources).
-        stack.Children.Add(FluentUi.Text("样例预览", "fluent-subtle-text"));
-        var primary = _viewModel.TypographyLines.FirstOrDefault();
+        stack.Children.Add(FluentUi.Text("样例预览（使用 Nm.FontFamily.Ui 的实际字体）", "fluent-subtle-text"));
+        var primary = snapshot.Lines.FirstOrDefault();
         foreach (var (label, sample) in new[]
                  {
                      ("中文", "永字体样式预览"),
@@ -633,7 +636,6 @@ public sealed class SettingsPageView : UserControl
                  })
         {
             var text = FluentUi.Text(sample, "fluent-subtle-text");
-            text.Text = sample;
             if (primary is not null && !string.IsNullOrWhiteSpace(primary.ResolvedFamily))
             {
                 text.FontFamily = new Avalonia.Media.FontFamily(primary.ResolvedFamily);
