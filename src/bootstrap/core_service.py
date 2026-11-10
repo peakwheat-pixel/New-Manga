@@ -179,6 +179,7 @@ import uuid
 from datetime import datetime, timedelta, timezone
 from typing import Any, Callable, TextIO
 
+from application.fonts.service import FontLibraryError
 from application.editing.errors import (
     DraftError,
     GuardStatus,
@@ -5099,6 +5100,40 @@ class CoreServiceServer:
         except ValueError as error:
             raise P16WireError("INVALID_REQUEST", "validation", "Reading progress reset requires confirmation") from error
         return {"reset": removed}
+    # FEA-14-FONT-1 (PREQ FONT P1-P4): user-imported font library. No bundled
+    # fonts; every asset is copied into <data_root>/fonts with a SHA-256 row.
+    def handle_list_font_assets(self, payload: dict[str, Any]) -> dict[str, Any]:
+        if set(payload) != set():
+            raise P16WireError("INVALID_REQUEST", "validation", "Font list request is invalid")
+        return {"assets": self._core.fonts.list_assets()}
+
+    def handle_import_font_asset(self, payload: dict[str, Any]) -> dict[str, Any]:
+        if set(payload) - {"source_path", "license_note"} or not isinstance(payload.get("source_path"), str) or not payload["source_path"]:
+            raise P16WireError("INVALID_REQUEST", "validation", "Font import request is invalid")
+        license_note = payload.get("license_note")
+        if license_note is not None and not isinstance(license_note, str):
+            raise P16WireError("INVALID_REQUEST", "validation", "Font import request is invalid")
+        try:
+            asset = self._core.fonts.import_asset(payload["source_path"], license_note)
+        except FontLibraryError as error:
+            raise P16WireError(error.code, "validation", str(error)) from error
+        return {
+            "asset_id": asset["asset_id"],
+            "family": asset["family"],
+            "subfamily": asset["subfamily"],
+            "status": "imported",
+        }
+
+    def handle_delete_font_asset(self, payload: dict[str, Any]) -> dict[str, Any]:
+        if set(payload) != {"asset_id"} or not isinstance(payload.get("asset_id"), str) or not payload["asset_id"]:
+            raise P16WireError("INVALID_REQUEST", "validation", "Font delete request is invalid")
+        return {"deleted": self._core.fonts.delete_asset(payload["asset_id"])}
+
+    def handle_refresh_font_assets(self, payload: dict[str, Any]) -> dict[str, Any]:
+        if set(payload) != set():
+            raise P16WireError("INVALID_REQUEST", "validation", "Font refresh request is invalid")
+        return self._core.fonts.refresh_assets()
+
     def _register_export_target(self, payload: dict[str, Any]) -> dict[str, Any]:
         fields = {"grant_id", "session_id", "target_path", "format", "replace_existing", "expires_at", "signing_key", "signature"}
         if set(payload) != fields:
@@ -6879,7 +6914,7 @@ class CoreServiceServer:
                 "error": error,
             }, False)
 
-        if command in ("GetReaderProjection", "SaveReadingProgress",
+        if command in ("GetReaderProjection", "SaveReadingProgress", "ListFontAssets", "ImportFontAsset", "DeleteFontAsset", "RefreshFontAssets",
                        "GetReadingPreferences", "SaveReadingPreferences",
                        "ListBookmarks", "CreateBookmark", "DeleteBookmark",
                        "GetBookReadingProgress", "ResetReadingProgress",
@@ -6889,6 +6924,14 @@ class CoreServiceServer:
                     raise P16WireError("INVALID_REQUEST", "validation", "Request payload must be an object")
                 if command == "GetReaderProjection":
                     result = self.handle_get_reader_projection(payload)
+                elif command == "ListFontAssets":
+                    result = self.handle_list_font_assets(payload)
+                elif command == "ImportFontAsset":
+                    result = self.handle_import_font_asset(payload)
+                elif command == "DeleteFontAsset":
+                    result = self.handle_delete_font_asset(payload)
+                elif command == "RefreshFontAssets":
+                    result = self.handle_refresh_font_assets(payload)
                 elif command == "GetReadingPreferences":
                     result = self.handle_get_reading_preferences(payload)
                 elif command == "SaveReadingPreferences":

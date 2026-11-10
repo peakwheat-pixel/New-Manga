@@ -47,6 +47,9 @@ SCHEMA_VERSION_V9 = 9
 #: Additive only; v1–v9 SQL/name/checksum stay byte-identical.
 SCHEMA_VERSION_V10 = 10
 
+#: FEA-14-FONT-1: user-imported font assets (PREQ FONT P1-P4). Additive only.
+SCHEMA_VERSION_V11 = 11
+
 MIGRATION_V1_NAME = "v1__storage_base"
 
 MIGRATION_V1_SQL = """
@@ -870,6 +873,27 @@ MIGRATION_V10_NAME = "v10__reading_preferences_bookmarks"
 #: (mode/direction/zoom/double-page/layout), bookmarks (left/right/both), and
 #: the additive anchor/viewport columns on the existing progress rows. Every
 #: statement is additive; v1–v9 checksums stay byte-identical.
+MIGRATION_V11_NAME = "v11__font_assets"
+
+MIGRATION_V11_SQL = """
+CREATE TABLE font_assets (
+    asset_id TEXT PRIMARY KEY CHECK (length(asset_id) > 0),
+    family TEXT NOT NULL DEFAULT '',
+    subfamily TEXT NOT NULL DEFAULT '',
+    format TEXT NOT NULL,
+    sha256 TEXT NOT NULL,
+    size_bytes INTEGER NOT NULL,
+    managed_path TEXT NOT NULL,
+    license_note TEXT NOT NULL DEFAULT '',
+    state TEXT NOT NULL DEFAULT 'active' CHECK (state IN ('active', 'missing', 'deleted')),
+    created_at TEXT NOT NULL,
+    deleted_at TEXT
+);
+CREATE INDEX idx_font_assets_state ON font_assets(state);
+CREATE UNIQUE INDEX idx_font_assets_sha ON font_assets(sha256) WHERE state != 'deleted';
+"""
+
+
 MIGRATION_V10_SQL = """
 CREATE TABLE reading_preferences (
     book_id TEXT PRIMARY KEY CHECK (length(book_id) > 0),
@@ -907,4 +931,5 @@ def default_migrations() -> tuple[Migration, ...]:
         Migration(SCHEMA_VERSION_V8, MIGRATION_V8_NAME, MIGRATION_V8_SQL),
         Migration(SCHEMA_VERSION_V9, MIGRATION_V9_NAME, MIGRATION_V9_SQL),
         Migration(SCHEMA_VERSION_V10, MIGRATION_V10_NAME, MIGRATION_V10_SQL),
+        Migration(SCHEMA_VERSION_V11, MIGRATION_V11_NAME, MIGRATION_V11_SQL),
     )

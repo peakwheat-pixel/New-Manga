@@ -197,7 +197,7 @@ def test_v9_shape_and_v1_v8_bytes_are_frozen() -> None:
     # indexed" (frozen record §4A L-4 / scope review §2.4).
     assert "IF NOT EXISTS" not in MIGRATION_V9_SQL.upper()
     assert len(MIGRATIONS) >= 9
-    assert [m.schema_version for m in MIGRATIONS] == list(range(1, 11))
+    assert [m.schema_version for m in MIGRATIONS] == list(range(1, len(MIGRATIONS) + 1))
     assert tuple(
         (m.schema_version, m.migration_name, m.checksum) for m in MIGRATIONS[:8]
     ) == FROZEN_V1_V8
@@ -250,7 +250,7 @@ def test_v8_upgrade_preserves_rows_and_query_results(tmp_path) -> None:
     assert before["pointers_a"], "seed must produce non-trivial preview rows"
 
     applied = MigrationRunner(conn, MIGRATIONS).apply_pending()
-    assert [record.schema_version for record in applied] == [9, 10]
+    assert [record.schema_version for record in applied] == list(range(9, MIGRATIONS[-1].schema_version + 1))
     assert _max_version(conn) == LATEST
     assert _metadata_version(conn) == LATEST
     assert INDEX_NAME in _index_names(conn)

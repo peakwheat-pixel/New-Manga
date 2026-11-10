@@ -50,6 +50,7 @@ from application.maintenance import TrashService
 from application.maintenance.cleanup import CleanupService
 from application.maintenance.diagnostics import BoundedErrorLog, DiagnosticsService
 from application.maintenance.trash import _JsonTrashManifest
+from application.fonts.service import FontLibraryService
 from application.reading.service import ReadingExtrasService, ReadingService
 from application.rendering.service import RenderService
 from application.resource_channel.dto import E_NOT_FOUND, TypedResourceChannelError
@@ -117,6 +118,7 @@ from infrastructure.sqlite.migrator import (
     make_v7_validator,
     read_schema_version,
 )
+from infrastructure.sqlite.fonts import SqliteFontAssetStore
 from infrastructure.sqlite.reading_export import (
     SqliteReadingExtrasStore,
     SqliteExportHistoryStore,
@@ -837,6 +839,7 @@ class CoreServices:
     cleanup: CleanupService
     reading: ReadingService
     reading_extras: ReadingExtrasService
+    fonts: FontLibraryService
     export_service: ExportService
     diagnostics: DiagnosticsService
     library: LibraryService
@@ -1848,6 +1851,7 @@ def assemble_core_services(
 
         reading = ReadingService(SqliteReadingProgressStore(conn))
         reading_extras = ReadingExtrasService(SqliteReadingExtrasStore(conn))
+        fonts = FontLibraryService(SqliteFontAssetStore(conn), Path(data_root))
         export_history_store = SqliteExportHistoryStore(conn)
         export_service = ExportService(
             export_history_store, pdf_composer=QtFreePdfComposer(), plugins=plugins
@@ -1892,6 +1896,7 @@ def assemble_core_services(
             cleanup=cleanup,
             reading=reading,
             reading_extras=reading_extras,
+            fonts=fonts,
             export_service=export_service,
             diagnostics=diagnostics,
             library=library,

@@ -40,7 +40,7 @@ def _service(tmp_path: Path):
 def test_v10_creates_tables_and_adds_progress_columns(tmp_path):
     conn = _connect(tmp_path)
     _migrate(conn)
-    assert read_schema_version(conn) == LATEST == 10
+    assert read_schema_version(conn) >= 10
     tables = {row[0] for row in conn.execute("select name from sqlite_master where type='table'")}
     assert {"reading_preferences", "reading_bookmarks"} <= tables
     indexes = {row[0] for row in conn.execute("select name from sqlite_master where type='index'")}
@@ -60,7 +60,7 @@ def test_v10_migration_preserves_legacy_progress_rows(tmp_path):
     )
     conn.commit()
     _migrate(conn)
-    assert read_schema_version(conn) == 10
+    assert read_schema_version(conn) >= 10
     row = conn.execute(
         "SELECT progress_percent, anchor_json, viewport_json FROM reading_progress WHERE progress_id = 'p1'"
     ).fetchone()
