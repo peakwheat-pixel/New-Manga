@@ -1,6 +1,6 @@
-FEA-14-AI-1 App.Tests full | 2026-11-10T17:59:17.0051310+08:00 | HEAD=aac1aba9d3f84e82f60ac891cc19a78a7e3474d8 | dirty=[?? verification/FEA-14-AI-1/]
+FEA-14-AI-1 App.Tests full | 2026-11-10T18:30:23.5810525+08:00 | HEAD=1b5bdb1f2eed2d1ab8f8f531c8d8651b32158ba4 | dirty=[]
 G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
 总共 1 个测试文件与指定模式相匹配。
 
-已通过! - 失败:     0，通过:   887，已跳过:    11，总计:   898，持续时间: 4 m 48 s - NewManga.App.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:   888，已跳过:    11，总计:   899，持续时间: 5 m 36 s - NewManga.App.Tests.dll (net9.0)
 EXIT=0
