@@ -13,7 +13,7 @@ depends_on:
 base_commit: 164ebabcfa90b92fc46c07238280960fc01f7423
 branch: main
 worktree: G:/CODEX/New Manga
-integration_commit: null
+integration_commit: 9629beca79b4310a60bf7a333f6e6d05c598fa51
 delivery_head: ab31381fa92fdb5d1311f1b2cc42c892f84f58d1
 canonical_evidence_status: complete
 resource_closeout_status: complete
@@ -116,6 +116,7 @@ FEA-14 S5 七切片（SET/PREQ/EXPORT/READ/FONT/LIB/EDIT/AI 相关实现卡）�
 | SRC-26 | 资源清单 | `verification/FEA-15-ACCEPT-1/resource-manifest.json` | `1ecd613325cf69db7900fabb5fedb2302e47e84f` | `27e8b3f7d0a611f9dfd079ab9f21685aeae65f46ce84363700ca400cedf0abd1` | SOURCE_PIN |
 | SRC-27 | 资源清点（不完整） | `verification/FEA-15-ACCEPT-1/workspace-inventory.md` | `1ecd613325cf69db7900fabb5fedb2302e47e84f` | `f56912112752805ac068f88d22f2c635725e9add2a44cfbe43c543abb251e043` | SOURCE_PIN |
 | SRC-28 | 资源清点（不跟随链接） | `verification/FEA-15-ACCEPT-1/workspace-inventory-nofollow.md` | `1ecd613325cf69db7900fabb5fedb2302e47e84f` | `b7ad18fd2a74e982b3a7644f5f15de6b42835636568cab98efa95f49c3ac1c83` | SOURCE_PIN |
+| SRC-29 | 终态门禁 | `verification/FEA-15-ACCEPT-1/gates-closeout.log` | `6329d716ad0feb4a3b38f222514f85fa4c833c07` | `b11cdee3763e3dbc823d2341cb17d608f4cdceaa92722e0c5e4973a1dac7d258` | SOURCE_PIN |
 
 ## Closeout Record
 
@@ -128,4 +129,5 @@ FEA-14 S5 七切片（SET/PREQ/EXPORT/READ/FONT/LIB/EDIT/AI 相关实现卡）�
 - r1 处置后 `ab31381fa92fdb5d1311f1b2cc42c892f84f58d1` 上默认及指定 Task 治理检查、18 pins 均 EXIT 0（`gates-final.log`；生成时该日志尚未登记，故 4 条警告）。本次登记日志后须再复核；AC5 仍待最终结论和 r2。
 - 2026-11-11：r2 独立复核 `approved`（`sess_88acf941-2220-4c42-a4bf-ca95923a8cfe`；reviewed `d0d8a3ab1b3d9877ef6f33a4f67ee36052cad0d1`；0 P0/P1/P2），ZCode [最终裁决](../reviews/FEA-15-ACCEPT-1-final-adjudication.md)授权 `closed_with_limitations`。`d0d8a3ab1` 00:23 登记后默认和指定 Task 检查 PASS（3 warnings、EXIT 0），pins 18/18 EXIT 0；r1/r2 已核验 diff ⊆ allowed_paths。
 - 保留限制：pytest 16 failed、.NET 127 failed 原样保留，根因未定项待 DIAG；当前版本安装、可见 UI、真实库升级/回退 NOT_RUN；r2 指出 30 条 pin 中 27 条跨 checkout 工作区哈希不可复现，待 pin 口径治理。62 个共享 fixture 候选、系统 Python ACL、AppContainer profile 维持 `PRESERVE_UNKNOWN`；构建 worktree 维持 `PRESERVE_REFERENCED`；未清理任何资源。
-- 终态集成提交待下一次治理提交回填；独立 r2 审查报告为 `doc/reviews/FEA-15-ACCEPT-1-r2.md`。资源清单采用真实路径与未知实例描述，不将未确认 profile 标为不适用。
+- 终态集成 `9629beca79b4310a60bf7a333f6e6d05c598fa51`；独立 r3 见 `doc/reviews/FEA-15-ACCEPT-1-r3.md`。资源清单采用真实路径与未知实例描述，不将未确认 profile 标为不适用。
+- 终态后在 `9629beca` 实测默认和指定 Task 检查 PASS（各 3 warnings，EXIT 0）、pins 18/18 EXIT 0；`gates-closeout.log` 于该 head 重跑并留证。此前 `d0d8a3ab` 00:23 的复核仅有执行记录、未留独立日志，不补造。
