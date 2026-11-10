@@ -1,0 +1,14 @@
+FEA-15-A2-1 R1-001 disclosure: real AppData logs written by the first install-smoke run | 2026-11-10T11:57:42.7412135+08:00
+C:\Users\49745\AppData\Roaming\com.newmanga.desktop\logs\wire\core-service.ndjson|6008166|2026-11-10T03:47:48.0879308Z
+C:\Users\49745\AppData\Roaming\com.newmanga.desktop\logs\host.log|17544|2026-11-10T03:47:47.6388231Z
+C:\Users\49745\AppData\Roaming\com.newmanga.desktop\logs\wire\host-bridge.ndjson|640261|2026-11-10T03:47:47.6273095Z
+C:\Users\49745\AppData\Roaming\com.newmanga.desktop\logs\core_service.stderr.log|11718|2026-11-10T03:47:47.4887175Z
+C:\Users\49745\AppData\Roaming\com.newmanga.desktop\logs\startup.log|3166|2026-11-10T03:47:45.6806344Z
+C:\Users\49745\AppData\Roaming\com.newmanga.desktop\logs\window-material.log|1206936|2026-11-09T08:42:25.5938801Z
+C:\Users\49745\AppData\Roaming\com.newmanga.desktop\library.db|438272|2026-10-30T03:02:40.0580035Z
+C:\Users\49745\AppData\Roaming\com.newmanga.desktop\catalog\catalog.sqlite|61440|2026-10-30T02:58:35.8805086Z
+C:\Users\49745\AppData\Roaming\com.newmanga.desktop\derived\pages\page-original-48b5b58e82e94e6f9a0d70676426676c.jpg|82862|2026-10-30T02:58:35.8735088Z
+C:\Users\49745\AppData\Roaming\com.newmanga.desktop\derived\pages\page-original-40e42e5f4882422e961424dfe7711e77.jpg|263549|2026-10-30T02:58:35.8064785Z
+C:\Users\49745\AppData\Roaming\com.newmanga.desktop\derived\pages\page-original-784cb16838bb4ef5b3ae70628069d28c.jpg|360035|2026-10-30T02:58:35.7626677Z
+C:\Users\49745\AppData\Roaming\com.newmanga.desktop\derived\pages\page-original-399551076fdc440b91db6f00e7283062.jpg|138868|2026-10-30T02:58:35.7456649Z
+C:\Users\49745\AppData\Roaming\NewManga\theme-settings.json|359|2026-10-30T03:00:27.3906012Z

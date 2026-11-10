@@ -25,9 +25,9 @@ New-Item -ItemType Directory -Force (Join-Path $stage 'app')|Out-Null
 $publishArgs = if ($NoTrim) {
   @('-p:PublishTrimmed=false', '-p:PublishReadyToRun=false', '-p:EnableCompressionInSingleFile=false')
 } else {
-  $args = @('-p:PublishTrimmed=true', '-p:IncludeNativeLibrariesForSelfExtract=true', '-p:PublishReadyToRun=true', '-p:EnableCompressionInSingleFile=true')
-  if ($SuppressTrimWarnings) { $args += '-p:SuppressTrimAnalysisWarnings=true' }
-  $args
+  $trimArgs = @('-p:PublishTrimmed=true', '-p:IncludeNativeLibrariesForSelfExtract=true', '-p:PublishReadyToRun=true', '-p:EnableCompressionInSingleFile=true')
+  if ($SuppressTrimWarnings) { $trimArgs += '-p:SuppressTrimAnalysisWarnings=true' }
+  $trimArgs
 }
 Push-Location $root
 & dotnet publish src/NewManga.App/NewManga.App.csproj -c Release -r win-x64 --self-contained -p:PublishSingleFile=true @publishArgs -o (Join-Path $stage 'app') 2>&1 | Tee-Object -FilePath (Join-Path $OutputRoot "publish-$variant.log") | Out-Null
