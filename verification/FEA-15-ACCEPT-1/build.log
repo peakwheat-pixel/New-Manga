@@ -1,0 +1,45 @@
+time=2026-11-10T23:14:05.9760277+08:00 HEAD=d63d735a712dbe47100db2e72b4d59a73dfd1f62 worktree=G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree preexisting_bin_obj=0 command=dotnet build apps/desktop-avalonia/NewManga.sln -c Release --nologo
+  正在确定要还原的项目…
+  已还原 G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree\apps\desktop-avalonia\src\NewManga.ApplicationCore\NewManga.ApplicationCore.csproj (用时 1.91 秒)。
+  已还原 G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree\apps\desktop-avalonia\src\NewManga.Host\NewManga.Host.csproj (用时 1.91 秒)。
+  已还原 G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree\apps\desktop-avalonia\src\NewManga.Appearance\NewManga.Appearance.csproj (用时 1.91 秒)。
+  已还原 G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree\apps\desktop-avalonia\src\NewManga.CoreClient\NewManga.CoreClient.csproj (用时 1.91 秒)。
+  已还原 G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree\apps\desktop-avalonia\src\NewManga.ThemeEngine\NewManga.ThemeEngine.csproj (用时 1.93 秒)。
+  已还原 G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree\apps\desktop-avalonia\src\NewManga.DesignSystem\NewManga.DesignSystem.csproj (用时 1.93 秒)。
+  已还原 G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree\apps\desktop-avalonia\src\NewManga.Presentation.Avalonia\NewManga.Presentation.Avalonia.csproj (用时 1.93 秒)。
+  已还原 G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree\apps\desktop-avalonia\src\NewManga.DesignSystem\tools\NewManga.DesignSystem.TokenGen\NewManga.DesignSystem.TokenGen.csproj (用时 1.93 秒)。
+  已还原 G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree\apps\desktop-avalonia\src\NewManga.ThemeEngine\tools\NewManga.ThemeEngine.ThemeGen\NewManga.ThemeEngine.ThemeGen.csproj (用时 1.93 秒)。
+  已还原 G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree\apps\desktop-avalonia\tests\NewManga.Appearance.Tests\NewManga.Appearance.Tests.csproj (用时 1.95 秒)。
+  已还原 G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree\apps\desktop-avalonia\tests\NewManga.ApplicationCore.Tests\NewManga.ApplicationCore.Tests.csproj (用时 1.95 秒)。
+  已还原 G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree\apps\desktop-avalonia\tests\NewManga.CoreClient.Tests\NewManga.CoreClient.Tests.csproj (用时 1.95 秒)。
+  已还原 G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree\apps\desktop-avalonia\tests\NewManga.Presentation.Avalonia.Tests\NewManga.Presentation.Avalonia.Tests.csproj (用时 1.95 秒)。
+  已还原 G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree\apps\desktop-avalonia\tests\NewManga.DesignSystem.Tests\NewManga.DesignSystem.Tests.csproj (用时 1.97 秒)。
+  已还原 G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree\apps\desktop-avalonia\tests\NewManga.ThemeEngine.Tests\NewManga.ThemeEngine.Tests.csproj (用时 1.97 秒)。
+  已还原 G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree\apps\desktop-avalonia\src\NewManga.App\NewManga.App.csproj (用时 1.97 秒)。
+  已还原 G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree\apps\desktop-avalonia\tests\NewManga.App.Tests\NewManga.App.Tests.csproj (用时 1.97 秒)。
+  已还原 G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree\apps\desktop-avalonia\tests\NewManga.Host.Tests\NewManga.Host.Tests.csproj (用时 1.97 秒)。
+  NewManga.ApplicationCore -> G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree\apps\desktop-avalonia\src\NewManga.ApplicationCore\bin\Release\net9.0\NewManga.ApplicationCore.dll
+  NewManga.Appearance -> G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree\apps\desktop-avalonia\src\NewManga.Appearance\bin\Release\net9.0\NewManga.Appearance.dll
+  NewManga.CoreClient -> G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree\apps\desktop-avalonia\src\NewManga.CoreClient\bin\Release\net9.0\NewManga.CoreClient.dll
+  NewManga.Appearance.Tests -> G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree\apps\desktop-avalonia\tests\NewManga.Appearance.Tests\bin\Release\net9.0\NewManga.Appearance.Tests.dll
+  NewManga.Host -> G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree\apps\desktop-avalonia\src\NewManga.Host\bin\Release\net9.0\NewManga.Host.dll
+  NewManga.ApplicationCore.Tests -> G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree\apps\desktop-avalonia\tests\NewManga.ApplicationCore.Tests\bin\Release\net9.0\NewManga.ApplicationCore.Tests.dll
+  NewManga.CoreClient.Tests -> G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree\apps\desktop-avalonia\tests\NewManga.CoreClient.Tests\bin\Release\net9.0\NewManga.CoreClient.Tests.dll
+  NewManga.DesignSystem -> G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree\apps\desktop-avalonia\src\NewManga.DesignSystem\bin\Release\net9.0\NewManga.DesignSystem.dll
+  NewManga.Presentation.Avalonia -> G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree\apps\desktop-avalonia\src\NewManga.Presentation.Avalonia\bin\Release\net9.0\NewManga.Presentation.Avalonia.dll
+  NewManga.DesignSystem.TokenGen -> G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree\apps\desktop-avalonia\src\NewManga.DesignSystem\tools\NewManga.DesignSystem.TokenGen\bin\Release\net9.0\NewManga.DesignSystem.TokenGen.dll
+  NewManga.ThemeEngine -> G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree\apps\desktop-avalonia\src\NewManga.ThemeEngine\bin\Release\net9.0\NewManga.ThemeEngine.dll
+  NewManga.DesignSystem.Tests -> G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree\apps\desktop-avalonia\tests\NewManga.DesignSystem.Tests\bin\Release\net9.0\NewManga.DesignSystem.Tests.dll
+  NewManga.ThemeEngine.ThemeGen -> G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree\apps\desktop-avalonia\src\NewManga.ThemeEngine\tools\NewManga.ThemeEngine.ThemeGen\bin\Release\net9.0\NewManga.ThemeEngine.ThemeGen.dll
+  NewManga.Presentation.Avalonia.Tests -> G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree\apps\desktop-avalonia\tests\NewManga.Presentation.Avalonia.Tests\bin\Release\net9.0\NewManga.Presentation.Avalonia.Tests.dll
+  NewManga.ThemeEngine.Tests -> G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree\apps\desktop-avalonia\tests\NewManga.ThemeEngine.Tests\bin\Release\net9.0\NewManga.ThemeEngine.Tests.dll
+  NewManga.App -> G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree\apps\desktop-avalonia\src\NewManga.App\bin\Release\net9.0\NewManga.App.dll
+  NewManga.Host.Tests -> G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Release\net9.0\NewManga.Host.Tests.dll
+  NewManga.App.Tests -> G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Release\net9.0\NewManga.App.Tests.dll
+
+已成功生成。
+    0 个警告
+    0 个错误
+
+已用时间 00:00:12.61
+finished=2026-11-10T23:14:18.8744087+08:00 EXIT=0

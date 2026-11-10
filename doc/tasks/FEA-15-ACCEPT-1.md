@@ -76,10 +76,11 @@ FEA-14 S5 七切片（SET/PREQ/EXPORT/READ/FONT/LIB/EDIT/AI 相关实现卡）�
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| temp | `G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\`（隔离根） | NOT_APPLICABLE | — | — | 仓外，不提交 |
+| temp | `G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\`（隔离根） | PRESERVE_UNKNOWN | — | — | 仓外测试数据与日志暂保留；另有 FEA-11 测试硬编码共享 fixtures，候选清单见 `verification/FEA-15-ACCEPT-1/fixture-observation.log`，归属未证明，不清理 |
 | user-data | `%APPDATA%\com.newmanga.desktop` | NOT_APPLICABLE | — | — | 只读；不写真实用户数据 |
-| build | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 复用现有环境 |
-| worktree | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 主树执行 |
+| build | `G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree\apps\desktop-avalonia` | PRESERVE_REFERENCED | — | — | Release 构建产物，暂供复核 |
+| worktree | `G:\CODEX\New Manga.workspace\FEA-15-ACCEPT-1\clean-tree` | PRESERVE_REFERENCED | — | — | detached `d63d735a712dbe47100db2e72b4d59a73dfd1f62`；主树为任务写入树，不执行清理 |
+| runtime ACL | `C:\Python314\python.exe`、`C:\Python314` | PRESERVE_UNKNOWN | — | `verification/FEA-15-ACCEPT-1/python-acl-observation.log` | 插件测试会尝试授予 AppContainer 权限；无运行前 ACL 快照，新增项与归属不明，不擅自撤销 |
 
 ## Canonical Evidence
 
@@ -90,3 +91,4 @@ FEA-14 S5 七切片（SET/PREQ/EXPORT/READ/FONT/LIB/EDIT/AI 相关实现卡）�
 
 - 2026-11-10 scope 冻结（`ready`）。未开始。
 - 2026-11-10 Codex 认领（`in_progress`），ZCode 独立会话 `sess_2a802094-24f6-4254-9bfa-33cad3a6bf4e` 裁决；主树串行，执行基线 `164ebabcfa90b92fc46c07238280960fc01f7423`。冻结范围不变。
+- 2026-11-10 验证进行中：隔离 Release 构建 0 警告/0 错误 EXIT 0；pytest 全量 3515 passed/16 failed/12 skipped EXIT 1；.NET 八项目中 App 与 Host 失败、整体 EXIT 1。日志、隔离限制与 NOT_RUN 见 `verification/FEA-15-ACCEPT-1/README.md`；失败及下一步已交 ZCode 独立会话裁决，未作验收通过结论。
