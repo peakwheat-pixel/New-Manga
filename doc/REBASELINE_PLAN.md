@@ -44,9 +44,9 @@
 |FEA-C10-DRAFT|—|**done**（C-10 **FROZEN** v5，`T=4 DIP`；pin `ec8fd862…`；[冻结记录](plan/FEA-CONTRACT-FROZEN-C10.md)）|
 |FEA-14-SET-1 / FEA-14-S5-PREQ-1|FEA-13-SRC-6|**done**（SET-1 r3 approved delivery `c543b51cc`；PREQ r2 approved delivery `5459c9220`；C-07 v1.2；wire 25 条 + errata 0 pin + DDL v10 计划）|
 |FEA-14-EXPORT-1|FEA-14-S5-PREQ-1|**done**（r3 approved；零新 wire/零 DDL）|
-|FEA-15-A2-1|FEA-14-EXPORT-1|**done**（r2 approved；四页 4/4；双根隔离）|
-|FEA-15-A3-1|FEA-15-A2-1|**closed_with_limitations**（r3 approved；四壳/四页 4/4；AC3 limitation）|
-|FEA-15-A4-1|FEA-15-A3-1|**done**（r2 approved；升级/回退演练）|
+|FEA-15-A2-1|FEA-14-EXPORT-1|**done**（r2；四页 4/4；双根隔离）|
+|FEA-15-A3-1|FEA-15-A2-1|**closed_with_limitations**（r3；四壳/四页 4/4；AC3 limitation）|
+|FEA-15-A4-1|FEA-15-A3-1|**done**（r2；升级/回退演练）|
 |FEA-14-READ-1|FEA-14-S5-PREQ-1|**closed_with_limitations**（r4；wire P9–P15 + v10）|
 |FEA-14-READ-2|FEA-14-READ-1|**closed_with_limitations**（r3；VM 接线；可见 UI → UI 卡）|
 |NEW-MANGA-V1-FULL-AUDIT|—|blocked（素材不传播；resume=in_progress）|
