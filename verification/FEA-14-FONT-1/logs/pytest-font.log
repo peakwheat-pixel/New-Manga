@@ -1,4 +1,4 @@
-FEA-14-FONT-1 font pytest | 2026-11-10T14:14:54.6652507+08:00 | HEAD=4ecb195f2666275df65afaf4993de37355fd5901
-.......                                                                  [100%]
-7 passed in 1.07s
+FEA-14-FONT-1 font pytest (r2 fix) | 2026-11-10T14:28:44.4555136+08:00 | HEAD=133498d338549faec1faf0bbf0dbf44a632b02d9
+........                                                                 [100%]
+8 passed in 1.11s
 EXIT=0

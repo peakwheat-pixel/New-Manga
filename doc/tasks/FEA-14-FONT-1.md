@@ -72,7 +72,7 @@ FEA-14 S5 FONT 切片（FEA-00 §12.2/§15.6）需要字体库数据面：安装
 
 - [x] **AC1 字体安装**：合法字体文件 → 复制到受管 `fonts/`、行记录（family/subfamily/format/sha256；**weight/style/display_name 不在本卡**——需 fontTools 解析，登记 limitation）；重复安装同 sha256 幂等；越界/非字体文件拒绝（typed，魔数与扩展名必须一致）。 <<MET>>
 - [x] **AC2 删除**：删除行（soft delete）+ **删除受管副本**；不存在/已删 → typed `FONT_NOT_FOUND`；不触碰用户源文件。 <<MET>>
-- [x] **AC3 列举/目录**：列举已安装字体（排除 deleted）；目录查询按 **family** 过滤（weight 字段不在本卡）；**内置条目缺省为空（PREQ：不随包任何字体）**；数据与磁盘一致（refresh）。 <<MET>>
+- [x] **AC3 列举/目录**：列举已安装字体（排除 deleted；**wire P1 保持 PREQ `{}` 形状、不做 family/weight 过滤——过滤留 FONT-2**）；**内置条目缺省为空（PREQ：不随包任何字体）**；数据与磁盘一致（refresh）。 <<MET>>
 - [x] **AC4 迁移无损**：schema v11 additive；既有用户数据行不受影响。 <<MET>>
 - [x] **AC5 契约/门禁**：P1–P4 按 PREQ §8 形状；`generate_api_inventory.py --check` EXIT 0；`verify_pins` 18/18（C-07 pin 更新记录）。 <<MET>>
 - [x] **AC6 证据**：定向 pytest/App.Tests 通过；`verification/FEA-14-FONT-1/` 日志含 EXIT；NOT_RUN（真实字体渲染/随包字体）如实登记。 <<MET>>
@@ -85,6 +85,13 @@ FEA-14 S5 FONT 切片（FEA-00 §12.2/§15.6）需要字体库数据面：安装
 - **R1-003（P2，已修/口径）**：`list_assets` 排除 deleted 并支持 family 过滤；内置条目缺省空（PREQ 不随包）；weight 过滤登记 limitation。
 - **R1-004（P2，已修）**：allowed_paths 补 UNFREEZE 载体与 4 个 v11 适配测试（`test_reading_preferences.py`/`test_v9_migration.py`/`test_v7_migration.py`/`test_source_gate_unify.py`）。
 - **R1-005/R1-006/R1-007（P3）**：Host P2 DTO 空 Format/Sha256 登记（P2 wire 仅回 asset_id/family/subfamily）；补边界测试（伪装格式/删除 typed/list deleted）；base 校准 `24637d1b4`、新增 v11 回归日志 `regression-v11.log`。
+
+
+## r2 处置记录（2026-11-10，对 `133498d33` 的 changes_requested）
+
+- **R2-001（P2，口径修正）**：wire P1 保持 PREQ §8 的 `{}` 形状，**不增加 family/weight 过滤**（过滤留 FONT-2）；AC3/README 口径同步（service 层保留 `family` 参数供内部/测试）。
+- **R2-002（P3，已修）**：删除受管副本失败不再静默——`FONT_DELETE_FAILED` typed 错误（行已软删，调用方可重试/上报）。
+- **R2-003/R2-004（P3，登记）**：Host P2 import 返回空 Format/Sha256/Size（PREQ P2 仅回 asset_id/family/subfamily/status；UI 可 import 后 List 刷新）；边界测试（>50MB/>200/并发/refresh sha mismatch）登记。
 
 ## 证据计划（L2）
 
@@ -114,9 +121,9 @@ FEA-14 S5 FONT 切片（FEA-00 §12.2/§15.6）需要字体库数据面：安装
 |---|---|---|---|---|---|
 | EV-FN-001 | FONT-1 | `verification/FEA-14-FONT-1/logs/dotnet-app-tests.log` | `-` | `fd837f5fe5af02719c261db4f2e5043619eb95e3da21917c727cec1571b5696a` | CANONICAL |
 | EV-FN-002 | FONT-1 | `verification/FEA-14-FONT-1/logs/pins-api.log` | `-` | `9d798a9b0a0637abe5ddc41b74f2915997cb933ef4be16fa9da064531336b5e6` | CANONICAL |
-| EV-FN-003 | FONT-1 | `verification/FEA-14-FONT-1/logs/pytest-font.log` | `-` | `2fdfb7359e36fea2284dc29ddaae41977171a306627afb9e265538bf8fcfcb55` | CANONICAL |
+| EV-FN-003 | FONT-1 | `verification/FEA-14-FONT-1/logs/pytest-font.log` | `-` | `1cfced07ac877e3579f758298221ed040f3066088a04b70b8f84625213f16f0a` | CANONICAL |
 | EV-FN-004 | FONT-1 | `verification/FEA-14-FONT-1/logs/regression-v11.log` | `-` | `9934a4a4e67b8cc4435fbd0fd63a9232ced1e3ecd40d8dcb70d0e354fa081d37` | CANONICAL |
-| EV-FN-005 | FONT-1 | `verification/FEA-14-FONT-1/README.md` | `-` | `46403459808ca9e8b45b4a78ea34891bfecf8b3e6a7830cf27efaa4258787701` | CANONICAL |
+| EV-FN-005 | FONT-1 | `verification/FEA-14-FONT-1/README.md` | `-` | `c121f34035de7fc015faf8917af73e6ac3f33e49acc80be94e8840042c1cdb60` | CANONICAL |
 
 ## Closeout Record
 

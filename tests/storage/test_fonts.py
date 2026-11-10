@@ -115,3 +115,20 @@ def test_refresh_reports_available_and_missing(tmp_path):
     (service.fonts_root / asset["managed_path"]).unlink()
     report = service.refresh_assets()
     assert {"path": asset["managed_path"], "code": "FONT_FILE_MISSING"} in report["failed"]
+
+
+def test_delete_reports_typed_failure_when_managed_copy_is_stuck(tmp_path):
+    conn, service = _service(tmp_path)
+    asset = service.import_asset(str(_font_file(tmp_path)))
+    managed = service.fonts_root / asset["managed_path"]
+    # R2-002: a read-only managed copy cannot be removed on Windows.
+    managed.chmod(0o444)
+    try:
+        with pytest.raises(FontLibraryError) as caught:
+            service.delete_asset(asset["asset_id"])
+        assert caught.value.code == "FONT_DELETE_FAILED"
+    finally:
+        try:
+            managed.chmod(0o666)
+        except OSError:
+            pass

@@ -155,8 +155,10 @@ class FontLibraryService:
         managed = self._fonts_root / asset.managed_path
         try:
             managed.unlink(missing_ok=True)
-        except OSError:
-            pass
+        except OSError as error:
+            # R2-002: the row is already soft-deleted; a stuck managed file is a
+            # typed failure so the caller can retry or report it (never silent).
+            raise FontLibraryError("FONT_DELETE_FAILED", "managed font file could not be removed") from error
         return True
 
     def refresh_assets(self) -> dict:
