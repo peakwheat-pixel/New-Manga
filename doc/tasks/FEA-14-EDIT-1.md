@@ -3,20 +3,20 @@ id: FEA-14-EDIT-1
 title: FEA-14 切片 EDIT-1：问题标记（复用 PREQ 预冻结 wire P16–P20）
 kind: implementation
 governance_version: 3
-status: in_review
+status: closed_with_limitations
 approval: **DSH 2026-11-10 冻结**（`ADJ-2026-11-10-FEA14-S5-SCOPE` §2.1/§2.2；PREQ-1 wire 预冻结 EDIT P16–P20；DDL v10 计划 §2.3）
 suggested_owner: dsh
 owner: dsh
-reviewer: null
+reviewer: r2 独立复核 approved（`doc/reviews/FEA-14-EDIT-1-r2.md`，P0/P1/P2=0；P3=1 accepted）
 depends_on:
   - FEA-14-S5-PREQ-1
 base_commit: 68a9e2e74
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: a89b3421c
+delivery_head: 54b87dcc9
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-14-EDIT-1
 allowed_paths:
   - doc/tasks/FEA-14-EDIT-1.md
@@ -133,4 +133,8 @@ FEA-14 S5 EDIT 切片需要「问题标记」数据面：列出/新建/解决/�
 
 ## Closeout Record
 
-- 2026-11-10 scope 冻结（`ready`）→ 实现（schema v13 + `IssueMarkerService` + wire P16–P20 + Host 六处 + C-07 v1.7）→ **r1 独立复核待派发**。未 push。
+- 2026-11-10：scope 冻结（`ready`）→ 实现 `9a968c3e4`（schema v13 + `IssueMarkerService` + wire P16–P20 + Host 六处 + C-07 v1.7）→ r1 `changes_requested`（P2=1/P3=4，`doc/reviews/FEA-14-EDIT-1-r1.md`）→ r1 处置 `a89b3421c`（C-07 S5 行修正/pin `89781583…`、Fake 按书过滤/null=open、v13 行级断言、F-05 limitation）→ 证据 `4635ab306` + pin 回填 `54b87dcc9` → **r2 `approved`**（P0/P1/P2=0；P3=1 accepted，`doc/reviews/FEA-14-EDIT-1-r2.md`）。
+- 结论：**完成（带 limitation）**（2026-11-10）。交付 head `54b87dcc9`（r2 被审字节）；收口提交只含卡面/STATUS/PLAN/ledger/C-07 记录/报告，无产品字节。
+- 交付：schema **v13**（仅 additive `issue_markers` 表 + 两索引）+ `IssueMarkerService`（归属校验/位置 0–1 成对/状态机幂等/物理删）+ wire P16–P20 + Host 六处 5 方法（`IssueMarkerInfo`/`IssueMarkerPosition` DTO）+ C-07 UNFREEZE v1.7（74/81，pin `89781583…`）；定向 5、回归 1258、App 883/0/11、pins 18/18、API 74/81。
+- **Limitation**：① `issue_markers` 无外键、book 永久删除不清理 marker 行（F-05，与 `reading_bookmarks` 先例一致；已删书标记由 `book_exists` 守卫不复现，孤儿行留后续清理卡）；② `position` 形状 `{x,y}`（0–1 相对坐标）为 PREQ §8 未定义处之实现裁决，若提升为跨卡契约需 PREQ errata/ADR；③ 批量 resolve/delete、列表分页/跨书过滤、`kind` UI 预置集合 = EDIT-2/EDIT-3/UI 卡；④ 真实 Host↔Core IPC 映射、EDIT UI、管线联动、万级性能 = NOT_RUN。
+- 零未授权契约字节（C-07 仅 UNFREEZE v1.7 记录在案）；未 push。

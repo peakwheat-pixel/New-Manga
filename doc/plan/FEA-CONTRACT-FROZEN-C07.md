@@ -27,9 +27,9 @@
 
 | 项 | 值 |
 |---|---|
-| 最后一次独立复核 | v1.0：r2 approved（FEA-GOV-10-r2）；v1.1：**r3 approved（FEA-05-PORT-1，P0/P1=0，P2×11 接受）**；v1.2：**r2 approved**（`doc/reviews/FEA-14-S5-PREQ-1-wire-review-r2.md`）；v1.3：READ-1 r2 approved（`doc/reviews/FEA-14-READ-1-r2.md`）；v1.4：FONT-1 r5 approved（`doc/reviews/FEA-14-FONT-1-r5.md`）；v1.5/v1.6：LIB-1 r1 `changes_requested` → r1 处置 → r2 `changes_requested` → r2 处置 → **r3 `approved`**（`doc/reviews/FEA-14-LIB-1-r3.md`，P0/P1/P2=0；P3=1 accepted；被审 head `de595f69d`，覆盖 v1.6 字节）；v1.7：EDIT-1 实现落地（被审 head 待 r2；本记录由 v1.7 行登记；r1 发现 S5 节残留行 → 已删除并重算 pin） |
+| 最后一次独立复核 | v1.0：r2 approved（FEA-GOV-10-r2）；v1.1：**r3 approved（FEA-05-PORT-1，P0/P1=0，P2×11 接受）**；v1.2：**r2 approved**（`doc/reviews/FEA-14-S5-PREQ-1-wire-review-r2.md`）；v1.3：READ-1 r2 approved（`doc/reviews/FEA-14-READ-1-r2.md`）；v1.4：FONT-1 r5 approved（`doc/reviews/FEA-14-FONT-1-r5.md`）；v1.5/v1.6：LIB-1 r1 `changes_requested` → r1 处置 → r2 `changes_requested` → r2 处置 → **r3 `approved`**（`doc/reviews/FEA-14-LIB-1-r3.md`，P0/P1/P2=0；P3=1 accepted；被审 head `de595f69d`，覆盖 v1.6 字节）；v1.7：EDIT-1 实现落地 → **r2 `approved`**（`doc/reviews/FEA-14-EDIT-1-r2.md`，P0/P1/P2=0；P3=1 accepted；被审 head `54b87dcc9`，覆盖 v1.7 字节；r1 发现 C-07 S5 节残留 P16–P18 行 → 已删除并重算 pin `89781583…`） |
 | 复核后到冻结的改动 | v1.1：Draft 端口 7 方法 + 统计/成员表；v1.2：新增「S5 计划追加」节；v1.3：READ-1 统计 61/68；v1.4：FONT-1 统计 65/72；v1.5：LIB-1 统计 69/76；v1.6：P1–P15 成员表同步；v1.7：EDIT-1 统计 74/81 + P16–P20 成员表并入（S5 节只剩 P21–P25） |
-| 处置 | v1.1 **已重冻**（2026-11-02，r3 approved）；v1.2 **UNFREEZE 已生效**（2026-11-10，PREQ AC2）；v1.3–v1.5 已随各自实现卡重算 pin；**v1.6 已重冻**（2026-11-10，LIB-1 r3 approved）；**v1.7 随 EDIT-1 实现落地重算 pin**（`89781583…`；r1 处置后已修正 S5 节残留行，字节以此为准），待 EDIT-1 r2 复核后重冻 |
+| 处置 | v1.1 **已重冻**（2026-11-02，r3 approved）；v1.2 **UNFREEZE 已生效**（2026-11-10，PREQ AC2）；v1.3–v1.5 已随各自实现卡重算 pin；**v1.6 已重冻**（2026-11-10，LIB-1 r3 approved）；**v1.7 随 EDIT-1 实现落地重算 pin**（`89781583…`；r1 处置后已修正 S5 节残留行，字节以此为准），**已由 EDIT-1 r2 approved 重冻** |
 
 **为什么必须有这一节**：冻结条件①是「独立复核通过」，若冻结字节 ≠ 复核字节，该条件在证据上不覆盖被冻内容。本节的目的是把差异显式化，而不是掩盖它。
 
@@ -37,7 +37,7 @@
 
 | # | C-07 条件 | 状态 | 证据 |
 |---|---|---|---|
-| 1 | 独立复核通过 | ✅ | r1（P1 生成脚本缺失）→ 入库脚本 → r2 [approved](../reviews/FEA-GOV-10-r2.md)（P0×0 / P1×0 / P2×3）；v1.2 UNFREEZE 复核：见载体 §4/§5 |
+| 1 | 独立复核通过 | ✅ | r1（P1 生成脚本缺失）→ 入库脚本 → r2 [approved](../reviews/FEA-GOV-10-r2.md)（P0×0 / P1×0 / P2×3）；v1.2 UNFREEZE 复核：见载体 §4/§5；v1.7：EDIT-1 r2 approved（`doc/reviews/FEA-14-EDIT-1-r2.md`） |
 | 2 | 生成脚本入库 | ✅ | [`tools/generate_api_inventory.py`](../../tools/generate_api_inventory.py)（177 行，UTF-8 stdout 固定） |
 | 3 | `--check` 通过 | ✅ | `python tools/generate_api_inventory.py --check` → EXIT=0，**1/74/6 = 81**（代码实测；「S5 计划追加」节剩余 P21–P25 不计入脚本统计；v1.6 起正式成员表逐行与 stdout 一致，计数一致不等于成员表一致） |
 | 4 | `check.ps1` PASS | ✅ | 冻结时 PASS；2026-11-10 UNFREEZE 后 `check.ps1`（默认 + `-TaskPath`）PASS（3 persistent warnings） |
@@ -91,3 +91,4 @@
 | 2026-11-10 | **v1.6 待重冻（LIB-1 r2 `changes_requested`）**：r2 独立复核确认 C-07 成员表逐行等于 stdout、统计/pin/§1B/§2/§3/§5 自洽（v1.6 字节本身无 finding）；阻断项均为产品残余（R-02 未知 tag typed/半写、R-04 sort_order 撞序）与 4×P3。r2 处置只改产品/测试/证据字节，**C-07 字节未变、pin 仍 `7c033bf7…`**；待 r3 独立复核覆盖 v1.6 后重冻收口；报告 `doc/reviews/FEA-14-LIB-1-r2.md` | DSH |
 | 2026-11-10 | **v1.6 重冻（LIB-1 r3 approved）**：r3 独立复核 `approved`（P0/P1/P2=0，P3=1 accepted），逐行核对 C-07 成员表 = stdout、pin = 文件 SHA-256、冻结记录 §1–§5 自洽；C-07 字节自 v1.6 起未再改，pin 保持 `7c033bf7…`；报告 `doc/reviews/FEA-14-LIB-1-r3.md`（被审 head `de595f69d`） | DSH |
 | 2026-11-10 | **UNFREEZE v1.6→v1.7（FEA-14-EDIT-1）**：`IHostController` 69→**74**、合计 76→**81**（P16–P20 落地：`ListIssueMarkersAsync`/`CreateIssueMarkerAsync`/`ResolveIssueMarkerAsync`/`ReopenIssueMarkerAsync`/`DeleteIssueMarkerAsync`）；成员表按脚本 stdout 重建为 74 方法 + 4 非方法成员（`ALL_MATCH: True`）；S5 计划节只剩 P21–P25（已落地 20/25）；pin `89781583…`（v1.6 `7c033bf7…` 保留；r1 处置把初值 `bb775912…` 修正为 `89781583…`，差异仅 S5 节删除残留的 P16–P18 三行）；载体 [CONTRACT-UNFREEZE-2026-11-10-EDIT1](../reviews/CONTRACT-UNFREEZE-2026-11-10-EDIT1.md)；复核：`--check` EXIT 0、`verify_pins` 18/18，独立复核随 EDIT-1 r2 | DSH |
+| 2026-11-10 | **v1.7 重冻（EDIT-1 r2 approved）**：r2 独立复核 `approved`（P0/P1/P2=0；P3=1 accepted：卡片 closeout 文字旧，已随收口更新），逐项关闭 r1 的 F-01–F-05；C-07 S5 计划节只剩 P21–P25、成员表 74+4 与 stdout 逐行一致、pin `89781583…` = 文件 SHA-256；报告 `doc/reviews/FEA-14-EDIT-1-r2.md`（被审 head `54b87dcc9`） | DSH |
