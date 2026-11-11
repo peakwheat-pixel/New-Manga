@@ -49,10 +49,10 @@
 |FEA-14-EDIT-1|FEA-14-S5-PREQ-1|**closed_with_limitations**（r2；v13 + P16–P20）|
 |FEA-14-AI-1|FEA-14-S5-PREQ-1|**closed_with_limitations**（r2；v14 + P21–P25；S5 25/25 落地）|
 |FEA-15-ACCEPT-1|FEA-14-AI-1|**closed_with_limitations**（失败与 NOT_RUN 保留）|
-|FEA-15-DIAG-ACL-1 / FEA-15-PIN-EOL-GOV-1|FEA-15-ACCEPT-1|in_progress / proposed（串行）|
+|FEA-15-DIAG-ACL-1 / FEA-15-PIN-EOL-GOV-1|FEA-15-ACCEPT-1|in_review / proposed（串行）|
 |NEW-MANGA-V1-FULL-AUDIT|—|blocked（素材不传播；resume=in_progress）|
 ## 当前活动程序（FEA 线 S5 + FEA-15 验收）
-**FEA 线 S5**：`FEA-15-DIAG-ACL-1` in_progress；V11R 收官。
+**FEA 线 S5**：`FEA-15-DIAG-ACL-1` in_review；V11R 收官。
 READY 节点：无
 ## 历史快照（终态节点，非当前 DAG）
 
