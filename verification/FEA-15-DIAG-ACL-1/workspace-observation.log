@@ -1,0 +1,7 @@
+time=2026-11-11T00:36:13.294Z HEAD=5ed87d05d95e6b861c297c3063905b60e5fe7b7c command=read-only Get-Item/Get-ChildItem/Get-Acl
+workspace=G:\CODEX\New Manga.workspace\FEA-15-DIAG-ACL-1 attributes=Directory created_utc=2026-11-10T17:00:24.1791638Z
+workspace_children=acl-probe-001
+probe=G:\CODEX\New Manga.workspace\FEA-15-DIAG-ACL-1\acl-probe-001 attributes=Directory created_utc=2026-11-10T17:00:24.1791638Z
+probe_owner=HOME-MY\49745 access_rule_count=1
+No files, ACLs or directories were modified by this observation.
+EXIT=0

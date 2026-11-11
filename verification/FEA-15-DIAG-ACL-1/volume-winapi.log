@@ -1,0 +1,4 @@
+time=2026-11-11T00:59:59.722379+08:00 HEAD=5ed87d05d95e6b861c297c3063905b60e5fe7b7c command=GetVolumeInformationW
+root=G:\ filesystem=NTFS flags=0x03e72eff FILE_PERSISTENT_ACLS=True EXIT=0
+root=C:\ filesystem=NTFS flags=0x03e72eff FILE_PERSISTENT_ACLS=True EXIT=0
+EXIT=0

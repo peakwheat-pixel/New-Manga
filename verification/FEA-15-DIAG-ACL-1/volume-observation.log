@@ -1,0 +1,8 @@
+time=2026-11-11T00:59:41.3714457+08:00 HEAD=5ed87d05d95e6b861c297c3063905b60e5fe7b7c command=fsutil fsinfo volumeinfo G:,C: read-only
+DRIVE=G:
+Error 5: Access is denied.
+COMMAND_EXIT=1
+DRIVE=C:
+Error 5: Access is denied.
+COMMAND_EXIT=1
+finished=2026-11-11T00:59:41.4325072+08:00

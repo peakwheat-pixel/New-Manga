@@ -1,0 +1,3 @@
+time=2026-11-11T01:00:24.1422144+08:00 HEAD=5ed87d05d95e6b861c297c3063905b60e5fe7b7c command=isolated SourceSecurity-equivalent directory ACL target=G:\CODEX\New Manga.workspace\FEA-15-DIAG-ACL-1\acl-probe-001
+preexisting_owner=HOME-MY\49745 identity=S-1-5-21-2196946971-914346751-4210154634-1001
+result=success owner=HOME-MY\49745 rule_count=1 EXIT=0
