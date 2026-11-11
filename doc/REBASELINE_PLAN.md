@@ -2,7 +2,6 @@
 
 运行以 [STATUS](STATUS.md) 为准；目标架构 [AD-002](AD-002_TARGET_DESKTOP_ARCHITECTURE.md)（AD-001 已取代）。
 ## 当前 DAG
-
 |节点/目标|依赖|状态|
 |---|---|---|
 |FEA-CONTRACT-WRAP-1|FEA-C14-DRAFT|done（L-3 Errata + PLAN 预算；R2 approved `6cfe7ab92`）|
@@ -11,10 +10,10 @@
 |FEA-07-RESIDUAL-4|FEA-07、FEA-07-RESIDUAL-3|**done**（L-R4b-1 隔离；真实 AppData delta=0；r2 approved；`7aa1e5778`）|
 |FEA-11-2C-RESIDUAL-1|FEA-11-RUN-GRANT-2C|**done**（预算超限保留 typed stop；+3 判别测试；r1 approved；`a2c4c1d8c`）|
 |FEA-11-HOST-AUTH-3|FEA-11-HOST-AUTH-2|**done**（C-17 v1.2 载体；5 轮独立 Review；崩溃正/反例 PASS）|
-|FEA-13-BK2-1…SCHED-5|—|**done**（五片：backup/2+协商、覆盖二期、DatabaseId、merge restore、调度保留；详见各卡）|
+|FEA-13-BK2-1…SCHED-5|—|**done**（五片；详情见各卡）|
 |FEA-13-SRC-6|FEA-13-COV-2、FEA-11-HOST-AUTH-3|**done**（C-09 SC-B07 ④；extras+handoff+Host 导入；2 轮 Review；`ef0618e57`）|
 |FEA-11-PREREQ-1|FEA-09、FEA-10|**done**（C-17 v1.0 FROZEN；pins 18/18；r1+轻量复核 approved P0/P1=0；集成提交见 Task）|
-|FEA-11|FEA-09、FEA-10、FEA-11-PREREQ-1|**done**（2026-11-08 翻转：R4A `fbe337f95`；AC11-1…10 MET；L-STARTUP 子项 NA；L-M1/L-M4/needs_confirmation re-home；L-1…L-11 原文保留）||
+|FEA-11|FEA-09、FEA-10、FEA-11-PREREQ-1|**done**（R4A `fbe337f95`；AC11-1…10 MET；L-STARTUP NA；L-M1/L-M4/needs_confirmation re-home；L-1…11 保留）||
 |FEA-11-SCAN-1|FEA-11|**done**（r2 窄面 approved；delivery `7080167e1`；AC-S1…S6 全 MET；AC11-1 终态 MET 带 limitation）|
 |FEA-11-HOST-AUTH-1|FEA-11-PREREQ-1|**done**（2026-11-08：AC3 MET（fresh+重发/恢复 e2e）；崩溃点 re-home HOST-AUTH-3；`f7016d3fb`）||
 |FEA-11-LINEAGE-1|FEA-11-PREREQ-1|**done**（r4 approved；delivery `90a8c8218`；r7 硬约束解除；残余 L4-L11 见卡）||
@@ -34,7 +33,7 @@
 |FEA-05-WIRE-1|FEA-03、FEA-04|**done**（Draft 命令面 wire C078–C083；实现复核 impl-r3 approved；全量 931/0/60）|
 |FEA-05-PORT-1|FEA-05-WIRE-1|**done**（Draft 端口面 + registry + Region 契约 v1.6；impl r3 approved；949/0/57）|
 |FEA-06|FEA-04b、FEA-05-PORT-1、FEA-06-PREREQ-1/2|**done**（集成 `b26840acd`；impl-r2 approved；全量 1034/0/57；AC8–AC10 MET；AC1–AC7 residual→FEA-06-RESIDUAL-1）|
-|FEA-07|FEA-00A-IMPL-1、FEA-04、FEA-05-PORT-1、FEA-06|**done**（2026-11-09 翻转：R4a `a03a6794a` + R4b `8e9420f41`；AC1–AC4/AC6–AC8 MET；AC5 原生矩阵 NA/NOT_RUN；L-R4a-1…4 + L-R4b-1…5 具名登记）|
+|FEA-07|FEA-00A-IMPL-1、FEA-04、FEA-05-PORT-1、FEA-06|**done**（R4a `a03a6794a` + R4b `8e9420f41`；AC1–4/6–8 MET；AC5 NA/NOT_RUN；L-R4a-1…4、L-R4b-1…5）|
 |FEA-06-RESIDUAL-2|FEA-06-RESIDUAL-1|**done**（2026-11-08 翻转：RESIDUAL-3 `ddc29ecb3` 关 4 格 + Tab/a11y；格 3→RESIDUAL-4；原生 NA）|
 |D-14-STATUS-COLOR-FIX|FEA-06-RESIDUAL-2|**done**（D-14 裁决 A 实施 `5ecc1e4c6`+证据补正 `075dc1682`；impl-r3 approved（ZCode，P0=0/P1=0/P2=2）；集成 `e36a7442b`；全量 **1292/0/57**）|
 |FEA-06-PREREQ-2|FEA-06-PREREQ-1|**done**（集成 `92cac5ab1`；scope-r4 + impl-r2 approved；1022/0/57）|
@@ -53,9 +52,10 @@
 |FEA-15-PIN-POLICY-1|FEA-15-PIN-EOL-GOV-1|done（ZCode；新 pin BLOB；历史不迁移）|
 |GOV-CHECKER-NOTASK-1|FEA-15-PIN-POLICY-1|done（空窗 default；Review 与终裁）|
 |GOV-REFINCIDENT-1|GOV-CHECKER-NOTASK-1|done（只读事故调查；根因 UNKNOWN）|
+|FEA-15-PIN-BASIS-ENFORCE-1|FEA-15-PIN-POLICY-1|in_progress（AC1 双环境基线；AC1d 前禁止实现）|
 |NEW-MANGA-V1-FULL-AUDIT|—|blocked（素材不传播；resume=in_progress）|
 ## 当前活动程序
-READY 节点：无；ACTIVE：无；REVIEW：无
+READY 节点：无；ACTIVE：FEA-15-PIN-BASIS-ENFORCE-1（基线实测）；REVIEW：无
 ## 历史快照（终态节点，非当前 DAG）
 
 终态约束（明细见 [TASK_LEDGER](TASK_LEDGER.md)）：
