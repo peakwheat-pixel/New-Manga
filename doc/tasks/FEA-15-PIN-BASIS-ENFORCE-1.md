@@ -98,7 +98,7 @@ AC 状态语法按 `doc/09_COLLABORATION.md` §4.3。AC1 的 A/B 是两个独立
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
-| ac1a-stop-readme | AC1 partial/stop disposition | verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md | 411309ca39e826aa1f5bbe13b15c73bb7c803d4e | 3e13dcfc747c802faddf4535b7ffa1f07a495e94585c20bb85f4eeee4fe61d9b | CANONICAL |
+| ac1a-stop-readme | AC1 transition disposition and NOT_RUN checkpoint | verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md | 31d7e59b15e897ae3779e3dbc9599b0c45624bfa | 3ca19bf9c5abc011c6f2a03f00e184cba1cc55e86b3155c4e554884cb432eae5 | CANONICAL |
 | ac1a-inventory | AC1 fixed-base inventory | verification/FEA-15-PIN-BASIS-ENFORCE-1/pin-inventory-2df8db7.json | 411309ca39e826aa1f5bbe13b15c73bb7c803d4e | 2aca6413774798056323f152f5a3ffc8a0fd82461bb6bdeef5f0c65fbf1d87c4 | CANONICAL |
 | ac1a-delta-stop | AC1 formal delta; CHANGED=2 | verification/FEA-15-PIN-BASIS-ENFORCE-1/pin-inventory-delta-e9f7bb1-to-2df8db7.json | 411309ca39e826aa1f5bbe13b15c73bb7c803d4e | f88f99052ee1580a8b859c5468b5621005df5e77e1bd179045d0c279fce97f21 | CANONICAL |
 | ac1a-repro-anchor | AC1 Addendum 2 exact delta reproduction | verification/FEA-15-PIN-BASIS-ENFORCE-1/pin-inventory-delta-repro-e9f7bb1.json | 411309ca39e826aa1f5bbe13b15c73bb7c803d4e | c27247db93960076ff27566e642be5b3d273588be47a8fa378eb81866bb3701e | CANONICAL |
@@ -108,6 +108,7 @@ AC 状态语法按 `doc/09_COLLABORATION.md` §4.3。AC1 的 A/B 是两个独立
 | ac1a-wrapper | AC1 released runtime-rebinding wrapper source | verification/FEA-15-PIN-BASIS-ENFORCE-1/capture_pin_basis_baseline.py | 411309ca39e826aa1f5bbe13b15c73bb7c803d4e | e4300b7bdbca9870e3b50354e011d955dfd56236d45a2d95b90fedf52073a03a | SOURCE_PIN |
 | ac1a-stop-adjudication | AC1 changed=2 release-condition adjudication | doc/reviews/FEA-15-PIN-BASIS-ENFORCE-1-ac1-delta-stop-adjudication-2026-11-12.md | 1d71a65d678423ecc94a60129d3d0a4f4f4dfd8a | 6e2c11c4c97e1fabc29ee7ea063d8be4a287780c0abd2f0eafb591229e19e21f | CANONICAL |
 | ac1-addendum4 | AC1 one-time history transition adjudication | doc/reviews/FEA-15-PIN-BASIS-ENFORCE-1-zcode-release-adjudication-addendum4-2026-11-12.md | 2be64baf16672dda8a351f6d95b68e5a937dc94a | EBBD38FB14C304531C79887161ABB985EDE094F42D1F76F5D764ECC6B6611A6F | CANONICAL |
+| ac1-transition-ledger | AC1 one-time history transition detail | verification/FEA-15-PIN-BASIS-ENFORCE-1/history-transition-ledger.md | 31d7e59b15e897ae3779e3dbc9599b0c45624bfa | 56cefbc99f4b389fb62e53cdb76125db8e1f87d6394a4d97d57664c431fca847 | CANONICAL |
 
 ## Resource Manifest
 
