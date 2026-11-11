@@ -1,0 +1,87 @@
+Task=FEA-15-PIN-BASIS-ENFORCE-1 AC1c B at R0
+R0=bfae0b9bd6a9b85a9a546d2adda0b684783ddb24
+COMPARISON_BASE=2df8db7a4d19b591e919ecc6e8f8651167800ef0
+STARTED_UTC=2026-11-11T18:30:32.368Z
+SETUP_ORDER: git clone --no-checkout EXIT=0; set clone-local core.autocrlf=false and core.longpaths=true before checkout; verify both origins/values; git checkout --detach R0 EXIT=0.
+SETUP_TIME_EVIDENCE: .git/config LastWriteTimeUtc=2026-11-11T18:26:32Z; HEAD reflog checkout time=2026-11-12T02:26:49+08:00 (2026-11-11T18:26:49Z); config timestamp precedes checkout.
+HEAD_ACTUAL=bfae0b9bd6a9b85a9a546d2adda0b684783ddb24
+ASSERT_HEAD=PASS
+ASSERT_CLEAN_BEFORE=PASS
+ENV_core.autocrlf=false (clone-local)
+ENV_core.longpaths=true (clone-local)
+ASSERT_CLONE_CONFIG=PASS
+ASSERT_FILE_PRESENT=PASS doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md
+ASSERT_FILE_PRESENT=PASS doc/STATUS.md
+ASSERT_FILE_PRESENT=PASS doc/REBASELINE_PLAN.md
+COMMAND=git diff --no-renames --name-status 2df8db7a4d19b591e919ecc6e8f8651167800ef0 bfae0b9bd6a9b85a9a546d2adda0b684783ddb24
+R0_DIFF_EXIT=0
+ASSERT_ALLOWED_DIFF=PASS M doc/REBASELINE_PLAN.md
+ASSERT_ALLOWED_DIFF=PASS M doc/STATUS.md
+ASSERT_ALLOWED_DIFF=PASS M doc/TASK_LEDGER.md
+ASSERT_ALLOWED_DIFF=PASS A doc/reviews/FEA-15-PIN-BASIS-ENFORCE-1-ac1-delta-stop-adjudication-2026-11-12.md
+ASSERT_ALLOWED_DIFF=PASS A doc/reviews/FEA-15-PIN-BASIS-ENFORCE-1-ac1c-a-release-adjudication-2026-11-12.md
+ASSERT_ALLOWED_DIFF=PASS A doc/reviews/FEA-15-PIN-BASIS-ENFORCE-1-zcode-release-adjudication-2026-11-11.md
+ASSERT_ALLOWED_DIFF=PASS A doc/reviews/FEA-15-PIN-BASIS-ENFORCE-1-zcode-release-adjudication-addendum-2026-11-11.md
+ASSERT_ALLOWED_DIFF=PASS A doc/reviews/FEA-15-PIN-BASIS-ENFORCE-1-zcode-release-adjudication-addendum2-2026-11-11.md
+ASSERT_ALLOWED_DIFF=PASS A doc/reviews/FEA-15-PIN-BASIS-ENFORCE-1-zcode-release-adjudication-addendum3-2026-11-12.md
+ASSERT_ALLOWED_DIFF=PASS A doc/reviews/FEA-15-PIN-BASIS-ENFORCE-1-zcode-release-adjudication-addendum4-2026-11-12.md
+ASSERT_ALLOWED_DIFF=PASS A doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md
+ASSERT_ALLOWED_DIFF=PASS A verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md
+ASSERT_ALLOWED_DIFF=PASS A verification/FEA-15-PIN-BASIS-ENFORCE-1/ac1a-delta-e9f7bb1-to-2df8db7.log
+ASSERT_ALLOWED_DIFF=PASS A verification/FEA-15-PIN-BASIS-ENFORCE-1/ac1a-delta-repro-e9f7bb1.log
+ASSERT_ALLOWED_DIFF=PASS A verification/FEA-15-PIN-BASIS-ENFORCE-1/ac1a-inventory-2df8db7.log
+ASSERT_ALLOWED_DIFF=PASS A verification/FEA-15-PIN-BASIS-ENFORCE-1/ac1c-a-gates-8d1d75ca.log
+ASSERT_ALLOWED_DIFF=PASS A verification/FEA-15-PIN-BASIS-ENFORCE-1/ac1c-main-stop-gates-a18d21bf.log
+ASSERT_ALLOWED_DIFF=PASS A verification/FEA-15-PIN-BASIS-ENFORCE-1/capture_pin_basis_baseline.py
+ASSERT_ALLOWED_DIFF=PASS A verification/FEA-15-PIN-BASIS-ENFORCE-1/history-transition-ledger.md
+ASSERT_ALLOWED_DIFF=PASS A verification/FEA-15-PIN-BASIS-ENFORCE-1/pin-inventory-2df8db7.json
+ASSERT_ALLOWED_DIFF=PASS A verification/FEA-15-PIN-BASIS-ENFORCE-1/pin-inventory-delta-e9f7bb1-to-2df8db7.json
+ASSERT_ALLOWED_DIFF=PASS A verification/FEA-15-PIN-BASIS-ENFORCE-1/pin-inventory-delta-repro-e9f7bb1.json
+ASSERT_ALLOWED_DIFF=PASS A verification/FEA-15-PIN-BASIS-ENFORCE-1/pin-r194-matrix-2df8db7.json
+ASSERT_ALLOWED_DIFF=PASS A verification/FEA-15-PIN-BASIS-ENFORCE-1/recovery-gates-c7b15c5.log
+ASSERT_ALLOWED_DIFF=PASS A verification/FEA-15-PIN-BASIS-ENFORCE-1/recovery-gates-f510bd5.log
+R0_DIFF_PATH_COUNT=25
+ASSERT_DIFF_COMMAND=PASS
+COMMAND=per-file blob comparison for tools/governance/** and doc/templates/**; base tree EXIT=0; R0 tree EXIT=0; file count=24
+ASSERT_BLOB_SAME=PASS doc/templates/HANDOFF.md d841d7bb62151418059664b6bc764cd5ca740ea4
+ASSERT_BLOB_SAME=PASS doc/templates/REVIEW.md b4394af48585a9ac3d2283cc312d255a7fdb7413
+ASSERT_BLOB_SAME=PASS doc/templates/TASK.md 7d318638dc5fa90b4ff0b8e638c31b67a549a239
+ASSERT_BLOB_SAME=PASS tools/governance/archive_branches.py fb60d0eb791e86d157bad41d40e4f46ccbfa69d7
+ASSERT_BLOB_SAME=PASS tools/governance/audit_tasks.py 502f5e2e2ac53939f641b5ef79a96c72594b64f4
+ASSERT_BLOB_SAME=PASS tools/governance/broad-root-preservation.json 3ff9a82942d8a6d61070e436cd4c18eefcfb4f17
+ASSERT_BLOB_SAME=PASS tools/governance/check.ps1 b56a832f8164063690142d0a593e7c7b17b81a36
+ASSERT_BLOB_SAME=PASS tools/governance/clean_workspace.py 78f45348b4ced163df53beddd57ed93b72aa19a7
+ASSERT_BLOB_SAME=PASS tools/governance/consolidate.py 0b590f070993869da87e2269b12601cb3ee689ec
+ASSERT_BLOB_SAME=PASS tools/governance/delete_branches.py a19dfd6f91816ae91cc5a2ac2afee49667020167
+ASSERT_BLOB_SAME=PASS tools/governance/historical-evidence-interpretation.json fde55924996b36c6ca8566f451da61923dfc6ee6
+ASSERT_BLOB_SAME=PASS tools/governance/non-declaration-json-exceptions.json 2b5d52f5948e029ff46d387d2460aaadc1ee05e9
+ASSERT_BLOB_SAME=PASS tools/governance/remove_worktrees.py eb9742e07e306097256eb9052cc2088279b4c32b
+ASSERT_BLOB_SAME=PASS tools/governance/residual-runtime-identity.json ae45f0989786718b6bf1be6c95865872683cf018
+ASSERT_BLOB_SAME=PASS tools/governance/resource-manifest.schema.json cbc2912ed09ed715253a274bfc14a5b0b3d3a726
+ASSERT_BLOB_SAME=PASS tools/governance/task_ledger.py 4277ac7a1f8b770e6291d922255b0ac3e87d6e14
+ASSERT_BLOB_SAME=PASS tools/governance/task_liveness.py af2c317a8980ea34f9c9eeff3df838ba36795ada
+ASSERT_BLOB_SAME=PASS tools/governance/tests/fixtures/resource-manifest/cases.json 56d66e63c4662c5378bcacb6cc96e400cb501d5a
+ASSERT_BLOB_SAME=PASS tools/governance/tests/run-resource-manifest-cases.py 53c6ab44ed937c05a94b1d50cf4ec750f2e6e6c1
+ASSERT_BLOB_SAME=PASS tools/governance/tests/test_ac_gate.py 8cd1b249aec3a75b1ce79264ff3f75e18c63c75c
+ASSERT_BLOB_SAME=PASS tools/governance/tests/test_architecture_assertions.py 161435c931cb76810054efe0d71e672d6c662512
+ASSERT_BLOB_SAME=PASS tools/governance/tests/test_path_header_compat.py a586ff71e6193454a05ac5a6ec0765ee6611ee48
+ASSERT_BLOB_SAME=PASS tools/governance/tests/test_residual_runtime_identity.py 402e140d83d5e8bc91793f92e7fb50e33a0e2145
+ASSERT_BLOB_SAME=PASS tools/governance/verify_pins.ps1 25d63260e8f922d1f796451e6ade2df2911ff521
+ASSERT_ALL_GOVERNANCE_TEMPLATE_BLOBS=PASS files=24
+ENV_GIT=git version 2.52.0.windows.1
+ENV_PWSH=7.6.9
+ENV_PYTHON=Python 3.14.6
+COMMAND_START_UTC=2026-11-11T18:30:33.972Z
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-15-PIN-BASIS-ENFORCE-1.md
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3152 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6971 bytes / 64 lines
+Governance check: PASS (3 warnings)
+EXIT=0
+ASSERT_TASKPATH=PASS
+COMMAND_FINISH_UTC=2026-11-11T18:30:36.832Z
+ASSERT_CLEAN_AFTER=PASS
+FINISHED_UTC=2026-11-11T18:30:36.896Z
+OVERALL_EXIT=0
