@@ -26,7 +26,7 @@ status: draft_pending_review
 | `19ccd9b60f319c632ee034db38b235364e594da6` | delivery HEAD 的最终 inventory/delta/matrix、运行日志与门禁日志 |
 | `89bb3fb27facee036c7a4402bb545c30478dea19` | 最终 delivery gate log（生成 HEAD `359d09d...`） |
 
-主要产物均在 `verification/FEA-15-PIN-POLICY-1/`：`pin-basis-ruling.md`、`pin-basis-impact-plan.md`、`pin-inventory.json`、`pin-inventory-delta.json`、`pin-r194-baseline-matrix.json`、对应 run logs、`delivery-gates-e9f7bb1.log`。最终 inventory 的 `measured_head` 为 delivery HEAD `e9f7bb1...`；最终证据提交只增加生成文件与日志，没有改变该 HEAD 的 pin 行 universe。
+主要产物均在 `verification/FEA-15-PIN-POLICY-1/`：`pin-basis-ruling.md`、`pin-basis-impact-plan.md`、`pin-inventory.json`、`pin-inventory-delta.json`、`pin-r194-baseline-matrix.json`、对应 run logs、`delivery-gates-e9f7bb1.log`、`delivery-gates-359d09d.log`。最终 inventory 的 `measured_head` 为 delivery HEAD `e9f7bb1...`；最终证据提交只增加生成文件与日志，没有改变该 HEAD 的 pin 行 universe。
 
 ## AC 对照
 
