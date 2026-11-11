@@ -91,8 +91,8 @@
 - `C:/Python314` ACL 与 AppContainer profile 的归属、增量和所有者：`NOT_RUN` / 不可判定；不修改、不撤销、不删除。
 - 62 个 fixture 候选清理或迁移：`NOT_RUN`；全量原位保留。
 - 真实旧库迁移/回退和真实用户数据操作：`NOT_RUN`；本 Task 禁止访问。
-- 独立 Review 已完成并批准；其未重跑门禁。`gates-terminal.log` 于 2026-11-11 02:25:02 UTC、HEAD `dea98ce8f93a3dfd3bdab84457a212d02804dba2` 记录候选 closeout 工作树：default check PASS（3 warnings，EXIT 0）、`-TaskPath` PASS（5 warnings，EXIT 0）、18 pins PASS（EXIT 0）。Task evidence pin backfill 后仍须复跑终态门禁。
+- 独立 Review 已完成并批准；其未重跑门禁。`gates-terminal.log` 同时记录候选运行和 Task pin 回填后的干净提交运行：2026-11-11 03:03:50 UTC、HEAD `05b22084828bff3ad27a96093652beff92dbe108`，default check PASS（3 warnings，EXIT 0）、`-TaskPath` PASS（5 warnings，EXIT 0）、18 pins PASS（EXIT 0）。
 
 ## 下一步
 
-独立 Reviewer `/root/fea15_diag_acl_review` 已对 `610839af8348f8b1f36e18a623e9fc40882051b5` 作只读审查并批准，P0/P1=0；报告位于 `doc/reviews/FEA-15-DIAG-ACL-1-r1.md`。候选 closeout 门禁已 PASS，最终 Task pin backfill 后需要再复核。精确 `SourceSecurity.PrivateDirectory` 探针继续保持 `NOT_RUN`；没有进行 ACL 恢复、profile 删除、fixture 清理或产品代码修复。
+独立 Reviewer `/root/fea15_diag_acl_review` 已对 `610839af8348f8b1f36e18a623e9fc40882051b5` 作只读审查并批准，P0/P1=0；报告位于 `doc/reviews/FEA-15-DIAG-ACL-1-r1.md`。Task pin 回填后的干净提交门禁已 PASS；精确 `SourceSecurity.PrivateDirectory` 探针继续保持 `NOT_RUN`。没有进行 ACL 恢复、profile 删除、fixture 清理或产品代码修复。
