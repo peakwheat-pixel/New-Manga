@@ -7,7 +7,7 @@ status: in_progress
 approval: ZCode 2026-11-11 RELEASE_WITH_BASELINE_PREREQUISITE（主裁决及 Addendum 1–3）；Addendum 4 接受一次性基线转接；AC1c A=ACCEPT_CONTINUE；AC1d=AC1D_PASS；AC2/AC3=ACCEPT_WITH_LIMITATIONS（2026-11-12），限定释放 AC4；AC5 未释放；用户授权自动继续，裁决交给 ZCode
 suggested_owner: codex
 owner: codex
-reviewer: ZCode 独立 CLI Review fresh session；须与 AC1d 基线复核和最终 adjudication 上下文不同
+reviewer: ZCode CLI 独立 Review session sess_426becfe-44b9-4e2e-9f16-9eaccdddbd05；AC4 adjudication 须使用不同新 session
 depends_on:
   - FEA-15-PIN-POLICY-1
 base_commit: d8b9b20869ac0957e152eddb9b5de88c8c2f9326
@@ -47,10 +47,10 @@ out_of_scope:
 ## Acceptance Criteria
 
 - [x] **AC1 实施前固定基线**：A clone 固定 `2df8db7a4d19b591e919ecc6e8f8651167800ef0`；reproduction/inventory `EXIT=0`；delta 原样 `ADDED=62 / REMOVED=0 / CHANGED=2`。AC1c A 的真实 FAIL/PASS 已由 ZCode `ACCEPT_CONTINUE` 裁定并原样保留；B 在 R0 的文件/差异/blob 断言与本 TaskPath 均 `EXIT=0`；fresh AC1d 独立确认 `AC1D_PASS`。 <<MET>>
-- [ ] **AC2 新旧表头与 basis 校验**：模板新增七列；checker 识别旧六列/新七列。旧表维持既有 r194 语义；新表要求合法 basis，BLOB 精确校验路径 commit blob，WORKTREE 校验明确声明的工作区字节，EXTERNAL_SHA256 不可读时失败关闭。 <<PARTIAL: AC2/AC3 前一候选已由 ZCode ACCEPT_WITH_LIMITATIONS；当前候选含 P1-1/P1-3 补测，fresh Review 待完成>>
-- [ ] **AC3 判别测试覆盖**：覆盖旧格式、basis 缺失/非法、三类来源、commit 不含路径、缺失路径、PNG exact bytes、CRLF 与 mixed-EOL，含旧格式结果不变断言。 <<PARTIAL: 当前 4ed 候选专项测试 EXIT=0；补测后的独立 Review 待完成>>
-- [ ] **AC4 跨 checkout 对照**：Windows core.autocrlf=true/false fresh checkout 对照；逐行区分历史不变性与 Task 新行增量。Linux 未实测则记录 NOT_RUN。 <<PARTIAL: Windows T/F gate、C1/C2 与 inventory 审计已执行；fresh ZCode adjudication 待完成；Linux NOT_RUN>>
-- [ ] **AC5 集成、Review 与终裁**：集成后 default、本 Task 与四个历史 TaskPath、18 pins、API 全部实际执行；更新 Handoff、Canonical Evidence、资源清单；fresh ZCode Review 与不同 session 的最终 adjudication 完成，R-001 由 Integrator 显式裁决。 <<BLOCKED: AC4 独立 Review/adjudication 待完成；AC5 尚未释放，相关门禁与最终终裁 NOT_RUN>>
+- [x] **AC2 新旧表头与 basis 校验**：模板新增七列；checker 识别旧六列/新七列。旧表维持既有 r194 语义；新表要求合法 basis，BLOB 精确校验路径 commit blob，WORKTREE 校验明确声明的工作区字节，EXTERNAL_SHA256 不可读时失败关闭。 <<MET>>
+- [x] **AC3 判别测试覆盖**：覆盖旧格式、basis 缺失/非法、三类来源、commit 不含路径、缺失路径、PNG exact bytes、CRLF 与 mixed-EOL，含旧格式结果不变断言。 <<MET>>
+- [ ] **AC4 跨 checkout 对照**：Windows core.autocrlf=true/false fresh checkout 对照；逐行区分历史不变性与 Task 新行增量。Linux 未实测则记录 NOT_RUN。 <<PARTIAL: Windows T/F gate、C1/C2、inventory audit 已完成；fresh ZCode Review 为 APPROVED_WITH_LIMITATIONS（P0/P1=0）；P2-1 SHA basis 标签与 P2-2 配置顺序证据待独立 adjudication；Linux NOT_RUN>>
+- [ ] **AC5 集成、Review 与终裁**：集成后 default、本 Task 与四个历史 TaskPath、18 pins、API 全部实际执行；更新 Handoff、Canonical Evidence、资源清单；fresh ZCode Review 与不同 session 的最终 adjudication 完成，R-001 由 Integrator 显式裁决。 <<BLOCKED: AC4 adjudication 尚待处理 P2-1/P2-2；AC5 未释放，历史 TaskPath、集成门禁和最终终裁均 NOT_RUN>>
 
 AC 状态语法按 `doc/09_COLLABORATION.md` §4.3。AC1 的 A/B 是两个独立载体：base clone 不存在本 Task 卡，不能将不存在的 TaskPath 记为 PASS；B 只在 R0 执行本卡 TaskPath。Addendum 4 细化 R0 文件在场、允许差异、治理工具/模板 blob 同一性和停止条件。AC1c A 实际 FAIL/PASS 均原样保留；ZCode fresh session 于 2026-11-12 作出 `ACCEPT_CONTINUE`，将 A 侧预期锚精确化为 autocrlf=true 环境的确定性结果。B clone checkout 前已设 clone-local `core.autocrlf=false`、`core.longpaths=true`；R0 差异/24 个治理工具与模板 blob 断言和本 TaskPath 均通过。fresh AC1d 返回 `AC1D_PASS`，只授权 AC2/AC3；B 的其它门禁仍 `NOT_RUN`。
 
@@ -65,13 +65,13 @@ AC 状态语法按 `doc/09_COLLABORATION.md` §4.3。AC1 的 A/B 是两个独立
 | AC1a | 固定 base clone；运行冻结 inventory/delta 脚本，依 Addendum 2 仅运行时重绑定路径 | Windows；base `2df8db7a4d19b591e919ecc6e8f8651167800ef0` | `EXIT=0`；inventory 5,438；delta `+62/-0/CHANGED=2`，Addendum 4 接受一次性转接 | README、原始 logs/JSON、history-transition-ledger |
 | AC1c-A | 记录 clone status/env；default + `AGPL-RELEASE-1`、`AD002-FOLLOWUPS-1`、`FEA-06-PREREQ-1`、`CHAPTER-SELECTOR-1` TaskPath；18 pins、API、固定样本矩阵 | Windows；A clone @ `2df8db7…`，checker 未变 | default/four TaskPath `EXIT=1`；pins `EXIT=1` (16 mismatches)；API/matrix `EXIT=0`；真实结果保持 FAIL/PASS，ZCode `ACCEPT_CONTINUE`；见裁决报告 | `ac1c-a-gates-8d1d75ca.log`；README；AC1c adjudication |
 | AC1b | 固定 R0 clone；断言 Task/STATUS/Plan 在场、允许差异集、逐文件比较 `tools/governance/**` 与 `doc/templates/**` blobs；运行本卡 TaskPath | Windows；R0；checkout 前 clone-local `core.autocrlf=false`、`core.longpaths=true`，clean | R0 HEAD 固定；3 个文件在场 PASS；25 个差异路径全部允许；24/24 blobs 相同；本卡 TaskPath `EXIT=0`（3 warnings）；B default/pins/API 等未运行 | `ac1c-b-r0-assertions-taskpath-bfae0b9.log`；README |
-| AC2–AC3 | 专项 pytest；候选完整 governance suite | implementation HEAD 7eef；validation / AC4 candidate HEAD 4ed7 | clean implementation HEAD：18 passed、9 subtests、EXIT=0；T clone：18 passed、9 subtests、EXIT=0；F clone：16 passed、2 skipped、9 subtests、EXIT=0。4ed 完整 suite：61 passed、2 skipped、3 failed、62 subtests、EXIT=1；三项失败在既有 dd6372420 baseline control 同名复现（3 failed、9 passed、EXIT=1），本 checkpoint 未重跑 baseline | ac2ac3-p1-p3-remediation-committed.log；ac2ac3-full-pytest-4ed7f32.log；ac4-v2 T/F gate logs；README |
-| AC4 | T/F fresh clones；pins、API、focused pytest；C1/C2 与 inventory delta audit | Windows；候选 4ed7f32b3ce9104ecee11aad593bde222055a0df；配置先于 checkout | T default/TaskPath EXIT=1（Plan 7035/7000 bytes），pins EXIT=1（16 EOL mismatch）；F default/TaskPath PASS EXIT=0（各3 warnings），pins EXIT=1（C04b/C17）；两侧 API EXIT=0。C1 16/16、C2 T/F 各2/2、11/11 path audit 均 EXIT=0；T/F 行增量均 +8/-1/~0；Linux NOT_RUN；待 ZCode adjudication | ac4-v2-t-gates-nativecwd.log；ac4-v2-f-gates-nativecwd.log；README / audit JSON |
+| AC2–AC3 | 专项 pytest；候选完整 governance suite | implementation HEAD 7eef；validation / AC4 candidate HEAD 4ed7 | clean implementation HEAD：18 passed、9 subtests、EXIT=0；T clone：18 passed、9 subtests、EXIT=0；F clone：16 passed、2 skipped、9 subtests、EXIT=0。4ed 完整 suite：61 passed、2 skipped、3 failed、62 subtests、EXIT=1；三项失败在 dd6372420 baseline control 同名复现（本 checkpoint 未重跑 baseline）。fresh ZCode Review APPROVED_WITH_LIMITATIONS、P0/P1=0；候选 4ed 为 4 个实现提交的 cherry-pick replay，4/4 实现/测试文件 blob 一致 | ac2ac3-p1-p3-remediation-committed.log；ac2ac3-full-pytest-4ed7f32.log；当前 Review / README
+| AC4 | T/F fresh clones；pins、API、focused pytest；C1/C2 与 inventory delta audit | Windows；候选 4ed7f32b3ce9104ecee11aad593bde222055a0df；T/F 最终配置值已核实，但 clone audit 时间戳不证明先于 checkout（P2-2） | T default/TaskPath EXIT=1（Plan 7035/7000 bytes），pins EXIT=1（16 EOL mismatch）；F default/TaskPath PASS EXIT=0（各3 warnings），pins EXIT=1（C04b/C17）；两侧 API EXIT=0。C1 16/16、C2 T/F 各2/2、11/11 path audit 均 EXIT=0；T/F 行增量均 +8/-1/~0；fresh Review APPROVED_WITH_LIMITATIONS，P2-1/P2-2 待 adjudication；Linux NOT_RUN | ac4-v2-t-gates-nativecwd.log；ac4-v2-f-gates-nativecwd.log；README / audit JSON
 | AC5 | 集成后 `check.ps1` default/本卡及四历史 TaskPath、`verify_pins.ps1`、API inventory | main 集成候选；逐项保存 HEAD 与 EXIT | `NOT_RUN`；与 AC1c A/B 基线门禁分开 | 后续 delivery-gates log |
 
 ## 依赖、风险与阻塞
 
-硬依赖 FEA-15-PIN-POLICY-1 已 done。AC1c A 的 EOL/历史 evidence FAIL 经 ZCode ACCEPT_CONTINUE；AC1d AC1D_PASS 解除 AC2/AC3 STOP。ZCode 2026-11-12 接受 AC2/AC3 并限定释放 AC4，AC5 明确 NOT_RELEASED。当前 AC4 证据已执行，待新独立 Review 与 ZCode adjudication；AC5 门禁不得提前运行。AC1d 原始长调用 EXIT 未保存，不将同会话回执冒充原调用 EXIT。
+硬依赖 FEA-15-PIN-POLICY-1 已 done。AC1c A 的 EOL/历史 evidence FAIL 经 ZCode ACCEPT_CONTINUE；AC1d AC1D_PASS 解除 AC2/AC3 STOP。AC2/AC3 当前 Review APPROVED_WITH_LIMITATIONS、P0/P1=0，P1-1/P1-3 补测充分；既有 ZCode adjudication 为 ACCEPT_WITH_LIMITATIONS。AC4 fresh Review 完成，P2-1 SHA basis 字节口径、P2-2 clone 配置顺序证据待独立 ZCode adjudication；AC5 明确 NOT_RELEASED，AC5 门禁不得提前运行。AC1d 原始长调用 EXIT 未保存，不将同会话回执冒充原调用 EXIT。
 
 5,376 行只是 `e9f7bb1…` 历史 snapshot；本 Task 必须在固定 `2df8db7…` clone 重算当前 inventory，不能把旧数量当预设答案。Inventory `class` 辅助字段对非标准表头有限制，不得用于政策或处置推断。573 条异常观察不自动构成损坏/迁移清单。
 
@@ -80,11 +80,12 @@ AC 状态语法按 `doc/09_COLLABORATION.md` §4.3。AC1 的 A/B 是两个独立
 - Release authority：主裁决、Addenda 1–3；Addendum 3 session `sess_7b34d23e-ddaf-4ec5-bbb3-964edd74fc58`，turn `turn_14d71565-8907-4cf0-8e20-fa98d38f2bed`。
 - Handoff：待交付。
 - AC1d baseline review：[独立裁决报告](../reviews/FEA-15-PIN-BASIS-ENFORCE-1-ac1d-baseline-confirmation-2026-11-12.md)，`AC1D_PASS`；session `sess_fd863071-c665-4b61-89be-2156ace80595` / turn `turn_133dc2f6-c7f1-467c-a8a5-2c342f12c65a`。原始长调用 EXIT 未捕获；同会话回执 turn `turn_217dd2e1-13dd-4f53-83d2-f599bc9a81dd` 为 `EXIT=0`，仅复述既有结论。最终 Review 与最终 adjudication 仍须使用彼此独立的新 session。
-- 实现分支/worktree：从冻结 R0 bfae0b9bd6a9b85a9a546d2adda0b684783ddb24 创建，仅用于 AC2/AC3；实现 HEAD 7eefb54dc5ca74ddf9cc5459eb40fb10769a44e1，clean。AC4 validation candidate 4ed7f32b3ce9104ecee11aad593bde222055a0df 与实现候选的 checker、TASK 模板、专项测试文件 blob 三项相同。
+- 实现分支/worktree：从冻结 R0 bfae0b9bd6a9b85a9a546d2adda0b684783ddb24 创建，仅用于 AC2/AC3；实现 HEAD 7eefb54dc5ca74ddf9cc5459eb40fb10769a44e1，clean。AC4 candidate 4ed7f32b3ce9104ecee11aad593bde222055a0df 是基于 dd6372420 的 4 提交 cherry-pick replay，不是 7eef 的后代；四个实现/测试文件 blob 经 fresh Review 核实一致。
 - AC1 原 delta STOP 独立裁决：[报告](../reviews/FEA-15-PIN-BASIS-ENFORCE-1-ac1-delta-stop-adjudication-2026-11-12.md)，结论 `ADJUDICATION_STOP`；后由 Addendum 4 接受一次性转接。AC1c A 的后续停止门已由下列 fresh ZCode 裁决 `ACCEPT_CONTINUE` 解除。
 - Addendum 4：[一次性基线转接与停止门解除](../reviews/FEA-15-PIN-BASIS-ENFORCE-1-zcode-release-adjudication-addendum4-2026-11-12.md)，原始释放 ZCode 会话 `sess_7b34d23e-ddaf-4ec5-bbb3-964edd74fc58` / `turn_391d1a6b-6e08-4bba-b0b8-f80f32a68e0d`；接受 `+62 / -0 / CHANGED=2` 一次性衔接并恢复 AC1c A 侧，不授权实现。
 - AC1c A：[ZCode 独立裁决](../reviews/FEA-15-PIN-BASIS-ENFORCE-1-ac1c-a-release-adjudication-2026-11-12.md)，`ACCEPT_CONTINUE`；session `sess_72137bd6-9553-424d-b09f-4184866cd387` / turn `turn_fbce0bef-c175-43a1-a065-31fdc00180a7`；A 侧失败锚已解释并接受。裁决时 B/AC1d 未运行；B 后续结果见下一 checkpoint。
 - AC2/AC3 adjudication 报告：ZCode session sess_dbdb62fe-a206-4477-a209-657882bae35b / turn turn_842ced10-318d-498e-836c-ca44d987f990，AC2/AC3 ACCEPT_WITH_LIMITATIONS，AC4 RELEASED（限定范围），AC5 NOT RELEASED；报告 doc/reviews/FEA-15-PIN-BASIS-ENFORCE-1-ac2-ac3-adjudication-2026-11-12.md。
+- Current independent AC2/AC3/AC4 v2 Review：ZCode CLI session sess_426becfe-44b9-4e2e-9f16-9eaccdddbd05 / turn turn_80b3a6dd-0d90-4edf-b60f-c95ab3fd9f94；reviewed main HEAD 7f1e7173e7638c79e024985ad91b18a073df727c、implementation 7eefb54dc5ca74ddf9cc5459eb40fb10769a44e1、candidate 4ed7f32b3ce9104ecee11aad593bde222055a0df；APPROVED_WITH_LIMITATIONS，P0/P1=0。报告 doc/reviews/FEA-15-PIN-BASIS-ENFORCE-1-ac2-ac3-ac4-v2-zcode-review-2026-11-12.md；原始 receipt verification/FEA-15-PIN-BASIS-ENFORCE-1/ac2-ac4-current-review-zcode-cli-20261112.jsonl；报告/receipt 在 5e626135793ab50c100b4e552aa42522fd70312d，README finding supplement 在 d714232ee。P2-1/P2-2 留 AC4 adjudication；本 Review 不作最终验收或 AC5 释放。
 - R-001 已增加 negative tests，但 finding 的实现状态及 AC5 前最终 Integrator disposition 仍待 fresh Review / final adjudication；不得自动视作关闭。
 
 ## Rolling Checkpoint
@@ -96,7 +97,7 @@ AC 状态语法按 `doc/09_COLLABORATION.md` §4.3。AC1 的 A/B 是两个独立
 - 2026-11-12，R0=`bfae0b9bd6a9b85a9a546d2adda0b684783ddb24`：main default/本卡 TaskPath/18 pins/API 均 `EXIT=0`；B clone clean，Task/STATUS/Plan 在场，`R0..2df8db7` 25 个差异路径均在释放范围内，`tools/governance/**` 与 `doc/templates/**` 24/24 blobs 相同；B 本卡 TaskPath `EXIT=0`（3 warnings）。B 其他门禁未运行；日志分别为 `r0-main-gates-bfae0b9.log` 与 `ac1c-b-r0-assertions-taskpath-bfae0b9.log`。
 - 2026-11-12，AC1d fresh ZCode 会话 `sess_fd863071-c665-4b61-89be-2156ace80595` / turn `turn_133dc2f6-c7f1-467c-a8a5-2c342f12c65a` 对 reviewed HEAD `0851085cbeeaaea95d1fd94b55a435a3e2eef102` 裁决 `AC1D_PASS`，只释放 AC2/AC3；R0 `bfae0b9bd6a9b85a9a546d2adda0b684783ddb24` 为实施基线。AC1d 报告原始长调用 EXIT 未捕获；同会话回执 `EXIT=0` 仅重述结论。generated HEAD `cdd5d258690471c8069d47f461f04a1ef9a306bd` 的 19 行 blob audit `EXIT=0`，状态前后 clean。
 - 当前证据：[verification README](../../verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md)、[history-transition-ledger](../../verification/FEA-15-PIN-BASIS-ENFORCE-1/history-transition-ledger.md)；A clone 保留。
-- 2026-11-12 current checkpoint：AC2/AC3 implementation commit 7eef；AC4 v2 evidence a9ca17988，post-evidence gates bb44720aa，README checkpoint 3db4c3841，follow-up Review report/receipt 8f4ee644b；候选完整 pytest 与 post-pinbackfill gate logs 在 32f229f26，最终 README 在 a036a85f3。candidate 4ed7f32b3ce9104ecee11aad593bde222055a0df 完整 suite 为 61 passed、2 skipped、3 failed、62 subtests、EXIT=1；三项 test_residual_runtime_identity failures 在已有 dd6372420 baseline control 同名复现，本 checkpoint 未重跑 baseline。main HEAD da3336391674d4a1cff6983849b570cf1e9e4d88 default / TaskPath PASS（各3 warnings、EXIT=0），18 pins EXIT=0，API EXIT=0。当前下一步为完成当前候选 fresh ZCode Review，再由独立 ZCode session adjudicate AC4 并决定是否释放 AC5。
+- 2026-11-12 current checkpoint：AC1–3 完成；AC2/AC3 当前候选 Review 为 APPROVED_WITH_LIMITATIONS（P0/P1=0）；AC4 v2 evidence 与 Review 已完成，P2-1/P2-2 待新 ZCode adjudication，AC5 NOT_RELEASED。Review/receipt commit 5e6261357，README P2/P3 supplement commit d714232ee。保留全量治理 suite 3 failed / EXIT=1、T Plan 与 pin FAIL、F 两 pin FAIL；Linux、四个历史 TaskPath、AC5 gates 均 NOT_RUN。Task 指针提交后，下一步运行 main default/TaskPath/18 pins/API gates，提交证据并回填 pin，再由独立 ZCode session 裁决 AC4。
 
 ## Canonical Evidence
 
@@ -160,6 +161,10 @@ AC 状态语法按 `doc/09_COLLABORATION.md` §4.3。AC1 的 A/B 是两个独立
 
 `ac1c-boundary-matrix` 的 Canonical SHA 使用 `6086a5b1…` 提交内 Git blob 字节（4316 bytes，SHA-256 `68ec…`）；A clone/verification 工作树文件为 4438 bytes，SHA-256 `e8c…`。两者基于 EOL 转换而字节不同，卡内 pin 指向实际 Git blob。`ac1a-inventory`、`ac1a-delta-stop`、`ac1a-repro-anchor` 也以 Git blob 字节作为 Canonical pin；README artifacts 表列出 A clone 工作树输出 SHA。三组 A 工作树文件在 CRLF→LF 归一化后均逐字节等于对应 blob，数量分别为 146,220、941、414 个 CRLF 对；详见本 README 的 AC1d 段落。不得迁移历史 pin。
 
+| ac2ac3-ac4-v2-review | Fresh independent AC2/AC3/AC4 v2 Review at main 7f1e and candidate 4ed; APPROVED_WITH_LIMITATIONS | doc/reviews/FEA-15-PIN-BASIS-ENFORCE-1-ac2-ac3-ac4-v2-zcode-review-2026-11-12.md | 5e626135793ab50c100b4e552aa42522fd70312d | c7a28b764abc78133fc0557a88303d5e3a77305ba4c532b3b2dee21b043dc176 | CANONICAL |
+| ac2ac3-ac4-v2-review-receipt | Full raw ZCode CLI JSON receipt, session/turn IDs and EXIT=0 | verification/FEA-15-PIN-BASIS-ENFORCE-1/ac2-ac4-current-review-zcode-cli-20261112.jsonl | 5e626135793ab50c100b4e552aa42522fd70312d | 0009a62aaa497b991c2c1b66c1e55414582909b7852adc1162c489d6d17930f2 | CANONICAL |
+| ac2ac3-ac4-v2-review-readme | Current review verdict, P2-1/P2-2/P3-1 and SHA-basis audit | verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md | d714232ee5f4f4b5ab322fef5fd527234c2859f3 | a95551ac9c08c84c977418b440fc11ce69ec2c8af4e26c39e4f099d82a37887c | CANONICAL |
+
 ## Resource Manifest
 
 不执行资源清理、worktree prune、GC 或 repack。所有基线/候选副本和过程日志逐项记录并保留；收尾前刷新 Worktree Safety Inventory。
@@ -174,6 +179,7 @@ AC 状态语法按 `doc/09_COLLABORATION.md` §4.3。AC1 的 A/B 是两个独立
 | AC4 validation clone | G:/CODEX/New Manga.workspace/FEA-15-PIN-BASIS-ENFORCE-1/validation-ac2ac3 | PRESERVE_REFERENCED | 同源保留 | candidate HEAD 4ed7f32b3ce9104ecee11aad593bde222055a0df | core.autocrlf=false、core.longpaths=true；focused tests 后 clean；保留，不清理 |
 | AC4 T/F clones | G:/CODEX/New Manga.workspace/FEA-15-PIN-BASIS-ENFORCE-1/ac4-v2-clone-t and ac4-v2-clone-f | PRESERVE_REFERENCED | 同源保留 | ac4-v2 inventory/delta logs and JSON | HEAD 4ed7f32b3ce9104ecee11aad593bde222055a0df；T autocrlf=true、F=false；Task-local R0/inventory/delta JSON untracked；保留，不清理 |
 | agent-output logs | G:/CODEX/New Manga.workspace/FEA-15-PIN-BASIS-ENFORCE-1/*.log | PRESERVE_REFERENCED | 同源保留 | README | 源运行日志另复制入仓；保留原文件 |
+| ZCode CLI Review receipt | G:/CODEX/New Manga.workspace/FEA-15-PIN-BASIS-ENFORCE-1/zcode-ac2-ac4-current-review-20261112.jsonl | PRESERVE_REFERENCED | verification/FEA-15-PIN-BASIS-ENFORCE-1/ac2-ac4-current-review-zcode-cli-20261112.jsonl | SHA-256 F61710BFF588A4C94FD9056E3A7E8D19E530BEFCD06E9FA37CA68FFBD4B0F3A6 | CLI EXIT=0；仓外原件保留，仓内副本已提交并 pin。 |
 | dataset / model / installation artifact / exchange | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | 未使用 |
 
 ## Closeout Record
