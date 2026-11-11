@@ -312,7 +312,7 @@
   },
   "external_agent_output": {
     "path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\FEA-15-PIN-EOL-GOV-1",
-    "file_count": 22,
+    "file_count": 23,
     "files": [
       {
         "path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\FEA-15-PIN-EOL-GOV-1\\checkout-matrix-run-001.log",
@@ -423,6 +423,11 @@
         "path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\FEA-15-PIN-EOL-GOV-1\\pin-inventory-snapshot-c3b1068.json",
         "size_bytes": 5749687,
         "sha256": "dd7328a4326aa4df7296e2962ef1a786e01e16c1b5d2cf7f48a2c938b33210b0"
+      },
+      {
+        "path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\FEA-15-PIN-EOL-GOV-1\\gate-d9c6360-adjudication.log",
+        "size_bytes": 9406,
+        "sha256": "37c2da16292f916696936796881bf2a4cf5653359f10e389aeebc4286b79c520"
       }
     ],
     "disposition": "PRESERVE_REFERENCED"
