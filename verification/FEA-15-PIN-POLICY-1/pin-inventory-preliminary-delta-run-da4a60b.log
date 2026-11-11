@@ -1,0 +1,12 @@
+Task: FEA-15-PIN-POLICY-1 preliminary AC1 baseline delta
+Command: python - (importlib loader for pin_inventory_delta.py; CURRENT=pin-inventory-preliminary-da4a60b.json; OUTPUT=pin-inventory-preliminary-delta-da4a60b.json)
+Generated at: 2026-11-11T15:17:10.670+08:00
+Execution HEAD: 1d48d9b13698e9b4d7e2549b26fc7795b957cb65
+Baseline measured HEAD: 948d73e0629869e560df9a2b2d8a357cec67027f
+Current inventory measured HEAD: da4a60baafba18281f156330b9ed1646045edb6d
+EXIT=0
+ROWS=5350->5376 ADDED=26 REMOVED=0 CHANGED=0
+BASIS_DELTA={"BLOB":0,"COMPOSITE_PATH":0,"EXTERNAL_UNAVAILABLE":0,"INCONSISTENT":0,"MISSING":0,"MIXED":10,"UNPINNED":0,"UNRESOLVED_COMMIT":0,"WORKTREE":16}
+ADDED_BY_SOURCE={"doc/tasks/FEA-15-PIN-EOL-GOV-1.md":24,"doc/tasks/FEA-15-PIN-POLICY-1.md":2}
+OUTPUT_SHA256=0a2c3170915f8fad48ef643712e056488954ba825108cdbd59a38c22ce4f5e83
+Status: preliminary only; final delta will be regenerated from the inventory measured at delivery HEAD.

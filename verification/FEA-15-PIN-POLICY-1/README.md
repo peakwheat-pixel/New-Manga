@@ -1,6 +1,6 @@
 # FEA-15-PIN-POLICY-1 evidence
 
-## Current execution snapshot
+## Initial execution snapshot
 
 - Captured: 2026-11-11T15:02:38+08:00
 - Branch: main
@@ -17,6 +17,14 @@
 - AC2 implementation impact-surface plan: NOT_RUN.
 - AC3 final delivery gates, Handoff, independent Review and ZCode adjudication: NOT_RUN.
 
+## Latest progress — preliminary AC1 comparison
+
+- Execution HEAD: `1d48d9b13698e9b4d7e2549b26fc7795b957cb65`.
+- A preliminary inventory was generated at `da4a60baafba18281f156330b9ed1646045edb6d`; it is preserved as [`pin-inventory-preliminary-da4a60b.json`](pin-inventory-preliminary-da4a60b.json), with its run record in [`pin-inventory-preliminary-run-da4a60b.log`](pin-inventory-preliminary-run-da4a60b.log). It is not the delivery-head inventory.
+- The preliminary delta against baseline `948d73e0629869e560df9a2b2d8a357cec67027f` is machine-readable in [`pin-inventory-preliminary-delta-da4a60b.json`](pin-inventory-preliminary-delta-da4a60b.json); command summary and EXIT are in [`pin-inventory-preliminary-delta-run-da4a60b.log`](pin-inventory-preliminary-delta-run-da4a60b.log).
+- Observed rows: `5,350 → 5,376`; `26 added`, `0 removed`, `0 changed`. The additions are 24 rows in `FEA-15-PIN-EOL-GOV-1` and 2 release rows in this Task. Basis deltas are `WORKTREE +16`, `MIXED +10`; exception-class rows remain 573. These are generator classifications, not validity or damage findings.
+- AC1 remains partial until the full snapshot and delta are regenerated at the delivery measurement HEAD, the policy ruling is completed, and ZCode adjudicates it. AC2 remains NOT_RUN. AC3 remains partial: release and intermediate gates passed, while delivery-head evidence, Handoff, independent Review, and final adjudication remain pending.
+
 ## Limits retained
 
 - The baseline inventory at 948d73e0629869e560df9a2b2d8a357cec67027f has 5,350 rows. The mutually exclusive basis split is WORKTREE=3,451, BLOB=327, MIXED=999, other=573. The 573 other rows include INCONSISTENT=160, UNPINNED=293, UNRESOLVED_COMMIT=68, EXTERNAL_UNAVAILABLE=47, MISSING=3 and COMPOSITE_PATH=2.
@@ -25,4 +33,4 @@
 
 ## Next step
 
-After committing this snapshot, refresh the pin inventory at the resulting fixed HEAD and compare it against the baseline. Keep policy decisions and implementation proposals separate from observed data.
+Complete the proposed policy ruling and implementation impact plan, then generate the final inventory and delta at the fixed delivery measurement HEAD. Keep policy decisions and implementation proposals separate from observed data.
