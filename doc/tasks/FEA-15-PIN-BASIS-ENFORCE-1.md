@@ -90,7 +90,7 @@ AC 状态语法按 `doc/09_COLLABORATION.md` §4.3。AC1 的 A/B 是两个独立
 ## Rolling Checkpoint
 
 - 2026-11-12，Addendum 4 由原始释放 ZCode 会话裁定并提交；一次性 delta 永久登记为 `+62 / -0 / CHANGED=2`，不得归零。
-- main 恢复登记门禁在 `f510bd5cf94251439919f16420dbdd1742f7474a` 与最终 pinbackfill 后的 `8d1d75ca246ef0daf7f3c116974cf16cfa21d410` 上，default/本卡 TaskPath、18 pins、API 均 `EXIT=0`；check 各 3 warnings。最终复核记录于 workspace checkpoint log。
+- main 恢复登记门禁在 `f510bd5cf94251439919f16420dbdd1742f7474a`、`8d1d75ca246ef0daf7f3c116974cf16cfa21d410` 及 AC1c stop 状态 `a18d21bf02810340c6380e217aa643e8e19da0cc` 上，default/本卡 TaskPath、18 pins、API 均 `EXIT=0`；check 各 3 warnings。最新主仓结果已入库并 pin。
 - A clone AC1c 于 `2026-11-11T17:43:05Z` 执行，HEAD 固定，`core.autocrlf=true`、`core.longpaths=true`。default/四历史 TaskPath/pins FAIL，API/矩阵 PASS；Plan 工作树 7056 bytes vs Git blob 6992 bytes；仅 Task-local JSON 输出目录 untracked，无 tracked 改动。完整日志：`ac1c-a-gates-8d1d75ca.log`。
 - 当前证据：[verification README](../../verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md)、[history-transition-ledger](../../verification/FEA-15-PIN-BASIS-ENFORCE-1/history-transition-ledger.md)；A clone 保留。
 - 下一步：保持 `blocked`，提交失败证据并 pinbackfill，向 fresh ZCode session 派发只读 adjudication；依裁决恢复或继续停止。AC1d 通过前禁止实现。
@@ -116,6 +116,7 @@ AC 状态语法按 `doc/09_COLLABORATION.md` §4.3。AC1 的 A/B 是两个独立
 | ac1-post-pinbackfill-gates | AC1 post-pinbackfill recovery gates | verification/FEA-15-PIN-BASIS-ENFORCE-1/recovery-gates-f510bd5.log | dd6de51ef0b52529fc819180b557381db19d9946 | 6d71449ad431b6d74fa59b3d7158d7d59ce823c939b38a7e70461212da8b6acd | CANONICAL |
 | ac1c-a-gates | AC1c A-side gate failures and passes | verification/FEA-15-PIN-BASIS-ENFORCE-1/ac1c-a-gates-8d1d75ca.log | 6086a5b1f7c1f95ea91a313798dbd391f5132648 | 7db8974016d0f28539eb840a7edc7f33cb2b5d5d3840847c76611777a5448e1f | CANONICAL |
 | ac1c-boundary-matrix | AC1c fixed boundary matrix output | verification/FEA-15-PIN-BASIS-ENFORCE-1/pin-r194-matrix-2df8db7.json | 6086a5b1f7c1f95ea91a313798dbd391f5132648 | 68ec4b50c3bbfc450218bc35fdc7da8f43454cf23eaedae8cbd4c872d879ec41 | CANONICAL |
+| ac1c-main-stop-gates | Main gates after AC1c A stop registration | verification/FEA-15-PIN-BASIS-ENFORCE-1/ac1c-main-stop-gates-a18d21bf.log | c7d26acb5f67a6b80adfc1fbf692aa948dbba8d3 | 5969f08c7622f88eb4e34fcd68fa76bd953d288452588fa69b83a80446f1b398 | CANONICAL |
 
 ## Resource Manifest
 
