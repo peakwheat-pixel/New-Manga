@@ -5,7 +5,7 @@ kind: governance
 governance_version: 3
 status: blocked
 resume_status: in_progress
-blocked_reason: AC1 inventory delta reports CHANGED=2, violating Addendum 1 stop condition; fresh ZCode adjudication pending
+blocked_reason: AC1 delta CHANGED=2 triggers Addendum 1; independent ZCode confirms procedural STOP, awaiting authorized release Addendum 4
 approval: ZCode 2026-11-11 RELEASE_WITH_BASELINE_PREREQUISITE（主裁决及 Addendum 1/2；Addendum 3 于 2026-11-12 接受双环境基线）；用户 2026-11-12 授权自动继续；Codex 已认领
 suggested_owner: codex
 owner: codex
@@ -48,7 +48,7 @@ out_of_scope:
 
 ## Acceptance Criteria
 
-- [ ] **AC1 实施前固定基线**：A clone 固定 `2df8db7a4d19b591e919ecc6e8f8651167800ef0`；Addendum 2 reproduction anchor EXIT 0、SHA 完全一致；formal inventory EXIT 0、5,438 行。相对 `e9f7bb1…` delta 为 `ADDED=62 / REMOVED=0 / CHANGED=2`；新增按来源归因，但 `CHANGED=2` 触发 Addendum 1 硬停止。其余 A checker/pins/API/matrix 与 B 新卡 TaskPath 均因停止条件 `NOT_RUN`。等待 fresh ZCode adjudication，确认后方可恢复。 <<PARTIAL: changed=2 违反已释放停止门，待 ZCode adjudication>>
+- [ ] **AC1 实施前固定基线**：A clone 固定 `2df8db7a4d19b591e919ecc6e8f8651167800ef0`；Addendum 2 reproduction anchor EXIT 0、SHA 完全一致；formal inventory EXIT 0、5,438 行。相对 `e9f7bb1…` delta 为 `ADDED=62 / REMOVED=0 / CHANGED=2`；独立 ZCode 已裁定此为程序性 STOP，变化虽完整归因仍未获释放豁免，须先由授权 ZCode 会话落盘 Addendum 4。其余 A checker/pins/API/matrix 与 B 新卡 TaskPath 均 `NOT_RUN`。 <<PARTIAL: 按 ZCode 裁决等待 Addendum 4；期间禁止实现>>
 - [ ] **AC2 新旧表头与 basis 校验**：模板新增七列；checker 明确识别旧六列/新七列。旧表维持既有 r194 语义；新表逐行要求合法 basis，BLOB 校验包含路径的 commit blob 精确字节，WORKTREE 仅校验明确声明且说明复现环境的工作区字节，EXTERNAL_SHA256 不可读不得通过。 <<BLOCKED: AC1d 独立基线确认通过前禁止实现>>
 - [ ] **AC3 判别测试覆盖**：测试覆盖旧格式、basis 缺失/非法、三类来源、commit 不含路径、缺失路径、PNG exact bytes、CRLF 与 mixed-EOL，包含旧格式结果不变断言。 <<BLOCKED: AC1d 独立基线确认通过前禁止实现>>
 - [ ] **AC4 跨 checkout 对照**：Windows `core.autocrlf=true/false` fresh checkout 对照；逐行区分历史行不变性与 Task 自身新行增量。Linux 未实测则明确记录 `NOT_RUN`。任何未解释历史变化或集合增删即停止。 <<BLOCKED: AC1d 独立基线确认通过前禁止实现>>
@@ -82,6 +82,7 @@ AC 状态语法按 `doc/09_COLLABORATION.md` §4.3。AC1 的 A/B 是两个独立
 - Handoff：待交付。
 - AC1d baseline review：待执行，必须使用 fresh ZCode session；最终 Review 与最终 adjudication 也使用彼此独立的新 session。
 - 实现分支/worktree：R0 冻结并通过 AC1d 后创建；main 不直接实现 checker/template。
+- AC1 停止条件独立裁决：[报告](../reviews/FEA-15-PIN-BASIS-ENFORCE-1-ac1-delta-stop-adjudication-2026-11-12.md)，结论 `ADJUDICATION_STOP`；下一步只需释放 Addendum 4，不需另立 Task。
 - `R-001` 不因实现自动关闭，等待最终 Integrator 明确裁决。
 
 ## Rolling Checkpoint
@@ -89,7 +90,7 @@ AC 状态语法按 `doc/09_COLLABORATION.md` §4.3。AC1 的 A/B 是两个独立
 - 2026-11-12，证据 commit `411309ca39e826aa1f5bbe13b15c73bb7c803d4e`；Task 状态已置 `blocked`，恢复态 `in_progress`。
 - 完成：Addendum 2 delta reproduction anchor、固定 base inventory、正式 delta。正式 delta `CHANGED=2` 触发停止；没有继续跑 base checker/pins/API/matrix，也没有创建 R0 clone 或实现 worktree。
 - 当前证据与失败条件：[verification README](../../verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md)。外部 A clone 保留。
-- 下一步：等待 fresh ZCode 对 changed rows 和初始 long-path checkout 恢复的只读 adjudication；按裁定恢复或维持阻塞。
+- 下一步：按独立裁决报告请求原释放 ZCode 会话发布 Addendum 4；未落盘前维持 blocked，不继续任何 AC1c 门禁或实现。
 
 ## Canonical Evidence
 
@@ -105,6 +106,7 @@ AC 状态语法按 `doc/09_COLLABORATION.md` §4.3。AC1 的 A/B 是两个独立
 | ac1a-delta-log | AC1 delta execution and stop record | verification/FEA-15-PIN-BASIS-ENFORCE-1/ac1a-delta-e9f7bb1-to-2df8db7.log | 411309ca39e826aa1f5bbe13b15c73bb7c803d4e | f4035837ddc0143bbe9a590b4e27e8831884249b76b967ccac04419282e36347 | CANONICAL |
 | ac1a-repro-log | AC1 reproduction execution record | verification/FEA-15-PIN-BASIS-ENFORCE-1/ac1a-delta-repro-e9f7bb1.log | 411309ca39e826aa1f5bbe13b15c73bb7c803d4e | b2f060ddc57f9885cd074b363a99ffff956cd6c5516a5ea5add7b7a9b29d7990 | CANONICAL |
 | ac1a-wrapper | AC1 released runtime-rebinding wrapper source | verification/FEA-15-PIN-BASIS-ENFORCE-1/capture_pin_basis_baseline.py | 411309ca39e826aa1f5bbe13b15c73bb7c803d4e | e4300b7bdbca9870e3b50354e011d955dfd56236d45a2d95b90fedf52073a03a | SOURCE_PIN |
+| ac1a-stop-adjudication | AC1 changed=2 release-condition adjudication | doc/reviews/FEA-15-PIN-BASIS-ENFORCE-1-ac1-delta-stop-adjudication-2026-11-12.md | 1d71a65d678423ecc94a60129d3d0a4f4f4dfd8a | 6e2c11c4c97e1fabc29ee7ea063d8be4a287780c0abd2f0eafb591229e19e21f | CANONICAL |
 
 ## Resource Manifest
 
