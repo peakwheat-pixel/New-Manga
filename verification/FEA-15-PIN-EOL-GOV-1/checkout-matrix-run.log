@@ -1,0 +1,12 @@
+timestamp=2026-11-11 12:38:14 +08:00
+HEAD=1c8d0abb92645779eb40c1a4fd46d156b02f5339
+command=python verification/FEA-15-PIN-EOL-GOV-1/checkout_matrix.py
+SNAPSHOT_HEAD=1c8d0abb92645779eb40c1a4fd46d156b02f5339
+SAMPLES=4 OBSERVATIONS=12
+BLOB: main-system-config=CRLF/803ac9db069b; isolated-autocrlf-true=CRLF/803ac9db069b; isolated-autocrlf-false=LF/c7309d2b25ba
+WORKTREE: main-system-config=CRLF/39b0c6a11ac7; isolated-autocrlf-true=CRLF/39b0c6a11ac7; isolated-autocrlf-false=LF/0329a81b7368
+MIXED_EOL: main-system-config=MIXED_EOL/b0a02a1867ab; isolated-autocrlf-true=CRLF/d599546c41ce; isolated-autocrlf-false=LF/8e251bed846f
+BINARY: main-system-config=BINARY/e5e795835b6c; isolated-autocrlf-true=BINARY/e5e795835b6c; isolated-autocrlf-false=BINARY/e5e795835b6c
+OUTPUT=verification\FEA-15-PIN-EOL-GOV-1\checkout-matrix.json
+SAMPLES_OUTPUT=verification\FEA-15-PIN-EOL-GOV-1\checkout-samples.json
+EXIT=0

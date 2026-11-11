@@ -1,0 +1,24 @@
+timestamp=2026-11-11 12:37:39 +08:00
+source_head=1c8d0abb92645779eb40c1a4fd46d156b02f5339
+checkout=G:\CODEX\New Manga.workspace\FEA-15-PIN-EOL-GOV-1\checkout-autocrlf-true
+origin_url=G:\CODEX\New Manga EXIT=0
+command=git -C "G:\CODEX\New Manga.workspace\FEA-15-PIN-EOL-GOV-1\checkout-autocrlf-true" fetch origin main EXIT=0
+  From G:\CODEX\New Manga
+   * branch                main       -> FETCH_HEAD
+     c3b106884..1c8d0abb9  main       -> origin/main
+command=git -C "G:\CODEX\New Manga.workspace\FEA-15-PIN-EOL-GOV-1\checkout-autocrlf-true" checkout --detach 1c8d0abb92645779eb40c1a4fd46d156b02f5339 EXIT=0
+  Previous HEAD position was c3b106884 docs(fea-15-pin-eol-gov-1): claim read-only inventory task
+  HEAD is now at 1c8d0abb9 tools(fea-15-pin-eol-gov-1): add pin inventory tooling
+command=git -C "G:\CODEX\New Manga.workspace\FEA-15-PIN-EOL-GOV-1\checkout-autocrlf-true" restore --source=HEAD --worktree -- . EXIT=0
+result_head=1c8d0abb92645779eb40c1a4fd46d156b02f5339 expected_head=1c8d0abb92645779eb40c1a4fd46d156b02f5339 core_autocrlf=true status_exit=0 status_lines=0
+checkout=G:\CODEX\New Manga.workspace\FEA-15-PIN-EOL-GOV-1\checkout-autocrlf-false
+origin_url=G:\CODEX\New Manga EXIT=0
+command=git -C "G:\CODEX\New Manga.workspace\FEA-15-PIN-EOL-GOV-1\checkout-autocrlf-false" fetch origin main EXIT=0
+  From G:\CODEX\New Manga
+   * branch                main       -> FETCH_HEAD
+     c3b106884..1c8d0abb9  main       -> origin/main
+command=git -C "G:\CODEX\New Manga.workspace\FEA-15-PIN-EOL-GOV-1\checkout-autocrlf-false" checkout --detach 1c8d0abb92645779eb40c1a4fd46d156b02f5339 EXIT=0
+  Previous HEAD position was c3b106884 docs(fea-15-pin-eol-gov-1): claim read-only inventory task
+  HEAD is now at 1c8d0abb9 tools(fea-15-pin-eol-gov-1): add pin inventory tooling
+command=git -C "G:\CODEX\New Manga.workspace\FEA-15-PIN-EOL-GOV-1\checkout-autocrlf-false" restore --source=HEAD --worktree -- . EXIT=0
+result_head=1c8d0abb92645779eb40c1a4fd46d156b02f5339 expected_head=1c8d0abb92645779eb40c1a4fd46d156b02f5339 core_autocrlf=false status_exit=0 status_lines=0

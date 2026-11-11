@@ -1,0 +1,14 @@
+FEA-15-PIN-EOL-GOV-1 isolated checkout setup
+
+Before creation, Test-Path returned False for the Task workspace root and for both intended checkout directories. The source was main HEAD `c3b1068840ab16654c66fdd3b24cb05cbcfc9e20`.
+
+Initial attempt (2026-11-11 12:14:14 +08:00):
+- `git clone --shared --no-checkout --branch main G:\CODEX\New Manga <checkout-autocrlf-true>`; `git config --local core.autocrlf true`; `git checkout --detach c3b1068840ab16654c66fdd3b24cb05cbcfc9e20`.
+- Repeated for `<checkout-autocrlf-false>` with local `core.autocrlf=false`.
+- PowerShell received the source path as a single string argument, so spaces were preserved; the display above omits shell quoting. A copyable rendering is `git clone --shared --no-checkout --branch main "G:\CODEX\New Manga" <checkout-path>`.
+- Clone/config/checkout commands returned `EXIT=0`, but checkout emitted Windows `Filename too long` errors for 20 long-path files per clone. `git status --porcelain --untracked-files=all` then showed 20 deleted tracked paths in each clone. This attempt is recorded as **incomplete**, not PASS.
+
+Recovery and validation (2026-11-11 12:18:19 +08:00; exact command outputs in `checkout-recovery.log`):
+- In each newly created clone only, set `core.longpaths=true`, then run `git restore --source=HEAD --worktree -- .`.
+- Both commands returned `EXIT=0` in each clone. Both clones remained at the snapshot HEAD, retained their respective `core.autocrlf=true/false` local values, and `git status --porcelain --untracked-files=all` returned zero lines.
+- The main repository's `.gitattributes`, index, source files, historical evidence, and frozen contracts were not changed by setup or recovery.

@@ -1,0 +1,16 @@
+timestamp=2026-11-11 12:18:19 +08:00
+source_head=c3b1068840ab16654c66fdd3b24cb05cbcfc9e20
+path=G:\CODEX\New Manga.workspace\FEA-15-PIN-EOL-GOV-1\checkout-autocrlf-true
+set_core_longpaths_exit=0
+restore_worktree_from_HEAD_exit=0
+checkout_head=c3b1068840ab16654c66fdd3b24cb05cbcfc9e20
+core_autocrlf=true core_longpaths=true status_lines=0
+result=PASS
+path=G:\CODEX\New Manga.workspace\FEA-15-PIN-EOL-GOV-1\checkout-autocrlf-false
+set_core_longpaths_exit=0
+restore_worktree_from_HEAD_exit=0
+checkout_head=c3b1068840ab16654c66fdd3b24cb05cbcfc9e20
+core_autocrlf=false core_longpaths=true status_lines=0
+result=PASS
+command=git config --local core.longpaths true; git restore --source=HEAD --worktree -- .; git status --porcelain
+EXIT=0
