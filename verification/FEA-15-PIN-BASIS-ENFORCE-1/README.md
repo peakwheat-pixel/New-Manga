@@ -33,6 +33,10 @@ ZCode release Addendum 4 accepts the exact historical delta below as a one-time 
 - Inventory, delta, and reproduction pins use Git blob bytes, while the A-clone artifact table records autocrlf=true worktree bytes. The pairs were independently compared after CRLF-to-LF normalization: inventory blob `2aca6413774798056323f152f5a3ffc8a0fd82461bb6bdeef5f0c65fbf1d87c4` / A output `3c6e39a269437873e2bb9b40c4b3c9461bcafaa1d171f240dfed322565bc1ce2` (146,220 CRLF pairs); delta blob `f88f99052ee1580a8b859c5468b5621005df5e77e1bd179045d0c279fce97f21` / A output `d737fcc75efcf10ab24ef55be75d5b6538c9acea1939450a5516867a652a95ea` (941 pairs); reproduction blob `c27247db93960076ff27566e642be5b3d273588be47a8fa378eb81866bb3701e` / A output `27ab6ac6f3e1c2213d6bfcd6acec11d16c94f1025a1e02abb0465bb90c523323` (414 pairs). Each normalized worktree file exactly equals its pinned Git blob; pins are unchanged.
 - `.gitattributes` has no EOL rule for this verification directory. The resulting worktree/blob byte distinction remains a documented limitation; this Task does not change `.gitattributes` or perform renormalization.
 
+## AC1d post-pinbackfill gates
+
+- At clean main HEAD `d362d2286a6fa23e4f3c6ec3a12fdf7d0e66c352`, the default check and this TaskPath each returned `EXIT=0` with 3 warnings; `verify_pins.ps1` returned `EXIT=0` with 18/18 pins; API inventory returned `EXIT=0` with `1/79/6=86`. All commands are recorded with timestamps, generated HEAD, and EXIT in `post-ac1d-pinbackfill-gates-d362d228.log`; the worktree was clean before and after.
+
 ## Versioned artifacts
 
 | File | Purpose | SHA-256 / result |
@@ -47,6 +51,7 @@ ZCode release Addendum 4 accepts the exact historical delta below as a one-time 
 | `ac1c-b-r0-assertions-taskpath-bfae0b9.log` | B R0 file presence, allowed diff scope, 24 blob comparisons, environment, and only permitted TaskPath | assertions `PASS`; TaskPath `EXIT=0` |
 | `ac1d-canonical-evidence-blob-audit-0851085.log` | AC1d pre-implementation audit of the 19 Canonical Evidence rows at generated HEAD `cdd5d258690471c8069d47f461f04a1ef9a306bd` | 19/19 commit:path and Git blob SHA checks `PASS`; `EXIT=0`; clean before/after |
 | `FEA-15-PIN-BASIS-ENFORCE-1-ac1d-baseline-confirmation-2026-11-12.md` | Fresh ZCode AC1d baseline decision and adjudication boundaries | `AC1D_PASS`; only AC2/AC3 released |
+| `post-ac1d-pinbackfill-gates-d362d228.log` | Clean main default, current TaskPath, pins, and API gates after AC1d Task pinbackfill | all four `EXIT=0`; 3 warnings on each governance check; pins 18/18; API 1/79/6=86 |
 | `ac1a-delta-repro-e9f7bb1.log` | Reproduction command, UTC start, HEAD, mapping, source/input/output hashes, EXIT | `EXIT=0` |
 | `ac1a-inventory-2df8db7.log` | Formal inventory command, UTC start, HEAD, environment, source/output hashes, EXIT | `EXIT=0` |
 | `ac1a-delta-e9f7bb1-to-2df8db7.log` | Formal delta command, UTC start, HEAD, mapping, source/input/output hashes, EXIT | `EXIT=0`, stop condition recorded |
