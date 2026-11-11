@@ -1,0 +1,444 @@
+HEAD_GENERATED=21ce0f24f2c4b0a153f85163eadc64b36b7bf72b
+HEAD_EXIT=0
+CLONE_STATUS_BEFORE=CLEAN
+STATUS_EXIT=0
+STARTED=2026-11-11T09:46:38.011341+00:00
+CHECKER_SHA256=6d4b513e9734934c236536d88c2eb0e983bc55469c2c81d9c3166be1ce76a72e
+
+CASE=baseline-active
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\GOV-CHECKER-NOTASK-1.md
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3095 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6966 bytes / 64 lines
+Governance check: PASS (3 warnings)
+EXIT=0
+ASSERT=PASS
+
+CASE=baseline-explicit-empty
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 14 current documents; no historical directory scan.
+WARN: STATUS 声明无当前 Task（空窗）；跳过当前 Task 检查。
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3105 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6966 bytes / 64 lines
+Governance check: PASS (4 warnings)
+EXIT=0
+ASSERT=PASS
+
+CASE=baseline-missing-line
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 14 current documents; no historical directory scan.
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3012 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6966 bytes / 64 lines
+FAIL: STATUS 未提供可解析的当前 Task 指针。
+FAIL: 当前 Task 文件不存在：
+Governance check: FAIL (2 errors, 3 warnings)
+EXIT=1
+ASSERT=PASS
+
+CASE=baseline-ambiguous-empty
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 14 current documents; no historical directory scan.
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3014 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6966 bytes / 64 lines
+FAIL: STATUS 未提供可解析的当前 Task 指针。
+FAIL: 当前 Task 文件不存在：
+Governance check: FAIL (2 errors, 3 warnings)
+EXIT=1
+ASSERT=PASS
+
+CASE=baseline-missing-path
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 14 current documents; no historical directory scan.
+Task: doc\tasks\GOV-CHECKER-NOTASK-MISSING.md
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3053 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6966 bytes / 64 lines
+FAIL: 当前 Task 文件不存在：G:\CODEX\New Manga.workspace\GOV-CHECKER-NOTASK-1\implementation\doc\tasks\GOV-CHECKER-NOTASK-MISSING.md
+Governance check: FAIL (1 errors, 3 warnings)
+EXIT=1
+ASSERT=PASS
+
+CASE=baseline-terminal
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-15-PIN-POLICY-1.md
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3058 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6966 bytes / 64 lines
+FAIL: STATUS 仍指向终态 Task：done
+FAIL: Evidence SHA-256 不匹配：doc/reviews/FEA-15-PIN-POLICY-1-zcode-release-adjudication-2026-11-11.md
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/release-gates-0730335.log
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/pin-inventory.json
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/pin-inventory-run.log
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/pin-inventory-delta.json
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/pin-inventory-delta-run.log
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/pin-r194-baseline-matrix.json
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/pin-r194-baseline-matrix-run.log
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/delivery-gates-e9f7bb1.log
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/delivery-gates-359d09d.log
+FAIL: Evidence SHA-256 不匹配：doc/handoffs/FEA-15-PIN-POLICY-1-e9f7bb1.md
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/closeout-gates-A-6f3c4c9.log
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/closeout-gates-B-68d1afc.log
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/closeout-gates-F-2a1b917.log
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/delivery-gates-d26c43c.log
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/pin-inventory-preliminary-da4a60b.json
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/pin-inventory-preliminary-run-da4a60b.log
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/pin-inventory-preliminary-delta-da4a60b.json
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/pin-inventory-preliminary-delta-run-da4a60b.log
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/pin-r194-preliminary-matrix-da4a60b.json
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/pin-r194-preliminary-matrix-run-da4a60b.log
+FAIL: Canonical evidence 路径缺失：verification/FEA-15-PIN-POLICY-1/__pycache__/pin_inventory_delta.cpython-314.pyc
+FAIL: Canonical evidence 路径缺失：verification/FEA-15-PIN-POLICY-1/__pycache__/pin_r194_matrix.cpython-314.pyc
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/README.md
+Governance check: FAIL (25 errors, 3 warnings)
+EXIT=1
+ASSERT=PASS
+
+CASE=baseline-pending-taskpath
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/GOV-CHECKER-NOTASK-1.md
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\GOV-CHECKER-NOTASK-1.md
+WARN: 存在 10 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3095 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6966 bytes / 64 lines
+FAIL: STATUS 仍指向终态 Task：done
+FAIL: DONE 必须记录 integration_commit。
+FAIL: DONE 必须设置 canonical_evidence_status: complete。
+FAIL: 终态或已集成的 approved Task 必须设置 resource_closeout_status: complete。
+FAIL: DONE 不能保留未完成 Acceptance Criteria；范围未完成时使用 closed_with_limitations。
+FAIL: Resource manifest 不存在：待记录
+FAIL: DONE Task 不得包含未达成状态（PARTIAL）的 AC：AC1；范围未达成时请使用 closed_with_limitations。
+FAIL: DONE Task 不得包含未达成状态（PARTIAL）的 AC：AC2；范围未达成时请使用 closed_with_limitations。
+FAIL: DONE Task 不得包含未达成状态（PARTIAL）的 AC：AC3；范围未达成时请使用 closed_with_limitations。
+Governance check: FAIL (9 errors, 3 warnings)
+EXIT=1
+ASSERT=PASS
+
+CASE=baseline-empty-suffix
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 14 current documents; no historical directory scan.
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3014 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6966 bytes / 64 lines
+FAIL: STATUS 未提供可解析的当前 Task 指针。
+FAIL: 当前 Task 文件不存在：
+Governance check: FAIL (2 errors, 3 warnings)
+EXIT=1
+ASSERT=PASS
+
+CASE=baseline-empty-missing-path
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 14 current documents; no historical directory scan.
+Task: doc\tasks\GOV-CHECKER-NOTASK-MISSING.md
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3049 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6966 bytes / 64 lines
+FAIL: 当前 Task 文件不存在：G:\CODEX\New Manga.workspace\GOV-CHECKER-NOTASK-1\implementation\doc\tasks\GOV-CHECKER-NOTASK-MISSING.md
+Governance check: FAIL (1 errors, 3 warnings)
+EXIT=1
+ASSERT=PASS
+
+CASE=baseline-duplicate-active
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\GOV-CHECKER-NOTASK-1.md
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3080 bytes / 32 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6966 bytes / 64 lines
+Governance check: PASS (3 warnings)
+EXIT=0
+ASSERT=PASS
+
+CASE=baseline-unclosed
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 14 current documents; no historical directory scan.
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3023 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6966 bytes / 64 lines
+FAIL: STATUS 未提供可解析的当前 Task 指针。
+FAIL: 当前 Task 文件不存在：
+Governance check: FAIL (2 errors, 3 warnings)
+EXIT=1
+ASSERT=PASS
+
+CASE=baseline-contradiction
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 14 current documents; no historical directory scan.
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3041 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6966 bytes / 64 lines
+FAIL: STATUS 未提供可解析的当前 Task 指针。
+FAIL: 当前 Task 文件不存在：
+Governance check: FAIL (2 errors, 3 warnings)
+EXIT=1
+ASSERT=PASS
+
+CASE=empty-with-terminal
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-15-PIN-POLICY-1.md
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3078 bytes / 32 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6966 bytes / 64 lines
+FAIL: STATUS 仍指向终态 Task：done
+FAIL: Evidence SHA-256 不匹配：doc/reviews/FEA-15-PIN-POLICY-1-zcode-release-adjudication-2026-11-11.md
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/release-gates-0730335.log
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/pin-inventory.json
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/pin-inventory-run.log
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/pin-inventory-delta.json
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/pin-inventory-delta-run.log
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/pin-r194-baseline-matrix.json
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/pin-r194-baseline-matrix-run.log
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/delivery-gates-e9f7bb1.log
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/delivery-gates-359d09d.log
+FAIL: Evidence SHA-256 不匹配：doc/handoffs/FEA-15-PIN-POLICY-1-e9f7bb1.md
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/closeout-gates-A-6f3c4c9.log
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/closeout-gates-B-68d1afc.log
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/closeout-gates-F-2a1b917.log
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/delivery-gates-d26c43c.log
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/pin-inventory-preliminary-da4a60b.json
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/pin-inventory-preliminary-run-da4a60b.log
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/pin-inventory-preliminary-delta-da4a60b.json
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/pin-inventory-preliminary-delta-run-da4a60b.log
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/pin-r194-preliminary-matrix-da4a60b.json
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/pin-r194-preliminary-matrix-run-da4a60b.log
+FAIL: Canonical evidence 路径缺失：verification/FEA-15-PIN-POLICY-1/__pycache__/pin_inventory_delta.cpython-314.pyc
+FAIL: Canonical evidence 路径缺失：verification/FEA-15-PIN-POLICY-1/__pycache__/pin_r194_matrix.cpython-314.pyc
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/README.md
+Governance check: FAIL (25 errors, 3 warnings)
+EXIT=1
+ASSERT=PASS
+
+CASE=empty-with-pending-taskpath
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/GOV-CHECKER-NOTASK-1.md
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\GOV-CHECKER-NOTASK-1.md
+WARN: 存在 10 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3105 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6966 bytes / 64 lines
+FAIL: DONE 必须记录 integration_commit。
+FAIL: DONE 必须设置 canonical_evidence_status: complete。
+FAIL: 终态或已集成的 approved Task 必须设置 resource_closeout_status: complete。
+FAIL: DONE 不能保留未完成 Acceptance Criteria；范围未完成时使用 closed_with_limitations。
+FAIL: Resource manifest 不存在：待记录
+FAIL: DONE Task 不得包含未达成状态（PARTIAL）的 AC：AC1；范围未达成时请使用 closed_with_limitations。
+FAIL: DONE Task 不得包含未达成状态（PARTIAL）的 AC：AC2；范围未达成时请使用 closed_with_limitations。
+FAIL: DONE Task 不得包含未达成状态（PARTIAL）的 AC：AC3；范围未达成时请使用 closed_with_limitations。
+Governance check: FAIL (8 errors, 3 warnings)
+EXIT=1
+ASSERT=PASS
+
+CASE=dot
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 14 current documents; no historical directory scan.
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3014 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6966 bytes / 64 lines
+FAIL: STATUS 未提供可解析的当前 Task 指针。
+FAIL: 当前 Task 文件不存在：
+Governance check: FAIL (2 errors, 3 warnings)
+EXIT=1
+ASSERT=PASS
+
+CASE=ascii-colon
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 14 current documents; no historical directory scan.
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3010 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6966 bytes / 64 lines
+FAIL: STATUS 未提供可解析的当前 Task 指针。
+FAIL: 当前 Task 文件不存在：
+Governance check: FAIL (2 errors, 3 warnings)
+EXIT=1
+ASSERT=PASS
+
+CASE=nested-fullwidth
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 14 current documents; no historical directory scan.
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3038 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6966 bytes / 64 lines
+FAIL: STATUS 未提供可解析的当前 Task 指针。
+FAIL: 当前 Task 文件不存在：
+Governance check: FAIL (2 errors, 3 warnings)
+EXIT=1
+ASSERT=PASS
+
+CASE=path-slash
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 14 current documents; no historical directory scan.
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3032 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6966 bytes / 64 lines
+FAIL: STATUS 未提供可解析的当前 Task 指针。
+FAIL: 当前 Task 文件不存在：
+Governance check: FAIL (2 errors, 3 warnings)
+EXIT=1
+ASSERT=PASS
+
+CASE=path-upper
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 14 current documents; no historical directory scan.
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3032 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6966 bytes / 64 lines
+FAIL: STATUS 未提供可解析的当前 Task 指针。
+FAIL: 当前 Task 文件不存在：
+Governance check: FAIL (2 errors, 3 warnings)
+EXIT=1
+ASSERT=PASS
+
+CASE=path-backslash
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 14 current documents; no historical directory scan.
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3032 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6966 bytes / 64 lines
+FAIL: STATUS 未提供可解析的当前 Task 指针。
+FAIL: 当前 Task 文件不存在：
+Governance check: FAIL (2 errors, 3 warnings)
+EXIT=1
+ASSERT=PASS
+
+CASE=ascii-path
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 14 current documents; no historical directory scan.
+Task: doc\tasks\FOO.md
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3029 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6966 bytes / 64 lines
+FAIL: 当前 Task 文件不存在：G:\CODEX\New Manga.workspace\GOV-CHECKER-NOTASK-1\implementation\doc\tasks\FOO.md
+Governance check: FAIL (1 errors, 3 warnings)
+EXIT=1
+ASSERT=PASS
+
+CASE=hidden-ascii-path
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 14 current documents; no historical directory scan.
+Task: doc\tasks\FOO.md
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3039 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6966 bytes / 64 lines
+FAIL: 当前 Task 文件不存在：G:\CODEX\New Manga.workspace\GOV-CHECKER-NOTASK-1\implementation\doc\tasks\FOO.md
+Governance check: FAIL (1 errors, 3 warnings)
+EXIT=1
+ASSERT=PASS
+
+CASE=bare-empty
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 14 current documents; no historical directory scan.
+WARN: STATUS 声明无当前 Task（空窗）；跳过当前 Task 检查。
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3011 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6966 bytes / 64 lines
+Governance check: PASS (4 warnings)
+EXIT=0
+ASSERT=PASS
+
+CASE=two-empty
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 14 current documents; no historical directory scan.
+WARN: STATUS 声明无当前 Task（空窗）；跳过当前 Task 检查。
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3031 bytes / 32 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6966 bytes / 64 lines
+Governance check: PASS (4 warnings)
+EXIT=0
+ASSERT=PASS
+
+CASE=empty-id-comment
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 14 current documents; no historical directory scan.
+WARN: STATUS 声明无当前 Task（空窗）；跳过当前 Task 检查。
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3047 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6966 bytes / 64 lines
+Governance check: PASS (4 warnings)
+EXIT=0
+ASSERT=PASS
+MUTATED_CHECKER_SHA256=392d2045e9281ed5cf1ec54d095c66d083aa225ebb2681b0e014bc15c2c00d32
+
+CASE=mutation-any-failure
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 14 current documents; no historical directory scan.
+WARN: STATUS 声明无当前 Task（空窗）；跳过当前 Task 检查。
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3012 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6966 bytes / 64 lines
+Governance check: PASS (4 warnings)
+EXIT=0
+ASSERT=PASS
+RESTORE_BEFORE_CASE=after-any-failure-restore SHA256=6d4b513e9734934c236536d88c2eb0e983bc55469c2c81d9c3166be1ce76a72e
+
+CASE=after-any-failure-restore
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 14 current documents; no historical directory scan.
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3012 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6966 bytes / 64 lines
+FAIL: STATUS 未提供可解析的当前 Task 指针。
+FAIL: 当前 Task 文件不存在：
+Governance check: FAIL (2 errors, 3 warnings)
+EXIT=1
+ASSERT=PASS
+RESTORE_BEFORE_CASE=after-any-restore-positive SHA256=6d4b513e9734934c236536d88c2eb0e983bc55469c2c81d9c3166be1ce76a72e
+
+CASE=after-any-restore-positive
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 14 current documents; no historical directory scan.
+WARN: STATUS 声明无当前 Task（空窗）；跳过当前 Task 检查。
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3105 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6966 bytes / 64 lines
+Governance check: PASS (4 warnings)
+EXIT=0
+ASSERT=PASS
+MUTATED_CHECKER_SHA256=e09bd6274b7f8a814d7d554e7957aa36c72feaf0e200dddea3b8da55b68ba206
+
+CASE=mutation-no-path-exclusion
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 14 current documents; no historical directory scan.
+WARN: STATUS 声明无当前 Task（空窗）；跳过当前 Task 检查。
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3032 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6966 bytes / 64 lines
+Governance check: PASS (4 warnings)
+EXIT=0
+ASSERT=PASS
+RESTORE_BEFORE_CASE=after-path-exclusion-restore SHA256=6d4b513e9734934c236536d88c2eb0e983bc55469c2c81d9c3166be1ce76a72e
+
+CASE=after-path-exclusion-restore
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 14 current documents; no historical directory scan.
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3032 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6966 bytes / 64 lines
+FAIL: STATUS 未提供可解析的当前 Task 指针。
+FAIL: 当前 Task 文件不存在：
+Governance check: FAIL (2 errors, 3 warnings)
+EXIT=1
+ASSERT=PASS
+
+CASE=final-positive
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 14 current documents; no historical directory scan.
+WARN: STATUS 声明无当前 Task（空窗）；跳过当前 Task 检查。
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3105 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6966 bytes / 64 lines
+Governance check: PASS (4 warnings)
+EXIT=0
+ASSERT=PASS
+
+RESTORED_CHECKER_SHA256=6d4b513e9734934c236536d88c2eb0e983bc55469c2c81d9c3166be1ce76a72e
+CLONE_STATUS_AFTER=CLEAN
+STATUS_EXIT=0
+ASSERTIONS=31/31
+MATRIX_RESULT=PASS
+FINISHED=2026-11-11T09:47:13.383810+00:00
+HARNESS_EXIT=0
