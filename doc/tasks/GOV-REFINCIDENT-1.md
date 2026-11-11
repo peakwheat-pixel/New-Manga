@@ -82,6 +82,7 @@ allowed_paths:
 | handoff | 交付与限制 | doc/handoffs/GOV-REFINCIDENT-1-9740b6d.md | df5a104156550e6422e8ea97947038ddddc53c92 | 89e7adbbf19f063c9e59b9791a493744b204668a1240a20568a16e41a57a54aa | CANONICAL |
 | review | 上下文独立 Review | doc/reviews/GOV-REFINCIDENT-1-zcode-review-2026-11-11.md | 12ddbcb968fedc203d69f1289fd23b8e6beacf5c | 8122cf24bcf61db687f11cca72d83460258a620c937ebd3c9f863f34f6ae313c | CANONICAL |
 | final-adjudication | 独立 ZCode 终裁 | doc/reviews/GOV-REFINCIDENT-1-zcode-adjudication-2026-11-11.md | 6b3cd4e7c502aa9ce7ce2a87c7aa7c51d7ec3750 | c8c4a4e918d19b5cc4d81ca6e027b2f87c0f9a7fb13c873f6829fae876340e45 | CANONICAL |
+| final-gates | AC4 clean 终态四项门禁 | verification/GOV-REFINCIDENT-1/delivery-gates-final-cfa1866.log | 99d53d4a06c008b7290d810b20e15fa9d19f2451 | e14ad539d3282d063ad0a13ed7327d1bf7a75bb595487f3aa31d32d27173cdbd | CANONICAL |
 
 ## Resource Manifest
 
@@ -100,5 +101,6 @@ allowed_paths:
 - Closeout date / adjudicator：2026-11-11 / ZCode 独立 session `sess_937b1456-117c-4a3d-b28b-2da4e53abff6`；`integration_commit` 指向直接 main 交付的终裁采信点 `6b3cd4e7c502aa9ce7ce2a87c7aa7c51d7ec3750`，并非 merge commit。
 - canonical_evidence_status / resource_closeout_status：complete / complete；独立 Review ACCEPT，P3-1/P3-2 由提交 `1fa6677f740a99826f2044c64d8baaec82a32f0d` 澄清并经终裁关闭。
 - dirty 收口候选 HEAD `6b3cd4e7c502aa9ce7ce2a87c7aa7c51d7ec3750` 的 default、done TaskPath、pins、API 四项实测均 EXIT 0；仓外 `investigation/gates-B-candidate-6b3cd4e.log` SHA-256 `d1d79eab3aa0597d7c278b97de01e8dd96cb7f6e2f68f3ee6b2e62dd1962d404`。候选测试后本条摘要追加，不改 gate 规则。
+- clean 终态 HEAD `cfa18664d4a393e564399fa72129f9e284f4da75` 四项 EXIT 0，日志在 `99d53d4a06c008b7290d810b20e15fa9d19f2451` 独立提交；该提交后未回填时 TaskPath 因新日志未登记而 EXIT 1，default 和 pins EXIT 0，仓外 `investigation/gates-C-99d53d4.log` SHA-256 `c212217b7e2aa98bf485d28fb505f782cc986a14f5e72801199aa94779dddb6b`。本回填提交登记日志以消除暂态，随后 clean HEAD 四项复跑结果留仓外。
 - 删除、迁移、归档数量/字节数：0；主 worktree、事故原件、仓外调查及隔离副本均保留。
 - 未关闭项及当前指针清理：根因 `root_cause_unknown_with_evidence`；USN query/read、精确 rm+checkout、跨环境 checkout 保持 NOT_RUN；原文默认 diff-check CRLF limitation 见 README；R-001 保持 open P2 未释放。STATUS 空窗、Plan done、Ledger 重生成；候选和 clean 终态门禁按裁决记录。
