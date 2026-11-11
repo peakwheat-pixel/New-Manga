@@ -1,0 +1,30 @@
+Git reference incident, observed 2026-11-11 Asia/Shanghai.
+Repository: G:/CODEX/New Manga
+Observed .git/HEAD: ref: refs/heads/main
+Observed refs/heads/main: 41 NUL bytes; HEAD cannot resolve.
+Last main reflog transition: 685d3a9e22e7adfb1d032f7b202e5390146e4b05 -> fa5e58e3fdbd2b53453e55104a7b002d4e57d518.
+git cat-file -e fa5e58e3fdbd2b53453e55104a7b002d4e57d518^{commit}: EXIT 0
+git cat-file -e fa5e58e3fdbd2b53453e55104a7b002d4e57d518^{tree}: EXIT 0
+git diff --cached --quiet fa5e58e3fdbd2b53453e55104a7b002d4e57d518 --: EXIT 0
+git diff --quiet --: EXIT 0
+These do not prove all repository objects healthy. Root cause UNKNOWN.
+Read-only gate observations after reference corruption: default check EXIT 0 (4 warnings); explicit GOV-CHECKER-NOTASK-1 TaskPath EXIT 0 (3 warnings); verify_pins EXIT 0 (18/18); API inventory EXIT 0 (86). Broken HEAD limits these checks' Git context.
+Copies: HEAD, main.ref, index, HEAD.reflog, main.reflog, packed-refs.
+All six copy SHA-256 values matched source immediately before and after copying.
+No repository ref, index, worktree, or resource was reset, repaired, deleted or cleaned.
+Recovery requires independent diagnosis and explicit authorization before rewriting any original reference.
+Read-only git -c gc.auto=0 fsck --connectivity-only --no-reflogs --no-progress fa5e58e3fdbd2b53453e55104a7b002d4e57d518: EXIT 8; stderr reports refs/heads/main badRefContent; stdout contains 479 lines, including dangling objects, with no lines beginning missing, broken, or error. Connectivity-only is not a full content integrity check. Full stdout/stderr retained in this directory.
+ISOLATED REHEARSAL ONLY: independent bare repository rehearsal.git, with alternate object access to original; original Git refs were not changed.
+git update-ref on copied 41-byte NUL loose main ref: EXIT 128, unable to resolve broken reference.
+Moving only the copied broken loose ref into rehearsal-main.corrupt initially led to EXIT 128 due to a CRLF error in the rehearsal alternates file. After correcting that isolated alternates file to LF, object lookup EXIT 0 and isolated git update-ref EXIT 0, isolated main resolves fa5e58e3fdbd2b53453e55104a7b002d4e57d518.
+Important correction: original packed-refs contains 7588ddc7aee1af707b010426d890b459b35e1ca8 refs/heads/main, verified also in the saved packed-refs copy. git merge-base --is-ancestor 7588ddc7aee1af707b010426d890b459b35e1ca8 fa5e58e3fdbd2b53453e55104a7b002d4e57d518: EXIT 0. Moving a loose ref would expose this older packed main until a new loose ref is established; the isolated reflog records this old packed value as its predecessor. ZCode's earlier assertion that packed-refs lacked main was incorrect. No original ref move or update was performed.
+ISOLATED CAS rehearsal: with packed main 7588ddc7 exposed, git update-ref to fa5e58e3 with deliberately incorrect expected old 685d3a9 returned EXIT 128 and main remained 7588ddc7; with expected old 7588ddc7 it returned EXIT 0 and rehearsal main resolved fa5e58e3. This detects an unexpected ref value at update time but does not prevent intermediate readers from observing the old packed value. Original main.ref SHA remains 9e1736c43d19118e6ce4302118af337109491ecc52757dfb949bad6a7940b0c2; no original ref changed.
+Continuation read-only git -c gc.auto=0 fsck --full --no-reflogs --no-progress fa5e58e3fdbd2b53453e55104a7b002d4e57d518: EXIT 8; stderr reports refs/heads/main badRefContent, stdout has 479 lines including dangling objects, with no lines beginning missing, broken, error or corrupt. Full stdout/stderr and exit code retained alongside this record. This run excludes reflogs and does not establish the root cause.
+Isolated status verification: copied saved index to index-verification; used independent rehearsal.git with recovered fa5 ref, --work-tree pointing at original worktree, core.bare=false, and GIT_INDEX_FILE pointing at the copied index. git status --porcelain --untracked-files=all returned EXIT 0 and 0 lines. Original .git/index SHA remained 71b06edd97205282c1daa852f1716a9d2e1b1e59abc1b214ff436dc285c57557. This does not repair original HEAD; exclude/config behavior is that of the isolated Git directory.
+
+User explicitly authorized recovery. Preconditions rechecked: original main ref, index, main reflog and packed-refs hashes matched preserved copies; target commit existed; index vs target and worktree vs index returned EXIT 0; no git.exe process or main/index/packed-refs lock was observed.
+Original NUL loose ref moved to main.original-corrupt inside this incident directory; preserved SHA-256 9e1736c43d19118e6ce4302118af337109491ecc52757dfb949bad6a7940b0c2.
+git update-ref -m "recover: restore main after NUL reference corruption 2026-11-11" refs/heads/main fa5e58e3fdbd2b53453e55104a7b002d4e57d518 7588ddc7aee1af707b010426d890b459b35e1ca8: EXIT 0.
+Post-recovery: branch main; HEAD fa5e58e3fdbd2b53453e55104a7b002d4e57d518; git status --porcelain empty. Existing reflog entry 685d3a9 -> fa5e58e3 retained; recovery entry 7588ddc7 -> fa5e58e3 appended.
+Post-recovery gates: pwsh -NoProfile -File tools/governance/check.ps1 PASS EXIT 0 (4 warnings, including explicit no-current-task warning); pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/GOV-CHECKER-NOTASK-1.md PASS EXIT 0 (3 warnings); pwsh -NoProfile -File tools/governance/verify_pins.ps1 PASS 18/18 EXIT 0; python tools/generate_api_inventory.py --check EXIT 0 (86).
+Post-recovery git -c gc.auto=0 fsck --full --no-reflogs --no-progress fa5e58e3fdbd2b53453e55104a7b002d4e57d518: EXIT 0. Output retained in fsck-post-stdout.txt / fsck-post-stderr.txt. Root cause remains UNKNOWN; no push, reset, cleanup or object pruning was performed.
