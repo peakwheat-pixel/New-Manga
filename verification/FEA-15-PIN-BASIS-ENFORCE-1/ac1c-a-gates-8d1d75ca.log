@@ -1,0 +1,267 @@
+FEA-15-PIN-BASIS-ENFORCE-1 AC1c A-side gates
+Generated at UTC: 2026-11-11T17:43:05Z
+Generated at main HEAD: 8d1d75ca246ef0daf7f3c116974cf16cfa21d410
+A clone: G:\CODEX\New Manga.workspace\FEA-15-PIN-BASIS-ENFORCE-1\baseline-2df8db7
+A clone HEAD: 2df8db7a4d19b591e919ecc6e8f8651167800ef0
+A clone core.longpaths: true
+A clone core.autocrlf: true
+Git: git version 2.52.0.windows.1
+PowerShell: 7.6.9
+Python: Python 3.14.6
+A clone status before:
+?? verification/FEA-15-PIN-BASIS-ENFORCE-1/
+
+LABEL: default
+COMMAND: pwsh -NoProfile -File tools/governance/check.ps1
+START_UTC: 2026-11-11T17:43:05Z
+END_UTC: 2026-11-11T17:43:08Z
+EXIT=1
+Governance scope: 14 current documents; no historical directory scan.
+WARN: STATUS 声明无当前 Task（空窗）；跳过当前 Task 检查。
+WARN: 存在 10 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3078 bytes / 31 lines
+FAIL: doc/REBASELINE_PLAN.md 超过防膨胀预算：7056 bytes / 64 lines
+Governance check: FAIL (1 errors, 3 warnings)
+
+LABEL: historical-taskpath-agpl
+COMMAND: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/AGPL-RELEASE-1.md
+START_UTC: 2026-11-11T17:43:08Z
+END_UTC: 2026-11-11T17:43:10Z
+EXIT=1
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\AGPL-RELEASE-1.md
+WARN: 存在 10 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3078 bytes / 31 lines
+FAIL: doc/REBASELINE_PLAN.md 超过防膨胀预算：7056 bytes / 64 lines
+Governance check: FAIL (1 errors, 2 warnings)
+
+LABEL: historical-taskpath-ad002
+COMMAND: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/AD002-FOLLOWUPS-1.md
+START_UTC: 2026-11-11T17:43:10Z
+END_UTC: 2026-11-11T17:43:11Z
+EXIT=1
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\AD002-FOLLOWUPS-1.md
+WARN: 存在 10 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3078 bytes / 31 lines
+FAIL: doc/REBASELINE_PLAN.md 超过防膨胀预算：7056 bytes / 64 lines
+Governance check: FAIL (1 errors, 2 warnings)
+
+LABEL: historical-taskpath-fea06
+COMMAND: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/FEA-06-PREREQ-1.md
+START_UTC: 2026-11-11T17:43:11Z
+END_UTC: 2026-11-11T17:43:13Z
+EXIT=1
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-06-PREREQ-1.md
+WARN: 存在 10 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3078 bytes / 31 lines
+FAIL: doc/REBASELINE_PLAN.md 超过防膨胀预算：7056 bytes / 64 lines
+FAIL: Evidence SHA-256 不匹配：apps/desktop-avalonia/src/NewManga.Appearance/AppearanceJson.cs
+FAIL: Evidence SHA-256 不匹配：verification/FEA-06-PREREQ-1/appearance-tests.log
+FAIL: Canonical evidence 路径缺失：apps/desktop-avalonia/src/NewManga.App/Services/AppearanceCoordinator.cs
+FAIL: Evidence SHA-256 不匹配：verification/FEA-06-PREREQ-1/motion-tests.log
+FAIL: Evidence SHA-256 不匹配：verification/FEA-06-PREREQ-1/sln-test.log
+FAIL: Evidence SHA-256 不匹配：verification/FEA-06-PREREQ-1/build.log
+FAIL: DONE evidence_dir 含未登记文件：G:\CODEX\New Manga.workspace\FEA-15-PIN-BASIS-ENFORCE-1\baseline-2df8db7\verification\FEA-06-PREREQ-1\appearance-coordinator-tests.log, G:\CODEX\New Manga.workspace\FEA-15-PIN-BASIS-ENFORCE-1\baseline-2df8db7\verification\FEA-06-PREREQ-1\delivery-notes.md, G:\CODEX\New Manga.workspace\FEA-15-PIN-BASIS-ENFORCE-1\baseline-2df8db7\verification\FEA-06-PREREQ-1\theme-tests.log
+FAIL: DONE 必须设置 canonical_evidence_status: complete。
+FAIL: 终态或已集成的 approved Task 必须设置 resource_closeout_status: complete。
+FAIL: DONE 不能保留未完成 Acceptance Criteria；范围未完成时使用 closed_with_limitations。
+FAIL: DONE 必须逐项填写 Resource Manifest；无资源时写 NOT_APPLICABLE。
+FAIL: DONE Task 不得包含未达成状态（PARTIAL）的 AC：AC1；范围未达成时请使用 closed_with_limitations。
+FAIL: DONE Task 不得包含未达成状态（PARTIAL）的 AC：AC3；范围未达成时请使用 closed_with_limitations。
+FAIL: DONE Task 不得包含未达成状态（PARTIAL）的 AC：AC5；范围未达成时请使用 closed_with_limitations。
+Governance check: FAIL (15 errors, 2 warnings)
+
+LABEL: historical-taskpath-chapter-selector
+COMMAND: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/CHAPTER-SELECTOR-1.md
+START_UTC: 2026-11-11T17:43:13Z
+END_UTC: 2026-11-11T17:43:14Z
+EXIT=1
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\CHAPTER-SELECTOR-1.md
+WARN: 存在 10 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3078 bytes / 31 lines
+FAIL: doc/REBASELINE_PLAN.md 超过防膨胀预算：7056 bytes / 64 lines
+FAIL: Resource manifest 不存在：evidence/`（测试/wire/screens/host）+ `pkg/app`（29.4 MB 发布件，`core-sidecar` 为 junction）+ `isolated-data`（EXTERNAL 双书三章测试根，源 fixture 未改）
+FAIL: AC 状态标记缺失或非法（需行末 <<MET>> / <<PARTIAL: 原因>> / <<BLOCKED: 原因>> / <<NOT_APPLICABLE: 原因>>）：AC1
+FAIL: AC 状态标记缺失或非法（需行末 <<MET>> / <<PARTIAL: 原因>> / <<BLOCKED: 原因>> / <<NOT_APPLICABLE: 原因>>）：AC2
+FAIL: AC 状态标记缺失或非法（需行末 <<MET>> / <<PARTIAL: 原因>> / <<BLOCKED: 原因>> / <<NOT_APPLICABLE: 原因>>）：AC3
+FAIL: AC 状态标记缺失或非法（需行末 <<MET>> / <<PARTIAL: 原因>> / <<BLOCKED: 原因>> / <<NOT_APPLICABLE: 原因>>）：AC4
+FAIL: AC 状态标记缺失或非法（需行末 <<MET>> / <<PARTIAL: 原因>> / <<BLOCKED: 原因>> / <<NOT_APPLICABLE: 原因>>）：AC5
+Governance check: FAIL (7 errors, 2 warnings)
+
+LABEL: verify-pins
+COMMAND: pwsh -NoProfile -File tools/governance/verify_pins.ps1
+START_UTC: 2026-11-11T17:43:14Z
+END_UTC: 2026-11-11T17:43:15Z
+EXIT=1
+MISMATCH C01b pin=3c9f5af7d74f actual=41cd5073f945
+MISMATCH C02 pin=bb365ca891a7 actual=cf553722a1a8
+MISMATCH C03 pin=b77e7968a00b actual=c57535ca8fc9
+OK C04b 4b304c0c315f
+MISMATCH C05 pin=f6e6f3cb1fe1 actual=598ae7d8ca05
+MISMATCH C06 pin=75f8e2b4eb80 actual=8481e58210d2
+MISMATCH C07 pin=8ccaba05cbc2 actual=a031aae77971
+MISMATCH C08 pin=453f993c1a16 actual=7852c318605c
+MISMATCH C09 pin=dc51226b336c actual=3782fc4657f5
+MISMATCH C10 pin=ec8fd862f95f actual=ba27fd4fa5b5
+MISMATCH C11 pin=44f4273f7ad1 actual=8c37d15c672c
+MISMATCH C12 pin=f49835860143 actual=f2bbef02acff
+MISMATCH C13 pin=8faf1e805eac actual=71621515bd75
+MISMATCH C14 pin=05056cbf65f9 actual=bd5e5dd5c5d9
+MISMATCH C15 pin=f9e376a0ed4c actual=6d87093cd695
+MISMATCH C16 pin=67286eeca8cb actual=87c41dfd29a6
+OK C17 cdeee4872e29
+MISMATCH FEA01 pin=0370c18932b1 actual=a337c3bd2e30
+PIN AUDIT: FAIL (16)
+
+LABEL: api-inventory
+COMMAND: python tools/generate_api_inventory.py --check
+START_UTC: 2026-11-11T17:43:15Z
+END_UTC: 2026-11-11T17:43:15Z
+EXIT=0
+OK: rendered counts match FEA-C07 doc
+| 接口 | 方法数 | 属性/事件/字段数 |
+|---|---|---|
+| IReaderProgressSink | 1 | 0 |
+| IHostController | 79 | 4 |
+| IRunController | 6 | 0 |
+| **合计** | **86** | — |
+
+## IReaderProgressSink
+
+| # | 成员 | 返回类型 |
+|---|---|---|
+| 1 | `SaveReadingProgressAsync` | `Task<ReaderProgressSaveResult>` |
+
+## IHostController
+
+| # | 成员 | 返回类型 |
+|---|---|---|
+| 1 | `StartAsync` | `Task` |
+| 2 | `RefreshBooksAsync` | `Task` |
+| 3 | `TryChineseRoundTripAsync` | `Task<bool>` |
+| 4 | `TryCreateBookAsync` | `Task<bool>` |
+| 5 | `CreateChapterAsync` | `Task<ChapterSummary?>` |
+| 6 | `LoadReaderBookAsync` | `Task<ReaderBookData?>` |
+| 7 | `ListChaptersAsync` | `Task<IReadOnlyList<ChapterSummary>>` |
+| 8 | `ListChapterPagesAsync` | `Task<IReadOnlyList<ChapterPageSummary>>` |
+| 9 | `GetReadingPreferencesAsync` | `Task<ReadingPreferencesInfo?>` |
+| 10 | `SaveReadingPreferencesAsync` | `Task<bool>` |
+| 11 | `ListBookmarksAsync` | `Task<IReadOnlyList<BookmarkInfo>>` |
+| 12 | `CreateBookmarkAsync` | `Task<string?>` |
+| 13 | `DeleteBookmarkAsync` | `Task<bool>` |
+| 14 | `GetBookReadingProgressAsync` | `Task<BookReadingProgressInfo?>` |
+| 15 | `ResetReadingProgressAsync` | `Task<int>` |
+| 16 | `ListFontAssetsAsync` | `Task<IReadOnlyList<FontAssetInfo>>` |
+| 17 | `ImportFontAssetAsync` | `Task<FontAssetInfo?>` |
+| 18 | `DeleteFontAssetAsync` | `Task<bool>` |
+| 19 | `RefreshFontAssetsAsync` | `Task<FontRefreshInfo>` |
+| 20 | `UpdateBookMetadataAsync` | `Task<bool>` |
+| 21 | `ReorderChaptersAsync` | `Task<bool>` |
+| 22 | `UpdateChapterMetadataAsync` | `Task<bool>` |
+| 23 | `CreateChapterWithMetadataAsync` | `Task<ChapterSummary?>` |
+| 24 | `ListIssueMarkersAsync` | `Task<IReadOnlyList<IssueMarkerInfo>>` |
+| 25 | `CreateIssueMarkerAsync` | `Task<string?>` |
+| 26 | `ResolveIssueMarkerAsync` | `Task<bool>` |
+| 27 | `ReopenIssueMarkerAsync` | `Task<bool>` |
+| 28 | `DeleteIssueMarkerAsync` | `Task<bool>` |
+| 29 | `ListPromptTemplatesAsync` | `Task<IReadOnlyList<PromptTemplateInfo>>` |
+| 30 | `SavePromptTemplateAsync` | `Task<PromptTemplateInfo?>` |
+| 31 | `DeletePromptTemplateAsync` | `Task<PromptTemplateDeleteResult>` |
+| 32 | `CopyBuiltinPromptTemplateAsync` | `Task<PromptTemplateInfo?>` |
+| 33 | `GetPromptTemplateReferencesAsync` | `Task<IReadOnlyList<PromptTemplateReference>>` |
+| 34 | `LoadPageRegionsAsync` | `Task<RegionPageProjection?>` |
+| 35 | `LoadRegionRevisionsAsync` | `Task<RegionRevisionHistory?>` |
+| 36 | `ReadPageImageAsync` | `Task<byte[]?>` |
+| 37 | `SetRegionTypeAsync` | `Task<RegionOperationResult>` |
+| 38 | `RestoreRegionRevisionAsync` | `Task<RegionOperationResult>` |
+| 39 | `RerenderPageAsync` | `Task<PageRerenderOutcome>` |
+| 40 | `ListCredentialTargetsAsync` | `Task<IReadOnlyList<CredentialTargetOption>>` |
+| 41 | `PutCredentialAsync` | `Task<CredentialOperationResult>` |
+| 42 | `ClearCredentialAsync` | `Task<CredentialOperationResult>` |
+| 43 | `ListProviderProfilesAsync` | `Task<IReadOnlyList<ProviderProfileInfo>>` |
+| 44 | `SaveProviderProfileAsync` | `Task<SettingsProfileResult>` |
+| 45 | `DeleteProviderProfileAsync` | `Task<SettingsProfileResult>` |
+| 46 | `ListNetworkProfilesAsync` | `Task<IReadOnlyList<NetworkProfileInfo>>` |
+| 47 | `SaveNetworkProfileAsync` | `Task<SettingsProfileResult>` |
+| 48 | `DeleteNetworkProfileAsync` | `Task<SettingsProfileResult>` |
+| 49 | `SetNetworkDefaultAsync` | `Task<SettingsProfileResult>` |
+| 50 | `TestNetworkProfileAsync` | `Task<NetworkTestInfo?>` |
+| 51 | `ResolveNetworkProfileAsync` | `Task<NetworkResolveInfo?>` |
+| 52 | `SetProviderBindingAsync` | `Task<SettingsProfileResult>` |
+| 53 | `ClearProviderBindingAsync` | `Task<SettingsProfileResult>` |
+| 54 | `ResolveProviderBindingAsync` | `Task<ProviderBindingResult?>` |
+| 55 | `ImportFilesAsync` | `Task<ImportOutcome>` |
+| 56 | `ImportFolderAsync` | `Task<ImportOutcome>` |
+| 57 | `GetTranslatedPageIdsAsync` | `Task<IReadOnlyList<string>>` |
+| 58 | `StartExportAsync` | `Task<ExportStartInfo?>` |
+| 59 | `GetExportSnapshotAsync` | `Task<ExportSnapshotInfo?>` |
+| 60 | `GetExportHistoryAsync` | `Task<IReadOnlyList<ExportHistoryEntry>>` |
+| 61 | `CancelExportAsync` | `Task<ExportSnapshotInfo?>` |
+| 62 | `RevealExportFolderAsync` | `Task<bool>` |
+| 63 | `ListBackupsAsync` | `Task<IReadOnlyList<BackupPackageInfo>>` |
+| 64 | `CreateBackupAsync` | `Task<BackupPackageInfo?>` |
+| 65 | `DeleteBackupAsync` | `Task<bool>` |
+| 66 | `RetryPendingCleanupsAsync` | `Task<CleanupOutcomeInfo?>` |
+| 67 | `ListPluginsAsync` | `Task<PluginListInfo>` |
+| 68 | `SetPluginsGlobalEnabledAsync` | `Task<bool?>` |
+| 69 | `SetPluginEnabledAsync` | `Task<bool?>` |
+| 70 | `GetCleanupPreviewAsync` | `Task<CleanupPreviewInfo>` |
+| 71 | `RunCleanupAsync` | `Task<CleanupOutcomeInfo?>` |
+| 72 | `OpenDraftAsync` | `Task<DraftLease?>` |
+| 73 | `PatchDraftAsync` | `Task<Draft?>` |
+| 74 | `PrepareCandidateAsync` | `Task<RegionCandidate?>` |
+| 75 | `ApplyCandidatesAsync` | `Task<IReadOnlyDictionary<string, string>>` |
+| 76 | `GetDraftAsync` | `Task<Draft?>` |
+| 77 | `ListDraftsAsync` | `Task<IReadOnlyList<Draft>>` |
+| 78 | `DiscardDraftAsync` | `Task` |
+| 79 | `RestoreBackupAsync` | `Task<string?>` |
+| — | `Snapshot`（属性） | `HostViewSnapshot` |
+| — | `StartRequests`（属性） | `int` |
+| — | `ExportDirectorySuggestion`（属性） | `string` |
+| — | `Changed`（事件） | `EventHandler?` |
+
+## IRunController
+
+| # | 成员 | 返回类型 |
+|---|---|---|
+| 1 | `StartRunAsync` | `Task<RunStartInfo?>` |
+| 2 | `ControlRunAsync` | `Task<RunControlInfo?>` |
+| 3 | `ResumeBlockedRunAsync` | `Task<RunControlInfo?>` |
+| 4 | `GetRunSnapshotAsync` | `Task<RunSnapshotInfo?>` |
+| 5 | `GetTaskProjectionAsync` | `Task<TaskProjectionInfo?>` |
+| 6 | `RetryFailedTargetsAsync` | `Task<RunControlInfo?>` |
+
+
+LABEL: fixed-boundary-matrix
+COMMAND: python "G:\CODEX\New Manga\verification\FEA-15-PIN-BASIS-ENFORCE-1\capture_pin_basis_baseline.py" matrix "G:\CODEX\New Manga.workspace\FEA-15-PIN-BASIS-ENFORCE-1\baseline-2df8db7"
+START_UTC: 2026-11-11T17:43:15Z
+END_UTC: 2026-11-11T17:43:15Z
+EXIT=0
+WRAPPER_PATH=G:\CODEX\New Manga\verification\FEA-15-PIN-BASIS-ENFORCE-1\capture_pin_basis_baseline.py
+WRAPPER_SHA256=e4300b7bdbca9870e3b50354e011d955dfd56236d45a2d95b90fedf52073a03a
+ROOT=G:\CODEX\New Manga.workspace\FEA-15-PIN-BASIS-ENFORCE-1\baseline-2df8db7
+HEAD=2df8db7a4d19b591e919ecc6e8f8651167800ef0
+INVENTORY_SOURCE_PATH=G:\CODEX\New Manga.workspace\FEA-15-PIN-BASIS-ENFORCE-1\baseline-2df8db7\verification\FEA-15-PIN-POLICY-1\pin_inventory.py
+INVENTORY_SOURCE_SHA256=6880c0509b1a4df4a9f04633c581a582dbbb182f1d1b233e27644a146441d7f3
+DELTA_SOURCE_PATH=G:\CODEX\New Manga.workspace\FEA-15-PIN-BASIS-ENFORCE-1\baseline-2df8db7\verification\FEA-15-PIN-POLICY-1\pin_inventory_delta.py
+DELTA_SOURCE_SHA256=6ae6eb7a30d12c306f6ca2c0460dc6e8b0fa938d9dabd9851f869844b62f2118
+MATRIX_SOURCE_PATH=G:\CODEX\New Manga.workspace\FEA-15-PIN-BASIS-ENFORCE-1\baseline-2df8db7\verification\FEA-15-PIN-POLICY-1\pin_r194_matrix.py
+MATRIX_SOURCE_SHA256=3d766118e3b5fabcedf1128f5ce1777b33e0f1b57a99b14776d690b13e510f91
+INVENTORY=G:\CODEX\New Manga.workspace\FEA-15-PIN-BASIS-ENFORCE-1\baseline-2df8db7\verification\FEA-15-PIN-BASIS-ENFORCE-1\pin-inventory-2df8db7.json
+INVENTORY_SHA256=3c6e39a269437873e2bb9b40c4b3c9461bcafaa1d171f240dfed322565bc1ce2
+OUTPUT=G:\CODEX\New Manga.workspace\FEA-15-PIN-BASIS-ENFORCE-1\baseline-2df8db7\verification\FEA-15-PIN-BASIS-ENFORCE-1\pin-r194-matrix-2df8db7.json
+HEAD=2df8db7a4d19b591e919ecc6e8f8651167800ef0
+TOTAL_PIN_ROWS=5438 BASIS_COUNTS={'BLOB': 749, 'COMPOSITE_PATH': 2, 'EXTERNAL_UNAVAILABLE': 47, 'INCONSISTENT': 241, 'MISSING': 3, 'MIXED': 627, 'UNPINNED': 293, 'UNRESOLVED_COMMIT': 339, 'WORKTREE': 3137}
+MODELED_R194=ACCEPT_PREDICATE=4513 NONPASS=925
+SAMPLE=BLOB_TEXT PATH=verification/AGPL-RELEASE-1/REPORT.md ROWS=1
+SAMPLE=WORKTREE_TEXT PATH=verification/RELEASE-REPACK-6/verify.json ROWS=2
+SAMPLE=MIXED_EOL_TEXT PATH=apps/desktop-avalonia/src/NewManga.Appearance/AppearanceJson.cs ROWS=1
+SAMPLE=BINARY PATH=verification/CHAPTER-SELECTOR-1/screens/01-bookshelf-two-books.png ROWS=1
+OUTPUT=verification\FEA-15-PIN-BASIS-ENFORCE-1\pin-r194-matrix-2df8db7.json
+OUTPUT_SHA256=e8c48163d5c552b337a478326d7e7e8d7c637c2304741c66b579f48ce6a70246
+
+A clone status after:
+?? verification/FEA-15-PIN-BASIS-ENFORCE-1/
