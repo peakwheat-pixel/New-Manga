@@ -3,7 +3,7 @@ id: GOV-CHECKER-NOTASK-1
 title: 治理检查器显式无当前任务状态
 kind: governance
 governance_version: 3
-status: ready
+status: in_progress
 approval: ZCode session sess_ed894fec-18b7-40b8-9e6d-f927d8f2f031；doc/reviews/GOV-CHECKER-NOTASK-1-zcode-release-2026-11-11.md
 suggested_owner: codex
 owner: codex
