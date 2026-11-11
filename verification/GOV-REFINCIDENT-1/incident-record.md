@@ -25,6 +25,7 @@
 | `environment-raw.txt` | `b91b4f2e84cf40a4953823245e6261cbc74e01fe83d9364904c175621576bfe3` | Git 版本、count-objects、hook/相关进程名；USN NOT_RUN |
 | `git-config-filtered-v2.txt` | `b7a4c82a1ec407ee49592c00216dfad1d767dfc9c119dbae84e9b01c7de11775` | 限定核心配置键及来源，EXIT 0；首版过滤未选中记录，v2 修正 |
 | `environment-supplement.txt` | `0d2b7cfdb481eb7a204200973cb4de10fd3b3f1560d8f621b17462b5726c8091` | G: Get-Volume NTFS/Healthy/OK，EXIT 0；两个 hook 均仅 shebang；其中首版 config 空筛选以 v2 为准 |
+| `git-layout.txt` | `fd9253b4b753f2f9f0edbdf34b9f625dc238e34f3727bc36dfb6778e83db5758` | `.git` 顶层文件/目录名只读枚举，EXIT 0 |
 | `observations.txt` | `9beabcf8ef024ea197ede5524fbf7ffe35921e2e99f5e6377bd67210d41eb53e` | 脱敏事件、hook 与 dangling 摘要 |
 | `rehearsal-crlf/run.log` | `ee582351c0bfc4b7293aca17ff77b38f14f6e9fba0c6d7385c494ff95338b4be` | R2 V1–V3 通过；V4 为 checkout-index 新路径模拟，V5 为 fresh clone |
 | `whitespace-check.txt` | `1ec84581f803c9a4da03de6dabe8f23aeeee09bce40758186160db718dcf1ee2` | 默认 diff check 因原始 CRLF EXIT 2；临时 cr-at-eol 检查 EXIT 0 |
