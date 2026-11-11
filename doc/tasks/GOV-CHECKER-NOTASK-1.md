@@ -33,12 +33,12 @@ allowed_paths:
 
 ## 来源与目标
 
-依据 [ZCode 释放裁决](../reviews/GOV-CHECKER-NOTASK-1-zcode-release-2026-11-11.md) 和 FEA-15-PIN-POLICY-1 Addendum，修复 default checker 不识别明确空窗的缺口。依 §4.4 先界定影响全集、测量代表和边界样本并保留基线错误矩阵；核验不足时不得实施语义变更。
+依据 [ZCode 释放裁决](../reviews/GOV-CHECKER-NOTASK-1-zcode-release-2026-11-11.md) 和 FEA-15-PIN-POLICY-1 Addendum，修复 default checker 不识别明确空窗的缺口。§4.4 基线经 [ZCode 独立裁决 v2](../reviews/GOV-CHECKER-NOTASK-1-zcode-baseline-adjudication-2026-11-11.md) 认定充分；实施必须符合其中白名单、路径排除、指针优先与 T1–T8。
 
 ## Acceptance Criteria
 
 - [ ] **AC1 空窗正例**：现行明确空窗声明下 default 检查 EXIT 0，记录历史两条错误消失。 <<PARTIAL: 尚未实施或验证>>
-- [ ] **AC2 反例与判别力**：终态指针、不存在路径、缺失当前 Task 行保持失败；合法非终态指针行为与基线一致；显式 TaskPath 对 done 且 integration_commit pending 保持失败；隔离变异使缺失行错误变绿，再逐字节恢复并验证复红、空窗正例仍绿，记录 hash 和 EXIT。 <<PARTIAL: 基线样本已记录；边界、实施与变异尚未完成>>
+- [ ] **AC2 反例与判别力**：终态指针、不存在路径、缺失当前 Task 行保持失败；合法非终态指针行为与基线一致；显式 TaskPath 对 done 且 integration_commit pending 保持失败；隔离变异使缺失行和路径形态反例分别错误变绿，再逐字节恢复并验证复红、空窗正例仍绿，记录 hash 和 EXIT。 <<PARTIAL: 基线及边界已测且获裁决；实施后矩阵与变异尚未完成>>
 - [ ] **AC3 门禁与收口**：空窗 default、本卡 TaskPath、18 pins、API inventory 均 EXIT 0；独立 Review、独立 ZCode 最终裁决、BLOB pin、STATUS/Plan/Ledger/Closeout 全部完成。 <<PARTIAL: 尚未执行>>
 
 ## 允许修改范围
@@ -53,7 +53,7 @@ allowed_paths:
 
 | 场景/AC | 计划命令或步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1/AC2 | 隔离场景矩阵、变异与 SHA-256；`pwsh -NoProfile -File tools/governance/check.ps1` | Windows；先测基线 | 基线样本已运行，脚本 EXIT 0；额外边界、实现后复跑与变异 NOT_RUN；终态和 pending 样本有额外错误，见 README。 | `baseline-run-eb06df0-blob.log`、README |
+| AC1/AC2 | 隔离场景矩阵、变异与 SHA-256；`pwsh -NoProfile -File tools/governance/check.ps1` | Windows；先测基线 | 基线及边界脚本 EXIT 0；实现后复跑与变异 NOT_RUN；终态和 pending 样本有额外错误，见 README。 | `baseline-run-eb06df0-blob.log`、`boundary-run-eb06df0.log`、README |
 | AC3 | default 与 `-TaskPath`、`verify_pins.ps1`、`python tools/generate_api_inventory.py --check` | clean delivery head | NOT_RUN | 待生成 |
 
 ## 依赖、风险与阻塞
@@ -73,6 +73,10 @@ allowed_paths:
 | baseline-log | AC2 实施前样本 | verification/GOV-CHECKER-NOTASK-1/baseline-run-eb06df0-blob.log | 9610df47438da0c2f5f9d98f72cbdd1e6ffedb1c | 4c6159802ce7691446592a03537ec1d3c92c5d28a8c899095b61006d3b0af23f | SOURCE_PIN |
 | baseline-script | AC2 场景生成器 | verification/GOV-CHECKER-NOTASK-1/baseline_matrix.py | 9610df47438da0c2f5f9d98f72cbdd1e6ffedb1c | 5b70d070a1e01e2feea6bd8597eb238cc031db7a721816aa8f3318954c7d17db | SOURCE_PIN |
 | evidence-readme | 基线范围与限制 | verification/GOV-CHECKER-NOTASK-1/README.md | 9610df47438da0c2f5f9d98f72cbdd1e6ffedb1c | e6535136b34f0ff253119f347a0aece1024f46db85d37ae56c82c1b786fdd690 | SOURCE_PIN |
+| boundary-log | AC2 边界基线 | verification/GOV-CHECKER-NOTASK-1/boundary-run-eb06df0.log | ca7f6f31b740cd09d6853e63683983c4826daf60 | b81b9ab3fb1ac5dd677d8be8e7cbbd7533ce02fcbb87682a31419e0a6ccae563 | SOURCE_PIN |
+| boundary-script | AC2 边界生成器 | verification/GOV-CHECKER-NOTASK-1/boundary_matrix.py | ca7f6f31b740cd09d6853e63683983c4826daf60 | d9641c51d27d3b7cdb41f291baefac9344c6b5242d08f7db5aced87976feca2f | SOURCE_PIN |
+| boundary-notes | AC2 边界结果 | verification/GOV-CHECKER-NOTASK-1/boundary-notes.md | ca7f6f31b740cd09d6853e63683983c4826daf60 | 8fda726c64ce111a1c2bcdc1b800605ad19f5973e49c8185ef9c28307d52f6e9 | SOURCE_PIN |
+| baseline-adjudication | §4.4 与 v2 语法裁决 | doc/reviews/GOV-CHECKER-NOTASK-1-zcode-baseline-adjudication-2026-11-11.md | 79e96c36e66e34c6f8a2f34a3271eea370555e15 | 637f893949036cd35687953a6ea571f099e693ecec887fbbb720ee6e978bd6e7 | CANONICAL |
 
 ## Resource Manifest
 
