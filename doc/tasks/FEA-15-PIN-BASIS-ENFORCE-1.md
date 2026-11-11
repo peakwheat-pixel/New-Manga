@@ -3,7 +3,9 @@ id: FEA-15-PIN-BASIS-ENFORCE-1
 title: Canonical Evidence 显式 SHA 字节基准与历史兼容
 kind: governance
 governance_version: 3
-status: in_progress
+status: blocked
+resume_status: in_progress
+blocked_reason: AC1 inventory delta reports CHANGED=2, violating Addendum 1 stop condition; fresh ZCode adjudication pending
 approval: ZCode 2026-11-11 RELEASE_WITH_BASELINE_PREREQUISITE（主裁决及 Addendum 1/2；Addendum 3 于 2026-11-12 接受双环境基线）；用户 2026-11-12 授权自动继续；Codex 已认领
 suggested_owner: codex
 owner: codex
@@ -46,13 +48,13 @@ out_of_scope:
 
 ## Acceptance Criteria
 
-- [ ] **AC1 实施前固定基线**：A clone 固定 `2df8db7a4d19b591e919ecc6e8f8651167800ef0`，正式刷新 inventory/delta，逐条归因新增项；删除/changed 必须为 0、无未归因项。运行 default、`FEA-15-PIN-EOL-GOV-1`、`FEA-15-PIN-POLICY-1`、`GOV-CHECKER-NOTASK-1`、`GOV-REFINCIDENT-1` 五项 `check.ps1` 检查（default + 四个历史 TaskPath）、18 pins、API 和固定样本矩阵。A 证据提交并 pin 回填后冻结 clean R0；B clone 在 R0 实跑本 Task `-TaskPath`，验证 R0 相对固定 base 的差异在允许集内，且 `tools/governance/**` 与 `doc/templates/**` blobs 完全一致。环境、HEAD、命令、时间、EXIT 均入日志。不同于最终 Review 的 fresh ZCode session 独立确认完整 AC1a/AC1c 基线。 <<PARTIAL: 双环境实测及独立确认尚未完成>>
+- [ ] **AC1 实施前固定基线**：A clone 固定 `2df8db7a4d19b591e919ecc6e8f8651167800ef0`；Addendum 2 reproduction anchor EXIT 0、SHA 完全一致；formal inventory EXIT 0、5,438 行。相对 `e9f7bb1…` delta 为 `ADDED=62 / REMOVED=0 / CHANGED=2`；新增按来源归因，但 `CHANGED=2` 触发 Addendum 1 硬停止。其余 A checker/pins/API/matrix 与 B 新卡 TaskPath 均因停止条件 `NOT_RUN`。等待 fresh ZCode adjudication，确认后方可恢复。 <<PARTIAL: changed=2 违反已释放停止门，待 ZCode adjudication>>
 - [ ] **AC2 新旧表头与 basis 校验**：模板新增七列；checker 明确识别旧六列/新七列。旧表维持既有 r194 语义；新表逐行要求合法 basis，BLOB 校验包含路径的 commit blob 精确字节，WORKTREE 仅校验明确声明且说明复现环境的工作区字节，EXTERNAL_SHA256 不可读不得通过。 <<BLOCKED: AC1d 独立基线确认通过前禁止实现>>
 - [ ] **AC3 判别测试覆盖**：测试覆盖旧格式、basis 缺失/非法、三类来源、commit 不含路径、缺失路径、PNG exact bytes、CRLF 与 mixed-EOL，包含旧格式结果不变断言。 <<BLOCKED: AC1d 独立基线确认通过前禁止实现>>
 - [ ] **AC4 跨 checkout 对照**：Windows `core.autocrlf=true/false` fresh checkout 对照；逐行区分历史行不变性与 Task 自身新行增量。Linux 未实测则明确记录 `NOT_RUN`。任何未解释历史变化或集合增删即停止。 <<BLOCKED: AC1d 独立基线确认通过前禁止实现>>
 - [ ] **AC5 集成、Review 与终裁**：集成后 default、本 Task 与四个历史 TaskPath、18 pins、API 全部实际执行；更新 Handoff、Canonical Evidence、资源清单；fresh ZCode 独立 Review 与不同 session 的 ZCode 最终 adjudication 完成，`R-001` 由 Integrator 显式裁决。不得把计划项或 `NOT_RUN` 写成 PASS。 <<BLOCKED: AC1d 独立基线确认通过前禁止实现>>
 
-AC 状态语法按 `doc/09_COLLABORATION.md` §4.3。AC1 的 A/B 是两个独立载体：base clone 不存在本 Task 卡，不能将不存在的 TaskPath 记为 PASS；B 只在 R0 执行本卡 TaskPath。Addendum 3 列出载体、文件级、blob 同一性和停止条件。
+AC 状态语法按 `doc/09_COLLABORATION.md` §4.3。AC1 的 A/B 是两个独立载体：base clone 不存在本 Task 卡，不能将不存在的 TaskPath 记为 PASS；B 只在 R0 执行本卡 TaskPath。Addendum 3 列出载体、文件级、blob 同一性和停止条件。当前只完成 A 的 reproduction/inventory/delta，delta changed=2 后即停；未跑项保持 `NOT_RUN`。
 
 ## 允许修改范围
 
@@ -70,7 +72,7 @@ AC 状态语法按 `doc/09_COLLABORATION.md` §4.3。AC1 的 A/B 是两个独立
 
 ## 依赖、风险与阻塞
 
-硬依赖 `FEA-15-PIN-POLICY-1` 已 done。**AC1d 是实现前置门**：在 AC1 独立确认之前，不改模板/checker/测试，不产生实现提交。停止条件包括增量删除、同键字段变化、无法归因新增、旧行未解释判定变化、旧/新表无法区分、外部/EOL 行为异常、允许范围外变化或任何冻结禁区需求。触发时保留现场并交 ZCode adjudicate。
+硬依赖 `FEA-15-PIN-POLICY-1` 已 done。**当前 blocker：**正式 delta 出现 `CHANGED=2`，已停在 AC1 前置门，等待 ZCode 独立 adjudication；在其明确允许恢复前，不得继续 A 的其它门禁、B、模板/checker/测试实现或实现提交。后续停止条件还包括增量删除、无法归因新增、旧行未解释判定变化、旧/新表无法区分、外部/EOL 行为异常、允许范围外变化或任何冻结禁区需求。
 
 5,376 行只是 `e9f7bb1…` 历史 snapshot；本 Task 必须在固定 `2df8db7…` clone 重算当前 inventory，不能把旧数量当预设答案。Inventory `class` 辅助字段对非标准表头有限制，不得用于政策或处置推断。573 条异常观察不自动构成损坏/迁移清单。
 
@@ -82,12 +84,27 @@ AC 状态语法按 `doc/09_COLLABORATION.md` §4.3。AC1 的 A/B 是两个独立
 - 实现分支/worktree：R0 冻结并通过 AC1d 后创建；main 不直接实现 checker/template。
 - `R-001` 不因实现自动关闭，等待最终 Integrator 明确裁决。
 
+## Rolling Checkpoint
+
+- 2026-11-12，证据 commit `411309ca39e826aa1f5bbe13b15c73bb7c803d4e`；Task 状态已置 `blocked`，恢复态 `in_progress`。
+- 完成：Addendum 2 delta reproduction anchor、固定 base inventory、正式 delta。正式 delta `CHANGED=2` 触发停止；没有继续跑 base checker/pins/API/matrix，也没有创建 R0 clone 或实现 worktree。
+- 当前证据与失败条件：[verification README](../../verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md)。外部 A clone 保留。
+- 下一步：等待 fresh ZCode 对 changed rows 和初始 long-path checkout 恢复的只读 adjudication；按裁定恢复或维持阻塞。
+
 ## Canonical Evidence
 
 本 Task 作为六列表兼容样本，不增加 `sha256_basis` 列。
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
+| ac1a-stop-readme | AC1 partial/stop disposition | verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md | 411309ca39e826aa1f5bbe13b15c73bb7c803d4e | 3e13dcfc747c802faddf4535b7ffa1f07a495e94585c20bb85f4eeee4fe61d9b | CANONICAL |
+| ac1a-inventory | AC1 fixed-base inventory | verification/FEA-15-PIN-BASIS-ENFORCE-1/pin-inventory-2df8db7.json | 411309ca39e826aa1f5bbe13b15c73bb7c803d4e | 2aca6413774798056323f152f5a3ffc8a0fd82461bb6bdeef5f0c65fbf1d87c4 | CANONICAL |
+| ac1a-delta-stop | AC1 formal delta; CHANGED=2 | verification/FEA-15-PIN-BASIS-ENFORCE-1/pin-inventory-delta-e9f7bb1-to-2df8db7.json | 411309ca39e826aa1f5bbe13b15c73bb7c803d4e | f88f99052ee1580a8b859c5468b5621005df5e77e1bd179045d0c279fce97f21 | CANONICAL |
+| ac1a-repro-anchor | AC1 Addendum 2 exact delta reproduction | verification/FEA-15-PIN-BASIS-ENFORCE-1/pin-inventory-delta-repro-e9f7bb1.json | 411309ca39e826aa1f5bbe13b15c73bb7c803d4e | c27247db93960076ff27566e642be5b3d273588be47a8fa378eb81866bb3701e | CANONICAL |
+| ac1a-inventory-log | AC1 inventory execution record | verification/FEA-15-PIN-BASIS-ENFORCE-1/ac1a-inventory-2df8db7.log | 411309ca39e826aa1f5bbe13b15c73bb7c803d4e | 43e6456114f98dddf4c16b4d29cdd62235b44f5c598d7af468df66b1e641f2df | CANONICAL |
+| ac1a-delta-log | AC1 delta execution and stop record | verification/FEA-15-PIN-BASIS-ENFORCE-1/ac1a-delta-e9f7bb1-to-2df8db7.log | 411309ca39e826aa1f5bbe13b15c73bb7c803d4e | f4035837ddc0143bbe9a590b4e27e8831884249b76b967ccac04419282e36347 | CANONICAL |
+| ac1a-repro-log | AC1 reproduction execution record | verification/FEA-15-PIN-BASIS-ENFORCE-1/ac1a-delta-repro-e9f7bb1.log | 411309ca39e826aa1f5bbe13b15c73bb7c803d4e | b2f060ddc57f9885cd074b363a99ffff956cd6c5516a5ea5add7b7a9b29d7990 | CANONICAL |
+| ac1a-wrapper | AC1 released runtime-rebinding wrapper source | verification/FEA-15-PIN-BASIS-ENFORCE-1/capture_pin_basis_baseline.py | 411309ca39e826aa1f5bbe13b15c73bb7c803d4e | e4300b7bdbca9870e3b50354e011d955dfd56236d45a2d95b90fedf52073a03a | SOURCE_PIN |
 
 ## Resource Manifest
 
@@ -96,10 +113,12 @@ AC 状态语法按 `doc/09_COLLABORATION.md` §4.3。AC1 的 A/B 是两个独立
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | main worktree | G:/CODEX/New Manga | PRESERVE_REFERENCED | G:/CODEX/New Manga | Task checkpoint | main 分支，当前 HEAD `d8b9b20869ac0957e152eddb9b5de88c8c2f9326`；保留 |
-| base clone | G:/CODEX/New Manga.workspace/FEA-15-PIN-BASIS-ENFORCE-1/baseline-2df8db7 | PRESERVE_REFERENCED | 同源保留 | 待测 manifest | 固定 base clone；创建/测量后补 HEAD、clean、哈希和进程核验 |
+| base clone | G:/CODEX/New Manga.workspace/FEA-15-PIN-BASIS-ENFORCE-1/baseline-2df8db7 | PRESERVE_REFERENCED | 同源保留 | verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md | HEAD 固定 `2df8db7…`；测量前 clean；clone-local `core.longpaths=true`；发生 changed=2 后保留现场 |
 | R0 clone | G:/CODEX/New Manga.workspace/FEA-15-PIN-BASIS-ENFORCE-1/r0-baseline | PRESERVE_REFERENCED | 同源保留 | 待测 manifest | 仅在 AC1a 证据 commit/pinbackfill 后创建；按 Addendum 3 只跑本 TaskPath |
 | implementation worktree | G:/CODEX/New Manga.workspace/FEA-15-PIN-BASIS-ENFORCE-1/implementation | PRESERVE_REFERENCED | 同源保留 | 待创建 | AC1d 通过后从冻结基线创建；不清理 |
-| task-env / dataset / model / artifact / temp / agent-output / exchange | 尚未创建 | 待登记 | — | — | 创建前先更新本表；不存在项不得伪记为已核验 |
+| A clone outputs | G:/CODEX/New Manga.workspace/FEA-15-PIN-BASIS-ENFORCE-1/baseline-2df8db7/verification/FEA-15-PIN-BASIS-ENFORCE-1 | PRESERVE_REFERENCED | 同源保留 | inventory/delta SHA 见 README | 仅生成本 Task 的 inventory/delta；保留，不清理 |
+| agent-output logs | G:/CODEX/New Manga.workspace/FEA-15-PIN-BASIS-ENFORCE-1/*.log | PRESERVE_REFERENCED | 同源保留 | README | 源运行日志另复制入仓；保留原文件 |
+| dataset / model / installation artifact / exchange | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | 未使用 |
 
 ## Closeout Record
 
