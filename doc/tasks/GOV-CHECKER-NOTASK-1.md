@@ -3,7 +3,7 @@ id: GOV-CHECKER-NOTASK-1
 title: 治理检查器显式无当前任务状态
 kind: governance
 governance_version: 3
-status: in_progress
+status: done
 approval: ZCode session sess_ed894fec-18b7-40b8-9e6d-f927d8f2f031；doc/reviews/GOV-CHECKER-NOTASK-1-zcode-release-2026-11-11.md
 suggested_owner: codex
 owner: codex
@@ -13,10 +13,10 @@ depends_on:
 base_commit: 0201dc9612faa9eea9104b8e0568414e4a7bad5a
 branch: main
 worktree: G:/CODEX/New Manga
-integration_commit: null
+integration_commit: 62ab6b735961359b8a29984484033747b221fee4
 delivery_head: 21ce0f24f2c4b0a153f85163eadc64b36b7bf72b
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/GOV-CHECKER-NOTASK-1
 allowed_paths:
   - tools/governance/check.ps1
@@ -39,7 +39,7 @@ allowed_paths:
 
 - [x] **AC1 空窗正例**：现行明确空窗声明下 default 检查 EXIT 0，记录历史两条错误消失。 <<MET>>
 - [x] **AC2 反例与判别力**：终态指针、不存在路径、缺失当前 Task 行保持失败；合法非终态指针行为与基线一致；显式 TaskPath 对 done 且 integration_commit pending 保持失败；隔离变异使缺失行和路径形态反例分别错误变绿，再逐字节恢复并验证复红、空窗正例仍绿，记录 hash 和 EXIT。 <<MET>>
-- [ ] **AC3 门禁与收口**：空窗 default、本卡 TaskPath、18 pins、API inventory 均 EXIT 0；独立 Review、独立 ZCode 最终裁决、BLOB pin、STATUS/Plan/Ledger/Closeout 全部完成。 <<PARTIAL: 活动指针门禁与独立 Review 已完成；空窗主树门禁、最终裁决和收口未完成>>
+- [x] **AC3 门禁与收口**：空窗 default、本卡 TaskPath、18 pins、API inventory 均 EXIT 0；独立 Review、独立 ZCode 最终裁决、BLOB pin、STATUS/Plan/Ledger/Closeout 全部完成。 <<MET>>
 
 ## 允许修改范围
 
@@ -54,7 +54,7 @@ allowed_paths:
 | 场景/AC | 计划命令或步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
 | AC1/AC2 | 隔离场景矩阵、变异与 SHA-256；`pwsh -NoProfile -File tools/governance/check.ps1` | Windows；基线 `eb06df0`、实现 `21ce0f2` | 基线、边界与实现后矩阵 EXIT 0；31/31 断言及两种变异恢复通过；终态和 pending 样本有额外错误，见 README。 | 基线及 `implementation-run-21ce0f2-r3.log` |
-| AC3 | default 与 `-TaskPath`、`verify_pins.ps1`、`python tools/generate_api_inventory.py --check` | clean delivery evidence HEAD `b76c4ab` | 活动指针下四项 EXIT 0；独立 Review ACCEPT；收口空窗主树实测、最终裁决 NOT_RUN。 | `delivery-gates-b76c4ab.log`、Review |
+| AC3 | default 与 `-TaskPath`、`verify_pins.ps1`、`python tools/generate_api_inventory.py --check` | clean 活动指针 HEAD `b76c4ab`；dirty 空窗候选 HEAD `05d1f5c` | 两次四项均 EXIT 0；独立 Review ACCEPT，ZCode 终裁有条件批准；提交后 clean HEAD 复跑另行实测。 | `delivery-gates-b76c4ab.log`、`closeout-gates-05d1f5c-G1.log`、Review/终裁 |
 
 ## 依赖、风险与阻塞
 
@@ -85,6 +85,8 @@ allowed_paths:
 | review | 独立 Review | doc/reviews/GOV-CHECKER-NOTASK-1-zcode-review-2026-11-11.md | 2afe986b6fd61a89a194176b1f5321d0aed6846c | cceacf71ca76382336f1e3366be29ac4fa7accda3e41a43e22db13fd16eeb25d | CANONICAL |
 | supplementary-audit | diff 与 evidence 审计 | verification/GOV-CHECKER-NOTASK-1/delivery-audit-2afe986.log | 0bea9c190a1162170f0f16122698fab699230488 | 326627b52edc8466df60abd9c115369da05dfc8dda78f938f74e8fbf5c4c28a3 | SOURCE_PIN |
 | resource-manifest | 资源清单与保留建议 | verification/GOV-CHECKER-NOTASK-1/resource-manifest.md | 0bea9c190a1162170f0f16122698fab699230488 | 512725a0398eb01ecfdf32a08d213129fa24cba9cd6cdeda7eb534fcc0041641 | SOURCE_PIN |
+| final-adjudication | 独立 ZCode 最终裁决 | doc/reviews/GOV-CHECKER-NOTASK-1-zcode-final-adjudication-2026-11-11.md | 05d1f5cd29cfc860d3ee12166db87136e409eaff | bd9a500f7155511855a83571c5c1ef74820a34f817b61f7edaf8d4039ce9c255 | CANONICAL |
+| closeout-gates | AC3 主树 dirty 候选四项门禁 | verification/GOV-CHECKER-NOTASK-1/closeout-gates-05d1f5c-G1.log | 685d3a9e22e7adfb1d032f7b202e5390146e4b05 | fbecc78cdbec32ed8378f84ea7bdbb0e344b99e0f4f9f93651e02385dc92ac06 | CANONICAL |
 
 ## Resource Manifest
 
@@ -95,12 +97,13 @@ allowed_paths:
 | dataset/model/test-material | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | 无外部数据 |
 | artifact | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | 无安装包 |
 | temp | G:/CODEX/New Manga.workspace/GOV-CHECKER-NOTASK-1/ | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/GOV-CHECKER-NOTASK-1/ | verification/GOV-CHECKER-NOTASK-1/resource-manifest.md | 三个隔离副本保留；未清理 |
-| agent-output | G:/CODEX/New Manga.workspace/GOV-CHECKER-NOTASK-1/ | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/GOV-CHECKER-NOTASK-1/ | verification/GOV-CHECKER-NOTASK-1/resource-manifest.md | 六份原始日志保留；hash 见清单 |
+| agent-output | G:/CODEX/New Manga.workspace/GOV-CHECKER-NOTASK-1/ | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/GOV-CHECKER-NOTASK-1/ | verification/GOV-CHECKER-NOTASK-1/resource-manifest.md | 六份初始日志及 G1、过渡 gate 日志保留；后两项 hash 见 Closeout |
 | exchange | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | 无 |
 
 ## Closeout Record
 
-- Closeout date / adjudicator：待关闭。
-- canonical_evidence_status / resource_closeout_status：pending / pending。
-- 删除、迁移、归档数量/字节数：待关闭；当前无操作。
-- 未关闭项及当前指针清理：待关闭。
+- Closeout date / adjudicator：2026-11-11 / ZCode `sess_6f299f99-83a7-4d04-a749-dade19f47d9a`，v2 裁决采信独立 Review；`integration_commit` 为直接 main 交付的集成验证基准 `62ab6b735961359b8a29984484033747b221fee4`，含实现、交付证据和 Review。
+- canonical_evidence_status / resource_closeout_status：complete / complete；Review F-1 按 v2 顺序处置，F-2 已以资源清单替换占位，F-3 预算由门禁验证，F-4 证据目录已登记并由 TaskPath 复核。
+- 删除、迁移、归档数量/字节数：0；主 worktree、三个隔离副本和原始日志保留。仓外 G1 日志 SHA-256 `8b8d959f82555f83587da84ffbafb8daad7fc602d040fa3ee1c675c5494922d4`；过渡日志路径 `G:/CODEX/New Manga.workspace/GOV-CHECKER-NOTASK-1/transitional-gates-685d3a9.log`。
+- 过渡日志实际 SHA-256：`27a8baed3e6cc70c11a7b4735130822748e995250d3cfe5cfecafc21aa50c59b`；HEAD `685d3a9e22e7adfb1d032f7b202e5390146e4b05` 时 TaskPath 因 G1 日志尚未登记而 EXIT 1，其余三项 EXIT 0；本 pin 回填消除该暂态，未将其记为 PASS。
+- 未关闭项及当前指针清理：STATUS 空窗、Plan done、Ledger 重生成；R-001 保持 open P2，后续 Task 尚未释放。空窗候选和 clean 终态验证见 closeout gate 记录及最终复跑。
