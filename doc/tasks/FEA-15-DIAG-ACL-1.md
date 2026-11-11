@@ -59,7 +59,7 @@ out_of_scope:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-01 | AC1–AC5 | `verification/FEA-15-DIAG-ACL-1/README.md` | `49a40cd46533573b7324bde69215b8d3950a66b4` | `60d6a3515a7fa89e3afda486efa94c34e2eb71a74d4bdcbb23be8711ab6f7ed1` | CANONICAL |
+| EV-01 | AC1–AC5 | `verification/FEA-15-DIAG-ACL-1/README.md` | `4ddb3cbd72f0e1f7c0c46a046b80dc6fe9a29fe7` | `4761cffa54478e2c3f4ad2bfcf9922deacf084f0f95d733f290a7f3fe265cd8d` | CANONICAL |
 | EV-02 | AC1 | `verification/FEA-15-ACCEPT-1/plugin-control.log` | `c06d06377dc7e7a9cb5e7ee83a067a28ec0d0488` | `86422c6a9f385699d2614067b0600dcf9740244fe98750a48bfcf8d80e55232e` | CANONICAL |
 | EV-03 | AC2 | `verification/FEA-15-ACCEPT-1/dotnet-host-control.log` | `c06d06377dc7e7a9cb5e7ee83a067a28ec0d0488` | `0ce018b15aa1413d02eeaf27b04afe3758ccb2d94bd8bdd882d3fcf29b5530ec` | CANONICAL |
 | EV-04 | AC3 | `verification/FEA-15-ACCEPT-1/python-acl-observation.log` | `c06d06377dc7e7a9cb5e7ee83a067a28ec0d0488` | `4ef940a1bb3dfd567f7cf2be23679d344c578db6989c620b3a288fbfbbe8a385` | CANONICAL |
@@ -69,14 +69,14 @@ out_of_scope:
 | SRC-03 | supporting | `verification/FEA-15-DIAG-ACL-1/volume-observation.log` | `c06d06377dc7e7a9cb5e7ee83a067a28ec0d0488` | `7e2d56b13357d360cac90fbe97364490709dbf353ec03e4d08c8d9c317fca5cb` | SOURCE_PIN |
 | SRC-04 | supporting | `verification/FEA-15-DIAG-ACL-1/volume-winapi.log` | `c06d06377dc7e7a9cb5e7ee83a067a28ec0d0488` | `05b8e504c104e5bf192b5f9d3260e8d6a9d227ae6d64dd967e7f4422a086b714` | SOURCE_PIN |
 | SRC-05 | supporting | `verification/FEA-15-DIAG-ACL-1/acl-probe.log` | `c06d06377dc7e7a9cb5e7ee83a067a28ec0d0488` | `fc661835ee481a8421f389e5a7024393998c8a864f7af03f1544daf5892b2ef2` | SOURCE_PIN |
-| SRC-06 | supporting | `verification/FEA-15-DIAG-ACL-1/checkpoint.md` | `49a40cd46533573b7324bde69215b8d3950a66b4` | `29241bce7795c2d62d210940528c71913fb42399fbf7362e59f1090eaa13a562` | SOURCE_PIN |
+| SRC-06 | supporting | `verification/FEA-15-DIAG-ACL-1/checkpoint.md` | `4ddb3cbd72f0e1f7c0c46a046b80dc6fe9a29fe7` | `dffb98bb9a3a3e431d63d1a543404def86e4c90fc94ece56656efe518ce6bc22` | SOURCE_PIN |
 | SRC-07 | supporting | `verification/FEA-15-ACCEPT-1/v7-repro-2.log` | `c06d06377dc7e7a9cb5e7ee83a067a28ec0d0488` | `8e0abc01bec34b3e38cc3a9e6117d34f443529552d60405ca2860c271779a6e6` | SOURCE_PIN |
 | SRC-08 | supporting | `verification/FEA-15-ACCEPT-1/v7-v14-probe.log` | `c06d06377dc7e7a9cb5e7ee83a067a28ec0d0488` | `bf1413267cffabc37b9f58e19526ae1e2ff4c0b98df9278f8c619d3e2cfe9dd7` | SOURCE_PIN |
 | SRC-09 | supporting | `verification/FEA-15-DIAG-ACL-1/appointment.md` | `dea98ce8f93a3dfd3bdab84457a212d02804dba2` | `ddd63c36390fc5a3a2e3bcc337f90696b00e2d3f2f74e0372565cead4aed04ad` | SOURCE_PIN |
 | SRC-10 | supporting | `verification/FEA-15-DIAG-ACL-1/gates-review.log` | `97145556a7be4865dae3b5bfe2868cf7fbf90e1d` | `a0d56069846c0fe9c1017dc57dfb3fd46575ca42636d74194eb00785c2c3a1c9` | SOURCE_PIN |
 | SRC-11 | independent review | `doc/reviews/FEA-15-DIAG-ACL-1-r1.md` | `dea98ce8f93a3dfd3bdab84457a212d02804dba2` | `15db12605a2273152183bdbdc57d40342acfbe7b6050a32e2767129cf8ccf305` | SOURCE_PIN |
-| SRC-12 | handoff | `doc/handoffs/FEA-15-DIAG-ACL-1-h1.md` | `49a40cd46533573b7324bde69215b8d3950a66b4` | `3b240696bb286dfe419dd552ee64c77a0247d60300a45b02cf62197e07bcda02` | SOURCE_PIN |
-| SRC-13 | terminal gates | `verification/FEA-15-DIAG-ACL-1/gates-terminal.log` | `49a40cd46533573b7324bde69215b8d3950a66b4` | `6482c684024eb10d4161a052e3adb92db389b82f141158af774a6b5797e3478c` | SOURCE_PIN |
+| SRC-12 | handoff | `doc/handoffs/FEA-15-DIAG-ACL-1-h1.md` | `4ddb3cbd72f0e1f7c0c46a046b80dc6fe9a29fe7` | `891bad4ebb79d0f4f9b6f290feb51b86c14e8f740cc5fde166bbbc5a0379f52f` | SOURCE_PIN |
+| SRC-13 | terminal gates | `verification/FEA-15-DIAG-ACL-1/gates-terminal.log` | `4ddb3cbd72f0e1f7c0c46a046b80dc6fe9a29fe7` | `adc93271a9dd4379f67ba95d945dbfe9066651090fdee492bb545789cf801fb1` | SOURCE_PIN |
 
 ## Closeout Record
 
@@ -85,6 +85,7 @@ out_of_scope:
 - 2026-11-11：完成只读诊断并将证据固定于 `c06d06377dc7e7a9cb5e7ee83a067a28ec0d0488`；AC1–AC3/AC5 保留 partial，AC4 met；所有未知资源保留。
 - 2026-11-11：独立上下文 Reviewer `/root/fea15_diag_acl_review` 完成只读 Review，结论 `approved`、P0=0/P1=0；报告固定于 `doc/reviews/FEA-15-DIAG-ACL-1-r1.md`，审查对象为 `610839af8348f8b1f36e18a623e9fc40882051b5`。
 - 2026-11-11：主 Agent 按当前授权签发阶段结论 `closed_with_limitations`；AC1–AC3 保持 `PARTIAL`，AC4/AC5 为 `MET`。终态治理门禁结果与命令日志见 `verification/FEA-15-DIAG-ACL-1/gates-terminal.log`。
+- 2026-11-11 03:03:50 UTC：在干净 `main` HEAD `05b22084828bff3ad27a96093652beff92dbe108` 完成 Task pin 回填后的终态门禁复核：default PASS（3 warnings，EXIT 0）；TaskPath PASS（5 warnings，EXIT 0）；`verify_pins.ps1` 18/18 PASS（EXIT 0）。
 - Closeout date / adjudicator：2026-11-11 / Codex primary Agent。
 - canonical_evidence_status：`complete`。
 - resource_closeout_status：`complete`；删除、迁移、归档：0。
