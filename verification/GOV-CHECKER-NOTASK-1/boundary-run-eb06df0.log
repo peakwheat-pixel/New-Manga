@@ -1,0 +1,66 @@
+HEAD_GENERATED=eb06df0d8e8521d43753823a8ef00166f19121b1
+HEAD_EXIT=0
+CLONE_STATUS_BEFORE=CLEAN
+STATUS_EXIT=0
+STARTED=2026-11-11T09:30:10.432644+00:00
+CHECKER_SHA256=d1c2f6632c384bbf53a8ea8cc740ea86338f8ee30c5d9b989181978ff5fe765b
+
+CASE=empty-suffix
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 14 current documents; no historical directory scan.
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3014 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6966 bytes / 64 lines
+FAIL: STATUS 未提供可解析的当前 Task 指针。
+FAIL: 当前 Task 文件不存在：
+Governance check: FAIL (2 errors, 3 warnings)
+EXIT=1
+
+CASE=empty-with-missing-path
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 14 current documents; no historical directory scan.
+Task: doc\tasks\GOV-CHECKER-NOTASK-MISSING.md
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3049 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6966 bytes / 64 lines
+FAIL: 当前 Task 文件不存在：G:\CODEX\New Manga.workspace\GOV-CHECKER-NOTASK-1\baseline-blob\doc\tasks\GOV-CHECKER-NOTASK-MISSING.md
+Governance check: FAIL (1 errors, 3 warnings)
+EXIT=1
+
+CASE=duplicate-empty-and-active
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\GOV-CHECKER-NOTASK-1.md
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3080 bytes / 32 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6966 bytes / 64 lines
+Governance check: PASS (3 warnings)
+EXIT=0
+
+CASE=empty-unclosed-comment
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 14 current documents; no historical directory scan.
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3023 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6966 bytes / 64 lines
+FAIL: STATUS 未提供可解析的当前 Task 指针。
+FAIL: 当前 Task 文件不存在：
+Governance check: FAIL (2 errors, 3 warnings)
+EXIT=1
+
+CASE=empty-contradictory-text
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 14 current documents; no historical directory scan.
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3041 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6966 bytes / 64 lines
+FAIL: STATUS 未提供可解析的当前 Task 指针。
+FAIL: 当前 Task 文件不存在：
+Governance check: FAIL (2 errors, 3 warnings)
+EXIT=1
+
+CLONE_STATUS_AFTER=CLEAN
+STATUS_EXIT=0
+FINISHED=2026-11-11T09:30:15.213436+00:00
+BOUNDARY_BASELINE=PASS
+HARNESS_EXIT=0
