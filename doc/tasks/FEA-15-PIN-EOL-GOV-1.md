@@ -3,7 +3,7 @@ id: FEA-15-PIN-EOL-GOV-1
 title: 证据 pin 行尾与跨 checkout 可复现性治理
 kind: governance
 governance_version: 3
-status: approved
+status: done
 approval: ZCode 2026-11-11 裁决释放（独立 CLI 会话；[adjudication](../reviews/FEA-15-DIAG-ACL-1-zcode-adjudication-2026-11-11.md) §4）；本轮用户单次授权：只读治理阶段
 suggested_owner: codex
 owner: codex
@@ -77,6 +77,14 @@ out_of_scope:
 | matrix-samples | AC2 support | `verification/FEA-15-PIN-EOL-GOV-1/checkout-samples.json` | `642088933d2c3a027647a82099ad4016d3baade0` | `6d5ce6b050f460555786194b05a3e345d67554bcef6057d38a2a392cf47f47df` | CANONICAL |
 | matrix-setup-log | AC2 support | `verification/FEA-15-PIN-EOL-GOV-1/checkout-setup.log` | `642088933d2c3a027647a82099ad4016d3baade0` | `673b7108e8b3757254685a69972a98f5a9f6c1e7784435e1e6fd09ebb321dd51` | CANONICAL |
 | initial-gate-log | Gate history | `verification/FEA-15-PIN-EOL-GOV-1/gate-baseline.log` | `642088933d2c3a027647a82099ad4016d3baade0` | `ca54918ae5666307031c4e4819437ec305453e24468f503904a29f3de7daf7a7` | CANONICAL |
+| gate-current-attempt | Gate history | verification/FEA-15-PIN-EOL-GOV-1/gate-current.log | 996f9768985ee121767bd750d24b1cdfe74dd186 | 6eae9fcfb5ad8a3bc7dfb0884a302d81df6f7d05edbf11b9d2bfb4dff11a70db | SOURCE_PIN |
+| gate-post-evidence-attempt | Gate history | verification/FEA-15-PIN-EOL-GOV-1/gate-post-evidence.log | 18e1bd2244f19a186b856a414c7c5c166f329627 | a4b78e29118dd09e42a08cbf39e6fc4ac836b21fdb95002096a944e611811f98 | SOURCE_PIN |
+| inventory-generator | AC1 support | verification/FEA-15-PIN-EOL-GOV-1/pin_inventory.py | 948d73e0629869e560df9a2b2d8a357cec67027f | 0533568126485d6b0e737e964b050c39e5c2204bfea55980837c0d1c7614ea92 | SOURCE_PIN |
+| inventory-run-log | AC1 support | verification/FEA-15-PIN-EOL-GOV-1/pin-inventory-run.log | ef6253677a608f285e1c86a321712e45ae54cfef | 44eb4f319cb0cbc5d9abe95d2dd683111f403c8b6f1b2389baac0c0e29cab46f | SOURCE_PIN |
+| task-readme | Summary | verification/FEA-15-PIN-EOL-GOV-1/README.md | 642088933d2c3a027647a82099ad4016d3baade0 | 41321989ab6ba704f4a651ba7c9ae42dba176e50087b8472ddc7a64eb89361c2 | CANONICAL |
+| resource-manifest | Resource closeout | verification/FEA-15-PIN-EOL-GOV-1/resource-manifest.json | 642088933d2c3a027647a82099ad4016d3baade0 | fcdf911d3d332620626ceec4a196e1734042944621a86c9797bdfecdea85f80c | CANONICAL |
+| snapshot-clone-setup-log | AC2 support | verification/FEA-15-PIN-EOL-GOV-1/snapshot-clone-setup.log | ef6253677a608f285e1c86a321712e45ae54cfef | 731f098f9f078794aac344f7ed881f50f03ecf81b9ea22adacfd74485d0ee6e5 | SOURCE_PIN |
+| ignored-python-bytecode | Preserved local process file | verification/FEA-15-PIN-EOL-GOV-1/__pycache__/pin_inventory.cpython-314.pyc | - | 02ca960eae2f71e340aaeacadcfe09f4565ef8fdacd76d165e652779a600d318 | SOURCE_PIN |
 
 ## Closeout Record
 
@@ -90,3 +98,6 @@ out_of_scope:
 - 2026-11-11：于干净 `main` HEAD=`d9c6360bb4cfcee970c0fe21f825e58b0d26df09` 实际运行四项集成门禁，时间 `13:43:55–13:43:57 +08:00`，default/TaskPath checks 各 PASS（4 warnings），pins 18/18 PASS，API 1/79/6=86；均 EXIT 0。日志在外部 agent-output，SHA-256 `37c2da16292f916696936796881bf2a4cf5653359f10e389aeebc4286b79c520`，资源清单 23/23 文件哈希核验一致。验证 head 作为 `integration_commit`；无 merge / push。
 - 2026-11-11：R-001 保持 open P2 non-blocking；其 WORKTREE 基准限制与产品 pytest/.NET、Linux fresh clone、renormalize simulation `NOT_RUN` 均保留。资源 Manifest 三项均 `PRESERVE_REFERENCED`，资源检查完成，0 删除/迁移/归档。Task 已按 ZCode 裁决进入 `approved`；终态关闭因默认治理门禁要求 STATUS 有非终态当前 Task 指针，而本范围不能释放后继 Task，待 ZCode 对该状态约束裁决。
 - 2026-11-11：ZCode adjudication #2（`sess_8df67a95-be8f-4518-89fe-d71e950d9cff` 续接）确认维持 `approved`、暂不 `done`：checker 同时强制当前 Task 指针且拒绝终态指针；无授权后继 Task 时无法兼顾 done 与 default gate 全绿。报告 SHA-256 `0f422404…`，commit `9893e28c8a614baf0fd369840883578c14840f86`。R-001 与 NOT_RUN 不变；解锁须另行授权释放后继 Task 或 checker 生命周期修订 Task。
+
+- 2026-11-11：用户明确授权持续推进、自动计划、全部授权并委托 ZCode 裁决；ZCode 独立只读会话 sess_236d9541-8358-45f0-9318-4844a86a767e 裁决释放 FEA-15-PIN-POLICY-1，并将本卡置 done 以切换当前 Task 指针。R-001 转由后继卡作口径裁定；不更改历史 pin、checker、.gitattributes 或本卡 AC 结果。
+- Closeout：Canonical Evidence 已登记 evidence_dir 全部 20 个文件（19 个 tracked 文件 + 1 个 ignored bytecode source pin）；资源 Manifest 三项均 PRESERVE_REFERENCED，未删除、迁移或归档；当前指针切换至 FEA-15-PIN-POLICY-1。本卡 pytest/.NET、Linux fresh clone 与 renormalize simulation 保持 NOT_RUN；R-001 保持 open P2 并移交新卡裁定。
