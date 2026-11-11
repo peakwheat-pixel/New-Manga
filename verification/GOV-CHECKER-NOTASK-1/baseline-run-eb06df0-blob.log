@@ -1,0 +1,154 @@
+HEAD_GENERATED=eb06df0d8e8521d43753823a8ef00166f19121b1
+HEAD_EXIT=0
+CLONE_STATUS_BEFORE=CLEAN
+STATUS_EXIT=0
+STARTED=2026-11-11T09:26:28.716667+00:00
+CHECKER_SHA256=d1c2f6632c384bbf53a8ea8cc740ea86338f8ee30c5d9b989181978ff5fe765b
+
+CASE=active
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\GOV-CHECKER-NOTASK-1.md
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3095 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6966 bytes / 64 lines
+Governance check: PASS (3 warnings)
+EXIT=0
+
+CASE=explicit-empty
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 14 current documents; no historical directory scan.
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3105 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6966 bytes / 64 lines
+FAIL: STATUS 未提供可解析的当前 Task 指针。
+FAIL: 当前 Task 文件不存在：
+Governance check: FAIL (2 errors, 3 warnings)
+EXIT=1
+
+CASE=missing-line
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 14 current documents; no historical directory scan.
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3012 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6966 bytes / 64 lines
+FAIL: STATUS 未提供可解析的当前 Task 指针。
+FAIL: 当前 Task 文件不存在：
+Governance check: FAIL (2 errors, 3 warnings)
+EXIT=1
+
+CASE=ambiguous-empty
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 14 current documents; no historical directory scan.
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3014 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6966 bytes / 64 lines
+FAIL: STATUS 未提供可解析的当前 Task 指针。
+FAIL: 当前 Task 文件不存在：
+Governance check: FAIL (2 errors, 3 warnings)
+EXIT=1
+
+CASE=missing-path
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 14 current documents; no historical directory scan.
+Task: doc\tasks\GOV-CHECKER-NOTASK-MISSING.md
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3053 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6966 bytes / 64 lines
+FAIL: 当前 Task 文件不存在：G:\CODEX\New Manga.workspace\GOV-CHECKER-NOTASK-1\baseline-blob\doc\tasks\GOV-CHECKER-NOTASK-MISSING.md
+Governance check: FAIL (1 errors, 3 warnings)
+EXIT=1
+
+CASE=terminal-pointer
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-15-PIN-POLICY-1.md
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3058 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6966 bytes / 64 lines
+FAIL: STATUS 仍指向终态 Task：done
+FAIL: Evidence SHA-256 不匹配：doc/reviews/FEA-15-PIN-POLICY-1-zcode-release-adjudication-2026-11-11.md
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/release-gates-0730335.log
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/pin-inventory.json
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/pin-inventory-run.log
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/pin-inventory-delta.json
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/pin-inventory-delta-run.log
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/pin-r194-baseline-matrix.json
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/pin-r194-baseline-matrix-run.log
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/delivery-gates-e9f7bb1.log
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/delivery-gates-359d09d.log
+FAIL: Evidence SHA-256 不匹配：doc/handoffs/FEA-15-PIN-POLICY-1-e9f7bb1.md
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/closeout-gates-A-6f3c4c9.log
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/closeout-gates-B-68d1afc.log
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/closeout-gates-F-2a1b917.log
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/delivery-gates-d26c43c.log
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/pin-inventory-preliminary-da4a60b.json
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/pin-inventory-preliminary-run-da4a60b.log
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/pin-inventory-preliminary-delta-da4a60b.json
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/pin-inventory-preliminary-delta-run-da4a60b.log
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/pin-r194-preliminary-matrix-da4a60b.json
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/pin-r194-preliminary-matrix-run-da4a60b.log
+FAIL: Canonical evidence 路径缺失：verification/FEA-15-PIN-POLICY-1/__pycache__/pin_inventory_delta.cpython-314.pyc
+FAIL: Canonical evidence 路径缺失：verification/FEA-15-PIN-POLICY-1/__pycache__/pin_r194_matrix.cpython-314.pyc
+FAIL: Evidence SHA-256 不匹配：verification/FEA-15-PIN-POLICY-1/README.md
+Governance check: FAIL (25 errors, 3 warnings)
+EXIT=1
+LEDGER_EXIT=0
+Task ledger (reproducible from doc/tasks/*.md)
+  task files            : 586  (tracked 586, untracked drafts 0)
+  terminal              : 575
+  non-terminal          : 10  (tracked 10, untracked drafts 0)
+    own plan row        : 1
+    named anywhere      : 1
+    outside the plan    : 9
+  by status:
+    done                     485 (terminal)
+    closed_with_limitations   53 (terminal)
+    cancelled                 18 (terminal)
+    historical                11 (terminal)
+    superseded                 8 (terminal)
+    proposed                   5
+    in_review                  2
+    (none)                     1
+    approved                   1
+    blocked                    1
+    ready                      1
+
+  4 task(s) in a state that implies activity or dispatchability:
+  (r38: none of these may be bulk-closed; each needs individual proof)
+    approved                 GIT-CLEAN-PUBLICATION-DIAG-1                   outside
+    in_review                GIT-CLEAN-PUBLICATION-1                        outside
+    in_review                GIT-CLEAN-RUST-ISOLATION-1                     outside
+    ready                    GIT-CLEAN-RUST-CAPACITY-DESIGN-1               outside
+
+  wrote doc\TASK_LEDGER.md
+
+
+CASE=done-pending-integration
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/GOV-CHECKER-NOTASK-1.md
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\GOV-CHECKER-NOTASK-1.md
+WARN: 存在 10 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3095 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6966 bytes / 64 lines
+FAIL: STATUS 仍指向终态 Task：done
+FAIL: 进入 REVIEW/DONE 的 lifecycle v2 Task 必须列出 canonical evidence。
+FAIL: DONE 必须记录 integration_commit。
+FAIL: DONE 必须设置 canonical_evidence_status: complete。
+FAIL: 终态或已集成的 approved Task 必须设置 resource_closeout_status: complete。
+FAIL: DONE 不能保留未完成 Acceptance Criteria；范围未完成时使用 closed_with_limitations。
+FAIL: Resource manifest 不存在：待记录
+FAIL: Resource 最终路径未验证：同源
+FAIL: Resource manifest 不存在：待记录
+FAIL: DONE Task 不得包含未达成状态（PARTIAL）的 AC：AC1；范围未达成时请使用 closed_with_limitations。
+FAIL: DONE Task 不得包含未达成状态（PARTIAL）的 AC：AC2；范围未达成时请使用 closed_with_limitations。
+FAIL: DONE Task 不得包含未达成状态（PARTIAL）的 AC：AC3；范围未达成时请使用 closed_with_limitations。
+Governance check: FAIL (12 errors, 3 warnings)
+EXIT=1
+
+CLONE_STATUS_AFTER=CLEAN
+STATUS_EXIT=0
+RESTORE_SHA256=STATUS.md:ddcabf18414b9699498f1ea69a857c21e194f80a0a355c08c073bf6ee9eb6a4e,GOV-CHECKER-NOTASK-1.md:88791c4811d722ec5346291392ce35bf30f03b00a7c63f90a2792175d06bfdbb,TASK_LEDGER.md:6ce7db5a84fd9829ef782c4061ca15d20f56a88c4c16a67ec190df2b6458bf49
+FINISHED=2026-11-11T09:26:39.639667+00:00
+MATRIX_EXPECTATIONS=PASS
+HARNESS_EXIT=0
