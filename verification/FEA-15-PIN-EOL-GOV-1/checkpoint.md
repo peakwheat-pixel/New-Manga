@@ -1,6 +1,6 @@
 # Checkpoint — FEA-15-PIN-EOL-GOV-1
 
-- Timestamp: 2026-11-11 13:57:56 +08:00
+- Timestamp: 2026-11-11 14:05:28 +08:00
 - Agent: Codex
 - TaskStatus / ExecutionState: `approved` / `INTEGRATED_APPROVED`
 - Branch / worktree: `main` / `G:/CODEX/New Manga`
@@ -25,7 +25,7 @@
 
 ## Current status / next exact step
 
-Task is `approved` with `integration_commit=d9c6360bb4cfcee970c0fe21f825e58b0d26df09` and complete resource closeout. R-001 remains open P2. Product pytest/.NET suites, Linux fresh clone, and renormalize simulation remain `NOT_RUN` and out of scope. A final-state governance check exposed that `check.ps1` rejects a terminal Task while STATUS has no active Task pointer, while project rules prohibit retaining a terminal pointer or auto-releasing a new Task. Keep this Task at `approved` pending ZCode adjudication of that checker/lifecycle conflict; do not modify checker semantics or release a new Task here.
+Task is `approved` with `integration_commit=d9c6360bb4cfcee970c0fe21f825e58b0d26df09` and complete resource closeout. R-001 remains open P2. Product pytest/.NET suites, Linux fresh clone, and renormalize simulation remain `NOT_RUN` and out of scope. ZCode adjudication #2 confirms the `check.ps1` current-Task-pointer requirement conflicts with a terminal Task when there is no authorized successor. Keep this Task at `approved` with default/TaskPath gates green; do not modify checker semantics, release a new Task, or point STATUS at a terminal Task without additional authorization.
 
 - Evidence: `pin-inventory.json`, `checkout-matrix.json`, `checkout-samples.json`, `candidate-policy-analysis.md`, `README.md`, `gate-final.log`, `resource-manifest.json`, `doc/reviews/FEA-15-PIN-EOL-GOV-1-r1.md`, and the ZCode adjudication report.
 - Resume Safety: `RESUME_SAFE`; current pointer updates are Task-scoped. Compare current HEAD and these exact files before resuming.
