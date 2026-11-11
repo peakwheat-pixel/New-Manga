@@ -3,7 +3,7 @@ task_id: FEA-15-PIN-POLICY-1
 author: Codex
 recipient: ZCode
 base_commit: 4efc592d12c25b8be33502f53c9270ad0597adfd
-delivery_head: e9f7bb1b48c885cb329848d2d3591e145ff3d229
+delivery_head: 359d09dffc489c8762727cf69b778cba6f432843
 status: draft_pending_review
 ---
 
@@ -24,6 +24,7 @@ status: draft_pending_review
 | `2ee6a5a024aede32a61e7907a865879eac7c8d70` | preliminary delta/matrix 与 checkpoint |
 | `e9f7bb1b48c885cb329848d2d3591e145ff3d229` | delivery measurement HEAD：裁定提案、影响面方案、matrix generator |
 | `19ccd9b60f319c632ee034db38b235364e594da6` | delivery HEAD 的最终 inventory/delta/matrix、运行日志与门禁日志 |
+| `89bb3fb27facee036c7a4402bb545c30478dea19` | 最终 delivery gate log（生成 HEAD `359d09d...`） |
 
 主要产物均在 `verification/FEA-15-PIN-POLICY-1/`：`pin-basis-ruling.md`、`pin-basis-impact-plan.md`、`pin-inventory.json`、`pin-inventory-delta.json`、`pin-r194-baseline-matrix.json`、对应 run logs、`delivery-gates-e9f7bb1.log`。最终 inventory 的 `measured_head` 为 delivery HEAD `e9f7bb1...`；最终证据提交只增加生成文件与日志，没有改变该 HEAD 的 pin 行 universe。
 
@@ -73,7 +74,7 @@ python tools/generate_api_inventory.py --check
 
 ## 接收方式
 
-- Repository: `G:/CODEX/New Manga`; branch: `main`; delivery measurement HEAD: `e9f7bb1b48c885cb329848d2d3591e145ff3d229`; 当前 evidence commit: `19ccd9b60f319c632ee034db38b235364e594da6`。
+- Repository: `G:/CODEX/New Manga`; branch: `main`; final review delivery HEAD: `359d09dffc489c8762727cf69b778cba6f432843`; inventory measurement HEAD: `e9f7bb1b48c885cb329848d2d3591e145ff3d229`; updated delivery gates generated at HEAD `359d09dffc489c8762727cf69b778cba6f432843` and committed in `89bb3fb27facee036c7a4402bb545c30478dea19`.
 - ZCode Reviewer 应使用新的独立 CLI session，只读精确 delivery HEAD、当前 AC1/AC2 文件与 run evidence；review session 与最终 adjudication session 必须不同，也不得复用本实现会话或 Task release session。
 - 本文在 delivery head 后形成；后续 commit 会把此 Handoff 与 Canonical Evidence 绑定到 Task 卡。
 
