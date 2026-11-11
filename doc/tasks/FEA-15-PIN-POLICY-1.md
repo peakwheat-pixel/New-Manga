@@ -13,7 +13,7 @@ depends_on:
 base_commit: 4efc592d12c25b8be33502f53c9270ad0597adfd
 branch: main
 worktree: G:/CODEX/New Manga
-integration_commit: pending
+integration_commit: 6f3c4c9156e52c9dc56dc0ca41c2f949fa3dd903
 delivery_head: 359d09dffc489c8762727cf69b778cba6f432843
 canonical_evidence_status: complete
 resource_closeout_status: complete
@@ -94,6 +94,7 @@ AC 状态语法按 doc/09_COLLABORATION.md §4.3；进入 in_review 前所有 AC
 | review-report | AC1/AC3 independent ZCode Review | doc/reviews/FEA-15-PIN-POLICY-1-zcode-review-2026-11-11.md | 4b64e740345e18e2f05954d3a1e565b15b8dc36f | feab867be474d334387ef93ade5bfe91e97bbe8ba123567757f339d61f3cb1e7 | CANONICAL |
 | final-adjudication | AC1/AC3 ZCode final policy adjudication | doc/reviews/FEA-15-PIN-POLICY-1-zcode-adjudication-2026-11-11.md | 534c6d3ef7a9683147499b2207ff9fa94b88518d | dcaf7e47a07589179b01d9a1cea1287288e6a648b9f41f638aebb9c17c19850c | CANONICAL |
 | closeout-adjudication-addendum | AC3 no-current-task default gate adjudication | doc/reviews/FEA-15-PIN-POLICY-1-zcode-adjudication-addendum-2026-11-11.md | d119b5d7c2aa938d709408d85c77689402474f70 | abf8d0f4d7483cbe6ece04d2d68106dd14148ca1e31e395381d5dc7dd94847e2 | CANONICAL |
+| staged-closeout-gates-A | AC3 staged closeout gate outcomes (expected transitional failures) | verification/FEA-15-PIN-POLICY-1/closeout-gates-A-6f3c4c9.log | d891e853d49ed81c07964705afde3322c6a54aaf | 9df9f45db43d87614a0d4a242b4b8fa086efe8cf89a80f0db6721a9282528b58 | SOURCE_PIN |
 | delivery-gates-post-pinbackfill | AC3 clean post-pinbackfill gate run | verification/FEA-15-PIN-POLICY-1/delivery-gates-d26c43c.log | e2399f3a68780760add53bde3007ab42dc302a9d | 0ea74a8044674248d4f9c044a661874be5d065e5acde51c8bf68e65a6b7fa758 | CANONICAL |
 | inventory-generator | AC1 inventory generator source | verification/FEA-15-PIN-POLICY-1/pin_inventory.py | da4a60baafba18281f156330b9ed1646045edb6d | 11e39fac240080a6f4ad10164aff35d2033742746a8f5c011042656b9948e7d7 | SOURCE_PIN |
 | delta-generator | AC1 delta generator source | verification/FEA-15-PIN-POLICY-1/pin_inventory_delta.py | 1d48d9b13698e9b4d7e2549b26fc7795b957cb65 | 86312df973c7ed161cc0dc63cedf77211a59d5c985a5c6ac394cfdc9e295f9b0 | SOURCE_PIN |
@@ -125,7 +126,7 @@ AC 状态语法按 doc/09_COLLABORATION.md §4.3；进入 in_review 前所有 AC
 
 ## Closeout Record
 
-- Closeout date / adjudicator：2026-11-11 / ZCode session `sess_39001b09-6b67-417a-b81d-85f3e62ec80d`；closeout 由 Codex 按用户接续授权执行；Task 卡集成哈希将在下一 pinbackfill commit 回填。
+- Closeout date / adjudicator：2026-11-11 / ZCode session `sess_39001b09-6b67-417a-b81d-85f3e62ec80d`；closeout 由 Codex 按用户接续授权执行；`integration_commit` 指向 closeout commit A `6f3c4c9156e52c9dc56dc0ca41c2f949fa3dd903`。过渡门禁结果见 `staged-closeout-gates-A-6f3c4c9.log`，预期失败未冒充 PASS。
 - canonical_evidence_status：complete。
 - resource_closeout_status：complete。
 - 删除、迁移、归档数量/字节数：0；本卡禁止资源清理。
