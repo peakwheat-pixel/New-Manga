@@ -3,7 +3,7 @@ id: GOV-REFINCIDENT-1
 title: main 引用损坏事故只读调查与证据固化
 kind: governance
 governance_version: 3
-status: ready
+status: in_progress
 approval: ZCode session sess_84bc17dc-2b59-4dac-b4ba-46768d80fd97；doc/reviews/GOV-REFINCIDENT-1-zcode-release-2026-11-11.md
 suggested_owner: codex
 owner: codex
