@@ -91,3 +91,4 @@ out_of_scope:
 - resource_closeout_status：`complete`；删除、迁移、归档：0。
 - 未关闭项及保留原因：精确 Host ACL 拒绝条件、sandbox 失败阶段和 ACE/profile 归属未知；62 个 fixture 候选按 `PRESERVE_UNKNOWN` 原位保留；所有 `NOT_RUN` 见 README。
 - 当前指针清理：STATUS、Plan、Task Ledger、Handoff 与 rolling checkpoint 已更新；继任 Task 仍为 `proposed`，未释放、未实施。
+- 2026-11-11：ZCode 独立 CLI 会话终态复核（[adjudication](../reviews/FEA-15-DIAG-ACL-1-zcode-adjudication-2026-11-11.md)）：**确认** `closed_with_limitations`；18 条 pin 独立复算 PASS（11 条 WORKTREE 基准与 r1 记录吻合）；AC1–AC3 PARTIAL / AC4–AC5 MET 维持；两段 diff 均 ⊆ allowed_paths。同轮裁决释放 `FEA-15-PIN-EOL-GOV-1`（ready，只读治理）。
