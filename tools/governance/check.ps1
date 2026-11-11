@@ -191,9 +191,18 @@ $statusPath = Join-Path $repoRoot 'doc/STATUS.md'
 $statusText = Get-Content -LiteralPath $statusPath -Raw
 $activeMatch = [regex]::Match($statusText, '(?m)^-\s*当前 Task：.*?\((?<path>tasks/[^)]+\.md)\)')
 $activeTaskPath = $null
+$noCurrentTask = $false
 if ($activeMatch.Success) { $activeTaskPath = [IO.Path]::GetFullPath((Join-Path (Join-Path $repoRoot 'doc') $activeMatch.Groups['path'].Value)) }
 if (-not $TaskPath) {
-    if (-not $activeMatch.Success) { Add-Error 'STATUS 未提供可解析的当前 Task 指针。' }
+    if (-not $activeMatch.Success) {
+        foreach ($line in ($statusText -split '\r?\n')) {
+            $emptyDeclaration = $line -match '^-\s*当前 Task：无[ \t]*$' -or
+                $line -match '^-\s*当前 Task：无（[^）]*）[。]?[ \t]*$'
+            if ($emptyDeclaration -and $line -notmatch '(?i)tasks[/\\]') { $noCurrentTask = $true; break }
+        }
+        if ($noCurrentTask) { Add-Warning 'STATUS 声明无当前 Task（空窗）；跳过当前 Task 检查。' }
+        else { Add-Error 'STATUS 未提供可解析的当前 Task 指针。' }
+    }
     else { $TaskPath = $activeTaskPath }
 } elseif (-not [IO.Path]::IsPathRooted($TaskPath)) {
     $TaskPath = Join-Path $repoRoot $TaskPath
@@ -246,7 +255,7 @@ foreach ($relative in $staticFiles) {
 if ($TaskPath -and (Test-Path -LiteralPath $TaskPath -PathType Leaf)) {
     $TaskPath = (Resolve-Path -LiteralPath $TaskPath).Path
     if (-not $selectedFiles.Contains($TaskPath)) { $selectedFiles.Add($TaskPath) }
-} else { Add-Error "当前 Task 文件不存在：$TaskPath" }
+} elseif (-not $noCurrentTask) { Add-Error "当前 Task 文件不存在：$TaskPath" }
 
 # Check only the declared current-document set and the selected Task; target files are existence-checked, not opened.
 foreach ($file in $selectedFiles) {
