@@ -1,37 +1,318 @@
 {
-  "schema_version": 1,
-  "generated_at_local": "2026-11-11 12:41:10 +08:00",
+  "schema_version": 2,
+  "generated_at_local": "2026-11-11 13:04:51 +08:00",
   "task_id": "FEA-15-PIN-EOL-GOV-1",
-  "repo_head": "1c8d0abb92645779eb40c1a4fd46d156b02f5339",
+  "measured_head": "948d73e0629869e560df9a2b2d8a357cec67027f",
+  "main_worktree": {
+    "path": "G:\\CODEX\\New Manga",
+    "branch": "main",
+    "tracked_status_lines": [
+      " M doc/REBASELINE_PLAN.md",
+      " M doc/STATUS.md",
+      " M doc/TASK_LEDGER.md",
+      " M doc/tasks/FEA-15-PIN-EOL-GOV-1.md",
+      " M verification/FEA-15-PIN-EOL-GOV-1/README.md",
+      " M verification/FEA-15-PIN-EOL-GOV-1/candidate-policy-analysis.md",
+      " M verification/FEA-15-PIN-EOL-GOV-1/checkout-matrix-run.log",
+      " M verification/FEA-15-PIN-EOL-GOV-1/checkout-matrix.json",
+      " M verification/FEA-15-PIN-EOL-GOV-1/checkout-refresh.log",
+      " M verification/FEA-15-PIN-EOL-GOV-1/checkout-samples.json",
+      " M verification/FEA-15-PIN-EOL-GOV-1/checkpoint.md",
+      " M verification/FEA-15-PIN-EOL-GOV-1/pin-inventory-run.log",
+      " M verification/FEA-15-PIN-EOL-GOV-1/pin-inventory.json",
+      "?? verification/FEA-15-PIN-EOL-GOV-1/snapshot-clone-setup.log"
+    ],
+    "changes_are_current_task_only": true
+  },
   "task_workspace": {
     "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1",
-    "created_after_absence_check": true,
+    "root_was_confirmed_absent_before_creation": true,
     "checkouts": [
       {
         "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\checkout-autocrlf-true",
-        "head": "1c8d0abb92645779eb40c1a4fd46d156b02f5339",
-        "detached": true,
-        "core_autocrlf": "true",
-        "tracked_file_count": 20778,
+        "head": "948d73e0629869e560df9a2b2d8a357cec67027f",
+        "branch": "DETACHED",
+        "core_autocrlf_effective": "file:.git/config\ttrue",
+        "tracked_file_count": 20793,
         "status_lines": [],
-        "clean": true,
+        "tracked_worktree_clean": true,
+        "generated_evidence_files": [
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\checkout-autocrlf-true\\verification\\FEA-15-PIN-EOL-GOV-1\\candidate-policy-analysis.md",
+            "size_bytes": 6956,
+            "sha256": "e69667b655c4154b019efd4d107e3a13d9c02c44b42bfc124bba632086654d57"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\checkout-autocrlf-true\\verification\\FEA-15-PIN-EOL-GOV-1\\checkout_matrix.py",
+            "size_bytes": 8463,
+            "sha256": "c4a73bd77922bf4298d480ee909944c05373fa4dd92e94705185309ecb6e3151"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\checkout-autocrlf-true\\verification\\FEA-15-PIN-EOL-GOV-1\\checkout-matrix-run.log",
+            "size_bytes": 912,
+            "sha256": "f047ee4b505fe5700bad9ff333ae8d3531a8a05440f8fc689e76d8c726e75f96"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\checkout-autocrlf-true\\verification\\FEA-15-PIN-EOL-GOV-1\\checkout-matrix.json",
+            "size_bytes": 26155,
+            "sha256": "1d1528ef14d8c9057a37971f1f1da74198345757713e28a42a39fb4c902df126"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\checkout-autocrlf-true\\verification\\FEA-15-PIN-EOL-GOV-1\\checkout-recovery.log",
+            "size_bytes": 747,
+            "sha256": "4aa8dfa4b8b299b1aca9b9a28a485a7d2353667bdcc401ddde2ed89cc936917f"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\checkout-autocrlf-true\\verification\\FEA-15-PIN-EOL-GOV-1\\checkout-refresh.log",
+            "size_bytes": 2103,
+            "sha256": "8b71c790230dc9cfc8268c47b407b12f163ba7feaed290dff32b715b6d33418b"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\checkout-autocrlf-true\\verification\\FEA-15-PIN-EOL-GOV-1\\checkout-samples.json",
+            "size_bytes": 2594,
+            "sha256": "e4e456712592cccdbf4f56938084b4196d258ba55fa046109e198da03ddac302"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\checkout-autocrlf-true\\verification\\FEA-15-PIN-EOL-GOV-1\\checkout-setup.log",
+            "size_bytes": 1705,
+            "sha256": "1c7695694a72c6b1953b729d6412197112070f3a27a3baf4de4efe504384503d"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\checkout-autocrlf-true\\verification\\FEA-15-PIN-EOL-GOV-1\\checkpoint.md",
+            "size_bytes": 2725,
+            "sha256": "0d60614acbfd1ba4aa620c801913cbf04b70f7e5adfdfc64316d28f7a25a8503"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\checkout-autocrlf-true\\verification\\FEA-15-PIN-EOL-GOV-1\\gate-baseline.log",
+            "size_bytes": 7919,
+            "sha256": "ca54918ae5666307031c4e4819437ec305453e24468f503904a29f3de7daf7a7"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\checkout-autocrlf-true\\verification\\FEA-15-PIN-EOL-GOV-1\\gate-post-evidence.log",
+            "size_bytes": 7919,
+            "sha256": "a4b78e29118dd09e42a08cbf39e6fc4ac836b21fdb95002096a944e611811f98"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\checkout-autocrlf-true\\verification\\FEA-15-PIN-EOL-GOV-1\\pin_inventory.py",
+            "size_bytes": 19113,
+            "sha256": "cb4f7c7e3c0717559a4f5ce0dbf5a45d7114befb3650c99cced1c81619bd42d0"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\checkout-autocrlf-true\\verification\\FEA-15-PIN-EOL-GOV-1\\pin-inventory-run.log",
+            "size_bytes": 816,
+            "sha256": "924b251a69ba56b756c44a1bea7b17249611000f232cb4d1ede1e245e2c680da"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\checkout-autocrlf-true\\verification\\FEA-15-PIN-EOL-GOV-1\\pin-inventory.json",
+            "size_bytes": 5750318,
+            "sha256": "52c89b9a52a413c942fc37064206b2f3207c43f754a4c45affac73a70ac2b55f"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\checkout-autocrlf-true\\verification\\FEA-15-PIN-EOL-GOV-1\\README.md",
+            "size_bytes": 7312,
+            "sha256": "f76a9c5497e031e34cdc1ae703142c37b7e19b5ed6fea4981c1525a33243cec9"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\checkout-autocrlf-true\\verification\\FEA-15-PIN-EOL-GOV-1\\resource-manifest.json",
+            "size_bytes": 5511,
+            "sha256": "4cdd536b588d7ced4cf803237b6075e1366d5b56d8917083ea599fbd768c82b3"
+          }
+        ],
         "disposition": "PRESERVE_REFERENCED"
       },
       {
         "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\checkout-autocrlf-false",
-        "head": "1c8d0abb92645779eb40c1a4fd46d156b02f5339",
-        "detached": true,
-        "core_autocrlf": "false",
-        "tracked_file_count": 20778,
+        "head": "948d73e0629869e560df9a2b2d8a357cec67027f",
+        "branch": "DETACHED",
+        "core_autocrlf_effective": "file:.git/config\tfalse",
+        "tracked_file_count": 20793,
         "status_lines": [],
-        "clean": true,
+        "tracked_worktree_clean": true,
+        "generated_evidence_files": [
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\checkout-autocrlf-false\\verification\\FEA-15-PIN-EOL-GOV-1\\candidate-policy-analysis.md",
+            "size_bytes": 6912,
+            "sha256": "dc5cc74b732f78648ea73d239f75f7a39b50dfdf7c06601df359fabe5694fb90"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\checkout-autocrlf-false\\verification\\FEA-15-PIN-EOL-GOV-1\\checkout_matrix.py",
+            "size_bytes": 8277,
+            "sha256": "5afdd759a1349b49b6c156b31166a32a6b19984b6dc47a9f33b8749cc1d7075b"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\checkout-autocrlf-false\\verification\\FEA-15-PIN-EOL-GOV-1\\checkout-matrix-run.log",
+            "size_bytes": 900,
+            "sha256": "7912bab4c5701c3797d88dc8db194e9ff3470ad35a2d4b96d8a41f6ac9896258"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\checkout-autocrlf-false\\verification\\FEA-15-PIN-EOL-GOV-1\\checkout-matrix.json",
+            "size_bytes": 25652,
+            "sha256": "2d65e0adf392c27dd12aebcdffdfa5d0a16b510f3457cc3f1ebc3d7809452541"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\checkout-autocrlf-false\\verification\\FEA-15-PIN-EOL-GOV-1\\checkout-recovery.log",
+            "size_bytes": 731,
+            "sha256": "b47a199959de6ae2d48bebe6545be7ad0624736b5c03eba1e70b06c9e963ce1b"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\checkout-autocrlf-false\\verification\\FEA-15-PIN-EOL-GOV-1\\checkout-refresh.log",
+            "size_bytes": 2079,
+            "sha256": "e4c3ffba8945f6ff846e80ee861547a078cc2b5f9f45ec13ce0a692a909e23f4"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\checkout-autocrlf-false\\verification\\FEA-15-PIN-EOL-GOV-1\\checkout-samples.json",
+            "size_bytes": 2544,
+            "sha256": "86fac5526a1d989b19f1b5c85a9ab11c7d082d43256434dcf3c58c6aae47bf91"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\checkout-autocrlf-false\\verification\\FEA-15-PIN-EOL-GOV-1\\checkout-setup.log",
+            "size_bytes": 1691,
+            "sha256": "673b7108e8b3757254685a69972a98f5a9f6c1e7784435e1e6fd09ebb321dd51"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\checkout-autocrlf-false\\verification\\FEA-15-PIN-EOL-GOV-1\\checkpoint.md",
+            "size_bytes": 2696,
+            "sha256": "0f2533be8a9e83f7512ace5013be6770e2ad0e5b67e84d1c5180fa99193f5c23"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\checkout-autocrlf-false\\verification\\FEA-15-PIN-EOL-GOV-1\\gate-baseline.log",
+            "size_bytes": 7751,
+            "sha256": "a028539c05132c1ae0f6e64da330c76a0f0f5c0538f3a6130d0c45867a07303b"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\checkout-autocrlf-false\\verification\\FEA-15-PIN-EOL-GOV-1\\gate-post-evidence.log",
+            "size_bytes": 7751,
+            "sha256": "c690b20876424475ec8f0a003bf00d66cdde08f13101cdae2f1caa46f134f609"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\checkout-autocrlf-false\\verification\\FEA-15-PIN-EOL-GOV-1\\pin_inventory.py",
+            "size_bytes": 18660,
+            "sha256": "0533568126485d6b0e737e964b050c39e5c2204bfea55980837c0d1c7614ea92"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\checkout-autocrlf-false\\verification\\FEA-15-PIN-EOL-GOV-1\\pin-inventory-run.log",
+            "size_bytes": 805,
+            "sha256": "0d9e9628d723cdae4c92337a4ea4c14ce94224fe374f54a711f9f6b99c14d673"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\checkout-autocrlf-false\\verification\\FEA-15-PIN-EOL-GOV-1\\pin-inventory.json",
+            "size_bytes": 5608137,
+            "sha256": "9b90104b8f852f47c92fd6c37913ddc70ffb91e10e5823f353949659662f19c2"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\checkout-autocrlf-false\\verification\\FEA-15-PIN-EOL-GOV-1\\README.md",
+            "size_bytes": 7258,
+            "sha256": "3b5f162979535f4a44d103fa3e0ce89f4a3207f279f6758e04f6cb337dd10e5b"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\checkout-autocrlf-false\\verification\\FEA-15-PIN-EOL-GOV-1\\resource-manifest.json",
+            "size_bytes": 5391,
+            "sha256": "6779547ff0382808a9bc46abb655321b1866fe0cf67dbff3b6baf09b4ab6c406"
+          }
+        ],
+        "disposition": "PRESERVE_REFERENCED"
+      },
+      {
+        "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\snapshot-main-system-config",
+        "head": "c6f34d93a09cba0afa3046697badd5bdb433a207",
+        "branch": "main",
+        "core_autocrlf_effective": "file:C:/Program Files/Git/etc/gitconfig\ttrue",
+        "tracked_file_count": 20793,
+        "status_lines": [
+          " M verification/FEA-15-PIN-EOL-GOV-1/checkout-matrix.json",
+          " M verification/FEA-15-PIN-EOL-GOV-1/checkout-samples.json",
+          " M verification/FEA-15-PIN-EOL-GOV-1/pin-inventory.json"
+        ],
+        "tracked_worktree_clean": false,
+        "generated_evidence_files": [
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\snapshot-main-system-config\\verification\\FEA-15-PIN-EOL-GOV-1\\candidate-policy-analysis.md",
+            "size_bytes": 6956,
+            "sha256": "e69667b655c4154b019efd4d107e3a13d9c02c44b42bfc124bba632086654d57"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\snapshot-main-system-config\\verification\\FEA-15-PIN-EOL-GOV-1\\checkout_matrix.py",
+            "size_bytes": 8463,
+            "sha256": "f14af68ec31049b0a8e12aca5f1a4c86816a78f931c59ddb3d215b0240f38365"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\snapshot-main-system-config\\verification\\FEA-15-PIN-EOL-GOV-1\\checkout-matrix-run.log",
+            "size_bytes": 912,
+            "sha256": "f047ee4b505fe5700bad9ff333ae8d3531a8a05440f8fc689e76d8c726e75f96"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\snapshot-main-system-config\\verification\\FEA-15-PIN-EOL-GOV-1\\checkout-matrix.json",
+            "size_bytes": 23931,
+            "sha256": "6c04f8eb5c58a99775366d1cdebb2c89076adf5591baee1e75fa512a58a5e8b3"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\snapshot-main-system-config\\verification\\FEA-15-PIN-EOL-GOV-1\\checkout-recovery.log",
+            "size_bytes": 747,
+            "sha256": "4aa8dfa4b8b299b1aca9b9a28a485a7d2353667bdcc401ddde2ed89cc936917f"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\snapshot-main-system-config\\verification\\FEA-15-PIN-EOL-GOV-1\\checkout-refresh.log",
+            "size_bytes": 2103,
+            "sha256": "8b71c790230dc9cfc8268c47b407b12f163ba7feaed290dff32b715b6d33418b"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\snapshot-main-system-config\\verification\\FEA-15-PIN-EOL-GOV-1\\checkout-samples.json",
+            "size_bytes": 2632,
+            "sha256": "1229ecc842e4ff49d2fa801f267b7ae83edbf3e092089c7d30b9f1ddeb2ec59e"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\snapshot-main-system-config\\verification\\FEA-15-PIN-EOL-GOV-1\\checkout-setup.log",
+            "size_bytes": 1705,
+            "sha256": "1c7695694a72c6b1953b729d6412197112070f3a27a3baf4de4efe504384503d"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\snapshot-main-system-config\\verification\\FEA-15-PIN-EOL-GOV-1\\checkpoint.md",
+            "size_bytes": 2725,
+            "sha256": "0d60614acbfd1ba4aa620c801913cbf04b70f7e5adfdfc64316d28f7a25a8503"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\snapshot-main-system-config\\verification\\FEA-15-PIN-EOL-GOV-1\\gate-baseline.log",
+            "size_bytes": 7919,
+            "sha256": "ca54918ae5666307031c4e4819437ec305453e24468f503904a29f3de7daf7a7"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\snapshot-main-system-config\\verification\\FEA-15-PIN-EOL-GOV-1\\gate-post-evidence.log",
+            "size_bytes": 7919,
+            "sha256": "a4b78e29118dd09e42a08cbf39e6fc4ac836b21fdb95002096a944e611811f98"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\snapshot-main-system-config\\verification\\FEA-15-PIN-EOL-GOV-1\\pin_inventory.py",
+            "size_bytes": 19062,
+            "sha256": "264bafb3e1c4b4ccf37827493c6734482232f2aa88bac3432559118561801bdf"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\snapshot-main-system-config\\verification\\FEA-15-PIN-EOL-GOV-1\\pin-inventory-run.log",
+            "size_bytes": 816,
+            "sha256": "924b251a69ba56b756c44a1bea7b17249611000f232cb4d1ede1e245e2c680da"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\snapshot-main-system-config\\verification\\FEA-15-PIN-EOL-GOV-1\\pin-inventory.json",
+            "size_bytes": 5804710,
+            "sha256": "ad12b9f05e4a8e0dcc7d0c684b6fb87c3c63dc01d8616083f5c829411bee8f5c"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\snapshot-main-system-config\\verification\\FEA-15-PIN-EOL-GOV-1\\README.md",
+            "size_bytes": 7312,
+            "sha256": "f76a9c5497e031e34cdc1ae703142c37b7e19b5ed6fea4981c1525a33243cec9"
+          },
+          {
+            "path": "G:\\CODEX\\New Manga.workspace\\FEA-15-PIN-EOL-GOV-1\\snapshot-main-system-config\\verification\\FEA-15-PIN-EOL-GOV-1\\resource-manifest.json",
+            "size_bytes": 5511,
+            "sha256": "4cdd536b588d7ced4cf803237b6075e1366d5b56d8917083ea599fbd768c82b3"
+          }
+        ],
         "disposition": "PRESERVE_REFERENCED"
       }
     ]
   },
   "external_agent_output": {
     "path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\FEA-15-PIN-EOL-GOV-1",
-    "file_count": 16,
+    "file_count": 22,
     "files": [
       {
         "path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\FEA-15-PIN-EOL-GOV-1\\checkout-matrix-run-001.log",
@@ -49,9 +330,19 @@
         "sha256": "1465aa97cd5078537f9297ba0dde243adfe6a38ce67ff02b9b8a4993f681964b"
       },
       {
+        "path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\FEA-15-PIN-EOL-GOV-1\\checkout-matrix-run-snapshot-1c8d0ab.log",
+        "size_bytes": 912,
+        "sha256": "f047ee4b505fe5700bad9ff333ae8d3531a8a05440f8fc689e76d8c726e75f96"
+      },
+      {
         "path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\FEA-15-PIN-EOL-GOV-1\\checkout-matrix-run-snapshot-c3b1068.log",
         "size_bytes": 905,
         "sha256": "1465aa97cd5078537f9297ba0dde243adfe6a38ce67ff02b9b8a4993f681964b"
+      },
+      {
+        "path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\FEA-15-PIN-EOL-GOV-1\\checkout-matrix-snapshot-1c8d0ab.json",
+        "size_bytes": 26155,
+        "sha256": "1d1528ef14d8c9057a37971f1f1da74198345757713e28a42a39fb4c902df126"
       },
       {
         "path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\FEA-15-PIN-EOL-GOV-1\\checkout-matrix-snapshot-c3b1068.json",
@@ -64,6 +355,11 @@
         "sha256": "4aa8dfa4b8b299b1aca9b9a28a485a7d2353667bdcc401ddde2ed89cc936917f"
       },
       {
+        "path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\FEA-15-PIN-EOL-GOV-1\\checkout-samples-snapshot-1c8d0ab.json",
+        "size_bytes": 2594,
+        "sha256": "e4e456712592cccdbf4f56938084b4196d258ba55fa046109e198da03ddac302"
+      },
+      {
         "path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\FEA-15-PIN-EOL-GOV-1\\checkout-samples-snapshot-c3b1068.json",
         "size_bytes": 2594,
         "sha256": "956d25aca64cf10f912684a323cf5902591a345536237396e61df0a7a1b648d1"
@@ -72,6 +368,11 @@
         "path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\FEA-15-PIN-EOL-GOV-1\\checkout-setup-001.log",
         "size_bytes": 583,
         "sha256": "3aa01c8cf61400fce4ad04c42226fa964831df4294a78f080ed48f3ef81e1dd4"
+      },
+      {
+        "path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\FEA-15-PIN-EOL-GOV-1\\gate-post-evidence-snapshot-1c8d0ab.log",
+        "size_bytes": 7919,
+        "sha256": "a4b78e29118dd09e42a08cbf39e6fc4ac836b21fdb95002096a944e611811f98"
       },
       {
         "path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\FEA-15-PIN-EOL-GOV-1\\pin-inventory-run-001-parse-failure.log",
@@ -104,9 +405,19 @@
         "sha256": "56876454b716cb78191591ea29633594b8e7d73cc58ea3a874e7ef0aa54edbbd"
       },
       {
+        "path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\FEA-15-PIN-EOL-GOV-1\\pin-inventory-run-snapshot-1c8d0ab.log",
+        "size_bytes": 816,
+        "sha256": "924b251a69ba56b756c44a1bea7b17249611000f232cb4d1ede1e245e2c680da"
+      },
+      {
         "path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\FEA-15-PIN-EOL-GOV-1\\pin-inventory-run-snapshot-c3b1068.log",
         "size_bytes": 810,
         "sha256": "56876454b716cb78191591ea29633594b8e7d73cc58ea3a874e7ef0aa54edbbd"
+      },
+      {
+        "path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\FEA-15-PIN-EOL-GOV-1\\pin-inventory-snapshot-1c8d0ab.json",
+        "size_bytes": 5750318,
+        "sha256": "52c89b9a52a413c942fc37064206b2f3207c43f754a4c45affac73a70ac2b55f"
       },
       {
         "path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\FEA-15-PIN-EOL-GOV-1\\pin-inventory-snapshot-c3b1068.json",
@@ -116,5 +427,5 @@
     ],
     "disposition": "PRESERVE_REFERENCED"
   },
-  "no_cleanup_or_migration_performed": true
+  "no_cleanup_migration_or_archive_performed": true
 }

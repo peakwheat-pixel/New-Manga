@@ -1,0 +1,11 @@
+timestamp=2026-11-11 12:54:03 +08:00
+absence_check=Test-Path "G:\CODEX\New Manga.workspace\FEA-15-PIN-EOL-GOV-1\snapshot-main-system-config" => False
+command=git clone --shared --no-checkout --branch main "G:\CODEX\New Manga" "G:\CODEX\New Manga.workspace\FEA-15-PIN-EOL-GOV-1\snapshot-main-system-config"
+clone_EXIT=0
+Cloning into 'G:\CODEX\New Manga.workspace\FEA-15-PIN-EOL-GOV-1\snapshot-main-system-config'...
+done.
+command=git -C "G:\CODEX\New Manga.workspace\FEA-15-PIN-EOL-GOV-1\snapshot-main-system-config" config --local core.longpaths true EXIT=0
+command=git -C "G:\CODEX\New Manga.workspace\FEA-15-PIN-EOL-GOV-1\snapshot-main-system-config" checkout main EXIT=0
+Your branch is up to date with 'origin/main'.
+Already on 'main'
+source_head=c6f34d93a09cba0afa3046697badd5bdb433a207 checkout_head=c6f34d93a09cba0afa3046697badd5bdb433a207 branch=main effective_autocrlf=file:C:/Program Files/Git/etc/gitconfig	true status_lines=0

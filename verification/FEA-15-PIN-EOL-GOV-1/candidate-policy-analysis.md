@@ -1,16 +1,17 @@
 # AC3 — Evidence pin basis and migration candidates
 
-Snapshot: `main` at `1c8d0abb92645779eb40c1a4fd46d156b02f5339`. This is analysis only. No policy is approved by this document, and no implementation is performed.
+Snapshot: `main` at `948d73e0629869e560df9a2b2d8a357cec67027f`. This is analysis only. No policy is approved by this document, and no implementation is performed.
 
 ## Observed facts
 
-1. The inventory contains 5,350 rows: 5,332 Canonical Evidence rows in 585 tracked Task cards and 18 frozen contract records. At this snapshot, 3,451 rows match only the current worktree hash, 327 only the recorded commit blob, 999 both, and 160 neither. The remaining 573 are explicitly unpinned or cannot be compared because the path/commit is unavailable or unresolved. These are row counts, not unique files or active-task counts.
+1. The inventory contains 5,350 rows: 5,332 Canonical Evidence rows in 584 tracked Task cards and 18 frozen contract records. At this snapshot, 3,451 rows match only the current worktree hash, 327 only the recorded commit blob, 999 both, and 160 neither. The remaining 573 are explicitly unpinned or cannot be compared because the path/commit is unavailable or unresolved. These are row counts, not unique files or active-task counts.
 2. The 4,733 unique repository paths in those rows include 4,639 files present in the current worktree. Of unique present paths, 442 have binary bytes, 172 mixed EOL, and 2,807 CRLF. These counts cover files referenced by the pin rows only; they are not counts of every file in `verification/**`.
 3. Git reports `core.autocrlf=true` from the system config `C:/Program Files/Git/etc/gitconfig`; the inventory snapshot records no tracked worktree or index changes. Most pinned paths have no explicit EOL attribute. `.gitattributes` has targeted rules for selected handoffs, tools, Task paths, and evidence directories, not one universal rule for all verification evidence.
 4. `tools/governance/check.ps1` r194 first hashes current worktree bytes, then accepts a recorded commit blob hash when the commit contains the path. This is the current compatibility behavior. `tools/governance/verify_pins.ps1` checks the 18 frozen contract hashes against current worktree bytes; it remains `18/18` at this snapshot.
 5. Existing precedents have distinct scopes. FEA-08 records blob/LF SHA-256 for text evidence and explicitly keeps PNG/GIF/ZIP/PDF fixtures byte-exact. P19 and GOV-EOL rules pin selected text evidence to LF. `GOV-EOL-PIN-1` added bounded rules for named evidence paths and Task files; it did not establish that every historical pin shares one basis.
 6. FEA-15-ACCEPT-1 r1/r2 and the older r27 figures describe their own historical populations. The current 5,350-row inventory was measured directly and is not inferred from 27/30 or 187/300.
 7. The four-sample matrix shows both reproducible and non-reproducible outcomes across the three checked worktrees. Blob-only text matches the LF checkout; worktree-only JSON matches the CRLF checkout; a mixed-EOL source file's original bytes match neither fresh checkout; the PNG hash is unchanged. All checkouts are the same HEAD.
+8. The inventory's Task/frozen source text comes from the committed snapshot via `git cat-file`; worktree hashes and EOL observations come from the actual `main` worktree. That worktree had only the current Task's known documentation/evidence edits, which are listed in the machine snapshot. This keeps the row universe bound to HEAD while preserving the measured worktree bytes.
 
 ## Inferences, with boundaries
 

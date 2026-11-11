@@ -3,18 +3,18 @@
 ## Snapshot and scope
 
 - Snapshot branch: `main`
-- Snapshot HEAD: `1c8d0abb92645779eb40c1a4fd46d156b02f5339`
-- Inventory generation: `2026-11-11 12:38:01 +08:00`; command, HEAD, and `EXIT=0` are in [`pin-inventory-run.log`](pin-inventory-run.log).
-- The measured tracked worktree and index were clean. `git status --porcelain` showed only this Task's untracked evidence directory. The inventory reads tracked Task cards and frozen records at the snapshot HEAD; it does not scan untracked Task drafts.
-- The Task workspace was confirmed absent before creation. Both isolated checkouts are under `G:/CODEX/New Manga.workspace/FEA-15-PIN-EOL-GOV-1/`; after the inventory tooling commit they were advanced to this snapshot and verified clean. The fetch/checkout/restore commands and exit codes are in [`checkout-refresh.log`](checkout-refresh.log).
+- Snapshot HEAD: `948d73e0629869e560df9a2b2d8a357cec67027f`
+- Inventory generation: `2026-11-11 12:58:14 +08:00`; command, HEAD, and `EXIT=0` are in [`pin-inventory-run.log`](pin-inventory-run.log).
+- The inventory reads the committed Task cards, frozen records, and pin map from `HEAD` using `git cat-file`; it hashes referenced files from the actual `main` worktree. At capture, the worktree had only the current Task's documented card/status/plan/ledger/evidence edits; all are listed in `pin-inventory.json`. No unrelated user changes were present. The current Task's later Canonical Evidence pinbackfill was not yet committed at this snapshot and is therefore not counted as a versioned pin row.
+- The Task workspace was confirmed absent before creation. Both `core.autocrlf=true/false` isolated checkouts are at this snapshot and clean. A third preserved snapshot clone at `c6f34d93a09cba0afa3046697badd5bdb433a207` contains an earlier clean-checkout comparison and its generated files. That observation is supplemental only; the AC1 inventory and final AC2 matrix below use the exact `948d73e…` snapshot. Checkout creation/refresh commands are in [`snapshot-clone-setup.log`](snapshot-clone-setup.log) and [`checkout-refresh.log`](checkout-refresh.log); final resource states are in [`resource-manifest.json`](resource-manifest.json).
 - Effective `core.autocrlf=true` came only from `file:C:/Program Files/Git/etc/gitconfig`. See the environment block in [`pin-inventory.json`](pin-inventory.json).
-- On this snapshot, the default and TaskPath governance checks passed with 3 warnings each, `verify_pins.ps1` passed 18/18, and the API inventory check passed at 1/79/6=86. Exact commands, HEAD, output, and exit codes are in [`gate-baseline.log`](gate-baseline.log).
+- On earlier tool/evidence snapshots, default and TaskPath governance checks passed with 3 warnings each, `verify_pins.ps1` passed 18/18, and the API inventory check passed at 1/79/6=86. Those commands, HEADs, outputs, and exit codes are in [`gate-baseline.log`](gate-baseline.log) and [`gate-post-evidence.log`](gate-post-evidence.log); the final post-correction gate run is recorded separately.
 
 ## AC1 inventory
 
 [`pin_inventory.py`](pin_inventory.py) parses all tracked `doc/tasks/**/*.md` Canonical Evidence tables and the 18 `doc/plan/FEA-CONTRACT-FROZEN-*.md` records mapped by `tools/governance/verify_pins.ps1`. For each row it stores the source, ID, path, pin, commit, current worktree SHA-256, referenced blob SHA-256 when available, basis classification, current EOL profile, `git ls-files --eol` values, and attribute state in [`pin-inventory.json`](pin-inventory.json).
 
-The snapshot contains 585 tracked Task cards, 5,332 Canonical Evidence rows, 18 frozen contract records, and 5,350 rows total. The 18 frozen record IDs and source paths all match the `verify_pins.ps1` map. Of those 18, 16 match both current worktree and HEAD blob bytes; C04b and C17 match worktree bytes only. `verify_pins.ps1` still checks those 18 worktree hashes.
+The snapshot contains 584 tracked Task cards, 5,332 Canonical Evidence rows, 18 frozen contract records, and 5,350 rows total. The 18 frozen record IDs and source paths all match the `verify_pins.ps1` map. Of those 18, 16 match both current worktree and HEAD blob bytes; C04b and C17 match worktree bytes only. `verify_pins.ps1` still checks those 18 worktree hashes. `doc/tasks/README.md` is the Task index, not a Task card, and is excluded from the card count.
 
 | Basis | Rows | Meaning |
 |---|---:|---|
@@ -45,7 +45,7 @@ EOL profiles count pin rows: 3,100 CRLF, 1,288 LF, 198 mixed-EOL, 452 binary, 16
 
 `pin_result` means the checkout's worktree SHA-256 equals the recorded pin. The separate `head_blob_result` is `PASS` for all 12 observations. These are measurement outcomes, not authorization to change pin rules.
 
-The first Windows checkout attempt reported `Filename too long` for 20 long-path files per clone even though Git returned exit 0. Both checkouts showed 20 missing tracked paths and were not treated as successful. In the clones only, `core.longpaths=true` followed by `git restore --source=HEAD --worktree -- .` restored both to clean status; each recovery command exited 0. [`checkout-setup.log`](checkout-setup.log) and [`checkout-recovery.log`](checkout-recovery.log) preserve this. The checkout workspace was then advanced from the earlier `c3b1068…` observation to the tooling snapshot with `git fetch`, detached checkout, and a second restore; both remained clean and retained their `core.autocrlf` values. The earlier snapshot logs and JSON are retained in the external Task agent-output directory. No source worktree files were changed.
+The first Windows checkout attempt reported `Filename too long` for 20 long-path files per clone even though Git returned exit 0. The two autocrlf clones showed 20 missing tracked paths and were not treated as successful. In the clones only, `core.longpaths=true` followed by `git restore --source=HEAD --worktree -- .` restored them to clean status; each recovery command exited 0. [`checkout-setup.log`](checkout-setup.log) and [`checkout-recovery.log`](checkout-recovery.log) preserve this. The two matrix clones were advanced to `948d73e…` and remain clean with their respective `core.autocrlf` values. The extra `c6f34d9…` snapshot clone is preserved with its exploratory inventory and matrix; its older HEAD is not used for the AC1 count or final matrix. No source worktree files were changed.
 
 ## AC3 analysis and limits
 
