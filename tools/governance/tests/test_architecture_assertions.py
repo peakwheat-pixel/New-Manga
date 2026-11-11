@@ -44,7 +44,17 @@ class ArchitectureAssertions(unittest.TestCase):
 
         # The real checker checks selected documents' link targets for existence,
         # but does not read target contents. Create only those target placeholders.
-        selected = list(STATIC) + ["doc/tasks/REALUSE-DATA-SAFETY-6.md"]
+        current_task_links = []
+        status_document = cls.fixture / "doc/STATUS.md"
+        for raw in LINK.findall(status_document.read_text(encoding="utf-8-sig")):
+            link = unquote(re.split(r"[?#]", raw, maxsplit=1)[0])
+            if not link or re.match(r"^(https?|mailto|codex)://", link, re.I):
+                continue
+            target = (status_document.parent / link).resolve()
+            if target.parent == (cls.fixture / "doc/tasks").resolve() and target.suffix.lower() == ".md":
+                current_task_links.append(target.relative_to(cls.fixture).as_posix())
+
+        selected = list(STATIC) + current_task_links + ["doc/tasks/REALUSE-DATA-SAFETY-6.md"]
         for relative in selected:
             document = cls.fixture / relative
             for raw in LINK.findall(document.read_text(encoding="utf-8-sig")):

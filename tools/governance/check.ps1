@@ -51,6 +51,45 @@ function Get-TableRows([string]$Section) {
     return $rows
 }
 
+function Get-GitBlobSha256([string]$Commit, [string]$RepoRelativePath) {
+    $process = [System.Diagnostics.Process]::new()
+    $memory = [System.IO.MemoryStream]::new()
+    $hashAlgorithm = [System.Security.Cryptography.SHA256]::Create()
+    try {
+        $startInfo = [System.Diagnostics.ProcessStartInfo]::new()
+        $startInfo.FileName = 'git'
+        $startInfo.WorkingDirectory = $repoRoot
+        $startInfo.UseShellExecute = $false
+        $startInfo.RedirectStandardOutput = $true
+        $startInfo.RedirectStandardError = $true
+        [void]$startInfo.ArgumentList.Add('cat-file')
+        [void]$startInfo.ArgumentList.Add('blob')
+        [void]$startInfo.ArgumentList.Add("${Commit}:$RepoRelativePath")
+        $process.StartInfo = $startInfo
+        if (-not $process.Start()) { return $null }
+        $process.StandardOutput.BaseStream.CopyTo($memory)
+        $stderr = $process.StandardError.ReadToEnd()
+        $process.WaitForExit()
+        if ($process.ExitCode -ne 0) { return $null }
+        $digest = $hashAlgorithm.ComputeHash($memory.ToArray())
+        return [Convert]::ToHexString($digest).ToLowerInvariant()
+    } catch {
+        return $null
+    } finally {
+        $hashAlgorithm.Dispose()
+        $memory.Dispose()
+        $process.Dispose()
+    }
+}
+
+function Get-RepoPathInfo([string]$Path, [string]$RepoRoot) {
+    $relative = [IO.Path]::GetRelativePath($RepoRoot, $Path)
+    $normalized = $relative.Replace('\', '/')
+    $inside = -not [IO.Path]::IsPathRooted($relative) -and
+        $normalized -ne '..' -and -not $normalized.StartsWith('../')
+    return [pscustomobject]@{ Relative = $normalized; IsInside = $inside }
+}
+
 function Resolve-ManifestReference([string]$Section, [string]$RepoRoot) {
     # A Resource Manifest section may reference exactly one repository-relative JSON file.
     # Anything ambiguous or outside verification/** is refused rather than guessed at.
@@ -667,17 +706,88 @@ if ($TaskPath -and (Test-Path -LiteralPath $TaskPath -PathType Leaf)) {
             Add-Warning '当前 Task 是 lifecycle v1；保留其原状态与证据，不强制回填旧 Task。'
         } elseif ($metadata['governance_version'] -in @('2', '3')) {
             if ($taskStatus -in @('in_review', 'approved', 'done', 'closed_with_limitations')) {
-                $evidenceRows = @(Get-TableRows (Get-Section $taskText 'Canonical Evidence'))
+                $evidenceSection = Get-Section $taskText 'Canonical Evidence'
+                $evidenceRows = @(Get-TableRows $evidenceSection)
+                $headerLine = @($evidenceSection -split '\r?\n' | Where-Object { $_ -match '^\s*\|.*\|\s*$' } | Select-Object -First 1)
+                $headerCells = @()
+                if ($headerLine.Count -gt 0) {
+                    $headerCells = @($headerLine[0].Trim().Trim('|').Split('|') | ForEach-Object { $_.Trim().Trim('`') })
+                }
+                $legacyEvidenceSchema = $headerCells.Count -eq 6 -and
+                    $headerCells[0] -ieq 'evidence_id' -and $headerCells[1] -ieq 'AC/Gate' -and
+                    $headerCells[2] -match '^path(?:$|\s|[（(])' -and $headerCells[3] -ieq 'commit' -and
+                    $headerCells[4] -ieq 'sha256' -and $headerCells[5] -match '^class(?:\s|$)'
+                $basisEvidenceSchema = $headerCells.Count -eq 7 -and
+                    $headerCells[0] -ceq 'evidence_id' -and $headerCells[1] -ceq 'AC/Gate' -and
+                    $headerCells[2] -match '^path(?:$|\s|[（(])' -and $headerCells[3] -ceq 'commit' -and
+                    $headerCells[4] -ceq 'sha256' -and $headerCells[5] -match '^class(?:\s|$)' -and
+                    $headerCells[6] -ceq 'sha256_basis'
+                if (-not $legacyEvidenceSchema -and -not $basisEvidenceSchema) {
+                    Add-Error 'EVIDENCE_BASIS_HEADER_INVALID: Canonical Evidence 必须是兼容旧六列或显式 sha256_basis 新七列。'
+                    $evidenceRows = @()
+                }
                 if ($evidenceRows.Count -eq 0) { Add-Error '进入 REVIEW/DONE 的 lifecycle v2 Task 必须列出 canonical evidence。' }
                 foreach ($row in $evidenceRows) {
-                    if ($row.Count -lt 6) { Add-Error 'Canonical Evidence 表格需要 6 列。'; continue }
+                    if ($row.Count -lt 6) {
+                        if ($basisEvidenceSchema) { Add-Error 'EVIDENCE_BASIS_ROW_ARITY: 新七列表的每行必须有 7 列。' }
+                        else { Add-Error 'Canonical Evidence 表格需要 6 列。' }
+                        continue
+                    }
                     $path = $row[2]
-                    $commit = $row[3]
-                    $sha = $row[4].ToLowerInvariant()
+                    $commit = [string]$row[3]
+                    $sha = ([string]$row[4]).ToLowerInvariant()
                     $class = $row[5].ToUpperInvariant()
+                    if ($class -notin @('CANONICAL', 'SOURCE_PIN')) { Add-Error "Evidence class 无效：$class" }
+                    if ($basisEvidenceSchema) {
+                        if ($row.Count -ne 7) { Add-Error 'EVIDENCE_BASIS_ROW_ARITY: 新七列表的每行必须恰好有 7 列。'; continue }
+                        $basis = [string]$row[6]
+                        if ($basis -cnotin @('BLOB', 'WORKTREE', 'EXTERNAL_SHA256')) {
+                            Add-Error "EVIDENCE_BASIS_INVALID: sha256_basis 必须严格为 BLOB、WORKTREE 或 EXTERNAL_SHA256：$path"
+                            continue
+                        }
+                        if ($sha -notmatch '^[0-9a-f]{64}$') {
+                            Add-Error "EVIDENCE_BASIS_SHA_INVALID: 新格式必须提供 64 位 SHA-256：$path"
+                            continue
+                        }
+                        $evidencePath = Resolve-LocalPath $path $repoRoot
+                        if (-not $evidencePath) { Add-Error "EVIDENCE_BASIS_PATH_INVALID: 路径不可解析：$path"; continue }
+                        $pathInfo = Get-RepoPathInfo $evidencePath $repoRoot
+                        switch ($basis) {
+                            'BLOB' {
+                                if ($commit -match '^(?i:null|pending|todo|none|-|—)$' -or $commit -notmatch '^[0-9a-fA-F]{7,40}$') {
+                                    Add-Error "EVIDENCE_BASIS_BLOB_COMMIT_REQUIRED: BLOB 必须提供有效 commit：$path"
+                                    continue
+                                }
+                                if (-not $pathInfo.IsInside) { Add-Error "EVIDENCE_BASIS_BLOB_PATH_INVALID: BLOB 路径必须位于仓库内：$path"; continue }
+                                $blobSha = Get-GitBlobSha256 $commit $pathInfo.Relative
+                                if (-not $blobSha) { Add-Error "EVIDENCE_BASIS_BLOB_PATH_MISSING: commit 不含可读取的路径 blob：$commit`:$($pathInfo.Relative)"; continue }
+                                if ($blobSha -ne $sha) { Add-Error "EVIDENCE_BASIS_HASH_MISMATCH: Git blob SHA-256 不匹配：$path" }
+                            }
+                            'WORKTREE' {
+                                if ($row[1] -notmatch '(?i)WORKTREE_ENV\s*=\s*\S') {
+                                    Add-Error "EVIDENCE_BASIS_WORKTREE_ENV_REQUIRED: AC/Gate 必须说明可复现环境（WORKTREE_ENV=...）：$path"
+                                    continue
+                                }
+                                if (-not $pathInfo.IsInside) { Add-Error "EVIDENCE_BASIS_WORKTREE_PATH_INVALID: WORKTREE 路径必须位于当前仓库工作树：$path"; continue }
+                                if (-not (Test-Path -LiteralPath $evidencePath -PathType Leaf)) { Add-Error "EVIDENCE_BASIS_WORKTREE_PATH_UNREADABLE: 工作树文件不存在：$path"; continue }
+                                try { $actualSha = (Get-FileHash -LiteralPath $evidencePath -Algorithm SHA256 -ErrorAction Stop).Hash.ToLowerInvariant() }
+                                catch { Add-Error "EVIDENCE_BASIS_WORKTREE_PATH_UNREADABLE: 工作树文件不可读：$path"; continue }
+                                if ($actualSha -ne $sha) { Add-Error "EVIDENCE_BASIS_HASH_MISMATCH: WORKTREE SHA-256 不匹配：$path" }
+                            }
+                            'EXTERNAL_SHA256' {
+                                if ($pathInfo.IsInside) { Add-Error "EVIDENCE_BASIS_EXTERNAL_PATH_INVALID: EXTERNAL_SHA256 路径必须在仓库外：$path"; continue }
+                                if (-not (Test-Path -LiteralPath $evidencePath -PathType Leaf)) { Add-Error "EVIDENCE_BASIS_EXTERNAL_PATH_UNREADABLE: 外部文件不存在：$path"; continue }
+                                try { $actualSha = (Get-FileHash -LiteralPath $evidencePath -Algorithm SHA256 -ErrorAction Stop).Hash.ToLowerInvariant() }
+                                catch { Add-Error "EVIDENCE_BASIS_EXTERNAL_PATH_UNREADABLE: 外部文件不可读：$path"; continue }
+                                if ($actualSha -ne $sha) { Add-Error "EVIDENCE_BASIS_HASH_MISMATCH: EXTERNAL_SHA256 不匹配：$path" }
+                            }
+                        }
+                        continue
+                    }
+
+                    # Legacy six-column rows retain r194's original semantics.
                     $evidencePath = Resolve-LocalPath $path $repoRoot
                     if (-not $evidencePath -or -not (Test-Path -LiteralPath $evidencePath -PathType Leaf)) { Add-Error "Canonical evidence 路径缺失：$path"; continue }
-                    if ($class -notin @('CANONICAL', 'SOURCE_PIN')) { Add-Error "Evidence class 无效：$class" }
                     if ($commit -match '^(?i:null|pending|todo|-)$') { $commit = '' }
                     if ($sha -match '^(?i:null|pending|todo|-)$') { $sha = '' }
                     if (-not $commit -and -not $sha) { Add-Error "Evidence 必须有 commit 或 SHA-256 pin：$path" }
@@ -697,27 +807,15 @@ if ($TaskPath -and (Test-Path -LiteralPath $TaskPath -PathType Leaf)) {
                         if ($sha) {
                             if ($sha -notmatch '^[0-9a-f]{64}$') { Add-Error "Evidence SHA-256 格式无效：$path" }
                             else {
-                                # r194: a pin may be against worktree bytes (CRLF under
-                                # core.autocrlf=true) or against the committed blob (LF).
-                                # Both are legitimate readings of "the same file" and which
-                                # one a task recorded depends on when it was authored, so
-                                # accept either. The blob branch is only computed when the
-                                # commit really contains the path; otherwise it would compare
-                                # against nothing and pass silently.
+                                # Keep the legacy OR predicate: current worktree bytes may match,
+                                # or the committed blob may match when the commit contains the path.
                                 $worktreeSha = (Get-FileHash -LiteralPath $evidencePath -Algorithm SHA256).Hash.ToLowerInvariant()
                                 $matches = ($worktreeSha -eq $sha)
                                 if (-not $matches -and $commit) {
                                     $repoRel = [IO.Path]::GetRelativePath($repoRoot, $evidencePath).Replace('\', '/')
                                     if ($repoRel -ne '..' -and -not $repoRel.StartsWith('../')) {
-                                        $blobHex = & git -C $repoRoot rev-parse "${commit}:$repoRel" 2>$null
-                                        if ($LASTEXITCODE -eq 0 -and $blobHex) {
-                                            $tmp = [IO.Path]::GetTempFileName()
-                                            try {
-                                                & git -C $repoRoot cat-file blob $blobHex > $tmp 2>$null
-                                                $blobSha = (Get-FileHash -LiteralPath $tmp -Algorithm SHA256).Hash.ToLowerInvariant()
-                                                if ($blobSha -eq $sha) { $matches = $true }
-                                            } finally { Remove-Item -LiteralPath $tmp -ErrorAction SilentlyContinue }
-                                        }
+                                        $blobSha = Get-GitBlobSha256 $commit $repoRel
+                                        if ($blobSha -eq $sha) { $matches = $true }
                                     }
                                 }
                                 if (-not $matches) { Add-Error "Evidence SHA-256 不匹配：$path" }

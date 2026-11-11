@@ -60,10 +60,10 @@ depends_on 必须是已存在 Task ID。区分硬依赖与可并行条件；记�
 
 ## Canonical Evidence
 
-进入 `in_review` 前，逐项列出已释放 AC/Gate 的唯一当前证据。仓库内文件 pin commit；仓外原始输入 pin SHA-256。不要把尝试日志全复制进本表。
+进入 `in_review` 前，逐项列出已释放 AC/Gate 的唯一当前证据。旧六列表继续使用 r194 语义；新表必须使用七列表并显式填写字节来源；仓库内证据默认用 `BLOB`。`BLOB` 校验 `commit:path` 的 Git blob 原始字节；`WORKTREE` 只校验当前仓库工作树文件字节，且 `AC/Gate` 单元须写 `WORKTREE_ENV=...`（包含可复现所需的操作系统、Git 与 `core.autocrlf` 等设置）；`EXTERNAL_SHA256` 只校验仓外可读文件的原始字节。任何来源不可读取均为失败。不要把尝试日志全复制进本表。
 
-| evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
-|---|---|---|---|---|---|
+| evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) | sha256_basis |
+|---|---|---|---|---|---|---|
 
 ## Resource Manifest
 
