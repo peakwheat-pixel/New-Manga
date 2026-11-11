@@ -108,5 +108,35 @@ The fixed A clone and R0 clone remain retained; R0 contains its Task-local inven
 - AC4 T：default 与本 TaskPath 均因 Plan 工作树 7035/7000 bytes 超限 EXIT=1（各 2 warnings）；verify_pins.ps1 因 16 个 EOL 工作树字节 mismatch EXIT=1；API EXIT=0；专项测试 18 passed, 9 subtests passed、EXIT=0。AC4 F：default 与本 TaskPath PASS、各 3 warnings、EXIT=0；pins 仅 C04b/C17 mismatch、EXIT=1；API EXIT=0；专项测试 16 passed, 2 skipped, 9 subtests passed、EXIT=0。两个 skip 是 F checkout 下不可区分的 EOL 分支，不计作覆盖通过。
 - C1：T 的 16 个 mismatch 文件逐项 CRLF→LF 后与冻结 pin 及候选 HEAD blob 一致，16/16、EXIT=0，见 ac4-v2-t-pin-eol-normalization.log。C2：T/F 两侧冻结 inventory generators 均 2/2 与 R0/source/HEAD blobs 及 SHA 一致，分别 EXIT=0，见 ac4-v2-generator-integrity-t.log 与 ac4-v2-generator-integrity-f.log。
 - AC4 v2 inventories：R0 5455 行；T/F 各 5462 行。T/F row identity/SHA 集一致，均 ADDED=8 / REMOVED=1 / CHANGED=0；8 条新增来自本 Task，唯一移除行由同 ID 的更新 README pin 替代。其余 4737 个历史 evidence paths 中，1032 raw-equal、3705 在 T 侧仅 CRLF→LF 后一致，0 failures。v2 inventory、delta 和 audit 文件 SHA 见对应日志及 Canonical Evidence；审计 FILE_DIFF=PASS、ALLOWED_PATH_EOL=11/11、EXIT=0，audit JSON SHA-256 acd19f03d677eb410dfa88274fd0c348e2c13d74f65403fa43512cc3f8906486。
-- AC4 仍待 fresh 独立 Review 与 ZCode adjudication；Linux NOT_RUN。AC5 尚未释放：四个历史 TaskPath（AGPL-RELEASE-1、AD002-FOLLOWUPS-1、FEA-06-PREREQ-1、CHAPTER-SELECTOR-1）、集成后完整 gate bundle、最终 Review/adjudication 均 NOT_RUN。旧候选 bf377... 的 v1 文件保留为历史；4ed7... v2 为当前 AC4 候选。完整 governance pytest 已在 2026-11-11T22:58Z 于 4ed7f32b3ce9104ecee11aad593bde222055a0df 运行：61 passed、2 skipped、3 failed、62 subtests、EXIT=1；失败为 test_all_seven_errors_are_resolved、test_protection_set_did_not_shrink、test_user_data_root_is_now_protected。既有 dd6372420 baseline control 同样复现这三项（3 failed、9 passed、EXIT=1），本 checkpoint 未重复跑 baseline；失败仍按 FAIL 记录，完整日志 ac2ac3-full-pytest-4ed7f32.log。
+- AC4 v2 fresh ZCode Review 在 main 7f1e7173e7638c79e024985ad91b18a073df727c / candidate 4ed7f32b3ce9104ecee11aad593bde222055a0df 得到 APPROVED_WITH_LIMITATIONS（P0/P1=0）；P2-1 SHA 字节口径披露与 P2-2 clone 配置顺序证据待独立 adjudication。AC4 adjudication 尚未执行，Linux NOT_RUN。AC5 仍 NOT RELEASED；四个历史 TaskPath、AC5 gates、最终集成 Review/adjudication 均 NOT_RUN。candidate 4ed7f32 是基于 dd6372420 重放实现提交的并列候选，非 implementation 7eefb54 的祖先，映射详见 Review P3-1。下一步：保存 Review/receipt、更新 Task 指针与 pins、运行主线 gates，再由全新 ZCode session adjudicate AC4 并决定是否释放 AC5。
 - 主仓库 post-pinbackfill gates 在 HEAD da3336391674d4a1cff6983849b570cf1e9e4d88：default / 本 TaskPath PASS、各 3 warnings、EXIT=0；18 pins EXIT=0；API EXIT=0，日志 main-post-pinbackfill-gates-da3336391.log。完整 suite 与 post-pinbackfill gate 日志均已入库于 32f229f26；此前 a9ca17988 post-evidence gates 也全 EXIT=0。外部实现、验证、R0、AC4 T/F 克隆均保留，不执行清理、prune、GC 或 repack。当前下一步为把最新 README / pytest / gate evidence pin 回 Task 卡，再委托新的 ZCode 独立 Review 当前候选；之后由不同 ZCode session adjudicate AC4 并决定是否释放 AC5。
+
+## AC2/AC3/AC4 v2 fresh independent Review and evidence-quality findings (2026-11-12)
+
+- ZCode CLI fresh read-only session sess_426becfe-44b9-4e2e-9f16-9eaccdddbd05 / turn turn_80b3a6dd-0d90-4edf-b60f-c95ab3fd9f94 reviewed main HEAD 7f1e7173e7638c79e024985ad91b18a073df727c, implementation HEAD 7eefb54dc5ca74ddf9cc5459eb40fb10769a44e1, and AC4 candidate 4ed7f32b3ce9104ecee11aad593bde222055a0df. Verdict: APPROVED_WITH_LIMITATIONS, P0=0/P1=0. Report: doc/reviews/FEA-15-PIN-BASIS-ENFORCE-1-ac2-ac3-ac4-v2-zcode-review-2026-11-12.md; raw CLI receipt: ac2-ac4-current-review-zcode-cli-20261112.jsonl.
+- AC2/AC3 P1-1 and P1-3 remediations are sufficient. AC4 behavioral evidence is supported, but final AC4 adjudication has not run. This Review is not final acceptance and does not release AC5.
+
+### P2-1: distinguish generation-time worktree SHA from Canonical Evidence Git-blob SHA
+
+The six generation logs report generation-time output hashes, which match the current main worktree bytes for these six JSON artifacts. Canonical Evidence pins the committed Git-blob bytes; in the current Windows checkout these differ because the worktree contains CRLF. All six current worktree files become byte-identical to their pinned Git blobs after removing CR bytes. The values below were independently recalculated from current worktree bytes and git show HEAD:<path>:
+
+| Generated artifact | Worktree SHA-256 recorded by generation log | Git-blob SHA-256 / Canonical pin |
+|---|---|---|
+| ac4-v2-inventory-audit.json | acd19f03d677eb410dfa88274fd0c348e2c13d74f65403fa43512cc3f8906486 | ac321500f01b342516dbec4d7f48083cea5a44bc3479b05c0c2476ff5e472c92 |
+| ac4-inventory-r0.json | 425692adcaddf8a9ab6d86ef3aff885d6056cddd84fa17f3dbc108c7913de8b3 | 578b9e30933c5d8807da8a2687c8adc903bbcce58c1653adca61a3d8437af0e9 |
+| ac4-v2-clone-t-inventory.json | fd1916eb1cb4b16f6fa7a0da316e21f684111f6cef5c9251dcc759e4f09c6bc0 | 6d29d0fd54141f74c22b9ff4b283d7f74d514b37b92191c8d4aed0d6a9e5b5aa |
+| ac4-v2-clone-f-inventory.json | 1e680f71fdd8cebb70607b5458f8ee8b1cffe9dc03e803b7846b63a40388450c | 5206e4c5d3ab2a86b2bb1d35154d8ad3edc0f4f5d93602d49dd08212dec780f0 |
+| ac4-inventory-delta-r0-to-4ed7f32b3ce9104ecee11aad593bde222055a0df-t.json | bbc48c6f7249f503a591a2f40a08a73cc55968c24ec669895290219f1d7953ef | 9daceedc583621725bff1691b7fd2ca815fce90fabab304c4cbdbf128a64e623 |
+| ac4-inventory-delta-r0-to-4ed7f32b3ce9104ecee11aad593bde222055a0df-f.json | f055bb1ad4a12c70343b4675837bf77c7c3d76f5798f2a6b064681477fa4caea | ae697e5c58c669bf7ae9c649f49fc6248e50d424925071f0e58e4972cf926eb3 |
+
+For example, the audit JSON is 28,227 worktree bytes with 577 CR bytes; removing CR yields the exact 27,650-byte Git blob. The logged generation hashes are valid for their stated worktree outputs; they must not be described as the Canonical Git-blob pin. This is an evidence-labeling limitation, not evidence of content alteration. Keep the historical logs and pins unchanged.
+
+### P2-2: clone-creation audit does not prove configuration preceded checkout
+
+ac4-v2-clone-creation-audit.log records CHECKOUT_REFLOG_UTC=2026-11-12T06:20:42+08:00 (22:20:42Z), while CONFIG_LAST_WRITE_UTC is 22:21:20.9076373Z for T and 22:21:29.4210567Z for F. These recorded config timestamps are 38.9 and 47.4 seconds later than the checkout reflog timestamp; the audit started at 22:21:18Z. Therefore this log does not prove that the recorded settings were written before checkout, despite the prior summary wording. The resulting T/F settings and EOL output behavior are consistent with the intended modes, but the sequence remains unproven. Preserve the log and report this as an evidence-quality limitation pending adjudication; do not infer or claim a proven ordering.
+
+### P3-1: implementation-to-candidate commit mapping
+
+Implementation HEAD 7eefb54dc5ca74ddf9cc5459eb40fb10769a44e1 is not an ancestor of validation candidate 4ed7f32b3ce9104ecee11aad593bde222055a0df; the candidate is a cherry-pick replay based on main dd6372420. The four checked implementation/test file blobs match. Record this mapping when planning integration so the exact candidate shape is explicit.
+
+- AC4 current state: review complete with limitations; adjudication pending; T budget failure, T/F pin mismatches, full-suite 3 failed / EXIT=1, Linux NOT_RUN, four historical TaskPaths NOT_RUN, and all AC5 gates remain unchanged. AC5 is not released.
