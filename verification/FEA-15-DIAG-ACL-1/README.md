@@ -39,7 +39,7 @@
 
 ### 插件 sandbox / export hook
 
-当前实现中的调用链是 `PluginService._invoke_sandboxed` → `AppContainerSandbox.prepare_plugin` / `run`。profile 路径通过 `CreateAppContainerProfile` 创建，若已存在则由 SID 派生；解释器和插件目录权限通过 `icacls <path> /grant *<sid>:<rights>` 授予。若底层抛出 `SandboxError`，服务将其转换为 `PLUGIN_HOOK_UNAVAILABLE`，保持 fail-closed。`_grant` 只记录通用错误，不将 `icacls` stderr/返回码细节带到调用方，因此现有 pytest 输出不能定位实际失败调用。
+当前实现中的调用链是 `PluginService._invoke_sandboxed` → `AppContainerSandbox.prepare_plugin` / `run`。profile 路径通过 `CreateAppContainerProfile` 创建，若已存在则由 SID 派生；解释器和插件目录权限通过 `icacls <path> /grant *<sid>:<rights>` 授予。若 `SandboxError` 表示 hook 输出超限，服务映射为 `PLUGIN_HOOK_FAILED`；其他 `SandboxError` 映射为 `PLUGIN_HOOK_UNAVAILABLE`，保持 fail-closed。`_grant` 只记录通用错误，不将 `icacls` stderr/返回码细节带到调用方，因此现有 pytest 输出不能定位实际失败调用。
 
 跨主树、clean-tree 和专用 venv 仍出现失败，足以排除“仅 linked worktree `.git` 文件形态导致全部 sandbox 失败”的解释；不能据此断言系统 Python ACL 是根因。现存用例断言失败可能发生在 sandbox 初始化或启动任一阶段，现有记录没有失败操作的原始 Win32 错误/`icacls` stderr。
 
@@ -78,11 +78,11 @@
 
 | AC | 当前诊断状态 | 收口前仍需 |
 |---|---|---|
-| AC1 sandbox/export | `PARTIAL`：失败跨多环境复现、调用链与边界已记录；底层失败阶段不可定位 | 独立 Reviewer 复核是否接受作为有边界的诊断结论；若要求精确复现，待自动审批审核可运行时执行探针 |
-| AC2 Host ACL | `PARTIAL`：原始堆栈和适用范围有界；卷能力不支持简单格式归因；精确 Host 方法探针 `NOT_RUN` | 在新的 Task 目录中重试精确原方法探针；保留原异常和身份信息 |
-| AC3 资源影响 | `PARTIAL`：归属不可判定，但证据缺口和保留原则已逐项列出 | 不做系统 ACL/profile 修改或清理；独立 Review 后由主 Agent 决定是否需另开资源审计 |
-| AC4 fixture | `MET`：62 项只按时间窗识别，建议和实际处置均为原位保留/零清理 | Review 确认该限制说明充分 |
-| AC5 建议与交付 | `PARTIAL`：矩阵、v7 债、NOT_RUN 和 5 条 Canonical Evidence 已固定；独立 Review/最终结论待完成 | `gates-review.log` 在 HEAD `80edff3fcaf36e7f429dd68500a76472d38321b6` 记录双 `check.ps1` PASS（各 3 warnings）及 pins 18/18 PASS；完成独立 Review 后再作终态门禁 |
+| AC1 sandbox/export | `PARTIAL`：失败跨多环境复现、调用链与边界已记录；底层失败阶段不可定位 | 已由独立 Review 接受为有边界的诊断；失败操作与原始错误仍未知 |
+| AC2 Host ACL | `PARTIAL`：原始堆栈和适用范围有界；卷能力不支持简单格式归因；精确 Host 方法探针 `NOT_RUN` | 精确原方法探针未执行；拒绝条件仍未知 |
+| AC3 资源影响 | `PARTIAL`：归属不可判定，但证据缺口和保留原则已逐项列出 | 保持系统 ACL/profile 和未知资源不变；若后续调查，须另行冻结 Task 范围 |
+| AC4 fixture | `MET`：62 项只按时间窗识别，建议和实际处置均为原位保留/零清理 | 独立 Review 已确认限制说明与证据相符 |
+| AC5 建议与交付 | 独立 Review 已 `approved`（P0/P1=0）；最终治理门禁与终态记录待完成 | `gates-review.log` 是较早 HEAD 的历史门禁证据；终态门禁另行记录，不把历史结果当作当前 PASS |
 
 ## NOT_RUN 与限制
 
@@ -91,8 +91,8 @@
 - `C:/Python314` ACL 与 AppContainer profile 的归属、增量和所有者：`NOT_RUN` / 不可判定；不修改、不撤销、不删除。
 - 62 个 fixture 候选清理或迁移：`NOT_RUN`；全量原位保留。
 - 真实旧库迁移/回退和真实用户数据操作：`NOT_RUN`；本 Task 禁止访问。
-- 当前 review gate 已有日志；Review 完成后的终态门禁与独立 Review 结论仍待执行，不能据此标记终态 PASS。
+- 独立 Review 已完成并批准；其未重跑门禁。终态门禁尚待执行，不能把历史 `gates-review.log` 当作终态 PASS。
 
 ## 下一步
 
-Reviewer appointment 已从未启动的 ZCode CLI 调整为 Codex 新上下文只读 subagent；最终阶段结论由主 Agent 在 Review 后签发。若 Reviewer 要求精确 Host 复现，只有在自动审批服务可执行时才对新 Task 专属目录执行 `SourceSecurity.PrivateDirectory`；否则保留 `NOT_RUN`，不得模拟点击或绕过审核。没有授权进行 ACL 恢复、profile 删除、fixture 清理或产品代码修复。
+独立 Reviewer `/root/fea15_diag_acl_review` 已对 `610839af8348f8b1f36e18a623e9fc40882051b5` 作只读审查并批准，P0/P1=0；报告位于 `doc/reviews/FEA-15-DIAG-ACL-1-r1.md`。本 Task 的终态治理门禁待完成。精确 `SourceSecurity.PrivateDirectory` 探针继续保持 `NOT_RUN`；没有进行 ACL 恢复、profile 删除、fixture 清理或产品代码修复。

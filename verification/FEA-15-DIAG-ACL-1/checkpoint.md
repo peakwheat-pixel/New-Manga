@@ -1,7 +1,7 @@
 # FEA-15-DIAG-ACL-1 Checkpoint
 
 ```text
-Timestamp: 2026-11-11 01:53:52 UTC / 09:53:52 Asia/Shanghai
+Timestamp: 2026-11-11 02:10:37 UTC / 10:10:37 Asia/Shanghai
 Agent: Codex
 Task ID: FEA-15-DIAG-ACL-1
 TaskStatus: in_review
@@ -10,51 +10,48 @@ Branch: main
 Worktree: G:/CODEX/New Manga
 Base commit: 1e4542a047e991a5f10b0b213ca5a96eafe919a4
 Task claim commit: 5ed87d05d95e6b861c297c3063905b60e5fe7b7c
-Evidence delivery head: 97145556a7be4865dae3b5bfe2868cf7fbf90e1d
-Current HEAD at checkpoint: 548690f60fcce7a09502d5f763d46decaa4bbfd9
+Reviewed head: 610839af8348f8b1f36e18a623e9fc40882051b5
+Current HEAD at checkpoint: 610839af8348f8b1f36e18a623e9fc40882051b5
 ```
 
 ## Resume Reality Check
 
-- Task card and `STATUS.md` both name `FEA-15-DIAG-ACL-1` as `in_review`; the reviewer appointment is being updated to a fresh-context subagent after the user directed the primary agent to make the final call without manual approval.
-- `REBASELINE_PLAN.md` marks this task `in_review`; the serial follow-up `FEA-15-PIN-EOL-GOV-1` remains `proposed`; READY nodes are none.
-- Claim commit `5ed87d05d95e6b861c297c3063905b60e5fe7b7c` descends from task base `1e4542a047e991a5f10b0b213ca5a96eafe919a4`; current head descends through the evidence, appointment, gate, and pin commits.
-- Before this update, Task metadata changed only `doc/tasks/FEA-15-DIAG-ACL-1.md`; no pre-existing user changes were overwritten. This checkpoint update adds only allowed Task documentation/evidence paths.
-- Result: `RESUME_SAFE` for the fixed diagnostic evidence and current review handoff; don't reuse or clean unknown external resources.
+- Task and `STATUS.md` remain `in_review`; independent Reviewer `/root/fea15_diag_acl_review` approved the fixed reviewed head, P0=0/P1=0.
+- `REBASELINE_PLAN.md` still marks this Task `in_review`; `FEA-15-PIN-EOL-GOV-1` remains `proposed`, and READY nodes are none.
+- The independent report fixes `reviewed_head` at `610839af8348f8b1f36e18a623e9fc40882051b5`. The current changes are documentation/evidence closeout only; no production code, tests, dependencies, schema or frozen contracts changed.
+- Modified paths at checkpoint: `doc/STATUS.md`, `verification/FEA-15-DIAG-ACL-1/README.md`, `verification/FEA-15-DIAG-ACL-1/appointment.md`, and this checkpoint; `doc/reviews/FEA-15-DIAG-ACL-1-r1.md` is newly added. All are within Task scope.
+- Resume result: `RESUME_SAFE` for the reviewed diagnostic delivery. Unknown ACL/profile/fixture resources remain untouched.
 
 ## Completed
 
-- Read the active Task, STATUS, DAG, prior acceptance report and relevant source/tests.
-- Cross-checked plugin sandbox/export hook, Host ACL, Python ACL/profile and v7 failure evidence.
-- Added a diagnostic matrix, resource manifest and updated checkpoint. No production/test/contract bytes changed.
-- Recorded NTFS persistent ACL capability for C:/G:, a PowerShell ACL-equivalent success on a new Task-owned directory, and a read-only workspace observation.
-- Explicitly marked the direct `SourceSecurity.PrivateDirectory` probe `NOT_RUN`; its automatic approval review did not execute it.
-- ZCode CLI review invocation was cancelled while an explicit approval dialog was pending, following the user's no-manual-approval instruction; no ZCode session or test was started.
-- Reappointed a fresh-context Reviewer subagent; final stage decision remains with the primary Agent.
+- Recorded the diagnostic evidence, resource manifest and bounded conclusions for sandbox/export, Host ACL, Python ACL/AppContainer profile, 62 fixture candidates and the v7 test fixture debt.
+- Kept AC1–AC3 as `PARTIAL`; AC4 is `MET`. The direct Host method probe remains `NOT_RUN`.
+- Received a read-only independent Review from `/root/fea15_diag_acl_review`: `approved`, P0=0/P1=0. The reviewer recommends `closed_with_limitations` after terminal gates, preserving unresolved limitations.
+- Updated the appointment and report links; corrected README's `PLUGIN_HOOK_FAILED` mapping for output-exceeded `SandboxError`.
+- No system ACL/profile/fixture action, real user database access, product test rerun, production change or push was performed during Review closeout.
 
 ## Working Tree
 
-- At checkpoint time, modified files: `doc/tasks/FEA-15-DIAG-ACL-1.md`, `verification/FEA-15-DIAG-ACL-1/README.md`, `appointment.md`, and `checkpoint.md`; all are Task-allowed paths.
-- No staged files. Evidence and appointment commits are present; the latest three-file evidence update and Task pin backfill remain to be committed.
+- Documentation/evidence edits listed above are pending commit and Task pin backfill.
+- No implementation changes are present. Preserve any unknown external resources; do not clean them.
 
 ## Tests / Gates
 
-- No test suite was re-run in this diagnostic step; existing measured runs remain linked from `README.md` and retain their original HEADs and EXIT codes.
-- Last committed `gates-review.log` at HEAD `80edff3fcaf36e7f429dd68500a76472d38321b6`: default check PASS (3 warnings), `-TaskPath` PASS (3 warnings), pins 18/18 PASS; later commits only added gate evidence and updated Task pins/reviewer metadata.
-- Re-run final gates after the pending evidence/pin commits; do not use these prior results as proof of the resulting HEAD.
-- Independent subagent Review and primary-agent stage adjudication: pending.
+- This diagnostic Task did not rerun product test suites. Existing measured runs remain in their original logs with their own HEAD and EXIT values.
+- `gates-review.log` records historical checks at HEAD `80edff3fcaf36e7f429dd68500a76472d38321b6`: default and `-TaskPath` checks PASS (3 warnings each); pins 18/18 PASS. It is not evidence for the terminal state.
+- Terminal `check.ps1` (default and `-TaskPath`) and `verify_pins.ps1` have not yet been rerun after Review closeout edits.
 
 ## Blockers / Decisions / Open Questions
 
-- Exact Host ACL failure condition is unproven. A direct reflection call was not executed because its automatic approval review reported a usage-limit failure.
-- Plugin failure stage and origin of observed system Python ACE/profile state are unproven; do not rerun ACL/profile-mutating tests without a fresh isolated plan and before-state snapshot.
-- The 62 fixture candidates are not attributed to a unique owner; keep them all in place.
-- No contractual or architecture change is proposed.
+- Exact Host ACL failure condition is unproven; the direct `SourceSecurity.PrivateDirectory` probe was not executed after an automatic execution review reported a usage-limit failure.
+- Plugin failure stage and origin of observed system Python ACE/profile state remain unproven.
+- The 62 fixture candidates have no proven unique owner. Keep them all in place.
+- No contract or architecture change is proposed.
 
 ## Next Exact Step
 
-1. Commit the README/appointment/checkpoint evidence update, then update their Task SHA/commit pins and regenerate `TASK_LEDGER.md`.
-2. Re-run both `check.ps1` modes and `verify_pins.ps1`; record command, time, HEAD and EXIT.
-3. Resume `/root/fea15_diag_acl_review` on the exact current Task head; inspect its findings without changing the reviewed head.
-4. The primary Agent signs the stage conclusion from the independent Review and gates; preserve unresolved causes/resources as limitations and keep NOT_RUN truthful.
-5. Do not modify/clean system ACLs, profiles or fixtures. No push.
+1. Commit the Review report and supporting documentation, then update Task evidence pins and regenerate `doc/TASK_LEDGER.md` with `python tools/governance/task_ledger.py --write`.
+2. Record AC5 as met only after final gate output is captured; keep AC1–AC3 partial and all NOT_RUN items explicit.
+3. Run `pwsh -NoProfile -File tools/governance/check.ps1`, the same command with `-TaskPath doc/tasks/FEA-15-DIAG-ACL-1.md`, and `pwsh -NoProfile -File tools/governance/verify_pins.ps1`; record the actual generating HEAD, time and EXIT values.
+4. Close this Task as `closed_with_limitations`, update STATUS/Plan/Handoff/checkpoint and pin commit references, then rerun the gates on the resulting tree.
+5. Do not change/clean system ACLs, profiles or fixtures. Do not start the proposed successor or push.

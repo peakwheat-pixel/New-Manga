@@ -7,8 +7,9 @@
 - reviewer_kind: `subagent`
 - Source/session ID: `/root/fea15_diag_acl_review` (recorded by the collaboration dispatcher).
 - Base commit: `1e4542a047e991a5f10b0b213ca5a96eafe919a4`
-- Delivery evidence head: `97145556a7be4865dae3b5bfe2868cf7fbf90e1d`
+- Delivery evidence head reviewed: `610839af8348f8b1f36e18a623e9fc40882051b5`
 - Review mode: read-only
 - Scope: `verification/FEA-15-DIAG-ACL-1/README.md`, its raw probe logs and resource manifest; referenced FEA-15-ACCEPT-1 test/resource evidence; Task AC1–AC5 and claims of causal attribution/NOT_RUN.
 - Constraints: do not edit production code, tests, dependency, schema or frozen contracts; do not change/revoke system interpreter ACLs, enumerate/delete profiles, or clean fixtures; do not push. Review every failure claim against its source log and distinguish observed fact, inference and unknown.
 - Requested decision: report findings, whether each AC is met/partial/not met under the frozen Task, whether `closed_with_limitations` is supportable, remaining limitations, and the next authorized action under the current DAG. The primary Codex Agent signs the final stage conclusion after considering this independent Review.
+- Review result: `approved`, P0=0/P1=0; report `doc/reviews/FEA-15-DIAG-ACL-1-r1.md`. Final terminal gates and stage closeout are tracked separately.
