@@ -7,7 +7,7 @@ status: in_review
 approval: ZCode 2026-11-11 裁决释放（独立 CLI session sess_236d9541-8358-45f0-9318-4844a86a767e；doc/reviews/FEA-15-PIN-POLICY-1-zcode-release-adjudication-2026-11-11.md）；用户已授权持续推进、全部授权、自动计划及 ZCode 裁决
 suggested_owner: codex
 owner: codex
-reviewer: ZCode 独立 CLI Review（即将新建上下文；session ID 在 Review 报告与本卡回填）
+reviewer: ZCode 独立 CLI Review（fresh plan-mode session `sess_08fc30ae-10e9-48c5-8029-c3adb02fe9a5`；报告已归档）
 depends_on:
   - FEA-15-PIN-EOL-GOV-1
 base_commit: 4efc592d12c25b8be33502f53c9270ad0597adfd
@@ -45,9 +45,9 @@ out_of_scope:
 
 ## Acceptance Criteria
 
-- [ ] **AC1 全集增量刷新与正式裁定**：交付 inventory `5,376` 行，baseline delta `+26 / -0 / changed 0`；裁定提案、事实/推论/未知/反证/暂停门槛均已写入。最终政策仍待 ZCode adjudication。 <<PARTIAL: ZCode 独立 Review 与最终 adjudication 尚未完成>>
+- [ ] **AC1 全集增量刷新与正式裁定**：交付 inventory `5,376` 行，baseline delta `+26 / -0 / changed 0`；裁定提案、事实/推论/未知/反证/暂停门槛均已写入。最终政策仍待另一新 ZCode session adjudication。 <<PARTIAL: 最终 adjudication 尚未完成>>
 - [x] **AC2 实施影响面方案（不含实施）**：影响全集、互斥 basis/异常分类、4 种代表与边界样本、固定 r194 predicate matrix、dry-run/rollback 方案和 successor Task 边界已登记；矩阵为 inventory predicate 模型而非逐行执行 checker，clone dry-run 依要求保持 NOT_RUN。 <<MET>>
-- [ ] **AC3 登记、复核与治理门禁**：delivery/review head `359d09dffc489c8762727cf69b778cba6f432843` 的 default/current/prior TaskPath、18 pins、API gate 均为 EXIT 0；复核日志记录当时 HEAD 与 dirty docs 状态，Handoff 已提交；独立 Review 与最终 adjudication 尚未完成。 <<PARTIAL: ZCode 独立 Review 与最终 adjudication pending>>
+- [ ] **AC3 登记、复核与治理门禁**：delivery/review head `359d09dffc489c8762727cf69b778cba6f432843` 与 pinbackfill 后 clean HEAD `d26c43c76576b0f514530874fc9cb04f016674e6` 的 default/current/prior TaskPath、18 pins、API gates 均为 EXIT 0；ZCode Review `ACCEPT`（3 项非阻断发现），发现 1 已用 clean post-pinbackfill gate log 补证；发现 2/3 留给最终 adjudication 分类。 <<PARTIAL: 最终 ZCode adjudication 尚未完成>>
 
 AC 状态语法按 doc/09_COLLABORATION.md §4.3；进入 in_review 前所有 AC 必须具备合法且与勾选一致的 <<MET>>、<<PARTIAL: 原因>> 或 <<BLOCKED: 原因>> 标记。
 
@@ -61,7 +61,7 @@ AC 状态语法按 doc/09_COLLABORATION.md §4.3；进入 in_review 前所有 AC
 |---|---|---|---|---|
 | AC1 | `python verification/FEA-15-PIN-POLICY-1/pin_inventory.py`；`python verification/FEA-15-PIN-POLICY-1/pin_inventory_delta.py` | `main`，delivery measurement HEAD `e9f7bb1b48c885cb329848d2d3591e145ff3d229` | `5,376` 行；delta `+26 / -0 / changed 0`；两命令 `EXIT=0`。正式裁定仍 PARTIAL。 | `pin-inventory.json`、`pin-inventory-delta.json`、对应 run logs、`pin-basis-ruling.md` |
 | AC2 | `python verification/FEA-15-PIN-POLICY-1/pin_r194_matrix.py`；制定 future isolated-clone dry-run | inventory fixed at delivery HEAD；当前 Task 不创建 clone | modeled predicate `4,803` match / `573` nonpass；matrix 命令 `EXIT=0`。Dry-run `NOT_RUN`，实现不在本卡范围。 | `pin-r194-baseline-matrix.json`、run log、`pin-basis-impact-plan.md` |
-| AC3 | `pwsh -NoProfile -File tools/governance/check.ps1`；加 `-TaskPath doc/tasks/FEA-15-PIN-POLICY-1.md`；prior TaskPath；`pwsh -NoProfile -File tools/governance/verify_pins.ps1`；`python tools/generate_api_inventory.py --check` | `main`，review delivery HEAD `359d09d...` | default/current/prior checks PASS (各 3 warnings)，18 pins PASS `18/18`，API `1/79/6=86`；5 commands 均 `EXIT=0`。Review/adjudication `NOT_RUN`。日志记录 generation HEAD `359d09d...` 与当时 dirty docs。 | `delivery-gates-359d09d.log`、Handoff；Review 与 adjudication 待补 |
+| AC3 | `pwsh -NoProfile -File tools/governance/check.ps1`；加 `-TaskPath doc/tasks/FEA-15-PIN-POLICY-1.md`；prior TaskPath；`pwsh -NoProfile -File tools/governance/verify_pins.ps1`；`python tools/generate_api_inventory.py --check` | `main`，review delivery HEAD `359d09d...`，post-pinbackfill verification HEAD `d26c43c...` clean | default/current/prior checks PASS (各 3 warnings)，18 pins PASS `18/18`，API `1/79/6=86`；两轮五项命令均 `EXIT=0`。Review `ACCEPT`（3 项非阻断发现）；最终 adjudication `NOT_RUN`。 | `delivery-gates-359d09d.log`、`delivery-gates-d26c43c.log`、Review 报告、Handoff |
 
 ## 依赖、风险与阻塞
 
@@ -70,7 +70,7 @@ AC 状态语法按 doc/09_COLLABORATION.md §4.3；进入 in_review 前所有 AC
 ## 交付与运行记录
 
 - Handoff：[`FEA-15-PIN-POLICY-1-e9f7bb1.md`](../handoffs/FEA-15-PIN-POLICY-1-e9f7bb1.md)，review delivery head `359d09d...`。
-- Review：ZCode 新独立 CLI Review session；当前卡提交后新建，session ID 与结论写入 Review 报告并回填。
+- Review：[`ZCode 独立 Review 报告`](../reviews/FEA-15-PIN-POLICY-1-zcode-review-2026-11-11.md)，session `sess_08fc30ae-10e9-48c5-8029-c3adb02fe9a5`，`ACCEPT`，3 项非阻断发现；发现 1 已补 clean post-pinbackfill gate 证据，2/3 待最终裁决处置。
 - 最终裁决者：ZCode 独立上下文 adjudication；必须使用与 Review 不同的 session。
 - 任何 NOT_RUN 保留原状态；完成本卡不代表后续迁移实施获授权。
 
@@ -91,6 +91,8 @@ AC 状态语法按 doc/09_COLLABORATION.md §4.3；进入 in_review 前所有 AC
 | delivery-gates-inventory-head | AC3 initial inventory-head gate snapshot | verification/FEA-15-PIN-POLICY-1/delivery-gates-e9f7bb1.log | 19ccd9b60f319c632ee034db38b235364e594da6 | 80ed09fc2f6d72dcce78cd0721a754b07f708df7e5f4cfcede232d780161ea6b | CANONICAL |
 | delivery-gates-final-review | AC3 final review-head governance gates | verification/FEA-15-PIN-POLICY-1/delivery-gates-359d09d.log | 89bb3fb27facee036c7a4402bb545c30478dea19 | 11531b0d524b7905caf9263c8d96e7baaa4b89ff003e5ffeed6867de8255a689 | CANONICAL |
 | handoff | AC3 Handoff | doc/handoffs/FEA-15-PIN-POLICY-1-e9f7bb1.md | e02509282ce8e535f6cfd22a07c2b4e29023f963 | 38b166a26faf7d6d351466dfad6352582d63ea93f5e0532cb733aebe49d8d341 | CANONICAL |
+| review-report | AC1/AC3 independent ZCode Review | doc/reviews/FEA-15-PIN-POLICY-1-zcode-review-2026-11-11.md | 4b64e740345e18e2f05954d3a1e565b15b8dc36f | feab867be474d334387ef93ade5bfe91e97bbe8ba123567757f339d61f3cb1e7 | CANONICAL |
+| delivery-gates-post-pinbackfill | AC3 clean post-pinbackfill gate run | verification/FEA-15-PIN-POLICY-1/delivery-gates-d26c43c.log | e2399f3a68780760add53bde3007ab42dc302a9d | 0ea74a8044674248d4f9c044a661874be5d065e5acde51c8bf68e65a6b7fa758 | CANONICAL |
 | inventory-generator | AC1 inventory generator source | verification/FEA-15-PIN-POLICY-1/pin_inventory.py | da4a60baafba18281f156330b9ed1646045edb6d | 11e39fac240080a6f4ad10164aff35d2033742746a8f5c011042656b9948e7d7 | SOURCE_PIN |
 | delta-generator | AC1 delta generator source | verification/FEA-15-PIN-POLICY-1/pin_inventory_delta.py | 1d48d9b13698e9b4d7e2549b26fc7795b957cb65 | 86312df973c7ed161cc0dc63cedf77211a59d5c985a5c6ac394cfdc9e295f9b0 | SOURCE_PIN |
 | matrix-generator | AC2 matrix generator source | verification/FEA-15-PIN-POLICY-1/pin_r194_matrix.py | e9f7bb1b48c885cb329848d2d3591e145ff3d229 | 8239d1361f998c466d44fbf6ced189ee4ab3b4e61066fdf89397924527c6e7ff | SOURCE_PIN |
@@ -121,9 +123,9 @@ AC 状态语法按 doc/09_COLLABORATION.md §4.3；进入 in_review 前所有 AC
 
 ## Closeout Record
 
-- Closeout date / adjudicator：待 Review 与最终裁决时填写。
+- Closeout date / adjudicator：待另一新 ZCode session 最终 adjudication。
 - canonical_evidence_status：complete。
 - resource_closeout_status：pending。
 - 删除、迁移、归档数量/字节数：0；本卡禁止资源清理。
-- 未关闭项及保留原因：AC1 最终裁定、独立 Review、ZCode adjudication 待完成；R-001 保持 open P2，提案转交后续单独释放 Task。
+- 未关闭项及保留原因：AC1 最终裁定与 ZCode adjudication 待完成；Review 3 项非阻断发现按报告记录，R-001 保持 open P2，提案转交后续单独释放 Task。
 - 当前指针清理：完成时更新 STATUS / Plan / Task Ledger；rolling checkpoint 随执行更新。
