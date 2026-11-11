@@ -1,0 +1,15 @@
+CHECK=generator-integrity
+COMMAND=python ac4_generator_integrity.py --repo . --expected-head 4ed7f32b3ce9104ecee11aad593bde222055a0df --expected-autocrlf true
+WORKDIR=G:\CODEX\New Manga.workspace\FEA-15-PIN-BASIS-ENFORCE-1\ac4-v2-clone-t
+ACTUAL_PROCESS_CWD=G:\CODEX\New Manga.workspace\FEA-15-PIN-BASIS-ENFORCE-1\ac4-v2-clone-t
+HEAD=4ed7f32b3ce9104ecee11aad593bde222055a0df
+START_UTC=2026-11-11T22:29:00.9731263+00:00
+ROOT=G:\CODEX\New Manga.workspace\FEA-15-PIN-BASIS-ENFORCE-1\ac4-v2-clone-t
+HEAD=4ed7f32b3ce9104ecee11aad593bde222055a0df
+CORE_AUTOCRLF=true
+PASS GENERATOR=verification/FEA-15-PIN-POLICY-1/pin_inventory.py HEAD_BLOB=39ae7209cd28911f449bda0108c1ac4ecb4e6e40 BASE_BLOB=39ae7209cd28911f449bda0108c1ac4ecb4e6e40 SOURCE_BLOB=39ae7209cd28911f449bda0108c1ac4ecb4e6e40 blob_sha256=11e39fac240080a6f4ad10164aff35d2033742746a8f5c011042656b9948e7d7 expected_sha256=11e39fac240080a6f4ad10164aff35d2033742746a8f5c011042656b9948e7d7 worktree_sha256=6880c0509b1a4df4a9f04633c581a582dbbb182f1d1b233e27644a146441d7f3 crlf_pairs=453 lf_only=0 bare_cr=0 eol_matches_setting=True normalized_equals_blob=True
+PASS GENERATOR=verification/FEA-15-PIN-POLICY-1/pin_inventory_delta.py HEAD_BLOB=deae990b4553e777852be482cb5cec0b854d7e18 BASE_BLOB=deae990b4553e777852be482cb5cec0b854d7e18 SOURCE_BLOB=deae990b4553e777852be482cb5cec0b854d7e18 blob_sha256=86312df973c7ed161cc0dc63cedf77211a59d5c985a5c6ac394cfdc9e295f9b0 expected_sha256=86312df973c7ed161cc0dc63cedf77211a59d5c985a5c6ac394cfdc9e295f9b0 worktree_sha256=6ae6eb7a30d12c306f6ca2c0460dc6e8b0fa938d9dabd9851f869844b62f2118 crlf_pairs=163 lf_only=0 bare_cr=0 eol_matches_setting=True normalized_equals_blob=True
+GENERATOR_INTEGRITY=2/2 checked; errors=0
+EXIT=0
+EXIT=0
+END_UTC=2026-11-11T22:29:01.4218580+00:00

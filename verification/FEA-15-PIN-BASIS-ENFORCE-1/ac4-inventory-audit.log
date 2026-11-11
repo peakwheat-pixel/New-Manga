@@ -1,0 +1,20 @@
+START_UTC=2026-11-11T21:36:51.1487003Z
+COMMAND=python verification/FEA-15-PIN-BASIS-ENFORCE-1/ac4_inventory_audit.py --r0 "G:\CODEX\New Manga.workspace\FEA-15-PIN-BASIS-ENFORCE-1\r0-baseline" --candidate "G:\CODEX\New Manga.workspace\FEA-15-PIN-BASIS-ENFORCE-1\validation-ac2ac3" --clone-t "G:\CODEX\New Manga.workspace\FEA-15-PIN-BASIS-ENFORCE-1\ac4-clone-t" --clone-f "G:\CODEX\New Manga.workspace\FEA-15-PIN-BASIS-ENFORCE-1\ac4-clone-f" --output verification/FEA-15-PIN-BASIS-ENFORCE-1/ac4-inventory-audit.json
+PROCESS_CWD=G:\CODEX\New Manga
+R0=G:\CODEX\New Manga.workspace\FEA-15-PIN-BASIS-ENFORCE-1\r0-baseline HEAD=bfae0b9bd6a9b85a9a546d2adda0b684783ddb24
+CANDIDATE_SOURCE=G:\CODEX\New Manga.workspace\FEA-15-PIN-BASIS-ENFORCE-1\validation-ac2ac3 HEAD=bf377705783da10eebcf6585316178984ef663d8
+CLONE_T=G:\CODEX\New Manga.workspace\FEA-15-PIN-BASIS-ENFORCE-1\ac4-clone-t HEAD=bf377705783da10eebcf6585316178984ef663d8
+CLONE_F=G:\CODEX\New Manga.workspace\FEA-15-PIN-BASIS-ENFORCE-1\ac4-clone-f HEAD=bf377705783da10eebcf6585316178984ef663d8
+FILE_DIFF=PASS observed=11 expected=11
+ALLOWED_PATH_EOL=9/11
+ROW_DELTA=T8/-1/~0 F8/-1/~0
+ROW_SOURCES=['doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md']
+REMOVED_ROW={'row_count': 1, 'source_file': 'doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md', 'evidence_id': 'ac1a-stop-readme', 'path': 'verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md', 'commit': '4af22e1ef6a148f55e76a0b864158158c64ae524', 'pin_sha256': '19380ae0584fe19c393841c48ca19515b0c7be8bd0706734df0f18071f8febd6', 'class': '', 'ac_gate': 'AC1 transition and AC1c A adjudication', 'expected_source_filename': '', 'basis': 'MIXED', 'path_scope': 'REPOSITORY'}
+REPLACEMENT_ROW={'row_count': 1, 'source_file': 'doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md', 'evidence_id': 'ac1a-stop-readme', 'path': 'verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md', 'commit': '817415797ced8b4bf675696e1f52edd0e8076e9d', 'pin_sha256': 'cf233443ac791aec8b87098d636cd066df69b2b791df98c11279698b607c59a9', 'class': '', 'ac_gate': 'AC1 baseline and AC1c A/B gate summary', 'expected_source_filename': '', 'basis': 'BLOB', 'path_scope': 'REPOSITORY'}
+HISTORICAL_ROWS=T+8/-1 F+8/-1 exact_candidate_match=True
+HISTORICAL_PATH_BYTES=4737 raw_equal=1032 t_crlf_normalized_equal=3705 failures=0
+AUDIT_JSON=G:\CODEX\New Manga\verification\FEA-15-PIN-BASIS-ENFORCE-1\ac4-inventory-audit.json
+AUDIT_JSON_SHA256=9c7c77abee5d8a6efc57a2e320fee9e128bba2f5c2bedb2858a4cc31ee8532e5
+EXIT=1
+EXIT=1
+END_UTC=2026-11-11T21:36:53.5858772Z

@@ -1,0 +1,577 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "2026-11-11T21:37:47+00:00",
+  "base_head": "bfae0b9bd6a9b85a9a546d2adda0b684783ddb24",
+  "candidate_head": "bf377705783da10eebcf6585316178984ef663d8",
+  "allowed_status_count": 11,
+  "allowed_status": [
+    "A\tdoc/reviews/FEA-15-PIN-BASIS-ENFORCE-1-ac1d-baseline-confirmation-2026-11-12.md",
+    "A\ttools/governance/tests/test_canonical_evidence_basis.py",
+    "A\tverification/FEA-15-PIN-BASIS-ENFORCE-1/ac1c-b-r0-assertions-taskpath-bfae0b9.log",
+    "A\tverification/FEA-15-PIN-BASIS-ENFORCE-1/ac1d-canonical-evidence-blob-audit-0851085.log",
+    "A\tverification/FEA-15-PIN-BASIS-ENFORCE-1/post-ac1d-pinbackfill-gates-d362d228.log",
+    "A\tverification/FEA-15-PIN-BASIS-ENFORCE-1/r0-main-gates-bfae0b9.log",
+    "M\tdoc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md",
+    "M\tdoc/templates/TASK.md",
+    "M\ttools/governance/check.ps1",
+    "M\ttools/governance/tests/test_architecture_assertions.py",
+    "M\tverification/FEA-15-PIN-BASIS-ENFORCE-1/README.md"
+  ],
+  "heads": {
+    "r0": "bfae0b9bd6a9b85a9a546d2adda0b684783ddb24",
+    "candidate_source": "bf377705783da10eebcf6585316178984ef663d8",
+    "clone_t": "bf377705783da10eebcf6585316178984ef663d8",
+    "clone_f": "bf377705783da10eebcf6585316178984ef663d8"
+  },
+  "file_diff": {
+    "command": "git diff --name-status bfae0b9bd6a9b85a9a546d2adda0b684783ddb24 bf377705783da10eebcf6585316178984ef663d8",
+    "observed": [
+      "A\tdoc/reviews/FEA-15-PIN-BASIS-ENFORCE-1-ac1d-baseline-confirmation-2026-11-12.md",
+      "A\ttools/governance/tests/test_canonical_evidence_basis.py",
+      "A\tverification/FEA-15-PIN-BASIS-ENFORCE-1/ac1c-b-r0-assertions-taskpath-bfae0b9.log",
+      "A\tverification/FEA-15-PIN-BASIS-ENFORCE-1/ac1d-canonical-evidence-blob-audit-0851085.log",
+      "A\tverification/FEA-15-PIN-BASIS-ENFORCE-1/post-ac1d-pinbackfill-gates-d362d228.log",
+      "A\tverification/FEA-15-PIN-BASIS-ENFORCE-1/r0-main-gates-bfae0b9.log",
+      "M\tdoc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md",
+      "M\tdoc/templates/TASK.md",
+      "M\ttools/governance/check.ps1",
+      "M\ttools/governance/tests/test_architecture_assertions.py",
+      "M\tverification/FEA-15-PIN-BASIS-ENFORCE-1/README.md"
+    ],
+    "expected": [
+      "A\tdoc/reviews/FEA-15-PIN-BASIS-ENFORCE-1-ac1d-baseline-confirmation-2026-11-12.md",
+      "A\ttools/governance/tests/test_canonical_evidence_basis.py",
+      "A\tverification/FEA-15-PIN-BASIS-ENFORCE-1/ac1c-b-r0-assertions-taskpath-bfae0b9.log",
+      "A\tverification/FEA-15-PIN-BASIS-ENFORCE-1/ac1d-canonical-evidence-blob-audit-0851085.log",
+      "A\tverification/FEA-15-PIN-BASIS-ENFORCE-1/post-ac1d-pinbackfill-gates-d362d228.log",
+      "A\tverification/FEA-15-PIN-BASIS-ENFORCE-1/r0-main-gates-bfae0b9.log",
+      "M\tdoc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md",
+      "M\tdoc/templates/TASK.md",
+      "M\ttools/governance/check.ps1",
+      "M\ttools/governance/tests/test_architecture_assertions.py",
+      "M\tverification/FEA-15-PIN-BASIS-ENFORCE-1/README.md"
+    ],
+    "pass": true
+  },
+  "allowed_path_eol": {
+    "doc/reviews/FEA-15-PIN-BASIS-ENFORCE-1-ac1d-baseline-confirmation-2026-11-12.md": {
+      "pass": true,
+      "clone_t_raw_sha256": "059945156ce52f499642ee8b92fc00c2fe30523235447e341ead83d8966696b1",
+      "clone_t_normalized_sha256": "781d9e3d935fa3a9e911888ae5d82f9200fcd8953b94aa135b72b966b320f952",
+      "clone_f_sha256": "781d9e3d935fa3a9e911888ae5d82f9200fcd8953b94aa135b72b966b320f952",
+      "candidate_blob_sha256": "781d9e3d935fa3a9e911888ae5d82f9200fcd8953b94aa135b72b966b320f952",
+      "clone_t_crlf_pairs": 84,
+      "clone_t_lf_only": 0,
+      "clone_t_bare_cr": 0,
+      "raw_bytes_identical_without_normalization": false,
+      "difference_is_only_clone_t_crlf": true,
+      "clone_f_equals_candidate_blob": true,
+      "clone_t_normalized_equals_clone_f": true
+    },
+    "doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md": {
+      "pass": true,
+      "clone_t_raw_sha256": "a60deba192712a67b4aab36a8dab1f75b3387fde3a47bdcc7007feaecb15764f",
+      "clone_t_normalized_sha256": "a60deba192712a67b4aab36a8dab1f75b3387fde3a47bdcc7007feaecb15764f",
+      "clone_f_sha256": "a60deba192712a67b4aab36a8dab1f75b3387fde3a47bdcc7007feaecb15764f",
+      "candidate_blob_sha256": "a60deba192712a67b4aab36a8dab1f75b3387fde3a47bdcc7007feaecb15764f",
+      "clone_t_crlf_pairs": 0,
+      "clone_t_lf_only": 154,
+      "clone_t_bare_cr": 0,
+      "raw_bytes_identical_without_normalization": true,
+      "difference_is_only_clone_t_crlf": false,
+      "clone_f_equals_candidate_blob": true,
+      "clone_t_normalized_equals_clone_f": true
+    },
+    "doc/templates/TASK.md": {
+      "pass": true,
+      "clone_t_raw_sha256": "fedb83fe92a3c80770c78ccb968f8928f98c80ccd032f2361cace19331f81b27",
+      "clone_t_normalized_sha256": "89371702736ae5756ceacf96c9e3e93ff10b2517aa38a1f253095f69361afc7c",
+      "clone_f_sha256": "89371702736ae5756ceacf96c9e3e93ff10b2517aa38a1f253095f69361afc7c",
+      "candidate_blob_sha256": "89371702736ae5756ceacf96c9e3e93ff10b2517aa38a1f253095f69361afc7c",
+      "clone_t_crlf_pairs": 84,
+      "clone_t_lf_only": 0,
+      "clone_t_bare_cr": 0,
+      "raw_bytes_identical_without_normalization": false,
+      "difference_is_only_clone_t_crlf": true,
+      "clone_f_equals_candidate_blob": true,
+      "clone_t_normalized_equals_clone_f": true
+    },
+    "tools/governance/check.ps1": {
+      "pass": true,
+      "clone_t_raw_sha256": "1a6f7ab38e1b3fad80c9c282880c74e77bbbb81e6300653af3678d0694a6cff2",
+      "clone_t_normalized_sha256": "1a6f7ab38e1b3fad80c9c282880c74e77bbbb81e6300653af3678d0694a6cff2",
+      "clone_f_sha256": "1a6f7ab38e1b3fad80c9c282880c74e77bbbb81e6300653af3678d0694a6cff2",
+      "candidate_blob_sha256": "1a6f7ab38e1b3fad80c9c282880c74e77bbbb81e6300653af3678d0694a6cff2",
+      "clone_t_crlf_pairs": 0,
+      "clone_t_lf_only": 970,
+      "clone_t_bare_cr": 0,
+      "raw_bytes_identical_without_normalization": true,
+      "difference_is_only_clone_t_crlf": false,
+      "clone_f_equals_candidate_blob": true,
+      "clone_t_normalized_equals_clone_f": true
+    },
+    "tools/governance/tests/test_architecture_assertions.py": {
+      "pass": true,
+      "clone_t_raw_sha256": "b4f854b1b78e1bacf818e65119bddf1c99cd4fb6c5196ec65fb02ffecd6c0c05",
+      "clone_t_normalized_sha256": "26f79e8a2d6b2d26e2e2e2320800c787b8535698de1a852b1ed63b24a9169e57",
+      "clone_f_sha256": "26f79e8a2d6b2d26e2e2e2320800c787b8535698de1a852b1ed63b24a9169e57",
+      "candidate_blob_sha256": "26f79e8a2d6b2d26e2e2e2320800c787b8535698de1a852b1ed63b24a9169e57",
+      "clone_t_crlf_pairs": 359,
+      "clone_t_lf_only": 0,
+      "clone_t_bare_cr": 0,
+      "raw_bytes_identical_without_normalization": false,
+      "difference_is_only_clone_t_crlf": true,
+      "clone_f_equals_candidate_blob": true,
+      "clone_t_normalized_equals_clone_f": true
+    },
+    "tools/governance/tests/test_canonical_evidence_basis.py": {
+      "pass": true,
+      "clone_t_raw_sha256": "8db828d8413ecba69e7514958b3107719c0930dd1aa058d9dbf4a89b52db7afb",
+      "clone_t_normalized_sha256": "80b6a1266e18419d239eb9b14a61c7ca9cdb7e8f889aeffdea83deb5de767a08",
+      "clone_f_sha256": "80b6a1266e18419d239eb9b14a61c7ca9cdb7e8f889aeffdea83deb5de767a08",
+      "candidate_blob_sha256": "80b6a1266e18419d239eb9b14a61c7ca9cdb7e8f889aeffdea83deb5de767a08",
+      "clone_t_crlf_pairs": 340,
+      "clone_t_lf_only": 0,
+      "clone_t_bare_cr": 0,
+      "raw_bytes_identical_without_normalization": false,
+      "difference_is_only_clone_t_crlf": true,
+      "clone_f_equals_candidate_blob": true,
+      "clone_t_normalized_equals_clone_f": true
+    },
+    "verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md": {
+      "pass": true,
+      "clone_t_raw_sha256": "8f1584256350e718278b13761db2b7f8180f40893e9c3302bde2e703251c620a",
+      "clone_t_normalized_sha256": "32d47ab064f4c93fbb1c2d0488296ebf9ab536faf6294d90aa817a2a56ada88a",
+      "clone_f_sha256": "32d47ab064f4c93fbb1c2d0488296ebf9ab536faf6294d90aa817a2a56ada88a",
+      "candidate_blob_sha256": "32d47ab064f4c93fbb1c2d0488296ebf9ab536faf6294d90aa817a2a56ada88a",
+      "clone_t_crlf_pairs": 63,
+      "clone_t_lf_only": 0,
+      "clone_t_bare_cr": 0,
+      "raw_bytes_identical_without_normalization": false,
+      "difference_is_only_clone_t_crlf": true,
+      "clone_f_equals_candidate_blob": true,
+      "clone_t_normalized_equals_clone_f": true
+    },
+    "verification/FEA-15-PIN-BASIS-ENFORCE-1/ac1c-b-r0-assertions-taskpath-bfae0b9.log": {
+      "pass": true,
+      "clone_t_raw_sha256": "d52a284b45d1bbf3a7ec85d686061178c6f608f0e7448326b6fe26c8730d6529",
+      "clone_t_normalized_sha256": "488924df930e1022d54003875f0904dcd97524d7dff914ecc7a1b3758c518bab",
+      "clone_f_sha256": "488924df930e1022d54003875f0904dcd97524d7dff914ecc7a1b3758c518bab",
+      "candidate_blob_sha256": "488924df930e1022d54003875f0904dcd97524d7dff914ecc7a1b3758c518bab",
+      "clone_t_crlf_pairs": 87,
+      "clone_t_lf_only": 0,
+      "clone_t_bare_cr": 0,
+      "raw_bytes_identical_without_normalization": false,
+      "difference_is_only_clone_t_crlf": true,
+      "clone_f_equals_candidate_blob": true,
+      "clone_t_normalized_equals_clone_f": true
+    },
+    "verification/FEA-15-PIN-BASIS-ENFORCE-1/ac1d-canonical-evidence-blob-audit-0851085.log": {
+      "pass": true,
+      "clone_t_raw_sha256": "3f15fe1e8b38f9d595b3c333799c881985b5b2816b729824fa02c0a8212a591c",
+      "clone_t_normalized_sha256": "b8c8539e4c94715c25f30a5e54b512bfb39d2c8ded9b29cac0393ab3ec112558",
+      "clone_f_sha256": "b8c8539e4c94715c25f30a5e54b512bfb39d2c8ded9b29cac0393ab3ec112558",
+      "candidate_blob_sha256": "b8c8539e4c94715c25f30a5e54b512bfb39d2c8ded9b29cac0393ab3ec112558",
+      "clone_t_crlf_pairs": 50,
+      "clone_t_lf_only": 0,
+      "clone_t_bare_cr": 0,
+      "raw_bytes_identical_without_normalization": false,
+      "difference_is_only_clone_t_crlf": true,
+      "clone_f_equals_candidate_blob": true,
+      "clone_t_normalized_equals_clone_f": true
+    },
+    "verification/FEA-15-PIN-BASIS-ENFORCE-1/post-ac1d-pinbackfill-gates-d362d228.log": {
+      "pass": true,
+      "clone_t_raw_sha256": "ce497bf7dc22f40a0131e2b407d972db18065872d16a2bf2fdae5f4bf618aa4c",
+      "clone_t_normalized_sha256": "df3d9ab418a4bd33719e263d0aa56cddd9d78e4c0e0a5ec7d34fd3bbaa5fe888",
+      "clone_f_sha256": "df3d9ab418a4bd33719e263d0aa56cddd9d78e4c0e0a5ec7d34fd3bbaa5fe888",
+      "candidate_blob_sha256": "df3d9ab418a4bd33719e263d0aa56cddd9d78e4c0e0a5ec7d34fd3bbaa5fe888",
+      "clone_t_crlf_pairs": 163,
+      "clone_t_lf_only": 0,
+      "clone_t_bare_cr": 0,
+      "raw_bytes_identical_without_normalization": false,
+      "difference_is_only_clone_t_crlf": true,
+      "clone_f_equals_candidate_blob": true,
+      "clone_t_normalized_equals_clone_f": true
+    },
+    "verification/FEA-15-PIN-BASIS-ENFORCE-1/r0-main-gates-bfae0b9.log": {
+      "pass": true,
+      "clone_t_raw_sha256": "688857f76fd5601b795a85eb99c1c161321b933280a819b470b3dd68d3437622",
+      "clone_t_normalized_sha256": "0f4b9dc45bb6b198f1414e1e8f52de2c6ffdba42d81b85d17742a7d3723defd0",
+      "clone_f_sha256": "0f4b9dc45bb6b198f1414e1e8f52de2c6ffdba42d81b85d17742a7d3723defd0",
+      "candidate_blob_sha256": "0f4b9dc45bb6b198f1414e1e8f52de2c6ffdba42d81b85d17742a7d3723defd0",
+      "clone_t_crlf_pairs": 158,
+      "clone_t_lf_only": 0,
+      "clone_t_bare_cr": 0,
+      "raw_bytes_identical_without_normalization": false,
+      "difference_is_only_clone_t_crlf": true,
+      "clone_f_equals_candidate_blob": true,
+      "clone_t_normalized_equals_clone_f": true
+    }
+  },
+  "row_delta": {
+    "clone_t": {
+      "baseline_head": "bfae0b9bd6a9b85a9a546d2adda0b684783ddb24",
+      "current_head": "bf377705783da10eebcf6585316178984ef663d8",
+      "added_rows": 8,
+      "removed_rows": 1,
+      "changed_rows": 0,
+      "added_by_source_file": {
+        "doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md": 8
+      },
+      "source_files": [
+        "doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md"
+      ],
+      "repository_evidence_targets": [
+        "doc/reviews/FEA-15-PIN-BASIS-ENFORCE-1-ac1d-baseline-confirmation-2026-11-12.md",
+        "verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md",
+        "verification/FEA-15-PIN-BASIS-ENFORCE-1/ac1c-b-r0-assertions-taskpath-bfae0b9.log",
+        "verification/FEA-15-PIN-BASIS-ENFORCE-1/ac1d-canonical-evidence-blob-audit-0851085.log",
+        "verification/FEA-15-PIN-BASIS-ENFORCE-1/post-ac1d-pinbackfill-gates-d362d228.log",
+        "verification/FEA-15-PIN-BASIS-ENFORCE-1/r0-main-gates-bfae0b9.log"
+      ],
+      "added": [
+        {
+          "row_count": 1,
+          "source_file": "doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md",
+          "evidence_id": "ac1a-stop-readme",
+          "path": "verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md",
+          "commit": "817415797ced8b4bf675696e1f52edd0e8076e9d",
+          "pin_sha256": "cf233443ac791aec8b87098d636cd066df69b2b791df98c11279698b607c59a9",
+          "class": "",
+          "ac_gate": "AC1 baseline and AC1c A/B gate summary",
+          "expected_source_filename": "",
+          "basis": "BLOB",
+          "path_scope": "REPOSITORY"
+        },
+        {
+          "row_count": 1,
+          "source_file": "doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md",
+          "evidence_id": "ac1c-b-r0-audit",
+          "path": "verification/FEA-15-PIN-BASIS-ENFORCE-1/ac1c-b-r0-assertions-taskpath-bfae0b9.log",
+          "commit": "817415797ced8b4bf675696e1f52edd0e8076e9d",
+          "pin_sha256": "488924df930e1022d54003875f0904dcd97524d7dff914ecc7a1b3758c518bab",
+          "class": "",
+          "ac_gate": "AC1c B R0 file/scope/blob assertions and TaskPath",
+          "expected_source_filename": "",
+          "basis": "BLOB",
+          "path_scope": "REPOSITORY"
+        },
+        {
+          "row_count": 1,
+          "source_file": "doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md",
+          "evidence_id": "ac1c-r0-main-gates",
+          "path": "verification/FEA-15-PIN-BASIS-ENFORCE-1/r0-main-gates-bfae0b9.log",
+          "commit": "817415797ced8b4bf675696e1f52edd0e8076e9d",
+          "pin_sha256": "0f4b9dc45bb6b198f1414e1e8f52de2c6ffdba42d81b85d17742a7d3723defd0",
+          "class": "",
+          "ac_gate": "AC1c clean R0 main default/TaskPath/pins/API gates",
+          "expected_source_filename": "",
+          "basis": "BLOB",
+          "path_scope": "REPOSITORY"
+        },
+        {
+          "row_count": 1,
+          "source_file": "doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md",
+          "evidence_id": "ac1d-baseline-review",
+          "path": "doc/reviews/FEA-15-PIN-BASIS-ENFORCE-1-ac1d-baseline-confirmation-2026-11-12.md",
+          "commit": "cdd5d258690471c8069d47f461f04a1ef9a306bd",
+          "pin_sha256": "781d9e3d935fa3a9e911888ae5d82f9200fcd8953b94aa135b72b966b320f952",
+          "class": "",
+          "ac_gate": "AC1 fresh independent baseline confirmation",
+          "expected_source_filename": "",
+          "basis": "BLOB",
+          "path_scope": "REPOSITORY"
+        },
+        {
+          "row_count": 1,
+          "source_file": "doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md",
+          "evidence_id": "ac1d-blob-audit",
+          "path": "verification/FEA-15-PIN-BASIS-ENFORCE-1/ac1d-canonical-evidence-blob-audit-0851085.log",
+          "commit": "c8d387929572f9995b4a1dde2a8ce2651d89e8a6",
+          "pin_sha256": "b8c8539e4c94715c25f30a5e54b512bfb39d2c8ded9b29cac0393ab3ec112558",
+          "class": "",
+          "ac_gate": "AC1d 19-row Canonical Evidence Git blob audit at generated HEAD cdd5d258690471c8069d47f461f04a1ef9a306bd",
+          "expected_source_filename": "",
+          "basis": "BLOB",
+          "path_scope": "REPOSITORY"
+        },
+        {
+          "row_count": 1,
+          "source_file": "doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md",
+          "evidence_id": "ac1d-evidence-readme",
+          "path": "verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md",
+          "commit": "c8d387929572f9995b4a1dde2a8ce2651d89e8a6",
+          "pin_sha256": "97702ae0a908cd6558bf90ee105edab4ba77ce45cdb2d1dacd096ccc62bc99b8",
+          "class": "",
+          "ac_gate": "AC1 baseline status, EOL basis pairs, and limitations",
+          "expected_source_filename": "",
+          "basis": "BLOB",
+          "path_scope": "REPOSITORY"
+        },
+        {
+          "row_count": 1,
+          "source_file": "doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md",
+          "evidence_id": "ac1d-main-gates",
+          "path": "verification/FEA-15-PIN-BASIS-ENFORCE-1/post-ac1d-pinbackfill-gates-d362d228.log",
+          "commit": "ecc626a1b642db247e8d5173e7870cff7b1003f5",
+          "pin_sha256": "df3d9ab418a4bd33719e263d0aa56cddd9d78e4c0e0a5ec7d34fd3bbaa5fe888",
+          "class": "",
+          "ac_gate": "AC1d post-pinbackfill main default/TaskPath/pins/API gate log",
+          "expected_source_filename": "",
+          "basis": "BLOB",
+          "path_scope": "REPOSITORY"
+        },
+        {
+          "row_count": 1,
+          "source_file": "doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md",
+          "evidence_id": "ac1d-post-pinbackfill-readme",
+          "path": "verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md",
+          "commit": "ecc626a1b642db247e8d5173e7870cff7b1003f5",
+          "pin_sha256": "32d47ab064f4c93fbb1c2d0488296ebf9ab536faf6294d90aa817a2a56ada88a",
+          "class": "",
+          "ac_gate": "AC1d main gate summary and outcomes",
+          "expected_source_filename": "",
+          "basis": "BLOB",
+          "path_scope": "REPOSITORY"
+        }
+      ],
+      "removed": [
+        {
+          "row_count": 1,
+          "source_file": "doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md",
+          "evidence_id": "ac1a-stop-readme",
+          "path": "verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md",
+          "commit": "4af22e1ef6a148f55e76a0b864158158c64ae524",
+          "pin_sha256": "19380ae0584fe19c393841c48ca19515b0c7be8bd0706734df0f18071f8febd6",
+          "class": "",
+          "ac_gate": "AC1 transition and AC1c A adjudication",
+          "expected_source_filename": "",
+          "basis": "MIXED",
+          "path_scope": "REPOSITORY"
+        }
+      ],
+      "changed": []
+    },
+    "clone_f": {
+      "baseline_head": "bfae0b9bd6a9b85a9a546d2adda0b684783ddb24",
+      "current_head": "bf377705783da10eebcf6585316178984ef663d8",
+      "added_rows": 8,
+      "removed_rows": 1,
+      "changed_rows": 0,
+      "added_by_source_file": {
+        "doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md": 8
+      },
+      "source_files": [
+        "doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md"
+      ],
+      "repository_evidence_targets": [
+        "doc/reviews/FEA-15-PIN-BASIS-ENFORCE-1-ac1d-baseline-confirmation-2026-11-12.md",
+        "verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md",
+        "verification/FEA-15-PIN-BASIS-ENFORCE-1/ac1c-b-r0-assertions-taskpath-bfae0b9.log",
+        "verification/FEA-15-PIN-BASIS-ENFORCE-1/ac1d-canonical-evidence-blob-audit-0851085.log",
+        "verification/FEA-15-PIN-BASIS-ENFORCE-1/post-ac1d-pinbackfill-gates-d362d228.log",
+        "verification/FEA-15-PIN-BASIS-ENFORCE-1/r0-main-gates-bfae0b9.log"
+      ],
+      "added": [
+        {
+          "row_count": 1,
+          "source_file": "doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md",
+          "evidence_id": "ac1a-stop-readme",
+          "path": "verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md",
+          "commit": "817415797ced8b4bf675696e1f52edd0e8076e9d",
+          "pin_sha256": "cf233443ac791aec8b87098d636cd066df69b2b791df98c11279698b607c59a9",
+          "class": "",
+          "ac_gate": "AC1 baseline and AC1c A/B gate summary",
+          "expected_source_filename": "",
+          "basis": "BLOB",
+          "path_scope": "REPOSITORY"
+        },
+        {
+          "row_count": 1,
+          "source_file": "doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md",
+          "evidence_id": "ac1c-b-r0-audit",
+          "path": "verification/FEA-15-PIN-BASIS-ENFORCE-1/ac1c-b-r0-assertions-taskpath-bfae0b9.log",
+          "commit": "817415797ced8b4bf675696e1f52edd0e8076e9d",
+          "pin_sha256": "488924df930e1022d54003875f0904dcd97524d7dff914ecc7a1b3758c518bab",
+          "class": "",
+          "ac_gate": "AC1c B R0 file/scope/blob assertions and TaskPath",
+          "expected_source_filename": "",
+          "basis": "MIXED",
+          "path_scope": "REPOSITORY"
+        },
+        {
+          "row_count": 1,
+          "source_file": "doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md",
+          "evidence_id": "ac1c-r0-main-gates",
+          "path": "verification/FEA-15-PIN-BASIS-ENFORCE-1/r0-main-gates-bfae0b9.log",
+          "commit": "817415797ced8b4bf675696e1f52edd0e8076e9d",
+          "pin_sha256": "0f4b9dc45bb6b198f1414e1e8f52de2c6ffdba42d81b85d17742a7d3723defd0",
+          "class": "",
+          "ac_gate": "AC1c clean R0 main default/TaskPath/pins/API gates",
+          "expected_source_filename": "",
+          "basis": "MIXED",
+          "path_scope": "REPOSITORY"
+        },
+        {
+          "row_count": 1,
+          "source_file": "doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md",
+          "evidence_id": "ac1d-baseline-review",
+          "path": "doc/reviews/FEA-15-PIN-BASIS-ENFORCE-1-ac1d-baseline-confirmation-2026-11-12.md",
+          "commit": "cdd5d258690471c8069d47f461f04a1ef9a306bd",
+          "pin_sha256": "781d9e3d935fa3a9e911888ae5d82f9200fcd8953b94aa135b72b966b320f952",
+          "class": "",
+          "ac_gate": "AC1 fresh independent baseline confirmation",
+          "expected_source_filename": "",
+          "basis": "MIXED",
+          "path_scope": "REPOSITORY"
+        },
+        {
+          "row_count": 1,
+          "source_file": "doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md",
+          "evidence_id": "ac1d-blob-audit",
+          "path": "verification/FEA-15-PIN-BASIS-ENFORCE-1/ac1d-canonical-evidence-blob-audit-0851085.log",
+          "commit": "c8d387929572f9995b4a1dde2a8ce2651d89e8a6",
+          "pin_sha256": "b8c8539e4c94715c25f30a5e54b512bfb39d2c8ded9b29cac0393ab3ec112558",
+          "class": "",
+          "ac_gate": "AC1d 19-row Canonical Evidence Git blob audit at generated HEAD cdd5d258690471c8069d47f461f04a1ef9a306bd",
+          "expected_source_filename": "",
+          "basis": "MIXED",
+          "path_scope": "REPOSITORY"
+        },
+        {
+          "row_count": 1,
+          "source_file": "doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md",
+          "evidence_id": "ac1d-evidence-readme",
+          "path": "verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md",
+          "commit": "c8d387929572f9995b4a1dde2a8ce2651d89e8a6",
+          "pin_sha256": "97702ae0a908cd6558bf90ee105edab4ba77ce45cdb2d1dacd096ccc62bc99b8",
+          "class": "",
+          "ac_gate": "AC1 baseline status, EOL basis pairs, and limitations",
+          "expected_source_filename": "",
+          "basis": "BLOB",
+          "path_scope": "REPOSITORY"
+        },
+        {
+          "row_count": 1,
+          "source_file": "doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md",
+          "evidence_id": "ac1d-main-gates",
+          "path": "verification/FEA-15-PIN-BASIS-ENFORCE-1/post-ac1d-pinbackfill-gates-d362d228.log",
+          "commit": "ecc626a1b642db247e8d5173e7870cff7b1003f5",
+          "pin_sha256": "df3d9ab418a4bd33719e263d0aa56cddd9d78e4c0e0a5ec7d34fd3bbaa5fe888",
+          "class": "",
+          "ac_gate": "AC1d post-pinbackfill main default/TaskPath/pins/API gate log",
+          "expected_source_filename": "",
+          "basis": "MIXED",
+          "path_scope": "REPOSITORY"
+        },
+        {
+          "row_count": 1,
+          "source_file": "doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md",
+          "evidence_id": "ac1d-post-pinbackfill-readme",
+          "path": "verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md",
+          "commit": "ecc626a1b642db247e8d5173e7870cff7b1003f5",
+          "pin_sha256": "32d47ab064f4c93fbb1c2d0488296ebf9ab536faf6294d90aa817a2a56ada88a",
+          "class": "",
+          "ac_gate": "AC1d main gate summary and outcomes",
+          "expected_source_filename": "",
+          "basis": "MIXED",
+          "path_scope": "REPOSITORY"
+        }
+      ],
+      "removed": [
+        {
+          "row_count": 1,
+          "source_file": "doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md",
+          "evidence_id": "ac1a-stop-readme",
+          "path": "verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md",
+          "commit": "4af22e1ef6a148f55e76a0b864158158c64ae524",
+          "pin_sha256": "19380ae0584fe19c393841c48ca19515b0c7be8bd0706734df0f18071f8febd6",
+          "class": "",
+          "ac_gate": "AC1 transition and AC1c A adjudication",
+          "expected_source_filename": "",
+          "basis": "MIXED",
+          "path_scope": "REPOSITORY"
+        }
+      ],
+      "changed": []
+    }
+  },
+  "removed_row_attribution": {
+    "disposition": "superseded by current Task-card pin to the updated Task-local README; both source row and target path are within the released Task scope",
+    "removed": {
+      "row_count": 1,
+      "source_file": "doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md",
+      "evidence_id": "ac1a-stop-readme",
+      "path": "verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md",
+      "commit": "4af22e1ef6a148f55e76a0b864158158c64ae524",
+      "pin_sha256": "19380ae0584fe19c393841c48ca19515b0c7be8bd0706734df0f18071f8febd6",
+      "class": "",
+      "ac_gate": "AC1 transition and AC1c A adjudication",
+      "expected_source_filename": "",
+      "basis": "MIXED",
+      "path_scope": "REPOSITORY"
+    },
+    "replacement": {
+      "row_count": 1,
+      "source_file": "doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md",
+      "evidence_id": "ac1a-stop-readme",
+      "path": "verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md",
+      "commit": "817415797ced8b4bf675696e1f52edd0e8076e9d",
+      "pin_sha256": "cf233443ac791aec8b87098d636cd066df69b2b791df98c11279698b607c59a9",
+      "class": "",
+      "ac_gate": "AC1 baseline and AC1c A/B gate summary",
+      "expected_source_filename": "",
+      "basis": "BLOB",
+      "path_scope": "REPOSITORY"
+    }
+  },
+  "historical_row_identity_sha": {
+    "r0_rows": 5455,
+    "candidate_t_rows": 5462,
+    "candidate_f_rows": 5462,
+    "candidate_t_added": 8,
+    "candidate_t_removed": 1,
+    "candidate_f_added": 8,
+    "candidate_f_removed": 1,
+    "clone_t_equals_clone_f": true,
+    "removed_historical_rows": [
+      [
+        "doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md",
+        "ac1a-stop-readme",
+        "verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md",
+        "4af22e1ef6a148f55e76a0b864158158c64ae524",
+        "19380ae0584fe19c393841c48ca19515b0c7be8bd0706734df0f18071f8febd6",
+        "",
+        "AC1 transition and AC1c A adjudication",
+        ""
+      ]
+    ]
+  },
+  "historical_path_bytes": {
+    "r0_unique_present_repository_paths": 4739,
+    "allowed_paths_checked_separately": 2,
+    "unchanged_paths_checked": 4737,
+    "raw_equal_to_r0": 1032,
+    "clone_t_crlf_normalized_equal_to_r0": 3705,
+    "failures": []
+  },
+  "clone_status": {
+    "r0": [
+      "?? verification/FEA-15-PIN-BASIS-ENFORCE-1/ac4-inventory-r0.json"
+    ],
+    "clone_t": [
+      "?? verification/FEA-15-PIN-BASIS-ENFORCE-1/ac4-clone-t-inventory.json",
+      "?? verification/FEA-15-PIN-BASIS-ENFORCE-1/ac4-inventory-delta-r0-to-bf377705783da10eebcf6585316178984ef663d8-t.json",
+      "?? verification/FEA-15-PIN-BASIS-ENFORCE-1/ac4-inventory-r0.json"
+    ],
+    "clone_f": [
+      "?? verification/FEA-15-PIN-BASIS-ENFORCE-1/ac4-clone-f-inventory.json",
+      "?? verification/FEA-15-PIN-BASIS-ENFORCE-1/ac4-inventory-delta-r0-to-bf377705783da10eebcf6585316178984ef663d8-f.json",
+      "?? verification/FEA-15-PIN-BASIS-ENFORCE-1/ac4-inventory-r0.json"
+    ],
+    "candidate_source": []
+  },
+  "failures": [],
+  "exit": 0
+}

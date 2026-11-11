@@ -1,0 +1,190 @@
+AC4_CLONE=G:\CODEX\New Manga.workspace\FEA-15-PIN-BASIS-ENFORCE-1\ac4-clone-t
+HEAD=bf377705783da10eebcf6585316178984ef663d8
+CORE_AUTOCRLF=true
+CORE_LONGPATHS=true
+
+START_UTC=2026-11-11T21:03:25.2101802Z
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+WORKDIR=G:\CODEX\New Manga.workspace\FEA-15-PIN-BASIS-ENFORCE-1\ac4-clone-t
+ACTUAL_PROCESS_CWD=G:\CODEX\New Manga.workspace\FEA-15-PIN-BASIS-ENFORCE-1\ac4-clone-t
+HEAD=bf377705783da10eebcf6585316178984ef663d8
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-15-PIN-BASIS-ENFORCE-1.md
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3183 bytes / 31 lines
+FAIL: doc/REBASELINE_PLAN.md 超过防膨胀预算：7035 bytes / 64 lines
+Governance check: FAIL (1 errors, 2 warnings)
+EXIT=1
+END_UTC=2026-11-11T21:03:28.0482527Z
+
+START_UTC=2026-11-11T21:03:28.0678538Z
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md
+WORKDIR=G:\CODEX\New Manga.workspace\FEA-15-PIN-BASIS-ENFORCE-1\ac4-clone-t
+ACTUAL_PROCESS_CWD=G:\CODEX\New Manga.workspace\FEA-15-PIN-BASIS-ENFORCE-1\ac4-clone-t
+HEAD=bf377705783da10eebcf6585316178984ef663d8
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-15-PIN-BASIS-ENFORCE-1.md
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3183 bytes / 31 lines
+FAIL: doc/REBASELINE_PLAN.md 超过防膨胀预算：7035 bytes / 64 lines
+Governance check: FAIL (1 errors, 2 warnings)
+EXIT=1
+END_UTC=2026-11-11T21:03:29.0195090Z
+
+START_UTC=2026-11-11T21:03:29.0231093Z
+COMMAND=pwsh -NoProfile -File tools/governance/verify_pins.ps1
+WORKDIR=G:\CODEX\New Manga.workspace\FEA-15-PIN-BASIS-ENFORCE-1\ac4-clone-t
+ACTUAL_PROCESS_CWD=G:\CODEX\New Manga.workspace\FEA-15-PIN-BASIS-ENFORCE-1\ac4-clone-t
+HEAD=bf377705783da10eebcf6585316178984ef663d8
+MISMATCH C01b pin=3c9f5af7d74f actual=41cd5073f945
+MISMATCH C02 pin=bb365ca891a7 actual=cf553722a1a8
+MISMATCH C03 pin=b77e7968a00b actual=c57535ca8fc9
+OK C04b 4b304c0c315f
+MISMATCH C05 pin=f6e6f3cb1fe1 actual=598ae7d8ca05
+MISMATCH C06 pin=75f8e2b4eb80 actual=8481e58210d2
+MISMATCH C07 pin=8ccaba05cbc2 actual=a031aae77971
+MISMATCH C08 pin=453f993c1a16 actual=7852c318605c
+MISMATCH C09 pin=dc51226b336c actual=3782fc4657f5
+MISMATCH C10 pin=ec8fd862f95f actual=ba27fd4fa5b5
+MISMATCH C11 pin=44f4273f7ad1 actual=8c37d15c672c
+MISMATCH C12 pin=f49835860143 actual=f2bbef02acff
+MISMATCH C13 pin=8faf1e805eac actual=71621515bd75
+MISMATCH C14 pin=05056cbf65f9 actual=bd5e5dd5c5d9
+MISMATCH C15 pin=f9e376a0ed4c actual=6d87093cd695
+MISMATCH C16 pin=67286eeca8cb actual=87c41dfd29a6
+OK C17 cdeee4872e29
+MISMATCH FEA01 pin=0370c18932b1 actual=a337c3bd2e30
+PIN AUDIT: FAIL (16)
+EXIT=1
+END_UTC=2026-11-11T21:03:29.4690957Z
+
+START_UTC=2026-11-11T21:03:29.4712255Z
+COMMAND=python tools/generate_api_inventory.py --check
+WORKDIR=G:\CODEX\New Manga.workspace\FEA-15-PIN-BASIS-ENFORCE-1\ac4-clone-t
+ACTUAL_PROCESS_CWD=G:\CODEX\New Manga.workspace\FEA-15-PIN-BASIS-ENFORCE-1\ac4-clone-t
+HEAD=bf377705783da10eebcf6585316178984ef663d8
+OK: rendered counts match FEA-C07 doc
+| 接口 | 方法数 | 属性/事件/字段数 |
+|---|---|---|
+| IReaderProgressSink | 1 | 0 |
+| IHostController | 79 | 4 |
+| IRunController | 6 | 0 |
+| **合计** | **86** | — |
+
+## IReaderProgressSink
+
+| # | 成员 | 返回类型 |
+|---|---|---|
+| 1 | `SaveReadingProgressAsync` | `Task<ReaderProgressSaveResult>` |
+
+## IHostController
+
+| # | 成员 | 返回类型 |
+|---|---|---|
+| 1 | `StartAsync` | `Task` |
+| 2 | `RefreshBooksAsync` | `Task` |
+| 3 | `TryChineseRoundTripAsync` | `Task<bool>` |
+| 4 | `TryCreateBookAsync` | `Task<bool>` |
+| 5 | `CreateChapterAsync` | `Task<ChapterSummary?>` |
+| 6 | `LoadReaderBookAsync` | `Task<ReaderBookData?>` |
+| 7 | `ListChaptersAsync` | `Task<IReadOnlyList<ChapterSummary>>` |
+| 8 | `ListChapterPagesAsync` | `Task<IReadOnlyList<ChapterPageSummary>>` |
+| 9 | `GetReadingPreferencesAsync` | `Task<ReadingPreferencesInfo?>` |
+| 10 | `SaveReadingPreferencesAsync` | `Task<bool>` |
+| 11 | `ListBookmarksAsync` | `Task<IReadOnlyList<BookmarkInfo>>` |
+| 12 | `CreateBookmarkAsync` | `Task<string?>` |
+| 13 | `DeleteBookmarkAsync` | `Task<bool>` |
+| 14 | `GetBookReadingProgressAsync` | `Task<BookReadingProgressInfo?>` |
+| 15 | `ResetReadingProgressAsync` | `Task<int>` |
+| 16 | `ListFontAssetsAsync` | `Task<IReadOnlyList<FontAssetInfo>>` |
+| 17 | `ImportFontAssetAsync` | `Task<FontAssetInfo?>` |
+| 18 | `DeleteFontAssetAsync` | `Task<bool>` |
+| 19 | `RefreshFontAssetsAsync` | `Task<FontRefreshInfo>` |
+| 20 | `UpdateBookMetadataAsync` | `Task<bool>` |
+| 21 | `ReorderChaptersAsync` | `Task<bool>` |
+| 22 | `UpdateChapterMetadataAsync` | `Task<bool>` |
+| 23 | `CreateChapterWithMetadataAsync` | `Task<ChapterSummary?>` |
+| 24 | `ListIssueMarkersAsync` | `Task<IReadOnlyList<IssueMarkerInfo>>` |
+| 25 | `CreateIssueMarkerAsync` | `Task<string?>` |
+| 26 | `ResolveIssueMarkerAsync` | `Task<bool>` |
+| 27 | `ReopenIssueMarkerAsync` | `Task<bool>` |
+| 28 | `DeleteIssueMarkerAsync` | `Task<bool>` |
+| 29 | `ListPromptTemplatesAsync` | `Task<IReadOnlyList<PromptTemplateInfo>>` |
+| 30 | `SavePromptTemplateAsync` | `Task<PromptTemplateInfo?>` |
+| 31 | `DeletePromptTemplateAsync` | `Task<PromptTemplateDeleteResult>` |
+| 32 | `CopyBuiltinPromptTemplateAsync` | `Task<PromptTemplateInfo?>` |
+| 33 | `GetPromptTemplateReferencesAsync` | `Task<IReadOnlyList<PromptTemplateReference>>` |
+| 34 | `LoadPageRegionsAsync` | `Task<RegionPageProjection?>` |
+| 35 | `LoadRegionRevisionsAsync` | `Task<RegionRevisionHistory?>` |
+| 36 | `ReadPageImageAsync` | `Task<byte[]?>` |
+| 37 | `SetRegionTypeAsync` | `Task<RegionOperationResult>` |
+| 38 | `RestoreRegionRevisionAsync` | `Task<RegionOperationResult>` |
+| 39 | `RerenderPageAsync` | `Task<PageRerenderOutcome>` |
+| 40 | `ListCredentialTargetsAsync` | `Task<IReadOnlyList<CredentialTargetOption>>` |
+| 41 | `PutCredentialAsync` | `Task<CredentialOperationResult>` |
+| 42 | `ClearCredentialAsync` | `Task<CredentialOperationResult>` |
+| 43 | `ListProviderProfilesAsync` | `Task<IReadOnlyList<ProviderProfileInfo>>` |
+| 44 | `SaveProviderProfileAsync` | `Task<SettingsProfileResult>` |
+| 45 | `DeleteProviderProfileAsync` | `Task<SettingsProfileResult>` |
+| 46 | `ListNetworkProfilesAsync` | `Task<IReadOnlyList<NetworkProfileInfo>>` |
+| 47 | `SaveNetworkProfileAsync` | `Task<SettingsProfileResult>` |
+| 48 | `DeleteNetworkProfileAsync` | `Task<SettingsProfileResult>` |
+| 49 | `SetNetworkDefaultAsync` | `Task<SettingsProfileResult>` |
+| 50 | `TestNetworkProfileAsync` | `Task<NetworkTestInfo?>` |
+| 51 | `ResolveNetworkProfileAsync` | `Task<NetworkResolveInfo?>` |
+| 52 | `SetProviderBindingAsync` | `Task<SettingsProfileResult>` |
+| 53 | `ClearProviderBindingAsync` | `Task<SettingsProfileResult>` |
+| 54 | `ResolveProviderBindingAsync` | `Task<ProviderBindingResult?>` |
+| 55 | `ImportFilesAsync` | `Task<ImportOutcome>` |
+| 56 | `ImportFolderAsync` | `Task<ImportOutcome>` |
+| 57 | `GetTranslatedPageIdsAsync` | `Task<IReadOnlyList<string>>` |
+| 58 | `StartExportAsync` | `Task<ExportStartInfo?>` |
+| 59 | `GetExportSnapshotAsync` | `Task<ExportSnapshotInfo?>` |
+| 60 | `GetExportHistoryAsync` | `Task<IReadOnlyList<ExportHistoryEntry>>` |
+| 61 | `CancelExportAsync` | `Task<ExportSnapshotInfo?>` |
+| 62 | `RevealExportFolderAsync` | `Task<bool>` |
+| 63 | `ListBackupsAsync` | `Task<IReadOnlyList<BackupPackageInfo>>` |
+| 64 | `CreateBackupAsync` | `Task<BackupPackageInfo?>` |
+| 65 | `DeleteBackupAsync` | `Task<bool>` |
+| 66 | `RetryPendingCleanupsAsync` | `Task<CleanupOutcomeInfo?>` |
+| 67 | `ListPluginsAsync` | `Task<PluginListInfo>` |
+| 68 | `SetPluginsGlobalEnabledAsync` | `Task<bool?>` |
+| 69 | `SetPluginEnabledAsync` | `Task<bool?>` |
+| 70 | `GetCleanupPreviewAsync` | `Task<CleanupPreviewInfo>` |
+| 71 | `RunCleanupAsync` | `Task<CleanupOutcomeInfo?>` |
+| 72 | `OpenDraftAsync` | `Task<DraftLease?>` |
+| 73 | `PatchDraftAsync` | `Task<Draft?>` |
+| 74 | `PrepareCandidateAsync` | `Task<RegionCandidate?>` |
+| 75 | `ApplyCandidatesAsync` | `Task<IReadOnlyDictionary<string, string>>` |
+| 76 | `GetDraftAsync` | `Task<Draft?>` |
+| 77 | `ListDraftsAsync` | `Task<IReadOnlyList<Draft>>` |
+| 78 | `DiscardDraftAsync` | `Task` |
+| 79 | `RestoreBackupAsync` | `Task<string?>` |
+| — | `Snapshot`（属性） | `HostViewSnapshot` |
+| — | `StartRequests`（属性） | `int` |
+| — | `ExportDirectorySuggestion`（属性） | `string` |
+| — | `Changed`（事件） | `EventHandler?` |
+
+## IRunController
+
+| # | 成员 | 返回类型 |
+|---|---|---|
+| 1 | `StartRunAsync` | `Task<RunStartInfo?>` |
+| 2 | `ControlRunAsync` | `Task<RunControlInfo?>` |
+| 3 | `ResumeBlockedRunAsync` | `Task<RunControlInfo?>` |
+| 4 | `GetRunSnapshotAsync` | `Task<RunSnapshotInfo?>` |
+| 5 | `GetTaskProjectionAsync` | `Task<TaskProjectionInfo?>` |
+| 6 | `RetryFailedTargetsAsync` | `Task<RunControlInfo?>` |
+
+EXIT=0
+END_UTC=2026-11-11T21:03:29.5672935Z
+
+START_UTC=2026-11-11T21:03:29.5713230Z
+COMMAND=python -m pytest tools/governance/tests/test_canonical_evidence_basis.py -q
+WORKDIR=G:\CODEX\New Manga.workspace\FEA-15-PIN-BASIS-ENFORCE-1\ac4-clone-t
+ACTUAL_PROCESS_CWD=G:\CODEX\New Manga.workspace\FEA-15-PIN-BASIS-ENFORCE-1\ac4-clone-t
+HEAD=bf377705783da10eebcf6585316178984ef663d8
+.................                                               [100%]
+17 passed, 9 subtests passed in 25.65s
+EXIT=0
+END_UTC=2026-11-11T21:03:55.5916101Z

@@ -1,0 +1,193 @@
+{
+  "schema_version": 1,
+  "identity_fields": [
+    "source_file",
+    "evidence_id",
+    "path",
+    "commit"
+  ],
+  "comparison_fields": [
+    "pin_sha256",
+    "class",
+    "ac_gate",
+    "expected_source_filename"
+  ],
+  "baseline": {
+    "path": "verification\\FEA-15-PIN-BASIS-ENFORCE-1\\ac4-inventory-r0.json",
+    "measured_head": "bfae0b9bd6a9b85a9a546d2adda0b684783ddb24",
+    "total_pin_rows": 5455,
+    "basis_counts": {
+      "BLOB": 74,
+      "COMPOSITE_PATH": 2,
+      "EXTERNAL_UNAVAILABLE": 47,
+      "INCONSISTENT": 1916,
+      "MISSING": 3,
+      "MIXED": 1319,
+      "UNPINNED": 293,
+      "UNRESOLVED_COMMIT": 890,
+      "WORKTREE": 911
+    }
+  },
+  "current": {
+    "path": "verification\\FEA-15-PIN-BASIS-ENFORCE-1\\ac4-v2-clone-f-inventory.json",
+    "measured_head": "4ed7f32b3ce9104ecee11aad593bde222055a0df",
+    "total_pin_rows": 5462,
+    "basis_counts": {
+      "BLOB": 76,
+      "COMPOSITE_PATH": 2,
+      "EXTERNAL_UNAVAILABLE": 47,
+      "INCONSISTENT": 1916,
+      "MISSING": 3,
+      "MIXED": 1324,
+      "UNPINNED": 293,
+      "UNRESOLVED_COMMIT": 890,
+      "WORKTREE": 911
+    }
+  },
+  "delta": {
+    "added_rows": 8,
+    "removed_rows": 1,
+    "changed_rows": 0,
+    "added_by_source_file": {
+      "doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md": 8
+    },
+    "added_by_basis": {
+      "BLOB": 2,
+      "MIXED": 6
+    },
+    "basis_count_delta": {
+      "BLOB": 2,
+      "COMPOSITE_PATH": 0,
+      "EXTERNAL_UNAVAILABLE": 0,
+      "INCONSISTENT": 0,
+      "MISSING": 0,
+      "MIXED": 5,
+      "UNPINNED": 0,
+      "UNRESOLVED_COMMIT": 0,
+      "WORKTREE": 0
+    },
+    "added": [
+      {
+        "row_count": 1,
+        "source_file": "doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md",
+        "evidence_id": "ac1a-stop-readme",
+        "path": "verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md",
+        "commit": "817415797ced8b4bf675696e1f52edd0e8076e9d",
+        "pin_sha256": "cf233443ac791aec8b87098d636cd066df69b2b791df98c11279698b607c59a9",
+        "class": "",
+        "ac_gate": "AC1 baseline and AC1c A/B gate summary",
+        "expected_source_filename": "",
+        "basis": "BLOB",
+        "path_scope": "REPOSITORY"
+      },
+      {
+        "row_count": 1,
+        "source_file": "doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md",
+        "evidence_id": "ac1c-b-r0-audit",
+        "path": "verification/FEA-15-PIN-BASIS-ENFORCE-1/ac1c-b-r0-assertions-taskpath-bfae0b9.log",
+        "commit": "817415797ced8b4bf675696e1f52edd0e8076e9d",
+        "pin_sha256": "488924df930e1022d54003875f0904dcd97524d7dff914ecc7a1b3758c518bab",
+        "class": "",
+        "ac_gate": "AC1c B R0 file/scope/blob assertions and TaskPath",
+        "expected_source_filename": "",
+        "basis": "MIXED",
+        "path_scope": "REPOSITORY"
+      },
+      {
+        "row_count": 1,
+        "source_file": "doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md",
+        "evidence_id": "ac1c-r0-main-gates",
+        "path": "verification/FEA-15-PIN-BASIS-ENFORCE-1/r0-main-gates-bfae0b9.log",
+        "commit": "817415797ced8b4bf675696e1f52edd0e8076e9d",
+        "pin_sha256": "0f4b9dc45bb6b198f1414e1e8f52de2c6ffdba42d81b85d17742a7d3723defd0",
+        "class": "",
+        "ac_gate": "AC1c clean R0 main default/TaskPath/pins/API gates",
+        "expected_source_filename": "",
+        "basis": "MIXED",
+        "path_scope": "REPOSITORY"
+      },
+      {
+        "row_count": 1,
+        "source_file": "doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md",
+        "evidence_id": "ac1d-baseline-review",
+        "path": "doc/reviews/FEA-15-PIN-BASIS-ENFORCE-1-ac1d-baseline-confirmation-2026-11-12.md",
+        "commit": "cdd5d258690471c8069d47f461f04a1ef9a306bd",
+        "pin_sha256": "781d9e3d935fa3a9e911888ae5d82f9200fcd8953b94aa135b72b966b320f952",
+        "class": "",
+        "ac_gate": "AC1 fresh independent baseline confirmation",
+        "expected_source_filename": "",
+        "basis": "MIXED",
+        "path_scope": "REPOSITORY"
+      },
+      {
+        "row_count": 1,
+        "source_file": "doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md",
+        "evidence_id": "ac1d-blob-audit",
+        "path": "verification/FEA-15-PIN-BASIS-ENFORCE-1/ac1d-canonical-evidence-blob-audit-0851085.log",
+        "commit": "c8d387929572f9995b4a1dde2a8ce2651d89e8a6",
+        "pin_sha256": "b8c8539e4c94715c25f30a5e54b512bfb39d2c8ded9b29cac0393ab3ec112558",
+        "class": "",
+        "ac_gate": "AC1d 19-row Canonical Evidence Git blob audit at generated HEAD cdd5d258690471c8069d47f461f04a1ef9a306bd",
+        "expected_source_filename": "",
+        "basis": "MIXED",
+        "path_scope": "REPOSITORY"
+      },
+      {
+        "row_count": 1,
+        "source_file": "doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md",
+        "evidence_id": "ac1d-evidence-readme",
+        "path": "verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md",
+        "commit": "c8d387929572f9995b4a1dde2a8ce2651d89e8a6",
+        "pin_sha256": "97702ae0a908cd6558bf90ee105edab4ba77ce45cdb2d1dacd096ccc62bc99b8",
+        "class": "",
+        "ac_gate": "AC1 baseline status, EOL basis pairs, and limitations",
+        "expected_source_filename": "",
+        "basis": "BLOB",
+        "path_scope": "REPOSITORY"
+      },
+      {
+        "row_count": 1,
+        "source_file": "doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md",
+        "evidence_id": "ac1d-main-gates",
+        "path": "verification/FEA-15-PIN-BASIS-ENFORCE-1/post-ac1d-pinbackfill-gates-d362d228.log",
+        "commit": "ecc626a1b642db247e8d5173e7870cff7b1003f5",
+        "pin_sha256": "df3d9ab418a4bd33719e263d0aa56cddd9d78e4c0e0a5ec7d34fd3bbaa5fe888",
+        "class": "",
+        "ac_gate": "AC1d post-pinbackfill main default/TaskPath/pins/API gate log",
+        "expected_source_filename": "",
+        "basis": "MIXED",
+        "path_scope": "REPOSITORY"
+      },
+      {
+        "row_count": 1,
+        "source_file": "doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md",
+        "evidence_id": "ac1d-post-pinbackfill-readme",
+        "path": "verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md",
+        "commit": "ecc626a1b642db247e8d5173e7870cff7b1003f5",
+        "pin_sha256": "32d47ab064f4c93fbb1c2d0488296ebf9ab536faf6294d90aa817a2a56ada88a",
+        "class": "",
+        "ac_gate": "AC1d main gate summary and outcomes",
+        "expected_source_filename": "",
+        "basis": "MIXED",
+        "path_scope": "REPOSITORY"
+      }
+    ],
+    "removed": [
+      {
+        "row_count": 1,
+        "source_file": "doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md",
+        "evidence_id": "ac1a-stop-readme",
+        "path": "verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md",
+        "commit": "4af22e1ef6a148f55e76a0b864158158c64ae524",
+        "pin_sha256": "19380ae0584fe19c393841c48ca19515b0c7be8bd0706734df0f18071f8febd6",
+        "class": "",
+        "ac_gate": "AC1 transition and AC1c A adjudication",
+        "expected_source_filename": "",
+        "basis": "MIXED",
+        "path_scope": "REPOSITORY"
+      }
+    ],
+    "changed": []
+  },
+  "interpretation_limit": "Rows are pin entries, not unique files. Basis labels are generator observations, not adjudications of validity or damage."
+}

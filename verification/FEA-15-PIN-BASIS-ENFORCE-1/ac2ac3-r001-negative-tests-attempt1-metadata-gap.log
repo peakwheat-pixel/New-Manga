@@ -1,0 +1,10 @@
+START_UTC=2026-11-11T21:39:21.3407529Z
+COMMAND=python -m pytest tools/governance/tests/test_canonical_evidence_basis.py -q
+PROCESS_CWD=G:\CODEX\New Manga.workspace\FEA-15-PIN-BASIS-ENFORCE-1\implementation
+IMPLEMENTATION_HEAD=ee0b25ac07dd6d9d756e98c3f10adaf4ffadce57
+CORE_AUTOCRLF=
+WORKTREE_STATUS_BEFORE=clean
+.................                                               [100%]
+17 passed, 9 subtests passed in 25.68s
+EXIT=0
+END_UTC=2026-11-11T21:39:47.4208129Z
