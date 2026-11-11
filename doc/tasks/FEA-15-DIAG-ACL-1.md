@@ -14,7 +14,7 @@ base_commit: 1e4542a047e991a5f10b0b213ca5a96eafe919a4
 branch: main
 worktree: G:/CODEX/New Manga
 integration_commit: null
-delivery_head: c06d06377dc7e7a9cb5e7ee83a067a28ec0d0488
+delivery_head: 97145556a7be4865dae3b5bfe2868cf7fbf90e1d
 canonical_evidence_status: complete
 resource_closeout_status: complete
 evidence_dir: verification/FEA-15-DIAG-ACL-1
@@ -78,6 +78,7 @@ out_of_scope:
 | SRC-07 | supporting | `verification/FEA-15-ACCEPT-1/v7-repro-2.log` | `c06d06377dc7e7a9cb5e7ee83a067a28ec0d0488` | `8e0abc01bec34b3e38cc3a9e6117d34f443529552d60405ca2860c271779a6e6` | SOURCE_PIN |
 | SRC-08 | supporting | `verification/FEA-15-ACCEPT-1/v7-v14-probe.log` | `c06d06377dc7e7a9cb5e7ee83a067a28ec0d0488` | `bf1413267cffabc37b9f58e19526ae1e2ff4c0b98df9278f8c619d3e2cfe9dd7` | SOURCE_PIN |
 | SRC-09 | supporting | `verification/FEA-15-DIAG-ACL-1/appointment.md` | `4911aac147bfa7fad35821042934719c68181366` | `436619714aadc37f26ed33d6b0ad5fd7534e59c1bf979df424e54ae1ab528d32` | SOURCE_PIN |
+| SRC-10 | supporting | `verification/FEA-15-DIAG-ACL-1/gates-review.log` | `97145556a7be4865dae3b5bfe2868cf7fbf90e1d` | `a0d56069846c0fe9c1017dc57dfb3fd46575ca42636d74194eb00785c2c3a1c9` | SOURCE_PIN |
 
 ## Closeout Record
 
