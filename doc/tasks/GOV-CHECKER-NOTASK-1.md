@@ -14,7 +14,7 @@ base_commit: 0201dc9612faa9eea9104b8e0568414e4a7bad5a
 branch: main
 worktree: G:/CODEX/New Manga
 integration_commit: null
-delivery_head: null
+delivery_head: 21ce0f24f2c4b0a153f85163eadc64b36b7bf72b
 canonical_evidence_status: pending
 resource_closeout_status: pending
 evidence_dir: verification/GOV-CHECKER-NOTASK-1
@@ -37,9 +37,9 @@ allowed_paths:
 
 ## Acceptance Criteria
 
-- [ ] **AC1 空窗正例**：现行明确空窗声明下 default 检查 EXIT 0，记录历史两条错误消失。 <<PARTIAL: 尚未实施或验证>>
-- [ ] **AC2 反例与判别力**：终态指针、不存在路径、缺失当前 Task 行保持失败；合法非终态指针行为与基线一致；显式 TaskPath 对 done 且 integration_commit pending 保持失败；隔离变异使缺失行和路径形态反例分别错误变绿，再逐字节恢复并验证复红、空窗正例仍绿，记录 hash 和 EXIT。 <<PARTIAL: 基线及边界已测且获裁决；实施后矩阵与变异尚未完成>>
-- [ ] **AC3 门禁与收口**：空窗 default、本卡 TaskPath、18 pins、API inventory 均 EXIT 0；独立 Review、独立 ZCode 最终裁决、BLOB pin、STATUS/Plan/Ledger/Closeout 全部完成。 <<PARTIAL: 尚未执行>>
+- [x] **AC1 空窗正例**：现行明确空窗声明下 default 检查 EXIT 0，记录历史两条错误消失。 <<MET>>
+- [x] **AC2 反例与判别力**：终态指针、不存在路径、缺失当前 Task 行保持失败；合法非终态指针行为与基线一致；显式 TaskPath 对 done 且 integration_commit pending 保持失败；隔离变异使缺失行和路径形态反例分别错误变绿，再逐字节恢复并验证复红、空窗正例仍绿，记录 hash 和 EXIT。 <<MET>>
+- [ ] **AC3 门禁与收口**：空窗 default、本卡 TaskPath、18 pins、API inventory 均 EXIT 0；独立 Review、独立 ZCode 最终裁决、BLOB pin、STATUS/Plan/Ledger/Closeout 全部完成。 <<PARTIAL: 活动指针门禁已通过，空窗主树门禁与独立 Review、最终裁决和收口未完成>>
 
 ## 允许修改范围
 
@@ -53,8 +53,8 @@ allowed_paths:
 
 | 场景/AC | 计划命令或步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1/AC2 | 隔离场景矩阵、变异与 SHA-256；`pwsh -NoProfile -File tools/governance/check.ps1` | Windows；先测基线 | 基线及边界脚本 EXIT 0；实现后复跑与变异 NOT_RUN；终态和 pending 样本有额外错误，见 README。 | `baseline-run-eb06df0-blob.log`、`boundary-run-eb06df0.log`、README |
-| AC3 | default 与 `-TaskPath`、`verify_pins.ps1`、`python tools/generate_api_inventory.py --check` | clean delivery head | NOT_RUN | 待生成 |
+| AC1/AC2 | 隔离场景矩阵、变异与 SHA-256；`pwsh -NoProfile -File tools/governance/check.ps1` | Windows；基线 `eb06df0`、实现 `21ce0f2` | 基线、边界与实现后矩阵 EXIT 0；31/31 断言及两种变异恢复通过；终态和 pending 样本有额外错误，见 README。 | 基线及 `implementation-run-21ce0f2-r3.log` |
+| AC3 | default 与 `-TaskPath`、`verify_pins.ps1`、`python tools/generate_api_inventory.py --check` | clean delivery evidence HEAD `b76c4ab` | 活动指针下四项 EXIT 0；收口空窗主树实测、独立 Review 和最终裁决 NOT_RUN。 | `delivery-gates-b76c4ab.log` |
 
 ## 依赖、风险与阻塞
 
@@ -62,7 +62,7 @@ allowed_paths:
 
 ## 交付与运行记录
 
-- Handoff：尚无；Review：尚无；实际测试：尚无。
+- Handoff：`doc/handoffs/GOV-CHECKER-NOTASK-1-21ce0f2.md`；Review：尚无；实际测试见表。
 - 释放裁决 session：`sess_ed894fec-18b7-40b8-9e6d-f927d8f2f031`；独立 Review 和最终裁决使用不同于实现及彼此的上下文。
 
 ## Canonical Evidence
@@ -77,6 +77,11 @@ allowed_paths:
 | boundary-script | AC2 边界生成器 | verification/GOV-CHECKER-NOTASK-1/boundary_matrix.py | ca7f6f31b740cd09d6853e63683983c4826daf60 | d9641c51d27d3b7cdb41f291baefac9344c6b5242d08f7db5aced87976feca2f | SOURCE_PIN |
 | boundary-notes | AC2 边界结果 | verification/GOV-CHECKER-NOTASK-1/boundary-notes.md | ca7f6f31b740cd09d6853e63683983c4826daf60 | 8fda726c64ce111a1c2bcdc1b800605ad19f5973e49c8185ef9c28307d52f6e9 | SOURCE_PIN |
 | baseline-adjudication | §4.4 与 v2 语法裁决 | doc/reviews/GOV-CHECKER-NOTASK-1-zcode-baseline-adjudication-2026-11-11.md | 79e96c36e66e34c6f8a2f34a3271eea370555e15 | 637f893949036cd35687953a6ea571f099e693ecec887fbbb720ee6e978bd6e7 | CANONICAL |
+| implementation-matrix | AC1/AC2 31 场景与变异 | verification/GOV-CHECKER-NOTASK-1/implementation-run-21ce0f2-r3.log | b76c4ab0621b3ec27433727d86078f0958b9d264 | e30febf50364996199a813eececbb2df6243dfe1973ed0dea265ab778accfe36 | CANONICAL |
+| implementation-script | AC1/AC2 生成器 | verification/GOV-CHECKER-NOTASK-1/implementation_matrix.py | b76c4ab0621b3ec27433727d86078f0958b9d264 | b0918d4110b4eef721b5f395c5bdb20ba44c780fc925c62df2844ecf8d1e3b85 | SOURCE_PIN |
+| implementation-notes | AC1/AC2 适用范围 | verification/GOV-CHECKER-NOTASK-1/implementation-notes.md | b76c4ab0621b3ec27433727d86078f0958b9d264 | 66760aa70e04a1e7cce3ba132450ddea90e5b23920403e03db6bd927d77980e0 | SOURCE_PIN |
+| delivery-gates | AC3 交付门禁 | verification/GOV-CHECKER-NOTASK-1/delivery-gates-b76c4ab.log | 869f76b350de8db8e392905379e9dde40c9e1162 | 2895080486d4fe26852d25ab7e8212a28695d90ffcd7370e6b6af42e9dbe66e6 | CANONICAL |
+| handoff | 交付与风险 | doc/handoffs/GOV-CHECKER-NOTASK-1-21ce0f2.md | 869f76b350de8db8e392905379e9dde40c9e1162 | 1bdb6647953d9ae62c38db0d9020d187be2809a190a00301072a6c952f15e678 | CANONICAL |
 
 ## Resource Manifest
 
