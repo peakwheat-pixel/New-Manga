@@ -108,7 +108,7 @@ The fixed A clone and R0 clone remain retained; R0 contains its Task-local inven
 - AC4 T：default 与本 TaskPath 均因 Plan 工作树 7035/7000 bytes 超限 EXIT=1（各 2 warnings）；verify_pins.ps1 因 16 个 EOL 工作树字节 mismatch EXIT=1；API EXIT=0；专项测试 18 passed, 9 subtests passed、EXIT=0。AC4 F：default 与本 TaskPath PASS、各 3 warnings、EXIT=0；pins 仅 C04b/C17 mismatch、EXIT=1；API EXIT=0；专项测试 16 passed, 2 skipped, 9 subtests passed、EXIT=0。两个 skip 是 F checkout 下不可区分的 EOL 分支，不计作覆盖通过。
 - C1：T 的 16 个 mismatch 文件逐项 CRLF→LF 后与冻结 pin 及候选 HEAD blob 一致，16/16、EXIT=0，见 ac4-v2-t-pin-eol-normalization.log。C2：T/F 两侧冻结 inventory generators 均 2/2 与 R0/source/HEAD blobs 及 SHA 一致，分别 EXIT=0，见 ac4-v2-generator-integrity-t.log 与 ac4-v2-generator-integrity-f.log。
 - AC4 v2 inventories：R0 5455 行；T/F 各 5462 行。T/F row identity/SHA 集一致，均 ADDED=8 / REMOVED=1 / CHANGED=0；8 条新增来自本 Task，唯一移除行由同 ID 的更新 README pin 替代。其余 4737 个历史 evidence paths 中，1032 raw-equal、3705 在 T 侧仅 CRLF→LF 后一致，0 failures。v2 inventory、delta 和 audit 文件 SHA 见对应日志及 Canonical Evidence；审计 FILE_DIFF=PASS、ALLOWED_PATH_EOL=11/11、EXIT=0，audit JSON SHA-256 acd19f03d677eb410dfa88274fd0c348e2c13d74f65403fa43512cc3f8906486。
-- AC4 v2 fresh ZCode Review 在 main 7f1e7173e7638c79e024985ad91b18a073df727c / candidate 4ed7f32b3ce9104ecee11aad593bde222055a0df 得到 APPROVED_WITH_LIMITATIONS（P0/P1=0）；P2-1 SHA 字节口径披露与 P2-2 clone 配置顺序证据待独立 adjudication。AC4 adjudication 尚未执行，Linux NOT_RUN。AC5 仍 NOT RELEASED；四个历史 TaskPath、AC5 gates、最终集成 Review/adjudication 均 NOT_RUN。candidate 4ed7f32 是基于 dd6372420 重放实现提交的并列候选，非 implementation 7eefb54 的祖先，映射详见 Review P3-1。下一步：更新 Task/STATUS/Plan 指针与 Canonical Evidence pin，运行主线 gates，再由全新 ZCode session adjudicate AC4 并决定是否释放 AC5。
+- AC4 v2 fresh ZCode Review 在 main 7f1e7173e7638c79e024985ad91b18a073df727c / candidate 4ed7f32b3ce9104ecee11aad593bde222055a0df 得到 APPROVED_WITH_LIMITATIONS（P0/P1=0）；P2-1 SHA 字节口径披露与 P2-2 clone 配置顺序证据待独立 adjudication。AC4 adjudication 尚未执行，Linux NOT_RUN。AC5 仍 NOT RELEASED；四个历史 TaskPath、AC5 gates、最终集成 Review/adjudication 均 NOT_RUN。candidate 4ed7f32 是基于 dd6372420 重放实现提交的并列候选，非 implementation 7eefb54 的祖先，映射详见 Review P3-1。main HEAD b199cf38329651cbe0d6fc15d7d2934fe6d3c6b5 的四项门禁均 EXIT=0；日志 main-review-pinbackfill-gates-b199cf383.log。下一步：将该门禁日志 pin 回 Task 卡，再用全新 ZCode session adjudicate AC4；AC5 仍未释放。
 - 主仓库 post-pinbackfill gates 在 HEAD da3336391674d4a1cff6983849b570cf1e9e4d88：default / 本 TaskPath PASS、各 3 warnings、EXIT=0；18 pins EXIT=0；API EXIT=0，日志 main-post-pinbackfill-gates-da3336391.log。完整 suite 与 post-pinbackfill gate 日志均已入库于 32f229f26；此前 a9ca17988 post-evidence gates 也全 EXIT=0。外部实现、验证、R0、AC4 T/F 克隆均保留，不执行清理、prune、GC 或 repack。当前下一步为把最新 README / pytest / gate evidence pin 回 Task 卡，再委托新的 ZCode 独立 Review 当前候选；之后由不同 ZCode session adjudicate AC4 并决定是否释放 AC5。
 
 ## AC2/AC3/AC4 v2 fresh independent Review and evidence-quality findings (2026-11-12)
@@ -141,3 +141,14 @@ Implementation HEAD 7eefb54dc5ca74ddf9cc5459eb40fb10769a44e1 is not an ancestor 
 
 - AC4 current state: review complete with limitations; adjudication pending; T budget failure, T/F pin mismatches, full-suite 3 failed / EXIT=1, Linux NOT_RUN, four historical TaskPaths NOT_RUN, and all AC5 gates remain unchanged. AC5 is not released.
 - ZCode CLI raw Review receipt：外部原件 G:/CODEX/New Manga.workspace/FEA-15-PIN-BASIS-ENFORCE-1/zcode-ac2-ac4-current-review-20261112.jsonl，SHA-256 F61710BFF588A4C94FD9056E3A7E8D19E530BEFCD06E9FA37CA68FFBD4B0F3A6，CLI EXIT=0；仓库证据副本为 verification/FEA-15-PIN-BASIS-ENFORCE-1/ac2-ac4-current-review-zcode-cli-20261112.jsonl。外部原件保留。
+
+## Post-review main gates at b199cf383
+
+Generated at main HEAD b199cf38329651cbe0d6fc15d7d2934fe6d3c6b5, process CWD G:/CODEX/New Manga:
+
+- pwsh -NoProfile -File tools/governance/check.ps1: PASS, 3 warnings, EXIT=0.
+- pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md: PASS, 3 warnings, EXIT=0.
+- pwsh -NoProfile -File tools/governance/verify_pins.ps1: 18/18 pins, EXIT=0.
+- python tools/generate_api_inventory.py --check: IReaderProgressSink 1 / IHostController 79 / IRunController 6 / total 86, EXIT=0.
+
+The complete timestamped command/output record is verification/FEA-15-PIN-BASIS-ENFORCE-1/main-review-pinbackfill-gates-b199cf383.log and was committed at c20fe22a1. These gates do not resolve AC4 P2-1/P2-2 or release AC5; the next action is a distinct fresh ZCode AC4 adjudication.
