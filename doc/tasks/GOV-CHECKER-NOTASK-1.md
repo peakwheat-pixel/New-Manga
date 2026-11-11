@@ -7,7 +7,7 @@ status: in_progress
 approval: ZCode session sess_ed894fec-18b7-40b8-9e6d-f927d8f2f031；doc/reviews/GOV-CHECKER-NOTASK-1-zcode-release-2026-11-11.md
 suggested_owner: codex
 owner: codex
-reviewer: ZCode 独立会话（未参与实现，具体 session 待指派）
+reviewer: ZCode 独立会话 sess_4edfc1ab-c2eb-4669-836f-aeb99a0a7bd8（未参与实现）
 depends_on:
   - FEA-15-PIN-POLICY-1
 base_commit: 0201dc9612faa9eea9104b8e0568414e4a7bad5a
@@ -39,7 +39,7 @@ allowed_paths:
 
 - [x] **AC1 空窗正例**：现行明确空窗声明下 default 检查 EXIT 0，记录历史两条错误消失。 <<MET>>
 - [x] **AC2 反例与判别力**：终态指针、不存在路径、缺失当前 Task 行保持失败；合法非终态指针行为与基线一致；显式 TaskPath 对 done 且 integration_commit pending 保持失败；隔离变异使缺失行和路径形态反例分别错误变绿，再逐字节恢复并验证复红、空窗正例仍绿，记录 hash 和 EXIT。 <<MET>>
-- [ ] **AC3 门禁与收口**：空窗 default、本卡 TaskPath、18 pins、API inventory 均 EXIT 0；独立 Review、独立 ZCode 最终裁决、BLOB pin、STATUS/Plan/Ledger/Closeout 全部完成。 <<PARTIAL: 活动指针门禁已通过，空窗主树门禁与独立 Review、最终裁决和收口未完成>>
+- [ ] **AC3 门禁与收口**：空窗 default、本卡 TaskPath、18 pins、API inventory 均 EXIT 0；独立 Review、独立 ZCode 最终裁决、BLOB pin、STATUS/Plan/Ledger/Closeout 全部完成。 <<PARTIAL: 活动指针门禁与独立 Review 已完成；空窗主树门禁、最终裁决和收口未完成>>
 
 ## 允许修改范围
 
@@ -54,7 +54,7 @@ allowed_paths:
 | 场景/AC | 计划命令或步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
 | AC1/AC2 | 隔离场景矩阵、变异与 SHA-256；`pwsh -NoProfile -File tools/governance/check.ps1` | Windows；基线 `eb06df0`、实现 `21ce0f2` | 基线、边界与实现后矩阵 EXIT 0；31/31 断言及两种变异恢复通过；终态和 pending 样本有额外错误，见 README。 | 基线及 `implementation-run-21ce0f2-r3.log` |
-| AC3 | default 与 `-TaskPath`、`verify_pins.ps1`、`python tools/generate_api_inventory.py --check` | clean delivery evidence HEAD `b76c4ab` | 活动指针下四项 EXIT 0；收口空窗主树实测、独立 Review 和最终裁决 NOT_RUN。 | `delivery-gates-b76c4ab.log` |
+| AC3 | default 与 `-TaskPath`、`verify_pins.ps1`、`python tools/generate_api_inventory.py --check` | clean delivery evidence HEAD `b76c4ab` | 活动指针下四项 EXIT 0；独立 Review ACCEPT；收口空窗主树实测、最终裁决 NOT_RUN。 | `delivery-gates-b76c4ab.log`、Review |
 
 ## 依赖、风险与阻塞
 
@@ -62,7 +62,7 @@ allowed_paths:
 
 ## 交付与运行记录
 
-- Handoff：`doc/handoffs/GOV-CHECKER-NOTASK-1-21ce0f2.md`；Review：尚无；实际测试见表。
+- Handoff：`doc/handoffs/GOV-CHECKER-NOTASK-1-21ce0f2.md`；Review：`doc/reviews/GOV-CHECKER-NOTASK-1-zcode-review-2026-11-11.md`，独立 session `sess_4edfc1ab-c2eb-4669-836f-aeb99a0a7bd8`，reviewed HEAD `4231469b972d0c2be086c6b077b6150c90a5d3d6`，ACCEPT，F-1/F-2 待 Integrator 裁决、F-3/F-4 已登记；实际测试见表。
 - 释放裁决 session：`sess_ed894fec-18b7-40b8-9e6d-f927d8f2f031`；独立 Review 和最终裁决使用不同于实现及彼此的上下文。
 
 ## Canonical Evidence
@@ -82,17 +82,20 @@ allowed_paths:
 | implementation-notes | AC1/AC2 适用范围 | verification/GOV-CHECKER-NOTASK-1/implementation-notes.md | b76c4ab0621b3ec27433727d86078f0958b9d264 | 66760aa70e04a1e7cce3ba132450ddea90e5b23920403e03db6bd927d77980e0 | SOURCE_PIN |
 | delivery-gates | AC3 交付门禁 | verification/GOV-CHECKER-NOTASK-1/delivery-gates-b76c4ab.log | 869f76b350de8db8e392905379e9dde40c9e1162 | 2895080486d4fe26852d25ab7e8212a28695d90ffcd7370e6b6af42e9dbe66e6 | CANONICAL |
 | handoff | 交付与风险 | doc/handoffs/GOV-CHECKER-NOTASK-1-21ce0f2.md | 869f76b350de8db8e392905379e9dde40c9e1162 | 1bdb6647953d9ae62c38db0d9020d187be2809a190a00301072a6c952f15e678 | CANONICAL |
+| review | 独立 Review | doc/reviews/GOV-CHECKER-NOTASK-1-zcode-review-2026-11-11.md | 2afe986b6fd61a89a194176b1f5321d0aed6846c | cceacf71ca76382336f1e3366be29ac4fa7accda3e41a43e22db13fd16eeb25d | CANONICAL |
+| supplementary-audit | diff 与 evidence 审计 | verification/GOV-CHECKER-NOTASK-1/delivery-audit-2afe986.log | 0bea9c190a1162170f0f16122698fab699230488 | 326627b52edc8466df60abd9c115369da05dfc8dda78f938f74e8fbf5c4c28a3 | SOURCE_PIN |
+| resource-manifest | 资源清单与保留建议 | verification/GOV-CHECKER-NOTASK-1/resource-manifest.md | 0bea9c190a1162170f0f16122698fab699230488 | 512725a0398eb01ecfdf32a08d213129fa24cba9cd6cdeda7eb534fcc0041641 | SOURCE_PIN |
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| worktree | G:/CODEX/New Manga | PRESERVE_REFERENCED | G:/CODEX/New Manga | 待记录 | 既有 main 主树 |
+| worktree | G:/CODEX/New Manga | PRESERVE_REFERENCED | G:/CODEX/New Manga | verification/GOV-CHECKER-NOTASK-1/resource-manifest.md | 既有 main 主树；清单记核验时 HEAD，保留 |
 | task-env | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | 无独立环境 |
 | dataset/model/test-material | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | 无外部数据 |
 | artifact | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | 无安装包 |
-| temp | G:/CODEX/New Manga.workspace/GOV-CHECKER-NOTASK-1/ | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/GOV-CHECKER-NOTASK-1/ | verification/GOV-CHECKER-NOTASK-1/README.md | 两个隔离副本和诊断日志保留；未清理 |
-| agent-output | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | 待核对 |
+| temp | G:/CODEX/New Manga.workspace/GOV-CHECKER-NOTASK-1/ | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/GOV-CHECKER-NOTASK-1/ | verification/GOV-CHECKER-NOTASK-1/resource-manifest.md | 三个隔离副本保留；未清理 |
+| agent-output | G:/CODEX/New Manga.workspace/GOV-CHECKER-NOTASK-1/ | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/GOV-CHECKER-NOTASK-1/ | verification/GOV-CHECKER-NOTASK-1/resource-manifest.md | 六份原始日志保留；hash 见清单 |
 | exchange | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | 无 |
 
 ## Closeout Record
