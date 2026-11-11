@@ -3,20 +3,20 @@ id: FEA-15-PIN-EOL-GOV-1
 title: 证据 pin 行尾与跨 checkout 可复现性治理
 kind: governance
 governance_version: 3
-status: in_review
+status: approved
 approval: ZCode 2026-11-11 裁决释放（独立 CLI 会话；[adjudication](../reviews/FEA-15-DIAG-ACL-1-zcode-adjudication-2026-11-11.md) §4）；本轮用户单次授权：只读治理阶段
 suggested_owner: codex
 owner: codex
-reviewer: ZCode（全新独立 CLI Review 会话；不得复用裁决释放会话 sess_abdb4288-4a4f-49c1-8097-6edbb6e3866f；派发后回填 session ID）
+reviewer: ZCode CLI Review（sess_1ff7ce49-fa46-4cb8-b7a7-d2efcb347fdc）；adjudicator（sess_8df67a95-be8f-4518-89fe-d71e950d9cff）
 depends_on:
   - FEA-15-ACCEPT-1
 base_commit: 4173961dfe1b65256cb06d7628cc813b0603caa3
 branch: main
 worktree: G:/CODEX/New Manga
-integration_commit: null
+integration_commit: d9c6360bb4cfcee970c0fe21f825e58b0d26df09
 delivery_head: 996f9768985ee121767bd750d24b1cdfe74dd186
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/FEA-15-PIN-EOL-GOV-1
 allowed_paths:
   - doc/tasks/FEA-15-PIN-EOL-GOV-1.md
@@ -46,16 +46,16 @@ out_of_scope:
 
 ## 测试计划
 
-- Gate（基线两轮见 `gate-baseline.log` 与 `gate-post-evidence.log`；首次失败保留于 `gate-current.log`，修正预算/READY 哨兵后的 PASS 记录于 `gate-final.log`）：`pwsh -NoProfile -File tools/governance/check.ps1`（default）与 `-TaskPath doc/tasks/FEA-15-PIN-EOL-GOV-1.md`；`pwsh -NoProfile -File tools/governance/verify_pins.ps1`（18/18）；`python tools/generate_api_inventory.py --check`（1/79/6=86）。卡面最终 pin 回填后另作最终复跑并记录于外部 agent-output。
+- Gate：基线首败保留于 `gate-current.log`；修正后 `gate-final.log`（HEAD `996f9768…`）四项全 EXIT 0。集成验证在 clean main HEAD `d9c6360bb4cfcee970c0fe21f825e58b0d26df09` 重跑，default 与 TaskPath checks（各 4 warnings）、18 pins、API 1/79/6=86 均 EXIT 0；逐条 HEAD/时间/命令/结果在 `G:/CODEX/New Manga.workspace/agent-output/codex/FEA-15-PIN-EOL-GOV-1/gate-d9c6360-adjudication.log`。
 - 观察命令：`git ls-files --eol`、`git cat-file blob <commit>:<path>`、隔离 checkout 复算；每个观察在 `checkout-matrix.json` 中带时间、HEAD、SHA-256 与 command exit codes。Linux fresh clone、renormalize simulation 与产品测试 `NOT_RUN`，原因见 `verification/FEA-15-PIN-EOL-GOV-1/README.md`。
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| task workspace（矩阵 checkout） | G:/CODEX/New Manga.workspace/FEA-15-PIN-EOL-GOV-1/checkout-autocrlf-true；`checkout-autocrlf-false` | PRESERVE_REFERENCED | 同源路径（保留） | `resource-manifest.json` SHA-256 `fd2f4aebf0099563a82a43dcfa976678772d63b4256843e086c2a6e41e125820`; commit `ef6253677a608f285e1c86a321712e45ae54cfef` | 两 clone 均 HEAD=`948d73e0…`、20,778 tracked files、status clean；由 AC2 引用 |
-| task workspace（补充 snapshot clone） | G:/CODEX/New Manga.workspace/FEA-15-PIN-EOL-GOV-1/snapshot-main-system-config | PRESERVE_REFERENCED | 同源路径（保留） | 同一 `resource-manifest.json` 记录 clone 状态及 3 个生成 JSON 的 SHA-256 | branch `main`、HEAD=`c6f34d93…`；保留早期 checkout 对照与输出，不作最终 AC1/AC2 结论 |
-| agent-output（历史生成尝试） | G:/CODEX/New Manga.workspace/agent-output/codex/FEA-15-PIN-EOL-GOV-1 | PRESERVE_REFERENCED | 同源路径（保留） | 同一 `resource-manifest.json` 逐文件记录 22 个日志/基线快照 SHA-256 | 含早期失败与成功尝试；保留原路径，无清理/迁移 |
+| task workspace（矩阵 checkout） | G:/CODEX/New Manga.workspace/FEA-15-PIN-EOL-GOV-1/checkout-autocrlf-true；`checkout-autocrlf-false` | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/FEA-15-PIN-EOL-GOV-1 | `verification/FEA-15-PIN-EOL-GOV-1/resource-manifest.json` | 两 detached clone 均 HEAD=`948d73e0…`、status clean；manifest SHA-256 `fcdf911d…` @ `642088933…`；由 AC2 引用 |
+| task workspace（补充 snapshot clone） | G:/CODEX/New Manga.workspace/FEA-15-PIN-EOL-GOV-1/snapshot-main-system-config | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/FEA-15-PIN-EOL-GOV-1/snapshot-main-system-config | `verification/FEA-15-PIN-EOL-GOV-1/resource-manifest.json` | branch `main`、HEAD=`c6f34d93…`；3 个补充 JSON 保持 modified 并原位保留；manifest SHA-256 `fcdf911d…` @ `642088933…` |
+| agent-output（历史生成尝试与最终门禁） | G:/CODEX/New Manga.workspace/agent-output/codex/FEA-15-PIN-EOL-GOV-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/agent-output/codex/FEA-15-PIN-EOL-GOV-1 | `verification/FEA-15-PIN-EOL-GOV-1/resource-manifest.json` | 23 个日志/快照 hash 与大小均匹配（manifest SHA-256 `fcdf911d…` @ `642088933…`），含最终门禁日志；不清理/迁移 |
 
 ## Canonical Evidence
 
@@ -65,6 +65,16 @@ out_of_scope:
 | checkout-matrix | AC2 | `verification/FEA-15-PIN-EOL-GOV-1/checkout-matrix.json` | `ef6253677a608f285e1c86a321712e45ae54cfef` | `e826f597cf606f92be6307f5ad8a4c2e3695892edb45e04a93e81bea19f61e6a` | CANONICAL |
 | policy-analysis | AC3 | `verification/FEA-15-PIN-EOL-GOV-1/candidate-policy-analysis.md` | `ef6253677a608f285e1c86a321712e45ae54cfef` | `53f7f39eba91649d52a448fabf5ed678ca463d437a2bba7aa5e8990ccc96c05d` | CANONICAL |
 | final-governance-gates | Gate | `verification/FEA-15-PIN-EOL-GOV-1/gate-final.log` | `996f9768985ee121767bd750d24b1cdfe74dd186` | `3f7869327f6713693af95fbc95e57699ff1f579b2f4881dcca314322d4c4aa45` | CANONICAL |
+| zcode-review-r1 | Review | `doc/reviews/FEA-15-PIN-EOL-GOV-1-r1.md` | `d9c6360bb4cfcee970c0fe21f825e58b0d26df09` | `5fa78bffa000b1d07b1ba6f4f2d882e9e104881e4fc61956fb1822b0b6109f7d` | CANONICAL |
+| zcode-adjudication | Closeout | `doc/reviews/FEA-15-PIN-EOL-GOV-1-adjudication-2026-11-11.md` | `642088933d2c3a027647a82099ad4016d3baade0` | `414c977e554e9d6cd148aac2e7ae8a0f4bb7a7923418892405d57248d4ead373` | CANONICAL |
+| integration-gates-d9c6360 | Gate | `G:/CODEX/New Manga.workspace/agent-output/codex/FEA-15-PIN-EOL-GOV-1/gate-d9c6360-adjudication.log` | `-` | `37c2da16292f916696936796881bf2a4cf5653359f10e389aeebc4286b79c520` | SOURCE_PIN |
+| matrix-inventory-script | AC2 support | `verification/FEA-15-PIN-EOL-GOV-1/checkout_matrix.py` | `642088933d2c3a027647a82099ad4016d3baade0` | `5afdd759a1349b49b6c156b31166a32a6b19984b6dc47a9f33b8749cc1d7075b` | CANONICAL |
+| matrix-run-log | AC2 support | `verification/FEA-15-PIN-EOL-GOV-1/checkout-matrix-run.log` | `642088933d2c3a027647a82099ad4016d3baade0` | `a8d8b08f3fbbb1578b366189bd238cef0159ce25441abbd6afe4de026262799d` | CANONICAL |
+| matrix-recovery-log | AC2 support | `verification/FEA-15-PIN-EOL-GOV-1/checkout-recovery.log` | `642088933d2c3a027647a82099ad4016d3baade0` | `4aa8dfa4b8b299b1aca9b9a28a485a7d2353667bdcc401ddde2ed89cc936917f` | CANONICAL |
+| matrix-refresh-log | AC2 support | `verification/FEA-15-PIN-EOL-GOV-1/checkout-refresh.log` | `642088933d2c3a027647a82099ad4016d3baade0` | `ccccc202a9b710597418a90eb95b6d0ebdd7b81b765e2efd908b7f40ddf2cdf6` | CANONICAL |
+| matrix-samples | AC2 support | `verification/FEA-15-PIN-EOL-GOV-1/checkout-samples.json` | `642088933d2c3a027647a82099ad4016d3baade0` | `6d5ce6b050f460555786194b05a3e345d67554bcef6057d38a2a392cf47f47df` | CANONICAL |
+| matrix-setup-log | AC2 support | `verification/FEA-15-PIN-EOL-GOV-1/checkout-setup.log` | `642088933d2c3a027647a82099ad4016d3baade0` | `673b7108e8b3757254685a69972a98f5a9f6c1e7784435e1e6fd09ebb321dd51` | CANONICAL |
+| initial-gate-log | Gate history | `verification/FEA-15-PIN-EOL-GOV-1/gate-baseline.log` | `642088933d2c3a027647a82099ad4016d3baade0` | `ca54918ae5666307031c4e4819437ec305453e24468f503904a29f3de7daf7a7` | CANONICAL |
 
 ## Closeout Record
 
@@ -73,3 +83,7 @@ out_of_scope:
 - 2026-11-11：Codex 在释放提交 `4173961dfe1b65256cb06d7628cc813b0603caa3` 认领并进入 `in_progress`；Owner=`codex`，Reviewer 预指定为新 ZCode 独立 CLI Review 会话；实现与 Review 会话必须分离。
 - 2026-11-11：计数核对发现首版把 `doc/tasks/README.md` 算作 Task 卡；生成器现排除索引并从 HEAD 读取 Task/冻结来源。c6 探索 checkout 保留为补充快照；当前主线快照更新为 `948d73e0…`。此前 `18e1bd2…` 的 Handoff 因首版计数过时保留为历史记录。
 - 2026-11-11：修正后 AC1–AC3 证据固定于 `ef625367…`；`gate-final.log` 在 `996f9768…` 记录两项 governance check、18 pins、API 全部 EXIT 0。修订 Handoff [FEA-15-PIN-EOL-GOV-1-996f976.md](../handoffs/FEA-15-PIN-EOL-GOV-1-996f976.md)，SHA-256 `6d29c8bcfadf3ed8bd0a611dd6cce4b874f001cc05e4c9e82e99ff4082954b2e`，commit `f70cb325abf481b9f0513ccddec620c810fdfaf3`。Canonical Evidence 4 项已回填，Task→`in_review`；delivery_head=`996f9768985ee121767bd750d24b1cdfe74dd186`，等待新 ZCode CLI Review。
+- 2026-11-11：ZCode 独立 Review `sess_1ff7ce49-fa46-4cb8-b7a7-d2efcb347fdc` 对 delivery head `996f9768…` 作 `approved`；Architecture / Verification PASS，R-001 为 open P2 non-blocking。Review 报告 SHA-256 `5fa78bff…`，commit `d9c6360bb4cfcee970c0fe21f825e58b0d26df09`。
+- 2026-11-11：ZCode adjudication `sess_8df67a95-be8f-4518-89fe-d71e950d9cff` 接受 r1 与 R-001 非阻断遗留；Task `in_review→approved`，要求集成验证、资源 closeout 后才能 `done`。裁决报告 SHA-256 `414c977e…`，commit `642088933d2c3a027647a82099ad4016d3baade0`。用户已授权 ZCode 裁决、Codex 继续执行。
+- 2026-11-11：于干净 `main` HEAD=`d9c6360bb4cfcee970c0fe21f825e58b0d26df09` 实际运行四项集成门禁，时间 `13:43:55–13:43:57 +08:00`，default/TaskPath checks 各 PASS（4 warnings），pins 18/18 PASS，API 1/79/6=86；均 EXIT 0。日志在外部 agent-output，SHA-256 `37c2da16292f916696936796881bf2a4cf5653359f10e389aeebc4286b79c520`，资源清单 23/23 文件哈希核验一致。验证 head 作为 `integration_commit`；无 merge / push。
+- 2026-11-11：R-001 保持 open P2 non-blocking；其 WORKTREE 基准限制与产品 pytest/.NET、Linux fresh clone、renormalize simulation `NOT_RUN` 均保留。资源 Manifest 三项均 `PRESERVE_REFERENCED`，资源检查完成，0 删除/迁移/归档。Task 已按 ZCode 裁决进入 `approved`；终态关闭因默认治理门禁要求 STATUS 有非终态当前 Task 指针，而本范围不能释放后继 Task，待 ZCode 对该状态约束裁决。

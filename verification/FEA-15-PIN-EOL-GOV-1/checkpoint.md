@@ -1,12 +1,12 @@
 # Checkpoint — FEA-15-PIN-EOL-GOV-1
 
-- Timestamp: 2026-11-11 13:13:17 +08:00
+- Timestamp: 2026-11-11 13:57:56 +08:00
 - Agent: Codex
-- TaskStatus / ExecutionState: `in_progress` / `ACTIVE`
+- TaskStatus / ExecutionState: `approved` / `INTEGRATED_APPROVED`
 - Branch / worktree: `main` / `G:/CODEX/New Manga`
 - Start commit / Task base: `4173961dfe1b65256cb06d7628cc813b0603caa3`
-- Current HEAD: `ef6253677a608f285e1c86a321712e45ae54cfef`
-- Working tree: this Task's card, `STATUS`, `REBASELINE_PLAN`, evidence README/analysis, gate logs, and checkpoint are modified or newly added. No unrelated paths are changed.
+- Current HEAD: `642088933d2c3a027647a82099ad4016d3baade0`
+- Working tree: this Task's card, `STATUS`, `REBASELINE_PLAN`, `TASK_LEDGER`, and this checkpoint are the closeout pointer updates. No unrelated paths are changed.
 
 ## Completed steps
 
@@ -16,14 +16,16 @@
 4. Updated AC3 candidate-policy analysis and evidence README. No pin policy or implementation change is proposed.
 5. An initial gate run at `ef625367…` failed on the over-budget STATUS and missing READY sentinel; both docs were corrected. Rerun at the same HEAD passed: default and TaskPath checks EXIT 0 with 3 warnings each, pins 18/18 EXIT 0, API 1/79/6=86 EXIT 0. The failure and success are `gate-current.log` and `gate-final.log`.
 
-## Current working point / next exact step
+## Review, adjudication, and integration
 
-Commit the failure/success gate records and this checkpoint as a separate gate-evidence commit; create a corrected Handoff bound to that head; then update Task/status/plan/ledger and all canonical pins. Run final gates after pinbackfill; send the fixed delivery head to a new ZCode CLI session for read-only independent Review.
+- Independent ZCode Review session `sess_1ff7ce49-fa46-4cb8-b7a7-d2efcb347fdc` approved delivery head `996f9768985ee121767bd750d24b1cdfe74dd186`; Architecture / Verification PASS; R-001 remains open P2, non-blocking. Report: `doc/reviews/FEA-15-PIN-EOL-GOV-1-r1.md`.
+- Independent ZCode adjudication session `sess_8df67a95-be8f-4518-89fe-d71e950d9cff` accepted the Review and R-001 disposition; Task advanced to `approved`, not `done`, pending integration gates and resource closeout. Report: `doc/reviews/FEA-15-PIN-EOL-GOV-1-adjudication-2026-11-11.md`.
+- Integration gates ran on clean `main` HEAD `d9c6360bb4cfcee970c0fe21f825e58b0d26df09`: default / TaskPath checks PASS with 4 warnings each; pins 18/18; API 1/79/6=86; all EXIT 0. The timestamped log is in the task workspace `agent-output` and is SHA-bound in `resource-manifest.json`.
+- Resource inventory: matrix checkouts remain clean at `948d73e0…`; supplemental `c6f34d9…` clone retains 3 generated JSON modifications; external agent-output has 23 files, all size/hash checks match. Every resource remains `PRESERVE_REFERENCED`; no deletion, migration, or archive occurred.
 
-## Tests, blockers, and resume
+## Current status / next exact step
 
-- Already run: inventory generator and checkout matrix at `948d73e0…`; all 12 matrix observations have zero command exits and blob PASS. At `ef625367…`, corrected default/TaskPath, frozen-pin, and API checks all exited 0. Final gates after card pinbackfill remain to run.
-- Remaining: final gate run after Task/pointer updates. Product pytest/.NET suites are `NOT_RUN` because this is a read-only governance inventory Task; no product behavior was changed.
-- Blockers / open questions: none. Linux checkout and `git add --renormalize` simulation remain explicitly out of scope / `NOT_RUN`.
-- Evidence: `pin-inventory.json`, `checkout-matrix.json`, `checkout-samples.json`, `candidate-policy-analysis.md`, `README.md`, `checkout-refresh.log`, and `resource-manifest.json`.
-- Resume Safety: `RESUME_SAFE`; the only working changes are listed Task/status/evidence files. Compare current HEAD and these exact files before resuming.
+Task is `approved` with `integration_commit=d9c6360bb4cfcee970c0fe21f825e58b0d26df09` and complete resource closeout. R-001 remains open P2. Product pytest/.NET suites, Linux fresh clone, and renormalize simulation remain `NOT_RUN` and out of scope. A final-state governance check exposed that `check.ps1` rejects a terminal Task while STATUS has no active Task pointer, while project rules prohibit retaining a terminal pointer or auto-releasing a new Task. Keep this Task at `approved` pending ZCode adjudication of that checker/lifecycle conflict; do not modify checker semantics or release a new Task here.
+
+- Evidence: `pin-inventory.json`, `checkout-matrix.json`, `checkout-samples.json`, `candidate-policy-analysis.md`, `README.md`, `gate-final.log`, `resource-manifest.json`, `doc/reviews/FEA-15-PIN-EOL-GOV-1-r1.md`, and the ZCode adjudication report.
+- Resume Safety: `RESUME_SAFE`; current pointer updates are Task-scoped. Compare current HEAD and these exact files before resuming.
