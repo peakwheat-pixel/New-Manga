@@ -7,7 +7,7 @@
 - reviewer_kind: `subagent`
 - Source/session ID: `/root/fea15_diag_acl_review` (recorded by the collaboration dispatcher).
 - Base commit: `1e4542a047e991a5f10b0b213ca5a96eafe919a4`
-- Delivery evidence head: `c06d06377dc7e7a9cb5e7ee83a067a28ec0d0488`
+- Delivery evidence head: `97145556a7be4865dae3b5bfe2868cf7fbf90e1d`
 - Review mode: read-only
 - Scope: `verification/FEA-15-DIAG-ACL-1/README.md`, its raw probe logs and resource manifest; referenced FEA-15-ACCEPT-1 test/resource evidence; Task AC1–AC5 and claims of causal attribution/NOT_RUN.
 - Constraints: do not edit production code, tests, dependency, schema or frozen contracts; do not change/revoke system interpreter ACLs, enumerate/delete profiles, or clean fixtures; do not push. Review every failure claim against its source log and distinguish observed fact, inference and unknown.

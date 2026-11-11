@@ -78,11 +78,11 @@
 
 | AC | 当前诊断状态 | 收口前仍需 |
 |---|---|---|
-| AC1 sandbox/export | `PARTIAL`：失败跨多环境复现、调用链与边界已记录；底层失败阶段不可定位 | ZCode 复核是否接受作为有边界的诊断结论；若要求确因复现，待自动审批审核可运行精确探针 |
+| AC1 sandbox/export | `PARTIAL`：失败跨多环境复现、调用链与边界已记录；底层失败阶段不可定位 | 独立 Reviewer 复核是否接受作为有边界的诊断结论；若要求精确复现，待自动审批审核可运行时执行探针 |
 | AC2 Host ACL | `PARTIAL`：原始堆栈和适用范围有界；卷能力不支持简单格式归因；精确 Host 方法探针 `NOT_RUN` | 在新的 Task 目录中重试精确原方法探针；保留原异常和身份信息 |
-| AC3 资源影响 | `PARTIAL`：归属不可判定，但证据缺口和保留原则已逐项列出 | 不做系统 ACL/profile 修改或清理；由 ZCode 裁决后续是否需要独立资源审计 |
+| AC3 资源影响 | `PARTIAL`：归属不可判定，但证据缺口和保留原则已逐项列出 | 不做系统 ACL/profile 修改或清理；独立 Review 后由主 Agent 决定是否需另开资源审计 |
 | AC4 fixture | `MET`：62 项只按时间窗识别，建议和实际处置均为原位保留/零清理 | Review 确认该限制说明充分 |
-| AC5 建议与交付 | `PARTIAL`：矩阵、v7 债和 NOT_RUN 已记录；独立 Review、门禁证据、最终 pin/提交/裁决未完成 | 完成 checkpoint、门禁复跑、独立 ZCode Review 和 ZCode 终态裁决；按结果更新 Task/STATUS/PLAN/ledger 与 Canonical Evidence |
+| AC5 建议与交付 | `PARTIAL`：矩阵、v7 债、NOT_RUN 和 5 条 Canonical Evidence 已固定；独立 Review/最终结论待完成 | `gates-review.log` 在 HEAD `80edff3fcaf36e7f429dd68500a76472d38321b6` 记录双 `check.ps1` PASS（各 3 warnings）及 pins 18/18 PASS；完成独立 Review 后再作终态门禁 |
 
 ## NOT_RUN 与限制
 
@@ -91,8 +91,8 @@
 - `C:/Python314` ACL 与 AppContainer profile 的归属、增量和所有者：`NOT_RUN` / 不可判定；不修改、不撤销、不删除。
 - 62 个 fixture 候选清理或迁移：`NOT_RUN`；全量原位保留。
 - 真实旧库迁移/回退和真实用户数据操作：`NOT_RUN`；本 Task 禁止访问。
-- 本 Task 终态门禁、独立 Review、ZCode 裁决、Canonical Evidence pin：待执行，不能记录为 PASS。
+- 当前 review gate 已有日志；Review 完成后的终态门禁与独立 Review 结论仍待执行，不能据此标记终态 PASS。
 
 ## 下一步
 
-先完成本 Task 的证据 pin 与门禁，再把上述报告和原始日志交 ZCode 独立 Review/裁决。若 ZCode 要求精确 Host 复现，待自动审批服务可运行后，仅对新的 Task 专属目录执行 `SourceSecurity.PrivateDirectory`；若审核仍不可用，保留 `NOT_RUN` 并由 ZCode 裁决是否带限制收口或申请新的 Task。没有授权进行 ACL 恢复、profile 删除、fixture 清理或产品代码修复。
+Reviewer appointment 已从未启动的 ZCode CLI 调整为 Codex 新上下文只读 subagent；最终阶段结论由主 Agent 在 Review 后签发。若 Reviewer 要求精确 Host 复现，只有在自动审批服务可执行时才对新 Task 专属目录执行 `SourceSecurity.PrivateDirectory`；否则保留 `NOT_RUN`，不得模拟点击或绕过审核。没有授权进行 ACL 恢复、profile 删除、fixture 清理或产品代码修复。
