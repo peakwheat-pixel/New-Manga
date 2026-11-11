@@ -208,6 +208,48 @@ class CanonicalEvidenceBasisTests(unittest.TestCase):
         )
         self.assert_basis_fails(output, "EVIDENCE_BASIS_HEADER_INVALID")
 
+    def test_new_basis_rows_reject_missing_or_extra_columns(self):
+        row = self.explicit_row(PLAN_REL, sha256(git_blob(self.head, PLAN_REL)), "BLOB", commit=self.head)
+        for name, values in (("missing", row[:-1]), ("extra", row + ["unexpected"])):
+            with self.subTest(name=name):
+                output = self.run_fixture(BASIS_HEADER, values)
+                self.assert_basis_fails(output, "EVIDENCE_BASIS_ROW_ARITY")
+
+    def test_new_basis_rejects_malformed_sha256(self):
+        output = self.run_fixture(
+            BASIS_HEADER,
+            self.explicit_row(PLAN_REL, "not-a-sha256", "BLOB", commit=self.head),
+        )
+        self.assert_basis_fails(output, "EVIDENCE_BASIS_SHA_INVALID")
+
+    def test_blob_basis_rejects_invalid_commit_values(self):
+        digest = sha256(git_blob(self.head, PLAN_REL))
+        for name, commit in (("malformed", "not-a-commit"), ("unknown", "f" * 40)):
+            with self.subTest(name=name):
+                output = self.run_fixture(
+                    BASIS_HEADER,
+                    self.explicit_row(PLAN_REL, digest, "BLOB", commit=commit),
+                )
+                self.assert_basis_fails(output, "EVIDENCE_BASIS_BLOB_COMMIT_REQUIRED" if name == "malformed" else "EVIDENCE_BASIS_BLOB_PATH_MISSING")
+
+    def test_each_basis_rejects_paths_outside_its_declared_domain(self):
+        digest = "0" * 64
+        with tempfile.TemporaryDirectory(prefix="pin-basis-external-path-") as external:
+            external_path = Path(external) / "evidence.txt"
+            external_path.write_text("external", encoding="utf-8")
+            cases = (
+                ("blob outside repo", external_path, "BLOB", self.head, "EVIDENCE_BASIS_BLOB_PATH_INVALID"),
+                ("worktree outside repo", external_path, "WORKTREE", self.head, "EVIDENCE_BASIS_WORKTREE_PATH_INVALID"),
+                ("external inside repo", self.root / "inside.txt", "EXTERNAL_SHA256", "null", "EVIDENCE_BASIS_EXTERNAL_PATH_INVALID"),
+            )
+            for name, path, basis, commit, code in cases:
+                with self.subTest(name=name):
+                    output = self.run_fixture(
+                        BASIS_HEADER,
+                        self.explicit_row(path, digest, basis, commit=commit, gate="AC4 path-domain fixture WORKTREE_ENV=Windows"),
+                    )
+                    self.assert_basis_fails(output, code)
+
     def test_worktree_requires_environment_and_never_falls_back_to_blob(self):
         path = REPO / PLAN_REL
         blob_sha = sha256(git_blob(self.head, PLAN_REL))
