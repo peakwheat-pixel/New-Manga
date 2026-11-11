@@ -38,7 +38,7 @@ allowed_paths:
 ## Acceptance Criteria
 
 - [ ] **AC1 空窗正例**：现行明确空窗声明下 default 检查 EXIT 0，记录历史两条错误消失。 <<PARTIAL: 尚未实施或验证>>
-- [ ] **AC2 反例与判别力**：终态指针、不存在路径、缺失当前 Task 行保持失败；合法非终态指针行为与基线一致；显式 TaskPath 对 done 且 integration_commit pending 保持失败；隔离变异使缺失行错误变绿，再逐字节恢复并验证复红、空窗正例仍绿，记录 hash 和 EXIT。 <<PARTIAL: 基线、实施和矩阵均未完成>>
+- [ ] **AC2 反例与判别力**：终态指针、不存在路径、缺失当前 Task 行保持失败；合法非终态指针行为与基线一致；显式 TaskPath 对 done 且 integration_commit pending 保持失败；隔离变异使缺失行错误变绿，再逐字节恢复并验证复红、空窗正例仍绿，记录 hash 和 EXIT。 <<PARTIAL: 基线样本已记录；边界、实施与变异尚未完成>>
 - [ ] **AC3 门禁与收口**：空窗 default、本卡 TaskPath、18 pins、API inventory 均 EXIT 0；独立 Review、独立 ZCode 最终裁决、BLOB pin、STATUS/Plan/Ledger/Closeout 全部完成。 <<PARTIAL: 尚未执行>>
 
 ## 允许修改范围
@@ -53,7 +53,7 @@ allowed_paths:
 
 | 场景/AC | 计划命令或步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1/AC2 | 隔离场景矩阵、变异与 SHA-256；`pwsh -NoProfile -File tools/governance/check.ps1` | Windows；先测基线 | NOT_RUN | 待生成 |
+| AC1/AC2 | 隔离场景矩阵、变异与 SHA-256；`pwsh -NoProfile -File tools/governance/check.ps1` | Windows；先测基线 | 基线样本已运行，脚本 EXIT 0；额外边界、实现后复跑与变异 NOT_RUN；终态和 pending 样本有额外错误，见 README。 | `baseline-run-eb06df0-blob.log`、README |
 | AC3 | default 与 `-TaskPath`、`verify_pins.ps1`、`python tools/generate_api_inventory.py --check` | clean delivery head | NOT_RUN | 待生成 |
 
 ## 依赖、风险与阻塞
@@ -69,6 +69,10 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class |
 |---|---|---|---|---|---|
+| release | 任务释放与范围 | doc/reviews/GOV-CHECKER-NOTASK-1-zcode-release-2026-11-11.md | 259fb7c1a1d76f41802c29688e3b28c18db82378 | 6066a7afd5331284cf42349dfedc5bb8ccc5219fbd21dad58f30a2dd6b770c77 | CANONICAL |
+| baseline-log | AC2 实施前样本 | verification/GOV-CHECKER-NOTASK-1/baseline-run-eb06df0-blob.log | 9610df47438da0c2f5f9d98f72cbdd1e6ffedb1c | 4c6159802ce7691446592a03537ec1d3c92c5d28a8c899095b61006d3b0af23f | SOURCE_PIN |
+| baseline-script | AC2 场景生成器 | verification/GOV-CHECKER-NOTASK-1/baseline_matrix.py | 9610df47438da0c2f5f9d98f72cbdd1e6ffedb1c | 5b70d070a1e01e2feea6bd8597eb238cc031db7a721816aa8f3318954c7d17db | SOURCE_PIN |
+| evidence-readme | 基线范围与限制 | verification/GOV-CHECKER-NOTASK-1/README.md | 9610df47438da0c2f5f9d98f72cbdd1e6ffedb1c | e6535136b34f0ff253119f347a0aece1024f46db85d37ae56c82c1b786fdd690 | SOURCE_PIN |
 
 ## Resource Manifest
 
@@ -78,7 +82,7 @@ allowed_paths:
 | task-env | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | 无独立环境 |
 | dataset/model/test-material | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | 无外部数据 |
 | artifact | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | 无安装包 |
-| temp | G:/CODEX/New Manga.workspace/GOV-CHECKER-NOTASK-1/ | PRESERVE_UNKNOWN | 同源 | 待记录 | 隔离场景尚未创建 |
+| temp | G:/CODEX/New Manga.workspace/GOV-CHECKER-NOTASK-1/ | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/GOV-CHECKER-NOTASK-1/ | verification/GOV-CHECKER-NOTASK-1/README.md | 两个隔离副本和诊断日志保留；未清理 |
 | agent-output | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | 待核对 |
 | exchange | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | 无 |
 
