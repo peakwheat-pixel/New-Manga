@@ -90,7 +90,8 @@ AC 状态语法按 `doc/09_COLLABORATION.md` §4.3。AC1 的 A/B 是两个独立
 - 2026-11-12，Addendum 4 已由原始释放 ZCode 会话裁定并提交；Task 恢复 `in_progress`。历史 delta 永久登记为 `+62 / -0 / CHANGED=2`，不得归零。
 - 完成：Addendum 2 reproduction anchor、固定 base inventory/delta、转接归因账本；AC1c A 门禁仍未运行。首次长路径 checkout 子命令 EXIT 未捕获，保留 limitation。
 - 当前证据：[verification README](../../verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md)；转接明细：[history-transition-ledger](../../verification/FEA-15-PIN-BASIS-ENFORCE-1/history-transition-ledger.md)。外部 A clone 保留，恢复执行时补测 porcelain 与 `core.longpaths`。
-- 下一步：提交恢复登记与证据 pinbackfill，重跑门禁；随后恢复 AC1c A 侧，再按 Addendum 4 冻结 R0 并执行 B。AC1d 通过前禁止实现。
+- main 恢复登记门禁：生成于 `c7b15c532fc707cdf8ac8071e578f18bf597d419`；default、当前 TaskPath、18 pins、API 均 `EXIT=0`，详情见 recovery-gates log。该日志已提交；本 pinbackfill 后会再次运行权威检查。
+- 下一步：完成本次 pinbackfill 后复核门禁；随后按 Addendum 4 恢复 AC1c A 侧，再冻结 R0 并执行 B。AC1d 通过前禁止实现。
 
 ## Canonical Evidence
 
@@ -109,6 +110,7 @@ AC 状态语法按 `doc/09_COLLABORATION.md` §4.3。AC1 的 A/B 是两个独立
 | ac1a-stop-adjudication | AC1 changed=2 release-condition adjudication | doc/reviews/FEA-15-PIN-BASIS-ENFORCE-1-ac1-delta-stop-adjudication-2026-11-12.md | 1d71a65d678423ecc94a60129d3d0a4f4f4dfd8a | 6e2c11c4c97e1fabc29ee7ea063d8be4a287780c0abd2f0eafb591229e19e21f | CANONICAL |
 | ac1-addendum4 | AC1 one-time history transition adjudication | doc/reviews/FEA-15-PIN-BASIS-ENFORCE-1-zcode-release-adjudication-addendum4-2026-11-12.md | 2be64baf16672dda8a351f6d95b68e5a937dc94a | EBBD38FB14C304531C79887161ABB985EDE094F42D1F76F5D764ECC6B6611A6F | CANONICAL |
 | ac1-transition-ledger | AC1 one-time history transition detail | verification/FEA-15-PIN-BASIS-ENFORCE-1/history-transition-ledger.md | 31d7e59b15e897ae3779e3dbc9599b0c45624bfa | 56cefbc99f4b389fb62e53cdb76125db8e1f87d6394a4d97d57664c431fca847 | CANONICAL |
+| ac1-recovery-gates | AC1 recovery registration gates | verification/FEA-15-PIN-BASIS-ENFORCE-1/recovery-gates-c7b15c5.log | 7e1fa88dd72383dc1a466382e9741ff384c72eb3 | 83307311f3eb9b5f57084a702b490c1262d94bc1832ec71b438f82ad44f540e9 | CANONICAL |
 
 ## Resource Manifest
 
