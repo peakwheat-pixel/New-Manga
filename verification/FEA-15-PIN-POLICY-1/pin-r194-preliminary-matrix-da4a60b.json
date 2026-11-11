@@ -1,0 +1,122 @@
+{
+  "schema_version": 1,
+  "measured_head": "da4a60baafba18281f156330b9ed1646045edb6d",
+  "input_inventory": "verification\\FEA-15-PIN-POLICY-1\\pin-inventory-preliminary-da4a60b.json",
+  "total_pin_rows": 5376,
+  "basis_counts": {
+    "BLOB": 327,
+    "COMPOSITE_PATH": 2,
+    "EXTERNAL_UNAVAILABLE": 47,
+    "INCONSISTENT": 160,
+    "MISSING": 3,
+    "MIXED": 1009,
+    "UNPINNED": 293,
+    "UNRESOLVED_COMMIT": 68,
+    "WORKTREE": 3467
+  },
+  "modeled_r194_hash_match_state_counts": {
+    "MATCH_BLOB_ONLY": 327,
+    "MATCH_BOTH": 1009,
+    "MATCH_WORKTREE_ONLY": 3467,
+    "NO_PIN": 293,
+    "PIN_PRESENT_NO_MATCH_OR_UNAVAILABLE": 280
+  },
+  "modeled_accept_predicate_rows": 4803,
+  "modeled_nonpass_rows": 573,
+  "samples": {
+    "BLOB_TEXT": {
+      "path": "verification/AGPL-RELEASE-1/REPORT.md",
+      "row_count": 1,
+      "records": [
+        {
+          "source_file": "doc/tasks/AGPL-RELEASE-1.md",
+          "evidence_id": "delivery-report",
+          "commit": "35fd83c3ab28e0f3293238bd17543c5cec2f8e91",
+          "pin_sha256": "c7309d2b25ba24c927b383dc4c6986f0c4ce47569c21b6eb11d5a84f5c7c7e44",
+          "basis": "BLOB",
+          "pin_matches_worktree": false,
+          "pin_matches_blob": true,
+          "worktree_eol_profile": "CRLF",
+          "blob_eol_profile": "LF",
+          "attributes": "UNSPECIFIED",
+          "worktree_exists": true
+        }
+      ]
+    },
+    "WORKTREE_TEXT": {
+      "path": "verification/RELEASE-REPACK-6/verify.json",
+      "row_count": 2,
+      "records": [
+        {
+          "source_file": "doc/tasks/AD002-FOLLOWUPS-1.md",
+          "evidence_id": "release-0.1.1-verify",
+          "commit": "93cfb1bce",
+          "pin_sha256": "39b0c6a11ac747e12fc35e7074c89d000f6f0cb6d1a1b03d92e89da2c6b5d3e5",
+          "basis": "WORKTREE",
+          "pin_matches_worktree": true,
+          "pin_matches_blob": false,
+          "worktree_eol_profile": "CRLF",
+          "blob_eol_profile": "LF",
+          "attributes": "UNSPECIFIED",
+          "worktree_exists": true
+        },
+        {
+          "source_file": "doc/tasks/RELEASE-REPACK-6.md",
+          "evidence_id": "verify-json",
+          "commit": "93cfb1bce",
+          "pin_sha256": "39b0c6a11ac747e12fc35e7074c89d000f6f0cb6d1a1b03d92e89da2c6b5d3e5",
+          "basis": "WORKTREE",
+          "pin_matches_worktree": true,
+          "pin_matches_blob": false,
+          "worktree_eol_profile": "CRLF",
+          "blob_eol_profile": "LF",
+          "attributes": "UNSPECIFIED",
+          "worktree_exists": true
+        }
+      ]
+    },
+    "MIXED_EOL_TEXT": {
+      "path": "apps/desktop-avalonia/src/NewManga.Appearance/AppearanceJson.cs",
+      "row_count": 1,
+      "records": [
+        {
+          "source_file": "doc/tasks/FEA-06-PREREQ-1.md",
+          "evidence_id": "E-P1-APPEARANCE",
+          "commit": "177e145fa",
+          "pin_sha256": "b0a02a1867ab93466bf277b7f1b981d1563a50a13fa6af060123597650d691f5",
+          "basis": "WORKTREE",
+          "pin_matches_worktree": true,
+          "pin_matches_blob": false,
+          "worktree_eol_profile": "MIXED_EOL",
+          "blob_eol_profile": "LF",
+          "attributes": "UNSPECIFIED",
+          "worktree_exists": true
+        }
+      ]
+    },
+    "BINARY": {
+      "path": "verification/CHAPTER-SELECTOR-1/screens/01-bookshelf-two-books.png",
+      "row_count": 1,
+      "records": [
+        {
+          "source_file": "doc/tasks/CHAPTER-SELECTOR-1.md",
+          "evidence_id": "CS1-SHOT-BOOKSHELF",
+          "commit": "126d055183b6852259b8fd292ca1c408c5fdd1b6",
+          "pin_sha256": "e5e795835b6c10c16ab4040d33473dfaa7bcf994327eeb469ab58154bd3cc300",
+          "basis": "MIXED",
+          "pin_matches_worktree": true,
+          "pin_matches_blob": true,
+          "worktree_eol_profile": "BINARY",
+          "blob_eol_profile": "BINARY",
+          "attributes": "UNSPECIFIED",
+          "worktree_exists": true
+        }
+      ]
+    }
+  },
+  "limits": [
+    "This matrix applies r194's documented worktree-or-commit-blob SHA predicate to inventory observations; it is not a per-row execution of check.ps1.",
+    "check.ps1 validates the current Task scope, not every historical Task row in this inventory.",
+    "A nonpass observation is not, by itself, an adjudication of corruption, invalid evidence, or permission to rewrite a pin."
+  ]
+}

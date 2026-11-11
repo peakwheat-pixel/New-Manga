@@ -1,0 +1,9 @@
+Command: python - (importlib loader for pin_r194_matrix.py; input=pin-inventory-preliminary-da4a60b.json; output=pin-r194-preliminary-matrix-da4a60b.json)
+Generated at: 2026-11-11T15:29:00.392+08:00
+Execution HEAD: 2ee6a5a024aede32a61e7907a865879eac7c8d70
+Measured inventory HEAD: da4a60baafba18281f156330b9ed1646045edb6d
+TOTAL_PIN_ROWS=5376
+MODELED_R194_ACCEPT=4803 NONPASS=573
+EXIT=0
+OUTPUT_SHA256=c45574a2ce7cb28d8a6829e9429195cc53284e845e1fc0302eb590a633bf50da
+Status: modeled observation matrix only; not a per-row check.ps1 run; preliminary snapshot.
