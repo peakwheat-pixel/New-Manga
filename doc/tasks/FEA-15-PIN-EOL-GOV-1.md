@@ -3,14 +3,14 @@ id: FEA-15-PIN-EOL-GOV-1
 title: 证据 pin 行尾与跨 checkout 可复现性治理
 kind: governance
 governance_version: 3
-status: ready
+status: in_progress
 approval: ZCode 2026-11-11 裁决释放（独立 CLI 会话；[adjudication](../reviews/FEA-15-DIAG-ACL-1-zcode-adjudication-2026-11-11.md) §4）；本轮用户单次授权：只读治理阶段
 suggested_owner: codex
-owner: null
-reviewer: null（进入 in_review 前按 09 §6 上下文独立指定；候选=ZCode 独立会话或 DSH 派发 subagent，不得为 Owner 同一会话）
+owner: codex
+reviewer: ZCode（实施交付后的全新独立 CLI Review 会话；不得复用裁决释放会话 sess_abdb4288-4a4f-49c1-8097-6edbb6e3866f；Review 时记录新 session ID）
 depends_on:
   - FEA-15-ACCEPT-1
-base_commit: 1e58398aa07467004c1b329bb52095f63bcb78d4
+base_commit: 4173961dfe1b65256cb06d7628cc813b0603caa3
 branch: main
 worktree: G:/CODEX/New Manga
 integration_commit: null
@@ -64,3 +64,4 @@ out_of_scope:
 
 - 2026-11-11：ZCode 裁决登记 proposed；未释放、未实施。
 - 2026-11-11：ZCode 独立 CLI 会话复核 DIAG-ACL-1 终态后裁决释放（[adjudication](../reviews/FEA-15-DIAG-ACL-1-zcode-adjudication-2026-11-11.md) §4）：status→ready，范围冻结为只读盘点（AC1–AC3），base=`1e58398aa07467004c1b329bb52095f63bcb78d4`；待 Owner 认领。
+- 2026-11-11：Codex 在释放提交 `4173961dfe1b65256cb06d7628cc813b0603caa3` 认领并进入 `in_progress`；Owner=`codex`，Reviewer 预指定为新 ZCode 独立 CLI Review 会话；实现与 Review 会话必须分离。
