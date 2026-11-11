@@ -4,7 +4,7 @@ title: Canonical Evidence 显式 SHA 字节基准与历史兼容
 kind: governance
 governance_version: 3
 status: in_progress
-approval: ZCode 2026-11-11 RELEASE_WITH_BASELINE_PREREQUISITE（主裁决及 Addendum 1–3）；Addendum 4（2026-11-12）接受一次性基线转接并解除 STOP；AC1c A 独立裁决 `ACCEPT_CONTINUE`（2026-11-12）；用户授权自动继续；Codex 已认领
+approval: ZCode 2026-11-11 RELEASE_WITH_BASELINE_PREREQUISITE（主裁决及 Addendum 1–3）；Addendum 4 接受一次性基线转接；AC1c A=ACCEPT_CONTINUE；AC1d=AC1D_PASS；AC2/AC3=ACCEPT_WITH_LIMITATIONS（2026-11-12），限定释放 AC4；AC5 未释放；用户授权自动继续，裁决交给 ZCode
 suggested_owner: codex
 owner: codex
 reviewer: ZCode 独立 CLI Review fresh session；须与 AC1d 基线复核和最终 adjudication 上下文不同
@@ -47,10 +47,10 @@ out_of_scope:
 ## Acceptance Criteria
 
 - [x] **AC1 实施前固定基线**：A clone 固定 `2df8db7a4d19b591e919ecc6e8f8651167800ef0`；reproduction/inventory `EXIT=0`；delta 原样 `ADDED=62 / REMOVED=0 / CHANGED=2`。AC1c A 的真实 FAIL/PASS 已由 ZCode `ACCEPT_CONTINUE` 裁定并原样保留；B 在 R0 的文件/差异/blob 断言与本 TaskPath 均 `EXIT=0`；fresh AC1d 独立确认 `AC1D_PASS`。 <<MET>>
-- [ ] **AC2 新旧表头与 basis 校验**：模板新增七列；checker 明确识别旧六列/新七列。旧表维持既有 r194 语义；新表逐行要求合法 basis，BLOB 校验包含路径的 commit blob 精确字节，WORKTREE 仅校验明确声明且说明复现环境的工作区字节，EXTERNAL_SHA256 不可读不得通过。 <<PARTIAL: AC1d 已授权实现；实现与判别测试尚未完成>>
-- [ ] **AC3 判别测试覆盖**：测试覆盖旧格式、basis 缺失/非法、三类来源、commit 不含路径、缺失路径、PNG exact bytes、CRLF 与 mixed-EOL，包含旧格式结果不变断言。 <<PARTIAL: AC1d 已授权实现；专项测试尚未完成>>
-- [ ] **AC4 跨 checkout 对照**：Windows `core.autocrlf=true/false` fresh checkout 对照；逐行区分历史行不变性与 Task 自身新行增量。Linux 未实测则明确记录 `NOT_RUN`。任何未解释历史变化或集合增删即停止。 <<BLOCKED: 依赖 AC2/AC3 实现完成；当前尚未运行跨 checkout 对照>>
-- [ ] **AC5 集成、Review 与终裁**：集成后 default、本 Task 与四个历史 TaskPath、18 pins、API 全部实际执行；更新 Handoff、Canonical Evidence、资源清单；fresh ZCode 独立 Review 与不同 session 的 ZCode 最终 adjudication 完成，`R-001` 由 Integrator 显式裁决。不得把计划项或 `NOT_RUN` 写成 PASS。 <<BLOCKED: 依赖 AC2–AC4；集成门禁、Review 与终裁尚未执行>>
+- [ ] **AC2 新旧表头与 basis 校验**：模板新增七列；checker 识别旧六列/新七列。旧表维持既有 r194 语义；新表要求合法 basis，BLOB 精确校验路径 commit blob，WORKTREE 校验明确声明的工作区字节，EXTERNAL_SHA256 不可读时失败关闭。 <<PARTIAL: AC2/AC3 前一候选已由 ZCode ACCEPT_WITH_LIMITATIONS；当前候选含 P1-1/P1-3 补测，fresh Review 待完成>>
+- [ ] **AC3 判别测试覆盖**：覆盖旧格式、basis 缺失/非法、三类来源、commit 不含路径、缺失路径、PNG exact bytes、CRLF 与 mixed-EOL，含旧格式结果不变断言。 <<PARTIAL: 当前 4ed 候选专项测试 EXIT=0；补测后的独立 Review 待完成>>
+- [ ] **AC4 跨 checkout 对照**：Windows core.autocrlf=true/false fresh checkout 对照；逐行区分历史不变性与 Task 新行增量。Linux 未实测则记录 NOT_RUN。 <<PARTIAL: Windows T/F gate、C1/C2 与 inventory 审计已执行；fresh ZCode adjudication 待完成；Linux NOT_RUN>>
+- [ ] **AC5 集成、Review 与终裁**：集成后 default、本 Task 与四个历史 TaskPath、18 pins、API 全部实际执行；更新 Handoff、Canonical Evidence、资源清单；fresh ZCode Review 与不同 session 的最终 adjudication 完成，R-001 由 Integrator 显式裁决。 <<BLOCKED: AC4 独立 Review/adjudication 待完成；AC5 尚未释放，相关门禁与最终终裁 NOT_RUN>>
 
 AC 状态语法按 `doc/09_COLLABORATION.md` §4.3。AC1 的 A/B 是两个独立载体：base clone 不存在本 Task 卡，不能将不存在的 TaskPath 记为 PASS；B 只在 R0 执行本卡 TaskPath。Addendum 4 细化 R0 文件在场、允许差异、治理工具/模板 blob 同一性和停止条件。AC1c A 实际 FAIL/PASS 均原样保留；ZCode fresh session 于 2026-11-12 作出 `ACCEPT_CONTINUE`，将 A 侧预期锚精确化为 autocrlf=true 环境的确定性结果。B clone checkout 前已设 clone-local `core.autocrlf=false`、`core.longpaths=true`；R0 差异/24 个治理工具与模板 blob 断言和本 TaskPath 均通过。fresh AC1d 返回 `AC1D_PASS`，只授权 AC2/AC3；B 的其它门禁仍 `NOT_RUN`。
 
@@ -65,13 +65,13 @@ AC 状态语法按 `doc/09_COLLABORATION.md` §4.3。AC1 的 A/B 是两个独立
 | AC1a | 固定 base clone；运行冻结 inventory/delta 脚本，依 Addendum 2 仅运行时重绑定路径 | Windows；base `2df8db7a4d19b591e919ecc6e8f8651167800ef0` | `EXIT=0`；inventory 5,438；delta `+62/-0/CHANGED=2`，Addendum 4 接受一次性转接 | README、原始 logs/JSON、history-transition-ledger |
 | AC1c-A | 记录 clone status/env；default + `AGPL-RELEASE-1`、`AD002-FOLLOWUPS-1`、`FEA-06-PREREQ-1`、`CHAPTER-SELECTOR-1` TaskPath；18 pins、API、固定样本矩阵 | Windows；A clone @ `2df8db7…`，checker 未变 | default/four TaskPath `EXIT=1`；pins `EXIT=1` (16 mismatches)；API/matrix `EXIT=0`；真实结果保持 FAIL/PASS，ZCode `ACCEPT_CONTINUE`；见裁决报告 | `ac1c-a-gates-8d1d75ca.log`；README；AC1c adjudication |
 | AC1b | 固定 R0 clone；断言 Task/STATUS/Plan 在场、允许差异集、逐文件比较 `tools/governance/**` 与 `doc/templates/**` blobs；运行本卡 TaskPath | Windows；R0；checkout 前 clone-local `core.autocrlf=false`、`core.longpaths=true`，clean | R0 HEAD 固定；3 个文件在场 PASS；25 个差异路径全部允许；24/24 blobs 相同；本卡 TaskPath `EXIT=0`（3 warnings）；B default/pins/API 等未运行 | `ac1c-b-r0-assertions-taskpath-bfae0b9.log`；README |
-| AC2–AC3 | `python -m pytest tools/governance/tests -q` 及专项夹具 | R0 implementation worktree；AC1d 已通过 | 实现进行中；测试尚未执行 | 后续测试日志 |
-| AC4 | autocrlf=true/false fresh clone 比较 | 候选副本固定 HEAD | NOT_RUN；Linux 预期 NOT_RUN，除非实际执行 | 后续矩阵与日志 |
+| AC2–AC3 | 专项 pytest；候选完整 governance suite | implementation HEAD 7eef；validation / AC4 candidate HEAD 4ed7 | clean implementation HEAD：18 passed、9 subtests、EXIT=0；T clone：18 passed、9 subtests、EXIT=0；F clone：16 passed、2 skipped、9 subtests、EXIT=0。4ed 完整 suite NOT_RUN；较早候选 full suite 3 failures 与未修改基线一致 | ac2ac3-p1-p3-remediation-committed.log；ac4-v2 T/F gate logs；README |
+| AC4 | T/F fresh clones；pins、API、focused pytest；C1/C2 与 inventory delta audit | Windows；候选 4ed7f32b3ce9104ecee11aad593bde222055a0df；配置先于 checkout | T default/TaskPath EXIT=1（Plan 7035/7000 bytes），pins EXIT=1（16 EOL mismatch）；F default/TaskPath PASS EXIT=0（各3 warnings），pins EXIT=1（C04b/C17）；两侧 API EXIT=0。C1 16/16、C2 T/F 各2/2、11/11 path audit 均 EXIT=0；T/F 行增量均 +8/-1/~0；Linux NOT_RUN；待 ZCode adjudication | ac4-v2-t-gates-nativecwd.log；ac4-v2-f-gates-nativecwd.log；README / audit JSON |
 | AC5 | 集成后 `check.ps1` default/本卡及四历史 TaskPath、`verify_pins.ps1`、API inventory | main 集成候选；逐项保存 HEAD 与 EXIT | `NOT_RUN`；与 AC1c A/B 基线门禁分开 | 后续 delivery-gates log |
 
 ## 依赖、风险与阻塞
 
-硬依赖 `FEA-15-PIN-POLICY-1` 已 done。AC1c A 的 EOL/历史 evidence 失败由 ZCode fresh session `ACCEPT_CONTINUE`；这些观测仍为 FAIL，不是 PASS。A clone 配置与冻结内容保持不变。B 使用 checkout 前设置的 clone-local `core.autocrlf=false`、`core.longpaths=true`。AC1d fresh ZCode session `AC1D_PASS` 已解除 AC2/AC3 的前置 STOP；AC4/AC5 仍须等待其前置项。AC1d 报告原始长调用 EXIT 未保存、同会话回执 `EXIT=0`，不得将回执写成原审查调用 EXIT。
+硬依赖 FEA-15-PIN-POLICY-1 已 done。AC1c A 的 EOL/历史 evidence FAIL 经 ZCode ACCEPT_CONTINUE；AC1d AC1D_PASS 解除 AC2/AC3 STOP。ZCode 2026-11-12 接受 AC2/AC3 并限定释放 AC4，AC5 明确 NOT_RELEASED。当前 AC4 证据已执行，待新独立 Review 与 ZCode adjudication；AC5 门禁不得提前运行。AC1d 原始长调用 EXIT 未保存，不将同会话回执冒充原调用 EXIT。
 
 5,376 行只是 `e9f7bb1…` 历史 snapshot；本 Task 必须在固定 `2df8db7…` clone 重算当前 inventory，不能把旧数量当预设答案。Inventory `class` 辅助字段对非标准表头有限制，不得用于政策或处置推断。573 条异常观察不自动构成损坏/迁移清单。
 
@@ -80,11 +80,12 @@ AC 状态语法按 `doc/09_COLLABORATION.md` §4.3。AC1 的 A/B 是两个独立
 - Release authority：主裁决、Addenda 1–3；Addendum 3 session `sess_7b34d23e-ddaf-4ec5-bbb3-964edd74fc58`，turn `turn_14d71565-8907-4cf0-8e20-fa98d38f2bed`。
 - Handoff：待交付。
 - AC1d baseline review：[独立裁决报告](../reviews/FEA-15-PIN-BASIS-ENFORCE-1-ac1d-baseline-confirmation-2026-11-12.md)，`AC1D_PASS`；session `sess_fd863071-c665-4b61-89be-2156ace80595` / turn `turn_133dc2f6-c7f1-467c-a8a5-2c342f12c65a`。原始长调用 EXIT 未捕获；同会话回执 turn `turn_217dd2e1-13dd-4f53-83d2-f599bc9a81dd` 为 `EXIT=0`，仅复述既有结论。最终 Review 与最终 adjudication 仍须使用彼此独立的新 session。
-- 实现分支/worktree：从冻结 R0 `bfae0b9bd6a9b85a9a546d2adda0b684783ddb24` 创建；AC1d 仅放行 AC2/AC3；main 不直接实现 checker/template。
+- 实现分支/worktree：从冻结 R0 bfae0b9bd6a9b85a9a546d2adda0b684783ddb24 创建，仅用于 AC2/AC3；实现 HEAD 7eefb54dc5ca74ddf9cc5459eb40fb10769a44e1，clean。AC4 validation candidate 4ed7f32b3ce9104ecee11aad593bde222055a0df 与实现候选的 checker、TASK 模板、专项测试文件 blob 三项相同。
 - AC1 原 delta STOP 独立裁决：[报告](../reviews/FEA-15-PIN-BASIS-ENFORCE-1-ac1-delta-stop-adjudication-2026-11-12.md)，结论 `ADJUDICATION_STOP`；后由 Addendum 4 接受一次性转接。AC1c A 的后续停止门已由下列 fresh ZCode 裁决 `ACCEPT_CONTINUE` 解除。
 - Addendum 4：[一次性基线转接与停止门解除](../reviews/FEA-15-PIN-BASIS-ENFORCE-1-zcode-release-adjudication-addendum4-2026-11-12.md)，原始释放 ZCode 会话 `sess_7b34d23e-ddaf-4ec5-bbb3-964edd74fc58` / `turn_391d1a6b-6e08-4bba-b0b8-f80f32a68e0d`；接受 `+62 / -0 / CHANGED=2` 一次性衔接并恢复 AC1c A 侧，不授权实现。
 - AC1c A：[ZCode 独立裁决](../reviews/FEA-15-PIN-BASIS-ENFORCE-1-ac1c-a-release-adjudication-2026-11-12.md)，`ACCEPT_CONTINUE`；session `sess_72137bd6-9553-424d-b09f-4184866cd387` / turn `turn_fbce0bef-c175-43a1-a065-31fdc00180a7`；A 侧失败锚已解释并接受。裁决时 B/AC1d 未运行；B 后续结果见下一 checkpoint。
-- `R-001` 不因实现自动关闭，等待最终 Integrator 明确裁决。
+- AC2/AC3 adjudication 报告：ZCode session sess_dbdb62fe-a206-4477-a209-657882bae35b / turn turn_842ced10-318d-498e-836c-ca44d987f990，AC2/AC3 ACCEPT_WITH_LIMITATIONS，AC4 RELEASED（限定范围），AC5 NOT RELEASED；报告 doc/reviews/FEA-15-PIN-BASIS-ENFORCE-1-ac2-ac3-adjudication-2026-11-12.md。
+- R-001 已增加 negative tests，但 finding 的实现状态及 AC5 前最终 Integrator disposition 仍待 fresh Review / final adjudication；不得自动视作关闭。
 
 ## Rolling Checkpoint
 
@@ -95,7 +96,7 @@ AC 状态语法按 `doc/09_COLLABORATION.md` §4.3。AC1 的 A/B 是两个独立
 - 2026-11-12，R0=`bfae0b9bd6a9b85a9a546d2adda0b684783ddb24`：main default/本卡 TaskPath/18 pins/API 均 `EXIT=0`；B clone clean，Task/STATUS/Plan 在场，`R0..2df8db7` 25 个差异路径均在释放范围内，`tools/governance/**` 与 `doc/templates/**` 24/24 blobs 相同；B 本卡 TaskPath `EXIT=0`（3 warnings）。B 其他门禁未运行；日志分别为 `r0-main-gates-bfae0b9.log` 与 `ac1c-b-r0-assertions-taskpath-bfae0b9.log`。
 - 2026-11-12，AC1d fresh ZCode 会话 `sess_fd863071-c665-4b61-89be-2156ace80595` / turn `turn_133dc2f6-c7f1-467c-a8a5-2c342f12c65a` 对 reviewed HEAD `0851085cbeeaaea95d1fd94b55a435a3e2eef102` 裁决 `AC1D_PASS`，只释放 AC2/AC3；R0 `bfae0b9bd6a9b85a9a546d2adda0b684783ddb24` 为实施基线。AC1d 报告原始长调用 EXIT 未捕获；同会话回执 `EXIT=0` 仅重述结论。generated HEAD `cdd5d258690471c8069d47f461f04a1ef9a306bd` 的 19 行 blob audit `EXIT=0`，状态前后 clean。
 - 当前证据：[verification README](../../verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md)、[history-transition-ledger](../../verification/FEA-15-PIN-BASIS-ENFORCE-1/history-transition-ledger.md)；A clone 保留。
-- 当前下一步：在指定 workspace implementation worktree 的 R0 基线上，仅实现 AC2/AC3；完成实现后按卡片分离提交实现、验证证据和 pinbackfill，再进入 AC4/AC5。
+- 2026-11-12 current checkpoint：AC2/AC3 implementation commit 7eef；AC4 v2 evidence commit a9ca17988，post-evidence gates commit bb44720aa，README checkpoint commit 3db4c3841，follow-up Review report/receipt commit 8f4ee644b。main gates at a9ca: default / TaskPath PASS（各3 warnings、EXIT=0），18 pins EXIT=0，API EXIT=0。当前下一步为更新 AC、Canonical Evidence 与指针，fresh ZCode Review 当前 4ed 候选，随后由独立 ZCode session adjudicate AC4 并决定是否释放 AC5。
 
 ## Canonical Evidence
 
@@ -127,6 +128,32 @@ AC 状态语法按 `doc/09_COLLABORATION.md` §4.3。AC1 的 A/B 是两个独立
 | ac1d-blob-audit | AC1d 19-row Canonical Evidence Git blob audit at generated HEAD cdd5d258690471c8069d47f461f04a1ef9a306bd | verification/FEA-15-PIN-BASIS-ENFORCE-1/ac1d-canonical-evidence-blob-audit-0851085.log | c8d387929572f9995b4a1dde2a8ce2651d89e8a6 | b8c8539e4c94715c25f30a5e54b512bfb39d2c8ded9b29cac0393ab3ec112558 | CANONICAL |
 | ac1d-post-pinbackfill-readme | AC1d main gate summary and outcomes | verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md | ecc626a1b642db247e8d5173e7870cff7b1003f5 | 32d47ab064f4c93fbb1c2d0488296ebf9ab536faf6294d90aa817a2a56ada88a | CANONICAL |
 | ac1d-main-gates | AC1d post-pinbackfill main default/TaskPath/pins/API gate log | verification/FEA-15-PIN-BASIS-ENFORCE-1/post-ac1d-pinbackfill-gates-d362d228.log | ecc626a1b642db247e8d5173e7870cff7b1003f5 | df3d9ab418a4bd33719e263d0aa56cddd9d78e4c0e0a5ec7d34fd3bbaa5fe888 | CANONICAL |
+| ac2ac3-review-prior | Prior AC2/AC3 independent Review at 5e216dc | doc/reviews/FEA-15-PIN-BASIS-ENFORCE-1-ac2-ac3-zcode-review-2026-11-12.md | 3e05096b3ea256c5136abccc8b735464462cb351 | ddc1796f0394f5915d9b2c6e5144d91e6b1db91ea2f8f0b40f8bc4c1998bf97f | CANONICAL |
+| ac2ac3-adjudication | AC2/AC3 ACCEPT_WITH_LIMITATIONS and AC4 limited release | doc/reviews/FEA-15-PIN-BASIS-ENFORCE-1-ac2-ac3-adjudication-2026-11-12.md | 82b745a402b4e09143aa0b273ef210ae9124cb2a | 64b41feaf21995c3ffb9f7e66c333e2ca79b65c491165d531a16d13716e16c98 | CANONICAL |
+| ac2ac3-followup-review | Follow-up independent Review at bf377; not the current 4ed Review | doc/reviews/FEA-15-PIN-BASIS-ENFORCE-1-ac2-ac3-followup-review-2026-11-12.md | 8f4ee644ba260e1d5f237b27ab6a9fa4b0d48753 | 113cfdff8e8f229c55a67d08cb26defc76778dc1c54bc6fbabffc052d53d709d | CANONICAL |
+| ac2ac3-followup-review-receipt | Full ZCode CLI receipt for the bf377 Review | verification/FEA-15-PIN-BASIS-ENFORCE-1/ac2ac3-followup-review-zcode-cli-20261112.jsonl | 8f4ee644ba260e1d5f237b27ab6a9fa4b0d48753 | 44f83c1eb5d49538045f43b2057bd8b12c4ba618b89e85fc17423c92ed95d06c | CANONICAL |
+| ac2ac3-p1p3-remediation | P1-1/P1-3 remediation focused tests at implementation HEAD 7eef | verification/FEA-15-PIN-BASIS-ENFORCE-1/ac2ac3-p1-p3-remediation-committed.log | a9ca17988e292a7bc391cacb09c3a860a2a02986 | 081fae1d28457cd2c1668aaee32e31d809f8b7555bef36ddc33f7c54a227cf4b | CANONICAL |
+| ac4-v2-evidence-readme | Current AC4 v2 checkpoint and limitations | verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md | 3db4c38413aba522786a20172088e05d5bccdd47 | 31aa80a78ae4e038462d6abcb0abee2d566d7d18b9cea500ca552e44298069c9 | CANONICAL |
+| ac4-v2-post-evidence-gates | Main default/TaskPath/18 pins/API at generated HEAD a9ca17988 | verification/FEA-15-PIN-BASIS-ENFORCE-1/main-post-evidence-gates-a9ca17988.log | bb44720aaaeec26ba3bd49c3c155e0554760d898 | 1cb9a6e1f6a8c591a797c32c9129e38a96a6cf3f23a9a25b1c8000db463d38e0 | CANONICAL |
+| ac4-v2-clone-creation | AC4 v2 T/F clone config-before-checkout record | verification/FEA-15-PIN-BASIS-ENFORCE-1/ac4-v2-clone-creation-audit.log | a9ca17988e292a7bc391cacb09c3a860a2a02986 | 578552b127bcd87b521f6ab514c3e868c535379d3f4567db2f0d584a11a34c5e | CANONICAL |
+| ac4-v2-gates-t | T gates at candidate 4ed with native process CWD verified | verification/FEA-15-PIN-BASIS-ENFORCE-1/ac4-v2-t-gates-nativecwd.log | a9ca17988e292a7bc391cacb09c3a860a2a02986 | 6109f0871d25065d109c1c2a2ac5a56a94dc444735a1da1cfa9a183308caf691 | CANONICAL |
+| ac4-v2-gates-f | F gates at candidate 4ed with native process CWD verified | verification/FEA-15-PIN-BASIS-ENFORCE-1/ac4-v2-f-gates-nativecwd.log | a9ca17988e292a7bc391cacb09c3a860a2a02986 | c57bd796d88023df6a9b46509a0513a5a211ebf3cb25240607d163f74adc3f78 | CANONICAL |
+| ac4-v2-pin-normalization-t | T 16/16 CRLF normalization and frozen pin verification | verification/FEA-15-PIN-BASIS-ENFORCE-1/ac4-v2-t-pin-eol-normalization.log | a9ca17988e292a7bc391cacb09c3a860a2a02986 | 45eab771d59bc6bf5fc571ea124b60fbf08ff300af4b139e46568f4753c279e4 | CANONICAL |
+| ac4-v2-generator-integrity-t | T frozen generator identity verification | verification/FEA-15-PIN-BASIS-ENFORCE-1/ac4-v2-generator-integrity-t.log | a9ca17988e292a7bc391cacb09c3a860a2a02986 | f66431b095bd3e8926c9eca93598ec6443ec2ce3a6c8c8b00999b9ea7a41cb79 | CANONICAL |
+| ac4-v2-generator-integrity-f | F frozen generator identity verification | verification/FEA-15-PIN-BASIS-ENFORCE-1/ac4-v2-generator-integrity-f.log | a9ca17988e292a7bc391cacb09c3a860a2a02986 | 7327ee7331a3a1251387b690c9a89d9ea8d3afc97033e1cbaba13154ef4a63cd | CANONICAL |
+| ac4-v2-r0-inventory | AC4 R0 inventory, 5455 rows | verification/FEA-15-PIN-BASIS-ENFORCE-1/ac4-inventory-r0.json | a9ca17988e292a7bc391cacb09c3a860a2a02986 | 578b9e30933c5d8807da8a2687c8adc903bbcce58c1653adca61a3d8437af0e9 | CANONICAL |
+| ac4-v2-r0-inventory-log | AC4 R0 inventory generation record | verification/FEA-15-PIN-BASIS-ENFORCE-1/ac4-r0-inventory.log | a9ca17988e292a7bc391cacb09c3a860a2a02986 | fb62cb3cfeaf5287d563218e60058c1b747c2a0088945185f5c4b42d3ca8ef53 | CANONICAL |
+| ac4-v2-inventory-log-t | T candidate inventory generation record | verification/FEA-15-PIN-BASIS-ENFORCE-1/ac4-v2-t-inventory.log | a9ca17988e292a7bc391cacb09c3a860a2a02986 | 5b7471c9cdd7e92a748894ccbbf06d68758ba9adf22f5c1fb6de6fa76f3c1575 | CANONICAL |
+| ac4-v2-inventory-log-f | F candidate inventory generation record | verification/FEA-15-PIN-BASIS-ENFORCE-1/ac4-v2-f-inventory.log | a9ca17988e292a7bc391cacb09c3a860a2a02986 | 761b74503a1a012cda9c64559ae82cb4042c8446a14b9fc87a0463c208a9e0b4 | CANONICAL |
+| ac4-v2-inventory-t | T candidate inventory, 5462 rows | verification/FEA-15-PIN-BASIS-ENFORCE-1/ac4-v2-clone-t-inventory.json | a9ca17988e292a7bc391cacb09c3a860a2a02986 | 6d29d0fd54141f74c22b9ff4b283d7f74d514b37b92191c8d4aed0d6a9e5b5aa | CANONICAL |
+| ac4-v2-inventory-f | F candidate inventory, 5462 rows | verification/FEA-15-PIN-BASIS-ENFORCE-1/ac4-v2-clone-f-inventory.json | a9ca17988e292a7bc391cacb09c3a860a2a02986 | 5206e4c5d3ab2a86b2bb1d35154d8ad3edc0f4f5d93602d49dd08212dec780f0 | CANONICAL |
+| ac4-v2-delta-log-t | T frozen generator delta record | verification/FEA-15-PIN-BASIS-ENFORCE-1/ac4-v2-t-inventory-delta.log | a9ca17988e292a7bc391cacb09c3a860a2a02986 | 0de62b3a1dfe6c7bd9b9fc136d636bdb19ac52e82a8fba19d16ff5922997b7f1 | CANONICAL |
+| ac4-v2-delta-log-f | F frozen generator delta record | verification/FEA-15-PIN-BASIS-ENFORCE-1/ac4-v2-f-inventory-delta.log | a9ca17988e292a7bc391cacb09c3a860a2a02986 | 5c8a1e1a4b58de4a36ec89e590cde58fe2f6d3b7ea711fa18813c737120103ab | CANONICAL |
+| ac4-v2-delta-t | R0-to-candidate T delta, +8/-1/~0 | verification/FEA-15-PIN-BASIS-ENFORCE-1/ac4-inventory-delta-r0-to-4ed7f32b3ce9104ecee11aad593bde222055a0df-t.json | a9ca17988e292a7bc391cacb09c3a860a2a02986 | 9daceedc583621725bff1691b7fd2ca815fce90fabab304c4cbdbf128a64e623 | CANONICAL |
+| ac4-v2-delta-f | R0-to-candidate F delta, +8/-1/~0 | verification/FEA-15-PIN-BASIS-ENFORCE-1/ac4-inventory-delta-r0-to-4ed7f32b3ce9104ecee11aad593bde222055a0df-f.json | a9ca17988e292a7bc391cacb09c3a860a2a02986 | ae697e5c58c669bf7ae9c649f49fc6248e50d424925071f0e58e4972cf926eb3 | CANONICAL |
+| ac4-v2-audit-source | AC4 v2 path/row/EOL audit helper | verification/FEA-15-PIN-BASIS-ENFORCE-1/ac4_inventory_audit_v2.py | a9ca17988e292a7bc391cacb09c3a860a2a02986 | e93fa71973108d884f3d46183b2a21678e217f7b3f56e1e0cd7273940758d1f3 | SOURCE_PIN |
+| ac4-v2-audit-log | AC4 v2 inventory audit record | verification/FEA-15-PIN-BASIS-ENFORCE-1/ac4-v2-inventory-audit.log | a9ca17988e292a7bc391cacb09c3a860a2a02986 | 08d13ec1ea01b97e6c8931cbed9a0899edb45ef5e482392b439457141b51fac7 | CANONICAL |
+| ac4-v2-audit-json | AC4 v2 inventory audit result | verification/FEA-15-PIN-BASIS-ENFORCE-1/ac4-v2-inventory-audit.json | a9ca17988e292a7bc391cacb09c3a860a2a02986 | ac321500f01b342516dbec4d7f48083cea5a44bc3479b05c0c2476ff5e472c92 | CANONICAL |
 
 `ac1c-boundary-matrix` 的 Canonical SHA 使用 `6086a5b1…` 提交内 Git blob 字节（4316 bytes，SHA-256 `68ec…`）；A clone/verification 工作树文件为 4438 bytes，SHA-256 `e8c…`。两者基于 EOL 转换而字节不同，卡内 pin 指向实际 Git blob。`ac1a-inventory`、`ac1a-delta-stop`、`ac1a-repro-anchor` 也以 Git blob 字节作为 Canonical pin；README artifacts 表列出 A clone 工作树输出 SHA。三组 A 工作树文件在 CRLF→LF 归一化后均逐字节等于对应 blob，数量分别为 146,220、941、414 个 CRLF 对；详见本 README 的 AC1d 段落。不得迁移历史 pin。
 
@@ -139,8 +166,10 @@ AC 状态语法按 `doc/09_COLLABORATION.md` §4.3。AC1 的 A/B 是两个独立
 | main worktree | G:/CODEX/New Manga | PRESERVE_REFERENCED | G:/CODEX/New Manga | Task checkpoint | main 分支；Task 注册基点 `d8b9b20869ac0957e152eddb9b5de88c8c2f9326`；保留 |
 | base clone | G:/CODEX/New Manga.workspace/FEA-15-PIN-BASIS-ENFORCE-1/baseline-2df8db7 | PRESERVE_REFERENCED | 同源保留 | verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md | HEAD 固定 `2df8db7…`；`core.longpaths=true`、`core.autocrlf=true`；仅 Task-local JSON 输出目录 untracked，无 tracked 改动；保留 |
 | R0 clone | G:/CODEX/New Manga.workspace/FEA-15-PIN-BASIS-ENFORCE-1/r0-baseline | PRESERVE_REFERENCED | 同源保留 | ac1c-b-r0-assertions-taskpath-bfae0b9.log | HEAD `bfae0b9bd6a9b85a9a546d2adda0b684783ddb24`；checkout 前 clone-local `core.autocrlf=false`、`core.longpaths=true`；clean；允许差异 25/25、工具/模板 blob 24/24、本卡 TaskPath `EXIT=0`；保留 |
-| implementation worktree | G:/CODEX/New Manga.workspace/FEA-15-PIN-BASIS-ENFORCE-1/implementation | PRESERVE_REFERENCED | 同源保留 | 待创建 | AC1d `AC1D_PASS`；从 R0 `bfae0b9bd6a9b85a9a546d2adda0b684783ddb24` 创建，仅用于 AC2/AC3；不清理 |
+| implementation worktree | G:/CODEX/New Manga.workspace/FEA-15-PIN-BASIS-ENFORCE-1/implementation | PRESERVE_REFERENCED | 同源保留 | 7eefb54dc5ca74ddf9cc5459eb40fb10769a44e1 | 从 R0 bfae0b9bd6a9b85a9a546d2adda0b684783ddb24 创建；AC2/AC3 实现 worktree clean；保留，不清理 |
 | A clone outputs | G:/CODEX/New Manga.workspace/FEA-15-PIN-BASIS-ENFORCE-1/baseline-2df8db7/verification/FEA-15-PIN-BASIS-ENFORCE-1 | PRESERVE_REFERENCED | 同源保留 | inventory/delta SHA 见 README | 仅生成本 Task 的 inventory/delta；保留，不清理 |
+| AC4 validation clone | G:/CODEX/New Manga.workspace/FEA-15-PIN-BASIS-ENFORCE-1/validation-ac2ac3 | PRESERVE_REFERENCED | 同源保留 | candidate HEAD 4ed7f32b3ce9104ecee11aad593bde222055a0df | core.autocrlf=false、core.longpaths=true；focused tests 后 clean；保留，不清理 |
+| AC4 T/F clones | G:/CODEX/New Manga.workspace/FEA-15-PIN-BASIS-ENFORCE-1/ac4-v2-clone-t and ac4-v2-clone-f | PRESERVE_REFERENCED | 同源保留 | ac4-v2 inventory/delta logs and JSON | HEAD 4ed7f32b3ce9104ecee11aad593bde222055a0df；T autocrlf=true、F=false；Task-local R0/inventory/delta JSON untracked；保留，不清理 |
 | agent-output logs | G:/CODEX/New Manga.workspace/FEA-15-PIN-BASIS-ENFORCE-1/*.log | PRESERVE_REFERENCED | 同源保留 | README | 源运行日志另复制入仓；保留原文件 |
 | dataset / model / installation artifact / exchange | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | 未使用 |
 
@@ -150,5 +179,5 @@ AC 状态语法按 `doc/09_COLLABORATION.md` §4.3。AC1 的 A/B 是两个独立
 - `canonical_evidence_status`：pending。
 - `resource_closeout_status`：pending；默认保留所有仓外副本。
 - 删除、迁移、归档数量/字节数：0（本 Task 禁止清理）。
-- 未关闭项：AC2/AC3 实现与测试、AC4/AC5、独立 Review/终裁；R-001 等待最终 Integrator 明确裁决。
+- 未关闭项：当前候选 AC2/AC3 独立 Review；AC4 fresh Review / ZCode adjudication；AC5 未释放，四个历史 TaskPath、集成后 gates、最终 Review/adjudication 均 NOT_RUN；R-001 最终 disposition 待 Integrator。
 - 当前指针清理：待 closeout 更新 STATUS / Plan / Ledger。
