@@ -351,8 +351,8 @@ class ArchitectureAssertions(unittest.TestCase):
         self.mutate("doc/00_INDEX.md", duplicate, False)
 
     def test_historical_prose_is_not_a_conflicting_assertion(self):
-        self.mutate("doc/STATUS.md", lambda text: text +
-                    "\n历史记录：当前目标架构为 React + TypeScript；该表述已被取代。\n", True)
+        # Keep this free-prose example below the shared STATUS byte budget.
+        self.mutate("doc/STATUS.md", lambda text: text + "\n历史 React+TS\n", True)
 
 
 if __name__ == "__main__":
