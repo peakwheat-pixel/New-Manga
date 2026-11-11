@@ -82,7 +82,7 @@
 | AC2 Host ACL | `PARTIAL`：原始堆栈和适用范围有界；卷能力不支持简单格式归因；精确 Host 方法探针 `NOT_RUN` | 精确原方法探针未执行；拒绝条件仍未知 |
 | AC3 资源影响 | `PARTIAL`：归属不可判定，但证据缺口和保留原则已逐项列出 | 保持系统 ACL/profile 和未知资源不变；若后续调查，须另行冻结 Task 范围 |
 | AC4 fixture | `MET`：62 项只按时间窗识别，建议和实际处置均为原位保留/零清理 | 独立 Review 已确认限制说明与证据相符 |
-| AC5 建议与交付 | 独立 Review 已 `approved`（P0/P1=0）；最终治理门禁与终态记录待完成 | `gates-review.log` 是较早 HEAD 的历史门禁证据；终态门禁另行记录，不把历史结果当作当前 PASS |
+| AC5 建议与交付 | 独立 Review 已 `approved`（P0/P1=0）；诊断矩阵、v7 债、NOT_RUN 与证据已留存 | `gates-terminal.log` 记录 closeout 候选树的门禁；Task pin backfill 后仍需按最终提交复跑 |
 
 ## NOT_RUN 与限制
 
@@ -91,8 +91,8 @@
 - `C:/Python314` ACL 与 AppContainer profile 的归属、增量和所有者：`NOT_RUN` / 不可判定；不修改、不撤销、不删除。
 - 62 个 fixture 候选清理或迁移：`NOT_RUN`；全量原位保留。
 - 真实旧库迁移/回退和真实用户数据操作：`NOT_RUN`；本 Task 禁止访问。
-- 独立 Review 已完成并批准；其未重跑门禁。终态门禁尚待执行，不能把历史 `gates-review.log` 当作终态 PASS。
+- 独立 Review 已完成并批准；其未重跑门禁。`gates-terminal.log` 于 2026-11-11 02:25:02 UTC、HEAD `dea98ce8f93a3dfd3bdab84457a212d02804dba2` 记录候选 closeout 工作树：default check PASS（3 warnings，EXIT 0）、`-TaskPath` PASS（5 warnings，EXIT 0）、18 pins PASS（EXIT 0）。Task evidence pin backfill 后仍须复跑终态门禁。
 
 ## 下一步
 
-独立 Reviewer `/root/fea15_diag_acl_review` 已对 `610839af8348f8b1f36e18a623e9fc40882051b5` 作只读审查并批准，P0/P1=0；报告位于 `doc/reviews/FEA-15-DIAG-ACL-1-r1.md`。本 Task 的终态治理门禁待完成。精确 `SourceSecurity.PrivateDirectory` 探针继续保持 `NOT_RUN`；没有进行 ACL 恢复、profile 删除、fixture 清理或产品代码修复。
+独立 Reviewer `/root/fea15_diag_acl_review` 已对 `610839af8348f8b1f36e18a623e9fc40882051b5` 作只读审查并批准，P0/P1=0；报告位于 `doc/reviews/FEA-15-DIAG-ACL-1-r1.md`。候选 closeout 门禁已 PASS，最终 Task pin backfill 后需要再复核。精确 `SourceSecurity.PrivateDirectory` 探针继续保持 `NOT_RUN`；没有进行 ACL 恢复、profile 删除、fixture 清理或产品代码修复。

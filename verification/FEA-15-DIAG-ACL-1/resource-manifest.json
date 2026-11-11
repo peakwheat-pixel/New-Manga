@@ -38,12 +38,23 @@
       "modified": false
     },
     {
-      "resource_type": "system_python_acl_and_user_appcontainer_profiles",
-      "source_path": "C:/Python314 and user-level AppContainer profiles",
-      "destination_path": "NOT_APPLICABLE",
+      "resource_type": "system_python_acl",
+      "source_path": "C:/Python314",
+      "destination_path": "Same source location",
       "disposition": "PRESERVE_UNKNOWN",
       "manifest_path": "../FEA-15-ACCEPT-1/python-acl-observation.log",
-      "process_check": "只引用既有运行后快照；归属不可判定。本 Task 未修改 ACL、未枚举或删除 profile。",
+      "process_check": "只引用既有运行后快照；归属不可判定。本 Task 未修改 ACL。",
+      "deleted": false,
+      "moved": false,
+      "modified": false
+    },
+    {
+      "resource_type": "user_appcontainer_profiles",
+      "source_path": "user-level AppContainer profile collection (not inventoried)",
+      "destination_path": "Same source location",
+      "disposition": "PRESERVE_UNKNOWN",
+      "manifest_path": "../FEA-15-ACCEPT-1/python-acl-observation.log",
+      "process_check": "没有前置清单，归属和具体条目未知；本 Task 未枚举、移动或删除 profile。",
       "deleted": false,
       "moved": false,
       "modified": false

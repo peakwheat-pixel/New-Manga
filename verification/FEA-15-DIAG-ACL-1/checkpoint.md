@@ -1,57 +1,56 @@
 # FEA-15-DIAG-ACL-1 Checkpoint
 
 ```text
-Timestamp: 2026-11-11 02:10:37 UTC / 10:10:37 Asia/Shanghai
+Timestamp: 2026-11-11 02:27:27 UTC / 10:27:27 Asia/Shanghai
 Agent: Codex
 Task ID: FEA-15-DIAG-ACL-1
-TaskStatus: in_review
+TaskStatus: closed_with_limitations (candidate closeout; final pin backfill in progress)
 ExecutionState: ACTIVE
 Branch: main
 Worktree: G:/CODEX/New Manga
 Base commit: 1e4542a047e991a5f10b0b213ca5a96eafe919a4
-Task claim commit: 5ed87d05d95e6b861c297c3063905b60e5fe7b7c
 Reviewed head: 610839af8348f8b1f36e18a623e9fc40882051b5
-Current HEAD at checkpoint: 610839af8348f8b1f36e18a623e9fc40882051b5
+Current HEAD at checkpoint: dea98ce8f93a3dfd3bdab84457a212d02804dba2
 ```
 
 ## Resume Reality Check
 
-- Task and `STATUS.md` remain `in_review`; independent Reviewer `/root/fea15_diag_acl_review` approved the fixed reviewed head, P0=0/P1=0.
-- `REBASELINE_PLAN.md` still marks this Task `in_review`; `FEA-15-PIN-EOL-GOV-1` remains `proposed`, and READY nodes are none.
-- The independent report fixes `reviewed_head` at `610839af8348f8b1f36e18a623e9fc40882051b5`. The current changes are documentation/evidence closeout only; no production code, tests, dependencies, schema or frozen contracts changed.
-- Modified paths at checkpoint: `doc/STATUS.md`, `verification/FEA-15-DIAG-ACL-1/README.md`, `verification/FEA-15-DIAG-ACL-1/appointment.md`, and this checkpoint; `doc/reviews/FEA-15-DIAG-ACL-1-r1.md` is newly added. All are within Task scope.
-- Resume result: `RESUME_SAFE` for the reviewed diagnostic delivery. Unknown ACL/profile/fixture resources remain untouched.
+- Independent Review `/root/fea15_diag_acl_review` approved reviewed head `610839af8348f8b1f36e18a623e9fc40882051b5`, P0=0/P1=0. The final stage record keeps AC1–AC3 `PARTIAL`, AC4/AC5 `MET`.
+- `STATUS.md` points to `FEA-15-PIN-EOL-GOV-1` as `proposed`, explicitly not released. The Plan READY set is empty.
+- Current closeout edits are documentation/evidence only. No production code, tests, dependencies, schema or frozen contracts changed.
+- Candidate gate run occurred at HEAD `dea98ce8f93a3dfd3bdab84457a212d02804dba2` with the closeout files listed below modified in the working tree. Its exact command outputs and EXIT values are in `gates-terminal.log`.
+- Resume result: `RESUME_SAFE`; all unknown ACL/profile/fixture resources remain untouched.
 
 ## Completed
 
-- Recorded the diagnostic evidence, resource manifest and bounded conclusions for sandbox/export, Host ACL, Python ACL/AppContainer profile, 62 fixture candidates and the v7 test fixture debt.
-- Kept AC1–AC3 as `PARTIAL`; AC4 is `MET`. The direct Host method probe remains `NOT_RUN`.
-- Received a read-only independent Review from `/root/fea15_diag_acl_review`: `approved`, P0=0/P1=0. The reviewer recommends `closed_with_limitations` after terminal gates, preserving unresolved limitations.
-- Updated the appointment and report links; corrected README's `PLUGIN_HOOK_FAILED` mapping for output-exceeded `SandboxError`.
-- No system ACL/profile/fixture action, real user database access, product test rerun, production change or push was performed during Review closeout.
+- Recorded diagnostic findings, cross-environment failures, v7 fixture debt, NOT_RUN items and resource dispositions.
+- Added the independent Review report and fixed README mapping for output-exceeded `SandboxError`.
+- Updated the external Resource Manifest to identify `C:/Python314` separately from un-inventoried user AppContainer profiles; same-location sentinel warnings are explicit and no resource was changed.
+- Candidate closeout gates: default `check.ps1` PASS (3 warnings, EXIT 0); TaskPath PASS (5 warnings, EXIT 0, including two explanatory same-source manifest notes); pins 18/18 PASS (EXIT 0).
 
 ## Working Tree
 
-- Documentation/evidence edits listed above are pending commit and Task pin backfill.
-- No implementation changes are present. Preserve any unknown external resources; do not clean them.
+- Modified: `doc/REBASELINE_PLAN.md`, `doc/STATUS.md`, `doc/TASK_LEDGER.md`, `doc/tasks/FEA-15-DIAG-ACL-1.md`, `verification/FEA-15-DIAG-ACL-1/README.md`, `verification/FEA-15-DIAG-ACL-1/checkpoint.md`, `verification/FEA-15-DIAG-ACL-1/resource-manifest.json`.
+- Added: `doc/handoffs/FEA-15-DIAG-ACL-1-h1.md`, `verification/FEA-15-DIAG-ACL-1/gates-terminal.log`.
+- Evidence commit and Task pin backfill are pending. These paths are within the frozen Task scope.
 
 ## Tests / Gates
 
-- This diagnostic Task did not rerun product test suites. Existing measured runs remain in their original logs with their own HEAD and EXIT values.
-- `gates-review.log` records historical checks at HEAD `80edff3fcaf36e7f429dd68500a76472d38321b6`: default and `-TaskPath` checks PASS (3 warnings each); pins 18/18 PASS. It is not evidence for the terminal state.
-- Terminal `check.ps1` (default and `-TaskPath`) and `verify_pins.ps1` have not yet been rerun after Review closeout edits.
+- No product test suite was rerun during the diagnostic closeout. Existing Python/.NET results retain their original HEAD and EXIT values in the referenced logs.
+- `gates-review.log` is historical at HEAD `80edff3fcaf36e7f429dd68500a76472d38321b6`; it is not used as current evidence.
+- `gates-terminal.log` records candidate closeout verification at HEAD `dea98ce8f93a3dfd3bdab84457a212d02804dba2`, with command, time, working-tree state and EXIT values.
+- Final gates must be rerun after the evidence commit, Task pin backfill and clean committed closeout.
 
 ## Blockers / Decisions / Open Questions
 
-- Exact Host ACL failure condition is unproven; the direct `SourceSecurity.PrivateDirectory` probe was not executed after an automatic execution review reported a usage-limit failure.
-- Plugin failure stage and origin of observed system Python ACE/profile state remain unproven.
-- The 62 fixture candidates have no proven unique owner. Keep them all in place.
-- No contract or architecture change is proposed.
+- The exact Host ACL rejection condition is unknown; direct `SourceSecurity.PrivateDirectory` probe remains `NOT_RUN` because the execution review reported a usage-limit failure.
+- Plugin sandbox failure stage and the provenance of Python ACE/profile state remain unknown.
+- The 62 fixture candidates have no proven unique owner. Preserve all in place.
+- No contract or architecture change is proposed; no push.
 
 ## Next Exact Step
 
-1. Commit the Review report and supporting documentation, then update Task evidence pins and regenerate `doc/TASK_LEDGER.md` with `python tools/governance/task_ledger.py --write`.
-2. Record AC5 as met only after final gate output is captured; keep AC1–AC3 partial and all NOT_RUN items explicit.
-3. Run `pwsh -NoProfile -File tools/governance/check.ps1`, the same command with `-TaskPath doc/tasks/FEA-15-DIAG-ACL-1.md`, and `pwsh -NoProfile -File tools/governance/verify_pins.ps1`; record the actual generating HEAD, time and EXIT values.
-4. Close this Task as `closed_with_limitations`, update STATUS/Plan/Handoff/checkpoint and pin commit references, then rerun the gates on the resulting tree.
-5. Do not change/clean system ACLs, profiles or fixtures. Do not start the proposed successor or push.
+1. Commit terminal evidence and documentation without the Task card; compute each file SHA-256 and update its pin to the commit that contains it.
+2. Regenerate `doc/TASK_LEDGER.md` with `python tools/governance/task_ledger.py --write` after Task edits.
+3. Run both `check.ps1` modes and `verify_pins.ps1` after pin backfill; require PASS and record exact final HEAD/time/EXIT.
+4. Confirm clean `main`, keep `FEA-15-PIN-EOL-GOV-1` proposed pending ZCode scope review; do not start it or push.
