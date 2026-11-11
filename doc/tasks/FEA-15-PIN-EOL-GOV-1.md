@@ -3,19 +3,19 @@ id: FEA-15-PIN-EOL-GOV-1
 title: 证据 pin 行尾与跨 checkout 可复现性治理
 kind: governance
 governance_version: 3
-status: in_progress
+status: in_review
 approval: ZCode 2026-11-11 裁决释放（独立 CLI 会话；[adjudication](../reviews/FEA-15-DIAG-ACL-1-zcode-adjudication-2026-11-11.md) §4）；本轮用户单次授权：只读治理阶段
 suggested_owner: codex
 owner: codex
-reviewer: ZCode（实施交付后的全新独立 CLI Review 会话；不得复用裁决释放会话 sess_abdb4288-4a4f-49c1-8097-6edbb6e3866f；Review 时记录新 session ID）
+reviewer: ZCode（全新独立 CLI Review 会话；不得复用裁决释放会话 sess_abdb4288-4a4f-49c1-8097-6edbb6e3866f；派发后回填 session ID）
 depends_on:
   - FEA-15-ACCEPT-1
 base_commit: 4173961dfe1b65256cb06d7628cc813b0603caa3
 branch: main
 worktree: G:/CODEX/New Manga
 integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
+delivery_head: 996f9768985ee121767bd750d24b1cdfe74dd186
+canonical_evidence_status: complete
 resource_closeout_status: pending
 evidence_dir: verification/FEA-15-PIN-EOL-GOV-1
 allowed_paths:
@@ -40,28 +40,36 @@ out_of_scope:
 
 ## Acceptance Criteria
 
-- [ ] **AC1 全集盘点**：在当前 main 实测 HEAD 上盘点全部 versioned 证据 pin（各 Task 卡 Canonical Evidence 表 + 18 条契约 FROZEN 记录 pin），逐条登记来源文件、pin 值、工作区 SHA-256、blob SHA-256、基准分类（BLOB/WORKTREE/MIXED/不一致）与 eol 属性状态；产出机器可复核的清单 artefact；不得以历史 27/30 或 r27 的 187/300 推断当前全集。 <<PENDING>>
-- [ ] **AC2 跨 checkout 观察矩阵**：对代表性样本（BLOB 基准、WORKTREE 基准、mixed eol、binary 各类）在至少两种检出配置（本机 autocrlf=true 工作区 vs 隔离 checkout/cat-file 口径）下复算 pin，形成 PASS/FAIL 矩阵；每次观察记录命令、HEAD、时点、EXIT；观察环境全部位于 `G:/CODEX/New Manga.workspace/FEA-15-PIN-EOL-GOV-1/`，创建前确认不存在。 <<PENDING>>
-- [ ] **AC3 基线证据与候选策略分析**：产出候选口径/迁移方案分析（含 FEA-08 blob/LF 先例对比、check.ps1 r194 双基准语义、renormalize 影响面、历史 pin 处置选项），按 §4.4 区分事实/推论/未知项/反证条件与暂停门槛；仅分析与建议，实施须另开 Task 经独立授权与 Review。 <<PENDING>>
+- [x] **AC1 全集盘点**：在快照 `948d73e0629869e560df9a2b2d8a357cec67027f` 实测全部 versioned 证据 pin（584 张 Task 卡 Canonical Evidence 表 + 18 条契约 FROZEN 记录），逐条登记来源、pin、工作区 SHA-256、blob SHA-256、基准分类与 eol/attribute 状态；产出机器可复核清单。未从历史比例推断全集。 <<MET>>
+- [x] **AC2 跨 checkout 观察矩阵**：对 BLOB、WORKTREE、mixed eol、binary 各选样本，在 main worktree 与隔离 checkout `core.autocrlf=true/false` 下复算；共 12 个观察，记录命令 EXIT、HEAD、时点与 PASS/FAIL。另保留一个早期 clean snapshot checkout 作补充，不计入最终矩阵。 <<MET>>
+- [x] **AC3 基线证据与候选策略分析**：分析含 FEA-08 blob/LF 先例、`check.ps1` r194 双基准语义、renormalize 影响面及历史 pin 处置选项；事实/推论/未知项/反证条件/暂停门槛分列。只提出候选项，未选策略或实施。 <<MET>>
 
 ## 测试计划
 
-- Gate（全部 planned，认领后执行）：`pwsh -NoProfile -File tools/governance/check.ps1`（default）与 `-TaskPath doc/tasks/FEA-15-PIN-EOL-GOV-1.md`；`pwsh -NoProfile -File tools/governance/verify_pins.ps1`；`python tools/generate_api_inventory.py --check`。
-- 观察命令：`git ls-files --eol`、`git cat-file blob <commit>:<path> | sha256sum`、隔离 checkout 复算等，逐次入库；NOT_RUN 与限制记录于 `verification/FEA-15-PIN-EOL-GOV-1/README.md`。
+- Gate（基线两轮见 `gate-baseline.log` 与 `gate-post-evidence.log`；首次失败保留于 `gate-current.log`，修正预算/READY 哨兵后的 PASS 记录于 `gate-final.log`）：`pwsh -NoProfile -File tools/governance/check.ps1`（default）与 `-TaskPath doc/tasks/FEA-15-PIN-EOL-GOV-1.md`；`pwsh -NoProfile -File tools/governance/verify_pins.ps1`（18/18）；`python tools/generate_api_inventory.py --check`（1/79/6=86）。卡面最终 pin 回填后另作最终复跑并记录于外部 agent-output。
+- 观察命令：`git ls-files --eol`、`git cat-file blob <commit>:<path>`、隔离 checkout 复算；每个观察在 `checkout-matrix.json` 中带时间、HEAD、SHA-256 与 command exit codes。Linux fresh clone、renormalize simulation 与产品测试 `NOT_RUN`，原因见 `verification/FEA-15-PIN-EOL-GOV-1/README.md`。
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| task workspace（隔离 checkout 观察环境） | G:/CODEX/New Manga.workspace/FEA-15-PIN-EOL-GOV-1（尚未创建） | NOT_APPLICABLE | — | — | ready，尚未执行；创建前确认不存在 |
+| task workspace（矩阵 checkout） | G:/CODEX/New Manga.workspace/FEA-15-PIN-EOL-GOV-1/checkout-autocrlf-true；`checkout-autocrlf-false` | PRESERVE_REFERENCED | 同源路径（保留） | `resource-manifest.json` SHA-256 `fd2f4aebf0099563a82a43dcfa976678772d63b4256843e086c2a6e41e125820`; commit `ef6253677a608f285e1c86a321712e45ae54cfef` | 两 clone 均 HEAD=`948d73e0…`、20,778 tracked files、status clean；由 AC2 引用 |
+| task workspace（补充 snapshot clone） | G:/CODEX/New Manga.workspace/FEA-15-PIN-EOL-GOV-1/snapshot-main-system-config | PRESERVE_REFERENCED | 同源路径（保留） | 同一 `resource-manifest.json` 记录 clone 状态及 3 个生成 JSON 的 SHA-256 | branch `main`、HEAD=`c6f34d93…`；保留早期 checkout 对照与输出，不作最终 AC1/AC2 结论 |
+| agent-output（历史生成尝试） | G:/CODEX/New Manga.workspace/agent-output/codex/FEA-15-PIN-EOL-GOV-1 | PRESERVE_REFERENCED | 同源路径（保留） | 同一 `resource-manifest.json` 逐文件记录 22 个日志/基线快照 SHA-256 | 含早期失败与成功尝试；保留原路径，无清理/迁移 |
 
 ## Canonical Evidence
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
+| pin-inventory | AC1 | `verification/FEA-15-PIN-EOL-GOV-1/pin-inventory.json` | `ef6253677a608f285e1c86a321712e45ae54cfef` | `1b369d621867d6a55aa866b22a2ea7160e188b2dd89efb1e69521a7a14c38ab5` | CANONICAL |
+| checkout-matrix | AC2 | `verification/FEA-15-PIN-EOL-GOV-1/checkout-matrix.json` | `ef6253677a608f285e1c86a321712e45ae54cfef` | `e826f597cf606f92be6307f5ad8a4c2e3695892edb45e04a93e81bea19f61e6a` | CANONICAL |
+| policy-analysis | AC3 | `verification/FEA-15-PIN-EOL-GOV-1/candidate-policy-analysis.md` | `ef6253677a608f285e1c86a321712e45ae54cfef` | `53f7f39eba91649d52a448fabf5ed678ca463d437a2bba7aa5e8990ccc96c05d` | CANONICAL |
+| final-governance-gates | Gate | `verification/FEA-15-PIN-EOL-GOV-1/gate-final.log` | `996f9768985ee121767bd750d24b1cdfe74dd186` | `3f7869327f6713693af95fbc95e57699ff1f579b2f4881dcca314322d4c4aa45` | CANONICAL |
 
 ## Closeout Record
 
 - 2026-11-11：ZCode 裁决登记 proposed；未释放、未实施。
 - 2026-11-11：ZCode 独立 CLI 会话复核 DIAG-ACL-1 终态后裁决释放（[adjudication](../reviews/FEA-15-DIAG-ACL-1-zcode-adjudication-2026-11-11.md) §4）：status→ready，范围冻结为只读盘点（AC1–AC3），base=`1e58398aa07467004c1b329bb52095f63bcb78d4`；待 Owner 认领。
 - 2026-11-11：Codex 在释放提交 `4173961dfe1b65256cb06d7628cc813b0603caa3` 认领并进入 `in_progress`；Owner=`codex`，Reviewer 预指定为新 ZCode 独立 CLI Review 会话；实现与 Review 会话必须分离。
+- 2026-11-11：计数核对发现首版把 `doc/tasks/README.md` 算作 Task 卡；生成器现排除索引并从 HEAD 读取 Task/冻结来源。c6 探索 checkout 保留为补充快照；当前主线快照更新为 `948d73e0…`。此前 `18e1bd2…` 的 Handoff 因首版计数过时保留为历史记录。
+- 2026-11-11：修正后 AC1–AC3 证据固定于 `ef625367…`；`gate-final.log` 在 `996f9768…` 记录两项 governance check、18 pins、API 全部 EXIT 0。修订 Handoff [FEA-15-PIN-EOL-GOV-1-996f976.md](../handoffs/FEA-15-PIN-EOL-GOV-1-996f976.md)，SHA-256 `6d29c8bcfadf3ed8bd0a611dd6cce4b874f001cc05e4c9e82e99ff4082954b2e`，commit `f70cb325abf481b9f0513ccddec620c810fdfaf3`。Canonical Evidence 4 项已回填，Task→`in_review`；delivery_head=`996f9768985ee121767bd750d24b1cdfe74dd186`，等待新 ZCode CLI Review。
