@@ -17,9 +17,9 @@
 
 ## 2. 实测影响全集与基线
 
-冻结基线 `948d73e0629869e560df9a2b2d8a357cec67027f` 的全量 inventory 为 5,350 行；本 Task 的初步 inventory 测量 `da4a60baafba18281f156330b9ed1646045edb6d` 为 5,376 行：585 张 Task 卡 / 5,358 个 Task pin 行 + 18 条 frozen 记录。相对基线 26 行新增、0 删除、0 同键字段变化。正式方案以最终 `pin-inventory.json` 和 `pin-inventory-delta.json` 中 delivery measurement HEAD 的数值为准。
+冻结基线 `948d73e0629869e560df9a2b2d8a357cec67027f` 的全量 inventory 为 5,350 行；delivery measurement HEAD `e9f7bb1b48c885cb329848d2d3591e145ff3d229` 的 [`pin-inventory.json`](pin-inventory.json) 为 5,376 行：585 张 Task 卡 / 5,358 个 Task pin 行 + 18 条 frozen 记录。相对基线 26 行新增、0 删除、0 同键字段变化；完整差异为 [`pin-inventory-delta.json`](pin-inventory-delta.json)，模型矩阵为 [`pin-r194-baseline-matrix.json`](pin-r194-baseline-matrix.json)。命令/时间/HEAD/EXIT 见各自 run log。
 
-初步基础分类（互斥，单位为 pin 行而非文件）：
+delivery snapshot 基础分类（互斥，单位为 pin 行而非文件）：
 
 | 类别 | 行数 | 当前观测 |
 |---|---:|---|
@@ -38,9 +38,9 @@ The exception subtotal is `160 + 293 + 68 + 47 + 3 + 2 = 573`; it must not be ad
 
 ### r194 预变更匹配矩阵
 
-按当前 r194 的 SHA 谓词（工作区匹配 **或** 可用 commit blob 匹配）套用 inventory 中的观测值，初步模型为：`MATCH_BOTH=1,009`、`MATCH_WORKTREE_ONLY=3,467`、`MATCH_BLOB_ONLY=327`，合计 4,803 行命中 predicate；其余 573 行未形成可通过匹配，其中 `NO_PIN=293`，`PIN_PRESENT_NO_MATCH_OR_UNAVAILABLE=280`。delivery snapshot 时将由 [`pin_r194_matrix.py`](pin_r194_matrix.py) 重算为 `pin-r194-baseline-matrix.json`。
+按当前 r194 的 SHA 谓词（工作区匹配 **或** 可用 commit blob 匹配）套用 delivery inventory 的观测值，模型为：`MATCH_BOTH=1,009`、`MATCH_WORKTREE_ONLY=3,467`、`MATCH_BLOB_ONLY=327`，合计 4,803 行命中 predicate；其余 573 行未形成可通过匹配，其中 `NO_PIN=293`，`PIN_PRESENT_NO_MATCH_OR_UNAVAILABLE=280`。逐行样本、运行时间与 hash 比对见 [`pin_r194_matrix.py`](pin_r194_matrix.py)、`pin-r194-baseline-matrix.json` 和 run log。
 
-**限制：** 这是由 inventory 的 hash 比较字段计算出的 r194 predicate 模型，不是对 5,376 行逐条执行 `check.ps1` 的日志。`check.ps1` 只验证当前 Task 作用域；当前真实治理 gate 结果单独记录：在 HEAD `2ee6a5a024aede32a61e7907a865879eac7c8d70`，default/current TaskPath/prior TaskPath 均 PASS、各 3 warnings、EXIT 0；18 pins `18/18` EXIT 0；API `1/79/6=86` EXIT 0。最终基线仍须在 delivery HEAD 重跑并存档。
+**限制：** 这是由 inventory 的 hash 比较字段计算出的 r194 predicate 模型，不是对 5,376 行逐条执行 `check.ps1` 的日志。`check.ps1` 只验证当前 Task 作用域；真实 delivery gate 结果见 [`delivery-gates-e9f7bb1.log`](delivery-gates-e9f7bb1.log)：在 HEAD `e9f7bb1b48c885cb329848d2d3591e145ff3d229`，default/current TaskPath/prior TaskPath 均 PASS、各 3 warnings、EXIT 0；18 pins `18/18` EXIT 0；API `1/79/6=86` EXIT 0。
 
 ## 3. 代表与边界样本
 

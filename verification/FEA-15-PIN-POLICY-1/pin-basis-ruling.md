@@ -5,8 +5,9 @@
 ## 依据与快照
 
 - 冻结基线：`verification/FEA-15-PIN-EOL-GOV-1/pin-inventory.json`，测量 HEAD `948d73e0629869e560df9a2b2d8a357cec67027f`，共 5,350 行（Task pin 5,332 + 冻结记录 18）。
-- 初步当前盘点：`pin-inventory-preliminary-da4a60b.json`，测量 HEAD `da4a60baafba18281f156330b9ed1646045edb6d`，共 5,376 行。相对基线新增 26 行、删除 0、同键字段变化 0；本结果是中间快照，最终交付测量值由 `pin-inventory.json` 与 `pin-inventory-delta.json` 替代。
-- 初步 basis 互斥计数：`WORKTREE=3,467`、`BLOB=327`、`MIXED=1,009`、其他 573。其他 573 为 `INCONSISTENT=160`、`UNPINNED=293`、`UNRESOLVED_COMMIT=68`、`EXTERNAL_UNAVAILABLE=47`、`MISSING=3`、`COMPOSITE_PATH=2`。26 条增量为旧 `FEA-15-PIN-EOL-GOV-1` 的 24 条证据行与本 Task 的 2 条 release 行；basis 差值是 `WORKTREE +16`、`MIXED +10`。
+- 最终交付测量 inventory：`pin-inventory.json`，测量 HEAD `e9f7bb1b48c885cb329848d2d3591e145ff3d229`，共 5,376 行（585 张 Task 卡、5,358 条 Task pin、18 条 frozen 记录）。相对基线新增 26 行、删除 0、同键字段变化 0；完整差异见 `pin-inventory-delta.json`，完整 r194 观测矩阵见 `pin-r194-baseline-matrix.json`。三项生成日志均记录命令、时间、HEAD 和 `EXIT=0`。
+- 交付快照 basis 互斥计数：`WORKTREE=3,467`、`BLOB=327`、`MIXED=1,009`、其他 573。其他 573 为 `INCONSISTENT=160`、`UNPINNED=293`、`UNRESOLVED_COMMIT=68`、`EXTERNAL_UNAVAILABLE=47`、`MISSING=3`、`COMPOSITE_PATH=2`。26 条增量为旧 `FEA-15-PIN-EOL-GOV-1` 的 24 条证据行与本 Task 的 2 条 release 行；basis 差值是 `WORKTREE +16`、`MIXED +10`。
+- 更早的 `pin-inventory-preliminary-da4a60b.json` 与初步差异保留作过程快照；它与交付快照计数相同，但不替代测量 HEAD=`e9f7bb1...` 的正式 inventory。
 - `tools/governance/check.ps1` r194 对 lifecycle Task 的 Canonical Evidence 行先比较工作区 SHA；不匹配时，若记录 commit 确实包含该路径，再比较该 commit 的 blob SHA；任一匹配即通过。它只检查当前治理作用域/当前 Task，不会逐条执行整个历史 inventory。`verify_pins.ps1` 的 18 条 FROZEN pin 是另一条独立门禁。
 - 上游 `FEA-15-PIN-EOL-GOV-1` 的 checkout 矩阵记录 4 种样本 × 3 个 Windows checkout，共 12 条观察：head blob 12/12 匹配，pin 结果 7 PASS / 5 FAIL。样本结果只表示测量，不等于历史 pin 的有效性裁决。
 

@@ -17,13 +17,15 @@
 - AC2 implementation impact-surface plan: NOT_RUN.
 - AC3 final delivery gates, Handoff, independent Review and ZCode adjudication: NOT_RUN.
 
-## Latest progress — preliminary AC1 comparison
+## Final delivery measurement and current state
 
-- Execution HEAD: `1d48d9b13698e9b4d7e2549b26fc7795b957cb65`.
-- A preliminary inventory was generated at `da4a60baafba18281f156330b9ed1646045edb6d`; it is preserved as [`pin-inventory-preliminary-da4a60b.json`](pin-inventory-preliminary-da4a60b.json), with its run record in [`pin-inventory-preliminary-run-da4a60b.log`](pin-inventory-preliminary-run-da4a60b.log). It is not the delivery-head inventory.
-- The preliminary delta against baseline `948d73e0629869e560df9a2b2d8a357cec67027f` is machine-readable in [`pin-inventory-preliminary-delta-da4a60b.json`](pin-inventory-preliminary-delta-da4a60b.json); command summary and EXIT are in [`pin-inventory-preliminary-delta-run-da4a60b.log`](pin-inventory-preliminary-delta-run-da4a60b.log).
-- Observed rows: `5,350 → 5,376`; `26 added`, `0 removed`, `0 changed`. The additions are 24 rows in `FEA-15-PIN-EOL-GOV-1` and 2 release rows in this Task. Basis deltas are `WORKTREE +16`, `MIXED +10`; exception-class rows remain 573. These are generator classifications, not validity or damage findings.
-- AC1 remains partial until the full snapshot and delta are regenerated at the delivery measurement HEAD, the policy ruling is completed, and ZCode adjudicates it. AC2 remains NOT_RUN. AC3 remains partial: release and intermediate gates passed, while delivery-head evidence, Handoff, independent Review, and final adjudication remain pending.
+- Delivery measurement HEAD: `e9f7bb1b48c885cb329848d2d3591e145ff3d229`.
+- Final inventory: [`pin-inventory.json`](pin-inventory.json), 5,376 rows (585 Task cards, 5,358 Task pins, 18 frozen records), SHA-256 `e38b7d2279177ea701fc7e7e10afa7f8ef3bbe4414cecbb81529a2c8feecef56`; run log [`pin-inventory-run.log`](pin-inventory-run.log), `EXIT=0`.
+- Baseline delta: [`pin-inventory-delta.json`](pin-inventory-delta.json), `5,350 → 5,376`, `+26 / -0 / changed 0`; the additions are 24 rows from `FEA-15-PIN-EOL-GOV-1` and 2 release rows from this Task. Basis change is `WORKTREE +16`, `MIXED +10`; the six exception classes remain 573. Delta run log records `EXIT=0`.
+- Modeled r194 matrix: [`pin-r194-baseline-matrix.json`](pin-r194-baseline-matrix.json), `4,803` match the worktree-or-blob predicate and `573` are nonpass observations. It is explicitly a model from inventory booleans, not a per-row `check.ps1` execution.
+- Final governance log [`delivery-gates-e9f7bb1.log`](delivery-gates-e9f7bb1.log): default/current TaskPath/prior TaskPath all PASS (3 warnings each, EXIT 0); `verify_pins.ps1` 18/18 EXIT 0; API 1/79/6=86 EXIT 0.
+- AC1 is PARTIAL pending ZCode's ruling adjudication. AC2's impact plan is drafted, pending independent Review/ZCode adjudication. AC3 delivery gates are recorded; Handoff, fresh-context Review, final adjudication and pinbackfill remain pending.
+- Preliminary inventory/delta/matrix at `da4a60baafba18281f156330b9ed1646045edb6d` are retained as process snapshots and are superseded by the final delivery measurement above.
 
 ## Proposed ruling and impact plan
 
