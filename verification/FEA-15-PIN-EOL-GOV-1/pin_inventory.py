@@ -312,7 +312,13 @@ def main() -> None:
     branch = git("branch", "--show-current", check=True).stdout.decode().strip()
     tracked = git("ls-files", "-z", check=True).stdout.decode("utf-8", "surrogateescape").split("\0")
     tracked = [p for p in tracked if p]
-    task_files = [p for p in tracked if p.startswith("doc/tasks/") and p.endswith(".md")]
+    task_files = [
+        p
+        for p in tracked
+        if p.startswith("doc/tasks/")
+        and p.endswith(".md")
+        and PurePosixPath(p).name.lower() != "readme.md"
+    ]
     expected_map = verify_pins_map()
     records: list[dict[str, str]] = []
     task_counts: dict[str, int] = {}
