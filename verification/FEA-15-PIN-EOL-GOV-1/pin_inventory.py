@@ -35,12 +35,17 @@ def text_cell(value: str) -> str:
     return value.strip(" `\t")
 
 
+def committed_text(path: str) -> str:
+    proc = git("cat-file", "blob", f"HEAD:{path}", check=True)
+    return proc.stdout.decode("utf-8-sig", "replace")
+
+
 def split_row(line: str) -> list[str]:
     return [cell.strip() for cell in line.strip().strip("|").split("|")]
 
 
 def parse_table_rows(path: str) -> list[dict[str, str]]:
-    content = (ROOT / path).read_text(encoding="utf-8-sig", errors="replace")
+    content = committed_text(path)
     active = False
     headers: list[str] | None = None
     result: list[dict[str, str]] = []
@@ -72,7 +77,7 @@ def frozen_records(tracked: list[str], expected_map: dict[str, str]) -> list[dic
     result: list[dict[str, str]] = []
     paths = [p for p in tracked if p.startswith("doc/plan/FEA-CONTRACT-FROZEN-") and p.endswith(".md")]
     for record_path in sorted(paths):
-        content = (ROOT / record_path).read_text(encoding="utf-8-sig", errors="replace")
+        content = committed_text(record_path)
         freeze_section = content.split("## 1B.", 1)[0]
         contract_match = re.search(r"(?m)^\|\s*文件\s*\|\s*`([^`]+)`\s*\|", freeze_section)
         if not contract_match:
@@ -97,7 +102,7 @@ def frozen_records(tracked: list[str], expected_map: dict[str, str]) -> list[dic
 
 
 def verify_pins_map() -> dict[str, str]:
-    content = (ROOT / "tools/governance/verify_pins.ps1").read_text(encoding="utf-8-sig")
+    content = committed_text("tools/governance/verify_pins.ps1")
     return {key: value for key, value in re.findall(r"'([^']+)'\s*=\s*'([^']+)'", content)}
 
 
