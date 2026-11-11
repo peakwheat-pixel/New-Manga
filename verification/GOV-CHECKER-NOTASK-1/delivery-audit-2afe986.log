@@ -1,0 +1,15 @@
+Task=GOV-CHECKER-NOTASK-1 delivery supplementary audit by Codex, not reviewer
+HEAD_GENERATED=2afe986b6fd61a89a194176b1f5321d0aed6846c
+WORKTREE_STATUS_BEFORE=CLEAN
+STARTED=2026-11-11T18:00:44.1226896+08:00
+COMMAND=git diff --stat 4190c103aa3710fba3f971466f3350b479f5d7e1 21ce0f24f2c4b0a153f85163eadc64b36b7bf72b
+ tools/governance/check.ps1 | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+EXIT=0
+COMMAND=git diff --exit-code 21ce0f24f2c4b0a153f85163eadc64b36b7bf72b HEAD -- tools/governance/check.ps1
+EXIT=0
+COMMAND=python -c [BLOB hash/commit containment and full evidence_dir coverage audit]
+BLOB_ROWS=13 BLOB_FAILS=[]
+EVIDENCE_FILES=10 UNREGISTERED=[]
+EXIT=0
+FINISHED=2026-11-11T18:00:44.5357337+08:00
