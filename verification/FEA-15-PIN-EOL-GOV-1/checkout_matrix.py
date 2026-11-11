@@ -130,7 +130,7 @@ def main() -> None:
     kinds = ("BLOB", "WORKTREE", "MIXED_EOL", "BINARY")
     samples: dict[str, dict] = {}
     observations: list[dict] = []
-    checkouts = (("main-system-config", ROOT), ("isolated-autocrlf-true", TRUE_CHECKOUT), ("isolated-autocrlf-false", FALSE_CHECKOUT))
+    checkouts = (("main-snapshot-system-config", ROOT), ("isolated-autocrlf-true", TRUE_CHECKOUT), ("isolated-autocrlf-false", FALSE_CHECKOUT))
     for kind in kinds:
         row = find_sample(inventory["records"], kind)
         sample = {
