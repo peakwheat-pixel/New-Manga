@@ -7,14 +7,14 @@ status: in_review
 approval: ZCode 2026-11-11 冻结并释放；依赖 FEA-15-ACCEPT-1 带限制终态
 suggested_owner: codex
 owner: codex
-reviewer: ZCode 独立 CLI 会话（session ID 记录于 Review 报告）
+reviewer: Codex Reviewer subagent `/root/fea15_diag_acl_review`（独立上下文）
 depends_on:
   - FEA-15-ACCEPT-1
 base_commit: 1e4542a047e991a5f10b0b213ca5a96eafe919a4
 branch: main
 worktree: G:/CODEX/New Manga
 integration_commit: null
-delivery_head: 97145556a7be4865dae3b5bfe2868cf7fbf90e1d
+delivery_head: daeb6dcccbf970facd2272c00645255ae6bdfb87
 canonical_evidence_status: complete
 resource_closeout_status: complete
 evidence_dir: verification/FEA-15-DIAG-ACL-1
@@ -64,7 +64,7 @@ out_of_scope:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-01 | AC1–AC5 | `verification/FEA-15-DIAG-ACL-1/README.md` | `c06d06377dc7e7a9cb5e7ee83a067a28ec0d0488` | `ad4451ef87a99667b252cd4bf6d51efe1247a74b54cc1dbc30c3880259dbebb1` | CANONICAL |
+| EV-01 | AC1–AC5 | `verification/FEA-15-DIAG-ACL-1/README.md` | `daeb6dcccbf970facd2272c00645255ae6bdfb87` | `6a43c65a5cfe179ace566c3e49b63ae4edbe9450d1febc4020ad7ef48920af80` | CANONICAL |
 | EV-02 | AC1 | `verification/FEA-15-ACCEPT-1/plugin-control.log` | `c06d06377dc7e7a9cb5e7ee83a067a28ec0d0488` | `86422c6a9f385699d2614067b0600dcf9740244fe98750a48bfcf8d80e55232e` | CANONICAL |
 | EV-03 | AC2 | `verification/FEA-15-ACCEPT-1/dotnet-host-control.log` | `c06d06377dc7e7a9cb5e7ee83a067a28ec0d0488` | `0ce018b15aa1413d02eeaf27b04afe3758ccb2d94bd8bdd882d3fcf29b5530ec` | CANONICAL |
 | EV-04 | AC3 | `verification/FEA-15-ACCEPT-1/python-acl-observation.log` | `c06d06377dc7e7a9cb5e7ee83a067a28ec0d0488` | `4ef940a1bb3dfd567f7cf2be23679d344c578db6989c620b3a288fbfbbe8a385` | CANONICAL |
@@ -74,10 +74,10 @@ out_of_scope:
 | SRC-03 | supporting | `verification/FEA-15-DIAG-ACL-1/volume-observation.log` | `c06d06377dc7e7a9cb5e7ee83a067a28ec0d0488` | `7e2d56b13357d360cac90fbe97364490709dbf353ec03e4d08c8d9c317fca5cb` | SOURCE_PIN |
 | SRC-04 | supporting | `verification/FEA-15-DIAG-ACL-1/volume-winapi.log` | `c06d06377dc7e7a9cb5e7ee83a067a28ec0d0488` | `05b8e504c104e5bf192b5f9d3260e8d6a9d227ae6d64dd967e7f4422a086b714` | SOURCE_PIN |
 | SRC-05 | supporting | `verification/FEA-15-DIAG-ACL-1/acl-probe.log` | `c06d06377dc7e7a9cb5e7ee83a067a28ec0d0488` | `fc661835ee481a8421f389e5a7024393998c8a864f7af03f1544daf5892b2ef2` | SOURCE_PIN |
-| SRC-06 | supporting | `verification/FEA-15-DIAG-ACL-1/checkpoint.md` | `c06d06377dc7e7a9cb5e7ee83a067a28ec0d0488` | `7957c910015efcaac8d16b324ac9d1896845e448f1b88abe41a7ae65061394a6` | SOURCE_PIN |
+| SRC-06 | supporting | `verification/FEA-15-DIAG-ACL-1/checkpoint.md` | `daeb6dcccbf970facd2272c00645255ae6bdfb87` | `f8c9e340c3baf74fcaa44948ff8e606df1c87d6acf7d0955375a4322d33d0897` | SOURCE_PIN |
 | SRC-07 | supporting | `verification/FEA-15-ACCEPT-1/v7-repro-2.log` | `c06d06377dc7e7a9cb5e7ee83a067a28ec0d0488` | `8e0abc01bec34b3e38cc3a9e6117d34f443529552d60405ca2860c271779a6e6` | SOURCE_PIN |
 | SRC-08 | supporting | `verification/FEA-15-ACCEPT-1/v7-v14-probe.log` | `c06d06377dc7e7a9cb5e7ee83a067a28ec0d0488` | `bf1413267cffabc37b9f58e19526ae1e2ff4c0b98df9278f8c619d3e2cfe9dd7` | SOURCE_PIN |
-| SRC-09 | supporting | `verification/FEA-15-DIAG-ACL-1/appointment.md` | `4911aac147bfa7fad35821042934719c68181366` | `436619714aadc37f26ed33d6b0ad5fd7534e59c1bf979df424e54ae1ab528d32` | SOURCE_PIN |
+| SRC-09 | supporting | `verification/FEA-15-DIAG-ACL-1/appointment.md` | `daeb6dcccbf970facd2272c00645255ae6bdfb87` | `ce7b5fcd2e1a98fdaa7c379793df81924712dae23a9d7da09af20d58af38e938` | SOURCE_PIN |
 | SRC-10 | supporting | `verification/FEA-15-DIAG-ACL-1/gates-review.log` | `97145556a7be4865dae3b5bfe2868cf7fbf90e1d` | `a0d56069846c0fe9c1017dc57dfb3fd46575ca42636d74194eb00785c2c3a1c9` | SOURCE_PIN |
 
 ## Closeout Record
