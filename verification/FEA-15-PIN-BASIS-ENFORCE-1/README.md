@@ -47,6 +47,13 @@ ZCode release Addendum 4 accepts the exact historical delta below as a one-time 
 - At validation HEAD `a2a3401…`, default and this TaskPath governance checks each returned `EXIT=0` with 3 warnings; API inventory returned `EXIT=0` with `1/79/6=86`. `verify_pins.ps1` returned `EXIT=1` in the `core.autocrlf=false` clone with C04b/C17 EOL mismatches; the same two mismatches reproduce at unmodified baseline `dd637242…`. On the existing main checkout (`core.autocrlf=true`) at that baseline, `verify_pins.ps1` returned `EXIT=0`, all 18 pins. No pin, contract, `.gitattributes`, or historical Task bytes were changed.
 - AC4's released Windows cross-checkout matrix and AC5's four historical TaskPaths, post-integration gate bundle, independent review, and final adjudication remain **NOT_RUN**. These logs document AC2/AC3 implementation validation only; they do not satisfy AC4/AC5.
 
+## AC2/AC3 independent Review
+
+- Fresh, read-only ZCode CLI `0.17.1` session `sess_6b151e7e-8133-4b6a-ae6f-3c47296e5b7a` reviewed base `bfae0b9bd6a9b85a9a546d2adda0b684783ddb24` through implementation HEAD `5e216dc53102ff93db39124b97ab85d88f18643b`; initial review turn `turn_f7833d05-4c82-435e-bf53-7107ffc59c82`. It returned `APPROVED_WITH_LIMITATIONS`, no P0/P1 code findings, and AC2/AC3 `PASS` within the released scope.
+- Review finding R-001 (P2) recommends extra negative tests for malformed row arity, invalid SHA/commit, and repository-boundary direction cases. The reviewer judged this non-blocking for the literal AC3 list and deferred disposition to an independent ZCode adjudication. Six P3 observations are informational; README implementation hash typo was corrected in main `06432c1fb94b7fe8a81c575a27076868a448a074`.
+- The same fresh Review session, follow-up turn `turn_ade3c4aa-3c7f-426a-85ac-060dcf566544`, explicitly retracted P3-6. Microsoft Learn documents that PowerShell 7.4+ preserves native stdout bytes when redirecting to a file; the task's logs record PowerShell 7.6.9. The old and new implementations therefore use the same byte basis on this project's runtime; the new implementation removes temporary-file I/O and reduces runtime-version dependence. The correction and source link are preserved in the Review report.
+- The reviewer could not directly run `git status` on the implementation worktree; Codex separately verified it clean at the reviewed head. The Review is not AC5 final adjudication, does not authorize AC4/AC5, and does not approve Task integration or closure. The complete report is [`FEA-15-PIN-BASIS-ENFORCE-1-ac2-ac3-zcode-review-2026-11-12.md`](../../doc/reviews/FEA-15-PIN-BASIS-ENFORCE-1-ac2-ac3-zcode-review-2026-11-12.md).
+
 ## Versioned artifacts
 
 | File | Purpose | SHA-256 / result |
@@ -69,6 +76,7 @@ ZCode release Addendum 4 accepts the exact historical delta below as a one-time 
 | `ac2ac3-candidate-gates.log` | Candidate default/TaskPath/pins/API at generated HEAD `a2a3401eb703c3ae7899375755c981eabbf47572` | default/TaskPath `EXIT=0`; false-checkout pins `EXIT=1` (C04b/C17); API `EXIT=0`, 1/79/6=86 |
 | `ac2ac3-baseline-controls.log` | Unmodified main baseline control at `dd6372420a459cdc9a4c39377f663f1b5d0d8646` | same three residual suite failures and same two false-checkout pin mismatches; true-checkout pins `EXIT=0`, 18/18 |
 | `ac2ac3-source-overlay-audit.log` | Four implementation/test Git blobs compared between implementation HEAD `5e216dc53102ff93db39124b97ab85d88f18643b` and validation HEAD `a2a3401eb703c3ae7899375755c981eabbf47572` | 4/4 identical, `EXIT=0` |
+| `doc/reviews/FEA-15-PIN-BASIS-ENFORCE-1-ac2-ac3-zcode-review-2026-11-12.md` | Fresh ZCode AC2/AC3 Review and same-session P3-6 correction | `APPROVED_WITH_LIMITATIONS`; AC2/AC3 PASS; R-001 P2 disposition awaits fresh adjudication |
 | `ac1a-delta-repro-e9f7bb1.log` | Reproduction command, UTC start, HEAD, mapping, source/input/output hashes, EXIT | `EXIT=0` |
 | `ac1a-inventory-2df8db7.log` | Formal inventory command, UTC start, HEAD, environment, source/output hashes, EXIT | `EXIT=0` |
 | `ac1a-delta-e9f7bb1-to-2df8db7.log` | Formal delta command, UTC start, HEAD, mapping, source/input/output hashes, EXIT | `EXIT=0`, stop condition recorded |
