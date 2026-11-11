@@ -101,7 +101,7 @@ AC 状态语法按 `doc/09_COLLABORATION.md` §4.3。AC1 的 A/B 是两个独立
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
-| ac1a-stop-readme | AC1 transition disposition and NOT_RUN checkpoint | verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md | 31d7e59b15e897ae3779e3dbc9599b0c45624bfa | 3ca19bf9c5abc011c6f2a03f00e184cba1cc55e86b3155c4e554884cb432eae5 | CANONICAL |
+| ac1a-stop-readme | AC1 transition and AC1c A stop disposition | verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md | 6086a5b1f7c1f95ea91a313798dbd391f5132648 | 043cfdf4ceb0717e1aa7a52b80c96c93360ee9e913a25b1dabd732841c135069 | CANONICAL |
 | ac1a-inventory | AC1 fixed-base inventory | verification/FEA-15-PIN-BASIS-ENFORCE-1/pin-inventory-2df8db7.json | 411309ca39e826aa1f5bbe13b15c73bb7c803d4e | 2aca6413774798056323f152f5a3ffc8a0fd82461bb6bdeef5f0c65fbf1d87c4 | CANONICAL |
 | ac1a-delta-stop | AC1 formal delta; CHANGED=2 | verification/FEA-15-PIN-BASIS-ENFORCE-1/pin-inventory-delta-e9f7bb1-to-2df8db7.json | 411309ca39e826aa1f5bbe13b15c73bb7c803d4e | f88f99052ee1580a8b859c5468b5621005df5e77e1bd179045d0c279fce97f21 | CANONICAL |
 | ac1a-repro-anchor | AC1 Addendum 2 exact delta reproduction | verification/FEA-15-PIN-BASIS-ENFORCE-1/pin-inventory-delta-repro-e9f7bb1.json | 411309ca39e826aa1f5bbe13b15c73bb7c803d4e | c27247db93960076ff27566e642be5b3d273588be47a8fa378eb81866bb3701e | CANONICAL |
@@ -114,6 +114,8 @@ AC 状态语法按 `doc/09_COLLABORATION.md` §4.3。AC1 的 A/B 是两个独立
 | ac1-transition-ledger | AC1 one-time history transition detail | verification/FEA-15-PIN-BASIS-ENFORCE-1/history-transition-ledger.md | 31d7e59b15e897ae3779e3dbc9599b0c45624bfa | 56cefbc99f4b389fb62e53cdb76125db8e1f87d6394a4d97d57664c431fca847 | CANONICAL |
 | ac1-recovery-gates | AC1 recovery registration gates | verification/FEA-15-PIN-BASIS-ENFORCE-1/recovery-gates-c7b15c5.log | 7e1fa88dd72383dc1a466382e9741ff384c72eb3 | 83307311f3eb9b5f57084a702b490c1262d94bc1832ec71b438f82ad44f540e9 | CANONICAL |
 | ac1-post-pinbackfill-gates | AC1 post-pinbackfill recovery gates | verification/FEA-15-PIN-BASIS-ENFORCE-1/recovery-gates-f510bd5.log | dd6de51ef0b52529fc819180b557381db19d9946 | 6d71449ad431b6d74fa59b3d7158d7d59ce823c939b38a7e70461212da8b6acd | CANONICAL |
+| ac1c-a-gates | AC1c A-side gate failures and passes | verification/FEA-15-PIN-BASIS-ENFORCE-1/ac1c-a-gates-8d1d75ca.log | 6086a5b1f7c1f95ea91a313798dbd391f5132648 | 7db8974016d0f28539eb840a7edc7f33cb2b5d5d3840847c76611777a5448e1f | CANONICAL |
+| ac1c-boundary-matrix | AC1c fixed boundary matrix output | verification/FEA-15-PIN-BASIS-ENFORCE-1/pin-r194-matrix-2df8db7.json | 6086a5b1f7c1f95ea91a313798dbd391f5132648 | 68ec4b50c3bbfc450218bc35fdc7da8f43454cf23eaedae8cbd4c872d879ec41 | CANONICAL |
 
 ## Resource Manifest
 
