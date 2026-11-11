@@ -46,13 +46,13 @@ out_of_scope:
 
 ## Acceptance Criteria
 
-- [ ] **AC1 实施前固定基线**：A clone 固定 `2df8db7a4d19b591e919ecc6e8f8651167800ef0`；reproduction/inventory `EXIT=0`；delta 原样 `ADDED=62 / REMOVED=0 / CHANGED=2`。AC1c A default/四历史 TaskPath/18 pins 的真实 FAIL 与 API/矩阵 PASS 已由 ZCode `ACCEPT_CONTINUE` 裁定，按 A 环境锚保留，详见 adjudication。B/AC1d 待运行。 <<PARTIAL: AC1c A 已裁决；B/AC1d 待完成，AC1d 通过前禁止实现>>
+- [ ] **AC1 实施前固定基线**：A clone 固定 `2df8db7a4d19b591e919ecc6e8f8651167800ef0`；reproduction/inventory `EXIT=0`；delta 原样 `ADDED=62 / REMOVED=0 / CHANGED=2`。AC1c A 的真实 FAIL/PASS 已由 ZCode `ACCEPT_CONTINUE` 裁定并原样保留；B 在 R0 的文件/差异/blob 断言与本 TaskPath 均 `EXIT=0`。fresh AC1d 待执行。 <<PARTIAL: A/B 基线在册；AC1d 独立确认待完成，AC1d 通过前禁止实现>>
 - [ ] **AC2 新旧表头与 basis 校验**：模板新增七列；checker 明确识别旧六列/新七列。旧表维持既有 r194 语义；新表逐行要求合法 basis，BLOB 校验包含路径的 commit blob 精确字节，WORKTREE 仅校验明确声明且说明复现环境的工作区字节，EXTERNAL_SHA256 不可读不得通过。 <<BLOCKED: AC1d 独立基线确认通过前禁止实现>>
 - [ ] **AC3 判别测试覆盖**：测试覆盖旧格式、basis 缺失/非法、三类来源、commit 不含路径、缺失路径、PNG exact bytes、CRLF 与 mixed-EOL，包含旧格式结果不变断言。 <<BLOCKED: AC1d 独立基线确认通过前禁止实现>>
 - [ ] **AC4 跨 checkout 对照**：Windows `core.autocrlf=true/false` fresh checkout 对照；逐行区分历史行不变性与 Task 自身新行增量。Linux 未实测则明确记录 `NOT_RUN`。任何未解释历史变化或集合增删即停止。 <<BLOCKED: AC1d 独立基线确认通过前禁止实现>>
 - [ ] **AC5 集成、Review 与终裁**：集成后 default、本 Task 与四个历史 TaskPath、18 pins、API 全部实际执行；更新 Handoff、Canonical Evidence、资源清单；fresh ZCode 独立 Review 与不同 session 的 ZCode 最终 adjudication 完成，`R-001` 由 Integrator 显式裁决。不得把计划项或 `NOT_RUN` 写成 PASS。 <<BLOCKED: AC1d 独立基线确认通过前禁止实现>>
 
-AC 状态语法按 `doc/09_COLLABORATION.md` §4.3。AC1 的 A/B 是两个独立载体：base clone 不存在本 Task 卡，不能将不存在的 TaskPath 记为 PASS；B 只在 R0 执行本卡 TaskPath。Addendum 4 细化 R0 文件在场、允许差异、治理工具/模板 blob 同一性和停止条件。AC1c A 实际 FAIL/PASS 均原样保留；ZCode fresh session 于 2026-11-12 作出 `ACCEPT_CONTINUE`，将 A 侧预期锚精确化为 autocrlf=true 环境的确定性结果。B clone checkout 前须设 clone-local `core.autocrlf=false`、`core.longpaths=true`，仅跑本 TaskPath；B/AC1d 仍 `NOT_RUN`。
+AC 状态语法按 `doc/09_COLLABORATION.md` §4.3。AC1 的 A/B 是两个独立载体：base clone 不存在本 Task 卡，不能将不存在的 TaskPath 记为 PASS；B 只在 R0 执行本卡 TaskPath。Addendum 4 细化 R0 文件在场、允许差异、治理工具/模板 blob 同一性和停止条件。AC1c A 实际 FAIL/PASS 均原样保留；ZCode fresh session 于 2026-11-12 作出 `ACCEPT_CONTINUE`，将 A 侧预期锚精确化为 autocrlf=true 环境的确定性结果。B clone checkout 前已设 clone-local `core.autocrlf=false`、`core.longpaths=true`；R0 差异/24 个治理工具与模板 blob 断言和本 TaskPath 均通过。B 的其它门禁及 AC1d 仍 `NOT_RUN`。
 
 ## 允许修改范围
 
@@ -64,7 +64,7 @@ AC 状态语法按 `doc/09_COLLABORATION.md` §4.3。AC1 的 A/B 是两个独立
 |---|---|---|---|---|
 | AC1a | 固定 base clone；运行冻结 inventory/delta 脚本，依 Addendum 2 仅运行时重绑定路径 | Windows；base `2df8db7a4d19b591e919ecc6e8f8651167800ef0` | `EXIT=0`；inventory 5,438；delta `+62/-0/CHANGED=2`，Addendum 4 接受一次性转接 | README、原始 logs/JSON、history-transition-ledger |
 | AC1c-A | 记录 clone status/env；default + `AGPL-RELEASE-1`、`AD002-FOLLOWUPS-1`、`FEA-06-PREREQ-1`、`CHAPTER-SELECTOR-1` TaskPath；18 pins、API、固定样本矩阵 | Windows；A clone @ `2df8db7…`，checker 未变 | default/four TaskPath `EXIT=1`；pins `EXIT=1` (16 mismatches)；API/matrix `EXIT=0`；真实结果保持 FAIL/PASS，ZCode `ACCEPT_CONTINUE`；见裁决报告 | `ac1c-a-gates-8d1d75ca.log`；README；AC1c adjudication |
-| AC1b | 固定 R0 clone；断言 Task/STATUS/Plan 在场、允许差异集、逐文件比较 `tools/governance/**` 与 `doc/templates/**` blobs；运行本卡 TaskPath | Windows；R0；checkout 前 clone-local `core.autocrlf=false`、`core.longpaths=true`，clean | `NOT_RUN` | 后续 R0 audit / TaskPath log |
+| AC1b | 固定 R0 clone；断言 Task/STATUS/Plan 在场、允许差异集、逐文件比较 `tools/governance/**` 与 `doc/templates/**` blobs；运行本卡 TaskPath | Windows；R0；checkout 前 clone-local `core.autocrlf=false`、`core.longpaths=true`，clean | R0 HEAD 固定；3 个文件在场 PASS；25 个差异路径全部允许；24/24 blobs 相同；本卡 TaskPath `EXIT=0`（3 warnings）；B default/pins/API 等未运行 | `ac1c-b-r0-assertions-taskpath-bfae0b9.log`；README |
 | AC2–AC3 | `python -m pytest tools/governance/tests -q` 及专项夹具 | 候选副本；仅 AC1d 通过后 | NOT_RUN | 后续测试日志 |
 | AC4 | autocrlf=true/false fresh clone 比较 | 候选副本固定 HEAD | NOT_RUN；Linux 预期 NOT_RUN，除非实际执行 | 后续矩阵与日志 |
 | AC5 | 集成后 `check.ps1` default/本卡及四历史 TaskPath、`verify_pins.ps1`、API inventory | main 集成候选；逐项保存 HEAD 与 EXIT | `NOT_RUN`；与 AC1c A/B 基线门禁分开 | 后续 delivery-gates log |
@@ -83,7 +83,7 @@ AC 状态语法按 `doc/09_COLLABORATION.md` §4.3。AC1 的 A/B 是两个独立
 - 实现分支/worktree：R0 冻结并通过 AC1d 后创建；main 不直接实现 checker/template。
 - AC1 原 delta STOP 独立裁决：[报告](../reviews/FEA-15-PIN-BASIS-ENFORCE-1-ac1-delta-stop-adjudication-2026-11-12.md)，结论 `ADJUDICATION_STOP`；后由 Addendum 4 接受一次性转接。AC1c A 的后续停止门已由下列 fresh ZCode 裁决 `ACCEPT_CONTINUE` 解除。
 - Addendum 4：[一次性基线转接与停止门解除](../reviews/FEA-15-PIN-BASIS-ENFORCE-1-zcode-release-adjudication-addendum4-2026-11-12.md)，原始释放 ZCode 会话 `sess_7b34d23e-ddaf-4ec5-bbb3-964edd74fc58` / `turn_391d1a6b-6e08-4bba-b0b8-f80f32a68e0d`；接受 `+62 / -0 / CHANGED=2` 一次性衔接并恢复 AC1c A 侧，不授权实现。
-- AC1c A：[ZCode 独立裁决](../reviews/FEA-15-PIN-BASIS-ENFORCE-1-ac1c-a-release-adjudication-2026-11-12.md)，`ACCEPT_CONTINUE`；session `sess_72137bd6-9553-424d-b09f-4184866cd387` / turn `turn_fbce0bef-c175-43a1-a065-31fdc00180a7`；A 侧失败锚已解释并接受，B/AC1d 未运行。
+- AC1c A：[ZCode 独立裁决](../reviews/FEA-15-PIN-BASIS-ENFORCE-1-ac1c-a-release-adjudication-2026-11-12.md)，`ACCEPT_CONTINUE`；session `sess_72137bd6-9553-424d-b09f-4184866cd387` / turn `turn_fbce0bef-c175-43a1-a065-31fdc00180a7`；A 侧失败锚已解释并接受。裁决时 B/AC1d 未运行；B 后续结果见下一 checkpoint。
 - `R-001` 不因实现自动关闭，等待最终 Integrator 明确裁决。
 
 ## Rolling Checkpoint
@@ -92,8 +92,9 @@ AC 状态语法按 `doc/09_COLLABORATION.md` §4.3。AC1 的 A/B 是两个独立
 - main 恢复登记门禁在 `f510bd5cf94251439919f16420dbdd1742f7474a`、`8d1d75ca246ef0daf7f3c116974cf16cfa21d410` 及 AC1c stop 状态 `a18d21bf02810340c6380e217aa643e8e19da0cc` 上，default/本卡 TaskPath、18 pins、API 均 `EXIT=0`；check 各 3 warnings。最新主仓结果已入库并 pin。
 - A clone AC1c 于 `2026-11-11T17:43:05Z` 执行，HEAD 固定，`core.autocrlf=true`、`core.longpaths=true`。default/四历史 TaskPath/pins FAIL，API/矩阵 PASS；Plan 工作树 7056 bytes vs Git blob 6992 bytes；仅 Task-local JSON 输出目录 untracked，无 tracked 改动。完整日志：`ac1c-a-gates-8d1d75ca.log`。
 - 2026-11-12，fresh ZCode session `sess_72137bd6-9553-424d-b09f-4184866cd387` / `turn_fbce0bef-c175-43a1-a065-31fdc00180a7` 只读审查 HEAD `71de053288a37f7792db5e47e8e0ccf21dceaf82`，裁决 `ACCEPT_CONTINUE`。A 侧真实 FAIL/PASS 未改写；矩阵 Canonical pin `68ec…` 经 Git blob SHA-256 核实，A 输出 SHA-256 为 `e8c…`；Addendum 4 pin 大小写规范化。B 侧只在 R0 clone checkout 前设 `core.autocrlf=false`、`core.longpaths=true`，只执行本卡 TaskPath。
+- 2026-11-12，R0=`bfae0b9bd6a9b85a9a546d2adda0b684783ddb24`：main default/本卡 TaskPath/18 pins/API 均 `EXIT=0`；B clone clean，Task/STATUS/Plan 在场，`R0..2df8db7` 25 个差异路径均在释放范围内，`tools/governance/**` 与 `doc/templates/**` 24/24 blobs 相同；B 本卡 TaskPath `EXIT=0`（3 warnings）。B 其他门禁未运行；日志分别为 `r0-main-gates-bfae0b9.log` 与 `ac1c-b-r0-assertions-taskpath-bfae0b9.log`。
 - 当前证据：[verification README](../../verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md)、[history-transition-ledger](../../verification/FEA-15-PIN-BASIS-ENFORCE-1/history-transition-ledger.md)；A clone 保留。
-- 下一步：在 `R0` 创建 B clone 并执行文件在场、允许差异集、治理工具/模板逐文件 blob 同一性、clean/环境断言；只跑本卡 TaskPath。完成后派发新的 ZCode AC1d 独立基线确认；通过前禁止实现。
+- 下一步：派发与 AC1c 裁决会话不同的 fresh ZCode AC1d 基线确认，输入须含 repro anchor、正式 inventory/delta、history-transition-ledger、A 侧 gates、B 侧 R0 断言与 TaskPath 结果。AC1d 通过前禁止实现。
 
 ## Canonical Evidence
 
@@ -101,7 +102,7 @@ AC 状态语法按 `doc/09_COLLABORATION.md` §4.3。AC1 的 A/B 是两个独立
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
-| ac1a-stop-readme | AC1 transition and AC1c A adjudication | verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md | 4af22e1ef6a148f55e76a0b864158158c64ae524 | 19380ae0584fe19c393841c48ca19515b0c7be8bd0706734df0f18071f8febd6 | CANONICAL |
+| ac1a-stop-readme | AC1 baseline and AC1c A/B gate summary | verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md | 817415797ced8b4bf675696e1f52edd0e8076e9d | cf233443ac791aec8b87098d636cd066df69b2b791df98c11279698b607c59a9 | CANONICAL |
 | ac1a-inventory | AC1 fixed-base inventory | verification/FEA-15-PIN-BASIS-ENFORCE-1/pin-inventory-2df8db7.json | 411309ca39e826aa1f5bbe13b15c73bb7c803d4e | 2aca6413774798056323f152f5a3ffc8a0fd82461bb6bdeef5f0c65fbf1d87c4 | CANONICAL |
 | ac1a-delta-stop | AC1 formal delta; CHANGED=2 | verification/FEA-15-PIN-BASIS-ENFORCE-1/pin-inventory-delta-e9f7bb1-to-2df8db7.json | 411309ca39e826aa1f5bbe13b15c73bb7c803d4e | f88f99052ee1580a8b859c5468b5621005df5e77e1bd179045d0c279fce97f21 | CANONICAL |
 | ac1a-repro-anchor | AC1 Addendum 2 exact delta reproduction | verification/FEA-15-PIN-BASIS-ENFORCE-1/pin-inventory-delta-repro-e9f7bb1.json | 411309ca39e826aa1f5bbe13b15c73bb7c803d4e | c27247db93960076ff27566e642be5b3d273588be47a8fa378eb81866bb3701e | CANONICAL |
@@ -118,6 +119,8 @@ AC 状态语法按 `doc/09_COLLABORATION.md` §4.3。AC1 的 A/B 是两个独立
 | ac1c-boundary-matrix | AC1c fixed boundary matrix output | verification/FEA-15-PIN-BASIS-ENFORCE-1/pin-r194-matrix-2df8db7.json | 6086a5b1f7c1f95ea91a313798dbd391f5132648 | 68ec4b50c3bbfc450218bc35fdc7da8f43454cf23eaedae8cbd4c872d879ec41 | CANONICAL |
 | ac1c-main-stop-gates | Main gates after AC1c A stop registration | verification/FEA-15-PIN-BASIS-ENFORCE-1/ac1c-main-stop-gates-a18d21bf.log | c7d26acb5f67a6b80adfc1fbf692aa948dbba8d3 | 5969f08c7622f88eb4e34fcd68fa76bd953d288452588fa69b83a80446f1b398 | CANONICAL |
 | ac1c-a-adjudication | AC1c A-side release adjudication | doc/reviews/FEA-15-PIN-BASIS-ENFORCE-1-ac1c-a-release-adjudication-2026-11-12.md | f2cdcbb6aa80d8a8a45903485ae0945353024de9 | 46c7e493d72905044fef490fee4bdddbea30d84198dc21488cad7bc08291d5a1 | CANONICAL |
+| ac1c-r0-main-gates | AC1c clean R0 main default/TaskPath/pins/API gates | verification/FEA-15-PIN-BASIS-ENFORCE-1/r0-main-gates-bfae0b9.log | 817415797ced8b4bf675696e1f52edd0e8076e9d | 0f4b9dc45bb6b198f1414e1e8f52de2c6ffdba42d81b85d17742a7d3723defd0 | CANONICAL |
+| ac1c-b-r0-audit | AC1c B R0 file/scope/blob assertions and TaskPath | verification/FEA-15-PIN-BASIS-ENFORCE-1/ac1c-b-r0-assertions-taskpath-bfae0b9.log | 817415797ced8b4bf675696e1f52edd0e8076e9d | 488924df930e1022d54003875f0904dcd97524d7dff914ecc7a1b3758c518bab | CANONICAL |
 
 `ac1c-boundary-matrix` 的 Canonical SHA 使用 `6086a5b1…` 提交内 Git blob 字节（4316 bytes，SHA-256 `68ec…`）；A clone/verification 工作树文件为 4438 bytes，SHA-256 `e8c…`。两者基于 EOL 转换而字节不同，卡内 pin 指向实际 Git blob。
 
@@ -129,7 +132,7 @@ AC 状态语法按 `doc/09_COLLABORATION.md` §4.3。AC1 的 A/B 是两个独立
 |---|---|---|---|---|---|
 | main worktree | G:/CODEX/New Manga | PRESERVE_REFERENCED | G:/CODEX/New Manga | Task checkpoint | main 分支；Task 注册基点 `d8b9b20869ac0957e152eddb9b5de88c8c2f9326`；保留 |
 | base clone | G:/CODEX/New Manga.workspace/FEA-15-PIN-BASIS-ENFORCE-1/baseline-2df8db7 | PRESERVE_REFERENCED | 同源保留 | verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md | HEAD 固定 `2df8db7…`；`core.longpaths=true`、`core.autocrlf=true`；仅 Task-local JSON 输出目录 untracked，无 tracked 改动；保留 |
-| R0 clone | G:/CODEX/New Manga.workspace/FEA-15-PIN-BASIS-ENFORCE-1/r0-baseline | PRESERVE_REFERENCED | 同源保留 | 待测 manifest | 仅在 AC1c A 证据 commit/pinbackfill 后创建；按 Addendum 4 只跑本 TaskPath |
+| R0 clone | G:/CODEX/New Manga.workspace/FEA-15-PIN-BASIS-ENFORCE-1/r0-baseline | PRESERVE_REFERENCED | 同源保留 | ac1c-b-r0-assertions-taskpath-bfae0b9.log | HEAD `bfae0b9bd6a9b85a9a546d2adda0b684783ddb24`；checkout 前 clone-local `core.autocrlf=false`、`core.longpaths=true`；clean；允许差异 25/25、工具/模板 blob 24/24、本卡 TaskPath `EXIT=0`；保留 |
 | implementation worktree | G:/CODEX/New Manga.workspace/FEA-15-PIN-BASIS-ENFORCE-1/implementation | PRESERVE_REFERENCED | 同源保留 | 待创建 | AC1d 通过后从冻结基线创建；不清理 |
 | A clone outputs | G:/CODEX/New Manga.workspace/FEA-15-PIN-BASIS-ENFORCE-1/baseline-2df8db7/verification/FEA-15-PIN-BASIS-ENFORCE-1 | PRESERVE_REFERENCED | 同源保留 | inventory/delta SHA 见 README | 仅生成本 Task 的 inventory/delta；保留，不清理 |
 | agent-output logs | G:/CODEX/New Manga.workspace/FEA-15-PIN-BASIS-ENFORCE-1/*.log | PRESERVE_REFERENCED | 同源保留 | README | 源运行日志另复制入仓；保留原文件 |
