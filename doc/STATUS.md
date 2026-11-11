@@ -4,11 +4,11 @@
 
 ## 当前程序
 - **FEA 线 ACTIVE（S5）**：[FEA-00 方案](design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md)；V11R 程序已收官（v0.1.1）。
-- 当前 Task：[PIN-POLICY-1](tasks/FEA-15-PIN-POLICY-1.md) in_review。
-- 刚收口：DIAG-ACL-1 与 [ACCEPT-1](tasks/FEA-15-ACCEPT-1.md) 均 `closed_with_limitations`；全量失败和 NOT_RUN 保留。
+- 当前 Task：无（S5 收口空窗；default gate EXIT 1 为已披露 checker limitation，用 -TaskPath）。
+- 刚收口：DIAG-ACL-1 与 [ACCEPT-1](tasks/FEA-15-ACCEPT-1.md) 均 `closed_with_limitations`；PIN-POLICY-1 `done`；全量失败和 NOT_RUN 保留。
 - FEA-11 线：WATCH-1/SCAN-2/SCAN-1/MATCH-1/AC4-GAPS-1/LINEAGE-1 `done`；HOST-AUTH-1 `done`；FEA-12 四卡 `done`。
 - **AC11-1 终态 MET（带 limitation）**：裁决 2026-11-06（[记录](reviews/FEA-11-AC11-1-adjudication-2026-11-06.md)）；「启动/访问前检查」= 冷启动枚举 + registry/root 核验（SCAN-2） + 每次访问/操作前 live grant+lease+digest 强验证；启动不做全量内容扫描（L-STARTUP）。
-- rolling checkpoint：[PIN-POLICY-1](../verification/FEA-15-PIN-POLICY-1/checkpoint.md)。
+
 - **Gate**：`G-CONTRACT`/`G-DELETE-CONTRACT` ✅ CLOSED（[裁定](plan/GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md)）；四表 DDL 已冻 = L-1 前置已满足（C-15 schema v7 + C-17 v1.1 schema v8；L-2…L-9 保留）；裁决 [ADJ-2026-11-01](reviews/ADJ-2026-11-01-FEA-DECISIONS.md)、[ADJ-2026-11-05](reviews/ADJ-2026-11-05-FEA-12-SCOPE.md)。
 - **FEA 方案（非 Task）**：[r8](reviews/FEA-00-dsh-r8.md) approved（0 P0/0 P1/9 P2）；17 契约 + [FEA-01](plan/FEA-01_CONTRACT_DRAFT.md) 已冻结（18 pins）；存储 [AD-003](AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)；删除 [ADJ-001](contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md)。
 - 审查报告在 `doc/reviews/`；`verify_pins.ps1` 18/18 PASS（机械校验，不替代复核）。

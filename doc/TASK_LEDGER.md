@@ -7,25 +7,25 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | metric | value |
 |---|---:|
 | task files | 585 |
-| terminal | 573 |
-| non-terminal | 11 |
-| non-terminal named in the plan | 2 |
+| terminal | 574 |
+| non-terminal | 10 |
+| non-terminal named in the plan | 1 |
 | non-terminal outside the plan | 9 |
 | task files tracked by git | 585 |
 | task files untracked (drafts) | 0 |
-| non-terminal tracked by git | 11 |
+| non-terminal tracked by git | 10 |
 
 ## By status
 
 | status | count | terminal |
 |---|---:|---|
-| `done` | 483 | yes |
+| `done` | 484 | yes |
 | `closed_with_limitations` | 53 | yes |
 | `cancelled` | 18 | yes |
 | `historical` | 11 | yes |
 | `superseded` | 8 | yes |
 | `proposed` | 5 | no |
-| `in_review` | 3 | no |
+| `in_review` | 2 | no |
 | `(none)` | 1 | no |
 | `approved` | 1 | no |
 | `blocked` | 1 | no |
@@ -37,7 +37,6 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 |---|---|---|
 | `GIT-CLEAN-PUBLICATION-DIAG-1` | `approved` | no |
 | `NEW-MANGA-V1-FULL-AUDIT` | `blocked` | own row |
-| `FEA-15-PIN-POLICY-1` | `in_review` | own row |
 | `GIT-CLEAN-PUBLICATION-1` | `in_review` | no |
 | `GIT-CLEAN-RUST-ISOLATION-1` | `in_review` | no |
 | `FEA-06-RESIDUAL-4` | `proposed` | no |

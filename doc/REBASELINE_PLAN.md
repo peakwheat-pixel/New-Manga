@@ -50,10 +50,10 @@
 |FEA-14-AI-1|FEA-14-S5-PREQ-1|**closed_with_limitations**（r2；v14 + P21–P25；S5 25/25 落地）|
 |FEA-15-ACCEPT-1|FEA-14-AI-1|**closed_with_limitations**（失败与 NOT_RUN 保留）|
 |FEA-15-DIAG-ACL-1 / FEA-15-PIN-EOL-GOV-1|FEA-15-ACCEPT-1|closed_with_limitations / done|
-|FEA-15-PIN-POLICY-1|FEA-15-PIN-EOL-GOV-1|in_review（ZCode复核）|
+|FEA-15-PIN-POLICY-1|FEA-15-PIN-EOL-GOV-1|done（ZCode 2026-11-11 最终 adjudication；治理层 BLOB 默认；历史 pin 不迁移）|
 |NEW-MANGA-V1-FULL-AUDIT|—|blocked（素材不传播；resume=in_progress）|
 ## 当前活动程序
-READY 节点：无；ACTIVE：无；REVIEW：FEA-15-PIN-POLICY-1
+READY 节点：无；ACTIVE：无；REVIEW：无
 ## 历史快照（终态节点，非当前 DAG）
 
 终态约束（明细见 [TASK_LEDGER](TASK_LEDGER.md)）：
