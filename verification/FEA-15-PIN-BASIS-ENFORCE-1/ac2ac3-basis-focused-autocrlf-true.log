@@ -1,0 +1,10 @@
+COMMAND=python -m pytest tools/governance/tests/test_canonical_evidence_basis.py -q
+GENERATED_HEAD=5e216dc53102ff93db39124b97ab85d88f18643b
+START_UTC=2026-11-11T20:04:02.8885057Z
+GIT_CORE_AUTOCRLF=true
+WORKTREE_BEFORE=
+.............                                                          [100%]
+13 passed, 2 subtests passed in 17.83s
+FINISH_UTC=2026-11-11T20:04:21.2129267Z
+EXIT=0
+WORKTREE_AFTER=

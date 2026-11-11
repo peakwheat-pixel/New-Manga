@@ -1,0 +1,12 @@
+COMMAND=python -m pytest tools/governance/tests/test_architecture_assertions.py -q
+GENERATED_HEAD=a2a3401eb703c3ae7899375755c981eabbf47572
+START_UTC=2026-11-11T19:54:59.2948677Z
+GIT_CORE_AUTOCRLF=false
+GIT_CORE_LONGPATHS=true
+WORKTREE_BEFORE=
+............................. [ 93%]
+..                                                                       [100%]
+31 passed, 43 subtests passed in 63.13s (0:01:03)
+FINISH_UTC=2026-11-11T19:56:02.9676006Z
+EXIT=0
+WORKTREE_AFTER=

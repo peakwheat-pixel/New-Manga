@@ -1,0 +1,57 @@
+COMMAND=python -m pytest tools/governance/tests -q
+GENERATED_HEAD=a2a3401eb703c3ae7899375755c981eabbf47572
+START_UTC=2026-11-11T19:56:16.6952285Z
+OS=Microsoft Windows NT 10.0.26300.0
+GIT_CORE_AUTOCRLF=false
+GIT_CORE_LONGPATHS=true
+WORKTREE_BEFORE=
+............................. [ 47%]
+.......s......s.....F.FF........                             [100%]
+================================== FAILURES ===================================
+______________ ProductionScan.test_all_seven_errors_are_resolved ______________
+
+self = <test_residual_runtime_identity.ProductionScan testMethod=test_all_seven_errors_are_resolved>
+
+    def test_all_seven_errors_are_resolved(self):
+>       self.assertEqual(self.index.errors, [])
+E       AssertionError: Lists differ: [{'code': 'TABLE_DELIMITER', 'message': 't[40825 chars]one}] != []
+E       
+E       First list contains 169 additional elements.
+E       First extra element 0:
+E       {'code': 'TABLE_DELIMITER', 'message': 'table at line 2 has an invalid delimiter row', 'file': 'doc/tasks/CHAPTER-SELECTOR-1.md', 'locator': None}
+E       
+E       Diff is 47858 characters long. Set self.maxDiff to None to see it.
+
+tools\governance\tests\test_residual_runtime_identity.py:134: AssertionError
+______________ ProductionScan.test_protection_set_did_not_shrink ______________
+
+self = <test_residual_runtime_identity.ProductionScan testMethod=test_protection_set_did_not_shrink>
+
+    def test_protection_set_did_not_shrink(self):
+        with mock.patch.object(
+                guard, "_apply_residual_runtime_identity",
+                lambda index, scanned: guard._finish_declaration_scan(index, scanned)):
+            before, _ = guard.scan_repo_declarations(str(REPO), WORKSPACE_ROOT)
+>       self.assertEqual(len(before.errors), 7)
+E       AssertionError: 169 != 7
+
+tools\governance\tests\test_residual_runtime_identity.py:154: AssertionError
+_____________ ProductionScan.test_user_data_root_is_now_protected _____________
+
+self = <test_residual_runtime_identity.ProductionScan testMethod=test_user_data_root_is_now_protected>
+
+    def test_user_data_root_is_now_protected(self):
+        for suffix in ("catalog", "data", "derived"):
+            hits = self.index.evaluate(norm(APPDATA_ROOT + "/" + suffix))
+>           self.assertTrue(hits, "expected protection for %s" % suffix)
+E           AssertionError: [] is not true : expected protection for catalog
+
+tools\governance\tests\test_residual_runtime_identity.py:141: AssertionError
+=========================== short test summary info ===========================
+FAILED tools/governance/tests/test_residual_runtime_identity.py::ProductionScan::test_all_seven_errors_are_resolved
+FAILED tools/governance/tests/test_residual_runtime_identity.py::ProductionScan::test_protection_set_did_not_shrink
+FAILED tools/governance/tests/test_residual_runtime_identity.py::ProductionScan::test_user_data_root_is_now_protected
+3 failed, 56 passed, 2 skipped, 55 subtests passed in 93.25s (0:01:33)
+FINISH_UTC=2026-11-11T19:57:50.4863126Z
+EXIT=1
+WORKTREE_AFTER=

@@ -1,0 +1,104 @@
+GENERATED_HEAD=dd6372420a459cdc9a4c39377f663f1b5d0d8646
+GIT_CORE_AUTOCRLF=false
+GIT_CORE_LONGPATHS=true
+WORKTREE_BEFORE=
+RUN_UTC=2026-11-11T19:59:54.0241898Z
+COMMAND=python -m pytest tools/governance/tests/test_residual_runtime_identity.py -q
+F.FF........                                                             [100%]
+================================== FAILURES ===================================
+______________ ProductionScan.test_all_seven_errors_are_resolved ______________
+
+self = <test_residual_runtime_identity.ProductionScan testMethod=test_all_seven_errors_are_resolved>
+
+    def test_all_seven_errors_are_resolved(self):
+>       self.assertEqual(self.index.errors, [])
+E       AssertionError: Lists differ: [{'code': 'TABLE_DELIMITER', 'message': 't[40825 chars]one}] != []
+E       
+E       First list contains 169 additional elements.
+E       First extra element 0:
+E       {'code': 'TABLE_DELIMITER', 'message': 'table at line 2 has an invalid delimiter row', 'file': 'doc/tasks/CHAPTER-SELECTOR-1.md', 'locator': None}
+E       
+E       Diff is 47858 characters long. Set self.maxDiff to None to see it.
+
+tools\governance\tests\test_residual_runtime_identity.py:134: AssertionError
+______________ ProductionScan.test_protection_set_did_not_shrink ______________
+
+self = <test_residual_runtime_identity.ProductionScan testMethod=test_protection_set_did_not_shrink>
+
+    def test_protection_set_did_not_shrink(self):
+        with mock.patch.object(
+                guard, "_apply_residual_runtime_identity",
+                lambda index, scanned: guard._finish_declaration_scan(index, scanned)):
+            before, _ = guard.scan_repo_declarations(str(REPO), WORKSPACE_ROOT)
+>       self.assertEqual(len(before.errors), 7)
+E       AssertionError: 169 != 7
+
+tools\governance\tests\test_residual_runtime_identity.py:154: AssertionError
+_____________ ProductionScan.test_user_data_root_is_now_protected _____________
+
+self = <test_residual_runtime_identity.ProductionScan testMethod=test_user_data_root_is_now_protected>
+
+    def test_user_data_root_is_now_protected(self):
+        for suffix in ("catalog", "data", "derived"):
+            hits = self.index.evaluate(norm(APPDATA_ROOT + "/" + suffix))
+>           self.assertTrue(hits, "expected protection for %s" % suffix)
+E           AssertionError: [] is not true : expected protection for catalog
+
+tools\governance\tests\test_residual_runtime_identity.py:141: AssertionError
+=========================== short test summary info ===========================
+FAILED tools/governance/tests/test_residual_runtime_identity.py::ProductionScan::test_all_seven_errors_are_resolved
+FAILED tools/governance/tests/test_residual_runtime_identity.py::ProductionScan::test_protection_set_did_not_shrink
+FAILED tools/governance/tests/test_residual_runtime_identity.py::ProductionScan::test_user_data_root_is_now_protected
+3 failed, 9 passed in 15.54s
+EXIT=1
+
+RUN_UTC=2026-11-11T20:00:09.9782550Z
+COMMAND=pwsh -NoProfile -File tools/governance/verify_pins.ps1
+OK C01b 3c9f5af7d74f
+OK C02 bb365ca891a7
+OK C03 b77e7968a00b
+MISMATCH C04b pin=4b304c0c315f actual=740a9eea786c
+OK C05 f6e6f3cb1fe1
+OK C06 75f8e2b4eb80
+OK C07 8ccaba05cbc2
+OK C08 453f993c1a16
+OK C09 dc51226b336c
+OK C10 ec8fd862f95f
+OK C11 44f4273f7ad1
+OK C12 f49835860143
+OK C13 8faf1e805eac
+OK C14 05056cbf65f9
+OK C15 f9e376a0ed4c
+OK C16 67286eeca8cb
+MISMATCH C17 pin=cdeee4872e29 actual=e809cfb33b8b
+OK FEA01 0370c18932b1
+PIN AUDIT: FAIL (2)
+EXIT=1
+WORKTREE_AFTER_BASELINE_SWITCH=
+MAIN_PIN_CONTROL_HEAD=dd6372420a459cdc9a4c39377f663f1b5d0d8646
+MAIN_GIT_CORE_AUTOCRLF=true
+MAIN_WORKTREE_BEFORE=
+RUN_UTC=2026-11-11T20:00:28.3141297Z
+COMMAND=pwsh -NoProfile -File tools/governance/verify_pins.ps1
+
+OK C01b 3c9f5af7d74f
+OK C02 bb365ca891a7
+OK C03 b77e7968a00b
+OK C04b 4b304c0c315f
+OK C05 f6e6f3cb1fe1
+OK C06 75f8e2b4eb80
+OK C07 8ccaba05cbc2
+OK C08 453f993c1a16
+OK C09 dc51226b336c
+OK C10 ec8fd862f95f
+OK C11 44f4273f7ad1
+OK C12 f49835860143
+OK C13 8faf1e805eac
+OK C14 05056cbf65f9
+OK C15 f9e376a0ed4c
+OK C16 67286eeca8cb
+OK C17 cdeee4872e29
+OK FEA01 0370c18932b1
+PIN AUDIT: PASS (all 18)
+MAIN_VERIFY_PINS_EXIT=0
+MAIN_WORKTREE_AFTER=
