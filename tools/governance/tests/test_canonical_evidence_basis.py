@@ -7,7 +7,7 @@ from pathlib import Path
 
 
 REPO = Path(__file__).resolve().parents[3]
-CHECK = REPO / "tools" / "governance" / "check.ps1"
+R0_HEAD = "bfae0b9bd6a9b85a9a546d2adda0b684783ddb24"
 PNG_REL = "experiments/TASK-018/samples/s5-structure-crossing.png"
 PLAN_REL = "doc/REBASELINE_PLAN.md"
 
@@ -26,10 +26,10 @@ def sha256(data):
     return hashlib.sha256(data).hexdigest()
 
 
-def git_blob(commit, path):
+def git_blob(commit, path, repo=REPO):
     return subprocess.run(
         ["git", "cat-file", "blob", f"{commit}:{path}"],
-        cwd=REPO,
+        cwd=repo,
         check=True,
         capture_output=True,
     ).stdout
@@ -42,16 +42,62 @@ class CanonicalEvidenceBasisTests(unittest.TestCase):
             ["git", "rev-parse", "HEAD"], cwd=REPO, check=True,
             capture_output=True, text=True,
         ).stdout.strip()
+        task_workspace = next(
+            (parent for parent in REPO.parents if parent.name == "FEA-15-PIN-BASIS-ENFORCE-1"),
+            REPO.parent.with_name(REPO.name + ".workspace") / "FEA-15-PIN-BASIS-ENFORCE-1",
+        )
+        task_workspace.mkdir(parents=True, exist_ok=True)
+        cls.clone_temp = tempfile.TemporaryDirectory(prefix="ac2ac3-governance-fixture-", dir=task_workspace)
+        cls.repo_root = Path(cls.clone_temp.name) / "repo"
+        autocrlf_result = subprocess.run(
+            ["git", "config", "--get", "core.autocrlf"],
+            cwd=REPO,
+            capture_output=True,
+            text=True,
+        )
+        cls.autocrlf = autocrlf_result.stdout.strip().lower() if autocrlf_result.returncode == 0 else "false"
+        if cls.autocrlf not in {"true", "false", "input"}:
+            cls.autocrlf = "false"
+        subprocess.run(
+            ["git", "clone", "--shared", "--no-checkout", str(REPO), str(cls.repo_root)],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        subprocess.run(["git", "-C", str(cls.repo_root), "config", "--local", "core.autocrlf", cls.autocrlf], check=True)
+        subprocess.run(["git", "-C", str(cls.repo_root), "config", "--local", "core.longpaths", "true"], check=True)
+        subprocess.run(
+            ["git", "-C", str(cls.repo_root), "checkout", "--detach", cls.head],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        cls.check = cls.repo_root / "tools" / "governance" / "check.ps1"
+        plan = cls.repo_root / PLAN_REL
+        plan_bytes = plan.read_bytes()
+        if len(plan_bytes) > 7000:
+            marker = "## 历史快照".encode("utf-8")
+            marker_at = plan_bytes.find(marker)
+            if marker_at < 0:
+                raise RuntimeError("Fixture checkout Plan exceeds byte budget and has no history boundary")
+            marker_end = plan_bytes.find(b"\n", marker_at)
+            if marker_end < 0:
+                raise RuntimeError("Fixture checkout Plan history heading is not line-terminated")
+            plan.write_bytes(plan_bytes[: marker_end + 1])
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.clone_temp.cleanup()
 
     def setUp(self):
-        self.temp = tempfile.TemporaryDirectory(prefix=".pin-basis-test-", dir=REPO)
+        self.temp = tempfile.TemporaryDirectory(prefix=".pin-basis-test-", dir=self.repo_root)
         self.root = Path(self.temp.name)
 
     def tearDown(self):
         self.temp.cleanup()
 
     def run_fixture(self, header, values):
-        task = self.root / "fixture.md"
+        task = self.repo_root / "doc" / "tasks" / "FEA-15-PIN-BASIS-ENFORCE-1.md"
         row = "| " + " | ".join(values) + " |"
         table_header = "| " + " | ".join(header) + " |"
         separator = "| " + " | ".join(["---"] * len(header)) + " |"
@@ -59,7 +105,7 @@ class CanonicalEvidenceBasisTests(unittest.TestCase):
             "\n".join(
                 [
                     "---",
-                    "id: FIXTURE-PIN-BASIS-1",
+                    "id: FEA-15-PIN-BASIS-ENFORCE-1",
                     "title: pin basis fixture",
                     "kind: governance",
                     "governance_version: 3",
@@ -107,15 +153,17 @@ class CanonicalEvidenceBasisTests(unittest.TestCase):
             newline="\n",
         )
         result = subprocess.run(
-            ["pwsh", "-NoProfile", "-File", str(CHECK), "-TaskPath", str(task)],
-            cwd=REPO,
+            ["pwsh", "-NoProfile", "-File", str(self.check), "-TaskPath", "doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md"],
+            cwd=self.repo_root,
             capture_output=True,
             text=True,
             encoding="utf-8",
         )
-        return (result.stdout or "") + (result.stderr or "")
+        return f"FIXTURE_PROCESS_EXIT={result.returncode}\n" + (result.stdout or "") + (result.stderr or "")
 
     def assert_basis_passes(self, output):
+        self.assertIn("FIXTURE_PROCESS_EXIT=0", output)
+        self.assertIn("Governance check: PASS", output)
         self.assertNotIn("EVIDENCE_BASIS_", output)
         self.assertNotIn("Evidence SHA-256 不匹配", output)
         self.assertNotIn("Evidence commit 不含所 pin 文件", output)
@@ -127,7 +175,7 @@ class CanonicalEvidenceBasisTests(unittest.TestCase):
         return ["EV1", gate, str(path), commit, sha, "CANONICAL", basis]
 
     def test_legacy_six_column_worktree_pin_remains_valid(self):
-        path = REPO / PLAN_REL
+        path = self.repo_root / PLAN_REL
         digest = sha256(path.read_bytes())
         output = self.run_fixture(
             LEGACY_HEADER,
@@ -138,7 +186,7 @@ class CanonicalEvidenceBasisTests(unittest.TestCase):
     def test_legacy_plain_path_header_remains_supported(self):
         header = LEGACY_HEADER.copy()
         header[2] = "path"
-        path = REPO / PLAN_REL
+        path = self.repo_root / PLAN_REL
         output = self.run_fixture(
             header,
             ["EV1", "AC2 legacy path alias", PLAN_REL, self.head, sha256(path.read_bytes()), "CANONICAL"],
@@ -146,8 +194,8 @@ class CanonicalEvidenceBasisTests(unittest.TestCase):
         self.assert_basis_passes(output)
 
     def test_legacy_six_column_blob_pin_remains_an_alternative(self):
-        path = REPO / PLAN_REL
-        blob = git_blob(self.head, PLAN_REL)
+        path = self.repo_root / PLAN_REL
+        blob = git_blob(self.head, PLAN_REL, self.repo_root)
         worktree = path.read_bytes()
         if worktree == blob:
             self.skipTest("checkout has identical blob and worktree bytes; AC4 provides the cross-EOL differential")
@@ -157,8 +205,32 @@ class CanonicalEvidenceBasisTests(unittest.TestCase):
         )
         self.assert_basis_passes(output)
 
+    def test_legacy_png_blob_fallback_matches_r0_checker(self):
+        png_path = self.repo_root / PNG_REL
+        original = png_path.read_bytes()
+        blob = git_blob(self.head, PNG_REL, self.repo_root)
+        self.assertEqual(original, blob)
+        candidate_checker = self.check.read_bytes()
+        baseline_checker = subprocess.run(
+            ["git", "show", f"{R0_HEAD}:tools/governance/check.ps1"],
+            cwd=self.repo_root,
+            check=True,
+            capture_output=True,
+        ).stdout
+        png_path.write_bytes(original + b"\x00WORKTREE-ONLY")
+        try:
+            row = ["EV1", "AC2 legacy PNG blob", PNG_REL, self.head, sha256(blob), "CANONICAL"]
+            candidate_output = self.run_fixture(LEGACY_HEADER, row)
+            self.assert_basis_passes(candidate_output)
+            self.check.write_bytes(baseline_checker)
+            baseline_output = self.run_fixture(LEGACY_HEADER, row)
+            self.assert_basis_passes(baseline_output)
+        finally:
+            self.check.write_bytes(candidate_checker)
+            png_path.write_bytes(original)
+
     def test_new_blob_basis_hashes_exact_png_blob_bytes(self):
-        blob = git_blob(self.head, PNG_REL)
+        blob = git_blob(self.head, PNG_REL, self.repo_root)
         self.assertTrue(blob.startswith(b"\x89PNG\r\n\x1a\n"))
         output = self.run_fixture(
             BASIS_HEADER,
@@ -167,8 +239,8 @@ class CanonicalEvidenceBasisTests(unittest.TestCase):
         self.assert_basis_passes(output)
 
     def test_new_blob_basis_uses_commit_bytes_across_checkout_eol(self):
-        blob = git_blob(self.head, PLAN_REL)
-        worktree = (REPO / PLAN_REL).read_bytes()
+        blob = git_blob(self.head, PLAN_REL, self.repo_root)
+        worktree = (self.repo_root / PLAN_REL).read_bytes()
         output = self.run_fixture(
             BASIS_HEADER,
             self.explicit_row(PLAN_REL, sha256(blob), "BLOB", commit=self.head),
@@ -178,7 +250,7 @@ class CanonicalEvidenceBasisTests(unittest.TestCase):
             self.assertNotEqual(sha256(blob), sha256(worktree))
 
     def test_blob_commit_without_path_fails_even_if_worktree_path_is_missing(self):
-        missing = REPO / self.root.name / "absent.png"
+        missing = self.repo_root / self.root.name / "absent.png"
         output = self.run_fixture(
             BASIS_HEADER,
             self.explicit_row(missing, "0" * 64, "BLOB", commit=self.head),
@@ -186,8 +258,8 @@ class CanonicalEvidenceBasisTests(unittest.TestCase):
         self.assert_basis_fails(output, "EVIDENCE_BASIS_BLOB_PATH_MISSING")
 
     def test_basis_is_required_and_case_sensitive(self):
-        path = REPO / PLAN_REL
-        digest = sha256(git_blob(self.head, PLAN_REL))
+        path = self.repo_root / PLAN_REL
+        digest = sha256(git_blob(self.head, PLAN_REL, self.repo_root))
         blank = self.run_fixture(
             BASIS_HEADER,
             ["EV1", "AC2 fixture", PLAN_REL, self.head, digest, "CANONICAL", ""],
@@ -200,16 +272,16 @@ class CanonicalEvidenceBasisTests(unittest.TestCase):
         self.assert_basis_fails(lowercase, "EVIDENCE_BASIS_INVALID")
 
     def test_new_table_header_must_identify_the_basis_column(self):
-        path = REPO / PLAN_REL
+        path = self.repo_root / PLAN_REL
         header = BASIS_HEADER[:-1] + ["basis"]
         output = self.run_fixture(
             header,
-            self.explicit_row(PLAN_REL, sha256(git_blob(self.head, PLAN_REL)), "BLOB", commit=self.head),
+            self.explicit_row(PLAN_REL, sha256(git_blob(self.head, PLAN_REL, self.repo_root)), "BLOB", commit=self.head),
         )
         self.assert_basis_fails(output, "EVIDENCE_BASIS_HEADER_INVALID")
 
     def test_new_basis_rows_reject_missing_or_extra_columns(self):
-        row = self.explicit_row(PLAN_REL, sha256(git_blob(self.head, PLAN_REL)), "BLOB", commit=self.head)
+        row = self.explicit_row(PLAN_REL, sha256(git_blob(self.head, PLAN_REL, self.repo_root)), "BLOB", commit=self.head)
         for name, values in (("missing", row[:-1]), ("extra", row + ["unexpected"])):
             with self.subTest(name=name):
                 output = self.run_fixture(BASIS_HEADER, values)
@@ -223,7 +295,7 @@ class CanonicalEvidenceBasisTests(unittest.TestCase):
         self.assert_basis_fails(output, "EVIDENCE_BASIS_SHA_INVALID")
 
     def test_blob_basis_rejects_invalid_commit_values(self):
-        digest = sha256(git_blob(self.head, PLAN_REL))
+        digest = sha256(git_blob(self.head, PLAN_REL, self.repo_root))
         for name, commit in (("malformed", "not-a-commit"), ("unknown", "f" * 40)):
             with self.subTest(name=name):
                 output = self.run_fixture(
@@ -251,8 +323,8 @@ class CanonicalEvidenceBasisTests(unittest.TestCase):
                     self.assert_basis_fails(output, code)
 
     def test_worktree_requires_environment_and_never_falls_back_to_blob(self):
-        path = REPO / PLAN_REL
-        blob_sha = sha256(git_blob(self.head, PLAN_REL))
+        path = self.repo_root / PLAN_REL
+        blob_sha = sha256(git_blob(self.head, PLAN_REL, self.repo_root))
         worktree_sha = sha256(path.read_bytes())
         if blob_sha == worktree_sha:
             self.skipTest("checkout has identical blob and worktree bytes; AC4 provides the cross-EOL differential")
@@ -303,7 +375,7 @@ class CanonicalEvidenceBasisTests(unittest.TestCase):
                 self.assert_basis_fails(normalized_pin, "EVIDENCE_BASIS_HASH_MISMATCH")
 
     def test_external_sha256_reads_exact_png_bytes(self):
-        png = git_blob(self.head, PNG_REL)
+        png = git_blob(self.head, PNG_REL, self.repo_root)
         with tempfile.TemporaryDirectory(prefix="pin-basis-external-") as external:
             path = Path(external) / "sample.png"
             path.write_bytes(png)
