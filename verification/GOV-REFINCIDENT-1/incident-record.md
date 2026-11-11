@@ -19,12 +19,13 @@
 | 文件 | 原始文件 SHA-256 | 内容/结果 |
 |---|---|---|
 | `pre-hashes.json` | `48d1b30c5ace92182a4b5cade07db71653643681f23e2ea7a1aae624304bee62` | 调查开始时 44 个既有文件，错误 0 |
+| `post-hashes.json` | `42e4ecc00583060826b55425eef67039bff4b1423cf2110c3902297b5ddc9cb5` | 中间复算；44 个，差异 0、错误 0；最终对照仍以 post-final 为准 |
 | `post-final-hashes.json` | `604ec7d1dfcf5e8e9ea88dd0a9344ab21cd5c1ce44ac72766bf0da1e4680de1b` | 调查末次复算 44 个，差异 0、错误 0；两次均排除新建 `investigation/` |
 | `known-hash-comparison.json` | `7279266aa52d1b632f0cd7ee5f41f36ed773da839888916cda5661c2f0005568` | 8 项重点副本与先前记录比较 OK，EXIT 0 |
 | `system-events.json` | `f6b8c55f830ce877f66b16b56cc1fd72178b693139f79833a8d8dd7f9732a422` | 17:30–19:40 的限定系统提供程序查询，11 项，EXIT 0；原文仅仓外 |
-| `environment-raw.txt` | `b91b4f2e84cf40a4953823245e6261cbc74e01fe83d9364904c175621576bfe3` | Git 版本、count-objects、hook/相关进程名；USN NOT_RUN |
-| `git-config-filtered-v2.txt` | `b7a4c82a1ec407ee49592c00216dfad1d767dfc9c119dbae84e9b01c7de11775` | 限定核心配置键及来源，EXIT 0；首版过滤未选中记录，v2 修正 |
-| `environment-supplement.txt` | `0d2b7cfdb481eb7a204200973cb4de10fd3b3f1560d8f621b17462b5726c8091` | G: Get-Volume NTFS/Healthy/OK，EXIT 0；两个 hook 均仅 shebang；其中首版 config 空筛选以 v2 为准 |
+| `environment-raw.txt` | `b91b4f2e84cf40a4953823245e6261cbc74e01fe83d9364904c175621576bfe3` | Git 版本、count-objects、hook/相关进程名；独立 `--get-regexp` 配置查询命中 5 条；USN NOT_RUN |
+| `git-config-filtered-v2.txt` | `b7a4c82a1ec407ee49592c00216dfad1d767dfc9c119dbae84e9b01c7de11775` | `--list` 后限定核心配置键及来源，命中 7 条，EXIT 0；补充前两次查询 |
+| `environment-supplement.txt` | `0d2b7cfdb481eb7a204200973cb4de10fd3b3f1560d8f621b17462b5726c8091` | G: Get-Volume NTFS/Healthy/OK，EXIT 0；两个 hook 均仅 shebang；此文件的内存筛选因转义缺陷漏选配置记录，以 v2 为准，与 raw 的独立 5 条查询不同 |
 | `git-layout.txt` | `fd9253b4b753f2f9f0edbdf34b9f625dc238e34f3727bc36dfb6778e83db5758` | `.git` 顶层文件/目录名只读枚举，EXIT 0 |
 | `observations.txt` | `9beabcf8ef024ea197ede5524fbf7ffe35921e2e99f5e6377bd67210d41eb53e` | 脱敏事件、hook 与 dangling 摘要 |
 | `rehearsal-crlf/run.log` | `ee582351c0bfc4b7293aca17ff77b38f14f6e9fba0c6d7385c494ff95338b4be` | R2 V1–V3 通过；V4 为 checkout-index 新路径模拟，V5 为 fresh clone |
