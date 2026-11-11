@@ -1,0 +1,15 @@
+# Preliminary inventory run (superseded by the delivery-head snapshot)
+
+Command: `python verification/FEA-15-PIN-POLICY-1/pin_inventory.py`
+Generated at (from JSON): 11/11/2026 15:07:41
+Branch: main
+Measured HEAD: da4a60baafba18281f156330b9ed1646045edb6d
+EXIT=0 (completed invocation output recorded by the executor)
+TASK_CARDS=585 TASK_PIN_ROWS=5358 FROZEN_RECORDS=18
+TOTAL_PIN_ROWS=5376
+BASIS_COUNTS={"BLOB":327,"COMPOSITE_PATH":2,"EXTERNAL_UNAVAILABLE":47,"INCONSISTENT":160,"MISSING":3,"MIXED":1009,"UNPINNED":293,"UNRESOLVED_COMMIT":68,"WORKTREE":3467}
+EXCEPTIONS=573
+Inventory SHA-256=43bd14469cb2e747fb058ea609a4f1da1744f597fe713487c4efb973fe97e66a
+Tracked index/worktree clean=True
+Status at capture=?? verification/FEA-15-PIN-POLICY-1/pin-inventory-run.log | ?? verification/FEA-15-PIN-POLICY-1/pin-inventory.json
+This is a preliminary measurement at the release-gate HEAD; the canonical `pin-inventory.json` and delta will be generated for the final delivery snapshot.
