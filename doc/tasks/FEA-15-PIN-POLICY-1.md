@@ -3,10 +3,10 @@ id: FEA-15-PIN-POLICY-1
 title: 证据 pin 基准口径裁定与迁移影响面方案（裁定阶段，不含实施）
 kind: governance
 governance_version: 3
-status: ready
+status: in_progress
 approval: ZCode 2026-11-11 裁决释放（独立 CLI session sess_236d9541-8358-45f0-9318-4844a86a767e；doc/reviews/FEA-15-PIN-POLICY-1-zcode-release-adjudication-2026-11-11.md）；用户已授权持续推进、全部授权、自动计划及 ZCode 裁决
 suggested_owner: codex
-owner: null
+owner: codex
 reviewer: ZCode 独立 CLI Review（执行时新建上下文；session ID 记入报告；不得使用实现会话）
 depends_on:
   - FEA-15-PIN-EOL-GOV-1
@@ -78,6 +78,9 @@ AC 状态语法按 doc/09_COLLABORATION.md §4.3；进入 in_review 前所有 AC
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (CANONICAL / SOURCE_PIN) |
 |---|---|---|---|---|---|
+| release-adjudication | Release authority | doc/reviews/FEA-15-PIN-POLICY-1-zcode-release-adjudication-2026-11-11.md | 0730335f835306a19d283f06dbc0164134a9e04e | 3912a32cdd434d7d6df8a61be3d758600adc92d27f0e6c00cd4c4791a57b2092 | CANONICAL |
+| release-gates | AC3 release baseline | verification/FEA-15-PIN-POLICY-1/release-gates-0730335.log | be4efb395a5dcf5fb03f51e48813b7c046f0d469 | 18258a64e59ed4387b85c07c5598ebf681f429a0e1edb5dc39f18afbe0e2682e | CANONICAL |
+
 
 ## Resource Manifest
 
