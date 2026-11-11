@@ -1,36 +1,35 @@
 # Checkpoint — FEA-15-PIN-POLICY-1
 
-- Timestamp: 2026-11-11T15:37:17+08:00
+- Timestamp: 2026-11-11T15:45:10+08:00
 - Agent: Codex
 - TaskStatus / ExecutionState: in_progress / ACTIVE
 - Branch / worktree: main / G:/CODEX/New Manga
 - Start commit / Task base: 4efc592d12c25b8be33502f53c9270ad0597adfd
 - Delivery measurement HEAD: `e9f7bb1b48c885cb329848d2d3591e145ff3d229`
-- Current HEAD at capture: `e9f7bb1b48c885cb329848d2d3591e145ff3d229`
-- Worktree at capture: no unrelated changes; final inventory, delta, matrix and gate logs are untracked, and README/ruling/impact/checkpoint are being updated for those outputs.
+- Current HEAD at capture: `fd8a60b57a16b0076ed4e14586463f4a1cf19e57`
+- Worktree at capture: no unrelated changes; only README, ruling and impact plan were being amended with a discovered inventory limitation.
 
 ## Completed
 
-1. ZCode released this bounded adjudication task; report: `doc/reviews/FEA-15-PIN-POLICY-1-zcode-release-adjudication-2026-11-11.md`.
-2. `FEA-15-PIN-EOL-GOV-1` is `done`; its evidence/resources remain preserved, and R-001 is transferred here for disposition.
-3. At delivery measurement HEAD `e9f7bb1b48c885cb329848d2d3591e145ff3d229`, final inventory measured 5,376 rows (5,358 Task pins + 18 frozen). Against baseline `948d73e0629869e560df9a2b2d8a357cec67027f`, delta is +26 / -0 / changed 0; basis deltas `WORKTREE +16`, `MIXED +10`; exception rows remain 573.
-4. Modeled r194 matrix at the same HEAD reports 4,803 predicate matches and 573 nonpass observations. This is derived from inventory hash booleans, not per-row `check.ps1` execution.
-5. Delivery gate log at the same HEAD records default/current TaskPath/prior TaskPath PASS (3 warnings each, EXIT 0), 18 pins PASS EXIT 0, and API 1/79/6=86 EXIT 0.
-6. The ruling proposal and impact plan are drafted. Both remain pending fresh-context ZCode Review and final ZCode adjudication; no checker/template/history change or dry-run occurred.
+1. Final delivery inventory at `e9f7bb1...`: 5,376 rows (5,358 Task pins + 18 frozen); baseline delta `+26 / -0 / changed 0`; `WORKTREE +16`, `MIXED +10`; exception rows remain 573.
+2. Modeled r194 matrix: 4,803 matching predicate / 573 nonpass observations. It is not a per-row checker run.
+3. Delivery gates at `e9f7bb1...`: default/current TaskPath/prior TaskPath PASS (3 warnings each, EXIT 0), pins 18/18 EXIT 0, API 1/79/6=86 EXIT 0. The same gates were rerun after evidence commit `19ccd9b...` and Handoff commit `fd8a60b...`; all passed with the same warnings and EXIT values.
+4. Handoff `doc/handoffs/FEA-15-PIN-POLICY-1-e9f7bb1.md` committed at `fd8a60b...`.
+5. Documented a limitation: the legacy inventory parser does not capture the parenthesized `class` header in this Task; its two release rows have blank `class`, and historical `class_counts` is not a reliable semantic taxonomy. Row identity/SHA/basis counts are unaffected; the frozen parser was not modified.
 
 ## AC state
 
-- AC1: PARTIAL. Full measurement and delta exist; ZCode has not adjudicated the proposed ruling.
-- AC2: PARTIAL. Impact plan and modeled matrix exist; ZCode review/adjudication and any required corrections remain pending.
-- AC3: PARTIAL. Delivery gates are recorded; Handoff, canonical pinbackfill, independent Review and final adjudication remain pending.
+- AC1: PARTIAL pending ZCode's independent review/adjudication of the proposed policy.
+- AC2: PARTIAL pending independent review/adjudication of the impact plan.
+- AC3: PARTIAL. Delivery gates and Handoff exist; canonical pinbackfill, independent Review, and final adjudication remain pending.
 
 ## Preserved NOT_RUN / limits
 
-- Product pytest/.NET suites, Linux fresh clone, renormalize simulation, pin migration, checker/template changes, and isolated clone dry-run remain NOT_RUN or out of scope. No NOT_RUN item is PASS.
+- Product pytest/.NET suites, Linux fresh clone, renormalize simulation, pin migration, checker/template changes and isolated clone dry-run remain NOT_RUN or out of scope. No NOT_RUN item is PASS.
 - No resource cleanup, migration, archive, or push has occurred.
 
 ## Next exact step
 
-Commit the final inventory/delta/matrix/gate outputs and the final measurement addendum. Then write a Handoff tied to delivery measurement HEAD `e9f7bb1...`, pin final evidence in the Task card with exact file SHA and containing commit, regenerate `TASK_LEDGER.md`, and rerun all required gates. Put the Task in review only after canonical evidence is complete; dispatch a fresh ZCode Review session, then a different ZCode adjudication session.
+Commit the parser limitation addendum and refreshed checkpoint/README. Then update the Task card with `delivery_head=e9f7bb1...`, exact Canonical Evidence pins (including the Handoff), set legal AC markers/status for review, run `python tools/governance/task_ledger.py --write`, and rerun all gates. Dispatch a new ZCode CLI Review session on the exact delivery HEAD; after its report is committed and pinned, use a different ZCode session for final adjudication.
 
-Resume safety: recheck branch, HEAD, worktree, Task card and latest review/adjudication pointers before resuming. The preliminary `da4a60b...` snapshot is superseded by the final inventory measured at `e9f7bb1...`.
+Resume safety: recheck branch, HEAD, status, Task card and current review/adjudication pointers. Delivery inventory/output measured at `e9f7bb1...`; evidence and Handoff commits are post-head documentation/evidence commits.

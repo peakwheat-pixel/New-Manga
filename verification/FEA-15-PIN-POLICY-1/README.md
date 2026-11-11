@@ -24,7 +24,8 @@
 - Baseline delta: [`pin-inventory-delta.json`](pin-inventory-delta.json), `5,350 → 5,376`, `+26 / -0 / changed 0`; the additions are 24 rows from `FEA-15-PIN-EOL-GOV-1` and 2 release rows from this Task. Basis change is `WORKTREE +16`, `MIXED +10`; the six exception classes remain 573. Delta run log records `EXIT=0`.
 - Modeled r194 matrix: [`pin-r194-baseline-matrix.json`](pin-r194-baseline-matrix.json), `4,803` match the worktree-or-blob predicate and `573` are nonpass observations. It is explicitly a model from inventory booleans, not a per-row `check.ps1` execution.
 - Final governance log [`delivery-gates-e9f7bb1.log`](delivery-gates-e9f7bb1.log): default/current TaskPath/prior TaskPath all PASS (3 warnings each, EXIT 0); `verify_pins.ps1` 18/18 EXIT 0; API 1/79/6=86 EXIT 0.
-- AC1 is PARTIAL pending ZCode's ruling adjudication. AC2's impact plan is drafted, pending independent Review/ZCode adjudication. AC3 delivery gates are recorded; Handoff, fresh-context Review, final adjudication and pinbackfill remain pending.
+- Inventory limitation: the legacy parser does not capture the current Task's parenthesized `class (CANONICAL / SOURCE_PIN)` header, so its two release rows have blank `class` values; historical `class_counts` are not a reliable semantic taxonomy. Row identity, SHA, basis and delta counts are unaffected. This remains documented; the frozen source parser was not modified.
+- AC1 is PARTIAL pending ZCode's ruling adjudication. AC2's impact plan is drafted, pending independent Review/ZCode adjudication. AC3 delivery gates are recorded and Handoff is committed at `fd8a60b57a16b0076ed4e14586463f4a1cf19e57`; Canonical Evidence pinbackfill, fresh-context Review and final adjudication remain pending.
 - Preliminary inventory/delta/matrix at `da4a60baafba18281f156330b9ed1646045edb6d` are retained as process snapshots and are superseded by the final delivery measurement above.
 
 ## Proposed ruling and impact plan

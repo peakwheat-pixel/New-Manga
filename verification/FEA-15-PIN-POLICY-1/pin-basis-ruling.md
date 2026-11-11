@@ -9,6 +9,7 @@
 - 交付快照 basis 互斥计数：`WORKTREE=3,467`、`BLOB=327`、`MIXED=1,009`、其他 573。其他 573 为 `INCONSISTENT=160`、`UNPINNED=293`、`UNRESOLVED_COMMIT=68`、`EXTERNAL_UNAVAILABLE=47`、`MISSING=3`、`COMPOSITE_PATH=2`。26 条增量为旧 `FEA-15-PIN-EOL-GOV-1` 的 24 条证据行与本 Task 的 2 条 release 行；basis 差值是 `WORKTREE +16`、`MIXED +10`。
 - 更早的 `pin-inventory-preliminary-da4a60b.json` 与初步差异保留作过程快照；它与交付快照计数相同，但不替代测量 HEAD=`e9f7bb1...` 的正式 inventory。
 - `tools/governance/check.ps1` r194 对 lifecycle Task 的 Canonical Evidence 行先比较工作区 SHA；不匹配时，若记录 commit 确实包含该路径，再比较该 commit 的 blob SHA；任一匹配即通过。它只检查当前治理作用域/当前 Task，不会逐条执行整个历史 inventory。`verify_pins.ps1` 的 18 条 FROZEN pin 是另一条独立门禁。
+- Inventory 的 `class` 辅助字段有解析限制：复制脚本只在表头归一化后精确等于 `class` 时填入该值；本 Task 现有表头 `class (CANONICAL / SOURCE_PIN)` 被归一化为另一字符串，故本 Task 两条 release row 的 `class` 在机器 JSON 中为空。历史 `class_counts` 也包含非标准值，不能作语义统计。该限制不改变 row count、source/evidence/path/commit/SHA 或 basis 比较；本 Task 不修历史脚本，Review 时需将其作为 inventory limitation 核查。
 - 上游 `FEA-15-PIN-EOL-GOV-1` 的 checkout 矩阵记录 4 种样本 × 3 个 Windows checkout，共 12 条观察：head blob 12/12 匹配，pin 结果 7 PASS / 5 FAIL。样本结果只表示测量，不等于历史 pin 的有效性裁决。
 
 ## 提案一：新 pin 默认基准与文本/二元规则
@@ -39,6 +40,7 @@
 - Linux fresh clone 的全量表现未测；当前矩阵只覆盖 Windows `core.autocrlf=true/false`。
 - 573 个异常类行尚未逐行判定根因；47 个仓外路径不可用，不能从本机工作区推定其内容。
 - 当前 Task/模板/checker 没有 basis 字段；实施前需由 ZCode 明确接受字段名、外部值域与旧格式兼容规则。
+- Inventory 的 legacy `class` 列在非标准表头下不完整；如果后续方案需要依赖证据 class 作处置条件，应先修复/替代解析器并独立复算，不能从当前 `class_counts` 推出全集构成。
 
 ### 反证条件
 

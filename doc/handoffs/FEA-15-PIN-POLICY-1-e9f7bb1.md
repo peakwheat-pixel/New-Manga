@@ -31,7 +31,7 @@ status: draft_pending_review
 
 | AC | 交付 / 实际状态 |
 |---|---|
-| AC1 | `pin-inventory.json` 盘点 5,376 行（585 Task cards / 5,358 Task pins / 18 frozen records）。对 baseline `948d73e0629869e560df9a2b2d8a357cec67027f` 增量 `+26 / -0 / changed 0`；basis delta 为 `WORKTREE +16`、`MIXED +10`，573 个异常类观察未增加。`pin-basis-ruling.md` 提议新仓库证据默认 exact `BLOB`、既有记录保留、r194 对 legacy 继续双基准、R-001 移交。**PARTIAL：等待 ZCode 独立 Review 与最终裁定，不能当作已批准 policy。** |
+| AC1 | `pin-inventory.json` 盘点 5,376 行（585 Task cards / 5,358 Task pins / 18 frozen records）。对 baseline `948d73e0629869e560df9a2b2d8a357cec67027f` 增量 `+26 / -0 / changed 0`；basis delta 为 `WORKTREE +16`、`MIXED +10`，573 个异常类观察未增加。`pin-basis-ruling.md` 提议新仓库证据默认 exact `BLOB`、既有记录保留、r194 对 legacy 继续双基准、R-001 移交。Inventory 的 legacy `class` parser 无法捕获当前括号表头，两个 release row 的 `class` 为空；此列不参与 row identity/SHA/basis，不能用 `class_counts` 作语义统计。**PARTIAL：等待 ZCode 独立 Review 与最终裁定，不能当作已批准 policy。** |
 | AC2 | `pin-basis-impact-plan.md` 登记 5,376-row universe、hash predicate 模型、四种边界样本、未来 checker/template Task 草案、隔离 clone dry-run 与回退方案。模型为 `4,803` 行 predicate match / `573` 行 nonpass observations，**不是**逐行运行 checker。dry-run 明确 `NOT_RUN`。 |
 | AC3 | 在 delivery HEAD 实测并记录 default、current TaskPath、prior TaskPath、18 pins、API gates；全部 EXIT 0。Handoff 本文已形成；Canonical Evidence pinbackfill、独立 Review、ZCode 最终 adjudication 待完成。 |
 
@@ -57,7 +57,7 @@ status: draft_pending_review
 
 ## 复现方式
 
-检查 delivery snapshot 时应使用 `git checkout e9f7bb1b48c885cb329848d2d3591e145ff3d229` 后运行：
+如需重新生成 delivery snapshot，请在独立只读 checkout/worktree 固定到 `e9f7bb1b48c885cb329848d2d3591e145ff3d229`，不要改变当前主工作树；运行：
 
 ```powershell
 python verification/FEA-15-PIN-POLICY-1/pin_inventory.py
@@ -89,5 +89,6 @@ python tools/generate_api_inventory.py --check
 ## 风险与遗留
 
 - 573 个异常类是生成器观察，不是 corruption 或迁移清单；160 inconsistent 的成因仍未知。
+- Inventory 的 legacy `class` 辅助列解析不完整；row count、source/evidence/path/commit/SHA 与 basis matrix 不受影响。不要用 `class_counts` 作策略依据；本 Task 未修改冻结的旧 parser。
 - R-001 提案为 open/non-blocking P2 并转交 basis metadata/enforcement 后续 Task；旧 hash 保持不动。最终处置以 ZCode adjudication 为准。
 - 本 Task 没有实施任何 checker、模板或产品变更；完成裁定不自动授权历史迁移或全局 EOL 修改。

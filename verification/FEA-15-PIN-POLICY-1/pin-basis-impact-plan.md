@@ -36,6 +36,8 @@ delivery snapshot 基础分类（互斥，单位为 pin 行而非文件）：
 
 The exception subtotal is `160 + 293 + 68 + 47 + 3 + 2 = 573`; it must not be added again as a separate basis class. Current inventory also reports 4,758 unique repository paths, 4,664 present, with worktree pin-row EOL profiles `BINARY=453`, `CRLF=3,115`, `LF=1,298`, `MIXED_EOL=198`, `MISSING=145`, `NO_EOL=167`. EOL profile counts are a different dimension from the mutually exclusive basis rows; `MISSING` EOL profile does not mean the 3 `basis=MISSING` rows.
 
+Inventory limitation: its auxiliary `class` parser only captures a header that normalizes exactly to `class`. The current Task header `class (CANONICAL / SOURCE_PIN)` is not captured; both current Task release rows therefore have blank class values, and historical `class_counts` contains nonstandard values. This does not alter row counts, `source_file`/`evidence_id`/path/commit/SHA, `basis`, or the r194 predicate. Do not use `class_counts` for policy or disposition; a future Task that needs class semantics must repair/replace the parser and remeasure independently. The frozen source generator was not modified in this Task.
+
 ### r194 预变更匹配矩阵
 
 按当前 r194 的 SHA 谓词（工作区匹配 **或** 可用 commit blob 匹配）套用 delivery inventory 的观测值，模型为：`MATCH_BOTH=1,009`、`MATCH_WORKTREE_ONLY=3,467`、`MATCH_BLOB_ONLY=327`，合计 4,803 行命中 predicate；其余 573 行未形成可通过匹配，其中 `NO_PIN=293`，`PIN_PRESENT_NO_MATCH_OR_UNAVAILABLE=280`。逐行样本、运行时间与 hash 比对见 [`pin_r194_matrix.py`](pin_r194_matrix.py)、`pin-r194-baseline-matrix.json` 和 run log。
