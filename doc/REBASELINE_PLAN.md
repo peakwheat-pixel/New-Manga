@@ -51,13 +51,14 @@
 |FEA-15-ACCEPT-1|FEA-14-AI-1|**closed_with_limitations**（失败与 NOT_RUN 保留）|
 |FEA-15-DIAG-ACL-1 / FEA-15-PIN-EOL-GOV-1|FEA-15-ACCEPT-1|closed_with_limitations / done|
 |FEA-15-PIN-POLICY-1|FEA-15-PIN-EOL-GOV-1|done（ZCode 2026-11-11 最终 adjudication；治理层 BLOB 默认；历史 pin 不迁移）|
+|GOV-CHECKER-NOTASK-1|FEA-15-PIN-POLICY-1|ready；先核验基线|
 |NEW-MANGA-V1-FULL-AUDIT|—|blocked（素材不传播；resume=in_progress）|
 ## 当前活动程序
-READY 节点：无；ACTIVE：无；REVIEW：无
+READY 节点：GOV-CHECKER-NOTASK-1；ACTIVE：无；REVIEW：无
 ## 历史快照（终态节点，非当前 DAG）
 
 终态约束（明细见 [TASK_LEDGER](TASK_LEDGER.md)）：
 - WORKSPACE-CONSOLIDATION-1：closed_with_limitations（r212），18 项受保护资源；不得清理/GC/prune。
 - WORKSPACE-CLEANUP-TOOL-HARDENING-1 done（`368c07809`）；DECLARATION-REMEDIATION-1 done（`bb7887442`），残余 fail-closed；不因工具修复获得删除授权。
 - 冻结 DAG 完整源：`fdca2057e:doc/REBASELINE_PLAN.md`（SHA-256 `1d2c83431273512787e58037260f1b27a2a0c3dab01e921e167fd6b51cf16ed7`）。
-- 当前治理主线 `main`；2026-11-06 用户「全部授权」后，门禁全过时 `git push origin main` 已执行（`b1c1f5a5→57f62b3f`），后续 push 仍以门禁全过与用户授权为前提。
+- 主线 `main`；2026-11-06 push `b1c1f5a5→57f62b3f`；后续 push 须门禁全过与用户授权。
