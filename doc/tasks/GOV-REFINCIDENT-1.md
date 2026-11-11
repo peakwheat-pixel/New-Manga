@@ -7,7 +7,7 @@ status: in_progress
 approval: ZCode session sess_84bc17dc-2b59-4dac-b4ba-46768d80fd97；doc/reviews/GOV-REFINCIDENT-1-zcode-release-2026-11-11.md
 suggested_owner: codex
 owner: codex
-reviewer: 独立 ZCode 会话（未参与实现，session 待指派）
+reviewer: ZCode 独立会话 sess_f5cc4af4-be6c-451d-9fad-4a68c4d460f7（未参与实现）
 depends_on:
   - GOV-CHECKER-NOTASK-1
 base_commit: fa5e58e3fdbd2b53453e55104a7b002d4e57d518
@@ -39,7 +39,7 @@ allowed_paths:
 - [x] **AC1 事故入册与证据固化**：原始 incident 文件按 R2 在仓内保全原字节，BLOB SHA 与仓外一致；结构化时间线区分日志声称和复核；事故目录既有文件前后文件集和 SHA 一致，关键副本逐项比较，无法读取项记 NOT_RUN。 <<MET>>
 - [x] **AC2 只读取证与环境枚举**：限定范围枚举 Git 版本/config/hook、系统事件、G: USN、相关进程和 dangling 对象；逐项命令、时间、EXIT 或 NOT_RUN；分析 NUL 模式与 loose ref 写入机制且不预设根因。 <<MET>>
 - [x] **AC3 假设与恢复建议**：记录假设、支持和反对证据、可复核性及置信度，允许 UNKNOWN；复发监测建议标未实施，记录事故原件与演练恢复前置。 <<MET>>
-- [ ] **AC4 治理收口**：四项门禁、Task/STATUS/Plan/Ledger、独立 Review、不同独立 ZCode 终裁和资源 closeout 完成，关闭后空窗 default 复验；R-001 保持 open P2。 <<PARTIAL: 尚未执行收口>>
+- [ ] **AC4 治理收口**：四项门禁、Task/STATUS/Plan/Ledger、独立 Review、不同独立 ZCode 终裁和资源 closeout 完成，关闭后空窗 default 复验；R-001 保持 open P2。 <<PARTIAL: 交付门禁与独立 Review 完成；终裁和收口复验未完成>>
 
 ## 允许修改范围
 
@@ -55,7 +55,7 @@ allowed_paths:
 |---|---|---|---|---|
 | AC1 | 复算前后文件集、原件/副本 hash，校验 commit BLOB | Windows；保留事故目录 | 44/44 一致；8/8 关键 hash OK；原件与 BLOB SHA 相同；R2 精确 rm+checkout NOT_RUN，替代 checkout-index 和 fresh clone 已测 | `incident-record.md`、仓外 investigation |
 | AC2/AC3 | 限定事件/环境只读查询，假设分层 | 权限不足项不得提权 | System 查询 EXIT 0；USN query/read NOT_RUN（非管理员）；根因 UNKNOWN | `incident-record.md`、`hypotheses.md`、`recurrence.md` |
-| AC4 | default、TaskPath、pins、API；独立 Review/终裁 | clean 交付 HEAD `9740b6d` | 四项 EXIT 0；Review、终裁、收口空窗复验 NOT_RUN | `delivery-gates-9740b6d.log` |
+| AC4 | default、TaskPath、pins、API；独立 Review/终裁 | clean 交付 HEAD `9740b6d` | 四项 EXIT 0；独立 Review ACCEPT；终裁和收口空窗复验 NOT_RUN | `delivery-gates-9740b6d.log`、Review |
 
 ## 依赖、风险与阻塞
 
@@ -64,7 +64,7 @@ allowed_paths:
 ## 交付与运行记录
 
 - ZCode release session `sess_84bc17dc-2b59-4dac-b4ba-46768d80fd97`；R2 隔离预演见仓外 `investigation/rehearsal-crlf/run.log`。
-- Handoff：`doc/handoffs/GOV-REFINCIDENT-1-9740b6d.md`；Review 尚无。执行结果区分日志声称、已复核和 NOT_RUN。
+- Handoff：`doc/handoffs/GOV-REFINCIDENT-1-9740b6d.md`；独立 Review：`doc/reviews/GOV-REFINCIDENT-1-zcode-review-2026-11-11.md`，session `sess_f5cc4af4-be6c-451d-9fad-4a68c4d460f7`，reviewed HEAD `3cc94ea7066e3ee4a7845fec533a20366a6235b6`，ACCEPT；P3-1/P3-2 文档澄清提交 `1fa6677f740a99826f2044c64d8baaec82a32f0d`，待 Integrator 处置。执行结果区分日志声称、已复核和 NOT_RUN。
 
 ## Canonical Evidence
 
@@ -72,7 +72,7 @@ allowed_paths:
 |---|---|---|---|---|---|
 | release | 任务释放及 R2 字节裁决 | doc/reviews/GOV-REFINCIDENT-1-zcode-release-2026-11-11.md | ee3f0ace6a50bc05d36fc1cf951cb199ceca121e | 55e2ba6ddaae3fe316605a82b4fac2bd94cc1e86a0b2b2ad952d809ff2232b7d | CANONICAL |
 | incident-original | AC1 原字节事故记录 | verification/GOV-REFINCIDENT-1/incident.txt | 48c250fa6b8ae7cf2332944dae5be10c3c1d1c83 | 72456c6d002a6799e483221c7c1b9df69723a64faa18c9868e355cae86f53970 | CANONICAL |
-| incident-record | AC1/AC2 时间线与来源 | verification/GOV-REFINCIDENT-1/incident-record.md | 9740b6de6ff8b532ab9f43543c92f63c2e9983a1 | 10f6d67683b2035ef0550f040c36d7da2306b50a254d80d1d1cc323dd0320a83 | CANONICAL |
+| incident-record | AC1/AC2 时间线与来源 | verification/GOV-REFINCIDENT-1/incident-record.md | 1fa6677f740a99826f2044c64d8baaec82a32f0d | 650b618d13948515bbe4dd6559233a2cea918cb693b71bf0723c1956dd8c6139 | CANONICAL |
 | nul-analysis | AC2 NUL 模式分析 | verification/GOV-REFINCIDENT-1/nul-pattern-analysis.md | b565218c828df982ad151d5a9370909d5d1937cb | a9e1ec730a0bd9024779a7c972580c28ab5f0aa89ae7ccd05abc99a6cf28a01c | CANONICAL |
 | hypotheses | AC3 假设及证据等级 | verification/GOV-REFINCIDENT-1/hypotheses.md | b565218c828df982ad151d5a9370909d5d1937cb | 4ab9b1fd58124258820950c4722ba5642381a8c3f0a4322ee15c4476bad57537 | CANONICAL |
 | recurrence | AC3 未实施建议 | verification/GOV-REFINCIDENT-1/recurrence.md | b565218c828df982ad151d5a9370909d5d1937cb | 9daf69910461574c36e294087976c19a14ea4d9657ea2558226e9597d2123c24 | CANONICAL |
@@ -80,6 +80,7 @@ allowed_paths:
 | resources | 资源清单 | verification/GOV-REFINCIDENT-1/resource-manifest.md | 9740b6de6ff8b532ab9f43543c92f63c2e9983a1 | ce205870ed9baad067eced366007da0ff7955696ddf2b17f7a8e14471e48151f | SOURCE_PIN |
 | delivery-gates | AC4 活动状态交付门禁 | verification/GOV-REFINCIDENT-1/delivery-gates-9740b6d.log | df5a104156550e6422e8ea97947038ddddc53c92 | 2c244ac420728c8422b031fe6c24d8824a9cc418c35b71248c31c6b90b234808 | CANONICAL |
 | handoff | 交付与限制 | doc/handoffs/GOV-REFINCIDENT-1-9740b6d.md | df5a104156550e6422e8ea97947038ddddc53c92 | 89e7adbbf19f063c9e59b9791a493744b204668a1240a20568a16e41a57a54aa | CANONICAL |
+| review | 上下文独立 Review | doc/reviews/GOV-REFINCIDENT-1-zcode-review-2026-11-11.md | 12ddbcb968fedc203d69f1289fd23b8e6beacf5c | 8122cf24bcf61db687f11cca72d83460258a620c937ebd3c9f863f34f6ae313c | CANONICAL |
 
 ## Resource Manifest
 
