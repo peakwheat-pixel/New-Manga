@@ -174,3 +174,14 @@ Generated at main HEAD 211987767278dd730769bb592db990488e59a46c, process CWD G:/
 - python tools/generate_api_inventory.py --check: IReaderProgressSink 1 / IHostController 79 / IRunController 6 / total 86, EXIT=0.
 
 The full timestamped record is verification/FEA-15-PIN-BASIS-ENFORCE-1/main-post-ac4-release-card-gates-211987767.log. These governance gates validate the updated Task/STATUS/Plan; AC5 implementation and integration gates remain NOT_RUN. Next: cherry-pick the four authorized implementation commits and verify the four file blobs before running AC5 gates.
+
+## Post-AC4 Task pinbackfill gates at 6c5d0015 (preliminary working-tree run)
+
+Generated at `HEAD=6c5d0015f0dde91eb2b1418ee313aa760d6d30a0`. At execution time, the Task card Canonical Evidence pinbackfill was present as an uncommitted working-tree change; therefore this is retained as a preliminary run, not a clean committed-state gate record. The TaskPath check read the updated card and passed; a clean committed-state run is still required before integration.
+
+- Default governance check: PASS, 3 warnings, `EXIT=0`.
+- FEA-15 TaskPath check: PASS, 3 warnings, `EXIT=0`.
+- Frozen pins: 18/18, `EXIT=0`.
+- API inventory: 1/79/6 = 86, `EXIT=0`.
+
+Timestamped command/output log: `verification/FEA-15-PIN-BASIS-ENFORCE-1/main-post-ac4-card-pinbackfill-gates-6c5d0015.log`. Its generated HEAD and process output are preserved as observed; the working-tree qualification above is based on the contemporaneous Git status.
