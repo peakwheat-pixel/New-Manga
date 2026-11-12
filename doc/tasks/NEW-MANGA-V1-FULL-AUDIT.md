@@ -35,7 +35,7 @@ allowed_paths:
 - [x] AC1：固定Git/环境及有效源码清单，记录dirty和历史缺口。 <<MET>>
 - [ ] AC2：15项专项逐项有真实检查结果或具名阻断，关键链路深读与测试。 <<PARTIAL: AUDIT-00 limited PASS；AUDIT-01 FAIL/P2；AUDIT-02 BLOCKED；AUDIT-08 FAIL（有限合成批次 284 passed/0 skipped/EXIT 0；`SEG-B-PROBES-002` 重现）；AUDIT-11 阶段 FAIL；AUDIT-03–07、09–10、12–14 尚未完成。阶段报告、suite 映射与限制见 Canonical Evidence。既有总体结果仍独立记录：probes EXIT 1（2 项 Medium / High confidence，1 项 defense-verified）；Python Core pytest EXIT 1（3,519 passed / 16 failed / 10 skipped）；Avalonia .NET BLOCKED-TESTHOST-ACCESS（8/8 runner EXIT 1、TRX 0 tests）；smoke EXIT 1（Wire 6/6 PASS，Core 4 PASS / 7 BLOCKED-SANDBOX-GRANT，frontend/packaged SKIP）>>
 - [ ] AC3：完整日志、问题分级、整改路线、正式报告和Release Gate落盘。 <<PARTIAL: probes 分级、pytest 失败摘要、TestHost/sandbox 阻断、suite 映射及 AUDIT-00/01/02/08/11 阶段报告和日志已形成；全量去重问题/影响分析、整改计划、正式报告和 Release Gate 仍待完成>>
-- [ ] AC4：独立复核、证据pin和治理检查可核验；未满足不得置done。 <<PARTIAL: ZCode checkpoint review、AUDIT-01/02 与 AUDIT-11 Review 已记录；AUDIT-11 Review 为 ACCEPT（0 个 P0/P1/P2、1 个 P3 已披露）；AUDIT-08 首轮 Review `ACCEPT`（0 个 P0/P1/P2、2 个 P3），矩阵已修、两组门禁输出已 pin，修订 head follow-up Review 待完成；最终全审 Review、交付 HEAD 门禁和集成验证未完成>>
+- [ ] AC4：独立复核、证据pin和治理检查可核验；未满足不得置done。 <<PARTIAL: ZCode checkpoint review、AUDIT-01/02 与 AUDIT-11 Review 已记录；AUDIT-11 Review 为 ACCEPT（0 个 P0/P1/P2、1 个 P3 已披露）；AUDIT-08 首轮 Review `ACCEPT`（0 个 P0/P1/P2、2 个 P3），矩阵已修，三组 post-pinbackfill/修订文档门禁输出已 pin，原28条 AUDIT08 blob SHA-256 已独立复算通过；新增 pins 经 TaskPath 机械复核，修订 head follow-up Review 待完成；最终全审 Review、交付 HEAD 门禁和集成验证未完成>>
 
 ## 允许修改范围
 仅frontmatter所列。审计日志/测试脚本由主控单一写入。三名子代理只读同一固定产品HEAD，无并发写入。用户显式审计目录优先于常规verification路径；运行派生产物放相邻workspace task-env。
@@ -219,6 +219,12 @@ src/**、apps/**、原有tests/**、共享契约、Schema、依赖、真实用�
 | AUDIT08-REVIEWFIX-GATE-TASKPATH-1 | AC4（Review 修订文档 HEAD=`a932b756` 上 TaskPath check；3 warnings，EXIT 0） | `audit/V1-FULL-AUDIT/logs/audit08-review-fix-taskpath-20261113.log` | `b8f2ffaeb821e695f7df4e432db92e8d8ddb1f32` | `E1BD5B2B0A6B95BEDB270DE8200AF799B0598A02CA7674FA6516C0D30DE56BAB` | CANONICAL | BLOB |
 | AUDIT08-REVIEWFIX-GATE-PINS-1 | AC4（Review 修订文档 HEAD=`a932b756` 上 verify_pins；18/18，EXIT 0） | `audit/V1-FULL-AUDIT/logs/audit08-review-fix-pins-20261113.log` | `b8f2ffaeb821e695f7df4e432db92e8d8ddb1f32` | `B3C432DFB4F4F681487139B77E2872F1107F2E3CB5F9A84F6A085E740E63BB8A` | CANONICAL | BLOB |
 | AUDIT08-REVIEWFIX-GATE-API-1 | AC4（Review 修订文档 HEAD=`a932b756` 上 API inventory；1/79/6=86，EXIT 0） | `audit/V1-FULL-AUDIT/logs/audit08-review-fix-api-20261113.log` | `b8f2ffaeb821e695f7df4e432db92e8d8ddb1f32` | `240FEC74C461C37E5C3198688F483551FF9D667733E15639004D58A4E8D739C4` | CANONICAL | BLOB |
+| AUDIT08-FINAL-POSTPIN-GATE-DEFAULT-1 | AC4（post-pinbackfill HEAD=`25614d45` 上 default check；3 warnings，EXIT 0） | `audit/V1-FULL-AUDIT/logs/governance-segment-b-20261112T170326419984Z.log` | `bc2858ec223cb9e2b93153ee8144606f2844ddc5` | `48201768C6DFA254632C56DDC0A7E35E67890D08A72DA8AF53CF6769FAEA5902` | CANONICAL | BLOB |
+| AUDIT08-FINAL-POSTPIN-GATE-DEFAULT-RESULT-1 | AC4（final post-pinbackfill default command argv/generated HEAD/EXIT 元数据） | `audit/V1-FULL-AUDIT/evidence/governance-segment-b-20261112T170326419984Z.json` | `bc2858ec223cb9e2b93153ee8144606f2844ddc5` | `4B459BE567C502B8072C2FB6705BB180277034E8958587453EE118A079FA7EB2` | CANONICAL | BLOB |
+| AUDIT08-FINAL-POSTPIN-GATE-TASKPATH-1 | AC4（post-pinbackfill HEAD=`25614d45` 上 TaskPath check；3 warnings，EXIT 0） | `audit/V1-FULL-AUDIT/logs/audit08-final-pinbackfill-taskpath-20261113.log` | `bc2858ec223cb9e2b93153ee8144606f2844ddc5` | `CC9BC7962A58FAEBD74086CC35724C9E7A7B5AB754AA5132D42EBEAD362ED4F2` | CANONICAL | BLOB |
+| AUDIT08-FINAL-POSTPIN-GATE-PINS-1 | AC4（post-pinbackfill HEAD=`25614d45` 上 verify_pins；18/18，EXIT 0） | `audit/V1-FULL-AUDIT/logs/audit08-final-pinbackfill-pins-20261113.log` | `bc2858ec223cb9e2b93153ee8144606f2844ddc5` | `BB0E95942657627CBFF425B4CCA02670376FDBAAA84758870D25AEBBF64B83F5` | CANONICAL | BLOB |
+| AUDIT08-FINAL-POSTPIN-GATE-API-1 | AC4（post-pinbackfill HEAD=`25614d45` 上 API inventory；1/79/6=86，EXIT 0） | `audit/V1-FULL-AUDIT/logs/audit08-final-pinbackfill-api-20261113.log` | `bc2858ec223cb9e2b93153ee8144606f2844ddc5` | `93F2BC98C31E55DD1ABD398E1A8B84EBE154465B23581B79BAB170F962BE8C8A` | CANONICAL | BLOB |
+| AUDIT08-PIN-HASH-VERIFY-1 | AC4（28 条 AUDIT08 Canonical Evidence raw Git blob SHA-256 独立复算，PASS/EXIT 0） | `audit/V1-FULL-AUDIT/logs/audit08-canonical-pin-hash-verify-20261113.log` | `34de33eca5d47b75fc6a45315c6a794c2bcbb70a` | `51F1250B5B2724186E59B7AB820C310F41F3DA3110702200903F198B223B3A90` | CANONICAL | BLOB |
 
 说明：裁决文档中记录的阶段 0 日志 `B561…` 是提交前 WORKTREE SHA-256；本表按模板使用 Git BLOB 字节，完整 SHA-256 为 `7E2A…`。
 
@@ -233,7 +239,7 @@ src/**、apps/**、原有tests/**、共享契约、Schema、依赖、真实用�
 | exchange | — | NOT_APPLICABLE | — | — | 无外部传输 |
 
 ## Rolling checkpoint
-[audit/V1-FULL-AUDIT/AUDIT_RESUME.md](../../audit/V1-FULL-AUDIT/AUDIT_RESUME.md) 的 2026-11-13 检查点为当前恢复点。历史 `PASS_FOR_CHECKPOINT` 结论仍按各自 reviewed head 有效，不代表全审完成。当前：AUDIT-00 limited PASS；01 FAIL/P2；02 BLOCKED；08 FAIL（284 passed/0 skipped/EXIT 0 的有限隔离批次，`SEG-B-PROBES-002` 复现）；11 阶段 FAIL/Review ACCEPT；其余专项未完成。报告提交 HEAD=`80b326f0` 与修订文档 HEAD=`a932b756` 的四项门禁均 EXIT 0；pinbackfill HEAD=`0742a572` 后四项重跑均 EXIT 0，相关日志已在 Canonical Evidence pinbackfill 中记录。ZCode 对 `fb1f6086b` 首轮 AUDIT-08 Review `ACCEPT`，2 P3 已处置；后续需对修订 head follow-up Review。Task `in_progress`，AC2/AC3/AC4 与最终集成验证未完成；下一步按 DAG 审阅 AUDIT-05/06。
+[audit/V1-FULL-AUDIT/AUDIT_RESUME.md](../../audit/V1-FULL-AUDIT/AUDIT_RESUME.md) 的 2026-11-13 检查点为当前恢复点。历史 `PASS_FOR_CHECKPOINT` 结论仍按各自 reviewed head 有效，不代表全审完成。当前：AUDIT-00 limited PASS；01 FAIL/P2；02 BLOCKED；08 FAIL（284 passed/0 skipped/EXIT 0 的有限隔离批次，`SEG-B-PROBES-002` 复现）；11 阶段 FAIL/Review ACCEPT；其余专项未完成。报告提交 HEAD=`80b326f0` 与修订文档 HEAD=`a932b756` 的四项门禁均 EXIT 0；pinbackfill HEAD=`0742a572`、`25614d45` 后四项重跑均 EXIT 0，相关日志已在 Canonical Evidence 中记录。28 条 AUDIT08 raw blob SHA-256 已独立复算通过（见 hash-verify log）。ZCode 对 `fb1f6086b` 首轮 AUDIT-08 Review `ACCEPT`，2 P3 已处置；后续需对修订 head follow-up Review。Task `in_progress`，AC2/AC3/AC4 与最终集成验证未完成；下一步按 DAG 审阅 AUDIT-05/06。
 
 ## 2026-10-24 推送准备补充授权
 
