@@ -5,7 +5,7 @@
 - 3 个失败均来自 P16 reader export hook options 参数测试：ZIP override 返回 `standard` 而非 `store`；text override 返回 `txt` 而非 `json`；空 override 案例没有预期的 `hook_invoked` audit event。该测试未比较排版像素质量，候选 `AUDIT-07-CAND-001` 归属与级别待 ZCode 裁决；`AUDIT-07-CAND-002` 为用户字体 license_note 未验证的边界观察，待 ZCode 裁决。
 - 活动 Core 的 Pillow renderer 只扫描 Windows Fonts；FEA-14-FONT-1 明确把用户字体渲染消费留给 FONT-2。修复 learned routes 均静态标记 not_implemented；不宣称 LaMa 模型或真实修复质量通过。真实权重/GT/GUI/缩放/导出视觉对照/用户字体许可均 `NOT_RUN`。
 - `audit07-static-scope-20261112T205724Z` generated HEAD=`4daa7169752b8f9c85fd8f8a01e5660f98f10481`：产品源码/原有测试/依赖/合同相对 base diff EXIT 0；审计 out-of-scope=0；仓库已跟踪字体/模型资产各 0。详见 `logs/audit07-static-scope-20261112T205724Z.log` 与 JSON。
-- 全矩阵、限制、准确失败栈见 `reports/AUDIT-07-REPAIR-TYPESET-EXPORT-2026-11-13.md`。阶段证据提交 `46fd59e67b5369637946ecae3af670341a6ad75d` 后已复跑门禁：default/TaskPath 各 EXIT 0（各 3 warnings）、18 pins EXIT 0（18/18）、API inventory EXIT 0（1/79/6=86）；日志与 JSON 路径见 `AUDIT_EVIDENCE_INDEX.md`，其门禁证据提交及 Task card pinbackfill 仍待完成。独立 Review 待审计交付后由 ZCode fresh context 执行。下一项按 DAG 执行 AUDIT-09；全 Task AC2/AC3/AC4 仍 PARTIAL、Release Gate BLOCKED。
+- 全矩阵、限制、准确失败栈见 `reports/AUDIT-07-REPAIR-TYPESET-EXPORT-2026-11-13.md`。阶段证据提交 `46fd59e67b5369637946ecae3af670341a6ad75d` 后 default/TaskPath/pins/API 全部 EXIT 0；Task 卡与台账 pinbackfill 于 `27b16028168d1e86987dff7e968f9147b614d34c` 固定。该 HEAD 上的 post-pinbackfill default/TaskPath 各 EXIT 0（各 3 warnings）、18 pins EXIT 0（18/18）、API inventory EXIT 0（1/79/6=86）；四份日志和 JSON 路径见 `AUDIT_EVIDENCE_INDEX.md`，待下次卡面 pinbackfill 纳入 Canonical Evidence。独立 Review 待全审交付后由 ZCode fresh context 执行。下一项按 DAG 执行 AUDIT-09；全 Task AC2/AC3/AC4 仍 PARTIAL、Release Gate BLOCKED。
 
 ## 2026-11-13 AUDIT-04 OCR 与文本检测检查点
 
