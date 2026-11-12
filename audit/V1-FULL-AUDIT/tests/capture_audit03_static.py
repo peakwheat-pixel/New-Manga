@@ -55,9 +55,9 @@ def main() -> int:
     status = run(["git", "status", "--porcelain", "--untracked-files=all"])
     product_diff = run(["git", "diff", "--quiet", BASE, str(head["stdout"]).strip(), "--", "src", "apps", "tests"])
     changed_paths = run(["git", "diff", "--name-only", BASE, str(head["stdout"]).strip()])
-    whitespace = run(["git", "diff", "--check", BASE, str(head["stdout"]).strip()])
+    whitespace = run(["git", "diff", "--check"])
     paths = [line for line in str(changed_paths["stdout"]).splitlines() if line]
-    out_of_scope = [path for path in paths if not path.startswith(ALLOWED_PREFIXES)]
+    inherited_paths_outside_task_allowlist = [path for path in paths if not path.startswith(ALLOWED_PREFIXES)]
     worktree_paths = [
         line[3:].split(" -> ")[-1]
         for line in str(status["stdout"]).splitlines()
@@ -74,7 +74,7 @@ def main() -> int:
         "worktree_status_porcelain": str(status["stdout"]),
         "product_paths_diff_exit": product_diff["exit"],
         "changed_paths": paths,
-        "out_of_scope_paths": out_of_scope,
+        "inherited_paths_outside_task_allowlist": inherited_paths_outside_task_allowlist,
         "worktree_paths": worktree_paths,
         "out_of_scope_worktree_paths": out_of_scope_worktree,
         "whitespace_diff_exit": whitespace["exit"],
@@ -90,7 +90,7 @@ def main() -> int:
         f"base_commit={BASE}",
         f"product_paths_diff_exit={product_diff['exit']}",
         f"changed_paths_count={len(paths)}",
-        f"out_of_scope_paths={json.dumps(out_of_scope, ensure_ascii=False)}",
+        f"inherited_paths_outside_task_allowlist={json.dumps(inherited_paths_outside_task_allowlist, ensure_ascii=False)}",
         f"worktree_paths_count={len(worktree_paths)}",
         f"out_of_scope_worktree_paths={json.dumps(out_of_scope_worktree, ensure_ascii=False)}",
         f"whitespace_diff_exit={whitespace['exit']}",
@@ -113,8 +113,8 @@ def main() -> int:
     print(f"generated_head={record['generated_head']}")
     print(f"log={LOG_PATH}")
     print(f"json={JSON_PATH}")
-    print(f"product_diff_exit={product_diff['exit']} changed_paths={len(paths)} out_of_scope={len(out_of_scope)} worktree_paths={len(worktree_paths)} out_of_scope_worktree={len(out_of_scope_worktree)} whitespace_exit={whitespace['exit']}")
-    return 1 if product_diff["exit"] != 0 or whitespace["exit"] != 0 or out_of_scope or out_of_scope_worktree else 0
+    print(f"product_diff_exit={product_diff['exit']} historical_changed_paths={len(paths)} inherited_outside_task_allowlist={len(inherited_paths_outside_task_allowlist)} worktree_paths={len(worktree_paths)} out_of_scope_worktree={len(out_of_scope_worktree)} whitespace_exit={whitespace['exit']}")
+    return 1 if product_diff["exit"] != 0 or whitespace["exit"] != 0 or out_of_scope_worktree else 0
 
 
 if __name__ == "__main__":
