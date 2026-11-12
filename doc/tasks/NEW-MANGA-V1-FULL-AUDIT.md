@@ -35,7 +35,7 @@ allowed_paths:
 - [x] AC1：固定Git/环境及有效源码清单，记录dirty和历史缺口。 <<MET>>
 - [ ] AC2：15项专项逐项有真实检查结果或具名阻断，关键链路深读与测试。 <<PARTIAL: AUDIT-00 limited PASS；AUDIT-01 FAIL/P2；AUDIT-02 BLOCKED；AUDIT-08 FAIL（有限合成批次 284 passed/0 skipped/EXIT 0；`SEG-B-PROBES-002` 重现）；AUDIT-11 阶段 FAIL；AUDIT-03–07、09–10、12–14 尚未完成。阶段报告、suite 映射与限制见 Canonical Evidence。既有总体结果仍独立记录：probes EXIT 1（2 项 Medium / High confidence，1 项 defense-verified）；Python Core pytest EXIT 1（3,519 passed / 16 failed / 10 skipped）；Avalonia .NET BLOCKED-TESTHOST-ACCESS（8/8 runner EXIT 1、TRX 0 tests）；smoke EXIT 1（Wire 6/6 PASS，Core 4 PASS / 7 BLOCKED-SANDBOX-GRANT，frontend/packaged SKIP）>>
 - [ ] AC3：完整日志、问题分级、整改路线、正式报告和Release Gate落盘。 <<PARTIAL: probes 分级、pytest 失败摘要、TestHost/sandbox 阻断、suite 映射及 AUDIT-00/01/02/08/11 阶段报告和日志已形成；全量去重问题/影响分析、整改计划、正式报告和 Release Gate 仍待完成>>
-- [ ] AC4：独立复核、证据pin和治理检查可核验；未满足不得置done。 <<PARTIAL: ZCode checkpoint review、AUDIT-01/02 与 AUDIT-11 Review 已记录；AUDIT-11 Review 为 ACCEPT（0 个 P0/P1/P2、1 个 P3 已披露）；AUDIT-08 独立 Review、最终全审 Review、最终交付 HEAD 门禁和集成验证未完成>>
+- [ ] AC4：独立复核、证据pin和治理检查可核验；未满足不得置done。 <<PARTIAL: ZCode checkpoint review、AUDIT-01/02 与 AUDIT-11 Review 已记录；AUDIT-11 Review 为 ACCEPT（0 个 P0/P1/P2、1 个 P3 已披露）；AUDIT-08 首轮 Review `ACCEPT`（0 个 P0/P1/P2、2 个 P3），报告矩阵已修，post-pinbackfill 门禁 pinbackfill 与 follow-up Review 待完成；最终全审 Review、交付 HEAD 门禁和集成验证未完成>>
 
 ## 允许修改范围
 仅frontmatter所列。审计日志/测试脚本由主控单一写入。三名子代理只读同一固定产品HEAD，无并发写入。用户显式审计目录优先于常规verification路径；运行派生产物放相邻workspace task-env。
@@ -220,7 +220,7 @@ src/**、apps/**、原有tests/**、共享契约、Schema、依赖、真实用�
 | exchange | — | NOT_APPLICABLE | — | — | 无外部传输 |
 
 ## Rolling checkpoint
-[audit/V1-FULL-AUDIT/AUDIT_RESUME.md](../../audit/V1-FULL-AUDIT/AUDIT_RESUME.md) 的 2026-11-13 检查点为当前恢复点。历史 `PASS_FOR_CHECKPOINT` 结论仍按各自 reviewed head 有效，不代表全审完成。当前：AUDIT-00 limited PASS；01 FAIL/P2；02 BLOCKED；08 FAIL（284 passed/0 skipped/EXIT 0 的有限隔离批次，`SEG-B-PROBES-002` 复现）；11 阶段 FAIL/Review ACCEPT；其余专项未完成。报告提交 HEAD=`80b326f0` 的四项门禁均 EXIT 0（各 check 3 warnings、pins 18/18、API 1/79/6=86），输出由 `94cdcd58` 固定并纳入 pins；pinbackfill HEAD=`0742a572` 后四项重跑均 EXIT 0（同样各 3 warnings、18/18、1/79/6=86），详见 post-pinbackfill logs。Task `in_progress`，AC2/AC3/AC4 与最终集成验证未完成；下一步按 DAG 审阅 AUDIT-05/06。
+[audit/V1-FULL-AUDIT/AUDIT_RESUME.md](../../audit/V1-FULL-AUDIT/AUDIT_RESUME.md) 的 2026-11-13 检查点为当前恢复点。历史 `PASS_FOR_CHECKPOINT` 结论仍按各自 reviewed head 有效，不代表全审完成。当前：AUDIT-00 limited PASS；01 FAIL/P2；02 BLOCKED；08 FAIL（284 passed/0 skipped/EXIT 0 的有限隔离批次，`SEG-B-PROBES-002` 复现）；11 阶段 FAIL/Review ACCEPT；其余专项未完成。报告提交 HEAD=`80b326f0` 的四项门禁均 EXIT 0；pinbackfill HEAD=`0742a572` 后四项重跑均 EXIT 0。ZCode 对 `fb1f6086b` 首轮 AUDIT-08 Review `ACCEPT`，2 P3 已处理矩阵映射、正在补门禁 pins；后续需对修订 head follow-up Review。Task `in_progress`，AC2/AC3/AC4 与最终集成验证未完成；下一步按 DAG 审阅 AUDIT-05/06。
 
 ## 2026-10-24 推送准备补充授权
 

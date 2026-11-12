@@ -14,13 +14,20 @@
 
 | 检查面 | 证据与观察 | 结论边界 |
 |---|---|---|
-| Schema、migration、升级兼容 | `tests/storage/test_upgrade_schema_data.py` 为历史 schema v1–v13 构造合成库并升级至当前 v14，检查数据保留及 schema 版本；v1–v11 冻结迁移未改。`tests/storage`、`tests/infrastructure/test_upgrade_legacy_layout.py`、`tests/fea09/test_v7_migration.py`、`tests/core/test_v9_migration.py` 纳入最终批次。 | 对代码所定义的合成旧库和被选用迁移路径为 PASS；没有真实历史用户库升级证据，不能外推到损坏或来源不明的 DB。 |
-| 外键、约束、完整性 | 合成并发/崩溃/路径探针检查 `PRAGMA integrity_check` 与 `PRAGMA foreign_key_check`；存储迁移测试检查关系及迁移后的数据。 | 被测 DB 检查通过；不代表所有约束及每种写路径均已独立验证。 |
-| 事务与并发读写 | `test_connection_ownership.py`（6 项）及合成探针验证共享 facade 的并发所有权；新增探针使用 2 个 writer 和 2 个 reader，写入 80 行并验证总行数及 DB 检查。迁移 runner 的既有事务/迁移测试也在批次中。 | 合成线程场景通过；未做压力、跨进程并发、锁超时边界或硬件故障注入。 |
-| 数据一致性、Revision、任务状态、项目与图片关系 | 迁移 fixture 覆盖 book/chapter/page、artifact/revision、pipeline/task 等代表性行，并跨旧版本升级检查行保留和外键。 | 只验证迁移期间的合成行保留；未覆盖运行时任务状态转换/重启，也未检查真实图像字节、可视内容或所有业务关系。 |
-| 关闭、意外退出与恢复 | 子进程提交一次更新后开始第二笔未提交事务并以 `os._exit(23)` 退出；父进程重新打开 DB，确认已提交值保留、未提交值回滚，并再次通过 integrity/FK 检查。 | 覆盖一种进程突然退出场景；不模拟断电、磁盘/控制器故障、杀毒锁文件或长时间 WAL 损坏。 |
-| 路径变化 | 合成 DB 正常关闭并 `wal_checkpoint(TRUNCATE)` 后移动主文件，再打开并核对版本和数据。 | 仅覆盖干净关闭后的文件移动；未覆盖应用级存储根迁移、WAL/SHM 同时活动时移动或实际 UI 流程。 |
-| 损坏风险 | 向隔离路径写入合成无效 SQLite 字节，`open_database` 抛 `sqlite3.DatabaseError`，文件字节 SHA-256 前后相同。 | 只证明这一无效文件被拒绝且没有被重初始化；不构成页面损坏、部分写入、恢复工具或真实损坏库的恢复测试。 |
+| Schema | 当前 `schema.py` 定义 v14；新探针创建并使用最新 schema。 | 静态与合成库覆盖当前定义；未针对真实用户 schema 做现场检查。 |
+| Migration | `tests/storage/test_upgrade_schema_data.py` 为 v1–v13 构造合成 DB 并逐段升级，检查 schema 版本与代表性数据保留；v1–v11 冻结迁移未改。 | 对仓库定义的合成旧库路径为有限 PASS；不代表任意历史 DB。 |
+| 外键及约束 | 合成并发/进程退出/移动探针执行 `PRAGMA integrity_check` 和 `PRAGMA foreign_key_check`；存储迁移测试检查关系。 | 被测路径通过；未穷尽所有表及约束组合。 |
+| 事务 | `tests/storage/test_schema_migration.py` 及存储 migration 批次覆盖迁移事务；`test_connection_ownership.py` 检查 thread-routed facade 的隔离。 | 被测迁移和 facade 用例通过；未做所有异常点故障注入。 |
+| 并发读写 | `test_connection_ownership.py` 6 项；新增 probe 用 2 个 writer、2 个 reader 并发运行，写入 80 行并校验行数和完整性。 | 合成线程场景通过；未做压力、跨进程并发、锁超时边界或硬件故障注入。 |
+| 数据一致性 | 迁移 fixture 对不同 schema 起点的代表性记录做保留检查。 | 只覆盖被 fixture 构造的数据；没有真实库级一致性盘点。 |
+| Revision 历史 | migration fixture 含 `artifact_revisions` / `region_revisions` 等关系行并检查迁移后数据。 | 检查合成迁移保留；未验证真实历史内容、revision pin 或运行时全部转换。 |
+| 任务状态 | migration fixture 包含 pipeline/task 行并检查旧库升级后的行保留。 | 只验证迁移保留；运行时状态转换、重启恢复未测。 |
+| 项目与图片关联 | fixture 覆盖 book/chapter/page、media artifact/revision 外键关系。 | 只验证合成行及外键；没有读真实图像字节、视觉内容或全量业务关系。 |
+| 数据库关闭 | 存储 / nmbak startup backup / restore-plan 与新探针纳入最终批次；新路径探针正常关闭连接后重开。 | 只覆盖选定关闭/重开路径；无长时运行或 OS 资源故障测试。 |
+| 路径变化 | 合成 DB `wal_checkpoint(TRUNCATE)` 并关闭后移动主文件，重开核对版本和数据。 | 未覆盖应用级存储根迁移、WAL/SHM 活跃时移动或真实 UI 流程。 |
+| 异常中断 | `tests/core/test_connection_ownership.py::test_interleaved_commit_cannot_orphan_a_revision` 与 `::test_writer_success_survives_the_other_threads_rollback` 在事件同步的并发事务中覆盖 error-path `rollback()`，检测中断交错后的行/Revision 状态。 | 有限覆盖显式 rollback 错误路径；没有在每类业务事务内逐点注入 Python exception 或磁盘异常。 |
+| 意外退出后的恢复 | 子进程提交一次更新，再打开未提交事务并以 `os._exit(23)` 退出；父进程重开后确认已提交值保留、未提交值回滚并通过 integrity/FK 检查。 | 覆盖一种进程突然退出；不模拟断电、控制器故障或长时间 WAL 损坏。 |
+| 数据库损坏风险 | 合成无效 SQLite 字节使 `open_database` 抛 `sqlite3.DatabaseError`，前后字节 SHA-256 相同。 | 只证明无效字节被拒绝且未重初始化，不是页损坏、部分写、恢复工具或真实损坏 DB 的恢复测试。 |
 | restore 磁盘写失败 | `pytest-audit08-nmbak-failure-repro-20261113-03` 对 `test_nmbak_restore_disk_failure_leaves_changed_database_without_rollback_id` 重跑：1 passed / 2 deselected，EXIT 0；输出 `database_changed=true`、`typed_error=false`、`rollback_id_in_error=false`、`pre_restore_packages=1`。 | 测试通过表示预期 finding 被再次确认，不是产品 PASS。数据库已被恢复到备份状态后 managed 文件写入抛出未类型化 I/O 错误，错误未返回可用于回退的 backup ID。多文件部分写入仅为静态推断，本 probe 未演示。 |
 
 ## 执行证据
@@ -34,4 +41,4 @@
 
 - 未访问真实/用户数据库；未验证运行时任务生命周期、应用级路径迁移、真实损坏恢复、断电或硬件 I/O 故障、多文件部分写入和数据量/并发压力极限。
 - `SEG-B-PROBES-002` 仍为 Medium / High confidence，维持 `TRIAGED`。不在本审计 Task 内修改产品代码；修复应另行释放实现 Task，并在隔离环境验证失败原子性、类型化错误与 `pre_restore` rollback ID。
-- AUDIT-08 的独立交付 Review 尚待 ZCode 对固定审计提交 head 只读审查；本报告不自行签发 Review 或产品发布准入。
+- ZCode 首轮独立 Review 对 head `fb1f6086b6436f6c471d1bd52e97873588450813` 给出 `ACCEPT`（0 P0/P1/P2，2 P3）；矩阵已补列“异常中断”，post-pinbackfill 门禁输出将纳入 Canonical Evidence。此后需由 ZCode 对更新后的固定 head 做 follow-up Review；本报告不代表产品发布准入。
