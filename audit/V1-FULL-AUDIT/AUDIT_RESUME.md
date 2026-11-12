@@ -1,8 +1,16 @@
+## 2026-11-13 P7 ZCode 独立 Review 派发阻断
+
+- 待审固定 HEAD=`3c40eb5ce987cecc6c73cb8dec37fbdef9948538`，branch=`main`；ZCode 启动前确认该 HEAD 且工作树 clean。Task P7 交付文件与当前门禁已固定，无审查期间工作区变更。
+- 完整只读 Review 以 ZCode CLI `0.17.1`、`--mode plan --json --locale zh-CN` 派发，EXIT 1；stdout 0 bytes、无 response/sessionId。stderr 为 ProviderBusinessError `1310`，提示每周/月额度于 `2026-11-17 18:40:33` 重置。
+- 随后用 workspace 临时 provider 配置对已存在的 Team Coding Plan provider 做最小只读探测，仍 EXIT 1；CLI 实际解析到 `account:bigmodel-individual-coding-plan` 并返回相同 `1310`，无 response/sessionId。没有改动原始凭据或全局 provider 配置。
+- 可复核记录：`source/zcode-final-review-prompt-20261113.txt`、`logs/zcode-final-review-attempts-20261113.log`、`evidence/zcode-final-review-attempts-20261113.json` 及其引用的 stdout/stderr 原始文件。外部临时配置和原始派发回执保留于 `G:/CODEX/New Manga.workspace/task-envs/NEW-MANGA-V1-FULL-AUDIT/`、`agent-output/ZCode/NEW-MANGA-V1-FULL-AUDIT/`。
+- 该失败不构成 Review 或候选裁决。AC2/AC3/AC4 仍 PARTIAL，Task 仍 `in_progress`，Release Gate 仍 `BLOCKED`；下一步是在 ZCode provider 可用后，以届时 clean HEAD 重派独立 Review，并复核当前证据与门禁。无待处理的人工批准。
+
 ## 2026-11-13 P7 当前 pinbackfill 后门禁检查点
 
 - Task card pinbackfill HEAD=87ee1ea75aefac15a313767c64c149e286d3a8e8，branch=main。该提交后的 default / TaskPath / verify_pins / API 四项全部 EXIT 0：default 与 TaskPath 各 3 warnings；verify_pins 18/18；API inventory 1/79/6=86。
 - 原始输出与 JSON：logs/audit-post-evidence-87ee1ea7-default.log、evidence/audit-post-evidence-87ee1ea7-default.json；TaskPath、pins、API 同 stem 文件。该 batch 是当前 Task Card commit 后的 gate 结果；按 rolling pinbackfill 规则，Task Card 在本轮复核前的 Canonical Evidence 已固定至 a3a429cc batch，本批记录于本检查点供 ZCode 复核，后续 Task-card 更新再 pin。
-- 接下来将 evidence files 与本检查点固定，再以包含本批日志的 clean HEAD 委派给新的 ZCode CLI plan-mode 上下文做独立只读 Review 与候选 adjudication。Task 仍 in_progress；AC2/AC3/AC4 PARTIAL；Release Gate BLOCKED。
+- 该批后续 gate output 已固定。原计划的 ZCode CLI plan-mode 独立只读 Review 于 `3c40eb5c` 派发，但因 provider quota `1310` 无 response/sessionId；具体尝试和限制见本文件顶部。Task 仍 in_progress；AC2/AC3/AC4 PARTIAL；Release Gate BLOCKED。
 
 ## 2026-11-13 P7 final-pinbackfill gate batch
 

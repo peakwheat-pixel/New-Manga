@@ -1,0 +1,28 @@
+你是 New Manga 项目的独立 Reviewer，当前调用为全新 ZCode 上下文。请只读审查固定的仓库状态，不修改任何文件，不运行会写入、清理、安装、发布或访问外部系统的命令。
+
+审查身份与目标：
+- 仓库：G:\CODEX\New Manga，branch main。
+- 唯一审查 HEAD：3c40eb5ce987cecc6c73cb8dec37fbdef9948538。审查时先检查 git status 和 HEAD；若 HEAD 不同或工作树不 clean，停止并报告。
+- 审查对象：本 HEAD 中 NEW-MANGA-V1-FULL-AUDIT 的 P7 完整审计交付及治理证据。Task 卡、AUDIT_STATUS、AUDIT_PLAN、AUDIT_RESUME、AUDIT_EVIDENCE_INDEX、AUDIT_ISSUES、reports/11_ISSUES.md、reports/12_REMEDIATION_PLAN.md、reports/13_RELEASE_GATE.md、FINAL_AUDIT_REPORT.md、相关专项报告和证据 pin 都应交叉核对。
+- Task 范围是只读审计；不得修改 src/apps/既有 tests、契约、schema、依赖、远端、Git 历史、用户数据；本次 Review 也不得修改文件。
+- 不读取或查询远端，不访问/重建已删除的私有素材；AUDIT-11-INC-001 只能以已有本地证据为基础裁决其表达、严重度/状态及安全后续调查步骤，不得推断当前远端可见性。
+
+请独立核对并给出明确裁决：
+1. 交付文件是否自洽、引用和范围是否准确；AC1–AC4 现有状态是否和证据及具名 NOT_RUN/limitation 一致。
+2. Canonical Evidence 的 path/commit/sha256/class/sha256_basis 是否可核验，commit 是否确实包含对应 blob；门禁日志/元数据是否记录实际 generated HEAD 和 EXIT。重点看最新 rolling post-pinbackfill batch、Task 卡 pins 和本 HEAD 门禁记录。可用只读 Git 对象读取/哈希核验，不必重跑历史重型测试。
+3. 复核问题去重和计数：三个已 triage 产品 finding、AUDIT-11-INC-001、11 个 REVIEW_PENDING 候选、关闭的非产品观察；确认 P0–P3 计数边界、候选是否应升为 finding/accepted limitation/close、严重度或需求归属、R1–R4 次序。请逐一处置以下 11 个 ID：AUDIT-05-CAND-001、AUDIT-06-CAND-001、AUDIT-06-CAND-002、AUDIT-07-CAND-001、AUDIT-07-CAND-002、AUDIT-09-CAND-001、AUDIT-12-CAND-001、AUDIT-14-CAND-001、AUDIT-14-CAND-002、AUDIT-14-CAND-003、AUDIT-14-CAND-004。不得把待裁决候选说成已证实缺陷，也不得因未观察到就断言不存在。
+4. Release Gate 是否应保持 BLOCKED；当前未修复 findings、关键 NOT_RUN 和 AUDIT-11-INC-001 是否支持该结论。
+5. 给出 NEW-MANGA-V1-FULL-AUDIT 的审查结论：ACCEPT、ACCEPT_WITH_LIMITATIONS 或 REJECT；分别说明 AC2/AC3/AC4 是否可收口、是否还有必须返修的审计文档问题。不要宣告产品发布 PASS，也不要将未执行项目写成 PASS。
+
+输出请用简体中文，结构如下：
+- 审查身份和固定 HEAD / 工作树状态
+- 总结结论（枚举值）
+- 发现：按严重度排序，逐项列文件/证据和最小返修动作；若无，明确“无阻断性文档缺陷”
+- 11 个候选的逐项裁决表：ID、结论（finding / accepted limitation / close / investigate）、是否进入 P0–P3 计数、severity/priority（如不适用写 N/A）、依据、建议后续 Task/验证
+- AUDIT-11-INC-001 裁决（明确仍未知的事实）
+- P0–P3 和 finding 总计核验
+- R1–R4 次序意见
+- Release Gate 决定
+- AC1–AC4 与 Task 生命周期建议
+- 明确列出没有执行的检查及边界
+仅依据仓库内可核验资料；如果证据不足，结论写明 unknown 并给出最小、非破坏性的后续步骤。

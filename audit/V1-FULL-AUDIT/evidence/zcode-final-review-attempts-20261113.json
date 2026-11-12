@@ -1,0 +1,48 @@
+{
+  "schema": "zcode-final-review-attempts/v1",
+  "generated_at_utc": "2026-11-12T23:23:37.1930882+00:00",
+  "generated_head": "3c40eb5ce987cecc6c73cb8dec37fbdef9948538",
+  "branch": "main",
+  "cli": "node E:\\Program Files\\ZCode\\resources\\glm\\zcode.cjs",
+  "cli_version": "0.17.1",
+  "review_result": "NO_RESPONSE_NOT_A_REVIEW",
+  "attempts": [
+    {
+      "kind": "full_review",
+      "generated_at_utc": "11/13/2026 07:15:07",
+      "mode": "plan",
+      "locale": "zh-CN",
+      "exit": 1,
+      "session_id": null,
+      "prompt_path": "source/zcode-final-review-prompt-20261113.txt",
+      "prompt_sha256": "C5CDDF0DDC8F39DA2F9CCA8AF7A96E96775251AC296AEC7A9628F1694D048864",
+      "stdout_path": "evidence/zcode-final-review-full.stdout.json",
+      "stdout_bytes": 0,
+      "stdout_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "stderr_path": "logs/zcode-final-review-full.stderr.log",
+      "stderr_sha256": "24BFED812F225CDCED22FDB0C62531B25DA0FDA095FDAEDB60843BA050EE1F96",
+      "provider_id": "account:bigmodel-individual-coding-plan",
+      "provider_code": "1310",
+      "reset_message": "2026-11-17 18:40:33"
+    },
+    {
+      "kind": "minimal_provider_probe",
+      "generated_at_utc": "11/13/2026 07:19:34",
+      "mode": "plan",
+      "exit": 1,
+      "session_id": null,
+      "response": null,
+      "configured_provider": "account:bigmodel-team-coding-plan",
+      "model": "GLM-5.3-Flash",
+      "temporary_config_path": "G:\\CODEX\\New Manga.workspace\\task-envs\\NEW-MANGA-V1-FULL-AUDIT\\zcode-provider-config-team-plan.json",
+      "actual_provider_id": "account:bigmodel-individual-coding-plan",
+      "provider_code": "1310",
+      "stdout_path": "evidence/zcode-final-review-probe.stdout.json",
+      "stdout_bytes": 0,
+      "stdout_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+      "stderr_path": "logs/zcode-final-review-probe.stderr.log",
+      "stderr_sha256": "0AD3098DBBD7676E1DFC09B21767CD6CF3579E0EE881FB5D0B218794159AC229",
+      "reset_message": "2026-11-17 18:40:33"
+    }
+  ]
+}

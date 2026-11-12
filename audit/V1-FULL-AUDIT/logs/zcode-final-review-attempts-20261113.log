@@ -1,0 +1,40 @@
+ZCode independent final review dispatch attempts
+generated_at_utc=2026-11-12T23:23:37.1930882+00:00
+target_repository=G:\CODEX\New Manga
+branch=main
+generated_head=3c40eb5ce987cecc6c73cb8dec37fbdef9948538
+review_result=NO_RESPONSE; this file is not a Review or adjudication.
+CLI=node E:\Program Files\ZCode\resources\glm\zcode.cjs
+CLI_version=0.17.1
+
+Attempt 1: full read-only review
+mode=plan
+locale=zh-CN
+argv=--mode plan --json --locale zh-CN --cwd G:\CODEX\New Manga --prompt @source/zcode-final-review-prompt-20261113.txt
+generated_at_utc=11/13/2026 07:15:07
+exit=1
+session_id=none
+stdout_bytes=0
+stdout_sha256=E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855
+stderr_path=logs/zcode-final-review-full.stderr.log
+stderr_sha256=24BFED812F225CDCED22FDB0C62531B25DA0FDA095FDAEDB60843BA050EE1F96
+stderr_summary=ProviderBusinessError code 1310; weekly/monthly usage limit; reset stated as 2026-11-17 18:40:33; actual provider account:bigmodel-individual-coding-plan.
+
+Attempt 2: minimal read-only provider probe after first failure
+mode=plan
+locale=zh-CN
+configured_provider=account:bigmodel-team-coding-plan
+model=GLM-5.3-Flash
+temporary_personal_provider_config=G:\CODEX\New Manga.workspace\task-envs\NEW-MANGA-V1-FULL-AUDIT\zcode-provider-config-team-plan.json
+generated_at_utc=11/13/2026 07:19:34
+exit=1
+session_id=none
+response=none
+actual_provider_from_stderr=account:bigmodel-individual-coding-plan
+stdout_bytes=0
+stdout_sha256=E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855
+stderr_path=logs/zcode-final-review-probe.stderr.log
+stderr_sha256=0AD3098DBBD7676E1DFC09B21767CD6CF3579E0EE881FB5D0B218794159AC229
+stderr_summary=Same ProviderBusinessError code 1310 and reset time. No review content was generated.
+
+No source, product, contract, user data, remote, or Git history was changed by either ZCode invocation. The first CLI attempt and the probe both exited 1 before returning a session or response. A fresh-context independent Review remains pending.

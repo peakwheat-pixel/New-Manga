@@ -1,0 +1,63 @@
+ProviderBusinessError: [1310][您已达到每周/每月使用上限，您的限额将在 2026-11-17 18:40:33 重置。][20261113071506cb927ba231164d8a]
+    at detectProviderBusinessError (E:\Program Files\ZCode\resources\glm\zcode.cjs:2142:15021)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Object.fetch (E:\Program Files\ZCode\resources\glm\zcode.cjs:2142:13796)
+    at async E:\Program Files\ZCode\resources\glm\zcode.cjs:2122:3251
+    at async postToApi (E:\Program Files\ZCode\resources\glm\zcode.cjs:2092:22186)
+    at async m7s.doStream (E:\Program Files\ZCode\resources\glm\zcode.cjs:2093:51208)
+    at async fn (E:\Program Files\ZCode\resources\glm\zcode.cjs:2174:15517)
+    at async E:\Program Files\ZCode\resources\glm\zcode.cjs:2169:964
+    at async _retryWithExponentialBackoff (E:\Program Files\ZCode\resources\glm\zcode.cjs:2169:5143)
+    at async streamStep (E:\Program Files\ZCode\resources\glm\zcode.cjs:2174:14640) {
+  code: 'PROVIDER_BUSINESS_ERROR',
+  isProviderBusinessError: true,
+  providerCode: '1310',
+  providerId: 'account:bigmodel-individual-coding-plan',
+  providerKind: 'anthropic',
+  providerMessage: '[1310][您已达到每周/每月使用上限，您的限额将在 2026-11-17 18:40:33 重置。][20261113071506cb927ba231164d8a]',
+  providerRequestId: '20261113071506cb927ba231164d8a',
+  responseBodySummary: {
+    keys: [ 'type', 'error', 'request_id' ],
+    success: undefined,
+    code: undefined,
+    error_code: undefined,
+    msg: undefined,
+    message: undefined,
+    request_id: '20261113071506cb927ba231164d8a',
+    requestId: undefined,
+    error: {
+      keys: [Array],
+      code: '1310',
+      error_code: undefined,
+      msg: undefined,
+      message: '[1310][您已达到每周/每月使用上限，您的限额将在 2026-11-17 18:40:33 重置。][20261113071506cb927ba231164d8a]',
+      request_id: undefined,
+      requestId: undefined,
+      type: 'rate_limit_error'
+    }
+  },
+  responseHeaders: {
+    'anthropic-ratelimit-unified-status': 'rejected',
+    connection: 'keep-alive',
+    'content-type': 'application/json',
+    date: 'Thu, 12 Nov 2026 23:15:07 GMT',
+    eagleid: '3cbc7e9617945253067934784e',
+    'ga-traceid': 'c69ecf9365f109ab7c29a4d05657bc50',
+    'request-id': '20261113071506cb927ba231164d8a',
+    'retry-after': '386725',
+    server: 'ESA',
+    'set-cookie': 'acw_tc=ac10420417945253068363910e091b968d3ea0c8f6bcdce8595f9a390bccf2;path=/;HttpOnly;Max-Age=1800',
+    'timing-allow-origin': '*',
+    'transfer-encoding': 'chunked',
+    vary: 'Origin, Access-Control-Request-Method, Access-Control-Request-Headers, Origin, Access-Control-Request-Method, Access-Control-Request-Headers, Origin',
+    via: 'ens-cache3.l2eo166-17[250,0,DP], ens-cache2.cn9579[260,0,DP], ens-cache2.cn9579[263,0]',
+    'x-content-type-options': 'nosniff',
+    'x-log-id': '20261113071506cb927ba231164d8a',
+    'x-process-time': '0.159754',
+    'x-request-id': '20261112231506e90e3766467c78cbb6e6, 204b2103-6ea3-45bd-a3ea-04c3fe080118',
+    'x-site-cache-status': 'DYNAMIC'
+  },
+  responseStatus: 429,
+  statusCode: undefined
+}
+Error: Turn execution failed (traceId: 0545be17-a434-42ab-9be5-cb352f64138c)

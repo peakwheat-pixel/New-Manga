@@ -2,7 +2,7 @@
 
 ## 当前执行点（2026-11-13）
 
-AUDIT-00–14 均已有段 B 结果或具名限制，详见 AUDIT_TASKS.md 与专项报告。P7 编号交付册、去重台账、整改路线、BLOCKED Release Gate 和 FINAL_AUDIT_REPORT 已提交于 3fc756a1aed8ca366ac0b324ff293cc3e1f9ebb0。三批四项门禁均 EXIT 0；最新 pinbackfill 工作树 generated HEAD=c0665ff90408d78097e787bd53af63d96bb32ecf，输出提交于 4b91a2d7ff51e2ac6c05eef7c02a4640335fcf92。e72bf97816a33e50c8cff5968c198975c3faddbd 上 post-pinbackfill 四项门禁均 EXIT 0；a3a429cc955f12765253a14680e79bab2389dd89 上的 default/TaskPath/pins/API 均 EXIT 0，日志/JSON 见 AUDIT_RESUME.md。87ee1ea75aefac15a313767c64c149e286d3a8e8 的 post-pinbackfill default/TaskPath/pins/API 均 EXIT 0，原始证据见 AUDIT_RESUME.md。下一步固定该 gate batch 后，将完整交付 HEAD 交 ZCode fresh-context Review。Task 保持 in_progress，Release Gate 保持 BLOCKED。
+AUDIT-00–14 均已有段 B 结果或具名限制，详见 AUDIT_TASKS.md 与专项报告。P7 编号交付册、去重台账、整改路线、BLOCKED Release Gate 和 FINAL_AUDIT_REPORT 已提交于 3fc756a1aed8ca366ac0b324ff293cc3e1f9ebb0。最近三轮 post-pinbackfill default/TaskPath/pins/API 门禁均 EXIT 0，详情见 AUDIT_RESUME.md 与对应原始日志。当前 HEAD=3c40eb5ce987cecc6c73cb8dec37fbdef9948538 的门禁四项均 EXIT 0。ZCode fresh-context Review 已派发，但 CLI 两次均因 provider quota `1310` 在产生 session/response 前 EXIT 1；不得视作 Review 或 adjudication。provider reset 提示为 2026-11-17 18:40:33；届时或 ZCode provider 可用后，以届时 clean HEAD 重派 Review。Task 保持 in_progress，AC2/AC3/AC4 PARTIAL，Release Gate 保持 BLOCKED。
 
 P0: AUDIT-00 基线盘点 → P1: AUDIT-01/02 架构/静态 → P2: AUDIT-03/08 导入/数据 → P3: AUDIT-04/05/06/07 OCR/SFX/翻译/图像 → P4: AUDIT-09 UI → P5: AUDIT-10/11/12 性能/安全/交付 → P6: AUDIT-13/14 E2E/需求覆盖 → P7: 去重整改 → P8: 证据复核/Release Gate。
 
