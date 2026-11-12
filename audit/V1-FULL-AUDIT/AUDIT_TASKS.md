@@ -15,7 +15,7 @@
 - AUDIT-05: NOT_TESTED（待 SFX 契约、状态机与错误路由逐项核对）
 - AUDIT-06: NOT_TESTED（待翻译配置/重试/超时/并发审阅；真实付费 API 不在本轮授权）
 - AUDIT-07: NOT_TESTED（待修复/排版/导出链路和许可核对）
-- AUDIT-08: FAIL（有限合成 DB 专项 284 passed / 0 skipped / EXIT 0；迁移 v1–v13→v14、关系保留、约束、并发、异常 rollback、意外退出恢复与关闭后路径移动有隔离证据。`SEG-B-PROBES-002` 重跑确认裸 I/O 错误且无 rollback ID。ZCode 首轮独立 Review `ACCEPT`，0 P0/P1/P2、2 P3；follow-up 对 `f3320cc9d` 为 `ACCEPT`，0 P0/P1/P2、1 P3。异常中断映射、0742a572/25614d45/a932b756/d6658d12 四批门禁 pin 已补；39 条 raw Git blob SHA-256 独立复算通过。P3-3 已补录、待 closure review。真实库、运行时任务状态、应用路径迁移、真实损坏恢复、断电及多文件部分写仍未验证。详见 AUDIT-08 / ZCode Review 报告）
+- AUDIT-08: FAIL（有限合成 DB 专项 284 passed / 0 skipped / EXIT 0；迁移 v1–v13→v14、关系保留、约束、并发、异常 rollback、意外退出恢复与关闭后路径移动有隔离证据。`SEG-B-PROBES-002` 重跑确认裸 I/O 错误且无 rollback ID。ZCode 首轮 Review `ACCEPT`（0 P0/P1/P2、2 P3）；对 `f3320cc9d` follow-up `ACCEPT`（0 P0/P1/P2、1 P3）；closure Review 对 `6375afacb` 为 `ACCEPT`，P3-3 CLOSED，P3-4 的 WORKTREE/BLOB SHA 基准和 CRLF→LF 归一化已在报告澄清，待 fresh closure review。0742a572/25614d45/a932b756/d6658d12 四批及后续两批门禁已 pin；39 项既有哈希独立复算通过，最新两批各五文件回填中。真实库、运行时任务状态、应用路径迁移、真实损坏恢复、断电及多文件部分写仍未验证。详见 AUDIT-08 / ZCode Review 报告）
 - AUDIT-09: NOT_TESTED（待 Avalonia 静态页面覆盖审阅；真实 GUI 运行具名 BLOCKED）
 - AUDIT-10: NOT_TESTED（待可重复 Core 合成样本微基准；GUI 性能具名 BLOCKED）
 - AUDIT-11: FAIL（安全静态阶段报告 `reports/AUDIT-11-SECURITY-STATIC-2026-11-12.md`；`SEG-B-PROBES-001` 路径写越界与 `SEG-B-PROBES-002` restore I/O 恢复缺陷均为 Medium / High confidence，`NM-AUD-0001` 经 ZCode 复核为 P2。独立 Review `ACCEPT`，0 个 P0/P1/P2 阻断项；1 个 P3 扫描器源 SHA 差异已确认为移除尾随空格并披露，未重跑 scanner。Key/日志/命令/SQL/依赖等其余面为 PARTIAL 或具名 NOT_TESTED；真实 UI/vault、恶意文件 fuzz、Python 依赖漏洞数据库、竞态和远端可见性未验证）
