@@ -10,4 +10,4 @@ IN_PROGRESS：段 A 基线、盘点与测试日志已保存；段 B 于 2026-11-
 
 2026-11-12 风险披露：本地 `origin/main` reflog 记有 2026-10-30 三次 main push；私有素材对象曾进入公开仓库历史为高置信推论，见 `reports/ZCODE-SCOPE-ADJUDICATION-2026-11-12.md`。实时远端可见性未核验，未执行远端补救；本地审计继续，任何传播/删除/历史改写均不在本 Task 授权内。
 
-段 B 状态：AUDIT-00 PASS（仅基线/清单，限制见报告）；AUDIT-01–14 均为 `BLOCKED-ORIGINAL-CHECKLIST-MISSING`（未测试）。限定 suite 证据采集中：probes EXIT 1（2 项 Medium / High confidence，1 项防线已验证）；Python Core pytest EXIT 1（3,519 passed / 16 failed / 10 skipped / 11 warnings）。pytest 失败和 probe 分级详见对应报告；suite 结果不改变逐项状态。其余当前架构 suite 待运行，Release Gate 保持 BLOCKED。
+段 B 状态：AUDIT-00 PASS（仅基线/清单，限制见报告）；AUDIT-01–14 均为 `BLOCKED-ORIGINAL-CHECKLIST-MISSING`（未测试）。限定 suite 证据采集中：probes EXIT 1（2 项 Medium / High confidence，1 项防线已验证）；Python Core pytest EXIT 1（3,519 passed / 16 failed / 10 skipped / 11 warnings）；Avalonia .NET `BLOCKED-TESTHOST-ACCESS`（8/8 runner EXIT 1，TRX 0 tests，不能作为产品测试失败或通过证据）。各 suite 结果详见对应报告，均不改变逐项状态。smoke 与最终 governance 待运行，Release Gate 保持 BLOCKED。

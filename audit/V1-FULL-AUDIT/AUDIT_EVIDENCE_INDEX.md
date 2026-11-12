@@ -35,3 +35,7 @@
 - `logs/probe-triage-confirmation-20261112.log`：ZCode 只读确认命令、session/turn/trace、生成 HEAD、时点、回答与 EXIT。
 - `logs/pytest-segment-b-20261112T081732598825Z.log`、`evidence/pytest-segment-b-20261112T081732598825Z.json`：Python Core 限定 pytest 的 argv/cwd、生成 HEAD、起始时点、耗时、完整失败输出与 EXIT；结果为 3,519 passed / 16 failed / 10 skipped / 11 warnings。
 - `reports/PYTEST-RESULT-SEGMENT-B-2026-11-12.md`：pytest 失败分组、skip/warning 和 suite 证据限制摘要。
+- `reports/DOTNET-RESULT-SEGMENT-B-2026-11-12.md`：8 个 Avalonia 测试项目的 TestHost 阻断裁定、TRX 0 计数、工作树守护核验及后续范围。
+- `logs/dotnet-result-adjudication-20261112.log`：ZCode 对 .NET suite 的只读 adjudication 原文、session/turn/trace、生成 HEAD 与 EXIT。
+- `logs/dotnet-app-20261112T083119769139Z.log`、`evidence/dotnet-app-20261112T083119769139Z.json`；同一 run ID 下另有 appearance、applicationcore、coreclient、designsystem、host、presentationavalonia、themeengine 的配套 log/JSON。8 组均含命令、生成 HEAD、逐项时点/elapsed、EXIT 与 porcelain 守护字节摘要。
+- TRX 指针：`G:/CODEX/New Manga.workspace/task-env/NEW-MANGA-V1-FULL-AUDIT/dotnet/results-20261112T083119769139Z/`；8 个 TRX 外部 artifact 只读解析后 `total/executed/passed/failed=0`，未复制入仓库，保留在 Task 指定 workspace。

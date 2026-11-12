@@ -59,3 +59,11 @@ TaskStatus=in_progress；ExecutionState=BLOCKED_MATERIAL_PROVENANCE（仅推送�
 - ZCode 只读确认 probes 原有分级：`reports/PROBE-TRIAGE-SEGMENT-B-2026-11-12.md` 与 `logs/probe-triage-confirmation-20261112.log`。两项建议均为 Medium / High confidence；`../` 备份路径为 defense-verified。未独立复现；实现修复超出本 Task。
 - 原始 pytest 数据和 ZCode 确认日志在证据提交 `40f47362894f2ea6dcd66d463a72328aad37bbc6` 固定；本恢复点文档随后单独提交并 pin 回 Task。
 - 下一步按既有裁决逐一运行 8 个 `.NET` 测试项目（`--no-restore`，TRX 写到 workspace；每项前后 porcelain 必须逐字节一致）。如有不忽略的状态变化立即停止，不清理、不恢复。之后执行 smoke `core,wire` 与 governance；`frontend/rust/desktop/npm-audit/packaged` 继续 `NOT_RUN-legacy`，真实 GUI 继续 BLOCKED。
+
+### 段 B Avalonia .NET TestHost 阻断检查点（2026-11-12）
+
+- 已按裁决执行 `python audit/V1-FULL-AUDIT/tests/audit_runner.py dotnet`，覆盖 App、Appearance、ApplicationCore、CoreClient、DesignSystem、Host、PresentationAvalonia、ThemeEngine 8 个项目；生成时 HEAD=`da589416344b8254c9c1061f1d4e3dd61b3e7a93`，branch=`main`。8 个 runner 均 EXIT=1、TIMED_OUT=False，8/8 `status_identical=True`；逐项证据 JSON/log 固定在提交 `426a4fc5d5a551f04cf58979176baa4150351d5c`。
+- 8 个 TRX 外部 workspace 只读 XML 计数均为 total/executed/passed/failed=0。TestHost 在 `SetParentProcessExitCallback` → `ProcessManager.OpenProcess` 抛 Win32Exception(5) 后退出，尚未发现或执行任何测试用例。ZCode 只读裁定状态为 `BLOCKED-TESTHOST-ACCESS`，保留原始 EXIT=1，不记产品测试失败、NOT_RUN 或 PASS；详见 `reports/DOTNET-RESULT-SEGMENT-B-2026-11-12.md` 和 `logs/dotnet-result-adjudication-20261112.log`。
+- 对每项日志中的 `GIT_STATUS_BEFORE_HEX` 解码核对：porcelain 基线依次包含 0/2/4/6/8/10/12/14 条，只涉及审计目录中前序 runner 产物；8 组运行期间均字节不变。没有清理、恢复或修改源码。
+- 不推断 Win32 错误的底层成因，也不提权、关闭安全控制、改 runner/测试参数或重跑绕过。TRX 留在 `G:/CODEX/New Manga.workspace/task-env/NEW-MANGA-V1-FULL-AUDIT/dotnet/results-20261112T083119769139Z/`，按 resource manifest 保留，不复制进仓库。
+- 按 ZCode 裁决，下一步继续 smoke `core,wire` 与 governance；`frontend/rust/desktop/npm-audit/packaged` 仍为 `NOT_RUN-legacy`，真实 GUI 仍 BLOCKED。所有 AUDIT-01–14 继续 `BLOCKED-ORIGINAL-CHECKLIST-MISSING`，Release Gate 继续 BLOCKED。
