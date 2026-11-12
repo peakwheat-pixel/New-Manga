@@ -399,3 +399,9 @@ At clean `main` HEAD `e3e6a2e0e31cf257112ad57fe99cc1b4a0f6f239`, after adding th
 - `r001-post-pinbackfill-audit-e3e6a2e0e3.log` — 45809 bytes; workspace-original SHA-256 `65962e11b3c1ef65e4993c34fa86b03479ba115eea20f4a7be6f3174cf7f3a01`.
 
 Task remains `in_progress`, R-001 `OPEN`; this audit predates terminal candidate changes and is not the final closeout audit.
+
+## R-001 post-Handoff clean gates (2026-11-12)
+
+At clean `main` HEAD `6b68e9f33bc6eeebe2a4ce8ffd9f5b0e83edbba7`, after committing the terminal Handoff, default and TaskPath checks each PASSed with 3 warnings / `EXIT=0`; frozen pins were `18/18` / `EXIT=0`; API inventory was `1/79/6=86` / `EXIT=0`. `PROCESS_CWD=G:\CODEX\New Manga`; `GIT_STATUS_PORCELAIN` was empty at generation time. These gates precede the terminal Task-card candidate and do not replace its required final gates or full-section audit.
+
+- `r001-after-handoff-6b68e9f33-gates.log` — generated at clean HEAD `6b68e9f33bc6eeebe2a4ce8ffd9f5b0e83edbba7`; workspace-original SHA-256 `3110d30cf96ca0e9a4cf661a5b941f7682a1d252905915c519847e4ca1be68ff`; all four commands `EXIT=0`; external original preserved.
