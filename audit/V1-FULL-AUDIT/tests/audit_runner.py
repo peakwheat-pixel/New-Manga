@@ -112,7 +112,7 @@ def run(name: str, argv: list[str], cwd: Path, timeout: int) -> dict:
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('suite', choices=['pytest', 'frontend', 'rust', 'smoke', 'governance', 'dependencies', 'desktop', 'probes', 'dotnet', 'sidecar-lifecycle'])
+    parser.add_argument('suite', choices=['pytest', 'audit03-import', 'frontend', 'rust', 'smoke', 'governance', 'dependencies', 'desktop', 'probes', 'dotnet', 'sidecar-lifecycle'])
     args = parser.parse_args()
     assert ROOT.name == 'New Manga' and (ROOT / '.git').exists()
     npm = shutil.which('npm.cmd') or 'npm.cmd'
@@ -130,6 +130,28 @@ if __name__ == '__main__':
     dotnet_results = RUNTIME / 'dotnet' / f'results-{run_id}'
     suites = {
         'pytest': [(f'pytest-segment-b-{run_id}', [sys.executable, '-m', 'pytest', 'tests', '-q', '-rs', '--tb=short', '-o', 'cache_dir=' + str(RUNTIME / f'pytest-cache-{run_id}'), '--basetemp=' + str(RUNTIME / f'pytest-temp-{run_id}')], ROOT, 1200)],
+        # Split package groups because their same-named conftest.py modules collide when collected together.
+        'audit03-import': [
+            (f'audit03-core-import-{run_id}', [sys.executable, '-m', 'pytest',
+            'tests/library/test_import_images.py', 'tests/library/test_import_sources.py',
+            'tests/library/test_page_order.py', 'tests/library/test_sqlite_library.py',
+            'tests/library/test_book_crud.py', 'tests/library/test_chapters.py',
+            'tests/library/test_production_adapters.py', 'tests/library/test_p09_managed_copy_safety.py',
+            'tests/storage/test_managed_storage.py', 'tests/import_formats/test_decode_format_matrix.py',
+            '-q', '-rs', '--tb=short', '-o', 'cache_dir=' + str(RUNTIME / f'audit03-pytest-cache-{run_id}'),
+            '--basetemp=' + str(RUNTIME / f'audit03-pytest-temp-{run_id}')], ROOT, 600),
+            (f'audit03-referenced-import-{run_id}', [sys.executable, '-m', 'pytest',
+            'tests/fea09/test_import_source.py', 'tests/fea09/test_referenced_flow.py',
+            'tests/fea09/test_referenced_resolve.py', 'tests/fea09/test_referenced_scanner.py',
+            'tests/fea09/test_referenced_wire.py', 'tests/fea09/test_referenced_sharing.py',
+            'tests/fea09/test_read_paths.py', '-q', '-rs', '--tb=short',
+            '-o', 'cache_dir=' + str(RUNTIME / f'audit03-reference-pytest-cache-{run_id}'),
+            '--basetemp=' + str(RUNTIME / f'audit03-reference-pytest-temp-{run_id}')], ROOT, 600),
+            (f'audit03-project-lifecycle-{run_id}', [sys.executable, '-m', 'pytest',
+            'tests/m2_acceptance/test_acceptance_loop.py', '-q', '-rs', '--tb=short',
+            '-o', 'cache_dir=' + str(RUNTIME / f'audit03-project-pytest-cache-{run_id}'),
+            '--basetemp=' + str(RUNTIME / f'audit03-project-pytest-temp-{run_id}')], ROOT, 300),
+        ],
         'frontend': [(f'frontend-tests-segment-b-{run_id}', [npm, 'test', '--', '--reporter=verbose'], ROOT / 'apps/desktop/frontend', 180),
                      (f'frontend-build-segment-b-{run_id}', [npm, 'run', 'build', '--', '--outDir', str(RUNTIME / f'frontend-dist-{run_id}')], ROOT / 'apps/desktop/frontend', 180)],
         'rust': [(f'cargo-test-segment-b-{run_id}', ['cargo', 'test', '--locked', '--offline'], ROOT / 'apps/desktop/src-tauri', 900)],
