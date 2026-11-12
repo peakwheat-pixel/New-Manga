@@ -102,7 +102,7 @@ def python_import_graph(paths: list[Path]) -> tuple[dict[str, set[str]], int]:
 
     for path, (current, is_package) in names.items():
         try:
-            ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+            tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
         except (SyntaxError, UnicodeDecodeError):
             continue
         package = current if is_package else current.rpartition(".")[0]
