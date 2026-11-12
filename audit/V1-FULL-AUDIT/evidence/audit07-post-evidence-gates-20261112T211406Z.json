@@ -1,0 +1,56 @@
+{
+  "generated_head": "46fd59e67b5369637946ecae3af670341a6ad75d",
+  "branch": "main",
+  "batch_utc": "20261112T211406Z",
+  "results": [
+    {
+      "name": "default",
+      "argv": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "tools/governance/check.ps1"
+      ],
+      "started_utc": "2026-11-12T21:14:05Z",
+      "elapsed_seconds": 1.004,
+      "exit": 0
+    },
+    {
+      "name": "taskpath",
+      "argv": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "tools/governance/check.ps1",
+        "-TaskPath",
+        "doc/tasks/NEW-MANGA-V1-FULL-AUDIT.md"
+      ],
+      "started_utc": "2026-11-12T21:14:05Z",
+      "elapsed_seconds": 0.971,
+      "exit": 0
+    },
+    {
+      "name": "pins",
+      "argv": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "tools/governance/verify_pins.ps1"
+      ],
+      "started_utc": "2026-11-12T21:14:05Z",
+      "elapsed_seconds": 0.359,
+      "exit": 0
+    },
+    {
+      "name": "api",
+      "argv": [
+        "python",
+        "tools/generate_api_inventory.py",
+        "--check"
+      ],
+      "started_utc": "2026-11-12T21:14:05Z",
+      "elapsed_seconds": 0.08,
+      "exit": 0
+    }
+  ]
+}

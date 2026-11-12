@@ -119,3 +119,4 @@
 - `logs/audit07-revision-restore-20261112T205631263951Z.log` 与 `evidence/audit07-revision-restore-20261112T205631263951Z.json`：同 HEAD；7 passed / 0 skipped，EXIT 0。
 - `logs/audit07-static-scope-20261112T205724Z.log` 与 `evidence/audit07-static-scope-20261112T205724Z.json`：同 HEAD；产品源码/既有测试/依赖/合同差异 EXIT 0，审计越界路径 0，tracked fonts/models 各 0。
 - `logs/audit07-governance-4daa716-20261112T211024Z.log` 与 `evidence/audit07-governance-4daa716-20261112T211024Z.json`：generated HEAD=`4daa7169752b8f9c85fd8f8a01e5660f98f10481`；default、TaskPath、verify_pins 18/18、API 1/79/6=86 均 EXIT 0。此为阶段证据提交前门禁；pinbackfill 后仍须复跑。
+- `logs/audit07-post-evidence-gates-20261112T211406Z.log` 与 `evidence/audit07-post-evidence-gates-20261112T211406Z.json`：generated HEAD=`46fd59e67b5369637946ecae3af670341a6ad75d`；default/TaskPath 各 EXIT 0（各 3 warnings），verify_pins 18/18 EXIT 0，API inventory 1/79/6=86 EXIT 0。Task pinbackfill 后仍须复跑。
