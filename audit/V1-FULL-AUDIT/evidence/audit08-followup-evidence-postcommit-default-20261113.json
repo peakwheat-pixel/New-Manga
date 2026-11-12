@@ -1,0 +1,17 @@
+{
+  "name": "audit08-followup-evidence-postcommit-default",
+  "argv": [
+    "pwsh",
+    "-NoProfile",
+    "-File",
+    "tools/governance/check.ps1"
+  ],
+  "cwd": "G:\\CODEX\\New Manga",
+  "started_utc": "2026-11-12T17:40:51.9509286Z",
+  "head": "995a71d462408d7f75013554e611ce7a44f618a4",
+  "branch": "main",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 1.003,
+  "log": "audit/V1-FULL-AUDIT/logs/audit08-followup-evidence-postcommit-default-20261113.log"
+}
