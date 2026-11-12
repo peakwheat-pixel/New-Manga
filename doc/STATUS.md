@@ -4,8 +4,8 @@
 
 ## 当前程序
 - **FEA 线 ACTIVE（S5）**：[FEA-00 方案](design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md)；V11R 程序已收官（v0.1.1）。
-- 当前 Task：无；[FEA-15-PIN-BASIS-ENFORCE-1](tasks/FEA-15-PIN-BASIS-ENFORCE-1.md)(closed_with_limitations;AC5 MET;R-001 OPEN audit pending;FAIL/NOT_RUN;Handoff)
-- 刚收口：DIAG-ACL-1 与 [ACCEPT-1](tasks/FEA-15-ACCEPT-1.md) 均 `closed_with_limitations`；PIN-POLICY-1 `done`；全量失败和 NOT_RUN 保留。
+- 当前 Task：无
+- 刚收口：[FEA-15-PIN-BASIS-ENFORCE-1](tasks/FEA-15-PIN-BASIS-ENFORCE-1.md) `closed_with_limitations`（AC5 MET；R-001 audit pending；历史 FAIL/NOT_RUN 保留）；DIAG-ACL-1 与 [ACCEPT-1](tasks/FEA-15-ACCEPT-1.md) 均 `closed_with_limitations`；PIN-POLICY-1 `done`。
 - FEA-11 线：WATCH-1/SCAN-2/SCAN-1/MATCH-1/AC4-GAPS-1/LINEAGE-1 `done`；HOST-AUTH-1 `done`；FEA-12 四卡 `done`。
 - **AC11-1 终态 MET（带 limitation）**：裁决 2026-11-06（[记录](reviews/FEA-11-AC11-1-adjudication-2026-11-06.md)）；「启动/访问前检查」= 冷启动枚举 + registry/root 核验（SCAN-2） + 每次访问/操作前 live grant+lease+digest 强验证；启动不做全量内容扫描（L-STARTUP）。
 
