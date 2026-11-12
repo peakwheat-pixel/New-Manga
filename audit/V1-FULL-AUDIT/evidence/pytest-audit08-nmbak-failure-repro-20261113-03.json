@@ -1,0 +1,25 @@
+{
+  "name": "pytest-audit08-nmbak-failure-repro-20261113-03",
+  "argv": [
+    "C:\\Python314\\python.exe",
+    "-m",
+    "pytest",
+    "audit/V1-FULL-AUDIT/tests/test_audit_probes.py",
+    "-k",
+    "nmbak_restore_disk_failure",
+    "-vv",
+    "-s",
+    "--tb=short",
+    "-p",
+    "no:cacheprovider",
+    "--basetemp=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\pytest-audit08-nmbak-failure-repro-20261113-03\\pytest-temp"
+  ],
+  "cwd": "G:\\CODEX\\New Manga",
+  "started_utc": "2026-11-12T16:21:46.859292+00:00",
+  "head": "5802af0a2cf812b3a977f58c5b7c161bba2c9199",
+  "branch": "main",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 0.647,
+  "log": "audit\\V1-FULL-AUDIT\\logs\\pytest-audit08-nmbak-failure-repro-20261113-03.log"
+}

@@ -1,0 +1,23 @@
+START_UTC=2026-11-12T16:21:46.859292+00:00
+HEAD=5802af0a2cf812b3a977f58c5b7c161bba2c9199
+BRANCH=main
+SHELL=Python subprocess (no shell)
+INTERPRETER=C:\Python314\python.exe
+CWD=G:\CODEX\New Manga
+ARGV=["C:\\Python314\\python.exe", "-m", "pytest", "audit/V1-FULL-AUDIT/tests/test_audit_probes.py", "-k", "nmbak_restore_disk_failure", "-vv", "-s", "--tb=short", "-p", "no:cacheprovider", "--basetemp=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\pytest-audit08-nmbak-failure-repro-20261113-03\\pytest-temp"]
+DATA_ROOT=G:\CODEX\New Manga.workspace\task-env\NEW-MANGA-V1-FULL-AUDIT\pytest-audit08-nmbak-failure-repro-20261113-03\data
+============================= test session starts =============================
+platform win32 -- Python 3.14.6, pytest-9.1.1, pluggy-1.6.0 -- C:\Python314\python.exe
+rootdir: G:\CODEX\New Manga
+configfile: pytest.ini
+plugins: anyio-4.14.2
+collecting ... collected 3 items / 2 deselected / 1 selected
+
+audit/V1-FULL-AUDIT/tests/test_audit_probes.py::test_nmbak_restore_disk_failure_leaves_changed_database_without_rollback_id {"defect_confirmed": true, "database_changed": true, "typed_error": false, "rollback_id_in_error": false, "pre_restore_packages": 1}
+PASSED
+
+======================= 1 passed, 2 deselected in 0.20s =======================
+
+EXIT=0
+TIMED_OUT=False
+ELAPSED_SECONDS=0.647

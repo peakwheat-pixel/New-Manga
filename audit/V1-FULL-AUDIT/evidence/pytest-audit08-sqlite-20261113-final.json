@@ -1,0 +1,30 @@
+{
+  "name": "pytest-audit08-sqlite-20261113-final",
+  "argv": [
+    "C:\\Python314\\python.exe",
+    "-m",
+    "pytest",
+    "tests/storage",
+    "tests/infrastructure/test_nmbak_startup_backup.py",
+    "tests/infrastructure/test_upgrade_legacy_layout.py",
+    "tests/core/test_core_restore_plan.py",
+    "tests/core/test_connection_ownership.py",
+    "tests/fea09/test_v7_migration.py",
+    "tests/core/test_v9_migration.py",
+    "audit/V1-FULL-AUDIT/tests/test_audit08_sqlite_synthetic.py",
+    "-q",
+    "-rs",
+    "--tb=short",
+    "-p",
+    "no:cacheprovider",
+    "--basetemp=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\pytest-audit08-sqlite-20261113-final\\pytest-temp"
+  ],
+  "cwd": "G:\\CODEX\\New Manga",
+  "started_utc": "2026-11-12T16:23:08.355951+00:00",
+  "head": "5802af0a2cf812b3a977f58c5b7c161bba2c9199",
+  "branch": "main",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 23.957,
+  "log": "audit\\V1-FULL-AUDIT\\logs\\pytest-audit08-sqlite-20261113-final.log"
+}

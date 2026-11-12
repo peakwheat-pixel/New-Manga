@@ -1,0 +1,23 @@
+{
+  "name": "pytest-audit08-sqlite-probes-20261113-02",
+  "argv": [
+    "C:\\Python314\\python.exe",
+    "-m",
+    "pytest",
+    "audit/V1-FULL-AUDIT/tests/test_audit08_sqlite_synthetic.py",
+    "-q",
+    "-rs",
+    "--tb=short",
+    "-p",
+    "no:cacheprovider",
+    "--basetemp=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\pytest-audit08-sqlite-probes-20261113-02\\pytest-temp"
+  ],
+  "cwd": "G:\\CODEX\\New Manga",
+  "started_utc": "2026-11-12T16:21:33.976762+00:00",
+  "head": "5802af0a2cf812b3a977f58c5b7c161bba2c9199",
+  "branch": "main",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 0.696,
+  "log": "audit\\V1-FULL-AUDIT\\logs\\pytest-audit08-sqlite-probes-20261113-02.log"
+}

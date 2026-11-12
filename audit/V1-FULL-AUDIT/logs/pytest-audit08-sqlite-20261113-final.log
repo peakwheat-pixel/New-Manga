@@ -1,0 +1,17 @@
+START_UTC=2026-11-12T16:23:08.355951+00:00
+HEAD=5802af0a2cf812b3a977f58c5b7c161bba2c9199
+BRANCH=main
+SHELL=Python subprocess (no shell)
+INTERPRETER=C:\Python314\python.exe
+CWD=G:\CODEX\New Manga
+ARGV=["C:\\Python314\\python.exe", "-m", "pytest", "tests/storage", "tests/infrastructure/test_nmbak_startup_backup.py", "tests/infrastructure/test_upgrade_legacy_layout.py", "tests/core/test_core_restore_plan.py", "tests/core/test_connection_ownership.py", "tests/fea09/test_v7_migration.py", "tests/core/test_v9_migration.py", "audit/V1-FULL-AUDIT/tests/test_audit08_sqlite_synthetic.py", "-q", "-rs", "--tb=short", "-p", "no:cacheprovider", "--basetemp=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\pytest-audit08-sqlite-20261113-final\\pytest-temp"]
+DATA_ROOT=G:\CODEX\New Manga.workspace\task-env\NEW-MANGA-V1-FULL-AUDIT\pytest-audit08-sqlite-20261113-final\data
+........................................................................ [ 25%]
+........................................................................ [ 50%]
+........................................................................ [ 76%]
+....................................................................     [100%]
+284 passed in 23.45s
+
+EXIT=0
+TIMED_OUT=False
+ELAPSED_SECONDS=23.957

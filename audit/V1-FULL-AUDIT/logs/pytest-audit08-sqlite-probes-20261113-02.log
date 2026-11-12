@@ -1,0 +1,14 @@
+START_UTC=2026-11-12T16:21:33.976762+00:00
+HEAD=5802af0a2cf812b3a977f58c5b7c161bba2c9199
+BRANCH=main
+SHELL=Python subprocess (no shell)
+INTERPRETER=C:\Python314\python.exe
+CWD=G:\CODEX\New Manga
+ARGV=["C:\\Python314\\python.exe", "-m", "pytest", "audit/V1-FULL-AUDIT/tests/test_audit08_sqlite_synthetic.py", "-q", "-rs", "--tb=short", "-p", "no:cacheprovider", "--basetemp=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\pytest-audit08-sqlite-probes-20261113-02\\pytest-temp"]
+DATA_ROOT=G:\CODEX\New Manga.workspace\task-env\NEW-MANGA-V1-FULL-AUDIT\pytest-audit08-sqlite-probes-20261113-02\data
+....                                                                     [100%]
+4 passed in 0.28s
+
+EXIT=0
+TIMED_OUT=False
+ELAPSED_SECONDS=0.696
