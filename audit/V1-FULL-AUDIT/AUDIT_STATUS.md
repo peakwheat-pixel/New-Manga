@@ -9,3 +9,5 @@ IN_PROGRESS：段 A 基线、盘点与测试日志已保存；段 B 于 2026-11-
 当前裁决：用户明确素材“我自己的，但是不传播”。169个JPEG及其压缩blob禁止上传，push=BLOCKED_OWNER_NO_DISTRIBUTION；此前等待传播许可分支被覆盖。本地原件/历史保留，独立干净快照方案尚未释放。
 
 2026-11-12 风险披露：本地 `origin/main` reflog 记有 2026-10-30 三次 main push；私有素材对象曾进入公开仓库历史为高置信推论，见 `reports/ZCODE-SCOPE-ADJUDICATION-2026-11-12.md`。实时远端可见性未核验，未执行远端补救；本地审计继续，任何传播/删除/历史改写均不在本 Task 授权内。
+
+段 B 状态：AUDIT-00 PASS（仅基线/清单，限制见报告）；AUDIT-01–14 均为 NOT_TESTED；Release Gate 保持 BLOCKED。

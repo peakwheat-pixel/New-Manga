@@ -7,7 +7,7 @@
 
 ## 段 B（当前产品基线 `10e4ee013835605800d3830fb960ae8d3aa04167`）
 
-- AUDIT-00: NOT_RUN（尚未重做当前产品基线盘点）
+- AUDIT-00: PASS（当前 Git/environment/source inventory；边界见 `reports/00_BASELINE-SEGMENT-B.md`）
 - AUDIT-01: NOT_TESTED
 - AUDIT-02: NOT_TESTED
 - AUDIT-03: NOT_TESTED

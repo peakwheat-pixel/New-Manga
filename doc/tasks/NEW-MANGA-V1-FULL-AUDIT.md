@@ -32,7 +32,7 @@ allowed_paths:
 用户2026-10-24粘贴的完整自主审计指令；本轮新增只读审计 Task，不重新激活历史实现。Codex接任Lead Auditor，明确覆盖AUDIT-00–14；允许隔离本地扫描/测试与报告，不授权业务修改、安装、付费API、发布、删除、清理或上传项目材料。
 
 ## Acceptance Criteria
-- [ ] AC1：固定Git/环境及有效源码清单，记录dirty和历史缺口。 <<PARTIAL: 基线已存，待交叉核验>>
+- [x] AC1：固定Git/环境及有效源码清单，记录dirty和历史缺口。 <<MET>>
 - [ ] AC2：15项专项逐项有真实检查结果或具名阻断，关键链路深读与测试。 <<PARTIAL: 正在执行>>
 - [ ] AC3：完整日志、问题分级、整改路线、正式报告和Release Gate落盘。 <<PARTIAL: 正在执行>>
 - [ ] AC4：独立复核、证据pin和治理检查可核验；未满足不得置done。 <<PARTIAL: 尚未提交或独立审查>>
@@ -54,6 +54,10 @@ src/**、apps/**、原有tests/**、共享契约、Schema、依赖、真实用�
 | SCOPE-1 | 解封范围与传播风险裁决 | `audit/V1-FULL-AUDIT/reports/ZCODE-SCOPE-ADJUDICATION-2026-11-12.md` | `304a40addb4818f415b1e86d5c5b65205eca3605` | `0BE9C7ECBCE7C4EA6482FF8248DF16179380A742096BB84D51716304DE6D9D54` | CANONICAL | BLOB |
 | STAGE0-1 | AC1（段 B 基线/范围前置核验，partial） | `audit/V1-FULL-AUDIT/logs/stage0-resume-verification-20261112.log` | `304a40addb4818f415b1e86d5c5b65205eca3605` | `7E2A4911D7F1AB2D21DE48C4AC4B77F2C8BACCC5FA6CB1D6C2DFF681F32260A7` | CANONICAL | BLOB |
 | GATES-1 | AC4（TaskPath/default/pins/API release gates，partial） | `audit/V1-FULL-AUDIT/logs/segment-b-release-gates-df120fb.log` | `4b5aa2d6a327c7ffa2c5b3025473fb5a6f3f1179` | `F426CF2DEC18EA69D5A584950787A15753506D037CE48021CB41FED1771CFA85` | CANONICAL | BLOB |
+| BASELINE-1 | AC1（段 B Git/environment，MET） | `audit/V1-FULL-AUDIT/evidence/baseline-segment-b.json` | `1a8238b9f86427efe5c48918f3bc0f2942611732` | `9553030087685016AF6070C2E33AEF373F5AA713950CD179BE06129954F95A3E` | CANONICAL | BLOB |
+| SOURCES-1 | AC1（段 B effective source manifest，MET） | `audit/V1-FULL-AUDIT/evidence/source-manifest-segment-b.json` | `1a8238b9f86427efe5c48918f3bc0f2942611732` | `DF83A2D57A1F73A0155951461FCC11C0033E3F020BC9F439B0E8239A7157C727` | CANONICAL | BLOB |
+| AUDIT00-LOG-1 | AC1（段 B baseline 命令与 EXIT，MET） | `audit/V1-FULL-AUDIT/logs/audit-00-segment-b.log` | `1a8238b9f86427efe5c48918f3bc0f2942611732` | `A66823B170F3A22BA41912E85C245AE4CC837FF24EF90FF68DC49FE7E7BEEC05` | CANONICAL | BLOB |
+| AUDIT00-REPORT-1 | AC1（段 B limitation 与历史缺口，MET） | `audit/V1-FULL-AUDIT/reports/00_BASELINE-SEGMENT-B.md` | `1a8238b9f86427efe5c48918f3bc0f2942611732` | `7E282EEF4DCF46C604F404F7B2E1C4B22C5036B484473F54A8F71D9F9D6555CD` | CANONICAL | BLOB |
 
 说明：裁决文档中记录的阶段 0 日志 `B561…` 是提交前 WORKTREE SHA-256；本表按模板使用 Git BLOB 字节，完整 SHA-256 为 `7E2A…`。
 
