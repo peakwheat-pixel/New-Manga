@@ -104,3 +104,4 @@
 - logs/audit04-core-detect-20261112T203116769705Z.log 与 evidence/audit04-core-detect-20261112T203116769705Z.json：同 HEAD；40 passed、0 skipped、EXIT 0。
 - logs/audit04-static-20261112T203819Z.log 与 evidence/audit04-static-20261112T203819Z.json：同 HEAD；产品 diff EXIT 0、whitespace EXIT 0；21 条采集时工作树路径均允许，out-of-scope=0；14 条历史 FEA-11 HOST-AUTH-4 路径作继承项披露。
 - 过程记录：runner 初次试跑于 `5727f5497fdf392295309d031f2632c86e6f1b51`，providers 167 passed + Core 40 passed；补入 ORT CPU/auto policy tests 后以最终 runner 在 `c20e819009a810ae3828aef7eb8644eb9a3eae80` 重跑为正式结果。初次试跑与早期静态捕获 `20261112T202910Z` / `20261112T203116Z` / `20261112T203329Z` 的日志/JSON均保留。
+- logs/audit04-post-evidence-gates-20261112T203946Z.log 与 evidence/audit04-post-evidence-gates-20261112T203946Z.json：generated HEAD=`c10c3ac39e354f08a068825915ece29bd506e969`；default/TaskPath 各 PASS / EXIT 0（各 3 warnings），verify_pins 18/18 / EXIT 0，API inventory 1/79/6=86 / EXIT 0。工作树在门禁生成时 clean。
