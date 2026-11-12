@@ -1,5 +1,26 @@
 # 问题台账
 
+## AUDIT-05-CAND-001 — 重叠仲裁保留同几何双 Region
+
+- 状态：`REVIEW_PENDING`（候选观察；未由审计作者确定 severity 或正式 finding）
+- 证据：`reports/AUDIT-05-06-SFX-TRANSLATION-2026-11-13.md`、`tests/test_audit05_sfx_regression.py`、`logs/audit05-06-targeted-20261113.log`。合成 same-geometry primary `manga-1` + SFX `sfx-1` 仲裁后保留两个相同 polygon，且二者均映射为 SFX；生产 handler 对每候选创建 Region。
+- 影响/限制：`skip` 默认策略避免自动翻译；显式 `translate` 时两个 Region 各自进入单 Region step。未测真实模型重复框概率与用户可见影响；既有仲裁 Task 已列该副作用为已知取舍/去重候选。
+- 待裁决：请 ZCode 判断是否为正式 finding、严重级别及是否已由既有 Task/产品语义接受；本审计不授权修复。
+
+## AUDIT-06-CAND-001 — 缺少账单级 spend cap 与 provider idempotency key
+
+- 状态：`REVIEW_PENDING`（候选观察；远端计费影响未知）
+- 证据：`reports/AUDIT-05-06-SFX-TRANSLATION-2026-11-13.md`；单 Run 有 StepRun 数上限，provider retry 有上限，但配置/transport 未提供货币预算或 provider 级 idempotency key。
+- 影响/限制：超时重试可能使客户端重复发送相同 payload；本轮未调用 API，未验证服务端处理、重放或计费，不能声称发生重复扣费。
+- 待裁决：请 ZCode 对照审计范围判断风险定级/是否为产品要求缺口；修复需另行释放 Task。
+
+## AUDIT-06-CAND-002 — glossary 词条优先级未由生产路径强制
+
+- 状态：`REVIEW_PENDING`（候选观察；需需求/语义裁决）
+- 证据：`reports/AUDIT-05-06-SFX-TRANSLATION-2026-11-13.md` 与对应 production request seam 测试；glossary 以 source→target 字典进入请求，但 system prompt 和生产响应校验未强制 glossary term match。
+- 影响/限制：未调用真实模型，不能推断翻译会违反术语；现有文档/用户预期是否要求强制术语优先级尚待核对。
+- 待裁决：请 ZCode 对照原始审计清单、契约及既有 glossary 语义确认；本审计不授权改 prompt 或 response validation。
+
 ## AUDIT-11-INC-001 — 私有素材可能随 main 历史传播
 
 - 状态：`INVESTIGATE`（传播风险证据已记录；远端现状及补救未核验/未执行）

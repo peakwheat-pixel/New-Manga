@@ -12,8 +12,8 @@
 - AUDIT-02: BLOCKED（Python AST 语法扫描、.NET solution build PASS；`dotnet format whitespace` EXIT 2，1,556 项诊断；Python lint/type/security 工具未安装，.NET analyzers disabled，语义扫描未完成。详见阶段报告与对应 logs）
 - AUDIT-03: NOT_TESTED（专项尚未完成；已有 `SEG-B-PROBES-001` 的目录 junction publication 证据与风险映射，完整导入路径审阅和合成素材隔离验证待做）
 - AUDIT-04: NOT_TESTED（待模型链路静态核对/合成 GT；真实素材准确率具名受限）
-- AUDIT-05: NOT_TESTED（待 SFX 契约、状态机与错误路由逐项核对）
-- AUDIT-06: NOT_TESTED（待翻译配置/重试/超时/并发审阅；真实付费 API 不在本轮授权）
+- AUDIT-05: PARTIAL（SFX 分类、策略、重检测/人工保护、provider 降级与重叠仲裁已静态核对并以合成回归覆盖；定向批次 247 passed / 3 deselected / EXIT 0。相同几何 primary/SFX 产生双 SFX Region 为候选，待 ZCode 裁决；真实权重、人工 GT 与 UI `NOT_RUN`。见 `reports/AUDIT-05-06-SFX-TRANSLATION-2026-11-13.md`）
+- AUDIT-06: PARTIAL（翻译 payload、SQLite 同 chapter 上下文冻结、Region 映射、重试、超时/暂停边界与人工 Revision 保护已静态核对并以 mock/合成测试覆盖；上下文批次 84 passed / EXIT 0。账单级 spend cap/idempotency 与 glossary 强制优先级为候选，待 ZCode 裁决；真实 API/费用/取消语义 `NOT_RUN`。见同一阶段报告）
 - AUDIT-07: NOT_TESTED（待修复/排版/导出链路和许可核对）
 - AUDIT-08: FAIL（有限合成 DB 专项 284 passed / 0 skipped / EXIT 0；迁移 v1–v13→v14、关系保留、约束、并发、异常 rollback、意外退出恢复与关闭后路径移动有隔离证据。`SEG-B-PROBES-002` 重跑确认裸 I/O 错误且无 rollback ID。ZCode 首轮 Review `ACCEPT`（0 P0/P1/P2、2 P3）；对 `f3320cc9d` follow-up `ACCEPT`（0 P0/P1/P2、1 P3）；closure Review 对 `6375afacb` 为 `ACCEPT`，P3-3 CLOSED，P3-4 的 WORKTREE/BLOB SHA 基准和 CRLF→LF 归一化已在报告澄清，待 fresh closure review。0742a572/25614d45/a932b756/d6658d12 四批及后续两批门禁已 pin；39 项既有哈希独立复算通过，最新两批各五文件回填中。真实库、运行时任务状态、应用路径迁移、真实损坏恢复、断电及多文件部分写仍未验证。详见 AUDIT-08 / ZCode Review 报告）
 - AUDIT-09: NOT_TESTED（待 Avalonia 静态页面覆盖审阅；真实 GUI 运行具名 BLOCKED）

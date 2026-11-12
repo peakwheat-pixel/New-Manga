@@ -1,0 +1,15 @@
+START_UTC=2026-11-12T18:43:21.132829+00:00
+HEAD=d96529ebff6cf752ad64a676d05ec622da09e565
+BRANCH=main
+SHELL=Python subprocess (no shell)
+INTERPRETER=C:\Python314\python.exe
+CWD=G:\CODEX\New Manga
+ARGV=["C:\\Python314\\python.exe", "-m", "pytest", "-q", "-p", "no:cacheprovider", "audit/V1-FULL-AUDIT/tests/test_audit06_context_observations.py", "tests/providers/test_handlers_pipeline.py", "tests/pipeline/test_pipeline_production_seam.py", "tests/providers/test_remote_providers.py", "tests/providers/test_translation_protocol.py", "tests/providers/test_retry_fallback.py"]
+DATA_ROOT=G:\CODEX\New Manga.workspace\task-env\NEW-MANGA-V1-FULL-AUDIT\audit06-context-20261113\data
+........................................................................ [ 85%]
+............                                                             [100%]
+84 passed in 2.46s
+
+EXIT=0
+TIMED_OUT=False
+ELAPSED_SECONDS=2.909

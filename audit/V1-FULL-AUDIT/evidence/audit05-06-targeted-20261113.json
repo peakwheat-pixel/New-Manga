@@ -1,0 +1,33 @@
+{
+  "name": "audit05-06-targeted-20261113",
+  "argv": [
+    "C:\\Python314\\python.exe",
+    "-m",
+    "pytest",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+    "audit/V1-FULL-AUDIT/tests/test_audit05_sfx_regression.py",
+    "tests/providers/test_detection_sfx.py",
+    "tests/core/test_sfx_policy_settings.py",
+    "tests/core/test_sfx_policy_end_to_end.py",
+    "tests/knowledge/test_sfx_gate.py",
+    "tests/knowledge/test_translate_step.py",
+    "tests/editing/test_region_retype.py",
+    "tests/providers/test_retype_redetect_persistence.py",
+    "tests/pipeline/test_regionless_rebinding.py",
+    "tests/pipeline/test_pipeline.py",
+    "tests/providers/test_translation_protocol.py",
+    "tests/providers/test_retry_fallback.py",
+    "-k",
+    "not real_weights"
+  ],
+  "cwd": "G:\\CODEX\\New Manga",
+  "started_utc": "2026-11-12T18:43:21.132531+00:00",
+  "head": "d96529ebff6cf752ad64a676d05ec622da09e565",
+  "branch": "main",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 4.983,
+  "log": "audit\\V1-FULL-AUDIT\\logs\\audit05-06-targeted-20261113.log"
+}

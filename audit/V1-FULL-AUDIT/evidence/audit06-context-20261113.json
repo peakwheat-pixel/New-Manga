@@ -1,0 +1,25 @@
+{
+  "name": "audit06-context-20261113",
+  "argv": [
+    "C:\\Python314\\python.exe",
+    "-m",
+    "pytest",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+    "audit/V1-FULL-AUDIT/tests/test_audit06_context_observations.py",
+    "tests/providers/test_handlers_pipeline.py",
+    "tests/pipeline/test_pipeline_production_seam.py",
+    "tests/providers/test_remote_providers.py",
+    "tests/providers/test_translation_protocol.py",
+    "tests/providers/test_retry_fallback.py"
+  ],
+  "cwd": "G:\\CODEX\\New Manga",
+  "started_utc": "2026-11-12T18:43:21.132829+00:00",
+  "head": "d96529ebff6cf752ad64a676d05ec622da09e565",
+  "branch": "main",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 2.909,
+  "log": "audit\\V1-FULL-AUDIT\\logs\\audit06-context-20261113.log"
+}

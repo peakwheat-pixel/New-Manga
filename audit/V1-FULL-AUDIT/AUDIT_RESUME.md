@@ -1,5 +1,13 @@
 # 恢复入口
 
+## 2026-11-13 AUDIT-05/06 阶段检查点
+
+- 当前 Task `NEW-MANGA-V1-FULL-AUDIT` 仍 `in_progress`，产品基线为 `10e4ee013835605800d3830fb960ae8d3aa04167`。本阶段测试生成 HEAD=`d96529ebff6cf752ad64a676d05ec622da09e565`，分支 `main`；产品源码和原有测试相对基线无差异，新增测试只位于本审计目录。
+- AUDIT-05=`PARTIAL`：`audit05-06-targeted-20261113` 为 247 passed / 3 deselected / EXIT 0；真实 SFX 权重、人工 GT 和 UI 为 `NOT_RUN`。AUDIT-06=`PARTIAL`：`audit06-context-20261113` 为 84 passed / EXIT 0；真实 API、账单/重放、远端取消语义为 `NOT_RUN`。
+- 三个待 ZCode 裁决候选：同位 primary/SFX 双 Region；无账单级 spend cap/idempotency key；glossary 优先级未由生产校验强制。候选、证据和限制见 `AUDIT_ISSUES.md` 与 `reports/AUDIT-05-06-SFX-TRANSLATION-2026-11-13.md`；不得视作已定级 finding 或修复授权。
+- 完整命令、生成 HEAD、UTC 与 EXIT 见两批 log/JSON；独立审计测试为 `tests/test_audit05_sfx_regression.py` 与 `tests/test_audit06_context_observations.py`。
+- 下一步：固定阶段交付并完成四项治理门禁与 Canonical Evidence pinbackfill；将精确交付 HEAD 交给 ZCode 新独立上下文只读复核候选及范围。复核后继续 DAG 节点 AUDIT-14。全 Task AC2/AC3/AC4 仍 `PARTIAL`，Release Gate 仍 `BLOCKED`。
+
 2026-10-24；HEAD 349e61faff5f93067af5d4ce2d9e394e0d665b8c；branch main；worktree G:/CODEX/New Manga。
 
 先核对 git status / git rev-parse HEAD 与 evidence/source-manifest.json；保留原6个P04诊断文件。已完成基线/盘点。下一步查看 evidence/*.json 和 logs/*.log 的 EXIT，未有结果的套件通过 `python audit/V1-FULL-AUDIT/tests/audit_runner.py <suite>` 执行；suite=pytest/frontend/rust/smoke/governance/dependencies。所有运行数据 G:/CODEX/New Manga.workspace/task-env/NEW-MANGA-V1-FULL-AUDIT。不得直接复跑未知仍运行任务；先检查进程。审计未完成，不宣称PASS。

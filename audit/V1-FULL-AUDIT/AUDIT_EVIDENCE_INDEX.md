@@ -1,5 +1,13 @@
 # 证据索引
 
+## AUDIT-05/06（2026-11-13）
+
+- `reports/AUDIT-05-06-SFX-TRANSLATION-2026-11-13.md`：SFX 与翻译链路阶段结果、候选观察及 NOT_RUN 边界；结论均为 `PARTIAL`，待 ZCode 独立裁决。
+- `tests/test_audit05_sfx_regression.py`、`tests/test_audit06_context_observations.py`：审计专用合成回归；未改原有测试或产品代码。
+- `logs/audit05-06-targeted-20261113.log`、`evidence/audit05-06-targeted-20261113.json`：generated HEAD=`d96529ebff6cf752ad64a676d05ec622da09e565`，247 passed / 3 deselected，EXIT 0。
+- `logs/audit06-context-20261113.log`、`evidence/audit06-context-20261113.json`：generated HEAD=`d96529ebff6cf752ad64a676d05ec622da09e565`，84 passed，EXIT 0。
+- 本阶段未运行真实模型、真实 GUI 或付费 API；测试数据置于 workspace Task 环境。三个候选观察见 `AUDIT_ISSUES.md`，严重级别与是否构成正式 finding 待 ZCode 裁决。
+
 - evidence/baseline.json：Git/环境。
 - evidence/source-manifest.json：源码/config路径、SHA256、语法结果。
 - evidence/static-summary.json：扫描统计和例外。
