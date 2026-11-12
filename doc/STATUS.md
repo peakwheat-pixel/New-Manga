@@ -4,7 +4,7 @@
 
 ## 当前程序
 - **FEA 线 ACTIVE（S5）**：[FEA-00 方案](design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md)；V11R 程序已收官（v0.1.1）。
-- 当前 Task：[NEW-MANGA-V1-FULL-AUDIT](tasks/NEW-MANGA-V1-FULL-AUDIT.md) `in_progress`（00 limited PASS / 01 FAIL-P2 / 02 BLOCKED / 11 FAIL/ZCode Review ACCEPT；余项未完；Release Gate BLOCKED）。
+- 当前 Task：[NEW-MANGA-V1-FULL-AUDIT](tasks/NEW-MANGA-V1-FULL-AUDIT.md) `in_progress`（00 limited PASS / 01 FAIL-P2 / 02 BLOCKED / 11 FAIL/ZCode Review ACCEPT；未完；Gate BLOCKED）。
 - 刚收口：[FEA-15-PIN-BASIS-ENFORCE-1](tasks/FEA-15-PIN-BASIS-ENFORCE-1.md) `closed_with_limitations`（AC5 MET；R-001 CLOSED）；DIAG-ACL-1/[ACCEPT-1](tasks/FEA-15-ACCEPT-1.md) 同为 `closed_with_limitations`；PIN-POLICY-1 `done`。
 - FEA-11 线：WATCH-1/SCAN-2/SCAN-1/MATCH-1/AC4-GAPS-1/LINEAGE-1 `done`；HOST-AUTH-1 `done`；FEA-12 四卡 `done`。
 - **AC11-1 MET with limitation**（2026-11-06，[裁决](reviews/FEA-11-AC11-1-adjudication-2026-11-06.md)）：冷启动枚举、registry/root 核验及每次访问的 live grant+lease+digest 检查；启动不做全量扫描（L-STARTUP）。
