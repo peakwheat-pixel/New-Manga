@@ -58,3 +58,4 @@
 - `logs/final-post-pinbackfill-gates-20261112.log`：四项治理门禁在 generated HEAD=`453327ff19ea012026b76d2e10cdcf2c93c58038` 的完整输出、命令、UTC 时点及 EXIT；默认/TaskPath check、18 pins、API inventory 均 EXIT 0。
 - `reports/ZCODE-LIFECYCLE-ADJUDICATION-2026-11-12.md`、`logs/zcode-lifecycle-adjudication-20261112.log`：ZCode 初次生命周期裁决及原始 CLI 输出；因误将 Codex prompt 选项归为用户原话，已由更正裁决明确撤回，不可作为关闭依据。
 - `reports/ZCODE-LIFECYCLE-ADJUDICATION-CORRECTION-2026-11-12.md`、`logs/zcode-lifecycle-adjudication-correction-20261112.log`：ZCode 更正后的终局裁决与原始 CLI 输出；Task 保持 `in_progress`，唯一待用户明确接受 `closed_with_limitations` 的具体语义。保留 AC2/AC3/AC4 PARTIAL、AUDIT-01–14 BLOCKED 和 Release Gate BLOCKED。
+- `logs/original-checklist-git-history-search-20261112.log`：generated HEAD=`5cb792e0966817bd642d173ab7db844b2dce092c`；记录 Task 自身可达 Git 历史、`AUDIT-14`/`15项专项` 定向 `-S` 搜索及最早 Task blob。最早版本 `1248f2b8a` 仅含通用 AC1–AC4 和 AUDIT-00–14 范围，没有 AUDIT-01–14 逐项定义；未从当前 Task/audit 子树历史恢复清单。

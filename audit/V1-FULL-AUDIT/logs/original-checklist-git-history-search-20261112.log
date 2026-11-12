@@ -1,0 +1,65 @@
+generated_head: 5cb792e0966817bd642d173ab7db844b2dce092c
+branch: main
+worktree_status_before: <clean>
+
+=== TASK_FILE_HISTORY ===
+command: git log --all --follow --format=%h %ad %s --date=short -- doc/tasks/NEW-MANGA-V1-FULL-AUDIT.md
+started_utc: 2026-11-12T10:42:08.3894925Z
+ended_utc: 2026-11-12T10:42:08.9005536Z
+exit_code: 0
+output:
+5cb792e09 2026-11-12 audit: pin lifecycle adjudication correction
+af32678d1 2026-11-12 audit: pin current-head review and gates
+453327ff1 2026-11-12 audit: pin final review evidence
+b17fead6d 2026-11-12 audit: record final review addendum
+3825d6111 2026-11-12 audit: pin postreview gate verification
+ac188dde5 2026-11-12 audit: pin final review and gate evidence
+75e3aefb2 2026-11-12 audit: record final checkpoint review
+d9478939f 2026-11-12 audit: pin checkpoint review evidence
+405f82e30 2026-11-12 audit: record checkpoint review addendum
+f8feb02ca 2026-11-12 audit: record checkpoint review and wording fixes
+499a6b8e6 2026-11-12 audit: pin governance suite evidence
+3e0c960a4 2026-11-12 audit: pin core-wire smoke evidence
+2a7aed313 2026-11-12 audit: pin Avalonia TestHost evidence
+da5894163 2026-11-12 audit: pin pytest and probe triage evidence
+425bd0565 2026-11-12 docs: pin V1 audit probe results
+d991949ac 2026-11-12 docs: pin V1 audit execution ruling
+8453559b1 2026-11-12 docs: pin V1 audit mapping ruling
+4534fed56 2026-11-12 docs: pin AUDIT-00 segment B evidence
+7e4152cc6 2026-11-12 docs: pin V1 audit resumption evidence
+df120fb56 2026-11-12 docs: resume V1 full audit on current baseline
+1248f2b8a 2026-10-25 docs(governance): preserve Codex/ZCode GIT-CLEAN work-in-progress
+
+=== AUDIT_14_STRING_HISTORY ===
+command: git log --all --format=%h %ad %s --date=short -SAUDIT-14 -- Task and audit subtree
+started_utc: 2026-11-12T10:42:08.9042654Z
+ended_utc: 2026-11-12T10:42:09.2886495Z
+exit_code: 0
+output:
+50845a11c 2026-11-12 evidence: record V1 audit suite mapping ruling
+f632f801b 2026-10-25 chore(evidence): commit GIT-CLEAN verification evidence and V1 audit artifacts
+
+=== 15_ITEMS_STRING_HISTORY ===
+command: git log --all --format=%h %ad %s --date=short -S15项专项 -- Task and audit subtree
+started_utc: 2026-11-12T10:42:09.2888339Z
+ended_utc: 2026-11-12T10:42:09.6614935Z
+exit_code: 0
+output:
+50845a11c 2026-11-12 evidence: record V1 audit suite mapping ruling
+1248f2b8a 2026-10-25 docs(governance): preserve Codex/ZCode GIT-CLEAN work-in-progress
+
+=== EARLIEST_TASK_ACCEPTANCE ===
+command: git show 1248f2b8a:doc/tasks/NEW-MANGA-V1-FULL-AUDIT.md | Select-String AC/AUDIT scope lines
+started_utc: 2026-11-12T10:42:09.6616406Z
+ended_utc: 2026-11-12T10:42:09.7044650Z
+exit_code: 0
+output:
+## 来源与目标
+用户2026-10-24粘贴的完整自主审计指令；本轮新增只读审计 Task，不重新激活历史实现。Codex接任Lead Auditor，明确覆盖AUDIT-00–14；允许隔离本地扫描/测试与报告，不授权业务修改、安装、付费API、发布、删除、清理或上传项目材料。
+## Acceptance Criteria
+- [ ] AC1：固定Git/环境及有效源码清单，记录dirty和历史缺口。 <<PARTIAL: 基线已存，待交叉核验>>
+- [ ] AC2：15项专项逐项有真实检查结果或具名阻断，关键链路深读与测试。 <<PARTIAL: 正在执行>>
+- [ ] AC3：完整日志、问题分级、整改路线、正式报告和Release Gate落盘。 <<PARTIAL: 正在执行>>
+- [ ] AC4：独立复核、证据pin和治理检查可核验；未满足不得置done。 <<PARTIAL: 尚未提交或独立审查>>
+
+result: earliest tracked Task version in reachable history (1248f2b8a, 2026-10-25) contains generic AC1-AC4 and scope AUDIT-00-14, but no itemized AUDIT-01-14 definitions; targeted -S searches did not find a later itemized checklist in the Task/audit subtree.
