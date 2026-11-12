@@ -11,3 +11,5 @@ IN_PROGRESS：段 A 基线、盘点与测试日志已保存；段 B 于 2026-11-
 2026-11-12 风险披露：本地 `origin/main` reflog 记有 2026-10-30 三次 main push；私有素材对象曾进入公开仓库历史为高置信推论，见 `reports/ZCODE-SCOPE-ADJUDICATION-2026-11-12.md`。实时远端可见性未核验，未执行远端补救；本地审计继续，任何传播/删除/历史改写均不在本 Task 授权内。
 
 段 B 状态：AUDIT-00 PASS（仅基线/清单，限制见报告）；AUDIT-01–14 均为 `BLOCKED-ORIGINAL-CHECKLIST-MISSING`（未测试）。限定 suite 证据已采集：probes EXIT 1（2 项 Medium / High confidence，1 项防线已验证）；Python Core pytest EXIT 1（3,519 passed / 16 failed / 10 skipped / 11 warnings）；Avalonia .NET `BLOCKED-TESTHOST-ACCESS`（8/8 runner EXIT 1，TRX 0 tests）；smoke `core,wire` EXIT 1（Wire 6/6 PASS；Core 4 PASS、7 项 `BLOCKED-SANDBOX-GRANT`，frontend/packaged 显式 SKIP）；governance default runner EXIT 0（3 warnings，生成 HEAD=`3e0c960a482f5420666faec82d9c0f89e8396159`）。suite 结果详见对应报告，不改变逐项状态。最终审计 HEAD 的 default + TaskPath、18 pins、API 复核待做，Release Gate 保持 BLOCKED。
+
+Checkpoint Review：ZCode fresh context 对 reviewed_head=`499a6b8e6eb293487abf391c46d00263230940ad` 给出 `PASS_FOR_CHECKPOINT`，发现 R-1 补验缺口及 R-2/R-3 P3 文案问题；文案已在 Task 卡修订。实现侧只读补验对 37 个 diff 路径和 46 条 Canonical/SOURCE_PIN 哈希均得匹配（EXIT 0）；ZCode addendum 待处理，不能提前将 R-1 记为 Reviewer 已关闭。详见 checkpoint review 报告。此结论不等于全审通过或 Task 关闭。

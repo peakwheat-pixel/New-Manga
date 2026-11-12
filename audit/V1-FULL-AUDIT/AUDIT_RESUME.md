@@ -80,3 +80,10 @@ TaskStatus=in_progress；ExecutionState=BLOCKED_MATERIAL_PROVENANCE（仅推送�
 
 - `python audit/V1-FULL-AUDIT/tests/audit_runner.py governance` 已运行默认治理 check 一次，生成 HEAD=`3e0c960a482f5420666faec82d9c0f89e8396159`，branch=`main`，EXIT=0，elapsed=1.281s，3 条既有 warning。原始 log/JSON 固定在 evidence commit `1e9c15344`。
 - 此 suite 仅执行默认 `check.ps1`；最后一笔 Task Canonical Evidence pinbackfill 后，仍须在最终 HEAD 执行 default + TaskPath `check.ps1`、`verify_pins.ps1`、`generate_api_inventory.py --check`。这些结果决定最终治理状态；当前 Task 和 Release Gate 未关闭。
+
+### 段 B checkpoint Review 与补验（2026-11-12）
+
+- ZCode fresh context 对 reviewed_head=`499a6b8e6eb293487abf391c46d00263230940ad` 给出 `PASS_FOR_CHECKPOINT`；Review 不是全审批准或 Task 关闭。完整 finding 摘要见 `reports/ZCODE-CHECKPOINT-REVIEW-SEGMENT-B-2026-11-12.md`。
+- Review 初始 R-1 为 NOT_VERIFIED（plan mode 下 Reviewer 不能执行 diff/path 与 46 pin 复算）；R-2/R-3 为 P3 Task 文案滞后，已在 Task 卡修订；R-4 是已登记的 probe 3 defense-verified 观察。
+- Codex 随后基于固定 reviewed_head 的 Git 对象完成只读补验：37 个 diff 路径全部属于当时 `allowed_paths`；45 条 CANONICAL + 1 条 SOURCE_PIN 的文件内容 SHA-256 全匹配且 commit:path 存在。完整命令结果在 `logs/review-checkpoint-recheck-20261112.log`（EXIT 0）；该补验由实现侧执行，已交原 ZCode Reviewer 请求 addendum，收到前保留 R-1 pending。
+- 下次继续：取回 ZCode addendum，更新 Review 处置；随后为本次 Review/补验建 Canonical Evidence pins，重生成 Task ledger；在新的固定 checkpoint head 重跑 default + TaskPath、18 pins、API。AUDIT-01–14 仍等原始逐项清单，Release Gate 不变为 BLOCKED 以外状态。

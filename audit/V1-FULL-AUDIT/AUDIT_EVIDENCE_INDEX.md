@@ -44,3 +44,6 @@
 - `logs/smoke-result-adjudication-20261112.log`：ZCode 只读 adjudication 原文、session/turn/trace、生成 HEAD 与 EXIT。
 - `reports/GOVERNANCE-RESULT-SEGMENT-B-2026-11-12.md`：默认 governance suite 的命令、生成 HEAD、EXIT、3 warnings 与最终 gate 复跑限制。
 - `logs/governance-segment-b-20261112T085303591759Z.log`、`evidence/governance-segment-b-20261112T085303591759Z.json`：governance runner 的 argv/cwd、生成 HEAD、时点、elapsed 与 EXIT。
+- `reports/ZCODE-CHECKPOINT-REVIEW-SEGMENT-B-2026-11-12.md`：新独立 ZCode Reviewer 对 reviewed_head `499a6b8e6…` 的 checkpoint 结论、R-1–R-4 findings 与限制。
+- `logs/zcode-checkpoint-review-20261112.log`、`logs/zcode-checkpoint-review-findings-20261112.log`：ZCode fresh-context CLI 首轮结论和完整 finding 重述。
+- `logs/review-checkpoint-recheck-20261112.log`：实现侧在 reviewed_head Git 对象上逐路径核对 37 个变更、复算 46 个 Canonical/SOURCE_PIN SHA-256 的原始只读结果；EXIT 0，待独立 Reviewer addendum。
