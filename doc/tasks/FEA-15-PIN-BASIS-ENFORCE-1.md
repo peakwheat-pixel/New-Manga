@@ -101,6 +101,7 @@ AC 状态语法按 `doc/09_COLLABORATION.md` §4.3。AC1 的 A/B 是两个独立
 - 2026-11-12 previous checkpoint：AC1–AC4 完成；AC4 ACCEPT_WITH_LIMITATIONS（P2-1/P2-2 limitation），AC5 RELEASED 条件执行。Adjudication/receipt/README evidence commit c3fde8b54。主线 preintegration gates at 139ae0622 全 EXIT=0；实现源 7eefb54，candidate 4ed7f32 仅供证据对照且禁止集成。AC5 尚未开始；Linux、四历史 TaskPath、集成后 gates、AC5 Review/final adjudication 均 NOT_RUN；R-001/Review-R-001 保持开放。下步按裁决 cherry-pick 实现四提交并核对四个 file blobs。
 - 2026-11-12 current checkpoint：AC4 adjudication 后 Task/STATUS/Plan 的 default 与本卡 TaskPath 均 PASS（各 3 warnings），18 pins 与 API `1/79/6=86` 均 EXIT=0；生成于 `211987767278dd730769bb592db990488e59a46c`，证据和 README 汇总提交 `6c5d0015f0dde91eb2b1418ee313aa760d6d30a0`。AC5 集成后 gates 尚未运行。下一步按裁决 cherry-pick 四个实现提交并核对四个文件 blobs；4ed7f32 candidate 对象不得集成。
 - 补充记录：`bd883972630ab3eca266e60dc0819fef3158dfcd` 保存一组 preliminary gates，生成 HEAD `6c5d0015f0dde91eb2b1418ee313aa760d6d30a0` 时 Task pinbackfill 仍在 working tree，故不作为 clean committed-state gate 证据。后续先提交本次 Task pinbackfill，再在 clean HEAD 上复跑。
+- clean committed-state preintegration gates：生成于 clean HEAD `c16d3fff945100d23648eee77c5c602a62552555`；default、TaskPath（均 3 warnings）、18/18 pins、API 1/79/6=86 全部 `EXIT=0`。README/log 证据提交 `6a5c5e204a4096b165f95d059b4b6d8b24670c4f`。下一步执行 AC5 四提交集成和四文件 blob 对照；集成后门禁尚未运行。
 
 ## Canonical Evidence
 
@@ -180,6 +181,8 @@ AC 状态语法按 `doc/09_COLLABORATION.md` §4.3。AC1 的 A/B 是两个独立
 | ac4-release-card-gates | Default/TaskPath, 18 pins, API gate log generated at 211987767278dd730769bb592db990488e59a46c; all EXIT=0 | verification/FEA-15-PIN-BASIS-ENFORCE-1/main-post-ac4-release-card-gates-211987767.log | 6c5d0015f0dde91eb2b1418ee313aa760d6d30a0 | ead857c03558563db70ccfb9a598322ee5db7b600d84639e493f2698d84ff081 | CANONICAL |
 | ac4-release-preliminary-readme | Preliminary card pinbackfill gate run qualification; working tree was dirty | verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md | bd883972630ab3eca266e60dc0819fef3158dfcd | 9537760249fcb355430c3595e9c90d4517e8299ddd21205e8dfd6db209b781a3 | CANONICAL |
 | ac4-release-preliminary-gates | Preliminary default/TaskPath, 18 pins, API run at 6c5d0015 with uncommitted Task pinbackfill present | verification/FEA-15-PIN-BASIS-ENFORCE-1/main-post-ac4-card-pinbackfill-gates-6c5d0015.log | bd883972630ab3eca266e60dc0819fef3158dfcd | 13f4e1390c5d3a2d76759b6048d76c8a3b81c435e4dac6c56d5810c992e10dfa | CANONICAL |
+| ac4-release-clean-readme | Clean committed-state preintegration gate results and distinction from preliminary run | verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md | 6a5c5e204a4096b165f95d059b4b6d8b24670c4f | 0d98cce2926104da1dab2cef4608c48d1596f4f925f2ddb395b9c205a6840508 | CANONICAL |
+| ac4-release-clean-gates | Clean committed-state default/TaskPath, 18 pins, API gates at c16d3fff; all EXIT=0 | verification/FEA-15-PIN-BASIS-ENFORCE-1/main-clean-post-ac4-card-gates-c16d3fff.log | 6a5c5e204a4096b165f95d059b4b6d8b24670c4f | 842a9f5b9a7f5d355a71d4221a833872bb7fc149bb654b850bb9c5f071807327 | CANONICAL |
 
 ## Resource Manifest
 
