@@ -56,7 +56,7 @@ SOURCES: dict[str, tuple[str, ...]] = {
         r"正在读取书架|书架读取失败|ImportFilesAsync|ImportFolderAsync|FluentUi\.Empty|AutomationProperties",
     ),
     "apps/desktop-avalonia/src/NewManga.App/Views/Fluent/WorkbenchPageView.cs": (
-        r"WorkbenchViewTab|Batch|OCR|SFX|Glossary|Region|Revision|FluentUi\.Empty|Loading|Error|AutomationProperties",
+        r"WorkbenchViewTab|Batch|OCR|SFX|Glossary|Region|Revision|FluentUi\.Empty|Loading|Error|AutomationProperties|StartRunAsync|RetryRun",
     ),
     "apps/desktop-avalonia/src/NewManga.App/Views/Fluent/SettingsPageView.cs": (
         r"theme\.frontendId|凭据|Network|Backup|正在读取设置|设置错误|AutomationProperties",
@@ -69,6 +69,30 @@ SOURCES: dict[str, tuple[str, ...]] = {
     ),
     "apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Studio/StudioBatchViewModel.cs": (
         r"NotWiredText|NOT_WIRED|投影未接入|IRunController",
+    ),
+    "apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Studio/StudioInspectorViewModel.cs": (
+        r"OCR 原文|人工确认|SfxPolicyText|SfxPolicy|Lock(sNote|ToggleEnabled)|四级文本读取命令未接入|SaveTranslationLabel|FontFamilyNote",
+    ),
+    "apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Studio/StudioHudRing.cs": (
+        r"ReOcrRegion|ToggleLock|DeleteRegion|NOT_WIRED|StudioHudSlot",
+    ),
+    "apps/desktop-avalonia/src/NewManga.App/Views/V2/Studio/Controls/StudioRegionOverlay.cs": (
+        r"PointerPressed|HasFailed|IsLocked|NOT_WIRED|real source reported",
+    ),
+    "apps/desktop-avalonia/src/NewManga.App/Views/V2/Studio/Controls/StudioKeyboard.cs": (
+        r"Key\.(Tab|Escape|Enter|Left|Right)|NOT_WIRED|人工译文输入框",
+    ),
+    "apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Studio/StudioExportViewModel.cs": (
+        r"UnconfirmedNotWired|StaleNotWired|HistoryEmptyText|LoadHistoryAsync|StartExportAsync|CancelAsync|IsHistoryLoading",
+    ),
+    "apps/desktop-avalonia/src/NewManga.App/Views/V2/Studio/Controls/StudioToolsOverlay.cs": (
+        r"导出预检|导出历史|术语与约束|开始导出|取消导出|ProgressBar|EmptyText",
+    ),
+    "apps/desktop-avalonia/src/NewManga.App/Views/V2/Studio/Controls/StudioBatchControls.cs": (
+        r"StudioBatchWorkspace|NOT_WIRED|ProgressText|StatusText|空态|AutomationProperties",
+    ),
+    "apps/desktop-avalonia/src/NewManga.App/Views/V2/Studio/Controls/StudioBottomBands.cs": (
+        r"NOT_WIRED|状态待接入|Progress|AutomationProperties",
     ),
     "apps/desktop-avalonia/src/NewManga.App/Views/V2/Studio/Controls/StudioCanvasViewport.cs": (
         r"NOT_WIRED|成品预览|能力待接入",
