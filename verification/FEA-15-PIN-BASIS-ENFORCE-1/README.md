@@ -348,3 +348,14 @@ These results cover the 134 Canonical Evidence rows present at `8f383aa60f`, inc
 - `r001-post-pinbackfill-full-section-audit-8f383aa60f.log` — 40285 bytes; workspace-original SHA-256 `00f94b9777fe7804d5cdea6fc53dc0fda2da6a0a0bc3bcdfd378d9cc796be4aa`.
 
 Task remains `in_progress`, R-001 remains **OPEN**, and terminal-state gates plus the fresh independent Review are pending. Earlier FAIL and NOT_RUN classifications remain unchanged.
+
+## R-001 review-ready clean-head gates and 137-row audit (2026-11-12)
+
+At clean `main` HEAD `70423741c1c6499d57082ded5b7cdd691e58842b`, after pinning the 134-row post-pinbackfill evidence, default governance, this TaskPath, the 18 frozen pins, and API inventory each returned `EXIT=0`; default and TaskPath each emitted 3 warnings. API counts were `1/79/6=86`. The complete Canonical Evidence section audit passed `137/137`, `FAIL_ROWS=0`, `EXIT=0`, with empty `GIT_STATUS_PORCELAIN`.
+
+These are review-ready clean-head results; the Task remains `in_progress` and R-001 `OPEN`. Logs:
+
+- `r001-review-ready-gates-70423741c1.log` — 7675 bytes; workspace-original SHA-256 `c924e62cc24af7e73bb646ca8b3b85a18e9ebc87f29598bf652e702f47f5dfc5`.
+- `r001-review-ready-audit-70423741c1.log` — 41199 bytes; workspace-original SHA-256 `885801a9e7b8ec30b55a2c94e76d2413478cf61fc94eee1426e86c1e972ba6f6`.
+
+No historical FAIL or NOT_RUN classification changed.
