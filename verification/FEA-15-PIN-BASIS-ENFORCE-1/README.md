@@ -196,3 +196,37 @@ Generated at main HEAD `c16d3fff945100d23648eee77c5c602a62552555` with an empty 
 - API inventory: IReaderProgressSink 1 / IHostController 79 / IRunController 6 = 86, `EXIT=0`.
 
 Timestamped command/output log: `verification/FEA-15-PIN-BASIS-ENFORCE-1/main-clean-post-ac4-card-gates-c16d3fff.log`. This is a clean committed-state pre-integration run; AC5 integration gates remain pending.
+
+## AC5 integration and required gate results (2026-11-12)
+
+The four authorized implementation commits were cherry-picked onto main in order. The resulting implementation head is `e69fc2dc7a5f6ec68c9a881c1e25599cfe634da3`; candidate commit `4ed7f32b3ce9104ecee11aad593bde222055a0df` was not merged, and that commit object is absent from the main repository. T/F validation clones were read only for the candidate blob comparison.
+
+| Source path | Implementation / candidate / integrated SHA-256 | Git blob in integrated head | Result |
+|---|---|---|---|
+| `tools/governance/check.ps1` | `1a6f7ab38e1b3fad80c9c282880c74e77bbbb81e6300653af3678d0694a6cff2` | `a320c034494c31b7ba8c9fd8e7f685cb917692e4` | Match in implementation `7eefb54`, candidate 4ed T/F, integrated `e69fc2dc` |
+| `doc/templates/TASK.md` | `89371702736ae5756ceacf96c9e3e93ff10b2517aa38a1f253095f69361afc7c` | `574b82d7414f9f700858a3acbc296b6da6c60fc8` | Match in implementation `7eefb54`, candidate 4ed T/F, integrated `e69fc2dc` |
+| `tools/governance/tests/test_canonical_evidence_basis.py` | `2b82fb2d0eacc0f664a6464ffe4e34ffed2a8022bf938295e8195ea32569fd0f` | `aabe8e14b9c649d5f53ab053b19822817ab1a75b` | Match in implementation `7eefb54`, candidate 4ed T/F, integrated `e69fc2dc` |
+| `tools/governance/tests/test_architecture_assertions.py` | `26f79e8a2d6b2d26e2e2e2320800c787b8535698de1a852b1ed63b24a9169e57` | `e9b0bbc7c598ea39dc9eba1a1cc8605a8a741635` | Match in implementation `7eefb54`, candidate 4ed T/F, integrated `e69fc2dc` |
+
+Commit mapping: `fd84360219fddf1e0b7611c1da1a088d5635593c` → `d363b13dca5a517734c90f56daf2593f9e4c22bc`; `5e216dc53102ff93db39124b97ab85d88f18643b` → `6e2db2e904f35d2e5c54c6fb643e323b6222c071`; `ee0b25ac07dd6d9d756e98c3f10adaf4ffadce57` → `3ec23cc4688174a8597862ce07603c1ae38f573a`; `7eefb54dc5ca74ddf9cc5459eb40fb10769a44e1` → `e69fc2dc7a5f6ec68c9a881c1e25599cfe634da3`.
+
+The blob map is recorded in `verification/FEA-15-PIN-BASIS-ENFORCE-1/ac5-integration-blob-map-e69fc2dc7.log`; it was generated at the clean integration HEAD and includes SHA-256 and Git blob IDs for implementation, both candidate clones, and integration.
+
+The required AC5 gates were run at clean main HEAD `e69fc2dc7a5f6ec68c9a881c1e25599cfe634da3`. The complete timestamped command/output record is `verification/FEA-15-PIN-BASIS-ENFORCE-1/ac5-integrated-gates-e69fc2dc7.log`.
+
+| Gate | Result |
+|---|---|
+| Default `check.ps1` | PASS, 3 warnings, `EXIT=0` |
+| FEA-15 TaskPath | PASS, 3 warnings, `EXIT=0` |
+| `AGPL-RELEASE-1` TaskPath | PASS, 3 warnings, `EXIT=0` |
+| `AD002-FOLLOWUPS-1` TaskPath | PASS, 3 warnings, `EXIT=0` |
+| `FEA-06-PREREQ-1` TaskPath | FAIL, 13 errors / 3 warnings, `EXIT=1` |
+| `CHAPTER-SELECTOR-1` TaskPath | FAIL, 6 errors / 3 warnings, `EXIT=1` |
+| Frozen pins | 18/18, `EXIT=0` |
+| API inventory | IReaderProgressSink 1 / IHostController 79 / IRunController 6 = 86, `EXIT=0` |
+
+The FEA-06 TaskPath reports historical canonical evidence SHA mismatches, a missing `AppearanceCoordinator.cs` path, unregistered evidence-directory files, and historical DONE/resource/AC-state violations. The CHAPTER-SELECTOR TaskPath reports a missing Resource Manifest and missing v3 AC status markers for AC1–AC5. These are observed failures in the historical Task cards. No historical Task or evidence file was edited, and no gate failure is reclassified as PASS. The AC5 adjudication requires stopping on these failures for Integrator disposition.
+
+The full governance pytest suite was not rerun because it is not an AC5 required gate; its earlier `61 passed / 2 skipped / 3 failed / EXIT=1` record remains FAIL. Linux remains `NOT_RUN`. R-001 and Review-R-001 remain open. AC5 Handoff, fresh independent Review, and separate final adjudication are pending; the Task remains `in_progress` and is not accepted or closed.
+
+Preserved limitations for the pending Handoff: P2-1 keeps the six worktree-SHA/Git-blob-SHA pairs and the distinction “generation-log SHA = generation-time worktree bytes; Canonical pin = Git blob bytes.” P2-2 remains an evidence-quality limitation: the audit records T/F config last-write times after the checkout reflog time, the original sampler/script is unavailable, and the audit does not prove config-before-checkout. Do not assert that ordering.
