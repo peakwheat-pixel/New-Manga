@@ -1,0 +1,17 @@
+# command: python -m pytest -q
+# shell: PowerShell 7.6.8
+# python: Python 3.14.6
+# pytest: pytest 9.1.1
+# generated_head: 9e53948fce3529373420c91a3655d6057c52f2de
+# branch: main
+# worktree_status_before: <clean>
+# started_utc: 2026-11-12T11:52:26.0180069Z
+# ended_utc: 2026-11-12T12:00:15.5250897Z
+# EXIT=1
+# result: NOT_VALID_BASELINE (environmental setup failure)
+# summary: 1654 passed, 10 skipped, 10 warnings, 1881 errors in 467.20s (0:07:47)
+# errors: all 1881 errors are pytest tmp_path setup PermissionError (WinError 5) at os.scandir(C:\Users\49745\AppData\Local\Temp\pytest-of-49745); no other exception class observed.
+# representative stack: _mk_tmp -> TempPathFactory.mktemp -> getbasetemp -> make_numbered_dir -> find_prefixed -> os.scandir(root).
+# raw_stdout_stderr: G:\CODEX\New Manga.workspace\agent-output\codex\FEA-11-HOST-AUTH-4\pytest-release-baseline-attempt1-raw.log
+# raw_stdout_stderr_sha256: 5e809b1bbcec88a54dcbe807f9e6c8356940449c210f823b3d9d9214a05ad8d8
+# normalization: repository evidence summarizes the repeated identical traceback; complete unmodified command output is preserved at the workspace path above.
