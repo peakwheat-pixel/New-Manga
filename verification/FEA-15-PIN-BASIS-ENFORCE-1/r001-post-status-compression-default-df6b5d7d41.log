@@ -1,0 +1,9 @@
+Generated: 2026-11-12T13:06:15+08:00 HEAD: df6b5d7d418c5d9321c3089a085ab840e25fa628 Branch: main Working tree before: clean Command: pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-15-PIN-BASIS-ENFORCE-1.md
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3188 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6999 bytes / 64 lines
+Governance check: PASS (3 warnings)
+EXIT=0
+Working tree after: clean

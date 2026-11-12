@@ -314,3 +314,20 @@ Two non-blocking P3 observations remain for closeout: P3-O1 asks that the report
 - At clean main HEAD `661211b548a5d17a7368457e04b37c3dd192a948`, the first post-normalization gate (`pwsh -NoProfile -File tools/governance/check.ps1`) returned `FAIL (1 error, 2 warnings) / EXIT=1`: `doc/STATUS.md` measured 3298 bytes against the 3200-byte limit; 31/45 lines. TaskPath, pins, API, and full-section audit were not run due the stop rule. Original log: `r001-post-normalization-gates-661211b54-budget-fail.log`; workspace-original SHA-256 `B3C7F66A60AD04DAFC513C821DFDA22E4DCBF6F5A54D7C13AE08FCDC713B0407`. This remains FAIL and is superseded only by a later clean retry.
 - Fresh ZCode adjudication `AUTHORIZE_BOUNDED_STATUS_COMPRESSION_AND_RETRY`, session `sess_3b0755a2-981e-4f83-ab5f-b2584a0da0dd`, decision turn `turn_fb3b11b8-6b36-45dc-85d1-466fe7452ba3`, CLI `EXIT=0`, authorizes changing only the current Task summary on STATUS line 7. It must retain the Task link/id, `in_progress`, AC1–4 complete and AC4 limitation, the 43-error `EXIT=1` FAIL, the ZCode-authorized manifest normalization, R-001 OPEN, and pending independent Review/terminal gates/final full-section audit. Target STATUS size is ≤3190 bytes; all other STATUS lines stay byte-identical. Full ruling: `../../doc/reviews/FEA-15-PIN-BASIS-ENFORCE-1-r001-status-budget-adjudication-2026-11-12.md`; raw receipt: `zcode-r001-status-budget-adjudication-followup-20261112.jsonl`.
 - After the failure log and ruling are pinned and the bounded STATUS edit is committed, rerun clean-head gates in order: default check, this TaskPath, `verify_pins.ps1` (18/18), API inventory (1/79/6=86), then full-section audit. Any nonzero exit stops work; preserve the result and keep Task `in_progress` / R-001 OPEN.
+## R-001 clean-head retry after STATUS compression (2026-11-12)
+
+At clean `main` HEAD `df6b5d7d418c5d9321c3089a085ab840e25fa628`, the bounded STATUS line-7 compression produced 3188 bytes; the other 30 lines match the adjudicated baseline byte-for-byte. Task remains `in_progress`, R-001 remains `OPEN`, and the prior terminal-candidate `43 errors / EXIT=1` remains FAIL.
+
+- Default governance check: `EXIT=0`, 3 warnings.
+- FEA-15 TaskPath check: `EXIT=0`, 3 warnings.
+- Frozen pins: `18/18`, `EXIT=0`.
+- API inventory: `IReaderProgressSink=1 / IHostController=79 / IRunController=6`, total 86, `EXIT=0`.
+- Full-section Canonical Evidence Git-blob audit: `130/130 PASS`, `FAIL_ROWS=0`, `EXIT=0`.
+
+Each raw log below records its generated HEAD and command-level exit status; the full audit also records branch and clean porcelain. These are the first clean retry results before their Task pinbackfill. External workspace originals remain preserved.
+
+- `r001-post-status-compression-default-df6b5d7d41.log` — 643 bytes; workspace-original SHA-256 `b2e7eaf30241100b87804ed9107c19700e080a7bc7159a7f43cd93c948e2c276`.
+- `r001-post-status-compression-gates-df6b5d7d41.log` — 7177 bytes; workspace-original SHA-256 `77f4c8e8d80bebcd3df4cde1a2654cb00055118af06be7b732c59660d4145905`.
+- `r001-post-status-compression-full-section-audit-df6b5d7d41.log` — 39039 bytes; workspace-original SHA-256 `b78835304e6aa4e3f1823fe53accb468f59fbb8aaad7cd4eda28104411551273`.
+
+R-001 remains **OPEN** pending a fresh independent Review, terminal-state gates, and the final full-section audit. No earlier FAIL or NOT_RUN result is reclassified.
