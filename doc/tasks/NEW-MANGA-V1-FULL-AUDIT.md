@@ -35,7 +35,7 @@ allowed_paths:
 - [x] AC1：固定Git/环境及有效源码清单，记录dirty和历史缺口。 <<MET>>
 - [ ] AC2：15项专项逐项有真实检查结果或具名阻断，关键链路深读与测试。 <<PARTIAL: AUDIT-01–14 因原始清单缺失保持具名阻断；probes EXIT 1（2 项 Medium / High confidence，1 项 defense-verified）；Python Core pytest EXIT 1（3,519 passed / 16 failed / 10 skipped）；Avalonia .NET 为 BLOCKED-TESTHOST-ACCESS（8/8 EXIT 1、TRX 0 tests）；smoke EXIT 1（Wire 6/6 PASS，Core 4 PASS / 7 BLOCKED-SANDBOX-GRANT，frontend/packaged SKIP）>>
 - [ ] AC3：完整日志、问题分级、整改路线、正式报告和Release Gate落盘。 <<PARTIAL: probes 分级、pytest 失败摘要、.NET TestHost、smoke 沙箱阻断和最终 governance 门禁均有记录；全审与最终 Release Gate 仍因逐项清单缺失保持 BLOCKED>>
-- [ ] AC4：独立复核、证据pin和治理检查可核验；未满足不得置done。 <<PARTIAL: ZCode checkpoint addendum 已关闭 R-1/R-2/R-3 与 F-1/F-2/F-3（R-4 保持 observation）；完整性日志核实 11/11 路径在允许范围、57/57 既有 pin 匹配，addendum 报告/CLI log/完整性日志已登记；全审 review 与集成验证未完成>>
+- [ ] AC4：独立复核、证据pin和治理检查可核验；未满足不得置done。 <<PARTIAL: ZCode checkpoint review @453327ff1 为 PASS_FOR_CHECKPOINT（0 P0/0 P1）；N-1/N-2 已按复核补记，review/raw CLI/gates 三项证据已 pin，generated HEAD 453327ff1 四项门禁 EXIT 0；全审 Review 与集成验证未完成>>
 
 ## 允许修改范围
 仅frontmatter所列。审计日志/测试脚本由主控单一写入。三名子代理只读同一固定产品HEAD，无并发写入。用户显式审计目录优先于常规verification路径；运行派生产物放相邻workspace task-env。
@@ -111,6 +111,9 @@ src/**、apps/**、原有tests/**、共享契约、Schema、依赖、真实用�
 | ZCODE-FINAL-REVIEW-ADDENDUM-REPORT-1 | AC4（ZCode checkpoint addendum：F-1/F-2/F-3 CLOSED，R-4 observation；`PASS_FOR_CHECKPOINT`） | `audit/V1-FULL-AUDIT/reports/ZCODE-FINAL-REVIEW-ADDENDUM-2026-11-12.md` | `b17fead6d2cbbd2324ffb0a85096eb50448050ff` | `90C4B6743683A77F78CC5B84C74887BF86DBAD12EA3A5E4D38DC93FA2D5DC22A` | CANONICAL | BLOB |
 | ZCODE-FINAL-REVIEW-ADDENDUM-LOG-1 | AC4（ZCode addendum 原始 CLI 输出、session/turn/trace 与 EXIT 0） | `audit/V1-FULL-AUDIT/logs/zcode-final-review-addendum-20261112.log` | `b17fead6d2cbbd2324ffb0a85096eb50448050ff` | `A50F9CA3520923A88628494DABB59146E61E27CF32C367F3652C6B308E9B9C0A` | CANONICAL | BLOB |
 | POSTADDENDUM-INTEGRITY-LOG-1 | AC4（generated HEAD=`b17fead6`、reviewed_head=`d9478939`：11/11 diff 路径 allowed、57/57 既有 pin 匹配，EXIT 0） | `audit/V1-FULL-AUDIT/logs/postaddendum-integrity-20261112.log` | `0588e024ef9364dedae91231623b6b92b141e9b1` | `B34B332CC6C7DB315531EC963E0930F27D8BD1F2FF7C5DE0F67A3EBDE0C2BAE1` | CANONICAL | BLOB |
+| ZCODE-CURRENT-HEAD-REVIEW-REPORT-1 | AC4（ZCode fresh checkpoint review of `453327ff1`: `PASS_FOR_CHECKPOINT`, 0 P0/0 P1; N-1/N-2 P3, N-3/R-4 observations） | `audit/V1-FULL-AUDIT/reports/ZCODE-CURRENT-HEAD-CHECKPOINT-REVIEW-2026-11-12.md` | `172bca13396d27cd8af7b39d1d675e516f422332` | `53E5DE691819A7923ADA31564430E99DAF346F2E15645E49E6CE54FEB0B2BCC8` | CANONICAL | BLOB |
+| ZCODE-CURRENT-HEAD-REVIEW-LOG-1 | AC4（reviewed_head=`453327ff1` 的原始 ZCode CLI JSON、session/turn/trace 与 EXIT 0） | `audit/V1-FULL-AUDIT/logs/zcode-current-head-checkpoint-review-20261112.log` | `172bca13396d27cd8af7b39d1d675e516f422332` | `63589140BB8147C61DC4EAC9CF2EA0BEF3D01D0BFDB215ADA4AC23768FBECBA8` | CANONICAL | BLOB |
+| FINAL-POST-PINBACKFILL-GATES-1 | AC4（generated HEAD=`453327ff1`：default/TaskPath governance、18 pins、API inventory 四项 EXIT 0，含命令/UTC/输出） | `audit/V1-FULL-AUDIT/logs/final-post-pinbackfill-gates-20261112.log` | `172bca13396d27cd8af7b39d1d675e516f422332` | `E7D19C884D2EB94326649946BC855C134DF147885C91C37FC72E812A097CF0B0` | CANONICAL | BLOB |
 
 说明：裁决文档中记录的阶段 0 日志 `B561…` 是提交前 WORKTREE SHA-256；本表按模板使用 Git BLOB 字节，完整 SHA-256 为 `7E2A…`。
 
@@ -124,7 +127,7 @@ src/**、apps/**、原有tests/**、共享契约、Schema、依赖、真实用�
 | exchange | — | NOT_APPLICABLE | — | — | 无外部传输 |
 
 ## Rolling checkpoint
-[audit/V1-FULL-AUDIT/AUDIT_RESUME.md](../../audit/V1-FULL-AUDIT/AUDIT_RESUME.md)。ZCode 对 `499a6b8e6eb293487abf391c46d00263230940ad` 与 `d9478939f2cee81104f18ea757d81cec71c36225` 的 checkpoint 结论均为 `PASS_FOR_CHECKPOINT`；R-1/R-2/R-3、F-1/F-2/F-3 已 CLOSED，R-4 保持 observation。addendum 后完整性日志已核实 11/11 diff 路径均 allowed、57/57 既有 pin 匹配并登记在 Canonical Evidence。此结论不等于全审批准或 Task 关闭；保持 `in_progress`，AC2/AC3 与全审 Review/集成验证未完成。
+[audit/V1-FULL-AUDIT/AUDIT_RESUME.md](../../audit/V1-FULL-AUDIT/AUDIT_RESUME.md)。ZCode 对 `499a6b8e6eb293487abf391c46d00263230940ad`、`d9478939f2cee81104f18ea757d81cec71c36225` 与 `453327ff19ea012026b76d2e10cdcf2c93c58038` 的 checkpoint 结论均为 `PASS_FOR_CHECKPOINT`。R-1/R-2/R-3、F-1/F-2/F-3 已 CLOSED；当前-head Review 的 N-1/N-2 已按后续证据与文案更新关闭，N-3/R-4 保持 observation。generated HEAD `453327ff1` 的四项门禁均 EXIT 0，三项 Review/gate 证据已 pin。上述均不等于全审通过或 Task 关闭；保持 `in_progress`，AC2/AC3 与全审集成验证未完成。
 
 ## 2026-10-24 推送准备补充授权
 
