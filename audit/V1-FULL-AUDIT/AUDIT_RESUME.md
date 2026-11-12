@@ -7,7 +7,8 @@
 - 文档核对发现 V1 与未来规划没有权威逐项总账；README 的 Managed Copy 和 0.1.0 示例、索引“没有 README”以及 V11R 计划 ACTIVE 等与当前状态存在漂移。README 5 个功能域/4 个一级页面仅是声明数量，不能算作正式 V1 commitment count；未来计划数量 `NOT_COUNTABLE`。
 - 4 项候选 `AUDIT-14-CAND-001…004` 均 `REVIEW_PENDING`，未定级；静态命令/输出在 `logs/audit14-static-20261112T192852Z.log` 和配套 JSON，完整分析在 `reports/AUDIT-14-V1-INTEGRITY-2026-11-13.md`。真实 UI、安装包、模型/漫画数据均 `NOT_RUN`。
 - `e67fef47461a0de6a600c7fcf67b6a13c9b64635` 上首轮 default/TaskPath 因状态文档 3209/3200 bytes、计划 7002/7000 bytes 各 EXIT 1；压缩两行摘要后复跑均 EXIT 0（各 3 warnings），pins 18/18 EXIT 0、API 1/79/6=86 EXIT 0。两批原始输出均保留在 `AUDIT_EVIDENCE_INDEX.md`。
-- 下一步：按专项顺序推进 AUDIT-03（导入/路径发布）；之后 AUDIT-04、07、09、10、12、13。全审 AC2/AC3/AC4 与 Release Gate 继续 `PARTIAL` / `BLOCKED`；等待独立 ZCode 对候选作出裁决，不能自行定级或关闭。
+- ZCode 复核已按用户报告“额度恢复”再试：固定 `reviewed_head=26888045ff475fb2e34b043c55c168f4bd78cd52`，fresh plan 调用因 provider `1310` / HTTP `429` 再次失败，提示额度重置于 `2026-11-17 18:40:33`；EXIT 1、stdout 为空、无 session/response。raw stderr 仅存 task-env，脱敏回执与 dispatch 记录已落盘；05/06 和 14 共 7 项候选均仍 `REVIEW_PENDING`。不重试同一限额，继续独立审计。
+- 下一步：按专项顺序推进 AUDIT-03（导入/路径发布）；之后 AUDIT-04、07、09、10、12、13。全审 AC2/AC3/AC4 与 Release Gate 继续 `PARTIAL` / `BLOCKED`；最终定级仍交 ZCode，不自行定级或关闭。
 
 ## 2026-11-13 AUDIT-05/06 阶段检查点
 

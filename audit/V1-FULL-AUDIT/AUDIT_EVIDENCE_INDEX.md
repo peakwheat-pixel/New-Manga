@@ -80,3 +80,5 @@
 - `logs/audit14-governance-20261112T193119Z.log`、`evidence/audit14-governance-20261112T193119Z.json`：stage HEAD=`e67fef47461a0de6a600c7fcf67b6a13c9b64635` 首轮 default/TaskPath 因 STATUS/Plan 超预算各 EXIT 1；18 pins、API check EXIT 0。后续精简仅状态摘要后重新检查。
 - `logs/audit14-governance-20261112T193219Z.log`、`evidence/audit14-governance-20261112T193219Z.json`：同一 stage HEAD 上修订状态摘要后 default/TaskPath 均 EXIT 0（各 3 warnings），18 pins 18/18 EXIT 0，API 1/79/6=86 EXIT 0；输出含各命令时点/elapsed/argv。
 - `source/zcode-audit14-review-prompt-20261113.txt`：ZCode fresh independent context 对 AUDIT-05/06 与 AUDIT-14 七项候选的固定 HEAD 只读 Review 指令；不含人工裁决预设，不授权产品修改。
+- `logs/zcode-audit14-review-dispatch-20261113.log`、`evidence/zcode-audit14-review-attempt-20261113.json`：对固定 reviewed_head=`26888045ff475fb2e34b043c55c168f4bd78cd52` 的只读 plan-mode 调用；provider code `1310` / HTTP `429`，EXIT 1、空 stdout、无 session/response；raw stderr hash 保留，正文只在 task-env。
+- `evidence/zcode-audit14-review-attempt-20261113.stdout.txt`、`evidence/zcode-audit14-review-attempt-20261113.stderr-sanitized.txt`：失败尝试空 stdout 与脱敏 provider/额度回执；不构成 Review，重置时间见回执。

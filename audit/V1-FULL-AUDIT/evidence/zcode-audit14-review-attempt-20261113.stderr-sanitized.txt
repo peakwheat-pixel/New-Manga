@@ -1,0 +1,4 @@
+ZCode CLI 0.17.1；mode=plan；reviewed_head=26888045ff475fb2e34b043c55c168f4bd78cd52。
+start_utc=2026-11-12T19:42:37.2065449Z；end_utc=2026-11-12T19:42:40.6776505Z；EXIT=1；stdout=0 bytes；sessionId=none；response=none。
+ProviderBusinessError：provider code 1310 / HTTP 429，weekly/monthly usage limit；提示于 2026-11-17 18:40:33 重置。request_id=202611130342405175ad6a469648d3。
+原始 stderr（3986 bytes；SHA-256 3CDE1F79E6CC5AE4EF9343CA7B790378F6C8C8325D12AEEE0EE187C7EAA95ADF）仅保存在 task-env。脱敏时移除瞬态响应头及可能的凭据元数据。
