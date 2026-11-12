@@ -28,3 +28,6 @@
 - `logs/test-mapping-adjudication-20261112.log`：ZCode session/turn、命令/EXIT 与原始清单定位搜索结果。
 - `reports/TEST-EXECUTION-ADJUDICATION-2026-11-12.md`：ZCode 对 smoke/current-vs-Legacy 面、8 个 `.NET` 测试项目和 no-restore 输出隔离方式的后续裁决。
 - `logs/test-execution-adjudication-20261112.log`：ZCode session/turn、`smoke`/solution/assets/ArtifactsPath 只读核验命令与 EXIT；没有执行测试。
+- `tests/audit_runner.py`：段 B suite 范围映射；保存历史结果名、记录 HEAD/branch/EXIT；`.NET` 逐项目运行并核对前后 porcelain。
+- `reports/PROBES-RESULT-SEGMENT-B.md`：段 B probes 的 2 个待分级问题、1 个未复现越界覆盖预期与 EXIT 1 边界。
+- `logs/audit-probes-segment-b-20261112T081030840760Z.log`、`evidence/audit-probes-segment-b-20261112T081030840760Z.json`：段 B probes 生成 HEAD、argv、时点、输出、elapsed 和 EXIT。

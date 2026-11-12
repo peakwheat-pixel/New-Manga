@@ -33,7 +33,7 @@ allowed_paths:
 
 ## Acceptance Criteria
 - [x] AC1：固定Git/环境及有效源码清单，记录dirty和历史缺口。 <<MET>>
-- [ ] AC2：15项专项逐项有真实检查结果或具名阻断，关键链路深读与测试。 <<PARTIAL: suite 映射已固定；AUDIT-01–14 因原始清单缺失保持具名阻断，限定 suite 测试待执行>>
+- [ ] AC2：15项专项逐项有真实检查结果或具名阻断，关键链路深读与测试。 <<PARTIAL: AUDIT-01–14 因原始清单缺失保持具名阻断；probes EXIT 1 并发现待分级问题，其他限定 suite 待执行>>
 - [ ] AC3：完整日志、问题分级、整改路线、正式报告和Release Gate落盘。 <<PARTIAL: 正在执行>>
 - [ ] AC4：独立复核、证据pin和治理检查可核验；未满足不得置done。 <<PARTIAL: 尚未提交或独立审查>>
 
@@ -62,6 +62,10 @@ src/**、apps/**、原有tests/**、共享契约、Schema、依赖、真实用�
 | TESTMAP-LOG-1 | AC2（ZCode 裁决 CLI / 清单定位命令与 EXIT） | `audit/V1-FULL-AUDIT/logs/test-mapping-adjudication-20261112.log` | `50845a11cc2ab8b7d1ecb1d1eaa64b73ce2bbb5a` | `920368B0E2FCCC139CB0DA48730E08E1909285EEE73C6E6674BFBF9F5E786291` | CANONICAL | BLOB |
 | TESTEXEC-1 | AC2（限定 suite 执行范围/输出隔离裁决；测试未执行） | `audit/V1-FULL-AUDIT/reports/TEST-EXECUTION-ADJUDICATION-2026-11-12.md` | `7d2d4d423bf0797c99e4cca2ea3ddb82578ae634` | `943BB6468564ED6440ED9969128598EEC16B4EFD590CE1BA2C754CB77E9F5B21` | CANONICAL | BLOB |
 | TESTEXEC-LOG-1 | AC2（ZCode CLI/只读目标核验及 EXIT） | `audit/V1-FULL-AUDIT/logs/test-execution-adjudication-20261112.log` | `7d2d4d423bf0797c99e4cca2ea3ddb82578ae634` | `086F13D7905B45B7B6651A7EE5A6E62BB20C49C262A028622F1D144B74CFE86B` | CANONICAL | BLOB |
+| AUDIT-RUNNER-SOURCE-1 | AC2（当前/Legacy suite runner 实现） | `audit/V1-FULL-AUDIT/tests/audit_runner.py` | `5ab8ae006580f4c3aab6d61ce180794921dc7641` | `C3B2FF42251A7BBEB84A80752C82A907D584B37A233EFDCF94166E1693E6782A` | SOURCE_PIN | BLOB |
+| PROBES-RESULT-1 | AC2（段 B probes 实际结果，EXIT 1） | `audit/V1-FULL-AUDIT/evidence/audit-probes-segment-b-20261112T081030840760Z.json` | `fbf138af6a0e037f86802ef599277898c7abaa7e` | `A7074CD6264F93DFE258758A0FE5D5C9F85711C10F512DA88C5E21F88085E3B8` | CANONICAL | BLOB |
+| PROBES-LOG-1 | AC2（段 B probes 命令、生成 HEAD、EXIT 与原始输出） | `audit/V1-FULL-AUDIT/logs/audit-probes-segment-b-20261112T081030840760Z.log` | `fbf138af6a0e037f86802ef599277898c7abaa7e` | `D1BEF19A173D66D63AC1E8B6F973E5306B19270464A6211D41429A8BE9B402B5` | CANONICAL | BLOB |
+| PROBES-REPORT-1 | AC2/AC3（probe 观察、解释边界与待分级风险） | `audit/V1-FULL-AUDIT/reports/PROBES-RESULT-SEGMENT-B.md` | `9ce6bb09dce228018426e979f562c5999df2efc5` | `514680B15B579F26FC340FF08375126A6871692309272A68A3665970EDA942B1` | CANONICAL | BLOB |
 
 说明：裁决文档中记录的阶段 0 日志 `B561…` 是提交前 WORKTREE SHA-256；本表按模板使用 Git BLOB 字节，完整 SHA-256 为 `7E2A…`。
 

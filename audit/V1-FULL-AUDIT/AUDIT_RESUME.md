@@ -44,3 +44,9 @@ TaskStatus=in_progress；ExecutionState=BLOCKED_MATERIAL_PROVENANCE（仅推送�
 - `smoke` 的当前架构范围为 `core,wire`；`packaged` 固定依赖旧 `apps/desktop/src-tauri`，与 `frontend/rust/desktop/npm-audit` 一并登记 `NOT_RUN-legacy`。
 - `.NET` 使用 8 个测试 `.csproj` 分别 `dotnet test --no-restore`；TRX 写到仓外，仓库默认 `obj/bin` 只允许 ignored 派生物。每个项目执行前后 `git status --porcelain` 必须逐字节一致。8/8 项目 restore assets 已只读确认存在。不得使用 `--artifacts-path`、复制资产或 restore。
 - 下一步：在 audit runner 中添加 `.NET` suite 并将 smoke 限定为 `core,wire`，实现提交后按 probes → pytest → `.NET` 8 项 → smoke → governance 执行；任何环境/状态偏差按具名阻断，不清理、不恢复。
+
+### 段 B probes 检查点（2026-11-12）
+
+- runner 实现固定在 `5ab8ae006580f4c3aab6d61ce180794921dc7641`；结果在 HEAD `5ab8ae006580f4c3aab6d61ce180794921dc7641` 生成，命令 `python audit/V1-FULL-AUDIT/tests/audit_runner.py probes`，EXIT 1，耗时 1.295s。原始输出与 JSON 见 Task Canonical Evidence `PROBES-LOG-1` / `PROBES-RESULT-1`。
+- 隔离 probes 中，directory junction 发布越界和 nmbak 磁盘失败后的数据库变更/错误信息缺失两个观察待 ZCode 定级；`../` 备份路径写入预期被 `_managed_relative_path` 拒绝。详细解释边界见 `reports/PROBES-RESULT-SEGMENT-B.md`；没有修复或重跑。
+- AUDIT-01–14 仍全部 `BLOCKED-ORIGINAL-CHECKLIST-MISSING`。下一项运行根 `pytest`，保持 suite 结果与 AUDIT-NN 状态隔离；其后按已保存裁决执行 8 个 `.NET` 项目、smoke `core,wire`、governance。
