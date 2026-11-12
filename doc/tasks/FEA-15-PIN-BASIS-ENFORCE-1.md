@@ -4,10 +4,10 @@ title: Canonical Evidence 显式 SHA 字节基准与历史兼容
 kind: governance
 governance_version: 3
 status: in_progress
-approval: ZCode 2026-11-11 RELEASE_WITH_BASELINE_PREREQUISITE；AC1c ACCEPT_CONTINUE；AC1d AC1D_PASS；AC2/AC3 ACCEPT_WITH_LIMITATIONS；AC4 ACCEPT_WITH_LIMITATIONS，P2-1/P2-2 ACCEPT_AS_LIMITATION；AC5 MET_WITH_LIMITATIONS（sess_1bff86d4-2618-42f8-841c-8a701eed4933）；first-table partial audit 53/53 (not R-001); full-section audit 88/76/12/EXIT=1; path-A corrections authorized by ZCode; final audit and terminal gates pending
+approval: ZCode 2026-11-11 RELEASE_WITH_BASELINE_PREREQUISITE；AC1c ACCEPT_CONTINUE；AC1d AC1D_PASS；AC2/AC3 ACCEPT_WITH_LIMITATIONS；AC4 ACCEPT_WITH_LIMITATIONS，P2-1/P2-2 ACCEPT_AS_LIMITATION；AC5 MET_WITH_LIMITATIONS（sess_1bff86d4-2618-42f8-841c-8a701eed4933）；first-table partial audit 53/53 (not R-001); full-section audit 88/76/12/EXIT=1; path-A corrections authorized by ZCode; 98-row corrected audit passed at clean 3832e459; final pinbackfill audit, independent Review, and terminal gates pending
 suggested_owner: codex
 owner: codex
-reviewer: AC2/AC3/AC4 v2 Review sess_426becfe-44b9-4e2e-9f16-9eaccdddbd05；AC4 adjudication sess_b3fbf940-0ae4-446e-9eb0-e3d29e347451；AC5 integration Review sess_3e7c8eaa-c247-4cb2-beeb-8fa8be8975c2 / turn_cc3cd65c-0cf2-4995-87cb-036883a20fb2 APPROVED_WITH_LIMITATIONS；final Integrator adjudication sess_1bff86d4-2618-42f8-841c-8a701eed4933 / decision turn_1f3df43f-3f02-4b8a-be7a-b19c86539dfa
+reviewer: AC2/AC3/AC4 v2 Review sess_426becfe-44b9-4e2e-9f16-9eaccdddbd05；AC4 adjudication sess_b3fbf940-0ae4-446e-9eb0-e3d29e347451；AC5 integration Review sess_3e7c8eaa-c247-4cb2-beeb-8fa8be8975c2 / turn_cc3cd65c-0cf2-4995-87cb-036883a20fb2 APPROVED_WITH_LIMITATIONS；final Integrator adjudication sess_1bff86d4-2618-42f8-841c-8a701eed4933 / decision turn_1f3df43f-3f02-4b8a-be7a-b19c86539dfa；R-001 corrected card Review pending
 depends_on:
   - FEA-15-PIN-POLICY-1
 base_commit: d8b9b20869ac0957e152eddb9b5de88c8c2f9326
@@ -50,7 +50,7 @@ out_of_scope:
 - [x] **AC2 新旧表头与 basis 校验**：模板新增七列；checker 识别旧六列/新七列。旧表维持既有 r194 语义；新表要求合法 basis，BLOB 精确校验路径 commit blob，WORKTREE 校验明确声明的工作区字节，EXTERNAL_SHA256 不可读时失败关闭。 <<MET>>
 - [x] **AC3 判别测试覆盖**：覆盖旧格式、basis 缺失/非法、三类来源、commit 不含路径、缺失路径、PNG exact bytes、CRLF 与 mixed-EOL，含旧格式结果不变断言。 <<MET>>
 - [x] **AC4 跨 checkout 对照**：Windows core.autocrlf=true/false fresh checkout 对照；逐行区分历史不变性与 Task 新行增量。ZCode adjudication ACCEPT_WITH_LIMITATIONS；P2-1/P2-2 接纳为限制并按报告保留；Linux NOT_RUN。见 adjudication report 和 verification README。 <<MET>>
-- [ ] **AC5 集成、Review 与终裁**：集成后 default、本 Task 与四个历史 TaskPath、18 pins、API 全部实际执行；Handoff、Canonical Evidence 与资源清单已更新；fresh ZCode Review 和不同 session 最终 adjudication 完成。 <<PARTIAL: ZCode 已裁定 MET_WITH_LIMITATIONS，接纳两条历史 TaskPath FAIL；Handoff 历史字节保留；首表部分审计 53/53 PASS（不满足 R-001，已由全节 88/76/12/EXIT=1 审计取代）；按 ZCode path A 修正中，全行重审及终态门禁待完成>>
+- [ ] **AC5 集成、Review 与终裁**：集成后 default、本 Task 与四个历史 TaskPath、18 pins、API 全部实际执行；Handoff、Canonical Evidence 与资源清单已更新；fresh ZCode Review 和不同 session 最终 adjudication 完成。 <<PARTIAL: ZCode 已裁定 MET_WITH_LIMITATIONS，接纳两条历史 TaskPath FAIL；Handoff 历史字节保留；首表部分审计 53/53 PASS（不满足 R-001，已由全节 88/76/12/EXIT=1 审计取代）；12项订正已落卡；此前98行全节 audit PASS；新增审计/门禁/README pin 后的全行重审、独立Review与终态门禁待完成>>
 
 AC 状态语法按 `doc/09_COLLABORATION.md` §4.3。AC1 的 A/B 是两个独立载体：base clone 不存在本 Task 卡，不能将不存在的 TaskPath 记为 PASS；B 只在 R0 执行本卡 TaskPath。Addendum 4 细化 R0 文件在场、允许差异、治理工具/模板 blob 同一性和停止条件。AC1c A 实际 FAIL/PASS 均原样保留；ZCode fresh session 于 2026-11-12 作出 `ACCEPT_CONTINUE`，将 A 侧预期锚精确化为 autocrlf=true 环境的确定性结果。B clone checkout 前已设 clone-local `core.autocrlf=false`、`core.longpaths=true`；R0 差异/24 个治理工具与模板 blob 断言和本 TaskPath 均通过。fresh AC1d 返回 `AC1D_PASS`，只授权 AC2/AC3；B 的其它门禁仍 `NOT_RUN`。
 
@@ -112,6 +112,8 @@ AC 状态语法按 `doc/09_COLLABORATION.md` §4.3。AC1 的 A/B 是两个独立
 - Post-adjudication card-pinbackfill gates were rerun at clean HEAD `e5f115ff2392f6a6be4d8158a76769c68f9b81b2` after the evidence-pin commit: default, TaskPath, 18 pins, and API all `EXIT=0`; timestamped log is in evidence commit `c0e5927138b37a8e7f0e6897eeb2ce0b8082fe2a`. Proceed with the full-row blob audit; no historical FAIL was changed.
 
 - 2026-11-12 R-001 scope correction: the two previously described `53/53` audits cover only the first Canonical Evidence table and do not satisfy R-001. Full-section audit at clean HEAD `d4c4d9ffbbd3a59f79f4cd242dac19ffa23af1eb` found 88 rows / 76 PASS / 12 FAIL / `EXIT=1`; see ZCode report `sess_14d54cdc-c657-466a-9678-23eb966f8ea1` turns `turn_b37b312b-ab42-47ed-8692-9d53ae34402e`, `turn_4707ecd4-9c3c-4132-a3c3-f8cd8af535c9`, and `turn_c9015724-9752-47ea-86ac-0e4361fa93b7`. The first-table audit logs remain byte-preserved and superseded. ZCode authorized the bounded active-card corrections; R-001 remains OPEN until a corrected full-section audit returns `EXIT=0`.
+
+- 2026-11-12 corrected R-001 full-section audit at clean HEAD `3832e459cb867c4ea2e953673e81151d00c53ed8`: all 98 Canonical Evidence rows passed (`98/98`, `EXIT=0`); default/TaskPath/18 pins/API also `EXIT=0` (3 existing warnings per check). Audit/gate logs were committed in `ff9185c96b71141684ce0e1acbc686e7aebb4922`; the updated README summary is in `ec62f346fbc8e74ce7aa9b8421e1b8e63158bab6`. These three entries are now added to the active card; final independent Review pins and post-pinbackfill full audit remain pending, so R-001 stays OPEN.
 
 ## Canonical Evidence
 
@@ -223,6 +225,9 @@ AC 状态语法按 `doc/09_COLLABORATION.md` §4.3。AC1 的 A/B 是两个独立
 | ac5-r001-adjudication-cli-result | ZCode CLI result log; original first invocation exit not captured, follow-ups EXIT=0 | verification/FEA-15-PIN-BASIS-ENFORCE-1/zcode-r001-adjudication-cli-result-20261112.log | de73be82f58dd66b421498aca3d03c0657b396c7 | 4b5596e2c5c6ebad5ab7ed15c59793794a183c9d0752d230a09738ed7c709921 | CANONICAL |
 | ac5-r001-post-adjudication-gates | Default/TaskPath, 18 pins, API at clean HEAD de73be82; all EXIT=0 | verification/FEA-15-PIN-BASIS-ENFORCE-1/main-post-r001-adjudication-evidence-commit-de73be82.log | ddcf917f015212b5df45e7a8df424327cb81597b | f5a6b1112350827b932e5ad0880f564b5a9c2ecc56109658f8c641dd99eb8314 | CANONICAL |
 | ac5-r001-readme-correction | Superseding summary: first-table partial audit vs full-section 88/76/12/EXIT=1 | verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md | 400c7db8172fdba701bcda894cf53cbfa1700176 | 389bc1e30add6c3a333991bce9ddf6cb3ac04b09f3fc49d40bfe49c9c6a6dcf4 | CANONICAL |
+| ac5-r001-pre-review-full-section-audit | Corrected full-section audit at clean HEAD 3832e459; 98/98 PASS, EXIT=0 | verification/FEA-15-PIN-BASIS-ENFORCE-1/canonical-evidence-full-section-audit-3832e459.log | ff9185c96b71141684ce0e1acbc686e7aebb4922 | 2cf48997b69152bc793e7c16074247737b906b9a4c15544a710ed011eea0f88c | CANONICAL |
+| ac5-r001-pre-review-gates | Clean HEAD 3832e459 default/TaskPath, 18 pins, API; all EXIT=0 | verification/FEA-15-PIN-BASIS-ENFORCE-1/main-post-r001-card-correction-gates-3832e459.log | ff9185c96b71141684ce0e1acbc686e7aebb4922 | bb0d3dfdfa53c049c16d9501f40b72604a0e28e78469ffe51e0933e04eee8978 | CANONICAL |
+| ac5-r001-pre-review-readme | Corrected 98-row audit and pending final pinbackfill summary | verification/FEA-15-PIN-BASIS-ENFORCE-1/README.md | ec62f346fbc8e74ce7aa9b8421e1b8e63158bab6 | 9f1843b223b6c2681220f844056326ea23658d449e5bbed70b0a95497b8ab80f | CANONICAL |
 
 ### R-001 full-section audit correction and authorized pin-basis repair
 
@@ -276,6 +281,8 @@ For the ten EOL rows, ZCode verified that each preserved original/worktree byte 
 | ZCode R-001 remediation adjudication receipt | G:/CODEX/New Manga.workspace/FEA-15-PIN-BASIS-ENFORCE-1/zcode-ac5-full-audit-authorization-adjudication-20261112.jsonl | PRESERVE_REFERENCED | verification/FEA-15-PIN-BASIS-ENFORCE-1/zcode-r001-remediation-adjudication-20261112.jsonl | SHA-256 87C27B51812282250EE268FD2DC4BD2231892BC85BD2D764F6AE76591C02E1DF | Path A authorized; CLI EXIT=0; turn_4707ecd4-9c3c-4132-a3c3-f8cd8af535c9. |
 | ZCode R-001 README scope clarification receipt | G:/CODEX/New Manga.workspace/FEA-15-PIN-BASIS-ENFORCE-1/zcode-r001-readme-correction-scope-20261112.jsonl | PRESERVE_REFERENCED | verification/FEA-15-PIN-BASIS-ENFORCE-1/zcode-r001-readme-correction-scope-20261112.jsonl | SHA-256 41E64DAC3FD02F863F06BB8C8C7523E5BE2B7C3B206B3771A8C9C62CB4FF337F | README and active Task status correction authorized; CLI EXIT=0; turn_c9015724-9752-47ea-86ac-0e4361fa93b7. |
 | Post-R-001 adjudication gates original | G:/CODEX/New Manga.workspace/FEA-15-PIN-BASIS-ENFORCE-1/main-post-r001-adjudication-evidence-commit-de73be82.log | PRESERVE_REFERENCED | verification/FEA-15-PIN-BASIS-ENFORCE-1/main-post-r001-adjudication-evidence-commit-de73be82.log | SHA-256 D4CA5197337FAA1250465850A9D9FA983FD051276D0CC8F2B8BF4CB7A17F9DD6 | Generated clean at de73be82; default/TaskPath/pins/API EXIT=0; original retained. |
+| R-001 corrected full-section audit original | G:/CODEX/New Manga.workspace/FEA-15-PIN-BASIS-ENFORCE-1/canonical-evidence-full-section-audit-3832e459cb.log | PRESERVE_REFERENCED | verification/FEA-15-PIN-BASIS-ENFORCE-1/canonical-evidence-full-section-audit-3832e459.log | SHA-256 2CF48997B69152BC793E7C16074247737B906B9A4C15544A710ED011EEA0F88C | Generated clean at 3832e459; 98/98 PASS, EXIT=0; original retained. |
+| R-001 corrected-card gates original | G:/CODEX/New Manga.workspace/FEA-15-PIN-BASIS-ENFORCE-1/main-post-r001-card-correction-gates-3832e459.log | PRESERVE_REFERENCED | verification/FEA-15-PIN-BASIS-ENFORCE-1/main-post-r001-card-correction-gates-3832e459.log | SHA-256 91FF0C952A2F1B265EB2E5584D4989A01669CCD29118652D024AB13C9680B51A | Generated clean at 3832e459; default/TaskPath/18 pins/API EXIT=0; original retained. |
 | dataset / model / installation artifact / exchange | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | NOT_APPLICABLE | 未使用 |
 
 ## Closeout Record
