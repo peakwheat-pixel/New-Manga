@@ -35,7 +35,7 @@ allowed_paths:
 - [x] AC1：固定Git/环境及有效源码清单，记录dirty和历史缺口。 <<MET>>
 - [ ] AC2：15项专项逐项有真实检查结果或具名阻断，关键链路深读与测试。 <<PARTIAL: AUDIT-01–14 因原始清单缺失保持具名阻断；probes EXIT 1（2 项 Medium / High confidence，1 项 defense-verified）；Python Core pytest EXIT 1（3,519 passed / 16 failed / 10 skipped）；Avalonia .NET 为 BLOCKED-TESTHOST-ACCESS（8/8 EXIT 1、TRX 0 tests）；smoke EXIT 1（Wire 6/6 PASS，Core 4 PASS / 7 BLOCKED-SANDBOX-GRANT，frontend/packaged SKIP）>>
 - [ ] AC3：完整日志、问题分级、整改路线、正式报告和Release Gate落盘。 <<PARTIAL: probes 分级、pytest 失败摘要、.NET TestHost、smoke 沙箱阻断和 governance 默认 check 均已记录；完整审计与最终 Release Gate 门禁待完成>>
-- [ ] AC4：独立复核、证据pin和治理检查可核验；未满足不得置done。 <<PARTIAL: 段 B 中间证据已提交并 pin；checkpoint review 已完成；最终全审 review 与最终治理门禁未完成>>
+- [ ] AC4：独立复核、证据pin和治理检查可核验；未满足不得置done。 <<PARTIAL: 段 B 中间证据已提交并 pin；ZCode checkpoint addendum 已关闭 R-1/R-2/R-3（R-4 保持 observation）；最终治理门禁与全审 review 未完成>>
 
 ## 允许修改范围
 仅frontmatter所列。审计日志/测试脚本由主控单一写入。三名子代理只读同一固定产品HEAD，无并发写入。用户显式审计目录优先于常规verification路径；运行派生产物放相邻workspace task-env。
@@ -110,7 +110,7 @@ src/**、apps/**、原有tests/**、共享契约、Schema、依赖、真实用�
 | exchange | — | NOT_APPLICABLE | — | — | 无外部传输 |
 
 ## Rolling checkpoint
-[audit/V1-FULL-AUDIT/AUDIT_RESUME.md](../../audit/V1-FULL-AUDIT/AUDIT_RESUME.md)。Reviewer 已指定为 ZCode 新独立上下文；checkpoint `499a6b8e6eb293487abf391c46d00263230940ad` 已获 `PASS_FOR_CHECKPOINT`（附 R-1 补验缺口及 R-2/R-3 文档 findings，详见 checkpoint review 报告）。此结论不等于全审批准或 Task 关闭；最终全审 review 与集成验证仍待完成，保持 `in_progress`。
+[audit/V1-FULL-AUDIT/AUDIT_RESUME.md](../../audit/V1-FULL-AUDIT/AUDIT_RESUME.md)。Reviewer 已指定为 ZCode 新独立上下文；checkpoint `499a6b8e6eb293487abf391c46d00263230940ad` 的 `PASS_FOR_CHECKPOINT` 经 addendum 维持，R-1/R-2/R-3 已 CLOSED、R-4 保持 observation（详见原 Review 与 addendum 报告）。此结论不等于全审批准或 Task 关闭；最终治理门禁、全审 review 与集成验证仍待完成，保持 `in_progress`。
 
 ## 2026-10-24 推送准备补充授权
 
