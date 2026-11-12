@@ -1,0 +1,169 @@
+TASK=FEA-15-PIN-BASIS-ENFORCE-1 post-AC5 Task-card pinbackfill gates
+GENERATED_HEAD=fea5c742afe4ecdb1e3e6a8116bc0c18f1cabeb1
+PROCESS_CWD=G:\CODEX\New Manga
+GIT_STATUS_PORCELAIN=
+
+START_UTC=2026-11-12T00:28:44.3915167Z
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-15-PIN-BASIS-ENFORCE-1.md
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3145 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6979 bytes / 64 lines
+Governance check: PASS (3 warnings)
+EXIT=0
+END_UTC=2026-11-12T00:28:45.3968628Z
+
+START_UTC=2026-11-12T00:28:45.4056827Z
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-15-PIN-BASIS-ENFORCE-1.md
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3145 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6979 bytes / 64 lines
+Governance check: PASS (3 warnings)
+EXIT=0
+END_UTC=2026-11-12T00:28:46.3773824Z
+
+START_UTC=2026-11-12T00:28:46.3860323Z
+COMMAND=pwsh -NoProfile -File tools/governance/verify_pins.ps1
+OK C01b 3c9f5af7d74f
+OK C02 bb365ca891a7
+OK C03 b77e7968a00b
+OK C04b 4b304c0c315f
+OK C05 f6e6f3cb1fe1
+OK C06 75f8e2b4eb80
+OK C07 8ccaba05cbc2
+OK C08 453f993c1a16
+OK C09 dc51226b336c
+OK C10 ec8fd862f95f
+OK C11 44f4273f7ad1
+OK C12 f49835860143
+OK C13 8faf1e805eac
+OK C14 05056cbf65f9
+OK C15 f9e376a0ed4c
+OK C16 67286eeca8cb
+OK C17 cdeee4872e29
+OK FEA01 0370c18932b1
+PIN AUDIT: PASS (all 18)
+EXIT=0
+END_UTC=2026-11-12T00:28:46.7586776Z
+
+START_UTC=2026-11-12T00:28:46.7680731Z
+COMMAND=python tools/generate_api_inventory.py --check
+OK: rendered counts match FEA-C07 doc
+| 接口 | 方法数 | 属性/事件/字段数 |
+|---|---|---|
+| IReaderProgressSink | 1 | 0 |
+| IHostController | 79 | 4 |
+| IRunController | 6 | 0 |
+| **合计** | **86** | — |
+
+## IReaderProgressSink
+
+| # | 成员 | 返回类型 |
+|---|---|---|
+| 1 | `SaveReadingProgressAsync` | `Task<ReaderProgressSaveResult>` |
+
+## IHostController
+
+| # | 成员 | 返回类型 |
+|---|---|---|
+| 1 | `StartAsync` | `Task` |
+| 2 | `RefreshBooksAsync` | `Task` |
+| 3 | `TryChineseRoundTripAsync` | `Task<bool>` |
+| 4 | `TryCreateBookAsync` | `Task<bool>` |
+| 5 | `CreateChapterAsync` | `Task<ChapterSummary?>` |
+| 6 | `LoadReaderBookAsync` | `Task<ReaderBookData?>` |
+| 7 | `ListChaptersAsync` | `Task<IReadOnlyList<ChapterSummary>>` |
+| 8 | `ListChapterPagesAsync` | `Task<IReadOnlyList<ChapterPageSummary>>` |
+| 9 | `GetReadingPreferencesAsync` | `Task<ReadingPreferencesInfo?>` |
+| 10 | `SaveReadingPreferencesAsync` | `Task<bool>` |
+| 11 | `ListBookmarksAsync` | `Task<IReadOnlyList<BookmarkInfo>>` |
+| 12 | `CreateBookmarkAsync` | `Task<string?>` |
+| 13 | `DeleteBookmarkAsync` | `Task<bool>` |
+| 14 | `GetBookReadingProgressAsync` | `Task<BookReadingProgressInfo?>` |
+| 15 | `ResetReadingProgressAsync` | `Task<int>` |
+| 16 | `ListFontAssetsAsync` | `Task<IReadOnlyList<FontAssetInfo>>` |
+| 17 | `ImportFontAssetAsync` | `Task<FontAssetInfo?>` |
+| 18 | `DeleteFontAssetAsync` | `Task<bool>` |
+| 19 | `RefreshFontAssetsAsync` | `Task<FontRefreshInfo>` |
+| 20 | `UpdateBookMetadataAsync` | `Task<bool>` |
+| 21 | `ReorderChaptersAsync` | `Task<bool>` |
+| 22 | `UpdateChapterMetadataAsync` | `Task<bool>` |
+| 23 | `CreateChapterWithMetadataAsync` | `Task<ChapterSummary?>` |
+| 24 | `ListIssueMarkersAsync` | `Task<IReadOnlyList<IssueMarkerInfo>>` |
+| 25 | `CreateIssueMarkerAsync` | `Task<string?>` |
+| 26 | `ResolveIssueMarkerAsync` | `Task<bool>` |
+| 27 | `ReopenIssueMarkerAsync` | `Task<bool>` |
+| 28 | `DeleteIssueMarkerAsync` | `Task<bool>` |
+| 29 | `ListPromptTemplatesAsync` | `Task<IReadOnlyList<PromptTemplateInfo>>` |
+| 30 | `SavePromptTemplateAsync` | `Task<PromptTemplateInfo?>` |
+| 31 | `DeletePromptTemplateAsync` | `Task<PromptTemplateDeleteResult>` |
+| 32 | `CopyBuiltinPromptTemplateAsync` | `Task<PromptTemplateInfo?>` |
+| 33 | `GetPromptTemplateReferencesAsync` | `Task<IReadOnlyList<PromptTemplateReference>>` |
+| 34 | `LoadPageRegionsAsync` | `Task<RegionPageProjection?>` |
+| 35 | `LoadRegionRevisionsAsync` | `Task<RegionRevisionHistory?>` |
+| 36 | `ReadPageImageAsync` | `Task<byte[]?>` |
+| 37 | `SetRegionTypeAsync` | `Task<RegionOperationResult>` |
+| 38 | `RestoreRegionRevisionAsync` | `Task<RegionOperationResult>` |
+| 39 | `RerenderPageAsync` | `Task<PageRerenderOutcome>` |
+| 40 | `ListCredentialTargetsAsync` | `Task<IReadOnlyList<CredentialTargetOption>>` |
+| 41 | `PutCredentialAsync` | `Task<CredentialOperationResult>` |
+| 42 | `ClearCredentialAsync` | `Task<CredentialOperationResult>` |
+| 43 | `ListProviderProfilesAsync` | `Task<IReadOnlyList<ProviderProfileInfo>>` |
+| 44 | `SaveProviderProfileAsync` | `Task<SettingsProfileResult>` |
+| 45 | `DeleteProviderProfileAsync` | `Task<SettingsProfileResult>` |
+| 46 | `ListNetworkProfilesAsync` | `Task<IReadOnlyList<NetworkProfileInfo>>` |
+| 47 | `SaveNetworkProfileAsync` | `Task<SettingsProfileResult>` |
+| 48 | `DeleteNetworkProfileAsync` | `Task<SettingsProfileResult>` |
+| 49 | `SetNetworkDefaultAsync` | `Task<SettingsProfileResult>` |
+| 50 | `TestNetworkProfileAsync` | `Task<NetworkTestInfo?>` |
+| 51 | `ResolveNetworkProfileAsync` | `Task<NetworkResolveInfo?>` |
+| 52 | `SetProviderBindingAsync` | `Task<SettingsProfileResult>` |
+| 53 | `ClearProviderBindingAsync` | `Task<SettingsProfileResult>` |
+| 54 | `ResolveProviderBindingAsync` | `Task<ProviderBindingResult?>` |
+| 55 | `ImportFilesAsync` | `Task<ImportOutcome>` |
+| 56 | `ImportFolderAsync` | `Task<ImportOutcome>` |
+| 57 | `GetTranslatedPageIdsAsync` | `Task<IReadOnlyList<string>>` |
+| 58 | `StartExportAsync` | `Task<ExportStartInfo?>` |
+| 59 | `GetExportSnapshotAsync` | `Task<ExportSnapshotInfo?>` |
+| 60 | `GetExportHistoryAsync` | `Task<IReadOnlyList<ExportHistoryEntry>>` |
+| 61 | `CancelExportAsync` | `Task<ExportSnapshotInfo?>` |
+| 62 | `RevealExportFolderAsync` | `Task<bool>` |
+| 63 | `ListBackupsAsync` | `Task<IReadOnlyList<BackupPackageInfo>>` |
+| 64 | `CreateBackupAsync` | `Task<BackupPackageInfo?>` |
+| 65 | `DeleteBackupAsync` | `Task<bool>` |
+| 66 | `RetryPendingCleanupsAsync` | `Task<CleanupOutcomeInfo?>` |
+| 67 | `ListPluginsAsync` | `Task<PluginListInfo>` |
+| 68 | `SetPluginsGlobalEnabledAsync` | `Task<bool?>` |
+| 69 | `SetPluginEnabledAsync` | `Task<bool?>` |
+| 70 | `GetCleanupPreviewAsync` | `Task<CleanupPreviewInfo>` |
+| 71 | `RunCleanupAsync` | `Task<CleanupOutcomeInfo?>` |
+| 72 | `OpenDraftAsync` | `Task<DraftLease?>` |
+| 73 | `PatchDraftAsync` | `Task<Draft?>` |
+| 74 | `PrepareCandidateAsync` | `Task<RegionCandidate?>` |
+| 75 | `ApplyCandidatesAsync` | `Task<IReadOnlyDictionary<string, string>>` |
+| 76 | `GetDraftAsync` | `Task<Draft?>` |
+| 77 | `ListDraftsAsync` | `Task<IReadOnlyList<Draft>>` |
+| 78 | `DiscardDraftAsync` | `Task` |
+| 79 | `RestoreBackupAsync` | `Task<string?>` |
+| — | `Snapshot`（属性） | `HostViewSnapshot` |
+| — | `StartRequests`（属性） | `int` |
+| — | `ExportDirectorySuggestion`（属性） | `string` |
+| — | `Changed`（事件） | `EventHandler?` |
+
+## IRunController
+
+| # | 成员 | 返回类型 |
+|---|---|---|
+| 1 | `StartRunAsync` | `Task<RunStartInfo?>` |
+| 2 | `ControlRunAsync` | `Task<RunControlInfo?>` |
+| 3 | `ResumeBlockedRunAsync` | `Task<RunControlInfo?>` |
+| 4 | `GetRunSnapshotAsync` | `Task<RunSnapshotInfo?>` |
+| 5 | `GetTaskProjectionAsync` | `Task<TaskProjectionInfo?>` |
+| 6 | `RetryFailedTargetsAsync` | `Task<RunControlInfo?>` |
+
+EXIT=0
+END_UTC=2026-11-12T00:28:46.8645509Z
+
