@@ -1,0 +1,43 @@
+TASK=NEW-MANGA-V1-FULL-AUDIT
+GENERATED_AT_UTC=2026-11-12T06:58:31Z
+CWD=G:\CODEX\New Manga
+COMMAND=git rev-parse --show-toplevel
+OUTPUT=G:/CODEX/New Manga
+EXIT=0
+COMMAND=git branch --show-current
+OUTPUT=main
+EXIT=0
+COMMAND=git rev-parse HEAD
+OUTPUT=10e4ee013835605800d3830fb960ae8d3aa04167
+EXIT=0
+COMMAND=git status --porcelain --untracked-files=all
+OUTPUT=<empty>
+EXIT=0
+COMMAND=git rev-parse refs/remotes/origin/main
+OUTPUT=9b06838220e9caa496c6428a7986cfd5e9391234
+EXIT=0
+COMMAND=git merge-base --is-ancestor 349e61faff5f93067af5d4ce2d9e394e0d665b8c HEAD
+RESULT=349e61_to_HEAD EXIT=0
+COMMAND=git merge-base --is-ancestor 87f61d8b02c9b678e96b65798042ec3d83b9db87 HEAD
+RESULT=87f61d8_to_HEAD EXIT=0
+COMMAND=git merge-base --is-ancestor 87f61d8b02c9b678e96b65798042ec3d83b9db87 349e61faff5f93067af5d4ce2d9e394e0d665b8c
+RESULT=87f61d8_to_349e61 EXIT=0
+COMMAND=git merge-base --is-ancestor 349e61faff5f93067af5d4ce2d9e394e0d665b8c b1c1f5a56840988e149c18375f6e414bf5c7fbda
+RESULT=349e61_to_b1c1 EXIT=0
+COMMAND=git merge-base --is-ancestor b1c1f5a56840988e149c18375f6e414bf5c7fbda HEAD
+RESULT=b1c1f5a5_to_HEAD EXIT=0
+COMMAND=git merge-base --is-ancestor 349e61faff5f93067af5d4ce2d9e394e0d665b8c refs/remotes/origin/main
+RESULT=349e61_to_origin_main_local_ref EXIT=0
+COMMAND=git rev-list --count 349e61faff5f93067af5d4ce2d9e394e0d665b8c..HEAD
+OUTPUT=2366
+EXIT=0
+COMMAND=git ls-tree 349e61faff5f93067af5d4ce2d9e394e0d665b8c .tmp.driveupload
+OUTPUT=040000 tree de422133b490f671c5717daaafb3cc3d59c3b5c4	.tmp.driveupload
+EXIT=0
+COMMAND=git ls-tree -r --name-only 349e61faff5f93067af5d4ce2d9e394e0d665b8c -- .tmp.driveupload | count
+OUTPUT=2148
+EXIT=0
+COMMAND=git reflog show refs/remotes/origin/main --date=iso-strict --format=%H %gd %gs | filter 10/30 main pushes
+OUTPUT=b1c1f5a56840988e149c18375f6e414bf5c7fbda origin/main@{2026-10-30T09:50:35+08:00} update by push | e97d6a242ed886f82db0e03e2dbd9d2aea7153a2 origin/main@{2026-10-30T09:50:05+08:00} update by push | cc88d1ee9fdd27825869b4cdc0a1b68965b3d1fc origin/main@{2026-10-30T09:46:17+08:00} update by push
+EXIT=0
+LIMITATION=No live git ls-remote or public-visibility query was run; origin/main above is the local remote-tracking ref.
