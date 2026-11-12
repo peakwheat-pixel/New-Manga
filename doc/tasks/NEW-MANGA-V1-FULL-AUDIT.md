@@ -34,8 +34,8 @@ allowed_paths:
 ## Acceptance Criteria
 - [x] AC1：固定Git/环境及有效源码清单，记录dirty和历史缺口。 <<MET>>
 - [ ] AC2：15项专项逐项有真实检查结果或具名阻断，关键链路深读与测试。 <<PARTIAL: AUDIT-01–14 因原始清单缺失保持具名阻断；probes EXIT 1（2 项 Medium / High confidence，1 项 defense-verified）；Python Core pytest EXIT 1（3,519 passed / 16 failed / 10 skipped）；Avalonia .NET 为 BLOCKED-TESTHOST-ACCESS（8/8 EXIT 1、TRX 0 tests）；smoke EXIT 1（Wire 6/6 PASS，Core 4 PASS / 7 BLOCKED-SANDBOX-GRANT，frontend/packaged SKIP）>>
-- [ ] AC3：完整日志、问题分级、整改路线、正式报告和Release Gate落盘。 <<PARTIAL: probes 分级、pytest 失败摘要、.NET TestHost、smoke 沙箱阻断和 governance 默认 check 均已记录；完整审计与最终 Release Gate 门禁待完成>>
-- [ ] AC4：独立复核、证据pin和治理检查可核验；未满足不得置done。 <<PARTIAL: ZCode checkpoint addendum 已关闭 R-1/R-2/R-3（R-4 保持 observation）；最终 checkpoint review 为 PASS_FOR_CHECKPOINT，但 F-1/F-2/F-3 证据闭合待 addendum；全审 review 与治理验证未完成>>
+- [ ] AC3：完整日志、问题分级、整改路线、正式报告和Release Gate落盘。 <<PARTIAL: probes 分级、pytest 失败摘要、.NET TestHost、smoke 沙箱阻断和最终 governance 门禁均有记录；全审与最终 Release Gate 仍因逐项清单缺失保持 BLOCKED>>
+- [ ] AC4：独立复核、证据pin和治理检查可核验；未满足不得置done。 <<PARTIAL: ZCode checkpoint addendum 已关闭 R-1/R-2/R-3（R-4 保持 observation）；最终 checkpoint 为 PASS_FOR_CHECKPOINT，F-1/F-2/F-3 的机械补证已落盘，待 ZCode addendum 复核；全审 review 与集成验证未完成>>
 
 ## 允许修改范围
 仅frontmatter所列。审计日志/测试脚本由主控单一写入。三名子代理只读同一固定产品HEAD，无并发写入。用户显式审计目录优先于常规verification路径；运行派生产物放相邻workspace task-env。
@@ -103,6 +103,10 @@ src/**、apps/**、原有tests/**、共享契约、Schema、依赖、真实用�
 | REVIEW-RECHECK-LOG-1 | AC4（37 路径与 46 pins 只读补验，EXIT 0；经 ZCode 接受为 R-1 closure evidence） | `audit/V1-FULL-AUDIT/logs/review-checkpoint-recheck-20261112.log` | `16c468060a18b795ba8c78bcb52eedbb2ef183ef` | `4DC1E678761B8D171CFA2539DBC544ECD3BEC9AF6B7ACA97BA21161842E09254` | CANONICAL | BLOB |
 | ZCODE-REVIEW-ADDENDUM-REPORT-1 | AC4（ZCode addendum 报告：R-1/R-2/R-3 CLOSED，R-4 observation） | `audit/V1-FULL-AUDIT/reports/ZCODE-CHECKPOINT-REVIEW-ADDENDUM-2026-11-12.md` | `405f82e30a349e210e97053356aa110e9f7dc4ee` | `EE22A68E509FA392F1CC7AC7D49F0085C6DEDCAD8882A6693CA0D5D2481AB6EF` | CANONICAL | BLOB |
 | ZCODE-REVIEW-ADDENDUM-LOG-1 | AC4（ZCode addendum 原始 CLI 记录，EXIT 0） | `audit/V1-FULL-AUDIT/logs/zcode-checkpoint-review-addendum-20261112.log` | `90d26381616e58bf94acd42827002d4b5774e3d0` | `ADC51C34780CA3E940F7CDD013768E20E09588D92A820F97067FBCA994CDCF94` | CANONICAL | BLOB |
+| ZCODE-FINAL-REVIEW-REPORT-1 | AC4（ZCode 最终 checkpoint review 报告，`PASS_FOR_CHECKPOINT`；F-1/F-2/F-3） | `audit/V1-FULL-AUDIT/reports/ZCODE-FINAL-CHECKPOINT-REVIEW-2026-11-12.md` | `75e3aefb2c35c276086fad50ece70421a67fbb53` | `F599F694A5DCDBAE870FF9DBBB00E9C0CC2ECD099602900666F11742ECF58950` | CANONICAL | BLOB |
+| ZCODE-FINAL-REVIEW-LOG-1 | AC4（ZCode 最终 checkpoint review 原始 CLI 输出、session/turn/trace、EXIT 0） | `audit/V1-FULL-AUDIT/logs/zcode-final-audit-review-20261112.log` | `75e3aefb2c35c276086fad50ece70421a67fbb53` | `FB437BDB78B69C80572BEC37B104FB91EDEADA15A02DF328F5F176B337C7D1A0` | CANONICAL | BLOB |
+| REVIEW-FINAL-INTEGRITY-LOG-1 | AC4（两段 diff 路径范围与 52 行 BLOB SHA-256 复算，reviewed_head=`d9478939f2cee81104f18ea757d81cec71c36225`，EXIT 0） | `audit/V1-FULL-AUDIT/logs/review-final-integrity-20261112.log` | `b9b6c5801060370eb4171c30eb77a935800e2f6f` | `7226A48417184636F92611599BDCB5385BA97584D1A356C09ACF22DD3E6CC4A3` | CANONICAL | BLOB |
+| FINAL-GOVERNANCE-GATES-1 | AC4（default/TaskPath governance、18 pins、API inventory 完整输出；4 项 EXIT 0） | `audit/V1-FULL-AUDIT/logs/final-governance-gates-20261112.log` | `9f41ddf4b8b6e4fe147c7c06b742637166e342cb` | `6E40CDFEB73C35FE221328163595F3BFDC86DE8AF87ABD3C17D2B9489FC43F7F` | CANONICAL | BLOB |
 
 说明：裁决文档中记录的阶段 0 日志 `B561…` 是提交前 WORKTREE SHA-256；本表按模板使用 Git BLOB 字节，完整 SHA-256 为 `7E2A…`。
 
@@ -116,7 +120,7 @@ src/**、apps/**、原有tests/**、共享契约、Schema、依赖、真实用�
 | exchange | — | NOT_APPLICABLE | — | — | 无外部传输 |
 
 ## Rolling checkpoint
-[audit/V1-FULL-AUDIT/AUDIT_RESUME.md](../../audit/V1-FULL-AUDIT/AUDIT_RESUME.md)。ZCode checkpoint review 对 `499a6b8e6eb293487abf391c46d00263230940ad` 的 `PASS_FOR_CHECKPOINT` 经 addendum 维持，R-1/R-2/R-3 已 CLOSED、R-4 保持 observation。新的 ZCode 独立上下文对 `d9478939f2cee81104f18ea757d81cec71c36225` 给出 `PASS_FOR_CHECKPOINT`（0 P0 / 0 P1），但 F-1/F-2/F-3 的机械证据仍待补齐和 addendum 复核。此结论不等于全审批准或 Task 关闭；保持 `in_progress`。
+[audit/V1-FULL-AUDIT/AUDIT_RESUME.md](../../audit/V1-FULL-AUDIT/AUDIT_RESUME.md)。ZCode checkpoint review 对 `499a6b8e6eb293487abf391c46d00263230940ad` 的 `PASS_FOR_CHECKPOINT` 经 addendum 维持，R-1/R-2/R-3 已 CLOSED、R-4 保持 observation。新的 ZCode 独立上下文对 `d9478939f2cee81104f18ea757d81cec71c36225` 给出 `PASS_FOR_CHECKPOINT`（0 P0 / 0 P1）；F-1/F-2/F-3 的机械补证分别见 integrity 和 governance gate logs，待原 Reviewer addendum 复核。此结论不等于全审批准或 Task 关闭；保持 `in_progress`。
 
 ## 2026-10-24 推送准备补充授权
 
