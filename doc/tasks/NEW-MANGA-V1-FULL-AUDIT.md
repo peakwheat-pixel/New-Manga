@@ -35,7 +35,7 @@ allowed_paths:
 - [x] AC1：固定Git/环境及有效源码清单，记录dirty和历史缺口。 <<MET>>
 - [ ] AC2：15项专项逐项有真实检查结果或具名阻断，关键链路深读与测试。 <<PARTIAL: AUDIT-00 limited PASS；AUDIT-01 FAIL/P2；AUDIT-02 BLOCKED；AUDIT-05/06 PARTIAL（阶段批次分别 247 passed / 3 deselected / EXIT 0、84 passed / EXIT 0；真实权重/GT/UI 与真实 API/账单语义 NOT_RUN）；AUDIT-08 FAIL（有限合成批次 284 passed/0 skipped/EXIT 0；`SEG-B-PROBES-002` 重现）；AUDIT-11 阶段 FAIL；AUDIT-03/04/07/09/10/12/13/14 尚未完成。阶段报告、suite 映射与限制见 Canonical Evidence。既有总体结果仍独立记录：probes EXIT 1（2 项 Medium / High confidence，1 项 defense-verified）；Python Core pytest EXIT 1（3,519 passed / 16 failed / 10 skipped）；Avalonia .NET BLOCKED-TESTHOST-ACCESS（8/8 runner EXIT 1、TRX 0 tests）；smoke EXIT 1（Wire 6/6 PASS，Core 4 PASS / 7 BLOCKED-SANDBOX-GRANT，frontend/packaged SKIP）>>
 - [ ] AC3：完整日志、问题分级、整改路线、正式报告和Release Gate落盘。 <<PARTIAL: probes 分级、pytest 失败摘要、TestHost/sandbox 阻断、suite 映射及 AUDIT-00/01/02/05/06/08/11 阶段报告和日志已形成；AUDIT-05/06 有 3 项候选待 ZCode 定级；全量去重问题/影响分析、整改计划、正式报告和 Release Gate 仍待完成>>
-- [ ] AC4：独立复核、证据pin和治理检查可核验；未满足不得置done。 <<PARTIAL: checkpoint、AUDIT-01/02/11 Review 已记录；AUDIT-08 closure P3-4 的基准披露已补、fresh closure review 待执行；AUDIT-05/06 阶段证据已 pin，ZCode 独立 Review 待执行；阶段交付 HEAD `c0da575` 上 default/TaskPath check 各 3 warnings、pins 18/18、API 1/79/6=86，四项 EXIT 0；最终全审 Review、交付 HEAD 门禁和集成验证未完成>>
+- [ ] AC4：独立复核、证据pin和治理检查可核验；未满足不得置done。 <<PARTIAL: checkpoint、AUDIT-01/02/11 Review 已记录；AUDIT-08 closure P3-4 的基准披露已补、fresh closure review 待执行；AUDIT-05/06 阶段证据及两批门禁已 pin，ZCode 独立 Review 待执行；post-pinbackfill HEAD `919b55d` 上 default/TaskPath check 各 3 warnings、pins 18/18、API 1/79/6=86，四项 EXIT 0；最终全审 Review、交付 HEAD 门禁和集成验证未完成>>
 
 ## 允许修改范围
 仅frontmatter所列。审计日志/测试脚本由主控单一写入。三名子代理只读同一固定产品HEAD，无并发写入。用户显式审计目录优先于常规verification路径；运行派生产物放相邻workspace task-env。
@@ -260,6 +260,8 @@ src/**、apps/**、原有tests/**、共享契约、Schema、依赖、真实用�
 | AUDIT06-CONTEXT-RESULT-1 | AC2（AUDIT-06 context pytest runner metadata；generated HEAD/argv/UTC/EXIT） | `audit/V1-FULL-AUDIT/evidence/audit06-context-20261113.json` | `c0da575b46e30ecda7a6aefe3bbfe103440ae493` | `1E905A24842BBC34A1CA4406D1E333496749135C3157C214F1D050C568E29151` | CANONICAL | BLOB |
 | AUDIT05-06-GATE-LOG-1 | AC4（c0da575 上 default/TaskPath/pins/API 四项治理门禁原始输出；均 EXIT 0） | `audit/V1-FULL-AUDIT/logs/audit05-06-governance-c0da575-20261113.log` | `c9cb792dda2d31648d520af9b49caf7f8d39aadf` | `74FB622CA4312671FC49D70FF4BD6A95D1CD98450C44137A3C4770DACCEDE1C4` | CANONICAL | BLOB |
 | AUDIT05-06-GATE-RESULT-1 | AC4（治理门禁生成 HEAD、argv、时点、耗时与 EXIT 元数据） | `audit/V1-FULL-AUDIT/evidence/audit05-06-governance-c0da575-20261113.json` | `c9cb792dda2d31648d520af9b49caf7f8d39aadf` | `FAB2C01E8E4B82462D667C3A82D7621FE3E12E0062F0C3BC25B76EA40CBD4991` | CANONICAL | BLOB |
+| AUDIT05-06-POSTPIN-GATE-LOG-1 | AC4（Task pinbackfill HEAD=`919b55d` 上 default/TaskPath/pins/API 四项复核；均 EXIT 0） | `audit/V1-FULL-AUDIT/logs/audit05-06-post-pinbackfill-919b55d-20261113.log` | `cdf857b2aba2fe8e2f55f0aff28e41730bf1dc76` | `574EE764F5C4BA02D4A8258CA8520FA0445C527B3BAA291D0B031B93AD96C424` | CANONICAL | BLOB |
+| AUDIT05-06-POSTPIN-GATE-RESULT-1 | AC4（post-pinbackfill 治理门禁 generated HEAD/argv/UTC/elapsed/EXIT 元数据） | `audit/V1-FULL-AUDIT/evidence/audit05-06-post-pinbackfill-919b55d-20261113.json` | `cdf857b2aba2fe8e2f55f0aff28e41730bf1dc76` | `D36D4C65AAE0D5DAE47162D9FA474B7492C6C3FA57ABEDF3F3A74A526A8979EA` | CANONICAL | BLOB |
 
 说明：裁决文档中记录的阶段 0 日志 `B561…` 是提交前 WORKTREE SHA-256；本表按模板使用 Git BLOB 字节，完整 SHA-256 为 `7E2A…`。
 
@@ -274,7 +276,7 @@ src/**、apps/**、原有tests/**、共享契约、Schema、依赖、真实用�
 | exchange | — | NOT_APPLICABLE | — | — | 无外部传输 |
 
 ## Rolling checkpoint
-[audit/V1-FULL-AUDIT/AUDIT_RESUME.md](../../audit/V1-FULL-AUDIT/AUDIT_RESUME.md) 顶部的 2026-11-13 AUDIT-05/06 检查点为当前恢复点。当前：00 limited PASS；01 FAIL/P2；02 BLOCKED；05/06 PARTIAL；08 FAIL；11 阶段 FAIL；AUDIT-03/04/07/09/10/12/13/14 未完成。阶段内容提交 `c0da575b46e30ecda7a6aefe3bbfe103440ae493`；门禁证据最终内容提交 `c9cb792dda2d31648d520af9b49caf7f8d39aadf`。在 generated HEAD=`c0da575b46e30ecda7a6aefe3bbfe103440ae493` 上 default/TaskPath check 各 PASS（3 warnings）、18 pins PASS、API 1/79/6=86，四项 EXIT 0；完整输出已 pin。待在 Task 卡 pinbackfill 后复跑门禁并交 ZCode fresh context 复核本阶段三项候选。AC2/AC3/AC4 仍 `PARTIAL`，Release Gate `BLOCKED`，Task `in_progress`。
+[audit/V1-FULL-AUDIT/AUDIT_RESUME.md](../../audit/V1-FULL-AUDIT/AUDIT_RESUME.md) 顶部的 2026-11-13 AUDIT-05/06 检查点为当前恢复点。当前：00 limited PASS；01 FAIL/P2；02 BLOCKED；05/06 PARTIAL；08 FAIL；11 阶段 FAIL；AUDIT-03/04/07/09/10/12/13/14 未完成。阶段内容提交 `c0da575b46e30ecda7a6aefe3bbfe103440ae493`；初始门禁证据提交 `c9cb792dda2d31648d520af9b49caf7f8d39aadf`；Task pinbackfill HEAD=`919b55d932f3665693b047dfcb075b2bdf1c6d1c` 后的门禁证据提交 `cdf857b2aba2fe8e2f55f0aff28e41730bf1dc76`，default/TaskPath 各 3 warnings、pins 18/18、API 1/79/6=86，四项 EXIT 0，均已 pin。AC2/AC3/AC4 仍 `PARTIAL`，Release Gate `BLOCKED`，Task `in_progress`；送审前在当前最终 Task pinbackfill HEAD 再跑门禁并将输出留在 workspace，随后由 ZCode fresh context 独立复核三项候选。
 
 ## 2026-10-24 推送准备补充授权
 
