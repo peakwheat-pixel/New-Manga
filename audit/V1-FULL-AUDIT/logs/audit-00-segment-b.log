@@ -1,0 +1,43 @@
+TASK=NEW-MANGA-V1-FULL-AUDIT
+SUITE=AUDIT-00
+STARTED_UTC=2026-11-12T07:22:34Z
+GENERATED_HEAD=c310f01658f99ddc654d3439777b147fe6d3b7e5
+PRODUCT_BASE=10e4ee013835605800d3830fb960ae8d3aa04167
+BRANCH=main
+WORKTREE_BEFORE=expected audit outputs already present: ?? audit/V1-FULL-AUDIT/evidence/baseline-segment-b.json | ?? audit/V1-FULL-AUDIT/evidence/source-manifest-segment-b.json
+SHELL=PowerShell 7.6.9
+INTERPRETER=C:\Python314\python.exe
+CWD=G:\CODEX\New Manga
+ARGV=python -B audit/V1-FULL-AUDIT/tests/rebaseline_audit00.py
+{
+  "product_base": "10e4ee013835605800d3830fb960ae8d3aa04167",
+  "generated_head": "c310f01658f99ddc654d3439777b147fe6d3b7e5",
+  "tracked_tree_files_at_base": 21046,
+  "included_source_config_files": 1301,
+  "included_by_class": {
+    "ci_config": 2,
+    "developer_tools": 42,
+    "packaging": 17,
+    "root_config_or_license": 36,
+    "target_source": 633,
+    "target_tests": 571
+  },
+  "excluded_tracked_files_by_root": {
+    ".tmp.driveupload": 2148,
+    "test_assets": 86,
+    "training_data": 0,
+    "weights": 0,
+    "archive": 39,
+    "verification": 14329,
+    "audit": 49,
+    "doc": 2325,
+    "docs": 6,
+    "experiments": 224,
+    "apps/desktop": 284,
+    "legacy-source-apps-desktop": 284
+  },
+  "baseline": "audit/V1-FULL-AUDIT/evidence/baseline-segment-b.json",
+  "source_manifest": "audit/V1-FULL-AUDIT/evidence/source-manifest-segment-b.json"
+}
+EXIT=0
+ELAPSED_SECONDS=1.148

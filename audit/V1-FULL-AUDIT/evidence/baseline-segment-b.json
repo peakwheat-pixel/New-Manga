@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "2026-11-12T07:22:35.443666+00:00",
+  "generated_head": "c310f01658f99ddc654d3439777b147fe6d3b7e5",
+  "product_base": "10e4ee013835605800d3830fb960ae8d3aa04167",
+  "branch": "main",
+  "worktree_status": "only_expected_audit_outputs_untracked",
+  "source_drift_between_base_and_generated_head": [],
+  "tracked_tree_files_at_base": 21046,
+  "included_source_config_files": 1301,
+  "included_by_class": {
+    "ci_config": 2,
+    "developer_tools": 42,
+    "packaging": 17,
+    "root_config_or_license": 36,
+    "target_source": 633,
+    "target_tests": 571
+  },
+  "included_by_suffix": {
+    ".axaml": 71,
+    ".cs": 522,
+    ".csproj": 18,
+    ".ini": 1,
+    ".json": 6,
+    ".md": 5,
+    ".props": 1,
+    ".ps1": 34,
+    ".py": 633,
+    ".sln": 1,
+    ".txt": 4,
+    ".yml": 2,
+    "<none>": 3
+  },
+  "excluded_tracked_files_by_root": {
+    ".tmp.driveupload": 2148,
+    "test_assets": 86,
+    "training_data": 0,
+    "weights": 0,
+    "archive": 39,
+    "verification": 14329,
+    "audit": 49,
+    "doc": 2325,
+    "docs": 6,
+    "experiments": 224,
+    "apps/desktop": 284,
+    "legacy-source-apps-desktop": 284
+  },
+  "environment": {
+    "platform": "Windows-11-10.0.26300-SP0",
+    "python_executable": "C:\\Python314\\python.exe",
+    "python": "3.14.6 (tags/v3.14.6:c63aec6, Jun 10 2026, 10:26:10) [MSC v.1944 64 bit (AMD64)]",
+    "sqlite": "3.50.4",
+    "git": "git version 2.52.0.windows.1",
+    "dotnet": "10.0.401",
+    "pwsh": "PowerShell 7.6.9",
+    "node": "v24.15.0",
+    "npm": "12.0.1",
+    "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)",
+    "cargo": "cargo 1.98.1 (797e8a9bc 2026-08-05)"
+  },
+  "scope": {
+    "included_roots": [
+      "src/",
+      "apps/desktop-avalonia/",
+      "packaging/",
+      "tools/",
+      "tests/",
+      ".github/workflows/",
+      "repository root allowlist"
+    ],
+    "excluded_roots": [
+      ".tmp.driveupload/",
+      "test_assets/",
+      "training_data/",
+      "weights/",
+      "archive/",
+      "verification/",
+      "audit/",
+      "doc/",
+      "docs/",
+      "experiments/",
+      "apps/desktop/"
+    ],
+    "blob_policy": "only selected code/config blobs were read and SHA-256 hashed; excluded blob contents were not read",
+    "history_limit": "fixed tree only; no unreachable objects or remote refs scanned"
+  }
+}

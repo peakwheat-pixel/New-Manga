@@ -16,3 +16,11 @@
 - logs/push-material-checks.json：本轮材料核查、自检和治理检查的实际argv/exit。
 - reports/MATERIAL_DISPOSITION_OPTIONS.md：完整历史/独立干净快照/暂不推送的具体方案；仅设计，待用户裁决，未释放实施。
 - evidence/push-material-disposition.json：用户“不传播”裁决及169个JPEG/压缩外层blob的禁止上传指纹；本地保留。
+
+## 段 B（当前产品基线 `10e4ee013835605800d3830fb960ae8d3aa04167`）
+
+- `reports/00_BASELINE-SEGMENT-B.md`：当前架构的 AUDIT-00 基线结论、有效源码范围和历史缺口。
+- `evidence/baseline-segment-b.json`：固定 Git/environment、dirty 状态、目录范围和排除计数。
+- `evidence/source-manifest-segment-b.json`：1,301 个源码/构建配置条目的 Git blob SHA-1、SHA-256、字节数与分类。
+- `logs/audit-00-segment-b.log`：基线清单生成的命令、shell/interpreter、生成时 HEAD、时点与 EXIT。
+- `tests/rebaseline_audit00.py`：段 B 基线生成器；只读取所选代码/配置 blob，不读取排除数据目录的内容。
