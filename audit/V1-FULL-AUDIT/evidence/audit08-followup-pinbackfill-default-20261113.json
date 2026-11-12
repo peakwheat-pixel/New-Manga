@@ -1,0 +1,17 @@
+{
+  "name": "audit08-followup-pinbackfill-default",
+  "argv": [
+    "pwsh",
+    "-NoProfile",
+    "-File",
+    "tools/governance/check.ps1"
+  ],
+  "cwd": "G:\\CODEX\\New Manga",
+  "started_utc": "2026-11-12T17:39:15.5647015Z",
+  "head": "ac55c50d93e0b8b9d9237346e26077abe608fe45",
+  "branch": "main",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 0.981,
+  "log": "audit/V1-FULL-AUDIT/logs/audit08-followup-pinbackfill-default-20261113.log"
+}
