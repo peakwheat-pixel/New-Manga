@@ -39,3 +39,6 @@
 - `logs/dotnet-result-adjudication-20261112.log`：ZCode 对 .NET suite 的只读 adjudication 原文、session/turn/trace、生成 HEAD 与 EXIT。
 - `logs/dotnet-app-20261112T083119769139Z.log`、`evidence/dotnet-app-20261112T083119769139Z.json`；同一 run ID 下另有 appearance、applicationcore、coreclient、designsystem、host、presentationavalonia、themeengine 的配套 log/JSON。8 组均含命令、生成 HEAD、逐项时点/elapsed、EXIT 与 porcelain 守护字节摘要。
 - TRX 指针：`G:/CODEX/New Manga.workspace/task-env/NEW-MANGA-V1-FULL-AUDIT/dotnet/results-20261112T083119769139Z/`；8 个 TRX 外部 artifact 只读解析后 `total/executed/passed/failed=0`，未复制入仓库，保留在 Task 指定 workspace。
+- `reports/SMOKE-RESULT-SEGMENT-B-2026-11-12.md`：smoke `core,wire` 分项结果、7 项前置阻断与级联分析、无证据项及 ZCode adjudication。
+- `logs/software-smoke-segment-b-20261112T084557725697Z.log`、`evidence/software-smoke-report-segment-b-20261112T084557725697Z.json`、`evidence/software-smoke-segment-b-20261112T084557725697Z.json`：runner 命令、生成 HEAD、起始时点/elapsed、分层检查结果和 EXIT。
+- `logs/smoke-result-adjudication-20261112.log`：ZCode 只读 adjudication 原文、session/turn/trace、生成 HEAD 与 EXIT。

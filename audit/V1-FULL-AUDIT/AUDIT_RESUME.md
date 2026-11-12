@@ -67,3 +67,11 @@ TaskStatus=in_progress；ExecutionState=BLOCKED_MATERIAL_PROVENANCE（仅推送�
 - 对每项日志中的 `GIT_STATUS_BEFORE_HEX` 解码核对：porcelain 基线依次包含 0/2/4/6/8/10/12/14 条，只涉及审计目录中前序 runner 产物；8 组运行期间均字节不变。没有清理、恢复或修改源码。
 - 不推断 Win32 错误的底层成因，也不提权、关闭安全控制、改 runner/测试参数或重跑绕过。TRX 留在 `G:/CODEX/New Manga.workspace/task-env/NEW-MANGA-V1-FULL-AUDIT/dotnet/results-20261112T083119769139Z/`，按 resource manifest 保留，不复制进仓库。
 - 按 ZCode 裁决，下一步继续 smoke `core,wire` 与 governance；`frontend/rust/desktop/npm-audit/packaged` 仍为 `NOT_RUN-legacy`，真实 GUI 仍 BLOCKED。所有 AUDIT-01–14 继续 `BLOCKED-ORIGINAL-CHECKLIST-MISSING`，Release Gate 继续 BLOCKED。
+
+### 段 B smoke `core,wire` 检查点（2026-11-12）
+
+- 已运行一次 `python audit/V1-FULL-AUDIT/tests/audit_runner.py smoke`，argv 限定 `--only core,wire`。生成 HEAD=`2a7aed313f9673b327cfbb87dbbe2cfde1269037`，branch=`main`，EXIT=1，elapsed=1.783s；完整 runner log、report JSON 与 runner JSON 见 Task Canonical Evidence。
+- 17 项检查中 10 PASS、7 FAIL；Wire 6/6 PASS，Core 4 PASS / 7 FAIL。frontend 与 packaged 显式 SKIP。ZCode 只读裁定 7 项 Core 失败为 `BLOCKED-SANDBOX-GRANT` 前置阻断及级联：`icacls` 无法授予当前解释器 `python.exe` AppContainer 访问；`CORE-AUDIT` 缺少 `hook_invoked` 是 hook 未能启动后的级联。保留程序 `FAIL` 和原始 EXIT=1，不能汇总为 suite PASS。详细报告：`reports/SMOKE-RESULT-SEGMENT-B-2026-11-12.md`。
+- 核心安全拒绝/允许语义、timeout、Job Object 子进程树清理均为零证据；不能从 10 个限定 PASS 外推。`CORE-FAIL-CLOSED` PASS，仅证明授权失败时拒绝执行且 fail-closed。
+- ZCode 没有发现可把这些失败独立归因到产品缺陷的证据；`icacls` 的底层错误码/环境原因未知。与 .NET TestHost Win32 error 5 不建立共同根因。
+- 下一步按裁决运行最终 governance 并绑定审计 HEAD；Legacy 前端/Rust/npm-audit/packaged 仍 `NOT_RUN-legacy`，GUI 仍 BLOCKED。AUDIT-01–14 和 Release Gate 状态不变。
