@@ -48,4 +48,6 @@
 - `logs/zcode-checkpoint-review-20261112.log`、`logs/zcode-checkpoint-review-findings-20261112.log`：ZCode fresh-context CLI 首轮结论和完整 finding 重述。
 - `logs/review-checkpoint-recheck-20261112.log`：实现侧在 reviewed_head Git 对象上逐路径核对 37 个变更、复算 46 个 Canonical/SOURCE_PIN SHA-256 的原始只读结果；EXIT 0，ZCode addendum 已接受为 R-1 closure evidence。
 - `reports/ZCODE-CHECKPOINT-REVIEW-ADDENDUM-2026-11-12.md`、`logs/zcode-checkpoint-review-addendum-20261112.log`：ZCode addendum 摘要及原始 CLI 记录；R-1/R-2/R-3 CLOSED、R-4 保持 observation，结论仍限于 `PASS_FOR_CHECKPOINT`。
-- `reports/ZCODE-FINAL-CHECKPOINT-REVIEW-2026-11-12.md`、`logs/zcode-final-audit-review-20261112.log`：ZCode 新独立上下文对 reviewed_head `d9478939f…` 的最终 checkpoint review；`PASS_FOR_CHECKPOINT`，F-1/F-2/F-3 待机械证据补齐和 addendum 复核。
+- `reports/ZCODE-FINAL-CHECKPOINT-REVIEW-2026-11-12.md`、`logs/zcode-final-audit-review-20261112.log`：ZCode 新独立上下文对 reviewed_head `d9478939f…` 的最终 checkpoint review；`PASS_FOR_CHECKPOINT`，F-1/F-2/F-3 的机械证据已补存，待 addendum 复核。
+- `logs/review-final-integrity-20261112.log`：固定 `reviewed_head=d9478939f…` 的两段 `git diff --name-status` 路径授权核对及 52 行 BLOB SHA-256 复算；36 个路径条目均 allowed，52/52 pins 匹配，EXIT 0。
+- `logs/final-governance-gates-20261112.log`：default/TaskPath check、18 pins、API inventory 的完整输出、生成 HEAD、时点和 EXIT；generated HEAD=`b9b6c5801…`，四项 EXIT 0。

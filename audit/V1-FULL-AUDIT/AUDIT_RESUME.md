@@ -91,5 +91,6 @@ TaskStatus=in_progress；ExecutionState=BLOCKED_MATERIAL_PROVENANCE（仅推送�
 ### 段 B 最终 checkpoint Review（2026-11-12）
 
 - ZCode 新独立上下文对 reviewed_head=`d9478939f2cee81104f18ea757d81cec71c36225` 给出 `PASS_FOR_CHECKPOINT`（0 P0 / 0 P1）；原始 CLI session/turn/trace 和完整回答见 `logs/zcode-final-audit-review-20261112.log`，摘要见 `reports/ZCODE-FINAL-CHECKPOINT-REVIEW-2026-11-12.md`。
-- F-1（新增 6 个 pin 的 commit:path/SHA 未有机械复算）、F-2（`10e4ee013..425bd0565` 与 `499a6b8e..d9478939f` 的完整 diff 路径集未落盘）、F-3（d947 的最终四项门禁无原始日志/pin）仍待闭合；Reviewer 将相关值标为 `NOT_VERIFIED`。Reviewer 指出 Task `in_progress` 时 `check.ps1 -TaskPath` 不逐行校验 Canonical Evidence；18 pins 检查的是 FEA 冻结契约，不替代本 Task 的 pin 复算。
-- Task 仍为 `in_progress`。下一步先按 Review 建议一次性保存两段 diff 路径核对及 52 行 Git blob SHA-256 复算日志，再保存四项治理门禁日志；完成后交原 ZCode Reviewer 同一只读 Review session 出具 addendum。全审/Task 关闭和 Release Gate 状态不变。
+- F-1/F-2 已按建议在 `logs/review-final-integrity-20261112.log` 补证：固定 `reviewed_head=d9478939f2cee81104f18ea757d81cec71c36225` 的 52/52 行 BLOB SHA-256 匹配、0 mismatch；两个 diff 区间共 36 个路径条目，全部在 allowed_paths；该日志生成于 HEAD `75e3aefb2c35c276086fad50ece70421a67fbb53`，EXIT 0。
+- F-3 的四项治理门禁已在 `logs/final-governance-gates-20261112.log` 重新运行并完整落盘：generated HEAD=`b9b6c5801060370eb4171c30eb77a935800e2f6f`；default 与 TaskPath check 各 EXIT 0（各 3 warnings），18 pins EXIT 0（18/18），API inventory EXIT 0（1/79/6=86）。该日志生成前工作树 clean。
+- 三项 Review findings 的机械证据现已提交，仍待原 ZCode Reviewer 只读 addendum 决定 CLOSED/未闭合。Task 保持 `in_progress`；全审/Task 关闭和 Release Gate 状态不变。
