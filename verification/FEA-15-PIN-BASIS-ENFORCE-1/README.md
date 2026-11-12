@@ -405,3 +405,13 @@ Task remains `in_progress`, R-001 `OPEN`; this audit predates terminal candidate
 At clean `main` HEAD `6b68e9f33bc6eeebe2a4ce8ffd9f5b0e83edbba7`, after committing the terminal Handoff, default and TaskPath checks each PASSed with 3 warnings / `EXIT=0`; frozen pins were `18/18` / `EXIT=0`; API inventory was `1/79/6=86` / `EXIT=0`. `PROCESS_CWD=G:\CODEX\New Manga`; `GIT_STATUS_PORCELAIN` was empty at generation time. These gates precede the terminal Task-card candidate and do not replace its required final gates or full-section audit.
 
 - `r001-after-handoff-6b68e9f33-gates.log` — generated at clean HEAD `6b68e9f33bc6eeebe2a4ce8ffd9f5b0e83edbba7`; workspace-original SHA-256 `3110d30cf96ca0e9a4cf661a5b941f7682a1d252905915c519847e4ca1be68ff`; all four commands `EXIT=0`; external original preserved.
+
+## R-001 terminal candidate STATUS pointer failure and ZCode ruling (2026-11-12)
+
+At clean main HEAD `089bc8c2bef7f667a8d26f638c9f465958559876`, terminal-candidate default and TaskPath checks both returned `FAIL` / `EXIT=1`, each with the same single error: `STATUS 仍指向终态 Task：closed_with_limitations`. The cause was the STATUS “当前 Task：无” line also containing a Markdown link to this terminal Task; `check.ps1` parsed that link as the active Task. Frozen pins were `18/18` / `EXIT=0`; API inventory was `1/79/6=86` / `EXIT=0`. The run had 4 warnings. This failure is preserved as a real FAIL and does not reclassify the earlier 43-error TaskPath FAIL or either historical TaskPath result.
+
+Fresh read-only ZCode adjudication `AUTHORIZE_BOUNDED_STATUS_POINTER_REFORMAT_AND_RETRY` authorized one bounded correction: make STATUS line 7 exactly `- 当前 Task：无` with no Task path/link; move the FEA-15 closeout summary to line 8 beginning `- 刚收口：`; leave other STATUS lines byte-identical and keep the file at or below 3190 bytes. Task status remains `closed_with_limitations`; Plan, checker, 18 pins, contracts, historical Task/Review/evidence and resources are outside this correction. Preserve the failure and stop if the single retry has any nonzero gate.
+
+- Failure log: `r001-terminal-candidate-089bc8c2b-gates.log`; generated HEAD `089bc8c2bef7f667a8d26f638c9f465958559876`; workspace-original SHA-256 `afba07f76462d5da4b4a44bb30b9c3ed69859a2a68325b41ab1fe8687462a66a`; default/TaskPath `EXIT=1`, pins/API `EXIT=0`.
+- ZCode report: `doc/reviews/FEA-15-PIN-BASIS-ENFORCE-1-r001-status-pointer-adjudication-2026-11-12.md`; session `sess_56d6062d-ab4d-4774-aad1-ff837168632f`, turn `turn_e9bf65d7-ad68-4c51-be8a-33edebd9f605`, CLI `EXIT=0`.
+- Raw ZCode receipt: `zcode-r001-terminal-status-pointer-adjudication-20261112.jsonl`; workspace-original SHA-256 `dfe9cdd96d2f7094eb29e2af13ea859555c66ab7c8fc8b734fafec393a4bdf31`.
