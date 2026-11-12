@@ -1,3 +1,9 @@
+## 2026-11-13 P7 当前 pinbackfill 后门禁检查点
+
+- Task card pinbackfill HEAD=87ee1ea75aefac15a313767c64c149e286d3a8e8，branch=main。该提交后的 default / TaskPath / verify_pins / API 四项全部 EXIT 0：default 与 TaskPath 各 3 warnings；verify_pins 18/18；API inventory 1/79/6=86。
+- 原始输出与 JSON：logs/audit-post-evidence-87ee1ea7-default.log、evidence/audit-post-evidence-87ee1ea7-default.json；TaskPath、pins、API 同 stem 文件。该 batch 是当前 Task Card commit 后的 gate 结果；按 rolling pinbackfill 规则，Task Card 在本轮复核前的 Canonical Evidence 已固定至 a3a429cc batch，本批记录于本检查点供 ZCode 复核，后续 Task-card 更新再 pin。
+- 接下来将 evidence files 与本检查点固定，再以包含本批日志的 clean HEAD 委派给新的 ZCode CLI plan-mode 上下文做独立只读 Review 与候选 adjudication。Task 仍 in_progress；AC2/AC3/AC4 PARTIAL；Release Gate BLOCKED。
+
 ## 2026-11-13 P7 final-pinbackfill gate batch
 
 - Task card HEAD=a3a429cc955f12765253a14680e79bab2389dd89，branch=main。该 HEAD 上 default / TaskPath / verify_pins / API 四项门禁均 EXIT 0：default 和 TaskPath 各 3 warnings；18 pins；API inventory 1/79/6=86。

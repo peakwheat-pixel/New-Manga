@@ -5,7 +5,7 @@
 
 段 B 状态为 00 limited PASS；01/03/08/11 FAIL；02 BLOCKED；04–07、09、10、12–14 PARTIAL。台账有 3 项已 triage finding、1 项 INVESTIGATE、11 项待 ZCode 裁决候选、1 项已披露关闭的非产品 P3 observation。AC2/AC3/AC4 保持 PARTIAL，Release Gate BLOCKED。
 
-最新 post-pinbackfill 四项门禁已在 generated HEAD=e72bf97816a33e50c8cff5968c198975c3faddbd 全部 EXIT 0，细节与原始输出见 AUDIT_RESUME.md 顶部及 audit-post-evidence-e72bf978 文件。post-pinbackfill generated HEAD=a3a429cc955f12765253a14680e79bab2389dd89 的 default/TaskPath/pins/API 均 EXIT 0（3 warnings/3 warnings、18/18、1/79/6=86）；日志路径见 AUDIT_RESUME.md 顶部。下一步先将本批证据回填 Task Canonical Evidence、重生成 Task Ledger，再在新 pinbackfill HEAD 复跑门禁并交 ZCode fresh-context Review。
+最新 post-pinbackfill 四项门禁已在 generated HEAD=e72bf97816a33e50c8cff5968c198975c3faddbd 全部 EXIT 0，细节与原始输出见 AUDIT_RESUME.md 顶部及 audit-post-evidence-e72bf978 文件。post-pinbackfill generated HEAD=a3a429cc955f12765253a14680e79bab2389dd89 的 default/TaskPath/pins/API 均 EXIT 0（3 warnings/3 warnings、18/18、1/79/6=86）；日志路径见 AUDIT_RESUME.md 顶部。87ee1ea75aefac15a313767c64c149e286d3a8e8 的 Task-card post-pinbackfill 四项门禁已均 EXIT 0；详细原始输出见 AUDIT_RESUME.md 顶部。该批 gate output 随本检查点固定后，下一步派发完整交付 HEAD 给 ZCode fresh-context Review 与候选 adjudication。
 
 ## 先前阶段状态（由以上检查点更新）
 
