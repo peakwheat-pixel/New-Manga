@@ -7,7 +7,7 @@
 
 ## 段 B（当前产品基线 `10e4ee013835605800d3830fb960ae8d3aa04167`）
 
-- AUDIT-00: PASS（仅当前 Git/environment/source baseline；启动入口、命令面、DB、资源 pin 和结构/模块索引待补；见 `reports/00_BASELINE-SEGMENT-B.md` 与 ZCode 恢复裁决）
+- AUDIT-00: PASS（静态项目盘点完成；结构图、模块索引、有效源码覆盖、启动/接口、schema/存储、模型 pin、测试/构建/发布与历史架构差异见 `reports/01_PROJECT_INVENTORY.md`；命令与基线核对见 `logs/audit-00-inventory-20261112.log`。外部模型文件字节和运行时行为未在本项验证）
 - AUDIT-01: NOT_TESTED（待架构边界、异常传播、资源生命周期和依赖审阅）
 - AUDIT-02: NOT_TESTED（待零安装静态扫描和重点代码复核）
 - AUDIT-03: NOT_TESTED（待导入路径审阅和合成素材隔离验证）

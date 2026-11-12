@@ -1,9 +1,9 @@
 # 审计状态
 ## 当前执行状态（2026-11-12，原始指令附件恢复后）
 
-ZCode 裁决确认附件完整，AUDIT-01–14 从 `BLOCKED-ORIGINAL-CHECKLIST-MISSING` 更正为 `NOT_TESTED`。AUDIT-00 仅 baseline/source inventory 为 limited PASS，启动入口、后端命令面、schema、模型/资源 pin 与模块索引仍待 `01_PROJECT_INVENTORY.md` 补齐。Task `in_progress`，AC2/AC3/AC4 `PARTIAL`，Release Gate `BLOCKED`；原“等待用户接受限制或提供清单”分支已终止。
+ZCode 裁决确认附件完整，AUDIT-01–14 从 `BLOCKED-ORIGINAL-CHECKLIST-MISSING` 更正为 `NOT_TESTED`。AUDIT-00 已由 `reports/01_PROJECT_INVENTORY.md` 完成静态盘点并记为 PASS；命令、UTC、生成 HEAD 和 EXIT 见 `logs/audit-00-inventory-20261112.log`。外部模型文件字节、实际构建和 UI 行为未由静态盘点验证。Task `in_progress`，AC2/AC3/AC4 `PARTIAL`，Release Gate `BLOCKED`；原“等待用户接受限制或提供清单”分支已终止。
 
-ZCode 范围裁决证据与源文件哈希复核见 `reports/ZCODE-ORIGINAL-SCOPE-READJUDICATION-2026-11-12.md`。裁决报告生成前门禁为 default/TaskPath check EXIT 0（各 3 warnings）、18/18 pins EXIT 0、API 1/79/6=86 EXIT 0；裁决证据提交后的门禁复核见 `logs/gates-after-scope-adjudication-20261112.log`，generated HEAD=`5f88bbcb643cf368536b10010677e1664d5082b5`，四项 EXIT 0。下一步补 AUDIT-00 项目盘点，然后依 AUDIT_PLAN 推进静态、安全、数据、覆盖及合成审计。
+ZCode 范围裁决证据与源文件哈希复核见 `reports/ZCODE-ORIGINAL-SCOPE-READJUDICATION-2026-11-12.md`。裁决报告生成前门禁为 default/TaskPath check EXIT 0（各 3 warnings）、18/18 pins EXIT 0、API 1/79/6=86 EXIT 0；裁决证据提交后的门禁复核见 `logs/gates-after-scope-adjudication-20261112.log`，generated HEAD=`5f88bbcb643cf368536b10010677e1664d5082b5`，四项 EXIT 0。AUDIT-00 静态项目盘点现已 PASS；下一步按 AUDIT_PLAN 推进 AUDIT-01/02 架构与静态审计。
 IN_PROGRESS：段 A 基线、盘点与测试日志已保存；段 B 于 2026-11-12 解封，固定当前架构 HEAD `10e4ee013835605800d3830fb960ae8d3aa04167`。Release Gate 仍为 BLOCKED（段 B 审计和 Review 未完成）。
 
 2026-10-24 推送准备：登记和台账已同步，治理 PASS（3 warnings）。历史凭据筛查未确认真实凭据；材料来源、许可及数据库隐私未核清，push=BLOCKED_MATERIAL_PROVENANCE。未commit/push；独立Review尚未执行。详见 reports/PUSH_READINESS.md。
