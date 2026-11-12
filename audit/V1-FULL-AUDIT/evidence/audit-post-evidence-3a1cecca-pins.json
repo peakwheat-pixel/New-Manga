@@ -1,0 +1,17 @@
+{
+  "name": "audit-post-evidence-3a1cecca-pins",
+  "argv": [
+    "pwsh",
+    "-NoProfile",
+    "-File",
+    "tools/governance/verify_pins.ps1"
+  ],
+  "cwd": "G:\\CODEX\\New Manga",
+  "started_utc": "2026-11-12T23:34:02.696973+00:00",
+  "head": "3a1ceccacd5e972413c2d170760ede83ae39a5d1",
+  "branch": "main",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 0.329,
+  "log": "audit\\V1-FULL-AUDIT\\logs\\audit-post-evidence-3a1cecca-pins.log"
+}

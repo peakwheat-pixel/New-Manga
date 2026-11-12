@@ -1,0 +1,16 @@
+{
+  "name": "audit-post-evidence-3a1cecca-api",
+  "argv": [
+    "C:\\Python314\\python.exe",
+    "tools/generate_api_inventory.py",
+    "--check"
+  ],
+  "cwd": "G:\\CODEX\\New Manga",
+  "started_utc": "2026-11-12T23:34:03.026405+00:00",
+  "head": "3a1ceccacd5e972413c2d170760ede83ae39a5d1",
+  "branch": "main",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 0.077,
+  "log": "audit\\V1-FULL-AUDIT\\logs\\audit-post-evidence-3a1cecca-api.log"
+}
