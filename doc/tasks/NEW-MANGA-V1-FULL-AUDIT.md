@@ -107,6 +107,7 @@ src/**、apps/**、原有tests/**、共享契约、Schema、依赖、真实用�
 | ZCODE-FINAL-REVIEW-LOG-1 | AC4（ZCode 最终 checkpoint review 原始 CLI 输出、session/turn/trace、EXIT 0） | `audit/V1-FULL-AUDIT/logs/zcode-final-audit-review-20261112.log` | `75e3aefb2c35c276086fad50ece70421a67fbb53` | `FB437BDB78B69C80572BEC37B104FB91EDEADA15A02DF328F5F176B337C7D1A0` | CANONICAL | BLOB |
 | REVIEW-FINAL-INTEGRITY-LOG-1 | AC4（两段 diff 路径范围与 52 行 BLOB SHA-256 复算，reviewed_head=`d9478939f2cee81104f18ea757d81cec71c36225`，EXIT 0） | `audit/V1-FULL-AUDIT/logs/review-final-integrity-20261112.log` | `b9b6c5801060370eb4171c30eb77a935800e2f6f` | `7226A48417184636F92611599BDCB5385BA97584D1A356C09ACF22DD3E6CC4A3` | CANONICAL | BLOB |
 | FINAL-GOVERNANCE-GATES-1 | AC4（default/TaskPath governance、18 pins、API inventory 完整输出；4 项 EXIT 0） | `audit/V1-FULL-AUDIT/logs/final-governance-gates-20261112.log` | `9f41ddf4b8b6e4fe147c7c06b742637166e342cb` | `6E40CDFEB73C35FE221328163595F3BFDC86DE8AF87ABD3C17D2B9489FC43F7F` | CANONICAL | BLOB |
+| POSTREVIEW-FINAL-VERIFICATION-1 | AC4（generated HEAD=`ac188dde5`：default/TaskPath、18 pins、API inventory 与 56 行 Task pin 逐项复算；全部 EXIT 0） | `audit/V1-FULL-AUDIT/logs/postreview-final-verification-20261112.log` | `6dc3d634da0bd6c4083509c50d99a0bc0efb4742` | `6E900FF4F6F367EA1EA6B6B6F5452F0A9186618EE767D03754C0D0F6B3EC528A` | CANONICAL | BLOB |
 
 说明：裁决文档中记录的阶段 0 日志 `B561…` 是提交前 WORKTREE SHA-256；本表按模板使用 Git BLOB 字节，完整 SHA-256 为 `7E2A…`。
 
