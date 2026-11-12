@@ -53,6 +53,7 @@ src/**、apps/**、原有tests/**、共享契约、Schema、依赖、真实用�
 |---|---|---|---|---|---|---|
 | SCOPE-1 | 解封范围与传播风险裁决 | `audit/V1-FULL-AUDIT/reports/ZCODE-SCOPE-ADJUDICATION-2026-11-12.md` | `304a40addb4818f415b1e86d5c5b65205eca3605` | `0BE9C7ECBCE7C4EA6482FF8248DF16179380A742096BB84D51716304DE6D9D54` | CANONICAL | BLOB |
 | STAGE0-1 | AC1（段 B 基线/范围前置核验，partial） | `audit/V1-FULL-AUDIT/logs/stage0-resume-verification-20261112.log` | `304a40addb4818f415b1e86d5c5b65205eca3605` | `7E2A4911D7F1AB2D21DE48C4AC4B77F2C8BACCC5FA6CB1D6C2DFF681F32260A7` | CANONICAL | BLOB |
+| GATES-1 | AC4（TaskPath/default/pins/API release gates，partial） | `audit/V1-FULL-AUDIT/logs/segment-b-release-gates-df120fb.log` | `4b5aa2d6a327c7ffa2c5b3025473fb5a6f3f1179` | `F426CF2DEC18EA69D5A584950787A15753506D037CE48021CB41FED1771CFA85` | CANONICAL | BLOB |
 
 说明：裁决文档中记录的阶段 0 日志 `B561…` 是提交前 WORKTREE SHA-256；本表按模板使用 Git BLOB 字节，完整 SHA-256 为 `7E2A…`。
 
