@@ -1,5 +1,13 @@
 # 恢复入口
 
+## 2026-11-13 AUDIT-14 静态阶段检查点
+
+- 当前 Task 仍 `in_progress`；产品基线=`10e4ee013835605800d3830fb960ae8d3aa04167`，静态 inventory 生成 HEAD=`a9924499fc5271fb1f917ea031d701c419003dcc`，branch=`main`。本阶段只写 `audit/V1-FULL-AUDIT/**`；`git diff --quiet <base> HEAD -- src apps tests` EXIT 0，未改产品代码、contracts、schema、依赖或原有测试。
+- AUDIT-14=`PARTIAL`：传统 `MainWindow` 四页的静态 Host 接线可见；当前 V2 Studio 对 Run/text/flag/Final-Split surfaces 明确采用 `NOT_WIRED` 或无对应数据源。需求归属待独立裁决。
+- 文档核对发现 V1 与未来规划没有权威逐项总账；README 的 Managed Copy 和 0.1.0 示例、索引“没有 README”以及 V11R 计划 ACTIVE 等与当前状态存在漂移。README 5 个功能域/4 个一级页面仅是声明数量，不能算作正式 V1 commitment count；未来计划数量 `NOT_COUNTABLE`。
+- 4 项候选 `AUDIT-14-CAND-001…004` 均 `REVIEW_PENDING`，未定级；静态命令/输出在 `logs/audit14-static-20261112T192852Z.log` 和配套 JSON，完整分析在 `reports/AUDIT-14-V1-INTEGRITY-2026-11-13.md`。真实 UI、安装包、模型/漫画数据均 `NOT_RUN`。
+- 下一步：按专项顺序推进 AUDIT-03（导入/路径发布）；之后 AUDIT-04、07、09、10、12、13。全审 AC2/AC3/AC4 与 Release Gate 继续 `PARTIAL` / `BLOCKED`；等待独立 ZCode 对候选作出裁决，不能自行定级或关闭。
+
 ## 2026-11-13 AUDIT-05/06 阶段检查点
 
 - 当前 Task `NEW-MANGA-V1-FULL-AUDIT` 仍 `in_progress`，产品基线为 `10e4ee013835605800d3830fb960ae8d3aa04167`。本阶段测试生成 HEAD=`d96529ebff6cf752ad64a676d05ec622da09e565`，分支 `main`；产品源码和原有测试相对基线无差异，新增测试只位于本审计目录。

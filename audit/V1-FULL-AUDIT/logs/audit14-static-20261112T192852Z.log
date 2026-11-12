@@ -1,0 +1,556 @@
+AUDIT-14 bounded static inventory
+generated_at_utc=2026-11-12T19:28:52.195201Z
+generated_head=a9924499fc5271fb1f917ea031d701c419003dcc
+branch=main
+cwd=G:\CODEX\New Manga
+scope=bounded read-only static inventory; no tests/build/GUI/user-data access
+json=audit/V1-FULL-AUDIT/evidence/audit14-static-20261112T192852Z.json
+
+[git]
+argv=["git", "rev-parse", "HEAD"]
+shell=False interpreter=git cwd=G:\CODEX\New Manga
+elapsed_seconds=0.021062 EXIT=0
+stdout:
+a9924499fc5271fb1f917ea031d701c419003dcc
+
+[git]
+argv=["git", "status", "--porcelain"]
+shell=False interpreter=git cwd=G:\CODEX\New Manga
+elapsed_seconds=0.066136 EXIT=0
+stdout:
+ M audit/V1-FULL-AUDIT/AUDIT_EVIDENCE_INDEX.md
+ M audit/V1-FULL-AUDIT/AUDIT_ISSUES.md
+ M audit/V1-FULL-AUDIT/AUDIT_RESUME.md
+ M audit/V1-FULL-AUDIT/AUDIT_STATUS.md
+ M audit/V1-FULL-AUDIT/AUDIT_TASKS.md
+ M doc/REBASELINE_PLAN.md
+ M doc/STATUS.md
+ M doc/tasks/NEW-MANGA-V1-FULL-AUDIT.md
+?? audit/V1-FULL-AUDIT/evidence/audit14-static-20261112T192145Z.json
+?? audit/V1-FULL-AUDIT/evidence/audit14-static-20261112T192353Z.json
+?? audit/V1-FULL-AUDIT/logs/audit14-static-20261112T192145Z.log
+?? audit/V1-FULL-AUDIT/logs/audit14-static-20261112T192353Z.log
+?? audit/V1-FULL-AUDIT/reports/AUDIT-14-V1-INTEGRITY-2026-11-13.md
+?? audit/V1-FULL-AUDIT/scripts/
+
+[git]
+argv=["git", "branch", "--show-current"]
+shell=False interpreter=git cwd=G:\CODEX\New Manga
+elapsed_seconds=0.019798 EXIT=0
+stdout:
+main
+
+[git]
+argv=["git", "diff", "--quiet", "10e4ee013835605800d3830fb960ae8d3aa04167", "HEAD", "--", "src", "apps", "tests"]
+shell=False interpreter=git cwd=G:\CODEX\New Manga
+elapsed_seconds=0.022688 EXIT=0
+stdout:
+
+
+[index_and_current_status]
+argv=["rg", "-n", "仓库根目录没有 README|V11R 程序已收官|V11R 程序.*已收官|当前 Task|NEW-MANGA-V1-FULL-AUDIT", "doc/00_INDEX.md", "doc/STATUS.md", "doc/REBASELINE_PLAN.md"]
+shell=False interpreter=ripgrep cwd=G:\CODEX\New Manga
+elapsed_seconds=0.041039 EXIT=0
+stdout:
+doc/00_INDEX.md:13:| Task 范围与冻结契约 | Plan 指定的当前 Task、该 Task 明确引用的契约 | 已完成或历史 Task 不构成当前授权。 |
+doc/00_INDEX.md:14:| Review 结论 | 当前 Task 最新 Review 及 DSH adjudication | adjudication 记录 finding 的接受/拒绝及限制。 |
+doc/00_INDEX.md:15:| 当前恢复点 | STATUS 指定的 rolling checkpoint | 只为恢复当前 Task，不替代 Task、Review 或原始证据。 |
+doc/00_INDEX.md:16:| 技术事实/验证结果 | 当前 Task 指定的原始 evidence/source pin | 证据说明其实际测得内容；不自行授予授权或改写 Review/adjudication。 |
+doc/00_INDEX.md:45:| Plan 指向的当前 Task、最新 Review/adjudication、checkpoint 和证据 | CURRENT / TASK-SCOPED | 只读当前 Task 明确引用的版本；其他内容均按需检索。 |
+doc/00_INDEX.md:46:| [01 功能架构](01_FUNCTIONAL_ARCHITECTURE.md)、[03 数据模型](03_DATA_MODEL.md)、[04 用户流程](04_USER_FLOW.md) | REQUIREMENT REFERENCE | 产品行为/概念数据意图；不授予实现权限。03 的正式字段与写入契约以当前 Task 冻结契约为准。 |
+doc/00_INDEX.md:58:| 迁移中间态 | 特定迁移 Task 中的阶段性实现状态 | 不构成另一个产品目标；仅由当前 Task 明确范围描述，不得推翻目标架构或默认释放 QML 工作。 |
+doc/00_INDEX.md:75:| **V11R 程序** | 2026-10-30 新 UI/UX 重建轮次，已收官（v0.1.1）；不属于 FEA 线 | [V11R_PROGRAM](V11R_PROGRAM.md)、[V11R_ACCEPTANCE_REPORT](V11R_ACCEPTANCE_REPORT.md) |
+doc/00_INDEX.md:83:5. Plan 指定的当前 Task
+doc/00_INDEX.md:87:本索引只在需要定位文档或判断分类时读取。不得默认扫描全部 doc、Task、Review、verification、checkpoint 或 archive；历史材料只有在当前 Task 明确需要时按需读取。仓库根目录没有 README.md；本文件承担文档入口与真相地图。
+doc/STATUS.md:6:- **FEA 线 ACTIVE（S5）**：[FEA-00 方案](design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md)；V11R 程序已收官（v0.1.1）。
+doc/STATUS.md:7:- 当前 Task：[NEW-MANGA-V1-FULL-AUDIT](tasks/NEW-MANGA-V1-FULL-AUDIT.md) `in_progress`（00 limited PASS / 01 FAIL-P2 / 02 BLOCKED / 05–06 PARTIAL / 08 FAIL / 11 FAIL / 14 PARTIAL；Gate BLOCKED）。
+doc/REBASELINE_PLAN.md:56:|NEW-MANGA-V1-FULL-AUDIT|—|in_progress（base `10e4ee013835605800d3830fb960ae8d3aa04167`；00 limited PASS / 01 FAIL-P2 / 02 BLOCKED / 05–06 PARTIAL / 08 FAIL / 11 FAIL / 14 PARTIAL；03/04/07/09/10/12/13 未完）|
+doc/REBASELINE_PLAN.md:58:READY 节点：无；ACTIVE：NEW-MANGA-V1-FULL-AUDIT；BLOCKED：无；REVIEW：无
+
+[readme_claims_and_release_versions]
+argv=["rg", "-n", "^> \\*\\*Status:|^[-] \\*\\*(Bookshelf|Workbench|Reader|Settings|Export)|四个一级页面|0\\.1\\.0|0\\.1\\.1|managed copy", "README.md"]
+shell=False interpreter=ripgrep cwd=G:\CODEX\New Manga
+elapsed_seconds=0.034008 EXIT=0
+stdout:
+11:> **Status: 0.1.1 (early).** The Windows installer is **not code-signed yet**, so SmartScreen shows
+21:- **Bookshelf** — managed library of books/chapters/pages. Original files are never modified (managed copy).
+22:- **Workbench** — real page canvas with detected regions; retype/undo a region, rerender a page.
+23:- **Reader** — immersive reader (Esc/H/F keys), webtoon scrolling, per-chapter reading progress.
+24:- **Settings** — light/dark appearance driven by the design-system token layer (the
+26:- **Export** — ZIP image pack or PDF (image-only / searchable dual-layer CJK text).
+34:- 四个一级页面：书架 / 工作台 / 阅读器 / 设置。
+80:  -OutputRoot <out-dir> -Version 0.1.0 `
+85:  -StageDir <out-dir>/NewManga-0.1.0-win-x64 -OutDir <out-dir> -Version 0.1.0
+89:  -BaseZip <out-dir>/NewManga-0.1.0-win-x64.zip `
+90:  -ModelsZip <out-dir>/NewManga-0.1.0-win-x64-models.zip `
+91:  -SetupExe <out-dir>/NewManga-0.1.0-setup.exe `
+109:Get-AuthenticodeSignature .\NewManga-0.1.0-setup.exe    # currently NotSigned
+112:See `apps/desktop-avalonia/docs/RELEASE_NOTES_0.1.0.md` for install/upgrade/uninstall, SmartScreen
+117:- **Installer (per-user, no admin):** run `NewManga-0.1.0-setup.exe` → installs to
+120:- Silent install/uninstall for scripts: `NewManga-0.1.0-setup.exe /S` and `Uninstall.exe /S`.
+
+[v11r_state_and_historical_acceptance]
+argv=["rg", "-n", "^状态：`ACTIVE`|Console：9 分区|术语与约束|发布产物（0\\.1\\.1", "doc/V11R_PROGRAM.md", "doc/V11R_ACCEPTANCE_REPORT.md"]
+shell=False interpreter=ripgrep cwd=G:\CODEX\New Manga
+elapsed_seconds=0.038254 EXIT=0
+stdout:
+doc/V11R_ACCEPTANCE_REPORT.md:36:- Console：9 分区（真实 4 项 + 诚实 NOT_WIRED 5 项）、Provider/网络档案/凭据（永不回显）、Run 投影与控制（共享单一 poller，R-24）。
+doc/V11R_ACCEPTANCE_REPORT.md:37:- 导出/术语：导出预检（范围/格式/stale 策略两值真实透传）、进度/取消/历史；术语与约束因 Core 无读写命令，诚实 NOT_WIRED。
+doc/V11R_ACCEPTANCE_REPORT.md:218:## 17. 发布产物（0.1.1，2026-10-30）
+doc/V11R_PROGRAM.md:3:状态：`ACTIVE`（2026-10-30 起，DSH 为 Lead / Architect / Integrator）
+doc/V11R_PROGRAM.md:102:| `V11R-B-5` | 导出预检/术语与约束工作面 | `V11R-A-3`、`V11R-B-3` | `ui-studio` | 独立 | L2 |
+
+[ad003_implementation_snapshot]
+argv=["rg", "-n", "未冻结与未实现|SourceAccessRegistry.*当前均无实现|V2 的删除.*NOT_WIRED|source-read", "doc/AD-003_REFERENCED_SOURCE_ARCHITECTURE.md"]
+shell=False interpreter=ripgrep cwd=G:\CODEX\New Manga
+elapsed_seconds=0.036129 EXIT=0
+stdout:
+82:- 引用源读取需要**独立授权面**：Host 私有且**持久化**的 `SourceAccessRegistry`（locator、授权根边界、identity facts、授权 generation）+ 新 `source-read` grant；旧一次性 `ImportPages` grant（≤300 秒、直属成员、进程内 registry）**不得**当长期授权复用。
+115:## 4. 未冻结与未实现（不得表述为已具备）
+118:- `SourceAccessRegistry`、`source-read` grant、递归授权根、ZIP/CBZ 解码器、页面完整性谓词（`integrity=incomplete/complete`）、`DatabaseId` 回填、Windows 回收站桥：**当前均无实现**。
+119:- Core 已有书籍不可逆硬删与回收站列表命令；服务层已有书籍软删及页级软删/恢复方法，但相关软删/恢复命令与 Host/V2 接线尚缺。V2 的删除、回收站读取、恢复及永久删除入口均为 **NOT_WIRED**；分层事实与代码位置见 [ADJ-001 §7](contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md#7-与现行实现和冻结契约的关系)，运行行为仍须验证。
+
+[production_shell_composition]
+argv=["rg", "-n", "new HostController|new BookshelfPage|new WorkbenchPage|new ReaderPage|new SettingsPage|StudioWorkspaceViewModel\\(|new StudioWorkspaceAdapter|EnsureLoadedAsync|RefreshCredentialsAsync|RefreshProfilesAsync", "apps/desktop-avalonia/src/NewManga.App/App.axaml.cs", "apps/desktop-avalonia/src/NewManga.App/Views/MainWindow.axaml.cs", "apps/desktop-avalonia/src/NewManga.App/Shell/V2/AppShellV2.axaml.cs"]
+shell=False interpreter=ripgrep cwd=G:\CODEX\New Manga
+elapsed_seconds=0.037236 EXIT=0
+stdout:
+apps/desktop-avalonia/src/NewManga.App/Shell/V2/AppShellV2.axaml.cs:53:        StudioWorkspace = new StudioWorkspaceAdapter(
+apps/desktop-avalonia/src/NewManga.App/Shell/V2/AppShellV2.axaml.cs:54:            new StudioWorkspaceView(new StudioWorkspaceViewModel(
+apps/desktop-avalonia/src/NewManga.App/Views/MainWindow.axaml.cs:94:        _pages["bookshelf"] = new BookshelfPage(Bookshelf, _controller, _filePicker);
+apps/desktop-avalonia/src/NewManga.App/Views/MainWindow.axaml.cs:95:        Workbench = new WorkbenchPage(new WorkbenchViewModel(), _controller, _filePicker);
+apps/desktop-avalonia/src/NewManga.App/Views/MainWindow.axaml.cs:97:        Reader = new ReaderPage(
+apps/desktop-avalonia/src/NewManga.App/Views/MainWindow.axaml.cs:117:        Settings = new SettingsPage(settingsViewModel, OnThemeApplied, _controller);
+apps/desktop-avalonia/src/NewManga.App/Views/MainWindow.axaml.cs:238:            _ = Workbench.EnsureLoadedAsync();
+apps/desktop-avalonia/src/NewManga.App/Views/MainWindow.axaml.cs:245:            _ = Settings.RefreshCredentialsAsync();
+apps/desktop-avalonia/src/NewManga.App/Views/MainWindow.axaml.cs:246:            _ = Settings.RefreshProfilesAsync();
+apps/desktop-avalonia/src/NewManga.App/Views/MainWindow.axaml.cs:972:                await Workbench.EnsureLoadedAsync(CancellationToken.None);
+apps/desktop-avalonia/src/NewManga.App/Views/MainWindow.axaml.cs:976:            await Settings.RefreshCredentialsAsync();
+apps/desktop-avalonia/src/NewManga.App/Views/MainWindow.axaml.cs:978:            await Settings.RefreshProfilesAsync();
+apps/desktop-avalonia/src/NewManga.App/App.axaml.cs:93:            var controller = new HostController(options.ToHostOptions());
+
+[v2_studio_explicit_gaps]
+argv=["rg", "-n", "RunSource = runSource \\?\\? NotWiredRunDataSource|TextSource = textSource \\?\\? new NotWiredRegionTextSource|FlagSource = flagSource \\?\\? new NotWiredRegionFlagSource|IRunDataSource: NOT_WIRED|IRegionTextSource: NOT_WIRED|IRegionFlagSource: NOT_WIRED|PageSurface\\.Final/Split: NOT_WIRED|NotWiredTermsSource", "apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Studio/StudioPageViewModel.cs", "apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Studio/StudioTermsViewModel.cs"]
+shell=False interpreter=ripgrep cwd=G:\CODEX\New Manga
+elapsed_seconds=0.039247 EXIT=0
+stdout:
+apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Studio/StudioTermsViewModel.cs:45:public sealed class NotWiredTermsSource : IStudioTermsSource
+apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Studio/StudioTermsViewModel.cs:47:    public static NotWiredTermsSource Instance { get; } = new();
+apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Studio/StudioTermsViewModel.cs:81:        _source = source ?? NotWiredTermsSource.Instance;
+apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Studio/StudioPageViewModel.cs:280:        RunSource = runSource ?? NotWiredRunDataSource.Instance;
+apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Studio/StudioPageViewModel.cs:281:        TextSource = textSource ?? new NotWiredRegionTextSource();
+apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Studio/StudioPageViewModel.cs:282:        FlagSource = flagSource ?? new NotWiredRegionFlagSource();
+apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Studio/StudioPageViewModel.cs:1822:            items.Add("IRunDataSource: NOT_WIRED（GetTaskProjection / V11R-A-2 未合入）");
+apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Studio/StudioPageViewModel.cs:1827:            items.Add("IRegionTextSource: NOT_WIRED（四级文本读取命令不存在）");
+apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Studio/StudioPageViewModel.cs:1832:            items.Add("IRegionFlagSource: NOT_WIRED（四把锁 / 失败角标读取命令不存在）");
+apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Studio/StudioPageViewModel.cs:1835:        items.Add("PageSurface.Final/Split: NOT_WIRED（成品页资源读取命令不存在）");
+
+[source_and_trash_implementation_symbols]
+argv=["rg", "-n", "class SourceAccessRegistry|class HostOperationOrchestrator|RestoreFromTrashAsync|PreviewPermanentDeleteBooks|MoveToTrashAsync|source-read", "apps/desktop-avalonia/src/NewManga.Host", "apps/desktop-avalonia/src/NewManga.App/Services/HostController.cs", "src/application/sources"]
+shell=False interpreter=ripgrep cwd=G:\CODEX\New Manga
+elapsed_seconds=0.044719 EXIT=0
+stdout:
+apps/desktop-avalonia/src/NewManga.App/Services/HostController.cs:3373:    public Task<TrashWriteResult> MoveToTrashAsync(
+apps/desktop-avalonia/src/NewManga.App/Services/HostController.cs:3379:    public Task<TrashWriteResult> RestoreFromTrashAsync(
+apps/desktop-avalonia/src/NewManga.App/Services/HostController.cs:3516:    /// r1 P2-2b: projects one PreviewPermanentDeleteBooks response. rev 2.14: an ABSENT or null
+src/application/sources\ports.py:15:    """The live source-read grant registry face the sync stack uses."""
+src/application/sources\materialization.py:4:source-read grants, and the Host must re-mint a fresh grant to ACK the already
+src/application/sources\scanner.py:3:Combines the live source-read grant (lease + digest strong verification, no
+src/application/sources\reattest.py:8:EXPLICIT action flow into that row: after the Host mints a live source-read
+src/application/sources\reattest.py:48:    """The live source-read grant face this command reads (C-16 §2.5 ③/④).
+src/application/sources\reattest.py:198:            raise _denied("source-read grant is not usable")
+src/application/sources\reattest.py:201:            raise _denied("source-read grant scope is not usable")
+apps/desktop-avalonia/src/NewManga.Host\HostRuntime.cs:67:    /// (R-4/R-6/R-7/R1-01/R1-04). Null until the source-read stack exists.</summary>
+apps/desktop-avalonia/src/NewManga.Host\HostRuntime.cs:73:    /// expire. Null when the source-read stack is off/absent or the option is disabled.
+apps/desktop-avalonia/src/NewManga.Host\HostRuntime.cs:1556:                // orchestration over the source-read stack above. Null when the
+apps/desktop-avalonia/src/NewManga.Host\HostRuntime.cs:1561:                // round); null when the source-read stack is off/absent or the option is disabled.
+apps/desktop-avalonia/src/NewManga.Host\HostRuntime.cs:1581:                    // source-read authorization hook (mint -> bind -> dispatch).
+apps/desktop-avalonia/src/NewManga.Host\HostRuntime.cs:1826:    // FEA-11-RUN-GRANT-1 (C-16 v1.3 §2.4): Run pre-dispatch source-read
+apps/desktop-avalonia/src/NewManga.Host\HostRuntime.cs:2136:    /// when the source-read stack is off/absent (old behaviour, R-6).</summary>
+apps/desktop-avalonia/src/NewManga.Host\HostRuntime.cs:2162:    /// when the source-read stack is off/absent, referenced import is disabled or the option is off (in
+apps/desktop-avalonia/src/NewManga.Host\HostRuntime.cs:2232:            _log.Warn("run source-read on-demand scan failed code=" + error.GetType().Name);
+apps/desktop-avalonia/src/NewManga.Host\HostRuntime.cs:2359:/// never touch the source-read face.</summary>
+apps/desktop-avalonia/src/NewManga.Host\HostRuntime.cs:2651:                _warn("run source-read authorization skipped code=INVALID_REQUEST");
+apps/desktop-avalonia/src/NewManga.Host\HostRuntime.cs:2660:            _warn("run source-read authorization skipped code=INVALID_REQUEST");
+apps/desktop-avalonia/src/NewManga.Host\HostRuntime.cs:2672:            _warn("run source-read authorization skipped run_id code=" + CodeOf(error));
+apps/desktop-avalonia/src/NewManga.Host\HostRuntime.cs:2715:            _warn("run source-read authorization skipped registry code=" + CodeOf(error));
+apps/desktop-avalonia/src/NewManga.Host\HostRuntime.cs:2723:            _warn($"run source-read authorization unresolved_sources={resolution.Resolution.Unresolved}");
+apps/desktop-avalonia/src/NewManga.Host\HostRuntime.cs:2729:            _warn($"run source-read authorization cold_sources={resolution.ColdSources}"
+apps/desktop-avalonia/src/NewManga.Host\HostRuntime.cs:2743:                _warn("run source-read authorization skipped all_sources"
+apps/desktop-avalonia/src/NewManga.Host\HostRuntime.cs:2748:            _info($"run source-read authorization sources={targets.Count}"
+apps/desktop-avalonia/src/NewManga.Host\HostRuntime.cs:2762:            _warn("run source-read authorization skipped code=" + CodeOf(error));
+apps/desktop-avalonia/src/NewManga.Host\HostRuntime.cs:2791:            _warn($"run source-read authorization on_demand_budget_exhausted={resolution.ColdSources.Count - budget}");
+apps/desktop-avalonia/src/NewManga.Host\HostRuntime.cs:2810:                        _warn("run source-read renewal on_demand_budget_exhausted"
+apps/desktop-avalonia/src/NewManga.Host\HostRuntime.cs:2827:                    _warn("run source-read authorization on_demand_scan timed out");
+apps/desktop-avalonia/src/NewManga.Host\HostRuntime.cs:2831:                    _warn("run source-read authorization on_demand_scan skipped code=" + CodeOf(error));
+apps/desktop-avalonia/src/NewManga.Host\HostRuntime.cs:2861:            _warn("run source-read authorization skipped probe code=" + CodeOf(error));
+apps/desktop-avalonia/src/NewManga.Host\Sources\HostOperationOrchestrator.cs:15:public sealed class HostOperationOrchestrator
+apps/desktop-avalonia/src/NewManga.Host\Sources\SourceAccessRegistry.cs:17:public sealed class SourceAccessRegistry
+apps/desktop-avalonia/src/NewManga.Host\Sources\SourceOperationCoordinator.cs:185:    /// FEA-11-HOST-AUTH-3 (C-17 v1.2 / AC-H3-3): re-mint FRESH source-read grants for an
+apps/desktop-avalonia/src/NewManga.Host\Sources\SourceReadCoordinator.cs:57:/// <summary>Host authority for source-read issuance, capability gating and revoke ACK.</summary>
+apps/desktop-avalonia/src/NewManga.Host\Sources\SourceReadCoordinator.cs:264:    /// FEA-11-RUN-GRANT-1 (C-16 v1.3 §2.4): mint one source-read grant per
+apps/desktop-avalonia/src/NewManga.Host\Sources\SourceReadCoordinator.cs:494:    /// source-read grant for an already-persisted plan after the process tree died, using the
+apps/desktop-avalonia/src/NewManga.Host\Sources\SourceReadCoordinator.cs:636:                ["grant_id"] = id, ["session_id"] = session.HostSessionId, ["operation"] = "source-read",
+
+[legacy_build_and_release_references]
+argv=["rg", "-n", "src-tauri|apps/desktop/src-tauri|0\\.1\\.0|0\\.1\\.1", "apps/desktop-avalonia/scripts/prepare-sidecar.ps1", "apps/desktop-avalonia/scripts/build-installer.ps1", "packaging/release-gate/run_release_gate.py", ".github/workflows/build-release.yml", "README.md"]
+shell=False interpreter=ripgrep cwd=G:\CODEX\New Manga
+elapsed_seconds=0.036318 EXIT=0
+stdout:
+README.md:11:> **Status: 0.1.1 (early).** The Windows installer is **not code-signed yet**, so SmartScreen shows
+README.md:80:  -OutputRoot <out-dir> -Version 0.1.0 `
+README.md:85:  -StageDir <out-dir>/NewManga-0.1.0-win-x64 -OutDir <out-dir> -Version 0.1.0
+README.md:89:  -BaseZip <out-dir>/NewManga-0.1.0-win-x64.zip `
+README.md:90:  -ModelsZip <out-dir>/NewManga-0.1.0-win-x64-models.zip `
+README.md:91:  -SetupExe <out-dir>/NewManga-0.1.0-setup.exe `
+README.md:109:Get-AuthenticodeSignature .\NewManga-0.1.0-setup.exe    # currently NotSigned
+README.md:112:See `apps/desktop-avalonia/docs/RELEASE_NOTES_0.1.0.md` for install/upgrade/uninstall, SmartScreen
+README.md:117:- **Installer (per-user, no admin):** run `NewManga-0.1.0-setup.exe` → installs to
+README.md:120:- Silent install/uninstall for scripts: `NewManga-0.1.0-setup.exe /S` and `Uninstall.exe /S`.
+.github/workflows/build-release.yml:28:        description: "Version string, e.g. 0.1.0"
+.github/workflows/build-release.yml:30:        default: "0.1.0"
+apps/desktop-avalonia/scripts/build-installer.ps1:40:    [string]$StageDir = $( $v11rRepo = (Split-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) -Parent); if ($env:NEWMANGA_WORKSPACE_ROOT) { Join-Path $env:NEWMANGA_WORKSPACE_ROOT 'task-envs/AGPL-RELEASE-1/out/NewManga-0.1.0-win-x64' } else { Join-Path (Join-Path (Split-Path $v11rRepo -Parent) ((Split-Path $v11rRepo -Leaf) + '.workspace')) 'task-envs/AGPL-RELEASE-1/out/NewManga-0.1.0-win-x64' } ),
+apps/desktop-avalonia/scripts/build-installer.ps1:55:    $candidate = Join-Path $repo 'apps/desktop/src-tauri/icons/icon.ico'
+packaging/release-gate/run_release_gate.py:87:    / "src-tauri"
+packaging/release-gate/run_release_gate.py:92:    / "m2rc1-desktop_0.1.0_x64-setup.exe"
+packaging/release-gate/run_release_gate.py:912:    main_rs = (REPO_ROOT / "apps/desktop/src-tauri/src/main.rs").read_text(encoding="utf-8")
+packaging/release-gate/run_release_gate.py:915:        bridges[name] = (REPO_ROOT / "apps/desktop/src-tauri/src" / name).read_text(encoding="utf-8")
+packaging/release-gate/run_release_gate.py:1094:    warn_src = REPO_ROOT / "apps" / "desktop" / "src-tauri" / "target" / "pyinstaller-work" / "core_sidecar"
+apps/desktop-avalonia/scripts/prepare-sidecar.ps1:16:    [string]$Source = $( if ($env:NEWMANGA_REPO_ROOT) { Join-Path $env:NEWMANGA_REPO_ROOT 'apps/desktop/src-tauri/target/release/resources/core-sidecar' } else { Join-Path (Split-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) -Parent) 'apps/desktop/src-tauri/target/release/resources/core-sidecar' } ),
+apps/desktop-avalonia/scripts/prepare-sidecar.ps1:27:  NEWMANGA_REPO_ROOT=<repo>         repository root containing apps/desktop/src-tauri/...
+
+[legacy_surface_presence]
+argv=["rg", "--files", "apps/desktop", "src/ui"]
+shell=False interpreter=ripgrep cwd=G:\CODEX\New Manga
+elapsed_seconds=0.036941 EXIT=0
+stdout:
+src/ui\__init__.py
+src/ui\viewmodels\__init__.py
+src/ui\viewmodels\workbench\__init__.py
+src/ui\viewmodels\workbench\viewmodel.py
+src/ui\viewmodels\workbench\run_controller.py
+src/ui\viewmodels\workbench\region_canvas.py
+src/ui\viewmodels\settings\__init__.py
+src/ui\viewmodels\settings\viewmodel.py
+src/ui\viewmodels\reader\__init__.py
+src/ui\viewmodels\reader\viewmodel.py
+src/ui\viewmodels\navigation\__init__.py
+src/ui\viewmodels\navigation\viewmodel.py
+src/ui\viewmodels\export\__init__.py
+src/ui\viewmodels\export\viewmodel.py
+src/ui\viewmodels\bookshelf\__init__.py
+src/ui\viewmodels\bookshelf\viewmodel.py
+apps/desktop\src-tauri\tauri.dev.conf.json
+apps/desktop\src-tauri\tauri.conf.json
+apps/desktop\src-tauri\tauri.acceptance.conf.json
+apps/desktop\LEGACY_FROZEN.md
+apps/desktop\src-tauri\Cargo.toml
+apps/desktop\src-tauri\Cargo.lock
+apps/desktop\src-tauri\build.rs
+src/ui\qml\workbench\WorkbenchView.qml
+src/ui\qml\workbench\WorkbenchToolbar.qml
+src/ui\qml\workbench\ViewerPanel.qml
+src/ui\qml\workbench\TaskProgressPanel.qml
+src/ui\qml\workbench\RegionOverlay.qml
+src/ui\qml\workbench\RegionInspector.qml
+src/ui\qml\workbench\PageListPanel.qml
+src/ui\qml\workbench\DirtyConfirmDialog.qml
+src/ui\qml\Main.qml
+apps/desktop\src-tauri\src\settings_bridge.rs
+apps/desktop\src-tauri\src\resource_protocol.rs
+apps/desktop\src-tauri\src\packaged_sidecar_tests.rs
+apps/desktop\src-tauri\src\main.rs
+apps/desktop\src-tauri\src\library_bridge.rs
+apps/desktop\src-tauri\src\host_issuer.rs
+apps/desktop\src-tauri\src\credential_manager.rs
+apps/desktop\src-tauri\src\core_bridge.rs
+apps/desktop\src-tauri\src\ac1_bridge.rs
+src/ui\qml\reader\ReaderView.qml
+apps/desktop\src-tauri\capabilities\m2rc1-commands.json
+apps/desktop\frontend\vite.config.ts
+apps/desktop\frontend\tsconfig.json
+src/ui\qml\windows\ExportWindow.qml
+src/ui\models\tasks\__init__.py
+src/ui\models\tasks\projection.py
+src/ui\models\tasks\page_list_model.py
+apps/desktop\frontend\e2e\workbench_driver_protocol.ts
+src/ui\models\library\__init__.py
+src/ui\models\library\models.py
+apps/desktop\src-tauri\permissions\autogenerated\ac1_request.toml
+apps/desktop\src-tauri\permissions\autogenerated\ac1_exit.toml
+apps/desktop\src-tauri\permissions\autogenerated\ac1_write_results.toml
+src/ui\qml\bookshelf\BookDetailPanel.qml
+src/ui\qml\bookshelf\BookCard.qml
+src/ui\qml\bookshelf\BookGrid.qml
+src/ui\qml\bookshelf\BookshelfToolbar.qml
+apps/desktop\src-tauri\icons\icon.ico
+src/ui\qml\bookshelf\ChapterList.qml
+src/ui\qml\common\CanvasCaption.qml
+src/ui\qml\common\ChapterPicker.qml
+apps/desktop\frontend\e2e\uiux-v2\run.mjs
+apps/desktop\frontend\e2e\uiux-v2\probe.mjs
+apps/desktop\src-tauri\gen\schemas\windows-schema.json
+apps/desktop\src-tauri\gen\schemas\desktop-schema.json
+apps/desktop\src-tauri\gen\schemas\capabilities.json
+apps/desktop\src-tauri\gen\schemas\acl-manifests.json
+apps/desktop\frontend\e2e\uiux-v2\diag-narrow.mjs
+apps/desktop\frontend\src\App.tsx
+apps/desktop\frontend\src\App.test.tsx
+src/ui\qml\bookshelf\BookshelfView.qml
+src/ui\qml\shell\PrimaryNavigationRail.qml
+src/ui\qml\shell\NavBadge.qml
+src/ui\qml\shell\AppShell.qml
+src/ui\qml\settings\SettingsView.qml
+src/ui\qml\common\EmptyState.qml
+apps/desktop\frontend\src\events.test.ts
+src/ui\qml\theme\Tokens.qml
+src/ui\qml\theme\qmldir
+apps/desktop\src-tauri\permissions\autogenerated\library_get_export_history.toml
+apps/desktop\src-tauri\permissions\autogenerated\library_delete_book_permanently.toml
+apps/desktop\src-tauri\permissions\autogenerated\library_delete_books_permanently.toml
+apps/desktop\src-tauri\permissions\autogenerated\library_create_book.toml
+apps/desktop\src-tauri\permissions\autogenerated\library_control_run.toml
+apps/desktop\src-tauri\permissions\autogenerated\library_cancel_export.toml
+apps/desktop\src-tauri\permissions\autogenerated\issue_resource_url.toml
+apps/desktop\src-tauri\permissions\autogenerated\credential_put.toml
+apps/desktop\src-tauri\permissions\autogenerated\credential_clear.toml
+apps/desktop\src-tauri\permissions\autogenerated\create_chapter.toml
+apps/desktop\src-tauri\permissions\autogenerated\core_ping.toml
+apps/desktop\src-tauri\permissions\autogenerated\cleanup_run.toml
+apps/desktop\src-tauri\permissions\autogenerated\cleanup_retry_pending.toml
+apps/desktop\src-tauri\permissions\autogenerated\cleanup_preview.toml
+apps/desktop\src-tauri\permissions\autogenerated\backup_restore.toml
+apps/desktop\src-tauri\permissions\autogenerated\backup_list.toml
+apps/desktop\src-tauri\permissions\autogenerated\backup_delete.toml
+apps/desktop\src-tauri\permissions\autogenerated\backup_create.toml
+apps/desktop\src-tauri\permissions\autogenerated\library_resume_blocked_run.toml
+apps/desktop\src-tauri\permissions\autogenerated\library_list_recycle_bin_books.toml
+apps/desktop\src-tauri\permissions\autogenerated\library_list_books.toml
+apps/desktop\src-tauri\permissions\autogenerated\library_import_folder.toml
+apps/desktop\src-tauri\permissions\autogenerated\library_import_file.toml
+apps/desktop\src-tauri\permissions\autogenerated\library_get_task_projection.toml
+apps/desktop\src-tauri\permissions\autogenerated\library_get_run_snapshot.toml
+apps/desktop\src-tauri\permissions\autogenerated\library_get_reader_projection.toml
+apps/desktop\src-tauri\permissions\autogenerated\library_get_export_snapshot.toml
+apps/desktop\frontend\e2e\p02-new-time\ac1-identity.mjs
+apps/desktop\src-tauri\permissions\autogenerated\library_start_export.toml
+apps/desktop\src-tauri\permissions\autogenerated\library_save_reading_progress.toml
+apps/desktop\src-tauri\permissions\autogenerated\library_reveal_export_folder.toml
+apps/desktop\src-tauri\permissions\autogenerated\library_retry_failed_targets.toml
+apps/desktop\src-tauri\permissions\autogenerated\list_chapters.toml
+apps/desktop\src-tauri\permissions\autogenerated\library_start_run.toml
+apps/desktop\src-tauri\permissions\autogenerated\list_chapter_pages.toml
+apps/desktop\src-tauri\permissions\autogenerated\list_regions.toml
+apps/desktop\frontend\package-lock.json
+apps/desktop\frontend\index.html
+apps/desktop\frontend\package.json
+apps/desktop\frontend\src\events.ts
+apps/desktop\src-tauri\permissions\autogenerated\list_region_revisions.toml
+apps/desktop\frontend\src\workbench\client.ts
+apps/desktop\frontend\src\workbench\client.test.ts
+apps/desktop\frontend\src\workbench\WorkbenchToolbar.tsx
+apps/desktop\frontend\src\workbench\WorkbenchPage.tsx
+apps/desktop\frontend\src\workbench\WorkbenchPage.test.tsx
+apps/desktop\frontend\src\workbench\WorkbenchError.tsx
+apps/desktop\frontend\src\workbench\ViewerPanel.tsx
+apps/desktop\frontend\src\workbench\TaskProgressPanel.tsx
+apps/desktop\frontend\src\workbench\relabelMachine.ts
+apps/desktop\frontend\src\workbench\relabelMachine.test.ts
+apps/desktop\frontend\src\workbench\RelabelContextMenu.tsx
+apps/desktop\frontend\src\workbench\RelabelConfirmDialog.tsx
+apps/desktop\frontend\src\workbench\RegionInspector.tsx
+apps/desktop\frontend\src\workbench\PageListPanel.tsx
+apps/desktop\frontend\src\workbench\PageListPanel.test.tsx
+apps/desktop\frontend\src\workbench\pageImage.ts
+apps/desktop\frontend\src\workbench\ExportDialog.tsx
+apps/desktop\frontend\src\workbench\ExportDialog.test.tsx
+apps/desktop\frontend\src\workbench\DisabledFeature.tsx
+apps/desktop\frontend\e2e\p02-new-time\README.md
+apps/desktop\frontend\src\ac1\driver.ts
+apps/desktop\frontend\src\ac1\driver.test.ts
+apps/desktop\frontend\e2e\uiux-v2\lib\env.mjs
+apps/desktop\frontend\e2e\uiux-v2\lib\app.mjs
+apps/desktop\frontend\src\library\client.test.ts
+apps/desktop\src-tauri\permissions\autogenerated\set_region_type.toml
+apps/desktop\frontend\src\design\useAcrylicBudget.ts
+apps/desktop\src-tauri\permissions\autogenerated\settings_update_section.toml
+apps/desktop\src-tauri\permissions\autogenerated\settings_resolve_overrides.toml
+apps/desktop\src-tauri\permissions\autogenerated\settings_provider_run_snapshot_get.toml
+apps/desktop\frontend\src\design\useAcrylicBudget.test.tsx
+apps/desktop\src-tauri\permissions\autogenerated\settings_provider_profiles_update.toml
+apps/desktop\frontend\src\design\types.ts
+apps/desktop\frontend\src\design\tokens.test.ts
+apps/desktop\frontend\src\design\tokens.css
+apps/desktop\frontend\src\design\base.test.ts
+apps/desktop\frontend\src\design\base.css
+apps/desktop\frontend\src\design\acrylic.test.ts
+apps/desktop\frontend\src\design\acrylic.css
+apps/desktop\frontend\src\library\client.ts
+apps/desktop\frontend\src\library\LibraryPanel.test.tsx
+apps/desktop\src-tauri\permissions\autogenerated\settings_provider_profiles_list.toml
+apps/desktop\src-tauri\permissions\autogenerated\settings_provider_profiles_delete.toml
+apps/desktop\src-tauri\permissions\autogenerated\settings_provider_profiles_create.toml
+apps/desktop\src-tauri\permissions\autogenerated\settings_provider_bindings_set.toml
+apps/desktop\src-tauri\permissions\autogenerated\settings_provider_bindings_resolve.toml
+apps/desktop\src-tauri\permissions\autogenerated\settings_provider_bindings_clear.toml
+apps/desktop\src-tauri\permissions\autogenerated\settings_network_profile_resolve.toml
+apps/desktop\src-tauri\permissions\autogenerated\settings_network_profile_default_set.toml
+apps/desktop\src-tauri\permissions\autogenerated\settings_network_profile_default_clear.toml
+apps/desktop\src-tauri\permissions\autogenerated\settings_network_profiles_update.toml
+apps/desktop\src-tauri\permissions\autogenerated\settings_network_profiles_test.toml
+apps/desktop\src-tauri\permissions\autogenerated\settings_network_profiles_list.toml
+apps/desktop\src-tauri\permissions\autogenerated\settings_network_profiles_delete.toml
+apps/desktop\src-tauri\permissions\autogenerated\settings_network_profiles_create.toml
+apps/desktop\src-tauri\permissions\autogenerated\settings_get.toml
+apps/desktop\src-tauri\permissions\autogenerated\revoke_resource_refs.toml
+apps/desktop\src-tauri\permissions\autogenerated\revoke_ref.toml
+apps/desktop\src-tauri\permissions\autogenerated\restore_region_revision.toml
+apps/desktop\src-tauri\permissions\autogenerated\resolve_page_resource.toml
+apps/desktop\src-tauri\permissions\autogenerated\rerender_page.toml
+apps/desktop\src-tauri\permissions\autogenerated\probe_write_results.toml
+apps/desktop\src-tauri\permissions\autogenerated\probe_issue_url.toml
+apps/desktop\src-tauri\permissions\autogenerated\probe_exit.toml
+apps/desktop\src-tauri\permissions\autogenerated\probe_config.toml
+apps/desktop\src-tauri\permissions\autogenerated\plugins_set_plugin_enabled.toml
+apps/desktop\src-tauri\permissions\autogenerated\plugins_set_enabled.toml
+apps/desktop\src-tauri\permissions\autogenerated\plugins_open_directory.toml
+apps/desktop\src-tauri\permissions\autogenerated\plugins_list.toml
+apps/desktop\src-tauri\permissions\autogenerated\plugins_audit_list.toml
+apps/desktop\frontend\src\main.tsx
+apps/desktop\frontend\e2e\p02-new-time\lib\safety-check.mjs
+apps/desktop\frontend\e2e\p02-new-time\lib\evidence.mjs
+apps/desktop\frontend\e2e\p02-new-time\lib\env.mjs
+apps/desktop\frontend\e2e\p02-new-time\lib\cdp.mjs
+apps/desktop\frontend\e2e\p02-new-time\lib\app.mjs
+apps/desktop\frontend\e2e\p02-new-time\ac6-contrast.mjs
+apps/desktop\frontend\e2e\p02-new-time\ac5-keyboard.mjs
+apps/desktop\frontend\e2e\p02-new-time\ac4-write-refresh.mjs
+apps/desktop\frontend\e2e\p02-new-time\ac3-debounce.mjs
+apps/desktop\frontend\e2e\p02-new-time\ac2-navigation.mjs
+apps/desktop\frontend\src\library\LibraryPanel.tsx
+apps/desktop\frontend\src\library\types.ts
+apps/desktop\frontend\src\bookshelf\types.ts
+apps/desktop\frontend\src\bookshelf\ImportDialog.tsx
+apps/desktop\frontend\src\bookshelf\error.ts
+apps/desktop\frontend\src\bookshelf\error.test.ts
+apps/desktop\frontend\src\bookshelf\EmptyStateBookshelf.tsx
+apps/desktop\frontend\src\bookshelf\CreateTitleDialog.tsx
+apps/desktop\frontend\src\bookshelf\ChapterList.tsx
+apps/desktop\frontend\src\bookshelf\BookshelfToolbar.tsx
+apps/desktop\frontend\src\bookshelf\BookshelfPage.tsx
+apps/desktop\frontend\src\bookshelf\BookshelfPage.test.tsx
+apps/desktop\frontend\src\bookshelf\BookList.tsx
+apps/desktop\frontend\src\bookshelf\BookGrid.tsx
+apps/desktop\frontend\src\bookshelf\BookDetailPanel.tsx
+apps/desktop\frontend\src\bookshelf\BookCard.tsx
+apps/desktop\frontend\src\components\StatusMark.tsx
+apps/desktop\frontend\src\components\StatusMark.test.tsx
+apps/desktop\frontend\src\components\StatusMark.css
+apps/desktop\frontend\src\components\PrimaryNav.tsx
+apps/desktop\frontend\src\components\PagePlaceholder.tsx
+apps/desktop\frontend\src\components\Icon.tsx
+apps/desktop\frontend\src\ui\CommandPalette.test.tsx
+apps/desktop\frontend\src\ui\CommandPalette.tsx
+apps/desktop\frontend\src\dev\devMockBridge.ts
+apps/desktop\frontend\src\ui\PageState.tsx
+apps/desktop\frontend\src\ui\UiRoot.tsx
+apps/desktop\frontend\src\ui\UiRoot.test.tsx
+apps/desktop\frontend\src\ui\ui.css
+apps/desktop\frontend\src\ui\types.ts
+apps/desktop\frontend\src\ui\theme.ts
+apps/desktop\frontend\src\region\types.ts
+apps/desktop\frontend\src\region\RegionOverlay.tsx
+apps/desktop\frontend\src\region\geometry.ts
+apps/desktop\frontend\src\region\geometry.test.ts
+apps/desktop\frontend\src\region\client.ts
+apps/desktop\frontend\src\region\client.test.ts
+apps/desktop\frontend\src\perf\FpsRecorderPanel.tsx
+apps/desktop\frontend\src\perf\FpsRecorderPanel.test.tsx
+apps/desktop\frontend\src\perf\fpsRecorder.ts
+apps/desktop\frontend\src\perf\fpsRecorder.test.ts
+apps/desktop\frontend\src\reader\WebtoonReaderView.tsx
+apps/desktop\frontend\src\reader\types.ts
+apps/desktop\frontend\src\reader\ReaderToolbar.tsx
+apps/desktop\frontend\src\reader\ReaderPageImage.tsx
+apps/desktop\frontend\src\reader\ReaderPage.tsx
+apps/desktop\frontend\src\reader\ReaderPage.test.tsx
+apps/desktop\frontend\src\reader\ReaderEmptyState.tsx
+apps/desktop\frontend\src\reader\PagedReaderView.tsx
+apps/desktop\frontend\src\reader\client.ts
+apps/desktop\frontend\src\reader\client.test.ts
+apps/desktop\frontend\src\recycleBin\RecycleBinPage.tsx
+apps/desktop\frontend\src\recycleBin\RecycleBinPage.test.tsx
+apps/desktop\frontend\src\recycleBin\PermanentDeleteConfirmDialog.tsx
+apps/desktop\frontend\src\shell\AppShell.tsx
+apps/desktop\frontend\src\shell\AppShell.test.tsx
+apps/desktop\frontend\src\shell\AppShell.lifecycle.test.tsx
+apps/desktop\frontend\src\pages\DesignPreview.tsx
+apps/desktop\frontend\src\pages\DesignPreview.test.tsx
+apps/desktop\frontend\src\pages\pages.css
+apps/desktop\frontend\src\pages\pages.test.ts
+apps/desktop\frontend\src\theme\themeReactiveStyles.test.ts
+apps/desktop\frontend\src\theme\tokens.ts
+apps/desktop\frontend\src\theme\tokens.test.ts
+apps/desktop\frontend\src\testSupport\jsdomEvents.ts
+apps/desktop\frontend\src\pages\reader-settings.css
+apps/desktop\frontend\src\pages\Reader.test.tsx
+apps/desktop\frontend\src\testSupport\mockDom.ts
+apps/desktop\frontend\src\pages\Workbench.tsx
+apps/desktop\frontend\src\pages\Workbench.test.tsx
+apps/desktop\frontend\src\pages\workbench.css
+apps/desktop\frontend\src\pages\Shelf.tsx
+apps/desktop\frontend\src\pages\Shelf.test.tsx
+apps/desktop\frontend\src\pages\Settings.tsx
+apps/desktop\frontend\src\pages\Settings.test.tsx
+apps/desktop\frontend\src\pages\Reader.tsx
+apps/desktop\frontend\src\resourceChannel\commandSurface.test.ts
+apps/desktop\frontend\src\resourceChannel\client.ts
+apps/desktop\frontend\src\resourceChannel\client.test.ts
+apps/desktop\frontend\src\settings\useSettingsSection.ts
+apps/desktop\frontend\src\settings\TypesetSettingsPanel.tsx
+apps/desktop\frontend\src\settings\TypesetSettingsPanel.test.tsx
+apps/desktop\frontend\src\settings\types.ts
+apps/desktop\frontend\src\settings\TranslationParamsPanel.tsx
+apps/desktop\frontend\src\settings\TranslationParamsPanel.test.tsx
+apps/desktop\frontend\src\settings\TasksSettingsPanel.tsx
+apps/desktop\frontend\src\settings\TasksSettingsPanel.test.tsx
+apps/desktop\frontend\src\settings\SfxPolicyControl.tsx
+apps/desktop\frontend\src\settings\SfxPolicyControl.test.tsx
+apps/desktop\frontend\src\settings\SettingsPanel.tsx
+apps/desktop\frontend\src\settings\SettingsPanel.test.tsx
+apps/desktop\frontend\src\settings\SettingsPage.tsx
+apps/desktop\frontend\src\settings\SettingsPage.test.tsx
+apps/desktop\frontend\src\settings\SettingsErrorBar.tsx
+apps/desktop\frontend\src\settings\sections.ts
+apps/desktop\frontend\src\settings\SectionPanelFrame.tsx
+apps/desktop\frontend\src\settings\SectionField.tsx
+apps/desktop\frontend\src\settings\RecycleBinSettingsPanel.tsx
+apps/desktop\frontend\src\settings\RecycleBinSettingsPanel.test.tsx
+apps/desktop\frontend\src\settings\ProviderProfilePanel.tsx
+apps/desktop\frontend\src\settings\ProviderProfilePanel.test.tsx
+apps/desktop\frontend\src\settings\PluginSettingsPanel.tsx
+apps/desktop\frontend\src\settings\PluginSettingsPanel.test.tsx
+apps/desktop\frontend\src\settings\OcrSettingsPanel.tsx
+apps/desktop\frontend\src\settings\OcrSettingsPanel.test.tsx
+apps/desktop\frontend\src\settings\NetworkProfilePanel.tsx
+apps/desktop\frontend\src\settings\NetworkProfilePanel.test.tsx
+apps/desktop\frontend\src\settings\ModelGpuSettingsPanel.tsx
+apps/desktop\frontend\src\settings\ModelGpuSettingsPanel.test.tsx
+apps/desktop\frontend\src\settings\InpaintSettingsPanel.tsx
+apps/desktop\frontend\src\settings\InpaintSettingsPanel.test.tsx
+apps/desktop\frontend\src\settings\errors.ts
+apps/desktop\frontend\src\settings\errors.test.ts
+apps/desktop\frontend\src\settings\DisabledSection.tsx
+apps/desktop\frontend\src\settings\DisabledSection.test.tsx
+apps/desktop\frontend\src\settings\CredentialField.tsx
+apps/desktop\frontend\src\settings\client.ts
+apps/desktop\frontend\src\settings\client.test.ts
+apps/desktop\frontend\src\settings\client.sections.test.ts
+apps/desktop\frontend\src\settings\client.p15.test.ts
+apps/desktop\frontend\src\settings\client.cleanup.test.ts
+apps/desktop\frontend\src\settings\CapabilityBindingPanel.tsx
+apps/desktop\frontend\src\settings\CapabilityBindingPanel.test.tsx
+apps/desktop\frontend\src\settings\CacheRevisionPanel.tsx
+apps/desktop\frontend\src\settings\CacheRevisionPanel.test.tsx
+apps/desktop\frontend\src\settings\BackupSettingsPanel.tsx
+apps/desktop\frontend\src\settings\BackupSettingsPanel.test.tsx

@@ -21,7 +21,7 @@
 - AUDIT-11: FAIL（安全静态阶段报告 `reports/AUDIT-11-SECURITY-STATIC-2026-11-12.md`；`SEG-B-PROBES-001` 路径写越界与 `SEG-B-PROBES-002` restore I/O 恢复缺陷均为 Medium / High confidence，`NM-AUD-0001` 经 ZCode 复核为 P2。独立 Review `ACCEPT`，0 个 P0/P1/P2 阻断项；1 个 P3 扫描器源 SHA 差异已确认为移除尾随空格并披露，未重跑 scanner。Key/日志/命令/SQL/依赖等其余面为 PARTIAL 或具名 NOT_TESTED；真实 UI/vault、恶意文件 fuzz、Python 依赖漏洞数据库、竞态和远端可见性未验证）
 - AUDIT-12: NOT_TESTED（待构建/打包静态审阅；干净 Windows 安装实测具名 BLOCKED）
 - AUDIT-13: NOT_TESTED（待 E/F/G/H 合成场景；真实漫画场景具名 BLOCKED）
-- AUDIT-14: NOT_TESTED（待 V1 承诺/实现/Mock/历史债务矩阵）
+- AUDIT-14: PARTIAL（静态核对 MainWindow 四页接线、V2 Studio 显式 NOT_WIRED 面、历史路径及文档漂移；无权威 V1/未来逐项总账，无法可靠计数；真实 GUI/安装/模型 NOT_RUN；候选待 ZCode 定级。见 `reports/AUDIT-14-V1-INTEGRITY-2026-11-13.md`）
 
 ## 段 B suite 级状态（与 AUDIT-01–14 逐项状态分离）
 

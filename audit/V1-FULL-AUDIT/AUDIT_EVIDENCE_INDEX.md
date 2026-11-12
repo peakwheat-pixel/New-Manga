@@ -73,3 +73,6 @@
 - `reports/ZCODE-LIFECYCLE-ADJUDICATION-2026-11-12.md`、`logs/zcode-lifecycle-adjudication-20261112.log`：ZCode 初次生命周期裁决及原始 CLI 输出；因误将 Codex prompt 选项归为用户原话，已由更正裁决明确撤回，不可作为关闭依据。
 - `reports/ZCODE-LIFECYCLE-ADJUDICATION-CORRECTION-2026-11-12.md`、`logs/zcode-lifecycle-adjudication-correction-20261112.log`：ZCode 更正后的终局裁决与原始 CLI 输出；Task 保持 `in_progress`，唯一待用户明确接受 `closed_with_limitations` 的具体语义。保留 AC2/AC3/AC4 PARTIAL、AUDIT-01–14 BLOCKED 和 Release Gate BLOCKED。
 - `logs/original-checklist-git-history-search-20261112.log`：generated HEAD=`5cb792e0966817bd642d173ab7db844b2dce092c`；记录 Task 自身可达 Git 历史、`AUDIT-14`/`15项专项` 定向 `-S` 搜索及最早 Task blob。最早版本 `1248f2b8a` 仅含通用 AC1–AC4 和 AUDIT-00–14 范围，没有 AUDIT-01–14 逐项定义；未从当前 Task/audit 子树历史恢复清单。
+- `reports/AUDIT-14-V1-INTEGRITY-2026-11-13.md`：当前 Avalonia composition、V1 可计数边界、NOT_WIRED 能力、历史路径/文档债务及独立审查候选；静态阶段 `PARTIAL`。
+- `scripts/audit14_static_inventory.py`：AUDIT-14 有界只读采集脚本；不启动 GUI、不构建、不运行测试、不访问用户数据。
+- `logs/audit14-static-20261112T192852Z.log`、`evidence/audit14-static-20261112T192852Z.json`：脚本/命令清单、branch、生成 HEAD、UTC、cwd、各条 argv/elapsed/EXIT 与定点搜索输出；所有扫描及产品目录 diff 均 EXIT 0。

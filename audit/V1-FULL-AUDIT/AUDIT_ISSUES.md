@@ -21,6 +21,37 @@
 - 影响/限制：未调用真实模型，不能推断翻译会违反术语；现有文档/用户预期是否要求强制术语优先级尚待核对。
 - 待裁决：请 ZCode 对照原始审计清单、契约及既有 glossary 语义确认；本审计不授权改 prompt 或 response validation。
 
+## AUDIT-14-CAND-001 — V1 承诺与未来规划缺少统一逐项总账
+
+- 状态：`REVIEW_PENDING`（审计治理观察；未判为产品 finding 或分级）。
+- 证据：`reports/AUDIT-14-V1-INTEGRITY-2026-11-13.md` §2、§4；`doc/00_INDEX.md:46,87`、`README.md:11,21-34,80-120`、`doc/V11R_PROGRAM.md:3`、`doc/STATUS.md:6`。
+- 复现条件/实际：在文档声明的权威来源与当前产品说明中对照，README 说根目录不存在而文件实际存在；README 的存储与版本文案、V11R 计划状态与当前决策有漂移。没有独立 V1/未来逐项承诺总账，因此不能可靠计算数量或完成率。
+- 影响/限制：可能导致规划项被误当作 V1 缺陷或反之；目前未发现由此直接导致的运行故障。范围限于本轮查阅的当前文档，不声称扫描了所有历史文件。
+- 建议：另开授权文档 Task，固定 V1 manifest、未来规划边界和各产品说明的有效日期；本审计不改现有产品文档。
+
+## AUDIT-14-CAND-002 — V2 Studio 有明确 NOT_WIRED 的可见能力
+
+- 状态：`REVIEW_PENDING`（是否属于 V1 承诺待 ZCode 裁决；GUI 行为未实测）。
+- 证据：`reports/AUDIT-14-V1-INTEGRITY-2026-11-13.md` §3；`apps/desktop-avalonia/src/NewManga.App/Shell/V2/AppShellV2.axaml.cs:53-58`、`ViewModels/V2/Studio/StudioPageViewModel.cs:270-282,1808-1835`、`StudioWorkspaceViewModel.cs:28-33`、`StudioTermsViewModel.cs:45-47,79-82`。
+- 复现条件/实际：静态走 `AppShellV2` composition；Studio 仅注入 Host/selection/run tracking，遗漏 run/text/flag source 参数，故 page VM 采用 `NotWired*` 默认值；Final/Split 页资源也被 inventory 固定标为 `NOT_WIRED`。
+- 影响/限制：若被纳入当前产品承诺，批量 Run 投影、区域文本/状态与成品页显示不可用；未确认 V1 需求归属、用户可见状态或实际 GUI 结果。
+- 建议：由 ZCode 对照版本承诺与当前 V2 设计定级；若纳入当前发布范围，另行释放实现 Task 并为每个入口补真实 Host/GUI 回归。
+
+## AUDIT-14-CAND-003 — Avalonia 发布辅助脚本保留旧 Tauri 路径依赖
+
+- 状态：`REVIEW_PENDING`（发布脆弱性候选；未证明 clean release 会失败）。
+- 证据：`reports/AUDIT-14-V1-INTEGRITY-2026-11-13.md` §4；`.github/workflows/build-release.yml` installer 调用处不传 `-IconPath`；`apps/desktop-avalonia/scripts/build-installer.ps1` 的缺省回退检查 `apps/desktop/src-tauri/icons/icon.ico`；`scripts/prepare-sidecar.ps1` 的缺省 Source 指向旧 `src-tauri/target/release/resources/core-sidecar`。
+- 影响/限制：当前 CI 依赖该 Tauri icon 文件存在；手动 sidecar helper 在新架构产物目录下可能选错输入。此轮未执行 clean build/installer，未证实失败、发行物损坏或用户影响。
+- 建议：若 ZCode 接受此观察，另开发布脚本 Task 明确当前资产来源、在隔离干净环境验证并移除无用旧路径引用。
+
+## AUDIT-14-CAND-004 — 多 Avalonia shell 路由扩大 V2 回归面
+
+- 状态：`REVIEW_PENDING`（架构风险观察，未证明为已发生缺陷）。
+- 证据：`reports/AUDIT-14-V1-INTEGRITY-2026-11-13.md` §4；`apps/desktop-avalonia/src/NewManga.App/App.axaml.cs:131-176`、`Views/MainWindow.axaml.cs:94-117`、`Shell/V2/AppShellV2.axaml.cs:53-58`。
+- 实际：composition 支持 legacy `MainWindow`、Current V2 和 Fluent frontend 分支；页面结构/能力不同。全审目前没有本 Task 的真实 GUI 对照结果。
+- 影响/限制：提高路由、导航与功能 parity 的回归成本；当前没有证据表明用户运行时已遇到具体行为错误。
+- 建议：ZCode 判定这是否是当前架构的可接受迁移/回退设计；后续验收按 shell/页面记录可达性与关键操作，不能把单一路径测试外推到所有 shell。
+
 ## AUDIT-11-INC-001 — 私有素材可能随 main 历史传播
 
 - 状态：`INVESTIGATE`（传播风险证据已记录；远端现状及补救未核验/未执行）
