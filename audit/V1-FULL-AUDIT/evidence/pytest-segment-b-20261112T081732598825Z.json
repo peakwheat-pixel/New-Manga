@@ -1,0 +1,23 @@
+{
+  "name": "pytest-segment-b-20261112T081732598825Z",
+  "argv": [
+    "C:\\Python314\\python.exe",
+    "-m",
+    "pytest",
+    "tests",
+    "-q",
+    "-rs",
+    "--tb=short",
+    "-o",
+    "cache_dir=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\pytest-cache-20261112T081732598825Z",
+    "--basetemp=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\pytest-temp-20261112T081732598825Z"
+  ],
+  "cwd": "G:\\CODEX\\New Manga",
+  "started_utc": "2026-11-12T08:17:32.598950+00:00",
+  "head": "425bd0565134b36642c93922ebd80c648b97d627",
+  "branch": "main",
+  "exit_code": 1,
+  "timed_out": false,
+  "elapsed_seconds": 288.543,
+  "log": "audit\\V1-FULL-AUDIT\\logs\\pytest-segment-b-20261112T081732598825Z.log"
+}
