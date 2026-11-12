@@ -1,0 +1,26 @@
+START_UTC=2026-11-12T19:57:23.565178+00:00
+HEAD=55630b5c19c20f33332a097eeef917ac5e48cffb
+BRANCH=main
+SHELL=Python subprocess (no shell)
+INTERPRETER=C:\Python314\python.exe
+CWD=G:\CODEX\New Manga
+ARGV=["C:\\Python314\\python.exe", "-m", "pytest", "tests/library/test_import_images.py", "tests/library/test_import_sources.py", "tests/library/test_page_order.py", "tests/library/test_sqlite_library.py", "tests/library/test_book_crud.py", "tests/library/test_chapters.py", "tests/library/test_production_adapters.py", "tests/library/test_p09_managed_copy_safety.py", "tests/storage/test_managed_storage.py", "tests/import_formats/test_decode_format_matrix.py", "tests/fea09/test_import_source.py", "tests/fea09/test_referenced_flow.py", "tests/fea09/test_referenced_resolve.py", "tests/fea09/test_referenced_scanner.py", "tests/fea09/test_referenced_wire.py", "tests/fea09/test_referenced_sharing.py", "tests/fea09/test_read_paths.py", "tests/m2_acceptance/test_acceptance_loop.py", "-q", "-rs", "--tb=short", "-o", "cache_dir=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\audit03-pytest-cache-20261112T195723565045Z", "--basetemp=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\audit03-pytest-temp-20261112T195723565045Z"]
+DATA_ROOT=G:\CODEX\New Manga.workspace\task-env\NEW-MANGA-V1-FULL-AUDIT\audit03-import-project-20261112T195723565045Z\data
+
+=================================== ERRORS ====================================
+____________ ERROR collecting tests/fea09/test_referenced_wire.py _____________
+ImportError while importing test module 'G:\CODEX\New Manga\tests\fea09\test_referenced_wire.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\Python314\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\fea09\test_referenced_wire.py:21: in <module>
+    from conftest import NOW
+E   ImportError: cannot import name 'NOW' from 'conftest' (G:\CODEX\New Manga\tests\m2_acceptance\conftest.py)
+!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 1.39s
+
+EXIT=2
+TIMED_OUT=False
+ELAPSED_SECONDS=1.907

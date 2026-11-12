@@ -1,0 +1,29 @@
+{
+  "name": "audit03-referenced-import-20261112T195832407658Z",
+  "argv": [
+    "C:\\Python314\\python.exe",
+    "-m",
+    "pytest",
+    "tests/fea09/test_import_source.py",
+    "tests/fea09/test_referenced_flow.py",
+    "tests/fea09/test_referenced_resolve.py",
+    "tests/fea09/test_referenced_scanner.py",
+    "tests/fea09/test_referenced_wire.py",
+    "tests/fea09/test_referenced_sharing.py",
+    "tests/fea09/test_read_paths.py",
+    "-q",
+    "-rs",
+    "--tb=short",
+    "-o",
+    "cache_dir=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\audit03-reference-pytest-cache-20261112T195832407658Z",
+    "--basetemp=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\audit03-reference-pytest-temp-20261112T195832407658Z"
+  ],
+  "cwd": "G:\\CODEX\\New Manga",
+  "started_utc": "2026-11-12T19:58:35.432467+00:00",
+  "head": "934c81017cadf20e96fd2ee60bfa247086638be6",
+  "branch": "main",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 2.629,
+  "log": "audit\\V1-FULL-AUDIT\\logs\\audit03-referenced-import-20261112T195832407658Z.log"
+}

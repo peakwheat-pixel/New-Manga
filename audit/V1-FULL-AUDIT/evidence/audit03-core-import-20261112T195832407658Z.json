@@ -1,0 +1,32 @@
+{
+  "name": "audit03-core-import-20261112T195832407658Z",
+  "argv": [
+    "C:\\Python314\\python.exe",
+    "-m",
+    "pytest",
+    "tests/library/test_import_images.py",
+    "tests/library/test_import_sources.py",
+    "tests/library/test_page_order.py",
+    "tests/library/test_sqlite_library.py",
+    "tests/library/test_book_crud.py",
+    "tests/library/test_chapters.py",
+    "tests/library/test_production_adapters.py",
+    "tests/library/test_p09_managed_copy_safety.py",
+    "tests/storage/test_managed_storage.py",
+    "tests/import_formats/test_decode_format_matrix.py",
+    "-q",
+    "-rs",
+    "--tb=short",
+    "-o",
+    "cache_dir=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\audit03-pytest-cache-20261112T195832407658Z",
+    "--basetemp=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\audit03-pytest-temp-20261112T195832407658Z"
+  ],
+  "cwd": "G:\\CODEX\\New Manga",
+  "started_utc": "2026-11-12T19:58:32.407805+00:00",
+  "head": "934c81017cadf20e96fd2ee60bfa247086638be6",
+  "branch": "main",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 3.024,
+  "log": "audit\\V1-FULL-AUDIT\\logs\\audit03-core-import-20261112T195832407658Z.log"
+}

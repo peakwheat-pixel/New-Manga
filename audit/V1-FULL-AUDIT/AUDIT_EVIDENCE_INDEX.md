@@ -82,3 +82,14 @@
 - `source/zcode-audit14-review-prompt-20261113.txt`：ZCode fresh independent context 对 AUDIT-05/06 与 AUDIT-14 七项候选的固定 HEAD 只读 Review 指令；不含人工裁决预设，不授权产品修改。
 - `logs/zcode-audit14-review-dispatch-20261113.log`、`evidence/zcode-audit14-review-attempt-20261113.json`：对固定 reviewed_head=`26888045ff475fb2e34b043c55c168f4bd78cd52` 的只读 plan-mode 调用；provider code `1310` / HTTP `429`，EXIT 1、空 stdout、无 session/response；raw stderr hash 保留，正文只在 task-env。
 - `evidence/zcode-audit14-review-attempt-20261113.stdout.txt`、`evidence/zcode-audit14-review-attempt-20261113.stderr-sanitized.txt`：失败尝试空 stdout 与脱敏 provider/额度回执；不构成 Review，重置时间见回执。
+
+## 2026-11-13 AUDIT-03
+
+- reports/AUDIT-03-IMPORT-PROJECT-2026-11-13.md：15 项原始检查矩阵、两条导入路径、限制和 FAIL 依据。
+- tests/audit_runner.py：新增 audit03-import 定向 suite；按 Core 与 FEA-09 分组，避免多个 conftest.py 的收集冲突，并排除 PySide/QML 历史测试。
+- tests/capture_audit03_static.py：捕获 task base 产品路径 diff、当前 allowed path 工作树路径和 whitespace EXIT。
+- logs/audit03-core-import-20261112T200824899900Z.log 与 evidence/audit03-core-import-20261112T200824899900Z.json：generated HEAD=8071caccae1a7885fb41b95889cbdc0e80eeb963；87 passed，EXIT 0。
+- logs/audit03-referenced-import-20261112T200824899900Z.log 与 evidence/audit03-referenced-import-20261112T200824899900Z.json：同 HEAD；77 passed，EXIT 0。
+- logs/audit03-static-20261112T200836Z.log 与 evidence/audit03-static-20261112T200836Z.json：generated HEAD=8071caccae1a7885fb41b95889cbdc0e80eeb963；src/apps/tests 产品 diff EXIT 0；当前 20 条工作树路径均在 allowed_paths；working-tree whitespace EXIT 0。完整 base-to-head 变更集里的 14 条 FEA-11-HOST-AUTH-4 路径是既有提交，不是本 Task 工作树修改。
+- logs/audit-probes-segment-b-20261112T195906381034Z.log 与 evidence/audit-probes-segment-b-20261112T195906381034Z.json：generated HEAD=934c81017cadf20e96fd2ee60bfa247086638be6；suite EXIT 1 / 2 passed / 1 failed，含 SEG-B-PROBES-001 junction 越界写复现与独立防线验证；不得把 test PASSED 解释成产品通过。
+- 过程记录：audit03-import-project-20261112T195723565045Z 在 HEAD=55630b5c19c20f33332a097eeef917ac5e48cffb 收集阶段 EXIT 2，无产品测试执行；分组后通过。中间 PySide/QML 6 passed 不计入当前架构证据；早期 static capture 对历史差异误报 EXIT 1，最终修正结果见 20261112T200836Z。

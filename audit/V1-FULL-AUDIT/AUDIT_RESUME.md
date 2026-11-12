@@ -1,3 +1,12 @@
+## 2026-11-13 AUDIT-03 合成导入与路径检查点
+
+- 当前 Task 仍 in_progress；产品基线=10e4ee013835605800d3830fb960ae8d3aa04167；当前核心回归 generated HEAD=8071caccae1a7885fb41b95889cbdc0e80eeb963；产品目录 src/apps/tests 相对基线 git diff --quiet EXIT 0。
+- AUDIT-03=FAIL；定向活动 Core 组 87 passed/EXIT 0，FEA-09 ReferencedSource 组 77 passed/EXIT 0；两组都是合成临时素材。详细矩阵、主机架构路径与限制见 reports/AUDIT-03-IMPORT-PROJECT-2026-11-13.md。
+- 路径探针 generated HEAD=934c81017cadf20e96fd2ee60bfa247086638be6；SEG-B-PROBES-001 实测 publish 通过 managed/books 目录 junction 在 managed root 外创建 revision 文件。既有只读 triage 级别 Medium/High confidence，本轮不重定级。probe suite 其他两项涉及 AUDIT-08/11和已验证防线，不外推至 AUDIT-03。
+- 活动 Core 普通路径测试检查原图 hash 不变；这不抹去 managed publication 的 root containment defect。该 junction probe 没有覆盖真实用户路径或修改现存原图文件。
+- 中间试跑中包含的 tests/m2_acceptance/test_acceptance_loop.py 使用 PySide/QML 历史 harness，不在当前产品范围且未纳入正式证据。.NET 定向 Host/App tests 未重跑；历史基线状态 BLOCKED-TESTHOST-ACCESS。真实 GUI、安装包、项目根移动和 Avalonia 进程重启均 NOT_RUN。
+- 探针复现的 SEG-B-PROBES-001 不新建 issue ID；不修改 product source，修复需独立实现 Task。AC2/AC3/AC4 仍 PARTIAL，Release Gate BLOCKED。下一项按 DAG 继续 AUDIT-04。
+
 # 恢复入口
 
 ## 2026-11-13 AUDIT-14 静态阶段检查点

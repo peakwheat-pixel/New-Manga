@@ -1,0 +1,2292 @@
+AUDIT-03 static repository boundary capture
+generated_at_utc=2026-11-12T20:06:20.163645Z
+generated_head=d1c4bee2071f6b7fd89ceb313be6ce97b6dd8cb8
+branch=main
+base_commit=10e4ee013835605800d3830fb960ae8d3aa04167
+product_paths_diff_exit=0
+changed_paths_count=281
+out_of_scope_paths=["doc/reviews/FEA-11-HOST-AUTH-4-desktop-surface-adjudication-2026-11-12.md", "doc/reviews/FEA-11-HOST-AUTH-4-freeze-adjudication-2026-11-12.md", "doc/reviews/FEA-11-HOST-AUTH-4-project-continuation-plan-2026-11-12.md", "doc/reviews/FEA-11-HOST-AUTH-4-release-readiness-adjudication-2026-11-12.md", "doc/reviews/FEA-11-HOST-AUTH-4-scope-r1.md", "verification/FEA-11-HOST-AUTH-4/logs/dotnet-release-baseline-20261112.log", "verification/FEA-11-HOST-AUTH-4/logs/pytest-release-baseline-20261112.log", "verification/FEA-11-HOST-AUTH-4/logs/pytest-release-baseline-workspace-20261112.log", "verification/FEA-11-HOST-AUTH-4/logs/zcode-desktop-surface-probe-20261112.log", "verification/FEA-11-HOST-AUTH-4/logs/zcode-dotnet-host-probe-20261112.log", "verification/FEA-11-HOST-AUTH-4/logs/zcode-release-readiness-adjudication-20261112.log", "verification/FEA-11-HOST-AUTH-4/zcode-freeze-adjudication-20261112.log", "verification/FEA-11-HOST-AUTH-4/zcode-project-continuation-plan-20261112.log", "verification/FEA-11-HOST-AUTH-4/zcode-scope-review-r1-20261112.log"]
+worktree_paths_count=12
+out_of_scope_worktree_paths=[]
+whitespace_diff_exit=2
+json=G:\CODEX\New Manga\audit\V1-FULL-AUDIT\evidence\audit03-static-20261112T200619Z.json
+
+argv=["git", "rev-parse", "HEAD"]
+cwd=G:\CODEX\New Manga shell=False interpreter=git
+started_utc=2026-11-12T20:06:19.934207+00:00 elapsed_seconds=0.020859 EXIT=0
+stdout:
+d1c4bee2071f6b7fd89ceb313be6ce97b6dd8cb8
+
+argv=["git", "branch", "--show-current"]
+cwd=G:\CODEX\New Manga shell=False interpreter=git
+started_utc=2026-11-12T20:06:19.955083+00:00 elapsed_seconds=0.019279 EXIT=0
+stdout:
+main
+
+argv=["git", "status", "--porcelain", "--untracked-files=all"]
+cwd=G:\CODEX\New Manga shell=False interpreter=git
+started_utc=2026-11-12T20:06:19.974378+00:00 elapsed_seconds=0.066507 EXIT=0
+stdout:
+ M doc/REBASELINE_PLAN.md
+ M doc/STATUS.md
+?? audit/V1-FULL-AUDIT/evidence/audit-probes-segment-b-20261112T195906381034Z.json
+?? audit/V1-FULL-AUDIT/evidence/audit03-core-import-20261112T195832407658Z.json
+?? audit/V1-FULL-AUDIT/evidence/audit03-import-project-20261112T195723565045Z.json
+?? audit/V1-FULL-AUDIT/evidence/audit03-project-lifecycle-20261112T195832407658Z.json
+?? audit/V1-FULL-AUDIT/evidence/audit03-referenced-import-20261112T195832407658Z.json
+?? audit/V1-FULL-AUDIT/logs/audit-probes-segment-b-20261112T195906381034Z.log
+?? audit/V1-FULL-AUDIT/logs/audit03-core-import-20261112T195832407658Z.log
+?? audit/V1-FULL-AUDIT/logs/audit03-import-project-20261112T195723565045Z.log
+?? audit/V1-FULL-AUDIT/logs/audit03-project-lifecycle-20261112T195832407658Z.log
+?? audit/V1-FULL-AUDIT/logs/audit03-referenced-import-20261112T195832407658Z.log
+
+argv=["git", "diff", "--quiet", "10e4ee013835605800d3830fb960ae8d3aa04167", "d1c4bee2071f6b7fd89ceb313be6ce97b6dd8cb8", "--", "src", "apps", "tests"]
+cwd=G:\CODEX\New Manga shell=False interpreter=git
+started_utc=2026-11-12T20:06:20.040901+00:00 elapsed_seconds=0.02371 EXIT=0
+stdout:
+
+
+argv=["git", "diff", "--name-only", "10e4ee013835605800d3830fb960ae8d3aa04167", "d1c4bee2071f6b7fd89ceb313be6ce97b6dd8cb8"]
+cwd=G:\CODEX\New Manga shell=False interpreter=git
+started_utc=2026-11-12T20:06:20.064625+00:00 elapsed_seconds=0.026729 EXIT=0
+stdout:
+audit/V1-FULL-AUDIT/AUDIT_EVIDENCE_INDEX.md
+audit/V1-FULL-AUDIT/AUDIT_ISSUES.md
+audit/V1-FULL-AUDIT/AUDIT_PLAN.md
+audit/V1-FULL-AUDIT/AUDIT_RESUME.md
+audit/V1-FULL-AUDIT/AUDIT_STATUS.md
+audit/V1-FULL-AUDIT/AUDIT_TASKS.md
+audit/V1-FULL-AUDIT/evidence/audit-11-reviewed-source-manifest-20261112.json
+audit/V1-FULL-AUDIT/evidence/audit-11-static-inventory-20261112.json
+audit/V1-FULL-AUDIT/evidence/audit-probes-segment-b-20261112T081030840760Z.json
+audit/V1-FULL-AUDIT/evidence/audit05-06-governance-c0da575-20261113.json
+audit/V1-FULL-AUDIT/evidence/audit05-06-post-pinbackfill-919b55d-20261113.json
+audit/V1-FULL-AUDIT/evidence/audit05-06-reviewattempt-gates-46db551-20261113.json
+audit/V1-FULL-AUDIT/evidence/audit05-06-targeted-20261113.json
+audit/V1-FULL-AUDIT/evidence/audit06-context-20261113.json
+audit/V1-FULL-AUDIT/evidence/audit08-closure-pinbackfill-default-20261113.json
+audit/V1-FULL-AUDIT/evidence/audit08-followup-evidence-postcommit-default-20261113.json
+audit/V1-FULL-AUDIT/evidence/audit08-followup-pinbackfill-default-20261113.json
+audit/V1-FULL-AUDIT/evidence/audit14-governance-20261112T193119Z.json
+audit/V1-FULL-AUDIT/evidence/audit14-governance-20261112T193219Z.json
+audit/V1-FULL-AUDIT/evidence/audit14-static-20261112T192852Z.json
+audit/V1-FULL-AUDIT/evidence/baseline-segment-b.json
+audit/V1-FULL-AUDIT/evidence/dotnet-app-20261112T083119769139Z.json
+audit/V1-FULL-AUDIT/evidence/dotnet-appearance-20261112T083119769139Z.json
+audit/V1-FULL-AUDIT/evidence/dotnet-applicationcore-20261112T083119769139Z.json
+audit/V1-FULL-AUDIT/evidence/dotnet-coreclient-20261112T083119769139Z.json
+audit/V1-FULL-AUDIT/evidence/dotnet-designsystem-20261112T083119769139Z.json
+audit/V1-FULL-AUDIT/evidence/dotnet-host-20261112T083119769139Z.json
+audit/V1-FULL-AUDIT/evidence/dotnet-presentationavalonia-20261112T083119769139Z.json
+audit/V1-FULL-AUDIT/evidence/dotnet-themeengine-20261112T083119769139Z.json
+audit/V1-FULL-AUDIT/evidence/governance-segment-b-20261112T085303591759Z.json
+audit/V1-FULL-AUDIT/evidence/governance-segment-b-20261112T163538379654Z.json
+audit/V1-FULL-AUDIT/evidence/governance-segment-b-20261112T164032450706Z.json
+audit/V1-FULL-AUDIT/evidence/governance-segment-b-20261112T170013817352Z.json
+audit/V1-FULL-AUDIT/evidence/governance-segment-b-20261112T170326419984Z.json
+audit/V1-FULL-AUDIT/evidence/governance-segment-b-20261112T170837323982Z.json
+audit/V1-FULL-AUDIT/evidence/pytest-audit08-connection-ownership-20261113-04.json
+audit/V1-FULL-AUDIT/evidence/pytest-audit08-nmbak-failure-repro-20261113-03.json
+audit/V1-FULL-AUDIT/evidence/pytest-audit08-sqlite-20261113-01.json
+audit/V1-FULL-AUDIT/evidence/pytest-audit08-sqlite-20261113-final-02.json
+audit/V1-FULL-AUDIT/evidence/pytest-audit08-sqlite-20261113-final.json
+audit/V1-FULL-AUDIT/evidence/pytest-audit08-sqlite-probes-20261113-02.json
+audit/V1-FULL-AUDIT/evidence/pytest-segment-b-20261112T081732598825Z.json
+audit/V1-FULL-AUDIT/evidence/sidecar-lifecycle-probe-20261112T142759897356Z.json
+audit/V1-FULL-AUDIT/evidence/sidecar-lifecycle-probe-20261112T143133097703Z.json
+audit/V1-FULL-AUDIT/evidence/software-smoke-report-segment-b-20261112T084557725697Z.json
+audit/V1-FULL-AUDIT/evidence/software-smoke-segment-b-20261112T084557725697Z.json
+audit/V1-FULL-AUDIT/evidence/source-architecture-scan-20261112.json
+audit/V1-FULL-AUDIT/evidence/source-manifest-segment-b.json
+audit/V1-FULL-AUDIT/evidence/zcode-audit01-02-review-20261112.json
+audit/V1-FULL-AUDIT/evidence/zcode-audit05-06-review-attempt-20261113.json
+audit/V1-FULL-AUDIT/evidence/zcode-audit05-06-review-attempt-20261113.stderr-sanitized.txt
+audit/V1-FULL-AUDIT/evidence/zcode-audit05-06-review-attempt-20261113.stdout.txt
+audit/V1-FULL-AUDIT/evidence/zcode-audit08-closure-rereview-plan-20261113.json
+audit/V1-FULL-AUDIT/evidence/zcode-audit08-closure-rereview-plan-20261113.stderr.txt
+audit/V1-FULL-AUDIT/evidence/zcode-audit08-closure-rereview-probe-20261113.json
+audit/V1-FULL-AUDIT/evidence/zcode-audit08-closure-rereview-probe-20261113.stderr.txt
+audit/V1-FULL-AUDIT/evidence/zcode-audit08-closure-rereview-yolo-20261113.stderr.redacted.txt
+audit/V1-FULL-AUDIT/evidence/zcode-audit08-closure-rereview-yolo-20261113.stdout.txt
+audit/V1-FULL-AUDIT/evidence/zcode-audit08-closure-review-20261113.json
+audit/V1-FULL-AUDIT/evidence/zcode-audit08-closure-review-20261113.stderr.txt
+audit/V1-FULL-AUDIT/evidence/zcode-audit08-closure-review-20261113.stdout.txt
+audit/V1-FULL-AUDIT/evidence/zcode-audit08-followup-review-20261113.json
+audit/V1-FULL-AUDIT/evidence/zcode-audit08-followup-review-20261113.stderr.txt
+audit/V1-FULL-AUDIT/evidence/zcode-audit08-review-20261113.json
+audit/V1-FULL-AUDIT/evidence/zcode-audit08-review-20261113.stderr.txt
+audit/V1-FULL-AUDIT/evidence/zcode-audit11-review-20261112.json
+audit/V1-FULL-AUDIT/evidence/zcode-audit14-review-attempt-20261113.json
+audit/V1-FULL-AUDIT/evidence/zcode-audit14-review-attempt-20261113.stderr-sanitized.txt
+audit/V1-FULL-AUDIT/evidence/zcode-audit14-review-attempt-20261113.stdout.txt
+audit/V1-FULL-AUDIT/logs/audit-00-inventory-20261112.log
+audit/V1-FULL-AUDIT/logs/audit-00-post-pinbackfill-gates-20261112.log
+audit/V1-FULL-AUDIT/logs/audit-00-segment-b.log
+audit/V1-FULL-AUDIT/logs/audit-11-gate-api-20261112.log
+audit/V1-FULL-AUDIT/logs/audit-11-gate-default-20261112.log
+audit/V1-FULL-AUDIT/logs/audit-11-gate-pins-20261112.log
+audit/V1-FULL-AUDIT/logs/audit-11-gate-post-statusfix-api-20261112.log
+audit/V1-FULL-AUDIT/logs/audit-11-gate-post-statusfix-default-20261112.log
+audit/V1-FULL-AUDIT/logs/audit-11-gate-post-statusfix-pins-20261112.log
+audit/V1-FULL-AUDIT/logs/audit-11-gate-post-statusfix-taskpath-20261112.log
+audit/V1-FULL-AUDIT/logs/audit-11-gate-taskpath-20261112.log
+audit/V1-FULL-AUDIT/logs/audit-11-post-canonicalpin-api-20261112.log
+audit/V1-FULL-AUDIT/logs/audit-11-post-canonicalpin-default-20261112.log
+audit/V1-FULL-AUDIT/logs/audit-11-post-canonicalpin-pins-20261112.log
+audit/V1-FULL-AUDIT/logs/audit-11-post-canonicalpin-taskpath-20261112.log
+audit/V1-FULL-AUDIT/logs/audit-11-post-pinbackfill-api-20261112.log
+audit/V1-FULL-AUDIT/logs/audit-11-post-pinbackfill-default-20261112.log
+audit/V1-FULL-AUDIT/logs/audit-11-post-pinbackfill-pins-20261112.log
+audit/V1-FULL-AUDIT/logs/audit-11-post-pinbackfill-taskpath-20261112.log
+audit/V1-FULL-AUDIT/logs/audit-11-scanner-source-hash-drift-20261112.log
+audit/V1-FULL-AUDIT/logs/audit-11-source-manifest-20261112.log
+audit/V1-FULL-AUDIT/logs/audit-11-static-inventory-20261112.log
+audit/V1-FULL-AUDIT/logs/audit-probes-segment-b-20261112T081030840760Z.log
+audit/V1-FULL-AUDIT/logs/audit01-02-evidence-commit-gates-20261112.log
+audit/V1-FULL-AUDIT/logs/audit01-source-scope-diff-20261112.log
+audit/V1-FULL-AUDIT/logs/audit05-06-governance-c0da575-20261113.log
+audit/V1-FULL-AUDIT/logs/audit05-06-post-pinbackfill-919b55d-20261113.log
+audit/V1-FULL-AUDIT/logs/audit05-06-reviewattempt-gates-46db551-20261113.log
+audit/V1-FULL-AUDIT/logs/audit05-06-targeted-20261113.log
+audit/V1-FULL-AUDIT/logs/audit06-context-20261113.log
+audit/V1-FULL-AUDIT/logs/audit08-canonical-pin-hash-verify-20261113.log
+audit/V1-FULL-AUDIT/logs/audit08-closure-pinbackfill-api-20261113.log
+audit/V1-FULL-AUDIT/logs/audit08-closure-pinbackfill-default-20261113.log
+audit/V1-FULL-AUDIT/logs/audit08-closure-pinbackfill-pins-20261113.log
+audit/V1-FULL-AUDIT/logs/audit08-closure-pinbackfill-taskpath-20261113.log
+audit/V1-FULL-AUDIT/logs/audit08-doc-gate-api-20261113.log
+audit/V1-FULL-AUDIT/logs/audit08-doc-gate-pins-20261113.log
+audit/V1-FULL-AUDIT/logs/audit08-doc-gate-taskpath-20261113.log
+audit/V1-FULL-AUDIT/logs/audit08-final-pinbackfill-api-20261113.log
+audit/V1-FULL-AUDIT/logs/audit08-final-pinbackfill-pins-20261113.log
+audit/V1-FULL-AUDIT/logs/audit08-final-pinbackfill-taskpath-20261113.log
+audit/V1-FULL-AUDIT/logs/audit08-final-review-api-20261113.log
+audit/V1-FULL-AUDIT/logs/audit08-final-review-pins-20261113.log
+audit/V1-FULL-AUDIT/logs/audit08-final-review-taskpath-20261113.log
+audit/V1-FULL-AUDIT/logs/audit08-followup-evidence-postcommit-api-20261113.log
+audit/V1-FULL-AUDIT/logs/audit08-followup-evidence-postcommit-default-20261113.log
+audit/V1-FULL-AUDIT/logs/audit08-followup-evidence-postcommit-pins-20261113.log
+audit/V1-FULL-AUDIT/logs/audit08-followup-evidence-postcommit-taskpath-20261113.log
+audit/V1-FULL-AUDIT/logs/audit08-followup-pinbackfill-api-20261113.log
+audit/V1-FULL-AUDIT/logs/audit08-followup-pinbackfill-default-20261113.log
+audit/V1-FULL-AUDIT/logs/audit08-followup-pinbackfill-pins-20261113.log
+audit/V1-FULL-AUDIT/logs/audit08-followup-pinbackfill-taskpath-20261113.log
+audit/V1-FULL-AUDIT/logs/audit08-pin-verify-followup-20261113.log
+audit/V1-FULL-AUDIT/logs/audit08-post-pinbackfill-api-20261113.log
+audit/V1-FULL-AUDIT/logs/audit08-post-pinbackfill-pins-20261113.log
+audit/V1-FULL-AUDIT/logs/audit08-post-pinbackfill-taskpath-20261113.log
+audit/V1-FULL-AUDIT/logs/audit08-review-fix-api-20261113.log
+audit/V1-FULL-AUDIT/logs/audit08-review-fix-pins-20261113.log
+audit/V1-FULL-AUDIT/logs/audit08-review-fix-taskpath-20261113.log
+audit/V1-FULL-AUDIT/logs/audit11-zcode-review-gates-api-20261113.log
+audit/V1-FULL-AUDIT/logs/audit11-zcode-review-gates-default-20261113.log
+audit/V1-FULL-AUDIT/logs/audit11-zcode-review-gates-pins-20261113.log
+audit/V1-FULL-AUDIT/logs/audit11-zcode-review-gates-taskpath-20261113.log
+audit/V1-FULL-AUDIT/logs/audit11-zcode-review-postpinbackfill-api-20261113.log
+audit/V1-FULL-AUDIT/logs/audit11-zcode-review-postpinbackfill-default-20261113.log
+audit/V1-FULL-AUDIT/logs/audit11-zcode-review-postpinbackfill-pins-20261113.log
+audit/V1-FULL-AUDIT/logs/audit11-zcode-review-postpinbackfill-taskpath-20261113.log
+audit/V1-FULL-AUDIT/logs/audit11-zcode-review-poststatus-api-20261113.log
+audit/V1-FULL-AUDIT/logs/audit11-zcode-review-poststatus-default-20261113.log
+audit/V1-FULL-AUDIT/logs/audit11-zcode-review-poststatus-pins-20261113.log
+audit/V1-FULL-AUDIT/logs/audit11-zcode-review-poststatus-taskpath-20261113.log
+audit/V1-FULL-AUDIT/logs/audit11-zcode-review-posttrim-api-20261113.log
+audit/V1-FULL-AUDIT/logs/audit11-zcode-review-posttrim-default-20261113.log
+audit/V1-FULL-AUDIT/logs/audit11-zcode-review-posttrim-pins-20261113.log
+audit/V1-FULL-AUDIT/logs/audit11-zcode-review-posttrim-taskpath-20261113.log
+audit/V1-FULL-AUDIT/logs/audit14-governance-20261112T193119Z.log
+audit/V1-FULL-AUDIT/logs/audit14-governance-20261112T193219Z.log
+audit/V1-FULL-AUDIT/logs/audit14-static-20261112T192852Z.log
+audit/V1-FULL-AUDIT/logs/dependency-vulnerability-scan-20261112.log
+audit/V1-FULL-AUDIT/logs/dotnet-app-20261112T083119769139Z.log
+audit/V1-FULL-AUDIT/logs/dotnet-appearance-20261112T083119769139Z.log
+audit/V1-FULL-AUDIT/logs/dotnet-applicationcore-20261112T083119769139Z.log
+audit/V1-FULL-AUDIT/logs/dotnet-build-audit01-02-20261112.log
+audit/V1-FULL-AUDIT/logs/dotnet-coreclient-20261112T083119769139Z.log
+audit/V1-FULL-AUDIT/logs/dotnet-designsystem-20261112T083119769139Z.log
+audit/V1-FULL-AUDIT/logs/dotnet-format-whitespace-20261112.log
+audit/V1-FULL-AUDIT/logs/dotnet-host-20261112T083119769139Z.log
+audit/V1-FULL-AUDIT/logs/dotnet-presentationavalonia-20261112T083119769139Z.log
+audit/V1-FULL-AUDIT/logs/dotnet-result-adjudication-20261112.log
+audit/V1-FULL-AUDIT/logs/dotnet-themeengine-20261112T083119769139Z.log
+audit/V1-FULL-AUDIT/logs/final-governance-gates-20261112.log
+audit/V1-FULL-AUDIT/logs/final-post-pinbackfill-gates-20261112.log
+audit/V1-FULL-AUDIT/logs/gates-after-scope-adjudication-20261112.log
+audit/V1-FULL-AUDIT/logs/governance-segment-b-20261112T085303591759Z.log
+audit/V1-FULL-AUDIT/logs/governance-segment-b-20261112T163538379654Z.log
+audit/V1-FULL-AUDIT/logs/governance-segment-b-20261112T164032450706Z.log
+audit/V1-FULL-AUDIT/logs/governance-segment-b-20261112T170013817352Z.log
+audit/V1-FULL-AUDIT/logs/governance-segment-b-20261112T170326419984Z.log
+audit/V1-FULL-AUDIT/logs/governance-segment-b-20261112T170837323982Z.log
+audit/V1-FULL-AUDIT/logs/original-checklist-git-history-search-20261112.log
+audit/V1-FULL-AUDIT/logs/original-instructions-recovery-20261112.log
+audit/V1-FULL-AUDIT/logs/original-instructions-stage-preservation-20261112.log
+audit/V1-FULL-AUDIT/logs/post-scope-reset-gates-20261112.log
+audit/V1-FULL-AUDIT/logs/postaddendum-integrity-20261112.log
+audit/V1-FULL-AUDIT/logs/postreview-final-verification-20261112.log
+audit/V1-FULL-AUDIT/logs/probe-triage-confirmation-20261112.log
+audit/V1-FULL-AUDIT/logs/pytest-audit08-connection-ownership-20261113-04.log
+audit/V1-FULL-AUDIT/logs/pytest-audit08-nmbak-failure-repro-20261113-03.log
+audit/V1-FULL-AUDIT/logs/pytest-audit08-sqlite-20261113-01.log
+audit/V1-FULL-AUDIT/logs/pytest-audit08-sqlite-20261113-final-02.log
+audit/V1-FULL-AUDIT/logs/pytest-audit08-sqlite-20261113-final.log
+audit/V1-FULL-AUDIT/logs/pytest-audit08-sqlite-probes-20261113-02.log
+audit/V1-FULL-AUDIT/logs/pytest-segment-b-20261112T081732598825Z.log
+audit/V1-FULL-AUDIT/logs/python-tool-discovery-20261112.log
+audit/V1-FULL-AUDIT/logs/review-checkpoint-recheck-20261112.log
+audit/V1-FULL-AUDIT/logs/review-final-integrity-20261112.log
+audit/V1-FULL-AUDIT/logs/segment-b-release-gates-df120fb.log
+audit/V1-FULL-AUDIT/logs/sidecar-lifecycle-invalid-run-investigation-20261112.log
+audit/V1-FULL-AUDIT/logs/sidecar-lifecycle-probe-20261112.log
+audit/V1-FULL-AUDIT/logs/sidecar-lifecycle-probe-20261112T142759897356Z.log
+audit/V1-FULL-AUDIT/logs/sidecar-lifecycle-probe-20261112T143133097703Z.log
+audit/V1-FULL-AUDIT/logs/smoke-result-adjudication-20261112.log
+audit/V1-FULL-AUDIT/logs/software-smoke-segment-b-20261112T084557725697Z.log
+audit/V1-FULL-AUDIT/logs/source-architecture-scan-20261112.log
+audit/V1-FULL-AUDIT/logs/stage0-resume-verification-20261112.log
+audit/V1-FULL-AUDIT/logs/suite-to-audit-mapping-20261112.log
+audit/V1-FULL-AUDIT/logs/test-execution-adjudication-20261112.log
+audit/V1-FULL-AUDIT/logs/test-mapping-adjudication-20261112.log
+audit/V1-FULL-AUDIT/logs/zcode-audit01-02-review-dispatch-20261112.log
+audit/V1-FULL-AUDIT/logs/zcode-audit05-06-review-dispatch-20261113.log
+audit/V1-FULL-AUDIT/logs/zcode-audit08-closure-rereview-dispatch-20261113.log
+audit/V1-FULL-AUDIT/logs/zcode-audit08-closure-review-dispatch-20261113.log
+audit/V1-FULL-AUDIT/logs/zcode-audit08-followup-review-dispatch-20261113.log
+audit/V1-FULL-AUDIT/logs/zcode-audit08-review-dispatch-20261113.log
+audit/V1-FULL-AUDIT/logs/zcode-audit11-review-dispatch-20261112.log
+audit/V1-FULL-AUDIT/logs/zcode-audit14-review-dispatch-20261113.log
+audit/V1-FULL-AUDIT/logs/zcode-checkpoint-review-20261112.log
+audit/V1-FULL-AUDIT/logs/zcode-checkpoint-review-addendum-20261112.log
+audit/V1-FULL-AUDIT/logs/zcode-checkpoint-review-findings-20261112.log
+audit/V1-FULL-AUDIT/logs/zcode-current-head-checkpoint-review-20261112.log
+audit/V1-FULL-AUDIT/logs/zcode-final-audit-review-20261112.log
+audit/V1-FULL-AUDIT/logs/zcode-final-review-addendum-20261112.log
+audit/V1-FULL-AUDIT/logs/zcode-lifecycle-adjudication-20261112.log
+audit/V1-FULL-AUDIT/logs/zcode-lifecycle-adjudication-correction-20261112.log
+audit/V1-FULL-AUDIT/logs/zcode-original-scope-readjudication-20261112.log
+audit/V1-FULL-AUDIT/logs/zcode-readjudication-gates-20261112.log
+audit/V1-FULL-AUDIT/reports/00_BASELINE-SEGMENT-B.md
+audit/V1-FULL-AUDIT/reports/01_PROJECT_INVENTORY.md
+audit/V1-FULL-AUDIT/reports/AUDIT-01-02-ARCHITECTURE-STATIC-2026-11-12.md
+audit/V1-FULL-AUDIT/reports/AUDIT-05-06-SFX-TRANSLATION-2026-11-13.md
+audit/V1-FULL-AUDIT/reports/AUDIT-08-SQLITE-PERSISTENCE-2026-11-13.md
+audit/V1-FULL-AUDIT/reports/AUDIT-11-SECURITY-STATIC-2026-11-12.md
+audit/V1-FULL-AUDIT/reports/AUDIT-14-V1-INTEGRITY-2026-11-13.md
+audit/V1-FULL-AUDIT/reports/DOTNET-RESULT-SEGMENT-B-2026-11-12.md
+audit/V1-FULL-AUDIT/reports/GOVERNANCE-RESULT-SEGMENT-B-2026-11-12.md
+audit/V1-FULL-AUDIT/reports/ORIGINAL-USER-AUDIT-SCOPE-RECOVERY-2026-11-12.md
+audit/V1-FULL-AUDIT/reports/PROBE-TRIAGE-SEGMENT-B-2026-11-12.md
+audit/V1-FULL-AUDIT/reports/PROBES-RESULT-SEGMENT-B.md
+audit/V1-FULL-AUDIT/reports/PYTEST-RESULT-SEGMENT-B-2026-11-12.md
+audit/V1-FULL-AUDIT/reports/SMOKE-RESULT-SEGMENT-B-2026-11-12.md
+audit/V1-FULL-AUDIT/reports/SUITE-TO-AUDIT-MAPPING-SEGMENT-B-2026-11-12.md
+audit/V1-FULL-AUDIT/reports/TEST-EXECUTION-ADJUDICATION-2026-11-12.md
+audit/V1-FULL-AUDIT/reports/TEST-MAPPING-ADJUDICATION-2026-11-12.md
+audit/V1-FULL-AUDIT/reports/ZCODE-AUDIT-01-02-REVIEW-2026-11-12.md
+audit/V1-FULL-AUDIT/reports/ZCODE-AUDIT-08-CLOSURE-REREVIEW-ATTEMPT-2026-11-13.md
+audit/V1-FULL-AUDIT/reports/ZCODE-AUDIT-08-CLOSURE-REVIEW-2026-11-13.md
+audit/V1-FULL-AUDIT/reports/ZCODE-AUDIT-08-FOLLOWUP-REVIEW-2026-11-13.md
+audit/V1-FULL-AUDIT/reports/ZCODE-AUDIT-08-REVIEW-2026-11-13.md
+audit/V1-FULL-AUDIT/reports/ZCODE-AUDIT-11-REVIEW-2026-11-12.md
+audit/V1-FULL-AUDIT/reports/ZCODE-CHECKPOINT-REVIEW-ADDENDUM-2026-11-12.md
+audit/V1-FULL-AUDIT/reports/ZCODE-CHECKPOINT-REVIEW-SEGMENT-B-2026-11-12.md
+audit/V1-FULL-AUDIT/reports/ZCODE-CURRENT-HEAD-CHECKPOINT-REVIEW-2026-11-12.md
+audit/V1-FULL-AUDIT/reports/ZCODE-FINAL-CHECKPOINT-REVIEW-2026-11-12.md
+audit/V1-FULL-AUDIT/reports/ZCODE-FINAL-REVIEW-ADDENDUM-2026-11-12.md
+audit/V1-FULL-AUDIT/reports/ZCODE-LIFECYCLE-ADJUDICATION-2026-11-12.md
+audit/V1-FULL-AUDIT/reports/ZCODE-LIFECYCLE-ADJUDICATION-CORRECTION-2026-11-12.md
+audit/V1-FULL-AUDIT/reports/ZCODE-ORIGINAL-SCOPE-READJUDICATION-2026-11-12.md
+audit/V1-FULL-AUDIT/reports/ZCODE-SCOPE-ADJUDICATION-2026-11-12.md
+audit/V1-FULL-AUDIT/scripts/audit14_static_inventory.py
+audit/V1-FULL-AUDIT/scripts/capture_audit14_governance.py
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt
+audit/V1-FULL-AUDIT/source/zcode-audit05-06-review-prompt-20261113.txt
+audit/V1-FULL-AUDIT/source/zcode-audit08-closure-rereview-prompt-20261113.txt
+audit/V1-FULL-AUDIT/source/zcode-audit08-closure-review-prompt-20261113.txt
+audit/V1-FULL-AUDIT/source/zcode-audit14-review-prompt-20261113.txt
+audit/V1-FULL-AUDIT/tests/audit_runner.py
+audit/V1-FULL-AUDIT/tests/capture_audit03_static.py
+audit/V1-FULL-AUDIT/tests/rebaseline_audit00.py
+audit/V1-FULL-AUDIT/tests/security_static_inventory.py
+audit/V1-FULL-AUDIT/tests/sidecar_lifecycle_probe.ps1
+audit/V1-FULL-AUDIT/tests/source_architecture_scan.py
+audit/V1-FULL-AUDIT/tests/test_audit05_sfx_regression.py
+audit/V1-FULL-AUDIT/tests/test_audit06_context_observations.py
+audit/V1-FULL-AUDIT/tests/test_audit08_sqlite_synthetic.py
+doc/REBASELINE_PLAN.md
+doc/STATUS.md
+doc/TASK_LEDGER.md
+doc/reviews/FEA-11-HOST-AUTH-4-desktop-surface-adjudication-2026-11-12.md
+doc/reviews/FEA-11-HOST-AUTH-4-freeze-adjudication-2026-11-12.md
+doc/reviews/FEA-11-HOST-AUTH-4-project-continuation-plan-2026-11-12.md
+doc/reviews/FEA-11-HOST-AUTH-4-release-readiness-adjudication-2026-11-12.md
+doc/reviews/FEA-11-HOST-AUTH-4-scope-r1.md
+doc/tasks/NEW-MANGA-V1-FULL-AUDIT.md
+verification/FEA-11-HOST-AUTH-4/logs/dotnet-release-baseline-20261112.log
+verification/FEA-11-HOST-AUTH-4/logs/pytest-release-baseline-20261112.log
+verification/FEA-11-HOST-AUTH-4/logs/pytest-release-baseline-workspace-20261112.log
+verification/FEA-11-HOST-AUTH-4/logs/zcode-desktop-surface-probe-20261112.log
+verification/FEA-11-HOST-AUTH-4/logs/zcode-dotnet-host-probe-20261112.log
+verification/FEA-11-HOST-AUTH-4/logs/zcode-release-readiness-adjudication-20261112.log
+verification/FEA-11-HOST-AUTH-4/zcode-freeze-adjudication-20261112.log
+verification/FEA-11-HOST-AUTH-4/zcode-project-continuation-plan-20261112.log
+verification/FEA-11-HOST-AUTH-4/zcode-scope-review-r1-20261112.log
+
+argv=["git", "diff", "--check", "10e4ee013835605800d3830fb960ae8d3aa04167", "d1c4bee2071f6b7fd89ceb313be6ce97b6dd8cb8"]
+cwd=G:\CODEX\New Manga shell=False interpreter=git
+started_utc=2026-11-12T20:06:20.091369+00:00 elapsed_seconds=0.07221 EXIT=2
+stdout:
+audit/V1-FULL-AUDIT/logs/audit-probes-segment-b-20261112T081030840760Z.log:54: trailing whitespace.
++audit\V1-FULL-AUDIT\tests\test_audit_probes.py:82: 
+audit/V1-FULL-AUDIT/logs/audit-probes-segment-b-20261112T081030840760Z.log:69: trailing whitespace.
++    
+audit/V1-FULL-AUDIT/logs/audit-probes-segment-b-20261112T081030840760Z.log:73: trailing whitespace.
++    
+audit/V1-FULL-AUDIT/logs/audit-probes-segment-b-20261112T081030840760Z.log:76: trailing whitespace.
++    
+audit/V1-FULL-AUDIT/logs/audit-probes-segment-b-20261112T081030840760Z.log:80: trailing whitespace.
++    
+audit/V1-FULL-AUDIT/logs/audit08-closure-pinbackfill-api-20261113.log:117: new blank line at EOF.
+audit/V1-FULL-AUDIT/logs/final-post-pinbackfill-gates-20261112.log:176: new blank line at EOF.
+audit/V1-FULL-AUDIT/logs/pytest-segment-b-20261112T081732598825Z.log:64: trailing whitespace.
++E     
+audit/V1-FULL-AUDIT/logs/pytest-segment-b-20261112T081732598825Z.log:74: trailing whitespace.
++E     
+audit/V1-FULL-AUDIT/logs/pytest-segment-b-20261112T081732598825Z.log:112: trailing whitespace.
++E     
+audit/V1-FULL-AUDIT/logs/pytest-segment-b-20261112T081732598825Z.log:139: trailing whitespace.
++E     
+audit/V1-FULL-AUDIT/logs/review-final-integrity-20261112.log:6: trailing whitespace.
++worktree_status_before: 
+audit/V1-FULL-AUDIT/reports/PROBE-TRIAGE-SEGMENT-B-2026-11-12.md:3: trailing whitespace.
++日期：2026-11-12  
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:1: trailing whitespace.
++# NEW-MANGA-V1-FULL-AUDIT
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:2: trailing whitespace.
++# 漫画翻译软件 V1 全项目自主审计总指令
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:3: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:4: trailing whitespace.
++## 0. 最高目标
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:5: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:6: trailing whitespace.
++你现在正式接任 New Manga V1 的首席软件审计负责人（Lead Software Auditor）。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:7: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:8: trailing whitespace.
++**项目根目录：`G:\CODEX\New Manga`**
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:9: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:10: trailing whitespace.
++**唯一最终目标：**
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:11: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:12: trailing whitespace.
++在保护现有项目和用户数据的前提下，对漫画翻译软件 V1 进行全面、系统、深入、可验证的审计。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:13: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:14: trailing whitespace.
++审计范围包括：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:15: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:16: trailing whitespace.
++- 全部有效项目源代码
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:17: trailing whitespace.
++- 系统架构与技术实现
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:18: trailing whitespace.
++- 软件功能完整性
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:19: trailing whitespace.
++- AI 翻译流程
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:20: trailing whitespace.
++- OCR 与文本检测
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:21: trailing whitespace.
++- SFX 拟声词处理
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:22: trailing whitespace.
++- 图片消除和修复
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:23: trailing whitespace.
++- 排版与漫画导出
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:24: trailing whitespace.
++- UI/UX 及实际交互
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:25: trailing whitespace.
++- SQLite 和文件管理
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:26: trailing whitespace.
++- 性能、并发和稳定性
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:27: trailing whitespace.
++- 安全及异常恢复
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:28: trailing whitespace.
++- 自动化测试与端到端测试
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:29: trailing whitespace.
++- Windows 构建、安装和交付
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:30: trailing whitespace.
++- 历史技术债务与未完成功能
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:31: trailing whitespace.
++- 最终 V1 发布准入判断
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:32: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:33: trailing whitespace.
++本任务不是简单 Code Review，不是仅运行一次测试，也不是只检查某几个核心文件。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:34: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:35: trailing whitespace.
++**最终必须交付：完整审计证据、问题清单、风险分析、整改计划、测试结果和正式审计报告。**
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:36: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:37: trailing whitespace.
++未经实际验证，不得宣称软件已经通过审计。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:38: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:39: trailing whitespace.
++---
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:40: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:41: trailing whitespace.
++# 第一部分：自主执行授权
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:42: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:43: trailing whitespace.
++## 1.1 自主执行模式
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:44: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:45: trailing whitespace.
++用户已授权你在本次审计范围内：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:46: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:47: trailing whitespace.
++1. 自主调查项目现状。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:48: trailing whitespace.
++2. 自主制定审计任务和执行顺序。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:49: trailing whitespace.
++3. 自主拆分模块与子任务。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:50: trailing whitespace.
++4. 自主选择审计方法和工具。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:51: trailing whitespace.
++5. 自主执行安全的本地静态分析、构建及测试。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:52: trailing whitespace.
++6. 自主收集日志、截图与验证证据。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:53: trailing whitespace.
++7. 自主整理问题及审计结论。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:54: trailing whitespace.
++8. 自主制定整改计划。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:55: trailing whitespace.
++9. 自主维护审计进度与恢复检查点。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:56: trailing whitespace.
++10. 自动进入下一项尚未完成的审计任务。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:57: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:58: trailing whitespace.
++在上述范围内，不需要逐阶段向用户请求批准。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:59: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:60: trailing whitespace.
++不要频繁询问：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:61: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:62: trailing whitespace.
++- 是否开始？
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:63: trailing whitespace.
++- 是否继续？
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:64: trailing whitespace.
++- 是否进入下一阶段？
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:65: trailing whitespace.
++- 是否执行下一轮检查？
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:66: trailing whitespace.
++- 是否生成报告？
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:67: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:68: trailing whitespace.
++只要任务安全且具备执行条件，就直接推进。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:69: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:70: trailing whitespace.
++## 1.2 授权边界
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:71: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:72: trailing whitespace.
++本次以审计为主，原则上不修改现有业务代码。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:73: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:74: trailing whitespace.
++允许：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:75: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:76: trailing whitespace.
++- 新建独立审计目录。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:77: trailing whitespace.
++- 编写独立测试脚本。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:78: trailing whitespace.
++- 使用隔离测试数据库和测试漫画副本。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:79: trailing whitespace.
++- 创建审计文档、测试日志和问题报告。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:80: trailing whitespace.
++- 执行可安全运行的本地检查。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:81: trailing whitespace.
++- 在项目允许的范围内启动和测试软件。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:82: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:83: trailing whitespace.
++未经用户另行授权，不得：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:84: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:85: trailing whitespace.
++- 删除或覆盖真实用户数据。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:86: trailing whitespace.
++- 执行破坏性数据库迁移。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:87: trailing whitespace.
++- 大规模重构或替换业务代码。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:88: trailing whitespace.
++- 删除 Git 历史或强制重置仓库。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:89: trailing whitespace.
++- 强制推送、自动合并或发布。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:90: trailing whitespace.
++- 上传包含源代码、私有漫画或密钥的资料到第三方服务。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:91: trailing whitespace.
++- 进行产生费用的真实 API 压力测试。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:92: trailing whitespace.
++- 修改用户全局系统环境或安装高风险系统组件。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:93: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:94: trailing whitespace.
++必要时使用沙箱、临时目录或文件副本。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:95: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:96: trailing whitespace.
++若某项测试存在不可控风险，记录 BLOCKED 并继续其他工作。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:97: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:98: trailing whitespace.
++**用户不在电脑前，不代表获得了不可逆操作的授权。**
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:99: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:100: trailing whitespace.
++---
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:101: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:102: trailing whitespace.
++# 第二部分：Plus 额度优化和模型分工
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:103: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:104: trailing whitespace.
++## 2.1 基本原则
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:105: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:106: trailing whitespace.
++本项目使用 ChatGPT Plus，模型额度有限。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:107: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:108: trailing whitespace.
++在保证审计质量的前提下，优先节约高级推理额度。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:109: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:110: trailing whitespace.
++采用以下推荐分工：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:111: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:112: trailing whitespace.
++### Luna：默认执行模型
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:113: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:114: trailing whitespace.
++承担约 60%～70% 的执行性任务，包括：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:115: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:116: trailing whitespace.
++- 项目文件与目录盘点。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:117: trailing whitespace.
++- 代码数量、文件类型和依赖统计。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:118: trailing whitespace.
++- 静态检查工具运行。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:119: trailing whitespace.
++- TypeScript 类型检查。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:120: trailing whitespace.
++- Python 静态检查。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:121: trailing whitespace.
++- 构建与编译。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:122: trailing whitespace.
++- 单元测试、集成测试及回归测试执行。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:123: trailing whitespace.
++- UI 页面、组件及路由盘点。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:124: trailing whitespace.
++- 测试日志、截图和证据整理。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:125: trailing whitespace.
++- 功能覆盖矩阵初步建立。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:126: trailing whitespace.
++- 明确、局部、低风险缺陷的分析。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:127: trailing whitespace.
++- 审计文档和报告初稿整理。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:128: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:129: trailing whitespace.
++### Sol Medium：深度审计模型
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:130: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:131: trailing whitespace.
++承担复杂推理与关键裁决，包括：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:132: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:133: trailing whitespace.
++- 系统架构分析。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:134: trailing whitespace.
++- React/Tauri/Python 跨模块接口。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:135: trailing whitespace.
++- 数据库事务和数据完整性。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:136: trailing whitespace.
++- OCR、SFX 复杂分类逻辑。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:137: trailing whitespace.
++- 上下文翻译和状态机。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:138: trailing whitespace.
++- 图片消除、排版及导出。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:139: trailing whitespace.
++- UI/UX 深层交互问题。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:140: trailing whitespace.
++- 并发、异常恢复和资源管理。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:141: trailing whitespace.
++- 高风险缺陷根因分析。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:142: trailing whitespace.
++- 审计证据复核。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:143: trailing whitespace.
++- 整改优先级及最终发布判断。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:144: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:145: trailing whitespace.
++### Sol High：默认禁用
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:146: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:147: trailing whitespace.
++不主动使用 Sol High。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:148: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:149: trailing whitespace.
++遇到 Sol Medium 无法可靠判断的重大问题：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:150: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:151: trailing whitespace.
++1. 保留已有证据。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:152: trailing whitespace.
++2. 标记 HIGH_REVIEW_CANDIDATE。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:153: trailing whitespace.
++3. 说明需要升级的原因。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:154: trailing whitespace.
++4. 继续其他可执行审计。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:155: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:156: trailing whitespace.
++本次审计不依赖 High 才能结束。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:157: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:158: trailing whitespace.
++## 2.2 模型调用限制
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:159: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:160: trailing whitespace.
++不得假设当前运行环境可以自动切换模型。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:161: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:162: trailing whitespace.
++如果具备真实的模型分派能力，则按上述规则分配。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:163: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:164: trailing whitespace.
++如果不能自动切换：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:165: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:166: trailing whitespace.
++- 使用当前可用模型推进。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:167: trailing whitespace.
++- 将需要更强推理的任务独立记录。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:168: trailing whitespace.
++- 不因无法切换模型而暂停全部审计。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:169: trailing whitespace.
++- 不得虚构其他模型已经执行了审查。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:170: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:171: trailing whitespace.
++无需主动使用 multi-agent-project-orchestrator，也不依赖其他 Agent 才能完成本轮审计。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:172: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:173: trailing whitespace.
++## 2.3 节省额度的执行策略
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:174: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:175: trailing whitespace.
++必须遵循：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:176: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:177: trailing whitespace.
++1. 本地工具优先于 AI 人工逐行分析。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:178: trailing whitespace.
++2. 使用索引、搜索和依赖关系定位代码。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:179: trailing whitespace.
++3. 每个模块保留已审计文件范围及证据。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:180: trailing whitespace.
++4. 不重复读取已经审查且未变化的文件。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:181: trailing whitespace.
++5. 代码未变化时复用有效测试证据。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:182: trailing whitespace.
++6. 长日志保存到文件，报告仅保留关键摘要与证据链接。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:183: trailing whitespace.
++7. 按模块分批执行，避免一次性读取整个仓库。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:184: trailing whitespace.
++8. 核心业务逻辑优先进行深度审查。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:185: trailing whitespace.
++9. 对低风险辅助代码采用自动化检查和抽样复核。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:186: trailing whitespace.
++10. 不为了节省额度降低验收标准。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:187: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:188: trailing whitespace.
++自动化扫描必须覆盖全部有效源码；人工深度审阅根据风险确定范围。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:189: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:190: trailing whitespace.
++第三方依赖、构建产物、缓存、模型权重等不得当作自研源码逐文件审阅，但需要检查相关依赖、安全及运行风险。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:191: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:192: trailing whitespace.
++---
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:193: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:194: trailing whitespace.
++# 第三部分：审计基线与防中断机制
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:195: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:196: trailing whitespace.
++## 3.1 首先建立审计基线
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:197: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:198: trailing whitespace.
++审计开始前，检查：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:199: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:200: trailing whitespace.
++- Git HEAD Commit。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:201: trailing whitespace.
++- 当前分支。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:202: trailing whitespace.
++- 工作区未提交修改。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:203: trailing whitespace.
++- 项目目录结构。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:204: trailing whitespace.
++- 当前软件版本。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:205: trailing whitespace.
++- 实际技术架构。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:206: trailing whitespace.
++- 构建环境。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:207: trailing whitespace.
++- 依赖与锁文件。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:208: trailing whitespace.
++- 现有测试体系。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:209: trailing whitespace.
++- 已有功能与开发文档。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:210: trailing whitespace.
++- 已知历史阻断和证据缺失。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:211: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:212: trailing whitespace.
++不允许随意切换、清理或覆盖用户现有工作区。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:213: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:214: trailing whitespace.
++审计针对明确记录的代码版本进行。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:215: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:216: trailing whitespace.
++若项目仍有未提交修改，应将其作为基线的一部分记录，并标记由此产生的复现限制。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:217: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:218: trailing whitespace.
++此前历史验收证据缺失的问题必须保留原状态。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:219: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:220: trailing whitespace.
++新的 V1 审计证据可以建立新基线，但不得将缺失的历史证据自动改为 PASS。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:221: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:222: trailing whitespace.
++## 3.2 建立独立审计目录
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:223: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:224: trailing whitespace.
++目录：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:225: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:226: trailing whitespace.
++`G:\CODEX\New Manga\audit\V1-FULL-AUDIT`
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:227: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:228: trailing whitespace.
++创建必要的子目录：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:229: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:230: trailing whitespace.
++- `reports/`
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:231: trailing whitespace.
++- `evidence/`
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:232: trailing whitespace.
++- `logs/`
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:233: trailing whitespace.
++- `tests/`
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:234: trailing whitespace.
++- `screenshots/`
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:235: trailing whitespace.
++- `checkpoints/`
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:236: trailing whitespace.
++- `handoff/`
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:237: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:238: trailing whitespace.
++使用清晰、稳定的文件命名。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:239: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:240: trailing whitespace.
++避免在审计目录之外制造不必要文件。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:241: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:242: trailing whitespace.
++## 3.3 持久化进度
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:243: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:244: trailing whitespace.
++建立以下核心状态文件：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:245: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:246: trailing whitespace.
++`AUDIT_STATUS.md`
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:247: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:248: trailing whitespace.
++`AUDIT_PLAN.md`
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:249: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:250: trailing whitespace.
++`AUDIT_TASKS.md`
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:251: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:252: trailing whitespace.
++`AUDIT_EVIDENCE_INDEX.md`
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:253: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:254: trailing whitespace.
++`AUDIT_ISSUES.md`
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:255: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:256: trailing whitespace.
++`AUDIT_RESUME.md`
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:257: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:258: trailing whitespace.
++其中 `AUDIT_RESUME.md` 必须记录：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:259: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:260: trailing whitespace.
++- 当前审计阶段。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:261: trailing whitespace.
++- 已完成任务。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:262: trailing whitespace.
++- 未完成任务。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:263: trailing whitespace.
++- 最近验证结果。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:264: trailing whitespace.
++- 已发现的关键问题。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:265: trailing whitespace.
++- 最新代码版本。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:266: trailing whitespace.
++- 下一个可执行任务。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:267: trailing whitespace.
++- 恢复运行所需命令。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:268: trailing whitespace.
++- 阻断与风险说明。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:269: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:270: trailing whitespace.
++每完成一个独立审计任务，更新状态。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:271: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:272: trailing whitespace.
++## 3.4 断电与中断恢复
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:273: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:274: trailing whitespace.
++假设运行过程可能出现：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:275: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:276: trailing whitespace.
++- 电脑关闭。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:277: trailing whitespace.
++- Codex 会话结束。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:278: trailing whitespace.
++- 模型额度不足。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:279: trailing whitespace.
++- 工具调用中断。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:280: trailing whitespace.
++- 测试进程异常退出。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:281: trailing whitespace.
++- 上下文窗口不足。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:282: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:283: trailing whitespace.
++所有审计阶段都必须可以从持久化检查点恢复。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:284: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:285: trailing whitespace.
++恢复时：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:286: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:287: trailing whitespace.
++1. 读取 AUDIT_RESUME.md。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:288: trailing whitespace.
++2. 核对 Git 和审计基线是否变化。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:289: trailing whitespace.
++3. 核查上次执行结果。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:290: trailing whitespace.
++4. 识别尚未完成的任务。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:291: trailing whitespace.
++5. 从最后一个可信检查点继续。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:292: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:293: trailing whitespace.
++不得因会话重启而无意义地重新开展全部审计。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:294: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:295: trailing whitespace.
++若当前平台无法跨会话自动运行，应保存完整恢复入口，不得虚称已经设置后台任务。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:296: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:297: trailing whitespace.
++---
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:298: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:299: trailing whitespace.
++# 第四部分：全项目审计范围
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:300: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:301: trailing whitespace.
++必须建立正式审计任务 DAG，并覆盖以下专项。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:302: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:303: trailing whitespace.
++## AUDIT-00：项目现状与完整盘点
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:304: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:305: trailing whitespace.
++检查：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:306: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:307: trailing whitespace.
++- 项目全部有效源码。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:308: trailing whitespace.
++- 当前技术栈。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:309: trailing whitespace.
++- 启动入口。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:310: trailing whitespace.
++- 后端接口。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:311: trailing whitespace.
++- 数据库结构。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:312: trailing whitespace.
++- 文件存储布局。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:313: trailing whitespace.
++- 模型与资源配置。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:314: trailing whitespace.
++- 测试代码。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:315: trailing whitespace.
++- 构建脚本。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:316: trailing whitespace.
++- 发布配置。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:317: trailing whitespace.
++- 历史架构与当前架构差异。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:318: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:319: trailing whitespace.
++输出项目结构图、模块索引、文件覆盖清单。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:320: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:321: trailing whitespace.
++## AUDIT-01：系统架构审计
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:322: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:323: trailing whitespace.
++重点验证：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:324: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:325: trailing whitespace.
++- React、TypeScript、Tauri 与 Python Core 的边界。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:326: trailing whitespace.
++- 实际运行架构是否与目标架构一致。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:327: trailing whitespace.
++- 旧代码是否仍被错误调用。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:328: trailing whitespace.
++- 前后端消息传递是否稳定。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:329: trailing whitespace.
++- 状态管理与业务数据是否重复。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:330: trailing whitespace.
++- 模块之间是否存在循环依赖。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:331: trailing whitespace.
++- 是否存在过度耦合。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:332: trailing whitespace.
++- 是否存在隐藏的全局状态。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:333: trailing whitespace.
++- 异步操作及资源生命周期是否合理。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:334: trailing whitespace.
++- 异常是否会跨模块传播失控。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:335: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:336: trailing whitespace.
++不得仅依据架构文档判断。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:337: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:338: trailing whitespace.
++必须结合真实代码和运行结果。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:339: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:340: trailing whitespace.
++## AUDIT-02：源代码质量审计
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:341: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:342: trailing whitespace.
++对有效源码进行全量自动化扫描。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:343: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:344: trailing whitespace.
++重点检查：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:345: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:346: trailing whitespace.
++- 类型错误。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:347: trailing whitespace.
++- 未处理异常。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:348: trailing whitespace.
++- 空值访问。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:349: trailing whitespace.
++- 无效分支。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:350: trailing whitespace.
++- 死代码。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:351: trailing whitespace.
++- 重复代码。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:352: trailing whitespace.
++- 不一致的接口定义。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:353: trailing whitespace.
++- 不安全的文件操作。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:354: trailing whitespace.
++- 非法状态转换。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:355: trailing whitespace.
++- 资源泄漏。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:356: trailing whitespace.
++- 异步竞争。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:357: trailing whitespace.
++- 缺失的输入校验。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:358: trailing whitespace.
++- 不合理的全局变量。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:359: trailing whitespace.
++- 潜在兼容性问题。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:360: trailing whitespace.
++- 测试缺口。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:361: trailing whitespace.
++- 未完成 TODO 与占位实现。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:362: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:363: trailing whitespace.
++记录静态扫描结果，并对高风险位置进行深入审阅。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:364: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:365: trailing whitespace.
++不得把工具未报错视为逻辑正确。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:366: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:367: trailing whitespace.
++## AUDIT-03：漫画库、导入及项目管理
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:368: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:369: trailing whitespace.
++验证：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:370: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:371: trailing whitespace.
++- 日本漫画分页导入。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:372: trailing whitespace.
++- 韩国 Webtoon 长条漫导入。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:373: trailing whitespace.
++- 单张与批量导入。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:374: trailing whitespace.
++- 图片格式兼容。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:375: trailing whitespace.
++- 非法或损坏图片。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:376: trailing whitespace.
++- 重复文件。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:377: trailing whitespace.
++- 文件名特殊字符。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:378: trailing whitespace.
++- Unicode 路径。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:379: trailing whitespace.
++- 中文、日文、韩文路径。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:380: trailing whitespace.
++- 超大图片。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:381: trailing whitespace.
++- 图片排序。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:382: trailing whitespace.
++- 项目创建、保存、打开与删除。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:383: trailing whitespace.
++- Managed Copy 行为。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:384: trailing whitespace.
++- 原始文件保护。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:385: trailing whitespace.
++- 项目移动和重启恢复。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:386: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:387: trailing whitespace.
++任何可能损坏真实文件的操作必须使用副本。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:388: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:389: trailing whitespace.
++## AUDIT-04：OCR 与文本区域检测
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:390: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:391: trailing whitespace.
++验证：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:392: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:393: trailing whitespace.
++- 检测模型选择。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:394: trailing whitespace.
++- 日文 OCR。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:395: trailing whitespace.
++- 韩文 OCR。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:396: trailing whitespace.
++- 区域坐标。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:397: trailing whitespace.
++- 图片缩放后的坐标映射。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:398: trailing whitespace.
++- 竖排文本。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:399: trailing whitespace.
++- 横排文本。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:400: trailing whitespace.
++- 小字体和艺术字体。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:401: trailing whitespace.
++- 重叠区域。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:402: trailing whitespace.
++- 漏检与误检。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:403: trailing whitespace.
++- CPU 推理。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:404: trailing whitespace.
++- 模型初始化和释放。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:405: trailing whitespace.
++- 模型缺失处理。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:406: trailing whitespace.
++- 推理中断及异常恢复。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:407: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:408: trailing whitespace.
++区分检测准确率问题、OCR 识别问题和后续翻译问题。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:409: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:410: trailing whitespace.
++无人工参考标注时不得宣称准确率达标。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:411: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:412: trailing whitespace.
++## AUDIT-05：SFX 拟声词专项
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:413: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:414: trailing whitespace.
++这是本轮重点高风险专项。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:415: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:416: trailing whitespace.
++必须检查：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:417: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:418: trailing whitespace.
++- SFX 与普通对白的分类。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:419: trailing whitespace.
++- 韩漫大型艺术字。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:420: trailing whitespace.
++- 斜体、旋转、变形和重叠文字。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:421: trailing whitespace.
++- SFX 跳过。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:422: trailing whitespace.
++- SFX 翻译。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:423: trailing whitespace.
++- SFX 人工确认。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:424: trailing whitespace.
++- 区域类型修改。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:425: trailing whitespace.
++- 分类结果缓存。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:426: trailing whitespace.
++- 重新检测后的状态同步。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:427: trailing whitespace.
++- 单 Region 重翻。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:428: trailing whitespace.
++- 错误路由恢复。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:429: trailing whitespace.
++- 多阶段状态机。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:430: trailing whitespace.
++- 用户人工修改是否被覆盖。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:431: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:432: trailing whitespace.
++对已定义的 SFX 业务契约逐项检查。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:433: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:434: trailing whitespace.
++建立独立的 SFX 回归测试集。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:435: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:436: trailing whitespace.
++机器输出不能直接作为独立正确答案。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:437: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:438: trailing whitespace.
++## AUDIT-06：AI 翻译引擎
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:439: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:440: trailing whitespace.
++检查：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:441: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:442: trailing whitespace.
++- API 配置及模型调用。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:443: trailing whitespace.
++- Prompt 构建。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:444: trailing whitespace.
++- 上下文传递。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:445: trailing whitespace.
++- 作品、章节及页面上下文。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:446: trailing whitespace.
++- 术语表优先级。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:447: trailing whitespace.
++- 批量翻译。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:448: trailing whitespace.
++- 单区域重翻。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:449: trailing whitespace.
++- 翻译结果解析。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:450: trailing whitespace.
++- 失败重试。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:451: trailing whitespace.
++- 超时控制。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:452: trailing whitespace.
++- 取消与恢复。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:453: trailing whitespace.
++- 重复请求。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:454: trailing whitespace.
++- 费用失控风险。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:455: trailing whitespace.
++- 并发限制。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:456: trailing whitespace.
++- 结果与原区域匹配。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:457: trailing whitespace.
++- 用户手工修改保护。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:458: trailing whitespace.
++- Revision 历史。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:459: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:460: trailing whitespace.
++重点防止错位、漏翻、重复翻译和错误覆盖。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:461: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:462: trailing whitespace.
++真实付费 API 调用必须受到事先明确存在的费用预算与权限约束；否则使用 Mock 或已批准的测试配置，并明确标记真实性限制。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:463: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:464: trailing whitespace.
++## AUDIT-07：图片消除、修复与排版
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:465: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:466: trailing whitespace.
++检查：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:467: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:468: trailing whitespace.
++- 文本区域蒙版。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:469: trailing whitespace.
++- 原文消除。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:470: trailing whitespace.
++- LaMa 等实际存在的修复链路。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:471: trailing whitespace.
++- 修复算法回退。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:472: trailing whitespace.
++- 图片边界处理。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:473: trailing whitespace.
++- 图片质量。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:474: trailing whitespace.
++- 消除区域与翻译区域一致性。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:475: trailing whitespace.
++- 字体加载。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:476: trailing whitespace.
++- 文本框计算。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:477: trailing whitespace.
++- 自动字号调整。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:478: trailing whitespace.
++- 换行与溢出。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:479: trailing whitespace.
++- 气泡适配。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:480: trailing whitespace.
++- 日文、韩文、中文渲染。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:481: trailing whitespace.
++- 缩放后的编辑结果。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:482: trailing whitespace.
++- Undo/Redo 或已有修订机制。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:483: trailing whitespace.
++- 导出前后的质量变化。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:484: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:485: trailing whitespace.
++仅检查当前代码中实际存在的模型链路。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:486: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:487: trailing whitespace.
++规划但尚未实现的功能应单独登记，不得假定已经接入。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:488: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:489: trailing whitespace.
++## AUDIT-08：SQLite 与持久化
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:490: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:491: trailing whitespace.
++重点检查：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:492: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:493: trailing whitespace.
++- Schema。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:494: trailing whitespace.
++- Migration。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:495: trailing whitespace.
++- 外键及约束。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:496: trailing whitespace.
++- 事务。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:497: trailing whitespace.
++- 并发读写。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:498: trailing whitespace.
++- 数据一致性。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:499: trailing whitespace.
++- Revision 历史。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:500: trailing whitespace.
++- 任务状态。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:501: trailing whitespace.
++- 项目与图片关联。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:502: trailing whitespace.
++- 数据库关闭和恢复。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:503: trailing whitespace.
++- 路径变化。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:504: trailing whitespace.
++- 异常中断。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:505: trailing whitespace.
++- 意外退出后的恢复。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:506: trailing whitespace.
++- 数据库损坏风险。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:507: trailing whitespace.
++- 升级兼容性。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:508: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:509: trailing whitespace.
++使用测试数据库模拟异常，不得破坏用户已有数据。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:510: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:511: trailing whitespace.
++## AUDIT-09：UI/UX 全面审计
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:512: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:513: trailing whitespace.
++必须对软件实际运行界面进行审核。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:514: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:515: trailing whitespace.
++覆盖：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:516: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:517: trailing whitespace.
++- 主窗口。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:518: trailing whitespace.
++- 漫画库。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:519: trailing whitespace.
++- 项目管理。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:520: trailing whitespace.
++- 图片阅读和编辑。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:521: trailing whitespace.
++- 缩放、拖动、翻页。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:522: trailing whitespace.
++- 单图、双图对比。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:523: trailing whitespace.
++- 区域编辑。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:524: trailing whitespace.
++- OCR 结果展示。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:525: trailing whitespace.
++- 翻译操作。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:526: trailing whitespace.
++- 批量任务进度。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:527: trailing whitespace.
++- SFX 人工确认。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:528: trailing whitespace.
++- 术语表。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:529: trailing whitespace.
++- Revision 历史。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:530: trailing whitespace.
++- 导出界面。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:531: trailing whitespace.
++- 软件设置。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:532: trailing whitespace.
++- 报错提示。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:533: trailing whitespace.
++- 空状态及加载状态。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:534: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:535: trailing whitespace.
++审查：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:536: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:537: trailing whitespace.
++- 视觉一致性。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:538: trailing whitespace.
++- 操作直观性。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:539: trailing whitespace.
++- 信息层级。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:540: trailing whitespace.
++- 布局适应性。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:541: trailing whitespace.
++- 交互反馈。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:542: trailing whitespace.
++- 键盘操作。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:543: trailing whitespace.
++- 操作可撤销性。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:544: trailing whitespace.
++- 长耗时任务反馈。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:545: trailing whitespace.
++- 错误恢复引导。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:546: trailing whitespace.
++- 无障碍基础问题。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:547: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:548: trailing whitespace.
++如无法实际启动 GUI，则记录未验证内容。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:549: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:550: trailing whitespace.
++不得仅凭 JSX/TSX 代码判断实际 UI/UX 已通过。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:551: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:552: trailing whitespace.
++## AUDIT-10：性能与稳定性
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:553: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:554: trailing whitespace.
++建立可重复的性能测试。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:555: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:556: trailing whitespace.
++检查：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:557: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:558: trailing whitespace.
++- 冷启动与热启动。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:559: trailing whitespace.
++- 大批量图片导入。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:560: trailing whitespace.
++- 长条漫加载。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:561: trailing whitespace.
++- 连续翻页。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:562: trailing whitespace.
++- 缩放和拖动。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:563: trailing whitespace.
++- OCR 推理。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:564: trailing whitespace.
++- 批量翻译。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:565: trailing whitespace.
++- 图像修复。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:566: trailing whitespace.
++- 导出速度。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:567: trailing whitespace.
++- 内存占用。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:568: trailing whitespace.
++- CPU 使用。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:569: trailing whitespace.
++- 缓存增长。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:570: trailing whitespace.
++- 资源释放。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:571: trailing whitespace.
++- 后台任务取消。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:572: trailing whitespace.
++- 长时间运行。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:573: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:574: trailing whitespace.
++记录测试硬件、测试样本、执行方式与实际测量结果。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:575: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:576: trailing whitespace.
++没有客观测量不得编造性能数字。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:577: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:578: trailing whitespace.
++## AUDIT-11：安全及异常恢复
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:579: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:580: trailing whitespace.
++检查：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:581: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:582: trailing whitespace.
++- API Key 存储与日志脱敏。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:583: trailing whitespace.
++- 敏感配置泄漏。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:584: trailing whitespace.
++- 路径遍历。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:585: trailing whitespace.
++- 不可信文件输入。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:586: trailing whitespace.
++- 图像解码风险。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:587: trailing whitespace.
++- 数据库注入风险。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:588: trailing whitespace.
++- 命令执行风险。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:589: trailing whitespace.
++- WebView/Tauri 权限。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:590: trailing whitespace.
++- 依赖安全。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:591: trailing whitespace.
++- 日志隐私。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:592: trailing whitespace.
++- 文件覆盖。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:593: trailing whitespace.
++- 并发竞态。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:594: trailing whitespace.
++- 异常退出。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:595: trailing whitespace.
++- 网络失败。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:596: trailing whitespace.
++- 磁盘空间不足。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:597: trailing whitespace.
++- 模型文件丢失。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:598: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:599: trailing whitespace.
++安全问题必须根据实际攻击条件和代码证据分级。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:600: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:601: trailing whitespace.
++## AUDIT-12：Windows 构建与交付
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:602: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:603: trailing whitespace.
++检查：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:604: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:605: trailing whitespace.
++- 开发构建。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:606: trailing whitespace.
++- Release 构建。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:607: trailing whitespace.
++- 必要资源打包。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:608: trailing whitespace.
++- Python 运行环境依赖。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:609: trailing whitespace.
++- OCR 与图像模型资源。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:610: trailing whitespace.
++- 路径及权限问题。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:611: trailing whitespace.
++- 安装包。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:612: trailing whitespace.
++- 启动程序。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:613: trailing whitespace.
++- 卸载行为。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:614: trailing whitespace.
++- Windows 兼容性。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:615: trailing whitespace.
++- 中文路径与非管理员账户。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:616: trailing whitespace.
++- 干净环境运行。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:617: trailing whitespace.
++- 缺失运行库时的行为。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:618: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:619: trailing whitespace.
++如果没有干净 Windows 测试环境，必须列明环境覆盖缺口。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:620: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:621: trailing whitespace.
++## AUDIT-13：完整端到端测试
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:622: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:623: trailing whitespace.
++建立真实使用场景：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:624: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:625: trailing whitespace.
++场景 A：日漫完整导入、OCR、翻译、消字、排版、导出。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:626: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:627: trailing whitespace.
++场景 B：韩漫 Webtoon 完整处理。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:628: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:629: trailing whitespace.
++场景 C：韩漫混合对白及大型 SFX。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:630: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:631: trailing whitespace.
++场景 D：批量翻译后人工校对与单区域重翻。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:632: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:633: trailing whitespace.
++场景 E：异常退出、重启、项目恢复。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:634: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:635: trailing whitespace.
++场景 F：大批量图片运行与资源监控。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:636: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:637: trailing whitespace.
++场景 G：翻译 API 失败及任务重试。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:638: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:639: trailing whitespace.
++场景 H：项目保存、重新打开、最终导出一致性。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:640: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:641: trailing whitespace.
++各场景保存：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:642: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:643: trailing whitespace.
++- 测试输入。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:644: trailing whitespace.
++- 执行命令与步骤。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:645: trailing whitespace.
++- 预期结果。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:646: trailing whitespace.
++- 实际结果。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:647: trailing whitespace.
++- 日志或截图。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:648: trailing whitespace.
++- 问题编号。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:649: trailing whitespace.
++- PASS/FAIL/BLOCKED/NOT_TESTED。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:650: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:651: trailing whitespace.
++## AUDIT-14：历史技术债务及 V1 完整性
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:652: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:653: trailing whitespace.
++对比需求、设计文档及实际实现，明确：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:654: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:655: trailing whitespace.
++1. 完整实现的功能。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:656: trailing whitespace.
++2. 部分实现的功能。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:657: trailing whitespace.
++3. 界面存在但没有真正接线的功能。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:658: trailing whitespace.
++4. 只存在 Mock 的功能。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:659: trailing whitespace.
++5. 尚未实现的规划功能。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:660: trailing whitespace.
++6. 已不适用的历史代码。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:661: trailing whitespace.
++7. 应当清理的技术债务。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:662: trailing whitespace.
++8. 可能影响后续 V2 开发的架构问题。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:663: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:664: trailing whitespace.
++分别统计 V1 已承诺功能和未来规划功能。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:665: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:666: trailing whitespace.
++不能将未来规划全部作为 V1 必须修复的缺陷。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:667: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:668: trailing whitespace.
++---
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:669: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:670: trailing whitespace.
++# 第五部分：测试与证据标准
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:671: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:672: trailing whitespace.
++## 5.1 审计结果分类
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:673: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:674: trailing whitespace.
++每个检查项必须标记为：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:675: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:676: trailing whitespace.
++- PASS：有充分证据证明满足验收标准。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:677: trailing whitespace.
++- FAIL：已证实存在缺陷。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:678: trailing whitespace.
++- BLOCKED：受明确外部条件阻断。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:679: trailing whitespace.
++- NOT_TESTED：尚未执行验证。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:680: trailing whitespace.
++- NOT_APPLICABLE：经过核实不适用。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:681: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:682: trailing whitespace.
++禁止默认 PASS。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:683: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:684: trailing whitespace.
++## 5.2 问题严重程度
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:685: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:686: trailing whitespace.
++P0：数据破坏、严重安全问题、核心流程整体失效。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:687: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:688: trailing whitespace.
++P1：重要功能不可用、严重稳定性问题、重大业务错误。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:689: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:690: trailing whitespace.
++P2：一般功能问题、较明显的交互或性能缺陷。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:691: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:692: trailing whitespace.
++P3：低风险维护性、局部体验与代码优化问题。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:693: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:694: trailing whitespace.
++每个问题建立唯一 ID：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:695: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:696: trailing whitespace.
++`NM-AUD-0001`
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:697: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:698: trailing whitespace.
++问题必须记录：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:699: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:700: trailing whitespace.
++- 严重等级。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:701: trailing whitespace.
++- 问题分类。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:702: trailing whitespace.
++- 文件路径和定位。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:703: trailing whitespace.
++- 复现条件。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:704: trailing whitespace.
++- 预期与实际结果。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:705: trailing whitespace.
++- 证据文件。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:706: trailing whitespace.
++- 影响范围。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:707: trailing whitespace.
++- 根因或待核实假设。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:708: trailing whitespace.
++- 推荐修复方案。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:709: trailing whitespace.
++- 对应回归测试。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:710: trailing whitespace.
++- 当前状态。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:711: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:712: trailing whitespace.
++潜在风险不得直接写成已证实 Bug。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:713: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:714: trailing whitespace.
++## 5.3 证据真实性
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:715: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:716: trailing whitespace.
++严禁：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:717: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:718: trailing whitespace.
++- 没有运行就写测试通过。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:719: trailing whitespace.
++- 没有截图就声称界面验收通过。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:720: trailing whitespace.
++- 没有检查文件就声称文件已审查。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:721: trailing whitespace.
++- 将 Mock 通过当作真实 API 通过。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:722: trailing whitespace.
++- 将开发环境通过当作安装包通过。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:723: trailing whitespace.
++- 将历史 PASS 当作本轮 PASS。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:724: trailing whitespace.
++- 将无法复现的问题随意判定不存在。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:725: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:726: trailing whitespace.
++所有结论应当可以通过保存的证据重新核验。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:727: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:728: trailing whitespace.
++---
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:729: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:730: trailing whitespace.
++# 第六部分：审计执行策略
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:731: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:732: trailing whitespace.
++## 6.1 阶段顺序
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:733: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:734: trailing whitespace.
++执行顺序：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:735: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:736: trailing whitespace.
++P0：基线、项目盘点、审计任务 DAG。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:737: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:738: trailing whitespace.
++P1：工具化全量静态扫描与构建检查。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:739: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:740: trailing whitespace.
++P2：架构、接口、数据库和核心业务深度审计。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:741: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:742: trailing whitespace.
++P3：OCR、SFX、翻译、修复和导出专项审计。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:743: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:744: trailing whitespace.
++P4：UI/UX 与真实软件运行测试。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:745: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:746: trailing whitespace.
++P5：性能、安全、稳定性及 Windows 交付审计。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:747: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:748: trailing whitespace.
++P6：综合端到端测试及需求覆盖核对。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:749: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:750: trailing whitespace.
++P7：问题去重、分级、根因分析和整改规划。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:751: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:752: trailing whitespace.
++P8：最终交叉核验与 Release Gate。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:753: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:754: trailing whitespace.
++允许并行执行相互独立且不会争用关键资源的任务。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:755: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:756: trailing whitespace.
++不允许跳过某阶段却宣称其已完成。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:757: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:758: trailing whitespace.
++## 6.2 自主循环
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:759: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:760: trailing whitespace.
++每轮执行：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:761: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:762: trailing whitespace.
++PLAN → INSPECT → EXECUTE → VERIFY → RECORD → UPDATE → NEXT
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:763: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:764: trailing whitespace.
++其中：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:765: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:766: trailing whitespace.
++PLAN：确定当前可执行任务。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:767: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:768: trailing whitespace.
++INSPECT：定位文件、依赖和实际实现。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:769: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:770: trailing whitespace.
++EXECUTE：执行审计、工具扫描或测试。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:771: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:772: trailing whitespace.
++VERIFY：验证发现和测试结果是否可靠。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:773: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:774: trailing whitespace.
++RECORD：保存问题及证据。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:775: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:776: trailing whitespace.
++UPDATE：更新审计状态与完成范围。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:777: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:778: trailing whitespace.
++NEXT：自动选择下一项任务。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:779: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:780: trailing whitespace.
++禁止只完成 PLAN 就停止。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:781: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:782: trailing whitespace.
++## 6.3 遇到困难时的处理
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:783: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:784: trailing whitespace.
++遇到问题优先尝试：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:785: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:786: trailing whitespace.
++1. 重新定位准确文件。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:787: trailing whitespace.
++2. 检查环境与依赖。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:788: trailing whitespace.
++3. 使用替代性静态验证。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:789: trailing whitespace.
++4. 将任务拆小。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:790: trailing whitespace.
++5. 使用隔离副本复现。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:791: trailing whitespace.
++6. 执行不依赖该阻断的其他任务。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:792: trailing whitespace.
++7. 记录证据缺口。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:793: trailing whitespace.
++8. 制定后续补验方案。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:794: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:795: trailing whitespace.
++不得在同一失败命令上无限重试。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:796: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:797: trailing whitespace.
++连续重复失败应登记阻断，切换任务。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:798: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:799: trailing whitespace.
++## 6.4 无人值守要求
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:800: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:801: trailing whitespace.
++用户可能不在电脑前。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:802: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:803: trailing whitespace.
++不要因正常阶段切换而等待确认。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:804: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:805: trailing whitespace.
++若遇到需要用户独有凭据、付费权限、高风险系统变更或不可逆操作的情况：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:806: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:807: trailing whitespace.
++- 不得自行越权。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:808: trailing whitespace.
++- 登记外部依赖。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:809: trailing whitespace.
++- 继续其他安全任务。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:810: trailing whitespace.
++- 最终汇总需用户介入的事项。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:811: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:812: trailing whitespace.
++如果所有剩余任务都无法安全执行，则保存最终恢复状态并如实结束当前运行。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:813: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:814: trailing whitespace.
++不把工作停止解释为审计已全部通过。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:815: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:816: trailing whitespace.
++---
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:817: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:818: trailing whitespace.
++# 第七部分：正式报告与交付物
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:819: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:820: trailing whitespace.
++最终至少提供以下文件：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:821: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:822: trailing whitespace.
++`00_BASELINE.md`  
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:823: trailing whitespace.
++审计基线、Git 版本、环境与限制。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:824: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:825: trailing whitespace.
++`01_PROJECT_INVENTORY.md`  
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:826: trailing whitespace.
++项目结构、有效源文件、依赖与模块清单。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:827: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:828: trailing whitespace.
++`02_ARCHITECTURE_REVIEW.md`  
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:829: trailing whitespace.
++架构及跨模块问题。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:830: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:831: trailing whitespace.
++`03_CODE_QUALITY_REVIEW.md`  
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:832: trailing whitespace.
++全量静态分析与重点代码审核。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:833: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:834: trailing whitespace.
++`04_FUNCTIONAL_COVERAGE.md`  
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:835: trailing whitespace.
++功能实现与需求覆盖矩阵。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:836: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:837: trailing whitespace.
++`05_OCR_SFX_TRANSLATION_REVIEW.md`  
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:838: trailing whitespace.
++OCR、SFX 与 AI 翻译专项结果。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:839: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:840: trailing whitespace.
++`06_DATA_AND_RECOVERY_REVIEW.md`  
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:841: trailing whitespace.
++数据库、文件和异常恢复审计。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:842: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:843: trailing whitespace.
++`07_UIUX_REVIEW.md`  
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:844: trailing whitespace.
++UI/UX、页面、交互与运行截图。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:845: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:846: trailing whitespace.
++`08_TEST_RESULTS.md`  
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:847: trailing whitespace.
++全部测试及覆盖缺口。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:848: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:849: trailing whitespace.
++`09_SECURITY_PERFORMANCE_REVIEW.md`  
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:850: trailing whitespace.
++安全、性能与稳定性。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:851: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:852: trailing whitespace.
++`10_WINDOWS_RELEASE_REVIEW.md`  
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:853: trailing whitespace.
++Windows 构建与交付审查。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:854: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:855: trailing whitespace.
++`11_ISSUES.md`  
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:856: trailing whitespace.
++完整、去重、分级的问题台账。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:857: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:858: trailing whitespace.
++`12_REMEDIATION_PLAN.md`  
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:859: trailing whitespace.
++整改方案、优先级、依赖关系和验收要求。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:860: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:861: trailing whitespace.
++`13_RELEASE_GATE.md`  
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:862: trailing whitespace.
++正式发布准入结论。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:863: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:864: trailing whitespace.
++`FINAL_AUDIT_REPORT.md`  
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:865: trailing whitespace.
++最终综合审计报告。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:866: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:867: trailing whitespace.
++同时保留必要的原始日志、测试结果及截图。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:868: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:869: trailing whitespace.
++## 7.1 整改方案要求
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:870: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:871: trailing whitespace.
++修复计划必须按以下优先级安排：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:872: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:873: trailing whitespace.
++R1：P0/P1 及数据安全、主流程阻断问题。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:874: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:875: trailing whitespace.
++R2：影响功能可靠性的架构和状态管理问题。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:876: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:877: trailing whitespace.
++R3：P2、UI/UX、性能和稳定性问题。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:878: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:879: trailing whitespace.
++R4：P3、维护性和下一版本优化。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:880: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:881: trailing whitespace.
++每个整改任务说明：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:882: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:883: trailing whitespace.
++- 问题与根因。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:884: trailing whitespace.
++- 影响文件。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:885: trailing whitespace.
++- 推荐改动。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:886: trailing whitespace.
++- 依赖关系。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:887: trailing whitespace.
++- 风险。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:888: trailing whitespace.
++- 验收标准。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:889: trailing whitespace.
++- 回归测试范围。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:890: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:891: trailing whitespace.
++本轮以形成可靠整改计划为终点，不擅自实施大规模业务代码修复。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:892: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:893: trailing whitespace.
++## 7.2 Release Gate
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:894: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:895: trailing whitespace.
++审计结束时必须给出明确结论：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:896: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:897: trailing whitespace.
++PASS：符合已定义的发布准入标准，关键测试通过。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:898: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:899: trailing whitespace.
++CONDITIONAL：不存在未处理的致命阻断，遗留问题符合明确的风险接受条件。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:900: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:901: trailing whitespace.
++BLOCKED：存在发布阻断问题或关键证据缺失。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:902: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:903: trailing whitespace.
++如果测试执行不完整，不得用主观信心代替证据。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:904: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:905: trailing whitespace.
++报告必须说明审计完成程度与产品发布准备度是两件不同的事情。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:906: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:907: trailing whitespace.
++---
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:908: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:909: trailing whitespace.
++# 第八部分：最终完成条件
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:910: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:911: trailing whitespace.
++只有达到以下条件，才允许宣布本轮审计任务完成：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:912: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:913: trailing whitespace.
++1. 已建立明确的代码及环境审计基线。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:914: trailing whitespace.
++2. 全部有效源代码已纳入审计清单和自动化检查范围，无法扫描的例外已列明。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:915: trailing whitespace.
++3. 所有专项均已完成检查或明确记录阻断。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:916: trailing whitespace.
++4. 核心漫画翻译流程具有真实测试结果或明确测试缺口。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:917: trailing whitespace.
++5. OCR、SFX、翻译、消字、排版和导出均有专项结论。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:918: trailing whitespace.
++6. 数据库和文件安全完成风险审查。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:919: trailing whitespace.
++7. UI/UX 完成实际验证或记录无法验证的范围。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:920: trailing whitespace.
++8. Windows 构建及交付风险得到判断。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:921: trailing whitespace.
++9. 全部发现问题均已登记、分级和去重。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:922: trailing whitespace.
++10. 已形成完整整改方案。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:923: trailing whitespace.
++11. 全部审计证据和最终报告落盘。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:924: trailing whitespace.
++12. 已出具可追溯的 Release Gate 结论。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:925: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:926: trailing whitespace.
++审计流程允许存在 BLOCKED、FAIL 和 NOT_TESTED 的检查项，但必须如实披露。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:927: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:928: trailing whitespace.
++**审计完成 ≠ 没有问题 ≠ 软件发布通过。**
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:929: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:930: trailing whitespace.
++---
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:931: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:932: trailing whitespace.
++# 第九部分：最终自主推进指令
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:933: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:934: trailing whitespace.
++从现在开始，执行：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:935: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:936: trailing whitespace.
++**项目盘点 → 基线冻结 → 自动化扫描 → 架构审计 → 核心功能审计 → UI/UX 审计 → 动态测试 → 性能安全审计 → Windows 交付审计 → 综合复核 → 问题清单 → 整改方案 → 最终报告。**
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:937: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:938: trailing whitespace.
++你负责自主规划任务、执行任务、验证结果、保存证据、更新状态并继续推进。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:939: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:940: trailing whitespace.
++用户无需参与日常审计过程。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:941: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:942: trailing whitespace.
++不要在完成一项任务后等待“下一步”指令。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:943: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:944: trailing whitespace.
++没有安全或外部阻断时，自动选择下一项可执行任务。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:945: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:946: trailing whitespace.
++控制高级模型额度，优先使用 Luna 完成规则明确的工作，关键复杂问题由 Sol Medium 处理，Sol High 默认不使用。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:947: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:948: trailing whitespace.
++如果受额度、会话或环境限制无法继续，必须保存完整审计状态及恢复入口。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:949: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:950: trailing whitespace.
++最终向用户交付：
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:951: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:952: trailing whitespace.
++1. V1 软件总体质量评价。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:953: trailing whitespace.
++2. 功能实现完整性结论。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:954: trailing whitespace.
++3. P0/P1/P2/P3 问题数量与具体清单。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:955: trailing whitespace.
++4. 十大优先整改问题。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:956: trailing whitespace.
++5. 完整整改路线图。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:957: trailing whitespace.
++6. 未解决风险与证据缺口。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:958: trailing whitespace.
++7. Windows 发布准入结论。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:959: trailing whitespace.
++8. 所有报告和证据的存放位置。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:960: trailing whitespace.
++9. 后续恢复或整改的直接执行指令。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:961: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:962: trailing whitespace.
++**最终目标不变：完成 New Manga V1 全项目独立审计，取得真实、完整、可复核的质量基线。**
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:963: trailing whitespace.
++
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:964: trailing whitespace.
++现在立即开始执行 P0：审计基线与项目全面盘点。
+audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt:965: trailing whitespace.
++

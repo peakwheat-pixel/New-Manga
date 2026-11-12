@@ -1,0 +1,23 @@
+{
+  "name": "audit03-project-lifecycle-20261112T195832407658Z",
+  "argv": [
+    "C:\\Python314\\python.exe",
+    "-m",
+    "pytest",
+    "tests/m2_acceptance/test_acceptance_loop.py",
+    "-q",
+    "-rs",
+    "--tb=short",
+    "-o",
+    "cache_dir=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\audit03-project-pytest-cache-20261112T195832407658Z",
+    "--basetemp=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\audit03-project-pytest-temp-20261112T195832407658Z"
+  ],
+  "cwd": "G:\\CODEX\\New Manga",
+  "started_utc": "2026-11-12T19:58:38.062239+00:00",
+  "head": "934c81017cadf20e96fd2ee60bfa247086638be6",
+  "branch": "main",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 3.314,
+  "log": "audit\\V1-FULL-AUDIT\\logs\\audit03-project-lifecycle-20261112T195832407658Z.log"
+}
