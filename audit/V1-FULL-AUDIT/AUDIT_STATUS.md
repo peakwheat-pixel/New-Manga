@@ -5,7 +5,7 @@
 
 段 B 状态为 00 limited PASS；01/03/08/11 FAIL；02 BLOCKED；04–07、09、10、12–14 PARTIAL。台账有 3 项已 triage finding、1 项 INVESTIGATE、11 项待 ZCode 裁决候选、1 项已披露关闭的非产品 P3 observation。AC2/AC3/AC4 保持 PARTIAL，Release Gate BLOCKED。
 
-下一步：把最新 gate batch 与恢复点回填 Task Canonical Evidence，重生成 Task Ledger；对 pinbackfill commit 再运行四项治理门禁，之后将完整交付 HEAD 交 ZCode fresh-context Review。
+最新 post-pinbackfill 四项门禁已在 generated HEAD=e72bf97816a33e50c8cff5968c198975c3faddbd 全部 EXIT 0，细节与原始输出见 AUDIT_RESUME.md 顶部及 audit-post-evidence-e72bf978 文件。下一步将这批结果回填 Task Canonical Evidence、重生成 Task Ledger，再跑一次 pinbackfill 后门禁并交 ZCode fresh-context Review。
 
 ## 先前阶段状态（由以上检查点更新）
 

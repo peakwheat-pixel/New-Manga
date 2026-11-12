@@ -1,3 +1,10 @@
+## 2026-11-13 P7 post-pinbackfill 门禁检查点
+
+- Task card pinbackfill HEAD=e72bf97816a33e50c8cff5968c198975c3faddbd，branch=main。该提交包含 55 条新增 Canonical Evidence pins；新增 pin 的 Git BLOB SHA-256 逐项复算为 55/55 匹配。
+- post-pinbackfill 门禁均在 generated HEAD=e72bf97816a33e50c8cff5968c198975c3faddbd 运行并 EXIT 0：default check 3 warnings；TaskPath check 3 warnings；verify_pins 18/18；API inventory 1/79/6=86。原始输出/metadata 分别为 logs/audit-post-evidence-e72bf978-default.log 与 evidence/audit-post-evidence-e72bf978-default.json、TaskPath、pins、API 同 stem 文件。
+- 本次门禁验证了 P7 Task pinbackfill 提交。下一步将该批日志/JSON 纳入 Canonical Evidence；其后再在新增 pinbackfill HEAD 运行四项门禁。最终 ZCode fresh-context Review 仍待执行。
+- 当前 Task in_progress；AC2/AC3/AC4 PARTIAL；Release Gate BLOCKED。真实模型、付费 API、完整 GUI、清洁安装、升级/回退/卸载等限制仍见 reports/FINAL_AUDIT_REPORT.md 与 reports/13_RELEASE_GATE.md。
+
 ## 2026-11-13 P7 综合报告与门禁检查点
 
 - 产品审计基线=10e4ee013835605800d3830fb960ae8d3aa04167，branch=main。P7 编号交付册、去重台账、整改路线、Release Gate 与 FINAL_AUDIT_REPORT 已提交于 3fc756a1aed8ca366ac0b324ff293cc3e1f9ebb0；报告覆盖段 B AUDIT-00–14 现有结果与限制，没有把候选写成正式 finding，也没有把未测项写成 PASS。
