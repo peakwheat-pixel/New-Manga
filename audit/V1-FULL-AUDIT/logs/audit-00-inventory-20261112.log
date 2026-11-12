@@ -1,0 +1,209 @@
+AUDIT-00 static inventory command log
+generated_utc=2026-11-12T13:46:31.1000836Z
+generated_head=6f5153e47ff6adfcedde49712636c75e21bd43ef
+product_base=10e4ee013835605800d3830fb960ae8d3aa04167
+
+[selected-product-path-diff]
+utc=2026-11-12T13:46:31.1042265Z
+command=git diff --name-only 10e4ee013835605800d3830fb960ae8d3aa04167 HEAD -- src apps/desktop-avalonia tests tools packaging .github requirements.txt README.md
+EXIT=0
+
+[manifest-class-counts]
+utc=2026-11-12T13:46:31.1558642Z
+command=python -c "parse source-manifest-segment-b.json and count entries by class"
+EXIT=0
+product_base= 10e4ee013835605800d3830fb960ae8d3aa04167
+generated_head= c310f01658f99ddc654d3439777b147fe6d3b7e5
+hash_basis= SHA-256 of exact Git blob bytes at product_base
+entries= 1301
+{'ci_config': 2, 'developer_tools': 42, 'packaging': 17, 'root_config_or_license': 36, 'target_source': 633, 'target_tests': 571}
+
+[api-inventory-check]
+utc=2026-11-12T13:46:31.2166853Z
+command=python tools/generate_api_inventory.py --check
+EXIT=0
+| 接口 | 方法数 | 属性/事件/字段数 |
+|---|---|---|
+| IReaderProgressSink | 1 | 0 |
+| IHostController | 79 | 4 |
+| IRunController | 6 | 0 |
+| **合计** | **86** | — |
+
+## IReaderProgressSink
+
+| # | 成员 | 返回类型 |
+|---|---|---|
+| 1 | `SaveReadingProgressAsync` | `Task<ReaderProgressSaveResult>` |
+
+## IHostController
+
+| # | 成员 | 返回类型 |
+|---|---|---|
+| 1 | `StartAsync` | `Task` |
+| 2 | `RefreshBooksAsync` | `Task` |
+| 3 | `TryChineseRoundTripAsync` | `Task<bool>` |
+| 4 | `TryCreateBookAsync` | `Task<bool>` |
+| 5 | `CreateChapterAsync` | `Task<ChapterSummary?>` |
+| 6 | `LoadReaderBookAsync` | `Task<ReaderBookData?>` |
+| 7 | `ListChaptersAsync` | `Task<IReadOnlyList<ChapterSummary>>` |
+| 8 | `ListChapterPagesAsync` | `Task<IReadOnlyList<ChapterPageSummary>>` |
+| 9 | `GetReadingPreferencesAsync` | `Task<ReadingPreferencesInfo?>` |
+| 10 | `SaveReadingPreferencesAsync` | `Task<bool>` |
+| 11 | `ListBookmarksAsync` | `Task<IReadOnlyList<BookmarkInfo>>` |
+| 12 | `CreateBookmarkAsync` | `Task<string?>` |
+| 13 | `DeleteBookmarkAsync` | `Task<bool>` |
+| 14 | `GetBookReadingProgressAsync` | `Task<BookReadingProgressInfo?>` |
+| 15 | `ResetReadingProgressAsync` | `Task<int>` |
+| 16 | `ListFontAssetsAsync` | `Task<IReadOnlyList<FontAssetInfo>>` |
+| 17 | `ImportFontAssetAsync` | `Task<FontAssetInfo?>` |
+| 18 | `DeleteFontAssetAsync` | `Task<bool>` |
+| 19 | `RefreshFontAssetsAsync` | `Task<FontRefreshInfo>` |
+| 20 | `UpdateBookMetadataAsync` | `Task<bool>` |
+| 21 | `ReorderChaptersAsync` | `Task<bool>` |
+| 22 | `UpdateChapterMetadataAsync` | `Task<bool>` |
+| 23 | `CreateChapterWithMetadataAsync` | `Task<ChapterSummary?>` |
+| 24 | `ListIssueMarkersAsync` | `Task<IReadOnlyList<IssueMarkerInfo>>` |
+| 25 | `CreateIssueMarkerAsync` | `Task<string?>` |
+| 26 | `ResolveIssueMarkerAsync` | `Task<bool>` |
+| 27 | `ReopenIssueMarkerAsync` | `Task<bool>` |
+| 28 | `DeleteIssueMarkerAsync` | `Task<bool>` |
+| 29 | `ListPromptTemplatesAsync` | `Task<IReadOnlyList<PromptTemplateInfo>>` |
+| 30 | `SavePromptTemplateAsync` | `Task<PromptTemplateInfo?>` |
+| 31 | `DeletePromptTemplateAsync` | `Task<PromptTemplateDeleteResult>` |
+| 32 | `CopyBuiltinPromptTemplateAsync` | `Task<PromptTemplateInfo?>` |
+| 33 | `GetPromptTemplateReferencesAsync` | `Task<IReadOnlyList<PromptTemplateReference>>` |
+| 34 | `LoadPageRegionsAsync` | `Task<RegionPageProjection?>` |
+| 35 | `LoadRegionRevisionsAsync` | `Task<RegionRevisionHistory?>` |
+| 36 | `ReadPageImageAsync` | `Task<byte[]?>` |
+| 37 | `SetRegionTypeAsync` | `Task<RegionOperationResult>` |
+| 38 | `RestoreRegionRevisionAsync` | `Task<RegionOperationResult>` |
+| 39 | `RerenderPageAsync` | `Task<PageRerenderOutcome>` |
+| 40 | `ListCredentialTargetsAsync` | `Task<IReadOnlyList<CredentialTargetOption>>` |
+| 41 | `PutCredentialAsync` | `Task<CredentialOperationResult>` |
+| 42 | `ClearCredentialAsync` | `Task<CredentialOperationResult>` |
+| 43 | `ListProviderProfilesAsync` | `Task<IReadOnlyList<ProviderProfileInfo>>` |
+OK: rendered counts match FEA-C07 doc
+| 44 | `SaveProviderProfileAsync` | `Task<SettingsProfileResult>` |
+| 45 | `DeleteProviderProfileAsync` | `Task<SettingsProfileResult>` |
+| 46 | `ListNetworkProfilesAsync` | `Task<IReadOnlyList<NetworkProfileInfo>>` |
+| 47 | `SaveNetworkProfileAsync` | `Task<SettingsProfileResult>` |
+| 48 | `DeleteNetworkProfileAsync` | `Task<SettingsProfileResult>` |
+| 49 | `SetNetworkDefaultAsync` | `Task<SettingsProfileResult>` |
+| 50 | `TestNetworkProfileAsync` | `Task<NetworkTestInfo?>` |
+| 51 | `ResolveNetworkProfileAsync` | `Task<NetworkResolveInfo?>` |
+| 52 | `SetProviderBindingAsync` | `Task<SettingsProfileResult>` |
+| 53 | `ClearProviderBindingAsync` | `Task<SettingsProfileResult>` |
+| 54 | `ResolveProviderBindingAsync` | `Task<ProviderBindingResult?>` |
+| 55 | `ImportFilesAsync` | `Task<ImportOutcome>` |
+| 56 | `ImportFolderAsync` | `Task<ImportOutcome>` |
+| 57 | `GetTranslatedPageIdsAsync` | `Task<IReadOnlyList<string>>` |
+| 58 | `StartExportAsync` | `Task<ExportStartInfo?>` |
+| 59 | `GetExportSnapshotAsync` | `Task<ExportSnapshotInfo?>` |
+| 60 | `GetExportHistoryAsync` | `Task<IReadOnlyList<ExportHistoryEntry>>` |
+| 61 | `CancelExportAsync` | `Task<ExportSnapshotInfo?>` |
+| 62 | `RevealExportFolderAsync` | `Task<bool>` |
+| 63 | `ListBackupsAsync` | `Task<IReadOnlyList<BackupPackageInfo>>` |
+| 64 | `CreateBackupAsync` | `Task<BackupPackageInfo?>` |
+| 65 | `DeleteBackupAsync` | `Task<bool>` |
+| 66 | `RetryPendingCleanupsAsync` | `Task<CleanupOutcomeInfo?>` |
+| 67 | `ListPluginsAsync` | `Task<PluginListInfo>` |
+| 68 | `SetPluginsGlobalEnabledAsync` | `Task<bool?>` |
+| 69 | `SetPluginEnabledAsync` | `Task<bool?>` |
+| 70 | `GetCleanupPreviewAsync` | `Task<CleanupPreviewInfo>` |
+| 71 | `RunCleanupAsync` | `Task<CleanupOutcomeInfo?>` |
+| 72 | `OpenDraftAsync` | `Task<DraftLease?>` |
+| 73 | `PatchDraftAsync` | `Task<Draft?>` |
+| 74 | `PrepareCandidateAsync` | `Task<RegionCandidate?>` |
+| 75 | `ApplyCandidatesAsync` | `Task<IReadOnlyDictionary<string, string>>` |
+| 76 | `GetDraftAsync` | `Task<Draft?>` |
+| 77 | `ListDraftsAsync` | `Task<IReadOnlyList<Draft>>` |
+| 78 | `DiscardDraftAsync` | `Task` |
+| 79 | `RestoreBackupAsync` | `Task<string?>` |
+| — | `Snapshot`（属性） | `HostViewSnapshot` |
+| — | `StartRequests`（属性） | `int` |
+| — | `ExportDirectorySuggestion`（属性） | `string` |
+| — | `Changed`（事件） | `EventHandler?` |
+
+## IRunController
+
+| # | 成员 | 返回类型 |
+|---|---|---|
+| 1 | `StartRunAsync` | `Task<RunStartInfo?>` |
+| 2 | `ControlRunAsync` | `Task<RunControlInfo?>` |
+| 3 | `ResumeBlockedRunAsync` | `Task<RunControlInfo?>` |
+| 4 | `GetRunSnapshotAsync` | `Task<RunSnapshotInfo?>` |
+| 5 | `GetTaskProjectionAsync` | `Task<TaskProjectionInfo?>` |
+| 6 | `RetryFailedTargetsAsync` | `Task<RunControlInfo?>` |
+
+[schema-migrations]
+utc=2026-11-12T13:46:31.3178755Z
+command=rg -n '^MIGRATION_V[0-9]+_NAME\s*=' src/infrastructure/sqlite/schema.py
+EXIT=0
+58:MIGRATION_V1_NAME = "v1__storage_base"
+176:MIGRATION_V2_NAME = "v2__library_region_persistence"
+311:MIGRATION_V3_NAME = "v3__production_pipeline_persistence"
+441:MIGRATION_V4_NAME = "v4__reading_export_storage"
+484:MIGRATION_V5_NAME = "v5__detach_pipeline_history"
+586:MIGRATION_V6_NAME = "v6__plugin_runtime"
+623:MIGRATION_V7_NAME = "v7__source_storage"
+770:MIGRATION_V8_NAME = "v8__source_sync"
+860:MIGRATION_V9_NAME = "v9__media_artifacts_book_index"
+875:MIGRATION_V10_NAME = "v10__reading_preferences_bookmarks"
+906:MIGRATION_V11_NAME = "v11__font_assets"
+930:MIGRATION_V12_NAME = "v12__chapters_custom_rank"
+938:MIGRATION_V13_NAME = "v13__issue_markers"
+965:MIGRATION_V14_NAME = "v14__prompt_templates"
+
+[core-data-root-and-db]
+utc=2026-11-12T13:46:31.3734908Z
+command=rg -n 'NEWMANGA_DATA_ROOT|library\.db|data_root / "settings"|data_root / "backups"' src/bootstrap/core_service.py src/bootstrap/core_assembly.py
+EXIT=0
+src/bootstrap/core_assembly.py:1091:    root = os.environ.get("NEWMANGA_DATA_ROOT")
+src/bootstrap/core_assembly.py:1943:            provider_profile_store=JsonProviderProfileStore(data_root / "settings"),
+src/bootstrap/core_assembly.py:1944:            network_profile_store=JsonNetworkProfileStore(data_root / "settings"),
+src/bootstrap/core_assembly.py:1945:            provider_binding_store=JsonProviderCapabilityBindingStore(data_root / "settings"),
+src/bootstrap/core_assembly.py:1953:                data_root / "backups",
+src/bootstrap/core_service.py:856:    db_path = data_root / "library.db"
+src/bootstrap/core_service.py:3272:            staged_db = staging / "library.db"
+src/bootstrap/core_service.py:8749:    env_root = os.environ.get("NEWMANGA_DATA_ROOT")
+src/bootstrap/core_service.py:8759:        # empty root library.db on first use, after which the legacy data would
+
+[desktop-startup-and-sidecars]
+utc=2026-11-12T13:46:31.4230813Z
+command=rg -n 'StartWithClassicDesktopLifetime|HostController|CoreService = await|HostBridge = await|CoreServiceName|HostBridgeName' apps/desktop-avalonia/src/NewManga.App/Program.cs apps/desktop-avalonia/src/NewManga.App/App.axaml.cs apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs apps/desktop-avalonia/src/NewManga.CoreClient/Transport/SidecarSpec.cs
+EXIT=0
+apps/desktop-avalonia/src/NewManga.CoreClient/Transport/SidecarSpec.cs:10:    public const string CoreServiceName = "core_service";
+apps/desktop-avalonia/src/NewManga.CoreClient/Transport/SidecarSpec.cs:11:    public const string HostBridgeName = "host_bridge";
+apps/desktop-avalonia/src/NewManga.App/Program.cs:21:            BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs:321:            SidecarSpec.CoreServiceName,
+apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs:1189:            CoreService = await CoreServiceClient.StartAsync(
+apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs:1207:            HostBridge = await HostBridgeClient.StartAsync(
+apps/desktop-avalonia/src/NewManga.App/App.axaml.cs:93:            var controller = new HostController(options.ToHostOptions());
+apps/desktop-avalonia/src/NewManga.App/App.axaml.cs:133:        IHostController controller,
+apps/desktop-avalonia/src/NewManga.App/App.axaml.cs:171:        IHostController controller,
+apps/desktop-avalonia/src/NewManga.App/App.axaml.cs:192:        IHostController controller,
+apps/desktop-avalonia/src/NewManga.App/App.axaml.cs:206:        IHostController controller,
+apps/desktop-avalonia/src/NewManga.App/App.axaml.cs:445:        IHostController controller,
+
+[model-pins]
+utc=2026-11-12T13:46:31.4705745Z
+command=rg -n 'MANGA_ONNX_SHA256|MANGA_OCR_.*SHA256|SFX_WEIGHTS_SHA256' src/infrastructure/providers/detection_manga_onnx.py src/infrastructure/providers/ocr_manga_onnx.py src/infrastructure/providers/detection_sfx.py
+EXIT=0
+src/infrastructure/providers/ocr_manga_onnx.py:63:MANGA_OCR_ENCODER_SHA256 = (
+src/infrastructure/providers/ocr_manga_onnx.py:66:MANGA_OCR_DECODER_SHA256 = (
+src/infrastructure/providers/ocr_manga_onnx.py:69:MANGA_OCR_VOCAB_SHA256 = (
+src/infrastructure/providers/ocr_manga_onnx.py:288:            (MANGA_OCR_ENCODER_FILENAME, MANGA_OCR_ENCODER_SHA256),
+src/infrastructure/providers/ocr_manga_onnx.py:289:            (MANGA_OCR_DECODER_FILENAME, MANGA_OCR_DECODER_SHA256),
+src/infrastructure/providers/ocr_manga_onnx.py:290:            (MANGA_OCR_VOCAB_FILENAME, MANGA_OCR_VOCAB_SHA256),
+src/infrastructure/providers/detection_sfx.py:131:SFX_WEIGHTS_SHA256 = (
+src/infrastructure/providers/detection_sfx.py:974:    if actual != SFX_WEIGHTS_SHA256:
+src/infrastructure/providers/detection_sfx.py:977:            f"expected {SFX_WEIGHTS_SHA256}; refusing to run unverified weights",
+src/infrastructure/providers/detection_manga_onnx.py:80:MANGA_ONNX_SHA256 = (
+src/infrastructure/providers/detection_manga_onnx.py:405:    if actual != MANGA_ONNX_SHA256:
+src/infrastructure/providers/detection_manga_onnx.py:408:            f"{actual}, expected {MANGA_ONNX_SHA256}; refusing to run "
+
+[missing-legacy-spec-probe]
+utc=2026-11-12T13:46:31.5190015Z
+command=git cat-file -e 10e4ee013835605800d3830fb960ae8d3aa04167:packaging/new_manga.spec (expected absent at product_base)
+EXIT=128
+fatal: path 'packaging/new_manga.spec' does not exist in '10e4ee013835605800d3830fb960ae8d3aa04167'
