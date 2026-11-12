@@ -1,0 +1,40 @@
+EVENT=ZCode read-only audit test execution-safety ruling
+GENERATED_AT_UTC=2026-11-12T07:59:42Z
+REPO=G:\CODEX\New Manga
+BRANCH=main
+HEAD=8453559b1827795152e89b2d5ccf9136f8dc5936
+AUDIT_BASE=10e4ee013835605800d3830fb960ae8d3aa04167
+ZCODE_CLI=node E:\Program Files\ZCode\resources\glm\zcode.cjs --prompt <concise final execution-boundary ruling> --cwd G:\CODEX\New Manga --resume sess_8a2f7064-f80d-49a5-b96f-6d5ba20dd1ca --mode plan --json --locale zh-CN
+ZCODE_EXIT=0
+ZCODE_SESSION_ID=sess_8a2f7064-f80d-49a5-b96f-6d5ba20dd1ca
+ZCODE_TURN_ID=turn_43c7abf5-aa04-419b-942d-c4f419c3da38
+ZCODE_TRACE_ID=b54e291c-210b-424d-902e-8f7482e84cf9
+MODEL_REQUEST_COUNT=1
+INPUT_TOKENS=82632
+OUTPUT_TOKENS=2734
+WEB_FETCH_REQUESTS=0
+WEB_SEARCH_REQUESTS=0
+
+READONLY_CHECK_1=Get-Content -TotalCount 180 tools/smoke/plugins.py; Get-Content -TotalCount 150 tools/smoke/checks/wire.py; Get-Content -TotalCount 125 tools/smoke/checks/packaged.py
+READONLY_CHECK_1_EXIT=0
+READONLY_RESULT=wire uses real Core stdio JSON-lines 2.3; packaged bundle path is apps/desktop/src-tauri/target/core-sidecar and therefore Legacy.
+
+READONLY_CHECK_2=dotnet sln apps/desktop-avalonia/NewManga.sln list
+READONLY_CHECK_2_EXIT=0
+READONLY_RESULT=solution lists 8 test csproj plus product/tool projects.
+
+READONLY_CHECK_3=dotnet msbuild 'apps/desktop-avalonia/tests/NewManga.App.Tests/NewManga.App.Tests.csproj' '-getProperty:MSBuildProjectExtensionsPath,BaseIntermediateOutputPath,IntermediateOutputPath,BaseOutputPath,OutputPath' '-p:ArtifactsPath=G:\CODEX\New Manga.workspace\task-env\NEW-MANGA-V1-FULL-AUDIT\dotnet\artifacts'
+READONLY_CHECK_3_EXIT=0
+READONLY_RESULT=MSBuildProjectExtensionsPath/obj and BaseOutputPath/bin resolve under external artifacts tree.
+
+READONLY_CHECK_4=Get-ChildItem -Recurse -File apps/desktop-avalonia/tests -Filter *.csproj; Test-Path <each project>/obj/project.assets.json
+READONLY_CHECK_4_EXIT=0
+READONLY_RESULT=all 8 test projects currently have source-tree project.assets.json; external artifacts project.assets.json is absent.
+
+DIAGNOSTIC_PROBE=dotnet msbuild <App.Tests.csproj> --artifacts-path <external> -getProperty:...
+DIAGNOSTIC_PROBE_EXIT=1
+DIAGNOSTIC_PROBE_RESULT=MSB1001 unknown switch; no build/test/restore target executed. Replaced by supported -p:ArtifactsPath property evaluation above.
+
+RULING=Use smoke --only core,wire; classify packaged/frontend as NOT_RUN-legacy. Run all 8 .NET test projects separately, no restore, no artifacts-path, TRX external, ignored repository obj/bin writes accepted only when git status porcelain is byte-identical before/after. No copying assets. Missing assets => BLOCKED-NO-RESTORE-STATE.
+TESTS_RUN=none
+FILES_CHANGED_BY_ZCODE=none
