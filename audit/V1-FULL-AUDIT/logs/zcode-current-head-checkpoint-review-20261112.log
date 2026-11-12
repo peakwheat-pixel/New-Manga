@@ -1,0 +1,34 @@
+reviewed_head: 453327ff19ea012026b76d2e10cdcf2c93c58038
+branch: main
+worktree_status_before: <clean>
+started_utc: 2026-11-12T10:06:36.7413796Z
+ended_utc: 2026-11-12T10:14:28.3155069Z
+session_id: sess_210ecf7f-a2a3-4d81-a7df-f4f30596ea84
+exit_code: 0
+raw_cli_output:
+{
+  "sessionId": "sess_210ecf7f-a2a3-4d81-a7df-f4f30596ea84",
+  "traceId": "5559e5fb-a2d3-404f-a5e9-8b2f32ad5744",
+  "turnId": "turn_baff21a6-a75b-4498-b442-6133d011c471",
+  "response": "全部核对完成。以下是本次 checkpoint review 的正式报告。\n\n---\n\n# NEW-MANGA-V1-FULL-AUDIT 段 B Checkpoint Review（HEAD 453327ff1，新 ZCode CLI 独立会话）\n\n## 审查标识\n\n- **Reviewer**：ZCode CLI 全新会话（GLM-5.3，ZCode harness，plan mode 只读）。未参与段 B 实现、返修、任何前序裁决 / checkpoint review / addendum。sessionId 在会话内不可引用（与前序 d947 review 先例一致），session/turn/trace envelope 请执行侧归档时附加。\n- **reviewed_head**：`453327ff19ea012026b76d2e10cdcf2c93c58038`，branch `main`（`git rev-parse HEAD` 亲验一致），工作树 clean（`git status --porcelain` 亲验为空）。\n- **本会话能力边界（如实披露）**：git 只读命令与 blob 复算管道可执行；heredoc python、复合 shell 循环与 `pwsh`（治理检查器）被 plan mode 拦截。因此本 review **亲自完成**了 git 级核对与部分 pin 复算（超过前序两轮 review 的亲验范围），但**未复跑**治理检查器。\n- 只读声明：未写任何文件、未运行测试、未读取图像或真实用户数据。\n\n## 1. Checkpoint 结论\n\n**`PASS_FOR_CHECKPOINT`，0 P0 / 0 P1。**\n\n仅覆盖精确 HEAD `453327ff1` 上段 B checkpoint 的证据忠实性与范围纪律：**不是**全项目审计通过、**不是** Task done、**不改变** AUDIT-01–14 `BLOCKED-ORIGINAL-CHECKLIST-MISSING` 与 Release Gate `BLOCKED`、**不替代**最终全审 review 与 DSH 集成验证。Task 保持 `in_progress` 与文档登记一致（`doc/STATUS.md:7`、`doc/REBASELINE_PLAN.md:56` 均为 in_progress/ACTIVE，base `10e4ee013` 一致）。\n\n## 2. 自 d9478939f 以来的核对结果（问题 2）\n\n**亲验事实：**\n- `d9478939f..453327ff1` 共 10 个 `audit:` 提交、12 个 diff 路径（3 M 登记 + 8 A 日志/报告 + Task M），全部落在 `allowed_paths`（audit/V1-FULL-AUDIT/** 与 Task 卡）；其中 11 个与 postaddendum 完整性日志的 11/11 逐条吻合，唯一增量是 0588e024e 新增的完整性日志自身。\n- Task 表当前 **60 行 pin（59 CANONICAL + 1 SOURCE_PIN）**，与用户给定数量一致；60 = postaddendum 复算的 57 + 453327ff1 新增 3。\n- **本 Reviewer 亲自复算 7/60 行 raw Git blob SHA-256，全部匹配**：包括 addendum 后新增、此前无任何机械日志覆盖的全部 3 行（`ZCODE-FINAL-REVIEW-ADDENDUM-REPORT-1`/`ADDENDUM-LOG-1` @b17fead6d、`POSTADDENDUM-INTEGRITY-LOG-1` @0588e024e），以及抽查 `SCOPE-1`、`AUDIT-RUNNER-SOURCE-1`、`ZCODE-FINAL-REVIEW-REPORT-1`、`PYTEST-RESULT-1`。其余 53 行由 postaddendum（57/57，@b17fead6d）与 postreview（56/56，@ac188dde5）机械复算覆盖，我已将两份日志的 expected 值与 Task 表直读比对一致——这补上了 addendum“actual 未由 Reviewer 亲算”保留声明的部分缺口。\n- 453327ff1 的 AC4/rolling checkpoint 文案更新（“待补证”→“已核实 11/11、57/57 并登记”）与事实一致；addendum 报告与其原始 CLI 日志（`sess_89204e2f-ffcc-4fb8-80d8-ed4903638337`，turn/trace 两轮不同）内容一致；`AUDIT_EVIDENCE_INDEX.md` 登记与 Task 表一致。\n- 无任何 EXIT 1 / BLOCKED / NOT_RUN 被写成 PASS。\n\n**Findings（0 P0 / 0 P1）：**\n\n| ID | 级别 | 发现 | 依据 |\n|---|---|---|---|\n| N-1 | P3 | `audit/V1-FULL-AUDIT/AUDIT_STATUS.md:17` 末句（“addendum 证据 pinbackfill 和最终门禁仍待完成”）与 `AUDIT_RESUME.md:97` 末句（“接下来将…登记…再运行最终治理门禁”）在 453327ff1 完成登记/pinbackfill 后未刷新，恢复点文案滞后于 HEAD 实际进度 | 两文件最后修改于 0588e024e；453327ff1 diff 证实登记已完成 |\n| N-2 | P3 | 453327ff1 之后在 HEAD 复跑的四项最终门禁（转述均 EXIT 0）**未按 GATES-1/POSTREVIEW 先例落盘日志并 pin**，仓内无该 HEAD 的门禁证据；本 review 因 plan mode 无法代跑（NOT_RERUN_BY_REVIEWER）。缓解：Task 转 in_review 时 `check.ps1 -TaskPath` 将强制校验全部 60 行 pin；453327ff1 相对 ac188dde5 的变更仅在 audit/doc 路径；两份已落盘历史门禁日志全 EXIT 0；本 review 亲算 7/60 无 mismatch | diff 无新日志文件；final-governance-gates 与 postreview 两份日志 generated HEAD 为 b9b6c580/ac188dde5 |\n| N-3 | P4 observation | 9f41ddf4b 对已提交的 final-governance-gates 日志做过 2 行事后修正（`worktree_status_before` 空→`<clean>`、补 EOF 换行）。属元数据显式化、非命令输出改写，pin 登记在修正后 commit，链条自洽；但“提交后再改已落盘日志”的方式今后应避免，应在生成时写入 | `git show 9f41ddf4b` |\n| R-4 | P4 observation | probe 3 `../` 断言方向观察——沿用原登记，保持 observation | 前序 addendum |\n\n## 3. 后续边界裁决（问题 3）\n\n- **仓内仍可执行且不越界的最小工作**仅剩两项 Owner（Codex）补记：N-1 两处滞后文案刷新 + N-2 在 HEAD 落盘四项门禁日志并 pin（均在 allowed_paths 内）。本 Reviewer 按独立性规矩不参与返修。除此之外，AC2/AC3 无法在仓内推进：AUDIT-01–14 原始逐项清单已做过定向查找（仅状态占位），无法仓内恢复，更不得伪造。\n- **唯一外部输入/裁决**：(a) 用户或授权方提供 2026-10-24 原始审计指令中 AUDIT-01–14 的逐项定义；或 (b) 用户/DSH 裁决以 `closed_with_limitations` 终态接受清单缺失为永久限制。是否转 in_review 的决定权在 DSH（addendum 亦同此建议）。\n- **推荐**：短期保持 `in_progress`；待 Codex 完成 N-1/N-2 最小补记后，由 DSH 裁决转 `in_review`（转换时 check.ps1 -TaskPath 将机械强制校验全部 60 行 pin，正好闭合“自指尾巴”）或走 `closed_with_limitations` 收口（需用户确认限制）。现在直接转 in_review 会让 N-2 的门禁缺口只能靠检查器兜底、仓内无最终 HEAD 门禁日志，不推荐。\n\n## 4. 保留的 limitations / NOT_RUN / BLOCKED 与下一个安全动作（问题 4）\n\n- AUDIT-01–14：`BLOCKED-ORIGINAL-CHECKLIST-MISSING`（14 项）；Release Gate：`BLOCKED`\n- Avalonia .NET：`BLOCKED-TESTHOST-ACCESS`（8/8 EXIT 1、TRX 0 tests）；smoke Core 7 项：`BLOCKED-SANDBOX-GRANT`（原 FAIL 保留）；frontend/rust/desktop/npm-audit/packaged：`NOT_RUN-legacy`；真实 GUI/安装/升级回退：BLOCKED\n- probes EXIT 1（2 项 Medium/High confidence 观察、1 项 defense-verified）；pytest EXIT 1（3,519/16/10，产品侧真实失败信号，未修复）；本 review 门禁未复跑：NOT_RERUN_BY_REVIEWER\n- 169 张 JPEG 及含其内容的 blob：禁止传播/push；远端实时可见性未核验，无远端补救\n- **下一个安全动作**：Codex 一次最小只读补记提交（N-1 文案 + N-2 门禁落盘+pin）→ DSH 裁决 in_review / closed_with_limitations。\n\n**本报告依据的证据文件**（均已直读或复算）：`doc/tasks/NEW-MANGA-V1-FULL-AUDIT.md`、`audit/V1-FULL-AUDIT/AUDIT_STATUS.md`、`AUDIT_RESUME.md`、`AUDIT_EVIDENCE_INDEX.md`、`logs/postaddendum-integrity-20261112.log`、`logs/review-final-integrity-20261112.log`、`logs/final-governance-gates-20261112.log`、`logs/postreview-final-verification-20261112.log`、`logs/zcode-final-audit-review-20261112.log`、`logs/zcode-final-review-addendum-20261112.log`、`reports/ZCODE-FINAL-CHECKPOINT-REVIEW-2026-11-12.md`、`reports/ZCODE-FINAL-REVIEW-ADDENDUM-2026-11-12.md`、`doc/STATUS.md`、`doc/REBASELINE_PLAN.md`。\n\n**可转发给 Codex（Owner）的最小补记指令：**\n\n```\n对 NEW-MANGA-V1-FULL-AUDIT（HEAD 453327ff1，保持 in_progress）执行一次最小只读补记：\n1) 刷新 audit/V1-FULL-AUDIT/AUDIT_STATUS.md:17 与 AUDIT_RESUME.md 末段的滞后文案：addendum 报告/CLI log/postaddendum-integrity 已登记入 Canonical Evidence（453327ff1），消除\"仍待完成\"表述（checkpoint review N-1）。\n2) 在当前 HEAD 按 GATES-1 先例落盘四项门禁日志（check.ps1、check.ps1 -TaskPath、verify_pins.ps1、generate_api_inventory.py --check，记录命令/生成 HEAD/输出/EXIT）并 pin 入 Task（N-2）。\n3) 不改产品代码/契约/Schema/依赖，不伪造 AUDIT-01–14 清单，不把任何 NOT_RUN/BLOCKED 写成 PASS；完成后交 DSH 裁决转 in_review 或 closed_with_limitations。\n依据：ZCode checkpoint review @453327ff1 结论 PASS_FOR_CHECKPOINT（0 P0/0 P1；N-1/N-2 P3、N-3/R-4 observation）。\n```\n\n**推荐下一步**：由 Codex 执行上述最小补记（安全、已授权范围内）；随后唯一待决为 DSH/用户对 AUDIT-01–14 缺失的外部裁决（提供原始清单，或接受 closed_with_limitations）。",
+  "usage": {
+    "source": "provider",
+    "modelRequestCount": 12,
+    "inputTokens": 1075596,
+    "outputTokens": 24423,
+    "totalTokens": 1100019,
+    "cacheReadTokens": 977024,
+    "cacheWriteTokens": 0,
+    "reasoningTokens": 0,
+    "webFetchRequests": 0,
+    "webSearchRequests": 0
+  },
+  "eventCount": 21878,
+  "projection": {
+    "status": "idle",
+    "turnCount": 1,
+    "totalTokenCount": 1100019,
+    "contextUsed": 132298,
+    "contextWindow": 200000
+  }
+}
