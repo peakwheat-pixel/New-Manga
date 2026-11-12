@@ -1,0 +1,23 @@
+{
+  "name": "audit04-core-detect-20261112T202915072524Z",
+  "argv": [
+    "C:\\Python314\\python.exe",
+    "-m",
+    "pytest",
+    "tests/core/test_core_detect.py",
+    "-q",
+    "-rs",
+    "--tb=short",
+    "-o",
+    "cache_dir=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\audit04-core-pytest-cache-20261112T202915072524Z",
+    "--basetemp=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\audit04-core-pytest-temp-20261112T202915072524Z"
+  ],
+  "cwd": "G:\\CODEX\\New Manga",
+  "started_utc": "2026-11-12T20:29:23.958543+00:00",
+  "head": "5727f5497fdf392295309d031f2632c86e6f1b51",
+  "branch": "main",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 3.203,
+  "log": "audit\\V1-FULL-AUDIT\\logs\\audit04-core-detect-20261112T202915072524Z.log"
+}

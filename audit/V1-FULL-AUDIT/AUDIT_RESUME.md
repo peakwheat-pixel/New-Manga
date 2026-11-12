@@ -1,3 +1,12 @@
+## 2026-11-13 AUDIT-04 OCR 与文本检测检查点
+
+- 当前 Task 仍 `in_progress`；产品基线=`10e4ee013835605800d3830fb960ae8d3aa04167`；定向测试 generated HEAD=`c20e819009a810ae3828aef7eb8644eb9a3eae80`。
+- AUDIT-04=`PARTIAL`：providers 组 175 passed、Core detect 组 40 passed；各 EXIT 0、无 skip。测试使用合成 frame、fake engine/decoder/Paddle payload 与 fake detector outputs，不验证真实 OCR/detection accuracy。
+- 最终静态捕获 `audit04-static-20261112T203819Z` generated HEAD=`c20e819009a810ae3828aef7eb8644eb9a3eae80`：`src/apps/tests` 基线 diff EXIT 0、working-tree whitespace EXIT 0；采集时 21 条工作树路径均在 allowed_paths，out-of-scope=0。305 条 base-to-HEAD 路径含 14 条继承 FEA-11 HOST-AUTH-4 路径，不是本 Task 工作树修改。
+- 默认检测 Manga ONNX、默认 Japanese Manga OCR ONNX 与 Korean Paddle OCR 路由有静态/单元证据；ORT CPU/auto→CPU 仅 fake runtime policy 证据。真实模型权重、人工 GT、日/韩文识别率、真实 CPU 推理、模型 teardown/长时恢复和 Avalonia GUI 缩放映射均 `NOT_RUN`。
+- 本轮排除 `tests/providers/test_detection_doctr_real.py` 与 `test_detection_manga_real.py`。没有调用 Vision API、下载模型或读真实漫画。既有 Avalonia TestHost 8/8 runner `BLOCKED-TESTHOST-ACCESS` 未重试。
+- 详细矩阵、链路和限制见 `reports/AUDIT-04-OCR-DETECTION-2026-11-13.md`；不新建 issue ID，不给识别准确率结论。全 Task AC2/AC3/AC4 仍 `PARTIAL`，Release Gate `BLOCKED`。下一项按 DAG 执行 AUDIT-07。
+
 ## 2026-11-13 AUDIT-03 合成导入与路径检查点
 
 - 当前 Task 仍 in_progress；产品基线=10e4ee013835605800d3830fb960ae8d3aa04167；当前核心回归 generated HEAD=8071caccae1a7885fb41b95889cbdc0e80eeb963；产品目录 src/apps/tests 相对基线 git diff --quiet EXIT 0。

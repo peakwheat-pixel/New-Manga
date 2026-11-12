@@ -11,7 +11,7 @@
 - AUDIT-01: FAIL（阶段报告与正式 runner 复现见 `reports/AUDIT-01-02-ARCHITECTURE-STATIC-2026-11-12.md`、`logs/sidecar-lifecycle-probe-20261112T143133097703Z.log`、对应 JSON；`NM-AUD-0001` 证明取消/直接 dispose 后忽略 EOF 的 helper 子进程仍运行并已由 probe 清理。ZCode 对阶段交付 `ACCEPT`、维持 P2；真实 sidecar、UI、完整异常/状态/耦合链仍未验）
 - AUDIT-02: BLOCKED（Python AST 语法扫描、.NET solution build PASS；`dotnet format whitespace` EXIT 2，1,556 项诊断；Python lint/type/security 工具未安装，.NET analyzers disabled，语义扫描未完成。详见阶段报告与对应 logs）
 - AUDIT-03: FAIL（活动 Core 87 passed、ReferencedSource 77 passed，均 EXIT 0；directory junction publication probe 确认 managed root 越界新文件写入，沿用 SEG-B-PROBES-001 / Medium / High confidence；桌面 UI 与项目搬迁 NOT_RUN。见 reports/AUDIT-03-IMPORT-PROJECT-2026-11-13.md）
-- AUDIT-04: NOT_TESTED（待模型链路静态核对/合成 GT；真实素材准确率具名受限）
+- AUDIT-04: PARTIAL（Provider/OCR/Core detect 定向合成回归 175+40 passed / EXIT 0；验证权重选路、fake OCR adapter 与坐标算子；真实权重/人工 GT/识别准确率/CPU inference/GUI NOT_RUN。见 reports/AUDIT-04-OCR-DETECTION-2026-11-13.md）
 - AUDIT-05: PARTIAL（SFX 分类、策略、重检测/人工保护、provider 降级与重叠仲裁已静态核对并以合成回归覆盖；定向批次 247 passed / 3 deselected / EXIT 0。相同几何 primary/SFX 产生双 SFX Region 为候选，待 ZCode 裁决；真实权重、人工 GT 与 UI `NOT_RUN`。见 `reports/AUDIT-05-06-SFX-TRANSLATION-2026-11-13.md`）
 - AUDIT-06: PARTIAL（翻译 payload、SQLite 同 chapter 上下文冻结、Region 映射、重试、超时/暂停边界与人工 Revision 保护已静态核对并以 mock/合成测试覆盖；上下文批次 84 passed / EXIT 0。账单级 spend cap/idempotency 与 glossary 强制优先级为候选，待 ZCode 裁决；真实 API/费用/取消语义 `NOT_RUN`。见同一阶段报告）
 - AUDIT-07: NOT_TESTED（待修复/排版/导出链路和许可核对）

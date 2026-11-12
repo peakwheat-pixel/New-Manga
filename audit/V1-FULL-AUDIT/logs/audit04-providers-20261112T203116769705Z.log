@@ -1,0 +1,16 @@
+START_UTC=2026-11-12T20:31:16.769882+00:00
+HEAD=c20e819009a810ae3828aef7eb8644eb9a3eae80
+BRANCH=main
+SHELL=Python subprocess (no shell)
+INTERPRETER=C:\Python314\python.exe
+CWD=G:\CODEX\New Manga
+ARGV=["C:\\Python314\\python.exe", "-m", "pytest", "tests/providers/test_detection_doctr.py", "tests/providers/test_detection_manga.py", "tests/providers/test_detection_manga_onnx.py", "tests/providers/test_ocr_local.py", "tests/providers/test_ocr_manga_onnx.py", "tests/providers/test_detect_handler.py", "tests/providers/test_detector_assembly.py", "tests/providers/test_detector_weights_lookup.py", "tests/providers/test_onnx_sessions.py", "-q", "-rs", "--tb=short", "-o", "cache_dir=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\audit04-providers-pytest-cache-20261112T203116769705Z", "--basetemp=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\audit04-providers-pytest-temp-20261112T203116769705Z"]
+DATA_ROOT=G:\CODEX\New Manga.workspace\task-env\NEW-MANGA-V1-FULL-AUDIT\audit04-providers-20261112T203116769705Z\data
+........................................................................ [ 41%]
+........................................................................ [ 82%]
+...............................                                          [100%]
+175 passed in 3.26s
+
+EXIT=0
+TIMED_OUT=False
+ELAPSED_SECONDS=4.078

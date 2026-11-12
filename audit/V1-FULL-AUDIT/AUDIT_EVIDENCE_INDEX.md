@@ -94,3 +94,13 @@
 - logs/audit-probes-segment-b-20261112T195906381034Z.log 与 evidence/audit-probes-segment-b-20261112T195906381034Z.json：generated HEAD=934c81017cadf20e96fd2ee60bfa247086638be6；suite EXIT 1 / 2 passed / 1 failed，含 SEG-B-PROBES-001 junction 越界写复现与独立防线验证；不得把 test PASSED 解释成产品通过。
 - 过程记录：audit03-import-project-20261112T195723565045Z 在 HEAD=55630b5c19c20f33332a097eeef917ac5e48cffb 收集阶段 EXIT 2，无产品测试执行；分组后通过。中间 PySide/QML 6 passed 不计入当前架构证据；早期 static capture 对历史差异误报 EXIT 1，最终修正结果见 20261112T200836Z。
 - logs/audit03-post-evidence-gates-20261112T201910Z.log 与 evidence/audit03-post-evidence-gates-20261112T201910Z.json：generated HEAD=03b1a7acc5a324dcd1884df82d748569b2c7f91e；default 与 `-TaskPath` check 各 PASS / EXIT 0（各 3 条 warning），verify_pins 18/18 / EXIT 0，API inventory 1/79/6=86 / EXIT 0。工作树在门禁生成时 clean。
+
+## 2026-11-13 AUDIT-04
+
+- reports/AUDIT-04-OCR-DETECTION-2026-11-13.md：OCR/检测真实链路、12 项矩阵、175+40 synthetic pass、质量结论边界与 NOT_RUN 清单。
+- tests/audit_runner.py：增加 `audit04-ocr-detection`，providers 与 Core 分组，排除 real-weight provider tests；final runner 在 commit `c20e819009a810ae3828aef7eb8644eb9a3eae80`。
+- tests/capture_audit04_static.py：记录产品基线 diff、Task allowed paths、工作树与 whitespace EXIT；source 首次固定于 `5727f5497fdf392295309d031f2632c86e6f1b51`。
+- logs/audit04-providers-20261112T203116769705Z.log 与 evidence/audit04-providers-20261112T203116769705Z.json：generated HEAD=`c20e819009a810ae3828aef7eb8644eb9a3eae80`；175 passed、0 skipped、EXIT 0。
+- logs/audit04-core-detect-20261112T203116769705Z.log 与 evidence/audit04-core-detect-20261112T203116769705Z.json：同 HEAD；40 passed、0 skipped、EXIT 0。
+- logs/audit04-static-20261112T203819Z.log 与 evidence/audit04-static-20261112T203819Z.json：同 HEAD；产品 diff EXIT 0、whitespace EXIT 0；21 条采集时工作树路径均允许，out-of-scope=0；14 条历史 FEA-11 HOST-AUTH-4 路径作继承项披露。
+- 过程记录：runner 初次试跑于 `5727f5497fdf392295309d031f2632c86e6f1b51`，providers 167 passed + Core 40 passed；补入 ORT CPU/auto policy tests 后以最终 runner 在 `c20e819009a810ae3828aef7eb8644eb9a3eae80` 重跑为正式结果。初次试跑与早期静态捕获 `20261112T202910Z` / `20261112T203116Z` / `20261112T203329Z` 的日志/JSON均保留。

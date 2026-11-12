@@ -1,0 +1,31 @@
+{
+  "name": "audit04-providers-20261112T203116769705Z",
+  "argv": [
+    "C:\\Python314\\python.exe",
+    "-m",
+    "pytest",
+    "tests/providers/test_detection_doctr.py",
+    "tests/providers/test_detection_manga.py",
+    "tests/providers/test_detection_manga_onnx.py",
+    "tests/providers/test_ocr_local.py",
+    "tests/providers/test_ocr_manga_onnx.py",
+    "tests/providers/test_detect_handler.py",
+    "tests/providers/test_detector_assembly.py",
+    "tests/providers/test_detector_weights_lookup.py",
+    "tests/providers/test_onnx_sessions.py",
+    "-q",
+    "-rs",
+    "--tb=short",
+    "-o",
+    "cache_dir=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\audit04-providers-pytest-cache-20261112T203116769705Z",
+    "--basetemp=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\audit04-providers-pytest-temp-20261112T203116769705Z"
+  ],
+  "cwd": "G:\\CODEX\\New Manga",
+  "started_utc": "2026-11-12T20:31:16.769882+00:00",
+  "head": "c20e819009a810ae3828aef7eb8644eb9a3eae80",
+  "branch": "main",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 4.078,
+  "log": "audit\\V1-FULL-AUDIT\\logs\\audit04-providers-20261112T203116769705Z.log"
+}
