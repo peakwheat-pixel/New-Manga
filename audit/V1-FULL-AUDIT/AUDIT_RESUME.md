@@ -131,3 +131,12 @@ TaskStatus=in_progress；ExecutionState=BLOCKED_MATERIAL_PROVENANCE（仅推送�
 - 机器扫描证据：`logs/source-architecture-scan-20261112.log` + `evidence/source-architecture-scan-20261112.json`（Python AST 268 文件 / 0 syntax errors；.NET 10 source projects / 13 refs / 0 project cycles）。`dotnet build` EXIT 0，日志 `logs/dotnet-build-audit01-02-20261112.log`；`dotnet format whitespace` EXIT 2、1,556 diagnostics，日志 `logs/dotnet-format-whitespace-20261112.log`；Python lint/type/security 工具发现见 `logs/python-tool-discovery-20261112.log`（七项均未安装）。
 - `NM-AUD-0001` 通过 `tests/sidecar_lifecycle_probe.ps1` + `audit_runner.py sidecar-lifecycle` 隔离复现：正式 run `20261112T143133097703Z` 的 pre-cancel 与 direct dispose 后新 helper 均仍存活（dispose 约 2,011 ms 返回），日志和 JSON 记录 generated HEAD、程序集 SHA-256、argv 与 cleanup 成功；两个 helper 都已由 probe 终止。中间 run `20261112T142759897356Z` 复用了旧 PID marker，已在报告标为无效并排除。测试未调用真实 Core/Bridge sidecar、未访问用户数据；产品源码未改。
 - 最新阶段说明见 `reports/AUDIT-01-02-ARCHITECTURE-STATIC-2026-11-12.md`，问题项见 `AUDIT_ISSUES.md`。下一步：按计划做 suite-to-audit 映射，随后 AUDIT-11 安全静态审阅；AUDIT-03–14 除已明示项外保持 `NOT_TESTED`。ZCode 需复核 `NM-AUD-0001` severity 和报告边界。
+
+### suite 映射与 AUDIT-11 阶段检查点（2026-11-12）
+
+- 起点 HEAD=`beaa13406438fab46ef56fa5a8852bf04ce7133d`，branch=`main`；本阶段开始时 tracked worktree clean。源代码/产品基线未修改。
+- suite 证据映射见 `reports/SUITE-TO-AUDIT-MAPPING-SEGMENT-B-2026-11-12.md`；它保留既有 suite EXIT 和结果，不从总测试通过数推导专项 PASS。映射报告和日志记录生成 HEAD 与 EXIT。
+- AUDIT-11 静态阶段报告见 `reports/AUDIT-11-SECURITY-STATIC-2026-11-12.md`，阶段结论 `FAIL`：`SEG-B-PROBES-001` junction 写越界、`SEG-B-PROBES-002` restore 磁盘写故障恢复缺陷均 Medium / High confidence；`NM-AUD-0001` 经 ZCode 对 `beaa13406438fab46ef56fa5a8852bf04ce7133d` 的阶段 Review `ACCEPT`，维持 P2。该 ZCode Review 没有重跑测试或重算源码 hashes；其限度与 P3 observations 见 Review 报告。
+- 静态扫描 638 个源码文件、Python AST errors 0；dependency scan `dotnet list ... --no-restore` EXIT 0、18 projects/current configured sources 无已知漏洞结果，但可能查询 NuGet 网络；`pip-audit` 不可用。源码 manifest 23 个文件在产品基线与审计 HEAD 间无差异。精确命令、时点、generated HEAD、EXIT、hash 和副作用边界见对应 logs。
+- 当前状态：AUDIT-00 limited PASS；AUDIT-01 FAIL/P2；AUDIT-02 BLOCKED；AUDIT-03、08 仍 NOT_TESTED（probe 结果只作窄面映射）；AUDIT-11 阶段 FAIL、其余矩阵面保持 PARTIAL/NOT_TESTED；AUDIT-04–07、09–10、12–14 尚未完成。Task `in_progress`，AC2/AC3/AC4 `PARTIAL`，Release Gate `BLOCKED`。
+- 下一步按 DAG 做 AUDIT-08 隔离数据库专项及 AUDIT-05/06 契约/流程审阅，然后 AUDIT-14、AUDIT-03/04/07/10/13 和可执行的 AUDIT-09/12 核验。AUDIT-11 自身独立 Review 尚未执行。产品修复、远端查询/补救、真实私人素材访问均不在本 Task 范围。

@@ -1,0 +1,172 @@
+{
+  "generated_at_utc": "2026-11-12T15:13:16.9945014Z",
+  "generated_head": "beaa13406438fab46ef56fa5a8852bf04ce7133d",
+  "branch": "main",
+  "product_base": "10e4ee013835605800d3830fb960ae8d3aa04167",
+  "source_file_count": 23,
+  "files": [
+    {
+      "path": "src/infrastructure/filesystem/managed_storage.py",
+      "commit": "beaa13406438fab46ef56fa5a8852bf04ce7133d",
+      "git_blob": "87d82ae868e5fae18a70e4e32427b55ce41e5cdc",
+      "sha256": "05366DF43CB0B560825D41BE3866AE9884B96A1A8479C7BD6341263E694048AB",
+      "unchanged_from_product_base": true
+    },
+    {
+      "path": "src/infrastructure/sqlite/nmbak.py",
+      "commit": "beaa13406438fab46ef56fa5a8852bf04ce7133d",
+      "git_blob": "192cdf0b78bcd3c4bdd96240702a3193e9ecd354",
+      "sha256": "CC6CCEDCD47F6346F94282995129A5F71E2D2CF25565886AA303B3FE98C24AE1",
+      "unchanged_from_product_base": true
+    },
+    {
+      "path": "src/application/maintenance/restore_plan.py",
+      "commit": "beaa13406438fab46ef56fa5a8852bf04ce7133d",
+      "git_blob": "7c1286890993397aef2d2c9dc06cb883414249f0",
+      "sha256": "ED353A4D7458999962223AE9AF0155449906D2B1DD5D6F172C8AC46E4323B1D0",
+      "unchanged_from_product_base": true
+    },
+    {
+      "path": "src/application/importing/referenced/reader.py",
+      "commit": "beaa13406438fab46ef56fa5a8852bf04ce7133d",
+      "git_blob": "65ebec12f7e94df030412f892dc39ca9c0ea5d2a",
+      "sha256": "05728D6B3AA7EC689A9205CD8AE95C50825D468918DBFA07F9A72C5DF128D650",
+      "unchanged_from_product_base": true
+    },
+    {
+      "path": "src/application/importing/referenced/scanner.py",
+      "commit": "beaa13406438fab46ef56fa5a8852bf04ce7133d",
+      "git_blob": "f2909a9ede5c0b3228077bac4141fb23509a16ea",
+      "sha256": "CA8D74824A2BC389FE2ECCA4B691838CCFE11C31826B0C3023A77B9238878249",
+      "unchanged_from_product_base": true
+    },
+    {
+      "path": "src/bootstrap/core_service.py",
+      "commit": "beaa13406438fab46ef56fa5a8852bf04ce7133d",
+      "git_blob": "0bdb1f4fe6a70836cf905e04249b7c35d880ea7a",
+      "sha256": "C853234BFD4CB700E3D636461E8B4DF190D53DFA7E524C5DE06D0FF496A6874D",
+      "unchanged_from_product_base": true
+    },
+    {
+      "path": "src/infrastructure/providers/openai_client.py",
+      "commit": "beaa13406438fab46ef56fa5a8852bf04ce7133d",
+      "git_blob": "d790e6111b57f17fcd655036dd2979ca5a4ddb18",
+      "sha256": "2E83CEDE0F41F73943B07B855480E51C302C784529893281AD94D26ADFD6063A",
+      "unchanged_from_product_base": true
+    },
+    {
+      "path": "src/ports/providers/credentials.py",
+      "commit": "beaa13406438fab46ef56fa5a8852bf04ce7133d",
+      "git_blob": "cdfb2c3f93bd32d24ed3b5139fc993c3329b020b",
+      "sha256": "76BA99DA3856C4CA4A92F37E34446E183C77B71DE24007CDBF397C339AB0A67C",
+      "unchanged_from_product_base": true
+    },
+    {
+      "path": "src/infrastructure/credentials/windows.py",
+      "commit": "beaa13406438fab46ef56fa5a8852bf04ce7133d",
+      "git_blob": "3f4018b36b8c185b43f4319b92cc2ef09856c378",
+      "sha256": "6C70120A80E47B34D18B3AF0E56E84391E04BC425DA4B41B02B08A5419373A97",
+      "unchanged_from_product_base": true
+    },
+    {
+      "path": "src/bootstrap/settings_commands.py",
+      "commit": "beaa13406438fab46ef56fa5a8852bf04ce7133d",
+      "git_blob": "332de41c74b13e6e12f48c83465fc43f7a81acc3",
+      "sha256": "17BC0F75E9332C62B07E00CBA3C9F7AFEA8FFA89833FB1266CCA8ED4D3D45824",
+      "unchanged_from_product_base": true
+    },
+    {
+      "path": "src/ports/network/profiles.py",
+      "commit": "beaa13406438fab46ef56fa5a8852bf04ce7133d",
+      "git_blob": "5c823d6101c7539e2b100d4a7cbe3e3976d36695",
+      "sha256": "316A38CDDAC513B42C6C7361B8C4AA47F13399AAFAF4D66D9F3DE96347D61502",
+      "unchanged_from_product_base": true
+    },
+    {
+      "path": "src/infrastructure/transport/stdlib.py",
+      "commit": "beaa13406438fab46ef56fa5a8852bf04ce7133d",
+      "git_blob": "0718c712889e6b72427ee1eb74a72698c19174b5",
+      "sha256": "F962B5E322F721EC4D9910EB271ABEBF4B8A29B8211C9CEF78D0F8AF9FD05AEC",
+      "unchanged_from_product_base": true
+    },
+    {
+      "path": "src/infrastructure/plugins/sandbox.py",
+      "commit": "beaa13406438fab46ef56fa5a8852bf04ce7133d",
+      "git_blob": "febb351846401deb3e2fa1ed7d79fa8cb63b36b5",
+      "sha256": "29240C5C94D90A3E0B8052499716C03A84E1564D8DD0BEA5CCC87FDDBFED896A",
+      "unchanged_from_product_base": true
+    },
+    {
+      "path": "src/infrastructure/plugins/service.py",
+      "commit": "beaa13406438fab46ef56fa5a8852bf04ce7133d",
+      "git_blob": "0a7ee2de597c31fd2279243f56250578cb636b79",
+      "sha256": "57D442A718A6A202F9C1FEC0C674A82BDFCB0EADB330B23F881753D975EB3DB2",
+      "unchanged_from_product_base": true
+    },
+    {
+      "path": "apps/desktop-avalonia/src/NewManga.Host/Credentials/WindowsCredentialStore.cs",
+      "commit": "beaa13406438fab46ef56fa5a8852bf04ce7133d",
+      "git_blob": "497a35a2695a346d65db05ca33d0a18ba72490d0",
+      "sha256": "928E8568371D92508341BD5E888019EC47BCEAB80A67B4E0008D5BBDC244E6AE",
+      "unchanged_from_product_base": true
+    },
+    {
+      "path": "apps/desktop-avalonia/src/NewManga.Host/HostCredentialCoordinator.cs",
+      "commit": "beaa13406438fab46ef56fa5a8852bf04ce7133d",
+      "git_blob": "fbc98fb2a03d990fe6b738dd486a34e6544a5c12",
+      "sha256": "1E6CADF48D0A02C3740C366DD6CBFD581419C156B18805EE67FF369BD7041F5A",
+      "unchanged_from_product_base": true
+    },
+    {
+      "path": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceSecretStore.cs",
+      "commit": "beaa13406438fab46ef56fa5a8852bf04ce7133d",
+      "git_blob": "816c7b348134338029fab638be39610094566942",
+      "sha256": "4E007D37D3D89BF13D28F62ED522CDD25A1CECD7DF9D575B23737272ADBFCFA0",
+      "unchanged_from_product_base": true
+    },
+    {
+      "path": "apps/desktop-avalonia/src/NewManga.CoreClient/Transport/SidecarProcess.cs",
+      "commit": "beaa13406438fab46ef56fa5a8852bf04ce7133d",
+      "git_blob": "622d3b018b1ad96ba52aace4081b2100b6e8dd1a",
+      "sha256": "D7A09E4D3676BF748912EB1B1C81855A1F79AF262DE5D52F461DFB726AB199F8",
+      "unchanged_from_product_base": true
+    },
+    {
+      "path": "apps/desktop-avalonia/src/NewManga.Host/HostLog.cs",
+      "commit": "beaa13406438fab46ef56fa5a8852bf04ce7133d",
+      "git_blob": "97de88d42962081c75c50751b7088395da10cb40",
+      "sha256": "3105CCFFCD26ADD3DBE838DD3FDE90990686323675262CAEF807C3F85B48DD9E",
+      "unchanged_from_product_base": true
+    },
+    {
+      "path": "apps/desktop-avalonia/src/NewManga.App/Program.cs",
+      "commit": "beaa13406438fab46ef56fa5a8852bf04ce7133d",
+      "git_blob": "3d42fd320479254363a024440dceb0475c07992b",
+      "sha256": "7B6700693DE1FDBF974E247C09F8D3179CA7CB00AA60FEB97FD60CF28DADE08B",
+      "unchanged_from_product_base": true
+    },
+    {
+      "path": "src/infrastructure/settings/json_profile_stores.py",
+      "commit": "beaa13406438fab46ef56fa5a8852bf04ce7133d",
+      "git_blob": "48c85eb80c6aaa51122c95bcaa845d96dc60967c",
+      "sha256": "B191A9E02A88E6C8DA4089C65D0FE9643C07B38B38758DAD7FC4CE278477CEF0",
+      "unchanged_from_product_base": true
+    },
+    {
+      "path": "src/infrastructure/sqlite/source_sync.py",
+      "commit": "beaa13406438fab46ef56fa5a8852bf04ce7133d",
+      "git_blob": "6ec82282ee972c4eb775591269b0aef82f3ee5d9",
+      "sha256": "02CA3CF1EC4529195FA9D40702AC91DD15D12DC5DF303BC2BE740D9B76F49CCC",
+      "unchanged_from_product_base": true
+    },
+    {
+      "path": "src/infrastructure/resource_channel/catalog_store.py",
+      "commit": "beaa13406438fab46ef56fa5a8852bf04ce7133d",
+      "git_blob": "59869aadfabfab2f8cad2443961a69eda5255e44",
+      "sha256": "8B39EC35716450EB9EFC5DFA158FFC0BF1144626867DD11B7F3D4E72CA5284A9",
+      "unchanged_from_product_base": true
+    }
+  ],
+  "user_data_accessed": false,
+  "result": "PASS"
+}

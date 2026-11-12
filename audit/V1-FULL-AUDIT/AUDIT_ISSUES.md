@@ -15,7 +15,7 @@
 - 级别：`Medium` / confidence `High`（ZCode 只读源码核对与隔离 probe 证据；未独立复现）
 - 证据：`reports/PROBE-TRIAGE-SEGMENT-B-2026-11-12.md`、`reports/PROBES-RESULT-SEGMENT-B.md`、对应 log/evidence JSON。`test_managed_publish_follows_directory_junction` 在隔离 `tmp_path` 内实测 `publish_wrote_outside_managed=true`。
 - 影响范围：需外部行为者在 managed root 内创建 junction；产品写出受限于生成的 revision bytes，现有外部文件受 `final_path.exists()` 保护。证据未覆盖真实用户目录、GC/归档或其他未测入口。
-- 处置：不修改产品代码；修复须另开实现 Task。建议给 `publish` 增加 containment/reparse 防线。AUDIT-01–14 仍维持具名阻断，不据此映射到某个 AUDIT-NN。
+- 处置：不修改产品代码；修复须另开实现 Task。建议给 `publish` 增加 containment/reparse 防线。已映射至 AUDIT-03（窄面文件管理证据）和 AUDIT-11（路径/写入安全 FAIL）；这不表示任一专项全部完成。
 
 ## SEG-B-PROBES-002 — nmbak 磁盘写失败后数据库变更且缺少回滚标识
 
@@ -23,12 +23,12 @@
 - 级别：`Medium` / confidence `High`（ZCode 只读源码核对与隔离 probe 证据；未独立复现）
 - 证据：`reports/PROBE-TRIAGE-SEGMENT-B-2026-11-12.md`、`reports/PROBES-RESULT-SEGMENT-B.md` 与对应 log/evidence JSON。`test_nmbak_restore_disk_failure_leaves_changed_database_without_rollback_id` 实测 `database_changed=true`、`typed_error=false`、`rollback_id_in_error=false`，且 pre_restore 包已创建。
 - 影响范围：可恢复性由 pre_restore 包保留；缺陷为裸 I/O 错误缺少 typed error 和 rollback 指引。多文件部分写中间态仅为静态推断，probe 未演示。上层 Core/wire 映射、真实磁盘故障与用户数据影响未验证。
-- 处置：不修改产品代码；修复须另开实现 Task。建议把 I/O 错误包装为带 pre_restore `backup_id` 的 `BACKUP_RESTORE_INCOMPLETE`。AUDIT-01–14 仍维持具名阻断，不据此映射到某个 AUDIT-NN。
+- 处置：不修改产品代码；修复须另开实现 Task。建议把 I/O 错误包装为带 pre_restore `backup_id` 的 `BACKUP_RESTORE_INCOMPLETE`。已映射至 AUDIT-08（窄面恢复证据）和 AUDIT-11（磁盘写失败/恢复 FAIL）；这不表示任一专项全部完成。
 
 ## NM-AUD-0001 — sidecar 启动取消与释放未执行显式进程停止
 
-- 状态：`TRIAGED`（静态控制流已确认；隔离 helper 通过真实 `SidecarProcess` API 复现存活；真实 sidecar / 用户可见影响尚未验证；待 ZCode 独立严重级别裁决）
-- 级别：`P2 candidate`（依据可复现的进程生命周期问题；由 ZCode 复核最终等级和范围）
+- 状态：`TRIAGED`（静态控制流已确认；隔离 helper 通过真实 `SidecarProcess` API 复现存活；真实 sidecar / 用户可见影响尚未验证；ZCode 阶段 Review 已接受此范围）
+- 级别：`P2`（ZCode 对 `beaa13406438fab46ef56fa5a8852bf04ce7133d` 的独立阶段 Review 维持 P2；真实生产 sidecar 的存活行为仍未验证）
 - 分类：异步取消 / 进程资源生命周期。
 - 位置：`apps/desktop-avalonia/src/NewManga.CoreClient/Transport/SidecarProcess.cs:81-169,299-360`；调用路径 `apps/desktop-avalonia/src/NewManga.CoreClient/Bridge/HostBridgeClient.cs:238-264`、`apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs:258-285,1100-1120,1188-1219`。
 - 复现条件（已执行）：隔离 helper 在启动时把自身 PID 写入 workspace 标记文件后忽略 stdin EOF 并 sleep 60 秒；分别使用已取消 token 调 `SidecarProcess.StartAsync`，以及正常启动后直接调用 `DisposeAsync`。
@@ -40,3 +40,4 @@
 - 推荐修复方案：另建幂等 stop/cleanup 路径，使 dispose 能实际关闭、等待并按超时终止；把 spawn 后所有失败与取消收口到有所有权的清理逻辑；让 HostBridge shutdown/dispose 覆盖受控进程退出。修复仅可在单独释放的实现 Task 中进行。
 - 对应回归测试：使用可控 helper child 覆盖 pre-cancel、spawn 后取消、正常 EOF 退出、忽略 EOF 并超过 grace period；断言子进程及其子树在 dispose 返回后均已退出，并验证 shutdown 错误仍可收敛。
 - 处置：本审计不修改产品代码；请 ZCode 对 severity / 分类 / 影响边界作独立复核，后续实现须另开 Task。
+- ZCode 阶段 Review：`ACCEPT`，维持 P2（0 个 P0/P1/P2 findings）；原始回执见 `reports/ZCODE-AUDIT-01-02-REVIEW-2026-11-12.md`。P3 observation N-1 补充两条受同一清理短路影响的路径：`SidecarProcess.StartAsync` integrity-fail 清理与 `HostBridgeClient` ping 失败后的 `client.DisposeAsync()`；N-2 要求未来实现设计明确 `HostRuntime` 退出时 HostBridge 的受控 shutdown 顺序。二者不改变严重度和边界，也不授权本 Task 修改产品代码。

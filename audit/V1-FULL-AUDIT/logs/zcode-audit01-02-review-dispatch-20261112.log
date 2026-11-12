@@ -1,0 +1,30 @@
+ZCode AUDIT-01/02 read-only Review dispatch record
+recorded_utc=2026-11-12T15:10:37.9924551Z
+reviewed_head=beaa13406438fab46ef56fa5a8852bf04ce7133d
+repo_head_when_recorded=beaa13406438fab46ef56fa5a8852bf04ce7133d
+branch=main
+reviewer=ZCode fresh independent context
+reviewer_kind=agent
+session=sess_0f75abbb-b6c5-4aee-b015-b89c5085201c
+turn=turn_7990edb9-a081-452d-9998-540e29d7da2d
+trace=20f9cd88-0d83-48a0-9575-051ec950da50
+verdict=ACCEPT
+CLI_EXIT=0
+stderr_bytes=0
+reviewer_ran_tests_or_commands=false
+reviewer_recomputed_sha256=false
+worktree_before_count=0
+worktree_after_count=0
+--- dispatch metadata ---
+started_utc=2026-11-12T14:52:11.3969756Z
+expected_reviewed_head=beaa13406438fab46ef56fa5a8852bf04ce7133d
+actual_head=beaa13406438fab46ef56fa5a8852bf04ce7133d
+command=node zcode.cjs --prompt <read-only audit review> --cwd "G:\CODEX\New Manga" --mode plan --json --locale zh-CN
+EXIT=0
+stdout_path=G:\CODEX\New Manga.workspace\agent-output\codex\NEW-MANGA-V1-FULL-AUDIT\zcode-review-20261112\stdout.json
+stderr_path=G:\CODEX\New Manga.workspace\agent-output\codex\NEW-MANGA-V1-FULL-AUDIT\zcode-review-20261112\stderr.log
+worktree_before_count=0
+worktree_after_count=0
+raw_json=audit/V1-FULL-AUDIT/evidence/zcode-audit01-02-review-20261112.json
+raw_json_sha256=0EC90328B4D21120319F25EFB33EFC8356EF8D12536DF299D4225CB86403E354
+EXIT=0

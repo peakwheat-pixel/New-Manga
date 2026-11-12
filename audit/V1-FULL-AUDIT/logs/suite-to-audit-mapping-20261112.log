@@ -1,0 +1,13 @@
+suite-to-audit mapping evidence recapture
+generated_utc=2026-11-12T15:27:39.6710730Z
+generated_head=beaa13406438fab46ef56fa5a8852bf04ce7133d
+branch=main
+shell=Windows PowerShell; interpreter=powershell.exe
+command=git rev-parse HEAD; git branch --show-current; Test-Path 5 cited reports/index files; Get-FileHash mapping report SHA256
+git_rev_parse_EXIT=0
+git_branch_EXIT=0
+referenced_source_count=5
+missing_source_count=0
+mapping_report=audit/V1-FULL-AUDIT/reports/SUITE-TO-AUDIT-MAPPING-SEGMENT-B-2026-11-12.md
+mapping_report_sha256=2237D54E0E87DF85CE946FBC641137BA8EB2562364F7C07A7CA535C982C60EF8
+EXIT=0

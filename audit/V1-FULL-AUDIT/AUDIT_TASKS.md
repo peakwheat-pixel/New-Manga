@@ -8,17 +8,17 @@
 ## 段 B（当前产品基线 `10e4ee013835605800d3830fb960ae8d3aa04167`）
 
 - AUDIT-00: PASS（静态项目盘点完成；结构图、模块索引、有效源码覆盖、启动/接口、schema/存储、模型 pin、测试/构建/发布与历史架构差异见 `reports/01_PROJECT_INVENTORY.md`；命令与基线核对见 `logs/audit-00-inventory-20261112.log`。外部模型文件字节和运行时行为未在本项验证）
-- AUDIT-01: FAIL（阶段报告与正式 runner 复现见 `reports/AUDIT-01-02-ARCHITECTURE-STATIC-2026-11-12.md`、`logs/sidecar-lifecycle-probe-20261112T143133097703Z.log`、对应 JSON；`NM-AUD-0001` 证明取消/直接 dispose 后忽略 EOF 的 helper 子进程仍运行并已由 probe 清理。真实 sidecar、UI、完整异常/状态/耦合链仍未验；待 ZCode 定级复核）
+- AUDIT-01: FAIL（阶段报告与正式 runner 复现见 `reports/AUDIT-01-02-ARCHITECTURE-STATIC-2026-11-12.md`、`logs/sidecar-lifecycle-probe-20261112T143133097703Z.log`、对应 JSON；`NM-AUD-0001` 证明取消/直接 dispose 后忽略 EOF 的 helper 子进程仍运行并已由 probe 清理。ZCode 对阶段交付 `ACCEPT`、维持 P2；真实 sidecar、UI、完整异常/状态/耦合链仍未验）
 - AUDIT-02: BLOCKED（Python AST 语法扫描、.NET solution build PASS；`dotnet format whitespace` EXIT 2，1,556 项诊断；Python lint/type/security 工具未安装，.NET analyzers disabled，语义扫描未完成。详见阶段报告与对应 logs）
-- AUDIT-03: NOT_TESTED（待导入路径审阅和合成素材隔离验证）
+- AUDIT-03: NOT_TESTED（专项尚未完成；已有 `SEG-B-PROBES-001` 的目录 junction publication 证据与风险映射，完整导入路径审阅和合成素材隔离验证待做）
 - AUDIT-04: NOT_TESTED（待模型链路静态核对/合成 GT；真实素材准确率具名受限）
 - AUDIT-05: NOT_TESTED（待 SFX 契约、状态机与错误路由逐项核对）
 - AUDIT-06: NOT_TESTED（待翻译配置/重试/超时/并发审阅；真实付费 API 不在本轮授权）
 - AUDIT-07: NOT_TESTED（待修复/排版/导出链路和许可核对）
-- AUDIT-08: NOT_TESTED（已有 probe F1/F2 需登记；待隔离数据库异常模拟）
+- AUDIT-08: NOT_TESTED（专项尚未完成；已有 `SEG-B-PROBES-002` restore 磁盘写失败证据及 `../` defense-verified 结果待纳入；隔离数据库专项检查待做）
 - AUDIT-09: NOT_TESTED（待 Avalonia 静态页面覆盖审阅；真实 GUI 运行具名 BLOCKED）
 - AUDIT-10: NOT_TESTED（待可重复 Core 合成样本微基准；GUI 性能具名 BLOCKED）
-- AUDIT-11: NOT_TESTED（待 Key、日志脱敏、路径、IPC 沙箱和依赖许可静态审阅；既有素材传播风险证据仅作背景）
+- AUDIT-11: FAIL（安全静态阶段报告 `reports/AUDIT-11-SECURITY-STATIC-2026-11-12.md`；`SEG-B-PROBES-001` 路径写越界与 `SEG-B-PROBES-002` restore I/O 恢复缺陷均为 Medium / High confidence，`NM-AUD-0001` 经 ZCode 复核为 P2。Key/日志/命令/SQL/依赖等其余面为 PARTIAL 或具名 NOT_TESTED；真实 UI/vault、恶意文件 fuzz、Python 依赖漏洞数据库、竞态和远端可见性未验证。AUDIT-11 独立 Review 待执行）
 - AUDIT-12: NOT_TESTED（待构建/打包静态审阅；干净 Windows 安装实测具名 BLOCKED）
 - AUDIT-13: NOT_TESTED（待 E/F/G/H 合成场景；真实漫画场景具名 BLOCKED）
 - AUDIT-14: NOT_TESTED（待 V1 承诺/实现/Mock/历史债务矩阵）

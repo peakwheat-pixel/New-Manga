@@ -1,0 +1,25 @@
+AUDIT-11 read-only static source inventory
+started_utc=2026-11-12T15:14:19.8317986Z
+generated_head=beaa13406438fab46ef56fa5a8852bf04ce7133d
+branch=main
+shell=Windows PowerShell; interpreter=powershell.exe; child=C:\Python314\python.exe
+argv=python audit/V1-FULL-AUDIT/tests/security_static_inventory.py
+cwd=G:\CODEX\New Manga
+scope=src/**; apps/desktop-avalonia/src/**; dependency manifest metadata only
+no user data/config/image content read
+source_file_count=638
+python_ast_parse_error_count=0
+dynamic_sql_candidate_count=84
+process_exec_candidate_count=6
+raw_error_log_candidate_count=52
+credential_candidate_count=181
+webview_runtime_api_candidate_count=0
+python_requirement_entries=29
+python_pinned_or_bounded=29
+avalonia_csproj_count=10
+avalonia_package_reference_count=6
+evidence_json_sha256=44630F7E7C4EB2185F04C3C84363A64E834F43A87BD41A9EC2757EA496A2D5E3
+scanner_source_sha256=4BFDDE17DC29EF7619D3A385F010E0877DC6527865C6FC8B5DFD34660F6BD456
+product_source_status_before_after_identical=True
+python_EXIT=0
+EXIT=0

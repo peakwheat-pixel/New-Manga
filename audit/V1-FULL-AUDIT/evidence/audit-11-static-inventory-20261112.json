@@ -1,0 +1,2264 @@
+{
+  "generated_at_utc": "2026-11-12T15:14:21.016685+00:00",
+  "generated_head": "beaa13406438fab46ef56fa5a8852bf04ce7133d",
+  "branch": "main",
+  "scope": [
+    "src",
+    "apps/desktop-avalonia/src"
+  ],
+  "source_file_count": 638,
+  "python_ast_parse_error_count": 0,
+  "python_ast_parse_errors": [],
+  "candidate_sites_by_pattern": {
+    "credential_vault": [
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandRegistry.cs",
+        "line": 380
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Credentials/CoreCredentialBridge.cs",
+        "line": 11
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Credentials/CoreCredentialBridge.cs",
+        "line": 88
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Credentials/ICredentialStore.cs",
+        "line": 19
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Credentials/ICredentialStore.cs",
+        "line": 21
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Credentials/ICredentialStore.cs",
+        "line": 38
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Credentials/ICredentialStore.cs",
+        "line": 58
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Credentials/ICredentialStore.cs",
+        "line": 79
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Credentials/WindowsCredentialStore.cs",
+        "line": 11
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Credentials/WindowsCredentialStore.cs",
+        "line": 15
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Credentials/WindowsCredentialStore.cs",
+        "line": 34
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Credentials/WindowsCredentialStore.cs",
+        "line": 42
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Credentials/WindowsCredentialStore.cs",
+        "line": 55
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Credentials/WindowsCredentialStore.cs",
+        "line": 56
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Credentials/WindowsCredentialStore.cs",
+        "line": 85
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Credentials/WindowsCredentialStore.cs",
+        "line": 93
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Credentials/WindowsCredentialStore.cs",
+        "line": 96
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Credentials/WindowsCredentialStore.cs",
+        "line": 106
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Credentials/WindowsCredentialStore.cs",
+        "line": 114
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Credentials/WindowsCredentialStore.cs",
+        "line": 147
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Credentials/WindowsCredentialStore.cs",
+        "line": 183
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Credentials/WindowsCredentialStore.cs",
+        "line": 188
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Credentials/WindowsCredentialStore.cs",
+        "line": 191
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Credentials/WindowsCredentialStore.cs",
+        "line": 206
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Credentials/WindowsCredentialStore.cs",
+        "line": 228
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Credentials/WindowsCredentialStore.cs",
+        "line": 231
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Credentials/WindowsCredentialStore.cs",
+        "line": 234
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Credentials/WindowsCredentialStore.cs",
+        "line": 237
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/HostCredentialCoordinator.cs",
+        "line": 32
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/HostCredentialCoordinator.cs",
+        "line": 38
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/HostCredentialCoordinator.cs",
+        "line": 93
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/HostCredentialCoordinator.cs",
+        "line": 228
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs",
+        "line": 1226
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs",
+        "line": 1036
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs",
+        "line": 1055
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceSecretStore.cs",
+        "line": 28
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceSecretStore.cs",
+        "line": 113
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceSecurity.cs",
+        "line": 33
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceSecurity.cs",
+        "line": 53
+      },
+      {
+        "file": "src/application/tasks/store.py",
+        "line": 163
+      },
+      {
+        "file": "src/application/tasks/store.py",
+        "line": 172
+      },
+      {
+        "file": "src/application/tasks/store.py",
+        "line": 199
+      },
+      {
+        "file": "src/application/tasks/store.py",
+        "line": 206
+      },
+      {
+        "file": "src/application/tasks/store.py",
+        "line": 228
+      },
+      {
+        "file": "src/bootstrap/app.py",
+        "line": 199
+      },
+      {
+        "file": "src/bootstrap/core_assembly.py",
+        "line": 787
+      },
+      {
+        "file": "src/bootstrap/core_assembly.py",
+        "line": 796
+      },
+      {
+        "file": "src/bootstrap/core_assembly.py",
+        "line": 798
+      },
+      {
+        "file": "src/bootstrap/core_assembly.py",
+        "line": 804
+      },
+      {
+        "file": "src/bootstrap/core_assembly.py",
+        "line": 864
+      },
+      {
+        "file": "src/bootstrap/settings_commands.py",
+        "line": 27
+      },
+      {
+        "file": "src/bootstrap/settings_commands.py",
+        "line": 328
+      },
+      {
+        "file": "src/bootstrap/settings_commands.py",
+        "line": 330
+      },
+      {
+        "file": "src/bootstrap/settings_commands.py",
+        "line": 331
+      },
+      {
+        "file": "src/bootstrap/settings_commands.py",
+        "line": 337
+      },
+      {
+        "file": "src/bootstrap/settings_commands.py",
+        "line": 347
+      },
+      {
+        "file": "src/bootstrap/settings_commands.py",
+        "line": 350
+      },
+      {
+        "file": "src/bootstrap/settings_commands.py",
+        "line": 353
+      },
+      {
+        "file": "src/bootstrap/settings_commands.py",
+        "line": 364
+      },
+      {
+        "file": "src/bootstrap/settings_commands.py",
+        "line": 365
+      },
+      {
+        "file": "src/bootstrap/settings_commands.py",
+        "line": 367
+      },
+      {
+        "file": "src/bootstrap/settings_commands.py",
+        "line": 373
+      },
+      {
+        "file": "src/bootstrap/settings_commands.py",
+        "line": 374
+      },
+      {
+        "file": "src/bootstrap/settings_commands.py",
+        "line": 380
+      },
+      {
+        "file": "src/bootstrap/settings_commands.py",
+        "line": 418
+      },
+      {
+        "file": "src/bootstrap/settings_commands.py",
+        "line": 421
+      },
+      {
+        "file": "src/bootstrap/settings_commands.py",
+        "line": 513
+      },
+      {
+        "file": "src/bootstrap/settings_commands.py",
+        "line": 631
+      },
+      {
+        "file": "src/bootstrap/settings_commands.py",
+        "line": 952
+      },
+      {
+        "file": "src/bootstrap/settings_commands.py",
+        "line": 963
+      },
+      {
+        "file": "src/bootstrap/settings_commands.py",
+        "line": 964
+      },
+      {
+        "file": "src/bootstrap/settings_commands.py",
+        "line": 979
+      },
+      {
+        "file": "src/bootstrap/settings_commands.py",
+        "line": 1008
+      },
+      {
+        "file": "src/bootstrap/settings_commands.py",
+        "line": 1009
+      },
+      {
+        "file": "src/bootstrap/settings_commands.py",
+        "line": 1028
+      },
+      {
+        "file": "src/infrastructure/credentials/windows.py",
+        "line": 4
+      },
+      {
+        "file": "src/infrastructure/credentials/windows.py",
+        "line": 6
+      },
+      {
+        "file": "src/infrastructure/credentials/windows.py",
+        "line": 9
+      },
+      {
+        "file": "src/infrastructure/credentials/windows.py",
+        "line": 12
+      },
+      {
+        "file": "src/infrastructure/credentials/windows.py",
+        "line": 24
+      },
+      {
+        "file": "src/infrastructure/credentials/windows.py",
+        "line": 68
+      },
+      {
+        "file": "src/infrastructure/credentials/windows.py",
+        "line": 69
+      },
+      {
+        "file": "src/infrastructure/credentials/windows.py",
+        "line": 74
+      },
+      {
+        "file": "src/infrastructure/credentials/windows.py",
+        "line": 82
+      },
+      {
+        "file": "src/infrastructure/credentials/windows.py",
+        "line": 86
+      },
+      {
+        "file": "src/infrastructure/credentials/windows.py",
+        "line": 95
+      },
+      {
+        "file": "src/infrastructure/credentials/windows.py",
+        "line": 110
+      },
+      {
+        "file": "src/infrastructure/credentials/windows.py",
+        "line": 115
+      },
+      {
+        "file": "src/infrastructure/credentials/windows.py",
+        "line": 117
+      },
+      {
+        "file": "src/infrastructure/credentials/windows.py",
+        "line": 119
+      },
+      {
+        "file": "src/infrastructure/credentials/windows.py",
+        "line": 124
+      },
+      {
+        "file": "src/infrastructure/credentials/windows.py",
+        "line": 131
+      },
+      {
+        "file": "src/infrastructure/credentials/windows.py",
+        "line": 133
+      },
+      {
+        "file": "src/infrastructure/credentials/windows.py",
+        "line": 139
+      },
+      {
+        "file": "src/infrastructure/credentials/windows.py",
+        "line": 143
+      },
+      {
+        "file": "src/infrastructure/credentials/windows.py",
+        "line": 147
+      },
+      {
+        "file": "src/infrastructure/credentials/windows.py",
+        "line": 155
+      },
+      {
+        "file": "src/infrastructure/network/profile_test.py",
+        "line": 109
+      },
+      {
+        "file": "src/infrastructure/network/profile_test.py",
+        "line": 187
+      },
+      {
+        "file": "src/infrastructure/network/profile_test.py",
+        "line": 191
+      },
+      {
+        "file": "src/infrastructure/providers/dependencies.py",
+        "line": 142
+      },
+      {
+        "file": "src/infrastructure/providers/dependencies.py",
+        "line": 145
+      },
+      {
+        "file": "src/infrastructure/providers/dependencies.py",
+        "line": 146
+      },
+      {
+        "file": "src/infrastructure/providers/dependencies.py",
+        "line": 147
+      },
+      {
+        "file": "src/infrastructure/providers/dependencies.py",
+        "line": 153
+      },
+      {
+        "file": "src/infrastructure/providers/dependencies.py",
+        "line": 157
+      },
+      {
+        "file": "src/infrastructure/providers/openai_client.py",
+        "line": 79
+      },
+      {
+        "file": "src/infrastructure/providers/openai_client.py",
+        "line": 207
+      },
+      {
+        "file": "src/infrastructure/providers/openai_client.py",
+        "line": 247
+      },
+      {
+        "file": "src/infrastructure/providers/openai_client.py",
+        "line": 250
+      },
+      {
+        "file": "src/infrastructure/providers/registry.py",
+        "line": 389
+      },
+      {
+        "file": "src/infrastructure/providers/registry.py",
+        "line": 409
+      },
+      {
+        "file": "src/infrastructure/providers/registry.py",
+        "line": 430
+      },
+      {
+        "file": "src/infrastructure/providers/registry.py",
+        "line": 437
+      },
+      {
+        "file": "src/infrastructure/providers/registry.py",
+        "line": 490
+      },
+      {
+        "file": "src/infrastructure/providers/registry.py",
+        "line": 518
+      },
+      {
+        "file": "src/infrastructure/providers/registry.py",
+        "line": 520
+      },
+      {
+        "file": "src/infrastructure/providers/runtime.py",
+        "line": 17
+      },
+      {
+        "file": "src/infrastructure/providers/runtime.py",
+        "line": 263
+      },
+      {
+        "file": "src/infrastructure/providers/runtime.py",
+        "line": 264
+      },
+      {
+        "file": "src/infrastructure/providers/runtime.py",
+        "line": 363
+      },
+      {
+        "file": "src/infrastructure/providers/runtime.py",
+        "line": 364
+      },
+      {
+        "file": "src/infrastructure/providers/runtime.py",
+        "line": 479
+      },
+      {
+        "file": "src/infrastructure/providers/runtime.py",
+        "line": 481
+      },
+      {
+        "file": "src/infrastructure/providers/translation_openai.py",
+        "line": 152
+      },
+      {
+        "file": "src/infrastructure/settings/json_profile_stores.py",
+        "line": 10
+      },
+      {
+        "file": "src/infrastructure/settings/json_profile_stores.py",
+        "line": 70
+      },
+      {
+        "file": "src/infrastructure/settings/json_profile_stores.py",
+        "line": 88
+      },
+      {
+        "file": "src/infrastructure/settings/json_profile_stores.py",
+        "line": 107
+      },
+      {
+        "file": "src/infrastructure/settings/json_profile_stores.py",
+        "line": 129
+      },
+      {
+        "file": "src/infrastructure/transport/stdlib.py",
+        "line": 107
+      },
+      {
+        "file": "src/infrastructure/transport/stdlib.py",
+        "line": 115
+      },
+      {
+        "file": "src/infrastructure/transport/stdlib.py",
+        "line": 416
+      },
+      {
+        "file": "src/infrastructure/transport/stdlib.py",
+        "line": 464
+      },
+      {
+        "file": "src/infrastructure/transport/stdlib.py",
+        "line": 468
+      },
+      {
+        "file": "src/infrastructure/transport/stdlib.py",
+        "line": 473
+      },
+      {
+        "file": "src/infrastructure/transport/stdlib.py",
+        "line": 477
+      },
+      {
+        "file": "src/infrastructure/transport/stdlib.py",
+        "line": 481
+      },
+      {
+        "file": "src/infrastructure/transport/stdlib.py",
+        "line": 545
+      },
+      {
+        "file": "src/ports/network/profiles.py",
+        "line": 14
+      },
+      {
+        "file": "src/ports/network/profiles.py",
+        "line": 37
+      },
+      {
+        "file": "src/ports/network/profiles.py",
+        "line": 44
+      },
+      {
+        "file": "src/ports/network/profiles.py",
+        "line": 59
+      },
+      {
+        "file": "src/ports/network/profiles.py",
+        "line": 111
+      },
+      {
+        "file": "src/ports/providers/credentials.py",
+        "line": 6
+      },
+      {
+        "file": "src/ports/providers/credentials.py",
+        "line": 8
+      },
+      {
+        "file": "src/ports/providers/credentials.py",
+        "line": 25
+      },
+      {
+        "file": "src/ports/providers/credentials.py",
+        "line": 40
+      },
+      {
+        "file": "src/ports/providers/credentials.py",
+        "line": 66
+      },
+      {
+        "file": "src/ports/providers/credentials.py",
+        "line": 80
+      },
+      {
+        "file": "src/ports/providers/credentials.py",
+        "line": 83
+      },
+      {
+        "file": "src/ports/providers/credentials.py",
+        "line": 87
+      },
+      {
+        "file": "src/ports/providers/credentials.py",
+        "line": 91
+      },
+      {
+        "file": "src/ports/providers/profiles.py",
+        "line": 8
+      },
+      {
+        "file": "src/ports/providers/profiles.py",
+        "line": 55
+      },
+      {
+        "file": "src/ports/providers/profiles.py",
+        "line": 89
+      },
+      {
+        "file": "src/ui/viewmodels/settings/viewmodel.py",
+        "line": 14
+      },
+      {
+        "file": "src/ui/viewmodels/settings/viewmodel.py",
+        "line": 21
+      },
+      {
+        "file": "src/ui/viewmodels/settings/viewmodel.py",
+        "line": 39
+      },
+      {
+        "file": "src/ui/viewmodels/settings/viewmodel.py",
+        "line": 121
+      },
+      {
+        "file": "src/ui/viewmodels/settings/viewmodel.py",
+        "line": 122
+      },
+      {
+        "file": "src/ui/viewmodels/settings/viewmodel.py",
+        "line": 149
+      },
+      {
+        "file": "src/ui/viewmodels/settings/viewmodel.py",
+        "line": 226
+      },
+      {
+        "file": "src/ui/viewmodels/settings/viewmodel.py",
+        "line": 228
+      },
+      {
+        "file": "src/ui/viewmodels/settings/viewmodel.py",
+        "line": 229
+      },
+      {
+        "file": "src/ui/viewmodels/settings/viewmodel.py",
+        "line": 232
+      },
+      {
+        "file": "src/ui/viewmodels/settings/viewmodel.py",
+        "line": 244
+      },
+      {
+        "file": "src/ui/viewmodels/settings/viewmodel.py",
+        "line": 273
+      },
+      {
+        "file": "src/ui/viewmodels/settings/viewmodel.py",
+        "line": 304
+      },
+      {
+        "file": "src/ui/viewmodels/settings/viewmodel.py",
+        "line": 306
+      },
+      {
+        "file": "src/ui/viewmodels/settings/viewmodel.py",
+        "line": 307
+      },
+      {
+        "file": "src/ui/viewmodels/settings/viewmodel.py",
+        "line": 310
+      },
+      {
+        "file": "src/ui/viewmodels/settings/viewmodel.py",
+        "line": 322
+      },
+      {
+        "file": "src/ui/viewmodels/settings/viewmodel.py",
+        "line": 360
+      },
+      {
+        "file": "src/ui/viewmodels/settings/viewmodel.py",
+        "line": 459
+      },
+      {
+        "file": "src/ui/viewmodels/settings/viewmodel.py",
+        "line": 467
+      },
+      {
+        "file": "src/ui/viewmodels/settings/viewmodel.py",
+        "line": 488
+      },
+      {
+        "file": "src/ui/viewmodels/settings/viewmodel.py",
+        "line": 501
+      },
+      {
+        "file": "src/ui/viewmodels/settings/viewmodel.py",
+        "line": 539
+      },
+      {
+        "file": "src/ui/viewmodels/settings/viewmodel.py",
+        "line": 541
+      },
+      {
+        "file": "src/ui/viewmodels/settings/viewmodel.py",
+        "line": 542
+      }
+    ],
+    "network_auth_tls": [
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.App/Services/HostController.cs",
+        "line": 1736
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.App/Services/SettingsProfileContracts.cs",
+        "line": 217
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.App/Services/SettingsProfileContracts.cs",
+        "line": 228
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.App/Views/ProfileSections.cs",
+        "line": 425
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostAuthorizationMinter.cs",
+        "line": 9
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostAuthorizationMinter.cs",
+        "line": 13
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostAuthorizationMinter.cs",
+        "line": 19
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostAuthorizationMinter.cs",
+        "line": 20
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostAuthorizationMinter.cs",
+        "line": 22
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandDispatcher.cs",
+        "line": 94
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandDispatcher.cs",
+        "line": 178
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandDispatcher.cs",
+        "line": 703
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandDispatcher.cs",
+        "line": 712
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs",
+        "line": 113
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs",
+        "line": 128
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs",
+        "line": 1884
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs",
+        "line": 1889
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs",
+        "line": 1910
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs",
+        "line": 1912
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs",
+        "line": 1921
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs",
+        "line": 2086
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs",
+        "line": 2087
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs",
+        "line": 2149
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs",
+        "line": 2410
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs",
+        "line": 2453
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs",
+        "line": 2540
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs",
+        "line": 2543
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs",
+        "line": 2568
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs",
+        "line": 2572
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs",
+        "line": 2587
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs",
+        "line": 2591
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs",
+        "line": 2629
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs",
+        "line": 2655
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs",
+        "line": 2677
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs",
+        "line": 2682
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs",
+        "line": 2696
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs",
+        "line": 2707
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs",
+        "line": 2778
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Resources/TileChannel.cs",
+        "line": 84
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Resources/TileChannel.cs",
+        "line": 112
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Resources/TileChannel.cs",
+        "line": 114
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Resources/TileChannel.cs",
+        "line": 261
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Resources/TileChannel.cs",
+        "line": 265
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Resources/TileChannel.cs",
+        "line": 276
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Resources/TileChannel.cs",
+        "line": 306
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/HostOperationOrchestrator.cs",
+        "line": 10
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/HostOperationOrchestrator.cs",
+        "line": 39
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/HostOperationOrchestrator.cs",
+        "line": 72
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/HostOperationOrchestrator.cs",
+        "line": 95
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/HostOperationOrchestrator.cs",
+        "line": 103
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/HostOperationOrchestrator.cs",
+        "line": 104
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/HostOperationOrchestrator.cs",
+        "line": 113
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/HostOperationOrchestrator.cs",
+        "line": 134
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/HostOperationOrchestrator.cs",
+        "line": 145
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/HostOperationOrchestrator.cs",
+        "line": 232
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/HostOperationOrchestrator.cs",
+        "line": 236
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/HostOperationOrchestrator.cs",
+        "line": 237
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/HostOperationOrchestrator.cs",
+        "line": 239
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/HostOperationOrchestrator.cs",
+        "line": 258
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/HostOperationOrchestrator.cs",
+        "line": 266
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/HostOperationOrchestrator.cs",
+        "line": 273
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/HostOperationOrchestrator.cs",
+        "line": 274
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/HostOperationOrchestrator.cs",
+        "line": 277
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/HostOperationOrchestrator.cs",
+        "line": 316
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceAccessRegistry.cs",
+        "line": 9
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceAccessRegistry.cs",
+        "line": 11
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceAccessRegistry.cs",
+        "line": 37
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceAccessRegistry.cs",
+        "line": 52
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceAccessRegistry.cs",
+        "line": 63
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceAccessRegistry.cs",
+        "line": 65
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceAccessRegistry.cs",
+        "line": 103
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceAccessRegistry.cs",
+        "line": 250
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs",
+        "line": 71
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs",
+        "line": 72
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs",
+        "line": 83
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs",
+        "line": 84
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs",
+        "line": 121
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs",
+        "line": 122
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs",
+        "line": 152
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs",
+        "line": 153
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs",
+        "line": 249
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs",
+        "line": 306
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs",
+        "line": 334
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs",
+        "line": 341
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs",
+        "line": 386
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs",
+        "line": 388
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs",
+        "line": 396
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs",
+        "line": 408
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs",
+        "line": 412
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs",
+        "line": 423
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs",
+        "line": 455
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs",
+        "line": 567
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs",
+        "line": 615
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs",
+        "line": 641
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs",
+        "line": 642
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs",
+        "line": 774
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs",
+        "line": 781
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs",
+        "line": 785
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs",
+        "line": 788
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs",
+        "line": 815
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs",
+        "line": 843
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceReadCoordinator.cs",
+        "line": 39
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceReadCoordinator.cs",
+        "line": 65
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceReadCoordinator.cs",
+        "line": 138
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceReadCoordinator.cs",
+        "line": 142
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceReadCoordinator.cs",
+        "line": 277
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceReadCoordinator.cs",
+        "line": 287
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceReadCoordinator.cs",
+        "line": 325
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceReadCoordinator.cs",
+        "line": 349
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceRootReattestPlanner.cs",
+        "line": 160
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceRootReattestPlanner.cs",
+        "line": 173
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanScheduler.cs",
+        "line": 341
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanScheduler.cs",
+        "line": 1620
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanScheduler.cs",
+        "line": 1686
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanScheduler.cs",
+        "line": 1689
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanScheduler.cs",
+        "line": 1769
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanScheduler.cs",
+        "line": 1988
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanScheduler.cs",
+        "line": 2006
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanScheduler.cs",
+        "line": 2007
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanScheduler.cs",
+        "line": 2011
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanScheduler.cs",
+        "line": 2066
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanScheduler.cs",
+        "line": 2067
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanScheduler.cs",
+        "line": 2296
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanScheduler.cs",
+        "line": 2388
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanScheduler.cs",
+        "line": 2390
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceScanScheduler.cs",
+        "line": 2464
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceWatcher.cs",
+        "line": 413
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceWatcher.cs",
+        "line": 426
+      },
+      {
+        "file": "src/application/importing/referenced/resolve.py",
+        "line": 52
+      },
+      {
+        "file": "src/application/settings/network.py",
+        "line": 6
+      },
+      {
+        "file": "src/application/settings/network.py",
+        "line": 8
+      },
+      {
+        "file": "src/application/settings/network.py",
+        "line": 59
+      },
+      {
+        "file": "src/application/settings/network.py",
+        "line": 61
+      },
+      {
+        "file": "src/application/settings/network.py",
+        "line": 74
+      },
+      {
+        "file": "src/application/settings/network.py",
+        "line": 100
+      },
+      {
+        "file": "src/application/sources/model.py",
+        "line": 321
+      },
+      {
+        "file": "src/application/sources/model.py",
+        "line": 706
+      },
+      {
+        "file": "src/application/tasks/store.py",
+        "line": 228
+      },
+      {
+        "file": "src/bootstrap/settings_commands.py",
+        "line": 151
+      },
+      {
+        "file": "src/bootstrap/settings_commands.py",
+        "line": 163
+      },
+      {
+        "file": "src/bootstrap/settings_commands.py",
+        "line": 176
+      },
+      {
+        "file": "src/bootstrap/settings_commands.py",
+        "line": 194
+      },
+      {
+        "file": "src/bootstrap/settings_commands.py",
+        "line": 460
+      },
+      {
+        "file": "src/bootstrap/settings_commands.py",
+        "line": 462
+      },
+      {
+        "file": "src/bootstrap/settings_commands.py",
+        "line": 467
+      },
+      {
+        "file": "src/bootstrap/settings_commands.py",
+        "line": 473
+      },
+      {
+        "file": "src/bootstrap/settings_commands.py",
+        "line": 489
+      },
+      {
+        "file": "src/bootstrap/settings_commands.py",
+        "line": 490
+      },
+      {
+        "file": "src/bootstrap/settings_commands.py",
+        "line": 510
+      },
+      {
+        "file": "src/bootstrap/settings_commands.py",
+        "line": 511
+      },
+      {
+        "file": "src/bootstrap/settings_commands.py",
+        "line": 975
+      },
+      {
+        "file": "src/bootstrap/settings_commands.py",
+        "line": 1005
+      },
+      {
+        "file": "src/bootstrap/settings_commands.py",
+        "line": 1006
+      },
+      {
+        "file": "src/bootstrap/settings_commands.py",
+        "line": 1249
+      },
+      {
+        "file": "src/bootstrap/settings_commands.py",
+        "line": 1250
+      },
+      {
+        "file": "src/infrastructure/network/diagnostics.py",
+        "line": 39
+      },
+      {
+        "file": "src/infrastructure/network/diagnostics.py",
+        "line": 256
+      },
+      {
+        "file": "src/infrastructure/network/diagnostics.py",
+        "line": 261
+      },
+      {
+        "file": "src/infrastructure/network/profile_test.py",
+        "line": 200
+      },
+      {
+        "file": "src/infrastructure/providers/openai_client.py",
+        "line": 208
+      },
+      {
+        "file": "src/infrastructure/providers/registry.py",
+        "line": 437
+      },
+      {
+        "file": "src/infrastructure/providers/runtime.py",
+        "line": 369
+      },
+      {
+        "file": "src/infrastructure/settings/json_profile_stores.py",
+        "line": 111
+      },
+      {
+        "file": "src/infrastructure/settings/json_profile_stores.py",
+        "line": 133
+      },
+      {
+        "file": "src/infrastructure/transport/stdlib.py",
+        "line": 129
+      },
+      {
+        "file": "src/infrastructure/transport/stdlib.py",
+        "line": 289
+      },
+      {
+        "file": "src/infrastructure/transport/stdlib.py",
+        "line": 446
+      },
+      {
+        "file": "src/infrastructure/transport/stdlib.py",
+        "line": 455
+      },
+      {
+        "file": "src/infrastructure/transport/stdlib.py",
+        "line": 488
+      },
+      {
+        "file": "src/ports/network/profiles.py",
+        "line": 6
+      },
+      {
+        "file": "src/ports/network/profiles.py",
+        "line": 63
+      },
+      {
+        "file": "src/ui/viewmodels/settings/viewmodel.py",
+        "line": 153
+      },
+      {
+        "file": "src/ui/viewmodels/settings/viewmodel.py",
+        "line": 330
+      },
+      {
+        "file": "src/ui/viewmodels/settings/viewmodel.py",
+        "line": 505
+      }
+    ],
+    "image_decode_budget": [
+      {
+        "file": "src/application/importing/referenced/reader.py",
+        "line": 37
+      },
+      {
+        "file": "src/application/importing/referenced/reader.py",
+        "line": 47
+      },
+      {
+        "file": "src/application/importing/referenced/reader.py",
+        "line": 152
+      },
+      {
+        "file": "src/application/importing/referenced/reader.py",
+        "line": 156
+      },
+      {
+        "file": "src/application/importing/referenced/reader.py",
+        "line": 164
+      },
+      {
+        "file": "src/application/importing/referenced/reader.py",
+        "line": 165
+      },
+      {
+        "file": "src/application/importing/referenced/reader.py",
+        "line": 178
+      },
+      {
+        "file": "src/application/importing/referenced/runtime.py",
+        "line": 796
+      },
+      {
+        "file": "src/application/resource_channel/tiles.py",
+        "line": 52
+      },
+      {
+        "file": "src/application/resource_channel/tiles.py",
+        "line": 184
+      },
+      {
+        "file": "src/application/sources/scanner.py",
+        "line": 848
+      },
+      {
+        "file": "src/bootstrap/core_assembly.py",
+        "line": 446
+      },
+      {
+        "file": "src/bootstrap/core_assembly.py",
+        "line": 504
+      },
+      {
+        "file": "src/bootstrap/core_service.py",
+        "line": 581
+      },
+      {
+        "file": "src/bootstrap/core_service.py",
+        "line": 582
+      },
+      {
+        "file": "src/bootstrap/core_service.py",
+        "line": 588
+      },
+      {
+        "file": "src/bootstrap/core_service.py",
+        "line": 591
+      },
+      {
+        "file": "src/bootstrap/core_service.py",
+        "line": 2859
+      },
+      {
+        "file": "src/bootstrap/core_service.py",
+        "line": 2860
+      },
+      {
+        "file": "src/bootstrap/core_service.py",
+        "line": 2895
+      },
+      {
+        "file": "src/bootstrap/core_service.py",
+        "line": 2903
+      },
+      {
+        "file": "src/bootstrap/core_service.py",
+        "line": 2905
+      },
+      {
+        "file": "src/bootstrap/core_service.py",
+        "line": 2918
+      },
+      {
+        "file": "src/bootstrap/core_service.py",
+        "line": 2929
+      },
+      {
+        "file": "src/bootstrap/core_service.py",
+        "line": 2935
+      },
+      {
+        "file": "src/bootstrap/core_service.py",
+        "line": 2941
+      },
+      {
+        "file": "src/bootstrap/core_service.py",
+        "line": 2945
+      },
+      {
+        "file": "src/bootstrap/core_service.py",
+        "line": 2946
+      },
+      {
+        "file": "src/bootstrap/core_service.py",
+        "line": 2949
+      },
+      {
+        "file": "src/bootstrap/sfx_detect_probe.py",
+        "line": 186
+      },
+      {
+        "file": "src/infrastructure/export/qt_free.py",
+        "line": 14
+      },
+      {
+        "file": "src/infrastructure/export/qt_free.py",
+        "line": 36
+      },
+      {
+        "file": "src/infrastructure/importing.py",
+        "line": 143
+      },
+      {
+        "file": "src/infrastructure/importing.py",
+        "line": 220
+      },
+      {
+        "file": "src/infrastructure/providers/ocr_local.py",
+        "line": 253
+      },
+      {
+        "file": "src/infrastructure/rendering/pillow_rendering.py",
+        "line": 202
+      },
+      {
+        "file": "src/infrastructure/rendering/pillow_source_style.py",
+        "line": 64
+      }
+    ],
+    "process_execution": [
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.CoreClient/Transport/SidecarProcess.cs",
+        "line": 98
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.CoreClient/Transport/SidecarProcess.cs",
+        "line": 124
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/HostGrantCoordinator.cs",
+        "line": 606
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.Host/HostGrantCoordinator.cs",
+        "line": 612
+      },
+      {
+        "file": "src/infrastructure/plugins/sandbox.py",
+        "line": 280
+      },
+      {
+        "file": "src/infrastructure/plugins/service.py",
+        "line": 416
+      }
+    ],
+    "raw_error_logging": [
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.App/AssemblyInfo.cs",
+        "line": 4
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.App/Program.cs",
+        "line": 67
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.App/Program.cs",
+        "line": 68
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.DesignSystem/tools/NewManga.DesignSystem.TokenGen/Program.cs",
+        "line": 24
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.DesignSystem/tools/NewManga.DesignSystem.TokenGen/Program.cs",
+        "line": 48
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.DesignSystem/tools/NewManga.DesignSystem.TokenGen/Program.cs",
+        "line": 71
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.DesignSystem/tools/NewManga.DesignSystem.TokenGen/Program.cs",
+        "line": 74
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.ThemeEngine/tools/NewManga.ThemeEngine.ThemeGen/Program.cs",
+        "line": 22
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.ThemeEngine/tools/NewManga.ThemeEngine.ThemeGen/Program.cs",
+        "line": 46
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.ThemeEngine/tools/NewManga.ThemeEngine.ThemeGen/Program.cs",
+        "line": 78
+      },
+      {
+        "file": "apps/desktop-avalonia/src/NewManga.ThemeEngine/tools/NewManga.ThemeEngine.ThemeGen/Program.cs",
+        "line": 81
+      },
+      {
+        "file": "src/bootstrap/app.py",
+        "line": 289
+      },
+      {
+        "file": "src/bootstrap/app.py",
+        "line": 450
+      },
+      {
+        "file": "src/bootstrap/app.py",
+        "line": 508
+      },
+      {
+        "file": "src/bootstrap/app.py",
+        "line": 522
+      },
+      {
+        "file": "src/bootstrap/core_assembly.py",
+        "line": 1018
+      },
+      {
+        "file": "src/bootstrap/core_assembly.py",
+        "line": 1206
+      },
+      {
+        "file": "src/bootstrap/core_assembly.py",
+        "line": 1227
+      },
+      {
+        "file": "src/bootstrap/core_assembly.py",
+        "line": 1234
+      },
+      {
+        "file": "src/bootstrap/core_assembly.py",
+        "line": 1350
+      },
+      {
+        "file": "src/bootstrap/core_assembly.py",
+        "line": 1356
+      },
+      {
+        "file": "src/bootstrap/core_service.py",
+        "line": 991
+      },
+      {
+        "file": "src/bootstrap/core_service.py",
+        "line": 1331
+      },
+      {
+        "file": "src/bootstrap/core_service.py",
+        "line": 4427
+      },
+      {
+        "file": "src/bootstrap/core_service.py",
+        "line": 4446
+      },
+      {
+        "file": "src/bootstrap/core_service.py",
+        "line": 4461
+      },
+      {
+        "file": "src/bootstrap/core_service.py",
+        "line": 4929
+      },
+      {
+        "file": "src/bootstrap/core_service.py",
+        "line": 5844
+      },
+      {
+        "file": "src/bootstrap/core_service.py",
+        "line": 6451
+      },
+      {
+        "file": "src/bootstrap/core_service.py",
+        "line": 7463
+      },
+      {
+        "file": "src/bootstrap/core_service.py",
+        "line": 8220
+      },
+      {
+        "file": "src/bootstrap/core_service.py",
+        "line": 8457
+      },
+      {
+        "file": "src/bootstrap/core_service.py",
+        "line": 8691
+      },
+      {
+        "file": "src/bootstrap/core_service.py",
+        "line": 8717
+      },
+      {
+        "file": "src/bootstrap/core_service.py",
+        "line": 8724
+      },
+      {
+        "file": "src/bootstrap/core_service.py",
+        "line": 8764
+      },
+      {
+        "file": "src/bootstrap/core_service.py",
+        "line": 8769
+      },
+      {
+        "file": "src/bootstrap/core_service.py",
+        "line": 8777
+      },
+      {
+        "file": "src/bootstrap/core_service.py",
+        "line": 8816
+      },
+      {
+        "file": "src/bootstrap/core_service.py",
+        "line": 8850
+      },
+      {
+        "file": "src/bootstrap/core_service.py",
+        "line": 8896
+      },
+      {
+        "file": "src/bootstrap/core_service.py",
+        "line": 8899
+      },
+      {
+        "file": "src/bootstrap/core_service.py",
+        "line": 8946
+      },
+      {
+        "file": "src/bootstrap/core_service.py",
+        "line": 8954
+      },
+      {
+        "file": "src/bootstrap/sfx_detect_probe.py",
+        "line": 369
+      },
+      {
+        "file": "src/infrastructure/providers/detection_sfx.py",
+        "line": 1327
+      },
+      {
+        "file": "src/infrastructure/providers/handlers.py",
+        "line": 514
+      },
+      {
+        "file": "src/infrastructure/providers/handlers.py",
+        "line": 1346
+      },
+      {
+        "file": "src/infrastructure/providers/handlers.py",
+        "line": 1360
+      },
+      {
+        "file": "src/infrastructure/resource_channel/catalog_loader.py",
+        "line": 106
+      },
+      {
+        "file": "src/infrastructure/resource_channel/host_bridge.py",
+        "line": 143
+      },
+      {
+        "file": "src/infrastructure/sqlite/pipeline.py",
+        "line": 1635
+      }
+    ],
+    "webview_runtime_api": []
+  },
+  "dynamic_sql_call_sites": [
+    {
+      "file": "src/application/maintenance/restore_plan.py",
+      "line": 182,
+      "method": "execute"
+    },
+    {
+      "file": "src/application/maintenance/restore_plan.py",
+      "line": 208,
+      "method": "execute"
+    },
+    {
+      "file": "src/application/maintenance/restore_plan.py",
+      "line": 81,
+      "method": "execute"
+    },
+    {
+      "file": "src/application/maintenance/restore_plan.py",
+      "line": 164,
+      "method": "execute"
+    },
+    {
+      "file": "src/application/maintenance/restore_plan.py",
+      "line": 193,
+      "method": "execute"
+    },
+    {
+      "file": "src/application/maintenance/restore_plan.py",
+      "line": 75,
+      "method": "execute"
+    },
+    {
+      "file": "src/bootstrap/settings_commands.py",
+      "line": 1152,
+      "method": "execute"
+    },
+    {
+      "file": "src/bootstrap/settings_commands.py",
+      "line": 1142,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/resource_channel/catalog_store.py",
+      "line": 911,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/resource_channel/catalog_store.py",
+      "line": 509,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/connection.py",
+      "line": 318,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/issue_markers.py",
+      "line": 29,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/issue_markers.py",
+      "line": 48,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/issue_markers.py",
+      "line": 55,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/issue_markers.py",
+      "line": 61,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 164,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 221,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 273,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 495,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 728,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 743,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 870,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 875,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 880,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 887,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 891,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 895,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 898,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 901,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 905,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 910,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 914,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 919,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 924,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 930,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 933,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 2006,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 2028,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 2034,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 2653,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 179,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 186,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 235,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 242,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 279,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 285,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 291,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 468,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 486,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 516,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 531,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 555,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 572,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 708,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 762,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 778,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 1299,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 1409,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 1421,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 1451,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 2054,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 969,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 1814,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/migrator.py",
+      "line": 464,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/migrator.py",
+      "line": 619,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/pipeline.py",
+      "line": 1848,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/prompt_templates.py",
+      "line": 21,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/prompt_templates.py",
+      "line": 36,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/prompt_templates.py",
+      "line": 44,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/prompt_templates.py",
+      "line": 52,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/reading_export.py",
+      "line": 134,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/reading_export.py",
+      "line": 237,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/regions.py",
+      "line": 622,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/regions.py",
+      "line": 138,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/regions.py",
+      "line": 145,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/source_sync.py",
+      "line": 235,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/source_sync.py",
+      "line": 470,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/source_sync.py",
+      "line": 528,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/source_sync.py",
+      "line": 578,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/source_sync.py",
+      "line": 625,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/source_sync.py",
+      "line": 723,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/source_sync.py",
+      "line": 753,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/source_sync.py",
+      "line": 1080,
+      "method": "execute"
+    },
+    {
+      "file": "src/infrastructure/sqlite/source_sync.py",
+      "line": 618,
+      "method": "execute"
+    }
+  ],
+  "dependency_manifest_inventory": {
+    "requirements_files": [
+      "requirements.txt",
+      "requirements-dev.txt",
+      "packaging\\m2ac5\\requirements-build.txt"
+    ],
+    "python_requirement_entries": 29,
+    "python_entries_with_exact_or_bounded_version": 29,
+    "python_entries_without_exact_or_bounded_version": 0,
+    "avalonia_source_csproj_count": 10,
+    "avalonia_direct_package_reference_count": 6
+  },
+  "limitations": [
+    "Pattern hits are locations for manual review, not findings.",
+    "No user data, image content, runtime configuration, .env files, or generated obj/bin trees were read.",
+    "The inventory does not prove absence of indirect/dynamic behavior or vulnerabilities."
+  ]
+}

@@ -1,0 +1,13 @@
+AUDIT-11 reviewed product source pin manifest
+generated_at_utc=2026-11-12T15:13:16.9945014Z
+generated_head=beaa13406438fab46ef56fa5a8852bf04ce7133d
+branch=main
+product_base=10e4ee013835605800d3830fb960ae8d3aa04167
+shell=Windows PowerShell; interpreter=powershell.exe
+command=git diff --quiet <product_base> <HEAD> -- <each reviewed source>; git rev-parse <HEAD>:<path>; Get-FileHash SHA256
+scope=23 named product source files; no generated obj/bin or user data
+source_file_count=23
+unchanged_from_product_base_count=23
+mismatch_count=0
+manifest_sha256=9A3C795064B018EC7DD0BD79CD3B5363CB3F8F2E329D97FD65C9FB841C408B32
+EXIT=0

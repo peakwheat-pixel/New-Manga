@@ -33,9 +33,9 @@ allowed_paths:
 
 ## Acceptance Criteria
 - [x] AC1：固定Git/环境及有效源码清单，记录dirty和历史缺口。 <<MET>>
-- [ ] AC2：15项专项逐项有真实检查结果或具名阻断，关键链路深读与测试。 <<PARTIAL: AUDIT-00 静态项目盘点 PASS；AUDIT-01 FAIL（NM-AUD-0001 受控 helper 已复现，真实 sidecar/UI 与其余架构检查未完）；AUDIT-02 BLOCKED（Python AST 与 .NET build PASS、whitespace 扫描 EXIT 2、完整类型/安全/语义扫描缺工具）；AUDIT-03–14 NOT_TESTED。阶段报告与 scanner/build/format/probe 日志见 Canonical Evidence。既有 suite 结果仍独立记录：probes EXIT 1（2 项 Medium / High confidence，1 项 defense-verified）；Python Core pytest EXIT 1（3,519 passed / 16 failed / 10 skipped）；Avalonia .NET BLOCKED-TESTHOST-ACCESS（8/8 runner EXIT 1、TRX 0 tests）；smoke EXIT 1（Wire 6/6 PASS，Core 4 PASS / 7 BLOCKED-SANDBOX-GRANT，frontend/packaged SKIP）>>
-- [ ] AC3：完整日志、问题分级、整改路线、正式报告和Release Gate落盘。 <<PARTIAL: 已有 probes 分级、pytest 失败摘要、TestHost/sandbox 阻断和治理门禁记录；专项报告、去重问题台账、整改计划、正式报告及 Release Gate 尚未完成>>
-- [ ] AC4：独立复核、证据pin和治理检查可核验；未满足不得置done。 <<PARTIAL: ZCode checkpoint review @453327ff1 为 PASS_FOR_CHECKPOINT（0 P0/0 P1），原件恢复、范围裁决与当前阶段治理证据已 pin；最终全审 Review、交付 HEAD 独立复核与集成验证未完成>>
+- [ ] AC2：15项专项逐项有真实检查结果或具名阻断，关键链路深读与测试。 <<PARTIAL: AUDIT-00 静态项目盘点 limited PASS；AUDIT-01 FAIL（NM-AUD-0001 受控 helper 复现，ZCode ACCEPT、P2；真实 sidecar/UI 与完整架构覆盖未完）；AUDIT-02 BLOCKED（Python AST 与 .NET build PASS、whitespace 扫描 EXIT 2、完整类型/安全/语义扫描缺工具）；AUDIT-03–10、12–14 尚未完成；AUDIT-11 阶段 FAIL，其他检查面为 PARTIAL/NOT_TESTED。阶段报告、suite 映射、扫描器和限制见 Canonical Evidence。既有 suite 结果仍独立记录：probes EXIT 1（2 项 Medium / High confidence，1 项 defense-verified）；Python Core pytest EXIT 1（3,519 passed / 16 failed / 10 skipped）；Avalonia .NET BLOCKED-TESTHOST-ACCESS（8/8 runner EXIT 1、TRX 0 tests）；smoke EXIT 1（Wire 6/6 PASS，Core 4 PASS / 7 BLOCKED-SANDBOX-GRANT，frontend/packaged SKIP）>>
+- [ ] AC3：完整日志、问题分级、整改路线、正式报告和Release Gate落盘。 <<PARTIAL: probes 分级、pytest 失败摘要、TestHost/sandbox 阻断、suite 映射、AUDIT-00/01/02/11 阶段报告与日志已形成；全量去重问题/影响分析、整改计划、正式报告和 Release Gate 仍待完成>>
+- [ ] AC4：独立复核、证据pin和治理检查可核验；未满足不得置done。 <<PARTIAL: ZCode checkpoint review 和 AUDIT-01/02 阶段 review 已记录；本阶段 AUDIT-11 Review、最终全审 Review、最终交付 HEAD 门禁和集成验证未完成>>
 
 ## 允许修改范围
 仅frontmatter所列。审计日志/测试脚本由主控单一写入。三名子代理只读同一固定产品HEAD，无并发写入。用户显式审计目录优先于常规verification路径；运行派生产物放相邻workspace task-env。
@@ -212,11 +212,20 @@ DSH 接任 Lead / Architect / Integrator（见 `doc/GOVERNANCE_TAKEOVER_2026-10-
 
 旧报告与原始记录见 `audit/V1-FULL-AUDIT/reports/ZCODE-LIFECYCLE-ADJUDICATION-2026-11-12.md`、`audit/V1-FULL-AUDIT/reports/ZCODE-LIFECYCLE-ADJUDICATION-CORRECTION-2026-11-12.md` 及既有 Canonical Evidence pins；它们仅作为历史依据保留。
 
-## 2026-11-12 ZCode 原始范围恢复裁决（当前有效）
+## 2026-11-12 ZCode 原始范围恢复裁决（当时有效；后续阶段见下文）
 
 - 原始附件包含 AUDIT-00–14 全部专项、授权边界、结果/严重级别规则、报告交付物和完成条件；文件 SHA-256=`3EA8E623AE7EC6E492385005828DC43368563A78E4A91C9CAF8BB75DBB399EAF`，与 Git blob 对应字节一致。来源、裁决与证据 commit 均列于 Canonical Evidence。
-- AUDIT-01–14 从 `BLOCKED-ORIGINAL-CHECKLIST-MISSING` 纠正为可按原件逐项审计；当前 AUDIT-01 `FAIL`、AUDIT-02 `BLOCKED`、AUDIT-03–14 `NOT_TESTED`。既有 suite 结果与专项结论分离；没有从 suite 结果推断专项 PASS。
+- AUDIT-01–14 从 `BLOCKED-ORIGINAL-CHECKLIST-MISSING` 纠正为可按原件逐项审计；在该检查点 AUDIT-01 `FAIL`、AUDIT-02 `BLOCKED`、AUDIT-03–14 `NOT_TESTED`。既有 suite 结果与专项结论分离；没有从 suite 结果推断专项 PASS。
 - AUDIT-00 已完成静态盘点并记为 `PASS`：`reports/01_PROJECT_INVENTORY.md` 含项目结构图、模块索引、接口、schema、存储、模型 pin、测试/构建/发布清单和历史架构差异；`logs/audit-00-inventory-20261112.log` 记录命令、UTC、生成 HEAD 与 EXIT。模型外部文件字节和运行时/安装行为不属于该静态盘点结论。
 - Task 维持 `in_progress`。此前“等待用户接受永久限制”的分支终止；按原任务授权继续审计，无需新增用户输入。Release Gate 仍 `BLOCKED`，AC2/AC3/AC4 仍 `PARTIAL`。
-- 执行顺序：AUDIT-00 静态盘点已 PASS；AUDIT-01/02 阶段报告已形成（见 Canonical Evidence）；下一步做 suite→专项映射与 AUDIT-11 安全静态；其后 AUDIT-08 隔离数据库检查及 AUDIT-05/06 契约核对、AUDIT-14 覆盖/债务矩阵、AUDIT-03/04/07/10/13 安全合成验证；最后补齐 `00–13`、`FINAL_AUDIT_REPORT.md`、问题台账、整改计划和 BLOCKED Release Gate。`NM-AUD-0001` 严重等级待 ZCode 复核。
+- 执行顺序（该检查点）：AUDIT-00 静态盘点、AUDIT-01/02 阶段报告已形成；接下来做 suite→专项映射与 AUDIT-11 安全静态，再执行后续 DAG。`NM-AUD-0001` 严重等级当时待 ZCode 复核，已在后续阶段 review 中处理。
 - 继续遵守 `allowed_paths`、禁止业务修改与原始素材边界。真实 GUI、TestHost、sandbox grant、干净 Windows、付费 API 和私有素材内容检查分别记录为具名 `BLOCKED`/`NOT_RUN`，不得用替代证据冒充实测。
+
+## 2026-11-12 suite 映射与 AUDIT-11 阶段检查点
+
+- 当前 HEAD 起点：`beaa13406438fab46ef56fa5a8852bf04ce7133d`；branch=`main`；本阶段开始时 tracked worktree clean。审计产物仅在 `audit/V1-FULL-AUDIT/**` 和 frontmatter 授权的治理文档内。
+- 既有 suite→专项映射见 `audit/V1-FULL-AUDIT/reports/SUITE-TO-AUDIT-MAPPING-SEGMENT-B-2026-11-12.md`。既有 EXIT 和 PASS/FAIL/BLOCKED/SKIP 原值不变，不由总测试通过数推导专项 PASS。
+- AUDIT-11 阶段报告 `audit/V1-FULL-AUDIT/reports/AUDIT-11-SECURITY-STATIC-2026-11-12.md` 结论为 `FAIL`：`SEG-B-PROBES-001` directory junction 写越界和 `SEG-B-PROBES-002` nmbak restore I/O 恢复问题均为 Medium / High confidence；`NM-AUD-0001` 经 ZCode 对 `beaa13406438fab46ef56fa5a8852bf04ce7133d` 的独立阶段 Review `ACCEPT`，维持 P2。真实 sidecar、Windows vault/UI、恶意图像/压缩文件 fuzz、完整污点分析、Python 依赖漏洞数据库、并发和远端材料状态均未验证。
+- 本阶段扫描 artifacts 与源码指纹记录了生成 HEAD=`beaa13406438fab46ef56fa5a8852bf04ce7133d` 和各命令 EXIT；静态 scanner EXIT 0、NuGet vulnerability check EXIT 0（18 projects/current configured sources、可能查询 NuGet 网络；无 restore/安装/源码或用户数据上传），Python `pip-audit` 缺失。相关日志在 Canonical Evidence 待提交后补 pin。
+- 当前专项状态：AUDIT-00 limited PASS；AUDIT-01 FAIL/P2；AUDIT-02 BLOCKED；AUDIT-03、08 仍 `NOT_TESTED`（仅关联现存 probes）；AUDIT-11 阶段 FAIL、其余面按报告保持 PARTIAL/NOT_TESTED；AUDIT-04–07、09–10、12–14 未完成。AC2/AC3/AC4 仍 PARTIAL，Release Gate BLOCKED，Task 保持 `in_progress`。
+- 下一步按 DAG 执行 AUDIT-08 隔离数据库检查与 AUDIT-05/06 契约/流程审阅；随后 AUDIT-14 覆盖矩阵、AUDIT-03/04/07/10/13 合成验证及可执行的 AUDIT-09/12 检查，最终完成问题去重、整改计划、Release Gate 和正式报告。尚未执行 AUDIT-11 独立 Review；ZCode 需在审计材料固定后复核此阶段。

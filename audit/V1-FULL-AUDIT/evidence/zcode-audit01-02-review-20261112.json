@@ -1,0 +1,26 @@
+{
+  "sessionId": "sess_0f75abbb-b6c5-4aee-b015-b89c5085201c",
+  "traceId": "20f9cd88-0d83-48a0-9575-051ec950da50",
+  "turnId": "turn_7990edb9-a081-452d-9998-540e29d7da2d",
+  "response": "全部证据链已核验完毕。以下是独立只读阶段 Review 报告。\n\n---\n\n# AUDIT-01/02 阶段 Review（ZCode 独立上下文，只读）\n\n**Verdict：`ACCEPT`**（0 P0 / 0 P1 / 0 P2 findings；2 条 P3 observation 不阻塞）\n\n- **审查者**：ZCode 本会话（全新上下文，未参与 AUDIT-01/02 实施）；只读被审 head，全程未写入、未运行测试、未复算 hash。\n- **实际 HEAD**：`beaa13406438fab46ef56fa5a8852bf04ce7133d`（main），与指定 reviewed_head 一致，工作区 clean ✅\n\n## TL;DR\n\nCodex 的 finding 是真的：代码里 `DisposeAsync` 先把 `_disposed` 设成 true 再调 `StopAsync`，而 `StopAsync` 第一行见到 `_disposed` 就直接返回——等于**释放时什么都不清理**（不关 stdin、不等退出、不 kill）。加上启动尾部的取消检查抛异常时也不清理，两条泄漏路径都成立。复现实验干净、无效实验被正确排除、报告没有吹牛（明说没验证真实 sidecar）。P2 定级我同意维持。\n\n## 逐项核验\n\n### 1. 控制流是否支持 finding —— 完全支持\n\n**pre-cancel 路径**：`SidecarProcess.cs:124` spawn 成功、`:149` integrity check 通过后，`:167` `ThrowIfCancellationRequested()` 抛出时**不在任何 try/finally 内**，已 spawn 的进程无清理收口。正式 probe 观察到 `OperationCanceledException` + child 存活，与控制流逐字吻合。\n\n**direct-dispose 路径**：`SidecarProcess.cs:345` 先 `_disposed = true`，`:346` 再 `await StopAsync()`；而 `StopAsync`（`:300-303`）开头 `if (_disposed) return;` → stop 被完全短路：无 `_stdin.Close()`（`:307`）、无 `WaitForExitAsync`（`:317`）、无 `TryKill`（`:321`）。之后 `_stderrPump.WaitAsync(2s)` 必然超时（进程活着、stderr 管道不关闭），`_process.Dispose()`（`:360`）只释放句柄不终止进程。**`dispose_elapsed_ms=2011` 这个数值本身佐证短路**：若 StopAsync 真执行了，应见 ~3s grace + kill 且 child 死亡；实测 ~2s 返回且 child 存活，正是“2 秒 pump 等待超时 + 短路”的特征。台账根因描述与代码一致。\n\n### 2. HostBridge / CoreService 调用路径描述 —— 准确，且正确区分了两者\n\n- `HostBridgeClient.DisposeAsync`（`HostBridgeClient.cs:255-264`）只调 `_process.DisposeAsync()`、不先调 `StopAsync` —— 继承短路缺陷；其 `ShutdownAsync:251` 注释 *\"dispose kills the bridge if it hangs\"* 与实际行为相反，佐证缺陷非有意设计。\n- **`CoreServiceClient.DisposeAsync`（`CoreServiceClient.cs:2401-2412`）显式先 `_process.StopAsync()` 再 `DisposeAsync()`，此路径是正确的**——台账 finding 位置只列 HostBridgeClient、不列 CoreServiceClient，区分准确。\n- 台账引用行号全部核对无误：`HostRuntime.cs:258-285`（启动失败 catch→`runtime.DisposeAsync()`）、`:1100-1120`（DisposeAsync 内先 bridge 后 core）、`:1188-1219`（两个 sidecar 的启动链）。\n\n### 3. 正式 run 与无效 replay 的区分 —— 正确，无越界表述\n\n- 正式 run `20261112T143133097703Z`（HEAD `19ecee897`，argv 传唯一 `-WorkspaceRoot`，EXIT 0）：pre-cancel pid 15284 存活 ✅、dispose pid 26112 在 2011ms 返回后存活 ✅、两 case `cleanup_killed_child=true` 均如实表述为“**测试随后**将 helper 终止”，未冒充产品清理成功 ✅。\n- 无效 replay `20261112T142759897356Z`：argv 无 `-WorkspaceRoot`，其 `child_alive=false` 检查的是 stale marker 里的旧 PID（36884/39872，前次已清理 run 的值）；当轮新 helper 覆写 marker 为 37212/43576 后 60s 自然结束（14:36Z 查询 0 存活，investigation log 明示“不代表产品清理成功”）。该 run 若被采信会产生**假阴性**（“无缺陷”），排除正当且必要；修正后脚本（`probe.ps1:44` 拒绝既有 marker + 每 run 唯一目录，`audit_runner.py:138`）从机制上杜绝复发。\n- 全文检索未发现任何“真实 sidecar / UI 已验证”表述；报告反复明确“受控 helper 复现，不代表真实 sidecar/UI 已验收”“不调用真实 sidecar、不访问用户数据”“未声称生产 Python sidecar 会忽略 EOF”。\n\n### 4. NM-AUD-0001 定级 —— 维持 P2，分类与影响边界合适\n\n- 分类（异步取消 / 进程资源生命周期）准确；影响边界诚实（真实 Core/Bridge 对 EOF 的行为、发生概率、用户可见影响均列未测，不推断数据损坏/安全绕过）。\n- 维持 P2 的依据：可复现且波及**正常关闭路径**（`HostRuntime.DisposeAsync` 对 HostBridge 不先 `ShutdownAsync` 就 dispose → 连 stdin 都不会关），权重不低；但升 P1 缺最后一环——真实 host_bridge/core_service 在 dispose 后存活的实测。**建议补一条触发条件：若后续实测真实 sidecar 在正常应用退出后存活，应升 P1**（默认路径而非边缘路径）。\n\n### 5. AUDIT-01 FAIL / AUDIT-02 BLOCKED / 阶段限制 —— 均成立\n\n- AUDIT-01 FAIL：异步与资源生命周期面有已复现真实缺陷，记 FAIL 保守诚实；其余面 PARTIAL/NOT_TESTED 如实分层。\n- AUDIT-02 BLOCKED：lint/type/security 工具未安装（且任务不授权安装）+ `EnableNETAnalyzers=false`，完整扫描客观不可行；whitespace EXIT 2（1,556 诊断）如实记录。阶段限制声明（扫描器不做类型/语义判定、probe 不绕过 TestHost、不代表全审完成或 Release Gate 通过）全部与 Task 文件 AC2 PARTIAL 状态一致。\n- Canonical Evidence pin 表：commit 链（`7a1d4a507`→`19ecee897`→`340cce4b9`→`298c89291`→`beaa13406`）与各日志内嵌 generated_head 逐一吻合。**限制声明：遵照本次“不运行其他命令”指令，未复算 BLOB SHA-256，pin 核对为路径/commit/内容交叉级。**\n\n## Findings\n\n| # | 严重度 | 位置 | 内容 |\n|---|---|---|---|\n| N-1 | P3 (observation) | `SidecarProcess.cs:153,158`、`HostBridgeClient.cs:121,146` | 同一短路根因还波及台账未逐点列出的路径：StartAsync integrity-fail 清理、HostBridgeClient ping 失败的 `client.DisposeAsync()`。根因描述与推荐修复（幂等 stop/cleanup）已实质覆盖，仅影响面枚举不全，可在后续报告中补一句。 |\n| N-2 | P3 (observation) | `HostRuntime.cs:1111-1115` | HostRuntime 关闭对 HostBridge 不先 `ShutdownAsync` 就 dispose；台账推荐方案末句已隐含，修复 Task 设计时应显式化为受控退出顺序。 |\n\n无 P0/P1/P2 findings。\n\n## 推荐下一步\n\n本 Review 为 ACCEPT、NM-AUD-0001 维持 P2，可按 Task 文件 §2026-11-12 执行顺序继续：**下一位为 Codex 续做 AUDIT-11 安全静态扫描（含 `AUDIT_ISSUES.md` 中 AUDIT-11-INC-001 的深查）**，随后按既定顺序推进 AUDIT-08/05/06/14/03/04/07/10/13，最后汇总 `FINAL_AUDIT_REPORT.md`。NM-AUD-0001 的产品修复须另开实现 Task，不得在本审计 Task 内进行。",
+  "usage": {
+    "source": "provider",
+    "modelRequestCount": 10,
+    "inputTokens": 678476,
+    "outputTokens": 14876,
+    "totalTokens": 693352,
+    "cacheReadTokens": 604928,
+    "cacheWriteTokens": 0,
+    "reasoningTokens": 0,
+    "webFetchRequests": 0,
+    "webSearchRequests": 0
+  },
+  "eventCount": 14163,
+  "projection": {
+    "status": "idle",
+    "turnCount": 1,
+    "totalTokenCount": 693352,
+    "contextUsed": 91931,
+    "contextWindow": 200000
+  }
+}
