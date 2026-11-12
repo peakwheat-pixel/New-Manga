@@ -76,3 +76,6 @@
 - `reports/AUDIT-14-V1-INTEGRITY-2026-11-13.md`：当前 Avalonia composition、V1 可计数边界、NOT_WIRED 能力、历史路径/文档债务及独立审查候选；静态阶段 `PARTIAL`。
 - `scripts/audit14_static_inventory.py`：AUDIT-14 有界只读采集脚本；不启动 GUI、不构建、不运行测试、不访问用户数据。
 - `logs/audit14-static-20261112T192852Z.log`、`evidence/audit14-static-20261112T192852Z.json`：脚本/命令清单、branch、生成 HEAD、UTC、cwd、各条 argv/elapsed/EXIT 与定点搜索输出；所有扫描及产品目录 diff 均 EXIT 0。
+- `scripts/capture_audit14_governance.py`：按顺序复核 default check、TaskPath check、18 pins、API inventory 并保留 argv/cwd/UTC/elapsed/EXIT 的采集器。
+- `logs/audit14-governance-20261112T193119Z.log`、`evidence/audit14-governance-20261112T193119Z.json`：stage HEAD=`e67fef47461a0de6a600c7fcf67b6a13c9b64635` 首轮 default/TaskPath 因 STATUS/Plan 超预算各 EXIT 1；18 pins、API check EXIT 0。后续精简仅状态摘要后重新检查。
+- `logs/audit14-governance-20261112T193219Z.log`、`evidence/audit14-governance-20261112T193219Z.json`：同一 stage HEAD 上修订状态摘要后 default/TaskPath 均 EXIT 0（各 3 warnings），18 pins 18/18 EXIT 0，API 1/79/6=86 EXIT 0；输出含各命令时点/elapsed/argv。
