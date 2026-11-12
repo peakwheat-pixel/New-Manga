@@ -52,10 +52,10 @@
 |FEA-15-PIN-POLICY-1|FEA-15-PIN-EOL-GOV-1|done（ZCode；新 pin BLOB；历史不迁移）|
 |GOV-CHECKER-NOTASK-1|FEA-15-PIN-POLICY-1|done（空窗 default；Review 与终裁）|
 |GOV-REFINCIDENT-1|GOV-CHECKER-NOTASK-1|done（只读事故调查；根因 UNKNOWN）|
-|FEA-15-PIN-BASIS-ENFORCE-1|FEA-15-PIN-POLICY-1|in_progress（AC1–4完/AC4限；AC5集成；2历史门禁FAIL待ZCode裁决）|
+|FEA-15-PIN-BASIS-ENFORCE-1|FEA-15-PIN-POLICY-1|closed_with_limitations|
 |NEW-MANGA-V1-FULL-AUDIT|—|blocked（素材不传播；resume=in_progress）|
 ## 当前活动程序
-READY 节点：无；ACTIVE：FEA-15-PIN-BASIS-ENFORCE-1；BLOCKED：无；REVIEW：无
+READY 节点：无；ACTIVE：无；BLOCKED：NEW-MANGA-V1-FULL-AUDIT；REVIEW：无
 ## 历史快照（终态节点，非当前 DAG）
 
 终态约束（明细见 [TASK_LEDGER](TASK_LEDGER.md)）：
