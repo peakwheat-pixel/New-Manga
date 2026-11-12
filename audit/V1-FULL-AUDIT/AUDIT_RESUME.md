@@ -87,3 +87,9 @@ TaskStatus=in_progress；ExecutionState=BLOCKED_MATERIAL_PROVENANCE（仅推送�
 - 原 Review 初始 R-1 为 `NOT_VERIFIED`；R-2/R-3 为 P3 Task 文案问题；R-4 是 probe 3 的非阻断 observation。原 Review 与 addendum 摘要分别见 `reports/ZCODE-CHECKPOINT-REVIEW-SEGMENT-B-2026-11-12.md` 和 `reports/ZCODE-CHECKPOINT-REVIEW-ADDENDUM-2026-11-12.md`。
 - ZCode addendum 已关闭 R-1/R-2/R-3，R-4 保持 observation。R-1 补验由实现侧 Codex 在固定 reviewed_head 的 Git objects 上执行：37 个 diff 路径全部属于当时 `allowed_paths`；45 条 CANONICAL + 1 条 SOURCE_PIN 的 BLOB content SHA-256 全匹配且 `commit:path` 存在。ZCode 接受该日志为 closure evidence，但 actual 值未由 Reviewer 亲自重算。原始补验日志 `logs/review-checkpoint-recheck-20261112.log` EXIT 0；addendum 原始 CLI 记录 `logs/zcode-checkpoint-review-addendum-20261112.log` EXIT 0。
 - 下一步：将 Review/addendum 原始日志与报告 pin 入 Task，重生成 Task ledger；随后在最终 pinbackfill HEAD 运行 governance default + TaskPath、18 pins、API inventory。完成门禁后，将固定交付 head 交给新的 ZCode 独立上下文作全审 review。AUDIT-01–14 仍因原始清单缺失保持阻断，Release Gate 仍为 BLOCKED。
+
+### 段 B 最终 checkpoint Review（2026-11-12）
+
+- ZCode 新独立上下文对 reviewed_head=`d9478939f2cee81104f18ea757d81cec71c36225` 给出 `PASS_FOR_CHECKPOINT`（0 P0 / 0 P1）；原始 CLI session/turn/trace 和完整回答见 `logs/zcode-final-audit-review-20261112.log`，摘要见 `reports/ZCODE-FINAL-CHECKPOINT-REVIEW-2026-11-12.md`。
+- F-1（新增 6 个 pin 的 commit:path/SHA 未有机械复算）、F-2（`10e4ee013..425bd0565` 与 `499a6b8e..d9478939f` 的完整 diff 路径集未落盘）、F-3（d947 的最终四项门禁无原始日志/pin）仍待闭合；Reviewer 将相关值标为 `NOT_VERIFIED`。Reviewer 指出 Task `in_progress` 时 `check.ps1 -TaskPath` 不逐行校验 Canonical Evidence；18 pins 检查的是 FEA 冻结契约，不替代本 Task 的 pin 复算。
+- Task 仍为 `in_progress`。下一步先按 Review 建议一次性保存两段 diff 路径核对及 52 行 Git blob SHA-256 复算日志，再保存四项治理门禁日志；完成后交原 ZCode Reviewer 同一只读 Review session 出具 addendum。全审/Task 关闭和 Release Gate 状态不变。

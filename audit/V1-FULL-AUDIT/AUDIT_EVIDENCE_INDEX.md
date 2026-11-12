@@ -48,3 +48,4 @@
 - `logs/zcode-checkpoint-review-20261112.log`、`logs/zcode-checkpoint-review-findings-20261112.log`：ZCode fresh-context CLI 首轮结论和完整 finding 重述。
 - `logs/review-checkpoint-recheck-20261112.log`：实现侧在 reviewed_head Git 对象上逐路径核对 37 个变更、复算 46 个 Canonical/SOURCE_PIN SHA-256 的原始只读结果；EXIT 0，ZCode addendum 已接受为 R-1 closure evidence。
 - `reports/ZCODE-CHECKPOINT-REVIEW-ADDENDUM-2026-11-12.md`、`logs/zcode-checkpoint-review-addendum-20261112.log`：ZCode addendum 摘要及原始 CLI 记录；R-1/R-2/R-3 CLOSED、R-4 保持 observation，结论仍限于 `PASS_FOR_CHECKPOINT`。
+- `reports/ZCODE-FINAL-CHECKPOINT-REVIEW-2026-11-12.md`、`logs/zcode-final-audit-review-20261112.log`：ZCode 新独立上下文对 reviewed_head `d9478939f…` 的最终 checkpoint review；`PASS_FOR_CHECKPOINT`，F-1/F-2/F-3 待机械证据补齐和 addendum 复核。
