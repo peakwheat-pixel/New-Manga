@@ -1,0 +1,31 @@
+# invocation: node "E:\Program Files\ZCode\resources\glm\zcode.cjs" --prompt [self-contained read-only execution-surface probe] --cwd "G:\CODEX\New Manga" --mode yolo --surface desktop --json --locale zh-CN
+# shell: PowerShell 7.6.9; Node v24.15.0; ZCode CLI 0.17.1
+# generated_head: 30a131229aee23b2cb3a27ab853ec1f49b1b0a7b
+# branch: main; worktree_status_before: clean
+# started_utc: 2026-11-12T12:33:15.7521419Z
+# ended_utc: 2026-11-12T12:39:30.0976731Z
+# session_id: sess_885811e6-a26e-48fd-bd1f-3dd7afb4e856
+# turn_id: turn_88dcb208-cc41-4366-a698-02f34b4e133c
+# trace_id: 3356ca7b-589e-4a45-b2fe-9abec24fdeef
+# ZCODE_CLI_EXIT=0
+# verdict: BLOCKED; no ordinary interactive desktop execution surface available in this ZCode node_repl session
+# backend_probe: getState() and requestAccess(["observe","act"]) both returned "Computer Use is unavailable for this node_repl session"; not a permission denial
+# baseline: all 8 .NET projects NOT_RUN (EXIT=n/a); full pytest NOT_RUN (EXIT=n/a)
+# prior latest pytest attempt: 3519 passed / 10 skipped / 16 failed / EXIT=1; NOT_VALID_BASELINE; 16 failures remain unadjudicated
+# zcode_raw_workspace_path: G:\CODEX\New Manga.workspace\agent-output\codex\FEA-11-HOST-AUTH-4\zcode-desktop-baseline-probe-20261112.log
+# zcode_raw_workspace_sha256: 84c6729cfca7a675f12cc21274b726f8c084aac80b5058963400d700d5a27d0e
+# zcode_surface_probe_workspace_path: G:\CODEX\New Manga.workspace\agent-output\codex\FEA-11-HOST-AUTH-4\zcode-desktop-surface-probe-20261112.log
+# zcode_surface_probe_workspace_sha256: 8c4f608db861a7433770a666bf13f51edc1feb89dc7af4cf85e9ae15f990458d
+
+## Codex-side local process probe (not a full baseline)
+command: dotnet test apps\desktop-avalonia\tests\NewManga.Appearance.Tests\NewManga.Appearance.Tests.csproj -c Debug
+shell/runtime: PowerShell 7.6.9; dotnet 10.0.401
+generated_head: 30a131229aee23b2cb3a27ab853ec1f49b1b0a7b
+started_utc: 2026-11-12T12:31:10.7524635Z
+ended_utc: 2026-11-12T12:31:18.3144607Z
+EXIT=1
+result: build succeeded; testhost aborted before test cases at ProcessManager.OpenProcess with Win32Exception(5); test counts NOT_RUN
+raw_workspace_path: G:\CODEX\New Manga.workspace\agent-output\codex\FEA-11-HOST-AUTH-4\dotnet-host-probe-20261112-current-head.log
+raw_workspace_sha256: fa5ffa41bff5a3595386563314d918005f1dac0d51102e764e4e68cd323833fe
+
+# no source/task/plan/status/ACL/security changes; no test output marked PASS
