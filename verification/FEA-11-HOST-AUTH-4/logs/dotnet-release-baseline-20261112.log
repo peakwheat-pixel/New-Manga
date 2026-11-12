@@ -1,0 +1,15 @@
+# command: dotnet test <each of all 8 test csproj> -c Debug (fresh build; no --no-build)
+# shell: PowerShell 7.6.9; dotnet 10.0.401
+# generated_head: 43df25edf5903c0626926b5a34133e307cb38c90
+# branch: main; worktree_status_before: <clean>
+# started_utc: 2026-11-12T12:12:18.9471177Z
+# ended_utc: 2026-11-12T12:13:12.7999885Z
+# aggregate_EXIT=1; all 8 project EXITs=1
+# test counts: NOT_RUN (testhost aborted before executing test cases)
+# common cause: Testhost unhandled System.ComponentModel.Win32Exception (5) at System.Diagnostics.ProcessManager.OpenProcess while setting parent-process exit callback; repeated for each project.
+# full unmodified output: G:\CODEX\New Manga.workspace\agent-output\codex\FEA-11-HOST-AUTH-4\dotnet-release-baseline-attempt1-raw.log
+# full output sha256: f9943bef15f01282acf3e91bf56dcbc85c2fc516e59241acbccf29ceb7c9163b
+# normalization: this repository log summarizes the repeated identical host failure; complete unmodified stdout/stderr is preserved at the workspace path above.
+
+## Per-project result
+=== NewManga.App.Tests EXIT=1 === === NewManga.Appearance.Tests EXIT=1 === === NewManga.ApplicationCore.Tests EXIT=1 === === NewManga.CoreClient.Tests EXIT=1 === === NewManga.DesignSystem.Tests EXIT=1 === === NewManga.Host.Tests EXIT=1 === === NewManga.Presentation.Avalonia.Tests EXIT=1 === === NewManga.ThemeEngine.Tests EXIT=1 ===
