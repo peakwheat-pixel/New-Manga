@@ -1,0 +1,16 @@
+gate evidence
+generated_utc=2026-11-12T15:35:41.3606421Z
+generated_head=9bcb1886bcdd6f49eadeb57d208458e52a994b2c
+branch=main
+tracked_worktree_clean=True
+index_clean=True
+command=pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/NEW-MANGA-V1-FULL-AUDIT.md
+cwd=G:\CODEX\New Manga
+--- output ---
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\NEW-MANGA-V1-FULL-AUDIT.md
+WARN: 存在 10 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3194 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6995 bytes / 64 lines
+Governance check: PASS (3 warnings)
+EXIT=0
