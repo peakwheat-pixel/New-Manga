@@ -1,0 +1,20 @@
+{
+  "name": "software-smoke-segment-b-20261112T084557725697Z",
+  "argv": [
+    "C:\\Python314\\python.exe",
+    "-m",
+    "tools.smoke.plugins",
+    "--only",
+    "core,wire",
+    "--json",
+    "G:\\CODEX\\New Manga\\audit\\V1-FULL-AUDIT\\evidence\\software-smoke-report-segment-b-20261112T084557725697Z.json"
+  ],
+  "cwd": "G:\\CODEX\\New Manga",
+  "started_utc": "2026-11-12T08:45:57.725840+00:00",
+  "head": "2a7aed313f9673b327cfbb87dbbe2cfde1269037",
+  "branch": "main",
+  "exit_code": 1,
+  "timed_out": false,
+  "elapsed_seconds": 1.783,
+  "log": "audit\\V1-FULL-AUDIT\\logs\\software-smoke-segment-b-20261112T084557725697Z.log"
+}
