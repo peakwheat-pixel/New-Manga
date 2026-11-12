@@ -34,7 +34,7 @@ allowed_paths:
 ## Acceptance Criteria
 - [x] AC1：固定Git/环境及有效源码清单，记录dirty和历史缺口。 <<MET>>
 - [ ] AC2：15项专项逐项有真实检查结果或具名阻断，关键链路深读与测试。 <<PARTIAL: AUDIT-01–14 因原始清单缺失保持具名阻断；probes EXIT 1（2 项 Medium / High confidence，1 项 defense-verified）；Python Core pytest EXIT 1（3,519 passed / 16 failed / 10 skipped）；Avalonia .NET 为 BLOCKED-TESTHOST-ACCESS（8/8 EXIT 1、TRX 0 tests）；smoke EXIT 1（Wire 6/6 PASS，Core 4 PASS / 7 BLOCKED-SANDBOX-GRANT，frontend/packaged SKIP）>>
-- [ ] AC3：完整日志、问题分级、整改路线、正式报告和Release Gate落盘。 <<PARTIAL: probes 分级、pytest 失败摘要、.NET TestHost 与 smoke 沙箱阻断均已记录；完整审计、governance 与 Release Gate 待完成>>
+- [ ] AC3：完整日志、问题分级、整改路线、正式报告和Release Gate落盘。 <<PARTIAL: probes 分级、pytest 失败摘要、.NET TestHost、smoke 沙箱阻断和 governance 默认 check 均已记录；完整审计与最终 Release Gate 门禁待完成>>
 - [ ] AC4：独立复核、证据pin和治理检查可核验；未满足不得置done。 <<PARTIAL: 尚未提交或独立审查>>
 
 ## 允许修改范围
@@ -94,6 +94,9 @@ src/**、apps/**、原有tests/**、共享契约、Schema、依赖、真实用�
 | SMOKE-LOG-1 | AC2（smoke 完整输出、argv/cwd、生成 HEAD、时点、EXIT） | `audit/V1-FULL-AUDIT/logs/software-smoke-segment-b-20261112T084557725697Z.log` | `d480745da4d263875181bc717c4828df6c8b749e` | `760877EAA32EC76E3FB770CB1F88C1EFEC61C89AB2D6418F5BB6D745279ACAA4` | CANONICAL | BLOB |
 | SMOKE-ADJUDICATION-LOG-1 | AC2/AC3（ZCode smoke 只读 adjudication 原文） | `audit/V1-FULL-AUDIT/logs/smoke-result-adjudication-20261112.log` | `fe652ee0be6472b09104a9ab9344d7873eebb653` | `80D76C98750A29E2EC254B71523AC9FACF4611E47609B8E7C0CB3673D8054123` | CANONICAL | BLOB |
 | SMOKE-RESULT-1 | AC2/AC3（smoke 分项结果、阻断与证据边界） | `audit/V1-FULL-AUDIT/reports/SMOKE-RESULT-SEGMENT-B-2026-11-12.md` | `82603ae84e09fdd77d41489c3697124023c9be55` | `81B69C26DC83BB2BB38E9F1AFF157002E37FC825D2E142F8B0A1DB648C2A486C` | CANONICAL | BLOB |
+| GOVERNANCE-RESULT-1 | AC4（default governance runner 结果与最终 gate 限制） | `audit/V1-FULL-AUDIT/reports/GOVERNANCE-RESULT-SEGMENT-B-2026-11-12.md` | `6d40dbc060ed591941b8b6966d73ff9f24afd8d6` | `2DF67291FAB4E38ABF07F1008212DD4F52545DC3D0E618A961457C6FFAD7F97D` | CANONICAL | BLOB |
+| GOVERNANCE-JSON-1 | AC4（governance runner argv/HEAD/EXIT，默认 check EXIT 0） | `audit/V1-FULL-AUDIT/evidence/governance-segment-b-20261112T085303591759Z.json` | `1e9c15344e5ad766c0809c9b0e569da9cd9baeb8` | `5CF175527541E915E49DF6A30C92B41D5AF0BB87AEFB02A75222A4A1934599CB` | CANONICAL | BLOB |
+| GOVERNANCE-LOG-1 | AC4（governance 原始输出、生成 HEAD 与 EXIT） | `audit/V1-FULL-AUDIT/logs/governance-segment-b-20261112T085303591759Z.log` | `1e9c15344e5ad766c0809c9b0e569da9cd9baeb8` | `D37B62A1916101AE59B56EE041E8769C8105560070BB784E0EA64C2F009ED557` | CANONICAL | BLOB |
 
 说明：裁决文档中记录的阶段 0 日志 `B561…` 是提交前 WORKTREE SHA-256；本表按模板使用 Git BLOB 字节，完整 SHA-256 为 `7E2A…`。
 
