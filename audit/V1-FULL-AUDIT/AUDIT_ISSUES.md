@@ -41,3 +41,10 @@
 - 对应回归测试：使用可控 helper child 覆盖 pre-cancel、spawn 后取消、正常 EOF 退出、忽略 EOF 并超过 grace period；断言子进程及其子树在 dispose 返回后均已退出，并验证 shutdown 错误仍可收敛。
 - 处置：本审计不修改产品代码；请 ZCode 对 severity / 分类 / 影响边界作独立复核，后续实现须另开 Task。
 - ZCode 阶段 Review：`ACCEPT`，维持 P2（0 个 P0/P1/P2 findings）；原始回执见 `reports/ZCODE-AUDIT-01-02-REVIEW-2026-11-12.md`。P3 observation N-1 补充两条受同一清理短路影响的路径：`SidecarProcess.StartAsync` integrity-fail 清理与 `HostBridgeClient` ping 失败后的 `client.DisposeAsync()`；N-2 要求未来实现设计明确 `HostRuntime` 退出时 HostBridge 的受控 shutdown 顺序。二者不改变严重度和边界，也不授权本 Task 修改产品代码。
+
+## AUDIT11-REV-001 — 扫描器源文件自指纹差异
+
+- 状态：`CLOSED_BY_DISCLOSURE`（P3 observation；非产品 finding）。
+- 发现：ZCode 对 `e10fd1ee7e326255ffebb4ca529ecee5dfa477d9` 的独立 AUDIT-11 Review `ACCEPT`，记录 0 个 P0/P1/P2 阻断项和 1 个 P3 observation。扫描日志中的源 SHA-256 为 `4BFDDE17DC29EF7619D3A385F010E0877DC6527865C6FC8B5DFD34660F6BD456`，最终 pin 的 SHA-256 为 `8D71732C7DB12CD14711E7AE9E83CCF2F2D753DD3EAEE526B5E446B1463476D8`。
+- 复核：重建行 37 末尾含一个 ASCII 空格的 6,193-byte 版本，SHA-256 精确匹配扫描时 hash；提交版 6,192 bytes。差异来自 `git diff --cached --check` 后移除该尾随空格，仅为空白变化，不改变 Python tokens/扫描逻辑。详见 `logs/audit-11-scanner-source-hash-drift-20261112.log`。
+- 边界：扫描结果 JSON SHA-256 与记录统计未变；本次没有重跑 scanner，不能声称新扫描 PASS。review 报告、原始回执及 dispatch 日志见 `reports/ZCODE-AUDIT-11-REVIEW-2026-11-12.md`、`evidence/zcode-audit11-review-20261112.json`、`logs/zcode-audit11-review-dispatch-20261112.log`。

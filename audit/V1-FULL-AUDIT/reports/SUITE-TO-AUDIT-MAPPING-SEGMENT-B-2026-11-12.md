@@ -22,7 +22,7 @@
 | AUDIT-08 SQLite/持久化 | pytest 总体结果；1 个 FEA11 v7 fixture 因缺 `chapters.custom_rank` 失败；`SEG-B-PROBES-002` 实测 nmbak 磁盘写失败后数据库已改变且错误缺 rollback id；路径 `../` 的 nmbak defense probe 被拒绝 | 支持登记两个具体的 fixture/异常恢复观察；第三项只证明被测路径的 fail-closed | 并发读写、事务崩溃、迁移兼容、数据库关闭恢复和多文件部分写未验证；专项仍 `NOT_TESTED`，probe 风险已关联 |
 | AUDIT-09 UI/UX | `.NET` 8 个测试 runner 在用例执行前因 TestHost access 失败（8/8 EXIT 1、TRX 0）；没有真实 GUI 会话 | 说明 headless TestHost 当前受阻，不是 UI 产品测试失败或通过 | 真实 UI/交互/无障碍/页面完整性 `BLOCKED`；专项 `NOT_TESTED` |
 | AUDIT-10 性能/稳定性 | pytest 日志记录的是 suite elapsed；sidecar helper probe 有调用耗时观察，但使用受控休眠 helper | 不把测试 suite 耗时或 helper 清理观察冒充产品性能指标 | 无产品样本吞吐、内存/CPU、长跑、缓存和并发基准；专项 `NOT_TESTED` |
-| AUDIT-11 安全/异常恢复 | `reports/AUDIT-11-SECURITY-STATIC-2026-11-12.md`、静态 inventory 与源码 manifest；`SEG-B-PROBES-001` directory junction 写越界、`SEG-B-PROBES-002` nmbak restore I/O failure、nmbak `../` defense-verified；Core smoke 7 项安全语义在 sandbox ACL 前置失败；`NM-AUD-0001` 经 ZCode 阶段 Review 接受为 P2 | 证据支持阶段状态 `FAIL`，并将 blocked hook 检查保留为零证据；其余矩阵项只到报告标示的 PARTIAL/NOT_TESTED | 真实 vault/UI、恶意输入 fuzz、完整 SQL/命令污点、Python 漏洞数据库、竞态、生产 sidecar 关闭和远端材料可见性仍未验证；具体限制见 AUDIT-11 报告，独立 Review 待执行 |
+| AUDIT-11 安全/异常恢复 | `reports/AUDIT-11-SECURITY-STATIC-2026-11-12.md`、静态 inventory 与源码 manifest；`SEG-B-PROBES-001` directory junction 写越界、`SEG-B-PROBES-002` nmbak restore I/O failure、nmbak `../` defense-verified；Core smoke 7 项安全语义在 sandbox ACL 前置失败；`NM-AUD-0001` 经 ZCode 阶段 Review 接受为 P2；AUDIT-11 ZCode 独立 Review `ACCEPT`（0 P0/P1/P2，1 P3 已披露） | 证据支持阶段状态 `FAIL`，并将 blocked hook 检查保留为零证据；其余矩阵项只到报告标示的 PARTIAL/NOT_TESTED | 真实 vault/UI、恶意输入 fuzz、完整 SQL/命令污点、Python 漏洞数据库、竞态、生产 sidecar 关闭和远端材料可见性仍未验证；扫描器 SHA 差异为单个尾随空格且未重跑扫描；具体限制见 AUDIT-11 报告与 Review |
 | AUDIT-12 Windows 构建/交付 | `dotnet build` EXIT 0 仅为开发 solution build；`packaged` smoke 指向 Legacy Tauri 产物，按裁决为 `NOT_RUN-legacy`；无干净环境安装记录 | 可支持当前源码在现有 SDK/工作区中的一次开发构建成功 | Release publish、资源/模型打包、安装/启动/卸载、中文路径、非管理员和干净 Windows 均未验证；专项 `NOT_TESTED` |
 | AUDIT-13 端到端场景 | Wire smoke 6/6 PASS（真实 Core 子进程、协议 2.3 的有限命令）；Core smoke 4 PASS / 7 `BLOCKED-SANDBOX-GRANT`；Legacy frontend/packaged SKIP | 仅支持 Wire smoke 覆盖的有限协议行为 | A–H 场景均未完成；真实漫画数据禁止触碰，需使用获准合成输入；专项 `NOT_TESTED` |
 | AUDIT-14 V1 完整性/技术债务 | AUDIT-00 inventory、当前阶段报告与已知 issue 台账可作来源 | 当前可以建立需求/实现/Mock/Legacy 的审计索引，尚不能给完成率 | 尚无逐需求 V1 承诺矩阵及 Mock/未接线/规划项分类；专项 `NOT_TESTED` |
@@ -38,4 +38,4 @@
 
 ## 状态结论
 
-映射只确定既有 suite 证据与专项的关系，不宣告专项完成。当前有效专项状态仍以 `AUDIT_TASKS.md` 和 Task 卡为准：AUDIT-00 为有限范围 `PASS`，AUDIT-01 为 `FAIL`，AUDIT-02 为 `BLOCKED`，AUDIT-11 阶段结果为 `FAIL`；AUDIT-03–10、12–14 仍未完成，AUDIT-11 的其余检查面及独立 Review 也未完成。Release Gate 继续 `BLOCKED`。AUDIT-11 专项后续证据详见 `reports/AUDIT-11-SECURITY-STATIC-2026-11-12.md`。
+映射只确定既有 suite 证据与专项的关系，不宣告专项完成。当前有效专项状态仍以 `AUDIT_TASKS.md` 和 Task 卡为准：AUDIT-00 为有限范围 `PASS`，AUDIT-01 为 `FAIL`，AUDIT-02 为 `BLOCKED`，AUDIT-11 阶段结果为 `FAIL`（独立 Review `ACCEPT`，P3 已披露）；AUDIT-03–10、12–14 仍未完成，AUDIT-11 的其余检查面也未完成。Release Gate 继续 `BLOCKED`。AUDIT-11 专项后续证据详见阶段报告与 `reports/ZCODE-AUDIT-11-REVIEW-2026-11-12.md`。

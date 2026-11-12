@@ -1,0 +1,33 @@
+AUDIT-11 ZCode independent read-only review dispatch
+cli_version=0.17.1
+dispatched_utc=2026-11-12T15:42:41.7521025Z
+completed_output_utc=2026-11-12T15:51:56.1994272Z
+generated_head=e10fd1ee7e326255ffebb4ca529ecee5dfa477d9
+branch=main
+reviewed_head=e10fd1ee7e326255ffebb4ca529ecee5dfa477d9
+command=node zcode.cjs --prompt <AUDIT-11 standalone review prompt> --cwd G:\CODEX\New Manga --mode plan --json --locale zh-CN
+cwd=G:\CODEX\New Manga
+review_mode=plan (read-only)
+cli_EXIT=0
+stderr_bytes=
+0
+stderr_sha256=
+E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855
+stdout_source=G:\CODEX\New Manga.workspace\agent-output\codex\NEW-MANGA-V1-FULL-AUDIT\zcode-audit11-review-20261112\stdout.json
+stdout_sha256=
+83CC7C211A4817089F8ECDA701664079E70485394C84FEFEA7773D0BB53E8720
+raw_evidence=audit/V1-FULL-AUDIT/evidence/zcode-audit11-review-20261112.json
+raw_copy_sha256=
+83CC7C211A4817089F8ECDA701664079E70485394C84FEFEA7773D0BB53E8720
+sessionId=
+sess_5f0ece9a-542e-46d0-93ae-76a596b6c39a
+turnId=
+turn_b7103000-a9a4-48fc-b390-a7ac5767f004
+traceId=
+948d6d18-393f-4e84-b49e-338bfddf0780
+verdict=ACCEPT
+P0=0; P1=0; P2=0; P3=1
+finding=P3-1 scanner source self-hash mismatch after one trailing-space cleanup; evidence JSON hash and statistics matched
+product_source_changed=False
+tests_or_scans_run_by_reviewer=False
+EXIT=0

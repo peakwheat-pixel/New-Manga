@@ -1,0 +1,12 @@
+AUDIT-11 scanner source fingerprint discrepancy follow-up
+generated_utc=2026-11-12T15:55:48.4301225Z
+generated_head=e10fd1ee7e326255ffebb4ca529ecee5dfa477d9
+branch=main
+command=python - read security_static_inventory.py; hash current bytes and reconstructed pre-cleanup variant with one trailing ASCII space
+cwd=G:\CODEX\New Manga
+python_EXIT=0
+result_json={"source_path": "audit\\V1-FULL-AUDIT\\tests\\security_static_inventory.py", "line_1based": 37, "current_length_bytes": 6192, "reconstructed_pre_cleanup_length_bytes": 6193, "current_sha256": "8D71732C7DB12CD14711E7AE9E83CCF2F2D753DD3EAEE526B5E446B1463476D8", "reconstructed_pre_cleanup_sha256": "4BFDDE17DC29EF7619D3A385F010E0877DC6527865C6FC8B5DFD34660F6BD456", "reconstructed_hash_matches_scan_log": true, "difference": "one ASCII space (0x20) inserted before LF on line 37", "evidence_json_sha256_logged": "44630F7E7C4EB2185F04C3C84363A64E834F43A87BD41A9EC2757EA496A2D5E3", "scanner_sha256_logged_at_scan": "4BFDDE17DC29EF7619D3A385F010E0877DC6527865C6FC8B5DFD34660F6BD456"}
+interpretation=the reconstructed hash exactly matches the scanner hash recorded at scan generation; the committed scanner differs by one removed trailing ASCII space on line 37, which was removed after generation following git diff --check
+no_scan_rerun=True
+no_product_source_or_user_data_read=True
+EXIT=0
