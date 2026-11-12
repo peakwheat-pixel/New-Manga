@@ -1,9 +1,12 @@
-param(
-    [string]$WorkspaceRoot = 'G:\CODEX\New Manga.workspace\task-env\NEW-MANGA-V1-FULL-AUDIT\sidecar-lifecycle-probe-20261112'
-)
+param([string]$WorkspaceRoot)
 
 $ErrorActionPreference = 'Stop'
 $repoRoot = 'G:\CODEX\New Manga'
+$defaultProbeRoot = 'G:\CODEX\New Manga.workspace\task-env\NEW-MANGA-V1-FULL-AUDIT\sidecar-lifecycle-probe'
+if ([string]::IsNullOrWhiteSpace($WorkspaceRoot)) {
+    $runId = [DateTime]::UtcNow.ToString('yyyyMMddTHHmmssfffffffZ')
+    $WorkspaceRoot = Join-Path $defaultProbeRoot $runId
+}
 $workspacePrefix = [System.IO.Path]::GetFullPath('G:\CODEX\New Manga.workspace\').TrimEnd('\') + '\'
 $resolvedWorkspace = [System.IO.Path]::GetFullPath($WorkspaceRoot)
 if (-not $resolvedWorkspace.StartsWith($workspacePrefix, [System.StringComparison]::OrdinalIgnoreCase)) {
@@ -38,6 +41,7 @@ function New-ProbeSpec([string]$name, [string]$pidFile, [string]$stderrLog) {
 }
 
 function Wait-ChildPid([string]$pidFile) {
+    if (Test-Path -LiteralPath $pidFile) { throw "refusing stale PID marker: $pidFile" }
     $until = [DateTime]::UtcNow.AddSeconds(5)
     while ([DateTime]::UtcNow -lt $until) {
         if (Test-Path -LiteralPath $pidFile) {
@@ -87,6 +91,9 @@ try {
     catch [System.OperationCanceledException] {
         $cancelException = $_.Exception.GetType().Name
     }
+catch {
+    $cancelException = $_.Exception.GetType().Name
+}
     $cancelPid = Wait-ChildPid $cancelPidFile
     Start-Sleep -Milliseconds 500
     $cancelAlive = Get-ChildAlive $cancelPid
@@ -112,7 +119,7 @@ try {
     $sidecar = [NewManga.CoreClient.Transport.SidecarProcess]::StartAsync($spec).GetAwaiter().GetResult()
     $disposePid = Wait-ChildPid $disposePidFile
     $disposeClock = [System.Diagnostics.Stopwatch]::StartNew()
-    $sidecar.DisposeAsync().AsTask().GetAwaiter().GetResult()
+    $sidecar.DisposeAsync().AsTask().GetAwaiter().GetResult() | Out-Null
     $disposeClock.Stop()
     Start-Sleep -Milliseconds 500
     $disposeAlive = Get-ChildAlive $disposePid
@@ -135,5 +142,6 @@ finally {
     assembly_path = $assemblyPath
     assembly_sha256 = $assemblyHash
     child_executable = $childExe
+    workspace_root = $resolvedWorkspace
     results = @($results)
 } | ConvertTo-Json -Depth 6
