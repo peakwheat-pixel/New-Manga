@@ -31,3 +31,9 @@ TaskStatus=in_progress；ExecutionState=BLOCKED_MATERIAL_PROVENANCE（仅推送�
 - 段 B release gates 在 `df120fb56567278e7e9a954e7a81c3f6465625c1` 实测：default PASS/EXIT 0（3 warnings）、TaskPath PASS/EXIT 0（3 warnings）、18 pins PASS/EXIT 0、API 1/79/6=86 EXIT 0。原始日志见 [segment-b-release-gates-df120fb.log](logs/segment-b-release-gates-df120fb.log)，commit `4b5aa2d6a327c7ffa2c5b3025473fb5a6f3f1179`。
 - 范围裁决摘要和传播风险证据见 [ZCode 裁决记录](reports/ZCODE-SCOPE-ADJUDICATION-2026-11-12.md)。本地证据支持素材历史于 2026-10-30 随 main push 进入当时公开仓库的高置信推论；当前远端实时可见性未核验，不 push、不删除、不改写历史、不 GC/prune。
 - 段 B 启动时 AUDIT-00–14 均未执行；目前 AUDIT-00 已 PASS（仅基线/清单），AUDIT-01–14 仍 NOT_TESTED。报告、JSON 清单与命令日志见 Task Canonical Evidence（commit `1a8238b9f86427efe5c48918f3bc0f2942611732`）。审计仅本地与只读隔离，私有图片只可用元数据定位，禁止素材内容级访问、导出、复制或显示真实路径。若发现新的真实用户数据泄漏面、需改产品文件、超出 allowed_paths 修治理问题或阶段 0 基线/祖先条件变化，停止并记录。
+
+### 测试映射检查点（2026-11-12）
+
+- ZCode 只读裁决见 `reports/TEST-MAPPING-ADJUDICATION-2026-11-12.md`（session `sess_8a2f7064-f80d-49a5-b96f-6d5ba20dd1ca`）；对应 CLI 和原始清单定位搜索见 `logs/test-mapping-adjudication-20261112.log`。裁决区分当前 Python Core/Avalonia 测试面与冻结 Legacy suites，并允许仅在 audit 路径增加 `.NET` runner。
+- 对 `audit`、`doc`、`verification`、`archive` 文本做定向查找，只找到状态占位，没有 AUDIT-01–14 原始逐项定义。没有运行 probes、pytest、`.NET` 或其他专项测试；AUDIT-01–14 继续为 `NOT_TESTED`，Release Gate 继续 `BLOCKED`。
+- 下一步先将“逐项清单缺失”交 ZCode 作范围裁决。未获裁决前不猜测 AUDIT-01–14 各自范围、不执行专项测试、不读取漫画图像内容。

@@ -24,3 +24,5 @@
 - `evidence/source-manifest-segment-b.json`：1,301 个源码/构建配置条目的 Git blob SHA-1、SHA-256、字节数与分类。
 - `logs/audit-00-segment-b.log`：基线清单生成的命令、shell/interpreter、生成时 HEAD、时点与 EXIT。
 - `tests/rebaseline_audit00.py`：段 B 基线生成器；只读取所选代码/配置 blob，不读取排除数据目录的内容。
+- `reports/TEST-MAPPING-ADJUDICATION-2026-11-12.md`：ZCode 对段 B 当前/Legacy 测试 suite 的只读映射裁决，以及 .NET suite 建议和原始 AUDIT-01–14 清单缺失限制。
+- `logs/test-mapping-adjudication-20261112.log`：ZCode session/turn、命令/EXIT 与原始清单定位搜索结果。

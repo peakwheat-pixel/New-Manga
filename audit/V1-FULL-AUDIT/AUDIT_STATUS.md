@@ -10,4 +10,4 @@ IN_PROGRESS：段 A 基线、盘点与测试日志已保存；段 B 于 2026-11-
 
 2026-11-12 风险披露：本地 `origin/main` reflog 记有 2026-10-30 三次 main push；私有素材对象曾进入公开仓库历史为高置信推论，见 `reports/ZCODE-SCOPE-ADJUDICATION-2026-11-12.md`。实时远端可见性未核验，未执行远端补救；本地审计继续，任何传播/删除/历史改写均不在本 Task 授权内。
 
-段 B 状态：AUDIT-00 PASS（仅基线/清单，限制见报告）；AUDIT-01–14 均为 NOT_TESTED；Release Gate 保持 BLOCKED。
+段 B 状态：AUDIT-00 PASS（仅基线/清单，限制见报告）；AUDIT-01–14 均为 NOT_TESTED。测试 suite 映射裁决已记录；原始逐项清单搜索未找到，未据阶段标签猜测范围，当前未运行专项测试，等待 ZCode 对范围缺口的进一步裁决。Release Gate 保持 BLOCKED。
