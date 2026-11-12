@@ -35,7 +35,7 @@ allowed_paths:
 - [x] AC1：固定Git/环境及有效源码清单，记录dirty和历史缺口。 <<MET>>
 - [ ] AC2：15项专项逐项有真实检查结果或具名阻断，关键链路深读与测试。 <<PARTIAL: AUDIT-00 limited PASS；AUDIT-01 FAIL/P2；AUDIT-02 BLOCKED；AUDIT-05/06 PARTIAL（阶段批次分别 247 passed / 3 deselected / EXIT 0、84 passed / EXIT 0；真实权重/GT/UI 与真实 API/账单语义 NOT_RUN）；AUDIT-08 FAIL（有限合成批次 284 passed/0 skipped/EXIT 0；`SEG-B-PROBES-002` 重现）；AUDIT-11 阶段 FAIL；AUDIT-03/04/07/09/10/12/13/14 尚未完成。阶段报告、suite 映射与限制见 Canonical Evidence。既有总体结果仍独立记录：probes EXIT 1（2 项 Medium / High confidence，1 项 defense-verified）；Python Core pytest EXIT 1（3,519 passed / 16 failed / 10 skipped）；Avalonia .NET BLOCKED-TESTHOST-ACCESS（8/8 runner EXIT 1、TRX 0 tests）；smoke EXIT 1（Wire 6/6 PASS，Core 4 PASS / 7 BLOCKED-SANDBOX-GRANT，frontend/packaged SKIP）>>
 - [ ] AC3：完整日志、问题分级、整改路线、正式报告和Release Gate落盘。 <<PARTIAL: probes 分级、pytest 失败摘要、TestHost/sandbox 阻断、suite 映射及 AUDIT-00/01/02/05/06/08/11 阶段报告和日志已形成；AUDIT-05/06 有 3 项候选待 ZCode 定级；全量去重问题/影响分析、整改计划、正式报告和 Release Gate 仍待完成>>
-- [ ] AC4：独立复核、证据pin和治理检查可核验；未满足不得置done。 <<PARTIAL: checkpoint、AUDIT-01/02/11 Review 已记录；AUDIT-08 closure P3-4 的基准披露已补、fresh closure review 待执行；AUDIT-05/06 阶段证据及两批门禁已 pin，ZCode 独立 Review 待执行；post-pinbackfill HEAD `919b55d` 上 default/TaskPath check 各 3 warnings、pins 18/18、API 1/79/6=86，四项 EXIT 0；最终全审 Review、交付 HEAD 门禁和集成验证未完成>>
+- [ ] AC4：独立复核、证据pin和治理检查可核验；未满足不得置done。 <<PARTIAL: checkpoint、AUDIT-01/02/11 Review 已记录；AUDIT-08 closure P3-4 的基准披露已补、fresh closure review 待执行；AUDIT-05/06 阶段证据与门禁已 pin。ZCode fresh plan Review 对 `dfef8d8919fe2d19013e65c84948fb288c2c9928` 的调用因 provider code `1310` / HTTP `429` 失败（提示 2026-11-17 18:40:33 重置），EXIT 1、无 session/response，故 Review `NOT_RUN`、三候选仍 `REVIEW_PENDING`；调用后 HEAD `46db551` 上四项门禁均 EXIT 0（check 各 3 warnings、pins 18/18、API 1/79/6=86）；最终全审 Review、交付 HEAD 门禁和集成验证未完成>>
 
 ## 允许修改范围
 仅frontmatter所列。审计日志/测试脚本由主控单一写入。三名子代理只读同一固定产品HEAD，无并发写入。用户显式审计目录优先于常规verification路径；运行派生产物放相邻workspace task-env。
@@ -262,6 +262,13 @@ src/**、apps/**、原有tests/**、共享契约、Schema、依赖、真实用�
 | AUDIT05-06-GATE-RESULT-1 | AC4（治理门禁生成 HEAD、argv、时点、耗时与 EXIT 元数据） | `audit/V1-FULL-AUDIT/evidence/audit05-06-governance-c0da575-20261113.json` | `c9cb792dda2d31648d520af9b49caf7f8d39aadf` | `FAB2C01E8E4B82462D667C3A82D7621FE3E12E0062F0C3BC25B76EA40CBD4991` | CANONICAL | BLOB |
 | AUDIT05-06-POSTPIN-GATE-LOG-1 | AC4（Task pinbackfill HEAD=`919b55d` 上 default/TaskPath/pins/API 四项复核；均 EXIT 0） | `audit/V1-FULL-AUDIT/logs/audit05-06-post-pinbackfill-919b55d-20261113.log` | `cdf857b2aba2fe8e2f55f0aff28e41730bf1dc76` | `574EE764F5C4BA02D4A8258CA8520FA0445C527B3BAA291D0B031B93AD96C424` | CANONICAL | BLOB |
 | AUDIT05-06-POSTPIN-GATE-RESULT-1 | AC4（post-pinbackfill 治理门禁 generated HEAD/argv/UTC/elapsed/EXIT 元数据） | `audit/V1-FULL-AUDIT/evidence/audit05-06-post-pinbackfill-919b55d-20261113.json` | `cdf857b2aba2fe8e2f55f0aff28e41730bf1dc76` | `D36D4C65AAE0D5DAE47162D9FA474B7492C6C3FA57ABEDF3F3A74A526A8979EA` | CANONICAL | BLOB |
+| ZCODE-AUDIT05-06-PROMPT-1 | AC4（固定 reviewed_head=`dfef8d8919fe2d19013e65c84948fb288c2c9928` 的 ZCode fresh-context 只读 Review prompt） | `audit/V1-FULL-AUDIT/source/zcode-audit05-06-review-prompt-20261113.txt` | `46db551b4e4fd38f9f46c0653adef9330afc66ad` | `D4058D67A22721D07A5D66D05BE32C0091F7B14FE589956AAD7C16DF19E5AE8C` | SOURCE_PIN | BLOB |
+| ZCODE-AUDIT05-06-DISPATCH-1 | AC4（ZCode CLI version/mode/reviewed_head/prompt 与 raw output hashes；调用失败 EXIT 1） | `audit/V1-FULL-AUDIT/logs/zcode-audit05-06-review-dispatch-20261113.log` | `46db551b4e4fd38f9f46c0653adef9330afc66ad` | `FE675AF6A3163B0B2B1F247AD19519EF45071D14844462EAF9D4A3DB7AE2D5B5` | CANONICAL | BLOB |
+| ZCODE-AUDIT05-06-ATTEMPT-1 | AC4（ZCode Review attempt envelope；provider 1310/429、无 response/session） | `audit/V1-FULL-AUDIT/evidence/zcode-audit05-06-review-attempt-20261113.json` | `46db551b4e4fd38f9f46c0653adef9330afc66ad` | `859EE8A3E629EBDC0AB8AF678DB99A5A8E55A9D30A373BBD9E525F0B465107DF` | CANONICAL | BLOB |
+| ZCODE-AUDIT05-06-STDOUT-1 | AC4（ZCode failed attempt stdout；empty） | `audit/V1-FULL-AUDIT/evidence/zcode-audit05-06-review-attempt-20261113.stdout.txt` | `46db551b4e4fd38f9f46c0653adef9330afc66ad` | `E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855` | CANONICAL | BLOB |
+| ZCODE-AUDIT05-06-STDERR-SANITIZED-1 | AC4（ZCode 429 provider error sanitized; raw stderr hash retained in envelope） | `audit/V1-FULL-AUDIT/evidence/zcode-audit05-06-review-attempt-20261113.stderr-sanitized.txt` | `46db551b4e4fd38f9f46c0653adef9330afc66ad` | `47ED3EB5F8461BCB73C4D41DE30F57602E0DB54308479BFD0BC9BEF36DEA8A7C` | CANONICAL | BLOB |
+| AUDIT05-06-REVIEWATTEMPT-GATES-LOG-1 | AC4（Review dispatch evidence HEAD=`46db551` 上 default/TaskPath/pins/API，均 EXIT 0） | `audit/V1-FULL-AUDIT/logs/audit05-06-reviewattempt-gates-46db551-20261113.log` | `977dd1237d07113074ec8524cbcf103af8b26214` | `BAEBB18774AB5908AB2976523A74F58374A2AD0764D839A3700DFBE87B736335` | CANONICAL | BLOB |
+| AUDIT05-06-REVIEWATTEMPT-GATES-RESULT-1 | AC4（dispatch evidence HEAD 上四项门禁 generated HEAD/argv/UTC/elapsed/EXIT） | `audit/V1-FULL-AUDIT/evidence/audit05-06-reviewattempt-gates-46db551-20261113.json` | `977dd1237d07113074ec8524cbcf103af8b26214` | `5E3B63C0052809E2110DEAC175DD3304E2C816664CF25D6952798E7BE12089DC` | CANONICAL | BLOB |
 
 说明：裁决文档中记录的阶段 0 日志 `B561…` 是提交前 WORKTREE SHA-256；本表按模板使用 Git BLOB 字节，完整 SHA-256 为 `7E2A…`。
 
@@ -269,14 +276,14 @@ src/**、apps/**、原有tests/**、共享契约、Schema、依赖、真实用�
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | worktree | G:/CODEX/New Manga | PRESERVE_REFERENCED | — | evidence/baseline.json | 主工作区，不创建/移除worktree |
-| task-env | G:/CODEX/New Manga.workspace/task-env/NEW-MANGA-V1-FULL-AUDIT | PRESERVE_REFERENCED | — | audit/V1-FULL-AUDIT | 隔离数据库/构建/临时数据，未授权删除 |
+| task-env | G:/CODEX/New Manga.workspace/task-env/NEW-MANGA-V1-FULL-AUDIT | PRESERVE_REFERENCED | — | audit/V1-FULL-AUDIT | 隔离数据库/构建/临时数据及 ZCode 429 原始 stderr（含瞬态响应头；脱敏副本入仓）；未授权删除 |
 | agent-output | G:/CODEX/New Manga.workspace/agent-output/codex/NEW-MANGA-V1-FULL-AUDIT | PRESERVE_REFERENCED | — | `logs/dotnet-build-audit01-02-20261112.log`; `logs/sidecar-lifecycle-probe-20261112T143133097703Z.log` | solution 编译产物；lifecycle probe 载入实际生成的 `NewManga.CoreClient.dll`；Task 未关闭前保留 |
 | artifact | audit/V1-FULL-AUDIT | PRESERVE_REFERENCED | — | evidence/ | 审计交付物保留 |
 | dataset/model/test-material | — | NOT_APPLICABLE | — | — | 不获取私有漫画/新模型 |
 | exchange | — | NOT_APPLICABLE | — | — | 无外部传输 |
 
 ## Rolling checkpoint
-[audit/V1-FULL-AUDIT/AUDIT_RESUME.md](../../audit/V1-FULL-AUDIT/AUDIT_RESUME.md) 顶部的 2026-11-13 AUDIT-05/06 检查点为当前恢复点。当前：00 limited PASS；01 FAIL/P2；02 BLOCKED；05/06 PARTIAL；08 FAIL；11 阶段 FAIL；AUDIT-03/04/07/09/10/12/13/14 未完成。阶段内容提交 `c0da575b46e30ecda7a6aefe3bbfe103440ae493`；初始门禁证据提交 `c9cb792dda2d31648d520af9b49caf7f8d39aadf`；Task pinbackfill HEAD=`919b55d932f3665693b047dfcb075b2bdf1c6d1c` 后的门禁证据提交 `cdf857b2aba2fe8e2f55f0aff28e41730bf1dc76`，default/TaskPath 各 3 warnings、pins 18/18、API 1/79/6=86，四项 EXIT 0，均已 pin。AC2/AC3/AC4 仍 `PARTIAL`，Release Gate `BLOCKED`，Task `in_progress`；送审前在当前最终 Task pinbackfill HEAD 再跑门禁并将输出留在 workspace，随后由 ZCode fresh context 独立复核三项候选。
+[audit/V1-FULL-AUDIT/AUDIT_RESUME.md](../../audit/V1-FULL-AUDIT/AUDIT_RESUME.md) 顶部的 2026-11-13 AUDIT-05/06 检查点为当前恢复点。当前：00 limited PASS；01 FAIL/P2；02 BLOCKED；05/06 PARTIAL；08 FAIL；11 阶段 FAIL；AUDIT-03/04/07/09/10/12/13/14 未完成。阶段内容提交 `c0da575b46e30ecda7a6aefe3bbfe103440ae493`；AUDIT-05/06 两批门禁均已 pin；ZCode 对 `dfef8d8919fe2d19013e65c84948fb288c2c9928` 的 fresh review attempt 返回 1310/429、无 response/session，故 Review `NOT_RUN`，回执已 pin；attempt 后 HEAD=`46db551b4e4fd38f9f46c0653adef9330afc66ad` 上的四项门禁 EXIT 0 并已 pin。全 Task AC2/AC3/AC4 仍 `PARTIAL`，Release Gate `BLOCKED`，Task `in_progress`。下一步继续 AUDIT-14，并保留 AUDIT-05/06 的 ZCode 裁决待办至额度重置后。
 
 ## 2026-10-24 推送准备补充授权
 
