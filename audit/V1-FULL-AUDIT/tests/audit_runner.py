@@ -112,7 +112,7 @@ def run(name: str, argv: list[str], cwd: Path, timeout: int) -> dict:
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('suite', choices=['pytest', 'audit03-import', 'frontend', 'rust', 'smoke', 'governance', 'dependencies', 'desktop', 'probes', 'dotnet', 'sidecar-lifecycle'])
+    parser.add_argument('suite', choices=['pytest', 'audit03-import', 'audit04-ocr-detection', 'frontend', 'rust', 'smoke', 'governance', 'dependencies', 'desktop', 'probes', 'dotnet', 'sidecar-lifecycle'])
     args = parser.parse_args()
     assert ROOT.name == 'New Manga' and (ROOT / '.git').exists()
     npm = shutil.which('npm.cmd') or 'npm.cmd'
@@ -147,6 +147,28 @@ if __name__ == '__main__':
             'tests/fea09/test_read_paths.py', '-q', '-rs', '--tb=short',
             '-o', 'cache_dir=' + str(RUNTIME / f'audit03-reference-pytest-cache-{run_id}'),
             '--basetemp=' + str(RUNTIME / f'audit03-reference-pytest-temp-{run_id}')], ROOT, 600),
+        ],
+        # Keep provider-level tests separate from the Core service tests so
+        # same-named conftest.py modules cannot collide during collection.
+        # Real-weight/inference probes are deliberately excluded; this audit
+        # run covers synthetic outputs and typed fail-closed behavior only.
+        'audit04-ocr-detection': [
+            (f'audit04-providers-{run_id}', [sys.executable, '-m', 'pytest',
+            'tests/providers/test_detection_doctr.py',
+            'tests/providers/test_detection_manga.py',
+            'tests/providers/test_detection_manga_onnx.py',
+            'tests/providers/test_ocr_local.py',
+            'tests/providers/test_ocr_manga_onnx.py',
+            'tests/providers/test_detect_handler.py',
+            'tests/providers/test_detector_assembly.py',
+            'tests/providers/test_detector_weights_lookup.py',
+            '-q', '-rs', '--tb=short',
+            '-o', 'cache_dir=' + str(RUNTIME / f'audit04-providers-pytest-cache-{run_id}'),
+            '--basetemp=' + str(RUNTIME / f'audit04-providers-pytest-temp-{run_id}')], ROOT, 900),
+            (f'audit04-core-detect-{run_id}', [sys.executable, '-m', 'pytest',
+            'tests/core/test_core_detect.py', '-q', '-rs', '--tb=short',
+            '-o', 'cache_dir=' + str(RUNTIME / f'audit04-core-pytest-cache-{run_id}'),
+            '--basetemp=' + str(RUNTIME / f'audit04-core-pytest-temp-{run_id}')], ROOT, 600),
         ],
         'frontend': [(f'frontend-tests-segment-b-{run_id}', [npm, 'test', '--', '--reporter=verbose'], ROOT / 'apps/desktop/frontend', 180),
                      (f'frontend-build-segment-b-{run_id}', [npm, 'run', 'build', '--', '--outDir', str(RUNTIME / f'frontend-dist-{run_id}')], ROOT / 'apps/desktop/frontend', 180)],
