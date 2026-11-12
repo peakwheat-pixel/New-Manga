@@ -31,3 +31,7 @@
 - `tests/audit_runner.py`：段 B suite 范围映射；保存历史结果名、记录 HEAD/branch/EXIT；`.NET` 逐项目运行并核对前后 porcelain。
 - `reports/PROBES-RESULT-SEGMENT-B.md`：段 B probes 的 2 个待分级问题、1 个未复现越界覆盖预期与 EXIT 1 边界。
 - `logs/audit-probes-segment-b-20261112T081030840760Z.log`、`evidence/audit-probes-segment-b-20261112T081030840760Z.json`：段 B probes 生成 HEAD、argv、时点、输出、elapsed 和 EXIT。
+- `reports/PROBE-TRIAGE-SEGMENT-B-2026-11-12.md`：ZCode 对两项 probes 的 Medium / High confidence 分级、第三项 defense-verified 定性及证据边界。
+- `logs/probe-triage-confirmation-20261112.log`：ZCode 只读确认命令、session/turn/trace、生成 HEAD、时点、回答与 EXIT。
+- `logs/pytest-segment-b-20261112T081732598825Z.log`、`evidence/pytest-segment-b-20261112T081732598825Z.json`：Python Core 限定 pytest 的 argv/cwd、生成 HEAD、起始时点、耗时、完整失败输出与 EXIT；结果为 3,519 passed / 16 failed / 10 skipped / 11 warnings。
+- `reports/PYTEST-RESULT-SEGMENT-B-2026-11-12.md`：pytest 失败分组、skip/warning 和 suite 证据限制摘要。

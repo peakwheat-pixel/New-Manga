@@ -25,8 +25,8 @@
 
 ## 段 B suite 级状态（与 AUDIT-01–14 逐项状态分离）
 
-- `pytest`（Python Core 限定证据）：NOT_RUN
-- `probes`（审计工具探针）：EXIT 1；2 项隔离 probe 确认风险，1 项目录穿越覆盖预期未复现；severity pending，详见 `reports/PROBES-RESULT-SEGMENT-B.md`
+- `pytest`（Python Core 限定证据）：EXIT 1；3,519 passed / 16 failed / 10 skipped / 11 warnings；失败详情见 `logs/pytest-segment-b-20261112T081732598825Z.log`，汇总见 `reports/PYTEST-RESULT-SEGMENT-B-2026-11-12.md`
+- `probes`（审计工具探针）：EXIT 1；2 项隔离 probe 确认为 Medium / High confidence 风险，1 项目录穿越覆盖预期未复现且防线已验证；详见 `reports/PROBES-RESULT-SEGMENT-B.md` 与 `reports/PROBE-TRIAGE-SEGMENT-B-2026-11-12.md`
 - `dotnet`（Avalonia headless，8 个测试项目逐项）：NOT_RUN；仓库默认 `obj/project.assets.json` 8/8 存在
 - `smoke-core,wire`：NOT_RUN
 - `governance`：已在 2026-11-12 当前裁决证据 HEAD 复核，default/TaskPath、18 pins、API 退出码均为 0；最终交付前需再绑最终审计 HEAD 复跑

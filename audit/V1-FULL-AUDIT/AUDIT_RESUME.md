@@ -50,3 +50,12 @@ TaskStatus=in_progress；ExecutionState=BLOCKED_MATERIAL_PROVENANCE（仅推送�
 - runner 实现固定在 `5ab8ae006580f4c3aab6d61ce180794921dc7641`；结果在 HEAD `5ab8ae006580f4c3aab6d61ce180794921dc7641` 生成，命令 `python audit/V1-FULL-AUDIT/tests/audit_runner.py probes`，EXIT 1，耗时 1.295s。原始输出与 JSON 见 Task Canonical Evidence `PROBES-LOG-1` / `PROBES-RESULT-1`。
 - 隔离 probes 中，directory junction 发布越界和 nmbak 磁盘失败后的数据库变更/错误信息缺失两个观察待 ZCode 定级；`../` 备份路径写入预期被 `_managed_relative_path` 拒绝。详细解释边界见 `reports/PROBES-RESULT-SEGMENT-B.md`；没有修复或重跑。
 - AUDIT-01–14 仍全部 `BLOCKED-ORIGINAL-CHECKLIST-MISSING`。下一项运行根 `pytest`，保持 suite 结果与 AUDIT-NN 状态隔离；其后按已保存裁决执行 8 个 `.NET` 项目、smoke `core,wire`、governance。
+
+### 段 B pytest 与 probes 分级检查点（2026-11-12）
+
+- 根目录 `tests` 已通过 `python audit/V1-FULL-AUDIT/tests/audit_runner.py pytest` 执行一次，作为 Python Core 限定 suite 证据。子进程 argv、cwd、branch、生成 HEAD、UTC 起始时点、elapsed、完整输出和 EXIT 见 `logs/pytest-segment-b-20261112T081732598825Z.log` 及 `evidence/pytest-segment-b-20261112T081732598825Z.json`。生成 HEAD=`425bd0565134b36642c93922ebd80c648b97d627`，EXIT=1，3,519 passed / 16 failed / 10 skipped / 11 warnings，elapsed=288.543s。
+- 16 项失败按观察分为 reader export hook 3 项、FEA11 v7 fixture 查询缺 `chapters.custom_rank` 1 项、plugin sandbox 12 项；未推断共同根因、未修复、未重跑。详见 `reports/PYTEST-RESULT-SEGMENT-B-2026-11-12.md`。10 个 skip 与 11 个 warning 的原因/类别也记在报告和完整日志中。
+- suite 状态已更新，但不映射到 `AUDIT-01–14`；这些逐项仍为 `BLOCKED-ORIGINAL-CHECKLIST-MISSING`。当前 pytest 结果不是 App/UI、真实 GUI、安装、升级/回退或 Release Gate 通过证据。
+- ZCode 只读确认 probes 原有分级：`reports/PROBE-TRIAGE-SEGMENT-B-2026-11-12.md` 与 `logs/probe-triage-confirmation-20261112.log`。两项建议均为 Medium / High confidence；`../` 备份路径为 defense-verified。未独立复现；实现修复超出本 Task。
+- 原始 pytest 数据和 ZCode 确认日志在证据提交 `40f47362894f2ea6dcd66d463a72328aad37bbc6` 固定；本恢复点文档随后单独提交并 pin 回 Task。
+- 下一步按既有裁决逐一运行 8 个 `.NET` 测试项目（`--no-restore`，TRX 写到 workspace；每项前后 porcelain 必须逐字节一致）。如有不忽略的状态变化立即停止，不清理、不恢复。之后执行 smoke `core,wire` 与 governance；`frontend/rust/desktop/npm-audit/packaged` 继续 `NOT_RUN-legacy`，真实 GUI 继续 BLOCKED。

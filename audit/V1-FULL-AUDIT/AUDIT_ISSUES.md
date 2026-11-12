@@ -11,16 +11,16 @@
 
 ## SEG-B-PROBES-001 — directory junction 下 managed publication 越界写
 
-- 状态：`NEEDS_TRIAGE`（仅隔离 probe 证据；尚无独立 severity 或完整影响分析）
-- 级别：`UNASSESSED`
-- 证据：`reports/PROBES-RESULT-SEGMENT-B.md` 与对应 log/evidence JSON。`test_managed_publish_follows_directory_junction` 在隔离 `tmp_path` 内实测 `publish_wrote_outside_managed=true`。
-- 影响范围：当前证据限于测试构造的目录 junction；尚未验证其他入口、真实用户目录或可利用条件。
-- 处置：不修改产品代码；交 ZCode 独立只读定级/定修复路线。AUDIT-01–14 仍维持具名阻断，不据此映射到某个 AUDIT-NN。
+- 状态：`TRIAGED`
+- 级别：`Medium` / confidence `High`（ZCode 只读源码核对与隔离 probe 证据；未独立复现）
+- 证据：`reports/PROBE-TRIAGE-SEGMENT-B-2026-11-12.md`、`reports/PROBES-RESULT-SEGMENT-B.md`、对应 log/evidence JSON。`test_managed_publish_follows_directory_junction` 在隔离 `tmp_path` 内实测 `publish_wrote_outside_managed=true`。
+- 影响范围：需外部行为者在 managed root 内创建 junction；产品写出受限于生成的 revision bytes，现有外部文件受 `final_path.exists()` 保护。证据未覆盖真实用户目录、GC/归档或其他未测入口。
+- 处置：不修改产品代码；修复须另开实现 Task。建议给 `publish` 增加 containment/reparse 防线。AUDIT-01–14 仍维持具名阻断，不据此映射到某个 AUDIT-NN。
 
 ## SEG-B-PROBES-002 — nmbak 磁盘写失败后数据库变更且缺少回滚标识
 
-- 状态：`NEEDS_TRIAGE`（仅隔离 probe 证据；尚无独立 severity 或完整影响分析）
-- 级别：`UNASSESSED`
-- 证据：`reports/PROBES-RESULT-SEGMENT-B.md` 与对应 log/evidence JSON。`test_nmbak_restore_disk_failure_leaves_changed_database_without_rollback_id` 实测 `database_changed=true`、`typed_error=false`、`rollback_id_in_error=false`。
-- 影响范围：当前证据限于隔离备份/数据库 fixture；尚未复核中断窗口、可恢复性及用户数据影响。
-- 处置：不修改产品代码；交 ZCode 独立只读定级/定修复路线。AUDIT-01–14 仍维持具名阻断，不据此映射到某个 AUDIT-NN。
+- 状态：`TRIAGED`
+- 级别：`Medium` / confidence `High`（ZCode 只读源码核对与隔离 probe 证据；未独立复现）
+- 证据：`reports/PROBE-TRIAGE-SEGMENT-B-2026-11-12.md`、`reports/PROBES-RESULT-SEGMENT-B.md` 与对应 log/evidence JSON。`test_nmbak_restore_disk_failure_leaves_changed_database_without_rollback_id` 实测 `database_changed=true`、`typed_error=false`、`rollback_id_in_error=false`，且 pre_restore 包已创建。
+- 影响范围：可恢复性由 pre_restore 包保留；缺陷为裸 I/O 错误缺少 typed error 和 rollback 指引。多文件部分写中间态仅为静态推断，probe 未演示。上层 Core/wire 映射、真实磁盘故障与用户数据影响未验证。
+- 处置：不修改产品代码；修复须另开实现 Task。建议把 I/O 错误包装为带 pre_restore `backup_id` 的 `BACKUP_RESTORE_INCOMPLETE`。AUDIT-01–14 仍维持具名阻断，不据此映射到某个 AUDIT-NN。
