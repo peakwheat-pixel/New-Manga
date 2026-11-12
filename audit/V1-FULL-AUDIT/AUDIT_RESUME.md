@@ -109,3 +109,5 @@ TaskStatus=in_progress；ExecutionState=BLOCKED_MATERIAL_PROVENANCE（仅推送�
 - ZCode 更正后的最终状态裁决为 `in_progress`：用户实际授权“持续推进，全部授权，自动计划，不需要用户介入，裁决交给zcode”“不需要人工批准，你自己批准”“额度已恢复，继续停止的任务”，但没有具体接受本 Task 的永久限制。依 [协作协议 §4](../../doc/09_COLLABORATION.md)，限制性关闭需要用户对该具体取舍明确裁决。
 - 唯一待处理输入是用户明确接受或拒绝 Task 卡所列的 `closed_with_limitations` 语义。没有明确接受时不转 `in_review`，不关闭 Task，不改写 AC2/AC3/AC4 的 PARTIAL、AUDIT-01–14 的 BLOCKED 或 Release Gate 的 BLOCKED。
 - 原始与更正裁决报告/CLI log 已列入 Canonical Evidence；见 `reports/ZCODE-LIFECYCLE-ADJUDICATION-2026-11-12.md`、`reports/ZCODE-LIFECYCLE-ADJUDICATION-CORRECTION-2026-11-12.md`。N-1/N-2 已闭合；产品测试失败、阻断与未验证限制保持原样。
+- 后续对 Task 自身可达 Git 历史的定向搜索记录在 `logs/original-checklist-git-history-search-20261112.log`（generated HEAD=`5cb792e0966817bd642d173ab7db844b2dce092c`）：最早 Task blob `1248f2b8a` 只有通用 AC1–AC4 与 `AUDIT-00–14` 范围；`-SAUDIT-14`、`-S15项专项` 在 Task/audit 子树中未找到逐项定义。该日志已 pin 入 Task；只能说明当前仓库可达历史未保存该清单，不外推到仓外来源。
+- 当前唯一决策输入未变：若要限制性收口，用户须明确接受 Task 卡所列 `closed_with_limitations` 语义；若要完成逐项审计，则需提供原始清单。没有其中之一时 Task 保持 `in_progress`，不得把它改成 `in_review` 或 `done`。
