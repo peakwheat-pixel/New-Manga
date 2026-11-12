@@ -5,7 +5,7 @@
 
 段 B 状态为 00 limited PASS；01/03/08/11 FAIL；02 BLOCKED；04–07、09、10、12–14 PARTIAL。台账有 3 项已 triage finding、1 项 INVESTIGATE、11 项待 ZCode 裁决候选、1 项已披露关闭的非产品 P3 observation。AC2/AC3/AC4 保持 PARTIAL，Release Gate BLOCKED。
 
-最新已 pin 的 post-pinbackfill gate batch generated HEAD=77310033f77d5b793fe4ff3734e1ba7cf049c06c，commit=e61a271fb06f708db67e465be87a396fffc92c47：default/TaskPath 各 3 warnings，verify_pins 18/18、API 1/79/6=86，四项均 EXIT 0。更早批次仍见 AUDIT_RESUME.md。ZCode plan-mode Review 两次在 session/response 前因 provider quota `1310` EXIT 1；证据与 reset 时间见 AUDIT_RESUME.md 顶部。卡面 pinbackfill 后仍须跑门禁。AC4 保持 PARTIAL，Task 保持 in_progress，Release Gate 保持 BLOCKED。
+最新已 pin 的 post-pinbackfill gate batch generated HEAD=77310033f77d5b793fe4ff3734e1ba7cf049c06c，commit=e61a271fb06f708db67e465be87a396fffc92c47：default/TaskPath 各 3 warnings，verify_pins 18/18、API 1/79/6=86，四项均 EXIT 0。Task Card pinbackfill HEAD=3a1cecca 后又复跑四项并 EXIT 0，记录见 AUDIT_RESUME.md，待下次卡面更新 rolling pin。ZCode plan-mode Review 两次在 session/response 前因 provider quota `1310` EXIT 1；证据与 reset 时间见 AUDIT_RESUME.md 顶部。AC4 保持 PARTIAL，Task 保持 in_progress，Release Gate 保持 BLOCKED。
 
 ## 先前阶段状态（由以上检查点更新）
 

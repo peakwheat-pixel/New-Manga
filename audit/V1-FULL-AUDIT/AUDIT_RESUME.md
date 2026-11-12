@@ -5,6 +5,7 @@
 - 随后用 workspace 临时 provider 配置对已存在的 Team Coding Plan provider 做最小只读探测，仍 EXIT 1；CLI 实际解析到 `account:bigmodel-individual-coding-plan` 并返回相同 `1310`，无 response/sessionId。没有改动原始凭据或全局 provider 配置。
 - 可复核记录：`source/zcode-final-review-prompt-20261113.txt`、`logs/zcode-final-review-attempts-20261113.log`、`evidence/zcode-final-review-attempts-20261113.json` 及其引用的 stdout/stderr 原始文件。外部临时配置和原始派发回执保留于 `G:/CODEX/New Manga.workspace/task-envs/NEW-MANGA-V1-FULL-AUDIT/`、`agent-output/ZCode/NEW-MANGA-V1-FULL-AUDIT/`。
 - 上述记录提交后，generated HEAD=`77310033f77d5b793fe4ff3734e1ba7cf049c06c` 的 default / TaskPath / verify_pins / API 四项均 EXIT 0；default/TaskPath 各 3 warnings，pins 18/18，API 1/79/6=86。原始日志与 JSON 由 commit=`e61a271fb06f708db67e465be87a396fffc92c47` 固定；本次 Canonical Evidence pinbackfill 将其与派发失败证据一并纳入，再于 pinbackfill HEAD 重跑四项门禁。
+- Task Card pinbackfill HEAD=`3a1ceccacd5e972413c2d170760ede83ae39a5d1` 后，default/TaskPath/verify_pins/API 再次均 EXIT 0（3 warnings/3 warnings、18/18、1/79/6=86）；原始日志与 JSON 由 commit=`7ecf21c7d724c93c6890703a15394b5854348c69` 固定。该滚动 gate batch 将在下一次 Task-card 更新时回填 Canonical Evidence。
 - 该失败不构成 Review 或候选裁决。AC2/AC3/AC4 仍 PARTIAL，Task 仍 `in_progress`，Release Gate 仍 `BLOCKED`；下一步是在 ZCode provider 可用后，以届时 clean HEAD 重派独立 Review，并复核当前证据与门禁。无待处理的人工批准。
 
 ## 2026-11-13 P7 当前 pinbackfill 后门禁检查点
