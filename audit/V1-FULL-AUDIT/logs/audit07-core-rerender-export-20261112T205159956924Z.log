@@ -1,0 +1,49 @@
+START_UTC=2026-11-12T20:52:05.012424+00:00
+HEAD=4daa7169752b8f9c85fd8f8a01e5660f98f10481
+BRANCH=main
+SHELL=Python subprocess (no shell)
+INTERPRETER=C:\Python314\python.exe
+CWD=G:\CODEX\New Manga
+ARGV=["C:\\Python314\\python.exe", "-m", "pytest", "tests/core/test_font_wire.py", "tests/core/test_pipeline_defaults_service.py", "tests/core/test_settings_section_validation.py", "tests/core/test_rc4_stdio_render_preview.py", "tests/core/test_p16_reader_export.py", "-q", "-rs", "--tb=short", "-o", "cache_dir=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\audit07-core-pytest-cache-20261112T205159956924Z", "--basetemp=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\audit07-core-pytest-temp-20261112T205159956924Z"]
+DATA_ROOT=G:\CODEX\New Manga.workspace\task-env\NEW-MANGA-V1-FULL-AUDIT\audit07-core-rerender-export-20261112T205159956924Z\data
+........................................................................ [ 55%]
+.......................................................FFF               [100%]
+================================== FAILURES ===================================
+_ test_export_hook_effective_options_match_content_and_history[zip-initial0-override0-effective0] _
+tests\core\test_p16_reader_export.py:762: in test_export_hook_effective_options_match_content_and_history
+    assert accepted["format_options"] == effective
+E   AssertionError: assert {'compression': 'standard'} == {'compression': 'store'}
+E     
+E     Differing items:
+E     {'compression': 'standard'} != {'compression': 'store'}
+E     Use -v to get more diff
+---------------------------- Captured stderr call -----------------------------
+[core.schema] applied 14 migration(s) up to v14; schema bootstrap is the only write a read-only session performs (user rows and managed originals are never modified)
+_ test_export_hook_effective_options_match_content_and_history[text-initial1-override1-effective1] _
+tests\core\test_p16_reader_export.py:762: in test_export_hook_effective_options_match_content_and_history
+    assert accepted["format_options"] == effective
+E   AssertionError: assert {'text_representation': 'txt'} == {'text_repres...tion': 'json'}
+E     
+E     Differing items:
+E     {'text_representation': 'txt'} != {'text_representation': 'json'}
+E     Use -v to get more diff
+---------------------------- Captured stderr call -----------------------------
+[core.schema] applied 14 migration(s) up to v14; schema bootstrap is the only write a read-only session performs (user rows and managed originals are never modified)
+_ test_export_hook_effective_options_match_content_and_history[text-initial2-override2-effective2] _
+tests\core\test_p16_reader_export.py:780: in test_export_hook_effective_options_match_content_and_history
+    assert len([e for e in events if e["event_type"] == "hook_invoked"]) == 2
+E   assert 0 == 2
+E    +  where 0 = len([])
+---------------------------- Captured stderr call -----------------------------
+[core.schema] applied 14 migration(s) up to v14; schema bootstrap is the only write a read-only session performs (user rows and managed originals are never modified)
+============================== warnings summary ===============================
+tests/core/test_rc4_stdio_render_preview.py::test_production_stdio_decodes_nmfr_renders_text_and_publishes_readable_preview
+  G:\CODEX\New Manga\tests\core\test_rc4_stdio_render_preview.py:245: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+    for px in rendered.crop((20, 20, 150, 120)).convert("RGB").getdata()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+3 failed, 127 passed, 1 warning in 7.81s
+
+EXIT=1
+TIMED_OUT=False
+ELAPSED_SECONDS=8.308

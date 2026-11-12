@@ -14,7 +14,7 @@
 - AUDIT-04: PARTIAL（Provider/OCR/Core detect 定向合成回归 175+40 passed / EXIT 0；验证权重选路、fake OCR adapter 与坐标算子；真实权重/人工 GT/识别准确率/CPU inference/GUI NOT_RUN。见 reports/AUDIT-04-OCR-DETECTION-2026-11-13.md）
 - AUDIT-05: PARTIAL（SFX 分类、策略、重检测/人工保护、provider 降级与重叠仲裁已静态核对并以合成回归覆盖；定向批次 247 passed / 3 deselected / EXIT 0。相同几何 primary/SFX 产生双 SFX Region 为候选，待 ZCode 裁决；真实权重、人工 GT 与 UI `NOT_RUN`。见 `reports/AUDIT-05-06-SFX-TRANSLATION-2026-11-13.md`）
 - AUDIT-06: PARTIAL（翻译 payload、SQLite 同 chapter 上下文冻结、Region 映射、重试、超时/暂停边界与人工 Revision 保护已静态核对并以 mock/合成测试覆盖；上下文批次 84 passed / EXIT 0。账单级 spend cap/idempotency 与 glossary 强制优先级为候选，待 ZCode 裁决；真实 API/费用/取消语义 `NOT_RUN`。见同一阶段报告）
-- AUDIT-07: NOT_TESTED（待修复/排版/导出链路和许可核对）
+- AUDIT-07: PARTIAL（38 inpaint/pipeline、73 rendering、5 Pillow source-style、6 font-storage、7 searchable export、7 revision restore 全部 EXIT 0；Core/rerender/export 组 127 passed/3 failed/EXIT 1，3 例来自 P16 reader export hook options，候选待 ZCode。真实模型/GT/GUI/屏幕缩放/视觉质量/字体许可 NOT_RUN；见 `reports/AUDIT-07-REPAIR-TYPESET-EXPORT-2026-11-13.md`）
 - AUDIT-08: FAIL（有限合成 DB 专项 284 passed / 0 skipped / EXIT 0；迁移 v1–v13→v14、关系保留、约束、并发、异常 rollback、意外退出恢复与关闭后路径移动有隔离证据。`SEG-B-PROBES-002` 重跑确认裸 I/O 错误且无 rollback ID。ZCode 首轮 Review `ACCEPT`（0 P0/P1/P2、2 P3）；对 `f3320cc9d` follow-up `ACCEPT`（0 P0/P1/P2、1 P3）；closure Review 对 `6375afacb` 为 `ACCEPT`，P3-3 CLOSED，P3-4 的 WORKTREE/BLOB SHA 基准和 CRLF→LF 归一化已在报告澄清，待 fresh closure review。0742a572/25614d45/a932b756/d6658d12 四批及后续两批门禁已 pin；39 项既有哈希独立复算通过，最新两批各五文件回填中。真实库、运行时任务状态、应用路径迁移、真实损坏恢复、断电及多文件部分写仍未验证。详见 AUDIT-08 / ZCode Review 报告）
 - AUDIT-09: NOT_TESTED（待 Avalonia 静态页面覆盖审阅；真实 GUI 运行具名 BLOCKED）
 - AUDIT-10: NOT_TESTED（待可重复 Core 合成样本微基准；GUI 性能具名 BLOCKED）

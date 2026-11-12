@@ -1,0 +1,14 @@
+START_UTC=2026-11-12T20:56:31.264033+00:00
+HEAD=4daa7169752b8f9c85fd8f8a01e5660f98f10481
+BRANCH=main
+SHELL=Python subprocess (no shell)
+INTERPRETER=C:\Python314\python.exe
+CWD=G:\CODEX\New Manga
+ARGV=["C:\\Python314\\python.exe", "-m", "pytest", "tests/core/test_rc4_revision_commands.py", "-q", "-rs", "--tb=short", "-o", "cache_dir=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\audit07-revision-cache-20261112T205631263951Z", "--basetemp=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\audit07-revision-temp-20261112T205631263951Z"]
+DATA_ROOT=G:\CODEX\New Manga.workspace\task-env\NEW-MANGA-V1-FULL-AUDIT\audit07-revision-restore-20261112T205631263951Z\data
+.......                                                                  [100%]
+7 passed in 0.77s
+
+EXIT=0
+TIMED_OUT=False
+ELAPSED_SECONDS=1.205

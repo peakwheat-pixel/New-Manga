@@ -105,3 +105,17 @@
 - logs/audit04-static-20261112T203819Z.log 与 evidence/audit04-static-20261112T203819Z.json：同 HEAD；产品 diff EXIT 0、whitespace EXIT 0；21 条采集时工作树路径均允许，out-of-scope=0；14 条历史 FEA-11 HOST-AUTH-4 路径作继承项披露。
 - 过程记录：runner 初次试跑于 `5727f5497fdf392295309d031f2632c86e6f1b51`，providers 167 passed + Core 40 passed；补入 ORT CPU/auto policy tests 后以最终 runner 在 `c20e819009a810ae3828aef7eb8644eb9a3eae80` 重跑为正式结果。初次试跑与早期静态捕获 `20261112T202910Z` / `20261112T203116Z` / `20261112T203329Z` 的日志/JSON均保留。
 - logs/audit04-post-evidence-gates-20261112T203946Z.log 与 evidence/audit04-post-evidence-gates-20261112T203946Z.json：generated HEAD=`c10c3ac39e354f08a068825915ece29bd506e969`；default/TaskPath 各 PASS / EXIT 0（各 3 warnings），verify_pins 18/18 / EXIT 0，API inventory 1/79/6=86 / EXIT 0。工作树在门禁生成时 clean。
+
+## 2026-11-13 AUDIT-07
+
+- `reports/AUDIT-07-REPAIR-TYPESET-EXPORT-2026-11-13.md`：阶段矩阵、合成证据、3 个邻接 P16 export 测试失败、两项待 ZCode 裁决候选与真实模型/GUI/字体许可 `NOT_RUN` 边界。
+- `tests/audit_runner.py`：新增 `audit07-typeset` suite；源码由 commit `4daa7169752b8f9c85fd8f8a01e5660f98f10481` 固定。
+- `logs/audit07-inpaint-pipeline-20261112T205159956924Z.log` 与 `evidence/audit07-inpaint-pipeline-20261112T205159956924Z.json`：generated HEAD=`4daa7169752b8f9c85fd8f8a01e5660f98f10481`；38 passed / 0 skipped，EXIT 0。
+- `logs/audit07-rendering-20261112T205159956924Z.log` 与 `evidence/audit07-rendering-20261112T205159956924Z.json`：同 HEAD；73 passed / 0 skipped，EXIT 0。
+- `logs/audit07-core-rerender-export-20261112T205159956924Z.log` 与 `evidence/audit07-core-rerender-export-20261112T205159956924Z.json`：同 HEAD；127 passed / 3 failed / 0 skipped，EXIT 1；失败是 P16 reader export hook/options 测试，不是图像像素质量断言。
+- `logs/audit07-pillow-source-style-20261112T205159956924Z.log` 与 `evidence/audit07-pillow-source-style-20261112T205159956924Z.json`：同 HEAD；5 passed / 0 skipped，EXIT 0。
+- `logs/audit07-font-storage-20261112T205159956924Z.log` 与 `evidence/audit07-font-storage-20261112T205159956924Z.json`：同 HEAD；6 passed / 0 skipped，EXIT 0。
+- `logs/audit07-searchable-export-20261112T205159956924Z.log` 与 `evidence/audit07-searchable-export-20261112T205159956924Z.json`：同 HEAD；7 passed / 0 skipped，EXIT 0。
+- `logs/audit07-revision-restore-20261112T205631263951Z.log` 与 `evidence/audit07-revision-restore-20261112T205631263951Z.json`：同 HEAD；7 passed / 0 skipped，EXIT 0。
+- `logs/audit07-static-scope-20261112T205724Z.log` 与 `evidence/audit07-static-scope-20261112T205724Z.json`：同 HEAD；产品源码/既有测试/依赖/合同差异 EXIT 0，审计越界路径 0，tracked fonts/models 各 0。
+- `logs/audit07-governance-4daa716-20261112T211024Z.log` 与 `evidence/audit07-governance-4daa716-20261112T211024Z.json`：generated HEAD=`4daa7169752b8f9c85fd8f8a01e5660f98f10481`；default、TaskPath、verify_pins 18/18、API 1/79/6=86 均 EXIT 0。此为阶段证据提交前门禁；pinbackfill 后仍须复跑。

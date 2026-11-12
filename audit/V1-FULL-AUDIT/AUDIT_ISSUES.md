@@ -100,3 +100,18 @@
 - 发现：ZCode 对 `e10fd1ee7e326255ffebb4ca529ecee5dfa477d9` 的独立 AUDIT-11 Review `ACCEPT`，记录 0 个 P0/P1/P2 阻断项和 1 个 P3 observation。扫描日志中的源 SHA-256 为 `4BFDDE17DC29EF7619D3A385F010E0877DC6527865C6FC8B5DFD34660F6BD456`，最终 pin 的 SHA-256 为 `8D71732C7DB12CD14711E7AE9E83CCF2F2D753DD3EAEE526B5E446B1463476D8`。
 - 复核：重建行 37 末尾含一个 ASCII 空格的 6,193-byte 版本，SHA-256 精确匹配扫描时 hash；提交版 6,192 bytes。差异来自 `git diff --cached --check` 后移除该尾随空格，仅为空白变化，不改变 Python tokens/扫描逻辑。详见 `logs/audit-11-scanner-source-hash-drift-20261112.log`。
 - 边界：扫描结果 JSON SHA-256 与记录统计未变；本次没有重跑 scanner，不能声称新扫描 PASS。review 报告、原始回执及 dispatch 日志见 `reports/ZCODE-AUDIT-11-REVIEW-2026-11-12.md`、`evidence/zcode-audit11-review-20261112.json`、`logs/zcode-audit11-review-dispatch-20261112.log`。
+
+
+## AUDIT-07-CAND-001 — P16 reader export hook options test failures
+
+- 状态：`REVIEW_PENDING`（候选观察；不由审计作者分配 severity 或正式 finding）。
+- 证据：`reports/AUDIT-07-REPAIR-TYPESET-EXPORT-2026-11-13.md`、`logs/audit07-core-rerender-export-20261112T205159956924Z.log`。三个参数化 case 中 ZIP compression override 未生效、text representation override 未生效，且空 override case 未产生预期的 hook audit events；测试组 127 passed / 3 failed / EXIT 1。
+- 边界：该测试覆盖 reader export plugin hook/options 与 history，不测排版像素或真实导出视觉质量；当前尚未重复运行或单独归因到产品缺陷。
+- 待裁决：请 ZCode 判断是否属于 AUDIT-07 或既有 export scope，是否构成正式 finding 及严重度；本审计不授权修复。
+
+## AUDIT-07-CAND-002 — 用户字体许可证备注不是授权验证
+
+- 状态：`REVIEW_PENDING`（范围/风险待裁决；不宣称存在未授权分发）。
+- 证据：`src/application/fonts/service.py` 接受可选 `license_note` 并原样保存；FEA-14-FONT-1 要求不随包分发字体且把字体渲染消费留给 FONT-2；静态捕获显示仓库 tracked font assets=0。
+- 边界：本轮没有读取用户字体、核验外部许可或观察随包/发布；`license_note` 只能作为用户备注，不能证明许可。用户字体许可检查 `NOT_RUN`。
+- 待裁决：请 ZCode 判断备注/许可边界是否已由 FEA-14-FONT-1 limitation 接受，或需要独立产品要求/Task；不在本审计内改变字体导入语义。

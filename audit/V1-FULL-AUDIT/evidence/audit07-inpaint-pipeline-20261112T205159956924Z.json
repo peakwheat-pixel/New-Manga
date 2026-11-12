@@ -1,0 +1,24 @@
+{
+  "name": "audit07-inpaint-pipeline-20261112T205159956924Z",
+  "argv": [
+    "C:\\Python314\\python.exe",
+    "-m",
+    "pytest",
+    "tests/providers/test_inpaint.py",
+    "tests/providers/test_handlers_pipeline.py",
+    "-q",
+    "-rs",
+    "--tb=short",
+    "-o",
+    "cache_dir=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\audit07-inpaint-pytest-cache-20261112T205159956924Z",
+    "--basetemp=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\audit07-inpaint-pytest-temp-20261112T205159956924Z"
+  ],
+  "cwd": "G:\\CODEX\\New Manga",
+  "started_utc": "2026-11-12T20:51:59.957122+00:00",
+  "head": "4daa7169752b8f9c85fd8f8a01e5660f98f10481",
+  "branch": "main",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 2.566,
+  "log": "audit\\V1-FULL-AUDIT\\logs\\audit07-inpaint-pipeline-20261112T205159956924Z.log"
+}

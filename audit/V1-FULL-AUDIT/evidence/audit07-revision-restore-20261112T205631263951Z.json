@@ -1,0 +1,23 @@
+{
+  "name": "audit07-revision-restore-20261112T205631263951Z",
+  "argv": [
+    "C:\\Python314\\python.exe",
+    "-m",
+    "pytest",
+    "tests/core/test_rc4_revision_commands.py",
+    "-q",
+    "-rs",
+    "--tb=short",
+    "-o",
+    "cache_dir=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\audit07-revision-cache-20261112T205631263951Z",
+    "--basetemp=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\audit07-revision-temp-20261112T205631263951Z"
+  ],
+  "cwd": "G:\\CODEX\\New Manga",
+  "started_utc": "2026-11-12T20:56:31.264033+00:00",
+  "head": "4daa7169752b8f9c85fd8f8a01e5660f98f10481",
+  "branch": "main",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 1.205,
+  "log": "audit\\V1-FULL-AUDIT\\logs\\audit07-revision-restore-20261112T205631263951Z.log"
+}

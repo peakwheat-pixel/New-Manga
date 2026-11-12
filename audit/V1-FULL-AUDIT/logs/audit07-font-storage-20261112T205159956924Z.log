@@ -1,0 +1,14 @@
+START_UTC=2026-11-12T20:52:13.940546+00:00
+HEAD=4daa7169752b8f9c85fd8f8a01e5660f98f10481
+BRANCH=main
+SHELL=Python subprocess (no shell)
+INTERPRETER=C:\Python314\python.exe
+CWD=G:\CODEX\New Manga
+ARGV=["C:\\Python314\\python.exe", "-m", "pytest", "tests/storage/test_fonts.py", "-q", "-rs", "--tb=short", "-o", "cache_dir=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\audit07-font-storage-pytest-cache-20261112T205159956924Z", "--basetemp=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\audit07-font-storage-pytest-temp-20261112T205159956924Z"]
+DATA_ROOT=G:\CODEX\New Manga.workspace\task-env\NEW-MANGA-V1-FULL-AUDIT\audit07-font-storage-20261112T205159956924Z\data
+......                                                                   [100%]
+6 passed in 0.71s
+
+EXIT=0
+TIMED_OUT=False
+ELAPSED_SECONDS=1.145

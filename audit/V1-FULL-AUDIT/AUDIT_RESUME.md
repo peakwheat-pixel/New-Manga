@@ -1,3 +1,12 @@
+## 2026-11-13 AUDIT-07 图片修复、排版与导出检查点
+
+- Task 仍 `in_progress`；产品基线=`10e4ee013835605800d3830fb960ae8d3aa04167`；测试和静态捕获 generated HEAD=`4daa7169752b8f9c85fd8f8a01e5660f98f10481`，branch=`main`。
+- AUDIT-07=`PARTIAL`：7 组隔离命令累计 263 passed / 3 failed / 0 skipped。inpaint/pipeline 38、Pillow rendering 73、source-style 5、font storage 6、searchable export 7、region revision restore 7 各 EXIT 0；Core/rerender/export 组 127 passed/3 failed/EXIT 1。
+- 3 个失败均来自 P16 reader export hook options 参数测试：ZIP override 返回 `standard` 而非 `store`；text override 返回 `txt` 而非 `json`；空 override 案例没有预期的 `hook_invoked` audit event。该测试未比较排版像素质量，候选 `AUDIT-07-CAND-001` 归属与级别待 ZCode 裁决；`AUDIT-07-CAND-002` 为用户字体 license_note 未验证的边界观察，待 ZCode 裁决。
+- 活动 Core 的 Pillow renderer 只扫描 Windows Fonts；FEA-14-FONT-1 明确把用户字体渲染消费留给 FONT-2。修复 learned routes 均静态标记 not_implemented；不宣称 LaMa 模型或真实修复质量通过。真实权重/GT/GUI/缩放/导出视觉对照/用户字体许可均 `NOT_RUN`。
+- `audit07-static-scope-20261112T205724Z` generated HEAD=`4daa7169752b8f9c85fd8f8a01e5660f98f10481`：产品源码/原有测试/依赖/合同相对 base diff EXIT 0；审计 out-of-scope=0；仓库已跟踪字体/模型资产各 0。详见 `logs/audit07-static-scope-20261112T205724Z.log` 与 JSON。
+- 全矩阵、限制、准确失败栈见 `reports/AUDIT-07-REPAIR-TYPESET-EXPORT-2026-11-13.md`。治理门禁、独立 Review 与 Task card pinbackfill 尚待本阶段证据提交后复跑。下一项按 DAG 执行 AUDIT-09；全 Task AC2/AC3/AC4 仍 PARTIAL、Release Gate BLOCKED。
+
 ## 2026-11-13 AUDIT-04 OCR 与文本检测检查点
 
 - 当前 Task 仍 `in_progress`；产品基线=`10e4ee013835605800d3830fb960ae8d3aa04167`；定向测试 generated HEAD=`c20e819009a810ae3828aef7eb8644eb9a3eae80`。

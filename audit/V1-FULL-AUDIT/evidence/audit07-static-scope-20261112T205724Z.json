@@ -1,0 +1,114 @@
+{
+  "schema": "audit07-static-scope/v1",
+  "generated_at_utc": "2026-11-12T20:57:24.438313Z",
+  "generated_head": "4daa7169752b8f9c85fd8f8a01e5660f98f10481",
+  "branch": "main",
+  "git_status_porcelain": "?? audit/V1-FULL-AUDIT/evidence/audit07-core-rerender-export-20261112T205159956924Z.json\n?? audit/V1-FULL-AUDIT/evidence/audit07-font-storage-20261112T205159956924Z.json\n?? audit/V1-FULL-AUDIT/evidence/audit07-inpaint-pipeline-20261112T205159956924Z.json\n?? audit/V1-FULL-AUDIT/evidence/audit07-pillow-source-style-20261112T205159956924Z.json\n?? audit/V1-FULL-AUDIT/evidence/audit07-rendering-20261112T205159956924Z.json\n?? audit/V1-FULL-AUDIT/evidence/audit07-revision-restore-20261112T205631263951Z.json\n?? audit/V1-FULL-AUDIT/evidence/audit07-searchable-export-20261112T205159956924Z.json\n?? audit/V1-FULL-AUDIT/logs/audit07-core-rerender-export-20261112T205159956924Z.log\n?? audit/V1-FULL-AUDIT/logs/audit07-font-storage-20261112T205159956924Z.log\n?? audit/V1-FULL-AUDIT/logs/audit07-inpaint-pipeline-20261112T205159956924Z.log\n?? audit/V1-FULL-AUDIT/logs/audit07-pillow-source-style-20261112T205159956924Z.log\n?? audit/V1-FULL-AUDIT/logs/audit07-rendering-20261112T205159956924Z.log\n?? audit/V1-FULL-AUDIT/logs/audit07-revision-restore-20261112T205631263951Z.log\n?? audit/V1-FULL-AUDIT/logs/audit07-searchable-export-20261112T205159956924Z.log\n",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "G:\\CODEX\\New Manga",
+      "shell": false,
+      "interpreter": "git",
+      "elapsed_seconds": 0.021329,
+      "exit": 0,
+      "stdout": "4daa7169752b8f9c85fd8f8a01e5660f98f10481\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "branch",
+        "--show-current"
+      ],
+      "cwd": "G:\\CODEX\\New Manga",
+      "shell": false,
+      "interpreter": "git",
+      "elapsed_seconds": 0.019231,
+      "exit": 0,
+      "stdout": "main\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain"
+      ],
+      "cwd": "G:\\CODEX\\New Manga",
+      "shell": false,
+      "interpreter": "git",
+      "elapsed_seconds": 0.065733,
+      "exit": 0,
+      "stdout": "?? audit/V1-FULL-AUDIT/evidence/audit07-core-rerender-export-20261112T205159956924Z.json\n?? audit/V1-FULL-AUDIT/evidence/audit07-font-storage-20261112T205159956924Z.json\n?? audit/V1-FULL-AUDIT/evidence/audit07-inpaint-pipeline-20261112T205159956924Z.json\n?? audit/V1-FULL-AUDIT/evidence/audit07-pillow-source-style-20261112T205159956924Z.json\n?? audit/V1-FULL-AUDIT/evidence/audit07-rendering-20261112T205159956924Z.json\n?? audit/V1-FULL-AUDIT/evidence/audit07-revision-restore-20261112T205631263951Z.json\n?? audit/V1-FULL-AUDIT/evidence/audit07-searchable-export-20261112T205159956924Z.json\n?? audit/V1-FULL-AUDIT/logs/audit07-core-rerender-export-20261112T205159956924Z.log\n?? audit/V1-FULL-AUDIT/logs/audit07-font-storage-20261112T205159956924Z.log\n?? audit/V1-FULL-AUDIT/logs/audit07-inpaint-pipeline-20261112T205159956924Z.log\n?? audit/V1-FULL-AUDIT/logs/audit07-pillow-source-style-20261112T205159956924Z.log\n?? audit/V1-FULL-AUDIT/logs/audit07-rendering-20261112T205159956924Z.log\n?? audit/V1-FULL-AUDIT/logs/audit07-revision-restore-20261112T205631263951Z.log\n?? audit/V1-FULL-AUDIT/logs/audit07-searchable-export-20261112T205159956924Z.log\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--quiet",
+        "10e4ee013835605800d3830fb960ae8d3aa04167",
+        "4daa7169752b8f9c85fd8f8a01e5660f98f10481",
+        "--",
+        "src",
+        "apps",
+        "tests",
+        "requirements.txt",
+        "requirements-dev.txt",
+        "doc/contracts"
+      ],
+      "cwd": "G:\\CODEX\\New Manga",
+      "shell": false,
+      "interpreter": "git",
+      "elapsed_seconds": 0.024256,
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "ls-files",
+        "--",
+        "*.ttf",
+        "*.otf",
+        "*.woff",
+        "*.woff2"
+      ],
+      "cwd": "G:\\CODEX\\New Manga",
+      "shell": false,
+      "interpreter": "git",
+      "elapsed_seconds": 0.022988,
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "ls-files",
+        "--",
+        "*.onnx",
+        "*.pt",
+        "*.pth",
+        "*.safetensors"
+      ],
+      "cwd": "G:\\CODEX\\New Manga",
+      "shell": false,
+      "interpreter": "git",
+      "elapsed_seconds": 0.022997,
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "tracked_font_assets": [],
+  "tracked_model_assets": [],
+  "out_of_scope_paths": [],
+  "out_of_scope_count": 0
+}
