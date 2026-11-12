@@ -23,3 +23,10 @@ TaskStatus=in_progress；ExecutionState=BLOCKED_MATERIAL_PROVENANCE（仅推送�
 备选方案已具体写入 `reports/MATERIAL_DISPOSITION_OPTIONS.md`：完整历史推送仍需材料传播证明；许可不足时建议独立的干净源码快照新分支，保留原main/远端main和全部证据。仅设计，未创建导出/分支/新仓库或释放新Task。下一步等待用户材料信息或方案选择，不自动实施。
 
 当前用户裁决覆盖上述等待许可分支：用户明确“我自己的，但是不传播”。169个JPEG及其压缩外层blob已登记禁止上传（`evidence/push-material-disposition.json`），push=BLOCKED_OWNER_NO_DISTRIBUTION。保留全部本地素材与历史；不再重复索要许可，也不推完整main或3个分批候选。推荐下一步由Codex冻结独立干净源码快照的发布目标与Task；尚未释放、不自动创建分支或push。
+
+## 2026-11-12 段 B 恢复点
+
+- 当前 Task 已按 ZCode 受托裁决从 `blocked` 恢复为 `in_progress`。段 A 基线仍为 `349e61faff5f93067af5d4ce2d9e394e0d665b8c`，原有 PASS/NOT_TESTED 作为历史保留；段 B 审计当前 AD-002 产品，固定 base=`10e4ee013835605800d3830fb960ae8d3aa04167`。
+- 阶段 0：branch=`main`、工作树 clean；`87f61d8…`、`349e61…`、`b1c1f5a5…` 祖先关系 EXIT 0；`349e61…..HEAD` 为 2366 commits；`.tmp.driveupload` 在旧树中有 2148 个条目。完整命令与 EXIT 见 [阶段 0 日志](logs/stage0-resume-verification-20261112.log)；提交前 WORKTREE SHA-256=`B561337B697AD62506049EF310EF04A52B8C69487CE31F6C9046E2B9B470EB6D`，Git BLOB SHA-256=`7E2A4911D7F1AB2D21DE48C4AC4B77F2C8BACCC5FA6CB1D6C2DFF681F32260A7`（commit `304a40addb4818f415b1e86d5c5b65205eca3605`）。
+- 范围裁决摘要和传播风险证据见 [ZCode 裁决记录](reports/ZCODE-SCOPE-ADJUDICATION-2026-11-12.md)。本地证据支持素材历史于 2026-10-30 随 main push 进入当时公开仓库的高置信推论；当前远端实时可见性未核验，不 push、不删除、不改写历史、不 GC/prune。
+- 段 B AUDIT-00–14 全部从未执行状态开始；审计仅本地与只读隔离，私有图片只可用元数据定位，禁止素材内容级访问、导出、复制或显示真实路径。若发现新的真实用户数据泄漏面、需改产品文件、超出 allowed_paths 修治理问题或阶段 0 基线/祖先条件变化，停止并记录。

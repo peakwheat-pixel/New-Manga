@@ -3,14 +3,14 @@ id: NEW-MANGA-V1-FULL-AUDIT
 title: V1 全项目独立审计
 kind: research
 governance_version: 3
-status: blocked
+status: in_progress
 resume_status: in_progress
 approval: user_approved
 suggested_owner: Codex
 owner: Codex
-reviewer: null
+reviewer: ZCode (fresh independent context after delivery)
 depends_on: []
-base_commit: 349e61faff5f93067af5d4ce2d9e394e0d665b8c
+base_commit: 10e4ee013835605800d3830fb960ae8d3aa04167
 branch: main
 worktree: G:/CODEX/New Manga
 integration_commit: null
@@ -47,7 +47,14 @@ src/**、apps/**、原有tests/**、共享契约、Schema、依赖、真实用�
 使用 audit/V1-FULL-AUDIT/tests/audit_runner.py，日志保存argv/cwd/shell/interpreter/exit/elapsed；真实GUI若不可捕获则BLOCKED，不用JSX或Mock替代。真实API/模型标注和干净Windows无条件时BLOCKED。
 
 ## Canonical Evidence
-待审计交付后固定文件SHA256；当前证据尚未提交，不伪造commit pin。
+全审最终证据仍为 pending。当前段 B 范围裁决与阶段 0 证据如下；这些证据不代表 AC 已完成或 Release Gate 已通过。
+
+| evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) | sha256_basis |
+|---|---|---|---|---|---|---|
+| SCOPE-1 | 解封范围与传播风险裁决 | `audit/V1-FULL-AUDIT/reports/ZCODE-SCOPE-ADJUDICATION-2026-11-12.md` | `304a40addb4818f415b1e86d5c5b65205eca3605` | `0BE9C7ECBCE7C4EA6482FF8248DF16179380A742096BB84D51716304DE6D9D54` | CANONICAL | BLOB |
+| STAGE0-1 | AC1（段 B 基线/范围前置核验，partial） | `audit/V1-FULL-AUDIT/logs/stage0-resume-verification-20261112.log` | `304a40addb4818f415b1e86d5c5b65205eca3605` | `7E2A4911D7F1AB2D21DE48C4AC4B77F2C8BACCC5FA6CB1D6C2DFF681F32260A7` | CANONICAL | BLOB |
+
+说明：裁决文档中记录的阶段 0 日志 `B561…` 是提交前 WORKTREE SHA-256；本表按模板使用 Git BLOB 字节，完整 SHA-256 为 `7E2A…`。
 
 ## Resource Manifest
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
@@ -88,3 +95,14 @@ Codex 记录：`.tmp.driveupload` 中存在169个JPEG，文件名集合、页数
 DSH 接任 Lead / Architect / Integrator（见 `doc/GOVERNANCE_TAKEOVER_2026-10-25.md`）。本 Task 保持 `blocked`、`resume_status: in_progress`；Owner/审计作者仍为 Codex，不伪造独立审批。用户“169 张 JPEG 私有、不传播”的裁决不变：禁止推送包含这些字节的完整 main 历史，禁止把它们纳入任何待推对象。
 
 本 Task 不因 DSH 接管自动恢复；重新启动需 DSH 明确范围冻结与独立 Reviewer Appointment。干净快照 push 的独立审查可复用本 Task 的材料隔离结论，但不得据此宣称全审完成或产品发布通过。
+
+## 2026-11-12 ZCode 受托裁决与段 B 解封
+
+本节依用户当前授权“持续推进、全部授权；裁决交给 ZCode”及 ZCode 独立 CLI 裁决记录生效；范围摘要与阶段 0 本地核验见 Canonical Evidence 所 pin 的 `ZCODE-SCOPE-ADJUDICATION-2026-11-12.md` 和日志。
+
+- **状态/范围**：`blocked` 恢复为 `in_progress`。段 A 固定于 `349e61faff5f93067af5d4ce2d9e394e0d665b8c`，既有结果保留为历史；段 B 固定于 `10e4ee013835605800d3830fb960ae8d3aa04167`，AUDIT-00–14 需按当前产品重新核验。段 B 的 AUDIT-00 从 `NOT_RUN` 起，不继承段 A 的 PASS；AUDIT-01–14 保持 `NOT_TESTED`。
+- **材料边界**：本地只读审计可继续；169 张 JPEG 及含其内容的对象不得复制、导出、展示、上传或 push。素材内容级访问、OCR/视觉输出和真实本地路径披露均为停止条件。
+- **传播风险**：本地 `origin/main` reflog 与仓库文档支持私有素材对象曾随 2026-10-30 main push 进入公开仓库历史的高置信推论；详见裁决记录。当前远端实时可见性、外部可 fetch 状态及远端缓存均未实测。此 Task 不执行远端补救，不 push、不删分支、不改写历史、不 GC/prune。
+- **Owner / Reviewer**：Owner=Codex。Reviewer=ZCode 的新独立上下文，仅在审计交付后 Review；不得参与段 B 实施。Review 绑定最终 `reviewed_head`，记录 reviewer 新 session 身份。
+- **允许路径与 stop conditions**：沿用 frontmatter 原 `allowed_paths`。如需产品代码、测试、冻结契约、Schema、依赖改动，或治理修复越出允许路径，停止并新建/释放 Task；不得把 NOT_TESTED/NOT_RUN 写成 PASS。
+- **阶段 0 结果**：HEAD 精确为段 B base，branch=`main`，工作树 clean；`87f61d8…`、`349e61…` 均是 HEAD 祖先，`349e61…..HEAD` 为 2,366 commits；所有相关 ancestry EXIT=0。细节和未实测项见日志。
