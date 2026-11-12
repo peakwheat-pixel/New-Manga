@@ -1,0 +1,16 @@
+TASK=FEA-15-PIN-BASIS-ENFORCE-1 post-normalization clean-head gates
+GENERATED_AT=2026-11-12T12:37:02.1032738+08:00
+HEAD=661211b548a5d17a7368457e04b37c3dd192a948
+BRANCH=main
+PROCESS_CWD=G:\CODEX\New Manga
+GIT_STATUS_PORCELAIN=
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-15-PIN-BASIS-ENFORCE-1.md
+WARN: 存在 11 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6999 bytes / 64 lines
+FAIL: doc/STATUS.md 超过防膨胀预算：3298 bytes / 31 lines
+Governance check: FAIL (1 errors, 2 warnings)
+EXIT=1
+FINAL_GIT_STATUS_PORCELAIN=
+SUMMARY_EXIT=1
