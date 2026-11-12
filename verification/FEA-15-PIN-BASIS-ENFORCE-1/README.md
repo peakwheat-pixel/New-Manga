@@ -390,3 +390,12 @@ At clean `main` HEAD `ccb822b48df3bc6e42c2b63c9beb92c540d995e6`, following the R
 - `r001-post-review-pinbackfill-audit-ccb822b48d.log` — 44909 bytes; workspace-original SHA-256 `641401f9e819ce6066f12215f0c3c53583fd94d9c0c1ff41f1717d9de444e963`.
 
 This is the latest pre-terminal pinbackfill audit. Task remains `in_progress`, R-001 `OPEN`, and terminal-state gates are still pending.
+
+## R-001 latest active-card pinbackfill gates and 152-row audit (2026-11-12)
+
+At clean `main` HEAD `e3e6a2e0e31cf257112ad57fe99cc1b4a0f6f239`, after adding the three pre-terminal Canonical Evidence pins, default and TaskPath checks each PASSed with 3 warnings/`EXIT=0`; pins were `18/18`/`EXIT=0`; API was `1/79/6=86`/`EXIT=0`. The full-section audit of all 152 then-current rows returned `152/152 PASS`, `FAIL_ROWS=0`, `EXIT=0`; porcelain was empty.
+
+- `r001-post-pinbackfill-gates-e3e6a2e0e3.log` — 7675 bytes; workspace-original SHA-256 `8bea191780e9975ff7a789ac9122a3c370a090a29c653ea6bdc565ea55e49db9`.
+- `r001-post-pinbackfill-audit-e3e6a2e0e3.log` — 45809 bytes; workspace-original SHA-256 `65962e11b3c1ef65e4993c34fa86b03479ba115eea20f4a7be6f3174cf7f3a01`.
+
+Task remains `in_progress`, R-001 `OPEN`; this audit predates terminal candidate changes and is not the final closeout audit.
