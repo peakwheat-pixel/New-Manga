@@ -65,6 +65,11 @@ EXCLUDED_ROOTS = (
     "experiments/",
     "apps/desktop/",
 )
+OWN_OUTPUTS = {
+    "audit/V1-FULL-AUDIT/evidence/baseline-segment-b.json",
+    "audit/V1-FULL-AUDIT/evidence/source-manifest-segment-b.json",
+    "audit/V1-FULL-AUDIT/logs/audit-00-segment-b.log",
+}
 
 
 def git(*args: str, input_bytes: bytes | None = None) -> bytes:
@@ -120,9 +125,18 @@ def classify(path: str) -> str:
 def main() -> int:
     head = git("rev-parse", "HEAD").decode().strip()
     branch = git("branch", "--show-current").decode().strip()
-    status = git("status", "--porcelain", "--untracked-files=all").decode().strip()
-    if branch != "main" or status:
-        raise SystemExit(f"STOP: expected clean main; branch={branch!r}; status={status!r}")
+    status_records = [
+        row for row in git("status", "--porcelain", "--untracked-files=all").decode().splitlines()
+        if row
+    ]
+    dirty_paths = {row[3:].strip() for row in status_records}
+    unexpected_dirty = sorted(dirty_paths - OWN_OUTPUTS)
+    if branch != "main" or unexpected_dirty:
+        raise SystemExit(
+            f"STOP: expected main and no unrelated changes; branch={branch!r}; "
+            f"unexpected_dirty={unexpected_dirty!r}"
+        )
+    worktree_status = "clean" if not status_records else "only_expected_audit_outputs_untracked"
     if git("cat-file", "-e", f"{BASE}^{{commit}}") is None:
         raise SystemExit(f"STOP: base commit missing: {BASE}")
 
@@ -195,7 +209,7 @@ def main() -> int:
         "generated_head": head,
         "product_base": BASE,
         "branch": branch,
-        "worktree_status": "clean",
+        "worktree_status": worktree_status,
         "source_drift_between_base_and_generated_head": source_drift,
         "tracked_tree_files_at_base": len(entries),
         "included_source_config_files": len(manifest_entries),
