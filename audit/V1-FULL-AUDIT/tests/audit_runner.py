@@ -116,7 +116,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     assert ROOT.name == 'New Manga' and (ROOT / '.git').exists()
     npm = shutil.which('npm.cmd') or 'npm.cmd'
-    dotnet_run_id = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
+    run_id = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
     dotnet_projects = [
         ('App', 'apps/desktop-avalonia/tests/NewManga.App.Tests/NewManga.App.Tests.csproj'),
         ('Appearance', 'apps/desktop-avalonia/tests/NewManga.Appearance.Tests/NewManga.Appearance.Tests.csproj'),
@@ -127,23 +127,23 @@ if __name__ == '__main__':
         ('PresentationAvalonia', 'apps/desktop-avalonia/tests/NewManga.Presentation.Avalonia.Tests/NewManga.Presentation.Avalonia.Tests.csproj'),
         ('ThemeEngine', 'apps/desktop-avalonia/tests/NewManga.ThemeEngine.Tests/NewManga.ThemeEngine.Tests.csproj'),
     ]
-    dotnet_results = RUNTIME / 'dotnet' / f'results-{dotnet_run_id}'
+    dotnet_results = RUNTIME / 'dotnet' / f'results-{run_id}'
     suites = {
-        'pytest': [('pytest', [sys.executable, '-m', 'pytest', 'tests', '-q', '-rs', '--tb=short', '-o', 'cache_dir=' + str(RUNTIME / 'pytest-cache'), '--basetemp=' + str(RUNTIME / 'pytest-temp')], ROOT, 1200)],
-        'frontend': [('frontend-tests', [npm, 'test', '--', '--reporter=verbose'], ROOT / 'apps/desktop/frontend', 180),
-                     ('frontend-build', [npm, 'run', 'build', '--', '--outDir', str(RUNTIME / 'frontend-dist')], ROOT / 'apps/desktop/frontend', 180)],
-        'rust': [('cargo-test', ['cargo', 'test', '--locked', '--offline'], ROOT / 'apps/desktop/src-tauri', 900)],
-        'desktop': [('desktop-build', ['cargo', 'build', '--locked', '--offline'], ROOT / 'apps/desktop/src-tauri', 900)],
-        'probes': [('audit-probes', [sys.executable, '-m', 'pytest', str(AUDIT / 'tests/test_audit_probes.py'), '-vv', '-s', '-p', 'no:cacheprovider', '--basetemp=' + str(RUNTIME / 'probe-temp')], ROOT, 120)],
-        'smoke': [('software-smoke', [sys.executable, '-m', 'tools.smoke.plugins', '--only', 'core,wire', '--json', str(AUDIT / 'evidence/software-smoke-report.json')], ROOT, 180)],
-        'governance': [('governance', ['pwsh', '-NoProfile', '-File', 'tools/governance/check.ps1'], ROOT, 180)],
-        'dependencies': [('pip-check', [sys.executable, '-m', 'pip', 'check'], ROOT, 60),
-                         ('npm-audit', [npm, 'audit', '--json'], ROOT / 'apps/desktop/frontend', 90)],
+        'pytest': [(f'pytest-segment-b-{run_id}', [sys.executable, '-m', 'pytest', 'tests', '-q', '-rs', '--tb=short', '-o', 'cache_dir=' + str(RUNTIME / f'pytest-cache-{run_id}'), '--basetemp=' + str(RUNTIME / f'pytest-temp-{run_id}')], ROOT, 1200)],
+        'frontend': [(f'frontend-tests-segment-b-{run_id}', [npm, 'test', '--', '--reporter=verbose'], ROOT / 'apps/desktop/frontend', 180),
+                     (f'frontend-build-segment-b-{run_id}', [npm, 'run', 'build', '--', '--outDir', str(RUNTIME / f'frontend-dist-{run_id}')], ROOT / 'apps/desktop/frontend', 180)],
+        'rust': [(f'cargo-test-segment-b-{run_id}', ['cargo', 'test', '--locked', '--offline'], ROOT / 'apps/desktop/src-tauri', 900)],
+        'desktop': [(f'desktop-build-segment-b-{run_id}', ['cargo', 'build', '--locked', '--offline'], ROOT / 'apps/desktop/src-tauri', 900)],
+        'probes': [(f'audit-probes-segment-b-{run_id}', [sys.executable, '-m', 'pytest', str(AUDIT / 'tests/test_audit_probes.py'), '-vv', '-s', '-p', 'no:cacheprovider', '--basetemp=' + str(RUNTIME / f'probe-temp-{run_id}')], ROOT, 120)],
+        'smoke': [(f'software-smoke-segment-b-{run_id}', [sys.executable, '-m', 'tools.smoke.plugins', '--only', 'core,wire', '--json', str(AUDIT / f'evidence/software-smoke-report-segment-b-{run_id}.json')], ROOT, 180)],
+        'governance': [(f'governance-segment-b-{run_id}', ['pwsh', '-NoProfile', '-File', 'tools/governance/check.ps1'], ROOT, 180)],
+        'dependencies': [(f'pip-check-segment-b-{run_id}', [sys.executable, '-m', 'pip', 'check'], ROOT, 60),
+                         (f'npm-audit-segment-b-{run_id}', [npm, 'audit', '--json'], ROOT / 'apps/desktop/frontend', 90)],
         'dotnet': [
-            (f'dotnet-{name.lower()}-{dotnet_run_id}',
+            (f'dotnet-{name.lower()}-{run_id}',
              ['dotnet', 'test', project, '--no-restore',
               '--results-directory', str(dotnet_results),
-              '--logger', f'trx;LogFileName={name}-{dotnet_run_id}.trx',
+              '--logger', f'trx;LogFileName={name}-{run_id}.trx',
               '--settings', 'apps/desktop-avalonia/tests/NewManga.runsettings',
               '-v:minimal'], ROOT, 900)
             for name, project in dotnet_projects
