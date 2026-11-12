@@ -35,7 +35,7 @@ allowed_paths:
 - [x] AC1：固定Git/环境及有效源码清单，记录dirty和历史缺口。 <<MET>>
 - [ ] AC2：15项专项逐项有真实检查结果或具名阻断，关键链路深读与测试。 <<PARTIAL: AUDIT-01–14 因原始清单缺失保持具名阻断；probes EXIT 1（2 项 Medium / High confidence，1 项 defense-verified）；Python Core pytest EXIT 1（3,519 passed / 16 failed / 10 skipped）；Avalonia .NET 为 BLOCKED-TESTHOST-ACCESS（8/8 EXIT 1、TRX 0 tests）；smoke EXIT 1（Wire 6/6 PASS，Core 4 PASS / 7 BLOCKED-SANDBOX-GRANT，frontend/packaged SKIP）>>
 - [ ] AC3：完整日志、问题分级、整改路线、正式报告和Release Gate落盘。 <<PARTIAL: probes 分级、pytest 失败摘要、.NET TestHost、smoke 沙箱阻断和最终 governance 门禁均有记录；全审与最终 Release Gate 仍因逐项清单缺失保持 BLOCKED>>
-- [ ] AC4：独立复核、证据pin和治理检查可核验；未满足不得置done。 <<PARTIAL: ZCode checkpoint review @453327ff1 为 PASS_FOR_CHECKPOINT（0 P0/0 P1）；N-1/N-2 已按复核补记，review/raw CLI/gates 三项证据已 pin，generated HEAD 453327ff1 四项门禁 EXIT 0；全审 Review 与集成验证未完成>>
+- [ ] AC4：独立复核、证据pin和治理检查可核验；未满足不得置done。 <<PARTIAL: ZCode checkpoint review @453327ff1 为 PASS_FOR_CHECKPOINT（0 P0/0 P1）；N-1/N-2 已按复核补记，current-head review/gates 证据已 pin，generated HEAD 453327ff1 四项门禁 EXIT 0；生命周期更正裁决要求 Task 保持 in_progress，等待用户明确接受限制；全审 Review 与集成验证未完成>>
 
 ## 允许修改范围
 仅frontmatter所列。审计日志/测试脚本由主控单一写入。三名子代理只读同一固定产品HEAD，无并发写入。用户显式审计目录优先于常规verification路径；运行派生产物放相邻workspace task-env。
@@ -114,6 +114,10 @@ src/**、apps/**、原有tests/**、共享契约、Schema、依赖、真实用�
 | ZCODE-CURRENT-HEAD-REVIEW-REPORT-1 | AC4（ZCode fresh checkpoint review of `453327ff1`: `PASS_FOR_CHECKPOINT`, 0 P0/0 P1; N-1/N-2 P3, N-3/R-4 observations） | `audit/V1-FULL-AUDIT/reports/ZCODE-CURRENT-HEAD-CHECKPOINT-REVIEW-2026-11-12.md` | `172bca13396d27cd8af7b39d1d675e516f422332` | `53E5DE691819A7923ADA31564430E99DAF346F2E15645E49E6CE54FEB0B2BCC8` | CANONICAL | BLOB |
 | ZCODE-CURRENT-HEAD-REVIEW-LOG-1 | AC4（reviewed_head=`453327ff1` 的原始 ZCode CLI JSON、session/turn/trace 与 EXIT 0） | `audit/V1-FULL-AUDIT/logs/zcode-current-head-checkpoint-review-20261112.log` | `172bca13396d27cd8af7b39d1d675e516f422332` | `63589140BB8147C61DC4EAC9CF2EA0BEF3D01D0BFDB215ADA4AC23768FBECBA8` | CANONICAL | BLOB |
 | FINAL-POST-PINBACKFILL-GATES-1 | AC4（generated HEAD=`453327ff1`：default/TaskPath governance、18 pins、API inventory 四项 EXIT 0，含命令/UTC/输出） | `audit/V1-FULL-AUDIT/logs/final-post-pinbackfill-gates-20261112.log` | `172bca13396d27cd8af7b39d1d675e516f422332` | `E7D19C884D2EB94326649946BC855C134DF147885C91C37FC72E812A097CF0B0` | CANONICAL | BLOB |
+| ZCODE-LIFECYCLE-ADJUDICATION-REPORT-1 | AC4（初次生命周期裁决摘要；明确标记 SUPERSEDED，不能作为关闭依据） | `audit/V1-FULL-AUDIT/reports/ZCODE-LIFECYCLE-ADJUDICATION-2026-11-12.md` | `a04a3e9ac314ec136d243551c3a6f0d892e558db` | `C1AC2F481BA4C00D0B8405158B458DB3FA50A6D2DC920384E9A78BD914DF4DCE` | CANONICAL | BLOB |
+| ZCODE-LIFECYCLE-ADJUDICATION-LOG-1 | AC4（初次 ZCode 生命周期裁决原始 CLI JSON，EXIT 0；已由更正版撤回） | `audit/V1-FULL-AUDIT/logs/zcode-lifecycle-adjudication-20261112.log` | `a04a3e9ac314ec136d243551c3a6f0d892e558db` | `4961EC24F3B609936013D63C7A7B350EBF30F2B710F4F115D55512B0A583C1E6` | CANONICAL | BLOB |
+| ZCODE-LIFECYCLE-ADJUDICATION-CORRECTION-REPORT-1 | AC4（更正后最终生命周期裁决：Task 保持 in_progress，等待用户明确接受限制） | `audit/V1-FULL-AUDIT/reports/ZCODE-LIFECYCLE-ADJUDICATION-CORRECTION-2026-11-12.md` | `a04a3e9ac314ec136d243551c3a6f0d892e558db` | `E88623C6B4324A6028B6B0F11487BE9A48F2805BC34E22A621A024DB2F95073A` | CANONICAL | BLOB |
+| ZCODE-LIFECYCLE-ADJUDICATION-CORRECTION-LOG-1 | AC4（更正后 ZCode 原始 CLI JSON、turn/trace 与 EXIT 0） | `audit/V1-FULL-AUDIT/logs/zcode-lifecycle-adjudication-correction-20261112.log` | `a04a3e9ac314ec136d243551c3a6f0d892e558db` | `65865C8B42F5CED9706B0D2947611EE3B05522525A4345D15E4CBB5A4D24F9A7` | CANONICAL | BLOB |
 
 说明：裁决文档中记录的阶段 0 日志 `B561…` 是提交前 WORKTREE SHA-256；本表按模板使用 Git BLOB 字节，完整 SHA-256 为 `7E2A…`。
 
@@ -167,3 +171,14 @@ DSH 接任 Lead / Architect / Integrator（见 `doc/GOVERNANCE_TAKEOVER_2026-10-
 - **Owner / Reviewer**：Owner=Codex。Reviewer=ZCode 的新独立上下文，仅在审计交付后 Review；不得参与段 B 实施。Review 绑定最终 `reviewed_head`，记录 reviewer 新 session 身份。
 - **允许路径与 stop conditions**：沿用 frontmatter 原 `allowed_paths`。如需产品代码、测试、冻结契约、Schema、依赖改动，或治理修复越出允许路径，停止并新建/释放 Task；不得把 NOT_TESTED/NOT_RUN 写成 PASS。
 - **阶段 0 结果**：HEAD 精确为段 B base，branch=`main`，工作树 clean；`87f61d8…`、`349e61…` 均是 HEAD 祖先，`349e61…..HEAD` 为 2,366 commits；所有相关 ancestry EXIT=0。细节和未实测项见日志。
+
+## 2026-11-12 ZCode 生命周期更正裁决
+
+- ZCode 初次裁决曾建议 `closed_with_limitations`，但其授权论证误把 Codex prompt 中的“选项 2”当成用户原话。ZCode 已无条件撤回该归因与状态建议；初次报告明确为 `SUPERSEDED`，不得作为关闭依据。
+- 更正后的最终裁决：Task 保持 `in_progress`，不转 `in_review`，暂不执行 `closed_with_limitations`。依据 [协作协议 §4](../09_COLLABORATION.md) 的限制性关闭标准，用户委托 ZCode 和“免人工批准”授权不足以替代用户对本 Task 具体永久限制的明确接受。
+- 实际用户授权原文为“持续推进，全部授权，自动计划，不需要用户介入，裁决交给zcode”“不需要人工批准，你自己批准”“额度已恢复，继续停止的任务”。不得将 Codex 的提示词选项归为用户选择。
+- 唯一待处理输入：用户明确接受或拒绝以下限制性关闭语义。在收到明确接受前保持 `in_progress`，AC1 `MET`，AC2/AC3/AC4 保留 `PARTIAL`，AUDIT-01–14 保持 `BLOCKED-ORIGINAL-CHECKLIST-MISSING`，Release Gate 保持 `BLOCKED`。
+
+> 我知悉 `NEW-MANGA-V1-FULL-AUDIT` 的 AUDIT-01–14 原始逐项清单不可恢复，接受其作为永久限制；同意该 Task 以 `closed_with_limitations` 关闭，保留全部 PARTIAL/BLOCKED 原状，不宣称全审通过、技术完成或发布通过。
+
+裁决和原始记录见 `audit/V1-FULL-AUDIT/reports/ZCODE-LIFECYCLE-ADJUDICATION-2026-11-12.md`、`audit/V1-FULL-AUDIT/reports/ZCODE-LIFECYCLE-ADJUDICATION-CORRECTION-2026-11-12.md` 及 Canonical Evidence 对应 pins。

@@ -102,3 +102,10 @@ TaskStatus=in_progress；ExecutionState=BLOCKED_MATERIAL_PROVENANCE（仅推送�
 - N-1 指出的状态/恢复文案滞后已更新；N-2 所需该 HEAD 四项门禁原始日志已写入 `logs/final-post-pinbackfill-gates-20261112.log` 并纳入 Task Canonical Evidence。N-1/N-2 均为 P3 finding，整改不改变原始限制；N-3/R-4 是 P4 observation。
 - 该门禁日志 generated HEAD=`453327ff19ea012026b76d2e10cdcf2c93c58038`：default 与 TaskPath check 各 EXIT 0（各 3 warnings），18 pins EXIT 0（18/18），API inventory EXIT 0（1/79/6=86）；每项含 UTC 时点与完整输出。
 - Task 继续 `in_progress`。AUDIT-01–14 仍为 `BLOCKED-ORIGINAL-CHECKLIST-MISSING`，Release Gate 仍为 `BLOCKED`；pytest 的 16 个失败、.NET TestHost 与 smoke sandbox 阻断、未运行项目和真实 GUI/安装/升级回退缺口均按原状态保留。此 checkpoint 不等于全审完成、集成通过或 Task 关闭。
+
+### 生命周期裁决更正与恢复点（2026-11-12）
+
+- ZCode 初次生命周期裁决曾建议 `closed_with_limitations`，但误把 Codex prompt 的选项描述归因给用户。更正裁决已明确撤回该授权论证和状态建议；初次报告仅作审计轨迹，标为 `SUPERSEDED`。
+- ZCode 更正后的最终状态裁决为 `in_progress`：用户实际授权“持续推进，全部授权，自动计划，不需要用户介入，裁决交给zcode”“不需要人工批准，你自己批准”“额度已恢复，继续停止的任务”，但没有具体接受本 Task 的永久限制。依 [协作协议 §4](../../doc/09_COLLABORATION.md)，限制性关闭需要用户对该具体取舍明确裁决。
+- 唯一待处理输入是用户明确接受或拒绝 Task 卡所列的 `closed_with_limitations` 语义。没有明确接受时不转 `in_review`，不关闭 Task，不改写 AC2/AC3/AC4 的 PARTIAL、AUDIT-01–14 的 BLOCKED 或 Release Gate 的 BLOCKED。
+- 原始与更正裁决报告/CLI log 已列入 Canonical Evidence；见 `reports/ZCODE-LIFECYCLE-ADJUDICATION-2026-11-12.md`、`reports/ZCODE-LIFECYCLE-ADJUDICATION-CORRECTION-2026-11-12.md`。N-1/N-2 已闭合；产品测试失败、阻断与未验证限制保持原样。
