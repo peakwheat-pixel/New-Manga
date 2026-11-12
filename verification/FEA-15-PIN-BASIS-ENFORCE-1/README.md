@@ -257,3 +257,9 @@ Preserved limitations for the pending Handoff: P2-1 keeps the six worktree-SHA/G
 
 - Generated at clean main HEAD `e5f115ff2392f6a6be4d8158a76769c68f9b81b2`, `PROCESS_CWD=G:\CODEX\New Manga`, empty `GIT_STATUS_PORCELAIN`; default check and this TaskPath each PASS with 3 warnings / `EXIT=0`; `verify_pins.ps1` 18/18 / `EXIT=0`; API inventory 1/79/6=86 / `EXIT=0`.
 - Timestamped command/output log: `main-post-final-adjudication-card-pinbackfill-gates-e5f115ff2.log`. External original SHA-256 `6D971A9827F59BA745CA7DDF4609CB60AC46B887A1302A9337F6D8177A20BE35`; copied into this evidence directory. This run verifies the Task card pinbackfill at e5f115ff; it does not replace the required final clean-head gates after terminal closeout.
+
+## R-001 full-row blob audit and latest card-pinbackfill gates (2026-11-12)
+
+- Full Canonical Evidence audit generated at clean `main` HEAD `fbfc7de07ef51e1cf0372cfafb526bf81aaf71c6`: all 53 rows had an existing `commit:path` blob and matching SHA-256; `PASS_ROWS=53`, `FAIL_ROWS=0`, `EXIT=0`. The timestamped row-by-row log is `canonical-evidence-blob-audit-fbfc7de07.log`; external original SHA-256 `0A6503D5B2FFF463E31DBF5C514BC29C58EA3B9EB06735FE84B75DC58B0F1968`. This satisfies ZCode's R-001 audit condition; the Task Closeout Record will record `R-001=CLOSED` after the audit log is committed and pinned.
+- At the same clean HEAD, default and this TaskPath checks each PASS with 3 warnings / `EXIT=0`; frozen pins 18/18 / `EXIT=0`; API inventory 1/79/6=86 / `EXIT=0`. Raw command log: `main-post-final-adjudication-card-pinbackfill-gates-fbfc7de07.log`; external original SHA-256 `67BAF710C6FA51A199F7A14DBE3D09B1251BB76ED44446636BA9CEFCEBA0D052`.
+- Both logs were copied into this evidence directory; their external originals remain preserved. No historical Task/evidence bytes changed. The final clean-head gate run after terminal closeout remains pending.
