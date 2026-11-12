@@ -35,7 +35,7 @@ allowed_paths:
 - [x] AC1：固定Git/环境及有效源码清单，记录dirty和历史缺口。 <<MET>>
 - [ ] AC2：15项专项逐项有真实检查结果或具名阻断，关键链路深读与测试。 <<PARTIAL: AUDIT-01–14 因原始清单缺失保持具名阻断；probes EXIT 1（2 项 Medium / High confidence，1 项 defense-verified）；Python Core pytest EXIT 1（3,519 passed / 16 failed / 10 skipped）；Avalonia .NET 为 BLOCKED-TESTHOST-ACCESS（8/8 EXIT 1、TRX 0 tests）；smoke EXIT 1（Wire 6/6 PASS，Core 4 PASS / 7 BLOCKED-SANDBOX-GRANT，frontend/packaged SKIP）>>
 - [ ] AC3：完整日志、问题分级、整改路线、正式报告和Release Gate落盘。 <<PARTIAL: probes 分级、pytest 失败摘要、.NET TestHost、smoke 沙箱阻断和最终 governance 门禁均有记录；全审与最终 Release Gate 仍因逐项清单缺失保持 BLOCKED>>
-- [ ] AC4：独立复核、证据pin和治理检查可核验；未满足不得置done。 <<PARTIAL: ZCode addendum 已关闭 R-1/R-2/R-3 与 F-1/F-2/F-3（R-4 保持 observation）；最新 pin 尾项与 addendum 后 diff 路径仍需机械登记；全审 review 与集成验证未完成>>
+- [ ] AC4：独立复核、证据pin和治理检查可核验；未满足不得置done。 <<PARTIAL: ZCode checkpoint addendum 已关闭 R-1/R-2/R-3 与 F-1/F-2/F-3（R-4 保持 observation）；完整性日志核实 11/11 路径在允许范围、57/57 既有 pin 匹配，addendum 报告/CLI log/完整性日志已登记；全审 review 与集成验证未完成>>
 
 ## 允许修改范围
 仅frontmatter所列。审计日志/测试脚本由主控单一写入。三名子代理只读同一固定产品HEAD，无并发写入。用户显式审计目录优先于常规verification路径；运行派生产物放相邻workspace task-env。
@@ -108,6 +108,9 @@ src/**、apps/**、原有tests/**、共享契约、Schema、依赖、真实用�
 | REVIEW-FINAL-INTEGRITY-LOG-1 | AC4（两段 diff 路径范围与 52 行 BLOB SHA-256 复算，reviewed_head=`d9478939f2cee81104f18ea757d81cec71c36225`，EXIT 0） | `audit/V1-FULL-AUDIT/logs/review-final-integrity-20261112.log` | `b9b6c5801060370eb4171c30eb77a935800e2f6f` | `7226A48417184636F92611599BDCB5385BA97584D1A356C09ACF22DD3E6CC4A3` | CANONICAL | BLOB |
 | FINAL-GOVERNANCE-GATES-1 | AC4（default/TaskPath governance、18 pins、API inventory 完整输出；4 项 EXIT 0） | `audit/V1-FULL-AUDIT/logs/final-governance-gates-20261112.log` | `9f41ddf4b8b6e4fe147c7c06b742637166e342cb` | `6E40CDFEB73C35FE221328163595F3BFDC86DE8AF87ABD3C17D2B9489FC43F7F` | CANONICAL | BLOB |
 | POSTREVIEW-FINAL-VERIFICATION-1 | AC4（generated HEAD=`ac188dde5`：default/TaskPath、18 pins、API inventory 与 56 行 Task pin 逐项复算；全部 EXIT 0） | `audit/V1-FULL-AUDIT/logs/postreview-final-verification-20261112.log` | `6dc3d634da0bd6c4083509c50d99a0bc0efb4742` | `6E900FF4F6F367EA1EA6B6B6F5452F0A9186618EE767D03754C0D0F6B3EC528A` | CANONICAL | BLOB |
+| ZCODE-FINAL-REVIEW-ADDENDUM-REPORT-1 | AC4（ZCode checkpoint addendum：F-1/F-2/F-3 CLOSED，R-4 observation；`PASS_FOR_CHECKPOINT`） | `audit/V1-FULL-AUDIT/reports/ZCODE-FINAL-REVIEW-ADDENDUM-2026-11-12.md` | `b17fead6d2cbbd2324ffb0a85096eb50448050ff` | `90C4B6743683A77F78CC5B84C74887BF86DBAD12EA3A5E4D38DC93FA2D5DC22A` | CANONICAL | BLOB |
+| ZCODE-FINAL-REVIEW-ADDENDUM-LOG-1 | AC4（ZCode addendum 原始 CLI 输出、session/turn/trace 与 EXIT 0） | `audit/V1-FULL-AUDIT/logs/zcode-final-review-addendum-20261112.log` | `b17fead6d2cbbd2324ffb0a85096eb50448050ff` | `A50F9CA3520923A88628494DABB59146E61E27CF32C367F3652C6B308E9B9C0A` | CANONICAL | BLOB |
+| POSTADDENDUM-INTEGRITY-LOG-1 | AC4（generated HEAD=`b17fead6`、reviewed_head=`d9478939`：11/11 diff 路径 allowed、57/57 既有 pin 匹配，EXIT 0） | `audit/V1-FULL-AUDIT/logs/postaddendum-integrity-20261112.log` | `0588e024ef9364dedae91231623b6b92b141e9b1` | `B34B332CC6C7DB315531EC963E0930F27D8BD1F2FF7C5DE0F67A3EBDE0C2BAE1` | CANONICAL | BLOB |
 
 说明：裁决文档中记录的阶段 0 日志 `B561…` 是提交前 WORKTREE SHA-256；本表按模板使用 Git BLOB 字节，完整 SHA-256 为 `7E2A…`。
 
@@ -121,7 +124,7 @@ src/**、apps/**、原有tests/**、共享契约、Schema、依赖、真实用�
 | exchange | — | NOT_APPLICABLE | — | — | 无外部传输 |
 
 ## Rolling checkpoint
-[audit/V1-FULL-AUDIT/AUDIT_RESUME.md](../../audit/V1-FULL-AUDIT/AUDIT_RESUME.md)。ZCode 对 `499a6b8e6eb293487abf391c46d00263230940ad` 与 `d9478939f2cee81104f18ea757d81cec71c36225` 的 checkpoint 结论均为 `PASS_FOR_CHECKPOINT`；R-1/R-2/R-3、F-1/F-2/F-3 已 CLOSED，R-4 保持 observation。addendum 另列最新 pin 尾项与 `d947…..3825…` 路径集合跟进，正在按建议补证。此结论不等于全审批准或 Task 关闭；保持 `in_progress`。
+[audit/V1-FULL-AUDIT/AUDIT_RESUME.md](../../audit/V1-FULL-AUDIT/AUDIT_RESUME.md)。ZCode 对 `499a6b8e6eb293487abf391c46d00263230940ad` 与 `d9478939f2cee81104f18ea757d81cec71c36225` 的 checkpoint 结论均为 `PASS_FOR_CHECKPOINT`；R-1/R-2/R-3、F-1/F-2/F-3 已 CLOSED，R-4 保持 observation。addendum 后完整性日志已核实 11/11 diff 路径均 allowed、57/57 既有 pin 匹配并登记在 Canonical Evidence。此结论不等于全审批准或 Task 关闭；保持 `in_progress`，AC2/AC3 与全审 Review/集成验证未完成。
 
 ## 2026-10-24 推送准备补充授权
 
