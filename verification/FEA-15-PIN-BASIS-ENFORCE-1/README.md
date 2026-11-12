@@ -163,3 +163,14 @@ The complete timestamped command/output record is verification/FEA-15-PIN-BASIS-
 - R-001 and Review-R-001 remain open for final Integrator disposition; Linux remains NOT_RUN; four historical TaskPaths remain NOT_RUN until AC5 execution. AC5 integration Review, final adjudication, and Task completion are not done.
 
 - ZCode CLI raw AC4 adjudication receipt: external original G:/CODEX/New Manga.workspace/FEA-15-PIN-BASIS-ENFORCE-1/zcode-ac4-adjudication-20261112.jsonl, SHA-256 7F6C73B24A59AFA5D912196F9E16832DBEE90F03057B973FA322CF4F661AD1A9, CLI EXIT=0; repository copy verification/FEA-15-PIN-BASIS-ENFORCE-1/ac4-adjudication-zcode-cli-20261112.jsonl. External original retained.
+
+## Post-AC4 adjudication Task-card gates at 211987767
+
+Generated at main HEAD 211987767278dd730769bb592db990488e59a46c, process CWD G:/CODEX/New Manga, after updating AC4/AC5 status and Task pointers:
+
+- pwsh -NoProfile -File tools/governance/check.ps1: PASS, 3 warnings, EXIT=0.
+- pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md: PASS, 3 warnings, EXIT=0.
+- pwsh -NoProfile -File tools/governance/verify_pins.ps1: 18/18 pins, EXIT=0.
+- python tools/generate_api_inventory.py --check: IReaderProgressSink 1 / IHostController 79 / IRunController 6 / total 86, EXIT=0.
+
+The full timestamped record is verification/FEA-15-PIN-BASIS-ENFORCE-1/main-post-ac4-release-card-gates-211987767.log. These governance gates validate the updated Task/STATUS/Plan; AC5 implementation and integration gates remain NOT_RUN. Next: cherry-pick the four authorized implementation commits and verify the four file blobs before running AC5 gates.
