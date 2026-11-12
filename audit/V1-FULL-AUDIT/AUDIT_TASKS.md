@@ -16,11 +16,11 @@
 - AUDIT-06: PARTIAL（翻译 payload、SQLite 同 chapter 上下文冻结、Region 映射、重试、超时/暂停边界与人工 Revision 保护已静态核对并以 mock/合成测试覆盖；上下文批次 84 passed / EXIT 0。账单级 spend cap/idempotency 与 glossary 强制优先级为候选，待 ZCode 裁决；真实 API/费用/取消语义 `NOT_RUN`。见同一阶段报告）
 - AUDIT-07: PARTIAL（38 inpaint/pipeline、73 rendering、5 Pillow source-style、6 font-storage、7 searchable export、7 revision restore 全部 EXIT 0；Core/rerender/export 组 127 passed/3 failed/EXIT 1，3 例来自 P16 reader export hook options，候选待 ZCode。真实模型/GT/GUI/屏幕缩放/视觉质量/字体许可 NOT_RUN；见 `reports/AUDIT-07-REPAIR-TYPESET-EXPORT-2026-11-13.md`）
 - AUDIT-08: FAIL（有限合成 DB 专项 284 passed / 0 skipped / EXIT 0；迁移 v1–v13→v14、关系保留、约束、并发、异常 rollback、意外退出恢复与关闭后路径移动有隔离证据。`SEG-B-PROBES-002` 重跑确认裸 I/O 错误且无 rollback ID。ZCode 首轮 Review `ACCEPT`（0 P0/P1/P2、2 P3）；对 `f3320cc9d` follow-up `ACCEPT`（0 P0/P1/P2、1 P3）；closure Review 对 `6375afacb` 为 `ACCEPT`，P3-3 CLOSED，P3-4 的 WORKTREE/BLOB SHA 基准和 CRLF→LF 归一化已在报告澄清，待 fresh closure review。0742a572/25614d45/a932b756/d6658d12 四批及后续两批门禁已 pin；39 项既有哈希独立复算通过，最新两批各五文件回填中。真实库、运行时任务状态、应用路径迁移、真实损坏恢复、断电及多文件部分写仍未验证。详见 AUDIT-08 / ZCode Review 报告）
-- AUDIT-09: NOT_TESTED（待 Avalonia 静态页面覆盖审阅；真实 GUI 运行具名 BLOCKED）
-- AUDIT-10: NOT_TESTED（待可重复 Core 合成样本微基准；GUI 性能具名 BLOCKED）
+- AUDIT-09: PARTIAL（Legacy/V2 实际空态、设置、Reader fallback 与沉浸快捷键；Fluent Host 未 ready；大部分页面/编辑交互 NOT_RUN；`AUDIT-09-CAND-001` 待裁决）
+- AUDIT-10: PARTIAL（四项 720×1080 合成 Core microbench；OCR/translation、真实 I/O、批量与 soak NOT_RUN）
 - AUDIT-11: FAIL（安全静态阶段报告 `reports/AUDIT-11-SECURITY-STATIC-2026-11-12.md`；`SEG-B-PROBES-001` 路径写越界与 `SEG-B-PROBES-002` restore I/O 恢复缺陷均为 Medium / High confidence，`NM-AUD-0001` 经 ZCode 复核为 P2。独立 Review `ACCEPT`，0 个 P0/P1/P2 阻断项；1 个 P3 扫描器源 SHA 差异已确认为移除尾随空格并披露，未重跑 scanner。Key/日志/命令/SQL/依赖等其余面为 PARTIAL 或具名 NOT_TESTED；真实 UI/vault、恶意文件 fuzz、Python 依赖漏洞数据库、竞态和远端可见性未验证）
-- AUDIT-12: NOT_TESTED（待构建/打包静态审阅；干净 Windows 安装实测具名 BLOCKED）
-- AUDIT-13: NOT_TESTED（待 E/F/G/H 合成场景；真实漫画场景具名 BLOCKED）
+- AUDIT-12: PARTIAL（Release build EXIT 0；存在 2026-10-26/28 历史 zip/setup，不绑定当前 HEAD；本 Task 未安装；`AUDIT-12-CAND-001` 待裁决）
+- AUDIT-13: PARTIAL（Core acceptance 31 passed / 0 skipped / EXIT 0；A/D/E/G/H 分段合成覆盖，B/C/F 与完整桌面链未测）
 - AUDIT-14: PARTIAL（静态核对 MainWindow 四页接线、V2 Studio 显式 NOT_WIRED 面、历史路径及文档漂移；无权威 V1/未来逐项总账，无法可靠计数；真实 GUI/安装/模型 NOT_RUN；候选待 ZCode 定级。见 `reports/AUDIT-14-V1-INTEGRITY-2026-11-13.md`）
 
 ## 段 B suite 级状态（与 AUDIT-01–14 逐项状态分离）

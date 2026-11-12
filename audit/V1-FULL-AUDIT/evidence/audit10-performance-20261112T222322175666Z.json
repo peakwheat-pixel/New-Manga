@@ -1,0 +1,19 @@
+{
+  "name": "audit10-performance-20261112T222322175666Z",
+  "argv": [
+    "C:\\Python314\\python.exe",
+    "G:\\CODEX\\New Manga\\audit\\V1-FULL-AUDIT\\tests\\audit10_performance.py",
+    "--samples",
+    "20",
+    "--output",
+    "G:\\CODEX\\New Manga\\audit\\V1-FULL-AUDIT\\evidence\\audit10-performance-20261112T222322175666Z.json"
+  ],
+  "cwd": "G:\\CODEX\\New Manga",
+  "started_utc": "2026-11-12T22:23:22.175906+00:00",
+  "head": "4e04e68c0db07ab136bc801e7fee27e7a5097564",
+  "branch": "main",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 3.409,
+  "log": "audit\\V1-FULL-AUDIT\\logs\\audit10-performance-20261112T222322175666Z.log"
+}

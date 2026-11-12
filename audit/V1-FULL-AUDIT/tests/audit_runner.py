@@ -112,7 +112,7 @@ def run(name: str, argv: list[str], cwd: Path, timeout: int) -> dict:
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('suite', choices=['pytest', 'audit03-import', 'audit04-ocr-detection', 'audit07-typeset', 'frontend', 'rust', 'smoke', 'governance', 'dependencies', 'desktop', 'probes', 'dotnet', 'sidecar-lifecycle'])
+    parser.add_argument('suite', choices=['pytest', 'audit03-import', 'audit04-ocr-detection', 'audit07-typeset', 'audit10-performance', 'audit12-static', 'audit13-e2e', 'frontend', 'rust', 'smoke', 'governance', 'dependencies', 'desktop', 'probes', 'dotnet', 'sidecar-lifecycle'])
     args = parser.parse_args()
     assert ROOT.name == 'New Manga' and (ROOT / '.git').exists()
     npm = shutil.which('npm.cmd') or 'npm.cmd'
@@ -209,6 +209,24 @@ if __name__ == '__main__':
             '-q', '-rs', '--tb=short',
             '-o', 'cache_dir=' + str(RUNTIME / f'audit07-export-pytest-cache-{run_id}'),
             '--basetemp=' + str(RUNTIME / f'audit07-export-pytest-temp-{run_id}')], ROOT, 900),
+        ],
+        'audit10-performance': [
+            (f'audit10-performance-{run_id}', [sys.executable,
+             str(AUDIT / 'tests/audit10_performance.py'), '--samples', '20',
+             '--output', str(AUDIT / f'evidence/audit10-performance-metrics-{run_id}.json')], ROOT, 600),
+        ],
+        'audit12-static': [
+            (f'audit12-delivery-inventory-{run_id}', [sys.executable,
+             str(AUDIT / 'tests/audit12_delivery_inventory.py')], ROOT, 300),
+        ],
+        'audit13-e2e': [
+            (f'audit13-core-acceptance-{run_id}', [sys.executable, '-m', 'pytest',
+             'tests/m2_acceptance/test_data_integrity.py',
+             'tests/m2_acceptance/test_provider_fail_closed.py',
+             'tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py',
+             '-q', '-rs', '--tb=short',
+             '-o', 'cache_dir=' + str(RUNTIME / f'audit13-pytest-cache-{run_id}'),
+             '--basetemp=' + str(RUNTIME / f'audit13-pytest-temp-{run_id}')], ROOT, 900),
         ],
         'frontend': [(f'frontend-tests-segment-b-{run_id}', [npm, 'test', '--', '--reporter=verbose'], ROOT / 'apps/desktop/frontend', 180),
                      (f'frontend-build-segment-b-{run_id}', [npm, 'run', 'build', '--', '--outDir', str(RUNTIME / f'frontend-dist-{run_id}')], ROOT / 'apps/desktop/frontend', 180)],

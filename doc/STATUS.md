@@ -4,9 +4,9 @@
 
 ## 当前程序
 - **FEA 线 ACTIVE（S5）**：[FEA-00 方案](design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md)；V11R 程序已收官（v0.1.1）。
-- 当前 Task：[NEW-MANGA-V1-FULL-AUDIT](tasks/NEW-MANGA-V1-FULL-AUDIT.md) `in_progress`（00 limited PASS;01 FAIL/P2;02 BLOCKED;03/08/11 FAIL;04/07 PARTIAL;05/06/14 PARTIAL;Gate BLOCKED）。
+- 当前 Task：[NEW-MANGA-V1-FULL-AUDIT](tasks/NEW-MANGA-V1-FULL-AUDIT.md) `in_progress`（00 limited PASS；01/03/08/11 FAIL；02 BLOCKED；04–07/09/10/12–14 PARTIAL；Release Gate BLOCKED）。
 - 刚收口：[FEA-15-PIN-BASIS-ENFORCE-1](tasks/FEA-15-PIN-BASIS-ENFORCE-1.md) `closed_with_limitations`（AC5 MET；R-001 CLOSED）；DIAG-ACL-1/[ACCEPT-1](tasks/FEA-15-ACCEPT-1.md) 同为 `closed_with_limitations`；PIN-POLICY-1 `done`。
-- FEA-11 线：WATCH-1/SCAN-2/SCAN-1/MATCH-1/AC4-GAPS-1/LINEAGE-1 `done`；HOST-AUTH-1 `done`；FEA-12 四卡 `done`。
+- FEA-11/12 线：WATCH/SCAN/MATCH/LINEAGE/HOST-AUTH、FEA-12 四卡均 `done`。
 - **AC11-1 MET with limitation**（2026-11-06，[裁决](reviews/FEA-11-AC11-1-adjudication-2026-11-06.md)）：冷启动枚举、registry/root 核验及每次访问的 live grant+lease+digest 检查；启动不做全量扫描（L-STARTUP）。
 
 - **Gate**：`G-CONTRACT`/`G-DELETE-CONTRACT` ✅ CLOSED（[裁定](plan/GATE-DELETE-CONTRACT-CLOSURE-2026-11-01.md)）；四表 DDL 已冻 = L-1 前置已满足（C-15 schema v7 + C-17 v1.1 schema v8；L-2…L-9 保留）；裁决 [ADJ-2026-11-01](reviews/ADJ-2026-11-01-FEA-DECISIONS.md)、[ADJ-2026-11-05](reviews/ADJ-2026-11-05-FEA-12-SCOPE.md)。

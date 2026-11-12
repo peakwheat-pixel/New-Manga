@@ -1,0 +1,25 @@
+{
+  "name": "audit13-core-acceptance-20261112T222650072377Z",
+  "argv": [
+    "C:\\Python314\\python.exe",
+    "-m",
+    "pytest",
+    "tests/m2_acceptance/test_data_integrity.py",
+    "tests/m2_acceptance/test_provider_fail_closed.py",
+    "tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py",
+    "-q",
+    "-rs",
+    "--tb=short",
+    "-o",
+    "cache_dir=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\audit13-pytest-cache-20261112T222650072377Z",
+    "--basetemp=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\audit13-pytest-temp-20261112T222650072377Z"
+  ],
+  "cwd": "G:\\CODEX\\New Manga",
+  "started_utc": "2026-11-12T22:26:50.072615+00:00",
+  "head": "4e04e68c0db07ab136bc801e7fee27e7a5097564",
+  "branch": "main",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 18.324,
+  "log": "audit\\V1-FULL-AUDIT\\logs\\audit13-core-acceptance-20261112T222650072377Z.log"
+}

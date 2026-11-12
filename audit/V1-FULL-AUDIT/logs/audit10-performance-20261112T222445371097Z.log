@@ -1,0 +1,129 @@
+START_UTC=2026-11-12T22:24:45.371319+00:00
+HEAD=4e04e68c0db07ab136bc801e7fee27e7a5097564
+BRANCH=main
+SHELL=Python subprocess (no shell)
+INTERPRETER=C:\Python314\python.exe
+CWD=G:\CODEX\New Manga
+ARGV=["C:\\Python314\\python.exe", "G:\\CODEX\\New Manga\\audit\\V1-FULL-AUDIT\\tests\\audit10_performance.py", "--samples", "20", "--output", "G:\\CODEX\\New Manga\\audit\\V1-FULL-AUDIT\\evidence\\audit10-performance-metrics-20261112T222445371097Z.json"]
+DATA_ROOT=G:\CODEX\New Manga.workspace\task-env\NEW-MANGA-V1-FULL-AUDIT\audit10-performance-20261112T222445371097Z\data
+{
+  "audit": "AUDIT-10",
+  "status": "MEASURED_SYNTHETIC_MICROBENCH_ONLY",
+  "generated_utc": "2026-11-12T22:24:58.634447+00:00",
+  "generated_head": "4e04e68c0db07ab136bc801e7fee27e7a5097564",
+  "branch": "main",
+  "command": [
+    "C:\\Python314\\python.exe",
+    "audit\\V1-FULL-AUDIT\\tests\\audit10_performance.py",
+    "--samples",
+    "20",
+    "--output",
+    "G:\\CODEX\\New Manga\\audit\\V1-FULL-AUDIT\\evidence\\audit10-performance-metrics-20261112T222445371097Z.json"
+  ],
+  "environment": {
+    "platform": "Windows-11-10.0.26300-SP0",
+    "processor": "AMD64 Family 25 Model 97 Stepping 2, AuthenticAMD",
+    "logical_cpu_count": 32,
+    "python": "3.14.6 (tags/v3.14.6:c63aec6, Jun 10 2026, 10:26:10) [MSC v.1944 64 bit (AMD64)]",
+    "pillow": "12.3.0",
+    "memory": {
+      "provider": "psutil",
+      "process_rss_bytes": 48128000,
+      "process_peak_rss_bytes": 48287744,
+      "system_total_physical_bytes": 33981165568,
+      "system_available_physical_bytes_at_capture": 17427988480
+    }
+  },
+  "fixture": {
+    "source": "generated in memory by this audit script; no user files read",
+    "page_dimensions": [
+      720,
+      1080
+    ],
+    "page_png_bytes": 5437,
+    "render_regions": 8,
+    "inpaint_mask_pixels": 28800,
+    "inpaint_mask_percent": 3.704
+  },
+  "font_cold_start": {
+    "operation": "layout_8_cjk_regions_first_call_in_fresh_process",
+    "wall_ms": 20.444,
+    "process_cpu_ms": "NOT_MEASURED (single-call timer resolution is too coarse)"
+  },
+  "warm_workloads": [
+    {
+      "name": "decode_png_720x1080",
+      "samples": 20,
+      "warmups": 2,
+      "operations_per_timed_sample": 32,
+      "wall_ms": {
+        "median": 0.968,
+        "p95_nearest_rank": 1.04,
+        "min": 0.945,
+        "max": 1.058
+      },
+      "process_cpu_ms_median": 0.977,
+      "process_cpu_to_wall_percent_median": 100.9,
+      "operations_per_second_median": 1033.31
+    },
+    {
+      "name": "layout_8_cjk_regions_cached_font",
+      "samples": 20,
+      "warmups": 2,
+      "operations_per_timed_sample": 32,
+      "wall_ms": {
+        "median": 1.33,
+        "p95_nearest_rank": 1.373,
+        "min": 1.262,
+        "max": 1.4
+      },
+      "process_cpu_ms_median": 1.465,
+      "process_cpu_to_wall_percent_median": 108.5,
+      "operations_per_second_median": 751.73
+    },
+    {
+      "name": "compose_page_8_regions_720x1080",
+      "samples": 20,
+      "warmups": 2,
+      "operations_per_timed_sample": 8,
+      "wall_ms": {
+        "median": 9.132,
+        "p95_nearest_rank": 9.543,
+        "min": 8.885,
+        "max": 9.924
+      },
+      "process_cpu_ms_median": 9.766,
+      "process_cpu_to_wall_percent_median": 105.6,
+      "operations_per_second_median": 109.51
+    },
+    {
+      "name": "simple_fill_720x1080_3_7pct_mask",
+      "samples": 20,
+      "warmups": 2,
+      "operations_per_timed_sample": 4,
+      "wall_ms": {
+        "median": 109.972,
+        "p95_nearest_rank": 110.846,
+        "min": 108.594,
+        "max": 111.151
+      },
+      "process_cpu_ms_median": 109.375,
+      "process_cpu_to_wall_percent_median": 99.7,
+      "operations_per_second_median": 9.09
+    }
+  ],
+  "memory_after_workloads": {
+    "provider": "psutil",
+    "process_rss_bytes": 48128000,
+    "process_peak_rss_bytes": 48287744,
+    "system_total_physical_bytes": 33981165568,
+    "system_available_physical_bytes_at_capture": 17427988480
+  },
+  "excluded": [
+    "GUI, database/disk I/O, image import/export, OCR/translation models, network APIs, learned inpaint models, multi-hour soak, user libraries"
+  ]
+}
+
+EXIT=0
+TIMED_OUT=False
+ELAPSED_SECONDS=13.387

@@ -1,0 +1,125 @@
+START_UTC=2026-11-12T22:23:22.175906+00:00
+HEAD=4e04e68c0db07ab136bc801e7fee27e7a5097564
+BRANCH=main
+SHELL=Python subprocess (no shell)
+INTERPRETER=C:\Python314\python.exe
+CWD=G:\CODEX\New Manga
+ARGV=["C:\\Python314\\python.exe", "G:\\CODEX\\New Manga\\audit\\V1-FULL-AUDIT\\tests\\audit10_performance.py", "--samples", "20", "--output", "G:\\CODEX\\New Manga\\audit\\V1-FULL-AUDIT\\evidence\\audit10-performance-20261112T222322175666Z.json"]
+DATA_ROOT=G:\CODEX\New Manga.workspace\task-env\NEW-MANGA-V1-FULL-AUDIT\audit10-performance-20261112T222322175666Z\data
+{
+  "audit": "AUDIT-10",
+  "status": "MEASURED_SYNTHETIC_MICROBENCH_ONLY",
+  "generated_utc": "2026-11-12T22:23:25.412234+00:00",
+  "generated_head": "4e04e68c0db07ab136bc801e7fee27e7a5097564",
+  "branch": "main",
+  "command": [
+    "C:\\Python314\\python.exe",
+    "audit\\V1-FULL-AUDIT\\tests\\audit10_performance.py",
+    "--samples",
+    "20",
+    "--output",
+    "G:\\CODEX\\New Manga\\audit\\V1-FULL-AUDIT\\evidence\\audit10-performance-20261112T222322175666Z.json"
+  ],
+  "environment": {
+    "platform": "Windows-11-10.0.26300-SP0",
+    "processor": "AMD64 Family 25 Model 97 Stepping 2, AuthenticAMD",
+    "logical_cpu_count": 32,
+    "python": "3.14.6 (tags/v3.14.6:c63aec6, Jun 10 2026, 10:26:10) [MSC v.1944 64 bit (AMD64)]",
+    "pillow": "12.3.0",
+    "memory": {
+      "provider": "psutil",
+      "process_rss_bytes": 48144384,
+      "process_peak_rss_bytes": 48226304,
+      "system_total_physical_bytes": 33981165568,
+      "system_available_physical_bytes_at_capture": 17444270080
+    }
+  },
+  "fixture": {
+    "source": "generated in memory by this audit script; no user files read",
+    "page_dimensions": [
+      720,
+      1080
+    ],
+    "page_png_bytes": 5437,
+    "render_regions": 8,
+    "inpaint_mask_pixels": 28800,
+    "inpaint_mask_percent": 3.704
+  },
+  "font_cold_start": {
+    "operation": "layout_8_cjk_regions_first_call_in_fresh_process",
+    "wall_ms": 106.02,
+    "process_cpu_ms": 15.625
+  },
+  "warm_workloads": [
+    {
+      "name": "decode_png_720x1080",
+      "samples": 20,
+      "warmups": 2,
+      "wall_ms": {
+        "median": 0.974,
+        "p95_nearest_rank": 1.006,
+        "min": 0.955,
+        "max": 1.006
+      },
+      "process_cpu_ms_median": 0.0,
+      "process_cpu_to_wall_percent_median": 0.0,
+      "operations_per_second_median": 1026.8
+    },
+    {
+      "name": "layout_8_cjk_regions_cached_font",
+      "samples": 20,
+      "warmups": 2,
+      "wall_ms": {
+        "median": 1.362,
+        "p95_nearest_rank": 1.403,
+        "min": 1.33,
+        "max": 1.504
+      },
+      "process_cpu_ms_median": 0.0,
+      "process_cpu_to_wall_percent_median": 0.0,
+      "operations_per_second_median": 734.13
+    },
+    {
+      "name": "compose_page_8_regions_720x1080",
+      "samples": 20,
+      "warmups": 2,
+      "wall_ms": {
+        "median": 8.939,
+        "p95_nearest_rank": 9.691,
+        "min": 8.716,
+        "max": 10.056
+      },
+      "process_cpu_ms_median": 15.625,
+      "process_cpu_to_wall_percent_median": 174.8,
+      "operations_per_second_median": 111.87
+    },
+    {
+      "name": "simple_fill_720x1080_3_7pct_mask",
+      "samples": 20,
+      "warmups": 2,
+      "wall_ms": {
+        "median": 114.029,
+        "p95_nearest_rank": 116.086,
+        "min": 109.401,
+        "max": 116.345
+      },
+      "process_cpu_ms_median": 109.375,
+      "process_cpu_to_wall_percent_median": 95.9,
+      "operations_per_second_median": 8.77
+    }
+  ],
+  "memory_after_workloads": {
+    "provider": "psutil",
+    "process_rss_bytes": 48144384,
+    "process_peak_rss_bytes": 48226304,
+    "system_total_physical_bytes": 33981165568,
+    "system_available_physical_bytes_at_capture": 17443938304
+  },
+  "excluded": [
+    "GUI, database/disk I/O, image import/export, OCR/translation models, network APIs, learned inpaint models, multi-hour soak, user libraries"
+  ]
+}
+
+EXIT=0
+TIMED_OUT=False
+ELAPSED_SECONDS=3.409

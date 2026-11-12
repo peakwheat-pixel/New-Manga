@@ -122,3 +122,10 @@
 - 证据：`reports/AUDIT-09-UI-UX-2026-11-13.md`、`screenshots/audit09-v2-reader-retry-banner-20261113.jpg`、`logs/audit09-ui-v2-capture-20261112T220906Z.log` 及对应 JSON。隔离 V2 Library 选择了合成 book/chapter（章节 0 页）；Reader Retry 后仍提示“请先在资料柜选择作品与章节”。
 - 边界：仅在合成空章节路径观察；没有真实页图或操作数据，未验证状态根因、真实用户影响或其他导航路径；不据此推断数据丢失。
 - 待裁决：请 ZCode 判断提示是否构成 UI finding、severity 与需求归属；本审计不授权修复。
+
+## AUDIT-12-CAND-001 — Single-file publish 默认在仓库内递归清理输出目录
+
+- 状态：`REVIEW_PENDING`（静态治理/交付风险候选；未判为正式 finding，也未分配 severity）。
+- 证据：`tests/audit12_delivery_inventory.py` 与 `logs/audit12-delivery-inventory-20261112T223042315179Z.log` 对 `apps/desktop-avalonia/scripts/publish.ps1` 的哈希和相关行捕获：默认 `OutputDirectory` 为 `apps/desktop-avalonia/artifacts/win-x64-single`，若已存在会执行 `Remove-Item ... -Recurse -Force`，之后运行 `dotnet publish`。
+- 边界：本轮没有运行 publish，也没有证明目录中有用户文件、发生误删或当前发布失败；脚本预期可能把该目录当作专用构建输出。
+- 待裁决：请 ZCode 对照工作区治理规则和发布脚本调用方式判断默认路径是否需要登记风险/修复 Task；本审计不改脚本、不执行清理。

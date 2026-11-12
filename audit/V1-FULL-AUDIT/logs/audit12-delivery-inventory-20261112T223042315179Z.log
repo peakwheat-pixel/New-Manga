@@ -1,0 +1,977 @@
+START_UTC=2026-11-12T22:30:42.315406+00:00
+HEAD=4e04e68c0db07ab136bc801e7fee27e7a5097564
+BRANCH=main
+SHELL=Python subprocess (no shell)
+INTERPRETER=C:\Python314\python.exe
+CWD=G:\CODEX\New Manga
+ARGV=["C:\\Python314\\python.exe", "G:\\CODEX\\New Manga\\audit\\V1-FULL-AUDIT\\tests\\audit12_delivery_inventory.py"]
+DATA_ROOT=G:\CODEX\New Manga.workspace\task-env\NEW-MANGA-V1-FULL-AUDIT\audit12-delivery-inventory-20261112T223042315179Z\data
+{
+  "audit": "AUDIT-12",
+  "classification": "STATIC_INVENTORY_ONLY",
+  "generated_utc": "2026-11-12T22:30:42.504526+00:00",
+  "generated_head": "4e04e68c0db07ab136bc801e7fee27e7a5097564",
+  "branch": "main",
+  "scope": "read-only script hash/pattern inventory and direct package metadata inventory; no package extraction, publish, install, launch, or uninstall",
+  "sources": [
+    {
+      "path": "apps/desktop-avalonia/scripts/build.ps1",
+      "exists": true,
+      "bytes": 947,
+      "sha256": "C00E14984CBC208815ECC70D8887A7B30BFA73A6DAB28D66C0BA2BBD0BF72D3A",
+      "relevant_source_lines": []
+    },
+    {
+      "path": "apps/desktop-avalonia/scripts/publish.ps1",
+      "exists": true,
+      "bytes": 2944,
+      "sha256": "7CDE7867E0F1F6C1CF4732FC2E0CF86F7FCF536A5776658BB78B54C039760E36",
+      "relevant_source_lines": [
+        {
+          "line": 6,
+          "category": "publish",
+          "text": "Recipe (S0 spike, GO): SingleFile + SelfContained + PublishTrimmed + IncludeNativeLibrariesForSelfExtract"
+        },
+        {
+          "line": 26,
+          "category": "directory_removal",
+          "text": "Remove-Item $OutputDirectory -Recurse -Force"
+        },
+        {
+          "line": 33,
+          "category": "publish",
+          "text": "& dotnet publish src/NewManga.App/NewManga.App.csproj -c Release -r win-x64 --self-contained `"
+        },
+        {
+          "line": 34,
+          "category": "publish",
+          "text": "-p:PublishSingleFile=true `"
+        },
+        {
+          "line": 46,
+          "category": "publish",
+          "text": "throw \"dotnet publish failed with exit code $code\""
+        },
+        {
+          "line": 54,
+          "category": "publish",
+          "text": "command         = 'dotnet publish src/NewManga.App -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -p:PublishTrimmed=true -p:IncludeNativeLibrariesForSelfExtract=true -p:PublishReadyToRun=true -p:EnableCompressionInSingleFi"
+        }
+      ]
+    },
+    {
+      "path": "apps/desktop-avalonia/scripts/package.ps1",
+      "exists": true,
+      "bytes": 10449,
+      "sha256": "995C829CE99FB7B35407B07B9A577C132494BFFE54F556BDE00C347909C45AA6",
+      "relevant_source_lines": [
+        {
+          "line": 4,
+          "category": "sidecar_or_model",
+          "text": "[string]$SidecarDir='',"
+        },
+        {
+          "line": 6,
+          "category": "sidecar_or_model",
+          "text": "[switch]$WithModels,"
+        },
+        {
+          "line": 16,
+          "category": "sidecar_or_model",
+          "text": "if([string]::IsNullOrWhiteSpace($SidecarDir)){$SidecarDir=Join-Path $repo 'apps/desktop-avalonia/build/sidecar/core-sidecar/core-sidecar'}"
+        },
+        {
+          "line": 17,
+          "category": "sidecar_or_model",
+          "text": "$variant=if($WithModels){'models'}else{'base'}"
+        },
+        {
+          "line": 18,
+          "category": "sidecar_or_model",
+          "text": "$stageName=if($WithModels){\"NewManga-$Version-win-x64-models\"}else{\"NewManga-$Version-win-x64\"}"
+        },
+        {
+          "line": 20,
+          "category": "sidecar_or_model",
+          "text": "if($MaxZipMB -le 0){$MaxZipMB=if($WithModels){2048}else{150}}"
+        },
+        {
+          "line": 21,
+          "category": "directory_removal",
+          "text": "if(Test-Path $stage){Remove-Item $stage -Recurse -Force}"
+        },
+        {
+          "line": 33,
+          "category": "publish",
+          "text": "& dotnet publish src/NewManga.App/NewManga.App.csproj -c Release -r win-x64 --self-contained -p:PublishSingleFile=true @publishArgs -o (Join-Path $stage 'app') 2>&1 | Tee-Object -FilePath (Join-Path $OutputRoot \"publish-$variant.log\") | Out"
+        },
+        {
+          "line": 34,
+          "category": "publish",
+          "text": "if ($LASTEXITCODE -ne 0) { throw 'dotnet publish failed' }"
+        },
+        {
+          "line": 40,
+          "category": "sidecar_or_model",
+          "text": "if(-not (Test-Path (Join-Path $SidecarDir 'core_service.exe'))){throw \"sidecar bundle missing under SidecarDir: $SidecarDir (run packaging/m2ac5/build_sidecar.ps1 -Force first)\"}"
+        },
+        {
+          "line": 43,
+          "category": "sidecar_or_model",
+          "text": "$roboArgs=@($SidecarDir,$sidecarDst,'/E','/NFL','/NDL','/NJH','/NJS','/NP')"
+        },
+        {
+          "line": 44,
+          "category": "sidecar_or_model",
+          "text": "if(-not $WithModels){$roboArgs+=@('/XD',(Join-Path $SidecarDir 'models'))}"
+        },
+        {
+          "line": 47,
+          "category": "sidecar_or_model",
+          "text": "$requiredSidecar=@('core_service.exe','host_bridge.exe','catalog_loader.exe')"
+        },
+        {
+          "line": 51,
+          "category": "sidecar_or_model",
+          "text": "$modelsBundled=(Test-Path (Join-Path $sidecarDst 'models'))"
+        },
+        {
+          "line": 52,
+          "category": "sidecar_or_model",
+          "text": "$modelsBytes=if($modelsBundled){(Get-ChildItem (Join-Path $sidecarDst 'models') -Recurse -File|Measure-Object Length -Sum).Sum}else{0}"
+        },
+        {
+          "line": 53,
+          "category": "sidecar_or_model",
+          "text": "if($WithModels -and -not $modelsBundled){throw 'WithModels requested but the built sidecar has no models/ directory'}"
+        },
+        {
+          "line": 56,
+          "category": "sidecar_or_model",
+          "text": "# The frozen core_service.exe is rebuilt from src/ by packaging/m2ac5/build_sidecar.ps1;"
+        },
+        {
+          "line": 59,
+          "category": "sidecar_or_model",
+          "text": "$sidecarExe = Join-Path $sidecarDst 'core_service.exe'"
+        },
+        {
+          "line": 66,
+          "category": "sidecar_or_model",
+          "text": "models_bundled = $modelsBundled"
+        },
+        {
+          "line": 71,
+          "category": "sidecar_or_model",
+          "text": "# AGPL-RELEASE-1: the models variant ships Ultralytics YOLO11s-seg (AGPL-3.0), so the GNU"
+        },
+        {
+          "line": 86,
+          "category": "install_or_uninstall",
+          "text": "@('install.ps1','uninstall.ps1','migrate-legacy-dryrun.ps1')|ForEach-Object{Copy-Item (Join-Path $PSScriptRoot $_) (Join-Path $stage $_) -Force}"
+        },
+        {
+          "line": 112,
+          "category": "sidecar_or_model",
+          "text": "$modelsStrategy=if($modelsBundled){"
+        },
+        {
+          "line": 113,
+          "category": "sidecar_or_model",
+          "text": "\"bundled: app/core-sidecar/models ($([math]::Round($modelsBytes/1MB,1)) MiB in-package); no download at run time\""
+        },
+        {
+          "line": 115,
+          "category": "sidecar_or_model",
+          "text": "\"separated: base package ships NO models; the frozen Core reports typed PROVIDER_NOT_CONFIGURED until the pinned models are placed on %APPDATA%\\com.newmanga.desktop\\models (data root) or passed via NEWMANGA_DETECTOR_WEIGHTS / NEWMANGA_MANGA"
+        },
+        {
+          "line": 118,
+          "category": "sidecar_or_model",
+          "text": "# models ships Ultralytics YOLO11s-seg (AGPL-3.0) -> the whole variant is AGPL-3.0; base has no"
+        },
+        {
+          "line": 120,
+          "category": "sidecar_or_model",
+          "text": "$licenseDeclaration=if($modelsBundled){'AGPL-3.0'}else{'GPL-3.0-or-later'}"
+        },
+        {
+          "line": 121,
+          "category": "sidecar_or_model",
+          "text": "$bundledWeightsLicense=if($modelsBundled){'AGPL-3.0 (Ultralytics YOLO11s-seg: app/core-sidecar/models/detector/yolo11s-seg.onnx)'}else{'none (no model weights in this variant)'}"
+        },
+        {
+          "line": 122,
+          "category": "sidecar_or_model",
+          "text": "@{version=$Version;channel='stable';variant=$variant;data_root='%APPDATA%\\com.newmanga.desktop';license=$licenseDeclaration;license_files=$lic;bundled_weights_license=$bundledWeightsLicense;models=$modelsStrategy;sidecar='bundled: app/core-"
+        },
+        {
+          "line": 129,
+          "category": "sidecar_or_model",
+          "text": "$manifest=[ordered]@{package=$stageName;version=$Version;variant=$variant;bytes=$bytes;sidecar_bytes=$sidecarBytes;models_bundled=$modelsBundled;models_bytes=$modelsBytes;licenses=$licHashes;files=@()}"
+        },
+        {
+          "line": 137,
+          "category": "sidecar_or_model",
+          "text": "$summary=[ordered]@{ac='AC2';variant=$variant;version=$Version;zip=$zip;zip_bytes=$zipBytes;zip_mb=[math]::Round($zipBytes/1MB,2);max_zip_mb=$MaxZipMB;uncompressed_bytes=$bytes;uncompressed_mb=[math]::Round($bytes/1MB,2);file_count=$files.C"
+        }
+      ]
+    },
+    {
+      "path": "apps/desktop-avalonia/scripts/build-installer.ps1",
+      "exists": true,
+      "bytes": 11353,
+      "sha256": "64D7F2301787BDF02C6AE5D483A8D84059E851C5434986E3691C4E62EE06930D",
+      "relevant_source_lines": [
+        {
+          "line": 8,
+          "category": "install_or_uninstall",
+          "text": "%LOCALAPPDATA%\\Programs\\NewManga, writes an HKCU uninstall entry, creates Start Menu shortcuts"
+        },
+        {
+          "line": 9,
+          "category": "install_or_uninstall",
+          "text": "and supports /S silent install + silent uninstall. It never touches the user data root"
+        },
+        {
+          "line": 91,
+          "category": "sidecar_or_model",
+          "text": "'app/core-sidecar/core_service.exe',"
+        },
+        {
+          "line": 93,
+          "category": "install_or_uninstall",
+          "text": "'uninstall.ps1',"
+        }
+      ]
+    },
+    {
+      "path": "apps/desktop-avalonia/scripts/install.ps1",
+      "exists": true,
+      "bytes": 2783,
+      "sha256": "D001CF30110988FD79A478F70592497ED09EB8F0A5FB91BB0D0ABE4DAC692E2C",
+      "relevant_source_lines": [
+        {
+          "line": 3,
+          "category": "install_or_uninstall",
+          "text": "[string]$InstallDir=$( $v11rRepo = (Split-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) -Parent); if ($env:NEWMANGA_WORKSPACE_ROOT) { Join-Path $env:NEWMANGA_WORKSPACE_ROOT 'task-envs/FINAL-VALIDATION-1/install' } else { Join"
+        },
+        {
+          "line": 13,
+          "category": "sidecar_or_model",
+          "text": "foreach($n in @('core_service.exe','host_bridge.exe')){if(-not (Test-Path (Join-Path $pkgSidecar $n))){throw \"package Core sidecar missing: app/core-sidecar/$n\"}}"
+        },
+        {
+          "line": 14,
+          "category": "directory_removal",
+          "text": "if(Test-Path $InstallDir){Remove-Item $InstallDir -Recurse -Force}"
+        },
+        {
+          "line": 14,
+          "category": "install_or_uninstall",
+          "text": "if(Test-Path $InstallDir){Remove-Item $InstallDir -Recurse -Force}"
+        },
+        {
+          "line": 15,
+          "category": "install_or_uninstall",
+          "text": "New-Item -ItemType Directory -Force $InstallDir|Out-Null"
+        },
+        {
+          "line": 16,
+          "category": "install_or_uninstall",
+          "text": "Copy-Item (Join-Path $PackageDir '*') $InstallDir -Recurse -Force"
+        },
+        {
+          "line": 18,
+          "category": "install_or_uninstall",
+          "text": "foreach($n in $lic){if((Get-FileHash (Join-Path $PackageDir $n)).Hash -ne (Get-FileHash (Join-Path $InstallDir $n)).Hash){$ok=$false}}"
+        },
+        {
+          "line": 21,
+          "category": "install_or_uninstall",
+          "text": "$installedSidecar=Join-Path $InstallDir 'app/core-sidecar'"
+        },
+        {
+          "line": 22,
+          "category": "sidecar_or_model",
+          "text": "$modelsDir=Join-Path $installedSidecar 'models'"
+        },
+        {
+          "line": 24,
+          "category": "install_or_uninstall",
+          "text": "$versionJson=Get-Content (Join-Path $InstallDir 'VERSION.json') -Raw|ConvertFrom-Json"
+        },
+        {
+          "line": 27,
+          "category": "install_or_uninstall",
+          "text": "install_dir=$InstallDir"
+        },
+        {
+          "line": 34,
+          "category": "install_or_uninstall",
+          "text": "exe=(Join-Path $InstallDir 'app/NewManga.App.exe')"
+        },
+        {
+          "line": 35,
+          "category": "sidecar_or_model",
+          "text": "sidecar_bundled=(Test-Path (Join-Path $installedSidecar 'core_service.exe'))"
+        },
+        {
+          "line": 38,
+          "category": "sidecar_or_model",
+          "text": "models_bundled=(Test-Path $modelsDir)"
+        }
+      ]
+    },
+    {
+      "path": "apps/desktop-avalonia/scripts/install-verify.ps1",
+      "exists": true,
+      "bytes": 2889,
+      "sha256": "E69575091315D18E2E20B588BB87C36C94A8F16A531D936EACB4D020EFA9E51B",
+      "relevant_source_lines": [
+        {
+          "line": 1,
+          "category": "install_or_uninstall",
+          "text": "[CmdletBinding()] param([string]$PackageDir,[string]$InstallDir=$( $v11rRepo = (Split-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) -Parent); if ($env:NEWMANGA_WORKSPACE_ROOT) { Join-Path $env:NEWMANGA_WORKSPACE_ROOT 'task-en"
+        },
+        {
+          "line": 6,
+          "category": "install_or_uninstall",
+          "text": "& (Join-Path $PSScriptRoot 'install.ps1') -PackageDir $PackageDir -InstallDir $InstallDir -SkipBackup|Out-Null"
+        },
+        {
+          "line": 7,
+          "category": "install_or_uninstall",
+          "text": "$firstOk=Test-Path (Join-Path $InstallDir 'app/NewManga.App.exe')"
+        },
+        {
+          "line": 8,
+          "category": "install_or_uninstall",
+          "text": "$licOk=$true; foreach($n in $lic){if((Get-FileHash (Join-Path $PackageDir $n)).Hash -ne (Get-FileHash (Join-Path $InstallDir $n)).Hash){$licOk=$false}}"
+        },
+        {
+          "line": 9,
+          "category": "install_or_uninstall",
+          "text": "& (Join-Path $PSScriptRoot 'install.ps1') -PackageDir $PackageDir -InstallDir $InstallDir -SkipBackup|Out-Null"
+        },
+        {
+          "line": 10,
+          "category": "install_or_uninstall",
+          "text": "$secondOk=Test-Path (Join-Path $InstallDir 'app/NewManga.App.exe')"
+        },
+        {
+          "line": 11,
+          "category": "install_or_uninstall",
+          "text": "& (Join-Path $PSScriptRoot 'uninstall.ps1') -InstallDir $InstallDir|Out-Null"
+        },
+        {
+          "line": 12,
+          "category": "install_or_uninstall",
+          "text": "$u1=(-not (Test-Path $InstallDir)) -and (@(Get-Process NewManga.App -ErrorAction SilentlyContinue).Count -eq 0)"
+        },
+        {
+          "line": 13,
+          "category": "install_or_uninstall",
+          "text": "& (Join-Path $PSScriptRoot 'uninstall.ps1') -InstallDir $InstallDir|Out-Null"
+        },
+        {
+          "line": 14,
+          "category": "install_or_uninstall",
+          "text": "$u2=(-not (Test-Path $InstallDir))"
+        },
+        {
+          "line": 15,
+          "category": "install_or_uninstall",
+          "text": "$summary=[ordered]@{ac='AC4a';package_dir=$PackageDir;install_dir=$InstallDir;install_first=$firstOk;install_second_idempotent=$secondOk;license_byte_identical=$licOk;uninstall_first_residue_free=$u1;uninstall_second_idempotent=$u2;residual"
+        }
+      ]
+    },
+    {
+      "path": "apps/desktop-avalonia/scripts/install-smoke.ps1",
+      "exists": true,
+      "bytes": 6128,
+      "sha256": "0327521338EB3A6834C0CBAF0494AD1974A7C858674AC6AC29B85ADB9B76ED1A",
+      "relevant_source_lines": [
+        {
+          "line": 3,
+          "category": "install_or_uninstall",
+          "text": "[string]$InstallDir=$( $v11rRepo = (Split-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) -Parent); if ($env:NEWMANGA_WORKSPACE_ROOT) { Join-Path $env:NEWMANGA_WORKSPACE_ROOT 'task-envs/FINAL-VALIDATION-1/install' } else { Join"
+        },
+        {
+          "line": 18,
+          "category": "install_or_uninstall",
+          "text": "if([string]::IsNullOrWhiteSpace($DataRoot)){$DataRoot=Join-Path (Split-Path $InstallDir -Parent) 'iso/data'}"
+        },
+        {
+          "line": 19,
+          "category": "install_or_uninstall",
+          "text": "if([string]::IsNullOrWhiteSpace($ThemeHome)){$ThemeHome=Join-Path (Split-Path $InstallDir -Parent) 'iso/theme'}"
+        },
+        {
+          "line": 40,
+          "category": "install_or_uninstall",
+          "text": "$installJson=& (Join-Path $PSScriptRoot 'install.ps1') -PackageDir $PackageDir -InstallDir $InstallDir -SkipBackup | ConvertFrom-Json"
+        },
+        {
+          "line": 41,
+          "category": "install_or_uninstall",
+          "text": "$exe=Join-Path $InstallDir 'app/NewManga.App.exe'"
+        },
+        {
+          "line": 52,
+          "category": "sidecar_or_model",
+          "text": "$modelsBundled=$installJson.models_bundled"
+        },
+        {
+          "line": 55,
+          "category": "install_or_uninstall",
+          "text": "& (Join-Path $PSScriptRoot 'uninstall.ps1') -InstallDir $InstallDir|Out-Null"
+        },
+        {
+          "line": 72,
+          "category": "install_or_uninstall",
+          "text": "install_dir_after=(Test-Path $InstallDir)"
+        },
+        {
+          "line": 81,
+          "category": "sidecar_or_model",
+          "text": "models_bundled=$modelsBundled"
+        }
+      ]
+    },
+    {
+      "path": "apps/desktop-avalonia/scripts/uninstall.ps1",
+      "exists": true,
+      "bytes": 1071,
+      "sha256": "C559A2B670319ECE3C578FF8062F38854D4804008DFE649A0B7A793E873748E8",
+      "relevant_source_lines": [
+        {
+          "line": 1,
+          "category": "install_or_uninstall",
+          "text": "[CmdletBinding()] param([string]$InstallDir=$( $v11rRepo = (Split-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) -Parent); if ($env:NEWMANGA_WORKSPACE_ROOT) { Join-Path $env:NEWMANGA_WORKSPACE_ROOT 'task-envs/RELEASE-PACKAGE-1"
+        },
+        {
+          "line": 3,
+          "category": "install_or_uninstall",
+          "text": "Get-Process NewManga.App -ErrorAction SilentlyContinue | Where-Object { $_.Path -like \"$InstallDir*\" } | Stop-Process -Force -ErrorAction SilentlyContinue"
+        },
+        {
+          "line": 4,
+          "category": "directory_removal",
+          "text": "if(Test-Path $InstallDir){Remove-Item $InstallDir -Recurse -Force}"
+        },
+        {
+          "line": 4,
+          "category": "install_or_uninstall",
+          "text": "if(Test-Path $InstallDir){Remove-Item $InstallDir -Recurse -Force}"
+        },
+        {
+          "line": 5,
+          "category": "directory_removal",
+          "text": "if($PurgeData -and (Test-Path $DataRoot)){Remove-Item $DataRoot -Recurse -Force}"
+        },
+        {
+          "line": 5,
+          "category": "install_or_uninstall",
+          "text": "if($PurgeData -and (Test-Path $DataRoot)){Remove-Item $DataRoot -Recurse -Force}"
+        },
+        {
+          "line": 6,
+          "category": "install_or_uninstall",
+          "text": "@{uninstalled=$true;install_dir=$InstallDir;install_dir_exists=(Test-Path $InstallDir);data_root=$DataRoot;data_root_exists=(Test-Path $DataRoot);processes=@(Get-Process NewManga.App -ErrorAction SilentlyContinue).Count}|ConvertTo-Json -Dep"
+        }
+      ]
+    },
+    {
+      "path": "apps/desktop-avalonia/scripts/smoke.ps1",
+      "exists": true,
+      "bytes": 10630,
+      "sha256": "C0C3A3595D1D12F393B32E73DAFA77D13C3BB4C9DB91555D3555E47E99AB056D",
+      "relevant_source_lines": [
+        {
+          "line": 17,
+          "category": "sidecar_or_model",
+          "text": "[string]$SidecarDirectory = $( $v11rRepo = (Split-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) -Parent); if ($env:NEWMANGA_WORKSPACE_ROOT) { Join-Path $env:NEWMANGA_WORKSPACE_ROOT 'task-envs/HOST-CORECLIENT-1/sidecar-copy' }"
+        },
+        {
+          "line": 33,
+          "category": "sidecar_or_model",
+          "text": "if (-not (Test-Path (Join-Path $SidecarDirectory 'core_service.exe'))) {"
+        },
+        {
+          "line": 34,
+          "category": "sidecar_or_model",
+          "text": "throw \"sidecar copy not found: $SidecarDirectory (run scripts/prepare-sidecar.ps1)\""
+        },
+        {
+          "line": 72,
+          "category": "sidecar_or_model",
+          "text": "\"--sidecar-dir=`\"$SidecarDirectory`\"\","
+        }
+      ]
+    },
+    {
+      "path": "packaging/m2ac5/build_sidecar.ps1",
+      "exists": true,
+      "bytes": 20573,
+      "sha256": "A559A0CCFFF9B469F8885D359035706527C5E73A8349797286000CB5DDEC1605",
+      "relevant_source_lines": [
+        {
+          "line": 11,
+          "category": "sidecar_or_model",
+          "text": "#   <bundle>/models/detector/rtdetr-v2-fixed.onnx          (RT-DETR-v2, opset17)"
+        },
+        {
+          "line": 12,
+          "category": "sidecar_or_model",
+          "text": "#   <bundle>/models/ocr/manga-ocr-onnx/                     (encoder/decoder/vocab)"
+        },
+        {
+          "line": 14,
+          "category": "sidecar_or_model",
+          "text": "# the models ride along with zero tauri.conf.json change. Each ONNX/vocab file"
+        },
+        {
+          "line": 47,
+          "category": "sidecar_or_model",
+          "text": "[string]$WeightsSource = $( $v11rRepo = (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent); if ($env:NEWMANGA_WORKSPACE_ROOT) { Join-Path $env:NEWMANGA_WORKSPACE_ROOT 'task-envs/CORE-SLIM-2/models/detector' } else { Join-Path (Join-Pat"
+        },
+        {
+          "line": 52,
+          "category": "sidecar_or_model",
+          "text": "[string]$OcrWeightsSource = $( $v11rRepo = (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent); if ($env:NEWMANGA_WORKSPACE_ROOT) { Join-Path $env:NEWMANGA_WORKSPACE_ROOT 'task-envs/CORE-SLIM-2/models/ocr' } else { Join-Path (Join-Path "
+        },
+        {
+          "line": 107,
+          "category": "sidecar_or_model",
+          "text": "# Destination INSIDE the onedir bundle: <bundle>/models/detector/"
+        },
+        {
+          "line": 108,
+          "category": "sidecar_or_model",
+          "text": "# (the frozen provider probes Path(sys.executable).parent/models/detector/"
+        },
+        {
+          "line": 109,
+          "category": "sidecar_or_model",
+          "text": "# <file>, and the data root's models/detector/<file> first)."
+        },
+        {
+          "line": 110,
+          "category": "sidecar_or_model",
+          "text": "$destDir = Join-Path $Bundle \"models/detector\""
+        },
+        {
+          "line": 138,
+          "category": "sidecar_or_model",
+          "text": "# files. Destination: <bundle>/models/ocr/manga-ocr-onnx/ (the frozen"
+        },
+        {
+          "line": 139,
+          "category": "sidecar_or_model",
+          "text": "# provider probes <exe dir>/models/ocr/manga-ocr-onnx)."
+        },
+        {
+          "line": 140,
+          "category": "sidecar_or_model",
+          "text": "$destDir = Join-Path $Bundle \"models/ocr/manga-ocr-onnx\""
+        },
+        {
+          "line": 178,
+          "category": "sidecar_or_model",
+          "text": "# <bundle>/models/detector/ (a FILE this time, not a directory — the frozen"
+        },
+        {
+          "line": 191,
+          "category": "sidecar_or_model",
+          "text": "# Destination INSIDE the onedir bundle: <bundle>/models/detector/<file>."
+        },
+        {
+          "line": 192,
+          "category": "sidecar_or_model",
+          "text": "$destDir = Join-Path $Bundle \"models/detector\""
+        },
+        {
+          "line": 330,
+          "category": "sidecar_or_model",
+          "text": "foreach ($exe in @(\"host_bridge.exe\", \"core_service.exe\", \"acceptance_bridge.exe\", \"catalog_loader.exe\", \"sfx_detect_probe.exe\")) {"
+        }
+      ]
+    },
+    {
+      "path": "packaging/m2ac5/core_sidecar.spec",
+      "exists": true,
+      "bytes": 25954,
+      "sha256": "139F5CF037F2E5A26A1ED67C98BBFF6914B5F487C8393674B7EAB483FBDCBC63",
+      "relevant_source_lines": [
+        {
+          "line": 8,
+          "category": "sidecar_or_model",
+          "text": "core_service.exe         <- `-m bootstrap.core_service`  (production library)"
+        },
+        {
+          "line": 70,
+          "category": "sidecar_or_model",
+          "text": "(opset 17) ships as ``models/detector/rtdetr-v2-fixed.onnx`` and the manga-ocr"
+        },
+        {
+          "line": 71,
+          "category": "sidecar_or_model",
+          "text": "encoder/decoder ONNX pair under ``models/ocr/manga-ocr-onnx/`` (both SHA-256"
+        }
+      ]
+    },
+    {
+      "path": "packaging/nsis/installer.nsi",
+      "exists": true,
+      "bytes": 8584,
+      "sha256": "C1152FB368A98C13A48745EA2A8EE9C0B6778BF294D9B55D0A1A00AD09A33199",
+      "relevant_source_lines": [
+        {
+          "line": 9,
+          "category": "install_or_uninstall",
+          "text": ";   * HKCU uninstall entry + Start Menu shortcuts only - never HKLM / Program Files;"
+        },
+        {
+          "line": 10,
+          "category": "install_or_uninstall",
+          "text": ";   * the user data root %APPDATA%\\com.newmanga.desktop is NEVER touched by install or uninstall;"
+        },
+        {
+          "line": 11,
+          "category": "install_or_uninstall",
+          "text": ";   * /S silent install and silent uninstall both supported; reinstall is an in-place upgrade;"
+        },
+        {
+          "line": 41,
+          "category": "install_or_uninstall",
+          "text": "!define UNINST_KEY \"Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\${APP_ID}\""
+        },
+        {
+          "line": 44,
+          "category": "install_or_uninstall",
+          "text": "!define UNINSTALL_LOG \"$TEMP\\NewManga-uninstall-${VERSION}.log\""
+        },
+        {
+          "line": 48,
+          "category": "install_or_uninstall",
+          "text": "InstallDir \"$LOCALAPPDATA\\Programs\\NewManga\""
+        },
+        {
+          "line": 49,
+          "category": "install_or_uninstall",
+          "text": "InstallDirRegKey HKCU \"${APP_REG_KEY}\" \"InstallLocation\""
+        },
+        {
+          "line": 60,
+          "category": "sidecar_or_model",
+          "text": "VIAddVersionKey \"LegalCopyright\" \"GPL-3.0-or-later (base) / AGPL-3.0 for the models package; see LICENSE and LICENSE-AGPL-3.0.txt\""
+        },
+        {
+          "line": 64,
+          "category": "install_or_uninstall",
+          "text": "UninstallIcon \"${ICON_FILE}\""
+        },
+        {
+          "line": 73,
+          "category": "sidecar_or_model",
+          "text": "!define MUI_LICENSEPAGE_TEXT_TOP \"base 变体整体按 GPL-3.0-or-later 分发。若安装 models 变体（含 Ultralytics YOLO11s-seg 权重），该包整体按 AGPL-3.0 分发。完整文本随包提供：LICENSE、LICENSE-AGPL-3.0.txt、NOTICE.md、THIRD_PARTY_LICENSES.md。\""
+        },
+        {
+          "line": 94,
+          "category": "install_or_uninstall",
+          "text": "Var UninstallLog"
+        },
+        {
+          "line": 116,
+          "category": "install_or_uninstall",
+          "text": "Delete \"$INSTDIR\\Uninstall.exe\""
+        },
+        {
+          "line": 119,
+          "category": "install_or_uninstall",
+          "text": "; files + LICENSE_AUDIT.md, install/uninstall/migrate scripts, UPGRADE.md/MANUAL_VERIFY.md,"
+        },
+        {
+          "line": 122,
+          "category": "install_or_uninstall",
+          "text": "WriteUninstaller \"$INSTDIR\\Uninstall.exe\""
+        },
+        {
+          "line": 129,
+          "category": "install_or_uninstall",
+          "text": "CreateShortCut \"$SMPROGRAMS\\${APP_NAME}\\卸载 ${APP_NAME}.lnk\" \"$INSTDIR\\Uninstall.exe\""
+        },
+        {
+          "line": 132,
+          "category": "install_or_uninstall",
+          "text": "; HKCU uninstall entry (per-user; no HKLM writes anywhere in this script)."
+        },
+        {
+          "line": 138,
+          "category": "install_or_uninstall",
+          "text": "WriteRegStr HKCU \"${UNINST_KEY}\" \"UninstallString\" '\"$INSTDIR\\Uninstall.exe\"'"
+        },
+        {
+          "line": 139,
+          "category": "install_or_uninstall",
+          "text": "WriteRegStr HKCU \"${UNINST_KEY}\" \"QuietUninstallString\" '\"$INSTDIR\\Uninstall.exe\" /S'"
+        },
+        {
+          "line": 151,
+          "category": "install_or_uninstall",
+          "text": "; ---- uninstall ---------------------------------------------------------------"
+        },
+        {
+          "line": 152,
+          "category": "install_or_uninstall",
+          "text": "Section \"Uninstall\""
+        },
+        {
+          "line": 155,
+          "category": "install_or_uninstall",
+          "text": "FileOpen $UninstallLog \"${UNINSTALL_LOG}\" w"
+        },
+        {
+          "line": 156,
+          "category": "install_or_uninstall",
+          "text": "FileWrite $UninstallLog \"NewManga uninstaller ${VERSION}$\\r$\\n\""
+        },
+        {
+          "line": 157,
+          "category": "install_or_uninstall",
+          "text": "FileWrite $UninstallLog \"install_dir=$INSTDIR$\\r$\\n\""
+        },
+        {
+          "line": 158,
+          "category": "install_or_uninstall",
+          "text": "FileWrite $UninstallLog \"data_root_preserved=%APPDATA%\\com.newmanga.desktop$\\r$\\n\""
+        },
+        {
+          "line": 165,
+          "category": "install_or_uninstall",
+          "text": "FileWrite $UninstallLog \"shortcuts_removed=1$\\r$\\n\""
+        },
+        {
+          "line": 169,
+          "category": "install_or_uninstall",
+          "text": "FileWrite $UninstallLog \"registry_removed=HKCU\\${UNINST_KEY}$\\r$\\n\""
+        },
+        {
+          "line": 177,
+          "category": "install_or_uninstall",
+          "text": "Delete \"$INSTDIR\\Uninstall.exe\""
+        },
+        {
+          "line": 179,
+          "category": "install_or_uninstall",
+          "text": "FileWrite $UninstallLog \"install_dir_removed=1$\\r$\\n\""
+        },
+        {
+          "line": 180,
+          "category": "install_or_uninstall",
+          "text": "FileWrite $UninstallLog \"uninstall_complete=1$\\r$\\n\""
+        },
+        {
+          "line": 181,
+          "category": "install_or_uninstall",
+          "text": "FileClose $UninstallLog"
+        }
+      ]
+    }
+  ],
+  "existing_package_artifacts": [
+    {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\FINAL-VALIDATION-1\\out\\NewManga-0.1.0-win-x64-models.zip",
+      "name": "NewManga-0.1.0-win-x64-models.zip",
+      "bytes": 724501664,
+      "modified_utc": "2026-10-26T21:18:21.952899+00:00"
+    },
+    {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\FINAL-VALIDATION-1\\out\\NewManga-0.1.0-win-x64.zip",
+      "name": "NewManga-0.1.0-win-x64.zip",
+      "bytes": 102493981,
+      "modified_utc": "2026-10-26T21:17:28.649146+00:00"
+    },
+    {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\NSIS-INSTALLER-1\\out\\NewManga-0.1.0-setup.exe",
+      "name": "NewManga-0.1.0-setup.exe",
+      "bytes": 68611208,
+      "modified_utc": "2026-10-28T06:53:00.968992+00:00",
+      "sha256": "EBAD86624A0ADD5393B8A28D258E2334C23FD13EE52F0A0F0B598A5BA9753691"
+    },
+    {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\AGPL-RELEASE-1\\out\\NewManga-0.1.0-win-x64-models.zip",
+      "name": "NewManga-0.1.0-win-x64-models.zip",
+      "bytes": 725499708,
+      "modified_utc": "2026-10-28T05:17:36.976002+00:00"
+    },
+    {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\AGPL-RELEASE-1\\out\\NewManga-0.1.0-win-x64.zip",
+      "name": "NewManga-0.1.0-win-x64.zip",
+      "bytes": 103492048,
+      "modified_utc": "2026-10-28T05:17:03.901400+00:00"
+    }
+  ],
+  "existing_package_metadata": [
+    {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\FINAL-VALIDATION-1\\out\\package-summary-base.json",
+      "value": {
+        "ac": "AC2",
+        "variant": "base",
+        "version": "0.1.0",
+        "zip": "G:\\CODEX\\New Manga.workspace\\task-envs\\FINAL-VALIDATION-1\\out\\NewManga-0.1.0-win-x64.zip",
+        "zip_bytes": 102493981,
+        "zip_mb": 97.75,
+        "max_zip_mb": 150,
+        "uncompressed_bytes": 224659515.0,
+        "uncompressed_mb": 214.25,
+        "file_count": 1965,
+        "sidecar_bytes": 195357401.0,
+        "sidecar_mb": 186.31,
+        "models_bundled": false,
+        "models_bytes": 0,
+        "licenses_byte_identical": true,
+        "license_hashes": {
+          "NOTICE.md": "6b3d9bd0504884547f16faaa41a01bb100f435386952e9fcaa2c6a2cb5f57412",
+          "THIRD_PARTY_LICENSES.md": "72927e68ca60e8a530c3ab35be027bf1259b42ff77ada578c8317303b4313ecc",
+          "LICENSE": "cde3a5c4c116f8cde7ba83ee7a4a885bc591164195b6123bfcbcdc3a52f9a88c"
+        },
+        "generated_at_utc": "2026-10-26T21:17:28.6540527Z"
+      }
+    },
+    {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\FINAL-VALIDATION-1\\out\\package-summary-models.json",
+      "value": {
+        "ac": "AC2",
+        "variant": "models",
+        "version": "0.1.0",
+        "zip": "G:\\CODEX\\New Manga.workspace\\task-envs\\FINAL-VALIDATION-1\\out\\NewManga-0.1.0-win-x64-models.zip",
+        "zip_bytes": 724501664,
+        "zip_mb": 690.94,
+        "max_zip_mb": 2048,
+        "uncompressed_bytes": 898145797.0,
+        "uncompressed_mb": 856.54,
+        "file_count": 1975,
+        "sidecar_bytes": 868843916.0,
+        "sidecar_mb": 828.59,
+        "models_bundled": true,
+        "models_bytes": 673486515.0,
+        "licenses_byte_identical": true,
+        "license_hashes": {
+          "THIRD_PARTY_LICENSES.md": "72927e68ca60e8a530c3ab35be027bf1259b42ff77ada578c8317303b4313ecc",
+          "NOTICE.md": "6b3d9bd0504884547f16faaa41a01bb100f435386952e9fcaa2c6a2cb5f57412",
+          "LICENSE": "cde3a5c4c116f8cde7ba83ee7a4a885bc591164195b6123bfcbcdc3a52f9a88c"
+        },
+        "generated_at_utc": "2026-10-26T21:18:21.9562756Z"
+      }
+    },
+    {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\NSIS-INSTALLER-1\\out\\build-info.json",
+      "value": {
+        "task": "NSIS-INSTALLER-1",
+        "variant": "base",
+        "version": "0.1.0",
+        "version4": "0.1.0.0",
+        "installer": {
+          "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\NSIS-INSTALLER-1\\out\\NewManga-0.1.0-setup.exe",
+          "file_name": "NewManga-0.1.0-setup.exe",
+          "bytes": 68611208,
+          "mb": 65.43,
+          "sha256": "ebad86624a0add5393b8a28d258e2334c23fd13ee52f0a0f0b598a5ba9753691",
+          "build_seconds": 55.23,
+          "authenticode_status": "NotSigned",
+          "file_version": "0.1.0",
+          "product_name": "New Manga",
+          "product_version": "0.1.0",
+          "description": "New Manga setup (per-user, unsigned)"
+        },
+        "stage": {
+          "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\AGPL-RELEASE-1\\out\\NewManga-0.1.0-win-x64",
+          "file_count": 1969,
+          "bytes": 226083382.0,
+          "mb": 215.61,
+          "manifest_sha256": "f1ace7a06919b9da49942b11577f2091a244c689e25da43e19ddc0d768aa3db4",
+          "install_size_kb": 220785,
+          "version_json": {
+            "version": "0.1.0",
+            "variant": "base",
+            "license": "GPL-3.0-or-later"
+          }
+        },
+        "toolchain": {
+          "makensis": "C:\\Users\\49745\\AppData\\Local\\tauri\\NSIS\\makensis.exe",
+          "makensis_version": "v3.13",
+          "makensis_sha256": "4ec390d0f96f9728507fbc2f4e91311dd90bfc6c8ddfe2159357b3651ae151c0",
+          "nsi_script": "G:\\CODEX\\New Manga.workspace\\worktrees\\NSIS-INSTALLER-1\\packaging\\nsis\\installer.nsi",
+          "icon": "G:\\CODEX\\New Manga.workspace\\worktrees\\NSIS-INSTALLER-1\\apps\\desktop\\src-tauri\\icons\\icon.ico"
+        },
+        "generated_at_utc": "2026-10-28T06:53:01.4149117Z"
+      }
+    },
+    {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\AGPL-RELEASE-1\\out\\package-summary-base.json",
+      "value": {
+        "ac": "AC2",
+        "variant": "base",
+        "version": "0.1.0",
+        "zip": "G:\\CODEX\\New Manga.workspace\\task-envs\\AGPL-RELEASE-1\\out\\NewManga-0.1.0-win-x64.zip",
+        "zip_bytes": 103492048,
+        "zip_mb": 98.7,
+        "max_zip_mb": 150,
+        "uncompressed_bytes": 225701934.0,
+        "uncompressed_mb": 215.25,
+        "file_count": 1968,
+        "sidecar_bytes": 195375520.0,
+        "sidecar_mb": 186.32,
+        "models_bundled": false,
+        "models_bytes": 0,
+        "licenses_byte_identical": true,
+        "license_hashes": {
+          "LICENSE-AGPL-3.0.txt": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0",
+          "NOTICE.md": "dc36e35f854916b87855f8ad66295d6fd935bfceefb770b4725381c000ecc53c",
+          "LICENSE": "cde3a5c4c116f8cde7ba83ee7a4a885bc591164195b6123bfcbcdc3a52f9a88c",
+          "THIRD_PARTY_LICENSES.md": "ee5393685aa9f098ea590e39ce93d0934bbbfe02ffcf3795a4227e49fab2618c"
+        },
+        "generated_at_utc": "2026-10-28T05:17:03.9062362Z"
+      }
+    },
+    {
+      "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\AGPL-RELEASE-1\\out\\package-summary-models.json",
+      "value": {
+        "ac": "AC2",
+        "variant": "models",
+        "version": "0.1.0",
+        "zip": "G:\\CODEX\\New Manga.workspace\\task-envs\\AGPL-RELEASE-1\\out\\NewManga-0.1.0-win-x64-models.zip",
+        "zip_bytes": 725499708,
+        "zip_mb": 691.89,
+        "max_zip_mb": 2048,
+        "uncompressed_bytes": 899188061.0,
+        "uncompressed_mb": 857.53,
+        "file_count": 1978,
+        "sidecar_bytes": 868862035.0,
+        "sidecar_mb": 828.61,
+        "models_bundled": true,
+        "models_bytes": 673486515.0,
+        "licenses_byte_identical": true,
+        "license_hashes": {
+          "THIRD_PARTY_LICENSES.md": "ee5393685aa9f098ea590e39ce93d0934bbbfe02ffcf3795a4227e49fab2618c",
+          "LICENSE": "cde3a5c4c116f8cde7ba83ee7a4a885bc591164195b6123bfcbcdc3a52f9a88c",
+          "NOTICE.md": "dc36e35f854916b87855f8ad66295d6fd935bfceefb770b4725381c000ecc53c",
+          "LICENSE-AGPL-3.0.txt": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0"
+        },
+        "generated_at_utc": "2026-10-28T05:17:36.9795462Z"
+      }
+    }
+  ],
+  "current_release_build": {
+    "app_exe_path": "G:\\CODEX\\New Manga\\apps\\desktop-avalonia\\src\\NewManga.App\\bin\\Release\\net9.0\\NewManga.App.exe",
+    "app_exe_exists": true,
+    "sidecar_core_path": "G:\\CODEX\\New Manga\\apps\\desktop-avalonia\\build\\sidecar\\core-sidecar\\core-sidecar\\core_service.exe",
+    "sidecar_core_exists": true
+  }
+}
+
+EXIT=0
+TIMED_OUT=False
+ELAPSED_SECONDS=0.237

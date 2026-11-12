@@ -27,6 +27,16 @@
 
 # 恢复入口
 
+## 2026-11-13 AUDIT-09/10/12/13 检查点
+
+- 产品基线=`10e4ee013835605800d3830fb960ae8d3aa04167`；本批报告/测试 evidence generated HEAD=`4e04e68c0db07ab136bc801e7fee27e7a5097564`，branch=`main`。当前阶段结果：AUDIT-09 `PARTIAL`、AUDIT-10 `PARTIAL`、AUDIT-12 `PARTIAL`、AUDIT-13 `PARTIAL`；原 AC2/AC3/AC4 与 Release Gate 继续 `PARTIAL` / `BLOCKED`。
+- AUDIT-09 真实 Legacy/V2 空态 UI、设置、沉浸 Reader `H`/`Esc` 观察已捕获；Fluent Host 115.344 秒仍未 ready。Reader Retry 与可见合成选择不一致作为 `AUDIT-09-CAND-001`，不定级。真实页编辑、导入、OCR/翻译、导出、无障碍与完整多分辨率矩阵 `NOT_RUN`。详见 `reports/AUDIT-09-UI-UX-2026-11-13.md`。
+- AUDIT-10 对 PNG decode、8 区域 layout/page compose、simple-fill 做 20 次批量重复；规范结果 median/p95 分别为 0.968/1.040 ms、1.330/1.373 ms、9.132/9.543 ms、109.972/110.846 ms。没有真实 I/O、OCR/translation model、benchmark threshold 或 soak。详见 `reports/AUDIT-10-PERFORMANCE-STABILITY-2026-11-13.md`。
+- AUDIT-12 Release configuration build EXIT 0；inventory 发现旧 zip/setup 与当前产品 build 输出，但 package provenance 未绑定当前 fixed product baseline；按 Task scope 未安装/启动/卸载。`AUDIT-12-CAND-001` 为单文件 publish 默认 repo 内输出并递归清理目录的静态候选。详见 `reports/AUDIT-12-WINDOWS-DELIVERY-2026-11-13.md`。
+- AUDIT-13 三个 production Core acceptance 文件 31 passed / 0 skipped / EXIT 0；只提供 A/D/E/G/H 的部分 synthetic coverage，B/C/F 和真实完整 UI 链未测。详见 `reports/AUDIT-13-E2E-2026-11-13.md`。
+- 证据日志/JSON：`logs/audit09-ui-*.log`、`logs/audit10-performance-20261112T222445371097Z.log`、`evidence/audit10-performance-metrics-20261112T222445371097Z.json`、`logs/audit12-delivery-inventory-20261112T223042315179Z.log`、`logs/audit13-core-acceptance-20261112T222650072377Z.log`。未触碰真实漫画、用户库、provider 凭据或产品源码。
+- 下一步按 DAG 进入 P7：全量 candidate/finding 去重、整改路线、正式报告和 Release Gate；证据固定后交 ZCode fresh context 独立 Review。历史 01/02、08、11 的 review 只适用于各自 reviewed head，不替代最终交付 review。
+
 ## 2026-11-13 AUDIT-14 静态阶段检查点
 
 - 当前 Task 仍 `in_progress`；产品基线=`10e4ee013835605800d3830fb960ae8d3aa04167`，静态 inventory 生成 HEAD=`a9924499fc5271fb1f917ea031d701c419003dcc`，branch=`main`。本阶段只写 `audit/V1-FULL-AUDIT/**`；`git diff --quiet <base> HEAD -- src apps tests` EXIT 0，未改产品代码、contracts、schema、依赖或原有测试。

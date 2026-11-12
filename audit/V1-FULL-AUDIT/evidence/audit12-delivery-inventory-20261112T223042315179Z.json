@@ -1,0 +1,15 @@
+{
+  "name": "audit12-delivery-inventory-20261112T223042315179Z",
+  "argv": [
+    "C:\\Python314\\python.exe",
+    "G:\\CODEX\\New Manga\\audit\\V1-FULL-AUDIT\\tests\\audit12_delivery_inventory.py"
+  ],
+  "cwd": "G:\\CODEX\\New Manga",
+  "started_utc": "2026-11-12T22:30:42.315406+00:00",
+  "head": "4e04e68c0db07ab136bc801e7fee27e7a5097564",
+  "branch": "main",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 0.237,
+  "log": "audit\\V1-FULL-AUDIT\\logs\\audit12-delivery-inventory-20261112T223042315179Z.log"
+}
