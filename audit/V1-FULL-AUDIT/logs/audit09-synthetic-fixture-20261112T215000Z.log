@@ -1,0 +1,13 @@
+START_UTC=2026-11-12T21:49:02.555346+00:00
+HEAD=2509db99057a8a57423b3cf3cf4490c558994b37
+BRANCH=main
+SHELL=Python subprocess (no shell)
+INTERPRETER=C:\Python314\python.exe
+CWD=G:\CODEX\New Manga
+ARGV=["C:\\Python314\\python.exe", "G:\\CODEX\\New Manga\\audit\\V1-FULL-AUDIT\\scripts\\generate_audit09_synthetic_pages.py", "--output-dir", "G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\gui\\fixtures\\AUDIT09-synthetic-two-page-20261112T215000Z"]
+DATA_ROOT=G:\CODEX\New Manga.workspace\task-env\NEW-MANGA-V1-FULL-AUDIT\audit09-synthetic-fixture-20261112T215000Z\data
+{"output_dir": "G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\gui\\fixtures\\AUDIT09-synthetic-two-page-20261112T215000Z", "pages": [{"path": "G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\gui\\fixtures\\AUDIT09-synthetic-two-page-20261112T215000Z\\001.png", "width": 720, "height": 1080, "bytes": 24382, "sha256": "40191472D7AFD87FE41ACED220DD07F0D10A14E05E6ED6057C55B8C76C83CDC4"}, {"path": "G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\gui\\fixtures\\AUDIT09-synthetic-two-page-20261112T215000Z\\002.png", "width": 720, "height": 1080, "bytes": 27159, "sha256": "8E0D8B682312D2938339542601D9E59E30CAC9883530188F63B1C635C4DEC5C4"}], "manifest": "G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\gui\\fixtures\\AUDIT09-synthetic-two-page-20261112T215000Z\\manifest.json"}
+
+EXIT=0
+TIMED_OUT=False
+ELAPSED_SECONDS=0.224

@@ -1,0 +1,21 @@
+{
+  "name": "audit09-ui-build-20261112T213917Z",
+  "argv": [
+    "dotnet",
+    "build",
+    "G:\\CODEX\\New Manga.workspace\\worktrees\\NEW-MANGA-V1-FULL-AUDIT\\audit09-ui-2509db9\\apps\\desktop-avalonia\\src\\NewManga.App\\NewManga.App.csproj",
+    "--no-restore",
+    "--configuration",
+    "Release",
+    "--verbosity",
+    "minimal"
+  ],
+  "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\NEW-MANGA-V1-FULL-AUDIT\\audit09-ui-2509db9",
+  "started_utc": "2026-11-12T21:39:17.164517+00:00",
+  "head": "2509db99057a8a57423b3cf3cf4490c558994b37",
+  "branch": "main",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 8.384,
+  "log": "audit\\V1-FULL-AUDIT\\logs\\audit09-ui-build-20261112T213917Z.log"
+}

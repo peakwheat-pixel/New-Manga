@@ -115,3 +115,10 @@
 - 证据：`src/application/fonts/service.py` 接受可选 `license_note` 并原样保存；FEA-14-FONT-1 要求不随包分发字体且把字体渲染消费留给 FONT-2；静态捕获显示仓库 tracked font assets=0。
 - 边界：本轮没有读取用户字体、核验外部许可或观察随包/发布；`license_note` 只能作为用户备注，不能证明许可。用户字体许可检查 `NOT_RUN`。
 - 待裁决：请 ZCode 判断备注/许可边界是否已由 FEA-14-FONT-1 limitation 接受，或需要独立产品要求/Task；不在本审计内改变字体导入语义。
+
+## AUDIT-09-CAND-001 — V2 Reader Retry 提示与可见选择不一致
+
+- 状态：`REVIEW_PENDING`（候选观察；审计作者不分配 severity，也不确定为正式 finding）。
+- 证据：`reports/AUDIT-09-UI-UX-2026-11-13.md`、`screenshots/audit09-v2-reader-retry-banner-20261113.jpg`、`logs/audit09-ui-v2-capture-20261112T220906Z.log` 及对应 JSON。隔离 V2 Library 选择了合成 book/chapter（章节 0 页）；Reader Retry 后仍提示“请先在资料柜选择作品与章节”。
+- 边界：仅在合成空章节路径观察；没有真实页图或操作数据，未验证状态根因、真实用户影响或其他导航路径；不据此推断数据丢失。
+- 待裁决：请 ZCode 判断提示是否构成 UI finding、severity 与需求归属；本审计不授权修复。

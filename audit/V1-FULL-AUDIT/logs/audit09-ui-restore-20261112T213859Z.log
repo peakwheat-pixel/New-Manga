@@ -1,0 +1,21 @@
+START_UTC=2026-11-12T21:38:59.884813+00:00
+HEAD=2509db99057a8a57423b3cf3cf4490c558994b37
+BRANCH=main
+SHELL=Python subprocess (no shell)
+INTERPRETER=C:\Python314\python.exe
+CWD=G:\CODEX\New Manga.workspace\worktrees\NEW-MANGA-V1-FULL-AUDIT\audit09-ui-2509db9
+ARGV=["dotnet", "restore", "G:\\CODEX\\New Manga.workspace\\worktrees\\NEW-MANGA-V1-FULL-AUDIT\\audit09-ui-2509db9\\apps\\desktop-avalonia\\src\\NewManga.App\\NewManga.App.csproj", "--source", "C:\\Users\\49745\\.nuget\\packages", "--verbosity", "minimal"]
+DATA_ROOT=G:\CODEX\New Manga.workspace\task-env\NEW-MANGA-V1-FULL-AUDIT\audit09-ui-restore-20261112T213859Z\data
+  正在确定要还原的项目…
+  已还原 G:\CODEX\New Manga.workspace\worktrees\NEW-MANGA-V1-FULL-AUDIT\audit09-ui-2509db9\apps\desktop-avalonia\src\NewManga.ApplicationCore\NewManga.ApplicationCore.csproj (用时 71 毫秒)。
+  已还原 G:\CODEX\New Manga.workspace\worktrees\NEW-MANGA-V1-FULL-AUDIT\audit09-ui-2509db9\apps\desktop-avalonia\src\NewManga.Host\NewManga.Host.csproj (用时 74 毫秒)。
+  已还原 G:\CODEX\New Manga.workspace\worktrees\NEW-MANGA-V1-FULL-AUDIT\audit09-ui-2509db9\apps\desktop-avalonia\src\NewManga.CoreClient\NewManga.CoreClient.csproj (用时 71 毫秒)。
+  已还原 G:\CODEX\New Manga.workspace\worktrees\NEW-MANGA-V1-FULL-AUDIT\audit09-ui-2509db9\apps\desktop-avalonia\src\NewManga.Appearance\NewManga.Appearance.csproj (用时 71 毫秒)。
+  已还原 G:\CODEX\New Manga.workspace\worktrees\NEW-MANGA-V1-FULL-AUDIT\audit09-ui-2509db9\apps\desktop-avalonia\src\NewManga.ThemeEngine\NewManga.ThemeEngine.csproj (用时 103 毫秒)。
+  已还原 G:\CODEX\New Manga.workspace\worktrees\NEW-MANGA-V1-FULL-AUDIT\audit09-ui-2509db9\apps\desktop-avalonia\src\NewManga.DesignSystem\NewManga.DesignSystem.csproj (用时 102 毫秒)。
+  已还原 G:\CODEX\New Manga.workspace\worktrees\NEW-MANGA-V1-FULL-AUDIT\audit09-ui-2509db9\apps\desktop-avalonia\src\NewManga.Presentation.Avalonia\NewManga.Presentation.Avalonia.csproj (用时 103 毫秒)。
+  已还原 G:\CODEX\New Manga.workspace\worktrees\NEW-MANGA-V1-FULL-AUDIT\audit09-ui-2509db9\apps\desktop-avalonia\src\NewManga.App\NewManga.App.csproj (用时 133 毫秒)。
+
+EXIT=0
+TIMED_OUT=False
+ELAPSED_SECONDS=1.274

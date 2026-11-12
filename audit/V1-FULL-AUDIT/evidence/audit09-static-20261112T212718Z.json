@@ -1,0 +1,1244 @@
+{
+  "generated_head": "577fdaa85af235b64caa1bcf68f40769448a0fb8",
+  "branch": "main",
+  "captured_utc": "20261112T212718Z",
+  "base_commit": "10e4ee013835605800d3830fb960ae8d3aa04167",
+  "product_source_diff": {
+    "argv": [
+      "git",
+      "diff",
+      "--quiet",
+      "10e4ee013835605800d3830fb960ae8d3aa04167",
+      "577fdaa85af235b64caa1bcf68f40769448a0fb8",
+      "--",
+      "apps/desktop-avalonia"
+    ],
+    "started_utc": "2026-11-12T21:27:18Z",
+    "elapsed_seconds": 0.024,
+    "exit": 0
+  },
+  "process_check": {
+    "argv": [
+      "pwsh",
+      "-NoProfile",
+      "-Command",
+      "Get-Process | Where-Object { $_.ProcessName -match 'NewManga|Manga|Avalonia' } | Select-Object -ExpandProperty ProcessName -Unique"
+    ],
+    "started_utc": "2026-11-12T21:27:18Z",
+    "elapsed_seconds": 0.3,
+    "exit": 0
+  },
+  "matching_process_names": [],
+  "gui_runtime_status": "BLOCKED_NO_MATCHING_APP_PROCESS",
+  "files": [
+    {
+      "path": "apps/desktop-avalonia/src/NewManga.App/AppOptions.cs",
+      "sha256": "92A80835BBA7695425C02915DF5EF28CE44E88EBAF9BD3CEA5A8CE3AB73688AE",
+      "line_count": 364,
+      "matches": [
+        {
+          "pattern": "DefaultShellId|public string Shell|UseV2Shell|PresentationHost",
+          "hits": [
+            {
+              "line": 54,
+              "text": "public bool PresentationHost { get; private set; }"
+            },
+            {
+              "line": 80,
+              "text": "public string Shell { get; private set; } = DefaultShellId;"
+            },
+            {
+              "line": 83,
+              "text": "public const string DefaultShellId = \"v2\";"
+            },
+            {
+              "line": 86,
+              "text": "public bool UseV2Shell => string.Equals(Shell, \"v2\", StringComparison.OrdinalIgnoreCase);"
+            },
+            {
+              "line": 259,
+              "text": "options.PresentationHost = !value.Equals(\"false\", StringComparison.OrdinalIgnoreCase);"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/desktop-avalonia/src/NewManga.App/App.axaml.cs",
+      "sha256": "B99202CA4FF8D1A359AB2D63953CC69ED40F58A9137C80FD0A3BB62F9281935A",
+      "line_count": 536,
+      "matches": [
+        {
+          "pattern": "if \\(!options.UseV2Shell\\)|if \\(options.PresentationHost\\)|selection.IsFluent|CreateLegacyShell",
+          "hits": [
+            {
+              "line": 148,
+              "text": "if (!options.UseV2Shell)"
+            },
+            {
+              "line": 150,
+              "text": "return CreateLegacyShell(controller, options, themeManager);"
+            },
+            {
+              "line": 153,
+              "text": "if (options.PresentationHost)"
+            },
+            {
+              "line": 159,
+              "text": "return selection.IsFluent"
+            },
+            {
+              "line": 444,
+              "text": "private static Window CreateLegacyShell("
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/desktop-avalonia/src/NewManga.App/Services/FrontendSelector.cs",
+      "sha256": "6234F5861CC238489CF0307CA01A0050BF17C14454F1BD0000071392C0241F57",
+      "line_count": 156,
+      "matches": [
+        {
+          "pattern": "DefaultDiagnostic|FrontendKind\\.(AvaloniaV2|Fluent)|IsFallback|CurrentV2FrontendId",
+          "hits": [
+            {
+              "line": 31,
+              "text": "/// startup log can record why a shell was chosen (AC1 \"记录\"); <see cref=\"IsFallback\"/> is true when an"
+            },
+            {
+              "line": 37,
+              "text": "/// <param name=\"IsFallback\">True when an unknown id was rejected and V2 started instead.</param>"
+            },
+            {
+              "line": 43,
+              "text": "bool IsFallback,"
+            },
+            {
+              "line": 47,
+              "text": "public bool IsFluent => Kind == FrontendKind.Fluent;"
+            },
+            {
+              "line": 67,
+              "text": "public const string CurrentV2FrontendId = \"builtin.current-v2\";"
+            },
+            {
+              "line": 75,
+              "text": "private const string DefaultDiagnostic ="
+            },
+            {
+              "line": 90,
+              "text": "FrontendKind.AvaloniaV2,"
+            },
+            {
+              "line": 91,
+              "text": "CurrentV2FrontendId,"
+            },
+            {
+              "line": 93,
+              "text": "IsFallback: false,"
+            },
+            {
+              "line": 94,
+              "text": "DefaultDiagnostic);"
+            },
+            {
+              "line": 100,
+              "text": "FrontendKind.Fluent,"
+            },
+            {
+              "line": 103,
+              "text": "IsFallback: false,"
+            },
+            {
+              "line": 107,
+              "text": "if (string.Equals(candidate, CurrentV2FrontendId, StringComparison.Ordinal))"
+            },
+            {
+              "line": 110,
+              "text": "FrontendKind.AvaloniaV2,"
+            },
+            {
+              "line": 111,
+              "text": "CurrentV2FrontendId,"
+            },
+            {
+              "line": 113,
+              "text": "IsFallback: false,"
+            },
+            {
+              "line": 114,
+              "text": "$\"theme.frontendId '{CurrentV2FrontendId}' ({Describe(source)}) selects the Current V2 shell\");"
+            },
+            {
+              "line": 121,
+              "text": "$\"{reason}; {Describe(source)} supplied it and the fail-safe frontend '{CurrentV2FrontendId}' \" +"
+            },
+            {
+              "line": 126,
+              "text": "FrontendKind.AvaloniaV2,"
+            },
+            {
+              "line": 127,
+              "text": "CurrentV2FrontendId,"
+            },
+            {
+              "line": 129,
+              "text": "IsFallback: true,"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/desktop-avalonia/src/NewManga.App/Views/MainWindow.axaml",
+      "sha256": "CCCD8A148943968E37F2B04EF3F0C0AAB378251182B9ABA849D23D900759CA12",
+      "line_count": 66,
+      "matches": [
+        {
+          "pattern": "Width=|MinWidth=|PageHost|DockHost|SidebarHost",
+          "hits": [
+            {
+              "line": 5,
+              "text": "Width=\"1280\""
+            },
+            {
+              "line": 7,
+              "text": "MinWidth=\"960\""
+            },
+            {
+              "line": 17,
+              "text": "page content always lives in PageHost so page instances are never recreated by a layout switch. -->"
+            },
+            {
+              "line": 29,
+              "text": "<Ellipse Width=\"12\" Height=\"12\" Fill=\"#FF5F57\" />"
+            },
+            {
+              "line": 30,
+              "text": "<Ellipse Width=\"12\" Height=\"12\" Fill=\"#FEBC2E\" />"
+            },
+            {
+              "line": 31,
+              "text": "<Ellipse Width=\"12\" Height=\"12\" Fill=\"#28C840\" />"
+            },
+            {
+              "line": 33,
+              "text": "<Border Width=\"22\" Height=\"22\" CornerRadius=\"6\" Background=\"{DynamicResource Accent}\" />"
+            },
+            {
+              "line": 44,
+              "text": "<Border x:Name=\"SidebarHost\" Grid.Column=\"0\" IsVisible=\"False\""
+            },
+            {
+              "line": 54,
+              "text": "<ContentControl x:Name=\"PageHost\" Grid.Column=\"1\" />"
+            },
+            {
+              "line": 56,
+              "text": "<Border x:Name=\"DockHost\" Grid.Column=\"0\" Grid.ColumnSpan=\"2\" IsVisible=\"False\""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/desktop-avalonia/src/NewManga.App/Views/MainWindow.axaml.cs",
+      "sha256": "2CC3CCC9396D6865990420A675AB68A5C65E92ED653EFE11B967978248BA0129",
+      "line_count": 1087,
+      "matches": [
+        {
+          "pattern": "_pages\\[\"(bookshelf|workbench|reader|settings)\"\\]|AddNav\\(|Reader\\.SetExport|OpenReaderForBookAsync",
+          "hits": [
+            {
+              "line": 94,
+              "text": "_pages[\"bookshelf\"] = new BookshelfPage(Bookshelf, _controller, _filePicker);"
+            },
+            {
+              "line": 108,
+              "text": "Reader.SetExportController(_controller, _filePicker);"
+            },
+            {
+              "line": 112,
+              "text": "LastReaderNavigation = OpenReaderForBookAsync(item.BookId);"
+            },
+            {
+              "line": 114,
+              "text": "LastReaderNavigation = OpenReaderForBookAsync(Reader.LibraryBook?.BookId, chapterId);"
+            },
+            {
+              "line": 115,
+              "text": "_pages[\"workbench\"] = Workbench;"
+            },
+            {
+              "line": 116,
+              "text": "_pages[\"reader\"] = Reader;"
+            },
+            {
+              "line": 118,
+              "text": "_pages[\"settings\"] = Settings;"
+            },
+            {
+              "line": 120,
+              "text": "AddNav(\"bookshelf\", \"书架\", \"Icon.bookshelf\");"
+            },
+            {
+              "line": 121,
+              "text": "AddNav(\"workbench\", \"工作台\", \"Icon.workbench\");"
+            },
+            {
+              "line": 122,
+              "text": "AddNav(\"reader\", \"阅读器\", \"Icon.reader\");"
+            },
+            {
+              "line": 123,
+              "text": "AddNav(\"settings\", \"设置\", \"Icon.settings\");"
+            },
+            {
+              "line": 429,
+              "text": "public async Task<bool> OpenReaderForBookAsync("
+            },
+            {
+              "line": 695,
+              "text": "public BookshelfPage BookshelfPageControl => (BookshelfPage)_pages[\"bookshelf\"];"
+            },
+            {
+              "line": 909,
+              "text": "private void AddNav(string key, string label, string iconKey)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/desktop-avalonia/src/NewManga.App/Shell/V2/AppShellV2.axaml",
+      "sha256": "CD3CE1B6656E35E9A65E2E3F1C3ABA09F0DF37A0BA8B261FBC8A28C3F21E45ED",
+      "line_count": 58,
+      "matches": [
+        {
+          "pattern": "ReaderOverlay|V2WorkspaceHost|ThemeStudio|CommandPaletteOverlay|HelpOverlay|AlertBanner",
+          "hits": [
+            {
+              "line": 11,
+              "text": "(ThemeStudio, ReaderOverlay) and the global command palette / jump / help / confirm overlays."
+            },
+            {
+              "line": 24,
+              "text": "<ctrl:AlertBanner Severity=\"{Binding NoticeStatus}\""
+            },
+            {
+              "line": 32,
+              "text": "<v:V2WorkspaceHost />"
+            },
+            {
+              "line": 34,
+              "text": "<!-- 全窗表面：ThemeStudio（保留 TopBand 返回语义） -->"
+            },
+            {
+              "line": 35,
+              "text": "<Grid IsVisible=\"{Binding IsThemeStudioOpen}\">"
+            },
+            {
+              "line": 36,
+              "text": "<ContentControl Content=\"{Binding ThemeStudioWorkspaceContent}\""
+            },
+            {
+              "line": 37,
+              "text": "IsVisible=\"{Binding IsThemeStudioWorkspaceRegistered}\" />"
+            },
+            {
+              "line": 39,
+              "text": "Detail=\"{Binding ThemeStudioPlaceholderDetail}\""
+            },
+            {
+              "line": 40,
+              "text": "IsVisible=\"{Binding IsThemeStudioPlaceholderVisible}\" />"
+            },
+            {
+              "line": 45,
+              "text": "<lv:ReaderOverlay DataContext=\"{Binding Library.Reader}\" />"
+            },
+            {
+              "line": 53,
+              "text": "<v:CommandPaletteOverlay Grid.RowSpan=\"3\" />"
+            },
+            {
+              "line": 55,
+              "text": "<v:HelpOverlay Grid.RowSpan=\"3\" />"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/desktop-avalonia/src/NewManga.App/Shell/V2/AppShellV2.axaml.cs",
+      "sha256": "5109F30EAF5D53EC459F53599ED99A2DFEA6A6D1DF953765EAF290F43F1BD208",
+      "line_count": 268,
+      "matches": [
+        {
+          "pattern": "RegisterWorkspace|LibraryWorkspaceView|ConsoleWorkspaceView|StudioWorkspace|HandleKey",
+          "hits": [
+            {
+              "line": 21,
+              "text": "/// input funnels through <see cref=\"AppShellViewModel.HandleKey\"/> (single KeyMap registry, IME-safe)."
+            },
+            {
+              "line": 51,
+              "text": "_viewModel.RegisterWorkspace(new LibraryWorkspaceView(_viewModel.Library));"
+            },
+            {
+              "line": 52,
+              "text": "_viewModel.RegisterWorkspace(new ConsoleWorkspaceView(_viewModel.Console));"
+            },
+            {
+              "line": 53,
+              "text": "StudioWorkspace = new StudioWorkspaceAdapter("
+            },
+            {
+              "line": 54,
+              "text": "new StudioWorkspaceView(new StudioWorkspaceViewModel("
+            },
+            {
+              "line": 58,
+              "text": "_viewModel.RegisterWorkspace(StudioWorkspace);"
+            },
+            {
+              "line": 119,
+              "text": "public StudioWorkspaceAdapter StudioWorkspace { get; }"
+            },
+            {
+              "line": 125,
+              "text": "public bool RegisterWorkspace(IWorkspaceView workspace) => _viewModel.RegisterWorkspace(workspace);"
+            },
+            {
+              "line": 167,
+              "text": "public bool HandleKeyForTest(Key key, KeyModifiers modifiers, bool textInputFocused = false) =>"
+            },
+            {
+              "line": 168,
+              "text": "_viewModel.HandleKey(key, modifiers, textInputFocused);"
+            },
+            {
+              "line": 254,
+              "text": "_viewModel.HandleKey(e, textInputFocused);"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/desktop-avalonia/src/NewManga.App/Views/V2/Library/ReaderOverlay.axaml",
+      "sha256": "128EBF3BCF19C41CD59E8542ECEC5258246D6FCBE6CE7865827439353C0E7FF3",
+      "line_count": 123,
+      "matches": [
+        {
+          "pattern": "ToggleLayoutCommand|ToggleDirectionCommand|PreviousPageCommand|NextPageCommand|HasError|IsLoading|CurrentPage",
+          "hits": [
+            {
+              "line": 30,
+              "text": "Command=\"{Binding ToggleLayoutCommand}\" />"
+            },
+            {
+              "line": 34,
+              "text": "Command=\"{Binding ToggleLayoutCommand}\" />"
+            },
+            {
+              "line": 37,
+              "text": "Command=\"{Binding ToggleDirectionCommand}\""
+            },
+            {
+              "line": 43,
+              "text": "<Border Grid.Row=\"1\" Padding=\"{DynamicResource Nm.Padding.ControlSm}\" IsVisible=\"{Binding HasError}\">"
+            },
+            {
+              "line": 53,
+              "text": "<Image Source=\"{Binding CurrentPage.Image}\""
+            },
+            {
+              "line": 55,
+              "text": "IsVisible=\"{Binding CurrentPageHasImage}\" />"
+            },
+            {
+              "line": 60,
+              "text": "IsVisible=\"{Binding !CurrentPageHasImage}\">"
+            },
+            {
+              "line": 68,
+              "text": "Text=\"{Binding CurrentPageLabel}\""
+            },
+            {
+              "line": 103,
+              "text": "<Button Classes=\"ghost sm\" Content=\"上一页\" Command=\"{Binding PreviousPageCommand}\" />"
+            },
+            {
+              "line": 104,
+              "text": "<Button Classes=\"ghost sm\" Content=\"下一页\" Command=\"{Binding NextPageCommand}\" />"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/desktop-avalonia/src/NewManga.App/Views/Fluent/FluentShellSurface.axaml.cs",
+      "sha256": "D230CFC2D56B5E324E02162F77471A48A72D87FF28621E39D479D53A1AF1D998",
+      "line_count": 871,
+      "matches": [
+        {
+          "pattern": "enum FluentPage|FluentPage\\.(Library|Workbench|Reader|Settings)|new (ShelfPageView|WorkbenchPageView|ReaderPageView|SettingsPageView)|ApplyResponsiveBand|OnPreviewKeyDown",
+          "hits": [
+            {
+              "line": 26,
+              "text": "public enum FluentPage"
+            },
+            {
+              "line": 47,
+              "text": "[FluentPage.Library, FluentPage.Workbench, FluentPage.Reader, FluentPage.Settings];"
+            },
+            {
+              "line": 70,
+              "text": "private FluentPage _pageBeforeReader = FluentPage.Library;"
+            },
+            {
+              "line": 111,
+              "text": "_navButtons[FluentPage.Library] = Require<Button>(\"NavLibrary\");"
+            },
+            {
+              "line": 112,
+              "text": "_navButtons[FluentPage.Workbench] = Require<Button>(\"NavWorkbench\");"
+            },
+            {
+              "line": 113,
+              "text": "_navButtons[FluentPage.Settings] = Require<Button>(\"NavSettings\");"
+            },
+            {
+              "line": 128,
+              "text": "_shelfView = new ShelfPageView(_shelfModel, picker, OpenReader, OpenWorkbench, openConsole);"
+            },
+            {
+              "line": 131,
+              "text": "_workbenchView = new WorkbenchPageView(_workbenchModel, () => Navigate(FluentPage.Library), openConsole);"
+            },
+            {
+              "line": 137,
+              "text": "_readerView = new ReaderPageView(_readerModel, CloseReader, SetFullScreen);"
+            },
+            {
+              "line": 138,
+              "text": "_settingsView = new SettingsPageView(_settingsModel);"
+            },
+            {
+              "line": 152,
+              "text": "Require<Button>(\"SettingsCommandButton\").Click += (_, _) => Navigate(FluentPage.Settings);"
+            },
+            {
+              "line": 154,
+              "text": "SizeChanged += (_, args) => ApplyResponsiveBand(_viewportWidth ?? args.NewSize.Width);"
+            },
+            {
+              "line": 159,
+              "text": "AddHandler(KeyDownEvent, OnPreviewKeyDown, RoutingStrategies.Tunnel);"
+            },
+            {
+              "line": 160,
+              "text": "ApplyResponsiveBand(ShellLayout.BreakpointFull);"
+            },
+            {
+              "line": 167,
+              "text": "Navigate(FluentPage.Library);"
+            },
+            {
+              "line": 178,
+              "text": "FluentPage.Library => \"书架：作品网格、筛选、章节和页面预览。\","
+            },
+            {
+              "line": 179,
+              "text": "FluentPage.Workbench => \"工作台：页面画布、区域检查器和批量状态矩阵。\","
+            },
+            {
+              "line": 180,
+              "text": "FluentPage.Reader => \"阅读器：页导航、缩放、阅读进度和方向设置。\","
+            },
+            {
+              "line": 181,
+              "text": "FluentPage.Settings => \"设置：外观、Provider、网络、备份与关于。\","
+            },
+            {
+              "line": 197,
+              "text": "public void SetViewportWidth(double width) { _viewportWidth = width; ApplyResponsiveBand(width); UpdateStatus(); }"
+            },
+            {
+              "line": 237,
+              "text": "if (_currentPage == FluentPage.Settings && page != FluentPage.Settings && _settingsModel.IsDirty)"
+            },
+            {
+              "line": 243,
+              "text": "if (page == FluentPage.Reader)"
+            },
+            {
+              "line": 245,
+              "text": "if (_currentPage != FluentPage.Reader) _pageBeforeReader = _currentPage;"
+            },
+            {
+              "line": 246,
+              "text": "_currentPage = FluentPage.Reader;"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/desktop-avalonia/src/NewManga.App/Views/Fluent/ReaderPageView.cs",
+      "sha256": "9BC8DA75F0DF127D351B37F17F805508562C6123EB878F0C961A620E7CF1AA1C",
+      "line_count": 610,
+      "matches": [
+        {
+          "pattern": "Zoom|DoublePage|ScaleTransform|OnKeyDown|Key\\.(Left|Right|PageUp|PageDown)|AutomationProperties|FluentPageState\\.(Empty|Error|Partial)",
+          "hits": [
+            {
+              "line": 79,
+              "text": "AutomationProperties.SetName(this, \"阅读器\");"
+            },
+            {
+              "line": 86,
+              "text": "AutomationProperties.SetName(_pageImageSecondary, \"后一页\");"
+            },
+            {
+              "line": 97,
+              "text": "AutomationProperties.SetName(_pageSurface, \"当前漫画页面\");"
+            },
+            {
+              "line": 102,
+              "text": "AutomationProperties.SetName(_webtoonImagePrimary, \"连续滚动当前页\");"
+            },
+            {
+              "line": 103,
+              "text": "AutomationProperties.SetName(_webtoonImageSecondary, \"连续滚动后一页\");"
+            },
+            {
+              "line": 114,
+              "text": "AutomationProperties.SetName(_webtoonScroll, \"连续页滚动区\");"
+            },
+            {
+              "line": 160,
+              "text": "KeyDown += OnKeyDown;"
+            },
+            {
+              "line": 161,
+              "text": "_pageSurface.DoubleTapped += (_, _) => _viewModel.ToggleDoublePage();"
+            },
+            {
+              "line": 254,
+              "text": "bar.Children.Add(FluentUi.Button(\"单页 / 双页\", \"fluent-secondary\", _viewModel.ToggleDoublePage, \"切换单页或双页\"));"
+            },
+            {
+              "line": 278,
+              "text": "rail.Children.Add(FluentUi.Button(\"放大\", \"fluent-icon\", () => _viewModel.ZoomBy(0.1), \"放大页面\"));"
+            },
+            {
+              "line": 279,
+              "text": "rail.Children.Add(FluentUi.Button(\"缩小\", \"fluent-icon\", () => _viewModel.ZoomBy(-0.1), \"缩小页面\"));"
+            },
+            {
+              "line": 280,
+              "text": "rail.Children.Add(FluentUi.Button(\"适合页面\", \"fluent-icon\", _viewModel.ResetZoom, \"重置缩放\"));"
+            },
+            {
+              "line": 303,
+              "text": "actions.Children.Add(FluentUi.Button(\"缩小\", \"fluent-icon\", () => _viewModel.ZoomBy(-0.1), \"缩小页面\"));"
+            },
+            {
+              "line": 304,
+              "text": "actions.Children.Add(FluentUi.Button(\"放大\", \"fluent-icon\", () => _viewModel.ZoomBy(0.1), \"放大页面\"));"
+            },
+            {
+              "line": 305,
+              "text": "actions.Children.Add(FluentUi.Button(\"适合页面\", \"fluent-secondary\", _viewModel.ResetZoom, \"重置缩放\"));"
+            },
+            {
+              "line": 430,
+              "text": "_pageImage.RenderTransform = new ScaleTransform(_viewModel.Zoom, _viewModel.Zoom);"
+            },
+            {
+              "line": 431,
+              "text": "_pageImageSecondary.RenderTransform = new ScaleTransform(_viewModel.Zoom, _viewModel.Zoom);"
+            },
+            {
+              "line": 434,
+              "text": "_pageImageSecondary.IsVisible = !webtoon && _viewModel.DoublePage && _pageImageSecondary.Source is not null;"
+            },
+            {
+              "line": 455,
+              "text": "AutomationProperties.SetName(_progress, $\"阅读进度 {_viewModel.Progress:0}%\");"
+            },
+            {
+              "line": 456,
+              "text": "_messageHost.IsVisible = _viewModel.State is FluentPageState.Empty or FluentPageState.Error or FluentPageState.Partial;"
+            },
+            {
+              "line": 457,
+              "text": "if (_viewModel.State == FluentPageState.Empty)"
+            },
+            {
+              "line": 461,
+              "text": "else if (_viewModel.State == FluentPageState.Error)"
+            },
+            {
+              "line": 466,
+              "text": "else if (_viewModel.State == FluentPageState.Partial)"
+            },
+            {
+              "line": 570,
+              "text": "private void OnKeyDown(object? sender, KeyEventArgs args)"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/desktop-avalonia/src/NewManga.App/Views/Fluent/ShelfPageView.cs",
+      "sha256": "F0C60BEFE0261E9EFF6CBF7FF6ED8DC686F656A239406E4DD189F33E89D122C0",
+      "line_count": 600,
+      "matches": [
+        {
+          "pattern": "正在读取书架|书架读取失败|ImportFilesAsync|ImportFolderAsync|FluentUi\\.Empty|AutomationProperties",
+          "hits": [
+            {
+              "line": 89,
+              "text": "AutomationProperties.SetName(_viewModeControl, \"书架视图模式\");"
+            },
+            {
+              "line": 193,
+              "text": "public Task ImportFilesAsync() => PickAndImportFilesAsync();"
+            },
+            {
+              "line": 195,
+              "text": "public Task ImportFolderAsync() => PickAndImportFolderAsync();"
+            },
+            {
+              "line": 213,
+              "text": "AutomationProperties.SetName(input, name);"
+            },
+            {
+              "line": 235,
+              "text": "_importFilesButton = FluentUi.IconButton(NmIconKind.Import, \"导入文件\", () => _ = PickAndImportFilesAsync(), \"fluent-primary\");"
+            },
+            {
+              "line": 237,
+              "text": "_importFolderButton = FluentUi.Button(\"导入文件夹\", \"fluent-secondary\", () => _ = PickAndImportFolderAsync(), \"导入文件夹\");"
+            },
+            {
+              "line": 309,
+              "text": "loading.Children.Add(FluentUi.Text(\"正在读取书架…\", \"fluent-page-title\"));"
+            },
+            {
+              "line": 318,
+              "text": "errorCard.Children.Add(FluentUi.Banner(StatusKind.Failed, \"书架读取失败\", _viewModel.Error,"
+            },
+            {
+              "line": 344,
+              "text": "_stateHost.Child = FluentUi.Card(FluentUi.Empty("
+            },
+            {
+              "line": 353,
+              "text": "_stateHost.Child = FluentUi.Card(FluentUi.Empty("
+            },
+            {
+              "line": 378,
+              "text": "AutomationProperties.SetName(_detailToggle, _detailToggle.Content?.ToString() ?? \"折叠或展开详情栏\");"
+            },
+            {
+              "line": 395,
+              "text": "Avalonia.Automation.AutomationProperties.SetName(thumb, label);"
+            },
+            {
+              "line": 432,
+              "text": "AutomationProperties.SetName(card, $\"{book.Title} · {book.PageCount ?? 0} 页\");"
+            },
+            {
+              "line": 450,
+              "text": "AutomationProperties.SetName(row, $\"{book.Title} · {book.PageCount ?? 0} 页\");"
+            },
+            {
+              "line": 474,
+              "text": "if (_viewModel.SelectedChapter is not null) await PickAndImportFilesAsync();"
+            },
+            {
+              "line": 487,
+              "text": "AutomationProperties.SetName(_dialogConfirm, \"确认创建\");"
+            },
+            {
+              "line": 511,
+              "text": "else if (_dialogAction == \"drop-files\" && _pendingDropFiles.Count > 0) await _viewModel.ImportFilesAsync(_pendingDropFiles);"
+            },
+            {
+              "line": 512,
+              "text": "else if (_dialogAction == \"drop-folder\" && !string.IsNullOrWhiteSpace(_pendingDropFolder)) await _viewModel.ImportFolderAsync(_pendingDropFolder);"
+            },
+            {
+              "line": 517,
+              "text": "private async Task PickAndImportFilesAsync()"
+            },
+            {
+              "line": 521,
+              "text": "if (paths.Count > 0) await _viewModel.ImportFilesAsync(paths);"
+            },
+            {
+              "line": 524,
+              "text": "private async Task PickAndImportFolderAsync()"
+            },
+            {
+              "line": 528,
+              "text": "if (!string.IsNullOrWhiteSpace(folder)) await _viewModel.ImportFolderAsync(folder);"
+            },
+            {
+              "line": 562,
+              "text": "AutomationProperties.SetName(_dialogConfirm, _dialogConfirm.Content?.ToString() ?? \"确认导入\");"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/desktop-avalonia/src/NewManga.App/Views/Fluent/WorkbenchPageView.cs",
+      "sha256": "CE91937710EFB5D27D67A4567CB08B38F82B8073FD7CA990709D99A1ACAD4957",
+      "line_count": 836,
+      "matches": [
+        {
+          "pattern": "WorkbenchViewTab|Batch|OCR|SFX|Glossary|Region|Revision|FluentUi\\.Empty|Loading|Error|AutomationProperties",
+          "hits": [
+            {
+              "line": 21,
+              "text": "public enum WorkbenchViewTab"
+            },
+            {
+              "line": 24,
+              "text": "Batch,"
+            },
+            {
+              "line": 30,
+              "text": "/// 设计系统的 <c>BatchMatrix : ScrollViewer</c> 没有自己的 ControlTheme（StyleKey=派生类型 → 取不到"
+            },
+            {
+              "line": 32,
+              "text": "/// StyleKey 复位为基类型，既复用 <c>fluent-batch-matrix</c> 样式，又真正获得可滚动模板（0 pin："
+            },
+            {
+              "line": 34,
+              "text": "/// L-R3-3：DS 侧 <c>BatchMatrix</c> 缺 ControlTheme 的问题保留为 DS 回修项（本卡只做 App 侧规避）。"
+            },
+            {
+              "line": 36,
+              "text": "internal sealed class FluentBatchMatrix : ScrollViewer"
+            },
+            {
+              "line": 38,
+              "text": "public FluentBatchMatrix() => Classes.Add(\"fluent-batch-matrix\");"
+            },
+            {
+              "line": 61,
+              "text": "private readonly StackPanel _regionList;"
+            },
+            {
+              "line": 69,
+              "text": "private readonly Border _loadingHost;"
+            },
+            {
+              "line": 73,
+              "text": "private readonly StackPanel _batchLayout;"
+            },
+            {
+              "line": 77,
+              "text": "// 下列控件在 BuildBatchLayout/BuildConsoleLayout 中创建（构造函数调用一次），因此不标 readonly。"
+            },
+            {
+              "line": 78,
+              "text": "private Border _batchEmptyHost = null!;"
+            },
+            {
+              "line": 79,
+              "text": "private Grid _batchTable = null!;"
+            },
+            {
+              "line": 80,
+              "text": "private Grid _batchHeader = null!;"
+            },
+            {
+              "line": 81,
+              "text": "private FluentBatchMatrix _batchMatrix = null!;"
+            },
+            {
+              "line": 82,
+              "text": "private StackPanel _batchRows = null!;"
+            },
+            {
+              "line": 83,
+              "text": "private TextBlock _batchHint = null!;"
+            },
+            {
+              "line": 84,
+              "text": "private Button _batchStart = null!;"
+            },
+            {
+              "line": 87,
+              "text": "private Border _consoleErrorHost = null!;"
+            },
+            {
+              "line": 94,
+              "text": "private WorkbenchViewTab _activeTab;"
+            },
+            {
+              "line": 105,
+              "text": "AutomationProperties.SetName(_tabStrip, \"工作台视图\");"
+            },
+            {
+              "line": 125,
+              "text": "_regionList = FluentUi.Stack(\"fluent-chapter-list\");"
+            },
+            {
+              "line": 131,
+              "text": "AutomationProperties.SetName(_dirtyDot, \"有未保存的译文草稿\");"
+            },
+            {
+              "line": 150,
+              "text": "_loadingHost = new Border { IsVisible = false };"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/desktop-avalonia/src/NewManga.App/Views/Fluent/SettingsPageView.cs",
+      "sha256": "D8D4B350078025480F3B14DBAED68270D3E76C2098A12E2FD69C1929E6014645",
+      "line_count": 907,
+      "matches": [
+        {
+          "pattern": "theme\\.frontendId|凭据|Network|Backup|正在读取设置|设置错误|AutomationProperties",
+          "hits": [
+            {
+              "line": 39,
+              "text": "private BackupPackageInfo? _pendingBackup;"
+            },
+            {
+              "line": 53,
+              "text": "AutomationProperties.SetName(_dirtyDot, \"有未保存的设置修改\");"
+            },
+            {
+              "line": 318,
+              "text": "SettingsGroupId.Network => BuildNetworkGroup(),"
+            },
+            {
+              "line": 319,
+              "text": "SettingsGroupId.Backup => BuildBackupGroup(),"
+            },
+            {
+              "line": 347,
+              "text": "AutomationProperties.SetName(input, name);"
+            },
+            {
+              "line": 356,
+              "text": "var name = AutomationProperties.GetName(field.Children.OfType<Control>().Skip(1).FirstOrDefault() ?? field) ?? string.Empty;"
+            },
+            {
+              "line": 405,
+              "text": "AddCombo(cardContent, \"theme.frontendId\", [\"builtin.current-v2\", \"builtin.fluent\"], _viewModel.Draft.FrontendId,"
+            },
+            {
+              "line": 469,
+              "text": "stack.Children.Add(FluentUi.Text(\"Provider 与凭据\", \"fluent-page-title\"));"
+            },
+            {
+              "line": 473,
+              "text": "stack.Children.Add(FluentUi.Empty(\"暂无 Provider\", \"列表来自 Host；凭据不会回显明文。\", null, null));"
+            },
+            {
+              "line": 481,
+              "text": "card.Children.Add(FluentUi.Text($\"凭据：{profile.CredentialState}\", \"fluent-subtle-text\"));"
+            },
+            {
+              "line": 487,
+              "text": "\"删除 Provider Profile\", $\"将删除「{profile.DisplayName}」配置；不会删除凭据明文。\","
+            },
+            {
+              "line": 493,
+              "text": "stack.Children.Add(FluentUi.Text(\"凭据引用\", \"fluent-status-text\"));"
+            },
+            {
+              "line": 496,
+              "text": "stack.Children.Add(FluentUi.Text(\"暂无凭据目标。\", \"fluent-subtle-text\"));"
+            },
+            {
+              "line": 503,
+              "text": "var password = new TextBox { PasswordChar = '●', Watermark = \"仅输入新凭据，不回显已有值\" };"
+            },
+            {
+              "line": 504,
+              "text": "Avalonia.Automation.AutomationProperties.SetName(password, $\"{target.DisplayName} 凭据\");"
+            },
+            {
+              "line": 505,
+              "text": "var save = FluentUi.Button(\"保存凭据\", \"fluent-secondary\", null, \"保存凭据\");"
+            },
+            {
+              "line": 521,
+              "text": "private Control BuildNetworkGroup()"
+            },
+            {
+              "line": 525,
+              "text": "stack.Children.Add(FluentUi.Text(\"只显示 Host 返回的现有 Profile 字段。代理凭据以 credential_state 表示，不显示明文。\", \"fluent-subtle-text\"));"
+            },
+            {
+              "line": 527,
+              "text": "stack.Children.Add(FluentUi.Button(\"添加网络 Profile\", \"fluent-primary\", () => ShowNetworkEditor(null), \"添加网络 Profile\"));"
+            },
+            {
+              "line": 528,
+              "text": "if (_viewModel.Networks.Count == 0)"
+            },
+            {
+              "line": 533,
+              "text": "foreach (var network in _viewModel.Networks)"
+            },
+            {
+              "line": 536,
+              "text": "card.Children.Add(FluentUi.Text(network.DisplayText, \"fluent-status-text\"));"
+            },
+            {
+              "line": 537,
+              "text": "card.Children.Add(FluentUi.Text($\"TLS：{network.TlsVerificationState} · 代理失败直连：{network.AllowProxyFailureDirectFallback}\", \"fluent-subtle-text\"));"
+            },
+            {
+              "line": 538,
+              "text": "card.Children.Add(FluentUi.Button(\"设为默认网络\", \"fluent-secondary\", () => _ = _viewModel.SetNetworkDefaultAsync(network), \"设为默认网络 Profile\"));"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Studio/StudioCapabilities.cs",
+      "sha256": "BF1B3BA93F6BDBDACD1523914190F969AB817B4E375C4F5FEEF9FB9DB1E46419",
+      "line_count": 151,
+      "matches": [
+        {
+          "pattern": "NotWiredTooltip|WiredCommands|SetRegionType|RestoreRevision|RerenderPage|CanExecute",
+          "hits": [
+            {
+              "line": 10,
+              "text": "/// <summary>Wired: <c>IHostController.SetRegionTypeAsync</c> (set_region_type).</summary>"
+            },
+            {
+              "line": 11,
+              "text": "SetRegionType,"
+            },
+            {
+              "line": 14,
+              "text": "RestoreRevision,"
+            },
+            {
+              "line": 16,
+              "text": "/// <summary>Wired: <c>IHostController.RerenderPageAsync</c> (rerender_page).</summary>"
+            },
+            {
+              "line": 17,
+              "text": "RerenderPage,"
+            },
+            {
+              "line": 45,
+              "text": "public const string NotWiredTooltip = \"能力待接入（V11R-F0-1 写面未合入）\";"
+            },
+            {
+              "line": 49,
+              "text": "private static readonly HashSet<StudioCommand> WiredCommands = new()"
+            },
+            {
+              "line": 51,
+              "text": "StudioCommand.SetRegionType,"
+            },
+            {
+              "line": 52,
+              "text": "StudioCommand.RestoreRevision,"
+            },
+            {
+              "line": 53,
+              "text": "StudioCommand.RerenderPage,"
+            },
+            {
+              "line": 70,
+              "text": "public static bool IsWired(StudioCommand command) => WiredCommands.Contains(command);"
+            },
+            {
+              "line": 73,
+              "text": "public bool CanExecute(StudioCommand command) =>"
+            },
+            {
+              "line": 78,
+              "text": "CanExecute(command)"
+            },
+            {
+              "line": 81,
+              "text": "? NotWiredTooltip"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Studio/StudioTermsViewModel.cs",
+      "sha256": "D3842F57248DD9ED6C8B1CE3C9F1F3DCCAFCA7D05D6C931D455FFE2C26C17D2F",
+      "line_count": 195,
+      "matches": [
+        {
+          "pattern": "NOT_WIRED|能力待接入|搜索不可用|未接入：不展示|未执行任何写入",
+          "hits": [
+            {
+              "line": 37,
+              "text": "/// NOT_WIRED implementation: verified on 2026-10-30 that"
+            },
+            {
+              "line": 43,
+              "text": "/// renders the NOT_WIRED banner and never fabricates rows or interactions."
+            },
+            {
+              "line": 68,
+              "text": "/// typed Host method), so this view model exposes the NOT_WIRED banner, the exact reason and disabled"
+            },
+            {
+              "line": 90,
+              "text": "public string BannerTitle => IsWired ? \"术语与约束\" : \"能力待接入 · NOT_WIRED\";"
+            },
+            {
+              "line": 116,
+              "text": "public string SearchPlaceholder => IsWired ? \"搜索术语 / 原文 / 译文\" : \"搜索不可用（未接入）\";"
+            },
+            {
+              "line": 120,
+              "text": "/// <summary>Always empty while NOT_WIRED — no invented rows.</summary>"
+            },
+            {
+              "line": 135,
+              "text": "public string EmptyText => IsWired ? \"没有条目\" : \"未接入：不展示任何条目\";"
+            },
+            {
+              "line": 137,
+              "text": "/// <summary>Reads the bound source; the NOT_WIRED source returns empty lists by contract.</summary>"
+            },
+            {
+              "line": 167,
+              "text": "/// <summary>Editing/creating terms is NOT_WIRED: any attempt reports the reason instead of pretending.</summary>"
+            },
+            {
+              "line": 181,
+              "text": "_statusText = \"未接入：该操作需要知识域命令（当前不可用），未执行任何写入\";"
+            },
+            {
+              "line": 186,
+              "text": "/// <summary>Evidence inventory for the NOT_WIRED list.</summary>"
+            },
+            {
+              "line": 193,
+              "text": "$\"当前源：{(_source.IsWired ? \"真实\" : \"NOT_WIRED（返回空、不伪造）\")}\","
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Studio/StudioBatchViewModel.cs",
+      "sha256": "D5E5BF779A5005C7C5FC51D7A227BC97135BC2727180EA9F168286FF82B2EABE",
+      "line_count": 1441,
+      "matches": [
+        {
+          "pattern": "NotWiredText|NOT_WIRED|投影未接入|IRunController",
+          "hits": [
+            {
+              "line": 36,
+              "text": "/// <summary>Batch data lifecycle; <see cref=\"NotWired\"/> is reserved for a missing IRunController.</summary>"
+            },
+            {
+              "line": 299,
+              "text": "/// V11R-B-4 Studio · Batch mode: real <see cref=\"IRunController\"/> projection, dynamic stage columns"
+            },
+            {
+              "line": 310,
+              "text": "public const string NotWiredText = \"IRunController 不可用（Host 未就绪）· NOT_WIRED\";"
+            },
+            {
+              "line": 316,
+              "text": "private readonly IRunController? _controller;"
+            },
+            {
+              "line": 343,
+              "text": "IRunController? controller,"
+            },
+            {
+              "line": 351,
+              "text": "_controller = controller ?? host as IRunController;"
+            },
+            {
+              "line": 444,
+              "text": "StudioBatchRunState.NotWired => NotWiredText,"
+            },
+            {
+              "line": 1091,
+              "text": "_statusText = NotWiredText;"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/desktop-avalonia/src/NewManga.App/Views/V2/Studio/Controls/StudioCanvasViewport.cs",
+      "sha256": "28292410968E46C26BA42C20554C42EFA6031A4BCCD83FDF18F19E7ED2683B0A",
+      "line_count": 316,
+      "matches": [
+        {
+          "pattern": "NOT_WIRED|成品预览|能力待接入",
+          "hits": [
+            {
+              "line": 16,
+              "text": "/// is not on the frozen face yet, so they render an explicit NOT_WIRED placeholder instead of a fake."
+            },
+            {
+              "line": 64,
+              "text": "\"成品预览 · 能力待接入\\n渲染结果读取命令未接入（F0-1）\", \"meta\", \"studio-center\", \"studio-wrap\");"
+            },
+            {
+              "line": 182,
+              "text": "/// <summary>页面 = image + overlay; 成品 = NOT_WIRED placeholder; 分屏 = image left / placeholder right.</summary>"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "apps/desktop-avalonia/src/NewManga.App/Views/V2/Studio/Controls/StudioPageWorkspace.cs",
+      "sha256": "A23ABD309E2BF7CD1DC27FD6A71261D6589E0CB76EAE216901B196C90C6EA0EB",
+      "line_count": 397,
+      "matches": [
+        {
+          "pattern": "StudioSurfaceMode\\.Final|StudioSurfaceMode\\.Split|NOT_WIRED|成品预览读取未接入",
+          "hits": [
+            {
+              "line": 263,
+              "text": "(StudioSurfaceMode.Final, \"成品\"),"
+            },
+            {
+              "line": 264,
+              "text": "(StudioSurfaceMode.Split, \"分屏\"),"
+            },
+            {
+              "line": 273,
+              "text": "StudioSurfaceMode.Final => \"成品：成品预览读取未接入（NOT_WIRED）\","
+            },
+            {
+              "line": 274,
+              "text": "_ => \"分屏：原图 / 成品对照（成品侧 NOT_WIRED）\","
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "exit": 0
+}

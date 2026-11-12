@@ -1,0 +1,20 @@
+{
+  "name": "audit09-ui-legacy-20261112T215545Z",
+  "argv": [
+    "G:\\CODEX\\New Manga.workspace\\worktrees\\NEW-MANGA-V1-FULL-AUDIT\\audit09-ui-2509db9\\apps\\desktop-avalonia\\src\\NewManga.App\\bin\\Release\\net9.0\\NewManga.App.exe",
+    "--data-root=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\audit09-ui-legacy-20261112T215545Z\\data",
+    "--log-dir=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\audit09-ui-legacy-20261112T215545Z\\app-logs",
+    "--theme-home=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\audit09-ui-legacy-20261112T215545Z\\theme",
+    "--sidecar-dir=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\cargo-target\\debug\\resources\\core-sidecar",
+    "--mutex-name=NewManga.Audit09.Legacy.20261112T215545Z",
+    "--shell=legacy"
+  ],
+  "cwd": "G:\\CODEX\\New Manga.workspace\\worktrees\\NEW-MANGA-V1-FULL-AUDIT\\audit09-ui-2509db9",
+  "started_utc": "2026-11-12T21:55:45.005637+00:00",
+  "head": "2509db99057a8a57423b3cf3cf4490c558994b37",
+  "branch": "main",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 265.241,
+  "log": "audit\\V1-FULL-AUDIT\\logs\\audit09-ui-legacy-20261112T215545Z.log"
+}

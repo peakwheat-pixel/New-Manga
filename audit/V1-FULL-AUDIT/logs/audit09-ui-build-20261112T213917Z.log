@@ -1,0 +1,26 @@
+START_UTC=2026-11-12T21:39:17.164517+00:00
+HEAD=2509db99057a8a57423b3cf3cf4490c558994b37
+BRANCH=main
+SHELL=Python subprocess (no shell)
+INTERPRETER=C:\Python314\python.exe
+CWD=G:\CODEX\New Manga.workspace\worktrees\NEW-MANGA-V1-FULL-AUDIT\audit09-ui-2509db9
+ARGV=["dotnet", "build", "G:\\CODEX\\New Manga.workspace\\worktrees\\NEW-MANGA-V1-FULL-AUDIT\\audit09-ui-2509db9\\apps\\desktop-avalonia\\src\\NewManga.App\\NewManga.App.csproj", "--no-restore", "--configuration", "Release", "--verbosity", "minimal"]
+DATA_ROOT=G:\CODEX\New Manga.workspace\task-env\NEW-MANGA-V1-FULL-AUDIT\audit09-ui-build-20261112T213917Z\data
+  NewManga.ApplicationCore -> G:\CODEX\New Manga.workspace\worktrees\NEW-MANGA-V1-FULL-AUDIT\audit09-ui-2509db9\apps\desktop-avalonia\src\NewManga.ApplicationCore\bin\Release\net9.0\NewManga.ApplicationCore.dll
+  NewManga.Appearance -> G:\CODEX\New Manga.workspace\worktrees\NEW-MANGA-V1-FULL-AUDIT\audit09-ui-2509db9\apps\desktop-avalonia\src\NewManga.Appearance\bin\Release\net9.0\NewManga.Appearance.dll
+  NewManga.CoreClient -> G:\CODEX\New Manga.workspace\worktrees\NEW-MANGA-V1-FULL-AUDIT\audit09-ui-2509db9\apps\desktop-avalonia\src\NewManga.CoreClient\bin\Release\net9.0\NewManga.CoreClient.dll
+  NewManga.Host -> G:\CODEX\New Manga.workspace\worktrees\NEW-MANGA-V1-FULL-AUDIT\audit09-ui-2509db9\apps\desktop-avalonia\src\NewManga.Host\bin\Release\net9.0\NewManga.Host.dll
+  NewManga.DesignSystem -> G:\CODEX\New Manga.workspace\worktrees\NEW-MANGA-V1-FULL-AUDIT\audit09-ui-2509db9\apps\desktop-avalonia\src\NewManga.DesignSystem\bin\Release\net9.0\NewManga.DesignSystem.dll
+  NewManga.Presentation.Avalonia -> G:\CODEX\New Manga.workspace\worktrees\NEW-MANGA-V1-FULL-AUDIT\audit09-ui-2509db9\apps\desktop-avalonia\src\NewManga.Presentation.Avalonia\bin\Release\net9.0\NewManga.Presentation.Avalonia.dll
+  NewManga.ThemeEngine -> G:\CODEX\New Manga.workspace\worktrees\NEW-MANGA-V1-FULL-AUDIT\audit09-ui-2509db9\apps\desktop-avalonia\src\NewManga.ThemeEngine\bin\Release\net9.0\NewManga.ThemeEngine.dll
+  NewManga.App -> G:\CODEX\New Manga.workspace\worktrees\NEW-MANGA-V1-FULL-AUDIT\audit09-ui-2509db9\apps\desktop-avalonia\src\NewManga.App\bin\Release\net9.0\NewManga.App.dll
+
+已成功生成。
+    0 个警告
+    0 个错误
+
+已用时间 00:00:08.17
+
+EXIT=0
+TIMED_OUT=False
+ELAPSED_SECONDS=8.384

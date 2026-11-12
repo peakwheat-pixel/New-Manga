@@ -1,0 +1,12 @@
+START_UTC=2026-11-12T22:02:03.651616+00:00
+HEAD=2509db99057a8a57423b3cf3cf4490c558994b37
+BRANCH=main
+SHELL=Python subprocess (no shell)
+INTERPRETER=C:\Python314\python.exe
+CWD=G:\CODEX\New Manga.workspace\worktrees\NEW-MANGA-V1-FULL-AUDIT\audit09-ui-2509db9
+ARGV=["G:\\CODEX\\New Manga.workspace\\worktrees\\NEW-MANGA-V1-FULL-AUDIT\\audit09-ui-2509db9\\apps\\desktop-avalonia\\src\\NewManga.App\\bin\\Release\\net9.0\\NewManga.App.exe", "--data-root=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\audit09-ui-fluent-20261112T220203Z\\data", "--log-dir=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\audit09-ui-fluent-20261112T220203Z\\app-logs", "--theme-home=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\audit09-ui-fluent-20261112T220203Z\\theme", "--sidecar-dir=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\cargo-target\\debug\\resources\\core-sidecar", "--mutex-name=NewManga.Audit09.Fluent.20261112T220203Z", "--shell=v2", "--frontend=builtin.fluent"]
+DATA_ROOT=G:\CODEX\New Manga.workspace\task-env\NEW-MANGA-V1-FULL-AUDIT\audit09-ui-fluent-20261112T220203Z\data
+
+EXIT=0
+TIMED_OUT=False
+ELAPSED_SECONDS=115.344

@@ -1,0 +1,17 @@
+{
+  "name": "audit09-synthetic-fixture-20261112T215000Z",
+  "argv": [
+    "C:\\Python314\\python.exe",
+    "G:\\CODEX\\New Manga\\audit\\V1-FULL-AUDIT\\scripts\\generate_audit09_synthetic_pages.py",
+    "--output-dir",
+    "G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\gui\\fixtures\\AUDIT09-synthetic-two-page-20261112T215000Z"
+  ],
+  "cwd": "G:\\CODEX\\New Manga",
+  "started_utc": "2026-11-12T21:49:02.555346+00:00",
+  "head": "2509db99057a8a57423b3cf3cf4490c558994b37",
+  "branch": "main",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 0.224,
+  "log": "audit\\V1-FULL-AUDIT\\logs\\audit09-synthetic-fixture-20261112T215000Z.log"
+}
