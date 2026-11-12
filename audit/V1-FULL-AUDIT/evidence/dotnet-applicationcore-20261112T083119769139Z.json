@@ -1,0 +1,28 @@
+{
+  "name": "dotnet-applicationcore-20261112T083119769139Z",
+  "argv": [
+    "dotnet",
+    "test",
+    "apps/desktop-avalonia/tests/NewManga.ApplicationCore.Tests/NewManga.ApplicationCore.Tests.csproj",
+    "--no-restore",
+    "--results-directory",
+    "G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\dotnet\\results-20261112T083119769139Z",
+    "--logger",
+    "trx;LogFileName=ApplicationCore-20261112T083119769139Z.trx",
+    "--settings",
+    "apps/desktop-avalonia/tests/NewManga.runsettings",
+    "-v:minimal"
+  ],
+  "cwd": "G:\\CODEX\\New Manga",
+  "started_utc": "2026-11-12T08:31:42.311609+00:00",
+  "head": "da589416344b8254c9c1061f1d4e3dd61b3e7a93",
+  "branch": "main",
+  "exit_code": 1,
+  "timed_out": false,
+  "elapsed_seconds": 5.194,
+  "log": "audit\\V1-FULL-AUDIT\\logs\\dotnet-applicationcore-20261112T083119769139Z.log",
+  "status_identical": true,
+  "status_before_sha256": "4EA58E723CE9C7F1252FCB15D8750B1CF0814238336CAF52A089258595E89F4E",
+  "status_after_sha256": "4EA58E723CE9C7F1252FCB15D8750B1CF0814238336CAF52A089258595E89F4E",
+  "results_directory": "G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\dotnet\\results-20261112T083119769139Z"
+}
