@@ -1,0 +1,10 @@
+GENERATED_HEAD=4f77e73f4641f9c6e5bc4d1c2c7d0f109b172214
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/NEW-MANGA-V1-FULL-AUDIT.md
+EXIT=0
+
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\NEW-MANGA-V1-FULL-AUDIT.md
+WARN: 存在 10 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3178 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6956 bytes / 64 lines
+Governance check: PASS (3 warnings)

@@ -1,0 +1,8 @@
+{
+  "generated_head": "4f77e73f4641f9c6e5bc4d1c2c7d0f109b172214",
+  "command": "pwsh -NoProfile -File tools/governance/check.ps1",
+  "cwd": "G:\\CODEX\\New Manga",
+  "exit_code": 0,
+  "captured_at_utc": "2026-11-12T18:08:16.7053150Z",
+  "log_path": "audit/V1-FULL-AUDIT/logs/audit08-closure-pinbackfill-default-20261113.log"
+}
