@@ -185,3 +185,14 @@ Generated at `HEAD=6c5d0015f0dde91eb2b1418ee313aa760d6d30a0`. At execution time,
 - API inventory: 1/79/6 = 86, `EXIT=0`.
 
 Timestamped command/output log: `verification/FEA-15-PIN-BASIS-ENFORCE-1/main-post-ac4-card-pinbackfill-gates-6c5d0015.log`. Its generated HEAD and process output are preserved as observed; the working-tree qualification above is based on the contemporaneous Git status.
+
+## Clean committed-state post-AC4 card gates at c16d3fff
+
+Generated at main HEAD `c16d3fff945100d23648eee77c5c602a62552555` with an empty `git status --porcelain`, after the Task Canonical Evidence pinbackfill was committed:
+
+- Default governance check: PASS, 3 warnings, `EXIT=0`.
+- FEA-15 TaskPath check: PASS, 3 warnings, `EXIT=0`.
+- Frozen pins: 18/18, `EXIT=0`.
+- API inventory: IReaderProgressSink 1 / IHostController 79 / IRunController 6 = 86, `EXIT=0`.
+
+Timestamped command/output log: `verification/FEA-15-PIN-BASIS-ENFORCE-1/main-clean-post-ac4-card-gates-c16d3fff.log`. This is a clean committed-state pre-integration run; AC5 integration gates remain pending.
