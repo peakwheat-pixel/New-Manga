@@ -252,3 +252,8 @@ Preserved limitations for the pending Handoff: P2-1 keeps the six worktree-SHA/G
 - `Review-R-001` is closed. `R-001` remains conditional until a full-row Canonical Evidence Git-blob audit returns `EXIT=0`; do not close it before that audit. P2-1/P2-2 remain accepted limitations; P2-A resolved; P3-B accepted as non-blocking, P3-C resolved by evidence, P3-D accepted as a limitation.
 - Supplementary clean post-pinbackfill gates at HEAD `7661a63fafc638ea09ea340b346e999ab6923bb2`: default and TaskPath each PASS with 3 warnings / `EXIT=0`; frozen pins 18/18 / `EXIT=0`; API inventory 1/79/6=86 / `EXIT=0`. The original timestamped log is copied to `main-post-ac5-final-card-pinbackfill-gates-7661a63fa.log` and remains separately pinned in the closeout Task card.
 - Full governance suite remains `61 passed / 2 skipped / 3 failed / EXIT=1`; Linux `NOT_RUN`. Neither is rewritten as PASS. No push or resource cleanup is authorized.
+
+## Post-adjudication card-pinbackfill gates (2026-11-12)
+
+- Generated at clean main HEAD `e5f115ff2392f6a6be4d8158a76769c68f9b81b2`, `PROCESS_CWD=G:\CODEX\New Manga`, empty `GIT_STATUS_PORCELAIN`; default check and this TaskPath each PASS with 3 warnings / `EXIT=0`; `verify_pins.ps1` 18/18 / `EXIT=0`; API inventory 1/79/6=86 / `EXIT=0`.
+- Timestamped command/output log: `main-post-final-adjudication-card-pinbackfill-gates-e5f115ff2.log`. External original SHA-256 `6D971A9827F59BA745CA7DDF4609CB60AC46B887A1302A9337F6D8177A20BE35`; copied into this evidence directory. This run verifies the Task card pinbackfill at e5f115ff; it does not replace the required final clean-head gates after terminal closeout.
