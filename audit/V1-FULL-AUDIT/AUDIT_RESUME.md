@@ -121,5 +121,6 @@ TaskStatus=in_progress；ExecutionState=BLOCKED_MATERIAL_PROVENANCE（仅推送�
 ### AUDIT-00 静态项目盘点完成（2026-11-12）
 
 - 报告 `reports/01_PROJECT_INVENTORY.md` 与命令日志 `logs/audit-00-inventory-20261112.log` 在 commit `943e4615afd34865818a1287461ac57188f430ca` 固定。日志 generated HEAD=`6f5153e47ff6adfcedde49712636c75e21bd43ef`；清单/接口/迁移/入口/model-pin 检查 EXIT 0；旧 `packaging/new_manga.spec` 在产品基线缺失的探测按预期 EXIT 128。
+- Task pinbackfill 后门禁记录在 commit `c31278e0f532d3d2bebb969cd4c7943cf4407b8b`：generated HEAD=`caff9f29a52a2743ec0f25fc4c79b1dd9ba78ce4`；default check EXIT 0、TaskPath check EXIT 0（各 3 warnings）、18/18 pins EXIT 0、API 1/79/6=86 EXIT 0。Task 行已 pin 该门禁日志。
 - AUDIT-00 状态更新为 `PASS`（静态盘点）；外部模型文件字节、构建、安装、真实 GUI 和运行时行为不在此 PASS 内。报告记录的陈旧打包说明/入口是待 AUDIT-02/12 复核的静态观察，未改产品文件。
 - 当前下一步为 AUDIT-01/02 架构与静态扫描；AUDIT-01–14 仍为 `NOT_TESTED`，AC2/AC3/AC4 与 Release Gate 状态未变，Task 继续 `in_progress`。
