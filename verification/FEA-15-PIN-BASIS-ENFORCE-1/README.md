@@ -381,3 +381,12 @@ At clean `main` HEAD `5bd239dc1499059be4b24130d3c7d56e2dfa2044`, after pinning t
 - `r001-post-review-pinbackfill-audit-5bd239dc14.log` — 43973 bytes; workspace-original SHA-256 `e375bff96a970d6e4ce8b1b5d35e481ec8826616a67e773e0db5045b15bb4615`.
 
 The Review is `APPROVED` (P0/P1/P2=0; P3=2 non-blocking). Task remains `in_progress`, R-001 `OPEN`; terminal candidate changes have not yet been applied.
+
+## R-001 post-Review latest pinbackfill gates and 149-row audit (2026-11-12)
+
+At clean `main` HEAD `ccb822b48df3bc6e42c2b63c9beb92c540d995e6`, following the Review and 146-row evidence pinbackfill, the default and TaskPath gates each PASSed with 3 warnings / `EXIT=0`; frozen pins were `18/18` / `EXIT=0`; API inventory was `1/79/6=86` / `EXIT=0`. The full-section Git-blob audit covered all 149 rows then present and returned `149/149 PASS`, `FAIL_ROWS=0`, `EXIT=0`; porcelain was empty.
+
+- `r001-post-review-pinbackfill-gates-ccb822b48d.log` — 7675 bytes; workspace-original SHA-256 `a4f38c3eca07d82bbc5f008124d59426febbcfaa5d8076aa00588bafb8c23c73`.
+- `r001-post-review-pinbackfill-audit-ccb822b48d.log` — 44909 bytes; workspace-original SHA-256 `641401f9e819ce6066f12215f0c3c53583fd94d9c0c1ff41f1717d9de444e963`.
+
+This is the latest pre-terminal pinbackfill audit. Task remains `in_progress`, R-001 `OPEN`, and terminal-state gates are still pending.
