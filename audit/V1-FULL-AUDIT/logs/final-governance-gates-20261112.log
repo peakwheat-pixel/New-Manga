@@ -1,7 +1,7 @@
 generated_head: b9b6c5801060370eb4171c30eb77a935800e2f6f
 branch: main
 started_utc: 2026-11-12T09:40:21.8598850Z
-worktree_status_before: 
+worktree_status_before: <clean>
 
 COMMAND_NAME: check-default
 COMMAND: pwsh -NoProfile -File tools/governance/check.ps1
