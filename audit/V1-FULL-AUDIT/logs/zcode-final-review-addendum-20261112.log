@@ -1,0 +1,33 @@
+command: node E:\Program Files\ZCode\resources\glm\zcode.cjs --prompt <F-1/F-2/F-3 closure addendum; read-only> --cwd G:\CODEX\New Manga --resume sess_89204e2f-ffcc-4fb8-80d8-ed4903638337 --mode plan --json --locale zh-CN
+head: 3825d6111c3342c0514a2edabc7fe5940d7c5a9c
+reviewed_head: d9478939f2cee81104f18ea757d81cec71c36225
+addendum_document_head: 3825d6111c3342c0514a2edabc7fe5940d7c5a9c
+started_utc: 2026-11-12T09:51:08.3763371Z
+ended_utc: 2026-11-12T09:54:18.0946687Z
+exit_code: 0
+{
+  "sessionId": "sess_89204e2f-ffcc-4fb8-80d8-ed4903638337",
+  "traceId": "6c7efd24-b7c1-4160-b7af-64e72ba8051e",
+  "turnId": "turn_ae9bb38b-2c0b-4d64-9e22-8453bda38782",
+  "response": "核对完毕，证据链完整。以下为本次 addendum 正式报告。\n\n---\n\n# NEW-MANGA-V1-FULL-AUDIT 最终 checkpoint review Addendum（F-1/F-2/F-3 闭合核对）\n\n## A. Addendum 标识\n\n- **Reviewer**：ZCode（GLM-5.3，ZCode harness），即原最终 checkpoint review 的同一会话 `sess_89204e2f-ffcc-4fb8-80d8-ed4903638337`；turn/trace 由执行侧 envelope 归档。未参与段 B 实现/返修。\n- **原 review**：reviewed_head=`d9478939f2cee81104f18ea757d81cec71c36225`，结论 `PASS_FOR_CHECKPOINT`（0 P0 / 0 P1；F-1 P2、F-2 P3、F-3 P3、R-4 P4 observation）。\n- **本 addendum 核对文档 head**：`3825d6111c3342c0514a2edabc7fe5940d7c5a9c`（依执行侧声明；本会话 Bash 仍被 plan mode 全禁，无法亲验 HEAD/ancestry/哈希）。\n- **只读声明**：本 addendum 未写文件、未运行测试或 shell 命令、未读取图像或真实用户数据；全部核对经由只读 Read 直读工作树文件。\n\n## B. 逐项核对与判定\n\n### F-1（P2，reviewed_head 52 行 pin 缺机械复算）— **CLOSED**\n\n`review-final-integrity-20261112.log`（reviewed_head 固定 `d9478939f`，generated_head=`75e3aefb`，worktree clean，EXIT 0）对该 head 的 Task 表逐行复算：**PIN_ROWS=52（51 CANONICAL + 1 SOURCE_PIN）、PIN_MISMATCHES=0、RECHECK_RESULT=PASS**，每行含 `commit:path` 与 expected/actual raw Git blob content SHA-256。本 Reviewer 独立交叉核对：日志中 **52 个 expected 值与我在原 review 时直读的 `d947…` Task 表 52 行逐条一致**（含 commit:path 对），证明 expected 确实取自 reviewed_head 的表，而非后续版本污染；actual 为实现侧复算值。此外 `postreview-final-verification-20261112.log`（@`ac188dde`，clean start，overall_exit=0）对演进后的 56 行表再复算一次：**PIN_ROWS=56（55+1）、ERRORS=0、TASK_PIN_CHECK=PASS**，其中含我原 review 之后新增的 4 行（ZCODE-FINAL-REVIEW-REPORT-1/LOG-1 @`75e3aefb`、REVIEW-FINAL-INTEGRITY-LOG-1 @`b9b6c580`、FINAL-GOVERNANCE-GATES-1 @`9f41ddf4`），其 expected 与当前 57 行卡对应值逐条一致。\n\n### F-2（P3，两段 diff 区间缺机械核对）— **CLOSED**\n\n三段机械日志拼接覆盖 base→reviewed_head 全区间，路径条目全部 `allowed=True`：\n\n| 区间 | 证据 | 条目 | 结果 |\n|---|---|---|---|\n| `10e4ee013..425bd0565`（RANGE-1） | review-final-integrity log | 26 | ALL_ALLOWED=True |\n| `425bd0565..499a6b8e` | review-checkpoint-recheck log（上轮已接受） | 37 | DIFF_ALL_WITHIN_ALLOWED_PATHS=True，EXIT=0 |\n| `499a6b8e..d9478939f`（RANGE-2） | review-final-integrity log | 10 | ALL_ALLOWED=True |\n\n本 Reviewer 独立目检 26+10 条目：全部落在 allowed_paths 五模式内，无 src/apps/tests/契约/Schema/依赖路径；RANGE-1 条目集合与段 B 前期提交产物（范围裁决/AUDIT-00/GATES-1/testmap/testexec/probes/runner/治理文档 M）精确吻合，RANGE-2 条目集合与 `499a…→d947…` 的 5 个 audit 提交产物（6 个 review/addendum 文件 A + 3 个 AUDIT_* M + Task M）精确吻合——与我在原 review 中独立掌握的变更图景一致。**边界说明**：RANGE-1/RANGE-2 的 commit 端点未在该日志头部显式登记，端点身份依执行侧声明，由上述内容吻合旁证支持。\n\n### F-3（P3，d947… 的四项门禁缺落盘日志）— **CLOSED**\n\n`final-governance-gates-20261112.log`（generated_head=`b9b6c580`，clean start）与 `postreview-final-verification-20261112.log`（generated_head=`ac188dde`，clean start）均完整保存四项门禁原始输出：check-default **EXIT 0**（3 warnings：10 非终态 Task、STATUS/PLAN 预算 80%）、check-TaskPath **EXIT 0**（同 3 warnings）、verify-pins **18/18 PASS EXIT 0**、api-inventory **1/79/6=86 EXIT 0**；postreview 另含上述 56 行 pin 复算（overall_exit=0）。两份日志已分别 pin（@`9f41ddf4`、@`6dc3d634`）。**口径说明**：精确 `d9478939f` head 上的门禁日志不存在也不再必要——原 review 边界本就要求该套门禁“在最终 checkpoint HEAD 执行”，落盘 head（`b9b6c580`/`ac188dde`）晚于且包含 reviewed_head（后代关系依叙述链与三份日志的生成/pin 顺序，本 Reviewer 无法用 git 亲验 ancestry）。\n\n## C. Closure evidence 接受声明\n\n本 Reviewer **接受**上述三份实现侧生成的确定性日志作为 F-1/F-2/F-3 的 closure evidence，依据与上轮 R-1 相同：(1) 命令与哈希口径（raw Git blob content bytes）与 findings 指定一致，属机械确定性操作；(2) expected/actual 原值全部落盘，任何第三方可重跑比对；(3) expected 来源经本 Reviewer 对 `d947…` 52 行与当前卡新增行的独立直读交叉核验证实；(4) 三段区间条目集合与独立已知的提交内容三重吻合。**保留声明：actual 复算值未经本 Reviewer 亲算（本会话 Bash 被禁）。**\n\n**未复算内容清单（NOT_VERIFIED，均为登记跟进项、不构成 finding 重开）**：\n1. 第 57 行 pin（POSTREVIEW-FINAL-VERIFICATION-1 自身 @`6dc3d634`）无落盘复算日志——任何“最新一行 pin”在制度上总是最后加入，属自指尾巴；实现侧会话内声明 57/57 match/EXIT 0（未落盘）。兜底：Task 转 in_review/approved 时 `check.ps1 -TaskPath` 将机械强制校验全部 57 行（check.ps1:708–764）。\n2. `d9478939f..3825d611` 本轮落盘区间的 diff 路径集合无机械日志；直读的全部变更文件（5 个新 pin 文件、Task 卡、AUDIT_* 登记）均在 allowed_paths，且 `b9b6c580`/`ac188dde` 上 check-default/TaskPath EXIT 0 提供引用存在性背书。最小只读下一步：下一份 integrity 类日志顺带执行 `git diff --name-status d9478939f..<届时 head>`。\n\n## D. 结论\n\n| Finding | 判定 |\n|---|---|\n| F-1（P2） | **CLOSED** — 52/52 @`d9478939f`，PIN_MISMATCHES=0，EXIT 0；另 56/56 @`ac188dde` |\n| F-2（P3） | **CLOSED** — 26+37+10 条目全区间全 allowed，EXIT 0 |\n| F-3（P3） | **CLOSED** — 四项门禁完整落盘 @`b9b6c580` 与 `ac188dde`，全 EXIT 0，已 pin |\n| R-4（P4） | **继续 observation** — 未变化，仍为后续审计目录清理候选 |\n\n**原结论维持并完整生效：`PASS_FOR_CHECKPOINT`**（reviewed_head `d9478939f2cee81104f18ea757d81cec71c36225`；0 P0 / 0 P1）。本 addendum 与原 review 合计仍仅覆盖段 B checkpoint 的证据忠实性与范围纪律：**不等于**全项目审计通过、**不构成** Task 关闭（Task 保持 `in_progress`，AUDIT-01–14 仍为 `BLOCKED-ORIGINAL-CHECKLIST-MISSING`，Release Gate 仍 `BLOCKED`），**不替代**最终全审 review 与 DSH 集成验证。Task Rolling checkpoint 中“待原 Reviewer addendum 复核”的挂起项经本 addendum 落定。\n\n**推荐下一步**：Owner=Codex 做一次最小只读补记——将本 addendum 报告/log pin 入 Task（形成与既有先例一致的登记），并在同一次 integrity 日志中顺带闭合 §C-2 的 `d947…→…` 区间 diff 核对；此后交付链完整，由 DSH 决定是否将 Task 转 in_review（转换时 check.ps1 将自动强制校验全部 pin 行）。\n\n**Addendum 结束。**",
+  "usage": {
+    "source": "provider",
+    "modelRequestCount": 5,
+    "inputTokens": 680660,
+    "outputTokens": 12828,
+    "totalTokens": 693488,
+    "cacheReadTokens": 636992,
+    "cacheWriteTokens": 0,
+    "reasoningTokens": 0,
+    "webFetchRequests": 0,
+    "webSearchRequests": 0
+  },
+  "eventCount": 12477,
+  "projection": {
+    "status": "idle",
+    "turnCount": 1,
+    "totalTokenCount": 693488,
+    "contextUsed": 154998,
+    "contextWindow": 200000
+  }
+}

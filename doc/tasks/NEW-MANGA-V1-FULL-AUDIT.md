@@ -35,7 +35,7 @@ allowed_paths:
 - [x] AC1：固定Git/环境及有效源码清单，记录dirty和历史缺口。 <<MET>>
 - [ ] AC2：15项专项逐项有真实检查结果或具名阻断，关键链路深读与测试。 <<PARTIAL: AUDIT-01–14 因原始清单缺失保持具名阻断；probes EXIT 1（2 项 Medium / High confidence，1 项 defense-verified）；Python Core pytest EXIT 1（3,519 passed / 16 failed / 10 skipped）；Avalonia .NET 为 BLOCKED-TESTHOST-ACCESS（8/8 EXIT 1、TRX 0 tests）；smoke EXIT 1（Wire 6/6 PASS，Core 4 PASS / 7 BLOCKED-SANDBOX-GRANT，frontend/packaged SKIP）>>
 - [ ] AC3：完整日志、问题分级、整改路线、正式报告和Release Gate落盘。 <<PARTIAL: probes 分级、pytest 失败摘要、.NET TestHost、smoke 沙箱阻断和最终 governance 门禁均有记录；全审与最终 Release Gate 仍因逐项清单缺失保持 BLOCKED>>
-- [ ] AC4：独立复核、证据pin和治理检查可核验；未满足不得置done。 <<PARTIAL: ZCode checkpoint addendum 已关闭 R-1/R-2/R-3（R-4 保持 observation）；最终 checkpoint 为 PASS_FOR_CHECKPOINT，F-1/F-2/F-3 的机械补证已落盘，待 ZCode addendum 复核；全审 review 与集成验证未完成>>
+- [ ] AC4：独立复核、证据pin和治理检查可核验；未满足不得置done。 <<PARTIAL: ZCode addendum 已关闭 R-1/R-2/R-3 与 F-1/F-2/F-3（R-4 保持 observation）；最新 pin 尾项与 addendum 后 diff 路径仍需机械登记；全审 review 与集成验证未完成>>
 
 ## 允许修改范围
 仅frontmatter所列。审计日志/测试脚本由主控单一写入。三名子代理只读同一固定产品HEAD，无并发写入。用户显式审计目录优先于常规verification路径；运行派生产物放相邻workspace task-env。
@@ -121,7 +121,7 @@ src/**、apps/**、原有tests/**、共享契约、Schema、依赖、真实用�
 | exchange | — | NOT_APPLICABLE | — | — | 无外部传输 |
 
 ## Rolling checkpoint
-[audit/V1-FULL-AUDIT/AUDIT_RESUME.md](../../audit/V1-FULL-AUDIT/AUDIT_RESUME.md)。ZCode checkpoint review 对 `499a6b8e6eb293487abf391c46d00263230940ad` 的 `PASS_FOR_CHECKPOINT` 经 addendum 维持，R-1/R-2/R-3 已 CLOSED、R-4 保持 observation。新的 ZCode 独立上下文对 `d9478939f2cee81104f18ea757d81cec71c36225` 给出 `PASS_FOR_CHECKPOINT`（0 P0 / 0 P1）；F-1/F-2/F-3 的机械补证分别见 integrity 和 governance gate logs，待原 Reviewer addendum 复核。此结论不等于全审批准或 Task 关闭；保持 `in_progress`。
+[audit/V1-FULL-AUDIT/AUDIT_RESUME.md](../../audit/V1-FULL-AUDIT/AUDIT_RESUME.md)。ZCode 对 `499a6b8e6eb293487abf391c46d00263230940ad` 与 `d9478939f2cee81104f18ea757d81cec71c36225` 的 checkpoint 结论均为 `PASS_FOR_CHECKPOINT`；R-1/R-2/R-3、F-1/F-2/F-3 已 CLOSED，R-4 保持 observation。addendum 另列最新 pin 尾项与 `d947…..3825…` 路径集合跟进，正在按建议补证。此结论不等于全审批准或 Task 关闭；保持 `in_progress`。
 
 ## 2026-10-24 推送准备补充授权
 

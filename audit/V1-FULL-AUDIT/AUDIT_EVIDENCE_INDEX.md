@@ -52,3 +52,4 @@
 - `logs/review-final-integrity-20261112.log`：固定 `reviewed_head=d9478939f…` 的两段 `git diff --name-status` 路径授权核对及 52 行 BLOB SHA-256 复算；36 个路径条目均 allowed，52/52 pins 匹配，EXIT 0。
 - `logs/final-governance-gates-20261112.log`：default/TaskPath check、18 pins、API inventory 的完整输出、生成 HEAD、时点和 EXIT；generated HEAD=`b9b6c5801…`，四项 EXIT 0。
 - `logs/postreview-final-verification-20261112.log`：generated HEAD=`ac188dde5…` 的四项治理门禁和 Task 当前 56 行 Canonical/SOURCE_PIN Git blob SHA-256 逐项复算；所有检查 EXIT 0。
+- `reports/ZCODE-FINAL-REVIEW-ADDENDUM-2026-11-12.md`、`logs/zcode-final-review-addendum-20261112.log`：ZCode 原 Review session 的只读 addendum；F-1/F-2/F-3 CLOSED，R-4 保持 observation；同时登记最新 pin 尾项与 d947… 到 addendum head 的路径核对跟进。
