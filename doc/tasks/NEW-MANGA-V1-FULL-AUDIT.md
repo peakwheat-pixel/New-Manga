@@ -33,8 +33,8 @@ allowed_paths:
 
 ## Acceptance Criteria
 - [x] AC1：固定Git/环境及有效源码清单，记录dirty和历史缺口。 <<MET>>
-- [ ] AC2：15项专项逐项有真实检查结果或具名阻断，关键链路深读与测试。 <<PARTIAL: AUDIT-01–14 因原始清单缺失保持具名阻断；probes EXIT 1（2 项 Medium / High confidence，1 项 defense-verified）；Python Core pytest EXIT 1（3,519 passed / 16 failed / 10 skipped）；Avalonia .NET 为 BLOCKED-TESTHOST-ACCESS（8/8 EXIT 1、TRX 0 tests）；smoke 待执行>>
-- [ ] AC3：完整日志、问题分级、整改路线、正式报告和Release Gate落盘。 <<PARTIAL: probes 分级、pytest 失败摘要和 .NET TestHost 阻断均已记录；smoke、完整审计与 Release Gate 待完成>>
+- [ ] AC2：15项专项逐项有真实检查结果或具名阻断，关键链路深读与测试。 <<PARTIAL: AUDIT-01–14 因原始清单缺失保持具名阻断；probes EXIT 1（2 项 Medium / High confidence，1 项 defense-verified）；Python Core pytest EXIT 1（3,519 passed / 16 failed / 10 skipped）；Avalonia .NET 为 BLOCKED-TESTHOST-ACCESS（8/8 EXIT 1、TRX 0 tests）；smoke EXIT 1（Wire 6/6 PASS，Core 4 PASS / 7 BLOCKED-SANDBOX-GRANT，frontend/packaged SKIP）>>
+- [ ] AC3：完整日志、问题分级、整改路线、正式报告和Release Gate落盘。 <<PARTIAL: probes 分级、pytest 失败摘要、.NET TestHost 与 smoke 沙箱阻断均已记录；完整审计、governance 与 Release Gate 待完成>>
 - [ ] AC4：独立复核、证据pin和治理检查可核验；未满足不得置done。 <<PARTIAL: 尚未提交或独立审查>>
 
 ## 允许修改范围
@@ -89,6 +89,11 @@ src/**、apps/**、原有tests/**、共享契约、Schema、依赖、真实用�
 | DOTNET-PRESENTATION-LOG-1 | AC2（PresentationAvalonia 项目完整日志、生成 HEAD 与 EXIT） | `audit/V1-FULL-AUDIT/logs/dotnet-presentationavalonia-20261112T083119769139Z.log` | `426a4fc5d5a551f04cf58979176baa4150351d5c` | `07AAA904B14DF71589ED5B143E476E223694FA41B379DBB8FD3E4B8DB407C25B` | CANONICAL | BLOB |
 | DOTNET-THEMEENGINE-RESULT-1 | AC2（ThemeEngine 项目 runner JSON，EXIT 1，TRX 0 tests） | `audit/V1-FULL-AUDIT/evidence/dotnet-themeengine-20261112T083119769139Z.json` | `426a4fc5d5a551f04cf58979176baa4150351d5c` | `66D55F262A56EE82139210F1FF2C094E292FFA71F4B30F58418E0DB0127FC8B1` | CANONICAL | BLOB |
 | DOTNET-THEMEENGINE-LOG-1 | AC2（ThemeEngine 项目完整日志、生成 HEAD 与 EXIT） | `audit/V1-FULL-AUDIT/logs/dotnet-themeengine-20261112T083119769139Z.log` | `426a4fc5d5a551f04cf58979176baa4150351d5c` | `370A4DF30EE0CE4F730495F9F2FFFAF786A7F1FC5ADFE4ECDC75A831FA85FB69` | CANONICAL | BLOB |
+| SMOKE-REPORT-JSON-1 | AC2（core/wire 分层 checks JSON：17 checks，10 PASS / 7 FAIL） | `audit/V1-FULL-AUDIT/evidence/software-smoke-report-segment-b-20261112T084557725697Z.json` | `d480745da4d263875181bc717c4828df6c8b749e` | `0DBAC92E9525503E486AD6AA4C3F475EC808409504F138F7351DD7C7726E21C8` | CANONICAL | BLOB |
+| SMOKE-RUNNER-JSON-1 | AC2（runner argv、生成 HEAD 与 EXIT metadata） | `audit/V1-FULL-AUDIT/evidence/software-smoke-segment-b-20261112T084557725697Z.json` | `d480745da4d263875181bc717c4828df6c8b749e` | `6B452972CFD2C211A32D855011F0FA8F5D6683ACE5EB741FDD978B0CC7535681` | CANONICAL | BLOB |
+| SMOKE-LOG-1 | AC2（smoke 完整输出、argv/cwd、生成 HEAD、时点、EXIT） | `audit/V1-FULL-AUDIT/logs/software-smoke-segment-b-20261112T084557725697Z.log` | `d480745da4d263875181bc717c4828df6c8b749e` | `760877EAA32EC76E3FB770CB1F88C1EFEC61C89AB2D6418F5BB6D745279ACAA4` | CANONICAL | BLOB |
+| SMOKE-ADJUDICATION-LOG-1 | AC2/AC3（ZCode smoke 只读 adjudication 原文） | `audit/V1-FULL-AUDIT/logs/smoke-result-adjudication-20261112.log` | `fe652ee0be6472b09104a9ab9344d7873eebb653` | `80D76C98750A29E2EC254B71523AC9FACF4611E47609B8E7C0CB3673D8054123` | CANONICAL | BLOB |
+| SMOKE-RESULT-1 | AC2/AC3（smoke 分项结果、阻断与证据边界） | `audit/V1-FULL-AUDIT/reports/SMOKE-RESULT-SEGMENT-B-2026-11-12.md` | `82603ae84e09fdd77d41489c3697124023c9be55` | `81B69C26DC83BB2BB38E9F1AFF157002E37FC825D2E142F8B0A1DB648C2A486C` | CANONICAL | BLOB |
 
 说明：裁决文档中记录的阶段 0 日志 `B561…` 是提交前 WORKTREE SHA-256；本表按模板使用 Git BLOB 字节，完整 SHA-256 为 `7E2A…`。
 
