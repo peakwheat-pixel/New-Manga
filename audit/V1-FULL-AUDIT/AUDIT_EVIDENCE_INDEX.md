@@ -121,3 +121,12 @@
 - `logs/audit07-governance-4daa716-20261112T211024Z.log` 与 `evidence/audit07-governance-4daa716-20261112T211024Z.json`：generated HEAD=`4daa7169752b8f9c85fd8f8a01e5660f98f10481`；default、TaskPath、verify_pins 18/18、API 1/79/6=86 均 EXIT 0。此为阶段证据提交前门禁；pinbackfill 后仍须复跑。
 - `logs/audit07-post-evidence-gates-20261112T211406Z.log` 与 `evidence/audit07-post-evidence-gates-20261112T211406Z.json`：generated HEAD=`46fd59e67b5369637946ecae3af670341a6ad75d`；default/TaskPath 各 EXIT 0（各 3 warnings），verify_pins 18/18 EXIT 0，API inventory 1/79/6=86 EXIT 0。Task pinbackfill 后仍须复跑。
 - `logs/audit07-post-pinbackfill-27b1602-20261112T211905Z-default.log`、`logs/audit07-post-pinbackfill-27b1602-20261112T211905Z-taskpath.log`、`logs/audit07-post-pinbackfill-27b1602-20261112T211905Z-pins.log`、`logs/audit07-post-pinbackfill-27b1602-20261112T211905Z-api.log` 与 `evidence/audit07-post-pinbackfill-27b1602-20261112T211905Z.json`：generated HEAD=`27b16028168d1e86987dff7e968f9147b614d34c`；Task pinbackfill 后 default/TaskPath 各 EXIT 0（各 3 warnings）、verify_pins 18/18 EXIT 0、API inventory 1/79/6=86 EXIT 0。
+
+## 2026-11-13 P7 交付与 post-evidence 门禁
+
+- 编号报告：reports/02_ARCHITECTURE_REVIEW.md 至 reports/13_RELEASE_GATE.md、reports/FINAL_AUDIT_REPORT.md；去重台账另保留 AUDIT_ISSUES.md 详细记录。
+- AUDIT-09：reports/AUDIT-09-UI-UX-2026-11-13.md；screenshots/audit09-*.jpg；logs/audit09-ui-*.log 与对应 evidence JSON。
+- AUDIT-10：reports/AUDIT-10-PERFORMANCE-STABILITY-2026-11-13.md；logs/audit10-performance-20261112T222445371097Z.log；evidence/audit10-performance-metrics-20261112T222445371097Z.json。
+- AUDIT-12：reports/AUDIT-12-WINDOWS-DELIVERY-2026-11-13.md；logs/audit12-delivery-inventory-20261112T223042315179Z.log 与同名 JSON。
+- AUDIT-13：reports/AUDIT-13-E2E-2026-11-13.md；logs/audit13-core-acceptance-20261112T222650072377Z.log 与同名 JSON。
+- P7 gate batch generated HEAD=5a54390f63ed3283ba4a10df359dbc9f3a518a19，commit=592e3f6a9626b45b2962bce4d22f99875ec2e179；default/TaskPath 各 3 warnings EXIT 0，verify_pins 18/18 EXIT 0，API 1/79/6=86 EXIT 0。下一批 generated HEAD=3fc756a1aed8ca366ac0b324ff293cc3e1f9ebb0，commit=c0665ff90408d78097e787bd53af63d96bb32ecf；同样四项均 EXIT 0，细节见各 audit-post-evidence-3fc756a1 文件。此后 generated HEAD=c0665ff90408d78097e787bd53af63d96bb32ecf 的第三批四项门禁也均 EXIT 0，提交=4b91a2d7ff51e2ac6c05eef7c02a4640335fcf92；default/TaskPath 各 3 warnings、pins 18/18、API 1/79/6=86。回填该批 pins 后仍须复跑最终四项门禁。

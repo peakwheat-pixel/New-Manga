@@ -1,3 +1,12 @@
+## 2026-11-13 P7 综合报告与门禁检查点
+
+- 产品审计基线=10e4ee013835605800d3830fb960ae8d3aa04167，branch=main。P7 编号交付册、去重台账、整改路线、Release Gate 与 FINAL_AUDIT_REPORT 已提交于 3fc756a1aed8ca366ac0b324ff293cc3e1f9ebb0；报告覆盖段 B AUDIT-00–14 现有结果与限制，没有把候选写成正式 finding，也没有把未测项写成 PASS。
+- 首批 P7 preflight 结果在 generated HEAD=5a54390f63ed3283ba4a10df359dbc9f3a518a19 上四项均 EXIT 0，evidence commit=592e3f6a9626b45b2962bce4d22f99875ec2e179。加入报告与 38 个证据 pins 后在 generated HEAD=3fc756a1aed8ca366ac0b324ff293cc3e1f9ebb0 重跑：default / TaskPath 各 3 warnings、EXIT 0；verify_pins 18/18、EXIT 0；API inventory 1/79/6=86、EXIT 0。该批日志与 JSON 固定于 c0665ff90408d78097e787bd53af63d96bb32ecf；Task card 后续增加本批 8 个 pins，因此仍需在最终 pinbackfill commit 后重跑。
+- 当前段 B 专项：00 limited PASS；01/03/08/11 FAIL；02 BLOCKED；04–07、09、10、12–14 PARTIAL。P7 台账登记 3 个已 triage findings（SEG-B-PROBES-001/002 Medium / High confidence；NM-AUD-0001 P2）、1 个 INVESTIGATE、11 个 REVIEW_PENDING 候选、1 个已披露关闭的非产品 P3 observation。候选 adjudication 未由审计作者代替 ZCode。
+- 第三批 gate evidence generated HEAD=c0665ff90408d78097e787bd53af63d96bb32ecf，固定于 commit 4b91a2d7ff51e2ac6c05eef7c02a4640335fcf92：default / TaskPath 各 3 warnings、EXIT 0；verify_pins 18/18、EXIT 0；API inventory 1/79/6=86、EXIT 0。当前 Task card 已添加该批八个 BLOB pins；再完成这一轮 pinbackfill 后必须重跑四项门禁。
+- 全项目 pytest 3,519 passed / 16 failed / 10 skipped / 11 warnings，EXIT 1；Avalonia TestHost 8/8 runner EXIT 1、TRX 0；smoke EXIT 1；AUDIT-13 Core acceptance 31 passed / 0 skipped / EXIT 0。AUDIT-09/10/12/13 的详细结果和 NOT_RUN 界限见正式编号报告与 AUDIT_EVIDENCE_INDEX.md。
+- Task 仍 in_progress，AC2/AC3/AC4 PARTIAL，Release Gate BLOCKED。没有改产品源码、冻结契约、Schema、依赖、真实用户数据或远端；没有安装、发布或 push。下一步为回填当前 gate pins、更新 TASK_LEDGER、在 pinbackfill 后重跑四项治理门禁，然后派发固定 delivery HEAD 的 ZCode 独立只读 Review 和候选 adjudication。
+
 ## 2026-11-13 AUDIT-07 图片修复、排版与导出检查点
 
 - Task 仍 `in_progress`；产品基线=`10e4ee013835605800d3830fb960ae8d3aa04167`；测试和静态捕获 generated HEAD=`4daa7169752b8f9c85fd8f8a01e5660f98f10481`，branch=`main`。

@@ -1,13 +1,11 @@
 # 审计状态
 ## 最新检查点（2026-11-13）
 
-当前 Task NEW-MANGA-V1-FULL-AUDIT 仍为 in_progress；段 B AUDIT-00 limited PASS、01/03/08/11 FAIL、02 BLOCKED、04–07/09/10/12–14 PARTIAL。P7 已新增原始交付清单对应的架构、代码质量、功能、专项、数据恢复、UI、测试、安全性能、Windows 交付、去重问题、整改路线、Release Gate 与 FINAL_AUDIT_REPORT 文档。文档待提交、Task Canonical Evidence pinbackfill、最终门禁和 ZCode fresh-context Review。
+当前 Task NEW-MANGA-V1-FULL-AUDIT 仍为 in_progress；P7 编号报告、去重台账、整改路线、Release Gate 与 FINAL_AUDIT_REPORT 已由提交 3fc756a1aed8ca366ac0b324ff293cc3e1f9ebb0 固定。两轮 preflight evidence 已分别固定于 592e3f6a9626b45b2962bce4d22f99875ec2e179（generated HEAD=5a54390f）与 c0665ff90408d78097e787bd53af63d96bb32ecf（generated HEAD=3fc756a1），四项均 EXIT 0；最新一轮 generated HEAD=c0665ff90408d78097e787bd53af63d96bb32ecf 的四项结果固定于 4b91a2d7ff51e2ac6c05eef7c02a4640335fcf92，default / TaskPath 各 3 warnings、18 pins、API 1/79/6=86，均 EXIT 0。
 
-问题台账汇总为 3 项已 triage finding（SEG-B-PROBES-001/002：Medium / High confidence；NM-AUD-0001：P2）、1 项 INVESTIGATE、11 项 REVIEW_PENDING 候选和 1 项已披露关闭的非产品 P3 observation。审计作者未替 ZCode 定级。
+段 B 状态为 00 limited PASS；01/03/08/11 FAIL；02 BLOCKED；04–07、09、10、12–14 PARTIAL。台账有 3 项已 triage finding、1 项 INVESTIGATE、11 项待 ZCode 裁决候选、1 项已披露关闭的非产品 P3 observation。AC2/AC3/AC4 保持 PARTIAL，Release Gate BLOCKED。
 
-门禁 preflight 在生成 HEAD 5a54390f63ed3283ba4a10df359dbc9f3a518a19 上均 EXIT 0：default / TaskPath 各 3 warnings、18 pins、API 1/79/6=86。该批结果不是 P7 文档提交后的最终门禁。
-
-下一步：固定 P7 文档和 Task pins，重跑 default + TaskPath + verify_pins + API；之后将完整交付 HEAD 交 ZCode 只读复核并裁决候选。Release Gate 继续 BLOCKED。
+下一步：把最新 gate batch 与恢复点回填 Task Canonical Evidence，重生成 Task Ledger；对 pinbackfill commit 再运行四项治理门禁，之后将完整交付 HEAD 交 ZCode fresh-context Review。
 
 ## 先前阶段状态（由以上检查点更新）
 
