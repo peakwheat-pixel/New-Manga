@@ -1,0 +1,71 @@
+ProviderBusinessError: [1310][您已达到每周/每月使用上限，您的限额将在 2026-11-17 18:40:33 重置。][202611130219389ac78fcfd45e4436]
+    at detectProviderBusinessError (E:\Program Files\ZCode\resources\glm\zcode.cjs:2142:15021)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async Object.fetch (E:\Program Files\ZCode\resources\glm\zcode.cjs:2142:13796)
+    at async E:\Program Files\ZCode\resources\glm\zcode.cjs:2122:3251
+    at async postToApi (E:\Program Files\ZCode\resources\glm\zcode.cjs:2092:22186)
+    at async m7s.doStream (E:\Program Files\ZCode\resources\glm\zcode.cjs:2093:51208)
+    at async fn (E:\Program Files\ZCode\resources\glm\zcode.cjs:2174:15517)
+    at async E:\Program Files\ZCode\resources\glm\zcode.cjs:2169:964
+    at async _retryWithExponentialBackoff (E:\Program Files\ZCode\resources\glm\zcode.cjs:2169:5143)
+    at async streamStep (E:\Program Files\ZCode\resources\glm\zcode.cjs:2174:14640) {
+  code: 'PROVIDER_BUSINESS_ERROR',
+  isProviderBusinessError: true,
+  providerCode: '1310',
+  providerId: 'account:bigmodel-individual-coding-plan',
+  providerKind: 'anthropic',
+  providerMessage: '[1310][您已达到每周/每月使用上限，您的限额将在 2026-11-17 18:40:33 重置。][202611130219389ac78fcfd45e4436]',
+  providerRequestId: '202611130219389ac78fcfd45e4436',
+  responseBodySummary: {
+    keys: [ 'type', 'error', 'request_id' ],
+    success: undefined,
+    code: undefined,
+    error_code: undefined,
+    msg: undefined,
+    message: undefined,
+    request_id: '202611130219389ac78fcfd45e4436',
+    requestId: undefined,
+    error: {
+      keys: [Array],
+      code: '1310',
+      error_code: undefined,
+      msg: undefined,
+      message: '[1310][您已达到每周/每月使用上限，您的限额将在 2026-11-17 18:40:33 重置。][202611130219389ac78fcfd45e4436]',
+      request_id: undefined,
+      requestId: undefined,
+      type: 'rate_limit_error'
+    }
+  },
+  responseHeaders: {
+    'anthropic-ratelimit-unified-status': 'rejected',
+    connection: 'keep-alive',
+    'content-type': 'application/json',
+    date: 'Thu, 12 Nov 2026 18:19:38 GMT',
+    eagleid: '3cbc7e9b17945075783664717e',
+    'ga-traceid': 'b59d86f5eeb69e4517c9552ffd3826cd',
+    'request-id': '202611130219389ac78fcfd45e4436',
+    'retry-after': '404454',
+    server: 'ESA',
+    'set-cookie': 'acw_tc=[REDACTED];path=/;HttpOnly;Max-Age=1800',
+    'timing-allow-origin': '*',
+    'transfer-encoding': 'chunked',
+    vary: 'Origin, Access-Control-Request-Method, Access-Control-Request-Headers, Origin, Access-Control-Request-Method, Access-Control-Request-Headers, Origin',
+    via: 'ens-cache39.l2eo166-17[241,0,DP], ens-cache7.cn9579[250,0,DP], ens-cache7.cn9579[251,0]',
+    'x-content-type-options': 'nosniff',
+    'x-log-id': '202611130219389ac78fcfd45e4436',
+    'x-process-time': '0.136633',
+    'x-request-id': '202611121819382bfa9a5b0d9b42f2982e, da32a74c-4d71-4e7b-acc4-a31559b6d393',
+    'x-site-cache-status': 'DYNAMIC'
+  },
+  responseStatus: 429,
+  statusCode: undefined
+}
+Error: Turn execution failed (traceId: fe6f8ccc-ff51-4e21-96ad-2aacea2eb706)
+Cause: AiSdkModelAdapterError: [1310][您已达到每周/每月使用上限，您的限额将在 2026-11-17 18:40:33 重置。][202611130219389ac78fcfd45e4436]
+Error: Turn execution failed
+    at createCoreError (E:\Program Files\ZCode\resources\glm\zcode.cjs:116:2685)
+    at createTurnFailureError (E:\Program Files\ZCode\resources\glm\zcode.cjs:2348:11928)
+    at E:\Program Files\ZCode\resources\glm\zcode.cjs:14739:5563
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async $D.runRuntimeCommand (E:\Program Files\ZCode\resources\glm\zcode.cjs:14683:30567)
+    at async $D.drainRuntimeCommandQueue (E:\Program Files\ZCode\resources\glm\zcode.cjs:14683:27849)

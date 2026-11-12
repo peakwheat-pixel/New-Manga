@@ -1,0 +1,26 @@
+{
+  "sessionId": "sess_dc4cf807-aa30-42a2-875b-e3fa448ce49c",
+  "traceId": "f35adf66-68ca-4af5-9d55-5369a857dec7",
+  "turnId": "turn_f8a5835a-dc14-44f1-98fb-90df1f8b960c",
+  "response": "收到",
+  "usage": {
+    "source": "provider",
+    "modelRequestCount": 1,
+    "inputTokens": 36558,
+    "outputTokens": 142,
+    "totalTokens": 36700,
+    "cacheReadTokens": 29824,
+    "cacheWriteTokens": 0,
+    "reasoningTokens": 0,
+    "webFetchRequests": 0,
+    "webSearchRequests": 0
+  },
+  "eventCount": 152,
+  "projection": {
+    "status": "idle",
+    "turnCount": 1,
+    "totalTokenCount": 36700,
+    "contextUsed": 36700,
+    "contextWindow": 200000
+  }
+}
