@@ -35,7 +35,7 @@ allowed_paths:
 - [x] AC1：固定Git/环境及有效源码清单，记录dirty和历史缺口。 <<MET>>
 - [ ] AC2：15 项专项逐项有结果或具名阻断，关键链路深读与测试。 <<PARTIAL: 00 limited PASS；01/03/08/11 FAIL；02 BLOCKED；04–07、09、10、12–14 PARTIAL。09/10/12/13 均已有实际阶段报告但仍有覆盖限制。广泛 suite：pytest 3,519 passed/16 failed/10 skipped/EXIT 1；.NET 8/8 runner EXIT 1、TRX 0；smoke EXIT 1；AUDIT-13 Core acceptance 31 passed/0 skipped/EXIT 0。真实模型/GT/付费 API、完整编辑与导出 UI、accessibility/DPI、clean Windows install/upgrade/rollback/uninstall、长时 soak 与完整 shell 流程具名 NOT_RUN；V1 commitment count NOT_COUNTABLE>>
 - [ ] AC3：完整日志、去重问题台账、整改路线、正式报告和 Release Gate 落盘。 <<PARTIAL: 原始清单 00_BASELINE.md、01_PROJECT_INVENTORY.md、02–13 与 FINAL_AUDIT_REPORT.md 均已提交；reports/11_ISSUES.md 汇总 3 项 triaged finding、1 项 INVESTIGATE、11 项 REVIEW_PENDING 候选及 1 项关闭的非产品观察，reports/12_REMEDIATION_PLAN.md 与 reports/13_RELEASE_GATE.md 已落盘。候选严重度/需求归属和最终独立 Review 待 ZCode 裁决>>
-- [ ] AC4：独立复核、证据 pin 和治理检查可核验；未满足不得置 done。 <<PARTIAL: P7 报告、AUDIT-09/10/12/13 关键证据及 4 项门禁已有 Canonical Evidence BLOB pins；截至本卡片 pinbackfill 的最新门禁 generated HEAD=e72bf97816a33e50c8cff5968c198975c3faddbd，证据提交=52b28bacc82c15a1d0e182654c72b87ce49ba265：default/TaskPath 各 3 warnings、EXIT 0；18 pins EXIT 0；API 1/79/6=86 EXIT 0。最终 ZCode fresh Review、AUDIT-08 P3-4 fresh re-review 与最终集成结论尚未完成。后续 post-pinbackfill 门禁批次由 AUDIT_RESUME 滚动记录，并在下一次 pinbackfill 纳入>>
+- [ ] AC4：独立复核、证据 pin 和治理检查可核验；未满足不得置 done。 <<PARTIAL: P7 编号报告与 AUDIT-09/10/12/13 关键证据已固定；最新 Canonical Evidence gate batch generated HEAD=a3a429cc955f12765253a14680e79bab2389dd89，commit=7b2945d0dea541a06da21cc9c576f247e403d86c：default/TaskPath 各 3 warnings、EXIT 0；18 pins EXIT 0；API 1/79/6=86 EXIT 0。当前 card pinbackfill 后的新门禁由 AUDIT_RESUME 滚动记录并在下次 pinbackfill 纳入；ZCode fresh Review、AUDIT-08 P3-4 fresh re-review 与最终集成结论尚未完成>>
 
 ## 允许修改范围
 仅frontmatter所列。审计日志/测试脚本由主控单一写入。三名子代理只读同一固定产品HEAD，无并发写入。用户显式审计目录优先于常规verification路径；运行派生产物放相邻workspace task-env。
@@ -407,6 +407,15 @@ src/**、apps/**、原有tests/**、共享契约、Schema、依赖、真实用�
 | P7-POSTPIN-API-LOG-1 | AC4（generated HEAD=e72bf978；API 1/79/6=86/EXIT 0） | `audit/V1-FULL-AUDIT/logs/audit-post-evidence-e72bf978-api.log` | `52b28bacc82c15a1d0e182654c72b87ce49ba265` | `E544AD1CE44145352A5A9FBEFCA663E43FEC297F6680F465AAB56393AB454313` | CANONICAL | BLOB |
 | P7-POSTPIN-API-RESULT-1 | AC4（API inventory argv/UTC/HEAD/EXIT metadata） | `audit/V1-FULL-AUDIT/evidence/audit-post-evidence-e72bf978-api.json` | `52b28bacc82c15a1d0e182654c72b87ce49ba265` | `1278DF5B57F3684B82A7AF232BEF7CD34179BC06B0FFAD9E561F086320A8D3A0` | CANONICAL | BLOB |
 
+| P7-FINAL-DEFAULT-LOG-1 | AC4（generated HEAD=a3a429cc；default check 3 warnings/EXIT 0） | `audit/V1-FULL-AUDIT/logs/audit-post-evidence-a3a429cc-default.log` | `7b2945d0dea541a06da21cc9c576f247e403d86c` | `FA7CE732616F2A5100960C31D76023522A5BD7A2EAFDA3E5CB7B8C79589F92B9` | CANONICAL | BLOB |
+| P7-FINAL-DEFAULT-RESULT-1 | AC4（default check argv/UTC/HEAD/EXIT metadata） | `audit/V1-FULL-AUDIT/evidence/audit-post-evidence-a3a429cc-default.json` | `7b2945d0dea541a06da21cc9c576f247e403d86c` | `BA80EACFEC3C0AB390C2FC15FA7FC4CFB4A723055BE78ACDFB0F9FB68B7BDA23` | CANONICAL | BLOB |
+| P7-FINAL-TASKPATH-LOG-1 | AC4（generated HEAD=a3a429cc；TaskPath check 3 warnings/EXIT 0） | `audit/V1-FULL-AUDIT/logs/audit-post-evidence-a3a429cc-taskpath.log` | `7b2945d0dea541a06da21cc9c576f247e403d86c` | `465C684BA9A0AC8435A57D1F59449FBB4EDC29D9FE2A5342F96B3CBF29CAE015` | CANONICAL | BLOB |
+| P7-FINAL-TASKPATH-RESULT-1 | AC4（TaskPath check argv/UTC/HEAD/EXIT metadata） | `audit/V1-FULL-AUDIT/evidence/audit-post-evidence-a3a429cc-taskpath.json` | `7b2945d0dea541a06da21cc9c576f247e403d86c` | `B1B5FB33D4C50739DB7E127A168F49DF16ECAD4F1893617D84EF6E981290EF94` | CANONICAL | BLOB |
+| P7-FINAL-PINS-LOG-1 | AC4（generated HEAD=a3a429cc；verify_pins 18/18/EXIT 0） | `audit/V1-FULL-AUDIT/logs/audit-post-evidence-a3a429cc-pins.log` | `7b2945d0dea541a06da21cc9c576f247e403d86c` | `91B3618DB7AFD208652F62F14611F1B38AB7D7217D504A4DAB394157081B63CC` | CANONICAL | BLOB |
+| P7-FINAL-PINS-RESULT-1 | AC4（verify_pins argv/UTC/HEAD/EXIT metadata） | `audit/V1-FULL-AUDIT/evidence/audit-post-evidence-a3a429cc-pins.json` | `7b2945d0dea541a06da21cc9c576f247e403d86c` | `273ED1F8E88338996E87CD4F0267A202FD9232B89FEE817AB6ECE94B851D1448` | CANONICAL | BLOB |
+| P7-FINAL-API-LOG-1 | AC4（generated HEAD=a3a429cc；API 1/79/6=86/EXIT 0） | `audit/V1-FULL-AUDIT/logs/audit-post-evidence-a3a429cc-api.log` | `7b2945d0dea541a06da21cc9c576f247e403d86c` | `13022358E71D67D62097F70F701744A0C42375C5335CDFE1C2BED972941AEA98` | CANONICAL | BLOB |
+| P7-FINAL-API-RESULT-1 | AC4（API inventory argv/UTC/HEAD/EXIT metadata） | `audit/V1-FULL-AUDIT/evidence/audit-post-evidence-a3a429cc-api.json` | `7b2945d0dea541a06da21cc9c576f247e403d86c` | `8B4BF72F5707AC3746FA227934F6056045F1AAA3CC664EDF610DFB5053E325D5` | CANONICAL | BLOB |
+
 说明：裁决文档中记录的阶段 0 日志 `B561…` 是提交前 WORKTREE SHA-256；本表按模板使用 Git BLOB 字节，完整 SHA-256 为 `7E2A…`。
 
 ## Resource Manifest
@@ -420,7 +429,7 @@ src/**、apps/**、原有tests/**、共享契约、Schema、依赖、真实用�
 | exchange | — | NOT_APPLICABLE | — | — | 无外部传输 |
 
 ## Rolling checkpoint
-[audit/V1-FULL-AUDIT/AUDIT_RESUME.md](../../audit/V1-FULL-AUDIT/AUDIT_RESUME.md) 顶部 P7 post-pinbackfill 门禁检查点为最新滚动恢复入口。当前卡片 Canonical Evidence 固定至 gate batch generated HEAD=e72bf97816a33e50c8cff5968c198975c3faddbd，证据 commit=52b28bacc82c15a1d0e182654c72b87ce49ba265；default/TaskPath 各 3 warnings、18 pins、API 1/79/6=86 均 EXIT 0。随后在本卡片 HEAD 上运行的更晚 gate batch、generated HEAD 与 EXIT 见 AUDIT_RESUME；按滚动 pin 规则下次回填。段 B 专项与候选见 reports/11_ISSUES.md；Release Gate BLOCKED，AC2/AC3/AC4 PARTIAL，Task in_progress。
+[audit/V1-FULL-AUDIT/AUDIT_RESUME.md](../../audit/V1-FULL-AUDIT/AUDIT_RESUME.md) 顶部 2026-11-13 P7 检查点为最新恢复入口。Canonical Evidence 已固定 generated HEAD=a3a429cc955f12765253a14680e79bab2389dd89 的 post-pinbackfill gate batch，commit=7b2945d0dea541a06da21cc9c576f247e403d86c；四项均 EXIT 0。当前 Task card commit 后的更新门禁以 AUDIT_RESUME 顶部记录，按滚动 pin 规则下次回填。全审 Review 与候选 adjudication 待 ZCode；Release Gate BLOCKED，AC2/AC3/AC4 PARTIAL，Task in_progress。
 
 ## 2026-10-24 推送准备补充授权
 
