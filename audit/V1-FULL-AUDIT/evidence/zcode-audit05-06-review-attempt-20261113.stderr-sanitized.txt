@@ -1,0 +1,6 @@
+ZCode CLI 0.17.1 headless plan review attempt.
+Provider response: providerCode=1310; responseStatus=429.
+Provider message: quota limit reached; reset at 2026-11-17 18:40:33 (provider-returned time).
+providerRequestId=202611130306513f412afe425843d2.
+No valid response and no sessionId were returned; the requested AUDIT-05/06 Review was not performed.
+The raw stderr is retained under the Task workspace; its SHA-256 is recorded in the dispatch log/JSON. It is not committed because it includes response headers with a transient set-cookie value.

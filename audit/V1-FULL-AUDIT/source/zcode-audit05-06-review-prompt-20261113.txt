@@ -1,0 +1,16 @@
+你是本项目新启动的、上下文独立的只读 Reviewer。请只审查固定 Git commit：dfef8d8919fe2d19013e65c84948fb288c2c9928（branch main）。项目唯一仓库为 G:\CODEX\New Manga。审查目标为 AUDIT-05/06 阶段交付与三项候选裁决；不要审查后续 HEAD，也不要修改任何文件、运行测试、启动 GUI、调用真实模型/付费 API、读取真实漫画或用户数据库。
+
+范围与约束：
+- 以仓库为唯一事实源，先读 AGENTS.md、doc/tasks/NEW-MANGA-V1-FULL-AUDIT.md 的 AC2/AC3/AC4 与 Canonical Evidence、audit/V1-FULL-AUDIT/AUDIT_TASKS.md、AUDIT_ISSUES.md、AUDIT_STATUS.md、AUDIT_RESUME.md。
+- 对照原始清单 audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt 的 AUDIT-05 与 AUDIT-06，核对报告 `audit/V1-FULL-AUDIT/reports/AUDIT-05-06-SFX-TRANSLATION-2026-11-13.md`、审计专用测试 `tests/test_audit05_sfx_regression.py` / `tests/test_audit06_context_observations.py`、日志和 JSON 是否支持对应结论；沿报告引用只读检查相关生产代码、`doc/contracts/TASK-002_MINIMUM_DATA_EXECUTION_CONTRACT.md`、`doc/tasks/M2-REGION-OVERLAP-ARBITRATION.md` 及与 SFX/glossary 直接相关的既有 Task。不要扩展到全仓扫描。
+- 校验 247 passed / 3 deselected 和 84 passed 的命令、HEAD、UTC、EXIT 与报告一致性；这两批 EXIT 0 只证明所选合成/mock 回归通过，不等于真实图像/模型/API 的效果通过。真实 SFX 权重/人工 GT/UI、付费 API/账单与远端幂等/取消语义均应保持 `NOT_RUN`。
+- 复核 Canonical Evidence 新增行的 commit 是否包含对应路径、BLOB SHA-256 是否匹配；门禁已记录在 evidence/log 中。请区分治理门禁 PASS 与 AUDIT-05/06 `PARTIAL`，不得推导全审或 Release Gate PASS。
+
+必须逐项对以下候选作出独立裁决，允许结论为 confirmed finding、accepted/design observation、false positive、out of scope 或 not verified；若为 finding，给 severity (P0–P4)、置信度、已证实影响与未知边界：
+1. `AUDIT-05-CAND-001`：same-geometry primary/SFX 仲裁后仍保留两个 SFX Region。核对合成测试和生产 handler 证据，并确认既有仲裁 Task 是否已接受此结果/将它列为去重候选；不要把真实模型出现概率当作已测。
+2. `AUDIT-06-CAND-001`：没有账单级 spend cap 或 provider idempotency key。区分原始审计清单要求“审阅费用失控风险、真实 API 必须有预先明确预算，否则用 Mock”的合规执行，与产品必须实现预算/幂等控件的需求；未调用真实 API，不能声称发生重复扣费。
+3. `AUDIT-06-CAND-002`：glossary 进入请求但生产路径没有 glossary term match 强制校验。对照原始清单“术语表优先级”、现有契约和 glossary 语义，判断这是正式需求缺口还是未证明的运行时风险；未调用真实模型，不能声称已出现错译。
+
+审查标准：检查报告是否有事实错误、推理越界、遗漏 AUDIT-05/06 的强制检查面、测试设计/证据不足、状态或 limitation 误报。审查者不得提供产品修复补丁；如需实现，标记为需另行释放的 Task。
+
+请用简体中文输出完整 Review，绑定 `reviewed_head` 全 hash，并注明 Reviewer=ZCode fresh independent context、CLI 返回的 sessionId/turn（如果可见）。先给整体结论 `ACCEPT` / `ACCEPT_WITH_FINDINGS` / `CHANGES_REQUESTED` / `BLOCKED`，再逐项列出候选结论、严重度（若适用）、证据路径/行号、置信度、影响边界、是否阻断本阶段；最后列出报告/Task 卡必须补写的具体事项。若没有 findings 也请明确写 0 P0/P1/P2，不要把未测项写 PASS。只读，不写文件。

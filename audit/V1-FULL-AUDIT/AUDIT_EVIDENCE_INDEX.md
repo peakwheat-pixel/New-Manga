@@ -9,6 +9,9 @@
 - 本阶段未运行真实模型、真实 GUI 或付费 API；测试数据置于 workspace Task 环境。三个候选观察见 `AUDIT_ISSUES.md`，严重级别与是否构成正式 finding 待 ZCode 裁决。
 - `logs/audit05-06-governance-c0da575-20261113.log`、`evidence/audit05-06-governance-c0da575-20261113.json`：四项门禁 generated HEAD=`c0da575b46e30ecda7a6aefe3bbfe103440ae493`；default/TaskPath check 均 PASS（各 3 warnings）、pins 18/18、API inventory 1/79/6=86；四项 EXIT 0。
 - `logs/audit05-06-post-pinbackfill-919b55d-20261113.log`、`evidence/audit05-06-post-pinbackfill-919b55d-20261113.json`：Task pinbackfill HEAD=`919b55d932f3665693b047dfcb075b2bdf1c6d1c` 上 default/TaskPath check 各 PASS（3 warnings）、pins 18/18、API inventory 1/79/6=86；四项 EXIT 0。
+- `source/zcode-audit05-06-review-prompt-20261113.txt`：针对固定 reviewed_head=`dfef8d8919fe2d19013e65c84948fb288c2c9928` 的自包含独立只读 Review 输入。
+- `logs/zcode-audit05-06-review-dispatch-20261113.log`、`evidence/zcode-audit05-06-review-attempt-20261113.json`：ZCode CLI `0.17.1` plan-mode 调用已发出；服务返回 provider code `1310` / HTTP `429`，额度提示于 `2026-11-17 18:40:33` 重置，EXIT 1、无 session/response。该尝试不计为 Review。
+- `evidence/zcode-audit05-06-review-attempt-20261113.stdout.txt`、`evidence/zcode-audit05-06-review-attempt-20261113.stderr-sanitized.txt`：空 stdout 与脱敏错误摘要；含瞬态 `set-cookie` 的原始 stderr 仅保留在 Task workspace，raw SHA 记于 JSON/dispatch log。
 
 - evidence/baseline.json：Git/环境。
 - evidence/source-manifest.json：源码/config路径、SHA256、语法结果。

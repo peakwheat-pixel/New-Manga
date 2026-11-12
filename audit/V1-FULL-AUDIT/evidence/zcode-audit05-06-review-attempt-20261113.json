@@ -1,0 +1,23 @@
+{
+  "name": "zcode-audit05-06-review-attempt-20261113",
+  "cli_version": "0.17.1",
+  "reviewed_head": "dfef8d8919fe2d19013e65c84948fb288c2c9928",
+  "branch": "main",
+  "started_utc": "2026-11-12T19:06:50.0961930Z",
+  "mode": "plan",
+  "locale": "zh-CN",
+  "prompt_path": "audit/V1-FULL-AUDIT/source/zcode-audit05-06-review-prompt-20261113.txt",
+  "prompt_sha256": "D4058D67A22721D07A5D66D05BE32C0091F7B14FE589956AAD7C16DF19E5AE8C",
+  "exit_code": 1,
+  "session_id": null,
+  "provider_code": "1310",
+  "response_status": 429,
+  "provider_reset_at": "2026-11-17 18:40:33",
+  "provider_request_id": "202611130306513f412afe425843d2",
+  "response": null,
+  "stdout_sha256": "E3B0C44298FC1C149AFBF4C8996FB92427AE41E4649B934CA495991B7852B855",
+  "stderr_raw_workspace_path": "G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\zcode-audit05-06-review-stderr-20261113.txt",
+  "stderr_raw_sha256": "5917553559B4115031FF2E5D585486729606B5D01C4E21C4B50C0F9A4EBDF6D9",
+  "stderr_sanitized_path": "audit/V1-FULL-AUDIT/evidence/zcode-audit05-06-review-attempt-20261113.stderr-sanitized.txt",
+  "stderr_sanitized_sha256": "47ED3EB5F8461BCB73C4D41DE30F57602E0DB54308479BFD0BC9BEF36DEA8A7C"
+}
