@@ -220,7 +220,7 @@ src/**、apps/**、原有tests/**、共享契约、Schema、依赖、真实用�
 | exchange | — | NOT_APPLICABLE | — | — | 无外部传输 |
 
 ## Rolling checkpoint
-[audit/V1-FULL-AUDIT/AUDIT_RESUME.md](../../audit/V1-FULL-AUDIT/AUDIT_RESUME.md) 的 2026-11-13 检查点为当前恢复点。历史 `PASS_FOR_CHECKPOINT` 结论仍按各自 reviewed head 有效，不代表全审完成。当前：AUDIT-00 limited PASS；01 FAIL/P2；02 BLOCKED；08 FAIL（284 passed/0 skipped/EXIT 0 的有限隔离批次，`SEG-B-PROBES-002` 复现）；11 阶段 FAIL/Review ACCEPT；其余专项未完成。报告提交 HEAD=`80b326f0` 的四项门禁均 EXIT 0（各 check 3 warnings、pins 18/18、API 1/79/6=86），输出由 `94cdcd58` 固定并纳入 pins；本次 pinbackfill 后再复跑待记。Task `in_progress`，AC2/AC3/AC4 与最终集成验证未完成；下一步按 DAG 审阅 AUDIT-05/06。
+[audit/V1-FULL-AUDIT/AUDIT_RESUME.md](../../audit/V1-FULL-AUDIT/AUDIT_RESUME.md) 的 2026-11-13 检查点为当前恢复点。历史 `PASS_FOR_CHECKPOINT` 结论仍按各自 reviewed head 有效，不代表全审完成。当前：AUDIT-00 limited PASS；01 FAIL/P2；02 BLOCKED；08 FAIL（284 passed/0 skipped/EXIT 0 的有限隔离批次，`SEG-B-PROBES-002` 复现）；11 阶段 FAIL/Review ACCEPT；其余专项未完成。报告提交 HEAD=`80b326f0` 的四项门禁均 EXIT 0（各 check 3 warnings、pins 18/18、API 1/79/6=86），输出由 `94cdcd58` 固定并纳入 pins；pinbackfill HEAD=`0742a572` 后四项重跑均 EXIT 0（同样各 3 warnings、18/18、1/79/6=86），详见 post-pinbackfill logs。Task `in_progress`，AC2/AC3/AC4 与最终集成验证未完成；下一步按 DAG 审阅 AUDIT-05/06。
 
 ## 2026-10-24 推送准备补充授权
 

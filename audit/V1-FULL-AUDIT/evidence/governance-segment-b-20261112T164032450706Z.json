@@ -1,0 +1,17 @@
+{
+  "name": "governance-segment-b-20261112T164032450706Z",
+  "argv": [
+    "pwsh",
+    "-NoProfile",
+    "-File",
+    "tools/governance/check.ps1"
+  ],
+  "cwd": "G:\\CODEX\\New Manga",
+  "started_utc": "2026-11-12T16:40:32.450834+00:00",
+  "head": "0742a572eba783d9ff3b7a064850f0d932c98823",
+  "branch": "main",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 1.023,
+  "log": "audit\\V1-FULL-AUDIT\\logs\\governance-segment-b-20261112T164032450706Z.log"
+}
