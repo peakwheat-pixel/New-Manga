@@ -1,0 +1,17 @@
+# ZCode fresh-context independent closure re-review
+
+请以只读方式审查本地仓库 `G:\CODEX\New Manga` 的精确 HEAD（由本次 dispatch 明确传入），只审查 AUDIT-08 closure Review 的 P3-4 处置及其证据链。不得修改工作树、提交、运行产品测试或访问远端/用户数据。先确认 branch、HEAD、工作树状态；报告中记录精确 reviewed_head、会话身份和结论。
+
+## 要复核的 P3-4
+
+前一份 ZCode closure Review 对 `6375afacbd069b004c6af6adc7f79454d1307b70` 判定 ACCEPT，同时提出 P3-4：follow-up 人类 Review 报告中派发日志 SHA 使用工作树字节，而 Task Canonical Evidence 表使用 Git BLOB 字节；两个 hash 都真实，但报告未说明 hash basis。
+
+作者声称已修改 `audit/V1-FULL-AUDIT/reports/ZCODE-AUDIT-08-FOLLOWUP-REVIEW-2026-11-13.md`，明确披露 WORKTREE 与 BLOB 两个 SHA、对应提交，并说明差异仅为 Git CRLF→LF 归一化；Task 行保留 Git BLOB SHA。请独立验证这些陈述，至少：
+
+1. 阅读前一份 closure Review、修订后的 follow-up Review、Task `doc/tasks/NEW-MANGA-V1-FULL-AUDIT.md` 中相关 Canonical Evidence 行、dispatch 日志及其原始 ZCode 证据。
+2. 对 dispatch 日志分别计算当前工作树字节 SHA-256 和 `git show <pinned-commit>:<path>` 的原始 Git blob 内容 SHA-256；复算报告中给出的两个值，并确认 Task pin 对应正确的 Git blob 值且其 commit 包含该文件。
+3. 比较所述工作树与 blob 字节，确认两者仅有 CRLF/LF 差别；确认人类 Review 报告已明确解释 hash basis，而非仅仅列出两个值。
+4. 核对本次 pinbackfill 的两批五项门禁日志/默认 JSON 与 closure Review 证据均能由 Task 表对应，并核实各 pin 的 commit 祖先包含路径。记录验证方法和数量；不要把 governance 门禁 `PASS` 推断为 AUDIT-08 或全审 PASS。
+5. 检查新增/修订内容是否仍在 Task allowed_paths 内，没有产品源码、共享契约、Schema、依赖或既有测试变化；Task 继续 `in_progress`，AUDIT-08 继续 `FAIL`，Release Gate 继续 `BLOCKED`。
+
+输出简体中文独立 Review 报告，含 verdict（ACCEPT / ACCEPT_WITH_LIMITATIONS / REJECT）、P0/P1/P2/P3 分类、每条 finding 的证据/状态、reviewed_head、验证命令与结果。若发现阻断项，列出最小修正要求；不得代作者修改。明确给出 P3-4 CLOSED 或 OPEN 的裁决，以及是否有新的 P0–P3。
