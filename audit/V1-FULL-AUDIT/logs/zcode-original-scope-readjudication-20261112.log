@@ -1,0 +1,36 @@
+generated_utc=2026-11-12T13:11:22.1930630Z
+generated_head=033c3cf1af0e00e34172224c37a6c841277333bb
+branch=main
+worktree_status_before=clean
+
+[ZCode CLI]
+command=node zcode.cjs --prompt [read-only scope adjudication] --cwd G:\CODEX\New Manga --mode plan --json --locale zh-CN
+sessionId=sess_a2d20ca9-eaa7-49f8-95bf-2e67edbf8824
+turnId=turn_1a64fded-8e70-42b5-8f49-7fab16e23712
+traceId=422fc57e-18d3-48ef-927a-c580d3eed95a
+CLI_EXIT=0
+raw_log=G:\CODEX\New Manga.workspace\agent-output\codex\NEW-MANGA-V1-FULL-AUDIT\zcode-original-scope-readjudication-20261112.log
+raw_log_sha256=5A0DE1E20FFE9B573138488A447439856BE778FA9B11738BB98E8357119EA18F
+
+[Independent source verification]
+git rev-parse HEAD
+033c3cf1af0e00e34172224c37a6c841277333bb
+EXIT=0
+git status --porcelain
+(empty)
+EXIT=0
+Get-FileHash SHA256 audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt
+3EA8E623AE7EC6E492385005828DC43368563A78E4A91C9CAF8BB75DBB399EAF
+EXIT=0
+git hash-object --no-filters -- audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt
+b775b8663c3827ed4a75d6b64ff2236b92151038
+EXIT=0
+git rev-parse HEAD:audit/V1-FULL-AUDIT/source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt
+b775b8663c3827ed4a75d6b64ff2236b92151038
+EXIT=0
+
+[ZCode execution limitation]
+The single shell attempt in plan mode was intercepted with “Plan mode only allows read-only, non-destructive tools”; it did not execute and has no shell EXIT. Existing governance gate results cited by ZCode were prior pinned evidence, not rerun in that ZCode session.
+
+ended_utc=2026-11-12T13:11:22.3812371Z
+ZCODE_CLI_EXIT=0
