@@ -75,3 +75,8 @@ TaskStatus=in_progress；ExecutionState=BLOCKED_MATERIAL_PROVENANCE（仅推送�
 - 核心安全拒绝/允许语义、timeout、Job Object 子进程树清理均为零证据；不能从 10 个限定 PASS 外推。`CORE-FAIL-CLOSED` PASS，仅证明授权失败时拒绝执行且 fail-closed。
 - ZCode 没有发现可把这些失败独立归因到产品缺陷的证据；`icacls` 的底层错误码/环境原因未知。与 .NET TestHost Win32 error 5 不建立共同根因。
 - 下一步按裁决运行最终 governance 并绑定审计 HEAD；Legacy 前端/Rust/npm-audit/packaged 仍 `NOT_RUN-legacy`，GUI 仍 BLOCKED。AUDIT-01–14 和 Release Gate 状态不变。
+
+### 段 B governance suite 检查点（2026-11-12）
+
+- `python audit/V1-FULL-AUDIT/tests/audit_runner.py governance` 已运行默认治理 check 一次，生成 HEAD=`3e0c960a482f5420666faec82d9c0f89e8396159`，branch=`main`，EXIT=0，elapsed=1.281s，3 条既有 warning。原始 log/JSON 固定在 evidence commit `1e9c15344`。
+- 此 suite 仅执行默认 `check.ps1`；最后一笔 Task Canonical Evidence pinbackfill 后，仍须在最终 HEAD 执行 default + TaskPath `check.ps1`、`verify_pins.ps1`、`generate_api_inventory.py --check`。这些结果决定最终治理状态；当前 Task 和 Release Gate 未关闭。

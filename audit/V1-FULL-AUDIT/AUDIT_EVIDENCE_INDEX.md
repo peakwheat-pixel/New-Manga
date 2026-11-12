@@ -42,3 +42,5 @@
 - `reports/SMOKE-RESULT-SEGMENT-B-2026-11-12.md`：smoke `core,wire` 分项结果、7 项前置阻断与级联分析、无证据项及 ZCode adjudication。
 - `logs/software-smoke-segment-b-20261112T084557725697Z.log`、`evidence/software-smoke-report-segment-b-20261112T084557725697Z.json`、`evidence/software-smoke-segment-b-20261112T084557725697Z.json`：runner 命令、生成 HEAD、起始时点/elapsed、分层检查结果和 EXIT。
 - `logs/smoke-result-adjudication-20261112.log`：ZCode 只读 adjudication 原文、session/turn/trace、生成 HEAD 与 EXIT。
+- `reports/GOVERNANCE-RESULT-SEGMENT-B-2026-11-12.md`：默认 governance suite 的命令、生成 HEAD、EXIT、3 warnings 与最终 gate 复跑限制。
+- `logs/governance-segment-b-20261112T085303591759Z.log`、`evidence/governance-segment-b-20261112T085303591759Z.json`：governance runner 的 argv/cwd、生成 HEAD、时点、elapsed 与 EXIT。
