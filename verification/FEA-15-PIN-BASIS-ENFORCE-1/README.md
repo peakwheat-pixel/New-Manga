@@ -415,3 +415,9 @@ Fresh read-only ZCode adjudication `AUTHORIZE_BOUNDED_STATUS_POINTER_REFORMAT_AN
 - Failure log: `r001-terminal-candidate-089bc8c2b-gates.log`; generated HEAD `089bc8c2bef7f667a8d26f638c9f465958559876`; workspace-original SHA-256 `afba07f76462d5da4b4a44bb30b9c3ed69859a2a68325b41ab1fe8687462a66a`; default/TaskPath `EXIT=1`, pins/API `EXIT=0`.
 - ZCode report: `doc/reviews/FEA-15-PIN-BASIS-ENFORCE-1-r001-status-pointer-adjudication-2026-11-12.md`; session `sess_56d6062d-ab4d-4774-aad1-ff837168632f`, turn `turn_e9bf65d7-ad68-4c51-be8a-33edebd9f605`, CLI `EXIT=0`.
 - Raw ZCode receipt: `zcode-r001-terminal-status-pointer-adjudication-20261112.jsonl`; workspace-original SHA-256 `dfe9cdd96d2f7094eb29e2af13ea859555c66ab7c8fc8b734fafec393a4bdf31`.
+
+## R-001 one-time STATUS pointer retry (2026-11-12)
+
+At clean main HEAD `5a2b3eb8104c0553c1bd2c0e087b9cf6b4f72785`, after the bounded STATUS reformat and pinbackfill, the authorized single retry passed: default check PASS / 4 warnings / `EXIT=0` (includes the valid empty-current-Task warning); TaskPath PASS / 4 warnings / `EXIT=0`; frozen pins `18/18` / `EXIT=0`; API inventory `1/79/6=86` / `EXIT=0`. `PROCESS_CWD=G:\CODEX\New Manga`; `GIT_STATUS_PORCELAIN` was empty at generation time. This does not reclassify the preserved prior default/TaskPath `FAIL/EXIT=1` at HEAD `089bc8c2b`.
+
+- `r001-terminal-status-pointer-retry-5a2b3eb81-gates.log` — generated at clean HEAD `5a2b3eb8104c0553c1bd2c0e087b9cf6b4f72785`; workspace-original SHA-256 `3f7650b361b0222475d46ce04356f712065ecd8de3db98edebf9f71c629908fc`; all four commands `EXIT=0`; external original preserved.
