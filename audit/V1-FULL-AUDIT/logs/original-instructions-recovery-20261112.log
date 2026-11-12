@@ -1,0 +1,14 @@
+# command: .NET File.Copy(source attachment, versioned audit source; overwrite=false) + SHA-256/length comparison
+# generated_head: 9bf7fa87499e710191b691437b2bd930675ee7d4
+# branch: main; worktree_status_before: clean
+# started_utc: 2026-11-12T12:52:35.7475492Z
+# source: C:\Users\49745\.codex\attachments\ff881681-e0b6-4f2e-86e9-4d5e5842b13f\已粘贴的文本.txt
+# source_provenance: Codex thread 01a16991-6e34-7191-b1c3-cfb72f78a5ff, user-pasted request attachment
+# source_length_bytes: 25572
+# source_sha256: 3EA8E623AE7EC6E492385005828DC43368563A78E4A91C9CAF8BB75DBB399EAF
+# destination: audit\V1-FULL-AUDIT\source\ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt
+# destination_length_bytes: 25572
+# destination_sha256: 3EA8E623AE7EC6E492385005828DC43368563A78E4A91C9CAF8BB75DBB399EAF
+# comparison: MATCH
+# ended_utc: 2026-11-12T12:52:35.7726219Z
+# EXIT=0

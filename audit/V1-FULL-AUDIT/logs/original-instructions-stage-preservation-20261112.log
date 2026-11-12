@@ -1,0 +1,11 @@
+# command: git -c core.autocrlf=false add --renormalize -- source; compare raw and index blob IDs
+# generated_head: 9bf7fa87499e710191b691437b2bd930675ee7d4
+# started_utc: 2026-11-12T12:57:04.4408634Z
+# source_sha256: 3EA8E623AE7EC6E492385005828DC43368563A78E4A91C9CAF8BB75DBB399EAF
+# git_core.autocrlf: true (repository config unchanged)
+# raw_worktree_blob_sha1: b775b8663c3827ed4a75d6b64ff2236b92151038
+# index_blob_sha1: b775b8663c3827ed4a75d6b64ff2236b92151038
+# result: EXACT_BLOB_MATCH
+# diff_check_note: original user prompt has 15 intentional Markdown hard-break trailing-space lines; retained byte-for-byte
+# ended_utc: 2026-11-12T12:57:04.5202061Z
+# EXIT=0
