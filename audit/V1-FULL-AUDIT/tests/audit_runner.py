@@ -112,7 +112,7 @@ def run(name: str, argv: list[str], cwd: Path, timeout: int) -> dict:
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('suite', choices=['pytest', 'audit03-import', 'audit04-ocr-detection', 'frontend', 'rust', 'smoke', 'governance', 'dependencies', 'desktop', 'probes', 'dotnet', 'sidecar-lifecycle'])
+    parser.add_argument('suite', choices=['pytest', 'audit03-import', 'audit04-ocr-detection', 'audit07-typeset', 'frontend', 'rust', 'smoke', 'governance', 'dependencies', 'desktop', 'probes', 'dotnet', 'sidecar-lifecycle'])
     args = parser.parse_args()
     assert ROOT.name == 'New Manga' and (ROOT / '.git').exists()
     npm = shutil.which('npm.cmd') or 'npm.cmd'
@@ -170,6 +170,45 @@ if __name__ == '__main__':
             'tests/core/test_core_detect.py', '-q', '-rs', '--tb=short',
             '-o', 'cache_dir=' + str(RUNTIME / f'audit04-core-pytest-cache-{run_id}'),
             '--basetemp=' + str(RUNTIME / f'audit04-core-pytest-temp-{run_id}')], ROOT, 600),
+        ],
+        # AUDIT-07 uses only the current Pillow Core path and synthetic fixtures.
+        # Keep package groups separate because tests have same-named conftest.py
+        # modules. The Qt full-chain suite is historical and deliberately excluded.
+        'audit07-typeset': [
+            (f'audit07-inpaint-pipeline-{run_id}', [sys.executable, '-m', 'pytest',
+            'tests/providers/test_inpaint.py', 'tests/providers/test_handlers_pipeline.py',
+            '-q', '-rs', '--tb=short',
+            '-o', 'cache_dir=' + str(RUNTIME / f'audit07-inpaint-pytest-cache-{run_id}'),
+            '--basetemp=' + str(RUNTIME / f'audit07-inpaint-pytest-temp-{run_id}')], ROOT, 900),
+            (f'audit07-rendering-{run_id}', [sys.executable, '-m', 'pytest',
+            'tests/rendering/test_layout.py', 'tests/rendering/test_pillow_rendering.py',
+            'tests/rendering/test_compositor.py', 'tests/rendering/test_rerender.py',
+            'tests/rendering/test_source_style.py', 'tests/rendering/test_style_resolution.py',
+            'tests/rendering/test_typeset_defaults_merge.py',
+            '-q', '-rs', '--tb=short',
+            '-o', 'cache_dir=' + str(RUNTIME / f'audit07-rendering-pytest-cache-{run_id}'),
+            '--basetemp=' + str(RUNTIME / f'audit07-rendering-pytest-temp-{run_id}')], ROOT, 900),
+            (f'audit07-core-rerender-export-{run_id}', [sys.executable, '-m', 'pytest',
+            'tests/core/test_font_wire.py', 'tests/core/test_pipeline_defaults_service.py',
+            'tests/core/test_settings_section_validation.py',
+            'tests/core/test_rc4_stdio_render_preview.py', 'tests/core/test_p16_reader_export.py',
+            '-q', '-rs', '--tb=short',
+            '-o', 'cache_dir=' + str(RUNTIME / f'audit07-core-pytest-cache-{run_id}'),
+            '--basetemp=' + str(RUNTIME / f'audit07-core-pytest-temp-{run_id}')], ROOT, 900),
+            (f'audit07-pillow-source-style-{run_id}', [sys.executable, '-m', 'pytest',
+            'tests/infrastructure/test_pillow_source_style.py',
+            '-q', '-rs', '--tb=short',
+            '-o', 'cache_dir=' + str(RUNTIME / f'audit07-source-style-pytest-cache-{run_id}'),
+            '--basetemp=' + str(RUNTIME / f'audit07-source-style-pytest-temp-{run_id}')], ROOT, 600),
+            (f'audit07-font-storage-{run_id}', [sys.executable, '-m', 'pytest',
+            'tests/storage/test_fonts.py', '-q', '-rs', '--tb=short',
+            '-o', 'cache_dir=' + str(RUNTIME / f'audit07-font-storage-pytest-cache-{run_id}'),
+            '--basetemp=' + str(RUNTIME / f'audit07-font-storage-pytest-temp-{run_id}')], ROOT, 600),
+            (f'audit07-searchable-export-{run_id}', [sys.executable, '-m', 'pytest',
+            'tests/export/test_searchable_cjk_font.py', 'tests/export/test_searchable_font_cost.py',
+            '-q', '-rs', '--tb=short',
+            '-o', 'cache_dir=' + str(RUNTIME / f'audit07-export-pytest-cache-{run_id}'),
+            '--basetemp=' + str(RUNTIME / f'audit07-export-pytest-temp-{run_id}')], ROOT, 900),
         ],
         'frontend': [(f'frontend-tests-segment-b-{run_id}', [npm, 'test', '--', '--reporter=verbose'], ROOT / 'apps/desktop/frontend', 180),
                      (f'frontend-build-segment-b-{run_id}', [npm, 'run', 'build', '--', '--outDir', str(RUNTIME / f'frontend-dist-{run_id}')], ROOT / 'apps/desktop/frontend', 180)],
