@@ -1,5 +1,7 @@
 # 问题台账
 
+P7 去重汇总与严重度计数见 reports/11_ISSUES.md；本文件保留每条 finding / candidate 的详细证据、边界与裁决问题。P7 之后以 ZCode 独立裁决更新两处状态，不由审计作者预设 severity。
+
 ## AUDIT-05-CAND-001 — 重叠仲裁保留同几何双 Region
 
 - 状态：`REVIEW_PENDING`（候选观察；未由审计作者确定 severity 或正式 finding）

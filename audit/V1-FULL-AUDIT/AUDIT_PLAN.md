@@ -1,5 +1,9 @@
 # 审计 DAG
 
+## 当前执行点（2026-11-13）
+
+AUDIT-00–14 均已有段 B 结果或具名限制，详见 AUDIT_TASKS.md 与专项报告。P7 正在整理原始指令要求的编号交付册、去重台账、整改路线和 Release Gate；报告初稿已写入 reports/02_ARCHITECTURE_REVIEW.md 至 reports/13_RELEASE_GATE.md 及 reports/FINAL_AUDIT_REPORT.md。下一动作是提交文档、Task Canonical Evidence pinbackfill、最终治理门禁与 ZCode fresh-context review。交付完成前 Task 保持 in_progress，Release Gate 保持 BLOCKED。
+
 P0: AUDIT-00 基线盘点 → P1: AUDIT-01/02 架构/静态 → P2: AUDIT-03/08 导入/数据 → P3: AUDIT-04/05/06/07 OCR/SFX/翻译/图像 → P4: AUDIT-09 UI → P5: AUDIT-10/11/12 性能/安全/交付 → P6: AUDIT-13/14 E2E/需求覆盖 → P7: 去重整改 → P8: 证据复核/Release Gate。
 
 独立只读子任务：inventory_scan（Luna medium）、data_security（Sol medium）、pipeline_audit（Sol medium）；仅主控写入。所有专项需要明确结果/限制；无证据不能PASS。

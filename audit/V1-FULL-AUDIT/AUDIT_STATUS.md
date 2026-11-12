@@ -1,5 +1,15 @@
 # 审计状态
-## 当前执行状态（2026-11-13）
+## 最新检查点（2026-11-13）
+
+当前 Task NEW-MANGA-V1-FULL-AUDIT 仍为 in_progress；段 B AUDIT-00 limited PASS、01/03/08/11 FAIL、02 BLOCKED、04–07/09/10/12–14 PARTIAL。P7 已新增原始交付清单对应的架构、代码质量、功能、专项、数据恢复、UI、测试、安全性能、Windows 交付、去重问题、整改路线、Release Gate 与 FINAL_AUDIT_REPORT 文档。文档待提交、Task Canonical Evidence pinbackfill、最终门禁和 ZCode fresh-context Review。
+
+问题台账汇总为 3 项已 triage finding（SEG-B-PROBES-001/002：Medium / High confidence；NM-AUD-0001：P2）、1 项 INVESTIGATE、11 项 REVIEW_PENDING 候选和 1 项已披露关闭的非产品 P3 observation。审计作者未替 ZCode 定级。
+
+门禁 preflight 在生成 HEAD 5a54390f63ed3283ba4a10df359dbc9f3a518a19 上均 EXIT 0：default / TaskPath 各 3 warnings、18 pins、API 1/79/6=86。该批结果不是 P7 文档提交后的最终门禁。
+
+下一步：固定 P7 文档和 Task pins，重跑 default + TaskPath + verify_pins + API；之后将完整交付 HEAD 交 ZCode 只读复核并裁决候选。Release Gate 继续 BLOCKED。
+
+## 先前阶段状态（由以上检查点更新）
 
 ZCode 裁决确认 AUDIT-01–14 可执行。当前：00 limited PASS；01/03/08/11 FAIL；02 BLOCKED；04–07、09、10、12–14 PARTIAL。AUDIT-09 已实际打开 Legacy/V2 UI，Fluent Host 未 ready；AUDIT-10 为四项合成 microbench；AUDIT-12 发现历史 package/installer 但未安装；AUDIT-13 为 31 passed/0 skipped Core acceptance。AUDIT-07 有 3 个 reader export hook 测试失败；05/06/07/09/12/14 候选待 ZCode 裁决。真实模型、GT、GUI 页面编辑/DPI、clean install、付费 API 等具名 `NOT_RUN`。全 Task AC2/AC3/AC4 `PARTIAL`、Release Gate `BLOCKED`、Task `in_progress`。
 
