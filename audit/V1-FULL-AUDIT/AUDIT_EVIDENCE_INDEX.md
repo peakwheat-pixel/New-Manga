@@ -79,3 +79,4 @@
 - `scripts/capture_audit14_governance.py`：按顺序复核 default check、TaskPath check、18 pins、API inventory 并保留 argv/cwd/UTC/elapsed/EXIT 的采集器。
 - `logs/audit14-governance-20261112T193119Z.log`、`evidence/audit14-governance-20261112T193119Z.json`：stage HEAD=`e67fef47461a0de6a600c7fcf67b6a13c9b64635` 首轮 default/TaskPath 因 STATUS/Plan 超预算各 EXIT 1；18 pins、API check EXIT 0。后续精简仅状态摘要后重新检查。
 - `logs/audit14-governance-20261112T193219Z.log`、`evidence/audit14-governance-20261112T193219Z.json`：同一 stage HEAD 上修订状态摘要后 default/TaskPath 均 EXIT 0（各 3 warnings），18 pins 18/18 EXIT 0，API 1/79/6=86 EXIT 0；输出含各命令时点/elapsed/argv。
+- `source/zcode-audit14-review-prompt-20261113.txt`：ZCode fresh independent context 对 AUDIT-05/06 与 AUDIT-14 七项候选的固定 HEAD 只读 Review 指令；不含人工裁决预设，不授权产品修改。

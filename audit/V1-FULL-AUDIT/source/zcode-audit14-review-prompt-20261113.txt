@@ -1,0 +1,18 @@
+你是本项目新启动的、上下文独立的只读 Reviewer。请只审查固定 Git commit：26888045ff475fb2e34b043c55c168f4bd78cd52（branch main）。项目唯一仓库为 G:\CODEX\New Manga。不要审查后续 HEAD，不要修改任何文件，不要运行测试或构建，不要启动 GUI，不要调用真实模型/付费 API，不要读取真实漫画或用户数据库。
+
+本次审查为限定阶段复核，不是全审验收或 Release Gate 复核。请以仓库为唯一事实源，读取 AGENTS.md；doc/tasks/NEW-MANGA-V1-FULL-AUDIT.md 的 AC2/AC3/AC4 和 Canonical Evidence；audit/V1-FULL-AUDIT/AUDIT_TASKS.md、AUDIT_STATUS.md、AUDIT_ISSUES.md、AUDIT_EVIDENCE_INDEX.md、AUDIT_RESUME.md。只读下列阶段范围及必要的直接引用源，不要全仓扫描：
+
+1. AUDIT-05/06：`reports/AUDIT-05-06-SFX-TRANSLATION-2026-11-13.md`、`tests/test_audit05_sfx_regression.py`、`tests/test_audit06_context_observations.py`、对应 logs/evidence JSON、原始清单 `source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt` 的 AUDIT-05/06 段；三项候选 `AUDIT-05-CAND-001`、`AUDIT-06-CAND-001`、`AUDIT-06-CAND-002`。必要时按报告引用核对生产 handler、`doc/contracts/TASK-002_MINIMUM_DATA_EXECUTION_CONTRACT.md`、`doc/tasks/M2-REGION-OVERLAP-ARBITRATION.md` 和 glossary 语义。此前对 dfef8d8 的 ZCode 调用因服务端 429 无回答，不构成审查。
+2. AUDIT-14：`reports/AUDIT-14-V1-INTEGRITY-2026-11-13.md`、`scripts/audit14_static_inventory.py`、`logs/audit14-static-20261112T192852Z.log`、配套 JSON、原始清单 AUDIT-14 段；四项候选 `AUDIT-14-CAND-001…004`。只读核对当前 MainWindow/V2 shell 组合、Studio 默认 `NotWired` sources、README/AD-002/AD-003/00_INDEX/V11R 状态与 release helper 证据。不要把未来规划自动当作 V1 承诺。
+3. 检查本 Task Canonical Evidence 中 `AUDIT14-*` 行：确认 commit 含对应路径、原始 Git blob 的 SHA-256 与 5 行 pin 一致；区分首轮门禁失败（如实保留）与修正后的门禁成功。HEAD e67fef4 的修正后 default/TaskPath 各 3 warnings EXIT 0、18 pins EXIT 0、API 1/79/6=86 EXIT 0；HEAD a5a75ed 的 post-evidence 四项也均 EXIT 0。治理门禁 PASS 不意味着专项 PASS，更不意味着 AC2/3/4 全部满足。
+
+请逐项对上述 7 个候选作独立裁决，候选结论可为 confirmed finding、accepted/design observation、false positive、out of scope 或 not verified。若定为 finding，请给 P0–P4 严重级别、置信度、已证实影响及未知边界；不要据未调用真实模型、未运行 UI 或未测试干净 release 推断实际故障。重点：
+- AUDIT-05：same-geometry primary/SFX 仲裁后有两个 SFX Region；核对合成测试、生产 handler 和既有仲裁 Task，勿推断真实模型重复框概率。
+- AUDIT-06-001：无账单级 spend cap/provider idempotency key；区分审计清单的费用风险审查/Mock 执行要求与产品需求。未调用真实 API，不能声称发生重复扣费。
+- AUDIT-06-002：请求包含 glossary，但生产路径没有 glossary term match 强制校验；对照原始优先级要求和契约，未跑真实模型不能声称已经错译。
+- AUDIT-14-001：缺乏可权威计数 V1/未来承诺的统一总账及文档漂移。
+- AUDIT-14-002：V2 Studio 的 Run/text/flag/Final-Split 能力显式 NOT_WIRED，需求归属需对照当前承诺。
+- AUDIT-14-003：Avalonia release helper 引用旧 Tauri icon/sidecar 路径；本 Task 未运行 clean release，不能声称构建已失败。
+- AUDIT-14-004：多 Avalonia shell 路由增大回归面；是否为可接受迁移风险，不得写成已复现用户故障。
+
+审查标准：检查事实是否准确、路径/行号是否支持主张、结论是否越界、原清单强制检查面是否有遗漏、状态/limitation/NOT_RUN 是否真实。不得提供修复补丁或更改文件；需实现/清理的建议必须另行释放 Task。请用简体中文完整输出，绑定 reviewed_head 全 hash，注明 `Reviewer=ZCode fresh independent context`，若 CLI 可见则附 `sessionId`/turn。先给 `ACCEPT` / `ACCEPT_WITH_FINDINGS` / `CHANGES_REQUESTED` / `BLOCKED` 总结，然后逐项列出 7 个候选的裁决、severity（若适用）、证据位置、置信度、影响及未知边界、是否阻断本阶段，最后列出报告/卡面需改的具体事项。明确指出这不代表全审通过；未测项目不得写 PASS。只读，不写文件。
