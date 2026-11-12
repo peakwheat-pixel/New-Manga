@@ -30,6 +30,14 @@ def run(name: str, argv: list[str], cwd: Path, timeout: int) -> dict:
     started = datetime.now(timezone.utc).isoformat()
     tick = time.perf_counter()
     is_dotnet = name.startswith('dotnet-')
+    head = subprocess.run(
+        ['git', 'rev-parse', 'HEAD'], cwd=ROOT, stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE, check=True, text=True, encoding='utf-8',
+    ).stdout.strip()
+    branch = subprocess.run(
+        ['git', 'branch', '--show-current'], cwd=ROOT, stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE, check=True, text=True, encoding='utf-8',
+    ).stdout.strip()
     env = os.environ.copy()
     for key in list(env):
         if key.startswith(('M2RC1_', 'M2RC2_', 'M2AC1_', 'NEWMANGA_')):
@@ -62,7 +70,7 @@ def run(name: str, argv: list[str], cwd: Path, timeout: int) -> dict:
         result_path = AUDIT / 'evidence' / f'{name}.json'
         status_before = None
     with log.open('w', encoding='utf-8') as stream:
-        stream.write(f'START_UTC={started}\nSHELL=Python subprocess (no shell)\nINTERPRETER={sys.executable}\nCWD={cwd}\nARGV={json.dumps(argv)}\nDATA_ROOT={env["NEWMANGA_DATA_ROOT"]}\n')
+        stream.write(f'START_UTC={started}\nHEAD={head}\nBRANCH={branch}\nSHELL=Python subprocess (no shell)\nINTERPRETER={sys.executable}\nCWD={cwd}\nARGV={json.dumps(argv)}\nDATA_ROOT={env["NEWMANGA_DATA_ROOT"]}\n')
         if is_dotnet:
             stream.write(f'GIT_STATUS_BEFORE_SHA256={hashlib.sha256(status_before).hexdigest().upper()}\n')
             stream.write(f'GIT_STATUS_BEFORE_HEX={status_before.hex().upper()}\n')
@@ -86,6 +94,7 @@ def run(name: str, argv: list[str], cwd: Path, timeout: int) -> dict:
             stream.write(f'GIT_STATUS_BYTE_IDENTICAL={status_before == status_after}\n')
         stream.write(f'\nEXIT={code}\nTIMED_OUT={timed_out}\nELAPSED_SECONDS={elapsed}\n')
     result = dict(name=name, argv=argv, cwd=str(cwd), started_utc=started,
+                  head=head, branch=branch,
                   exit_code=code, timed_out=timed_out, elapsed_seconds=elapsed,
                   log=str((published_log if is_dotnet else log).relative_to(ROOT)))
     if is_dotnet:
