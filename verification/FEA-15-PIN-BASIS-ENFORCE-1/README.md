@@ -331,3 +331,20 @@ Each raw log below records its generated HEAD and command-level exit status; the
 - `r001-post-status-compression-full-section-audit-df6b5d7d41.log` — 39039 bytes; workspace-original SHA-256 `b78835304e6aa4e3f1823fe53accb468f59fbb8aaad7cd4eda28104411551273`.
 
 R-001 remains **OPEN** pending a fresh independent Review, terminal-state gates, and the final full-section audit. No earlier FAIL or NOT_RUN result is reclassified.
+
+## R-001 post-pinbackfill gates and 134-row audit (2026-11-12)
+
+After the first clean retry logs and their four Canonical Evidence pins were committed, the Task pinbackfill HEAD `8f383aa60f9835843d0f0b3b51e4afb0e241f591` was rechecked from a clean `main` worktree.
+
+- Default governance check: `EXIT=0`, 3 warnings.
+- FEA-15 TaskPath check: `EXIT=0`, 3 warnings.
+- Frozen pins: `18/18`, `EXIT=0`.
+- API inventory: `1/79/6=86`, `EXIT=0`.
+- Full-section Git-blob audit: `134/134 PASS`, `FAIL_ROWS=0`, `EXIT=0`; `GIT_STATUS_PORCELAIN` was empty.
+
+These results cover the 134 Canonical Evidence rows present at `8f383aa60f`, including the first retry evidence pins. The two raw logs below contain generated HEAD and command-level EXIT values; their workspace originals remain preserved.
+
+- `r001-post-pinbackfill-gates-8f383aa60f.log` — 7675 bytes; workspace-original SHA-256 `6ed5dd23e15db8a1e4940c58318414ba7c7f65353da12df571ee63ba89fffae1`.
+- `r001-post-pinbackfill-full-section-audit-8f383aa60f.log` — 40285 bytes; workspace-original SHA-256 `00f94b9777fe7804d5cdea6fc53dc0fda2da6a0a0bc3bcdfd378d9cc796be4aa`.
+
+Task remains `in_progress`, R-001 remains **OPEN**, and terminal-state gates plus the fresh independent Review are pending. Earlier FAIL and NOT_RUN classifications remain unchanged.
