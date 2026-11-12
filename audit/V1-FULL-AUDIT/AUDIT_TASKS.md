@@ -7,21 +7,21 @@
 
 ## 段 B（当前产品基线 `10e4ee013835605800d3830fb960ae8d3aa04167`）
 
-- AUDIT-00: PASS（当前 Git/environment/source inventory；边界见 `reports/00_BASELINE-SEGMENT-B.md`）
-- AUDIT-01: BLOCKED-ORIGINAL-CHECKLIST-MISSING（未测试）
-- AUDIT-02: BLOCKED-ORIGINAL-CHECKLIST-MISSING（未测试）
-- AUDIT-03: BLOCKED-ORIGINAL-CHECKLIST-MISSING（未测试）
-- AUDIT-04: BLOCKED-ORIGINAL-CHECKLIST-MISSING（未测试）
-- AUDIT-05: BLOCKED-ORIGINAL-CHECKLIST-MISSING（未测试）
-- AUDIT-06: BLOCKED-ORIGINAL-CHECKLIST-MISSING（未测试）
-- AUDIT-07: BLOCKED-ORIGINAL-CHECKLIST-MISSING（未测试）
-- AUDIT-08: BLOCKED-ORIGINAL-CHECKLIST-MISSING（未测试）
-- AUDIT-09: BLOCKED-ORIGINAL-CHECKLIST-MISSING（未测试）
-- AUDIT-10: BLOCKED-ORIGINAL-CHECKLIST-MISSING（未测试）
-- AUDIT-11: BLOCKED-ORIGINAL-CHECKLIST-MISSING（未测试；含私有素材传播风险调查；不作远端处置）
-- AUDIT-12: BLOCKED-ORIGINAL-CHECKLIST-MISSING（未测试）
-- AUDIT-13: BLOCKED-ORIGINAL-CHECKLIST-MISSING（未测试）
-- AUDIT-14: BLOCKED-ORIGINAL-CHECKLIST-MISSING（未测试）
+- AUDIT-00: PASS（仅当前 Git/environment/source baseline；启动入口、命令面、DB、资源 pin 和结构/模块索引待补；见 `reports/00_BASELINE-SEGMENT-B.md` 与 ZCode 恢复裁决）
+- AUDIT-01: NOT_TESTED（待架构边界、异常传播、资源生命周期和依赖审阅）
+- AUDIT-02: NOT_TESTED（待零安装静态扫描和重点代码复核）
+- AUDIT-03: NOT_TESTED（待导入路径审阅和合成素材隔离验证）
+- AUDIT-04: NOT_TESTED（待模型链路静态核对/合成 GT；真实素材准确率具名受限）
+- AUDIT-05: NOT_TESTED（待 SFX 契约、状态机与错误路由逐项核对）
+- AUDIT-06: NOT_TESTED（待翻译配置/重试/超时/并发审阅；真实付费 API 不在本轮授权）
+- AUDIT-07: NOT_TESTED（待修复/排版/导出链路和许可核对）
+- AUDIT-08: NOT_TESTED（已有 probe F1/F2 需登记；待隔离数据库异常模拟）
+- AUDIT-09: NOT_TESTED（待 Avalonia 静态页面覆盖审阅；真实 GUI 运行具名 BLOCKED）
+- AUDIT-10: NOT_TESTED（待可重复 Core 合成样本微基准；GUI 性能具名 BLOCKED）
+- AUDIT-11: NOT_TESTED（待 Key、日志脱敏、路径、IPC 沙箱和依赖许可静态审阅；既有素材传播风险证据仅作背景）
+- AUDIT-12: NOT_TESTED（待构建/打包静态审阅；干净 Windows 安装实测具名 BLOCKED）
+- AUDIT-13: NOT_TESTED（待 E/F/G/H 合成场景；真实漫画场景具名 BLOCKED）
+- AUDIT-14: NOT_TESTED（待 V1 承诺/实现/Mock/历史债务矩阵）
 
 ## 段 B suite 级状态（与 AUDIT-01–14 逐项状态分离）
 

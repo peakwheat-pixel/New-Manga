@@ -96,18 +96,24 @@ TaskStatus=in_progress；ExecutionState=BLOCKED_MATERIAL_PROVENANCE（仅推送�
 - 在 HEAD=`ac188dde54fed9bf8d0adc0f62bd25bb7adb8951` 又执行了完整复跑，并将输出、每项时点/EXIT 和 56 行当前 Task pin 逐项 blob 复算写入 `logs/postreview-final-verification-20261112.log`：default/TaskPath 各 EXIT 0（各 3 warnings），18 pins EXIT 0（18/18），API inventory EXIT 0（1/79/6=86），56/56 pin 无 mismatch；日志生成前工作树 clean。
 - 原 ZCode Reviewer addendum 已将 F-1/F-2/F-3 全部 CLOSED、R-4 保持 observation；详见 `reports/ZCODE-FINAL-REVIEW-ADDENDUM-2026-11-12.md` 与原始 CLI log。addendum 提出的既有 Task pin 复算及 reviewed_head 到补证 HEAD 的路径集合跟进，已由 `logs/postaddendum-integrity-20261112.log` 覆盖：generated HEAD=`b17fead6d2cbbd2324ffb0a85096eb50448050ff`、reviewed_head=`d9478939f2cee81104f18ea757d81cec71c36225`，11/11 路径均 allowed、57/57 既有 pins 匹配、EXIT 0。后续 Task pinbackfill 与该 HEAD 的最终门禁结果见下方 2026-11-12 current-head checkpoint。
 
-### ZCode current-head checkpoint 与补记（2026-11-12）
+### ZCode current-head checkpoint 与补记（2026-11-12；范围恢复前的历史状态）
 
 - ZCode fresh independent context 对 reviewed_head=`453327ff19ea012026b76d2e10cdcf2c93c58038` 给出 `PASS_FOR_CHECKPOINT`（0 P0 / 0 P1），session=`sess_210ecf7f-a2a3-4d81-a7df-f4f30596ea84`；报告和原始 JSON 分别见 `reports/ZCODE-CURRENT-HEAD-CHECKPOINT-REVIEW-2026-11-12.md`、`logs/zcode-current-head-checkpoint-review-20261112.log`。
 - N-1 指出的状态/恢复文案滞后已更新；N-2 所需该 HEAD 四项门禁原始日志已写入 `logs/final-post-pinbackfill-gates-20261112.log` 并纳入 Task Canonical Evidence。N-1/N-2 均为 P3 finding，整改不改变原始限制；N-3/R-4 是 P4 observation。
 - 该门禁日志 generated HEAD=`453327ff19ea012026b76d2e10cdcf2c93c58038`：default 与 TaskPath check 各 EXIT 0（各 3 warnings），18 pins EXIT 0（18/18），API inventory EXIT 0（1/79/6=86）；每项含 UTC 时点与完整输出。
-- Task 继续 `in_progress`。AUDIT-01–14 仍为 `BLOCKED-ORIGINAL-CHECKLIST-MISSING`，Release Gate 仍为 `BLOCKED`；pytest 的 16 个失败、.NET TestHost 与 smoke sandbox 阻断、未运行项目和真实 GUI/安装/升级回退缺口均按原状态保留。此 checkpoint 不等于全审完成、集成通过或 Task 关闭。
+- 当时 Task 继续 `in_progress`；AUDIT-01–14 被记为 `BLOCKED-ORIGINAL-CHECKLIST-MISSING`。原始附件恢复后，该逐项状态被后续裁决更正为 `NOT_TESTED`；Release Gate 仍为 `BLOCKED`。pytest 的 16 个失败、.NET TestHost 与 smoke sandbox 阻断、未运行项目和真实 GUI/安装/升级回退缺口仍是有效证据限制。此 checkpoint 不等于全审完成、集成通过或 Task 关闭。
 
-### 生命周期裁决更正与恢复点（2026-11-12）
+### 历史生命周期裁决更正与恢复点（2026-11-12；原始附件恢复前）
 
 - ZCode 初次生命周期裁决曾建议 `closed_with_limitations`，但误把 Codex prompt 的选项描述归因给用户。更正裁决已明确撤回该授权论证和状态建议；初次报告仅作审计轨迹，标为 `SUPERSEDED`。
-- ZCode 更正后的最终状态裁决为 `in_progress`：用户实际授权“持续推进，全部授权，自动计划，不需要用户介入，裁决交给zcode”“不需要人工批准，你自己批准”“额度已恢复，继续停止的任务”，但没有具体接受本 Task 的永久限制。依 [协作协议 §4](../../doc/09_COLLABORATION.md)，限制性关闭需要用户对该具体取舍明确裁决。
-- 唯一待处理输入是用户明确接受或拒绝 Task 卡所列的 `closed_with_limitations` 语义。没有明确接受时不转 `in_review`，不关闭 Task，不改写 AC2/AC3/AC4 的 PARTIAL、AUDIT-01–14 的 BLOCKED 或 Release Gate 的 BLOCKED。
+- 随后的更正裁决当时要求 Task 保持 `in_progress`，并等待对永久限制作具体取舍；其依据是原始专项清单缺失。
 - 原始与更正裁决报告/CLI log 已列入 Canonical Evidence；见 `reports/ZCODE-LIFECYCLE-ADJUDICATION-2026-11-12.md`、`reports/ZCODE-LIFECYCLE-ADJUDICATION-CORRECTION-2026-11-12.md`。N-1/N-2 已闭合；产品测试失败、阻断与未验证限制保持原样。
 - 后续对 Task 自身可达 Git 历史的定向搜索记录在 `logs/original-checklist-git-history-search-20261112.log`（generated HEAD=`5cb792e0966817bd642d173ab7db844b2dce092c`）：最早 Task blob `1248f2b8a` 只有通用 AC1–AC4 与 `AUDIT-00–14` 范围；`-SAUDIT-14`、`-S15项专项` 在 Task/audit 子树中未找到逐项定义。该日志已 pin 入 Task；只能说明当前仓库可达历史未保存该清单，不外推到仓外来源。
-- 当前唯一决策输入未变：若要限制性收口，用户须明确接受 Task 卡所列 `closed_with_limitations` 语义；若要完成逐项审计，则需提供原始清单。没有其中之一时 Task 保持 `in_progress`，不得把它改成 `in_review` 或 `done`。
+
+### 原始附件恢复与当前续审检查点（2026-11-12）
+
+- 原始用户附件已恢复至 `source/ORIGINAL-USER-AUDIT-INSTRUCTIONS-2026-10-24.txt`，25,572 bytes；SHA-256=`3EA8E623AE7EC6E492385005828DC43368563A78E4A91C9CAF8BB75DBB399EAF`，raw worktree Git blob 与 HEAD blob 均为 `b775b8663c3827ed4a75d6b64ff2236b92151038`。恢复报告、两份恢复日志和原件均已纳入 Task Canonical Evidence。
+- ZCode 原始范围恢复裁决的 CLI 外层记录：session=`sess_a2d20ca9-eaa7-49f8-95bf-2e67edbf8824`、turn=`turn_1a64fded-8e70-42b5-8f49-7fab16e23712`、trace=`422fc57e-18d3-48ef-927a-c580d3eed95a`、CLI EXIT=0。正文中的 ID 自述与外层 envelope 不一致，已在报告披露。ZCode 的 plan-mode shell 尝试被拦截，没有执行且无 shell EXIT；既有治理结果不是该会话重跑所得。
+- 当前状态纠正为 AUDIT-00 limited PASS（只覆盖现有 baseline/source inventory）；AUDIT-01–14 全部 `NOT_TESTED`，不把 suite 结果外推为专项 PASS。Release Gate `BLOCKED`；Task `in_progress`；AC2/AC3/AC4 `PARTIAL`。原“等用户接受永久限制或重新提供清单”的分支终止，无需新的用户输入。
+- 下一步按 ZCode 执行序列先补 AUDIT-00 的 `01_PROJECT_INVENTORY.md`，再做 AUDIT-01/02、suite 专项映射、AUDIT-11、AUDIT-08/05/06、AUDIT-14、合成验证和最终报告。实际 GUI、TestHost、sandbox grant、干净 Windows、真实付费 API 与私有漫画内容仍按各子项具名 `BLOCKED`/`NOT_RUN`；任何产品源码或超出 `allowed_paths` 的改动均停在新 Task 裁决。
+- ZCode 裁决及阶段性门禁记录见 Task Canonical Evidence `ZCODE-ORIGINAL-SCOPE-ADJUDICATION-1`、`ZCODE-ORIGINAL-SCOPE-GATES-1`、`SCOPE-POSTCOMMIT-GATES-1`。此恢复检查点不等于全审通过、最终 Review 或 Task 关闭。

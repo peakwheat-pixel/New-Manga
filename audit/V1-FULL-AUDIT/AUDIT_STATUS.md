@@ -1,17 +1,21 @@
 # 审计状态
+## 当前执行状态（2026-11-12，原始指令附件恢复后）
 
+ZCode 裁决确认附件完整，AUDIT-01–14 从 `BLOCKED-ORIGINAL-CHECKLIST-MISSING` 更正为 `NOT_TESTED`。AUDIT-00 仅 baseline/source inventory 为 limited PASS，启动入口、后端命令面、schema、模型/资源 pin 与模块索引仍待 `01_PROJECT_INVENTORY.md` 补齐。Task `in_progress`，AC2/AC3/AC4 `PARTIAL`，Release Gate `BLOCKED`；原“等待用户接受限制或提供清单”分支已终止。
+
+ZCode 范围裁决证据与源文件哈希复核见 `reports/ZCODE-ORIGINAL-SCOPE-READJUDICATION-2026-11-12.md`。裁决报告生成前门禁为 default/TaskPath check EXIT 0（各 3 warnings）、18/18 pins EXIT 0、API 1/79/6=86 EXIT 0；裁决证据提交后的门禁复核见 `logs/gates-after-scope-adjudication-20261112.log`，generated HEAD=`5f88bbcb643cf368536b10010677e1664d5082b5`，四项 EXIT 0。下一步补 AUDIT-00 项目盘点，然后依 AUDIT_PLAN 推进静态、安全、数据、覆盖及合成审计。
 IN_PROGRESS：段 A 基线、盘点与测试日志已保存；段 B 于 2026-11-12 解封，固定当前架构 HEAD `10e4ee013835605800d3830fb960ae8d3aa04167`。Release Gate 仍为 BLOCKED（段 B 审计和 Review 未完成）。
 
 2026-10-24 推送准备：登记和台账已同步，治理 PASS（3 warnings）。历史凭据筛查未确认真实凭据；材料来源、许可及数据库隐私未核清，push=BLOCKED_MATERIAL_PROVENANCE。未commit/push；独立Review尚未执行。详见 reports/PUSH_READINESS.md。
 
-材料复核更新：4个PNG确认合成来源；169个JPEG与T1.1.1商业日漫记录的页名/数量/尺寸全部吻合，缺逐页源hash及传播证明。34份数据库已immutable只读核查，无已知非空secret字段，但存在22个本地路径单元格及WAL/删除页限制。最新报告 reports/MATERIAL_CLEARANCE.md；等待用户来源/许可信息或处置选择，不重复相同扫描，不push。
+材料复核更新：4个PNG确认合成来源；169个JPEG与T1.1.1商业日漫记录的页名/数量/尺寸全部吻合，缺逐页源hash及传播证明。34份数据库已immutable只读核查，无已知非空secret字段，但存在22个本地路径单元格及WAL/删除页限制。最新报告 reports/MATERIAL_CLEARANCE.md；“我自己的，但是不传播”的后续裁决已覆盖等待许可分支，不再索要传播许可；不重复相同扫描、不push。
 
 当前裁决：用户明确素材“我自己的，但是不传播”。169个JPEG及其压缩blob禁止上传，push=BLOCKED_OWNER_NO_DISTRIBUTION；此前等待传播许可分支被覆盖。本地原件/历史保留，独立干净快照方案尚未释放。
 
 2026-11-12 风险披露：本地 `origin/main` reflog 记有 2026-10-30 三次 main push；私有素材对象曾进入公开仓库历史为高置信推论，见 `reports/ZCODE-SCOPE-ADJUDICATION-2026-11-12.md`。实时远端可见性未核验，未执行远端补救；本地审计继续，任何传播/删除/历史改写均不在本 Task 授权内。
 
-段 B 状态：AUDIT-00 PASS（仅基线/清单，限制见报告）；AUDIT-01–14 均为 `BLOCKED-ORIGINAL-CHECKLIST-MISSING`（未测试）。限定 suite 证据已采集：probes EXIT 1（2 项 Medium / High confidence，1 项防线已验证）；Python Core pytest EXIT 1（3,519 passed / 16 failed / 10 skipped / 11 warnings）；Avalonia .NET `BLOCKED-TESTHOST-ACCESS`（8/8 runner EXIT 1，TRX 0 tests）；smoke `core,wire` EXIT 1（Wire 6/6 PASS；Core 4 PASS、7 项 `BLOCKED-SANDBOX-GRANT`，frontend/packaged 显式 SKIP）；governance default runner EXIT 0（3 warnings，生成 HEAD=`3e0c960a482f5420666faec82d9c0f89e8396159`）。suite 结果详见对应报告，不改变逐项状态。最终治理复跑见 `logs/postreview-final-verification-20261112.log`（generated HEAD=`ac188dde54fed9bf8d0adc0f62bd25bb7adb8951`）：default/TaskPath 各 EXIT 0（3 warnings），18 pins 18/18 EXIT 0，API 1/79/6=86 EXIT 0；同日志 56/56 Task evidence pins 无 mismatch。最后的证据 pinbackfill 后仍须重跑，Release Gate 保持 BLOCKED。
+段 B suite 级证据状态（逐项状态以原件恢复后的最新裁决为准）：AUDIT-00 limited PASS（仅 baseline/source manifest；AUDIT-00 原始要求的完整项目盘点待补）；AUDIT-01–14 均为 `NOT_TESTED`。已有 probes EXIT 1（2 项 Medium / High confidence，1 项防线已验证）；Python Core pytest EXIT 1（3,519 passed / 16 failed / 10 skipped / 11 warnings）；Avalonia .NET `BLOCKED-TESTHOST-ACCESS`（8/8 runner EXIT 1、TRX 0 tests）；smoke `core,wire` EXIT 1（Wire 6/6 PASS；Core 4 PASS、7 项 `BLOCKED-SANDBOX-GRANT`；frontend/packaged SKIP）。suite 结果只作映射证据，不推导专项 PASS。
 
 Checkpoint Review：ZCode fresh context 对 reviewed_head=`499a6b8e6eb293487abf391c46d00263230940ad` 的结论为 `PASS_FOR_CHECKPOINT`。ZCode addendum 已将 R-1/R-2/R-3 记为 CLOSED；R-4 保持 observation。R-1 的补验由实现侧 Codex 执行，ZCode 接受其日志作为 closure evidence：37/37 diff 路径在 allowed_paths 内，46/46 Canonical/SOURCE_PIN 的 raw Git blob SHA-256 匹配，EXIT 0；Reviewer 未亲自重算 actual 值。详见原 Review 和 [addendum 报告](reports/ZCODE-CHECKPOINT-REVIEW-ADDENDUM-2026-11-12.md)。该结论不等于全审通过或 Task 关闭；最终治理门禁和全审 review 仍待完成。
 
-最终 checkpoint review：ZCode 新独立上下文对 `d9478939f2cee81104f18ea757d81cec71c36225` 给出 `PASS_FOR_CHECKPOINT`（0 P0 / 0 P1）；addendum 将 F-1/F-2/F-3 全部 CLOSED，R-4 保持 observation。其后 ZCode fresh context 对 `453327ff19ea012026b76d2e10cdcf2c93c58038` 给出 `PASS_FOR_CHECKPOINT`（0 P0 / 0 P1），N-1/N-2 已按后续补记并 pin 入 Task。`logs/final-post-pinbackfill-gates-20261112.log` 记录该 HEAD 四项门禁均 EXIT 0。Task 自身可达 Git 历史也已定向检索：最早版本 `1248f2b8a` 只有通用 AC 和 AUDIT-00–14 范围，无 AUDIT-01–14 逐项定义；命令与结果见 `logs/original-checklist-git-history-search-20261112.log`。ZCode 生命周期初次裁决因错误归因已撤回；更正版要求 Task 保持 `in_progress`，直到用户明确接受把原始清单缺失作为永久限制，或提供原清单以恢复审计。AUDIT-01–14 仍 BLOCKED，Release Gate 仍 BLOCKED；所有 checkpoint 结论均不等于全审通过或 Task 关闭。
+历史 checkpoint review：ZCode 对当时 reviewed_head 的结论及门禁仍是该提交范围内的有效历史记录；当时关于原始清单缺失和生命周期等待的状态已被附件恢复后的裁决更新。历史搜索只证明可达 Git 历史未保存逐项清单，不否定仓外附件来源。
