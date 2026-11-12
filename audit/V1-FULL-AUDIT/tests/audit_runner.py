@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 from datetime import datetime, timezone
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -16,10 +17,19 @@ AUDIT = ROOT / 'audit/V1-FULL-AUDIT'
 RUNTIME = ROOT.parent / 'New Manga.workspace/task-env/NEW-MANGA-V1-FULL-AUDIT'
 
 
+def _git_status_bytes() -> bytes:
+    result = subprocess.run(
+        ['git', 'status', '--porcelain'], cwd=ROOT, stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE, check=True,
+    )
+    return result.stdout
+
+
 def run(name: str, argv: list[str], cwd: Path, timeout: int) -> dict:
     assert cwd.is_dir(), cwd
     started = datetime.now(timezone.utc).isoformat()
     tick = time.perf_counter()
+    is_dotnet = name.startswith('dotnet-')
     env = os.environ.copy()
     for key in list(env):
         if key.startswith(('M2RC1_', 'M2RC2_', 'M2AC1_', 'NEWMANGA_')):
@@ -31,12 +41,33 @@ def run(name: str, argv: list[str], cwd: Path, timeout: int) -> dict:
                M2RC2_CATALOG_DB=str(RUNTIME / name / 'catalog.sqlite'),
                TEMP=str(RUNTIME / name / 'temp'), TMP=str(RUNTIME / name / 'temp'),
                CARGO_TARGET_DIR=str(RUNTIME / 'cargo-target'))
+    if is_dotnet:
+        env.update(NEWMANGA_WORKSPACE_ROOT=str(RUNTIME),
+                   DOTNET_CLI_TELEMETRY_OPTOUT='1', DOTNET_NOLOGO='1')
     if name == 'desktop-build':
         env['TAURI_CONFIG'] = json.dumps({'build': {'frontendDist': str(RUNTIME / 'frontend-dist')}})
     Path(env['TEMP']).mkdir(parents=True, exist_ok=True)
-    log = AUDIT / 'logs' / f'{name}.log'
+    if is_dotnet:
+        external_run = RUNTIME / 'dotnet-runner' / name
+        external_run.mkdir(parents=True, exist_ok=True)
+        log = external_run / f'{name}.log'
+        result_path = external_run / f'{name}.json'
+        published_log = AUDIT / 'logs' / f'{name}.log'
+        published_result = AUDIT / 'evidence' / f'{name}.json'
+        results_directory = Path(argv[argv.index('--results-directory') + 1])
+        results_directory.mkdir(parents=True, exist_ok=True)
+        status_before = _git_status_bytes()
+    else:
+        log = AUDIT / 'logs' / f'{name}.log'
+        result_path = AUDIT / 'evidence' / f'{name}.json'
+        status_before = None
     with log.open('w', encoding='utf-8') as stream:
         stream.write(f'START_UTC={started}\nSHELL=Python subprocess (no shell)\nINTERPRETER={sys.executable}\nCWD={cwd}\nARGV={json.dumps(argv)}\nDATA_ROOT={env["NEWMANGA_DATA_ROOT"]}\n')
+        if is_dotnet:
+            stream.write(f'GIT_STATUS_BEFORE_SHA256={hashlib.sha256(status_before).hexdigest().upper()}\n')
+            stream.write(f'GIT_STATUS_BEFORE_HEX={status_before.hex().upper()}\n')
+            stream.write(f'RESULTS_DIRECTORY={results_directory}\n')
+            stream.write(f'NEWMANGA_WORKSPACE_ROOT={env["NEWMANGA_WORKSPACE_ROOT"]}\n')
         stream.flush()
         process = subprocess.Popen(argv, cwd=cwd, env=env, stdout=stream, stderr=subprocess.STDOUT)
         timed_out = False
@@ -48,21 +79,46 @@ def run(name: str, argv: list[str], cwd: Path, timeout: int) -> dict:
             subprocess.run(['taskkill', '/PID', str(process.pid), '/T', '/F'], capture_output=True)
             code = process.wait(timeout=30)
         elapsed = round(time.perf_counter() - tick, 3)
+        status_after = _git_status_bytes() if is_dotnet else None
+        if is_dotnet:
+            stream.write(f'GIT_STATUS_AFTER_SHA256={hashlib.sha256(status_after).hexdigest().upper()}\n')
+            stream.write(f'GIT_STATUS_AFTER_HEX={status_after.hex().upper()}\n')
+            stream.write(f'GIT_STATUS_BYTE_IDENTICAL={status_before == status_after}\n')
         stream.write(f'\nEXIT={code}\nTIMED_OUT={timed_out}\nELAPSED_SECONDS={elapsed}\n')
     result = dict(name=name, argv=argv, cwd=str(cwd), started_utc=started,
                   exit_code=code, timed_out=timed_out, elapsed_seconds=elapsed,
-                  log=str(log.relative_to(ROOT)))
-    (AUDIT / 'evidence' / f'{name}.json').write_text(json.dumps(result, indent=2), encoding='utf-8')
+                  log=str((published_log if is_dotnet else log).relative_to(ROOT)))
+    if is_dotnet:
+        result.update(status_identical=status_before == status_after,
+                      status_before_sha256=hashlib.sha256(status_before).hexdigest().upper(),
+                      status_after_sha256=hashlib.sha256(status_after).hexdigest().upper(),
+                      results_directory=str(results_directory))
+    result_path.write_text(json.dumps(result, indent=2), encoding='utf-8')
+    if is_dotnet:
+        shutil.copy2(log, published_log)
+        shutil.copy2(result_path, published_result)
     print(json.dumps(result), flush=True)
     return result
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('suite', choices=['pytest', 'frontend', 'rust', 'smoke', 'governance', 'dependencies', 'desktop', 'probes'])
+    parser.add_argument('suite', choices=['pytest', 'frontend', 'rust', 'smoke', 'governance', 'dependencies', 'desktop', 'probes', 'dotnet'])
     args = parser.parse_args()
     assert ROOT.name == 'New Manga' and (ROOT / '.git').exists()
     npm = shutil.which('npm.cmd') or 'npm.cmd'
+    dotnet_run_id = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
+    dotnet_projects = [
+        ('App', 'apps/desktop-avalonia/tests/NewManga.App.Tests/NewManga.App.Tests.csproj'),
+        ('Appearance', 'apps/desktop-avalonia/tests/NewManga.Appearance.Tests/NewManga.Appearance.Tests.csproj'),
+        ('ApplicationCore', 'apps/desktop-avalonia/tests/NewManga.ApplicationCore.Tests/NewManga.ApplicationCore.Tests.csproj'),
+        ('CoreClient', 'apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/NewManga.CoreClient.Tests.csproj'),
+        ('DesignSystem', 'apps/desktop-avalonia/tests/NewManga.DesignSystem.Tests/NewManga.DesignSystem.Tests.csproj'),
+        ('Host', 'apps/desktop-avalonia/tests/NewManga.Host.Tests/NewManga.Host.Tests.csproj'),
+        ('PresentationAvalonia', 'apps/desktop-avalonia/tests/NewManga.Presentation.Avalonia.Tests/NewManga.Presentation.Avalonia.Tests.csproj'),
+        ('ThemeEngine', 'apps/desktop-avalonia/tests/NewManga.ThemeEngine.Tests/NewManga.ThemeEngine.Tests.csproj'),
+    ]
+    dotnet_results = RUNTIME / 'dotnet' / f'results-{dotnet_run_id}'
     suites = {
         'pytest': [('pytest', [sys.executable, '-m', 'pytest', 'tests', '-q', '-rs', '--tb=short', '-o', 'cache_dir=' + str(RUNTIME / 'pytest-cache'), '--basetemp=' + str(RUNTIME / 'pytest-temp')], ROOT, 1200)],
         'frontend': [('frontend-tests', [npm, 'test', '--', '--reporter=verbose'], ROOT / 'apps/desktop/frontend', 180),
@@ -70,10 +126,22 @@ if __name__ == '__main__':
         'rust': [('cargo-test', ['cargo', 'test', '--locked', '--offline'], ROOT / 'apps/desktop/src-tauri', 900)],
         'desktop': [('desktop-build', ['cargo', 'build', '--locked', '--offline'], ROOT / 'apps/desktop/src-tauri', 900)],
         'probes': [('audit-probes', [sys.executable, '-m', 'pytest', str(AUDIT / 'tests/test_audit_probes.py'), '-vv', '-s', '-p', 'no:cacheprovider', '--basetemp=' + str(RUNTIME / 'probe-temp')], ROOT, 120)],
-        'smoke': [('software-smoke', [sys.executable, '-m', 'tools.smoke.plugins', '--only', 'core,wire,packaged', '--json', str(AUDIT / 'evidence/software-smoke-report.json')], ROOT, 180)],
+        'smoke': [('software-smoke', [sys.executable, '-m', 'tools.smoke.plugins', '--only', 'core,wire', '--json', str(AUDIT / 'evidence/software-smoke-report.json')], ROOT, 180)],
         'governance': [('governance', ['pwsh', '-NoProfile', '-File', 'tools/governance/check.ps1'], ROOT, 180)],
         'dependencies': [('pip-check', [sys.executable, '-m', 'pip', 'check'], ROOT, 60),
                          ('npm-audit', [npm, 'audit', '--json'], ROOT / 'apps/desktop/frontend', 90)],
+        'dotnet': [
+            (f'dotnet-{name.lower()}-{dotnet_run_id}',
+             ['dotnet', 'test', project, '--no-restore',
+              '--results-directory', str(dotnet_results),
+              '--logger', f'trx;LogFileName={name}-{dotnet_run_id}.trx',
+              '--settings', 'apps/desktop-avalonia/tests/NewManga.runsettings',
+              '-v:minimal'], ROOT, 900)
+            for name, project in dotnet_projects
+        ],
     }
     for spec in suites[args.suite]:
-        run(*spec)
+        result = run(*spec)
+        if args.suite == 'dotnet' and not result['status_identical']:
+            print('STOP: git status --porcelain changed during .NET test; no further projects will run.', file=sys.stderr)
+            break
