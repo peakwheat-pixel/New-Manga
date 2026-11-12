@@ -33,8 +33,8 @@ allowed_paths:
 
 ## Acceptance Criteria
 - [x] AC1：固定Git/环境及有效源码清单，记录dirty和历史缺口。 <<MET>>
-- [ ] AC2：15项专项逐项有真实检查结果或具名阻断，关键链路深读与测试。 <<PARTIAL: AUDIT-01–14 因原始清单缺失保持具名阻断；probes EXIT 1 并发现待分级问题，其他限定 suite 待执行>>
-- [ ] AC3：完整日志、问题分级、整改路线、正式报告和Release Gate落盘。 <<PARTIAL: 正在执行>>
+- [ ] AC2：15项专项逐项有真实检查结果或具名阻断，关键链路深读与测试。 <<PARTIAL: AUDIT-01–14 因原始清单缺失保持具名阻断；probes EXIT 1（2 项 Medium / High confidence，1 项 defense-verified）；Python Core pytest EXIT 1（3,519 passed / 16 failed / 10 skipped）；8 个 .NET 项目与 smoke 待执行>>
+- [ ] AC3：完整日志、问题分级、整改路线、正式报告和Release Gate落盘。 <<PARTIAL: probes 分级及 pytest 失败摘要已记录；完整审计、其余 suite 与 Release Gate 待完成>>
 - [ ] AC4：独立复核、证据pin和治理检查可核验；未满足不得置done。 <<PARTIAL: 尚未提交或独立审查>>
 
 ## 允许修改范围
@@ -66,6 +66,11 @@ src/**、apps/**、原有tests/**、共享契约、Schema、依赖、真实用�
 | PROBES-RESULT-1 | AC2（段 B probes 实际结果，EXIT 1） | `audit/V1-FULL-AUDIT/evidence/audit-probes-segment-b-20261112T081030840760Z.json` | `fbf138af6a0e037f86802ef599277898c7abaa7e` | `A7074CD6264F93DFE258758A0FE5D5C9F85711C10F512DA88C5E21F88085E3B8` | CANONICAL | BLOB |
 | PROBES-LOG-1 | AC2（段 B probes 命令、生成 HEAD、EXIT 与原始输出） | `audit/V1-FULL-AUDIT/logs/audit-probes-segment-b-20261112T081030840760Z.log` | `fbf138af6a0e037f86802ef599277898c7abaa7e` | `D1BEF19A173D66D63AC1E8B6F973E5306B19270464A6211D41429A8BE9B402B5` | CANONICAL | BLOB |
 | PROBES-REPORT-1 | AC2/AC3（probe 观察、解释边界与待分级风险） | `audit/V1-FULL-AUDIT/reports/PROBES-RESULT-SEGMENT-B.md` | `9ce6bb09dce228018426e979f562c5999df2efc5` | `514680B15B579F26FC340FF08375126A6871692309272A68A3665970EDA942B1` | CANONICAL | BLOB |
+| PYTEST-RESULT-1 | AC2（段 B Python Core pytest JSON，EXIT 1） | `audit/V1-FULL-AUDIT/evidence/pytest-segment-b-20261112T081732598825Z.json` | `40f47362894f2ea6dcd66d463a72328aad37bbc6` | `DAE5BD3FB943EA22C1802B70141F767F13E69EA99CD8AD85A2DB86D2EB015D55` | CANONICAL | BLOB |
+| PYTEST-LOG-1 | AC2（pytest 完整输出、失败栈与 skips/warnings，EXIT 1） | `audit/V1-FULL-AUDIT/logs/pytest-segment-b-20261112T081732598825Z.log` | `40f47362894f2ea6dcd66d463a72328aad37bbc6` | `FF69803F82AFB18687593772650A878FFF51643FD1BD2841B7293BBFF3BA0919` | CANONICAL | BLOB |
+| PYTEST-REPORT-1 | AC2/AC3（pytest 结果分组、限制与未执行项） | `audit/V1-FULL-AUDIT/reports/PYTEST-RESULT-SEGMENT-B-2026-11-12.md` | `65328772e3cc62c15509a2d4a5800990df3fdd4d` | `A46524DD681FD668DE1367700510D17CED7F4B9DB6F129BC8EB81DF05A0D43B6` | CANONICAL | BLOB |
+| PROBE-TRIAGE-1 | AC2/AC3（ZCode probe 分级、defense-verified 与限制） | `audit/V1-FULL-AUDIT/reports/PROBE-TRIAGE-SEGMENT-B-2026-11-12.md` | `65328772e3cc62c15509a2d4a5800990df3fdd4d` | `60D882F8F224C7C2A700B175AEF61E4BC7277351150C47C329F7545B7AE17F85` | CANONICAL | BLOB |
+| PROBE-TRIAGE-LOG-1 | AC2/AC3（ZCode 只读确认原始回答、session/turn/trace 与 EXIT） | `audit/V1-FULL-AUDIT/logs/probe-triage-confirmation-20261112.log` | `40f47362894f2ea6dcd66d463a72328aad37bbc6` | `DCC383FB045CBE8B43716F4E1F7A5BF1D851A9F35F4EA84DEFB9C4D6F836F1C8` | CANONICAL | BLOB |
 
 说明：裁决文档中记录的阶段 0 日志 `B561…` 是提交前 WORKTREE SHA-256；本表按模板使用 Git BLOB 字节，完整 SHA-256 为 `7E2A…`。
 
