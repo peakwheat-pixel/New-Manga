@@ -1,0 +1,112 @@
+{
+  "schema": "audit-governance/v1",
+  "generated_at_utc": "2026-11-12T20:19:12.637985Z",
+  "generated_head": "03b1a7acc5a324dcd1884df82d748569b2c7f91e",
+  "branch": "main",
+  "git_status_porcelain": "",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": "G:\\CODEX\\New Manga",
+      "shell": false,
+      "interpreter": "git",
+      "elapsed_seconds": 0.02097,
+      "exit": 0,
+      "stdout": "03b1a7acc5a324dcd1884df82d748569b2c7f91e\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "branch",
+        "--show-current"
+      ],
+      "cwd": "G:\\CODEX\\New Manga",
+      "shell": false,
+      "interpreter": "git",
+      "elapsed_seconds": 0.019357,
+      "exit": 0,
+      "stdout": "main\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain"
+      ],
+      "cwd": "G:\\CODEX\\New Manga",
+      "shell": false,
+      "interpreter": "git",
+      "elapsed_seconds": 0.064337,
+      "exit": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "tools/governance/check.ps1"
+      ],
+      "cwd": "G:\\CODEX\\New Manga",
+      "shell": false,
+      "interpreter": "pwsh",
+      "elapsed_seconds": 1.031716,
+      "exit": 0,
+      "stdout": "Governance scope: 15 current documents; no historical directory scan.\nTask: doc\\tasks\\NEW-MANGA-V1-FULL-AUDIT.md\nWARN: 存在 10 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）\nWARN: doc/STATUS.md 已达到预算的 80%：3194 bytes / 31 lines\nWARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6992 bytes / 64 lines\nGovernance check: PASS (3 warnings)\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "tools/governance/check.ps1",
+        "-TaskPath",
+        "doc/tasks/NEW-MANGA-V1-FULL-AUDIT.md"
+      ],
+      "cwd": "G:\\CODEX\\New Manga",
+      "shell": false,
+      "interpreter": "pwsh",
+      "elapsed_seconds": 0.926137,
+      "exit": 0,
+      "stdout": "Governance scope: 15 current documents; no historical directory scan.\nTask: doc\\tasks\\NEW-MANGA-V1-FULL-AUDIT.md\nWARN: 存在 10 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）\nWARN: doc/STATUS.md 已达到预算的 80%：3194 bytes / 31 lines\nWARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6992 bytes / 64 lines\nGovernance check: PASS (3 warnings)\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "pwsh",
+        "-NoProfile",
+        "-File",
+        "tools/governance/verify_pins.ps1"
+      ],
+      "cwd": "G:\\CODEX\\New Manga",
+      "shell": false,
+      "interpreter": "pwsh",
+      "elapsed_seconds": 0.337063,
+      "exit": 0,
+      "stdout": "OK C01b 3c9f5af7d74f\nOK C02 bb365ca891a7\nOK C03 b77e7968a00b\nOK C04b 4b304c0c315f\nOK C05 f6e6f3cb1fe1\nOK C06 75f8e2b4eb80\nOK C07 8ccaba05cbc2\nOK C08 453f993c1a16\nOK C09 dc51226b336c\nOK C10 ec8fd862f95f\nOK C11 44f4273f7ad1\nOK C12 f49835860143\nOK C13 8faf1e805eac\nOK C14 05056cbf65f9\nOK C15 f9e376a0ed4c\nOK C16 67286eeca8cb\nOK C17 cdeee4872e29\nOK FEA01 0370c18932b1\nPIN AUDIT: PASS (all 18)\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "python",
+        "tools/generate_api_inventory.py",
+        "--check"
+      ],
+      "cwd": "G:\\CODEX\\New Manga",
+      "shell": false,
+      "interpreter": "python",
+      "elapsed_seconds": 0.075069,
+      "exit": 0,
+      "stdout": "| 接口 | 方法数 | 属性/事件/字段数 |\n|---|---|---|\n| IReaderProgressSink | 1 | 0 |\n| IHostController | 79 | 4 |\n| IRunController | 6 | 0 |\n| **合计** | **86** | — |\n\n## IReaderProgressSink\n\n| # | 成员 | 返回类型 |\n|---|---|---|\n| 1 | `SaveReadingProgressAsync` | `Task<ReaderProgressSaveResult>` |\n\n## IHostController\n\n| # | 成员 | 返回类型 |\n|---|---|---|\n| 1 | `StartAsync` | `Task` |\n| 2 | `RefreshBooksAsync` | `Task` |\n| 3 | `TryChineseRoundTripAsync` | `Task<bool>` |\n| 4 | `TryCreateBookAsync` | `Task<bool>` |\n| 5 | `CreateChapterAsync` | `Task<ChapterSummary?>` |\n| 6 | `LoadReaderBookAsync` | `Task<ReaderBookData?>` |\n| 7 | `ListChaptersAsync` | `Task<IReadOnlyList<ChapterSummary>>` |\n| 8 | `ListChapterPagesAsync` | `Task<IReadOnlyList<ChapterPageSummary>>` |\n| 9 | `GetReadingPreferencesAsync` | `Task<ReadingPreferencesInfo?>` |\n| 10 | `SaveReadingPreferencesAsync` | `Task<bool>` |\n| 11 | `ListBookmarksAsync` | `Task<IReadOnlyList<BookmarkInfo>>` |\n| 12 | `CreateBookmarkAsync` | `Task<string?>` |\n| 13 | `DeleteBookmarkAsync` | `Task<bool>` |\n| 14 | `GetBookReadingProgressAsync` | `Task<BookReadingProgressInfo?>` |\n| 15 | `ResetReadingProgressAsync` | `Task<int>` |\n| 16 | `ListFontAssetsAsync` | `Task<IReadOnlyList<FontAssetInfo>>` |\n| 17 | `ImportFontAssetAsync` | `Task<FontAssetInfo?>` |\n| 18 | `DeleteFontAssetAsync` | `Task<bool>` |\n| 19 | `RefreshFontAssetsAsync` | `Task<FontRefreshInfo>` |\n| 20 | `UpdateBookMetadataAsync` | `Task<bool>` |\n| 21 | `ReorderChaptersAsync` | `Task<bool>` |\n| 22 | `UpdateChapterMetadataAsync` | `Task<bool>` |\n| 23 | `CreateChapterWithMetadataAsync` | `Task<ChapterSummary?>` |\n| 24 | `ListIssueMarkersAsync` | `Task<IReadOnlyList<IssueMarkerInfo>>` |\n| 25 | `CreateIssueMarkerAsync` | `Task<string?>` |\n| 26 | `ResolveIssueMarkerAsync` | `Task<bool>` |\n| 27 | `ReopenIssueMarkerAsync` | `Task<bool>` |\n| 28 | `DeleteIssueMarkerAsync` | `Task<bool>` |\n| 29 | `ListPromptTemplatesAsync` | `Task<IReadOnlyList<PromptTemplateInfo>>` |\n| 30 | `SavePromptTemplateAsync` | `Task<PromptTemplateInfo?>` |\n| 31 | `DeletePromptTemplateAsync` | `Task<PromptTemplateDeleteResult>` |\n| 32 | `CopyBuiltinPromptTemplateAsync` | `Task<PromptTemplateInfo?>` |\n| 33 | `GetPromptTemplateReferencesAsync` | `Task<IReadOnlyList<PromptTemplateReference>>` |\n| 34 | `LoadPageRegionsAsync` | `Task<RegionPageProjection?>` |\n| 35 | `LoadRegionRevisionsAsync` | `Task<RegionRevisionHistory?>` |\n| 36 | `ReadPageImageAsync` | `Task<byte[]?>` |\n| 37 | `SetRegionTypeAsync` | `Task<RegionOperationResult>` |\n| 38 | `RestoreRegionRevisionAsync` | `Task<RegionOperationResult>` |\n| 39 | `RerenderPageAsync` | `Task<PageRerenderOutcome>` |\n| 40 | `ListCredentialTargetsAsync` | `Task<IReadOnlyList<CredentialTargetOption>>` |\n| 41 | `PutCredentialAsync` | `Task<CredentialOperationResult>` |\n| 42 | `ClearCredentialAsync` | `Task<CredentialOperationResult>` |\n| 43 | `ListProviderProfilesAsync` | `Task<IReadOnlyList<ProviderProfileInfo>>` |\n| 44 | `SaveProviderProfileAsync` | `Task<SettingsProfileResult>` |\n| 45 | `DeleteProviderProfileAsync` | `Task<SettingsProfileResult>` |\n| 46 | `ListNetworkProfilesAsync` | `Task<IReadOnlyList<NetworkProfileInfo>>` |\n| 47 | `SaveNetworkProfileAsync` | `Task<SettingsProfileResult>` |\n| 48 | `DeleteNetworkProfileAsync` | `Task<SettingsProfileResult>` |\n| 49 | `SetNetworkDefaultAsync` | `Task<SettingsProfileResult>` |\n| 50 | `TestNetworkProfileAsync` | `Task<NetworkTestInfo?>` |\n| 51 | `ResolveNetworkProfileAsync` | `Task<NetworkResolveInfo?>` |\n| 52 | `SetProviderBindingAsync` | `Task<SettingsProfileResult>` |\n| 53 | `ClearProviderBindingAsync` | `Task<SettingsProfileResult>` |\n| 54 | `ResolveProviderBindingAsync` | `Task<ProviderBindingResult?>` |\n| 55 | `ImportFilesAsync` | `Task<ImportOutcome>` |\n| 56 | `ImportFolderAsync` | `Task<ImportOutcome>` |\n| 57 | `GetTranslatedPageIdsAsync` | `Task<IReadOnlyList<string>>` |\n| 58 | `StartExportAsync` | `Task<ExportStartInfo?>` |\n| 59 | `GetExportSnapshotAsync` | `Task<ExportSnapshotInfo?>` |\n| 60 | `GetExportHistoryAsync` | `Task<IReadOnlyList<ExportHistoryEntry>>` |\n| 61 | `CancelExportAsync` | `Task<ExportSnapshotInfo?>` |\n| 62 | `RevealExportFolderAsync` | `Task<bool>` |\n| 63 | `ListBackupsAsync` | `Task<IReadOnlyList<BackupPackageInfo>>` |\n| 64 | `CreateBackupAsync` | `Task<BackupPackageInfo?>` |\n| 65 | `DeleteBackupAsync` | `Task<bool>` |\n| 66 | `RetryPendingCleanupsAsync` | `Task<CleanupOutcomeInfo?>` |\n| 67 | `ListPluginsAsync` | `Task<PluginListInfo>` |\n| 68 | `SetPluginsGlobalEnabledAsync` | `Task<bool?>` |\n| 69 | `SetPluginEnabledAsync` | `Task<bool?>` |\n| 70 | `GetCleanupPreviewAsync` | `Task<CleanupPreviewInfo>` |\n| 71 | `RunCleanupAsync` | `Task<CleanupOutcomeInfo?>` |\n| 72 | `OpenDraftAsync` | `Task<DraftLease?>` |\n| 73 | `PatchDraftAsync` | `Task<Draft?>` |\n| 74 | `PrepareCandidateAsync` | `Task<RegionCandidate?>` |\n| 75 | `ApplyCandidatesAsync` | `Task<IReadOnlyDictionary<string, string>>` |\n| 76 | `GetDraftAsync` | `Task<Draft?>` |\n| 77 | `ListDraftsAsync` | `Task<IReadOnlyList<Draft>>` |\n| 78 | `DiscardDraftAsync` | `Task` |\n| 79 | `RestoreBackupAsync` | `Task<string?>` |\n| — | `Snapshot`（属性） | `HostViewSnapshot` |\n| — | `StartRequests`（属性） | `int` |\n| — | `ExportDirectorySuggestion`（属性） | `string` |\n| — | `Changed`（事件） | `EventHandler?` |\n\n## IRunController\n\n| # | 成员 | 返回类型 |\n|---|---|---|\n| 1 | `StartRunAsync` | `Task<RunStartInfo?>` |\n| 2 | `ControlRunAsync` | `Task<RunControlInfo?>` |\n| 3 | `ResumeBlockedRunAsync` | `Task<RunControlInfo?>` |\n| 4 | `GetRunSnapshotAsync` | `Task<RunSnapshotInfo?>` |\n| 5 | `GetTaskProjectionAsync` | `Task<TaskProjectionInfo?>` |\n| 6 | `RetryFailedTargetsAsync` | `Task<RunControlInfo?>` |\n\n",
+      "stderr": "OK: rendered counts match FEA-C07 doc\n"
+    }
+  ]
+}
