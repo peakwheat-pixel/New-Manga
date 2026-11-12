@@ -162,6 +162,7 @@ if __name__ == '__main__':
             'tests/providers/test_detect_handler.py',
             'tests/providers/test_detector_assembly.py',
             'tests/providers/test_detector_weights_lookup.py',
+            'tests/providers/test_onnx_sessions.py',
             '-q', '-rs', '--tb=short',
             '-o', 'cache_dir=' + str(RUNTIME / f'audit04-providers-pytest-cache-{run_id}'),
             '--basetemp=' + str(RUNTIME / f'audit04-providers-pytest-temp-{run_id}')], ROOT, 900),
