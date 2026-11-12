@@ -1,0 +1,26 @@
+{
+  "sessionId": "sess_14d54cdc-c657-466a-9678-23eb966f8ea1",
+  "traceId": "bc8eedbe-227f-4af9-84b9-43aef8be0137",
+  "turnId": "turn_c9015724-9752-47ea-86ac-0e4361fa93b7",
+  "response": "# Scope Clarification 裁定（第二裁之限定澄清，不重开 A/B）\n\n**session** `sess_14d54cdc-c657-466a-9678-23eb966f8ea1` / **turn** `turn_c9015724-9752-47ea-86ac-0e4361fa93b7` / reviewed HEAD `d4c4d9ff…`（clean，未变）\n\n## 裁定：两项均在既有第二裁授权内，可实施\n\n**1. verification README.md 摘要更正——允许。** 依据链：`verification/FEA-15-PIN-BASIS-ENFORCE-1/**` 在 frontmatter allowed_paths 内；README 是本 Task 活文档（历史上随每次 evidence commit 演进，Canonical Evidence 对它的多行 pin 均绑定**特定历史 commit 的 blob**，工作树更新并新提交不触碰那些旧 blob，相关 pin 行不受影响）；“修正 README 不准确表述、不动 raw log 字节”有直接裁决先例（sess_1bff86d4 §4 Review P2-A = RESOLVED 的处置形态）。方式约束：仅追加/修订 summary 文字（superseding correction：53/53 系表 1 部分审计、未满足 R-001；full-section 88 行 = 76 PASS/12 FAIL/EXIT=1；真实源日志与既有提交对象不动）；疑处默认新增 correction 小节而非改写原句。\n\n**2. 活动 Task 卡现时表述更正——允许。** frontmatter approval / AC5 行是本 Task 的现时状态字段（历来随每轮裁决更新）， Rolling Checkpoint 按惯例**追加**更正条目（旧 checkpoint 条目不改写）；sess_1bff86d4 §7 步骤 3 + 第二裁第 4/5/6 项与关闭序列的文档义务已覆盖此域。方式：旧“完整 53/53”表述标注为表 1 部分审计 + superseded by 88 行 full-section 审计；对历史 Handoff（ce2c7248 内）的 53/53 说法**仅以新 review addendum 引用并更正，不触碰其字节**——与用户提议及既有禁令一致。若不更新卡面，Closeout Record 的新结论将与残留的“完整 PASS”表述直接矛盾，故此更正是收口必要组成，非扩权。\n\n无需新的用户决定；无替代位置方案（README 可改，不需要）。\n\n## 必须保留不动的字节（ enumerative ）\n\n- 18 frozen pins、`tools/governance/verify_pins.ps1`、`.gitattributes`、renormalize；\n- 全部历史 Task/Review/Handoff/checkpoint 的已提交字节（含 ce2c7248 的 Handoff 及其 53/53 表述）；\n- `verification/**` 已入库 raw 日志与 evidence 文件（含两份 53 行审计日志；full-section 日志入库时字节须等于 `20BE3B23…0696C`）；\n- workspace 全部外部原件；\n- 既有 git 提交对象（修改只产生新提交，历史可达性不变）；\n- Canonical Evidence 全部历史行（除第二裁明列的 12 行指定字段订正外）。\n\n**推荐下一步**：Codex 写会话在执行第二裁第 1–6 项时，把上述两项 README/Task 卡更正一并纳入同一收口提交组（附加到此前转发指令第 2 条之后）：「在 verification README 摘要追加 superseding correction（53/53=表 1 部分审计、未满足 R-001；88 行=76/12/EXIT=1；源日志与提交对象不动）；Task 卡 approval/AC5/checkpoint 现时表述同步标注 superseded，checkpoint 以追加条目记录；不改任何历史 Handoff/raw evidence/外部原件字节」。",
+  "usage": {
+    "source": "provider",
+    "modelRequestCount": 2,
+    "inputTokens": 270893,
+    "outputTokens": 2765,
+    "totalTokens": 273658,
+    "cacheReadTokens": 262528,
+    "cacheWriteTokens": 0,
+    "reasoningTokens": 0,
+    "webFetchRequests": 0,
+    "webSearchRequests": 0
+  },
+  "eventCount": 2685,
+  "projection": {
+    "status": "idle",
+    "turnCount": 1,
+    "totalTokenCount": 273658,
+    "contextUsed": 137310,
+    "contextWindow": 200000
+  }
+}

@@ -1,0 +1,76 @@
+全部证据链闭合。session/turn ID 已实测（rollout 文件名 + 内字段双验证，与既往 session 均不同）。以下为完整裁决报告。
+
+---
+
+# FEA-15-PIN-BASIS-ENFORCE-1 R-001 全行审计独立复核裁决（2026-11-12）
+
+| 项 | 值 |
+|---|---|
+| 裁决者 | ZCode 独立 Integrator adjudicator（全新只读会话，未参与本 Task 任何实现/返修/Review） |
+| session | `sess_14d54cdc-c657-466a-9678-23eb966f8ea1`（rollout 文件名与 `sessionId` 字段双实测一致） |
+| 报告 turn | `turn_b37b312b-ab42-47ed-8692-9d53ae34402e`（rollout `turnId` 字段最新实测值，harness 记录原文） |
+| reviewed HEAD | `d4c4d9ffbbd3a59f79f4cd242dac19ffa23af1eb`（branch main，`git rev-parse HEAD` 实测逐位一致；`git status --porcelain` 为空） |
+| 审计对象日志 | `canonical-evidence-blob-audit-full-section-d4c4d9ffb.log`，SHA-256 实测 `20be3b23212e55d007c52bdf3d9716bdfda193cef70887bd0e6359e8b3e0696c` == 给定值 |
+| 方法边界 | 全程只读：Read / ls / grep / sha256sum / tr / printf / `git cat-file`(blob/-t) / `git log` / `git show` / `git branch`。plan 权限过滤器拦截复合命令与 python 内联（既有裁决 §0 同现象），全部改用简单命令完成。未修改任何文件、未暂存、未提交、未 push、未运行任何 gate/pytest。 |
+
+---
+
+## 1. 审计范围与 88 行统计复现：**确认**
+
+- **范围正确**：Task 卡第 114 行 `## Canonical Evidence` 至第 215 行 `## Resource Manifest` 之前（即 114–214），与日志 `CANONICAL_SECTION_LINE_RANGE=114-214` 一致；日志确实扫过了第一张表之后的说明段（174 行）并继续解析了后续 4 张无表头续表——此前两份 53/53 报告的解析器缺陷（遇说明段即停）不复存在。
+- **88 行复现**：本会话独立解析节内全部表格数据行 = 表 1（120–172，53 行）+ 续表 176–178（3 行）+ 180–181（2 行）+ 183（1 行）+ 185–213（29 行）= **88 行**，全部为 6 列规范行，与 `PARSED_ROWS=88` 一致。
+- **76 PASS / 12 FAIL / EXIT=1 复现**：12 个 FAIL 行的 actual 本会话逐行重算**全部逐位一致**（11 行 blob SHA + 1 行 MISSING）；另抽查 4 个 PASS 行（`ac5-integration-readme`、`ac5-closeout-handoff`、`ac5-r001-initial-blob-audit`、`ac1d-blob-audit`）重算全部一致。
+- **诚实边界**：因 python 内联被拦，76 个 PASS 未逐一重算（12 FAIL + 4 PASS 抽样 + 行数/顺序全对齐）；该抽样不足以推翻 76 PASS 判定，但如需 100% 逐行独立重算，须在非 plan-mode 授权会话补跑。两份 53/53 报告依用户说明不作为 R-001 证据，本裁决未采信。
+
+## 2. 12 个 FAIL 行逐项核对（全部独立实测）
+
+**分类汇总：1 行 commit 对象不存在（卡面 commit 抄写错误）；10 行存在但 SHA 不匹配且实证为 worktree/Git-blob EOL 双口径差异（P2-1 模式）；1 行存在但卡面 pin 抄写缺字。**
+
+| # | evidence_id | 存在性 | expected（卡面 pin） | actual（Git blob，本会话复算） | basis（证据来源，全部本会话实测） |
+|---|---|---|---|---|---|
+| 1 | ac2ac3-ac4-v2-review-readme | **commit 对象不存在**（`cat-file -t` exit 128；`cat-file blob` 报 path not in commit） | a95551ac…87c | MISSING | **卡面 commit 列抄写错误**。真实 commit `d714232eefbe66e62f15b4534dce90d22927ddc5`（2026-11-12 07:46:18 "docs: clarify FEA-15 review evidence status"，README 历史在案）与卡面 `d714232ee5f4…` 仅前 9 位相同；真实 commit 中该 README blob SHA-256 == expected pin **逐位一致**。即 pin 本身正确、commit 列 31 位抄错 |
+| 2 | ac4-release-card-gates | 存在 | ead857c0…081 | 08d6db94…59f | **P2-1 EOL 双口径（实证）**：workspace 外部原件 `main-post-ac4-release-card-gates-211987767.log` SHA == expected；原件去 `\r` 后 SHA == actual（双向验证）→ 差异仅 CRLF/LF |
+| 3 | ac4-release-preliminary-gates | 存在 | 13f4e139…dfa | bad07f4e…4e4 | 同上模式：原件 SHA==expected；去 CR 后==actual |
+| 4 | ac4-release-clean-gates | 存在 | 842a9f5b…727 | 53bcbc97…338 | 同上模式：原件 SHA==expected；去 CR 后==actual |
+| 5 | ac5-integration-blob-map | 存在 | ad7107e5…d22 | b765707e…a62 | 同上模式；原件为 `ac5-integration-blob-map-e69fc2dc7-v2.log`（SHA==expected，**去 CR 后==actual**）；Resource Manifest 第 229 行已如实登记该 source→destination 对及同值大写 SHA。同目录非 v2 原件 SHA=37143dc3…，与两侧均不符，非 pin 来源 |
+| 6 | ac5-integration-gates | 存在 | 998c1dc6…963 | ac6d2a36…705 | 同上模式（双向验证）：原件==expected；去 CR 后==actual；Resource Manifest 230 行登记同值 |
+| 7 | ac5-zcode-review | 存在 | 6e9bd689…2cd | 0a4a9370…fad | **P2-1 worktree basis（实证）**：expected == 主仓**当前工作树**该报告文件（CRLF checkout 字节）SHA-256 实测值；工作树去 CR 后 == actual。该文件 git 历史仅一个版本（da780b6b），blob==actual |
+| 8 | ac5-zcode-review-receipt | 存在 | 3164b313…776 | 07939c9e…aa6 | 外部原件 `zcode-ac5-integration-review-20261112.jsonl` SHA==expected（Resource Manifest 231 行登记同值）；去 CR 后==actual |
+| 9 | ac5-review-readme | 存在 | 596bfde7…becd9b0（**63 字符**） | 596bfde7…becdc9b0（64 字符） | **卡面 pin 抄写缺字**：字符级对齐实测——前 60 字符逐位相同，expected 恰为 actual 删除第 61 位 `c` 的结果；63≠64 字符（`wc -c` 实测）。SHA-256 雪崩下不可能来自不同内容，非 EOL/内容差异 |
+| 10 | ac5-post-pinbackfill-gates | 存在 | e5160903…c0e | 3f5db42c…75c | 外部原件模式：原件==expected（Resource Manifest 232 行同值）；去 CR 后==actual |
+| 11 | ac5-review-post-pinbackfill-budget-fail | 存在 | ecc49f5b…cf5 | 5392452c…9b8 | 外部原件模式：原件==expected（Resource Manifest 233 行同值）；去 CR 后==actual |
+| 12 | ac5-review-post-budget-fix-gates | 存在 | 4939c7d1…062 | 54accdca…8b1 | 外部原件模式：原件==expected（Resource Manifest 234 行同值）；去 CR 后==actual |
+
+- 无一行标 UNKNOWN：12 行 basis 全部有确定性实测证据，无预设 EOL 结论。
+- 依指示明确：**不得因同一 README/TaskPath 在其他 commit 行 PASS 而放行**——本审计逐行独立判定，行 1/行 9 等不因 verification README 存在多行 PASS 而视为通过；10 行 EOL 差异亦不改变其按 BLOB 口径 mismatch 的事实（R-001 义务原文：pin 须指向「包含文件的实际 commit」的 blob 字节）。
+
+## 3. R-001 disposition 与 Task 终态
+
+- 既有绑定裁决（sess_1bff86d4）硬条件：全行逐行 `EXIT=0` 才能关闭；**任一行失败 → R-001 保持 open、Task 不得收口、回报再裁**。
+- 本轮审计 `EXIT=1`（12 FAIL）→ **R-001 = 保持 OPEN**；**Task 不得终态关闭**（不得置 `closed_with_limitations`，`canonical_evidence_status` 不得置 complete）。本报告即规定的「回报再裁」载体。
+- 附带事实（不改变上述 disposition）：12 行中 10 行经实证为 P2-1 已知双口径模式（原件/工作树字节与仓内 blob 去 CR 后逐字节相等——**无内容漂移、无数据损坏**），2 行为卡面抄写缺陷（行 1 commit 列、行 9 pin 缺字），其中行 1/行 9 的正确值均有确定性实测依据。
+
+## 4. worktree basis 调整与授权
+
+- **本会话不批准任何修改**（plan mode 只读 + 用户明令「不得自动批准修改」+ 既有裁决「不得修改 pin 字节或历史行来凑 PASS」）。
+- P2-1 允许「明确区分 generation-time worktree SHA 与 commit Git-blob SHA」——本会话已为 10 行提供其要求的**实际证据**，区分成立；但「区分」≠「把这些行按 blob 口径改判 PASS」。
+- 修正路径属**修改 Canonical Evidence 既有行的 pin/commit 字节**，超出本会话与既有授权，须用户显式裁决后由授权 Owner 在新授权范围内执行；不需要新 Task 亦可由用户以补充裁决授权收口修正（属收口提交的自然延伸），但**没有授权就一步都不能动**。行 1/行 9 属抄写缺陷修正（修正值 = 实测正确值，非凑数），同样须授权。
+
+## 5. 允许的下一步 / 禁止动作
+
+**允许（按序，均须用户先行裁决）**：
+1. 将本裁决报告落盘 `doc/reviews/FEA-15-PIN-BASIS-ENFORCE-1-r001-full-audit-adjudication-2026-11-12.md` 并连同审计日志（外部原件保留）提交——落盘须授权写会话执行。
+2. 用户在两条路径中裁决：
+   - **路径 A（修正后重审）**：授权收口修正提交——(a) 行 1 commit 列改为 `d714232eefbe66e62f15b4534dce90d22927ddc5`；(b) 行 9 pin 补全为 64 字符 `596bfde7…becdc9b0`；(c) 10 行 EOL 行依 P2-1 双口径惯例择一处置（pin 改为 Git blob 值，或保留原值并在卡内登记双口径说明段）——其后在 clean HEAD 重跑全行 blob audit，`EXIT=0` 且新日志入库后按既有条件关闭 R-001、收口。
+   - **路径 B（接纳限制收口）**：用户明确修订 R-001 关闭条件，将 12 行接纳为 documented pin-basis limitation（含本报告 basis 证据表），按 76/88 + 限制清单收口。此为用户专属权力，本 adjudicator 不代行。
+3. 无论 A/B：STATUS/Plan/Ledger 指针更新须守 Plan 6999/7000 bytes 预算红线（6dad54fe 先例）。
+
+**禁止**：
+- 不得修改 18 frozen pins、任何历史 Task/Review/Handoff/checkpoint/evidence/pin 字节、`.gitattributes`、renormalize；
+- 不得无实测依据改写任何 FAIL 为 PASS；不得触碰 FEA-06-PREREQ-1 / CHAPTER-SELECTOR-1 两条历史 FAIL（documented historical limitation 原样）；
+- 不得 push、不得资源清理、gc/prune/repack；
+- 本会话及任何 Agent 不得在用户裁决前自动修改行 1/行 9 或任何 EOL 行的 pin/commit 字节。
+
+---
+
+**结论**：审计范围与 88 行统计复现成立（76 PASS/12 FAIL/EXIT=1 属实）；12 行 basis 全部实证（1 行卡面 commit 抄写错误、10 行 P2-1 worktree/Git-blob EOL 双口径、1 行 pin 缺字）；按既有绑定条件 **R-001 保持 open、Task 不得终态关闭**，回报再裁已完成，处置路径 A/B 待用户裁决；本会话未修改仓库任何字节。
