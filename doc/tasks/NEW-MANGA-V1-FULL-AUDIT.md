@@ -33,7 +33,7 @@ allowed_paths:
 
 ## Acceptance Criteria
 - [x] AC1：固定Git/环境及有效源码清单，记录dirty和历史缺口。 <<MET>>
-- [ ] AC2：15项专项逐项有真实检查结果或具名阻断，关键链路深读与测试。 <<PARTIAL: 正在执行>>
+- [ ] AC2：15项专项逐项有真实检查结果或具名阻断，关键链路深读与测试。 <<PARTIAL: suite 映射已固定；AUDIT-01–14 因原始清单缺失保持具名阻断，限定 suite 测试待执行>>
 - [ ] AC3：完整日志、问题分级、整改路线、正式报告和Release Gate落盘。 <<PARTIAL: 正在执行>>
 - [ ] AC4：独立复核、证据pin和治理检查可核验；未满足不得置done。 <<PARTIAL: 尚未提交或独立审查>>
 
@@ -60,6 +60,8 @@ src/**、apps/**、原有tests/**、共享契约、Schema、依赖、真实用�
 | AUDIT00-REPORT-1 | AC1（段 B limitation 与历史缺口，MET） | `audit/V1-FULL-AUDIT/reports/00_BASELINE-SEGMENT-B.md` | `1a8238b9f86427efe5c48918f3bc0f2942611732` | `7E282EEF4DCF46C604F404F7B2E1C4B22C5036B484473F54A8F71D9F9D6555CD` | CANONICAL | BLOB |
 | TESTMAP-1 | AC2（suite 适用性与范围缺口；测试未执行） | `audit/V1-FULL-AUDIT/reports/TEST-MAPPING-ADJUDICATION-2026-11-12.md` | `50845a11cc2ab8b7d1ecb1d1eaa64b73ce2bbb5a` | `4E4CE72EBFBEC312310B62BF1B9798E6332B57A4D39999B440F8846239C4637B` | CANONICAL | BLOB |
 | TESTMAP-LOG-1 | AC2（ZCode 裁决 CLI / 清单定位命令与 EXIT） | `audit/V1-FULL-AUDIT/logs/test-mapping-adjudication-20261112.log` | `50845a11cc2ab8b7d1ecb1d1eaa64b73ce2bbb5a` | `920368B0E2FCCC139CB0DA48730E08E1909285EEE73C6E6674BFBF9F5E786291` | CANONICAL | BLOB |
+| TESTEXEC-1 | AC2（限定 suite 执行范围/输出隔离裁决；测试未执行） | `audit/V1-FULL-AUDIT/reports/TEST-EXECUTION-ADJUDICATION-2026-11-12.md` | `7d2d4d423bf0797c99e4cca2ea3ddb82578ae634` | `943BB6468564ED6440ED9969128598EEC16B4EFD590CE1BA2C754CB77E9F5B21` | CANONICAL | BLOB |
+| TESTEXEC-LOG-1 | AC2（ZCode CLI/只读目标核验及 EXIT） | `audit/V1-FULL-AUDIT/logs/test-execution-adjudication-20261112.log` | `7d2d4d423bf0797c99e4cca2ea3ddb82578ae634` | `086F13D7905B45B7B6651A7EE5A6E62BB20C49C262A028622F1D144B74CFE86B` | CANONICAL | BLOB |
 
 说明：裁决文档中记录的阶段 0 日志 `B561…` 是提交前 WORKTREE SHA-256；本表按模板使用 Git BLOB 字节，完整 SHA-256 为 `7E2A…`。
 

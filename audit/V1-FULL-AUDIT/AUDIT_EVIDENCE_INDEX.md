@@ -26,3 +26,5 @@
 - `tests/rebaseline_audit00.py`：段 B 基线生成器；只读取所选代码/配置 blob，不读取排除数据目录的内容。
 - `reports/TEST-MAPPING-ADJUDICATION-2026-11-12.md`：ZCode 对段 B 当前/Legacy 测试 suite 的只读映射裁决，以及 .NET suite 建议和原始 AUDIT-01–14 清单缺失限制。
 - `logs/test-mapping-adjudication-20261112.log`：ZCode session/turn、命令/EXIT 与原始清单定位搜索结果。
+- `reports/TEST-EXECUTION-ADJUDICATION-2026-11-12.md`：ZCode 对 smoke/current-vs-Legacy 面、8 个 `.NET` 测试项目和 no-restore 输出隔离方式的后续裁决。
+- `logs/test-execution-adjudication-20261112.log`：ZCode session/turn、`smoke`/solution/assets/ArtifactsPath 只读核验命令与 EXIT；没有执行测试。

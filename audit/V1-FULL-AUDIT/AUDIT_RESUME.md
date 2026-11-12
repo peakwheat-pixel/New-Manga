@@ -37,3 +37,10 @@ TaskStatus=in_progress；ExecutionState=BLOCKED_MATERIAL_PROVENANCE（仅推送�
 - ZCode 只读裁决见 `reports/TEST-MAPPING-ADJUDICATION-2026-11-12.md`（session `sess_8a2f7064-f80d-49a5-b96f-6d5ba20dd1ca`）；对应 CLI 和原始清单定位搜索见 `logs/test-mapping-adjudication-20261112.log`。裁决区分当前 Python Core/Avalonia 测试面与冻结 Legacy suites，并允许仅在 audit 路径增加 `.NET` runner。
 - 对 `audit`、`doc`、`verification`、`archive` 文本做定向查找，只找到状态占位，没有 AUDIT-01–14 原始逐项定义。没有运行 probes、pytest、`.NET` 或其他专项测试；AUDIT-01–14 继续为 `NOT_TESTED`，Release Gate 继续 `BLOCKED`。
 - 下一步先将“逐项清单缺失”交 ZCode 作范围裁决。未获裁决前不猜测 AUDIT-01–14 各自范围、不执行专项测试、不读取漫画图像内容。
+
+### 测试执行边界检查点（2026-11-12）
+
+- ZCode 后续裁决选定“证据采集与逐项判定解耦”：AUDIT-01–14 全部为 `BLOCKED-ORIGINAL-CHECKLIST-MISSING`；可以继续 pytest/Core、probes、Avalonia `.NET`、适用 smoke 与 governance 的限定 suite 证据。详细裁决与 CLI 日志见 Task Canonical Evidence `TESTEXEC-1` / `TESTEXEC-LOG-1`。
+- `smoke` 的当前架构范围为 `core,wire`；`packaged` 固定依赖旧 `apps/desktop/src-tauri`，与 `frontend/rust/desktop/npm-audit` 一并登记 `NOT_RUN-legacy`。
+- `.NET` 使用 8 个测试 `.csproj` 分别 `dotnet test --no-restore`；TRX 写到仓外，仓库默认 `obj/bin` 只允许 ignored 派生物。每个项目执行前后 `git status --porcelain` 必须逐字节一致。8/8 项目 restore assets 已只读确认存在。不得使用 `--artifacts-path`、复制资产或 restore。
+- 下一步：在 audit runner 中添加 `.NET` suite 并将 smoke 限定为 `core,wire`，实现提交后按 probes → pytest → `.NET` 8 项 → smoke → governance 执行；任何环境/状态偏差按具名阻断，不清理、不恢复。
