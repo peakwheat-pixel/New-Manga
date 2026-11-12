@@ -1,0 +1,16 @@
+{
+  "name": "audit-post-evidence-77310033-api",
+  "argv": [
+    "C:\\Python314\\python.exe",
+    "tools/generate_api_inventory.py",
+    "--check"
+  ],
+  "cwd": "G:\\CODEX\\New Manga",
+  "started_utc": "2026-11-12T23:25:10.557820+00:00",
+  "head": "77310033f77d5b793fe4ff3734e1ba7cf049c06c",
+  "branch": "main",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 0.073,
+  "log": "audit\\V1-FULL-AUDIT\\logs\\audit-post-evidence-77310033-api.log"
+}
