@@ -372,3 +372,12 @@ P3-1 records that the review prompt called `140/140` an already pinned audit, wh
 - Current full-section audit: `r001-current-pinbackfill-audit-00775fc0e1.log` (`140/140 PASS`, `FAIL_ROWS=0`, `EXIT=0`).
 
 Task remains `in_progress`, R-001 remains **OPEN** pending terminal-state gates and final full-section audit. Historical FAIL and NOT_RUN classifications remain unchanged.
+
+## R-001 post-Review pinbackfill gates and 146-row audit (2026-11-12)
+
+At clean `main` HEAD `5bd239dc1499059be4b24130d3c7d56e2dfa2044`, after pinning the ZCode independent Review and correcting STATUS to show the Review completed, all four gates passed: default and TaskPath each had 3 warnings/`EXIT=0`, frozen pins `18/18`/`EXIT=0`, API `1/79/6=86`/`EXIT=0`. The full-section Git-blob audit covered all 146 then-current Canonical Evidence rows and returned `146/146 PASS`, `FAIL_ROWS=0`, `EXIT=0`; porcelain was empty.
+
+- `r001-post-review-pinbackfill-gates-5bd239dc14.log` — 7675 bytes; workspace-original SHA-256 `7a58b40bca129f0af6e0120bfceb1f0b9b31f808bee0c28104eadc9273591cb8`.
+- `r001-post-review-pinbackfill-audit-5bd239dc14.log` — 43973 bytes; workspace-original SHA-256 `e375bff96a970d6e4ce8b1b5d35e481ec8826616a67e773e0db5045b15bb4615`.
+
+The Review is `APPROVED` (P0/P1/P2=0; P3=2 non-blocking). Task remains `in_progress`, R-001 `OPEN`; terminal candidate changes have not yet been applied.
