@@ -7,6 +7,7 @@
 - `logs/audit05-06-targeted-20261113.log`、`evidence/audit05-06-targeted-20261113.json`：generated HEAD=`d96529ebff6cf752ad64a676d05ec622da09e565`，247 passed / 3 deselected，EXIT 0。
 - `logs/audit06-context-20261113.log`、`evidence/audit06-context-20261113.json`：generated HEAD=`d96529ebff6cf752ad64a676d05ec622da09e565`，84 passed，EXIT 0。
 - 本阶段未运行真实模型、真实 GUI 或付费 API；测试数据置于 workspace Task 环境。三个候选观察见 `AUDIT_ISSUES.md`，严重级别与是否构成正式 finding 待 ZCode 裁决。
+- `logs/audit05-06-governance-c0da575-20261113.log`、`evidence/audit05-06-governance-c0da575-20261113.json`：四项门禁 generated HEAD=`c0da575b46e30ecda7a6aefe3bbfe103440ae493`；default/TaskPath check 均 PASS（各 3 warnings）、pins 18/18、API inventory 1/79/6=86；四项 EXIT 0。
 
 - evidence/baseline.json：Git/环境。
 - evidence/source-manifest.json：源码/config路径、SHA256、语法结果。
