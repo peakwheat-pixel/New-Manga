@@ -1,0 +1,102 @@
+START_UTC=2026-11-12T08:10:30.840885+00:00
+HEAD=5ab8ae006580f4c3aab6d61ce180794921dc7641
+BRANCH=main
+SHELL=Python subprocess (no shell)
+INTERPRETER=C:\Python314\python.exe
+CWD=G:\CODEX\New Manga
+ARGV=["C:\\Python314\\python.exe", "-m", "pytest", "G:\\CODEX\\New Manga\\audit\\V1-FULL-AUDIT\\tests\\test_audit_probes.py", "-vv", "-s", "-p", "no:cacheprovider", "--basetemp=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\probe-temp-20261112T081030840760Z"]
+DATA_ROOT=G:\CODEX\New Manga.workspace\task-env\NEW-MANGA-V1-FULL-AUDIT\audit-probes-segment-b-20261112T081030840760Z\data
+============================= test session starts =============================
+platform win32 -- Python 3.14.6, pytest-9.1.1, pluggy-1.6.0 -- C:\Python314\python.exe
+rootdir: G:\CODEX\New Manga
+configfile: pytest.ini
+plugins: anyio-4.14.2
+collecting ... collected 3 items
+
+audit/V1-FULL-AUDIT/tests/test_audit_probes.py::test_managed_publish_follows_directory_junction {"defect_confirmed": true, "publish_wrote_outside_managed": true, "scope": "all paths under isolated tmp_path"}
+PASSED
+audit/V1-FULL-AUDIT/tests/test_audit_probes.py::test_nmbak_restore_disk_failure_leaves_changed_database_without_rollback_id {"defect_confirmed": true, "database_changed": true, "typed_error": false, "rollback_id_in_error": false, "pre_restore_packages": 1}
+PASSED
+audit/V1-FULL-AUDIT/tests/test_audit_probes.py::test_nmbak_restore_can_overwrite_outside_managed_root FAILED
+
+================================== FAILURES ===================================
+____________ test_nmbak_restore_can_overwrite_outside_managed_root ____________
+
+tmp_path = WindowsPath('G:/CODEX/New Manga.workspace/task-env/NEW-MANGA-V1-FULL-AUDIT/probe-temp-20261112T081030840760Z/test_nmbak_restore_can_overwri0')
+
+    def test_nmbak_restore_can_overwrite_outside_managed_root(tmp_path):
+        root = Path(__file__).resolve().parents[3]
+        fixture = runpy.run_path(str(root / 'tests/storage/test_nmbak_backup.py'))['workspace']
+        generator = fixture.__wrapped__(tmp_path)
+        workspace = next(generator)
+        try:
+            service = workspace['service']
+            backup = service.create('manual', 'isolated audit probe')
+            package = workspace['backup_root'] / (backup['backup_id'] + '.nmbak')
+            with zipfile.ZipFile(package) as archive:
+                members = {name: archive.read(name) for name in archive.namelist()}
+            manifest = json.loads(members['manifest.json'])
+            payload = b'AUDIT-OVERWRITE'
+            manifest['revision_refs'] = [{'managed_path': '../audit-victim.txt', 'sha256': hashlib.sha256(payload).hexdigest()}]
+            manifest['managed_file_count'] = 1
+            manifest['managed_total_bytes'] = len(payload)
+            members['manifest.json'] = json.dumps(manifest).encode()
+            members['managed/../audit-victim.txt'] = payload
+            members['audit-victim.txt'] = payload
+            with zipfile.ZipFile(package, 'w') as archive:
+                for name, data in members.items():
+                    archive.writestr(name, data)
+            victim = tmp_path / 'audit-victim.txt'
+            victim.write_bytes(b'ORIGINAL-SENTINEL')
+>           result = service.restore(backup['backup_id'], confirm_restore=True)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+audit\V1-FULL-AUDIT\tests\test_audit_probes.py:82: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\infrastructure\sqlite\nmbak.py:372: in restore
+    manifest = self._verify_package(target)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\infrastructure\sqlite\nmbak.py:1030: in _verify_package
+    relative = _managed_relative_path(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+value = '../audit-victim.txt'
+context = 'e2862106cf8c4f13bdeab8decc317e8a.nmbak: revision_ref'
+code = 'BACKUP_CORRUPT'
+
+    def _managed_relative_path(value: object, *, context: str, code: str = "BACKUP_CORRUPT") -> Path:
+        """REALUSE-DATA-SAFETY-1 review M1: keep every managed path inside its root.
+    
+        ``Path(root) / Path(x)`` silently DISCARDS ``root`` when ``x`` is absolute
+        (``C:\\Windows\\...``, ``/etc/...``, ``\\\\server\\share``) and happily walks
+        out through ``..``. Both directions were reachable:
+    
+        - create: a dirty/edited ``pages.managed_original_ref`` row;
+        - restore/verify: a tampered ``.nmbak`` manifest.
+    
+        The result was an out-of-root read on create and an arbitrary-path write on
+        restore. Every entry point now funnels through this check and fails closed.
+        """
+    
+        raw = "" if value is None else str(value).strip()
+        if not raw:
+            raise NmbakBackupError(code, f"{context}: empty managed path")
+        if (
+            Path(raw).is_absolute()
+            or raw.startswith(("/", "\\"))
+            or re.match(r"^[A-Za-z]:", raw)
+        ):
+            raise NmbakBackupError(code, f"{context}: absolute managed path {raw!r}")
+        relative = Path(raw)
+        if any(part in {"..", ""} for part in relative.parts):
+>           raise NmbakBackupError(code, f"{context}: unsafe managed path {raw!r}")
+E           infrastructure.sqlite.nmbak.NmbakBackupError: BACKUP_CORRUPT: e2862106cf8c4f13bdeab8decc317e8a.nmbak: revision_ref: unsafe managed path '../audit-victim.txt'
+
+src\infrastructure\sqlite\nmbak.py:149: NmbakBackupError
+=========================== short test summary info ===========================
+FAILED audit/V1-FULL-AUDIT/tests/test_audit_probes.py::test_nmbak_restore_can_overwrite_outside_managed_root - infrastructure.sqlite.nmbak.NmbakBackupError: BACKUP_CORRUPT: e2862106cf8c4f13bdeab8decc317e8a.nmbak: revision_ref: unsafe managed path '../audit-victim.txt'
+========================= 1 failed, 2 passed in 0.46s =========================
+
+EXIT=1
+TIMED_OUT=False
+ELAPSED_SECONDS=1.295

@@ -1,0 +1,22 @@
+{
+  "name": "audit-probes-segment-b-20261112T081030840760Z",
+  "argv": [
+    "C:\\Python314\\python.exe",
+    "-m",
+    "pytest",
+    "G:\\CODEX\\New Manga\\audit\\V1-FULL-AUDIT\\tests\\test_audit_probes.py",
+    "-vv",
+    "-s",
+    "-p",
+    "no:cacheprovider",
+    "--basetemp=G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\probe-temp-20261112T081030840760Z"
+  ],
+  "cwd": "G:\\CODEX\\New Manga",
+  "started_utc": "2026-11-12T08:10:30.840885+00:00",
+  "head": "5ab8ae006580f4c3aab6d61ce180794921dc7641",
+  "branch": "main",
+  "exit_code": 1,
+  "timed_out": false,
+  "elapsed_seconds": 1.295,
+  "log": "audit\\V1-FULL-AUDIT\\logs\\audit-probes-segment-b-20261112T081030840760Z.log"
+}
