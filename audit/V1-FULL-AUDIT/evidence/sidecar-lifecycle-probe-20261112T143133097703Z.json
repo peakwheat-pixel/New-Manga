@@ -1,0 +1,19 @@
+{
+  "name": "sidecar-lifecycle-probe-20261112T143133097703Z",
+  "argv": [
+    "pwsh",
+    "-NoProfile",
+    "-File",
+    "G:\\CODEX\\New Manga\\audit\\V1-FULL-AUDIT\\tests\\sidecar_lifecycle_probe.ps1",
+    "-WorkspaceRoot",
+    "G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\sidecar-lifecycle-probe-20261112T143133097703Z\\probe-output"
+  ],
+  "cwd": "G:\\CODEX\\New Manga",
+  "started_utc": "2026-11-12T14:31:33.097836+00:00",
+  "head": "19ecee897243a209c724dc93c4c173087587f94f",
+  "branch": "main",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 4.004,
+  "log": "audit\\V1-FULL-AUDIT\\logs\\sidecar-lifecycle-probe-20261112T143133097703Z.log"
+}

@@ -1,0 +1,36 @@
+START_UTC=2026-11-12T14:31:33.097836+00:00
+HEAD=19ecee897243a209c724dc93c4c173087587f94f
+BRANCH=main
+SHELL=Python subprocess (no shell)
+INTERPRETER=C:\Python314\python.exe
+CWD=G:\CODEX\New Manga
+ARGV=["pwsh", "-NoProfile", "-File", "G:\\CODEX\\New Manga\\audit\\V1-FULL-AUDIT\\tests\\sidecar_lifecycle_probe.ps1", "-WorkspaceRoot", "G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\sidecar-lifecycle-probe-20261112T143133097703Z\\probe-output"]
+DATA_ROOT=G:\CODEX\New Manga.workspace\task-env\NEW-MANGA-V1-FULL-AUDIT\sidecar-lifecycle-probe-20261112T143133097703Z\data
+{
+  "generated_utc": "2026-11-12T14:31:33.4819515Z",
+  "generated_head": "19ecee897243a209c724dc93c4c173087587f94f",
+  "assembly_path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\NEW-MANGA-V1-FULL-AUDIT\\build-20261112\\bin\\Debug\\net9.0\\NewManga.CoreClient.dll",
+  "assembly_sha256": "EBBF795ABD57E4BB97972D88EB933EFB1A331D437E8C4EA43CFA911B6C1447AC",
+  "child_executable": "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+  "workspace_root": "G:\\CODEX\\New Manga.workspace\\task-env\\NEW-MANGA-V1-FULL-AUDIT\\sidecar-lifecycle-probe-20261112T143133097703Z\\probe-output",
+  "results": [
+    {
+      "case": "pre_cancel_after_spawn",
+      "observed_exception": "OperationCanceledException",
+      "child_pid": 15284,
+      "child_alive_after_start_failed": true,
+      "cleanup_killed_child": true
+    },
+    {
+      "case": "dispose_without_explicit_stop",
+      "child_pid": 26112,
+      "dispose_elapsed_ms": 2011,
+      "child_alive_after_dispose_returned": true,
+      "cleanup_killed_child": true
+    }
+  ]
+}
+
+EXIT=0
+TIMED_OUT=False
+ELAPSED_SECONDS=4.004

@@ -1,0 +1,46 @@
+{
+  "generated_head": "bb99ab8eaf07ddc95722ad7bd49e972a1c0054a7",
+  "product_base": "10e4ee013835605800d3830fb960ae8d3aa04167",
+  "manifest_source_files": 633,
+  "missing_manifest_paths": [],
+  "python": {
+    "source_files": 268,
+    "syntax_errors": [],
+    "local_modules": 268,
+    "static_local_import_edges": 655,
+    "static_import_cycles": [
+      [
+        "infrastructure.providers.mock_local",
+        "infrastructure.providers.registry"
+      ]
+    ],
+    "dynamic_import_call_sites": 9
+  },
+  "dotnet": {
+    "source_projects": 10,
+    "project_reference_edges": 13,
+    "project_reference_cycles": [],
+    "unresolved_or_invalid_references": []
+  },
+  "source_marker_counts": {
+    "NotImplementedError": 1
+  },
+  "source_marker_examples_capped_at_80_per_kind": {
+    "TODO": [],
+    "FIXME": [],
+    "NotImplementedError": [
+      {
+        "path": "src/infrastructure/providers/ocr_local.py",
+        "line": 38,
+        "text": "NotImplementedError). The flag is accepted by 2.x as well, so the"
+      }
+    ],
+    "NotImplementedException": []
+  },
+  "limitations": [
+    "Python imports are inferred from AST; dynamic/plugin imports and runtime dispatch are incomplete.",
+    "C# graph uses project references only; it does not model method-level calls or assembly reflection.",
+    "TODO/FIXME/NotImplemented hits are text markers, not defect findings.",
+    "This scanner does not type-check, analyze null flow, or prove runtime/resource behavior."
+  ]
+}

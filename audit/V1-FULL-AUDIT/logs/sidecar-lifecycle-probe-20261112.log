@@ -1,0 +1,35 @@
+AUDIT-01 isolated sidecar lifecycle probe
+generated_utc=2026-11-12T14:20:27.9351476Z
+generated_head=bb99ab8eaf07ddc95722ad7bd49e972a1c0054a7
+cwd=G:\CODEX\New Manga
+command=pwsh -NoProfile -File audit/V1-FULL-AUDIT/tests/sidecar_lifecycle_probe.ps1
+elapsed_ms=4213
+EXIT=0
+porcelain_before_after_identical=True
+porcelain_before= M audit/V1-FULL-AUDIT/AUDIT_ISSUES.md | ?? audit/V1-FULL-AUDIT/evidence/source-architecture-scan-20261112.json | ?? audit/V1-FULL-AUDIT/logs/dotnet-build-audit01-02-20261112.log | ?? audit/V1-FULL-AUDIT/logs/dotnet-format-whitespace-20261112.log | ?? audit/V1-FULL-AUDIT/logs/python-tool-discovery-20261112.log | ?? audit/V1-FULL-AUDIT/logs/source-architecture-scan-20261112.log | ?? audit/V1-FULL-AUDIT/reports/AUDIT-01-02-ARCHITECTURE-STATIC-2026-11-12.md
+porcelain_after= M audit/V1-FULL-AUDIT/AUDIT_ISSUES.md | ?? audit/V1-FULL-AUDIT/evidence/source-architecture-scan-20261112.json | ?? audit/V1-FULL-AUDIT/logs/dotnet-build-audit01-02-20261112.log | ?? audit/V1-FULL-AUDIT/logs/dotnet-format-whitespace-20261112.log | ?? audit/V1-FULL-AUDIT/logs/python-tool-discovery-20261112.log | ?? audit/V1-FULL-AUDIT/logs/source-architecture-scan-20261112.log | ?? audit/V1-FULL-AUDIT/reports/AUDIT-01-02-ARCHITECTURE-STATIC-2026-11-12.md
+output:
+System.Threading.Tasks.VoidTaskResult
+{
+  "generated_utc": "2026-11-12T14:20:28.2802523Z",
+  "generated_head": "bb99ab8eaf07ddc95722ad7bd49e972a1c0054a7",
+  "assembly_path": "G:\\CODEX\\New Manga.workspace\\agent-output\\codex\\NEW-MANGA-V1-FULL-AUDIT\\build-20261112\\bin\\Debug\\net9.0\\NewManga.CoreClient.dll",
+  "assembly_sha256": "EBBF795ABD57E4BB97972D88EB933EFB1A331D437E8C4EA43CFA911B6C1447AC",
+  "child_executable": "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+  "results": [
+    {
+      "case": "pre_cancel_after_spawn",
+      "observed_exception": "OperationCanceledException",
+      "child_pid": 36884,
+      "child_alive_after_start_failed": true,
+      "cleanup_killed_child": true
+    },
+    {
+      "case": "dispose_without_explicit_stop",
+      "child_pid": 39872,
+      "dispose_elapsed_ms": 2021,
+      "child_alive_after_dispose_returned": true,
+      "cleanup_killed_child": true
+    }
+  ]
+}

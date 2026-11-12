@@ -124,3 +124,10 @@ TaskStatus=in_progress；ExecutionState=BLOCKED_MATERIAL_PROVENANCE（仅推送�
 - Task pinbackfill 后门禁记录在 commit `c31278e0f532d3d2bebb969cd4c7943cf4407b8b`：generated HEAD=`caff9f29a52a2743ec0f25fc4c79b1dd9ba78ce4`；default check EXIT 0、TaskPath check EXIT 0（各 3 warnings）、18/18 pins EXIT 0、API 1/79/6=86 EXIT 0。Task 行已 pin 该门禁日志。
 - AUDIT-00 状态更新为 `PASS`（静态盘点）；外部模型文件字节、构建、安装、真实 GUI 和运行时行为不在此 PASS 内。报告记录的陈旧打包说明/入口是待 AUDIT-02/12 复核的静态观察，未改产品文件。
 - 当前下一步为 AUDIT-01/02 架构与静态扫描；AUDIT-01–14 仍为 `NOT_TESTED`，AC2/AC3/AC4 与 Release Gate 状态未变，Task 继续 `in_progress`。
+
+### AUDIT-01/02 与 sidecar 生命周期复现检查点（2026-11-12）
+
+- 审计检查 HEAD=`bb99ab8eaf07ddc95722ad7bd49e972a1c0054a7`；产品基线仍为 `10e4ee013835605800d3830fb960ae8d3aa04167`。AUDIT-01 阶段报告记 `FAIL`，AUDIT-02 记 `BLOCKED`；全审 Task 仍 `in_progress`，Release Gate 仍 `BLOCKED`。
+- 机器扫描证据：`logs/source-architecture-scan-20261112.log` + `evidence/source-architecture-scan-20261112.json`（Python AST 268 文件 / 0 syntax errors；.NET 10 source projects / 13 refs / 0 project cycles）。`dotnet build` EXIT 0，日志 `logs/dotnet-build-audit01-02-20261112.log`；`dotnet format whitespace` EXIT 2、1,556 diagnostics，日志 `logs/dotnet-format-whitespace-20261112.log`；Python lint/type/security 工具发现见 `logs/python-tool-discovery-20261112.log`（七项均未安装）。
+- `NM-AUD-0001` 通过 `tests/sidecar_lifecycle_probe.ps1` + `audit_runner.py sidecar-lifecycle` 隔离复现：正式 run `20261112T143133097703Z` 的 pre-cancel 与 direct dispose 后新 helper 均仍存活（dispose 约 2,011 ms 返回），日志和 JSON 记录 generated HEAD、程序集 SHA-256、argv 与 cleanup 成功；两个 helper 都已由 probe 终止。中间 run `20261112T142759897356Z` 复用了旧 PID marker，已在报告标为无效并排除。测试未调用真实 Core/Bridge sidecar、未访问用户数据；产品源码未改。
+- 最新阶段说明见 `reports/AUDIT-01-02-ARCHITECTURE-STATIC-2026-11-12.md`，问题项见 `AUDIT_ISSUES.md`。下一步：按计划做 suite-to-audit 映射，随后 AUDIT-11 安全静态审阅；AUDIT-03–14 除已明示项外保持 `NOT_TESTED`。ZCode 需复核 `NM-AUD-0001` severity 和报告边界。

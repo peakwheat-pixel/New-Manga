@@ -1,0 +1,8 @@
+AUDIT-02 Python static tool discovery
+generated_utc=2026-11-12T14:16:45.6041872Z
+generated_head=bb99ab8eaf07ddc95722ad7bd49e972a1c0054a7
+cwd=G:\CODEX\New Manga
+command=python -c 'import importlib.util as u; print({x:bool(u.find_spec(x)) for x in ["ruff","mypy","bandit","pyright","pylint","vulture","semgrep"]})'
+EXIT=0
+output:
+{'ruff': False, 'mypy': False, 'bandit': False, 'pyright': False, 'pylint': False, 'vulture': False, 'semgrep': False}

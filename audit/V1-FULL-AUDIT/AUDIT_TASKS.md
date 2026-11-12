@@ -8,8 +8,8 @@
 ## 段 B（当前产品基线 `10e4ee013835605800d3830fb960ae8d3aa04167`）
 
 - AUDIT-00: PASS（静态项目盘点完成；结构图、模块索引、有效源码覆盖、启动/接口、schema/存储、模型 pin、测试/构建/发布与历史架构差异见 `reports/01_PROJECT_INVENTORY.md`；命令与基线核对见 `logs/audit-00-inventory-20261112.log`。外部模型文件字节和运行时行为未在本项验证）
-- AUDIT-01: NOT_TESTED（待架构边界、异常传播、资源生命周期和依赖审阅）
-- AUDIT-02: NOT_TESTED（待零安装静态扫描和重点代码复核）
+- AUDIT-01: FAIL（阶段报告与正式 runner 复现见 `reports/AUDIT-01-02-ARCHITECTURE-STATIC-2026-11-12.md`、`logs/sidecar-lifecycle-probe-20261112T143133097703Z.log`、对应 JSON；`NM-AUD-0001` 证明取消/直接 dispose 后忽略 EOF 的 helper 子进程仍运行并已由 probe 清理。真实 sidecar、UI、完整异常/状态/耦合链仍未验；待 ZCode 定级复核）
+- AUDIT-02: BLOCKED（Python AST 语法扫描、.NET solution build PASS；`dotnet format whitespace` EXIT 2，1,556 项诊断；Python lint/type/security 工具未安装，.NET analyzers disabled，语义扫描未完成。详见阶段报告与对应 logs）
 - AUDIT-03: NOT_TESTED（待导入路径审阅和合成素材隔离验证）
 - AUDIT-04: NOT_TESTED（待模型链路静态核对/合成 GT；真实素材准确率具名受限）
 - AUDIT-05: NOT_TESTED（待 SFX 契约、状态机与错误路由逐项核对）

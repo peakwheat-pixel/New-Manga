@@ -1,0 +1,17 @@
+AUDIT-01/02 static source graph scan
+generated_utc=2026-11-12T14:00:15.4294023Z
+generated_head=bb99ab8eaf07ddc95722ad7bd49e972a1c0054a7
+worktree_before=clean
+command=python audit/V1-FULL-AUDIT/tests/source_architecture_scan.py
+EXIT=0
+source_manifest_files=633
+missing_manifest_paths=0
+python_source_files=268
+python_syntax_errors=0
+python_local_modules=268; static_edges=655; dynamic_import_call_sites=9
+python_static_cycles=["infrastructure.providers.mock_local","infrastructure.providers.registry"]
+dotnet_source_projects=10; project_reference_edges=13
+dotnet_project_reference_cycles=
+dotnet_unresolved_or_invalid_references=
+source_marker_counts={"NotImplementedError":1}
+full_json=audit/V1-FULL-AUDIT/evidence/source-architecture-scan-20261112.json

@@ -1,0 +1,15 @@
+AUDIT-01 stale-marker replay investigation
+initial_marker_inspection=INVALID (PowerShell path-array construction did not resolve file paths; no marker data was collected)
+corrected_generated_utc=2026-11-12T14:36:02.5851257Z
+corrected_generated_head=19ecee897243a209c724dc93c4c173087587f94f
+cwd=G:\CODEX\New Manga
+command=Get-Item/Get-Content for the two fixed-root PID markers; query Win32_Process for the controlled helper command line
+pre_cancel_marker=G:\CODEX\New Manga.workspace\task-env\NEW-MANGA-V1-FULL-AUDIT\sidecar-lifecycle-probe-20261112\pre-cancel-child.pid
+pre_cancel_marker_last_write_utc=2026-11-12T14:28:00.4457327Z
+pre_cancel_marker_pid=37212
+dispose_marker=G:\CODEX\New Manga.workspace\task-env\NEW-MANGA-V1-FULL-AUDIT\sidecar-lifecycle-probe-20261112\dispose-only-child.pid
+dispose_marker_last_write_utc=2026-11-12T14:28:00.9791260Z
+dispose_marker_pid=43576
+active_matching_helper_count=0
+EXIT=0
+interpretation=runner replay JSON reported PIDs 36884/39872 matching the earlier cleaned direct run; the marker files were overwritten by new helper PIDs 37212/43576 during replay. The replay checked stale marker values before overwrite and is excluded. Current matching helper count is zero after the 60-second sleep window.
