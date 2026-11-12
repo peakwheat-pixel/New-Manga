@@ -141,5 +141,14 @@ TaskStatus=in_progress；ExecutionState=BLOCKED_MATERIAL_PROVENANCE（仅推送�
 - 治理证据：阶段提交 `e0bbe10c3` 后第一次 default/TaskPath check 因 `doc/STATUS.md` 超预算各 EXIT 1；`c3bd266cb` 将状态摘要压缩后重跑 default/TaskPath check 均 EXIT 0（各 3 warnings）、`verify_pins.ps1` EXIT 0（18/18）、API inventory EXIT 0（1/79/6=86）。成功复核生成 HEAD=`c3bd266cb01007b8e9da679790433a149dfdc00e`；原失败和成功日志均保留以显示修复过程。
 - Task pinbackfill HEAD=`9bcb1886bcdd6f49eadeb57d208458e52a994b2c` 上再次复核：default/TaskPath check EXIT 0（各 3 warnings）、18 pins EXIT 0（18/18）、API inventory EXIT 0（1/79/6=86）。日志由 commit `1d245610e51e11b48547c1c1b42f810344014d92` 固定并纳入 Task Canonical Evidence。
 - 追加 Canonical Evidence rows 的 HEAD=`1e9f34e03a0cf10fede372c7e6ad11ffb8777eb0` 上又完成 default/TaskPath/pins/API 四项复核，均 EXIT 0（warning、18/18 与 1/79/6=86 详情见命令输出）；原始日志 commit `4177c2d31d327bb98f4bab0948449cdba223661f`，已在后续 pinbackfill 中纳入 Task Canonical Evidence。
-- 当前状态：AUDIT-00 limited PASS；AUDIT-01 FAIL/P2；AUDIT-02 BLOCKED；AUDIT-03、08 仍 NOT_TESTED（probe 结果只作窄面映射）；AUDIT-11 阶段 FAIL、Review ACCEPT、其余矩阵面保持 PARTIAL/NOT_TESTED；AUDIT-04–07、09–10、12–14 尚未完成。Task `in_progress`，AC2/AC3/AC4 `PARTIAL`，Release Gate `BLOCKED`。
-- 下一步按 DAG 做 AUDIT-08 隔离数据库专项及 AUDIT-05/06 契约/流程审阅，然后 AUDIT-14、AUDIT-03/04/07/10/13 和可执行的 AUDIT-09/12 核验。产品修复、远端查询/补救、真实私人素材访问均不在本 Task 范围。
+- 检查点记录当时状态：AUDIT-00 limited PASS；AUDIT-01 FAIL/P2；AUDIT-02 BLOCKED；AUDIT-03、08 尚未完成；AUDIT-11 阶段 FAIL、Review ACCEPT，其余矩阵面 PARTIAL/NOT_TESTED。该 2026-11-12 顺序已由下方新检查点更新。
+- 当时下一步为 AUDIT-08 与 AUDIT-05/06；AUDIT-08 已在下方 2026-11-13 检查点完成有限执行。产品修复、远端查询/补救、真实私人素材访问仍不在本 Task 范围。
+
+### AUDIT-08 隔离数据库专项检查点（2026-11-13）
+
+- 检查前 HEAD=`5802af0a2cf812b3a977f58c5b7c161bba2c9199`，branch=`main`；此前 AUDIT-08 探针源已提交，产品源码、Schema、依赖、契约和原有测试未改。
+- `reports/AUDIT-08-SQLITE-PERSISTENCE-2026-11-13.md` 按原始 AUDIT-08 逐项登记覆盖与限制。最终合并批次 `284 passed / 0 skipped / EXIT 0`；4 个隔离探针及 connection ownership 6 项单独复跑也 EXIT 0。临时数据均在 `New Manga.workspace/task-env/NEW-MANGA-V1-FULL-AUDIT/`。
+- 独立复跑 `SEG-B-PROBES-002` 后再次确认 `database_changed=true`、`typed_error=false`、`rollback_id_in_error=false`、`pre_restore_packages=1`。EXIT 0 表示 finding probe 成功确认缺陷；AUDIT-08 状态为 `FAIL`，并非产品恢复通过。多文件部分写仍属未实测的静态推断。
+- 原始命令/时点/generated HEAD/EXIT 固定于 `logs/pytest-audit08-*.log` 和同名 evidence JSON；初始 278 项批次发生在新增探针源提交前，不作最终批次依据。证据提交为 `057f7666c7e5d13a5cc68cae8f5d97079af35436`。
+- 未覆盖：真实/用户数据库、运行时任务转换、应用级路径迁移、真实损坏恢复、断电/硬件故障、多文件部分写及压力上限。未执行任何产品修复。
+- 后续按当前 DAG 审阅 AUDIT-05/06，再推进 AUDIT-14、AUDIT-03/04/07/10/13 和可执行的 AUDIT-09/12；AUDIT-08 独立 Review 仍需在固定审计 head 上由 ZCode 完成。全审 AC2/AC3/AC4 `PARTIAL`，Release Gate `BLOCKED`。

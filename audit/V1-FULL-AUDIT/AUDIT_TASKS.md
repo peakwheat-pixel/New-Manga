@@ -15,7 +15,7 @@
 - AUDIT-05: NOT_TESTED（待 SFX 契约、状态机与错误路由逐项核对）
 - AUDIT-06: NOT_TESTED（待翻译配置/重试/超时/并发审阅；真实付费 API 不在本轮授权）
 - AUDIT-07: NOT_TESTED（待修复/排版/导出链路和许可核对）
-- AUDIT-08: NOT_TESTED（专项尚未完成；已有 `SEG-B-PROBES-002` restore 磁盘写失败证据及 `../` defense-verified 结果待纳入；隔离数据库专项检查待做）
+- AUDIT-08: FAIL（有限合成 DB 专项已执行，284 passed / 0 skipped / EXIT 0；迁移 v1–v13→v14、关系数据保留、FK/integrity、并发读写、进程异常退出恢复及关闭后路径移动有隔离证据。`SEG-B-PROBES-002` 磁盘写失败复现再次确认裸 I/O 错误且无 rollback ID；真实库、运行时任务状态、应用路径迁移、真实损坏恢复、断电及多文件部分写仍未验证。详见 `reports/AUDIT-08-SQLITE-PERSISTENCE-2026-11-13.md`）
 - AUDIT-09: NOT_TESTED（待 Avalonia 静态页面覆盖审阅；真实 GUI 运行具名 BLOCKED）
 - AUDIT-10: NOT_TESTED（待可重复 Core 合成样本微基准；GUI 性能具名 BLOCKED）
 - AUDIT-11: FAIL（安全静态阶段报告 `reports/AUDIT-11-SECURITY-STATIC-2026-11-12.md`；`SEG-B-PROBES-001` 路径写越界与 `SEG-B-PROBES-002` restore I/O 恢复缺陷均为 Medium / High confidence，`NM-AUD-0001` 经 ZCode 复核为 P2。独立 Review `ACCEPT`，0 个 P0/P1/P2 阻断项；1 个 P3 扫描器源 SHA 差异已确认为移除尾随空格并披露，未重跑 scanner。Key/日志/命令/SQL/依赖等其余面为 PARTIAL 或具名 NOT_TESTED；真实 UI/vault、恶意文件 fuzz、Python 依赖漏洞数据库、竞态和远端可见性未验证）

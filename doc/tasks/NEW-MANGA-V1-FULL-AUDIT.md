@@ -33,9 +33,9 @@ allowed_paths:
 
 ## Acceptance Criteria
 - [x] AC1：固定Git/环境及有效源码清单，记录dirty和历史缺口。 <<MET>>
-- [ ] AC2：15项专项逐项有真实检查结果或具名阻断，关键链路深读与测试。 <<PARTIAL: AUDIT-00 静态项目盘点 limited PASS；AUDIT-01 FAIL（NM-AUD-0001 受控 helper 复现，ZCode ACCEPT、P2；真实 sidecar/UI 与完整架构覆盖未完）；AUDIT-02 BLOCKED（Python AST 与 .NET build PASS、whitespace 扫描 EXIT 2、完整类型/安全/语义扫描缺工具）；AUDIT-03–10、12–14 尚未完成；AUDIT-11 阶段 FAIL，其他检查面为 PARTIAL/NOT_TESTED。阶段报告、suite 映射、扫描器和限制见 Canonical Evidence。既有 suite 结果仍独立记录：probes EXIT 1（2 项 Medium / High confidence，1 项 defense-verified）；Python Core pytest EXIT 1（3,519 passed / 16 failed / 10 skipped）；Avalonia .NET BLOCKED-TESTHOST-ACCESS（8/8 runner EXIT 1、TRX 0 tests）；smoke EXIT 1（Wire 6/6 PASS，Core 4 PASS / 7 BLOCKED-SANDBOX-GRANT，frontend/packaged SKIP）>>
-- [ ] AC3：完整日志、问题分级、整改路线、正式报告和Release Gate落盘。 <<PARTIAL: probes 分级、pytest 失败摘要、TestHost/sandbox 阻断、suite 映射、AUDIT-00/01/02/11 阶段报告与日志已形成；全量去重问题/影响分析、整改计划、正式报告和 Release Gate 仍待完成>>
-- [ ] AC4：独立复核、证据pin和治理检查可核验；未满足不得置done。 <<PARTIAL: ZCode checkpoint review、AUDIT-01/02 与 AUDIT-11 阶段 Review 已记录；AUDIT-11 Review 为 ACCEPT，0 个 P0/P1/P2、1 个 P3 已披露；最终全审 Review、最终交付 HEAD 门禁和集成验证未完成>>
+- [ ] AC2：15项专项逐项有真实检查结果或具名阻断，关键链路深读与测试。 <<PARTIAL: AUDIT-00 limited PASS；AUDIT-01 FAIL/P2；AUDIT-02 BLOCKED；AUDIT-08 FAIL（有限合成批次 284 passed/0 skipped/EXIT 0；`SEG-B-PROBES-002` 重现）；AUDIT-11 阶段 FAIL；AUDIT-03–07、09–10、12–14 尚未完成。阶段报告、suite 映射与限制见 Canonical Evidence。既有总体结果仍独立记录：probes EXIT 1（2 项 Medium / High confidence，1 项 defense-verified）；Python Core pytest EXIT 1（3,519 passed / 16 failed / 10 skipped）；Avalonia .NET BLOCKED-TESTHOST-ACCESS（8/8 runner EXIT 1、TRX 0 tests）；smoke EXIT 1（Wire 6/6 PASS，Core 4 PASS / 7 BLOCKED-SANDBOX-GRANT，frontend/packaged SKIP）>>
+- [ ] AC3：完整日志、问题分级、整改路线、正式报告和Release Gate落盘。 <<PARTIAL: probes 分级、pytest 失败摘要、TestHost/sandbox 阻断、suite 映射及 AUDIT-00/01/02/08/11 阶段报告和日志已形成；全量去重问题/影响分析、整改计划、正式报告和 Release Gate 仍待完成>>
+- [ ] AC4：独立复核、证据pin和治理检查可核验；未满足不得置done。 <<PARTIAL: ZCode checkpoint review、AUDIT-01/02 与 AUDIT-11 Review 已记录；AUDIT-11 Review 为 ACCEPT（0 个 P0/P1/P2、1 个 P3 已披露）；AUDIT-08 独立 Review、最终全审 Review、最终交付 HEAD 门禁和集成验证未完成>>
 
 ## 允许修改范围
 仅frontmatter所列。审计日志/测试脚本由主控单一写入。三名子代理只读同一固定产品HEAD，无并发写入。用户显式审计目录优先于常规verification路径；运行派生产物放相邻workspace task-env。
@@ -205,7 +205,7 @@ src/**、apps/**、原有tests/**、共享契约、Schema、依赖、真实用�
 | exchange | — | NOT_APPLICABLE | — | — | 无外部传输 |
 
 ## Rolling checkpoint
-[audit/V1-FULL-AUDIT/AUDIT_RESUME.md](../../audit/V1-FULL-AUDIT/AUDIT_RESUME.md)。ZCode 对 `499a6b8e6eb293487abf391c46d00263230940ad`、`d9478939f2cee81104f18ea757d81cec71c36225` 与 `453327ff19ea012026b76d2e10cdcf2c93c58038` 的 checkpoint 结论均为 `PASS_FOR_CHECKPOINT`。这些中间 Review 与门禁仍是有效历史证据，但不代表全审完成。原始指令附件已恢复，AUDIT-01–14 当前均为 `NOT_TESTED`；ZCode 原件恢复裁决、来源完整性及其门禁复核见 Canonical Evidence。Task 保持 `in_progress`，AC2/AC3/AC4 与最终集成验证未完成。
+[audit/V1-FULL-AUDIT/AUDIT_RESUME.md](../../audit/V1-FULL-AUDIT/AUDIT_RESUME.md) 的 2026-11-13 检查点为当前恢复点。历史 `PASS_FOR_CHECKPOINT` 结论仍按各自 reviewed head 有效，不代表全审完成。当前：AUDIT-00 limited PASS；01 FAIL/P2；02 BLOCKED；08 FAIL（284 passed/0 skipped/EXIT 0 的有限隔离批次，`SEG-B-PROBES-002` 复现）；11 阶段 FAIL/Review ACCEPT；其余专项未完成。Task `in_progress`，AC2/AC3/AC4 与最终集成验证未完成；下一步按 DAG 审阅 AUDIT-05/06。
 
 ## 2026-10-24 推送准备补充授权
 

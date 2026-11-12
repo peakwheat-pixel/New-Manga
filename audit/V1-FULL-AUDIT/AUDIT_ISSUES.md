@@ -20,10 +20,10 @@
 ## SEG-B-PROBES-002 — nmbak 磁盘写失败后数据库变更且缺少回滚标识
 
 - 状态：`TRIAGED`
-- 级别：`Medium` / confidence `High`（ZCode 只读源码核对与隔离 probe 证据；未独立复现）
-- 证据：`reports/PROBE-TRIAGE-SEGMENT-B-2026-11-12.md`、`reports/PROBES-RESULT-SEGMENT-B.md` 与对应 log/evidence JSON。`test_nmbak_restore_disk_failure_leaves_changed_database_without_rollback_id` 实测 `database_changed=true`、`typed_error=false`、`rollback_id_in_error=false`，且 pre_restore 包已创建。
+- 级别：`Medium` / confidence `High`（ZCode 只读源码核对及两次隔离 probe；2026-11-13 在已提交 audit probe 上复跑确认）
+- 证据：`reports/PROBE-TRIAGE-SEGMENT-B-2026-11-12.md`、`reports/PROBES-RESULT-SEGMENT-B.md`、`reports/AUDIT-08-SQLITE-PERSISTENCE-2026-11-13.md` 与对应 log/evidence JSON。`test_nmbak_restore_disk_failure_leaves_changed_database_without_rollback_id` 再次观测 `database_changed=true`、`typed_error=false`、`rollback_id_in_error=false`、`pre_restore_packages=1`；隔离复现测试 EXIT 0 的含义是 finding 被确认。
 - 影响范围：可恢复性由 pre_restore 包保留；缺陷为裸 I/O 错误缺少 typed error 和 rollback 指引。多文件部分写中间态仅为静态推断，probe 未演示。上层 Core/wire 映射、真实磁盘故障与用户数据影响未验证。
-- 处置：不修改产品代码；修复须另开实现 Task。建议把 I/O 错误包装为带 pre_restore `backup_id` 的 `BACKUP_RESTORE_INCOMPLETE`。已映射至 AUDIT-08（窄面恢复证据）和 AUDIT-11（磁盘写失败/恢复 FAIL）；这不表示任一专项全部完成。
+- 处置：不修改产品代码；修复须另开实现 Task。建议把 I/O 错误包装为带 pre_restore `backup_id` 的 `BACKUP_RESTORE_INCOMPLETE`。已映射至 AUDIT-08（本轮专项 FAIL）和 AUDIT-11（磁盘写失败/恢复 FAIL）；这不表示任一专项全部完成。多文件部分写仍仅为静态推断，未由 probe 演示。
 
 ## NM-AUD-0001 — sidecar 启动取消与释放未执行显式进程停止
 

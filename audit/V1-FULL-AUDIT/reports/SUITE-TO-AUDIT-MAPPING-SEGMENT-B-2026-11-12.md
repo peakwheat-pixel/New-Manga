@@ -19,7 +19,7 @@
 | AUDIT-05 SFX | pytest 总体结果；无按 SFX 契约、区域状态和错误路由归类的报告 | 无可单独归因到本专项的既有结论 | SFX 需求/实现映射及针对性测试未完成；`NOT_TESTED` |
 | AUDIT-06 AI 翻译 | pytest 总体结果；网络/TLS 相关 6 项 skip（环境缺 OpenSSL）；无真实付费 API 调用 | 不产生 provider/API 正确性或质量通过结论 | 翻译配置、重试/超时/并发、隐私和合成响应验证未完成；真实付费 API `NOT_RUN`；专项 `NOT_TESTED` |
 | AUDIT-07 图片消除/修复/排版/导出 | pytest 总体结果；Reader export hook 3 项失败；既有其他模块用例未按本专项归组 | 3 个 Reader export 失败是已记录的具体 suite 失败；不能从大套件的 pass 数推断消除、修复、排版或导出完成 | 修复链路、像素/尺寸边界、排版/多页输出与写入目标未专项核验；`NOT_TESTED` |
-| AUDIT-08 SQLite/持久化 | pytest 总体结果；1 个 FEA11 v7 fixture 因缺 `chapters.custom_rank` 失败；`SEG-B-PROBES-002` 实测 nmbak 磁盘写失败后数据库已改变且错误缺 rollback id；路径 `../` 的 nmbak defense probe 被拒绝 | 支持登记两个具体的 fixture/异常恢复观察；第三项只证明被测路径的 fail-closed | 并发读写、事务崩溃、迁移兼容、数据库关闭恢复和多文件部分写未验证；专项仍 `NOT_TESTED`，probe 风险已关联 |
+| AUDIT-08 SQLite/持久化 | 追加执行见下方 2026-11-13 addendum：隔离最终批次 284 passed / 0 skipped / EXIT 0；4 项 synthetic probes、6 项 connection ownership；`SEG-B-PROBES-002` 独立重跑 EXIT 0 并再次观测数据库已变化、无 typed error/rollback ID；原先 `../` defense probe 仍仅表示被测输入 fail-closed | 合成迁移 v1–v13→v14、FK/integrity、代表性数据保留、并发读写、进程退出后 SQLite 恢复及干净关闭后移动路径获得有限支持；restore 磁盘写失败为未修复 finding | 专项状态 `FAIL`；真实用户库、运行时任务状态、应用级路径迁移、真实损坏/断电恢复及多文件部分写仍未验证。不能从限定批次通过数推导全专项 PASS |
 | AUDIT-09 UI/UX | `.NET` 8 个测试 runner 在用例执行前因 TestHost access 失败（8/8 EXIT 1、TRX 0）；没有真实 GUI 会话 | 说明 headless TestHost 当前受阻，不是 UI 产品测试失败或通过 | 真实 UI/交互/无障碍/页面完整性 `BLOCKED`；专项 `NOT_TESTED` |
 | AUDIT-10 性能/稳定性 | pytest 日志记录的是 suite elapsed；sidecar helper probe 有调用耗时观察，但使用受控休眠 helper | 不把测试 suite 耗时或 helper 清理观察冒充产品性能指标 | 无产品样本吞吐、内存/CPU、长跑、缓存和并发基准；专项 `NOT_TESTED` |
 | AUDIT-11 安全/异常恢复 | `reports/AUDIT-11-SECURITY-STATIC-2026-11-12.md`、静态 inventory 与源码 manifest；`SEG-B-PROBES-001` directory junction 写越界、`SEG-B-PROBES-002` nmbak restore I/O failure、nmbak `../` defense-verified；Core smoke 7 项安全语义在 sandbox ACL 前置失败；`NM-AUD-0001` 经 ZCode 阶段 Review 接受为 P2；AUDIT-11 ZCode 独立 Review `ACCEPT`（0 P0/P1/P2，1 P3 已披露） | 证据支持阶段状态 `FAIL`，并将 blocked hook 检查保留为零证据；其余矩阵项只到报告标示的 PARTIAL/NOT_TESTED | 真实 vault/UI、恶意输入 fuzz、完整 SQL/命令污点、Python 漏洞数据库、竞态、生产 sidecar 关闭和远端材料可见性仍未验证；扫描器 SHA 差异为单个尾随空格且未重跑扫描；具体限制见 AUDIT-11 报告与 Review |
@@ -38,4 +38,8 @@
 
 ## 状态结论
 
-映射只确定既有 suite 证据与专项的关系，不宣告专项完成。当前有效专项状态仍以 `AUDIT_TASKS.md` 和 Task 卡为准：AUDIT-00 为有限范围 `PASS`，AUDIT-01 为 `FAIL`，AUDIT-02 为 `BLOCKED`，AUDIT-11 阶段结果为 `FAIL`（独立 Review `ACCEPT`，P3 已披露）；AUDIT-03–10、12–14 仍未完成，AUDIT-11 的其余检查面也未完成。Release Gate 继续 `BLOCKED`。AUDIT-11 专项后续证据详见阶段报告与 `reports/ZCODE-AUDIT-11-REVIEW-2026-11-12.md`。
+映射只确定 suite 证据与专项的关系，不宣告专项整体完成。当前有效状态以 `AUDIT_TASKS.md` 和 Task 卡为准：AUDIT-00 有限 `PASS`；01 `FAIL`；02 `BLOCKED`；08 `FAIL`；11 阶段 `FAIL`（独立 Review `ACCEPT`，P3 已披露）；AUDIT-03–07、09–10、12–14 仍未完成，11 其余检查面也未完成。Release Gate 继续 `BLOCKED`。
+
+## 2026-11-13 AUDIT-08 执行补记
+
+以上映射表记录的是 2026-11-12 时点。后续 AUDIT-08 隔离执行在测试 HEAD `5802af0a2cf812b3a977f58c5b7c161bba2c9199` 完成；最终批次 `284 passed, 0 skipped`、EXIT 0，生成日志与 JSON 为 `logs/pytest-audit08-sqlite-20261113-final-02.log` 及 `evidence/pytest-audit08-sqlite-20261113-final-02.json`。4 项 synthetic probes、6 项 connection ownership 均 EXIT 0。`SEG-B-PROBES-002` 独立复跑 EXIT 0，但其观测确认数据库状态已变化、错误没有类型化且没有 rollback ID；因此专项为 `FAIL`，不把探针 EXIT 0 当作产品 PASS。真实库、运行时任务转换、应用级路径迁移、真实损坏/断电和多文件部分写仍未验证。完整逐项报告见 `reports/AUDIT-08-SQLITE-PERSISTENCE-2026-11-13.md`。
