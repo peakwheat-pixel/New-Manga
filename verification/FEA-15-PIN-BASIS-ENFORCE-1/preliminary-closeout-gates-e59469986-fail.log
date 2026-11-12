@@ -1,0 +1,210 @@
+GENERATED_AT=2026-11-12T11:54:50+08:00
+HEAD=e59469986553a63876a2685ad4388f1d65df58a6
+BRANCH=main
+PROCESS_CWD=G:\CODEX\New Manga
+GIT_STATUS_BEGIN
+ M doc/REBASELINE_PLAN.md
+ M doc/STATUS.md
+ M doc/TASK_LEDGER.md
+ M doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md
+GIT_STATUS_END
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1
+Governance scope: 14 current documents; no historical directory scan.
+WARN: STATUS 澹版槑鏃犲綋鍓� Task锛堢┖绐楋級锛涜烦杩囧綋鍓� Task 妫�鏌ャ��
+WARN: 瀛樺湪 10 涓�闈炵粓鎬� Task锛堣�� TASK_LEDGER锛夛紱鐘舵�佸瓧娈典笉鑳借瘉鏄庢椿鎬э紝涓嶅緱鎹�姝ゆ壒閲忓叧闂�锛坮38锛�
+WARN: doc/STATUS.md 宸茶揪鍒伴�勭畻鐨� 80%锛�3107 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 宸茶揪鍒伴�勭畻鐨� 80%锛�6995 bytes / 64 lines
+Governance check: PASS (4 warnings)
+EXIT=0
+
+COMMAND=pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\FEA-15-PIN-BASIS-ENFORCE-1.md
+WARN: 瀛樺湪 10 涓�闈炵粓鎬� Task锛堣�� TASK_LEDGER锛夛紱鐘舵�佸瓧娈典笉鑳借瘉鏄庢椿鎬э紝涓嶅緱鎹�姝ゆ壒閲忓叧闂�锛坮38锛�
+WARN: doc/STATUS.md 宸茶揪鍒伴�勭畻鐨� 80%锛�3107 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 宸茶揪鍒伴�勭畻鐨� 80%锛�6995 bytes / 64 lines
+WARN: evidence_dir 鍚�鏈�鐧昏�拌繃绋嬫枃浠讹紙褰掑叆 workspace 鎴栧垪涓� SOURCE_PIN锛夛細G:\CODEX\New Manga\verification\FEA-15-PIN-BASIS-ENFORCE-1\ac2ac3-architecture-tests.log, G:\CODEX\New Manga\verification\FEA-15-PIN-BASIS-ENFORCE-1\ac2ac3-baseline-controls.log, G:\CODEX\New Manga\verification\FEA-15-PIN-BASIS-ENFORCE-1\ac2ac3-basis-focused-autocrlf-true.log, G:\CODEX\New Manga\verification\FEA-15-PIN-BASIS-ENFORCE-1\ac2ac3-basis-focused-final.log, G:\CODEX\New Manga\verification\FEA-15-PIN-BASIS-ENFORCE-1\ac2ac3-candidate-gates.log, G:\CODEX\New Manga\verification\FEA-15-PIN-BASIS-ENFORCE-1\ac2ac3-full-pytest-final.log, G:\CODEX\New Manga\verification\FEA-15-PIN-BASIS-ENFORCE-1\ac2ac3-post-review-gates.log, G:\CODEX\New Manga\verification\FEA-15-PIN-BASIS-ENFORCE-1\ac2ac3-r001-negative-tests-attempt1-metadata-gap.log
+FAIL: REBASELINE_PLAN 褰撳墠 DAG 缂哄皯 READY 鑺傜偣澹版槑銆�
+FAIL: Resource manifest 涓嶅瓨鍦�锛歍ask checkpoint
+FAIL: Resource 鏈�缁堣矾寰勬湭楠岃瘉锛氬悓婧愪繚鐣�
+FAIL: Resource 鏈�缁堣矾寰勬湭楠岃瘉锛氬悓婧愪繚鐣�
+FAIL: Resource manifest 涓嶅瓨鍦�锛歛c1c-b-r0-assertions-taskpath-bfae0b9.log
+FAIL: Resource 鏈�缁堣矾寰勬湭楠岃瘉锛氬悓婧愪繚鐣�
+FAIL: Resource manifest 涓嶅瓨鍦�锛�7eefb54dc5ca74ddf9cc5459eb40fb10769a44e1
+FAIL: Resource 鏈�缁堣矾寰勬湭楠岃瘉锛氬悓婧愪繚鐣�
+FAIL: Resource manifest 涓嶅瓨鍦�锛歩nventory/delta SHA 瑙� README
+FAIL: Resource 鏈�缁堣矾寰勬湭楠岃瘉锛氬悓婧愪繚鐣�
+FAIL: Resource manifest 涓嶅瓨鍦�锛歝andidate HEAD 4ed7f32b3ce9104ecee11aad593bde222055a0df
+FAIL: Resource 鏈�缁堣矾寰勬湭楠岃瘉锛氬悓婧愪繚鐣�
+FAIL: Resource manifest 涓嶅瓨鍦�锛歛c4-v2 inventory/delta logs and JSON
+FAIL: Resource 鏈�缁堣矾寰勬湭楠岃瘉锛氬悓婧愪繚鐣�
+FAIL: Resource manifest 涓嶅瓨鍦�锛歊EADME
+FAIL: Resource manifest 涓嶅瓨鍦�锛歋HA-256 AD7107E56F9CB22C25D5B4A829A7874AA5FD0C95FE1CCE962F5E7734F523AD22
+FAIL: Resource manifest 涓嶅瓨鍦�锛歋HA-256 998C1DC670B349F6CF7E3FCB3ED5DFB50E0A395E86A109BE47551CF705268963
+FAIL: Resource manifest 涓嶅瓨鍦�锛歋HA-256 3164B313C7D00A2FED668BE0D885231398614A791630560C1724F93B779F8776
+FAIL: Resource manifest 涓嶅瓨鍦�锛歋HA-256 E51609034637F085549B75EAEC37D54B5AFA85FB9302AC78258FFC49C84DAC0E
+FAIL: Resource manifest 涓嶅瓨鍦�锛歋HA-256 ECC49F5BD83971D26ECD39311C5F10266948795797AACE775842C51B286C4CF5
+FAIL: Resource manifest 涓嶅瓨鍦�锛歋HA-256 4939C7D13CC1EEB2F812164203B7E0C61BF9486C59DB6478FA017D0C54334062
+FAIL: Resource manifest 涓嶅瓨鍦�锛歋HA-256 F61710BFF588A4C94FD9056E3A7E8D19E530BEFCD06E9FA37CA68FFBD4B0F3A6
+FAIL: Resource manifest 涓嶅瓨鍦�锛歋HA-256 7F6C73B24A59AFA5D912196F9E16832DBEE90F03057B973FA322CF4F661AD1A9
+FAIL: Resource manifest 涓嶅瓨鍦�锛歋HA-256 002323A55C0566D9F32F26F91A064950201465F3B5089D2CB9A8196CD8A30A67
+FAIL: Resource manifest 涓嶅瓨鍦�锛歋HA-256 C964DAB0C6294F886B97001E79CBF17B7CD544BDE64EC42E33BC9936145C2C7F
+FAIL: Resource manifest 涓嶅瓨鍦�锛歋HA-256 6D971A9827F59BA745CA7DDF4609CB60AC46B887A1302A9337F6D8177A20BE35
+FAIL: Resource manifest 涓嶅瓨鍦�锛歋HA-256 0A6503D5B2FFF463E31DBF5C514BC29C58EA3B9EB06735FE84B75DC58B0F1968
+FAIL: Resource manifest 涓嶅瓨鍦�锛歋HA-256 67BAF710C6FA51A199F7A14DBE3D09B1251BB76ED44446636BA9CEFCEBA0D052
+FAIL: Resource manifest 涓嶅瓨鍦�锛歋HA-256 20BE3B23212E55D007C52BDF3D9716BDFDA193CEF70887BD0E6359E8B3E0696C
+FAIL: Resource 鏈�缁堣矾寰勬湭楠岃瘉锛歐orkspace original; incomplete attempt only
+FAIL: Resource manifest 涓嶅瓨鍦�锛歋HA-256 902ECB70C54AA0F39D21A0A3BAB5CB8E96D694C0D9B774F141BBCAC54B5E46F6
+FAIL: Resource manifest 涓嶅瓨鍦�锛歋HA-256 2B7DF2FB0DC1A224BAD0C6F0A88F92BD74E8094B9DD2DBC6DF134C400A5BDDF0
+FAIL: Resource manifest 涓嶅瓨鍦�锛歋HA-256 87C27B51812282250EE268FD2DC4BD2231892BC85BD2D764F6AE76591C02E1DF
+FAIL: Resource manifest 涓嶅瓨鍦�锛歋HA-256 41E64DAC3FD02F863F06BB8C8C7523E5BE2B7C3B206B3771A8C9C62CB4FF337F
+FAIL: Resource manifest 涓嶅瓨鍦�锛歋HA-256 D4CA5197337FAA1250465850A9D9FA983FD051276D0CC8F2B8BF4CB7A17F9DD6
+FAIL: Resource manifest 涓嶅瓨鍦�锛歋HA-256 2CF48997B69152BC793E7C16074247737B906B9A4C15544A710ED011EEA0F88C
+FAIL: Resource manifest 涓嶅瓨鍦�锛歋HA-256 91FF0C952A2F1B265EB2E5584D4989A01669CCD29118652D024AB13C9680B51A
+FAIL: Resource manifest 涓嶅瓨鍦�锛歋HA-256 C6C96129EAE22BCEFC8F02B8D0D33D3A32EBD459794823C29384F9F128CDAF16
+FAIL: Resource manifest 涓嶅瓨鍦�锛歋HA-256 61E3622AB89C5CA60F06E93C1B73FD97F676E7C47DAF7598BCDD40792F6B2688
+FAIL: Resource manifest 涓嶅瓨鍦�锛歋HA-256 A22928EDA0E25D056C042CD2724755EC7837D2DDD08B7F5A39A40D2AA45088DA
+FAIL: Resource manifest 涓嶅瓨鍦�锛歋HA-256 1CEBB3514B9ED155C53CDD8C046D45F5481244CAB1697A20A060499581377FBE
+FAIL: Resource manifest 涓嶅瓨鍦�锛歋HA-256 E835FE3C65595AF2B985556034014F8608941E432C41D78649BEFFDBB9E987DD
+FAIL: Resource manifest 涓嶅瓨鍦�锛歋HA-256 89A0D5F66B87D364F9B400FD75CFD5D94B8C6186712685D866E3CA1510AF94B5
+Governance check: FAIL (43 errors, 4 warnings)
+EXIT=1
+
+COMMAND=pwsh -NoProfile -File tools/governance/verify_pins.ps1
+OK C01b 3c9f5af7d74f
+OK C02 bb365ca891a7
+OK C03 b77e7968a00b
+OK C04b 4b304c0c315f
+OK C05 f6e6f3cb1fe1
+OK C06 75f8e2b4eb80
+OK C07 8ccaba05cbc2
+OK C08 453f993c1a16
+OK C09 dc51226b336c
+OK C10 ec8fd862f95f
+OK C11 44f4273f7ad1
+OK C12 f49835860143
+OK C13 8faf1e805eac
+OK C14 05056cbf65f9
+OK C15 f9e376a0ed4c
+OK C16 67286eeca8cb
+OK C17 cdeee4872e29
+OK FEA01 0370c18932b1
+PIN AUDIT: PASS (all 18)
+EXIT=0
+
+COMMAND=python tools/generate_api_inventory.py --check
+| 鎺ュ彛 | 鏂规硶鏁� | 灞炴��/浜嬩欢/瀛楁�垫暟 |
+|---|---|---|
+| IReaderProgressSink | 1 | 0 |
+| IHostController | 79 | 4 |
+| IRunController | 6 | 0 |
+| **鍚堣��** | **86** | 鈥� |
+
+## IReaderProgressSink
+
+| # | 鎴愬憳 | 杩斿洖绫诲瀷 |
+|---|---|---|
+| 1 | `SaveReadingProgressAsync` | `Task<ReaderProgressSaveResult>` |
+
+## IHostController
+
+| # | 鎴愬憳 | 杩斿洖绫诲瀷 |
+|---|---|---|
+| 1 | `StartAsync` | `Task` |
+| 2 | `RefreshBooksAsync` | `Task` |
+| 3 | `TryChineseRoundTripAsync` | `Task<bool>` |
+| 4 | `TryCreateBookAsync` | `Task<bool>` |
+| 5 | `CreateChapterAsync` | `Task<ChapterSummary?>` |
+| 6 | `LoadReaderBookAsync` | `Task<ReaderBookData?>` |
+| 7 | `ListChaptersAsync` | `Task<IReadOnlyList<ChapterSummary>>` |
+| 8 | `ListChapterPagesAsync` | `Task<IReadOnlyList<ChapterPageSummary>>` |
+| 9 | `GetReadingPreferencesAsync` | `Task<ReadingPreferencesInfo?>` |
+| 10 | `SaveReadingPreferencesAsync` | `Task<bool>` |
+| 11 | `ListBookmarksAsync` | `Task<IReadOnlyList<BookmarkInfo>>` |
+| 12 | `CreateBookmarkAsync` | `Task<string?>` |
+| 13 | `DeleteBookmarkAsync` | `Task<bool>` |
+| 14 | `GetBookReadingProgressAsync` | `Task<BookReadingProgressInfo?>` |
+| 15 | `ResetReadingProgressAsync` | `Task<int>` |
+| 16 | `ListFontAssetsAsync` | `Task<IReadOnlyList<FontAssetInfo>>` |
+| 17 | `ImportFontAssetAsync` | `Task<FontAssetInfo?>` |
+| 18 | `DeleteFontAssetAsync` | `Task<bool>` |
+| 19 | `RefreshFontAssetsAsync` | `Task<FontRefreshInfo>` |
+| 20 | `UpdateBookMetadataAsync` | `Task<bool>` |
+| 21 | `ReorderChaptersAsync` | `Task<bool>` |
+| 22 | `UpdateChapterMetadataAsync` | `Task<bool>` |
+| 23 | `CreateChapterWithMetadataAsync` | `Task<ChapterSummary?>` |
+| 24 | `ListIssueMarkersAsync` | `Task<IReadOnlyList<IssueMarkerInfo>>` |
+| 25 | `CreateIssueMarkerAsync` | `Task<string?>` |
+| 26 | `ResolveIssueMarkerAsync` | `Task<bool>` |
+| 27 | `ReopenIssueMarkerAsync` | `Task<bool>` |
+| 28 | `DeleteIssueMarkerAsync` | `Task<bool>` |
+| 29 | `ListPromptTemplatesAsync` | `Task<IReadOnlyList<PromptTemplateInfo>>` |
+| 30 | `SavePromptTemplateAsync` | `Task<PromptTemplateInfo?>` |
+| 31 | `DeletePromptTemplateAsync` | `Task<PromptTemplateDeleteResult>` |
+| 32 | `CopyBuiltinPromptTemplateAsync` | `Task<PromptTemplateInfo?>` |
+| 33 | `GetPromptTemplateReferencesAsync` | `Task<IReadOnlyList<PromptTemplateReference>>` |
+| 34 | `LoadPageRegionsAsync` | `Task<RegionPageProjection?>` |
+| 35 | `LoadRegionRevisionsAsync` | `Task<RegionRevisionHistory?>` |
+| 36 | `ReadPageImageAsync` | `Task<byte[]?>` |
+| 37 | `SetRegionTypeAsync` | `Task<RegionOperationResult>` |
+| 38 | `RestoreRegionRevisionAsync` | `Task<RegionOperationResult>` |
+| 39 | `RerenderPageAsync` | `Task<PageRerenderOutcome>` |
+| 40 | `ListCredentialTargetsAsync` | `Task<IReadOnlyList<CredentialTargetOption>>` |
+| 41 | `PutCredentialAsync` | `Task<CredentialOperationResult>` |
+| 42 | `ClearCredentialAsync` | `Task<CredentialOperationResult>` |
+| 43 | `ListProviderProfilesAsync` | `Task<IReadOnlyList<ProviderProfileInfo>>` |
+| 44 | `SaveProviderProfileAsync` | `Task<SettingsProfileResult>` |
+| 45 | `DeleteProviderProfileAsync` | `Task<SettingsProfileResult>` |
+| 46 | `ListNetworkProfilesAsync` | `Task<IReadOnlyList<NetworkProfileInfo>>` |
+| 47 | `SaveNetworkProfileAsync` | `Task<SettingsProfileResult>` |
+| 48 | `DeleteNetworkProfileAsync` | `Task<SettingsProfileResult>` |
+| 49 | `SetNetworkDefaultAsync` | `Task<SettingsProfileResult>` |
+| 50 | `TestNetworkProfileAsync` | `Task<NetworkTestInfo?>` |
+| 51 | `ResolveNetworkProfileAsync` | `Task<NetworkResolveInfo?>` |
+| 52 | `SetProviderBindingAsync` | `Task<SettingsProfileResult>` |
+| 53 | `ClearProviderBindingAsync` | `Task<SettingsProfileResult>` |
+| 54 | `ResolveProviderBindingAsync` | `Task<ProviderBindingResult?>` |
+| 55 | `ImportFilesAsync` | `Task<ImportOutcome>` |
+| 56 | `ImportFolderAsync` | `Task<ImportOutcome>` |
+| 57 | `GetTranslatedPageIdsAsync` | `Task<IReadOnlyList<string>>` |
+| 58 | `StartExportAsync` | `Task<ExportStartInfo?>` |
+| 59 | `GetExportSnapshotAsync` | `Task<ExportSnapshotInfo?>` |
+| 60 | `GetExportHistoryAsync` | `Task<IReadOnlyList<ExportHistoryEntry>>` |
+| 61 | `CancelExportAsync` | `Task<ExportSnapshotInfo?>` |
+| 62 | `RevealExportFolderAsync` | `Task<bool>` |
+| 63 | `ListBackupsAsync` | `Task<IReadOnlyList<BackupPackageInfo>>` |
+| 64 | `CreateBackupAsync` | `Task<BackupPackageInfo?>` |
+| 65 | `DeleteBackupAsync` | `Task<bool>` |
+| 66 | `RetryPendingCleanupsAsync` | `Task<CleanupOutcomeInfo?>` |
+| 67 | `ListPluginsAsync` | `Task<PluginListInfo>` |
+| 68 | `SetPluginsGlobalEnabledAsync` | `Task<bool?>` |
+| 69 | `SetPluginEnabledAsync` | `Task<bool?>` |
+| 70 | `GetCleanupPreviewAsync` | `Task<CleanupPreviewInfo>` |
+| 71 | `RunCleanupAsync` | `Task<CleanupOutcomeInfo?>` |
+| 72 | `OpenDraftAsync` | `Task<DraftLease?>` |
+| 73 | `PatchDraftAsync` | `Task<Draft?>` |
+| 74 | `PrepareCandidateAsync` | `Task<RegionCandidate?>` |
+| 75 | `ApplyCandidatesAsync` | `Task<IReadOnlyDictionary<string, string>>` |
+| 76 | `GetDraftAsync` | `Task<Draft?>` |
+| 77 | `ListDraftsAsync` | `Task<IReadOnlyList<Draft>>` |
+| 78 | `DiscardDraftAsync` | `Task` |
+| 79 | `RestoreBackupAsync` | `Task<string?>` |
+| 鈥� | `Snapshot`锛堝睘鎬э級 | `HostViewSnapshot` |
+| 鈥� | `StartRequests`锛堝睘鎬э級 | `int` |
+| 鈥� | `ExportDirectorySuggestion`锛堝睘鎬э級 | `string` |
+| 鈥� | `Changed`锛堜簨浠讹級 | `EventHandler?` |
+
+## IRunController
+
+| # | 鎴愬憳 | 杩斿洖绫诲瀷 |
+|---|---|---|
+| 1 | `StartRunAsync` | `Task<RunStartInfo?>` |
+| 2 | `ControlRunAsync` | `Task<RunControlInfo?>` |
+| 3 | `ResumeBlockedRunAsync` | `Task<RunControlInfo?>` |
+| 4 | `GetRunSnapshotAsync` | `Task<RunSnapshotInfo?>` |
+| 5 | `GetTaskProjectionAsync` | `Task<TaskProjectionInfo?>` |
+| 6 | `RetryFailedTargetsAsync` | `Task<RunControlInfo?>` |
+STDERR_BEGIN
+OK: rendered counts match FEA-C07 doc
+STDERR_END
+EXIT=0
