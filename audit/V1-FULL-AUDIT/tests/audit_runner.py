@@ -112,7 +112,7 @@ def run(name: str, argv: list[str], cwd: Path, timeout: int) -> dict:
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('suite', choices=['pytest', 'frontend', 'rust', 'smoke', 'governance', 'dependencies', 'desktop', 'probes', 'dotnet'])
+    parser.add_argument('suite', choices=['pytest', 'frontend', 'rust', 'smoke', 'governance', 'dependencies', 'desktop', 'probes', 'dotnet', 'sidecar-lifecycle'])
     args = parser.parse_args()
     assert ROOT.name == 'New Manga' and (ROOT / '.git').exists()
     npm = shutil.which('npm.cmd') or 'npm.cmd'
@@ -135,6 +135,7 @@ if __name__ == '__main__':
         'rust': [(f'cargo-test-segment-b-{run_id}', ['cargo', 'test', '--locked', '--offline'], ROOT / 'apps/desktop/src-tauri', 900)],
         'desktop': [(f'desktop-build-segment-b-{run_id}', ['cargo', 'build', '--locked', '--offline'], ROOT / 'apps/desktop/src-tauri', 900)],
         'probes': [(f'audit-probes-segment-b-{run_id}', [sys.executable, '-m', 'pytest', str(AUDIT / 'tests/test_audit_probes.py'), '-vv', '-s', '-p', 'no:cacheprovider', '--basetemp=' + str(RUNTIME / f'probe-temp-{run_id}')], ROOT, 120)],
+        'sidecar-lifecycle': [(f'sidecar-lifecycle-probe-{run_id}', ['pwsh', '-NoProfile', '-File', str(AUDIT / 'tests/sidecar_lifecycle_probe.ps1')], ROOT, 120)],
         'smoke': [(f'software-smoke-segment-b-{run_id}', [sys.executable, '-m', 'tools.smoke.plugins', '--only', 'core,wire', '--json', str(AUDIT / f'evidence/software-smoke-report-segment-b-{run_id}.json')], ROOT, 180)],
         'governance': [(f'governance-segment-b-{run_id}', ['pwsh', '-NoProfile', '-File', 'tools/governance/check.ps1'], ROOT, 180)],
         'dependencies': [(f'pip-check-segment-b-{run_id}', [sys.executable, '-m', 'pip', 'check'], ROOT, 60),
