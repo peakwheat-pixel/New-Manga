@@ -1,0 +1,26 @@
+EVENT=ZCode read-only test-mapping adjudication
+GENERATED_AT_UTC=2026-11-12T07:45:31Z
+REPO=G:\CODEX\New Manga
+BRANCH=main
+HEAD=4534fed56da100e01bcef55197d97d448046f30d
+AUDIT_BASE=10e4ee013835605800d3830fb960ae8d3aa04167
+CLI=node E:\Program Files\ZCode\resources\glm\zcode.cjs --prompt <self-contained read-only audit test mapping> --cwd G:\CODEX\New Manga --resume sess_8a2f7064-f80d-49a5-b96f-6d5ba20dd1ca --mode plan --json --locale zh-CN
+EXIT=0
+SESSION_ID=sess_8a2f7064-f80d-49a5-b96f-6d5ba20dd1ca
+TURN_ID=turn_ef45a99a-6055-4dca-8822-88fd76189aa6
+TRACE_ID=9ec31904-476f-4213-8ba7-0fd89b4238e3
+MODEL_REQUEST_COUNT=5
+INPUT_TOKENS=251403
+OUTPUT_TOKENS=12013
+TOTAL_TOKENS=263416
+WEB_FETCH_REQUESTS=0
+WEB_SEARCH_REQUESTS=0
+
+PROMPT_SCOPE=Read-only mapping of audit_runner suites to current Avalonia/.NET 9 + Python Core product; inspect Task, runner, target framework/test project, AD-002; no commands/tests/edits/media access. Request safe no-restore external-artifacts dotnet strategy, next audit nodes, scope stop conditions.
+
+RESULT=See reports/TEST-MAPPING-ADJUDICATION-2026-11-12.md. Key ruling: pytest is Core-only partial evidence; frontend/rust/desktop/npm-audit are Legacy; governance/probes apply; smoke core applies, wire likely applies, packaged target unresolved; add audit-only .NET suite with --no-restore and external artifacts/results; original AUDIT-01–14 definitions were not found in reviewed inputs, so do not guess and seek further adjudication.
+
+FOLLOWUP_DISCOVERY_COMMAND=rg -l --glob '*.md' --glob '*.json' --glob '*.txt' --glob '*.py' 'AUDIT-14|15项专项' audit doc verification archive
+FOLLOWUP_DISCOVERY_EXIT=0
+FOLLOWUP_DISCOVERY_OUTPUT=audit/V1-FULL-AUDIT/AUDIT_TASKS.md; doc/tasks/NEW-MANGA-V1-FULL-AUDIT.md
+FOLLOWUP_DISCOVERY_CONCLUSION=No original AUDIT-01–14 checklist located in searched repository text; see report.
