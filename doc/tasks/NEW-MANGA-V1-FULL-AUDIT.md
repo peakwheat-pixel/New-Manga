@@ -35,7 +35,7 @@ allowed_paths:
 - [x] AC1：固定Git/环境及有效源码清单，记录dirty和历史缺口。 <<MET>>
 - [ ] AC2：15 项专项逐项有结果或具名阻断，关键链路深读与测试。 <<PARTIAL: 00 limited PASS；01/03/08/11 FAIL；02 BLOCKED；04–07、09、10、12–14 PARTIAL。09/10/12/13 均已有实际阶段报告但仍有覆盖限制。广泛 suite：pytest 3,519 passed/16 failed/10 skipped/EXIT 1；.NET 8/8 runner EXIT 1、TRX 0；smoke EXIT 1；AUDIT-13 Core acceptance 31 passed/0 skipped/EXIT 0。真实模型/GT/付费 API、完整编辑与导出 UI、accessibility/DPI、clean Windows install/upgrade/rollback/uninstall、长时 soak 与完整 shell 流程具名 NOT_RUN；V1 commitment count NOT_COUNTABLE>>
 - [ ] AC3：完整日志、去重问题台账、整改路线、正式报告和 Release Gate 落盘。 <<PARTIAL: 原始清单 00_BASELINE.md、01_PROJECT_INVENTORY.md、02–13 与 FINAL_AUDIT_REPORT.md 均已提交；reports/11_ISSUES.md 汇总 3 项 triaged finding、1 项 INVESTIGATE、11 项 REVIEW_PENDING 候选及 1 项关闭的非产品观察，reports/12_REMEDIATION_PLAN.md 与 reports/13_RELEASE_GATE.md 已落盘。候选严重度/需求归属和最终独立 Review 待 ZCode 裁决>>
-- [ ] AC4：独立复核、证据 pin 和治理检查可核验；未满足不得置 done。 <<PARTIAL: P7 编号报告、AUDIT-09/10/12/13 关键证据与两轮 preflight 均已按 BLOB 固定；最新 pinbackfill 工作树门禁 generated HEAD=c0665ff90408d78097e787bd53af63d96bb32ecf，证据提交=4b91a2d7ff51e2ac6c05eef7c02a4640335fcf92：default/TaskPath 各 3 warnings、EXIT 0；18 pins EXIT 0；API 1/79/6=86 EXIT 0。当前卡片增加本批 8 个 pins 后仍需 post-pinbackfill 门禁；ZCode 全审 fresh Review、AUDIT-08 P3-4 fresh re-review 与最终集成验证未完成>>
+- [ ] AC4：独立复核、证据 pin 和治理检查可核验；未满足不得置 done。 <<PARTIAL: P7 报告、AUDIT-09/10/12/13 关键证据及 4 项门禁已有 Canonical Evidence BLOB pins；截至本卡片 pinbackfill 的最新门禁 generated HEAD=e72bf97816a33e50c8cff5968c198975c3faddbd，证据提交=52b28bacc82c15a1d0e182654c72b87ce49ba265：default/TaskPath 各 3 warnings、EXIT 0；18 pins EXIT 0；API 1/79/6=86 EXIT 0。最终 ZCode fresh Review、AUDIT-08 P3-4 fresh re-review 与最终集成结论尚未完成。后续 post-pinbackfill 门禁批次由 AUDIT_RESUME 滚动记录，并在下一次 pinbackfill 纳入>>
 
 ## 允许修改范围
 仅frontmatter所列。审计日志/测试脚本由主控单一写入。三名子代理只读同一固定产品HEAD，无并发写入。用户显式审计目录优先于常规verification路径；运行派生产物放相邻workspace task-env。
@@ -398,6 +398,15 @@ src/**、apps/**、原有tests/**、共享契约、Schema、依赖、真实用�
 | P7-PINBACKFILL-API-LOG-1 | AC4（generated HEAD=c0665ff9；API 1/79/6=86/EXIT 0） | `audit/V1-FULL-AUDIT/logs/audit-post-evidence-c0665ff9-api.log` | `4b91a2d7ff51e2ac6c05eef7c02a4640335fcf92` | `C1EA652985BFC65E6C685E743CCCBDD42DF9092189A3F64A3D2260782313830B` | CANONICAL | BLOB |
 | P7-PINBACKFILL-API-RESULT-1 | AC4（API inventory argv/UTC/HEAD/EXIT metadata） | `audit/V1-FULL-AUDIT/evidence/audit-post-evidence-c0665ff9-api.json` | `4b91a2d7ff51e2ac6c05eef7c02a4640335fcf92` | `82AA06D319D76E937DF68C82C34266F99C7A5453D2FE0E1310D7D9565B6537CA` | CANONICAL | BLOB |
 
+| P7-POSTPIN-DEFAULT-LOG-1 | AC4（generated HEAD=e72bf978；default check 3 warnings/EXIT 0） | `audit/V1-FULL-AUDIT/logs/audit-post-evidence-e72bf978-default.log` | `52b28bacc82c15a1d0e182654c72b87ce49ba265` | `E4B071B1FB6F1D2AC0E9E84E77E3D768B35F1F8BA9E56E1C16FF95133EE05053` | CANONICAL | BLOB |
+| P7-POSTPIN-DEFAULT-RESULT-1 | AC4（default check argv/UTC/HEAD/EXIT metadata） | `audit/V1-FULL-AUDIT/evidence/audit-post-evidence-e72bf978-default.json` | `52b28bacc82c15a1d0e182654c72b87ce49ba265` | `1C0347B01BE12CB3ECA09C3137589827486347BE54447CAF26B82B701786582A` | CANONICAL | BLOB |
+| P7-POSTPIN-TASKPATH-LOG-1 | AC4（generated HEAD=e72bf978；TaskPath check 3 warnings/EXIT 0） | `audit/V1-FULL-AUDIT/logs/audit-post-evidence-e72bf978-taskpath.log` | `52b28bacc82c15a1d0e182654c72b87ce49ba265` | `B2B968FCE400374A78418C31B21A11FEEE481DB976845F8038182316BE57F072` | CANONICAL | BLOB |
+| P7-POSTPIN-TASKPATH-RESULT-1 | AC4（TaskPath check argv/UTC/HEAD/EXIT metadata） | `audit/V1-FULL-AUDIT/evidence/audit-post-evidence-e72bf978-taskpath.json` | `52b28bacc82c15a1d0e182654c72b87ce49ba265` | `327D2B15F063949F98BEB6041B0F76965B1EC72483B885EFBAB8B7F733F584A9` | CANONICAL | BLOB |
+| P7-POSTPIN-PINS-LOG-1 | AC4（generated HEAD=e72bf978；verify_pins 18/18/EXIT 0） | `audit/V1-FULL-AUDIT/logs/audit-post-evidence-e72bf978-pins.log` | `52b28bacc82c15a1d0e182654c72b87ce49ba265` | `F65EA183CE350A4BF303651E4EFDC12375DAB8046BE67735332DC84C1F4E7B66` | CANONICAL | BLOB |
+| P7-POSTPIN-PINS-RESULT-1 | AC4（verify_pins argv/UTC/HEAD/EXIT metadata） | `audit/V1-FULL-AUDIT/evidence/audit-post-evidence-e72bf978-pins.json` | `52b28bacc82c15a1d0e182654c72b87ce49ba265` | `3FD452AF6163A2FAF1DC59A390C6550DA8F9B915A86CE3D3F174B2E1BE259CEB` | CANONICAL | BLOB |
+| P7-POSTPIN-API-LOG-1 | AC4（generated HEAD=e72bf978；API 1/79/6=86/EXIT 0） | `audit/V1-FULL-AUDIT/logs/audit-post-evidence-e72bf978-api.log` | `52b28bacc82c15a1d0e182654c72b87ce49ba265` | `E544AD1CE44145352A5A9FBEFCA663E43FEC297F6680F465AAB56393AB454313` | CANONICAL | BLOB |
+| P7-POSTPIN-API-RESULT-1 | AC4（API inventory argv/UTC/HEAD/EXIT metadata） | `audit/V1-FULL-AUDIT/evidence/audit-post-evidence-e72bf978-api.json` | `52b28bacc82c15a1d0e182654c72b87ce49ba265` | `1278DF5B57F3684B82A7AF232BEF7CD34179BC06B0FFAD9E561F086320A8D3A0` | CANONICAL | BLOB |
+
 说明：裁决文档中记录的阶段 0 日志 `B561…` 是提交前 WORKTREE SHA-256；本表按模板使用 Git BLOB 字节，完整 SHA-256 为 `7E2A…`。
 
 ## Resource Manifest
@@ -411,7 +420,7 @@ src/**、apps/**、原有tests/**、共享契约、Schema、依赖、真实用�
 | exchange | — | NOT_APPLICABLE | — | — | 无外部传输 |
 
 ## Rolling checkpoint
-[audit/V1-FULL-AUDIT/AUDIT_RESUME.md](../../audit/V1-FULL-AUDIT/AUDIT_RESUME.md) 顶部 2026-11-13 P7 综合报告检查点为当前恢复入口。P7 文档提交=3fc756a1aed8ca366ac0b324ff293cc3e1f9ebb0；gate batch generated HEAD=5a54390f，提交=592e3f6a；随后 generated HEAD=3fc756a1，提交=c0665ff9；最新 batch generated HEAD=c0665ff9，提交=4b91a2d7。三批 default/TaskPath 各 3 warnings EXIT 0、verify_pins 18/18 EXIT 0、API 1/79/6=86 EXIT 0。当前段 B 状态与 11 个候选见 reports/11_ISSUES.md；Release Gate BLOCKED，Task AC2/AC3/AC4 PARTIAL、in_progress。接下来回填本批 pins 并在该 pinbackfill 后运行最终四项门禁，再由 ZCode fresh context Review 固定交付 HEAD。
+[audit/V1-FULL-AUDIT/AUDIT_RESUME.md](../../audit/V1-FULL-AUDIT/AUDIT_RESUME.md) 顶部 P7 post-pinbackfill 门禁检查点为最新滚动恢复入口。当前卡片 Canonical Evidence 固定至 gate batch generated HEAD=e72bf97816a33e50c8cff5968c198975c3faddbd，证据 commit=52b28bacc82c15a1d0e182654c72b87ce49ba265；default/TaskPath 各 3 warnings、18 pins、API 1/79/6=86 均 EXIT 0。随后在本卡片 HEAD 上运行的更晚 gate batch、generated HEAD 与 EXIT 见 AUDIT_RESUME；按滚动 pin 规则下次回填。段 B 专项与候选见 reports/11_ISSUES.md；Release Gate BLOCKED，AC2/AC3/AC4 PARTIAL，Task in_progress。
 
 ## 2026-10-24 推送准备补充授权
 
