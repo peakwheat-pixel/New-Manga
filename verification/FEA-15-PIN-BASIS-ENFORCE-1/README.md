@@ -359,3 +359,16 @@ These are review-ready clean-head results; the Task remains `in_progress` and R-
 - `r001-review-ready-audit-70423741c1.log` — 41199 bytes; workspace-original SHA-256 `885801a9e7b8ec30b55a2c94e76d2413478cf61fc94eee1426e86c1e972ba6f6`.
 
 No historical FAIL or NOT_RUN classification changed.
+
+## R-001 STATUS budget compression independent Review (2026-11-12)
+
+Fresh ZCode read-only Review returned `APPROVED` at clean `main` HEAD `00775fc0e12caf029859e6c186c16ddf268803cd` (`EXIT=0`; session `sess_ac79f4e2-ca91-4e46-b956-940513719cff`, turn `turn_0d02732c-a915-4989-92a1-d9ac50f0cce6`). Counts: P0=0, P1=0, P2=0, P3=2; both P3 findings are non-blocking. The Review confirms the STATUS boundary/semantics, retained FAIL classifications, scope, 18 frozen pins, Task state, and permission to proceed to the terminal candidate. Full report and raw receipt are preserved in the paths above/below.
+
+P3-1 records that the review prompt called `140/140` an already pinned audit, which was inaccurate at review time: the latest audit then in the repository was the pinned `137/137` run at `70423741c1`; the `140/140` run existed only as a workspace log generated at reviewed HEAD `00775fc0e`. That raw gate log and audit are now copied byte-for-byte into this verification directory and will receive Canonical Evidence pins. This finding is explicitly retained as a prompt/evidence wording issue and does not reclassify any result. P3-2 records earlier README EOF-newline completion as a content-neutral append observation; historical bytes are preserved in their commits.
+
+- Reviewer report: `doc/reviews/FEA-15-PIN-BASIS-ENFORCE-1-r001-status-compression-review-2026-11-12.md`.
+- Workspace-original CLI receipt SHA-256: `1114808399dcdab00c34a59e15ed92449553dbeffb784603f1297bbd5d67fb87`.
+- Current pinbackfill clean-head gates: `r001-current-pinbackfill-gates-00775fc0e1.log`.
+- Current full-section audit: `r001-current-pinbackfill-audit-00775fc0e1.log` (`140/140 PASS`, `FAIL_ROWS=0`, `EXIT=0`).
+
+Task remains `in_progress`, R-001 remains **OPEN** pending terminal-state gates and final full-section audit. Historical FAIL and NOT_RUN classifications remain unchanged.
