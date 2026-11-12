@@ -1,3 +1,10 @@
+## 2026-11-13 P7 final-pinbackfill gate batch
+
+- Task card HEAD=a3a429cc955f12765253a14680e79bab2389dd89，branch=main。该 HEAD 上 default / TaskPath / verify_pins / API 四项门禁均 EXIT 0：default 和 TaskPath 各 3 warnings；18 pins；API inventory 1/79/6=86。
+- 原始日志与 JSON：logs/audit-post-evidence-a3a429cc-default.log、evidence/audit-post-evidence-a3a429cc-default.json；TaskPath、pins、API 同 stem 文件。此批在提交后按 rolling pin 规则进入下一次 Canonical Evidence pinbackfill。
+- 运行时 working tree 仅新增本批日志/JSON，产品源码、真实用户数据与远端未改动。提交该证据批后，将本批 hashes 回填 Task Card，再把固定 reviewed HEAD 交 ZCode fresh-context read-only Review。
+- Task 保持 in_progress，AC2/AC3/AC4 PARTIAL，Release Gate BLOCKED；本检查不构成产品发布通过。
+
 ## 2026-11-13 P7 post-pinbackfill 门禁检查点
 
 - Task card pinbackfill HEAD=e72bf97816a33e50c8cff5968c198975c3faddbd，branch=main。该提交包含 55 条新增 Canonical Evidence pins；新增 pin 的 Git BLOB SHA-256 逐项复算为 55/55 匹配。
