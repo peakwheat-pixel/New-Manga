@@ -421,3 +421,9 @@ Fresh read-only ZCode adjudication `AUTHORIZE_BOUNDED_STATUS_POINTER_REFORMAT_AN
 At clean main HEAD `5a2b3eb8104c0553c1bd2c0e087b9cf6b4f72785`, after the bounded STATUS reformat and pinbackfill, the authorized single retry passed: default check PASS / 4 warnings / `EXIT=0` (includes the valid empty-current-Task warning); TaskPath PASS / 4 warnings / `EXIT=0`; frozen pins `18/18` / `EXIT=0`; API inventory `1/79/6=86` / `EXIT=0`. `PROCESS_CWD=G:\CODEX\New Manga`; `GIT_STATUS_PORCELAIN` was empty at generation time. This does not reclassify the preserved prior default/TaskPath `FAIL/EXIT=1` at HEAD `089bc8c2b`.
 
 - `r001-terminal-status-pointer-retry-5a2b3eb81-gates.log` — generated at clean HEAD `5a2b3eb8104c0553c1bd2c0e087b9cf6b4f72785`; workspace-original SHA-256 `3f7650b361b0222475d46ce04356f712065ecd8de3db98edebf9f71c629908fc`; all four commands `EXIT=0`; external original preserved.
+
+## R-001 final full-section audit after STATUS correction (2026-11-12)
+
+At clean main HEAD `4861da022e41fcdeb8d63c3623389fa4bb97e911`, after pinning the one-time STATUS retry evidence, the complete-section audit parsed all 164 Canonical Evidence rows. Every row's `commit:path` blob existed and its SHA-256 matched: `164/164 PASS`, `FAIL_ROWS=0`, `EXIT=0`; `GIT_STATUS_PORCELAIN` was empty. This satisfies R-001's conditional audit requirement; the Task Closeout Record is to mark R-001 CLOSED when pinning this audit. The audit does not reclassify the earlier STATUS pointer `FAIL/EXIT=1`.
+
+- `canonical-evidence-full-section-audit-4861da022-post-status-pointer.log` — generated at clean HEAD `4861da022e41fcdeb8d63c3623389fa4bb97e911`; workspace-original SHA-256 `21b1b40ce429bb8e8c52f5a16e69859c36db80504f5beaf9b3e6424aab27be29`; 164/164 PASS / `EXIT=0`; external original preserved.
