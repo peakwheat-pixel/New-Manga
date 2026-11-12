@@ -51,3 +51,4 @@
 - `reports/ZCODE-FINAL-CHECKPOINT-REVIEW-2026-11-12.md`、`logs/zcode-final-audit-review-20261112.log`：ZCode 新独立上下文对 reviewed_head `d9478939f…` 的最终 checkpoint review；`PASS_FOR_CHECKPOINT`，F-1/F-2/F-3 的机械证据已补存，待 addendum 复核。
 - `logs/review-final-integrity-20261112.log`：固定 `reviewed_head=d9478939f…` 的两段 `git diff --name-status` 路径授权核对及 52 行 BLOB SHA-256 复算；36 个路径条目均 allowed，52/52 pins 匹配，EXIT 0。
 - `logs/final-governance-gates-20261112.log`：default/TaskPath check、18 pins、API inventory 的完整输出、生成 HEAD、时点和 EXIT；generated HEAD=`b9b6c5801…`，四项 EXIT 0。
+- `logs/postreview-final-verification-20261112.log`：generated HEAD=`ac188dde5…` 的四项治理门禁和 Task 当前 56 行 Canonical/SOURCE_PIN Git blob SHA-256 逐项复算；所有检查 EXIT 0。
