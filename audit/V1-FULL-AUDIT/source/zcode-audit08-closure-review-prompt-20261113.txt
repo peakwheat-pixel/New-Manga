@@ -1,0 +1,14 @@
+请对 New Manga 仓库当前固定 HEAD 6375afacbd069b004c6af6adc7f79454d1307b70 做一次全新上下文、只读的 AUDIT-08 follow-up closure review。你是 ZCode，未参加本次 pinbackfill 或修订。不要改文件、不要运行测试、不要访问远端。回复必须给出 verdict=ACCEPT 或 CHANGES_REQUESTED、reviewed_head、reviewer/session、P0/P1/P2/P3 数量、每项 finding 的位置/影响/处置建议，以及 Review 的边界；只在 response 中报告。
+
+本轮重点：判断前一轮 ZCode 对 reviewed_head=f3320cc9de84dd769c60064537555d5ccd59005c 给出的 ACCEPT（0 P0/P1/P2、1 P3）中 P3-3 是否已充分闭合。P3-3 指出 f3320cc 内 d6658d123ba14d4f586b1675652d64a5d2e5d523 上最后五个门禁文件没有列入 Task Canonical Evidence，且 AUDIT_RESUME 未记录该批。
+
+请查看：
+- AGENTS.md；doc/09_COLLABORATION.md §4 与 §4.1；doc/STATUS.md 与 doc/REBASELINE_PLAN.md。
+- doc/tasks/NEW-MANGA-V1-FULL-AUDIT.md 的 AC4、AUDIT08 Canonical Evidence、滚动 pin 表注和 Rolling checkpoint。
+- audit/V1-FULL-AUDIT/reports/ZCODE-AUDIT-08-FOLLOWUP-REVIEW-2026-11-13.md 与此前首轮 Review 报告；两份原始 ZCode 回执及 dispatch log。
+- audit/V1-FULL-AUDIT/AUDIT_RESUME.md、AUDIT_STATUS.md、AUDIT_TASKS.md 中 AUDIT-08 的最新状态。
+- d6658d123 gate 输出：governance-segment-b-20261112T170837323982Z.log 与 JSON、audit08-final-review-taskpath/pins/api-20261113.log；其生成 HEAD、四项 EXIT、18/18、1/79/6=86。
+- audit08-pin-verify-followup-20261113.log 的 39/39 raw Git blob SHA-256 结果（generated HEAD=f3320cc9d）。
+- ac55c50d93e0b8b9d9237346e26077abe608fe45 与 995a71d462408d7f75013554e611ce7a44f618a4 后的 gate 日志（现固定在 HEAD=6375afacbd069b004c6af6adc7f79454d1307b70）；它们由最新 pinbackfill 之后生成，尚未进入 Task Canonical Evidence 表。表注说明此类 post-pinbackfill gate outputs 按滚动规则在下一次 pinbackfill 整批纳入。
+
+独立判断以下处置是否足以关闭 P3-3：五个 d6658d123 gate 文件已加入 Task Canonical Evidence（含 commit/path/SHA）；AUDIT_RESUME 已更新；39 项 raw blob 独立复算日志已提交并 pin；SCOPE-POSTCOMMIT-GATES-1 的短 commit 已补成 40 位；并新增滚动 pin 规则。若仍有遗漏，列出具体路径与所需改动。确认 Task 仍为 in_progress、AUDIT-08 仍为 FAIL、Release Gate 仍为 BLOCKED；本 Review 不应将其提升为通过或关闭。
