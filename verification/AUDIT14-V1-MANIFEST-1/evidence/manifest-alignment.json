@@ -1,0 +1,18 @@
+{
+  "release_gate": "BLOCKED",
+  "not_run": [
+    "真实 clean install",
+    "真实 GUI 全验收",
+    "真实模型 API 调用"
+  ],
+  "schema": "audit14-evidence/v1",
+  "manifest": "doc/design/V1_COMMITMENT_MANIFEST.md",
+  "head": "cffd806c5a6c8b35baa5826c63c26e18ea98dd0e",
+  "status_bytes": 3183,
+  "aligned": [
+    "README.md",
+    "doc/00_INDEX.md",
+    "doc/AD-003_REFERENCED_SOURCE_ARCHITECTURE.md",
+    "doc/STATUS.md"
+  ]
+}

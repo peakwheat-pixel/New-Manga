@@ -26,6 +26,7 @@
 Technical Gate=NOT_SATISFIED；private_registry_absence=UNPROVABLE；Owner Risk Acceptance=APPROVED；Disposition=WAIVED_BY_OWNER。push `clean-snapshot-20261026`=`892b946e`、`clean-snapshot-20261102`=`ac7d488e`；**main 2026-11-08 push（2C/L-R11/C-04b/SCAN-RH/INDEX-L4-1/UI-RESIDUAL-2；§27；AHEAD=0）**。
 
 ## 当前权威指针
+- V1 承诺：[V1_COMMITMENT_MANIFEST](design/V1_COMMITMENT_MANIFEST.md)（Gate BLOCKED）。
 - DAG/节点：[REBASELINE_PLAN](REBASELINE_PLAN.md)（唯一权威）；主线 `main`；工作区 [WORKSPACE_GOVERNANCE](WORKSPACE_GOVERNANCE.md)。
 - 恢复点：rolling checkpoint + 各 Task 卡与 `verification/**`。
 - 残余收口：[PLAN](plan/RESIDUAL-CLOSEOUT-PLAN-2026-11-08.md)（4 节点→done，6 卡方案）。

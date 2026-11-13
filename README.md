@@ -16,6 +16,8 @@
 > detected or `--parity=false` is passed (the UI shows the reason), and a first-run catalog backup is
 > taken before writes. See [doc/plan/V11R_WRITE_POLICY.md](doc/plan/V11R_WRITE_POLICY.md).
 
+> **V1 commitment:** 当前 V1 交付承诺、状态与未验证项见 [doc/design/V1_COMMITMENT_MANIFEST.md](doc/design/V1_COMMITMENT_MANIFEST.md)（2026-11-14；产品 Release Gate **BLOCKED**，见 [audit/V1-FULL-AUDIT/](audit/V1-FULL-AUDIT/)）。
+
 ## What it does
 
 - **Bookshelf** — managed library of books/chapters/pages. Original files are never modified (managed copy).
@@ -35,7 +37,7 @@
 - **写入策略（V11R-A-5）**：安装后**默认可写**（导入/建书/建章/编辑/Run 可用）；检测到旧 Tauri 壳运行或显式 `--parity=false` 时只读，并在 UI 显示原因；每次启动在 sidecar 之前执行 first-run 备份（`%APPDATA%\com.newmanga.desktop\backups\*.sqlite-backup`，幂等不覆盖；`.nmbak` 是 Core 的备份包格式，两者不再共用命名空间）。详见 [doc/plan/V11R_WRITE_POLICY.md](doc/plan/V11R_WRITE_POLICY.md)。
 - 构建：需 .NET 9 SDK、Python 3.11、NSIS 3.x、PowerShell 7；模型权重不随 Git 仓库分发，
   `-models` 发行包内置权重，base 包首次检测会以 typed `PROVIDER_NOT_CONFIGURED` 提示。
-- 测试基线（2026-10-28）：.NET 258/258（0 skipped）、pytest 2773P/10S/0F、typed IPC 命令 66/66。
+- 测试基线（2026-10-28）：.NET 258/258（0 skipped）、pytest 2773P/10S/0F、typed IPC 命令 66/66（历史基线）；2026-11-14 审计基线：pytest 3,519P/16F/10S（16 为既有失败）、.NET 1,804P/0F/107S（TestHost runner 8/8 EXIT 1、TRX 0，BLOCKED）、typed IPC 86。
 - 许可：项目代码 GPL-3.0-or-later；`-models` 包因内置 Ultralytics YOLO11s-seg（AGPL-3.0）整体按 AGPL-3.0
   分发，AGPL 全文随包（`LICENSE-AGPL-3.0.txt`）。
 - 当前安装包未签名：SmartScreen 会提示「未知发布者」，请先核对 SHA-256 并按发行说明操作；签名申请材料见 `doc/release/`。

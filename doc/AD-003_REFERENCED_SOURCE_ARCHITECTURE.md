@@ -4,7 +4,8 @@ Status: **ACCEPTED_ARCHITECTURE_AMENDMENT**（用户 2026-10-31 决定；DSH 记
 Architecture sentinel: `Windows + C#/.NET + Avalonia + Python Core + SQLite + ReferencedSource`
 Decision authority: **User**（2026-10-31 决定）· Owner / Recorder: **DSH**（Lead / Architect / Integrator）· Date: 2026-10-31
 上游：[AD-002 目标桌面架构](AD-002_TARGET_DESKTOP_ARCHITECTURE.md)（2026-10-26 用户裁决，继续有效，除本文件明示取代的范围）· 需求来源：[Fluent 漫画用户需求与交互概念](design/FLUENT_MANGA_USER_CONCEPT_2026-10-30.md) §1/§3/§4 · 方案来源：[可切换前端架构方案](design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md) §8/§9/§11/§15.1
-相关裁定：[ADJ-001 永久删除与保护状态](contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md) · 审查记录：[FEA-00 r1](reviews/FEA-00-dsh-r1.md)、[FEA-00 r2 技术复核](reviews/FEA-00-dsh-r2-technical-recheck.md)
+相关裁定：[ADJ-001 永久删除与保护状态](contracts/ADJ-001_PERMANENT_DELETE_AND_PROTECTION.md)
+V1 承诺与未验证项：[V1 commitment manifest](design/V1_COMMITMENT_MANIFEST.md)（2026-11-14；Release Gate BLOCKED）。 · 审查记录：[FEA-00 r1](reviews/FEA-00-dsh-r1.md)、[FEA-00 r2 技术复核](reviews/FEA-00-dsh-r2-technical-recheck.md)
 
 本文件是**架构决策记录**，不是实现授权、契约冻结、Task 释放或验收结论。本文件不修改任何生产代码、Schema、命令或冻结契约；`src/**`、`apps/**` 与 `doc/contracts/**` 当前字节不变。
 

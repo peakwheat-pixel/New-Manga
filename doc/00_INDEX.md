@@ -1,6 +1,6 @@
 # Document Truth Map / 项目文档权威地图
 
-更新：2026-10-31（DSH 记录 AD-003 存储架构补充决策；此前 2026-10-25 DSH 接任 Lead / Architect / Integrator，角色迁移与字节保留见[接管记录](GOVERNANCE_TAKEOVER_2026-10-25.md)）。当前目标架构为 Windows + C#/.NET + Avalonia + Python Core + SQLite + ReferencedSource（新导入默认引用原文件；既有 Managed Copy 数据继续读取），见 [AD-002](AD-002_TARGET_DESKTOP_ARCHITECTURE.md) 与 [AD-003](AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)。本文是文档导航和冲突裁决表，不替代下列权威来源。
+更新：2026-11-14（新增 V1 commitment manifest 与审计整改指针；2026-10-31 DSH 记录 AD-003 存储架构补充决策；此前 2026-10-25 DSH 接任 Lead / Architect / Integrator，角色迁移与字节保留见[接管记录](GOVERNANCE_TAKEOVER_2026-10-25.md)）。当前目标架构为 Windows + C#/.NET + Avalonia + Python Core + SQLite + ReferencedSource（新导入默认引用原文件；既有 Managed Copy 数据继续读取），见 [AD-002](AD-002_TARGET_DESKTOP_ARCHITECTURE.md) 与 [AD-003](AD-003_REFERENCED_SOURCE_ARCHITECTURE.md)。本文是文档导航和冲突裁决表，不替代下列权威来源。
 
 ## 权威来源与冲突裁决
 
@@ -21,6 +21,7 @@
 
 | 文档 | 分类 | 当前可依赖内容 |
 |---|---|---|
+| [V1_COMMITMENT_MANIFEST](design/V1_COMMITMENT_MANIFEST.md) | CURRENT / COMMITMENT | V1 交付承诺、状态与 NOT_RUN/BLOCKED 项；产品 Release Gate BLOCKED（2026-11-14）。 |
 | [AGENTS.md](../AGENTS.md) | CURRENT / GOVERNANCE | Agent 项目入口、角色、安全和最小读取规则。 |
 | [接管记录](GOVERNANCE_TAKEOVER_2026-10-25.md) | CURRENT / GOVERNANCE | 2026-10-25 接管授权记录：Codex 的 Lead / Architect / Integrator 权限移交 DSH；当日角色表不替代 AGENTS.md 的当前参与名单，历史署名与证据字节保留。 |
 | [Push 记录](PUSH_RECORD_2026-10-25.md) | CURRENT / DELIVERY RECORD | 干净源码快照推送到 `origin/codex/clean-source-snapshot` 的授权、审查、命令、远端 SHA 核验与未关闭项。 |
