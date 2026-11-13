@@ -35,7 +35,7 @@ allowed_paths:
 - [x] **AC1**：固定Git/环境及有效源码清单，记录dirty和历史缺口。 <<MET>>
 - [x] **AC2**：15 项专项逐项有结果或具名阻断，关键链路深读与测试。 <<MET>>
 - [ ] **AC3**：完整日志、去重问题台账、整改路线、正式报告和 Release Gate 落盘。 <<PARTIAL: 交付文件齐全，11 候选已由 Codex 裁决并更新 11_ISSUES/12/13/FINAL/AUDIT_ISSUES；Codex 已完成七轮独立 Review（最新第七轮 `9bd7264ca`），第八轮复审（`6b09ca1f`）仅剩 Task/报告摘要同步问题并已在本轮修复；待第九轮复审确认后由 DSH 集成，故暂不可收口>>
-- [ ] **AC4**：独立复核、证据 pin 和治理检查可核验；未满足不得置 done。 <<PARTIAL: 535 条 Canonical Evidence 已复算通过（含 14 条 worktree→BLOB 更正）；Codex 已完成七轮独立 Review（首轮 `d92859c9a`、复审 `226eb048`、第三轮 `42810143b`、第四轮 `6350081a`、第五轮 `1ae79bb99`、第六轮 `c2f5bc827`、第七轮 `9bd7264ca`，均 EXIT 0、结论 REJECT 属交付文档收敛）；已 pin 的 gate 批次覆盖 ed17a790、52b86d39、70e92876、b72363aa、076dfbb6、d248ed28、fee77cc0、86f47fee、c9953bac、484094a1、9b0be2cd。最后一批门禁未回填属滚动 limitation（已被Review 接受）。本轮回填第八轮复审证据与最新门禁后，仍需第九轮复审与 DSH 集成/closeout，故不可收口>>
+- [ ] **AC4**：独立复核、证据 pin 和治理检查可核验；未满足不得置 done。 <<PARTIAL: 535 条 Canonical Evidence 已复算通过（含 14 条 worktree→BLOB 更正）；Codex 已完成九轮独立 Review（首轮 `d92859c9a`、返修复审 `226eb048`、第三轮 `42810143b`、第四轮 `6350081a`、第五轮 `1ae79bb99`、第六轮 `c2f5bc827`、第七轮 `9bd7264ca`、第八轮 `6b09ca1f`、第九轮 `f25127083`，均 EXIT 0；前八轮 REJECT 属交付文档收敛，第九轮仅剩当前指针同步）。已 pin 的 gate 批次覆盖 ed17a790、52b86d39、70e92876、b72363aa、076dfbb6、d248ed28、fee77cc0、86f47fee、c9953bac、484094a1、9b0be2cd、46a8fe6e（收录于 f0fa06ef）。最终四项门禁须在 DSH 集成后的 delivery head 记录；滚动 limitation 已被 Review 接受。故不可收口>>
 
 ## 允许修改范围
 仅frontmatter所列。审计日志/测试脚本由主控单一写入。三名子代理只读同一固定产品HEAD，无并发写入。用户显式审计目录优先于常规verification路径；运行派生产物放相邻workspace task-env。
@@ -617,7 +617,7 @@ src/**、apps/**、原有tests/**、共享契约、Schema、依赖、真实用�
 | exchange | — | NOT_APPLICABLE | — | — | 无外部传输 |
 
 ## Rolling checkpoint
-[audit/V1-FULL-AUDIT/AUDIT_RESUME.md](../../audit/V1-FULL-AUDIT/AUDIT_RESUME.md) 顶部 2026-11-13 Codex 复审检查点为最新恢复入口。Canonical Evidence 含 535 条 BLOB pins、十一批 gate 证据与七轮 Codex Review 证据；Codex 裁决 11 候选（4 finding / 4 INVESTIGATE / 1 accepted limitation / 2 close）。第八轮复审（`6b09ca1f`）仅剩 Task/报告摘要同步，本轮已修复并置 `changes_requested`→`in_review`；第九轮复审与 DSH 集成/closeout 待完成。Release Gate BLOCKED，AC1/AC2 MET，AC3/AC4 PARTIAL，Task 未完成。
+[audit/V1-FULL-AUDIT/AUDIT_RESUME.md](../../audit/V1-FULL-AUDIT/AUDIT_RESUME.md) 顶部 2026-11-13 Codex 复审检查点为最新恢复入口。Canonical Evidence 含 535 条 BLOB pins、十二批 gate 证据与九轮 Codex Review 证据；Codex 裁决 11 候选（4 finding / 4 INVESTIGATE / 1 accepted limitation / 2 close）。第九轮复审（`f25127083`）仅剩当前指针同步，本轮已修复；待 DSH 固定新 head 复审、集成并在 delivery head 记录最终门禁与 closeout。Release Gate BLOCKED，AC1/AC2 MET，AC3/AC4 PARTIAL，Task 未完成。
 
 ## 2026-10-24 推送准备补充授权
 
@@ -734,3 +734,9 @@ DSH 接任 Lead / Architect / Integrator（见 `doc/GOVERNANCE_TAKEOVER_2026-10-
 - Reviewer：Codex 全新上下文；`reviewed_head=6b09ca1f42a0145fa63fa317c2beb3b0596fe848`；session `01a1d553-…` 之后的新会话（见 `logs/codex-final7-review-dispatch-20261113.log`）；EXIT 0；729.2s；工作树前后 clean。原始报告 `reports/CODEX-FINAL7-REVIEW-2026-11-13.md`。
 - 结论：**REJECT**。确认 522/522 pins；F1 为 Task AC3/AC4/Rolling 旧轮次、GATE 第 7 条旧轮次/pin 数、FINAL 候选“待裁决”、AUDIT_STATUS 旧“剩余”描述；F2 为 `6b09ca1f` 门禁未入库，属已接受的滚动 limitation，不单独阻断。
 - 处置：本轮修复 F1 摘要与候选措辞，Task 置 `changes_requested` 后改回 `in_review`；第八轮复审证据与最新门禁回填后派发第九轮复审。通过后转 `approved`，DSH 集成并补齐 closeout；AC1/AC2 MET；AC3/AC4 PARTIAL；Release Gate BLOCKED。
+
+## 2026-11-13 Codex 第八/九轮复审（6b09ca1f / f25127083）
+
+- 第八轮：reviewed_head=`6b09ca1f42a0145fa63fa317c2beb3b0596fe848`，EXIT 0，729.2s，REJECT（F1 Task 摘要同步；F2 滚动门禁 limitation 接受）。报告 `reports/CODEX-FINAL7-REVIEW-2026-11-13.md`。
+- 第九轮：reviewed_head=`f251270833f3ea775f6f577dbfa33e6c88073162`，EXIT 0，1,306.9s，REJECT（仅剩 AUDIT_PLAN/AUDIT_STATUS/Task AC4·Rolling/FINAL/13_GATE 当前指针同步；确认 535/535 pins；指出最新已记录门禁为 `46a8fe6e`，最终门禁应在 DSH 集成的 delivery head 记录）。报告 `reports/CODEX-FINAL8-REVIEW-2026-11-13.md`。
+- 处置：本轮同步全部当前指针并记录本两轮 Review；Task 保持 `in_review`，待 DSH 固定新 head 做第十轮复审；通过后转 `approved`，DSH 集成并填写 `integration_commit`/`delivery_head`、补齐 pins 与资源 closeout、在 delivery head 记录最终门禁，再置 `done`。AC1/AC2 MET；AC3/AC4 PARTIAL；Release Gate BLOCKED。
