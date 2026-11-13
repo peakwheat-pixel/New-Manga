@@ -1,3 +1,9 @@
+## 2026-11-13 用户裁决：最终独立 Review 与裁决改为 Codex 优先
+
+- 用户 2026-11-13 指示：“调整流程，裁决交给 codex 或者 zcode，优先 codex”。本 Task 的最终独立 Review 与候选/finding 裁决改为 **Codex 优先**；Codex 不可用或不适配时回退 **ZCode**。历史 ZCode 裁决、Review 与 evidence pin 原字节保留，不追改、不据此恢复 ZCode 独占裁决。
+- Reviewer 字段同步更新为 Codex（fresh independent context；fallback ZCode）。Review 仍须上下文独立：产出该变更的同一会话/实例不得自审；本 Task 由 DSH 集成，Codex 以新上下文做只读 Review。
+- ZCode provider 额度失败（1310/429，reset 2026-11-17 18:40:33）不再阻塞 Review 路径；Codex CLI 0.162.0 于 2026-11-13 探测 EXIT 0（session `01a1d4c6-e6b0-7df2-9a05-4ddc83a50712`），已具备派发条件。
+- 该裁决不改变 Task 状态、AC1–AC4、Release Gate BLOCKED，也不授权修改产品源码、既有测试、契约、Schema、依赖、真实用户数据或 Git 历史。
 ## 2026-11-13 P7 DSH 续审与集成核验检查点
 
 - 复原与固定：HEAD=`48ccb75ce1a547cf89e4d38cd577b868e15de5ce`，branch=`main`，工作树 clean；与用户记录一致，未 reset/clean/merge/改历史或覆盖他人文件。

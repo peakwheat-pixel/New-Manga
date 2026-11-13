@@ -1,0 +1,31 @@
+你是 New Manga 项目的独立 Reviewer（Codex，全新上下文）。请只读审查固定仓库状态：不修改任何文件，不运行会写入、清理、安装、发布或访问外部系统的命令；不访问远端，不读取或重建私有素材。
+
+审查身份与目标：
+- 仓库：G:\CODEX\New Manga，branch main。
+- 派发消息会给出 expected_head。审查开始时执行 `git status --porcelain` 与 `git rev-parse HEAD`；HEAD 必须等于 expected_head 且工作树 clean，否则停止并在回答开头报告差异；以实际 HEAD 作为 reviewed_head 记录在回答开头。
+- 审查对象：NEW-MANGA-V1-FULL-AUDIT 的 P7 完整审计交付及治理证据。至少交叉核对：`doc/tasks/NEW-MANGA-V1-FULL-AUDIT.md`、`audit/V1-FULL-AUDIT/AUDIT_STATUS.md`、`AUDIT_PLAN.md`、`AUDIT_RESUME.md`、`AUDIT_EVIDENCE_INDEX.md`、`AUDIT_ISSUES.md`、`reports/11_ISSUES.md`、`reports/12_REMEDIATION_PLAN.md`、`reports/13_RELEASE_GATE.md`、`reports/FINAL_AUDIT_REPORT.md`、`reports/P7-INTEGRATION-CONSISTENCY-CHECK-2026-11-13.md`、专项报告与 Canonical Evidence pins。
+- 2026-11-13 用户裁决：最终 Review 与裁决改为 Codex 优先（ZCode 仅回退）。本次即为最终独立 Review。
+- 不得把候选写成已证实缺陷；不得把 NOT_RUN/BLOCKED 写成 PASS；不宣告产品发布 PASS。
+
+请独立核对并给出明确裁决：
+1. 交付文件是否自洽、引用和范围是否准确；AC1–AC4 当前状态是否与证据及具名 NOT_RUN/limitation 一致。
+2. Canonical Evidence 的 path/commit/sha256/class/sha256_basis 是否可核验；重点复核 Task 卡 398 条 pins（含 2026-11-13 对 AUDIT-03/04 共 14 条 worktree→BLOB 更正是否必要且正确）、ed17a790 与 52b86d39 gate batch、ZCode 额度失败证据。可用只读 Git 对象读取/哈希核验，不必重跑历史重型测试。
+3. 复核问题去重和计数：三个已 triage 产品 finding、AUDIT-11-INC-001、11 个 REVIEW_PENDING 候选、关闭的非产品观察；确认 P0–P3 计数边界。逐一处置以下 11 个 ID：AUDIT-05-CAND-001、AUDIT-06-CAND-001、AUDIT-06-CAND-002、AUDIT-07-CAND-001、AUDIT-07-CAND-002、AUDIT-09-CAND-001、AUDIT-12-CAND-001、AUDIT-14-CAND-001、AUDIT-14-CAND-002、AUDIT-14-CAND-003、AUDIT-14-CAND-004；给出结论（finding / accepted limitation / close / investigate）、是否进入 P0–P3 计数、severity/priority（如不适用写 N/A）、依据与建议后续 Task/验证。
+4. AUDIT-11-INC-001 裁决：明确仍未知的事实（当前远端可见性未核验，不得推断为已公开或已消除）。
+5. Release Gate 是否应保持 BLOCKED；当前未修复 findings、关键 NOT_RUN 和 AUDIT-11-INC-001 是否支持该结论。
+6. 给出 NEW-MANGA-V1-FULL-AUDIT 的审查结论：ACCEPT、ACCEPT_WITH_LIMITATIONS 或 REJECT；分别说明 AC2/AC3/AC4 是否可收口、是否还有必须返修的审计文档问题。
+7. R1–R4 处置次序意见。
+
+输出请用简体中文，结构如下：
+- 审查身份与 reviewed_head / 工作树状态
+- 总结结论（枚举值）
+- 发现：按严重度排序，逐项列文件/证据和最小返修动作；若无，明确“无阻断性文档缺陷”
+- 11 个候选的逐项裁决表：ID、结论、是否进入 P0–P3 计数、severity/priority、依据、建议后续 Task/验证
+- AUDIT-11-INC-001 裁决（明确仍未知的事实）
+- P0–P3 和 finding 总计核验
+- R1–R4 次序意见
+- Release Gate 决定
+- AC1–AC4 与 Task 生命周期建议
+- 明确列出没有执行的检查及边界
+
+仅依据仓库内可核验资料；如果证据不足，结论写明 unknown 并给出最小、非破坏性的后续步骤。

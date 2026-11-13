@@ -8,7 +8,7 @@ resume_status: in_progress
 approval: user_approved
 suggested_owner: Codex
 owner: Codex
-reviewer: ZCode (fresh independent context after delivery)
+reviewer: "Codex (fresh independent context after delivery; fallback ZCode if unavailable)"
 depends_on: []
 base_commit: 10e4ee013835605800d3830fb960ae8d3aa04167
 branch: main
@@ -541,3 +541,10 @@ DSH 接任 Lead / Architect / Integrator（见 `doc/GOVERNANCE_TAKEOVER_2026-10-
 - 治理门禁：阶段提交 `e0bbe10c3` 后首轮 default/TaskPath check 因 `doc/STATUS.md` 超预算而 EXIT 1；修正提交 `c3bd266cb` 后在 generated HEAD=`c3bd266cb01007b8e9da679790433a149dfdc00e` 复跑，default/TaskPath 各 EXIT 0（各 3 warnings）、18 pins EXIT 0（18/18）、API inventory EXIT 0（1/79/6=86）。Task Canonical Evidence 更新后的 HEAD=`1e9f34e03a0cf10fede372c7e6ad11ffb8777eb0` 上又四项全 EXIT 0；日志已由 commit `4177c2d31d327bb98f4bab0948449cdba223661f` 固定并列入 evidence 表。
 - 当前专项状态：AUDIT-00 limited PASS；AUDIT-01 FAIL/P2；AUDIT-02 BLOCKED；AUDIT-03、08 仍 `NOT_TESTED`（仅关联现存 probes）；AUDIT-11 阶段 FAIL、ZCode Review ACCEPT（1 个 P3 已披露）、其余面按报告保持 PARTIAL/NOT_TESTED；AUDIT-04–07、09–10、12–14 未完成。AC2/AC3/AC4 仍 PARTIAL，Release Gate BLOCKED，Task 保持 `in_progress`。
 - AUDIT-11 Review 确认：扫描器 hash 差异来自提交前删除一处尾随 ASCII 空格；静态结果 JSON hash/统计匹配，本次未重跑 scanner，不增加扫描 PASS。接下来按 DAG 执行 AUDIT-08 隔离数据库检查与 AUDIT-05/06 契约/流程审阅，再做 AUDIT-14、AUDIT-03/04/07/10/13 和可执行的 AUDIT-09/12 核验，最后完成问题去重、整改计划、Release Gate 与正式报告。
+
+## 2026-11-13 用户裁决：最终独立 Review 与裁决改为 Codex 优先
+
+- 用户 2026-11-13 指示：“调整流程，裁决交给 codex 或者 zcode，优先 codex”。本 Task 的最终独立 Review 与候选/finding 裁决改为 **Codex 优先**；Codex 不可用或不适配时回退 **ZCode**。历史 ZCode 裁决、Review 与 evidence pin 原字节保留，不追改、不据此恢复 ZCode 独占裁决。
+- Reviewer 字段同步更新为 Codex（fresh independent context；fallback ZCode）。Review 仍须上下文独立：产出该变更的同一会话/实例不得自审；本 Task 由 DSH 集成，Codex 以新上下文做只读 Review。
+- ZCode provider 额度失败（1310/429，reset 2026-11-17 18:40:33）不再阻塞 Review 路径；Codex CLI 0.162.0 于 2026-11-13 探测 EXIT 0（session `01a1d4c6-e6b0-7df2-9a05-4ddc83a50712`），已具备派发条件。
+- 该裁决不改变 Task 状态、AC1–AC4、Release Gate BLOCKED，也不授权修改产品源码、既有测试、契约、Schema、依赖、真实用户数据或 Git 历史。

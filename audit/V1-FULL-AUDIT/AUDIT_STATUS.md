@@ -5,7 +5,7 @@
 
 段 B 状态为 00 limited PASS；01/03/08/11 FAIL；02 BLOCKED；04–07、09、10、12–14 PARTIAL。台账有 3 项已 triage finding、1 项 INVESTIGATE、11 项待 ZCode 裁决候选、1 项已披露关闭的非产品 P3 observation。AC2/AC3/AC4 保持 PARTIAL，Release Gate BLOCKED。
 
-ZCode plan-mode Review 仍因 provider quota `1310`（HTTP 429）在 session/response 前 EXIT 1；2026-11-13 19:36 本地最小 plan 复核再次失败，reset 提示 2026-11-17 18:40:33，证据 `logs/zcode-final-review-probe-20261113T1935Z.log`、`evidence/zcode-final-review-probe-20261113T1935Z.json`。该探测不构成 Review；11 个候选与 `AUDIT-11-INC-001` 仍待 ZCode 裁决，最终 fresh-context Review NOT_RUN。AC4 保持 PARTIAL，Task 保持 in_progress，Release Gate 保持 BLOCKED。
+ZCode plan-mode Review 仍因 provider quota `1310`（HTTP 429）在 session/response 前 EXIT 1（2026-11-13 19:36 复核仍失败，reset 2026-11-17 18:40:33）。按 2026-11-13 用户裁决，最终 Review 与候选裁决改为 Codex 优先：Codex CLI 0.162.0 探测 EXIT 0（session `01a1d4c6-e6b0-7df2-9a05-4ddc83a50712`），Codex fresh-context Review 已派发/待结果；11 个候选与 `AUDIT-11-INC-001` 仍未裁决。AC4 保持 PARTIAL，Task 保持 in_progress，Release Gate 保持 BLOCKED。
 
 ## 先前阶段状态（由以上检查点更新）
 

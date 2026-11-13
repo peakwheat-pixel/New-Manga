@@ -2,7 +2,7 @@
 
 ## 当前执行点（2026-11-13）
 
-AUDIT-00–14 均已有段 B 结果或具名限制，详见 AUDIT_TASKS.md 与专项报告。P7 编号交付册、去重台账、整改路线、BLOCKED Release Gate 和 FINAL_AUDIT_REPORT 已提交于 3fc756a1aed8ca366ac0b324ff293cc3e1f9ebb0。最新已 pin gate batch generated HEAD=77310033f77d5b793fe4ff3734e1ba7cf049c06c、commit=e61a271fb06f708db67e465be87a396fffc92c47；四项均 EXIT 0。ZCode fresh-context Review 两次均因 provider quota `1310` 在产生 session/response 前 EXIT 1；不得视作 Review 或 adjudication。provider reset 提示为 2026-11-17 18:40:33；届时或 ZCode provider 可用后，以届时 clean HEAD 重派 Review。Task 保持 in_progress，AC2/AC3/AC4 PARTIAL，Release Gate 保持 BLOCKED。
+AUDIT-00–14 均已有段 B 结果或具名限制，详见 AUDIT_TASKS.md 与专项报告。P7 编号交付册、去重台账、整改路线、BLOCKED Release Gate 和 FINAL_AUDIT_REPORT 已提交于 3fc756a1aed8ca366ac0b324ff293cc3e1f9ebb0。最新已 pin gate batch generated HEAD=77310033f77d5b793fe4ff3734e1ba7cf049c06c、commit=e61a271fb06f708db67e465be87a396fffc92c47；四项均 EXIT 0。ZCode fresh-context Review 两次均因 provider quota `1310` 在产生 session/response 前 EXIT 1；不得视作 Review 或 adjudication。2026-11-13 用户裁决最终 Review 与裁决改为 Codex 优先、ZCode 回退；Codex CLI 0.162.0 探测 EXIT 0，已以届时 clean HEAD 派发 Codex fresh-context 只读 Review。Task 保持 in_progress，AC2/AC3/AC4 PARTIAL，Release Gate 保持 BLOCKED。
 
 P0: AUDIT-00 基线盘点 → P1: AUDIT-01/02 架构/静态 → P2: AUDIT-03/08 导入/数据 → P3: AUDIT-04/05/06/07 OCR/SFX/翻译/图像 → P4: AUDIT-09 UI → P5: AUDIT-10/11/12 性能/安全/交付 → P6: AUDIT-13/14 E2E/需求覆盖 → P7: 去重整改 → P8: 证据复核/Release Gate。
 
