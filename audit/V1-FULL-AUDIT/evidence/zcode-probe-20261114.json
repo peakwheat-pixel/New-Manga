@@ -1,0 +1,16 @@
+{
+  "schema": "zcode-probe/v1",
+  "generated_at_local": "2026-11-14T00:37:00+08:00",
+  "mode": "plan",
+  "locale": "zh-CN",
+  "exit": 1,
+  "stdout_bytes": 2,
+  "session_id": null,
+  "response": null,
+  "error_summary": "Select a model before sending a message; ERA_NEGOTIATION_FAILED",
+  "raw_stderr_path": "G:\\CODEX\\New Manga.workspace\\task-envs\\NEW-MANGA-V1-FULL-AUDIT\\zcode-probe-20261114\\stderr.txt",
+  "raw_stderr_bytes": 154548,
+  "raw_stderr_sha256": "A85F6735F682F065E3FA86DC63A0E84217C3276385E642171F4CE3B7BB5959B4",
+  "review_result": "NO_RESPONSE_NOT_A_REVIEW",
+  "note": "ZCode still unavailable; error type differs from quota 1310. Codex fallback reviews remain the only executed reviews."
+}

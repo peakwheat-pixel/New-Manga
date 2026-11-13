@@ -49,6 +49,8 @@
 
 - 2026-11-14 Codex 回退第十一轮复审见 `reports/CODEX-FINAL10-REVIEW-2026-11-14.md` 及配套 evidence/log；用户 2026-11-14 裁决最终裁决改为 ZCode 优先、Codex 回退。
 
+- `logs/zcode-probe-20261114.log`、`evidence/zcode-probe-20261114.json`：2026-11-14 ZCode 可用性复核；EXIT 1、无 session/response、错误 `Select a model` / `ERA_NEGOTIATION_FAILED`；不构成 Review。
+
 ## 2026-11-13 P7 DSH 集成核验与 ZCode 额度复核
 
 - `reports/P7-INTEGRATION-CONSISTENCY-CHECK-2026-11-13.md`：DSH 集成核验记录（非 ZCode Review）；371 条 Canonical Evidence 复算、14 条 worktree/BLOB 基准更正、报告计数/AC/R1–R4/Gate 一致性与文档漂移清单。

@@ -1,0 +1,11 @@
+ZCode availability probe (after 2026-11-14 ZCode-first ruling)
+generated_at_local=2026-11-14T00:37:00+08:00
+mode=plan locale=zh-CN prompt=只回复两个字：收到
+exit=1
+stdout_bytes=2 (CRLF only)
+raw_stderr_bytes=154548
+raw_stderr_sha256=A85F6735F682F065E3FA86DC63A0E84217C3276385E642171F4CE3B7BB5959B4
+raw_stderr_path=G:\CODEX\New Manga.workspace\task-envs\NEW-MANGA-V1-FULL-AUDIT\zcode-probe-20261114\stderr.txt
+error_summary=Select a model before sending a message (traceId 29974ca7-...); code ERA_NEGOTIATION_FAILED; Node.js v24.15.0
+interpretation=ZCode provider/model selection failed before any review content; this probe is NOT a Review and produces no session/response.
+note=Error type differs from prior quota 1310/429; not remediated in this Task (no ZCode config changes). Original stderr contains bundle source fragments and stays in Task workspace.
