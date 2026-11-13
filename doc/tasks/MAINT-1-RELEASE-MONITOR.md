@@ -186,3 +186,10 @@ NEW-MANGA-V1-FULL-AUDIT 与 R1–R4 整改、SEC-01/02/03、CORE-01、AUDIT-07/0
 - **处置**：不开产品修复卡；登记为测试支撑缺口，路线 (a) 修 fixture / (b) 仓储容错 留待裁决。
 - **DoD §4**：失败已归因未消除，仍不写全绿。
 - **会话预算**：已近上限，下一轮建议新会话按 `CHECKPOINT.md` 续跑。
+
+### 轮次 16（2026-11-14）
+
+- **P11 裁决完成**：[custom_rank 裁决](../reviews/MAINT-1-P11-CUSTOM-RANK-ADJUDICATION.md)。源码 `schema.py:930-932` 证实生产路径有 v12 迁移，故取**路线 (a) 修 fixture**，不改产品代码/契约；路线 (b) 仓储容错会弱化 SELECT 列清单。
+- **下一会话派发**：Owner Codex，范围仅 `tests/fea11/test_source_scan.py` 的 fixture 建库逻辑；验收＝该用例通过 + 全量 pytest 0 failed + 门禁不降。
+- **DoD §4**：用例通过前仍为「有条件达成」。
+- **会话预算**：已到上限，后续按 `CHECKPOINT.md` 新会话续跑。
