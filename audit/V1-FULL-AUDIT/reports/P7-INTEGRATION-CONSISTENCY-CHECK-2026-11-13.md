@@ -21,6 +21,8 @@
 
 **处置：** 按上述基准把 14 行的记录值更正为对应 commit 的 raw Git BLOB SHA-256；`class`/`sha256_basis`/`path`/`commit` 不变。逐项旧值/新值见 `evidence/task-card-pin-correction-20261113.json`。复算原始输出分两份：更正前（对从 `HEAD` 精确导出的 133,609 字节原卡副本运行，`TASK` 指向该副本）为 `logs/task-card-pin-recompute-20261113-pre-correction.log` / `evidence/task-card-pin-recompute-20261113-pre-correction.json`，**357 pass / 14 fail**；更正后（当前 Task 卡）为 `logs/task-card-pin-recompute-20261113.log` / `evidence/task-card-pin-recompute-20261113.json`，**371/371 PASS、failed=0**。
 
+**pinbackfill 后复核：** 本轮回填新增 27 条 pins（ZCode 额度复核 3、复算/更正 6、报告/脚本 2、52b86d39 gate batch 8、ed17a790 gate batch 8）后，Task 卡共 398 条 pins；按同一 BLOB 算法复算 **398/398 PASS**，见 `logs/task-card-pin-recompute-20261113-final.log`、`evidence/task-card-pin-recompute-20261113-final.json`。
+
 **待 ZCode 复核：** 是否接受该更正；是否需要把本审计其他文档（例如历史报告）中的 worktree SHA-256 标注统一标注为 WORKTREE 基准。
 
 ## 2. 报告与台账一致性

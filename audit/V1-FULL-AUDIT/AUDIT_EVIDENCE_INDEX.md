@@ -5,7 +5,8 @@
 - `reports/P7-INTEGRATION-CONSISTENCY-CHECK-2026-11-13.md`：DSH 集成核验记录（非 ZCode Review）；371 条 Canonical Evidence 复算、14 条 worktree/BLOB 基准更正、报告计数/AC/R1–R4/Gate 一致性与文档漂移清单。
 - `tests/verify_canonical_evidence.py`：Task 卡 Canonical Evidence 只读复算器（`git cat-file` 定位 commit/path 并重算 raw Git BLOB SHA-256）。
 - `logs/task-card-pin-recompute-20261113-pre-correction.log`、`evidence/task-card-pin-recompute-20261113-pre-correction.json`：更正前复算（任务卡字节由 `HEAD:doc/tasks/NEW-MANGA-V1-FULL-AUDIT.md` 精确导出、133,609 bytes）；357 pass / 14 fail，generated HEAD=`48ccb75ce1a547cf89e4d38cd577b868e15de5ce`。
-- `logs/task-card-pin-recompute-20261113.log`、`evidence/task-card-pin-recompute-20261113.json`：更正后复算（当前 Task 卡）；371/371 pass、0 fail，generated HEAD=`48ccb75ce1a547cf89e4d38cd577b868e15de5ce`。
+- `logs/task-card-pin-recompute-20261113.log`、`evidence/task-card-pin-recompute-20261113.json`：更正后复算（当时 Task 卡 371 条）；371/371 pass、0 fail，generated HEAD=`48ccb75ce1a547cf89e4d38cd577b868e15de5ce`。
+- `logs/task-card-pin-recompute-20261113-final.log`、`evidence/task-card-pin-recompute-20261113-final.json`：本轮回填 27 条新 pins 后的最终复算（Task 卡 398 条，同一 BLOB 算法）；398/398 pass、0 fail。
 - `evidence/task-card-pin-mismatch-investigation-20261113.json`：14 项不匹配根因调查（记录值 = worktree CRLF 字节；对 commit BLOB 做 LF→CRLF 变换后 14/14 精确匹配）。
 - `evidence/task-card-pin-correction-20261113.json`：14 项 pin 的旧值/新值对照，依据 ZCode AUDIT-08 closure review 的 BLOB 基准。
 - `logs/zcode-final-review-probe-20261113T1935Z.log`、`evidence/zcode-final-review-probe-20261113T1935Z.json`、`evidence/zcode-final-review-probe-20261113T1935Z.stderr-sanitized.txt`：2026-11-13 19:36 本地 ZCode 最小 plan 探测；provider `1310` / HTTP 429、EXIT 1、stdout 仅 CRLF、无 session/response；原始 stdout/stderr 保留于 Task workspace 并记录 SHA-256。该探测不构成 Review。

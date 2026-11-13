@@ -35,7 +35,7 @@ allowed_paths:
 - [x] AC1：固定Git/环境及有效源码清单，记录dirty和历史缺口。 <<MET>>
 - [ ] AC2：15 项专项逐项有结果或具名阻断，关键链路深读与测试。 <<PARTIAL: 00 limited PASS；01/03/08/11 FAIL；02 BLOCKED；04–07、09、10、12–14 PARTIAL。09/10/12/13 均已有实际阶段报告但仍有覆盖限制。广泛 suite：pytest 3,519 passed/16 failed/10 skipped/EXIT 1；.NET 8/8 runner EXIT 1、TRX 0；smoke EXIT 1；AUDIT-13 Core acceptance 31 passed/0 skipped/EXIT 0。真实模型/GT/付费 API、完整编辑与导出 UI、accessibility/DPI、clean Windows install/upgrade/rollback/uninstall、长时 soak 与完整 shell 流程具名 NOT_RUN；V1 commitment count NOT_COUNTABLE>>
 - [ ] AC3：完整日志、去重问题台账、整改路线、正式报告和 Release Gate 落盘。 <<PARTIAL: 原始清单 00_BASELINE.md、01_PROJECT_INVENTORY.md、02–13 与 FINAL_AUDIT_REPORT.md 均已提交；reports/11_ISSUES.md 汇总 3 项 triaged finding、1 项 INVESTIGATE、11 项 REVIEW_PENDING 候选及 1 项关闭的非产品观察，reports/12_REMEDIATION_PLAN.md 与 reports/13_RELEASE_GATE.md 已落盘。候选严重度/需求归属和最终独立 Review 待 ZCode 裁决>>
-- [ ] AC4：独立复核、证据 pin 和治理检查可核验；未满足不得置 done。 <<PARTIAL: P7 编号报告与 AUDIT-09/10/12/13 关键证据已固定；当前 Canonical Evidence pinbackfill 包含 7 条 ZCode 派发失败证据及 generated HEAD=77310033 的四项 gate 证据，gate evidence commit=e61a271fb06f708db67e465be87a396fffc92c47：default/TaskPath 各 3 warnings、EXIT 0；18 pins EXIT 0；API 1/79/6=86 EXIT 0。该卡面 pinbackfill 后仍须重跑门禁。ZCode fresh Review 两次因 provider quota 1310 在 session/response 前 EXIT 1，非 Review；AUDIT-08 P3-4 fresh re-review 与最终集成结论也尚未完成>>
+- [ ] AC4：独立复核、证据 pin 和治理检查可核验；未满足不得置 done。 <<PARTIAL: 2026-11-13 DSH 集成核验复算 371 条 pins，14 条 AUDIT-03/04 记录误用 worktree SHA-256 而 basis=BLOB，按 ZCode AUDIT-08 的 BLOB 基准更正后 371/371 匹配；新增 ed17a790（commit=48ccb75c）与本轮 52b86d39 四项 EXIT 0 gate batch、ZCode 额度复核与 pin 复算/更正证据 pin。ZCode fresh Review 仍因 provider quota 1310 在 session/response 前 EXIT 1（2026-11-13 19:36 复核仍失败，reset 2026-11-17 18:40:33），非 Review；11 候选、AUDIT-11-INC-001、AUDIT-08 P3-4 fresh re-review 与最终集成结论尚未完成>>
 
 ## 允许修改范围
 仅frontmatter所列。审计日志/测试脚本由主控单一写入。三名子代理只读同一固定产品HEAD，无并发写入。用户显式审计目录优先于常规verification路径；运行派生产物放相邻workspace task-env。
@@ -431,6 +431,34 @@ src/**、apps/**、原有tests/**、共享契约、Schema、依赖、真实用�
 | P7-FINAL-API-LOG-1 | AC4（generated HEAD=a3a429cc；API 1/79/6=86/EXIT 0） | `audit/V1-FULL-AUDIT/logs/audit-post-evidence-a3a429cc-api.log` | `7b2945d0dea541a06da21cc9c576f247e403d86c` | `13022358E71D67D62097F70F701744A0C42375C5335CDFE1C2BED972941AEA98` | CANONICAL | BLOB |
 | P7-FINAL-API-RESULT-1 | AC4（API inventory argv/UTC/HEAD/EXIT metadata） | `audit/V1-FULL-AUDIT/evidence/audit-post-evidence-a3a429cc-api.json` | `7b2945d0dea541a06da21cc9c576f247e403d86c` | `8B4BF72F5707AC3746FA227934F6056045F1AAA3CC664EDF610DFB5053E325D5` | CANONICAL | BLOB |
 
+| ZCODE-QUOTA-RECHECK-LOG-1 | AC2/AC4（ZCode 额度复核，不构成 Review） | `audit/V1-FULL-AUDIT/logs/zcode-final-review-probe-20261113T1935Z.log` | `4902c8b64` | `60A95AD56BB95BACF5BB17D96F2C762FFE986B1DEE1466176345E920B57A1773` | CANONICAL | BLOB |
+| ZCODE-QUOTA-RECHECK-RESULT-1 | AC4（探测 argv/UTC/HEAD/EXIT/哈希元数据） | `audit/V1-FULL-AUDIT/evidence/zcode-final-review-probe-20261113T1935Z.json` | `4902c8b64` | `11D8C4A0EA2841F05AC66EB5DB814E505553F3E7E5C9F40565751ED07B95CDBE` | CANONICAL | BLOB |
+| ZCODE-QUOTA-RECHECK-STDERR-1 | AC4（脱敏 provider/额度回执；非 Review） | `audit/V1-FULL-AUDIT/evidence/zcode-final-review-probe-20261113T1935Z.stderr-sanitized.txt` | `4902c8b64` | `553E157967A0759344F7DD7F4328AB7F6FE17A7725B3F118EE2A637056BDBDD0` | CANONICAL | BLOB |
+| P7-PIN-RECOMPUTE-PRE-LOG-1 | AC4（更正前复算：357 pass / 14 fail） | `audit/V1-FULL-AUDIT/logs/task-card-pin-recompute-20261113-pre-correction.log` | `4902c8b64` | `A10305B2B6BFE3AECF17FE24EB0F94AC2CCADA32BBF9265FC5989AC1BF2BD41F` | CANONICAL | BLOB |
+| P7-PIN-RECOMPUTE-PRE-RESULT-1 | AC4（更正前逐行复算 JSON） | `audit/V1-FULL-AUDIT/evidence/task-card-pin-recompute-20261113-pre-correction.json` | `4902c8b64` | `0CA647313DF290E39982BF3E6233510E54E72C0601F853CE12A7BC77FA6F386C` | CANONICAL | BLOB |
+| P7-PIN-RECOMPUTE-LOG-1 | AC4（更正后复算：371/371 pass） | `audit/V1-FULL-AUDIT/logs/task-card-pin-recompute-20261113.log` | `4902c8b64` | `4BFCA1ED758AFAF5D633CC2EFB6D97B6462B7805483C2CED9661235792E2A20D` | CANONICAL | BLOB |
+| P7-PIN-RECOMPUTE-RESULT-1 | AC4（更正后逐行复算 JSON） | `audit/V1-FULL-AUDIT/evidence/task-card-pin-recompute-20261113.json` | `4902c8b64` | `5E268198343EEC5B03819AA393E5AF02A17090579475434C5EC40ACB2AC01737` | CANONICAL | BLOB |
+| P7-PIN-MISMATCH-INVESTIGATION-1 | AC4（14 项 worktree/blob 基准根因调查） | `audit/V1-FULL-AUDIT/evidence/task-card-pin-mismatch-investigation-20261113.json` | `4902c8b64` | `92C3780797298BCAF22F92F05C86682CFACCAAB67C01671FB7F81828A2B38698` | CANONICAL | BLOB |
+| P7-PIN-CORRECTION-1 | AC4（14 项 pin 旧值/新值更正记录） | `audit/V1-FULL-AUDIT/evidence/task-card-pin-correction-20261113.json` | `4902c8b64` | `E40A56E93C1CB4C965D3F1E04C5543ED5850B11A92CD570A1C7F6D62E1FC64F8` | CANONICAL | BLOB |
+| P7-INTEGRATION-CHECK-1 | AC3/AC4（DSH 集成一致性核验记录） | `audit/V1-FULL-AUDIT/reports/P7-INTEGRATION-CONSISTENCY-CHECK-2026-11-13.md` | `4902c8b64` | `1290885A7A47F91D3CA227739ED105425140414EF4E650C58E04D63BCD51AF6A` | CANONICAL | BLOB |
+| P7-PIN-RECOMPUTE-SOURCE-1 | AC4（Canonical Evidence 复算器源码） | `audit/V1-FULL-AUDIT/tests/verify_canonical_evidence.py` | `4902c8b64` | `554F4C5A2EE17D8A1C7A9A3388716950BC94DF779A30D67255A8C46DD384160A` | CANONICAL | BLOB |
+| QUOTA-CHECK-GATE-DEFAULT-LOG-1 | AC4（generated HEAD=52b86d39；default check 3 warnings/EXIT 0） | `audit/V1-FULL-AUDIT/logs/audit-post-evidence-52b86d39-default.log` | `a021083cd` | `EBA944B8D07637EABD6B0F0A9060F47F065D6AC34CA0AA0138E224F2C33C01B4` | CANONICAL | BLOB |
+| QUOTA-CHECK-GATE-DEFAULT-RESULT-1 | AC4（default check argv/UTC/HEAD/EXIT metadata） | `audit/V1-FULL-AUDIT/evidence/audit-post-evidence-52b86d39-default.json` | `a021083cd` | `B1FCF5B65B17A730B7D397239633BE6240B4B138046567E868665CCF21A313FE` | CANONICAL | BLOB |
+| QUOTA-CHECK-GATE-TASKPATH-LOG-1 | AC4（generated HEAD=52b86d39；TaskPath check 3 warnings/EXIT 0） | `audit/V1-FULL-AUDIT/logs/audit-post-evidence-52b86d39-taskpath.log` | `a021083cd` | `41E44F009529A787A8A8B3DCAB15A524BCF29EF82481B58051497AB6E8E5445F` | CANONICAL | BLOB |
+| QUOTA-CHECK-GATE-TASKPATH-RESULT-1 | AC4（TaskPath check metadata） | `audit/V1-FULL-AUDIT/evidence/audit-post-evidence-52b86d39-taskpath.json` | `a021083cd` | `80A7CAE6D89F94331EE40EE6E526BD04949421BEC8C78A55FBB0D17D13213BDE` | CANONICAL | BLOB |
+| QUOTA-CHECK-GATE-PINS-LOG-1 | AC4（generated HEAD=52b86d39；verify_pins 18/18/EXIT 0） | `audit/V1-FULL-AUDIT/logs/audit-post-evidence-52b86d39-pins.log` | `a021083cd` | `9B6F60205A7962C9CF8F01E0FDE2AD0C9613506810496C12A854B66F9A746E68` | CANONICAL | BLOB |
+| QUOTA-CHECK-GATE-PINS-RESULT-1 | AC4（verify_pins metadata） | `audit/V1-FULL-AUDIT/evidence/audit-post-evidence-52b86d39-pins.json` | `a021083cd` | `D71835037E48E904400E5857FDE3BB85FB01342C7DE75F44648E74C4873CE2F6` | CANONICAL | BLOB |
+| QUOTA-CHECK-GATE-API-LOG-1 | AC4（generated HEAD=52b86d39；API 1/79/6=86/EXIT 0） | `audit/V1-FULL-AUDIT/logs/audit-post-evidence-52b86d39-api.log` | `a021083cd` | `A460657E65129081EB200B68FD2F6DBA76143E4C3ED9DE3EA792015864D9E8B1` | CANONICAL | BLOB |
+| QUOTA-CHECK-GATE-API-RESULT-1 | AC4（API inventory metadata） | `audit/V1-FULL-AUDIT/evidence/audit-post-evidence-52b86d39-api.json` | `a021083cd` | `7A5F7799CBD9849F9AFA2F052815DA383BE05C65A0BE48A4BE6C1A05E4EDF0BD` | CANONICAL | BLOB |
+| QUOTA-POSTPIN-GATE-DEFAULT-LOG-1 | AC4（generated HEAD=ed17a790；default EXIT 0） | `audit/V1-FULL-AUDIT/logs/audit-post-evidence-ed17a790-default.log` | `48ccb75ce` | `667B07F4AA9C43FA701160EF0CCE80BB1BED1398D94DCEA65C6D87ECA4AABE90` | CANONICAL | BLOB |
+| QUOTA-POSTPIN-GATE-DEFAULT-RESULT-1 | AC4（gate metadata） | `audit/V1-FULL-AUDIT/evidence/audit-post-evidence-ed17a790-default.json` | `48ccb75ce` | `77EDA79081C9312E629480253973B1C6F2BBC388B187F447595A82911FC16E1A` | CANONICAL | BLOB |
+| QUOTA-POSTPIN-GATE-TASKPATH-LOG-1 | AC4（generated HEAD=ed17a790；taskpath EXIT 0） | `audit/V1-FULL-AUDIT/logs/audit-post-evidence-ed17a790-taskpath.log` | `48ccb75ce` | `87548FBCBB443261C0DD45817785CD7F01166CD1542AB8F23CF5B142E6446399` | CANONICAL | BLOB |
+| QUOTA-POSTPIN-GATE-TASKPATH-RESULT-1 | AC4（gate metadata） | `audit/V1-FULL-AUDIT/evidence/audit-post-evidence-ed17a790-taskpath.json` | `48ccb75ce` | `0CC053D62D1D318CA0501ADF6F4EDEB9DDC53021ACB5C9A4070B0D26E06F92EA` | CANONICAL | BLOB |
+| QUOTA-POSTPIN-GATE-PINS-LOG-1 | AC4（generated HEAD=ed17a790；pins EXIT 0） | `audit/V1-FULL-AUDIT/logs/audit-post-evidence-ed17a790-pins.log` | `48ccb75ce` | `D9A582A97B13782C0C6AB84310B92247D02F53CEB4E9579F0BE19A9FB70CD0FD` | CANONICAL | BLOB |
+| QUOTA-POSTPIN-GATE-PINS-RESULT-1 | AC4（gate metadata） | `audit/V1-FULL-AUDIT/evidence/audit-post-evidence-ed17a790-pins.json` | `48ccb75ce` | `10A4FB23A5C0F5E2104D72CD91EEBD2D48B9E608DB4F0DB5BFA468145E2D5EE6` | CANONICAL | BLOB |
+| QUOTA-POSTPIN-GATE-API-LOG-1 | AC4（generated HEAD=ed17a790；api EXIT 0） | `audit/V1-FULL-AUDIT/logs/audit-post-evidence-ed17a790-api.log` | `48ccb75ce` | `61D2DB9B745CF0DA8E8E5B4B9AC918442B22E1E6256536949E4BA06869938A6F` | CANONICAL | BLOB |
+| QUOTA-POSTPIN-GATE-API-RESULT-1 | AC4（gate metadata） | `audit/V1-FULL-AUDIT/evidence/audit-post-evidence-ed17a790-api.json` | `48ccb75ce` | `F4E6B59088B115D4FFF1A786774B28227E3949AFA6F152A4AFD35661AE067FDE` | CANONICAL | BLOB |
+
 说明：裁决文档中记录的阶段 0 日志 `B561…` 是提交前 WORKTREE SHA-256；本表按模板使用 Git BLOB 字节，完整 SHA-256 为 `7E2A…`。
 
 ## Resource Manifest
@@ -444,7 +472,7 @@ src/**、apps/**、原有tests/**、共享契约、Schema、依赖、真实用�
 | exchange | — | NOT_APPLICABLE | — | — | 无外部传输 |
 
 ## Rolling checkpoint
-[audit/V1-FULL-AUDIT/AUDIT_RESUME.md](../../audit/V1-FULL-AUDIT/AUDIT_RESUME.md) 顶部 2026-11-13 P7 检查点为最新恢复入口。Canonical Evidence 已固定 generated HEAD=a3a429cc955f12765253a14680e79bab2389dd89 的 post-pinbackfill gate batch，commit=7b2945d0dea541a06da21cc9c576f247e403d86c；四项均 EXIT 0。当前 Task card commit 后的更新门禁以 AUDIT_RESUME 顶部记录，按滚动 pin 规则下次回填。全审 Review 与候选 adjudication 待 ZCode；Release Gate BLOCKED，AC2/AC3/AC4 PARTIAL，Task in_progress。
+[audit/V1-FULL-AUDIT/AUDIT_RESUME.md](../../audit/V1-FULL-AUDIT/AUDIT_RESUME.md) 顶部 2026-11-13 P7 DSH 续审检查点为最新恢复入口。Canonical Evidence 已固定 ed17a790（commit=48ccb75c，四项 EXIT 0）与本轮 52b86d39（四项 EXIT 0）gate batch、ZCode 额度复核证据与 pin 复算/更正证据；更正后 BLOB pins 复算匹配。全审 ZCode Review 因 provider quota 仍 NOT_RUN；Release Gate BLOCKED，AC2/AC3/AC4 PARTIAL，Task in_progress。
 
 ## 2026-10-24 推送准备补充授权
 
