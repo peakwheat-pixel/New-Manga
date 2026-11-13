@@ -11,13 +11,15 @@
 
 - 返修后 gate batch generated HEAD=`076dfbb63ad7f2b63605bfc16cdd8079e96dd6b2`，四项 EXIT 0（default/TaskPath 各 3 warnings、verify_pins 18/18、API 1/79/6=86）；`logs/audit-post-evidence-076dfbb6-*.log`、`evidence/audit-post-evidence-076dfbb6-*.json`。
 
+- `reports/CODEX-REREVIEW-2026-11-13.md`、`evidence/codex-rereview-20261113.result.md`、`logs/codex-rereview-dispatch-20261113.log`、`evidence/codex-rereview-20261113.meta.json`：Codex 复审（reviewed_head=`226eb048006ffa804ebefd9f98e51bbc13793f31`，session `01a1d4f3-9736-7402-8c3e-ce701f1e2490`，EXIT 0，817.3s）；结论 REJECT，确认 428 pins 与 9 项重命名，剩余状态/计数口径与 076dfbb6 未 pin 等返修项。
+
 ## 2026-11-13 P7 DSH 集成核验与 ZCode 额度复核
 
 - `reports/P7-INTEGRATION-CONSISTENCY-CHECK-2026-11-13.md`：DSH 集成核验记录（非 ZCode Review）；371 条 Canonical Evidence 复算、14 条 worktree/BLOB 基准更正、报告计数/AC/R1–R4/Gate 一致性与文档漂移清单。
 - `tests/verify_canonical_evidence.py`：Task 卡 Canonical Evidence 只读复算器（`git cat-file` 定位 commit/path 并重算 raw Git BLOB SHA-256）。
 - `logs/task-card-pin-recompute-20261113-pre-correction.log`、`evidence/task-card-pin-recompute-20261113-pre-correction.json`：更正前复算（任务卡字节由 `HEAD:doc/tasks/NEW-MANGA-V1-FULL-AUDIT.md` 精确导出、133,609 bytes）；357 pass / 14 fail，generated HEAD=`48ccb75ce1a547cf89e4d38cd577b868e15de5ce`。
 - `logs/task-card-pin-recompute-20261113.log`、`evidence/task-card-pin-recompute-20261113.json`：更正后复算（当时 Task 卡 371 条）；371/371 pass、0 fail，generated HEAD=`48ccb75ce1a547cf89e4d38cd577b868e15de5ce`。
-- `logs/task-card-pin-recompute-20261113-final.log`、`evidence/task-card-pin-recompute-20261113-final.json`：本轮回填 27 条新 pins 后的最终复算（Task 卡 398 条，同一 BLOB 算法）；398/398 pass、0 fail。
+- `logs/task-card-pin-recompute-20261113-final.log`、`evidence/task-card-pin-recompute-20261113-final.json`：本轮回填 27 条新 pins 后的复算（当时 Task 卡 398 条，同一 BLOB 算法）；398/398 pass、0 fail；Review 返修后为 428 条（见 after-review 行）。
 - `evidence/task-card-pin-mismatch-investigation-20261113.json`：14 项不匹配根因调查（记录值 = worktree CRLF 字节；对 commit BLOB 做 LF→CRLF 变换后 14/14 精确匹配）。
 - `evidence/task-card-pin-correction-20261113.json`：14 项 pin 的旧值/新值对照，依据 ZCode AUDIT-08 closure review 的 BLOB 基准。
 - `logs/zcode-final-review-probe-20261113T1935Z.log`、`evidence/zcode-final-review-probe-20261113T1935Z.json`、`evidence/zcode-final-review-probe-20261113T1935Z.stderr-sanitized.txt`：2026-11-13 19:36 本地 ZCode 最小 plan 探测；provider `1310` / HTTP 429、EXIT 1、stdout 仅 CRLF、无 session/response；原始 stdout/stderr 保留于 Task workspace 并记录 SHA-256。该探测不构成 Review。

@@ -1,0 +1,28 @@
+{
+  "schema": "codex-final-review-dispatch/v1",
+  "kind": "re-review after repair",
+  "reviewer": "Codex (fresh independent context)",
+  "cli": "codex-cli 0.162.0",
+  "model": "gpt-6-luna",
+  "reasoning_effort": "xhigh",
+  "sandbox": "danger-full-access (read-only-instructed; read-only/workspace-write cannot spawn child processes: Windows error 740)",
+  "reviewed_head": "226eb048006ffa804ebefd9f98e51bbc13793f31",
+  "expected_head": "226eb048006ffa804ebefd9f98e51bbc13793f31",
+  "branch": "main",
+  "exit": 0,
+  "elapsed_seconds": 817.3,
+  "started_at_local": "2026-11-13T21:01:53+08:00",
+  "decision": "REJECT",
+  "result_path": "audit/V1-FULL-AUDIT/reports/CODEX-REREVIEW-2026-11-13.md",
+  "result_sha256": "A385910113A1C280BAEB3F0E2F96A5A11D10DAA429DED15081E0B37295697417",
+  "stdout_path": "audit/V1-FULL-AUDIT/evidence/codex-rereview-20261113.stdout.log",
+  "stdout_sha256": "95177284713257B4A019F2728B92D19DAF910268A9BD93EF903F07577CA9BDEB",
+  "raw_stderr_path": "G:\\CODEX\\New Manga.workspace\\task-envs\\NEW-MANGA-V1-FULL-AUDIT\\codex-rereview-20261113\\stderr.log",
+  "raw_stderr_bytes": 1194317,
+  "raw_stderr_sha256": "91CC73AE6E6F63D1303043748C57ECA3CE6810F51027056F03D9860BEEACE825",
+  "notes": [
+    "Worktree was clean before and after the review.",
+    "The review confirmed 428/428 unique pins, the 70e92876/b72363aa gate pins and the 9 renames.",
+    "Remaining blockers: stale status numbers (398 vs 428), un-pinned 076dfbb6 gates, and candidate wording still pending in detailed materials."
+  ]
+}

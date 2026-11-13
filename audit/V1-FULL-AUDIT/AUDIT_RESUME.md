@@ -6,6 +6,8 @@
 - 该裁决不改变 Task 状态、AC1–AC4、Release Gate BLOCKED，也不授权修改产品源码、既有测试、契约、Schema、依赖、真实用户数据或 Git 历史。
 - 返修后门禁：generated HEAD=`076dfbb63ad7f2b63605bfc16cdd8079e96dd6b2` 的四项门禁均 EXIT 0（default/TaskPath 各 3 warnings；verify_pins 18/18；API 1/79/6=86），原始输出 `logs/audit-post-evidence-076dfbb6-*.log`。下一步以该 clean head 派发 Codex 复审修订后的交付。
 
+- 复审（2026-11-13）：Codex 对 `reviewed_head=226eb048006ffa804ebefd9f98e51bbc13793f31` 完成返修复审（session `01a1d4f3-9736-7402-8c3e-ce701f1e2490`，EXIT 0，817.3s），结论 **REJECT**；确认 428 pins、70e/b723 gate pins 与 9 项重命名有效；剩余返修：状态/计数口径（398↔428）、076dfbb6 门禁未 pin、专项报告与台账旧 ZCode 口径、`AUDIT-14-CAND-003` 表述。报告 `reports/CODEX-REREVIEW-2026-11-13.md`。
+
 ## 2026-11-13 P7 Codex 最终独立 Review（Codex-first 裁决）
 
 - 用户裁决后，以 Codex CLI 0.162.0（`gpt-6-luna` / xhigh）对 clean HEAD=`d92859c9ac8a4d3122d6cabfe4d44af980574104` 派发全新上下文只读 Review；session `01a1d4ce-6b79-7b43-939d-834e3cdc21a9`、EXIT 0、耗时 1,911.5s、Review 前后工作树 clean。原始报告 `reports/CODEX-FINAL-REVIEW-2026-11-13.md`，派发元数据 `evidence/codex-final-review-20261113.meta.json`。
