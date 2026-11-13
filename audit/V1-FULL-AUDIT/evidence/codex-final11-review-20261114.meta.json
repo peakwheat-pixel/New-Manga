@@ -1,0 +1,26 @@
+{
+  "schema": "codex-final-review-dispatch/v1",
+  "kind": "twelfth review / final fallback (ZCode unavailable)",
+  "reviewer": "Codex (fresh independent context; fallback per 2026-11-14 owner ruling)",
+  "cli": "codex-cli 0.162.0",
+  "model": "gpt-6-luna",
+  "reasoning_effort": "xhigh",
+  "session_id": "01a1d5d0-8fad-7bc0-8ac5-951ac17e1d29",
+  "reviewed_head": "89e16b9d6289b58ea1d5f0faa28e060124dda86d",
+  "expected_head": "89e16b9d6289b58ea1d5f0faa28e060124dda86d",
+  "branch": "main",
+  "exit": 0,
+  "elapsed_seconds": 1111.7,
+  "started_at_local": "2026-11-14T00:52:00+08:00",
+  "decision": "ACCEPT_WITH_LIMITATIONS",
+  "result_path": "audit/V1-FULL-AUDIT/reports/CODEX-FINAL11-REVIEW-2026-11-14.md",
+  "result_sha256": "95DE38783E5EECA18AEBD284BE9362DF874703396DBF44754906913735F2082D",
+  "stdout_sha256": "B60B6E5EF0025FE6B972EC64AA932F2AB8829B55BAFEDAE14D50793A163E015A",
+  "raw_stderr_bytes": 896349,
+  "raw_stderr_sha256": "DD1995C29C7AC69DEC0B223B9E07F72894E0CCA5FC4DFC572C39F6B76C501ABD",
+  "notes": [
+    "Worktree clean; 535/535 pins verified; AC1/AC2/AC3 MET, AC4 pending DSH integration",
+    "No blocking documentation defect; remaining items are integration/closeout and rolling-gate limitation",
+    "ZCode unavailable (Select a model / missing @zcode/tui), Codex fallback used"
+  ]
+}

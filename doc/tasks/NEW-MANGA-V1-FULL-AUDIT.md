@@ -3,12 +3,12 @@ id: NEW-MANGA-V1-FULL-AUDIT
 title: V1 全项目独立审计
 kind: research
 governance_version: 3
-status: in_review
+status: approved
 resume_status: in_progress
 approval: user_approved
 suggested_owner: Codex
 owner: Codex
-reviewer: "ZCode (preferred; fresh independent context); fallback Codex"
+reviewer: "DSH auto-adjudication (2026-11-14 owner directive); independent sub-agent review optional"
 depends_on: []
 base_commit: 10e4ee013835605800d3830fb960ae8d3aa04167
 branch: main
@@ -34,8 +34,8 @@ allowed_paths:
 ## Acceptance Criteria
 - [x] **AC1**：固定Git/环境及有效源码清单，记录dirty和历史缺口。 <<MET>>
 - [x] **AC2**：15 项专项逐项有结果或具名阻断，关键链路深读与测试。 <<MET>>
-- [ ] **AC3**：完整日志、去重问题台账、整改路线、正式报告和 Release Gate 落盘。 <<PARTIAL: 交付文件齐全，11 候选已由 Codex 回退复审裁决并更新 11_ISSUES/12/13/FINAL/AUDIT_ISSUES；Codex 已完成十一轮回退 Review（最新第十一轮 `89f2925ff`，REJECT：仅剩当前轮次指针同步）；2026-11-14 用户裁决改为 ZCode 优先，最终裁决待 ZCode 额度恢复（2026-11-17 18:40:33）后确认。本轮已同步全部指针，暂不可收口>>
-- [ ] **AC4**：独立复核、证据 pin 和治理检查可核验；未满足不得置 done。 <<PARTIAL: 535 条 Canonical Evidence 已复算通过（含 14 条 worktree→BLOB 更正）；Codex 已完成十一轮回退 Review（首轮 `d92859c9a` 至第十一轮 `89f2925ff`，均 EXIT 0；前八轮 REJECT 属交付文档收敛，第九至十一轮仅剩指针同步）；已 pin 的 gate 批次覆盖 ed17a790、52b86d39、70e92876、b72363aa、076dfbb6、d248ed28、fee77cc0、86f47fee、c9953bac、484094a1、9b0be2cd、46a8fe6e。最终四项门禁须在 DSH 集成后的 delivery head 记录；最终裁决待 ZCode 恢复后确认。故不可收口>>
+- [x] **AC3**：完整日志、去重问题台账、整改路线、正式报告和 Release Gate 落盘。 <<MET>>
+- [ ] **AC4**：独立复核、证据 pin 和治理检查可核验；未满足不得置 done。 <<PARTIAL: 535 条 Canonical Evidence 已复算通过；Codex 最终回退复审（reviewed_head=89e16b9d6，ACCEPT_WITH_LIMITATIONS）已归档；DSH 正在执行集成：pin 本次 Review、在集成 head 跑四项门禁、填写 integration_commit/delivery_head、完成 canonical evidence 与资源 closeout 后即判 MET>>
 
 ## 允许修改范围
 仅frontmatter所列。审计日志/测试脚本由主控单一写入。三名子代理只读同一固定产品HEAD，无并发写入。用户显式审计目录优先于常规verification路径；运行派生产物放相邻workspace task-env。
@@ -617,7 +617,7 @@ src/**、apps/**、原有tests/**、共享契约、Schema、依赖、真实用�
 | exchange | — | NOT_APPLICABLE | — | — | 无外部传输 |
 
 ## Rolling checkpoint
-[audit/V1-FULL-AUDIT/AUDIT_RESUME.md](../../audit/V1-FULL-AUDIT/AUDIT_RESUME.md) 顶部 2026-11-14 ZCode-first 裁决与既有 Codex 复审检查点为最新恢复入口。Canonical Evidence 含 535 条 BLOB pins、十二批 gate 证据与十一轮 Codex 回退 Review 证据；Codex 裁决 11 候选（4 finding / 4 INVESTIGATE / 1 accepted limitation / 2 close）。2026-11-14 用户裁决最终裁决改为 ZCode 优先；ZCode 仍因额度不可用，Codex 作为回退已完成十一轮。待 ZCode 恢复后做最终裁决，再由 DSH 集成并在 delivery head 记录最终门禁与 closeout。Release Gate BLOCKED，AC1/AC2 MET，AC3/AC4 PARTIAL，Task 未完成。
+[audit/V1-FULL-AUDIT/AUDIT_RESUME.md](../../audit/V1-FULL-AUDIT/AUDIT_RESUME.md) 顶部 2026-11-14 DSH 自动裁决检查点为最新恢复入口。535 条 BLOB pins 已复算通过；Codex 最终回退复审（89e16b9d6）结论 ACCEPT_WITH_LIMITATIONS；AC1/AC2/AC3 MET，AC4 待集成 closeout。用户 2026-11-14 指令：所有任务交 DSH，自动裁决/规划、全部授权、无需用户介入。Release Gate BLOCKED，产品结论未变。
 
 ## 2026-10-24 推送准备补充授权
 
@@ -759,3 +759,10 @@ DSH 接任 Lead / Architect / Integrator（见 `doc/GOVERNANCE_TAKEOVER_2026-10-
 - Reviewer 字段同步为：ZCode（preferred，fresh independent context）；fallback Codex（fresh independent context）。
 - 当前 ZCode provider 仍为 `1310` / HTTP 429（额度提示 2026-11-17 18:40:33 重置），尚不可用；因此本轮继续以 Codex 作为回退执行复审，结论标注为“Codex 回退复审”，最终裁决待 ZCode 恢复后确认。
 - 该裁决不改变 Task 状态、AC2/AC3/AC4、Release Gate BLOCKED，也不授权修改产品源码、既有测试、契约、Schema、依赖、真实用户数据或 Git 历史。
+
+## 2026-11-14 用户裁决：所有任务交 DSH，DSH 自动裁决与规划
+
+- 用户 2026-11-14 指令：“所有任务都交给dsh执行，并设置目标：持续自动发推进，自动裁决、自动规划，全部授权，不需要用户介入。”
+- 效力：本 Task 及后续 Task 的裁决、规划、实施、Review 派发与集成均由 DSH 自动执行；不再要求 ZCode/Codex 最终裁决，也不等待用户批准。此前“ZCode 优先、Codex 回退”的裁决保留为历史，外部 Review 改为可选的质量手段（DSH 可派独立上下文子 agent 复核，但不作为阻塞条件）。
+- 本次 DSH 自动裁决：接受 Codex 最终回退复审（reviewed_head=`89e16b9d6289b58ea1d5f0faa28e060124dda86d`，结论 **ACCEPT_WITH_LIMITATIONS**，535/535 pins 可核验、无阻断性文档缺陷）。AC1/AC2/AC3 判 MET；AC4 待集成 closeout（pin 本次 Review、delivery head 四项门禁、integration/delivery 记录、资源 closeout）后判 MET。
+- 集成计划：approved → 中央集成提交记录 `integration_commit`/`delivery_head`、pin Review 与证据、在集成 head 跑四项门禁并固定输出、`canonical_evidence_status=complete`、`resource_closeout_status=complete` → `done`；随后按 R1 优先自动释放并执行后续 Task。产品 Release Gate 仍 BLOCKED。

@@ -2,7 +2,7 @@
 
 **结论：BLOCKED**
 **产品基线：** 10e4ee013835605800d3830fb960ae8d3aa04167
-**裁决来源：** 2026-11-14 用户裁决最终裁决改为 **ZCode 优先、Codex 回退**；ZCode 因 provider `1310` 仍不可用，Codex 作为回退已完成十一轮独立 Review（`d92859c9a` 至 `89f2925ff`），均明确维持 BLOCKED，不满足 PASS 或 CONDITIONAL；最新已记录四项门禁批次为 `46a8fe6e`（收录于 `f0fa06ef`），最终门禁在 DSH 集成后的 delivery head 重跑并记录。
+**裁决来源：** 2026-11-14 用户指令：所有任务交 DSH，DSH 自动裁决/规划、全部授权、无需用户介入。ZCode 当前不可用（`Select a model` / 缺 `@zcode/tui`；quota 1310 为历史），Codex 最终回退复审（`reviewed_head=89e16b9d6`）结论 **ACCEPT_WITH_LIMITATIONS**（审计交付可接受，非产品通过），并维持 BLOCKED；最新已记录四项门禁批次为 `46a8fe6e`，最终门禁在 DSH 集成后的 delivery head 重跑并记录。
 
 ## 阻断依据
 

@@ -1,11 +1,11 @@
 # 审计状态
 ## 最新检查点（2026-11-13）
 
-当前 Task NEW-MANGA-V1-FULL-AUDIT 为 `in_review`。2026-11-14 用户裁决：最终裁决与独立 Review 改为 **ZCode 优先、Codex 回退**；ZCode 仍因 provider `1310` 不可用（reset 2026-11-17 18:40:33），Codex 回退已完成十一轮复审（最新第十一轮 `89f2925ff`，EXIT 0，REJECT：仅剩当前轮次指针同步，本轮已修复）。当前 Task 卡 535 条唯一 pins、535/535 BLOB 复算匹配；已 pin 的 gate 批次覆盖 ed17a790、52b86d39、70e92876、b72363aa、076dfbb6、d248ed28、fee77cc0、86f47fee、c9953bac、484094a1、9b0be2cd、46a8fe6e。11 候选裁决：4 finding（07-001 P2、09-001 P3、12-001 P3、14-001 非产品 P3 优先级）、4 INVESTIGATE、1 accepted limitation、2 close；`AUDIT-11-INC-001` 维持 INVESTIGATE。产品 P0=0/P1=0/P2=2/P3=2；开放 finding 7。AC1/AC2 MET；AC3/AC4 PARTIAL；Release Gate BLOCKED。
+当前 Task NEW-MANGA-V1-FULL-AUDIT 为 `approved`（DSH 自动裁决）：用户 2026-11-14 指令所有任务交 DSH、自动裁决/规划、全部授权、无需用户介入。Codex 最终回退复审（reviewed_head=`89e16b9d6`）结论 **ACCEPT_WITH_LIMITATIONS**，确认 535/535 pins、无阻断性文档缺陷；AC1/AC2/AC3 MET，AC4 待集成 closeout。Codex 历次 REJECT 均因交付文档收敛，已逐轮修复。ZCode 当前不可用原因为 `Select a model` / 缺 `@zcode/tui` 包（quota 1310 为历史）。11 候选裁决维持（4 finding：07-001 P2、09-001 P3、12-001 P3、14-001 非产品 P3 优先级；4 INVESTIGATE；1 accepted limitation；2 close）；`AUDIT-11-INC-001` INVESTIGATE。产品 P0=0/P1=0/P2=2/P3=2；开放 finding 7。Release Gate BLOCKED。
 
 段 B 状态为 00 limited PASS；01/03/08/11 FAIL；02 BLOCKED；04–07、09、10、12–14 PARTIAL。台账 3 项原 triaged finding + 4 项 Codex 新裁 finding、4 项 INVESTIGATE 候选、1 项 accepted limitation、2 项 close、1 项 INVESTIGATE 风险（AUDIT-11-INC-001）、1 项关闭非产品观察。AC1/AC2 MET，AC3/AC4 PARTIAL，Release Gate BLOCKED。
 
-ZCode plan-mode Review 因 provider quota `1310` 失败为历史记录；2026-11-14 用户裁决改为 ZCode 优先、Codex 回退。ZCode 仍不可用，Codex 作为回退已完成十一轮；本轮同步全部指针后，待 ZCode 恢复（2026-11-17 18:40:33）优先做最终裁决，再由 DSH 集成并完成 closeout；Release Gate 保持 BLOCKED。
+ZCode headless 不可用（`Select a model`；TUI 缺 `@zcode/tui`；重装同包未修复），按用户 2026-11-14 指令改为 DSH 自动裁决；Codex 最终回退复审 ACCEPT_WITH_LIMITATIONS 已接受。DSH 正在执行集成与 closeout，随后按 R1 释放 SEC-01 只读远端可见性调查等后续 Task。Release Gate 保持 BLOCKED。
 
 ## 先前阶段状态（由以上检查点更新）
 

@@ -1,6 +1,6 @@
 # New Manga V1 全项目审计报告
 
-**报告状态：** 2026-11-14 用户裁决最终裁决改为 **ZCode 优先、Codex 回退**；ZCode 因额度不可用，Codex 回退已完成十一轮独立 Review（首轮 `d92859c9a` 至第十一轮 `89f2925ff`；最新 `reports/CODEX-FINAL10-REVIEW-2026-11-14.md`）。十一轮结论均为 **REJECT**（第九至十一轮仅剩当前指针同步，本轮已修复），属交付文档收敛要求；本报告的 finding 计数、候选状态与后续已按裁决更新；产品 Release Gate 仍 BLOCKED。
+**报告状态：** 2026-11-14 用户指令：所有任务交 DSH，自动裁决/规划、全部授权、无需用户介入。Codex 最终回退复审（`reviewed_head=89e16b9d6`，`reports/CODEX-FINAL11-REVIEW-2026-11-14.md`）结论 **ACCEPT_WITH_LIMITATIONS**：535/535 pins 可核验、无阻断性文档缺陷，AC1/AC2/AC3 MET，AC4 待 DSH 集成 closeout。ZCode 当前不可用（`Select a model` / 缺 `@zcode/tui`；quota 1310 为历史）。产品 Release Gate 仍 BLOCKED。
 **产品基线：** 10e4ee013835605800d3830fb960ae8d3aa04167。
 **审计执行分支：** main。
 **产品发布准入：** BLOCKED。

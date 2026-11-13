@@ -40,6 +40,8 @@
 
 - ZCode 可用性复核（2026-11-14 00:37）：最小 plan 探测 EXIT 1、stdout 仅 CRLF、无 session/response；错误为 `Select a model before sending a message` / `ERA_NEGOTIATION_FAILED`（非此前的 quota 1310）。按用户 ZCode-first 裁决，ZCode 仍不可用，未修改 ZCode 配置；证据见 `logs/zcode-probe-20261114.log` 与 `evidence/zcode-probe-20261114.json`。
 
+- 2026-11-14 用户裁决：所有任务交 DSH，DSH 自动裁决/自动规划、全部授权、无需用户介入。DSH 接受 Codex 最终回退复审（reviewed_head=89e16b9d6，ACCEPT_WITH_LIMITATIONS；535/535 pins、无阻断性文档缺陷）；AC1/AC2/AC3 MET，AC4 待集成 closeout。ZCode 当前不可用原因为 Select a model / 缺 @zcode/tui（诊断见 logs/zcode-model-selection-diagnosis-20261114.log），quota 1310 为历史尝试。
+
 ## 2026-11-13 用户裁决：最终独立 Review 与裁决改为 Codex 优先
 
 - 用户 2026-11-13 指示：“调整流程，裁决交给 codex 或者 zcode，优先 codex”。本 Task 的最终独立 Review 与候选/finding 裁决改为 **Codex 优先**；Codex 不可用或不适配时回退 **ZCode**。历史 ZCode 裁决、Review 与 evidence pin 原字节保留，不追改、不据此恢复 ZCode 独占裁决。
