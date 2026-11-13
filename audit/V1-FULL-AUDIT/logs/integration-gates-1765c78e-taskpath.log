@@ -1,0 +1,19 @@
+START_UTC=2026-11-14T01:08:00+08:00
+HEAD=1765c78ec107b3738c313d85a3e22269283ce600
+BRANCH=main
+SHELL=PowerShell 7 (manual invocation, read-only)
+INTERPRETER=pwsh
+CWD=G:\CODEX\New Manga
+ARGV=["pwsh", "-NoProfile", "-File", "tools/governance/check.ps1", "-TaskPath", "doc/tasks/NEW-MANGA-V1-FULL-AUDIT.md"]
+
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\NEW-MANGA-V1-FULL-AUDIT.md
+WARN: 存在 10 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3180 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6988 bytes / 64 lines
+WARN: evidence_dir 含未登记过程文件（归入 workspace 或列为 SOURCE_PIN）：G:\CODEX\New Manga\audit\V1-FULL-AUDIT\AUDIT_EVIDENCE_INDEX.md, G:\CODEX\New Manga\audit\V1-FULL-AUDIT\AUDIT_PLAN.md, G:\CODEX\New Manga\audit\V1-FULL-AUDIT\AUDIT_RESUME.md, G:\CODEX\New Manga\audit\V1-FULL-AUDIT\evidence\audit-post-evidence-0de08632-api.json, G:\CODEX\New Manga\audit\V1-FULL-AUDIT\evidence\audit-post-evidence-0de08632-default.json, G:\CODEX\New Manga\audit\V1-FULL-AUDIT\evidence\audit-post-evidence-0de08632-pins.json, G:\CODEX\New Manga\audit\V1-FULL-AUDIT\evidence\audit-post-evidence-0de08632-taskpath.json, G:\CODEX\New Manga\audit\V1-FULL-AUDIT\evidence\audit-post-evidence-18357fdc-api.json
+Governance check: PASS (4 warnings)
+
+EXIT=0
+TIMED_OUT=False
+ELAPSED_SECONDS=na (manual run; see AUDIT_RESUME)

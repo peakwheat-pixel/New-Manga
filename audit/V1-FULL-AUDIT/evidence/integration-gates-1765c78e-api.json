@@ -1,0 +1,17 @@
+{
+  "name": "integration-gates-1765c78e-api",
+  "argv": [
+    "C:\\Python314\\python.exe",
+    "tools/generate_api_inventory.py",
+    "--check"
+  ],
+  "cwd": "G:\\CODEX\\New Manga",
+  "started_utc": "2026-11-14T01:08:00+08:00",
+  "head": "1765c78ec107b3738c313d85a3e22269283ce600",
+  "branch": "main",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": null,
+  "log": "audit/V1-FULL-AUDIT/logs/integration-gates-1765c78e-api.log",
+  "note": "integration-candidate delivery-head gates (owned by DSH integration)"
+}
