@@ -35,6 +35,8 @@
 
 - `reports/CODEX-FINAL6-REVIEW-2026-11-13.md`、`evidence/codex-final6-review-20261113.result.md`、`logs/codex-final6-review-dispatch-20261113.log`、`evidence/codex-final6-review-20261113.meta.json`：Codex 第七轮复审，reviewed_head=`9bd7264ca3b91a5ddcfe831f9b1beeb47e13dca3`，EXIT 0，1036.6s；确认 509/509 pins；关闭 AUDIT-08 P3-4（WORKTREE/BLOB 基准已澄清）；结论 REJECT（F1 状态摘要未同步in_review/509/七轮、0de08632b warning 应为 4、AUDIT_TASKS/P7 快照旧措辞）。
 
+- `logs/task-card-pin-recompute-20261113-after-final6.log`、`evidence/task-card-pin-recompute-20261113-after-final6.json`：第七轮复审回填后 Task 卡复算（522 条 pins：第七轮复审证据 5、9b0be2cd 门禁 8）；522/522 PASS。
+
 ## 2026-11-13 P7 DSH 集成核验与 ZCode 额度复核
 
 - `reports/P7-INTEGRATION-CONSISTENCY-CHECK-2026-11-13.md`：DSH 集成核验记录（非 ZCode Review）；371 条 Canonical Evidence 复算、14 条 worktree/BLOB 基准更正、报告计数/AC/R1–R4/Gate 一致性与文档漂移清单。
