@@ -1,5 +1,7 @@
 # AUDIT-14：历史技术债务与 V1 完整性（静态阶段）
 
+**Codex adjudication（2026-11-13，独立上下文）：** 本报告中的 `REVIEW_PENDING` 候选已由 Codex 最终独立 Review 裁决（首轮 `reviewed_head=d92859c9ac8a4d3122d6cabfe4d44af980574104`，复审 `226eb048006ffa804ebefd9f98e51bbc13793f31`；结论 REJECT 属交付文档返修，不改变产品 Gate）。现行状态以 `reports/11_ISSUES.md` 与 `AUDIT_ISSUES.md` 为准；本报告原观察与限制保持原字节语义。
+
 状态：`PARTIAL`。本阶段只做了固定 HEAD 上的静态文档、组合根和显式能力标记核对；没有运行 GUI、构建、测试、迁移、真实模型或真实用户数据。阶段结果不能代表全审通过。
 
 ## 1. 范围、方法与限制
@@ -40,7 +42,7 @@
 
 - `AUDIT-14-CAND-001`：V1/未来功能没有统一承诺总账，README、当前架构决策与历史计划状态存在可证实漂移；影响是无法可靠统计完成率并可能误把规划项当缺陷。
 - `AUDIT-14-CAND-002`：V2 Studio 页面有显式 `NOT_WIRED` 批量 Run、区域文本/状态和 Final/Split 能力；需确认它们是否在当前承诺内以及现有可见状态是否足够。
-- `AUDIT-14-CAND-003`：Avalonia release helper 仍从旧 Tauri 路径取图标/sidecar；当前 CI 是否受该路径脆弱性影响需由 clean build/release 证据确认。
+- `AUDIT-14-CAND-003`（Codex 更正）：Avalonia release workflow 不传 `-IconPath`，installer 仅在旧图标存在时才设置该路径；`prepare-sidecar.ps1` 的旧默认路径未证明被当前 release workflow 调用。未证明缺图标会使当前 CI 失败，也未证明当前 release 使用旧 sidecar 路径；该候选已由 Codex 裁决 **close**，旧路径仅作未证实维护债务。
 - `AUDIT-14-CAND-004`：多 shell 路由和功能面差异扩大后续 V2 的回归矩阵；当前运行风险未实测。
 
 Issue ledger 状态保持 `REVIEW_PENDING`，没有自行赋予 P0–P3。现有 AUDIT-01/08/11 等已复核问题仍分别以其原始证据和状态为准，本报告不重定级或重复登记。

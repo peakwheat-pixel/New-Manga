@@ -1,11 +1,11 @@
 # 审计状态
 ## 最新检查点（2026-11-13）
 
-当前 Task NEW-MANGA-V1-FULL-AUDIT 仍为 in_progress；Codex fresh-context 最终独立 Review（`reviewed_head=d92859c9ac8a4d3122d6cabfe4d44af980574104`，session `01a1d4ce-6b79-7b43-939d-834e3cdc21a9`，EXIT 0）结论 **REJECT**：要求同步当前状态与 Codex-first 裁决、pin 70e92876/b72363aa gate 批次、修正重复 evidence_id 与 `AUDIT-14-CAND-003` 表述、统一 398 计数。11 候选已裁决：4 finding（07-001 P2、09-001 P3、12-001 P3、14-001 非产品 P3 优先级）、4 INVESTIGATE、1 accepted limitation、2 close；`AUDIT-11-INC-001` 维持 INVESTIGATE。产品 P0=0/P1=0/P2=2/P3=2；开放 finding 7。AC1/AC2 MET，AC3/AC4 不可收口；Release Gate BLOCKED。
+当前 Task NEW-MANGA-V1-FULL-AUDIT 仍为 in_progress；Codex 首轮最终 Review（`reviewed_head=d92859c9ac8a4d3122d6cabfe4d44af980574104`）与返修复审（`reviewed_head=226eb048006ffa804ebefd9f98e51bbc13793f31`，session `01a1d4f3-9736-7402-8c3e-ce701f1e2490`，EXIT 0）结论均为 **REJECT**；复审确认 428/428 pins 可核验、70e/b723 gate pins 已补、9 个重复 evidence_id 已重命名。剩余返修：状态与计数口径统一（398→428）、076dfbb6 门禁纳入 Task pins 并重跑、专项报告与台账旧 ZCode 口径清理、`AUDIT-14-CAND-003` 表述消除。11 候选裁决与计数维持：4 finding（07-001 P2、09-001 P3、12-001 P3、14-001 非产品 P3 优先级）、4 INVESTIGATE、1 accepted limitation、2 close；`AUDIT-11-INC-001` 维持 INVESTIGATE。产品 P0=0/P1=0/P2=2/P3=2；开放 finding 7。AC1/AC2 MET；AC3/AC4 PARTIAL；Release Gate BLOCKED。
 
-段 B 状态为 00 limited PASS；01/03/08/11 FAIL；02 BLOCKED；04–07、09、10、12–14 PARTIAL。台账有 3 项已 triage finding、1 项 INVESTIGATE、11 项待 ZCode 裁决候选、1 项已披露关闭的非产品 P3 observation。AC2/AC3/AC4 保持 PARTIAL，Release Gate BLOCKED。
+段 B 状态为 00 limited PASS；01/03/08/11 FAIL；02 BLOCKED；04–07、09、10、12–14 PARTIAL。台账 3 项原 triaged finding + 4 项 Codex 新裁 finding、4 项 INVESTIGATE 候选、1 项 accepted limitation、2 项 close、1 项 INVESTIGATE 风险（AUDIT-11-INC-001）、1 项关闭非产品观察。AC1/AC2 MET，AC3/AC4 PARTIAL，Release Gate BLOCKED。
 
-ZCode plan-mode Review 仍因 provider quota `1310`（HTTP 429）在 session/response 前 EXIT 1（2026-11-13 19:36 复核仍失败，reset 2026-11-17 18:40:33）。按 2026-11-13 用户裁决，最终 Review 与候选裁决改为 Codex 优先：Codex CLI 0.162.0 探测 EXIT 0（session `01a1d4c6-e6b0-7df2-9a05-4ddc83a50712`），Codex fresh-context Review 已派发/待结果；11 个候选与 `AUDIT-11-INC-001` 仍未裁决。AC4 保持 PARTIAL，Task 保持 in_progress，Release Gate 保持 BLOCKED。
+ZCode plan-mode Review 因 provider quota `1310`（HTTP 429）在 session/response 前 EXIT 1（reset 2026-11-17 18:40:33）。按 2026-11-13 用户裁决改为 Codex 优先；Codex 首轮与复审均已完成并结论 REJECT。DSH 完成剩余返修后再以 clean head 复审；Release Gate 保持 BLOCKED。
 
 ## 先前阶段状态（由以上检查点更新）
 

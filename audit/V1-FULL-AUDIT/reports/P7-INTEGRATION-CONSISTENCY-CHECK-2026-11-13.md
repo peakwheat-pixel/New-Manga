@@ -48,15 +48,15 @@
 4. Task 卡 14 项 pin 的 SHA-256 基准错误（已在第 1 节更正）。
 5. `AUDIT-05/06` 与 `AUDIT-14` 的 7 项候选在额度失败后一直保持 `REVIEW_PENDING`，无处置；`AUDIT-08` P3-4 fresh closure re-review 亦未执行。
 
-**处置：** 更新 `AUDIT_STATUS.md`、`AUDIT_EVIDENCE_INDEX.md`、Task 卡 Rolling checkpoint 与 AC4 文本；漂移 1 保留原文历史性说明并在检查点标注最新状态；其余作为 ZCode Review 的输入，不由 DSH 裁决。
+**处置：** 更新 `AUDIT_STATUS.md`、`AUDIT_EVIDENCE_INDEX.md`、Task 卡 Rolling checkpoint 与 AC4 文本；漂移 1 保留原文历史性说明并在检查点标注最新状态。其余项的独立 Review 已由 Codex 完成（首轮与复审均 REJECT，要求返修；见 `reports/CODEX-FINAL-REVIEW-2026-11-13.md` 与 `reports/CODEX-REREVIEW-2026-11-13.md`）；DSH 仅做集成与返修，不自行裁决候选。
 
 ## 3. 本轮未执行的检查（具名限制）
 
-- **未执行** ZCode fresh-context 独立 Review、11 候选裁决、`AUDIT-11-INC-001` 处置、AUDIT-08 P3-4 fresh re-review。
+- **未执行**（本记录自身）：独立 Review、11 候选裁决、`AUDIT-11-INC-001` 处置、AUDIT-08 P3-4 fresh re-review；这些已由 Codex 首轮/复审完成（均见 `reports/` 下对应报告）。
 - **未重跑** 重型测试、真实模型 / 人工 GT / 付费 API、完整 GUI 编辑与导出、accessibility/DPI、clean Windows install/upgrade/rollback/uninstall、长时 soak 与完整 shell 流程；这些继续按原报告保留 `NOT_RUN` / `BLOCKED`。
 - **未访问** 远端、未 push、未删除、未改产品源码 / 既有测试 / 契约 / Schema / 依赖 / 真实用户数据 / Git 历史。
 - **未安装** 任何工具或依赖；AUDIT-02 的工具缺口保持原状。
 
 ## 4. 结论边界
 
-本记录只说明：在当前固定 HEAD 上，Canonical Evidence 的 Git BLOB 可机械复核（更正后 371/371），报告的计数、AC 与 Gate 文字自洽，且已记录若干文档漂移并完成其中可安全执行的更正。它**不**构成 Review、候选裁决、产品通过或 Release Gate 解锁；Release Gate 维持 `BLOCKED`，Task 维持 `in_progress`，AC2/AC3/AC4 维持 `PARTIAL`。
+本记录只说明：在当前固定 HEAD 上，Canonical Evidence 的 Git BLOB 可机械复核——更正后当时 **371/371**，积压回填后 **398/398**，Review 返修与新增 gate/Review pins 后 **428/428**（当前 Task 卡 428 条）；报告的计数、AC 与 Gate 文字自洽。它**不**构成 Review、候选裁决、产品通过或 Release Gate 解锁；Release Gate 维持 `BLOCKED`，Task 维持 `in_progress`，AC3/AC4 维持 `PARTIAL`（AC1/AC2 已 `MET`）。

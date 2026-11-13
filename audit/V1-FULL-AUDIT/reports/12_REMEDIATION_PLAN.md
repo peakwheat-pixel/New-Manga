@@ -44,7 +44,7 @@ Codex 裁决后，以下 3 项已确认 finding，可按各自范围释放实现
 |---|---|---|---|
 | `AUDIT-14-CAND-001` | finding（P3 优先级，非产品 P0–P3 计数） | 确认 V1/未来范围权威来源 | 独立文档 Task 建立有日期/版本的逐项 manifest，对齐 README/AD-003/STATUS/索引与未来规划，阻止未来项目误计入 V1。Codex 建议将其提前到 14-002 归属裁定之前。 |
 | `AUDIT-14-CAND-002` | INVESTIGATE | 判定 NOT_WIRED surfaces 是否属于当前 V1 | 先做 V1 manifest 映射；纳入 V1 才释放 Studio wiring/实现 Task 并做真实 shell 验收。 |
-| `AUDIT-14-CAND-003` | close | — | 不开产品修复 Task（当前 release 不会因此失败）；如清理旧辅助路径，归 R4 维护 Task 并先核实调用者。 |
+| `AUDIT-14-CAND-003` | close | — | 不开产品修复 Task（没有证据证明当前 release 会因此失败）；如清理旧辅助路径，归 R4 维护 Task 并先核实调用者。 |
 | `AUDIT-14-CAND-004` | close | — | 不开缺陷 Task；后续真实 UI 验证记录 shell × page × 关键操作矩阵。 |
 
 ## 排序说明（Codex 意见）

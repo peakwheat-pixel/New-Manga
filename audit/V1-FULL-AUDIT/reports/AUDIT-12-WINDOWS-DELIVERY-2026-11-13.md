@@ -1,5 +1,7 @@
 # AUDIT-12：Windows 构建与交付
 
+**Codex adjudication（2026-11-13，独立上下文）：** 本报告中的 `REVIEW_PENDING` 候选已由 Codex 最终独立 Review 裁决（首轮 `reviewed_head=d92859c9ac8a4d3122d6cabfe4d44af980574104`，复审 `226eb048006ffa804ebefd9f98e51bbc13793f31`；结论 REJECT 属交付文档返修，不改变产品 Gate）。现行状态以 `reports/11_ISSUES.md` 与 `AUDIT_ISSUES.md` 为准；本报告原观察与限制保持原字节语义。 本报告中的 `AUDIT-12-CAND-001` 被裁为 **finding P3（交付工具）**。
+
 状态：`PARTIAL`。当前 fixed source HEAD 的 Avalonia Release configuration build 与 AUDIT-09 的开发输出 GUI launch 有证据；隔离工作区外还存在 2026-10-26/28 的旧 zip 与 NSIS setup 包。旧包不能绑定到当前产品基线，因此本阶段不把它们作为当前 build/release 通过证据。当前 Task 明确不授权 publish/install/uninstall，本轮没有运行安装包。
 
 ## 证据与当前输出
