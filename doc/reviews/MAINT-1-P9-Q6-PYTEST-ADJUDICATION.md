@@ -39,3 +39,13 @@ python -m pytest -q tests/infrastructure/test_plugin_sandbox.py
 **16 个沙箱失败未复现**（归因结论再次得到支持）。
 
 **唯一失败未归因**：`test_real_v7_import_fixture_degrades_then_pixel_matches_on_generation_two`。其 `scratch_dir` 指向 `G:/CODEX/New Manga.workspace/FEA-11/fixtures/...`（workspace 真实 fixture），本次未逐行定位根因，**不得读作已归因**。DoD §4 因此仍不写全绿。
+
+## 6. 唯一失败根因（轮次 15，已定位）
+
+- 用例：`test_real_v7_import_fixture_degrades_then_pixel_matches_on_generation_two`
+- 断言原文：`sqlite3.OperationalError: no such column: custom_rank`
+- 调用链：`src/application/importing/referenced/planner.py:94` → `src/infrastructure/sqlite/library.py:235`
+- 判读：v7 旧库 fixture 的 `chapters` 表**没有 `custom_rank` 列**，而当前仓储查询列清单已包含它。属 **schema 演进与旧 fixture 的版本缺口**（`FEA-14-LIB-1` 侧新增字段），不是已迁移生产库的运行时回归。
+- 处置：**不开产品修复卡**；作为测试支撑缺口登记，两条可选路线留给下一轮裁决：
+  (a) 修 fixture 使其迁移到当前 schema；(b) 仓储查询对旧 schema 容错（需评估是否弱化契约）。
+- DoD §4：失败已**归因**，但未消除，故仍不写全绿。

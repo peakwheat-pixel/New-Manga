@@ -179,3 +179,10 @@ NEW-MANGA-V1-FULL-AUDIT 与 R1–R4 整改、SEC-01/02/03、CORE-01、AUDIT-07/0
 - **唯一失败未归因**：`test_real_v7_import_fixture_degrades_then_pixel_matches_on_generation_two`（依赖 `workspace/FEA-11/fixtures` 真实 fixture），未逐行定位，**不得写全绿**。
 - **DoD §4**：仍为「有条件达成」。
 - **下一轮（P11）**：定位该用例；随后评估 C1 首卡（受会话预算限制，可能需要新会话续跑）。
+
+### 轮次 15（2026-11-14）
+
+- **唯一失败已定位**：`sqlite3.OperationalError: no such column: custom_rank`（`planner.py:94` → `library.py:235`）。v7 旧库 fixture 缺 `custom_rank` 列，属 schema 演进与旧 fixture 的版本缺口（LIB-1 侧新增），**非已迁移库的运行时回归**。
+- **处置**：不开产品修复卡；登记为测试支撑缺口，路线 (a) 修 fixture / (b) 仓储容错 留待裁决。
+- **DoD §4**：失败已归因未消除，仍不写全绿。
+- **会话预算**：已近上限，下一轮建议新会话按 `CHECKPOINT.md` 续跑。
