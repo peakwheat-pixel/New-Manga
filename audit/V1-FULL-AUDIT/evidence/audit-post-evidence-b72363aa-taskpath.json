@@ -1,0 +1,19 @@
+{
+  "name": "audit-post-evidence-b72363aa-taskpath",
+  "argv": [
+    "pwsh",
+    "-NoProfile",
+    "-File",
+    "tools/governance/check.ps1",
+    "-TaskPath",
+    "doc/tasks/NEW-MANGA-V1-FULL-AUDIT.md"
+  ],
+  "cwd": "G:\\CODEX\\New Manga",
+  "started_utc": "2026-11-13T12:01:35.464015+00:00",
+  "head": "b72363aa7c78326870af41f85886817f191295c9",
+  "branch": "main",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 0.999,
+  "log": "audit\\V1-FULL-AUDIT\\logs\\audit-post-evidence-b72363aa-taskpath.log"
+}

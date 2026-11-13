@@ -1,0 +1,17 @@
+{
+  "name": "audit-post-evidence-b72363aa-pins",
+  "argv": [
+    "pwsh",
+    "-NoProfile",
+    "-File",
+    "tools/governance/verify_pins.ps1"
+  ],
+  "cwd": "G:\\CODEX\\New Manga",
+  "started_utc": "2026-11-13T12:01:36.464230+00:00",
+  "head": "b72363aa7c78326870af41f85886817f191295c9",
+  "branch": "main",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 0.408,
+  "log": "audit\\V1-FULL-AUDIT\\logs\\audit-post-evidence-b72363aa-pins.log"
+}
