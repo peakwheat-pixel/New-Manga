@@ -1,0 +1,30 @@
+{
+  "schema": "codex-final-review-dispatch/v1",
+  "kind": "eighth review (summary sync)",
+  "reviewer": "Codex (fresh independent context)",
+  "cli": "codex-cli 0.162.0",
+  "model": "gpt-6-luna",
+  "reasoning_effort": "xhigh",
+  "sandbox": "danger-full-access (read-only-instructed; read-only/workspace-write cannot spawn child processes: Windows error 740)",
+  "session_id": "01a1d568-f122-7e40-a003-8fd000786c03",
+  "reviewed_head": "6b09ca1f42a0145fa63fa317c2beb3b0596fe848",
+  "expected_head": "6b09ca1f42a0145fa63fa317c2beb3b0596fe848",
+  "branch": "main",
+  "exit": 0,
+  "elapsed_seconds": 729.2,
+  "started_at_local": "2026-11-13T23:08:35+08:00",
+  "decision": "REJECT",
+  "result_path": "audit/V1-FULL-AUDIT/reports/CODEX-FINAL7-REVIEW-2026-11-13.md",
+  "result_sha256": "D0386CC0CBB3903E8439EBBD0FEC96E64BCA881A0BB232090220BACE1EFA6E89",
+  "stdout_path": "audit/V1-FULL-AUDIT/evidence/codex-final7-review-20261113.stdout.log",
+  "stdout_sha256": "E08B7AE24410BAFC026ED29295C1CAEC12FD65110ABC2A0C7A448E5DE0A1A64B",
+  "raw_stderr_path": "G:\\CODEX\\New Manga.workspace\\task-envs\\NEW-MANGA-V1-FULL-AUDIT\\codex-final7-20261113\\stderr.log",
+  "raw_stderr_bytes": 1260902,
+  "raw_stderr_sha256": "981B85E15F7476CAF92542337C2550FC8CB7A908C9FEACB2BA635727F954BF79",
+  "notes": [
+    "Worktree clean before and after.",
+    "Confirmed 522/522 pins.",
+    "F1: Task AC3/AC4/Rolling and GATE/FINAL/AUDIT_STATUS stale wording.",
+    "F2: 6b09ca1f gate not archived; treated as accepted rolling limitation (not a blocker)."
+  ]
+}
