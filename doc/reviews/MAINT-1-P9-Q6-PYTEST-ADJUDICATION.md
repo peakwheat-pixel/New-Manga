@@ -29,3 +29,13 @@ python -m pytest -q tests/infrastructure/test_plugin_sandbox.py
 - `.NET`：已在轮次 2 实测 **1875/0/109 `EXIT=0`**。
 - `pytest`：16 failed 已归因且真实环境不复现。
 - 余下仅需**全量复跑**给出与本轮同一环境的干净数字；在此之前，DoD §4 仍标「有条件达成」，不写成全绿。
+
+## 5. 全量复跑（2026-11-14，轮次 14）
+
+`python -m pytest -q` → **`1 failed, 3536 passed, 10 skipped`**（292.07 s，`EXIT=1`）。
+日志：`verification/MAINT-1-RELEASE-MONITOR/logs/pytest-full-2026-11-14.log`。
+
+与验收基线对比：`3515 passed / 16 failed / 12 skipped` → 现 `3536 passed / 1 failed / 10 skipped`。
+**16 个沙箱失败未复现**（归因结论再次得到支持）。
+
+**唯一失败未归因**：`test_real_v7_import_fixture_degrades_then_pixel_matches_on_generation_two`。其 `scratch_dir` 指向 `G:/CODEX/New Manga.workspace/FEA-11/fixtures/...`（workspace 真实 fixture），本次未逐行定位根因，**不得读作已归因**。DoD §4 因此仍不写全绿。

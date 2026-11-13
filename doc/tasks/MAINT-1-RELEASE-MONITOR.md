@@ -172,3 +172,10 @@ NEW-MANGA-V1-FULL-AUDIT 与 R1–R4 整改、SEC-01/02/03、CORE-01、AUDIT-07/0
 - **限制登记**：仅复跑该文件，全量 pytest 复跑列入下一轮；复跑环境 `python`+`pytest 9.1.1` 与验收 `C:\Python314`（无 pytest）不同，差异本身即环境证据。
 - **DoD §4**：`.NET` 1875/0/109 已实测；pytest 16F 已归因；仍需一次全量复跑给出同环境干净数字，故 §4 仍为「有条件达成」。
 - **下一轮（P10）**：全量 pytest 复跑 + 更新 V1 清单数字；随后评估 C1 首卡。
+
+### 轮次 14（2026-11-14）
+
+- **全量 pytest 复跑完成**：`1 failed, 3536 passed, 10 skipped`（292 s）。相对验收基线 `16 failed / 3515 passed`，16 个沙箱失败未复现，Q6 归因结论再次得到支持。
+- **唯一失败未归因**：`test_real_v7_import_fixture_degrades_then_pixel_matches_on_generation_two`（依赖 `workspace/FEA-11/fixtures` 真实 fixture），未逐行定位，**不得写全绿**。
+- **DoD §4**：仍为「有条件达成」。
+- **下一轮（P11）**：定位该用例；随后评估 C1 首卡（受会话预算限制，可能需要新会话续跑）。
