@@ -1,0 +1,6 @@
+Codex tenth review (final pointer sync) of NEW-MANGA-V1-FULL-AUDIT
+session_id=01a1d58e-3b2d-7d41-8fcd-86f1a1477c10
+reviewed_head=9bbd5db468c2e416d4bc24e9495ebd1a19faa9f8
+exit=0 elapsed_seconds=972.3 decision=REJECT
+latest recorded gate: 46a8fe6e (in f0fa06ef)
+environment: danger-full-access due to Windows error 740 sandbox limitation; strictly read-only

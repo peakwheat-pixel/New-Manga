@@ -43,6 +43,8 @@
 
 - `reports/CODEX-FINAL8-REVIEW-2026-11-13.md`、`evidence/codex-final8-review-20261113.result.md`、`logs/codex-final8-review-dispatch-20261113.log`、`evidence/codex-final8-review-20261113.meta.json`：Codex 第九轮复审，reviewed_head=`f251270833f3ea775f6f577dbfa33e6c88073162`，EXIT 0，1306.9s；确认 535/535 pins；结论 REJECT（仅剩当前指针同步；最新已记录门禁为 46a8fe6e，最终门禁应在 DSH 集成的 delivery head 记录）。
 
+- `reports/CODEX-FINAL9-REVIEW-2026-11-13.md`、`evidence/codex-final9-review-20261113.result.md`、`logs/codex-final9-review-dispatch-20261113.log`、`evidence/codex-final9-review-20261113.meta.json`：Codex 第十轮复审，reviewed_head=`9bbd5db468c2e416d4bc24e9495ebd1a19faa9f8`，EXIT 0，972.3s；确认 535/535 pins、最新已记录门禁 46a8fe6e；结论 REJECT（仅剩 Task AC3 与 13_GATE 审查来源两处旧轮次）。
+
 ## 2026-11-13 P7 DSH 集成核验与 ZCode 额度复核
 
 - `reports/P7-INTEGRATION-CONSISTENCY-CHECK-2026-11-13.md`：DSH 集成核验记录（非 ZCode Review）；371 条 Canonical Evidence 复算、14 条 worktree/BLOB 基准更正、报告计数/AC/R1–R4/Gate 一致性与文档漂移清单。

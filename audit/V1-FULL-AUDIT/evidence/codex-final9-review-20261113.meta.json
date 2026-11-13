@@ -1,0 +1,29 @@
+{
+  "schema": "codex-final-review-dispatch/v1",
+  "kind": "tenth review (final pointer sync)",
+  "reviewer": "Codex (fresh independent context)",
+  "cli": "codex-cli 0.162.0",
+  "model": "gpt-6-luna",
+  "reasoning_effort": "xhigh",
+  "sandbox": "danger-full-access (read-only-instructed; read-only/workspace-write cannot spawn child processes: Windows error 740)",
+  "session_id": "01a1d58e-3b2d-7d41-8fcd-86f1a1477c10",
+  "reviewed_head": "9bbd5db468c2e416d4bc24e9495ebd1a19faa9f8",
+  "expected_head": "9bbd5db468c2e416d4bc24e9495ebd1a19faa9f8",
+  "branch": "main",
+  "exit": 0,
+  "elapsed_seconds": 972.3,
+  "started_at_local": "2026-11-13T23:53:22+08:00",
+  "decision": "REJECT",
+  "result_path": "audit/V1-FULL-AUDIT/reports/CODEX-FINAL9-REVIEW-2026-11-13.md",
+  "result_sha256": "F24223AE9AC138CCCE3FCF072E04EE88C395E2C930E4F69DA48049E9FF409D7C",
+  "stdout_path": "audit/V1-FULL-AUDIT/evidence/codex-final9-review-20261113.stdout.log",
+  "stdout_sha256": "16EAD9D6AD958FE1EA495A2C5C176469BC5F14644AAD726CB1B944A16A9AE53A",
+  "raw_stderr_path": "G:\\CODEX\\New Manga.workspace\\task-envs\\NEW-MANGA-V1-FULL-AUDIT\\codex-final9-20261113\\stderr.log",
+  "raw_stderr_bytes": 1206185,
+  "raw_stderr_sha256": "E71D7591E3AF49717BC3D12DB0B9BB5E4493C338C3EDA913F2137653A3F10C9D",
+  "notes": [
+    "Worktree clean before and after.",
+    "Confirmed 535/535 pins; latest recorded gate is 46a8fe6e.",
+    "Remaining: Task AC3 stale (seventh/eighth wording) and 13_GATE review-source line still seven rounds."
+  ]
+}
