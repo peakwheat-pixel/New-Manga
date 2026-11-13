@@ -9,5 +9,11 @@
   "worktree_or_config_changes": "none",
   "hypothesis": "CLI 0.17.1 storage/provider state resolves to user home; provider registry returns empty default model selection",
   "not_a_review": true,
-  "practical_path": "run read-only review in ZCode desktop app with self-contained prompt"
+  "practical_path": "run read-only review in ZCode desktop app with self-contained prompt",
+  "additional_checks": [
+    "--model/-m rejected; --resume existing session still Select a model; TUI fails: Cannot find package '@zcode/tui'",
+    "resources\\glm has no node_modules and no @zcode/tui; CLI install incomplete for TUI/headless",
+    "CLI local_setting has no default model selection; interactive sessions ran (model usage recorded)",
+    "headless dispatch from DSH not possible without reinstall/repair or manual desktop run"
+  ]
 }

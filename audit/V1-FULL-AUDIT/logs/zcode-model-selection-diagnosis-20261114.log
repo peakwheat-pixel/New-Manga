@@ -36,3 +36,23 @@ Practical path: the ZCode desktop app itself is usable (owner screenshot shows a
 selection). Owner can run the read-only review directly in the ZCode desktop app with the self-contained
 prompt; its answer can then be integrated by DSH. Headless retry can be attempted after a ZCode desktop/CLI
 update.
+
+
+Additional checks (2026-11-14, after owner asked DSH to dispatch directly):
+8. --model / -m flags: rejected as unknown options (CLI has no model flag).
+9. --resume sess_990c5367-... (an existing CLI session with model GLM-5.3-Flash / individual plan):
+   EXIT 1, stderr only "Error: Select a model before sending a message" (96 bytes).
+   The CLI does not restore a session-level model for headless resume when no default selection exists.
+10. `node zcode.cjs tui --cwd ...`: "Error: Cannot find package '@zcode/tui' imported from
+    E:\Program Files\ZCode\resources\glm\zcode.cjs".
+11. Install layout: `E:\Program Files\ZCode\resources\glm` contains only `node-runtime` and `packages`;
+    there is NO `node_modules` directory and no `@zcode/tui` package anywhere under resources.
+12. CLI local state: db.sqlite (C:\Users\49745\.zcode\cli) has three user CLI sessions that ran successfully
+    today (sess_3811c5d6 start-plan/GLM-5.3-Flash at 00:33; sess_990c5367 individual plan at 00:24;
+    sess_792f68a4 start-plan at 00:10), but `local_setting` only contains `user/model/reasoningLevel=max`
+    and no default model selection. So interactive/desktop sessions can run, headless new sessions cannot.
+
+Conclusion: the installed ZCode CLI is incomplete for headless/TUI use (missing @zcode/tui and node_modules
+dependencies) and has no default model selection; headless dispatch from DSH is not possible on this machine
+without reinstallation/repair or a desktop-side manual run. The desktop application itself works.
+No ZCode configuration, credentials or desktop state was modified by these checks.
