@@ -35,7 +35,7 @@ allowed_paths:
 - [x] AC1：固定Git/环境及有效源码清单，记录dirty和历史缺口。 <<MET>>
 - [x] AC2：15 项专项逐项有结果或具名阻断，关键链路深读与测试。 <<MET>>
 - [ ] AC3：完整日志、去重问题台账、整改路线、正式报告和 Release Gate 落盘。 <<PARTIAL: 日志/台账/整改路线/正式报告/Release Gate 已落盘，Codex 最终 Review 已裁决 11 候选并更新台账；但该 Review 结论为 REJECT（当前状态同步、未 pin gate 批次、重复 evidence_id、AUDIT-14-CAND-003 表述等），返修后复审与 DSH 集成尚未完成，暂不可收口>>
-- [ ] AC4：独立复核、证据 pin 和治理检查可核验；未满足不得置 done。 <<PARTIAL: 441 条 Canonical Evidence 已复算通过（含 14 条 worktree→BLOB 更正）；Codex 首轮 Review（reviewed_head=d92859c9a）与返修复审（reviewed_head=226eb048，session 01a1d4f3-9736-7402-8c3e-ce701f1e2490，EXIT 0）结论均为 REJECT，已归档并 pin；本轮已回填 70e92876/b72363aa/076dfbb6 gate 批次与复审证据、重命名 9 个重复 evidence_id、统一 428→441 计数。返修后仍需以 clean head 复审并完成最终门禁，故不可收口>>
+- [ ] AC4：独立复核、证据 pin 和治理检查可核验；未满足不得置 done。 <<PARTIAL: 462 条 Canonical Evidence 已复算通过（含 14 条 worktree→BLOB 更正）；Codex 首轮 Review（reviewed_head=d92859c9a）与返修复审（reviewed_head=226eb048，session 01a1d4f3-9736-7402-8c3e-ce701f1e2490，EXIT 0）结论均为 REJECT，已归档并 pin；本轮已回填 70e92876/b72363aa/076dfbb6 gate 批次与复审证据、重命名 9 个重复 evidence_id、统一 462 计数。最终复审后仍需 DSH 集成与 closeout，故不可收口>>
 
 ## 允许修改范围
 仅frontmatter所列。审计日志/测试脚本由主控单一写入。三名子代理只读同一固定产品HEAD，无并发写入。用户显式审计目录优先于常规verification路径；运行派生产物放相邻workspace task-env。
@@ -496,6 +496,28 @@ src/**、apps/**、原有tests/**、共享契约、Schema、依赖、真实用�
 | CODEX-REREVIEW-STDOUT-1 | AC4（复审 stdout） | `audit/V1-FULL-AUDIT/evidence/codex-rereview-20261113.stdout.log` | `271eb80ba` | `95177284713257B4A019F2728B92D19DAF910268A9BD93EF903F07577CA9BDEB` | CANONICAL | BLOB |
 | CODEX-REREVIEW-META-1 | AC4（session/EXIT/HEAD/耗时/哈希元数据） | `audit/V1-FULL-AUDIT/evidence/codex-rereview-20261113.meta.json` | `271eb80ba` | `03C8025B4520F813307FCC5252C7349667C6FAAA7B3343D5B9510D9397142E52` | CANONICAL | BLOB |
 | CODEX-REREVIEW-DISPATCH-1 | AC4（复审派发日志） | `audit/V1-FULL-AUDIT/logs/codex-rereview-dispatch-20261113.log` | `271eb80ba` | `52CF08A367429A6E4A880C0ADAF73C5B76D77A2B22969BE589721E1AA97E463F` | CANONICAL | BLOB |
+
+| FOURTH-ROUND-GATE-D248ED28-DEFAULT-LOG-1 | AC4（generated HEAD=d248ed28；default EXIT 0） | `audit/V1-FULL-AUDIT/logs/audit-post-evidence-d248ed28-default.log` | `42810143b` | `13BB34F13AFA3730A13CC824F9DC0801E9C1911E5EA875303AA24EA5C51AE6A2` | CANONICAL | BLOB |
+| FOURTH-ROUND-GATE-D248ED28-DEFAULT-RESULT-1 | AC4（gate metadata） | `audit/V1-FULL-AUDIT/evidence/audit-post-evidence-d248ed28-default.json` | `42810143b` | `98B2C8AE983FC6210D74083A8A93687554C135AFC37D5C5DC1BC9E35A38E1A9E` | CANONICAL | BLOB |
+| FOURTH-ROUND-GATE-D248ED28-TASKPATH-LOG-1 | AC4（generated HEAD=d248ed28；taskpath EXIT 0） | `audit/V1-FULL-AUDIT/logs/audit-post-evidence-d248ed28-taskpath.log` | `42810143b` | `70969FE33227C4799FF6302114EA84437B142DC6BB311B97F403674242F3F616` | CANONICAL | BLOB |
+| FOURTH-ROUND-GATE-D248ED28-TASKPATH-RESULT-1 | AC4（gate metadata） | `audit/V1-FULL-AUDIT/evidence/audit-post-evidence-d248ed28-taskpath.json` | `42810143b` | `84C62E3AD7A6B06192A2BE970FA7F33A400BFF19E40323A2F3E2DB8010B35E63` | CANONICAL | BLOB |
+| FOURTH-ROUND-GATE-D248ED28-PINS-LOG-1 | AC4（generated HEAD=d248ed28；pins EXIT 0） | `audit/V1-FULL-AUDIT/logs/audit-post-evidence-d248ed28-pins.log` | `42810143b` | `9105222E60829C782A17DEF605F8EC108F5E4DA450C0AB9CE5A72A097E37C75E` | CANONICAL | BLOB |
+| FOURTH-ROUND-GATE-D248ED28-PINS-RESULT-1 | AC4（gate metadata） | `audit/V1-FULL-AUDIT/evidence/audit-post-evidence-d248ed28-pins.json` | `42810143b` | `C80EAAFA583D444B59836C32E11097EABA605549FBFC58823B6807897A5B3443` | CANONICAL | BLOB |
+| FOURTH-ROUND-GATE-D248ED28-API-LOG-1 | AC4（generated HEAD=d248ed28；api EXIT 0） | `audit/V1-FULL-AUDIT/logs/audit-post-evidence-d248ed28-api.log` | `42810143b` | `947BD00C66399501158B351ADF8683C0066A4E382C79AB96808CCB57E8BB167D` | CANONICAL | BLOB |
+| FOURTH-ROUND-GATE-D248ED28-API-RESULT-1 | AC4（gate metadata） | `audit/V1-FULL-AUDIT/evidence/audit-post-evidence-d248ed28-api.json` | `42810143b` | `6E98AE030476BF69ED71C5003DD1AE5DEFBA7A82FD4BF046923431D726852B1D` | CANONICAL | BLOB |
+| CODEX-FINAL2-REVIEW-REPORT-1 | AC3/AC4（Codex 第三轮/最终复审，REJECT） | `audit/V1-FULL-AUDIT/reports/CODEX-FINAL2-REVIEW-2026-11-13.md` | `df9eed8ba` | `113E80B48270C5590915B1487F3DB7FCD794A1F2DDD8908171B26C0CF95D11BF` | CANONICAL | BLOB |
+| CODEX-FINAL2-REVIEW-RESULT-1 | AC4（最终复审原始结果） | `audit/V1-FULL-AUDIT/evidence/codex-final2-review-20261113.result.md` | `df9eed8ba` | `113E80B48270C5590915B1487F3DB7FCD794A1F2DDD8908171B26C0CF95D11BF` | CANONICAL | BLOB |
+| CODEX-FINAL2-REVIEW-STDOUT-1 | AC4（最终复审 stdout） | `audit/V1-FULL-AUDIT/evidence/codex-final2-review-20261113.stdout.log` | `df9eed8ba` | `416A57D2C52C37C600CF8FC222FAF54A82F695FC4B7BB0B56BCBE703347D993A` | CANONICAL | BLOB |
+| CODEX-FINAL2-REVIEW-META-1 | AC4（session/EXIT/HEAD/耗时元数据） | `audit/V1-FULL-AUDIT/evidence/codex-final2-review-20261113.meta.json` | `df9eed8ba` | `5C1AAC080BFE0DCD106BBE77F464E8ED3B671B62BE986C1CE6079D8CDEBE4E4C` | CANONICAL | BLOB |
+| CODEX-FINAL2-REVIEW-DISPATCH-1 | AC4（最终复审派发日志） | `audit/V1-FULL-AUDIT/logs/codex-final2-review-dispatch-20261113.log` | `df9eed8ba` | `8BEFDEFDACB20502C094AB70030D2B1674715706F178173328CE71B58072B146` | CANONICAL | BLOB |
+| CONVERGENCE-GATE-FEE77CC0-DEFAULT-LOG-1 | AC4（generated HEAD=fee77cc0；default EXIT 0） | `audit/V1-FULL-AUDIT/logs/audit-post-evidence-fee77cc0-default.log` | `1a8389b4a` | `5C98D4EDAF068A156BF28DE446051767DD70F9D8F3445D7E5F0BC903046F2241` | CANONICAL | BLOB |
+| CONVERGENCE-GATE-FEE77CC0-DEFAULT-RESULT-1 | AC4（gate metadata） | `audit/V1-FULL-AUDIT/evidence/audit-post-evidence-fee77cc0-default.json` | `1a8389b4a` | `105F3A4067CED46CF5BD8A72F3BC6103FEAD38B4964304C3EBA20A8D05BA37BB` | CANONICAL | BLOB |
+| CONVERGENCE-GATE-FEE77CC0-TASKPATH-LOG-1 | AC4（generated HEAD=fee77cc0；taskpath EXIT 0） | `audit/V1-FULL-AUDIT/logs/audit-post-evidence-fee77cc0-taskpath.log` | `1a8389b4a` | `AD97A967CCAD9CAB49BDC7B6F0BA4BCAC13DBED1045ABDE2D94BB4ED45966EED` | CANONICAL | BLOB |
+| CONVERGENCE-GATE-FEE77CC0-TASKPATH-RESULT-1 | AC4（gate metadata） | `audit/V1-FULL-AUDIT/evidence/audit-post-evidence-fee77cc0-taskpath.json` | `1a8389b4a` | `BAB8EB8ADE00877E5F2740325D8F4E2F350CDEEF24FA992BE1A96F70A3429449` | CANONICAL | BLOB |
+| CONVERGENCE-GATE-FEE77CC0-PINS-LOG-1 | AC4（generated HEAD=fee77cc0；pins EXIT 0） | `audit/V1-FULL-AUDIT/logs/audit-post-evidence-fee77cc0-pins.log` | `1a8389b4a` | `3FCD13C266E7F7DB7ABE19653EE5E0C68059529A9018CF478E19A6B060692C65` | CANONICAL | BLOB |
+| CONVERGENCE-GATE-FEE77CC0-PINS-RESULT-1 | AC4（gate metadata） | `audit/V1-FULL-AUDIT/evidence/audit-post-evidence-fee77cc0-pins.json` | `1a8389b4a` | `5130AF0F9C0F66403CA5358E68317FBCDDD87F2E58730E2F5300F61C01DE57D5` | CANONICAL | BLOB |
+| CONVERGENCE-GATE-FEE77CC0-API-LOG-1 | AC4（generated HEAD=fee77cc0；api EXIT 0） | `audit/V1-FULL-AUDIT/logs/audit-post-evidence-fee77cc0-api.log` | `1a8389b4a` | `762B1EB82125C8A701DB002E649282CD6A6337D704956F925CCAAF020BDBC2D2` | CANONICAL | BLOB |
+| CONVERGENCE-GATE-FEE77CC0-API-RESULT-1 | AC4（gate metadata） | `audit/V1-FULL-AUDIT/evidence/audit-post-evidence-fee77cc0-api.json` | `1a8389b4a` | `2F4BB50997F75AE21775F6A9EBAC74FF6398799E773EA108FC4DDB05F3132EAF` | CANONICAL | BLOB |
 | P7-ISSUES-2 | AC3（Codex 裁决后去重问题台账） | `audit/V1-FULL-AUDIT/reports/11_ISSUES.md` | `6dd67c11c` | `0D2EBD335AB941D9167C019D177190BF8C9AC43D551058F8698B152859AFD62E` | CANONICAL | BLOB |
 | P7-REMEDIATION-2 | AC3（Codex 裁决后整改路线） | `audit/V1-FULL-AUDIT/reports/12_REMEDIATION_PLAN.md` | `6dd67c11c` | `BB56D4E2EB00CA3C92F57CB7FC5C3EC6200FCDD4EB14AA98C5FF17A579F50817` | CANONICAL | BLOB |
 | P7-RELEASE-GATE-2 | AC3/Gate（Codex 裁决后 Release Gate，BLOCKED） | `audit/V1-FULL-AUDIT/reports/13_RELEASE_GATE.md` | `6dd67c11c` | `6EC74CB0F8F8EC64DA5901FCCF6160825923BBA69711B0B21FF471C24F26C367` | CANONICAL | BLOB |
@@ -517,7 +539,7 @@ src/**、apps/**、原有tests/**、共享契约、Schema、依赖、真实用�
 | exchange | — | NOT_APPLICABLE | — | — | 无外部传输 |
 
 ## Rolling checkpoint
-[audit/V1-FULL-AUDIT/AUDIT_RESUME.md](../../audit/V1-FULL-AUDIT/AUDIT_RESUME.md) 顶部 2026-11-13 Codex 复审检查点为最新恢复入口。Canonical Evidence 含 441 条 BLOB pins、六批 gate 证据与三轮 Codex Review 证据；Codex 裁决 11 候选（4 finding / 4 INVESTIGATE / 1 accepted limitation / 2 close）。第三轮（最终）复审结论 REJECT（要求文档收敛）；本轮已收敛并重跑门禁，待 DSH 固定新 head 并完成集成与 closeout。Release Gate BLOCKED，AC1/AC2 MET，AC3/AC4 PARTIAL，Task in_progress。
+[audit/V1-FULL-AUDIT/AUDIT_RESUME.md](../../audit/V1-FULL-AUDIT/AUDIT_RESUME.md) 顶部 2026-11-13 Codex 复审检查点为最新恢复入口。Canonical Evidence 含 462 条 BLOB pins、七批 gate 证据与三轮 Codex Review 证据；Codex 裁决 11 候选（4 finding / 4 INVESTIGATE / 1 accepted limitation / 2 close）。第三轮（最终）复审结论 REJECT（要求文档收敛）；本轮已收敛并重跑门禁，待 DSH 固定新 head 并完成集成与 closeout。Release Gate BLOCKED，AC1/AC2 MET，AC3/AC4 PARTIAL，Task in_progress。
 
 ## 2026-10-24 推送准备补充授权
 

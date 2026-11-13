@@ -19,6 +19,8 @@
 
 - `reports/CODEX-FINAL2-REVIEW-2026-11-13.md`、`evidence/codex-final2-review-20261113.result.md`、`logs/codex-final2-review-dispatch-20261113.log`、`evidence/codex-final2-review-20261113.meta.json`：Codex 第三轮（最终）复审，reviewed_head=`42810143b025a90de2f651a73059243dd6a0259e`，EXIT 0，994.6s；确认 441/441 pins、14 项更正与六批门禁；结论 REJECT，剩余为当前状态措辞与 14-003 表述收敛。
 
+- `logs/task-card-pin-recompute-20261113-final-review.log`、`evidence/task-card-pin-recompute-20261113-final-review.json`：最终复审回填后 Task 卡复算（462 条 pins：d248ed28 门禁 8、最终复审证据 5、fee77cc0 门禁 8）；462/462 PASS、0 fail。
+
 ## 2026-11-13 P7 DSH 集成核验与 ZCode 额度复核
 
 - `reports/P7-INTEGRATION-CONSISTENCY-CHECK-2026-11-13.md`：DSH 集成核验记录（非 ZCode Review）；371 条 Canonical Evidence 复算、14 条 worktree/BLOB 基准更正、报告计数/AC/R1–R4/Gate 一致性与文档漂移清单。
