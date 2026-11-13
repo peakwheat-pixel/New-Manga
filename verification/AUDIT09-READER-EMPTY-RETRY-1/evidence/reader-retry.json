@@ -1,0 +1,13 @@
+{
+  "logs": [
+    "logs/dotnet-test-reader-retry.log",
+    "logs/dotnet-test-reader-retry-fixed.log",
+    "logs/discriminating-power-old-code.log"
+  ],
+  "fixed": "4 passed / EXIT 0",
+  "old_code": "1 failed (EmptyChapter_RetryKeepsTheSelectedContext) / EXIT 1",
+  "schema": "audit09-evidence/v1",
+  "head": "a9e01722f8a0a7db3c89a8b8aaa753d65eaa2883",
+  "real_gui": "NOT_RUN",
+  "tests": "V2ImmersiveReaderTests"
+}

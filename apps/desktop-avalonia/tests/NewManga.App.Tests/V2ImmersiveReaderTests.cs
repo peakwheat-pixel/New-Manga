@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Headless.XUnit;
 using Avalonia.Input;
+using NewManga.App.Services;
 using NewManga.App.Shell.V2;
 using NewManga.App.ViewModels.V2.Library;
 using NewManga.App.ViewModels.V2.Shell;
@@ -58,5 +59,31 @@ public sealed class V2ImmersiveReaderTests
         var command = KeyMap.Default.Definitions.Single(d => d.Id == ShellCommandIds.LibraryImmersiveReader);
         Assert.Contains(command.Gestures, g => g.Matches(Key.F11, KeyModifiers.None));
         Assert.Empty(KeyMap.Default.Conflicts);
+    }
+
+    [AvaloniaFact]
+    public async Task EmptyChapter_RetryKeepsTheSelectedContext()
+    {
+        var host = Controller();
+        host.ReaderBooksByChapterId["ch-empty"] = new ReaderBookData(
+            "book-1", "AUDIT 合成样本", "ch-empty", "合成审计章节 1", "paged",
+            Array.Empty<ReaderPageData>());
+        var notices = new List<string>();
+        var reader = new ReaderOverlayViewModel(host, (text, _) => notices.Add(text));
+
+        Assert.False(await reader.OpenAsync("book-1", "ch-empty"));
+        Assert.Equal("该章节没有可阅读的页面。", reader.ErrorMessage);
+
+        reader.RetryCommand.Execute(null);
+        var deadline = DateTime.UtcNow.AddSeconds(5);
+        while (host.ReaderLoadCount < 2 && DateTime.UtcNow < deadline)
+        {
+            await Task.Delay(50);
+        }
+
+        Assert.True(host.ReaderLoadCount >= 2, "Retry must reload the reader projection");
+        Assert.Equal(("book-1", "ch-empty"), host.LastReaderRequest);
+        Assert.Equal("该章节没有可阅读的页面。", reader.ErrorMessage);
+        Assert.DoesNotContain(notices, text => text.Contains("请先在资料柜", StringComparison.Ordinal));
     }
 }

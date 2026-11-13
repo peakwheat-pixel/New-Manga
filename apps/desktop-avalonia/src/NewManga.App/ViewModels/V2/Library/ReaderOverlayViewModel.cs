@@ -59,6 +59,14 @@ public sealed class ReaderOverlayViewModel : ObservableObject
     private bool _isSaving;
 
     /// <summary>
+    /// AUDIT-09-CAND-001: the (book, chapter) the caller asked the overlay to open, kept even when
+    /// the load fails (for example a zero-page chapter). Retry reuses this request instead of the
+    /// last successfully loaded book, so a failed open cannot degrade into "select a book first".
+    /// </summary>
+    private string? _requestedBookId;
+    private string? _requestedChapterId;
+
+    /// <summary>
     /// REALUSE-DATA-SAFETY-7 R-001: the save currently awaiting the Host. Closing waits for it so
     /// the closing pass cannot be short-circuited by <c>_isSaving</c>, and so the mirror callback
     /// never runs against a book that the close has already cleared.
@@ -90,7 +98,7 @@ public sealed class ReaderOverlayViewModel : ObservableObject
         PreviousPageCommand = new RelayCommand(() => _ = PreviousAsync());
         ToggleLayoutCommand = new RelayCommand(() => _ = ToggleLayoutAsync());
         ToggleDirectionCommand = new RelayCommand(() => _ = ToggleDirectionAsync());
-        RetryCommand = new RelayCommand(() => _ = OpenAsync(BookId, ChapterId));
+        RetryCommand = new RelayCommand(() => _ = OpenAsync(BookId ?? _requestedBookId, ChapterId ?? _requestedChapterId));
     }
 
     public ObservableCollection<ReaderPageItem> Pages { get; }
@@ -248,6 +256,11 @@ public sealed class ReaderOverlayViewModel : ObservableObject
             _notify("请先在资料柜选择作品与章节，再打开阅读浮层", NmStatus.Blocked);
             return false;
         }
+
+        // AUDIT-09-CAND-001: remember the requested context before loading so Retry keeps using the
+        // user's current selection even when the chapter has no pages (the load then fails).
+        _requestedBookId = bookId;
+        _requestedChapterId = chapterId;
 
         IsOpen = true;
         IsLoading = true;
