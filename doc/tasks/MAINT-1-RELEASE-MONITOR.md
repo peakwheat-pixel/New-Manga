@@ -80,3 +80,11 @@ NEW-MANGA-V1-FULL-AUDIT 与 R1–R4 整改、SEC-01/02/03、CORE-01、AUDIT-07/0
 - **未翻转状态**：`REL-GATE-1`、`FEA-15-ACCEPT-1` 均 `closed_with_limitations`，未改一字、未改状态；解冻留待 P3 独立 Review。
 - **会话教训（写死）**：`Start-Process` 在本会话无限阻塞、`CopyFromScreen` 无交互桌面时阻塞、`Start-Job` 受命名管道限制挂死；改用 `Process.Start(UseShellExecute=false)` + `PrintWindow`。
 - **下一轮（P3）**：9 个 `closed_with_limitations` 节点逐项分类（C1 工程闭环 / C2 契约对齐 / C3 设计选择 / C4 硬件）并处置。
+
+### 轮次 4（2026-11-14）
+
+- **P3 分类完成**：[triage 记录](../reviews/MAINT-1-P3-LIMITATION-TRIAGE.md)。9 个节点拆出 C1 约 13 项、C2 5 项、C3 7 项、C4 10 项，另有 2 项已由本循环 P1/P2 解决。
+- **一处自我更正**：A3-1「日志路径写真实 %APPDATA%」原先被我判定为 C1 真实缺陷；核对源码 `MainWindow.axaml.cs:1041-1047` 后确认 `ResolveDiagnosticsRoot` 是**有意**的发行默认（显式 `--log-dir` 时全部重定向，未传时保留每用户位置），故降级为 C3/C1 边界并转入 Q5 双签。P2 冒烟同时传了 `--log-dir`，所以未触发该路径，与 A3-1 现象一致。
+- **双签队列（6 项）**：Q1 name 规范化、Q2 position 形状、Q3 FONT-2 拆分与字体授权、Q4 READ P12/P15 偏差、Q5 日志根是否跟随数据根、Q6 pytest 16F 修或永久登记。
+- **未翻转状态**：9 个节点全部保持 `closed_with_limitations`。
+- **下一轮（P3-a）**：把两处 `TaskPath FAIL`（`FEA-06-PREREQ-1` 13 errors、`CHAPTER-SELECTOR-1` 6 errors）作为首批 C1 治理卡修复。
