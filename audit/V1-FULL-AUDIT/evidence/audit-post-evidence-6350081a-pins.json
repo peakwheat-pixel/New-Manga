@@ -1,0 +1,18 @@
+{
+  "name": "audit-post-evidence-6350081a-pins",
+  "argv": [
+    "pwsh",
+    "-NoProfile",
+    "-File",
+    "tools/governance/verify_pins.ps1"
+  ],
+  "cwd": "G:\\CODEX\\New Manga",
+  "started_utc": "2026-11-13T21:27:03.2000507+08:00",
+  "head": "6350081a535d5c67c57c0f1c6123a68ed5bbdf57",
+  "branch": "main",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": null,
+  "log": "audit/V1-FULL-AUDIT/logs/audit-post-evidence-6350081a-pins.log",
+  "note": "manual read-only gate run before the fourth Codex review; archived from Task workspace"
+}

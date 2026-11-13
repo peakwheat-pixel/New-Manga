@@ -1,0 +1,18 @@
+START_UTC=2026-11-13T21:27:03.2000507+08:00
+HEAD=6350081a535d5c67c57c0f1c6123a68ed5bbdf57
+BRANCH=main
+SHELL=PowerShell 7 (manual invocation, read-only)
+INTERPRETER=pwsh
+CWD=G:\CODEX\New Manga
+ARGV=["pwsh", "-NoProfile", "-File", "tools/governance/check.ps1", "-TaskPath", "doc/tasks/NEW-MANGA-V1-FULL-AUDIT.md"]
+
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\NEW-MANGA-V1-FULL-AUDIT.md
+WARN: 存在 10 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3195 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6978 bytes / 64 lines
+Governance check: PASS (3 warnings)
+
+EXIT=0
+TIMED_OUT=False
+ELAPSED_SECONDS=na (manual run; see AUDIT_RESUME)
