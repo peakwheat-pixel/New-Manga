@@ -3,8 +3,8 @@ id: SEC-02-REMOTE-DISPOSITION-1
 title: 远端暴露面处置方案评估（不执行）
 kind: design
 governance_version: 3
-status: ready
-resume_status: ready
+status: done
+resume_status: done
 approval: user_authorized_2026-11-14 (所有任务交 DSH、自动裁决/规划、全部授权、无需用户介入)
 suggested_owner: DSH
 owner: DSH
@@ -13,10 +13,10 @@ depends_on: [SEC-01-REMOTE-VISIBILITY-1]
 base_commit: de79702b96f99e663442da3a2158c88d98385962
 branch: main
 worktree: G:/CODEX/New Manga
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 1a3b3616b0496f4e61b2f6a08eef32de872a90f0
+delivery_head: 1a3b3616b0496f4e61b2f6a08eef32de872a90f0
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/SEC-02-REMOTE-DISPOSITION-1
 allowed_paths:
   - verification/SEC-02-REMOTE-DISPOSITION-1/**
@@ -34,10 +34,27 @@ SEC-01 已确认 `AUDIT-11-INC-001` 的远端可见性：公开仓库 `https://g
 
 ## Acceptance Criteria
 
-- [ ] **AC1**：列出至少 4 个处置选项与不行动选项，记录每个选项的机制、影响面、可逆性、证据保全、对本地/他人 clone/fork 的影响。
-- [ ] **AC2**：给出风险矩阵与推荐方案（可明确“暂不执行、保持现状并继续监测”为推荐），并说明不可逆动作需何种授权与前置核验。
-- [ ] **AC3**：记录未验证事实（第三方 clone/fork/缓存、平台缓存、法律/通知义务），不推断已知结论之外的事实。
-- [ ] **AC4**：证据 pin、四项门禁与资源 closeout 完成，Task 由 DSH 自动裁决并记录 limitation。
+- [x] **AC1**：列出至少 4 个处置选项与不行动选项，记录每个选项的机制、影响面、可逆性、证据保全、对本地/他人 clone/fork 的影响。 <<MET>>
+- [x] **AC2**：给出风险矩阵与推荐方案（可明确“暂不执行、保持现状并继续监测”为推荐），并说明不可逆动作需何种授权与前置核验。 <<MET>>
+- [x] **AC3**：记录未验证事实（第三方 clone/fork/缓存、平台缓存、法律/通知义务），不推断已知结论之外的事实。 <<MET>>
+- [x] **AC4**：证据 pin、四项门禁与资源 closeout 完成，Task 由 DSH 自动裁决并记录 limitation。 <<MET>>
+
+## Canonical Evidence
+
+| evidence_id | AC/Gate | path | commit | sha256 | class | sha256_basis |
+|---|---|---|---|---|---|---|
+| SEC02-REPORT-1 | AC1-4 | `verification/SEC-02-REMOTE-DISPOSITION-1/REPORT.md` | `1a3b3616b0496f4e61b2f6a08eef32de872a90f0` | `F942957D325B183F14F9DC5E15E5DBE42E787BC26575C1B6C66C3D59877E6194` | CANONICAL | BLOB |
+
+## Resource Manifest
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| worktree | G:/CODEX/New Manga | PRESERVE_REFERENCED | doc | verification/SEC-02-REMOTE-DISPOSITION-1/REPORT.md | 主工作区保留 |
+| task-env | - | NOT_APPLICABLE | doc | verification/SEC-02-REMOTE-DISPOSITION-1/REPORT.md | 无独立 task-env |
+| agent-output | - | NOT_APPLICABLE | doc | verification/SEC-02-REMOTE-DISPOSITION-1/REPORT.md | 无 agent-output |
+| artifact | verification/SEC-02-REMOTE-DISPOSITION-1 | PRESERVE_REFERENCED | doc | verification/SEC-02-REMOTE-DISPOSITION-1/REPORT.md | 评估报告保留 |
+| dataset/model/test-material | - | NOT_APPLICABLE | doc | verification/SEC-02-REMOTE-DISPOSITION-1/REPORT.md | 未读取素材 |
+| exchange | - | NOT_APPLICABLE | doc | verification/SEC-02-REMOTE-DISPOSITION-1/REPORT.md | 无外部传输 |
 
 ## 允许修改范围
 

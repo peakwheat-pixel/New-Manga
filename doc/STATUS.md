@@ -4,7 +4,7 @@
 
 ## 当前程序
 - **FEA 线 ACTIVE（S5）**：[FEA-00 方案](design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md)；V11R 程序已收官（v0.1.1）。
-- 当前 Task：[SEC-02-REMOTE-DISPOSITION-1](tasks/SEC-02-REMOTE-DISPOSITION-1.md) `ready`（远端暴露面处置方案评估；DSH 自动执行；SEC-01 已 done：远端可见性已确认）。
+- 当前 Task：[SEC-03-RESTORE-TYPED-ERROR-1](tasks/SEC-03-RESTORE-TYPED-ERROR-1.md) `ready`（nmbak restore typed error；SEC-01/02 done）。
 - 刚收口：FEA-15-PIN-BASIS-ENFORCE-1 `closed_with_limitations`（AC5 MET；R-001 CLOSED）；DIAG-ACL-1/[ACCEPT-1](tasks/FEA-15-ACCEPT-1.md) 同为 `closed_with_limitations`；PIN-POLICY-1 `done`。
 - FEA-11/12 线：WATCH/SCAN/MATCH/LINEAGE/HOST-AUTH、FEA-12 四卡均 `done`。
 - **AC11-1 MET with limitation**（2026-11-06，[裁决](reviews/FEA-11-AC11-1-adjudication-2026-11-06.md)）：冷启动枚举、registry/root 核验及每次访问的 live grant+lease+digest 检查；启动不做全量扫描（L-STARTUP）。
