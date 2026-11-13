@@ -1,0 +1,19 @@
+START_UTC=2026-11-13T14:32:34.948977+00:00
+HEAD=0de08632b2a8ed4fd9812d39ab5ad07881151bfe
+BRANCH=main
+SHELL=Python subprocess (no shell)
+INTERPRETER=C:\Python314\python.exe
+CWD=G:\CODEX\New Manga
+ARGV=["pwsh", "-NoProfile", "-File", "tools/governance/check.ps1", "-TaskPath", "doc/tasks/NEW-MANGA-V1-FULL-AUDIT.md"]
+
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\NEW-MANGA-V1-FULL-AUDIT.md
+WARN: 存在 10 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3195 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6978 bytes / 64 lines
+WARN: evidence_dir 含未登记过程文件（归入 workspace 或列为 SOURCE_PIN）：G:\CODEX\New Manga\audit\V1-FULL-AUDIT\AUDIT_EVIDENCE_INDEX.md, G:\CODEX\New Manga\audit\V1-FULL-AUDIT\AUDIT_PLAN.md, G:\CODEX\New Manga\audit\V1-FULL-AUDIT\AUDIT_RESUME.md, G:\CODEX\New Manga\audit\V1-FULL-AUDIT\evidence\audit-post-evidence-0de08632-default.json, G:\CODEX\New Manga\audit\V1-FULL-AUDIT\evidence\audit-post-evidence-18357fdc-api.json, G:\CODEX\New Manga\audit\V1-FULL-AUDIT\evidence\audit-post-evidence-18357fdc-default.json, G:\CODEX\New Manga\audit\V1-FULL-AUDIT\evidence\audit-post-evidence-18357fdc-pins.json, G:\CODEX\New Manga\audit\V1-FULL-AUDIT\evidence\audit-post-evidence-18357fdc-taskpath.json
+Governance check: PASS (4 warnings)
+
+EXIT=0
+TIMED_OUT=False
+ELAPSED_SECONDS=21.476

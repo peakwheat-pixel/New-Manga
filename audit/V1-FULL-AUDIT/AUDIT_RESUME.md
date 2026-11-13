@@ -16,6 +16,8 @@
 
 - 第八轮回填（2026-11-13）：Task 卡 pins 509/509（第六轮复审证据 5、484094a1 门禁 8）；Task status 由 `changes_requested` 改为 `in_review` 并附第六轮复审记录；下一步跑门禁并以 clean head 做第七轮复审。
 
+- 进入 REVIEW 后门禁：Task status=`in_review`，AC 标题改为 lifecycle v3 要求的 `- [ ] **ACn**` 格式后，generated HEAD=`0de08632b2a8ed4fd9812d39ab5ad07881151bfe` 四项均 EXIT 0（default/TaskPath 各 3 warnings；verify_pins 18/18；API 1/79/6=86）；日志 `logs/audit-post-evidence-0de08632-*.log`、metadata `evidence/audit-post-evidence-0de08632-*.json`。
+
 ## 2026-11-13 用户裁决：最终独立 Review 与裁决改为 Codex 优先
 
 - 用户 2026-11-13 指示：“调整流程，裁决交给 codex 或者 zcode，优先 codex”。本 Task 的最终独立 Review 与候选/finding 裁决改为 **Codex 优先**；Codex 不可用或不适配时回退 **ZCode**。历史 ZCode 裁决、Review 与 evidence pin 原字节保留，不追改、不据此恢复 ZCode 独占裁决。
