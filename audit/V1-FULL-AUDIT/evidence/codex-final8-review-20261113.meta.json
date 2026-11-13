@@ -1,0 +1,30 @@
+{
+  "schema": "codex-final-review-dispatch/v1",
+  "kind": "ninth review (pointer sync)",
+  "reviewer": "Codex (fresh independent context)",
+  "cli": "codex-cli 0.162.0",
+  "model": "gpt-6-luna",
+  "reasoning_effort": "xhigh",
+  "sandbox": "danger-full-access (read-only-instructed; read-only/workspace-write cannot spawn child processes: Windows error 740)",
+  "session_id": "01a1d578-383b-74c1-bc94-355e3ecdfe1c",
+  "reviewed_head": "f251270833f3ea775f6f577dbfa33e6c88073162",
+  "expected_head": "f251270833f3ea775f6f577dbfa33e6c88073162",
+  "branch": "main",
+  "exit": 0,
+  "elapsed_seconds": 1306.9,
+  "started_at_local": "2026-11-13T23:34:54+08:00",
+  "decision": "REJECT",
+  "result_path": "audit/V1-FULL-AUDIT/reports/CODEX-FINAL8-REVIEW-2026-11-13.md",
+  "result_sha256": "67536A317515E94B838075633969EA9AB43FE345F4F8EB0827263519F8C90030",
+  "stdout_path": "audit/V1-FULL-AUDIT/evidence/codex-final8-review-20261113.stdout.log",
+  "stdout_sha256": "9A31265110FA82BD502346A6D4B7D9D81CCA232D9AD5EC75BFC239DB1F3A445F",
+  "raw_stderr_path": "G:\\CODEX\\New Manga.workspace\\task-envs\\NEW-MANGA-V1-FULL-AUDIT\\codex-final8-20261113\\stderr.log",
+  "raw_stderr_bytes": 1424998,
+  "raw_stderr_sha256": "CCACC66A2451213726F00A83BDDA7FF1D971DAB730353022C2F8F251D7749619",
+  "notes": [
+    "Worktree clean before and after.",
+    "Confirmed 535/535 pins; no duplicates; 14 corrections correct.",
+    "F1: AUDIT_PLAN/AUDIT_STATUS/Task AC4/Rolling/FINAL/13_GATE current pointers not synced to 46a8fe6e and ninth review.",
+    "Review notes the latest recorded gate batch is 46a8fe6e (in f0fa06ef), and final gates should be recorded on the DSH-integrated delivery head."
+  ]
+}

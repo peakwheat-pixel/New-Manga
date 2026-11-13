@@ -30,6 +30,8 @@
 
 - 第十轮回填（2026-11-13）：Task 卡 pins 535/535（第八轮复审证据 5、46a8fe6e 门禁 8）；Task status 由 `changes_requested` 改为 `in_review`，TASK_LEDGER 重跑；下一步跑门禁并以 clean head 做第九轮复审。
 
+- 第九轮复审（2026-11-13）：Codex 对 `reviewed_head=f251270833f3ea775f6f577dbfa33e6c88073162` 复审，EXIT 0，1306.9s；确认 535/535 pins；结论 REJECT，仅剩 AUDIT_PLAN/AUDIT_STATUS/Task AC4·Rolling/FINAL/13_GATE 当前指针同步（本轮修复）；指出最新已记录门禁为 `46a8fe6e`。报告 `reports/CODEX-FINAL8-REVIEW-2026-11-13.md`。
+
 ## 2026-11-13 用户裁决：最终独立 Review 与裁决改为 Codex 优先
 
 - 用户 2026-11-13 指示：“调整流程，裁决交给 codex 或者 zcode，优先 codex”。本 Task 的最终独立 Review 与候选/finding 裁决改为 **Codex 优先**；Codex 不可用或不适配时回退 **ZCode**。历史 ZCode 裁决、Review 与 evidence pin 原字节保留，不追改、不据此恢复 ZCode 独占裁决。
