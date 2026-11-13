@@ -39,6 +39,8 @@
 
 - `reports/CODEX-FINAL7-REVIEW-2026-11-13.md`、`evidence/codex-final7-review-20261113.result.md`、`logs/codex-final7-review-dispatch-20261113.log`、`evidence/codex-final7-review-20261113.meta.json`：Codex 第八轮复审，reviewed_head=`6b09ca1f42a0145fa63fa317c2beb3b0596fe848`，EXIT 0，729.2s；确认 522/522 pins；结论 REJECT（F1 Task AC3/AC4/Rolling、GATE 第 7 条、FINAL 候选措辞、AUDIT_STATUS 旧描述；F2 6b09ca1f 门禁未入库为已接受滚动 limitation）。
 
+- `logs/task-card-pin-recompute-20261113-after-final7.log`、`evidence/task-card-pin-recompute-20261113-after-final7.json`：第八轮复审回填后 Task 卡复算（535 条 pins：第八轮复审证据 5、46a8fe6e 门禁 8）；535/535 PASS。
+
 ## 2026-11-13 P7 DSH 集成核验与 ZCode 额度复核
 
 - `reports/P7-INTEGRATION-CONSISTENCY-CHECK-2026-11-13.md`：DSH 集成核验记录（非 ZCode Review）；371 条 Canonical Evidence 复算、14 条 worktree/BLOB 基准更正、报告计数/AC/R1–R4/Gate 一致性与文档漂移清单。

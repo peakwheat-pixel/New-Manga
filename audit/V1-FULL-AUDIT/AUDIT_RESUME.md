@@ -28,6 +28,8 @@
 
 - 第九轮修复后门禁：generated HEAD=`46a8fe6edb489efbafb88f83610e9b48f00d6d0d` 四项均 EXIT 0（default/TaskPath；verify_pins 18/18；API 1/79/6=86）；日志 `logs/audit-post-evidence-46a8fe6e-*.log`、metadata `evidence/audit-post-evidence-46a8fe6e-*.json`。
 
+- 第十轮回填（2026-11-13）：Task 卡 pins 535/535（第八轮复审证据 5、46a8fe6e 门禁 8）；Task status 由 `changes_requested` 改为 `in_review`，TASK_LEDGER 重跑；下一步跑门禁并以 clean head 做第九轮复审。
+
 ## 2026-11-13 用户裁决：最终独立 Review 与裁决改为 Codex 优先
 
 - 用户 2026-11-13 指示：“调整流程，裁决交给 codex 或者 zcode，优先 codex”。本 Task 的最终独立 Review 与候选/finding 裁决改为 **Codex 优先**；Codex 不可用或不适配时回退 **ZCode**。历史 ZCode 裁决、Review 与 evidence pin 原字节保留，不追改、不据此恢复 ZCode 独占裁决。
