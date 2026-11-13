@@ -1,0 +1,9 @@
+{
+  "audit_head": "4daa7169752b8f9c85fd8f8a01e5660f98f10481",
+  "head": "22cb0d3d140d76ab8dbc3a7d8771ca8d31b24700",
+  "limitation": "original P2 finding and audit evidence preserved; requires reproduction in the original environment before a fix task",
+  "conclusion": "not reproducible on current HEAD; no product changes touching export/plugins since audit head",
+  "audit_result": "127 passed / 3 failed / EXIT 1",
+  "schema": "audit07-repro/v1",
+  "current_result": "130 passed / 3 passed targeted / EXIT 0"
+}

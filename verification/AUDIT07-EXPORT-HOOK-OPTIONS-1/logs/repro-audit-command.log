@@ -1,0 +1,13 @@
+START_UTC=2026-11-13T17:51:13.8334898Z
+HEAD=22cb0d3d140d76ab8dbc3a7d8771ca8d31b24700
+ARGV=[python,-m,pytest,tests/core/test_font_wire.py,tests/core/test_pipeline_defaults_service.py,tests/core/test_settings_section_validation.py,tests/core/test_rc4_stdio_render_preview.py,tests/core/test_p16_reader_export.py,-q,-rs,--tb=short,--basetemp=...]
+........................................................................ [ 55%]
+..........................................................               [100%]
+============================== warnings summary ===============================
+tests/core/test_rc4_stdio_render_preview.py::test_production_stdio_decodes_nmfr_renders_text_and_publishes_readable_preview
+  G:\CODEX\New Manga\tests\core\test_rc4_stdio_render_preview.py:245: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+    for px in rendered.crop((20, 20, 150, 120)).convert("RGB").getdata()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+130 passed, 1 warning in 11.37s
+EXIT=0
