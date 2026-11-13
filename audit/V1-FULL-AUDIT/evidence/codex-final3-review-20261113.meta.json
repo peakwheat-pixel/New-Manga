@@ -1,0 +1,29 @@
+{
+  "schema": "codex-final-review-dispatch/v1",
+  "kind": "final convergence re-review (fourth round)",
+  "reviewer": "Codex (fresh independent context)",
+  "cli": "codex-cli 0.162.0",
+  "model": "gpt-6-luna",
+  "reasoning_effort": "xhigh",
+  "sandbox": "danger-full-access (read-only-instructed; read-only/workspace-write cannot spawn child processes: Windows error 740)",
+  "session_id": "01a1d518-1719-7cb1-8734-063c33c20fe5",
+  "reviewed_head": "6350081a535d5c67c57c0f1c6123a68ed5bbdf57",
+  "expected_head": "6350081a535d5c67c57c0f1c6123a68ed5bbdf57",
+  "branch": "main",
+  "exit": 0,
+  "elapsed_seconds": 1031.6,
+  "started_at_local": "2026-11-13T21:45:19+08:00",
+  "decision": "REJECT",
+  "result_path": "audit/V1-FULL-AUDIT/reports/CODEX-FINAL3-REVIEW-2026-11-13.md",
+  "result_sha256": "B91DE6FDA2D67664E17215985F4779FD0D82639819DF1BFF445B1DA90A41E1BC",
+  "stdout_path": "audit/V1-FULL-AUDIT/evidence/codex-final3-review-20261113.stdout.log",
+  "stdout_sha256": "1676627F6946FD8A84E50D713DCB1DDBACD6218A475E3078529A4DF9818066CD",
+  "raw_stderr_path": "G:\\CODEX\\New Manga.workspace\\task-envs\\NEW-MANGA-V1-FULL-AUDIT\\codex-final3-20261113\\stderr.log",
+  "raw_stderr_bytes": 1058381,
+  "raw_stderr_sha256": "6AEA30555767EABA015DF3DD70DE46E9217DA318BFDBE96EAE300176E11CB22F",
+  "notes": [
+    "Worktree was clean before and after the review.",
+    "Confirmed 462/462 unique pins, no duplicates, correct 14 corrections, counts consistent.",
+    "Remaining: stale current summaries (441 vs 462, old review status), special-report historical wording, and missing traceable gate batch for reviewed HEAD."
+  ]
+}

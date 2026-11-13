@@ -16,6 +16,8 @@
 
 - 最终回填（2026-11-13）：Task 卡 pins 462/462（d248ed28 批次 8、第三轮复审证据 5、fee77cc0 批次 8）；AC4/Rolling 同步 462；第四轮门禁在 fee77cc0 与后续 HEAD 均 EXIT 0。下一步以 clean head 做最终复审并完成 DSH 集成/closeout。
 
+- 第四轮收敛复审（2026-11-13）：Codex 对 `reviewed_head=6350081a535d5c67c57c0f1c6123a68ed5bbdf57` 复审，EXIT 0，1031.6s；确认 462/462 pins、无重复、14 项更正正确、计数自洽；结论 REJECT，剩余：STATUS/AUDIT_STATUS 写 441、AUDIT_PLAN/13_GATE/FINAL 旧 Review 状态、专项报告旧措辞、6350081a 门禁批次未入仓。报告 `reports/CODEX-FINAL3-REVIEW-2026-11-13.md`。
+
 ## 2026-11-13 P7 Codex 最终独立 Review（Codex-first 裁决）
 
 - 用户裁决后，以 Codex CLI 0.162.0（`gpt-6-luna` / xhigh）对 clean HEAD=`d92859c9ac8a4d3122d6cabfe4d44af980574104` 派发全新上下文只读 Review；session `01a1d4ce-6b79-7b43-939d-834e3cdc21a9`、EXIT 0、耗时 1,911.5s、Review 前后工作树 clean。原始报告 `reports/CODEX-FINAL-REVIEW-2026-11-13.md`，派发元数据 `evidence/codex-final-review-20261113.meta.json`。
