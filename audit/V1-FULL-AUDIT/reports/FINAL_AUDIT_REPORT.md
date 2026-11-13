@@ -30,8 +30,8 @@
 | 02 源码质量扫描 | BLOCKED | AST / project graph / build 有证据；whitespace EXIT 2、1,556 项诊断；多类工具未安装、analyzers 关闭、语义扫描未完成。 |
 | 03 导入 / 项目路径 | FAIL | Core 87、ReferencedSource 77 passed；junction 下 ManagedFileStorage.publish 越出 managed root，SEG-B-PROBES-001。 |
 | 04 OCR / detection | PARTIAL | provider / Core 合成回归 175 + 40 passed；无真实权重、GT、准确率或 CPU inference。 |
-| 05 SFX | PARTIAL | 定向合成组 247 passed / 3 deselected；AUDIT-05-CAND-001 待裁决；真实权重、GT、UI 未测。 |
-| 06 翻译 | PARTIAL | 合成上下文组 84 passed；真实 API / 费用 / 取消未测；两个候选待裁决。 |
+| 05 SFX | PARTIAL | 定向合成组 247 passed / 3 deselected；AUDIT-05-CAND-001 已由 Codex 裁为 INVESTIGATE；真实权重、GT、UI 未测。 |
+| 06 翻译 | PARTIAL | 合成上下文组 84 passed；真实 API / 费用 / 取消未测；两个候选已由 Codex 裁为 INVESTIGATE。 |
 | 07 修复 / 排版 / 导出 | PARTIAL | 多组定向测试通过；Core/rerender/export 127 passed、3 failed、EXIT 1；视觉质量、真实模型与字体许可未测。 |
 | 08 数据库 / 恢复 | FAIL | 合成 DB 284 passed；restore 磁盘写失败复现确认 SEG-B-PROBES-002。 |
 | 09 UI/UX | PARTIAL | Legacy 与 V2 空态、设置、Reader fallback/快捷键有实际观察；Fluent Host 115.344s 未 ready；大量交互 NOT_RUN。 |
@@ -53,7 +53,7 @@
 - 开放 finding 共 7 项；另有 AUDIT-11-INC-001 1 条 INVESTIGATE 风险，不计 finding。
 - 11 个候选已由 Codex 裁决：4 finding / 4 INVESTIGATE / 1 accepted limitation / 2 close。
 
-完整去重记录、证据、分类和待裁决问题见 reports/11_ISSUES.md 以及 AUDIT_ISSUES.md。
+完整去重记录、证据、分类和已裁决问题见 reports/11_ISSUES.md 以及 AUDIT_ISSUES.md。
 
 ## 测试结果摘要
 
@@ -67,7 +67,7 @@
 
 ## 功能完整性与 Windows 发布判断
 
-目前缺少 V1 与未来规划的权威逐项总账，不能计算整体承诺完成率。V2 Studio 静态 inventory 标记多个可见能力 NOT_WIRED，但它们是否属于 V1 承诺仍待 ZCode 裁决。
+目前缺少 V1 与未来规划的权威逐项总账，不能计算整体承诺完成率。V2 Studio 静态 inventory 标记多个可见能力 NOT_WIRED，但它们是否属于 V1 承诺已由 Codex 裁为 INVESTIGATE（V1 归属待 manifest）。
 
 Windows build 成功不等于 Windows 发布成功。没有当前基线包 provenance、clean install、升级/回退、安装后四个一级页面验收和卸载证据。历史包未被执行。
 

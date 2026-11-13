@@ -12,7 +12,7 @@
 4. 没有当前基线安装包 provenance 和 clean Windows install / upgrade / rollback / uninstall 验证；历史 zip/setup 不绑定当前基线，本 Task 未安装、执行或发布。
 5. `AUDIT-11-INC-001` 当前远端可见性未知（Codex 维持 INVESTIGATE，不分配 severity）；不得写成已公开或已消除。
 6. 真实 manga / 模型 / 付费 API / 完整 UI 流程没有形成覆盖关键路径的端到端证据；部分结果仅来自 synthetic fixtures。
-7. Codex 五轮 Review 结论均为 **REJECT**：历史 REJECT 原因是状态/计数/重复 ID/门禁 pin 等；第五轮确认 483/483 pins 与计数自洽，仅剩当前摘要与专项报告/索引旧措辞的文档收敛；AC3/AC4 尚不能据此收口。该 REJECT 与产品发布阻断相互独立但同向。
+7. Codex 七轮 Review 结论均为 **REJECT**：历史 REJECT 原因是状态/计数/重复 ID/门禁 pin 等；第七轮确认 522/522 pins 与计数自洽，仅剩当前摘要与候选措辞的文档收敛；AC3/AC4 尚不能据此收口。该 REJECT 与产品发布阻断相互独立但同向。
 
 ## Gate 解释
 
