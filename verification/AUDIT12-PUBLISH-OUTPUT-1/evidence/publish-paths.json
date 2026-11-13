@@ -1,0 +1,8 @@
+{
+  "argv": "pwsh -NoProfile -File apps/desktop-avalonia/scripts/tests/publish-paths.tests.ps1",
+  "summary": "PASS existing directory outside publish root is not cleaned | SUMMARY passes=7 failures=0",
+  "note": "path/cleanup policy tests only; dotnet publish NOT RUN",
+  "head": "4817e528b26887362d4de547c5f4de2fcf51c40f",
+  "schema": "audit12-evidence/v1",
+  "exit": 0
+}

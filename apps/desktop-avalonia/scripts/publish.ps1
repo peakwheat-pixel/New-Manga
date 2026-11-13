@@ -16,12 +16,14 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $root = Resolve-Path (Join-Path $PSScriptRoot '..')
-$repoRoot = Resolve-Path (Join-Path $root '..\..')
+$repoRoot = (Resolve-Path (Join-Path $root '..\..')).Path
+. (Join-Path $PSScriptRoot 'publish-paths.ps1')
 $evidence = Join-Path $repoRoot 'verification/HOST-CORECLIENT-1/publish'
 New-Item -ItemType Directory -Force -Path $evidence | Out-Null
 if ([string]::IsNullOrWhiteSpace($OutputDirectory)) {
-    $OutputDirectory = Join-Path $root 'artifacts/win-x64-single'
+    $OutputDirectory = Get-DefaultPublishOutputDirectory -RepoRoot $repoRoot
 }
+$OutputDirectory = Assert-SafePublishOutput -Path $OutputDirectory -RepoRoot $repoRoot -AllowDelete
 if (Test-Path $OutputDirectory) {
     Remove-Item $OutputDirectory -Recurse -Force
 }

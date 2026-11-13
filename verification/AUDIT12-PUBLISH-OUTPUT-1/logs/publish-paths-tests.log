@@ -1,0 +1,12 @@
+START_UTC=2026-11-13T17:54:00.9320793Z
+HEAD=4817e528b26887362d4de547c5f4de2fcf51c40f
+ARGV=[pwsh,-NoProfile,-File,apps/desktop-avalonia/scripts/tests/publish-paths.tests.ps1]
+PASS default output is inside workspace publish root
+PASS default output is outside the repository
+PASS repository path is rejected
+PASS drive root is rejected
+PASS empty path is rejected
+PASS workspace publish disposable directory may be cleaned
+PASS existing directory outside publish root is not cleaned
+SUMMARY passes=7 failures=0
+EXIT=0
