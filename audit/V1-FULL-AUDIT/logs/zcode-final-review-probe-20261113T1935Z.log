@@ -1,0 +1,37 @@
+ZCode independent final review quota-recheck probe
+generated_at_utc=2026-11-13T11:36:24Z (local 2026-11-13T19:36:24+08:00)
+target_repository=G:\CODEX\New Manga
+branch=main
+generated_head=48ccb75ce1a547cf89e4d38cd577b868e15de5ce
+worktree_before_invocation=clean (git status --porcelain empty)
+review_result=NO_RESPONSE; this file is not a Review or adjudication.
+CLI=node E:\Program Files\ZCode\resources\glm\zcode.cjs
+CLI_version=0.17.1
+mode=plan
+locale=zh-CN
+argv=["node","E:\\Program Files\\ZCode\\resources\\glm\\zcode.cjs","--prompt","只回复两个字：收到","--cwd","G:\\CODEX\\New Manga","--mode","plan","--json","--locale","zh-CN"]
+exit=1
+session_id=none
+response=none
+stdout_bytes=2
+stdout_content=CRLF only (no JSON, no response)
+stdout_sha256=7EB70257593DA06F682A3DDDA54A9D260D4FC514F645237F5CA74B08F8DA61A6
+raw_stderr_path=G:\CODEX\New Manga.workspace\task-envs\NEW-MANGA-V1-FULL-AUDIT\zcode-probe-20261113T1935Z.stderr.txt
+raw_stderr_bytes=3273
+raw_stderr_sha256=D74C167FAE964790F8DAAFA437D9DBAE9478996985DE4A5BDC003753B0589605
+sanitized_stderr_path=evidence/zcode-final-review-probe-20261113T1935Z.stderr-sanitized.txt
+provider_id=account:bigmodel-individual-coding-plan
+provider_kind=anthropic
+provider_code=1310
+provider_message=[1310][您已达到每周/每月使用上限，您的限额将在 2026-11-17 18:40:33 重置。][20261113193624df033433ea324f3e]
+provider_request_id=20261113193624df033433ea324f3e
+response_status=429
+retry_after_seconds=386459
+reset_message=2026-11-17 18:40:33
+
+Interpretation:
+- The provider rejected the request with business code 1310 and HTTP 429 before any session or response was created.
+- No files, product source, contracts, schema, dependencies, user data, remote state or Git history were changed by this invocation.
+- This probe does not count as a Review, adjudication, or candidate disposition. It only reconfirms that the ZCode provider quota reset stated as 2026-11-17 18:40:33 has not occurred.
+- A fresh-context independent Review of the current clean HEAD remains pending and must be dispatched after the quota reset; the reviewed HEAD must be re-fixed to the then-current clean HEAD and the prompt file refreshed accordingly.
+- The raw stderr contains transient response headers (including set-cookie) and stays in the Task workspace; only the sanitized excerpt is committed.

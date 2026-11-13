@@ -1,3 +1,11 @@
+## 2026-11-13 P7 DSH 续审与集成核验检查点
+
+- 复原与固定：HEAD=`48ccb75ce1a547cf89e4d38cd577b868e15de5ce`，branch=`main`，工作树 clean；与用户记录一致，未 reset/clean/merge/改历史或覆盖他人文件。
+- ZCode 可用性复核：2026-11-13 19:36（本地）以 `--mode plan --json --locale zh-CN` 最小探测，provider 仍返回 `1310` / HTTP `429`、EXIT 1、stdout 仅 CRLF、无 session/response；reset 提示 `2026-11-17 18:40:33`。原始 stdout/stderr 保留于 Task workspace，脱敏摘要与哈希见 `logs/zcode-final-review-probe-20261113T1935Z.log`、`evidence/zcode-final-review-probe-20261113T1935Z.json`。该探测**不构成 Review**；11 个候选与 `AUDIT-11-INC-001` 仍待 ZCode。
+- 集成核验（DSH，非 Review）：`reports/P7-INTEGRATION-CONSISTENCY-CHECK-2026-11-13.md`。复算 Task 卡 371 条 Canonical Evidence：357 pass、14 FAIL；14 项（AUDIT-03 十项、AUDIT-04 四项）记录的是 worktree CRLF 字节 SHA-256，而 basis=BLOB；按 ZCode AUDIT-08 closure review 的 BLOB 基准更正为该 commit 的 raw Git BLOB SHA-256 后 371/371 PASS。脚本 `tests/verify_canonical_evidence.py`；更正前输出 `logs/task-card-pin-recompute-20261113-pre-correction.log`、`evidence/task-card-pin-recompute-20261113-pre-correction.json`，更正后 `logs/task-card-pin-recompute-20261113.log`、`evidence/task-card-pin-recompute-20261113.json`，根因与逐项值见 `evidence/task-card-pin-mismatch-investigation-20261113.json`、`evidence/task-card-pin-correction-20261113.json`。
+- 报告一致性：3 triaged findings / 1 INVESTIGATE / 11 候选 / 1 关闭非产品观察、P0–P3 计数、测试数值、AC1–AC4、R1–R4 与 Release Gate BLOCKED 均一致；记录到的文档漂移（AUDIT_STATUS 旧 NOT_TESTED 段、PLAN/INDEX 旧 gate 批次、Task 卡 AC4 旧 batch、遗留候选未处置）已记录并部分更正，不由 DSH 裁决候选。
+- 下一步：本次提交与门禁后，以届时 clean HEAD 重派 ZCode fresh-context 只读 Review（候选逐项裁决 + 证据复核 + Release Gate），再由 ZCode 裁决、DSH 集成。Task 仍 `in_progress`；AC2/AC3/AC4 `PARTIAL`；Release Gate `BLOCKED`；无待处理人工批准。
+
 ## 2026-11-13 P7 ZCode 独立 Review 派发阻断
 
 - 待审固定 HEAD=`3c40eb5ce987cecc6c73cb8dec37fbdef9948538`，branch=`main`；ZCode 启动前确认该 HEAD 且工作树 clean。Task P7 交付文件与当前门禁已固定，无审查期间工作区变更。

@@ -1,0 +1,342 @@
+{
+  "schema": "task-card-pin-mismatch-investigation/v1",
+  "head": "48ccb75ce1a547cf89e4d38cd577b868e15de5ce",
+  "failures": [
+    {
+      "evidence_id": "AUDIT03-CORE-LOG-1",
+      "path": "audit/V1-FULL-AUDIT/logs/audit03-core-import-20261112T200824899900Z.log",
+      "pinned_commit": "03b1a7acc5a324dcd1884df82d748569b2c7f91e",
+      "expected_sha256": "A0A96B37041B21B9206F188E9A694792CD4067A07E04AE191B4A326CF0C87C4C",
+      "worktree_sha256": "A0A96B37041B21B9206F188E9A694792CD4067A07E04AE191B4A326CF0C87C4C",
+      "worktree_bytes": 1298,
+      "worktree_matches_expected": true,
+      "pinned_blob_sha256": "268713BB9AEC1742C6D1A47382402034B611F23BBAD7919DC8545FF675C451E1",
+      "pinned_blob_bytes": 1283,
+      "pinned_blob_has_crlf": false,
+      "lf_to_crlf_sha256": "A0A96B37041B21B9206F188E9A694792CD4067A07E04AE191B4A326CF0C87C4C",
+      "crlf_to_lf_sha256": "268713BB9AEC1742C6D1A47382402034B611F23BBAD7919DC8545FF675C451E1",
+      "expected_matches_lf_to_crlf": true,
+      "expected_matches_crlf_to_lf": false,
+      "history": [
+        {
+          "commit": "03b1a7acc5a324dcd1884df82d748569b2c7f91e",
+          "date": "2026-11-13T04:18:42+08:00",
+          "subject": "audit: record AUDIT-03 import findings"
+        }
+      ],
+      "commits_with_expected_blob": []
+    },
+    {
+      "evidence_id": "AUDIT03-CORE-RESULT-1",
+      "path": "audit/V1-FULL-AUDIT/evidence/audit03-core-import-20261112T200824899900Z.json",
+      "pinned_commit": "03b1a7acc5a324dcd1884df82d748569b2c7f91e",
+      "expected_sha256": "0617CB02CCF1F08ECBBE73BD2E45AF8444FC7D162A1907D16BFF64F5A6A5CA24",
+      "worktree_sha256": "0617CB02CCF1F08ECBBE73BD2E45AF8444FC7D162A1907D16BFF64F5A6A5CA24",
+      "worktree_bytes": 1233,
+      "worktree_matches_expected": true,
+      "pinned_blob_sha256": "358AC0A41DC50B12EFEB838C84B82389605BCFF545A69F51AE00E85C74C1ACCC",
+      "pinned_blob_bytes": 1202,
+      "pinned_blob_has_crlf": false,
+      "lf_to_crlf_sha256": "0617CB02CCF1F08ECBBE73BD2E45AF8444FC7D162A1907D16BFF64F5A6A5CA24",
+      "crlf_to_lf_sha256": "358AC0A41DC50B12EFEB838C84B82389605BCFF545A69F51AE00E85C74C1ACCC",
+      "expected_matches_lf_to_crlf": true,
+      "expected_matches_crlf_to_lf": false,
+      "history": [
+        {
+          "commit": "03b1a7acc5a324dcd1884df82d748569b2c7f91e",
+          "date": "2026-11-13T04:18:42+08:00",
+          "subject": "audit: record AUDIT-03 import findings"
+        }
+      ],
+      "commits_with_expected_blob": []
+    },
+    {
+      "evidence_id": "AUDIT03-REFERENCE-LOG-1",
+      "path": "audit/V1-FULL-AUDIT/logs/audit03-referenced-import-20261112T200824899900Z.log",
+      "pinned_commit": "03b1a7acc5a324dcd1884df82d748569b2c7f91e",
+      "expected_sha256": "4A178087E7288E3E59CB8135C408863DD274AF25431649615820DBBC5108D658",
+      "worktree_sha256": "4A178087E7288E3E59CB8135C408863DD274AF25431649615820DBBC5108D658",
+      "worktree_bytes": 1188,
+      "worktree_matches_expected": true,
+      "pinned_blob_sha256": "9486A656C4D4F9EDB8AACEA88A8F6F58FE47E42D9F72DDD42424C9F339F53C95",
+      "pinned_blob_bytes": 1173,
+      "pinned_blob_has_crlf": false,
+      "lf_to_crlf_sha256": "4A178087E7288E3E59CB8135C408863DD274AF25431649615820DBBC5108D658",
+      "crlf_to_lf_sha256": "9486A656C4D4F9EDB8AACEA88A8F6F58FE47E42D9F72DDD42424C9F339F53C95",
+      "expected_matches_lf_to_crlf": true,
+      "expected_matches_crlf_to_lf": false,
+      "history": [
+        {
+          "commit": "03b1a7acc5a324dcd1884df82d748569b2c7f91e",
+          "date": "2026-11-13T04:18:42+08:00",
+          "subject": "audit: record AUDIT-03 import findings"
+        }
+      ],
+      "commits_with_expected_blob": []
+    },
+    {
+      "evidence_id": "AUDIT03-REFERENCE-RESULT-1",
+      "path": "audit/V1-FULL-AUDIT/evidence/audit03-referenced-import-20261112T200824899900Z.json",
+      "pinned_commit": "03b1a7acc5a324dcd1884df82d748569b2c7f91e",
+      "expected_sha256": "C132EA8FA418DBB7734C33647D51F8980073A3F5C1D024B204B75AF452548AE4",
+      "worktree_sha256": "C132EA8FA418DBB7734C33647D51F8980073A3F5C1D024B204B75AF452548AE4",
+      "worktree_bytes": 1114,
+      "worktree_matches_expected": true,
+      "pinned_blob_sha256": "C3C91B6B54F4C2112A82E348CE63564D75818BE487B9759E24092AE3CD596E4E",
+      "pinned_blob_bytes": 1086,
+      "pinned_blob_has_crlf": false,
+      "lf_to_crlf_sha256": "C132EA8FA418DBB7734C33647D51F8980073A3F5C1D024B204B75AF452548AE4",
+      "crlf_to_lf_sha256": "C3C91B6B54F4C2112A82E348CE63564D75818BE487B9759E24092AE3CD596E4E",
+      "expected_matches_lf_to_crlf": true,
+      "expected_matches_crlf_to_lf": false,
+      "history": [
+        {
+          "commit": "03b1a7acc5a324dcd1884df82d748569b2c7f91e",
+          "date": "2026-11-13T04:18:42+08:00",
+          "subject": "audit: record AUDIT-03 import findings"
+        }
+      ],
+      "commits_with_expected_blob": []
+    },
+    {
+      "evidence_id": "AUDIT03-PROBE-LOG-1",
+      "path": "audit/V1-FULL-AUDIT/logs/audit-probes-segment-b-20261112T195906381034Z.log",
+      "pinned_commit": "03b1a7acc5a324dcd1884df82d748569b2c7f91e",
+      "expected_sha256": "26292A7F5E6E1AB176F191E1F4B439A80D45E709A2B7D09EF5929194718F8A44",
+      "worktree_sha256": "26292A7F5E6E1AB176F191E1F4B439A80D45E709A2B7D09EF5929194718F8A44",
+      "worktree_bytes": 6050,
+      "worktree_matches_expected": true,
+      "pinned_blob_sha256": "90AECDB3FAB904BFDC152EA88C3CDCF54DB349F006F33D9F7DB1E38A2EB5D89C",
+      "pinned_blob_bytes": 5948,
+      "pinned_blob_has_crlf": false,
+      "lf_to_crlf_sha256": "26292A7F5E6E1AB176F191E1F4B439A80D45E709A2B7D09EF5929194718F8A44",
+      "crlf_to_lf_sha256": "90AECDB3FAB904BFDC152EA88C3CDCF54DB349F006F33D9F7DB1E38A2EB5D89C",
+      "expected_matches_lf_to_crlf": true,
+      "expected_matches_crlf_to_lf": false,
+      "history": [
+        {
+          "commit": "03b1a7acc5a324dcd1884df82d748569b2c7f91e",
+          "date": "2026-11-13T04:18:42+08:00",
+          "subject": "audit: record AUDIT-03 import findings"
+        }
+      ],
+      "commits_with_expected_blob": []
+    },
+    {
+      "evidence_id": "AUDIT03-PROBE-RESULT-1",
+      "path": "audit/V1-FULL-AUDIT/evidence/audit-probes-segment-b-20261112T195906381034Z.json",
+      "pinned_commit": "03b1a7acc5a324dcd1884df82d748569b2c7f91e",
+      "expected_sha256": "2655B34A58D7BC7036E8250A4CFCE653C68CA5834B4E57CDA51EDD6DA2E9E7BD",
+      "worktree_sha256": "2655B34A58D7BC7036E8250A4CFCE653C68CA5834B4E57CDA51EDD6DA2E9E7BD",
+      "worktree_bytes": 726,
+      "worktree_matches_expected": true,
+      "pinned_blob_sha256": "AA1DCC3B9055E8AD9644B4120CC1757F85DB6FD25AA0EC80FF0D92F885F3490D",
+      "pinned_blob_bytes": 705,
+      "pinned_blob_has_crlf": false,
+      "lf_to_crlf_sha256": "2655B34A58D7BC7036E8250A4CFCE653C68CA5834B4E57CDA51EDD6DA2E9E7BD",
+      "crlf_to_lf_sha256": "AA1DCC3B9055E8AD9644B4120CC1757F85DB6FD25AA0EC80FF0D92F885F3490D",
+      "expected_matches_lf_to_crlf": true,
+      "expected_matches_crlf_to_lf": false,
+      "history": [
+        {
+          "commit": "03b1a7acc5a324dcd1884df82d748569b2c7f91e",
+          "date": "2026-11-13T04:18:42+08:00",
+          "subject": "audit: record AUDIT-03 import findings"
+        }
+      ],
+      "commits_with_expected_blob": []
+    },
+    {
+      "evidence_id": "AUDIT03-COLLECTION-FAIL-LOG-1",
+      "path": "audit/V1-FULL-AUDIT/logs/audit03-import-project-20261112T195723565045Z.log",
+      "pinned_commit": "03b1a7acc5a324dcd1884df82d748569b2c7f91e",
+      "expected_sha256": "7CB26E8A86C293012C220395CD834591126E9EE8AAA0A2C954589ADEA91D7119",
+      "worktree_sha256": "7CB26E8A86C293012C220395CD834591126E9EE8AAA0A2C954589ADEA91D7119",
+      "worktree_bytes": 2271,
+      "worktree_matches_expected": true,
+      "pinned_blob_sha256": "E4556ABDE19BED7D5F11C210BBC2AF286BE611CBE9095229A280D18E03214909",
+      "pinned_blob_bytes": 2245,
+      "pinned_blob_has_crlf": false,
+      "lf_to_crlf_sha256": "7CB26E8A86C293012C220395CD834591126E9EE8AAA0A2C954589ADEA91D7119",
+      "crlf_to_lf_sha256": "E4556ABDE19BED7D5F11C210BBC2AF286BE611CBE9095229A280D18E03214909",
+      "expected_matches_lf_to_crlf": true,
+      "expected_matches_crlf_to_lf": false,
+      "history": [
+        {
+          "commit": "03b1a7acc5a324dcd1884df82d748569b2c7f91e",
+          "date": "2026-11-13T04:18:42+08:00",
+          "subject": "audit: record AUDIT-03 import findings"
+        }
+      ],
+      "commits_with_expected_blob": []
+    },
+    {
+      "evidence_id": "AUDIT03-COLLECTION-FAIL-RESULT-1",
+      "path": "audit/V1-FULL-AUDIT/evidence/audit03-import-project-20261112T195723565045Z.json",
+      "pinned_commit": "03b1a7acc5a324dcd1884df82d748569b2c7f91e",
+      "expected_sha256": "FFB909CB3F393A2E20C1111565A5FC9C2887CAFB3C252F26C09AF16FF913F0FD",
+      "worktree_sha256": "FFB909CB3F393A2E20C1111565A5FC9C2887CAFB3C252F26C09AF16FF913F0FD",
+      "worktree_bytes": 1602,
+      "worktree_matches_expected": true,
+      "pinned_blob_sha256": "4D325F94641E743FEB779EFA8B23DA8D6BF310D1A02AFAB27004E35E92189B11",
+      "pinned_blob_bytes": 1563,
+      "pinned_blob_has_crlf": false,
+      "lf_to_crlf_sha256": "FFB909CB3F393A2E20C1111565A5FC9C2887CAFB3C252F26C09AF16FF913F0FD",
+      "crlf_to_lf_sha256": "4D325F94641E743FEB779EFA8B23DA8D6BF310D1A02AFAB27004E35E92189B11",
+      "expected_matches_lf_to_crlf": true,
+      "expected_matches_crlf_to_lf": false,
+      "history": [
+        {
+          "commit": "03b1a7acc5a324dcd1884df82d748569b2c7f91e",
+          "date": "2026-11-13T04:18:42+08:00",
+          "subject": "audit: record AUDIT-03 import findings"
+        }
+      ],
+      "commits_with_expected_blob": []
+    },
+    {
+      "evidence_id": "AUDIT03-LEGACY-EXCLUDED-LOG-1",
+      "path": "audit/V1-FULL-AUDIT/logs/audit03-project-lifecycle-20261112T195832407658Z.log",
+      "pinned_commit": "03b1a7acc5a324dcd1884df82d748569b2c7f91e",
+      "expected_sha256": "6377FC8AE2E1ACDF051100AB6A01DE2853B1B23EB1D2DE5856325A3ECB29E8CA",
+      "worktree_sha256": "6377FC8AE2E1ACDF051100AB6A01DE2853B1B23EB1D2DE5856325A3ECB29E8CA",
+      "worktree_bytes": 874,
+      "worktree_matches_expected": true,
+      "pinned_blob_sha256": "F88F18C84213E47C6C73B2C77D0F50DDC7F0BA11E19548D958751AFD6EE7376E",
+      "pinned_blob_bytes": 860,
+      "pinned_blob_has_crlf": false,
+      "lf_to_crlf_sha256": "6377FC8AE2E1ACDF051100AB6A01DE2853B1B23EB1D2DE5856325A3ECB29E8CA",
+      "crlf_to_lf_sha256": "F88F18C84213E47C6C73B2C77D0F50DDC7F0BA11E19548D958751AFD6EE7376E",
+      "expected_matches_lf_to_crlf": true,
+      "expected_matches_crlf_to_lf": false,
+      "history": [
+        {
+          "commit": "03b1a7acc5a324dcd1884df82d748569b2c7f91e",
+          "date": "2026-11-13T04:18:42+08:00",
+          "subject": "audit: record AUDIT-03 import findings"
+        }
+      ],
+      "commits_with_expected_blob": []
+    },
+    {
+      "evidence_id": "AUDIT03-LEGACY-EXCLUDED-RESULT-1",
+      "path": "audit/V1-FULL-AUDIT/evidence/audit03-project-lifecycle-20261112T195832407658Z.json",
+      "pinned_commit": "03b1a7acc5a324dcd1884df82d748569b2c7f91e",
+      "expected_sha256": "32BDC4C657EADF7ABD86F3E37184600DDD55A104D83DCA8EF379DE0F8AF9195A",
+      "worktree_sha256": "32BDC4C657EADF7ABD86F3E37184600DDD55A104D83DCA8EF379DE0F8AF9195A",
+      "worktree_bytes": 852,
+      "worktree_matches_expected": true,
+      "pinned_blob_sha256": "B7F3506FE93A41BB2FBC1C4214FE1047390C14FCBDD3D254E92F1A9324D0815F",
+      "pinned_blob_bytes": 830,
+      "pinned_blob_has_crlf": false,
+      "lf_to_crlf_sha256": "32BDC4C657EADF7ABD86F3E37184600DDD55A104D83DCA8EF379DE0F8AF9195A",
+      "crlf_to_lf_sha256": "B7F3506FE93A41BB2FBC1C4214FE1047390C14FCBDD3D254E92F1A9324D0815F",
+      "expected_matches_lf_to_crlf": true,
+      "expected_matches_crlf_to_lf": false,
+      "history": [
+        {
+          "commit": "03b1a7acc5a324dcd1884df82d748569b2c7f91e",
+          "date": "2026-11-13T04:18:42+08:00",
+          "subject": "audit: record AUDIT-03 import findings"
+        }
+      ],
+      "commits_with_expected_blob": []
+    },
+    {
+      "evidence_id": "AUDIT04-PROVIDERS-LOG-1",
+      "path": "audit/V1-FULL-AUDIT/logs/audit04-providers-20261112T203116769705Z.log",
+      "pinned_commit": "c10c3ac39e354f08a068825915ece29bd506e969",
+      "expected_sha256": "033212CE8B9AD31534750F0669D3154DD89FC3651754C8C0150CFEEFF69E2A07",
+      "worktree_sha256": "033212CE8B9AD31534750F0669D3154DD89FC3651754C8C0150CFEEFF69E2A07",
+      "worktree_bytes": 1379,
+      "worktree_matches_expected": true,
+      "pinned_blob_sha256": "93A5EDCA37D37ECAB8E649332900BD1E272BF8305406C657CF38D05FD5A9D359",
+      "pinned_blob_bytes": 1363,
+      "pinned_blob_has_crlf": false,
+      "lf_to_crlf_sha256": "033212CE8B9AD31534750F0669D3154DD89FC3651754C8C0150CFEEFF69E2A07",
+      "crlf_to_lf_sha256": "93A5EDCA37D37ECAB8E649332900BD1E272BF8305406C657CF38D05FD5A9D359",
+      "expected_matches_lf_to_crlf": true,
+      "expected_matches_crlf_to_lf": false,
+      "history": [
+        {
+          "commit": "c10c3ac39e354f08a068825915ece29bd506e969",
+          "date": "2026-11-13T04:39:15+08:00",
+          "subject": "audit: record AUDIT-04 OCR limitations"
+        }
+      ],
+      "commits_with_expected_blob": []
+    },
+    {
+      "evidence_id": "AUDIT04-PROVIDERS-RESULT-1",
+      "path": "audit/V1-FULL-AUDIT/evidence/audit04-providers-20261112T203116769705Z.json",
+      "pinned_commit": "c10c3ac39e354f08a068825915ece29bd506e969",
+      "expected_sha256": "345A2AD46BFD01AB212D53A9017CFD069D5BB111188EBD4EC8AF60C8CF6AE4EE",
+      "worktree_sha256": "345A2AD46BFD01AB212D53A9017CFD069D5BB111188EBD4EC8AF60C8CF6AE4EE",
+      "worktree_bytes": 1225,
+      "worktree_matches_expected": true,
+      "pinned_blob_sha256": "F64593C1B7793FF9AE29625F2A684CD530038409D10EA2E7113EF180D97E1414",
+      "pinned_blob_bytes": 1195,
+      "pinned_blob_has_crlf": false,
+      "lf_to_crlf_sha256": "345A2AD46BFD01AB212D53A9017CFD069D5BB111188EBD4EC8AF60C8CF6AE4EE",
+      "crlf_to_lf_sha256": "F64593C1B7793FF9AE29625F2A684CD530038409D10EA2E7113EF180D97E1414",
+      "expected_matches_lf_to_crlf": true,
+      "expected_matches_crlf_to_lf": false,
+      "history": [
+        {
+          "commit": "c10c3ac39e354f08a068825915ece29bd506e969",
+          "date": "2026-11-13T04:39:15+08:00",
+          "subject": "audit: record AUDIT-04 OCR limitations"
+        }
+      ],
+      "commits_with_expected_blob": []
+    },
+    {
+      "evidence_id": "AUDIT04-CORE-DETECT-LOG-1",
+      "path": "audit/V1-FULL-AUDIT/logs/audit04-core-detect-20261112T203116769705Z.log",
+      "pinned_commit": "c10c3ac39e354f08a068825915ece29bd506e969",
+      "expected_sha256": "F09E8C33F8C05807AD398CDB0BF217298E9CB2ABD72FA05B4CE82052EA198E72",
+      "worktree_sha256": "F09E8C33F8C05807AD398CDB0BF217298E9CB2ABD72FA05B4CE82052EA198E72",
+      "worktree_bytes": 850,
+      "worktree_matches_expected": true,
+      "pinned_blob_sha256": "1F2F9587E4F58C4B420C9C525617EB79DE683546E041AF36E1F9FFBA76802643",
+      "pinned_blob_bytes": 836,
+      "pinned_blob_has_crlf": false,
+      "lf_to_crlf_sha256": "F09E8C33F8C05807AD398CDB0BF217298E9CB2ABD72FA05B4CE82052EA198E72",
+      "crlf_to_lf_sha256": "1F2F9587E4F58C4B420C9C525617EB79DE683546E041AF36E1F9FFBA76802643",
+      "expected_matches_lf_to_crlf": true,
+      "expected_matches_crlf_to_lf": false,
+      "history": [
+        {
+          "commit": "c10c3ac39e354f08a068825915ece29bd506e969",
+          "date": "2026-11-13T04:39:15+08:00",
+          "subject": "audit: record AUDIT-04 OCR limitations"
+        }
+      ],
+      "commits_with_expected_blob": []
+    },
+    {
+      "evidence_id": "AUDIT04-CORE-DETECT-RESULT-1",
+      "path": "audit/V1-FULL-AUDIT/evidence/audit04-core-detect-20261112T203116769705Z.json",
+      "pinned_commit": "c10c3ac39e354f08a068825915ece29bd506e969",
+      "expected_sha256": "560B17EB7BE7F7E17C54622C6DD80910FCBF8C1815D7E50B2754711B72D243A0",
+      "worktree_sha256": "560B17EB7BE7F7E17C54622C6DD80910FCBF8C1815D7E50B2754711B72D243A0",
+      "worktree_bytes": 821,
+      "worktree_matches_expected": true,
+      "pinned_blob_sha256": "C6D9421D54AD20FBC9DC99E2095C5A39FD8CB36F6C1A1D96D4C76B4E96B2BA79",
+      "pinned_blob_bytes": 799,
+      "pinned_blob_has_crlf": false,
+      "lf_to_crlf_sha256": "560B17EB7BE7F7E17C54622C6DD80910FCBF8C1815D7E50B2754711B72D243A0",
+      "crlf_to_lf_sha256": "C6D9421D54AD20FBC9DC99E2095C5A39FD8CB36F6C1A1D96D4C76B4E96B2BA79",
+      "expected_matches_lf_to_crlf": true,
+      "expected_matches_crlf_to_lf": false,
+      "history": [
+        {
+          "commit": "c10c3ac39e354f08a068825915ece29bd506e969",
+          "date": "2026-11-13T04:39:15+08:00",
+          "subject": "audit: record AUDIT-04 OCR limitations"
+        }
+      ],
+      "commits_with_expected_blob": []
+    }
+  ]
+}

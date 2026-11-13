@@ -1,11 +1,11 @@
 # 审计状态
 ## 最新检查点（2026-11-13）
 
-当前 Task NEW-MANGA-V1-FULL-AUDIT 仍为 in_progress；P7 编号报告、去重台账、整改路线、Release Gate 与 FINAL_AUDIT_REPORT 已由提交 3fc756a1aed8ca366ac0b324ff293cc3e1f9ebb0 固定。两轮 preflight evidence 已分别固定于 592e3f6a9626b45b2962bce4d22f99875ec2e179（generated HEAD=5a54390f）与 c0665ff90408d78097e787bd53af63d96bb32ecf（generated HEAD=3fc756a1），四项均 EXIT 0；最新一轮 generated HEAD=c0665ff90408d78097e787bd53af63d96bb32ecf 的四项结果固定于 4b91a2d7ff51e2ac6c05eef7c02a4640335fcf92，default / TaskPath 各 3 warnings、18 pins、API 1/79/6=86，均 EXIT 0。
+当前 Task NEW-MANGA-V1-FULL-AUDIT 仍为 in_progress；P7 编号报告、去重台账、整改路线、Release Gate 与 FINAL_AUDIT_REPORT 已由提交 3fc756a1aed8ca366ac0b324ff293cc3e1f9ebb0 固定；Canonical Evidence 已 pin 至 a3a429cc 批次（7b2945d0）。2026-11-13 DSH 集成核验（`reports/P7-INTEGRATION-CONSISTENCY-CHECK-2026-11-13.md`）复算 371 条 pins：357 匹配、14 条 AUDIT-03/04 记录误用 worktree（CRLF）SHA-256 而 basis=BLOB；按 ZCode AUDIT-08 closure review 的 BLOB 基准更正为该 commit 的 raw Git BLOB SHA-256 后 371/371 匹配。最新 gate batch generated HEAD=ed17a790、commit=48ccb75c：default/TaskPath 各 3 warnings、verify_pins 18/18、API 1/79/6=86，四项 EXIT 0。
 
 段 B 状态为 00 limited PASS；01/03/08/11 FAIL；02 BLOCKED；04–07、09、10、12–14 PARTIAL。台账有 3 项已 triage finding、1 项 INVESTIGATE、11 项待 ZCode 裁决候选、1 项已披露关闭的非产品 P3 observation。AC2/AC3/AC4 保持 PARTIAL，Release Gate BLOCKED。
 
-最新已 pin 的 post-pinbackfill gate batch generated HEAD=77310033f77d5b793fe4ff3734e1ba7cf049c06c，commit=e61a271fb06f708db67e465be87a396fffc92c47：default/TaskPath 各 3 warnings，verify_pins 18/18、API 1/79/6=86，四项均 EXIT 0。Task Card pinbackfill HEAD=3a1cecca 后又复跑四项并 EXIT 0，记录见 AUDIT_RESUME.md，待下次卡面更新 rolling pin。ZCode plan-mode Review 两次在 session/response 前因 provider quota `1310` EXIT 1；证据与 reset 时间见 AUDIT_RESUME.md 顶部。AC4 保持 PARTIAL，Task 保持 in_progress，Release Gate 保持 BLOCKED。
+ZCode plan-mode Review 仍因 provider quota `1310`（HTTP 429）在 session/response 前 EXIT 1；2026-11-13 19:36 本地最小 plan 复核再次失败，reset 提示 2026-11-17 18:40:33，证据 `logs/zcode-final-review-probe-20261113T1935Z.log`、`evidence/zcode-final-review-probe-20261113T1935Z.json`。该探测不构成 Review；11 个候选与 `AUDIT-11-INC-001` 仍待 ZCode 裁决，最终 fresh-context Review NOT_RUN。AC4 保持 PARTIAL，Task 保持 in_progress，Release Gate 保持 BLOCKED。
 
 ## 先前阶段状态（由以上检查点更新）
 
@@ -25,7 +25,7 @@ IN_PROGRESS：段 A 基线、盘点与测试日志已保存；段 B 于 2026-11-
 
 2026-11-12 风险披露：本地 `origin/main` reflog 记有 2026-10-30 三次 main push；私有素材对象曾进入公开仓库历史为高置信推论，见 `reports/ZCODE-SCOPE-ADJUDICATION-2026-11-12.md`。实时远端可见性未核验，未执行远端补救；本地审计继续，任何传播/删除/历史改写均不在本 Task 授权内。
 
-段 B suite 级证据状态（逐项状态以原件恢复后的最新裁决为准）：AUDIT-00 静态盘点 limited PASS；AUDIT-01 `FAIL`（`NM-AUD-0001`，ZCode 维持 P2）；AUDIT-02 `BLOCKED`；AUDIT-03 `FAIL`（SEG-B-PROBES-001）；AUDIT-04 `PARTIAL`（合成 Provider/Core 检查通过，真实模型与 GT 未测）；AUDIT-07/09/10/12/13 `NOT_TESTED`；AUDIT-05/06 `PARTIAL`；AUDIT-08 `FAIL`；AUDIT-11 安全静态阶段 `FAIL`、其余检查面具名 PARTIAL/NOT_TESTED；AUDIT-14 `PARTIAL`（静态盘点，真实 GUI/安装/模型未跑）。已有 probes EXIT 1（2 项 Medium / High confidence，1 项防线已验证）；Python Core pytest EXIT 1（3,519 passed / 16 failed / 10 skipped / 11 warnings）；Avalonia .NET `BLOCKED-TESTHOST-ACCESS`（8/8 runner EXIT 1、TRX 0 tests）；smoke `core,wire` EXIT 1（Wire 6/6 PASS；Core 4 PASS、7 项 `BLOCKED-SANDBOX-GRANT`；frontend/packaged SKIP）。suite 结果只作映射证据，不推导专项 PASS。
+段 B suite 级证据状态（逐项状态以原件恢复后的最新裁决为准）：AUDIT-00 静态盘点 limited PASS；AUDIT-01 `FAIL`（`NM-AUD-0001`，ZCode 维持 P2）；AUDIT-02 `BLOCKED`；AUDIT-03 `FAIL`（SEG-B-PROBES-001）；AUDIT-04 `PARTIAL`（合成 Provider/Core 检查通过，真实模型与 GT 未测）；AUDIT-07/09/10/12/13 `PARTIAL`（该行历史 `NOT_TESTED` 仅指记录时点；最新状态以 AUDIT_TASKS 与本文件顶部为准）；AUDIT-05/06 `PARTIAL`；AUDIT-08 `FAIL`；AUDIT-11 安全静态阶段 `FAIL`、其余检查面具名 PARTIAL/NOT_TESTED；AUDIT-14 `PARTIAL`（静态盘点，真实 GUI/安装/模型未跑）。已有 probes EXIT 1（2 项 Medium / High confidence，1 项防线已验证）；Python Core pytest EXIT 1（3,519 passed / 16 failed / 10 skipped / 11 warnings）；Avalonia .NET `BLOCKED-TESTHOST-ACCESS`（8/8 runner EXIT 1、TRX 0 tests）；smoke `core,wire` EXIT 1（Wire 6/6 PASS；Core 4 PASS、7 项 `BLOCKED-SANDBOX-GRANT`；frontend/packaged SKIP）。suite 结果只作映射证据，不推导专项 PASS。
 
 Checkpoint Review：ZCode fresh context 对 reviewed_head=`499a6b8e6eb293487abf391c46d00263230940ad` 的结论为 `PASS_FOR_CHECKPOINT`。ZCode addendum 已将 R-1/R-2/R-3 记为 CLOSED；R-4 保持 observation。R-1 的补验由实现侧 Codex 执行，ZCode 接受其日志作为 closure evidence：37/37 diff 路径在 allowed_paths 内，46/46 Canonical/SOURCE_PIN 的 raw Git blob SHA-256 匹配，EXIT 0；Reviewer 未亲自重算 actual 值。详见原 Review 和 [addendum 报告](reports/ZCODE-CHECKPOINT-REVIEW-ADDENDUM-2026-11-12.md)。该结论不等于全审通过或 Task 关闭；最终治理门禁和全审 review 仍待完成。
 

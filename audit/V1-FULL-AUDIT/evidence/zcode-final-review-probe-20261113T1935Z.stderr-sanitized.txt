@@ -1,0 +1,13 @@
+ProviderBusinessError: [1310][您已达到每周/每月使用上限，您的限额将在 2026-11-17 18:40:33 重置。][20261113193624df033433ea324f3e]
+  code: 'PROVIDER_BUSINESS_ERROR',
+  isProviderBusinessError: true,
+  providerCode: '1310',
+  providerId: 'account:bigmodel-individual-coding-plan',
+  providerKind: 'anthropic',
+  providerMessage: '[1310][您已达到每周/每月使用上限，您的限额将在 2026-11-17 18:40:33 重置。][20261113193624df033433ea324f3e]',
+  providerRequestId: '20261113193624df033433ea324f3e',
+    code: undefined,
+      code: '1310',
+  responseStatus: 429,
+  retry-after: 386459
+  (all transient response headers, set-cookie values and trace ids removed; original raw stderr retained in Task workspace)

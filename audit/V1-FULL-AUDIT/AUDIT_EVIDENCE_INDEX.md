@@ -1,5 +1,15 @@
 # 证据索引
 
+## 2026-11-13 P7 DSH 集成核验与 ZCode 额度复核
+
+- `reports/P7-INTEGRATION-CONSISTENCY-CHECK-2026-11-13.md`：DSH 集成核验记录（非 ZCode Review）；371 条 Canonical Evidence 复算、14 条 worktree/BLOB 基准更正、报告计数/AC/R1–R4/Gate 一致性与文档漂移清单。
+- `tests/verify_canonical_evidence.py`：Task 卡 Canonical Evidence 只读复算器（`git cat-file` 定位 commit/path 并重算 raw Git BLOB SHA-256）。
+- `logs/task-card-pin-recompute-20261113-pre-correction.log`、`evidence/task-card-pin-recompute-20261113-pre-correction.json`：更正前复算（任务卡字节由 `HEAD:doc/tasks/NEW-MANGA-V1-FULL-AUDIT.md` 精确导出、133,609 bytes）；357 pass / 14 fail，generated HEAD=`48ccb75ce1a547cf89e4d38cd577b868e15de5ce`。
+- `logs/task-card-pin-recompute-20261113.log`、`evidence/task-card-pin-recompute-20261113.json`：更正后复算（当前 Task 卡）；371/371 pass、0 fail，generated HEAD=`48ccb75ce1a547cf89e4d38cd577b868e15de5ce`。
+- `evidence/task-card-pin-mismatch-investigation-20261113.json`：14 项不匹配根因调查（记录值 = worktree CRLF 字节；对 commit BLOB 做 LF→CRLF 变换后 14/14 精确匹配）。
+- `evidence/task-card-pin-correction-20261113.json`：14 项 pin 的旧值/新值对照，依据 ZCode AUDIT-08 closure review 的 BLOB 基准。
+- `logs/zcode-final-review-probe-20261113T1935Z.log`、`evidence/zcode-final-review-probe-20261113T1935Z.json`、`evidence/zcode-final-review-probe-20261113T1935Z.stderr-sanitized.txt`：2026-11-13 19:36 本地 ZCode 最小 plan 探测；provider `1310` / HTTP 429、EXIT 1、stdout 仅 CRLF、无 session/response；原始 stdout/stderr 保留于 Task workspace 并记录 SHA-256。该探测不构成 Review。
+
 ## AUDIT-05/06（2026-11-13）
 
 - `reports/AUDIT-05-06-SFX-TRANSLATION-2026-11-13.md`：SFX 与翻译链路阶段结果、候选观察及 NOT_RUN 边界；结论均为 `PARTIAL`，待 ZCode 独立裁决。
@@ -136,3 +146,5 @@
 - ZCode final Review 派发证据：source/zcode-final-review-prompt-20261113.txt；logs/zcode-final-review-attempts-20261113.log、logs/zcode-final-review-full.stderr.log、logs/zcode-final-review-probe.stderr.log；evidence/zcode-final-review-attempts-20261113.json 及两个空 stdout 文件。固定审查 HEAD=3c40eb5c；两次调用均 provider 1310 / EXIT 1 / 无 session 或 response，故不构成 Review。
 - Post-quota checkpoint generated HEAD=77310033f77d5b793fe4ff3734e1ba7cf049c06c，门禁 evidence commit=e61a271fb06f708db67e465be87a396fffc92c47：default/TaskPath 各 3 warnings EXIT 0，verify_pins 18/18 EXIT 0，API 1/79/6=86 EXIT 0。日志与逐项 JSON 为 logs/audit-post-evidence-77310033-*.log、evidence/audit-post-evidence-77310033-*.json。
 - Post-pinbackfill generated HEAD=3a1ceccacd5e972413c2d170760ede83ae39a5d1，gate evidence commit=7ecf21c7d724c93c6890703a15394b5854348c69：default/TaskPath 各 3 warnings EXIT 0、verify_pins 18/18 EXIT 0、API 1/79/6=86 EXIT 0。日志与逐项 JSON 为 logs/audit-post-evidence-3a1cecca-*.log、evidence/audit-post-evidence-3a1cecca-*.json；按 rolling pinbackfill 规则待下一次卡面更新纳入。
+- Quota recheck generated HEAD=48ccb75ce1a547cf89e4d38cd577b868e15de5ce：ZCode 最小 plan 探测 provider `1310` / HTTP 429、EXIT 1、无 session/response（reset 2026-11-17 18:40:33）；见 `logs/zcode-final-review-probe-20261113T1935Z.log` 与对应 JSON。
+- Post-quota recheck gate batch generated HEAD=48ccb75ce1a547cf89e4d38cd577b868e15de5ce，四项 EXIT 0（default/TaskPath 各 3 warnings、verify_pins 18/18、API 1/79/6=86）；文件为 `logs/audit-post-evidence-48ccb75c-*.log` 与 `evidence/audit-post-evidence-48ccb75c-*.json`；该批按 rolling pin 规则进入下一次 Task-card pinbackfill。
