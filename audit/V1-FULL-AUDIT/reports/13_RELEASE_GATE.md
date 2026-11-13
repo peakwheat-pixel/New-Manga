@@ -16,7 +16,7 @@
 
 ## Gate 解释
 
-原始审计准入规则允许最终审计中存在 FAIL / BLOCKED / NOT_TESTED，但关键证据缺失或有未处置风险时不能以主观信心改判 PASS 或 CONDITIONAL。当前符合 BLOCKED 条件。AUDIT-09 的 Release build EXIT 0、509 条 pins 的字节可核验性与治理门禁通过，只证明各自窄面，不解除产品发布阻断。
+原始审计准入规则允许最终审计中存在 FAIL / BLOCKED / NOT_TESTED，但关键证据缺失或有未处置风险时不能以主观信心改判 PASS 或 CONDITIONAL。当前符合 BLOCKED 条件。AUDIT-09 的 Release build EXIT 0、522 条 pins 的字节可核验性与治理门禁通过，只证明各自窄面，不解除产品发布阻断。
 
 本 Gate 代表产品发布准备度，不等同于审计文档是否完成。审计文档返修（Codex REJECT 所指）已完成/进行时，产品发布阻断仍不变。
 
