@@ -1,0 +1,13 @@
+{
+  "schema": "zcode-diagnosis/v1",
+  "date": "2026-11-14",
+  "desktop_version": "3.18.2.10443",
+  "cli_version": "0.17.1",
+  "cli_mtime": "2026-11-12T18:38:08",
+  "error": "Select a model before sending a message",
+  "attempts": 6,
+  "worktree_or_config_changes": "none",
+  "hypothesis": "CLI 0.17.1 storage/provider state resolves to user home; provider registry returns empty default model selection",
+  "not_a_review": true,
+  "practical_path": "run read-only review in ZCode desktop app with self-contained prompt"
+}
