@@ -10,6 +10,8 @@
 
 - 第三轮返修（2026-11-13）：Task AC4/Rolling checkpoint 更新为 441 pins；回填 076dfbb6 gate 批次（8 条）与复审证据（5 条）；STATUS 同步为 428/428 并控制预算；AUDIT_STATUS、AUDIT_PLAN、P7 集成报告、专项报告与详细台账的旧口径已修正；pins 441/441 复算通过。下一步跑四项门禁并以 clean head 做最终复审。
 
+- 三轮返修后门禁：generated HEAD=`d248ed28faebf025d599e4701216f4da7ee17f3b` 四项 EXIT 0（default/TaskPath 各 3 warnings；verify_pins 18/18；API 1/79/6=86），原始输出 `logs/audit-post-evidence-d248ed28-*.log`。下一步以该 clean head 做最终 Codex 复审。
+
 ## 2026-11-13 P7 Codex 最终独立 Review（Codex-first 裁决）
 
 - 用户裁决后，以 Codex CLI 0.162.0（`gpt-6-luna` / xhigh）对 clean HEAD=`d92859c9ac8a4d3122d6cabfe4d44af980574104` 派发全新上下文只读 Review；session `01a1d4ce-6b79-7b43-939d-834e3cdc21a9`、EXIT 0、耗时 1,911.5s、Review 前后工作树 clean。原始报告 `reports/CODEX-FINAL-REVIEW-2026-11-13.md`，派发元数据 `evidence/codex-final-review-20261113.meta.json`。
