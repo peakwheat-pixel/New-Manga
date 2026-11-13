@@ -16,7 +16,7 @@
 
 - 第八轮回填（2026-11-13）：Task 卡 pins 509/509（第六轮复审证据 5、484094a1 门禁 8）；Task status 由 `changes_requested` 改为 `in_review` 并附第六轮复审记录；下一步跑门禁并以 clean head 做第七轮复审。
 
-- 进入 REVIEW 后门禁：Task status=`in_review`，AC 标题改为 lifecycle v3 要求的 `- [ ] **ACn**` 格式后，generated HEAD=`0de08632b2a8ed4fd9812d39ab5ad07881151bfe` 四项均 EXIT 0（default/TaskPath 各 3 warnings；verify_pins 18/18；API 1/79/6=86）；日志 `logs/audit-post-evidence-0de08632-*.log`、metadata `evidence/audit-post-evidence-0de08632-*.json`。
+- 进入 REVIEW 后门禁：Task status=`in_review`，AC 标题改为 lifecycle v3 要求的 `- [ ] **ACn**` 格式后，generated HEAD=`0de08632b2a8ed4fd9812d39ab5ad07881151bfe` 四项均 EXIT 0（default/TaskPath 各 **4 warnings**（未登记过程文件提示，非失败）；verify_pins 18/18；API 1/79/6=86）；日志 `logs/audit-post-evidence-0de08632-*.log`、metadata `evidence/audit-post-evidence-0de08632-*.json`。
 
 - 第七轮复审（2026-11-13）：Codex 对 `reviewed_head=9bd7264ca3b91a5ddcfe831f9b1beeb47e13dca3` 复审，EXIT 0，1036.6s；确认 509/509 pins；关闭 AUDIT-08 P3-4；结论 REJECT，仅剩 F1 状态摘要同步（STATUS/LEDGER/PLAN/AUDIT_STATUS/AUDIT_PLAN/GATE/FINAL）、0de08632b warning=4 与 AUDIT_TASKS/P7 快照措辞。报告 `reports/CODEX-FINAL6-REVIEW-2026-11-13.md`。
 

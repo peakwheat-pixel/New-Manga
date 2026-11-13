@@ -28,7 +28,7 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | `in_review` | 2 | no |
 | `(none)` | 1 | no |
 | `approved` | 1 | no |
-| `in_progress` | 1 | no |
+| `changes_requested` | 1 | no |
 | `ready` | 1 | no |
 
 ## Non-terminal tasks
@@ -36,7 +36,7 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | task | status | in plan |
 |---|---|---|
 | `GIT-CLEAN-PUBLICATION-DIAG-1` | `approved` | no |
-| `NEW-MANGA-V1-FULL-AUDIT` | `in_progress` | own row |
+| `NEW-MANGA-V1-FULL-AUDIT` | `changes_requested` | own row |
 | `GIT-CLEAN-PUBLICATION-1` | `in_review` | no |
 | `GIT-CLEAN-RUST-ISOLATION-1` | `in_review` | no |
 | `FEA-06-RESIDUAL-4` | `proposed` | no |

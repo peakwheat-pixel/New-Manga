@@ -1,11 +1,11 @@
 # 审计状态
 ## 最新检查点（2026-11-13）
 
-当前 Task NEW-MANGA-V1-FULL-AUDIT 仍为 in_progress；Codex 已完成五轮独立 Review（首轮 `d92859c9a`、返修复审 `226eb048`、第三轮 `42810143b`、第四轮 `6350081a`、第五轮 `1ae79bb99`；均 EXIT 0，结论 REJECT 属交付文档收敛要求）。当前 Task 卡有 496 条唯一 Canonical Evidence pins、496/496 BLOB 复算匹配、无重复 evidence_id；14 项 worktree→BLOB 更正已复核正确。历史 pin 计数（371/398/428/441/462/483/496）属不同检查点，不是当前哈希失败。11 候选裁决：4 finding（07-001 P2、09-001 P3、12-001 P3、14-001 非产品 P3 优先级）、4 INVESTIGATE、1 accepted limitation、2 close；`AUDIT-11-INC-001` 维持 INVESTIGATE。产品 P0=0/P1=0/P2=2/P3=2；开放 finding 7。AC1/AC2 MET；AC3/AC4 PARTIAL；Release Gate BLOCKED。
+当前 Task NEW-MANGA-V1-FULL-AUDIT 为 `in_review`；Codex 已完成七轮独立 Review（首轮 `d92859c9a`、复审 `226eb048`、第三轮 `42810143b`、第四轮 `6350081a`、第五轮 `1ae79bb99`、第六轮 `c2f5bc827`、第七轮 `9bd7264ca`；均 EXIT 0）。第七轮确认 509/509 唯一 pins、无重复、14 项 worktree→BLOB 更正正确，并关闭 AUDIT-08 P3-4；剩余 F1 为当前状态摘要同步（STATUS、TASK_LEDGER、REBASELINE_PLAN、AUDIT_STATUS、AUDIT_PLAN、13_GATE、FINAL）与 0de08632b warning 计数（实为 4）。11 候选裁决：4 finding（07-001 P2、09-001 P3、12-001 P3、14-001 非产品 P3 优先级）、4 INVESTIGATE、1 accepted limitation、2 close；`AUDIT-11-INC-001` 维持 INVESTIGATE。产品 P0=0/P1=0/P2=2/P3=2；开放 finding 7。AC1/AC2 MET；AC3/AC4 PARTIAL；Release Gate BLOCKED。
 
 段 B 状态为 00 limited PASS；01/03/08/11 FAIL；02 BLOCKED；04–07、09、10、12–14 PARTIAL。台账 3 项原 triaged finding + 4 项 Codex 新裁 finding、4 项 INVESTIGATE 候选、1 项 accepted limitation、2 项 close、1 项 INVESTIGATE 风险（AUDIT-11-INC-001）、1 项关闭非产品观察。AC1/AC2 MET，AC3/AC4 PARTIAL，Release Gate BLOCKED。
 
-ZCode plan-mode Review 因 provider quota `1310` 失败为历史记录；按 2026-11-13 用户裁决改为 Codex 优先，五轮 Codex Review 已完成（最新 `1ae79bb99`，结论 REJECT：要求当前摘要统一 483、专项报告/索引旧措辞标为快照）。本轮收敛后由 DSH 固定新 head、跑最终门禁并完成集成与 closeout；Release Gate 保持 BLOCKED。
+ZCode plan-mode Review 因 provider quota `1310` 失败为历史记录；按 2026-11-13 用户裁决改为 Codex 优先，七轮 Codex Review 已完成（最新 `9bd7264ca`，REJECT：要求当前状态摘要同步与 warning 计数更正）。本轮同步后由 DSH 固定新 head 复审并完成集成/closeout；Release Gate 保持 BLOCKED。
 
 ## 先前阶段状态（由以上检查点更新）
 

@@ -3,7 +3,7 @@ id: NEW-MANGA-V1-FULL-AUDIT
 title: V1 全项目独立审计
 kind: research
 governance_version: 3
-status: in_review
+status: changes_requested
 resume_status: in_progress
 approval: user_approved
 suggested_owner: Codex
@@ -694,3 +694,9 @@ DSH 接任 Lead / Architect / Integrator（见 `doc/GOVERNANCE_TAKEOVER_2026-10-
 - Reviewer：Codex 全新上下文；`reviewed_head=c2f5bc8273314f18fe91ea29781339f659872899`；session `01a1d539-0bb2-7553-a904-d0ce28be7e2f`；EXIT 0；1,397.3s；工作树前后 clean。原始报告 `reports/CODEX-FINAL5-REVIEW-2026-11-13.md`。
 - 结论：**REJECT**。确认 496/496 pins、无重复、14 项更正正确；滚动门禁 limitation 被明确接受。剩余：F1 Task AC3/AC4/Rolling 仍按四轮/三轮描述（与五轮记录冲突）；F2 `AUDIT-07` 第 76 行与 `AUDIT_EVIDENCE_INDEX` 仍写候选待 ZCode。
 - 处置：本轮已修复 F1/F2，Task 置 `changes_requested`，随后改回 `in_review` 并派发第七轮复审；复审通过后由 DSH 集成、补齐治理检查与资源 closeout，再依生命周期更新状态。AC1/AC2 MET；AC3/AC4 PARTIAL；Release Gate BLOCKED。
+
+## 2026-11-13 Codex 第七轮复审（9bd7264ca）——changes_requested
+
+- Reviewer：Codex 全新上下文；`reviewed_head=9bd7264ca3b91a5ddcfe831f9b1beeb47e13dca3`；session `01a1d553-c53c-7891-a2ae-3c35d1507a7c`；EXIT 0；1,036.6s；工作树前后 clean。原始报告 `reports/CODEX-FINAL6-REVIEW-2026-11-13.md`。
+- 结论：**REJECT**。确认 509/509 pins、14 项更正正确；关闭 AUDIT-08 P3-4（WORKTREE/BLOB 基准已复核）。剩余 F1：当前状态摘要（STATUS、TASK_LEDGER、REBASELINE_PLAN、AUDIT_STATUS、AUDIT_PLAN、13_GATE、FINAL）未同步 `in_review`/509/七轮；`0de08632b` warning 数应为 4；AUDIT_TASKS/P7 快照旧措辞。
+- 处置：本轮已同步上述摘要、更正 warning 数、关闭 P3-4，Task 置 `changes_requested` 后改回 `in_review` 并派发第八轮复审。复审通过后由 DSH 集成并完成 closeout，再依生命周期更新状态。AC1/AC2 MET；AC3/AC4 PARTIAL；Release Gate BLOCKED。

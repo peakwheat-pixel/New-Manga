@@ -1,6 +1,6 @@
 # New Manga V1 全项目审计报告
 
-**报告状态：** P7 交付已由 Codex 五轮 fresh-context 独立 Review 裁决（首轮 `d92859c9a`、复审 `226eb048`、第三轮 `42810143b`、第四轮 `6350081a`、第五轮 `1ae79bb99`；最新 `reports/CODEX-FINAL4-REVIEW-2026-11-13.md`）。五轮结论均为 **REJECT**，属交付文档收敛要求；本报告的 finding 计数、候选状态与后续已按裁决更新；产品 Release Gate 仍 BLOCKED。
+**报告状态：** P7 交付已由 Codex 七轮 fresh-context 独立 Review 裁决（首轮 `d92859c9a`、复审 `226eb048`、第三轮 `42810143b`、第四轮 `6350081a`、第五轮 `1ae79bb99`、第六轮 `c2f5bc827`、第七轮 `9bd7264ca`；最新 `reports/CODEX-FINAL6-REVIEW-2026-11-13.md`）。七轮结论均为 **REJECT**，属交付文档收敛要求；本报告的 finding 计数、候选状态与后续已按裁决更新；产品 Release Gate 仍 BLOCKED。
 **产品基线：** 10e4ee013835605800d3830fb960ae8d3aa04167。
 **审计执行分支：** main。
 **产品发布准入：** BLOCKED。
