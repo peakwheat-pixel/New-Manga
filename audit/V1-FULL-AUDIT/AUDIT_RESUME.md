@@ -4,6 +4,14 @@
 - Reviewer 字段同步更新为 Codex（fresh independent context；fallback ZCode）。Review 仍须上下文独立：产出该变更的同一会话/实例不得自审；本 Task 由 DSH 集成，Codex 以新上下文做只读 Review。
 - ZCode provider 额度失败（1310/429，reset 2026-11-17 18:40:33）不再阻塞 Review 路径；Codex CLI 0.162.0 于 2026-11-13 探测 EXIT 0（session `01a1d4c6-e6b0-7df2-9a05-4ddc83a50712`），已具备派发条件。
 - 该裁决不改变 Task 状态、AC1–AC4、Release Gate BLOCKED，也不授权修改产品源码、既有测试、契约、Schema、依赖、真实用户数据或 Git 历史。
+## 2026-11-13 P7 Codex 最终独立 Review（Codex-first 裁决）
+
+- 用户裁决后，以 Codex CLI 0.162.0（`gpt-6-luna` / xhigh）对 clean HEAD=`d92859c9ac8a4d3122d6cabfe4d44af980574104` 派发全新上下文只读 Review；session `01a1d4ce-6b79-7b43-939d-834e3cdc21a9`、EXIT 0、耗时 1,911.5s、Review 前后工作树 clean。原始报告 `reports/CODEX-FINAL-REVIEW-2026-11-13.md`，派发元数据 `evidence/codex-final-review-20261113.meta.json`。
+- 前两次派发（`-s read-only` 与 `-s workspace-write`）因本机 Codex 无法 spawn 子进程（Windows error 740）在前置检查停止；第二次另因 8 个未跟踪 gate 文件判定工作树不 clean 而停止。两者均未形成裁决，不计为 Review。
+- 结论 **REJECT**（交付文档问题，不是产品通过）。返修项：①当前状态与 Codex-first 裁决未同步到 Task AC3/AC4、STATUS、AUDIT_STATUS、AUDIT_PLAN、AUDIT_RESUME、11_ISSUES、12_REMEDIATION_PLAN、13_RELEASE_GATE、FINAL_AUDIT_REPORT；②70e92876 与 b72363aa gate batch 尚未 pin，P7 集成报告 398/371 矛盾；③9 个 evidence_id 各对应两行（`AUDIT-RUNNER-SOURCE-2` 与 8 个 `QUOTA-POSTPIN-GATE-*-1`）；④`AUDIT-14-CAND-003` 对当前 CI 的断言过强，裁决为 close。
+- 裁决要点：05/06 三候选 INVESTIGATE；07-001 finding P2；07-002 accepted limitation；09-001 finding P3；12-001 finding P3（交付工具）；14-001 finding（非产品 P0–P3 计数，P3 优先级）；14-002 INVESTIGATE；14-003 close；14-004 close；AUDIT-11-INC-001 维持 INVESTIGATE 且不计 P。产品计数 P0=0/P1=0/P2=2/P3=2；开放 finding 共 7（3 原有 + 4 新增）。AC1 MET；AC2 可收口 MET（保留原 FAIL/BLOCKED/PARTIAL 与 NOT_RUN）；AC3/AC4 不可收口；Task 维持 in_progress；Release Gate BLOCKED。
+- 下一步：DSH 按 Review 要求同步裁决与返修文档、pin 70e/b723 批次与本次 Review 证据、重命名重复 evidence_id、统一 398 计数，再以修订后 clean head 交独立上下文复审（Codex），最后由 DSH 集成与生命周期裁决。
+
 ## 2026-11-13 P7 DSH 续审与集成核验检查点
 
 - 复原与固定：HEAD=`48ccb75ce1a547cf89e4d38cd577b868e15de5ce`，branch=`main`，工作树 clean；与用户记录一致，未 reset/clean/merge/改历史或覆盖他人文件。

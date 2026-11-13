@@ -1,0 +1,9 @@
+provider: openai
+approval: never
+sandbox: danger-full-access
+reasoning effort: xhigh
+session id: 01a1d4ce-6b79-7b43-939d-834e3cdc21a9
+ERROR codex_models_manager::manager: failed to refresh available models: request timed out (non-fatal)
+WARN rmcp::transport::worker: tldraw MCP auth required (non-fatal, unrelated to review)
+tokens used: see rollout (raw stderr kept in Task workspace)
+(full raw stderr retained in Task workspace; this file is the sanitized metadata excerpt)

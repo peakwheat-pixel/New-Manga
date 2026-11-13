@@ -1,0 +1,33 @@
+{
+  "schema": "codex-final-review-dispatch/v1",
+  "reviewer": "Codex (fresh independent context)",
+  "cli": "codex-cli 0.162.0",
+  "cli_path": "C:\\Users\\49745\\AppData\\Local\\Programs\\OpenAI\\Codex\\bin\\codex.exe",
+  "model": "gpt-6-luna",
+  "reasoning_effort": "xhigh",
+  "sandbox": "danger-full-access (read-only-instructed; unavoidable because read-only/workspace-write sandbox cannot spawn child processes on this host: Windows error 740)",
+  "session_id": "01a1d4ce-6b79-7b43-939d-834e3cdc21a9",
+  "reviewed_head": "d92859c9ac8a4d3122d6cabfe4d44af980574104",
+  "expected_head": "d92859c9ac8a4d3122d6cabfe4d44af980574104",
+  "branch": "main",
+  "exit": 0,
+  "elapsed_seconds": 1911.5,
+  "started_at_local": "2026-11-13T20:39:31+08:00",
+  "decision": "REJECT",
+  "result_path": "audit/V1-FULL-AUDIT/reports/CODEX-FINAL-REVIEW-2026-11-13.md",
+  "result_sha256": "BE5FFCC97AA708761D21742F78FBB428830427B9DF2D9ADD5F16315BF0CBDA60",
+  "stdout_path": "audit/V1-FULL-AUDIT/evidence/codex-final-review-20261113.stdout.log",
+  "stdout_sha256": "82BC381F5924883C1E41E63BE5A079A3EC1CAA3941A4765D5716C3918F36835A",
+  "prompt_used_path": "audit/V1-FULL-AUDIT/evidence/codex-final-review-20261113.prompt-used.txt",
+  "prompt_used_sha256": "3E0F5E1E6E9ED9A198929C7BF1840A7E0E29448776D58C819159694812E01C00",
+  "raw_stderr_path": "G:\\CODEX\\New Manga.workspace\\task-envs\\NEW-MANGA-V1-FULL-AUDIT\\codex-review-20261113\\stderr-r3.log",
+  "raw_stderr_bytes": 3187307,
+  "raw_stderr_sha256": "4C5CFBD3C22AD70283A7875DBF0FC5B480CB791C5C0E13E000263C0DDAA7B548",
+  "sanitized_stderr_path": "audit/V1-FULL-AUDIT/evidence/codex-final-review-20261113.stderr-sanitized.txt",
+  "notes": [
+    "Worktree was clean before dispatch and remained unchanged after the review (git status --porcelain empty).",
+    "The first two dispatches (read-only, workspace-write) failed at the review pre-check because Codex could not spawn child processes (Windows error 740); no verdict was produced and they are not reviews.",
+    "The review read only repository files and Git objects; it did not run tests, access the remote, or read private materials.",
+    "Its verdict REJECT is about the current delivery/documentation state, not about product release readiness; Release Gate stays BLOCKED."
+  ]
+}

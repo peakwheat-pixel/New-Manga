@@ -1,5 +1,12 @@
 # 证据索引
 
+## 2026-11-13 Codex 最终独立 Review（Codex-first 裁决执行）
+
+- `reports/CODEX-FINAL-REVIEW-2026-11-13.md`（原字节 = `evidence/codex-final-review-20261113.result.md`）：Codex 全新上下文对 `reviewed_head=d92859c9ac8a4d3122d6cabfe4d44af980574104` 的最终只读 Review；结论 **REJECT**（属交付文档返修要求，不改变产品 Release Gate BLOCKED）。含 11 候选逐项裁决、AUDIT-11-INC-001 维持 INVESTIGATE、P0–P3 计数、R1–R4、AC 与 Task 生命周期建议。
+- `logs/codex-final-review-dispatch-20261113.log`、`evidence/codex-final-review-20261113.meta.json`：CLI `codex-cli 0.162.0`、session `01a1d4ce-6b79-7b43-939d-834e3cdc21a9`、EXIT 0、耗时 1,911.5s、reviewed/expected HEAD 与工作树状态、原始 stderr 路径与 SHA-256。
+- `evidence/codex-final-review-20261113.prompt-used.txt`、`.stdout.log`、`.stderr-sanitized.txt`：实际派发 prompt（含 expected_head 与沙箱限制说明）、stdout 原文、stderr 精简元数据；完整 raw stderr 仅保留于 Task workspace。
+- 说明：Codex `-s read-only` / `-s workspace-write` 在本机无法 spawn 子进程（Windows error 740），前两次派发在 `b72363aa` 前置检查阶段停止（第二次另因 8 个未跟踪 gate 文件判定工作树不 clean），不构成 Review；第三次以 `-s danger-full-access` 派发并严格只读，Review 前后工作树均 clean。
+
 ## 2026-11-13 P7 DSH 集成核验与 ZCode 额度复核
 
 - `reports/P7-INTEGRATION-CONSISTENCY-CHECK-2026-11-13.md`：DSH 集成核验记录（非 ZCode Review）；371 条 Canonical Evidence 复算、14 条 worktree/BLOB 基准更正、报告计数/AC/R1–R4/Gate 一致性与文档漂移清单。
