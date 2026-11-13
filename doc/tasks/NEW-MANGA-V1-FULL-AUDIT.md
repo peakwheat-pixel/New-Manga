@@ -32,10 +32,10 @@ allowed_paths:
 用户2026-10-24粘贴的完整自主审计指令；本轮新增只读审计 Task，不重新激活历史实现。Codex接任Lead Auditor，明确覆盖AUDIT-00–14；允许隔离本地扫描/测试与报告，不授权业务修改、安装、付费API、发布、删除、清理或上传项目材料。
 
 ## Acceptance Criteria
-- [x] AC1：固定Git/环境及有效源码清单，记录dirty和历史缺口。 <<MET>>
-- [x] AC2：15 项专项逐项有结果或具名阻断，关键链路深读与测试。 <<MET>>
-- [ ] AC3：完整日志、去重问题台账、整改路线、正式报告和 Release Gate 落盘。 <<PARTIAL: 交付文件齐全，11 候选已由 Codex 裁决并更新 11_ISSUES/12/13/FINAL/AUDIT_ISSUES；Codex 已完成六轮独立 Review（最新 `c2f5bc827`，REJECT：Task AC3/AC4/Rolling 旧轮次摘要与 AUDIT-07/索引旧 ZCode 措辞）；本轮 F1/F2 已修复，Task 置 `changes_requested` 并随后进入 `in_review` 复审。复审与 DSH 集成完成前不可收口>>
-- [ ] AC4：独立复核、证据 pin 和治理检查可核验；未满足不得置 done。 <<PARTIAL: 509 条 Canonical Evidence 已复算通过（含 14 条 worktree→BLOB 更正）；Codex 已完成六轮独立 Review（首轮 `d92859c9a`、复审 `226eb048`、第三轮 `42810143b`、第四轮 `6350081a`、第五轮 `1ae79bb99`、第六轮 `c2f5bc827`，均 EXIT 0、结论 REJECT 属交付文档收敛）；已 pin 的 gate 批次含 ed17a790、52b86d39、70e92876、b72363aa、076dfbb6、d248ed28、fee77cc0、86f47fee、c9953bac 与 6350081a 归档批次。最后一批门禁未回填属滚动 limitation（已被 Review 接受）。本轮回填第六轮 Review 与最新门禁后，仍需最终复审与 DSH 集成/closeout，故不可收口>>
+- [x] **AC1**：固定Git/环境及有效源码清单，记录dirty和历史缺口。 <<MET>>
+- [x] **AC2**：15 项专项逐项有结果或具名阻断，关键链路深读与测试。 <<MET>>
+- [ ] **AC3**：完整日志、去重问题台账、整改路线、正式报告和 Release Gate 落盘。 <<PARTIAL: 交付文件齐全，11 候选已由 Codex 裁决并更新 11_ISSUES/12/13/FINAL/AUDIT_ISSUES；Codex 已完成六轮独立 Review（最新 `c2f5bc827`，REJECT：Task AC3/AC4/Rolling 旧轮次摘要与 AUDIT-07/索引旧 ZCode 措辞）；本轮 F1/F2 已修复，Task 置 `changes_requested` 并随后进入 `in_review` 复审。复审与 DSH 集成完成前不可收口>>
+- [ ] **AC4**：独立复核、证据 pin 和治理检查可核验；未满足不得置 done。 <<PARTIAL: 509 条 Canonical Evidence 已复算通过（含 14 条 worktree→BLOB 更正）；Codex 已完成六轮独立 Review（首轮 `d92859c9a`、复审 `226eb048`、第三轮 `42810143b`、第四轮 `6350081a`、第五轮 `1ae79bb99`、第六轮 `c2f5bc827`，均 EXIT 0、结论 REJECT 属交付文档收敛）；已 pin 的 gate 批次含 ed17a790、52b86d39、70e92876、b72363aa、076dfbb6、d248ed28、fee77cc0、86f47fee、c9953bac 与 6350081a 归档批次。最后一批门禁未回填属滚动 limitation（已被 Review 接受）。本轮回填第六轮 Review 与最新门禁后，仍需最终复审与 DSH 集成/closeout，故不可收口>>
 
 ## 允许修改范围
 仅frontmatter所列。审计日志/测试脚本由主控单一写入。三名子代理只读同一固定产品HEAD，无并发写入。用户显式审计目录优先于常规verification路径；运行派生产物放相邻workspace task-env。
