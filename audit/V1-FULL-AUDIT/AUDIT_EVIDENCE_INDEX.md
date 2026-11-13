@@ -9,6 +9,8 @@
 
 - `logs/task-card-pin-recompute-20261113-after-review.log`、`evidence/task-card-pin-recompute-20261113-after-review.json`：Codex Review 返修后 Task 卡复算（428 条 pins，含 30 条新 pin 与 9 个重复 evidence_id 重命名）；428/428 PASS，0 fail。
 
+- 返修后 gate batch generated HEAD=`076dfbb63ad7f2b63605bfc16cdd8079e96dd6b2`，四项 EXIT 0（default/TaskPath 各 3 warnings、verify_pins 18/18、API 1/79/6=86）；`logs/audit-post-evidence-076dfbb6-*.log`、`evidence/audit-post-evidence-076dfbb6-*.json`。
+
 ## 2026-11-13 P7 DSH 集成核验与 ZCode 额度复核
 
 - `reports/P7-INTEGRATION-CONSISTENCY-CHECK-2026-11-13.md`：DSH 集成核验记录（非 ZCode Review）；371 条 Canonical Evidence 复算、14 条 worktree/BLOB 基准更正、报告计数/AC/R1–R4/Gate 一致性与文档漂移清单。
