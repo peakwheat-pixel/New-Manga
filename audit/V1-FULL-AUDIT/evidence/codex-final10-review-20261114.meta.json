@@ -1,0 +1,30 @@
+{
+  "schema": "codex-final-review-dispatch/v1",
+  "kind": "eleventh review (fallback after ZCode-first ruling)",
+  "reviewer": "Codex (fresh independent context; fallback per 2026-11-14 owner ruling)",
+  "cli": "codex-cli 0.162.0",
+  "model": "gpt-6-luna",
+  "reasoning_effort": "xhigh",
+  "sandbox": "danger-full-access (read-only-instructed; read-only/workspace-write cannot spawn child processes: Windows error 740)",
+  "session_id": "01a1d59e-d019-7d91-8462-587751ea64e2",
+  "reviewed_head": "89f2925ff0ad6d11d4f77aec0c23346f2c817b78",
+  "expected_head": "89f2925ff0ad6d11d4f77aec0c23346f2c817b78",
+  "branch": "main",
+  "exit": 0,
+  "elapsed_seconds": 873.1,
+  "started_at_local": "2026-11-14T00:09:50+08:00",
+  "decision": "REJECT",
+  "result_path": "audit/V1-FULL-AUDIT/reports/CODEX-FINAL10-REVIEW-2026-11-14.md",
+  "result_sha256": "6A800FF6E739BCFA085572EF6665D255FC3A5A6E0F7E4B931C51836EE887B298",
+  "stdout_path": "audit/V1-FULL-AUDIT/evidence/codex-final10-review-20261114.stdout.log",
+  "stdout_sha256": "0B614F192CB844DE3FF81CCEF706DE4A8AD3455E8182FE67EF9644361BD7F873",
+  "raw_stderr_path": "G:\\CODEX\\New Manga.workspace\\task-envs\\NEW-MANGA-V1-FULL-AUDIT\\codex-final10-20261113\\stderr.log",
+  "raw_stderr_bytes": 874953,
+  "raw_stderr_sha256": "9C378B3903C880E3D98ECEE818E224590F7A17DEBD0568246AADFF0375785AD8",
+  "notes": [
+    "Worktree clean before and after.",
+    "Confirmed 535/535 pins and candidate counts.",
+    "Remaining: current review-round pointers (Task AC3/AC4/Rolling, AUDIT_STATUS, AUDIT_PLAN, FINAL_AUDIT_REPORT, 13_RELEASE_GATE) still said ninth round.",
+    "Per 2026-11-14 owner ruling, final adjudication is ZCode-first; this Codex review is a fallback input."
+  ]
+}

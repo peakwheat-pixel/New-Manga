@@ -1,0 +1,79 @@
+`reviewed_head=89f2925ff0ad6d11d4f77aec0c23346f2c817b78`；branch=`main`；工作树 clean；与 `expected_head` 一致。
+
+## 审查身份与 reviewed_head / 工作树状态
+
+Reviewer：Codex，全新独立上下文。审查时间：2026-11-14。审查开始与结束均执行 `git status --porcelain`、`git rev-parse HEAD`、`git branch --show-current`；状态无输出，HEAD 未变，分支为 `main`。
+
+## 总结结论
+
+**REJECT**。P7 内容、候选裁决、计数和证据主体基本自洽，但当前摘要对“最新已记录审查轮次”的指针仍互相矛盾，阻断审计交付接受。产品 Release Gate 仍为 **BLOCKED**。
+
+## 发现：按严重度排序
+
+**F1 — 当前审查轮次指针未同步**（审计交付阻断；产品 P0–P3 severity 不适用）
+
+Task 的 AC3 仍称第九轮 `f25127083` 为最新；AC4 和 Rolling checkpoint 也停在九轮。可是在 Task 后文已记录第十轮 `9bbd5db46`，并称等待第十一轮审查。[Task AC3/AC4](<G:/CODEX/New Manga/doc/tasks/NEW-MANGA-V1-FULL-AUDIT.md:37>)、[Rolling checkpoint](<G:/CODEX/New Manga/doc/tasks/NEW-MANGA-V1-FULL-AUDIT.md:620>)、[第十轮记录](<G:/CODEX/New Manga/doc/tasks/NEW-MANGA-V1-FULL-AUDIT.md:744>) 相互矛盾。[AUDIT_STATUS](<G:/CODEX/New Manga/audit/V1-FULL-AUDIT/AUDIT_STATUS.md:4>) 仍称最新为第九轮，下一步是“第十轮复审”；[AUDIT_PLAN](<G:/CODEX/New Manga/audit/V1-FULL-AUDIT/AUDIT_PLAN.md:5>)、[FINAL_AUDIT_REPORT](<G:/CODEX/New Manga/audit/V1-FULL-AUDIT/reports/FINAL_AUDIT_REPORT.md:3>) 和 [13_RELEASE_GATE](<G:/CODEX/New Manga/audit/V1-FULL-AUDIT/reports/13_RELEASE_GATE.md:5>) 也仍以九轮、`f25127083` 为最新。相对地，[AUDIT_RESUME](<G:/CODEX/New Manga/audit/V1-FULL-AUDIT/AUDIT_RESUME.md:35>) 与 [AUDIT_EVIDENCE_INDEX](<G:/CODEX/New Manga/audit/V1-FULL-AUDIT/AUDIT_EVIDENCE_INDEX.md:46>) 已记录第十轮。
+
+**最小返修动作：** 同步 Task 的 AC3、AC4、Rolling checkpoint，以及 `AUDIT_STATUS`、`AUDIT_PLAN`、`FINAL_AUDIT_REPORT`、`13_RELEASE_GATE` 的当前摘要，反映仓库中最新已记录审查是第十轮 `9bbd5db46`，并更新下一步。记录本次第十一轮结论时，再将本次 `reviewed_head=89f2925f…` 和 REJECT 结果入册并 pin。保留明确标注为历史快照的原记录。
+
+除这项当前指针问题外，问题去重、候选分类和 Gate 结论基本自洽；阶段专项报告中 `REVIEW_PENDING` 等措辞带有历史快照说明，不应据此改写历史。`P7-INTEGRATION-CONSISTENCY-CHECK` 明确标注为早期快照，其 371/398/441 等历史计数不作为当前状态。
+
+### Canonical Evidence 核验与限制
+
+- Task 卡共有 **535 条唯一 pins**：512 条 `CANONICAL`、23 条 `SOURCE_PIN`，全部声明 `sha256_basis=BLOB`。逐项核对了 commit 类型、`commit:path` 对象及 raw Git BLOB SHA-256，结果 **535/535 匹配**，无重复 evidence ID。
+- AUDIT-03/04 的 **14 条 worktree→BLOB 更正必要且正确**：03 为 10 条、04 为 4 条。更正后的值与对应 raw BLOB SHA-256 完全一致；旧值与该 BLOB 转为 CRLF 后的 SHA-256 完全一致。更正证据见 [pin 更正记录](<G:/CODEX/New Manga/audit/V1-FULL-AUDIT/evidence/task-card-pin-correction-20261113.json>)。
+- 历史 **398 条**复算 JSON 记载 398/398 通过；其中 398 个 `(path, commit, SHA-256)` 均能在当前 535 条表中找到（旧证据 ID 后续有重命名）。但该 JSON 未记录输入 Task 卡的哈希，且其 `head=a021083cd` 中提交的 Task 卡实际为 371 条，故它不能单独证明那份 398 行工作副本的精确字节快照。这是历史证据登记限制；当前 535/535 已独立复核，因此不构成当前阻断。
+- `52b86d39`、`ed17a790` 两批各自的四项门禁日志与 metadata 均记录正确 generated HEAD、EXIT 0。最新已登记批次为 `46a8fe6e`，四项也均 EXIT 0。它们属于滚动门禁证据；**集成后 delivery head 的最终门禁尚待记录**，这是已接受的滚动 limitation，不是本次 REJECT 原因。
+- 仓内 ZCode 额度失败记录为 provider code `1310`、HTTP `429`、无 session/response，并明确不是一次 Review；Codex 优先流程已取代该阻塞。核对仅使用仓内脱敏证据，未读取 workspace 中的原始 stderr。
+
+## 11 个候选的逐项裁决表
+
+| ID | 结论 | 是否进入 P0–P3 计数 | severity / priority | 依据 | 建议后续 Task / 验证 |
+|---|---|---|---|---|---|
+| `AUDIT-05-CAND-001` | `INVESTIGATE` | 否 | N/A | 合成 same-geometry primary/SFX 会生成相同 polygon 的双 Region；去重和人工修改语义未定。[专项报告](<G:/CODEX/New Manga/audit/V1-FULL-AUDIT/reports/AUDIT-05-06-SFX-TRANSLATION-2026-11-13.md:34>) | 先由需求明确相同/近似区域、人工修改、`skip`/`translate` 规则；再测 Region 数和请求数。 |
+| `AUDIT-06-CAND-001` | `INVESTIGATE` | 否 | N/A | 有 StepRun 和 provider 重试上限，但无账单级预算；未调用真实 API，无重复扣费证据。[专项报告](<G:/CODEX/New Manga/audit/V1-FULL-AUDIT/reports/AUDIT-05-06-SFX-TRANSLATION-2026-11-13.md:49>) | 先裁定费用控制需求；以 fake provider 验证重试、timeout/replay 与预算耗尽。 |
+| `AUDIT-06-CAND-002` | `INVESTIGATE` | 否 | N/A | glossary 随请求发送，但生产响应路径没有强制匹配；是否属于产品合同未知。[专项报告](<G:/CODEX/New Manga/audit/V1-FULL-AUDIT/reports/AUDIT-05-06-SFX-TRANSLATION-2026-11-13.md:45>) | 先明确 glossary 合同，再用 fake provider 验证漏匹配与冲突词条。 |
+| `AUDIT-07-CAND-001` | finding | 是 | P2 | 定向组 127 passed / 3 failed，涉及 ZIP `store`、JSON text override 和 hook audit events。[专项报告](<G:/CODEX/New Manga/audit/V1-FULL-AUDIT/reports/AUDIT-07-REPAIR-TYPESET-EXPORT-2026-11-13.md:72>) | 独立修复 Task；回归有效 options、hook events 和 ZIP/text 导出。 |
+| `AUDIT-07-CAND-002` | accepted limitation | 否 | N/A | `license_note` 只是备注；tracked font assets 为 0，且现有字体 Task 规定默认不随包分发字体。许可本身仍未核验。[专项报告](<G:/CODEX/New Manga/audit/V1-FULL-AUDIT/reports/AUDIT-07-REPAIR-TYPESET-EXPORT-2026-11-13.md:76>) | 保留 limitation；若以后涉及字体许可核验或随包分发，另立有范围的 Task。 |
+| `AUDIT-09-CAND-001` | finding | 是 | P3 | 合成空章节路径中仍显示已选作品/章节，但 Retry 提示先选择；根因和普遍性未知。[专项报告](<G:/CODEX/New Manga/audit/V1-FULL-AUDIT/reports/AUDIT-09-UI-UX-2026-11-13.md>) | 用隔离 Host/UI fixture 覆盖已选、未选、零页、切换及 Retry 路径后修正提示。 |
+| `AUDIT-12-CAND-001` | finding | 是 | P3（交付工具） | `publish.ps1` 默认输出在仓库内并递归清理；脚本未运行，没有误删证据。[专项报告](<G:/CODEX/New Manga/audit/V1-FULL-AUDIT/reports/AUDIT-12-WINDOWS-DELIVERY-2026-11-13.md:17>) | 独立 Task 将默认输出移至 workspace；仅用 disposable 目录验证清理边界。 |
+| `AUDIT-14-CAND-001` | finding | 否；计入开放 finding 总数 | P3 优先级（文档 finding，非产品 P0–P3） | README、AD-003 等说明有漂移，缺少可逐项核验的 V1 承诺总账。[专项报告](<G:/CODEX/New Manga/audit/V1-FULL-AUDIT/reports/AUDIT-14-V1-INTEGRITY-2026-11-13.md:19>) | 新建有版本和日期的 V1 manifest，对齐 README、AD-003、STATUS 与索引。 |
+| `AUDIT-14-CAND-002` | `INVESTIGATE` | 否 | N/A | V2 Studio 有 `NOT_WIRED` 能力，但其 V1 归属未知，真实 GUI 未测。[专项报告](<G:/CODEX/New Manga/audit/V1-FULL-AUDIT/reports/AUDIT-14-V1-INTEGRITY-2026-11-13.md:25>) | 先映射权威 manifest；确认属于 V1 后再决定实现与 Host/GUI 验收。 |
+| `AUDIT-14-CAND-003` | close | 否 | N/A | 未证明旧 Tauri 路径会导致当前 release 失败，也未证明当前 workflow 使用该路径。[问题台账](<G:/CODEX/New Manga/audit/V1-FULL-AUDIT/AUDIT_ISSUES.md:42>) | 不开缺陷 Task；如需清理旧辅助路径，先确认调用者并隔离验证。 |
+| `AUDIT-14-CAND-004` | close | 否 | N/A | 多 shell 增加回归面，但没有具体运行故障证据。[问题台账](<G:/CODEX/New Manga/audit/V1-FULL-AUDIT/AUDIT_ISSUES.md:49>) | 不开缺陷 Task；后续 GUI 验证按 shell × page × 操作留证。 |
+
+## AUDIT-11-INC-001 裁决
+
+维持 `INVESTIGATE`；不分配 severity，不计入 P0–P3 或 finding 数。仓内本地历史证据支持“私有素材对象可能曾随历史 main push 进入公开仓库历史”的高置信推论，但**当前远端是否可见、可下载或可 fetch 仍未知**；远端缓存/对象状态及当时完整授权语境也未知。本次没有访问远端，因此不能推断为已公开，也不能推断为已消除。[范围裁决](<G:/CODEX/New Manga/audit/V1-FULL-AUDIT/reports/ZCODE-SCOPE-ADJUDICATION-2026-11-12.md:38>)、[问题台账](<G:/CODEX/New Manga/audit/V1-FULL-AUDIT/AUDIT_ISSUES.md:57>)。
+
+后续最小步骤是另开明确授权边界的只读核验 Task，记录目标、查询方法、时间和结果；任何删除、改写历史或补救均须另行裁决。
+
+## P0–P3 和 finding 总计核验
+
+- 11 个候选：**4 finding / 4 `INVESTIGATE` / 1 accepted limitation / 2 close**。
+- 开放 finding 共 **7**：3 项原 triaged findings（`SEG-B-PROBES-001/002`、`NM-AUD-0001`）加 4 项新 finding；`AUDIT-14-CAND-001` 计入开放 finding 总数，但不计产品 P0–P3。
+- 已分配产品 P0/P1/P2/P3 为 **0 / 0 / 2 / 2**。P0/P1 是当前已分配数量，不代表已证明不存在。
+- P2：`NM-AUD-0001`、`AUDIT-07-CAND-001`；P3：`AUDIT-09-CAND-001`、`AUDIT-12-CAND-001`。
+- `SEG-B-PROBES-001/002` 保持 Medium / High confidence，不映射 P 级。关闭的非产品观察 `AUDIT11-REV-001` 不计开放 finding；`AUDIT-11-INC-001` 也不计 finding。
+
+## R1–R4 次序意见
+
+同意 `R1 → R2 → R3 → R4`。R1 先做边界明确的只读传播风险核验，禁止将调查与远端删除或历史改写捆绑；再分别处理 containment 和 restore 失败语义。R2 处理 sidecar 生命周期 P2。R3 优先修复导出 P2，再处理 Reader 提示、publish 输出路径和具名验证缺口；05/06 与 14-002 先裁需求。R4 处理文档和维护事项；其中 14-001 manifest 应提前于 14-002 的 V1 归属判断。
+
+## Release Gate 决定
+
+保持 **BLOCKED**，不宣告产品发布 PASS。未修复 findings、Python Core 全量测试 16 个失败、Avalonia TestHost 8/8 runner 失败且 TRX 为 0 tests、Core smoke 的 sandbox 阻断，以及真实模型/API、完整 UI、当前基线安装/升级/回退/卸载的关键 `NOT_RUN`，均支持 BLOCKED。`AUDIT-11-INC-001` 的远端状态未知也未消除该风险。[Release Gate](<G:/CODEX/New Manga/audit/V1-FULL-AUDIT/reports/13_RELEASE_GATE.md:7>)。
+
+## AC1–AC4 与 Task 生命周期建议
+
+- **AC1：MET。**
+- **AC2：MET。** 每个专项有结果或具名限制；`FAIL`、`BLOCKED`、`PARTIAL` 和 `NOT_RUN` 均保留，不能写成 PASS。
+- **AC3：PARTIAL，不可收口。** 当前轮次指针矛盾，且本次 Review 为 REJECT。
+- **AC4：PARTIAL，不可收口。** 535 pins 已核验；delivery head 的最终四项门禁、`integration_commit`、`delivery_head`、Canonical Evidence 和资源 closeout 尚未完成。Task 当前 `in_review`，`canonical_evidence_status` 与 `resource_closeout_status` 为 pending。
+- DSH 应将 Task 转为 `changes_requested`，修正并固定新 head 后派发下一次独立 Review。只有 Review 接受后，才转 `approved` 并由 DSH 集成；记录真实 `integration_commit` / `delivery_head`，将 evidence 与 resource closeout 完成状态写入 Task，在该 delivery head 留下 default governance、TaskPath、`verify_pins`、API inventory 四项门禁的命令、HEAD、时点和 EXIT 记录，满足生命周期要求后再置 `done`。审计 Task 完成不会解除产品 Gate 的 BLOCKED。
+
+## 明确列出没有执行的检查及边界
+
+只读了仓内指定文档、已提交日志/JSON 和 Git 对象。哈希核验通过内存中的 Python 对 `git cat-file` 返回字节计算 SHA-256；未运行会写入文件的 pin verifier 脚本。未运行测试、治理门禁、构建、publish、install、清理或资源 closeout；未访问远端或其他外部系统，未读取 workspace 原始 stderr，未读取或重建私有素材，也未修改任何文件或工作树状态。
+
+**推荐下一步：** DSH 将 Task 标为 `changes_requested`，只修复上述当前轮次摘要指针，固定新 head 后安排独立复审。

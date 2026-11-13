@@ -34,6 +34,8 @@
 
 - 第十轮复审（2026-11-13）：Codex 对 `reviewed_head=9bbd5db468c2e416d4bc24e9495ebd1a19faa9f8` 复审，EXIT 0，972.3s；确认 535/535 pins；结论 REJECT，仅剩 Task AC3 与 13_GATE 审查来源两处指针（本轮修复）。报告 `reports/CODEX-FINAL9-REVIEW-2026-11-13.md`。
 
+- 第十一轮 Codex 回退复审（2026-11-14）：reviewed_head=`89f2925ff0ad6d11d4f77aec0c23346f2c817b78`，EXIT 0，873.1s；确认 535/535 pins；结论 REJECT，仅剩当前轮次指针同步（本轮修复）。用户 2026-11-14 裁决最终裁决改为 ZCode 优先，本复审作为回退输入。报告 `reports/CODEX-FINAL10-REVIEW-2026-11-14.md`。
+
 ## 2026-11-13 用户裁决：最终独立 Review 与裁决改为 Codex 优先
 
 - 用户 2026-11-13 指示：“调整流程，裁决交给 codex 或者 zcode，优先 codex”。本 Task 的最终独立 Review 与候选/finding 裁决改为 **Codex 优先**；Codex 不可用或不适配时回退 **ZCode**。历史 ZCode 裁决、Review 与 evidence pin 原字节保留，不追改、不据此恢复 ZCode 独占裁决。
