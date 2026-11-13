@@ -3,7 +3,8 @@ id: FEA-06-RESIDUAL-4
 title: RegionBox 逐 region 冲突投影与「查看对照」（原 RESIDUAL-2 格 3；需 C-07 additive）
 kind: implementation
 governance_version: 3
-status: proposed
+status: cancelled
+disposition: OUT（2026-11-14 DSH；双签：Codex OUT + 独立子 agent OUT；见 doc/reviews/MAINT-1-P4A-Q7-Q8-ADJUDICATION.md。性质＝冻结设计意图的产品可见缩减，非缺陷修复）
 approval: 占位卡：由 `FEA-06-RESIDUAL-3` scope review r1（格 3 未解除）与 DSH 2026-11-08 裁决 re-home；**scope 未冻结，不得实施**；须先独立 scope review + 可能需要 C-07/UNFREEZE 类载体
 suggested_owner: dsh
 owner: null
@@ -16,7 +17,7 @@ worktree: null
 integration_commit: null
 delivery_head: null
 canonical_evidence_status: pending
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/FEA-06-RESIDUAL-4
 allowed_paths:
   - doc/tasks/FEA-06-RESIDUAL-4.md
@@ -46,3 +47,26 @@ out_of_scope:
 
 - 若走 1：逐 region 冲突字段投影 + UI 对照面板 + 判别测试；契约/pin 变更须走 UNFREEZE 且独立 byte-level 复核。
 - 若走 2：DSH/用户裁决记录 + `FEA-06-RESIDUAL-2` 卡面 append-only 更新（不得删改原 limitation 字节）。
+
+## 处置记录（append-only，2026-11-14）
+
+**结论：OUT / `cancelled`**（双签见 `doc/reviews/MAINT-1-P4A-Q7-Q8-ADJUDICATION.md`；Codex 与独立子 agent 均判 OUT）。
+
+**性质必须说准**：「查看对照」是**冻结设计意图**（`doc/design/fluent-v1/06-page-workbench.md:50`、`09-state-matrix.md:14`），`FEA-06` AC3 为 PARTIAL 且明写缺该动作；2026-11-08 裁决是 re-home 而非 waive。因此本 OUT ＝**正式放弃该设计行**，不是"修掉一个 bug"，**不得**读作已实现或无缺口。
+
+**用户可见后果**：区域冲突时只能看到并发冲突横幅 + typed 原因 + 「请重新读取并对照」的文字提示，无法并排比对冲突 region 的基底文本与对方草稿。
+
+**重开条件**：① 用户要求冲突对照或列为发布前必做；② 出现第二个基底文本消费者（如 V2 Studio）；③ 真实多会话/外部工具编辑使区域冲突成为常见路径。重开时须先补「对照内容规格」（显示哪两层、字段、布局、交互），再走 C-07 additive UNFREEZE 载体 + 独立 byte-level 复核 + 重冻。
+
+**Errata（更正卡面两处过期事实，wont-fix body bytes）**：
+1. `RegionSummary` 行号已漂移：现为 `CoreServiceClient.cs:204-210`（非 `:172-178`）；冲突用例现为 `FluentResidualBatchATests.cs:642-670`（非 `:613-641`）。
+2. 「术语/冲突面 NOT_WIRED（`StudioTermsViewModel.cs:36-62`）」是**范畴错误**——术语表冲突 ≠ 区域冲突，不能作为 region 对照的证据。
+3. 补充更正：`list_page_region_texts` 在 Core 侧**已实现**（`src/bootstrap/core_service.py:3533/7787/7796`），注册与分发就绪（`HostCommandRegistry.cs:191/357/462-466`、`HostCommandDispatcher.cs:868-871`）；缺的只是 **App 侧端口**，不是数据面。
+
+**保留**：本卡原 limitation、设计文档、`FEA-06-RESIDUAL-2` 的历史字节全部不动；`FEA-06-RESIDUAL-2` 的格 3 由本裁决转为 OUT，其卡面更新留待专门载体（未在本轮改）。
+
+## Resource Manifest
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| none | - | NOT_APPLICABLE | - | - | 本卡为占位提案，从未实施（`proposed` 直接处置为 `cancelled`），无 task-env、无派生产物；2026-11-14 DSH 复核 |

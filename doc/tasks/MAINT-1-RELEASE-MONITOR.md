@@ -29,6 +29,8 @@ allowed_paths:
   - doc/tasks/CHAPTER-SELECTOR-1.md
   - doc/tasks/FEA-11-HOST-AUTH-4.md
   - doc/tasks/FEA-11-L-S1-B2-ROOTS-AVAILABILITY-1.md
+  - doc/tasks/FEA-06-RESIDUAL-4.md
+  - doc/tasks/FEA-11-HOST-AUTH-5.md
 ---
 
 # MAINT-1-RELEASE-MONITOR：项目计划收口后的维护与 Release Gate 监测
@@ -121,3 +123,14 @@ NEW-MANGA-V1-FULL-AUDIT 与 R1–R4 整改、SEC-01/02/03、CORE-01、AUDIT-07/0
 - **DSH 终裁意向**：Q7 → `OUT`（不提供查看对照）；Q8 → `OUT`（不新建全链路卡），改为"补 fresh ACK 断言"的测试补强项。
 - **状态未翻转**：两张 `proposed` 卡保持原状，待第二意见回来后落状态（矩阵要求收齐两份）。
 - **下一轮（P4-b）**：收第二意见 → 终裁 → 翻转两卡状态 → 更新台账与三指针。
+
+### 轮次 8（2026-11-14）
+
+- **双签收齐**：[裁决记录](../reviews/MAINT-1-P4A-Q7-Q8-ADJUDICATION.md)；[Codex 原字节](../reviews/MAINT-1-P4A-codex-advice-2026-11-14.md)；[第二意见整理版](../reviews/MAINT-1-P4A-independent-advice-2026-11-14.md)（ZCode 不可用，独立子 agent 代行并登记偏差）。
+- **无实质冲突**：Q7、Q8 均判 `OUT`；第二意见在治理口径上更保守（要求写清"放弃冻结设计意图"的性质、要求先更正假前提），已全部采纳。
+- **Q7 `FEA-06-RESIDUAL-4` → `cancelled`**：性质＝**冻结设计意图的产品可见缩减**（`06-page-workbench.md:50`、`09-state-matrix.md:14`；AC3 PARTIAL；原裁决是 re-home 非 waive），已写清用户可见后果（只能看横幅+typed 原因，不能并排比对）与 3 条重开条件；未写成"已实现/无缺口"。
+- **Q8 `FEA-11-HOST-AUTH-5` → `cancelled`**：登记 4 条事实（默认套件无全链路 e2e / opt-in 已执行且有日志 / fresh-ACK 只在直连 gated 用例 / 打包 sidecar `NOT_RUN`），明确 **AC-F4 不得写成 MET**。
+- **两处卡面前提更正（Errata，append-only）**：「仓内无全链路用例」为假、「需 HostOptions seam」为假；真实根因是打包 sidecar 早于 C-17。同步更正 P4 处置文档 §2。
+- **台账**：`non-terminal` 8 → 6；**FEA 范围内 `proposed` 清零 → DoD §2 达成**。
+- **门禁**：check 默认 + 三张分卡 PASS；pins 18/18。
+- **下一轮（P5）**：MAINT-1 自身 AC1–AC4 收口。

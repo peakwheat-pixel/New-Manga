@@ -51,3 +51,15 @@
 - 派 Codex：Q7、Q8 各一份书面建议（附证据与复现命令）。
 - 派 ZCode：同一议题独立一份（不共享 Codex 结论）。
 - 冲突时取更保守一方，另一方理由登记为残留风险。
+
+## 5. 更正（append-only，2026-11-14 双签后）
+
+本节**更正本文 §2 与 §0 中关于 Q8 的事实前提**，原文字节保留不动。
+
+- **原表述（已过期）**：「仓内**无** `runtime.Commands.InvokeAsync` 全链路用例」。
+  **更正**：该用例存在——`tests/NewManga.Host.Tests/Fea11Residual4AIpcTests.cs:33-36`，helper `:494-503` 即 `runtime.Commands!.InvokeAsync`，且 `:65→:139→:171-175` 覆盖 register/grant → apply(`source_resync`) → `acknowledged`。真实缺口是**默认不执行**（opt-in `NEWMANGA_FEA11_IPC=1`，`:668-679`；`scripts/test.ps1` 不导出该变量）与**未在同链断言 fresh ACK**。
+- **原表述（已过期）**：「需 `HostOptions` 最小 Core 覆盖 seam（约 4–6 行）」。
+  **更正**：`SidecarDirectoryOverride` 自 S1（`eb123ad4f`）已存在（`HostOptions.cs:52`、`HostRuntime.cs:1169`，测试 `:729` 直接用），**无 seam 待补**。
+- **仍然成立的**：打包 sidecar 早于 C-17（`Fea11Scan2HostRuntimeTests.cs:16-17`、`:57-59`），这才是默认门禁跑不了该链的根因。
+- **处置不变**：Q8 仍为 `OUT`（不新建全链路实现卡），依据由"链缺失"更正为"链已存在、默认不执行、fresh-ACK 不在同链"。详见 `MAINT-1-P4A-Q7-Q8-ADJUDICATION.md` 与 `MAINT-1-P4A-independent-advice-2026-11-14.md`。
+- **另更正**：Q7 中「术语/冲突面 NOT_WIRED（`StudioTermsViewModel.cs:36-62`）」属范畴错误（术语表冲突 ≠ 区域冲突），不作为 region 对照证据；`RegionSummary` 行号现为 `CoreServiceClient.cs:204-210`。
