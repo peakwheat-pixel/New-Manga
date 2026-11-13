@@ -111,3 +111,13 @@ NEW-MANGA-V1-FULL-AUDIT 与 R1–R4 整改、SEC-01/02/03、CORE-01、AUDIT-07/0
 - **DoD §2 未满足**：仍有 2 张 `proposed`，必须完成双签后终裁。
 - **状态翻转**：2 张 `proposed` → `cancelled`（依据裁决记录先落盘，符合红线 4「先证据后状态」）。
 - **下一轮（P4-a）**：派 Codex 与 ZCode 各出一份 Q7/Q8 独立书面建议。
+
+### 轮次 7（2026-11-14）
+
+- **Q7/Q8 意见收集**：[Codex 原字节](../reviews/MAINT-1-P4A-codex-advice-2026-11-14.md)（`gpt-6-luna` xhigh，会话 `01a1d658…`，`EXIT=0`）；**ZCode 服务不可用**（三项环境变量齐全仍 `Select a model` + `ERA_NEGOTIATION_FAILED`，最小探测 `EXIT=1`），按 skill 不自行升权、不改桌面端配置，第二意见改由独立上下文子 agent 代行并登记偏差。
+- **本地核实纠正两处前提**（Codex 读不到本地 HEAD，只能读远端快照）：
+  - Q8 卡面「仓内无全链路用例」**不准确**：`Fea11Residual4AIpcTests.cs` 已走 `HostRuntime.StartAsync`(:725) + `source_resync`(:139) + 断言 `acknowledged`(:173-174)；但它 **opt-in**（`NEWMANGA_FEA11_IPC=1`）且**未断言 fresh ACK**（全文无 `fresh`）。
+  - Q7 前提成立：`RegionSummary` 无冲突字段（`CoreServiceClient.cs:204-210`）；`list_page_region_texts` 已注册（`HostCommandRegistry.cs:191/357/465`）但 `IHostController` 无对应方法。
+- **DSH 终裁意向**：Q7 → `OUT`（不提供查看对照）；Q8 → `OUT`（不新建全链路卡），改为"补 fresh ACK 断言"的测试补强项。
+- **状态未翻转**：两张 `proposed` 卡保持原状，待第二意见回来后落状态（矩阵要求收齐两份）。
+- **下一轮（P4-b）**：收第二意见 → 终裁 → 翻转两卡状态 → 更新台账与三指针。
