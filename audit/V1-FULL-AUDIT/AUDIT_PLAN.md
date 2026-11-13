@@ -2,7 +2,7 @@
 
 ## 当前执行点（2026-11-13）
 
-AUDIT-00–14 均已有段 B 结果或具名限制，详见 AUDIT_TASKS.md 与专项报告。P7 编号交付册、去重台账、整改路线、BLOCKED Release Gate 和 FINAL_AUDIT_REPORT 已提交于 3fc756a1。最新 gate batch：6c177343 四项 EXIT 0 已记录于 Evidence Index 与 AUDIT_RESUME（滚动 pin 待归档）；此前 076dfbb6、6350081a、86f47fee 批次均已 pin。Codex 优先裁决后已完成五轮独立 Review（首轮 `d92859c9a`、复审 `226eb048`、第三轮 `42810143b`、第四轮 `6350081a`、第五轮 `1ae79bb99`，均 EXIT 0、结论 REJECT：要求交付文档收敛）。本轮收敛后由 DSH 固定新 head、跑最终门禁并完成集成；Task 保持 in_progress，AC1/AC2 MET，AC3/AC4 PARTIAL，Release Gate BLOCKED。
+AUDIT-00–14 均已有段 B 结果或具名限制，详见 AUDIT_TASKS.md 与专项报告。P7 编号交付册、去重台账、整改路线、BLOCKED Release Gate 和 FINAL_AUDIT_REPORT 已提交于 3fc756a1。最新 gate batch：c9953bac 四项 EXIT 0 已入库并 pin（496 pins 复算通过）；fcd0ece3f 之后的门禁按滚动规则记录于 AUDIT_RESUME。此前 076dfbb6、6350081a、86f47fee 批次均已 pin。Codex 优先裁决后已完成五轮独立 Review（首轮 `d92859c9a`、复审 `226eb048`、第三轮 `42810143b`、第四轮 `6350081a`、第五轮 `1ae79bb99`，均 EXIT 0、结论 REJECT：要求交付文档收敛）。本轮收敛后由 DSH 固定新 head、跑最终门禁并完成集成；Task 保持 in_progress，AC1/AC2 MET，AC3/AC4 PARTIAL，Release Gate BLOCKED。
 
 P0: AUDIT-00 基线盘点 → P1: AUDIT-01/02 架构/静态 → P2: AUDIT-03/08 导入/数据 → P3: AUDIT-04/05/06/07 OCR/SFX/翻译/图像 → P4: AUDIT-09 UI → P5: AUDIT-10/11/12 性能/安全/交付 → P6: AUDIT-13/14 E2E/需求覆盖 → P7: 去重整改 → P8: 证据复核/Release Gate。
 
