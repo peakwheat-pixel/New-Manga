@@ -1,0 +1,18 @@
+START_UTC=2026-11-13T14:52:23.373462+00:00
+HEAD=9b0be2cd120af176a188f60fd59d1c5425056f5b
+BRANCH=main
+SHELL=Python subprocess (no shell)
+INTERPRETER=C:\Python314\python.exe
+CWD=G:\CODEX\New Manga
+ARGV=["pwsh", "-NoProfile", "-File", "tools/governance/check.ps1", "-TaskPath", "doc/tasks/NEW-MANGA-V1-FULL-AUDIT.md"]
+
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\NEW-MANGA-V1-FULL-AUDIT.md
+WARN: 存在 10 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3193 bytes / 31 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6988 bytes / 64 lines
+Governance check: PASS (3 warnings)
+
+EXIT=0
+TIMED_OUT=False
+ELAPSED_SECONDS=1.072
