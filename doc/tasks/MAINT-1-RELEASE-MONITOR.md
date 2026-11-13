@@ -165,3 +165,10 @@ NEW-MANGA-V1-FULL-AUDIT 与 R1–R4 整改、SEC-01/02/03、CORE-01、AUDIT-07/0
 - **§3 排除项**：明确登记 5 项不属 C3 的项（FEA-11 folder relink=C1、RESIDUAL-2 Tab/a11y=C1、FEA-07 AC1/AC2=C1、A3-1 硬编码说法不成立、术语冲突为无关项），防止把可做的工作误分类为设计选择。
 - **limitation 处置进度**：C4 10 项（轮次 11）+ C3 6 项（本轮）已有正式载体；**C1 约 13、C2 5、Q6 仍开放**，DoD §1/§3 未达成。
 - **下一轮（P9）**：Q6（pytest 16F 修 or 永久登记）裁决；并评估是否释放 C1 首卡（受会话预算约束）。
+
+### 轮次 13（2026-11-14）
+
+- **P9 Q6 裁决完成**：[Q6 裁决](../reviews/MAINT-1-P9-Q6-PYTEST-ADJUDICATION.md)。16 个 pytest 失败**全部集中在插件沙箱子系统**，复跑 `tests/infrastructure/test_plugin_sandbox.py` → **16 passed / 26.23s**，与验收 16 failed 数目精确吻合 → 裁决为**环境性失败、非产品缺陷**，不开修复卡。
+- **限制登记**：仅复跑该文件，全量 pytest 复跑列入下一轮；复跑环境 `python`+`pytest 9.1.1` 与验收 `C:\Python314`（无 pytest）不同，差异本身即环境证据。
+- **DoD §4**：`.NET` 1875/0/109 已实测；pytest 16F 已归因；仍需一次全量复跑给出同环境干净数字，故 §4 仍为「有条件达成」。
+- **下一轮（P10）**：全量 pytest 复跑 + 更新 V1 清单数字；随后评估 C1 首卡。
