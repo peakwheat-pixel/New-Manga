@@ -27,6 +27,8 @@
 
 - `reports/CODEX-FINAL4-REVIEW-2026-11-13.md`、`evidence/codex-final4-review-20261113.result.md`、`logs/codex-final4-review-dispatch-20261113.log`、`evidence/codex-final4-review-20261113.meta.json`：Codex 第五轮复审，reviewed_head=`1ae79bb99534e3a06fc77a284c3a5089e12fce34`，EXIT 0，643.5s；确认 483/483 pins、无重复、14 项更正正确；结论 REJECT（F1 当前摘要 462 vs 483、F2 专项报告/索引旧措辞）；明确认可“最后一批门禁未回填”为可接受 limitation。
 
+- `logs/task-card-pin-recompute-20261113-after-final4.log`、`evidence/task-card-pin-recompute-20261113-after-final4.json`：第五轮复审回填后 Task 卡复算（496 条 pins：第五轮复审证据 5、c9953bac 门禁 8）；496/496 PASS。
+
 ## 2026-11-13 P7 DSH 集成核验与 ZCode 额度复核
 
 - `reports/P7-INTEGRATION-CONSISTENCY-CHECK-2026-11-13.md`：DSH 集成核验记录（非 ZCode Review）；371 条 Canonical Evidence 复算、14 条 worktree/BLOB 基准更正、报告计数/AC/R1–R4/Gate 一致性与文档漂移清单。
