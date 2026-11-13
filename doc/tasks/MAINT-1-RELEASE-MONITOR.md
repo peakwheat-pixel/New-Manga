@@ -141,3 +141,12 @@ NEW-MANGA-V1-FULL-AUDIT 与 R1–R4 整改、SEC-01/02/03、CORE-01、AUDIT-07/0
 - **AC 状态**：AC1–AC4 全部标 `<<MET>>`；任务**保持 `in_progress`**，待 P6 收官核对三指针后再置终态——不在 C1 待办未处置时提前关闭维护哨位。
 - **AC4 自证**：未扩大产品范围（4 张提案全 OUT）、未改历史字节（更正一律 errata/独立 review）、未覆盖任何 pin（`FEA-06-PREREQ-1` 的 4 条 SHA 漂移保持 FAIL）。
 - **下一轮（P6）**：三指针一致性核对 + 四项门禁复跑 + 收官报告。
+
+### 轮次 10（2026-11-14）
+
+- **P6 收官核对完成**：[判定报告](../reviews/MAINT-1-P6-LINE-CLOSEOUT-VERDICT.md)。**判定：线未收口（DoD 5 条中 §1、§3 未达成）**，不构成完成声明。
+- **三指针一致（DoD §5 达成）**：`STATUS:6-7`、`PLAN:58`、`TASK_LEDGER`（`non-terminal 6` / `named 5`）互相吻合。
+- **DoD §2 达成**、**§4 有条件达成**（check/pins/api-inventory/.NET 全绿；pytest 16F 为登记基线内未清零）。
+- **结构性阻塞已定位并给出解法**：PLAN 64/64 行、6954/7000 B；新开实现卡会超预算 → 下轮以 `MAINT-2-*` 登记并把 ID 并入既有表外行（+约 35 B，预算内）。
+- **未翻转任何节点状态**；Release Gate 保持 BLOCKED，未写成 PASS。
+- **下一轮（P7）**：释放 `MAINT-2-C1-BATCH-1` 承载价值最高的 3–4 项 C1。
