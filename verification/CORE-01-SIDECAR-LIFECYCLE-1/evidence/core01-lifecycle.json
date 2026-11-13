@@ -1,0 +1,13 @@
+{
+  "tests": "SidecarLifecycleTests 4 passed",
+  "build": "dotnet build EXIT 0",
+  "schema": "core01-evidence/v1",
+  "test_exit": 0,
+  "discriminating_power": "old code: 2 failed (EXIT 1); fixed code: 4 passed (EXIT 0)",
+  "head": "45011c0e5eedd27b91c5f74d67b25fa2a59d6f5f",
+  "logs": [
+    "logs/dotnet-test-lifecycle.log",
+    "logs/dotnet-test-lifecycle-fixed.log",
+    "logs/discriminating-power-old-code.log"
+  ]
+}

@@ -21,6 +21,8 @@ public sealed class SidecarProcess : IAsyncDisposable
     private readonly object _stderrGate = new();
     private bool _disposed;
     private bool _poisoned;
+    private readonly object _stopGate = new();
+    private Task? _stopTask;
 
     private SidecarProcess(SidecarSpec spec, Process process)
     {
@@ -118,6 +120,9 @@ public sealed class SidecarProcess : IAsyncDisposable
             startInfo.ArgumentList.Add(argument);
         }
 
+        // NM-AUD-0001: a pre-cancelled start must never spawn a child.
+        cancellationToken.ThrowIfCancellationRequested();
+
         Process process;
         try
         {
@@ -147,8 +152,16 @@ public sealed class SidecarProcess : IAsyncDisposable
         try
         {
             ProcessIntegrity.EnsureChildMatchesParent(spec.Name, process.Handle, spec.StderrLogPath);
+            // NM-AUD-0001: a start cancelled after the spawn must tear the child down
+            // before the exception escapes -- otherwise the child outlives the caller.
+            cancellationToken.ThrowIfCancellationRequested();
         }
         catch (SidecarException)
+        {
+            await sidecar.DisposeAsync().ConfigureAwait(false);
+            throw;
+        }
+        catch (OperationCanceledException)
         {
             await sidecar.DisposeAsync().ConfigureAwait(false);
             throw;
@@ -164,7 +177,6 @@ public sealed class SidecarProcess : IAsyncDisposable
                 ex);
         }
 
-        cancellationToken.ThrowIfCancellationRequested();
         return sidecar;
     }
 
@@ -296,12 +308,21 @@ public sealed class SidecarProcess : IAsyncDisposable
         return line;
     }
 
-    public async Task StopAsync(int gracefulTimeoutMs = 3000)
-    {        if (_disposed)
+    /// <summary>
+    /// NM-AUD-0001: stop/cleanup ownership is single-flight and idempotent. Every caller
+    /// (explicit stop, cancellation cleanup, DisposeAsync) awaits the same stop task, so a
+    /// second caller can never return while the first one is still tearing the child down.
+    /// </summary>
+    public Task StopAsync(int gracefulTimeoutMs = 3000)
+    {
+        lock (_stopGate)
         {
-            return;
+            return _stopTask ??= StopCoreAsync(gracefulTimeoutMs);
         }
+    }
 
+    private async Task StopCoreAsync(int gracefulTimeoutMs)
+    {
         try
         {
             _stdin.Close();
@@ -337,13 +358,13 @@ public sealed class SidecarProcess : IAsyncDisposable
 
     public async ValueTask DisposeAsync()
     {
+        await StopAsync().ConfigureAwait(false);
         if (_disposed)
         {
             return;
         }
 
         _disposed = true;
-        await StopAsync().ConfigureAwait(false);
         try
         {
             await _stderrPump.WaitAsync(TimeSpan.FromSeconds(2)).ConfigureAwait(false);
