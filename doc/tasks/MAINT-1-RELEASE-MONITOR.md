@@ -193,3 +193,10 @@ NEW-MANGA-V1-FULL-AUDIT 与 R1–R4 整改、SEC-01/02/03、CORE-01、AUDIT-07/0
 - **下一会话派发**：Owner Codex，范围仅 `tests/fea11/test_source_scan.py` 的 fixture 建库逻辑；验收＝该用例通过 + 全量 pytest 0 failed + 门禁不降。
 - **DoD §4**：用例通过前仍为「有条件达成」。
 - **会话预算**：已到上限，后续按 `CHECKPOINT.md` 新会话续跑。
+
+### 轮次 17（2026-11-14）
+
+- **修复点精确定位**：`tests/fea11/test_source_match.py:1028` 用 `migrations[:7]` 把库停在 v7，而下游 planner → `library.py:217` 需要 v12 的 `custom_rank`。**结论修正**：不是"fixture 缺一列"，而是该用例的**迁移时序与该用例声称的终态版本不一致**，不能靠加列修。
+- **未擅自改测**：该用例意图（v7 生产迁移 + 真实导入 → v8）需先读懂再动；已写成可执行的移交单（4 步，含验收与独立 Review 要求）。
+- **DoD §4**：仍「有条件达成」。
+- **会话预算**：已到上限，后续按 CHECKPOINT 新会话续跑。
