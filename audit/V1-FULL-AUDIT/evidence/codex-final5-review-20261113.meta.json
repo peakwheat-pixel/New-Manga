@@ -1,0 +1,31 @@
+{
+  "schema": "codex-final-review-dispatch/v1",
+  "kind": "sixth review (state consistency)",
+  "reviewer": "Codex (fresh independent context)",
+  "cli": "codex-cli 0.162.0",
+  "model": "gpt-6-luna",
+  "reasoning_effort": "xhigh",
+  "sandbox": "danger-full-access (read-only-instructed; read-only/workspace-write cannot spawn child processes: Windows error 740)",
+  "session_id": "01a1d539-0bb2-7553-a904-d0ce28be7e2f",
+  "reviewed_head": "c2f5bc8273314f18fe91ea29781339f659872899",
+  "expected_head": "c2f5bc8273314f18fe91ea29781339f659872899",
+  "branch": "main",
+  "exit": 0,
+  "elapsed_seconds": 1397.3,
+  "started_at_local": "2026-11-13T22:27:25+08:00",
+  "decision": "REJECT",
+  "result_path": "audit/V1-FULL-AUDIT/reports/CODEX-FINAL5-REVIEW-2026-11-13.md",
+  "result_sha256": "E2A6148CB2AC14AF0DBD81A6A0983475CDDB1D9B3F030B2223EF9DFAA232E858",
+  "stdout_path": "audit/V1-FULL-AUDIT/evidence/codex-final5-review-20261113.stdout.log",
+  "stdout_sha256": "C7BB8A1F2CCF7491B7F59543A261AB69A8B47E8357952A188F745BAB9BDA0DEE",
+  "raw_stderr_path": "G:\\CODEX\\New Manga.workspace\\task-envs\\NEW-MANGA-V1-FULL-AUDIT\\codex-final5-20261113\\stderr.log",
+  "raw_stderr_bytes": 1725522,
+  "raw_stderr_sha256": "70162E0EB93C07FDEAD18F78A14AA6E920C9BF0F3CFCD7743BB7B985F967F782",
+  "notes": [
+    "Worktree clean before and after.",
+    "Confirmed 496/496 unique pins (473 CANONICAL, 23 SOURCE_PIN), no duplicates, correct 14 corrections.",
+    "Rolling-gate limitation explicitly accepted.",
+    "Remaining F1: Task AC3/AC4/rolling checkpoint still describe four/three review rounds and old gate batches.",
+    "Remaining F2: AUDIT-07 report line 76 and Evidence Index line 49 still say candidates await ZCode."
+  ]
+}

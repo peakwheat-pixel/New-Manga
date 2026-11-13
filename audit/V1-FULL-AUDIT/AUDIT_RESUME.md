@@ -10,6 +10,8 @@
 
 - 第七轮回填（2026-11-13）：Task 卡 pins 496/496（第五轮复审证据 5、c9953bac 门禁 8）；AC4/Rolling 同步 496；下一步跑门禁并以 clean head 做第六轮复审。
 
+- 第六轮复审（2026-11-13）：Codex 对 `reviewed_head=c2f5bc8273314f18fe91ea29781339f659872899` 复审，EXIT 0，1397.3s；确认 496/496 pins；结论 REJECT，仅剩 F1（Task AC3/AC4/Rolling 旧轮次摘要）与 F2（AUDIT-07 第 76 行、索引第 49 行旧 ZCode 措辞）；滚动门禁 limitation 被接受。报告 `reports/CODEX-FINAL5-REVIEW-2026-11-13.md`。
+
 ## 2026-11-13 用户裁决：最终独立 Review 与裁决改为 Codex 优先
 
 - 用户 2026-11-13 指示：“调整流程，裁决交给 codex 或者 zcode，优先 codex”。本 Task 的最终独立 Review 与候选/finding 裁决改为 **Codex 优先**；Codex 不可用或不适配时回退 **ZCode**。历史 ZCode 裁决、Review 与 evidence pin 原字节保留，不追改、不据此恢复 ZCode 独占裁决。
