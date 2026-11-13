@@ -623,12 +623,12 @@ src/**、apps/**、原有tests/**、共享契约、Schema、依赖、真实用�
 ## Resource Manifest
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| worktree | G:/CODEX/New Manga | PRESERVE_REFERENCED | — | evidence/baseline.json | 主工作区，不创建/移除worktree |
-| task-env | G:/CODEX/New Manga.workspace/task-env/NEW-MANGA-V1-FULL-AUDIT | PRESERVE_REFERENCED | — | audit/V1-FULL-AUDIT | 隔离数据库/构建/临时数据及 ZCode 429 原始 stderr（含瞬态响应头；脱敏副本入仓）；未授权删除 |
-| agent-output | G:/CODEX/New Manga.workspace/agent-output/codex/NEW-MANGA-V1-FULL-AUDIT | PRESERVE_REFERENCED | — | `logs/dotnet-build-audit01-02-20261112.log`; `logs/sidecar-lifecycle-probe-20261112T143133097703Z.log` | solution 编译产物；lifecycle probe 载入实际生成的 `NewManga.CoreClient.dll`；Task 未关闭前保留 |
-| artifact | audit/V1-FULL-AUDIT | PRESERVE_REFERENCED | — | evidence/ | 审计交付物保留 |
-| dataset/model/test-material | — | NOT_APPLICABLE | — | — | 不获取私有漫画/新模型 |
-| exchange | — | NOT_APPLICABLE | — | — | 无外部传输 |
+| worktree | G:/CODEX/New Manga | PRESERVE_REFERENCED | doc | audit/V1-FULL-AUDIT/evidence/baseline.json | 主工作区，不创建/移除worktree |
+| task-env | G:/CODEX/New Manga.workspace/task-env/NEW-MANGA-V1-FULL-AUDIT | PRESERVE_REFERENCED | audit/V1-FULL-AUDIT | audit/V1-FULL-AUDIT/evidence/baseline-segment-b.json | 隔离数据库/构建/临时数据及 ZCode 429 原始 stderr（含瞬态响应头；脱敏副本入仓）；未授权删除 |
+| agent-output | G:/CODEX/New Manga.workspace/agent-output/codex/NEW-MANGA-V1-FULL-AUDIT | PRESERVE_REFERENCED | audit/V1-FULL-AUDIT | audit/V1-FULL-AUDIT/evidence/source-manifest.json | solution 编译产物；lifecycle probe 载入实际生成的 `NewManga.CoreClient.dll`；Task 未关闭前保留 |
+| artifact | audit/V1-FULL-AUDIT | PRESERVE_REFERENCED | audit/V1-FULL-AUDIT | audit/V1-FULL-AUDIT/evidence/codex-final11-review-20261114.meta.json | 审计交付物保留 |
+| dataset/model/test-material | - | NOT_APPLICABLE | doc | audit/V1-FULL-AUDIT/evidence/baseline.json | 不获取私有漫画/新模型 |
+| exchange | - | NOT_APPLICABLE | doc | audit/V1-FULL-AUDIT/evidence/baseline.json | 无外部传输 |
 
 ## Rolling checkpoint
 [audit/V1-FULL-AUDIT/AUDIT_RESUME.md](../../audit/V1-FULL-AUDIT/AUDIT_RESUME.md) 顶部 2026-11-14 DSH 集成检查点为最新恢复入口。Task 已由 DSH 自动裁决完成：Codex 最终回退复审 ACCEPT_WITH_LIMITATIONS；548 条 BLOB pins（含最终复审与集成门禁批次）；integration_commit=delivery_head=a4040a8d8；canonical_evidence_status/resource_closeout_status=complete。下一节点 R1 SEC-01（AUDIT-11-INC-001 只读远端可见性调查）。产品 Release Gate BLOCKED。
