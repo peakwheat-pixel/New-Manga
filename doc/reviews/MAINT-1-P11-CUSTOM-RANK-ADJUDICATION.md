@@ -34,3 +34,15 @@
    - (a2) 若语义上必须停 v7，则下游读取应改走不依赖 v12 列的路径（**需 DSH 先确认是否弱化契约**，不得自行改）。
 3. 验收：该用例通过；**全量 pytest 0 failed**；`.NET` 与 `pins 18/18` 不变；`check.ps1` 不得降级。
 4. 独立 Review：不得由实现者同一会话/实例执行。
+
+## 终局定位（轮次 18）
+
+同一用例内有两处迁移：`:1028` `migrations[:7]`（停在 v7）与 `:1085` `migrations`（全量）。
+→ 失败发生在 **v7 阶段**：v7 与 v12 之间，代码已通过 `SqliteLibraryRepository` 读取 `chapters`（`_CHAPTER_COLUMNS` 含 `custom_rank`），而库仍停在 v7。
+
+**结论**：这不是"fixture 少一列"，而是**该用例在 v7 阶段误用了当前 schema 的数据访问路径**。
+**修复建议（供 Codex 执行，仍需先确认作者意图）**：
+- 若 v7 阶段只想写 legacy 行 → 改用裸 SQL 写入，不经过 `SqliteLibraryRepository`；
+- 或把 `:1085` 的全量迁移提前到任何仓储读取之前。
+两种改法都不动 `src/**`，不改契约，符合路线 (a)。
+**验收**：该用例通过 + 全量 pytest 0 failed + .NET/pins/check 不降 + 独立 Review。
