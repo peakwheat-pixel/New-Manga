@@ -38,11 +38,11 @@ READER-LIBRARY-WIRE-1 完成书库接线但固定第一本书第一章；多章/
 
 ## Acceptance Criteria
 
-- [x] **AC1 章节列表**：阅读器页提供章节列表（`list_chapters`），当前书/章可见，可切章并渲染对应页。→ **MET**：工具栏「书：… · 章：…」上下文 + `ChapterSelector` 下拉 + 上一章/下一章按钮（单章隐藏、边界禁用），`HostRuntime.ListChaptersAsync` 走真实 `list_chapters`；切章重新投影并更新页数/布局。真机：书 A 第 1 章 8 页 →「下一章」→ 第二章 4 页。证据：`verification/CHAPTER-SELECTOR-1/live-evidence.json`、`screens/02-*.png`、`screens/03-*.png`、`test/summary.json`（145/145）。
-- [x] **AC2 多书入口**：书架多本书时从任一本进入都打开对应书（不再固定第一本）。→ **MET**：书卡双击与详情「进入阅读」均走 `OpenReaderForBookAsync(bookId)`；切书/切章前 flush 当前进度；任意 bookId/chapterId 走 `LoadReaderBookAsync`。真机：书架两本书，第二本 → 副本B 3 页。证据：`screens/01-*.png`、`screens/04-*.png`、`live-evidence.json`（两本书 + 各自 `list_chapters`/投影）。
-- [x] **AC3 测试**：Headless 覆盖切章更新页数/投影、多书分别打开；真机用 BOOK-FIXTURE 数据根（可复制成两本）验证。→ **MET**：headless 12 项（`ReaderChapterSelectorTests`）+ Host 真 sidecar 2 项（`HostReaderChaptersIntegrationTests`：list_chapters 与投影一致、12 路并发读被串行化）；真机双书三章数据根（源 fixture 不动）。证据：`test/*`、`host/*.json`、`live-evidence.json`、`runtime-logs/`。
-- [x] **AC4 回归**：`scripts/test.ps1` 全绿；vitest 60/567；pytest 无新增失败。→ **MET**：test.ps1 **145/145 passed, 0 skipped**（coreclient 40 / host 42 / app 63；上卡 131 + 本轮 14）；vitest **60 files / 567 tests**；pytest **3F/2739P/9S**（与基线一致）。证据：`test/summary.json`、`test/dotnet-test-Debug.log`、`test/vitest.log`、`test/pytest.log`。
-- [x] **AC5 门禁**：`check.ps1 -TaskPath` PASS；64-hex pin；Handoff。→ **MET**：`pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/CHAPTER-SELECTOR-1.md` PASS；下方 14 条 Canonical Evidence pin；`doc/handoffs/CHAPTER-SELECTOR-1-handoff.md`。
+- [x] **AC1 章节列表**：阅读器页提供章节列表（`list_chapters`），当前书/章可见，可切章并渲染对应页。→ **MET**：工具栏「书：… · 章：…」上下文 + `ChapterSelector` 下拉 + 上一章/下一章按钮（单章隐藏、边界禁用），`HostRuntime.ListChaptersAsync` 走真实 `list_chapters`；切章重新投影并更新页数/布局。真机：书 A 第 1 章 8 页 →「下一章」→ 第二章 4 页。证据：`verification/CHAPTER-SELECTOR-1/live-evidence.json`、`screens/02-*.png`、`screens/03-*.png`、`test/summary.json`（145/145）。 <<MET>>
+- [x] **AC2 多书入口**：书架多本书时从任一本进入都打开对应书（不再固定第一本）。→ **MET**：书卡双击与详情「进入阅读」均走 `OpenReaderForBookAsync(bookId)`；切书/切章前 flush 当前进度；任意 bookId/chapterId 走 `LoadReaderBookAsync`。真机：书架两本书，第二本 → 副本B 3 页。证据：`screens/01-*.png`、`screens/04-*.png`、`live-evidence.json`（两本书 + 各自 `list_chapters`/投影）。 <<MET>>
+- [x] **AC3 测试**：Headless 覆盖切章更新页数/投影、多书分别打开；真机用 BOOK-FIXTURE 数据根（可复制成两本）验证。→ **MET**：headless 12 项（`ReaderChapterSelectorTests`）+ Host 真 sidecar 2 项（`HostReaderChaptersIntegrationTests`：list_chapters 与投影一致、12 路并发读被串行化）；真机双书三章数据根（源 fixture 不动）。证据：`test/*`、`host/*.json`、`live-evidence.json`、`runtime-logs/`。 <<MET>>
+- [x] **AC4 回归**：`scripts/test.ps1` 全绿；vitest 60/567；pytest 无新增失败。→ **MET**：test.ps1 **145/145 passed, 0 skipped**（coreclient 40 / host 42 / app 63；上卡 131 + 本轮 14）；vitest **60 files / 567 tests**；pytest **3F/2739P/9S**（与基线一致）。证据：`test/summary.json`、`test/dotnet-test-Debug.log`、`test/vitest.log`、`test/pytest.log`。 <<MET>>
+- [x] **AC5 门禁**：`check.ps1 -TaskPath` PASS；64-hex pin；Handoff。→ **MET**：`pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/CHAPTER-SELECTOR-1.md` PASS；下方 14 条 Canonical Evidence pin；`doc/handoffs/CHAPTER-SELECTOR-1-handoff.md`。 <<MET>>
 
 ## 允许修改范围
 
@@ -90,7 +90,7 @@ READER-LIBRARY-WIRE-1 完成书库接线但固定第一本书第一章；多章/
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| task-env | G:/CODEX/New Manga.workspace/task-envs/CHAPTER-SELECTOR-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/CHAPTER-SELECTOR-1 | `evidence/`（测试/wire/screens/host）+ `pkg/app`（29.4 MB 发布件，`core-sidecar` 为 junction）+ `isolated-data`（EXTERNAL 双书三章测试根，源 fixture 未改） | 2026-10-27 本卡收口时目录存在；`live-evidence.json` 引用其路径；未移动/未删除；关闭时由 DSH 复核 |
+| task-env | G:/CODEX/New Manga.workspace/task-envs/CHAPTER-SELECTOR-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/CHAPTER-SELECTOR-1 | `verification/CHAPTER-SELECTOR-1/live-evidence.json` | 2026-10-27 本卡收口时目录存在；`live-evidence.json` 引用其路径；未移动/未删除；关闭时由 DSH 复核 ｜ 资源构成（原 integrity 列文本迁入）：`evidence/`（测试/wire/screens/host）+ `pkg/app`（29.4 MB 发布件，`core-sidecar` 为 junction）+ `isolated-data`（EXTERNAL 双书三章测试根，源 fixture 未改） |
 
 ## Closeout Record
 

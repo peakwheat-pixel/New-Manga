@@ -26,6 +26,7 @@ allowed_paths:
   - doc/TASK_LEDGER.md
   - doc/reviews/MAINT-1-*.md
   - tools/governance/task_ledger.py
+  - doc/tasks/CHAPTER-SELECTOR-1.md
 ---
 
 # MAINT-1-RELEASE-MONITOR：项目计划收口后的维护与 Release Gate 监测
@@ -88,3 +89,12 @@ NEW-MANGA-V1-FULL-AUDIT 与 R1–R4 整改、SEC-01/02/03、CORE-01、AUDIT-07/0
 - **双签队列（6 项）**：Q1 name 规范化、Q2 position 形状、Q3 FONT-2 拆分与字体授权、Q4 READ P12/P15 偏差、Q5 日志根是否跟随数据根、Q6 pytest 16F 修或永久登记。
 - **未翻转状态**：9 个节点全部保持 `closed_with_limitations`。
 - **下一轮（P3-a）**：把两处 `TaskPath FAIL`（`FEA-06-PREREQ-1` 13 errors、`CHAPTER-SELECTOR-1` 6 errors）作为首批 C1 治理卡修复。
+
+### 轮次 5（2026-11-14）
+
+- **`CHAPTER-SELECTOR-1` 转绿**：5 个 AC 补 `<<MET>>` 行末标记（结论早已写在正文，仅补机器可读格式）；Resource Manifest 的 `sha256/manifest` 列改为真实索引 `verification/CHAPTER-SELECTOR-1/live-evidence.json`，原长描述**迁入**结果列未删。`check.ps1 -TaskPath` → **PASS**；diff 6 增 6 删。
+- **`FEA-06-PREREQ-1` 仅诊断不改**：[诊断记录](../reviews/MAINT-1-P3A-TASKPATH-DIAGNOSIS.md)。13 个错误分四类，其中 4 条证据 SHA 漂移属 pin 基准策略议题，须独立成卡重钉；本轮取 O2（登记债），不重钉、不改历史 AC 语义。
+- **允许路径扩展**：本卡 `allowed_paths` 增加 `doc/tasks/CHAPTER-SELECTOR-1.md`（本轮实际改动前已补登）。
+- **单卡 FAIL 清单**：2 张 → 1 张（仅剩 `FEA-06-PREREQ-1`）。
+- **未翻转节点状态**：无。
+- **下一轮（P4）**：4 张 FEA proposed 卡逐张处置（释放或裁 OUT）。
