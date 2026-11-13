@@ -1,0 +1,6 @@
+Codex fifth review (post-convergence) of NEW-MANGA-V1-FULL-AUDIT
+session_id=01a1d52b-c4fa-7a43-82ea-226531bf4760
+reviewed_head=1ae79bb99534e3a06fc77a284c3a5089e12fce34
+exit=0 elapsed_seconds=643.5 decision=REJECT
+accepted limitation: last gate batch not yet pinbackfilled (rolling rule)
+environment: danger-full-access due to Windows error 740 sandbox limitation; strictly read-only
