@@ -2,7 +2,7 @@
 
 ## 当前执行点（2026-11-13）
 
-AUDIT-00–14 均已有段 B 结果或具名限制，详见 AUDIT_TASKS.md 与专项报告。P7 编号交付册、去重台账、整改路线、BLOCKED Release Gate 和 FINAL_AUDIT_REPORT 已提交于 3fc756a1。Task 状态 `in_review`、pins 535；最新已记录的四项门禁批次 generated HEAD=`46a8fe6e`（收录于 `f0fa06ef`），日志在 audit/V1-FULL-AUDIT/logs，均 EXIT 0；`f25127083` 为 535-pin 回填提交，其门禁在 DSH 集成后的 delivery head 记录。Codex 已执行九轮独立 Review（首轮 `d92859c9a`、复审 `226eb048`、第三轮 `42810143b`、第四轮 `6350081a`、第五轮 `1ae79bb99`、第六轮 `c2f5bc827`、第七轮 `9bd7264ca`、第八轮 `6b09ca1f`、第九轮 `f25127083`，均 EXIT 0；前八轮结论 REJECT 属交付文档收敛，第九轮 仅剩当前指针同步）。本轮收敛后由 DSH 固定新 head 复审并完成集成；AC1/AC2 MET，AC3/AC4 PARTIAL，Release Gate BLOCKED。
+AUDIT-00–14 均已有段 B 结果或具名限制，详见 AUDIT_TASKS.md 与专项报告。P7 编号交付册、去重台账、整改路线、BLOCKED Release Gate 和 FINAL_AUDIT_REPORT 已提交于 3fc756a1。Task 状态 `in_review`、pins 535；最新已记录四项门禁批次 generated HEAD=`46a8fe6e`（收录于 `f0fa06ef`），均 EXIT 0；最终门禁在 DSH 集成的 delivery head 记录。2026-11-14 用户裁决最终裁决改为 ZCode 优先、Codex 回退；ZCode 仍因额度不可用，Codex 回退已完成十一轮独立 Review（首轮 `d92859c9a` 至第十一轮 `89f2925ff`，第九至十一轮仅剩当前指针同步，本轮已修复）。待 ZCode 恢复后做最终裁决，再由 DSH 集成；AC1/AC2 MET，AC3/AC4 PARTIAL，Release Gate BLOCKED。
 
 P0: AUDIT-00 基线盘点 → P1: AUDIT-01/02 架构/静态 → P2: AUDIT-03/08 导入/数据 → P3: AUDIT-04/05/06/07 OCR/SFX/翻译/图像 → P4: AUDIT-09 UI → P5: AUDIT-10/11/12 性能/安全/交付 → P6: AUDIT-13/14 E2E/需求覆盖 → P7: 去重整改 → P8: 证据复核/Release Gate。
 

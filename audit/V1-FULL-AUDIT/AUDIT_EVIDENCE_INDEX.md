@@ -47,6 +47,8 @@
 
 - `reports/CODEX-FINAL10-REVIEW-2026-11-14.md`、`evidence/codex-final10-review-20261114.result.md`、`logs/codex-final10-review-dispatch-20261114.log`、`evidence/codex-final10-review-20261114.meta.json`：Codex 回退第十一轮复审（用户 2026-11-14 裁决 ZCode 优先后的回退执行），reviewed_head=`89f2925ff0ad6d11d4f77aec0c23346f2c817b78`，EXIT 0，873.1s；确认 535/535 pins、候选与计数自洽、最新已记录门禁 46a8fe6e；结论 REJECT（仅剩当前轮次指针同步）。
 
+- 2026-11-14 Codex 回退第十一轮复审见 `reports/CODEX-FINAL10-REVIEW-2026-11-14.md` 及配套 evidence/log；用户 2026-11-14 裁决最终裁决改为 ZCode 优先、Codex 回退。
+
 ## 2026-11-13 P7 DSH 集成核验与 ZCode 额度复核
 
 - `reports/P7-INTEGRATION-CONSISTENCY-CHECK-2026-11-13.md`：DSH 集成核验记录（非 ZCode Review）；371 条 Canonical Evidence 复算、14 条 worktree/BLOB 基准更正、报告计数/AC/R1–R4/Gate 一致性与文档漂移清单。

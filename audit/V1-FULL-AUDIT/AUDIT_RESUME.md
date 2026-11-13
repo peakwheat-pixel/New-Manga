@@ -36,6 +36,8 @@
 
 - 第十一轮 Codex 回退复审（2026-11-14）：reviewed_head=`89f2925ff0ad6d11d4f77aec0c23346f2c817b78`，EXIT 0，873.1s；确认 535/535 pins；结论 REJECT，仅剩当前轮次指针同步（本轮修复）。用户 2026-11-14 裁决最终裁决改为 ZCode 优先，本复审作为回退输入。报告 `reports/CODEX-FINAL10-REVIEW-2026-11-14.md`。
 
+- 2026-11-14 用户裁决：最终裁决与独立 Review 改为 **ZCode 优先、Codex 回退**；ZCode 仍因 provider `1310` 不可用（reset 2026-11-17 18:40:33），本轮以 Codex 回退执行第十一轮复审（reviewed_head `89f2925ff`，REJECT：仅剩轮次指针同步），并同步全部当前指针。最终裁决待 ZCode 恢复后确认。
+
 ## 2026-11-13 用户裁决：最终独立 Review 与裁决改为 Codex 优先
 
 - 用户 2026-11-13 指示：“调整流程，裁决交给 codex 或者 zcode，优先 codex”。本 Task 的最终独立 Review 与候选/finding 裁决改为 **Codex 优先**；Codex 不可用或不适配时回退 **ZCode**。历史 ZCode 裁决、Review 与 evidence pin 原字节保留，不追改、不据此恢复 ZCode 独占裁决。

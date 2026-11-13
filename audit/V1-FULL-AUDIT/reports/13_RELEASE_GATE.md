@@ -2,7 +2,7 @@
 
 **结论：BLOCKED**
 **产品基线：** 10e4ee013835605800d3830fb960ae8d3aa04167
-**裁决来源：** Codex 九轮独立 Review（`d92859c9a`、`226eb048`、`42810143b`、`6350081a`、`1ae79bb99`、`c2f5bc827`、`9bd7264ca`、`6b09ca1f`、`f25127083`；对应 `reports/CODEX-*REVIEW-2026-11-13.md`）均明确维持 BLOCKED，不满足 PASS 或 CONDITIONAL；最新已记录四项门禁批次为 `46a8fe6e`（收录于 `f0fa06ef`），其门禁在 DSH 集成后的 delivery head 重跑并记录。
+**裁决来源：** 2026-11-14 用户裁决最终裁决改为 **ZCode 优先、Codex 回退**；ZCode 因 provider `1310` 仍不可用，Codex 作为回退已完成十一轮独立 Review（`d92859c9a` 至 `89f2925ff`），均明确维持 BLOCKED，不满足 PASS 或 CONDITIONAL；最新已记录四项门禁批次为 `46a8fe6e`（收录于 `f0fa06ef`），最终门禁在 DSH 集成后的 delivery head 重跑并记录。
 
 ## 阻断依据
 
@@ -12,7 +12,7 @@
 4. 没有当前基线安装包 provenance 和 clean Windows install / upgrade / rollback / uninstall 验证；历史 zip/setup 不绑定当前基线，本 Task 未安装、执行或发布。
 5. `AUDIT-11-INC-001` 当前远端可见性未知（Codex 维持 INVESTIGATE，不分配 severity）；不得写成已公开或已消除。
 6. 真实 manga / 模型 / 付费 API / 完整 UI 流程没有形成覆盖关键路径的端到端证据；部分结果仅来自 synthetic fixtures。
-7. Codex 九轮 Review 结论均为 **REJECT**：历史原因是状态/计数/重复 ID/门禁 pin 等；第九轮确认 535/535 pins 与计数自洽，仅剩当前指针同步（AUDIT_PLAN/AUDIT_STATUS/Task AC4·Rolling/FINAL/13_GATE）。AC3/AC4 尚不能据此收口；该 REJECT 与产品发布阻断相互独立但同向。
+7. Codex 十一轮回退 Review 结论均为 **REJECT**：历史原因是状态/计数/重复 ID/门禁 pin 等；第九轮确认 535/535 pins 与计数自洽，仅剩当前指针同步（AUDIT_PLAN/AUDIT_STATUS/Task AC4·Rolling/FINAL/13_GATE）。AC3/AC4 尚不能据此收口；该 REJECT 与产品发布阻断相互独立但同向。
 
 ## Gate 解释
 
