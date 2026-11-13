@@ -41,10 +41,10 @@ NEW-MANGA-V1-FULL-AUDIT 与 R1–R4 整改、SEC-01/02/03、CORE-01、AUDIT-07/0
 
 ## Acceptance Criteria
 
-- [ ] **AC1**：维护记录：DAG 收口状态、V1 承诺清单与 Release Gate BLOCKED 的当前依据（引用 STATUS/13_GATE/V1_COMMITMENT_MANIFEST）。
-- [ ] **AC2**：监测规则：四项治理门禁保持 EXIT 0；任何 Task/证据变更后复跑并保存原始输出。
-- [ ] **AC3**：重新评估入口：若获得 clean install / 真实模型 API / 安装验证条件，按 13_RELEASE_GATE 要求复评；未获得时保持 BLOCKED，不写成 PASS。
-- [ ] **AC4**：不得以本 Task 扩大产品范围或改写历史证据；维护记录按需更新。
+- [x] **AC1**：维护记录：DAG 收口状态、V1 承诺清单与 Release Gate BLOCKED 的当前依据（引用 STATUS/13_GATE/V1_COMMITMENT_MANIFEST）。 <<MET>>
+- [x] **AC2**：监测规则：四项治理门禁保持 EXIT 0；任何 Task/证据变更后复跑并保存原始输出。 <<MET>>
+- [x] **AC3**：重新评估入口：若获得 clean install / 真实模型 API / 安装验证条件，按 13_RELEASE_GATE 要求复评；未获得时保持 BLOCKED，不写成 PASS。 <<MET>>
+- [x] **AC4**：不得以本 Task 扩大产品范围或改写历史证据；维护记录按需更新。 <<MET>>
 
 ## 允许修改范围
 
@@ -134,3 +134,10 @@ NEW-MANGA-V1-FULL-AUDIT 与 R1–R4 整改、SEC-01/02/03、CORE-01、AUDIT-07/0
 - **台账**：`non-terminal` 8 → 6；**FEA 范围内 `proposed` 清零 → DoD §2 达成**。
 - **门禁**：check 默认 + 三张分卡 PASS；pins 18/18。
 - **下一轮（P5）**：MAINT-1 自身 AC1–AC4 收口。
+
+### 轮次 9（2026-11-14）
+
+- **P5 AC1–AC4 达成**：[维护记录](../../verification/MAINT-1-RELEASE-MONITOR/MAINTENANCE-RECORD.md) 为正本；门禁原始输出 `logs/gates-2026-11-14.log`（7,374 B，四项全 `EXIT=0`）。
+- **AC 状态**：AC1–AC4 全部标 `<<MET>>`；任务**保持 `in_progress`**，待 P6 收官核对三指针后再置终态——不在 C1 待办未处置时提前关闭维护哨位。
+- **AC4 自证**：未扩大产品范围（4 张提案全 OUT）、未改历史字节（更正一律 errata/独立 review）、未覆盖任何 pin（`FEA-06-PREREQ-1` 的 4 条 SHA 漂移保持 FAIL）。
+- **下一轮（P6）**：三指针一致性核对 + 四项门禁复跑 + 收官报告。
