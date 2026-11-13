@@ -1,5 +1,7 @@
 - 第五轮收敛门禁与第四轮 reviewed-HEAD 门禁归档：generated HEAD=`86f47fee363f9a3b84a9a6f75d8493178afe8c75` 四项 EXIT 0（default/TaskPath 各 3 warnings；verify_pins 18/18；API 1/79/6=86），日志 `logs/audit-post-evidence-86f47fee-*.log`；第四轮复审 reviewed HEAD=`6350081a535d5c67c57c0f1c6123a68ed5bbdf57` 的四项门禁（此前仅存 Task workspace）已按同一布局归档为 `logs/audit-post-evidence-6350081a-*.log` 与 `evidence/audit-post-evidence-6350081a-*.json`，四项均 EXIT 0，并将 pin 入 Task Canonical Evidence。
 
+- 第六轮回填（2026-11-13）：Task 卡 pins 483/483（6350081a 归档门禁 8、86f47fee 门禁 8、第四轮复审证据 5）；AC4/Rolling 同步 483；下一步跑门禁并以 clean head 做收敛后复审。
+
 ## 2026-11-13 用户裁决：最终独立 Review 与裁决改为 Codex 优先
 
 - 用户 2026-11-13 指示：“调整流程，裁决交给 codex 或者 zcode，优先 codex”。本 Task 的最终独立 Review 与候选/finding 裁决改为 **Codex 优先**；Codex 不可用或不适配时回退 **ZCode**。历史 ZCode 裁决、Review 与 evidence pin 原字节保留，不追改、不据此恢复 ZCode 独占裁决。
