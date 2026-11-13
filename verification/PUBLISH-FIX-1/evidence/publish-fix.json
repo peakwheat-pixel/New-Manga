@@ -1,0 +1,26 @@
+{
+  "schema": "publish-fix-evidence/v1",
+  "install": "NOT_RUN",
+  "build": {
+    "errors": 0,
+    "command": "dotnet build NewManga.sln -c Debug",
+    "exit": 0,
+    "warnings": 0
+  },
+  "release_gate": "BLOCKED",
+  "logs": [
+    "logs/dotnet-publish-s0-fixed.log",
+    "logs/dotnet-publish-s0-fixed2.log",
+    "logs/dotnet-publish-s0-fixed3.log"
+  ],
+  "gui_run": "NOT_RUN (no isolated data-root entry; same boundary as REL-GATE-1)",
+  "s0_publish": {
+    "files": 1,
+    "exit": 0,
+    "trim_hints": "IL2026 warnings only (Avalonia/JSON call sites); not errors after ILLinkTreatWarningsAsErrors=false for PublishTrimmed",
+    "file": "NewManga.App.exe",
+    "bytes": 37254365,
+    "command": "dotnet publish NewManga.App.csproj -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -p:PublishTrimmed=true ..."
+  },
+  "head": "f235733766a2e89d91ae3f1f79923f90cb737767"
+}

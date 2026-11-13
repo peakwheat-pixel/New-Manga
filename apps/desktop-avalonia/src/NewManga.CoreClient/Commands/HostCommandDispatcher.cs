@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using NewManga.CoreClient.Bridge;
 using NewManga.CoreClient.Diagnostics;
@@ -316,6 +317,10 @@ public sealed class HostCommandDispatcher
             response.Result ?? EmptyObject());
     }
 
+    [UnconditionalSuppressMessage(
+        "Trimming",
+        "IL2026",
+        Justification = "The merged result is a small dictionary of already-materialized JsonElement values; no user-defined types are reflected.")]
     private async Task<HostCommandResult> InvokeHostControlAsync(
         HostCommandDescriptor descriptor,
         JsonElement args,

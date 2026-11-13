@@ -23,6 +23,9 @@
          present in the S0 spike; the publish recipe must not fail on them (the build gate still runs
          -warnaserror in the normal TFM build, where these hints do not appear). -->
     <TreatWarningsAsErrors Condition="'$(PublishTrimmed)' == 'true'">false</TreatWarningsAsErrors>
+    <!-- ILLink owns its own warning->error switch; without this the trim hints above still fail the
+         publish even when TreatWarningsAsErrors is false (REL-GATE-1 / PUBLISH-FIX-1). -->
+    <ILLinkTreatWarningsAsErrors>false</ILLinkTreatWarningsAsErrors>
     <WarningsNotAsErrors>$(WarningsNotAsErrors);IL2026;IL2072;IL2075;IL3050</WarningsNotAsErrors>
     <TrimmerSingleWarn>false</TrimmerSingleWarn>
   </PropertyGroup>

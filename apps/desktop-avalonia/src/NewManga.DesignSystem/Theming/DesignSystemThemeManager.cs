@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
@@ -511,6 +512,10 @@ public sealed class DesignSystemThemeManager : IDisposable
     /// Loads one compiled resource dictionary; returns false instead of throwing when the dictionary
     /// is missing or malformed (AC9 fallback contract).
     /// </summary>
+    [UnconditionalSuppressMessage(
+        "Trimming",
+        "IL2026",
+        Justification = "Avalonia compiled XAML dictionaries are app-bundled and preserved by Avalonia's trim roots; TryLoad falls back when a dictionary is missing.")]
     public static bool TryLoad(Uri uri, out ResourceDictionary? dictionary)
     {
         ArgumentNullException.ThrowIfNull(uri);
