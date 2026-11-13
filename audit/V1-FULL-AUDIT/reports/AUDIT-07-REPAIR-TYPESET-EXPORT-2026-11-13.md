@@ -30,7 +30,7 @@
 
 - `rerender_page` 将当前 Clean 图像与 region 排版结果合成新的 translated PNG revision；provenance 标记 `ai_invoked=false`。Core stdio 测试用 NMFR 合成帧验证预览可读、目标文字区域发生变化、未编辑/SFX 区域像素保持不变。
 - Region revision wire 有 list/restore 现有版本机制，不依赖模拟 Undo/Redo；独立 `test_rc4_revision_commands.py` 覆盖恢复历史、冲突零写入与并发竞争。
-- 导出质量没有真实图像前后对照、人工视觉评分或量化画质指标。Core reader export 的相邻 hook 选项测试在本轮出现 3 个失败；这些检查不比较排版图像质量，故单独登记，待 ZCode 判断是否归入本阶段或既有导出问题。
+- 导出质量没有真实图像前后对照、人工视觉评分或量化画质指标。Core reader export 的相邻 hook 选项测试在本轮出现 3 个失败；这些检查不比较排版图像质量，故单独登记；阶段快照已由 Codex 裁为 finding P2（见 11_ISSUES.md）。
 - Avalonia repair tab 静态可见 `rerender_page` 接线；“换 Mask / 换路线 / 重新修复”控件明确禁用并显示“能力待接入”。batch viewmodel 有 `reinpaint_*` 命令映射，但本轮没有真实 UI 会话，因此没有验证屏幕缩放后的坐标、鼠标编辑、焦点、命令执行或导出观感。
 
 ## 验证矩阵
@@ -51,7 +51,7 @@
 | 缩放后的编辑结果 | NOT_RUN | 没有真实 Avalonia GUI 会话；坐标缩放与指针编辑无实测。 |
 | Undo/Redo 或修订机制 | PARTIAL（合成） | Region revision list/restore 与新 revision 通过 7 项 wire tests；没有 GUI Undo/Redo 操作演练。 |
 | 导出前后质量变化 | NOT_RUN（视觉比较） | 合成 rerender preview 验证修改区/保留区像素差异；无真实导出页质量对照。 |
-| 导出旁路观察 | REVIEW_PENDING | 3 个 P16 reader export hook option 参数化用例失败，详见下节；不从中推导 D07 图像质量问题。 |
+| 导出旁路观察 | REVIEW_PENDING（历史快照；已被 Codex finding P2 取代） | 3 个 P16 reader export hook option 参数化用例失败，详见下节；不从中推导 D07 图像质量问题。 |
 
 ## 命令与测试结果
 

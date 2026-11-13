@@ -88,4 +88,4 @@ Windows build 成功不等于 Windows 发布成功。没有当前基线包 prove
 
 本报告是当前证据的综合摘要，不是产品发布批准。候选分级与最终独立 Review 已由 Codex 作出（结论 REJECT，要求返修）；Task AC 状态、生命周期与最终集成由 DSH 处置。
 
-**直接下一步：** 按 Codex Review 的返修清单同步状态与台账、pin 最新 gate 批次与本次 Review、重命名重复 evidence_id、统一 398 计数；修订后以 clean head 交独立上下文复审，再由 DSH 集成与生命周期裁决。不得修改产品源码、修改冻结契约、发布或 push。
+**直接下一步：** 固定本轮文档收敛后的 clean head，由 DSH 完成集成、Canonical Evidence/资源 closeout 与最终四项门禁；产品实现按 R1–R4 另立 Task。不得修改产品源码、修改冻结契约、发布或 push。

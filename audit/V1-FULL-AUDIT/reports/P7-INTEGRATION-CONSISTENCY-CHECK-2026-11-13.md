@@ -1,8 +1,8 @@
 # P7 集成核验记录（DSH，2026-11-13）
 
-**性质：** Lead / Integrator 的机械核验记录，**不是** ZCode 独立 Review，也不裁决任何候选或严重度。
+**性质：** Lead / Integrator 的机械核验记录（2026-11-13 早期快照），**不是**独立 Review，也不裁决候选。独立 Review 已由 Codex 三轮完成（`reports/CODEX-FINAL-REVIEW`、`CODEX-REREVIEW`、`CODEX-FINAL2-REVIEW-2026-11-13.md`）。
 **核验时固定状态：** `HEAD=48ccb75ce1a547cf89e4d38cd577b868e15de5ce`，branch=`main`，工作树 clean。
-**ZCode 可用性：** 2026-11-13 19:36（本地）最小 plan 探测仍返回 provider `1310` / HTTP `429`、EXIT 1、无 session/response；额度提示 `2026-11-17 18:40:33` 重置。因此本轮**未执行** fresh-context 独立 Review，11 个候选与 `AUDIT-11-INC-001` 仍为 `REVIEW_PENDING` / `INVESTIGATE`。
+**ZCode 可用性（历史快照）：** 2026-11-13 19:36（本地）最小 plan 探测返回 provider `1310` / HTTP `429`、EXIT 1、无 session/response；据此当时未执行独立 Review。该状态随后由用户裁决改为 Codex 优先，并已实际执行三轮独立 Review；11 个候选与 `AUDIT-11-INC-001` 均已裁决（见 `reports/11_ISSUES.md`）。
 
 ## 1. Canonical Evidence 复算
 
@@ -21,7 +21,7 @@
 
 **处置：** 按上述基准把 14 行的记录值更正为对应 commit 的 raw Git BLOB SHA-256；`class`/`sha256_basis`/`path`/`commit` 不变。逐项旧值/新值见 `evidence/task-card-pin-correction-20261113.json`。复算原始输出分两份：更正前（对从 `HEAD` 精确导出的 133,609 字节原卡副本运行，`TASK` 指向该副本）为 `logs/task-card-pin-recompute-20261113-pre-correction.log` / `evidence/task-card-pin-recompute-20261113-pre-correction.json`，**357 pass / 14 fail**；更正后（当前 Task 卡）为 `logs/task-card-pin-recompute-20261113.log` / `evidence/task-card-pin-recompute-20261113.json`，**371/371 PASS、failed=0**。
 
-**pinbackfill 后复核：** 本轮回填新增 27 条 pins（ZCode 额度复核 3、复算/更正 6、报告/脚本 2、52b86d39 gate batch 8、ed17a790 gate batch 8）后，Task 卡共 398 条 pins；按同一 BLOB 算法复算 **398/398 PASS**，见 `logs/task-card-pin-recompute-20261113-final.log`、`evidence/task-card-pin-recompute-20261113-final.json`。
+**pinbackfill 后复核（历史检查点）：** 本轮回填新增 27 条 pins（ZCode 额度复核 3、复算/更正 6、报告/脚本 2、52b86d39 gate batch 8、ed17a790 gate batch 8）后，Task 卡当时共 398 条 pins；按同一 BLOB 算法复算 **398/398 PASS**，见 `logs/task-card-pin-recompute-20261113-final.log`、`evidence/task-card-pin-recompute-20261113-final.json`。
 
 **待 ZCode 复核：** 是否接受该更正；是否需要把本审计其他文档（例如历史报告）中的 worktree SHA-256 标注统一标注为 WORKTREE 基准。
 
@@ -59,4 +59,4 @@
 
 ## 4. 结论边界
 
-本记录只说明：在当前固定 HEAD 上，Canonical Evidence 的 Git BLOB 可机械复核——更正后当时 **371/371**，积压回填后 **398/398**，Review 返修与新增 gate/Review pins 后 **428/428**（当前 Task 卡 428 条）；报告的计数、AC 与 Gate 文字自洽。它**不**构成 Review、候选裁决、产品通过或 Release Gate 解锁；Release Gate 维持 `BLOCKED`，Task 维持 `in_progress`，AC3/AC4 维持 `PARTIAL`（AC1/AC2 已 `MET`）。
+本记录只说明：在当前固定 HEAD 上，Canonical Evidence 的 Git BLOB 可机械复核——更正后当时 **371/371**，积压回填后 **398/398**，首轮返修后 **428/428**，复审与最终复审回填后 **441/441**（当前 Task 卡 441 条）；报告的计数、AC 与 Gate 文字自洽。它**不**构成 Review、候选裁决、产品通过或 Release Gate 解锁；Release Gate 维持 `BLOCKED`，Task 维持 `in_progress`，AC3/AC4 维持 `PARTIAL`（AC1/AC2 已 `MET`）。

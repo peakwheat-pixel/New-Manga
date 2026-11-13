@@ -517,7 +517,7 @@ src/**、apps/**、原有tests/**、共享契约、Schema、依赖、真实用�
 | exchange | — | NOT_APPLICABLE | — | — | 无外部传输 |
 
 ## Rolling checkpoint
-[audit/V1-FULL-AUDIT/AUDIT_RESUME.md](../../audit/V1-FULL-AUDIT/AUDIT_RESUME.md) 顶部 2026-11-13 Codex 复审检查点为最新恢复入口。Canonical Evidence 含 441 条 BLOB pins、70e92876/b72363aa/076dfbb6 gate 批次与首轮/复审 Review 证据；Codex 裁决 11 候选（4 finding / 4 INVESTIGATE / 1 accepted limitation / 2 close）。复审结论 REJECT（状态口径与少量表述返修）；本轮已完成返修并重跑门禁，待以clean head 做最终复审。Release Gate BLOCKED，AC1/AC2 MET，AC3/AC4 PARTIAL，Task in_progress。
+[audit/V1-FULL-AUDIT/AUDIT_RESUME.md](../../audit/V1-FULL-AUDIT/AUDIT_RESUME.md) 顶部 2026-11-13 Codex 复审检查点为最新恢复入口。Canonical Evidence 含 441 条 BLOB pins、六批 gate 证据与三轮 Codex Review 证据；Codex 裁决 11 候选（4 finding / 4 INVESTIGATE / 1 accepted limitation / 2 close）。第三轮（最终）复审结论 REJECT（要求文档收敛）；本轮已收敛并重跑门禁，待 DSH 固定新 head 并完成集成与 closeout。Release Gate BLOCKED，AC1/AC2 MET，AC3/AC4 PARTIAL，Task in_progress。
 
 ## 2026-10-24 推送准备补充授权
 
@@ -609,3 +609,10 @@ DSH 接任 Lead / Architect / Integrator（见 `doc/GOVERNANCE_TAKEOVER_2026-10-
 - 结论：**REJECT**。返修部分完成（70e92876/b72363aa gate pins 已补、9 个重复 evidence_id 已重命名、428 pins 可核验）；剩余阻断项：状态/计数口径旧值（398 vs 428）、076dfbb6 门禁未 pin 且未在 pinbackfill 后重跑、专项报告与详细台账仍含 ZCode 待裁口径、`AUDIT-14-CAND-003` 过强表述未在所有文档消除。
 - 复试裁定维持首轮：11 候选 4 finding / 4 INVESTIGATE / 1 accepted limitation / 2 close；产品 P0/1/2/3 = 0/0/2/2；开放 finding 7；`AUDIT-11-INC-001` 维持 INVESTIGATE。AC1/AC2 MET；AC3/AC4 PARTIAL；Task in_progress；Release Gate BLOCKED。
 - 本轮已处理上述剩余返修（状态口径、076dfbb6 pins、专项报告注记、14-003 表述）；下一步以 clean head 做最终复审，再由 DSH 集成与生命周期裁决。
+
+## 2026-11-13 Codex 第三轮（最终）复审（Codex-first 执行）
+
+- Reviewer：Codex 全新上下文；`reviewed_head=42810143b025a90de2f651a73059243dd6a0259e`；session `01a1d503-efc7-7152-bb71-c93cd8a9fdff`；EXIT 0；耗时 994.6s；Review 前后工作树 clean。原始报告 `reports/CODEX-FINAL2-REVIEW-2026-11-13.md`。
+- 结论：**REJECT**。复核确认 441/441 唯一 pins、无重复 evidence_id、14 项 worktree→BLOB 更正正确、六批门禁记录一致；076dfbb6 已 pin、d248ed28 pinbackfill 后门禁已重跑。
+- 剩余返修（本轮已收敛）：当前状态措辞统一为 441 与 AC1/AC2 MET/AC3/AC4 PARTIAL、历史 pin 计数（371/398/428）标注为历史检查点、专项报告旧 ZCode 待裁措辞改为阶段快照、`AUDIT-14-CAND-003` 改为“未证明当前发布会失败，也未验证成功”。
+- 11 候选裁决与计数维持：4 finding / 4 INVESTIGATE / 1 accepted limitation / 2 close；产品 P0/1/2/3=0/0/2/2；开放 finding 7；`AUDIT-11-INC-001` 维持 INVESTIGATE。AC1/AC2 MET；AC3/AC4 PARTIAL；Task in_progress；Release Gate BLOCKED。

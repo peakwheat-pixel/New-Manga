@@ -7,7 +7,7 @@
 - 产品基线：`10e4ee013835605800d3830fb960ae8d3aa04167`
 - 本轮测试生成 HEAD：`d96529ebff6cf752ad64a676d05ec622da09e565`
 - 产品源码/原有测试与产品基线的路径差异：`src/`、`apps/desktop-avalonia/`、`tests/` 均为空；本轮新增测试仅在 `audit/V1-FULL-AUDIT/tests/`。
-- 独立复核：待 ZCode fresh context；作者未自审。
+- 独立复核（阶段快照）：原计划 ZCode fresh context；2026-11-13 已由 Codex 三轮 Review 裁决（见 CODEX-* 报告）；作者未自审。
 
 ## 范围与方法
 
@@ -55,7 +55,7 @@
 
 1. **`AUDIT-05-CAND-001`：同位 primary/SFX 双 Region。** 合成结果精确复现两候选相同 polygon、均为 SFX；handler 分别落 Region。`skip` 默认减轻自动 API 请求，`translate` 策略仍会分别请求/渲染。SFX 仲裁 Task 已记录此副作用与去重候选。
 2. **`AUDIT-06-CAND-001`：无账单级 spend cap / provider idempotency key。** 单 Run 有步骤数上限且 per-provider retry 有上限，但没有货币预算；网络层的 ambiguous timeout replay 是否造成双重计费未知。
-3. **`AUDIT-06-CAND-002`：glossary 优先级未由生产校验强制。** request 会附 glossary；未对实际翻译输出强制术语匹配。是否违背原始需求，待 ZCode 按清单/契约复核。
+3. **`AUDIT-06-CAND-002`：glossary 优先级未由生产校验强制。** request 会附 glossary；未对实际翻译输出强制术语匹配。是否违背原始需求属阶段快照；已由 Codex 裁为 INVESTIGATE（见 11_ISSUES.md）。
 
 ## 未测与限制
 

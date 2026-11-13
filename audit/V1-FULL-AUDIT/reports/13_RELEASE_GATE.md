@@ -2,7 +2,7 @@
 
 **结论：BLOCKED**
 **产品基线：** 10e4ee013835605800d3830fb960ae8d3aa04167
-**裁决来源：** Codex 最终独立 Review（`reviewed_head=d92859c9ac8a4d3122d6cabfe4d44af980574104`，`reports/CODEX-FINAL-REVIEW-2026-11-13.md`）明确维持 BLOCKED，不满足 PASS 或 CONDITIONAL。
+**裁决来源：** Codex 三轮独立 Review（`d92859c9a`、`226eb048`、`42810143b`；`reports/CODEX-FINAL-REVIEW`、`CODEX-REREVIEW`、`CODEX-FINAL2-REVIEW-2026-11-13.md`）均明确维持 BLOCKED，不满足 PASS 或 CONDITIONAL。
 
 ## 阻断依据
 
@@ -12,11 +12,11 @@
 4. 没有当前基线安装包 provenance 和 clean Windows install / upgrade / rollback / uninstall 验证；历史 zip/setup 不绑定当前基线，本 Task 未安装、执行或发布。
 5. `AUDIT-11-INC-001` 当前远端可见性未知（Codex 维持 INVESTIGATE，不分配 severity）；不得写成已公开或已消除。
 6. 真实 manga / 模型 / 付费 API / 完整 UI 流程没有形成覆盖关键路径的端到端证据；部分结果仅来自 synthetic fixtures。
-7. Codex Review 结论为 **REJECT**：当前交付文档在状态同步、pins 与门禁批次、重复 evidence_id、AUDIT-14-CAND-003 表述等方面需返修，AC3/AC4 不能据此收口；该 REJECT 与产品发布阻断相互独立但同向。
+7. Codex 三轮 Review 结论均为 **REJECT**：交付文档仍需当前状态/计数口径收敛、专项报告历史快照标注与 `AUDIT-14-CAND-003` 表述修正，AC3/AC4 不能据此收口；该 REJECT 与产品发布阻断相互独立但同向。
 
 ## Gate 解释
 
-原始审计准入规则允许最终审计中存在 FAIL / BLOCKED / NOT_TESTED，但关键证据缺失或有未处置风险时不能以主观信心改判 PASS 或 CONDITIONAL。当前符合 BLOCKED 条件。AUDIT-09 的 Release build EXIT 0、398 条 pins 的字节可核验性与治理门禁通过，只证明各自窄面，不解除产品发布阻断。
+原始审计准入规则允许最终审计中存在 FAIL / BLOCKED / NOT_TESTED，但关键证据缺失或有未处置风险时不能以主观信心改判 PASS 或 CONDITIONAL。当前符合 BLOCKED 条件。AUDIT-09 的 Release build EXIT 0、441 条 pins 的字节可核验性与治理门禁通过，只证明各自窄面，不解除产品发布阻断。
 
 本 Gate 代表产品发布准备度，不等同于审计文档是否完成。审计文档返修（Codex REJECT 所指）已完成/进行时，产品发布阻断仍不变。
 

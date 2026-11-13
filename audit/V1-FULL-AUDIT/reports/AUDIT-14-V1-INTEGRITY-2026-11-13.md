@@ -30,13 +30,13 @@
 
 ## 4. 历史代码、文档和维护债务
 
-1. **历史前端仍在仓库，且有当前工具引用旧路径。** `apps/desktop/src-tauri`、`apps/desktop/frontend` 和 `src/ui`（PySide/QML）仍可枚举到；AGENTS 与 AD-002 将 Tauri/React/PySide 定义为历史。`.github/workflows/build-release.yml` 当前会调用 Avalonia installer（约 112 行），而 `apps/desktop-avalonia/scripts/build-installer.ps1` 在未提供 `-IconPath` 时回退到 `apps/desktop/src-tauri/icons/icon.ico`（约 55 行）；另有 `prepare-sidecar.ps1` 默认从旧 Tauri `target/release/resources` 取 sidecar。旧工具/资产尚未完全隔离。CI 因文件存在而可工作，但这会让新架构的发布脚本依赖旧架构路径；本阶段没有执行 clean release 来确认失败/影响。
+1. **历史前端仍在仓库，且有当前工具引用旧路径。** `apps/desktop/src-tauri`、`apps/desktop/frontend` 和 `src/ui`（PySide/QML）仍可枚举到；AGENTS 与 AD-002 将 Tauri/React/PySide 定义为历史。`.github/workflows/build-release.yml` 当前会调用 Avalonia installer（约 112 行），而 `apps/desktop-avalonia/scripts/build-installer.ps1` 在未提供 `-IconPath` 时回退到 `apps/desktop/src-tauri/icons/icon.ico`（约 55 行）；另有 `prepare-sidecar.ps1` 默认从旧 Tauri `target/release/resources` 取 sidecar。旧工具/资产尚未完全隔离。未证明当前发布会因此失败，也未验证当前发布成功；旧路径仅作为未证实维护债务保留（Codex 已裁 close）。本阶段没有执行 clean release。
 2. **README 与当前决策/发布说明漂移。** README `:21` 将新导入描述为 managed copy，与 AD-003 当前默认 ReferencedSource 不一致；README 自述 `0.1.1`，其构建、校验和安装示例仍命名 `0.1.0`（`:11,80-120`）。这是文档/版本入口一致性问题，未验证实际发布资产。
 3. **文档导航自相矛盾。** `doc/00_INDEX.md:87` 写根目录没有 README，但 `README.md` 实际存在。V11R 程序文件仍标 `ACTIVE`（`doc/V11R_PROGRAM.md:3`），而 STATUS 和 00_INDEX 均记录 V11R 已收官并发布 v0.1.1。历史计划可保留，但状态应明确标记为历史快照。
 4. **AD-003 的“未实现”列表过期。** `SourceAccessRegistry`、Host 操作协调和 trash Host 方法在当前树可见，但 AD-003 §4 仍以“当前均无实现 / NOT_WIRED”陈述。只将可直接反证的条目列为文档漂移；其他 Source、删除、恢复入口仍需按 UI → Host → Core → DB 分层逐项复核。
 5. **多 shell 增加验证面。** App composition 支持 `MainWindow` 回退、V2 shell，以及由 frontend selection 进入 Fluent shell 的分支（`App.axaml.cs:131-176`）。静态上它们复用部分 Host，但页面结构和可用能力并不完全相同；双 UI 的差异是否符合发布策略属于架构风险，需由独立审查和真实 GUI 回归判断，不在此宣称已经造成用户缺陷。
 
-## 5. 候选观察（待 ZCode 独立定级）
+## 5. 候选观察（阶段快照；已由 Codex 裁决，见 AUDIT_ISSUES.md）
 
 下列均为审计作者提交的候选，不是已定 severity 的正式 findings，也不授权修复：
 
@@ -45,7 +45,7 @@
 - `AUDIT-14-CAND-003`（Codex 更正）：Avalonia release workflow 不传 `-IconPath`，installer 仅在旧图标存在时才设置该路径；`prepare-sidecar.ps1` 的旧默认路径未证明被当前 release workflow 调用。未证明缺图标会使当前 CI 失败，也未证明当前 release 使用旧 sidecar 路径；该候选已由 Codex 裁决 **close**，旧路径仅作未证实维护债务。
 - `AUDIT-14-CAND-004`：多 shell 路由和功能面差异扩大后续 V2 的回归矩阵；当前运行风险未实测。
 
-Issue ledger 状态保持 `REVIEW_PENDING`，没有自行赋予 P0–P3。现有 AUDIT-01/08/11 等已复核问题仍分别以其原始证据和状态为准，本报告不重定级或重复登记。
+Issue ledger 当时状态为 `REVIEW_PENDING`（历史快照；2026-11-13 已由 Codex 裁决），本报告未自行赋予 P0–P3。现有 AUDIT-01/08/11 等已复核问题仍分别以其原始证据和状态为准，本报告不重定级或重复登记。
 
 ## 6. 结论与后续范围
 
