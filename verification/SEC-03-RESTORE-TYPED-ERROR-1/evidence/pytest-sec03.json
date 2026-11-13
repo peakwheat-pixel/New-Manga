@@ -1,0 +1,8 @@
+{
+  "schema": "sec03-evidence/v1",
+  "log": "verification/SEC-03-RESTORE-TYPED-ERROR-1\\logs\\pytest-sec03.log",
+  "argv": "pytest tests/storage/test_nmbak_restore_typed_error.py tests/storage/test_nmbak_backup.py tests/storage/test_nmbak_merge_restore.py -q",
+  "head": "bbbe51bb257ea3eba9faa06fa4eee64daff10252",
+  "exit": 0,
+  "summary": "..............................                                           [100%] | 30 passed in 2.96s"
+}

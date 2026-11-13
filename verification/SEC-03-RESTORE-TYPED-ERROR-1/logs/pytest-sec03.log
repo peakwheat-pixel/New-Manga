@@ -1,0 +1,6 @@
+START_UTC=2026-11-13T17:43:22.5679373Z
+HEAD=bbbe51bb257ea3eba9faa06fa4eee64daff10252
+ARGV=[python,-m,pytest,tests/storage/test_nmbak_restore_typed_error.py,tests/storage/test_nmbak_backup.py,tests/storage/test_nmbak_merge_restore.py,-q]
+..............................                                           [100%]
+30 passed in 2.96s
+EXIT=0

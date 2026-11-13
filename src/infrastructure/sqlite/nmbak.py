@@ -404,7 +404,18 @@ class NmbakBackupService:
                         ),
                     ) from error
                 raise
-            self._restore_managed(restore_dir, manifest)
+            try:
+                self._restore_managed(restore_dir, manifest)
+            except NmbakBackupError as error:
+                if error.code == "BACKUP_RESTORE_INCOMPLETE":
+                    raise NmbakBackupError(
+                        error.code,
+                        error.detail.replace(
+                            "rollback package: pre_restore",
+                            f"rollback package: {pre_restore['backup_id']}",
+                        ),
+                    ) from error
+                raise
             consistency = self.managed_consistency_report()
             report = {
                 "restored_from": backup_id,
@@ -1206,8 +1217,21 @@ class NmbakBackupService:
                 relative,
                 context=f"restore {key}",
             )
-            destination.parent.mkdir(parents=True, exist_ok=True)
-            destination.write_bytes(source.read_bytes())
+            try:
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                destination.write_bytes(source.read_bytes())
+            except OSError as error:
+                # SEG-B-PROBES-002: a bare OSError here used to escape the
+                # typed-error contract -- the database was already swapped to
+                # the backup point, so callers must see a typed incomplete
+                # restore with the pre_restore rollback package, never a naked
+                # IO error. The restore() caller substitutes the actual
+                # pre_restore backup id for the placeholder below.
+                raise NmbakBackupError(
+                    "BACKUP_RESTORE_INCOMPLETE",
+                    f"managed write failed for {key}: {error}; "
+                    f"rollback package: pre_restore",
+                ) from error
 
     @staticmethod
     def _remove_tree(path: Path) -> None:
