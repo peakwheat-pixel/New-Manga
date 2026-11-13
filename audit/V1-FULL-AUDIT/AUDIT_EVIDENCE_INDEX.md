@@ -1,5 +1,7 @@
 # 证据索引
 
+- `logs/task-card-pin-recompute-20261114-after-integration.log`、`evidence/task-card-pin-recompute-20261114-after-integration.json`：集成后 Task 卡复算（548 条 pins，含最终回退复审 5 条与集成门禁 8 条）；548/548 PASS。
+
 ## 2026-11-13 Codex 最终独立 Review（Codex-first 裁决执行）
 
 - `reports/CODEX-FINAL-REVIEW-2026-11-13.md`（原字节 = `evidence/codex-final-review-20261113.result.md`）：Codex 全新上下文对 `reviewed_head=d92859c9ac8a4d3122d6cabfe4d44af980574104` 的最终只读 Review；结论 **REJECT**（属交付文档返修要求，不改变产品 Release Gate BLOCKED）。含 11 候选逐项裁决、AUDIT-11-INC-001 维持 INVESTIGATE、P0–P3 计数、R1–R4、AC 与 Task 生命周期建议。

@@ -3,8 +3,8 @@ id: NEW-MANGA-V1-FULL-AUDIT
 title: V1 全项目独立审计
 kind: research
 governance_version: 3
-status: approved
-resume_status: in_progress
+status: done
+resume_status: done
 approval: user_approved
 suggested_owner: Codex
 owner: Codex
@@ -13,10 +13,10 @@ depends_on: []
 base_commit: 10e4ee013835605800d3830fb960ae8d3aa04167
 branch: main
 worktree: G:/CODEX/New Manga
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: a4040a8d88b7cd295669c8c5db7f83e001a4ca6b
+delivery_head: a4040a8d88b7cd295669c8c5db7f83e001a4ca6b
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: audit/V1-FULL-AUDIT
 allowed_paths:
   - audit/V1-FULL-AUDIT/**
@@ -35,7 +35,7 @@ allowed_paths:
 - [x] **AC1**：固定Git/环境及有效源码清单，记录dirty和历史缺口。 <<MET>>
 - [x] **AC2**：15 项专项逐项有结果或具名阻断，关键链路深读与测试。 <<MET>>
 - [x] **AC3**：完整日志、去重问题台账、整改路线、正式报告和 Release Gate 落盘。 <<MET>>
-- [ ] **AC4**：独立复核、证据 pin 和治理检查可核验；未满足不得置 done。 <<PARTIAL: 535 条 Canonical Evidence 已复算通过；Codex 最终回退复审（reviewed_head=89e16b9d6，ACCEPT_WITH_LIMITATIONS）已归档；DSH 正在执行集成：pin 本次 Review、在集成 head 跑四项门禁、填写 integration_commit/delivery_head、完成 canonical evidence 与资源 closeout 后即判 MET>>
+- [x] **AC4**：独立复核、证据 pin 和治理检查可核验；未满足不得置 done。 <<MET>>
 
 ## 允许修改范围
 仅frontmatter所列。审计日志/测试脚本由主控单一写入。三名子代理只读同一固定产品HEAD，无并发写入。用户显式审计目录优先于常规verification路径；运行派生产物放相邻workspace task-env。
@@ -556,6 +556,20 @@ src/**、apps/**、原有tests/**、共享契约、Schema、依赖、真实用�
 | CODEX-FINAL7-REVIEW-STDOUT-1 | AC4（第八轮复审 stdout） | `audit/V1-FULL-AUDIT/evidence/codex-final7-review-20261113.stdout.log` | `4547ddfb4` | `E08B7AE24410BAFC026ED29295C1CAEC12FD65110ABC2A0C7A448E5DE0A1A64B` | CANONICAL | BLOB |
 | CODEX-FINAL7-REVIEW-META-1 | AC4（session/EXIT/HEAD/耗时元数据） | `audit/V1-FULL-AUDIT/evidence/codex-final7-review-20261113.meta.json` | `4547ddfb4` | `1D64203426370CB1F95AC5E083CD5DB4DAAF4C96252E45EAFC58ED8B7C194061` | CANONICAL | BLOB |
 | CODEX-FINAL7-REVIEW-DISPATCH-1 | AC4（第八轮复审派发日志） | `audit/V1-FULL-AUDIT/logs/codex-final7-review-dispatch-20261113.log` | `4547ddfb4` | `828B942D113F41F3797C3FD944CD24A47280EF486E92F7F094795DC2C95A499B` | CANONICAL | BLOB |
+
+| CODEX-FINAL11-REVIEW-REPORT-1 | AC3/AC4（Codex 最终回退复审，ACCEPT_WITH_LIMITATIONS） | `audit/V1-FULL-AUDIT/reports/CODEX-FINAL11-REVIEW-2026-11-14.md` | `1765c78ec` | `95DE38783E5EECA18AEBD284BE9362DF874703396DBF44754906913735F2082D` | CANONICAL | BLOB |
+| CODEX-FINAL11-REVIEW-RESULT-1 | AC4（复审原始结果） | `audit/V1-FULL-AUDIT/evidence/codex-final11-review-20261114.result.md` | `1765c78ec` | `95DE38783E5EECA18AEBD284BE9362DF874703396DBF44754906913735F2082D` | CANONICAL | BLOB |
+| CODEX-FINAL11-REVIEW-STDOUT-1 | AC4（复审 stdout） | `audit/V1-FULL-AUDIT/evidence/codex-final11-review-20261114.stdout.log` | `1765c78ec` | `B60B6E5EF0025FE6B972EC64AA932F2AB8829B55BAFEDAE14D50793A163E015A` | CANONICAL | BLOB |
+| CODEX-FINAL11-REVIEW-META-1 | AC4（session/EXIT/HEAD/耗时元数据） | `audit/V1-FULL-AUDIT/evidence/codex-final11-review-20261114.meta.json` | `1765c78ec` | `90BCDD34E19691502A89C1B1CCCD432042A3C5DB5A4BE985B6620DD89E55C7A6` | CANONICAL | BLOB |
+| CODEX-FINAL11-REVIEW-DISPATCH-1 | AC4（复审派发日志） | `audit/V1-FULL-AUDIT/logs/codex-final11-review-dispatch-20261114.log` | `1765c78ec` | `C9823FEE08E667FB69B167D85B664D435AB2231881AE785817B8EB979FD33AE7` | CANONICAL | BLOB |
+| INTEGRATION-GATE-1765C78E-DEFAULT-LOG-1 | AC4（delivery-head generated HEAD=1765c78e；default EXIT 0） | `audit/V1-FULL-AUDIT/logs/integration-gates-1765c78e-default.log` | `a4040a8d8` | `D64AE6071A9E408879DFDA9A501F4BC5339578674E1FF0FC7C46EBEC8C9CAC08` | CANONICAL | BLOB |
+| INTEGRATION-GATE-1765C78E-DEFAULT-RESULT-1 | AC4（gate metadata） | `audit/V1-FULL-AUDIT/evidence/integration-gates-1765c78e-default.json` | `a4040a8d8` | `D9FA019B020CE234A634E6FC37E6381E8C78DA66AAD87B67C56ED53CC67EEBDA` | CANONICAL | BLOB |
+| INTEGRATION-GATE-1765C78E-TASKPATH-LOG-1 | AC4（delivery-head generated HEAD=1765c78e；taskpath EXIT 0） | `audit/V1-FULL-AUDIT/logs/integration-gates-1765c78e-taskpath.log` | `a4040a8d8` | `2BE41092E7AD466126918ACA4045F412175747AF878B876059D4B8936D55F41F` | CANONICAL | BLOB |
+| INTEGRATION-GATE-1765C78E-TASKPATH-RESULT-1 | AC4（gate metadata） | `audit/V1-FULL-AUDIT/evidence/integration-gates-1765c78e-taskpath.json` | `a4040a8d8` | `AEA1D3FE852CA0BAD566CB16DAF7DB9E4CDDD21DAB8FA257299571B0072FD198` | CANONICAL | BLOB |
+| INTEGRATION-GATE-1765C78E-PINS-LOG-1 | AC4（delivery-head generated HEAD=1765c78e；pins EXIT 0） | `audit/V1-FULL-AUDIT/logs/integration-gates-1765c78e-pins.log` | `a4040a8d8` | `058792885B6CF592C593427E8D8BEC82D957D790996C41A70E5B40A5770F8E75` | CANONICAL | BLOB |
+| INTEGRATION-GATE-1765C78E-PINS-RESULT-1 | AC4（gate metadata） | `audit/V1-FULL-AUDIT/evidence/integration-gates-1765c78e-pins.json` | `a4040a8d8` | `1EC22FC7BD8528B58A02AC24A5E74EDAB26CD632B3946E841D1157C7FE03A385` | CANONICAL | BLOB |
+| INTEGRATION-GATE-1765C78E-API-LOG-1 | AC4（delivery-head generated HEAD=1765c78e；api EXIT 0） | `audit/V1-FULL-AUDIT/logs/integration-gates-1765c78e-api.log` | `a4040a8d8` | `6C45870A2AC4C2AB7E85ADCC1C2EAA915E749A96BDD92AE81F2D36D815BAF8D7` | CANONICAL | BLOB |
+| INTEGRATION-GATE-1765C78E-API-RESULT-1 | AC4（gate metadata） | `audit/V1-FULL-AUDIT/evidence/integration-gates-1765c78e-api.json` | `a4040a8d8` | `14EB3260A3A0055F9C9756769F6692135201497396CAF14DE018F875473D0C7B` | CANONICAL | BLOB |
 | NINTH-ROUND-GATE-46A8FE6E-DEFAULT-LOG-1 | AC4（generated HEAD=46a8fe6e；default EXIT 0） | `audit/V1-FULL-AUDIT/logs/audit-post-evidence-46a8fe6e-default.log` | `f0fa06efe` | `7BA154AD3C1BCE81B385C53B78E4969D7B6FC47291AA29C8F074ECAD922A2A49` | CANONICAL | BLOB |
 | NINTH-ROUND-GATE-46A8FE6E-DEFAULT-RESULT-1 | AC4（gate metadata） | `audit/V1-FULL-AUDIT/evidence/audit-post-evidence-46a8fe6e-default.json` | `f0fa06efe` | `9F1F4834FD51F920090BC6677DAD95F84EEE1C28B06142759881324E1A45F24B` | CANONICAL | BLOB |
 | NINTH-ROUND-GATE-46A8FE6E-TASKPATH-LOG-1 | AC4（generated HEAD=46a8fe6e；taskpath EXIT 0） | `audit/V1-FULL-AUDIT/logs/audit-post-evidence-46a8fe6e-taskpath.log` | `f0fa06efe` | `56E6F34892CFE3A04E8705570AF12A3AC9E8732E845092538A058A9C9DB9F878` | CANONICAL | BLOB |
@@ -617,7 +631,7 @@ src/**、apps/**、原有tests/**、共享契约、Schema、依赖、真实用�
 | exchange | — | NOT_APPLICABLE | — | — | 无外部传输 |
 
 ## Rolling checkpoint
-[audit/V1-FULL-AUDIT/AUDIT_RESUME.md](../../audit/V1-FULL-AUDIT/AUDIT_RESUME.md) 顶部 2026-11-14 DSH 自动裁决检查点为最新恢复入口。535 条 BLOB pins 已复算通过；Codex 最终回退复审（89e16b9d6）结论 ACCEPT_WITH_LIMITATIONS；AC1/AC2/AC3 MET，AC4 待集成 closeout。用户 2026-11-14 指令：所有任务交 DSH，自动裁决/规划、全部授权、无需用户介入。Release Gate BLOCKED，产品结论未变。
+[audit/V1-FULL-AUDIT/AUDIT_RESUME.md](../../audit/V1-FULL-AUDIT/AUDIT_RESUME.md) 顶部 2026-11-14 DSH 集成检查点为最新恢复入口。Task 已由 DSH 自动裁决完成：Codex 最终回退复审 ACCEPT_WITH_LIMITATIONS；548 条 BLOB pins（含最终复审与集成门禁批次）；integration_commit=delivery_head=a4040a8d8；canonical_evidence_status/resource_closeout_status=complete。下一节点 R1 SEC-01（AUDIT-11-INC-001 只读远端可见性调查）。产品 Release Gate BLOCKED。
 
 ## 2026-10-24 推送准备补充授权
 
@@ -766,3 +780,12 @@ DSH 接任 Lead / Architect / Integrator（见 `doc/GOVERNANCE_TAKEOVER_2026-10-
 - 效力：本 Task 及后续 Task 的裁决、规划、实施、Review 派发与集成均由 DSH 自动执行；不再要求 ZCode/Codex 最终裁决，也不等待用户批准。此前“ZCode 优先、Codex 回退”的裁决保留为历史，外部 Review 改为可选的质量手段（DSH 可派独立上下文子 agent 复核，但不作为阻塞条件）。
 - 本次 DSH 自动裁决：接受 Codex 最终回退复审（reviewed_head=`89e16b9d6289b58ea1d5f0faa28e060124dda86d`，结论 **ACCEPT_WITH_LIMITATIONS**，535/535 pins 可核验、无阻断性文档缺陷）。AC1/AC2/AC3 判 MET；AC4 待集成 closeout（pin 本次 Review、delivery head 四项门禁、integration/delivery 记录、资源 closeout）后判 MET。
 - 集成计划：approved → 中央集成提交记录 `integration_commit`/`delivery_head`、pin Review 与证据、在集成 head 跑四项门禁并固定输出、`canonical_evidence_status=complete`、`resource_closeout_status=complete` → `done`；随后按 R1 优先自动释放并执行后续 Task。产品 Release Gate 仍 BLOCKED。
+
+## 2026-11-14 DSH 集成与 Task 完成（自动裁决）
+
+- 用户指令：所有任务交 DSH，DSH 自动裁决/规划、全部授权、无需用户介入。
+- 接受 Codex 最终回退复审（`reviewed_head=89e16b9d6`，ACCEPT_WITH_LIMITATIONS，535/535 pins、无阻断性文档缺陷）。
+- 集成：`integration_commit`=`delivery_head`=`a4040a8d8`；在集成候选 head `1765c78ec` 执行 default governance、TaskPath、verify_pins（18/18）、API inventory（1/79/6=86）四项门禁，全部 EXIT 0，原始输出已入库并 pin。
+- 收口：AC1/AC2/AC3/AC4 全部 MET；`canonical_evidence_status=complete`；`resource_closeout_status=complete`（task-env/agent-output 等按 PRESERVE_REFERENCED 保留）；Task 置 `done`。
+- 滚动门禁 limitation：最终 `done` 提交后的四项门禁在 DSH 工作区保存原始输出，按已接受的滚动规则不再递归回填。
+- 后续：按 R1 优先自动释放 SEC-01（`AUDIT-11-INC-001` 只读远端可见性调查），再依次 SEC-02/SEC-03/CORE-01/R3/R4。产品 Release Gate 仍 BLOCKED。

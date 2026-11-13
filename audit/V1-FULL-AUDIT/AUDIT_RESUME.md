@@ -42,6 +42,8 @@
 
 - 2026-11-14 用户裁决：所有任务交 DSH，DSH 自动裁决/自动规划、全部授权、无需用户介入。DSH 接受 Codex 最终回退复审（reviewed_head=89e16b9d6，ACCEPT_WITH_LIMITATIONS；535/535 pins、无阻断性文档缺陷）；AC1/AC2/AC3 MET，AC4 待集成 closeout。ZCode 当前不可用原因为 Select a model / 缺 @zcode/tui（诊断见 logs/zcode-model-selection-diagnosis-20261114.log），quota 1310 为历史尝试。
 
+- 2026-11-14 DSH 集成完成：Codex 最终回退复审 ACCEPT_WITH_LIMITATIONS 已接受；integration_commit=delivery_head=`a4040a8d8`；集成候选 head `1765c78ec` 四项门禁 EXIT 0 已入库并 pin；AC1–AC4 全 MET；canonical evidence 与资源 closeout complete；Task 置 `done`。548/548 pins 复算通过。下一节点：R1 SEC-01（AUDIT-11-INC-001 只读远端可见性调查）。产品 Release Gate 仍 BLOCKED。
+
 ## 2026-11-13 用户裁决：最终独立 Review 与裁决改为 Codex 优先
 
 - 用户 2026-11-13 指示：“调整流程，裁决交给 codex 或者 zcode，优先 codex”。本 Task 的最终独立 Review 与候选/finding 裁决改为 **Codex 优先**；Codex 不可用或不适配时回退 **ZCode**。历史 ZCode 裁决、Review 与 evidence pin 原字节保留，不追改、不据此恢复 ZCode 独占裁决。
