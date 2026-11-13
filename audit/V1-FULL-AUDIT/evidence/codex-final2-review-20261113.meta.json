@@ -1,0 +1,29 @@
+{
+  "schema": "codex-final-review-dispatch/v1",
+  "kind": "final re-review (third round)",
+  "reviewer": "Codex (fresh independent context)",
+  "cli": "codex-cli 0.162.0",
+  "model": "gpt-6-luna",
+  "reasoning_effort": "xhigh",
+  "sandbox": "danger-full-access (read-only-instructed; read-only/workspace-write cannot spawn child processes: Windows error 740)",
+  "session_id": "01a1d503-efc7-7152-bb71-c93cd8a9fdff",
+  "reviewed_head": "42810143b025a90de2f651a73059243dd6a0259e",
+  "expected_head": "42810143b025a90de2f651a73059243dd6a0259e",
+  "branch": "main",
+  "exit": 0,
+  "elapsed_seconds": 994.6,
+  "started_at_local": "2026-11-13T21:22:41+08:00",
+  "decision": "REJECT",
+  "result_path": "audit/V1-FULL-AUDIT/reports/CODEX-FINAL2-REVIEW-2026-11-13.md",
+  "result_sha256": "113E80B48270C5590915B1487F3DB7FCD794A1F2DDD8908171B26C0CF95D11BF",
+  "stdout_path": "audit/V1-FULL-AUDIT/evidence/codex-final2-review-20261113.stdout.log",
+  "stdout_sha256": "416A57D2C52C37C600CF8FC222FAF54A82F695FC4B7BB0B56BCBE703347D993A",
+  "raw_stderr_path": "G:\\CODEX\\New Manga.workspace\\task-envs\\NEW-MANGA-V1-FULL-AUDIT\\codex-final2-20261113\\stderr.log",
+  "raw_stderr_bytes": 750344,
+  "raw_stderr_sha256": "CF19F3058A0574DA3398DBACA0C417637A81ECE06B18E4FF37945D3976D40B35",
+  "notes": [
+    "Worktree was clean before and after the review.",
+    "Confirmed 441 unique pins, 441/441 BLOB matches, no duplicate ids, correct 14 corrections, and all six gate batches consistent.",
+    "Remaining blockers were stale current-state wording (398/428 vs 441, AC2 PARTIAL, 076 unpinned, old ZCode wording in special reports, AUDIT-14-CAND-003 over-claim)."
+  ]
+}

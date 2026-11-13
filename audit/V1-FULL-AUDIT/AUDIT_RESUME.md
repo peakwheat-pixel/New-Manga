@@ -12,6 +12,8 @@
 
 - 三轮返修后门禁：generated HEAD=`d248ed28faebf025d599e4701216f4da7ee17f3b` 四项 EXIT 0（default/TaskPath 各 3 warnings；verify_pins 18/18；API 1/79/6=86），原始输出 `logs/audit-post-evidence-d248ed28-*.log`。下一步以该 clean head 做最终 Codex 复审。
 
+- 第三轮最终复审（2026-11-13）：Codex 对 `reviewed_head=42810143b025a90de2f651a73059243dd6a0259e` 完成最终复审，EXIT 0，994.6s；确认 441/441 pins、无重复 ID、14 项更正正确、六批门禁一致；剩余返修为当前状态措辞（441 vs 428/398）、专项报告旧 ZCode 措辞与 `AUDIT-14-CAND-003` 表述。报告 `reports/CODEX-FINAL2-REVIEW-2026-11-13.md`。
+
 ## 2026-11-13 P7 Codex 最终独立 Review（Codex-first 裁决）
 
 - 用户裁决后，以 Codex CLI 0.162.0（`gpt-6-luna` / xhigh）对 clean HEAD=`d92859c9ac8a4d3122d6cabfe4d44af980574104` 派发全新上下文只读 Review；session `01a1d4ce-6b79-7b43-939d-834e3cdc21a9`、EXIT 0、耗时 1,911.5s、Review 前后工作树 clean。原始报告 `reports/CODEX-FINAL-REVIEW-2026-11-13.md`，派发元数据 `evidence/codex-final-review-20261113.meta.json`。

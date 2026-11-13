@@ -17,6 +17,8 @@
 
 - 三轮返修后 gate batch generated HEAD=`d248ed28faebf025d599e4701216f4da7ee17f3b`，四项 EXIT 0（default/TaskPath 各 3 warnings、verify_pins 18/18、API 1/79/6=86）；`logs/audit-post-evidence-d248ed28-*.log`、`evidence/audit-post-evidence-d248ed28-*.json`。
 
+- `reports/CODEX-FINAL2-REVIEW-2026-11-13.md`、`evidence/codex-final2-review-20261113.result.md`、`logs/codex-final2-review-dispatch-20261113.log`、`evidence/codex-final2-review-20261113.meta.json`：Codex 第三轮（最终）复审，reviewed_head=`42810143b025a90de2f651a73059243dd6a0259e`，EXIT 0，994.6s；确认 441/441 pins、14 项更正与六批门禁；结论 REJECT，剩余为当前状态措辞与 14-003 表述收敛。
+
 ## 2026-11-13 P7 DSH 集成核验与 ZCode 额度复核
 
 - `reports/P7-INTEGRATION-CONSISTENCY-CHECK-2026-11-13.md`：DSH 集成核验记录（非 ZCode Review）；371 条 Canonical Evidence 复算、14 条 worktree/BLOB 基准更正、报告计数/AC/R1–R4/Gate 一致性与文档漂移清单。
