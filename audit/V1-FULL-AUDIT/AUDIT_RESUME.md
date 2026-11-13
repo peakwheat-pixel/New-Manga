@@ -8,6 +8,8 @@
 
 - 复审（2026-11-13）：Codex 对 `reviewed_head=226eb048006ffa804ebefd9f98e51bbc13793f31` 完成返修复审（session `01a1d4f3-9736-7402-8c3e-ce701f1e2490`，EXIT 0，817.3s），结论 **REJECT**；确认 428 pins、70e/b723 gate pins 与 9 项重命名有效；剩余返修：状态/计数口径（398↔428）、076dfbb6 门禁未 pin、专项报告与台账旧 ZCode 口径、`AUDIT-14-CAND-003` 表述。报告 `reports/CODEX-REREVIEW-2026-11-13.md`。
 
+- 第三轮返修（2026-11-13）：Task AC4/Rolling checkpoint 更新为 441 pins；回填 076dfbb6 gate 批次（8 条）与复审证据（5 条）；STATUS 同步为 428/428 并控制预算；AUDIT_STATUS、AUDIT_PLAN、P7 集成报告、专项报告与详细台账的旧口径已修正；pins 441/441 复算通过。下一步跑四项门禁并以 clean head 做最终复审。
+
 ## 2026-11-13 P7 Codex 最终独立 Review（Codex-first 裁决）
 
 - 用户裁决后，以 Codex CLI 0.162.0（`gpt-6-luna` / xhigh）对 clean HEAD=`d92859c9ac8a4d3122d6cabfe4d44af980574104` 派发全新上下文只读 Review；session `01a1d4ce-6b79-7b43-939d-834e3cdc21a9`、EXIT 0、耗时 1,911.5s、Review 前后工作树 clean。原始报告 `reports/CODEX-FINAL-REVIEW-2026-11-13.md`，派发元数据 `evidence/codex-final-review-20261113.meta.json`。

@@ -13,6 +13,8 @@
 
 - `reports/CODEX-REREVIEW-2026-11-13.md`、`evidence/codex-rereview-20261113.result.md`、`logs/codex-rereview-dispatch-20261113.log`、`evidence/codex-rereview-20261113.meta.json`：Codex 复审（reviewed_head=`226eb048006ffa804ebefd9f98e51bbc13793f31`，session `01a1d4f3-9736-7402-8c3e-ce701f1e2490`，EXIT 0，817.3s）；结论 REJECT，确认 428 pins 与 9 项重命名，剩余状态/计数口径与 076dfbb6 未 pin 等返修项。
 
+- `logs/task-card-pin-recompute-20261113-after-rereview.log`、`evidence/task-card-pin-recompute-20261113-after-rereview.json`：复审返修后 Task 卡复算（441 条 pins，含 076dfbb6 gate 批次与复审证据）；441/441 PASS。
+
 ## 2026-11-13 P7 DSH 集成核验与 ZCode 额度复核
 
 - `reports/P7-INTEGRATION-CONSISTENCY-CHECK-2026-11-13.md`：DSH 集成核验记录（非 ZCode Review）；371 条 Canonical Evidence 复算、14 条 worktree/BLOB 基准更正、报告计数/AC/R1–R4/Gate 一致性与文档漂移清单。
