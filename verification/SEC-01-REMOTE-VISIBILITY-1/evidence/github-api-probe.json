@@ -1,0 +1,29 @@
+[
+  {
+    "bytes": 5559,
+    "name": "repo",
+    "status": 200,
+    "url": "https://api.github.com/repos/peakwheat-pixel/New-Manga",
+    "summary": "{\"id\":1386049822,\"node_id\":\"R_kgDOUp1xHg\",\"name\":\"New-Manga\",\"full_name\":\"peakwheat-pixel/New-Manga\",\"private\":false,\"owner\":{\"login\":\"peakwheat-pixel\",\"id\":250251473,\"node_id\":\"U_kgDODuqI0Q\",\"avatar_"
+  },
+  {
+    "bytes": 5728,
+    "name": "commit_cc88d1ee",
+    "status": 200,
+    "url": "https://api.github.com/repos/peakwheat-pixel/New-Manga/commits/cc88d1ee9fdd27825869b4cdc0a1b68965b3d1fc",
+    "summary": "{\"sha\":\"cc88d1ee9fdd27825869b4cdc0a1b68965b3d1fc\",\"node_id\":\"C_kwDOUp1xHtoAKGNjODhkMWVlOWZkZDI3ODI1ODY5YjRjZGMwYTFiNjg5NjViM2QxZmM\",\"commit\":{\"author\":{\"name\":\"peakwheat-pixel\",\"email\":\"peak.wheat@gma"
+  },
+  {
+    "bytes": 6764,
+    "name": "commit_b1c1f5a5",
+    "status": 200,
+    "url": "https://api.github.com/repos/peakwheat-pixel/New-Manga/commits/b1c1f5a5",
+    "summary": "{\"sha\":\"b1c1f5a56840988e149c18375f6e414bf5c7fbda\",\"node_id\":\"C_kwDOUp1xHtoAKGIxYzFmNWE1Njg0MDk4OGUxNDljMTgzNzVmNmU0MTRiZjVjN2ZiZGE\",\"commit\":{\"author\":{\"name\":\"peakwheat-pixel\",\"email\":\"peak.wheat@gma"
+  },
+  {
+    "error": "响应状态代码未指示成功: 404 (Not Found)。",
+    "name": "contents_driveupload",
+    "status": 404,
+    "url": "https://api.github.com/repos/peakwheat-pixel/New-Manga/contents/.tmp.driveupload"
+  }
+]
