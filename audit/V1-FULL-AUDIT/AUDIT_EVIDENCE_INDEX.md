@@ -40,7 +40,7 @@
 
 ## AUDIT-05/06（2026-11-13）
 
-- `reports/AUDIT-05-06-SFX-TRANSLATION-2026-11-13.md`：SFX 与翻译链路阶段结果、候选观察及 NOT_RUN 边界；结论均为 `PARTIAL`，待 ZCode 独立裁决。
+- `reports/AUDIT-05-06-SFX-TRANSLATION-2026-11-13.md`：SFX 与翻译链路阶段结果、候选观察及 NOT_RUN 边界；结论均为 `PARTIAL`；候选已由 Codex 裁决（见 11_ISSUES.md）。
 - `tests/test_audit05_sfx_regression.py`、`tests/test_audit06_context_observations.py`：审计专用合成回归；未改原有测试或产品代码。
 - `logs/audit05-06-targeted-20261113.log`、`evidence/audit05-06-targeted-20261113.json`：generated HEAD=`d96529ebff6cf752ad64a676d05ec622da09e565`，247 passed / 3 deselected，EXIT 0。
 - `logs/audit06-context-20261113.log`、`evidence/audit06-context-20261113.json`：generated HEAD=`d96529ebff6cf752ad64a676d05ec622da09e565`，84 passed，EXIT 0。
@@ -146,7 +146,7 @@
 
 ## 2026-11-13 AUDIT-07
 
-- `reports/AUDIT-07-REPAIR-TYPESET-EXPORT-2026-11-13.md`：阶段矩阵、合成证据、3 个邻接 P16 export 测试失败、两项待 ZCode 裁决候选与真实模型/GUI/字体许可 `NOT_RUN` 边界。
+- `reports/AUDIT-07-REPAIR-TYPESET-EXPORT-2026-11-13.md`：阶段矩阵、合成证据、3 个邻接 P16 export 测试失败、两项候选（已由 Codex 裁决：07-001 finding P2；07-002 accepted limitation）与真实模型/GUI/字体许可 `NOT_RUN` 边界。
 - `tests/audit_runner.py`：新增 `audit07-typeset` suite；源码由 commit `4daa7169752b8f9c85fd8f8a01e5660f98f10481` 固定。
 - `logs/audit07-inpaint-pipeline-20261112T205159956924Z.log` 与 `evidence/audit07-inpaint-pipeline-20261112T205159956924Z.json`：generated HEAD=`4daa7169752b8f9c85fd8f8a01e5660f98f10481`；38 passed / 0 skipped，EXIT 0。
 - `logs/audit07-rendering-20261112T205159956924Z.log` 与 `evidence/audit07-rendering-20261112T205159956924Z.json`：同 HEAD；73 passed / 0 skipped，EXIT 0。

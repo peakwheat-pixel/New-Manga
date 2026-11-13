@@ -69,7 +69,7 @@
 
 ### 邻接 reader export 失败
 
-失败均来自 `tests/core/test_p16_reader_export.py::test_export_hook_effective_options_match_content_and_history`：ZIP 的 `compression=store` override 返回 `standard`；text 的 `text_representation=json` override 返回 `txt`；空 override 案例期望两条 `hook_invoked` 事件，实际为 0。测试报告 EXIT 1。它检查 reader export hook/options 与历史记录，不测试排版像素质量；没有为此修改产品代码，也未创建/定级正式 issue ID。候选 `AUDIT-07-CAND-001`：归属与严重度 `REVIEW_PENDING`，交 ZCode 复核。
+失败均来自 `tests/core/test_p16_reader_export.py::test_export_hook_effective_options_match_content_and_history`：ZIP 的 `compression=store` override 返回 `standard`；text 的 `text_representation=json` override 返回 `txt`；空 override 案例期望两条 `hook_invoked` 事件，实际为 0。测试报告 EXIT 1。它检查 reader export hook/options 与历史记录，不测试排版像素质量；没有为此修改产品代码，也未创建/定级正式 issue ID。候选 `AUDIT-07-CAND-001`：归属与严重度当时为 `REVIEW_PENDING`（阶段快照）；2026-11-13 已由 Codex 裁为 finding P2（见 11_ISSUES.md）。
 
 ### 用户字体许可证备注
 

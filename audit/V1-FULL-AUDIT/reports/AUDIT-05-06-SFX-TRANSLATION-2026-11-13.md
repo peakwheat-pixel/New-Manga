@@ -31,7 +31,7 @@
 | 区域类型修改、Revision、人工保护 | 定向测试覆盖用户重类型 Revision、Lock/乐观并发保护、人工译文保护，以及 redetect 竞态时保留已存在的人工作业。 | 所选测试 `PASS` |
 | 分类缓存与重检测 | 没有独立的模型输出缓存；已落库的 live Regions 是后续 pipeline 的复用依据。`handle_detect` 遇到 live Regions 时复用而不调用 detector，因此避免重复 Region，也不会因模型/配置更新而自动刷新已有分类。现有 SFX policy Task 说明设置仅作用于新建 Region。 | 数据复用与保护 `PASS`；自动重新分类未实现/未验证 |
 | SFX detector 错误路由 | typed SFX provider 错误会附带 `sfx_provider_status=degraded: ...` 并保留主检测候选；若主标签为 `manga-*`，其 Region 类型仍是 `speech`，因此该降级下 SFX 不会进入 SFX policy 门。非 typed 编程错误传播。未实测真实权重损坏/运行时故障和人工恢复界面。 | 合成故障路由 `PASS`；恢复闭环 `PARTIAL` |
-| 重叠与重复 Region | 对同一几何的合成 primary `manga-1` 与 SFX `sfx-1`，仲裁把 primary 重标 `sfx-arb-manga-1`，但仍追加原 SFX 候选；两个相同 polygon 均映射为 SFX。Region handler 对每个候选分别创建 Region；若用户将策略设为 `translate`，每个 Region 进入各自的单 Region 翻译 step。该副作用在 `M2-REGION-OVERLAP-ARBITRATION` 已列作已知取舍/去重候选；是否作为缺陷及严重级别待 ZCode 裁决。 | 候选 `AUDIT-05-CAND-001`，待裁决 |
+| 重叠与重复 Region | 对同一几何的合成 primary `manga-1` 与 SFX `sfx-1`，仲裁把 primary 重标 `sfx-arb-manga-1`，但仍追加原 SFX 候选；两个相同 polygon 均映射为 SFX。Region handler 对每个候选分别创建 Region；若用户将策略设为 `translate`，每个 Region 进入各自的单 Region 翻译 step。该副作用在 `M2-REGION-OVERLAP-ARBITRATION` 已列作已知取舍/去重候选（阶段快照）；2026-11-13 已由 Codex 裁为 INVESTIGATE（见 11_ISSUES.md）。 | 候选 `AUDIT-05-CAND-001`：INVESTIGATE |
 | 单 Region 重翻/多阶段状态 | `RETRANSLATE_REGION`、SFX policy gate、pause/continue/stop 与 crash recovery 的合成测试覆盖了 Core 状态/调度路径。暂停/停止按 Step 安全边界处理，不替代真实 UI 操作体验。 | 所选测试 `PASS` |
 
 机器检测输出只用于检查 pipeline 路由，不作为 SFX/对白准确率的独立正确答案。没有人工 GT 的项目准确率结论。
