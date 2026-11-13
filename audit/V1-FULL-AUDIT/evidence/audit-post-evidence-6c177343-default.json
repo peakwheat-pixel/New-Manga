@@ -1,0 +1,17 @@
+{
+  "name": "audit-post-evidence-6c177343-default",
+  "argv": [
+    "pwsh",
+    "-NoProfile",
+    "-File",
+    "tools/governance/check.ps1"
+  ],
+  "cwd": "G:\\CODEX\\New Manga",
+  "started_utc": "2026-11-13T13:49:13.502907+00:00",
+  "head": "6c1773433a1121eccf27922eba73ecccaaa981a6",
+  "branch": "main",
+  "exit_code": 0,
+  "timed_out": false,
+  "elapsed_seconds": 1.153,
+  "log": "audit\\V1-FULL-AUDIT\\logs\\audit-post-evidence-6c177343-default.log"
+}
