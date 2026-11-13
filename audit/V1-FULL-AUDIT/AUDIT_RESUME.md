@@ -6,6 +6,8 @@
 
 - 第五轮复审（2026-11-13）：Codex 对 `reviewed_head=1ae79bb99534e3a06fc77a284c3a5089e12fce34` 复审，EXIT 0，643.5s；确认 483/483 pins；结论 REJECT，仅剩 F1 当前摘要 462 vs 483 与 F2 专项报告/索引旧措辞；并明确认可最后一次门禁未回填属滚动 limitation。报告 `reports/CODEX-FINAL4-REVIEW-2026-11-13.md`。
 
+- 第六轮收敛后门禁：generated HEAD=`c9953bac5970272e502c0dad2949ae40dda38a8d` 四项均 EXIT 0（default/TaskPath 各 3 warnings；verify_pins 18/18；API 1/79/6=86）；日志 `logs/audit-post-evidence-c9953bac-*.log`、metadata `evidence/audit-post-evidence-c9953bac-*.json`。
+
 ## 2026-11-13 用户裁决：最终独立 Review 与裁决改为 Codex 优先
 
 - 用户 2026-11-13 指示：“调整流程，裁决交给 codex 或者 zcode，优先 codex”。本 Task 的最终独立 Review 与候选/finding 裁决改为 **Codex 优先**；Codex 不可用或不适配时回退 **ZCode**。历史 ZCode 裁决、Review 与 evidence pin 原字节保留，不追改、不据此恢复 ZCode 独占裁决。
