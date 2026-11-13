@@ -9,11 +9,13 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | task files | 599 |
 | terminal | 588 |
 | non-terminal | 10 |
-| non-terminal named in the plan | 0 |
-| non-terminal outside the plan | 10 |
+| non-terminal named in the plan | 1 |
+| non-terminal outside the plan | 9 |
 | task files tracked by git | 599 |
 | task files untracked (drafts) | 0 |
 | non-terminal tracked by git | 10 |
+
+Arithmetic note: `task files` = `terminal` + `non-terminal` + `(none)` rows. A `(none)` row is a file with no `status:` field (a draft), which is excluded from `non-terminal` because check.ps1 only counts entries whose status exists and is not terminal; adding only `terminal` + `non-terminal` therefore lands one short of `task files`, and that gap is this note, not a counting error.
 
 ## By status
 
@@ -36,7 +38,7 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | task | status | in plan |
 |---|---|---|
 | `GIT-CLEAN-PUBLICATION-DIAG-1` | `approved` | no |
-| `MAINT-1-RELEASE-MONITOR` | `in_progress` | no |
+| `MAINT-1-RELEASE-MONITOR` | `in_progress` | own row |
 | `GIT-CLEAN-PUBLICATION-1` | `in_review` | no |
 | `GIT-CLEAN-RUST-ISOLATION-1` | `in_review` | no |
 | `FEA-06-RESIDUAL-4` | `proposed` | no |

@@ -24,6 +24,8 @@ allowed_paths:
   - doc/STATUS.md
   - doc/REBASELINE_PLAN.md
   - doc/TASK_LEDGER.md
+  - doc/reviews/MAINT-1-*.md
+  - tools/governance/task_ledger.py
 ---
 
 # MAINT-1-RELEASE-MONITOR：项目计划收口后的维护与 Release Gate 监测
@@ -43,6 +45,7 @@ NEW-MANGA-V1-FULL-AUDIT 与 R1–R4 整改、SEC-01/02/03、CORE-01、AUDIT-07/0
 
 - `verification/MAINT-1-RELEASE-MONITOR/**`
 - 本 Task 卡、`doc/STATUS.md`、`doc/REBASELINE_PLAN.md`、`doc/TASK_LEDGER.md`
+- `doc/reviews/MAINT-1-*.md`、`tools/governance/task_ledger.py`
 
 ## 禁止范围
 
@@ -51,3 +54,12 @@ NEW-MANGA-V1-FULL-AUDIT 与 R1–R4 整改、SEC-01/02/03、CORE-01、AUDIT-07/0
 ## 测试要求
 
 无产品测试；维护检查以四项治理门禁与原始证据为准。
+
+## 维护记录（append-only）
+
+### 轮次 1（2026-11-14）
+
+- **P0 治理一致性**：E-1…E-4 见 [errata](../reviews/MAINT-1-P0-ERRATA-2026-11-14.md)。PLAN 补 READY/表外节点声明；TASK_LEDGER 重生成并补算术说明；STATUS 时效修正；REL-GATE-1 AC2 只登记不改历史字节。
+- **门禁**：`check.ps1` PASS（3 warnings）；`verify_pins` 18/18 PASS；4 张非终态卡的分卡检查由 FAIL 转 PASS。
+- **AC1 进度**：已记录 DAG 收口状态、V1 承诺清单指针与 Release Gate BLOCKED 依据。
+- **下一步（P1）**：`.NET` 全量 127 failed 逐项归因，红基线不得当作绿通过。

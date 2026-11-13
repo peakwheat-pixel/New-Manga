@@ -190,6 +190,12 @@ def main() -> int:
             "| non-terminal tracked by git | %d |"
             % len([r for r in non_terminal if r["tracked"]]),
             "",
+            "Arithmetic note: `task files` = `terminal` + `non-terminal` + `(none)` rows. "
+            "A `(none)` row is a file with no `status:` field (a draft), which is excluded "
+            "from `non-terminal` because check.ps1 only counts entries whose status exists "
+            "and is not terminal; adding only `terminal` + `non-terminal` therefore lands "
+            "one short of `task files`, and that gap is this note, not a counting error.",
+            "",
             "## By status",
             "",
             "| status | count | terminal |",
