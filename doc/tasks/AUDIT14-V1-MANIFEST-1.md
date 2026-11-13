@@ -3,8 +3,8 @@ id: AUDIT14-V1-MANIFEST-1
 title: 建立 V1 commitment manifest 并对齐 README/AD-003/STATUS 文档（AUDIT-14-CAND-001 P3）
 kind: documentation
 governance_version: 3
-status: ready
-resume_status: ready
+status: done
+resume_status: done
 approval: user_authorized_2026-11-14 (所有任务交 DSH、自动裁决/规划、全部授权、无需用户介入)
 suggested_owner: DSH
 owner: DSH
@@ -13,10 +13,10 @@ depends_on: [AUDIT09-READER-EMPTY-RETRY-1]
 base_commit: 338dc3f9a
 branch: main
 worktree: G:/CODEX/New Manga
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 90301427380e67ec72cd253a721fe53214e43333
+delivery_head: 90301427380e67ec72cd253a721fe53214e43333
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/AUDIT14-V1-MANIFEST-1
 allowed_paths:
   - doc/design/V1_COMMITMENT_MANIFEST.md
@@ -38,10 +38,32 @@ allowed_paths:
 
 ## Acceptance Criteria
 
-- [ ] **AC1**：核对 README、AD-003、STATUS、00_INDEX 当前指针与漂移点，记录基准（commit/日期）。
-- [ ] **AC2**：新增 `doc/design/V1_COMMITMENT_MANIFEST.md`：V1 交付项清单、状态指针（STATUS/Task/证据）与明确的未完成/未验证项。
-- [ ] **AC3**：对齐 README、AD-003、STATUS（预算内）、00_INDEX 的指针；不得把 BLOCKED/NOT_RUN 写成 PASS。
-- [ ] **AC4**：证据 pin、四项门禁、资源 closeout、DSH 自动裁决。
+- [x] **AC1**：核对 README、AD-003、STATUS、00_INDEX 当前指针与漂移点，记录基准（commit/日期）。 <<MET>>
+- [x] **AC2**：新增 `doc/design/V1_COMMITMENT_MANIFEST.md`：V1 交付项清单、状态指针（STATUS/Task/证据）与明确的未完成/未验证项。 <<MET>>
+- [x] **AC3**：对齐 README、AD-003、STATUS（预算内）、00_INDEX 的指针；不得把 BLOCKED/NOT_RUN 写成 PASS。 <<MET>>
+- [x] **AC4**：证据 pin、四项门禁、资源 closeout、DSH 自动裁决。 <<MET>>
+
+## Canonical Evidence
+
+| evidence_id | AC/Gate | path | commit | sha256 | class | sha256_basis |
+|---|---|---|---|---|---|---|
+| AUDIT14-MANIFEST-1 | AC2 | `doc/design/V1_COMMITMENT_MANIFEST.md` | `90301427380e67ec72cd253a721fe53214e43333` | `85CB2A50C8A4607FA71277EF64F624048760BF470D58A541BB2DD56C39ECEF9A` | CANONICAL | BLOB |
+| AUDIT14-README-1 | AC3 | `README.md` | `90301427380e67ec72cd253a721fe53214e43333` | `DFCC585EC180BEF693BB9B382399E9C840F0F2860134ABCB9FE11EDD7106FF54` | CANONICAL | BLOB |
+| AUDIT14-INDEX-1 | AC3 | `doc/00_INDEX.md` | `90301427380e67ec72cd253a721fe53214e43333` | `F8A4BF05EBA6EB26923F41A6A1BCFAE1ED16EC34A4D3795454FBCA04455AECE6` | CANONICAL | BLOB |
+| AUDIT14-AD003-1 | AC3 | `doc/AD-003_REFERENCED_SOURCE_ARCHITECTURE.md` | `90301427380e67ec72cd253a721fe53214e43333` | `FA67F0822F6F1BB8929358DEB1046B88A272EDF1589F25A6352F4531DAA32F5C` | CANONICAL | BLOB |
+| AUDIT14-STATUS-1 | AC3 | `doc/STATUS.md` | `90301427380e67ec72cd253a721fe53214e43333` | `7C418A73D0CE97A13FCB0427E589FA496283E4B877F6355268BBCAE0451FD57E` | CANONICAL | BLOB |
+| AUDIT14-EVIDENCE-1 | AC4 | `verification/AUDIT14-V1-MANIFEST-1/evidence/manifest-alignment.json` | `90301427380e67ec72cd253a721fe53214e43333` | `45D1F209531AC95CA84353EA8CEC9429FEDDB60863AF90AF359A98F5365D361C` | CANONICAL | BLOB |
+
+## Resource Manifest
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| worktree | G:/CODEX/New Manga | PRESERVE_REFERENCED | doc | verification/AUDIT14-V1-MANIFEST-1/evidence/manifest-alignment.json | 主工作区保留 |
+| task-env | - | NOT_APPLICABLE | doc | verification/AUDIT14-V1-MANIFEST-1/evidence/manifest-alignment.json | 无独立 task-env |
+| agent-output | - | NOT_APPLICABLE | doc | verification/AUDIT14-V1-MANIFEST-1/evidence/manifest-alignment.json | 无 agent-output |
+| artifact | verification/AUDIT14-V1-MANIFEST-1 | PRESERVE_REFERENCED | doc | verification/AUDIT14-V1-MANIFEST-1/evidence/manifest-alignment.json | 对齐证据保留 |
+| dataset/model/test-material | - | NOT_APPLICABLE | doc | verification/AUDIT14-V1-MANIFEST-1/evidence/manifest-alignment.json | 无 |
+| exchange | - | NOT_APPLICABLE | doc | verification/AUDIT14-V1-MANIFEST-1/evidence/manifest-alignment.json | 无外部传输 |
 
 ## 允许修改范围
 
