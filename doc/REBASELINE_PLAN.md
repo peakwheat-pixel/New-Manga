@@ -10,7 +10,7 @@
 |FEA-07-RESIDUAL-4|FEA-07、FEA-07-RESIDUAL-3|**done**（L-R4b-1 隔离；真实 AppData delta=0；r2 approved；`7aa1e5778`）|
 |FEA-11-2C-RESIDUAL-1|FEA-11-RUN-GRANT-2C|**done**（预算超限保留 typed stop；+3 判别测试；r1 approved；`a2c4c1d8c`）|
 |FEA-11-HOST-AUTH-3|FEA-11-HOST-AUTH-2|**done**（C-17 v1.2 载体；5 轮独立 Review；崩溃正/反例 PASS）|
-|FEA-13-BK2-1…SCHED-5|—|**done**（五片；详情见各卡）|
+|FEA-13-BK2-1…SCHED-5|—|**done**|
 |FEA-13-SRC-6|FEA-13-COV-2、FEA-11-HOST-AUTH-3|**done**（C-09 SC-B07 ④；extras+handoff+Host 导入；2 轮 Review；`ef0618e57`）|
 |FEA-11-PREREQ-1|FEA-09、FEA-10|**done**（C-17 v1.0 FROZEN；pins 18/18；r1+轻量复核 approved P0/P1=0；集成提交见 Task）|
 |FEA-11|FEA-09、FEA-10、FEA-11-PREREQ-1|**done**（R4A `fbe337f95`；AC11-1…10 MET；L-STARTUP NA；L-M1/L-M4/needs_confirmation re-home；L-1…11 保留）||
@@ -48,14 +48,15 @@
 |FEA-14-EDIT-1|FEA-14-S5-PREQ-1|**closed_with_limitations**（v13；P16–P20）|
 |FEA-14-AI-1|FEA-14-S5-PREQ-1|**closed_with_limitations**（v14；P21–P25；S5=25/25）|
 |FEA-15-ACCEPT-1|FEA-14-AI-1|**closed_with_limitations**（失败/NOT_RUN 保留）|
-|FEA-15-DIAG-ACL-1 / FEA-15-PIN-EOL-GOV-1|FEA-15-ACCEPT-1|closed_with_limitations / done|
+|FEA-15-DIAG-ACL-1 / FEA-15-PIN-EOL-GOV-1|FEA-15-ACCEPT-1|done|
 |FEA-15-PIN-POLICY-1|FEA-15-PIN-EOL-GOV-1|done（ZCode；新 pin BLOB；历史保留）|
 |GOV-CHECKER-NOTASK-1|FEA-15-PIN-POLICY-1|done（空窗；Review/终裁）|
 |GOV-REFINCIDENT-1|GOV-CHECKER-NOTASK-1|done（根因 UNKNOWN）|
 |FEA-15-PIN-BASIS-ENFORCE-1|FEA-15-PIN-POLICY-1|closed_with_limitations|
 |NEW-MANGA-V1-FULL-AUDIT|—|done（base 同；AC1–4 MET；Codex 最终回退复审 ACCEPT_WITH_LIMITATIONS；Gate BLOCKED）|
+|MAINT-1-RELEASE-MONITOR|PUBLISH-FIX-1|in_progress|
 ## 当前活动程序
-READY 节点：无（DAG 收口）；ACTIVE：MAINT-1（维护）；BLOCKED：无；REVIEW：无
+READY 节点：无；ACTIVE：MAINT-1；BLOCKED：无；REVIEW：无
 ## 历史快照（终态节点，非当前 DAG）
 
 终态约束（明细见 [TASK_LEDGER](TASK_LEDGER.md)）：
