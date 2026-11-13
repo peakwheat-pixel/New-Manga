@@ -2,7 +2,7 @@
 
 **结论：BLOCKED**
 **产品基线：** 10e4ee013835605800d3830fb960ae8d3aa04167
-**裁决来源：** Codex 七轮独立 Review（`d92859c9a`、`226eb048`、`42810143b`、`6350081a`、`1ae79bb99`、`c2f5bc827`、`9bd7264ca`；对应 `reports/CODEX-*REVIEW-2026-11-13.md`）均明确维持 BLOCKED，不满足 PASS 或 CONDITIONAL。
+**裁决来源：** Codex 九轮独立 Review（`d92859c9a`、`226eb048`、`42810143b`、`6350081a`、`1ae79bb99`、`c2f5bc827`、`9bd7264ca`、`6b09ca1f`、`f25127083`；对应 `reports/CODEX-*REVIEW-2026-11-13.md`）均明确维持 BLOCKED，不满足 PASS 或 CONDITIONAL；最新已记录四项门禁批次为 `46a8fe6e`（收录于 `f0fa06ef`），其门禁在 DSH 集成后的 delivery head 重跑并记录。
 
 ## 阻断依据
 

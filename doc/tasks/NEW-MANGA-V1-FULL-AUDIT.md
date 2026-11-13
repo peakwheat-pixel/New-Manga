@@ -34,7 +34,7 @@ allowed_paths:
 ## Acceptance Criteria
 - [x] **AC1**：固定Git/环境及有效源码清单，记录dirty和历史缺口。 <<MET>>
 - [x] **AC2**：15 项专项逐项有结果或具名阻断，关键链路深读与测试。 <<MET>>
-- [ ] **AC3**：完整日志、去重问题台账、整改路线、正式报告和 Release Gate 落盘。 <<PARTIAL: 交付文件齐全，11 候选已由 Codex 裁决并更新 11_ISSUES/12/13/FINAL/AUDIT_ISSUES；Codex 已完成七轮独立 Review（最新第七轮 `9bd7264ca`），第八轮复审（`6b09ca1f`）仅剩 Task/报告摘要同步问题并已在本轮修复；待第九轮复审确认后由 DSH 集成，故暂不可收口>>
+- [ ] **AC3**：完整日志、去重问题台账、整改路线、正式报告和 Release Gate 落盘。 <<PARTIAL: 交付文件齐全，11 候选已由 Codex 裁决并更新 11_ISSUES/12/13/FINAL/AUDIT_ISSUES；Codex 已完成九轮独立 Review（最新第九轮 `f25127083`，第 9–10 轮均已确认 535/535 pins，仅剩当前指针同步）。第十轮复审（`9bbd5db46`）仅指出 AC3 与 13_GATE 审查来源两处旧轮次描述，本轮已修复；待第十一轮复审确认后由 DSH 集成，故暂不可收口>>
 - [ ] **AC4**：独立复核、证据 pin 和治理检查可核验；未满足不得置 done。 <<PARTIAL: 535 条 Canonical Evidence 已复算通过（含 14 条 worktree→BLOB 更正）；Codex 已完成九轮独立 Review（首轮 `d92859c9a`、返修复审 `226eb048`、第三轮 `42810143b`、第四轮 `6350081a`、第五轮 `1ae79bb99`、第六轮 `c2f5bc827`、第七轮 `9bd7264ca`、第八轮 `6b09ca1f`、第九轮 `f25127083`，均 EXIT 0；前八轮 REJECT 属交付文档收敛，第九轮仅剩当前指针同步）。已 pin 的 gate 批次覆盖 ed17a790、52b86d39、70e92876、b72363aa、076dfbb6、d248ed28、fee77cc0、86f47fee、c9953bac、484094a1、9b0be2cd、46a8fe6e（收录于 f0fa06ef）。最终四项门禁须在 DSH 集成后的 delivery head 记录；滚动 limitation 已被 Review 接受。故不可收口>>
 
 ## 允许修改范围
@@ -740,3 +740,9 @@ DSH 接任 Lead / Architect / Integrator（见 `doc/GOVERNANCE_TAKEOVER_2026-10-
 - 第八轮：reviewed_head=`6b09ca1f42a0145fa63fa317c2beb3b0596fe848`，EXIT 0，729.2s，REJECT（F1 Task 摘要同步；F2 滚动门禁 limitation 接受）。报告 `reports/CODEX-FINAL7-REVIEW-2026-11-13.md`。
 - 第九轮：reviewed_head=`f251270833f3ea775f6f577dbfa33e6c88073162`，EXIT 0，1,306.9s，REJECT（仅剩 AUDIT_PLAN/AUDIT_STATUS/Task AC4·Rolling/FINAL/13_GATE 当前指针同步；确认 535/535 pins；指出最新已记录门禁为 `46a8fe6e`，最终门禁应在 DSH 集成的 delivery head 记录）。报告 `reports/CODEX-FINAL8-REVIEW-2026-11-13.md`。
 - 处置：本轮同步全部当前指针并记录本两轮 Review；Task 保持 `in_review`，待 DSH 固定新 head 做第十轮复审；通过后转 `approved`，DSH 集成并填写 `integration_commit`/`delivery_head`、补齐 pins 与资源 closeout、在 delivery head 记录最终门禁，再置 `done`。AC1/AC2 MET；AC3/AC4 PARTIAL；Release Gate BLOCKED。
+
+## 2026-11-13 Codex 第十轮复审（9bbd5db46）
+
+- Reviewer：Codex 全新上下文；`reviewed_head=9bbd5db468c2e416d4bc24e9495ebd1a19faa9f8`；EXIT 0；972.3s；工作树前后 clean。原始报告 `reports/CODEX-FINAL9-REVIEW-2026-11-13.md`。
+- 结论：**REJECT**。确认 535/535 pins、14 项更正正确、候选裁决与计数自洽、最新已记录门禁为 `46a8fe6e`。剩余仅两处当前指针：Task AC3 仍写第七/八轮并“待第九轮”，13_GATE 审查来源仍写七轮、只列到 `9bd7264ca`。
+- 处置：本轮已修正 AC3 与 13_GATE 审查来源，Task 保持 `in_review`；待第十一轮复审通过后转 `approved`，由 DSH 集成并填写 `integration_commit`/`delivery_head`、在 delivery head 记录最终四项门禁、完成资源 closeout 再置 `done`。AC1/AC2 MET；AC3/AC4 PARTIAL；Release Gate BLOCKED。
