@@ -3,8 +3,8 @@ id: REL-GATE-1
 title: Release Gate 可执行证据补齐（GUI 冒烟 / 构建 / NOT_RUN 边界）
 kind: verification
 governance_version: 3
-status: done
-resume_status: done
+status: closed_with_limitations
+resume_status: closed
 approval: user_authorized_2026-11-14 (所有任务交 DSH、自动裁决/规划、全部授权、无需用户介入)
 suggested_owner: DSH
 owner: DSH
