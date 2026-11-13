@@ -7,13 +7,13 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | metric | value |
 |---|---:|
 | task files | 599 |
-| terminal | 588 |
-| non-terminal | 10 |
-| non-terminal named in the plan | 1 |
-| non-terminal outside the plan | 9 |
+| terminal | 590 |
+| non-terminal | 8 |
+| non-terminal named in the plan | 5 |
+| non-terminal outside the plan | 3 |
 | task files tracked by git | 599 |
 | task files untracked (drafts) | 0 |
-| non-terminal tracked by git | 10 |
+| non-terminal tracked by git | 8 |
 
 Arithmetic note: `task files` = `terminal` + `non-terminal` + `(none)` rows. A `(none)` row is a file with no `status:` field (a draft), which is excluded from `non-terminal` because check.ps1 only counts entries whose status exists and is not terminal; adding only `terminal` + `non-terminal` therefore lands one short of `task files`, and that gap is this note, not a counting error.
 
@@ -23,10 +23,10 @@ Arithmetic note: `task files` = `terminal` + `non-terminal` + `(none)` rows. A `
 |---|---:|---|
 | `done` | 495 | yes |
 | `closed_with_limitations` | 56 | yes |
-| `cancelled` | 18 | yes |
+| `cancelled` | 20 | yes |
 | `historical` | 11 | yes |
 | `superseded` | 8 | yes |
-| `proposed` | 5 | no |
+| `proposed` | 3 | no |
 | `in_review` | 2 | no |
 | `(none)` | 1 | no |
 | `approved` | 1 | no |
@@ -37,16 +37,14 @@ Arithmetic note: `task files` = `terminal` + `non-terminal` + `(none)` rows. A `
 
 | task | status | in plan |
 |---|---|---|
-| `GIT-CLEAN-PUBLICATION-DIAG-1` | `approved` | no |
+| `GIT-CLEAN-PUBLICATION-DIAG-1` | `approved` | mentioned |
 | `MAINT-1-RELEASE-MONITOR` | `in_progress` | own row |
-| `GIT-CLEAN-PUBLICATION-1` | `in_review` | no |
-| `GIT-CLEAN-RUST-ISOLATION-1` | `in_review` | no |
+| `GIT-CLEAN-PUBLICATION-1` | `in_review` | mentioned |
+| `GIT-CLEAN-RUST-ISOLATION-1` | `in_review` | mentioned |
 | `FEA-06-RESIDUAL-4` | `proposed` | no |
-| `FEA-11-HOST-AUTH-4` | `proposed` | no |
 | `FEA-11-HOST-AUTH-5` | `proposed` | no |
-| `FEA-11-L-S1-B2-ROOTS-AVAILABILITY-1` | `proposed` | no |
 | `GIT-CLEAN-CORE-ENV-2` | `proposed` | no |
-| `GIT-CLEAN-RUST-CAPACITY-DESIGN-1` | `ready` | no |
+| `GIT-CLEAN-RUST-CAPACITY-DESIGN-1` | `ready` | mentioned |
 
 ## What this ledger does not say
 

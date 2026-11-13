@@ -27,6 +27,8 @@ allowed_paths:
   - doc/reviews/MAINT-1-*.md
   - tools/governance/task_ledger.py
   - doc/tasks/CHAPTER-SELECTOR-1.md
+  - doc/tasks/FEA-11-HOST-AUTH-4.md
+  - doc/tasks/FEA-11-L-S1-B2-ROOTS-AVAILABILITY-1.md
 ---
 
 # MAINT-1-RELEASE-MONITOR：项目计划收口后的维护与 Release Gate 监测
@@ -98,3 +100,14 @@ NEW-MANGA-V1-FULL-AUDIT 与 R1–R4 整改、SEC-01/02/03、CORE-01、AUDIT-07/0
 - **单卡 FAIL 清单**：2 张 → 1 张（仅剩 `FEA-06-PREREQ-1`）。
 - **未翻转节点状态**：无。
 - **下一轮（P4）**：4 张 FEA proposed 卡逐张处置（释放或裁 OUT）。
+
+### 轮次 6（2026-11-14）
+
+- **P4 处置**：[P4 记录](../reviews/MAINT-1-P4-PROPOSED-DISPOSITION.md)。
+  - `FEA-11-HOST-AUTH-4` → **OUT / `cancelled`**（承接项全是测试/健壮性观测，无产品可见变化，原 limitation 与 Review P3 原样保留）。
+  - `FEA-11-L-S1-B2-ROOTS-AVAILABILITY-1` → **OUT / `cancelled`**（C-16 v1.5 字段已冻结但**无消费者**，契约字段不删，可撤销）。
+  - `FEA-06-RESIDUAL-4`（查看对照）→ **待 Q7 双签**（实现需 C-07 additive UNFREEZE + API inventory，且 Current V2 亦无此功能）。
+  - `FEA-11-HOST-AUTH-5`（HostRuntime 全链路 e2e）→ **待 Q8 双签**（仓内无 register→…→ACK 全链路用例，属验收强度取舍）。
+- **DoD §2 未满足**：仍有 2 张 `proposed`，必须完成双签后终裁。
+- **状态翻转**：2 张 `proposed` → `cancelled`（依据裁决记录先落盘，符合红线 4「先证据后状态」）。
+- **下一轮（P4-a）**：派 Codex 与 ZCode 各出一份 Q7/Q8 独立书面建议。
