@@ -1,6 +1,6 @@
 # New Manga V1 全项目审计报告
 
-**报告状态：** P7 初版综合交付；待 ZCode fresh-context 独立 Review / adjudication。
+**报告状态：** P7 交付已由 Codex fresh-context 独立 Review 裁决（`reviewed_head=d92859c9ac8a4d3122d6cabfe4d44af980574104`，结论 **REJECT**：要求返修交付文档；原始报告 `reports/CODEX-FINAL-REVIEW-2026-11-13.md`）。本报告的 finding 计数、候选状态与后续已按该裁决更新；产品 Release Gate 仍 BLOCKED。
 **产品基线：** 10e4ee013835605800d3830fb960ae8d3aa04167。
 **审计执行分支：** main。
 **产品发布准入：** BLOCKED。
@@ -9,9 +9,9 @@
 
 本轮审计对段 B 当前产品基线完成 AUDIT-00–14 的阶段性检查。专项有 PASS / FAIL / PARTIAL / BLOCKED 结果及具名限制；未把合成测试、编译成功、历史包或未执行项目当作真实产品验收。
 
-全项目质量目前**无法评为通过**：已有三个未修复的 triaged findings（两个 Medium / High confidence、一个 P2）；完整 Python pytest 有 16 个失败；Avalonia TestHost 未进入测试用例；若干真实 UI、模型、API 与安装流程未验证。建议的 Release Gate 为 BLOCKED。此结论独立于本轮审计文档是否已整理。
+全项目质量目前**无法评为通过**：Codex 裁决后共有 7 项开放 finding（3 项原 triaged：两项 Medium / High confidence 与 `NM-AUD-0001` P2；4 项新裁：`AUDIT-07-CAND-001` P2、`AUDIT-09-CAND-001` P3、`AUDIT-12-CAND-001` P3 交付工具、`AUDIT-14-CAND-001` 非产品文档）；完整 Python pytest 有 16 个失败；Avalonia TestHost 未进入测试用例；若干真实 UI、模型、API 与安装流程未验证。Release Gate 为 BLOCKED。此结论独立于审计文档返修进度。
 
-审计作者没有替 ZCode 对 11 个 REVIEW_PENDING 候选、AUDIT-11-INC-001 或 AUDIT-14 需求归属分配 severity。P0/P1 当前未被正式分配不表示已证明不存在。
+11 个候选与 `AUDIT-11-INC-001` 已由 Codex 独立裁决：4 项 finding、4 项 INVESTIGATE、1 项 accepted limitation、2 项 close；`AUDIT-11-INC-001` 维持 INVESTIGATE 且不计 P0–P3/finding。产品 P0=0、P1=0、P2=2、P3=2；P0/P1 为当前已分配数量，不表示已证明不存在。
 
 ## 范围与方法
 
@@ -47,10 +47,11 @@
 
 - P0：0 项已被正式分配；这不是“已证明没有 P0”。
 - P1：0 项已被正式分配；这不是“已证明没有 P1”。
-- P2：1 项，NM-AUD-0001，未修复。
-- P3：当前没有开放的正式 P3 产品 finding；AUDIT11-REV-001 是已披露关闭的非产品 P3 observation。
+- P2：2 项，NM-AUD-0001 与 AUDIT-07-CAND-001，均未修复。
+- P3：2 项产品 finding，AUDIT-09-CAND-001 与 AUDIT-12-CAND-001；另 AUDIT-14-CAND-001 为 P3 优先级文档 finding，不并入产品 P0–P3 计数。AUDIT11-REV-001 是已披露关闭的非产品 P3 observation。
 - 其他量表：SEG-B-PROBES-001 与 SEG-B-PROBES-002 均为 Medium / High confidence，不与 P-level 合并计数。
-- 另有 1 条 INVESTIGATE 风险 AUDIT-11-INC-001、11 条 REVIEW_PENDING 候选。
+- 开放 finding 共 7 项；另有 AUDIT-11-INC-001 1 条 INVESTIGATE 风险，不计 finding。
+- 11 个候选已由 Codex 裁决：4 finding / 4 INVESTIGATE / 1 accepted limitation / 2 close。
 
 完整去重记录、证据、分类和待裁决问题见 reports/11_ISSUES.md 以及 AUDIT_ISSUES.md。
 
@@ -77,7 +78,7 @@ Windows build 成功不等于 Windows 发布成功。没有当前基线包 prove
 3. 真实模型、人工 GT、实际翻译服务/费用、完整页面编辑/导出和长时稳定性未验证。
 4. clean Windows 安装、升级/回退、权限/中文路径、当前 installer 与模型资源 provenance 未验证。
 5. 当前公开远端对历史私有素材对象的可见性未知；没有远端访问或补救。
-6. 11 个候选与 1 个调查风险等待 ZCode 最终 adjudication。
+6. 11 个候选已由 Codex 裁决；`AUDIT-11-INC-001` 仍为 INVESTIGATE，远端可见性未知。
 
 ## 整改路线与发布 Gate
 
@@ -85,6 +86,6 @@ Windows build 成功不等于 Windows 发布成功。没有当前基线包 prove
 
 ## 结论边界与后续
 
-本报告是当前证据的综合摘要，不是独立 Review 结论，也不是产品发布批准。全审是否满足 Task AC、候选最终分级、Task 生命周期和最终集成由独立 ZCode Review 与项目 Integrator 处置。
+本报告是当前证据的综合摘要，不是产品发布批准。候选分级与最终独立 Review 已由 Codex 作出（结论 REJECT，要求返修）；Task AC 状态、生命周期与最终集成由 DSH 处置。
 
-**直接下一步：** 将固定交付 HEAD 交给新的 ZCode CLI plan-mode 上下文，要求只读复核报告与证据一致性、issue 去重 / 候选裁决、R1–R4 排序及 BLOCKED gate；报告按 reviewed HEAD 留证。不得修改产品源码、修改冻结契约、发布或 push。
+**直接下一步：** 按 Codex Review 的返修清单同步状态与台账、pin 最新 gate 批次与本次 Review、重命名重复 evidence_id、统一 398 计数；修订后以 clean head 交独立上下文复审，再由 DSH 集成与生命周期裁决。不得修改产品源码、修改冻结契约、发布或 push。

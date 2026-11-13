@@ -4,28 +4,28 @@ P7 去重汇总与严重度计数见 reports/11_ISSUES.md；本文件保留每�
 
 ## AUDIT-05-CAND-001 — 重叠仲裁保留同几何双 Region
 
-- 状态：`REVIEW_PENDING`（候选观察；未由审计作者确定 severity 或正式 finding）
+- 状态：`INVESTIGATE`（Codex 最终 Review 裁决；不并入 P0–P3 计数，产品去重语义待需求确定）
 - 证据：`reports/AUDIT-05-06-SFX-TRANSLATION-2026-11-13.md`、`tests/test_audit05_sfx_regression.py`、`logs/audit05-06-targeted-20261113.log`。合成 same-geometry primary `manga-1` + SFX `sfx-1` 仲裁后保留两个相同 polygon，且二者均映射为 SFX；生产 handler 对每候选创建 Region。
 - 影响/限制：`skip` 默认策略避免自动翻译；显式 `translate` 时两个 Region 各自进入单 Region step。未测真实模型重复框概率与用户可见影响；既有仲裁 Task 已列该副作用为已知取舍/去重候选。
 - 待裁决：请 ZCode 判断是否为正式 finding、严重级别及是否已由既有 Task/产品语义接受；本审计不授权修复。
 
 ## AUDIT-06-CAND-001 — 缺少账单级 spend cap 与 provider idempotency key
 
-- 状态：`REVIEW_PENDING`（候选观察；远端计费影响未知）
+- 状态：`INVESTIGATE`（Codex 最终 Review 裁决；费用上限是否内建需需求裁决，不并入 P0–P3 计数）
 - 证据：`reports/AUDIT-05-06-SFX-TRANSLATION-2026-11-13.md`；单 Run 有 StepRun 数上限，provider retry 有上限，但配置/transport 未提供货币预算或 provider 级 idempotency key。
 - 影响/限制：超时重试可能使客户端重复发送相同 payload；本轮未调用 API，未验证服务端处理、重放或计费，不能声称发生重复扣费。
 - 待裁决：请 ZCode 对照审计范围判断风险定级/是否为产品要求缺口；修复需另行释放 Task。
 
 ## AUDIT-06-CAND-002 — glossary 词条优先级未由生产路径强制
 
-- 状态：`REVIEW_PENDING`（候选观察；需需求/语义裁决）
+- 状态：`INVESTIGATE`（Codex 最终 Review 裁决；glossary 合同语义待需求确定，不并入 P0–P3 计数）
 - 证据：`reports/AUDIT-05-06-SFX-TRANSLATION-2026-11-13.md` 与对应 production request seam 测试；glossary 以 source→target 字典进入请求，但 system prompt 和生产响应校验未强制 glossary term match。
 - 影响/限制：未调用真实模型，不能推断翻译会违反术语；现有文档/用户预期是否要求强制术语优先级尚待核对。
 - 待裁决：请 ZCode 对照原始审计清单、契约及既有 glossary 语义确认；本审计不授权改 prompt 或 response validation。
 
 ## AUDIT-14-CAND-001 — V1 承诺与未来规划缺少统一逐项总账
 
-- 状态：`REVIEW_PENDING`（审计治理观察；未判为产品 finding 或分级）。
+- 状态：finding（Codex 最终 Review 裁决：P3 优先级文档/范围完整性 finding，**不并入产品 P0–P3 计数**）
 - 证据：`reports/AUDIT-14-V1-INTEGRITY-2026-11-13.md` §2、§4；`doc/00_INDEX.md:46,87`、`README.md:11,21-34,80-120`、`doc/V11R_PROGRAM.md:3`、`doc/STATUS.md:6`。
 - 复现条件/实际：在文档声明的权威来源与当前产品说明中对照，README 说根目录不存在而文件实际存在；README 的存储与版本文案、V11R 计划状态与当前决策有漂移。没有独立 V1/未来逐项承诺总账，因此不能可靠计算数量或完成率。
 - 影响/限制：可能导致规划项被误当作 V1 缺陷或反之；目前未发现由此直接导致的运行故障。范围限于本轮查阅的当前文档，不声称扫描了所有历史文件。
@@ -33,7 +33,7 @@ P7 去重汇总与严重度计数见 reports/11_ISSUES.md；本文件保留每�
 
 ## AUDIT-14-CAND-002 — V2 Studio 有明确 NOT_WIRED 的可见能力
 
-- 状态：`REVIEW_PENDING`（是否属于 V1 承诺待 ZCode 裁决；GUI 行为未实测）。
+- 状态：`INVESTIGATE`（Codex 最终 Review 裁决；V1 归属待 manifest 确定；GUI 行为未实测）
 - 证据：`reports/AUDIT-14-V1-INTEGRITY-2026-11-13.md` §3；`apps/desktop-avalonia/src/NewManga.App/Shell/V2/AppShellV2.axaml.cs:53-58`、`ViewModels/V2/Studio/StudioPageViewModel.cs:270-282,1808-1835`、`StudioWorkspaceViewModel.cs:28-33`、`StudioTermsViewModel.cs:45-47,79-82`。
 - 复现条件/实际：静态走 `AppShellV2` composition；Studio 仅注入 Host/selection/run tracking，遗漏 run/text/flag source 参数，故 page VM 采用 `NotWired*` 默认值；Final/Split 页资源也被 inventory 固定标为 `NOT_WIRED`。
 - 影响/限制：若被纳入当前产品承诺，批量 Run 投影、区域文本/状态与成品页显示不可用；未确认 V1 需求归属、用户可见状态或实际 GUI 结果。
@@ -41,14 +41,14 @@ P7 去重汇总与严重度计数见 reports/11_ISSUES.md；本文件保留每�
 
 ## AUDIT-14-CAND-003 — Avalonia 发布辅助脚本保留旧 Tauri 路径依赖
 
-- 状态：`REVIEW_PENDING`（发布脆弱性候选；未证明 clean release 会失败）。
+- 状态：close（Codex 最终 Review 裁决：关闭“当前 release 会失败”候选；旧辅助路径仅作为未证实维护债务保留）
 - 证据：`reports/AUDIT-14-V1-INTEGRITY-2026-11-13.md` §4；`.github/workflows/build-release.yml` installer 调用处不传 `-IconPath`；`apps/desktop-avalonia/scripts/build-installer.ps1` 的缺省回退检查 `apps/desktop/src-tauri/icons/icon.ico`；`scripts/prepare-sidecar.ps1` 的缺省 Source 指向旧 `src-tauri/target/release/resources/core-sidecar`。
-- 影响/限制：当前 CI 依赖该 Tauri icon 文件存在；手动 sidecar helper 在新架构产物目录下可能选错输入。此轮未执行 clean build/installer，未证实失败、发行物损坏或用户影响。
+- 影响/限制（Codex 复核更正）：release workflow 不传 `-IconPath`，`build-installer.ps1` 仅在旧图标存在时才设置该路径，缺少该文件不会由该逻辑证明 CI 失败；`prepare-sidecar.ps1` 的旧默认路径在仓内仅见测试/辅助调用点，未证明当前 release workflow 使用。此轮未执行 clean build/installer。
 - 建议：若 ZCode 接受此观察，另开发布脚本 Task 明确当前资产来源、在隔离干净环境验证并移除无用旧路径引用。
 
 ## AUDIT-14-CAND-004 — 多 Avalonia shell 路由扩大 V2 回归面
 
-- 状态：`REVIEW_PENDING`（架构风险观察，未证明为已发生缺陷）。
+- 状态：close（Codex 最终 Review 裁决：架构观察，无运行故障证据）
 - 证据：`reports/AUDIT-14-V1-INTEGRITY-2026-11-13.md` §4；`apps/desktop-avalonia/src/NewManga.App/App.axaml.cs:131-176`、`Views/MainWindow.axaml.cs:94-117`、`Shell/V2/AppShellV2.axaml.cs:53-58`。
 - 实际：composition 支持 legacy `MainWindow`、Current V2 和 Fluent frontend 分支；页面结构/能力不同。全审目前没有本 Task 的真实 GUI 对照结果。
 - 影响/限制：提高路由、导航与功能 parity 的回归成本；当前没有证据表明用户运行时已遇到具体行为错误。
@@ -106,28 +106,28 @@ P7 去重汇总与严重度计数见 reports/11_ISSUES.md；本文件保留每�
 
 ## AUDIT-07-CAND-001 — P16 reader export hook options test failures
 
-- 状态：`REVIEW_PENDING`（候选观察；不由审计作者分配 severity 或正式 finding）。
+- 状态：finding（Codex 最终 Review 裁决：P2；属产品 P2 计数）
 - 证据：`reports/AUDIT-07-REPAIR-TYPESET-EXPORT-2026-11-13.md`、`logs/audit07-core-rerender-export-20261112T205159956924Z.log`。三个参数化 case 中 ZIP compression override 未生效、text representation override 未生效，且空 override case 未产生预期的 hook audit events；测试组 127 passed / 3 failed / EXIT 1。
 - 边界：该测试覆盖 reader export plugin hook/options 与 history，不测排版像素或真实导出视觉质量；当前尚未重复运行或单独归因到产品缺陷。
 - 待裁决：请 ZCode 判断是否属于 AUDIT-07 或既有 export scope，是否构成正式 finding 及严重度；本审计不授权修复。
 
 ## AUDIT-07-CAND-002 — 用户字体许可证备注不是授权验证
 
-- 状态：`REVIEW_PENDING`（范围/风险待裁决；不宣称存在未授权分发）。
+- 状态：accepted limitation（Codex 最终 Review 裁决；不并入 P0–P3 计数）
 - 证据：`src/application/fonts/service.py` 接受可选 `license_note` 并原样保存；FEA-14-FONT-1 要求不随包分发字体且把字体渲染消费留给 FONT-2；静态捕获显示仓库 tracked font assets=0。
 - 边界：本轮没有读取用户字体、核验外部许可或观察随包/发布；`license_note` 只能作为用户备注，不能证明许可。用户字体许可检查 `NOT_RUN`。
 - 待裁决：请 ZCode 判断备注/许可边界是否已由 FEA-14-FONT-1 limitation 接受，或需要独立产品要求/Task；不在本审计内改变字体导入语义。
 
 ## AUDIT-09-CAND-001 — V2 Reader Retry 提示与可见选择不一致
 
-- 状态：`REVIEW_PENDING`（候选观察；审计作者不分配 severity，也不确定为正式 finding）。
+- 状态：finding（Codex 最终 Review 裁决：P3；属产品 P3 计数）
 - 证据：`reports/AUDIT-09-UI-UX-2026-11-13.md`、`screenshots/audit09-v2-reader-retry-banner-20261113.jpg`、`logs/audit09-ui-v2-capture-20261112T220906Z.log` 及对应 JSON。隔离 V2 Library 选择了合成 book/chapter（章节 0 页）；Reader Retry 后仍提示“请先在资料柜选择作品与章节”。
 - 边界：仅在合成空章节路径观察；没有真实页图或操作数据，未验证状态根因、真实用户影响或其他导航路径；不据此推断数据丢失。
 - 待裁决：请 ZCode 判断提示是否构成 UI finding、severity 与需求归属；本审计不授权修复。
 
 ## AUDIT-12-CAND-001 — Single-file publish 默认在仓库内递归清理输出目录
 
-- 状态：`REVIEW_PENDING`（静态治理/交付风险候选；未判为正式 finding，也未分配 severity）。
+- 状态：finding（Codex 最终 Review 裁决：P3 交付工具；属产品 P3 计数）
 - 证据：`tests/audit12_delivery_inventory.py` 与 `logs/audit12-delivery-inventory-20261112T223042315179Z.log` 对 `apps/desktop-avalonia/scripts/publish.ps1` 的哈希和相关行捕获：默认 `OutputDirectory` 为 `apps/desktop-avalonia/artifacts/win-x64-single`，若已存在会执行 `Remove-Item ... -Recurse -Force`，之后运行 `dotnet publish`。
 - 边界：本轮没有运行 publish，也没有证明目录中有用户文件、发生误删或当前发布失败；脚本预期可能把该目录当作专用构建输出。
 - 待裁决：请 ZCode 对照工作区治理规则和发布脚本调用方式判断默认路径是否需要登记风险/修复 Task；本审计不改脚本、不执行清理。

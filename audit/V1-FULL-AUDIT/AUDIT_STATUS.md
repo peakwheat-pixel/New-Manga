@@ -1,7 +1,7 @@
 # 审计状态
 ## 最新检查点（2026-11-13）
 
-当前 Task NEW-MANGA-V1-FULL-AUDIT 仍为 in_progress；P7 编号报告、去重台账、整改路线、Release Gate 与 FINAL_AUDIT_REPORT 已由提交 3fc756a1aed8ca366ac0b324ff293cc3e1f9ebb0 固定；Canonical Evidence 已 pin 至 a3a429cc 批次（7b2945d0）。2026-11-13 DSH 集成核验（`reports/P7-INTEGRATION-CONSISTENCY-CHECK-2026-11-13.md`）复算 371 条 pins：357 匹配、14 条 AUDIT-03/04 记录误用 worktree（CRLF）SHA-256 而 basis=BLOB；按 ZCode AUDIT-08 closure review 的 BLOB 基准更正为该 commit 的 raw Git BLOB SHA-256 后 371/371 匹配。最新 gate batch generated HEAD=ed17a790、commit=48ccb75c：default/TaskPath 各 3 warnings、verify_pins 18/18、API 1/79/6=86，四项 EXIT 0。
+当前 Task NEW-MANGA-V1-FULL-AUDIT 仍为 in_progress；Codex fresh-context 最终独立 Review（`reviewed_head=d92859c9ac8a4d3122d6cabfe4d44af980574104`，session `01a1d4ce-6b79-7b43-939d-834e3cdc21a9`，EXIT 0）结论 **REJECT**：要求同步当前状态与 Codex-first 裁决、pin 70e92876/b72363aa gate 批次、修正重复 evidence_id 与 `AUDIT-14-CAND-003` 表述、统一 398 计数。11 候选已裁决：4 finding（07-001 P2、09-001 P3、12-001 P3、14-001 非产品 P3 优先级）、4 INVESTIGATE、1 accepted limitation、2 close；`AUDIT-11-INC-001` 维持 INVESTIGATE。产品 P0=0/P1=0/P2=2/P3=2；开放 finding 7。AC1/AC2 MET，AC3/AC4 不可收口；Release Gate BLOCKED。
 
 段 B 状态为 00 limited PASS；01/03/08/11 FAIL；02 BLOCKED；04–07、09、10、12–14 PARTIAL。台账有 3 项已 triage finding、1 项 INVESTIGATE、11 项待 ZCode 裁决候选、1 项已披露关闭的非产品 P3 observation。AC2/AC3/AC4 保持 PARTIAL，Release Gate BLOCKED。
 
