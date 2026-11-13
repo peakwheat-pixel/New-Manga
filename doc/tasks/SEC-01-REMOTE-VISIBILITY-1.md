@@ -34,10 +34,10 @@ NEW-MANGA-V1-FULL-AUDIT 的 R1 整改项 SEC-01（`reports/12_REMEDIATION_PLAN.m
 
 ## Acceptance Criteria
 
-- [x] **AC1**：固定仓库与远端元数据（`git remote -v`、branch、HEAD、相关本地对象/提交清单），记录命令、时间、generated HEAD、EXIT 与证据路径。
-- [x] **AC2**：以只读、不下载私有素材内容的方式查询远端可见性（HTTP/只读 API/公开页面），记录请求目标、时间、状态、结果与不可用方法；不得 push、删除、改写历史或上传材料。
-- [x] **AC3**：对照 `AUDIT-11-INC-001` 本地证据给出结论：远端可见 / 不可见 / 仍未知（若证据不足则 unknown），不推断未验证事实；任何补救动作不在本 Task 授权内。
-- [x] **AC4**：证据 pin、四项治理门禁与资源 closeout 完成，Task 由 DSH 自动裁决并记录 limitation；未执行项标 NOT_RUN。
+- [x] **AC1**：固定仓库与远端元数据（`git remote -v`、branch、HEAD、相关本地对象/提交清单），记录命令、时间、generated HEAD、EXIT 与证据路径。 <<MET>>
+- [x] **AC2**：以只读、不下载私有素材内容的方式查询远端可见性（HTTP/只读 API/公开页面），记录请求目标、时间、状态、结果与不可用方法；不得 push、删除、改写历史或上传材料。 <<MET>>
+- [x] **AC3**：对照 `AUDIT-11-INC-001` 本地证据给出结论：远端可见 / 不可见 / 仍未知（若证据不足则 unknown），不推断未验证事实；任何补救动作不在本 Task 授权内。 <<MET>>
+- [x] **AC4**：证据 pin、四项治理门禁与资源 closeout 完成，Task 由 DSH 自动裁决并记录 limitation；未执行项标 NOT_RUN。 <<MET>>
 
 ## Canonical Evidence
 
