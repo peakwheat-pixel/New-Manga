@@ -51,4 +51,4 @@ Issue ledger 当时状态为 `REVIEW_PENDING`（历史快照；2026-11-13 已由
 
 AUDIT-14 已完成一轮定点静态核对，能证明四页旧壳存在真实 Host 接线，也能证明 V2 Studio 有明确未接线能力；同时发现若干历史代码路径和文档快照漂移。由于 V1/未来承诺没有统一的权威逐项清单，且没有运行当前 GUI/安装包，本专项维持 `PARTIAL`，不统计 V1 完成百分比、不把未来规划全部写成 V1 缺陷。
 
-后续需要：ZCode 对候选观察作独立定级；按剩余 DAG 继续 AUDIT-03/04/07/09/10/12/13；全审正式报告、完整问题去重、交付 HEAD 门禁及 Release Gate 仍未完成。产品代码、发布脚本、README、AD-003 和索引均未在本 Task 中修改。
+后续需要（阶段快照）：原计划的 ZCode 独立定级已由 Codex 四轮 Review 完成；AUDIT-03/04/07/09/10/12/13 与全审正式报告、问题去重、交付 HEAD 门禁及 Release Gate 均已落盘，当前状态见 reports/11_ISSUES.md 与 AUDIT_RESUME.md。产品代码、发布脚本、README、AD-003 和索引均未在本 Task 中修改。

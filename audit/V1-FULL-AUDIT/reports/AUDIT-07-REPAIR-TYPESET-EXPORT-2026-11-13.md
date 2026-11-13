@@ -2,7 +2,7 @@
 
 **Codex adjudication（2026-11-13，独立上下文）：** 本报告中的 `REVIEW_PENDING` 候选已由 Codex 最终独立 Review 裁决（首轮 `reviewed_head=d92859c9ac8a4d3122d6cabfe4d44af980574104`，复审 `226eb048006ffa804ebefd9f98e51bbc13793f31`；结论 REJECT 属交付文档返修，不改变产品 Gate）。现行状态以 `reports/11_ISSUES.md` 与 `AUDIT_ISSUES.md` 为准；本报告原观察与限制保持原字节语义。 本报告中的 `AUDIT-07-CAND-001` 被裁为 **finding P2**，`AUDIT-07-CAND-002` 为 **accepted limitation**。
 
-**阶段状态：PARTIAL。** 当前证据覆盖活动 Python Core 的合成遮罩/修复、Pillow 排版与合成、rerender 预览、字体数据面和版本恢复。真实修复模型、真实漫画质量、Avalonia 实际缩放交互及视觉导出质量均未验证。严重度与正式问题归属留给 ZCode 复核。
+**阶段状态：PARTIAL。** 当前证据覆盖活动 Python Core 的合成遮罩/修复、Pillow 排版与合成、rerender 预览、字体数据面和版本恢复。真实修复模型、真实漫画质量、Avalonia 实际缩放交互及视觉导出质量均未验证。严重度与正式问题归属当时留给独立复核；阶段快照已由 Codex 裁决（07-001 finding P2；07-002 accepted limitation）。
 
 ## 固定范围与方法
 

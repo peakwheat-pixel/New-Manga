@@ -34,7 +34,7 @@ allowed_paths:
 ## Acceptance Criteria
 - [x] AC1：固定Git/环境及有效源码清单，记录dirty和历史缺口。 <<MET>>
 - [x] AC2：15 项专项逐项有结果或具名阻断，关键链路深读与测试。 <<MET>>
-- [ ] AC3：完整日志、去重问题台账、整改路线、正式报告和 Release Gate 落盘。 <<PARTIAL: 日志/台账/整改路线/正式报告/Release Gate 已落盘，Codex 最终 Review 已裁决 11 候选并更新台账；但该 Review 结论为 REJECT（当前状态同步、未 pin gate 批次、重复 evidence_id、AUDIT-14-CAND-003 表述等），返修后复审与 DSH 集成尚未完成，暂不可收口>>
+- [ ] AC3：完整日志、去重问题台账、整改路线、正式报告和 Release Gate 落盘。 <<PARTIAL: 交付文件齐全，11 候选已由 Codex 裁决并更新 11_ISSUES/12/13/FINAL/AUDIT_ISSUES；当前剩余为交付文档收敛：当前状态摘要与专项报告阶段快照标注、四轮 Review 结论同步与最终 HEAD 门禁证据归档。收敛完成后由 DSH 集成，故暂不可收口>>
 - [ ] AC4：独立复核、证据 pin 和治理检查可核验；未满足不得置 done。 <<PARTIAL: 462 条 Canonical Evidence 已复算通过（含 14 条 worktree→BLOB 更正）；Codex 首轮 Review（reviewed_head=d92859c9a）与返修复审（reviewed_head=226eb048，session 01a1d4f3-9736-7402-8c3e-ce701f1e2490，EXIT 0）结论均为 REJECT，已归档并 pin；本轮已回填 70e92876/b72363aa/076dfbb6 gate 批次与复审证据、重命名 9 个重复 evidence_id、统一 462 计数。最终复审后仍需 DSH 集成与 closeout，故不可收口>>
 
 ## 允许修改范围

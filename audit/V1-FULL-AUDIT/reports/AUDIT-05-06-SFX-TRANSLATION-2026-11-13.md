@@ -2,7 +2,7 @@
 
 **Codex adjudication（2026-11-13，独立上下文）：** 本报告中的 `REVIEW_PENDING` 候选已由 Codex 最终独立 Review 裁决（首轮 `reviewed_head=d92859c9ac8a4d3122d6cabfe4d44af980574104`，复审 `226eb048006ffa804ebefd9f98e51bbc13793f31`；结论 REJECT 属交付文档返修，不改变产品 Gate）。现行状态以 `reports/11_ISSUES.md` 与 `AUDIT_ISSUES.md` 为准；本报告原观察与限制保持原字节语义。 本报告中的 `AUDIT-05-CAND-001`、`AUDIT-06-CAND-001/002` 均被裁为 **INVESTIGATE**。
 
-**结论：AUDIT-05 `PARTIAL`；AUDIT-06 `PARTIAL`。** 已核对当前生产 Core 的契约、provider、pipeline 与人工修改保护路径，并执行纯合成的定向测试。此报告不代表全审 PASS；待独立 ZCode 复核与候选项裁决。
+**结论：AUDIT-05 `PARTIAL`；AUDIT-06 `PARTIAL`。** 已核对当前生产 Core 的契约、provider、pipeline 与人工修改保护路径，并执行纯合成的定向测试。此报告不代表全审 PASS；阶段快照中的“待独立复核/候选裁决”已由 Codex 四轮 Review 完成（见 CODEX-* 报告与 11_ISSUES.md）。
 
 - 产品基线：`10e4ee013835605800d3830fb960ae8d3aa04167`
 - 本轮测试生成 HEAD：`d96529ebff6cf752ad64a676d05ec622da09e565`
