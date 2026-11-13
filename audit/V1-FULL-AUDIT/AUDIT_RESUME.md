@@ -18,6 +18,8 @@
 
 - 进入 REVIEW 后门禁：Task status=`in_review`，AC 标题改为 lifecycle v3 要求的 `- [ ] **ACn**` 格式后，generated HEAD=`0de08632b2a8ed4fd9812d39ab5ad07881151bfe` 四项均 EXIT 0（default/TaskPath 各 3 warnings；verify_pins 18/18；API 1/79/6=86）；日志 `logs/audit-post-evidence-0de08632-*.log`、metadata `evidence/audit-post-evidence-0de08632-*.json`。
 
+- 第七轮复审（2026-11-13）：Codex 对 `reviewed_head=9bd7264ca3b91a5ddcfe831f9b1beeb47e13dca3` 复审，EXIT 0，1036.6s；确认 509/509 pins；关闭 AUDIT-08 P3-4；结论 REJECT，仅剩 F1 状态摘要同步（STATUS/LEDGER/PLAN/AUDIT_STATUS/AUDIT_PLAN/GATE/FINAL）、0de08632b warning=4 与 AUDIT_TASKS/P7 快照措辞。报告 `reports/CODEX-FINAL6-REVIEW-2026-11-13.md`。
+
 ## 2026-11-13 用户裁决：最终独立 Review 与裁决改为 Codex 优先
 
 - 用户 2026-11-13 指示：“调整流程，裁决交给 codex 或者 zcode，优先 codex”。本 Task 的最终独立 Review 与候选/finding 裁决改为 **Codex 优先**；Codex 不可用或不适配时回退 **ZCode**。历史 ZCode 裁决、Review 与 evidence pin 原字节保留，不追改、不据此恢复 ZCode 独占裁决。

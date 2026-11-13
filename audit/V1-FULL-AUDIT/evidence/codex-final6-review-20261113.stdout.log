@@ -1,0 +1,83 @@
+## 审查身份与 reviewed_head / 工作树状态
+
+**reviewed_head=`9bd7264ca3b91a5ddcfe831f9b1beeb47e13dca3`**；分支 `main`。审查前后 `git status --porcelain` 均为空，HEAD 与 `expected_head` 一致。
+
+我按只读方式检查了交付文档、治理状态、专项报告与 Git 对象。509 条 Canonical Evidence pins 均可定位并复算；未修改文件或工作树。
+
+## 总结结论
+
+**REJECT**
+
+候选裁决、主要 finding 计数与产品 Release Gate 结论有证据支持；14 条 SHA 更正及 509 条 pins 均通过本次复算。仍有一项必须返修的治理问题：当前状态汇总与 Task 卡、恢复记录不一致，且最新门禁 warning 数量记录有误。因此暂不能批准 Task。
+
+## 发现：按严重度排序
+
+### F1 — 当前状态与门禁摘要未同步（阻断审计交付接收；非产品 P0–P3）
+
+[Task 卡](<G:/CODEX/New Manga/doc/tasks/NEW-MANGA-V1-FULL-AUDIT.md:6>) 当前为 `in_review`，记录 509 pins、六轮 Review 与最新一次 `c2f5bc827` REJECT；[AUDIT_RESUME](<G:/CODEX/New Manga/audit/V1-FULL-AUDIT/AUDIT_RESUME.md:17>) 也记录 509 pins、`in_review` 及 `0de08632b` 门禁。与之相反，[STATUS](<G:/CODEX/New Manga/doc/STATUS.md:7>)、[TASK_LEDGER](<G:/CODEX/New Manga/doc/TASK_LEDGER.md:39>)、[REBASELINE_PLAN](<G:/CODEX/New Manga/doc/REBASELINE_PLAN.md:56>)、[AUDIT_STATUS](<G:/CODEX/New Manga/audit/V1-FULL-AUDIT/AUDIT_STATUS.md:4>)、[AUDIT_PLAN](<G:/CODEX/New Manga/audit/V1-FULL-AUDIT/AUDIT_PLAN.md:5>) 仍写 `in_progress`、496 pins 或五轮 Review。 [Release Gate](<G:/CODEX/New Manga/audit/V1-FULL-AUDIT/reports/13_RELEASE_GATE.md:5>) 与 [FINAL_AUDIT_REPORT](<G:/CODEX/New Manga/audit/V1-FULL-AUDIT/reports/FINAL_AUDIT_REPORT.md:3>) 也仍称五轮 Review、引用较旧的 pin 数与 Review 状态。
+
+另有两个局部漂移：
+
+- `AUDIT_RESUME.md` 称 `0de08632b` 的 default/TaskPath 各有 3 warnings；两份原始日志实际写 **4 warnings、EXIT 0**：[default](<G:/CODEX/New Manga/audit/V1-FULL-AUDIT/logs/audit-post-evidence-0de08632-default.log:15>)、[TaskPath](<G:/CODEX/New Manga/audit/V1-FULL-AUDIT/logs/audit-post-evidence-0de08632-taskpath.log:15>)。warning 是未登记过程文件提示，不改变 EXIT 0。
+- [AUDIT_TASKS](<G:/CODEX/New Manga/audit/V1-FULL-AUDIT/AUDIT_TASKS.md:18>) 仍称 AUDIT-08 P3-4 等 fresh closure review；[P7 快照](<G:/CODEX/New Manga/audit/V1-FULL-AUDIT/reports/P7-INTEGRATION-CONSISTENCY-CHECK-2026-11-13.md:49>) 与其第 55 行的概括也存在状态歧义。本次复核确认 P3-4 所述 SHA 基准问题已澄清，见下文。
+
+**最小返修动作：** DSH 更新当前状态摘要与 Task 流转记录，使其反映本次 `reviewed_head` 和本次 REJECT；同步 `STATUS`、Plan、审计状态页、`AUDIT_TASKS`、Release Gate 与最终报告。对历史 P7 快照加当前更正记录即可，保留历史证据原样。将 `0de08632b` warning 数更正为 4，并记录本次对 P3-4 的处置。完成返修后需以新 clean HEAD 重新 Review；不要把历史快照改写成当前事实。
+
+## 11 个候选的逐项裁决表
+
+候选证据与状态主要见 [AUDIT_ISSUES.md](<G:/CODEX/New Manga/audit/V1-FULL-AUDIT/AUDIT_ISSUES.md:5>)、[11_ISSUES.md](<G:/CODEX/New Manga/audit/V1-FULL-AUDIT/reports/11_ISSUES.md:8>) 与 [整改路线](<G:/CODEX/New Manga/audit/V1-FULL-AUDIT/reports/12_REMEDIATION_PLAN.md:19>)。
+
+| ID | 结论 | 是否进入 P0–P3 计数 | severity / priority | 依据 | 建议后续 Task / 验证 |
+|---|---|---|---|---|---|
+| `AUDIT-07-CAND-001` | finding | 是，产品 P2 | P2 | 定向组 127 passed / 3 failed：ZIP compression、text override 与空 options 的 hook audit events 未符合预期；未证明视觉排版故障。 | 独立修复 Task；验证有效 options、hook 事件及真实 export 回归。 |
+| `AUDIT-09-CAND-001` | finding | 是，产品 P3 | P3 | 合成零页章节下界面显示已选作品/章节，Retry 却要求先选择；真实数据与根因未验证。 | Host/UI fixture 覆盖有页、零页、切换与 Retry/返回。 |
+| `AUDIT-12-CAND-001` | finding | 是，产品/交付 P3 | P3 | `publish.ps1` 默认输出在仓库内并递归清理；脚本未运行，未证明发生误删。 | 将默认输出移到 workspace；用 disposable 目录验证清理边界。 |
+| `AUDIT-14-CAND-001` | finding | **否**，非产品 finding | P3 优先级（文档/范围） | V1/未来范围缺逐项权威总账，相关文档有漂移；未证明运行故障。 | 文档 Task 建立有版本日期的 V1 manifest，对齐产品说明与规划。 |
+| `AUDIT-05-CAND-001` | INVESTIGATE | 否 | N/A，需求语义未定 | 合成同几何 primary/SFX 产生双 Region；已有仲裁副作用记录，但去重规则未定。 | 先裁定相同/近似区域、人工修改及 `skip`/`translate` 规则，再做合成验证。 |
+| `AUDIT-06-CAND-001` | INVESTIGATE | 否 | N/A，预算需求未定 | 有 StepRun/provider 重试上限，无账单级预算或 idempotency key；未调用真实 API，不能称为发生重复扣费。 | 先裁定费用控制需求；fake provider 验证重试与预算耗尽。 |
+| `AUDIT-06-CAND-002` | INVESTIGATE | 否 | N/A，合同语义未定 | glossary 进入请求，但生产路径不强制词条匹配；原始需求与真实模型行为未验证。 | 先裁定 glossary 约束，再用 fake provider 验证冲突、漏匹配行为。 |
+| `AUDIT-14-CAND-002` | INVESTIGATE | 否 | N/A，V1 归属未知 | V2 Studio 有 `NOT_WIRED` 能力，但是否属于当前 V1 承诺及真实 GUI 行为未知。 | 先完成 V1 manifest 映射；纳入 V1 后再开实现与 Host/GUI 验证 Task。 |
+| `AUDIT-07-CAND-002` | accepted limitation | 否 | N/A | `license_note` 只是用户备注；tracked fonts 为 0，但本轮未检查用户字体许可或发布包分发内容。 | 若字体进入功能/发布范围，再核对许可及实际包内容；继续保留 `NOT_RUN`。 |
+| `AUDIT-14-CAND-003` | close | 否 | N/A | installer 缺省图标仅在旧文件存在时选用，未证明当前 workflow 会因旧路径缺失而失败；未做 clean installer 测试。 | 不开故障修复 Task；清理旧辅助路径前先核实调用者。 |
+| `AUDIT-14-CAND-004` | close | 否 | N/A | 多 shell 路由增加回归面，但没有具体运行故障证据。 | 不开缺陷 Task；后续真实 UI 验证记录 shell × page 矩阵。 |
+
+另行核对了 AUDIT-08 P3-4：follow-up 报告已明确 WORKTREE 与 BLOB 两种基准及 CRLF→LF 归一化原因；本次验证该 pin 的 BLOB SHA 为 `0851DD23…`，CRLF 转换后的 SHA 为 `1A0C9340…`，均与报告记录相符。我将该非产品证据说明 finding 判为**已关闭**；不加入当前开放 finding 数，但需更新 `AUDIT_TASKS` 的旧待复审状态。[相关 Review 记录](<G:/CODEX/New Manga/audit/V1-FULL-AUDIT/reports/ZCODE-AUDIT-08-CLOSURE-REVIEW-2026-11-13.md:22>)、[follow-up 报告](<G:/CODEX/New Manga/audit/V1-FULL-AUDIT/reports/ZCODE-AUDIT-08-FOLLOWUP-REVIEW-2026-11-13.md:10>)。
+
+## AUDIT-11-INC-001 裁决
+
+维持 **INVESTIGATE**，不分配 severity，不计入 P0–P3 或 finding 数。本地材料支持私有素材对象可能随历史 `main` push 传播的高置信推论；但**当前远端是否可见、可下载或可 fetch 仍未知**。缓存/对象状态与当时授权语境也未知。本次未访问远端，不得称其已公开，也不得称风险已消除。[问题台账](<G:/CODEX/New Manga/audit/V1-FULL-AUDIT/reports/11_ISSUES.md:34>)。
+
+## P0–P3 和 finding 总计核验
+
+- 3 个原有 triaged finding：`SEG-B-PROBES-001`、`SEG-B-PROBES-002` 为 Medium / High confidence 且不映射 P 级；`NM-AUD-0001` 为 P2。
+- 11 个候选：4 finding、4 INVESTIGATE、1 accepted limitation、2 close；当前均有裁决，没有 `REVIEW_PENDING` 候选。
+- 新增 4 项 finding：`AUDIT-07-CAND-001` P2、`AUDIT-09-CAND-001` 产品 P3、`AUDIT-12-CAND-001` 产品/交付 P3、`AUDIT-14-CAND-001` 非产品文档 P3 优先级。
+- 当前开放 finding 共 **7**：3 个原有 finding + 4 个候选 finding。产品 P0/P1/P2/P3 当前已分配数为 **0/0/2/2**；P0/P1 为“未分配”，不代表已证明不存在。
+- `AUDIT-11-INC-001` 是单独调查风险，不计 finding；`AUDIT11-REV-001` 是已关闭的非产品 P3 observation。AUDIT-08 P3-4 经本次复核关闭，不增加当前开放总数。
+
+## R1–R4 次序意见
+
+维持现路线：
+
+1. **R1**：先做有授权边界的只读远端可见性调查，再分别处理 junction containment 与 restore 失败语义；不得顺带清理或改写历史。
+2. **R2**：处理 `NM-AUD-0001` sidecar 取消、Dispose 与 Host shutdown 生命周期。
+3. **R3**：先修复导出 P2，再处理 Reader 提示与 publish 输出目录；05/06 与 14-002 先裁定需求。完整 UI、模型/API、安装等验证缺口仍需独立计划。
+4. **R4**：长期架构与文档维护；把 V1 manifest（14-001）放在 14-002 范围判断之前。
+
+## Release Gate 决定
+
+**继续 BLOCKED；不宣告产品发布 PASS。** 未修复 finding、pytest 16 个失败、Avalonia TestHost 0 tests、smoke sandbox 阻断、关键 UI/模型/API/Windows install 检查未运行，以及 `AUDIT-11-INC-001` 未知远端可见性，均支持该结论。[Release Gate](<G:/CODEX/New Manga/audit/V1-FULL-AUDIT/reports/13_RELEASE_GATE.md:7>)。
+
+## AC1–AC4 与 Task 生命周期建议
+
+- **AC1：MET**。固定基线与源码清单及历史缺口有证据。
+- **AC2：MET**。专项有结果或具名限制；`NOT_RUN`/`BLOCKED` 仍按原状态保留，没有被写成 PASS。
+- **AC3：当前 PARTIAL，不能在此 head 收口。** 交付件和候选裁决基本齐备，但当前状态汇总漂移，且本次 Review 结果尚未进入 Task/最终报告。
+- **AC4：当前 PARTIAL，不能在此 head 收口。** 509 pins 的字节可核验；`ed17a790` 与 `52b86d39` 四项门禁批次的 EXIT 0 记录可核验。[证据索引](<G:/CODEX/New Manga/audit/V1-FULL-AUDIT/AUDIT_EVIDENCE_INDEX.md:183>)。`0de08632b` 的四项门禁也都 EXIT 0，但默认/TaskPath 各是 4 warnings，且该批尚按 rolling pin 规则待后续回填。资源 closeout 与集成记录仍待 DSH 完成。
+- **Task 流转：** 本次结论为 REJECT，建议从 `in_review` 转为 `changes_requested`，先同步当前状态记录；以新 clean head 再做 fresh-context Review。通过后转 `approved`，由 DSH 集成并在集成后重跑/记录门禁、补齐当前 pin 与资源 closeout，最终满足逐项 AC 证据、`canonical_evidence_status: complete`、`resource_closeout_status: complete` 后才能 `done`。不建议用 `closed_with_limitations` 代替这些步骤。Task 生命周期依据见[协作协议 §4](<G:/CODEX/New Manga/doc/09_COLLABORATION.md:69>)。
+
+## 明确列出的未执行检查及边界
+
+未运行重型测试、治理脚本或产品命令；未访问远端；未调用 ZCode、模型、付费 API、GUI、Windows 安装/升级/回退流程；未读取或重建私有 manga、模型、数据库或其他用户素材。本次只读检查包括 Git 状态/HEAD/分支、Task pin 表解析、`git cat-file` commit/path/BLOB SHA-256 核验、14 条更正的 LF/CRLF 哈希对照，以及读取现有 gate 日志和审计报告。
+
+ZCode 额度证据显示 provider `1310` / HTTP `429`、EXIT 1、没有 session 或 response，记录明确标注 `NO_RESPONSE_NOT_A_REVIEW`；不能把它算作 Review。`ed17a790`、`52b86d39` 与 `0de08632b` 已有门禁记录均为治理门禁结果，不代表产品通过。[ZCode 额度证据](<G:/CODEX/New Manga/audit/V1-FULL-AUDIT/AUDIT_EVIDENCE_INDEX.md:45>)。

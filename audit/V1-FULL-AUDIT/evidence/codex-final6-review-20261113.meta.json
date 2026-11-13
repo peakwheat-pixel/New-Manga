@@ -1,0 +1,30 @@
+{
+  "schema": "codex-final-review-dispatch/v1",
+  "kind": "seventh review (state sync)",
+  "reviewer": "Codex (fresh independent context)",
+  "cli": "codex-cli 0.162.0",
+  "model": "gpt-6-luna",
+  "reasoning_effort": "xhigh",
+  "sandbox": "danger-full-access (read-only-instructed; read-only/workspace-write cannot spawn child processes: Windows error 740)",
+  "session_id": "01a1d553-c53c-7891-a2ae-3c35d1507a7c",
+  "reviewed_head": "9bd7264ca3b91a5ddcfe831f9b1beeb47e13dca3",
+  "expected_head": "9bd7264ca3b91a5ddcfe831f9b1beeb47e13dca3",
+  "branch": "main",
+  "exit": 0,
+  "elapsed_seconds": 1036.6,
+  "started_at_local": "2026-11-13T22:50:35+08:00",
+  "decision": "REJECT",
+  "result_path": "audit/V1-FULL-AUDIT/reports/CODEX-FINAL6-REVIEW-2026-11-13.md",
+  "result_sha256": "D4DAE4D93BB2A8307499685E1A34E119E16E72420AE1E6F102C7EBC21F2C90F6",
+  "stdout_path": "audit/V1-FULL-AUDIT/evidence/codex-final6-review-20261113.stdout.log",
+  "stdout_sha256": "F96D77C5C16E5E8D2155411B132C57B7FEE60DDE5CDA50D43D9A782F28F5C4BC",
+  "raw_stderr_path": "G:\\CODEX\\New Manga.workspace\\task-envs\\NEW-MANGA-V1-FULL-AUDIT\\codex-final6-20261113\\stderr.log",
+  "raw_stderr_bytes": 997422,
+  "raw_stderr_sha256": "80BE311712112D01FD940A8DCBE217ACC997E4F4D3C73219CD2F9620F5442254",
+  "notes": [
+    "Worktree clean before and after.",
+    "Confirmed 509/509 pins and 14 corrections.",
+    "Closed AUDIT-08 P3-4 as verified/clarified.",
+    "Remaining F1: status summaries (STATUS, TASK_LEDGER, PLAN, AUDIT_STATUS, AUDIT_PLAN, GATE, FINAL) not synced to in_review/509/seven reviews; warning count for 0de08632b was 4 not 3; AUDIT_TASKS P3-4 and P7 snapshot wording."
+  ]
+}
