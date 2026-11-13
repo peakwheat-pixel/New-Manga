@@ -1,0 +1,6 @@
+page=bookshelf window=True at=1582.2ms shot=ok(28321B) exit=0 hostlog=1316B
+page=workbench window=True at=1569.6ms shot=ok(32555B) exit=0 hostlog=1316B
+page=reader window=True at=1535.2ms shot=ok(34730B) exit=0 hostlog=1313B
+page=settings window=True at=1532.1ms shot=ok(59932B) exit=0 hostlog=1315B
+pages_ok=True shots_ok=True host_logs_ok=True appdata_unchanged=True
+P2_SMOKE PASS

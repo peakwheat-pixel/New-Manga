@@ -1,0 +1,93 @@
+{
+  "round": "MAINT-1 P2 visible ui smoke",
+  "at_utc": "2026-11-13T19:09:50.2519891Z",
+  "exe": "G:\\CODEX\\New Manga\\apps\\desktop-avalonia\\src\\NewManga.App\\bin\\Release\\net9.0\\win-x64\\NewManga.App.exe",
+  "sidecar": "G:\\CODEX\\New Manga.workspace\\task-envs\\HOST-CORECLIENT-1\\sidecar-copy",
+  "pages": [
+    {
+      "page": "bookshelf",
+      "window_seen": true,
+      "window_visible_ms": 1582.2,
+      "window_size": {
+        "width": 1116,
+        "height": 799
+      },
+      "screenshot": "G:\\CODEX\\New Manga\\verification\\MAINT-1-RELEASE-MONITOR\\tools\\ui-smoke\\page-bookshelf.png",
+      "screenshot_bytes": 28321,
+      "screenshot_status": "ok",
+      "exit_code": 0,
+      "elapsed_ms": 13316.1,
+      "host_log_bytes": 1316,
+      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\newmanga-p2-bookshelf-e2caedba",
+      "theme_home": "C:\\Users\\49745\\AppData\\Local\\Temp\\newmanga-p2-theme-bookshelf-e2caedba"
+    },
+    {
+      "page": "workbench",
+      "window_seen": true,
+      "window_visible_ms": 1569.6,
+      "window_size": {
+        "width": 1116,
+        "height": 799
+      },
+      "screenshot": "G:\\CODEX\\New Manga\\verification\\MAINT-1-RELEASE-MONITOR\\tools\\ui-smoke\\page-workbench.png",
+      "screenshot_bytes": 32555,
+      "screenshot_status": "ok",
+      "exit_code": 0,
+      "elapsed_ms": 13254.3,
+      "host_log_bytes": 1316,
+      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\newmanga-p2-workbench-ed69829f",
+      "theme_home": "C:\\Users\\49745\\AppData\\Local\\Temp\\newmanga-p2-theme-workbench-ed69829f"
+    },
+    {
+      "page": "reader",
+      "window_seen": true,
+      "window_visible_ms": 1535.2,
+      "window_size": {
+        "width": 1116,
+        "height": 799
+      },
+      "screenshot": "G:\\CODEX\\New Manga\\verification\\MAINT-1-RELEASE-MONITOR\\tools\\ui-smoke\\page-reader.png",
+      "screenshot_bytes": 34730,
+      "screenshot_status": "ok",
+      "exit_code": 0,
+      "elapsed_ms": 13328.9,
+      "host_log_bytes": 1313,
+      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\newmanga-p2-reader-bccaf5ca",
+      "theme_home": "C:\\Users\\49745\\AppData\\Local\\Temp\\newmanga-p2-theme-reader-bccaf5ca"
+    },
+    {
+      "page": "settings",
+      "window_seen": true,
+      "window_visible_ms": 1532.1,
+      "window_size": {
+        "width": 1116,
+        "height": 799
+      },
+      "screenshot": "G:\\CODEX\\New Manga\\verification\\MAINT-1-RELEASE-MONITOR\\tools\\ui-smoke\\page-settings.png",
+      "screenshot_bytes": 59932,
+      "screenshot_status": "ok",
+      "exit_code": 0,
+      "elapsed_ms": 13292.7,
+      "host_log_bytes": 1315,
+      "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\newmanga-p2-settings-50880475",
+      "theme_home": "C:\\Users\\49745\\AppData\\Local\\Temp\\newmanga-p2-theme-settings-50880475"
+    }
+  ],
+  "pages_ok": true,
+  "shots_ok": true,
+  "host_logs_ok": true,
+  "real_appdata": {
+    "path": "C:\\Users\\49745\\AppData\\Roaming\\com.newmanga.desktop",
+    "before": {
+      "exists": true,
+      "files": 524,
+      "bytes": 210443772
+    },
+    "after": {
+      "exists": true,
+      "files": 524,
+      "bytes": 210443772
+    },
+    "unchanged": true
+  }
+}
