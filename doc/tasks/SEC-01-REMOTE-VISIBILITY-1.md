@@ -50,6 +50,17 @@ NEW-MANGA-V1-FULL-AUDIT 的 R1 整改项 SEC-01（`reports/12_REMEDIATION_PLAN.m
 | SEC01-API-PROBE-JSON-1 | AC2 | `verification/SEC-01-REMOTE-VISIBILITY-1/evidence/github-api-probe.json` | `de79702b96f99e663442da3a2158c88d98385962` | `20DE11B666937FE688B9DE40B6527669CB8D8F7EEF9B9970744AE55965674144` | CANONICAL | BLOB |
 | SEC01-API-PROBE2-JSON-1 | AC2 | `verification/SEC-01-REMOTE-VISIBILITY-1/evidence/github-api-probe2.json` | `de79702b96f99e663442da3a2158c88d98385962` | `7A937341DE6A799BB1A91E8CDEE37C9A18BF97BD431C9A99E004E6C87E0A8F1D` | CANONICAL | BLOB |
 
+## Resource Manifest
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| worktree | G:/CODEX/New Manga | PRESERVE_REFERENCED | doc | verification/SEC-01-REMOTE-VISIBILITY-1/evidence/github-api-probe.json | 主工作区保留，不创建/移除 worktree |
+| task-env | - | NOT_APPLICABLE | doc | verification/SEC-01-REMOTE-VISIBILITY-1/evidence/github-api-probe.json | 本 Task 无独立 task-env |
+| agent-output | - | NOT_APPLICABLE | doc | verification/SEC-01-REMOTE-VISIBILITY-1/evidence/github-api-probe.json | 无 agent-output |
+| artifact | verification/SEC-01-REMOTE-VISIBILITY-1 | PRESERVE_REFERENCED | doc | verification/SEC-01-REMOTE-VISIBILITY-1/evidence/github-api-probe.json | 调查证据保留 |
+| dataset/model/test-material | - | NOT_APPLICABLE | doc | verification/SEC-01-REMOTE-VISIBILITY-1/evidence/github-api-probe.json | 未读取私有素材内容 |
+| exchange | - | NOT_APPLICABLE | doc | verification/SEC-01-REMOTE-VISIBILITY-1/evidence/github-api-probe.json | 无外部传输 |
+
 ## 允许修改范围
 
 - `verification/SEC-01-REMOTE-VISIBILITY-1/**`（证据/log/JSON）
