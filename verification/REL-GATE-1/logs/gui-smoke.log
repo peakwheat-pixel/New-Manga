@@ -1,0 +1,3 @@
+START_UTC=2026-11-13T18:02:57.4698664Z
+STATUS=BLOCKED
+REASON=App has no isolated data-root CLI/env entry surface discovered (NEWMANGA_DATA_ROOT is Core-side only); starting the GUI would write the real %APPDATA% root, which this task forbids; no install package present

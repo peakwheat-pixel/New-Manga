@@ -1,0 +1,33 @@
+{
+  "not_run": [
+    "clean install",
+    "installer/uninstall",
+    "real model API calls",
+    "full GUI acceptance"
+  ],
+  "schema": "rel-gate-evidence/v1",
+  "release_gate": "BLOCKED",
+  "gui_smoke": {
+    "status": "BLOCKED",
+    "reason": "no isolated data-root entry point / no install environment; avoiding real user data root; no UIA capture available in this boundary"
+  },
+  "publish_s0": {
+    "result": "FAILED: IL2026 (AvaloniaXamlLoader.Load, JsonSerializer.SerializeToElement) under trimming",
+    "exit": 1,
+    "command": "dotnet publish NewManga.App.csproj -c Release -r win-x64 --self-contained -p:PublishTrimmed=true ..."
+  },
+  "publish_notrim": {
+    "file": "NewManga.App.exe",
+    "bytes": 62627468,
+    "exit": 0,
+    "files": 1,
+    "command": "same without -p:PublishTrimmed=true"
+  },
+  "build": {
+    "warnings": 0,
+    "exit": 0,
+    "errors": 0,
+    "command": "dotnet build apps/desktop-avalonia/NewManga.sln -c Debug"
+  },
+  "head": "3a3dfbbb5a8673128f4c628ae29a1357ead14e83"
+}
