@@ -73,11 +73,11 @@
 
 ### 用户字体许可证备注
 
-`AUDIT-07-CAND-002` 是范围观察：字体服务把可选 `license_note` 当普通文本保存，不验证许可真伪或授权范围；FEA-14-FONT-1 又明确默认不随包分发字体，并把字体渲染消费留给 FONT-2。本轮没有访问用户字体或核验外部许可，tracked font assets 为 0；没有证据表明发生未授权分发。候选状态为 `REVIEW_PENDING`，由 ZCode 判断该边界是否已被既有 FONT-1 limitation 覆盖，或需另开需求/Task；本审计不改变字体导入语义。
+`AUDIT-07-CAND-002` 是范围观察：字体服务把可选 `license_note` 当普通文本保存，不验证许可真伪或授权范围；FEA-14-FONT-1 又明确默认不随包分发字体，并把字体渲染消费留给 FONT-2。本轮没有访问用户字体或核验外部许可，tracked font assets 为 0；没有证据表明发生未授权分发。候选状态当时为 `REVIEW_PENDING`（阶段快照）；2026-11-13 已由 Codex 裁为 **accepted limitation**（FEA-14-FONT-1 已覆盖该边界），本审计不改变字体导入语义。
 
 ## 未执行与结论
 
 - 真实 LaMa/AOT-GAN/BrushNet/FLUX 权重、CPU/GPU 推理、性能/内存/释放、人工 mask/GT、真实漫画和像素级视觉质量：`NOT_RUN` 或 route `NOT_IMPLEMENTED`。
 - Avalonia GUI/TestHost、真实 DPI/缩放、手动改 mask/region、真实 font fallback 和导出视觉对比：`NOT_RUN`。
 - 用户字体许可证来源/授权核验：`NOT_RUN`；仓库未跟踪字体，不等于用户字体已获许可。
-- Task 全局 AC2/AC3/AC4 继续 `PARTIAL`，Release Gate 继续 `BLOCKED`，Task 保持 `in_progress`。AUDIT-07 只能作为合成链路与代码路径证据，不能宣称真实图像质量、GUI 可用性或全阶段 PASS。下一项按任务 DAG 执行 AUDIT-09；AUDIT-07-CAND-001/002 均由 ZCode 最终裁决。
+- Task 全局 AC2/AC3/AC4 继续 `PARTIAL`，Release Gate 继续 `BLOCKED`，Task 保持 `in_progress`。AUDIT-07 只能作为合成链路与代码路径证据，不能宣称真实图像质量、GUI 可用性或全阶段 PASS。下一项按任务 DAG 执行 AUDIT-09；AUDIT-07-CAND-001/002 已由 Codex 最终裁决（finding P2 / accepted limitation）。

@@ -3,7 +3,7 @@ id: NEW-MANGA-V1-FULL-AUDIT
 title: V1 全项目独立审计
 kind: research
 governance_version: 3
-status: in_progress
+status: changes_requested
 resume_status: in_progress
 approval: user_approved
 suggested_owner: Codex
@@ -34,8 +34,8 @@ allowed_paths:
 ## Acceptance Criteria
 - [x] AC1：固定Git/环境及有效源码清单，记录dirty和历史缺口。 <<MET>>
 - [x] AC2：15 项专项逐项有结果或具名阻断，关键链路深读与测试。 <<MET>>
-- [ ] AC3：完整日志、去重问题台账、整改路线、正式报告和 Release Gate 落盘。 <<PARTIAL: 交付文件齐全，11 候选已由 Codex 裁决并更新 11_ISSUES/12/13/FINAL/AUDIT_ISSUES；当前剩余为交付文档收敛：当前状态摘要与专项报告阶段快照标注、四轮 Review 结论同步与最终 HEAD 门禁证据归档。收敛完成后由 DSH 集成，故暂不可收口>>
-- [ ] AC4：独立复核、证据 pin 和治理检查可核验；未满足不得置 done。 <<PARTIAL: 496 条 Canonical Evidence 已复算通过（含 14 条 worktree→BLOB 更正）；Codex 首轮 Review（reviewed_head=d92859c9a）与返修复审（reviewed_head=226eb048，session 01a1d4f3-9736-7402-8c3e-ce701f1e2490，EXIT 0）结论均为 REJECT，已归档并 pin；本轮已回填 70e92876/b72363aa/076dfbb6 gate 批次与复审证据、重命名 9 个重复 evidence_id、统一 496 计数。最终复审后仍需 DSH 集成与 closeout，故不可收口>>
+- [ ] AC3：完整日志、去重问题台账、整改路线、正式报告和 Release Gate 落盘。 <<PARTIAL: 交付文件齐全，11 候选已由 Codex 裁决并更新 11_ISSUES/12/13/FINAL/AUDIT_ISSUES；Codex 已完成六轮独立 Review（最新 `c2f5bc827`，REJECT：Task AC3/AC4/Rolling 旧轮次摘要与 AUDIT-07/索引旧 ZCode 措辞）；本轮 F1/F2 已修复，Task 置 `changes_requested` 并随后进入 `in_review` 复审。复审与 DSH 集成完成前不可收口>>
+- [ ] AC4：独立复核、证据 pin 和治理检查可核验；未满足不得置 done。 <<PARTIAL: 496 条 Canonical Evidence 已复算通过（含 14 条 worktree→BLOB 更正）；Codex 已完成六轮独立 Review（首轮 `d92859c9a`、复审 `226eb048`、第三轮 `42810143b`、第四轮 `6350081a`、第五轮 `1ae79bb99`、第六轮 `c2f5bc827`，均 EXIT 0、结论 REJECT 属交付文档收敛）；已 pin 的 gate 批次含 ed17a790、52b86d39、70e92876、b72363aa、076dfbb6、d248ed28、fee77cc0、86f47fee、c9953bac 与 6350081a 归档批次。最后一批门禁未回填属滚动 limitation（已被 Review 接受）。本轮回填第六轮 Review 与最新门禁后，仍需最终复审与 DSH 集成/closeout，故不可收口>>
 
 ## 允许修改范围
 仅frontmatter所列。审计日志/测试脚本由主控单一写入。三名子代理只读同一固定产品HEAD，无并发写入。用户显式审计目录优先于常规verification路径；运行派生产物放相邻workspace task-env。
@@ -575,7 +575,7 @@ src/**、apps/**、原有tests/**、共享契约、Schema、依赖、真实用�
 | exchange | — | NOT_APPLICABLE | — | — | 无外部传输 |
 
 ## Rolling checkpoint
-[audit/V1-FULL-AUDIT/AUDIT_RESUME.md](../../audit/V1-FULL-AUDIT/AUDIT_RESUME.md) 顶部 2026-11-13 Codex 复审检查点为最新恢复入口。Canonical Evidence 含 496 条 BLOB pins、七批 gate 证据与三轮 Codex Review 证据；Codex 裁决 11 候选（4 finding / 4 INVESTIGATE / 1 accepted limitation / 2 close）。第三轮（最终）复审结论 REJECT（要求文档收敛）；本轮已收敛并重跑门禁，待 DSH 固定新 head 并完成集成与 closeout。Release Gate BLOCKED，AC1/AC2 MET，AC3/AC4 PARTIAL，Task in_progress。
+[audit/V1-FULL-AUDIT/AUDIT_RESUME.md](../../audit/V1-FULL-AUDIT/AUDIT_RESUME.md) 顶部 2026-11-13 Codex 复审检查点为最新恢复入口。Canonical Evidence 含 496→509 条 BLOB pins、十批 gate 证据与六轮 Codex Review 证据；Codex 裁决 11 候选（4 finding / 4 INVESTIGATE / 1 accepted limitation / 2 close）。第六轮复审（`c2f5bc827`）结论 REJECT（F1 Task 旧轮次摘要、F2 AUDIT-07/索引旧措辞）；本轮已修复并置 `changes_requested`→`in_review`，最终复审与 DSH 集成/closeout 待完成。Release Gate BLOCKED，AC1/AC2 MET，AC3/AC4 PARTIAL，Task 未完成。
 
 ## 2026-10-24 推送准备补充授权
 
@@ -674,3 +674,9 @@ DSH 接任 Lead / Architect / Integrator（见 `doc/GOVERNANCE_TAKEOVER_2026-10-
 - 结论：**REJECT**。复核确认 441/441 唯一 pins、无重复 evidence_id、14 项 worktree→BLOB 更正正确、六批门禁记录一致；076dfbb6 已 pin、d248ed28 pinbackfill 后门禁已重跑。
 - 剩余返修（本轮已收敛）：当前状态措辞统一为 441 与 AC1/AC2 MET/AC3/AC4 PARTIAL、历史 pin 计数（371/398/428）标注为历史检查点、专项报告旧 ZCode 待裁措辞改为阶段快照、`AUDIT-14-CAND-003` 改为“未证明当前发布会失败，也未验证成功”。
 - 11 候选裁决与计数维持：4 finding / 4 INVESTIGATE / 1 accepted limitation / 2 close；产品 P0/1/2/3=0/0/2/2；开放 finding 7；`AUDIT-11-INC-001` 维持 INVESTIGATE。AC1/AC2 MET；AC3/AC4 PARTIAL；Task in_progress；Release Gate BLOCKED。
+
+## 2026-11-13 Codex 第六轮复审（c2f5bc827）——changes_requested
+
+- Reviewer：Codex 全新上下文；`reviewed_head=c2f5bc8273314f18fe91ea29781339f659872899`；session `01a1d539-0bb2-7553-a904-d0ce28be7e2f`；EXIT 0；1,397.3s；工作树前后 clean。原始报告 `reports/CODEX-FINAL5-REVIEW-2026-11-13.md`。
+- 结论：**REJECT**。确认 496/496 pins、无重复、14 项更正正确；滚动门禁 limitation 被明确接受。剩余：F1 Task AC3/AC4/Rolling 仍按四轮/三轮描述（与五轮记录冲突）；F2 `AUDIT-07` 第 76 行与 `AUDIT_EVIDENCE_INDEX` 仍写候选待 ZCode。
+- 处置：本轮已修复 F1/F2，Task 置 `changes_requested`，随后改回 `in_review` 并派发第七轮复审；复审通过后由 DSH 集成、补齐治理检查与资源 closeout，再依生命周期更新状态。AC1/AC2 MET；AC3/AC4 PARTIAL；Release Gate BLOCKED。
