@@ -48,7 +48,6 @@
 |FEA-14-EDIT-1|FEA-14-S5-PREQ-1|**closed_with_limitations**（v13；P16–P20）|
 |FEA-14-AI-1|FEA-14-S5-PREQ-1|**closed_with_limitations**（v14；P21–P25；S5=25/25）|
 |FEA-15-ACCEPT-1|FEA-14-AI-1|**closed_with_limitations**（失败/NOT_RUN 保留）|
-|FEA-15-DIAG-ACL-1 / FEA-15-PIN-EOL-GOV-1|FEA-15-ACCEPT-1|done|
 |FEA-15-PIN-POLICY-1|FEA-15-PIN-EOL-GOV-1|done（ZCode；新 pin BLOB；历史保留）|
 |GOV-CHECKER-NOTASK-1|FEA-15-PIN-POLICY-1|done（空窗；Review/终裁）|
 |GOV-REFINCIDENT-1|GOV-CHECKER-NOTASK-1|done（根因 UNKNOWN）|
