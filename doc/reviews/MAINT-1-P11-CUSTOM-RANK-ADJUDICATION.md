@@ -46,3 +46,10 @@
 - 或把 `:1085` 的全量迁移提前到任何仓储读取之前。
 两种改法都不动 `src/**`，不改契约，符合路线 (a)。
 **验收**：该用例通过 + 全量 pytest 0 failed + .NET/pins/check 不降 + 独立 Review。
+
+## 可执行修复提案（轮次 20，未实施）
+
+- 失败点：`tests/fea11/test_source_match.py:1048` 在 **v7** 库上构造 `SqliteLibraryRepository(conn)`，`:1052` 调 `runtime._planner.plan` → `library.py:217` 列清单含 v12 的 `custom_rank`。
+- 提案：把 `:1085` 的 `MigrationRunner(conn, migrations).apply_pending()` 提前到 `:1048` 之前（legacy 行已在 `:1029-1039` 用裸 SQL 写入，不受影响）；若 `:1069-1120` 存在"库仍为 v7/v8"的版本断言，需同步调整或改为断言"迁移后版本 == 最新"。
+- **未实施原因**：本会话上下文不足以安全核完 `:1069-1120` 的断言面，编辑可能破坏用例原意。留待新会话执行。
+- 验收：该用例通过 + 全量 pytest 0 failed + `.NET`/pins/check 不降 + 独立 Review。
