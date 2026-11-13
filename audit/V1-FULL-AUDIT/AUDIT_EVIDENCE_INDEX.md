@@ -7,6 +7,8 @@
 - `evidence/codex-final-review-20261113.prompt-used.txt`、`.stdout.log`、`.stderr-sanitized.txt`：实际派发 prompt（含 expected_head 与沙箱限制说明）、stdout 原文、stderr 精简元数据；完整 raw stderr 仅保留于 Task workspace。
 - 说明：Codex `-s read-only` / `-s workspace-write` 在本机无法 spawn 子进程（Windows error 740），前两次派发在 `b72363aa` 前置检查阶段停止（第二次另因 8 个未跟踪 gate 文件判定工作树不 clean），不构成 Review；第三次以 `-s danger-full-access` 派发并严格只读，Review 前后工作树均 clean。
 
+- `logs/task-card-pin-recompute-20261113-after-review.log`、`evidence/task-card-pin-recompute-20261113-after-review.json`：Codex Review 返修后 Task 卡复算（428 条 pins，含 30 条新 pin 与 9 个重复 evidence_id 重命名）；428/428 PASS，0 fail。
+
 ## 2026-11-13 P7 DSH 集成核验与 ZCode 额度复核
 
 - `reports/P7-INTEGRATION-CONSISTENCY-CHECK-2026-11-13.md`：DSH 集成核验记录（非 ZCode Review）；371 条 Canonical Evidence 复算、14 条 worktree/BLOB 基准更正、报告计数/AC/R1–R4/Gate 一致性与文档漂移清单。

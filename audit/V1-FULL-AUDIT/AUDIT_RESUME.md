@@ -12,6 +12,8 @@
 - 裁决要点：05/06 三候选 INVESTIGATE；07-001 finding P2；07-002 accepted limitation；09-001 finding P3；12-001 finding P3（交付工具）；14-001 finding（非产品 P0–P3 计数，P3 优先级）；14-002 INVESTIGATE；14-003 close；14-004 close；AUDIT-11-INC-001 维持 INVESTIGATE 且不计 P。产品计数 P0=0/P1=0/P2=2/P3=2；开放 finding 共 7（3 原有 + 4 新增）。AC1 MET；AC2 可收口 MET（保留原 FAIL/BLOCKED/PARTIAL 与 NOT_RUN）；AC3/AC4 不可收口；Task 维持 in_progress；Release Gate BLOCKED。
 - 下一步：DSH 按 Review 要求同步裁决与返修文档、pin 70e/b723 批次与本次 Review 证据、重命名重复 evidence_id、统一 398 计数，再以修订后 clean head 交独立上下文复审（Codex），最后由 DSH 集成与生命周期裁决。
 
+- 返修执行（2026-11-13）：同步 Task/STATUS/AUDIT_* 状态与 Codex-first 裁决；Task AC2=MET、AC3/AC4 保留 PARTIAL 并更新原因；回填 70e92876 与 b72363aa gate 批次及本次 Review 证据共 30 条 pins；重命名 9 个重复 evidence_id（`AUDIT-RUNNER-SOURCE-2-5A54390F` 与 8 个 `QUOTA-POSTPIN-GATE-*-ED17A790`）；Task 卡 pins 428/428 复算通过。下一步以修订后 clean head 派发 Codex 复审。
+
 ## 2026-11-13 P7 DSH 续审与集成核验检查点
 
 - 复原与固定：HEAD=`48ccb75ce1a547cf89e4d38cd577b868e15de5ce`，branch=`main`，工作树 clean；与用户记录一致，未 reset/clean/merge/改历史或覆盖他人文件。
