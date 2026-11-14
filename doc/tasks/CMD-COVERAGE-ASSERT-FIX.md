@@ -84,7 +84,7 @@ registry —— 这组断言**根本不需要 sidecar**，却被关在 sidecar �
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
 | AC1/AC2 | `dotnet test --filter CommandCoverageRoutingTests`（无夹具） | 无 sidecar | **4 passed**（76 ms） | `verification/CMD-COVERAGE-ASSERT-FIX/README.md` §3 |
-| AC3 判别力 | 同上 `AC3_AnOutOfRouteCommand_IsReportedAsUnrouted`（合成 + 真实数据探针） | 无夹具 | **PASS**（三种方式验证同一谓词） | 同上 |
+| AC3 判别力 | 同上 `AC3_AnOutOfRouteCommand_IsReportedAsUnrouted`（合成 + 真实数据探针） | 无夹具 | **PASS**（三种方式验证同一谓词） | 同上 §3 |
 | AC4 | 设夹具跑原测试 | 旧 sidecar（能启动） | **1 passed**（修复前 `Expected 111 / Actual 90` 失败）；跨域拒绝断言保留未改 | 同上 §3 |
 | AC5 | `git diff --stat` | 仓库根 | 仅测试 + 文档，**零 `src/**` 改动** | 同上 §2 |
 | AC6 | 无夹具全量 CoreClient；四件套 | 仓库根 | **186 / 0 / 26**（本卡前 182/0/26，skip 未增加）；pins 18/18、inventory `1/80/6=87` | `four-pieces.log` |
@@ -106,8 +106,8 @@ registry —— 这组断言**根本不需要 sidecar**，却被关在 sidecar �
 
 | finding | 处置 |
 |---|---|
-| **P2-1 未强制"exactly one route"**：把 `create_region` 加入 `SourceSyncCommandNames` 后新类仍 4/4 绿（重叠未被发现） | **已修**：`EveryUncoveredCommand_BelongsToADispatcherRoutedFamily` 增 `Assert.Empty(covered.Intersect(families))`；新增 `P2_1_AnOverlappingRoute_IsReported`（真实数据探针）。实测把 `create_region` 塞进 `SourceSyncCommandNames` → **5/5 变红**，还原后 5 passed。 |
-| **P2-2 表述过强**：六个 `HostDomainService` 在生产 `src/**` 从未实例化，生产只经 `HostRuntime` → `HostCommandDispatcher` | **已修（表述）**：README §4.1 明确本守卫校验的是"registry 域划分与六服务端口契约抽象的一致性"，**不证明生产可达性**。 |
+| **P2-1 未强制"exactly one route"**：把 `create_region` 加入 `SourceSyncCommandNames` 后新类仍 4/4 绿（重叠未被发现） | **已修**：`EveryUncoveredCommand_BelongsToADispatcherRoutedFamily` 增 `Assert.Empty(covered.Intersect(families))`。曾加过一个 `P2_1_AnOverlappingRoute_IsReported` 自证测试，r2 复核指出它只测 BCL，**已删除**。真实判别力证据是 r2 复核与本卡各自做的变异实验：精确地把 `create_region` 加进 HashSet → **1 failed / 3 passed**（失败项正是含 `Assert.Empty` 的那个），还原后 4 passed。 |
+| **P2-2 表述过强**：六个 `HostDomainService` 在生产 `src/**` 从未实例化，生产只经 `HostRuntime` → `HostCommandDispatcher` | **已修（表述）**：README §4.1 明确本守卫校验的是"registry 域划分与六服务端口契约抽象的一致性"，**不证明生产可达性**。测试类注释已同步更正。 |
 | **P2-3 引用了错误的保证链**：`extract-command-surface.py --check` 只比对旧 Rust `PRODUCTION_COMMANDS` 与快照；`core-command-probe.json` 25 条里没有 `drafts_*`/`source_*` | **已修**：README §4.3 更正，并明确"这 21 条与 Core handler 的一致性**未被覆盖**，属未验证面"。 |
 | P3 `186/0/26` 未进 `four-pieces.log` | **已修**：重新生成日志并写入该数字。 |
 | P3 提交越界带入 `verification/FEA-09/logs/wire-redacted.ndjson` | **已修（我方错误，原样登记）**：`git checkout 9a79b2a69 -- <path>` 还原，diff 归零，`verify_pins` 18/18。这是本会话**第二次**犯同一错误（`git add -A` 卷走 .NET 测试写脏的该文件），已在卡面登记。 |

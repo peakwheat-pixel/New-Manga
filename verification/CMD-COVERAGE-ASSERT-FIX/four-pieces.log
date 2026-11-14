@@ -1,4 +1,4 @@
-# CMD-COVERAGE-ASSERT-FIX four-pieces (r2) 2026-11-15T01:22:28.9388011+08:00
+# CMD-COVERAGE-ASSERT-FIX four-pieces (r3) 2026-11-15T01:30:08.0175081+08:00
 ## check.ps1
 Governance scope: 15 current documents; no historical directory scan.
 Task: doc\tasks\MAINT-1-RELEASE-MONITOR.md
@@ -15,4 +15,6 @@ OK: rendered counts match FEA-C07 doc
 ## CoreClient 无夹具全量
 186 passed / 0 failed / 26 skipped / 212 total (本卡前 182/0/26/208；skip 未增加)
 ## 路由覆盖测试
-CommandCoverageRoutingTests: 5 passed（无 sidecar）
+CommandCoverageRoutingTests: 4 passed（无 sidecar）
+## 重叠探针判别力（精确，只改 HashSet）
+1 failed / 3 passed；失败项 = EveryUncoveredCommand_BelongsToADispatcherRoutedFamily（含 Assert.Empty）

@@ -4,12 +4,17 @@ using Xunit;
 namespace NewManga.CoreClient.Tests.Commands;
 
 /// <summary>
-/// E-1 / CMD-COVERAGE-ASSERT-FIX: every production command is reachable through exactly one route —
+/// E-1 / CMD-COVERAGE-ASSERT-FIX: every production command belongs to exactly one route —
 /// either one of the six typed <see cref="HostDomainService"/> ports, or the
 /// <see cref="HostCommandDispatcher"/> direct family (<c>Drafts</c> / <c>SourceSync</c>).
 ///
-/// These facts read only the static registry plus the services' <c>Descriptors</c> projection, so they
-/// need **no sidecar**. The old version of this coverage check lived behind <c>[SidecarFact]</c>, so it
+/// Scope caveat (r1 复核 P2-2): the six `HostDomainService` classes are a CONTRACT-TEST abstraction —
+/// production `src/**` never instantiates them; the real dispatch path is `HostRuntime` →
+/// `HostCommandDispatcher`. What these facts pin is therefore the consistency between the registry's
+/// domain split and that six-port abstraction, NOT production reachability.
+///
+/// They read only the static registry plus the services' <c>Descriptors</c> projection, so they need
+/// **no sidecar**. The old version of this coverage check lived behind <c>[SidecarFact]</c>, so it
 /// skipped in the normal fixture-less suite — which is how it stayed broken: it asserted that the six
 /// services covered all 111 commands, while 21 of them (Drafts 6 + SourceSync 15) are dispatcher-routed
 /// by design.
@@ -144,25 +149,5 @@ public sealed class CommandCoverageRoutingTests
             !DispatcherRoutedDomains.Contains(HostCommandRegistry.All[name].Domain));
         var withoutVictim = covered.Where(name => name != victim).ToHashSet(StringComparer.Ordinal);
         Assert.Equal(victim, FirstUnrouted(HostCommandRegistry.All.Keys, withoutVictim, families));
-    }
-
-    /// <summary>
-    /// P2-1 (r1 复核) discriminating power: the "exactly one route" rule must reject an overlap,
-    /// i.e. a command that a typed service claims AND that is listed in a dispatcher family.
-    /// </summary>
-    [Fact]
-    public void P2_1_AnOverlappingRoute_IsReported()
-    {
-        var covered = CoveredNames();
-        var families = DispatcherFamilyNames();
-
-        // Baseline: no command is on both routes.
-        Assert.Empty(covered.Intersect(families, StringComparer.Ordinal));
-
-        // Real-data probe: pretend one genuinely typed command is also a dispatcher-family member.
-        var victim = covered.First(name =>
-            !DispatcherRoutedDomains.Contains(HostCommandRegistry.All[name].Domain));
-        var familiesWithOverlap = new HashSet<string>(families, StringComparer.Ordinal) { victim };
-        Assert.Contains(victim, covered.Intersect(familiesWithOverlap, StringComparer.Ordinal));
     }
 }
