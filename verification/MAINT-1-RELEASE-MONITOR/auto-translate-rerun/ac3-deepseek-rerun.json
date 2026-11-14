@@ -1,0 +1,164 @@
+{
+  "ac": "AC3/AC4",
+  "generated_at_utc": "2026-11-14T08:38:02Z",
+  "sidecar": "G:\\CODEX\\New Manga.workspace\\artifacts\\release\\NewManga-0.1.1-win-x64\\core-sidecar",
+  "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\REAL-TRANSLATE-PROVIDER-1\\work-root",
+  "book_id": "14340ddad0ed472fbe687fe12340c5d8",
+  "command": "translate_untranslated",
+  "translate_provider": "openai-compatible-translation",
+  "label": "deepseek-rerun",
+  "api_key_read_by_tool": false,
+  "commands": [
+    {
+      "command": "core.ping",
+      "result": {
+        "status": "ready",
+        "protocol_version": {
+          "major": 2,
+          "minor": 3
+        },
+        "capabilities": [
+          "library.list_books"
+        ]
+      }
+    }
+  ],
+  "overrides": {
+    "provider_bindings": {
+      "ocr": "manga-ocr",
+      "translate": "openai-compatible-translation"
+    }
+  },
+  "start": {
+    "run_id": "run-aa71e2b1f91a47bdbfe334deaa73e8ad",
+    "status": "pending"
+  },
+  "run_id": "run-aa71e2b1f91a47bdbfe334deaa73e8ad",
+  "terminal": "completed_with_failures",
+  "status_transitions": [
+    "pending",
+    "completed_with_failures"
+  ],
+  "elapsed_ms": 400.8,
+  "command_traces": {
+    "GetRunSnapshot_request": null
+  },
+  "task_projection": {
+    "run_status": "completed_with_failures",
+    "overall_progress": 1.0,
+    "counts": {
+      "total": 8,
+      "completed": 0,
+      "failed": 5,
+      "skipped": 3,
+      "blocked": 0,
+      "waiting": 0,
+      "processing": 0
+    },
+    "blocked_reasons": [],
+    "step_status": {
+      "ocr": {
+        "failed": 5
+      }
+    },
+    "error_codes": [
+      {
+        "step_type": "ocr",
+        "status": "failed",
+        "error_code": "INVALID_INPUT"
+      },
+      {
+        "step_type": "ocr",
+        "status": "failed",
+        "error_code": "INVALID_INPUT"
+      },
+      {
+        "step_type": "ocr",
+        "status": "failed",
+        "error_code": "INVALID_INPUT"
+      },
+      {
+        "step_type": "ocr",
+        "status": "failed",
+        "error_code": "INVALID_INPUT"
+      },
+      {
+        "step_type": "ocr",
+        "status": "failed",
+        "error_code": "INVALID_INPUT"
+      }
+    ],
+    "tasks": [
+      {
+        "target_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "status": "skipped",
+        "steps": []
+      },
+      {
+        "target_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "status": "skipped",
+        "steps": []
+      },
+      {
+        "target_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "status": "skipped",
+        "steps": []
+      },
+      {
+        "target_id": "6814353f6d8544d6945ad5748d518f47",
+        "status": "failed",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "INVALID_INPUT"
+          }
+        ]
+      },
+      {
+        "target_id": "f54739037525486e8704db23db5c0dc1",
+        "status": "failed",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "INVALID_INPUT"
+          }
+        ]
+      },
+      {
+        "target_id": "c239be827f3a4448848d2c42bffc05d1",
+        "status": "failed",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "INVALID_INPUT"
+          }
+        ]
+      },
+      {
+        "target_id": "7a39226851774f01a4cdb89bcf118296",
+        "status": "failed",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "INVALID_INPUT"
+          }
+        ]
+      },
+      {
+        "target_id": "221d772e601e480e8e7508dfe9aff380",
+        "status": "failed",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "INVALID_INPUT"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -281,3 +281,11 @@ NEW-MANGA-V1-FULL-AUDIT 与 R1–R4 整改、SEC-01/02/03、CORE-01、AUDIT-07/0
 - **四卡拆分**：T-A 配置桥（Core，唯一必做新代码）→ T-B 运行路径收口（Host）→ T-C 入口与文案（App）；T-D 质量项可选。**明确排除**新 wire 命令与新 `IHostController` 成员。
 - **失败模式已盘点**：403→`PROVIDER_AUTH_FAILED`（不可重试，qwen 已遇）；404 模型名与 402 无余额都落 `INVALID_INPUT`（**语义错位**）；429→`PROVIDER_RATE_LIMITED`；**无 token/成本计量**（账单风险）；配置变更需重启 Core。
 - **DSH 补充（§10）**：既有 `REAL-TRANSLATE-PROVIDER-1` 已把装配链路跑通（`PROVIDER_NOT_CONFIGURED`=0，全部 429），**BLOCKED 仅因 key 无额度**；本机 DeepSeek key 已实测可用，故可**零代码重跑**换取「Core 侧端到端」证据（但无法证明 Host/UI 侧，因该探针走冻结 Core stdio 直连）。
+
+### 轮次 29（2026-11-14，本会话续）—— Core 端到端重跑：尝试并**未成功**（如实记录）
+
+- **做了什么**：复用 `run_translate_probe.py`，把旧 `REAL-TRANSLATE-PROVIDER-1` 隔离根的 profile 改为 DeepSeek（`api.deepseek.com/v1` + `deepseek-chat`），用 `cmdkey /generic` 写入与 Core `CRED_TYPE_GENERIC` 兼容的凭据，然后真跑 `StartRun translate_untranslated`。
+- **结果**：`completed_with_failures`，8 target = **3 skipped + 5 failed（全部 `ocr / INVALID_INPUT`）**，**translate step 从未执行**。证据 `verification/MAINT-1-RELEASE-MONITOR/auto-translate-rerun/`。
+- **为什么不算成功（三条，缺一不可）**：① 隔离根已被上次运行污染（`library.db` 已有 26 regions，非 0-region 初始态）；② sidecar 是 `0.1.1` 发布包，**不是**原验证用的 RELEASE-REPACK-2 models sidecar；③ 该 Task 报告本身写明「identity 回退运行另有 5 个 OCR `INVALID_INPUT`（region-less 页既有行为）」，本次同型，**不能归因于 DeepSeek 配置**。
+- **结论修正**：「零代码重跑即可拿到 Core 端到端」的设想在当前工作区**不成立**。前置是「干净 fixture（8 页 / 0 regions）」+「含 OCR 模型的 sidecar（或改跑源码 Core）」，两者都不现成。
+- **未变**：provider 层真实调用已验（翻译 + 视觉 OCR 两份日志）；Core→落库端到端**仍未验证**；Gate 仍 `BLOCKED`。
