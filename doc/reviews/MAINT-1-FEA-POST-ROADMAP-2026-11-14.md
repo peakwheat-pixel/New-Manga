@@ -80,3 +80,21 @@
 3. **装配期 provider 约束（实测）**：provider 在装配期一次性构建；只在 `StartRun.overrides` 塞 profile **不生效**（`base_url="" / model="" / credential_ref=None` → `RUN_SNAPSHOT_INCOMPLETE`）；**必须先写 `pipeline_defaults` 再启动 Core**。
 4. region seed 的产品 API 路径：`editing.create_region` → `apply_ocr_result`（勿用 `save_manual_translation`，会触发 manual 保护导致 skipped）。
 5. 证据：`verification/L2-CORE-E2E/`（README §8–§10，含 VERIFIED/INFERRED 分层与 `key_present`）。
+
+### L2 路线 E 终局（2026-11-14，DSH 收口）—— 失败性质已精确到产品缺陷
+
+路线 E（把 `ocr` 改绑**远程**视觉 provider GLM-4V，绕开本地 ONNX 依赖）**仍未取得产出**，但把失败从「缺模型」推进到「**Core 侧缺陷**」：
+
+- **决定性证据**：进程内核对 `create_run` 后的 `run.provider_binding_snapshot["ocr"]`，其中是**完整合法**的 replay 配置 —— `provider_id: glm-vision-ocr`、`execution: { provider_id: openai-vision-ocr, provider_type: openai-compatible-vision, base_url: https://open.bigmodel.cn/api/paas/v4, model: glm-4v-flash, credential_ref, adapter_version, network_profile }`、`execution_digest: sha256:0c582839…`（合法）。
+- **而执行期该 step 仍报 `PROVIDER_NOT_CONFIGURED`**。三种绑定形状均复现：
+
+| # | ocr 绑定 | 结果 |
+|---|---|---|
+| E-1 | 用户 profile id `glm-vision-ocr`（type=openai-compatible-vision） | `ocr / PROVIDER_NOT_CONFIGURED` |
+| E-2 | 固定注册槽 `openai-vision-ocr`（同时误删 translate profile → `RUN_SNAPSHOT_INCOMPLETE`，已排除为操作失误） | 不可用 |
+| E-3 | 固定注册槽 + 保留 translate profile（**正确形状**） | StartRun 通过，**仍** `ocr / PROVIDER_NOT_CONFIGURED` |
+
+- **新排除 5 项**：ocr 绑定缺失（快照证明存在）、槽位 id 写错（E-3 同样失败）、translate 被 profile 段覆盖（E-3 两者并存）、GLM key 未落 vault（cmdkey 成功 + `key_present: true`）、区域缺失（同页 2 region 已 seed、page scope 展开成功）。
+- **结论**：**不是配置形状问题**（形状已被冻结快照证明合法），而是 **Core 侧 vision provider 的就绪/解析判定**未接受该配置。候选根因：`requirements` 的 endpoint/credential 校验、`resolve_for_run` 对 profile-id vs 槽 id 的比较、或 vision provider 需要 detect 前置。**属产品缺陷，需要独立诊断卡**。
+
+**L2 最终状态：`BLOCKED`（性质＝Core 侧 vision provider 解析缺口）。** 三条 scope 路线 + 路线 E 共四次尝试全部穷尽，不再是「环境缺资源」能解释的。

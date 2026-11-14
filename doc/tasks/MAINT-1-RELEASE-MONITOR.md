@@ -331,3 +331,13 @@ NEW-MANGA-V1-FULL-AUDIT 与 R1–R4 整改、SEC-01/02/03、CORE-01、AUDIT-07/0
   - L-AI1-6：`src/**` 中 `reassign_references` 命中 0；`test_prompt_templates.py:221` 以 `not hasattr` 固定
 - **条件 1 进度：0/8 → 3/8**；剩余 5 项（4 张卡 + 1 项 NOT_RUN）。**仍未完成，Gate 仍 BLOCKED**。
 - **教训**：矩阵是处置快照，实施进展不会自动回流；条件类裁决依赖矩阵计数前必须核实现状态。
+
+### 轮次 35（2026-11-14，本会话续）—— L2 路线 E 失败，性质升级为产品缺陷
+
+- **路线 E（远程 GLM-4V 视觉 provider，绕开 ONNX）仍无产出**，但把失败精确定位：
+  - `run.provider_binding_snapshot["ocr"]` 是**完整合法**的 replay 配置（`execution` 含 base_url/model/credential_ref/adapter_version/network_profile，`execution_digest` 合法）
+  - 执行期仍 `ocr / PROVIDER_NOT_CONFIGURED`；**三种绑定形状**（用户 profile id、固定注册槽、固定槽+保留 translate）均复现
+  - 新排除 5 项 ⇒ **不是配置形状问题**，是 **Core 侧 vision provider 的就绪/解析判定**缺陷
+- **L2 最终：`BLOCKED`（Core 侧 vision provider 解析缺口）**；四次尝试（book/detect、region/planning 门、page/ocr 缺模型、page/远程视觉）全部穷尽
+- **建议下一步**：开一张小诊断卡查 `src/infrastructure/providers/**` 的 vision OCR registry 就绪/解析路径（很可能属真实缺陷）；或回到 D（用户提供 ONNX 模型）
+- **Gate 条件 5 维持「部分」**：两条 provider 路径已验；Core→落库未证明，且现在有明确的缺陷指向
