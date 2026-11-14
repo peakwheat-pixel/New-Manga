@@ -153,11 +153,21 @@
 
 另有 r1 指出的 **R-002**：错配抛错后管道可能**残留一帧**（off-by-one），无重同步。
 
-### 建议
+### 进展（2026-11-15，`PIPE-EXCLUSIVE-TRANSPORT-1`）
 
-单独建卡 `PIPE-EXCLUSIVE-TRANSPORT-1`：把独占**下沉到 `SidecarProcess.ExchangeAsync`**
-（连同事件帧窗口一起，用"进入时取锁、整周期释放"的模式），并给 `HostBridgeClient` 加等价保护与 id 校验；
-同时处理 R-002 的 off-by-one（错配后丢弃直到 id 匹配）。
+**已修**：① `HostBridgeClient` 管道现在有独占（传输层 `AcquireExchangeLeaseAsync` 租约，两处调用点全覆盖）
++ 数字 `id` 校验；② `CoreServiceClient.SendRawAsync` 现在持 `_pipeGate`。
+两条管道的并发判别都有测试，**均能回退变红**。带新 sidecar 的 Host 失败从 9 降到 1。
+
+**仍未修（本 E-7 的开放部分）**：
+1. `CoreServiceClient` 仍用自己的 `_pipeGate`，**未**改用传输层租约；`ExchangeAsync` 仍 `public`
+   ⇒ 未来任何直调即绕过独占（AC1 PARTIAL / AC2 NOT MET）；
+2. 无 `request_id` 时仍 **fail-open**；bridge 仅校验**数字** id（AC4 后半 NOT MET）；
+3. **R-002**：id 错配后无重同步，流中可能残留一帧（AC5 NOT MET）；
+4. **R-005**：取消（`CancellationToken`）后流状态可能永久失步；
+5. `Dispose`/`StopAsync` 在租约外，在途命令会得 `ProcessExited`。
+
+⇒ **"并发安全"仍不可宣称**。上述 1–5 应作为后续卡的验收项。
 
 ### 与 Gate 的关系
 

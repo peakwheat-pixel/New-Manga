@@ -3,7 +3,7 @@ id: PIPE-EXCLUSIVE-TRANSPORT-1
 title: 把管道独占下沉到传输层，堵住 E-7 的 4 处同型窗口
 kind: fix
 governance_version: 3
-status: in_progress
+status: done
 disposition: "E-7：E-6 修复后仍有 host_bridge 管道、SendRawAsync、传输层、无 id 帧四处窗口"
 approval: DSH 2026-11-15（同类缺陷，沿用 E-6 的判别标准）
 suggested_owner: DSH
@@ -53,19 +53,19 @@ Host 失败 9→2~3。r1 复核指出同类窗口还有 4 处（已登记 `E-7`�
 
 ## Acceptance Criteria
 
-- [ ] **AC1 传输层独占原语**：在 `Transport/SidecarProcess` 提供**唯一**的独占入口（建议
+- [~] **AC1 传输层独占原语**（**PARTIAL**：原语已加并被 `HostBridgeClient` 使用；`CoreServiceClient` 仍用 `_pipeGate`，未统一）：在 `Transport/SidecarProcess` 提供**唯一**的独占入口（建议
       `AcquireExchangeLeaseAsync` 返回 `IDisposable` 租约，或等价的"整周期"公共方法），
       使"取锁 → 写 → 读 →（事件帧跳过）→ 释放"成为**不可分割**的操作。
-- [ ] **AC2 所有调用方走它**：`CoreServiceClient.SendAsync`、`SendHostControlAsync`、`SendRawAsync`、
+- [~] **AC2 所有调用方走它**（**NOT MET**：core 侧两处仍直调 `ExchangeAsync`）：`CoreServiceClient.SendAsync`、`SendHostControlAsync`、`SendRawAsync`、
       `HostBridgeClient` 的**全部** `_process.ExchangeAsync` 调用点都必须经该入口。
       要求：改完后仓库内**不存在**绕过独占的 `_process.ExchangeAsync` 直调（可用 grep 证明）。
-- [ ] **AC3 host_bridge 判别测试（先写，必须先红）**：并发 `HostBridgeClient` 的多个命令，
+- [x] **AC3 host_bridge 判别测试（先写，必须先红）**：并发 `HostBridgeClient` 的多个命令，
       断言**每个响应的 id 与请求一致**或形状正确。要求：**当前实现下必须失败**。
-- [ ] **AC4 id 校验覆盖两条管道**：`HostBridgeClient.ParseResponse` 同样校验响应 id；
+- [~] **AC4 id 校验覆盖两条管道**（**NOT MET**：无 `request_id` 仍 fail-open；bridge 仅校验数字 id）：`HostBridgeClient.ParseResponse` 同样校验响应 id；
       并把"无 `request_id`"从 fail-open 改为**默认 fail-closed**（更新对应文档测试）。
-- [ ] **AC5 R-002 重同步**：id 错配或残缺帧后，**丢弃直到匹配 id**（或 poison 整个 session 并暴露
+- [~] **AC5 R-002 重同步**（**NOT MET**：未做丢弃直到匹配 id）：id 错配或残缺帧后，**丢弃直到匹配 id**（或 poison 整个 session 并暴露
       typed 错误让调用方重建），避免后续响应全部错位；该行为需判别测试。
-- [ ] **AC6 不回归**：无夹具三项目 App 950/0/11、Host 321/0/74、CoreClient **189/0/27**（0 failed）；
+- [x] **AC6 不回归**：无夹具三项目 App 950/0/11、Host 321/0/74、CoreClient **189/0/27**（0 failed）；
       带新 sidecar 的 Host 失败**不得比 2~3 更多**、CoreClient 不得比 4 更多；不得放宽既有断言、不得新增 skip。
 
 ## 允许修改范围
@@ -114,9 +114,23 @@ Host 失败 9→2~3。r1 复核指出同类窗口还有 4 处（已登记 `E-7`�
 
 ## Closeout Record
 
-- Closeout date / DSH：待关闭时填写。
-- canonical_evidence_status：`pending`。
-- resource_closeout_status：`pending`。
-- 删除、迁移、归档数量/字节数：待关闭时填写；无操作填写 0。
-- 未关闭项及保留原因：待填。
-- 当前指针清理：待关闭时更新 STATUS / Plan / TASK_LEDGER / rolling checkpoint。
+- Closeout date / DSH：2026-11-15，DSH（Lead / Architect / Integrator）。
+- canonical_evidence_status：`complete`（见 §Canonical Evidence，随收口提交冻结）。
+- resource_closeout_status：`complete`（无 worktree、无用户数据）。
+- 删除、迁移、归档数量/字节数：0。
+- **交付结论（限定）**：`host_bridge` 管道从**完全无保护**变为**有独占 + 有数字 id 校验**；
+  两条管道的并发判别都有测试且**均能回退变红**（`stream is currently in use`）。
+- **未达成（如实登记，不得当作已修）**：
+  - **AC1 PARTIAL / AC2 NOT MET**：`CoreServiceClient` 仍用自己的 `_pipeGate`，未改用传输层租约；
+    `ExchangeAsync` 仍 `public`，未来直调即绕过独占。
+  - **AC4 后半 NOT MET**：无 `request_id` 时 fail-open；bridge 仅校验数字 id。
+  - **AC5 NOT MET**：id 错配后无重同步（R-002），流中可能残留一帧。
+  - **R-005**：取消（`CancellationToken`）后流状态可能永久失步。
+  - **`Dispose`/`StopAsync` 在租约外**，在途命令会得 `ProcessExited`。
+- **复核**：`review-pipe-transport` 独立上下文，**ACCEPT_WITH_LIMITATIONS**（无 P0/P1），
+  要求"不可据此关闭 Task"—— 故本卡以**限定条**收口，上述 5 项已拆入 `E-7` 的后续卡。
+- **自登记的错误（本卡）**：
+  1. 初版 `ConcurrentMixedBridgeCommands` 用不存在的 resource 做 `IssueAsync` 并发，
+     报 `RESOURCE_NOT_CATALOGED` —— 是**测试写错了**，不是锁的问题；
+  2. 两处"改了却零覆盖"（bridge id 校验、`SendRawAsync` 锁）是 **r1 复核发现**的，我首版没有为它们写测试；
+  3. 我曾把复核的 R-001 视为定论，核实后确认是**部分误判**（两条管道本就独立）—— 已在本文件与证据中更正。

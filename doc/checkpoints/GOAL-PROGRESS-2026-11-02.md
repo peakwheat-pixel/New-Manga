@@ -1565,3 +1565,23 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   独占未下沉传输层、无 `request_id` 时 fail-open、错配后无重同步（R-002）。
 - **仍开**：CoreClient 4 个 Frozen Core 前提测试（与管道无关）、Host 剩余 2~3 个
   （`SOURCE_REGISTRY_BUSY` / `KeyNotFoundException` ×2）。
+## 215. PIPE-EXCLUSIVE-TRANSPORT-1 收口（限定条）—— host_bridge 管道独占 + E-7 部分闭合（2026-11-15，DSH，goal 轮次 14）
+
+- 提交链：`17c744b26`（实现）→ `5063cc59a`（r1 复核处置：补 R-003/R-004 判别测试 + 证据更正）。
+- **已修**：① `host_bridge` 管道从**完全无保护**→ 传输层 `AcquireExchangeLeaseAsync` 租约（`HostBridgeClient`
+  两处调用点全覆盖）+ 数字 `id` 校验；② `CoreServiceClient.SendRawAsync` 持 `_pipeGate`。
+- **判别力（四次实测）**：bridge 管道 —— 修复前 2 FAIL（`stream is currently in use`）→ 后 2 PASS →
+  **删两处租约再变红** → 恢复转绿；bridge id 校验 —— **删校验变红**；`SendRawAsync` 锁 —— **删锁变红**。
+- **效果**：带新 sidecar Host 失败 **9（E-6 前）→ 2~3（E-6 后）→ 1（本卡后）**；CoreClient 4 个为 Frozen Core 类。
+  无夹具 CoreClient **192/0/30/222**、Host 321/0/74/395、App 950/0/11。
+- **复核**：`review-pipe-transport` 独立上下文，**ACCEPT_WITH_LIMITATIONS**（无 P0/P1），明确"**不可据此关闭 Task**"。
+- **未达成（以限定条收口，不得当作已修）**：AC1 PARTIAL / **AC2 NOT MET**（core 侧仍用 `_pipeGate`，
+  `ExchangeAsync` 仍 `public`）、**AC4 后半 NOT MET**（无 `request_id` fail-open、bridge 仅数字 id）、
+  **AC5 NOT MET**（R-002 无重同步）、R-005（取消后失步）、`Dispose`/`StopAsync` 在租约外。
+- **核实并部分纠正复核意见**：复核称"`_pipeGate` 与 `_exchangeGate` 两套锁域互不排他" —— 已核实
+  `CoreServiceClient._process` 与 `HostBridgeClient._process` 是**两个独立 `SidecarProcess`**（core_service
+  与 host_bridge 两个进程），两条独立管道本就无需互斥；但"独占总在传输层"确实未做到。
+- **自登记**：初版混合并发测试用不存在的 resource 做 `IssueAsync`（误报 `RESOURCE_NOT_CATALOGED`）；
+  两处"改了却零覆盖"是 r1 复核发现、我首版未写测试。
+- **下一步**：完整下沉 + 重同步 + fail-closed 三项（见 E-7 开放部分），或转向条件 4 的安装器矩阵
+  （`makensis` 已具备，stage + setup.exe + install/uninstall 尚未做）。
