@@ -222,6 +222,27 @@ Task<RegionPageTextProjection?> ListPageRegionTextsAsync(
 
 **复核者的明确结论**：当前字节**不满足重冻条件**（记录层两处假陈述必须先修）；修完 P1（不触 inventory）后 r2 只需窄复核三口径 + 两处改动 + 四门禁即可 `approved`，随后由 DSH 回填载体 §6 与冻结记录 §1B 并重冻。
 
+## S7 扩面 errata 与 4B 实施口径（append-only，2026-11-14 DSH 裁决）
+
+依据：起草 `FEA-06-RESIDUAL-4B` scope 时的只读实测（4 跳生产链取证）。本节的扩面**不改变** v1.9 预授权的方法名 / 返回类型 / 统计（仍 1 个方法、`Task<RegionPageTextProjection?>`），因此 **pin 保持 `91e51ab7…`，不需要第二次 UNFREEZE**。
+
+### E-1｜S7 允许面不完整（补 2 个生产文件）
+
+- **事实**：生产链是 **4 跳**——`IHostController`（`IHostController.cs`）→ `HostController`（`HostController.cs:17`）→ `HostRuntime`（`HostRuntime.cs:826-840` 门控样板）→ `CoreServiceClient`（`CoreServiceClient.cs:1104` 样板）。`CoreServiceClient` 中 `region_texts` **0 命中**，wire 调用与解析都必须新写。
+- **裁决**：S7 允许面扩充为包含 `apps/desktop-avalonia/src/NewManga.App/Services/HostRuntime.cs` 与 `apps/desktop-avalonia/src/NewManga.CoreClient/CoreServiceClient.cs`（含其 wire DTO，若需）。该扩面只在 `FEA-06-RESIDUAL-4B` 的 `allowed_paths` 落地；4A 是契约卡，**不实现**这两个文件。
+
+### E-2｜`TARGET_NOT_FOUND` 通道口径（R-8 确认）
+
+- **问题**：若端口传 `regionIds` 而某 region 已消失，Core 抛 `CoreOperationException(TARGET_NOT_FOUND)`；`HostController.IsUiFacingFailure`（`HostController.cs:2932`）把 `CoreOperationException` 统一吞成 `null`，VM 会误判成 `REGION_TEXT_PROJECTION_UNAVAILABLE`。要保留错误码就得改已预授权的返回类型 → 触发第二次 UNFREEZE。
+- **裁决**：端口**不传 `regionIds`**（整页一次，符合 S1-a「一页一次」）。`TARGET_NOT_FOUND` 一律由**本地成员判定**（page 不在当前投影/已删除），不依赖 Core 错误码透传。签名与 v1.9 预授权**完全一致，零额外 UNFREEZE**。
+- **对 P2-2 的补充**：三条原因的判定优先级不变，但 `TARGET_NOT_FOUND` 的来源改为本地判定。
+
+### E-3｜4B 实施顺序（避免半翻转）
+
+1. **第一刀**：`CoreServiceClient.ListPageRegionTextsAsync` wire 方法 + AC6 wire 形状测试（可独立编译/测试，不依赖 UI）；
+2. 随后：Host 三处实现（`HostController` / `NullHostController` / Fake）→ UI 面板 → 判别/负向测试；
+3. **最后**：统计翻转 `80/87` + pin `v1.10`（避免 R-5 半翻转）。
+
 ## Canonical Evidence
 
 进入 `in_review` 前由 DSH 填写；当前为 `proposed`，证据以 `verification/FEA-06-RESIDUAL-4A/README.md` 索引（含 pin 前后值、门禁四件套原始输出、脚本 stdout 与成员表逐行比对）。
