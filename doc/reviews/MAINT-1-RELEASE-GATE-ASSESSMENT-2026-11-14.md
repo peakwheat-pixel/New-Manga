@@ -207,4 +207,26 @@
   且它是**快照**，无自动失效检测（已在矩阵 §6 声明 staleness）。
 - **条件 3 仍不判 MET。** 推进路径按性质分：解 E-2（本环境 PyPI 不可达，不可行）/ 开启 opt-in 矩阵 /
   补那 1 格 / Owner 接受边界。Gate 仍 `BLOCKED`。
+## 16. 条件 4 打包探测（2026-11-15，`RELEASE-PACKAGE-PROBE-1`）—— 条件 4 首次真实推进
 
+条件 4 此前一直被记作"未完成，需重新打包 sidecar + 签名"，但**从未探测过卡在哪一步**。本卡实测：
+
+| # | 步骤 | 状态 |
+|---|---|---|
+| 1 | 构建绑定当前 commit 的包 | ✅ **完成**：`manifest-singlefile.json` 的 `git_head = 5dda04437…`（= 被探测 head），`result=PASS`，`NewManga.App.exe` 99,554,850 B，sha256 `EA01C8C7…76ED` |
+| 2 | 启动冒烟 | ✅ **完成**：`window_found=true`、`window_title="New Manga"`、`host_ready=true`、`exit_code=0`、`exit_kind=natural`；截图显示四页导航与状态栏"Host 就绪" |
+| 3 | 构建 `setup.exe` | 🟡 **工具具备、未执行**：`makensis v3.13` 在 `C:\Program Files (x86)\NSIS`（不在 PATH，`build-installer.ps1` 会 probe）；`.nsi` 用 `File /r "${STAGE_DIR}\*.*"`，不绑定特定布局 |
+| 4 | sidecar 重建 | ❌ **MISSING**：需 PyInstaller，PyPI 不可达 |
+| 5 | 签名 | ⚪ **非阻塞**：`.nsi` 明确记载 unsigned 是已知限制，本机也无证书 |
+| 6 | install/启动/升级回退/四页/卸载矩阵 | ❌ **未执行**（依赖第 3 步产物） |
+
+**三条诚实边界（不得越过）**：
+1. **「包能启动」≠「命令面完整」** —— 冒烟用的是 **2026-10-23 的旧 sidecar**，它早于 `ReorderChapters`
+   （`83e45cfe5`）等多条现行命令（E-2 同根因）。
+2. **包不自包含 sidecar** —— `singlefile-Release-win-x64\` 只有 `NewManga.App.exe`；smoke 是经
+   `--sidecar-dir=` 外部注入。安装器 stage 必须把 sidecar 打进去。
+3. **截图证明首屏，不证明四页可达** —— 冒烟只断言"窗口出现 + Host ready + exit 0"，不逐页导航。
+
+**结论**：条件 4 的真实阻塞已收窄为**一项** —— sidecar 重建（PyInstaller）。安装/卸载/升级/四页矩阵
+在**工具层面全部具备**，只是尚未执行；它们可以先用旧 sidecar 跑通"机制"，但**正式分发包**必须等 sidecar 重建。
+**条件 4 仍不判 MET，Gate 仍 `BLOCKED`。**

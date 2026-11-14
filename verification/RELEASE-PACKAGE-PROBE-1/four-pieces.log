@@ -1,0 +1,23 @@
+# RELEASE-PACKAGE-PROBE-1 four-pieces 2026-11-15T02:59:11.2903004+08:00
+## check.ps1
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\MAINT-1-RELEASE-MONITOR.md
+WARN: 存在 7 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3038 bytes / 27 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6978 bytes / 63 lines
+Governance check: PASS (3 warnings)
+## verify_pins.ps1
+OK FEA01 0370c18932b1
+PIN AUDIT: PASS (all 18)
+## api inventory
+OK: rendered counts match FEA-C07 doc
+| **合计** | **87** | — |
+## 三项目无夹具全量（本卡未改代码，沿用上一轮实测）
+App.Tests 950/0/11/961 ; Host.Tests 321/0/74/395 ; CoreClient.Tests 186/0/26/212
+## publish 实测
+== singlefile ==
+[singlefile] result=PASS exit=0 elapsed=7.7s artifact=94.94 MB sha256=EA01C8C77358F35B0F15F43A0A496DFD3BF1A0E1B472ADF9C55C65F0A28C76ED
+   smoke: pass=True exit=0 exit_kind=natural host_ready=True reason=
+publish: 1/1 PASS, 0 expected-failure(s), 0 FAIL
+## manifest git_head
+5dda04437d68baf304b4364a3a73f9dfa217d943 (= 被探测 head)

@@ -1,0 +1,23 @@
+{
+  "task": "V11R-PUB-1",
+  "generated_at": "2026-11-14T18:56:12.4986068Z",
+  "git_head": "5dda04437d68baf304b4364a3a73f9dfa217d943",
+  "modes": [
+    {
+      "mode": "singlefile",
+      "result": "PASS",
+      "publish_exit_code": 0,
+      "artifact_exe_size_mb": 94.94,
+      "artifact_directory_size_mb": 94.94,
+      "artifact_sha256": "EA01C8C77358F35B0F15F43A0A496DFD3BF1A0E1B472ADF9C55C65F0A28C76ED",
+      "smoke_pass": true,
+      "expected_failure": null
+    }
+  ],
+  "summary": {
+    "total": 1,
+    "passed": 1,
+    "expected_failures": 0,
+    "failed": 0
+  }
+}
