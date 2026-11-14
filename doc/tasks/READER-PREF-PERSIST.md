@@ -3,7 +3,7 @@ id: READER-PREF-PERSIST
 title: 阅读偏好持久化闭环（单双页/方向/缩放接到 SaveReadingPreferences）
 kind: implementation
 governance_version: 3
-status: in_progress
+status: done
 disposition: "既有缺陷 E-4（doc/reviews/MAINT-1-EXISTING-FINDINGS-2026-11-14.md）；DSH 2026-11-14 释放"
 approval: DSH 2026-11-14（Gate 条件 3 相邻缺口，范围冻结）
 suggested_owner: DSH
@@ -14,10 +14,10 @@ depends_on:
 base_commit: eebfedf6d
 branch: main
 worktree: G:/CODEX/New Manga
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 6afab416bf845ce8481b20bae90687fcf2852d7e
+delivery_head: 6afab416b
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/READER-PREF-PERSIST
 allowed_paths:
   - doc/tasks/READER-PREF-PERSIST.md
@@ -110,8 +110,17 @@ allowed_paths:
 
 ## Canonical Evidence
 
+AC1–AC3 的"重开读回"半边因 E-2（sidecar 过期）为 `NOT_RUN`，下列证据只覆盖已实际执行的部分。
+
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) | sha256_basis |
 |---|---|---|---|---|---|---|
+| EV-RPP-01 | AC1/AC2/AC3/AC5/AC6 与缺陷事实 | verification/READER-PREF-PERSIST/README.md | 6afab416b | ad16f5153c3798803e105903dbe9ab5a8f1492f10b199e67326fb9a87fea64c8 | CANONICAL | BLOB |
+| EV-RPP-02 | AC8 回归 | verification/READER-PREF-PERSIST/regression.log | 6afab416b | a6d2c260d8e387685e0d1b75a0f31ebb0daec000b8c291930d1a7cea73c7c8c1 | CANONICAL | BLOB |
+| EV-RPP-03 | AC1/AC5/AC6 VM 与竞态测试 | apps/desktop-avalonia/tests/NewManga.App.Tests/ReaderPreferencePersistenceTests.cs | 6afab416b | 393bae08a85e6281a0a30b7b50515d2f74a7073aa5c3698b82b73d91f6664b14 | CANONICAL | BLOB |
+| EV-RPP-04 | AC4 View 级接线测试 | apps/desktop-avalonia/tests/NewManga.App.Tests/ReaderPreferenceWiringTests.cs | 6afab416b | 7a232882d52bbd6d073b8f3ea1d9388d2758776444fbe699868562ed35ca966e | CANONICAL | BLOB |
+| EV-RPP-05 | 实现（意图捕获 + 快照语义） | apps/desktop-avalonia/src/NewManga.App/ViewModels/Fluent/ReaderViewModel.cs | 6afab416b | 3bab1c98e023f4e9e2eaa0679c7f582549db78b55d0ca3b9b9b983c34506e0f4 | CANONICAL | BLOB |
+| EV-RPP-06 | r1 复核（REJECT） | doc/reviews/READER-PREF-PERSIST-review-r1.md | 6afab416b | d378c7ff33c673443e0316f6559f4d5d3f3b8cc4d0cb5856b43a759aa5f56e2f | CANONICAL | BLOB |
+| EV-RPP-07 | r2 复核（ACCEPT_WITH_LIMITATIONS） | doc/reviews/READER-PREF-PERSIST-review-r2.md | 6afab416b | f8d9fc770740451905bca72e0e7559eddcc292b1b9d7b7617f21280f98a380e2 | CANONICAL | BLOB |
 
 ## Resource Manifest
 
@@ -121,9 +130,24 @@ allowed_paths:
 
 ## Closeout Record
 
-- Closeout date / DSH：待关闭时填写。
-- canonical_evidence_status：`pending`。
-- resource_closeout_status：`pending`。
-- 删除、迁移、归档数量/字节数：待关闭时填写；无操作填写 0。
-- 未关闭项及保留原因：待填。
-- 当前指针清理：待关闭时更新 STATUS / Plan / TASK_LEDGER / rolling checkpoint。
+- Closeout date / DSH：2026-11-15，DSH（Lead / Architect / Integrator）。
+- canonical_evidence_status：`complete`（7 条 BLOB pin，commit `6afab416bf845ce8481b20bae90687fcf2852d7e`）。
+- resource_closeout_status：`complete`（无 worktree、无用户数据）。
+- 删除、迁移、归档数量/字节数：0。
+- 未关闭项及保留原因：
+  - **AC1–AC3 的"重开读回"半边 `NOT_RUN`**：本卡证明"控件路径发出了正确的 patch"与"失败不记账"，
+    但没有真实 sidecar 做"保存→重启→读回"闭环（E-2：仓库 sidecar 2026-10-23 早于
+    `SaveReadingPreferences`；重建需 PyInstaller，本环境 PyPI 不可达）；
+  - `DoubleTapped` 与键盘 `+`/`-`/`0` 入口已接线但只有静态核对，无 View 级测试；
+  - `_pendingPreferenceIntent` 为单槽：合并窗口内若对两本书都改动，只保证最后一次；
+  - 离开阅读器无显式 flush，依赖 80ms 合并窗口内的保存。
+- 当前指针清理：STATUS / Plan / TASK_LEDGER / rolling checkpoint 已更新。
+- **本卡自身的错误登记**：
+  1. 首版（`57f149b02`）在 `_appliedPreferences` 用 await **之后**的当前值写快照，导致"在途改值"永久丢更新
+     —— 由 r1 复核 P1-1 实测发现，r2 修复；
+  2. 首版 AC4 的测试只调 VM，把 `ReaderPageView` 整体回退到基线仍 17/17 全绿（生产接线零覆盖）
+     —— 由 r1 复核 P1-2 实测发现，r2 补 View 级测试；
+  3. 首版提交后又留下 4 个未提交文件，复审看到不一致中间态 —— 由 r1 复核 P1-3 指出，已改为单一提交；
+  4. r2 后仍残留"意图未带 diff 基线"的漏写窗口（80ms 内切到快照相等的书 → 0 写入）—— r2 复核 P2-1 实测发现，本轮修复。
+- **资源**：`G:\CODEX\New Manga.workspace\task-envs\CHAPTER-MANUAL-SORT\hash2.py` 等派生物属前序会话；
+  本卡无新增资源。
