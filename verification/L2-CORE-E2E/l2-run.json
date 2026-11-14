@@ -1,0 +1,214 @@
+{
+  "ac": "AC3/AC4",
+  "generated_at_utc": "2026-11-14T11:06:27Z",
+  "sidecar": null,
+  "core_launch": "python-source:G:\\CODEX\\New Manga",
+  "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\L2-CORE-E2E\\work-root",
+  "book_id": "14340ddad0ed472fbe687fe12340c5d8",
+  "command": "translate_untranslated",
+  "translate_provider": "openai-compatible-translation",
+  "label": "l2-deepseek",
+  "api_key_read_by_tool": false,
+  "commands": [
+    {
+      "command": "core.ping",
+      "result": {
+        "status": "ready",
+        "protocol_version": {
+          "major": 2,
+          "minor": 3
+        },
+        "capabilities": [
+          "library.list_books",
+          "source.read/1",
+          "source.resolve-secret/1",
+          "source.read.run/1",
+          "source.reattest/1",
+          "library.delete.preview/1",
+          "library.trash.read/1",
+          "library.trash.write/1",
+          "source.sync.scan/1",
+          "source.sync.plan/1",
+          "source.sync.apply/1",
+          "source.sync.relink/1",
+          "source.sync.repoint/1",
+          "source.sync.resync/1",
+          "source.sync.operation/1",
+          "source.sync.enumerate/1",
+          "source.sync.plan-materialization/1"
+        ]
+      }
+    }
+  ],
+  "overrides": {
+    "provider_bindings": {
+      "ocr": "manga-ocr",
+      "translate": "openai-compatible-translation"
+    }
+  },
+  "start": {
+    "run_id": "run-84394ff7494e43c5afad314074b56e8f",
+    "status": "pending"
+  },
+  "run_id": "run-84394ff7494e43c5afad314074b56e8f",
+  "terminal": "completed_with_failures",
+  "status_transitions": [
+    "pending",
+    "completed_with_failures"
+  ],
+  "elapsed_ms": 401.2,
+  "command_traces": {
+    "GetRunSnapshot_request": null
+  },
+  "task_projection": {
+    "run_status": "completed_with_failures",
+    "overall_progress": 1.0,
+    "counts": {
+      "total": 8,
+      "completed": 0,
+      "failed": 8,
+      "skipped": 0,
+      "blocked": 0,
+      "waiting": 0,
+      "processing": 0
+    },
+    "blocked_reasons": [],
+    "step_status": {
+      "detect": {
+        "failed": 8
+      }
+    },
+    "error_codes": [
+      {
+        "step_type": "detect",
+        "status": "failed",
+        "error_code": "PROVIDER_NOT_CONFIGURED"
+      },
+      {
+        "step_type": "detect",
+        "status": "failed",
+        "error_code": "PROVIDER_NOT_CONFIGURED"
+      },
+      {
+        "step_type": "detect",
+        "status": "failed",
+        "error_code": "PROVIDER_NOT_CONFIGURED"
+      },
+      {
+        "step_type": "detect",
+        "status": "failed",
+        "error_code": "PROVIDER_NOT_CONFIGURED"
+      },
+      {
+        "step_type": "detect",
+        "status": "failed",
+        "error_code": "PROVIDER_NOT_CONFIGURED"
+      },
+      {
+        "step_type": "detect",
+        "status": "failed",
+        "error_code": "PROVIDER_NOT_CONFIGURED"
+      },
+      {
+        "step_type": "detect",
+        "status": "failed",
+        "error_code": "PROVIDER_NOT_CONFIGURED"
+      },
+      {
+        "step_type": "detect",
+        "status": "failed",
+        "error_code": "PROVIDER_NOT_CONFIGURED"
+      }
+    ],
+    "tasks": [
+      {
+        "target_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "status": "failed",
+        "steps": [
+          {
+            "step_type": "detect",
+            "status": "failed",
+            "error_code": "PROVIDER_NOT_CONFIGURED"
+          }
+        ]
+      },
+      {
+        "target_id": "4f8a24147b3044deabf4f5a2dd83b84f",
+        "status": "failed",
+        "steps": [
+          {
+            "step_type": "detect",
+            "status": "failed",
+            "error_code": "PROVIDER_NOT_CONFIGURED"
+          }
+        ]
+      },
+      {
+        "target_id": "a607fc4ca3034f47b5bc43d59f94f2ca",
+        "status": "failed",
+        "steps": [
+          {
+            "step_type": "detect",
+            "status": "failed",
+            "error_code": "PROVIDER_NOT_CONFIGURED"
+          }
+        ]
+      },
+      {
+        "target_id": "6814353f6d8544d6945ad5748d518f47",
+        "status": "failed",
+        "steps": [
+          {
+            "step_type": "detect",
+            "status": "failed",
+            "error_code": "PROVIDER_NOT_CONFIGURED"
+          }
+        ]
+      },
+      {
+        "target_id": "f54739037525486e8704db23db5c0dc1",
+        "status": "failed",
+        "steps": [
+          {
+            "step_type": "detect",
+            "status": "failed",
+            "error_code": "PROVIDER_NOT_CONFIGURED"
+          }
+        ]
+      },
+      {
+        "target_id": "c239be827f3a4448848d2c42bffc05d1",
+        "status": "failed",
+        "steps": [
+          {
+            "step_type": "detect",
+            "status": "failed",
+            "error_code": "PROVIDER_NOT_CONFIGURED"
+          }
+        ]
+      },
+      {
+        "target_id": "7a39226851774f01a4cdb89bcf118296",
+        "status": "failed",
+        "steps": [
+          {
+            "step_type": "detect",
+            "status": "failed",
+            "error_code": "PROVIDER_NOT_CONFIGURED"
+          }
+        ]
+      },
+      {
+        "target_id": "221d772e601e480e8e7508dfe9aff380",
+        "status": "failed",
+        "steps": [
+          {
+            "step_type": "detect",
+            "status": "failed",
+            "error_code": "PROVIDER_NOT_CONFIGURED"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "profile": {
+    "provider_type": "openai-compatible-translation",
+    "base_url": "https://api.deepseek.com/v1",
+    "model": "deepseek-chat",
+    "credential_ref": "NewManga/provider/3819f991cbe54001ba45b6f8524f260c/3218c7670af30a61c068a7caeafa0d0f",
+    "enabled": true,
+    "options": {},
+    "network_profile_id": "",
+    "proxy_policy": "inherit"
+  }
+}
