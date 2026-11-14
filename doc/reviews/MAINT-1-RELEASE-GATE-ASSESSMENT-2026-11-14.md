@@ -183,3 +183,21 @@
 条件 4（当前 commit 的 Windows 包，需 PyInstaller）、条件 5（人工 GT 基线）仍未满足。条件 1 与 2 的
 推进**不构成发布许可**。
 
+## 15. 条件 3 覆盖矩阵（2026-11-15，`GATE3-COVERAGE-MATRIX`）
+
+条件 3 此前只记作"部分"，没有任何清单说明覆盖到哪。现已逐格盘点，见
+`doc/reviews/MAINT-1-GATE-CONDITION-3-MATRIX-2026-11-15.md`。要点：
+
+- **结构性事实（此前未记录）**：`NewManga.App.Tests` 有 61 个 `[AvaloniaFact]` 文件、825 个可见测试方法，
+  但只有 **2 个** `[HostSidecarFact]`。**GUI 层几乎不依赖 sidecar**；E-2 的阻塞集中在
+  `Host.Tests`（74 skip）与 `CoreClient.Tests`（26 skip）的集成层。
+- **"可安全执行的"部分已大面覆盖**：四页 + 13 类关键流程中 **11 类**在 headless 下有真实断言；
+  四页有 PNG 级渲染证据（`FluentPages_RenderHeadlessPngEvidence` 断言四帧 `PixelSize` 非零）。
+- **完全无覆盖仅 2 类**：设置页错误态、阅读器独立只读测试（均只有同型借道断言）。
+- **矩阵自身的证据强度已分级**：只有 12 格被逐行核对断言，其余为"类摘要 + 方法名"，**不得当作已验证**。
+- **结论（可判定）**：条件 3 的剩余缺口**没有一项是"GUI 没做"** —— 要么卡在 E-2 sidecar，要么属人工
+  真机走查。因此条件 3 的推进路径是"**解 E-2** 或 **Owner 接受该边界**"，而不是继续补 headless 测试。
+  在 E-2 无法解除（本环境 PyPI 不可达）的情况下，条件 3 应作为**已知边界**提交 Owner 裁决，
+  而非无限期停留在"部分"。
+- **条件 3 仍不判 MET**；Gate 仍 `BLOCKED`。
+
