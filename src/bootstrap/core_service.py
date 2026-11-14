@@ -4600,6 +4600,13 @@ class CoreServiceServer:
                     "title": chapter.title,
                     "chapter_number": chapter.chapter_number,
                     "sort_order": chapter.sort_order,
+                    # M2-C1 rev 2.16 (MAINT-2-C1-BATCH-1 AC4/AC5, additive widening):
+                    # two OPTIONAL read-only fields. The four frozen keys above keep their
+                    # names/types/semantics; custom_rank is emitted as an explicit null when
+                    # unset (the BookSummary.page_count None-channel precedent), and this
+                    # command's ordering stays sort_order (custom_rank never sorts here).
+                    "kind": chapter.chapter_type.value,
+                    "custom_rank": chapter.custom_rank,
                 }
                 for chapter in chapters
             ]

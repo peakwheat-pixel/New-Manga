@@ -26,7 +26,65 @@ public sealed record BookSummary(
     string UpdatedAt);
 
 /// <summary>One chapter row from the Core <c>list_chapters</c> read face.</summary>
-public sealed record ChapterSummary(string ChapterId, string Title, string ChapterNumber, int SortOrder);
+/// <summary>
+/// M2-PAGE-NAV-PROJECTION-1 chapter navigation row. M2-C1 rev 2.16 (MAINT-2-C1-BATCH-1
+/// AC4/AC5) widened the frozen four-key <c>list_chapters</c> result with two OPTIONAL
+/// read-only fields: <paramref name="Kind"/> (<c>paged</c>/<c>webtoon</c>) and
+/// <paramref name="CustomRank"/> (null when unset). Both are optional so every existing
+/// construction site keeps working; the four original fields are unchanged.
+/// <see cref="CustomRank"/> is <see cref="long"/> because the Core column is a 64-bit
+/// integer (see MAX_SQLITE_INTEGER in the library service) and an int would truncate.
+/// </summary>
+public sealed record ChapterSummary(
+    string ChapterId,
+    string Title,
+    string ChapterNumber,
+    int SortOrder,
+    string? Kind = null,
+    long? CustomRank = null)
+{
+    /// <summary>
+    /// M2-C1 rev 2.16: parse one <c>list_chapters</c> row. The four frozen keys are required
+    /// (a missing/mistyped one throws <see cref="FormatException"/> -- the row is malformed),
+    /// while <c>kind</c>/<c>custom_rank</c> are OPTIONAL: an absent field, an explicit null and
+    /// an older four-key Core all read as null. Kept as a static entry point (same convention as
+    /// <c>RegionTextDetail.Parse</c>) so the widening is testable without a live sidecar.
+    /// </summary>
+    public static ChapterSummary Parse(JsonElement element)
+    {
+        if (element.ValueKind != JsonValueKind.Object)
+        {
+            throw new FormatException("chapter row must be an object");
+        }
+
+        var sortOrder = element.TryGetProperty("sort_order", out var sort)
+            && sort.ValueKind == JsonValueKind.Number
+            && sort.TryGetInt32(out var order)
+            ? order
+            : throw new FormatException("missing integer field 'sort_order'");
+
+        var customRank = element.TryGetProperty("custom_rank", out var rank)
+            && rank.ValueKind == JsonValueKind.Number
+            && rank.TryGetInt64(out var value)
+            ? (long?)value
+            : null;
+
+        return new ChapterSummary(
+            RequiredString(element, "chapter_id"),
+            RequiredString(element, "title"),
+            RequiredString(element, "chapter_number"),
+            sortOrder,
+            element.TryGetProperty("kind", out var kind) && kind.ValueKind == JsonValueKind.String
+                ? kind.GetString()
+                : null,
+            customRank);
+    }
+
+    private static string RequiredString(JsonElement element, string property) =>
+        element.TryGetProperty(property, out var value) && value.ValueKind == JsonValueKind.String
+            ? value.GetString() ?? string.Empty
+            : throw new FormatException($"missing string field '{property}'");
+}
 
 /// <summary>FEA-14-EDIT-1 (PREQ EDIT P16): relative page point of a marker (0..1).</summary>
 public sealed record IssueMarkerPosition(double X, double Y);
@@ -1038,11 +1096,7 @@ public sealed class CoreServiceClient : IAsyncDisposable
                     throw Malformed("list_chapters entry is not an object");
                 }
 
-                chapters.Add(new ChapterSummary(
-                    ReadString(item, "chapter_id") ?? string.Empty,
-                    ReadString(item, "title") ?? string.Empty,
-                    ReadString(item, "chapter_number") ?? string.Empty,
-                    ReadInt(item, "sort_order")));
+                chapters.Add(ChapterSummary.Parse(item));
             }
         }
 
