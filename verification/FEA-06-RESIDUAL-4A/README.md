@@ -14,7 +14,7 @@
 | AC2 inventory 更新 | 计划节锁死名称/返回类型/#80；正式成员表 = 脚本 stdout 逐行一致 | **PARTIAL**：新增「RO-1 计划追加」节；成员表与 stdout **`ALL_MATCH: True`**（三接口全等），统计仍 `79 / 86` = 代码实测；80/87 翻转归 4B（v1.10，DSH 裁决口径） |
 | AC3 pin 重算 | 新 pin 写入冻结记录 §1 置顶、前一 pin 原值保留、§1B/§2/§3/§5 同步 | **PARTIAL**：pin `8ccaba05…` → `91e51ab7…`；v1.8 原值保留于「前一 pin（v1.8，保留原值）」行；§1B 记为「独立复核 pending」 |
 | AC4 载体 | 结构对齐同型先例 | **PARTIAL**：`doc/reviews/CONTRACT-UNFREEZE-2026-11-14-C07-RO1.md` 已落盘，§6 复核记录为 `pending` |
-| AC5 独立字节级复核 | 由 DSH 另派未参与写作的上下文 | **CHANGES_REQUESTED (r1)**：独立子 agent 复核 `doc/reviews/FEA-06-RESIDUAL-4A-r1.md`，P0=0 / P1=2 / P2=7 / P3=5；字节层全过，P1 为记录层事实错误；已修 P1-1/P1-2（不触 inventory 字节，pin 仍 `91e51ab7…`），待 r2 窄复核 |
+| AC5 独立字节级复核 | 由 DSH 另派未参与写作的上下文 | **MET**：r1 `changes_requested`（P0=0/P1=2，记录层；`doc/reviews/FEA-06-RESIDUAL-4A-r1.md`）→ 处置（不触 inventory 字节）→ **r2 `approved`**（P0/P1=0；P2=2/P3=5 不阻断；`doc/reviews/FEA-06-RESIDUAL-4A-r2.md`，被审 head `756ab29e2`），C-07 v1.9 **已重冻** |
 | AC6 门禁四件套 | 四项原始输出 + EXIT | **PARTIAL**：四项全 `EXIT=0`；台账经 DSH 授权重生成一次；零越界按卡面逐文件核对 |
 
 ## pin（完整 64 位）

@@ -60,19 +60,21 @@ out_of_scope:
 - [ ] **AC2 inventory 更新（成员表逐行一致口径）**：[C-07 API Inventory](../plan/FEA-C07_API_INVENTORY.md) 新增「RO-1 计划追加」节，锁死 `ListPageRegionTextsAsync` / `Task<RegionPageTextProjection?>` / 落地后行号 `#80`；**正式成员表与统计行保持与脚本 stdout 逐行一致**（79 方法 + 4 非方法成员；`IHostController 79`、合计 `86`），并显式写明「80/87 由 4B 落地时翻转 + pin 重算 v1.10」。`python tools/generate_api_inventory.py --check` EXIT 0。 `<<PARTIAL: 计划节与口径已落盘；统计/成员表按上文口径保持 79/86，翻转属 4B>>`
 - [ ] **AC3 pin 重算与冻结记录同步**：C-07 文件 pin 由 v1.8 重算为 v1.9 并写入 [冻结记录](../plan/FEA-CONTRACT-FROZEN-C07.md) §1（**新行置顶、前一 pin 原值保留不改写**）、§1B（登记 v1.9 RO-1 与「独立复核 pending」）、§2 条件 3（计数口径）、§5（变更行）；`pwsh -NoProfile -File tools/governance/verify_pins.ps1` PASS 且 C07 行等于新 pin。 `<<PARTIAL: pin 已重算并登记；§1B 复核列仍为 pending>>`
 - [ ] **AC4 UNFREEZE 载体**：载体落 `doc/reviews/CONTRACT-UNFREEZE-2026-11-14-C07-RO1.md`，含「依据 / 为什么必须 UNFREEZE / 变更范围 / 计划节 / 新 pin / 独立复核要求 / 复核记录（pending）/ 不构成什么」，结构对齐同型先例 [CONTRACT-UNFREEZE-2026-11-10-C07](../reviews/CONTRACT-UNFREEZE-2026-11-10-C07.md)。 `<<PARTIAL: 载体已落盘；§6 复核记录待独立复核回填>>`
-- [ ] **AC5 独立字节级复核**：由 DSH 另派**未参与本卡写作**的独立上下文 reviewer（本项目 Review 独立性以上下文独立为准），逐字节核对：inventory 成员表 = 脚本 stdout、pin = 文件 SHA-256、计划节与规格字段逐字一致、冻结记录 §1–§5 自洽、无 `src/**`/`apps/**`/`tests/**` diff。结论回填载体 §6 与冻结记录 §1B。**本卡作者不得自审，也不得代写 approved。** `<<PENDING: 未派发>>`
+- [x] **AC5 独立字节级复核（r2 `approved`，<<MET>>；r1 `changes_requested` 已处置）**：由 DSH 另派**未参与本卡写作**的独立上下文 reviewer（本项目 Review 独立性以上下文独立为准），逐字节核对：inventory 成员表 = 脚本 stdout、pin = 文件 SHA-256、计划节与规格字段逐字一致、冻结记录 §1–§5 自洽、无 `src/**`/`apps/**`/`tests/**` diff。结论回填载体 §6 与冻结记录 §1B。**本卡作者不得自审，也不得代写 approved。** `<<PENDING: 未派发>>`
 - [ ] **AC6 门禁四件套 + 零越界**：① `pwsh -NoProfile -File tools/governance/check.ps1`；② 同脚本 `-TaskPath doc/tasks/FEA-06-RESIDUAL-4A.md`；③ `pwsh -NoProfile -File tools/governance/verify_pins.ps1`；④ `python tools/generate_api_inventory.py --check`。四者原始输出与 EXIT 码留 `verification/FEA-06-RESIDUAL-4A/logs/`；**本提交所含路径** ⊆ `allowed_paths`（工作树里 `tests/fea11/test_source_match.py` 的未提交改动属 DSH 并行的 `custom_rank` 夹具修复，**不在本卡范围、不纳入本提交**）；无产品代码 / DDL diff。 `<<PARTIAL: 四项全部 EXIT=0（logs/gates-2026-11-14.log）；台账按 R-1 经 DSH 授权重生成一次；零越界按 §交付与运行记录 逐文件核对。剩余闭合动作＝AC5 独立复核后由 DSH 复跑确认>>`
 
 ## 对照内容规格 v1（冻结候选）
 
 > v0 出自 [RO-1 §5](../reviews/MAINT-1-RO-1-REOPEN-RESIDUAL-4-2026-11-14.md)。本节把 v0 的六个字段组细化为 4B 可直接实现、测试可直接判别的规格。任何与本节冲突的实现视为超范围。
 
+**规格版本：v1.1（2026-11-14 定稿）**。v1.0 字节保留在 git 历史；v1.1 在正文同步三处更正——P2-3（空集合语义，S3）、P2-4（L2 取 VM 实时 `DraftText`，S1/S2）、P2-2（`TARGET_NOT_FOUND` 改本地判定，S3/S5），与「r1 独立复核处置」节及「S7 扩面 errata」节一致。**已通过 r2 独立复核 `approved`（P0=0/P1=0）**。
+
 ### S1 两层定义（固定两层，不得扩为三层）
 
 | 层 | 名称 | 数据来源（只读） | 权威性 |
 |---|---|---|---|
 | **L1** | 基底 / 已提交文本 | Core `list_page_region_texts` → 新增端口 `ListPageRegionTextsAsync` → `RegionPageTextProjection`（`RegionTextProjection.cs:224-281`） | 唯一权威读投影。**不得**用 L2 或本地缓存替代或回填 |
-| **L2** | 当前工作副本 | 现有 `LoadPageRegionsAsync` 的 `RegionSummary`（`CoreServiceClient.cs:204-210`）+ 本会话草稿（`ListDraftsAsync`/`OpenDraftAsync` 命中的 `Draft.Patch["text"]`，读取口径同 `WorkbenchViewModel.ReadDraftText`，`WorkbenchViewModel.cs:788-796`） | 仅展示本地态。**无草稿即「本地无草稿」，不得用 L1 值冒充 L2** |
+| **L2** | 当前工作副本 | 现有 `LoadPageRegionsAsync` 的 `RegionSummary`（`CoreServiceClient.cs:204-210`）+ **`WorkbenchViewModel` 的实时可编辑 `DraftText`**（用户此刻屏幕上可见且可编辑的文本；**不得**取持久化 `Draft.Patch["text"]`——冲突态下两者可能不一致，而对照的意义正是让用户看到当下差异。v1.1 修订，见 §r1 处置 P2-4） | 仅展示本地态。**无草稿即「本地无草稿」，不得用 L1 值冒充 L2** |
 
 判别断言：
 - **S1-a**：面板打开时 `ListPageRegionTextsAsync` 必须被调用**恰好一次**（一页一次，禁止 per-region N+1）。
@@ -86,7 +88,7 @@ out_of_scope:
 | SfxPolicy | `RegionTextDetail.SfxPolicy` | `RegionSummary.SfxPolicy` | 不适用 |
 | Origin | `RegionTextDetail.Origin` | `RegionSummary.Origin` | 不适用 |
 | RevisionNo | `RegionTextDetail.RevisionNo` | `RegionSummary.RevisionNo` | 不适用 |
-| 文本 | `Text.FinalTranslation` | 草稿 `patch.text` | 空串 → 显示 `（空文本）` 标签；**这是「值为空」的约定显示，不是替代文本**，不得用另一层的值填充 |
+| 文本 | `Text.FinalTranslation` | **VM 实时 `DraftText`**（非持久化 `patch.text`；v1.1 修订） | 空串 → 显示 `（空文本）` 标签；**这是「值为空」的约定显示，不是替代文本**，不得用另一层的值填充 |
 | 文本来源 | `Text.FinalSource`（`none` 时显示 `—`） | 固定显示 `本地草稿` / `本地无草稿` | — |
 
 判别断言：
@@ -105,8 +107,8 @@ Task<RegionPageTextProjection?> ListPageRegionTextsAsync(
     CancellationToken cancellationToken = default);
 ```
 
-- 返回 `null` 表示「投影不可用」，**不得**抛异常进 UI、**不得**返回空集合冒充「无可比对内容」（空集合只表示该页真实没有区域）。
-- `regionIds` 语义沿用 wire：非空、去重、全部必须属于该页；Core 侧对非本页 id 返回 `TARGET_NOT_FOUND`（`HostCommandDispatcher.cs:868-871`）。
+- 返回 `null` 表示「投影不可用」，**不得**抛异常进 UI、**不得**返回空集合冒充「无可比对内容」。**空集合不能单独表示「该页无区域」**——Core 对未知 page 也会返回 `regions: []`（且 `page_size` 为 `null`），必须结合 `page_size` / `page_id` 与 `TARGET_NOT_FOUND` 区分（v1.1 修订，见 §r1 处置 P2-3）。
+- `regionIds` 参数**保留在签名中**（v1.9 预授权、不得改动签名），但 **4B 调用时一律不传（传 `null`）**：整页一次，符合 S1-a。因为 4B 永不传 `regionIds`，`TARGET_NOT_FOUND` **不来自 Core 错误码透传**（`HostController.IsUiFacingFailure` 会把 `CoreOperationException` 吞成 `null`），而由**本地成员判定**：page 不在当前投影中 → `TARGET_NOT_FOUND`。这样既不触发第二次 UNFREEZE，也不改变返回类型（见 §S7 扩面 errata E-2）。
 - `NullHostController` / `FakeHostController` 一律 `null`（降级语义与既有读方法一致）。
 
 ### S4 布局
@@ -127,7 +129,7 @@ Task<RegionPageTextProjection?> ListPageRegionTextsAsync(
 |---|---|---|
 | 端口返回 `null` | `REGION_TEXT_PROJECTION_UNAVAILABLE` | 投影暂不可用；请先「重新读取页面」后再打开对照（面板不给重试按钮） |
 | Host 未就绪 | `HOST_NOT_READY` | Host 未就绪；恢复后请重新读取页面 |
-| 该 region 不在 L1 结果中 | `TARGET_NOT_FOUND` | 目标区域已变化；请重新读取页面 |
+| 该 page 不在当前投影中（**本地判定**，非 Core 错误码） | `TARGET_NOT_FOUND` | 目标页面已变化；请重新读取页面 |
 | 既有 conflict 错误码（`DRAFT_OWNER_CHANGED` / `STALE_BASE_REVISION` / `LOCK_CHANGED` / `EDIT_TOKEN_EXPIRED` 等） | 沿用 `DraftErrorMap`（`WorkbenchViewModel.cs:806-835`）的既有映射 | 沿用既有 `Presentation` 文案，不新造第二套 |
 
 - **负向不变量（先由本规格锁定，4B 只实现不减弱）**：投影不可用时**不得**显示任何对照内容（不得用本地文本、缓存或 L1 推测值填充），沿用既有 `WithoutFabricatedCompare` 语义。既有 `I13_WorkbenchConflictRow_ConflictBannerShowsWithoutFabricatedCompare`（`FluentResidualBatchATests.cs:642-670`）的 `DoesNotContain(查看对照)` 断言由 4B 改为**正向断言**（冲突态存在「查看对照」按钮），但**必须同时新增**「投影不可用 → 面板不出现任何文本行、只出现 typed 原因」的断言；两条断言并存才算保持不变量。**本条在规格里先冻结**：若 4B 只把旧断言翻成正向而不同时补负向断言，即视为削弱 `WithoutFabricatedCompare`，4A 独立复核与 4B Review 都必须判 `changes_requested`。
@@ -187,7 +189,7 @@ Task<RegionPageTextProjection?> ListPageRegionTextsAsync(
 - **门禁实测**（原始输出见证据目录 `logs/gates-2026-11-14.log`）：① `check.ps1` **PASS (3 warnings) / EXIT=0**；② `check.ps1 -TaskPath doc/tasks/FEA-06-RESIDUAL-4A.md` **PASS (3 warnings) / EXIT=0**；③ `verify_pins.ps1` **PASS (all 18) / EXIT=0**（C07 = 新 pin `91e51ab7…`）；④ `generate_api_inventory.py --check` **EXIT=0**（`1/79/6 = 86`）。台账按 R-1 由 DSH 授权重生成一次（`task files 599→600`、`non-terminal 7→8`）。
 - **零越界核对**（**仅本提交所含路径**逐文件）：`doc/tasks/FEA-06-RESIDUAL-4A.md`（新）、`doc/reviews/CONTRACT-UNFREEZE-2026-11-14-C07-RO1.md`（新）、`doc/plan/FEA-C07_API_INVENTORY.md`（+18/−2）、`doc/plan/FEA-CONTRACT-FROZEN-C07.md`、`doc/TASK_LEDGER.md`（机械重生成）、`verification/FEA-06-RESIDUAL-4A/**`（新）——全部 ⊆ `allowed_paths`；**无 `src/**`、`apps/**`、`tests/**`、DDL/schema diff**。
   - **范围外声明**：工作树中 `tests/fea11/test_source_match.py` 有 DSH 并行的 `custom_rank` 夹具修复（未提交，属 `MAINT-1` 的 DoD §4 事项）；本卡**不读不改不提交**它。`git status --short` 里它会显示为 ` M`，属预期。
-- **未做**：独立字节级复核（AC5 `pending`，须 DSH 另派）；80/87 统计翻转（R-2，属 4B）；任何产品代码。
+- **未做（交付时）**：独立字节级复核（**已于 2026-11-14 完成：r1 `changes_requested` → 处置 → r2 `approved`**）；80/87 统计翻转（R-2，属 4B）；任何产品代码。
 - **下一步**：① DSH 独立 scope review 本卡规格与预授权（RO-1 §4：`proposed` → `ready` 前必须有）→ ② DSH 另派独立上下文做字节级复核并回填载体 §6 / 冻结记录 §1B → ③ 复核通过后重冻 C-07 v1.9 → ④ 释放 `FEA-06-RESIDUAL-4B`（端口 + UI + 判别测试 + 统计 80/87 翻转 + pin v1.10）。
 
 ## r1 独立复核处置（append-only，2026-11-14）
@@ -266,5 +268,5 @@ Task<RegionPageTextProjection?> ListPageRegionTextsAsync(
 - canonical_evidence_status：`pending`。
 - resource_closeout_status：`pending`。
 - 删除、迁移、归档数量/字节数：0（本轮无删除/迁移/归档）。
-- 未关闭项及保留原因：AC5 独立复核 `pending`；AC2 的 80/87 翻转按 R-2 归属 4B；AC4 载体 §6 复核记录待回填。
+- 未关闭项及保留原因：AC5 **已关闭**（r1 `changes_requested` → 处置 → r2 `approved`，2026-11-14）；AC2 的 80/87 翻转按 R-2 归属 4B；AC4 载体 §6 复核记录**已回填**（`approved`，含 r2 覆盖范围声明）。
 - 当前指针清理：本轮不改 `STATUS` / `REBASELINE_PLAN`（RO-1 §6：`proposed` 不触发 DAG 登记），由 DSH 在释放时更新；`TASK_LEDGER` 已按 R-1 一次性重生成（`task files 600` / `non-terminal 8`）。
