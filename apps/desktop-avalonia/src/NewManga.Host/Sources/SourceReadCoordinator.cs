@@ -357,10 +357,10 @@ public sealed class SourceReadCoordinator(
     public static SourceAccessException MapMintFailure(Exception error) => error switch
     {
         FileNotFoundException or DirectoryNotFoundException or UnauthorizedAccessException =>
-            new SourceAccessException("SOURCE_ENTRY_MISSING"),
-        IOException => new SourceAccessException("FILE_IDENTITY_CHANGED"),
-        ArgumentException or NotSupportedException => new SourceAccessException("SOURCE_ACCESS_DENIED"),
-        _ => new SourceAccessException("SOURCE_ENTRY_MISSING"),
+            new SourceAccessException("SOURCE_ENTRY_MISSING", error),
+        IOException => new SourceAccessException("FILE_IDENTITY_CHANGED", error),
+        ArgumentException or NotSupportedException => new SourceAccessException("SOURCE_ACCESS_DENIED", error),
+        _ => new SourceAccessException("SOURCE_ENTRY_MISSING", error),
     };
 
     /// <summary>

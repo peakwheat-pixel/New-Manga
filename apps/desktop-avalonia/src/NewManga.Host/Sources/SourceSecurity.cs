@@ -6,9 +6,25 @@ using Microsoft.Win32.SafeHandles;
 
 namespace NewManga.Host.Sources;
 
-public sealed class SourceAccessException(string code) : Exception(code)
+public sealed class SourceAccessException(string code, Exception? inner = null)
+    : Exception(code, inner)
 {
     public string Code { get; } = code;
+
+    /// <summary>
+    /// MINT-FAILURE-DIAG-1: the original exception's type name, when one was captured. The public Message
+    /// stays exactly <see cref="Code"/> so no existing assertion changes; this is purely diagnostic.
+    /// Without it, <c>MapMintFailure</c>'s catch-all bucket made "file missing", "unauthorized" and
+    /// "anything else" indistinguishable, which blocked triage of a real failing test.
+    /// </summary>
+    public string? OriginalExceptionType => InnerException?.GetType().Name;
+
+    /// <summary>
+    /// Kept EXACTLY equal to <see cref="Code"/>. <c>Exception(string, Exception)</c> would otherwise append
+    /// " ---&gt; inner message" to Message, silently changing text that existing assertions and the frozen
+    /// error vocabulary depend on. The origin stays reachable via <see cref="OriginalExceptionType"/>.
+    /// </summary>
+    public override string Message => Code;
 }
 
 public interface ISecretProtector
