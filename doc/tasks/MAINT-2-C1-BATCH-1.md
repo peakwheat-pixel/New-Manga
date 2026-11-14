@@ -47,15 +47,15 @@ out_of_scope:
 
 ## Acceptance Criteria
 
-- [ ] **AC1（C1-1 / L-R2-1）READ-2 可见控件**：书签面板、整书进度、reset 确认三处的**可见控件**接线（VM 与测试已覆盖，缺视图层）；判别测试断言控件存在且绑定到既有命令。
-- [ ] **AC2（C1-2 / L-F1-2）FONT wire 负例**：补 wire 级 `FONT_DELETE_FAILED` 负例测试（storage 侧已覆盖，wire 侧缺）。
-- [ ] **AC3（C1-3 / L-F1-3）FONT 大文件/并发**：补大文件与并发导入的边界测试（占用文件保留 `KEEP`，不在此列）。
-- [ ] **AC4（C1-4 / L-L1-1）LIB `kind` 投影**：`ChapterSummary` 增 `kind` 投影并由 wire 透出；判别测试断言字段存在且与存储一致。
-- [ ] **AC5（C1-5 / L-L1-2）LIB `custom_rank` 读回闭环**：`custom_rank` 从 write-only 变为可读回；判别测试覆盖写入→读回一致（排序 UI 属 C3-3，不在本卡）。
-- [ ] **AC6（C1-6 / L-L1-4）LIB 64 位边界**：补 R3-001 的 64 位边界校验与断言。
-- [ ] **AC7（C1-7 / L-AI1-6）AI-1 清理**：删除死方法 `reassign_references`、修正 `test_issue_markers` 旧注释。
-- [ ] **AC8（C1-8 / L-PB1-1）PIN-BASIS 专项 suite**：复跑专项 suite 并保留原始输出为证。
-- [ ] **AC9 回归与门禁**：受影响全量测试 0 failed；`check.ps1` / `verify_pins` / `generate_api_inventory --check` 三项不降级；无 `src` 外的契约字节改动。
+- [x] **AC1（C1-1 / L-R2-1）READ-2 可见控件**：书签面板、整书进度、reset 确认三处的**可见控件**接线（VM 与测试已覆盖，缺视图层）；判别测试断言控件存在且绑定到既有命令。 <<MET>>
+- [x] **AC2（C1-2 / L-F1-2）FONT wire 负例**：补 wire 级 `FONT_DELETE_FAILED` 负例测试（storage 侧已覆盖，wire 侧缺）。 <<MET>>
+- [x] **AC3（C1-3 / L-F1-3）FONT 大文件/并发**：补大文件与并发导入的边界测试（占用文件保留 `KEEP`，不在此列）。 <<MET>>
+- [x] **AC4（C1-4 / L-L1-1）LIB `kind` 投影**：`ChapterSummary` 增 `kind` 投影并由 wire 透出；判别测试断言字段存在且与存储一致。 <<MET>>
+- [x] **AC5（C1-5 / L-L1-2）LIB `custom_rank` 读回闭环**：`custom_rank` 从 write-only 变为可读回；判别测试覆盖写入→读回一致（排序 UI 属 C3-3，不在本卡）。 <<MET>>
+- [x] **AC6（C1-6 / L-L1-4）LIB 64 位边界**：补 R3-001 的 64 位边界校验与断言。 <<MET>>
+- [x] **AC7（C1-7 / L-AI1-6）AI-1 清理**：删除死方法 `reassign_references`、修正 `test_issue_markers` 旧注释。 <<MET>>
+- [x] **AC8（C1-8 / L-PB1-1）PIN-BASIS 专项 suite**：复跑专项 suite 并保留原始输出为证。 <<PARTIAL: 复跑留证完成、基线不可比已裁决；不得写 MET>>
+- [x] **AC9 回归与门禁**：受影响全量测试 0 failed；`check.ps1` / `verify_pins` / `generate_api_inventory --check` 三项不降级；无 `src` 外的契约字节改动。 <<MET>>
 
 ## 允许修改范围
 
