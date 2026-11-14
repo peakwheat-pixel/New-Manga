@@ -9,11 +9,11 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | task files | 601 |
 | terminal | 591 |
 | non-terminal | 9 |
-| non-terminal named in the plan | 5 |
-| non-terminal outside the plan | 4 |
-| task files tracked by git | 600 |
-| task files untracked (drafts) | 1 |
-| non-terminal tracked by git | 8 |
+| non-terminal named in the plan | 7 |
+| non-terminal outside the plan | 2 |
+| task files tracked by git | 601 |
+| task files untracked (drafts) | 0 |
+| non-terminal tracked by git | 9 |
 
 Arithmetic note: `task files` = `terminal` + `non-terminal` + `(none)` rows. A `(none)` row is a file with no `status:` field (a draft), which is excluded from `non-terminal` because check.ps1 only counts entries whose status exists and is not terminal; adding only `terminal` + `non-terminal` therefore lands one short of `task files`, and that gap is this note, not a counting error.
 
@@ -26,11 +26,11 @@ Arithmetic note: `task files` = `terminal` + `non-terminal` + `(none)` rows. A `
 | `cancelled` | 21 | yes |
 | `historical` | 11 | yes |
 | `superseded` | 8 | yes |
-| `proposed` | 4 | no |
+| `proposed` | 3 | no |
+| `in_progress` | 2 | no |
 | `in_review` | 2 | no |
 | `(none)` | 1 | no |
 | `approved` | 1 | no |
-| `in_progress` | 1 | no |
 | `ready` | 1 | no |
 
 ## Non-terminal tasks
@@ -38,12 +38,12 @@ Arithmetic note: `task files` = `terminal` + `non-terminal` + `(none)` rows. A `
 | task | status | in plan |
 |---|---|---|
 | `GIT-CLEAN-PUBLICATION-DIAG-1` | `approved` | mentioned |
+| `FEA-06-RESIDUAL-4B` | `in_progress` | mentioned |
 | `MAINT-1-RELEASE-MONITOR` | `in_progress` | own row |
 | `GIT-CLEAN-PUBLICATION-1` | `in_review` | mentioned |
 | `GIT-CLEAN-RUST-ISOLATION-1` | `in_review` | mentioned |
-| `FEA-06-RESIDUAL-4` | `proposed` | no |
+| `FEA-06-RESIDUAL-4` | `proposed` | mentioned |
 | `FEA-06-RESIDUAL-4A` | `proposed` | no |
-| `FEA-06-RESIDUAL-4B` | `proposed` | no |
 | `GIT-CLEAN-CORE-ENV-2` | `proposed` | no |
 | `GIT-CLEAN-RUST-CAPACITY-DESIGN-1` | `ready` | mentioned |
 

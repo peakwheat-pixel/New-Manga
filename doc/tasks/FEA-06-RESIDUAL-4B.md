@@ -5,7 +5,7 @@ kind: implementation
 governance_version: 3
 status: in_progress
 disposition: "RO-1 拆卡的实现卡（2026-11-14，DSH 释放）；消费 `FEA-06-RESIDUAL-4A` 冻结的规格 v1.1；前置 4A r2 `approved` + C-07 v1.9 已重冻（`91e51ab7…`）"
-approval: DSH 2026-11-14 释放（前置已满足：4A r2 approved、C-07 v1.9 重冻、规格 v1.1 定稿）
+approval: DSH 2026-11-14 释放（前置：4A r2 approved、C-07 v1.9 重冻、规格 v1.1 定稿）。**scope review 形式要件裁决（r3 F-9）**：本卡不另做独立 scope review，改由 4A 的 r2 + r3 两轮独立字节级复核替代——两者均由未参与实现者执行，且已核规格可验收性、allowed_paths 边界与预授权一致性；DSH 承担该替代的裁决责任。
 suggested_owner: DSH
 owner: DSH
 reviewer: null
@@ -171,7 +171,7 @@ out_of_scope:
 
 ## Closeout Record
 
-- Closeout date / DSH：待关闭时填写（当前 `proposed`，未释放）。
+- Closeout date / DSH：未关闭（当前 `in_progress`，2026-11-14 由 DSH 释放；前置 4A r2 `approved` + C-07 v1.9 重冻）。
 - canonical_evidence_status：`pending`。
 - resource_closeout_status：`pending`。
 - 删除、迁移、归档数量/字节数：待关闭时填写（预期 0）。

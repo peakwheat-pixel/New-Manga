@@ -12,8 +12,8 @@
 |---|---|---|
 | AC1 规格冻结 | 规格 v1 覆盖两层/字段/布局/交互/空态失败态/a11y + 可判别断言 | **PARTIAL**：规格 v1 已写入卡面 §「对照内容规格 v1（冻结候选）」，字段名/返回类型与 inventory 计划节逐字一致；「冻结」以独立 scope review 通过为准 |
 | AC2 inventory 更新 | 计划节锁死名称/返回类型/#80；正式成员表 = 脚本 stdout 逐行一致 | **PARTIAL**：新增「RO-1 计划追加」节；成员表与 stdout **`ALL_MATCH: True`**（三接口全等），统计仍 `79 / 86` = 代码实测；80/87 翻转归 4B（v1.10，DSH 裁决口径） |
-| AC3 pin 重算 | 新 pin 写入冻结记录 §1 置顶、前一 pin 原值保留、§1B/§2/§3/§5 同步 | **PARTIAL**：pin `8ccaba05…` → `91e51ab7…`；v1.8 原值保留于「前一 pin（v1.8，保留原值）」行；§1B 记为「独立复核 pending」 |
-| AC4 载体 | 结构对齐同型先例 | **PARTIAL**：`doc/reviews/CONTRACT-UNFREEZE-2026-11-14-C07-RO1.md` 已落盘，§6 复核记录为 `pending` |
+| AC3 pin 重算 | 新 pin 写入冻结记录 §1 置顶、前一 pin 原值保留、§1B/§2/§3/§5 同步 | **MET**：pin `8ccaba05…` → `91e51ab7…`；v1.8 原值保留于「前一 pin（v1.8，保留原值）」行；§1B 已记 r1 `changes_requested` → 处置 → r2 `approved` 并**已重冻**（2026-11-14） |
+| AC4 载体 | 结构对齐同型先例 | **MET**：`doc/reviews/CONTRACT-UNFREEZE-2026-11-14-C07-RO1.md` 已落盘，§6 复核记录**已回填 `approved`**（含 r1/r2 两行与覆盖范围声明） |
 | AC5 独立字节级复核 | 由 DSH 另派未参与写作的上下文 | **MET**：r1 `changes_requested`（P0=0/P1=2，记录层；`doc/reviews/FEA-06-RESIDUAL-4A-r1.md`）→ 处置（不触 inventory 字节）→ **r2 `approved`**（P0/P1=0；P2=2/P3=5 不阻断；`doc/reviews/FEA-06-RESIDUAL-4A-r2.md`，被审 head `756ab29e2`），C-07 v1.9 **已重冻** |
 | AC6 门禁四件套 | 四项原始输出 + EXIT | **PARTIAL**：四项全 `EXIT=0`；台账经 DSH 授权重生成一次；零越界按卡面逐文件核对 |
 
@@ -49,7 +49,7 @@
 | 路径 | 变更 | 说明 |
 |---|---|---|
 | `doc/tasks/FEA-06-RESIDUAL-4A.md` | 新增 | 本卡（含规格 v1、AC、R-1…R-5、Resource Manifest） |
-| `doc/reviews/CONTRACT-UNFREEZE-2026-11-14-C07-RO1.md` | 新增 | UNFREEZE 载体（§1 变更范围 / §2 为什么必须 UNFREEZE / §3 计划节 / §4 门禁 / §5 复核要求 / §6 复核记录 pending / §7 不构成什么） |
+| `doc/reviews/CONTRACT-UNFREEZE-2026-11-14-C07-RO1.md` | 新增 | UNFREEZE 载体（§1 变更范围 / §2 为什么必须 UNFREEZE / §3 计划节 / §4 门禁 / §5 复核要求 / §6 复核记录 **approved**（r1/r2 两行 + 覆盖范围声明）/ §7 不构成什么） |
 | `doc/plan/FEA-C07_API_INVENTORY.md` | +18/−2 | 状态行/生成日期行注记 + 「RO-1 计划追加」节 + §关系 补一条 |
 | `doc/plan/FEA-CONTRACT-FROZEN-C07.md` | 改 | §1 pin 链（新行置顶 + v1.8 保留）、§1B、§2 条件 1/3/4、§3、§5 变更行 |
 | `doc/TASK_LEDGER.md` | 机械重生成 | `task files 599→600`、`non-terminal 7→8`、`untracked 0`；经 DSH 2026-11-14 显式授权执行一次 `python tools/governance/task_ledger.py --write` |
@@ -59,7 +59,7 @@
 
 ## 未做 / NOT_RUN（不得记 PASS）
 
-- **独立字节级复核 NOT_RUN**：AC5 `pending`，须 DSH 另派未参与本卡写作的上下文；本卡不写「复核通过」。
+- **独立字节级复核已完成（不再 NOT_RUN）**：r1 `changes_requested`（P0=0/P1=2）→ 处置 → r2 `approved`（P0/P1=0）→ C-07 v1.9 已重冻；r3 窄复核覆盖 v1.1/S7 errata delta（P0=0/P1=0，`doc/reviews/FEA-06-RESIDUAL-4A-r3.md`）。
 - **统计 80/87 NOT_DONE**：按 DSH 裁决与脚本机制（计数由源码解析）在 4A 不可达，属 4B 落地（pin v1.10）。
 - **产品代码 / UI / 测试 NOT_RUN**：`src/**`、`apps/**`、`tests/**` 零改动；「查看对照」面板与端口实现属 `FEA-06-RESIDUAL-4B`。
 - **`FEA-06` AC3 NOT_FLIPPED**：仍为 `PARTIAL`，直到 4B 集成验证通过。
