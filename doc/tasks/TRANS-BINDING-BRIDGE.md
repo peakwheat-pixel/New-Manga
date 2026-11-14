@@ -118,3 +118,28 @@ legacy QML 还镜像 `settings["providers"]["networks"]`（`viewmodel.py:485-520
 ### R-5 证据与门禁
 
 全量 pytest 3551/0/10、四件套全绿、`--check` 1/80/6=87、`apps/**` 零改动 —— 均以本卡证据 README 为准；独立复核 `TRANS-BINDING-BRIDGE-r1.md` 待派。
+
+## 返修记录（2026-11-14，`659bb3053`）
+
+r1 复核 `changes_requested` 后返修：
+
+- **P1-1 scope 真 bug 已修**。取证：执行链只读**扁平** step 槽（`handlers.py:1267` 的 `_chain` 读 `run.provider_binding_snapshot.get(step_type)`；同读取点 `executor.py:27`、`projection.py:285`、`service.py:797`），`pipeline_defaults.provider_bindings` 是 `{step: profile_id}` 扁平表（`pipeline_defaults.py:62-103`、`pipeline.py:1766-1786`），`provider_binding_snapshot[_p15_settings_snapshot]` 的 book/chapter 解析结果**仅供 resolve 显示**（`core_service.py:6707-6709`）。⇒ **只有 global scope 可写/可清扁平槽**；book/chapter 只落 P15 JSON 行。
+  - 改动：`settings_commands.py` 的 `_bindings_set` / `_bindings_clear` 增加 `writes_flat_slot` / `clears_flat_slot = scope["kind"] == "global"`。
+  - 新增 3 例：global→book 不覆盖全局；clear book 不动全局；clear chapter 不动全局。
+- **P1-2 反向半写已修**。`_write_with_rollback` 捕获扩为 `(BindingValidationError, KeyError, OSError, TypeError, ValueError)`，选型原则是「两个协作者实际会抛的异常族」，**故意不捕获裸 `Exception`**（`AttributeError`/`NameError` 必须响亮）。
+  - 新增 4 例反向：`update_profile` 抛 `KeyError`（r1 实测那条）、`add_profile` 抛 `OSError`、`delete_profile` 抛 `OSError`、`save_bindings` 抛 `OSError`；均断言 typed `SETTINGS_UNAVAILABLE` + 镜像回到调用前值 + 与 JSON 侧一致。
+- **证据命令已修正**：`logs/gates-final.log` 每节首行改为完整可复制命令（含 `-TaskPath doc/tasks/TRANS-BINDING-BRIDGE.md`）并重跑。
+- **实测**：全量 pytest **3558/0/10**（上轮 3551 → +7）；定向 115 passed（14 bridge + 101 P15，零回归）；四件套全绿；`--check` 1/80/6=87；`apps/**` 0 改动。
+
+## DSH 裁决 R-6：book/chapter scope 不驱动执行 —— 登记 limitation，本轮**不开卡**
+
+- **事实**：扁平槽只接受 global，故**仅配置 book/chapter scope 绑定时 `_chain` 仍会 `PROVIDER_NOT_CONFIGURED`**（run 快照无 per-book step 槽）。
+- **裁决**：接受为**已知限制**，不在本卡扩面。理由：① 全局配置已覆盖自动翻译的主用例；② 根治需给 `provider_binding_snapshot` 加 scope 维度并改执行链读取面，风险与范围都超出本桥；③ 若日后出现「不同书用不同 provider」的真实需求，再开独立卡（届时须先出 run 快照结构评估）。
+- **登记位置**：本节 + `verification/TRANS-BINDING-BRIDGE/README.md` §6.2。
+
+## 仍无法保证的反向窗口（实施者如实登记，DSH 确认）
+
+1. **回滚本身失败**（同一 SQLite 不可写时）：吞掉回滚异常仍抛 typed 失败，可能留下「镜像新值 / JSON 旧值」；两存储**无跨库事务**。
+2. **两次写之间进程被强杀**：无崩溃恢复标记。
+3. **JSON 文件被外部并发改写**：读-改-原子写的丢失更新（既有风险，与本桥无关）。
+4. **book/chapter scope 不驱动执行**（见 R-6）。
