@@ -10,8 +10,8 @@
 
 | AC | 判别 | 结果 |
 |---|---|---|
-| AC1 规格冻结 | 规格 v1 覆盖两层/字段/布局/交互/空态失败态/a11y + 可判别断言 | **PARTIAL**：规格 v1 已写入卡面 §「对照内容规格 v1（冻结候选）」，字段名/返回类型与 inventory 计划节逐字一致；「冻结」以独立 scope review 通过为准 |
-| AC2 inventory 更新 | 计划节锁死名称/返回类型/#80；正式成员表 = 脚本 stdout 逐行一致 | **PARTIAL**：新增「RO-1 计划追加」节；成员表与 stdout **`ALL_MATCH: True`**（三接口全等），统计仍 `79 / 86` = 代码实测；80/87 翻转归 4B（v1.10，DSH 裁决口径） |
+| AC1 规格冻结 | 规格 v1 覆盖两层/字段/布局/交互/空态失败态/a11y + 可判别断言 | **MET**：规格 **v1.1** 已定稿并写入卡面（S1/S2/S3/S5 已同步 P2-2/P2-3/P2-4 三处更正），字段名/返回类型与 inventory 计划节逐字一致；scope review 形式要件按 **r3 F-9 裁决**由 r2+r3 两轮独立字节级复核替代（记于卡面 AC1 与 4B `approval`） |
+| AC2 inventory 更新 | 计划节锁死名称/返回类型/#80；正式成员表 = 脚本 stdout 逐行一致 | **MET**：新增「RO-1 计划追加」节；成员表与 stdout **`ALL_MATCH: True`**（三接口全等），统计维持 `79 / 86` = 代码实测（4A 不动 `apps/**`）；**80/87 与 pin v1.10 由 4B 落地时翻转**（DSH 裁决口径，见 RO-1 §6A errata） |
 | AC3 pin 重算 | 新 pin 写入冻结记录 §1 置顶、前一 pin 原值保留、§1B/§2/§3/§5 同步 | **MET**：pin `8ccaba05…` → `91e51ab7…`；v1.8 原值保留于「前一 pin（v1.8，保留原值）」行；§1B 已记 r1 `changes_requested` → 处置 → r2 `approved` 并**已重冻**（2026-11-14） |
 | AC4 载体 | 结构对齐同型先例 | **MET**：`doc/reviews/CONTRACT-UNFREEZE-2026-11-14-C07-RO1.md` 已落盘，§6 复核记录**已回填 `approved`**（含 r1/r2 两行与覆盖范围声明） |
 | AC5 独立字节级复核 | 由 DSH 另派未参与写作的上下文 | **MET**：r1 `changes_requested`（P0=0/P1=2，记录层；`doc/reviews/FEA-06-RESIDUAL-4A-r1.md`）→ 处置（不触 inventory 字节）→ **r2 `approved`**（P0/P1=0；P2=2/P3=5 不阻断；`doc/reviews/FEA-06-RESIDUAL-4A-r2.md`，被审 head `756ab29e2`），C-07 v1.9 **已重冻** |

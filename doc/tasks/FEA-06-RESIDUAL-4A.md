@@ -56,7 +56,7 @@ out_of_scope:
 
 状态标记为本卡起草提交时的真实状态；`<<MET>>` / `<<PARTIAL>>` / `<<PENDING>>` 由 DSH 在释放与收口时更新，**本卡不得自评通过**。
 
-- [x] **AC1 规格冻结**：RO-1 §5 v0 细化为规格 v1，覆盖**两层定义 / 字段 / 布局 / 交互 / 空态与失败态 / a11y**，逐项给出可判别断言（供 4B 直接派生测试）；规格文本落本卡 §「对照内容规格 v1（冻结候选）」，且与计划节的方法名、返回类型、字段名**逐字一致**。规格「冻结」以独立 scope review 通过为准。 `<<MET: 规格 v1.1 已定稿（S1/S2/S3/S5 已同步 P2-2/P2-3/P2-4）；scope review 形式要件按 r3 F-9 裁决，由 r2+r3 两轮独立字节级复核替代>>`
+- [x] **AC1 规格冻结**：RO-1 §5 v0 细化为规格 v1，覆盖**两层定义 / 字段 / 布局 / 交互 / 空态与失败态 / a11y**，逐项给出可判别断言（供 4B 直接派生测试）；规格文本落本卡 §「对照内容规格 v1（冻结候选）」，且与计划节的方法名、返回类型、字段名**逐字一致**。规格「冻结」以独立 scope review 通过为准。 `<<MET: 规格 v1.1 已定稿（S1/S2/S3/S5 已同步 P2-2/P2-3/P2-4）；scope review 形式要件按 DSH 依 r3 F-9 建议作出的裁决，由 r2+r3 两轮独立字节级复核替代>>`
 - [ ] **AC2 inventory 更新（成员表逐行一致口径）**：[C-07 API Inventory](../plan/FEA-C07_API_INVENTORY.md) 新增「RO-1 计划追加」节，锁死 `ListPageRegionTextsAsync` / `Task<RegionPageTextProjection?>` / 落地后行号 `#80`；**正式成员表与统计行保持与脚本 stdout 逐行一致**（79 方法 + 4 非方法成员；`IHostController 79`、合计 `86`），并显式写明「80/87 由 4B 落地时翻转 + pin 重算 v1.10」。`python tools/generate_api_inventory.py --check` EXIT 0。 `<<PARTIAL: 计划节与口径已落盘；统计/成员表按上文口径保持 79/86，翻转属 4B>>`
 - [ ] **AC3 pin 重算与冻结记录同步**：C-07 文件 pin 由 v1.8 重算为 v1.9 并写入 [冻结记录](../plan/FEA-CONTRACT-FROZEN-C07.md) §1（**新行置顶、前一 pin 原值保留不改写**）、§1B（登记 v1.9 RO-1 与「独立复核 pending」）、§2 条件 3（计数口径）、§5（变更行）；`pwsh -NoProfile -File tools/governance/verify_pins.ps1` PASS 且 C07 行等于新 pin。 `<<PARTIAL: pin 已重算并登记；§1B 复核列仍为 pending>>`
 - [ ] **AC4 UNFREEZE 载体**：载体落 `doc/reviews/CONTRACT-UNFREEZE-2026-11-14-C07-RO1.md`，含「依据 / 为什么必须 UNFREEZE / 变更范围 / 计划节 / 新 pin / 独立复核要求 / 复核记录（pending）/ 不构成什么」，结构对齐同型先例 [CONTRACT-UNFREEZE-2026-11-10-C07](../reviews/CONTRACT-UNFREEZE-2026-11-10-C07.md)。 `<<PARTIAL: 载体已落盘；§6 复核记录待独立复核回填>>`
@@ -231,7 +231,7 @@ Task<RegionPageTextProjection?> ListPageRegionTextsAsync(
 ### E-1｜S7 允许面不完整（补 2 个生产文件）
 
 - **事实**：生产链是 **4 跳**——`IHostController`（`IHostController.cs`）→ `HostController`（`HostController.cs:17`）→ `HostRuntime`（`HostRuntime.cs:826-840` 门控样板）→ `CoreServiceClient`（`CoreServiceClient.cs:1104` 样板）。`CoreServiceClient` 中 `region_texts` **0 命中**，wire 调用与解析都必须新写。
-- **裁决**：S7 允许面扩充为包含 `apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs`（**r3 F-1 更正：本节初稿误写为 `App/Services/HostRuntime.cs`，该路径从未存在；真实文件在 `NewManga.Host/`，2875 行，class 定义于 `:20`**）与 `apps/desktop-avalonia/src/NewManga.CoreClient/CoreServiceClient.cs`（含其 wire DTO，若需）。该扩面只在 `FEA-06-RESIDUAL-4B` 的 `allowed_paths` 落地；4A 是契约卡，**不实现**这两个文件。
+- **裁决**：S7 允许面扩充为包含 `apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs`（**r3 F-1 更正：本节初稿写成了不存在的子路径，已改；正确文件在 `NewManga.Host/`，2,875 行 / 134,124 B，class 定义于 `:20`**）与 `apps/desktop-avalonia/src/NewManga.CoreClient/CoreServiceClient.cs`（含其 wire DTO，若需）。该扩面只在 `FEA-06-RESIDUAL-4B` 的 `allowed_paths` 落地；4A 是契约卡，**不实现**这两个文件。
 
 ### E-2｜`TARGET_NOT_FOUND` 通道口径（R-8 确认）
 
