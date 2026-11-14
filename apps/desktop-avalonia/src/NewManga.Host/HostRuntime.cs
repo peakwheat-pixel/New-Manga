@@ -840,6 +840,31 @@ public sealed class HostRuntime : IAsyncDisposable
     }
 
     /// <summary>
+    /// FEA-06-RESIDUAL-4B (4A spec S3): the page-scoped Region TEXT read projection
+    /// (<c>list_page_region_texts</c>). Read-only and behind the same reader gate as
+    /// <see cref="ListRegionsAsync"/>: a not-ready runtime throws typed and the App controller
+    /// degrades that to <c>null</c>. The optional filter is passed through untouched.
+    /// </summary>
+    public async Task<RegionPageTextProjection> ListPageRegionTextsAsync(
+        string pageId,
+        IReadOnlyList<string>? regionIds = null,
+        CancellationToken cancellationToken = default)
+    {
+        await _readerIoGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            var core = CoreService ?? throw NotReady();
+            return await core
+                .ListPageRegionTextsAsync(pageId, regionIds, cancellationToken)
+                .ConfigureAwait(false);
+        }
+        finally
+        {
+            _readerIoGate.Release();
+        }
+    }
+
+    /// <summary>
     /// READER-WORKBENCH-1 AC1: frozen region revision history (<c>list_region_revisions</c>).
     /// Read-only; same gate.
     /// </summary>

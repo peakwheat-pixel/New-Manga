@@ -1,5 +1,6 @@
 using System.Globalization;
 using NewManga.CoreClient;
+using NewManga.CoreClient.Commands;
 
 namespace NewManga.App.Services;
 
@@ -175,6 +176,13 @@ public sealed class NullHostController : IHostController, ISourceImportControlle
         string pageId,
         CancellationToken cancellationToken = default) =>
         Task.FromResult<RegionPageProjection?>(null);
+
+    /// <summary>FEA-06-RESIDUAL-4B (4A spec S3): the inert host has no projection; always null.</summary>
+    public Task<RegionPageTextProjection?> ListPageRegionTextsAsync(
+        string pageId,
+        IReadOnlyList<string>? regionIds = null,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult<RegionPageTextProjection?>(null);
 
     public Task<RegionRevisionHistory?> LoadRegionRevisionsAsync(
         string regionId,

@@ -3,6 +3,7 @@ using System.Text.Json;
 using NewManga.App.Services;
 using NewManga.App.ViewModels.V2.Library;
 using NewManga.CoreClient;
+using NewManga.CoreClient.Commands;
 
 namespace NewManga.App.Tests;
 
@@ -1195,6 +1196,23 @@ public sealed class FakeHostController : IHostController, ISourceImportControlle
         RegionListCalls.Add(pageId);
         return Task.FromResult<RegionPageProjection?>(
             RegionsByPage.TryGetValue(pageId, out var projection) ? projection : null);
+    }
+
+    // FEA-06-RESIDUAL-4B (4A spec S3): the page-scoped Region TEXT projection. Unset means
+    // "projection unavailable" (null), so a UI test can pin the empty/failure states without a
+    // Core; the call log lets a test assert the "exactly one projection call per open" rule.
+    public Dictionary<string, RegionPageTextProjection> RegionTextsByPage { get; } = new(StringComparer.Ordinal);
+
+    public List<(string PageId, IReadOnlyList<string>? RegionIds)> RegionTextCalls { get; } = new();
+
+    public Task<RegionPageTextProjection?> ListPageRegionTextsAsync(
+        string pageId,
+        IReadOnlyList<string>? regionIds = null,
+        CancellationToken cancellationToken = default)
+    {
+        RegionTextCalls.Add((pageId, regionIds));
+        return Task.FromResult<RegionPageTextProjection?>(
+            RegionTextsByPage.TryGetValue(pageId, out var projection) ? projection : null);
     }
 
     public Task<RegionRevisionHistory?> LoadRegionRevisionsAsync(

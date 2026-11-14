@@ -997,6 +997,34 @@ public sealed class HostController : IHostController, ISourceImportController, I
         }
     }
 
+    /// <summary>
+    /// FEA-06-RESIDUAL-4B (4A spec S3): the page-scoped Region TEXT projection; null when the Host
+    /// is not ready or the read fails, so a typed reason never escapes to the UI thread. The Host
+    /// never invents regions or text: an unavailable projection is null, not an empty projection.
+    /// </summary>
+    public async Task<RegionPageTextProjection?> ListPageRegionTextsAsync(
+        string pageId,
+        IReadOnlyList<string>? regionIds = null,
+        CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(pageId) || _runtime is null || !_runtime.Result.IsReady)
+        {
+            return null;
+        }
+
+        var runtime = _runtime;
+        try
+        {
+            return await runtime
+                .ListPageRegionTextsAsync(pageId, regionIds, cancellationToken)
+                .ConfigureAwait(false);
+        }
+        catch (Exception ex) when (IsUiFacingFailure(ex))
+        {
+            return null;
+        }
+    }
+
     /// <summary>AC1: region revision history; null when the Host/Core is unavailable.</summary>
     public async Task<RegionRevisionHistory?> LoadRegionRevisionsAsync(
         string regionId,
