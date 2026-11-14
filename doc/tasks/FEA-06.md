@@ -274,3 +274,10 @@ allowed_paths:
 - **残留登记**：P2-2（09 细粒度缺口）、P2-6（书架空态主按钮偏差）、P2-7（Elevation 未消费）、P2-8（四 VM 单文件技术债）、P2-9（设置未保存确认/Esc）、W-13 residual（完整 Run 控制台数据）、PNG 采证测试写仓库（异机 dirty）→ 全部登记到 `FEA-06-RESIDUAL-1` 或后续 Task。
 - 删除、迁移、归档数量/字节数：0；未执行清理或数据迁移；未写产品数据/用户源文件。
 - 关闭于 2026-11-02（DSH 集成；未 push）。
+
+## RO-1 回填（append-only，2026-11-14）
+
+- **AC3 的「冲突态缺『查看对照』动作」子项已关闭**：路径为 `FEA-06-RESIDUAL-4A`（契约前置，C-07 v1.9 RO-1 预授权）→ `FEA-06-RESIDUAL-4B`（实现，四刀 `eae0eb67a`/`fd4008ce3`/`ba6136d0`/`42123ae67`，收口 `16209b0df`，`status: done`）→ C-07 **v1.10 FROZEN**（pin `498882eb…`，成员表 #80 纯 append，统计 80/87）→ 独立字节级复核 `approved`（`doc/reviews/FEA-06-RESIDUAL-4B-r1.md`，P0=0/P1=0）。
+- **本回填不改 AC3 的整体判定**：AC3 仍为 `PARTIAL`，因为其余子项（错误态卡片控制台入口、满态未保存圆点、Run 投影/控制的完整绑定）不在本次范围内。
+- **不得读作「视觉已验收」**：4B 只有结构性证据，无像素级截图；6 项 limitation（无像素证据、Esc seam、catch 分支、SendAsync seam、焦点、文案两两不同断言）见 `verification/FEA-06-RESIDUAL-4B/README.md` 与 4B 卡 Closeout。
+- **用户可见后果（已解除的部分）**：区域冲突时现在可以在横幅下方打开纵向双栏对照（上=基底只读，下=当前工作副本实时只读），不再只能看横幅与 typed 原因。
