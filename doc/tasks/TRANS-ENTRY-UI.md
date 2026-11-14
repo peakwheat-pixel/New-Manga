@@ -80,3 +80,25 @@ C#：`dotnet test`（App.Tests 为主）；不得新增 skip/xfail；若既有 U
 ## Closeout Record
 
 - 未关闭（当前 `in_progress`）。
+
+## 交付记录与 DSH 裁决（2026-11-14，`ff1778246`）
+
+### 交付
+
+- 新增 `Services/TranslateErrorText.cs`；四类文案互不相同（测试断言 distinct=4）。
+- AC1 前置门用既有 `ResolveProviderBindingAsync("Translation")`，**显式无 profile 才拦**，返回 null（未知）放行（fail-open）。
+- AC3 空章做成**建议性探测**（探测照跑、尝试照发、失败文案用空章句覆盖 `INVALID_REQUEST`）。
+- AC4 重启提示独立常量 + 内嵌未配置文案。AC5 设置页无 scoped 入口，登记「未提供」。AC6 `StudioInspectorPanel.cs:256` 按实测状态改写。
+- grep 先行：`未配置模型 Provider`/`重启`/`开始处理`/`能力待接入`/`INVALID_REQUEST` 五类既有断言**逐条保留**，未削弱。
+- 实测：App **919/0/11**、CoreClient 182/0/26、Host 321/0/74；四件套绿；`--check` 1/80/6=87。
+
+### 自曝并已修的回归
+
+第一版把空章探测做成**硬门**（空 → `return false`），App.Tests **13 红**（既有 fake Host 无页数据全被拦）；改为建议性探测后回 0 红。已在证据 README 留档。
+
+### DSH 裁决
+
+- **R-1 接受 AC3 的「不拦、只换文案」**。验收对象是**用户可见文案**，已覆盖；要做硬门必须让 Host 能区分「空」与「未知」，当前契约不能，且硬门会误伤 13 条既有用例。这是结构限制，不是实现偷懒。**但须登记 limitation**（见下）。
+- **R-2 接受 AC1 的 fail-open**。`null` 语义是「查不到」（Host 未就绪/端口不支持），把它当「未配置」会误伤「已配置但 Host 未起」的用户。区分 `null` 与 `cleared` 需要改契约，超本卡边界。
+- **R-3 接受 402/404 不区分**。wire 上同为 `INVALID_INPUT`，状态码不下发到 UI；编造区分就是撒谎。文案已如实并列「可能是模型名写错（404），也可能是额度不足（402）」，这是当前证据下的正确表述。
+- **R-4 limitation 登记**：① 空章探测是建议性的，`list_chapter_pages` 在「空」与「不可读」上无区分能力；② AC1 fail-open 意味着「已配置但 Host 未就绪」会进入 StartRun 并失败（失败文案已可读）；③ 402/404 不可区分，需 Core 侧加错误码（UNFREEZE）才能改善。
