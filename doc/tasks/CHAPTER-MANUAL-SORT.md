@@ -76,8 +76,8 @@ allowed_paths:
 - [ ] **AC1 原子持久化**：`reorder_chapters` 在同一 SQLite 事务内完成整书 `sort_order` 重写；任何一步失败则全部回滚，DB 中不存在"部分章节已改序"的中间状态。
 - [ ] **AC2 判别测试（原子性）**：构造中途失败（注入 `update_chapter` 抛错），断言事务回滚后**全部**章节 `sort_order` 与调用前一致。把实现回退成逐章独立事务后，该测试必须变红。
 - [ ] **AC3 缓存失效**：`HostController.ReorderChaptersAsync` 成功返回后，同一 `bookId` 的 `ListChaptersAsync` 必须返回新顺序（不得命中重排前的缓存条目）。
-- [ ] **AC4 VM 拖拽语义**：`ShelfViewModel.MoveChapterAsync(fromIndex, toIndex)` 计算目标顺序并调用 `IHostController.ReorderChaptersAsync`；成功则 `Chapters` 集合按结果重排且 `SelectedChapter` 保持在原选中章节；失败则集合顺序**不变**并给出可见错误文案；越界索引不发起调用。
-- [ ] **AC5 视图拖拽手势**：书架章节列表支持鼠标拖拽重排（拖拽超过阈值才触发，单击仍为选中章节），拖放结束调用 `MoveChapterAsync`。
+- [ ] **AC4 VM 拖拽语义**：`ShelfViewModel.ReorderChapterAsync(fromIndex, toIndex)` 计算目标顺序并调用 `IHostController.ReorderChaptersAsync`；成功则 `Chapters` 集合按结果重排且 `SelectedChapter` 保持在原选中章节；失败则集合顺序**不变**并给出可见错误文案；越界索引不发起调用。
+- [ ] **AC5 视图拖拽手势**：书架章节列表支持鼠标拖拽重排（拖拽超过阈值才触发，单击仍为选中章节），拖放结束调用 `ReorderChapterAsync`。
 - [ ] **AC6 契约零变化**：`ListChapters` 仍按 `sort_order` 返回；wire 命令、字段、DTO 与 `M2-C1`/`C-07` 字节不变（`generate_api_inventory.py --check` 仍 `1/80/6=87`；`verify_pins.ps1` 18/18）。
 - [ ] **AC7 新增章节排末尾**：在已有手动顺序的书中新增章节后，新章节位于列表末尾（固定既有 `max+1` 行为，防回归）。
 - [ ] **AC8 失败与刷新不假装成功**：重排失败、并发冲突（`INVALID_REQUEST`）或刷新后，UI 不得显示未落库的顺序；错误路径有可见文案。
@@ -90,7 +90,7 @@ allowed_paths:
 
 - Core 端：`reorder_chapters` 的事务化（可新增 repo 批量方法或 service 层事务包装）；`ports.py` 如需扩展 port 须同批。
 - Host 端：`HostController.ReorderChaptersAsync` 成功后失效对应 `bookId` 缓存。
-- UI 端：`ShelfViewModel` 新增 `MoveChapterAsync` 与 in-flight 守卫；`ShelfPageView` 章节列表加拖拽手势。
+- UI 端：`ShelfViewModel` 新增 `ReorderChapterAsync` 与 in-flight 守卫；`ShelfPageView` 章节列表加拖拽手势。
 - 测试与 `verification/CHAPTER-MANUAL-SORT/**`。
 
 ## 禁止范围
@@ -125,9 +125,32 @@ allowed_paths:
 
 ## 交付与运行记录
 
-- Handoff：尚无。
-- Review：尚无（须独立上下文，不得由实现会话自审）。
-- 实际测试：尚无。
+- Handoff：`doc/reviews/CHAPTER-MANUAL-SORT-review-r1.md`（独立复核 r1，verdict **ACCEPT_WITH_LIMITATIONS**）。
+- Review：r1 独立上下文子 agent `review-chapter-sort`（未参与实现），被审 head `13d836713`。
+- 实际测试（r2 返修后复跑）：
+  - `pytest tests/storage/test_chapter_reorder_atomic.py -q` → **5 passed**
+  - `dotnet test --filter ShelfChapterReorderTests` → **11 passed**（含 F2 切书竞态、SelectedChapter 保持、空书边界）
+  - `dotnet build src/NewManga.App -warnaserror` → **0 警告 0 错误**
+  - 四件套：`check` PASS｜`verify_pins` 18/18｜`inventory` `1/80/6=87`
+  - 全量回归见 `verification/CHAPTER-MANUAL-SORT/regression.log`
+
+### r1 复核处置（逐项，不得淡化）
+
+| finding | 严重度 | 处置 |
+|---|---|---|
+| F1 越界提交 `verification/FEA-09/logs/wire-redacted.ndjson`，使 `EV-059` pin 失效 | **P1** | **已修**：`git checkout 79606ea4a -- <path>` 还原为 5004 bytes / `548de629…`，与 pin 一致。**这是我的错误**：.NET 测试会写脏该文件（handoff §6 坑 7 已警告），我虽然在首次提交前还原过，但在其后又跑了 CoreClient 测试并用 `git add -A` 把它卷进了 `13d836713`。原样登记，不淡化。 |
+| F2 重排 await 期间切书 → 旧书章节覆盖新书视图 | **P2** | **已修**：await 前捕获 `bookId`，返回后校验 `SelectedBook?.BookId`；不符则保留新书列表（写入已落库）。新增判别测试，实测去掉守卫后变红（`ch-2,ch-3,ch-1` 覆盖新书）。 |
+| F3 AC3 无任何可执行测试 | **P2** | **接受为限制**：维持 `NOT_RUN`。仓库 sidecar（2026-10-23）早于 `ReorderChapters`（`83e45cfe5`/2026-11-10），重建需 PyInstaller 而本环境 PyPI 不可达。pending 测试保留在 `verification/CHAPTER-MANUAL-SORT/pending-host-cache-test.cs.txt`，待 Gate 条件 4 的新 sidecar 后转正。**不得写成"AC3 已通过"**。 |
+| F4 条件 1 计数在 STATUS 与评估 §14 间矛盾 | **P2** | **已修**：统一为「6 项已关闭 + 1 项本卡收口 + 1 项 KEEP-NOTRUN」，STATUS 与 §14 同步。 |
+| F5 E-1「前端不可达」表述过强 | P3 | **已修**：改为"未经 `HostDomainService` 覆盖，测试口径与生产分派方式不一致"，并注明 `drafts_*` 由 `HostController` 直调、`source_*` 经 `HostRuntime`。 |
+| F6 AC4 方法名不一致；`SelectedChapter`/空边界无测试；`??= moved` 不刷新预览 | P3 | **已修**：卡面统一为 `ReorderChapterAsync`；删除 `SelectedChapter ??= moved`；新增"选中保持"与"空书 no-op"两个测试。 |
+| F7 Host early-return 无错误码；VM 文案未用错误码 | P3 | **部分修**：exception 路径已补 `SetLastError`；early-return（未就绪/空 bookId）仍返回 false 不设码 —— 与同类方法一致，登记为待评估。 |
+| F8 缓存"读-填"竞态（eviction 可能被在途 List 回填） | P3 | **接受为限制**：`ListChaptersAsync` 在 `lock` 外 await，理论上可能把 evict 前的旧结果写回。概率低、影响为一次陈旧列表，需下一次刷新纠正。登记，不在本卡扩大范围。 |
+| F9 `update_chapters_atomic` 复制了 `update_chapter` 的 SQL | P3 | **接受**：为保持 `update_chapter` 既有调用方零风险而没有抽公共私有方法；重复是有意的最小改动。 |
+| F10 AC9 测试在删守卫时表现为 hang 而非 red；AC2 注释计数 | P3 | **部分修**：AC2 注释已改为"LATER update"；AC9 的 hang 现象登记（守卫存在时测试正常通过，删守卫会挂起而非干净失败）。 |
+| F11 卡面交付记录陈旧、914 基线、four-pieces warnings 数 | P3 | **已修/说明**：本节已更新为实测值；914 来自 handoff §1 的旧记录，本卡实测基线为 App 931（未含本卡时为 923）；four-pieces 日志记的 3 条警告是 STATUS 压缩前的快照，当前为 2 条。 |
+| F12 视图/VM 健壮性与排版细节 | P3 | 已顺手修掉 `Chapters.Clear()` 后粘连的排版；其余无行为影响。 |
+
 - 后续记录日期、commit、环境、结果、遗留项；最终由 DSH 填 `integration_commit` 并改 done。
 
 ## Canonical Evidence

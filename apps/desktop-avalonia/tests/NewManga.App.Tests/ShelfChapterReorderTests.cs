@@ -93,9 +93,39 @@ public sealed class ShelfChapterReorderTests
         Assert.Contains("只读", vm.ViewStatus, StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// F6 (r1 review): a drag reorders the list; it must not silently change which chapter is
+    /// selected (the preview pane belongs to the selection).
+    /// </summary>
     [Fact]
-    public async Task ReorderChapter_WhileAWriteIsInFlight_RefusesTheSecondDrag()
+    public async Task ReorderChapter_KeepsTheExistingChapterSelection()
     {
+        var (host, vm) = await LoadedAsync();
+        vm.SelectChapter(vm.Chapters[1]);
+        Assert.Equal("ch-2", vm.SelectedChapter?.ChapterId);
+
+        Assert.True(await vm.ReorderChapterAsync(0, 2));
+
+        Assert.Equal("ch-2", vm.SelectedChapter?.ChapterId);
+        Assert.Equal(new[] { "ch-2", "ch-3", "ch-1" }, VisibleOrder(vm));
+    }
+
+    /// <summary>F6 (r1 review): the empty book is a no-op with no wire traffic.</summary>
+    [Fact]
+    public async Task ReorderChapter_EmptyBook_IsRejectedWithoutWireTraffic()
+    {
+        var host = new FakeHostController(FakeHostController.ReadySnapshot("空书"));
+        host.ChaptersByBook["book-0"] = Array.Empty<ChapterSummary>();
+        var vm = new ShelfViewModel(host);
+        await vm.SelectBookAsync(host.Snapshot.Books[0]);
+        Assert.Empty(vm.Chapters);
+
+        Assert.False(await vm.ReorderChapterAsync(0, 0));
+        Assert.False(host.LastReorderCalled);
+    }
+
+    [Fact]
+    public async Task ReorderChapter_WhileAWriteIsInFlight_RefusesTheSecondDrag()    {
         var (host, vm) = await LoadedAsync();
         var gate = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
         host.ReorderOverride = (_, _) => gate.Task;
@@ -116,5 +146,46 @@ public sealed class ShelfChapterReorderTests
         Assert.True(await first);
         Assert.False(vm.IsReordering);
         Assert.Equal(new[] { "ch-2", "ch-3", "ch-1" }, VisibleOrder(vm));
+    }
+
+    /// <summary>
+    /// F2 (r1 review): the reorder write is awaited while the user may already have clicked another
+    /// book. A late return must not repopulate the shelf with the previous book's chapters.
+    /// </summary>
+    [Fact]
+    public async Task ReorderChapter_WhenTheUserSwitchesBookMidWrite_DoesNotOverwriteTheNewBook()
+    {
+        var host = new FakeHostController(FakeHostController.ReadySnapshot("书一", "书二"));
+        host.ChaptersByBook["book-0"] = ThreeChapters;
+        host.ChaptersByBook["book-1"] = new[]
+        {
+            new ChapterSummary("other-1", "另一本 1", "1", 1),
+            new ChapterSummary("other-2", "另一本 2", "2", 2),
+        };
+        var vm = new ShelfViewModel(host);
+        await vm.SelectBookAsync(host.Snapshot.Books[0]);
+        Assert.Equal(3, vm.Chapters.Count);
+
+        var gate = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        host.ReorderOverride = (_, _) => gate.Task;
+
+        var pending = vm.ReorderChapterAsync(0, 2);
+        for (var spin = 0; spin < 200 && !vm.IsReordering; spin++)
+        {
+            await Task.Delay(5);
+        }
+        Assert.True(vm.IsReordering);
+
+        // The user picks the other book while the write is still in flight.
+        await vm.SelectBookAsync(host.Snapshot.Books[1]);
+        Assert.Equal(new[] { "other-1", "other-2" }, VisibleOrder(vm));
+        Assert.Equal("book-1", vm.SelectedBook!.BookId);
+
+        gate.SetResult(true);
+        Assert.True(await pending);
+
+        // The write landed, but the pane must still show the newly selected book.
+        Assert.Equal(new[] { "other-1", "other-2" }, VisibleOrder(vm));
+        Assert.Equal("book-1", vm.SelectedBook!.BookId);
     }
 }

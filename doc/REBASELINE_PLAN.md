@@ -44,9 +44,7 @@
 |FEA-14-EXPORT-1|FEA-14-S5-PREQ-1|done（r3 approved；零新 wire/零 DDL）|
 |FEA-15-A2-1 / A3-1 / A4-1|FEA-14-EXPORT-1|A2 done（r2；四页 4/4）；A3 closed_with_limitations（r3；AC3 limitation）；A4 done（r2；升级/回退演练）|
 |FEA-14-READ-1 / FEA-14-READ-2|FEA-14-S5-PREQ-1|closed_with_limitations（r4/r3；v10+wire）|
-|FEA-14-FONT-1 / FEA-14-LIB-1|FEA-14-S5-PREQ-1|closed_with_limitations（v11/v12；P1–P8）|
-|FEA-14-EDIT-1|FEA-14-S5-PREQ-1|closed_with_limitations（v13；P16–P20）|
-|FEA-14-AI-1|FEA-14-S5-PREQ-1|closed_with_limitations（v14；P21–P25；S5=25/25）|
+|FEA-14-FONT-1 / LIB-1 / EDIT-1 / AI-1|FEA-14-S5-PREQ-1|closed_with_limitations（v11–v14；P1–P25；S5=25/25）|
 |FEA-15-ACCEPT-1|FEA-14-AI-1|closed_with_limitations（失败/NOT_RUN 保留）|
 |FEA-15-PIN-POLICY-1 / GOV-CHECKER-NOTASK-1 / GOV-REFINCIDENT-1|FEA-15-PIN-EOL-GOV-1|done（ZCode；新 pin BLOB；根因 UNKNOWN）|
 |FEA-15-PIN-BASIS-ENFORCE-1|FEA-15-PIN-POLICY-1|closed_with_limitations|

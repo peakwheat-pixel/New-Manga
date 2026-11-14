@@ -40,7 +40,9 @@
 - **性质**：需要 DSH 裁决是「补两个 DomainService（Drafts/SourceSync 端口）」还是「该测试的正确断言应为
   '每个 domain 都有服务覆盖且无重复'」。两者都要动代码或测试口径，属范围决策，**不在本卡内**。
 - **与 Gate 的关系**：属 Gate 条件 3（完整 GUI/Core/Host 流程矩阵）的直接输入 —— 21 条命令没有
-  C# 端口服务，即这些命令在前端不可达/未投影。
+  C# 端口服务 —— 但这**不等于命令不可达**：`drafts_*` 由 `HostController.cs:3121-3263` 直接
+  `commands.InvokeAsync`，`source_*` 经 `HostRuntime.cs:1275/1368` 等路径发出。准确表述是
+  **"这 21 条未经 `HostDomainService` 覆盖，测试口径与生产分派方式不一致"**（r1 复核 F5 指出原表述过强）。
 
 ## E-2：仓库内 sidecar 构建（2026-10-23）早于多条现行 wire 命令
 

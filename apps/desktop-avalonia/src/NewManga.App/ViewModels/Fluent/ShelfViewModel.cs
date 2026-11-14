@@ -304,23 +304,37 @@ public sealed class ShelfViewModel : FluentViewModel
         reordered.RemoveAt(fromIndex);
         reordered.Insert(toIndex, moved);
         var orderedIds = reordered.Select(chapter => chapter.ChapterId).ToArray();
+        // F2 (r1 review): the write takes a moment and the user may pick another book meanwhile.
+        // Capture which book this drag belongs to so a late return cannot repopulate the shelf
+        // with the previous book's chapters.
+        var bookId = SelectedBook.BookId;
 
         _isReordering = true;
         Changed(nameof(IsReordering));
         try
         {
-            var saved = await _host.ReorderChaptersAsync(SelectedBook.BookId, orderedIds, cancellationToken);
+            var saved = await _host.ReorderChaptersAsync(bookId, orderedIds, cancellationToken);
             if (!saved)
             {
                 ViewStatus = "章节顺序保存失败，已保留原顺序。";
                 return false;
             }
 
-            Chapters.Clear();            foreach (var chapter in reordered)
+            if (SelectedBook?.BookId != bookId)
+            {
+                // The order did land in Core, but the pane now shows another book: leave that
+                // book's list alone instead of overwriting it with the previous one's chapters.
+                return true;
+            }
+
+            Chapters.Clear();
+            foreach (var chapter in reordered)
             {
                 Chapters.Add(chapter);
             }
-            SelectedChapter ??= moved;
+            // F6 (r1 review): the selection is an independent choice and the preview belongs to it.
+            // Do not silently select the dragged chapter here -- that would change SelectedChapter
+            // without refreshing PreviewPages.
             ViewStatus = $"{SelectedBook.Title} · {Chapters.Count} 个章节";
             return true;
         }

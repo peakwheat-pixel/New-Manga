@@ -76,4 +76,21 @@ AssertionError: assert {'...': 2} == {'...': 3}
 
 ## 7. 四件套与回归
 
-见同目录 `four-pieces.log` 与 `regression.log`（生成后追加）。
+见同目录 `four-pieces.log` 与 `regression.log`。
+
+## 8. r2 返修记录（独立复核 r1 之后）
+
+复核报告：`doc/reviews/CHAPTER-MANUAL-SORT-review-r1.md`（verdict `ACCEPT_WITH_LIMITATIONS`，
+审查者 `review-chapter-sort`，未参与实现，被审 head `13d836713`）。
+
+| finding | 处置 |
+|---|---|
+| **F1（P1）** 越界提交 `verification/FEA-09/logs/wire-redacted.ndjson`（.NET 测试写脏），使 `EV-059` pin 失效 | **已修**：`git checkout 79606ea4a -- <path>` 还原，diff 归零。**这是实现者（DSH 本会话）的错误**：handoff §6 坑 7 已警告该文件会被测试写脏，我在首次提交前还原过，但随后又跑 CoreClient 测试并用 `git add -A` 把它再次卷进提交。原样登记。 |
+| **F2（P2）** 重排 await 期间切书，旧书章节会覆盖新书视图 | **已修**：await 前捕获 `bookId`，返回后校验 `SelectedBook?.BookId` 不符则不重填。判别测试 `ReorderChapter_WhenTheUserSwitchesBookMidWrite_DoesNotOverwriteTheNewBook`；实测去掉守卫后变红（新书列表被 `ch-2,ch-3,ch-1` 覆盖）。 |
+| **F3（P2）** AC3 无可执行测试 | **接受为限制**，维持 `NOT_RUN`（见 §6）。 |
+| **F4（P2）** 条件 1 计数在 STATUS 与评估 §14 矛盾 | **已修**：统一为「6 已关闭 + 1 本卡收口 + 1 KEEP-NOTRUN」。 |
+| **F5–F12（P3）** | 逐项处置见卡面「r1 复核处置」表；未修项均登记为限制（Host early-return 无错误码、缓存读-填竞态、SQL 重复、AC9 删守卫时 hang）。 |
+
+r2 复跑：`pytest tests/storage/test_chapter_reorder_atomic.py` → 5 passed；
+`dotnet test --filter ShelfChapterReorderTests` → **11 passed**；`dotnet build -warnaserror` → 0/0。
+

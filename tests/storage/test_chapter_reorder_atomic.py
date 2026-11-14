@@ -59,7 +59,7 @@ def test_reorder_rolls_back_every_row_when_a_later_write_fails(tmp_path):
     before = _sort_orders(service, book.book_id)
     assert before == {first.chapter_id: 1, second.chapter_id: 2, third.chapter_id: 3}
 
-    # Fail on the SECOND update of the submitted order: a per-row loop has
+    # Fail on a LATER update of the submitted order: a per-row loop has
     # already committed `third` by then, so only a single transaction can leave
     # the book exactly as it was.
     assert [chapter.import_order for chapter in chapters] == [1, 2, 3]
