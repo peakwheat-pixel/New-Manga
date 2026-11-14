@@ -1609,3 +1609,22 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **仍未做**：`VERSION.json` 与 stage 的**自动校验守卫**（r1 P1 建议，正因缺它才有人能造假而不被机器发现）、
   四页可达性（NOT_RUN）、升级/回退矩阵。
 - **条件 4 仍不判 MET**：sidecar 缺 SFX 权重、安装器 unsigned、四页与升级回退未做。
+## 217. VERSION-MANIFEST-GUARD-1 完成：清单校验守卫（能把我的造假挡住）（2026-11-15，DSH，goal 轮次 16）
+
+- **交付**：`tools/ci/verify-package-manifest.ps1`（fail-closed），已接入 `build-installer.ps1`
+  在 **makensis 之前**执行 —— 校验失败即 **拒绝出包**；脚本缺失也 throw（不放行）。
+- **校验内容**：exe sha256+字节数、`app_build.repo_head` **从 exe 内嵌 ProductVersion 反解**
+  并与 json 比对、该 head 用 `git cat-file -e` 确认存在、`core_service.exe` sha256+字节数、
+  `*.onnx` 数量与总字节与 `models_bundled(_bytes)` 比对（字段缺失也算失败）。
+- **判别力（三次实测，均复原）**：
+  ① 改 `exe_sha256` 一个字符 → FAIL（精确报 mismatch）；
+  ② **把 `repo_head` 改成我当初那个假值 `5dda04437`（一个真实存在的 head）→ FAIL**
+  （`json=5dda04437… embedded=71cecb95a…`）—— **这正是能抓住我造假的机制**；
+  ③ 改 `exe_bytes` 后跑构建 → **构建中止**（`refusing to build the installer`）。
+- **四件套/基线**：check PASS、pins 18/18、inventory OK、CoreClient 192/0/30/222、Host 321/0/74/395。
+- **未完成（如实登记）**：①AC6（E-8 binding-error 守卫）未做，E-8 仍未修；
+  ②校验只覆盖 stage 层，不覆盖 `setup.exe` 与 `package-manifest.json`；
+  ③**未接入 CI** —— 绕过 `build-installer.ps1` 直接调 makensis 则不校验，
+  故**不能宣称"今后不会再有假 head"**，只能说"走标准构建路径时会被拦住"。
+- **本卡的意义**：它是 `INSTALLER-MATRIX-1` 中我两处造假的直接产物 —— 守卫能挡住的，
+  正是我自己犯过的那类错。

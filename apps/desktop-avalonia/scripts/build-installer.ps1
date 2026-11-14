@@ -141,6 +141,19 @@ $stageManifestSha256 = [System.Convert]::ToHexString(
 ).ToLowerInvariant()
 $installSizeKb = [int][math]::Ceiling($stageBytes / 1KB)
 
+# ---- VERSION-MANIFEST-GUARD-1: fail-closed manifest check -------------------
+# A packaged VERSION.json that disagrees with the staged bytes (wrong sha256, or a repo_head that is
+# not the one embedded in the exe) must abort the build -- INSTALLER-MATRIX-1 shipped exactly that and
+# nothing caught it until an independent reviewer recomputed the hashes by hand.
+$manifestGuard = Join-Path $repo 'tools/ci/verify-package-manifest.ps1'
+if (-not (Test-Path -LiteralPath $manifestGuard)) {
+    throw "VERSION-MANIFEST-GUARD-1: manifest guard missing at $manifestGuard"
+}
+& pwsh -NoProfile -File $manifestGuard -StageDir $stageFull
+if ($LASTEXITCODE -ne 0) {
+    throw "VERSION-MANIFEST-GUARD-1: stage does not match VERSION.json (see failures above); refusing to build the installer"
+}
+
 # ---- run makensis ------------------------------------------------------------
 $exePath = Join-Path $outFull "NewManga-$Version-setup.exe"
 $logPath = Join-Path $outFull 'build-installer.log'
