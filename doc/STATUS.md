@@ -15,7 +15,7 @@
 
 ## 保留与已知限制
 - 台账 [TASK_LEDGER](TASK_LEDGER.md)；真机端到端 run-i18 7/7、run-i36 10/10。
-- 四件套：`check` PASS(3w)｜`verify_pins` 18/18｜`inventory` `1/80/6=87`｜无夹具三项目 953/325/192 全绿、skip 未增加。
+- 四件套：`check` PASS(3w)｜`verify_pins` 18/18｜`inventory` `1/80/6=87`｜无夹具三项目 954/325/192 全绿(E-8 修复)、skip 未增加。
 
 ## Gate 与保留项
 Technical Gate=NOT_SATISFIED；private_registry_absence=UNPROVABLE；Owner Risk Acceptance=APPROVED；Disposition=WAIVED_BY_OWNER。push `clean-snapshot-20261026`=`892b946e`、`clean-snapshot-20261102`=`ac7d488e`。

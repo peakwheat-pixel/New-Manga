@@ -2008,3 +2008,15 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   需模拟完整离开确认状态机；且**该弹窗 startup 时不构建**，真实 App 日志也不会有证据 ⇒ 如实标"仅编译保证"。
 - **E-8 可按此口径收口**：核心缺陷（8 个 HUD 按钮永久失效 + inspector 标题不显示）已修，
   有**单测 + 真实 App** 双重证据；残留项有明确判定。
+## 243. E8-POINTER-SYNC-1：三指针反映 E-8 收口，并更正 finding 里的错误陈述（2026-11-15，DSH，goal 轮次 44）
+
+- **更正一处必须更正的内容**：`MAINT-1-EXISTING-FINDINGS` 的 **E-8 header 原文**写着
+  "VM **没有** `IsEnabled` / `ActiveTabLabel` 属性，XAML 却绑定它们" —— **这是我最初的错误判断**，
+  已在 `E8-STUDIO-BINDING-1` 推翻（两者都存在：`StudioPageViewModel.IsEnabled:202`、
+  `StudioInspectorViewModel.ActiveTabLabel:241`）。按纪律**必须更正**，不能让它留在 header 里
+  与后面的正确结论并存。
+- **已做**：①E-8 header 加**状态行**（已修复 + 真实 App 10→1 条 + 剩余 1 条判定 + LeaveModal 仅编译保证）；
+  ②原文错误陈述**加删除线并就地更正**；③PLAN 卡片行更新为"二十四卡（+E8 四卡）"；
+  ④STATUS 基线 953→**954**（App +1，即 `StudioBindingSourceTests`）。
+- **预算**：PLAN **6928/7000**、STATUS **3190/3200**（均未超）。
+- **下一步**：派**独立上下文复核** E-8 四卡（B）。E-8 至今**未经过独立复核**，属纪律缺口。

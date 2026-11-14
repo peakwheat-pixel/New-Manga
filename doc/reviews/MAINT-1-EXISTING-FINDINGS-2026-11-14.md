@@ -176,6 +176,16 @@
 
 **严重度：P2（静默 UI 失效，不影响数据）。**
 
+**状态：已修复（2026-11-15，`E8-STUDIO-BINDING-1/2/3` + `E8-RESIDUAL-1`）。**
+真实 App 同页面对照：`--page=library` 的 `[Binding]` 从 **10 条降至 1 条**；剩余 1 条（`CurrentPage.Image`
+的 `Value is null`）经核实属 **`ReaderOverlay` 的预期降级显示**，保留不修（理由见 §E-8 残留判定）。
+`StudioLeaveModal` 的 3 处仍**仅编译保证**。
+
+**⚠️ 本节的初始判断有误，已更正（见下方"E-8 根因与修复"节）**：
+原文写"VM **没有** `IsEnabled` / `ActiveTabLabel` 属性" —— **错**。这两个属性都存在
+（`StudioPageViewModel.IsEnabled:202`、`StudioInspectorViewModel.ActiveTabLabel:241`）。
+真实原因是**这些控件没有可解析的 DataContext**，而绑定写成了不带 `Source` 的裸绑定。
+
 安装后启动的 `startup.log` 出现 6 条以上绑定错误，全部指向 `NewManga.App.ViewModels.V2.Studio.StudioPageViewModel`：
 
 ```
@@ -187,7 +197,8 @@
 
 ### 性质
 
-VM **没有** `IsEnabled` / `ActiveTabLabel` 属性，XAML 却绑定它们 ⇒ 这些控件在运行时**不会**反映状态
+~~VM **没有** `IsEnabled` / `ActiveTabLabel` 属性，XAML 却绑定它们 ⇒ 这些控件在运行时**不会**反映状态~~
+**↑ 此判断错误，已更正**：属性存在；真实原因是绑定缺少 `Source` 而控件 DataContext 不可解析。
 （按钮启用态与标签文案静默失效）。**不抛异常、不黑屏**，所以很容易漏掉。
 
 ### 为什么现在才发现
