@@ -1920,3 +1920,17 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **表述纪律写进文件本身**：**不得**写"仅崩溃恢复不可用"（ZCode 核实 `AcknowledgeAsync:468` 与
   `RecoverAsync:581` 是同一 re-mint 路径）。
 - **未做**：未改 C-17（有意）；未实现 mint-time 映射；未跑测试（只加文档）。
+## 237. GATE3-APP-SKIP-TRIAGE-1：App 4 个 with-fixture skip 归因 —— **2 个只是开关没开**（2026-11-15，DSH，goal 轮次 38）
+
+- **实测抓取**（`--logger console;verbosity=normal`，**不用源码正则** —— 这个错我已犯过三次）：
+  4 个 skip = `RealProcessLaunchMatrix`、`Gated_HotSwitch`、`Park`、`Recover`。
+- **★ 开开关实测**：
+  - `RealProcessLaunchMatrix` + `NEWMANGA_FEA07_STARTUP_PROCESS=1` → **1 passed** ✅
+  - `Gated_HotSwitch` + `NEWMANGA_FEA07_PERF=1` → **1 passed**（21 s）✅
+  - `Park` + `FEA07_CRASH=1` + `CRASH_PHASE=park` → **1 failed**：
+    `NEWMANGA_FEA07_CRASH_ROOT must point at the prepared isolated crash root (phase=park)` ❌
+  - `Recover` 未单独跑（同 `ApplyGate` 机制，**推断**）❌
+- **结论**：**4 个里 2 个只是"开关没开"，不是"跑不了"**；与 Host 44 个**同型** ⇒
+  **"skip 数量"不等于"覆盖缺失"**。
+- **未做**：未把门禁改常开（CI/产品策略；Perf 单测 21 s，开常开会拉长默认套件）；
+  `Recover` 未单独实测；基线未变（953/0/11、957/0/4）；条件 3 仍不判 MET。

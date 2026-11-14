@@ -478,3 +478,37 @@ NewManga.Host.Sources.SourceAccessException : SOURCE_ENTRY_MISSING
 
 1. 异常类型猜成 `CoreOperationException`，实际 **`SourceAccessException`**；
 2. 猜"没发布所以旧 binding 仍 `healthy`"，实测 **`superseded`** —— supersede 在 **core-commit** 发生，不是 ACK。
+## 15. App.Tests 4 个 with-fixture skip 归因（2026-11-15，`GATE3-APP-SKIP-TRIAGE-1`）
+
+### 15.1 实测抓取（不用源码正则）
+
+带 sidecar 跑 `dotnet test --logger "console;verbosity=normal"`，实测 `已跳过` 行恰好 4 个：
+
+```
+StartupDiagnosticsTests.RealProcessLaunchMatrix_ExitZeroAndDiagnosableStartupLog
+PerformanceBaselineTests.Gated_HotSwitch_UiThreadSchedulingGapStaysWithinThePerfGateBudget
+Fea07Residual3CrashTests.Park_ProductionSwitchStopsBetweenPersistedTargetAndJournalCommit
+Fea07Residual3CrashTests.Recover_NewProcessRollsBackAndAdoptsTheLatestProtectedState
+```
+
+### 15.2 门禁变量与实测
+
+| 测试 | 门禁 | 开开关后 |
+|---|---|---|
+| `RealProcessLaunchMatrix_…` | `NEWMANGA_FEA07_STARTUP_PROCESS=1` | **1 passed** ✅ |
+| `Gated_HotSwitch_…` | `NEWMANGA_FEA07_PERF=1` | **1 passed**（21 s）✅ |
+| `Park_…` | `NEWMANGA_FEA07_CRASH=1` + `NEWMANGA_FEA07_CRASH_PHASE=park` + **`NEWMANGA_FEA07_CRASH_ROOT`** | **1 failed**：`CRASH_ROOT must point at the prepared isolated crash root` ❌ |
+| `Recover_…` | 同上 phase=recover | 未单独跑（同 `ApplyGate` 机制，**推断**）❌ |
+
+### 15.3 结论
+
+**4 个里 2 个只是"开关没开"，不是"跑不了"**（已实测 passed）。
+
+**与 Host 44 个同型**：大量 skip 是 **opt-in 门禁**，不是能力缺失。
+本节与 §11 共同表明：**"skip 数量"不等于"覆盖缺失"**。
+
+### 15.4 未做
+
+- **未把门禁改常开**（CI/产品策略；Perf 单测 21 s，开常开会显著拉长默认套件）。
+- `Recover_…` 未单独实测，标为**推断**。
+- 基线未变（953/0/11 无夹具、957/0/4 带夹具）。
