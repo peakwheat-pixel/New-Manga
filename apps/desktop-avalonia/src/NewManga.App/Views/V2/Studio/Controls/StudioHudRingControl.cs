@@ -44,7 +44,7 @@ public sealed class StudioHudRingControl : Canvas
 
             var captured = slot;
             StudioUi.TrackClass(button, "active", slot, () => captured.IsFocused);
-            button.Bind(IsEnabledProperty, new Avalonia.Data.Binding(nameof(StudioHudSlotViewModel.IsEnabled)));
+            button.Bind(IsEnabledProperty, new Avalonia.Data.Binding(nameof(StudioHudSlotViewModel.IsEnabled)) { Source = captured });
             ToolTip.SetTip(button, string.Empty);
             slot.PropertyChanged += (_, _) => ToolTip.SetTip(button, captured.Tooltip);
         }

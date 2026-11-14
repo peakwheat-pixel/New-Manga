@@ -1948,3 +1948,19 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   `INSTALLER-MATRIX-1` `in_progress → done`。STATUS 现 **3178/3200**（仍在预算内）。
 - **教训**：**卡面状态不会自动回流到三指针**。本轮前十张卡都 done 了，但 STATUS 一直没跟上；
   这是"实现进展不自动回流"的又一次实例，且是我自己造成的。
+## 239. E8-STUDIO-BINDING-1：E-8 根因是"控件无可解析 DataContext"，修复 4 处裸绑定（2026-11-15，DSH，goal 轮次 40）
+
+- **我最初的判断错了**：以为 `StudioPageViewModel` 缺 `IsEnabled` —— **它有**（`:202`）；
+  `ActiveTabLabel` 在 `StudioInspectorViewModel`（`:241`）也**存在**。
+- **真实根因**：三个控件**没有可解析的 DataContext**，而绑定写成**裸绑定**（无 `Source`）。
+  对照：`StudioPageWorkspace` 设了 `DataContext = viewModel`（`L48`）⇒ 其 11 处裸绑定**正常**（不是 bug）；
+  `StudioInspectorPanel` 设了 `DataContext = _inspector`（`L89`）但 `:70` 的绑定**写在赋值之前**（时序失败）；
+  **`StudioLeaveModal` 与 `StudioHudRingControl` 完全未设 DataContext** ⇒ 3 处 + 8 个 `IsEnabled` **永久失效**。
+- **日志里恰好 8 条 `IsEnabled`** 是因为 `StudioHudRingControl` 为 **8 个 HUD slot 各建一个 Button** ——
+  数字对得上，坐实了归因。
+- **修复 4 处**（对齐同仓已有正确写法 `{ Source = ... }`）：`StudioHudRingControl:47` +`{ Source = captured }`；
+  `StudioInspectorPanel:70` +`{ Source = _inspector }`；`StudioLeaveModal:42/46/53` +`{ Source = _viewModel }`。
+- **未做（诚实登记）**：**没有判别测试**（构造 `StudioPageViewModel` 成本高，本轮时间不足）⇒
+  4 处修复**目前只有编译保证，没有回归测试固定住**；**未重跑真实 App** 验证日志清零；
+  `CurrentPage.Image` null 那条**未处理**（不同类，是"图片源为 null"而非绑定路径错）。
+- **教训（重复出现）**：**我又先猜后查了**。这次是"猜 VM 缺属性"，实际是"绑定时 DataContext 还不可用"。

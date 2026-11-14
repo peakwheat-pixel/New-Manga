@@ -363,3 +363,25 @@ typed 拒绝已使失败**可解释**（`SOURCE_PLAN_UNAVAILABLE` 而非误导�
 
 登记文件内含：真实口径（**含正常 ACK**，不是"仅崩溃恢复"）、数据安全边界、
 解锁条件（mint-time DPAPI 路径映射）、被挡住的测试名、以及四处引用。
+### E-8 根因与修复（2026-11-15，`E8-STUDIO-BINDING-1`）
+
+**根因不是"VM 缺属性"**（我最初的判断错了）：`StudioPageViewModel.IsEnabled` 存在（`:202`），
+`ActiveTabLabel` 存在于 `StudioInspectorViewModel`（`:241`）。
+
+**真正原因**：三个控件**没有可解析的 DataContext**，而绑定写成了裸绑定（无 `Source`）。
+
+| 控件 | DataContext | 结果 |
+|---|---|---|
+| `StudioPageWorkspace` | `L48: = viewModel` | ✅ 其 11 处裸绑定**正常** |
+| `StudioInspectorPanel` | `L89: = _inspector`，但 `:70` 绑定写在赋值**之前** | ⚠️ 时序导致首次解析失败 |
+| **`StudioLeaveModal`** | **完全未设** | ❌ 3 处永久失效 |
+| **`StudioHudRingControl`** | **完全未设** | ❌ 8 个 `IsEnabled` 全失效（**8 个 slot 循环，与日志 8 条完全对应**） |
+
+**修复 4 处**（对齐同仓已有的正确写法 `{ Source = ... }`）：
+`StudioHudRingControl:47` + `{ Source = captured }`；`StudioInspectorPanel:70` + `{ Source = _inspector }`；
+`StudioLeaveModal:42/46/53` + `{ Source = _viewModel }`。
+
+**未做（诚实）**：**没有判别测试**（构造 `StudioPageViewModel` 成本高，本轮时间不足）⇒
+这 4 处**目前只有编译保证**；也**未重跑真实 App** 确认日志清零；`CurrentPage.Image` null 那条**未处理**（不同类）。
+
+**下一轮必须补**：`[AvaloniaFact]` 断言 `Buttons[i].IsEnabled` 跟随 slot（回退后须变红）+ 重跑真实 App 验日志。

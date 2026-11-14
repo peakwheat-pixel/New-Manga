@@ -67,7 +67,7 @@ public sealed class StudioInspectorPanel : Border
         _rail.Child = railStack;
 
         _header = new TextBlock { Classes = { "label" } };
-        _header.Bind(TextBlock.TextProperty, new Binding(nameof(StudioInspectorViewModel.ActiveTabLabel)));
+        _header.Bind(TextBlock.TextProperty, new Binding(nameof(StudioInspectorViewModel.ActiveTabLabel)) { Source = _inspector });
         var titleRow = StudioUi.Row(8);
         titleRow.Margin = new Thickness(12, 8);
         titleRow.Children.Add(_header);
