@@ -3,7 +3,7 @@ id: MAINT-2-C1-BATCH-1
 title: C1 批次：8 项 limitation 补实现（READ-2 控件 / FONT 负例与压测 / LIB 投影与边界 / AI-1 清理 / PIN-BASIS suite）
 kind: implementation
 governance_version: 3
-status: in_progress
+status: closed_with_limitations
 disposition: "DoD §3 收口批（2026-11-14 DSH 释放）；依据 MAINT-1-LIMITATION-DISPOSITION-MATRIX-2026-11-14 §3-C1-1..C1-8"
 approval: DSH 2026-11-14 释放（DoD §3 未达成的唯一缺口）
 suggested_owner: DSH
@@ -14,10 +14,10 @@ depends_on:
 base_commit: 1e272c5f6
 branch: main
 worktree: G:/CODEX/New Manga
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: a19ebdead
+delivery_head: b122fb926
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/MAINT-2-C1-BATCH-1
 allowed_paths:
   - doc/tasks/MAINT-2-C1-BATCH-1.md
@@ -54,7 +54,7 @@ out_of_scope:
 - [x] **AC5（C1-5 / L-L1-2）LIB `custom_rank` 读回闭环**：`custom_rank` 从 write-only 变为可读回；判别测试覆盖写入→读回一致（排序 UI 属 C3-3，不在本卡）。 <<MET>>
 - [x] **AC6（C1-6 / L-L1-4）LIB 64 位边界**：补 R3-001 的 64 位边界校验与断言。 <<MET>>
 - [x] **AC7（C1-7 / L-AI1-6）AI-1 清理**：删除死方法 `reassign_references`、修正 `test_issue_markers` 旧注释。 <<MET>>
-- [x] **AC8（C1-8 / L-PB1-1）PIN-BASIS 专项 suite**：复跑专项 suite 并保留原始输出为证。 <<PARTIAL: 复跑留证完成、基线不可比已裁决；不得写 MET>>
+- [ ] **AC8（C1-8 / L-PB1-1）PIN-BASIS 专项 suite**：复跑专项 suite 并保留原始输出为证。 <<PARTIAL: 复跑留证完成、基线不可比已裁决；不得写 MET>>
 - [x] **AC9 回归与门禁**：受影响全量测试 0 failed；`check.ps1` / `verify_pins` / `generate_api_inventory --check` 三项不降级；无 `src` 外的契约字节改动。 <<MET>>
 
 ## 允许修改范围
@@ -79,15 +79,28 @@ out_of_scope:
 
 `verification/MAINT-2-C1-BATCH-1/README.md` + `logs/`（测试与门禁原始输出）。
 
+## Canonical Evidence
+
+| evidence_id | AC/Gate | path | commit | sha256 | class |
+|---|---|---|---|---|---|
+| EV-1 | DoD SS3 | verification/MAINT-2-C1-BATCH-1/AC4-AC5-CONTRACT-BLOCKER.md | ac69bb955 | 8b7c4cb78a75b805b3fad26f66d0983bfacfd56d1b6633cddf4fc6f2662d5676 | canonical |
+| EV-2 | DoD SS3 | verification/MAINT-2-C1-BATCH-1/README.md | 2d985956a | 0514c4689810f85aca7f36f83dfd57823cd9b5d369e6f391f490805c761fb54d | canonical |
+| EV-3 | DoD SS3 | verification/MAINT-2-C1-BATCH-1/logs/gates-2026-11-14-final.log | b122fb926 | d61c6f7b4f19e014b12d780e600720bc017f6cb4dccbf763eee26fff5b3a01f0 | canonical |
+| EV-4 | DoD SS3 | verification/MAINT-2-C1-BATCH-1/logs/pin-basis-governance-suite.log | ac69bb955 | 430f81a1f04beb5047a988c267b32ab6f2da1a5b32320ec7db77a5584cbd644b | canonical |
+| EV-5 | DoD SS3 | verification/MAINT-2-C1-BATCH-1/logs/pytest-full-after-ac45.log | b122fb926 | 19aa95733dbed0494c4c220af362fec0c9e85726dfbc5c739c3c9bdb2545ee24 | canonical |
+| EV-6 | DoD SS3 | verification/MAINT-2-C1-BATCH-1/logs/pytest-full.log | ac69bb955 | f7c16cf7ccd35039e1661ba42f6deec8b35440075f0d5ead05f5c308acaeefa6 | canonical |
+
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | worktree | `G:\CODEX\New Manga`（main） | NOT_APPLICABLE | - | - | 复用主工作树 |
-
+| evidence（仓库） | `verification/MAINT-2-C1-BATCH-1/**` | NOT_APPLICABLE | 仓库内 | `verification/MAINT-2-C1-BATCH-1/EV`（见 Canonical Evidence） | 测试/门禁原始输出已保留 |
 ## Closeout Record
 
-- 未关闭（当前 `in_progress`）。
+- **收口（2026-11-14，DSH）**：AC1–AC7/AC9 `MET`；**AC8 `PARTIAL`**（r1 复核与 DSH 裁决口径：复跑留证完成、validation clone 为唯一可比基线、两套原始输出保留；**不得写 MET**）。r1 独立复核 `approved`（P0=0/P1=0/P2=5），P2-1/2/5 已修、P2-3 已修（`a19ebdead`，测试缺口已披露）、P2-4 登记 limitation。
+- **limitation 清单**：① P2-3 降级路径无 runtime 注入 seam，无单元级判别测试；② AC8 基线不可比；③ AC1 的 UI 打磨项（`fluent-reader-title` 定位、书签面板布局、顶栏长文案）；④ AC4/AC5 依赖 M2-C1 rev 2.16（M2-C1 无 pin 体系）。
+- 删除/迁移/归档：0。
 
 ## DSH 裁决（2026-11-14）
 
