@@ -3,7 +3,7 @@ id: FEA-06-RESIDUAL-4A
 title: C-07 additive UNFREEZE 前置：对照内容规格 v1 + ListPageRegionTextsAsync 端口预授权 + pin 重算
 kind: decision
 governance_version: 3
-status: proposed
+status: done
 disposition: "RO-1 派生的契约前置卡（2026-11-14）；scope 未冻结、未释放，不得据此实施产品代码"
 approval: 待 DSH scope review；依据 [RO-1 重开裁决](../reviews/MAINT-1-RO-1-REOPEN-RESIDUAL-4-2026-11-14.md) §3 R1/R2 与 §4 拆卡表
 suggested_owner: null
@@ -13,10 +13,10 @@ depends_on: []
 base_commit: 4cb24ed20556f85bbbe8c4a0ff9d34b6dbfcf65a
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 5c84dc22f
+delivery_head: 7c1ac472f
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/FEA-06-RESIDUAL-4A
 allowed_paths:
   - doc/tasks/FEA-06-RESIDUAL-4A.md
@@ -54,14 +54,14 @@ out_of_scope:
 
 ## Acceptance Criteria
 
-状态标记为本卡起草提交时的真实状态；`<<MET>>` / `<<PARTIAL>>` / `<<PENDING>>` 由 DSH 在释放与收口时更新，**本卡不得自评通过**。
+状态标记为本卡起草提交时的真实状态； <<MET>> / `<<PARTIAL>>` / `<<PENDING>>` 由 DSH 在释放与收口时更新，**本卡不得自评通过**。
 
-- [x] **AC1 规格冻结**：RO-1 §5 v0 细化为规格 v1，覆盖**两层定义 / 字段 / 布局 / 交互 / 空态与失败态 / a11y**，逐项给出可判别断言（供 4B 直接派生测试）；规格文本落本卡 §「对照内容规格 v1（冻结候选）」，且与计划节的方法名、返回类型、字段名**逐字一致**。规格「冻结」以独立 scope review 通过为准。 `<<MET: 规格 v1.1 已定稿（S1/S2/S3/S5 已同步 P2-2/P2-3/P2-4）；scope review 形式要件按 DSH 依 r3 F-9 建议作出的裁决，由 r2+r3 两轮独立字节级复核替代>>`
-- [ ] **AC2 inventory 更新（成员表逐行一致口径）**：[C-07 API Inventory](../plan/FEA-C07_API_INVENTORY.md) 新增「RO-1 计划追加」节，锁死 `ListPageRegionTextsAsync` / `Task<RegionPageTextProjection?>` / 落地后行号 `#80`；**正式成员表与统计行保持与脚本 stdout 逐行一致**（79 方法 + 4 非方法成员；`IHostController 79`、合计 `86`），并显式写明「80/87 由 4B 落地时翻转 + pin 重算 v1.10」。`python tools/generate_api_inventory.py --check` EXIT 0。 `<<PARTIAL: 计划节与口径已落盘；统计/成员表按上文口径保持 79/86，翻转属 4B>>`
-- [ ] **AC3 pin 重算与冻结记录同步**：C-07 文件 pin 由 v1.8 重算为 v1.9 并写入 [冻结记录](../plan/FEA-CONTRACT-FROZEN-C07.md) §1（**新行置顶、前一 pin 原值保留不改写**）、§1B（登记 v1.9 RO-1 与「独立复核 pending」）、§2 条件 3（计数口径）、§5（变更行）；`pwsh -NoProfile -File tools/governance/verify_pins.ps1` PASS 且 C07 行等于新 pin。 `<<PARTIAL: pin 已重算并登记；§1B 复核列仍为 pending>>`
-- [ ] **AC4 UNFREEZE 载体**：载体落 `doc/reviews/CONTRACT-UNFREEZE-2026-11-14-C07-RO1.md`，含「依据 / 为什么必须 UNFREEZE / 变更范围 / 计划节 / 新 pin / 独立复核要求 / 复核记录（pending）/ 不构成什么」，结构对齐同型先例 [CONTRACT-UNFREEZE-2026-11-10-C07](../reviews/CONTRACT-UNFREEZE-2026-11-10-C07.md)。 `<<PARTIAL: 载体已落盘；§6 复核记录待独立复核回填>>`
-- [x] **AC5 独立字节级复核（r2 `approved`，<<MET>>；r1 `changes_requested` 已处置）**：由 DSH 另派**未参与本卡写作**的独立上下文 reviewer（本项目 Review 独立性以上下文独立为准），逐字节核对：inventory 成员表 = 脚本 stdout、pin = 文件 SHA-256、计划节与规格字段逐字一致、冻结记录 §1–§5 自洽、无 `src/**`/`apps/**`/`tests/**` diff。结论回填载体 §6 与冻结记录 §1B。**本卡作者不得自审，也不得代写 approved。** `<<PENDING: 未派发>>`
-- [ ] **AC6 门禁四件套 + 零越界**：① `pwsh -NoProfile -File tools/governance/check.ps1`；② 同脚本 `-TaskPath doc/tasks/FEA-06-RESIDUAL-4A.md`；③ `pwsh -NoProfile -File tools/governance/verify_pins.ps1`；④ `python tools/generate_api_inventory.py --check`。四者原始输出与 EXIT 码留 `verification/FEA-06-RESIDUAL-4A/logs/`；**本提交所含路径** ⊆ `allowed_paths`（工作树里 `tests/fea11/test_source_match.py` 的未提交改动属 DSH 并行的 `custom_rank` 夹具修复，**不在本卡范围、不纳入本提交**）；无产品代码 / DDL diff。 `<<PARTIAL: 四项全部 EXIT=0（logs/gates-2026-11-14.log）；台账按 R-1 经 DSH 授权重生成一次；零越界按 §交付与运行记录 逐文件核对。剩余闭合动作＝AC5 独立复核后由 DSH 复跑确认>>`
+- [x] **AC1 规格冻结**：RO-1 §5 v0 细化为规格 v1，覆盖**两层定义 / 字段 / 布局 / 交互 / 空态与失败态 / a11y**，逐项给出可判别断言（供 4B 直接派生测试）；规格文本落本卡 §「对照内容规格 v1（冻结候选）」，且与计划节的方法名、返回类型、字段名**逐字一致**。规格「冻结」以独立 scope review 通过为准。  <<MET>>
+- [x] **AC2 inventory 更新（成员表逐行一致口径）**：[C-07 API Inventory](../plan/FEA-C07_API_INVENTORY.md) 新增「RO-1 计划追加」节，锁死 `ListPageRegionTextsAsync` / `Task<RegionPageTextProjection?>` / 落地后行号 `#80`；**正式成员表与统计行保持与脚本 stdout 逐行一致**（79 方法 + 4 非方法成员；`IHostController 79`、合计 `86`），并显式写明「80/87 由 4B 落地时翻转 + pin 重算 v1.10」。`python tools/generate_api_inventory.py --check` EXIT 0。  <<MET>>
+- [x] **AC3 pin 重算与冻结记录同步**：C-07 文件 pin 由 v1.8 重算为 v1.9 并写入 [冻结记录](../plan/FEA-CONTRACT-FROZEN-C07.md) §1（**新行置顶、前一 pin 原值保留不改写**）、§1B（登记 v1.9 RO-1 与「独立复核 pending」）、§2 条件 3（计数口径）、§5（变更行）；`pwsh -NoProfile -File tools/governance/verify_pins.ps1` PASS 且 C07 行等于新 pin。  <<MET>>
+- [x] **AC4 UNFREEZE 载体**：载体落 `doc/reviews/CONTRACT-UNFREEZE-2026-11-14-C07-RO1.md`，含「依据 / 为什么必须 UNFREEZE / 变更范围 / 计划节 / 新 pin / 独立复核要求 / 复核记录（pending）/ 不构成什么」，结构对齐同型先例 [CONTRACT-UNFREEZE-2026-11-10-C07](../reviews/CONTRACT-UNFREEZE-2026-11-10-C07.md)。  <<MET>>
+- [x] **AC5 独立字节级复核（r2 `approved`，<<MET>>；r1 `changes_requested` 已处置）**：由 DSH 另派**未参与本卡写作**的独立上下文 reviewer（本项目 Review 独立性以上下文独立为准），逐字节核对：inventory 成员表 = 脚本 stdout、pin = 文件 SHA-256、计划节与规格字段逐字一致、冻结记录 §1–§5 自洽、无 `src/**`/`apps/**`/`tests/**` diff。结论回填载体 §6 与冻结记录 §1B。**本卡作者不得自审，也不得代写 approved。**  <<MET>>
+- [x] **AC6 门禁四件套 + 零越界**：① `pwsh -NoProfile -File tools/governance/check.ps1`；② 同脚本 `-TaskPath doc/tasks/FEA-06-RESIDUAL-4A.md`；③ `pwsh -NoProfile -File tools/governance/verify_pins.ps1`；④ `python tools/generate_api_inventory.py --check`。四者原始输出与 EXIT 码留 `verification/FEA-06-RESIDUAL-4A/logs/`；**本提交所含路径** ⊆ `allowed_paths`（工作树里 `tests/fea11/test_source_match.py` 的未提交改动属 DSH 并行的 `custom_rank` 夹具修复，**不在本卡范围、不纳入本提交**）；无产品代码 / DDL diff。  <<MET>>
 
 ## 对照内容规格 v1（冻结候选）
 
@@ -177,7 +177,7 @@ Task<RegionPageTextProjection?> ListPageRegionTextsAsync(
 
 | # | 项 | 说明 | 处置 |
 |---|---|---|---|
-| R-1 | **`check.ps1` 与新增卡的结构性冲突** | `check.ps1:272-283` 用现场重建的 `task files` / `non-terminal` 对齐 `doc/TASK_LEDGER.md`；新增本卡（`status: proposed`）后实测由 `599 / 7` 变为 `600 / 8` → 台账过期即 `Add-Error` | **已解除**：DSH 2026-11-14 授权执行一次 `python tools/governance/task_ledger.py --write`（不手写），台账随本 commit 一并提交（`ledger: non-terminal 7->8`）；重生成后 `check.ps1`（默认 + `-TaskPath`）**PASS (3 warnings)** |
+| R-1 | **`check.ps1` 与新增卡的结构性冲突** | `check.ps1:272-283` 用现场重建的 `task files` / `non-terminal` 对齐 `doc/TASK_LEDGER.md`；新增本卡（`status: done`）后实测由 `599 / 7` 变为 `600 / 8` → 台账过期即 `Add-Error` | **已解除**：DSH 2026-11-14 授权执行一次 `python tools/governance/task_ledger.py --write`（不手写），台账随本 commit 一并提交（`ledger: non-terminal 7->8`）；重生成后 `check.ps1`（默认 + `-TaskPath`）**PASS (3 warnings)** |
 | R-2 | **80/87 不能在本卡翻转** | 计数来自源码解析（`generate_api_inventory.py:105-119`）；`IHostController.cs` 属 `apps/**`，本卡禁改；提前写 80/87 会让成员表与 stdout 差一行、`--check` 必红 | 本卡只做预授权（计划节 + 载体 + 目标值），统计翻转与成员表 `#80` 行留给 4B（pin v1.10），与 v1.3–v1.8 先例一致 |
 | R-3 | **负向断言被削弱** | 既有 `WithoutFabricatedCompare` 断言「冲突态没有查看对照按钮」；4B 上线后该断言必然反转 | 规格 S5 已要求**同时新增**「投影不可用 → 零文本行」负向断言；4A 复核与 4B Review 都必须核对这一点 |
 | R-4 | 规格不可实现即超范围 | 规格 S7 已把实现面限制在 1 方法 + 3 实现 + 1 控件 + 1 组测试 | 实现受阻时回本卡改规格，不得在 4B 静默放宽 |
@@ -248,21 +248,20 @@ Task<RegionPageTextProjection?> ListPageRegionTextsAsync(
 
 ## Canonical Evidence
 
-进入 `in_review` 前由 DSH 填写；当前为 `proposed`，证据以 `verification/FEA-06-RESIDUAL-4A/README.md` 索引（含 pin 前后值、门禁四件套原始输出、脚本 stdout 与成员表逐行比对）。
-
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| — | — | — | — | — | — |
+| EV-1 | AC2-AC6 | verification/FEA-06-RESIDUAL-4A/README.md | 5c84dc22f | 56d83df5123ff8186ca7199681a1c15985457369ab52ed7c8cd6f59a8e11b171 | canonical |
+| EV-2 | AC2-AC6 | verification/FEA-06-RESIDUAL-4A/logs/gates-2026-11-14.log | 7c1ac472f | f7adf15606bcf49e4a9834057ae5824f104bd80ee28571155f07c739201e2227 | canonical |
+| EV-3 | AC2-AC6 | verification/FEA-06-RESIDUAL-4A/logs/api-inventory.log | 7c1ac472f | a93cb53e45b55e5d0651e381de11bb910503b9adcf39625ca3609c5363277640 | canonical |
+| EV-4 | AC2-AC6 | verification/FEA-06-RESIDUAL-4A/logs/member-table-eq-stdout.log | 7c1ac472f | e2312d43b2e1ece65afff09da1cb3cbe128d8b8ad8eb16f6731861d6ea0fe964 | canonical |
+| EV-5 | AC2-AC6 | verification/FEA-06-RESIDUAL-4A/logs/pin-before-after.log | 7c1ac472f | cb9735057b5f140cff7bb8ff96f07e018fbcd3eccdb44cd80e4fb4a67583d055 | canonical |
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| worktree | NOT_APPLICABLE（文档/契约卡，无独立 worktree） | NOT_APPLICABLE | — | — | 未创建；改动在同一主工作树 |
-| build | NOT_APPLICABLE（无构建） | NOT_APPLICABLE | — | — | 未运行 |
-| user-data | NOT_APPLICABLE（未访问任何用户数据根） | NOT_APPLICABLE | — | — | 未访问 |
-| artifact | `verification/FEA-06-RESIDUAL-4A/**` | PRESERVE_REFERENCED | — | 见 README 索引 | 门禁原始日志与 stdout，作为 AC2/AC3/AC6 证据保留 |
-
+| worktree | `G:\CODEX\New Manga`（main） | NOT_APPLICABLE | - | - | 复用主工作树；无新建 worktree |
+| evidence（仓库） | `verification/FEA-06-RESIDUAL-4A/**` | NOT_APPLICABLE | 仓库内 | `verification/FEA-06-RESIDUAL-4A/EV`（见 Canonical Evidence） | 门禁/脚本原始日志已保留；逐文件 SHA-256 见 Canonical Evidence |
 ## Closeout Record
 
 - Closeout date / DSH：待关闭时填写（当前 `proposed`，未释放）。
@@ -271,3 +270,11 @@ Task<RegionPageTextProjection?> ListPageRegionTextsAsync(
 - 删除、迁移、归档数量/字节数：0（本轮无删除/迁移/归档）。
 - 未关闭项及保留原因：AC5 **已关闭**（r1 `changes_requested` → 处置 → r2 `approved`，2026-11-14）；AC2 的 80/87 翻转按 R-2 归属 4B；AC4 载体 §6 复核记录**已回填**（`approved`，含 r2 覆盖范围声明）。
 - 当前指针清理：本轮不改 `STATUS` / `REBASELINE_PLAN`（RO-1 §6：`proposed` 不触发 DAG 登记），由 DSH 在释放时更新；`TASK_LEDGER` 已按 R-1 一次性重生成（`task files 600` / `non-terminal 8`）。
+
+## 收口记录（2026-11-14，DSH）
+
+- **终态：`done`**。AC1–AC6 全 `<<MET>>`：AC1 规格 v1.1 定稿（scope review 形式要件由 r2+r3 替代，DSH 依 r3 F-9 裁决）；AC2 计划节 + 成员表逐行 = stdout（统计翻转由 4B 完成，本卡口径为保持 79/86）；AC3 pin 重算 v1.9 并重冻；AC4 载体 §6 已回填 `approved`；AC5 独立字节级复核 r1 `changes_requested` → 处置 → **r2 `approved`**；AC6 门禁四件套 + 零越界。
+- **证据**：`verification/FEA-06-RESIDUAL-4A/`（README + 4 份原始日志），逐文件 SHA-256 见 Canonical Evidence。
+- **交付链**：`7c1ac472f`（4A 交付）→ `756ab29e2`（r1 处置）→ `5c84dc22f`（r4 处置）；`integration_commit: 5c84dc22f`、`delivery_head: 7c1ac472f`。
+- **下游**：`FEA-06-RESIDUAL-4B` 已据此把统计翻到 **80/87**、pin 推到 **v1.10 `498882eb…`** 并冻结（`ba6136d0`）；4B 已 `done`。
+- **未闭合**：无（本卡范围）；后续限制见 4B 的 6 项 limitation。
