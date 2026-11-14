@@ -1,0 +1,6 @@
+fixture=huge.zip entries=120 page=1600x2400 raw_noise png_compress_level=0 zip=STORED
+built_size_mb=1319.1
+container_digest_s=0.85 throughput_mb_s=1555
+enumerate_and_hash_s=0.89 throughput_mb_s=1486
+total_s=1.74
+host=local NVMe, single run
