@@ -77,3 +77,24 @@ C#：`dotnet test`（CoreClient / Host / App 受影响项目）；Python：定�
 ## Closeout Record
 
 - 未关闭（当前 `in_progress`）。
+
+## 交付记录与 DSH 裁决（2026-11-14）
+
+### 诊断（`c9cb3eeab`）—— 推翻了既有记录
+
+- **根因**：`INVALID_REQUEST` **不是** Host 传参错位。Core 把 `EMPTY_TARGET_SELECTION`（目标集为空）**折叠**成冻结的 `INVALID_REQUEST` 并配通用文案（`core_service.py:6810-6811`，文案 `:6826`），真实异常来自 `src/application/tasks/store.py:413-421`（`PipelineError: 'EMPTY_TARGET_SELECTION: scope expands to no active pages'`），精确原因从不离开进程。
+- **「同 payload 可接受」的真相**：直连探针是 `translate_untranslated` + **book scope**，Host/App 是 `translate_all` + **chapter scope**（`WorkbenchViewModel.cs:14,172-176`）⇒ 章节无 active page 时 book scope 能展开到别章页面，chapter scope 必拒。
+- **已排除**：打包/仓库 Core 版本漂移（envelope 逐字节相同）、Host payload 形状错位、协议 minor 不匹配、`provider_profiles` 在 minor 3 被拒。
+
+### 修复（`652d7e7d0`）
+
+- **AC2**：折叠前把精确原因写 stderr（`[core.run] <Cmd> refused: <CODE>: <detail>`），Host 本就捕获 Core stderr；**wire 字节零变更**。
+- **AC3**：默认仍 `{"ocr":"manga-ocr"}`；有 translate 配置（`NEWMANGA_RUN_TRANSLATE_PROVIDER` 或显式入参）时追加 `translate`；**显式 `overrides.provider_bindings` 永远优先**；`NEWMANGA_RUN_PROVIDER_BINDINGS` 关闭口保留；无配置时默认 JSON 逐字节不变。
+- **实测**：pytest **3564/0/10**（+2）；CoreClient 182/0/26、Host 351/0/44、App 915/0/11；四件套绿；`--check` 1/80/6=87。
+
+### DSH 裁决
+
+- **R-1 接受 AC2 只修「可诊断性」，不判 PARTIAL**。根因是**数据前置条件**（本章无可处理页面）而非传参 bug；要改用户可见错误码必须动冻结错误面（UNFREEZE），要改行为必须让 Host 先探测页面（产品决策）。实施者选了唯一零契约、零行为变更的动作，并把能力边界写进 README §3 —— 这是正确的最小动作。**但「用户仍看到通用文案」必须作为产品债登记**（见 R-3）。
+- **R-2 接受 AC3 的当前解释（环境变量兜底），但加约束**。T-A 的镜像已把全局 `provider_bindings.translate` 写进 Core，默认注入在多数场景冗余，此处不做 P15 反查是合理的。**约束**：T-C 必须让 Host 默认值来自**当前翻译 binding**，环境变量只作兜底 —— 否则用户「在 UI 选了 profile A、Host 注入 B」会静默错配。
+- **R-3 两条产品债转入 T-C**：① 章节无 active page 时用户只看到 `INVALID_REQUEST / Run request is invalid` —— T-C 须加 Host 前置探测（`list_chapter_pages`）并给可读文案；② Host 默认 translate 值须来自当前 binding，环境变量兜底。
+- **R-4 一次自曝的坑已记录**：把 `NEWMANGA_CORECLIENT_SIDECAR_DIR` 指向 0.1.1 发布 sidecar 跑**全部** .NET 测试会激活期望 models sidecar 的 fixture（CoreClient 1 红、App 6 红），撤掉后全绿；本卡两条 dispatcher 用例在该 sidecar 上单独跑 4/0/0。复核者须避免这个假红。
