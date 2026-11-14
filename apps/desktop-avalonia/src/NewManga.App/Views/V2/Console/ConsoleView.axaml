@@ -339,6 +339,10 @@
             <ctrl:AlertBanner Severity="Blocked"
                               Message="安全约束：凭据只显示「已保存 / 未保存」，UI 永不回显密钥；错误只显示 typed code，不含路径或 secret。" />
 
+            <!-- ADJ-B-RESTART-HINT-1: adjudication B requires the restart constraint to be clearly
+                 shown where the model config is edited, not only inside a failure message. -->
+            <TextBlock Classes="meta" Text="{Binding RestartHintText}" />
+
             <StackPanel Spacing="{DynamicResource Nm.Space.2}">
               <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="{DynamicResource Nm.Space.2}">
                 <TextBlock Classes="section-title" Text="Provider 配置" VerticalAlignment="Center" />

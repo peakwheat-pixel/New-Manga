@@ -1703,3 +1703,19 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **自登记**：本卡先用源码 `grep` 数出 108 个测试，与实跑 **79** 不符 ——
   **又一次"以源码推断代替实测"**。已改用 `dotnet test` 实测并记入卡面。
 - **仍不判 MET**：带夹具 skip 48、真机走查、上述逐流程缺口均未闭合。
+## 223. ADJ-B-RESTART-HINT-1：裁决 B 的前提核实 → 缺陷成立（P2）并修复（2026-11-15，DSH，goal 轮次 22）
+
+- **背景**：条件 1 核实为 **7/8 + 1 KEEP-NOTRUN**（goal 描述的"剩 4 项"是 11-14 旧状态），
+  故转向用户明确指定的**第二优先**：外部裁决。
+- **裁决 B 留给 DSH 的前提**："现有重启提示覆盖相关配置入口……若提示不可见，应单独按实际故障开卡"。
+- **核实结论：前提不成立**。`RestartHint` 全仓仅三处引用（`TranslateErrorText.cs:16/20/41`），
+  `RestartHintShort` **定义后从未被使用**，**无任何 UI 绑定**；`ConsoleView.axaml` 的
+  "② Provider 与凭据"段**没有重启提示** ⇒ 用户改完模型配置只有**等翻译失败**才可能看到"需重启"。
+  **缺陷成立（P2）。**
+- **修复**：`ConsoleViewModel.RestartHintText => TranslateErrorText.RestartHint`（复用常量不复制文案）
+  \+ Provider 段 `TextBlock` 绑定。**编译失败一次已登记**：`AlertBanner.Severity` 是受限枚举
+  `NmStatus`，不接受 `"Info"`（`AVLN3000`），改用 `TextBlock`。
+- **判别力**：删掉 XAML 的 `TextBlock` → `ProviderSection_PaintsTheRestartHint` **变红**（已还原）。
+- **无夹具**：App.Tests **`953 / 0 / 11 / 964`**（新增 2 个测试；**skip 仍 11，未新增**）。
+- **裁决 B 只满足一半**：「清楚展示」✅；「**重启后确能使用新配置**」**NOT_RUN**
+  （需真实模型权重与 Provider 凭据，属用户不可替代实物）。

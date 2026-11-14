@@ -1291,6 +1291,15 @@ public sealed class ConsoleViewModel : ObservableObject
     }
     // ── Provider section ─────────────────────────────────────────────────────────────────
 
+    /// <summary>
+    /// ADJ-B-RESTART-HINT-1: adjudication B requires that "changing a model config needs an app restart"
+    /// is KEPT AND CLEARLY SHOWN. The string already existed (TranslateErrorText.RestartHint) but was only
+    /// reachable through a translation failure message -- the Provider configuration section itself, which
+    /// is where the user actually edits model settings, never showed it. Surfacing it here (bound in
+    /// ConsoleView's Provider section) closes that gap without duplicating the sentence.
+    /// </summary>
+    public string RestartHintText => TranslateErrorText.RestartHint;
+
     public ObservableCollection<ProviderProfileRowViewModel> ProviderProfiles { get; }
 
     public ObservableCollection<CredentialTargetRowViewModel> CredentialTargets { get; }

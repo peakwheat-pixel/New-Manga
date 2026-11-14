@@ -304,3 +304,28 @@ F11 没送进 shell，因此不会触发阅读器；`after F11` 无新窗口。*
 **条件 4 的口径修正**：v2 shell 里四个"一级页面"实际是 **3 个空间**（Library/Studio/Console）
 \+ **沉浸式阅读器窗口**。"四页可达性"应表述为：**三个空间参数可达 + 阅读器需 UI 交互**
 （标 `NEEDS_INTERACTION`），**不能**说"四页全部可达"。
+## 20. 外部裁决 B 的前提核实（2026-11-15，`ADJ-B-RESTART-HINT-1`）
+
+裁决 B 选择"暂时保持现状"，但留下一条明确的前提由 DSH 核实：
+**"B 的投入产出判断依赖现有重启提示覆盖相关配置入口……若提示不可见，应单独按实际故障开卡"**。
+
+**核实结论：前提不成立 —— 提示没有覆盖配置入口。** 缺陷成立（P2），已按裁决 B 的口径开卡修复。
+
+**证据**：`RestartHint` 全仓只有三处引用，`RestartHintShort` **定义后从未被使用**，
+**没有任何 UI 绑定**；`ConsoleView.axaml` 的"② Provider 与凭据"段（用户真正改模型配置的地方）
+只有安全约束 banner、标题、四个按钮与列表，**没有重启提示**。
+⇒ 用户改完模型配置后，只有**等翻译失败**才可能读到"需重启"。
+
+**修复**：`ConsoleViewModel.RestartHintText`（复用 `TranslateErrorText.RestartHint` 常量，不复制文案）
+\+ Provider 段 `TextBlock` 绑定。**一次编译失败已登记**（`AlertBanner.Severity` 是受限枚举 `NmStatus`，
+不接受 `"Info"`，改用 `TextBlock`）。
+
+**判别力**：删掉 XAML 的 `TextBlock` → `ProviderSection_PaintsTheRestartHint` **变红**（已还原）。
+无夹具 App.Tests **953 / 0 / 11 / 964**（新增 2 个测试，**skip 仍 11**）。
+
+**裁决 B 的两半只满足一半**：
+- 「保留并**清楚展示**」→ **已满足**（配置入口现在可见）；
+- 「**重启后确能使用新配置**」→ **`NOT_RUN`**，需要真实模型权重（`yolo11s-seg.onnx` 缺失）与真实
+  Provider 凭据，属用户不可替代的实物。
+
+**不得**因为提示已显示就宣称裁决 B 的两个前提都满足。
