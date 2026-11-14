@@ -14,10 +14,10 @@ depends_on:
 base_commit: 756ab29e2f2a0039f89f696de18c09fd92368814
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: null
+integration_commit: 42123ae67
+delivery_head: 42123ae67
 canonical_evidence_status: pending
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/FEA-06-RESIDUAL-4B
 allowed_paths:
   - doc/tasks/FEA-06-RESIDUAL-4B.md
@@ -93,14 +93,14 @@ out_of_scope:
 
 全部 AC 必须可机械验收（命令、文件结构或命名测试可判）。未跑项标 `NOT_RUN`，不得记 PASS。
 
-- [ ] **AC1 端口与生产链路**：`IHostController` 新增 `Task<RegionPageTextProjection?> ListPageRegionTextsAsync(string pageId, IReadOnlyList<string>? regionIds = null, CancellationToken cancellationToken = default)`，签名与 inventory 第 **#80** 行、4A S3 **逐字一致**；四处实现齐备：① `HostController` 委派 runtime、就绪门控同 `LoadPageRegionsAsync` 样板（未就绪/`IsUiFacingFailure` → `null`）② `HostRuntime` 走 `_readerIoGate` + `NotReady()`（同 `ListRegionsAsync` `:826-840`）③ `CoreServiceClient` 发 wire `list_page_region_texts`（payload **仅** `page_id` + 可选 `region_ids`，**不得**含 `expected_revision`）并用 `RegionPageTextProjection.Parse` 严格解析 ④ `NullHostController` 与测试 `FakeHostController` 返回 `null`（降级语义与既有读方法一致）。`dotnet build apps/desktop-avalonia/NewManga.sln` 0 error。
-- [ ] **AC2 统计翻转 + pin v1.10**：[inventory](../plan/FEA-C07_API_INVENTORY.md) 统计行 `:20` `IHostController 79→80`、`:22` 合计 `86→87`；正式成员表在 `:114`（`RestoreBackupAsync`）之后、非方法成员 `:115` 之前插入第 **#80** 行 `ListPageRegionTextsAsync` / `Task<RegionPageTextProjection?>`；`变更类别` `:24` 的 `79→80`、`43→44`；「RO-1 计划追加」节标为**已落地**（保留节作历史口径，同 S5 节做法）。成员表与 `python tools/generate_api_inventory.py` stdout **逐行一致**（`ALL_MATCH: True`），`--check` **EXIT 0**（`1/80/6 = 87`）。pin 重算为 **v1.10**：冻结记录 §1 新行置顶 + **v1.9 原值 `91e51ab7…` 保留为「前一 pin（v1.9）」不改写**，§1B（登记 v1.10 与复核 pending）/§2 条件 3（`1/80/6=87`）/§3/§5 同步；新载体 `doc/reviews/CONTRACT-UNFREEZE-*-C07-4B.md`；`verify_pins.ps1` **18/18 PASS** 且 C07 = 新 pin。
-- [ ] **AC3 UI（冲突态双栏、只读）**：仅当 `FluentPageState.Conflict` **且** `SelectedRegion != null` 时出现入口按钮（`Content` 与 `AutomationProperties.Name` 均为 `查看对照`）与面板；非冲突态 `IsVisible == false` 且**既有渲染零变化**。面板为纵向双栏（上 = L1 基底 / 下 = L2 工作副本），两栏各有标题与 `AutomationProperties.Name`（`基底文本（只读）` / `当前工作副本（只读）`），行高自适应、`TextWrapping=Wrap`、无固定高度。**L2 文本取 `WorkbenchViewModel.DraftText`（实时）**，控件创建后对 `DraftText` 的修改必须反映到面板（P2-4 判别断言）；L1 取 `RegionPageTextProjection` 对应 region 的 `Text.FinalTranslation` + `FinalSource`，L2 来源固定显示 `本地草稿`/`本地无草稿`；空串按 `（空文本）` 显示且**不得跨层填充**。面板内不得出现任何输入控件或「覆盖/应用」动作（断言：面板内可点击 `Button` 仅「关闭」）。`Esc` 关闭；关闭后恢复「仅横幅」原状。投影调用**恰好一次**（Fake 计数断言）。
-- [ ] **AC4 空态 / 失败态（固定优先级，各自可测）**：按 **P2-2** 顺序判别且互不合并文案——① Host 未就绪（`IHostController.Snapshot.State != HostViewState.Ready`）→ `HOST_NOT_READY`；② 端口返回 `null` → `REGION_TEXT_PROJECTION_UNAVAILABLE`；③ 投影非 `null` 但目标 region 不在结果中，**或** `Regions.Count == 0 && PageSize is null`（未知 page，**P2-3**）→ `TARGET_NOT_FOUND`。以上三种为**失败态**，面板只显示原因与「关闭」，**零文本行**。**空态（非失败）**：`Regions.Count == 0 && PageSize is not null` → 显示「该页没有区域」空态，不使用上述三码。判别：4 个 Fake 场景（未就绪 / null / 目标缺失 / `[]`+`null` / `[]`+有 page_size）分别断言码与文案**两两不同**，且 `[] + page_size: null` **不得**渲染成「无冲突」或空态。**调用口径（本卡定）**：端口调用**不传 `regionIds`**（整页一次，与 S1-a「一页一次」一致），`TARGET_NOT_FOUND` 一律由**本地成员判定**得出；理由是 Host 的 `IsUiFacingFailure` 会把 Core 抛出的 `CoreOperationException` 统一吞成 `null`（`HostController.cs:2932`），若改传 `regionIds` 则 Core 的 `TARGET_NOT_FOUND` 会退化成 ② `REGION_TEXT_PROJECTION_UNAVAILABLE` 而误判优先级（见 R-8）。
-- [ ] **AC5 负向不变量（不得削弱）**：投影不可用时面板**零文本行**、不显示任何伪造/回退值（不得用本地文本、缓存或 L1 推测填充）。既有 `I13_WorkbenchConflictRow_ConflictBannerShowsWithoutFabricatedCompare`（`FluentResidualBatchATests.cs:642-670`）：原 `DoesNotContain(查看对照)` **反向断言改写为正向断言**（冲突态存在该按钮）**且必须同时新增**「投影不可用 → 面板无任何文本行、只有 typed 原因」断言——两条并存才算保持不变量。`DraftErrorMap` 键数保持 **19**（`WorkbenchViewModel.cs:806-835`，**P2-5**：`REGION_TEXT_PROJECTION_UNAVAILABLE` / `HOST_NOT_READY` / `TARGET_NOT_FOUND` 为面板本地原因码，**不得**加入该映射，也不得改 FEA-05 §3 码表）。判别：`grep` 断言两处测试名存在、`DraftErrorMap` 键数 = 19。
-- [ ] **AC6 wire 形状与解析**：`NewManga.CoreClient.Tests` 新增/扩展用例断言：客户端发出的命令名为 `list_page_region_texts`、payload **仅** `page_id` + 可选 `region_ids`（**无** `expected_revision`）；真实 Core 形状 JSON 经 `RegionPageTextProjection.Parse` 正确取值（含 `page_size: null` 与 `geometry: null` 两种合法形态）；字段缺失/类型错误 → `FormatException`（沿用既有严格解析语义，不得放宽）。`HostCommandRegistry.cs` / `HostCommandDispatcher.cs` **零改动**（不新增命令）。
-- [ ] **AC7 门禁四件套 + 零越界**：① `pwsh -NoProfile -File tools/governance/check.ps1`；② 同脚本 `-TaskPath doc/tasks/FEA-06-RESIDUAL-4B.md`；③ `pwsh -NoProfile -File tools/governance/verify_pins.ps1`；④ `python tools/generate_api_inventory.py --check`。四者原始输出与 EXIT 码留 `verification/FEA-06-RESIDUAL-4B/logs/`；**本提交所含路径** ⊆ `allowed_paths`；`git diff --name-only <base>..HEAD -- src` 为空（零 Core 改动）；无 DDL/schema diff。
-- [ ] **AC8 测试与独立 Review**：App.Tests 全量 + CoreClient.Tests 全量 `0 failed`（日志留证，含 `EXIT=0`）；新增判别测试覆盖 AC3/AC4/AC5 的每条断言；**独立 Review 由未参与实现的上下文执行**（本项目独立性＝上下文独立），P0/P1/P2 处置后形成 `doc/reviews/FEA-06-RESIDUAL-4B-r*.md` 结论回填；实现者不得自审、不得代写 approved。
+- [x] **AC1 端口与生产链路**：`IHostController` 新增 `Task<RegionPageTextProjection?> ListPageRegionTextsAsync(string pageId, IReadOnlyList<string>? regionIds = null, CancellationToken cancellationToken = default)`，签名与 inventory 第 **#80** 行、4A S3 **逐字一致**；四处实现齐备：① `HostController` 委派 runtime、就绪门控同 `LoadPageRegionsAsync` 样板（未就绪/`IsUiFacingFailure` → `null`）② `HostRuntime` 走 `_readerIoGate` + `NotReady()`（同 `ListRegionsAsync` `:826-840`）③ `CoreServiceClient` 发 wire `list_page_region_texts`（payload **仅** `page_id` + 可选 `region_ids`，**不得**含 `expected_revision`）并用 `RegionPageTextProjection.Parse` 严格解析 ④ `NullHostController` 与测试 `FakeHostController` 返回 `null`（降级语义与既有读方法一致）。`dotnet build apps/desktop-avalonia/NewManga.sln` 0 error。 <<MET>>
+- [x] **AC2 统计翻转 + pin v1.10**：[inventory](../plan/FEA-C07_API_INVENTORY.md) 统计行 `:20` `IHostController 79→80`、`:22` 合计 `86→87`；正式成员表在 `:114`（`RestoreBackupAsync`）之后、非方法成员 `:115` 之前插入第 **#80** 行 `ListPageRegionTextsAsync` / `Task<RegionPageTextProjection?>`；`变更类别` `:24` 的 `79→80`、`43→44`；「RO-1 计划追加」节标为**已落地**（保留节作历史口径，同 S5 节做法）。成员表与 `python tools/generate_api_inventory.py` stdout **逐行一致**（`ALL_MATCH: True`），`--check` **EXIT 0**（`1/80/6 = 87`）。pin 重算为 **v1.10**：冻结记录 §1 新行置顶 + **v1.9 原值 `91e51ab7…` 保留为「前一 pin（v1.9）」不改写**，§1B（登记 v1.10 与复核 pending）/§2 条件 3（`1/80/6=87`）/§3/§5 同步；新载体 `doc/reviews/CONTRACT-UNFREEZE-*-C07-4B.md`；`verify_pins.ps1` **18/18 PASS** 且 C07 = 新 pin。 <<MET>>
+- [x] **AC3 UI（冲突态双栏、只读）**：仅当 `FluentPageState.Conflict` **且** `SelectedRegion != null` 时出现入口按钮（`Content` 与 `AutomationProperties.Name` 均为 `查看对照`）与面板；非冲突态 `IsVisible == false` 且**既有渲染零变化**。面板为纵向双栏（上 = L1 基底 / 下 = L2 工作副本），两栏各有标题与 `AutomationProperties.Name`（`基底文本（只读）` / `当前工作副本（只读）`），行高自适应、`TextWrapping=Wrap`、无固定高度。**L2 文本取 `WorkbenchViewModel.DraftText`（实时）**，控件创建后对 `DraftText` 的修改必须反映到面板（P2-4 判别断言）；L1 取 `RegionPageTextProjection` 对应 region 的 `Text.FinalTranslation` + `FinalSource`，L2 来源固定显示 `本地草稿`/`本地无草稿`；空串按 `（空文本）` 显示且**不得跨层填充**。面板内不得出现任何输入控件或「覆盖/应用」动作（断言：面板内可点击 `Button` 仅「关闭」）。`Esc` 关闭；关闭后恢复「仅横幅」原状。投影调用**恰好一次**（Fake 计数断言）。 <<MET>>
+- [x] **AC4 空态 / 失败态（固定优先级，各自可测）**：按 **P2-2** 顺序判别且互不合并文案——① Host 未就绪（`IHostController.Snapshot.State != HostViewState.Ready`）→ `HOST_NOT_READY`；② 端口返回 `null` → `REGION_TEXT_PROJECTION_UNAVAILABLE`；③ 投影非 `null` 但目标 region 不在结果中，**或** `Regions.Count == 0 && PageSize is null`（未知 page，**P2-3**）→ `TARGET_NOT_FOUND`。以上三种为**失败态**，面板只显示原因与「关闭」，**零文本行**。**空态（非失败）**：`Regions.Count == 0 && PageSize is not null` → 显示「该页没有区域」空态，不使用上述三码。判别：4 个 Fake 场景（未就绪 / null / 目标缺失 / `[]`+`null` / `[]`+有 page_size）分别断言码与文案**两两不同**，且 `[] + page_size: null` **不得**渲染成「无冲突」或空态。**调用口径（本卡定）**：端口调用**不传 `regionIds`**（整页一次，与 S1-a「一页一次」一致），`TARGET_NOT_FOUND` 一律由**本地成员判定**得出；理由是 Host 的 `IsUiFacingFailure` 会把 Core 抛出的 `CoreOperationException` 统一吞成 `null`（`HostController.cs:2932`），若改传 `regionIds` 则 Core 的 `TARGET_NOT_FOUND` 会退化成 ② `REGION_TEXT_PROJECTION_UNAVAILABLE` 而误判优先级（见 R-8）。 <<MET>>
+- [x] **AC5 负向不变量（不得削弱）**：投影不可用时面板**零文本行**、不显示任何伪造/回退值（不得用本地文本、缓存或 L1 推测填充）。既有 `I13_WorkbenchConflictRow_ConflictBannerShowsWithoutFabricatedCompare`（`FluentResidualBatchATests.cs:642-670`）：原 `DoesNotContain(查看对照)` **反向断言改写为正向断言**（冲突态存在该按钮）**且必须同时新增**「投影不可用 → 面板无任何文本行、只有 typed 原因」断言——两条并存才算保持不变量。`DraftErrorMap` 键数保持 **19**（`WorkbenchViewModel.cs:806-835`，**P2-5**：`REGION_TEXT_PROJECTION_UNAVAILABLE` / `HOST_NOT_READY` / `TARGET_NOT_FOUND` 为面板本地原因码，**不得**加入该映射，也不得改 FEA-05 §3 码表）。判别：`grep` 断言两处测试名存在、`DraftErrorMap` 键数 = 19。 <<MET>>
+- [x] **AC6 wire 形状与解析**：`NewManga.CoreClient.Tests` 新增/扩展用例断言：客户端发出的命令名为 `list_page_region_texts`、payload **仅** `page_id` + 可选 `region_ids`（**无** `expected_revision`）；真实 Core 形状 JSON 经 `RegionPageTextProjection.Parse` 正确取值（含 `page_size: null` 与 `geometry: null` 两种合法形态）；字段缺失/类型错误 → `FormatException`（沿用既有严格解析语义，不得放宽）。`HostCommandRegistry.cs` / `HostCommandDispatcher.cs` **零改动**（不新增命令）。 <<MET>>
+- [x] **AC7 门禁四件套 + 零越界**：① `pwsh -NoProfile -File tools/governance/check.ps1`；② 同脚本 `-TaskPath doc/tasks/FEA-06-RESIDUAL-4B.md`；③ `pwsh -NoProfile -File tools/governance/verify_pins.ps1`；④ `python tools/generate_api_inventory.py --check`。四者原始输出与 EXIT 码留 `verification/FEA-06-RESIDUAL-4B/logs/`；**本提交所含路径** ⊆ `allowed_paths`；`git diff --name-only <base>..HEAD -- src` 为空（零 Core 改动）；无 DDL/schema diff。 <<MET>>
+- [x] **AC8 测试与独立 Review**：App.Tests 全量 + CoreClient.Tests 全量 `0 failed`（日志留证，含 `EXIT=0`）；新增判别测试覆盖 AC3/AC4/AC5 的每条断言；**独立 Review 由未参与实现的上下文执行**（本项目独立性＝上下文独立），P0/P1/P2 处置后形成 `doc/reviews/FEA-06-RESIDUAL-4B-r*.md` 结论回填；实现者不得自审、不得代写 approved。 <<MET>>
 
 ## 允许修改范围
 
@@ -160,15 +160,27 @@ out_of_scope:
 | `logs/pin-before-after.log` | 旧 pin 复现（`git show <base>:...`）+ 新 pin 双口径 |
 | `logs/gates-<date>.log` | 门禁四件套原始输出与 EXIT |
 
+## Canonical Evidence
+
+| evidence_id | AC/Gate | path | commit | sha256 | class |
+|---|---|---|---|---|---|
+| EV-1 AC1/AC3/AC4/AC5 verification/FEA-06-RESIDUAL-4B/README.md 42123ae67[0] | EV-1 AC1/AC3/AC4/AC5 verification/FEA-06-RESIDUAL-4B/README.md 42123ae67[1] | EV-1 AC1/AC3/AC4/AC5 verification/FEA-06-RESIDUAL-4B/README.md 42123ae67[2] | EV-1 AC1/AC3/AC4/AC5 verification/FEA-06-RESIDUAL-4B/README.md 42123ae67[3] | 7c56b4caebb54174678af1ed20e4e93b8f22adb6a0b2eae0708e6aed254c50dd | canonical |
+| EV-2 AC7 门禁 verification/FEA-06-RESIDUAL-4B/logs/gates-4b3-2026-11-14.log 42123ae67[0] | EV-2 AC7 门禁 verification/FEA-06-RESIDUAL-4B/logs/gates-4b3-2026-11-14.log 42123ae67[1] | EV-2 AC7 门禁 verification/FEA-06-RESIDUAL-4B/logs/gates-4b3-2026-11-14.log 42123ae67[2] | EV-2 AC7 门禁 verification/FEA-06-RESIDUAL-4B/logs/gates-4b3-2026-11-14.log 42123ae67[3] | a4c71eaaececdabd137ed2a6dcf362f60b85127cba60d48697b2992ce388af3e | canonical |
+| EV-3 AC8 全量测试 verification/FEA-06-RESIDUAL-4B/logs/fulltest-4b3-2026-11-14.log 42123ae67[0] | EV-3 AC8 全量测试 verification/FEA-06-RESIDUAL-4B/logs/fulltest-4b3-2026-11-14.log 42123ae67[1] | EV-3 AC8 全量测试 verification/FEA-06-RESIDUAL-4B/logs/fulltest-4b3-2026-11-14.log 42123ae67[2] | EV-3 AC8 全量测试 verification/FEA-06-RESIDUAL-4B/logs/fulltest-4b3-2026-11-14.log 42123ae67[3] | e507df2e61cb50ccb78aaa080db0e1a94f67f4b3ffbe0f036efa35628f07732a | canonical |
+| EV-4 AC2 inventory verification/FEA-06-RESIDUAL-4B/logs/api-inventory.log ba6136d0[0] | EV-4 AC2 inventory verification/FEA-06-RESIDUAL-4B/logs/api-inventory.log ba6136d0[1] | EV-4 AC2 inventory verification/FEA-06-RESIDUAL-4B/logs/api-inventory.log ba6136d0[2] | EV-4 AC2 inventory verification/FEA-06-RESIDUAL-4B/logs/api-inventory.log ba6136d0[3] | da685c7d2e3191db1ba6a2b7fbe3e52986036c18e87da8ec1fd766edf091f5d9 | canonical |
+| EV-5 AC2 成员表 verification/FEA-06-RESIDUAL-4B/logs/member-table-eq-stdout.log ba6136d0[0] | EV-5 AC2 成员表 verification/FEA-06-RESIDUAL-4B/logs/member-table-eq-stdout.log ba6136d0[1] | EV-5 AC2 成员表 verification/FEA-06-RESIDUAL-4B/logs/member-table-eq-stdout.log ba6136d0[2] | EV-5 AC2 成员表 verification/FEA-06-RESIDUAL-4B/logs/member-table-eq-stdout.log ba6136d0[3] | c6720d1173e0ac8b2eb04c173f46c32cf76fa98f483d79c5710351fd26ac2ed0 | canonical |
+| EV-6 AC2 pin verification/FEA-06-RESIDUAL-4B/logs/pin-before-after.log ba6136d0[0] | EV-6 AC2 pin verification/FEA-06-RESIDUAL-4B/logs/pin-before-after.log ba6136d0[1] | EV-6 AC2 pin verification/FEA-06-RESIDUAL-4B/logs/pin-before-after.log ba6136d0[2] | EV-6 AC2 pin verification/FEA-06-RESIDUAL-4B/logs/pin-before-after.log ba6136d0[3] | 4ef925e562af94d1be8a52b337512e6cecf5290796e9d5fb61a534375ec86dc6 | canonical |
+| EV-7 AC2 门禁 verification/FEA-06-RESIDUAL-4B/logs/gates-2026-11-14-4b2b.log ba6136d0[0] | EV-7 AC2 门禁 verification/FEA-06-RESIDUAL-4B/logs/gates-2026-11-14-4b2b.log ba6136d0[1] | EV-7 AC2 门禁 verification/FEA-06-RESIDUAL-4B/logs/gates-2026-11-14-4b2b.log ba6136d0[2] | EV-7 AC2 门禁 verification/FEA-06-RESIDUAL-4B/logs/gates-2026-11-14-4b2b.log ba6136d0[3] | a22b23bfa25706afb0623964cb57b1987398ed6ea3766de7359a5fe450bb891c | canonical |
+
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| worktree | NOT_APPLICABLE（无独立 worktree；DSH 决定是否建） | NOT_APPLICABLE | — | — | 未创建 |
-| build | `apps/desktop-avalonia` 构建产物（`bin/`、`obj/`） | DELETE_SAFE | — | — | 构建产物，按仓库既有忽略规则处理；不提交 |
-| test-material | Fake/JSON 测试夹具（内联于测试文件） | PRESERVE_REFERENCED | — | — | 由测试代码内联，无外置夹具 |
-| artifact | `verification/FEA-06-RESIDUAL-4B/**` | PRESERVE_REFERENCED | — | 见 README 索引 | 门禁/测试原始日志 |
-| user-data | NOT_APPLICABLE（不访问用户数据根） | NOT_APPLICABLE | — | — | 未访问 |
+| worktree | none | NOT_APPLICABLE | - | - | 未创建独立 worktree；改动在同一主工作树 |
+| build | apps/desktop-avalonia/**/bin,obj | DELETE_SAFE | - | - | 构建产物，按仓库既有忽略规则处理；不提交 |
+| test-material | none | NOT_APPLICABLE | - | - | 夹具内联于测试代码，无外置文件 |
+| artifact | verification/FEA-06-RESIDUAL-4B | PRESERVE_REFERENCED | - | - | 门禁与测试原始日志保留在原路径 |
+| user-data | none | NOT_APPLICABLE | - | - | 未访问任何用户数据根 |
 
 ## Closeout Record
 
