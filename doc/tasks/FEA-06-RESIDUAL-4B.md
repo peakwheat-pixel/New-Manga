@@ -3,7 +3,7 @@ id: FEA-06-RESIDUAL-4B
 title: RegionBox「查看对照」实现：ListPageRegionTextsAsync 端口 + 冲突态双栏面板 + C-07 统计翻转 80/87
 kind: implementation
 governance_version: 3
-status: in_progress
+status: done
 disposition: "RO-1 拆卡的实现卡（2026-11-14，DSH 释放）；消费 `FEA-06-RESIDUAL-4A` 冻结的规格 v1.1；前置 4A r2 `approved` + C-07 v1.9 已重冻（`91e51ab7…`）"
 approval: DSH 2026-11-14 释放（前置：4A r2 approved、C-07 v1.9 重冻、规格 v1.1 定稿）。**scope review 形式要件裁决（r3 F-9）**：本卡不另做独立 scope review，改由 4A 的 r2 + r3 两轮独立字节级复核替代——两者均由未参与实现者执行，且已核规格可验收性、allowed_paths 边界与预授权一致性；DSH 承担该替代的裁决责任。
 suggested_owner: DSH
@@ -16,7 +16,7 @@ branch: null
 worktree: null
 integration_commit: 42123ae67
 delivery_head: 42123ae67
-canonical_evidence_status: pending
+canonical_evidence_status: complete
 resource_closeout_status: complete
 evidence_dir: verification/FEA-06-RESIDUAL-4B
 allowed_paths:
@@ -164,31 +164,33 @@ out_of_scope:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-1 AC1/AC3/AC4/AC5 verification/FEA-06-RESIDUAL-4B/README.md 42123ae67[0] | EV-1 AC1/AC3/AC4/AC5 verification/FEA-06-RESIDUAL-4B/README.md 42123ae67[1] | EV-1 AC1/AC3/AC4/AC5 verification/FEA-06-RESIDUAL-4B/README.md 42123ae67[2] | EV-1 AC1/AC3/AC4/AC5 verification/FEA-06-RESIDUAL-4B/README.md 42123ae67[3] | 7c56b4caebb54174678af1ed20e4e93b8f22adb6a0b2eae0708e6aed254c50dd | canonical |
-| EV-2 AC7 门禁 verification/FEA-06-RESIDUAL-4B/logs/gates-4b3-2026-11-14.log 42123ae67[0] | EV-2 AC7 门禁 verification/FEA-06-RESIDUAL-4B/logs/gates-4b3-2026-11-14.log 42123ae67[1] | EV-2 AC7 门禁 verification/FEA-06-RESIDUAL-4B/logs/gates-4b3-2026-11-14.log 42123ae67[2] | EV-2 AC7 门禁 verification/FEA-06-RESIDUAL-4B/logs/gates-4b3-2026-11-14.log 42123ae67[3] | a4c71eaaececdabd137ed2a6dcf362f60b85127cba60d48697b2992ce388af3e | canonical |
-| EV-3 AC8 全量测试 verification/FEA-06-RESIDUAL-4B/logs/fulltest-4b3-2026-11-14.log 42123ae67[0] | EV-3 AC8 全量测试 verification/FEA-06-RESIDUAL-4B/logs/fulltest-4b3-2026-11-14.log 42123ae67[1] | EV-3 AC8 全量测试 verification/FEA-06-RESIDUAL-4B/logs/fulltest-4b3-2026-11-14.log 42123ae67[2] | EV-3 AC8 全量测试 verification/FEA-06-RESIDUAL-4B/logs/fulltest-4b3-2026-11-14.log 42123ae67[3] | e507df2e61cb50ccb78aaa080db0e1a94f67f4b3ffbe0f036efa35628f07732a | canonical |
-| EV-4 AC2 inventory verification/FEA-06-RESIDUAL-4B/logs/api-inventory.log ba6136d0[0] | EV-4 AC2 inventory verification/FEA-06-RESIDUAL-4B/logs/api-inventory.log ba6136d0[1] | EV-4 AC2 inventory verification/FEA-06-RESIDUAL-4B/logs/api-inventory.log ba6136d0[2] | EV-4 AC2 inventory verification/FEA-06-RESIDUAL-4B/logs/api-inventory.log ba6136d0[3] | da685c7d2e3191db1ba6a2b7fbe3e52986036c18e87da8ec1fd766edf091f5d9 | canonical |
-| EV-5 AC2 成员表 verification/FEA-06-RESIDUAL-4B/logs/member-table-eq-stdout.log ba6136d0[0] | EV-5 AC2 成员表 verification/FEA-06-RESIDUAL-4B/logs/member-table-eq-stdout.log ba6136d0[1] | EV-5 AC2 成员表 verification/FEA-06-RESIDUAL-4B/logs/member-table-eq-stdout.log ba6136d0[2] | EV-5 AC2 成员表 verification/FEA-06-RESIDUAL-4B/logs/member-table-eq-stdout.log ba6136d0[3] | c6720d1173e0ac8b2eb04c173f46c32cf76fa98f483d79c5710351fd26ac2ed0 | canonical |
-| EV-6 AC2 pin verification/FEA-06-RESIDUAL-4B/logs/pin-before-after.log ba6136d0[0] | EV-6 AC2 pin verification/FEA-06-RESIDUAL-4B/logs/pin-before-after.log ba6136d0[1] | EV-6 AC2 pin verification/FEA-06-RESIDUAL-4B/logs/pin-before-after.log ba6136d0[2] | EV-6 AC2 pin verification/FEA-06-RESIDUAL-4B/logs/pin-before-after.log ba6136d0[3] | 4ef925e562af94d1be8a52b337512e6cecf5290796e9d5fb61a534375ec86dc6 | canonical |
-| EV-7 AC2 门禁 verification/FEA-06-RESIDUAL-4B/logs/gates-2026-11-14-4b2b.log ba6136d0[0] | EV-7 AC2 门禁 verification/FEA-06-RESIDUAL-4B/logs/gates-2026-11-14-4b2b.log ba6136d0[1] | EV-7 AC2 门禁 verification/FEA-06-RESIDUAL-4B/logs/gates-2026-11-14-4b2b.log ba6136d0[2] | EV-7 AC2 门禁 verification/FEA-06-RESIDUAL-4B/logs/gates-2026-11-14-4b2b.log ba6136d0[3] | a22b23bfa25706afb0623964cb57b1987398ed6ea3766de7359a5fe450bb891c | canonical |
+| EV-1 | AC1/AC3/AC4/AC5 | verification/FEA-06-RESIDUAL-4B/README.md | e52ad6c05 | 7c56b4caebb54174678af1ed20e4e93b8f22adb6a0b2eae0708e6aed254c50dd | canonical |
+| EV-2 | AC7 gates | verification/FEA-06-RESIDUAL-4B/logs/gates-4b3-2026-11-14.log | e52ad6c05 | a4c71eaaececdabd137ed2a6dcf362f60b85127cba60d48697b2992ce388af3e | canonical |
+| EV-3 | AC8 fulltest | verification/FEA-06-RESIDUAL-4B/logs/fulltest-4b3-2026-11-14.log | e52ad6c05 | e507df2e61cb50ccb78aaa080db0e1a94f67f4b3ffbe0f036efa35628f07732a | canonical |
+| EV-4 | AC2 inventory | verification/FEA-06-RESIDUAL-4B/logs/api-inventory.log | ba6136d0 | da685c7d2e3191db1ba6a2b7fbe3e52986036c18e87da8ec1fd766edf091f5d9 | canonical |
+| EV-5 | AC2 member-table | verification/FEA-06-RESIDUAL-4B/logs/member-table-eq-stdout.log | ba6136d0 | c6720d1173e0ac8b2eb04c173f46c32cf76fa98f483d79c5710351fd26ac2ed0 | canonical |
+| EV-6 | AC2 pin | verification/FEA-06-RESIDUAL-4B/logs/pin-before-after.log | ba6136d0 | 4ef925e562af94d1be8a52b337512e6cecf5290796e9d5fb61a534375ec86dc6 | canonical |
+| EV-7 | AC2 gates | verification/FEA-06-RESIDUAL-4B/logs/gates-2026-11-14-4b2b.log | ba6136d0 | a22b23bfa25706afb0623964cb57b1987398ed6ea3766de7359a5fe450bb891c | canonical |
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| worktree | none | NOT_APPLICABLE | - | - | 未创建独立 worktree；改动在同一主工作树 |
-| build | apps/desktop-avalonia/**/bin,obj | DELETE_SAFE | - | - | 构建产物，按仓库既有忽略规则处理；不提交 |
-| test-material | none | NOT_APPLICABLE | - | - | 夹具内联于测试代码，无外置文件 |
-| artifact | verification/FEA-06-RESIDUAL-4B | PRESERVE_REFERENCED | - | - | 门禁与测试原始日志保留在原路径 |
-| user-data | none | NOT_APPLICABLE | - | - | 未访问任何用户数据根 |
-
+| worktree | `G:\CODEX\New Manga`（main） | NOT_APPLICABLE | - | - | 复用主工作树；无新建 worktree；工作树 clean |
+| evidence（仓库） | `verification/FEA-06-RESIDUAL-4B/**` | NOT_APPLICABLE | 仓库内 | `verification/FEA-06-RESIDUAL-4B/EV`（见 Canonical Evidence） | 门禁/测试原始日志已保留；逐文件 SHA-256 见 Canonical Evidence |
 ## Closeout Record
 
-- Closeout date / DSH：未关闭（当前 `in_progress`，2026-11-14 由 DSH 释放；前置 4A r2 `approved` + C-07 v1.9 重冻）。
-- canonical_evidence_status：`pending`。
-- resource_closeout_status：`pending`。
-- 删除、迁移、归档数量/字节数：待关闭时填写（预期 0）。
-- 未关闭项及保留原因：无（尚未实施）。
+- Closeout date / DSH：**2026-11-14 收口**（`done`）。四刀交付：4B-1 `eae0eb67a`（wire）→ 4B-2 `fd4008ce3`（端口，含已闭合的 `--check` 红窗）→ 4B-2b `ba6136d0`（统计 80/87 + pin v1.10）→ 4B-3 `42123ae67`（UI）；证据 `e52ad6c05`。
+- canonical_evidence_status：`complete`（7 条 EV，逐文件 SHA-256 已登记）。
+- resource_closeout_status：`complete`。
+- 删除、迁移、归档数量/字节数：**0**（无删除、无迁移、无归档）。
+- 未关闭项及保留原因（均已登记为 limitation，**不得读作已验收**）：
+  1. 无像素级视觉证据（R-12）：AC3/AC4/AC5 只做结构性断言，未做主题/字体/截图验收；
+  2. Esc 走 `*ForTest` seam（R-11）：真实键盘事件未端到端；
+  3. `HostController` 的 `catch (IsUiFacingFailure) → null` 分支未在默认门禁触发（无 runtime seam）；
+  4. `CoreServiceClient` public 方法未贯穿 `SendAsync`（无传输 seam）；
+  5. S6 焦点管理未断言（4B r1 P2-1）；
+  6. AC4 三条原因文案「两两不同」缺显式断言（4B r1 P2-2）。
 - 当前指针清理：本轮不改 `STATUS` / `REBASELINE_PLAN`；`FEA-06` AC3 保持 **PARTIAL**，直到本卡集成验证通过并经 DSH 裁决后才可改 MET。
 
 ## 切片执行记录（append-only，2026-11-14）
