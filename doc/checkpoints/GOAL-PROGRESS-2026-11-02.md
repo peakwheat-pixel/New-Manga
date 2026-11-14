@@ -1346,3 +1346,15 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 数字：定向 23 passed；`build -warnaserror` 0/0；App.Tests **946/0/11**（本卡前 940/0/11，skip 未增加）。
 - 未做并登记：离开阅读器时的显式 flush。
 - 下一步：等 r2 复审；通过后收口（pin + 卡置 done + 条件 3 输入更新）。
+## 202. READER-PREF-PERSIST 收口 + 本轮 Gate 进展汇总（2026-11-15，DSH）
+
+- **交付链**：`57f149b02`（首版）→ `98d42c6b6`（r1 REJECT 返修）→ `6afab416b`（r2 收口）→ `ada2af1d8`（卡置 done，integration_commit = `6afab416bf845ce8481b20bae90687fcf2852d7e`）。
+- **复核**：r1 `REJECT`（3 P1：在途快照丢更新 / AC4 只有 VM 测试·View 回退仍全绿 / 提交后留未提交中间态）→ r2 `ACCEPT_WITH_LIMITATIONS`（无 P1；审查者独立复跑 946/0/11，并实测三项 P1 已修）。r2 残留 P2-1（意图未带 diff 基线导致 80ms 窗口内 0 写入）已在本轮修掉并加判别测试。
+- **门禁**：`check` PASS(3w)｜`verify_pins` 18/18｜`inventory` `1/80/6=87`｜App.Tests **947/0/11**（skip 未增加）｜7 条 BLOB pin 过 check。
+- **本轮（接手会话）整体成果**：
+  - 两张实现卡收口：`CHAPTER-MANUAL-SORT`（章节拖拽排序，条件 1 的 `L-L1-2`）、`READER-PREF-PERSIST`（E-4 偏好保存入口）。
+  - **Gate 更正两处滞后**：条件 2 = MET（`SEC-01`/`SEC-02` 早已 done，远端可见性 unknown→已确认可见）；条件 1 = **7/8 已关闭** + `L-F1-3` KEEP-NOTRUN（原记录 4/8，漏算 `L-R1-1`/`L-R2-1` 已由 `MAINT-2-C1-BATCH-1` AC1 交付）。
+  - **登记 5 项既有缺陷**（`MAINT-1-EXISTING-FINDINGS`）：E-1 命令覆盖 111 vs 90（SourceSync 15 + Drafts 6 由 dispatcher 直通，测试断言过时，基线已复现）、E-2 sidecar 早于现行命令、E-3 错误码缺失、E-4 偏好无保存入口（已本卡修复）、E-5 `L-F1-3` 压测未被边界测试替代。
+  - **4 次判别力实测**（均还原）：原子性（逐章事务变红）、切书竞态（CM-SORT）、在途快照（1.5 vs 1.7）、View 接线（回退后 LastSavedPreferences 为 null）、意图基线段（0 writes）。
+- **Gate 仍 BLOCKED**：条件 3（完整流程矩阵；E-1/E-2 是直接障碍）、条件 4（当前 commit 的 Windows 包，需 PyInstaller，本环境 PyPI 不可达）、条件 5（人工 GT）未满足；条件 2 的处置动作需 Owner 授权。
+- **下一步候选**：`CMD-COVERAGE-ASSERT-FIX`（修 E-1 的过时断言，恢复命令可达性守卫).
