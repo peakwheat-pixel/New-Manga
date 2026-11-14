@@ -1358,3 +1358,12 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   - **4 次判别力实测**（均还原）：原子性（逐章事务变红）、切书竞态（CM-SORT）、在途快照（1.5 vs 1.7）、View 接线（回退后 LastSavedPreferences 为 null）、意图基线段（0 writes）。
 - **Gate 仍 BLOCKED**：条件 3（完整流程矩阵；E-1/E-2 是直接障碍）、条件 4（当前 commit 的 Windows 包，需 PyInstaller，本环境 PyPI 不可达）、条件 5（人工 GT）未满足；条件 2 的处置动作需 Owner 授权。
 - **下一步候选**：`CMD-COVERAGE-ASSERT-FIX`（修 E-1 的过时断言，恢复命令可达性守卫).
+## 203. CMD-COVERAGE-ASSERT-FIX 收口 + 证据污染根治（2026-11-15，DSH，goal 轮次 2）
+
+- **交付链**：`f1835e437`（实现）→ `073f00b02`（r1 返修）→ `9ee168f1e`（r2 收口）→ `cef42b1c2`（证据污染根治），integration_commit = `cef42b1c2ac1264fc8fa82267b06b90cb78f8b50`。
+- **复核**：r1 `ACCEPT_WITH_LIMITATIONS`（P2-1 重叠未检出 / P2-2 表述过强 / P2-3 保证链错误）→ r2 `ACCEPT_WITH_LIMITATIONS`（P2 已闭合，余数字与措辞）。r2 实测把 `create_region` 加进 `SourceSyncCommandNames` 后新类 **2 failed / 3 passed**。
+- **成果**：E-1 修复。registry 111 条中 21 条（Drafts 6 + SourceSync 15）由 dispatcher 直通，六服务覆盖 90 —— 断言已按此口径修正且从 `[SidecarFact]` 中拆出独立无夹具测试（4 passed）。原测试设旧 sidecar 实测 **1 passed**（修复前 `Expected 111 / Actual 90`）。`src/**` 净 diff **0**。
+- **证据污染根治（本会话第三次踩同一坑后）**：根因是 `WireLogSourceRedactionTests.PersistedNdjsonContainsOnlyRewrittenBytes` 直接写仓库内 `verification/FEA-09/logs/wire-redacted.ndjson`（pinned evidence）。已改为写 `%TEMP%`，实测跑完全量 CoreClient **186/0/26/212** 后 `git diff 9a79b2a69..HEAD -- verification/FEA-09` 为 **0**。**今后跑 .NET 测试不再需要手工 checkout 该文件。**
+- **自登记错误**：① 三次 `git add -A` 卷入被写脏的证据文件；② 一次**假阳性判别力证据**（字符串替换同时命中 `SourceSyncNames` 数组与 `SourceSyncCommandNames` 集合 → registry 重复键崩溃 4/4 红，被我当成"重叠被检测到"，实际是崩溃）；③ 数字写错两轮（4 Fact/4 passed、1/3 变红、186/0/26/212）。
+- **Gate 影响**：条件 3 的一个直接障碍（命令面守卫坏掉）已消除；条件 3 仍缺"真实 sidecar 端到端"（E-2）与真实窗口矩阵。Gate 仍 **BLOCKED**。
+- **下一步候选**：条件 3 的"可安全执行"部分已基本覆盖（63 个 `[AvaloniaFact]` 文件含四页 headless PNG 证据）；剩余实质缺口均受 E-2 / PyInstaller / 人工 GT 阻塞。建议下一轮做 **条件 3 覆盖矩阵**（把现有 headless 测试映射到四页关键流程，明确有覆盖 / NOT_RUN 清单），把"部分"变成可判定证据。

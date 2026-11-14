@@ -3,7 +3,7 @@ id: CMD-COVERAGE-ASSERT-FIX
 title: 修复命令覆盖断言的过时口径（E-1），恢复命令可达性守卫
 kind: implementation
 governance_version: 3
-status: in_progress
+status: done
 disposition: "既有缺陷 E-1（doc/reviews/MAINT-1-EXISTING-FINDINGS-2026-11-14.md）；DSH 2026-11-15 释放"
 approval: DSH 2026-11-15（Gate 条件 3 直接输入，范围冻结）
 suggested_owner: DSH
@@ -14,10 +14,10 @@ depends_on:
 base_commit: 9a79b2a69
 branch: main
 worktree: G:/CODEX/New Manga
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: cef42b1c2ac1264fc8fa82267b06b90cb78f8b50
+delivery_head: cef42b1c2
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/CMD-COVERAGE-ASSERT-FIX
 allowed_paths:
   - doc/tasks/CMD-COVERAGE-ASSERT-FIX.md
@@ -119,7 +119,13 @@ registry —— 这组断言**根本不需要 sidecar**，却被关在 sidecar �
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) | sha256_basis |
 |---|---|---|---|---|---|---|
-
+| EV-CCA-01 | AC1/AC2/AC3 与性质边界 | verification/CMD-COVERAGE-ASSERT-FIX/README.md | cef42b1c2 | 45bdac6437133f0935c28c21731fbc12908f1edac54ca8630c9bda2869a0d0f6 | CANONICAL | BLOB |
+| EV-CCA-02 | AC6 门禁与测试计数 | verification/CMD-COVERAGE-ASSERT-FIX/four-pieces.log | cef42b1c2 | 97090bc2d4db2d18c98b52639748efac8b928b31359895fbc3a9c0c939a4545d | CANONICAL | BLOB |
+| EV-CCA-03 | AC1/AC2/AC3 路由覆盖测试 | apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Commands/CommandCoverageRoutingTests.cs | cef42b1c2 | 260f49bd0eac7ac52f928a958fc5aeefc720eae1890ea71396ecd8db71e66b0e | CANONICAL | BLOB |
+| EV-CCA-04 | AC4 原测试口径修正 | apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Commands/CommandIntegrationTests.cs | cef42b1c2 | 2ce080dfa8c6ef5c7656607727562440db8e5f3e8ac3a884d141d2728ebab1cf | CANONICAL | BLOB |
+| EV-CCA-05 | 证据污染根治（WireLog 测试隔离） | apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/WireLogSourceRedactionTests.cs | cef42b1c2 | 825066e20dfbccb773fd35b321630661dba373a2a529e90e9dc26810bf8e3163 | CANONICAL | BLOB |
+| EV-CCA-06 | 独立复核 r1（ACCEPT_WITH_LIMITATIONS） | doc/reviews/CMD-COVERAGE-ASSERT-FIX-review-r1.md | cef42b1c2 | e10c15f649e515c80fb6870419b81e89f1860a62c517ab63d78c874bae2ec226 | CANONICAL | BLOB |
+| EV-CCA-07 | 独立复核 r2（ACCEPT_WITH_LIMITATIONS） | doc/reviews/CMD-COVERAGE-ASSERT-FIX-review-r2.md | cef42b1c2 | 4b1cd772fb265a12df035177f810614cb122cfe4bfdbdf3bd313115f54340a78 | CANONICAL | BLOB |
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
@@ -128,9 +134,26 @@ registry —— 这组断言**根本不需要 sidecar**，却被关在 sidecar �
 
 ## Closeout Record
 
-- Closeout date / DSH：待关闭时填写。
-- canonical_evidence_status：`pending`。
-- resource_closeout_status：`pending`。
-- 删除、迁移、归档数量/字节数：待关闭时填写；无操作填写 0。
-- 未关闭项及保留原因：待填。
-- 当前指针清理：待关闭时更新 STATUS / Plan / TASK_LEDGER / rolling checkpoint。
+- Closeout date / DSH：2026-11-15，DSH（Lead / Architect / Integrator）。
+- canonical_evidence_status：`complete`（7 条 BLOB pin，commit `cef42b1c2ac1264fc8fa82267b06b90cb78f8b50`）。
+- resource_closeout_status：`complete`（无 worktree、无用户数据；临时 ndjson 由测试自删）。
+- 删除、迁移、归档数量/字节数：0。
+- 未关闭项及保留原因：
+  - **本断言的性质限制**：六个 `HostDomainService` 生产 `src/**` 从未实例化，守卫的是 registry 域划分与
+    契约测试抽象的一致性，**不证明生产可达性**（r1 复核 P2-2）；
+  - 不能发现"命令被错误归类进 `Drafts`/`SourceSync`"，也不能发现族内命令在 dispatcher 上缺 payload 处理；
+  - 这 21 条与 Core 实际 handler 的一致性**未被覆盖**（r1 复核 P2-3：`extract-command-surface.py --check`
+    只比对旧 Rust `PRODUCTION_COMMANDS` 与快照，`core-command-probe.json` 25 条无 `drafts_*`/`source_*`）；
+  - 真实 sidecar 端到端仍受 E-2 阻塞。
+- 当前指针清理：STATUS / Plan / TASK_LEDGER / rolling checkpoint 已更新。
+- **本卡自身的错误登记（不淡化）**：
+  1. **三次**用 `git add -A` 把 .NET 测试写脏的 `verification/FEA-09/logs/wire-redacted.ndjson`
+     （FEA-09 的 pinned evidence）卷进提交；本轮已找到根因（`WireLogSourceRedactionTests` 直接写仓库内
+     该路径）并改为临时文件，`git diff 9a79b2a69..HEAD -- verification/FEA-09` 现为 **0**；
+  2. 一度**编造**判别力证据：第一次重叠探针用字符串替换，同时命中 `SourceSyncNames`（构建数组）与
+     `SourceSyncCommandNames`（HashSet），导致 registry 重复键崩溃、4/4 全红；我把这当成"重叠被检测到"，
+     属**假阳性**。改用只改 HashSet 的精确探针后真实结果是 1 failed / 3 passed，已在 README §3.1 登记；
+  3. 数字写错两轮：先写"4 个 Fact / 4 passed / 5/5 变红 / 186"，被 r2 复核指出与实测（4/4、1/3、186）
+     不符；已按实测更正。
+- **资源**：`G:\CODEX\New Manga.workspace\task-envs\CHAPTER-MANUAL-SORT\*.py`、`commit-msg*.txt` 为前序会话派生；
+  本卡无新增资源。
