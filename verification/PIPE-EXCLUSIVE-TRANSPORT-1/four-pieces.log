@@ -1,0 +1,24 @@
+# PIPE-EXCLUSIVE-TRANSPORT-1 four-pieces 2026-11-15T04:14:00.4062399+08:00
+## check.ps1
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\MAINT-1-RELEASE-MONITOR.md
+WARN: 存在 8 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：2945 bytes / 27 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6974 bytes / 63 lines
+Governance check: PASS (3 warnings)
+## verify_pins.ps1
+OK FEA01 0370c18932b1
+PIN AUDIT: PASS (all 18)
+## api inventory
+OK: rendered counts match FEA-C07 doc
+| **合计** | **87** | — |
+## 判别力（bridge 管道）
+before fix : 2 FAIL (InvalidOperationException: The stream is currently in use by a previous operation on the stream)
+after fix  : 2 PASS
+rollback   : remove both leases -> 2 FAIL; restore -> 2 PASS
+## 无夹具全量
+CoreClient 189 / 0 / 29 / 218 (skip +2 = 新增 2 个 SidecarFact bridge 测试)
+Host       321 / 0 / 74 / 395
+## 带新 sidecar 全量
+CoreClient 214 / 4 / 0 / 218 (4 个为 Frozen Core 前提类，与管道无关)
+Host       350 / 1 / 44 / 395  (E-6 前 9, E-6 后 2~3, 本卡后 1)

@@ -22,6 +22,39 @@ public sealed class SidecarProcess : IAsyncDisposable
     private bool _disposed;
     private bool _poisoned;
     private readonly object _stopGate = new();
+
+    /// <summary>
+    /// PIPE-EXCLUSIVE-TRANSPORT-1 / E-7: the ONE exclusive entry for this pipe. The sidecar speaks a
+    /// strictly request/response protocol over a single stdin/stdout pair, and <see cref="ExchangeAsync"/>
+    /// assumes only one request is in flight. Callers must hold a lease for the WHOLE cycle
+    /// (write + read + any event-frame skipping), because both halves touch the same shared streams.
+    /// Acquiring a second lease concurrently is what produced
+    /// "The stream is currently in use by a previous operation on the stream".
+    /// </summary>
+    private readonly SemaphoreSlim _exchangeGate = new(1, 1);
+
+    /// <summary>
+    /// Takes the pipe exclusively. Dispose the returned lease to release it. Use with <c>using var</c> so
+    /// an exception can never leak the lease.
+    /// </summary>
+    public async Task<IDisposable> AcquireExchangeLeaseAsync(CancellationToken cancellationToken = default)
+    {
+        await _exchangeGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        return new ExchangeLease(_exchangeGate);
+    }
+
+    private sealed class ExchangeLease : IDisposable
+    {
+        private SemaphoreSlim? _gate;
+
+        public ExchangeLease(SemaphoreSlim gate) => _gate = gate;
+
+        public void Dispose()
+        {
+            var gate = Interlocked.Exchange(ref _gate, null);
+            gate?.Release();
+        }
+    }
     private Task? _stopTask;
 
     private SidecarProcess(SidecarSpec spec, Process process)

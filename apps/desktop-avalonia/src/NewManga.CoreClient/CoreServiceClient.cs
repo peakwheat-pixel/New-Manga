@@ -2380,10 +2380,21 @@ public sealed class CoreServiceClient : IAsyncDisposable
     /// <summary>Raw escaping test hook (AC3 negative): sends the line verbatim, never throws on Core errors.</summary>
     public async Task<CoreResponse> SendRawAsync(string rawJsonLine, CancellationToken cancellationToken = default)
     {
-        var frame = await _process
-            .ExchangeAsync(rawJsonLine, escapeNonAscii: false, _options.RequestTimeout, cancellationToken)
-            .ConfigureAwait(false);
-        return CoreProtocol.Parse(frame.ResponseLine);
+        // PIPE-EXCLUSIVE-TRANSPORT-1 / E-7 (window 2): this hook used to bypass _pipeGate entirely, so a raw
+        // frame could race every normal command on the same stdin/stdout pair. The raw line carries its own
+        // request_id (if any), so we do not validate the id here -- but the pipe must still be exclusive.
+        await _pipeGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
+            var frame = await _process
+                .ExchangeAsync(rawJsonLine, escapeNonAscii: false, _options.RequestTimeout, cancellationToken)
+                .ConfigureAwait(false);
+            return CoreProtocol.Parse(frame.ResponseLine);
+        }
+        finally
+        {
+            _pipeGate.Release();
+        }
     }
     /// <summary>
     /// CORE-PIPE-EXCLUSIVE-1 / E-6: a response carrying a DIFFERENT request_id means the pipe handed back

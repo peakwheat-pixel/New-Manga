@@ -266,6 +266,7 @@ public sealed class HostBridgeClient : IAsyncDisposable
     /// <summary>Raw wire hook (evidence/negative): sends a line verbatim and parses the reply.</summary>
     public async Task<JsonElement> SendRawAsync(string rawJsonLine, CancellationToken cancellationToken = default)
     {
+        using var lease = await _process.AcquireExchangeLeaseAsync(cancellationToken).ConfigureAwait(false);
         var frame = await _process.ExchangeAsync(rawJsonLine, escapeNonAscii: false, _options.RequestTimeout, cancellationToken)
             .ConfigureAwait(false);
         return ParseResponse("raw", frame.ResponseLine);
@@ -288,13 +289,14 @@ public sealed class HostBridgeClient : IAsyncDisposable
             writer.WriteEndObject();
         });
 
+        using var lease = await _process.AcquireExchangeLeaseAsync(cancellationToken).ConfigureAwait(false);
         var frame = await _process.ExchangeAsync(line, escapeNonAscii: true, timeout, cancellationToken).ConfigureAwait(false);
-        return ParseResponse(method, frame.ResponseLine);
+        return ParseResponse(method, frame.ResponseLine, requestId);
     }
 
     private int NextRequestId() => Interlocked.Increment(ref _requestCounter);
 
-    private static JsonElement ParseResponse(string method, string line)
+    private static JsonElement ParseResponse(string method, string line, int? expectedId = null)
     {
         JsonDocument document;
         try
@@ -312,6 +314,22 @@ public sealed class HostBridgeClient : IAsyncDisposable
             if (root.ValueKind != JsonValueKind.Object)
             {
                 throw new SidecarException(SidecarErrorCode.MalformedResponse, SidecarSpec.HostBridgeName, $"{method}: response root is not an object");
+            }
+
+            // PIPE-EXCLUSIVE-TRANSPORT-1 / E-7 (window 4): a response carrying a DIFFERENT id means this
+            // pipe handed back another command's answer. Ignoring that is how a caller can silently read
+            // someone else's payload.
+            if (expectedId is { } wanted
+                && root.TryGetProperty("id", out var actualId)
+                && actualId.ValueKind == JsonValueKind.Number
+                && actualId.TryGetInt32(out var actual)
+                && actual != wanted)
+            {
+                throw new SidecarException(
+                    SidecarErrorCode.MalformedResponse,
+                    SidecarSpec.HostBridgeName,
+                    $"{method}: response id {actual} does not match request {wanted} "
+                    + "(the host_bridge pipe returned another command's response)");
             }
 
             if (root.TryGetProperty("error", out var error) && error.ValueKind == JsonValueKind.Object)

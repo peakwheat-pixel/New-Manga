@@ -19,10 +19,10 @@
 |FEA-11-LINEAGE-1|FEA-11-PREREQ-1|done（r4 approved；delivery `90a8c8218`；r7 硬约束解除；残余 L4-L11 见卡）|
 |FEA-12-PREREQ-1|—|done（r2 approved；delivery `3e37c595b`；M2-C1 rev 2.13 + Host 投影；R-002 移交 CORE）|
 |FEA-12-CORE|FEA-12-PREREQ-1、FEA-11-LINEAGE-1|done（r4 approved；UNFREEZE `fc9833479`；`51e139eff`；AC1–AC12 MET）|
-|FEA-12-DSIM-1|—|done（r2 approved；delivery `beee351bb`；模拟切片，真实 D NOT_RUN）|
+|FEA-12-DSIM-1|—|done（`beee351bb`；模拟切片，真实 D NOT_RUN）|
 |FEA-12-UI|FEA-12-PREREQ-1、FEA-12-CORE|done（r2 approved；delivery `a46d4d5c7`；AC1–AC10 全 MET；L3 NOT_RUN）|
 |FEA-11-MATCH-1|FEA-11|done（r2 窄面 approved；delivery `869b6d5d5`；AC-M1…M6 全 MET；AC11-3 回填 MET 带 L-M1/L-M4 limitation）|
-|FEA-11-AC4-GAPS-1|FEA-11|done（r1 approved；delivery `2d9a4a219`；AC11-4 可判 MET；test-only）|
+|FEA-11-AC4-GAPS-1|FEA-11|done（`2d9a4a219`；AC11-4 MET；test-only）|
 |FEA-01-FREEZE-1|FEA-C11-PREREQ-1|done（FEA-01 冻结 v2，pin `0370c189…`；集成 `bf1c8eb00`；15/15）|
 |FEA-02-CORE|FEA-01-FREEZE-1|done（集成 `135479270`；delivery `5efb8f58c`；r1 approved）|
 |FEA-00A-PREP-1|FEA-02-CORE|done（集成 `aec780362`；评估文档 v2 + R1 approved）|
@@ -51,7 +51,7 @@
 |MAINT-1-RELEASE-MONITOR|PUBLISH-FIX-1|in_progress|
 |MAINT-1 子卡：CHAPTER-MANUAL-SORT / READER-PREF-PERSIST / CMD-COVERAGE-ASSERT-FIX|MAINT-1-RELEASE-MONITOR|均 done（拖拽排序 / 偏好落库 / E-1 断言口径；各 ACCEPT_WITH_LIMITATIONS，NOT_RUN 见卡面）|
 |GATE3-COVERAGE-MATRIX / SETTINGS-ERROR-STATE-1|MAINT-1-RELEASE-MONITOR|done（三层盘点 + 矩阵 ❌ 格清零；零 src；仅部分证据）|
-|CORE-PIPE-EXCLUSIVE-1|SIDECAR-REBUILD-1|done（E-6 P1 修复；Host 失败 9→2~3；r1 ACCEPT_WITH_LIMITATIONS）|
+|CORE-PIPE-EXCLUSIVE-1 → PIPE-EXCLUSIVE-TRANSPORT-1|SIDECAR-REBUILD-1|前者 done（E-6 P1；Host 9→2~3）；后者 in_progress（E-7 独占下沉）|
 |RELEASE-PACKAGE-PROBE-1|MAINT-1-RELEASE-MONITOR|done（包+冒烟 PASS；PyInstaller 可得）|
 |SIDECAR-REBUILD-1|MAINT-1-RELEASE-MONITOR|done（capabilities 17 条；13 失败拆 E-6）|
 ## 当前活动程序
