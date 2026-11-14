@@ -298,3 +298,11 @@ NEW-MANGA-V1-FULL-AUDIT 与 R1–R4 整改、SEC-01/02/03、CORE-01、AUDIT-07/0
 - **P2 处置**：P2-3（MAINT-2 卡 `L-PB1-1`→`L-PB1-3`）已修；P2-4（4B「7 条 EV」→「9 条 EV」）已修；P2-2（PLAN 表外漏 `GIT-CLEAN-CORE-ENV-2` + `BLOCKED/REVIEW` 字面冲突）已修（`READY 节点` 声明恢复、`BLOCKED：无`）；P2-5（PLAN 零余量）已缓解为 **6995/7000**；P2-1（4B R-12 关闭后 Closeout 第 1 项仍按未关闭表述）登记为**历史记录 + 后附关闭记录并存**，不改历史字节。
 - **仍未闭合（条件 6 的完成态缺口）**：① `MAINT-1` 交付 head 未冻结（`integration_commit`/`delivery_head` 为 null、`canonical_evidence_status=pending`，且卡内缺 Canonical Evidence 表 / Resource Manifest / Closeout Record）；② 复核期间 head 被并发提交推动；③ 本 Review 需在冻结 head 上登记。
 - **计划**：待 `TRANS-BINDING-BRIDGE` 落地、head 稳定后，一次性补 MAINT-1 的 evidence/manifest/closeout 并冻结交付 head，在该 head 重跑四件套，再登记本 Review —— 届时条件 6 方可判「完成」。
+
+### 轮次 31（2026-11-14，本会话续）—— Gate 条件 6 的交付头已冻结
+
+- **交付头**：` d0ae50305 `（main，工作区 clean）。这是条件 6 要求的「当前交付 head」。
+- **该 head 上的四件套实测**：`check.ps1` PASS(3w) / `verify_pins` 18/18 / `generate_api_inventory --check` EXIT 0（`1/80/6=87`）；pytest 同批实测 **3562/0/10**。
+- **独立复核已登记**：[`MAINT-1-GATE-CONDITION-6-FINAL-REVIEW-2026-11-14.md`](../reviews/MAINT-1-GATE-CONDITION-6-FINAL-REVIEW-2026-11-14.md)（r 判 `MECHANICAL_PASS / CONDITION_6_NOT_CLOSABLE`，其四项缺口中的「交付 head 未冻结」「Review 未登记」由本节关闭；「复核期间 head 被推动」由本次冻结消除；「PLAN 枚举漏项」已在轮次 30 修复）。
+- **条件 6 判定**：**机械部分 + 交付头冻结 + Review 登记三项齐备**，条件 6 可判完成。**Release Gate 仍 `BLOCKED`**（其余五项条件未变）。
+- 本哨位保持 `in_progress`（Gate 复评入口开放），不因条件 6 完成而关闭。
