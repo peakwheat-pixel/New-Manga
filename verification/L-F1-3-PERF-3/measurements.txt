@@ -1,0 +1,11 @@
+fixture=8 independent zips, each 123.7MB (20 pages 1200x1800 noise PNG, compress_level=0, ZIP_STORED)
+serial_files=f0..f3 (cold)  concurrent_files=f4..f7 (cold)  total_mb_per_side=494.7
+machine_ram_gb=31.6
+total_fixture_footprint_gb=1.6
+serial_wall_s=0.35  serial_throughput_mb_s=1399  per_file=[0.10,0.10,0.09,0.09]
+concurrent_wall_s=0.10  concurrent_throughput_mb_s=5039  per_thread=[0.10,0.10,0.09,0.09]
+ratio=0.28x
+repeat_serial_wall_s=0.33  repeat_concurrent_wall_s=0.10  repeat_ratio=0.30x
+verdict=INVALID for disk concurrency: fixtures (~1.6GB) << RAM (31.6GB) => page cache holds everything.
+  Per-thread time unchanged vs serial per-file time => it is memory/CPU parallelism, not disk.
+not_measured=wire-level serialisation criterion (concurrent throughput approx equal to serial = _pipeGate working)
