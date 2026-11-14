@@ -2130,3 +2130,22 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   （`tools/perf/x.py` 的 `parents[1]` 是 `tools/` 而非仓库根），
   导致 `ModuleNotFoundError: No module named 'bootstrap'`；改 `parents[2]` 后正常。
   **写路径时没先确认文件所在深度。**
+## 250. ★ L-F1-3 关闭：zcode 裁决"有条件成立"，条件 1 达 **8/8**（2026-11-15，DSH，goal 轮次 51）
+
+- **★ 我上一轮又不合规了**：我把判据取舍**抛给用户等答复** —— 但 goal 明确写"产品取舍与用户偏好类决策，
+  **派 codex 或 zcode 裁决并采纳其书面记录，不得因此停工等待人工**"。**本该派裁决，不该问人。**
+- **派 `subagent_zcode`（agent-5，独立上下文，只读）裁决**：结论 **有条件成立**，4 条**全是记录性动作**、不要求新测量。
+- **裁决者自己核实的代码事实（非采信我的叙述）**：`_pipeGate` 是 `SemaphoreSlim(1,1)`（`:426`）；
+  **三对 Wait/Release 覆盖全部通道**（`:696/:722`、`:2386/:2396`、`:2428/:2455`），
+  全文件 wire 交换点仅 `:700/:706`、`:2390`、`:2431/:2440`，**全部在 gate 内、无 gate 外交换**；
+  `SendRawAsync` 的 E-7 window 2 绕过**修复完整**（`:2383-2396`）；
+  另有两道防线：`SidecarProcess.cs:40-55` 的 `_exchangeGate` 租约、`CoreServiceClient.cs:2403-2415` 的
+  `EnsureResponseBelongsToRequest` id 校验。`HostBridgeClient.cs:105` 是独立进程/pipe，**非绕过点**。
+- **按 4 条留痕落盘**：①`doc/reviews/L-F1-3-JUDGMENT-SUBSTITUTION-zcode-2026-11-15.md`（判据替代三理由）；
+  ②残余未测项**保持未测口径**（冷磁盘并发/时序判据/跨盘对照）+ **重测触发条件**（架构若改多 pipe/并行通道，本判据自动失效）；
+  ③**写明 PERF-4 覆盖面**（Python 直连 core_service；C# 侧靠代码结构事实，**不是 40 并发实跑**）；
+  ④`doc/tasks/L-F1-3-CLOSE-1.md` + check PASS + STATUS 同步。
+- **★★ 条件 1 达 8/8**：STATUS 里"7/8 已关闭"改为 **"8/8 已关闭"**。
+- **裁决者判定"无虚报"**：PERF-1 自declares 并发未做、PERF-2 主动作废 2.8x 数字、
+  PERF-3 论证数据仍无效并登记第 9 次教训、PERF-4 明写 `VERDICT=SERIALISED` 是机械输出**不可引用** ——
+  **已测/不可用/未测出边界清晰，两次自我纠正均有留痕**。
