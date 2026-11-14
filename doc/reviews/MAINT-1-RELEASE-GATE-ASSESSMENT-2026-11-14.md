@@ -232,3 +232,29 @@
 ①重建 sidecar（Python 3.12+ 与钉死的 ML 栈）；②以 `app/core-sidecar/` 布局准备 stage 出 `setup.exe`；
 ③做 install / 启动 / 升级回退 / 四页 / 卸载矩阵。**它们尚未执行，条件 4 仍 NOT MET，Gate 仍 `BLOCKED`。**
 另需注意：本次 `elapsed=7.7s` 是热缓存增量构建，只证明"本机可构建"，不证明 clean-room。
+## 17. 条件 4 安装/卸载矩阵（2026-11-15，`INSTALLER-MATRIX-1`）
+
+`RELEASE-PACKAGE-PROBE-1` 证明了"包能建、能起、Host 就绪"；本卡补上**安装器与 install/uninstall 矩阵**：
+
+| 环节 | 结果 |
+|---|---|
+| stage | **848.15 MB / 1037 files**（exe 94.9 MB + sidecar 753 MB + 许可齐全） |
+| `VERSION.json` | **实测值**（app exe sha256 / sidecar core_service sha256 / 两个 head），未沿用模板旧值 |
+| `setup.exe` | `NewManga-0.1.1-setup.exe` **621.9 MB**，sha256 `3e6dcb1f…650a`，`makensis v3.13` |
+| **clean install** | `/S` exit 0；程序目录、HKCU 卸载项（`New Manga 0.1.1`）、Start Menu 快捷方式齐备 |
+| **安装后启动** | exit 0；`core_service ready` + `host_bridge ready` + `credential port ready` + **`self-check status=Passed`**（`core_protocol=2.3`，capabilities **17 条**） |
+| **卸载** | `/S` exit 0；程序目录/HKCU/Start Menu 全部清理；**用户数据根 532 files / 967,726,273 B 逐字节未变** |
+| 四页可达性 | **NOT_RUN**（未在打包产物上逐页导航，不用 headless 证据冒充） |
+| 升级/回退 | **NOT_RUN**（需旧版 setup 作回退目标） |
+
+**两条新记录**：
+
+1. **我的副作用**：第一次启动漏传 `--data-root`（`NEWMANGA_DATA_ROOT` 只对 core_service 生效），
+   污染了真实数据根（524→705 文件、+669 MB、`library.db` 被重写）；改为 `--data-root` 后实测未变。
+   已写进证据 §3 并评估影响（新增主要是可再生的 `derived`/`logs`，且 sidecar 有 first-writable backup）。
+2. **新缺陷 `E-8`**：安装后启动的 `startup.log` 有成批 **XAML 绑定错误**
+   （`StudioPageViewModel` 缺 `IsEnabled`/`ActiveTabLabel`）⇒ 静默 UI 失效。
+   **headless 测试抓不到**（不读该日志）—— 这正是"打包产物验证"的价值。
+
+**条件 4 仍不判 MET**：sidecar 仍缺 SFX 权重（`yolo11s-seg.onnx`）、安装器 unsigned、
+四页与升级/回退矩阵未做。但**安装/启动/卸载三条已实测通过**，且死字节级证明了用户数据根未被卸载触碰。

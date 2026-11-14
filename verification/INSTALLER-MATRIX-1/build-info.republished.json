@@ -4,12 +4,12 @@
   "version": "0.1.1",
   "version4": "0.1.1.0",
   "installer": {
-    "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\INSTALLER-MATRIX-1\\out\\NewManga-0.1.1-setup.exe",
+    "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\INSTALLER-MATRIX-1\\out2\\NewManga-0.1.1-setup.exe",
     "file_name": "NewManga-0.1.1-setup.exe",
-    "bytes": 652083323,
-    "mb": 621.88,
-    "sha256": "3e6dcb1f6d8d03c268e6a75c6d6afc6ab52cfe0e91c70a54e1e15f37b796650a",
-    "build_seconds": 252.17,
+    "bytes": 652107016,
+    "mb": 621.9,
+    "sha256": "0c0415993b6deab7027baee941f683487a263a0e0fb65c2cd16040ee4c358f06",
+    "build_seconds": 253.7,
     "authenticode_status": "NotSigned",
     "file_version": "0.1.1",
     "product_name": "New Manga",
@@ -19,10 +19,10 @@
   "stage": {
     "path": "G:\\CODEX\\New Manga.workspace\\task-envs\\INSTALLER-MATRIX-1\\stage\\NewManga-0.1.1-win-x64",
     "file_count": 1037,
-    "bytes": 889352697.0,
+    "bytes": 889353540.0,
     "mb": 848.15,
-    "manifest_sha256": "f195677a3d18d9b09eef6a928a0df8a94bbb179145968182bd611905fa28939a",
-    "install_size_kb": 868509,
+    "manifest_sha256": "58b54b0449e631d9d8f09ab45864164b4093bb6acf0a5dee7ee869c9d84d7b8f",
+    "install_size_kb": 868510,
     "version_json": {
       "version": "0.1.1",
       "variant": "base",
@@ -36,5 +36,5 @@
     "nsi_script": "G:\\CODEX\\New Manga\\packaging\\nsis\\installer.nsi",
     "icon": "G:\\CODEX\\New Manga\\apps\\desktop\\src-tauri\\icons\\icon.ico"
   },
-  "generated_at_utc": "2026-11-14T20:41:12.9247031Z"
+  "generated_at_utc": "2026-11-14T21:02:05.2761083Z"
 }

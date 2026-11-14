@@ -45,18 +45,18 @@ allowed_paths:
 
 ## Acceptance Criteria
 
-- [ ] **AC1 stage 就绪**：以 `AGPL-RELEASE-1` 的 stage 为**结构模板**构建新 stage：
+- [x] **AC1 stage 就绪**：以 `AGPL-RELEASE-1` 的 stage 为**结构模板**构建新 stage：
       `app/NewManga.App.exe` = 当前 head 的 publish 产物（sha256 记录）；
       `app/core-sidecar` = `apps/desktop-avalonia/build/sidecar/core-sidecar/core-sidecar`；
       许可/NOTICE 文件齐全。
-- [ ] **AC2 VERSION.json 真实**：`sidecar_build.core_service_sha256`/`core_service_bytes`/
+- [x] **AC2 VERSION.json 真实**：`sidecar_build.core_service_sha256`/`core_service_bytes`/
       `core_service_built_at_utc`/`repo_head` 必须与**实际使用的** sidecar 与 head 一致；
       `app` 的 exe sha256/尺寸同样记录。**不得照抄模板旧值**。
-- [ ] **AC3 setup.exe**：`build-installer.ps1` 产出 `NewManga-<ver>-setup.exe`，记录尺寸与 sha256、NSIS 日志。
-- [ ] **AC4 clean install**：`/S` 静默安装 → 程序出现在 `%LOCALAPPDATA%\Programs\NewManga`，
+- [x] **AC3 setup.exe**：`build-installer.ps1` 产出 `NewManga-<ver>-setup.exe`，记录尺寸与 sha256、NSIS 日志。
+- [x] **AC4 clean install**：`/S` 静默安装 → 程序出现在 `%LOCALAPPDATA%\Programs\NewManga`，
       HKCU 卸载项存在，Start Menu 快捷方式存在（若 `.nsi` 声明）。
-- [ ] **AC5 安装后启动**：运行**安装目录里的** exe，断言窗口出现且 Host 就绪（用与 publish 冒烟相同的判据）。
-- [ ] **AC6 卸载**：静默卸载 → 程序目录与 HKCU 项被清理；
+- [x] **AC5 安装后启动**：运行**安装目录里的** exe，断言窗口出现且 Host 就绪（用与 publish 冒烟相同的判据）。
+- [x] **AC6 卸载**：静默卸载 → 程序目录与 HKCU 项被清理；
       **`%APPDATA%\com.newmanga.desktop` 用户数据根未被触碰**（安装前后记录其文件清单+哈希对比）。
 - [ ] **AC7 四页可达性（打包产物上）**：至少用截图证明四个一级页面（书架/工作台/阅读器/设置）可从安装产物到达；
       若做不到（例如需要真实交互），**如实标 NOT_RUN** 并说明原因，不得用 headless 结果冒充。
