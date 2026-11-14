@@ -257,7 +257,13 @@ public sealed record FluentRunRow(
     /// <summary>Visible status cell text: symbol + label; the colour is never the only channel.</summary>
     public string StatusCell => $"{StatusCatalog.Symbol(Status)} {StatusLabel}";
 
-    public string ErrorCell => string.IsNullOrWhiteSpace(ErrorCode) ? FluentRunProjection.Missing : ErrorCode!;
+    /// <summary>
+    /// P1-2: execution-time failures (401 / 429 / 4xx) surface HERE, so the cell must carry the
+    /// readable sentence instead of the raw Core code. Unknown codes keep their code (diagnosable).
+    /// </summary>
+    public string ErrorCell => string.IsNullOrWhiteSpace(ErrorCode)
+        ? FluentRunProjection.Missing
+        : NewManga.App.Services.TranslateErrorText.ForCode(ErrorCode);
 }
 
 /// <summary>One labelled field of the AC-2 9-row table.</summary>

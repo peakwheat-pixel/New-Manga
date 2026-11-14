@@ -447,7 +447,7 @@ public sealed class StudioBatchDrawerControl : Border
                 row.Children.Add(glyph);
                 row.Children.Add(StudioUi.Text(step.StepType, "label"));
                 row.Children.Add(StudioUi.Text(step.State is { } value ? StudioStates.Label(value) : "无投影数据", "meta", "muted"));
-                row.Children.Add(StudioUi.Text(step.ErrorCode ?? string.Empty, "meta"));
+                row.Children.Add(StudioUi.Text(step.ErrorCode is null ? string.Empty : NewManga.App.Services.TranslateErrorText.ForCode(step.ErrorCode), "meta"));
                 return row;
             }, false),
         };

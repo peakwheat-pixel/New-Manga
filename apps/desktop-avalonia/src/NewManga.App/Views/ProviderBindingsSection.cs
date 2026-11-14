@@ -83,7 +83,7 @@ public sealed class ProviderBindingsSection : UserControl
         var body = new StackPanel { Spacing = 8 };
         body.Children.Add(Ui.Text("Provider 绑定（slot）", 13, "TextPrimary", bold: true));
         body.Children.Add(Ui.Text(
-            "把某个 provider profile 绑定到 (scope, capability) 槽位；运行链会按槽位解析 provider。book/chapter 范围用真实书库选择器。",
+            "把某个 provider profile 绑定到 (scope, capability) 槽位；**当前仅全局绑定驱动执行**：book/chapter 范围的绑定会保存并显示，但 Run 执行链只读全局槽位（跨书/跨章按槽位解析尚未接入）。book/chapter 范围用真实书库选择器。",
             11,
             "TextSecondary"));
         body.Children.Add(ProfileUi.Label("Scope 类型（global / book / chapter）"));

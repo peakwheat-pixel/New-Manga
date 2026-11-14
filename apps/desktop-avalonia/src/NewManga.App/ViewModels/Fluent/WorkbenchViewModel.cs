@@ -193,7 +193,11 @@ public sealed class WorkbenchViewModel : FluentViewModel
         try
         {
             var pages = await _host.ListChapterPagesAsync(_chapterId, cancellationToken);
-            chapterLooksEmpty = pages.Count == 0;
+            // P1-1: an unreadable/absent chapter and an EMPTY chapter are different facts — the
+            // Host reports both as an empty list (HostController.cs:967-970), so only a ready Host
+            // may turn "0 pages" into the "本章没有页面" sentence. Otherwise the original typed
+            // failure text stays (never a false claim about the chapter).
+            chapterLooksEmpty = pages.Count == 0 && _host.Snapshot.State == HostViewState.Ready;
         }
         catch (Exception)
         {

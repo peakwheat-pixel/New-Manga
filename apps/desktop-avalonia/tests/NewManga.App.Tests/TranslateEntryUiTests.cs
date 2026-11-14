@@ -83,4 +83,42 @@ public sealed class TranslateEntryUiTests
         Assert.Contains("本章没有可处理的页面", TranslateErrorText.EmptyChapter, StringComparison.Ordinal);
         Assert.DoesNotContain("INVALID_REQUEST", TranslateErrorText.EmptyChapter, StringComparison.Ordinal);
     }
+    [Fact]
+    public async Task ReadyHostWithNoPages_ShowsTheEmptyChapterSentence()
+    {
+        var (host, vm) = await SubjectAsync();
+        host.ChapterPagesByChapter["chapter-1"] = Array.Empty<ChapterPageSummary>();
+        host.ScriptedStartRuns.Enqueue(null);
+        host.ScriptedStartRunErrorCode = "INVALID_REQUEST";
+
+        var started = await vm.StartRunAsync();
+
+        Assert.False(started);
+        Assert.Contains("chapter-1", host.ChapterPageCalls);
+        // P1-1: READY host + genuinely 0 pages -> the readable empty-chapter sentence.
+        Assert.Equal(TranslateErrorText.EmptyChapter, vm.Error);
+        Assert.DoesNotContain("INVALID_REQUEST", vm.Error, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task UnreadyHost_DoesNotPretendTheChapterIsEmpty()
+    {
+        // P1-1: ListChapterPagesAsync returns an empty list when the Host is not ready
+        // (HostController.cs:967-970); that must never become "本章没有页面".
+        var host = new FakeHostController(new HostViewSnapshot(
+            HostViewState.Failed, "HOST_NOT_READY", "Host 未就绪", null, null,
+            Array.Empty<BookSummary>(), 0, false, null));
+        var vm = new WorkbenchViewModel(host, "session-1");
+        host.ChapterPagesByChapter["chapter-1"] = Array.Empty<ChapterPageSummary>();
+        host.ScriptedBindingResolveResults.Enqueue(new ProviderBindingResult(false, "profile-1", "Translation", "global"));
+        host.ScriptedStartRuns.Enqueue(null);
+        host.ScriptedStartRunErrorCode = "INVALID_REQUEST";
+        await vm.LoadAsync("chapter-1");
+
+        var started = await vm.StartRunAsync();
+
+        Assert.False(started);
+        Assert.NotEqual(TranslateErrorText.EmptyChapter, vm.Error);
+        Assert.Equal(TranslateErrorText.ForCode("INVALID_REQUEST"), vm.Error);
+    }
 }

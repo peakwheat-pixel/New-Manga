@@ -47,7 +47,7 @@
 | AC2 四类错误可读化 | **PASS** | 新增 `Services/TranslateErrorText.cs`；`StartRun` 失败改用 `TranslateErrorText.ForCode(LastError)`；四类字符串互不相同（测试断言 distinct=4） |
 | AC3 空章可读文案 | **PASS** | 前置 `ListChapterPagesAsync`；空 ⇒ 显示"本章没有可处理的页面…"，**不**透出 INVALID_REQUEST；探测抛错 ⇒ 跳过检查、不阻断（try/catch） |
 | AC4 重启提示 | **PASS** | `TranslateErrorText.RestartHint` 常量 + 内嵌于 AC1 文案 |
-| AC5 scoped 绑定如实表述 | **PASS（未提供）** | 设置页当前**没有**按书/章配置 provider 的入口（`SettingsProfileContracts` / 设置页只有全局 profile/binding），故按卡面记为「未提供 scoped 配置入口」 |
+| AC5 scoped 绑定如实表述 | **PASS（r1 修正）** | **事实更正**：设置页本来就有 book/chapter 绑定入口（`Views/Pages.cs:1141` 实例化 `ProviderBindingsSection`，`:89-94` 有 scope/书/章选择器）。r1 指出我先前写「没有入口」是**不实**。已在该 section 的说明文案补上卡面约束 3 的限定「**当前仅全局绑定驱动执行**：book/chapter 范围的绑定会保存并显示，但 Run 执行链只读全局槽位」 |
 | AC6 过期文案 | **PASS** | `StudioInspectorPanel.cs:256` 改写为实测状态（见上） |
 | AC7 零契约面 | **PASS** | 无新 wire 命令、无新 `IHostController` 成员（复用既有 `ResolveProviderBindingAsync` / `ListChapterPagesAsync`） |
 | AC8 判别测试 | **PASS** | `tests/NewManga.App.Tests/TranslateEntryUiTests.cs` 4 例：四类文案不同、重启提示、缺绑定不发 StartRun、空章文案且不发 StartRun |
@@ -68,4 +68,30 @@ dotnet test NewManga.Host.Tests       321 passed / 0 failed / 74 skipped   (395 
 
 1. **402/404 仍不可区分**（wire 同为 `INVALID_INPUT`）：文案如实并列两种可能，**不**编造区分；已在卡面与本文件登记。
 2. **空白章探测会多一次 Core 往返**（`list_chapter_pages`）；失败时静默跳过（不阻断），符合卡面约束 4。
-3. **AC5 scoped**：未提供入口，故只登记；若后续要做 scoped 配置 UI，必须先让执行链支持 per-book 槽（L2/T-A 已证扁平槽只认全局）。
+3. **AC5 scoped**：入口**存在**（见上表更正），但**只有全局绑定驱动执行**；已在 UI 文案明写，避免用户按书配置后误以为生效。要真正支持 scoped 执行，必须先让 run 快照有 per-book 槽（L2/T-A 已证扁平槽只认全局），属产品+契约改动。
+## 5. r1 复核处置（`doc/reviews/TRANS-ENTRY-UI-r1.md`）
+
+### P1-1 空章句污染失败路径（已修）
+
+根因：`ListChapterPagesAsync` 在 Host 未就绪/读失败时**返回空列表**（`HostController.cs:967-970`），而旧判定只数页数。修法：`chapterLooksEmpty = pages.Count == 0 && _host.Snapshot.State == HostViewState.Ready` —— 只有**就绪且确实 0 页**才用空章句；未就绪/读取异常保留原 typed 文案（不再谎称"本章没有页面"）。
+
+新增断言（`TranslateEntryUiTests`）：
+- `ReadyHostWithNoPages_ShowsTheEmptyChapterSentence`：Ready + 0 页 + StartRun 失败 ⇒ **`vm.Error == TranslateErrorText.EmptyChapter`**（旧测试无此断言，已被 r1 指出无判别力，现已补）
+- `UnreadyHost_DoesNotPretendTheChapterIsEmpty`：`HostViewState.Failed` + 0 页 ⇒ **`vm.Error != 空章句`**，而是 `INVALID_REQUEST` 的可读映射
+
+### P1-2 执行期展示面接映射（已修）
+
+- Fluent 矩阵：`WorkbenchPageView.cs:618` 渲染的 `FluentRunProjection.ErrorCell`（`FluentRunProjection.cs:260`）**改为经 `TranslateErrorText.ForCode` 输出**；
+- Studio drawer 的 step 行：`StudioBatchControls.cs:450` 的 `step.ErrorCode` 同样改为可读映射；
+- 因此执行期 401/429/4xx 的用户可见文本与 StartRun 拒绝路径**同一套字符串**。
+- 未接的面：`StudioInspectorPanel.cs:446-447` 的 `HistoryError` 是**历史读失败**的内部文本（非 provider/执行错误码），不在四类范围内，登记为不适用。
+
+### P1-3 证据不实 + 设置页限定（已修）
+
+- README 的 AC5 行改为事实（设置页**有** book/chapter 入口，`Pages.cs:1141` + `ProviderBindingsSection` scope 选择器）；
+- `ProviderBindingsSection.cs:86` 文案补「**当前仅全局绑定驱动执行**：book/chapter 范围的绑定会保存并显示，但 Run 执行链只读全局槽位」。
+
+### 其他登记
+
+- 旧句「批量 Run 未启动（…）」在 r1 时**无测试保护**；改为可读映射后该句已移除，**不声称其曾被覆盖**。
+- 硬门版本的 13 红从未提交，`NOT_RUN` 记录维持。
