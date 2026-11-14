@@ -3,11 +3,11 @@ id: FEA-06-RESIDUAL-4B
 title: RegionBox「查看对照」实现：ListPageRegionTextsAsync 端口 + 冲突态双栏面板 + C-07 统计翻转 80/87
 kind: implementation
 governance_version: 3
-status: proposed
-disposition: "RO-1 拆卡的实现卡（2026-11-14）；消费 `FEA-06-RESIDUAL-4A` 冻结的规格 v1/v1.1，scope 未冻结、未释放"
-approval: 待 DSH scope review 释放；前置＝`FEA-06-RESIDUAL-4A` 独立复核 approved 且 C-07 v1.9 重冻
-suggested_owner: null
-owner: null
+status: in_progress
+disposition: "RO-1 拆卡的实现卡（2026-11-14，DSH 释放）；消费 `FEA-06-RESIDUAL-4A` 冻结的规格 v1.1；前置 4A r2 `approved` + C-07 v1.9 已重冻（`91e51ab7…`）"
+approval: DSH 2026-11-14 释放（前置已满足：4A r2 approved、C-07 v1.9 重冻、规格 v1.1 定稿）
+suggested_owner: DSH
+owner: DSH
 reviewer: null
 depends_on:
   - FEA-06-RESIDUAL-4A
