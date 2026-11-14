@@ -1747,3 +1747,23 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   `Assert.Equal(CoreSchema.Current, …)`；**代价**是需跨语言同步守护。
   `== 14` 只是换硬编码；`>= 9` 是**放宽断言**（不可）。
 - **本卡边界不变**：只做归因，不修断言；条件 3 仍不判 MET。
+## 226. SCHEMA-VERSION-ASSERT-1：Codex 裁决"改断言不算放宽"，据此修复 3 处 schema 断言 + 加跨语言守护（2026-11-15，DSH，goal 轮次 25）
+
+- **裁决来源**：用户未回，按 goal 授权「产品取舍类决策派 codex 裁决，不得停工等待」，
+  派 codex 独立裁决（`subagent_oar` runtime=codex），裁决全文落盘
+  `doc/reviews/SCHEMA-VERSION-ASSERT-1-codex-adjudication.md`。
+- **裁决结论**：方案 C（读产品版本常量）**不属于"放宽既有断言"**，属"修正随产品迁移演进而过时的测试预期"；
+  判断标准是"是否削弱应验证的产品约束"，不能仅因测试由红变绿就认定违规。
+  B（`>= 9`）**属于放宽**；D（等回退 sidecar）缺乏依据。
+- **裁决的实施要求**（全部遵守）：①测试内常量 `Support/CoreSchema.cs`（不升格为产品契约）；
+  ②**默认执行、无需 opt-in** 的跨语言守护；③**环境缺失应失败不跳过**；
+  ④**预期值不得取自被测回执**；⑤**不用正则读 `MIGRATION_V14_NAME`**，直接执行真实工厂。
+- **实施**：`CoreSchema.Current = 14`；3 处 `Assert.Equal(9, …)` → `Assert.Equal(CoreSchema.Current, …)`；
+  新增 `PythonSchemaMigrationGuardTests`（`[Fact]`，`python -B -c "…default_migrations()…"`，断言 COUNT==14）。
+- **判别力**：`CoreSchema.Current` 临时改 13 → 守护测试 **FAIL**（`Expected: 13, Actual: 14`）；已还原，PROBE=0。
+- **效果**：带 opt-in 定向复跑三类 13 个 → **11 passed / 2 failed**（修复前 7+ 个 schema 失败）。
+  剩余 2 个**非 schema**：`Fea11SourceIpcTests.FullSyncChain_…` 与
+  `Fea11Residual4AIpcTests.ProductionDispatcherFullSyncChain_…`，错误
+  `new container must produce a changed page`，**待归因**。
+- **未做**：2 个 FullSyncChain 未归因；2 个 `NEWMANGA_FEA11_CRASH_STATE` 依赖未处理；未跑无夹具全量。
+- 提交：`07811dcad`。
