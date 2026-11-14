@@ -29,6 +29,7 @@ allowed_paths:
   - doc/checkpoints/GOAL-PROGRESS-2026-11-02.md
   - verification/CMD-COVERAGE-ASSERT-FIX/**
   - apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Commands/**
+  - apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/WireLogSourceRedactionTests.cs
 ---
 
 # CMD-COVERAGE-ASSERT-FIX：修复命令覆盖断言的过时口径（E-1）

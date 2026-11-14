@@ -30,23 +30,40 @@ public sealed class WireLogSourceRedactionTests
     [Fact]
     public void PersistedNdjsonContainsOnlyRewrittenBytes()
     {
-        var path = Path.Combine(RepoLocator.Root, "verification", "FEA-09", "logs", "wire-redacted.ndjson");
-        var log = new WireLog(path);
-        const string raw = "{\"payload\":{\"secret_ref\":{\"token\":\"sentinel-token\",\"path\":\"C:/private/source-secret.bin\"},\"signing_key\":\"sentinel-signing-key\",\"nested\":{\"path\":\"C:/private/source.png\"}}}";
-        log.Add(new WireFrame("core_service", raw, raw, "rawhex", "rawhex", true, true, 1, DateTimeOffset.UtcNow));
-        var text = File.ReadAllText(path);
-        Assert.DoesNotContain("sentinel-token", text);
-        Assert.DoesNotContain("sentinel-signing-key", text);
-        Assert.DoesNotContain("source-secret.bin", text);
-        foreach (var line in File.ReadLines(path))
+        // CMD-COVERAGE-ASSERT-FIX: this test used to append a frame to
+        // `verification/FEA-09/logs/wire-redacted.ndjson` — a PINNED canonical-evidence file inside the
+        // repo. Every CoreClient run therefore dirtied it, and it kept getting swept into unrelated
+        // commits by `git add -A` (three times in this session). The behaviour under test is "the
+        // persisted ndjson only ever contains rewritten bytes", which has nothing to do with that
+        // path, so it now writes to a throwaway file.
+        var path = Path.Combine(
+            Path.GetTempPath(), "newmanga-wire-redacted-" + Guid.NewGuid().ToString("N") + ".ndjson");
+        try
         {
-            using var document = JsonDocument.Parse(line);
-            foreach (var direction in new[] { "request", "response" })
+            var log = new WireLog(path);
+            const string raw = "{\"payload\":{\"secret_ref\":{\"token\":\"sentinel-token\",\"path\":\"C:/private/source-secret.bin\"},\"signing_key\":\"sentinel-signing-key\",\"nested\":{\"path\":\"C:/private/source.png\"}}}";
+            log.Add(new WireFrame("core_service", raw, raw, "rawhex", "rawhex", true, true, 1, DateTimeOffset.UtcNow));
+            var text = File.ReadAllText(path);
+            Assert.DoesNotContain("sentinel-token", text);
+            Assert.DoesNotContain("sentinel-signing-key", text);
+            Assert.DoesNotContain("source-secret.bin", text);
+            foreach (var line in File.ReadLines(path))
             {
-                var safe = document.RootElement.GetProperty(direction).GetString()!;
-                Assert.Equal(AsciiWire.Hex(Encoding.UTF8.GetBytes(safe)),
-                    document.RootElement.GetProperty(direction + "_utf8_hex").GetString());
-                using var safeJson = JsonDocument.Parse(safe);
+                using var document = JsonDocument.Parse(line);
+                foreach (var direction in new[] { "request", "response" })
+                {
+                    var safe = document.RootElement.GetProperty(direction).GetString()!;
+                    Assert.Equal(AsciiWire.Hex(Encoding.UTF8.GetBytes(safe)),
+                        document.RootElement.GetProperty(direction + "_utf8_hex").GetString());
+                    using var safeJson = JsonDocument.Parse(safe);
+                }
+            }
+        }
+        finally
+        {
+            if (File.Exists(path))
+            {
+                File.Delete(path);
             }
         }
     }
