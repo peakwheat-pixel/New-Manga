@@ -239,3 +239,13 @@ NEW-MANGA-V1-FULL-AUDIT 与 R1–R4 整改、SEC-01/02/03、CORE-01、AUDIT-07/0
 - **DoD 影响**：§1 由「未达成」转为「有载体 + 待口径确认」；§3 仍**未达成**（8 项实现待落）。
 - **副产物**：`FEA-15-ACCEPT-1` 的 pytest 16F 与 .NET 127F **均已解**（3537/0/0、1875/0/109）；`CHAPTER-SELECTOR-1` 已转绿。
 - **下一轮**：释放 `MAINT-2-C1-BATCH-1` 承载 8 项 C1 实现（PLAN 已腾出 45B）。
+
+### 轮次 24（2026-11-14，本会话续）—— FEA 线 DoD v2 达成
+
+- **判定报告**：[`MAINT-1-FEA-LINE-CLOSEOUT-v2-2026-11-14.md`](../reviews/MAINT-1-FEA-LINE-CLOSEOUT-v2-2026-11-14.md)（取代 P6 判定结论；P6 原字节保留）。
+- **DoD 五条全部达成**：§1（9 节点 × 39 项 limitation 处置矩阵 + DSH「closed_with_limitations + 载体 ≡ done+waiver」口径）、§2（FEA proposed 清零）、§3（C1 8 项全实现 + r1 approved + P2 处置）、§4（pytest 3544/0/10、.NET 三项目 0 failed、四门禁绿）、§5（三指针一致）。
+- **用户指令交付**：「查看对照」重开 → 4A 契约（C-07 v1.9）→ 4B 实现（v1.10 冻结、pin `498882eb…`）→ 独立复核 approved → 两子卡 done、父卡 superseded。
+- **MAINT-2 收口**：`closed_with_limitations`（AC8 PARTIAL 按裁切口径），P2-3 已修。
+- **保留限制 5 条**（不得读作已验收）：无像素视觉证据、gated 集成缺口、AC8 基线不可比、单卡 TaskPath 红 1 张、M2-C1 无 pin 体系。
+- **线外**：Release Gate 仍 BLOCKED，不计入 DoD、不得写 PASS。
+- 本维护哨位保持 `in_progress`（Gate 复评入口仍开放）。
