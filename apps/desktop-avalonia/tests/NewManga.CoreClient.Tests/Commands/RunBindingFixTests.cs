@@ -645,3 +645,104 @@ internal static class ModelSidecarFixture
     public const string FirstPageId = "f52f2772e8044557a72e82f5ea6ab932";
 }
 
+
+/// <summary>
+/// TRANS-RUN-PATH-FIX (L1-T-B) AC3/AC5: the Host default StartRun bindings are OCR plus
+/// <c>translate</c> when a translate provider is configured, and explicit user bindings always win.
+/// Kept as its own class so it does not touch the RUN-BINDING-FIX-1 file's fixture helpers.
+/// </summary>
+public sealed class TransRunPathFixTests
+{
+    [Fact]
+    public void RunBindingDefaults_AddsTranslate_WhenAProviderIsConfigured()
+    {
+        Assert.Equal(
+            "{\"ocr\":\"manga-ocr\",\"translate\":\"openai-compatible-translation\"}",
+            RunBindingDefaults.ResolveJson(translateProviderId: "openai-compatible-translation"));
+        var element = RunBindingDefaults.Resolve(translateProviderId: "openai-compatible-translation");
+        Assert.Equal("manga-ocr", element!.Value.GetProperty("ocr").GetString());
+        Assert.Equal("openai-compatible-translation", element.Value.GetProperty("translate").GetString());
+    }
+
+    [Fact]
+    public void RunBindingDefaults_WithoutATranslateProvider_KeepsTheOcrOnlyDefault()
+    {
+        Assert.Equal("{\"ocr\":\"manga-ocr\"}", RunBindingDefaults.ResolveJson(translateProviderId: ""));
+        Assert.Equal("{\"ocr\":\"manga-ocr\"}", RunBindingDefaults.ResolveJson(translateProviderId: "off"));
+        Assert.Equal("{\"ocr\":\"manga-ocr\"}", RunBindingDefaults.ResolveJson(translateProviderId: "none"));
+        Assert.Equal("{\"ocr\":\"manga-ocr\"}", RunBindingDefaults.ResolveJson(translateProviderId: "0"));
+    }
+
+    [SidecarFact]
+    public async Task StartRun_InjectsTranslate_WhenTheEnvironmentConfiguresOne()
+    {
+        var previous = Environment.GetEnvironmentVariable(RunBindingDefaults.TranslateProviderVariable);
+        try
+        {
+            Environment.SetEnvironmentVariable(
+                RunBindingDefaults.TranslateProviderVariable, "openai-compatible-translation");
+            var environment = SidecarFixture.CreateCommandEnvironment("trans-run-path-translate");
+            await using var core = await CoreServiceClient.StartAsync(environment.CoreOptions);
+            await using var bridge = await HostBridgeClient.StartAsync(environment.BridgeOptions);
+            var dispatcher = new HostCommandDispatcher(core, bridge);
+
+            var error = await Assert.ThrowsAsync<CoreOperationException>(() => dispatcher.InvokeAsync(
+                "library_start_run",
+                Args("{\"command\":\"translate_untranslated\",\"scope\":{\"kind\":\"book\",\"book_id\":\"book-none\"},\"idempotency_key\":\"tb-translate-1\"}")));
+            Assert.Equal("INVALID_REQUEST", error.Code);
+
+            var frame = core.Wire.Frames.LastOrDefault(candidate =>
+                candidate.RequestLine.Contains("\"command\":\"StartRun\"", StringComparison.Ordinal));
+            Assert.NotNull(frame);
+            Assert.Contains(
+                "\"provider_bindings\":{\"ocr\":\"manga-ocr\",\"translate\":\"openai-compatible-translation\"}",
+                frame!.RequestLine,
+                StringComparison.Ordinal);
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable(RunBindingDefaults.TranslateProviderVariable, previous);
+        }
+    }
+
+    [SidecarFact]
+    public async Task StartRun_KeepsExplicitUserBindings_OverTheTranslateDefault()
+    {
+        var previous = Environment.GetEnvironmentVariable(RunBindingDefaults.TranslateProviderVariable);
+        try
+        {
+            Environment.SetEnvironmentVariable(
+                RunBindingDefaults.TranslateProviderVariable, "openai-compatible-translation");
+            var environment = SidecarFixture.CreateCommandEnvironment("trans-run-path-explicit");
+            await using var core = await CoreServiceClient.StartAsync(environment.CoreOptions);
+            await using var bridge = await HostBridgeClient.StartAsync(environment.BridgeOptions);
+            var dispatcher = new HostCommandDispatcher(core, bridge);
+
+            await Assert.ThrowsAsync<CoreOperationException>(() => dispatcher.InvokeAsync(
+                "library_start_run",
+                Args("{\"command\":\"translate_untranslated\",\"scope\":{\"kind\":\"book\",\"book_id\":\"book-none\"},"
+                     + "\"overrides\":{\"provider_bindings\":{\"ocr\":\"user-ocr\",\"translate\":\"user-translate\"}},"
+                     + "\"idempotency_key\":\"tb-translate-explicit\"}")));
+
+            var frame = core.Wire.Frames.LastOrDefault(candidate =>
+                candidate.RequestLine.Contains("\"command\":\"StartRun\"", StringComparison.Ordinal));
+            Assert.NotNull(frame);
+            Assert.Contains(
+                "\"provider_bindings\":{\"ocr\":\"user-ocr\",\"translate\":\"user-translate\"}",
+                frame!.RequestLine,
+                StringComparison.Ordinal);
+            Assert.DoesNotContain("manga-ocr", frame.RequestLine, StringComparison.Ordinal);
+            Assert.DoesNotContain("openai-compatible-translation", frame.RequestLine, StringComparison.Ordinal);
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable(RunBindingDefaults.TranslateProviderVariable, previous);
+        }
+    }
+
+    private static JsonElement Args(string json)
+    {
+        using var document = JsonDocument.Parse(json);
+        return document.RootElement.Clone();
+    }
+}

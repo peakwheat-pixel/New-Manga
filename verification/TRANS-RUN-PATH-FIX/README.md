@@ -67,7 +67,9 @@ book scope 能展开到**该书其它章节**的页面，chapter scope 只看本
 
 - `C:\Python314\python.exe -m pytest -q tests/core/test_trans_run_path_fix.py` → **2 passed**
 - `dotnet test NewManga.CoreClient.Tests --filter TransRunPathFixTests`（`NEWMANGA_CORECLIENT_SIDECAR_DIR` 指向冻结 sidecar）→ **4 passed / 0 skipped**
-- 全量与四门禁：见 `logs/`
+- 全量与四门禁：`logs/pytest-full.log`（**3564 passed / 10 skipped / 0 failed**，312.93s）、`logs/gates.log`（四门禁 EXIT=0，inventory `1/80/6=87`，pins 18/18）
+- .NET（不带 sidecar 环境变量的仓库基线）：CoreClient.Tests **182 / 0 / 26**、Host.Tests **351 / 0 / 44**、App.Tests **915 / 0 / 11**
+- 说明：把 `NEWMANGA_CORECLIENT_SIDECAR_DIR` 指向 0.1.1 发布 sidecar 并让**全部** .NET 测试跑时，会激活一批期望「models sidecar」的用例（CoreClient 1 红、App 6 红）；那是 fixture 不匹配，不是本卡改动引起——本卡的 2 条 dispatcher 用例在该 sidecar 上单独跑是 **4 passed / 0 skipped**。
 
 ## 3. 仍存在的限制（如实登记）
 
