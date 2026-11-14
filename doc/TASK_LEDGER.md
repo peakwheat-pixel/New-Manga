@@ -6,13 +6,13 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 
 | metric | value |
 |---|---:|
-| task files | 617 |
-| terminal | 608 |
+| task files | 618 |
+| terminal | 609 |
 | non-terminal | 8 |
-| non-terminal named in the plan | 8 |
-| non-terminal outside the plan | 0 |
+| non-terminal named in the plan | 7 |
+| non-terminal outside the plan | 1 |
 | task files tracked by git | 617 |
-| task files untracked (drafts) | 0 |
+| task files untracked (drafts) | 1 |
 | non-terminal tracked by git | 8 |
 
 Arithmetic note: `task files` = `terminal` + `non-terminal` + `(none)` rows. A `(none)` row is a file with no `status:` field (a draft), which is excluded from `non-terminal` because check.ps1 only counts entries whose status exists and is not terminal; adding only `terminal` + `non-terminal` therefore lands one short of `task files`, and that gap is this note, not a counting error.
@@ -21,7 +21,7 @@ Arithmetic note: `task files` = `terminal` + `non-terminal` + `(none)` rows. A `
 
 | status | count | terminal |
 |---|---:|---|
-| `done` | 507 | yes |
+| `done` | 508 | yes |
 | `closed_with_limitations` | 60 | yes |
 | `cancelled` | 21 | yes |
 | `historical` | 11 | yes |
@@ -38,7 +38,7 @@ Arithmetic note: `task files` = `terminal` + `non-terminal` + `(none)` rows. A `
 | task | status | in plan |
 |---|---|---|
 | `GIT-CLEAN-PUBLICATION-DIAG-1` | `approved` | mentioned |
-| `INSTALLER-MATRIX-1` | `in_progress` | mentioned |
+| `INSTALLER-MATRIX-1` | `in_progress` | no |
 | `MAINT-1-RELEASE-MONITOR` | `in_progress` | own row |
 | `SIDECAR-REBUILD-1` | `in_progress` | own row |
 | `GIT-CLEAN-PUBLICATION-1` | `in_review` | mentioned |

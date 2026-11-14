@@ -286,3 +286,21 @@
 **教训：数字不同不等于内容正确；截图类证据必须人眼过一遍，且必须从目标窗口渲染。**
 
 **条件 4 仍不判 MET**：sidecar 缺 SFX 权重（`yolo11s-seg.onnx`）、安装器 unsigned、`reader` 页未验证。
+## 19. 条件 4 的 reader 页：更正与定性（2026-11-15，`GATE4-READER-PAGE-1`）
+
+**更正**：§18 里"`--page=reader` 空库回落"是**错的**。真因是 `App.axaml.cs` 的
+`SpaceForStartupPage` 把 `"bookshelf" or "library" or "reader"` **三者全部映射到 `SpaceId.Library`** ——
+两图相同与书库内容**无关**。阅读器是**独立的沉浸式窗口**（`ImmersiveReaderRequested` 由**裸 F11** 或
+`LibraryImmersiveReader` 命令触发），需先在资料柜**选中一本书**。
+
+**能否无交互到达：不能（有实测依据）**。尝试脚本启动到 Library → `SetForegroundWindow` → `keybd_event(VK_F11)`，
+实测输出 `foreground=66368 (shell=1376488, match=False)` —— **非交互进程抢前台失败**，
+F11 没送进 shell，因此不会触发阅读器；`after F11` 无新窗口。**这是"试了并证明了为什么不行"，不是"没试"。**
+
+**已取得**：`--page=library` + `BOOK-FIXTURE-1` 副本的截图（**人眼确认**）：面包屑
+`资料柜 > BOOK-FIXTURE-1 日漫_JA 测试书 > 第 1 章`、右栏有 **`阅读`** 按钮、`读到第 1 / 8 页 13%`、
+底栏 `Host 就绪`。⇒ 可达性缺口**只在交互层**，不在渲染层或数据层。
+
+**条件 4 的口径修正**：v2 shell 里四个"一级页面"实际是 **3 个空间**（Library/Studio/Console）
+\+ **沉浸式阅读器窗口**。"四页可达性"应表述为：**三个空间参数可达 + 阅读器需 UI 交互**
+（标 `NEEDS_INTERACTION`），**不能**说"四页全部可达"。
