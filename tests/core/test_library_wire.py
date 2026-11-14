@@ -155,3 +155,54 @@ def test_library_wire_empty_book_reorder_and_strict_types(tmp_path):
         })
         assert non_string["error"] is not None, key
         assert non_string["error"]["code"] == "INVALID_REQUEST", (key, non_string["error"])
+
+
+# MAINT-2-C1-BATCH-1 AC6 (C1-6 / L-L1-4, LIB-1 r3 R3-001): SQLite INTEGER is signed
+# 64-bit. Out-of-range values used to reach sqlite3 and surface as `UNKNOWN/internal`;
+# P8 additionally left a half-created chapter behind. The guards must be TYPED
+# (`INVALID_REQUEST`/validation) and ATOMIC (no row written).
+SQLITE_MAX = 2**63 - 1
+
+
+def test_chapter_metadata_rejects_64_bit_overflow_as_typed_and_atomic(tmp_path):
+    core, server = _server(tmp_path)
+    book = core.library.create_book("Bounds Book")
+    chapter = core.library.create_chapter(book.book_id, "C1")
+
+    # P7 (custom_rank): out of range -> typed validation error, stored value untouched.
+    overflow_rank = _rpc(server, "UpdateChapterMetadata", {
+        "chapter_id": chapter.chapter_id, "patch": {"custom_rank": SQLITE_MAX + 1},
+    })
+    assert overflow_rank["error"] is not None
+    assert overflow_rank["error"]["code"] == "INVALID_REQUEST", overflow_rank["error"]
+    assert overflow_rank["error"]["category"] == "validation", overflow_rank["error"]
+    assert core.library.get_chapter(chapter.chapter_id).custom_rank is None
+
+    # The representable ceiling itself is still accepted (no over-rejection).
+    at_ceiling = _rpc(server, "UpdateChapterMetadata", {
+        "chapter_id": chapter.chapter_id, "patch": {"custom_rank": SQLITE_MAX},
+    })
+    assert at_ceiling["error"] is None, at_ceiling["error"]
+    assert core.library.get_chapter(chapter.chapter_id).custom_rank == SQLITE_MAX
+
+    # P8 (import_order): out of range -> typed error AND no chapter row left behind.
+    before = len(core.library.list_chapters(book.book_id))
+    overflow_order = _rpc(server, "CreateChapterWithMetadata", {
+        "book_id": book.book_id, "title": "Overflow", "import_order": SQLITE_MAX + 1,
+    })
+    assert overflow_order["error"] is not None
+    assert overflow_order["error"]["code"] == "INVALID_REQUEST", overflow_order["error"]
+    assert len(core.library.list_chapters(book.book_id)) == before, "partial chapter row was written"
+
+    # R3-001 cascade: the top of the import range is accepted, but the NEXT append must be a
+    # typed failure instead of an UNKNOWN/internal that poisons the book forever.
+    accepted = _rpc(server, "CreateChapterWithMetadata", {
+        "book_id": book.book_id, "title": "Ceiling", "import_order": SQLITE_MAX - 1,
+    })
+    assert accepted["error"] is None, accepted["error"]
+    before = len(core.library.list_chapters(book.book_id))
+    poisoned = _rpc(server, "CreateChapterWithMetadata", {"book_id": book.book_id, "title": "Next"})
+    assert poisoned["error"] is not None
+    assert poisoned["error"]["code"] == "INVALID_REQUEST", poisoned["error"]
+    assert poisoned["error"]["code"] != "UNKNOWN"
+    assert len(core.library.list_chapters(book.book_id)) == before

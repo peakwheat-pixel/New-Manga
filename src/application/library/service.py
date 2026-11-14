@@ -21,6 +21,17 @@ from application.library.errors import (
 from application.library.ports import LibraryRepository
 from domain.books.entities import Book, Chapter, ChapterType, ReadingDirection, Tag, utc_now
 
+#: MAINT-2-C1-BATCH-1 AC6 (C1-6 / L-L1-4, LIB-1 r3 R3-001): SQLite INTEGER is signed
+#: 64-bit. Values outside this range must be refused as a typed validation error
+#: BEFORE any row is written; otherwise the write raises sqlite3.OverflowError and the
+#: wire surfaces `UNKNOWN/internal` (and P8 would leave the chapter row behind).
+MAX_SQLITE_INTEGER = 2**63 - 1
+
+#: The highest import_order a caller may set. One less than the storage ceiling, so the
+#: appended `next = max(import_order) + 1` still fits and the book keeps working; beyond
+#: it the DB would overflow on the next create and poison the book permanently.
+MAX_IMPORT_ORDER = MAX_SQLITE_INTEGER - 1
+
 
 def _new_id() -> str:
     return uuid.uuid4().hex
@@ -146,6 +157,13 @@ class LibraryService:
         next_import_order = (
             max((chapter.import_order for chapter in existing), default=0) + 1
         )
+        # AC6 (R3-001): a legacy/poisoned row at the ceiling must fail as a TYPED validation
+        # error here, not as `UNKNOWN/internal` from sqlite3 on the insert.
+        if next_import_order > MAX_IMPORT_ORDER:
+            raise ValueError(
+                "chapter import order is exhausted for this book "
+                f"(next would be {next_import_order} > {MAX_IMPORT_ORDER})"
+            )
         # R-04 (r2): sort_order is the display/read order and must stay unique.
         # It can diverge from import_order once a caller sets a specific
         # import_order, so derive it from the maximum sort_order, not import_order.
@@ -271,10 +289,15 @@ class LibraryService:
         if "custom_rank" in patch:
             value = patch["custom_rank"]
             # R-13: no silent int() coercion of bool/float; null clears the rank.
+            # AC6 (R3-001): also refuse values outside SQLite's signed 64-bit range as a
+            # typed validation error instead of letting the write fail as UNKNOWN/internal.
             if value is not None and (
-                isinstance(value, bool) or not isinstance(value, int) or value < 0
+                isinstance(value, bool)
+                or not isinstance(value, int)
+                or value < 0
+                or value > MAX_SQLITE_INTEGER
             ):
-                raise ValueError("custom_rank must be a non-negative integer or null")
+                raise ValueError("custom_rank must be a non-negative 64-bit integer or null")
             chapter.custom_rank = value
         if "number" in patch:
             chapter.chapter_number = patch["number"]
@@ -308,6 +331,19 @@ class LibraryService:
         number: str = "",
         import_order: int | None = None,
     ) -> Chapter:
+        # AC6 (R3-001): validate BEFORE creating the row. The previous order created the
+        # chapter first and only then wrote import_order, so an out-of-range value left a
+        # half-created chapter behind and surfaced as UNKNOWN/internal.
+        if import_order is not None:
+            if (
+                isinstance(import_order, bool)
+                or not isinstance(import_order, int)
+                or import_order < 0
+                or import_order > MAX_IMPORT_ORDER
+            ):
+                raise ValueError(
+                    "import_order must be a non-negative integer within the 64-bit import range"
+                )
         chapter = self.create_chapter(
             book_id, title, chapter_number=number,
             chapter_type=ChapterType(kind) if kind else None,
@@ -315,7 +351,7 @@ class LibraryService:
         if import_order is not None:
             # R-04: only the provenance order is user-supplied; sort_order stays
             # the appended next value so two chapters can never collide.
-            chapter.import_order = int(import_order)
+            chapter.import_order = import_order
             self._repo.update_chapter(chapter)
         return chapter
 
