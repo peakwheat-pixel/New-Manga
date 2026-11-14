@@ -1430,3 +1430,20 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **无夹具基线未变**：App 950/0/11、Host 321/0/74、CoreClient 186/0/26（0 failed）。
 - **下一步**：`E2-FALLOUT-TRIAGE-1` —— 逐个归因那 13 个失败，区分"前提过期（改测试的模拟方式）"与
   "真实不兼容（修 fixture/实现）"，并保住 fail-closed 守卫。
+## 208. SIDECAR-REBUILD-1 续：直连探测证明 sidecar 正常，13 个失败收窄到夹具层（2026-11-15，DSH，goal 轮次 7）
+
+- 提交：`473e7e145`。卡仍 `in_progress`。
+- **关键诊断**：写 `probe_core.py` 以 NDJSON 直连 `core_service.exe`（protocol 名必须是 **`new-manga.core`**）：
+  - `core.ping` → `status=ready`、`protocol 2.3`、**capabilities 17 条**，含 `library.delete.preview/1`、
+    `library.trash.read/1`、`library.trash.write/1`；
+  - `ListBooks` → `result=[]`、`error=null`（合法空数组）。
+  ⇒ **新 sidecar 自身完全正常**；13 个失败**不是** sidecar 造成的，而在**测试夹具 / 协议配置 / 数据准备**层。
+- 这把问题范围从"sidecar 有问题"缩小到"测试侧适配"，是归因的决定性一步。
+- 归因方向（README §8，未逐项核实）：`ListBooks result is not an array` 疑为夹具路径/通道没生效；
+  "集合为空"×5 疑为数据根不一致；`KeyNotFoundException`×2 需核缺失字段；`SOURCE_REGISTRY_BUSY` 疑并发残留；
+  `Expected:8 Actual:0` 待核。
+- **自登记**：第一版探针把 protocol 名写成 `newmanga.core` → `PROTOCOL_VERSION_UNSUPPORTED`；
+  正确值是 `new-manga.core`。该错误也提示：协议名写错的表现是"版本不支持"，**不是**"列表不是数组"。
+- Gate 仍 BLOCKED。E-2 的性质已从"缺工具"变成"缺测试侧适配"。
+- **下一步**：逐个归因 13 个失败（CoreClient 4 = Frozen Core 前提，需改为显式模拟旧 capabilities；
+  Host 9 = 夹具/协议配置），并保住 fail-closed 守卫。
