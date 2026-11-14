@@ -4,6 +4,7 @@ title: 定位恢复路径把 registry root 当容器（产品缺陷 E-9，P2）
 kind: evidence
 governance_version: 3
 status: done
+follow_up: E9-RECOVERY-PATH-FIX-1（typed 拒绝已实施；真修需 UNFREEZE）
 disposition: "承接 MINT-FAILURE-DIAG-1：UnauthorizedAccessException 指向 fixture root 目录，已定位为产品缺陷"
 approval: DSH 2026-11-15
 suggested_owner: DSH

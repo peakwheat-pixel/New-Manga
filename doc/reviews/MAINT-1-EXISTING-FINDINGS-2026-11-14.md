@@ -252,3 +252,19 @@ var grantId = await readsCoordinator.IssueForRecoveryAsync(
 ### 与 Gate 的关系
 
 不属条件 1 的 8 项；属**条件 3 带 opt-in 面**的真实产品缺陷，且是"恢复"这种数据安全相邻路径。
+### E-9 进展（2026-11-15，`E9-RECOVERY-PATH-FIX-1`）
+
+**已实施 typed 拒绝**：`MintRecoveryGrantsAsync` 在 `sourceKind != "folder"` 时抛 `SOURCE_PLAN_UNAVAILABLE`
+（此前是 `roots[0]` 目录 → `UnauthorizedAccessException` → 被兜底成 `SOURCE_ENTRY_MISSING`）。
+
+**查询结论**：`JournalEntry`（16 字段）、`AuthorizationJson`（只解析 registry_id/identity_digest/generation）、
+`SourceSyncPlanMaterialization`（11 字段）**都没有容器路径** ⇒ 无权威路径可改用。
+
+**效果**：错误码从误导性的 `SOURCE_ENTRY_MISSING` 变为准确的 `SOURCE_PLAN_UNAVAILABLE`；
+**但 `Fea11Residual4AIpcTests.ProductionDispatcherFullSyncChain_…` 仍失败** —— 它期望恢复**成功**，
+而无权威路径时成功不可能。**本卡没有让它转绿**。
+
+**真修需要 UNFREEZE**：在持久化位置记录容器路径（journal 的 AuthorizationJson 或 plan materialization）。
+这属契约变更，需 DSH 裁决载体与兼容性。
+
+**未做**：无专门的 typed 拒绝判别测试（`MintRecoveryGrantsAsync` 为 private）；未实测 folder 类恢复仍正常。

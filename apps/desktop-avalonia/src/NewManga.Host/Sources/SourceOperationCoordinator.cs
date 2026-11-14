@@ -278,6 +278,23 @@ public sealed class SourceOperationCoordinator
             {
                 throw new SourceAccessException("SOURCE_ACCESS_DENIED");
             }
+
+            // E9-RECOVERY-PATH-FIX-1 (finding E-9, P2): a registry ROOT is an authorization boundary --
+            // a directory the caller may read -- NOT the container file this grant is about. Passing
+            // roots[0] as sourcePath only works for sourceKind=="folder", where the root *is* the
+            // container; for zip/cbz/pdf/image it hands a directory to DescribeContainer, which fails with
+            // UnauthorizedAccessException (masked as SOURCE_ENTRY_MISSING before MINT-FAILURE-DIAG-1).
+            //
+            // Neither JournalEntry (AuthorizationJson -> registry_id/generation/identity_digest) nor
+            // SourceSyncPlanMaterialization (source_id/version_id/content_digest/entries) records the
+            // container path, so there is NO authoritative path to use here. Refuse typed rather than
+            // guess one: a typed refusal is honest, a guessed directory is a lie that shows up as a
+            // misleading file-system error. Recording the container path is a contract change
+            // (UNFREEZE) and must be decided elsewhere -- see finding E-9.
+            if (!string.Equals(sourceKind, "folder", StringComparison.Ordinal))
+            {
+                throw new SourceAccessException("SOURCE_PLAN_UNAVAILABLE");
+            }
             var readsCoordinator = reads
                 ?? throw new SourceAccessException("CORE_UNAVAILABLE");
             var grantId = await readsCoordinator
