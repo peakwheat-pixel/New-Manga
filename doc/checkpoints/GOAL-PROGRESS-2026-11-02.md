@@ -1367,3 +1367,13 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **自登记错误**：① 三次 `git add -A` 卷入被写脏的证据文件；② 一次**假阳性判别力证据**（字符串替换同时命中 `SourceSyncNames` 数组与 `SourceSyncCommandNames` 集合 → registry 重复键崩溃 4/4 红，被我当成"重叠被检测到"，实际是崩溃）；③ 数字写错两轮（4 Fact/4 passed、1/3 变红、186/0/26/212）。
 - **Gate 影响**：条件 3 的一个直接障碍（命令面守卫坏掉）已消除；条件 3 仍缺"真实 sidecar 端到端"（E-2）与真实窗口矩阵。Gate 仍 **BLOCKED**。
 - **下一步候选**：条件 3 的"可安全执行"部分已基本覆盖（63 个 `[AvaloniaFact]` 文件含四页 headless PNG 证据）；剩余实质缺口均受 E-2 / PyInstaller / 人工 GT 阻塞。建议下一轮做 **条件 3 覆盖矩阵**（把现有 headless 测试映射到四页关键流程，明确有覆盖 / NOT_RUN 清单），把"部分"变成可判定证据。
+## 204. GATE3-COVERAGE-MATRIX 收口（2026-11-15，DSH，goal 轮次 3）
+
+- 交付链：`73d2b3d81`（首版）→ `84c9a8486`（r1 REJECT 返修）→ `c549cfdd6`（r2 REJECT 返修）→ `7f510afd7`（r3 收口），integration_commit = `7f510afd7221250ddc23cb4793553ed4bd4adefc`。
+- **三轮独立复核**：r1 `REJECT`（只盘 GUI、漏 Core/Host）→ r2 `REJECT`（**我把 `HostReaderChaptersIntegrationTests`/`HostRegionWorkbenchIntegrationTests` 误标 plain**，实为 `[BookFixtureFact]`/`[RegionFixtureFact]`，6 个全 SKIP）→ r3 `ACCEPT_WITH_LIMITATIONS`（无 P1，仅 P2/P3 数字）。
+- **交付物定位**：矩阵**不是**条件 3 判定依据，只是"NOT MET 的**部分证据**"。要判 MET 必须执行 **111 个 skip**（Host 74 + CoreClient 26 + App 11）或 Owner 接受边界。
+- **实测事实**（本基线 `d86f185ca`）：App 947/0/11/958（`[AvaloniaFact]` 文件 **62**）、Host 321/0/74/395、CoreClient 186/0/26/212。App 11 skip = **7 sidecar + 4 非 sidecar**；Host 74 的 **30/44 总量二分可复现**（30 = HostSidecarFact 22 + BookFixture 4 + RegionFixture 4），逐类清单已入库（`host-skips.txt` 27 行 × 合计 74、`coreclient-skips.txt` 9 类 × 26）。
+- **GUI 结论**：四页 × 13 类流程 **12 类有覆盖**，**唯一完全无覆盖的是"设置页错误态"一格**；四页有 PNG 级渲染证据。
+- **方法论错误（本卡最重要教训）**：前两版都用**源码正则推断 gate/分类**而非实测运行结果，因此连续两次被实跑证伪。第三版起所有数字改为 `dotnet test` 的实测输出。**今后凡涉"哪些测试被 skip / 哪些能跑"，一律以实测清单为准，不得由 attribute 文本或类名推断。**
+- Gate 仍 **BLOCKED**：条件 3 现为"有部分证据、剩余 111 skip + 1 格无覆盖 + 真机走查"；条件 4 需 PyInstaller；条件 5 需人工 GT。
+- 下一步候选：条件 3 的推进只剩三条路（解 E-2 / 开 opt-in 矩阵 / Owner 接受边界），本环境均不可自证；**建议转向条件 4 的可做部分**（检查 	ools/ci/publish-release.ps1 是否能在无可联网环境产出绑定当前 commit 的包，若不能则如实登记 blocked 所需），或补"设置页错误态"这一格测试（范围极小、可自证）。

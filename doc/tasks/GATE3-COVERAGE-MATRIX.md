@@ -3,7 +3,7 @@ id: GATE3-COVERAGE-MATRIX
 title: Gate 条件 3 覆盖矩阵盘点（四页 × 关键流程，逐格代码依据）
 kind: evidence
 governance_version: 3
-status: in_progress
+status: done
 disposition: "Gate 条件 3（完整 GUI/Core/Host 流程与 Avalonia TestHost）；把「部分」变为可判定证据"
 approval: DSH 2026-11-15（纯盘点，零代码改动）
 suggested_owner: DSH
@@ -14,10 +14,10 @@ depends_on:
 base_commit: d86f185ca
 branch: main
 worktree: G:/CODEX/New Manga
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 7f510afd7221250ddc23cb4793553ed4bd4adefc
+delivery_head: 7f510afd7
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/GATE3-COVERAGE-MATRIX
 allowed_paths:
   - doc/tasks/GATE3-COVERAGE-MATRIX.md
@@ -125,7 +125,13 @@ Gate 条件 3 = "补齐**可安全执行的**完整 GUI / Core / Host 关键流�
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) | sha256_basis |
 |---|---|---|---|---|---|---|
-
+| EV-G3M-01 | AC1/AC2/AC6 矩阵本体 | doc/reviews/MAINT-1-GATE-CONDITION-3-MATRIX-2026-11-15.md | 7f510afd7 | c2b0e0e4f78b81984443aec6888d8a675f231019880b3200db5386942e5b059e | CANONICAL | BLOB |
+| EV-G3M-02 | AC5 四件套 | verification/GATE3-COVERAGE-MATRIX/four-pieces.log | 7f510afd7 | 1f104fbd4a307d0dd147d8447407a5ae691089c3fbc70ca07d9c0822b4b3f1da | CANONICAL | BLOB |
+| EV-G3M-03 | AC3/AC4 Host 74 skip 实测清单 | verification/GATE3-COVERAGE-MATRIX/host-skips.txt | 7f510afd7 | 38c0bc4909ee3a2b8f2451fee21b2d12b9efd617481f331673872f84e6f49cb6 | CANONICAL | BLOB |
+| EV-G3M-04 | AC3/AC4 CoreClient 26 skip 实测清单 | verification/GATE3-COVERAGE-MATRIX/coreclient-skips.txt | 7f510afd7 | d7bb12c7493256ffb493e8fc4e6606357cbe0fa73a6e31adff9fda995ca09c46 | CANONICAL | BLOB |
+| EV-G3M-05 | 独立复核 r1（REJECT） | doc/reviews/GATE3-COVERAGE-MATRIX-review-r1.md | 7f510afd7 | 48780822e047fe53df324ab569d32d120e3715228949be1a58daa2af82ad8e96 | CANONICAL | BLOB |
+| EV-G3M-06 | 独立复核 r2（REJECT） | doc/reviews/GATE3-COVERAGE-MATRIX-review-r2.md | 7f510afd7 | 6db33b2090449b5c7212d36f991b48f56e9f2c5ccfb255a4ce2bc3a7cabc4c0c | CANONICAL | BLOB |
+| EV-G3M-07 | 独立复核 r3（ACCEPT_WITH_LIMITATIONS） | doc/reviews/GATE3-COVERAGE-MATRIX-review-r3.md | 7f510afd7 | f92c453fbf0b800df5744c564d2535aabfb31264d01ddb35350901eb698ffaf0 | CANONICAL | BLOB |
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
@@ -134,9 +140,23 @@ Gate 条件 3 = "补齐**可安全执行的**完整 GUI / Core / Host 关键流�
 
 ## Closeout Record
 
-- Closeout date / DSH：待关闭时填写。
-- canonical_evidence_status：`pending`。
-- resource_closeout_status：`pending`。
-- 删除、迁移、归档数量/字节数：待关闭时填写；无操作填写 0。
-- 未关闭项及保留原因：待填。
-- 当前指针清理：待关闭时更新 STATUS / Plan / TASK_LEDGER / rolling checkpoint。
+- Closeout date / DSH：2026-11-15，DSH（Lead / Architect / Integrator）。
+- canonical_evidence_status：`complete`（7 条 BLOB pin，commit `7f510afd7221250ddc23cb4793553ed4bd4adefc`）。
+- resource_closeout_status：`complete`（无 worktree、无用户数据；本轮临时脚本在 workspace task-env）。
+- 删除、迁移、归档数量/字节数：0。
+- **交付物的定位（不得升级）**：本矩阵**不是**条件 3 的判定依据，只是"条件 3 NOT MET 的**部分证据**"。
+  要判 MET，必须执行那 **111 个被 skip 的测试**（需 sidecar / opt-in 环境与样本），或由 Owner 明示接受边界。
+- 未关闭项及保留原因：
+  - 矩阵是**快照**（基线 `d86f185ca`），无自动失效检测（§6 已声明）；
+  - 只有 12 格被逐行核对断言，其余为类摘要 + 方法名；
+  - Host 74 / CoreClient 26 的 skip **逐类归属**未逐条核实 attribute（§4.2 末已声明）；
+  - 未覆盖：其它测试项目、legacy shell、真机走查。
+- **本卡自身的错误登记（不淡化，三轮复核逐次发现）**：
+  1. **第一版只盘 GUI**，而条件 3 明确含 Core/Host，且未声明范围（r1 P1）；
+  2. **把 `HostReaderChaptersIntegrationTests`(2) / `HostRegionWorkbenchIntegrationTests`(4) 标为 plain
+     并声称"计入 321 passed"** —— r2 实跑证伪，它们是 `[BookFixtureFact]`/`[RegionFixtureFact]`，6 个全 SKIP；
+  3. **方法论错误**：前两版用源码正则推断 gate/分类，而不是实测运行结果，因此连续两次被实跑证伪；
+  4. **撤回过度**：r2 后我把"30/44"整体撤回，r3 指出该总量其实可复现（30 = 22+4+4，44 = 74−30），
+     我又改回；期间还写出错误的"43/31"归因；
+  5. 数字错多轮：AvaloniaFact 文件 61→62、偏好测试 8→9、§4.2 合计 67→74、skip 总数 107→111、
+     gate 类型 Run×3→Run×2+BookFixture×1。
