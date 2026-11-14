@@ -1,0 +1,24 @@
+# SIDECAR-REBUILD-1 four-pieces 2026-11-15T03:22:33.5630694+08:00
+## check.ps1
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\MAINT-1-RELEASE-MONITOR.md
+WARN: 存在 7 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3087 bytes / 27 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6989 bytes / 63 lines
+Governance check: PASS (3 warnings)
+## verify_pins.ps1
+OK FEA01 0370c18932b1
+PIN AUDIT: PASS (all 18)
+## api inventory
+OK: rendered counts match FEA-C07 doc
+| **合计** | **87** | — |
+## 构建
+pip: 63 包全部安装成功（含 torch 2.14.0 cp314 / pyinstaller 6.22.3 / transformers 5.17.0）
+PyInstaller: Build complete, closure assertions PASS, bundle 753 MB, 5 exe + 3 ONNX
+最后一步 FAIL: sfx weights missing (M2-SFX-DETECT/weights-v2b/yolo11s-seg.onnx) -> core_service 不受影响
+## 带新 sidecar 的全量结果
+CoreClient: 208 passed / 4 failed / 0 skipped / 212  (基线 186/0/26)
+Host:       342 passed / 9 failed / 44 skipped / 395 (基线 321/0/74)
+=> skip 100 -> 44 (-56)，pass 507 -> 550 (+43)，新增 13 failed
+## 无夹具基线（未变）
+App 950/0/11/961 ; Host 321/0/74/395 ; CoreClient 186/0/26/212
