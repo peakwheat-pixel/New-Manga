@@ -1797,3 +1797,16 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   失败在**读容器**阶段，与 pixel 无关，pixel 修复**没有**让它转绿。
   **教训（同类已第二次）**：同族失败不能按"错误文本相似"推断同因，必须逐个复跑。
 - **未做**：`SOURCE_ENTRY_MISSING` 未归因；条件 3 仍不判 MET。
+## 229. FEA11-ENTRY-MISSING-1：`SOURCE_ENTRY_MISSING` 只能部分归因 → 标 blocked（2026-11-15，DSH，goal 轮次 28）
+
+- **失败点**：`SourceReadCoordinator.DescribeContainer` 的 `FileStream` 打开处（line 382 的
+  `throw MapMintFailure(error)`）。
+- **已排除**（实测）：①种子确实创建 `source-v2.zip`（358 B）且 `new_zip` 是绝对路径；
+  ②`schema_version = 14` 与 `CoreSchema.Current` 一致（我的修复生效）。
+- **★ 发现产品诊断性缺陷（P3）**：`MapMintFailure` 的 `_ => new SourceAccessException("SOURCE_ENTRY_MISSING")`
+  **兜底**且不保留 inner exception，使"文件不存在 / 无权限 / 路径过长 / 其它"在错误码上**不可区分**。
+- **因此标 blocked**：不是我缺实物、也不是环境缺失，而是**产品丢弃了定论所需的内层异常类型**。
+- **给出的修法（未实施）**：①产品侧 `MapMintFailure` 保留 inner / 在兜底分支保留原始类型
+  （**诊断性**改动，不改错误码对外语义）；②测试侧先 `Assert.True(File.Exists(newZip))` 并打印路径，
+  把"文件不存在"从"其它"里分离。
+- 带 opt-in 三类基线仍 **12 passed / 1 failed**；条件 3 仍不判 MET。
