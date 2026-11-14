@@ -1824,3 +1824,17 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **未做**：未修复（恢复路径的权威来源需 DSH 裁决：journal / plan materialization / typed 拒绝）；
   未验证 cbz/pdf/image 是否同样受害。
 - 带 opt-in 三类基线仍 **12 passed / 1 failed**；条件 3 仍不判 MET。
+## 231. E9-PATH-CARRIER-STUDY-1：补齐 Codex 无法核实的事实 → 结论"独立列优于塞 JSON"（2026-11-15，DSH，goal 轮次 32）
+
+- **Codex 诚实拒绝**：其命令因 Windows 740 全部无法启动，**未读到代码**，故只给"倾向 A"的**有条件**意见
+  \+ 4 项待核实条件，并明确"不能将题述内容冒充代码核实结果"。
+- **DSH 补齐 4 项**：①载体 = journal 表 `authorization_json TEXT`（**Host 内部持久化，非 wire**）；
+  ②`RequestDigest = sha256({operation_id, plan_id, plan_digest, kind})` —— 不含 authorization 结构；
+  ③`minted.AuthorizationDigest = sha256(canonical(authorizations[]))` —— 外层字段不在范围；
+  ④`JournalEntry.Kind` 存在且参与 RequestDigest，但**不能**证明历史记录存过路径（认同 Codex）。
+- **★ 关键发现**：**`Authorize()` 存的 `AuthorizationDigest` 是 `Sha256Hex(整个 JSON)`**（`:152`），
+  与 `:425` 用的 `minted.AuthorizationDigest`（只覆盖 `authorizations[]`）**定义不一致** ⇒
+  "塞进 `authorizationJson`"会**改变 `:152` 的摘要语义**。好消息：全仓**无该校验点**（只写不验）。
+- **结论**：A 可行，但**更小风险的等价方案是 journal 表新增独立列 `container_path TEXT NULL`**，
+  完全不碰既有 JSON、摘要与消费者。**未实施**，待冻结范围。
+- 未改任何代码；带 opt-in 三类基线仍 **12/1**；条件 3 仍不判 MET。

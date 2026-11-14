@@ -268,3 +268,22 @@ var grantId = await readsCoordinator.IssueForRecoveryAsync(
 这属契约变更，需 DSH 裁决载体与兼容性。
 
 **未做**：无专门的 typed 拒绝判别测试（`MintRecoveryGrantsAsync` 为 private）；未实测 folder 类恢复仍正常。
+### E-9 载体可行性核实（2026-11-15，`E9-PATH-CARRIER-STUDY-1`）
+
+Codex 被要求裁决"journal（A）vs Core plan（B）"，但其命令因 Windows 740 无法启动，**未读到代码**，
+只给出"倾向 A"的**有条件**意见并列了 4 项待核实条件。DSH 已补齐：
+
+| 项 | 结论 |
+|---|---|
+| 载体 | journal 表列 `authorization_json TEXT`（Host 内部持久化，非 wire） |
+| `RequestDigest` | `sha256({operation_id, plan_id, plan_digest, kind})` —— 不含 authorization 结构 |
+| `minted.AuthorizationDigest` | `sha256(canonical(authorizations[]))` —— 外层字段不在范围 |
+| **`Authorize()` 的 `AuthorizationDigest`** | **`Sha256Hex(整个 JSON)`** —— **加外层字段会变** |
+| `AuthorizationDigest` 校验点 | **全仓无**（只写不验） |
+
+**★ 关键发现**：两个写入点对 `AuthorizationDigest` 用了**不同定义**（`:425` 用 minter 的，
+`:152` 用整 JSON 的 sha256）。
+
+**结论**：A 可行，但**"塞进 `authorizationJson`"会改变 `:152` 的摘要语义** ——
+更小风险的等价方案是 **journal 表新增独立列 `container_path TEXT NULL`**，完全不碰既有 JSON、
+摘要与消费者。**本卡未实施**，待 DSH 冻结范围。
