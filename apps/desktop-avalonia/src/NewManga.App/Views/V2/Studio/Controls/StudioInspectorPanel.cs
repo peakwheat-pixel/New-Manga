@@ -253,7 +253,7 @@ public sealed class StudioInspectorPanel : Border
         _saveTranslationButton = save;
         panel.Children.Add(save);
         panel.Children.Add(StudioUi.Text(
-            "人工译文输入框：能力待接入（F0-1 save_manual_translation）· 本构建不提供可输入的假字段",
+            "人工译文输入框：本检查器尚未提供输入控件；译文写入命令 save_manual_translation 已在 Host 命令面可用（HostCommandRegistry:352 / core_service.py:4367），不是「能力待接入」",
             "meta",
             "muted",
             "studio-wrap"));

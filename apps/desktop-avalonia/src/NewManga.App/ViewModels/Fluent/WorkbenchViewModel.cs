@@ -161,6 +161,45 @@ public sealed class WorkbenchViewModel : FluentViewModel
             return false;
         }
 
+        // TRANS-ENTRY-UI AC1: gate on the CURRENT translate binding before touching StartRun.
+        // A missing binding is the real "configured but nothing happens" cause; resolving it here
+        // (the same Read face the settings page uses) keeps the UI honest instead of firing a run
+        // that the Core will refuse with PROVIDER_NOT_CONFIGURED.
+        try
+        {
+            var binding = await _host.ResolveProviderBindingAsync("Translation", cancellationToken);
+            // A NULL result means "cannot determine" (Host not ready / probe unsupported), and the
+            // preflight must never turn that into a block — only an explicit "no profile" answer
+            // gates the action. Unknown states fall through to StartRun, which stays authoritative.
+            if (binding is not null && binding.ProfileId is null)
+            {
+                Error = TranslateErrorText.ProviderNotConfigured;
+                Status = Error;
+                return false;
+            }
+        }
+        catch (Exception)
+        {
+            // A failed probe must never block the user: fall through and let StartRun answer.
+        }
+
+        // TRANS-ENTRY-UI AC3: an empty chapter has its own readable sentence. The probe is a
+        // read-only extra round trip; a failure (or an unreadable projection) skips the check
+        // rather than blocking translation — constraint 4 of the card.
+        // The probe is advisory: an empty answer replaces the failure text (the Core would only
+        // answer INVALID_REQUEST), but it must never stop the attempt — hosts that do not expose
+        // page data would otherwise be blocked from translating entirely (card constraint 4).
+        var chapterLooksEmpty = false;
+        try
+        {
+            var pages = await _host.ListChapterPagesAsync(_chapterId, cancellationToken);
+            chapterLooksEmpty = pages.Count == 0;
+        }
+        catch (Exception)
+        {
+            // Probe failed: claim nothing, gate nothing.
+        }
+
         if (!string.Equals(_startIdempotencyChapterId, _chapterId, StringComparison.Ordinal))
         {
             // 新的章节意图 = 新的意图键；同一意图内的重试复用同一 key。
@@ -180,7 +219,11 @@ public sealed class WorkbenchViewModel : FluentViewModel
             var started = await _host.StartRunAsync(request, cancellationToken);
             if (started is null || string.IsNullOrWhiteSpace(started.RunId))
             {
-                Error = $"批量 Run 未启动（{_host.Snapshot.LastError ?? "HOST_NOT_READY"}）；可重试，重试复用同一意图键。";
+                // TRANS-ENTRY-UI AC2/AC3: an empty chapter has its own sentence; every other class
+                // is mapped from the Host's typed code (see TranslateErrorText).
+                Error = chapterLooksEmpty
+                    ? TranslateErrorText.EmptyChapter
+                    : TranslateErrorText.ForCode(_host.Snapshot.LastError);
                 Status = Error;
                 return false;
             }
