@@ -23,6 +23,7 @@ allowed_paths:
   - doc/tasks/SETTINGS-ERROR-STATE-1.md
   - doc/reviews/SETTINGS-ERROR-STATE-1-*.md
   - doc/reviews/MAINT-1-GATE-CONDITION-3-MATRIX-2026-11-15.md
+  - doc/reviews/MAINT-1-RELEASE-GATE-ASSESSMENT-2026-11-14.md
   - doc/REBASELINE_PLAN.md
   - doc/STATUS.md
   - doc/TASK_LEDGER.md
@@ -94,10 +95,18 @@ allowed_paths:
 
 ## 交付与运行记录
 
-- Handoff：尚无。
-- Review：尚无（须独立上下文）。
+- Handoff：`doc/reviews/SETTINGS-ERROR-STATE-1-review-r1.md`（独立复核 r1，verdict **ACCEPT_WITH_LIMITATIONS**，审查者 `review-settings-error`，未参与实现；被审 head `90dc51ded`）。
+- Review：r1 独立上下文完成；复核者另做了"只回退视图 banner"的实验 → **仅 AC2 变红**，证明 AC2 是真实视图树断言而非只看 VM 字段。
 - 实际测试：尚无。
 - 后续记录日期、commit、环境、结果、遗留项。
+### 自登记的错误（不淡化）
+
+1. **探针两次没生效却险些当成"已验证"**：第一次用 PowerShell `.Replace()` 做 AC3 探针，字符串里的 `$"..."` 被
+   PowerShell 插值，替换未发生、测试仍全绿；第二次改用 Python 后删掉了对 `ex` 的引用，触发 `CS0168` 编译失败
+   （也不是"变红"）。第三次才得到真实的 **2 failed / 1 passed**。若前两次就此收工，"判别力已验证"是假的。
+2. **越界改文档未登记**：AC4 要求改 Gate 评估 §15，但 `allowed_paths` 当时漏了该文件（r1 复核 P2-1 指出）。
+   已补登记。
+3. **矩阵格行号写错**：原写 `SettingsErrorStateTests.cs:44/:60`，实际是 `:35`（VM 级）与 `:53`（视图级）。
 
 ## Canonical Evidence
 

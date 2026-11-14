@@ -59,7 +59,7 @@ r1 复核指出、r2 复核再次纠正：**skip 的原因不止 sidecar**，而
 |---|---|---|---|---|
 | **进入与空态** | ✅ `ShelfPage_EmptyHostFailure_…` (`FluentPageTests.cs:25`) — `State==Error`、`CurrentPage==Library`、Workbench 导航按钮非 null【核对】 | ✅ `WorkbenchPage_UnselectedState_…` (`:38`) — `State==Empty`、`RegionCanvas` 非 null、三 tab 点击后 `ActiveTab`+选中 class+token 颜色/圆角【核对】 | ✅ `ReaderPage_HostUnavailable_…` (`:90`) — `State==Error` 且 Content 是 `ReaderPageView`【核对】 | ✅ `SettingsPage_HostUnavailable_IsBrowsableButReadOnly` (`:104`) — `State==ReadOnly`、`IsReadOnly`、Content 是 `SettingsPageView`【核对】 |
 | **四页 headless 渲染** | ✅ `FluentPages_RenderHeadlessPngEvidence` (`:258`) — 依次 Capture 四页并断言每帧 `PixelSize` 宽高 > 0；可选落盘 PNG【核对】 | 同左 | 同左 | 同左 |
-| **错误态** | ✅ 同上；`Bookshelf_ImportTypedFailure_ShowsCodeAndDoesNotRefresh` (`ImportExportUiTests.cs:229`) — 面板出现 `IMPORT_SOURCE_UNAVAILABLE` 且不刷新【核对】 | ✅ `I12_WorkbenchErrorCard_ConsoleEntry_NavigatesToConsoleSpace` (`FluentResidualBatchATests.cs:80`)【摘要】 | ✅ `ReaderPage_HostUnavailable_…`【核对】 | ✅ **`LoadFailure_PutsTheViewModelInErrorState_WithRetryableMessage` / `LoadFailure_ShowsTheErrorBannerWithRetryAction`** (`SettingsErrorStateTests.cs:44/:60`) — 设置读取抛异常后 `State==Error`、文案含"设置读取失败…可以重试"，且真实视图树出现"设置错误" banner 与"重试"按钮【核对】**（`SETTINGS-ERROR-STATE-1` 补）** |
+| **错误态** | ✅ 同上；`Bookshelf_ImportTypedFailure_ShowsCodeAndDoesNotRefresh` (`ImportExportUiTests.cs:229`) — 面板出现 `IMPORT_SOURCE_UNAVAILABLE` 且不刷新【核对】 | ✅ `I12_WorkbenchErrorCard_ConsoleEntry_NavigatesToConsoleSpace` (`FluentResidualBatchATests.cs:80`)【摘要】 | ✅ `ReaderPage_HostUnavailable_…`【核对】 | ✅ **`LoadFailure_PutsTheViewModelInErrorState_WithRetryableMessage` / `LoadFailure_ShowsTheErrorBannerWithRetryAction`** (`SettingsErrorStateTests.cs:35/:53`) — 设置读取抛异常后 `State==Error`、文案含"设置读取失败…可以重试"，且真实视图树出现"设置错误" banner 与"重试"按钮【核对】**（`SETTINGS-ERROR-STATE-1` 补）** |
 | **只读** | ⚠️ `[WritePolicySidecarFact]` 的 `WritePolicyUiTests` 覆盖只读写拒绝 → 需 sidecar，本环境 NOT_RUN【摘要】 | ✅ `Workbench_ReadOnlyHost_DisablesWrites_ShowsReason_ReadFaceStillWorks` (`RegionWorkbenchUiTests.cs`)【摘要】 | ✅ **`ReadOnlyHost_DoesNotPersist_ButReaderKeepsWorking`** (`ReaderProgressTests.cs:194`) — 只读 Host 下不持久化但阅读器仍工作【摘要】 | ✅ `SettingsPage_HostUnavailable_IsBrowsableButReadOnly`【核对】 |
 | **导入** | ✅ `Bookshelf_ImportFiles_…` (`:153`)、`…Folder_…` (`:196`)、`…PickerCancel_…` (`:251`)、失败见上 | ✅ `Workbench_ImportFiles_OpensTheSameFlow` (`:267`)【摘要】 | — | — |
 | **导出** | — | — | ✅ `Reader_ExportFlow_StartPollCompleteHistoryReveal` (`:316`) — 导出按钮→面板→Start→轮询→Completed→历史→reveal；`Reader_ExportScopeSelector_…` (`:420`)；`ExportStalePolicyTests` 四种 stale 策略【核对（主链路）】 | — |
@@ -157,17 +157,17 @@ r1 复核指出、r2 复核再次纠正：**skip 的原因不止 sidecar**，而
 
 ## 5. 条件 3 的可判定结论（r3 修正）
 
-1. **GUI 层**：四页 × 13 类流程 **13 类全部有覆盖**（`SETTINGS-ERROR-STATE-1` 补上了原先唯一缺的"设置页错误态"）。
+1. **GUI 层（限定范围：本矩阵 §3 的 4 页 × 13 类）**：**所有 ❌ 格已清零**。`SETTINGS-ERROR-STATE-1` 补上了原先唯一缺的"设置页错误态"；但仍有 **2 个 ⚠️ 格**（书架只读走 `[WritePolicySidecarFact]` → 本环境 NOT_RUN；设置快捷键仅"非 Space 入口"一条），且 **§0 未纳**回收站/命令面板/源恢复/沉浸等其它 GUI 流程。
    仍有 2 格为借道同型断言（书架只读走 `[WritePolicySidecarFact]` → 本环境 NOT_RUN；设置快捷键仅"非 Space 入口"一条），标 ⚠️。
 2. **Host/Core 层**：**321 + 186 passed** 是真实执行的覆盖（wire 契约、命令覆盖、Host 单元面、Source 调度、
    Run 授权、各 IPC 类的非 skip 方法）；**100 个 skip**（74 + 26）在本环境 NOT_RUN。
 3. **剩余缺口分三类**：
    - **被 skip 的集成面**：三项目共 **111 个 skip**（Host 74 + CoreClient 26 + App 11）。其中 App 的 11 = 7 sidecar + 4 非 sidecar。我并不宣称它们全部因 E-2 ——
      归因需逐条核 attribute，本节只给类分布（§4.2/§4.3）。
-   - **真无覆盖**：**0 格**（`SETTINGS-ERROR-STATE-1` 已补设置页错误态；见 `SettingsErrorStateTests.cs`）。
+   - **真无覆盖**：**本矩阵 4 页 × 13 类范围内 0 个 ❌ 格**（`SETTINGS-ERROR-STATE-1` 已补设置页错误态；见 `SettingsErrorStateTests.cs:35/:53`）。**这不等于"整个产品 GUI 无缺口"** —— 范围限定与 ⚠️ 格见 §0 与本节第 1 条。
    - **人工范畴**：真机窗口走查。
 4. **条件 3 不能判 MET。** 要判 MET，需要：执行被 skip 的 111 个测试（其中大部分需 sidecar 或 opt-in
-   环境与样本），或由 Owner 明确接受该边界。**GUI 层的"无覆盖"缺口已清零，剩下的是 skip 面与真机走查。**
+   环境与样本），或由 Owner 明确接受该边界。**在本矩阵限定的 4 页 × 13 类内，❌ 格已清零；剩下的是 2 个 ⚠️ 格、111 个 skip、以及未纳范围的 GUI 流程与真机走查。**
 5. **撤回上一版三处错误（全部由 r1/r2 复核实测发现，均属我的判断失误）**：
    - "`HostReaderChaptersIntegrationTests` / `HostRegionWorkbenchIntegrationTests` 是 plain、计入 passed"
      → **错**：它们是 `[BookFixtureFact]` / `[RegionFixtureFact]`，6 个测试**全部 SKIP**。

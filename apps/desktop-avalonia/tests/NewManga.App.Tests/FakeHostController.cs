@@ -804,6 +804,12 @@ public sealed class FakeHostController : IHostController, ISourceImportControlle
     public Task<IReadOnlyList<NetworkProfileInfo>> ListNetworkProfilesAsync(
         CancellationToken cancellationToken = default)
     {
+        // SETTINGS-ERROR-STATE-1: same gate as the provider list, so the settings load fails
+        // deterministically regardless of which list the VM asks for first.
+        if (SettingsLoadFailure is not null)
+        {
+            throw SettingsLoadFailure;
+        }
         NetworkProfileListCalls++;
         return Task.FromResult<IReadOnlyList<NetworkProfileInfo>>(NetworkProfiles.ToList());
     }

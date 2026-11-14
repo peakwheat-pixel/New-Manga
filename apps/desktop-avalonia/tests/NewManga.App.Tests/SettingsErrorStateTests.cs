@@ -72,9 +72,11 @@ public sealed class SettingsErrorStateTests
             Assert.Contains(texts, text => text.Contains("设置错误", StringComparison.Ordinal));
             Assert.Contains(texts, text => text.Contains("设置读取失败", StringComparison.Ordinal));
 
-            // The banner carries a retry action; without it the user cannot recover.
+            // The banner carries a retry action that the user can actually reach and hit.
             var buttons = page.GetVisualDescendants().OfType<Button>().ToArray();
-            Assert.Contains(buttons, button => (button.Content as string) == "重试");
+            var retry = Assert.Single(buttons, button => (button.Content as string) == "重试");
+            Assert.True(retry.IsEffectivelyVisible, "the retry action must be visible, not just present");
+            Assert.True(retry.IsEffectivelyEnabled, "the retry action must be clickable");
         }
         finally
         {

@@ -188,8 +188,8 @@
 条件 3 此前只记作"部分"，没有任何清单说明覆盖到哪。现已按 **GUI + Host + CoreClient 三层**逐格盘点，
 见 `doc/reviews/MAINT-1-GATE-CONDITION-3-MATRIX-2026-11-15.md`。要点：
 
-- **GUI 层**：`App.Tests` **950/0/11/961**（`SETTINGS-ERROR-STATE-1` 后 +3），`[AvaloniaFact]` 文件 **62 个**。
-  四页 × 13 类流程 **13 类全部有覆盖**（原先唯一缺的"设置页错误态"已由 `SettingsErrorStateTests.cs` 补上：
+- **GUI 层**：`App.Tests` **950/0/11/961**（`SETTINGS-ERROR-STATE-1` 后 +3），`[AvaloniaFact]` 文件 **63 个**。
+  四页 × 13 类流程（**本矩阵限定范围**）**所有 ❌ 格已清零**（原先唯一缺的"设置页错误态"已由 `SettingsErrorStateTests.cs:35/:53` 补上：
   加载抛异常 → `State==Error` + 可重试文案 + 视图出现"设置错误"banner 与"重试"按钮；
   实测回退该 catch 后 2 个测试变红）。四页有 PNG 级渲染证据（断言四帧 `PixelSize` 非零）。
 - **Host/Core 层**（r1/r2 复核两次纠正后）：本环境真实执行 `321 + 186 passed`（含 wire 契约、命令覆盖、
@@ -202,8 +202,8 @@
   `HostRegionWorkbenchIntegrationTests`(4) 标为 `plain` 并声称"计入 passed"；r2 复核实跑证明它们是
   `[BookFixtureFact]` / `[RegionFixtureFact]`，6 个测试**全部 SKIP**。根因是用源码正则推断 gate 而非实测。r3 后 §4 已改为纯实测 skip 类分布（27 行合计 74），原始输出入库 `verification/GATE3-COVERAGE-MATRIX/host-skips.txt`、`coreclient-skips.txt`。
 - **条件 3 的可判定形态**：剩余缺口分两类 —— ①被 skip 的 **111 个测试**（含 E-2 sidecar 与 opt-in 环境）；
-  ②真机人工走查。**GUI 层的"无覆盖"格已清零**（`SETTINGS-ERROR-STATE-1`）。
-- **矩阵自身的边界**：只有 12 格被逐行核对断言，其余为"类摘要 + 方法名"，**不得当作已验证**；
+  ②真机人工走查。**在本矩阵限定的 4 页 × 13 类内，❌ 格已清零**；仍有 2 个 ⚠️ 格、111 个 skip，且 §0 未纳回收站/命令面板/源恢复/沉浸等流程 —— 不得据此说"产品 GUI 无缺口"。
+- **矩阵自身的边界**：只有 **13 格**被逐行核对断言（`SETTINGS-ERROR-STATE-1` 新增第 13 格），其余为"类摘要 + 方法名"，**不得当作已验证**；
   且它是**快照**，无自动失效检测（已在矩阵 §6 声明 staleness）。
 - **条件 3 仍不判 MET。** 推进路径按性质分：解 E-2（本环境 PyPI 不可达，不可行）/ 开启 opt-in 矩阵 /
   补那 1 格 / Owner 接受边界。Gate 仍 `BLOCKED`。
