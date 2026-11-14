@@ -259,3 +259,36 @@ App 的 4 个（带夹具仍 skip）经差集确认是 **opt-in gated**（性能
 
 **这仍然不等于条件 3 MET**：带夹具 skip 仍有 **48**（Host 44 + App 4，均 opt-in/需真实 IPC）、
 矩阵 §0 未纳范围的 GUI 流程（源恢复/沉浸阅读等）、真机走查未做。
+## 10. 扩容：§0 未纳的 4 个 GUI 流程（2026-11-15，`GATE3-MATRIX-EXPAND-1`）
+
+§0 声明过"4 页 × 13 类不等于整个产品 GUI 无缺口"，并点名了回收站/命令面板/源恢复/沉浸。本节把它们纳入评估。
+
+### 10.1 实测（全部无夹具即可执行，0 skip）
+
+| 流程 | 测试类（`NewManga.App.Tests`） | 实测 |
+|---|---|---|
+| **回收站** | `TrashUiTests` | **47 passed / 0 failed / 0 skipped** |
+| **源恢复** | `SourceRecoveryUiTests` | **18 / 0 / 0** |
+| **沉浸阅读窗口** | `V2ImmersiveReaderTests` | **4 / 0 / 0** |
+| **F11 沉浸开关** | `F11HotkeyTests` | **9 / 0 / 0** |
+| **命令面板（焦点/键盘）** | `FluentCommandPaletteFocusTests` | **1 / 0 / 0** |
+| 组合 filter（以上全部） | — | **80 / 0 / 0**（比五类和 79 多 1，来自 `~CommandPalette` 另匹配到的类；不据此外推） |
+
+**重要**：这五个类**不需要 sidecar**（0 skipped），所以它们是**当前环境就能反复复跑**的覆盖，
+不是"等环境"的空白 —— 这一点与 §3 里那些 `[SidecarFact]` 的格不同。
+
+### 10.2 逐流程的覆盖与缺口（**类名存在 ≠ 语义完整**）
+
+| 流程 | 测试类**覆盖了什么**（从类与方法名可对应） | **仍缺什么**（本卡未验证） |
+|---|---|---|
+| 回收站 | 软删、恢复、彻底删除的 UI 交互与确认；保护语义的 UI 侧 | **ADJ-001 的完整保护矩阵**（软删/自动清理/显式彻底删除三层）是否逐条有测试，**未逐条核对**；真实文件层行为不在本类 |
+| 源恢复 | `DiagnoseSourceRecoveryAsync` / `ReauthorizeSourceAsync` / `ResetSourceAsync` 的 UI 流程（18 个） | Host/Core 侧的 `source_resync` 编排在 **Host.Tests**（`Fea11HostAuthTests` / `Fea11HostAuthIpcTests`），本卡**未跑**它们；两层的衔接未作为一个端到端用例验证 |
+| 沉浸阅读 | `V2ImmersiveReaderTests` 4 个 + `F11HotkeyTests` 9 个：F11 开关、Esc 阶梯、回到原页 | **真实窗口全屏/边框切换**在 headless 下不可验；真机走查仍缺 |
+| 命令面板 | `FluentCommandPaletteFocusTests` 1 个：焦点行为 | **条目内容正确性、执行结果、Esc 关闭**在 `GATE3-SETTINGS-SHORTCUT-1` 的测试里间接覆盖了"打开/Esc/关闭"，但**条目逐项执行**未覆盖 |
+
+### 10.3 本节的边界
+
+- 上表**只**证明"这些流程有可执行的 GUI 测试且当前全绿"，**不**证明它们语义完整。
+- `TrashUiTests` 的 47 与 `SourceRecoveryUiTests` 的 18 是**类级**数字；本卡**没有**逐条核对每个方法
+  对应哪个产品语义 —— 那需要按方法名逐个读，属后续工作。
+- **条件 3 仍不判 MET**：带夹具 skip 仍有 48、真机走查未做、上述逐流程缺口未闭合。

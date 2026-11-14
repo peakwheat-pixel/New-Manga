@@ -1690,3 +1690,16 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **⇒ 条件 3 矩阵的 ❌ 与 ⚠️ 均已清零**（❌ 由 `SETTINGS-ERROR-STATE-1`、⚠️ 由本卡）。
 - **仍不判 MET**：带夹具 skip 仍有 **48**（Host 44 + App 4，均 opt-in/需真实 IPC）、
   §0 未纳范围的 GUI 流程、真机走查未做。
+## 222. GATE3-MATRIX-EXPAND-1：条件 3 矩阵 §10 扩容 —— 4 个未纳流程全部有可执行 GUI 测试（2026-11-15，DSH，goal 轮次 21）
+
+- **实测（无夹具、0 skip）**：`TrashUiTests` **47**、`SourceRecoveryUiTests` **18**、`F11HotkeyTests` **9**、
+  `V2ImmersiveReaderTests` **4**、`FluentCommandPaletteFocusTests` **1**；组合 filter **80 passed / 0 failed / 0 skipped**。
+- **关键**：这五类**不需要 sidecar**（0 skipped），是**当前环境就能反复复跑**的覆盖，
+  与 §3 里那些 `[SidecarFact]` 的格不同。
+- **矩阵新增 §10**（不动 §3 既有格），并逐流程写明"覆盖了什么 / 仍缺什么"：
+  回收站的 **ADJ-001 三层保护矩阵未逐条核对**；源恢复的 **Host 侧 `source_resync` 编排未跑**
+  （在 `Fea11HostAuthTests`/`Fea11HostAuthIpcTests`，本卡未执行）；沉浸阅读的**真实窗口全屏/边框**
+  headless 不可验；命令面板的**条目逐项执行**未覆盖。
+- **自登记**：本卡先用源码 `grep` 数出 108 个测试，与实跑 **79** 不符 ——
+  **又一次"以源码推断代替实测"**。已改用 `dotnet test` 实测并记入卡面。
+- **仍不判 MET**：带夹具 skip 48、真机走查、上述逐流程缺口均未闭合。
