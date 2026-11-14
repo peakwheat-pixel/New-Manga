@@ -36,7 +36,7 @@
 | L-F1-2 | FEA-14-FONT-1 | wire 级 `FONT_DELETE_FAILED` 负例未补（storage 已覆盖）（`:153`） | `SOLVED` | 本文件 §3-C1-2（补 1 个定向测试；storage 侧证据见该卡交付段 `:152`） | **是** |
 | L-F1-3 | FEA-14-FONT-1 | 大文件 / 并发 / 占用文件未压测（`:153`） | `IMPL`（大文件/并发）+ `KEEP`（占用文件） | 本文件 §3-C1-3；`W4`（C4 载体 `:23`）只覆盖渲染消费与真实占用 | 部分 |
 | L-F1-4 | FEA-14-FONT-1 | 日志 HEAD 为生成时工作树（证据口径）（`:153`） | `C3` | 本文件 §3-C3-7（证据口径说明，非产品项） | 否 |
-| L-L1-1 | FEA-14-LIB-1 | ① `ChapterSummary` 不投影 `kind`（`doc/tasks/FEA-14-LIB-1.md:164`） | `IMPL` | 本文件 §3-C1-4（LIB-2 扩 DTO） | **是** |
+| L-L1-1 | FEA-14-LIB-1 | ① `ChapterSummary` 不投影 `kind`（`doc/tasks/FEA-14-LIB-1.md:164`） | `SOLVED` | 本文件 §3-C1-4（LIB-2 扩 DTO） | **是** |
 | L-L1-2 | FEA-14-LIB-1 | ② `custom_rank` write-only、P6 自定义/数字排序未实现（`:164`） | `IMPL`（读回闭环）+ `C3`（排序 UI 范围） | 本文件 §3-C1-5；UI 范围未释放，参照 `C3-3` 同型口径 | 部分 |
 | L-L1-3 | FEA-14-LIB-1 | ③ R-11 三项 deferral（kind 语义体积、`number_value`、`books.normalized_title` 唯一索引）（`:164`） | `C2` | 本文件 §3-C2-4（建议 OUT + 重开条件） | 否（建议 OUT） |
 | L-L1-4 | FEA-14-LIB-1 | ④ R3-001 64 位边界校验缺失（`:164`） | `SOLVED` | 本文件 §3-C1-6（小卡，补边界断言） | **是** |
@@ -183,3 +183,17 @@
 | **L-AI1-6** | `SOLVED` | `src/**` 中 `reassign_references` 命中数 **0**（方法已删）；`tests/storage/test_prompt_templates.py:221` 以 `assert not hasattr(...)` 固定该事实，防止回归 |
 
 **对条件 1 的影响**：8 项中 **3 项已关闭**（3/8），其余 5 项维持 GOP 裁决（4 张卡 + 1 项 NOT_RUN）。
+
+## 附二：L-L1-1 亦为 SOLVED（codex 外部裁决纠正 DSH 前提，2026-11-14）
+
+DSH 此前记「`ChapterSummary` 不投影 `kind`」并在条件 1 裁决中判为 `IMPL-CARD`。**该前提错误**，codex 外部裁决指出并在本仓库核实：
+
+| 事实 | 证据 |
+|---|---|
+| `ChapterSummary` **已含** `Kind` 与 `CustomRank`（可选） | `apps/desktop-avalonia/src/NewManga.CoreClient/CoreServiceClient.cs:38` |
+| Core `list_chapters` **已输出** `custom_rank`（显式 null） | `src/bootstrap/core_service.py:4609`（注释 `:4605-4607` 明写 `custom_rank` 为显式 null 且**排序仍走 `sort_order`**） |
+| 该投影已由 M2-C1 **rev 2.16 冻结** | `doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md:34`、`:204`（`kind?, custom_rank?`） |
+
+⇒ **L-L1-1 判 `SOLVED`**，条件 1 关闭进度 **3/8 → 4/8**。
+
+**DSH 的前提错误已记录**：把「矩阵写 `IMPL`」当成了「实现缺失」，没有先核 M2-C1 rev 2.16 的投影冻结。这与先前的教训同源 —— **裁决依赖矩阵前必须核实现**。
