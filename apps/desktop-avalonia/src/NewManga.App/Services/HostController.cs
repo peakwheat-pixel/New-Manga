@@ -944,7 +944,11 @@ public sealed class HostController : IHostController, ISourceImportController, I
             return chapters;
         }
         catch (Exception ex) when (
-            ex is CoreOperationException or SidecarException or BridgeException or OperationCanceledException or IOException)
+            // MAINT-2-C1-BATCH-1 r1 P2-3: ChapterSummary.Parse is strict (a row missing the frozen
+            // four keys or with a wrong type throws FormatException). Without FormatException here, a
+            // single contract-violating row would escape the "degrade to empty list" rule and surface
+            // as an unhandled exception in the UI path. Keep this in sync with the strict parser.
+            ex is CoreOperationException or SidecarException or BridgeException or OperationCanceledException or IOException or FormatException)
         {
             return Array.Empty<ChapterSummary>();
         }

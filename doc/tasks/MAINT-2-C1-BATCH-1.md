@@ -128,3 +128,14 @@ r1：**`approved`**，P0=0 / P1=0 / P2=5 / P3=2（报告 [`MAINT-2-C1-BATCH-1-r1
 7 项 `<<MET>>` + **AC8 `<<PARTIAL>>`**（DSH 2026-11-14 裁决口径：复跑留证完成、validation clone 为唯一可比基线、两套原始输出保留）+ **P2-3 待修**。
 
 **不得写成 8/8 MET 或 AC8 通过。** P2-3 落地后本卡方可 `done`。
+
+## P2-3 修复（2026-11-14）
+
+- **改动**：`apps/desktop-avalonia/src/NewManga.App/Services/HostController.cs` 的 `ListChaptersAsync` catch 过滤新增 `FormatException`，与 `ChapterSummary.Parse` 的严格化对齐；违约行现在**降级为空列表**而不是逃逸到 UI。
+- **为何必须修**：r1 指出 `Parse` 收紧后抛 `FormatException`，而 catch 只认 `CoreOperationException/SidecarException/BridgeException/OperationCanceledException/IOException` —— 一条契约违约行会让整个 `ListChaptersAsync` 抛出，绕过 `:919-922` 与 `:946-950` 的「降级为空/空列表」不变量。
+- **判别测试的诚实缺口**：`HostController` 只能经 `HostOptions` 构造，**无 runtime 注入 seam**，无法在单元层构造违约 payload 触发该 catch。因此本项只有：
+  ① `ChapterSummary.Parse` 的严格性测试（`Parse_MissingFrozenKey_Throws`，既存）；
+  ② 1 行 catch 过滤的代码审查；
+  ③ 全量 App.Tests 回归（build 0 error、0 failed）。
+  **不写成"已带判别测试"。** 建议后续在 gated 集成用例补真实验证，属已披露缺口。
+- 该缺口与本卡 AC1/AC2 的 gated 缺口同类，一并记入 limitation。
