@@ -1994,3 +1994,17 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   `StudioInspectorPanel` 的 `ActiveTabLabel` 无单元测试但**日志已确认消失**；
   Host/CoreClient 本轮未跑（未改动）。
 - 证据：`verification/E8-STUDIO-BINDING-3/README.md` + `startup-after-library.log`。
+## 242. E8-RESIDUAL-1：`CurrentPage.Image` 判为预期噪音（不修，附理由）；LeaveModal 仍未测（2026-11-15，DSH，goal 轮次 43）
+
+- **先读代码后判定**：`CurrentPage.Image` 的绑定在 **`ReaderOverlay.axaml:53`**（**阅读器 overlay，不是 Studio**）。
+  同处有互斥分支：`Image` 的 `IsVisible="{Binding CurrentPageHasImage}"` +
+  `Border` 显示"页图不可用：…（不伪造图片）"。
+  `ReaderOverlayViewModel`：`CurrentPage => … ? Pages[PageIndex] : null`；`CurrentPageHasImage => CurrentPage?.HasImage == true`。
+- **判定**：无图时 `CurrentPageHasImage == false` ⇒ 显示降级提示（**设计行为**）；
+  但 `Image.Source` 绑定仍求值得 `null` ⇒ 写一条日志。**是预期降级路径的日志，不是缺陷。**
+- **不修的理由**：占位图/`TargetNullValue` **违反"不伪造图片"原则**；converter 仍会求值且只为消一条日志；
+  移出可视树风险大于收益。**保留**（它是"该页确实无图"的准确信号，对排障有用）。
+- **`StudioLeaveModal` 的 3 处仍未测**：`LeaveSaveEnabled` 是**派生只读**（只有 `Raise`），
+  需模拟完整离开确认状态机；且**该弹窗 startup 时不构建**，真实 App 日志也不会有证据 ⇒ 如实标"仅编译保证"。
+- **E-8 可按此口径收口**：核心缺陷（8 个 HUD 按钮永久失效 + inspector 标题不显示）已修，
+  有**单测 + 真实 App** 双重证据；残留项有明确判定。
