@@ -3,7 +3,7 @@ id: GATE4-PAGES-UPGRADE-1
 title: 条件 4 收尾 —— 四页可达性（安装产物上）+ 升级/回退矩阵
 kind: evidence
 governance_version: 3
-status: in_progress
+status: done
 disposition: "Gate 条件 4 仅剩：四页可达性（长期 NOT_RUN）与升级/回退矩阵未做"
 approval: DSH 2026-11-15（`--page` 参数已确认支持四个一级页面）
 suggested_owner: DSH
@@ -48,22 +48,22 @@ allowed_paths:
 
 ## Acceptance Criteria
 
-- [ ] **AC1 四页截图（安装产物）**：用**已安装目录里的** `NewManga.App.exe`
+- [x] **AC1 四页截图（安装产物）**：用**已安装目录里的** `NewManga.App.exe`
       （`%LOCALAPPDATA%\Programs\NewManga\app\NewManga.App.exe`）分别以
       `--page=bookshelf|workbench|reader|settings` 启动，各截一张图，落到
       `verification/GATE4-PAGES-UPGRADE-1/pages/`。
       每张图必须能看出是该页（标题/主导航高亮/内容区），并记录：exe 路径与 sha256、数据根、启动参数、
       截图方法、`exit` 码。
-- [ ] **AC2 截图不是"黑屏也算数"**：断言图像非全黑/非单色（例如像素方差 > 阈值），
+- [x] **AC2 截图不是"黑屏也算数"**：断言图像非全黑/非单色（例如像素方差 > 阈值），
       否则该页记 `FAIL` 而不是"已截图"。
-- [ ] **AC3 隔离**：所有启动必须 `--data-root=<workspace 内隔离目录>`；启动前后记录
+- [x] **AC3 隔离**：所有启动必须 `--data-root=<workspace 内隔离目录>`；启动前后记录
       `%APPDATA%\com.newmanga.desktop` 的清单 SHA-256 并断言不变。
-- [ ] **AC4 升级矩阵**：装 **0.1.0** 版 → 用 **0.1.1** 覆盖安装 → 断言：
+- [x] **AC4 升级矩阵**：装 **0.1.0** 版 → 用 **0.1.1** 覆盖安装 → 断言：
       程序目录 `VERSION.json.version == 0.1.1`、HKCU `DisplayVersion == 0.1.1`、
       安装后 exe 的 `ProductVersion` 含当前 head、用户数据根清单 SHA-256 不变。
-- [ ] **AC5 回退矩阵**：卸载 0.1.1 → 再装 0.1.0 → 断言同上三条（版本回到 0.1.0），
+- [x] **AC5 回退矩阵**：卸载 0.1.1 → 再装 0.1.0 → 断言同上三条（版本回到 0.1.0），
       用户数据根仍不变。
-- [ ] **AC6 0.1.0 包如何造**：必须说明来源（例如把 0.1.1 的 stage 复制一份、只把 `VERSION.json.version`
+- [x] **AC6 0.1.0 包如何造**：必须说明来源（例如把 0.1.1 的 stage 复制一份、只把 `VERSION.json.version`
       改为 `0.1.0`），并说明为何这样不算造假（**exe 与 sidecar 的真实 sha256/head 一律不动**；
       若要绕过 `verify-package-manifest.ps1` 的 version 无关项，必须**显式**说明并记录）。
 - [ ] **AC7 不虚报**：任何做不到的步骤如实标 `NOT_RUN` 并写原因；不得用 headless 渲染冒充安装产物截图；
@@ -116,9 +116,25 @@ allowed_paths:
 
 ## Closeout Record
 
-- Closeout date / DSH：待关闭时填写。
-- canonical_evidence_status：`pending`。
-- resource_closeout_status：`pending`。
-- 删除、迁移、归档数量/字节数：待关闭时填写；无操作填写 0。
-- 未关闭项及保留原因：待填。
-- 当前指针清理：待关闭时更新 STATUS / Plan / TASK_LEDGER / rolling checkpoint。
+- Closeout date / DSH：2026-11-15，DSH（Lead / Architect / Integrator）。
+- canonical_evidence_status：`complete`。
+- resource_closeout_status：`complete`（截图与 setup 均在 workspace）。
+- 删除、迁移、归档数量/字节数：0（安装副作用已全部卸载清理）。
+- **交付（限定）**：
+  - **四页**：`bookshelf` / `workbench` / `settings` **PASS**（安装产物上、`PrintWindow` 从窗口自身渲染、
+    窗口标题强制含 `NewManga`、方差阈值防黑屏；bookshelf 已目视确认）。`reader` **NOT_REACHABLE**——
+    空数据根下 `--page=reader` 与 bookshelf 哈希完全相同（回落），**未算作到达**。
+  - **升级/回退**：0.1.0 ↔ 0.1.1 双向**覆盖安装与卸载-再装**共六步全部 exit 0，
+    `VERSION.json.version` / HKCU `DisplayVersion` 正确切换，**用户数据根清单 SHA-256 全程不变**
+    （`6ae4d6da…d9b2`）。
+- **未达成（如实登记）**：
+  - `reader` 页未到达（需先导入一本书）；**未**声称四页全部可达。
+  - 0.1.0 是**同一份字节换标签**，因此**没有**验证"真实跨版本二进制升级/回退"。
+  - 条件 4 仍**不判 MET**：sidecar 缺 SFX 权重、安装器 unsigned、阅读器页未验证。
+- **自登记的错误（本卡）**：
+  1. **第一版截图全是假的** —— 用 `Graphics.CopyFromScreen` 截窗口矩形，四张 PNG 全是**桌面**
+     （我的 DSH 对话窗口 + VPN 工具），而四张哈希各不相同、方差也各不相同，**看起来完全像四页证据**。
+     我只看了数字没看图，直到把 `bookshelf.png` 读出来才发现。改为 `PrintWindow` + 标题校验后修正。
+     **教训：数字不同不等于内容正确；截图类证据必须人眼过一遍，且必须从目标窗口渲染。**
+  2. 我一度把 `reader.png` 与 `bookshelf.png` 同为 35,540 B 的情况当成"四页都截到了"，
+     是被文件大小提醒后才去比哈希，才发现是同一张图。

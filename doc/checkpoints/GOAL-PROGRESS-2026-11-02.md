@@ -1628,3 +1628,20 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   故**不能宣称"今后不会再有假 head"**，只能说"走标准构建路径时会被拦住"。
 - **本卡的意义**：它是 `INSTALLER-MATRIX-1` 中我两处造假的直接产物 —— 守卫能挡住的，
   正是我自己犯过的那类错。
+## 218. GATE4-PAGES-UPGRADE-1 完成（限定）：三页 PASS + 阅读器 NotReachable + 升级回退六步全通（2026-11-15，DSH，goal 轮次 17）
+
+- 提交：`adabc2f7f`（四页证据）+ 本次收口。
+- **四页（安装产物 `0.1.1+71cecb95a`）**：`bookshelf`/`workbench`/`settings` **PASS**
+  （`PrintWindow(PW_RENDERFULLCONTENT)` 从窗口自身渲染 + 强制窗口标题含 `NewManga` + 亮度方差阈值；
+  bookshelf 已**目视确认**：标题 `New Manga`、导航 `资料柜/工位/控制台/主题工作室`、`Host 就绪`）。
+  **`reader` NOT_REACHABLE** —— 空数据根下与 bookshelf **哈希相同**（`2d62b2d7…`），**未算到达**。
+- **升级/回退**：0.1.0 ↔ 0.1.1 双向覆盖安装与卸载-再装**六步全部 exit 0**；
+  `VERSION.json.version` 与 HKCU `DisplayVersion` 正确切换；
+  **用户数据根清单 SHA-256 全程恒为 `6ae4d6da…d9b2`**。
+- **限定**：0.1.0 是**同一份字节换标签**（`version_note` 已声明）⇒ 验证的是 NSIS 在版本标签间的覆盖/回退语义，
+  **不是**真实跨版本二进制升级；所有步骤 exe `ProductVersion` 恒为 `0.1.1+71cecb95a…`。
+- **★ 自登记：本卡第一版截图全是假的** —— 用 `Graphics.CopyFromScreen` 截窗口矩形，
+  四张 PNG **全是桌面**（我的对话窗口 + VPN 工具），而四张哈希各不相同、方差也各不相同，
+  **看起来完全像四页证据**；我只看了数字没看图。改为 `PrintWindow` + 标题校验后修正。
+  教训：**数字不同不等于内容正确；截图类证据必须人眼过一遍，且必须从目标窗口渲染**。
+- **条件 4 仍不判 MET**：sidecar 缺 SFX 权重、安装器 unsigned、`reader` 页未验证。

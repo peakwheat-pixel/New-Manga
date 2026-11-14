@@ -265,3 +265,24 @@
 
 **条件 4 仍不判 MET**：sidecar 仍缺 SFX 权重（`yolo11s-seg.onnx`）、安装器 unsigned、
 四页与升级/回退矩阵未做。但**安装/启动/卸载三条已实测通过**，且死字节级证明了用户数据根未被卸载触碰。
+## 18. 条件 4 收尾：四页可达性 + 升级/回退矩阵（2026-11-15，`GATE4-PAGES-UPGRADE-1`）
+
+| 项 | 结果 |
+|---|---|
+| **四页可达性** | `bookshelf` / `workbench` / `settings` **PASS**（安装产物上、`PrintWindow` 从窗口自身渲染、强制窗口标题含 `NewManga`、方差阈值防黑屏；bookshelf 已**目视确认**是真界面）。**`reader` NOT_REACHABLE** —— 空数据根下 `--page=reader` 与 bookshelf **哈希完全相同**（回落），未算作到达 |
+| **升级/回退** | 0.1.0 ↔ 0.1.1 **双向**覆盖安装与卸载-再装共六步全部 exit 0；`VERSION.json.version` / HKCU `DisplayVersion` 正确切换；**用户数据根清单 SHA-256 全程不变**（`6ae4d6da…d9b2`） |
+| 隔离 | 所有启动 `--data-root=<workspace 隔离目录>`；用户数据根哈希前后一致 |
+
+**必须限定的两件事**：
+
+1. **`reader` 未到达**：需先在隔离数据根导入一本书，再以 `--page=reader` 启动。**四页并非全部可达。**
+2. **0.1.0 是同一份字节换标签**（`version_note` 已声明）⇒ 验证的是"NSIS 覆盖安装/卸载-再装在两个版本标签间可用"，
+   **不是**"真实跨版本二进制升级"。所有步骤的 exe `ProductVersion` 恒为 `0.1.1+71cecb95a…`。
+
+**另一件必须登记的事（我的错）**：本卡第一版截图用 `Graphics.CopyFromScreen` 截窗口矩形，
+**四张 PNG 全是桌面**（我的对话窗口 + VPN 工具），而四张哈希各不相同、方差也各不相同，
+**看起来完全像四页证据**。我只看了数字没看图，直到把 `bookshelf.png` 读出来才发现。
+已改为 `PrintWindow` + 标题校验，并把这一条写进卡面与证据。
+**教训：数字不同不等于内容正确；截图类证据必须人眼过一遍，且必须从目标窗口渲染。**
+
+**条件 4 仍不判 MET**：sidecar 缺 SFX 权重（`yolo11s-seg.onnx`）、安装器 unsigned、`reader` 页未验证。
