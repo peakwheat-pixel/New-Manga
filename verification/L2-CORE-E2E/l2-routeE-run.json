@@ -1,0 +1,102 @@
+{
+  "ac": "AC3/AC4",
+  "generated_at_utc": "2026-11-14T13:05:06Z",
+  "sidecar": null,
+  "core_launch": "python-source:G:\\CODEX\\New Manga",
+  "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\L2-CORE-E2E\\work-root-glm",
+  "book_id": "f52f2772e8044557a72e82f5ea6ab932",
+  "command": "translate_all",
+  "translate_provider": "openai-compatible-translation",
+  "label": "l2-glm-both",
+  "api_key_read_by_tool": false,
+  "commands": [
+    {
+      "command": "core.ping",
+      "result": {
+        "status": "ready",
+        "protocol_version": {
+          "major": 2,
+          "minor": 3
+        },
+        "capabilities": [
+          "library.list_books",
+          "source.read/1",
+          "source.resolve-secret/1",
+          "source.read.run/1",
+          "source.reattest/1",
+          "library.delete.preview/1",
+          "library.trash.read/1",
+          "library.trash.write/1",
+          "source.sync.scan/1",
+          "source.sync.plan/1",
+          "source.sync.apply/1",
+          "source.sync.relink/1",
+          "source.sync.repoint/1",
+          "source.sync.resync/1",
+          "source.sync.operation/1",
+          "source.sync.enumerate/1",
+          "source.sync.plan-materialization/1"
+        ]
+      }
+    }
+  ],
+  "overrides": {
+    "provider_bindings": {
+      "ocr": "manga-ocr",
+      "translate": "openai-compatible-translation"
+    }
+  },
+  "start": {
+    "run_id": "run-85d23568f0474dfc8b9d923766125fce",
+    "status": "pending"
+  },
+  "run_id": "run-85d23568f0474dfc8b9d923766125fce",
+  "terminal": "completed_with_failures",
+  "status_transitions": [
+    "pending",
+    "completed_with_failures"
+  ],
+  "elapsed_ms": 400.9,
+  "command_traces": {
+    "GetRunSnapshot_request": null
+  },
+  "task_projection": {
+    "run_status": "completed_with_failures",
+    "overall_progress": 1.0,
+    "counts": {
+      "total": 1,
+      "completed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "blocked": 0,
+      "waiting": 0,
+      "processing": 0
+    },
+    "blocked_reasons": [],
+    "step_status": {
+      "ocr": {
+        "failed": 1
+      }
+    },
+    "error_codes": [
+      {
+        "step_type": "ocr",
+        "status": "failed",
+        "error_code": "PROVIDER_NOT_CONFIGURED"
+      }
+    ],
+    "tasks": [
+      {
+        "target_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "status": "failed",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_NOT_CONFIGURED"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -145,3 +145,39 @@ error_codes=[("ocr","PROVIDER_NOT_CONFIGURED")]
 ### 10.5 一句话
 
 **Core→落库的端到端翻译未获证明**（三次尝试均在"第一个需要模型的步骤"止步，或止步于无 code 的 planning 门）；已证明的相邻事实见 §3/§8.2/§9 与本节 10.1。
+## 11. 路线 E：远程视觉 OCR（GLM-4V）— 最后一次尝试，仍未产出
+
+**结论：仍 `BLOCKED`。** 且证据指向**不是 provider 配置形状**问题，而是 Core 侧 provider **就绪/解析**判定（属产品缺口范畴，按指令 STOP 上报，未改 `src/**`）。
+
+### 11.1 本轮设置（全新根）
+
+- 新 work-root `workspace/task-envs/L2-CORE-E2E/work-root-glm`（从 `BOOK-FIXTURE-1/isolated-data` 复制，`v6 → v14`，自动备份 4,024,458 B verified）。
+- 凭据：从用户授权 `api.txt` 的**智普**段（`模型名称：glm` / `base url：https://open.bigmodel.cn/api/paas/v4`）取出 key，`cmdkey /generic:NewManga/provider/glm-vision-ocr/ocr-basic /user:apikey /pass:<key>` 写入 vault（`key_present: true`；未进仓库/日志/提交）。
+- seed（`pipeline_defaults`，写后启 Core）：profiles = `openai-vision-ocr`（`provider_type=openai-compatible-vision`, `base_url=https://open.bigmodel.cn/api/paas/v4`, `model=glm-4v-flash`）+ `openai-compatible-translation`（DeepSeek）；bindings = `{"ocr":"openai-vision-ocr","translate":"openai-compatible-translation"}`。
+- 区域：同一页 2 个 region，日文 `ocr_text`（`おはようございます。` / `今日はいい天気ですね。`）。
+
+### 11.2 三种绑定形状都试过（这是关键证据）
+
+| # | ocr 绑定形状 | 结果 |
+|---|---|---|
+| E-1 | `{"ocr": "glm-vision-ocr"}`（用户 profile id，profile_type=openai-compatible-vision） | `ocr / PROVIDER_NOT_CONFIGURED` |
+| E-2 | `{"ocr": "openai-vision-ocr"}`（**固定注册槽 id**），且 profiles 只留槽 profile（误删 translate → 触发 `RUN_SNAPSHOT_INCOMPLETE`，已排除为操作失误） | start_failed（配置不全，非目标结论） |
+| E-3 | `{"ocr": "openai-vision-ocr"}` + profiles **同时**含 translate（正确形状） | `ocr / PROVIDER_NOT_CONFIGURED` |
+
+**进程内核对（E-1 形状）**：`create_run` 后 `run.provider_binding_snapshot["ocr"]` 是**完整**的
+`{provider_id:"glm-vision-ocr", execution:{provider_id:"openai-vision-ocr", provider_type:"openai-compatible-vision", base_url:"https://open.bigmodel.cn/api/paas/v4", model:"glm-4v-flash", credential_ref:"NewManga/provider/glm-vision-ocr/ocr-basic", adapter_version:"openai-compatible-v1", network_profile:{...}}}` + 合法 digest。
+
+⇒ **冻结快照里的 replay 配置是完整的**，但执行期该 step 仍报 `PROVIDER_NOT_CONFIGURED`。按卡面判据：这不是"provider 配置形状不对"（形状已被快照证明），而是 **Core 侧 vision provider 的就绪/解析判定**（registry resolve/readiness gate）未接受该配置 —— **属产品缺口，STOP 上报，未改 `src/**`**。
+
+### 11.3 已排除（本轮新增）
+
+1. `ocr` 绑定缺失（快照里明确存在）；2. 槽位 id 写错（E-2/E-3 直接绑 `openai-vision-ocr` 仍同样失败）；3. translate 配置被 profile 段覆盖（E-3 已同时保留两者，StartRun 通过、只有 ocr step 失败）；4. GLM key 未落 vault（cmdkey 成功且 target 与 profile `credential_ref` 一致）；5. 区域缺失（同页 2 个 region 已 seed，且 page scope 展开成功）。
+
+### 11.4 下一步需要的条件（不再是"跑一次"能解决）
+
+- **产品侧**：查 vision OCR 的 registry 就绪/解析为何在 execution 完整时仍判 `PROVIDER_NOT_CONFIGURED`（候选：`requirements` 的 endpoint/credential 校验、`resolve_for_run` 对 profile-id vs 槽 id 的比较、或 vision provider 需要 detect 前置）。这需要读 `src/infrastructure/providers/**` 并可能改代码 —— 超出本验证任务边界。
+- 或回到 **D（本地 ONNX 模型）**，绕开远程视觉路径。
+
+### 11.5 一句话
+
+**Core→落库的端到端翻译仍未证明**；本轮把失败从"缺模型"精确推进到「execution 完整但 provider 解析判 not-configured」，这是产品侧需要单独定位的缺口，不是配置问题。
