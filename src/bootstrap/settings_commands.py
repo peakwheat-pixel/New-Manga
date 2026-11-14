@@ -7,6 +7,7 @@ from dataclasses import replace
 from datetime import datetime, timezone
 import ipaddress
 import json
+import sqlite3
 import time
 import urllib.request
 import uuid
@@ -1024,21 +1025,40 @@ class P15SettingsCommands:
         ``rollback`` is best-effort: the contract is the typed failure, and a
         rollback that itself fails must not mask it with a raw exception.
 
-        Exception scope (P1-2, deliberately explicit rather than ``except Exception``):
-        the two writers this pair joins can raise exactly these families —
-        ``BindingValidationError`` (the pipeline-defaults seam's own validation),
-        ``KeyError`` (``JsonProviderProfileStore.update_profile`` signals a missing row
-        with it), ``OSError`` (JSON file read/write/replace), ``ValueError``
-        (``ProfileFileFormatError`` / ``json.JSONDecodeError`` / dataclass validation)
-        and ``TypeError`` (JSON serialisation of an unexpected value). Anything else is
-        a programming error and must stay loud instead of being turned into a
+        Exception scope (P1-2 + r2 R2-001, deliberately explicit rather than
+        ``except Exception``): the writers this pair joins can raise exactly these
+        families —
+
+        * ``BindingValidationError`` — the pipeline-defaults seam's own validation;
+        * ``KeyError`` — ``JsonProviderProfileStore.update_profile`` signals a missing
+          row with it (``json_profile_stores.py:162-164``);
+        * ``OSError`` — JSON file read/write/``os.replace``
+          (``json_profile_stores.py:32-40``);
+        * ``ValueError`` — ``ProfileFileFormatError`` (a ValueError subclass) /
+          ``json.JSONDecodeError`` / dataclass validation;
+        * ``TypeError`` — JSON serialisation of an unexpected value;
+        * ``sqlite3.Error`` — **the mirror's only persistence is SQLite**
+          (``pipeline_defaults`` row). A SQLite write failure is a storage-unavailable
+          condition of exactly the same class as ``OSError``: it must be rolled back
+          and reported as a typed failure, not escape as a raw exception (r2 R2-001
+          measured the half-write when it escaped).
+
+        Anything else (``AttributeError``, ``NameError``, ``RuntimeError`` …) is a
+        programming error and must stay loud instead of being turned into a
         business-level SETTINGS_UNAVAILABLE.
         """
         try:
             write()
         except SettingsSurfaceError:
             raise
-        except (BindingValidationError, KeyError, OSError, TypeError, ValueError) as error:
+        except (
+            BindingValidationError,
+            KeyError,
+            OSError,
+            TypeError,
+            ValueError,
+            sqlite3.Error,
+        ) as error:
             try:
                 rollback()
             except Exception:  # noqa: BLE001 - best effort; the typed failure is the contract

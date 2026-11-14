@@ -436,3 +436,134 @@ def test_store_binding_failure_rolls_the_mirror_back(env, monkeypatch) -> None:
     assert response["error"]["code"] == "SETTINGS_UNAVAILABLE", response["error"]
     assert "translate" not in mirror_state(core)[1], "mirror kept a step the store rejected"
     assert core.provider_binding_store.list_bindings() == []
+
+# ------------------------------------------------- r2 R2-001 / R2-002: remaining catch families
+#
+# Every member of `_write_with_rollback`'s catch tuple must be hit by at least one
+# reverse test, otherwise "we catch X" is an unverified claim. The three below cover
+# sqlite3.Error (the mirror's own persistence), ValueError (profile-file format) and
+# TypeError (serialisation), which the four earlier reverse tests did not reach.
+
+def test_sqlite_write_failure_rolls_the_mirror_back(env, monkeypatch) -> None:
+    """r2 R2-001: the mirror's only persistence is SQLite.
+
+    A transient SQLite write failure must be caught, rolled back and reported typed —
+    previously it escaped the tuple and left "mirror new / store old" with no rollback.
+    The failure is made one-shot so the rollback itself can still succeed (the
+    persistent-unwritable window is registered in README §6.2 as unrecoverable).
+    """
+    import sqlite3
+
+    from infrastructure.sqlite import pipeline as pipeline_store
+
+    core, server = env
+    profile = create_profile(server, endpoint="https://old.example.test/v1")
+    profile_id = profile["profile_id"]
+
+    original = pipeline_store.SqliteSnapshotProvider.set_defaults
+    calls = {"count": 0}
+
+    def commit_then_fail(self, **kwargs):
+        # The realistic r2 R2-001 shape: the row IS written (mirror now new), and the
+        # failure happens right after -- e.g. the lock is lost while finishing the
+        # operation. Raising *before* the write would leave the mirror untouched and
+        # prove nothing about the rollback.
+        calls["count"] += 1
+        original(self, **kwargs)
+        if calls["count"] == 1:
+            raise sqlite3.OperationalError("database is locked")
+
+    monkeypatch.setattr(pipeline_store.SqliteSnapshotProvider, "set_defaults", commit_then_fail)
+
+    response = request(server, "settings_provider_profiles_update", {
+        "profile_id": profile_id,
+        "display_name": "Renamed",
+        "capabilities": ["Translation"],
+        "endpoint": "https://new.example.test/v1",
+        "model": "model-z",
+        "network_profile_id": None,
+        "enabled": True,
+    })
+    assert response["error"] is not None
+    assert response["error"]["code"] == "SETTINGS_UNAVAILABLE", response["error"]
+    assert mirror_state(core)[0][profile_id]["base_url"] == "https://old.example.test/v1", (
+        "sqlite failure escaped the rollback whitelist"
+    )
+    assert core.provider_profile_store.get_profile(profile_id).base_url == "https://old.example.test/v1"
+
+
+def test_store_format_error_rolls_the_mirror_back(env, monkeypatch) -> None:
+    """ValueError family: an unparsable profile file must roll the mirror back."""
+    from infrastructure.settings.json_profile_stores import ProfileFileFormatError
+
+    core, server = env
+    profile = create_profile(server)
+    profile_id = profile["profile_id"]
+
+    def boom(bindings):
+        raise ProfileFileFormatError("provider_bindings.json has an unsupported format")
+
+    monkeypatch.setattr(core.provider_binding_store, "save_bindings", boom)
+    response = request(server, "settings_provider_bindings_set", {
+        "scope": {"kind": "global"}, "capability": "Translation", "profile_id": profile_id,
+    })
+    assert response["error"] is not None
+    assert response["error"]["code"] == "SETTINGS_UNAVAILABLE", response["error"]
+    assert "translate" not in mirror_state(core)[1]
+    assert core.provider_binding_store.list_bindings() == []
+
+
+def test_store_type_error_rolls_the_mirror_back(env, monkeypatch) -> None:
+    """TypeError family: an unserialisable value must roll the mirror back."""
+    core, server = env
+    profile = create_profile(server)
+    profile_id = profile["profile_id"]
+
+    def boom(bindings):
+        raise TypeError("Object of type object is not JSON serializable")
+
+    monkeypatch.setattr(core.provider_binding_store, "save_bindings", boom)
+    response = request(server, "settings_provider_bindings_set", {
+        "scope": {"kind": "global"}, "capability": "Translation", "profile_id": profile_id,
+    })
+    assert response["error"] is not None
+    assert response["error"]["code"] == "SETTINGS_UNAVAILABLE", response["error"]
+    assert "translate" not in mirror_state(core)[1]
+
+def test_seam_validation_error_after_write_rolls_back_the_mirror(env, monkeypatch) -> None:
+    """`BindingValidationError` arriving AFTER the mirror write committed.
+
+    A seam validation error usually fires before anything is written (nothing to roll
+    back), which would make the catch member undiscriminated. Here the section is really
+    written first and the validation error is raised afterwards, so dropping the member
+    from the catch tuple leaves "mirror new / store old" and this test goes RED.
+    """
+    core, server = env
+    profile = create_profile(server, endpoint="https://old.example.test/v1")
+    profile_id = profile["profile_id"]
+
+    original = core.pipeline_defaults.save_settings_section
+    calls = {"count": 0}
+
+    def commit_then_reject(section, values):
+        calls["count"] += 1
+        result = original(section, values)
+        if calls["count"] == 1:
+            raise BindingValidationError("rejected after the section was written")
+        return result
+
+    monkeypatch.setattr(core.pipeline_defaults, "save_settings_section", commit_then_reject)
+    response = request(server, "settings_provider_profiles_update", {
+        "profile_id": profile_id,
+        "display_name": "Renamed",
+        "capabilities": ["Translation"],
+        "endpoint": "https://new.example.test/v1",
+        "model": "model-z",
+        "network_profile_id": None,
+        "enabled": True,
+    })
+    assert response["error"] is not None
+    assert response["error"]["code"] == "SETTINGS_UNAVAILABLE", response["error"]
+    assert mirror_state(core)[0][profile_id]["base_url"] == "https://old.example.test/v1", (
+        "seam validation error escaped without rolling the committed mirror write back"
+    )

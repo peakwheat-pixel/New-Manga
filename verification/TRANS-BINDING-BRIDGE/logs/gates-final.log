@@ -1,5 +1,5 @@
-# TRANS-BINDING-BRIDGE 门禁与定向测试原始输出（2026-11-14，r1 处置后）
-# HEAD=3a118368168b4d19adc4278ec6e9b4c55c4e3edd   ← 本日志生成时 HEAD；提交随后包含本文件
+# TRANS-BINDING-BRIDGE 门禁与定向测试原始输出（2026-11-14，r2 P2-001 处置后）
+# HEAD=65425a24f2dd205ae2596abca893cb6636763113   ← 本日志生成时 HEAD；提交随后包含本文件
 # 复现：以下每节第一行即完整可复制命令（工作目录 = 仓库根 G:\CODEX\New Manga）
 
 ## 1) 命令：pwsh -NoProfile -File tools/governance/check.ps1
@@ -44,5 +44,5 @@ OK: rendered counts match FEA-C07 doc
 | 6 | `RetryFailedTargetsAsync` | `Task<RunControlInfo?>` |
 EXIT=0
 ## 5) 命令：C:\Python314\python.exe -m pytest -q tests/core/test_trans_binding_bridge.py tests/core/test_p15_core_settings.py
-115 passed in 9.63s
+119 passed in 9.41s
 EXIT=0

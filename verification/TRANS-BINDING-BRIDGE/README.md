@@ -26,8 +26,8 @@
 | **AC3 fail-closed** | **PASS** | **mirror-first + store-after + 失败则 restore**：镜像失败 → 不写 JSON store；store 失败 → 回滚镜像。典型半写（store 已写、镜像未写）在结构上不可能出现 | `::test_profile_mirror_failure_is_typed_and_leaves_no_half_write`、`::test_binding_mirror_failure_rolls_back_the_binding_rows`（typed `SETTINGS_UNAVAILABLE` + 两侧均空） |
 | **AC4 复用 seam** | **PASS** | 只经 `PipelineDefaultsService.save_settings_section` / `save_provider_binding` / `clear_provider_binding`；未新增 persistence 实现 | 代码评审面；loader 注入点在 `core_assembly.py:1827-1833` |
 | **AC5 不新增契约面** | **PASS** | 无新 wire 命令、无 `IHostController` 成员；`generate_api_inventory --check` 仍 `1/80/6=87`；`verify_pins` 18/18 | `logs/gates-final.log` |
-| **AC6 判别测试** | **PASS** | 7 例；含「写入 profile+binding 后 runtime 侧读得到」与「镜像失败不留半写」 | `tests/core/test_trans_binding_bridge.py` |
-| **AC7 门禁** | **PASS** | 定向 108 passed（7 新 + 101 既有 P15）；全量 pytest 见 §3；四门禁 EXIT=0 | `logs/pytest-full.log`、`logs/gates-final.log` |
+| **AC6 判别测试** | **PASS** | **18 例**（7 首版 + 3 scope 分流 + 8 反向/异常族）；含「写入 profile+binding 后 runtime 侧读得到」与「镜像失败/回滚不留半写」 | `tests/core/test_trans_binding_bridge.py` |
+| **AC7 门禁** | **PASS** | 定向 **119 passed**（18 bridge + 101 既有 P15）；全量 pytest 见 §3；四门禁 EXIT=0 | `logs/pytest-full.log`、`logs/gates-final.log` |
 | **AC8 生效时机** | **PASS（文档）** | 见 §2 | `core_assembly.py:1421-1426` |
 
 ## 2. AC8 生效时机（供 T-C 的 UI 文案）
@@ -46,7 +46,7 @@ provider_runtime = build_provider_runtime(
 
 ## 3. 测试与门禁（原始输出见 logs/）
 
-- 定向：`pytest -q tests/core/test_trans_binding_bridge.py tests/core/test_p15_core_settings.py` → **108 passed**
+- 定向：`pytest -q tests/core/test_trans_binding_bridge.py tests/core/test_p15_core_settings.py` → **119 passed**（18 bridge + 101 P15）
 - 全量：`logs/pytest-full.log`
 - 门禁：`logs/gates-final.log` —— 每节首行即**完整可复制命令**（工作目录 = 仓库根）：`pwsh -NoProfile -File tools/governance/check.ps1` / `pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/TRANS-BINDING-BRIDGE.md` / `pwsh -NoProfile -File tools/governance/verify_pins.ps1` / `C:\Python314\python.exe tools/generate_api_inventory.py --check`
 
@@ -98,18 +98,22 @@ WITHOUT mirror: profiles=[]             bindings={}
 | `BindingValidationError` | pipeline-defaults seam 自身校验（`application/settings/errors.py`） |
 | `KeyError` | `JsonProviderProfileStore.update_profile` 对缺失行显式抛（`src/infrastructure/settings/json_profile_stores.py:162-164`） |
 | `OSError` | JSON 读/写/`os.replace`（`json_profile_stores.py:32-40`） |
+| `sqlite3.Error` | **r2 R2-001**：镜像唯一持久化是 SQLite（`pipeline_defaults` 行，`pipeline.py:1766-1786`）；SQLite 写失败与 `OSError` 同类（存储不可写），必须回滚并转 typed，不是编程错误 |
 | `ValueError` | `ProfileFileFormatError`（`json_profile_stores.py:28`，ValueError 子类）/ `json.JSONDecodeError` / dataclass 校验 |
 | `TypeError` | JSON 序列化异常值的防御 |
 
 其余（`AttributeError`/`NameError`/`RuntimeError` …）属编程错误，**故意不捕获**，让其保持响亮，而不是被转成业务级 `SETTINGS_UNAVAILABLE`。
 
-**新增反向判别测试**（镜像先写、store 后失败的四条路径全覆盖）：
+**反向判别测试**（镜像先写、后写失败；覆盖 store 四条写路径 + 全部捕获族）：
 - `test_store_update_failure_rolls_the_mirror_back`（`update_profile` 抛 `KeyError` ← r1 实测的那条）
 - `test_store_create_failure_rolls_the_mirror_back`（`add_profile` 抛 `OSError`）
 - `test_store_delete_failure_restores_the_mirror`（`delete_profile` 抛 `OSError`）
 - `test_store_binding_failure_rolls_the_mirror_back`（`save_bindings` 抛 `OSError`）
+- `test_sqlite_write_failure_rolls_the_mirror_back`（**r2 R2-001**：`set_defaults` 抛 `sqlite3.OperationalError`，一次性失败以便回滚可成功）
+- `test_store_format_error_rolls_the_mirror_back`（`ValueError` 族：`ProfileFileFormatError`）
+- `test_store_type_error_rolls_the_mirror_back`（`TypeError` 族：JSON 序列化失败）
 
-四条都断言：typed `SETTINGS_UNAVAILABLE` + 镜像回到调用前值 + 与 JSON 侧一致。
+全部断言：typed `SETTINGS_UNAVAILABLE` + 镜像回到调用前值 + 与 JSON 侧一致（详见 §6.3 的逐项回退敏感性矩阵）。
 
 **仍无法保证的反向窗口（如实登记，不含糊）**：
 
@@ -117,3 +121,19 @@ WITHOUT mirror: profiles=[]             bindings={}
 2. **进程在两次写之间被强杀**：镜像已提交、JSON 未写（或反之）无崩溃恢复标记；两者是不同存储、无 WAL 级协调。
 3. **JSON 文件被外部并发改写**：store 是「读-改-原子写」，外部写者会造成丢失更新（既有风险，与本桥无关）。
 4. **book/chapter scope 绑定不驱动执行**：扁平槽只接受 global（§6.1）⇒ 仅配置 book-scope 绑定时 `_chain` 仍会 `PROVIDER_NOT_CONFIGURED`。这是当前 run 快照结构的固有限制（无 per-book step 槽），需另卡在 run 快照上加 scope 维度，不在本卡。
+### 6.3 捕获族逐项回退敏感性矩阵（r2 R2-002 自查，实测）
+
+方法：把 `_write_with_rollback` 的捕获元组**逐项删掉一个成员**，每次只跑 `tests/core/test_trans_binding_bridge.py`（文件字节逐次从备份还原，还原后 SHA-256 一致）。「红」= 该成员的保证确实被测试覆盖。
+
+| 回退的成员 | 结果 | 变红的用例 |
+|---|---|---|
+| `KeyError` | **1 failed** | `test_store_update_failure_rolls_the_mirror_back` |
+| `OSError` | **3 failed** | `test_store_create_failure_rolls_the_mirror_back`、`test_store_delete_failure_restores_the_mirror`、`test_store_binding_failure_rolls_the_mirror_back` |
+| `TypeError` | **1 failed** | `test_store_type_error_rolls_the_mirror_back` |
+| `ValueError` | **1 failed** | `test_store_format_error_rolls_the_mirror_back`（`ProfileFileFormatError` 是 ValueError 子类） |
+| `sqlite3.Error` | **1 failed** | `test_sqlite_write_failure_rolls_the_mirror_back`（**r2 R2-001**；失败发生在写入提交之后，否则前后值相同、证明不了回滚） |
+| `BindingValidationError` | **0 failed（冗余成员，如实登记）** | — |
+
+**关于 `BindingValidationError` 为 0 红的解释（不是漏测）**：`BindingValidationError → SettingsError → ValueError`（`src/application/settings/errors.py:6,22`，运行期 `issubclass(..., ValueError) is True`），所以它**已被 `ValueError` 完全覆盖**，删除后行为不变。保留该成员只为**显式表达意图**（并防止未来有人改基类时静默失去保证），不构成独立保证。相应新增的 `test_seam_validation_error_after_write_rolls_back_the_mirror` 证明的是「镜像已提交、随后 seam 抛错 ⇒ 回滚」这条路径，它由 `ValueError` 分支接住（回退 `ValueError` 时该用例同样变红，见上表第 4 行口径）。
+
+**另一个必须写清的事实**：P15 命令的 dispatch 外层有 catch-all（`src/bootstrap/core_service.py:7317-7324`），任何逃出 `_write_with_rollback` 的异常都会被映射成 `SETTINGS_UNAVAILABLE`。因此**wire 错误码不是判别信号**——本桥测试的判别信号是「镜像是否回到调用前值 + 与 JSON 侧是否一致」，这也是上表用「镜像状态」而非错误码来衡量敏感性的原因。
