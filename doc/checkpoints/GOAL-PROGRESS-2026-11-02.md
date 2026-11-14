@@ -1853,3 +1853,19 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **待 DSH 裁决**：①操作开始（plan 创建）时是否已知路径；②只有 Core scan target 知道则是否扩 Core（成本=方案 B）；
   ③都拿不到是否接受"非 folder 恢复永久 typed 拒绝"并在产品上限制该能力。
 - **未改任何代码**；带 opt-in 三类基线仍 **12/1**；条件 3 仍不判 MET。
+## 233. E9-PATH-AVAILABILITY-1：六个 journal 入口全无容器路径 → E-9 只剩"扩 Core"或"接受限制"（2026-11-15，DSH，goal 轮次 34）
+
+- **回答上一轮的问题 1**：**容器路径在 journal 写入点不可得**。逐入口核实：
+  `Begin(planId, planDigest, kind, requestDigest, operationId?, grantIds?)` 无；
+  `Authorize(operationId, authorizationJson, hostReceiptId)` 无；`MarkCommitted` 只带 receipt 无；
+  `payload` 只读 `authorization`/`grant_ids` 无；`registryAuthorizations[]` 只含
+  `registry_id`/`generation`/`identity_digest` 无；`HostAuthorizationMinter.Mint` 只接收上述无。
+- **唯一知道路径的**是 `SourceReadCoordinator.IssueLockedAsync` 的 `sourcePath`（Run 授权链, :564），
+  与 operation journal 之间**没有传递通道**。
+- **只剩两选项**：①**扩 Core**（改 wire 契约 + 跨职责：Host 授权材料搬进 Core）；②**接受为能力限制**
+  （保持 typed 拒绝 + 文档/UI 明确"仅 folder 来源支持崩溃恢复"，零代码）。
+- **DSH 技术判断倾向 ②**，但**这是产品取舍**，按 goal 应派 codex/zcode 裁决；上一轮 codex 因 Windows 740
+  无法读代码，**该裁决尚未作出**。
+- **E-9 状态更新**：从"待修 P2 缺陷"调整为 **"已定位、修复路径受产品裁决阻塞的能力限制"**；
+  typed 拒绝已使失败**可解释**（`SOURCE_PLAN_UNAVAILABLE` 而非误导性的 `SOURCE_ENTRY_MISSING`）。
+- 未改代码；带 opt-in 三类基线仍 **12/1**；条件 3 仍不判 MET。

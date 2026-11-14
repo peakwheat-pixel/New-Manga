@@ -287,3 +287,29 @@ Codex 被要求裁决"journal（A）vs Core plan（B）"，但其命令因 Windo
 **结论**：A 可行，但**"塞进 `authorizationJson`"会改变 `:152` 的摘要语义** ——
 更小风险的等价方案是 **journal 表新增独立列 `container_path TEXT NULL`**，完全不碰既有 JSON、
 摘要与消费者。**本卡未实施**，待 DSH 冻结范围。
+### E-9 路径可得性核实（2026-11-15，`E9-PATH-AVAILABILITY-1`）
+
+**结论：六个 journal 写入入口全都没有容器路径。**
+
+| 入口 | 签名/上下文 | 有路径？ |
+|---|---|---|
+| `SourceOperationCoordinator.Begin` | `(planId, planDigest, kind, requestDigest, operationId?, grantIds?)` | **无** |
+| `SourceOperationCoordinator.Authorize` | `(operationId, authorizationJson, hostReceiptId)` | **无** |
+| `MarkCommitted` | 只带 receipt | **无** |
+| `HostOperationOrchestrator` 的 `payload` | 只读 `authorization` / `grant_ids` | **无** |
+| `registryAuthorizations[]` | `registry_id` / `generation` / `identity_digest` | **无** |
+| `HostAuthorizationMinter.Mint` | 只接收上述 authorizations | **无** |
+
+唯一知道路径的是 `SourceReadCoordinator.IssueLockedAsync` 的 `sourcePath`（Run 授权链，`:564`），
+与 operation journal 之间**没有传递通道**。
+
+**因此 E-9 只剩两个选项**：
+1. **扩 Core**（scan target 或 plan materialization 加容器路径）—— 改 wire 契约，且**跨职责**
+   （Host 的授权材料搬进 Core）；
+2. **接受为能力限制**—— 保持 typed 拒绝，并在文档/UI 明确"仅 folder 来源支持崩溃恢复"。**零代码**。
+
+**DSH 技术判断倾向 2**（成本收益不成比例），但**这是产品取舍**（是否限制 zip 来源的崩溃恢复能力），
+按 goal 应派 codex/zcode 裁决；上一轮 codex 因 Windows 740 无法读代码，**该裁决尚未作出**。
+
+**E-9 状态更新**：从"待修的 P2 缺陷"调整为 **"已定位、修复路径受产品裁决阻塞的能力限制"**。
+typed 拒绝已使失败**可解释**（`SOURCE_PLAN_UNAVAILABLE` 而非误导性的 `SOURCE_ENTRY_MISSING`）。
