@@ -13,6 +13,8 @@ import uuid
 from urllib.parse import urlsplit
 
 from domain.books.entities import ReadingDirection
+from application.settings.errors import BindingValidationError
+from application.settings.provider_runtime_mirror import ProviderRuntimeMirror
 from ports.network.profiles import (
     MODE_DIRECT,
     MODE_HTTP,
@@ -346,16 +348,42 @@ class P15SettingsCommands:
             ) from error
         if profile.credential_ref == credential_ref:
             return {"state": "configured"}
-        try:
-            store.update_profile(replace(profile, credential_ref=credential_ref, updated_at=self._now()))
-        except Exception as error:
+        updated = replace(profile, credential_ref=credential_ref, updated_at=self._now())
+        # `kind` here is the CREDENTIAL kind from _credential_target (CREDENTIAL_KIND_PROVIDER
+        # for provider profiles, CREDENTIAL_KIND_PROXY for network profiles).
+        if kind != CREDENTIAL_KIND_PROVIDER:
+            # Network-profile credentials are out of this bridge's scope (AC1 names
+            # provider profiles only); their write path stays exactly as before.
+            try:
+                store.update_profile(updated)
+            except Exception as error:
+                try:
+                    credentials.delete_credential(credential_ref)
+                except Exception:  # noqa: BLE001 - cleanup is best effort
+                    pass
+                raise _fail(
+                    "unavailable", "credential_binding", "contact_support", "SETTINGS_UNAVAILABLE"
+                ) from error
+            return {"state": "configured"}
+
+        mirror = self._runtime_mirror("profile")
+
+        def write() -> None:
+            # AC1: a credential reference IS part of the runtime profile shape,
+            # so the mirror must follow this write too (reference only, never the secret).
+            mirror.upsert_profile(updated)
+            store.update_profile(updated)
+
+        def rollback() -> None:
+            mirror.upsert_profile(profile)
+            # Keep the pre-existing cleanup: a credential minted for this binding
+            # must not survive a failed profile write.
             try:
                 credentials.delete_credential(credential_ref)
-            except Exception:
+            except Exception:  # noqa: BLE001 - cleanup is best effort
                 pass
-            raise _fail(
-                "unavailable", "credential_binding", "contact_support", "SETTINGS_UNAVAILABLE"
-            ) from error
+
+        self._write_with_rollback("profile", "configure_credential", write, rollback)
         return {"state": "configured"}
 
     def _clear_profile_credential(self, payload: dict) -> dict:
@@ -376,12 +404,28 @@ class P15SettingsCommands:
             raise _fail(
                 "unavailable", "credential_store", "configure_credential", "CREDENTIAL_STORE_UNAVAILABLE"
             ) from error
-        try:
-            store.update_profile(replace(profile, credential_ref=None, updated_at=self._now()))
-        except Exception as error:
-            raise _fail(
-                "unavailable", "credential_binding", "contact_support", "SETTINGS_UNAVAILABLE"
-            ) from error
+        cleared = replace(profile, credential_ref=None, updated_at=self._now())
+        # `kind` here is the CREDENTIAL kind from _credential_target (CREDENTIAL_KIND_PROVIDER
+        # for provider profiles, CREDENTIAL_KIND_PROXY for network profiles).
+        if kind != CREDENTIAL_KIND_PROVIDER:
+            # Same scope boundary as the bind path: network credentials stay as before.
+            try:
+                store.update_profile(cleared)
+            except Exception as error:
+                raise _fail(
+                    "unavailable", "credential_binding", "contact_support", "SETTINGS_UNAVAILABLE"
+                ) from error
+            return {"state": "missing"}
+
+        mirror = self._runtime_mirror("profile")
+
+        def write() -> None:
+            mirror.upsert_profile(cleared)
+            store.update_profile(cleared)
+
+        self._write_with_rollback(
+            "profile", "configure_credential", write, lambda: mirror.upsert_profile(profile)
+        )
         return {"state": "missing"}
 
     def _credential_target(self, target: object):
@@ -607,7 +651,16 @@ class P15SettingsCommands:
             created_at=self._now(),
             updated_at=self._now(),
         )
-        self._profile_store().add_profile(profile)
+        store = self._profile_store()
+        mirror = self._runtime_mirror("profile")
+
+        def write() -> None:
+            # AC3 ordering: mirror first, then the JSON store. A store failure
+            # restores the mirror, so "store written, mirror missing" cannot persist.
+            mirror.upsert_profile(profile)
+            store.add_profile(profile)
+
+        self._write_with_rollback("profile", "edit_profile", write, lambda: mirror.remove_profile(profile_id))
         return {"profile": self._profile_to_wire(profile)}
 
     def _profiles_update(self, payload: dict) -> dict:
@@ -636,20 +689,39 @@ class P15SettingsCommands:
             created_at=existing.created_at,
             updated_at=self._now(),
         )
-        self._profile_store().update_profile(profile)
+        mirror = self._runtime_mirror("profile")
+
+        def write() -> None:
+            # AC3 ordering: mirror first, then the JSON store; a store failure
+            # restores the previous mirror entry instead of leaving a half-write.
+            mirror.upsert_profile(profile)
+            self._profile_store().update_profile(profile)
+
+        self._write_with_rollback(
+            "profile", "edit_profile", write, lambda: mirror.upsert_profile(existing)
+        )
         return {"profile": self._profile_to_wire(profile)}
 
     def _profiles_delete(self, payload: dict) -> dict:
         self._fields(payload, {"profile_id"}, phase="profile")
         profile_id = self._text(payload, "profile_id", "profile")
         store = self._profile_store()
-        if store.get_profile(profile_id) is None:
+        existing = store.get_profile(profile_id)
+        if existing is None:
             raise _fail("not_found", "profile", "edit_profile", "SETTINGS_ITEM_NOT_FOUND")
         if any(row["profile_id"] == profile_id for row in self._binding_rows()):
             raise _fail("conflict", "profile", "clear_binding", "SETTINGS_CONFLICT")
         if self._profile_used_by_protected_run(profile_id):
             raise _fail("conflict", "profile", "clear_binding", "SETTINGS_CONFLICT")
-        store.delete_profile(profile_id)
+        mirror = self._runtime_mirror("profile")
+
+        def write() -> None:
+            mirror.remove_profile(profile_id)
+            store.delete_profile(profile_id)
+
+        self._write_with_rollback(
+            "profile", "edit_profile", write, lambda: mirror.upsert_profile(existing)
+        )
         return {"deleted": True}
 
     def _bindings_set(self, payload: dict) -> dict:
@@ -666,7 +738,21 @@ class P15SettingsCommands:
         ]
         binding = {"scope": scope, "capability": capability, "profile_id": profile_id}
         rows.append(binding)
-        self._binding_store().save_bindings(rows)
+        mirror = self._runtime_mirror("binding")
+        before = mirror.snapshot()
+        # `capability` is the P15 wire literal ("Translation"); the mirror is keyed
+        # by the model capability ("translation") that CAPABILITY_TO_STEP uses.
+        mirror_capability = CAPABILITY_TO_MODEL.get(capability, capability)
+
+        def write() -> None:
+            # AC1/AC3: mirror the step binding first (that is what _chain reads),
+            # then persist the P15 binding rows; a row-write failure restores the mirror.
+            mirror.bind_capability(mirror_capability, profile_id)
+            self._binding_store().save_bindings(rows)
+
+        self._write_with_rollback(
+            "binding", "clear_binding", write, lambda: mirror.restore(before)
+        )
         return {"binding": binding}
 
     def _bindings_clear(self, payload: dict) -> dict:
@@ -678,7 +764,17 @@ class P15SettingsCommands:
             row for row in self._binding_rows()
             if (row["scope"], row["capability"]) != (scope, capability)
         ]
-        self._binding_store().save_bindings(rows)
+        mirror = self._runtime_mirror("binding")
+        before = mirror.snapshot()
+        mirror_capability = CAPABILITY_TO_MODEL.get(capability, capability)
+
+        def write() -> None:
+            mirror.clear_capability(mirror_capability)
+            self._binding_store().save_bindings(rows)
+
+        self._write_with_rollback(
+            "binding", "clear_binding", write, lambda: mirror.restore(before)
+        )
         return {"cleared": True}
 
     def _bindings_resolve(self, payload: dict) -> dict:
@@ -889,6 +985,42 @@ class P15SettingsCommands:
         if store is None:
             raise _fail("unavailable", "profile", "contact_support", "SETTINGS_UNAVAILABLE")
         return store
+
+    # ------------------------------------------------------------------
+    # TRANS-BINDING-BRIDGE (L1-T-A): the run-side mirror seams.
+    # The runtime reads provider config from the pipeline_defaults row, while
+    # P15 persists to JSON stores; the two are joined ONLY here. Ordering is
+    # mirror-first (AC3): a store write can then never succeed without its
+    # mirror, and a mirror failure rolls back before the store is touched.
+    # ------------------------------------------------------------------
+
+    def _runtime_mirror(self, phase: str) -> ProviderRuntimeMirror:
+        defaults = getattr(self._core, "pipeline_defaults", None)
+        if defaults is None:
+            raise _fail(
+                "unavailable",
+                phase,
+                "edit_profile" if phase == "profile" else "clear_binding",
+                "SETTINGS_UNAVAILABLE",
+            )
+        return ProviderRuntimeMirror(defaults)
+
+    def _write_with_rollback(self, phase: str, action: str, write, rollback) -> None:
+        """Run one mirror+store write pair; on failure restore and fail typed (AC3).
+
+        ``rollback`` is best-effort: the contract is the typed failure, and a
+        rollback that itself fails must not mask it with a raw exception.
+        """
+        try:
+            write()
+        except SettingsSurfaceError:
+            raise
+        except (BindingValidationError, OSError, ValueError, TypeError) as error:
+            try:
+                rollback()
+            except Exception:  # noqa: BLE001 - best effort; the typed failure is the contract
+                pass
+            raise _fail("unavailable", phase, action, "SETTINGS_UNAVAILABLE") from error
 
     def _network_store(self):
         store = getattr(self._core, "network_profile_store", None)
