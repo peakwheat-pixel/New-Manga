@@ -1541,3 +1541,27 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   局部（把 scan 也纳入 `_readerIoGate`）能用但脆弱。修复须附**判别测试**：并发发 gate 内/外命令，
   断言每个响应 request_id 与请求一致，去掉底层锁后测试变红。
 - **本轮同时**：把 13 个失败从 `SIDECAR-REBUILD-1` 拆出登记为 `E-6`（该卡的目标"重建 sidecar"已达成）。
+## 214. ★ E-6 P1 已修复：core_service 管道响应错配（2026-11-15，DSH，goal 轮次 13）
+
+- 提交链：`065b9990f`（修复）→ `dff3d41a5`（r1 复核处置：补 AC3 测试 + 文档一致性）。
+- **缺陷**：`list_chapters`(req-7) 拿到 `source_list_scan_targets`(req-6) 的响应 `{"targets": []}`
+  ⇒ 无 `chapters` 属性 ⇒ 静默返回空 ⇒ **阅读器章节列表空显示**（P1，用户可见）。
+- **根因三方**：`ExchangeAsync` 无锁（假定一次一个在途）+ `_readerIoGate` 只覆盖 reader 方法 +
+  后台 `SourceScanScheduler.cs:2415`/`SourceOperationCoordinator.cs:219` 绕过 gate。放大器：
+  `SendAsync` 不校验 `request_id`。
+- **修复**：① `_pipeGate = SemaphoreSlim(1,1)`，`SendAsync` 与 `SendHostControlAsync` **各自**
+  把 `ExchangeAsync` + 事件帧跳过循环 + 解析整段包进 `try/finally`（锁放这两个方法而非
+  `ExchangeAsync`，因为事件帧读取仍用同一 stream）；② `EnsureResponseBelongsToRequest`
+  在 id 不匹配时抛 `SidecarException(MalformedResponse)`。
+- **判别力（两次实验，均由实测确认）**：修复前判别测试 FAIL（`The stream is currently in use by a
+  previous operation on the stream`）→ 修复后 PASS → **把 gate 放宽到 8 重新变红** → 还原转绿；
+  r1 复核另做：删掉校验（gate 保持 1）→ 全部仍绿，证明 AC3 零覆盖 → 补 `PipeResponsePairingValidationTests`
+  3 个 Fact，再验"禁用校验 → 变红"。
+- **效果**：带新 sidecar Host **失败 9 → 2~3**、pass +7；CoreClient 209/4/0/213。
+  无夹具：CoreClient **189/0/27/216**、Host **321/0/74/395**、App 950/0/11（0 failed）。
+- **复核**：`review-pipe-exclusive` 独立上下文，verdict **ACCEPT_WITH_LIMITATIONS**；
+  确认生产路径**全部在锁内**、**无死锁**（`_sessionGate`→`_pipeGate` 单向）。
+- **未修并登记为 E-7**：`HostBridgeClient` 同型无锁管道、`SendRawAsync` 锁外、
+  独占未下沉传输层、无 `request_id` 时 fail-open、错配后无重同步（R-002）。
+- **仍开**：CoreClient 4 个 Frozen Core 前提测试（与管道无关）、Host 剩余 2~3 个
+  （`SOURCE_REGISTRY_BUSY` / `KeyNotFoundException` ×2）。
