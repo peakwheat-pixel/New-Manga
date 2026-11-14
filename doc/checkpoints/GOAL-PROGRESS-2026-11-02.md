@@ -2044,3 +2044,19 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   **缺类别级守卫** —— `StartupDiagnosticsTests` **不检查 `[bind]`**，应加"startup.log 不含 `[Binding]`"。
 - **复核自陈未做**：未运行构建/测试（只读约束）；未追改后日志的二进制来源；未核对 `capture-reader.ps1` 参数。
 - **登记**：`doc/reviews/E8-INDEPENDENT-REVIEW-1.md`（含全部 5 处错误的更正记录）。
+## 245. E8-GUARD-1：类别级绑定守卫（收窄到解析失败特征）—— 实测能变红（2026-11-15，DSH，goal 轮次 46）
+
+- **执行复核的最高优先级项**：在 `StartupDiagnosticsTests.RealProcessLaunchMatrix`（**本就跑真实 App 进程**）
+  加类别级守卫。选择该位置而非新建 headless 测试，是因为本项目**没有** Avalonia 绑定错误捕获设施，
+  而该测试检查的是**真实二进制写出的真实日志** —— 最忠实。
+- **两处改动**：①`--exit-after` **2500 → 15000**（2500ms 不足以让 V2 shell 构建到 Studio 控件；
+  **看不见错误的守卫是假测试**）；②断言 `Assert.DoesNotContain("Could not find a matching property accessor", log)`。
+- **★ 第一次实现踩坑**：先写成断言裸 `"[Binding]"`，**立刻红了** —— 因为 `ReaderOverlay` 有一条
+  `[Binding] ... 'Value is null'`（`CurrentPage == null` 的**预期空态读数**）。
+  **这正是"断言噪音而非缺陷"的陷阱**。收窄到"解析失败"特征后既覆盖 E-8 整类、又不误伤合法空态。
+- **判别力实测**：正常 **1 passed**（65s）；去掉 `{ Source = captured }` → **FAIL**
+  （`DoesNotContain() Failure: Sub-string found`，**16s 就失败**）；恢复 → passed，`PROBE`=0。
+- **回归**：无夹具 App.Tests **954 / 0 / 11 / 965**（skip 仍 11，0 failed）。
+- **边界（诚实）**：该守卫是 **opt-in**，**默认不跑** ⇒ 日常 CI 不会自动防住该类回归；
+  未加 `ActiveTabLabel`/`StudioLeaveModal` 独立测试，因复核已证明**加了也是假测试**
+  （前者文本断言在绑定坏掉时仍绿；后者去掉 `Source` 仍绿），改由本守卫的类别覆盖兜底。

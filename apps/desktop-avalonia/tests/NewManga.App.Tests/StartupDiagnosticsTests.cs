@@ -309,7 +309,7 @@ public sealed class StartupDiagnosticsTests : IDisposable
                 "--log-dir=" + logDirectory,
                 "--theme-home=" + themeHome,
                 "--mutex-name=" + "Local\\NewManga.App.Tests.Fea07Startup." + Guid.NewGuid().ToString("N")[..12],
-                "--exit-after=2500",
+                "--exit-after=15000",
             };
             arguments.AddRange(extraArgs);
 
@@ -325,6 +325,22 @@ public sealed class StartupDiagnosticsTests : IDisposable
             Assert.True(File.Exists(startupLog), $"{name}: startup.log was not written");
             var log = File.ReadAllText(startupLog);
             Assert.Contains(expected, log, StringComparison.Ordinal);
+
+            // E8-GUARD-1 (category-level guard; independent review asked for exactly this):
+            // E-8 proved how silently a binding can fail -- 8 HUD buttons and an inspector header stopped
+            // reflecting state and NOTHING failed; the only trace was [Binding] lines in startup.log.
+            // A row-specific Assert.Contains can never catch a NEW binding error, so guard the CLASS.
+            //
+            // Scope is deliberately NARROWED to the failure signature "cannot find the property accessor":
+            // a *resolution* failure (wrong DataContext / missing Source / renamed member). The one remaining
+            // `[Binding] ... 'Value is null'` line from ReaderOverlay is an EXPECTED empty-state readout --
+            // CurrentPage is null when no book is open -- and must not be treated as a defect
+            // (see verification/E8-RESIDUAL-1/README.md). Guarding the bare "[Binding]" prefix would fail on
+            // that legitimate line, which is exactly the "assert the noise, not the defect" trap.
+            Assert.DoesNotContain(
+                "Could not find a matching property accessor",
+                log,
+                StringComparison.Ordinal);
 
             // 隔离直接证据：sink 的安装行必须指向本用例的隔离 log 目录（子进程确实用了我们给的值）。
             Assert.Contains(
