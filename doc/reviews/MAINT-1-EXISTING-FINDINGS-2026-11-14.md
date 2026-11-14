@@ -89,4 +89,43 @@
 - 二者不是一回事：边界测试证明"不会错"，压测证明"在规模/并发下仍可接受"。
   故 `L-F1-3` 的处置仍应是 `KEEP-NOTRUN`（已由条件 1 裁决给出重开条件），
   **不得用 AC3 的 MET 声称 L-F1-3 的压测已完成**。
+## E-6：`list_chapters` 间歇返回空（被 E-2 掩盖的既有竞态，2026-11-15 由 `SIDECAR-REBUILD-1` 暴露）
 
+**严重度候选：P1（用户可见：阅读器章节列表可能空显示）；证据充分度：中 —— 未定位到确切代码行，故暂不正式定级。**
+
+### 现象（可复现）
+
+- `HostReaderChaptersIntegrationTests.ListChapters_MatchesReaderProjection` 在
+  `:47 Assert.NotEmpty(chapters)` 处失败（`chapters` 为空），**两个测试单独跑都通过、连跑时交替失败**：
+  - 连跑①：`ConcurrentChapterAndProjectionReads_AreSerialized` 失败（`Assert.Single` 空）
+  - 连跑②：`ListChapters_MatchesReaderProjection:47` 失败
+- 仅在**新 sidecar**（2026-11-15 重建）下出现；旧 sidecar 时代这两测试是 **SKIP**（E-2）⇒ **缺陷一直存在，只是从未执行**。
+
+### 已排除（均有证据，见 `verification/SIDECAR-REBUILD-1/README.md` §7–§13）
+
+| 假设 | 结论 |
+|---|---|
+| sidecar 有问题 | **排除**：wire 帧显示该 session 的 `list_chapters` 返回了 1 个 chapter；`errors: {}`；`core_service.stderr.log` 无 error |
+| 数据根/参数传错 | **排除**：Host 用 `NEWMANGA_DATA_ROOT`（`CoreServiceClient.cs:499`）；`--data-root` 从来不被 sidecar 支持 |
+| namespace re-bind | **排除**：`_ensure_preview_namespace` 只处理 preview/derived catalog |
+| xunit 并行 | **排除**：两项目均已 `DisableTestParallelization = true` |
+| 残留进程 | **排除**：连跑后无 `core_service` 进程 |
+| 客户端串帧（gate 缺失） | **排除**：`HostRuntime._readerIoGate`（`:34`）覆盖 `ListChaptersAsync`（`:511`）**与** `GetReaderProjectionAsync`（`:784`） |
+
+### 剩余嫌疑
+
+`CoreServiceClient.SendAsync` 的"跳过事件帧"循环（`CoreServiceClient.cs:2376-2384`）：
+`core_service` 在 READER-PROGRESS-1 之后会推 `ReadingProgressChanged` 事件帧，该循环会继续读下一行 ——
+**这是唯一能吃到/错配响应的地方**。另注：`Transport/SidecarProcess.ExchangeAsync`（`:186`）**无锁**
+（"写一行→读下一行"），若存在 gate 外调用与 gate 内并发，理论仍可串帧。
+
+### 建议
+
+单独建卡 `LISTCHAPTERS-EMPTY-RACE-1`：在 `ListChaptersAsync` 解析前临时打印 `result.GetRawText()`，
+连跑复现，据输出判定是"事件帧循环吃掉响应"还是"解析 bug"；修复须附**回退后测试变红**的判别证据。
+**不得**用放宽断言、跳过测试或降低覆盖来"解决"。
+
+### 与 Gate 的关系
+
+不属于条件 1 的 8 项（那 8 项是审计 finding）。它是 E-2 解除后暴露的**产品级缺陷候选**，
+在定位前不影响 Gate 判定口径，但**构成条件 3/4 的真实性证据**：真实 UI 同时读章节与投影可能空显示。

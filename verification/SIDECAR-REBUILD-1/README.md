@@ -410,3 +410,57 @@ return chapters;   // ← 属性缺失时【静默返回空列表】，不报错
 - 若打印不出（异常）⇒ 看异常。
 
 **这是唯一能一步定性的实验**，不需要再猜。
+## 14. ★ 第七轮诊断（**根因确认**）：request_id 错配，后台 source 扫描抢走了阅读器响应
+
+### 14.1 失败 session 的完整 wire（6 帧）
+
+```
+# 1  REQ core.ping      req-1  → RESP req-1  ✅
+# 2  REQ OpenHostSession hostctl-2 → RESP hostctl-2 ✅
+# 3  REQ core.ping      req-3  → RESP req-3  ✅
+# 4  REQ core.ping      req-4  → RESP req-4  ✅
+# 5  REQ ListBooks      req-5  → RESP req-5  ✅  result: [1 本书]
+# 6  REQ list_chapters  req-7  → RESP req-6  ❌  result: {"targets": []}
+```
+
+**第 6 帧：请求是 `req-7`（`list_chapters`），拿到的却是 `req-6` 的响应，
+内容是 `{"targets": []}` —— 那是 `source_list_scan_targets` 的响应！**
+
+`list_chapters` 的解析器在结果里找不到 `chapters` 属性 ⇒ **静默返回空列表** ⇒
+`Assert.NotEmpty(chapters)` @ `HostReaderChaptersIntegrationTests.cs:47` **失败**。
+
+### 14.2 根因（三方同时满足）
+
+| 环节 | 事实 | 位置 |
+|---|---|---|
+| 管道本身 | `ExchangeAsync` **无锁**，写法是"写一行 → 读下一行"，**假定一次只有一个请求在途** | `Transport/SidecarProcess.cs:186-240` |
+| Host 层保护 | `_readerIoGate` 只覆盖 **reader 类**方法（`ListChaptersAsync:511`、`GetReaderProjectionAsync:784` 等 5 处） | `HostRuntime.cs:34/511/527/543/559/576/784` |
+| **漏洞** | **后台 source 扫描直接调 `CoreServiceClient`，完全不经过该 gate** | **`SourceScanScheduler.cs:2415`**（`_core.ListSourceScanTargetsAsync`）、`SourceOperationCoordinator.cs:219` |
+
+⇒ 后台扫描（`source_list_scan_targets`）与阅读器命令**并发**使用同一条 core_service stdin/stdout 管道，
+响应互相错配。**这正是 `req-7` 拿到 `req-6` 响应的原因。**
+
+### 14.3 为什么它现在才暴露
+
+旧 sidecar（2026-10-23）时代这两个测试是 **SKIP**（`[BookFixtureFact]` 检查不到 sidecar 就跳过），
+所以这条竞态**从未被执行过**。E-2 解除后测试开始真跑，缺陷立即显现。
+
+### 14.4 严重度：**P1（用户可见）**
+
+真实场景：用户打开阅读器读章节列表时，后台 source 扫描若正在跑，`list_chapters` 可能拿到
+`source_list_scan_targets` 的响应 ⇒ **阅读器章节列表静默变空**，无任何错误提示。
+同类风险还波及任何"gate 外调用 + gate 内调用"并发的组合（`SourceOperationCoordinator` 亦在 gate 外）。
+
+### 14.5 修复方向（两层，建议做底层）
+
+1. **根治（推荐）**：在 `SidecarProcess.ExchangeAsync`（或 `CoreServiceClient.SendAsync`）加一个
+   **全局管道锁**（`SemaphoreSlim(1,1)`）。管道本来就是严格请求-响应复用，
+   "一次一个在途"必须由最底层保证 —— 否则今后任何新调用点都可能再踩。
+2. **局部（不充分）**：把 `SourceScanScheduler` / `SourceOperationCoordinator` 的调用也纳入 `_readerIoGate`。
+   能用，但每新增一个调用点就要记得加，脆弱。
+
+**判别测试要求**（修复必须能固定住）：
+并发发 `list_chapters` 与 `source_list_scan_targets`（或任何 gate 外命令），断言
+**每个响应的 `request_id` 与请求一致**；把底层锁去掉后该测试必须变红。
+`CoreServiceClient.SendAsync` 目前**不校验响应的 `request_id`** —— 这也是它能"静默错配"的原因，
+修复时建议同时加上**错配即抛 typed 错误**（而不是把别的命令的响应当成自己的结果）。
