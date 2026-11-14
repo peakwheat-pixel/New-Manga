@@ -244,3 +244,47 @@ error_codes = [("term_extract", "INVALID_INPUT")]
 ### 12.6 一句话
 
 **Core→落库的端到端翻译仍未证明**，但链路已推进到 **ocr(远程视觉) completed + color completed**，`regions_translated_differs = 0`；阻断点从"provider 配不上"变成"某 region 的 OCR 文本为空导致 term_extract 失败"，属于**数据/图片质量**层，而非 provider 形状或时序。
+## 13. 路线 E 收尾：**成功**（Core→落库端到端翻译已证明）
+
+### 13.1 运行环境与时间戳
+
+| 项 | 值 |
+|---|---|
+| work-root | `workspace/task-envs/L2-CORE-E2E/work-root-glm4`（全新，v6→v14） |
+| T1 seed 完成 | `2026-11-14T21:46:16` |
+| T2 Core 启动 | `2026-11-14T21:46:16`（同一 root；本次为凭据修正后的第二次运行，同一 probe 模式） |
+| T3 run 结束 | `2026-11-14T21:46:28` |
+| 探针 | `--python-core`（源码 Core）+ `--ocr-provider openai-vision-ocr`（仓外 config-only） |
+| 命令 / scope | `translate_all` / `page`（页 `f52f2772…`） |
+
+### 13.2 终态：**completed**
+
+```
+terminal = completed
+step_status = {ocr: completed(1), color: completed(1), term_extract: completed(1),
+               translate: completed(2), segment: completed(2), mask_refine: completed(2),
+               inpaint: completed(2), render: completed(2)}
+error_codes = []
+```
+
+### 13.3 `regions_translated_differs = 2`（> 0）
+
+| region | ocr_text（日文原文） | machine_translation（译文） | differs |
+|---|---|---|---|
+| `8c3c59f4…` | `キャロット？\nキャロット！\nキャロット？！\nキャロット！？？\nキャロッ…` | `Carrot?\nCarrot!\nCarrot?!\nCarrot!??\n…` | **True** |
+| `1f930c43…` | `キャロット！\nかあ かあ かあ` | `Carrot!\nCaw caw caw` | **True** |
+
+一条译文首 30 字符（脱敏，无 key）：`Carrot?\nCarrot!\nCarrot?!\nCarrot!`
+
+### 13.4 本轮两个修正（都不是产品缺陷）
+
+1. **region bbox 放大**到覆盖正文区域（`(0,0,760,560)` / `(0,560,760,640)`），GLM-4V 对两个 region 都返回了非空日文文本 ⇒ `term_extract` 由 failed 转 completed。
+2. **translate 的 `PROVIDER_AUTH_FAILED`**：vault 里 `NewManga/provider/3819f991…` 此前被我写成了**错误的 key**（解析 api.txt 段落时误取到 gemini 段）。按段落正确解析出 DeepSeek 段（`模型名称：deepseek-chat`，35 字符）重写该 ref 后，translate 立即 completed（同一 work-root，无需重新 seed）。
+
+### 13.5 结论
+
+**Core→落库的端到端翻译已证明**：远程视觉 OCR（GLM-4V）与远程翻译（DeepSeek）在同一次 `translate_all` 中完成，译文写回 `regions.text_json.machine_translation`，且与日文原文不同。L2 可从 `BLOCKED` 推进为「Core→落库已验」。
+
+### 13.6 责任归属（按 r1 要求写死）
+
+此前 3 轮的失败**不是产品缺陷**：探针 `run_translate_probe.py` 硬编码 `overrides.provider_bindings.ocr="manga-ocr"`，而 Run overrides 优先级高于 `pipeline_defaults`，因此 seed 被覆盖、`ocr` 永远落到缺 ONNX 的本地 provider。**是探针 override 覆盖，不是 Core 就绪判定缺陷**；上一轮"Core 侧就绪/解析缺陷"的判断**作废**。
