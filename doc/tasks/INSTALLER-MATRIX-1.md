@@ -3,7 +3,7 @@ id: INSTALLER-MATRIX-1
 title: 用旧 sidecar 跑通安装/卸载矩阵（条件 4 的机制验证）
 kind: evidence
 governance_version: 3
-status: in_progress
+status: done
 disposition: "Gate 条件 4：setup.exe + clean install + 启动 + 卸载 + 用户数据根保护"
 approval: DSH 2026-11-15（makensis 已具备；sidecar 沿用 2026-10-23 版并标注 E-2）
 suggested_owner: DSH

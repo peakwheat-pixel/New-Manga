@@ -1934,3 +1934,17 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   **"skip 数量"不等于"覆盖缺失"**。
 - **未做**：未把门禁改常开（CI/产品策略；Perf 单测 21 s，开常开会拉长默认套件）；
   `Recover` 未单独实测；基线未变（953/0/11、957/0/4）；条件 3 仍不判 MET。
+## 238. GATE-STATUS-REFRESH-1：STATUS 指针过期与卡面未收口的两处更正（2026-11-15，DSH，goal 轮次 39）
+
+- **背景**：尝试条件 4 的 `reader` 页（想用 `--page reader` 绕开 F11），**核实后确认仍不可行** ——
+  `SpaceForStartupPage` 把 `"reader"` 映射到 `SpaceId.Library`（**只切空间，不开沉浸式阅读器**），
+  且 `AppOptions` **没有**任何"启动时执行命令"的选项。**无新证据，与 `GATE4-READER-PAGE-1` 结论一致**。
+- **转向全量 Gate 复评，发现两处真实缺口**：
+  1. **STATUS.md 的测试基线过期**：写"无夹具三项目 **931/321/182**"，实际是 **953/325/192**
+     （App +22、Host +4、CoreClient +10，来自本轮的 SchemaGuard/MapMint/ReStartHint 等新增测试）。
+  2. **`INSTALLER-MATRIX-1` 卡面仍是 `in_progress`** —— 其工作（安装/启动/卸载/升级回退全 PASS、
+     数据根 manifest 恒定）**早已完成**，但卡面未收口，导致 STATUS 与 PLAN 指针虚高。
+- **更正**：STATUS 基线改 **953/325/192**（同长度，预算不变）；"十余张卡"→"二十余张卡"；
+  `INSTALLER-MATRIX-1` `in_progress → done`。STATUS 现 **3178/3200**（仍在预算内）。
+- **教训**：**卡面状态不会自动回流到三指针**。本轮前十张卡都 done 了，但 STATUS 一直没跟上；
+  这是"实现进展不自动回流"的又一次实例，且是我自己造成的。
