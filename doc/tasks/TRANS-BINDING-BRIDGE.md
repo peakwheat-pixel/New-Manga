@@ -85,3 +85,36 @@ Python：`C:\Python314\python.exe -m pytest`（定向 + 全量不得新增 faile
 ## Closeout Record
 
 - 未关闭（当前 `in_progress`）。
+
+## 交付记录（2026-11-14）
+
+- **commit**：`94b8f33f5`（6 文件，+860/−19）。
+- **取证（重要，比卡面表述更精确）**：
+  - `settings["providers"]["profiles"]` 存在 **SQLite `pipeline_defaults` 表**的 `settings_json` 列（`schema.py:431-437`、`pipeline.py:1766-1786`），**不是**独立 JSON 文件。
+  - `PROVIDER_NOT_CONFIGURED` 的直接来源是 `_chain` 读 `run.provider_binding_snapshot[step]`（`handlers.py:1266-1274`）⇒ **只镜像 profiles 不够，必须同时写 `provider_bindings[step]`**。已按此实现双写。
+  - P15 profile/binding 存 JSON 文件（`data_root/settings`，`core_assembly.py:1943-1945`）。
+  - legacy QML 设置已有同投影参考：`src/ui/viewmodels/settings/viewmodel.py:453-475`、`:405`、`:52-57`。
+- **结果**：全量 pytest **3551/0/10**（基线 3544 → +7）；定向 108 passed；四件套全绿；`--check` 维持 `1/80/6=87`；`apps/**` 零改动。
+- **判别力实测**：把镜像 no-op 后 `profiles=[]`、`bindings={}`，相关断言必红。
+
+## DSH 裁决（2026-11-14）
+
+### R-1 接受 AC3 的「mirror-first + 回滚」口径（不判 PARTIAL）
+
+跨两个存储（JSON store 与 SQLite `pipeline_defaults`）**没有跨库事务**是客观限制。卡面 AC3 的原意是排除「store 写了、镜像没写」这一方向，该方向已被**结构上**排除（mirror-first），故按 PASS 计。反向窗口（镜像已写、store 失败、回滚再失败）只能「尽力回滚 + typed 失败」，已在证据 README §5.3 显式披露。**若未来引入跨库事务能力，须重估本项。**
+
+### R-2 接受 credential 写入接线为 AC1 的实质要求（非越权）
+
+不镜像 `credential_ref` 会导致「profile 已建、key 已绑、运行侧仍无凭据」⇒ 认证失败，与本卡目标直接冲突。故 `BindProfileCredential`/`ClearProfileCredential` 的接线属 **AC1 的必要组成**，不判定 scope 扩张。
+
+### R-3 networks 镜像**另开卡**，不在本卡
+
+legacy QML 还镜像 `settings["providers"]["networks"]`（`viewmodel.py:485-520`）。本卡范围只覆盖 profiles/bindings/credential；networks 属**既有缺口**（`proxy_policy=profile` 且依赖网络 profile 时才会暴露），另立 T-D 处理。本卡证据 README §5 已登记为范围外。
+
+### R-4 写入 T-C 的硬要求
+
+`provider_runtime_mirror` 目前只被 `settings_commands.py` 消费。**T-C（及后续任何 Host 侧改配置路径）必须走同一条 Core 命令面**；否则镜像只在一条路径上生效，会出现「UI 改配置后仍 `PROVIDER_NOT_CONFIGURED`」的假死。此条已登记为 T-C 的前置约束。
+
+### R-5 证据与门禁
+
+全量 pytest 3551/0/10、四件套全绿、`--check` 1/80/6=87、`apps/**` 零改动 —— 均以本卡证据 README 为准；独立复核 `TRANS-BINDING-BRIDGE-r1.md` 待派。
