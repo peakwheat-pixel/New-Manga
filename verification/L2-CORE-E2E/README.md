@@ -99,3 +99,49 @@ seed 后核对（脱敏）：`pipeline_defaults.settings_json.providers.profiles
 ## 9. 对 L2 的一句话结论
 
 **Core→落库的端到端翻译尚未被证明。** 已证明的相邻事实：源码 Core 入口可跑、fixture v6→v14 迁移无损、装配期 provider 约束（含 `RUN_SNAPSHOT_INCOMPLETE` 实测）、DeepSeek 凭据可用、区域/原文经产品 API 可 seed、`retranslate_region` 在 region scope 下被接受并执行到 planning（blocked，原因未投影）。
+## 10. page scope 尝试（L2 最后一轮）
+
+**结论：仍无产出 ⇒ L2 登记 `BLOCKED`（环境资源缺失，非产品缺陷、非代码问题）。**
+
+### 10.1 本轮设置（全新建根，不叠上一轮状态）
+
+- 新 work-root：`workspace/task-envs/L2-CORE-E2E/work-root-pagescope`（从 `BOOK-FIXTURE-1/isolated-data` 复制，**v6 → v14**，`applied 8 migration(s)`，自动备份 4,024,374 B verified）。
+- seed 全部走产品 API：
+  - 2 个 region 在同一页 `f52f2772…`（`editing.create_region` + `apply_ocr_result`，日文 `ocr_text`：`おはようございます。` / `今日はいい天気ですね。`），**未用** `save_manual_translation`；
+  - `pipeline_defaults`：`save_settings_section("providers", {profiles:{openai-compatible-translation: deepseek…}})` + `save_provider_binding("ocr","manga-ocr")` / `("translate","openai-compatible-translation")`（T-A 的 seam，非手写 SQL）。
+- 凭据：vault 已有 DeepSeek key（§8.1，`key_present: true`）。
+
+### 10.2 结果
+
+```
+translate_all + page scope → terminal=completed_with_failures
+counts={"total":1,"completed":0,"failed":1}
+step_status={"ocr":{"failed":1}}
+error_codes=[("ocr","PROVIDER_NOT_CONFIGURED")]
+```
+
+⇒ **卡在 `ocr`，translate 从未执行**；`machine_translation` 仍为空，`regions_translated_differs = 0`。
+
+**为什么是 OCR**：`translate_all` 对页面先跑 ocr；`ocr` 绑定虽已 seed 为 `manga-ocr`，但本地 `manga-ocr` 需要 ONNX 模型文件，而**仓库与工作区都没有该模型**（本 work-root 内 `*.onnx` = 0 个）⇒ provider 未就绪，按 fail-closed 报 `PROVIDER_NOT_CONFIGURED`。这与 `REAL-TRANSLATE-PROVIDER-1` 轮次 29 的 `ocr / INVALID_INPUT`（region-less 页）和本轮同一根因族：**执行链需要一个真正可用的模型/视觉 provider，工作区里没有**。
+
+### 10.3 三条路线的终局汇总（L2 已验证到的最远处）
+
+| # | 命令 + scope | 终态 | typed 结果 | 卡点 |
+|---|---|---|---|---|
+| 1 | `translate_untranslated` + book | completed_with_failures | `detect / PROVIDER_NOT_CONFIGURED`（8/8） | 0-region 页先跑 detect，无 detect provider |
+| 2 | `retranslate_region` + region | **blocked** | 无 error_code（planning 门） | 步骤执行前被拒，原因未投影 |
+| 3 | `translate_all` + page | completed_with_failures | `ocr / PROVIDER_NOT_CONFIGURED` | 本地 `manga-ocr` 模型缺失 |
+
+### 10.4 BLOCKED 登记
+
+- **卡点**：执行链第一个需要**推理模型**的步骤（detect / ocr）。
+- **typed 错误**：`PROVIDER_NOT_CONFIGURED`（路线 1、3，有 code）；路线 2 为**无 error_code 的 planning 门**。
+- **已排除的假设（6 项）**：① sidecar 缺模型（已改源码 Core）；② fixture 污染（每轮新建根，regions 由 seed 控制）；③ Host/探针 payload 形状（StartRun 均被接受并产生 run/target）；④ 协议 minor/字段错位（minor 3 直连，T-B 已证）；⑤ 凭据无效（DeepSeek key HTTP 200）；⑥ 装配期 profile 缺失（`RUN_SNAPSHOT_INCOMPLETE` 已解，seed 后 StartRun 通过）。
+- **下一轮需要的具体条件（任一）**：
+  - **D. 提供 `manga-ocr`（或任一 OCR）ONNX 模型文件**并放到 Core 能解析的位置 → 路线 3 即可走通（detect 可跳过：page 已有 region）。
+  - **E. 配置远程视觉/OCR provider**（如 GLM-4V 等，需要对应 key）→ 可同时替代 detect/ocr。
+- **性质**：环境资源缺失，**不改产品代码即可解决**；L2 验证结论不影响产品可用性，仅影响 Gate 条件 5 的措辞。
+
+### 10.5 一句话
+
+**Core→落库的端到端翻译未获证明**（三次尝试均在"第一个需要模型的步骤"止步，或止步于无 code 的 planning 门）；已证明的相邻事实见 §3/§8.2/§9 与本节 10.1。
