@@ -230,3 +230,12 @@ NEW-MANGA-V1-FULL-AUDIT 与 R1–R4 整改、SEC-01/02/03、CORE-01、AUDIT-07/0
 - **门禁**：check 默认 + 两卡 `TaskPath` PASS；pins **18/18**（C07 新值）；`generate_api_inventory --check` EXIT 0；成员表逐行 = stdout（`ALL_MATCH=True`）。
 - **未翻转**：9 个 `closed_with_limitations` 全部保持；`FEA-06` AC3 仍 PARTIAL；`FEA-06-RESIDUAL-4A` 仍 `proposed`（PLAN 无行余量）。
 - **下一轮（RO-3）**：派独立上下文对 4A 做 byte-level 复核（重点：v1.9 差异范围、新 typed 码 `REGION_TEXT_PROJECTION_UNAVAILABLE`、pin 的 CRLF 可复现性、Banner 单 action 布局依据）；复核 approved 后追写载体 §6 与 §1B 并重冻，再释放 4B。
+
+### 轮次 23（2026-11-14，本会话续）—— limitation 处置矩阵
+
+- **产出**：[limitation 处置矩阵](../reviews/MAINT-1-LIMITATION-DISPOSITION-MATRIX-2026-11-14.md)（39 项，9 个 `closed_with_limitations` 节点全覆盖；每项含 `L-<节点>-<n>` 编号 + 处置码 + 证据指针）。
+- **处置分布**：`C3` 10 / `WAIVER` 10 / `IMPL` 8 / `C2` 4 / `SOLVED` 3 / `KEEP` 2 / `UNCERTAIN` 2。
+- **DSH 终裁**（append 于载体）：① 接受「`closed_with_limitations` + 载体 ≡ done+waiver」**作为 DSH 解释口径**（明写不是既有裁决）；② C2 五项全 OUT；③ AI-1 两项 C3 重分类接受但加**硬重开条件**；④ `FEA-06-PREREQ-1` 13 errors 的 OUT 仅在「单卡 TaskPath 红不计入 DoD §4」前提下成立，且须在判定报告显式披露；⑤ **C1 的 8 项 `IMPL` 是待办，DoD §3 未达成**。
+- **DoD 影响**：§1 由「未达成」转为「有载体 + 待口径确认」；§3 仍**未达成**（8 项实现待落）。
+- **副产物**：`FEA-15-ACCEPT-1` 的 pytest 16F 与 .NET 127F **均已解**（3537/0/0、1875/0/109）；`CHAPTER-SELECTOR-1` 已转绿。
+- **下一轮**：释放 `MAINT-2-C1-BATCH-1` 承载 8 项 C1 实现（PLAN 已腾出 45B）。
