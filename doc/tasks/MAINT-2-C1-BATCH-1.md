@@ -21,6 +21,8 @@ resource_closeout_status: pending
 evidence_dir: verification/MAINT-2-C1-BATCH-1
 allowed_paths:
   - doc/tasks/MAINT-2-C1-BATCH-1.md
+  - doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md
+  - doc/reviews/CONTRACT-UNFREEZE-2026-11-14-M2C1.md
   - doc/reviews/MAINT-2-C1-BATCH-1-*.md
   - verification/MAINT-2-C1-BATCH-1/**
   - src/domain/**
@@ -86,3 +88,23 @@ out_of_scope:
 ## Closeout Record
 
 - 未关闭（当前 `in_progress`）。
+
+## DSH 裁决（2026-11-14）
+
+### AC4 / AC5：**批准方案 A（契约 additive 修订）**
+
+- **授权**：写 `doc/reviews/CONTRACT-UNFREEZE-2026-11-14-M2C1.md` 载体，把 `kind`（`paged|webtoon`）与 `custom_rank`（`integer|null`）登记为 `list_chapters` 的**可选字段**（additive widening，**协议 minor 不 bump**）。
+- **依据**：`M2-C1:194` 的 `ListRegions` 1.5 additive widening 先例（加可选 `geometry`/`page_size`，minor 不变）。
+- **约束**：只加可选字段，不改既有四字段、不改键集语义、不动其它冻结字节；载体 §6 复核记录必须留 `pending`（作者不得自写 approved）。
+- **与矩阵一致性**：两项在 limitation 矩阵中为 `IMPL`，本裁决维持该处置，不改为 OUT。
+- **实现顺序**：载体 → Core 加键 → 客户端 DTO/解析 → AC4/AC5 判别测试（3 个 commit）。
+
+### AC8：**接受「以 validation clone 为可比基线」**
+
+- 理由：governance suite 断言的是**仓库字节**（EOL/autocrlf 语义），主工作树与 validation clone 的检出字节本就不同，两者数字不可直接比；该漂移与 C-07 pin 的 `GOV-EOL-PIN` 既有债同源。
+- **要求**：① 证据 README 写明「**复跑留证，不等于复跑通过**」；② 两套原始输出（validation clone 的 3F/61P 与主工作树的 12F/56P）都保留；③ 不得把 AC8 写成 `MET`，只能写「留证完成 + 基线不可比已说明」；④ 若要真正清零，另开 EOL 口径卡。
+- **本卡 AC8 判定**：`PARTIAL`（留证完成、基线漂移已披露且经 DSH 裁决）；不阻断 DoD §3 的其余 7 项。
+
+### AC1：**批准执行**（Avalonia 视图层，等 Python 批收尾后做）
+
+- 若引发现有 UI 结构断言失效，必须同步更新断言并说明，不得删除。
