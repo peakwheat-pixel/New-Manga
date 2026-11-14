@@ -413,6 +413,18 @@ public sealed class CoreServiceClient : IAsyncDisposable
     private bool _disposed;
     private readonly SemaphoreSlim _sessionGate = new(1, 1);
 
+    /// <summary>
+    /// CORE-PIPE-EXCLUSIVE-1 / E-6: core_service speaks a strictly request/response protocol on ONE
+    /// stdin/stdout pipe and <see cref="Transport.SidecarProcess"/> holds a single StreamReader over it.
+    /// Two concurrent callers therefore both corrupt each other's responses and trip
+    /// "The stream is currently in use by a previous operation on the stream".
+    ///
+    /// Every command -- app channel, host-control channel, gate-inside or gate-outside -- must hold this
+    /// gate for the WHOLE request/response cycle, including the event-frame skipping loop, because that
+    /// loop reads the same shared stream.
+    /// </summary>
+    private readonly SemaphoreSlim _pipeGate = new(1, 1);
+
     /// <summary>GRANT-ISSUER-1: the host-control session opened at startup (null until opened).</summary>
     public HostSessionInfo? HostSession { get; private set; }
 
@@ -680,6 +692,10 @@ public sealed class CoreServiceClient : IAsyncDisposable
             writer.WriteEndObject();
         });
 
+        // CORE-PIPE-EXCLUSIVE-1: same exclusive gate as the app channel -- one shared pipe.
+        await _pipeGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
         var frame = await _process
             .ExchangeAsync(line, escapeNonAscii: true, timeout, cancellationToken)
             .ConfigureAwait(false);
@@ -692,6 +708,7 @@ public sealed class CoreServiceClient : IAsyncDisposable
         }
 
         var response = CoreProtocol.Parse(responseLine);
+        EnsureResponseBelongsToRequest(response, requestId);
         if (response.Error is { } error)
         {
             throw new CoreOperationException(
@@ -699,6 +716,11 @@ public sealed class CoreServiceClient : IAsyncDisposable
         }
 
         return response;
+        }
+        finally
+        {
+            _pipeGate.Release();
+        }
     }
 
     public async Task<IReadOnlyList<BookSummary>> ListBooksAsync(CancellationToken cancellationToken = default)
@@ -2363,6 +2385,23 @@ public sealed class CoreServiceClient : IAsyncDisposable
             .ConfigureAwait(false);
         return CoreProtocol.Parse(frame.ResponseLine);
     }
+    /// <summary>
+    /// CORE-PIPE-EXCLUSIVE-1 / E-6: a response carrying a DIFFERENT request_id means the pipe handed back
+    /// another command's answer. Silently accepting it is how an empty chapter list reached the reader.
+    /// </summary>
+    private void EnsureResponseBelongsToRequest(CoreResponse response, string requestId)
+    {
+        if (response.RequestId is { } actual && !string.Equals(actual, requestId, StringComparison.Ordinal))
+        {
+            throw new SidecarException(
+                SidecarErrorCode.MalformedResponse,
+                SidecarSpec.CoreServiceName,
+                $"response request_id '{actual}' does not match request '{requestId}': "
+                + "the core pipe returned another command's response",
+                _options.StderrLogPath);
+        }
+    }
+
     public async Task<CoreResponse> SendAsync(
         string command,
         int minor,
@@ -2372,6 +2411,11 @@ public sealed class CoreServiceClient : IAsyncDisposable
     {
         var requestId = $"req-{Interlocked.Increment(ref _requestCounter)}";
         var line = CoreProtocol.BuildRequest(requestId, command, minor, payload);
+
+        // CORE-PIPE-EXCLUSIVE-1: hold the pipe for the entire cycle (write + read + event-frame skipping).
+        await _pipeGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+        try
+        {
         var frame = await _process.ExchangeAsync(line, escapeNonAscii: true, timeout, cancellationToken).ConfigureAwait(false);
 
         // READER-PROGRESS-1: core_service pushes event frames (ReadingProgressChanged …) on the same
@@ -2386,12 +2430,18 @@ public sealed class CoreServiceClient : IAsyncDisposable
         }
 
         var response = CoreProtocol.Parse(responseLine);
+        EnsureResponseBelongsToRequest(response, requestId);
         if (response.Error is { } error)
         {
             throw new CoreOperationException(error.Code, error.Category, error.Retryable, error.Message, response.RequestId ?? requestId);
         }
 
         return response;
+        }
+        finally
+        {
+            _pipeGate.Release();
+        }
     }
 
     /// <summary>
