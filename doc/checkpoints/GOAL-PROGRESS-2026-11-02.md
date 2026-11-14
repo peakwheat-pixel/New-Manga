@@ -1906,3 +1906,17 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **必须说清**：**这没有修好 E-9**。它仍是能力限制；"13/0"是**测试口径与产品能力声明对齐**，
   不是"恢复功能可用"。解锁路径 = mint-time DPAPI 路径映射（未做）。
 - **未做**：C-17/FEA-11 的"已知限制"正式小节（ZCode 要求的最小产品动作）尚未落；未跑 App/CoreClient 全量。
+## 236. E9-LIMITATION-DOC-1：E-9 已知限制正式登记（不动被 pin 的 C-17）（2026-11-15，DSH，goal 轮次 37）
+
+- **执行 ZCode 裁决的最小产品动作：文档**。新建 `doc/reviews/E9-KNOWN-LIMITATION-REGISTER.md`。
+- **★ 核实到不能改 C-17**：`doc/plan/FEA-CONTRACT-FROZEN-C17.md` **被 pin 覆盖** ——
+  其附录自陈三指纹（工作树 `cdeee487…`、blob `2cccc3c6…`、58134 bytes）与
+  `truth 17 OK + C17 OK = 18/18`；`verify_pins.ps1` 用 `doc/plan/FEA-CONTRACT-FROZEN-.md` 动态构造。
+  **改它会使 18/18 变红**，且冻结契约变更需正式 UNFREEZE。
+- **判断**：本限制**不需要改契约语义**（契约要求"恢复需要容器路径"，产品只是**暂时无法提供**），
+  故用**独立登记文件**承载，**不动冻结字节**。
+- **登记内容**：真实口径（**含正常 ACK**，非"仅崩溃恢复"）、数据安全边界（只挡读门，无数据损坏）、
+  解锁条件（**mint-time DPAPI 路径映射**）、被挡住的测试名（`KNOWN-LIMITATION-E9`）、四处引用。
+- **表述纪律写进文件本身**：**不得**写"仅崩溃恢复不可用"（ZCode 核实 `AcknowledgeAsync:468` 与
+  `RecoverAsync:581` 是同一 re-mint 路径）。
+- **未做**：未改 C-17（有意）；未实现 mint-time 映射；未跑测试（只加文档）。

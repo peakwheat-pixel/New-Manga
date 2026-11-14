@@ -350,3 +350,16 @@ typed 拒绝已使失败**可解释**（`SOURCE_PLAN_UNAVAILABLE` 而非误导�
 #### DSH 采纳
 
 **采纳**。待执行：测试三断言 + `KNOWN-LIMITATION-E9` 标记 + 本口径落 C-17/FEA-11 已知限制。
+#### E-9 已知限制登记（`E9-LIMITATION-DOC-1`）
+
+限制的正式登记入口：**`doc/reviews/E9-KNOWN-LIMITATION-REGISTER.md`**。
+
+**未改 C-17**：`doc/plan/FEA-CONTRACT-FROZEN-C17.md` 被 pin 覆盖
+（附录自陈三指纹与 `truth 17 OK + C17 OK = 18/18`；`verify_pins.ps1` 动态构造
+`doc/plan/FEA-CONTRACT-FROZEN-$id.md`），改它会使 18/18 变红。
+
+本限制**不需要改契约语义**（契约要求"恢复需要容器路径"，产品只是暂时无法提供），
+故用独立登记文件承载，**不动冻结字节**。
+
+登记文件内含：真实口径（**含正常 ACK**，不是"仅崩溃恢复"）、数据安全边界、
+解锁条件（mint-time DPAPI 路径映射）、被挡住的测试名、以及四处引用。
