@@ -115,3 +115,46 @@ HostRegionWorkbenchIntegrationTests.RegionReadWriteFace_ExecutesAgainstFrozenCor
 - **未**跑 App.Tests 的 7 个 sidecar 测试（时间原因）。
 - **未**用新 sidecar 重跑 publish 冒烟（条件 4 的下一步）。
 - SFX 权重缺失 → 该 probe 永远 `PROVIDER_NOT_CONFIGURED`，需用户提供 `yolo11s-seg.onnx`。
+## 7. 独立直连探测：新 sidecar **本身完全正常**（关键诊断）
+
+为排除"新 sidecar 自身有问题"，写了 `probe_core.py`（在 workspace）直接以 NDJSON 与
+`build/sidecar/core-sidecar/core-sidecar/core_service.exe` 通信：
+
+```
+=== core.ping ===
+{"protocol":"new-manga.core","version":{"major":2,"minor":3},"request_id":"req-1",
+ "result":{"status":"ready","protocol_version":{"major":2,"minor":3},
+ "capabilities":["library.list_books","source.read/1","source.resolve-secret/1","source.read.run/1",
+ "source.reattest/1","library.delete.preview/1","library.trash.read/1","library.trash.write/1",
+ "source.sync.scan/1","source.sync.plan/1","source.sync.apply/1","source.sync.relink/1",
+ "source.sync.repoint/1","source.sync.resync/1","source.sync.operation/1",
+ "source.sync.enumerate/1","source.sync.plan-materialization/1"]},"error":null}
+
+=== ListBooks (minor=3) ===
+{"protocol":"new-manga.core","version":{"major":2,"minor":3},"request_id":"req-2",
+ "result":[],"error":null}
+```
+
+**结论**：
+
+1. 新 sidecar **协议正常**（`status=ready`、`2.3`）、**`ListBooks` 返回合法空数组**（不是 `null`、不是错误对象）。
+2. capabilities 共 **17 条**，**含 `library.delete.preview/1`、`library.trash.read/1`、`library.trash.write/1`**
+   ⇒ E-2 的根因（缺新命令能力）**确已消除**。
+3. ⇒ **13 个失败不是 sidecar 造成的**，而在**测试夹具 / 协议配置 / 数据准备**这一层。这是把问题范围
+   从"sidecar 有问题"缩小到"测试侧适配"的关键一步。
+
+（注意：我第一版探测脚本把 protocol 名写成 `newmanga.core`，得到 `PROTOCOL_VERSION_UNSUPPORTED`；
+正确值是 **`new-manga.core`**。这个错误也说明：**协议名写错时的表现是"版本不支持"，不是"列表不是数组"**。）
+
+## 8. 因此 13 个失败的归因方向（下一轮）
+
+- `ListBooks result is not an array`（`WritePolicyTests.DefaultStart_IsReadWrite_AndCanCreateBook`）：
+  既然直连返回 `[]`，C# 侧拿到非数组的最可能原因是**它连的不是这个 sidecar**（夹具路径/环境变量没生效）
+  或**它走的是另一个通道**。需核 `WritePolicyTests` 的 sidecar 启动参数。
+- "集合为空" 类（`ListChapters` / `ConcurrentChapterAndProjectionReads` / `SaveReadingProgress` ×2）：
+  测试创建了 book/chapter 但列表读不到 ⇒ 可能**数据根不一致**（夹具用 A 的数据根，sidecar 写 B）。
+- `KeyNotFoundException`（`GrantIssuerTests` ×2）：响应里缺某个字段名，需核具体哪一帧。
+- `SOURCE_REGISTRY_BUSY`（`Fea11WatchHostRuntimeTests`）：疑似**并发/残留锁**，与 sidecar 版本无关。
+- `Assert.Equal Expected:8 Actual:0`（`RegionWrites_ReadOnlyHost...`）：需核这两处 8 的含义。
+
+**⇒ 本卡仍不得收口为 done**：归因方向已明确，但逐项核实未完成。

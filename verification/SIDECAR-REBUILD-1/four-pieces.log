@@ -1,4 +1,4 @@
-# SIDECAR-REBUILD-1 four-pieces 2026-11-15T03:22:33.5630694+08:00
+# SIDECAR-REBUILD-1 four-pieces (r2) 2026-11-15T03:26:15.9451753+08:00
 ## check.ps1
 Governance scope: 15 current documents; no historical directory scan.
 Task: doc\tasks\MAINT-1-RELEASE-MONITOR.md
@@ -12,13 +12,12 @@ PIN AUDIT: PASS (all 18)
 ## api inventory
 OK: rendered counts match FEA-C07 doc
 | **合计** | **87** | — |
-## 构建
-pip: 63 包全部安装成功（含 torch 2.14.0 cp314 / pyinstaller 6.22.3 / transformers 5.17.0）
-PyInstaller: Build complete, closure assertions PASS, bundle 753 MB, 5 exe + 3 ONNX
-最后一步 FAIL: sfx weights missing (M2-SFX-DETECT/weights-v2b/yolo11s-seg.onnx) -> core_service 不受影响
-## 带新 sidecar 的全量结果
-CoreClient: 208 passed / 4 failed / 0 skipped / 212  (基线 186/0/26)
+## 独立直连探测（probe_core.py，protocol=new-manga.core）
+core.ping -> status=ready, protocol=2.3, capabilities=17 条（含 library.delete.preview/1, library.trash.read/1, library.trash.write/1）
+ListBooks -> result=[] (error=null，合法空数组)
+=> 新 sidecar 自身正常；13 个失败在测试夹具/协议配置/数据准备层
+## 带新 sidecar 全量（上一轮实测，未变）
+CoreClient: 208 passed / 4 failed / 0 skipped / 212 (基线 186/0/26)
 Host:       342 passed / 9 failed / 44 skipped / 395 (基线 321/0/74)
-=> skip 100 -> 44 (-56)，pass 507 -> 550 (+43)，新增 13 failed
 ## 无夹具基线（未变）
 App 950/0/11/961 ; Host 321/0/74/395 ; CoreClient 186/0/26/212
