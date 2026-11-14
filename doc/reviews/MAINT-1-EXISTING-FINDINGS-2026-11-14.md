@@ -172,3 +172,31 @@
 ### 与 Gate 的关系
 
 不影响条件 1–6 的判定口径；但它是**数据正确性**类缺陷的同类风险，修复前不应宣称"并发安全"。
+## E-8：V2 Studio 页面成批 XAML 绑定错误（2026-11-15，`INSTALLER-MATRIX-1` 首次真实启动发现）
+
+**严重度：P2（静默 UI 失效，不影响数据）。**
+
+安装后启动的 `startup.log` 出现 6 条以上绑定错误，全部指向 `NewManga.App.ViewModels.V2.Studio.StudioPageViewModel`：
+
+```
+[Binding] An error occurred binding 'IsEnabled' to 'IsEnabled' at 'IsEnabled':
+  'Could not find a matching property accessor for 'IsEnabled' on '...StudioPageViewModel'.'
+[Binding] An error occurred binding 'Text' to 'ActiveTabLabel' at 'ActiveTabLabel':
+  'Could not find a matching property accessor for 'ActiveTabLabel' on '...StudioPageViewModel'.'
+```
+
+### 性质
+
+VM **没有** `IsEnabled` / `ActiveTabLabel` 属性，XAML 却绑定它们 ⇒ 这些控件在运行时**不会**反映状态
+（按钮启用态与标签文案静默失效）。**不抛异常、不黑屏**，所以很容易漏掉。
+
+### 为什么现在才发现
+
+headless UI 测试**不读** `startup.log` 的绑定诊断；此前也没有在**打包产物**上做真实启动并检查该日志。
+这是"打包产物验证"带来的新发现 —— 也正是条件 4 存在的意义。
+
+### 建议
+
+单独建卡：①在 `StudioPageViewModel` 补齐缺失属性（或用 `AvaloniaProperty`/`StyledProperty` 适配）；
+②**加一个能固定住的测试**：解析 `startup.log`（或订阅 Avalonia 的 binding-error 事件），
+一旦出现 `[Binding] An error occurred` 就失败 —— 这样同类问题今后不会静默复发。
