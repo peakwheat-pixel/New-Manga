@@ -1890,3 +1890,19 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **最小产品动作：仅文档**（sync UI 入口尚不存在，无载体做 UI 提示）。
 - **待执行**：测试三断言改造（涉及 (5)(6)(7) 三步联动，本轮未做）；本口径落 C-17/FEA-11 已知限制。
 - 带 opt-in 三类基线仍 **12/1**；条件 3 仍不判 MET。
+## 235. E9-KNOWN-LIMITATION-TESTS-1：按裁决改造测试 → 带 opt-in 三类 13/0（2026-11-15，DSH，goal 轮次 36）
+
+- **执行 ZCode 裁决的待办**：`ProductionDispatcherFullSyncChain` 的"ACK 成功"期望从未可达，
+  改为**断言 typed 拒绝**：`SourceAccessException` 且 `Code == SOURCE_PLAN_UNAVAILABLE`（5）；
+  **新增** journal 仍 `core-committed`（5a）+ 重复 ACK 幂等同拒（5b）；
+  (6) 改为**断言页面仍不可读**（`SOURCE_ACCESS_DENIED`）；
+  (7) 保留 `superseded`，catalog 改 `Assert.Empty(renditions)`。
+- **结果**：带 opt-in 三类 **12/1 → 13 / 0 / 0 / 13**；无夹具 Host 全量 **325 / 0 / 74 / 399**（无变化）。
+- **为什么不是放宽**：旧期望**从未可达**；本改造**收紧**（精确码）+ **扩容**（+3 断言），
+  未删除任何 scan/plan/apply 段 wire 级断言。
+- **我自己两个错（已写进测试注释）**：①异常类型猜成 `CoreOperationException`，实际 `SourceAccessException`；
+  ②猜"没发布所以旧 binding 仍 `healthy`"，实测 **`superseded`** —— **supersede 在 core-commit 发生，不是 ACK**。
+  **两处都是"猜而没有先测"**。
+- **必须说清**：**这没有修好 E-9**。它仍是能力限制；"13/0"是**测试口径与产品能力声明对齐**，
+  不是"恢复功能可用"。解锁路径 = mint-time DPAPI 路径映射（未做）。
+- **未做**：C-17/FEA-11 的"已知限制"正式小节（ZCode 要求的最小产品动作）尚未落；未跑 App/CoreClient 全量。

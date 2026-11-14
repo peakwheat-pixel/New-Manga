@@ -445,3 +445,36 @@ NewManga.Host.Sources.SourceAccessException : SOURCE_ENTRY_MISSING
 ### 13.5 未做
 
 `Fea11Residual4AIpcTests` 的 `SOURCE_ENTRY_MISSING` **未归因**；条件 3 仍不判 MET。
+## 14. 带 opt-in 面归零：13 / 0（2026-11-15，`E9-KNOWN-LIMITATION-TESTS-1`）
+
+按 ZCode 裁决（`doc/reviews/E9-PRODUCT-ADJUDICATION-zcode-2026-11-15.md`）改造
+`Fea11Residual4AIpcTests.ProductionDispatcherFullSyncChain_NewKeyOldDigestConserved`：
+
+- (5) ACK：从期望 `acknowledged` 改为**断言 `SourceAccessException` 且 Code == `SOURCE_PLAN_UNAVAILABLE`**；
+- (5a)(5b) **新增**：journal 仍 `core-committed`（拒绝不损状态）+ 重复 ACK 幂等同拒；
+- (6)：改为**断言页面仍不可读**（`SOURCE_ACCESS_DENIED`）；
+- (7)：保留 `superseded`，并把"含已服务 rendition"改为 **`Assert.Empty(renditions)`**。
+
+### 结果
+
+| 口径 | 前 | 后 |
+|---|---|---|
+| 带 opt-in 三类（Fea11Source / Fea11Residual4A / Fea11Scan） | 12 passed / 1 failed | **13 / 0 / 0 / 13** |
+| 无夹具 Host.Tests 全量 | 325 / 0 / 74 / 399 | **325 / 0 / 74 / 399**（无变化） |
+
+### 为什么不是放宽断言
+
+旧 `acknowledged` 期望**从未可达**（修复前该步骤同样失败，只是错误码被兜底成 `SOURCE_ENTRY_MISSING`）。
+本改造**收紧**（精确码）+ **扩容**（+3 断言），未删除任何 scan/plan/apply 段的 wire 级断言。
+
+### 必须说清
+
+**这没有修好 E-9。** 它仍是**能力限制**：非 folder 来源的 sync 完成链（ACK/恢复）不可用，
+现在失败 **typed 且可解释**。解锁路径 = mint-time DPAPI 路径映射（后续 Task，**未做**）。
+
+**"13/0" 是测试口径与产品能力声明对齐，不是"恢复功能可用"。**
+
+### 我自己犯的两个错（已写进测试注释）
+
+1. 异常类型猜成 `CoreOperationException`，实际 **`SourceAccessException`**；
+2. 猜"没发布所以旧 binding 仍 `healthy`"，实测 **`superseded`** —— supersede 在 **core-commit** 发生，不是 ACK。

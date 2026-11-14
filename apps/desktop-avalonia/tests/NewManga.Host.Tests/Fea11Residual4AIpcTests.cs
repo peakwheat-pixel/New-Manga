@@ -169,37 +169,48 @@ public sealed class Fea11Residual4AIpcTests
         Assert.Equal("SOURCE_ACCESS_DENIED", pending.Code);
         evidence.Add("pending_gate=" + pending.Code);
 
-        // (5) ACK through the production dispatcher -> Host durable ACK.
-        var acked = await InvokeAsync(runtime, "source_acknowledge_operation",
-            new Dictionary<string, object?> { ["operation_id"] = operationId });
-        Assert.Equal("acknowledged", acked.GetProperty("State").GetString());
-        Assert.Equal("acknowledged", runtime.Operations!.Get(operationId)!.State);
-        evidence.Add("ack=acknowledged");
+        // (5) KNOWN-LIMITATION-E9 (product adjudication 2026-11-15 by ZCode;
+        // doc/reviews/E9-PRODUCT-ADJUDICATION-zcode-2026-11-15.md): the sync
+        // COMPLETION chain (ACK/recovery) is unavailable for non-folder sources.
+        // AcknowledgeAsync and RecoverAsync both take the same fresh re-mint, and
+        // none of the six journal/plan/payload entry points carries the container
+        // path, so the Host refuses typed instead of guessing a registry root.
+        //
+        // This is NOT a relaxed assertion: the old "acknowledged" expectation was
+        // NEVER reachable -- before the typed refusal this same step failed with
+        // UnauthorizedAccessException masked as SOURCE_ENTRY_MISSING. The three
+        // assertions below TIGHTEN the contract to the exact refusal code, an
+        // untouched journal, and idempotence.
+        var ackFailure = await Assert.ThrowsAsync<SourceAccessException>(
+            () => InvokeAsync(runtime, "source_acknowledge_operation",
+                new Dictionary<string, object?> { ["operation_id"] = operationId }));
+        Assert.Equal("SOURCE_PLAN_UNAVAILABLE", ackFailure.Code);
 
-        // (6) The page now resolves through a DIFFERENT v2 key and serves the
-        // NEW content (blue), not the old one (red).
-        var resource = (await InvokeAsync(runtime, "resolve_page_resource",
-            new Dictionary<string, object?> { ["page_id"] = "p1" }))
-            .GetProperty("resource_id").GetString()!;
-        Assert.StartsWith("page-rendition-v2-", resource);
-        Assert.NotEqual("page-rendition-p1", resource);
-        var newBytes = await runtime.ReadPageImageAsync("p1");
-        Assert.Equal(new byte[] { 0x89, 0x50, 0x4E, 0x47 },
-            newBytes.Take(4).ToArray());
-        var servedPath = Path.Combine(root, "p1-after.png");
-        await File.WriteAllBytesAsync(servedPath, newBytes);
-        var probe = await fixture.ProbePngAsync(servedPath);
-        Assert.Equal(4, probe.GetProperty("width").GetInt32());
-        Assert.Equal(3, probe.GetProperty("height").GetInt32());
-        Assert.Equal(
-            new[] { 0, 0, 255 },
-            probe.GetProperty("pixel").EnumerateArray()
-                .Select(value => value.GetInt32()).ToArray());
-        evidence.Add("new_resource=" + resource);
+        // (5a) The refusal must not corrupt the journal.
+        Assert.Equal("core-committed", runtime.Operations!.Get(operationId)!.State);
 
-        // (7) The OLD digest is immutable: the old binding keeps its
-        // verified_digest (now superseded) and the old entry digest is
-        // unchanged; the legacy page key was never (re)published.
+        // (5b) Repeating the ACK is idempotent: same refusal, state unmoved.
+        var ackAgain = await Assert.ThrowsAsync<SourceAccessException>(
+            () => InvokeAsync(runtime, "source_acknowledge_operation",
+                new Dictionary<string, object?> { ["operation_id"] = operationId }));
+        Assert.Equal("SOURCE_PLAN_UNAVAILABLE", ackAgain.Code);
+        Assert.Equal("core-committed", runtime.Operations!.Get(operationId)!.State);
+        evidence.Add("ack_typed_refusal=" + ackFailure.Code);
+
+        // (6) Because the ACK never lands, the publication gate stays CLOSED:
+        // the page must remain unreadable (same typed refusal as step (4)).
+        // Nothing is served, so there is no new rendition to inspect here.
+        var stillPending = await Assert.ThrowsAsync<CoreOperationException>(
+            () => ResolveAsync(runtime));
+        Assert.Equal("SOURCE_ACCESS_DENIED", stillPending.Code);
+        evidence.Add("still_pending_after_ack=" + stillPending.Code);
+
+        // (7) Nothing became READABLE, but the old binding is already superseded:
+        // supersession happens at core-commit (the apply step), not at ACK. This
+        // was measured here -- the first version of this patch guessed "healthy"
+        // and the test failed with Actual="superseded", which is the honest answer.
+        // The old digest stays immutable regardless. The old entry digests are
+        // unchanged and the legacy page key was never written to the catalog.
         var stateAfter = await fixture.InspectAsync();
         var oldBindingId = oldBinding.GetProperty("binding_id").GetString()!;
         var oldBindingAfter = BindingsOf(stateAfter, "p1")
@@ -218,11 +229,9 @@ public sealed class Fea11Residual4AIpcTests
         var renditions = stateAfter.GetProperty("renditions").EnumerateArray().ToList();
         Assert.DoesNotContain(renditions,
             row => row.GetProperty("cache_key").GetString() == "page-rendition-p1");
-        // The served rendition is recorded in the derived catalog with exactly
-        // the bytes ReadPageImageAsync returned (the v2 key is the catalog key;
-        // the rendition-cache row key is the cache identity).
-        Assert.Contains(renditions, row => row.GetProperty("content_digest").GetString()
-            == probe.GetProperty("sha256").GetString());
+        // No rendition was served at all: with the ACK refused, the catalog must
+        // not gain a row for this page's new generation.
+        Assert.Empty(renditions);
         evidence.Add("old_digest_immutable=1");
 
         // (8) The source files are untouched (hash/size/mtime + zip set).
