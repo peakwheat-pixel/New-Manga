@@ -3,7 +3,7 @@ id: TRANS-BINDING-BRIDGE
 title: 自动翻译配置桥：把 P15 profile/能力绑定镜像进 Run 侧 settings.providers.profiles
 kind: implementation
 governance_version: 3
-status: in_progress
+status: closed_with_limitations
 disposition: "L1-T-A（2026-11-14 DSH 释放）；依据 MAINT-1-AUTO-TRANSLATE-FEASIBILITY-2026-11-14 §7/§9"
 approval: DSH 2026-11-14 释放（评估结论：零冻结契约改动、零 UNFREEZE；本卡是自动翻译唯一必做的新代码）
 suggested_owner: DSH
@@ -14,10 +14,10 @@ depends_on:
 base_commit: 73a182a61
 branch: main
 worktree: G:/CODEX/New Manga
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 3db81c4f0
+delivery_head: 659bb3053
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/TRANS-BINDING-BRIDGE
 allowed_paths:
   - doc/tasks/TRANS-BINDING-BRIDGE.md
@@ -45,14 +45,14 @@ Run 运行时读取的是 `pipeline_defaults.settings["providers"]["profiles"]`�
 
 ## Acceptance Criteria
 
-- [ ] **AC1 镜像写入**：当 P15 profile 或能力绑定写入成功后，同一事务/同一 seam 内把对应条目镜像进 `pipeline_defaults.settings["providers"]["profiles"]`；镜像形状与 `runtime.py` 读取的键一致（至少 `provider_type` / `base_url` / `model` / `credential_ref` / `capabilities`）。
-- [ ] **AC2 只含引用、不含密钥**：镜像**绝不**包含 secret 本体，只含 `credential_ref`（与 `REAL-TRANSLATE-PROVIDER-1` 的既有纪律一致）。
-- [ ] **AC3 fail-closed**：镜像写入失败必须 typed 失败并回滚，不允许「JSON store 写了、镜像没写」的半写状态。
-- [ ] **AC4 复用既有 seam**：优先复用 `PipelineDefaultsService.save_settings_section`（`src/bootstrap/core_service.py:3106-3113`）这一 seam，**不新增 wire 命令**。
-- [ ] **AC5 不新增契约面**：不新增 Core wire 命令、不新增 `IHostController` 成员；`generate_api_inventory.py --check` 维持 `1/80/6=87`；`verify_pins` 18/18。
-- [ ] **AC6 判别测试**：至少一条「写入 profile+binding 后，`_profile_settings` 能读到该 profile」的测试；再一条「镜像失败 → 不留半写」的测试。
-- [ ] **AC7 门禁**：`check.ps1`（默认 + 本卡 TaskPath）、`verify_pins`、`generate_api_inventory --check`、受影响 pytest 全绿。
-- [ ] **AC8 生效时机说明**：在卡面与证据里写明「装配期一次性闭包 settings（`core_assembly.py:1421-1423`）⇒ 配置变更需重启 Core 才生效」，供 T-C 的 UI 文案使用。
+- [x] **AC1 镜像写入**：当 P15 profile 或能力绑定写入成功后，同一事务/同一 seam 内把对应条目镜像进 `pipeline_defaults.settings["providers"]["profiles"]`；镜像形状与 `runtime.py` 读取的键一致（至少 `provider_type` / `base_url` / `model` / `credential_ref` / `capabilities`）。 <<MET>>
+- [x] **AC2 只含引用、不含密钥**：镜像**绝不**包含 secret 本体，只含 `credential_ref`（与 `REAL-TRANSLATE-PROVIDER-1` 的既有纪律一致）。 <<MET>>
+- [x] **AC3 fail-closed**：镜像写入失败必须 typed 失败并回滚，不允许「JSON store 写了、镜像没写」的半写状态。 <<MET>>
+- [x] **AC4 复用既有 seam**：优先复用 `PipelineDefaultsService.save_settings_section`（`src/bootstrap/core_service.py:3106-3113`）这一 seam，**不新增 wire 命令**。 <<MET>>
+- [x] **AC5 不新增契约面**：不新增 Core wire 命令、不新增 `IHostController` 成员；`generate_api_inventory.py --check` 维持 `1/80/6=87`；`verify_pins` 18/18。 <<MET>>
+- [x] **AC6 判别测试**：至少一条「写入 profile+binding 后，`_profile_settings` 能读到该 profile」的测试；再一条「镜像失败 → 不留半写」的测试。 <<MET>>
+- [x] **AC7 门禁**：`check.ps1`（默认 + 本卡 TaskPath）、`verify_pins`、`generate_api_inventory --check`、受影响 pytest 全绿。 <<MET>>
+- [x] **AC8 生效时机说明**：在卡面与证据里写明「装配期一次性闭包 settings（`core_assembly.py:1421-1423`）⇒ 配置变更需重启 Core 才生效」，供 T-C 的 UI 文案使用。 <<MET>>
 
 ## 允许修改范围
 
@@ -76,15 +76,32 @@ Python：`C:\Python314\python.exe -m pytest`（定向 + 全量不得新增 faile
 
 `verification/TRANS-BINDING-BRIDGE/README.md` + `logs/`（测试与门禁原始输出、镜像前后快照）。
 
+## Canonical Evidence
+
+| evidence_id | AC/Gate | path | commit | sha256 | class |
+|---|---|---|---|---|---|
+| EV-1 | AC1-AC8 | verification/TRANS-BINDING-BRIDGE/README.md | 3db81c4f0 | 04c72ac2b9697b86277cc2576547301682ba134a2952046c905d50a288b69e13 | canonical |
+| EV-2 | AC1-AC8 | verification/TRANS-BINDING-BRIDGE/logs/gates-final.log | 3db81c4f0 | 2a04ec121fc9b9417270959df0afb64a0df5c5d4e6ef6b6ba3f8ad89e7e53acb | canonical |
+| EV-3 | AC1-AC8 | verification/TRANS-BINDING-BRIDGE/logs/pytest-full.log | 3db81c4f0 | 530109d7ce114d54e016137f6b612bcdf2e494d2756955ec2dcdfe91dfb66280 | canonical |
+
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | worktree | `G:\CODEX\New Manga`（main） | NOT_APPLICABLE | - | - | 复用主工作树 |
+| evidence（仓库） | `verification/TRANS-BINDING-BRIDGE/**` | NOT_APPLICABLE | 仓库内 | `verification/TRANS-BINDING-BRIDGE/EV`（见 Canonical Evidence） | 门禁/测试原始日志已保留 |
 
 ## Closeout Record
 
-- 未关闭（当前 `in_progress`）。
+- **收口（2026-11-14，DSH）**：`closed_with_limitations`。AC1–AC8 全部 `MET`；r1 `changes_requested`（P1-1 scope、P1-2 反向半写）→ 返修 → r2 `approved`；R2-001（`sqlite3.Error` 未捕获）→ 返修 → **r3 `approved`**（R2-001 真实关闭；矩阵 6/6 复算一致；`BindingValidationError` 确认为冗余成员）。
+- **交付**：`94b8f33f5`（初版）→ `659bb3053`（r1 处置）→ `3db81c4f0`（R2-001）。全量 pytest **3562/0/10**；定向 **119 passed**；四件套绿；`apps/**` 与 `doc/contracts/**` **零改动**。
+- **limitation（已如实登记，不得读作无缺口）**：
+  1. **回滚本身失败**（SQLite 持续不可写等）⇒ 可能留「镜像新值 / JSON 旧值」，只抛 typed 失败，无二次修复；两存储**无跨库事务**。
+  2. **两次写之间进程被强杀** ⇒ 无崩溃恢复标记、无跨库 WAL 协调。
+  3. **JSON 文件被外部并发改写** ⇒ store 读-改-原子写的丢失更新（既有风险，与本桥无关）。
+  4. **book/chapter scope 绑定不驱动执行**（R-6）⇒ 扁平槽只接受 global，仅配 book-scope 仍会 `PROVIDER_NOT_CONFIGURED`；根治需改 run 快照结构，已归入 T-C 前置约束。
+- **P3（证据文本，r3 登记）**：README `:94` 的捕获元组漏写 `sqlite3.Error`；README `:137`/`test:536-539` 对 `ValueError` 敏感性的表述不准。**非阻断，未在本轮修**。
+- **删除/迁移/归档**：0。
 
 ## 交付记录（2026-11-14）
 
