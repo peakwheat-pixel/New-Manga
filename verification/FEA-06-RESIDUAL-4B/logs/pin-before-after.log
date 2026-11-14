@@ -1,0 +1,30 @@
+# C-07 pin 重算记录（v1.9 -> v1.10）
+# 生成时 HEAD=fd4008ce38b2275efdfbffe992e10e781888fb97（旧 pin 取自 HEAD blob 的 LF 归一字节）
+old_pin_readme_v19      = 91e51ab74da201b99b6704e49fca96e93657d869dcc1e9523661dbb299c6d750
+new_pin_worktree_v110   = 498882eb17507b89db463eb7cc8eb4522af80783a92ba21f80a5229c6d66984f
+frozen_record_pin       = 498882eb17507b89db463eb7cc8eb4522af80783a92ba21f80a5229c6d66984f
+pin_matches_file        = True
+prev_pin_row_preserved  = 91e51ab74da201b99b6704e49fca96e93657d869dcc1e9523661dbb299c6d750
+prev_equals_old         = True
+
+# verify_pins.ps1 原始输出
+OK C01b 3c9f5af7d74f
+OK C02 bb365ca891a7
+OK C03 b77e7968a00b
+OK C04b 4b304c0c315f
+OK C05 f6e6f3cb1fe1
+OK C06 75f8e2b4eb80
+OK C07 498882eb1750
+OK C08 453f993c1a16
+OK C09 dc51226b336c
+OK C10 ec8fd862f95f
+OK C11 44f4273f7ad1
+OK C12 f49835860143
+OK C13 8faf1e805eac
+OK C14 05056cbf65f9
+OK C15 f9e376a0ed4c
+OK C16 67286eeca8cb
+OK C17 cdeee4872e29
+OK FEA01 0370c18932b1
+PIN AUDIT: PASS (all 18)
+EXIT=0

@@ -33,6 +33,7 @@ allowed_paths:
   - apps/desktop-avalonia/src/NewManga.App/Views/Fluent/WorkbenchPageView.cs
   - apps/desktop-avalonia/src/NewManga.App/Controls/RegionTextComparePanel.cs
   - apps/desktop-avalonia/tests/NewManga.App.Tests/FakeHostController.cs
+  - apps/desktop-avalonia/tests/NewManga.App.Tests/ListPageRegionTextsPortTests.cs
   - apps/desktop-avalonia/tests/NewManga.App.Tests/FluentResidualBatchATests.cs
   - apps/desktop-avalonia/tests/NewManga.App.Tests/RegionTextComparePanelTests.cs
   - apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Commands/RegionWriteCommandTests.cs
@@ -177,3 +178,33 @@ out_of_scope:
 - 删除、迁移、归档数量/字节数：待关闭时填写（预期 0）。
 - 未关闭项及保留原因：无（尚未实施）。
 - 当前指针清理：本轮不改 `STATUS` / `REBASELINE_PLAN`；`FEA-06` AC3 保持 **PARTIAL**，直到本卡集成验证通过并经 DSH 裁决后才可改 MET。
+
+## 切片执行记录（append-only，2026-11-14）
+
+按 DSH 裁决分刀实施；每刀一个 commit，审查边界可辩护。
+
+### 4B-1（wire 层）— `eae0eb67a`
+
+- 范围：`CoreServiceClient.ListPageRegionTextsAsync` + `WriteListPageRegionTextsPayload`（唯一 payload 写入点，internal 供测试直断言）+ AC6 判别 5 例（扩展 `RegionWriteCommandTests.cs`）。
+- 结果：CoreClient 176/0/24、`RegionWriteCommandTests` 79/0/0、新增 5/0/0；pin 未动（统计未翻）。
+- 已披露缺口：public 方法未贯穿 `SendAsync`（无传输 seam），端到端留给 gated 集成用例。
+
+### 4B-2（端口层）— `fd4008ce3`
+
+- 范围：`IHostController` + `HostController` + `NewManga.Host/HostRuntime.cs` + `NullHostController` + 测试 `FakeHostController`；新增 `ListPageRegionTextsPortTests.cs`（8 例）。
+- 结果：build 0/0；App.Tests **897/0/11**、Host.Tests **321/0/74**、CoreClient.Tests **176/0/24**；四件套中 3 项绿。
+- **中间态登记（重要）**：该 commit 落地接口后，`generate_api_inventory.py --check` **EXIT=1**（`FAIL: IHostController: rendered 80 not in doc`；stdout `80/87` vs 文档 `79/86`）。原因是「统计翻转」被排到最后一刀，而 `--check` 用源码计数比对文档计数 —— 接口一变即红。该红窗**已由 4B-2b 原子闭合**（见下），仅在历史 commit `fd4008ce3` 上存在；本卡此后的提交禁止再有中间红态（统计翻转必须与接口变更同批）。
+- allowed_paths 补登：`apps/desktop-avalonia/tests/NewManga.App.Tests/ListPageRegionTextsPortTests.cs`（端口契约测试独立成文件；卡初稿只预留了 `RegionTextComparePanelTests.cs` 给 UI 刀）。
+
+### 4B-2b（统计翻转 + pin v1.10 + 载体）— 本 commit
+
+- 范围：`doc/plan/FEA-C07_API_INVENTORY.md`（成员表 **#80** 纯 append、统计 `80/87`、变更类别 44、RO-1 节标记已落地）、`doc/plan/FEA-CONTRACT-FROZEN-C07.md`（§1 置顶 v1.10 且 v1.9 原值保留、§1B/§2 条件 3/§3/§5 同步）、新载体 `doc/reviews/CONTRACT-UNFREEZE-2026-11-14-C07-4B.md`（§6 复核 `pending`）。
+- 关键实现决定：端口成员**追加在 `IHostController` 接口末尾**，使 stdout 序号正好等于预授权的 **#80**，正式成员表成为纯 append（旧 1–79 行零改动零重编号）；若按逻辑位置插在 `LoadPageRegionsAsync` 之后，该行会变 #35 并把 35–79 全部重编号，与预授权冲突。
+- 结果：`--check` **EXIT 0**（`1/80/6 = 87`，`OK: rendered counts match FEA-C07 doc`）；成员表三接口逐行 `ALL_MATCH: True`；`verify_pins` 18/18（C07 = v1.10 新 pin）；pin `91e51ab7…` → **v1.10 新值**（v1.9 原值保留）。
+- 待办：独立字节级复核（载体 §6 `pending`，作者不得自评）→ 回填后重冻 v1.10。
+
+### 后续刀（未开始）
+
+- 4B-3：`WorkbenchViewModel` 对照状态/命令（L2 取实时 `DraftText`、失败优先级、`IsConflict` 派生）+ `WorkbenchPageView` 冲突横幅旁入口与纵向双栏容器（AC3/AC4；「恰好一次投影」断言落在 VM，不进端口层缓存）。
+- 4B-4：`FluentResidualBatchATests` 负向/正向断言并存（AC5）、独立 Review（AC8）、证据 README 收口。
+- 已知未闭合缺口：`HostController` 的 `catch (Exception ex) when (IsUiFacingFailure(ex))` 分支无法在默认门禁触发（无 runtime seam）→ gated 集成用例；若 4B-3 决定改用带 `regionIds` 的调用，`CoreOperationException(TARGET_NOT_FOUND)` 会被吞成 `null` 从而把 AC4 的 ③ 退化为 ② —— **必须先回卡裁定**，不得静默退化。

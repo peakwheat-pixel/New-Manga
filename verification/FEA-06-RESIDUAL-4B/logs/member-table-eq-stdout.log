@@ -1,0 +1,7 @@
+# 正式成员表 vs 脚本 stdout 逐行比对（C-07 v1.10 / AC2 硬要求）
+# 只比计数不够：本脚本按 (序号, 成员名, 属性/事件标记, 返回类型) 四元组逐行比较三个接口。
+IReaderProgressSink: stdout_rows=1 doc_rows=1 ALL_MATCH=True
+IHostController: stdout_rows=84 doc_rows=84 ALL_MATCH=True
+IRunController: stdout_rows=6 doc_rows=6 ALL_MATCH=True
+RESULT= PASS
+EXIT=0

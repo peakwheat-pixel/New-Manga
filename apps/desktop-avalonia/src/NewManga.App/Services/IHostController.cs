@@ -264,21 +264,6 @@ public interface IHostController : IReaderProgressSink, IRunController, IAsyncDi
         string pageId,
         CancellationToken cancellationToken = default);
 
-    /// <summary>
-    /// FEA-06-RESIDUAL-4B (C-07 UNFREEZE v1.9 / RO-1 plan row <c>#80</c>; 4A spec S3): the
-    /// page-scoped Region TEXT read projection (<c>list_page_region_texts</c>) the workbench
-    /// conflict「查看对照」panel reads its L1 committed-base text from. ONE call per page.
-    /// <paramref name="regionIds"/> is an optional strict filter (non-empty, distinct, every id live
-    /// on that page); null keeps the whole page. The command carries no revision guard, so no
-    /// <c>expectedRevision</c> is exposed here either. Null -- never a throw into the UI, and never
-    /// an empty stand-in -- means "projection unavailable"; callers must not fabricate compare
-    /// content from it (4A S5 negative invariant).
-    /// </summary>
-    Task<RegionPageTextProjection?> ListPageRegionTextsAsync(
-        string pageId,
-        IReadOnlyList<string>? regionIds = null,
-        CancellationToken cancellationToken = default);
-
     /// <summary>AC1: region revision history (<c>list_region_revisions</c>); null when unavailable.</summary>
     Task<RegionRevisionHistory?> LoadRegionRevisionsAsync(
         string regionId,
@@ -554,5 +539,23 @@ public interface IHostController : IReaderProgressSink, IRunController, IAsyncDi
 
     Task<string?> RestoreBackupAsync(
         string backupId,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// FEA-06-RESIDUAL-4B (C-07 UNFREEZE v1.10 / RO-1 plan row <c>#80</c>; 4A spec S3): the
+    /// page-scoped Region TEXT read projection (<c>list_page_region_texts</c>) the workbench
+    /// conflict「查看对照」panel reads its L1 committed-base text from. ONE call per page.
+    /// <paramref name="regionIds"/> is an optional strict filter (non-empty, distinct, every id live
+    /// on that page); null keeps the whole page. The command carries no revision guard, so no
+    /// <c>expectedRevision</c> is exposed here either. Null -- never a throw into the UI, and never
+    /// an empty stand-in -- means "projection unavailable"; callers must not fabricate compare
+    /// content from it (4A S5 negative invariant).
+    /// Appended at the END of the interface on purpose: C-07 row #80 is the pre-authorized slot
+    /// (`FEA-C07_API_INVENTORY` 「RO-1 计划追加」), so appending keeps the formal member table a pure
+    /// append instead of renumbering rows 35-80 of a frozen contract.
+    /// </summary>
+    Task<RegionPageTextProjection?> ListPageRegionTextsAsync(
+        string pageId,
+        IReadOnlyList<string>? regionIds = null,
         CancellationToken cancellationToken = default);
 }

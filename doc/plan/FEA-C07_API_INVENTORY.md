@@ -1,7 +1,7 @@
 # FEA-C07 应用端口清单（由代码生成）
 
-状态：**FROZEN / 冻结于 2026-11-01（[冻结记录](FEA-CONTRACT-FROZEN-C07.md)）**；**2026-11-10 UNFREEZE 链 v1.2→v1.8**（v1.2 PREQ 计划追加；v1.3 READ-1 / v1.4 FONT-1 / v1.5 LIB-1 实现落地统计；v1.6 成员表同步——P1–P15 并入正式成员表；v1.7 EDIT-1 P16–P20 落地（74/81）；v1.8 AI-1 P21–P25 落地（79/86，S5 计划全部落地）；载体见 [C07](../reviews/CONTRACT-UNFREEZE-2026-11-10-C07.md)、[READ1](../reviews/CONTRACT-UNFREEZE-2026-11-10-READ1.md)、[FONT1](../reviews/CONTRACT-UNFREEZE-2026-11-10-FONT1.md)、[LIB1](../reviews/CONTRACT-UNFREEZE-2026-11-10-LIB1.md)、[EDIT1](../reviews/CONTRACT-UNFREEZE-2026-11-10-EDIT1.md)、[AI1](../reviews/CONTRACT-UNFREEZE-2026-11-10-AI1.md)）；**2026-11-14 UNFREEZE v1.9（RO-1 预授权，尚未落地）**（`FEA-06-RESIDUAL-4A`：为 `IHostController.ListPageRegionTextsAsync` 做 additive 预授权登记，见 [RO1](../reviews/CONTRACT-UNFREEZE-2026-11-14-C07-RO1.md) 与下文「RO-1 计划追加」节；**统计行与正式成员表仍为代码实测 79/86**，80/87 由 `FEA-06-RESIDUAL-4B` 落地端口时翻转并重算 pin 为 v1.10）（本文档是脚本输出的**人工整理版**：统计表加了非方法成员说明、表头补了参数口径；**正式成员表与脚本 stdout 一一对应**，「S5 计划追加」节属人工预冻结、不计入统计，实现卡落地时并入正式表并重算）
-生成日期：2026-11-02；生成时 HEAD：`a740f855f`（FEA-05-PORT-1 追加 Draft 端口后重算）；v1.6 重跑：2026-11-10；v1.7 重跑：2026-11-10；v1.8 重跑：2026-11-10（`python tools/generate_api_inventory.py` 与 `--check` 均 EXIT 0）；v1.9 重跑：2026-11-14（同一命令，stdout 仍 `1/79/6 = 86`，`--check` EXIT 0；本节新增的「RO-1 计划追加」不计入脚本统计）
+状态：**FROZEN / 冻结于 2026-11-01（[冻结记录](FEA-CONTRACT-FROZEN-C07.md)）**；**2026-11-10 UNFREEZE 链 v1.2→v1.8**（v1.2 PREQ 计划追加；v1.3 READ-1 / v1.4 FONT-1 / v1.5 LIB-1 实现落地统计；v1.6 成员表同步——P1–P15 并入正式成员表；v1.7 EDIT-1 P16–P20 落地（74/81）；v1.8 AI-1 P21–P25 落地（79/86，S5 计划全部落地）；载体见 [C07](../reviews/CONTRACT-UNFREEZE-2026-11-10-C07.md)、[READ1](../reviews/CONTRACT-UNFREEZE-2026-11-10-READ1.md)、[FONT1](../reviews/CONTRACT-UNFREEZE-2026-11-10-FONT1.md)、[LIB1](../reviews/CONTRACT-UNFREEZE-2026-11-10-LIB1.md)、[EDIT1](../reviews/CONTRACT-UNFREEZE-2026-11-10-EDIT1.md)、[AI1](../reviews/CONTRACT-UNFREEZE-2026-11-10-AI1.md)）；**2026-11-14 UNFREEZE v1.9（RO-1 预授权）→ v1.10（4B 落地）**（`FEA-06-RESIDUAL-4A` 为 `IHostController.ListPageRegionTextsAsync` 做 additive 预授权，见 [RO1](../reviews/CONTRACT-UNFREEZE-2026-11-14-C07-RO1.md)；`FEA-06-RESIDUAL-4B` 落地端口后**统计翻转为 80/87、正式成员表并入第 #80 行**、pin 重算为 v1.10，见 [C07-4B](../reviews/CONTRACT-UNFREEZE-2026-11-14-C07-4B.md)）（本文档是脚本输出的**人工整理版**：统计表加了非方法成员说明、表头补了参数口径；**正式成员表与脚本 stdout 一一对应**，「S5 计划追加」节属人工预冻结、不计入统计，实现卡落地时并入正式表并重算）
+生成日期：2026-11-02；生成时 HEAD：`a740f855f`（FEA-05-PORT-1 追加 Draft 端口后重算）；v1.6 重跑：2026-11-10；v1.7 重跑：2026-11-10；v1.8 重跑：2026-11-10（`python tools/generate_api_inventory.py` 与 `--check` 均 EXIT 0）；v1.9 重跑：2026-11-14（同一命令，stdout 仍 `1/79/6 = 86`，`--check` EXIT 0；该轮新增的「RO-1 计划追加」不计入脚本统计）；v1.10 重跑：2026-11-14（`FEA-06-RESIDUAL-4B` 端口落地后同一命令，stdout `1/80/6 = 87`，正式成员表 80 + 4 与 stdout 逐行一致，`--check` EXIT 0）
 生成方式：`python tools/generate_api_inventory.py`（解析 `apps/desktop-avalonia/src/NewManga.App/Services/{IHostController.cs,RunContracts.cs}` 的 interface 块，输出成员名 + 返回类型）；**不是**手工枚举。重跑同一命令应得到同一集合。
 
 ## 用途
@@ -17,11 +17,11 @@ C-07（应用端口与兼容面）要求「由代码生成的方法清单」，�
 | 接口 | 成员数 |
 |---|---|
 | IReaderProgressSink | 1 |
-| IHostController | 79 |
+| IHostController | 80 |
 | IRunController | 6 |
-| **合计** | **86**（另有 4 个非方法成员：`HostViewSnapshot Snapshot`、`event EventHandler? Changed`、`int StartRequests`、`string ExportDirectorySuggestion`，均属 `IHostController`） |
+| **合计** | **87**（另有 4 个非方法成员：`HostViewSnapshot Snapshot`、`event EventHandler? Changed`、`int StartRequests`、`string ExportDirectorySuggestion`，均属 `IHostController`） |
 
-**变更类别**：`IHostController` 的 79 个中，**36 个为 V11R §5 `:239` 基线**（签名不得变），**43 个为 FEA 期间新增**（冻结前 18 个，含 Draft 7；S5 落地 25 个 = READ-1 7 / FONT-1 4 / LIB-1 4 / EDIT-1 5 / AI-1 5；均为 additive，冻结后同样只允许追加）。逐成员的新增/基线标注由实现 Task 在该行落地时补（本文档暂不逐行标）。
+**变更类别**：`IHostController` 的 80 个中，**36 个为 V11R §5 `:239` 基线**（签名不得变），**44 个为 FEA 期间新增**（冻结前 18 个，含 Draft 7；S5 落地 25 个 = READ-1 7 / FONT-1 4 / LIB-1 4 / EDIT-1 5 / AI-1 5；RO-1 落地 1 个 = `ListPageRegionTextsAsync`；均为 additive，冻结后同样只允许追加）。逐成员的新增/基线标注由实现 Task 在该行落地时补（本文档暂不逐行标）。
 
 ## IReaderProgressSink
 
@@ -112,6 +112,7 @@ C-07（应用端口与兼容面）要求「由代码生成的方法清单」，�
 | 77 | `ListDraftsAsync` | `Task<IReadOnlyList<Draft>>` |
 | 78 | `DiscardDraftAsync` | `Task` |
 | 79 | `RestoreBackupAsync` | `Task<string?>` |
+| 80 | `ListPageRegionTextsAsync` | `Task<RegionPageTextProjection?>` |
 | — | `Snapshot`（属性） | `HostViewSnapshot` |
 | — | `StartRequests`（属性） | `int` |
 | — | `ExportDirectorySuggestion`（属性） | `string` |
@@ -137,24 +138,24 @@ C-07（应用端口与兼容面）要求「由代码生成的方法清单」，�
 
 计划追加合计 **25** 条（FONT 4 / LIB 4 / READ 7 / EDIT 5 / AI 5），**已全部落地**（20 → 25）；`IHostController` 74+5=**79**、三接口合计 **86**，与 PREQ 目标一致（以实测为准）。
 
-## RO-1 计划追加（v1.9 预授权，**尚未落地**）
+## RO-1 计划追加（v1.9 预授权 → **v1.10 已落地 1/1**）
 
-> 本节由 [UNFREEZE 载体](../reviews/CONTRACT-UNFREEZE-2026-11-14-C07-RO1.md) 引入，依据 [RO-1 重开裁决](../reviews/MAINT-1-RO-1-REOPEN-RESIDUAL-4-2026-11-14.md) §3 R2 与卡 [FEA-06-RESIDUAL-4A](../tasks/FEA-06-RESIDUAL-4A.md)。与「S5 计划追加」同型：**只锁名称 / 返回类型 / 落地行号，不改变代码实测统计**。
+> 本节由 [UNFREEZE 载体](../reviews/CONTRACT-UNFREEZE-2026-11-14-C07-RO1.md) 引入，依据 [RO-1 重开裁决](../reviews/MAINT-1-RO-1-REOPEN-RESIDUAL-4-2026-11-14.md) §3 R2 与卡 [FEA-06-RESIDUAL-4A](../tasks/FEA-06-RESIDUAL-4A.md)。与「S5 计划追加」同型：先只锁名称 / 返回类型 / 落地行号，实现卡落地后并入正式成员表。**RO-1 行已随 `FEA-06-RESIDUAL-4B` 落地，并入正式成员表第 #80 行**（[载体 C07-4B](../reviews/CONTRACT-UNFREEZE-2026-11-14-C07-4B.md)）；本节保留作历史口径，不再有未落地行。
 
 | # | 计划命令 | 计划返回类型 | 落地卡 | 语义摘要 | 落地后行号 |
 |---|---|---|---|---|---|
 | RO-1 | `ListPageRegionTextsAsync` | `Task<RegionPageTextProjection?>` | `FEA-06-RESIDUAL-4B` | 逐 region 文本投影（Core `list_page_region_texts` 的 App 端口），供「查看对照」的 L1 基底文本 | `#80` |
 
-计划追加合计 **1** 条（additive：无删除、无改名、旧 79 个方法签名零改动）。**为什么本行不计入统计**：`tools/generate_api_inventory.py` 的计数由源码 interface 块解析得出（`generate_api_inventory.py:105-119`，源 `IHostController.cs`），端口落地前该文件仍是 79 个方法；提前把统计写成 80 会让正式成员表与脚本 stdout 差一行、`--check`（子串判定，`:174`）必红。故：
+计划追加合计 **1** 条（additive：无删除、无改名、旧 79 个方法签名零改动），**已落地 1/1**。落地口径留档：
 
-- **v1.9（本文件，2026-11-14）**：统计 `IHostController 79` / 合计 `86` = 代码实测；正式成员表 79 方法 + 4 非方法成员 = stdout 逐行一致；
-- **v1.10（`FEA-06-RESIDUAL-4B` 落地端口时）**：把上表行并入正式成员表第 **80** 行、统计改 `80` / 合计 `87`、重跑脚本 `--check`、重算 pin（口径见 [C-07 冻结记录](FEA-CONTRACT-FROZEN-C07.md) §3「实现注意」与 v1.3–v1.8 先例）。
+- **v1.9（2026-11-14，预授权）**：统计保持 `IHostController 79` / 合计 `86` = 那时代码实测；正式成员表 79 + 4 = stdout 逐行一致。原因：`generate_api_inventory.py` 的计数由源码 interface 块解析（`generate_api_inventory.py:105-119`，源 `IHostController.cs`），端口未落地时提前写 80 会让成员表与 stdout 差一行、`--check`（子串判定，`:174`）必红。
+- **v1.10（2026-11-14，落地）**：端口落地后同一命令 stdout 为 `1/80/6 = 87`，已并入正式成员表第 **80** 行、统计改 `80` / `87`、`--check` EXIT 0、pin 重算（见 [C-07 冻结记录](FEA-CONTRACT-FROZEN-C07.md) §3「实现注意」）。
 
 `regionIds` 可选过滤沿用 wire 语义（非空、去重、必须属该页，否则 Core 回 `TARGET_NOT_FOUND`）；返回 `null` = 投影不可用，**不得**抛进 UI，也**不得**用空集合冒充「无可比对内容」。
 
 ## 与 C-07 冻结面的关系
 
 - 本清单是**基线**：冻结时以本文件 + `tools/generate_api_inventory.py` 的输出为准；
-- 「旧签名不变」的可验证基线 = 重跑 `python tools/generate_api_inventory.py` 并把 **stdout 全文**与上次输出 diff（成员名/返回类型都在 stdout 里）；`--check` 只比对三个**计数行**（快速冒烟，不验签名内容）。因此 v1.6 起**正式成员表必须保持与 stdout 逐行对应**（79 个方法 + 4 个非方法成员），计数一致不能替代逐行核对；
+- 「旧签名不变」的可验证基线 = 重跑 `python tools/generate_api_inventory.py` 并把 **stdout 全文**与上次输出 diff（成员名/返回类型都在 stdout 里）；`--check` 只比对三个**计数行**（快速冒烟，不验签名内容）。因此 v1.6 起**正式成员表必须保持与 stdout 逐行对应**（**v1.10 起为 80 个方法 + 4 个非方法成员**），计数一致不能替代逐行核对；
 - 能力握手与 request-scoped error（C-07 其余内容）不在本文件展开。
-- 「S5 计划追加」与「RO-1 计划追加」两节均为**人工预冻结名单**，不计入脚本统计；实现卡落地时须把对应行并入正式成员表、把统计改为实测值并重算 pin（RO-1 行的落地行号为 **#80**，见 [C-07 冻结记录](FEA-CONTRACT-FROZEN-C07.md) §3）。
+- 「S5 计划追加」与「RO-1 计划追加」两节均为**人工预冻结名单**，不计入脚本统计；实现卡落地时须把对应行并入正式成员表、把统计改为实测值并重算 pin。**两节现均已全部落地**（S5 25/25 → v1.8；RO-1 1/1 → v1.10，落地行号 **#80**，见 [C-07 冻结记录](FEA-CONTRACT-FROZEN-C07.md) §3）。
