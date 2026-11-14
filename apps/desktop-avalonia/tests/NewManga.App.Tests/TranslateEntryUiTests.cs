@@ -121,4 +121,21 @@ public sealed class TranslateEntryUiTests
         Assert.NotEqual(TranslateErrorText.EmptyChapter, vm.Error);
         Assert.Equal(TranslateErrorText.ForCode("INVALID_REQUEST"), vm.Error);
     }
+    // P1-2 (r2): the execution-time surface — FluentRunRow.ErrorCell — had zero test coverage.
+    [Fact]
+    public void ErrorCell_MapsExecutionTimeCodeToReadableSentence()
+    {
+        var row = new FluentRunRow("p1", 0, "a.png", NewManga.DesignSystem.Controls.StatusKind.Failed, "失败", "failed", "PROVIDER_AUTH_FAILED", "row");
+
+        Assert.Equal(TranslateErrorText.ForCode("PROVIDER_AUTH_FAILED"), row.ErrorCell);
+        Assert.DoesNotContain("PROVIDER_AUTH_FAILED", row.ErrorCell, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void ErrorCell_KeepsUnknownCodeForDiagnosis()
+    {
+        var row = new FluentRunRow("p1", 0, "a.png", NewManga.DesignSystem.Controls.StatusKind.Failed, "失败", "failed", "SOMETHING_NEW", "row");
+
+        Assert.Contains("SOMETHING_NEW", row.ErrorCell, StringComparison.Ordinal);
+    }
 }

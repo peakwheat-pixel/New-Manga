@@ -613,8 +613,12 @@ public sealed class StudioBatchViewModel : StudioObservable
 
     public string DrawerTitle => _drawerRow is { } row ? $"页 {row.NumberLabel}" : string.Empty;
 
+    /// <summary>
+    /// P1-2 (r2): the drawer detail is an execution-time surface, so the raw Core code must not
+    /// leak to the user. Null keeps its "无错误码" wording instead of the ForCode fallback.
+    /// </summary>
     public string DrawerDetail => _drawerRow is { } row
-        ? $"{row.StateLabel} · {row.ErrorCode ?? "无错误码"} · steps {row.Row.Steps.Count}"
+        ? $"{row.StateLabel} · {(row.ErrorCode is null ? "无错误码" : NewManga.App.Services.TranslateErrorText.ForCode(row.ErrorCode))} · steps {row.Row.Steps.Count}"
         : string.Empty;
 
     public bool IsGateConfirmOpen

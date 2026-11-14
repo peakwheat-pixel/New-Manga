@@ -56,7 +56,7 @@
 ## 3. 测试数字
 
 ```
-dotnet test NewManga.App.Tests        919 passed / 0 failed / 11 skipped   (930 total)
+dotnet test NewManga.App.Tests        923 passed / 0 failed / 11 skipped   (934 total)
 dotnet test NewManga.CoreClient.Tests 182 passed / 0 failed / 26 skipped   (208 total)
 dotnet test NewManga.Host.Tests       321 passed / 0 failed / 74 skipped   (395 total)
 ```

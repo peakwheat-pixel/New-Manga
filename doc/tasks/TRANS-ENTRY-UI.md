@@ -51,7 +51,7 @@ out_of_scope:
 - [ ] **AC2 四类错误可读化**：`PROVIDER_NOT_CONFIGURED` / `PROVIDER_AUTH_FAILED`（401/403，不可重试）/ 模型名校验（404、402 目前都落 `INVALID_INPUT`，需给出可辨文案）/ `PROVIDER_RATE_LIMITED`（可重试）四类在 UI 文案上**可区分**，不得全部显示同一句。
 - [ ] **AC3 空章可读文案**（约束 4）：在 StartRun 前探测 `list_chapter_pages`；空章 → 「本章没有可处理的页面」，**不得**透出 `INVALID_REQUEST / Run request is invalid`。
 - [ ] **AC4 重启提示**（约束 2）：设置页/首个翻译尝试处显式说明「修改模型配置后需重启应用生效」。
-- [ ] **AC5 scoped 绑定如实表述**（约束 3）：若设置页允许按书/章配置 provider，必须标注「当前仅全局绑定驱动执行」；若不做 scoped 配置入口，则登记为「未提供」。
+- [ ] **AC5 scoped 绑定如实表述**（约束 3）：设置页**确实有** book/chapter 绑定入口（`Views/Pages.cs:1141`）；须在该 section 标注「当前仅全局绑定驱动执行」。（r1 曾误记「无入口」，见复核报告）
 - [ ] **AC6 修正过期文案**：`StudioInspectorPanel.cs:256` 的「能力待接入」按实际状态改写。
 - [ ] **AC7 零契约面**：无新 wire 命令、无新 `IHostController` 成员；`generate_api_inventory --check` 维持 `1/80/6=87`；`verify_pins` 18/18。
 - [ ] **AC8 判别测试**：每类文案至少一条测试（断言**用户可见字符串**，不是内部枚举）；空章探测与前置门各一条。
