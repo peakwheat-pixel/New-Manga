@@ -1,4 +1,4 @@
-# GATE3-COVERAGE-MATRIX four-pieces 2026-11-15T01:40:49.3044487+08:00
+# GATE3-COVERAGE-MATRIX four-pieces (r2) 2026-11-15T02:07:03.5656305+08:00
 ## check.ps1
 Governance scope: 15 current documents; no historical directory scan.
 Task: doc\tasks\MAINT-1-RELEASE-MONITOR.md
@@ -12,5 +12,11 @@ PIN AUDIT: PASS (all 18)
 ## api inventory
 OK: rendered counts match FEA-C07 doc
 | **合计** | **87** | — |
-## App.Tests 无夹具全量
-947 passed / 0 failed / 11 skipped / 958 total
+## 三项目无夹具全量
+App.Tests        947 / 0 / 11 / 958
+Host.Tests       321 / 0 / 74 / 395
+CoreClient.Tests 186 / 0 / 26 / 212
+
+## App.Tests 的 11 个 skip 明细（实测）
+- sidecar (7): CreateChapterHostIntegrationTests x2, RunControllerHostIntegrationTests x3, WritePolicyUiIntegrationTests x1, StartupSelfCheckUiTests x1
+- non-sidecar (4): PerformanceBaselineTests.Gated_HotSwitch x1, StartupDiagnosticsTests.RealProcessLaunchMatrix x1, Fea07Residual3CrashTests x2

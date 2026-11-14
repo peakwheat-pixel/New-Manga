@@ -183,21 +183,24 @@
 条件 4（当前 commit 的 Windows 包，需 PyInstaller）、条件 5（人工 GT 基线）仍未满足。条件 1 与 2 的
 推进**不构成发布许可**。
 
-## 15. 条件 3 覆盖矩阵（2026-11-15，`GATE3-COVERAGE-MATRIX`）
+## 15. 条件 3 覆盖矩阵（2026-11-15，`GATE3-COVERAGE-MATRIX`，r2 返修版）
 
-条件 3 此前只记作"部分"，没有任何清单说明覆盖到哪。现已逐格盘点，见
-`doc/reviews/MAINT-1-GATE-CONDITION-3-MATRIX-2026-11-15.md`。要点：
+条件 3 此前只记作"部分"，没有任何清单说明覆盖到哪。现已按 **GUI + Host + CoreClient 三层**逐格盘点，
+见 `doc/reviews/MAINT-1-GATE-CONDITION-3-MATRIX-2026-11-15.md`。要点：
 
-- **结构性事实（此前未记录）**：`NewManga.App.Tests` 有 61 个 `[AvaloniaFact]` 文件、825 个可见测试方法，
-  但只有 **2 个** `[HostSidecarFact]`。**GUI 层几乎不依赖 sidecar**；E-2 的阻塞集中在
-  `Host.Tests`（74 skip）与 `CoreClient.Tests`（26 skip）的集成层。
-- **"可安全执行的"部分已大面覆盖**：四页 + 13 类关键流程中 **11 类**在 headless 下有真实断言；
-  四页有 PNG 级渲染证据（`FluentPages_RenderHeadlessPngEvidence` 断言四帧 `PixelSize` 非零）。
-- **完全无覆盖仅 2 类**：设置页错误态、阅读器独立只读测试（均只有同型借道断言）。
-- **矩阵自身的证据强度已分级**：只有 12 格被逐行核对断言，其余为"类摘要 + 方法名"，**不得当作已验证**。
-- **结论（可判定）**：条件 3 的剩余缺口**没有一项是"GUI 没做"** —— 要么卡在 E-2 sidecar，要么属人工
-  真机走查。因此条件 3 的推进路径是"**解 E-2** 或 **Owner 接受该边界**"，而不是继续补 headless 测试。
-  在 E-2 无法解除（本环境 PyPI 不可达）的情况下，条件 3 应作为**已知边界**提交 Owner 裁决，
-  而非无限期停留在"部分"。
-- **条件 3 仍不判 MET**；Gate 仍 `BLOCKED`。
+- **GUI 层**：`App.Tests` 947/0/11/958，`[AvaloniaFact]` 文件 **62 个**。四页 × 13 类流程中
+  **12 类有覆盖**，**唯一完全无覆盖的是"设置页错误态"一格**；四页有 PNG 级渲染证据
+  （`FluentPages_RenderHeadlessPngEvidence` 断言四帧 `PixelSize` 非零）。
+- **Host/Core 层**（r1 复核要求补）：**plain（无需 sidecar）部分相当广** —— `SourceScanSchedulerTests`(57)、
+  `RunGrantRenewalTests`(23)、`HostUnitTests`(14)、`HostRegionWorkbenchIntegrationTests`(4)、
+  `HostReaderChaptersIntegrationTests`(2)、wire 契约与命令覆盖，均已在 321/186 passed 中真实执行。
+- **skip 归因（更正）**：Host 74 skip = **30 sidecar + 44 opt-in real-IPC/崩溃注入**；App 11 skip =
+  **7 sidecar + 4 非 sidecar**（perf gate 1、真实进程 1、崩溃注入 2）。**此前"100 个 skip 全部卡 E-2"
+  的说法错误，已撤回** —— opt-in 那部分属"未开启"而非"失败"，也不是 E-2。
+- **条件 3 的可判定形态**：剩余缺口分三类 —— ①E-2 阻塞（`SidecarFact` 家族）；
+  ②默认门禁外的 opt-in 矩阵（需环境与样本）；③**真无覆盖仅 1 格**（设置页错误态）。真机人工走查另属一类。
+- **矩阵自身的边界**：只有 12 格被逐行核对断言，其余为"类摘要 + 方法名"，**不得当作已验证**；
+  且它是**快照**，无自动失效检测（已在矩阵 §6 声明 staleness）。
+- **条件 3 仍不判 MET。** 推进路径按性质分：解 E-2（本环境 PyPI 不可达，不可行）/ 开启 opt-in 矩阵 /
+  补那 1 格 / Owner 接受边界。Gate 仍 `BLOCKED`。
 
