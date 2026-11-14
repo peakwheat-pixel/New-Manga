@@ -171,6 +171,8 @@ out_of_scope:
 | EV-5 | AC2 member-table | verification/FEA-06-RESIDUAL-4B/logs/member-table-eq-stdout.log | ba6136d0 | c6720d1173e0ac8b2eb04c173f46c32cf76fa98f483d79c5710351fd26ac2ed0 | canonical |
 | EV-6 | AC2 pin | verification/FEA-06-RESIDUAL-4B/logs/pin-before-after.log | ba6136d0 | 4ef925e562af94d1be8a52b337512e6cecf5290796e9d5fb61a534375ec86dc6 | canonical |
 | EV-7 | AC2 gates | verification/FEA-06-RESIDUAL-4B/logs/gates-2026-11-14-4b2b.log | ba6136d0 | a22b23bfa25706afb0623964cb57b1987398ed6ea3766de7359a5fe450bb891c | canonical |
+| EV-8 | AC3/AC4/AC5 visual | verification/FEA-06-RESIDUAL-4B/visuals/01-conflict-banner.png | fbf0268d1 | c2f78707242dc91bbce7dfa144e33eccb0194833eb7cbf483821b2da236a94a4 | canonical |
+| EV-9 | AC3/AC4/AC5 visual | verification/FEA-06-RESIDUAL-4B/visuals/02-compare-panel.png | fbf0268d1 | 9a3eb0df7c34f0f9a5b992c71cc5454aa9e6adb52ff9895cbe6f495e98259572 | canonical |
 
 ## Resource Manifest
 
