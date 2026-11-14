@@ -146,3 +146,32 @@
 3. 因此**`Gate` 仍 `BLOCKED`** —— 条件 2 满足不改变条件 1/3/4/5 的缺口，也不构成发布许可。
 
 **教训（并入纪律）**：handoff 与本文档 §2/§8 都可能滞后于实际 Task 状态；"依赖任何计数前先核实现"同样适用于 Gate 条件表本身。
+
+## 14. 条件 1 逐项复核：8 项均有处置依据（2026-11-14 接手会话）
+
+对 `MAINT-1-GATE-CONDITION-1-FINDING-ADJUDICATION-2026-11-14.md` §1 的 8 项逐条核实现，**不是**依赖矩阵/旧计数：
+
+| # | finding | 原判 | 逐项核实结果 | 证据 |
+|---|---|---|---|---|
+| 1 | `L-R1-1` Reader UI 未接线（偏好应用/书签面板/整书进度/reset 确认） | `IMPL-CARD` | **四项均已实现**：书签面板/整书进度/reset 确认由 `MAINT-2-C1-BATCH-1` AC1 交付；偏好"应用"由 `ReaderViewModel.LoadAsync:273` → `ApplyReadingPreferencesAsync` 接线 | `ReaderVisibleControlsTests`（4 项，`931/0/11` 全绿中通过）；`ReaderPageView.cs:151/278/286/362` |
+| 2 | `L-R2-1` 可见控件未接线 | `IMPL-CARD` | **`MAINT-2-C1-BATCH-1` AC1「READ-2 可见控件」= MET**（该卡 `closed_with_limitations`） | `doc/tasks/MAINT-2-C1-BATCH-1.md:AC1` |
+| 3 | `L-F1-2` wire 级 `FONT_DELETE_FAILED` 负例 | `IMPL-NOW` | 已由 BATCH-1 AC2 关闭 | 同上 AC2；已在此前 §9 计入 |
+| 4 | `L-F1-3` 大文件/并发/占用文件压测 | `KEEP-NOTRUN` | **处置维持 `KEEP-NOTRUN`**（重开条件已给出）。注意：BATCH-1 AC3 补的是**边界测试**，不等于压测，不得据此说压测已完成 | §1 裁决第 4 行；本文 `MAINT-1-EXISTING-FINDINGS` E-5 |
+| 5 | `L-L1-1` `kind` 未投影 | `IMPL-CARD` | **`SOLVED`**（codex 纠正：M2-C1 rev 2.16 已冻结投影） | §11 |
+| 6 | `L-L1-2` `custom_rank` write-only + 排序未实现 | `IMPL-CARD` | 读回闭环由 BATCH-1 AC5 完成；**排序 UI 由 `CHAPTER-MANUAL-SORT` 交付**（复用 `ReorderChapters`/`sort_order`，零 UNFREEZE） | `doc/tasks/CHAPTER-MANUAL-SORT.md`；`verification/CHAPTER-MANUAL-SORT/` |
+| 7 | `L-L1-4` 64 位边界 | `IMPL-NOW` | 已由 BATCH-1 AC6 关闭 | 同上 AC6 |
+| 8 | `L-AI1-6` 死方法/旧注释 | `IMPL-NOW` | 已由 BATCH-1 AC7 关闭 | 同上 AC7 |
+
+**更正后的条件 1 计数：0/8 → 6/8（本轮前）→ 7/8（本轮 L-L1-2）→ 8/8 有处置依据。**
+
+- 其中 **1 项为 `KEEP-NOTRUN`（`L-F1-3`，接受为已知限制，未做压测）**，其余 7 项为已实现或已解决。
+- **不得把 `KEEP-NOTRUN` 说成"已验证通过"**：`L-F1-3` 的压测确实没有做，是 Owner/裁决接受的限制。
+- **同时必须登记两个相邻缺口**（不改变上述 8 项判定，但属真实用户可见问题）：
+  - `E-4` 阅读偏好只有"应用"、**没有保存入口**（`SaveReadingPreferencesAsync` 生产路径零调用）；
+  - `E-5` `L-F1-3` 的压测未被 BATCH-1 AC3 的边界测试替代。
+- 两者见 `MAINT-1-EXISTING-FINDINGS-2026-11-14.md`。
+
+**Gate 结论不变：仍 `BLOCKED`** —— 条件 3（完整 GUI/Core/Host 矩阵，且 sidecar 过期使真实集成不可跑）、
+条件 4（当前 commit 的 Windows 包，需 PyInstaller）、条件 5（人工 GT 基线）仍未满足。条件 1 与 2 的
+推进**不构成发布许可**。
+

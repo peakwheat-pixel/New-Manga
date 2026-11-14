@@ -16,12 +16,23 @@
 
   对应断言：`Assert.Equal(HostCommandRegistry.All.Count, services.Sum(s => s.Descriptors.Count));`
   （`apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Commands/CommandIntegrationTests.cs:416-421`）
-- **根因（已定位到域级，未逐条枚举）**：`HostCommandDomain` 有 8 个值
-  （`Settings`/`Library`/`Region`/`Reader`/`Resource`/`Workbench`/`Drafts`/`SourceSync`，见
-  `HostCommandRegistry.cs` 的 `ByDomain` 构建），而 `CommandIntegrationTests` 只构造
-  **六个** `HostDomainService`（`Settings, Library, Region, Reader, Resource, Workbench`）。
-  `Drafts` 与 `SourceSync` 两个域的命令（`SourceSyncNames` 计 15 条，加上 `Drafts` 域若干条，合计 21 条）
-  没有被计入覆盖。
+- **根因（已精确到 21 条 = 15 + 6）**：
+  - `Drafts` 域 **6** 条（`drafts_open`/`drafts_patch`/`drafts_prepare`/`drafts_apply`/`drafts_status`/`drafts_discard`，
+    `HostCommandRegistry.cs:209`）由 **`HostCommandDispatcher` 的 switch 分支直接处理**
+    （`HostCommandDispatcher.cs:882/889/896/904/910/924`），不经 `HostDomainService`。
+  - `SourceSync` 域 **15** 条（`SourceSyncNames`，`HostCommandRegistry.cs:410`）同样由 dispatcher 直通
+    （`HostCommandDispatcher.cs:346` 等）。
+  - 15 + 6 = **21** = 111 − 90，与失败值完全吻合。
+  - `CommandIntegrationTests` 只构造六个 `HostDomainService`（Settings/Library/Region/Reader/Resource/Workbench），
+    断言却是"六服务覆盖**全部** `HostCommandRegistry.All`"。
+- **性质**：不是"缺两个服务"，而是**测试断言与现行两通路架构不符**；`Drafts`/`SourceSync` 走 dispatcher
+  是有意设计。因此修复方向是把断言限定为"六服务覆盖其各自域的每条命令 + 全局无重复 + 每个 domain 至少一条通路"，
+  而非补造两个空壳服务。
+- **判别力价值**：修好后该测试在夹具下可真实运行，并能抓住"新命令既不进服务也不进 dispatcher"的漏接线。
+- **为何此前未暴露**：该测试标注 `[SidecarFact]`；未设置 `NEWMANGA_CORECLIENT_SIDECAR_DIR` 时 SKIP，
+  历史全量记录多为无夹具模式，故长期以 SKIP 存在。
+- **与 Gate 的关系**：属 Gate 条件 3（完整 GUI/Core/Host 流程矩阵）的直接输入 —— 该断言坏掉意味着
+  "命令可达性"这一层没有有效守卫。
 - **判别力**：`git stash` 暂存 `CHAPTER-MANUAL-SORT` 全部已跟踪改动后，在基线 `79606ea4a` 上跑同一测试
   —— **同样 111 vs 90 失败**。故与本卡无关。
 - **为何此前未暴露**：该测试标注 `[SidecarFact]`；未设置 `NEWMANGA_CORECLIENT_SIDECAR_DIR` 时 SKIP，
@@ -52,3 +63,28 @@
 - 本卡已在该方法内补 `SetLastError(ErrorCodeOf(ex))` 与成功时 `SetLastError(null)`。
 - **未覆盖的同类位置**：`HostController` 中其余仅 `return false` 的元数据写方法是否同病，未逐条核实；
   登记为待评估，不在本卡范围。
+
+## E-4：阅读偏好只有"应用"没有"保存"入口（用户改了不落库）
+
+- **事实**：`ReaderViewModel` 有 `ApplyReadingPreferencesAsync`（`ReaderViewModel.cs:146`，由
+  `LoadAsync:273` 调用 ⇒ 偏好**应用**已接线）与 `SaveReadingPreferencesAsync`（`:175`）。
+  但 `apps/desktop-avalonia/src/NewManga.App/**` 内**没有任何调用 `SaveReadingPreferencesAsync` 的地方**
+  ——除 `ReaderReadingPreferencesTests` 直接驱动 VM 外，生产路径上它是死方法。
+- **用户可见后果**：阅读器里的「单页 / 双页」「反向翻页」「放大 / 缩小 / 适合页面」只改 VM 内存状态，
+  重启或重开书后回到 Core 里存的旧值。用户"改了设置却保存不下来"。
+- **与 `L-R1-1` 的关系**：`L-R1-1` 的字面是"**偏好应用**/书签面板/整书进度/reset 确认"，四项
+  逐项核实**均已实现**（书签面板/整书进度/reset 确认由 `MAINT-2-C1-BATCH-1` AC1 交付，
+  `ReaderVisibleControlsTests` 4 项通过；偏好应用由 `LoadAsync` 调用）。故 `L-R1-1` 按字面可判关闭。
+  **但"偏好持久化"是一个相邻且真实的新缺口，不能因为字面已满足就说这块没问题。**
+- **建议**：开一张 UI 卡，把「单页/双页、方向、缩放」三处用户改动接到 `SaveReadingPreferencesAsync`
+  （已有 partial-patch 语义，只需接入口），并加判别测试：控件操作后断言 `ReadingPreferencesPatch` 落到 Host。
+- **性质**：用户可见缺陷，非数据损坏；与 `L-R1-1` 同功能面，**不计入条件 1 的 8 项**。
+
+## E-5：`L-F1-3` 的"压测"仍未被替代物覆盖（边界测试 ≠ 压测）
+
+- `MAINT-2-C1-BATCH-1` AC3 交付的是"FONT 大文件/并发导入的**边界测试**"（MET），
+  而 `L-F1-3` 的原文是"大文件 / 并发 / 占用文件**未压测**"。
+- 二者不是一回事：边界测试证明"不会错"，压测证明"在规模/并发下仍可接受"。
+  故 `L-F1-3` 的处置仍应是 `KEEP-NOTRUN`（已由条件 1 裁决给出重开条件），
+  **不得用 AC3 的 MET 声称 L-F1-3 的压测已完成**。
+
