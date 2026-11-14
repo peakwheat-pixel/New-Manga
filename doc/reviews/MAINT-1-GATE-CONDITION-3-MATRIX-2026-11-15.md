@@ -68,7 +68,7 @@ r1 复核指出、r2 复核再次纠正：**skip 的原因不止 sidecar**，而
 | **书签** | — | — | ✅ `Reader_BookmarkPanel_ListsExistingAndAddsAndDeletes` (`ReaderVisibleControlsTests.cs:58`)— 面板开→列出→添加→删除【核对】 | — |
 | **Region 编辑** | — | ✅ `Workbench_RegionList_AndCanvasSelection_AreBidirectional`（列表→模型、画布→列表+模型双向）、`Workbench_ApplyType_Undo_Rerender_…`、`Workbench_LoadsRealBookChapterPageChain_…`、`MainWindow_WorkbenchNavigation_…`【核对（双向）】 | — | — |
 | **主题/外观** | — | — | — | ✅ `Sink_MapsEveryThemeSettingsFieldIntoTheCanonicalDocument` (`AppearanceThemeSettingsSinkTests.cs:24`)【摘要】；`V2ThemeStudioTests`（七段顺序、切段保草稿、Esc 阶梯、未保存对话框）【摘要】 |
-| **快捷键** | ✅ `FluentShell_BreakpointsA11yShortcutsAndReducedMotion_AreExplicit` (`:119`)— 18 gesture、`Conflicts` 空、Ctrl+D2→Workbench、Tab→Batch、文本聚焦不吞键【核对】 | ✅ 同左【核对】 | ✅ `F11_OnReaderPage_ReturnsToReaderPageAfterClose` (`F11HotkeyTests.cs:101`)【摘要】 | ⚠️ `ConsoleSpaceUsesWorkbenchConsoleAndSettingsRemainANonSpaceEntry` (`:166`)【摘要】 |
+| **快捷键** | ✅ `FluentShell_BreakpointsA11yShortcutsAndReducedMotion_AreExplicit` (`:119`)— 18 gesture、`Conflicts` 空、Ctrl+D2→Workbench、Tab→Batch、文本聚焦不吞键【核对】 | ✅ 同左【核对】 | ✅ `F11_OnReaderPage_ReturnsToReaderPageAfterClose` (`F11HotkeyTests.cs:101`)【摘要】 | ✅ **`SettingsSpaceShortcutTests.ConsoleSpace_DoesNotSwallowGlobalShortcuts`**（新增，`GATE3-SETTINGS-SHORTCUT-1`）—— 用 `Ctrl+D3` 进 Console，断言 `State.CurrentSpace==SpaceId.Console`；**从 Console 按 `Ctrl+K`** 断言被处理且 `IsPaletteOpen`；`Esc` 关闭；`Ctrl+D2` 回 Studio。判别力实测：把 `ConsoleWorkspaceView.TryHandleKey` 改成 `=> true` 会使它变红【实测】。原 `ConsoleSpaceUsesWorkbenchConsole…` 只证明"设置不是 Space 入口"，不等于"快捷键仍生效"，已保留为旁证 |
 | **焦点/a11y** | ✅ `EachFluentPage_PaintsTheKeyboardFocusRing` (`FluentFocusPageCoverageTests.cs:42`)— 遍历四页找 focusable+visible 控件并断言焦点环【核对（结构）】；`AC5_TabTraversal_…` (`FluentResidual3Tests.cs:1082`)、`AC5_UiaTree_…` (`:1260`)【摘要】 | 同左 | 同左 | 同左 |
 
 ## 4. Host / Core 层：实测 skip 分布（r2 复核后重写）
@@ -231,3 +231,31 @@ App 的 4 个（带夹具仍 skip）经差集确认是 **opt-in gated**（性能
 
 仍有 **48 个带夹具 skip**（Host 44 + App 4）、§0 未纳范围的 GUI 流程、真机走查。
 本更新**只**把矩阵内 ❌ 与 ⚠️ 的**可见格**清零，**不**等于条件 3 满足。
+## 9. 最后一个 ⚠️ 格闭合（2026-11-15，`GATE3-SETTINGS-SHORTCUT-1`）
+
+矩阵 §3 的「设置 / 快捷键」格原为 ⚠️，证据只有 `ConsoleSpaceUsesWorkbenchConsoleAndSettingsRemainANonSpaceEntry`
+—— 那证明的是"设置不是 Space 入口"，**不等于**"在设置页时全局快捷键仍然生效"。
+
+**代码事实**（先读后写，未猜）：`AppShellViewModel.HandleKey` 的路由是
+"workspace 先否决，再 shell KeyMap"，只有 `workspace.TryHandleKey(...)` 返回 `true` 才会**短路**掉 KeyMap。
+而 `ConsoleWorkspaceView.TryHandleKey => false`（`WorkspaceAdapters.cs`），
+`LibraryWorkspaceAdapter` 同样 `=> false`；只有 `StudioWorkspaceAdapter` 有选择性处理（R-17 Studio 键）。
+
+**新增测试**：`NewManga.App.Tests.SettingsSpaceShortcutTests.ConsoleSpace_DoesNotSwallowGlobalShortcuts`
+
+- `Ctrl+D3` → 断言 `State.CurrentSpace == SpaceId.Console`（确实在设置空间）；
+- **从 Console 按 `Ctrl+K`** → 断言被处理且 `IsPaletteOpen`（全局快捷键没被空间吞掉）；
+- `Esc` 关闭面板；`Ctrl+D2` → 断言回到 `SpaceId.Studio`（离开空间也正常）。
+
+**判别力实测**：把 `ConsoleWorkspaceView.TryHandleKey` 临时改为 `=> true`（吞掉所有键）→ 该测试**变红**；
+还原后通过，`PROBE` 标记计数 0（无残留）。⇒ 它真的守护"设置空间不吞键"。
+
+**无夹具回归**：App.Tests **951 / 0 / 11 / 962**（新增 1 个测试；**skip 仍 11，未新增**）。
+
+### 9.1 条件 3 矩阵的 ❌ / ⚠️ 均已清零
+
+- **❌ 格：0**（`SETTINGS-ERROR-STATE-1` 清掉最后一个）。
+- **⚠️ 格：0**（本卡清掉「设置 / 快捷键」）。
+
+**这仍然不等于条件 3 MET**：带夹具 skip 仍有 **48**（Host 44 + App 4，均 opt-in/需真实 IPC）、
+矩阵 §0 未纳范围的 GUI 流程（源恢复/沉浸阅读等）、真机走查未做。

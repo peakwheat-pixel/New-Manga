@@ -1676,3 +1676,17 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **未做**：Host（349/2~3）与 CoreClient（214/4）**未在本卡重跑**，数字来自前两卡实测。
 - **自登记**：识别"7 个转绿"时第一次 filter 写错（`FullyQualifiedName~App.Tests` 不命中），两次空输出；
   改用差集才定位准确。
+## 221. GATE3-SETTINGS-SHORTCUT-1：条件 3 最后一个 ⚠️ 格闭合 —— ❌/⚠️ 均清零（2026-11-15，DSH，goal 轮次 20）
+
+- **代码事实（先读后写）**：`AppShellViewModel.HandleKey` 的路由是"workspace 先否决，再 shell KeyMap"，
+  只有 `workspace.TryHandleKey(...)==true` 才**短路** KeyMap。而 `ConsoleWorkspaceView.TryHandleKey => false`、
+  `LibraryWorkspaceAdapter => false`；只有 `StudioWorkspaceAdapter` 有选择性处理（R-17 Studio 键）。
+- **新增测试**：`SettingsSpaceShortcutTests.ConsoleSpace_DoesNotSwallowGlobalShortcuts` ——
+  `Ctrl+D3` 进 Console 并断言 `State.CurrentSpace==SpaceId.Console`；**从 Console 按 `Ctrl+K`**
+  断言被处理且 `IsPaletteOpen`；`Esc` 关闭；`Ctrl+D2` 回 Studio。
+- **判别力实测**：把 `ConsoleWorkspaceView.TryHandleKey` 临时改成 `=> true`（吞所有键）→ 测试**变红**；
+  还原后通过（`PROBE` 计数 0，无残留）。
+- **无夹具回归**：App.Tests **`951 / 0 / 11 / 962`**（新增 1 个测试；**skip 仍 11，未新增**）。
+- **⇒ 条件 3 矩阵的 ❌ 与 ⚠️ 均已清零**（❌ 由 `SETTINGS-ERROR-STATE-1`、⚠️ 由本卡）。
+- **仍不判 MET**：带夹具 skip 仍有 **48**（Host 44 + App 4，均 opt-in/需真实 IPC）、
+  §0 未纳范围的 GUI 流程、真机走查未做。
