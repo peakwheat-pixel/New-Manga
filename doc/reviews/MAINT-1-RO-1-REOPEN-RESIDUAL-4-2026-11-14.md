@@ -73,6 +73,15 @@ status: 生效（`FEA-06-RESIDUAL-4` 已由 `cancelled` → `proposed`）
 - 若字节不足，压缩 PLAN 冗余注释腾字节，**不得删除既有语义**；
 - 两者都不行时，先由 4A 卡以 `proposed` 存在、`MAINT-1` 代为持有实施权（proposed 不触发 DAG 登记）。
 
+## 6A. Errata（2026-11-14，实施后更正统计口径）
+
+原 §3 R2 写「inventory 更新 79→80 / 86→87」，**在 4A 内不可达**，更正为两段式：
+
+- **4A（已交付 `7c1ac472f`）**：inventory 新增「RO-1 计划追加（v1.9 预授权）」节，锁死 `ListPageRegionTextsAsync` / `Task<RegionPageTextProjection?>` / 落地行 `#80`；**正式成员表与统计保持 79/86 = 代码实测**；`generate_api_inventory.py --check` 保持 EXIT 0；pin 因文档字节变化重算为 **v1.9 `91e51ab7…`**。
+- **4B**：落地端口实现后，把计划行并入正式成员表、统计翻转为 **80/87**，pin 更新为 **v1.10**。
+
+**不可达的原因**（写入载体 §"为什么本次不翻转统计"）：生成器从源码 interface 解析计数，4A 不写 `apps/**`；`--check` 是子串判定，伪造 80 必 FAIL；同型先例 v1.2 PREQ 就是「计划追加 + 代码零改动 + pin 重算」；`FEA-CONTRACT-FROZEN-C07.md:50` §3 要求新增端口方法在同一 Task 内重跑脚本并更新清单 ⇒ 翻转归 4B。
+
 ## 7. 状态变更（已执行）
 
 - `doc/tasks/FEA-06-RESIDUAL-4.md`：`status: cancelled` → `proposed`；`disposition` 追加 RO-1 反转说明；正文追加 append-only「RO-1 重开记录」，原处置记录字节保留。
