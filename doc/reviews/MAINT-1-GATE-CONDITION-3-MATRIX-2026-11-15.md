@@ -1,4 +1,4 @@
-# Gate 条件 3 覆盖矩阵（2026-11-15，r2 返修版）
+# Gate 条件 3 覆盖矩阵（2026-11-15，r3 定稿）
 
 **Task**：`GATE3-COVERAGE-MATRIX`。**基线**：`d86f185ca`。
 **条件原文**：「补齐**可安全执行的**完整 GUI / Core / Host 关键流程与 Avalonia TestHost；所有 blocked/skipped 项继续保留原结果」（`audit/V1-FULL-AUDIT/reports/13_RELEASE_GATE.md:27`）。
@@ -108,11 +108,27 @@ r1 复核指出、r2 复核再次纠正：**skip 的原因不止 sidecar**，而
 | `WritePolicyTests` | 3 | sidecar |
 | **`HostReaderChaptersIntegrationTests`** | **2** | **`[BookFixtureFact]` — 需 book fixture，本环境 SKIP** |
 | `ExportE2ETests` | 2 | sidecar + `NEWMANGA_EXPORT_*` |
-| `Fea10RunIpcTests` / `Fea11WatchHostRuntimeTests` / `Fea12TrashUiIpcTests` / `Fea09RealIpcTests` / `Fea07Residual3IpcTests` | 各 1 | opt-in IPC |
+| `Fea10RunIpcTests` | 1 | opt-in real-IPC |
+| `Fea11WatchHostRuntimeTests` | 1 | host-runtime |
+| `Fea12TrashUiIpcTests` | 1 | opt-in IPC |
+| `Fea09RealIpcTests` | 1 | opt-in real-IPC |
+| `Fea07Residual3IpcTests` | 1 | opt-in IPC |
+| `ExportStalePolicyWireTests` | 1 | sidecar |
+| `LegacyShellRealTests` | 1 | 需 legacy shell fixture |
+| `RealTranslateProviderTests` | 1 | 需真实 provider |
+| `SourceRecoveryIpcTests` | 1 | opt-in real-IPC |
+| `SourceRegistryResilienceTests` | 1 | opt-in real-IPC |
+| `Fea11Scan2HostRuntimeTests` | 1 | host-runtime |
+| `CredentialPortTests` | 1 | sidecar |
 
-**合计 74。** 归因（按类名粗分，**未逐条核实每个 attribute**）：opt-in real-IPC 类约 **43**、
-fixture/sidecar 类约 **31**。**上一版"30 sidecar / 44 opt-in"的二分与本节实测不符，已撤回** ——
-该二分来自二手结论，不是我的实测。
+**合计 74**（上表 27 行相加 = 74，与 `verification/GATE3-COVERAGE-MATRIX/host-skips.txt` 的 74 行逐名一致）。
+
+**30 / 44 的二分可复现，予以恢复**（上一版撤回过度）：
+
+- **30** = `HostSidecarFact` 22 + `BookFixture` 4（`HostReaderChaptersIntegrationTests` 2 + `Fea11RunGrantIpcTests` 内 2）
+  + `RegionFixture` 4（`HostRegionWorkbenchIntegrationTests`）—— 即"需要 sidecar/fixture 才能跑"的 30 个。
+- **44** = 74 − 30，即 opt-in real-IPC / 崩溃注入 / 需真实 provider / legacy fixture 等。
+- 两者之和 74，与实测行数一致。**归属到单个类时仍需逐条看 attribute**，本节只主张总量可复现。
 
 ### 4.3 CoreClient.Tests 的 26 个 skip，按实测类分布
 
@@ -146,11 +162,11 @@ fixture/sidecar 类约 **31**。**上一版"30 sidecar / 44 opt-in"的二分与�
 2. **Host/Core 层**：**321 + 186 passed** 是真实执行的覆盖（wire 契约、命令覆盖、Host 单元面、Source 调度、
    Run 授权、各 IPC 类的非 skip 方法）；**100 个 skip**（74 + 26）在本环境 NOT_RUN。
 3. **剩余缺口分三类**：
-   - **被 skip 的集成面**：Host 74 + CoreClient 26 + App 7 = **107 个测试**。我并不宣称它们全部因 E-2 ——
+   - **被 skip 的集成面**：三项目共 **111 个 skip**（Host 74 + CoreClient 26 + App 11）。其中 App 的 11 = 7 sidecar + 4 非 sidecar。我并不宣称它们全部因 E-2 ——
      归因需逐条核 attribute，本节只给类分布（§4.2/§4.3）。
    - **真无覆盖**：**仅 1 格**（设置页错误态）。
    - **人工范畴**：真机窗口走查。
-4. **条件 3 不能判 MET。** 要判 MET，需要：执行被 skip 的 107 个测试（其中大部分需 sidecar 或 opt-in
+4. **条件 3 不能判 MET。** 要判 MET，需要：执行被 skip 的 111 个测试（其中大部分需 sidecar 或 opt-in
    环境与样本），或由 Owner 明确接受该边界。
 5. **撤回上一版三处错误（全部由 r1/r2 复核实测发现，均属我的判断失误）**：
    - "`HostReaderChaptersIntegrationTests` / `HostRegionWorkbenchIntegrationTests` 是 plain、计入 passed"
@@ -175,4 +191,4 @@ fixture/sidecar 类约 **31**。**上一版"30 sidecar / 44 opt-in"的二分与�
 - 未统计 `NewManga.Presentation.Avalonia` / `NewManga.DesignSystem` 等其它测试项目。
 - 未核验 `--shell=legacy` 旧界面路径。
 - 未做真机手动走查。
-- §1.1 的 30/44 拆分数字来自 r1 复核的实测；我复核了 skip 的两类来源结构，未逐条重数 74 个。
+- §4.2 的 30/44 总量二分可复现（与 74 行实测相加一致），但**逐类归属未逐条核实 attribute**。

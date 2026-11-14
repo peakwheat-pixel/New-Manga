@@ -183,7 +183,7 @@
 条件 4（当前 commit 的 Windows 包，需 PyInstaller）、条件 5（人工 GT 基线）仍未满足。条件 1 与 2 的
 推进**不构成发布许可**。
 
-## 15. 条件 3 覆盖矩阵（2026-11-15，`GATE3-COVERAGE-MATRIX`，r2 返修版）
+## 15. 条件 3 覆盖矩阵（2026-11-15，`GATE3-COVERAGE-MATRIX`，r3 定稿；引用需注明基线 `d86f185ca`）
 
 条件 3 此前只记作"部分"，没有任何清单说明覆盖到哪。现已按 **GUI + Host + CoreClient 三层**逐格盘点，
 见 `doc/reviews/MAINT-1-GATE-CONDITION-3-MATRIX-2026-11-15.md`。要点：
@@ -192,15 +192,14 @@
   **12 类有覆盖**，**唯一完全无覆盖的是"设置页错误态"一格**；四页有 PNG 级渲染证据
   （`FluentPages_RenderHeadlessPngEvidence` 断言四帧 `PixelSize` 非零）。
 - **Host/Core 层**（r1/r2 复核两次纠正后）：本环境真实执行 `321 + 186 passed`（含 wire 契约、命令覆盖、
-  Host 单元面、Source 调度、Run 授权及各 IPC 类的非 skip 方法）；**100 个 skip**（Host 74 + CoreClient 26）
+  Host 单元面、Source 调度、Run 授权及各 IPC 类的非 skip 方法）；**100 个 skip**（Host 74 + CoreClient 26；App 另 11）
   NOT_RUN，按实测类分布列于矩阵 §4.2/§4.3。
 - **skip 归因（两次更正）**：App 11 skip = **7 sidecar**（4 个 attribute 类型：`HostSidecarFact`×2、
   `RunSidecarFact`×2、`RunBookFixtureFact`×1、`WritePolicySidecarFact`×2）+ **4 非 sidecar**
-  （perf 预算 / 真实进程 / 崩溃注入 ×2）。**"100 个 skip 全部卡 E-2"与"30 sidecar / 44 opt-in"两说法均已撤回** ——
-  后者我实测无法复现。
+  （perf 预算 / 真实进程 / 崩溃注入 ×2）。**"100 个 skip 全部卡 E-2"已撤回**；"30 sidecar / 44 opt-in"的**总量可复现**（与 74 行实测相加一致），但逐类归属需逐条看 attribute。
 - **我的一次实质判断失误（已登记在卡面）**：上一版把 `HostReaderChaptersIntegrationTests`(2) 与
   `HostRegionWorkbenchIntegrationTests`(4) 标为 `plain` 并声称"计入 passed"；r2 复核实跑证明它们是
-  `[BookFixtureFact]` / `[RegionFixtureFact]`，6 个测试**全部 SKIP**。根因是用源码正则推断 gate 而非实测。
+  `[BookFixtureFact]` / `[RegionFixtureFact]`，6 个测试**全部 SKIP**。根因是用源码正则推断 gate 而非实测。r3 后 §4 已改为纯实测 skip 类分布（27 行合计 74），原始输出入库 `verification/GATE3-COVERAGE-MATRIX/host-skips.txt`、`coreclient-skips.txt`。
 - **条件 3 的可判定形态**：剩余缺口分三类 —— ①E-2 阻塞（`SidecarFact` 家族）；
   ②默认门禁外的 opt-in 矩阵（需环境与样本）；③**真无覆盖仅 1 格**（设置页错误态）。真机人工走查另属一类。
 - **矩阵自身的边界**：只有 12 格被逐行核对断言，其余为"类摘要 + 方法名"，**不得当作已验证**；

@@ -90,16 +90,16 @@ Gate 条件 3 = "补齐**可安全执行的**完整 GUI / Core / Host 关键流�
 - Review：尚无（须独立上下文，且须复核"每格判定是否有代码依据"）。
 - 实际测试：本卡为盘点，无新增测试。
 - 后续记录日期、commit、环境、结果、遗留项。
-### r1 复核处置（REJECT → 返修）
+### r1 复核处置（REJECT → 返修）**——已被 r2/r3 取代，保留仅为历史**
 
 复核报告：`doc/reviews/GATE3-COVERAGE-MATRIX-review-r1.md`（审查者 `review-gate3-matrix`，未参与实现）。
 
 | finding | 严重度 | 处置 |
 |---|---|---|
-| **R-001 范围**：条件 3 原文含 **Core / Host**，矩阵只盘 GUI 四页且未声明范围 | **P1** | **已修**：新增 §0 范围声明（明示覆盖 GUI + Host + CoreClient 三层，并列出不在范围内的项）；新增 §4 **Host/Core 层集成流程表**（15 行，含 `HostReaderChaptersIntegrationTests`(2,plain)、`HostRegionWorkbenchIntegrationTests`(4,plain)、`SourceScanSchedulerTests`(57,plain)、`RunGrantRenewalTests`(23,plain)、`HostRuntimeIntegrationTests`(4,sidecar) 等，逐行标 plain/sidecar/opt-in）。 |
+| **R-001 范围**：条件 3 原文含 **Core / Host**，矩阵只盘 GUI 四页且未声明范围 | **P1** | **已修**：新增 §0 范围声明（明示覆盖 GUI + Host + CoreClient 三层，并列出不在范围内的项）；新增 §4 Host/Core 层表 —— **该表已被 r2/r3 取代**：其中把 `HostReaderChaptersIntegrationTests`/`HostRegionWorkbenchIntegrationTests` 标为 plain 是**错的**（实为 `[BookFixtureFact]`/`[RegionFixtureFact]`，6 个全 SKIP），其余"方法数/plain"标注亦不可靠；现版 §4 只保留实测 skip 类分布。 |
 | **R-002 结论口径**：把"格"说成"类"；"阅读器只读"实际有测试 | **P1** | **已修**：改为"唯一完全无覆盖的是设置页错误态**一格**"；"阅读器只读"改判 ✅ 并引 `ReaderProgressTests.cs:194` `ReadOnlyHost_DoesNotPersist_ButReaderKeepsWorking`。 |
-| **R-003 sidecar 计数**：只数了 `[HostSidecarFact]` | **P1** | **已修**：实测 App.Tests 无夹具 11 skip = **7 sidecar + 4 非 sidecar**（perf gate / 真实进程 / 崩溃注入×2）；sidecar 有 **4 类 gate**（`HostSidecarFact`×2、`RunSidecarFact`×3、`WritePolicySidecarFact`×2）。`WritePolicyUiTests` 的 gate 名已更正（`[WritePolicySidecarFact]`，不是 `[HostSidecarFact]`）。 |
-| **P2 "100 个 skip 全部卡 E-2"不成立** | P2 | **已修**：新增 §2.1，Host 74 skip = **30 sidecar + 44 opt-in real-IPC/崩溃注入**，并逐项列出环境变量；撤回原说法。 |
+| **R-003 sidecar 计数**：只数了 `[HostSidecarFact]` | **P1** | **已修**：实测 App.Tests 无夹具 11 skip = **7 sidecar + 4 非 sidecar**（perf gate / 真实进程 / 崩溃注入×2）；sidecar 有 **4 类 gate**（`HostSidecarFact`×2、`RunSidecarFact`×2、`RunBookFixtureFact`×1、`WritePolicySidecarFact`×2 —— r3 更正，原写 Run×3）。`WritePolicyUiTests` 的 gate 名已更正（`[WritePolicySidecarFact]`，不是 `[HostSidecarFact]`）。 |
+| **P2 "100 个 skip 全部卡 E-2"不成立** | P2 | **已修**：新增 §1.1/§4.2，Host 74 skip 的**总量二分可复现**（30 = sidecar/fixture、44 = opt-in 等），并给出 27 行逐类清单（合计 74）；"100 个 skip 全部卡 E-2"已撤回。 |
 | **P2 AC2 多格缺 `文件:行`** | P2 | 部分修：主要格已补 `文件:行`；【摘要】格仍以方法名为准（已在 §7 声明不得当作已验证）。 |
 | **P2 无失效检测** | P2 | **已修**：新增 §6 **staleness 声明** —— 文档为快照，测试改名/删除不会使矩阵变红；后续改动相关测试的 Task 必须登记"矩阵可能过时"。 |
 | **P3 数字**：`[AvaloniaFact]` 62（原写 61）、`ReaderPreferencePersistenceTests` 9（原写 8）、825 方法不可复现 | P3 | **已修**：改为 62 / 9，并删除"825 个可见测试方法"这一不可复现数字。 |
