@@ -1,0 +1,259 @@
+............................. [ 43%]
+......F.FFFF..FF.........F.FF........                 [100%]
+================================== FAILURES ===================================
+___ CanonicalEvidenceBasisTests.test_external_sha256_reads_exact_png_bytes ____
+
+self = <test_canonical_evidence_basis.CanonicalEvidenceBasisTests testMethod=test_external_sha256_reads_exact_png_bytes>
+
+    def test_external_sha256_reads_exact_png_bytes(self):
+        png = git_blob(self.head, PNG_REL, self.repo_root)
+        with tempfile.TemporaryDirectory(prefix="pin-basis-external-") as external:
+            path = Path(external) / "sample.png"
+            path.write_bytes(png)
+            output = self.run_fixture(
+                BASIS_HEADER,
+                self.explicit_row(path, sha256(png), "EXTERNAL_SHA256"),
+            )
+>           self.assert_basis_passes(output)
+
+tools\governance\tests\test_canonical_evidence_basis.py:386: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tools\governance\tests\test_canonical_evidence_basis.py:165: in assert_basis_passes
+    self.assertIn("FIXTURE_PROCESS_EXIT=0", output)
+E   AssertionError: 'FIXTURE_PROCESS_EXIT=0' not found in 'FIXTURE_PROCESS_EXIT=1\nGovernance scope: 15 current documents; no historical directory scan.\nTask: doc\\tasks\\FEA-15-PIN-BASIS-ENFORCE-1.md\nWARN: ���� 8 ������̬ Task���� TASK_LEDGER����״̬�ֶβ���֤�����ԣ����þݴ������رգ�r38��\nWARN: doc/STATUS.md �ѴﵽԤ��� 80%��3177 bytes / 32 lines\nWARN: doc/REBASELINE_PLAN.md �ѴﵽԤ��� 80%��6455 bytes / 60 lines\nFAIL: TASK_LEDGER �ѹ��ڣ����� 7 ������̬ Task��ʵ�� 8 �������� tools/governance/task_ledger.py --write��\nGovernance check: FAIL (1 errors, 3 warnings)\n'
+_ CanonicalEvidenceBasisTests.test_legacy_plain_path_header_remains_supported _
+
+self = <test_canonical_evidence_basis.CanonicalEvidenceBasisTests testMethod=test_legacy_plain_path_header_remains_supported>
+
+    def test_legacy_plain_path_header_remains_supported(self):
+        header = LEGACY_HEADER.copy()
+        header[2] = "path"
+        path = self.repo_root / PLAN_REL
+        output = self.run_fixture(
+            header,
+            ["EV1", "AC2 legacy path alias", PLAN_REL, self.head, sha256(path.read_bytes()), "CANONICAL"],
+        )
+>       self.assert_basis_passes(output)
+
+tools\governance\tests\test_canonical_evidence_basis.py:194: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tools\governance\tests\test_canonical_evidence_basis.py:165: in assert_basis_passes
+    self.assertIn("FIXTURE_PROCESS_EXIT=0", output)
+E   AssertionError: 'FIXTURE_PROCESS_EXIT=0' not found in 'FIXTURE_PROCESS_EXIT=1\nGovernance scope: 15 current documents; no historical directory scan.\nTask: doc\\tasks\\FEA-15-PIN-BASIS-ENFORCE-1.md\nWARN: ���� 8 ������̬ Task���� TASK_LEDGER����״̬�ֶβ���֤�����ԣ����þݴ������رգ�r38��\nWARN: doc/STATUS.md �ѴﵽԤ��� 80%��3177 bytes / 32 lines\nWARN: doc/REBASELINE_PLAN.md �ѴﵽԤ��� 80%��6455 bytes / 60 lines\nFAIL: TASK_LEDGER �ѹ��ڣ����� 7 ������̬ Task��ʵ�� 8 �������� tools/governance/task_ledger.py --write��\nGovernance check: FAIL (1 errors, 3 warnings)\n'
+_ CanonicalEvidenceBasisTests.test_legacy_png_blob_fallback_matches_r0_checker _
+
+self = <test_canonical_evidence_basis.CanonicalEvidenceBasisTests testMethod=test_legacy_png_blob_fallback_matches_r0_checker>
+
+    def test_legacy_png_blob_fallback_matches_r0_checker(self):
+        png_path = self.repo_root / PNG_REL
+        original = png_path.read_bytes()
+        blob = git_blob(self.head, PNG_REL, self.repo_root)
+        self.assertEqual(original, blob)
+        candidate_checker = self.check.read_bytes()
+        baseline_checker = subprocess.run(
+            ["git", "show", f"{R0_HEAD}:tools/governance/check.ps1"],
+            cwd=self.repo_root,
+            check=True,
+            capture_output=True,
+        ).stdout
+        png_path.write_bytes(original + b"\x00WORKTREE-ONLY")
+        try:
+            row = ["EV1", "AC2 legacy PNG blob", PNG_REL, self.head, sha256(blob), "CANONICAL"]
+            candidate_output = self.run_fixture(LEGACY_HEADER, row)
+>           self.assert_basis_passes(candidate_output)
+
+tools\governance\tests\test_canonical_evidence_basis.py:224: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tools\governance\tests\test_canonical_evidence_basis.py:165: in assert_basis_passes
+    self.assertIn("FIXTURE_PROCESS_EXIT=0", output)
+E   AssertionError: 'FIXTURE_PROCESS_EXIT=0' not found in 'FIXTURE_PROCESS_EXIT=1\nGovernance scope: 15 current documents; no historical directory scan.\nTask: doc\\tasks\\FEA-15-PIN-BASIS-ENFORCE-1.md\nWARN: ���� 8 ������̬ Task���� TASK_LEDGER����״̬�ֶβ���֤�����ԣ����þݴ������رգ�r38��\nWARN: doc/STATUS.md �ѴﵽԤ��� 80%��3177 bytes / 32 lines\nWARN: doc/REBASELINE_PLAN.md �ѴﵽԤ��� 80%��6455 bytes / 60 lines\nFAIL: TASK_LEDGER �ѹ��ڣ����� 7 ������̬ Task��ʵ�� 8 �������� tools/governance/task_ledger.py --write��\nGovernance check: FAIL (1 errors, 3 warnings)\n'
+_ CanonicalEvidenceBasisTests.test_legacy_six_column_blob_pin_remains_an_alternative _
+
+self = <test_canonical_evidence_basis.CanonicalEvidenceBasisTests testMethod=test_legacy_six_column_blob_pin_remains_an_alternative>
+
+    def test_legacy_six_column_blob_pin_remains_an_alternative(self):
+        path = self.repo_root / PLAN_REL
+        blob = git_blob(self.head, PLAN_REL, self.repo_root)
+        worktree = path.read_bytes()
+        if worktree == blob:
+            self.skipTest("checkout has identical blob and worktree bytes; AC4 provides the cross-EOL differential")
+        output = self.run_fixture(
+            LEGACY_HEADER,
+            ["EV1", "AC2 legacy blob", PLAN_REL, self.head, sha256(blob), "CANONICAL"],
+        )
+>       self.assert_basis_passes(output)
+
+tools\governance\tests\test_canonical_evidence_basis.py:206: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tools\governance\tests\test_canonical_evidence_basis.py:165: in assert_basis_passes
+    self.assertIn("FIXTURE_PROCESS_EXIT=0", output)
+E   AssertionError: 'FIXTURE_PROCESS_EXIT=0' not found in 'FIXTURE_PROCESS_EXIT=1\nGovernance scope: 15 current documents; no historical directory scan.\nTask: doc\\tasks\\FEA-15-PIN-BASIS-ENFORCE-1.md\nWARN: ���� 8 ������̬ Task���� TASK_LEDGER����״̬�ֶβ���֤�����ԣ����þݴ������رգ�r38��\nWARN: doc/STATUS.md �ѴﵽԤ��� 80%��3177 bytes / 32 lines\nWARN: doc/REBASELINE_PLAN.md �ѴﵽԤ��� 80%��6455 bytes / 60 lines\nFAIL: TASK_LEDGER �ѹ��ڣ����� 7 ������̬ Task��ʵ�� 8 �������� tools/governance/task_ledger.py --write��\nGovernance check: FAIL (1 errors, 3 warnings)\n'
+_ CanonicalEvidenceBasisTests.test_legacy_six_column_worktree_pin_remains_valid _
+
+self = <test_canonical_evidence_basis.CanonicalEvidenceBasisTests testMethod=test_legacy_six_column_worktree_pin_remains_valid>
+
+    def test_legacy_six_column_worktree_pin_remains_valid(self):
+        path = self.repo_root / PLAN_REL
+        digest = sha256(path.read_bytes())
+        output = self.run_fixture(
+            LEGACY_HEADER,
+            ["EV1", "AC2 legacy worktree", PLAN_REL, self.head, digest, "CANONICAL"],
+        )
+>       self.assert_basis_passes(output)
+
+tools\governance\tests\test_canonical_evidence_basis.py:184: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tools\governance\tests\test_canonical_evidence_basis.py:165: in assert_basis_passes
+    self.assertIn("FIXTURE_PROCESS_EXIT=0", output)
+E   AssertionError: 'FIXTURE_PROCESS_EXIT=0' not found in 'FIXTURE_PROCESS_EXIT=1\nGovernance scope: 15 current documents; no historical directory scan.\nTask: doc\\tasks\\FEA-15-PIN-BASIS-ENFORCE-1.md\nWARN: ���� 8 ������̬ Task���� TASK_LEDGER����״̬�ֶβ���֤�����ԣ����þݴ������رգ�r38��\nWARN: doc/STATUS.md �ѴﵽԤ��� 80%��3177 bytes / 32 lines\nWARN: doc/REBASELINE_PLAN.md �ѴﵽԤ��� 80%��6455 bytes / 60 lines\nFAIL: TASK_LEDGER �ѹ��ڣ����� 7 ������̬ Task��ʵ�� 8 �������� tools/governance/task_ledger.py --write��\nGovernance check: FAIL (1 errors, 3 warnings)\n'
+_ CanonicalEvidenceBasisTests.test_new_blob_basis_hashes_exact_png_blob_bytes _
+
+self = <test_canonical_evidence_basis.CanonicalEvidenceBasisTests testMethod=test_new_blob_basis_hashes_exact_png_blob_bytes>
+
+    def test_new_blob_basis_hashes_exact_png_blob_bytes(self):
+        blob = git_blob(self.head, PNG_REL, self.repo_root)
+        self.assertTrue(blob.startswith(b"\x89PNG\r\n\x1a\n"))
+        output = self.run_fixture(
+            BASIS_HEADER,
+            self.explicit_row(PNG_REL, sha256(blob), "BLOB", commit=self.head),
+        )
+>       self.assert_basis_passes(output)
+
+tools\governance\tests\test_canonical_evidence_basis.py:239: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tools\governance\tests\test_canonical_evidence_basis.py:165: in assert_basis_passes
+    self.assertIn("FIXTURE_PROCESS_EXIT=0", output)
+E   AssertionError: 'FIXTURE_PROCESS_EXIT=0' not found in 'FIXTURE_PROCESS_EXIT=1\nGovernance scope: 15 current documents; no historical directory scan.\nTask: doc\\tasks\\FEA-15-PIN-BASIS-ENFORCE-1.md\nWARN: ���� 8 ������̬ Task���� TASK_LEDGER����״̬�ֶβ���֤�����ԣ����þݴ������رգ�r38��\nWARN: doc/STATUS.md �ѴﵽԤ��� 80%��3177 bytes / 32 lines\nWARN: doc/REBASELINE_PLAN.md �ѴﵽԤ��� 80%��6455 bytes / 60 lines\nFAIL: TASK_LEDGER �ѹ��ڣ����� 7 ������̬ Task��ʵ�� 8 �������� tools/governance/task_ledger.py --write��\nGovernance check: FAIL (1 errors, 3 warnings)\n'
+_ CanonicalEvidenceBasisTests.test_new_blob_basis_uses_commit_bytes_across_checkout_eol _
+
+self = <test_canonical_evidence_basis.CanonicalEvidenceBasisTests testMethod=test_new_blob_basis_uses_commit_bytes_across_checkout_eol>
+
+    def test_new_blob_basis_uses_commit_bytes_across_checkout_eol(self):
+        blob = git_blob(self.head, PLAN_REL, self.repo_root)
+        worktree = (self.repo_root / PLAN_REL).read_bytes()
+        output = self.run_fixture(
+            BASIS_HEADER,
+            self.explicit_row(PLAN_REL, sha256(blob), "BLOB", commit=self.head),
+        )
+>       self.assert_basis_passes(output)
+
+tools\governance\tests\test_canonical_evidence_basis.py:248: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tools\governance\tests\test_canonical_evidence_basis.py:165: in assert_basis_passes
+    self.assertIn("FIXTURE_PROCESS_EXIT=0", output)
+E   AssertionError: 'FIXTURE_PROCESS_EXIT=0' not found in 'FIXTURE_PROCESS_EXIT=1\nGovernance scope: 15 current documents; no historical directory scan.\nTask: doc\\tasks\\FEA-15-PIN-BASIS-ENFORCE-1.md\nWARN: ���� 8 ������̬ Task���� TASK_LEDGER����״̬�ֶβ���֤�����ԣ����þݴ������رգ�r38��\nWARN: doc/STATUS.md �ѴﵽԤ��� 80%��3177 bytes / 32 lines\nWARN: doc/REBASELINE_PLAN.md �ѴﵽԤ��� 80%��6455 bytes / 60 lines\nFAIL: TASK_LEDGER �ѹ��ڣ����� 7 ������̬ Task��ʵ�� 8 �������� tools/governance/task_ledger.py --write��\nGovernance check: FAIL (1 errors, 3 warnings)\n'
+_ CanonicalEvidenceBasisTests.test_worktree_hashes_crlf_and_mixed_eol_exact_bytes (name='crlf') _
+
+self = <test_canonical_evidence_basis.CanonicalEvidenceBasisTests testMethod=test_worktree_hashes_crlf_and_mixed_eol_exact_bytes>
+
+    def test_worktree_hashes_crlf_and_mixed_eol_exact_bytes(self):
+        cases = {
+            "crlf": b"first\r\nsecond\r\n",
+            "mixed": b"first\r\nsecond\nthird\r\n",
+        }
+        for name, raw in cases.items():
+            with self.subTest(name=name):
+                path = self.root / f"{name}.txt"
+                path.write_bytes(raw)
+                normalized = raw.replace(b"\r\n", b"\n")
+                self.assertNotEqual(sha256(raw), sha256(normalized))
+                output = self.run_fixture(
+                    BASIS_HEADER,
+                    self.explicit_row(
+                        path,
+                        sha256(raw),
+                        "WORKTREE",
+                        gate="AC3 WORKTREE_ENV=Windows; raw fixture bytes",
+                    ),
+                )
+>               self.assert_basis_passes(output)
+
+tools\governance\tests\test_canonical_evidence_basis.py:365: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tools\governance\tests\test_canonical_evidence_basis.py:165: in assert_basis_passes
+    self.assertIn("FIXTURE_PROCESS_EXIT=0", output)
+E   AssertionError: 'FIXTURE_PROCESS_EXIT=0' not found in 'FIXTURE_PROCESS_EXIT=1\nGovernance scope: 15 current documents; no historical directory scan.\nTask: doc\\tasks\\FEA-15-PIN-BASIS-ENFORCE-1.md\nWARN: ���� 8 ������̬ Task���� TASK_LEDGER����״̬�ֶβ���֤�����ԣ����þݴ������رգ�r38��\nWARN: doc/STATUS.md �ѴﵽԤ��� 80%��3177 bytes / 32 lines\nWARN: doc/REBASELINE_PLAN.md �ѴﵽԤ��� 80%��6455 bytes / 60 lines\nFAIL: TASK_LEDGER �ѹ��ڣ����� 7 ������̬ Task��ʵ�� 8 �������� tools/governance/task_ledger.py --write��\nGovernance check: FAIL (1 errors, 3 warnings)\n'
+_ CanonicalEvidenceBasisTests.test_worktree_hashes_crlf_and_mixed_eol_exact_bytes (name='mixed') _
+
+self = <test_canonical_evidence_basis.CanonicalEvidenceBasisTests testMethod=test_worktree_hashes_crlf_and_mixed_eol_exact_bytes>
+
+    def test_worktree_hashes_crlf_and_mixed_eol_exact_bytes(self):
+        cases = {
+            "crlf": b"first\r\nsecond\r\n",
+            "mixed": b"first\r\nsecond\nthird\r\n",
+        }
+        for name, raw in cases.items():
+            with self.subTest(name=name):
+                path = self.root / f"{name}.txt"
+                path.write_bytes(raw)
+                normalized = raw.replace(b"\r\n", b"\n")
+                self.assertNotEqual(sha256(raw), sha256(normalized))
+                output = self.run_fixture(
+                    BASIS_HEADER,
+                    self.explicit_row(
+                        path,
+                        sha256(raw),
+                        "WORKTREE",
+                        gate="AC3 WORKTREE_ENV=Windows; raw fixture bytes",
+                    ),
+                )
+>               self.assert_basis_passes(output)
+
+tools\governance\tests\test_canonical_evidence_basis.py:365: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tools\governance\tests\test_canonical_evidence_basis.py:165: in assert_basis_passes
+    self.assertIn("FIXTURE_PROCESS_EXIT=0", output)
+E   AssertionError: 'FIXTURE_PROCESS_EXIT=0' not found in 'FIXTURE_PROCESS_EXIT=1\nGovernance scope: 15 current documents; no historical directory scan.\nTask: doc\\tasks\\FEA-15-PIN-BASIS-ENFORCE-1.md\nWARN: ���� 8 ������̬ Task���� TASK_LEDGER����״̬�ֶβ���֤�����ԣ����þݴ������رգ�r38��\nWARN: doc/STATUS.md �ѴﵽԤ��� 80%��3177 bytes / 32 lines\nWARN: doc/REBASELINE_PLAN.md �ѴﵽԤ��� 80%��6455 bytes / 60 lines\nFAIL: TASK_LEDGER �ѹ��ڣ����� 7 ������̬ Task��ʵ�� 8 �������� tools/governance/task_ledger.py --write��\nGovernance check: FAIL (1 errors, 3 warnings)\n'
+______________ ProductionScan.test_all_seven_errors_are_resolved ______________
+
+self = <test_residual_runtime_identity.ProductionScan testMethod=test_all_seven_errors_are_resolved>
+
+    def test_all_seven_errors_are_resolved(self):
+>       self.assertEqual(self.index.errors, [])
+E       AssertionError: Lists differ: [{'code': 'TABLE_DELIMITER', 'message': 't[39449 chars]one}] != []
+E       
+E       First list contains 168 additional elements.
+E       First extra element 0:
+E       {'code': 'TABLE_DELIMITER', 'message': 'table at line 2 has an invalid delimiter row', 'file': 'doc/tasks/CHAPTER-SELECTOR-1.md', 'locator': None}
+E       
+E       Diff is 46413 characters long. Set self.maxDiff to None to see it.
+
+tools\governance\tests\test_residual_runtime_identity.py:134: AssertionError
+______________ ProductionScan.test_protection_set_did_not_shrink ______________
+
+self = <test_residual_runtime_identity.ProductionScan testMethod=test_protection_set_did_not_shrink>
+
+    def test_protection_set_did_not_shrink(self):
+        with mock.patch.object(
+                guard, "_apply_residual_runtime_identity",
+                lambda index, scanned: guard._finish_declaration_scan(index, scanned)):
+            before, _ = guard.scan_repo_declarations(str(REPO), WORKSPACE_ROOT)
+>       self.assertEqual(len(before.errors), 7)
+E       AssertionError: 168 != 7
+
+tools\governance\tests\test_residual_runtime_identity.py:154: AssertionError
+_____________ ProductionScan.test_user_data_root_is_now_protected _____________
+
+self = <test_residual_runtime_identity.ProductionScan testMethod=test_user_data_root_is_now_protected>
+
+    def test_user_data_root_is_now_protected(self):
+        for suffix in ("catalog", "data", "derived"):
+            hits = self.index.evaluate(norm(APPDATA_ROOT + "/" + suffix))
+>           self.assertTrue(hits, "expected protection for %s" % suffix)
+E           AssertionError: [] is not true : expected protection for catalog
+
+tools\governance\tests\test_residual_runtime_identity.py:141: AssertionError
+=========================== short test summary info ===========================
+FAILED tools/governance/tests/test_canonical_evidence_basis.py::CanonicalEvidenceBasisTests::test_external_sha256_reads_exact_png_bytes
+FAILED tools/governance/tests/test_canonical_evidence_basis.py::CanonicalEvidenceBasisTests::test_legacy_plain_path_header_remains_supported
+FAILED tools/governance/tests/test_canonical_evidence_basis.py::CanonicalEvidenceBasisTests::test_legacy_png_blob_fallback_matches_r0_checker
+FAILED tools/governance/tests/test_canonical_evidence_basis.py::CanonicalEvidenceBasisTests::test_legacy_six_column_blob_pin_remains_an_alternative
+FAILED tools/governance/tests/test_canonical_evidence_basis.py::CanonicalEvidenceBasisTests::test_legacy_six_column_worktree_pin_remains_valid
+FAILED tools/governance/tests/test_canonical_evidence_basis.py::CanonicalEvidenceBasisTests::test_new_blob_basis_hashes_exact_png_blob_bytes
+FAILED tools/governance/tests/test_canonical_evidence_basis.py::CanonicalEvidenceBasisTests::test_new_blob_basis_uses_commit_bytes_across_checkout_eol
+SUBFAILED(name='crlf') tools/governance/tests/test_canonical_evidence_basis.py::CanonicalEvidenceBasisTests::test_worktree_hashes_crlf_and_mixed_eol_exact_bytes
+SUBFAILED(name='mixed') tools/governance/tests/test_canonical_evidence_basis.py::CanonicalEvidenceBasisTests::test_worktree_hashes_crlf_and_mixed_eol_exact_bytes
+FAILED tools/governance/tests/test_residual_runtime_identity.py::ProductionScan::test_all_seven_errors_are_resolved
+FAILED tools/governance/tests/test_residual_runtime_identity.py::ProductionScan::test_protection_set_did_not_shrink
+FAILED tools/governance/tests/test_residual_runtime_identity.py::ProductionScan::test_user_data_root_is_now_protected
+12 failed, 56 passed, 60 subtests passed in 145.18s (0:02:25)
