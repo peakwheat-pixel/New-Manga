@@ -1447,3 +1447,21 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - Gate 仍 BLOCKED。E-2 的性质已从"缺工具"变成"缺测试侧适配"。
 - **下一步**：逐个归因 13 个失败（CoreClient 4 = Frozen Core 前提，需改为显式模拟旧 capabilities；
   Host 9 = 夹具/协议配置），并保住 fail-closed 守卫。
+## 209. SIDECAR-REBUILD-1 再续：数据根传递澄清 + 失败收窄到 namespace（2026-11-15，DSH，goal 轮次 8）
+
+- 提交：`b9695e78a`。卡仍 `in_progress`。
+- **澄清一：`--data-root` 从来不被支持**。实测空格与等号两种形式，**新旧 sidecar 都静默忽略**
+  （打开默认库）；`app.py:20` 文档说支持，与实际不符。**正确通道是环境变量 `NEWMANGA_DATA_ROOT`**。
+- **澄清二：Host 侧传参是正确的**。`CoreServiceClient.cs:499` 用 `["NEWMANGA_DATA_ROOT"] = options.DataRoot`；
+  `HostFixture.SidecarDirectory` 确实读 `NEWMANGA_CORECLIENT_SIDECAR_DIR`。
+- **澄清三：新 sidecar 与 fixture 数据兼容**。用环境变量打开 fixture 副本 → **读到 1 本书**，
+  日志 `applied 8 migration(s) up to v14`（v6→v14 迁移链完好）。所以既不是 sidecar 坏了，也不是数据根传错。
+- **剩余怀疑：namespace 隔离**。用环境变量打开 fixture 时 stderr 出现
+  `[core.namespace] data root identity changed (preview namespace unavailable: namespace binding
+  identity mismatch); re-bound preview namespace: derived_root=…`。而 13 个 Host 测试并行、各自不同
+  dataRoot、且 `ParityReached=true`。**下一步先查 `derived_root` 是否被用于读数据**（若读 derived 而非传入根，
+  就解释了"集合为空"），并验单线程下是否仍失败。
+- 已入库 3 个探针脚本（`probe_fixture.py` / `probe_args.py` / `probe_env.py`）作为可复现证据。
+- **自登记**：本轮我先假设"`--data-root` 等号形式不被识别"，实测**空格形式也不被识别** ——
+  即该参数根本不存在。我最初的假设方向对了一半（参数无效），但归因（等号 vs 空格）是错的。
+- Gate 仍 BLOCKED。E-2 的下一步从"补 sidecar"变成"查 namespace/derived_root 与测试隔离"。
