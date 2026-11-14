@@ -50,7 +50,7 @@
 | AC5 scoped 绑定如实表述 | **PASS（r1 修正）** | **事实更正**：设置页本来就有 book/chapter 绑定入口（`Views/Pages.cs:1141` 实例化 `ProviderBindingsSection`，`:89-94` 有 scope/书/章选择器）。r1 指出我先前写「没有入口」是**不实**。已在该 section 的说明文案补上卡面约束 3 的限定「**当前仅全局绑定驱动执行**：book/chapter 范围的绑定会保存并显示，但 Run 执行链只读全局槽位」 |
 | AC6 过期文案 | **PASS** | `StudioInspectorPanel.cs:256` 改写为实测状态（见上） |
 | AC7 零契约面 | **PASS** | 无新 wire 命令、无新 `IHostController` 成员（复用既有 `ResolveProviderBindingAsync` / `ListChapterPagesAsync`） |
-| AC8 判别测试 | **PASS** | `tests/NewManga.App.Tests/TranslateEntryUiTests.cs` 4 例：四类文案不同、重启提示、缺绑定不发 StartRun、空章文案且不发 StartRun |
+| AC8 判别测试 | **PASS** | `tests/NewManga.App.Tests/TranslateEntryUiTests.cs` **8 例**：四类文案不同、重启提示、缺绑定不发 StartRun、空章文案且不发 StartRun、Ready+0页→空章句、未就绪→不谎称空章、ErrorCell 已知码映射、ErrorCell 未知码保留（**`DrawerDetail` 仍无直接断言，见卡面 limitation**） |
 | AC9 门禁 | **PASS** | 见 §3 |
 
 ## 3. 测试数字

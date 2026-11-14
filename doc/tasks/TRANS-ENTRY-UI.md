@@ -3,7 +3,7 @@ id: TRANS-ENTRY-UI
 title: 自动翻译入口与错误文案：工作台前置门 + 四类错误可读化 + 设置页如实表述
 kind: implementation
 governance_version: 3
-status: in_progress
+status: closed_with_limitations
 disposition: "L1-T-C（2026-11-14 DSH 释放）；依据 MAINT-1-AUTO-TRANSLATE-FEASIBILITY §7 T-C 与 T-A/T-B/L2 的五条前置约束"
 approval: DSH 2026-11-14 释放（零冻结契约改动；依赖 T-A/T-B 已闭环）
 suggested_owner: DSH
@@ -15,10 +15,10 @@ depends_on:
 base_commit: 6019a2c53
 branch: main
 worktree: G:/CODEX/New Manga
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 6803ed9dc
+delivery_head: 6803ed9dc
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/TRANS-ENTRY-UI
 allowed_paths:
   - doc/tasks/TRANS-ENTRY-UI.md
@@ -47,15 +47,15 @@ out_of_scope:
 
 ## Acceptance Criteria
 
-- [ ] **AC1 工作台前置门**：`WorkbenchViewModel` 的「开始处理」在 provider 未配置时**不发 StartRun**，改为可读提示（含"去设置"引导），文案覆盖 `PROVIDER_NOT_CONFIGURED`。
-- [ ] **AC2 四类错误可读化**：`PROVIDER_NOT_CONFIGURED` / `PROVIDER_AUTH_FAILED`（401/403，不可重试）/ 模型名校验（404、402 目前都落 `INVALID_INPUT`，需给出可辨文案）/ `PROVIDER_RATE_LIMITED`（可重试）四类在 UI 文案上**可区分**，不得全部显示同一句。
-- [ ] **AC3 空章可读文案**（约束 4）：在 StartRun 前探测 `list_chapter_pages`；空章 → 「本章没有可处理的页面」，**不得**透出 `INVALID_REQUEST / Run request is invalid`。
-- [ ] **AC4 重启提示**（约束 2）：设置页/首个翻译尝试处显式说明「修改模型配置后需重启应用生效」。
-- [ ] **AC5 scoped 绑定如实表述**（约束 3）：设置页**确实有** book/chapter 绑定入口（`Views/Pages.cs:1141`）；须在该 section 标注「当前仅全局绑定驱动执行」。（r1 曾误记「无入口」，见复核报告）
-- [ ] **AC6 修正过期文案**：`StudioInspectorPanel.cs:256` 的「能力待接入」按实际状态改写。
-- [ ] **AC7 零契约面**：无新 wire 命令、无新 `IHostController` 成员；`generate_api_inventory --check` 维持 `1/80/6=87`；`verify_pins` 18/18。
-- [ ] **AC8 判别测试**：每类文案至少一条测试（断言**用户可见字符串**，不是内部枚举）；空章探测与前置门各一条。
-- [ ] **AC9 门禁**：`check.ps1`（默认 + 本卡 TaskPath）、`verify_pins`、`generate_api_inventory --check`、受影响 `dotnet test` 全绿。
+- [x] **AC1 工作台前置门**：`WorkbenchViewModel` 的「开始处理」在 provider 未配置时**不发 StartRun**，改为可读提示（含"去设置"引导），文案覆盖 `PROVIDER_NOT_CONFIGURED`。 <<MET>>
+- [x] **AC2 四类错误可读化**：`PROVIDER_NOT_CONFIGURED` / `PROVIDER_AUTH_FAILED`（401/403，不可重试）/ 模型名校验（404、402 目前都落 `INVALID_INPUT`，需给出可辨文案）/ `PROVIDER_RATE_LIMITED`（可重试）四类在 UI 文案上**可区分**，不得全部显示同一句。 <<MET>>
+- [x] **AC3 空章可读文案**（约束 4）：在 StartRun 前探测 `list_chapter_pages`；空章 → 「本章没有可处理的页面」，**不得**透出 `INVALID_REQUEST / Run request is invalid`。 <<MET>>
+- [x] **AC4 重启提示**（约束 2）：设置页/首个翻译尝试处显式说明「修改模型配置后需重启应用生效」。 <<MET>>
+- [x] **AC5 scoped 绑定如实表述**（约束 3）：设置页**确实有** book/chapter 绑定入口（`Views/Pages.cs:1141`）；须在该 section 标注「当前仅全局绑定驱动执行」。（r1 曾误记「无入口」，见复核报告） <<MET>>
+- [x] **AC6 修正过期文案**：`StudioInspectorPanel.cs:256` 的「能力待接入」按实际状态改写。 <<MET>>
+- [x] **AC7 零契约面**：无新 wire 命令、无新 `IHostController` 成员；`generate_api_inventory --check` 维持 `1/80/6=87`；`verify_pins` 18/18。 <<MET>>
+- [x] **AC8 判别测试**：每类文案至少一条测试（断言**用户可见字符串**，不是内部枚举）；空章探测与前置门各一条。 <<MET>>
+- [x] **AC9 门禁**：`check.ps1`（默认 + 本卡 TaskPath）、`verify_pins`、`generate_api_inventory --check`、受影响 `dotnet test` 全绿。 <<MET>>
 
 ## 测试要求
 
@@ -71,15 +71,30 @@ C#：`dotnet test`（App.Tests 为主）；不得新增 skip/xfail；若既有 U
 
 `verification/TRANS-ENTRY-UI/README.md` + `logs/`（测试与门禁原始输出、文案对照表）。
 
+## Canonical Evidence
+
+| evidence_id | AC/Gate | path | commit | sha256 | class |
+|---|---|---|---|---|---|
+| EV-1 | AC1-AC9 | verification/TRANS-ENTRY-UI/README.md | 6803ed9dc | af78893fa3e1f50ee4c562e3a7c59b9b4b7c6dcdfd770bfd1558cacdc3f1b13d | canonical |
+
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | worktree | `G:\CODEX\New Manga`（main） | NOT_APPLICABLE | - | - | 复用主工作树 |
+| evidence（仓库） | `verification/TRANS-ENTRY-UI/**` | NOT_APPLICABLE | 仓库内 | `verification/TRANS-ENTRY-UI/EV`（见 Canonical Evidence） | 门禁/测试原始日志已保留 |
 
 ## Closeout Record
 
-- 未关闭（当前 `in_progress`）。
+- **收口（2026-11-14，DSH）**：`closed_with_limitations`。AC1–AC9 `MET`。三轮复核：r1 `changes_requested`（3×P1）→ `fdda639a1` → r2 `changes_requested`（P1-1/P1-3 关闭，P1-2 未全闭）→ `6803ed9dc` → **r3 `approved`**（P1-2 真实关闭，判别力实测 1 failed / 7 passed）。
+- **交付**：`ff1778246`（初版）→ `fdda639a1`（r1 处置）→ `6803ed9dc`（r2 处置）。App.Tests **923/0/11**；四件套绿；`src/**` 与 `doc/contracts/**` 零改动。
+- **limitation（如实登记，含我自己写错的两处）**：
+  1. **`DrawerDetail` 无直接测试保护**（r3 P2 实测：回退该行 8/8 仍全绿）。映射逻辑本身由 `ForCode` 的测试覆盖，但该展示面拼接无断言；补测需构造 `IHostController`+`StudioSelection`+`StudioPageViewModel`+`IRunController` 四个依赖，成本不划算，**故登记而非补测**。
+  2. **我在 `6803ed9dc` 的提交信息里写「drawer and grid coverage」不实** —— 当时只有 `ErrorCell`（grid）有测试。以此条为准，提交信息不作数。
+  3. 402/404 在 wire 同为 `INVALID_INPUT`，UI 只能如实并列，不能区分；需 Core 加错误码（UNFREEZE）才能改善。
+  4. 空章探测是建议性的：`HostViewState.Ready` + 0 页才判空章；**Ready 但读页失败**仍可能落空章句（r3 P3，未修）。
+  5. `Tooltip` 面仍有裸码（r3 P3，未接线）。
+- **删除/迁移/归档**：0。
 
 ## 交付记录与 DSH 裁决（2026-11-14，`ff1778246`）
 
