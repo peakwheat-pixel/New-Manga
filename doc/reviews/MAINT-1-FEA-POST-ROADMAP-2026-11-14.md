@@ -98,3 +98,40 @@
 - **结论**：**不是配置形状问题**（形状已被冻结快照证明合法），而是 **Core 侧 vision provider 的就绪/解析判定**未接受该配置。候选根因：`requirements` 的 endpoint/credential 校验、`resolve_for_run` 对 profile-id vs 槽 id 的比较、或 vision provider 需要 detect 前置。**属产品缺陷，需要独立诊断卡**。
 
 **L2 最终状态：`BLOCKED`（性质＝Core 侧 vision provider 解析缺口）。** 三条 scope 路线 + 路线 E 共四次尝试全部穷尽，不再是「环境缺资源」能解释的。
+
+### L2 最终结果：**Core→落库的端到端翻译已被证明**（2026-11-14，`28e3f7807`）
+
+**成功交付**：`terminal = completed`、`error_codes = []`
+
+```
+step_status = {ocr: completed(1), color: completed(1), term_extract: completed(1),
+               translate: completed(2), segment: completed(2), mask_refine: completed(2),
+               inpaint: completed(2), render: completed(2)}
+regions_translated_differs = 2   （> 0）
+```
+
+| region | ocr_text（日文原文） | machine_translation（译文） |
+|---|---|---|
+| `8c3c59f4…` | `キャロット？\nキャロット！…` | `Carrot?\nCarrot!…` |
+| `1f930c43…` | `キャロット！\nかあ かあ かあ` | `Carrot!\nCaw caw caw` |
+
+远程视觉 OCR（GLM-4V）+ 远程翻译（DeepSeek）在**同一次 `translate_all`** 中完成，译文写回 `regions.text_json.machine_translation` 且与日文原文不同。
+
+### 三轮失败的真因（责任在我方的探针）
+
+`run_translate_probe.py` 硬编码 `overrides.provider_bindings.ocr = "manga-ocr"`，而 **Run overrides 优先级高于 `pipeline_defaults`** ⇒ seed 被覆盖，`ocr` 永远落到缺 ONNX 的本地 provider。**是探针 override 覆盖，不是 Core 就绪判定缺陷**；此前「Core 侧就绪/解析缺陷」的判断**作废**，未写入任何结论。
+
+### 本轮两处修正（配置/数据，非产品代码）
+
+1. region bbox 放大到覆盖正文 ⇒ GLM 对每个 region 返回非空日文 ⇒ `term_extract` 转 completed；
+2. vault 中 `NewManga/provider/3819f991…` 曾被误写成 gemini 段的 key（`PROVIDER_AUTH_FAILED` 的真因）；按段落正确解析 DeepSeek 段重写后 translate 立即 completed，同一 work-root 无需重新 seed。
+
+### 时序（三条硬条件均满足）
+
+T1 seed 完成 `21:46:16`（纯 SQL，不经 Core）｜T2 Core 启动 `21:46:16`｜T3 run 结束 `21:46:28`；**T2 后零重启**。
+
+### 沉淀更新
+
+- **L2 从 `BLOCKED` 推进为「Core→落库已验」**；
+- 新增第 6 条可复用事实：**Run overrides 优先于 `pipeline_defaults`** —— 任何"配了不生效"的排查，先查 overrides 有没有覆盖；
+- 诊断报告 `L2-VISION-OCR-NOTCONFIGURED-DIAGNOSIS-2026-11-14.md` 的机制分析（装配期 resolve）仍成立，但**不是本次阻塞原因**，其「产品缺陷」结论已被实测推翻。

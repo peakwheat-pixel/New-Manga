@@ -98,3 +98,16 @@
 - **条件 1 关闭进度：0/8 → 3/8。**
 - 剩余 5 项：`IMPL-CARD` 4（L-R1-1、L-R2-1、L-L1-1、L-L1-2）+ `KEEP-NOTRUN` 1（L-F1-3）。
 - **条件 1 仍未完成**（5 项未关闭），**Gate 仍 `BLOCKED`**。
+
+## 10. 条件 5 重大推进：Core→落库的端到端翻译已被证明（2026-11-14）
+
+- **结果**：`translate_all` 单次运行 `terminal = completed`、`error_codes = []`；`ocr`/`color`/`term_extract`/`translate`/`segment`/`mask_refine`/`inpaint`/`render` **全部 completed**；**`regions_translated_differs = 2`**。
+- **实证译文**（`キャロット？` → `Carrot?`；`かあ かあ かあ` → `Caw caw caw`），写回 `regions.text_json.machine_translation`，与日文原文不同。
+- **路径**：远程视觉 OCR（GLM-4V）+ 远程翻译（DeepSeek）在同一运行内串通，非 provider 层单点验证。
+- **条件 5 的现状更新**：
+  - 真实模型 API 调用：✅（翻译 + 视觉 OCR 两条路径）
+  - **Core → provider → 落库端到端：✅（本次）**
+  - 代表性质量基线（人工 GT）：❌ 仍未做
+- **结论**：条件 5 仍是「部分」，但**剩余缺口只剩人工质量基线**；不再是"端到端未证"。
+- **Gate 仍 `BLOCKED`**（条件 1 剩 5 项、2/4 未动）。
+- **附带更正**：此前三轮 L2 失败的「Core 侧就绪判定缺陷」判断作废，真因是探针 `overrides` 硬编码 `manga-ocr` 且优先级高于 `pipeline_defaults`。
