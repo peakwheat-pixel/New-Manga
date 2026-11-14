@@ -1333,3 +1333,16 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **Gate 更正**：条件 2 = MET（SEC-01/SEC-02 done，可见性 unknown→已确认可见）；条件 1 = **7/8 关闭** + `L-F1-3` KEEP-NOTRUN。Gate 仍 BLOCKED（条件 3/4/5）。
 - **既有缺陷登记**（`doc/reviews/MAINT-1-EXISTING-FINDINGS-2026-11-14.md`）：E-1 111 vs 90（SourceSync 15 + Drafts 6 由 dispatcher 直通，测试断言过时，基线已复现）、E-2 sidecar 早于命令、E-3 错误码缺失、E-4 阅读偏好只有应用无保存入口、E-5 `L-F1-3` 压测未被边界测试替代。
 - 下一步：开 `READER-PREF-PERSIST`（E-4，把单双页/方向/缩放接到 `SaveReadingPreferencesAsync`，含判别测试），推进条件 1 相邻缺口与条件 3。
+## 201. READER-PREF-PERSIST：r1 REJECT 与 r2 返修（2026-11-15，DSH）
+
+- 开卡：缺陷 E-4（`SaveReadingPreferencesAsync` 生产路径零调用者）。实现链 `57f149b02`（首版）→ `98d42c6b6`（r2 返修）。
+- **r1 复核 verdict = REJECT**（`doc/reviews/READER-PREF-PERSIST-review-r1.md`，审查者 `review-reader-pref`）：
+  - **P1-1**：`_appliedPreferences` 用 await **之后**的当前值写快照、patch 却是 await 前构造 ⇒ 写 1.5 在途时改 1.7，第二次 diff 为空，1.5 永久留在 Core。**这是本会话真实写出的 bug，不是误判。**
+  - **P1-2**：AC4 证伪 —— 把 `ReaderPageView` 回退到基线 blob，17/17 仍全绿（测试只调 VM，生产接线零覆盖）；且页面双击仍走不保存的 `ToggleDoublePage()`。
+  - **P1-3**：提交后又改 4 个文件，复审看到的是不一致的中间态 —— 我的操作时序问题。
+  - P2：80ms 窗口内切书会把 b1 的 patch 记到 b2；失败状态不随 LoadAsync 重置；drain 无 try/catch 会永久卡死并静默丢弃；AC6 断言 0 次写入也通过。
+- **r2 返修**（`98d42c6b6`）：改「意图捕获」模型（`PreferenceIntent` 在变更那刻带 BookId + 全字段值）；快照只记录实际发送字段；新增 `ReaderPreferenceWiringTests` 4 个 `[AvaloniaFact]` 驱动真实按钮；双击入口接线；`ApplyReadingPreferencesAsync` 清状态；drain 捕获异常；`Assert.InRange(1,2)`。
+- **判别力实测（三次，均还原）**：旧快照写法 → `Expected 1.7 / Actual 1.5`；回退工具栏按钮接线 → `LastSavedPreferences` 为 null；新增的切书守卫去掉 → 新书出现旧书失败文案。
+- 数字：定向 23 passed；`build -warnaserror` 0/0；App.Tests **946/0/11**（本卡前 940/0/11，skip 未增加）。
+- 未做并登记：离开阅读器时的显式 flush。
+- 下一步：等 r2 复审；通过后收口（pin + 卡置 done + 条件 3 输入更新）。
