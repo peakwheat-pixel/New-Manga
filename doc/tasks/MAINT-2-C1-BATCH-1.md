@@ -54,7 +54,7 @@ out_of_scope:
 - [x] **AC5（C1-5 / L-L1-2）LIB `custom_rank` 读回闭环**：`custom_rank` 从 write-only 变为可读回；判别测试覆盖写入→读回一致（排序 UI 属 C3-3，不在本卡）。 <<MET>>
 - [x] **AC6（C1-6 / L-L1-4）LIB 64 位边界**：补 R3-001 的 64 位边界校验与断言。 <<MET>>
 - [x] **AC7（C1-7 / L-AI1-6）AI-1 清理**：删除死方法 `reassign_references`、修正 `test_issue_markers` 旧注释。 <<MET>>
-- [ ] **AC8（C1-8 / L-PB1-1）PIN-BASIS 专项 suite**：复跑专项 suite 并保留原始输出为证。 <<PARTIAL: 复跑留证完成、基线不可比已裁决；不得写 MET>>
+- [ ] **AC8（C1-8 / L-PB1-3）PIN-BASIS 专项 suite**：复跑专项 suite 并保留原始输出为证。 <<PARTIAL: 复跑留证完成、基线不可比已裁决；不得写 MET>>
 - [x] **AC9 回归与门禁**：受影响全量测试 0 failed；`check.ps1` / `verify_pins` / `generate_api_inventory --check` 三项不降级；无 `src` 外的契约字节改动。 <<MET>>
 
 ## 允许修改范围

@@ -183,7 +183,7 @@ out_of_scope:
 ## Closeout Record
 
 - Closeout date / DSH：**2026-11-14 收口**（`done`）。四刀交付：4B-1 `eae0eb67a`（wire）→ 4B-2 `fd4008ce3`（端口，含已闭合的 `--check` 红窗）→ 4B-2b `ba6136d0`（统计 80/87 + pin v1.10）→ 4B-3 `42123ae67`（UI）；证据 `e52ad6c05`。
-- canonical_evidence_status：`complete`（7 条 EV，逐文件 SHA-256 已登记）。
+- canonical_evidence_status：`complete`（9 条 EV，逐文件 SHA-256 已登记）。
 - resource_closeout_status：`complete`。
 - 删除、迁移、归档数量/字节数：**0**（无删除、无迁移、无归档）。
 - 未关闭项及保留原因（均已登记为 limitation，**不得读作已验收**）：

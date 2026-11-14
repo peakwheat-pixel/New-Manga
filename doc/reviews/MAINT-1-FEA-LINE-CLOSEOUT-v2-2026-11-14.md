@@ -54,3 +54,13 @@
 1. `MAINT-2-C1-BATCH-1` 置 `done`（P2-3 已修、r1 approved）→ 台账与三指针同步。
 2. `MAINT-1` 收口：写入本报告指针、更新 STATUS 的「FEA 已收口」表述（含 §1/§3 口径）。
 3. 若用户要求视觉验收：另开冒烟卡，复用 `tools/p2-ui-smoke.ps1` 截图通路。
+
+## Errata（append-only，2026-11-14，L3 条件 6 复核 P1-1）
+
+**§1 表中 §3 一行的「达成」需要收窄解读**，它不是「C1 的 8 项全部 `MET`」：
+
+- C1 的 8 项**全部已实现**，其中 **7 项 `<<MET>>`**，**AC8 为 `<<PARTIAL>>`**。
+- AC8 的 PARTIAL 是 **DSH 2026-11-14 裁决口径**：复跑留证已完成、validation clone 是唯一可比基线、主工作树与 validation clone 的两套原始输出均保留；它**无法**判 `MET`（`12F/56P/EXIT=1` 如实记录，未改写成通过）。
+- 因此 §3 的「达成」准确表述为：**8 项均已实现 + AC8 按裁切口径记 PARTIAL + r1 的 P2-3 已修**，**不等于 8/8 MET**。
+- 与 limitation 矩阵 `:141`「C1 补实现**并 MET**」的差异在此：AC8 因基线不可比**不能 MET**，故以「裁切口径 + PARTIAL」替代；该替代已由 `MAINT-2-C1-BATCH-1` 的 Closeout 与 `verification/MAINT-2-C1-BATCH-1/README.md` 记录。
+- **不修改本报告 §1 原字节**（历史证据），以本 Errata 为准读。

@@ -289,3 +289,12 @@ NEW-MANGA-V1-FULL-AUDIT 与 R1–R4 整改、SEC-01/02/03、CORE-01、AUDIT-07/0
 - **为什么不算成功（三条，缺一不可）**：① 隔离根已被上次运行污染（`library.db` 已有 26 regions，非 0-region 初始态）；② sidecar 是 `0.1.1` 发布包，**不是**原验证用的 RELEASE-REPACK-2 models sidecar；③ 该 Task 报告本身写明「identity 回退运行另有 5 个 OCR `INVALID_INPUT`（region-less 页既有行为）」，本次同型，**不能归因于 DeepSeek 配置**。
 - **结论修正**：「零代码重跑即可拿到 Core 端到端」的设想在当前工作区**不成立**。前置是「干净 fixture（8 页 / 0 regions）」+「含 OCR 模型的 sidecar（或改跑源码 Core）」，两者都不现成。
 - **未变**：provider 层真实调用已验（翻译 + 视觉 OCR 两份日志）；Core→落库端到端**仍未验证**；Gate 仍 `BLOCKED`。
+
+### 轮次 30（2026-11-14，本会话续）—— Gate 条件 6 独立最终复核
+
+- **复核结论**：`MECHANICAL_PASS / CONDITION_6_NOT_CLOSABLE`（报告 [`MAINT-1-GATE-CONDITION-6-FINAL-REVIEW-2026-11-14.md`](../reviews/MAINT-1-GATE-CONDITION-6-FINAL-REVIEW-2026-11-14.md)；Gate 结论仍 `BLOCKED` 未改）。
+- **实测通过**：四件套全绿；3 张卡 20 条 Canonical Evidence 的 path/sha256/`git cat-file -e` 三口径 **20/20**；limitation 矩阵 **9 节点 39 项、0 行缺处置码或指针**（`10/10/8/4/3/2/2=39` 自洽）；现行权威面 **0 处**把 `BLOCKED` 写成 PASS/CONDITIONAL。
+- **P1-1 已处置**：收口判定报告 append-only errata，把 §3 的「达成」收窄为「8 项均已实现 + AC8 按裁切口径 PARTIAL + P2-3 已修」，明写**不等于 8/8 MET**；并解释与矩阵「补实现并 MET」的差异（AC8 基线不可比）。
+- **P2 处置**：P2-3（MAINT-2 卡 `L-PB1-1`→`L-PB1-3`）已修；P2-4（4B「7 条 EV」→「9 条 EV」）已修；P2-2（PLAN 表外漏 `GIT-CLEAN-CORE-ENV-2` + `BLOCKED/REVIEW` 字面冲突）已修（`READY 节点` 声明恢复、`BLOCKED：无`）；P2-5（PLAN 零余量）已缓解为 **6995/7000**；P2-1（4B R-12 关闭后 Closeout 第 1 项仍按未关闭表述）登记为**历史记录 + 后附关闭记录并存**，不改历史字节。
+- **仍未闭合（条件 6 的完成态缺口）**：① `MAINT-1` 交付 head 未冻结（`integration_commit`/`delivery_head` 为 null、`canonical_evidence_status=pending`，且卡内缺 Canonical Evidence 表 / Resource Manifest / Closeout Record）；② 复核期间 head 被并发提交推动；③ 本 Review 需在冻结 head 上登记。
+- **计划**：待 `TRANS-BINDING-BRIDGE` 落地、head 稳定后，一次性补 MAINT-1 的 evidence/manifest/closeout 并冻结交付 head，在该 head 重跑四件套，再登记本 Review —— 届时条件 6 方可判「完成」。
