@@ -292,3 +292,61 @@ App 的 4 个（带夹具仍 skip）经差集确认是 **opt-in gated**（性能
 - `TrashUiTests` 的 47 与 `SourceRecoveryUiTests` 的 18 是**类级**数字；本卡**没有**逐条核对每个方法
   对应哪个产品语义 —— 那需要按方法名逐个读，属后续工作。
 - **条件 3 仍不判 MET**：带夹具 skip 仍有 48、真机走查未做、上述逐流程缺口未闭合。
+## 11. Host 44 个 skip 的归因与 opt-in 实测（2026-11-15，`GATE3-HOST-SKIP-TRIAGE-1`）
+
+### 11.1 44 个 skip 需要 **opt-in 开关**，不是 sidecar 缺失
+
+抽查 4 个类的 attribute：`Fea11ScanIpcFact` 的条件是 `NEWMANGA_FEA11_IPC != "1"`（其余同型）。
+全 Host.Tests 的 opt-in 变量统计：`NEWMANGA_BUILD_PYTHON` 22 次、`NEWMANGA_FEA11_IPC` 8 次、
+`NEWMANGA_FEA09_IPC` 3 次、`NEWMANGA_FEA11_CRASH_STATE` 2 次、`NEWMANGA_FEA12_UI_IPC` / `FEA10_IPC` /
+`CORE_TILE_E2E` / `REAL_SHELL*` / `WORKSPACE_ROOT` 各 1–3 次。
+
+⇒ 这与 §5 旧口径"大部分需 sidecar"**不完全一致**，本节更正为"需 opt-in 环境开关"。
+
+### 11.2 打开 opt-in 后的实测（★ 重要）
+
+```
+379 passed / 15 failed / 1 skipped / 395   (1m10s)
+```
+
+对比未开 opt-in（带 sidecar）：**349 / 2~3 / 44 / 395**。
+
+| 指标 | 未开 opt-in | 开 opt-in |
+|---|---|---|
+| pass | 349 | **379** |
+| fail | 2~3 | **15** |
+| skip | 44 | **1** |
+
+**skip 44→1：44 个里 43 个真的执行了。**
+
+### 11.3 15 个失败的归因
+
+| 归因 | 数量 | 明细 |
+|---|---|---|
+| **环境**：Python Core 依赖缺失（`C:\Python314` 无 torch 等） | 3 | `Fea09RealIpcTests`、`Fea09UiImportIpcProductionTests` ×2（另 1 个 `E_` 亦同族） |
+| **环境**：缺 `NEWMANGA_FEA11_CRASH_STATE` | 2 | `Fea11HostAuthIpcTests.CrashPoint_Park/Recover` |
+| **★ schema 版本**：`Assert.Equal(9, schema_version)` vs 实际 **v14** | **7+** | `Fea11HostAuthIpcTests` ×2、`Fea11Residual4AIpcTests` ×4、`Fea11SourceIpcTests` ×2 |
+| 原有（与 opt-in 无关） | 2 | `GrantIssuerTests.Import_…`、`Fea11WatchHostRuntimeTests`（`SOURCE_REGISTRY_BUSY`，已知 flaky） |
+
+### 11.4 核心发现：`schema_version` 硬编码 9
+
+```
+Fea11HostAuthIpcTests.cs:418    Assert.Equal(9, seed.GetProperty("schema_version").GetInt32());
+Fea11Residual4AIpcTests.cs:719  Assert.Equal(9, seed.GetProperty("schema_version").GetInt32());
+Fea11SourceIpcTests.cs:63       Assert.Equal(9, receipt.GetProperty("schema_version").GetInt32());
+```
+
+新 sidecar 启动打印 `[core.schema] applied 14 migration(s) up to v14` ⇒ **schema_version = 14**。
+
+⇒ **至少 7 个失败是"测试硬编码旧版本"，不是产品缺陷**；但这暴露了"换 sidecar / schema 升版
+会让这些测试红"的真实兼容缺口。
+
+**本卡不修**：改成 `== 14` 只是换硬编码；改成 `>= 9` 是**放宽断言**（纪律禁止）。
+正确做法（读写产品常量，或断言 `>=9 且 <= 当前最大值`）需 DSH 裁决，且要先确认 v14 是**预期版本**
+而非本地漂移。
+
+### 11.5 对条件 3 的影响（诚实口径）
+
+- **覆盖是可执行的**：43/44 在 opt-in 下真的跑了 —— 这比"44 个都跑不了"强。
+- **但换 sidecar 引入了版本兼容缺口**：15 红里有 7+ 是 schema 版本、5 是环境依赖、2 原有。
+- **不能说条件 3 变好**；条件 3 **仍不判 MET**。

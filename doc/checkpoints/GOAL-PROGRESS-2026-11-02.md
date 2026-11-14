@@ -1719,3 +1719,20 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **无夹具**：App.Tests **`953 / 0 / 11 / 964`**（新增 2 个测试；**skip 仍 11，未新增**）。
 - **裁决 B 只满足一半**：「清楚展示」✅；「**重启后确能使用新配置**」**NOT_RUN**
   （需真实模型权重与 Provider 凭据，属用户不可替代实物）。
+## 224. ★ GATE3-HOST-SKIP-TRIAGE-1：Host 44 skip 需 opt-in 而非 sidecar；opt-in 后 skip 44→1，但暴露 schema 9 vs 14（2026-11-15，DSH，goal 轮次 23）
+
+- **归因更正**：44 个 skip 的条件是 **opt-in 环境变量**（`NEWMANGA_FEA11_IPC` 8 次、
+  `NEWMANGA_BUILD_PYTHON` 22 次、`NEWMANGA_FEA09_IPC` 3 次、`NEWMANGA_FEA11_CRASH_STATE` 2 次等），
+  **不是** sidecar 缺失 —— 与矩阵 §5 旧口径不完全一致，已在新增 §11 更正。
+- **打开 opt-in 后实测**：**`379 / 15 / 1 / 395`**（1m10s），对比未开 **`349 / 2~3 / 44 / 395`**：
+  **skip 44→1（43 个真的跑了）**，但 **fail 2~3→15**。
+- **★ 核心发现**：15 个失败里 **7+ 是 `Assert.Equal(9, schema_version)` 硬编码**，而新 sidecar 打印
+  `applied 14 migration(s) up to v14` ⇒ **schema_version = 14**。
+  三处硬编码：`Fea11HostAuthIpcTests:418`、`Fea11Residual4AIpcTests:719`、`Fea11SourceIpcTests:63`。
+  其余：3 个 Fea09 是 `C:\Python314` 缺 Core 依赖；2 个缺 `NEWMANGA_FEA11_CRASH_STATE`；
+  2 个原有（GrantIssuer、SOURCE_REGISTRY_BUSY flaky）。
+- **本卡不修**：改成 `== 14` 只是换硬编码；改成 `>= 9` 是**放宽断言**（纪律禁止）。
+  正确做法（读写产品常量 / 断言 `>=9 且 <= 当前最大值`）需 DSH 裁决，且要先确认 v14 是**预期版本**
+  而非本地漂移。
+- **诚实口径**：覆盖**是可执行的**（43/44 真跑），但**换 sidecar 引入了版本兼容缺口**；
+  **不能说条件 3 变好**，仍不判 MET。
