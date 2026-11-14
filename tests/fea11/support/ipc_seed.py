@@ -76,9 +76,27 @@ def main() -> int:
         "INSERT INTO chapters (chapter_id, book_id, title, created_at, updated_at)"
         " VALUES ('c1', 'b1', 'Ch', ?, ?)", (fea11_conftest.NOW, fea11_conftest.NOW))
     conn.commit()
+    # FEA11-SEED-PIXEL-1: give the old entries REAL pixel profiles via the production
+    # decoder (application.sources.scanner._decode_pixel_profile). Without them the matcher
+    # honestly degrades to ambiguous/missing_old (C-17 7.3 row 4) and "changed" can never be
+    # observed. decode budget is bypassed by passing max_decode_bytes=0.
+    from types import SimpleNamespace
+    from application.sources.scanner import _decode_pixel_profile
+
+    _budget_free = SimpleNamespace(source_kind="zip", budget=SimpleNamespace(max_decode_bytes=0))
+    _old_pixel_profiles = {}
+    for _entry_id, _locator, _digest in old_entries:
+        _raw = old_pages[0] if _locator == "001.png" else old_pages[1]
+        _profile, _err = _decode_pixel_profile(_raw, _budget_free)
+        if _profile is not None:
+            _old_pixel_profiles[_entry_id] = _profile
+    if len(_old_pixel_profiles) != len(old_entries):
+        raise SystemExit("FEA11-SEED-PIXEL-1: could not derive a pixel profile for every old entry")
+
     fea11_conftest.add_source_tree(
         conn, source_id="s1", version_id="sv1", digest=old_digest,
         entries=list(old_entries), legacy_v7_evidence=False,
+        pixel_profiles=_old_pixel_profiles,
     )
     fea11_conftest.add_referenced_page(
         conn, "p1", "c1", "b1", order=1, source_id="s1", version_id="sv1",

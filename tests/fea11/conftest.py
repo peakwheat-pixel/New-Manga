@@ -285,6 +285,7 @@ def add_source_tree(
     version_id: str,
     digest: str,
     entries: list[tuple[str, str, str]],  # (entry_id, locator, content_digest)
+    pixel_profiles: dict[str, dict] | None = None,
     volume_serial: int = 7,
     file_id: int = 8,
     legacy_v7_evidence: bool = True,
@@ -323,15 +324,25 @@ def add_source_tree(
         conn.execute(
             "INSERT INTO source_entries (source_id, version_id, entry_id,"
             " locator, ordinal, stable_sort_key, content_digest_kind,"
-            " content_digest, encoded_digest, size_bytes, width, height,"
-            " orientation, decoder_name, decoder_version, created_at)"
-            " VALUES (?, ?, ?, ?, ?, ?, 'encoded', ?, ?, 9, ?, ?, ?, 'zip',"
-            " '1.0', ?)",
+            " content_digest, encoded_digest, size_bytes,"
+            " pixel_digest, pixel_digest_algorithm,"
+            " width, height, orientation,"
+            " decoder_name, decoder_version, decoder_params_json, created_at)"
+            " VALUES (?, ?, ?, ?, ?, ?, 'encoded', ?, ?, 9, ?, ?,"
+            " ?, ?, ?, ?, ?, ?, ?)",
             (source_id, version_id, entry_id, locator, ordinal,
              f"{ordinal:08d}", content_digest, content_digest,
-             None if legacy_v7_evidence else 5,
-             None if legacy_v7_evidence else 5,
-             None, NOW),
+             (pixel_profiles or {}).get(entry_id, {}).get("pixel_digest"),
+             (pixel_profiles or {}).get(entry_id, {}).get("pixel_digest_algorithm"),
+             (pixel_profiles or {}).get(entry_id, {}).get("width",
+                 None if legacy_v7_evidence else 5),
+             (pixel_profiles or {}).get(entry_id, {}).get("height",
+                 None if legacy_v7_evidence else 5),
+             (pixel_profiles or {}).get(entry_id, {}).get("orientation"),
+             (pixel_profiles or {}).get(entry_id, {}).get("decoder_name", "zip"),
+             (pixel_profiles or {}).get(entry_id, {}).get("decoder_version", "1.0"),
+             (pixel_profiles or {}).get(entry_id, {}).get("decoder_params_json", "{}"),
+             NOW),
         )
     conn.commit()
     return f"sl-{source_id}"

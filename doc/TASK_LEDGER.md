@@ -6,12 +6,12 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 
 | metric | value |
 |---|---:|
-| task files | 624 |
-| terminal | 613 |
+| task files | 625 |
+| terminal | 614 |
 | non-terminal | 10 |
 | non-terminal named in the plan | 7 |
 | non-terminal outside the plan | 3 |
-| task files tracked by git | 623 |
+| task files tracked by git | 624 |
 | task files untracked (drafts) | 1 |
 | non-terminal tracked by git | 10 |
 
@@ -21,7 +21,7 @@ Arithmetic note: `task files` = `terminal` + `non-terminal` + `(none)` rows. A `
 
 | status | count | terminal |
 |---|---:|---|
-| `done` | 512 | yes |
+| `done` | 513 | yes |
 | `closed_with_limitations` | 60 | yes |
 | `cancelled` | 21 | yes |
 | `historical` | 11 | yes |

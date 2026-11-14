@@ -1781,3 +1781,19 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **诚实边界**：`Fea11Residual4AIpcTests.ProductionDispatcherFullSyncChain_…` 为同族失败但
   **未单独复跑确认**，仅凭同一断言文本与机制**推断**，已在卡面标注"推断而非实测"。
 - 带 opt-in 基线仍 **11 passed / 2 failed**（三类 13 个）；条件 3 仍不判 MET。
+## 228. FEA11-SEED-PIXEL-1：种子补 pixel 画像，FullSyncChain 转绿（12/1）；并推翻上轮"同族"推断（2026-11-15，DSH，goal 轮次 27）
+
+- **改动**：`tests/fea11/conftest.py` 的 `add_source_tree` 新增 `pixel_profiles` 参数，
+  `source_entries` INSERT 补上此前**完全没写**的六列（pixel_digest / pixel_digest_algorithm / orientation /
+  decoder_name / decoder_version / decoder_params_json），**向后兼容**；
+  `ipc_seed.py` 用**生产解码器** `_decode_pixel_profile` 算真实画像（`max_decode_bytes=0` 跳预算），
+  **拿不到画像即 SystemExit**，不静默降级。
+- **结果**：`Fea11SourceIpcTests.FullSyncChain_…` **FAIL → PASS**；三类 13 个从 **11/2** 变为 **12/1**。
+- **判别力**：注释掉 `pixel_profiles=_old_pixel_profiles` 后该测试**重新变红**（`changed page`），
+  已还原（PROBE=0）。
+- **★ 推翻上轮推断**：`FEA11-FULLSYNC-TRIAGE-1` 曾**推断** `Fea11Residual4AIpcTests.ProductionDispatcherFullSyncChain_…`
+  同因（当时已标注"推断而非实测"）。本轮实测证明**不同因**：
+  `SourceAccessException : SOURCE_ENTRY_MISSING` at `SourceReadCoordinator.DescribeContainer` line 382 ——
+  失败在**读容器**阶段，与 pixel 无关，pixel 修复**没有**让它转绿。
+  **教训（同类已第二次）**：同族失败不能按"错误文本相似"推断同因，必须逐个复跑。
+- **未做**：`SOURCE_ENTRY_MISSING` 未归因；条件 3 仍不判 MET。

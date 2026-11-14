@@ -403,3 +403,45 @@ fea11_conftest.add_source_tree(..., entries=list(old_entries), legacy_v7_evidenc
   仅凭同一断言文本 + 同一机制推断。**如实标注为"推断而非实测"。**
 - 带 opt-in 的基线仍是 **11 passed / 2 failed**（三类 13 个），本卡未改变。
 - 条件 3 仍不判 MET。
+## 13. 种子补 pixel 画像：FullSyncChain 转绿（2026-11-15，`FEA11-SEED-PIXEL-1`）
+
+### 13.1 改动
+
+- `tests/fea11/conftest.py`：`add_source_tree` 新增 `pixel_profiles` 参数；`source_entries` 的 INSERT
+  补上此前**完全没有写入**的六列（`pixel_digest` / `pixel_digest_algorithm` / `orientation` /
+  `decoder_name` / `decoder_version` / `decoder_params_json`）。**向后兼容**。
+- `tests/fea11/support/ipc_seed.py`：用**生产解码器** `application.sources.scanner._decode_pixel_profile`
+  为旧侧条目算真实画像；`budget.max_decode_bytes=0` 跳过预算检查；**拿不到画像即 `SystemExit`**。
+
+**为什么用生产解码器而非硬编码 digest**：该函数内部做 EXIF 归一化并按 `widthxheight\0rgb` 算 sha256，
+硬编码会与生产不一致，测试将失去判别力。
+
+### 13.2 结果
+
+| 项 | 前 | 后 |
+|---|---|---|
+| `Fea11SourceIpcTests.FullSyncChain_…` | FAIL（`changed=0, ambiguous=1`） | **PASS** |
+| 三类 13 个合计 | 11 passed / 2 failed | **12 passed / 1 failed** |
+
+### 13.3 判别力
+
+注释掉 `pixel_profiles=_old_pixel_profiles` 后，该测试**重新变红**（`changed page` 断言），已还原（`PROBE`=0）。
+
+### 13.4 ★ §12.4 的"同族推断"已被实测推翻
+
+§12.4 曾写"`Fea11Residual4AIpcTests.ProductionDispatcherFullSyncChain_…` 为同族失败，
+仅凭同一断言文本 + 同一机制推断"。**本轮实测证明不同因**：
+
+```
+NewManga.Host.Sources.SourceAccessException : SOURCE_ENTRY_MISSING
+  at SourceReadCoordinator.DescribeContainer(String path, Int64 maxBytes) line 382
+```
+
+失败发生在**读容器**（`DescribeContainer`），**不是** `changed` 断言；pixel 修复**没有**让它转绿
+（12/13 中它就是那 1 个）。
+
+**教训（同类已第二次）**：同族失败不能按"错误文本相似"推断同因，必须逐个复跑。
+
+### 13.5 未做
+
+`Fea11Residual4AIpcTests` 的 `SOURCE_ENTRY_MISSING` **未归因**；条件 3 仍不判 MET。
