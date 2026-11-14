@@ -1,4 +1,4 @@
-# CMD-COVERAGE-ASSERT-FIX four-pieces 2026-11-15T01:02:54.4019410+08:00
+# CMD-COVERAGE-ASSERT-FIX four-pieces (r2) 2026-11-15T01:22:28.9388011+08:00
 ## check.ps1
 Governance scope: 15 current documents; no historical directory scan.
 Task: doc\tasks\MAINT-1-RELEASE-MONITOR.md
@@ -12,3 +12,7 @@ PIN AUDIT: PASS (all 18)
 ## api inventory
 OK: rendered counts match FEA-C07 doc
 | **合计** | **87** | — |
+## CoreClient 无夹具全量
+186 passed / 0 failed / 26 skipped / 212 total (本卡前 182/0/26/208；skip 未增加)
+## 路由覆盖测试
+CommandCoverageRoutingTests: 5 passed（无 sidecar）

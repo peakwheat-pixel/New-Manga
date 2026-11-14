@@ -103,6 +103,11 @@ public sealed class CommandCoverageRoutingTests
         Assert.All(families, name => Assert.True(
             HostCommandRegistry.All.ContainsKey(name),
             $"dispatcher family lists a non-production command: {name}"));
+
+        // EXACTLY ONE route (r1 复核 P2-1): a command covered by a typed service must not ALSO be
+        // listed as a dispatcher-routed family member. Without this, adding e.g. `create_region` to
+        // SourceSyncCommandNames keeps every other assertion green while the two routes overlap.
+        Assert.Empty(covered.Intersect(families, StringComparer.Ordinal));
     }
 
     [Fact]
@@ -139,5 +144,25 @@ public sealed class CommandCoverageRoutingTests
             !DispatcherRoutedDomains.Contains(HostCommandRegistry.All[name].Domain));
         var withoutVictim = covered.Where(name => name != victim).ToHashSet(StringComparer.Ordinal);
         Assert.Equal(victim, FirstUnrouted(HostCommandRegistry.All.Keys, withoutVictim, families));
+    }
+
+    /// <summary>
+    /// P2-1 (r1 复核) discriminating power: the "exactly one route" rule must reject an overlap,
+    /// i.e. a command that a typed service claims AND that is listed in a dispatcher family.
+    /// </summary>
+    [Fact]
+    public void P2_1_AnOverlappingRoute_IsReported()
+    {
+        var covered = CoveredNames();
+        var families = DispatcherFamilyNames();
+
+        // Baseline: no command is on both routes.
+        Assert.Empty(covered.Intersect(families, StringComparer.Ordinal));
+
+        // Real-data probe: pretend one genuinely typed command is also a dispatcher-family member.
+        var victim = covered.First(name =>
+            !DispatcherRoutedDomains.Contains(HostCommandRegistry.All[name].Domain));
+        var familiesWithOverlap = new HashSet<string>(families, StringComparer.Ordinal) { victim };
+        Assert.Contains(victim, covered.Intersect(familiesWithOverlap, StringComparer.Ordinal));
     }
 }
