@@ -1322,3 +1322,14 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **NOT_RUN（不得写成通过）**：AC3 缓存失效集成（仓库 sidecar 构建于 2026-10-23，早于该命令；重建需 PyInstaller，本环境 PyPI 不可达）；AC5 真实 GUI 拖拽（仅编译级验证）。
 - **既有缺陷登记**（`doc/reviews/MAINT-1-EXISTING-FINDINGS-2026-11-14.md`）：E-1 `HostCommandRegistry` 111 条 vs 六域服务覆盖 90 条（`git stash` 基线复现，与本卡无关）；E-2 sidecar 早于现行命令；E-3 错误码缺失（本卡修其一）。
 - 下一步：派独立上下文 Review → 集成与收口 → 条件 1 剩余 `L-R1-1`/`L-R2-1`（阅读器 UI 控件）与 `L-F1-3`（压测）。
+## 200. CHAPTER-MANUAL-SORT 收口（2026-11-14/15，DSH）
+
+- 交付链：`13d836713`（实现）→ `97d9476b6`（Gate 口径）→ `c459b279f`（r1 返修）→ `eebfedf6d`（收口，integration_commit = delivery_head = `c459b279f493b11941d0f05f49003984009e0707`）。
+- **独立复核 r1**：`doc/reviews/CHAPTER-MANUAL-SORT-review-r1.md`，审查者 `review-chapter-sort`（独立上下文、未参与实现），verdict **ACCEPT_WITH_LIMITATIONS**。它自测把 `reorder_chapters` 回退成逐章循环 → 1 failed/4 passed，还原后 5 passed，证实 AC2 判别力。
+- **r1 处置**：P1 越界提交 `verification/FEA-09/logs/wire-redacted.ndjson`（.NET 测试写脏，我用 `git add -A` 卷入）→ 已还原到 `79606ea4a` 并校验 5004 bytes/`548de629…`；P2 切书竞态（await 期间换书会用旧书章节覆盖新书）→ 捕获 `bookId` 校验 + 判别测试（去守卫实测变红）；P2 条件 1 口径矛盾 → 统一；P3 F5–F12 逐项处置或登记。
+- **自登记错误**：越界提交；填写 Closeout 时一度**编造** `integration_commit` 完整 hash，已用 `git rev-parse` 真实值覆盖。
+- 门禁：`check` PASS(3w)｜`verify_pins` 18/18｜`inventory` `1/80/6=87`｜App.Tests **934/0/11**（skip 未增加）｜reorder pytest **5 passed**｜7 条 BLOB pin 过 check 校验。
+- **仍为 NOT_RUN（不得写成通过）**：AC3 缓存失效集成（sidecar 2026-10-23 早于 `ReorderChapters`/`83e45cfe5`；PyInstaller 不可达）；AC5 真实 GUI 拖拽。
+- **Gate 更正**：条件 2 = MET（SEC-01/SEC-02 done，可见性 unknown→已确认可见）；条件 1 = **7/8 关闭** + `L-F1-3` KEEP-NOTRUN。Gate 仍 BLOCKED（条件 3/4/5）。
+- **既有缺陷登记**（`doc/reviews/MAINT-1-EXISTING-FINDINGS-2026-11-14.md`）：E-1 111 vs 90（SourceSync 15 + Drafts 6 由 dispatcher 直通，测试断言过时，基线已复现）、E-2 sidecar 早于命令、E-3 错误码缺失、E-4 阅读偏好只有应用无保存入口、E-5 `L-F1-3` 压测未被边界测试替代。
+- 下一步：开 `READER-PREF-PERSIST`（E-4，把单双页/方向/缩放接到 `SaveReadingPreferencesAsync`，含判别测试），推进条件 1 相邻缺口与条件 3。

@@ -192,8 +192,111 @@ public sealed class ReaderViewModel : FluentViewModel
         }
         var patch = new ReadingPreferencesPatch(
             Mode: mode, Zoom: zoom, DoublePage: doublePage, Layout: layout, Direction: sentDirection);
-        await _host.SaveReadingPreferencesAsync(Book.BookId, patch, cancellationToken);
+        var saved = await _host.SaveReadingPreferencesAsync(Book.BookId, patch, cancellationToken);
+        if (!saved)
+        {
+            // READER-PREF-PERSIST AC5 (r1 R1): a rejected write must not be recorded as applied --
+            // otherwise the next save would diff against a snapshot the Core never stored and skip
+            // the fields the user just changed.
+            PreferenceSaveStatus = "阅读偏好保存失败，本次设置不会在下次打开时保留。";
+            return;
+        }
         _appliedPreferences = (Mode, direction, Zoom, DoublePage, Layout);
+        PreferenceSaveStatus = string.Empty;
+    }
+
+    private string _preferenceSaveStatus = string.Empty;
+
+    /// <summary>READER-PREF-PERSIST AC5：偏好保存的可见结果（空串表示无话可说）。</summary>
+    public string PreferenceSaveStatus
+    {
+        get => _preferenceSaveStatus;
+        private set => Set(ref _preferenceSaveStatus, value);
+    }
+
+    private readonly object _preferenceSaveLock = new();
+    private bool _preferenceSaving;
+    private bool _preferenceDirty;
+
+    /// <summary>
+    /// READER-PREF-PERSIST AC6：把一次偏好变更排进保存队列。
+    /// 连续操作（例如连点放大）不逐次打 wire：在途的那一轮结束后若还有新变更，只再补一轮，
+    /// 因此 N 次连点最多产生两次保存，而不是 N 次。
+    /// </summary>
+    private void QueuePreferenceSave()
+    {
+        lock (_preferenceSaveLock)
+        {
+            _preferenceDirty = true;
+            if (_preferenceSaving)
+            {
+                // A drain is already running and will observe this dirty flag.
+                return;
+            }
+            _preferenceSaving = true;
+        }
+        _ = DrainPreferenceSavesAsync();
+    }
+
+    /// <summary>
+    /// READER-PREF-PERSIST AC6：连点合并窗口。一次变更排进队列后先等这么一小段，
+    /// 让紧跟着的操作并进同一次保存；用户感知不到，但连点不再产生等量 wire 调用。
+    /// </summary>
+    private static readonly TimeSpan PreferenceSaveCoalesceWindow = TimeSpan.FromMilliseconds(80);
+
+    private async Task DrainPreferenceSavesAsync()
+    {
+        while (true)
+        {
+            // Give rapid follow-up changes a chance to join this round before it writes.
+            await Task.Delay(PreferenceSaveCoalesceWindow);
+
+            lock (_preferenceSaveLock)
+            {
+                if (!_preferenceDirty)
+                {
+                    // Clearing `saving` in the same critical section as the dirty check is what
+                    // makes a change queued right here impossible to lose.
+                    _preferenceSaving = false;
+                    return;
+                }
+                _preferenceDirty = false;
+            }
+
+            await SaveReadingPreferencesAsync();
+        }
+    }
+
+    /// <summary>READER-PREF-PERSIST AC1：切换单/双页并持久化。</summary>
+    public Task ToggleDoublePagePersistingAsync()
+    {
+        ToggleDoublePage();
+        QueuePreferenceSave();
+        return Task.CompletedTask;
+    }
+
+    /// <summary>READER-PREF-PERSIST AC2：反转阅读方向并持久化。</summary>
+    public Task ToggleDirectionPersistingAsync()
+    {
+        ReverseDirection = !ReverseDirection;
+        QueuePreferenceSave();
+        return Task.CompletedTask;
+    }
+
+    /// <summary>READER-PREF-PERSIST AC3：按增量缩放并持久化。</summary>
+    public Task ZoomByPersistingAsync(double delta)
+    {
+        ZoomBy(delta);
+        QueuePreferenceSave();
+        return Task.CompletedTask;
+    }
+
+    /// <summary>READER-PREF-PERSIST AC3：恢复 100% 缩放并持久化。</summary>
+    public Task ResetZoomPersistingAsync()
+    {
+        ResetZoom();
+        QueuePreferenceSave();
+        return Task.CompletedTask;
     }
 
     /// <summary>FEA-14-READ-2 (PREQ P12): bookmark the current page.</summary>

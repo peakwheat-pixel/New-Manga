@@ -56,6 +56,7 @@ public sealed class ReaderPageView : UserControl
     private readonly DispatcherTimer _autoHideTimer;
     // MAINT-2-C1-BATCH-1 AC1（READ-2 可见控件）：整书进度 / 书签面板 / reset 确认。
     private readonly TextBlock _bookProgressText;
+    private TextBlock _preferenceStatus = null!;
     private readonly Border _bookmarkPanelHost;
     private readonly StackPanel _bookmarkList;
     private readonly TextBlock _bookmarkEmpty;
@@ -271,8 +272,8 @@ public sealed class ReaderPageView : UserControl
         bar.Children.Add(FluentUi.Text(string.Empty, "fluent-reader-title"));
         // AC1：整书进度（P14）——只显示 VM 给出的真实投影，未加载时留空。
         bar.Children.Add(_bookProgressText);
-        bar.Children.Add(FluentUi.Button("单页 / 双页", "fluent-secondary", _viewModel.ToggleDoublePage, "切换单页或双页"));
-        bar.Children.Add(FluentUi.Button("反向翻页", "fluent-secondary", () => _viewModel.ReverseDirection = !_viewModel.ReverseDirection, "切换阅读方向"));
+        bar.Children.Add(FluentUi.Button("单页 / 双页", "fluent-secondary", () => _ = _viewModel.ToggleDoublePagePersistingAsync(), "切换单页或双页"));
+        bar.Children.Add(FluentUi.Button("反向翻页", "fluent-secondary", () => _ = _viewModel.ToggleDirectionPersistingAsync(), "切换阅读方向"));
         bar.Children.Add(FluentUi.Button("全屏", "fluent-icon", ToggleFullScreen, "切换全屏阅读"));
         // AC1：书签面板入口（P11/P12/P13）。
         bar.Children.Add(FluentUi.Button("书签", "fluent-secondary", ToggleBookmarkPanel, "书签"));
@@ -367,6 +368,7 @@ public sealed class ReaderPageView : UserControl
     /// <summary>AC1 测试 seam：书签面板宿主 / 入口按钮 / 整书进度文本 / reset 确认行。</summary>
     internal Border BookmarkPanelHost => _bookmarkPanelHost;
     internal TextBlock BookProgressText => _bookProgressText;
+    internal TextBlock PreferenceSaveStatusText => _preferenceStatus;
     internal StackPanel ResetConfirmRow => _resetConfirmRow;
     internal Button ConfirmResetButton => _confirmResetButton;
 
@@ -388,10 +390,10 @@ public sealed class ReaderPageView : UserControl
     private Border BuildSideRail()
     {
         var rail = FluentUi.Stack("fluent-reader-siderail", Orientation.Vertical);
-        rail.Children.Add(FluentUi.Button("放大", "fluent-icon", () => _viewModel.ZoomBy(0.1), "放大页面"));
-        rail.Children.Add(FluentUi.Button("缩小", "fluent-icon", () => _viewModel.ZoomBy(-0.1), "缩小页面"));
-        rail.Children.Add(FluentUi.Button("适合页面", "fluent-icon", _viewModel.ResetZoom, "重置缩放"));
-        rail.Children.Add(FluentUi.Button("反向翻页", "fluent-icon", () => _viewModel.ReverseDirection = !_viewModel.ReverseDirection, "切换阅读方向"));
+        rail.Children.Add(FluentUi.Button("放大", "fluent-icon", () => _ = _viewModel.ZoomByPersistingAsync(0.1), "放大页面"));
+        rail.Children.Add(FluentUi.Button("缩小", "fluent-icon", () => _ = _viewModel.ZoomByPersistingAsync(-0.1), "缩小页面"));
+        rail.Children.Add(FluentUi.Button("适合页面", "fluent-icon", () => _ = _viewModel.ResetZoomPersistingAsync(), "重置缩放"));
+        rail.Children.Add(FluentUi.Button("反向翻页", "fluent-icon", () => _ = _viewModel.ToggleDirectionPersistingAsync(), "切换阅读方向"));
         rail.Children.Add(FluentUi.Button("全屏", "fluent-icon", ToggleFullScreen, "切换全屏阅读"));
         rail.Children.Add(FluentUi.Button("隐藏浮动工具条", "fluent-secondary", () => _viewModel.ToggleSideRail(), "隐藏浮动工具条"));
         var host = new Border { Child = rail, VerticalAlignment = VerticalAlignment.Center };
@@ -411,11 +413,13 @@ public sealed class ReaderPageView : UserControl
         actions.Classes.Add("fluent-reader-bar");
         actions.Children.Add(FluentUi.Button("上一页", "fluent-secondary", () => _ = _viewModel.PreviousAsync(), "上一页"));
         actions.Children.Add(_progress);
-        actions.Children.Add(FluentUi.Text(string.Empty, "fluent-status-text"));
+        _preferenceStatus = FluentUi.Text(string.Empty, "fluent-status-text");
+        AutomationProperties.SetName(_preferenceStatus, "阅读偏好保存状态");
+        actions.Children.Add(_preferenceStatus);
         actions.Children.Add(FluentUi.Button("下一页", "fluent-primary", () => _ = _viewModel.NextAsync(), "下一页"));
-        actions.Children.Add(FluentUi.Button("缩小", "fluent-icon", () => _viewModel.ZoomBy(-0.1), "缩小页面"));
-        actions.Children.Add(FluentUi.Button("放大", "fluent-icon", () => _viewModel.ZoomBy(0.1), "放大页面"));
-        actions.Children.Add(FluentUi.Button("适合页面", "fluent-secondary", _viewModel.ResetZoom, "重置缩放"));
+        actions.Children.Add(FluentUi.Button("缩小", "fluent-icon", () => _ = _viewModel.ZoomByPersistingAsync(-0.1), "缩小页面"));
+        actions.Children.Add(FluentUi.Button("放大", "fluent-icon", () => _ = _viewModel.ZoomByPersistingAsync(0.1), "放大页面"));
+        actions.Children.Add(FluentUi.Button("适合页面", "fluent-secondary", () => _ = _viewModel.ResetZoomPersistingAsync(), "重置缩放"));
         // AC1：reset 进度入口（P15）。点击只展开确认行，真正写入需要「确认重置进度」。
         actions.Children.Add(FluentUi.Button("重置进度", "fluent-secondary",
             () => _resetConfirmRow.IsVisible = true, "重置进度"));
@@ -529,6 +533,8 @@ public sealed class ReaderPageView : UserControl
         var title = _topBar.Children.OfType<TextBlock>().FirstOrDefault(block => block.Classes.Contains("fluent-reader-title"));
         if (title is not null) title.Text = book is null ? "阅读器" : $"{book.BookTitle} · {book.ChapterTitle} · {_viewModel.PageLabel}";
         // AC1：整书进度只显示 Host 给出的真实投影；未加载时整块隐藏（不显示伪造百分比）。
+        _preferenceStatus.Text = _viewModel.PreferenceSaveStatus;
+        _preferenceStatus.IsVisible = !string.IsNullOrEmpty(_viewModel.PreferenceSaveStatus);
         _bookProgressText.Text = _viewModel.BookProgressLabel;
         _bookProgressText.IsVisible = _viewModel.HasBookProgress;
 
@@ -703,17 +709,17 @@ public sealed class ReaderPageView : UserControl
         }
         else if (args.Key == Key.Add || args.Key == Key.OemPlus)
         {
-            _viewModel.ZoomBy(0.1);
+            _ = _viewModel.ZoomByPersistingAsync(0.1);
             args.Handled = true;
         }
         else if (args.Key == Key.Subtract || args.Key == Key.OemMinus)
         {
-            _viewModel.ZoomBy(-0.1);
+            _ = _viewModel.ZoomByPersistingAsync(-0.1);
             args.Handled = true;
         }
         else if (args.Key == Key.D0)
         {
-            _viewModel.ResetZoom();
+            _ = _viewModel.ResetZoomPersistingAsync();
             args.Handled = true;
         }
         else if (args.Key == Key.F)

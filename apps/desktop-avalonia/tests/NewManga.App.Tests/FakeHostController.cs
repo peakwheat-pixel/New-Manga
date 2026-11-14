@@ -199,8 +199,15 @@ public sealed class FakeHostController : IHostController, ISourceImportControlle
     public Task<bool> SaveReadingPreferencesAsync(string bookId, ReadingPreferencesPatch patch, CancellationToken cancellationToken = default)
     {
         LastSavedPreferences = patch;
-        return Task.FromResult(true);
+        SaveReadingPreferencesCallCount++;
+        return Task.FromResult(SaveReadingPreferencesResult);
     }
+
+    /// <summary>READER-PREF-PERSIST: outcome of <see cref="SaveReadingPreferencesAsync"/> (default success).</summary>
+    public bool SaveReadingPreferencesResult { get; set; } = true;
+
+    /// <summary>READER-PREF-PERSIST AC6: how many preference writes reached the host.</summary>
+    public int SaveReadingPreferencesCallCount { get; private set; }
 
     public Task<IReadOnlyList<BookmarkInfo>> ListBookmarksAsync(string bookId, CancellationToken cancellationToken = default) =>
         Task.FromResult<IReadOnlyList<BookmarkInfo>>(Bookmarks.ToArray());

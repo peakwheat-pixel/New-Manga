@@ -1,0 +1,10 @@
+# READER-PREF-PERSIST 回归 2026-11-15T00:12:33.3302024+08:00
+
+基线 eebfedf6d（main）。无夹具模式（未设 NEWMANGA_CORECLIENT_SIDECAR_DIR）。
+
+| 项目 | 结果 | 说明 |
+|---|---|---|
+| NewManga.App.Tests | **940 / 0 / 11** | 本卡前 934/0/11；+6 本卡测试，skip 未增加 |
+| 定向（偏好 6 + READ-2 偏好 7 + 可见控件 4） | **17 passed** | 见 README §4 |
+| dotnet build -warnaserror | 0 警告 / 0 错误 | |
+| pytest | 本卡未改 Python 代码（AC7 要求零契约） | 未重跑全量 |
