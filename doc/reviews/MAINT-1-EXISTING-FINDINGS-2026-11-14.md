@@ -91,7 +91,7 @@
   **不得用 AC3 的 MET 声称 L-F1-3 的压测已完成**。
 ## E-6：`list_chapters` 间歇返回空（被 E-2 掩盖的既有竞态，2026-11-15 由 `SIDECAR-REBUILD-1` 暴露）
 
-**严重度候选：P1（用户可见：阅读器章节列表可能空显示）；证据充分度：中 —— 未定位到确切代码行，故暂不正式定级。**
+**严重度：P1（已确证，2026-11-15 第七轮诊断）。根因明确，证据为 wire 帧的 request_id 错配。**
 
 ### 现象（可复现）
 
@@ -112,12 +112,22 @@
 | 残留进程 | **排除**：连跑后无 `core_service` 进程 |
 | 客户端串帧（gate 缺失） | **排除**：`HostRuntime._readerIoGate`（`:34`）覆盖 `ListChaptersAsync`（`:511`）**与** `GetReaderProjectionAsync`（`:784`） |
 
-### 剩余嫌疑
+### ★ 根因（已确认）
 
-`CoreServiceClient.SendAsync` 的"跳过事件帧"循环（`CoreServiceClient.cs:2376-2384`）：
-`core_service` 在 READER-PROGRESS-1 之后会推 `ReadingProgressChanged` 事件帧，该循环会继续读下一行 ——
-**这是唯一能吃到/错配响应的地方**。另注：`Transport/SidecarProcess.ExchangeAsync`（`:186`）**无锁**
-（"写一行→读下一行"），若存在 gate 外调用与 gate 内并发，理论仍可串帧。
+失败 session 的 wire 最后一帧：
+```
+# 6  REQ list_chapters req-7  → RESP req-6  result: {"targets": []}
+```
+**`list_chapters`(req-7) 读到了 `source_list_scan_targets`(req-6) 的响应** ⇒ 解析器找不到 `chapters`
+⇒ 静默返回空 ⇒ `Assert.NotEmpty` 失败。
+
+三方同时成立：
+1. `SidecarProcess.ExchangeAsync`（`:186-240`）**无锁**，假定"一次只有一个请求在途"；
+2. `HostRuntime._readerIoGate` 只覆盖 reader 类方法（`:511/527/543/559/576/784`）；
+3. **漏洞**：后台 source 扫描**直接调 `CoreServiceClient`，不经过 gate** ——
+   `SourceScanScheduler.cs:2415`、`SourceOperationCoordinator.cs:219`。
+
+另：`CoreServiceClient.SendAsync` **不校验响应的 `request_id`**，这是它能"静默错配"的直接原因。
 
 ### 建议
 

@@ -1521,3 +1521,23 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   打印出 projection ⇒ 确认事件帧循环吃掉了响应；打印出 `{"chapters":[...]}` 却返回空 ⇒ 解析 bug（不太可能）。
 - **自登记**：本卡我连续两轮提出"客户端串帧"假设（§12.5、上一轮推荐指令），都被代码证伪。
   教训：**推断链路前必须先把该链上的锁逐个核实**，而不是从"数据对不上"直接跳到并发缺陷。
+## 213. ★ 根因确认：list_chapters 空是因为 request_id 错配，后台 source 扫描抢走响应（P1）（2026-11-15，DSH，goal 轮次 12）
+
+- 提交：`18bc51bc9`。
+- **决定性证据**（失败 session 的 wire 最后一帧）：
+  `# 6  REQ list_chapters req-7  → RESP req-6  result: {"targets": []}`
+  —— `list_chapters` 拿到了 `source_list_scan_targets` 的响应 ⇒ 解析器找不到 `chapters`
+  ⇒ **静默返回空** ⇒ `Assert.NotEmpty` @ `HostReaderChaptersIntegrationTests.cs:47` 失败。
+- **根因（三方同时成立）**：
+  ① `Transport/SidecarProcess.ExchangeAsync`（`:186-240`）**无锁**，假定"一次只有一个请求在途"；
+  ② `HostRuntime._readerIoGate` 只覆盖 reader 类方法（`:511/527/543/559/576/784`）；
+  ③ **漏洞**：后台 source 扫描直接调 `CoreServiceClient`，**不经过 gate** ——
+     `SourceScanScheduler.cs:2415`、`SourceOperationCoordinator.cs:219`。
+  另：`CoreServiceClient.SendAsync` **不校验响应 request_id**，这是"静默错配"的直接原因。
+- **为何现在才暴露**：旧 sidecar 时代这两测试是 SKIP（`[BookFixtureFact]`），竞态从未执行；
+  E-2 解除后立即显现。**它是被 E-2 掩盖的既有 P1 产品缺陷**，已登记为 `E-6`。
+- **用户可见性**：读章节列表时若后台扫描在跑，章节列表会**静默变空**，无错误提示。
+- **修复方向**：根治在 `ExchangeAsync`/`SendAsync` 加**全局管道锁**（管道本就必须一次一个在途）；
+  局部（把 scan 也纳入 `_readerIoGate`）能用但脆弱。修复须附**判别测试**：并发发 gate 内/外命令，
+  断言每个响应 request_id 与请求一致，去掉底层锁后测试变红。
+- **本轮同时**：把 13 个失败从 `SIDECAR-REBUILD-1` 拆出登记为 `E-6`（该卡的目标"重建 sidecar"已达成）。
