@@ -1736,3 +1736,14 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   而非本地漂移。
 - **诚实口径**：覆盖**是可执行的**（43/44 真跑），但**换 sidecar 引入了版本兼容缺口**；
   **不能说条件 3 变好**，仍不判 MET。
+## 225. 补证：`schema_version=14` 是产品版本（非本地漂移）—— 测试的 9 是过时硬编码（2026-11-15，DSH，goal 轮次 24）
+
+- **核实**：`src/.../schema.py:965` **`MIGRATION_V14_NAME = "v14__prompt_templates"`**（同文件 `:58` v1、`:938` v13）；
+  新 sidecar 建的库（`smoke3/data/library.db`）`schema_migrations` 表有 **v1–v14 连续 14 条**，
+  `applied_at = 2026-11-14T21:03:01`（与我首次安装启动吻合）⇒ **是新建库，不是旧库升级**。
+- **⇒ v14 是产品代码支持的版本**；测试 `Assert.Equal(9, schema_version)` 是**过时硬编码**，
+  **既不是产品缺陷，也不是本地漂移**。
+- **建议修法（未实施，需裁决）**：在 C# 侧加 schema 常量与 `schema.py` 对齐，测试断言
+  `Assert.Equal(CoreSchema.Current, …)`；**代价**是需跨语言同步守护。
+  `== 14` 只是换硬编码；`>= 9` 是**放宽断言**（不可）。
+- **本卡边界不变**：只做归因，不修断言；条件 3 仍不判 MET。

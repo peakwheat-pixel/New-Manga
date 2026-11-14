@@ -122,3 +122,34 @@ Fea11SourceIpcTests.cs:63      Assert.Equal(9, receipt.GetProperty("schema_versi
 - 未逐个核对剩余 29 个（44 - 15 已归因）失败/通过的具体分类；本卡只抓了失败集。
 - 未确认 `schema_version=14` 是否为**预期产品版本**（可能是本地 workspace 漂移）。
 - 未处理 `NEWMANGA_FEA11_CRASH_STATE` 等剩余 opt-in 变量。
+## 7. 后续核实：`schema_version=14` 是产品版本，不是本地漂移（2026-11-15 补）
+
+上一节 §4 留了一个必须先确认的问题：**v14 是产品预期版本，还是本地 workspace 的库被迁移过？**
+
+**核实结论：v14 是产品版本。** 证据：
+
+| 证据 | 位置 / 内容 |
+|---|---|
+| 迁移名常量 | `src/.../schema.py:965` **`MIGRATION_V14_NAME = "v14__prompt_templates"`**（同文件 `:58` `v1__storage_base`、`:938` `v13__issue_markers`） |
+| 库内迁移记录 | 新 sidecar 建的库（`...\INSTALLER-MATRIX-1\smoke3\data\library.db`）有 `schema_migrations` 表，`schema_version` 从 **1 到 14** 连续存在，`applied_at` 为 `2026-11-14T21:03:01` |
+| 该库是**新建**的 | 上表 `applied_at` 与我第一次安装/启动的时间吻合 ⇒ **不是旧库被升级**，是从空库建到 v14 |
+| sidecar stderr | `[core.schema] applied 14 migration(s) up to v14` |
+
+⇒ **`schema_version = 14` 是当前产品代码支持的版本**，测试里的 `Assert.Equal(9, …)` 是**过时的硬编码**，
+不是产品缺陷、也不是本地漂移。
+
+### 7.1 因此建议的修法（**仍未实施**，需 DSH 裁决）
+
+| 方案 | 评价 |
+|---|---|
+| 改成 `Assert.Equal(14, …)` | 只是把硬编码换个数字，下次加 v15 又红。**不推荐** |
+| 改成 `Assert.True(v >= 9)` | **放宽断言**，违反纪律。**不可** |
+| **在 C# 侧加一个 schema 版本常量**（与 `schema.py` 的 `MIGRATION_V14_NAME` 对齐），测试断言 `Assert.Equal(CoreSchema.Current, …)` | 断言更强（精确等于当前版本），且只需在一个地方维护；**代价**是要保证 C# 与 Python 两侧同时更新，否则新的不一致——这一点需要一条跨语言的守护测试 |
+| 测试**从 sidecar 动态读**版本（若协议暴露） | `core.ping` 的 result 里**没有** schema 字段，所以当前不可行 |
+
+**推荐第 3 条**，但它同时是"产品代码改动 + 跨语言同步"，**不在本卡范围内**，
+需要单独开卡并明确"如何防止两侧漂移"。
+
+### 7.2 本卡边界（不变）
+
+本卡只做**归因**，不修断言。条件 3 仍不判 MET。
