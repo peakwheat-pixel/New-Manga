@@ -58,3 +58,44 @@ provider 实例在**装配期**按 `pipeline_defaults` 行一次性构建（`cor
 - `l2-run.json`：StartRun → 轮询 → GetTaskProjection 的完整原始响应（无 key）
 - `core-stderr.log`：源码 Core 的 stderr（含 T-B 新增的 `[core.run]` 精确原因行）
 - `probe-console.log`、`profile-deepseek.json`（只含 `credential_ref`，不含 secret）
+## 8. 路线 B 复跑（DeepSeek 凭据已换；seed 走产品 API）
+
+**结论：仍未证明 Core→落库端到端。** 数据与凭据都已就位，但 translate 始终未执行。
+
+### 8.1 凭据
+
+- 取自用户授权文件 `C:\Users\49745\DeskBox\杂项文件\api.txt` 的 **deepseek** 段（第 3 行 `api：sk-…`，35 字符）。
+- 先用一次最小 `POST https://api.deepseek.com/v1/chat/completions`（model=`deepseek-chat`, max_tokens=5）探测：**HTTP 200，返回 "OK"** ⇒ key 有效（`key_present: true`）。
+- 用 `cmdkey /generic:NewManga/provider/3819f991cbe54001ba45b6f8524f260c/3218c7670af30a61c068a7caeafa0d0f /user:apikey /pass:<key>` 写入 Windows 通用凭据（覆盖 OpenCode 时代的旧值）；**key 未进入任何仓库文件/日志/提交**，探测输出不含 key。
+
+### 8.2 seed 形状（VERIFIED vs INFERRED）
+
+走**产品 API** seed，不手写 SQL/JSON 快照：
+
+| 字段/结构 | 依据 | 等级 |
+|---|---|---|
+| region 创建：`core.editing.create_region(page_id, RegionGeometry(bbox=BBox(x,y,w,h)))` | `src/application/editing/service.py:680-711`；`BBox/RegionGeometry` 定义 `src/domain/regions/entities.py:62-105` | **VERIFIED** |
+| 首修订与 current 指针同一事务 | `service.py:712-717` 注释与实现 | **VERIFIED** |
+| 原文写入：`core.editing.apply_ocr_result(region_id, ocr_text)` → `RegionText.ocr_text` | `src/application/editing/service.py:1248-1259`；`RegionText` 字段 `src/domain/regions/entities.py`（`ocr_text`/`machine_translation`/`edited_translation`） | **VERIFIED** |
+| 「原文」语义 = `ocr_text`，译文 = `machine_translation`，final 由 `resolve_final()` 决定 | `entities.py` `RegionText.resolve_final` | **VERIFIED** |
+| 区域类型默认 `SPEECH`、`sfx_policy=SKIP` | `service.py:685-687` 默认参数 | **VERIFIED** |
+| 手动译文会触发 manual 保护（我曾用 `save_manual_translation` 写日文，导致后续 `retranslate_region` 直接 skipped） | 实测：revision_no=2 / `manual_edited=True` 的目标被 `skipped` | **INFERRED（实测现象推导）** |
+
+seed 后核对（脱敏）：`pipeline_defaults.settings_json.providers.profiles["openai-compatible-translation"]` 有 `base_url=https://api.deepseek.com/v1`、`model=deepseek-chat`、`credential_ref=NewManga/provider/3819f991…`；`provider_bindings_json={"ocr":"manga-ocr","translate":"openai-compatible-translation"}`。
+
+### 8.3 两次运行的真实结果
+
+| 命令 | 终态 | 关键输出 |
+|---|---|---|
+| `retranslate_region`（region scope，全新无手动译文的区域） | **blocked** | `counts={"total":1,"blocked":1}`，`step_status={}`、`error_codes=[]`、`blocked_reasons=[]` ⇒ 阻塞发生在**步骤执行前**，投影未给出原因（见 §8.4 待查点） |
+| `translate_single`（region scope） | start_failed | typed `TARGET_NOT_FOUND: page command requires page scope`（命令要求 page scope，属输入形状问题，已排除为"无关失败"） |
+
+区域复查：`ocr_text=おはようございます。今日はいい天気ですね。`、`machine_translation=""`、`final=""` ⇒ **`regions_translated_differs = 0`**。
+
+### 8.4 剩余待查（下一轮的第一步）
+
+`retranslate_region` 的 blocked 没有 error_code —— 需要查 planning 阶段的门（`PROVIDER_UNAVAILABLE`/readiness gate 或 lineage guard）。已知不是：凭据（key 200 有效）、profile 装配（§3 已 seed 且 StartRun 被接受）、scope（region 合法）。
+
+## 9. 对 L2 的一句话结论
+
+**Core→落库的端到端翻译尚未被证明。** 已证明的相邻事实：源码 Core 入口可跑、fixture v6→v14 迁移无损、装配期 provider 约束（含 `RUN_SNAPSHOT_INCOMPLETE` 实测）、DeepSeek 凭据可用、区域/原文经产品 API 可 seed、`retranslate_region` 在 region scope 下被接受并执行到 planning（blocked，原因未投影）。
