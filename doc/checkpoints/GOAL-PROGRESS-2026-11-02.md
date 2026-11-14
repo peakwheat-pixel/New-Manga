@@ -1502,3 +1502,22 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   再修实现；并作为独立 finding 登记。
 - **自登记**：本轮我一度以为"单跑通过是因为没有并发测试"，实际两个测试**各自单独跑都通过**，连跑才失败 ——
   即污染确实存在，但根因在客户端配对而非测试顺序。
+## 212. SIDECAR-REBUILD-1 五续：撤回串帧假设，失败点精确定位（2026-11-15，DSH，goal 轮次 11）
+
+- 提交：`0b458eeba`。卡仍 `in_progress`。
+- **两个 gate 都存在，我的串帧推断被证伪**：`HostRuntime._readerIoGate`（`:34`）覆盖
+  `ListChaptersAsync`（`:511`）**与** `GetReaderProjectionAsync`（`:784`）—— 测试的 12 个并发调用全部串行，
+  **不可能**在客户端串帧。**已撤回 §12.5 的"客户端串帧"结论**。
+  附带更正：`ExchangeAsync`（`Transport/SidecarProcess.cs:186`）确实**无锁**（写一行→读下一行），
+  所以**若**有 gate 外的调用与 gate 内并发，理论上仍会串；但本测试两条路径都在 gate 内。
+- **失败点精确定位**：`HostReaderChaptersIntegrationTests.cs:47` = `Assert.NotEmpty(chapters)`
+  （`:46` 是 `ListChaptersAsync`）。**而 wire 帧显示该 session 的 `list_chapters` 返回了 1 个 chapter。**
+  ⇒ **sidecar 返回了数据、C# 却得到空**，矛盾更尖锐。
+- **两测试交替失败**（第一次并发测试失败，第二次 `ListChapters_MatchesReaderProjection:47` 失败），
+  且**各自单独跑都通过** ⇒ 典型**竞态**，不是固定缺陷点。
+- **剩下的唯一嫌疑**：`SendAsync` 的"跳过事件帧"循环（`CoreServiceClient.cs:2376-2384`）——
+  `core_service` 在 READER-PROGRESS-1 后会推 `ReadingProgressChanged` 事件帧，这个循环是**唯一能吃掉一行响应**的地方。
+- **下一轮决定性实验**：在 `ListChaptersAsync` 解析前临时打印 `result.GetRawText()`，跑连跑场景 ——
+  打印出 projection ⇒ 确认事件帧循环吃掉了响应；打印出 `{"chapters":[...]}` 却返回空 ⇒ 解析 bug（不太可能）。
+- **自登记**：本卡我连续两轮提出"客户端串帧"假设（§12.5、上一轮推荐指令），都被代码证伪。
+  教训：**推断链路前必须先把该链上的锁逐个核实**，而不是从"数据对不上"直接跳到并发缺陷。
