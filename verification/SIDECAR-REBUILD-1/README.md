@@ -158,3 +158,42 @@ HostRegionWorkbenchIntegrationTests.RegionReadWriteFace_ExecutesAgainstFrozenCor
 - `Assert.Equal Expected:8 Actual:0`（`RegionWrites_ReadOnlyHost...`）：需核这两处 8 的含义。
 
 **⇒ 本卡仍不得收口为 done**：归因方向已明确，但逐项核实未完成。
+## 9. 第二轮诊断：数据根传递与 namespace（把 13 个失败进一步收窄）
+
+### 9.1 `--data-root` 参数**从来就不被支持**（新旧 sidecar 都不认）
+
+| 调用方式 | 新 sidecar | 旧 sidecar |
+|---|---|---|
+| `--data-root <path>`（空格） | 忽略 → 打开**默认库**（v14，0 本书） | 忽略 → 打开默认库，报 `schema v14 is newer than this application knows (v6)` |
+| `--data-root=<path>`（等号） | 同样忽略 | — |
+| **`NEWMANGA_DATA_ROOT=<path>`** | ✅ **生效**：读到 fixture 的 1 本书，日志 `applied 8 migration(s) up to v14` | — |
+
+**结论**：`app.py:20` 的文档（"可用 `--data-root` 或环境变量"）与实际不符 —— **CLI 参数被静默忽略**。
+
+### 9.2 Host 侧传参是**正确的**
+
+`CoreServiceClient.cs:499`：`["NEWMANGA_DATA_ROOT"] = options.DataRoot` —— 用的是**环境变量**，
+与我验证成功的路径一致。`HostFixture.SidecarDirectory` 也确实读 `NEWMANGA_CORECLIENT_SIDECAR_DIR`（我设置的变量生效）。
+
+**因此 13 个失败既不是"sidecar 坏了"，也不是"数据根传错"。**
+
+### 9.3 剩下的怀疑集中在 **namespace 隔离**
+
+用环境变量打开 fixture 副本时，sidecar stderr 出现：
+
+```
+[core.namespace] data root identity changed (preview namespace unavailable:
+  namespace binding identity mismatch); re-bound preview namespace: derived_root=...
+```
+
+即：**每换一个 data root，sidecar 会重新绑定 namespace**。13 个 Host 测试**并行**、各自不同 dataRoot、
+且 `HostOptions.ParityReached=true` —— 这条 re-bind 路径很可能就是失败来源（例如并发 re-bind 竞争、
+或 re-bind 后读的是 `derived` 根而非传入根）。
+
+**这一步把 13 个失败从"未知"收窄到"namespace 隔离/re-bind 路径"**，是下一轮的直接入口。
+
+### 9.4 尚未验证
+
+- 单线程（`-m:1` 或 xunit 并行度 1）跑那 13 个测试是否还失败 —— 若单线程全绿，则确认是并发/namespace 竞争。
+- `HostOptions.ParityReached` 与 namespace 的关系。
+- `derived_root` 是否被用于读数据。
