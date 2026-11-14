@@ -1465,3 +1465,21 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **自登记**：本轮我先假设"`--data-root` 等号形式不被识别"，实测**空格形式也不被识别** ——
   即该参数根本不存在。我最初的假设方向对了一半（参数无效），但归因（等号 vs 空格）是错的。
 - Gate 仍 BLOCKED。E-2 的下一步从"补 sidecar"变成"查 namespace/derived_root 与测试隔离"。
+## 210. SIDECAR-REBUILD-1 三续：sidecar 侧日志证明其完全正常，失败收窄到客户端/断言层（2026-11-15，DSH，goal 轮次 9）
+
+- 提交：`92349bc4e`。卡仍 `in_progress`。
+- **决定性对照**：同一测试**单独跑 PASSED**（1/1），**连跑两个 class → 4 failed / 1 passed**。
+  ⇒ 是**测试之间的交互**，不是该测试或 sidecar 本身缺陷。
+- **逐项排除（均有实证）**：xunit 并行（两项目都已 `DisableTestParallelization = true`）、
+  残留 sidecar 进程（连跑后 `Get-Process core_service` 为空）、namespace re-bind
+  （`_ensure_preview_namespace` 只处理 preview/derived catalog，与 books 读取无关）、
+  fixture 源被改脏（源仍 v6/books=1；源目录的 shm/wal 时间戳对应**我自己的只读 probe**）、
+  `--data-root` 传参（Host 用 `NEWMANGA_DATA_ROOT`，实测能读到 1 本书）。
+- **决定性证据**：用 `NEWMANGA_EVIDENCE_DIR` 抓到当次两个测试的 `core_service.stderr.log` ——
+  **两次 sidecar 启动都完全正常**：各自打开自己的 dataRoot、都 `applied 8 migration(s) up to v14`、
+  都成功做首次备份（4 MB，verified=True）、**无任何 error 行**。
+  ⇒ 失败在 **C# 客户端 / 测试断言**侧，不在 sidecar、不在数据。
+- 两种症状并存且性质不同：`ListBooks result is not an array`（解析失败）与"空列表"（解析成功但空）。
+  **下一轮唯一决定性证据是 wire 帧原文**（`EnableWireEvidence = true` 已开启，证据文件还没读）。
+- **自登记**：本轮我又一次先怀疑 namespace（读了代码才发现它只影响 preview），说明我前一轮的怀疑方向
+  错了一格。正确做法是**先拿 sidecar 自己的日志**，而不是从现象反推架构。
