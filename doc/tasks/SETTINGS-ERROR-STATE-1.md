@@ -3,7 +3,7 @@ id: SETTINGS-ERROR-STATE-1
 title: 设置页加载失败态的判别测试（闭合条件 3 矩阵唯一无覆盖格）
 kind: test
 governance_version: 3
-status: in_progress
+status: done
 disposition: "GATE3-COVERAGE-MATRIX §3 唯一「完全无覆盖」格（错误态/设置）；DSH 2026-11-15 释放"
 approval: DSH 2026-11-15（纯测试补强，零生产代码改动）
 suggested_owner: DSH
@@ -14,10 +14,10 @@ depends_on:
 base_commit: 418801499
 branch: main
 worktree: G:/CODEX/New Manga
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: e50e7ebc932c22834c6ed2808b89de5ff62c8785
+delivery_head: e50e7ebc9
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/SETTINGS-ERROR-STATE-1
 allowed_paths:
   - doc/tasks/SETTINGS-ERROR-STATE-1.md
@@ -112,7 +112,12 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) | sha256_basis |
 |---|---|---|---|---|---|---|
-
+| EV-SES-01 | AC1/AC2/AC3 与实现核实 | verification/SETTINGS-ERROR-STATE-1/README.md | e50e7ebc9 | fbf84657a6d38422501947ee3c156eaaa12791f675e7d2c7dd5b5949c8792ce8 | CANONICAL | BLOB |
+| EV-SES-02 | AC5 门禁与全量原始输出 | verification/SETTINGS-ERROR-STATE-1/four-pieces.log | e50e7ebc9 | 6cc981bb466fe8ade8f144260c0af6f9bcb495915061c6970a10e0a5e2003a35 | CANONICAL | BLOB |
+| EV-SES-03 | AC1/AC2/AC5 测试本体 | apps/desktop-avalonia/tests/NewManga.App.Tests/SettingsErrorStateTests.cs | e50e7ebc9 | 03342d0aa0b38618a553091a8c2307576dea493090ef62e6821093c9c8f3f69d | CANONICAL | BLOB |
+| EV-SES-04 | 失败注入开关（测试替身） | apps/desktop-avalonia/tests/NewManga.App.Tests/FakeHostController.cs | e50e7ebc9 | afe16f2fe64889b54f1afd22ed96cf4eae63087527fef57125603fe84be70d45 | CANONICAL | BLOB |
+| EV-SES-05 | 独立复核 r1（ACCEPT_WITH_LIMITATIONS） | doc/reviews/SETTINGS-ERROR-STATE-1-review-r1.md | e50e7ebc9 | 2ec9573919801d4c33c33fd35e7926ff4d04e68feb67775b90bf47e5b258ef9d | CANONICAL | BLOB |
+| EV-SES-06 | AC4 矩阵改判（含范围限定） | doc/reviews/MAINT-1-GATE-CONDITION-3-MATRIX-2026-11-15.md | e50e7ebc9 | d790c8dcd78baa79376acdcde401055466804f7155d868891df12658fa3afca2 | CANONICAL | BLOB |
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
@@ -121,9 +126,18 @@ allowed_paths:
 
 ## Closeout Record
 
-- Closeout date / DSH：待关闭时填写。
-- canonical_evidence_status：`pending`。
-- resource_closeout_status：`pending`。
-- 删除、迁移、归档数量/字节数：待关闭时填写；无操作填写 0。
-- 未关闭项及保留原因：待填。
-- 当前指针清理：待关闭时更新 STATUS / Plan / TASK_LEDGER / rolling checkpoint。
+- Closeout date / DSH：2026-11-15，DSH（Lead / Architect / Integrator）。
+- canonical_evidence_status：`complete`（6 条 BLOB pin，commit `e50e7ebc932c22834c6ed2808b89de5ff62c8785`）。
+- resource_closeout_status：`complete`（无 worktree、无用户数据）。
+- 删除、迁移、归档数量/字节数：0。
+- **交付结论**：条件 3 矩阵里「错误态 / 设置」格由 ❌ 改 ✅；在**本矩阵限定的 4 页 × 13 类**内，
+  ❌ 格已清零。**这不等于"产品 GUI 无缺口"** —— 仍有 2 个 ⚠️ 格、111 个 skip、以及 §0 未纳的流程。
+- 未关闭项及保留原因：
+  - 只覆盖"设置读取失败"一条失败路径；`SettingsViewModel` 另有外观保存失败、coordinator 未注入、
+    只读拒绝等失败路径**未**逐条补测；
+  - AC2 断言依赖"设置错误"/"重试"文案，文案改动会使测试变红（期望行为，但需同步矩阵措辞）；
+  - 未送 r2 复审：r1 为 `ACCEPT_WITH_LIMITATIONS` 且无 P0/P1，P2/P3 已在本收口提交中处置。
+- 当前指针清理：STATUS / Plan / TASK_LEDGER / rolling checkpoint 已更新。
+- **本卡自身的错误登记**：① 两次 AC3 探针未生效（PowerShell 插值、删掉 `ex` 触发 CS0168）却险些
+  当成"判别力已验证"；② 越界修改 Gate 评估文档未在 `allowed_paths` 登记（r1 P2-1）；③ 矩阵格行号写错
+  （44/60 → 实际 35/53）。

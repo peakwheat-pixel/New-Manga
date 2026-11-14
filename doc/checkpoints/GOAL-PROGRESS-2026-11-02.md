@@ -1377,3 +1377,23 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **方法论错误（本卡最重要教训）**：前两版都用**源码正则推断 gate/分类**而非实测运行结果，因此连续两次被实跑证伪。第三版起所有数字改为 `dotnet test` 的实测输出。**今后凡涉"哪些测试被 skip / 哪些能跑"，一律以实测清单为准，不得由 attribute 文本或类名推断。**
 - Gate 仍 **BLOCKED**：条件 3 现为"有部分证据、剩余 111 skip + 1 格无覆盖 + 真机走查"；条件 4 需 PyInstaller；条件 5 需人工 GT。
 - 下一步候选：条件 3 的推进只剩三条路（解 E-2 / 开 opt-in 矩阵 / Owner 接受边界），本环境均不可自证；**建议转向条件 4 的可做部分**（检查 	ools/ci/publish-release.ps1 是否能在无可联网环境产出绑定当前 commit 的包，若不能则如实登记 blocked 所需），或补"设置页错误态"这一格测试（范围极小、可自证）。
+## 205. SETTINGS-ERROR-STATE-1 收口（2026-11-15，DSH，goal 轮次 4）
+
+- 交付链：`90dc51ded`（实现）→ `e50e7ebc9`（r1 返修 + 收口），integration_commit = `e50e7ebc932c22834c6ed2808b89de5ff62c8785`。
+- **开卡前核实现（又一次证明"旧记录会滞后"）**：这一格在矩阵里被标"完全无覆盖"，但**实现早已存在** ——
+  `SettingsViewModel.LoadAsync` 的 catch 已设 `State=Error` + "设置读取失败…可以重试"，
+  `SettingsPageView` 已渲染"设置错误" banner + 重试按钮。本卡因此**零生产代码改动**，只补测试。
+- **测试**：`SettingsErrorStateTests.cs`（35 VM 级 / 53 视图级 / 90 对照）3 passed；视图级用 `Assert.Single`
+  + `IsEffectivelyVisible`/`IsEffectivelyEnabled` 断言重试按钮**真的可达**。
+- **判别力（两次独立实验）**：实现者回退 `LoadAsync` 的 catch → **2 failed / 1 passed**；
+  审查者 `review-settings-error` 只回退视图 banner → **1 failed / 2 passed（仅 AC2 红）**，
+  证明 AC2 是真实视图树断言而非只看 VM 字段。均还原，`src/**` diff 0。
+- **数字**：App.Tests **950 / 0 / 11 / 961**（本卡前 947/0/11/958，skip 未增加）；`[AvaloniaFact]` 文件 **63**；
+  矩阵【核对】格 **13 个**。
+- **结论限定（不得扩大）**：矩阵 §5 与 Gate §15 均改为"**本矩阵限定的 4 页 × 13 类内 ❌ 格清零**"，
+  并显式保留 2 个 ⚠️ 格、111 个 skip、以及 §0 未纳的回收站/命令面板/源恢复/沉浸等流程。
+  **不得据此说"产品 GUI 无缺口"。**
+- **自登记错误**：两次 AC3 探针未生效（PowerShell 插值 / 删 `ex` 触发 CS0168）却险些当成"已验证"；
+  越界改 Gate 文档未登记 allowed_paths；矩阵行号写错 44/60→35/53。
+- Gate 仍 **BLOCKED**：条件 1 = 7/8 + KEEP-NOTRUN、条件 2 = MET、条件 3 = 部分证据（111 skip + 2 ⚠️ + 未纳流程 + 真机走查）、条件 4 需 PyInstaller、条件 5 需人工 GT。
+- **下一步候选**：条件 3 的可自证部分已基本做尽。剩余可做的只有两类 —— ①补 SettingsViewModel 其它失败路径（外观保存失败等）的判别测试，价值有限；②转向**条件 4 的可做部分**：核实 `tools/ci/publish-release.ps1` 在本环境是否能产出绑定当前 commit 的包，若不能则如实登记"所需外部资源"（这是 Gate 里唯一还没被探测过的方向）。
