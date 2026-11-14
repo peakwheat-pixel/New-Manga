@@ -92,14 +92,22 @@ def test_list_chapters_returns_sorted_projection(tmp_path) -> None:
         rows = res["result"]["chapters"]
         # sorted by the user's sort_order (1 then 2), NOT by insertion/name
         assert [row["chapter_id"] for row in rows] == ["chapter-1", "chapter-2"]
+        # M2-C1 rev 2.16 (MAINT-2-C1-BATCH-1 AC4/AC5, additive widening): the row is the frozen
+        # four keys PLUS the two optional read-only fields kind/custom_rank. The table is still
+        # pinned by EXACT equality (nothing else may appear) -- the four frozen values are
+        # unchanged and custom_rank is an explicit null when unset.
         assert rows[0] == {
             "chapter_id": "chapter-1",
             "title": "first",
             "chapter_number": "1",
             "sort_order": 1,
+            "kind": "paged",
+            "custom_rank": None,
         }
-        # the navigation projection carries no Reader semantics
-        assert set(rows[1].keys()) == {"chapter_id", "title", "chapter_number", "sort_order"}
+        # the navigation projection carries no Reader semantics (only the two metadata fields above)
+        assert set(rows[1].keys()) == {
+            "chapter_id", "title", "chapter_number", "sort_order", "kind", "custom_rank",
+        }
     finally:
         core.conn.close()
 

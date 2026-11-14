@@ -54,6 +54,14 @@ public sealed class ReaderPageView : UserControl
     private readonly PageThumbStrip _thumbStrip;
     private readonly ReaderProgressBar _progress;
     private readonly DispatcherTimer _autoHideTimer;
+    // MAINT-2-C1-BATCH-1 AC1（READ-2 可见控件）：整书进度 / 书签面板 / reset 确认。
+    private readonly TextBlock _bookProgressText;
+    private readonly Border _bookmarkPanelHost;
+    private readonly StackPanel _bookmarkList;
+    private readonly TextBlock _bookmarkEmpty;
+    private readonly StackPanel _resetConfirmRow;
+    private readonly Button _confirmResetButton;
+    private readonly Button _cancelResetButton;
     // 字段初始化器必须在任何 lambda 捕获之前完成（_webtoonScroll.ScrollChanged 会用到这里）。
     private readonly DispatcherTimer _scrollProgressTimer = new() { Interval = TimeSpan.FromMilliseconds(600) };
     private readonly FluentVisibilityMotion _topMotion;
@@ -134,6 +142,16 @@ public sealed class ReaderPageView : UserControl
         _sideRailRestore.IsVisible = false;
         _thumbStrip = new PageThumbStrip();
         _progress = new ReaderProgressBar { Minimum = 0, Maximum = 100 };
+        // MAINT-2-C1-BATCH-1 AC1（READ-2 可见控件）：整书进度、书签面板、reset 确认三处控件。
+        _bookProgressText = FluentUi.Text(string.Empty, "fluent-reader-title");
+        AutomationProperties.SetName(_bookProgressText, "整书进度");
+        _bookmarkList = FluentUi.Stack("fluent-page-layout");
+        _bookmarkEmpty = FluentUi.Text("本书暂无书签", "fluent-subtle-text");
+        _bookmarkEmpty.IsVisible = false;
+        _bookmarkPanelHost = BuildBookmarkPanel();
+        _confirmResetButton = FluentUi.Button("确认重置进度", "fluent-primary", () => _ = ConfirmResetAsync(), "确认重置进度");
+        _cancelResetButton = FluentUi.Button("取消", "fluent-secondary", HideResetConfirm, "取消重置进度");
+        _resetConfirmRow = BuildResetConfirmRow();
         _topBar = BuildTopBar();
         _bottomBar = BuildBottomBar();
         // A vertical StackPanel measures the image at infinite height: fit-page then overflows the
@@ -251,11 +269,106 @@ public sealed class ReaderPageView : UserControl
         bar.Classes.Add("fluent-reader-bar");
         bar.Children.Add(FluentUi.Button("返回", "fluent-secondary", _back, "返回书架"));
         bar.Children.Add(FluentUi.Text(string.Empty, "fluent-reader-title"));
+        // AC1：整书进度（P14）——只显示 VM 给出的真实投影，未加载时留空。
+        bar.Children.Add(_bookProgressText);
         bar.Children.Add(FluentUi.Button("单页 / 双页", "fluent-secondary", _viewModel.ToggleDoublePage, "切换单页或双页"));
         bar.Children.Add(FluentUi.Button("反向翻页", "fluent-secondary", () => _viewModel.ReverseDirection = !_viewModel.ReverseDirection, "切换阅读方向"));
         bar.Children.Add(FluentUi.Button("全屏", "fluent-icon", ToggleFullScreen, "切换全屏阅读"));
+        // AC1：书签面板入口（P11/P12/P13）。
+        bar.Children.Add(FluentUi.Button("书签", "fluent-secondary", ToggleBookmarkPanel, "书签"));
         return bar;
     }
+
+    /// <summary>
+    /// AC1（READ-2 L-R2-1）：书签面板。列表来自 <see cref="ReaderViewModel.ListBookmarksAsync"/>；
+    /// 添加/删除分别走 P12/P13。面板里没有任何本地伪造行——空列表显示空态文案。
+    /// </summary>
+    private Border BuildBookmarkPanel()
+    {
+        var panel = FluentUi.Stack("fluent-page-layout");
+        panel.Children.Add(FluentUi.Text("书签", "fluent-status-text"));
+        panel.Children.Add(FluentUi.Button("添加当前页书签", "fluent-secondary",
+            () => _ = AddBookmarkAsync(), "添加当前页书签"));
+        panel.Children.Add(_bookmarkList);
+        panel.Children.Add(_bookmarkEmpty);
+        panel.Children.Add(FluentUi.Button("关闭书签面板", "fluent-secondary",
+            () => _bookmarkPanelHost.IsVisible = false, "关闭书签面板"));
+        var host = new Border { Child = FluentUi.Card(panel), IsVisible = false };
+        host[!Border.CornerRadiusProperty] = new DynamicResourceExtension("Nm.Corner.Fluent.Md");
+        host[!Border.BorderThicknessProperty] = new DynamicResourceExtension("Nm.Border.Hairline");
+        host[!Border.BorderBrushProperty] = new DynamicResourceExtension("Nm.Color.Line.Subtle");
+        AutomationProperties.SetName(host, "书签面板");
+        return host;
+    }
+
+    /// <summary>AC1：reset 确认（P15 要求 <c>confirm: true</c>，UI 必须先显式确认）。</summary>
+    private StackPanel BuildResetConfirmRow()
+    {
+        var row = FluentUi.Stack("fluent-page-toolbar", Orientation.Horizontal);
+        row.Classes.Add("fluent-reader-bar");
+        row.Children.Add(FluentUi.Text("重置整书阅读进度？此操作会清除已读页与位置。", "fluent-status-text"));
+        row.Children.Add(_confirmResetButton);
+        row.Children.Add(_cancelResetButton);
+        row.IsVisible = false;
+        AutomationProperties.SetName(row, "重置进度确认");
+        return row;
+    }
+
+    private void ToggleBookmarkPanel()
+    {
+        _bookmarkPanelHost.IsVisible = !_bookmarkPanelHost.IsVisible;
+        if (_bookmarkPanelHost.IsVisible)
+        {
+            _ = RefreshBookmarksAsync();
+        }
+    }
+
+    private async Task RefreshBookmarksAsync()
+    {
+        var bookmarks = await _viewModel.ListBookmarksAsync();
+        _bookmarkList.Children.Clear();
+        foreach (var bookmark in bookmarks)
+        {
+            var row = FluentUi.Stack("fluent-page-toolbar", Orientation.Horizontal);
+            var label = string.IsNullOrWhiteSpace(bookmark.Note)
+                ? $"页 {bookmark.PageId}"
+                : $"页 {bookmark.PageId} · {bookmark.Note}";
+            row.Children.Add(FluentUi.Text(label, "fluent-subtle-text"));
+            row.Children.Add(FluentUi.Button("删除", "fluent-secondary",
+                () => _ = DeleteBookmarkAsync(bookmark.BookmarkId),
+                $"删除书签 {bookmark.BookmarkId}"));
+            _bookmarkList.Children.Add(row);
+        }
+
+        _bookmarkEmpty.IsVisible = bookmarks.Count == 0;
+    }
+
+    private async Task AddBookmarkAsync()
+    {
+        await _viewModel.CreateBookmarkAsync();
+        await RefreshBookmarksAsync();
+    }
+
+    private async Task DeleteBookmarkAsync(string bookmarkId)
+    {
+        await _viewModel.DeleteBookmarkAsync(bookmarkId);
+        await RefreshBookmarksAsync();
+    }
+
+    private void HideResetConfirm() => _resetConfirmRow.IsVisible = false;
+
+    private async Task ConfirmResetAsync()
+    {
+        await _viewModel.ResetReadingProgressAsync(confirm: true);
+        _resetConfirmRow.IsVisible = false;
+        Render();
+    }
+
+    /// <summary>AC1 测试 seam：书签面板宿主 / 入口按钮 / 整书进度文本 / reset 确认行。</summary>
+    internal Border BookmarkPanelHost => _bookmarkPanelHost;
+    internal TextBlock BookProgressText => _bookProgressText;
+    internal StackPanel ResetConfirmRow => _resetConfirmRow;
+    internal Button ConfirmResetButton => _confirmResetButton;
 
     private Control BuildReadingArea()
     {
@@ -303,7 +416,12 @@ public sealed class ReaderPageView : UserControl
         actions.Children.Add(FluentUi.Button("缩小", "fluent-icon", () => _viewModel.ZoomBy(-0.1), "缩小页面"));
         actions.Children.Add(FluentUi.Button("放大", "fluent-icon", () => _viewModel.ZoomBy(0.1), "放大页面"));
         actions.Children.Add(FluentUi.Button("适合页面", "fluent-secondary", _viewModel.ResetZoom, "重置缩放"));
+        // AC1：reset 进度入口（P15）。点击只展开确认行，真正写入需要「确认重置进度」。
+        actions.Children.Add(FluentUi.Button("重置进度", "fluent-secondary",
+            () => _resetConfirmRow.IsVisible = true, "重置进度"));
         bottom.Children.Add(actions);
+        bottom.Children.Add(_resetConfirmRow);
+        bottom.Children.Add(_bookmarkPanelHost);
         bottom.Children.Add(_thumbStrip);
         return bottom;
     }
@@ -410,6 +528,9 @@ public sealed class ReaderPageView : UserControl
         var book = _viewModel.Book;
         var title = _topBar.Children.OfType<TextBlock>().FirstOrDefault(block => block.Classes.Contains("fluent-reader-title"));
         if (title is not null) title.Text = book is null ? "阅读器" : $"{book.BookTitle} · {book.ChapterTitle} · {_viewModel.PageLabel}";
+        // AC1：整书进度只显示 Host 给出的真实投影；未加载时整块隐藏（不显示伪造百分比）。
+        _bookProgressText.Text = _viewModel.BookProgressLabel;
+        _bookProgressText.IsVisible = _viewModel.HasBookProgress;
 
         // AC-3（格 2）：双页 / webtoon 连续页都加载 Pages[i] + Pages[i+1]；单页只显示当前页。
         if (_viewModel.PageBytes is { Length: > 0 } bytes)
