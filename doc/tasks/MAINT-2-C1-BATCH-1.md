@@ -108,3 +108,23 @@ out_of_scope:
 ### AC1：**批准执行**（Avalonia 视图层，等 Python 批收尾后做）
 
 - 若引发现有 UI 结构断言失效，必须同步更新断言并说明，不得删除。
+
+## r1 复核处置（2026-11-14）
+
+r1：**`approved`**，P0=0 / P1=0 / P2=5 / P3=2（报告 [`MAINT-2-C1-BATCH-1-r1.md`](../reviews/MAINT-2-C1-BATCH-1-r1.md)；被审 head `b122fb926`）。独立复跑：pytest 3544/0、App.Tests 914/0、Host 321/0、CoreClient 180/0、四门禁 EXIT=0。
+
+| P2 | 处置 |
+|---|---|
+| P2-1 `M2-C1:30` 状态行仍 2.15、history 缺 2.16 | **已修**（状态行改 2.16；history 增 2.16 条目） |
+| P2-2 未写「每个存活章节必须返回 `kind`」 | **已修**（写入 2.16 条目） |
+| P2-5 README:49 旧 commit 描述 | **已修**（限定为「AC8 复跑时点」） |
+| P2-3 `ChapterSummary.Parse` 抛 `FormatException` 未被 `ListChaptersAsync` 捕获，违约行可能绕过「降级为空列表」 | **必须修**（真实降级语义缺口，不得登记为 limitation）；下一轮派 |
+| P2-4 AC1 的 `fluent-reader-title` 定位脆弱 / 书签面板无 `MaxHeight`·`ScrollViewer` / 底栏 2s 自动隐藏会带走面板 / 顶栏长文案可能溢出 | **登记 limitation**，属 UI 打磨，另开卡 |
+
+**载体 §7 复核记录**：本卡即 r1 复核的引用源，`doc/reviews/CONTRACT-UNFREEZE-2026-11-14-M2C1.md` §6/§7 以本表为准（DSH 补记）。
+
+### DoD §3 判定：**条件达成**
+
+7 项 `<<MET>>` + **AC8 `<<PARTIAL>>`**（DSH 2026-11-14 裁决口径：复跑留证完成、validation clone 为唯一可比基线、两套原始输出保留）+ **P2-3 待修**。
+
+**不得写成 8/8 MET 或 AC8 通过。** P2-3 落地后本卡方可 `done`。

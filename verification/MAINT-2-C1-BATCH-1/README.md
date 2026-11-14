@@ -46,7 +46,7 @@ AC9（回归与门禁）见 §2/§3：**全量 pytest 0 failed**、`check.ps1` /
 - 差异原因（可复核）：
   1. **地点不同**：历史是 clean validation clone；本次是主工作树（含未跟踪证据目录、且 `core.autocrlf=true` 的 EOL 语义不同）。
   2. 失败集中在 `test_canonical_evidence_basis.py`（blob/EOL 字节口径）与 `test_residual_runtime_identity.py`（3 条历史即 FAIL，卡面明示"failures retained as FAIL"）。
-  3. 本批未改 `doc/**` 证据、契约、task 卡或 `verification/**` 既有字节，故这些失败与本批改动无因果关系（本批 4 个 commit 只改 `src/application/library/service.py`、`src/infrastructure/sqlite/prompt_templates.py` 与 4 个测试文件）。
+  3. 本批未改 `doc/**` 证据、契约、task 卡或 `verification/**` 既有字节，故这些失败与本批改动无因果关系（本批当时（AC8 复跑时点）4 个 commit 只改 `src/application/library/service.py`、`src/infrastructure/sqlite/prompt_templates.py` 与 4 个测试文件）。
 - **待 DSH 裁决**：是否接受"以 validation clone 为可比基线、主工作树的 12F 属环境/EOL 观测"，或要求先修 `test_canonical_evidence_basis` 的 EOL 口径（与 C-07 pin 的 `GOV-EOL-PIN` 债同源）。
 
 ## 5. NOT_RUN / 未做

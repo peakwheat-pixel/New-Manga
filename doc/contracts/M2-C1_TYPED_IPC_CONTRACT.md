@@ -27,10 +27,11 @@
 
 **前次修订范围：P09-AC3-DELETE-HARDEN-1 AC1 回收站读取面 rev 2.11**（§3.2 版本与兼容、§5 command catalog、§5.12、§11、§12）。本修订在 rev 2.10 已冻结的永久删除契约之外，新增只读回收站查询命令；不修改 rev 2.9/2.10 的命令参数、结果或行为。
 
-状态：文档 rev `2.15`；**Core protocol 仍为 major `2` / minor `3`**（rev 2.14 未提升协议版本；只 additive 登记删除预览的保护完整性字段与 digest v2/retry 规则，preview 目标 minor 保持 11；rev 2.15 只同步 C-04b v1.2 措辞与谓词文字）。rev 2.11 只新增一个只读回收站查询 command 与其封闭错误投影；rev 2.9/2.10 的删除命令参数、结果与语义不变。
+状态：文档 rev `2.16`；**Core protocol 仍为 major `2` / minor `3`**（rev 2.14 未提升协议版本；只 additive 登记删除预览的保护完整性字段与 digest v2/retry 规则，preview 目标 minor 保持 11；rev 2.15 只同步 C-04b v1.2 措辞与谓词文字）。rev 2.11 只新增一个只读回收站查询 command 与其封闭错误投影；rev 2.9/2.10 的删除命令参数、结果与语义不变。
 
 ## Revision history
 
+- `2.16`（2026-11-14，MAINT-2-C1-BATCH-1）：`list_chapters` 结果行 **additive** 增可选 `kind`（`paged`|`webtoon`）与 `custom_rank`（`integer|null`）；**每个存活章节必须返回 `kind`**（缺失即违约）；`custom_rank` 未设置为**显式 `null`** 而非省略；既有四键名字/类型/语义与 `sort_order` 唯一排序键不变；`PROTOCOL_MAJOR=2` / `PROTOCOL_MINOR=3` / wire minor 零变更。依据 `ListRegions` 1.5 additive 先例；载体 `doc/reviews/CONTRACT-UNFREEZE-2026-11-14-M2C1.md`（独立复核 r1 approved）。
 - `2.15`（C-04b v1.2 同步 / 契约债务清偿，2026-11-08，UNFREEZE）：**只同步措辞与谓词文字**，规则同 2.14——§5.13 `currentArtifactRevisionIds[]` 成员谓词明确为 `media_artifacts.book_id = 本书` 且 `current_revision_id` 非空、不按可见性过滤（删除无定义术语 `separate/detached`；representative 规则见 C-04b v1.2 §0 第 1 条、仅展示、不进 digest）；§5.11.1a 首次确认比对对象明确为**请求** `book_ids`（预览不缓存），单条 digest 来源明确为预览返回的 `inventoryDigests[bookId]`；retry 集合级规则明确**仅批量**。不新增命令/字段/错误码/capability；`PROTOCOL_MINOR` 不变（仍 3）；wire minor 不变。依据 C-04b v1.2（载体 `doc/reviews/CONTRACT-UNFREEZE-2026-11-08-C04B-RESIDUAL.md`）。
 
 - `2.14`（FEA-12-CORE 返修，2026-11-05，UNFREEZE 重冻）：按 Codex 裁决 OVERTURN（`doc/reviews/DSH-DECISIONS-2026-11-05-codex.md`）与 `doc/reviews/CONTRACT-UNFREEZE-2026-11-05.md`，additive 修订 §5.13：`protection.currentRegionRevisionIds[]`（全部 region 含 lineage-hidden current）与 `currentArtifactRevisionIds[]`（全部 artifact current）；逐书 digest canonical v2（数组替换单值 currentRevisionId；代表值仅展示）；§5.11.1a 增补 retry 规则（集合级始终校验；retry=原预览有序集合保序 pending 子集、`inventory_digest` 原样回传原集合 digest、mixed 拒绝、manifest JSON 持久化、无 DDL、fail-closed）。preview 目标 minor 保持 11；`PROTOCOL_MINOR` 不变（仍 3）。依据 C-04b v1.1。
