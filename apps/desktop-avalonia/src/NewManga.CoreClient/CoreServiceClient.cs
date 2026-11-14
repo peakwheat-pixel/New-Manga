@@ -708,7 +708,7 @@ public sealed class CoreServiceClient : IAsyncDisposable
         }
 
         var response = CoreProtocol.Parse(responseLine);
-        EnsureResponseBelongsToRequest(response, requestId);
+        EnsureResponseBelongsToRequest(response, requestId, _options.StderrLogPath);
         if (response.Error is { } error)
         {
             throw new CoreOperationException(
@@ -2389,7 +2389,8 @@ public sealed class CoreServiceClient : IAsyncDisposable
     /// CORE-PIPE-EXCLUSIVE-1 / E-6: a response carrying a DIFFERENT request_id means the pipe handed back
     /// another command's answer. Silently accepting it is how an empty chapter list reached the reader.
     /// </summary>
-    private void EnsureResponseBelongsToRequest(CoreResponse response, string requestId)
+    internal static void EnsureResponseBelongsToRequest(
+        CoreResponse response, string requestId, string? stderrLogPath)
     {
         if (response.RequestId is { } actual && !string.Equals(actual, requestId, StringComparison.Ordinal))
         {
@@ -2398,7 +2399,7 @@ public sealed class CoreServiceClient : IAsyncDisposable
                 SidecarSpec.CoreServiceName,
                 $"response request_id '{actual}' does not match request '{requestId}': "
                 + "the core pipe returned another command's response",
-                _options.StderrLogPath);
+                stderrLogPath);
         }
     }
 
@@ -2430,7 +2431,7 @@ public sealed class CoreServiceClient : IAsyncDisposable
         }
 
         var response = CoreProtocol.Parse(responseLine);
-        EnsureResponseBelongsToRequest(response, requestId);
+        EnsureResponseBelongsToRequest(response, requestId, _options.StderrLogPath);
         if (response.Error is { } error)
         {
             throw new CoreOperationException(error.Code, error.Category, error.Retryable, error.Message, response.RequestId ?? requestId);

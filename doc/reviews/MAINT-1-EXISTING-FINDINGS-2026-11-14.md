@@ -139,3 +139,26 @@
 
 不属于条件 1 的 8 项（那 8 项是审计 finding）。它是 E-2 解除后暴露的**产品级缺陷候选**，
 在定位前不影响 Gate 判定口径，但**构成条件 3/4 的真实性证据**：真实 UI 同时读章节与投影可能空显示。
+## E-7：`E-6` 修复后仍有 4 处同型"管道并发"窗口（2026-11-15，`CORE-PIPE-EXCLUSIVE-1` r1 复核发现）
+
+`CORE-PIPE-EXCLUSIVE-1` 已给 **core_service 管道**加了全局独占（`CoreServiceClient._pipeGate`）并加了
+`request_id` 校验，实测 `Host` 失败 9→2~3。但 r1 复核指出**同类窗口还有 4 处**：
+
+| # | 窗口 | 位置 | 性质 |
+|---|---|---|---|
+| 1 | `HostBridgeClient` 的管道**完全无锁**，且 `ParseResponse` 从不校验 id | `HostBridgeClient.cs:269/291` | 与 core_service 同型的第二条管道 |
+| 2 | 公开 `SendRawAsync` 直调 `_process`，绕开 `_pipeGate` | `CoreServiceClient.cs:2384` | 锁覆盖不全 |
+| 3 | 独占加在 `CoreServiceClient` 而非**传输层**，今后任何直调 `_process` 的代码天然在锁外 | `Transport/SidecarProcess.cs` | 架构性 |
+| 4 | 响应**无 `request_id`** 时校验 fail-open | `CoreServiceClient.EnsureResponseBelongsToRequest` | 已知限制，已由文档测试固定 |
+
+另有 r1 指出的 **R-002**：错配抛错后管道可能**残留一帧**（off-by-one），无重同步。
+
+### 建议
+
+单独建卡 `PIPE-EXCLUSIVE-TRANSPORT-1`：把独占**下沉到 `SidecarProcess.ExchangeAsync`**
+（连同事件帧窗口一起，用"进入时取锁、整周期释放"的模式），并给 `HostBridgeClient` 加等价保护与 id 校验；
+同时处理 R-002 的 off-by-one（错配后丢弃直到 id 匹配）。
+
+### 与 Gate 的关系
+
+不影响条件 1–6 的判定口径；但它是**数据正确性**类缺陷的同类风险，修复前不应宣称"并发安全"。
