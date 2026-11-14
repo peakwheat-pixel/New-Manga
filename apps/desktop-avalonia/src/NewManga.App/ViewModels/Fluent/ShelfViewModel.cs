@@ -260,6 +260,77 @@ public sealed class ShelfViewModel : FluentViewModel
             : await _host.ListChapterPagesAsync(chapter.ChapterId, cancellationToken);
     }
 
+    private bool _isReordering;
+
+    /// <summary>CHAPTER-MANUAL-SORT AC9：一次写入未完成时禁止再次拖拽。</summary>
+    public bool IsReordering => _isReordering;
+
+    /// <summary>
+    /// CHAPTER-MANUAL-SORT AC4/AC8/AC9：把 <paramref name="fromIndex"/> 处的章节移动到
+    /// <paramref name="toIndex"/> 并持久化新的显示顺序。
+    /// 只有写入确认成功后才重建可见集合；越界、只读、重入或写入失败时保持原顺序并给出可见文案，
+    /// 绝不显示没有落库的顺序。
+    /// </summary>
+    /// <returns>顺序已落库（或本就是空操作）时为 <c>true</c>。</returns>
+    public async Task<bool> ReorderChapterAsync(
+        int fromIndex, int toIndex, CancellationToken cancellationToken = default)
+    {
+        if (SelectedBook is null || _host is null)
+        {
+            return false;
+        }
+        if (fromIndex < 0 || toIndex < 0 || fromIndex >= Chapters.Count || toIndex >= Chapters.Count)
+        {
+            return false;
+        }
+        if (fromIndex == toIndex)
+        {
+            return true;
+        }
+        if (IsReadOnly)
+        {
+            ViewStatus = "只读模式，无法调整章节顺序。";
+            return false;
+        }
+        if (_isReordering)
+        {
+            // 第二次拖拽会与在途写入交叠成两次整书重写，保留已落库顺序并明确告知。
+            ViewStatus = "正在保存上一处调整，请稍后再拖动。";
+            return false;
+        }
+
+        var reordered = Chapters.ToList();
+        var moved = reordered[fromIndex];
+        reordered.RemoveAt(fromIndex);
+        reordered.Insert(toIndex, moved);
+        var orderedIds = reordered.Select(chapter => chapter.ChapterId).ToArray();
+
+        _isReordering = true;
+        Changed(nameof(IsReordering));
+        try
+        {
+            var saved = await _host.ReorderChaptersAsync(SelectedBook.BookId, orderedIds, cancellationToken);
+            if (!saved)
+            {
+                ViewStatus = "章节顺序保存失败，已保留原顺序。";
+                return false;
+            }
+
+            Chapters.Clear();            foreach (var chapter in reordered)
+            {
+                Chapters.Add(chapter);
+            }
+            SelectedChapter ??= moved;
+            ViewStatus = $"{SelectedBook.Title} · {Chapters.Count} 个章节";
+            return true;
+        }
+        finally
+        {
+            _isReordering = false;
+            Changed(nameof(IsReordering));
+        }
+    }
+
     public async Task<bool> CreateBookAsync(string title, CancellationToken cancellationToken = default)
     {
         if (_host is null || IsReadOnly || string.IsNullOrWhiteSpace(title))

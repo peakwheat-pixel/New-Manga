@@ -1311,3 +1311,14 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 **完成段原文**：FEA-10 done；FEA-11-PREREQ-1 done；FEA-11 done、HOST-AUTH-1 done；FEA-12 四卡 done；FEA-11 承接卡 done（AC11-1 判 MET 带 L-STARTUP）；UNFREEZE C-04b v1.1+M2-C1 rev2.14（`fc9833479`）；C-04b v1.2 `26aa0ca4a`（Owner c04b-impl）、R-1 0 pin。
 
 **当前 DAG 原文**：FEA-11→FEA-12 四卡 done → SCAN 线 done → RENDITION-1/UI-RESIDUAL-1 done → RUN-GRANT-1/2A/2B done → L-S1*/L-S4* done → 2C-PREREQ-1/2C done → L-R11/SCAN-RH/C-04b residual/INDEX-L4-1 done → **FEA-12-UI-RESIDUAL-2 done（回收站恢复后书架刷新 + 空态/计数诚实性；`85356c22a`）**；下一候选：2C-RESIDUAL-1（typed-stop 次序）/ README 对账。B2 延后（无消费者）。
+## 199. CHAPTER-MANUAL-SORT 开卡与实现（2026-11-14，DSH 接手会话）
+
+- 用户指令：读 `doc/reviews/HANDOFF-2026-11-14.md` 接续项目，按其 §9 goal 提示词建目标（轮次上限 100）。目标 `goal-b43dab5f-7d1d-4686-b7a2-a9c9a1f52ad1` 已 armed（maxGoalRounds=100）。
+- **handoff 滞后更正（3 项）**：① Gate 条件 2 的 `SEC-01-REMOTE-VISIBILITY-1`/`SEC-02-REMOTE-DISPOSITION-1` 均 `done`（`de79702b9`/`1a3b3616b`），远端可见性已由 unknown →「已确认可见（历史树可枚举）」；② `L-L1-2` 的读回闭环已由 `MAINT-2-C1-BATCH-1` AC5 完成，剩余仅为排序 UI（原 `C3-3` OUT）；③ 条件 1 的计数不含这两项。已写入 Gate 评估 §13。
+- **开卡事实核实（codex 点名三项）**：`ReorderChapters` wire 命令自 `83e45cfe5`（2026-11-10）已冻结存在并写 `sort_order`；原 `reorder_chapters` 为逐章独立事务（无原子性）；`HostController.ListChaptersAsync` 每书缓存一次、仅 `CreateChapterAsync` 失效（拖拽不改则假成功）。
+- **写入方案（DSH 裁决，依据 codex「DSH 先确认写入方案」）**：复用已冻结 `ReorderChapters` 写 `sort_order`，不动 `custom_rank`、零 UNFREEZE、零 DTO 扩展。偏离 codex 字面的 rank 混合排序已在卡面与 `verification/CHAPTER-MANUAL-SORT/README.md` 登记。
+- **实现**：`update_chapters_atomic`（单事务批量 UPDATE）+ `reorder_chapters` 事务化；`HostController.ReorderChaptersAsync` 成功失效缓存、失败 `SetLastError`（原实现吞掉错误码）；`ShelfViewModel.ReorderChapterAsync` + `IsReordering` 守卫；`ShelfPageView` 章节拖拽（4px 阈值区分点击、独立 `DataFormat` 与文件导入隔离）。
+- **测试**：新增 `tests/storage/test_chapter_reorder_atomic.py`（5 passed；已实测把实现回退成逐章事务后变红）；`ShelfChapterReorderTests`（8 passed）；Python 全量 `pytest -q` EXIT 0；无夹具三项目 App 931/0/11、Host 321/0/74、CoreClient 182/0/26 全绿，**skip 未增加**。
+- **NOT_RUN（不得写成通过）**：AC3 缓存失效集成（仓库 sidecar 构建于 2026-10-23，早于该命令；重建需 PyInstaller，本环境 PyPI 不可达）；AC5 真实 GUI 拖拽（仅编译级验证）。
+- **既有缺陷登记**（`doc/reviews/MAINT-1-EXISTING-FINDINGS-2026-11-14.md`）：E-1 `HostCommandRegistry` 111 条 vs 六域服务覆盖 90 条（`git stash` 基线复现，与本卡无关）；E-2 sidecar 早于现行命令；E-3 错误码缺失（本卡修其一）。
+- 下一步：派独立上下文 Review → 集成与收口 → 条件 1 剩余 `L-R1-1`/`L-R2-1`（阅读器 UI 控件）与 `L-F1-3`（压测）。

@@ -1,8 +1,10 @@
+using System.Globalization;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Automation;
 using Avalonia.Controls.Primitives;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Layout;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
@@ -65,6 +67,21 @@ public sealed class ShelfPageView : UserControl
     private Button _newBookButton = null!;
     private Button _newChapterButton = null!;
     private string _dialogAction = "book";
+
+    /// <summary>
+    /// CHAPTER-MANUAL-SORT AC5：书架章节拖拽用的应用内字符串格式。用独立格式而不是
+    /// <c>DataFormat.Text</c>/<c>File</c>，这样章节重排与指向窗口的文件导入拖放互不串味。
+    /// </summary>
+    private static readonly DataFormat<string> ChapterReorderFormat =
+        DataFormat.CreateStringApplicationFormat("newmanga-shelf-chapter-index");
+
+    /// <summary>按下时所在章节索引；松开或进入拖拽后清空。</summary>
+    private int? _chapterDragSourceIndex;
+    private Point _chapterDragOrigin;
+    private bool _chapterDragArmed;
+
+    /// <summary>超过该位移才视为拖拽，低于它仍是普通点击（选中章节）。</summary>
+    private const double ChapterDragThreshold = 4;
 
     public ShelfPageView(
         ShelfViewModel viewModel,
@@ -379,11 +396,17 @@ public sealed class ShelfPageView : UserControl
         if (_viewModel.SelectedBook is not null)
         {
             _chapterHost.Children.Add(FluentUi.Text(_viewModel.SelectedBook.Title, "fluent-status-text"));
-            foreach (var chapter in _viewModel.Chapters)
+            var chapterReorderable = !_viewModel.IsReadOnly && _viewModel.Chapters.Count > 1;
+            for (var chapterIndex = 0; chapterIndex < _viewModel.Chapters.Count; chapterIndex++)
             {
+                var chapter = _viewModel.Chapters[chapterIndex];
                 var button = FluentUi.Button(chapter.Title, "fluent-book-row",
                     () => _ = _viewModel.SelectChapterAsync(chapter), chapter.Title);
                 button.Classes.Set("selected", _viewModel.SelectedChapter?.ChapterId == chapter.ChapterId);
+                if (chapterReorderable)
+                {
+                    AttachChapterReorder(button, chapterIndex);
+                }
                 _chapterHost.Children.Add(button);
             }
 
@@ -526,6 +549,94 @@ public sealed class ShelfPageView : UserControl
         if (_filePicker is null) return;
         var folder = await _filePicker.PickFolderAsync();
         if (!string.IsNullOrWhiteSpace(folder)) await _viewModel.ImportFolderAsync(folder);
+    }
+
+    /// <summary>
+    /// CHAPTER-MANUAL-SORT AC5：给一个章节项挂上"拖拽重排"手势。
+    /// 位移阈值把拖拽和单击区分开（单击仍由按钮自身选中章节），拖放结束交给
+    /// <see cref="ShelfViewModel.ReorderChapterAsync"/>；文件导入的拖放事件用另一种数据格式，
+    /// 这里不认领，仍冒泡给根节点的导入处理器。
+    /// </summary>
+    private void AttachChapterReorder(Button chapterButton, int index)
+    {
+        chapterButton.AddHandler(
+            InputElement.PointerPressedEvent,
+            (_, args) =>
+            {
+                if (!args.GetCurrentPoint(chapterButton).Properties.IsLeftButtonPressed)
+                {
+                    return;
+                }
+                // 只在隧道阶段记录起点，不设 Handled：单击仍要落到按钮上完成选中。
+                _chapterDragSourceIndex = index;
+                _chapterDragOrigin = args.GetPosition(_chapterHost);
+                _chapterDragArmed = false;
+            },
+            RoutingStrategies.Tunnel);
+
+        chapterButton.AddHandler(
+            InputElement.PointerMovedEvent,
+            async (_, args) =>
+            {
+                if (_chapterDragSourceIndex is not { } source || source != index || _chapterDragArmed)
+                {
+                    return;
+                }
+                if (!args.GetCurrentPoint(chapterButton).Properties.IsLeftButtonPressed)
+                {
+                    _chapterDragSourceIndex = null;
+                    return;
+                }
+                var delta = args.GetPosition(_chapterHost) - _chapterDragOrigin;
+                if (Math.Abs(delta.X) < ChapterDragThreshold && Math.Abs(delta.Y) < ChapterDragThreshold)
+                {
+                    return;
+                }
+
+                _chapterDragArmed = true;
+                _chapterDragSourceIndex = null;
+                var payload = new DataTransfer();
+                payload.Add(DataTransferItem.Create(
+                    ChapterReorderFormat, source.ToString(CultureInfo.InvariantCulture)));
+                await DragDrop.DoDragDropAsync(args, payload, DragDropEffects.Move);
+            },
+            RoutingStrategies.Tunnel);
+
+        chapterButton.AddHandler(
+            InputElement.PointerReleasedEvent,
+            (_, _) =>
+            {
+                _chapterDragSourceIndex = null;
+                _chapterDragArmed = false;
+            },
+            RoutingStrategies.Tunnel);
+
+        DragDrop.SetAllowDrop(chapterButton, true);
+        chapterButton.AddHandler(DragDrop.DragOverEvent, (_, args) =>
+        {
+            if (!args.DataTransfer.Contains(ChapterReorderFormat))
+            {
+                return; // 文件导入：保持未处理，继续冒泡给根节点。
+            }
+            args.DragEffects = _viewModel.IsReadOnly ? DragDropEffects.None : DragDropEffects.Move;
+            args.Handled = true;
+        });
+
+        chapterButton.AddHandler(DragDrop.DropEvent, async (_, args) =>
+        {
+            if (!args.DataTransfer.Contains(ChapterReorderFormat))
+            {
+                return; // 文件导入：交给根节点的导入处理器。
+            }
+            args.Handled = true;
+            var raw = args.DataTransfer.TryGetValue(ChapterReorderFormat);
+            if (raw is null ||
+                !int.TryParse(raw, NumberStyles.Integer, CultureInfo.InvariantCulture, out var fromIndex))
+            {
+                return;
+            }
+            await _viewModel.ReorderChapterAsync(fromIndex, index);
+        });
     }
 
     private void OnDragOver(object? sender, DragEventArgs args)

@@ -1,0 +1,53 @@
+# CHAPTER-MANUAL-SORT 回归记录（2026-11-14）
+
+基线 `79606ea4a`（main，clean）。命令均在 `G:\CODEX\New Manga` / `apps/desktop-avalonia`。
+
+## 1. Python Core 全量
+
+```
+python -m pytest -q      → EXIT 0
+```
+
+（`-q` 摘要被 `src/ui/qml/shell/*.qml` 的既有 Qt 告警噪音覆盖；EXIT 0 表示无 failed/error。）
+
+定向：
+
+```
+python -m pytest tests/storage/ tests/library/ -q   → 279 passed
+python -m pytest tests/storage/test_chapter_reorder_atomic.py -q → 5 passed
+```
+
+## 2. .NET 三项目（**无夹具模式**，与既有基线可比）
+
+| 项目 | 结果 | 基线（handoff §1） | 差异 |
+|---|---|---|---|
+| NewManga.App.Tests | **931 / 0 / 11** | 914 / 0 / 11 | +17 passed（本卡 8 + 其他卡），**skip 未增加** |
+| NewManga.Host.Tests | **321 / 0 / 74** | 321 / 0 / 74 | 一致 |
+| NewManga.CoreClient.Tests | **182 / 0 / 26** | 180 / 0 / 24 | 总数 208 一致，分类差异；本卡未改该项目 |
+
+**无 failed。** App.Tests 的 11 skip 与基线同为 11 ⇒ 本卡**未新增 skip**。
+
+## 3. 有夹具（`NEWMANGA_CORECLIENT_SIDECAR_DIR`）时的失败 —— 均已证实与本卡无关
+
+### 3.1 CoreClient `DomainServices_CoverEveryCommandExactlyOnce`（既有缺陷）
+
+```
+Assert.Equal() Failure: Values differ
+Expected: 111
+Actual:   90
+```
+
+- **判别**：`git stash` 暂存本卡全部已跟踪源码改动后，在**基线代码**上跑同一测试 —— **同样失败**（111 vs 90）。
+- 含义：`HostCommandRegistry.All` 注册 111 条命令，六个 `HostDomainService` 只覆盖 90 条；缺口 21 条属 `Drafts` / `SourceSync` 两个 domain（六服务不含这两域）。
+- **与本卡无关**，是既有缺口；该测试带 `[SidecarFact]`，无夹具时 SKIP，故此前未暴露。登记见 `doc/reviews/MAINT-1-EXISTING-FINDINGS-2026-11-14.md`。
+
+### 3.2 App 的 `[HostSidecarFact]` 集成类间歇失败
+
+- 现象：`CreateChapterHostIntegrationTests` / `RunControllerHostIntegrationTests` / `WritePolicyUiIntegrationTests` 在设置夹具后**间歇**失败（`核心服务意外退出`），单跑同一类有时 2/2 通过、有时 1/2。
+- 与仓库 sidecar 构建于 **2026-10-23**、而多条命令（如 `ReorderChapters`，`83e45cfe5` / 2026-11-10）晚于该日一致；重建 sidecar 需 PyInstaller，本环境 PyPI 不可达。
+- **与本卡无关**：本卡未改 Host 启动、CreateChapter、RunCommands 或 WritePolicy 路径。
+
+## 4. 结论
+
+- 本卡改动**未引入回归**（Python EXIT 0；三项目无 failed；skip 未增加）。
+- 有夹具模式下的失败是**既有环境/基线问题**（sidecar 过期 + 命令覆盖缺口），已在 §3 分别取证；不得写成"本卡通过"或"全部通过"。

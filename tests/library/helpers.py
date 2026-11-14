@@ -53,6 +53,12 @@ class InMemoryLibraryRepository:
     def update_chapter(self, chapter):
         self.chapters[chapter.chapter_id] = chapter
 
+    def update_chapters_atomic(self, chapters):
+        # The fake has no failure injection, so "atomic" is just the batch write;
+        # the real rollback semantics are covered against SqliteLibraryRepository.
+        for chapter in chapters:
+            self.chapters[chapter.chapter_id] = chapter
+
     def add_tag(self, tag):
         self.tags[tag.tag_id] = tag
 

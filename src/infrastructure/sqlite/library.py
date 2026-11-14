@@ -262,6 +262,33 @@ class SqliteLibraryRepository:
                 ),
             )
 
+    def update_chapters_atomic(self, chapters: list[Chapter]) -> None:
+        """Persist several chapter rows in ONE transaction (all-or-nothing).
+
+        CHAPTER-MANUAL-SORT AC1: a user reorder rewrites the ``sort_order`` of
+        every chapter in the book. Opening one transaction for the whole batch
+        means a mid-way failure rolls every row back, so the book never keeps a
+        half-applied display order that the shelf would then show after a
+        restart.
+        """
+        if not chapters:
+            return
+        with self._conn:
+            for chapter in chapters:
+                self._conn.execute(
+                    "UPDATE chapters SET title = ?, chapter_number = ?, subtitle = ?,"
+                    " import_order = ?, sort_order = ?, chapter_type = ?,"
+                    " reading_direction = ?, notes = ?, custom_rank = ?, updated_at = ?, deleted_at = ?"
+                    " WHERE chapter_id = ?",
+                    (
+                        chapter.title, chapter.chapter_number, chapter.subtitle,
+                        chapter.import_order, chapter.sort_order,
+                        chapter.chapter_type.value, chapter.reading_direction.value,
+                        chapter.notes, chapter.custom_rank, chapter.updated_at, chapter.deleted_at,
+                        chapter.chapter_id,
+                    ),
+                )
+
     # ------------------------------------------------------------------
     # tags (delete = tag + links in ONE transaction; books untouched)
     # ------------------------------------------------------------------

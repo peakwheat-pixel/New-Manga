@@ -648,10 +648,26 @@ public sealed class HostController : IHostController, ISourceImportController, I
         var runtime = _runtime;
         try
         {
-            return await runtime.ReorderChaptersAsync(bookId, orderedChapterIds, cancellationToken).ConfigureAwait(false);
+            var updated = await runtime.ReorderChaptersAsync(bookId, orderedChapterIds, cancellationToken).ConfigureAwait(false);
+            if (updated)
+            {
+                // CHAPTER-MANUAL-SORT AC3: a reorder rewrites the book's display order, so the
+                // cached chapter list is stale the moment the write lands. Without this eviction
+                // a reload would show the pre-drag order and the drag would look silently lost.
+                lock (_chapterCacheLock)
+                {
+                    _chapterCache.Remove(bookId);
+                }
+            }
+            SetLastError(updated ? null : "INVALID_REQUEST");
+            return updated;
         }
         catch (Exception ex) when (ex is CoreOperationException or SidecarException or BridgeException or OperationCanceledException or IOException)
         {
+            // CHAPTER-MANUAL-SORT AC8: a rejected reorder must stay diagnosable. Swallowing the
+            // code here left the shelf able to say only "保存失败", which cannot distinguish a bad
+            // order from a sidecar that predates the command.
+            SetLastError(ErrorCodeOf(ex));
             return false;
         }
     }

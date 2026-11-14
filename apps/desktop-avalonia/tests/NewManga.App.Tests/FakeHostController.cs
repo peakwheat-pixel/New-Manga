@@ -268,8 +268,20 @@ public sealed class FakeHostController : IHostController, ISourceImportControlle
     {
         LastReorderCalled = true;
         LastReorderIds = orderedChapterIds;
-        return Task.FromResult(UpdateBookMetadataResult);
+        ReorderCallCount++;
+        return ReorderOverride is not null
+            ? ReorderOverride(bookId, orderedChapterIds)
+            : Task.FromResult(ReorderResult);
     }
+
+    /// <summary>CHAPTER-MANUAL-SORT: outcome of <see cref="ReorderChaptersAsync"/> (default success).</summary>
+    public bool ReorderResult { get; set; } = true;
+
+    /// <summary>CHAPTER-MANUAL-SORT AC9: number of reorder writes attempted.</summary>
+    public int ReorderCallCount { get; private set; }
+
+    /// <summary>CHAPTER-MANUAL-SORT AC9: lets a test hold the reorder write in flight.</summary>
+    public Func<string, IReadOnlyList<string>, Task<bool>>? ReorderOverride { get; set; }
 
     public Task<bool> UpdateChapterMetadataAsync(string chapterId, IReadOnlyDictionary<string, object?> patch, CancellationToken cancellationToken = default)
     {

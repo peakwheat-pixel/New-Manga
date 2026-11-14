@@ -210,7 +210,13 @@ class LibraryService:
         self._repo.update_chapter(chapter)
 
     def reorder_chapters(self, book_id: str, ordered_chapter_ids: list[str]) -> list[Chapter]:
-        """Apply a user ordering; import_order values stay frozen (D03 §5.3)."""
+        """Apply a user ordering; import_order values stay frozen (D03 §5.3).
+
+        CHAPTER-MANUAL-SORT AC1/AC2: the new ``sort_order`` of every chapter is
+        persisted through ONE repository transaction. A mid-way failure rolls the
+        whole book back instead of leaving the first few chapters re-ordered,
+        which is what the previous per-row loop could do.
+        """
         chapters = {chapter.chapter_id: chapter for chapter in self.list_chapters(book_id)}
         missing = [cid for cid in ordered_chapter_ids if cid not in chapters]
         if missing:
@@ -219,8 +225,8 @@ class LibraryService:
         for position, chapter_id in enumerate(ordered_chapter_ids, start=1):
             chapter = chapters[chapter_id]
             chapter.reorder(position)
-            self._repo.update_chapter(chapter)
             reordered.append(chapter)
+        self._repo.update_chapters_atomic(reordered)
         return reordered
 
     # ------------------------------------------------------------------

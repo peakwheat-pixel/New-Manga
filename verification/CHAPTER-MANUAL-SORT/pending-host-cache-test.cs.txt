@@ -1,0 +1,98 @@
+using NewManga.App.Services;
+using NewManga.Host;
+
+namespace NewManga.App.Tests;
+
+/// <summary>
+/// CHAPTER-MANUAL-SORT AC3/AC6: the chapter list is cached per book, so a reorder that does not
+/// evict that entry would make the shelf show the pre-drag order after a reload — a drag that
+/// silently did nothing. This runs against the real sidecars: the reload below can only come back
+/// in the new order if the write really landed in Core and the cache was dropped.
+/// </summary>
+public sealed class ChapterReorderHostCacheTests
+{
+    [HostSidecarFact]
+    public async Task Reorder_EvictsTheCachedListSoAReloadSeesTheNewOrder()
+    {
+        var options = CreateChapterSidecarFixture.CreateOptions("chapter-reorder", parity: true, out var dataRoot);
+        var controller = new HostController(options);
+        try
+        {
+            await controller.StartAsync();
+            Assert.True(
+                controller.Snapshot.State == HostViewState.Ready,
+                $"host not ready: {controller.Snapshot.ErrorCode} {controller.Snapshot.ErrorMessage}");
+            Assert.True(controller.Snapshot.WritesAllowed);
+
+            var bookTitle = "排序夹具 " + Guid.NewGuid().ToString("N")[..8];
+            Assert.True(await controller.TryCreateBookAsync(bookTitle));
+            var book = controller.Snapshot.Books.Single(candidate => candidate.Title == bookTitle);
+
+            Assert.NotNull(await controller.CreateChapterAsync(book.BookId, "第 1 章"));
+            Assert.NotNull(await controller.CreateChapterAsync(book.BookId, "第 2 章"));
+            Assert.NotNull(await controller.CreateChapterAsync(book.BookId, "第 3 章"));
+
+            // Prime the per-book cache with the imported order.
+            var initial = await controller.ListChaptersAsync(book.BookId);
+            Assert.Equal(3, initial.Count);
+            var initialIds = initial.Select(chapter => chapter.ChapterId).ToArray();
+
+            var reversed = Enumerable.Reverse(initialIds).ToArray();
+            Assert.True(
+                await controller.ReorderChaptersAsync(book.BookId, reversed),
+                $"reorder failed: {controller.Snapshot.LastError}");
+
+            // AC3: the same book must now read back in the new order. A stale cache returns
+            // `initialIds` here and the assertion fails.
+            var reloaded = await controller.ListChaptersAsync(book.BookId);
+            Assert.Equal(reversed, reloaded.Select(chapter => chapter.ChapterId));
+
+            // AC6: the reorder command only rewrote the display order; the reported sort_order is
+            // still a 1..n sequence, so the frozen "list_chapters returns sort_order" contract holds.
+            Assert.Equal(
+                Enumerable.Range(1, 3).ToArray(),
+                reloaded.Select(chapter => chapter.SortOrder).OrderBy(order => order).ToArray());
+        }
+        finally
+        {
+            await controller.DisposeAsync();
+            CreateChapterSidecarFixture.TryDeleteDirectory(dataRoot);
+        }
+    }
+
+    [HostSidecarFact]
+    public async Task Reorder_WithAFailedWrite_LeavesThePersistedOrderIntact()
+    {
+        var options = CreateChapterSidecarFixture.CreateOptions("chapter-reorder-fail", parity: true, out var dataRoot);
+        var controller = new HostController(options);
+        try
+        {
+            await controller.StartAsync();
+            Assert.True(
+                controller.Snapshot.State == HostViewState.Ready,
+                $"host not ready: {controller.Snapshot.ErrorCode} {controller.Snapshot.ErrorMessage}");
+
+            var bookTitle = "排序失败夹具 " + Guid.NewGuid().ToString("N")[..8];
+            Assert.True(await controller.TryCreateBookAsync(bookTitle));
+            var book = controller.Snapshot.Books.Single(candidate => candidate.Title == bookTitle);
+            Assert.NotNull(await controller.CreateChapterAsync(book.BookId, "第 1 章"));
+            Assert.NotNull(await controller.CreateChapterAsync(book.BookId, "第 2 章"));
+
+            var before = await controller.ListChaptersAsync(book.BookId);
+            var beforeIds = before.Select(chapter => chapter.ChapterId).ToArray();
+
+            // A missing id fails the Core's exact-cover check, so nothing may be rewritten.
+            var rejected = beforeIds.Append("missing-chapter").ToArray();
+            Assert.False(await controller.ReorderChaptersAsync(book.BookId, rejected));
+            Assert.Equal("INVALID_REQUEST", controller.Snapshot.LastError);
+
+            var after = await controller.ListChaptersAsync(book.BookId);
+            Assert.Equal(beforeIds, after.Select(chapter => chapter.ChapterId));
+        }
+        finally
+        {
+            await controller.DisposeAsync();
+            CreateChapterSidecarFixture.TryDeleteDirectory(dataRoot);
+        }
+    }
+}
