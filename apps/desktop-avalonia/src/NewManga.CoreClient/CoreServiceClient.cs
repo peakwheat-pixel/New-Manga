@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text.Json;
+using NewManga.CoreClient.Commands;
 using NewManga.CoreClient.Diagnostics;
 using NewManga.CoreClient.Issuer;
 using NewManga.CoreClient.Transport;
@@ -1151,6 +1152,108 @@ public sealed class CoreServiceClient : IAsyncDisposable
         }
 
         return new RegionPageProjection(regions, pageSize);
+    }
+
+    /// <summary>
+    /// FEA-06-RESIDUAL-4B (C-07 UNFREEZE v1.9 / RO-1 plan row <c>#80</c>): the page-scoped Region
+    /// TEXT read projection (<c>list_page_region_texts</c>, Region family minor 3, V11R-F0-2).
+    /// ONE page load returns every live region's four-level text / lock / review / pin / geometry
+    /// projection, so the workbench compare panel needs no per-region N+1.
+    /// The command accepts ONLY <c>page_id</c> plus an optional strict <c>region_ids</c> filter. It
+    /// has no <c>expected_revision</c> (that field belongs to the write commands), so a revision
+    /// guard cannot be sent by construction -- see <see cref="ListPageRegionTextsCommand"/>.
+    /// </summary>
+    public async Task<RegionPageTextProjection> ListPageRegionTextsAsync(
+        string pageId,
+        IReadOnlyList<string>? regionIds = null,
+        CancellationToken cancellationToken = default)
+    {
+        var response = await SendAsync(
+                ListPageRegionTextsCommand,
+                ListPageRegionTextsMinor,
+                writer => WriteListPageRegionTextsPayload(pageId, regionIds, writer),
+                _options.RequestTimeout,
+                cancellationToken)
+            .ConfigureAwait(false);
+        return RegionPageTextProjection.Parse(RequireResult(response, ListPageRegionTextsCommand));
+    }
+
+    /// <summary>FEA-06-RESIDUAL-4B (AC6): the frozen wire command of the page-scoped Region text read.</summary>
+    internal const string ListPageRegionTextsCommand = "list_page_region_texts";
+
+    /// <summary>
+    /// FEA-06-RESIDUAL-4B (AC6): the Region command-family minor. It stays the shared default-3
+    /// protocol minor, and the registry descriptor for the same command carries the same value; the
+    /// CoreClient tests cross-check both, so a drift fails a test instead of silently changing wire.
+    /// </summary>
+    internal static int ListPageRegionTextsMinor => CoreProtocol.DefaultMinor;
+
+    /// <summary>
+    /// FEA-06-RESIDUAL-4B (AC6): the ONE place that decides this command's payload shape. Internal
+    /// (not private) so the CoreClient test project can assert the exact keys without a live
+    /// sidecar -- the same testability convention as <c>HostCommandDispatcher.WriteCorePayload</c>.
+    /// Validation runs inside the writer, which <see cref="CoreProtocol.BuildRequest"/> invokes
+    /// before the frame is sent, so a rejected argument never reaches the wire.
+    /// </summary>
+    internal static void WriteListPageRegionTextsPayload(
+        string pageId,
+        IReadOnlyList<string>? regionIds,
+        Utf8JsonWriter writer)
+    {
+        if (string.IsNullOrWhiteSpace(pageId))
+        {
+            throw new ArgumentException("page_id is required", nameof(pageId));
+        }
+
+        var filter = NormalizeRegionIdFilter(regionIds, nameof(regionIds));
+        writer.WriteStartObject();
+        writer.WriteString("page_id", pageId);
+        if (filter is not null)
+        {
+            writer.WriteStartArray("region_ids");
+            foreach (var regionId in filter)
+            {
+                writer.WriteStringValue(regionId);
+            }
+
+            writer.WriteEndArray();
+        }
+
+        writer.WriteEndObject();
+    }
+
+    /// <summary>
+    /// FEA-06-RESIDUAL-4B (AC6): mirrors the dispatcher's boundary rule for the same optional
+    /// filter (non-empty, distinct). An empty list means "no filter", so the property is omitted
+    /// instead of sending the empty array the Core refuses.
+    /// </summary>
+    private static IReadOnlyList<string>? NormalizeRegionIdFilter(
+        IReadOnlyList<string>? regionIds,
+        string parameterName)
+    {
+        if (regionIds is null || regionIds.Count == 0)
+        {
+            return null;
+        }
+
+        var seen = new HashSet<string>(StringComparer.Ordinal);
+        var filter = new List<string>(regionIds.Count);
+        foreach (var regionId in regionIds)
+        {
+            if (string.IsNullOrWhiteSpace(regionId))
+            {
+                throw new ArgumentException("region_ids entries must be non-empty", parameterName);
+            }
+
+            if (!seen.Add(regionId))
+            {
+                throw new ArgumentException($"region_ids contains a duplicate id: {regionId}", parameterName);
+            }
+
+            filter.Add(regionId);
+        }
+
+        return filter;
     }
 
     /// <summary>Region revision history read face (<c>list_region_revisions</c>, RC-4).</summary>

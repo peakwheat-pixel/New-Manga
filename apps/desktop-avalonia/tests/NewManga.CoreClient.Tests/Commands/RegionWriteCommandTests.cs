@@ -583,6 +583,99 @@ public sealed class RegionWriteCommandTests
         });
     }
 
+    // ── FEA-06-RESIDUAL-4B slice 1 (AC6): the CLIENT side of list_page_region_texts ──────────
+    // The dispatcher-side payload for the same command is pinned above; these tests pin what the
+    // CoreServiceClient actually puts on the wire, because the HostRuntime read path talks to the
+    // Core through this client method (not through the dispatcher). No live sidecar is needed and
+    // none is faked: the assertions run on the exact writer / command / minor the public method uses.
+
+    [Fact]
+    public void Client_ListPageRegionTexts_PayloadIsOnlyPageIdAndOptionalRegionFilter()
+    {
+        var noFilter = WireJson.Write(writer =>
+            CoreServiceClient.WriteListPageRegionTextsPayload("page-1", null, writer));
+        Assert.True(JsonElement.DeepEquals(Args("""{"page_id":"page-1"}"""), Args(noFilter)), noFilter);
+
+        // An empty list means "no filter" too: the Core refuses a present-but-empty region_ids.
+        var emptyList = WireJson.Write(writer =>
+            CoreServiceClient.WriteListPageRegionTextsPayload("page-1", Array.Empty<string>(), writer));
+        Assert.True(JsonElement.DeepEquals(Args("""{"page_id":"page-1"}"""), Args(emptyList)), emptyList);
+
+        // A real filter keeps the caller's order verbatim.
+        var filtered = WireJson.Write(writer =>
+            CoreServiceClient.WriteListPageRegionTextsPayload("page-1", new[] { "r2", "r1" }, writer));
+        Assert.True(
+            JsonElement.DeepEquals(Args("""{"page_id":"page-1","region_ids":["r2","r1"]}"""), Args(filtered)),
+            filtered);
+    }
+
+    [Fact]
+    public void Client_ListPageRegionTexts_PayloadNeverCarriesExpectedRevision()
+    {
+        // expected_revision belongs to the write commands (restore_region_revision / pin_revision).
+        // A read projection that sent it would silently widen the pre-authorized C-07 signature.
+        var payloads = new[]
+        {
+            WireJson.Write(writer => CoreServiceClient.WriteListPageRegionTextsPayload("page-1", null, writer)),
+            WireJson.Write(writer =>
+                CoreServiceClient.WriteListPageRegionTextsPayload("page-1", new[] { "r1" }, writer)),
+        };
+
+        foreach (var payload in payloads)
+        {
+            Assert.DoesNotContain("expected_revision", payload, StringComparison.Ordinal);
+            using var document = JsonDocument.Parse(payload);
+            Assert.DoesNotContain(
+                document.RootElement.EnumerateObject(),
+                property => property.Name.Contains("revision", StringComparison.OrdinalIgnoreCase));
+        }
+    }
+
+    [Fact]
+    public void Client_ListPageRegionTexts_CommandAndMinorMatchTheFrozenRegistry()
+    {
+        Assert.Equal("list_page_region_texts", CoreServiceClient.ListPageRegionTextsCommand);
+
+        var descriptor = HostCommandRegistry.Get(CoreServiceClient.ListPageRegionTextsCommand);
+        Assert.Equal(CoreServiceClient.ListPageRegionTextsCommand, descriptor.CoreCommand);
+        Assert.Equal(CoreServiceClient.ListPageRegionTextsMinor, descriptor.CoreMinor);
+        Assert.Equal(RegionFamilyMinor, descriptor.CoreMinor);
+        Assert.Equal(HostCommandDomain.Region, descriptor.Domain);
+        Assert.True(descriptor.IsImplemented);
+    }
+
+    [Fact]
+    public void Client_ListPageRegionTexts_EnvelopeIsTheExactFrozenRequest()
+    {
+        var line = CoreProtocol.BuildRequest(
+            "req-1",
+            CoreServiceClient.ListPageRegionTextsCommand,
+            CoreServiceClient.ListPageRegionTextsMinor,
+            writer => CoreServiceClient.WriteListPageRegionTextsPayload("page-1", new[] { "r1" }, writer));
+
+        using var document = JsonDocument.Parse(line);
+        var root = document.RootElement;
+        Assert.Equal("list_page_region_texts", root.GetProperty("command").GetString());
+        Assert.Equal(3, root.GetProperty("version").GetProperty("minor").GetInt32());
+        Assert.Equal("page-1", root.GetProperty("payload").GetProperty("page_id").GetString());
+        Assert.Equal(
+            new[] { "page_id", "region_ids" },
+            root.GetProperty("payload").EnumerateObject().Select(property => property.Name).ToArray());
+    }
+
+    [Fact]
+    public void Client_ListPageRegionTexts_RejectsInvalidArgumentsBeforeTheWire()
+    {
+        // Validation runs before the first WriteXxx call, so a rejected argument leaves no
+        // half-written payload behind (the object is never opened).
+        Assert.Throws<ArgumentException>(() => WireJson.Write(writer =>
+            CoreServiceClient.WriteListPageRegionTextsPayload("   ", null, writer)));
+        Assert.Throws<ArgumentException>(() => WireJson.Write(writer =>
+            CoreServiceClient.WriteListPageRegionTextsPayload("page-1", new[] { "r1", "" }, writer)));
+        Assert.Throws<ArgumentException>(() => WireJson.Write(writer =>
+            CoreServiceClient.WriteListPageRegionTextsPayload("page-1", new[] { "r1", "r1" }, writer)));
+    }
+
     private static JsonElement Args(string json)
     {
         using var document = JsonDocument.Parse(json);
