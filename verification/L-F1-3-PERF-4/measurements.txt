@@ -1,0 +1,11 @@
+probe=tools/perf/wire_serialisation_probe.py
+command=core.ping      requests=40
+transport=real bootstrap.core_service over stdin/stdout JSON-RPC
+SERIAL  wall_s=0.001  median_ms=0.02  p95_ms=0.04
+CONCUR  wall_s=0.005  median_ms=0.06  p95_ms=0.10
+expected_concurrent_if_serial_s=0.001   concurrent_vs_expected_serial_ratio=5.35
+CORRECTNESS=PASS  (40/40 responses carried their own request_id, zero cross-talk)
+TIMING_CRITERION=NOT-MEASURED  (core.ping is 0.02ms, below thread/lock overhead; ratio 5.35
+  reflects contention, NOT serialisation. The script prints VERDICT=SERIALISED mechanically --
+  that line must NOT be cited as a conclusion.)
+VERDICT=wire-level concurrency correctness PASS; timing criterion needs a heavier command (>=10ms)

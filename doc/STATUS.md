@@ -5,7 +5,7 @@
 ## 当前程序
 - **FEA 线**（S0–S5 终态；limitation 已逐条处置）：[FEA-00 方案](design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md)；V11R 收官（v0.1.1）。
 - 当前 Task：[MAINT-1-RELEASE-MONITOR](tasks/MAINT-1-RELEASE-MONITOR.md) `in_progress`（伞形哨位）；本轮已收口二十余张卡（均 `done`，明细见 [TASK_LEDGER](TASK_LEDGER.md)）；[PIPE-EXCLUSIVE-TRANSPORT-1](tasks/PIPE-EXCLUSIVE-TRANSPORT-1.md) `done`；[INSTALLER-MATRIX-1](tasks/INSTALLER-MATRIX-1.md) `in_progress`（条件 4）；[VERSION-MANIFEST-GUARD-1](tasks/VERSION-MANIFEST-GUARD-1.md) `done`；[GATE4-PAGES-UPGRADE-1](tasks/GATE4-PAGES-UPGRADE-1.md) `done`；[GATE4-READER-PAGE-1](tasks/GATE4-READER-PAGE-1.md) `done`；[GATE3-SIDECAR-COVERAGE-1](tasks/GATE3-SIDECAR-COVERAGE-1.md) `done`；[GATE3-SETTINGS-SHORTCUT-1](tasks/GATE3-SETTINGS-SHORTCUT-1.md) `done`（§10 扩容）。
-- **Release Gate `BLOCKED`**：条件 1 = **7/8 已关闭**（L-R1-1、L-R2-1、L-F1-2、L-L1-1、L-L1-4、L-AI1-6、L-L1-2）+ `L-F1-3` `KEEP-NOTRUN`（大文件/占用已测）；条件 2 **调查已完成**（`SEC-01`/`SEC-02` done，结论"已确认可见"，处置需 Owner 授权）；条件 3/4/5 未满足；条件 6 已完成。详见 [Gate 评估](reviews/MAINT-1-RELEASE-GATE-ASSESSMENT-2026-11-14.md)。
+- **Release Gate `BLOCKED`**：条件 1 = **7/8 已关闭**（L-R1-1、L-R2-1、L-F1-2、L-L1-1、L-L1-4、L-AI1-6、L-L1-2）+ `L-F1-3` `KEEP-NOTRUN`（大文件/占用/wire并发已测）；条件 2 **调查已完成**（`SEC-01`/`SEC-02` done，结论"已确认可见"，处置需 Owner 授权）；条件 3/4/5 未满足；条件 6 已完成。详见 [Gate 评估](reviews/MAINT-1-RELEASE-GATE-ASSESSMENT-2026-11-14.md)。
 - **既有缺陷登记**（接手会话新发现）：[MAINT-1-EXISTING-FINDINGS](reviews/MAINT-1-EXISTING-FINDINGS-2026-11-14.md)（E-1 命令覆盖 111/90、E-2 sidecar 早于命令、E-3 错误码缺失）。
 
 ## 近期完成
