@@ -197,3 +197,42 @@ HostRegionWorkbenchIntegrationTests.RegionReadWriteFace_ExecutesAgainstFrozenCor
 - 单线程（`-m:1` 或 xunit 并行度 1）跑那 13 个测试是否还失败 —— 若单线程全绿，则确认是并发/namespace 竞争。
 - `HostOptions.ParityReached` 与 namespace 的关系。
 - `derived_root` 是否被用于读数据。
+## 10. 第三轮诊断：失败是**测试间交互**，不是并行、不是 fixture 污染、不是 namespace
+
+### 10.1 决定性对照
+
+| 运行方式 | 结果 |
+|---|---|
+| **单独**跑 `HostReaderChaptersIntegrationTests.ListChapters_MatchesReaderProjection` | **PASSED**（1/1） |
+| **连跑** `HostReaderChaptersIntegrationTests` + `HostReaderProgressIntegrationTests`（跨 2 个 class） | **4 failed / 1 passed** |
+
+⇒ 同一测试**单独跑绿、连跑红** ⇒ 这是**测试之间的交互**，不是该测试或 sidecar 本身的缺陷。
+
+### 10.2 逐项排除（都有实证）
+
+| 假设 | 结论 | 证据 |
+|---|---|---|
+| xunit 并行导致 | **排除** | 两个测试项目都已 `[assembly: Xunit.CollectionBehavior(DisableTestParallelization = true)]` |
+| 残留 sidecar 进程 | **排除** | 连跑后 `Get-Process core_service` **为空** |
+| namespace re-bind 导致 | **排除** | `_ensure_preview_namespace` 只处理 **preview/derived catalog**（`core_service.py:8435-8473`），与 `library.db` 的 books 读取无关 |
+| fixture **源**被测试改脏 | **排除** | 源仍是 `schema_version=6`、`books=1`、`chapters=1`；源目录出现的 `library.db-shm/-wal` 时间戳（3:27/3:32）对应的是**我自己的只读 probe**（`sqlite3 mode=ro` 也会建 shm），不是测试 |
+| `--data-root` 传参 | **排除** | Host 用 `NEWMANGA_DATA_ROOT` 环境变量（`CoreServiceClient.cs:499`），我实测该通道能正确读到 fixture 的 1 本书 |
+
+### 10.3 因此剩下的范围
+
+失败表现为 `Assert.Single/NotEmpty` 收到空集合（即 sidecar 的 `ListBooks` 返回 `[]`），
+且**只在前面的测试跑过之后出现**。剩下两种可能：
+
+1. **共享的全局 `derived`/namespace 状态**被前一个测试改写，导致后续 sidecar 打开 preview 命名空间时
+   走了不同分支（虽然理论上不影响 books，但需实证）；
+2. **sidecar 启动在连续运行时更容易失败**（例如 753 MB bundle 连续解压/加载、或某个全局 lock 被前进程
+   短暂占用），导致该次 session 没真正 ready —— 但测试断言的是空集合而非 `IsReady`，所以**未排除
+   "session 起来了但读的是空库"**。
+
+### 10.4 下一步（需要日志证据）
+
+`HostFixture.EvidenceDirectory` 指向 `G:\CODEX\New Manga.workspace\FEA-09-UI-1\...` 一类路径
+（旧日志在 3:19–3:24，**本轮 3:32+ 的测试日志没找到**）。下一轮必须先**定位当次测试的 `core_service.stderr.log`**，
+看它打开的是哪个 data root、迁移了什么、`ListBooks` 实际查了什么 —— 只有这份日志能区分 10.3 的两种可能。
+
+**现状**：`E2-FALLOUT-TRIAGE-1` 未完成；本卡仍 `in_progress`。
