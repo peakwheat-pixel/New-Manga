@@ -60,7 +60,7 @@ r1 复核指出、r2 复核再次纠正：**skip 的原因不止 sidecar**，而
 | **进入与空态** | ✅ `ShelfPage_EmptyHostFailure_…` (`FluentPageTests.cs:25`) — `State==Error`、`CurrentPage==Library`、Workbench 导航按钮非 null【核对】 | ✅ `WorkbenchPage_UnselectedState_…` (`:38`) — `State==Empty`、`RegionCanvas` 非 null、三 tab 点击后 `ActiveTab`+选中 class+token 颜色/圆角【核对】 | ✅ `ReaderPage_HostUnavailable_…` (`:90`) — `State==Error` 且 Content 是 `ReaderPageView`【核对】 | ✅ `SettingsPage_HostUnavailable_IsBrowsableButReadOnly` (`:104`) — `State==ReadOnly`、`IsReadOnly`、Content 是 `SettingsPageView`【核对】 |
 | **四页 headless 渲染** | ✅ `FluentPages_RenderHeadlessPngEvidence` (`:258`) — 依次 Capture 四页并断言每帧 `PixelSize` 宽高 > 0；可选落盘 PNG【核对】 | 同左 | 同左 | 同左 |
 | **错误态** | ✅ 同上；`Bookshelf_ImportTypedFailure_ShowsCodeAndDoesNotRefresh` (`ImportExportUiTests.cs:229`) — 面板出现 `IMPORT_SOURCE_UNAVAILABLE` 且不刷新【核对】 | ✅ `I12_WorkbenchErrorCard_ConsoleEntry_NavigatesToConsoleSpace` (`FluentResidualBatchATests.cs:80`)【摘要】 | ✅ `ReaderPage_HostUnavailable_…`【核对】 | ✅ **`LoadFailure_PutsTheViewModelInErrorState_WithRetryableMessage` / `LoadFailure_ShowsTheErrorBannerWithRetryAction`** (`SettingsErrorStateTests.cs:35/:53`) — 设置读取抛异常后 `State==Error`、文案含"设置读取失败…可以重试"，且真实视图树出现"设置错误" banner 与"重试"按钮【核对】**（`SETTINGS-ERROR-STATE-1` 补）** |
-| **只读** | ⚠️ `[WritePolicySidecarFact]` 的 `WritePolicyUiTests` 覆盖只读写拒绝 → 需 sidecar，本环境 NOT_RUN【摘要】 | ✅ `Workbench_ReadOnlyHost_DisablesWrites_ShowsReason_ReadFaceStillWorks` (`RegionWorkbenchUiTests.cs`)【摘要】 | ✅ **`ReadOnlyHost_DoesNotPersist_ButReaderKeepsWorking`** (`ReaderProgressTests.cs:194`) — 只读 Host 下不持久化但阅读器仍工作【摘要】 | ✅ `SettingsPage_HostUnavailable_IsBrowsableButReadOnly`【核对】 |
+| **只读** | ✅ **`WritePolicyUiIntegrationTests.DefaultController_IsWritable_AndParityFalse_IsReadOnlyWithReason`**（`[WritePolicySidecarFact]`）—— 带新 sidecar 实测**真实执行并通过**（`GATE3-SIDECAR-COVERAGE-1`，7 passed/0 skipped 定向复跑）【实测】**（澄清：`WritePolicyUiTests` 是 4 个不依赖 sidecar 的普通 Fact，与本格无关）** | ✅ `Workbench_ReadOnlyHost_DisablesWrites_ShowsReason_ReadFaceStillWorks` (`RegionWorkbenchUiTests.cs`)【摘要】 | ✅ **`ReadOnlyHost_DoesNotPersist_ButReaderKeepsWorking`** (`ReaderProgressTests.cs:194`) — 只读 Host 下不持久化但阅读器仍工作【摘要】 | ✅ `SettingsPage_HostUnavailable_IsBrowsableButReadOnly`【核对】 |
 | **导入** | ✅ `Bookshelf_ImportFiles_…` (`:153`)、`…Folder_…` (`:196`)、`…PickerCancel_…` (`:251`)、失败见上 | ✅ `Workbench_ImportFiles_OpensTheSameFlow` (`:267`)【摘要】 | — | — |
 | **导出** | — | — | ✅ `Reader_ExportFlow_StartPollCompleteHistoryReveal` (`:316`) — 导出按钮→面板→Start→轮询→Completed→历史→reveal；`Reader_ExportScopeSelector_…` (`:420`)；`ExportStalePolicyTests` 四种 stale 策略【核对（主链路）】 | — |
 | **阅读进度** | ✅ `CommittedSave_RefreshesShelfDetail_AndShelfMatchesReader` (`LibraryProgressRefreshTests.cs:103`)、`ClosingReader_ReReadsHostProjection_…` (`:133`)、`RefusedSave_DoesNotFabricateShelfRefresh` (`:205`)、`Import_RefreshesProgressLine_…` (`:166`)【摘要】 | — | ✅ 同左 + `SwitchingChapter_FlushesPreviousChapterProgress` (`ReaderChapterSelectorTests.cs:194`)、`Reader_ShowsWholeBookProgressFromTheHostProjection`【核对（整书进度）】 | — |
@@ -192,3 +192,42 @@ r1 复核指出、r2 复核再次纠正：**skip 的原因不止 sidecar**，而
 - 未核验 `--shell=legacy` 旧界面路径。
 - 未做真机手动走查。
 - §4.2 的 30/44 总量二分可复现（与 74 行实测相加一致），但**逐类归属未逐条核实 attribute**。
+## 8. 更新（2026-11-15，`GATE3-SIDECAR-COVERAGE-1`）
+
+### 8.1 "书架只读"格 ⚠️ → ✅
+
+`SIDECAR-REBUILD-1` 产出可用 sidecar 后，原来的 `[WritePolicySidecarFact]` 不再是"本环境跑不了"：
+
+- 带 `NEWMANGA_CORECLIENT_SIDECAR_DIR` 跑 **App.Tests = 957 / 0 / 4 / 961**（无夹具 **950 / 0 / 11**）；
+- 差集得到 **7 个转绿**测试，定向复跑 **7 passed / 0 skipped**；
+- 其中 `WritePolicyUiIntegrationTests.DefaultController_IsWritable_AndParityFalse_IsReadOnlyWithReason`
+  正是本格的证据。⇒ **本格改 ✅。**
+
+**一处澄清**：本矩阵原先把 `WritePolicyUiTests` 与 `[WritePolicySidecarFact]` 混称。
+实际是**两个类** —— `WritePolicyUiTests`（4 个普通 `[Fact]`）与
+`WritePolicyUiIntegrationTests`（`[WritePolicySidecarFact]`）。已在上表更正。
+
+### 8.2 skip 总量口径必须分开写
+
+| 口径 | Host | CoreClient | App | 合计 |
+|---|---|---|---|---|
+| **无夹具** | 74 | 26 | 11 | **111**（§5 原先只写了这个） |
+| **带新 sidecar** | 44 | 0 | 4 | **48** |
+
+App 的 4 个（带夹具仍 skip）经差集确认是 **opt-in gated**（性能门控 / 崩溃注入 ×2 / 真进程启动矩阵），
+**不是** sidecar 缺失。今后引用 skip 数**必须写明口径**。
+
+### 8.3 7 个转绿的测试（FQN）
+
+`StartupSelfCheckUiTests.SelfCheckFailure_IsVisibleInTheSnapshot`；
+`RunControllerHostIntegrationTests.RunCommands_WhenReadOnly_PublishHostReadOnly` /
+`…RunCommands_StartSuccessfulRun_ProjectRealPerPageState_AndReuseKey` /
+`…RunCommands_MapCoreErrors_AndReuseIdempotencyKeys`；
+`WritePolicyUiIntegrationTests.DefaultController_IsWritable_AndParityFalse_IsReadOnlyWithReason`；
+`CreateChapterHostIntegrationTests.HostController_CreateChapter_SucceedsThenMapsCoreFailures` /
+`…HostController_CreateChapter_WhenReadOnly_PublishesHostReadOnly`。
+
+### 8.4 条件 3 仍未 MET
+
+仍有 **48 个带夹具 skip**（Host 44 + App 4）、§0 未纳范围的 GUI 流程、真机走查。
+本更新**只**把矩阵内 ❌ 与 ⚠️ 的**可见格**清零，**不**等于条件 3 满足。

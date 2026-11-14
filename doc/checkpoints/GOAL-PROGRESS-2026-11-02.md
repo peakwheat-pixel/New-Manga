@@ -1661,3 +1661,18 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **条件 4 口径修正**：v2 shell 的四个"一级页面"实际是 **3 个空间**（Library/Studio/Console）+
   **沉浸式阅读器窗口**。应表述为"**三个空间参数可达 + 阅读器需 UI 交互**"，**不能说四页全部可达**。
 - **条件 4 仍不判 MET**：sidecar 缺 SFX 权重、安装器 unsigned、`reader` 需交互。
+## 220. GATE3-SIDECAR-COVERAGE-1：App.Tests skip 11→4，条件 3 唯一 ⚠️ 格转 ✅（2026-11-15，DSH，goal 轮次 19）
+
+- **实测**：带新 sidecar 跑 App.Tests = **`957 / 0 / 4 / 961`**（5m10s）；无夹具 **`950 / 0 / 11 / 961`**
+  ⇒ **skip 11→4、pass +7、0 failed**。
+- **7 个转绿测试**用"无夹具 11 skip vs 带夹具 4 skip 的**差集**"确定，定向复跑 **7 passed / 0 skipped**：
+  `StartupSelfCheckUiTests.SelfCheckFailure_…`、`RunControllerHostIntegrationTests` 3 个、
+  `WritePolicyUiIntegrationTests.DefaultController_IsWritable_…`、`CreateChapterHostIntegrationTests` 2 个。
+- **条件 3 矩阵**：`书架只读` 格 **⚠️ → ✅**；并澄清矩阵原先把 `WritePolicyUiTests`（4 个普通 Fact）
+  与 `WritePolicyUiIntegrationTests`（`[WritePolicySidecarFact]`）**混称**。
+- **skip 口径更正**：无夹具 **111**（Host 74 + CoreClient 26 + App 11）/ 带夹具 **48**（44+0+4）。
+  App 剩余 4 个经差集确认是 **opt-in gated**（性能门控/崩溃注入×2/真进程矩阵），**不是** sidecar 缺失。
+- **未达成**：条件 3 仍不判 MET（48 个带夹具 skip、§0 未纳范围的 GUI 流程、真机走查）。
+- **未做**：Host（349/2~3）与 CoreClient（214/4）**未在本卡重跑**，数字来自前两卡实测。
+- **自登记**：识别"7 个转绿"时第一次 filter 写错（`FullyQualifiedName~App.Tests` 不命中），两次空输出；
+  改用差集才定位准确。
