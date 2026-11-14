@@ -1412,3 +1412,21 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - 工具链实测：`makensis v3.13` 可用（`C:\Program Files (x86)\NSIS`）、.NET SDK 9.0.308/10.0.401、runtime 9.0.11、权重 3 个 ONNX、长路径启用、磁盘 1216 GB 空闲、**无代码签名证书**（`.nsi` 声明 unsigned 为已知限制，非阻塞）。
 - Gate 评估新增 §16；本卡 6 条 BLOB pin。
 - **下一步（本轮最大价值）**：`SIDECAR-REBUILD-1` —— 用 pypi.org 直连装 PyInstaller + 钉死 ML 栈，重建 sidecar 使其命令面追上当前 head（解 E-2），然后重跑带夹具的三项目测试。**这将同时打开条件 3 的 100 个 skip 与条件 4 的安装器矩阵。**
+## 207. SIDECAR-REBUILD-1 阶段成果 —— E-2 根因消除，但暴露 13 个失败（2026-11-15，DSH，goal 轮次 6）
+
+- 提交：`860878d64`。**卡状态保持 `in_progress`**（13 个失败未归因完成，不得收口）。
+- **推翻旧结论（实证）**：我用"PyPI 不可达"把 E-2 与条件 4 判为不可解多轮，**这是错的**。
+  `-i https://pypi.org/simple` 可装完整 ML 栈（63 包，含 **torch 2.14.0 cp314** 与 **pyinstaller 6.22.3**）。
+- **AC1/AC2 成功**：PyInstaller **Build complete**，closure assertion PASS，bundle **753 MB**，5 exe + 3 ONNX。
+  唯一未完成步骤：**SFX 权重 `yolo11s-seg.onnx` 全工作区不存在**（训练产物，需用户提供）—— 只影响
+  `sfx_detect_probe`，**不影响 core_service**。
+- **AC3 确证 E-2 根因消除**：新 sidecar capabilities 含 `library.delete.preview/1` / `library.trash.read/1` /
+  `library.trash.write/1`（旧 sidecar 2026-10-23 没有）；schema 到 **v14**。
+- **AC4 skip 大幅下降**：CoreClient **26→0**、Host **74→44**，合计 **100→44（-56）**，pass **507→550（+43）**。
+- **但新增 13 个失败（未归因完成）**：CoreClient 4 个是 "Frozen Core" 前提过期（性质清楚，**但不得删除** ——
+  它们守 `CORE_CAPABILITY_MISSING` fail-closed 语义，须改为显式模拟旧 capabilities）；Host 9 个归因未做，
+  其中 `ListChapters_MatchesReaderProjection` 是 `Assert.NotEmpty: Collection was empty`，
+  属 **schema v14 的数据/夹具差异**，不能归为前提过期。
+- **无夹具基线未变**：App 950/0/11、Host 321/0/74、CoreClient 186/0/26（0 failed）。
+- **下一步**：`E2-FALLOUT-TRIAGE-1` —— 逐个归因那 13 个失败，区分"前提过期（改测试的模拟方式）"与
+  "真实不兼容（修 fixture/实现）"，并保住 fail-closed 守卫。
