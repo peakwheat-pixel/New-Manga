@@ -343,3 +343,70 @@ return chapters;   // ← 属性缺失时【静默返回空列表】，不报错
 2. 若确认串配，**先写一个能在实现回退时变红的判别测试**（并发发 `list_chapters` + `GetReaderProjection`，
    断言每个响应被派给正确的请求），再修实现；
 3. 该缺陷若成立，应作为**独立 finding 登记**（它不属于 E-2，是被 E-2 解除后**暴露**出来的既有缺陷）。
+## 13. 第六轮诊断：我的"串帧"假设**被证伪**，但矛盾更尖锐了
+
+### 13.1 两个 gate 都存在，我的串帧假设不成立
+
+| 事实 | 证据 |
+|---|---|
+| `HostRuntime._readerIoGate = new(1,1)` 存在 | `HostRuntime.cs:34` |
+| `ListChaptersAsync` 在 gate 内 | `HostRuntime.cs:509-521`（`:511` WaitAsync / `:519` Release） |
+| **`GetReaderProjectionAsync` 也在 gate 内** | `HostRuntime.cs:782-795`（`:784` WaitAsync） |
+| `_sessionGate` 只保护 `OpenHostSessionAsync` | `CoreServiceClient.cs:595/633` |
+
+⇒ 测试的 12 个并发调用**全部**经过同一个 `_readerIoGate`，**不可能**在客户端串帧。
+**我在 §12.5 的"客户端串帧"推断被证伪，现撤回。**
+
+（附带更正：`ExchangeAsync` 确实**无锁**（`Transport/SidecarProcess.cs:186-240`，写法是"写一行→读下一行"），
+所以**如果**有 gate 外的调用与 gate 内并发，理论上仍会串 —— 但本测试的两条路径都在 gate 内。）
+
+### 13.2 失败点精确定位到 `Assert.NotEmpty(chapters)`
+
+`HostReaderChaptersIntegrationTests.cs` 逐行映射（按实际行号）：
+
+```
+43: var books = await runtime.ListBooksAsync();
+44: Assert.NotEmpty(books);
+45: var book = books[0];
+46: var chapters = await runtime.ListChaptersAsync(book.BookId);
+47: Assert.NotEmpty(chapters);          <-- 失败在这里
+```
+
+**而 wire 帧显示该 session 的 `list_chapters` 响应是**：
+```json
+{"chapters":[{"chapter_id":"240bdba549b74281bfc6d901b1a7abd7","title":"第 1 章",...}]}
+```
+
+**矛盾到极致：sidecar 返回了 1 个 chapter，C# 的 `ListChaptersAsync` 却返回空。**
+
+### 13.3 两个测试**交替**失败 ⇒ 竞态
+
+| 运行 | `ListChapters_MatchesReaderProjection` | `ConcurrentChapterAndProjectionReads_AreSerialized` |
+|---|---|---|
+| 单独跑前者 | **PASS** | — |
+| 单独跑后者 | — | **PASS** |
+| 连跑（第一次） | PASS | **FAIL**（`Assert.Single` 空） |
+| 连跑（第二次） | **FAIL**（`Assert.NotEmpty` @47 空） | PASS |
+
+⇒ **不是固定失败某个测试，而是两者交替** —— 典型的竞态/时序问题。
+
+### 13.4 剩下的唯一嫌疑
+
+既然 sidecar 正确、解析形状正确、gate 覆盖两点，那么"返回空"只能发生在
+**`result.TryGetProperty("chapters")` 取到的 `result` 不是那个响应**。
+
+两条可能路径：
+
+1. **`SendAsync` 的"跳过事件帧"循环**（`CoreServiceClient.cs:2376-2384`）在 gate 内仍可能多读一行，
+   把**下一个请求的响应**吃掉/错配；`core_service` 在 `READER-PROGRESS-1` 之后确实会推
+   `ReadingProgressChanged` 事件帧 —— **本 session 里若有事件帧，这个循环就是唯一能"吃掉"响应的地方**。
+2. **wire 记录与实际读到的行不一致**（例如 wire 记录的是 sidecar 写出，而客户端读了另一行）。
+
+### 13.5 下一轮（决定性实验，代码级）
+
+在 `ListChaptersAsync` 解析前**临时打印 `result.GetRawText()`**（或断言其形状），跑连跑场景：
+- 若打印出的 `result` 是 `{"chapters":[...]}` 而返回仍为空 ⇒ 解析逻辑有 bug（不可能，代码很直白）；
+- 若打印出的是**别的响应**（如 projection）⇒ 确认 1（事件帧循环吃掉了响应）；
+- 若打印不出（异常）⇒ 看异常。
+
+**这是唯一能一步定性的实验**，不需要再猜。
