@@ -3,7 +3,7 @@ id: FEA-06-RESIDUAL-4
 title: RegionBox 逐 region 冲突投影与「查看对照」（原 RESIDUAL-2 格 3；需 C-07 additive）
 kind: implementation
 governance_version: 3
-status: proposed
+status: superseded
 disposition: "RO-1 重开（2026-11-14 用户指令撤销 Q7 OUT；路线＝C-07 additive UNFREEZE；见 doc/reviews/MAINT-1-RO-1-REOPEN-RESIDUAL-4-2026-11-14.md）；原 OUT 记录保留：OUT（2026-11-14 DSH；双签：Codex OUT + 独立子 agent OUT；见 doc/reviews/MAINT-1-P4A-Q7-Q8-ADJUDICATION.md。性质＝冻结设计意图的产品可见缩减，非缺陷修复）"
 approval: 占位卡：由 `FEA-06-RESIDUAL-3` scope review r1（格 3 未解除）与 DSH 2026-11-08 裁决 re-home；**scope 未冻结，不得实施**；须先独立 scope review + 可能需要 C-07/UNFREEZE 类载体
 suggested_owner: dsh
@@ -87,3 +87,14 @@ out_of_scope:
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | none | - | NOT_APPLICABLE | - | - | 本卡为占位提案，从未实施（`proposed` 直接处置为 `cancelled`），无 task-env、无派生产物；2026-11-14 DSH 复核 |
+
+## 收口（2026-11-14，DSH）
+
+**`status: superseded`** —— 本占位卡由 RO-1 拆出的两张子卡取代，均已 `done`：
+
+| 子卡 | 内容 | 终态 |
+|---|---|---|
+| `FEA-06-RESIDUAL-4A` | 对照内容规格 v1.1 + C-07 additive UNFREEZE v1.9（预授权）+ 独立复核 r2 approved | `done`（`3519664d3`） |
+| `FEA-06-RESIDUAL-4B` | 四刀实现（wire → 端口 → 统计翻转 pin v1.10 → UI）+ 独立复核 approved | `done`（`16209b0df`） |
+
+**取代语义**：本卡原「占位/未 scope 冻结」状态不再有效；实现与验收证据见两张子卡与 `verification/FEA-06-RESIDUAL-4A|4B/`。`FEA-06` AC3 的「冲突态缺查看对照」子项已关闭（AC3 整体仍 PARTIAL）。
