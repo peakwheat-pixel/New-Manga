@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Text.Json;
 using Avalonia.Threading;
+using NewManga.App.Controls;
 using NewManga.App.Services;
 using NewManga.CoreClient;
 using NewManga.CoreClient.Wire;
@@ -34,6 +35,8 @@ public sealed class WorkbenchViewModel : FluentViewModel
     private bool _isBatch;
     private bool _isApplying;
     private bool _isInspectorCollapsed;
+    private bool _isCompareVisible;
+    private RegionTextCompare? _compare;
     private double _filmStripScrollOffset;
     private FluentRunProjection? _runProjection;
     private string? _runId;
@@ -524,6 +527,8 @@ public sealed class WorkbenchViewModel : FluentViewModel
         }
 
         _pageId = pageId;
+        // 4B: 换页即收起对照（面板内容属于上一页，不得跨页残留）。
+        CloseRegionCompare();
         SelectedPage = Pages.FirstOrDefault(item => item.PageId == pageId);
         if (SelectedPage is not null)
         {
@@ -542,6 +547,8 @@ public sealed class WorkbenchViewModel : FluentViewModel
         _lease = null;
         _candidate = null;
         DraftText = string.Empty;
+        // 4B: 换 region 即收起对照（L1/L2 都绑定到具体 region，不得跨 region 残留）。
+        CloseRegionCompare();
         if (_host is null || region is null || SelectedPage is null)
         {
             return;
@@ -742,6 +749,127 @@ public sealed class WorkbenchViewModel : FluentViewModel
         State = FluentPageState.Ready;
         Status = "草稿已按请求丢弃。";
         Changed(nameof(HasUnsavedDraft));
+    }
+
+    // ------------------------------------------------------------------------------------------
+    // FEA-06-RESIDUAL-4B（4A 规格 v1.1 S1/S2/S5；AC3/AC4/AC5）：冲突态「查看对照」。
+    // L1 = Host list_page_region_texts 的权威读投影（C-07 #80 端口）；
+    // L2 = 本地实时工作副本（DraftText，4A P2-4：不得取持久化 Draft.Patch）。
+    // 投影不可用时面板只给 typed 原因，绝不回落到本地文本（4A S5 负向不变量）。
+    // 一次打开 = 恰好一次投影调用；缓存不放端口层（4A S1-a / 卡面 4B-2 记录）。
+    // ------------------------------------------------------------------------------------------
+
+    /// <summary>面板是否展开（仅冲突态 + 已选 region 时有意义）。</summary>
+    public bool IsCompareVisible
+    {
+        get => _isCompareVisible;
+        private set => Set(ref _isCompareVisible, value);
+    }
+
+    /// <summary>当前对照内容；null = 未展开或已关闭（不保留陈旧内容）。</summary>
+    public RegionTextCompare? Compare
+    {
+        get => _compare;
+        private set => Set(ref _compare, value);
+    }
+
+    /// <summary>
+    /// 打开「查看对照」。AC4 的失败原因按固定优先级判定：① Host 未就绪（不发投影请求）→ ② 投影为
+    /// null → ③ 目标 region 不在结果中 / 未知 page。AC4 的空态（该页真实无区域，page_size 非 null）
+    /// 不是失败态；<c>regions: []</c> + <c>page_size: null</c> 一律按 ③ 处理（P2-3）。
+    /// </summary>
+    public async Task<bool> OpenRegionCompareAsync(CancellationToken cancellationToken = default)
+    {
+        if (_host is null || SelectedPage is null || SelectedRegion is null)
+        {
+            return false;
+        }
+
+        if (_host.Snapshot.State != HostViewState.Ready)
+        {
+            ShowCompareFailure(RegionCompareStatus.HostNotReady, RegionCompareReasonCodes.HostNotReady,
+                "Host 未就绪；恢复后请重新读取页面。");
+            return IsCompareVisible;
+        }
+
+        // 恰好一次：本方法就是唯一调用点；不开缓存、不做 per-region N+1。
+        var projection = await _host.ListPageRegionTextsAsync(
+            SelectedPage.PageId,
+            cancellationToken: cancellationToken);
+
+        if (projection is null)
+        {
+            ShowCompareFailure(RegionCompareStatus.ProjectionUnavailable,
+                RegionCompareReasonCodes.ProjectionUnavailable,
+                "投影暂不可用；请先「重新读取页面」后再打开对照。");
+            return IsCompareVisible;
+        }
+
+        var region = projection.Regions.FirstOrDefault(
+            item => string.Equals(item.RegionId, SelectedRegion.RegionId, StringComparison.Ordinal));
+
+        if (region is null)
+        {
+            if (projection.Regions.Count == 0 && projection.PageWidth is not null && projection.PageHeight is not null)
+            {
+                // 空态（非失败）：page extent 可读且确实没有区域 ⇒ 该页没有可比对内容。
+                Compare = new RegionTextCompare(RegionCompareStatus.EmptyPage, string.Empty,
+                    RegionTextComparePanel.EmptyText, null, null, false, null);
+                IsCompareVisible = true;
+                return true;
+            }
+
+            // 目标缺失，或未知 page（regions 空 + extent 也为 null，Core 对未知 page 就返回这一形状）。
+            ShowCompareFailure(RegionCompareStatus.TargetNotFound, RegionCompareReasonCodes.TargetNotFound,
+                "目标区域已变化；请重新读取页面。");
+            return IsCompareVisible;
+        }
+
+        var baseLayer = new RegionCompareLayer(
+            RegionTextComparePanel.BaseTitle,
+            region.RegionType,
+            region.SfxPolicy,
+            region.Origin,
+            region.RevisionNo,
+            RegionTextComparePanel.DisplayValue(region.Text.FinalTranslation),
+            string.IsNullOrEmpty(region.Text.FinalSource) || region.Text.FinalSource == "none"
+                ? "—"
+                : region.Text.FinalSource);
+
+        var workingLayer = new RegionCompareLayer(
+            RegionTextComparePanel.WorkingTitle,
+            SelectedRegion.RegionType,
+            SelectedRegion.SfxPolicy,
+            SelectedRegion.Origin,
+            SelectedRegion.RevisionNo,
+            RegionTextComparePanel.DisplayValue(DraftText),
+            CurrentDraft is null ? "本地无草稿" : "本地草稿");
+
+        var drift = baseLayer.RevisionNo != workingLayer.RevisionNo;
+        Compare = new RegionTextCompare(
+            RegionCompareStatus.Ready,
+            string.Empty,
+            string.Empty,
+            baseLayer,
+            workingLayer,
+            drift,
+            drift ? $"基底已推进：基底 r{baseLayer.RevisionNo} / 本地 r{workingLayer.RevisionNo}" : null);
+        IsCompareVisible = true;
+        return true;
+    }
+
+    /// <summary>关闭对照面板：清空内容并收起（关闭后不保留任何可渲染的文本）。</summary>
+    public void CloseRegionCompare()
+    {
+        Compare = null;
+        IsCompareVisible = false;
+    }
+
+    private void ShowCompareFailure(RegionCompareStatus status, string reasonCode, string reasonText)
+    {
+        // 失败态只带原因：两层都为 null，因此面板不会渲染任何文本行（AC5 负向不变量）。
+        Compare = new RegionTextCompare(status, reasonCode, reasonText, null, null, false, null);
+        IsCompareVisible = true;
     }
 
     private async Task LoadPageAsync(string pageId, CancellationToken cancellationToken)

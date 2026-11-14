@@ -70,6 +70,8 @@ public sealed class WorkbenchPageView : UserControl
     private readonly Border _dialogScrim;
     private readonly FluentDialog _leaveDialog;
     private readonly RunProjectionBar _runBar;
+    /// <summary>FEA-06-RESIDUAL-4B: the currently rendered compare panel (null = not rendered).</summary>
+    private RegionTextComparePanel? _comparePanel;
     private readonly StackPanel _batchLayout;
     private readonly StackPanel _consoleLayout;
     private readonly RunProjectionBar _consoleRunBar;
@@ -174,7 +176,16 @@ public sealed class WorkbenchPageView : UserControl
             {
                 _activeTab = _viewModel.IsBatch ? WorkbenchViewTab.Batch : WorkbenchViewTab.Page;
             }
-            if (args.PropertyName != nameof(WorkbenchViewModel.DraftText) && !_suspendRender) Render();
+
+            if (args.PropertyName == nameof(WorkbenchViewModel.DraftText))
+            {
+                // 4A v1.1 P2-4：L2 是「当前工作副本」，必须跟随实时 DraftText（不重排整页，
+                // 只更新对照面板的 L2 文本块，避免打断用户输入）。
+                _comparePanel?.UpdateWorkingText(_viewModel.DraftText);
+                return;
+            }
+
+            if (!_suspendRender) Render();
         };
         _canvas.SizeChanged += (_, _) => RenderRegions();
         // AC-1：1s Run 投影轮询只在工作台挂载期间运行；detach/切前端必须停表（泄漏回归）。
@@ -195,7 +206,32 @@ public sealed class WorkbenchPageView : UserControl
             _suspendRender = true;
             _viewModel.StopRunPolling();
         };
+        // 4B（4A S6）：Esc 关闭对照面板。真实键盘路径与 HandleKeyForTest 共用同一段逻辑。
+        AddHandler(Avalonia.Input.InputElement.KeyDownEvent, OnWorkbenchKeyDown,
+            Avalonia.Interactivity.RoutingStrategies.Tunnel);
         Render();
+    }
+
+    /// <summary>
+    /// FEA-06-RESIDUAL-4B（4A S6）：键盘路径的测试 seam（与 shell/surface 的 <c>HandleKeyForTest</c>
+    /// 同一命名约定），真实 <c>KeyDown</c> 也走这里，因此测试验证的是真实处理器而不是复制品。
+    /// </summary>
+    public bool HandleKeyForTest(Avalonia.Input.Key key, Avalonia.Input.KeyModifiers modifiers)
+    {
+        if (modifiers != Avalonia.Input.KeyModifiers.None || _comparePanel is null)
+        {
+            return false;
+        }
+
+        return _comparePanel.HandleKeyForTest(key);
+    }
+
+    private void OnWorkbenchKeyDown(object? sender, Avalonia.Input.KeyEventArgs args)
+    {
+        if (HandleKeyForTest(args.Key, args.KeyModifiers))
+        {
+            args.Handled = true;
+        }
     }
 
     public WorkbenchViewModel ViewModel => _viewModel;
@@ -640,6 +676,8 @@ public sealed class WorkbenchPageView : UserControl
         }
 
         _statusHost.IsVisible = _viewModel.State is FluentPageState.Error or FluentPageState.Conflict or FluentPageState.ReadOnly or FluentPageState.Partial;
+        // 4B：每次重排先丢弃面板引用；只有冲突态且展开时才会重新挂上（避免指向已脱离树的旧控件）。
+        _comparePanel = null;
         if (_viewModel.State == FluentPageState.Error)
         {
             // I-12：错误卡补「控制台入口」按钮（设计 06 §3 错误行「原因 + 重试 + 控制台入口」）。
@@ -655,8 +693,31 @@ public sealed class WorkbenchPageView : UserControl
         }
         else if (_viewModel.State == FluentPageState.Conflict)
         {
-            _statusHost.Child = FluentUi.Banner(StatusKind.Stale, "并发冲突", _viewModel.Error,
-                "重读草稿", () => _ = _viewModel.ReloadDraftAsync());
+            // FEA-06-RESIDUAL-4B（4A 规格 v1.1 S4）：冲突横幅下方的纵向容器。`FluentUi.Banner`
+            // 只有单个 action（此处已被「重读草稿」占用），因此不修改 Banner 签名，而是把
+            // 「查看对照」按钮与其面板作为同一容器内的独立控件渲染。
+            var conflictCard = FluentUi.Stack("fluent-page-layout");
+            conflictCard.Children.Add(FluentUi.Banner(StatusKind.Stale, "并发冲突", _viewModel.Error,
+                "重读草稿", () => _ = _viewModel.ReloadDraftAsync()));
+            if (_viewModel.SelectedRegion is not null)
+            {
+                conflictCard.Children.Add(FluentUi.Button("查看对照", "fluent-secondary",
+                    () => _ = _viewModel.OpenRegionCompareAsync(), "查看对照"));
+            }
+
+            if (_viewModel.IsCompareVisible && _viewModel.Compare is { } compare)
+            {
+                var panel = new RegionTextComparePanel(compare);
+                // 4A v1.1 P2-4：L2 是实时工作副本。`Compare` 记录的是打开瞬间的快照；若期间
+                // DraftText 变化 / 发生过重排（例如 HasUnsavedDraft 触发的 Render），这里用当前
+                // 实时值覆盖 L2，保证面板永远显示"当下"的工作文本而不是持久化草稿。
+                panel.UpdateWorkingText(_viewModel.DraftText);
+                panel.CloseRequested += (_, _) => _viewModel.CloseRegionCompare();
+                _comparePanel = panel;
+                conflictCard.Children.Add(panel);
+            }
+
+            _statusHost.Child = conflictCard;
         }
         else if (_viewModel.State == FluentPageState.ReadOnly)
         {

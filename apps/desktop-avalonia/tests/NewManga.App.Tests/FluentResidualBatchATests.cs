@@ -9,6 +9,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Threading;
 using Avalonia.VisualTree;
+using NewManga.App.Controls;
 using NewManga.App.Services;
 using NewManga.App.Shell.V2;
 using NewManga.App.ViewModels.Fluent;
@@ -658,15 +659,32 @@ public sealed class FluentResidualBatchATests : IDisposable
         await shell.WorkbenchViewModel.SelectRegionAsync(shell.WorkbenchViewModel.Regions[0]);
         Dispatcher.UIThread.RunJobs();
 
-        // Host 返回不可编辑 lease → 显式开草稿被拒 → 冲突条（B-7 的「查看对照」不在此批）。
+        // Host 返回不可编辑 lease → 显式开草稿被拒 → 冲突条。
         Assert.False(await shell.WorkbenchViewModel.OpenDraftAsync(1));
         Dispatcher.UIThread.RunJobs();
         Assert.Equal(FluentPageState.Conflict, shell.WorkbenchViewModel.State);
         var banner = shell.WorkbenchView.GetVisualDescendants().OfType<AlertBanner>()
             .FirstOrDefault(banner => banner.Title == "并发冲突");
         Assert.NotNull(banner);
-        Assert.DoesNotContain(shell.WorkbenchView.GetVisualDescendants().OfType<Button>(),
+
+        // FEA-06-RESIDUAL-4B（4A S5 / AC5）：本用例原来是「冲突态没有『查看对照』按钮」的反向断言；
+        // 能力落地后该反向断言已失效，按规格改写为**正向断言**（冲突态必须提供入口）。
+        var compareButton = Assert.Single(shell.WorkbenchView.GetVisualDescendants().OfType<Button>(),
             button => button.Content?.ToString()?.Contains("查看对照", StringComparison.Ordinal) == true);
+        Assert.Equal("查看对照", AutomationProperties.GetName(compareButton));
+
+        // AC5 负向不变量（**必须与新正向断言并存**）：本 fake 没有注册逐 region 文本投影 ⇒ 投影不可用。
+        // 此时面板只能给 typed 原因，绝不允许回落到本地草稿（"draft text"）或伪造 L1 文本。
+        compareButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        Dispatcher.UIThread.RunJobs();
+
+        var panel = Assert.Single(shell.WorkbenchView.GetVisualDescendants().OfType<RegionTextComparePanel>());
+        Assert.Equal(RegionCompareStatus.ProjectionUnavailable, panel.Status);
+        Assert.Equal(RegionCompareReasonCodes.ProjectionUnavailable, panel.ReasonCode);
+        Assert.Null(panel.BaseLayer);
+        Assert.Null(panel.WorkingLayer);
+        Assert.DoesNotContain(shell.WorkbenchView.GetVisualDescendants().OfType<TextBlock>(),
+            block => string.Equals(block.Text, "draft text", StringComparison.Ordinal));
     }
 
     [AvaloniaFact]
