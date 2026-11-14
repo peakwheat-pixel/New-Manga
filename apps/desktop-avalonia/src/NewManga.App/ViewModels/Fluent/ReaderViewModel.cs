@@ -165,43 +165,112 @@ public sealed class ReaderViewModel : FluentViewModel
         }
         _appliedPreferences = (preferences.Mode, preferences.Direction, preferences.Zoom,
             preferences.DoublePage, preferences.Layout);
+        // r1 复核 P2-2：换书后不得继续显示上一本书的保存失败文案。
+        PreferenceSaveStatus = string.Empty;
         BookProgress = await _host.GetBookReadingProgressAsync(Book.BookId, cancellationToken);
         Changed(nameof(BookProgress));
         Changed(nameof(BookProgressLabel));
         Changed(nameof(HasBookProgress));
     }
 
+    /// <summary>
+    /// READER-PREF-PERSIST：一次"用户想保存的偏好"的快照。
+    /// 必须在**变更发生的那一刻**捕获：保存是异步的，等它真正执行时 VM 的当前值可能已经变成
+    /// 别的书、别的值（r1 复核 P1-1 / P2-1）。
+    /// </summary>
+    private sealed record PreferenceIntent(
+        string BookId, string Mode, string Direction, double Zoom, bool DoublePage, string Layout);
+
+    private const string PreferenceSaveFailedText = "阅读偏好保存失败，本次设置不会在下次打开时保留。";
+
     /// <summary>FEA-14-READ-2 (PREQ P10): persist only the changed fields (partial patch).</summary>
-    public async Task SaveReadingPreferencesAsync(CancellationToken cancellationToken = default)
+    public Task SaveReadingPreferencesAsync(CancellationToken cancellationToken = default)
     {
         if (_host is null || Book is null)
         {
-            return;
+            return Task.CompletedTask;
         }
-        // R1-001: send ONLY the fields that differ from the applied snapshot.
-        var direction = VerticalDirection ? "vertical" : ReverseDirection ? "rtl" : "ltr";
-        var applied = _appliedPreferences;
-        string? mode = applied is null || applied.Value.Mode != Mode ? Mode : null;
-        double? zoom = applied is null || applied.Value.Zoom != Zoom ? Zoom : null;
-        bool? doublePage = applied is null || applied.Value.DoublePage != DoublePage ? DoublePage : null;
-        string? layout = applied is null || applied.Value.Layout != Layout ? Layout : null;
-        string? sentDirection = applied is null || applied.Value.Direction != direction ? direction : null;
-        if (mode is null && zoom is null && doublePage is null && layout is null && sentDirection is null)
+        return SavePreferenceIntentAsync(CapturePreferenceIntent(Book.BookId), cancellationToken);
+    }
+
+    private PreferenceIntent CapturePreferenceIntent(string bookId) =>
+        new(
+            bookId,
+            Mode,
+            VerticalDirection ? "vertical" : ReverseDirection ? "rtl" : "ltr",
+            Zoom,
+            DoublePage,
+            Layout);
+
+    private Task SavePreferenceIntentAsync(PreferenceIntent intent, CancellationToken cancellationToken)
+    {
+        if (_host is null)
         {
+            return Task.CompletedTask;
+        }
+
+        // R1-001: send ONLY the fields that differ from the applied snapshot.
+        var applied = _appliedPreferences;
+        string? mode = applied is null || applied.Value.Mode != intent.Mode ? intent.Mode : null;
+        double? zoom = applied is null || applied.Value.Zoom != intent.Zoom ? intent.Zoom : null;
+        bool? doublePage = applied is null || applied.Value.DoublePage != intent.DoublePage ? intent.DoublePage : null;
+        string? layout = applied is null || applied.Value.Layout != intent.Layout ? intent.Layout : null;
+        string? direction = applied is null || applied.Value.Direction != intent.Direction ? intent.Direction : null;
+        if (mode is null && zoom is null && doublePage is null && layout is null && direction is null)
+        {
+            return Task.CompletedTask;
+        }
+
+        return SavePreferencePatchAsync(intent, applied, mode, zoom, doublePage, layout, direction, cancellationToken);
+    }
+
+    private async Task SavePreferencePatchAsync(
+        PreferenceIntent intent,
+        (string Mode, string Direction, double Zoom, bool DoublePage, string Layout)? applied,
+        string? mode,
+        double? zoom,
+        bool? doublePage,
+        string? layout,
+        string? direction,
+        CancellationToken cancellationToken)
+    {
+        var patch = new ReadingPreferencesPatch(
+            Mode: mode, Zoom: zoom, DoublePage: doublePage, Layout: layout, Direction: direction);
+        bool saved;
+        try
+        {
+            saved = await _host!.SaveReadingPreferencesAsync(intent.BookId, patch, cancellationToken);
+        }
+        catch (Exception)
+        {
+            // r1 复核 P2-3：异常不能让 drain 状态机卡死（否则后续偏好全部静默丢弃）。
+            PreferenceSaveStatus = PreferenceSaveFailedText;
             return;
         }
-        var patch = new ReadingPreferencesPatch(
-            Mode: mode, Zoom: zoom, DoublePage: doublePage, Layout: layout, Direction: sentDirection);
-        var saved = await _host.SaveReadingPreferencesAsync(Book.BookId, patch, cancellationToken);
+
+        if (Book?.BookId != intent.BookId)
+        {
+            // The reader moved to another book: this result belongs to a book that is no longer on
+            // screen, so it must not paint a status nor seed the new book's applied snapshot.
+            return;
+        }
         if (!saved)
         {
-            // READER-PREF-PERSIST AC5 (r1 R1): a rejected write must not be recorded as applied --
-            // otherwise the next save would diff against a snapshot the Core never stored and skip
-            // the fields the user just changed.
-            PreferenceSaveStatus = "阅读偏好保存失败，本次设置不会在下次打开时保留。";
+            // AC5: a rejected write must not be recorded as applied -- otherwise the next save would
+            // diff against a snapshot the Core never stored and skip the fields the user changed.
+            PreferenceSaveStatus = PreferenceSaveFailedText;
             return;
         }
-        _appliedPreferences = (Mode, direction, Zoom, DoublePage, Layout);
+
+        // r1 复核 P1-1：record ONLY the fields actually sent. Writing the VM's *current* values here
+        // would mark a still-in-flight newer change as already stored, and the next diff would be
+        // empty -- the update would be lost forever.
+        _appliedPreferences = (
+            Mode: mode ?? applied?.Mode ?? intent.Mode,
+            Direction: direction ?? applied?.Direction ?? intent.Direction,
+            Zoom: zoom ?? applied?.Zoom ?? intent.Zoom,
+            DoublePage: doublePage ?? applied?.DoublePage ?? intent.DoublePage,
+            Layout: layout ?? applied?.Layout ?? intent.Layout);
         PreferenceSaveStatus = string.Empty;
     }
 
@@ -216,21 +285,25 @@ public sealed class ReaderViewModel : FluentViewModel
 
     private readonly object _preferenceSaveLock = new();
     private bool _preferenceSaving;
-    private bool _preferenceDirty;
+    private PreferenceIntent? _pendingPreferenceIntent;
 
     /// <summary>
     /// READER-PREF-PERSIST AC6：把一次偏好变更排进保存队列。
-    /// 连续操作（例如连点放大）不逐次打 wire：在途的那一轮结束后若还有新变更，只再补一轮，
-    /// 因此 N 次连点最多产生两次保存，而不是 N 次。
+    /// 意图在这里就捕获（含目标书与各字段值），所以 80ms 合并窗口内切书也不会把 A 书的设置写到 B 书。
+    /// 连续操作（例如连点放大）只保留最新意图：N 次连点最多产生两次保存，而不是 N 次。
     /// </summary>
     private void QueuePreferenceSave()
     {
+        if (_host is null || Book is null)
+        {
+            return;
+        }
         lock (_preferenceSaveLock)
         {
-            _preferenceDirty = true;
+            _pendingPreferenceIntent = CapturePreferenceIntent(Book.BookId);
             if (_preferenceSaving)
             {
-                // A drain is already running and will observe this dirty flag.
+                // A drain is already running and will observe this pending intent.
                 return;
             }
             _preferenceSaving = true;
@@ -251,19 +324,21 @@ public sealed class ReaderViewModel : FluentViewModel
             // Give rapid follow-up changes a chance to join this round before it writes.
             await Task.Delay(PreferenceSaveCoalesceWindow);
 
+            PreferenceIntent? intent;
             lock (_preferenceSaveLock)
             {
-                if (!_preferenceDirty)
+                intent = _pendingPreferenceIntent;
+                _pendingPreferenceIntent = null;
+                if (intent is null)
                 {
-                    // Clearing `saving` in the same critical section as the dirty check is what
+                    // Clearing `saving` in the same critical section as the pending check is what
                     // makes a change queued right here impossible to lose.
                     _preferenceSaving = false;
                     return;
                 }
-                _preferenceDirty = false;
             }
 
-            await SaveReadingPreferencesAsync();
+            await SavePreferenceIntentAsync(intent, CancellationToken.None);
         }
     }
 

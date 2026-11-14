@@ -141,8 +141,84 @@ public sealed class ReaderPreferencePersistenceTests
         await SettleAsync(host);
 
         Assert.Equal(1.6, vm.Zoom, 3);
-        Assert.True(
-            host.SaveReadingPreferencesCallCount <= 2,
-            $"expected coalesced writes (<=2), got {host.SaveReadingPreferencesCallCount}");
+        // P2-4 (r1 复核): "0 writes" must not satisfy a coalescing assertion.
+        Assert.InRange(host.SaveReadingPreferencesCallCount, 1, 2);
+    }
+
+    /// <summary>
+    /// P1-1 (r1 review): a change made WHILE a save is in flight must still be persisted.
+    /// The first implementation recorded the VM's then-current values as "applied" after the await,
+    /// so the newer change looked already-stored and the follow-up diff was empty.
+    /// </summary>
+    [Fact]
+    public async Task ChangeMadeWhileASaveIsInFlight_IsStillPersisted()
+    {
+        var (host, vm) = await LoadedAsync();
+        var gate = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        host.SaveReadingPreferencesOverride = (_, _) => gate.Task;
+
+        await vm.ZoomByPersistingAsync(0.5); // → 1.5
+        for (var spin = 0; spin < 200 && host.SaveReadingPreferencesCallCount == 0; spin++)
+        {
+            await Task.Delay(5);
+        }
+        Assert.Equal(1, host.SaveReadingPreferencesCallCount);
+        Assert.Equal(1.5, host.LastSavedPreferences!.Zoom!.Value, 3);
+
+        // Change again while that write is still pending.
+        await vm.ZoomByPersistingAsync(0.2); // → 1.7
+        host.SaveReadingPreferencesOverride = null;
+        gate.SetResult(true);
+
+        for (var spin = 0; spin < 400 && host.SaveReadingPreferencesCallCount < 2; spin++)
+        {
+            await Task.Delay(5);
+        }
+
+        Assert.Equal(1.7, host.LastSavedPreferences!.Zoom!.Value, 3);
+        Assert.Equal(1.7, vm.Zoom, 3);
+    }
+
+    /// <summary>
+    /// AC5/R2: the write is awaited, so the reader can switch books mid-flight. A result that
+    /// belongs to the book the reader has left must not paint a status on the book now on screen.
+    /// </summary>
+    [Fact]
+    public async Task FailedSave_ForABookTheUserAlreadyLeft_DoesNotPolluteTheNewBook()
+    {
+        var host = new FakeHostController(new HostViewSnapshot(
+            HostViewState.Ready, "ready", "—", null, null, Array.Empty<BookSummary>(), 0, false, null));
+        host.ReaderBook = new ReaderBookData(
+            "b1", "Book", "c1", "Ch", "single",
+            new[] { new ReaderPageData("p1", 0, 100, 200) });
+        host.ReadingPreferences = new ReadingPreferencesInfo(
+            "b1", "original", "ltr", 1.0, false, "single", "2026-01-01", false);
+        var vm = new ReaderViewModel(host);
+        await vm.LoadAsync("b1", "c1");
+
+        var gate = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        host.SaveReadingPreferencesOverride = (_, _) => gate.Task;
+
+        await vm.ZoomByPersistingAsync(0.5);
+        // The drain waits one coalesce window before writing; wait until the write is in flight.
+        for (var spin = 0; spin < 200 && host.SaveReadingPreferencesCallCount == 0; spin++)
+        {
+            await Task.Delay(5);
+        }
+        Assert.Equal(1, host.SaveReadingPreferencesCallCount);
+
+        // The user opens another book while the write is still pending.
+        host.SaveReadingPreferencesOverride = null;
+        host.ReaderBook = new ReaderBookData(
+            "b2", "Book Two", "c2", "Ch Two", "single",
+            new[] { new ReaderPageData("q1", 0, 100, 200) });
+        await vm.LoadAsync("b2", "c2");
+        Assert.Equal("b2", vm.Book!.BookId);
+
+        // The write for the book the user already left fails afterwards.
+        gate.SetResult(false);
+        await Task.Delay(50);
+
+        Assert.DoesNotContain("失败", vm.PreferenceSaveStatus, StringComparison.Ordinal);
     }
 }

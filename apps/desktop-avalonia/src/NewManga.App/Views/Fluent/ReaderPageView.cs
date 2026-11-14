@@ -177,7 +177,7 @@ public sealed class ReaderPageView : UserControl
         };
         _viewModel.PropertyChanged += OnViewModelPropertyChanged;
         KeyDown += OnKeyDown;
-        _pageSurface.DoubleTapped += (_, _) => _viewModel.ToggleDoublePage();
+        _pageSurface.DoubleTapped += (_, _) => _ = _viewModel.ToggleDoublePagePersistingAsync();
         _pageSurface.PointerWheelChanged += (_, args) =>
         {
             _ = args.Delta.Y >= 0 ? _viewModel.PreviousAsync() : _viewModel.NextAsync();

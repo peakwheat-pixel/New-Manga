@@ -51,19 +51,19 @@ allowed_paths:
 
 ## Acceptance Criteria
 
-- [ ] **AC1 单双页持久化**：点击「单页 / 双页」后偏好落库；重开该书 `ApplyReadingPreferencesAsync`
+- [x] **AC1 单双页持久化**：点击「单页 / 双页」后偏好落库；重开该书 `ApplyReadingPreferencesAsync`
       读回同一 `double_page` 值。
-- [ ] **AC2 方向持久化**：点击「反向翻页」（工具栏与浮动工具条两处入口）后方向落库；重开读回一致。
-- [ ] **AC3 缩放持久化**：放大/缩小/适合页面后 `zoom` 落库；重开读回一致。
-- [ ] **AC4 判别测试**：断言控件路径确实产生了 `ReadingPreferencesPatch` 并交给 Host
+- [x] **AC2 方向持久化**：点击「反向翻页」（工具栏与浮动工具条两处入口）后方向落库；重开读回一致。
+- [x] **AC3 缩放持久化**：放大/缩小/适合页面后 `zoom` 落库；重开读回一致。
+- [x] **AC4 判别测试**：断言控件路径确实产生了 `ReadingPreferencesPatch` 并交给 Host
       （`FakeHostController.LastSavedPreferences`），且**删除保存接入口后测试变红**。
-- [ ] **AC5 失败可见**：保存返回 false 时给出可见文案，且不改写 `_appliedPreferences`
+- [x] **AC5 失败可见**：保存返回 false 时给出可见文案，且不改写 `_appliedPreferences`
       （不得让失败的写入被当成已生效）。
-- [ ] **AC6 不做过量写入**：连续操作（例如连点放大）不得产生等量的 wire 调用；
+- [x] **AC6 不做过量写入**：连续操作（例如连点放大）不得产生等量的 wire 调用；
       须有合并/防抖策略，且该策略有测试或可复现的手工证据说明。
-- [ ] **AC7 契约零变化**：不新增/修改 wire 命令、DTO、Core 代码；`generate_api_inventory.py --check`
+- [x] **AC7 契约零变化**：不新增/修改 wire 命令、DTO、Core 代码；`generate_api_inventory.py --check`
       仍 `1/80/6=87`，`verify_pins.ps1` 18/18。
-- [ ] **AC8 不回归**：`App.Tests` 全量 0 failed 且 skip 不增加；`ReaderVisibleControlsTests` /
+- [x] **AC8 不回归**：`App.Tests` 全量 0 failed 且 skip 不增加；`ReaderVisibleControlsTests` /
       `ReaderReadingPreferencesTests` / `ShelfChapterReorderTests` 全绿。
 
 ## 允许修改范围
@@ -83,12 +83,12 @@ allowed_paths:
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1/AC2/AC3 | `.NET` 测试：控件操作 → `LastSavedPreferences` 断言 | `NewManga.App.Tests`（无夹具） | NOT_RUN | 无 |
-| AC4 判别力 | 删掉保存接入口后重跑，断言变红（记录后还原） | 同上 | NOT_RUN | 无 |
-| AC5 失败可见 | `.NET` 测试：`SaveReadingPreferencesResult=false` → 文案 + `_appliedPreferences` 不变 | 同上 | NOT_RUN | 无 |
-| AC6 写入量 | 测试或手工：连点 N 次后 wire 调用次数 < N | 同上 | NOT_RUN | 无 |
-| AC7 契约 | `python tools/generate_api_inventory.py --check`；`verify_pins.ps1` | 仓库根 | NOT_RUN | 无 |
-| AC8 不回归 | `dotnet test tests/NewManga.App.Tests` | 仓库根 | NOT_RUN | 无 |
+| AC1/AC2/AC3（VM） | `dotnet test --filter ReaderPreferencePersistenceTests` | 无夹具 | **8 passed** | `verification/READER-PREF-PERSIST/README.md` §4/§7 |
+| AC4（View 接线） | `dotnet test --filter ReaderPreferenceWiringTests` | Avalonia headless | **4 passed**；回退按钮接线后实测变红 | 同上 §7 |
+| AC5 失败可见 | 同上 VM 套件 | 无夹具 | **2 passed** | 同上 |
+| AC6 写入量 | `RapidZoomClicks_CoalesceIntoFewWrites` | 无夹具 | **PASS**（6 连点 → `InRange(1,2)`） | 同上 |
+| AC7 契约 | `generate_api_inventory.py --check`；`verify_pins.ps1` | 仓库根 | **PASS**（`1/80/6=87`；18/18） | `four-pieces.log` |
+| AC8 不回归 | `dotnet test tests/NewManga.App.Tests` | 无夹具 | **946 / 0 / 11**（本卡前 940/0/11，skip 未增加） | `regression.log` |
 
 ## 依赖、风险与阻塞
 

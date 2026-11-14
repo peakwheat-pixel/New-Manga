@@ -200,8 +200,13 @@ public sealed class FakeHostController : IHostController, ISourceImportControlle
     {
         LastSavedPreferences = patch;
         SaveReadingPreferencesCallCount++;
-        return Task.FromResult(SaveReadingPreferencesResult);
+        return SaveReadingPreferencesOverride is not null
+            ? SaveReadingPreferencesOverride(bookId, patch)
+            : Task.FromResult(SaveReadingPreferencesResult);
     }
+
+    /// <summary>READER-PREF-PERSIST AC5/R2: lets a test hold the preference write in flight.</summary>
+    public Func<string, ReadingPreferencesPatch, Task<bool>>? SaveReadingPreferencesOverride { get; set; }
 
     /// <summary>READER-PREF-PERSIST: outcome of <see cref="SaveReadingPreferencesAsync"/> (default success).</summary>
     public bool SaveReadingPreferencesResult { get; set; } = true;
