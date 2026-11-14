@@ -3,8 +3,8 @@ id: FEA-06-RESIDUAL-4
 title: RegionBox 逐 region 冲突投影与「查看对照」（原 RESIDUAL-2 格 3；需 C-07 additive）
 kind: implementation
 governance_version: 3
-status: cancelled
-disposition: OUT（2026-11-14 DSH；双签：Codex OUT + 独立子 agent OUT；见 doc/reviews/MAINT-1-P4A-Q7-Q8-ADJUDICATION.md。性质＝冻结设计意图的产品可见缩减，非缺陷修复）
+status: proposed
+disposition: "RO-1 重开（2026-11-14 用户指令撤销 Q7 OUT；路线＝C-07 additive UNFREEZE；见 doc/reviews/MAINT-1-RO-1-REOPEN-RESIDUAL-4-2026-11-14.md）；原 OUT 记录保留：OUT（2026-11-14 DSH；双签：Codex OUT + 独立子 agent OUT；见 doc/reviews/MAINT-1-P4A-Q7-Q8-ADJUDICATION.md。性质＝冻结设计意图的产品可见缩减，非缺陷修复）"
 approval: 占位卡：由 `FEA-06-RESIDUAL-3` scope review r1（格 3 未解除）与 DSH 2026-11-08 裁决 re-home；**scope 未冻结，不得实施**；须先独立 scope review + 可能需要 C-07/UNFREEZE 类载体
 suggested_owner: dsh
 owner: null
@@ -64,6 +64,23 @@ out_of_scope:
 3. 补充更正：`list_page_region_texts` 在 Core 侧**已实现**（`src/bootstrap/core_service.py:3533/7787/7796`），注册与分发就绪（`HostCommandRegistry.cs:191/357/462-466`、`HostCommandDispatcher.cs:868-871`）；缺的只是 **App 侧端口**，不是数据面。
 
 **保留**：本卡原 limitation、设计文档、`FEA-06-RESIDUAL-2` 的历史字节全部不动；`FEA-06-RESIDUAL-2` 的格 3 由本裁决转为 OUT，其卡面更新留待专门载体（未在本轮改）。
+
+## RO-1 重开记录（append-only，2026-11-14）
+
+**状态：`cancelled` → `proposed`。** 上一节 OUT 处置记录**整段原样保留**，本节为后续裁决，不删除、不改写任何历史字节。
+
+**依据**：用户 2026-11-14 直接指令「继续 FEA 线收口，且重开卡走 C-07 UNFREEZE 路线」，命中 `MAINT-1-P4A-Q7-Q8-ADJUDICATION.md:38` 的推翻条件与本节 `:59` 重开条件①。完整裁决见 [`MAINT-1-RO-1-REOPEN-RESIDUAL-4-2026-11-14.md`](../reviews/MAINT-1-RO-1-REOPEN-RESIDUAL-4-2026-11-14.md)。
+
+**路线（固定）**：规格冻结 → C-07 additive UNFREEZE（独立字节级复核 + 重冻 + pin 重算）→ App 端口 + UI 对照面板 + 判别测试 → 独立 Review + 集成验证。
+
+**拆卡**：
+
+- `FEA-06-RESIDUAL-4A`（契约前置）：对照内容规格 v0 → v1 冻结；`IHostController` 增 `ListPageRegionTextsAsync`（79→80 / 86→87）；`generate_api_inventory.py` 重跑；C-07 pin 重算；UNFREEZE 载体；独立 byte-level 复核；重冻。
+- `FEA-06-RESIDUAL-4B`（实现）：HostController/NullHostController/Fake 实现 + RegionBox 对照面板 + 判别与负向测试；复用既有 `WithoutFabricatedCompare` 不变量，不得削弱。
+
+**未变的事实**：`FEA-06` AC3 仍为 **PARTIAL**，直到 4B 集成验证通过；本卡当前仍是**占位卡**，`scope 未冻结，不得实施**（原 `approval` 行继续有效）。
+
+**下一步**：由 DSH 释放 4A（scope 冻结 + 允许路径 + 预算登记），Owner 建议 Codex/ZCode，独立 Review 由未参与实现的上下文执行。
 
 ## Resource Manifest
 

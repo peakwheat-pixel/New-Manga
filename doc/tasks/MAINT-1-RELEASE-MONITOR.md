@@ -200,3 +200,23 @@ NEW-MANGA-V1-FULL-AUDIT 与 R1–R4 整改、SEC-01/02/03、CORE-01、AUDIT-07/0
 - **未擅自改测**：该用例意图（v7 生产迁移 + 真实导入 → v8）需先读懂再动；已写成可执行的移交单（4 步，含验收与独立 Review 要求）。
 - **DoD §4**：仍「有条件达成」。
 - **会话预算**：已到上限，后续按 CHECKPOINT 新会话续跑。
+
+### 轮次 18–19（2026-11-14，前一会话）
+
+- **18**：终局定位——同一用例 `:1028` 停 v7 与 `:1085` 全量迁移的时序冲突，失败发生在 v7 阶段误用当前 schema 数据访问路径（`_CHAPTER_COLUMNS` 含 v12 的 `custom_rank`）；结论修正为"迁移时序与终态版本不一致"，非缺列。
+- **19**：**会话上下文耗尽终止**（非 DoD 达成、非用户中断、非轮次上限），HEAD `67de32919`；CHECKPOINT 已登记续跑顺序。
+- **状态**：未翻转任何节点；DoD §4 仍「有条件达成」。
+
+### 轮次 20（2026-11-14）
+
+- **可执行修复提案落盘**（`MAINT-1-P11-CUSTOM-RANK-ADJUDICATION.md` 末节）：把 `:1085` 的全量迁移提前到 `:1048` 的仓储构造之前；**未实施**（前一会话上下文不足）。HEAD `89547e366`。
+
+### 轮次 21（2026-11-14，本会话）
+
+- **用户新指令**：「继续 FEA 线收口，且重开卡走 C-07 UNFREEZE 路线」→ **撤销 Q7 `OUT`**，`FEA-06-RESIDUAL-4` 由 `cancelled` → `proposed`。
+- **裁决落盘**：[RO-1](../reviews/MAINT-1-RO-1-REOPEN-RESIDUAL-4-2026-11-14.md)：路线＝规格冻结 → C-07 additive UNFREEZE（`ListPageRegionTextsAsync`，79→80 / 86→87，独立 byte-level 复核 + 重冻 + pin 重算）→ 端口/UI/测试 → 独立 Review。
+- **拆卡**：`FEA-06-RESIDUAL-4A`（契约前置）、`FEA-06-RESIDUAL-4B`（实现）；两卡均须独立 scope review 后才 `ready`。
+- **保留**：Q7 的 OUT 审计链、Codex 原字节、独立第二意见**原样保留**；`FEA-06` AC3 仍 **PARTIAL**。
+- **DoD §2 回退**：`proposed` 0 → 1（用户主动重新纳入），P6 §2 的「达成」在 RO-1 完成前**不得再引用**。
+- **并行**：派 Codex（`gpt-6-luna` xhigh，`workspace-write`）执行 `custom_rank` fixture 修复，使 DoD §4 转达成；结果待回。
+- **下一轮（RO-2）**：释放 4A（scope review + PLAN 预算登记 + UNFREEZE 载体）；收 Codex 结果并复跑全量 pytest。

@@ -3,8 +3,8 @@
 状态：2026-10-25 起 DSH 接任 Lead / Architect / Integrator；授权与字节保留见[接管记录](GOVERNANCE_TAKEOVER_2026-10-25.md)。
 
 ## 当前程序
-- **FEA 线已收口（S0–S5 全终态；9 节点带 limitation）**：[FEA-00 方案](design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md)；V11R 已收官（v0.1.1）。
-- 当前 Task：[MAINT-1-RELEASE-MONITOR](tasks/MAINT-1-RELEASE-MONITOR.md) `in_progress`（DAG 收口后维护与 Gate 监测）。
+- **FEA 线（S0–S5 终态；9 节点 limitation；1 proposed 重开中）**：[FEA-00 方案](design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md)；V11R 已收官（v0.1.1）。
+- 当前 Task：[MAINT-1-RELEASE-MONITOR](tasks/MAINT-1-RELEASE-MONITOR.md) `in_progress`；RO-1：`FEA-06-RESIDUAL-4` 重开走 C-07 additive UNFREEZE。
 - 收口尾项：ACCEPT-1、PIN-BASIS-ENFORCE-1（AC5 MET）、DIAG-ACL-1 均 `closed_with_limitations`；PIN-POLICY-1 `done`。
 - FEA-11/12 线：WATCH/SCAN/MATCH/LINEAGE/HOST-AUTH、FEA-12 四卡均 `done`。
 - **AC11-1 MET with limitation**（2026-11-06，[裁决](reviews/FEA-11-AC11-1-adjudication-2026-11-06.md)）：冷启动枚举、registry/root 核验及每次访问的 live grant+lease+digest 检查；启动不做全量扫描（L-STARTUP）。
