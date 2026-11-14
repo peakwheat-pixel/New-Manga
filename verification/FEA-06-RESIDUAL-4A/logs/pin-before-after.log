@@ -1,0 +1,30 @@
+# C-07 pin 重算记录（v1.8 -> v1.9）
+# 旧 pin 复现：git show HEAD:doc/plan/FEA-C07_API_INVENTORY.md（CRLF->LF 归一后）SHA-256，应与冻结记录旧行一致
+old_blob_sha256   = 8ccaba05cbc21eec04a366f8bfa2be2dea4515ba90e6d5aab95b11a7c47f0509
+# 新 pin：工作树字节 SHA-256（冻结纪律：pin 在全部字节改动完成后计算）
+new_worktree_sha256 = 91e51ab74da201b99b6704e49fca96e93657d869dcc1e9523661dbb299c6d750
+frozen_record_pin = 91e51ab74da201b99b6704e49fca96e93657d869dcc1e9523661dbb299c6d750
+pin_matches_file  = True
+old_pin_preserved = True
+
+# verify_pins.ps1 原始输出
+OK C01b 3c9f5af7d74f
+OK C02 bb365ca891a7
+OK C03 b77e7968a00b
+OK C04b 4b304c0c315f
+OK C05 f6e6f3cb1fe1
+OK C06 75f8e2b4eb80
+OK C07 91e51ab74da2
+OK C08 453f993c1a16
+OK C09 dc51226b336c
+OK C10 ec8fd862f95f
+OK C11 44f4273f7ad1
+OK C12 f49835860143
+OK C13 8faf1e805eac
+OK C14 05056cbf65f9
+OK C15 f9e376a0ed4c
+OK C16 67286eeca8cb
+OK C17 cdeee4872e29
+OK FEA01 0370c18932b1
+PIN AUDIT: PASS (all 18)
+EXIT=0

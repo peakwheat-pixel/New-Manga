@@ -1,0 +1,8 @@
+# 正式成员表 vs 脚本 stdout 逐行比对（AC2 硬要求）
+# 说明：标准输出表头列为「接口 | 方法数 | 属性/事件/字段数」；本文档正式成员表用「# | 方法 | 返回类型」。
+# 本脚本抽取两侧的三元组（序号/成员名/返回类型 + 属性/事件标记）后逐行比较。
+IReaderProgressSink: stdout_rows=1 doc_rows=1 ALL_MATCH=True
+IHostController: stdout_rows=83 doc_rows=83 ALL_MATCH=True
+IRunController: stdout_rows=6 doc_rows=6 ALL_MATCH=True
+RESULT= PASS
+EXIT=0

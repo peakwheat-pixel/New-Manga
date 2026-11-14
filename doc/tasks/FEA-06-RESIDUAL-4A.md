@@ -1,0 +1,217 @@
+---
+id: FEA-06-RESIDUAL-4A
+title: C-07 additive UNFREEZE 前置：对照内容规格 v1 + ListPageRegionTextsAsync 端口预授权 + pin 重算
+kind: decision
+governance_version: 3
+status: proposed
+disposition: "RO-1 派生的契约前置卡（2026-11-14）；scope 未冻结、未释放，不得据此实施产品代码"
+approval: 待 DSH scope review；依据 [RO-1 重开裁决](../reviews/MAINT-1-RO-1-REOPEN-RESIDUAL-4-2026-11-14.md) §3 R1/R2 与 §4 拆卡表
+suggested_owner: null
+owner: null
+reviewer: null
+depends_on: []
+base_commit: 4cb24ed20556f85bbbe8c4a0ff9d34b6dbfcf65a
+branch: null
+worktree: null
+integration_commit: null
+delivery_head: null
+canonical_evidence_status: pending
+resource_closeout_status: pending
+evidence_dir: verification/FEA-06-RESIDUAL-4A
+allowed_paths:
+  - doc/tasks/FEA-06-RESIDUAL-4A.md
+  - doc/reviews/CONTRACT-UNFREEZE-2026-11-14-C07-RO1.md
+  - doc/reviews/FEA-06-RESIDUAL-4A-*.md
+  - doc/plan/FEA-C07_API_INVENTORY.md
+  - doc/plan/FEA-CONTRACT-FROZEN-C07.md
+  - doc/TASK_LEDGER.md
+  - verification/FEA-06-RESIDUAL-4A/**
+out_of_scope:
+  - 不写产品代码：`src/**`、`apps/**`、`tests/**` 一律不改（App 端口 / UI / 测试属 `FEA-06-RESIDUAL-4B`）
+  - 不改 `doc/STATUS.md`、`doc/REBASELINE_PLAN.md`（由 DSH 维护）；`doc/TASK_LEDGER.md` 只允许按 R-1 经 DSH 授权做**一次机械重生成**（`task_ledger.py --write`），不得手写
+  - 不改任何其他冻结契约字节（C-01b…C-17、FEA-01 零改动）
+  - 不改 Core 命令 / schema / wire：`list_page_region_texts` 已实现并注册，本卡只做 App 端口预授权
+  - 不写「复核通过」：独立字节级复核由 DSH 另派，本卡只写 `pending`
+  - 不 push 远端
+---
+
+# FEA-06-RESIDUAL-4A：C-07 additive UNFREEZE 前置（规格冻结 + 端口预授权 + pin 重算）
+
+## 来源与目标
+
+用户 2026-11-14 指令撤销 Q7 `OUT` 裁决并重开「查看对照」，固定走 **C-07 additive UNFREEZE** 路线。裁决原文与事实基线见 [RO-1 重开裁决](../reviews/MAINT-1-RO-1-REOPEN-RESIDUAL-4-2026-11-14.md)；被重开的伞卡见 [FEA-06-RESIDUAL-4](FEA-06-RESIDUAL-4.md)。
+
+本卡是**契约前置卡**（RO-1 §4 4A），只交付契约侧四件事，**不含任何产品代码**：
+
+1. 把 RO-1 §5 的「对照内容规格 v0」细化为**可实现、可判别**的规格 v1（本卡 §「对照内容规格 v1（冻结候选）」）；
+2. 在 C-07 冻结面内为 `IHostController.ListPageRegionTextsAsync` 做 **additive 预授权登记**（inventory 计划节 + 载体 + pin 重算）；
+3. 写 UNFREEZE 载体 [CONTRACT-UNFREEZE-2026-11-14-C07-RO1](../reviews/CONTRACT-UNFREEZE-2026-11-14-C07-RO1.md)；
+4. 重算 C-07 pin 并更新 [C-07 冻结记录](../plan/FEA-CONTRACT-FROZEN-C07.md)。
+
+**为什么必须是 additive**：Core 侧 `list_page_region_texts` 已实现（`src/bootstrap/core_service.py:3533/7787/7796`），Host 侧已注册并分发（`HostCommandRegistry.cs:191/357/465`、`HostCommandDispatcher.cs:868-871`），客户端解析器已在库（`apps/desktop-avalonia/src/NewManga.CoreClient/Commands/RegionTextProjection.cs:224-281`，当前仅测试使用）。缺的只有 **App 侧 `IHostController` 端口**，因此不需要 Core/schema/wire 任何改动。
+
+**统计口径的关键事实（本卡不绕开）**：`tools/generate_api_inventory.py` 的计数**由源码 interface 块解析得出**（`generate_api_inventory.py:105-119`，源 `apps/desktop-avalonia/src/NewManga.App/Services/IHostController.cs`）。该文件当前 **79 个方法**、无 `ListPageRegionTextsAsync`；`python tools/generate_api_inventory.py` stdout 实测 `IHostController | 79`、合计 `86`。因此 **80/87 只能在 4B 落地端口代码的同一个 Task 内翻转**（这正是 `FEA-CONTRACT-FROZEN-C07.md` §3「实现注意」与 v1.3–v1.8 六次先例的做法）。本卡把 80/87 作为**预授权目标值**锁进计划节与载体，不提前写进统计行——否则成员表会与脚本 stdout 差一行、`--check` 必红（`generate_api_inventory.py:174` 的子串判定）。
+
+## Acceptance Criteria
+
+状态标记为本卡起草提交时的真实状态；`<<MET>>` / `<<PARTIAL>>` / `<<PENDING>>` 由 DSH 在释放与收口时更新，**本卡不得自评通过**。
+
+- [ ] **AC1 规格冻结**：RO-1 §5 v0 细化为规格 v1，覆盖**两层定义 / 字段 / 布局 / 交互 / 空态与失败态 / a11y**，逐项给出可判别断言（供 4B 直接派生测试）；规格文本落本卡 §「对照内容规格 v1（冻结候选）」，且与计划节的方法名、返回类型、字段名**逐字一致**。规格「冻结」以独立 scope review 通过为准。 `<<PARTIAL: 规格 v1 已落卡面；冻结待独立 scope review>>`
+- [ ] **AC2 inventory 更新（成员表逐行一致口径）**：[C-07 API Inventory](../plan/FEA-C07_API_INVENTORY.md) 新增「RO-1 计划追加」节，锁死 `ListPageRegionTextsAsync` / `Task<RegionPageTextProjection?>` / 落地后行号 `#80`；**正式成员表与统计行保持与脚本 stdout 逐行一致**（79 方法 + 4 非方法成员；`IHostController 79`、合计 `86`），并显式写明「80/87 由 4B 落地时翻转 + pin 重算 v1.10」。`python tools/generate_api_inventory.py --check` EXIT 0。 `<<PARTIAL: 计划节与口径已落盘；统计/成员表按上文口径保持 79/86，翻转属 4B>>`
+- [ ] **AC3 pin 重算与冻结记录同步**：C-07 文件 pin 由 v1.8 重算为 v1.9 并写入 [冻结记录](../plan/FEA-CONTRACT-FROZEN-C07.md) §1（**新行置顶、前一 pin 原值保留不改写**）、§1B（登记 v1.9 RO-1 与「独立复核 pending」）、§2 条件 3（计数口径）、§5（变更行）；`pwsh -NoProfile -File tools/governance/verify_pins.ps1` PASS 且 C07 行等于新 pin。 `<<PARTIAL: pin 已重算并登记；§1B 复核列仍为 pending>>`
+- [ ] **AC4 UNFREEZE 载体**：载体落 `doc/reviews/CONTRACT-UNFREEZE-2026-11-14-C07-RO1.md`，含「依据 / 为什么必须 UNFREEZE / 变更范围 / 计划节 / 新 pin / 独立复核要求 / 复核记录（pending）/ 不构成什么」，结构对齐同型先例 [CONTRACT-UNFREEZE-2026-11-10-C07](../reviews/CONTRACT-UNFREEZE-2026-11-10-C07.md)。 `<<PARTIAL: 载体已落盘；§6 复核记录待独立复核回填>>`
+- [ ] **AC5 独立字节级复核**：由 DSH 另派**未参与本卡写作**的独立上下文 reviewer（本项目 Review 独立性以上下文独立为准），逐字节核对：inventory 成员表 = 脚本 stdout、pin = 文件 SHA-256、计划节与规格字段逐字一致、冻结记录 §1–§5 自洽、无 `src/**`/`apps/**`/`tests/**` diff。结论回填载体 §6 与冻结记录 §1B。**本卡作者不得自审，也不得代写 approved。** `<<PENDING: 未派发>>`
+- [ ] **AC6 门禁四件套 + 零越界**：① `pwsh -NoProfile -File tools/governance/check.ps1`；② 同脚本 `-TaskPath doc/tasks/FEA-06-RESIDUAL-4A.md`；③ `pwsh -NoProfile -File tools/governance/verify_pins.ps1`；④ `python tools/generate_api_inventory.py --check`。四者原始输出与 EXIT 码留 `verification/FEA-06-RESIDUAL-4A/logs/`；**本提交所含路径** ⊆ `allowed_paths`（工作树里 `tests/fea11/test_source_match.py` 的未提交改动属 DSH 并行的 `custom_rank` 夹具修复，**不在本卡范围、不纳入本提交**）；无产品代码 / DDL diff。 `<<PARTIAL: 四项全部 EXIT=0（logs/gates-2026-11-14.log）；台账按 R-1 经 DSH 授权重生成一次；零越界按 §交付与运行记录 逐文件核对。剩余闭合动作＝AC5 独立复核后由 DSH 复跑确认>>`
+
+## 对照内容规格 v1（冻结候选）
+
+> v0 出自 [RO-1 §5](../reviews/MAINT-1-RO-1-REOPEN-RESIDUAL-4-2026-11-14.md)。本节把 v0 的六个字段组细化为 4B 可直接实现、测试可直接判别的规格。任何与本节冲突的实现视为超范围。
+
+### S1 两层定义（固定两层，不得扩为三层）
+
+| 层 | 名称 | 数据来源（只读） | 权威性 |
+|---|---|---|---|
+| **L1** | 基底 / 已提交文本 | Core `list_page_region_texts` → 新增端口 `ListPageRegionTextsAsync` → `RegionPageTextProjection`（`RegionTextProjection.cs:224-281`） | 唯一权威读投影。**不得**用 L2 或本地缓存替代或回填 |
+| **L2** | 当前工作副本 | 现有 `LoadPageRegionsAsync` 的 `RegionSummary`（`CoreServiceClient.cs:204-210`）+ 本会话草稿（`ListDraftsAsync`/`OpenDraftAsync` 命中的 `Draft.Patch["text"]`，读取口径同 `WorkbenchViewModel.ReadDraftText`，`WorkbenchViewModel.cs:788-796`） | 仅展示本地态。**无草稿即「本地无草稿」，不得用 L1 值冒充 L2** |
+
+判别断言：
+- **S1-a**：面板打开时 `ListPageRegionTextsAsync` 必须被调用**恰好一次**（一页一次，禁止 per-region N+1）。
+- **S1-b**：L1 的任何字段都不得由 L2 派生；反向亦然（双向独立可判别：用不同取值的 Fake 断言两栏文本不同源）。
+
+### S2 字段（每行显示项）
+
+| 显示项 | L1 取值 | L2 取值 | 空/缺省显示 |
+|---|---|---|---|
+| RegionType | `RegionTextDetail.RegionType` | `RegionSummary.RegionType` | 不适用（两者必填） |
+| SfxPolicy | `RegionTextDetail.SfxPolicy` | `RegionSummary.SfxPolicy` | 不适用 |
+| Origin | `RegionTextDetail.Origin` | `RegionSummary.Origin` | 不适用 |
+| RevisionNo | `RegionTextDetail.RevisionNo` | `RegionSummary.RevisionNo` | 不适用 |
+| 文本 | `Text.FinalTranslation` | 草稿 `patch.text` | 空串 → 显示 `（空文本）` 标签；**这是「值为空」的约定显示，不是替代文本**，不得用另一层的值填充 |
+| 文本来源 | `Text.FinalSource`（`none` 时显示 `—`） | 固定显示 `本地草稿` / `本地无草稿` | — |
+
+判别断言：
+- **S2-a**：`IsConflict` **必须是派生值、不新增存储字段**。定义：`HasRevisionDrift := L1.RevisionNo != L2.RevisionNo`（基底在本地读取后被推进）。`IsConflict` 本身沿用既有状态机 `FluentPageState.Conflict`（`FluentViewModelBase.cs:15`），本卡不新增枚举值、不新增数据库字段、不新增 wire 字段。
+- **S2-b**：L1 文本为空串时，L2 若也空串，**两栏都显示 `（空文本）`**，不得出现任何一栏显示对方的值。
+- **S2-c**：`HasRevisionDrift == true` 时面板顶部追加一行 typed 提示（见 S5），并在两栏 RevisionNo 处同时显示真实数字（不得只显示 L1）。
+
+### S3 端口方法签名（与 inventory 计划节逐字一致）
+
+```csharp
+// 建议实现位置：apps/desktop-avalonia/src/NewManga.App/Services/IHostController.cs
+// 需 using NewManga.CoreClient.Commands;
+Task<RegionPageTextProjection?> ListPageRegionTextsAsync(
+    string pageId,
+    IReadOnlyList<string>? regionIds = null,
+    CancellationToken cancellationToken = default);
+```
+
+- 返回 `null` 表示「投影不可用」，**不得**抛异常进 UI、**不得**返回空集合冒充「无可比对内容」（空集合只表示该页真实没有区域）。
+- `regionIds` 语义沿用 wire：非空、去重、全部必须属于该页；Core 侧对非本页 id 返回 `TARGET_NOT_FOUND`（`HostCommandDispatcher.cs:868-871`）。
+- `NullHostController` / `FakeHostController` 一律 `null`（降级语义与既有读方法一致）。
+
+### S4 布局
+
+- 面板**只在 `FluentPageState.Conflict` 且已选中 region 时出现**；非冲突态不渲染（`IsVisible=false`），**不得改变现有非冲突态视觉**。
+- 位置：冲突横幅（`WorkbenchPageView.cs:656-660`，`AlertBanner("并发冲突", …)`）**下方**，RegionBox 内纵向排列；**不得改动 `FluentUi.Banner` 的单 action 签名**（`Controls/FluentUi.cs:143` 只接受一个 action）：横幅右侧的「查看对照」按钮作为同一纵向容器的独立控件渲染。
+- 展开后为纵向双栏：**上 = L1 基底文本（只读）**、**下 = L2 当前工作副本（只读）**；两栏各有标题条；行高自适应（`TextWrapping=Wrap`、无固定高度、不截断）；宽度随 RegionBox。
+- 关闭后恢复到「仅冲突横幅」的原状（不残留占位高度）。
+
+### S5 交互与 typed 原因
+
+- 入口：冲突横幅旁按钮，文案恒为 `查看对照`（测试已按 `Content` 含「查看对照」断言，见 `FluentResidualBatchATests.cs:668-669`）。
+- 打开后**只读**：不提供「以某一方覆盖」「应用 L1/L2」等任何写动作（避免误操作）；不自动合并。
+- 关闭：`关闭` 按钮 + `Esc`；关闭不发写请求。
+- 失败/空态 typed 原因（面板内显示，**不显示任何文本行**）：
+
+| 情形 | typed 原因 | 处置文案 |
+|---|---|---|
+| 端口返回 `null` | `REGION_TEXT_PROJECTION_UNAVAILABLE` | 投影暂不可用；请先「重新读取页面」后再打开对照（面板不给重试按钮） |
+| Host 未就绪 | `HOST_NOT_READY` | Host 未就绪；恢复后请重新读取页面 |
+| 该 region 不在 L1 结果中 | `TARGET_NOT_FOUND` | 目标区域已变化；请重新读取页面 |
+| 既有 conflict 错误码（`DRAFT_OWNER_CHANGED` / `STALE_BASE_REVISION` / `LOCK_CHANGED` / `EDIT_TOKEN_EXPIRED` 等） | 沿用 `DraftErrorMap`（`WorkbenchViewModel.cs:806-835`）的既有映射 | 沿用既有 `Presentation` 文案，不新造第二套 |
+
+- **负向不变量（先由本规格锁定，4B 只实现不减弱）**：投影不可用时**不得**显示任何对照内容（不得用本地文本、缓存或 L1 推测值填充），沿用既有 `WithoutFabricatedCompare` 语义。既有 `I13_WorkbenchConflictRow_ConflictBannerShowsWithoutFabricatedCompare`（`FluentResidualBatchATests.cs:642-670`）的 `DoesNotContain(查看对照)` 断言由 4B 改为**正向断言**（冲突态存在「查看对照」按钮），但**必须同时新增**「投影不可用 → 面板不出现任何文本行、只出现 typed 原因」的断言；两条断言并存才算保持不变量。**本条在规格里先冻结**：若 4B 只把旧断言翻成正向而不同时补负向断言，即视为削弱 `WithoutFabricatedCompare`，4A 独立复核与 4B Review 都必须判 `changes_requested`。
+
+### S6 可访问性（a11y）
+
+- 面板根 `AutomationProperties.Name = "区域文本对照"`；两栏分别 `"基底文本（只读）"` / `"当前工作副本（只读）"`。
+- 「查看对照」按钮 `AutomationProperties.Name = "查看对照"`（与 `Content` 文案一致，供既有 UIA 断言与新增断言共用）。
+- 键盘：按钮可 Tab 到达；面板打开后焦点落在 `关闭` 按钮；`Esc` 关闭；两栏文本为只读 `TextBlock`，**不进入 Tab 序列**（避免逐字停靠），其内容通过 `AutomationProperties.Name` 暴露给屏幕阅读器。
+- 对比度：只用既有主题笔刷，**不新增颜色常量**；两层用标题文字区分（**不得**仅靠颜色区分），满足色盲可读。
+
+### S7 规格与实现的边界（给 4B 的硬约束）
+
+- 只允许新增：1 个 `IHostController` 方法 + 3 处实现（`HostController` / `NullHostController` / 测试 Fake）+ 1 个对照面板控件 + 1 组测试。
+- 不允许：改 `FluentUi.Banner` 签名、改 `RegionSummary` 形状、改 `RegionPageTextProjection` 解析器、改任何 Core/wire 命令、改 `FluentPageState` 枚举。
+- 若实现中发现本规格某条不可行，**回到本卡改规格**（走 DSH 裁决），不得在 4B 内静默放宽。
+
+## 允许修改范围
+
+- 本卡 `doc/tasks/FEA-06-RESIDUAL-4A.md`
+- `doc/reviews/CONTRACT-UNFREEZE-2026-11-14-C07-RO1.md` 与本卡复核报告 `doc/reviews/FEA-06-RESIDUAL-4A-*.md`
+- `doc/plan/FEA-C07_API_INVENTORY.md`、`doc/plan/FEA-CONTRACT-FROZEN-C07.md`
+- `doc/TASK_LEDGER.md`：**本卡唯一的例外**，且仅做一次机械重生成——新增卡文件会改变 `task files` / `non-terminal` 两个计数，`check.ps1:272-283` 会因为台账过期而报错；该文件平时归 DSH 维护，本卡经 **DSH 2026-11-14 显式授权**执行一次 `python tools/governance/task_ledger.py --write`（不手写、不做判断），并纳入同一提交（R-1）
+- `verification/FEA-06-RESIDUAL-4A/**`（含 frontmatter `evidence_dir`，已在 `allowed_paths` 中显式列出）
+
+## 禁止范围
+
+- 产品源码 `src/**`、`apps/**`、`tests/**`（含 `IHostController.cs` 本身——端口落地属 4B）。
+- `doc/STATUS.md`、`doc/REBASELINE_PLAN.md`（DSH 维护）；`doc/TASK_LEDGER.md` 仅限 R-1 的一次机械重生成。
+- 任何其他冻结契约字节；任何 DDL/schema；任何 Core 命令面。
+- 远端写操作（不 push）。
+
+## 测试要求
+
+本卡为文档/契约卡，**无产品测试**；判别面是脚本与门禁。
+
+| 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
+|---|---|---|---|---|
+| AC2 成员表逐行一致 | `python tools/generate_api_inventory.py`（stdout）与 inventory 正式成员表逐行 diff | 仓库根、Python 3 | 实测 EXIT 0；stdout = 79 方法 + 4 非方法成员，与成员表逐行一致 | `verification/FEA-06-RESIDUAL-4A/logs/api-inventory.log` |
+| AC3 pin | `pwsh -NoProfile -File tools/governance/verify_pins.ps1` | 同上 | 18/18 PASS；C07 = v1.9 新 pin | 同上 |
+| AC6 门禁 | `check.ps1`、`check.ps1 -TaskPath`、`verify_pins.ps1`、`--check` | 同上 | 四项全部 `EXIT=0`（台账按 R-1 重生成后转绿） | `verification/FEA-06-RESIDUAL-4A/logs/gates-2026-11-14.log` |
+
+## 依赖、风险与阻塞
+
+| # | 项 | 说明 | 处置 |
+|---|---|---|---|
+| R-1 | **`check.ps1` 与新增卡的结构性冲突** | `check.ps1:272-283` 用现场重建的 `task files` / `non-terminal` 对齐 `doc/TASK_LEDGER.md`；新增本卡（`status: proposed`）后实测由 `599 / 7` 变为 `600 / 8` → 台账过期即 `Add-Error` | **已解除**：DSH 2026-11-14 授权执行一次 `python tools/governance/task_ledger.py --write`（不手写），台账随本 commit 一并提交（`ledger: non-terminal 7->8`）；重生成后 `check.ps1`（默认 + `-TaskPath`）**PASS (3 warnings)** |
+| R-2 | **80/87 不能在本卡翻转** | 计数来自源码解析（`generate_api_inventory.py:105-119`）；`IHostController.cs` 属 `apps/**`，本卡禁改；提前写 80/87 会让成员表与 stdout 差一行、`--check` 必红 | 本卡只做预授权（计划节 + 载体 + 目标值），统计翻转与成员表 `#80` 行留给 4B（pin v1.10），与 v1.3–v1.8 先例一致 |
+| R-3 | **负向断言被削弱** | 既有 `WithoutFabricatedCompare` 断言「冲突态没有查看对照按钮」；4B 上线后该断言必然反转 | 规格 S5 已要求**同时新增**「投影不可用 → 零文本行」负向断言；4A 复核与 4B Review 都必须核对这一点 |
+| R-4 | 规格不可实现即超范围 | 规格 S7 已把实现面限制在 1 方法 + 3 实现 + 1 控件 + 1 组测试 | 实现受阻时回本卡改规格，不得在 4B 静默放宽 |
+| R-5 | 独立复核独立性 | 作者不得自审（2026-10-31 裁决） | 由 DSH 另派未参与本卡写作的上下文；本卡只写 `pending` |
+
+## 交付与运行记录
+
+- **起草提交**：2026-11-14，base `4cb24ed20556f85bbbe8c4a0ff9d34b6dbfcf65a`。
+- **本次落盘**：本卡（含规格 v1）、UNFREEZE 载体、inventory 计划追加节 + v1.9 pin、冻结记录 §1/§1B/§2/§3/§5、证据 `verification/FEA-06-RESIDUAL-4A/`。
+- **门禁实测**（原始输出见证据目录 `logs/gates-2026-11-14.log`）：① `check.ps1` **PASS (3 warnings) / EXIT=0**；② `check.ps1 -TaskPath doc/tasks/FEA-06-RESIDUAL-4A.md` **PASS (3 warnings) / EXIT=0**；③ `verify_pins.ps1` **PASS (all 18) / EXIT=0**（C07 = 新 pin `91e51ab7…`）；④ `generate_api_inventory.py --check` **EXIT=0**（`1/79/6 = 86`）。台账按 R-1 由 DSH 授权重生成一次（`task files 599→600`、`non-terminal 7→8`）。
+- **零越界核对**（**仅本提交所含路径**逐文件）：`doc/tasks/FEA-06-RESIDUAL-4A.md`（新）、`doc/reviews/CONTRACT-UNFREEZE-2026-11-14-C07-RO1.md`（新）、`doc/plan/FEA-C07_API_INVENTORY.md`（+18/−2）、`doc/plan/FEA-CONTRACT-FROZEN-C07.md`、`doc/TASK_LEDGER.md`（机械重生成）、`verification/FEA-06-RESIDUAL-4A/**`（新）——全部 ⊆ `allowed_paths`；**无 `src/**`、`apps/**`、`tests/**`、DDL/schema diff**。
+  - **范围外声明**：工作树中 `tests/fea11/test_source_match.py` 有 DSH 并行的 `custom_rank` 夹具修复（未提交，属 `MAINT-1` 的 DoD §4 事项）；本卡**不读不改不提交**它。`git status --short` 里它会显示为 ` M`，属预期。
+- **未做**：独立字节级复核（AC5 `pending`，须 DSH 另派）；80/87 统计翻转（R-2，属 4B）；任何产品代码。
+- **下一步**：① DSH 独立 scope review 本卡规格与预授权（RO-1 §4：`proposed` → `ready` 前必须有）→ ② DSH 另派独立上下文做字节级复核并回填载体 §6 / 冻结记录 §1B → ③ 复核通过后重冻 C-07 v1.9 → ④ 释放 `FEA-06-RESIDUAL-4B`（端口 + UI + 判别测试 + 统计 80/87 翻转 + pin v1.10）。
+
+## Canonical Evidence
+
+进入 `in_review` 前由 DSH 填写；当前为 `proposed`，证据以 `verification/FEA-06-RESIDUAL-4A/README.md` 索引（含 pin 前后值、门禁四件套原始输出、脚本 stdout 与成员表逐行比对）。
+
+| evidence_id | AC/Gate | path | commit | sha256 | class |
+|---|---|---|---|---|---|
+| — | — | — | — | — | — |
+
+## Resource Manifest
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| worktree | NOT_APPLICABLE（文档/契约卡，无独立 worktree） | NOT_APPLICABLE | — | — | 未创建；改动在同一主工作树 |
+| build | NOT_APPLICABLE（无构建） | NOT_APPLICABLE | — | — | 未运行 |
+| user-data | NOT_APPLICABLE（未访问任何用户数据根） | NOT_APPLICABLE | — | — | 未访问 |
+| artifact | `verification/FEA-06-RESIDUAL-4A/**` | PRESERVE_REFERENCED | — | 见 README 索引 | 门禁原始日志与 stdout，作为 AC2/AC3/AC6 证据保留 |
+
+## Closeout Record
+
+- Closeout date / DSH：待关闭时填写（当前 `proposed`，未释放）。
+- canonical_evidence_status：`pending`。
+- resource_closeout_status：`pending`。
+- 删除、迁移、归档数量/字节数：0（本轮无删除/迁移/归档）。
+- 未关闭项及保留原因：AC5 独立复核 `pending`；AC2 的 80/87 翻转按 R-2 归属 4B；AC4 载体 §6 复核记录待回填。
+- 当前指针清理：本轮不改 `STATUS` / `REBASELINE_PLAN`（RO-1 §6：`proposed` 不触发 DAG 登记），由 DSH 在释放时更新；`TASK_LEDGER` 已按 R-1 一次性重生成（`task files 600` / `non-terminal 8`）。
