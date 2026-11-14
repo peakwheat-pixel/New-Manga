@@ -143,6 +143,44 @@ public sealed class ReaderPreferencePersistenceTests
         Assert.Equal(1.6, vm.Zoom, 3);
         // P2-4 (r1 复核): "0 writes" must not satisfy a coalescing assertion.
         Assert.InRange(host.SaveReadingPreferencesCallCount, 1, 2);
+        // r2 复核: also pin THAT the coalesced write carried the final value, not just the count.
+        Assert.Equal(1.6, host.LastSavedPreferences!.Zoom!.Value, 3);
+    }
+
+    /// <summary>
+    /// P2-1 (r2 复核): the intent must carry its own diff baseline. Without it, a book switch that
+    /// happens inside the 80ms coalesce window replaces the baseline with the NEW book's snapshot;
+    /// if that happens to equal the pending value the change looks already-stored and **zero**
+    /// writes happen -- the first book's edit is silently lost.
+    /// </summary>
+    [Fact]
+    public async Task PendingChange_QueuedBeforeASwitchToAMatchingBook_IsStillWritten()
+    {
+        var (host, vm) = await LoadedAsync();
+
+        // Queue the intent for b1 (zoom 1.0 -> 1.5); the drain waits one coalesce window.
+        await vm.ZoomByPersistingAsync(0.5);
+        Assert.Equal(0, host.SaveReadingPreferencesCallCount);
+
+        // Inside that window the user opens b2, whose stored zoom happens to be exactly 1.5.
+        host.ReadingPreferences = new ReadingPreferencesInfo(
+            "b2", "original", "ltr", 1.5, false, "single", "2026-01-01", false);
+        host.ReaderBook = new ReaderBookData(
+            "b2", "Book Two", "c2", "Ch Two", "single",
+            new[] { new ReaderPageData("q1", 0, 100, 200) });
+        await vm.LoadAsync("b2", "c2");
+        Assert.Equal(1.5, vm.Zoom, 3); // b2's snapshot, not b1's pending value
+
+        // The queued change must still reach the host (for b1): a captured baseline makes
+        // "1.5 vs 1.0" a real difference even though the reader now reports 1.5.
+        for (var spin = 0; spin < 400 && host.SaveReadingPreferencesCallCount == 0; spin++)
+        {
+            await Task.Delay(5);
+        }
+        Assert.True(
+            host.SaveReadingPreferencesCallCount >= 1,
+            "the queued change was dropped after the switch (0 writes)");
+        Assert.Equal(1.5, host.LastSavedPreferences!.Zoom!.Value, 3);
     }
 
     /// <summary>

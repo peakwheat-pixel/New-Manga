@@ -152,6 +152,8 @@ public sealed class ReaderViewModel : FluentViewModel
         var preferences = await _host.GetReadingPreferencesAsync(Book.BookId, cancellationToken);
         if (preferences is null)
         {
+            // r2 复核 P3-2：切到一本还没有偏好投影的书时，也要清掉上一本留下的失败文案。
+            PreferenceSaveStatus = string.Empty;
             return;
         }
         Mode = preferences.Mode;
@@ -177,9 +179,17 @@ public sealed class ReaderViewModel : FluentViewModel
     /// READER-PREF-PERSIST：一次"用户想保存的偏好"的快照。
     /// 必须在**变更发生的那一刻**捕获：保存是异步的，等它真正执行时 VM 的当前值可能已经变成
     /// 别的书、别的值（r1 复核 P1-1 / P2-1）。
+    /// 同时捕获当时的 diff 基线（``Applied``）：否则 80ms 窗口内切书后，新书的快照会被当成
+    /// 旧书这次变更的基线，导致这次变更被判为"无差异"而静默丢弃（r2 复核 P2-1）。
     /// </summary>
     private sealed record PreferenceIntent(
-        string BookId, string Mode, string Direction, double Zoom, bool DoublePage, string Layout);
+        string BookId,
+        string Mode,
+        string Direction,
+        double Zoom,
+        bool DoublePage,
+        string Layout,
+        (string Mode, string Direction, double Zoom, bool DoublePage, string Layout)? Applied);
 
     private const string PreferenceSaveFailedText = "阅读偏好保存失败，本次设置不会在下次打开时保留。";
 
@@ -200,7 +210,8 @@ public sealed class ReaderViewModel : FluentViewModel
             VerticalDirection ? "vertical" : ReverseDirection ? "rtl" : "ltr",
             Zoom,
             DoublePage,
-            Layout);
+            Layout,
+            _appliedPreferences);
 
     private Task SavePreferenceIntentAsync(PreferenceIntent intent, CancellationToken cancellationToken)
     {
@@ -209,8 +220,9 @@ public sealed class ReaderViewModel : FluentViewModel
             return Task.CompletedTask;
         }
 
-        // R1-001: send ONLY the fields that differ from the applied snapshot.
-        var applied = _appliedPreferences;
+        // R1-001: send ONLY the fields that differ from the applied snapshot. Use the baseline
+        // captured with the intent, not whatever the reader has on screen now (r2 复核 P2-1).
+        var applied = intent.Applied;
         string? mode = applied is null || applied.Value.Mode != intent.Mode ? intent.Mode : null;
         double? zoom = applied is null || applied.Value.Zoom != intent.Zoom ? intent.Zoom : null;
         bool? doublePage = applied is null || applied.Value.DoublePage != intent.DoublePage ? intent.DoublePage : null;
@@ -244,7 +256,11 @@ public sealed class ReaderViewModel : FluentViewModel
         catch (Exception)
         {
             // r1 复核 P2-3：异常不能让 drain 状态机卡死（否则后续偏好全部静默丢弃）。
-            PreferenceSaveStatus = PreferenceSaveFailedText;
+            // r2 复核 P3-1：先判书再置状态，否则旧书的异常会把"保存失败"画到新书上。
+            if (Book?.BookId == intent.BookId)
+            {
+                PreferenceSaveStatus = PreferenceSaveFailedText;
+            }
             return;
         }
 

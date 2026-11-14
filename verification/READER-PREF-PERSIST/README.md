@@ -80,4 +80,35 @@
 **r2 定向复跑**：`ReaderPreferencePersistenceTests` 8 + `ReaderPreferenceWiringTests` 4 +
 `ReaderReadingPreferencesTests` 7 + `ReaderVisibleControlsTests` 4 = **23 passed**。
 
+## 8. r2 复核处置（ACCEPT_WITH_LIMITATIONS，2026-11-15）
+
+复核报告：`doc/reviews/READER-PREF-PERSIST-review-r2.md`（同一独立审查者续接 r2，未参与返修；
+被审 `98d42c6b6`）。verdict **ACCEPT_WITH_LIMITATIONS**，**无 P1**；r1 的三项 P1 已逐项实测修复
+（P1-1 变红实验 1.5 vs 1.7；P1-2 View 回退基线后 4/4 红；P1-3 工作区 clean）。审查者还独立复跑
+App.Tests **946/0/11/957**。
+
+### 已修（最小收口集）
+
+| finding | 处置 |
+|---|---|
+| **P2-1 意图未带 diff 基线**：80ms 窗口内切到"快照恰好等于待存值"的书 → 这次变更被判无差异、**0 次写入**，旧书修改静默丢失 | **已修**：`PreferenceIntent` 增 `Applied` 字段，`QueuePreferenceSave` 时连同基线一并捕获；保存用 `intent.Applied` 做 diff。新增 `PendingChange_QueuedBeforeASwitchToAMatchingBook_IsStillWritten`；实测改回读当前 `_appliedPreferences` 即变红（"queued change was dropped after the switch (0 writes)"）。 |
+| **P3-1 异常路径先置状态后判书**（旧书抛错 → 新书显示失败） | **已修**：catch 内先判 `Book?.BookId == intent.BookId` 再置状态。 |
+| **P3-2 切到无偏好书不清状态** | **已修**：`ApplyReadingPreferencesAsync` 的 `preferences is null` 早退分支也清 `PreferenceSaveStatus`。 |
+| **AC6 未断言落库值** | **已修**：`RapidZoomClicks_CoalesceIntoFewWrites` 追加 `LastSavedPreferences.Zoom == 1.6`。 |
+| 证据日志仍是 r1 时间点 | **已修**：`four-pieces.log` / `regression.log` 按 r3 重生成。 |
+
+### 未修并接受的限制（不得写成通过）
+
+1. **AC1–AC3 的"重开读回"半边未端到端验证**：本卡证明的是"控件路径确实发出了正确的
+   `ReadingPreferencesPatch`"与"失败不记账"，**没有**在有真实 sidecar 的环境里做
+   "保存 → 重启 → 读回"闭环。原因是 E-2（仓库 sidecar 2026-10-23 早于 `SaveReadingPreferences`），
+   `NOT_RUN`。
+2. **无 View 级测试覆盖 `DoubleTapped` 与键盘 `+`/`-`/`0` 入口**：它们已接线（`ReaderPageView.cs:180`、
+   键处理分支），但只有静态核对。
+3. **全局单槽 pending**：`_pendingPreferenceIntent` 只有一个槽；若用户在窗口内对两本书都做了改动，
+   较早的意图会被较新的覆盖。已在复审中确认「旧书意图写旧书」是期望语义，但**窗口内的多书并发
+   只保证最后一次**。
+4. **离开阅读器无显式 flush**：依赖 80ms 合并窗口内的保存；极端情况下进程在窗口内终止会丢最后一次。
+
+
 
