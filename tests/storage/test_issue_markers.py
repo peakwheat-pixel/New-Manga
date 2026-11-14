@@ -1,4 +1,4 @@
-"""FEA-14-EDIT-1: issue markers over schema v13 (additive)."""
+"""FEA-14-EDIT-1: issue markers over schema v13 (additive; v14 is current LATEST)."""
 
 from __future__ import annotations
 
@@ -62,7 +62,8 @@ def test_v13_adds_issue_markers_and_keeps_legacy_rows(tmp_path):
     conn.row_factory = sqlite3.Row
     MigrationRunner(conn, MIGRATIONS[:-1]).apply_pending()
     assert read_schema_version(conn) == LATEST - 1 == 13
-    # A real v12 book/chapter/page row must survive the v13 table creation.
+    # A real pre-upgrade book/chapter/page row (pre-state now = v13) must survive
+    # the v13 -> latest upgrade. (F-06: the pre-state moved off v12 when v14 landed.)
     conn.execute(
         "INSERT INTO books (book_id, title, created_at, updated_at)"
         " VALUES ('legacy-b', 'Legacy', '2026-01-01', '2026-01-01')"
@@ -76,7 +77,7 @@ def test_v13_adds_issue_markers_and_keeps_legacy_rows(tmp_path):
         " VALUES ('legacy-p', 'legacy-c', 1, '2026-01-01', '2026-01-01')"
     )
     conn.commit()
-    # F-04 (r1): take a row-level snapshot of the pre-v13 tables and compare it
+    # F-04 (r1): take a row-level snapshot of the pre-upgrade tables and compare it
     # after the upgrade, not just one column.
     rows_before = {
         table: [tuple(row) for row in conn.execute(f"SELECT * FROM {table} ORDER BY rowid")]

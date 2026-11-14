@@ -211,3 +211,14 @@ def test_delete_without_references_still_requires_replacement(tmp_path):
     assert service.delete_template(first.template_id, second.template_id) is True
     visible, _ = service.list_templates()
     assert {item["template_id"] for item in visible} >= {second.template_id}
+
+
+# MAINT-2-C1-BATCH-1 AC7 (C1-7 / L-AI1-6): the dead N-01 helper is superseded by
+# `delete_with_reassign` (reference reassign + soft delete in ONE transaction).
+# This is the discriminating guard: re-adding the dead helper turns it RED, so the
+# cleanup cannot silently regress.
+def test_store_exposes_only_the_single_transaction_reassign_path():
+    assert not hasattr(SqlitePromptTemplateStore, "reassign_references"), (
+        "dead N-01 helper is back; P23 must keep using delete_with_reassign"
+    )
+    assert hasattr(SqlitePromptTemplateStore, "delete_with_reassign")
