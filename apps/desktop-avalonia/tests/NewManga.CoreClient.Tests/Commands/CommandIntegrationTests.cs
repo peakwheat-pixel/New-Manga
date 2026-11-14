@@ -410,15 +410,19 @@ public sealed class CommandIntegrationTests
         }
 
         // Derived from the registry itself (V11R-F0-1 appends the Region
-        // write batch): the six domain services must cover every command
-        // exactly once and every command is implemented.
-        Assert.Equal(HostCommandRegistry.All.Count, seen.Count);
-        Assert.Equal(
-            HostCommandRegistry.All.Count,
-            services.Sum(service => service.Descriptors.Count));
-        Assert.Equal(
-            HostCommandRegistry.All.Count,
-            services.Sum(service => service.ImplementedCount));
+        // write batch): the six domain services must cover every command of their SIX domains
+        // exactly once and every such command is implemented.
+        //
+        // CMD-COVERAGE-ASSERT-FIX (E-1): the earlier form of this assertion compared against
+        // HostCommandRegistry.All (111) and therefore always failed (actual 90) -- Drafts (6) and
+        // SourceSync (15) are dispatched directly by HostCommandDispatcher by design and are NOT
+        // part of the six typed services. The fixture-less proof that the leftover 21 names are
+        // exactly those two families lives in CommandCoverageRoutingTests.
+        var typedCommandCount = HostCommandRegistry.All.Values
+            .Count(descriptor => descriptor.Domain is not (HostCommandDomain.Drafts or HostCommandDomain.SourceSync));
+        Assert.Equal(typedCommandCount, seen.Count);
+        Assert.Equal(typedCommandCount, services.Sum(service => service.Descriptors.Count));
+        Assert.Equal(typedCommandCount, services.Sum(service => service.ImplementedCount));
 
         var crossDomain = await Assert.ThrowsAsync<ArgumentException>(
             () => context.Settings.InvokeAsync("library_list_books", Args("{}")));
