@@ -68,3 +68,40 @@ button.Bind(IsEnabledProperty,
 1. 用 `[AvaloniaFact]` 构造 `StudioHudRingControl` + 桩 VM，断言 `Buttons[i].IsEnabled` 跟随 slot；
    **回退 `{ Source = captured }` 后该测试必须变红**。
 2. 重新启动安装后的应用，确认 `startup.log` 里 8 条 `IsEnabled` 与 `ActiveTabLabel` 消失。
+## 6. 补完：判别测试已加（E8-STUDIO-BINDING-2，2026-11-15）
+
+上一节 §4 登记"没有判别测试"。**本节更正**：已补。
+
+### 6.1 测试
+
+`tests/NewManga.App.Tests/StudioBindingSourceTests.cs`，`[AvaloniaFact]`：
+
+- 断言 `StudioHudRingControl.Buttons.Count == 8`（与生产日志里恰好 8 条 `IsEnabled` 失败对应）；
+- 对**每个** slot：设 `slot.IsEnabled = false` ⇒ 断言 `ButtonFor(action).IsEnabled == false`；
+  再设 `true` ⇒ 断言为 `true`。
+- **断言方向有讲究**：**禁用方向才有判别力** —— 绑定解析失败时 `Button.IsEnabled` 落回控件默认值（true），
+  所以断言 `false` 会红；只断言 `true` 则无论绑定是否生效都通过。
+
+### 6.2 判别力（实测）
+
+把 `StudioHudRingControl.cs:47` 的 `{ Source = captured }` 去掉后重跑：
+
+```
+slot ShowTextTier: IsEnabled=false but the button is still enabled (binding did not resolve)
+失败! - 失败: 1，通过: 0
+```
+
+**变红且消息准确**。已还原（`PROBE` 计数 0）。
+
+### 6.3 回归
+
+无夹具 `App.Tests` 全量：**954 / 0 / 11 / 965**（前值 953 / 0 / 11 / 964 —— **+1 测试，skip 仍 11，0 failed**）。
+
+### 6.4 仍未做（诚实）
+
+- `StudioLeaveModal` 的 `SaveEnabled` **未测**：`LeaveSaveEnabled` 是**派生只读**属性
+  （源码里只有 `Raise(nameof(LeaveSaveEnabled))`），要驱动它得模拟完整的"离开确认"状态机，本轮未做。
+  ⇒ 那 3 处修复**仍只有编译保证**。
+- `StudioInspectorPanel` 的 `ActiveTabLabel` **未测**：需要构造 `StudioInspectorViewModel`，
+  本轮未做。⇒ 同样只有编译保证。
+- **仍未重跑真实 App** 验证 `startup.log` 里那 9 条是否消失。

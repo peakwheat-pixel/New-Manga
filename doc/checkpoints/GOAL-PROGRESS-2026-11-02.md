@@ -1964,3 +1964,19 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   4 处修复**目前只有编译保证，没有回归测试固定住**；**未重跑真实 App** 验证日志清零；
   `CurrentPage.Image` null 那条**未处理**（不同类，是"图片源为 null"而非绑定路径错）。
 - **教训（重复出现）**：**我又先猜后查了**。这次是"猜 VM 缺属性"，实际是"绑定时 DataContext 还不可用"。
+## 240. E8-STUDIO-BINDING-2：补判别测试并实测变红（2026-11-15，DSH，goal 轮次 41）
+
+- **补上上一轮欠的判别测试**：`StudioBindingSourceTests`（`[AvaloniaFact]`）——
+  断言 `StudioHudRingControl.Buttons.Count == 8`（与生产日志恰好 8 条 `IsEnabled` 对应），
+  并对**每个** slot 设 `IsEnabled = false/true` 后断言 `ButtonFor(action).IsEnabled` 跟随。
+- **★ 断言方向有讲究**：**禁用方向才有判别力** —— 绑定解析失败时 `Button.IsEnabled` 落回控件默认（true），
+  故断言 `false` 会红；只断言 `true` 则**绑定是否生效都通过**（无效测试）。
+- **判别力实测**：去掉 `{ Source = captured }` → 测试**变红**且消息准确
+  （`slot ShowTextTier: IsEnabled=false but the button is still enabled (binding did not resolve)`）；已还原，PROBE=0。
+- **回归**：无夹具 App.Tests **954 / 0 / 11 / 965**（前值 953/0/11/964 —— **+1 测试，skip 仍 11，0 failed**）。
+- **仍未做（诚实）**：①`StudioLeaveModal` 的 `SaveEnabled` 未测（`LeaveSaveEnabled` 是**派生只读**，
+  需模拟完整离开确认状态机）；②`StudioInspectorPanel` 的 `ActiveTabLabel` 未测（需构造
+  `StudioInspectorViewModel`）—— 这 2 组**仍只有编译保证**；③**仍未重跑真实 App** 验证日志 9 条是否消失。
+- **过程中犯的错**：先写了不存在的 `SetEnabledForTest`/`SetLeaveSaveEnabledForTest`，
+  靠编译错误才发现真实 API（`InternalsVisibleTo` 已开，可直接设 `internal set`）。
+  **这又是"先猜 API 后编译"** —— 同一模式第 5 次。
