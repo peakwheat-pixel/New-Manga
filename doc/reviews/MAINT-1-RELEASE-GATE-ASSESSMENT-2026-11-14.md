@@ -216,7 +216,7 @@
 | 1 | 构建绑定当前 commit 的包 | ✅ **完成**：`manifest-singlefile.json` 的 `git_head = 5dda04437…`（= 被探测 head），`result=PASS`，`NewManga.App.exe` 99,554,850 B，sha256 `EA01C8C7…76ED` |
 | 2 | 启动冒烟 | ✅ **完成**：`window_found=true`、`window_title="New Manga"`、`host_ready=true`、`exit_code=0`、`exit_kind=natural`；截图显示四页导航与状态栏"Host 就绪" |
 | 3 | 构建 `setup.exe` | 🟡 **工具具备、未执行**：`makensis v3.13` 在 `C:\Program Files (x86)\NSIS`（不在 PATH，`build-installer.ps1` 会 probe）；`.nsi` 用 `File /r "${STAGE_DIR}\*.*"`，不绑定特定布局 |
-| 4 | sidecar 重建 | ❌ **MISSING**：需 PyInstaller，PyPI 不可达 |
+| 4 | sidecar 重建 | 🟡 **可做（已更正）**：默认 index 缺包，但 `pypi.org` 直连可下载 `pyinstaller 6.22.3`（r1 复核实测）；需再核 ML 栈 |
 | 5 | 签名 | ⚪ **非阻塞**：`.nsi` 明确记载 unsigned 是已知限制，本机也无证书 |
 | 6 | install/启动/升级回退/四页/卸载矩阵 | ❌ **未执行**（依赖第 3 步产物） |
 
@@ -227,6 +227,8 @@
    `--sidecar-dir=` 外部注入。安装器 stage 必须把 sidecar 打进去。
 3. **截图证明首屏，不证明四页可达** —— 冒烟只断言"窗口出现 + Host ready + exit 0"，不逐页导航。
 
-**结论**：条件 4 的真实阻塞已收窄为**一项** —— sidecar 重建（PyInstaller）。安装/卸载/升级/四页矩阵
-在**工具层面全部具备**，只是尚未执行；它们可以先用旧 sidecar 跑通"机制"，但**正式分发包**必须等 sidecar 重建。
-**条件 4 仍不判 MET，Gate 仍 `BLOCKED`。**
+**结论（r1 复核后更正）**：**不存在"只差一项"这种收窄** —— 我此前断言"PyPI 不可达"是错的
+（`pypi.org` 直连可下载 `pyinstaller 6.22.3`）。工具层面全部具备，但工作量是完整的：
+①重建 sidecar（Python 3.12+ 与钉死的 ML 栈）；②以 `app/core-sidecar/` 布局准备 stage 出 `setup.exe`；
+③做 install / 启动 / 升级回退 / 四页 / 卸载矩阵。**它们尚未执行，条件 4 仍 NOT MET，Gate 仍 `BLOCKED`。**
+另需注意：本次 `elapsed=7.7s` 是热缓存增量构建，只证明"本机可构建"，不证明 clean-room。

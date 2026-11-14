@@ -97,6 +97,18 @@ Gate 条件 4 = "对当前固定产品 commit 生成并固定 Windows 包，完�
 - Review：尚无。
 - 实际测试：尚无。
 - 后续记录日期、commit、环境、结果、遗留项。
+### r1 复核处置（REJECT → 返修）
+
+复核报告：`doc/reviews/RELEASE-PACKAGE-PROBE-1-review-r1.md`（审查者 `review-gate4-probe`，未参与实现）。
+
+| finding | 严重度 | 处置 |
+|---|---|---|
+| **P1 "PyPI 不可达"为假**：默认 index（清华镜像）缺包，但 `pip download pyinstaller -i https://pypi.org/simple` **成功**（`pyinstaller-6.22.3`，正是钉死版本） | **P1** | **已修**：文档 §1 第 4 行、§2 表、§5 表、Gate §16 全部改写。**撤回"条件 4 只剩一项阻塞"的收窄结论**。这是我的判断错误：把"某个 index 失败"当成"包不可得"，未换源验证。 |
+| **P2 截图不是四页导航** | P2 | **已修**：§4.3 改为"顶部是**空间切换**（资料柜/工位/控制台，见 `AppShellViewModel.cs:58-63`）+ Breadcrumb，不是四页导航"；§1/§16 措辞同步，消除与 §4.3 的矛盾。 |
+| **P2 7.7s 是热缓存增量构建** | P2 | **已修**：新增 §7.2 —— 只证明"本机可构建"，不证明 clean-room；建议补 `--no-incremental` 或 `verify-clean-clone.ps1`。 |
+| **P2 无失效检测** | P2 | **已修**：新增 §7.3 staleness 声明（sidecar 重建成功 / publish 脚本变更 / head 变化 / PyInstaller 可用性变化均会使结论过时，无自动报警）。 |
+| **P2 Canonical Evidence 为空** | P2 | 已在收口时补 6 条 BLOB pin。 |
+| 已核实为真的部分（保留） | — | manifest `git_head` 与 `git rev-parse` 一致；sha256 复算一致；输出目录无 sidecar；`--sidecar-dir` 为外部注入；`git ls-files` 仅 6 个文本/PNG；`host_ready` 来自 `HostRuntime.cs:1229`（`core.ping` 之后写出，非脚本自证）；`makensis /VERSION` = v3.13。 |
 
 ## Canonical Evidence
 
