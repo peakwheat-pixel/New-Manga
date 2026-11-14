@@ -200,3 +200,55 @@ headless UI 测试**不读** `startup.log` 的绑定诊断；此前也没有在*
 单独建卡：①在 `StudioPageViewModel` 补齐缺失属性（或用 `AvaloniaProperty`/`StyledProperty` 适配）；
 ②**加一个能固定住的测试**：解析 `startup.log`（或订阅 Avalonia 的 binding-error 事件），
 一旦出现 `[Binding] An error occurred` 就失败 —— 这样同类问题今后不会静默复发。
+## E-9：source 恢复路径把 **registry root 目录** 当成**容器文件**（P2，2026-11-15 定位）
+
+**严重度：P2（恢复路径对非 folder 来源必然失败）；证据：完整调用栈 + 代码 + 实测异常。**
+
+### 现象
+
+`Fea11Residual4AIpcTests.ProductionDispatcherFullSyncChain_NewKeyOldDigestConserved` 失败：
+
+```
+SourceAccessException : SOURCE_ENTRY_MISSING
+---- System.UnauthorizedAccessException : Access to the path
+     'G:\CODEX\New Manga.workspace\FEA-11\fixtures\r4a-production-<guid>' is denied.
+```
+
+**被拒绝的是 fixture 的 root 目录**，不是 `source-v2.zip`。
+
+### 调用链（实测堆栈）
+
+```
+DescribeContainer ← IssueLockedAsync ← IssueAsync ← IssueForRecoveryAsync
+  ← SourceOperationCoordinator.MintRecoveryGrantsAsync ← AcknowledgeAsync
+  ← HostRuntime.SourceOperationCompletionAsync ← HostCommandDispatcher.InvokeHostControlAsync
+```
+
+### 根因
+
+`SourceOperationCoordinator.MintRecoveryGrantsAsync`：
+
+```csharp
+var roots = live.Roots.Where(root => root.Readable).Select(root => root.Root).ToArray();
+// R-r2-03: exactly one readable root, otherwise the source path would be guessed.
+if (roots.Length != 1) throw new SourceAccessException("SOURCE_ACCESS_DENIED");
+var grantId = await readsCoordinator.IssueForRecoveryAsync(
+    baseline.RegistryId, live.Generation,
+    roots[0],        // <-- registry root（目录）
+    sourceKind,      // <-- "zip"
+    ...);
+```
+
+`roots[0]` 是"允许访问的根目录"，**不是容器文件路径**。
+`sourceKind == "folder"` 时碰巧成立；`zip`/`cbz`/`pdf`/`image` 时 `DescribeContainer(目录)` 必然失败。
+
+**注释点出了风险（"path would be guessed"），但"恰好一个 root"解决不了语义错位。**
+
+### 建议
+
+恢复应使用**记录下来的容器路径**（journal / plan materialization），而不是 registry root；
+若确无权威来源，应 typed 拒绝而非猜目录。**未实施**（需 DSH 裁决权威来源）。
+
+### 与 Gate 的关系
+
+不属条件 1 的 8 项；属**条件 3 带 opt-in 面**的真实产品缺陷，且是"恢复"这种数据安全相邻路径。

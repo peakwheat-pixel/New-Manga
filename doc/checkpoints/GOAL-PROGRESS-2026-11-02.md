@@ -1810,3 +1810,17 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   （**诊断性**改动，不改错误码对外语义）；②测试侧先 `Assert.True(File.Exists(newZip))` 并打印路径，
   把"文件不存在"从"其它"里分离。
 - 带 opt-in 三类基线仍 **12 passed / 1 failed**；条件 3 仍不判 MET。
+## 230. FEA11-RECOVERY-ROOT-PATH-1：定位到产品缺陷 E-9（P2）—— 恢复路径用 registry root 当容器（2026-11-15，DSH，goal 轮次 30）
+
+- **承接**：`MINT-FAILURE-DIAG-1` 暴露的 `UnauthorizedAccessException`（被拒路径是 fixture **root 目录**）。
+- **完整调用链（实测堆栈）**：`DescribeContainer ← IssueLockedAsync ← IssueAsync ← IssueForRecoveryAsync
+  ← SourceOperationCoordinator.MintRecoveryGrantsAsync ← AcknowledgeAsync ← HostRuntime.SourceOperationCompletionAsync`
+  —— **不是测试直接调的**，是 Host 在 `AcknowledgeAsync` 的**恢复授权**路径。
+- **根因**：`MintRecoveryGrantsAsync` 把 `roots[0]`（registry 允许访问的**根目录**）当成 `sourcePath`
+  传给 `IssueForRecoveryAsync`，而 `sourceKind` 来自 Core scanTargets（实测 `"zip"`）⇒
+  `DescribeContainer(目录)` 必然失败。`sourceKind == "folder"` 时碰巧成立 —— 这是它长期未被发现的原因。
+  注释自陈"path would be guessed"，但"恰好一个 root"解决不了 **root ≠ 容器** 的语义错位。
+- **登记**：产品缺陷 **`E-9`（P2）**，写入 `MAINT-1-EXISTING-FINDINGS`。
+- **未做**：未修复（恢复路径的权威来源需 DSH 裁决：journal / plan materialization / typed 拒绝）；
+  未验证 cbz/pdf/image 是否同样受害。
+- 带 opt-in 三类基线仍 **12 passed / 1 failed**；条件 3 仍不判 MET。
