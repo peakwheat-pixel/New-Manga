@@ -220,3 +220,13 @@ NEW-MANGA-V1-FULL-AUDIT 与 R1–R4 整改、SEC-01/02/03、CORE-01、AUDIT-07/0
 - **DoD §2 回退**：`proposed` 0 → 1（用户主动重新纳入），P6 §2 的「达成」在 RO-1 完成前**不得再引用**。
 - **并行**：派 Codex（`gpt-6-luna` xhigh，`workspace-write`）执行 `custom_rank` fixture 修复，使 DoD §4 转达成；结果待回。
 - **下一轮（RO-2）**：释放 4A（scope review + PLAN 预算登记 + UNFREEZE 载体）；收 Codex 结果并复跑全量 pytest。
+
+### 轮次 22（2026-11-14，本会话续）
+
+- **`custom_rank` 已修，DoD §4 转「达成」**：Codex 首轮 `BLOCKED`（未改文件，理由是「提前迁移会改变 v7 导入语义」）；DSH 实证推翻——提前迁移后用例 `1 passed`、legacy 形状断言全部保持；全文件 20 passed；**全量 `3537 passed / 0 failed / 10 skipped`（316s）**。实施细节见 [P11 裁决 · 实施与实证节](../reviews/MAINT-1-P11-CUSTOM-RANK-ADJUDICATION.md)。
+- **环境澄清**：Codex 报 `Python314 无 pytest` 是其沙箱限制；该解释器实测有 `pytest 9.1.1`。后续 pytest 类验证由 DSH 代跑。
+- **4A 已交付**：`FEA-06-RESIDUAL-4A`（契约前置）由 DSH 派出的实施 Agent 完成并提交 `7c1ac472f`；C-07 pin **v1.8 `8ccaba05…` → v1.9 `91e51ab7…`**；inventory 正式成员表与统计保持 **79/86 = 代码实测**（新增「RO-1 计划追加（v1.9 预授权）」节锁死 `ListPageRegionTextsAsync` / `Task<RegionPageTextProjection?>` / 落地行 `#80`），翻转 80/87 留给 4B；载体 §6 复核记录 `pending`。
+- **偏差登记（RO-1 裁决与实际的一致性）**：RO-1 §3 R2 原写「79→80 / 86→87」，在 4A 内不可达（生成器解析源码、`--check` 为子串判定、`apps/**` 不在 4A 写域）；按 v1.2 PREQ 先例改为「4A 计划追加 + pin v1.9；4B 翻转 80/87 + pin v1.10」。
+- **门禁**：check 默认 + 两卡 `TaskPath` PASS；pins **18/18**（C07 新值）；`generate_api_inventory --check` EXIT 0；成员表逐行 = stdout（`ALL_MATCH=True`）。
+- **未翻转**：9 个 `closed_with_limitations` 全部保持；`FEA-06` AC3 仍 PARTIAL；`FEA-06-RESIDUAL-4A` 仍 `proposed`（PLAN 无行余量）。
+- **下一轮（RO-3）**：派独立上下文对 4A 做 byte-level 复核（重点：v1.9 差异范围、新 typed 码 `REGION_TEXT_PROJECTION_UNAVAILABLE`、pin 的 CRLF 可复现性、Banner 单 action 布局依据）；复核 approved 后追写载体 §6 与 §1B 并重冻，再释放 4B。

@@ -53,3 +53,19 @@
 - 提案：把 `:1085` 的 `MigrationRunner(conn, migrations).apply_pending()` 提前到 `:1048` 之前（legacy 行已在 `:1029-1039` 用裸 SQL 写入，不受影响）；若 `:1069-1120` 存在"库仍为 v7/v8"的版本断言，需同步调整或改为断言"迁移后版本 == 最新"。
 - **未实施原因**：本会话上下文不足以安全核完 `:1069-1120` 的断言面，编辑可能破坏用例原意。留待新会话执行。
 - 验收：该用例通过 + 全量 pytest 0 failed + `.NET`/pins/check 不降 + 独立 Review。
+
+## 实施与实证（轮次 22，2026-11-14，已完成）
+
+**Codex 首轮结论：`BLOCKED`，未改任何文件。** 它给出的理由是「把全量迁移提前会让导入在最新 schema 上运行，改变用例要保留的 v7 导入阶段语义」，并建议在测试文件内为 v7 章节读取做适配。
+
+**DSH 实证推翻了该担忧**（事实优先于判断）：
+
+1. 改动：把 `:1085` 的 `MigrationRunner(conn, migrations).apply_pending()` 前移到 `repo = SqliteLibraryRepository(conn)` 之前（`:1048`），`:1028` 的 `migrations[:7]` 建库与 `:1029-1039` 的裸 SQL legacy 行写入**原样保留**。
+2. 结果：用例 `1 passed`（0.23s），**`:1075-1083` 的 legacy 形状断言全部保持**——因为迁移只加列、不改既有行；导入代码写入的形状由代码决定，与 schema 版本无关。
+3. 全文件：`20 passed`。
+4. 全量：**`3537 passed, 10 skipped, 0 failed`（316.39s）**，日志 `workspace/flea-loop/pytest-full-ro1.log`。
+
+**DoD §4 判定：达成**（此前唯一失败的用例已修，且未删/未放宽任何断言、未加 skip/xfail、未改 `src/**`）。
+
+**环境澄清**：Codex 报 `C:\Python314\python.exe: No module named pytest` 是它自身沙箱限制；该解释器实测有 `pytest 9.1.1`。后续派 Codex 跑 pytest 类任务时须注意此限制，或由 DSH 代跑。
+

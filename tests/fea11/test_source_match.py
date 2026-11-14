@@ -1045,6 +1045,11 @@ def test_real_v7_import_fixture_degrades_then_pixel_matches_on_generation_two(
         [("001.png", image_one), ("002.png", image_two),
          ("notes.txt", b"plain notes")],
     )
+    # 生产升级路径会在打开旧库时先迁移到最新 schema，再允许任何仓储读取；
+    # 此处把全量迁移提前到 repo 构造之前，以对齐这一真实路径，同时保持
+    # v7 fixture 写入的 legacy 数据形状不变（迁移只加列，不改既有行）。
+    MigrationRunner(conn, migrations).apply_pending()
+
     repo = SqliteLibraryRepository(conn)
     access = FakeSourceReadAccess()
     access.add_file("g-import-0000001", "zip", imported_zip, source_id="imported")
@@ -1082,7 +1087,6 @@ def test_real_v7_import_fixture_degrades_then_pixel_matches_on_generation_two(
     assert unbound, "the plain-text member is not bound"
     assert all(row["width"] is None and row["height"] is None for row in unbound)
 
-    MigrationRunner(conn, migrations).apply_pending()
     source_id = conn.execute("SELECT source_id FROM sources").fetchone()[0]
     registry = SourceReadGrantRegistry()
     store = SourceSyncStore(conn)
