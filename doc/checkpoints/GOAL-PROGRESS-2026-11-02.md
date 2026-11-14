@@ -1980,3 +1980,17 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **过程中犯的错**：先写了不存在的 `SetEnabledForTest`/`SetLeaveSaveEnabledForTest`，
   靠编译错误才发现真实 API（`InternalsVisibleTo` 已开，可直接设 `internal set`）。
   **这又是"先猜 API 后编译"** —— 同一模式第 5 次。
+## 241. ★ E8-STUDIO-BINDING-3：真实 App 验收 —— 9/10 条绑定错误确认消失（2026-11-15，DSH，goal 轮次 42）
+
+- **方法**：复用 `capture-reader.ps1` 的启动参数，**只改 `--page`**；关键是 `--exit-after=25000`
+  让 App **自己退出**（退出码 0），**无需任何交互** —— 这正是之前卡住的地方（F11 需要交互）。
+- **★ 同页面同参数对照**（`--page=library`）：
+  **改前 10 条 → 改后 1 条**。消失的 9 条 = 8 条 `IsEnabled`（`StudioHudRingControl` 的 8 个 HUD slot）
+  \+ 1 条 `ActiveTabLabel`。
+- **顺带**：`--page=studio` 也是 1 条 ⇒ 修复对两条路径都生效。
+- **剩余 1 条**是 `CurrentPage.Image` 的 `'Value is null.'` —— **不同类**（不是绑定路径解析失败，
+  是"图片源为 null"），**本卡未处理**。
+- **仍未做**：`StudioLeaveModal` 的 `SaveEnabled` **无单元测试也无独立日志证据**；
+  `StudioInspectorPanel` 的 `ActiveTabLabel` 无单元测试但**日志已确认消失**；
+  Host/CoreClient 本轮未跑（未改动）。
+- 证据：`verification/E8-STUDIO-BINDING-3/README.md` + `startup-after-library.log`。
