@@ -313,3 +313,40 @@ Codex 被要求裁决"journal（A）vs Core plan（B）"，但其命令因 Windo
 
 **E-9 状态更新**：从"待修的 P2 缺陷"调整为 **"已定位、修复路径受产品裁决阻塞的能力限制"**。
 typed 拒绝已使失败**可解释**（`SOURCE_PLAN_UNAVAILABLE` 而非误导性的 `SOURCE_ENTRY_MISSING`）。
+### E-9 产品裁决（2026-11-15，ZCode，`E9-PRODUCT-ADJUDICATION`）
+
+**裁决：B（接受为能力限制）**。A（扩 Core）**任何时点都不采**。登记**第三方案**为后续解锁候选。
+
+#### ★ 三处对 DSH 的纠正
+
+1. **影响面被 DSH 低估**：不止"崩溃恢复"—— **`AcknowledgeAsync:468` 与 `RecoverAsync:581` 走同一 fresh re-mint**，
+   故 **zip/cbz/pdf/image 的 sync 完成链（含正常 ACK）整体不可用**；ACK 失败 → gate 停 pending
+   （`source_sync.py:150`）→ 新 binding 不可读。
+2. **A 的成本被 DSH 低估**：Core `source_locations` **刻意只存物理 facts**（`volume_serial`/`file_id`/`size_bytes`，**无路径列**）；
+   A 不是"暴露已有列"，而是 **Core 新接收并持久化 Host 授权材料** → **路径双权威必漂移**。
+3. **DSH 设想的"`JournalEntry` 加字段"同样受阻**：journal closed shape 冻结、**禁绝对路径**（`SourceOperationCoordinator.cs:22-23`，C-17 §5.2）。
+
+#### 测试口径（DSH 须执行）
+
+改为**断言 typed 拒绝**，**不 skip**（保留 scan/plan/apply 段的 wire 级覆盖）。三断言：
+①精确码 `SOURCE_PLAN_UNAVAILABLE`；②journal 状态保持 `core-committed` **无损**；③重复 ACK **幂等同拒**。
+
+**是否放宽**：**形式收紧、实质是能力边界重新声明** —— 旧"acknowledged"期望**从未可达**
+（修复前同样失败，只是错误码被兜底成 `SOURCE_ENTRY_MISSING`），**不属放宽断言**；
+但**须显式留痕**（含解锁条件 + 测试名标记 `KNOWN-LIMITATION-E9`），**禁止静默改绿**。
+
+#### 最小产品动作：**仅文档**
+
+"非 folder 来源 sync 完成（ACK/恢复）暂不可用，typed 拒绝 `SOURCE_PLAN_UNAVAILABLE`；
+解锁路径 = **mint-time 路径映射**"（`IssueLockedAsync` 手中已有真实路径 → Host 侧 DPAPI 映射
+`registry_id`→`container_path`，恢复时取候选路径、身份仍经 `IssueAsync` 全量物理 facts 验证）。
+**不做导入 UI 提示** —— sync UI 入口尚不存在，无载体。
+
+#### 保留给用户
+
+1. 近期若上**非 folder 来源的书架重同步**，B 即**挡路项**，应提前释放路径映射 Task；
+2. 接受 B 的安全前提：**数据无损边界** —— 只挡"读门打开"，**无业务数据损坏**。
+
+#### DSH 采纳
+
+**采纳**。待执行：测试三断言 + `KNOWN-LIMITATION-E9` 标记 + 本口径落 C-17/FEA-11 已知限制。

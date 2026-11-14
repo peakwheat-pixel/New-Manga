@@ -1869,3 +1869,24 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **E-9 状态更新**：从"待修 P2 缺陷"调整为 **"已定位、修复路径受产品裁决阻塞的能力限制"**；
   typed 拒绝已使失败**可解释**（`SOURCE_PLAN_UNAVAILABLE` 而非误导性的 `SOURCE_ENTRY_MISSING`）。
 - 未改代码；带 opt-in 三类基线仍 **12/1**；条件 3 仍不判 MET。
+## 234. ★ ZCode 裁决 E-9：采纳 B（接受为能力限制），并纠正 DSH 三处错误（2026-11-15，DSH，goal 轮次 35）
+
+- **裁决来源**：按 goal「产品取舍派 codex/zcode 裁决，不得停工等待」，codex 上轮因 Windows 740 不可用，
+  本轮**派 zcode**（`subagent_zcode`，只读），裁决全文落
+  `doc/reviews/E9-PRODUCT-ADJUDICATION-zcode-2026-11-15.md`。
+- **裁决：B（接受为能力限制）**；**A（扩 Core）任何时点都不采**；登记**第三方案**（Host 侧
+  **mint-time DPAPI 路径映射**：`IssueLockedAsync` 手中已有真实路径 → `registry_id→container_path`，
+  恢复时取候选路径、身份仍经 `IssueAsync` 全量物理 facts 验证）为后续 Task 候选。
+- **★ 纠正 DSH 三处**：
+  ①**影响面被低估** —— 不止崩溃恢复，**`AcknowledgeAsync:468` 与 `RecoverAsync:581` 走同一 fresh re-mint**，
+  故 zip/cbz/pdf/image 的 **sync 完成链（含正常 ACK）整体不可用**；
+  ②**A 成本被低估** —— Core `source_locations` **刻意只存物理 facts（无路径列）**，A 是让 Core
+  **新接收并持久化 Host 授权材料** ⇒ **路径双权威必漂移**；
+  ③DSH 设想的"`JournalEntry` 加字段"**同样受阻** —— journal closed shape 冻结、**禁绝对路径**
+  （`SourceOperationCoordinator.cs:22-23`，C-17 §5.2）。
+- **测试口径**：改为断言 typed 拒绝（三断言：精确码 / 状态保持 core-committed 无损 / 重复 ACK 幂等同拒），
+  **不 skip**，标记 `KNOWN-LIMITATION-E9`。**不属于放宽** —— 旧"acknowledged"期望**从未可达**
+  （修复前同样失败，只是错误码被兜底）。
+- **最小产品动作：仅文档**（sync UI 入口尚不存在，无载体做 UI 提示）。
+- **待执行**：测试三断言改造（涉及 (5)(6)(7) 三步联动，本轮未做）；本口径落 C-17/FEA-11 已知限制。
+- 带 opt-in 三类基线仍 **12/1**；条件 3 仍不判 MET。
