@@ -1,0 +1,16 @@
+# Release Gate 条件 5 —— 真实模型 API 调用验证
+# 生成时间: 2026-11-14T15:35:01.6689500+08:00
+# git HEAD: fe99c6791
+# 凭据: 从环境变量 DEEPSEEK_API_KEY 注入，未写入本文件或任何仓库文件
+# 路径: 产品自身 OpenAiTranslationProvider + StdlibTransport + 真实远端端点
+# 命令: C:\Python314\python.exe <workspace>/flea-loop/verify-model-api.py
+
+provider_id=openai-compatible-translation
+provider_type=openai-compatible
+model=deepseek-chat
+elapsed_ms=738
+region_ids=['region-1', 'region-2']
+valid_protocol=True
+  region-1 -> 你好，你好吗？
+  region-2 -> 轰
+EXIT=0

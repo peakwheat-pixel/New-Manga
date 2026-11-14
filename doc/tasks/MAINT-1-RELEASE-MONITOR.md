@@ -257,3 +257,10 @@ NEW-MANGA-V1-FULL-AUDIT 与 R1–R4 整改、SEC-01/02/03、CORE-01、AUDIT-07/0
 - **③ Release Gate：仍 `BLOCKED`**。出具 [差距评估](../reviews/MAINT-1-RELEASE-GATE-ASSESSMENT-2026-11-14.md)：更新了已变的旧事实（pytest 16F→0F、FEA DoD v2、视觉证据），逐条列出六项解锁条件的现状；明确**本轮未生成任何 Windows 包、未做 clean install / 升级回退 / 卸载、未调用真实模型 API、未做远端可见性调查**。现存 `0.1.1` 安装包不绑定当前基线，不得当作证据。
 - **可安全推进的两项**（后续会话）：条件 6 的独立最终 Review；条件 4 的前置——用 `tools/ci/publish-release.ps1` 在当前 HEAD 重新打包并跑 singlefile + `-Smoke`。
 - 门禁：check PASS(3w)；pins 18/18；inventory --check EXIT 0；4B TaskPath PASS（EV-8/EV-9 已登记）。
+
+### 轮次 26（2026-11-14，本会话续）—— 真实模型 API 调用已验
+
+- 用户提供 API 凭据位置（`C:\Users\49745\DeskBox\杂项文件\api.txt`）。**凭据只按需从环境变量注入，未写入仓库任何文件、提交或日志。**
+- 用产品自身 `OpenAiTranslationProvider` + `StdlibTransport` 对 DeepSeek 完成真实翻译：`deepseek-chat`、≈740ms、`valid_protocol=True`、`你好，你好吗？` / `轰`（SFX 文化等效）。
+- 证据：`verification/MAINT-1-RELEASE-MONITOR/model-api-verification.log`（已核验无密钥）。
+- **Gate 条件 5：未完成 → 部分**；其余条件未变，**Gate 仍 BLOCKED**。未做代表性质量基线（无人工 GT）与 App→Host→Core 完整 UI 端到端。

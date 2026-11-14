@@ -23,7 +23,7 @@
 | 2 | `AUDIT-11-INC-001` 只读远端可见性调查 | **未完成** | 需网络与远端仓库访问；本轮未做 |
 | 3 | 补齐完整 GUI / Core / Host 关键流程与 Avalonia TestHost | **部分** | headless 与三项目测试已绿；真实 GUI 全流程矩阵未做 |
 | 4 | 当前 commit 生成 Windows 包 + clean install / 启动 / 升级回退 / 四页 / 卸载矩阵 | **未完成** | 需重新打包 sidecar（现存只有 `0.1.1` 旧包）+ 安装器签名；**本轮未做** |
-| 5 | 模型 / API 与代表性质量验证，或 Owner 明确接受有边界限制 | **未完成** | 需真实 API key；本环境不具备 |
+| 5 | 模型 / API 与代表性质量验证，或 Owner 明确接受有边界限制 | **部分**（真实调用已验） | 已用产品自身 `OpenAiTranslationProvider` + `StdlibTransport` 对 DeepSeek 完成一次真实翻译：`deepseek-chat`、763/738ms、`valid_protocol=True`、`region-1 → 你好，你好吗？`、`region-2（sfx, ドガ）→ 轰`。证据 `verification/MAINT-1-RELEASE-MONITOR/model-api-verification.log`（凭据仅经环境变量注入，日志已核无密钥）。**仍未做**：代表性质量基线（无人工 GT，不得宣称翻译准确率达标）、App/Host 端到端走完整 UI 流程 |
 | 6 | 当前 head 的 Canonical Evidence / governance / TaskPath / verify_pins / API inventory + 独立最终 Review | **部分** | 四件套已绿（check PASS / pins 18/18 / inventory EXIT 0）；**独立最终 Review 未做** |
 
 ## 3. 诚实边界
@@ -39,3 +39,12 @@
 2. **条件 4 的前置**：用 `tools/ci/publish-release.ps1` 在**当前 HEAD** 重新打包 sidecar 并跑 singlefile + `-Smoke`（该脚本自带"启动 exe + 隔离数据根 + host.log ready + exit 0"的真实窗口冒烟），产出绑定当前 commit 的包与冒烟证据。这一步不等于 clean install 矩阵，但能替换掉过时的 `0.1.1` 证据。
 
 条件 1、2、5 依赖用户侧资源（finding 实现决策、远端访问、模型 API key），本轮无法推进。
+
+## 5. 追加：条件 5 的真实调用验证（2026-11-14 晚）
+
+- **做了什么**：用产品自身的 OpenAI 兼容翻译适配器（`src/infrastructure/providers/translation_openai.py`）+ 标准库 transport（`src/infrastructure/transport/stdlib.py`），对真实远端端点完成一次翻译请求，含 1 条 `speech` 与 1 条 `sfx`。
+- **结果**：`provider_id=openai-compatible-translation`、`model=deepseek-chat`、`elapsed_ms≈740`、`valid_protocol=True`（两个 region_id 均按协议返回）、`你好，你好吗？` / `轰`（SFX 走文化等效而非音译，符合 system prompt）。
+- **证据**：`verification/MAINT-1-RELEASE-MONITOR/model-api-verification.log`。
+- **凭据处理**：只从环境变量 `DEEPSEEK_API_KEY` 注入，未写入任何仓库文件；日志已用正则核验不含 `sk-` 形态密钥。
+- **边界（不得扩大解读）**：这是「真实模型 API 调用」的证据，**不是**质量验收——没有人工 ground truth，不能据此宣称翻译准确率或识别质量达标；也没有走 App → Host → Core 的完整 UI 端到端流程。
+- **Gate 结论不变**：条件 5 由「未完成」改为「部分」，其余条件未变，**Gate 仍 `BLOCKED`**。
