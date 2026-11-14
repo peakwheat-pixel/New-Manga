@@ -50,7 +50,10 @@ public bool CurrentPageHasImage => CurrentPage?.HasImage == true;
 `LeaveSaveEnabled` 是**派生只读**属性（源码里只有 `Raise(nameof(LeaveSaveEnabled))`），
 要驱动它需模拟完整"离开确认"状态机。本轮未做。
 
-**如实登记**：这 3 处**只有编译保证**，且**该弹窗在 startup 时不构建**，所以真实 App 日志里也不会出现相关证据。
+**如实登记（已由独立复核更正）**：这 3 处**不是修复，也没有测试**。
+
+**更正两处**：①此前写"该弹窗 startup 时不构建"**不实** —— `StudioPageWorkspace:83` **无条件** `new StudioLeaveModal`（同一次启动记录到 8 条 HUD 错误即证明 workspace 已挂载）；
+②这 3 处本来**就是 no-op** —— modal 继承同一个 Page VM，裸绑定本就可解析；改前 10 条日志里**没有一条** `LeaveBody/LeaveError/LeaveSaveEnabled` 就是反证。
 
 ## 3. 本轮结论
 

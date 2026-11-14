@@ -179,12 +179,12 @@
 **状态：已修复（2026-11-15，`E8-STUDIO-BINDING-1/2/3` + `E8-RESIDUAL-1`）。**
 真实 App 同页面对照：`--page=library` 的 `[Binding]` 从 **10 条降至 1 条**；剩余 1 条（`CurrentPage.Image`
 的 `Value is null`）经核实属 **`ReaderOverlay` 的预期降级显示**，保留不修（理由见 §E-8 残留判定）。
-`StudioLeaveModal` 的 3 处仍**仅编译保证**。
+**更正 3（影响面，复核指出）**：真实修复**只有 1 处** —— `StudioHudRingControl` 的 8 条 `IsEnabled`；`StudioInspectorPanel.ActiveTabLabel` 属**仅消日志**（`:217` 命令式写 `_header.Text`，标题从未不显示）；`StudioLeaveModal` 的 3 处**本就是 no-op**（继承同一 Page VM，裸绑定本可解析；改前 10 条日志里没有一条 `Leave*` 即是反证）。另：此前写的"该弹窗 startup 时不构建"**不实** —— `StudioPageWorkspace:83` **无条件** `new StudioLeaveModal`。
 
 **⚠️ 本节的初始判断有误，已更正（见下方"E-8 根因与修复"节）**：
 原文写"VM **没有** `IsEnabled` / `ActiveTabLabel` 属性" —— **错**。这两个属性都存在
-（`StudioPageViewModel.IsEnabled:202`、`StudioInspectorViewModel.ActiveTabLabel:241`）。
-真实原因是**这些控件没有可解析的 DataContext**，而绑定写成了不带 `Source` 的裸绑定。
+（**更正 2**：`IsEnabled` 实际属于 **`StudioHudSlotViewModel`**（`StudioPageViewModel.cs:182` 类声明；`StudioPageViewModel` 在 `:235`）；`ActiveTabLabel` 属于 `StudioInspectorViewModel:241`）。
+真实原因是**裸绑定解析到了继承来的 Page VM**（三个控件都从 `StudioPageWorkspace` 继承 `DataContext = viewModel`），而属性在 **slot / inspector 子 VM** 上。**更正**：此前写的"控件没有可解析的 DataContext"**不成立** —— `StudioPageWorkspace` 的 11 处裸绑定全部命中 Page VM 所以不报错，这条事实恰恰**证明继承存在**。
 
 安装后启动的 `startup.log` 出现 6 条以上绑定错误，全部指向 `NewManga.App.ViewModels.V2.Studio.StudioPageViewModel`：
 

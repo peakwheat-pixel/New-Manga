@@ -2020,3 +2020,27 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   ④STATUS 基线 953→**954**（App +1，即 `StudioBindingSourceTests`）。
 - **预算**：PLAN **6928/7000**、STATUS **3190/3200**（均未超）。
 - **下一步**：派**独立上下文复核** E-8 四卡（B）。E-8 至今**未经过独立复核**，属纪律缺口。
+## 244. ★ E-8 独立复核：ACCEPT_WITH_LIMITATIONS —— 复核揪出我 5 处事实错误（2026-11-15，DSH，goal 轮次 45）
+
+- **派独立上下文子 agent**（`agent-4`，只读）复核 E-8 四卡。**结论 ACCEPT_WITH_LIMITATIONS**。
+- **★ 复核揪出我的 5 处错误**（全部已更正）：
+  1. **属性归属错两次**：我先判"`StudioPageViewModel` 缺 `IsEnabled`"（错），"更正"后仍写
+     "`StudioPageViewModel.IsEnabled:202`" —— **还是错**。实际 `IsEnabled` 属于
+     **`StudioHudSlotViewModel`**（类声明 `:182`），`StudioPageViewModel` 在 `:235`。
+  2. **"控件没有可解析的 DataContext" 不成立**：三个控件**继承** `StudioPageWorkspace` 的
+     `DataContext = viewModel`；真实根因是**裸绑定解析到继承的 Page VM**，而属性在 slot/inspector 子 VM。
+     **我的说法自伤**：`StudioPageWorkspace` 的 11 处裸绑定不报错**恰恰证明继承存在**，我却用它支持"无可解析"。
+  3. **"4 处修复"夸大**：真实修复**只有 1 处**（`StudioHudRingControl` 的 8 条）；
+     `ActiveTabLabel` **仅消日志**（`:217` 命令式写 `_header.Text`，标题从未不显示）；
+     `StudioLeaveModal` 3 处**本就是 no-op**（改前 10 条里没有一条 `Leave*` 即反证）。
+  4. **"该弹窗 startup 时不构建" 不实**：`StudioPageWorkspace:83` **无条件** `new StudioLeaveModal`。
+  5. **剩余那条日志机制描述不准**：不是"图片源为 null"，是 **`CurrentPage == null`（未开书）**导致路径不可解析。
+- **复核确认成立的部分**：8 个 `IsEnabled` 错误**数字对得上**（`HudSlots` 恰 8 个，全仓 `Bind(IsEnabledProperty`
+  仅 3 处且另两处带 `Source`）；改前 10 条 / 改后 1 条**可复核**（caveat：两次运行外观态不同、
+  `appdata` 指向真实 `%APPDATA%`、无 exe 哈希记录）。
+- **复核指出的测试缺口**：`ActiveTabLabel` 无测试且**有判别力的测试形态特殊**（需捕获 Avalonia Logger 断言"无绑定错误"，
+  因为 `:217` 命令式同步使文本断言在绑定坏掉时仍绿）；`StudioLeaveModal` 的"需模拟状态机"说法**不成立**
+  （`V2StudioPageTests.LeaveModal_ThreeExits` 已驱动），但这类断言**去掉 Source 后仍绿**，只能钉行为不能钉本次改动；
+  **缺类别级守卫** —— `StartupDiagnosticsTests` **不检查 `[bind]`**，应加"startup.log 不含 `[Binding]`"。
+- **复核自陈未做**：未运行构建/测试（只读约束）；未追改后日志的二进制来源；未核对 `capture-reader.ps1` 参数。
+- **登记**：`doc/reviews/E8-INDEPENDENT-REVIEW-1.md`（含全部 5 处错误的更正记录）。
