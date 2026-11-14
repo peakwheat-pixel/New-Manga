@@ -191,12 +191,16 @@
 - **GUI 层**：`App.Tests` 947/0/11/958，`[AvaloniaFact]` 文件 **62 个**。四页 × 13 类流程中
   **12 类有覆盖**，**唯一完全无覆盖的是"设置页错误态"一格**；四页有 PNG 级渲染证据
   （`FluentPages_RenderHeadlessPngEvidence` 断言四帧 `PixelSize` 非零）。
-- **Host/Core 层**（r1 复核要求补）：**plain（无需 sidecar）部分相当广** —— `SourceScanSchedulerTests`(57)、
-  `RunGrantRenewalTests`(23)、`HostUnitTests`(14)、`HostRegionWorkbenchIntegrationTests`(4)、
-  `HostReaderChaptersIntegrationTests`(2)、wire 契约与命令覆盖，均已在 321/186 passed 中真实执行。
-- **skip 归因（更正）**：Host 74 skip = **30 sidecar + 44 opt-in real-IPC/崩溃注入**；App 11 skip =
-  **7 sidecar + 4 非 sidecar**（perf gate 1、真实进程 1、崩溃注入 2）。**此前"100 个 skip 全部卡 E-2"
-  的说法错误，已撤回** —— opt-in 那部分属"未开启"而非"失败"，也不是 E-2。
+- **Host/Core 层**（r1/r2 复核两次纠正后）：本环境真实执行 `321 + 186 passed`（含 wire 契约、命令覆盖、
+  Host 单元面、Source 调度、Run 授权及各 IPC 类的非 skip 方法）；**100 个 skip**（Host 74 + CoreClient 26）
+  NOT_RUN，按实测类分布列于矩阵 §4.2/§4.3。
+- **skip 归因（两次更正）**：App 11 skip = **7 sidecar**（4 个 attribute 类型：`HostSidecarFact`×2、
+  `RunSidecarFact`×2、`RunBookFixtureFact`×1、`WritePolicySidecarFact`×2）+ **4 非 sidecar**
+  （perf 预算 / 真实进程 / 崩溃注入 ×2）。**"100 个 skip 全部卡 E-2"与"30 sidecar / 44 opt-in"两说法均已撤回** ——
+  后者我实测无法复现。
+- **我的一次实质判断失误（已登记在卡面）**：上一版把 `HostReaderChaptersIntegrationTests`(2) 与
+  `HostRegionWorkbenchIntegrationTests`(4) 标为 `plain` 并声称"计入 passed"；r2 复核实跑证明它们是
+  `[BookFixtureFact]` / `[RegionFixtureFact]`，6 个测试**全部 SKIP**。根因是用源码正则推断 gate 而非实测。
 - **条件 3 的可判定形态**：剩余缺口分三类 —— ①E-2 阻塞（`SidecarFact` 家族）；
   ②默认门禁外的 opt-in 矩阵（需环境与样本）；③**真无覆盖仅 1 格**（设置页错误态）。真机人工走查另属一类。
 - **矩阵自身的边界**：只有 12 格被逐行核对断言，其余为"类摘要 + 方法名"，**不得当作已验证**；

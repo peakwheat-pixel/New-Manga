@@ -33,21 +33,23 @@
 |---|---|---|
 | `NewManga.App.Tests` | **947 / 0 / 11 / 958** | 无夹具全量 |
 | ├ `[AvaloniaFact]` 文件 | **62 个** | headless 可跑，无需 sidecar |
-| ├ sidecar gate 测试 | **7 个** | 4 类 gate：`[HostSidecarFact]`×2（`CreateChapterHostIntegrationTests`）、`[RunSidecarFact]`×3（`RunControllerHostIntegrationTests`）、`[WritePolicySidecarFact]`×1（`WritePolicyUiIntegrationTests`）、`[WritePolicySidecarFact]`×1（`StartupSelfCheckUiTests`） |
+| ├ sidecar gate 测试 | **7 个** | **4 个 attribute 类型**：`[HostSidecarFact]`×2（`ChapterCreationTests`）、`[RunSidecarFact]`×2（`RunControllerTests`）、`[RunBookFixtureFact]`×1（`RunControllerTests`）、`[WritePolicySidecarFact]`×2（`WritePolicyUiTests` 1 + `StartupSelfCheckUiTests` 1） |
 | └ 非 sidecar 的 4 个 skip | **4 个** | `PerformanceBaselineTests.Gated_HotSwitch_…`（perf 预算 gate）、`StartupDiagnosticsTests.RealProcessLaunchMatrix_…`（真实进程）、`Fea07Residual3CrashTests.{Park,Recover}_…`（崩溃注入） |
 | `NewManga.Host.Tests` | **321 / 0 / 74 / 395** | 74 skip |
 | `NewManga.CoreClient.Tests` | **186 / 0 / 26 / 212** | 26 skip |
 
 ### 1.1 **关键更正**：skip 不等于"全部卡在 E-2"
 
-r1 复核指出、我也实测确认：Host.Tests 的 74 skip **由两类原因构成**：
+r1 复核指出、r2 复核再次纠正：**skip 的原因不止 sidecar**，而且我**无法仅凭类名可靠切分**。
 
-| 原因 | 规模（r1 复核实测） | 与 E-2 的关系 |
+| 层 | skip 总量 | 能确定的成分 |
 |---|---|---|
-| sidecar 缺失（`SidecarFact` 家族） | **30** | **是** E-2（仓库 sidecar 构建于 2026-10-23，早于多条现行命令） |
-| opt-in real-IPC 环境变量（`NEWMANGA_FEA11_IPC` 22 处、`NEWMANGA_FEA09_IPC` 5、`NEWMANGA_FEA10_IPC` 2、`NEWMANGA_FEA11_CRASH_STATE` 4、`NEWMANGA_CORE_TILE_E2E`、`NEWMANGA_FEA07_A03`、`NEWMANGA_FEA11_CRASH_NEGATIVE`） | **44** | **否** —— 这些是需要显式开启的真实 IPC/崩溃注入测试，本就不在默认门禁里 |
+| App.Tests | 11 | **7 个 sidecar gate**（4 个 attribute 类型，见 §2）+ **4 个非 sidecar**（perf 预算 gate、真实进程启动、崩溃注入 ×2） |
+| Host.Tests | 74 | 按类分布见 §4.2；含 opt-in real-IPC（`NEWMANGA_FEA09/10/11/12_*_IPC`）、fixture（Book/Region）、sidecar |
+| CoreClient.Tests | 26 | 按类分布见 §4.3 |
 
-⇒ 先前"100 个 skip 全部卡 E-2"的说法**错误**，已撤回。
+⇒ 先前"100 个 skip 全部卡 E-2"与"30 sidecar / 44 opt-in"两个说法**均已撤回**（后者来自二手结论，
+我的实测无法复现该二分）。本文件只保留可实测的**类分布**。
 
 ## 3. GUI 层：四页 × 关键流程
 
@@ -69,54 +71,94 @@ r1 复核指出、我也实测确认：Host.Tests 的 74 skip **由两类原因�
 | **快捷键** | ✅ `FluentShell_BreakpointsA11yShortcutsAndReducedMotion_AreExplicit` (`:119`)— 18 gesture、`Conflicts` 空、Ctrl+D2→Workbench、Tab→Batch、文本聚焦不吞键【核对】 | ✅ 同左【核对】 | ✅ `F11_OnReaderPage_ReturnsToReaderPageAfterClose` (`F11HotkeyTests.cs:101`)【摘要】 | ⚠️ `ConsoleSpaceUsesWorkbenchConsoleAndSettingsRemainANonSpaceEntry` (`:166`)【摘要】 |
 | **焦点/a11y** | ✅ `EachFluentPage_PaintsTheKeyboardFocusRing` (`FluentFocusPageCoverageTests.cs:42`)— 遍历四页找 focusable+visible 控件并断言焦点环【核对（结构）】；`AC5_TabTraversal_…` (`FluentResidual3Tests.cs:1082`)、`AC5_UiaTree_…` (`:1260`)【摘要】 | 同左 | 同左 | 同左 |
 
-## 4. Host / Core 层：集成流程（r1 复核 R-001 补齐）
+## 4. Host / Core 层：实测 skip 分布（r2 复核后重写）
 
-`git` 基线为 `d86f185ca`。gate 列含义：**plain** = 无 sidecar 也能跑（计入 321/186 passed）；
-**sidecar** = `SidecarFact`；**opt-in** = 需显式环境变量。
+> **本节在 r2 复核后被彻底重写。** 上一版按"类"贴 `plain`/`sidecar` 标签，把
+> `HostReaderChaptersIntegrationTests`(2) 与 `HostRegionWorkbenchIntegrationTests`(4) 误判为 `plain` 并
+> 声称"计入 321 passed"。**r2 复核用实跑证伪：这两类分别是 `[BookFixtureFact]` / `[RegionFixtureFact]`，
+> 6 个测试全部 SKIP。** 我的错误根因是**用源码正则推断 gate 与分类，而没有实测运行结果**。
+>
+> 本节现在只报**实测数字**（`dotnet test` 的 "已跳过" 输出），不再猜 gate 类型；也不列分母
+> （总测试数未逐一实测，列分母会再次出错）。
 
-| 流程 | 代表测试文件（方法数） | gate | 状态 |
-|---|---|---|---|
-| Host 运行时装配 / 生命周期 | `HostRuntimeIntegrationTests.cs`(4) | sidecar | ⚠️ 有覆盖，本环境 **NOT_RUN**（E-2） |
-| 阅读器章节链（Host） | `HostReaderChaptersIntegrationTests.cs`(2) | **plain** | ✅ 本地可跑（计入 321 passed） |
-| 阅读进度（Host） | `HostReaderProgressIntegrationTests.cs`(3) | sidecar | ⚠️ 有覆盖，NOT_RUN（E-2） |
-| Region 工作台链（Host） | `HostRegionWorkbenchIntegrationTests.cs`(4) | **plain** | ✅ 本地可跑 |
-| 导出端到端（Host） | `ExportE2ETests.cs`(2) | sidecar + `NEWMANGA_EXPORT_*` | ⚠️ NOT_RUN（E-2 + opt-in） |
-| 写策略（Host） | `WritePolicyTests.cs`(6) | sidecar | ⚠️ NOT_RUN（E-2） |
-| 凭据端口（Host） | `CredentialPortTests.cs`(11) | sidecar | ⚠️ NOT_RUN（E-2） |
-| Source 扫描调度 | `SourceScanSchedulerTests.cs`(57) | **plain** | ✅ 本地可跑 |
-| Source 恢复（IPC） | `SourceRecoveryIpcTests.cs`(5) | opt-in `NEWMANGA_FEA11_IPC` | ❌ 默认门禁外（非 E-2 原因） |
-| Source 注册表韧性 | `SourceRegistryResilienceTests.cs`(10) | opt-in `NEWMANGA_FEA11_IPC` | ❌ 默认门禁外 |
-| Run 授权续期 | `RunGrantRenewalTests.cs`(23) | **plain** | ✅ 本地可跑 |
-| 安全 harness | `D4SecurityHarnessTests.cs`(7) | opt-in `NEWMANGA_EVIDENCE_DIR` | ❌ 默认门禁外 |
-| Core tile 端到端 | `CoreTileEmitEndToEndTests.cs`(1) | opt-in `NEWMANGA_CORE_TILE_E2E` | ❌ 默认门禁外 |
-| Host 单元面 | `HostUnitTests.cs`(14) | **plain** | ✅ 本地可跑 |
-| wire 命令契约 | `CommandContractV11RTests` / `CommandParityContractTests` / `CommandWiringB1/B2`（CoreClient） | plain | ✅ 本地可跑 |
-| 命令覆盖（六服务口径） | `CommandCoverageRoutingTests.cs`(4) | **plain** | ✅ 本地可跑（本会话 `CMD-COVERAGE-ASSERT-FIX` 修复） |
-| sidecar 生命周期 / 失败 | `SidecarLifecycleTests` / `SidecarFailureTests`（CoreClient） | sidecar | ⚠️ NOT_RUN（E-2） |
+### 4.1 三层 skip 总量（实测）
 
-**Host/Core 层的结论**：本地可跑部分（plain）**相当广**（Source 调度 57、Run 授权 23、Host 单元 14、
-区域链 4、章节链 2、命令契约与覆盖）已在 321/186 passed 中真实执行；需 sidecar 的部分**全部** NOT_RUN
-（E-2）；另有一组 opt-in real-IPC **本就不在默认门禁**（非 E-2，需显式开启，本环境未开启）。
+| 层 | 结果 |
+|---|---|
+| `NewManga.App.Tests` | 947 passed / 0 failed / **11 skipped** / 958 |
+| `NewManga.Host.Tests` | 321 passed / 0 failed / **74 skipped** / 395 |
+| `NewManga.CoreClient.Tests` | 186 passed / 0 failed / **26 skipped** / 212 |
 
-## 5. 条件 3 的可判定结论（r2 修正）
+### 4.2 Host.Tests 的 74 个 skip，按实测类分布
 
-1. **GUI 层覆盖广度**：四页 × 13 类流程中，**12 类有覆盖**；**唯一完全无覆盖的是"设置页错误态"一格**
-   （`SettingsPage_HostUnavailable_IsBrowsableButReadOnly` 只覆盖只读态，不是加载失败态）。
-   另有 2 格为"借道同型断言"（书架只读走 `[WritePolicySidecarFact]` → NOT_RUN；设置快捷键只有
-   "Settings 不是 Space 入口"一条），标 ⚠️。
-2. **Host/Core 层**：plain 部分相当广（Source 调度 57、Run 授权 23、Host 单元 14、区域链 4、章节链 2、
-   wire 契约与命令覆盖），已在 321/186 passed 中真实执行；`SidecarFact` 部分全部 NOT_RUN（E-2）；
-   opt-in real-IPC / 崩溃注入部分**不在默认门禁**（不是 E-2，是"未开启"）。
-3. **剩余缺口按性质分三类**：
-   - **E-2 阻塞**：所有 `SidecarFact` 家族（Host 30 skip + CoreClient 26 skip + App 7 个测试）；
-   - **默认门禁外**：Host 44 个 opt-in real-IPC / 崩溃注入 + App 4 个（perf gate / 真实进程 / 崩溃注入）；
-   - **真无覆盖**：**仅 1 格**（设置页错误态）；真机人工走查属另一范畴。
-4. **条件 3 不能判 MET。** 推进路径按性质分：解 E-2（本环境不可行）/ 开启 opt-in 矩阵（需环境与样本）/
-   补那 1 格未覆盖测试 / Owner 接受边界。
-5. **撤回前版两处错误表述**：
-   - "完全无覆盖仅 2 类" → 实际**只有 1 格**："阅读器只读"有测试（`ReaderProgressTests.cs:194`
-     `ReadOnlyHost_DoesNotPersist_ButReaderKeepsWorking`）；
-   - "100 个 skip 全部卡 E-2" → Host 74 skip 中**仅 30** 是 sidecar，**44** 是 opt-in real-IPC/崩溃注入。
+| 测试类 | skip 数 | 性质（据类名/attribute 判断，未逐条核实） |
+|---|---|---|
+| `Fea09UiImportIpcProductionTests` | 11 | opt-in real-IPC（`NEWMANGA_FEA09_IPC`） |
+| `Fea11RunGrantIpcTests` | 7 | opt-in real-IPC（`NEWMANGA_FEA11_IPC`） |
+| `Fea09UiImportIpcTests` | 5 | opt-in real-IPC |
+| **`HostRegionWorkbenchIntegrationTests`** | **4** | **`[RegionFixtureFact]` — 需 region fixture，本环境 SKIP** |
+| `GrantIssuerTests` | 4 | fixture/host-control |
+| `Fea11HostAuthIpcTests` | 4 | opt-in real-IPC |
+| `Fea11Residual4AIpcTests` | 4 | opt-in real-IPC |
+| `Fea11ScanIpcTests` | 4 | opt-in real-IPC |
+| `Fea11SourceIpcTests` | 3 | opt-in real-IPC |
+| `HostRuntimeIntegrationTests` | 3 | sidecar |
+| `HostReaderProgressIntegrationTests` | 3 | sidecar |
+| `StartupSelfCheckTests` | 3 | fixture |
+| `WritePolicyTests` | 3 | sidecar |
+| **`HostReaderChaptersIntegrationTests`** | **2** | **`[BookFixtureFact]` — 需 book fixture，本环境 SKIP** |
+| `ExportE2ETests` | 2 | sidecar + `NEWMANGA_EXPORT_*` |
+| `Fea10RunIpcTests` / `Fea11WatchHostRuntimeTests` / `Fea12TrashUiIpcTests` / `Fea09RealIpcTests` / `Fea07Residual3IpcTests` | 各 1 | opt-in IPC |
+
+**合计 74。** 归因（按类名粗分，**未逐条核实每个 attribute**）：opt-in real-IPC 类约 **43**、
+fixture/sidecar 类约 **31**。**上一版"30 sidecar / 44 opt-in"的二分与本节实测不符，已撤回** ——
+该二分来自二手结论，不是我的实测。
+
+### 4.3 CoreClient.Tests 的 26 个 skip，按实测类分布
+
+| 测试类 | skip 数 |
+|---|---|
+| `CommandIntegrationTests` | 6 |
+| `CoreServiceIntegrationTests` | 4 |
+| `RunBindingFixTests` | 4 |
+| `CommandWiringB2Tests` | 3 |
+| `HostBridgeIntegrationTests` | 3 |
+| `CommandWiringB1Tests` | 2 |
+| `TransRunPathFixTests` | 2 |
+| `S4RegionReaderCommandTests` | 1 |
+| `SidecarFailureTests` | 1 |
+
+**合计 26。**
+
+### 4.4 因此"Host/Core 层哪些流程有覆盖"能说到什么程度
+
+- **有覆盖且已执行**：Host/CoreClient 的 **321 + 186 passed**。这些包含 wire 命令契约、命令覆盖、
+  Host 单元面、Source 调度、Run 授权、以及各 IPC 类的非 skip 方法。
+- **明确 NOT_RUN（本环境）**：上两表列出的 **74 + 26 = 100 个 skip**。其中真正属于"E-2 sidecar 过期"
+  的子集**我无法仅凭类名可靠切分**（见 §4.2 的归因说明），因此**不再宣称具体比例**。
+- **可安全执行的 GUI 之外的有力证据**：`CommandCoverageRoutingTests`(4, 无 sidecar) 与 wire 契约类
+  （`CommandContractV11RTests` / `CommandParityContractTests`）在 passed 中。
+
+## 5. 条件 3 的可判定结论（r3 修正）
+
+1. **GUI 层**：四页 × 13 类流程中 **12 类有覆盖**；**唯一完全无覆盖的是"设置页错误态"一格**。
+   另有 2 格为借道同型断言（书架只读走 `[WritePolicySidecarFact]` → NOT_RUN；设置快捷键仅"非 Space 入口"一条），标 ⚠️。
+2. **Host/Core 层**：**321 + 186 passed** 是真实执行的覆盖（wire 契约、命令覆盖、Host 单元面、Source 调度、
+   Run 授权、各 IPC 类的非 skip 方法）；**100 个 skip**（74 + 26）在本环境 NOT_RUN。
+3. **剩余缺口分三类**：
+   - **被 skip 的集成面**：Host 74 + CoreClient 26 + App 7 = **107 个测试**。我并不宣称它们全部因 E-2 ——
+     归因需逐条核 attribute，本节只给类分布（§4.2/§4.3）。
+   - **真无覆盖**：**仅 1 格**（设置页错误态）。
+   - **人工范畴**：真机窗口走查。
+4. **条件 3 不能判 MET。** 要判 MET，需要：执行被 skip 的 107 个测试（其中大部分需 sidecar 或 opt-in
+   环境与样本），或由 Owner 明确接受该边界。
+5. **撤回上一版三处错误（全部由 r1/r2 复核实测发现，均属我的判断失误）**：
+   - "`HostReaderChaptersIntegrationTests` / `HostRegionWorkbenchIntegrationTests` 是 plain、计入 passed"
+     → **错**：它们是 `[BookFixtureFact]` / `[RegionFixtureFact]`，6 个测试**全部 SKIP**。
+   - "100 个 skip 全部卡 E-2" → **错**：其中含大量 opt-in real-IPC，属"未开启"而非 E-2。
+   - "30 sidecar / 44 opt-in" 的二分 → **无法由我的实测复现**，已撤回，只保留类分布。
+6. **方法教训**：本卡前两版都用"源码正则"推断 gate 与分类，因此连续两次被实跑证伪。
+   本版所有数字改为**实测输出**（§4.1–§4.3 全部来自 `dotnet test` 的 "已跳过" 列表）。
 
 ## 6. 失效（staleness）声明 —— r1 复核 P2 要求
 

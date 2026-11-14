@@ -104,6 +104,22 @@ Gate 条件 3 = "补齐**可安全执行的**完整 GUI / Core / Host 关键流�
 | **P2 无失效检测** | P2 | **已修**：新增 §6 **staleness 声明** —— 文档为快照，测试改名/删除不会使矩阵变红；后续改动相关测试的 Task 必须登记"矩阵可能过时"。 |
 | **P3 数字**：`[AvaloniaFact]` 62（原写 61）、`ReaderPreferencePersistenceTests` 9（原写 8）、825 方法不可复现 | P3 | **已修**：改为 62 / 9，并删除"825 个可见测试方法"这一不可复现数字。 |
 | P3 `four-pieces.log` 缺 Host/CoreClient | P3 | 已补。 |
+### r2 复核处置（REJECT → r3 返修）
+
+复核报告：`doc/reviews/GATE3-COVERAGE-MATRIX-review-r2.md`。**核心新 P1 是我的一处实质判断失误**：
+
+| finding | 严重度 | 处置 |
+|---|---|---|
+| **P1 §4 核心事实错误**：`HostReaderChaptersIntegrationTests`(2) 实为 `[BookFixtureFact]`、`HostRegionWorkbenchIntegrationTests`(4) 实为 `[RegionFixtureFact]`，6 个**全部 SKIP**；我标 `plain` 并声称"计入 321 passed" | **P1** | **已修，并承认是判断失误**：§4 整体重写，**不再打 plain/sidecar 标签**，改为只报 `dotnet test` 实测的 skip 数与类分布（§4.1–§4.3）。根因是用源码正则推断 gate 而非实测 —— 该教训写进 §5.6。 |
+| **P1 §4 按"类"贴 gate 过粗**：单文件内部分方法 passed 部分 skip（`WritePolicyTests` 3/6、`CredentialPortTests` 6/7、`HostRuntimeIntegrationTests` 1/4、`SourceRegistryResilienceTests` 8/9、`D4SecurityHarnessTests` 6/6、`CoreTileEmitEndToEndTests` 1/1、`SidecarLifecycleTests` 4/4） | **P1** | **已修**：去掉行级 NOT_RUN 判定与"方法数"列（我的方法数是源码计数，实测不符），改为**类级实测 skip 数**。 |
+| **P1 7+4 的 gate 类型写错**：应为 `HostSidecarFact`×2、`RunSidecarFact`×2、`RunBookFixtureFact`×1、`WritePolicySidecarFact`×2 | **P1** | **已修**（§2 表）。原写 Run×3 + Write×1 + Write×1，错误。 |
+| **P1 "30/44" 二分不可复现**：那 44 是源码 env 出现次数，不是 skip 组成 | **P1** | **已撤回**（§1.1、§4.2）：只保留实测类分布，不再宣称 sidecar/opt-in 的比例。 |
+| P2 未盘流程（Fea09/10/11/12 IPC 部分、Trash、GrantIssuer、ExportStalePolicyWire、CoreClient 的 CommandIntegration/CoreService/HostBridge/S4RegionReader） | P2 | **部分修**：CoreClient 的 26 skip 类已全部列入 §4.3；Host 的 74 已全部列入 §4.2（含 Trash/GrantIssuer/Export）。**仍缺**：这些类"测了什么流程"的业务描述，只给了类名与 skip 数。 |
+| P2 AC2 部分格缺 `文件:行`（Region/偏好/主题/整书进度） | P2 | **部分修**：主要格已补；仍有个别格以方法名为准（§7 已声明）。 |
+| P2 §0 未列 AC1 之外的 GUI 流程 | P2 | 已列入"不在本矩阵内"（其它测试项目、legacy shell、真机走查）。 |
+
+**结论（修正）**：本矩阵**不能**作为条件 3 的判定依据；修正后只能作为"条件 3 NOT MET 的**部分证据**"。
+要判 MET，必须执行那 107 个被 skip 的测试（需 sidecar / opt-in 环境与样本），或由 Owner 明示接受边界。
 
 ## Canonical Evidence
 
