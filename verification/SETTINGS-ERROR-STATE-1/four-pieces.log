@@ -1,0 +1,20 @@
+# SETTINGS-ERROR-STATE-1 four-pieces 2026-11-15T02:34:16.2136621+08:00
+## check.ps1
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\MAINT-1-RELEASE-MONITOR.md
+WARN: 存在 7 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：2948 bytes / 27 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6939 bytes / 63 lines
+Governance check: PASS (3 warnings)
+## verify_pins.ps1
+OK FEA01 0370c18932b1
+PIN AUDIT: PASS (all 18)
+## api inventory
+OK: rendered counts match FEA-C07 doc
+| **合计** | **87** | — |
+## App.Tests 无夹具全量
+950 passed / 0 failed / 11 skipped / 961 total (本卡前 947/0/11/958；skip 未增加)
+## 定向
+SettingsErrorStateTests: 3 passed（含 1 个对照测试）
+## 判别力实测
+回退 LoadAsync catch -> 2 failed / 1 passed (Expected: Error, Actual: Loading)；已还原，src diff 0

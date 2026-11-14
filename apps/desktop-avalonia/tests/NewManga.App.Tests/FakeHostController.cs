@@ -736,8 +736,18 @@ public sealed class FakeHostController : IHostController, ISourceImportControlle
         CancellationToken cancellationToken = default)
     {
         ProviderProfileListCalls++;
+        if (SettingsLoadFailure is not null)
+        {
+            throw SettingsLoadFailure;
+        }
         return Task.FromResult<IReadOnlyList<ProviderProfileInfo>>(ProviderProfiles.ToList());
     }
+
+    /// <summary>
+    /// SETTINGS-ERROR-STATE-1: when set, the settings list calls throw, so the Settings page exercises
+    /// its real load-failure path (`SettingsViewModel.LoadAsync` catch → State=Error).
+    /// </summary>
+    public Exception? SettingsLoadFailure { get; set; }
 
     public Task<SettingsProfileResult> SaveProviderProfileAsync(
         string? profileId,

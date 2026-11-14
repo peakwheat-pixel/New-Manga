@@ -33,7 +33,7 @@
 |FEA-05-WIRE-1|FEA-03、FEA-04|done（Draft 命令面 wire C078–C083；实现复核 impl-r3 approved；全量 931/0/60）|
 |FEA-05-PORT-1|FEA-05-WIRE-1|done（Draft 端口面 + registry + Region 契约 v1.6；impl r3 approved；949/0/57）|
 |FEA-06|FEA-04b、FEA-05-PORT-1、FEA-06-PREREQ-1/2|done（集成 `b26840acd`；impl-r2 approved；全量 1034/0/57；AC8–AC10 MET；AC1–AC7 residual→FEA-06-RESIDUAL-1）|
-|FEA-07|FEA-00A-IMPL-1、FEA-04、FEA-05-PORT-1、FEA-06|done（R4a `a03a6794a` + R4b `8e9420f41`；AC1–4/6–8 MET；AC5 NA/NOT_RUN；L-R4a-1…4、L-R4b-1…5）|
+|FEA-07|FEA-00A-IMPL-1、FEA-04、FEA-05-PORT-1、FEA-06|done（`a03a6794a`+`8e9420f41`；AC1–4/6–8 MET；AC5 NA；L-R4a-1…4、L-R4b-1…5）|
 |FEA-06-RESIDUAL-2|FEA-06-RESIDUAL-1|done（2026-11-08 翻转：RESIDUAL-3 `ddc29ecb3` 关 4 格 + Tab/a11y；格 3→RESIDUAL-4；原生 NA）|
 |D-14-STATUS-COLOR-FIX|FEA-06-RESIDUAL-2|done（D-14 裁决 A；impl-r3 approved ZCode；集成 `e36a7442b`；1292/0/57）|
 |FEA-06-PREREQ-2|FEA-06-PREREQ-1|done（集成 `92cac5ab1`；scope-r4 + impl-r2 approved；1022/0/57）|
@@ -42,7 +42,7 @@
 |FEA-C10-DRAFT|—|done（C-10 **FROZEN** v5，`T=4 DIP`；pin `ec8fd862…`）|
 |FEA-14-SET-1 / FEA-14-S5-PREQ-1|FEA-13-SRC-6|done（r3/r2；`c543b51cc`/`5459c9220`）|
 |FEA-14-EXPORT-1|FEA-14-S5-PREQ-1|done（r3 approved；零新 wire/零 DDL）|
-|FEA-15-A2-1 / A3-1 / A4-1|FEA-14-EXPORT-1|A2 done（r2；四页 4/4）；A3 closed_with_limitations（r3；AC3 limitation）；A4 done（r2；升级/回退演练）|
+|FEA-15-A2-1 / A3-1 / A4-1|FEA-14-EXPORT-1|A2/A4 done；A3 closed_with_limitations（AC3 limitation）|
 |FEA-14-READ-1 / FEA-14-READ-2|FEA-14-S5-PREQ-1|closed_with_limitations（r4/r3；v10+wire）|
 |FEA-14-FONT-1 / LIB-1 / EDIT-1 / AI-1|FEA-14-S5-PREQ-1|closed_with_limitations（v11–v14；P1–P25；S5=25/25）|
 |FEA-15-ACCEPT-1|FEA-14-AI-1|closed_with_limitations（失败/NOT_RUN 保留）|
@@ -52,6 +52,7 @@
 |MAINT-1-RELEASE-MONITOR|PUBLISH-FIX-1|in_progress|
 |MAINT-1 子卡：CHAPTER-MANUAL-SORT / READER-PREF-PERSIST / CMD-COVERAGE-ASSERT-FIX|MAINT-1-RELEASE-MONITOR|均 done（拖拽排序 / 偏好落库 / E-1 断言口径；各 ACCEPT_WITH_LIMITATIONS，NOT_RUN 见卡面）|
 |GATE3-COVERAGE-MATRIX|MAINT-1-RELEASE-MONITOR|done（条件 3 三层盘点；r1/r2 REJECT→r3 ACCEPT_WITH_LIMITATIONS；仅部分证据）|
+|SETTINGS-ERROR-STATE-1|GATE3-COVERAGE-MATRIX|in_progress（矩阵唯一无覆盖格；零 src 改动）|
 ## 当前活动程序
 READY 节点：GIT-CLEAN-RUST-CAPACITY-DESIGN-1；ACTIVE：MAINT-1；BLOCKED：无
 表外节点（不在上表行）：非终态 GIT-CLEAN-PUBLICATION-DIAG-1(approved)、GIT-CLEAN-CORE-ENV-2、GIT-CLEAN-PUBLICATION-1(in_review)、GIT-CLEAN-RUST-ISOLATION-1(in_review)；其余终态见 TASK_LEDGER
