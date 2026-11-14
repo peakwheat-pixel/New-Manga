@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Automation;
 using Avalonia.Controls;
+using Avalonia.Headless;
 using Avalonia.Headless.XUnit;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -395,4 +396,60 @@ public sealed class RegionTextComparePanelTests
             .FirstOrDefault(button => string.Equals(button.Content?.ToString(), content, StringComparison.Ordinal));
 
     private static void Click(Button button) => button.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+
+    // ------------------------------------------------------------------ 视觉证据（opt-in，不作 AC 判据）
+
+    /// <summary>
+    /// opt-in 视觉证据：把冲突态横幅与展开后的双栏面板渲染成 PNG，写入
+    /// <c>verification/FEA-06-RESIDUAL-4B/visuals/</c>。
+    /// <para>口径沿用 <c>FluentResidual3VisualEvidenceTests</c>：**像素不作 AC 判据**，只作为人眼签署证据；
+    /// 未设 <c>NEWMANGA_CAPTURE_FEA06_COMPARE_PNGS=1</c> 时不写任何文件（默认零写入）。</para>
+    /// </summary>
+    [AvaloniaFact]
+    public async Task Captures_Compare_Panel_Pngs_Only_When_Opted_In()
+    {
+        const string captureEnvVar = "NEWMANGA_CAPTURE_FEA06_COMPARE_PNGS";
+
+        var (shell, _) = await CreateConflictAsync(configure: fake =>
+            fake.RegionTextsByPage["page-1"] =
+                Projection("page-1", "region-1", "基底译文", "edited", revisionNo: 1));
+
+        var conflictFrame = shell.CaptureRenderedFrame();
+        Assert.NotNull(conflictFrame);
+
+        Click(FindButton(shell.WorkbenchView, "查看对照")!);
+        Dispatcher.UIThread.RunJobs();
+
+        var panelFrame = shell.CaptureRenderedFrame();
+        Assert.NotNull(panelFrame);
+
+        if (Environment.GetEnvironmentVariable(captureEnvVar) != "1")
+        {
+            return;
+        }
+
+        var root = FindRepositoryRoot()
+            ?? throw new DirectoryNotFoundException("repository root not found from test output dir");
+        var visuals = Path.Combine(root, "verification", "FEA-06-RESIDUAL-4B", "visuals");
+        Directory.CreateDirectory(visuals);
+        conflictFrame!.Save(Path.Combine(visuals, "01-conflict-banner.png"));
+        panelFrame!.Save(Path.Combine(visuals, "02-compare-panel.png"));
+    }
+
+    private static string? FindRepositoryRoot()
+    {
+        var assemblyDirectory = Path.GetDirectoryName(typeof(RegionTextComparePanelTests).Assembly.Location);
+        var cursor = new DirectoryInfo(string.IsNullOrEmpty(assemblyDirectory) ? AppContext.BaseDirectory : assemblyDirectory!);
+        while (cursor is not null)
+        {
+            if (Directory.Exists(Path.Combine(cursor.FullName, "doc", "tasks")))
+            {
+                return cursor.FullName;
+            }
+
+            cursor = cursor.Parent;
+        }
+
+        return null;
+    }
 }

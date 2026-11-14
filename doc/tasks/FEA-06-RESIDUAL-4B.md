@@ -248,3 +248,9 @@ out_of_scope:
 - 4B-3：`WorkbenchViewModel` 对照状态/命令（L2 取实时 `DraftText`、失败优先级、`IsConflict` 派生）+ `WorkbenchPageView` 冲突横幅旁入口与纵向双栏容器（AC3/AC4；「恰好一次投影」断言落在 VM，不进端口层缓存）。
 - 4B-4：`FluentResidualBatchATests` 负向/正向断言并存（AC5）、独立 Review（AC8）、证据 README 收口。
 - 已知未闭合缺口：`HostController` 的 `catch (Exception ex) when (IsUiFacingFailure(ex))` 分支无法在默认门禁触发（无 runtime seam）→ gated 集成用例；若 4B-3 决定改用带 `regionIds` 的调用，`CoreOperationException(TARGET_NOT_FOUND)` 会被吞成 `null` 从而把 AC4 的 ③ 退化为 ② —— **必须先回卡裁定**，不得静默退化。
+
+### R-12 关闭记录（append-only，2026-11-14 DSH）
+
+- 原 limitation「无像素级视觉证据」**已关闭**：新增 opt-in 截图测试（`NEWMANGA_CAPTURE_FEA06_COMPARE_PNGS=1`），产物 `verification/FEA-06-RESIDUAL-4B/visuals/{01-conflict-banner,02-compare-panel}.png`。
+- **DSH 目视确认**（1180×780，真实 Avalonia 渲染帧）：冲突横幅保留「重读草稿」；其下独立「查看对照」入口；展开后「区域文本对照」纵向双栏，上栏基底只读（`基底译文` / 来源 `user` / 文本来源 `edited`），下栏工作副本只读（`draft text` / 来源 `detect` / 文本来源 `本地草稿`）；**无任何写动作按钮**，仅「关闭」。检查器可见 19 键 Draft Error Category，未混入面板本地原因码。
+- **口径不变**：像素是签署证据，**不作 AC 判据**（沿用 `FluentResidual3VisualEvidenceTests` 的既有立场）。R-11（Esc seam）、gated 缺口、P2-4 UI 打磨仍为已披露缺口。
