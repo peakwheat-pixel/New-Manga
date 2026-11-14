@@ -249,3 +249,11 @@ NEW-MANGA-V1-FULL-AUDIT 与 R1–R4 整改、SEC-01/02/03、CORE-01、AUDIT-07/0
 - **保留限制 5 条**（不得读作已验收）：无像素视觉证据、gated 集成缺口、AC8 基线不可比、单卡 TaskPath 红 1 张、M2-C1 无 pin 体系。
 - **线外**：Release Gate 仍 BLOCKED，不计入 DoD、不得写 PASS。
 - 本维护哨位保持 `in_progress`（Gate 复评入口仍开放）。
+
+### 轮次 25（2026-11-14，本会话续）—— 用户要求的三项后续
+
+- **① 目视确认「查看对照」：完成**。新增 opt-in 截图测试渲染真实冲突帧与展开后面板（`verification/FEA-06-RESIDUAL-4B/visuals/`）；DSH 逐项目视核对：横幅保留「重读草稿」、其下独立「查看对照」入口、面板「区域文本对照」纵向双栏、上栏 `基底译文`/`user`/`edited`、下栏 `draft text`/`detect`/`本地草稿`、唯一按钮「关闭」、检查器 19 键未混入面板本地码。
+- **② 像素级验收：完成并落库**。口径沿用 `FluentResidual3VisualEvidenceTests`——**像素是签署证据、不作 AC 判据**；默认零写入，仅 `NEWMANGA_CAPTURE_FEA06_COMPARE_PNGS=1` 时产出。4B 的 R-12 limitation **关闭**；两张 PNG 已登记为 EV-8/EV-9。
+- **③ Release Gate：仍 `BLOCKED`**。出具 [差距评估](../reviews/MAINT-1-RELEASE-GATE-ASSESSMENT-2026-11-14.md)：更新了已变的旧事实（pytest 16F→0F、FEA DoD v2、视觉证据），逐条列出六项解锁条件的现状；明确**本轮未生成任何 Windows 包、未做 clean install / 升级回退 / 卸载、未调用真实模型 API、未做远端可见性调查**。现存 `0.1.1` 安装包不绑定当前基线，不得当作证据。
+- **可安全推进的两项**（后续会话）：条件 6 的独立最终 Review；条件 4 的前置——用 `tools/ci/publish-release.ps1` 在当前 HEAD 重新打包并跑 singlefile + `-Smoke`。
+- 门禁：check PASS(3w)；pins 18/18；inventory --check EXIT 0；4B TaskPath PASS（EV-8/EV-9 已登记）。

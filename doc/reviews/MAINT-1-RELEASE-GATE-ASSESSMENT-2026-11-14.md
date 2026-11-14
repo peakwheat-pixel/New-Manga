@@ -1,0 +1,41 @@
+# Release Gate 差距评估（FEA 收口后）— 2026-11-14
+
+**结论：Release Gate 仍 `BLOCKED`。** 本文件只更新事实与可执行性，不改 Gate 结论，不构成发布许可。
+
+基线：`main` @ `a30f78d7d`（工作区 clean）。
+
+## 1. 相较 `13_RELEASE_GATE.md` 的已变事实
+
+| 报告中的旧事实 | 当前实测 | 影响 |
+|---|---|---|
+| Python Core 全量 pytest `3519 passed / 16 failed / EXIT 1` | **pytest 3544 passed / 0 failed / 10 skipped** | 该阻断项**已解除**；报告数字需更新 |
+| FEA 线 DoD §1/§3 未达成 | **DoD v2 五条达成**（`MAINT-1-FEA-LINE-CLOSEOUT-v2-2026-11-14.md`） | 不直接解锁 Gate，但消除了"产品面未收口"的疑问 |
+| 4B「无像素级视觉证据」 | **已关闭**：`verification/FEA-06-RESIDUAL-4B/visuals/` 两张真实帧 + DSH 目视确认 | 视觉证据从"缺失"变为"有签署证据"，但仍不作 AC 判据 |
+| `.NET` 全量 `1875/0/109`（MAINT-1 P1） | 本项目三项目实测：App 914/0/11、Host 321/0/74、CoreClient 180/0/24 | 无 failed；全量 8 项目未在本轮复跑 |
+
+**注意**：`13_RELEASE_GATE.md` 第 3 条同时提到"Avalonia TestHost 8/8 runner EXIT 1、TRX 0 tests"——本轮的 `dotnet test` 是真实跑通的（914 passed），与该旧描述不符；差异原因（不同 runner/不同时点）本轮**未核实**，不得据此声称该条已解。
+
+## 2. Gate 六条解锁条件的现状
+
+| # | 条件 | 状态 | 本环境可执行性 |
+|---|---|---|---|
+| 1 | 处置并验证 7 项开放 finding | **未完成** | 需逐项实现 + 独立 Review；`MAINT-1` P4 只处置了 4 张**提案卡**，不等于 7 项 finding 关闭 |
+| 2 | `AUDIT-11-INC-001` 只读远端可见性调查 | **未完成** | 需网络与远端仓库访问；本轮未做 |
+| 3 | 补齐完整 GUI / Core / Host 关键流程与 Avalonia TestHost | **部分** | headless 与三项目测试已绿；真实 GUI 全流程矩阵未做 |
+| 4 | 当前 commit 生成 Windows 包 + clean install / 启动 / 升级回退 / 四页 / 卸载矩阵 | **未完成** | 需重新打包 sidecar（现存只有 `0.1.1` 旧包）+ 安装器签名；**本轮未做** |
+| 5 | 模型 / API 与代表性质量验证，或 Owner 明确接受有边界限制 | **未完成** | 需真实 API key；本环境不具备 |
+| 6 | 当前 head 的 Canonical Evidence / governance / TaskPath / verify_pins / API inventory + 独立最终 Review | **部分** | 四件套已绿（check PASS / pins 18/18 / inventory EXIT 0）；**独立最终 Review 未做** |
+
+## 3. 诚实边界
+
+- **本轮没有生成任何 Windows 包，没有做 clean install、升级/回退、卸载验证。** `G:\CODEX\New Manga.workspace\artifacts\release\NewManga-0.1.1-win-x64\` 是 `0.1.1` 的旧产物，**不绑定当前基线**，不得当作当前 commit 的安装包证据。
+- **没有调用任何真实模型 API。** 设置页「模型与设备：待接入」的状态未变；此前 MAINT-1 P2 冒烟也确认界面未假装已接入。
+- **没有做远端可见性调查**（`AUDIT-11-INC-001`）。
+- 因此 Gate **不能**从 BLOCKED 改为 CONDITIONAL 或 PASS。
+
+## 4. 可在后续会话安全推进的两项
+
+1. **条件 6 的独立最终 Review**：对当前 head 做一次未参与实现的独立复核（照 4B/C1 批次的模式），验证 Canonical Evidence、三指针、门禁与 limitation 登记。
+2. **条件 4 的前置**：用 `tools/ci/publish-release.ps1` 在**当前 HEAD** 重新打包 sidecar 并跑 singlefile + `-Smoke`（该脚本自带"启动 exe + 隔离数据根 + host.log ready + exit 0"的真实窗口冒烟），产出绑定当前 commit 的包与冒烟证据。这一步不等于 clean install 矩阵，但能替换掉过时的 `0.1.1` 证据。
+
+条件 1、2、5 依赖用户侧资源（finding 实现决策、远端访问、模型 API key），本轮无法推进。
