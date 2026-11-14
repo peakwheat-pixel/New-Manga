@@ -90,6 +90,20 @@
       "observations": []
     },
     {
+      "case": "changed-before-confirm",
+      "adapter": "HostController(HostOptions) \u002B ImportDockViewModel",
+      "plan": "\u8BA1\u5212\uFF1A\u5BFC\u5165 1 \u00B7 \u8DF3\u8FC7 0 \u00B7 \u4E0D\u652F\u6301 0 \u00B7 \u5931\u8D25 0",
+      "progress": "\u5BFC\u5165\u5931\u8D25 \u00B7 \u5DF2\u5BFC\u5165 0 \u00B7 \u8DF3\u8FC7 0 \u9875 / 0 \u6E90 \u00B7 \u4E0D\u652F\u6301 0 \u00B7 \u5931\u8D25\u6E90 1 \u00B7 \u5F85\u5904\u7406 1",
+      "error": "",
+      "chapter_pages": 0,
+      "rows": [
+        "page.png \u5931\u8D25\uFF08FILE_IDENTITY_CHANGED\uFF09 \u5DF2\u63D0\u4EA4 0 \u9875 \u00B7 \u5F85\u5904\u7406 1 \u9875 \u00B7 \u8DF3\u8FC7 0 \u9875 / 0 \u6E90"
+      ],
+      "observations": [
+        "\u5BFC\u5165\u5931\u8D25 \u00B7 \u5DF2\u5BFC\u5165 0 \u00B7 \u8DF3\u8FC7 0 \u9875 / 0 \u6E90 \u00B7 \u4E0D\u652F\u6301 0 \u00B7 \u5931\u8D25\u6E90 1 \u00B7 \u5F85\u5904\u7406 1\u5931\u8D25\uFF08FILE_IDENTITY_CHANGED\uFF09"
+      ]
+    },
+    {
       "case": "host-folder",
       "adapter": "HostController(HostOptions) \u002B ImportDockViewModel",
       "plan": "\u8BA1\u5212\uFF1A\u5BFC\u5165 2 \u00B7 \u8DF3\u8FC7 0 \u00B7 \u4E0D\u652F\u6301 0 \u00B7 \u5931\u8D25 0",
@@ -100,6 +114,16 @@
         "folder \u5DF2\u5BFC\u5165 \u5DF2\u63D0\u4EA4 2 \u9875 \u00B7 \u5F85\u5904\u7406 0 \u9875 \u00B7 \u8DF3\u8FC7 0 \u9875 / 0 \u6E90"
       ],
       "observations": []
+    },
+    {
+      "case": "secret-failure-capability",
+      "error_code": "CORE_CAPABILITY_MISSING",
+      "tokens_remaining": 0
+    },
+    {
+      "case": "secret-failure-register",
+      "error_code": "SOURCE_ACCESS_DENIED",
+      "tokens_remaining": 0
     },
     {
       "case": "secret-failure-start",
