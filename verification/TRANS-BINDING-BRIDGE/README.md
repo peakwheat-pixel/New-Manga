@@ -48,7 +48,7 @@ provider_runtime = build_provider_runtime(
 
 - 定向：`pytest -q tests/core/test_trans_binding_bridge.py tests/core/test_p15_core_settings.py` → **108 passed**
 - 全量：`logs/pytest-full.log`
-- 门禁：`logs/gates-final.log`（`check.ps1` 默认 + 本卡 TaskPath、`verify_pins`、`generate_api_inventory --check`）
+- 门禁：`logs/gates-final.log` —— 每节首行即**完整可复制命令**（工作目录 = 仓库根）：`pwsh -NoProfile -File tools/governance/check.ps1` / `pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/TRANS-BINDING-BRIDGE.md` / `pwsh -NoProfile -File tools/governance/verify_pins.ps1` / `C:\Python314\python.exe tools/generate_api_inventory.py --check`
 
 ## 4. 判别力（实现被回退时测试会红）
 
@@ -67,3 +67,53 @@ WITHOUT mirror: profiles=[]             bindings={}
 2. **`Rendering` capability 没有 pipeline step**：写入 P15 行但不创建设置 steps（`test_rendering_capability_never_invents_a_pipeline_step`），不臆造步骤。
 3. **双写不是跨库事务**：JSON store 与 SQLite `pipeline_defaults` 是两个存储，无法真事务；本卡用「mirror-first + 失败回滚」保证 AC3 禁止的那个方向（store 已写、镜像未写）不出现；反向窗口（镜像已写、store 写失败但回滚本身失败）已尽力回滚并留 typed 失败。
 4. **未验证真实 Host↔Core 端到端**：本卡只跑 Core 层；T-B/T-C 接 Host/UI 后需一条真实链路证据。
+## 6. r1 复核处置（`doc/reviews/TRANS-BINDING-BRIDGE-r1.md`，reviewed_head `94b8f33f5`）
+
+### 6.1 P1-1：binding 镜像必须按 scope 分流（已修）
+
+**scope 语义取证（文件:行）**：
+
+| 事实 | 证据 |
+|---|---|
+| 执行链只读**扁平**的 step 槽：`handlers._chain` 读 `run.provider_binding_snapshot.get(step_type)` | `src/infrastructure/providers/handlers.py:1267`；同样读取点 `src/infrastructure/pipeline/executor.py:27`、`src/application/tasks/projection.py:285`、`src/application/tasks/service.py:797` |
+| run 快照里**没有 per-book step 槽**：P15 的 book/chapter 解析结果被塞进 `provider_binding_snapshot[_p15_settings_snapshot]`，仅供 `settings_provider_bindings_resolve` 显示 | `src/bootstrap/core_service.py:6707-6709`；构建 `src/bootstrap/settings_commands.py:589-627`（`prepare_run_snapshot` 用 `_scope_context(scope)` + `_resolve_current_binding(capability, book_id=…, chapter_id=…)`） |
+| `provider_bindings` 是 `{step: profile_id}` 的扁平表，没有 scope 维度 | `src/application/settings/pipeline_defaults.py:62-103`；`src/infrastructure/sqlite/pipeline.py:1766-1786` |
+
+**结论**：能表达「谁在跑」的只有全局扁平槽，所以**只有 global scope 的 P15 绑定可以写它**；book/chapter scope 的写入与清除一律不碰扁平槽（否则 book 绑定会劫持全局执行链、clear 一个无关/空 scope 会抹掉全局配置）。
+
+**改动**：`src/bootstrap/settings_commands.py` 的 `_bindings_set` / `_bindings_clear` 增加 `writes_flat_slot` / `clears_flat_slot = scope["kind"] == "global"` 判定；非 global 只写 P15 JSON 行。
+
+**新增判别测试**：
+- `test_book_scoped_binding_does_not_overwrite_the_global_step`（global=A → book=B，扁平槽仍为 A，且 P15 resolve 对该书返回 B）
+- `test_clearing_a_book_scope_never_clears_the_global_step`
+- `test_clearing_a_chapter_scope_never_clears_the_global_step`
+
+### 6.2 P1-2：AC3 反向窗口（已修 + 已登记）
+
+**捕获范围与选型原则**（不做无脑 `except Exception`）：`_write_with_rollback` 现捕获
+`(BindingValidationError, KeyError, OSError, TypeError, ValueError)` —— 这正好是两个协作者**实际会抛出**的异常族：
+
+| 异常 | 来源 |
+|---|---|
+| `BindingValidationError` | pipeline-defaults seam 自身校验（`application/settings/errors.py`） |
+| `KeyError` | `JsonProviderProfileStore.update_profile` 对缺失行显式抛（`src/infrastructure/settings/json_profile_stores.py:162-164`） |
+| `OSError` | JSON 读/写/`os.replace`（`json_profile_stores.py:32-40`） |
+| `ValueError` | `ProfileFileFormatError`（`json_profile_stores.py:28`，ValueError 子类）/ `json.JSONDecodeError` / dataclass 校验 |
+| `TypeError` | JSON 序列化异常值的防御 |
+
+其余（`AttributeError`/`NameError`/`RuntimeError` …）属编程错误，**故意不捕获**，让其保持响亮，而不是被转成业务级 `SETTINGS_UNAVAILABLE`。
+
+**新增反向判别测试**（镜像先写、store 后失败的四条路径全覆盖）：
+- `test_store_update_failure_rolls_the_mirror_back`（`update_profile` 抛 `KeyError` ← r1 实测的那条）
+- `test_store_create_failure_rolls_the_mirror_back`（`add_profile` 抛 `OSError`）
+- `test_store_delete_failure_restores_the_mirror`（`delete_profile` 抛 `OSError`）
+- `test_store_binding_failure_rolls_the_mirror_back`（`save_bindings` 抛 `OSError`）
+
+四条都断言：typed `SETTINGS_UNAVAILABLE` + 镜像回到调用前值 + 与 JSON 侧一致。
+
+**仍无法保证的反向窗口（如实登记，不含糊）**：
+
+1. **回滚本身失败**：若回滚调用（`mirror.restore` / `upsert_profile(old)`）也抛错（例如同一 SQLite 已不可写），`_write_with_rollback` 会吞掉回滚异常并仍抛 typed 失败 —— 此时留下「镜像新值 / JSON 旧值」，**只能靠下一次成功写入或重启后的人工核对**。没有跨库事务可用。
+2. **进程在两次写之间被强杀**：镜像已提交、JSON 未写（或反之）无崩溃恢复标记；两者是不同存储、无 WAL 级协调。
+3. **JSON 文件被外部并发改写**：store 是「读-改-原子写」，外部写者会造成丢失更新（既有风险，与本桥无关）。
+4. **book/chapter scope 绑定不驱动执行**：扁平槽只接受 global（§6.1）⇒ 仅配置 book-scope 绑定时 `_chain` 仍会 `PROVIDER_NOT_CONFIGURED`。这是当前 run 快照结构的固有限制（无 per-book step 槽），需另卡在 run 快照上加 scope 维度，不在本卡。

@@ -268,3 +268,171 @@ def test_binding_mirror_failure_rolls_back_the_binding_rows(env, monkeypatch) ->
     assert response["error"]["code"] == "SETTINGS_UNAVAILABLE", response["error"]
     assert core.provider_binding_store.list_bindings() == []
     assert "translate" not in mirror_state(core)[1]
+
+
+# ------------------------------------------------- P1-1: scope-aware mirroring
+#
+# `provider_bindings` (pipeline_defaults) has ONE flat slot per step: the run's
+# `provider_binding_snapshot[step]` read by `handlers._chain`
+# (src/infrastructure/providers/handlers.py:1266-1274) and by
+# `infrastructure/pipeline/executor.py:27`. There is no per-book step slot there —
+# the P15 book/chapter resolution rides `provider_binding_snapshot[_p15_settings_snapshot]`
+# (built by `prepare_run_snapshot`, core_service.py:6704-6709) and is only a display face.
+# Therefore a book/chapter-scoped P15 binding must NEVER write the flat slot.
+
+def test_book_scoped_binding_does_not_overwrite_the_global_step(env) -> None:
+    core, server = env
+    global_profile = create_profile(server, name="Global")
+    book_profile = create_profile(server, name="PerBook")
+    global_id = global_profile["profile_id"]
+    book_id = book_profile["profile_id"]
+    book = core.library.create_book("Scoped Book")
+
+    assert request(server, "settings_provider_bindings_set", {
+        "scope": {"kind": "global"}, "capability": "Translation", "profile_id": global_id,
+    })["error"] is None
+    assert mirror_state(core)[1]["translate"] == global_id
+
+    scoped = request(server, "settings_provider_bindings_set", {
+        "scope": {"kind": "book", "book_id": book.book_id},
+        "capability": "Translation",
+        "profile_id": book_id,
+    })
+    assert scoped["error"] is None, scoped["error"]
+
+    # The P15 row is stored for that book ...
+    rows = core.provider_binding_store.list_bindings()
+    assert any(row["scope"] == {"kind": "book", "book_id": book.book_id} for row in rows)
+    # ... but the global flat slot (the one _chain reads) is untouched.
+    assert mirror_state(core)[1]["translate"] == global_id, "book scope hijacked the global step"
+
+    # The P15 resolve face still returns the book-scoped profile for that book.
+    resolved = request(server, "settings_provider_bindings_resolve", {
+        "capability": "Translation", "book_id": book.book_id,
+    })
+    assert resolved["error"] is None, resolved["error"]
+    assert resolved["result"]["profile_id"] == book_id
+
+
+def test_clearing_a_book_scope_never_clears_the_global_step(env) -> None:
+    core, server = env
+    profile = create_profile(server)
+    profile_id = profile["profile_id"]
+    book = core.library.create_book("Scoped Book")
+    assert request(server, "settings_provider_bindings_set", {
+        "scope": {"kind": "global"}, "capability": "Translation", "profile_id": profile_id,
+    })["error"] is None
+    assert mirror_state(core)[1]["translate"] == profile_id
+
+    # Clearing a book scope that has no binding at all must not touch the global slot.
+    cleared = request(server, "settings_provider_bindings_clear", {
+        "scope": {"kind": "book", "book_id": book.book_id}, "capability": "Translation",
+    })
+    assert cleared["error"] is None, cleared["error"]
+    assert mirror_state(core)[1]["translate"] == profile_id, "book clear wiped the global step"
+
+
+def test_clearing_a_chapter_scope_never_clears_the_global_step(env) -> None:
+    core, server = env
+    profile = create_profile(server)
+    profile_id = profile["profile_id"]
+    book = core.library.create_book("Scoped Book")
+    chapter = core.library.create_chapter(book.book_id, "Ch 1")
+    assert request(server, "settings_provider_bindings_set", {
+        "scope": {"kind": "global"}, "capability": "Translation", "profile_id": profile_id,
+    })["error"] is None
+
+    cleared = request(server, "settings_provider_bindings_clear", {
+        "scope": {"kind": "chapter", "chapter_id": chapter.chapter_id},
+        "capability": "Translation",
+    })
+    assert cleared["error"] is None, cleared["error"]
+    assert mirror_state(core)[1]["translate"] == profile_id
+
+
+# ------------------------------------------------- P1-2: reverse (store-fails) windows
+#
+# The mirror is written FIRST, so the reverse window is "mirror already new, store
+# write fails". Each of the four store writes is exercised here; after the typed
+# failure the mirror must be back at the pre-call value (both sides consistent).
+
+def test_store_update_failure_rolls_the_mirror_back(env, monkeypatch) -> None:
+    core, server = env
+    profile = create_profile(server, endpoint="https://old.example.test/v1")
+    profile_id = profile["profile_id"]
+    assert mirror_state(core)[0][profile_id]["base_url"] == "https://old.example.test/v1"
+
+    def boom(profile_arg):
+        raise KeyError(profile_arg.provider_profile_id)
+
+    monkeypatch.setattr(core.provider_profile_store, "update_profile", boom)
+    response = request(server, "settings_provider_profiles_update", {
+        "profile_id": profile_id,
+        "display_name": "Renamed",
+        "capabilities": ["Translation"],
+        "endpoint": "https://new.example.test/v1",
+        "model": "model-z",
+        "network_profile_id": None,
+        "enabled": True,
+    })
+    assert response["error"] is not None
+    assert response["error"]["code"] == "SETTINGS_UNAVAILABLE", response["error"]
+    # Reverse window closed: the mirror still carries the OLD value, matching the store.
+    assert mirror_state(core)[0][profile_id]["base_url"] == "https://old.example.test/v1"
+    assert core.provider_profile_store.get_profile(profile_id).base_url == "https://old.example.test/v1"
+
+
+def test_store_create_failure_rolls_the_mirror_back(env, monkeypatch) -> None:
+    core, server = env
+
+    def boom(profile_arg):
+        raise OSError("disk full")
+
+    monkeypatch.setattr(core.provider_profile_store, "add_profile", boom)
+    response = request(server, "settings_provider_profiles_create", {
+        "provider_id": "shared-provider",
+        "display_name": "Dangling",
+        "capabilities": ["Translation"],
+        "endpoint": "https://api.example.test/v1",
+        "model": "model-a",
+        "network_profile_id": None,
+        "enabled": True,
+    })
+    assert response["error"] is not None
+    assert response["error"]["code"] == "SETTINGS_UNAVAILABLE", response["error"]
+    assert mirror_state(core)[0] == {}, "mirror kept an entry the store rejected"
+    assert core.provider_profile_store.list_profiles() == []
+
+
+def test_store_delete_failure_restores_the_mirror(env, monkeypatch) -> None:
+    core, server = env
+    profile = create_profile(server)
+    profile_id = profile["profile_id"]
+
+    def boom(profile_id_arg):
+        raise OSError("locked")
+
+    monkeypatch.setattr(core.provider_profile_store, "delete_profile", boom)
+    response = request(server, "settings_provider_profiles_delete", {"profile_id": profile_id})
+    assert response["error"] is not None
+    assert response["error"]["code"] == "SETTINGS_UNAVAILABLE", response["error"]
+    assert profile_id in mirror_state(core)[0], "mirror lost a profile the store still owns"
+    assert core.provider_profile_store.get_profile(profile_id) is not None
+
+
+def test_store_binding_failure_rolls_the_mirror_back(env, monkeypatch) -> None:
+    core, server = env
+    profile = create_profile(server)
+    profile_id = profile["profile_id"]
+
+    def boom(bindings):
+        raise OSError("locked")
+
+    monkeypatch.setattr(core.provider_binding_store, "save_bindings", boom)
+    response = request(server, "settings_provider_bindings_set", {
+        "scope": {"kind": "global"}, "capability": "Translation", "profile_id": profile_id,
+    })
+    assert response["error"] is not None
+    assert response["error"]["code"] == "SETTINGS_UNAVAILABLE", response["error"]
+    assert "translate" not in mirror_state(core)[1], "mirror kept a step the store rejected"
+    assert core.provider_binding_store.list_bindings() == []

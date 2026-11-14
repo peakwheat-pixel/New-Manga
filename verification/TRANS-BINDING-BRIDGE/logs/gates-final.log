@@ -1,6 +1,8 @@
-# TRANS-BINDING-BRIDGE 门禁与定向测试原始输出（2026-11-14）
-# HEAD=d38c624f7f0c3237704ca70b0c3fef9ea701cfae
-## 1) check.ps1 (default)
+# TRANS-BINDING-BRIDGE 门禁与定向测试原始输出（2026-11-14，r1 处置后）
+# HEAD=3a118368168b4d19adc4278ec6e9b4c55c4e3edd   ← 本日志生成时 HEAD；提交随后包含本文件
+# 复现：以下每节第一行即完整可复制命令（工作目录 = 仓库根 G:\CODEX\New Manga）
+
+## 1) 命令：pwsh -NoProfile -File tools/governance/check.ps1
 Governance scope: 15 current documents; no historical directory scan.
 Task: doc\tasks\MAINT-1-RELEASE-MONITOR.md
 WARN: 存在 7 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
@@ -8,7 +10,7 @@ WARN: doc/STATUS.md 已达到预算的 80%：3164 bytes / 32 lines
 WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6995 bytes / 64 lines
 Governance check: PASS (3 warnings)
 EXIT=0
-## 2) check.ps1 -TaskPath TRANS-BINDING-BRIDGE
+## 2) 命令：pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/TRANS-BINDING-BRIDGE.md
 Governance scope: 15 current documents; no historical directory scan.
 Task: doc\tasks\TRANS-BINDING-BRIDGE.md
 WARN: 存在 7 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
@@ -16,7 +18,7 @@ WARN: doc/STATUS.md 已达到预算的 80%：3164 bytes / 32 lines
 WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6995 bytes / 64 lines
 Governance check: PASS (3 warnings)
 EXIT=0
-## 3) verify_pins.ps1
+## 3) 命令：pwsh -NoProfile -File tools/governance/verify_pins.ps1
 OK C01b 3c9f5af7d74f
 OK C02 bb365ca891a7
 OK C03 b77e7968a00b
@@ -37,10 +39,10 @@ OK C17 cdeee4872e29
 OK FEA01 0370c18932b1
 PIN AUDIT: PASS (all 18)
 EXIT=0
-## 4) generate_api_inventory.py --check
+## 4) 命令：C:\Python314\python.exe tools/generate_api_inventory.py --check
 OK: rendered counts match FEA-C07 doc
 | 6 | `RetryFailedTargetsAsync` | `Task<RunControlInfo?>` |
 EXIT=0
-## 5) 定向 pytest（bridge + P15）
-108 passed in 8.18s
+## 5) 命令：C:\Python314\python.exe -m pytest -q tests/core/test_trans_binding_bridge.py tests/core/test_p15_core_settings.py
+115 passed in 9.63s
 EXIT=0

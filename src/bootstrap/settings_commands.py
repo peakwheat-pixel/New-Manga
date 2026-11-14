@@ -743,11 +743,19 @@ class P15SettingsCommands:
         # `capability` is the P15 wire literal ("Translation"); the mirror is keyed
         # by the model capability ("translation") that CAPABILITY_TO_STEP uses.
         mirror_capability = CAPABILITY_TO_MODEL.get(capability, capability)
+        # P1-1: the run snapshot has exactly ONE flat slot per step
+        # (`handlers._chain` reads `run.provider_binding_snapshot[step]` — there is no
+        # per-book step slot), so ONLY a global binding may write it. Book/chapter
+        # scopes stay P15-only: their resolution already rides the run's
+        # `_p15_settings_snapshot` for display, and writing them into the flat slot
+        # would let a book-scoped bind silently hijack the global execution chain.
+        writes_flat_slot = scope["kind"] == "global"
 
         def write() -> None:
             # AC1/AC3: mirror the step binding first (that is what _chain reads),
             # then persist the P15 binding rows; a row-write failure restores the mirror.
-            mirror.bind_capability(mirror_capability, profile_id)
+            if writes_flat_slot:
+                mirror.bind_capability(mirror_capability, profile_id)
             self._binding_store().save_bindings(rows)
 
         self._write_with_rollback(
@@ -767,9 +775,14 @@ class P15SettingsCommands:
         mirror = self._runtime_mirror("binding")
         before = mirror.snapshot()
         mirror_capability = CAPABILITY_TO_MODEL.get(capability, capability)
+        # P1-1: only clearing the GLOBAL scope may clear the flat step slot. A book /
+        # chapter clear must never touch it (otherwise clearing an unrelated or even
+        # empty scope silently un-configures the global execution chain).
+        clears_flat_slot = scope["kind"] == "global"
 
         def write() -> None:
-            mirror.clear_capability(mirror_capability)
+            if clears_flat_slot:
+                mirror.clear_capability(mirror_capability)
             self._binding_store().save_bindings(rows)
 
         self._write_with_rollback(
@@ -1010,12 +1023,22 @@ class P15SettingsCommands:
 
         ``rollback`` is best-effort: the contract is the typed failure, and a
         rollback that itself fails must not mask it with a raw exception.
+
+        Exception scope (P1-2, deliberately explicit rather than ``except Exception``):
+        the two writers this pair joins can raise exactly these families —
+        ``BindingValidationError`` (the pipeline-defaults seam's own validation),
+        ``KeyError`` (``JsonProviderProfileStore.update_profile`` signals a missing row
+        with it), ``OSError`` (JSON file read/write/replace), ``ValueError``
+        (``ProfileFileFormatError`` / ``json.JSONDecodeError`` / dataclass validation)
+        and ``TypeError`` (JSON serialisation of an unexpected value). Anything else is
+        a programming error and must stay loud instead of being turned into a
+        business-level SETTINGS_UNAVAILABLE.
         """
         try:
             write()
         except SettingsSurfaceError:
             raise
-        except (BindingValidationError, OSError, ValueError, TypeError) as error:
+        except (BindingValidationError, KeyError, OSError, TypeError, ValueError) as error:
             try:
                 rollback()
             except Exception:  # noqa: BLE001 - best effort; the typed failure is the contract
