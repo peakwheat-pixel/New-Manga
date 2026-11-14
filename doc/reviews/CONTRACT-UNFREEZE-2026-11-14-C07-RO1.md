@@ -43,7 +43,7 @@
 
 **接入既有面（已在库，本卡不改）**：
 - Core：`src/bootstrap/core_service.py:3533/7787/7796`（`list_page_region_texts` 已实现）；
-- Host 注册/分发：`HostCommandRegistry.cs:191/357/465`、`HostCommandDispatcher.cs:868-871`（`page_id` 必填、`region_ids` 可选、`expected_revision` 可选）；
+- Host 注册/分发：`HostCommandRegistry.cs:191/357/465`、`HostCommandDispatcher.cs:868-871`（`page_id` 必填、`region_ids` 可选；**不接受 `expected_revision`**——该字段属 `restore_region_revision`（`core_service.py:3605+`），不得混入本命令签名，否则偏离本预授权）；
 - 客户端解析器：`apps/desktop-avalonia/src/NewManga.CoreClient/Commands/RegionTextProjection.cs:224-281`（`RegionPageTextProjection` / `RegionTextDetail`，当前仅测试使用）。
 
 **4B 落地判据（v1.10 的动作清单，本卡不执行）**：

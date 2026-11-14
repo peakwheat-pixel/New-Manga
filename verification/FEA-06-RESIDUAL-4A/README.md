@@ -14,7 +14,7 @@
 | AC2 inventory 更新 | 计划节锁死名称/返回类型/#80；正式成员表 = 脚本 stdout 逐行一致 | **PARTIAL**：新增「RO-1 计划追加」节；成员表与 stdout **`ALL_MATCH: True`**（三接口全等），统计仍 `79 / 86` = 代码实测；80/87 翻转归 4B（v1.10，DSH 裁决口径） |
 | AC3 pin 重算 | 新 pin 写入冻结记录 §1 置顶、前一 pin 原值保留、§1B/§2/§3/§5 同步 | **PARTIAL**：pin `8ccaba05…` → `91e51ab7…`；v1.8 原值保留于「前一 pin（v1.8，保留原值）」行；§1B 记为「独立复核 pending」 |
 | AC4 载体 | 结构对齐同型先例 | **PARTIAL**：`doc/reviews/CONTRACT-UNFREEZE-2026-11-14-C07-RO1.md` 已落盘，§6 复核记录为 `pending` |
-| AC5 独立字节级复核 | 由 DSH 另派未参与写作的上下文 | **PENDING**：未派发；作者不预填结论 |
+| AC5 独立字节级复核 | 由 DSH 另派未参与写作的上下文 | **CHANGES_REQUESTED (r1)**：独立子 agent 复核 `doc/reviews/FEA-06-RESIDUAL-4A-r1.md`，P0=0 / P1=2 / P2=7 / P3=5；字节层全过，P1 为记录层事实错误；已修 P1-1/P1-2（不触 inventory 字节，pin 仍 `91e51ab7…`），待 r2 窄复核 |
 | AC6 门禁四件套 | 四项原始输出 + EXIT | **PARTIAL**：四项全 `EXIT=0`；台账经 DSH 授权重生成一次；零越界按卡面逐文件核对 |
 
 ## pin（完整 64 位）
@@ -23,7 +23,7 @@
 |---|---|
 | 前 pin（v1.8，本提交后作为「前一 pin」保留） | `8ccaba05cbc21eec04a366f8bfa2be2dea4515ba90e6d5aab95b11a7c47f0509` |
 | 后 pin（v1.9） | `91e51ab74da201b99b6704e49fca96e93657d869dcc1e9523661dbb299c6d750` |
-| 旧 pin 可复现性 | `git show HEAD:doc/plan/FEA-C07_API_INVENTORY.md` → CRLF→LF 归一后 SHA-256 = `8ccaba05…` ✅ |
+| 旧 pin 可复现性 | `git show 4cb24ed20:doc/plan/FEA-C07_API_INVENTORY.md`（v1.9 的父提交，**不可用 `HEAD`**——提交后 HEAD 指向新 pin）→ CRLF→LF 归一后 SHA-256 = `8ccaba05…` ✅ |
 | 冻结记录声明 = 工作树 SHA-256 | `True`（`logs/pin-before-after.log` 的 `pin_matches_file`） |
 | 文件字节变化 | `git diff --numstat` = **+18 / −2**（LF，13,040 B） |
 

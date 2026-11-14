@@ -190,6 +190,38 @@ Task<RegionPageTextProjection?> ListPageRegionTextsAsync(
 - **未做**：独立字节级复核（AC5 `pending`，须 DSH 另派）；80/87 统计翻转（R-2，属 4B）；任何产品代码。
 - **下一步**：① DSH 独立 scope review 本卡规格与预授权（RO-1 §4：`proposed` → `ready` 前必须有）→ ② DSH 另派独立上下文做字节级复核并回填载体 §6 / 冻结记录 §1B → ③ 复核通过后重冻 C-07 v1.9 → ④ 释放 `FEA-06-RESIDUAL-4B`（端口 + UI + 判别测试 + 统计 80/87 翻转 + pin v1.10）。
 
+## r1 独立复核处置（append-only，2026-11-14）
+
+**复核**：[`FEA-06-RESIDUAL-4A-r1.md`](../reviews/FEA-06-RESIDUAL-4A-r1.md)（独立上下文子 agent，未参与写作与实现）。**结论 `changes_requested`：P0=0 / P1=2 / P2=7 / P3=5**。
+**字节层全部通过**（不采信卡面自述、由复核者独立实测）：pin 三口径 = `91e51ab7…`；旧 pin `8ccaba05…` 原值保留；成员表与源码逐行 `ALL_MATCH: True`（79 + 4 非方法 = 86）；diff 10 文件 ⊆ allowed_paths、`src/apps/tests` 零改动；`verify_pins` 18/18；四门禁 EXIT=0。
+
+### P1（已修；不触 inventory 字节 ⇒ pin 仍 `91e51ab7…`）
+
+- **P1-1**：冻结记录 §5 v1.9 行曾称 `check.ps1` 为红，与 §2 条件 4 及实测矛盾 → 已改为「台账重生成后 PASS；重生成前曾因 TASK_LEDGER 计数过期报错」。
+- **P1-2**：载体 §2 曾把 `expected_revision` 写成 `list_page_region_texts` 的可选字段（实际 dispatcher `:868-871` 与 Core handler 只收 `page_id`/`region_ids`，该字段属 `restore_region_revision`）→ 已删除并改为明确「**不接受** `expected_revision`」，防止 4B 偏离预授权签名。
+
+### P2（逐条处置）
+
+| # | 处置 |
+|---|---|
+| P2-1 | 冻结记录 §2 条件 1 状态列改为 `✅（v1.9 ⏳ pending）`，消除「标 ✅ 而复核 pending」矛盾。**已修** |
+| P2-2 失败态判别链 | **规格 v1.1 约束**：`null` 单一返回不可机械区分原因，4B 必须按固定优先级判定并各自可测：① `HOST_NOT_READY`（runtime/端口未就绪）② `REGION_TEXT_PROJECTION_UNAVAILABLE`（IPC 失败/投影不可读）③ `TARGET_NOT_FOUND`（page 不存在）。禁止把三种原因合并为同一 UI 文案。 |
+| P2-3 空集合语义 | **规格 v1.1 更正**：`regions: []` **不能**单独表示「该页无区域」——Core 对未知 page 也返回 `regions: []`（`page_size` 为 `null`）。4B 必须结合 `page_size`/`page_id` 与 `TARGET_NOT_FOUND` 区分，**不得**把空集合直接渲染成「无冲突」。 |
+| P2-4 L2 数据源 | **规格 v1.1 更正**：L2 必须取 ViewModel 的**实时可编辑 `DraftText`**，不得取持久化 `Draft.Patch`；冲突态下两者可能不同，而对照的意义正是让用户看到当下差异。 |
+| P2-5 新码闭集 | **规格 v1.1 写死**：`REGION_TEXT_PROJECTION_UNAVAILABLE` 是 **UI 面板本地原因码**，**不得**加入 `DraftErrorMap`（19 键闭集 = FEA-05 的 17 个 wire 码 + `INTERNAL`/`UNKNOWN`）；4B 不得新增 wire 码、不得改该闭集。 |
+| P2-6 S7 允许面 | **4B 卡 `allowed_paths` 必须**包含 `WorkbenchViewModel.cs` / `WorkbenchPageView.cs`（及新增控件文件）；4A 不实现，只在卡面登记。 |
+| P2-7 旧 pin 复现命令 | 证据 README 由 `git show HEAD:` 改为 `git show 4cb24ed20:`（父提交）。**已修** |
+
+### P3（登记，不修）
+
+- **P3-1**：冻结记录 §1B 缺 v1.8 行（既有断档，非本轮引入）→ 下次触及时补「v1.8：AI-1 统计 79/86 + P21–P25 并入」。
+- **P3-2**：载体 §1 指纹拆分称 RO-1 节「12 行」，实际 15 行（`FEA-C07_API_INVENTORY.md:140-154`）；总数 `+18/−2` 正确 → 登记。
+- **P3-3**：卡面把既有 `DoesNotContain` 描述成正向断言（卡面后文已纠正）→ 登记。
+- **P3-4**：证据 README 的日志头声明过度（两份日志无 HEAD/status）→ 登记。
+- **P3-5**：`.gitattributes` 无 `doc/plan/FEA-C07_API_INVENTORY.md text eol=lf`，`core.autocrlf=true` 的 fresh clone 会破 pin（**既有债**，v1.8 及更早同病，载体/README 已披露）→ 登记为 `GOV-EOL-PIN` 扩展候选，不在本卡 `allowed_paths`。
+
+**复核者的明确结论**：当前字节**不满足重冻条件**（记录层两处假陈述必须先修）；修完 P1（不触 inventory）后 r2 只需窄复核三口径 + 两处改动 + 四门禁即可 `approved`，随后由 DSH 回填载体 §6 与冻结记录 §1B 并重冻。
+
 ## Canonical Evidence
 
 进入 `in_review` 前由 DSH 填写；当前为 `proposed`，证据以 `verification/FEA-06-RESIDUAL-4A/README.md` 索引（含 pin 前后值、门禁四件套原始输出、脚本 stdout 与成员表逐行比对）。
