@@ -203,6 +203,32 @@ out_of_scope:
 - 结果：`--check` **EXIT 0**（`1/80/6 = 87`，`OK: rendered counts match FEA-C07 doc`）；成员表三接口逐行 `ALL_MATCH: True`；`verify_pins` 18/18（C07 = v1.10 新 pin）；pin `91e51ab7…` → **v1.10 新值**（v1.9 原值保留）。
 - 待办：独立字节级复核（载体 §6 `pending`，作者不得自评）→ 回填后重冻 v1.10。
 
+## UI 刀（4B-3，`42123ae67`）风险裁决（append-only，2026-11-14 DSH）
+
+实现者主动披露 4 条风险，裁决如下。本裁决**不改变 AC**，只解除实现口径歧义。
+
+### R-9 接受：VM 快照 + 面板实时（口径已补进 4A 规格 S1-c）
+
+- **现象**：`Compare.WorkingLayer.Text` 是打开瞬间快照；实时性由 `WorkbenchPageView` 在 `DraftText` 变化时调 `panel.UpdateWorkingText` 保证。
+- **为何这是对的**：`DraftText` 每键触发 `PropertyChanged`；若让 VM 每次重建 `Compare` 会触发 `Render()` 整页重排（`WorkbenchPageView.cs:177` 本就把 `DraftText` 排除在 Render 外，正是为了不打断输入）。
+- **裁决接受**，但**判据是用户可见行为**：面板显示必须始终等于当前 `DraftText`，且**重排后不得回落成旧值**。
+- **若复核发现重排后回落成旧值 → P1 功能缺陷**，不属口径分歧。
+
+### R-10 接受：「恰好一次」的边界是「每次打开」
+
+一次打开 = 1 次投影调用；关闭再开 = 2 次；重排不重复调用。断言落在 `WorkbenchViewModel`（不在端口层加缓存）。接受。
+
+### R-11 登记（不阻断）：Esc 走 `*ForTest` seam
+
+`HandleKeyForTest` 与真实 `OnWorkbenchKeyDown` 共用同一段逻辑（沿用 `FluentShellSurface` 既有约定），headless 下真实键盘事件未端到端验证。**登记为已披露缺口**，与 4B-1/4B-2 的 gated 缺口同类，随 4B 收口记入 limitation。
+
+### R-12 裁决：结构性证据可接受，但必须披露（不假装已视觉验收）
+
+- 本刀只有结构性断言（双栏标题、无输入控件、唯一按钮、换行属性、AutomationProperties），**无**像素/主题截图基线。
+- **裁决**：对 AC3/AC4/AC5，结构性证据**可接受**（本卡不引入 Avalonia 截图基线，成本与工程惯例不匹配）。
+- **但须**：① 证据 README 明确写「无像素级证据，用户可见效果未做截图层验收」；② 4B 收口把该项列入 limitation；③ 若用户后续要求视觉验收，另开冒烟卡（可复用 `tools/p2-ui-smoke.ps1` 截图通路）。
+- **不得**把结构性证据表述为「已完成视觉验收」。
+
 ### 后续刀（未开始）
 
 - 4B-3：`WorkbenchViewModel` 对照状态/命令（L2 取实时 `DraftText`、失败优先级、`IsConflict` 派生）+ `WorkbenchPageView` 冲突横幅旁入口与纵向双栏容器（AC3/AC4；「恰好一次投影」断言落在 VM，不进端口层缓存）。

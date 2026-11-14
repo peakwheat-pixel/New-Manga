@@ -77,8 +77,9 @@ out_of_scope:
 | **L2** | 当前工作副本 | 现有 `LoadPageRegionsAsync` 的 `RegionSummary`（`CoreServiceClient.cs:204-210`）+ **`WorkbenchViewModel` 的实时可编辑 `DraftText`**（用户此刻屏幕上可见且可编辑的文本；**不得**取持久化 `Draft.Patch["text"]`——冲突态下两者可能不一致，而对照的意义正是让用户看到当下差异。v1.1 修订，见 §r1 处置 P2-4） | 仅展示本地态。**无草稿即「本地无草稿」，不得用 L1 值冒充 L2** |
 
 判别断言：
-- **S1-a**：面板打开时 `ListPageRegionTextsAsync` 必须被调用**恰好一次**（一页一次，禁止 per-region N+1）。
+- **S1-a**：面板打开时 `ListPageRegionTextsAsync` 必须被调用**恰好一次**（一页一次，禁止 per-region N+1）。边界 = **每次打开**：关闭再开算第二次；页面重排**不得**重复调用。
 - **S1-b**：L1 的任何字段都不得由 L2 派生；反向亦然（双向独立可判别：用不同取值的 Fake 断言两栏文本不同源）。
+- **S1-c（v1.1 补充，DSH R-9 裁决）**：L2 的**实时性由 View 层保证**——`WorkbenchViewModel` 的对比记录可以是打开瞬间快照，但面板必须在 `DraftText` 变化时更新并**在页面重排后仍显示当前值**（不得回落成旧值）。判据是用户看到的值，不是数据结构的刷新频率。若重排后显示旧值，属功能缺陷（P1），不是实现口径分歧。
 
 ### S2 字段（每行显示项）
 
