@@ -3,7 +3,7 @@ id: CHAPTER-MANUAL-SORT
 title: 章节手动排序闭环（书架拖拽 + 原子持久化 + 缓存失效）
 kind: implementation
 governance_version: 3
-status: in_progress
+status: done
 disposition: "codex 外部裁决 A（2026-11-14）落地；L-L1-2 排序 UI 范围由 C3-3 OUT 提升为本卡；DSH 2026-11-14 释放"
 approval: codex 裁决 A + DSH 写入方案裁决 2026-11-14
 suggested_owner: DSH
@@ -14,10 +14,10 @@ depends_on:
 base_commit: 79606ea4a
 branch: main
 worktree: G:/CODEX/New Manga
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: c459b279f493b11941d0f05f49003984009e0707
+delivery_head: c459b279f
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/CHAPTER-MANUAL-SORT
 allowed_paths:
   - doc/tasks/CHAPTER-MANUAL-SORT.md
@@ -155,8 +155,17 @@ allowed_paths:
 
 ## Canonical Evidence
 
+AC3（缓存失效集成）与 AC5（真实 GUI 拖拽）为 `NOT_RUN`，**不以任何证据声称通过**；下表只覆盖已实际执行并判定的 AC。
+
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) | sha256_basis |
 |---|---|---|---|---|---|---|
+| EV-CMS-01 | AC1/AC2/AC6/AC8 与三项前置核实 | verification/CHAPTER-MANUAL-SORT/README.md | c459b279f | c1f74ff4428ac5fc9d79ed34219228b12556288a8e8c85b83e978a24c4b72134 | CANONICAL | BLOB |
+| EV-CMS-02 | AC10 回归与 NOT_RUN 说明 | verification/CHAPTER-MANUAL-SORT/regression.log | c459b279f | fae2be4a2524dd8c5c8afc8c246a44721036a12b22be1119930b930d720986e7 | CANONICAL | BLOB |
+| EV-CMS-03 | AC1/AC2/AC7 判别测试（含回退变红实测） | tests/storage/test_chapter_reorder_atomic.py | c459b279f | fff5392a1d0ced06a7d8560acdd1a3c25cd7d952c3247a43d72515ca981e1664 | CANONICAL | BLOB |
+| EV-CMS-04 | AC4/AC8/AC9 VM 语义与判别测试 | apps/desktop-avalonia/tests/NewManga.App.Tests/ShelfChapterReorderTests.cs | c459b279f | 4f374c852778a8bd3d3c951f682911fb47c0e9676e5e45a3baa15c92609f368a | CANONICAL | BLOB |
+| EV-CMS-05 | 独立复核（ACCEPT_WITH_LIMITATIONS） | doc/reviews/CHAPTER-MANUAL-SORT-review-r1.md | c459b279f | a91b5fdc0e114aecc5087ddd8566ca7ef95361d7d1bec85682d70f4fe318f95f | CANONICAL | BLOB |
+| EV-CMS-06 | Gate 条件 1 口径（6+1+1）与条件 2 更正 | doc/reviews/MAINT-1-RELEASE-GATE-ASSESSMENT-2026-11-14.md | c459b279f | 1cdf467695a63e9064b9cf789c83d672cde3acfb00f2099facc05ea3cb3966a7 | CANONICAL | BLOB |
+| EV-CMS-07 | 既有缺陷登记 E-1…E-5 | doc/reviews/MAINT-1-EXISTING-FINDINGS-2026-11-14.md | c459b279f | b07e5865d34b153b7ac360865c91caecfef52d498120c95e9b5bc7456fdc6899 | CANONICAL | BLOB |
 
 ## Resource Manifest
 
@@ -166,9 +175,18 @@ allowed_paths:
 
 ## Closeout Record
 
-- Closeout date / DSH：待关闭时填写。
-- canonical_evidence_status：`pending`。
-- resource_closeout_status：`pending`。
-- 删除、迁移、归档数量/字节数：待关闭时填写；无操作填写 0。
-- 未关闭项及保留原因：`custom_rank` 无消费端（R4）；跨实例并发不解决（R3）。
-- 当前指针清理：待关闭时更新 STATUS / Plan / rolling checkpoint。
+- Closeout date / DSH：2026-11-14，DSH（Lead / Architect / Integrator）。
+- canonical_evidence_status：`complete`（7 条 BLOB pin，commit `c459b279f493b11941d0f05f49003984009e0707`）。
+- resource_closeout_status：`complete`（本卡无 worktree 与用户数据；构建用 venv 见下）。
+- 删除、迁移、归档数量/字节数：0。未删除任何工作树、fixture 或用户数据。
+- 未关闭项及保留原因：
+  - **AC3 缓存失效集成 = `NOT_RUN`**（保留 `pending-host-cache-test.cs.txt`，待 Gate 条件 4 产出的新 sidecar 后转正）；
+  - **AC5 真实 GUI 拖拽 = `NOT_RUN`**（只做了编译级与静态核对）；
+  - Host early-return 无错误码、缓存读-填竞态、`update_chapters_atomic` SQL 重复、AC9 删守卫时 hang —— 均按 r1 复核建议登记，不在本卡扩大范围。
+- 当前指针清理：STATUS / Plan / TASK_LEDGER / rolling checkpoint 已更新。
+- **本卡自身的错误登记**（不得淡化）：`13d836713` 曾把 .NET 测试写脏的
+  `verification/FEA-09/logs/wire-redacted.ndjson` 卷进提交（越界 + `EV-059` pin 失效），
+  已在 `c459b279f` 还原并校验；另在填写本记录时一度**编造** `integration_commit` 的完整 hash，
+  已用 `git rev-parse` 的真实值 `c459b279f493b11941d0f05f49003984009e0707` 覆盖。
+- **资源**：`G:\CODEX\New Manga.workspace\task-envs\CHAPTER-MANUAL-SORT\build-venv`（PyInstaller 安装失败的空 venv）
+  与 `commit-msg*.txt`/`hash.py` 为派生物；`disposition = DELETE_SAFE`（无引用），本次**未删除**。

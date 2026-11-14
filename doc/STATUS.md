@@ -4,8 +4,8 @@
 
 ## 当前程序
 - **FEA 线**（S0–S5 终态；limitation 已逐条处置）：[FEA-00 方案](design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md)；V11R 收官（v0.1.1）。
-- 当前 Task：[CHAPTER-MANUAL-SORT](tasks/CHAPTER-MANUAL-SORT.md) `in_progress`；伞形哨位 [MAINT-1-RELEASE-MONITOR](tasks/MAINT-1-RELEASE-MONITOR.md)。
-- **Release Gate `BLOCKED`**：条件 1 = **6/8 已关闭**（L-R1-1、L-R2-1、L-F1-2、L-L1-1、L-L1-4、L-AI1-6）+ `L-L1-2` 由 `CHAPTER-MANUAL-SORT` 收口 + `L-F1-3` 维持 `KEEP-NOTRUN`（压测未做）；条件 2 **调查已完成**（`SEC-01`/`SEC-02` done，结论"已确认可见"，处置需 Owner 授权）；条件 3/4/5 未满足；条件 6 已完成。口径详见 [Gate 评估 §14](reviews/MAINT-1-RELEASE-GATE-ASSESSMENT-2026-11-14.md)。
+- 当前 Task：[MAINT-1-RELEASE-MONITOR](tasks/MAINT-1-RELEASE-MONITOR.md) `in_progress`（伞形哨位）；最近收口 [CHAPTER-MANUAL-SORT](tasks/CHAPTER-MANUAL-SORT.md) `done`（AC3/AC5 = NOT_RUN）。
+- **Release Gate `BLOCKED`**：条件 1 = **7/8 已关闭**（L-R1-1、L-R2-1、L-F1-2、L-L1-1、L-L1-4、L-AI1-6、L-L1-2）+ `L-F1-3` 维持 `KEEP-NOTRUN`（压测未做）；条件 2 **调查已完成**（`SEC-01`/`SEC-02` done，结论"已确认可见"，处置需 Owner 授权）；条件 3/4/5 未满足；条件 6 已完成。口径详见 [Gate 评估 §14](reviews/MAINT-1-RELEASE-GATE-ASSESSMENT-2026-11-14.md)。
 - **既有缺陷登记**（接手会话新发现）：[MAINT-1-EXISTING-FINDINGS](reviews/MAINT-1-EXISTING-FINDINGS-2026-11-14.md)（E-1 命令覆盖 111/90、E-2 sidecar 早于命令、E-3 错误码缺失）。
 
 ## 近期完成
