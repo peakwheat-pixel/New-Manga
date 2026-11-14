@@ -81,3 +81,41 @@ def test_font_wire_refresh_and_invalid_payloads(tmp_path):
     assert invalid["error"] is not None and invalid["error"]["code"] == "INVALID_REQUEST"
     missing = _rpc(server, "ImportFontAsset", {"source_path": str(tmp_path / "nope.ttf")})
     assert missing["error"] is not None and missing["error"]["code"] == "FONT_SOURCE_INVALID"
+
+
+# MAINT-2-C1-BATCH-1 AC2 (C1-2 / L-F1-2): the STORAGE layer already pins
+# FONT_DELETE_FAILED (tests/storage/test_fonts.py::test_delete_reports_typed_failure_when_managed_copy_is_stuck);
+# the WIRE layer did not, so a regression in the error mapping would only surface in production.
+# This test drives the real command handler end to end: a stuck managed copy must come back as the
+# typed FONT_DELETE_FAILED (not a generic failure), and the row must stay active so the delete can
+# be retried -- then the retry must succeed.
+def test_font_wire_delete_failure_is_typed_and_retryable(tmp_path):
+    server = _server(tmp_path)
+    imported = _rpc(server, "ImportFontAsset", {"source_path": str(_font(tmp_path))})
+    assert imported["error"] is None, imported["error"]
+    asset_id = imported["result"]["asset_id"]
+
+    managed_root = tmp_path / "data" / "fonts"
+    managed_files = list(managed_root.iterdir())
+    assert len(managed_files) == 1, managed_files
+    managed = managed_files[0]
+
+    # R2-002: a read-only managed copy cannot be removed on Windows.
+    managed.chmod(0o444)
+    try:
+        failed = _rpc(server, "DeleteFontAsset", {"asset_id": asset_id})
+        assert failed["error"] is not None, "stuck managed copy must not report success"
+        assert failed["error"]["code"] == "FONT_DELETE_FAILED", failed["error"]
+        # Existing projection (core_service.handle_delete_font_asset): only FONT_NOT_FOUND maps
+        # to not_found; an IO failure such as a stuck copy is `internal` (it is not a bad input).
+        assert failed["error"]["category"] == "internal", failed["error"]
+        # R3-001: the row stays active so the delete can be retried.
+        still_there = _rpc(server, "ListFontAssets", {})
+        assert [item["asset_id"] for item in still_there["result"]["assets"]] == [asset_id]
+    finally:
+        managed.chmod(0o666)
+
+    retried = _rpc(server, "DeleteFontAsset", {"asset_id": asset_id})
+    assert retried["error"] is None, retried["error"]
+    assert retried["result"]["deleted"] is True
+    assert _rpc(server, "ListFontAssets", {})["result"]["assets"] == []
