@@ -1838,3 +1838,18 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **结论**：A 可行，但**更小风险的等价方案是 journal 表新增独立列 `container_path TEXT NULL`**，
   完全不碰既有 JSON、摘要与消费者。**未实施**，待冻结范围。
 - 未改任何代码；带 opt-in 三类基线仍 **12/1**；条件 3 仍不判 MET。
+## 232. E9-CARRIER-CORRECTION-1：更正上一轮的 schema 迁移误判；新约束是"拿不到路径"（2026-11-15，DSH，goal 轮次 33）
+
+- **我上一轮判断错了**：`E9-PATH-CARRIER-STUDY-1` 暗示修复需要 **schema 迁移**（`source_operations` 加列）。
+  **错**：C# 的 journal **不是 SQLite 表**，是 **DPAPI 加密的 JSON 文件**
+  （`Write` 用 `JsonSerializer.SerializeToUtf8Bytes` + `Protect`，`Read` 用 `Unprotect`，每 operation 一个文件）。
+  **加字段无需迁移**，`System.Text.Json` 对缺失字段留 `null`，旧文件可反序列化。
+  `schema.py:798` 的 `source_operations` 是 **Python Core 侧**的另一份记录（我上一轮还把它误称为
+  `source_operation_journal`），与 C# journal 文件是**两套东西**。
+- **新约束**：全仓 `_operations.Authorize(...)` **只有 1 个调用点**（`HostOperationOrchestrator.cs:301`，
+  retry-failed 流程），其上下文**没有**容器路径；`roots` 正是错的 registry root。
+  真正知道路径的是 `SourceReadCoordinator.IssueLockedAsync` 的 `sourcePath`（grant 发行链），
+  与写 journal 是**两条不同的链** ⇒ **加字段容易，难在"哪个写入点能拿到真实容器路径"**。
+- **待 DSH 裁决**：①操作开始（plan 创建）时是否已知路径；②只有 Core scan target 知道则是否扩 Core（成本=方案 B）；
+  ③都拿不到是否接受"非 folder 恢复永久 typed 拒绝"并在产品上限制该能力。
+- **未改任何代码**；带 opt-in 三类基线仍 **12/1**；条件 3 仍不判 MET。
