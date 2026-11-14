@@ -1483,3 +1483,22 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   **下一轮唯一决定性证据是 wire 帧原文**（`EnableWireEvidence = true` 已开启，证据文件还没读）。
 - **自登记**：本轮我又一次先怀疑 namespace（读了代码才发现它只影响 preview），说明我前一轮的怀疑方向
   错了一格。正确做法是**先拿 sidecar 自己的日志**，而不是从现象反推架构。
+## 211. SIDECAR-REBUILD-1 四续（决定性）：wire 帧证明 sidecar 正确，缺陷在 C# 并发响应配对（2026-11-15，DSH，goal 轮次 10）
+
+- 提交：`acb8a89b2`。卡仍 `in_progress`。
+- **wire 帧分析（对照两个 session）**：通过侧 6 帧；失败侧 19 帧，其中 `list_chapters`×7、`GetReaderProjection`×6
+  —— 失败的那个测试就是**故意并发**的 `ConcurrentChapterAndProjectionReads_AreSerialized`。**`errors: {}`**。
+- **决定性事实**：失败 session 的 `ListBooks` 响应**返回了那本书**；7 次 `list_chapters` **全部**返回了正确
+  `{"chapters":[{...第 1 章...}]}`。**sidecar 100% 正常。**
+- **C# 解析代码形状一致**（`result.chapters`），但**属性缺失时静默返回空列表**，这正是 `Assert.Single` 拿到空集合
+  而不抛异常的形态。
+- **结论**：三者同时成立（sidecar 正确 / C# 解析与形状一致 / 测试得到空）只能由**客户端把响应配错了请求**解释：
+  12 个并发请求共用一条 stdin/stdout 管道，若读端未按 `request_id` 严格配对，`ListChaptersAsync` 会拿到
+  `GetReaderProjection` 的响应 ⇒ 无 `chapters` ⇒ 静默空 ⇒ 断言失败。
+- **这是一个产品级缺陷候选（P1）**：真实 UI 同时读章节列表与阅读投影（正是该测试模拟的场景）也会串响应、
+  悄悄显示空章节。**需独立复核确认后才能定级**，不得只凭推断。
+- 该缺陷**不属于 E-2**，是被 E-2 解除后**暴露**的既有缺陷 —— 与之前"重建 sidecar 暴露 13 个失败"一脉相承。
+- **下一步**：读 `CoreServiceClient.SendAsync` 的读端派发逻辑；若确认串配，先写**能在回退时变红**的并发判别测试，
+  再修实现；并作为独立 finding 登记。
+- **自登记**：本轮我一度以为"单跑通过是因为没有并发测试"，实际两个测试**各自单独跑都通过**，连跑才失败 ——
+  即污染确实存在，但根因在客户端配对而非测试顺序。
