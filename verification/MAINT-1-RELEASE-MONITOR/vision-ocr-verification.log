@@ -1,0 +1,15 @@
+# Release Gate 条件 5 —— 第二条 provider 路径：视觉 OCR
+# 生成时间: 2026-11-14T15:55:24.1205620+08:00   git HEAD: eeb85066f
+# 凭据: 环境变量 OCR_API_KEY，未写入本文件或任何仓库文件
+# 路径: 产品 VisionOcrProvider + StdlibTransport + 真实远端视觉端点
+# 输入: 程序渲染的 640x220 PNG，白底黑字 こんにちは（Meiryo/MS Gothic）
+
+provider_id=openai-vision-ocr
+model=glm-4v-flash
+line_count=1
+lines=['こんにちは']
+contains_expected=True
+EXIT=0
+### 附注：qwen 视觉模型在本 key 下不可用
+# qwen3-max/qwen-vl-plus -> HTTP 404；qwen-vl-ocr -> HTTP 403（同一 dashscope compatible-mode 端点）
+# 故第二条路径改用智普 glm-4v-flash（同一 OpenAI 兼容协议，验证目标是协议与适配器而非特定厂商）

@@ -264,3 +264,11 @@ NEW-MANGA-V1-FULL-AUDIT 与 R1–R4 整改、SEC-01/02/03、CORE-01、AUDIT-07/0
 - 用产品自身 `OpenAiTranslationProvider` + `StdlibTransport` 对 DeepSeek 完成真实翻译：`deepseek-chat`、≈740ms、`valid_protocol=True`、`你好，你好吗？` / `轰`（SFX 文化等效）。
 - 证据：`verification/MAINT-1-RELEASE-MONITOR/model-api-verification.log`（已核验无密钥）。
 - **Gate 条件 5：未完成 → 部分**；其余条件未变，**Gate 仍 BLOCKED**。未做代表性质量基线（无人工 GT）与 App→Host→Core 完整 UI 端到端。
+
+### 轮次 27（2026-11-14，本会话续）—— 第二条 provider 路径 + 端到端边界
+
+- **视觉 OCR 路径已验**：产品 `VisionOcrProvider` + `StdlibTransport` → 智普 `glm-4v-flash`，渲染图 `こんにちは` 正确识别。证据 `vision-ocr-verification.log`。
+- **qwen 视觉模型不可用**：`qwen3-max`/`qwen-vl-plus` HTTP 404、`qwen-vl-ocr` HTTP 403（同一 dashscope 端点）→ 第二条路径改用智普；验证目标是协议与适配器，不是厂商。
+- **端到端不可达（产品缺口）**：`HostCommandRegistry` 只有 `save_manual_translation`，**无自动翻译命令**；UI 的 `Translate` 只是批处理动作枚举/阶段标签；设置页显示「模型与设备：待接入」。**这不是 API key 能解决的**，需独立功能卡。
+- **Gate 条件 5 最终表述：部分**（两条路径已验；缺质量基线与 UI 端到端）；**Gate 仍 BLOCKED**。
+- 两个证据日志均已核验无密钥。

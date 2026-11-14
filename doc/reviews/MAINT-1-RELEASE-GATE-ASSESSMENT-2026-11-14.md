@@ -48,3 +48,27 @@
 - **凭据处理**：只从环境变量 `DEEPSEEK_API_KEY` 注入，未写入任何仓库文件；日志已用正则核验不含 `sk-` 形态密钥。
 - **边界（不得扩大解读）**：这是「真实模型 API 调用」的证据，**不是**质量验收——没有人工 ground truth，不能据此宣称翻译准确率或识别质量达标；也没有走 App → Host → Core 的完整 UI 端到端流程。
 - **Gate 结论不变**：条件 5 由「未完成」改为「部分」，其余条件未变，**Gate 仍 `BLOCKED`**。
+
+## 6. 追加：第二条 provider 路径（视觉 OCR）与「端到端」的真实边界
+
+### 6.1 已验（两条独立 provider 路径）
+
+| 路径 | provider | 模型 | 结果 | 证据 |
+|---|---|---|---|---|
+| 翻译 | `OpenAiTranslationProvider` | `deepseek-chat` | `valid_protocol=True`；`你好，你好吗？` / `轰` | `model-api-verification.log` |
+| 视觉 OCR | `VisionOcrProvider` | `glm-4v-flash` | 渲染图 `こんにちは` 被正确识别（`contains_expected=True`） | `vision-ocr-verification.log` |
+
+- 两条路径都走产品自身适配器 + `StdlibTransport` + 真实远端端点，不是 curl 探测。
+- **qwen 视觉模型在本环境不可用**：`qwen3-max` / `qwen-vl-plus` → HTTP 404，`qwen-vl-ocr` → HTTP 403（同一 dashscope compatible-mode 端点）。因此第二条路径改用智普 `glm-4v-flash`；验证目标是**协议与适配器**，不是特定厂商。
+- 凭据均只经环境变量注入；两个已提交日志已用正则核验，无 `sk-` / `AIza` / 智普 key 形态字符串。
+
+### 6.2 端到端「App → Host → Core 触发翻译」当前**不可达**（产品缺口，不是环境问题）
+
+- `HostCommandRegistry` 的翻译相关命令只有 **`save_manual_translation`**（手动保存），**没有自动翻译命令**。
+- UI 侧 `Translate` 仅出现在批处理动作枚举（`StudioBatchActionKind.Translate`）与阶段标签（`StudioStages`）中，没有调用 provider 的接线。
+- 与此一致：设置页「模型与设备」显示「待接入」。
+- **结论**：条件 5 的「端到端」不能靠提供 API key 解决，需先实现「自动翻译」的 Host 命令与 UI 接线；那是独立功能卡，不是维护事项。
+
+### 6.3 条件 5 的最终表述
+
+**部分**：真实模型 API 调用已在**两条 provider 路径**上验证通过；**未做**代表性质量基线（无人工 ground truth）与 UI 端到端（功能未接线）。**Gate 仍 `BLOCKED`。**
