@@ -272,3 +272,12 @@ NEW-MANGA-V1-FULL-AUDIT 与 R1–R4 整改、SEC-01/02/03、CORE-01、AUDIT-07/0
 - **端到端不可达（产品缺口）**：`HostCommandRegistry` 只有 `save_manual_translation`，**无自动翻译命令**；UI 的 `Translate` 只是批处理动作枚举/阶段标签；设置页显示「模型与设备：待接入」。**这不是 API key 能解决的**，需独立功能卡。
 - **Gate 条件 5 最终表述：部分**（两条路径已验；缺质量基线与 UI 端到端）；**Gate 仍 BLOCKED**。
 - 两个证据日志均已核验无密钥。
+
+### 轮次 28（2026-11-14，本会话续）—— 自动翻译可行性与契约面评估
+
+- **评估报告**：[`MAINT-1-AUTO-TRANSLATE-FEASIBILITY-2026-11-14.md`](../reviews/MAINT-1-AUTO-TRANSLATE-FEASIBILITY-2026-11-14.md)（独立上下文调研，只读、38KB）。
+- **结论：条件可行，零冻结契约改动 / 零 UNFREEZE / 零 pin 变更。** 运行链路（`StartRun(command=translate_*)` + `execute_translate_step` + pipeline executor）**已存在**。
+- **真实缺口是配置桥，不是 wire**：G1 P15 profile/binding 从不镜像进 `settings["providers"]["profiles"]`（`runtime.py:182-193` vs `settings_commands.py:590-670`）；G2 `RunBindingDefaults.DefaultJson` 只注 `{"ocr":"manga-ocr"}`（可被 `NEWMANGA_RUN_PROVIDER_BINDINGS` 覆盖）；G3 `library_start_run` 对冻结 Core 曾 `INVALID_REQUEST`（遗留未定位）。
+- **四卡拆分**：T-A 配置桥（Core，唯一必做新代码）→ T-B 运行路径收口（Host）→ T-C 入口与文案（App）；T-D 质量项可选。**明确排除**新 wire 命令与新 `IHostController` 成员。
+- **失败模式已盘点**：403→`PROVIDER_AUTH_FAILED`（不可重试，qwen 已遇）；404 模型名与 402 无余额都落 `INVALID_INPUT`（**语义错位**）；429→`PROVIDER_RATE_LIMITED`；**无 token/成本计量**（账单风险）；配置变更需重启 Core。
+- **DSH 补充（§10）**：既有 `REAL-TRANSLATE-PROVIDER-1` 已把装配链路跑通（`PROVIDER_NOT_CONFIGURED`=0，全部 429），**BLOCKED 仅因 key 无额度**；本机 DeepSeek key 已实测可用，故可**零代码重跑**换取「Core 侧端到端」证据（但无法证明 Host/UI 侧，因该探针走冻结 Core stdio 直连）。
