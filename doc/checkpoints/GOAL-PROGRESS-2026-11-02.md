@@ -1397,3 +1397,18 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   越界改 Gate 文档未登记 allowed_paths；矩阵行号写错 44/60→35/53。
 - Gate 仍 **BLOCKED**：条件 1 = 7/8 + KEEP-NOTRUN、条件 2 = MET、条件 3 = 部分证据（111 skip + 2 ⚠️ + 未纳流程 + 真机走查）、条件 4 需 PyInstaller、条件 5 需人工 GT。
 - **下一步候选**：条件 3 的可自证部分已基本做尽。剩余可做的只有两类 —— ①补 SettingsViewModel 其它失败路径（外观保存失败等）的判别测试，价值有限；②转向**条件 4 的可做部分**：核实 `tools/ci/publish-release.ps1` 在本环境是否能产出绑定当前 commit 的包，若不能则如实登记"所需外部资源"（这是 Gate 里唯一还没被探测过的方向）。
+## 206. RELEASE-PACKAGE-PROBE-1 收口 —— 条件 4 首次真实推进 + 发现 E-2 可解（2026-11-15，DSH，goal 轮次 5）
+
+- 交付链：`7220a261d`（首版）→ `4557bd03b`（r1 REJECT 返修 + 收口），integration_commit = `4557bd03bd7a92765a873d1b30d481010269083e`。
+- **条件 4 首次产出真实包**：manifest `git_head = 5dda04437…`（= 被探测 head）、`NewManga.App.exe` **99,554,850 B**、sha256 `EA01C8C7…76ED`（复核者独立复算一致）、`result=PASS`。
+- **启动冒烟 PASS**：`window_found=true`、`window_title="New Manga"`、`host_ready=true`、`exit_code=0`、`exit_kind=natural`。且 `host_ready` 经复核确认是真信号 —— `HostRuntime.cs:1229` 的 `core_service ready` 只在 `CoreServiceClient.StartAsync`（内含 `core.ping`）之后写出，不是脚本自证。
+- **最重要的发现（推翻我自己先前的结论）**：我此前断言"PyPI 不可达 → sidecar 无法重建"，**这是错的** ——
+  默认镜像确实缺包，但 `pip download pyinstaller -i https://pypi.org/simple` 成功拿到 **pyinstaller-6.22.3**
+  （正是 `requirements-build.txt` 钉死版本）。r1 复核发现、我已复现确认。
+  ⇒ **E-2 可解**：`Host.Tests` 74 skip / `CoreClient.Tests` 26 skip / `App.Tests` 7 skip **可能可跑**。这是下一张卡的入口。
+- **条件 4 仍 NOT MET**：install / 升级回退 / 四页（打包产物上）/ 卸载矩阵**均未执行**；sidecar 仍是 2026-10-23 旧版；
+  包**不自包含** sidecar（smoke 经 `--sidecar-dir` 外部注入）；`elapsed=7.7s` 是热缓存增量构建，不证明 clean-room。
+- **其他更正**：截图顶部是**空间切换**（资料柜/工位/控制台）+ Breadcrumb，**不是四页导航**（我原先写错且与 §4.3 矛盾）。
+- 工具链实测：`makensis v3.13` 可用（`C:\Program Files (x86)\NSIS`）、.NET SDK 9.0.308/10.0.401、runtime 9.0.11、权重 3 个 ONNX、长路径启用、磁盘 1216 GB 空闲、**无代码签名证书**（`.nsi` 声明 unsigned 为已知限制，非阻塞）。
+- Gate 评估新增 §16；本卡 6 条 BLOB pin。
+- **下一步（本轮最大价值）**：`SIDECAR-REBUILD-1` —— 用 pypi.org 直连装 PyInstaller + 钉死 ML 栈，重建 sidecar 使其命令面追上当前 head（解 E-2），然后重跑带夹具的三项目测试。**这将同时打开条件 3 的 100 个 skip 与条件 4 的安装器矩阵。**

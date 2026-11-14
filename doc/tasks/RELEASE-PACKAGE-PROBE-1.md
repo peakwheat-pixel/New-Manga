@@ -3,7 +3,7 @@ id: RELEASE-PACKAGE-PROBE-1
 title: 条件 4 打包可行性只读探测（依赖清单 + 可执行边界）
 kind: evidence
 governance_version: 3
-status: in_progress
+status: done
 disposition: "Gate 条件 4（当前 commit 的 Windows 包）；Gate 里唯一尚未被探测过的方向"
 approval: DSH 2026-11-15（只读探测 + 允许在 workspace 产出派生物）
 suggested_owner: DSH
@@ -14,10 +14,10 @@ depends_on:
 base_commit: 5dda04437
 branch: main
 worktree: G:/CODEX/New Manga
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 4557bd03bd7a92765a873d1b30d481010269083e
+delivery_head: 4557bd03b
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/RELEASE-PACKAGE-PROBE-1
 allowed_paths:
   - doc/tasks/RELEASE-PACKAGE-PROBE-1.md
@@ -114,7 +114,12 @@ Gate 条件 4 = "对当前固定产品 commit 生成并固定 Windows 包，完�
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) | sha256_basis |
 |---|---|---|---|---|---|---|
-
+| EV-RPP-01 | AC1/AC2/AC3/AC4/AC5 主交付 | doc/reviews/MAINT-1-GATE-CONDITION-4-PROBE-2026-11-15.md | 4557bd03b | 044475b58123629b56984d3a4ab02f411706cfb3296f1c9b5bd7b2415d18c13c | CANONICAL | BLOB |
+| EV-RPP-02 | AC3 绑定当前 commit | verification/RELEASE-PACKAGE-PROBE-1/manifest-singlefile.json | 4557bd03b | 7eeb56702e5ff6aa3c7a50fe6d16e0d75ec3eceb8da11efee146b5d6162e6cd2 | CANONICAL | BLOB |
+| EV-RPP-03 | AC2 冒烟结果 | verification/RELEASE-PACKAGE-PROBE-1/smoke-singlefile.json | 4557bd03b | dbdac2a743f2ad706fec55e98bd3c599557304399d460024d8e8f56b55c00e01 | CANONICAL | BLOB |
+| EV-RPP-04 | AC2 窗口视觉证据 | verification/RELEASE-PACKAGE-PROBE-1/published-singlefile.png | 4557bd03b | 149f79fca4832de8fa6c5422694de7278fdb248319f0aae637762f1a50bedb22 | CANONICAL | BLOB |
+| EV-RPP-05 | AC1/AC6 门禁 | verification/RELEASE-PACKAGE-PROBE-1/four-pieces.log | 4557bd03b | e0190eb059b06af3b9d8d9226208093ea49f2049d5d5c9b0b44519faf9f76a0a | CANONICAL | BLOB |
+| EV-RPP-06 | 独立复核 r1（REJECT，纠正了 P1） | doc/reviews/RELEASE-PACKAGE-PROBE-1-review-r1.md | 4557bd03b | 45372a95dfc0ca616cece09e932226eca677e6bbbad5a6f06a1ff917555d09e7 | CANONICAL | BLOB |
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
@@ -123,9 +128,22 @@ Gate 条件 4 = "对当前固定产品 commit 生成并固定 Windows 包，完�
 
 ## Closeout Record
 
-- Closeout date / DSH：待关闭时填写。
-- canonical_evidence_status：`pending`。
-- resource_closeout_status：`pending`。
-- 删除、迁移、归档数量/字节数：待关闭时填写；无操作填写 0。
-- 未关闭项及保留原因：待填。
-- 当前指针清理：待关闭时更新 STATUS / Plan / TASK_LEDGER / rolling checkpoint。
+- Closeout date / DSH：2026-11-15，DSH（Lead / Architect / Integrator）。
+- canonical_evidence_status：`complete`（6 条 BLOB pin，commit `4557bd03bd7a92765a873d1b30d481010269083e`）。
+- resource_closeout_status：`complete`。产物保留在 `G:\CODEX\New Manga.workspace\artifacts\publish\`
+  （`NewManga.App.exe` 99,554,850 B + manifest + smoke + 截图），**未进仓库**；pip 探针缓存
+  `G:\CODEX\New Manga.workspace\task-envs\RELEASE-PACKAGE-PROBE-1\pip-probe\pyinstaller-6.22.3-py3-none-win_amd64.whl`
+  保留为证据（证明 PyInstaller 可得）。
+- 删除、迁移、归档数量/字节数：0。
+- **交付结论**：条件 4 **首次真实推进** —— 产出绑定 `5dda04437` 的包（`git_head` 一致、sha256 可复算），
+  启动冒烟 `window_found/host_ready/exit 0/natural` 全通过。但**条件 4 仍 NOT MET**：install / 升级回退 /
+  四页（打包产物上）/ 卸载矩阵**均未执行**，sidecar 仍是 2026-10-23 的旧版。
+- **最重要的发现（推翻了我自己的旧结论）**：PyInstaller **可以**从 `pypi.org` 直连获得（`6.22.3`），
+  这意味着 **E-2 可解**、`Host.Tests` 74 / `CoreClient.Tests` 26 / `App.Tests` 7 的 skip 面**可能可跑**。
+  这是下一张卡的入口。
+- 未关闭项及保留原因：见文档 §4 三条诚实边界与 §7.3 staleness。
+- **本卡自身的错误登记（不淡化）**：
+  1. **错判"PyPI 不可达"**（只试了默认镜像就下结论），并据此得出"条件 4 只剩一项阻塞"的错误收窄；
+     r1 复核用 `-i https://pypi.org/simple` 实测推翻，我已复现确认；
+  2. 把截图里的"资料柜/工位/控制台"空间切换写成"四页导航"，且与文档 §4.3 自相矛盾；
+  3. 未在首版登记 staleness 与 evidence pin（r1 P2）。
