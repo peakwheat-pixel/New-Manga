@@ -51,3 +51,32 @@
 ## 预算约束
 
 `doc/REBASELINE_PLAN.md` 6964/7000（余 36 B）。阶段 1 只能登记**一张**卡；后续卡需先压缩 PLAN 或并入表外节点行。
+
+## L2 终局（2026-11-14，DSH 收口）
+
+**结果：`BLOCKED`（性质＝环境资源缺失），已按止损条件挂起。**
+
+三条路线全部走到终点，均无翻译产出（`regions_translated_differs = 0`）：
+
+| 路线 | 命令 + scope | 终局 | 卡点 |
+|---|---|---|---|
+| 1 | `translate_untranslated` + **book** | `completed_with_failures`，8/8 failed | `detect` / `PROVIDER_NOT_CONFIGURED`（`manga-ocr` 只覆盖 OCR，无 detect 绑定） |
+| 2 | `retranslate_region` + **region** | `blocked` | planning 门，**无 error_code**（`step_status={}`、`blocked_reasons=[]`） |
+| 3 | `translate_all` + **page** | `completed_with_failures`，1/1 failed | `ocr` / `PROVIDER_NOT_CONFIGURED`（本地 `manga-ocr` 需 ONNX 模型，仓库与工作区**均无**） |
+
+**已排除的 6 项假设**：sidecar 缺模型（已改源码 Core）、fixture 污染（每轮新建根）、Host/探针 payload 形状、协议 minor/字段错位、凭据无效（DeepSeek 探测 HTTP 200）、装配期 profile 缺失（`RUN_SNAPSHOT_INCOMPLETE` 已解）。
+
+**未证明的**：Core → provider → 落库的端到端翻译。**它不影响产品可用性，只影响 Gate 条件 5 的措辞。**
+
+### 解除 BLOCKED 所需条件（任一）
+
+- **D**：提供 `manga-ocr`（或任一 OCR）ONNX 模型文件并放到 Core 可解析的位置 → 路线 3 可走通（page 已有 region，可跳过 detect）；
+- **E**：配置远程视觉/OCR provider（如 GLM-4V）→ 同时替代 detect/ocr。
+
+### 沉淀（后续可复用，不因 BLOCKED 而失效）
+
+1. 源码 Core 入口：`python -m bootstrap.core_service`，需 `cwd=<repo>/src` + `PYTHONPATH=<repo>/src`；`core.ping` protocol 2.3 ready。
+2. fixture `v6 → v14` 迁移无损（自动备份 ~4.0 MB verified），迁移后计数不变。
+3. **装配期 provider 约束（实测）**：provider 在装配期一次性构建；只在 `StartRun.overrides` 塞 profile **不生效**（`base_url="" / model="" / credential_ref=None` → `RUN_SNAPSHOT_INCOMPLETE`）；**必须先写 `pipeline_defaults` 再启动 Core**。
+4. region seed 的产品 API 路径：`editing.create_region` → `apply_ocr_result`（勿用 `save_manual_translation`，会触发 manual 保护导致 skipped）。
+5. 证据：`verification/L2-CORE-E2E/`（README §8–§10，含 VERIFIED/INFERRED 分层与 `key_present`）。

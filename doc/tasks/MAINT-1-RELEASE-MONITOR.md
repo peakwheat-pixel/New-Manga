@@ -306,3 +306,11 @@ NEW-MANGA-V1-FULL-AUDIT 与 R1–R4 整改、SEC-01/02/03、CORE-01、AUDIT-07/0
 - **独立复核已登记**：[`MAINT-1-GATE-CONDITION-6-FINAL-REVIEW-2026-11-14.md`](../reviews/MAINT-1-GATE-CONDITION-6-FINAL-REVIEW-2026-11-14.md)（r 判 `MECHANICAL_PASS / CONDITION_6_NOT_CLOSABLE`，其四项缺口中的「交付 head 未冻结」「Review 未登记」由本节关闭；「复核期间 head 被推动」由本次冻结消除；「PLAN 枚举漏项」已在轮次 30 修复）。
 - **条件 6 判定**：**机械部分 + 交付头冻结 + Review 登记三项齐备**，条件 6 可判完成。**Release Gate 仍 `BLOCKED`**（其余五项条件未变）。
 - 本哨位保持 `in_progress`（Gate 复评入口开放），不因条件 6 完成而关闭。
+
+### 轮次 32（2026-11-14，本会话续）—— L2 终局 BLOCKED（环境资源）
+
+- **L2（Core 端到端翻译验证）按止损条件收口为 `BLOCKED`**，性质＝**环境资源缺失**（缺推理模型），**不改产品代码即可解决**，不影响产品可用性，只影响 Gate 条件 5 的措辞。
+- 三条路线均无产出（book/detect 无 detect provider；region/blocked 无 error_code 的 planning 门；page/ocr 缺 ONNX 模型）；已排除 6 项假设。
+- **解除条件**：D 提供 OCR ONNX 模型；或 E 配置远程视觉/OCR provider。
+- **沉淀 5 条**（源码 Core 入口、fixture v6→v14 无损、**装配期 provider 约束**、region seed 产品 API 路径、证据目录）已写入路线文档，后续 T-C 与任何 Core 侧验证可直接复用。
+- **转 T-C**：自动翻译的入口与错误文案（前置约束已攒 5 条，含本轮新增的「必须先写 `pipeline_defaults` 再启 Core」）。
