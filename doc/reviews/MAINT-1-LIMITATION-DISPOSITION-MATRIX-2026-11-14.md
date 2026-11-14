@@ -33,13 +33,13 @@
 | L-R2-1 | FEA-14-READ-2 | 书签面板 / 整书进度 / reset 确认的**可见控件**未接线（VM+测试已覆盖）（`doc/tasks/FEA-14-READ-2.md:116`） | `IMPL` | 本文件 §3-C1-1（建议：一张 UI 控件卡即可闭环）；VM 证据 `doc/tasks/FEA-14-READ-2.md:115` | **是** |
 | L-R2-2 | FEA-14-READ-2 | 真实 UI 手势 / IME / 多屏 / DPI / 主题 / 托盘 / 真实进程重启 / 可见 UI 截图（`:116`） | `WAIVER` | `W1` | 否 |
 | L-F1-1 | FEA-14-FONT-1 | FONT-2 范围：渲染消费、设置页字体 UI、家族/字重元数据解析（fontTools）、内置字体授权（不随包）（`doc/tasks/FEA-14-FONT-1.md:153`） | `C3` | `C3-5`（C3 载体 `:16`）；许可边界 `AGENTS.md`「许可证边界」段 | 否 |
-| L-F1-2 | FEA-14-FONT-1 | wire 级 `FONT_DELETE_FAILED` 负例未补（storage 已覆盖）（`:153`） | `IMPL` | 本文件 §3-C1-2（补 1 个定向测试；storage 侧证据见该卡交付段 `:152`） | **是** |
+| L-F1-2 | FEA-14-FONT-1 | wire 级 `FONT_DELETE_FAILED` 负例未补（storage 已覆盖）（`:153`） | `SOLVED` | 本文件 §3-C1-2（补 1 个定向测试；storage 侧证据见该卡交付段 `:152`） | **是** |
 | L-F1-3 | FEA-14-FONT-1 | 大文件 / 并发 / 占用文件未压测（`:153`） | `IMPL`（大文件/并发）+ `KEEP`（占用文件） | 本文件 §3-C1-3；`W4`（C4 载体 `:23`）只覆盖渲染消费与真实占用 | 部分 |
 | L-F1-4 | FEA-14-FONT-1 | 日志 HEAD 为生成时工作树（证据口径）（`:153`） | `C3` | 本文件 §3-C3-7（证据口径说明，非产品项） | 否 |
 | L-L1-1 | FEA-14-LIB-1 | ① `ChapterSummary` 不投影 `kind`（`doc/tasks/FEA-14-LIB-1.md:164`） | `IMPL` | 本文件 §3-C1-4（LIB-2 扩 DTO） | **是** |
 | L-L1-2 | FEA-14-LIB-1 | ② `custom_rank` write-only、P6 自定义/数字排序未实现（`:164`） | `IMPL`（读回闭环）+ `C3`（排序 UI 范围） | 本文件 §3-C1-5；UI 范围未释放，参照 `C3-3` 同型口径 | 部分 |
 | L-L1-3 | FEA-14-LIB-1 | ③ R-11 三项 deferral（kind 语义体积、`number_value`、`books.normalized_title` 唯一索引）（`:164`） | `C2` | 本文件 §3-C2-4（建议 OUT + 重开条件） | 否（建议 OUT） |
-| L-L1-4 | FEA-14-LIB-1 | ④ R3-001 64 位边界校验缺失（`:164`） | `IMPL` | 本文件 §3-C1-6（小卡，补边界断言） | **是** |
+| L-L1-4 | FEA-14-LIB-1 | ④ R3-001 64 位边界校验缺失（`:164`） | `SOLVED` | 本文件 §3-C1-6（小卡，补边界断言） | **是** |
 | L-L1-5 | FEA-14-LIB-1 | ⑤ 真实 Host↔Core 进程级联调 / LIB UI·tags UI / Volume 实体 / 万级章性能（`:164`） | `WAIVER` | `W5`（C4 载体 `:24`） | 否 |
 | L-E1-1 | FEA-14-EDIT-1 | ① `issue_markers` 无外键、删书不清理孤儿行（`doc/tasks/FEA-14-EDIT-1.md:139`） | `C3` | `C3-4`（C3 载体 `:15`） | 否 |
 | L-E1-2 | FEA-14-EDIT-1 | ② `position` 形状 `{x,y}` 为未定义处实现裁决（`:139`） | `C3` | `C3-2`（C3 载体 `:13`） | 否 |
@@ -50,7 +50,7 @@
 | L-AI1-3 | FEA-14-AI-1 | ③ `UPDATE OR REPLACE` 覆盖同 `(kind,owner_id)` label（F-03）（`:154`） | `C2` | 本文件 §3-C2-2（建议 OUT + 重开条件） | 否（建议 OUT） |
 | L-AI1-4 | FEA-14-AI-1 | ④ name 唯一/规范化范围（F-05，待 ADJ）（`:154`） | `C2` | 本文件 §3-C2-1（建议 OUT + 重开条件） | 否（建议 OUT） |
 | L-AI1-5 | FEA-14-AI-1 | ⑤ DDL「version 不可变」已裁决（F-08）（`:154`） | `C3` | `C3-1`（C3 载体 `:12`） | 否 |
-| L-AI1-6 | FEA-14-AI-1 | ⑥ 死方法 `reassign_references`（N-01）与 `test_issue_markers` 旧注释（F-06 残余）（`:154`） | `IMPL` | 本文件 §3-C1-7（微清理，可并入维护卡） | **是** |
+| L-AI1-6 | FEA-14-AI-1 | ⑥ 死方法 `reassign_references`（N-01）与 `test_issue_markers` 旧注释（F-06 残余）（`:154`） | `SOLVED` | 本文件 §3-C1-7（微清理，可并入维护卡） | **是** |
 | L-AI1-7 | FEA-14-AI-1 | ⑦ 真实 IPC / P24 活 Core 端到端 / 模板 UI（AI-2）/ 真实 AI 网络 / 并发大库（`:154`） | `WAIVER` | `W3`（C4 载体 `:22`）；模型 API `NOT_RUN` 见 `doc/design/V1_COMMITMENT_MANIFEST.md:6` | 否 |
 | L-AC1-1 | FEA-15-ACCEPT-1 | pytest 16 failed（既有基线）（`doc/tasks/FEA-15-ACCEPT-1.md:131`） | `SOLVED` | `doc/reviews/MAINT-1-P11-CUSTOM-RANK-ADJUDICATION.md:66`：全量 **3537 passed / 10 skipped / 0 failed**（316.39s）；Q6 归因 `doc/reviews/MAINT-1-P9-Q6-PYTEST-ADJUDICATION.md` | 否（证据在仓外，见 §4-R2） |
 | L-AC1-2 | FEA-15-ACCEPT-1 | .NET 127 failed「根因未定」（`:131`） | `SOLVED` | `doc/tasks/MAINT-1-RELEASE-MONITOR.md:74-75`（93 ACL + 31 仓库根发现 + 3 删除；真实仓库全量 **1875 passed / 0 failed / 109 skipped**）；日志 `verification/MAINT-1-RELEASE-MONITOR/logs/dotnet-full-current.log` | 否 |
@@ -171,3 +171,15 @@
 ### 更正要求
 
 - 载体总表「39 项」须与 9 个节点对齐；若某节点 limitation 项数有争议，**以卡面原文为准**，不以 triage 转述为准（triage 是二手整理）。
+
+## 附：L-F1-2 / L-L1-4 / L-AI1-6 的 SOLVED 证据（2026-11-14 DSH 复核）
+
+矩阵原记这三项为 `IMPL`（待实现），复核实现发现**均已完成**，属矩阵滞后：
+
+| id | 状态 | 证据 |
+|---|---|---|
+| **L-F1-2** | `SOLVED` | `tests/core/test_font_wire.py:92-108` 的 `test_font_wire_delete_failure_is_typed_and_retryable`（注释明标 `MAINT-2-C1-BATCH-1 AC2 (C1-2 / L-F1-2)`）：真命令端到端，read-only managed copy → `FONT_DELETE_FAILED`，且行保持 active 可重试 |
+| **L-L1-4** | `SOLVED` | 实现：`src/application/library/service.py:28-33`（`MAX_SQLITE_INTEGER`、`MAX_IMPORT_ORDER = MAX-1`）、`:298`（`custom_rank` 越界 → `ValueError`）。测试：`tests/core/test_library_wire.py:172-186`（`custom_rank = SQLITE_MAX+1` → typed validation、值不变；`SQLITE_MAX` 可写）、`:191-200`（`import_order = SQLITE_MAX+1` 被拒、`MAX-1` 为 ceiling）、`:214-250`（`2**40` round-trip 防 int32 截断） |
+| **L-AI1-6** | `SOLVED` | `src/**` 中 `reassign_references` 命中数 **0**（方法已删）；`tests/storage/test_prompt_templates.py:221` 以 `assert not hasattr(...)` 固定该事实，防止回归 |
+
+**对条件 1 的影响**：8 项中 **3 项已关闭**（3/8），其余 5 项维持 GOP 裁决（4 张卡 + 1 项 NOT_RUN）。

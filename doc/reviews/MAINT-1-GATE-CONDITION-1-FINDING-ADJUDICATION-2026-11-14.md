@@ -67,3 +67,23 @@
 - **Release Gate 仍 `BLOCKED`**：条件 1 从「未处置」变「已裁决」，但 8 项中 **0 项已关闭**（IMPL-NOW 尚未实现），因此条件 1 **仍未完成**。
 - 条件 2/4/5 未动。
 - 本文件不声称任何 finding 已修复。
+
+---
+
+## 7. 更正：3 个 IMPL-NOW 实为「已 SOLVED」（矩阵滞后，2026-11-14 复核）
+
+裁决当日把 L-F1-2 / L-L1-4 / L-AI1-6 判为 `IMPL-NOW`（待实现）。随后核实现发现**三项均已完成**，是矩阵滞后：
+
+| id | 实际状态 | 证据 |
+|---|---|---|
+| L-F1-2 | **SOLVED** | `tests/core/test_font_wire.py:92-108`（`test_font_wire_delete_failure_is_typed_and_retryable`，注释明标 `MAINT-2-C1-BATCH-1 AC2 (C1-2 / L-F1-2)`） |
+| L-L1-4 | **SOLVED** | 实现 `src/application/library/service.py:28-33`、`:298`；测试 `tests/core/test_library_wire.py:172-186`、`:191-200`、`:214-250` |
+| L-AI1-6 | **SOLVED** | `src/**` 中 `reassign_references` 命中 **0**；`tests/storage/test_prompt_templates.py:221` 以 `assert not hasattr(...)` 固定 |
+
+**结论更正**：
+
+- 条件 1 的关闭进度由 **0/8 → 3/8**；
+- 前述 §2 表格中 3 项 `IMPL-NOW` 的处置**已生效并闭合**，不再需要实现轮次；
+- 剩余 **5 项**维持 §1 裁决：4 项 `IMPL-CARD`（L-R1-1、L-R2-1、L-L1-1、L-L1-2）+ 1 项 `KEEP-NOTRUN`（L-F1-3）。
+
+**教训（记录在案）**：矩阵是处置时的快照，实施进展不会自动回流。条件类裁决在依赖矩阵计数前，**必须先核实现状态**，否则会把已完成项重复计为待办。
