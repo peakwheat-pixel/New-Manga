@@ -1,0 +1,119 @@
+{
+  "ac": "AC3/AC4",
+  "generated_at_utc": "2026-11-14T13:44:44Z",
+  "sidecar": null,
+  "core_launch": "python-source:G:\\CODEX\\New Manga",
+  "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\L2-CORE-E2E\\work-root-glm3",
+  "book_id": "f52f2772e8044557a72e82f5ea6ab932",
+  "command": "translate_all",
+  "translate_provider": "openai-compatible-translation",
+  "label": "l2-glm3",
+  "api_key_read_by_tool": false,
+  "commands": [
+    {
+      "command": "core.ping",
+      "result": {
+        "status": "ready",
+        "protocol_version": {
+          "major": 2,
+          "minor": 3
+        },
+        "capabilities": [
+          "library.list_books",
+          "source.read/1",
+          "source.resolve-secret/1",
+          "source.read.run/1",
+          "source.reattest/1",
+          "library.delete.preview/1",
+          "library.trash.read/1",
+          "library.trash.write/1",
+          "source.sync.scan/1",
+          "source.sync.plan/1",
+          "source.sync.apply/1",
+          "source.sync.relink/1",
+          "source.sync.repoint/1",
+          "source.sync.resync/1",
+          "source.sync.operation/1",
+          "source.sync.enumerate/1",
+          "source.sync.plan-materialization/1"
+        ]
+      }
+    }
+  ],
+  "overrides": {
+    "provider_bindings": {
+      "ocr": "openai-vision-ocr",
+      "translate": "openai-compatible-translation"
+    }
+  },
+  "start": {
+    "run_id": "run-4c7c30f9721d4175bebf40785b6339b0",
+    "status": "pending"
+  },
+  "run_id": "run-4c7c30f9721d4175bebf40785b6339b0",
+  "terminal": "completed_with_failures",
+  "status_transitions": [
+    "pending",
+    "running",
+    "completed_with_failures"
+  ],
+  "elapsed_ms": 2804.3,
+  "command_traces": {
+    "GetRunSnapshot_request": null
+  },
+  "task_projection": {
+    "run_status": "completed_with_failures",
+    "overall_progress": 1.0,
+    "counts": {
+      "total": 1,
+      "completed": 0,
+      "failed": 1,
+      "skipped": 0,
+      "blocked": 0,
+      "waiting": 0,
+      "processing": 0
+    },
+    "blocked_reasons": [],
+    "step_status": {
+      "ocr": {
+        "completed": 1
+      },
+      "color": {
+        "completed": 1
+      },
+      "term_extract": {
+        "failed": 1
+      }
+    },
+    "error_codes": [
+      {
+        "step_type": "term_extract",
+        "status": "failed",
+        "error_code": "INVALID_INPUT"
+      }
+    ],
+    "tasks": [
+      {
+        "target_id": "f52f2772e8044557a72e82f5ea6ab932",
+        "status": "failed",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "color",
+            "status": "completed",
+            "error_code": null
+          },
+          {
+            "step_type": "term_extract",
+            "status": "failed",
+            "error_code": "INVALID_INPUT"
+          }
+        ]
+      }
+    ]
+  }
+}

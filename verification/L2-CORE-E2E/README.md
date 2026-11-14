@@ -181,3 +181,66 @@ error_codes=[("ocr","PROVIDER_NOT_CONFIGURED")]
 ### 11.5 一句话
 
 **Core→落库的端到端翻译仍未证明**；本轮把失败从"缺模型"精确推进到「execution 完整但 provider 解析判 not-configured」，这是产品侧需要单独定位的缺口，不是配置问题。
+## 12. 路线 E 重做（严格时序，全新根 work-root-glm3）
+
+### 12.1 两个时间戳 + 无重启
+
+| 事件 | 本地时间 |
+|---|---|
+| **T1 seed 完成** | `2026-11-14T21:44:44` |
+| **T2 Core 进程启动** | `2026-11-14T21:44:44` |
+| **T3 run 结束** | `2026-11-14T21:44:48` |
+
+**T2 之后没有重启任何进程**：probe 只 spawn 一次 Core（`python -m bootstrap.core_service`），StartRun→轮询→GetTaskProjection 全程在**同一进程**内完成，T3 即该进程退出。seed 由**独立进程**在 T2 之前完成并关闭连接；`pipeline_defaults` 用**纯 SQL** 写入（不再经过任何 Core 装配），因此 run Core 装配时读到的一定是已提交的行。
+
+### 12.2 `pipeline_defaults` dump（脱敏，取自同一 work-root 的 DB 行）
+
+```
+providers.profiles:
+  openai-vision-ocr            provider_type=openai-compatible-vision
+                               base_url=https://open.bigmodel.cn/api/paas/v4
+                               model=glm-4v-flash
+                               credential_ref=NewManga/provider/glm-vision-ocr/ocr-basic
+  openai-compatible-translation provider_type=openai-compatible-translation
+                               base_url=https://api.deepseek.com/v1
+                               model=deepseek-chat
+                               credential_ref=NewManga/provider/3819f991…/3218c767…   (引用，非 key)
+provider_bindings:
+  {"ocr": "openai-vision-ocr", "translate": "openai-compatible-translation"}
+```
+
+### 12.3 本轮结果：**OCR 首次真正跑通**，但 translate 仍未执行
+
+```
+terminal = completed_with_failures
+counts   = {"total":1,"completed":0,"failed":1}
+step_status = {"ocr": {"completed": 1}, "color": {"completed": 1}, "term_extract": {"failed": 1}}
+error_codes = [("term_extract", "INVALID_INPUT")]
+```
+
+**`step_runs.error_detail`（原文）**：
+
+| step | status | error_code | error_detail |
+|---|---|---|---|
+| ocr | **completed** | — | （无） |
+| color | **completed** | — | （无） |
+| term_extract | failed | `INVALID_INPUT` | **`region has no OCR text to extract terms from (stage=term_extract)`** |
+
+⇒ **GLM-4V 远程视觉 OCR 在 Core 里成功执行**（route E 的核心假设成立），失败点前移到 `term_extract`：某 region 的 `ocr_text` 为空（运行后实测 region `d1775151…` 的 `ocr_text` 为空串，另一个 region 仍保留日文）。
+
+### 12.4 关键发现：之前 3 轮失败的真因是**探针自己的 override**
+
+`run_translate_probe.py` 一直硬编码
+`overrides.provider_bindings = {"ocr": "manga-ocr", "translate": <provider>}`，
+而 **Run overrides 的优先级高于 `pipeline_defaults`**，所以无论怎么 seed，`ocr` 都被打回本地 `manga-ocr`（这正是 `manga-ocr ONNX weights are not installed` 的来源）。上一轮我把它误判为"Core 侧就绪判定缺陷"，**该判断作废**。
+本轮给探针加 `--ocr-provider`（config-only 改动，不在仓库内），传 `openai-vision-ocr` 后 OCR 立刻 completed。
+
+### 12.5 剩余缺口（下一步条件，改动仍在配置/数据层）
+
+`term_extract` 需要该 region 有非空 `ocr_text`。当前 OCR 覆盖写回后 region 1 变空（GLM 对该 bbox 的识别结果为空或写回为空）。可选（都无需改产品代码）：
+- 换一张文字更清晰的页/调整 region bbox，让 GLM 对每个 region 都返回非空文本；
+- 或先跑 `ocr` 单步、人工确认 region 文本后，再跑不含 ocr 的 translate 命令。
+
+### 12.6 一句话
+
+**Core→落库的端到端翻译仍未证明**，但链路已推进到 **ocr(远程视觉) completed + color completed**，`regions_translated_differs = 0`；阻断点从"provider 配不上"变成"某 region 的 OCR 文本为空导致 term_extract 失败"，属于**数据/图片质量**层，而非 provider 形状或时序。

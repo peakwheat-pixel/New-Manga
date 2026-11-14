@@ -1,0 +1,4 @@
+[core.namespace] data root identity changed (preview namespace unavailable: namespace binding identity mismatch); re-bound preview namespace: derived_root=G:\CODEX\New Manga.workspace\task-envs\L2-CORE-E2E\work-root-glm3\derived
+[core.schema] schema v14 already current; this session performed no write
+[core.backup] automatic backup created: 483e3ebb075e49edb1ad68d458496e0a (4024425 bytes, verified=True, first writable start with an existing library)
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
