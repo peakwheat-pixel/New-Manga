@@ -206,3 +206,57 @@ def test_chapter_metadata_rejects_64_bit_overflow_as_typed_and_atomic(tmp_path):
     assert poisoned["error"]["code"] == "INVALID_REQUEST", poisoned["error"]
     assert poisoned["error"]["code"] != "UNKNOWN"
     assert len(core.library.list_chapters(book.book_id)) == before
+
+# MAINT-2-C1-BATCH-1 AC4 (C1-4 / L-L1-1) + AC5 (C1-5 / L-L1-2), M2-C1 rev 2.16:
+# `list_chapters` keeps its frozen four keys and adds two OPTIONAL read-only fields.
+# Discriminating: if the widening is reverted, kind/custom_rank are absent -> the
+# `== "webtoon"` / `== 7` assertions fail; if the frozen keys are renamed, the key
+# assertions fail; if custom_rank were truncated to int32, the 2**40 round-trip fails.
+def test_list_chapters_exposes_optional_kind_and_custom_rank(tmp_path):
+    core, server = _server(tmp_path)
+    book = core.library.create_book("Chapter Face")
+    first = core.library.create_chapter(book.book_id, "C1")
+    second = core.library.create_chapter(book.book_id, "C2")
+
+    patched = _rpc(server, "UpdateChapterMetadata", {
+        "chapter_id": second.chapter_id,
+        "patch": {"kind": "webtoon", "custom_rank": 7},
+    })
+    assert patched["error"] is None, patched["error"]
+    big = _rpc(server, "UpdateChapterMetadata", {
+        "chapter_id": first.chapter_id,
+        "patch": {"custom_rank": 2**40},
+    })
+    assert big["error"] is None, big["error"]
+
+    listed = _rpc(server, "list_chapters", {"book_id": book.book_id})
+    assert listed["error"] is None, listed["error"]
+    rows = listed["result"]["chapters"]
+    by_id = {row["chapter_id"]: row for row in rows}
+
+    # The four FROZEN keys are still present with their original meaning.
+    for row in rows:
+        assert {"chapter_id", "title", "chapter_number", "sort_order"} <= set(row)
+    assert [row["chapter_id"] for row in rows] == [first.chapter_id, second.chapter_id], (
+        "sort_order ordering must not change (custom_rank never sorts this command)"
+    )
+
+    # AC4: kind reflects storage (paged / webtoon).
+    assert by_id[second.chapter_id]["kind"] == "webtoon"
+    assert by_id[first.chapter_id]["kind"] == "paged"
+
+    # AC5: custom_rank is readable (write -> read consistent) and keeps 64-bit values.
+    assert by_id[second.chapter_id]["custom_rank"] == 7
+    assert by_id[first.chapter_id]["custom_rank"] == 2**40
+
+    # A row whose rank was never set emits an EXPLICIT null (not an omitted key).
+    third = core.library.create_chapter(book.book_id, "C3")
+    fresh = {row["chapter_id"]: row for row in
+             _rpc(server, "list_chapters", {"book_id": book.book_id})["result"]["chapters"]}
+    assert "custom_rank" in fresh[third.chapter_id]
+    assert fresh[third.chapter_id]["custom_rank"] is None
+
+    # Frozen semantics unchanged: unknown book_id is an empty array, zero new error codes.
+    unknown = _rpc(server, "list_chapters", {"book_id": "no-such-book"})
+    assert unknown["error"] is None
+    assert unknown["result"]["chapters"] == []
