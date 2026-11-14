@@ -1767,3 +1767,17 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   `new container must produce a changed page`，**待归因**。
 - **未做**：2 个 FullSyncChain 未归因；2 个 `NEWMANGA_FEA11_CRASH_STATE` 依赖未处理；未跑无夹具全量。
 - 提交：`07811dcad`。
+## 227. FEA11-FULLSYNC-TRIAGE-1：2 个 FullSyncChain 失败归因完毕 —— 产品行为正确，种子缺 pixel（2026-11-15，DSH，goal 轮次 26）
+
+- **结论**：**产品行为正确，缺陷在测试基础设施**。
+- **证据链**：①断言 `changed >= 1`（`Fea11SourceIpcTests.cs:241`）；②实测
+  `{"changed":0,"ambiguous":1}`；③决定性字段 `"evidence":"missing_old"` + `"classification":"ambiguous"`；
+  ④`matcher.py` 的 `if not _pixel_present(old): … never forge the old profile from the new image
+  (C-17 §7.3 row 4)`；⑤种子 `ipc_seed.py` 的 `old_entries` 只有 3 元组（无 pixel 画像），
+  虽传 `legacy_v7_evidence=False` 但数据不足以生成非 v7 行。
+- **处置口径**：改断言为 `changed+ambiguous` **不可**（把"无法验证"当"已验证"，属放宽）；
+  改产品让它判 changed **不可**（违反 C-17 §7.3 row 4）；**正解是让种子提供 pixel 画像**，
+  属测试基础设施改造，**本卡未实施**。
+- **诚实边界**：`Fea11Residual4AIpcTests.ProductionDispatcherFullSyncChain_…` 为同族失败但
+  **未单独复跑确认**，仅凭同一断言文本与机制**推断**，已在卡面标注"推断而非实测"。
+- 带 opt-in 基线仍 **11 passed / 2 failed**（三类 13 个）；条件 3 仍不判 MET。

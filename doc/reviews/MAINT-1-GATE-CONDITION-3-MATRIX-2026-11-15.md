@@ -350,3 +350,56 @@ Fea11SourceIpcTests.cs:63       Assert.Equal(9, receipt.GetProperty("schema_vers
 - **覆盖是可执行的**：43/44 在 opt-in 下真的跑了 —— 这比"44 个都跑不了"强。
 - **但换 sidecar 引入了版本兼容缺口**：15 红里有 7+ 是 schema 版本、5 是环境依赖、2 原有。
 - **不能说条件 3 变好**；条件 3 **仍不判 MET**。
+## 12. 2 个 FullSyncChain 失败的归因（2026-11-15，`FEA11-FULLSYNC-TRIAGE-1`）
+
+`SCHEMA-VERSION-ASSERT-1` 修复后残留 2 个失败，现归因完毕：
+
+### 12.1 结论
+
+**产品行为正确，缺陷在测试基础设施。**
+
+`Fea11SourceIpcTests.FullSyncChain_…` 断言 `totals.changed >= 1`，实测：
+
+```json
+"totals": {"unchanged":0,"added":0,"missing":0,"changed":0,"ambiguous":1}
+```
+
+条目的决定性字段是 `"evidence":"missing_old"`、`"classification":"ambiguous"`。
+对照 `src/application/sources/matcher.py`：
+
+```python
+if not _pixel_present(old):
+    # v7-era row (pixel/orientation None; at most W/H present): the
+    # positional correspondence is unverifiable — never forge the old
+    # profile from the new image (C-17 §7.3 row 4).
+    classification, evidence = "ambiguous", "missing_old"
+```
+
+⇒ matcher **按设计拒绝从新图伪造旧画像**，诚实降级。
+
+### 12.2 种子为什么没有 pixel 证据
+
+`tests/fea11/support/ipc_seed.py`：
+
+```python
+old_entries = [("se-001", "001.png", sha256(...)), ("se-002", "002.png", sha256(...))]
+fea11_conftest.add_source_tree(..., entries=list(old_entries), legacy_v7_evidence=False)
+```
+
+条目只有 3 元组（无 pixel 画像）；虽传 `legacy_v7_evidence=False`（明确要"非 v7"），
+但数据不足以生成非 v7 行。
+
+### 12.3 处置口径
+
+| 选项 | 判断 |
+|---|---|
+| 改断言为 `changed + ambiguous >= 1` | **不可** —— 把"无法验证"当"已验证"，属放宽 |
+| 改产品代码让它判 changed | **不可** —— 会违反 C-17 §7.3 row 4（伪造旧证据） |
+| **让种子提供 pixel 画像** | **正解**，但属测试基础设施改造，需单独冻结范围；**本卡未实施** |
+
+### 12.4 诚实边界
+
+- `Fea11Residual4AIpcTests.ProductionDispatcherFullSyncChain_…` 为同族失败，**未单独复跑确认**，
+  仅凭同一断言文本 + 同一机制推断。**如实标注为"推断而非实测"。**
+- 带 opt-in 的基线仍是 **11 passed / 2 failed**（三类 13 个），本卡未改变。
+- 条件 3 仍不判 MET。
