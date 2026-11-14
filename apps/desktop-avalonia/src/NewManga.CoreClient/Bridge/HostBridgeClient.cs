@@ -296,7 +296,7 @@ public sealed class HostBridgeClient : IAsyncDisposable
 
     private int NextRequestId() => Interlocked.Increment(ref _requestCounter);
 
-    private static JsonElement ParseResponse(string method, string line, int? expectedId = null)
+    internal static JsonElement ParseResponse(string method, string line, int? expectedId = null)
     {
         JsonDocument document;
         try
