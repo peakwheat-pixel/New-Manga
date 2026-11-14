@@ -8,6 +8,8 @@ using NewManga.Host;
 using NewManga.Host.Sources;
 using Xunit;
 
+using NewManga.Host.Tests.Support;
+
 namespace NewManga.Host.Tests;
 
 /// <summary>
@@ -716,7 +718,7 @@ public sealed class Fea11Residual4AIpcTests
                 await File.ReadAllTextAsync(
                     Path.Combine(root, "ipc-seed-receipt.json")));
             var seed = seedDocument.RootElement.Clone();
-            Assert.Equal(9, seed.GetProperty("schema_version").GetInt32());
+            Assert.Equal(CoreSchema.Current, seed.GetProperty("schema_version").GetInt32());
 
             var sidecars = Directory.CreateDirectory(
                 Path.Combine(root, "sidecars")).FullName;

@@ -7,6 +7,8 @@ using NewManga.CoreClient.Wire;
 using NewManga.Host.Sources;
 using Xunit;
 
+using NewManga.Host.Tests.Support;
+
 namespace NewManga.Host.Tests;
 
 /// <summary>
@@ -415,7 +417,7 @@ public sealed class Fea11HostAuthIpcTests
                 using var seedDocument = JsonDocument.Parse(await File.ReadAllTextAsync(
                     Path.Combine(root, "ipc-seed-receipt.json")));
                 seed = seedDocument.RootElement.Clone();
-                Assert.Equal(9, seed.GetProperty("schema_version").GetInt32());
+                Assert.Equal(CoreSchema.Current, seed.GetProperty("schema_version").GetInt32());
             }
             else
             {
