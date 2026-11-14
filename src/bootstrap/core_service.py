@@ -6807,6 +6807,17 @@ class CoreServiceServer:
             }
         except PipelineError as error:
             code = error.code
+            # TRANS-RUN-PATH-FIX AC2: the wire deliberately flattens
+            # EMPTY_TARGET_SELECTION/TARGET_DELETED into the frozen
+            # INVALID_REQUEST/TARGET_NOT_FOUND codes, which is what made the
+            # REAL-TRANSLATE-PROVIDER-1 leftover ("Host StartRun returns
+            # INVALID_REQUEST") un-triagable: the precise reason never left the
+            # process. Log it to stderr (the Host captures Core stderr) so the next
+            # occurrence is diagnosable without touching the frozen error surface.
+            print(
+                f"[core.run] {command} refused: {error.code}: {error}",
+                file=sys.stderr,
+            )
             if code in {"EMPTY_TARGET_SELECTION", "TARGET_DELETED"}:
                 code = "INVALID_REQUEST" if code == "EMPTY_TARGET_SELECTION" else "TARGET_NOT_FOUND"
             category = {
