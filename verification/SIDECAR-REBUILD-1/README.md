@@ -236,3 +236,47 @@ HostRegionWorkbenchIntegrationTests.RegionReadWriteFace_ExecutesAgainstFrozenCor
 看它打开的是哪个 data root、迁移了什么、`ListBooks` 实际查了什么 —— 只有这份日志能区分 10.3 的两种可能。
 
 **现状**：`E2-FALLOUT-TRIAGE-1` 未完成；本卡仍 `in_progress`。
+## 11. 第四轮诊断：**sidecar 侧完全正常**，失败在客户端/断言层
+
+用 `NEWMANGA_EVIDENCE_DIR` 指定 evidence 目录后，成功抓到**当次**两个测试的 `core_service.stderr.log`：
+
+**`reader-chapters-list`（该测试单独跑时通过）**：
+```
+[core.schema] applied 8 migration(s) up to v14; schema bootstrap is the only write a read-only
+              session performs (user rows and managed originals are never modified)
+[core.backup] automatic backup created: 136615b4... (4023097 bytes, verified=True,
+              first writable start with an existing library)
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+```
+
+**`reader-chapters-concurrent`（该测试失败）**：
+```
+[core.schema] applied 8 migration(s) up to v14; ...
+[core.backup] automatic backup created: 6fbea9d6... (4023108 bytes, verified=True, ...)
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
+```
+
+### 结论
+
+两次 sidecar 启动**都正常**：
+
+1. 都打开了**各自**的 dataRoot（日志里的 weights 探测路径含
+   `newmanga-host-runtime-tests\reader-chapters-list-1a51c65dbc` / `…-concurrent-d4264dc387`）；
+2. 都成功把 fixture 的 **v6 迁移到 v14**（`applied 8 migration(s)`）；
+3. 都成功做了首次备份（4 MB，`verified=True`）；
+4. **没有任何 error/exception 行**。
+
+⇒ **sidecar 没有读错库、没有迁移失败、没有 namespace 问题**。失败发生在 **C# 客户端 / 测试断言**这一侧。
+
+### 这把范围进一步收窄到
+
+- 为什么 `ListBooksAsync` 在连续运行时拿到空列表（sidecar 日志显示它正常起来了）；
+- `WritePolicyTests` 的 `ListBooks result is not an array` 是**明确的解析失败**，与"空列表"是**两种不同症状**，
+  说明 C# 侧收到的响应在连续运行时**结构不同**（值得直接抓 wire 帧）；
+- `EnableWireEvidence = true` 已开启 —— 下一轮应直接读 **wire 证据文件**，看那两次 `ListBooks`
+  的请求/响应原文，这是唯一还没看的决定性证据。
+
+### 已入库证据
+
+- `core_service.stderr.reader-chapters-list.log`
+- `core_service.stderr.reader-chapters-concurrent.log`

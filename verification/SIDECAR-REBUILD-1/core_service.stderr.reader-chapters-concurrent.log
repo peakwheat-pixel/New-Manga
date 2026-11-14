@@ -1,0 +1,4 @@
+[core.schema] applied 8 migration(s) up to v14; schema bootstrap is the only write a read-only session performs (user rows and managed originals are never modified)
+WARNING: detector weights not found (weights name 'yolo11s-seg.onnx'); probed candidates, none exists: C:\Users\49745\AppData\Local\Temp\newmanga-host-runtime-tests\reader-chapters-concurrent-d4264dc387\models\detector\yolo11s-seg.onnx | G:\CODEX\New Manga\apps\desktop-avalonia\build\sidecar\core-sidecar\core-sidecar\models\detector\yolo11s-seg.onnx; the detect step will fail closed with PROVIDER_NOT_CONFIGURED until the weights are placed on the data root or set via NEWMANGA_SFX_WEIGHTS
+[core.backup] automatic backup created: 6fbea9d6280d40d9b5d5423ed46b9967 (4023108 bytes, verified=True, first writable start with an existing library)
+[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0
