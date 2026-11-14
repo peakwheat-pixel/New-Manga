@@ -314,3 +314,11 @@ NEW-MANGA-V1-FULL-AUDIT 与 R1–R4 整改、SEC-01/02/03、CORE-01、AUDIT-07/0
 - **解除条件**：D 提供 OCR ONNX 模型；或 E 配置远程视觉/OCR provider。
 - **沉淀 5 条**（源码 Core 入口、fixture v6→v14 无损、**装配期 provider 约束**、region seed 产品 API 路径、证据目录）已写入路线文档，后续 T-C 与任何 Core 侧验证可直接复用。
 - **转 T-C**：自动翻译的入口与错误文案（前置约束已攒 5 条，含本轮新增的「必须先写 `pipeline_defaults` 再启 Core」）。
+
+### 轮次 33（2026-11-14，本会话续）—— Gate 条件 1 的 8 项 finding 已裁决
+
+- **裁决文件**：[`MAINT-1-GATE-CONDITION-1-FINDING-ADJUDICATION-2026-11-14.md`](../reviews/MAINT-1-GATE-CONDITION-1-FINDING-ADJUDICATION-2026-11-14.md)。
+- **分布**：`IMPL-NOW` 3（L-F1-2 / L-L1-4 / L-AI1-6）、`IMPL-CARD` 4（L-R1-1 / L-R2-1 / L-L1-1 / L-L1-2）、`KEEP-NOTRUN` 1（L-F1-3）、`OUT` 0。
+- **数量差异已记录**：评估原文写「7 项」，矩阵现有 8 项（`L-AI1-6` 后续增补）；**以矩阵为准**，原文 append-only 不改。
+- **诚实结论**：条件 1 从「未处置」→「已逐项裁决」，但 **0 项已关闭**（3 个 IMPL-NOW 尚未实现）⇒ **条件 1 仍未完成**；**Gate 仍 `BLOCKED`**。
+- **执行顺序**：先做 3 个 IMPL-NOW（1–2 轮可关闭）；#1+#2 合并一张 UI 控件卡；#5 先出契约评估；#6 等用户裁排序语义；#4 留到发布前性能验收。

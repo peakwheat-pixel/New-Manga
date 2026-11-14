@@ -72,3 +72,22 @@
 ### 6.3 条件 5 的最终表述
 
 **部分**：真实模型 API 调用已在**两条 provider 路径**上验证通过；**未做**代表性质量基线（无人工 ground truth）与 UI 端到端（功能未接线）。**Gate 仍 `BLOCKED`。**
+
+## 7. 追加：条件 1 的 8 项 finding 已逐项裁决（2026-11-14）
+
+- **裁决文件**：[`MAINT-1-GATE-CONDITION-1-FINDING-ADJUDICATION-2026-11-14.md`](MAINT-1-GATE-CONDITION-1-FINDING-ADJUDICATION-2026-11-14.md)。
+- **数量差异**：本评估原文写「7 项」，limitation 矩阵现有 **8 项 `IMPL`**（`L-AI1-6` 为后续增补）。**以矩阵 8 项为准**，原文按 append-only 不改。
+- **裁决分布**：`IMPL-NOW` 3 项（L-F1-2 wire 负例、L-L1-4 64 位边界、L-AI1-6 死方法清理）／`IMPL-CARD` 4 项（L-R1-1、L-R2-1 UI 控件；L-L1-1 DTO 投影；L-L1-2 排序功能）／`KEEP-NOTRUN` 1 项（L-F1-3 压测）／`OUT` **0 项**。
+- **对条件 1 的影响**：从「未处置」→「**已逐项裁决**」；但 **8 项中 0 项已关闭**（3 个 IMPL-NOW 尚未实现），故 **条件 1 仍未完成**。
+- **Gate 结论不变：仍 `BLOCKED`。**
+
+## 8. 条件状态快照（2026-11-14 晚，本轮末）
+
+| # | 条件 | 状态 |
+|---|---|---|
+| 1 | 8 项 finding 处置并验证 | **已裁决 / 0 项关闭**（未完成） |
+| 2 | `AUDIT-11-INC-001` 远端可见性调查 | 未完成（需远端访问） |
+| 3 | 完整 GUI / Core / Host 流程 + TestHost | 部分 |
+| 4 | 当前 commit 的 Windows 包 + clean install 矩阵 | 未完成（需重新打包 sidecar） |
+| 5 | 模型 / API 与代表性质量验证 | 部分（两条 provider 路径真实调用已验；L2 因缺 OCR 模型 BLOCKED；无人工 GT） |
+| 6 | 当前 head 门禁 + 独立最终 Review | **已完成**（交付头 `d0ae50305` 冻结，四件套绿，Review 已登记） |
