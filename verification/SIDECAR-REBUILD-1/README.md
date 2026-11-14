@@ -280,3 +280,66 @@ HostRegionWorkbenchIntegrationTests.RegionReadWriteFace_ExecutesAgainstFrozenCor
 
 - `core_service.stderr.reader-chapters-list.log`
 - `core_service.stderr.reader-chapters-concurrent.log`
+## 12. 第五轮诊断（决定性）：wire 帧证明 **sidecar 返回正确的数据**，失败在 C# 客户端
+
+### 12.1 两个 session 的帧对比
+
+| session | 帧数 | 命令 |
+|---|---|---|
+| `reader-chapters-list`（**通过**） | 6 | `core.ping`×3、`OpenHostSession`、`ListBooks`、`list_chapters` |
+| `reader-chapters-concurrent`（**失败**） | 19 | `core.ping`×3、`OpenHostSession`、`source_list_scan_targets`、`ListBooks`、**`list_chapters`×7**、**`GetReaderProjection`×6** |
+
+失败的那个正是 `ConcurrentChapterAndProjectionReads_AreSerialized` —— 它**故意**发 1+6 次 `list_chapters` 与 6 次
+`GetReaderProjection` 来验证"读 I/O 必须串行化"。**`errors: {}` —— 所有响应都没有 error。**
+
+### 12.2 关键：两者的 `ListBooks` 响应**都返回了那本书**
+
+```json
+// FAIL session 的 ListBooks 响应（request_id req-6）
+{"protocol":"new-manga.core","version":{"major":2,"minor":3},"request_id":"req-6",
+ "result":[{"book_id":"14340ddad0ed472fbe687fe12340c5d8","title":"BOOK-FIXTURE-1 日漫_JA 测试书",
+            "page_count":8, ...}],"error":null}
+```
+
+### 12.3 关键：7 次 `list_chapters` **全部**返回了正确的 chapters
+
+```
+RESP#1..RESP#7 content: {"chapters":[{"chapter_id":"240bdba549b74281bfc6d901b1a7abd7",
+                           "title":"第 1 章","chapter_number":"1","sort_order":1,...}]} | error: None
+```
+
+**⇒ sidecar 对每一次请求都返回了正确的数据。**
+
+### 12.4 C# 侧的解析代码看起来是**正确**的
+
+```csharp
+var result = RequireResult(response, "list_chapters");
+if (result.TryGetProperty("chapters", out var array) && array.ValueKind == JsonValueKind.Array) { ... }
+return chapters;   // ← 属性缺失时【静默返回空列表】，不报错
+```
+
+它与 sidecar 的 `{"chapters": [...]}` 形状**一致**。但注意：**属性缺失时静默返回空**，
+这正是 `Assert.Single` 得到空集合而不抛异常的形态。
+
+### 12.5 结论
+
+**sidecar 100% 正常（帧为证），C# 解析与帧形状一致，测试却拿到空集合。**
+
+唯一能同时满足这三件事的解释是：**C# 客户端在并发读时把响应配错了请求**
+（12 个并发请求共用一条 stdin/stdout 管道；若 `CoreServiceClient` 的读端未按 `request_id` 严格配对，
+`ListChaptersAsync` 会拿到 `GetReaderProjection` 的响应 —— 后者没有 `chapters` 属性 ⇒ **静默返回空** ⇒ `Assert.Single` 失败）。
+
+**这是一个产品级缺陷候选（P1 级）**：真实 UI 里同时读章节列表与阅读投影（正是 CONCURRENT 测试模拟的场景）
+同样会串响应、静默显示空章节。**需要独立复核确认**，不得只凭推断定级。
+
+### 12.6 为什么"单独跑通过、连跑失败"
+
+连跑时前一个测试留下的 sidecar/管道状态使第二个测试的并发窗口更长或响应到达顺序变化，
+从而更容易触发串配。**但根因仍是客户端的响应配对**，不是测试顺序本身。
+
+### 12.7 下一轮（代码级）
+
+1. 读 `CoreServiceClient.SendAsync` 的读端循环，确认是否按 `request_id` 派发响应、是否允许两帧交错；
+2. 若确认串配，**先写一个能在实现回退时变红的判别测试**（并发发 `list_chapters` + `GetReaderProjection`，
+   断言每个响应被派给正确的请求），再修实现；
+3. 该缺陷若成立，应作为**独立 finding 登记**（它不属于 E-2，是被 E-2 解除后**暴露**出来的既有缺陷）。
