@@ -7,7 +7,7 @@ status: done
 suggested_owner: DSH
 owner: DSH
 reviewer: fake-core-review（独立上下文子 agent，APPROVED_WITH_LIMITATIONS）
-integration_commit: f1d17cd9b
+integration_commit: 003385bc3
 canonical_evidence_status: complete
 resource_closeout_status: complete
 depends_on:
@@ -102,9 +102,9 @@ elif scenario == "idless-only":           # 只有无 id 帧（应 poison）
 
 | evidence_id | AC/Gate | path | commit | sha256 | class | sha256_basis |
 |---|---|---|---|---|---|---|
-| EV-FC-01 | AC1-AC4 假夹具 3 passed | verification/E7-2-DYNAMIC-EVIDENCE-1/fake-core-tests.log | f1d17cd9b | 117255f344b278e365682cb953ecc7882973c0c29bbfae4f5de85e0edd5f5cc5 | CANONICAL | BLOB |
-| EV-FC-02 | AC6 全量不回归（213/0/30） | verification/E7-2-DYNAMIC-EVIDENCE-1/coreclient-full.log | f1d17cd9b | 99c7400202e6efb265bd5dc117da2de737579e43014831426faf3e15ea398f2e | CANONICAL | BLOB |
-| EV-FC-03 | AC2/AC6 变异验证（SendHostControlAsync 绕过 resync ⇒ 第 4 条变红） | verification/E7-2-DYNAMIC-EVIDENCE-1/mutation-D-sendhostcontrol.log | f1d17cd9b | 99a118c9bcb24c7389f706dd7a9e27e1d0f6305c8c8c35400bbd259a5b5efd0c | CANONICAL | BLOB |
+| EV-FC-01 | AC1-AC4 假夹具 3 passed | verification/E7-2-DYNAMIC-EVIDENCE-1/fake-core-tests.log | 003385bc3 | 751309d7055f4d90ca99be51f383f44dc0788a00e9ec141450de0c308bec7e84 | CANONICAL | BLOB |
+| EV-FC-02 | AC6 全量不回归（213/0/30） | verification/E7-2-DYNAMIC-EVIDENCE-1/coreclient-full.log | 003385bc3 | 446bdaad7a605162b075aa770ce5a9459d1c3b06d0c3a8b67a740c4d47d858ce | CANONICAL | BLOB |
+| EV-FC-03 | AC2/AC6 变异验证（SendHostControlAsync 绕过 resync ⇒ 第 4 条变红） | verification/E7-2-DYNAMIC-EVIDENCE-1/mutation-D-sendhostcontrol.log | 003385bc3 | 99a118c9bcb24c7389f706dd7a9e27e1d0f6305c8c8c35400bbd259a5b5efd0c | CANONICAL | BLOB |
 
 ## Resource Manifest
 
