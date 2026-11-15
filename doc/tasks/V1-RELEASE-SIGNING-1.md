@@ -46,7 +46,7 @@ created: 2026-10-21
 - [x] AC1 使用**真实**证书对安装包执行 `signtool sign`，exit 0，且 `/fd SHA256 /td SHA256 /tr <RFC3161>` 时间戳成功；不得使用自签名测试证书替代。 <!-- not-applicable: 用户 2026-10-21 接受未签名 v1（原 <<NOT_APPLICABLE>>） -->
 - [x] AC2 `signtool verify /pa /v` exit 0；`Get-AuthenticodeSignature` 状态 `Valid`，签名者证书链可信。 <!-- not-applicable: 用户 2026-10-21 接受未签名 v1（原 <<NOT_APPLICABLE>>） -->
 - [x] AC3 记录签名前后安装包 SHA-256、签名者 Subject/Thumbprint、时间戳来源、命令与 exit code，写入 `release-readiness.md`。 <!-- not-applicable: 用户 2026-10-21 接受未签名 v1（原 <<NOT_APPLICABLE>>） -->
-- [x] AC4 若用户决定接受未签名发布：必须显式书面裁定并更新 `release-readiness.md`；否则不得发布。 <!-- verified: human:user@2026-10-21 明确接受未签名；release-readiness.md 已记录（原 <<MET>>） -->
+- [x] AC4 若用户决定接受未签名发布：必须显式书面裁定并更新 `release-readiness.md`；否则不得发布。 <!-- verified: human:user@2026-10-21 明确接受未签名 v1（原文「接受未签名 v1」见 file:verification/V1-FINALIZE-20261021/release-readiness.md:24；原 <<MET>>） -->
 
 ## 允许修改范围
 

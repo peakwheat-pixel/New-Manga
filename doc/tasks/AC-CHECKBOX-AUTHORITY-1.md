@@ -157,10 +157,36 @@ AC 正文未改（两类已批准例外见下方）；`git diff --numstat` 逐�
 
 **Lead 逐项裁决**（8 个独立子 agent 的 20+ 项「需裁决」）记录在
 `G:\CODEX\New Manga.workspace\tasks\AC-CHECKBOX-AUTHORITY-1\LEAD-DECISIONS.md`，要点：
-- **降级 3 条**（`V11R-D-1` AC8 因 D-12 旧壳 reduced-motion 不生效、`M2-SFX-CORRECTION-EXPORTER` AC4 因 T1b 产物不存在、`V11R-D-1` 同项）→ 说明 verified 判定确有对抗性复核。
-- **升级 2 条**（`M2-REGION-RETYPE-CORE` AC1/AC4：实现在树内 + 被新壳消费 + 历史回归记录）。
-- **维持 blocked 的关键拒绝**：`V11R-A-3` AC4（跨卡联合满足 ≠ 本卡达成）、`V11R-C-3` R1（tag 后 dry-run 未补）、`P19` AC1（正文要求 D+，用户已批准 D 替代）、`P20-MEM-OPT-1` AC2（正文 350MB，实测 443.3MB，用户已改 480MB 但本任务禁改正文）。
-- **与用户初始提示的 2 处偏离并说明理由**：`UI-DESIGN-1`（9 条）与 `M2-SFX-MISROUTE-UI-MITIGATION`（5 条）经逐条读 AC 文本确认为**设计交付物**（产出文档/契约/零产品代码），实物齐备且独立 Review 逐 AC PASS → 判 `verified`；若强判 `blocked: 实现未开始` 会构成**假陈述**（两卡 scope 本就是设计）。
+- **降级 4 条**：`V11R-D-1` AC8（D-12 旧壳 reduced-motion 不生效）、`M2-SFX-CORRECTION-EXPORTER` AC4
+  （T1b 产物不存在）、`MICA-FIX-1` AC1/AC2（**独立复核 r1 发现**：A/B 截图的 solid 帧实为 ChatGPT
+  桌面窗口、`titlebar_pixel=-1`；AC2 证据是 JSON 内自述字符串而无原始日志）→ 说明 verified 判定确有对抗性复核。
+- **升级 2 条**：`M2-REGION-RETYPE-CORE` AC1/AC4（实现在树内 + 被新壳消费 + 历史回归记录）。
+- **维持 blocked 的关键拒绝**：`V11R-A-3` AC4（跨卡联合满足 ≠ 本卡达成）、`V11R-C-3` R1（tag 后 dry-run 未补）、
+  `P19` AC1（正文要求 D+，用户已批准 D 替代）、`P20-MEM-OPT-1` AC2（正文 350MB，实测 443.3MB）。
+- **与用户初始提示的 2 处偏离并说明理由**：`UI-DESIGN-1`（9 条）与 `M2-SFX-MISROUTE-UI-MITIGATION`（5 条）
+  经逐条读 AC 文本确认为**设计交付物**，实物齐备且独立 Review 逐 AC PASS → 判 `verified`；
+  该例外已写入 `09_COLLABORATION.md` §4.3.1「两类例外」第 1 条（独立复核 r1 的 P3-06）。
+
+### 7.9 独立复核与返修（r1，verdict CHANGES_REQUESTED → 已处置）
+
+复核：`ac-review`（独立上下文子 agent，未参与实现），被审 head `0e7bc1fc5`，
+报告 `reviews/ac-review-r1.md`（P0/P1/P2/P3 = 0/3/8/8）。
+
+| finding | 处置 |
+|---|---|
+| **P1-01** `MICA-FIX-1` AC1 证据不成立 | **已修**：AC1 → `blocked`。Lead 亲自读图确认 `titlebar-solid.png` 是 ChatGPT 桌面窗口（左侧 ChatGPT 侧栏、底部 GPT-6.1），画面内无 NewManga；`titlebar_pixel=-1` 亦证明取色失败。这是本轮唯一一处**已发布的虚报**，原样登记不淡化。 |
+| **P1-02** 旧 Tauri 11 条 verified 与 §4.3.1 冲突 | **已裁决**：在 §4.3.1 增「两类例外」第 2 条（旧架构历史交付验收），并要求注释以「旧架构（已退出）历史交付」披露（`EXPORT-IPC-1`/`RUN-IPC-1` 已具备）。 |
+| **P1-03** FPS 7 条 + MEM AC1 未披露旧架构 | **已修**：8 条注释追加「⚠ 旧架构（React/WebView2，已由 AD-002 退役）历史交付验收，非当前产品能力」。 |
+| **P2-01** w4 批次无报告/无裁决时序 | **已修**：`LEAD-DECISIONS` 补 §八（w4 4 项裁决）与本轮 §十；任务卡 §7.6 记录 w4 结果。 |
+| **P2-02** `RUN-IPC-1` AC5 无退出码 | **已裁决并披露**：维持 verified（`test result 0 failed` + `PACKAGED_EXIT code=0` 构成绿证），注释显式写明该形式缺口。 |
+| **P2-03** `RELEASE-PACKAGE-1` AC1–AC5 未披露卡面 NOT_RUN 表 | **已修**：5 条注释追加「卡面测试要求表为旧计划态，依据是证据目录实物」。 |
+| **P2-04** 6 张 gv3 卡 `check.ps1 -TaskPath` FAIL | **已记录不掩盖**：§4.3.1 增「已知门禁边界」段——该 FAIL 在父版本同样存在、非本次引入，消除需另立 Task 给 checker 加历史豁免。 |
+| **P2-05** `verify_final.py` 提交后与 HEAD 自比失效 | **已修**：改为 `--base <commit>` / `AC_BASE` 指定基线，并以 `0b517259e`（首个标注提交的父）复跑归档。 |
+| **P2-06** `V11R-B-4` AC3 理由错误 | **已修**：实际 `StudioBatchViewModel.cs:673` 有 `State = Projection is null ? Error : Partial` 赋值；理由改为「有赋值路径但无测试断言/无就地呈现」。 |
+| **P2-07** 定位符格式（17 裸文件名 + 43 `@:行号`） | **已修**：提交 `895f3c852` 全部展开为完整相对路径，`verify_locators.py` 419/419 行内命中。 |
+| **P2-08** MICA AC2 自述证据 | **已修**：AC2 → `blocked`（无原始日志，卡面记 NOT_RUN，同轮采集不可信）。 |
+| P3-01…P3-08（8 项） | **已处置**：任务卡计数改为「降级 4 + 升级 2」；§4.3.1 措辞（「不再作为行末门禁标记」）、历史口径、设计卡例外已改；`TASK-056` 引用 :48→:49；`MICA` AC3 删除无关 :57 引用；`V1-RELEASE-SIGNING-1` 的 `human:` 补 `file:` 路径；NUL/CRLF 见 §7.8 与 §九。 |
+
 
 ### 7.8 附带发现：`doc/tasks/**` 控制字符损坏（另立 Task）
 
