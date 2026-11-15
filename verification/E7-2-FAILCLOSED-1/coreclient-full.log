@@ -1,7 +1,7 @@
 # test
-head: 16bac8f91（返修工作树）
+head: 6b847ab91（收口工作树；本证据在收口提交前生成）
 env: Windows 11 / pwsh 7 / dotnet 10.0.401
-timestamp: 2026-11-16T01:31:03+08:00
+timestamp: 2026-11-16T01:42:24+08:00
 command: dotnet test apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/NewManga.CoreClient.Tests.csproj
 EXIT: 0
 

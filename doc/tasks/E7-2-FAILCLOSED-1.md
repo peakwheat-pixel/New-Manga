@@ -3,10 +3,13 @@ id: E7-2-FAILCLOSED-1
 title: E-7 #2 —— 按 Codex 裁决把生产路径改为 fail-closed（无 request_id 不再视为属于本请求）
 kind: defect
 governance_version: 3
-status: in_progress
+status: done
 suggested_owner: DSH
 owner: DSH
-reviewer: null
+reviewer: e7-2-review（r1，CHANGES_REQUESTED）+ e7-2-review-r2（r2，APPROVED_WITH_LIMITATIONS）
+integration_commit: 6b847ab91
+canonical_evidence_status: complete
+resource_closeout_status: complete
 depends_on:
   - E7-1-UNIFY-LEASE-1
 approval: Codex 裁决 2026-11-16（doc/reviews/E7-2-FAILOPEN-RULING-codex-2026-11-16.md）；用户 2026-11-15「全部授权」
@@ -68,7 +71,7 @@ response.RequestId is { } actual && string.Equals(actual, requestId, StringCompa
   「它**若保留，应复用同一严格谓词**」、§5.3 是「**不能只改 Ensure，也不能只改 Parse**」，
   我把它误读为「可以不改 Ensure」。**返修已改**：`EnsureResponseBelongsToRequest` 现在复用
   同一个 `BelongsToRequest` 严格谓词（无/非法 id ⇒ `MalformedResponse`），
-  `BelongsToRequest` 由 `private` 改为 `internal` 以共享（仍非 public，不违反裁决「不加新公开 API」）；
+  `BelongsToRequest` 由 `private` 改为 `internal`（**r2 更正理由**：同类型的 `private` 成员本来就可被 `EnsureResponseBelongsToRequest` 互调，改 `internal` 的真正目的是让**测试直接断言谓词**；仍非 `public`，不违反裁决「不加新公开 API」）；
 - 事件帧排除守卫 `!CoreProtocol.IsEventFrame(line)` 不变。
 
 ### 测试影响（契约变更，测试随之改）
@@ -85,16 +88,16 @@ response.RequestId is { } actual && string.Equals(actual, requestId, StringCompa
 
 ## 目标（一个可观察结果）
 
-生产路径对「无 id 非事件帧」fail-closed；全量 **203 passed / 0 failed / 30 skipped** 不退化。
+生产路径对「无 id 非事件帧」fail-closed；全量 **210 passed / 0 failed / 30 skipped** 不退化。
 
 ## Acceptance Criteria
 
-- [ ] **AC1 按裁决实施**：`BelongsToRequest` 收紧为「必须 id 完全相等」。
-- [ ] **AC2 `SendRawAsync` 语义保持**：确认它不经 `BelongsToRequest`，原始观察语义不变。
-- [ ] **AC3 事件帧不受影响**：`IsEventFrame` 守卫保持，事件帧仍被跳过。
-- [ ] **AC4 测试同步**：原 fail-open 用例改为 fail-closed 用例并断言 drain 次数。
-- [ ] **AC5 不回归**：全量 **203 / 0 / 30**；四件套 PASS。
-- [ ] **AC6 独立复核**：固定 head 交独立上下文 Review。
+- [x] **AC1 按裁决实施**：`BelongsToRequest` 收紧为「必须 id 完全相等」。 <<MET>>
+- [x] **AC2 `SendRawAsync` 语义保持**：确认它不经 `BelongsToRequest`，原始观察语义不变。 <<MET>>
+- [x] **AC3 事件帧不受影响**：`IsEventFrame` 守卫保持，事件帧仍被跳过。 <<MET>>
+- [x] **AC4 测试同步**：原 fail-open 用例改为 fail-closed 用例并断言 drain 次数。 <<MET>>
+- [x] **AC5 不回归**：全量 **210 / 0 / 30**；四件套 PASS。 <<MET>>
+- [x] **AC6 独立复核**：固定 head 交独立上下文 Review。 <<MET>>
 
 ## 允许修改范围
 
@@ -111,8 +114,8 @@ response.RequestId is { } actual && string.Equals(actual, requestId, StringCompa
 
 | 场景 | 命令 | 期望 |
 |---|---|---|
-| 定向 | `--filter "R002ResyncTests\|PipeResponsePairingValidationTests"` | 7 passed |
-| 全量 | `dotnet test …NewManga.CoreClient.Tests.csproj` | 203 / 0 / 30 |
+| 定向 | `--filter "R002ResyncTests\|PipeResponsePairingValidationTests"` | 14 passed |
+| 全量 | `dotnet test …NewManga.CoreClient.Tests.csproj` | 210 / 0 / 30 |
 | 四件套 | check / pins / inventory | PASS / 18-18 / 87 |
 
 ## 裁决 §5.3 的未实施项（如实登记，不淡化）
@@ -134,10 +137,45 @@ response.RequestId is { } actual && string.Equals(actual, requestId, StringCompa
 | `EnsureResponseBelongsToRequest` 严格化 + 两处旧断言迁移 | ✅ 本轮完成 |
 | 非法 id 六种形态覆盖 | ✅ 本轮完成 |
 | 真实调用链（`SendAsync`/`SendHostControlAsync`）的假 sidecar 测试 | ❌ 未做（见上） |
+| §5.3 其它用例：**错 id→无 id→匹配**（多帧混合）、**无 id 耗尽预算→poison**、**事件帧+无 id 混排**、**raw 的 idless 请求错误仍可观察** | ❌ 均未做（同上，缺假 sidecar 夹具） |
 | **bridge 侧**同类 fail-open（`HostBridgeClient.ParseResponse` 在 `expectedId == null` 时不校验） | ❌ 不在本卡范围，需另一份裁决 |
 | `AcquireExchangeLeaseAsync` / `ReadNextResponseLineAsync` 仍 `public` | ❌ E7-1 明确不做 |
 | `R002-RESYNC-1` 的 P2-F1（测试不覆盖调用点） | ❌ 仍未关闭 |
 
-## 证据
+## Canonical Evidence
 
-裁决文件、全量日志、修复 diff 写入 `doc/reviews/` 与 `verification/E7-2-FAILCLOSED-1/`。
+| evidence_id | AC/Gate | path | commit | sha256 | class | sha256_basis |
+|---|---|---|---|---|---|---|
+| EV-E72-01 | AC1/AC4 全量不回归（210/0/30） | verification/E7-2-FAILCLOSED-1/coreclient-full.log | 6b847ab91 | addf180eec0c913bbb8feea25a8d2814d21b372f0defc6226eab9b37a9c07c11 | CANONICAL | BLOB |
+| EV-E72-02 | AC1/AC2/AC3/AC4 修复 diff | verification/E7-2-FAILCLOSED-1/fix.diff | 6b847ab91 | b13bd6dae09125bc8e780295fc3c3f3718c6c630ef2e51daab967cec434c604f | CANONICAL | BLOB |
+
+## Resource Manifest
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| agent-output | verification/E7-2-FAILCLOSED-1/ | NOT_APPLICABLE | — | — | 新增证据，无迁移/归档 |
+
+## Closeout Record
+
+- Closeout：2026-11-16，DSH；实现 `16bac8f91` + r1 返修 `6b847ab91` + r2 处置（本提交）。
+- **裁决采纳**：Codex 2026-11-16（`doc/reviews/E7-2-FAILOPEN-RULING-codex-2026-11-16.md`），
+  verdict「条件化：生产路径 fail-closed；`SendRawAsync` 保留原始语义，不加 opt-out 开关」。
+  DSH 以其名义集成。
+- **结果**：
+  - `BelongsToRequest` 改为严格谓词（必须 id 完全相等），生产重同步路径 fail-closed；
+  - `EnsureResponseBelongsToRequest` **复用同一谓词**（r1 F1：初版误读裁决为「可以不改 Ensure」，
+    已改）；错误消息**区分**「无可用 id」与「id 错配」（r2 R2-01）；
+  - `SendRawAsync` 语义未变（不经过 `BelongsToRequest`）；
+  - 事件帧守卫不变；两处旧断言已迁移（r1 F2/§5.3 要求）。
+- **独立复核两轮**：r1 `CHANGES_REQUESTED`（0/1/1/3）→ r2 `APPROVED_WITH_LIMITATIONS`（0/0/3/4）。
+- **门禁**：定向 **14 passed**；全量 **210 passed / 0 failed / 30 skipped / EXIT=0**；
+  `check.ps1` PASS (3 warnings)｜`verify_pins` 18/18｜`api_inventory` 1/80/6=87。
+- **未关闭项（不淡化）**：
+  1. **裁决 §5.3 的动态证据缺口**：真实 `SendAsync`/`SendHostControlAsync` 调用链的假 sidecar 测试
+     未做（`StartAsync` 需 `core.ping` 握手），以及「错 id→无 id→匹配」「无 id 耗尽→poison」
+     「事件+无 id 混排」「raw idless 观察」等用例 ⇒ **`E-7 #2` 整项不得据此关闭**；
+  2. **bridge 侧**同类 fail-open（`HostBridgeClient.ParseResponse` 在 `expectedId == null` 时不校验）
+     **未处理**，需另一份裁决；
+  3. `R002-RESYNC-1` 的 P2-F1（测试不覆盖调用点）仍未关闭；
+  4. `-TaskPath` 因 DAG 未登记而 FAIL（表外卡既有边界，标 done 后消解）。
+

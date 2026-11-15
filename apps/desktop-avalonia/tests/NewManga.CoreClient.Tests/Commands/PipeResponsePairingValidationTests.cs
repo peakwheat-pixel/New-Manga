@@ -66,7 +66,9 @@ public sealed class PipeResponsePairingValidationTests
             () => CoreServiceClient.EnsureResponseBelongsToRequest(response, "req-1", stderrLogPath: null));
 
         Assert.Equal(SidecarErrorCode.MalformedResponse, error.Code);
-        Assert.Contains("<missing>", error.Message, StringComparison.Ordinal);
+        // r2 R2-01: the message now distinguishes "no usable id" from "wrong id", so assert the
+        // missing-id wording rather than a placeholder.
+        Assert.Contains("no usable request_id", error.Message, StringComparison.Ordinal);
     }
 
     /// <summary>

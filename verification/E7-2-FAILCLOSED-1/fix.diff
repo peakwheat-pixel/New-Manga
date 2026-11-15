@@ -1,8 +1,8 @@
 diff --git a/apps/desktop-avalonia/src/NewManga.CoreClient/CoreServiceClient.cs b/apps/desktop-avalonia/src/NewManga.CoreClient/CoreServiceClient.cs
-index 0e3014f17..b38485fc7 100644
+index 0e3014f17..cd214b752 100644
 --- a/apps/desktop-avalonia/src/NewManga.CoreClient/CoreServiceClient.cs
 +++ b/apps/desktop-avalonia/src/NewManga.CoreClient/CoreServiceClient.cs
-@@ -2456,22 +2456,39 @@ public sealed class CoreServiceClient : IAsyncDisposable
+@@ -2456,22 +2456,45 @@ public sealed class CoreServiceClient : IAsyncDisposable
      }
  
      /// <summary>
@@ -34,26 +34,33 @@ index 0e3014f17..b38485fc7 100644
          CoreResponse response, string requestId, string? stderrLogPath)
      {
 -        if (response.RequestId is { } actual && !string.Equals(actual, requestId, StringComparison.Ordinal))
+-        {
 +        // E-7 #2 (Codex ruling 2026-11-16 §5.1): if this judge is kept it MUST reuse the same strict
 +        // predicate as production -- it used to let a null request_id through, which contradicted the
 +        // fail-closed policy for exactly the same case.
 +        if (!BelongsToRequest(response, requestId))
-         {
++        {
++            // E-7 #2 裁决 §5.1: a MISSING/non-string id is a different fault from a DIFFERENT id, so say
++            // which one it is instead of claiming "another command's response" in both cases.
++            var detail = response.RequestId is { } actual
++                ? $"response request_id '{actual}' does not match request '{requestId}': "
++                  + "the core pipe returned another command's response"
++                : $"response carries no usable request_id (expected '{requestId}'): "
++                  + "the core pipe returned a frame that cannot be attributed to this command";
              throw new SidecarException(
                  SidecarErrorCode.MalformedResponse,
                  SidecarSpec.CoreServiceName,
 -                $"response request_id '{actual}' does not match request '{requestId}': "
 -                + "the core pipe returned another command's response",
-+                $"response request_id '{response.RequestId ?? "<missing>"}' does not match request "
-+                + $"'{requestId}': the core pipe returned another command's response",
++                detail,
                  stderrLogPath);
          }
      }
 diff --git a/apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Commands/PipeResponsePairingValidationTests.cs b/apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Commands/PipeResponsePairingValidationTests.cs
-index ecf05d313..41552007c 100644
+index ecf05d313..69718b85c 100644
 --- a/apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Commands/PipeResponsePairingValidationTests.cs
 +++ b/apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Commands/PipeResponsePairingValidationTests.cs
-@@ -50,17 +50,59 @@ public sealed class PipeResponsePairingValidationTests
+@@ -50,17 +50,61 @@ public sealed class PipeResponsePairingValidationTests
      }
  
      /// <summary>
@@ -78,7 +85,9 @@ index ecf05d313..41552007c 100644
 +            () => CoreServiceClient.EnsureResponseBelongsToRequest(response, "req-1", stderrLogPath: null));
 +
 +        Assert.Equal(SidecarErrorCode.MalformedResponse, error.Code);
-+        Assert.Contains("<missing>", error.Message, StringComparison.Ordinal);
++        // r2 R2-01: the message now distinguishes "no usable id" from "wrong id", so assert the
++        // missing-id wording rather than a placeholder.
++        Assert.Contains("no usable request_id", error.Message, StringComparison.Ordinal);
 +    }
 +
 +    /// <summary>

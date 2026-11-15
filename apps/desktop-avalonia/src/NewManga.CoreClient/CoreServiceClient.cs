@@ -2484,11 +2484,17 @@ public sealed class CoreServiceClient : IAsyncDisposable
         // fail-closed policy for exactly the same case.
         if (!BelongsToRequest(response, requestId))
         {
+            // E-7 #2 裁决 §5.1: a MISSING/non-string id is a different fault from a DIFFERENT id, so say
+            // which one it is instead of claiming "another command's response" in both cases.
+            var detail = response.RequestId is { } actual
+                ? $"response request_id '{actual}' does not match request '{requestId}': "
+                  + "the core pipe returned another command's response"
+                : $"response carries no usable request_id (expected '{requestId}'): "
+                  + "the core pipe returned a frame that cannot be attributed to this command";
             throw new SidecarException(
                 SidecarErrorCode.MalformedResponse,
                 SidecarSpec.CoreServiceName,
-                $"response request_id '{response.RequestId ?? "<missing>"}' does not match request "
-                + $"'{requestId}': the core pipe returned another command's response",
+                detail,
                 stderrLogPath);
         }
     }

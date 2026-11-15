@@ -7,13 +7,13 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | metric | value |
 |---|---:|
 | task files | 651 |
-| terminal | 638 |
-| non-terminal | 12 |
+| terminal | 639 |
+| non-terminal | 11 |
 | non-terminal named in the plan | 7 |
-| non-terminal outside the plan | 5 |
+| non-terminal outside the plan | 4 |
 | task files tracked by git | 651 |
 | task files untracked (drafts) | 0 |
-| non-terminal tracked by git | 12 |
+| non-terminal tracked by git | 11 |
 
 Arithmetic note: `task files` = `terminal` + `non-terminal` + `(none)` rows. A `(none)` row is a file with no `status:` field (a draft), which is excluded from `non-terminal` because check.ps1 only counts entries whose status exists and is not terminal; adding only `terminal` + `non-terminal` therefore lands one short of `task files`, and that gap is this note, not a counting error.
 
@@ -21,12 +21,12 @@ Arithmetic note: `task files` = `terminal` + `non-terminal` + `(none)` rows. A `
 
 | status | count | terminal |
 |---|---:|---|
-| `done` | 537 | yes |
+| `done` | 538 | yes |
 | `closed_with_limitations` | 60 | yes |
 | `cancelled` | 21 | yes |
 | `historical` | 11 | yes |
 | `superseded` | 9 | yes |
-| `in_progress` | 6 | no |
+| `in_progress` | 5 | no |
 | `in_review` | 2 | no |
 | `(none)` | 1 | no |
 | `approved` | 1 | no |
@@ -40,7 +40,6 @@ Arithmetic note: `task files` = `terminal` + `non-terminal` + `(none)` rows. A `
 |---|---|---|
 | `GIT-CLEAN-PUBLICATION-DIAG-1` | `approved` | mentioned |
 | `FEA11-ENTRY-MISSING-1` | `blocked` | no |
-| `E7-2-FAILCLOSED-1` | `in_progress` | no |
 | `GATE3-MATRIX-EXPAND-1` | `in_progress` | no |
 | `GATE3-SETTINGS-SHORTCUT-1` | `in_progress` | no |
 | `INSTALLER-MATRIX-1` | `in_progress` | no |
