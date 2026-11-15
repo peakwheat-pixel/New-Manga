@@ -1,0 +1,107 @@
+
+=== doc/checkpoints/GOAL-PROGRESS-2026-11-02.md  (15 处)
+  [TAB] @5726: handler + 冻结信封映射）、<TAB>ests/core/test_draft_
+  [TAB] @11033: 余 3 条 P1**：P1-3（旧 <TAB>heme-settings.json 迁移
+  [TAB] @11358: otion=true→三类全禁、旧 <TAB>hemeId→frontendId、Fol
+  [TAB] @11420: ppearanceStore 读旧 <TAB>heme-settings.json 迁移
+  [TAB] @11848: r2-P1-1（layout 默认 <TAB>op-band/stacked/fit-p
+  [VT] @131490: 03.md。
+<NL>- **pin**：<VT>erify_pins.ps1 扩展为 **
+  [VT] @131648: -06 四 PNG 前缀匹配。证据 <VT>erification/FEA-09-PR
+  [VT] @132530: .1 / C-06 v1.1 冻结；<VT>erify_pins 17/17；chec
+  [TAB] @133561:  **DSH 范围裁决**：扩写域 <TAB>ests/storage/test_pur
+  [VT] @135534: 9-995d80ca5.md；证据 <VT>erification/FEA-09/lo
+  [TAB] @152661: 转向条件 4 的可做部分**（检查 <TAB>ools/ci/publish-relea
+  [CR] @207382: \manga），并据此认为需要新增 <CR>egistry_id → containe
+  [CR] @207847: 信裁决）：确认**属实**。⇒ **<CR>oots[0] 对非 folder 源本来
+  [CR] @231822: Files 未被污染**、<NL>  **<CR>einstall_exit_code=0 
+  [CR] @231846: all_exit_code=0 且 <CR>einstall_app_sha_matc
+
+=== doc/handoffs/CORE-TILE-EMIT-1-handoff.md  (4 处)
+  [VT] @402: ,length,sha256]\；\<VT>alidate_manifest\ 校验连
+  [TAB] @711:  端到端消费真实 Core 产物（\<TAB>est.ps1\ 先生成 artifact
+  [VT] @1014: ision。<NL><NL>## 复跑与证据<NL>\<VT>erification/CORE-TILE
+  [CR] @340: 流 \page.bin\，清单为 \<CR>esource_id/revision/s
+
+=== doc/handoffs/DSH-HANDOFF-2026-11-06.md  (2 处)
+  [TAB] @24461: re_service.py + 新 <TAB>ests/fea11/test_sourc
+  [VT] @42648: 子句按 **L-4** 降级表述）；<VT>erification/FEA-12-UI
+
+=== doc/handoffs/FEA-04-68c72ba57.md  (1 处)
+  [CR] @14205: tAfterGateAsync 改 <CR>return await；ReaderOv
+
+=== doc/handoffs/FEA-09-995d80ca5.md  (4 处)
+  [VT] @1758: mpl Review。
+<NL>- 证据：<VT>erification/FEA-09/lo
+  [VT] @2158: Resolve，16 frames；<VT>erification/FEA-09/ip
+  [CR] @1442: 03 22:05）<CR><NL><CR><NL>- 新增 <CR>eader.py/<CR>esolve.py/
+  [CR] @1452: <NL><CR><NL>- 新增 <CR>eader.py/<CR>esolve.py/ind_for_so
+
+=== doc/handoffs/GOV-EOL-PIN-1-d19e74ab4.md  (6 处)
+  [TAB] @1534: /text eol=lf      <TAB>doc/handoffs/GOV-UNTR
+  [TAB] @1623: /text eol=lf      <TAB>verification/GOV-UNTR
+  [TAB] @1737: /text eol=lf      <TAB>verification/GOV-UNTR
+  [TAB] @1836: /text eol=lf      <TAB>verification/GOV-UNTR
+  [TAB] @1937: /text eol=lf      <TAB>verification/GOV-UNTR
+  [TAB] @2033: /text eol=lf      <TAB>verification/GOV-UNTR
+
+=== doc/handoffs/HOST-RESOURCE-SECURITY-1-handoff.md  (1 处)
+  [VT] @1059: in。
+<NL>
+<NL>## 复跑与证据
+<NL>\<VT>erification/HOST-RESO
+
+=== doc/handoffs/M2-C1-zcode-7de1cd2.md  (7 处)
+  [TAB] @4427: f11399b0cea9463
+<NL>A<TAB>doc/contracts/M2-C1_T
+  [TAB] @4472: IPC_CONTRACT.md
+<NL>A<TAB>verification/M2-C1/zc
+  [TAB] @4524: -environment.md
+<NL>A<TAB>verification/M2-C1/zc
+  [TAB] @4588: e-owner-base.md
+<NL>A<TAB>verification/M2-C1/zc
+  [TAB] @4641: decision-log.md
+<NL>A<TAB>verification/M2-C1/zc
+  [TAB] @4698: -equivalence.md
+<NL>A<TAB>verification/M2-C1/zc
+  [TAB] @4754: -scope-check.md
+<NL>A<TAB>verification/M2-C1/zc
+
+=== doc/handoffs/REALUSE-DATA-SAFETY-5-handoff.md  (1 处)
+  [TAB] @144:  HEAD：\$head\；分支：\<TAB>ask/REALUSE-DATA-SAFE
+
+=== doc/handoffs/UPGRADE-LEGACY-LAYOUT-1-handoff.md  (1 处)
+  [CR] @2255: <NL><NL>- main() 在迁移失败时 <CR>eturn 2：目的是避免 ssembl
+
+=== doc/plan/FEA-CONTRACT-FROZEN-C09.md  (1 处)
+  [VT] @5339: re_restore 包与最近一个 <VT>erified=true 包**不得被自动
+
+=== doc/PUSH_RECORD_2026-10-25.md  (2 处)
+  [TAB] @2361: 7d2b032bb5ad1cf148<TAB>refs/heads/codex/clea
+  [TAB] @2441: a8076d6260bf8fa79a<TAB>refs/heads/main<NL>```<NL><NL>
+
+=== doc/reviews/FEA-06-RESIDUAL-4A-r2.md  (5 处)
+  [TAB] @9456: e89e1e 756ab29e2<NL>M<TAB>doc/plan/FEA-CONTRACT
+  [TAB] @9494: CT-FROZEN-C07.md<NL>M<TAB>doc/reviews/CONTRACT-
+  [TAB] @9548: 11-14-C07-RO1.md<NL>A<TAB>doc/reviews/FEA-06-RE
+  [TAB] @9587: ESIDUAL-4A-r1.md<NL>M<TAB>doc/tasks/FEA-06-RESI
+  [TAB] @9621: 6-RESIDUAL-4A.md<NL>M<TAB>verification/FEA-06-R
+
+=== doc/reviews/FEA-11-HOST-AUTH-4-scope-r1.md  (1 处)
+  [VT] @920: ean。完整运行元数据与原始响应以 <VT>erification/FEA-11-HO
+
+=== doc/reviews/GOAL-C-DEBT-AUDIT-2026-11-16.md  (3 处)
+  [VT] @6322: N-C09.md（VT=1）**在 <VT>erify_pins 的校验清单内**。
+
+  [VT] @6463: blob 重新锚定 pin，并重跑 <VT>erify_pins；
+<NL>- 本卡**未改
+  [VT] @6505:  doc/plan/** 文件**，<VT>erify_pins 仍 18/18。
+<NL>
+
+=== doc/reviews/MAINT-2-C1-BATCH-1-r1.md  (2 处)
+  [TAB] @3482: ONTRACT.md` = **`3<TAB>1`**，与实现者声称一致；全区间合计 `
+  [TAB] @16350: PC_CONTRACT.md = 3<TAB>1<NL><NL>C:\Python314\pytho
+
+=== doc/WORKTREE_SAFETY_INVENTORY.md  (2 处)
+  [TAB] @17287: （8e4ec7066）。<NL>- 分支 <TAB>ask/THEME-MACOS-2、<TAB>as
+  [TAB] @17306: ask/THEME-MACOS-2、<TAB>ask/THEME-MACOS-2-sab

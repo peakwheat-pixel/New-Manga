@@ -1,0 +1,16 @@
+# doc/ 其它目录控制字符评估
+head: b631e2b24
+timestamp: 2026-11-16T03:07:21+08:00
+
+## 结论：不修（四项理由见 doc/tasks/DOC-CTRLCHAR-FIX-2.md）
+
+## 失败记录
+- 失败一：正则 \\r\\n(?=\\r?\\n) 在 CRLF 文件里匹配每个空行 => 误改 781 个文件
+  回滚：git checkout -- doc/ ；回滚后 verify_pins 18/18、doc/tasks 修复仍在
+- 失败二：白名单版本下 UPGRADE-LEGACY-LAYOUT-1-handoff.md 出现 106 行可疑改动（应仅 1 处）
+  回滚：git checkout -- doc/
+
+## 回滚后状态
+git status = clean
+verify_pins = 18/18
+doc/tasks TAB=0 孤立CR=0
