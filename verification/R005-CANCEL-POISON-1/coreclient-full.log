@@ -1,0 +1,8 @@
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.CoreClient.Tests\bin\Debug\net9.0\NewManga.CoreClient.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+[xUnit.net 00:00:11.56]     NewManga.CoreClient.Tests.Commands.CommandWiringB1Tests.B1Commands_ExecuteAgainstFrozenCore [FAIL]
+[xUnit.net 00:00:15.18]     NewManga.CoreClient.Tests.Commands.CommandWiringB2Tests.B2Commands_ExecuteAgainstFrozenCore [FAIL]
+[xUnit.net 00:00:16.86]     NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.Fea12Core_DeleteTrashCapabilityProbe_OldCoreFailsClosedBeforeAnyCommandFrame [FAIL]
+[xUnit.net 00:00:20.32]     NewManga.CoreClient.Tests.Commands.CommandIntegrationTests.Fea12NewCommands_FrozenCoreFailsClosedWithTypedError [FAIL]
+
+失败!  - 失败:     4，通过:   220，已跳过:     0，总计:   224，持续时间: 59 s - NewManga.CoreClient.Tests.dll (net9.0)

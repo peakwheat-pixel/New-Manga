@@ -1,0 +1,27 @@
+diff --git a/apps/desktop-avalonia/src/NewManga.CoreClient/Transport/SidecarProcess.cs b/apps/desktop-avalonia/src/NewManga.CoreClient/Transport/SidecarProcess.cs
+index 8bff3a26b..54f1ea893 100644
+--- a/apps/desktop-avalonia/src/NewManga.CoreClient/Transport/SidecarProcess.cs
++++ b/apps/desktop-avalonia/src/NewManga.CoreClient/Transport/SidecarProcess.cs
+@@ -247,9 +247,21 @@ public sealed class SidecarProcess : IAsyncDisposable
+         {
+             responseLine = await _stdout.ReadLineAsync(timeoutSource.Token).ConfigureAwait(false);
+         }
+-        catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
++        catch (OperationCanceledException)
+         {
++            // E-7 / R-005: the request line is already on the wire (written above), and cancelling the
++            // CALLER does not un-write it. Whether the child answers later or never, the request/response
++            // pairing on this pipe becomes unknowable -- a leftover response would be read as the answer
++            // to the NEXT request (permanent off-by-one, since the protocol is one line per exchange).
++            // So BOTH outcomes poison the channel: timeout and caller cancellation.
++            // Only the timeout case is translated into a RequestTimeout; a caller cancellation keeps its
++            // OperationCanceledException so callers can still distinguish "I cancelled" from "it timed out".
+             _poisoned = true;
++            if (cancellationToken.IsCancellationRequested)
++            {
++                throw;
++            }
++
+             throw new SidecarException(
+                 SidecarErrorCode.RequestTimeout,
+                 Spec.Name,
