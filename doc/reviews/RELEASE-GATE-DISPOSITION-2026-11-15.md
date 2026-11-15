@@ -122,6 +122,20 @@
 > （`V11R-B-1…B-5`、`V11R-C-1`、`MICA-FIX-1`、`FEA-07-AC5-NATIVE-1`），非本轮引入。
 > 复核者一度测得 EXIT=0，是因其用了不同调用方式；本表以直接调用为准。
 
+
+### 3.2 条件 4 的可做部分已执行（`RELEASE-PACKAGE-CURRENT-HEAD-1`）
+
+在当前 HEAD 的产品代码树上产出 **94.94 MB 单文件 exe**（`07DD80F0…3AE74`）并通过**真实窗口冒烟**
+（`window_found`/`host_ready`/`exit_kind=natural`/截图；独立复核亲眼看图确认为 NewManga 本体）。
+这消除了 §3 所述「`0.1.1` 旧包不绑定当前基线」的证据缺口。
+
+**但条件 4 的判定不变**，因为：
+
+1. **单文件包不含 sidecar** —— 94.94 MB 的 exe 无法独立运行，需 792 MB sidecar 外挂
+   （`publish-release.ps1:61` 自述 `needs the sidecar bundle at runtime`）⇒ **不是可分发包**；
+2. 冒烟截图是 **0/0 空态**，未触达读写/并发路径；**E-7 仍有 5 项开放**（并发安全不可宣称）；
+3. clean install / 升级回退 / 卸载 / 安装器签名仍缺（需真机与证书）。
+
 ## 4. 与人协作的最小集（汇总进 HUMAN-REQUIRED）
 
 | 编号 | 事项 | 归属 |
