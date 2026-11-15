@@ -2442,3 +2442,25 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   **前三次都是外部裁决替我抓住的；这次是我按承诺主动去查的。**
 - **未做（诚实）**：未核实 GitHub **当前**默认分支（`gh` 未认证，只读仓库内文档，未访问远端；
   清单的"远端 `main` 未动"是 2026-10-28 的记录，**可能已变**）；未提交申请（需真实身份/邮箱）。
+## 266. ★ READER-ENTRY-PATH-1：`reader` **有程序化入口**，但裁决**不加 CLI 参数** —— 拆成"GUI 逻辑已验证 / 真实渲染需人工"（2026-11-15，DSH，goal 轮次 67）
+
+- **承诺兑现**：上一轮说"用读代码而非推测挖 reader"。本轮读到关键事实：
+  - `ShellCommands.cs:37` `LibraryImmersiveReader = "library.reader.immersive"`（`:111` 注册为"沉浸阅读"，绑 F11）；
+  - `AppShellViewModel.cs:1188-1190` 的处理**只是触发事件** `ImmersiveReaderRequested?.Invoke(...)`；
+  - **★ 裁决者更正我一处说法**：`TryHandleGlobalKey` **不是"测试窗口的方法"** —— 它是
+    **生产窗口的 public 方法**（`MainWindow.axaml.cs:298/384`），`OnKeyDown` 也调用它。
+    ⇒ 真实键盘 F11 与测试驱动**是同一条代码链**。
+- **裁决（ZCode）**：**不加 `--run-command` 参数；接受把 `reader` 项拆两半。**
+  裁决者补充核实：订阅点在 `App.axaml.cs:512-534` `WireImmersiveReader`，**惰性创建窗口**（事件驱动，非启动产物）；
+  `--page=reader` 显示资料柜**是设计如此**（`App.axaml.cs:452-453` 注释 "reader is an overlay inside Library"，
+  `:502` 映射到 `SpaceId.Library`）—— 我的实测结论成立，但**这是映射语义非缺陷**；
+  加参数需改 `AppOptions`（字段+解析+命令 id 白名单 fail-closed）+ `App.axaml.cs:104-118` 启动序列，
+  且**只在 V2 shell 有意义** ⇒ **真实产品面改动，非一行补丁**。
+  裁决者的关键理由是**"值不值"而非"该不该"**：**加参数只能打开窗口，全屏/无边框/视觉表现机器判不了，
+  取证仍需人看；人既在场，顺手按 F11 成本为零。收益≈0，成本为正。**
+- **落地拆分**：
+  | 子项 | 状态 | 依据 |
+  |---|---|---|
+  | **GUI 逻辑**（开关/Esc 阶梯/回到原页/PageCount） | ✅ **已验证** | `F11HotkeyTests`(9) + `V2ImmersiveReaderTests`(4)，headless 全绿，**驱动的是生产 public 方法** |
+  | **真实桌面渲染**（全屏/无边框/视觉） | ❌ **需人工按 F11 看一眼** | headless 判不了视觉 |
+- **本轮无代码改动**（裁决明确"仓库本轮无需代码改动"）。

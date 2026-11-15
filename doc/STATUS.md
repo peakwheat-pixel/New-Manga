@@ -5,7 +5,7 @@
 ## 当前程序
 - **FEA 线**（S0–S5 终态；limitation 已逐条处置）：[FEA-00 方案](design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md)；V11R 收官（v0.1.1）。
 - 当前 Task：[MAINT-1-RELEASE-MONITOR](tasks/MAINT-1-RELEASE-MONITOR.md) `in_progress`（伞形哨位）；本轮已收口二十余张卡（均 `done`），明细见 [TASK_LEDGER](TASK_LEDGER.md)。
-- **Release Gate `BLOCKED`**：条件 1 = **8/8 已关闭**（L-R1-1、L-R2-1、L-F1-2、L-L1-1、L-L1-4、L-AI1-6、L-L1-2）+ `L-F1-3` **已关闭**（wire 零错配替代磁盘判据）；条件 2 **调查已完成**（`SEC-01`/`SEC-02` done，结论"已确认可见"，处置需 Owner 授权）；条件 3 部分（矩阵完整，唯真机走查未做）；条件 4 两项残留（签名有 SignPath 免费通道，仅差两步 GitHub 操作；`reader` 需 F11；模型已就位并验证可加载）；**条件 5 NOT_RUN**（无人工 GT；模型/API 适配已验证，UI 端到端未实现，不属 Gate 范围）；条件 6 已完成。见 [Gate 评估](reviews/MAINT-1-RELEASE-GATE-ASSESSMENT-2026-11-14.md)。
+- **Release Gate `BLOCKED`**：条件 1 = **8/8 已关闭**（L-R1-1、L-R2-1、L-F1-2、L-L1-1、L-L1-4、L-AI1-6、L-L1-2）+ `L-F1-3` **已关闭**（wire 零错配替代磁盘判据）；条件 2 **调查已完成**（`SEC-01`/`SEC-02` done，结论"已确认可见"，处置需 Owner 授权）；条件 3 部分（矩阵完整，唯真机走查未做）；条件 4 两项残留（签名仅差两步 GitHub；`reader` GUI 逻辑已验证、真实渲染需人工按 F11；模型已就位并验证可加载）；**条件 5 NOT_RUN**（无人工 GT；模型/API 适配已验证，UI 端到端未实现，不属 Gate 范围）；条件 6 已完成。见 [Gate 评估](reviews/MAINT-1-RELEASE-GATE-ASSESSMENT-2026-11-14.md)。
 - **既有缺陷登记**（接手会话新发现）：[MAINT-1-EXISTING-FINDINGS](reviews/MAINT-1-EXISTING-FINDINGS-2026-11-14.md)（E-1…E-9；E-6/E-8/E-9 已修，E-7 部分）。
 
 ## 近期完成
