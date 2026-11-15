@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Test-only fake host_bridge. Kept as a SEPARATE console project (not inline Python like the core-side
+    fixture) because HostBridgeClient.StartAsync cannot pass AdditionalArguments and SidecarProcess runs
+    with UseShellExecute=false, so a .cmd wrapper or a python.exe + script argument both fail.
+    See doc/reviews/BRIDGE-FAKE-HARNESS-DESIGN-2026-11-16.md.
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <AssemblyName>FakeBridgeHost</AssemblyName>
+    <RootNamespace>FakeBridgeHost</RootNamespace>
+    <!-- Tests locate the binary next to the test assembly; keep the output flat. -->
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+  </PropertyGroup>
+
+</Project>

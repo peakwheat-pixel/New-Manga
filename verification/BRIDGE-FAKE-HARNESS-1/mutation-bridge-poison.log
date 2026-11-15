@@ -1,0 +1,16 @@
+# 变异测试：删掉 bridge SendAsync 的 _process.Poison()
+head: 0d2ff175a（变异在工作树）
+timestamp: 2026-11-16T02:46:28+08:00
+mutation: catch (SidecarException) { _process.Poison(); throw; } -> catch { throw; }
+build: dotnet build <CoreClient|Tests> --no-incremental（显式强制重建，防增量跳过）
+command: dotnet test --filter FullyQualifiedName~FakeBridgeHostIntegrationTests --no-build
+result: EXIT=1
+判定：
+**有判别力**（测试变红）
+
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.CoreClient.Tests\bin\Debug\net9.0\NewManga.CoreClient.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+[xUnit.net 00:00:00.57]     NewManga.CoreClient.Tests.FakeBridgeHostIntegrationTests.SendAsync_PoisonsChannel_WhenResponseOmitsId [FAIL]
+[xUnit.net 00:00:00.63]     NewManga.CoreClient.Tests.FakeBridgeHostIntegrationTests.SendAsync_PoisonsChannel_WhenResponseIdIsMismatched [FAIL]
+
+失败!  - 失败:     2，通过:     1，已跳过:     0，总计:     3，持续时间: 277 ms - NewManga.CoreClient.Tests.dll (net9.0)

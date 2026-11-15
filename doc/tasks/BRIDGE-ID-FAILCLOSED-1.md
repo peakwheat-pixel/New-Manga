@@ -161,8 +161,8 @@ catch (SidecarException ex) when (ex.Code == SidecarErrorCode.MalformedResponse)
 - **门禁**：定向 **11 passed**；全量 **222 passed / 0 failed / 30 skipped / EXIT=0**；
   `check.ps1` PASS (3 warnings)｜`verify_pins` 18/18｜`api_inventory` 1/80/6=87。
 - **未关闭项（不淡化）**：
-  1. **F-01：poison 接线无测试覆盖**（变异存活已实测）。**DSH 裁决转由 `BRIDGE-FAKE-HARNESS-1` 承接**，
-     理由：夹具冻结是独立工作量，且 core 侧同类缺口（host-control poison 分支）共用同一瓶颈；
+  1. ~~**F-01：poison 接线无测试覆盖**（变异存活已实测）。~~ **已关闭**：`BRIDGE-FAKE-HARNESS-1` 建成 `FakeBridgeHost` 夹具并补了 2 条经真实 `StartAsync` → `IssueAsync` 链的动态测试；**变异实测**「删掉 `_process.Poison()` ⇒ 2 条变红」。
+     **剩余**：core 侧 host-control 的同类分支仍未覆盖（见该卡未关闭项 1）；
   2. **`E-7 #2` 继续开放**，本卡**不得**被引用为「bridge 侧会话安全」的证据；
   3. 裁决 §4 还要求的这些边界仍未覆盖：error 信封先于 id 校验、匹配 id 的业务错误不 poison、
      握手期非法 id ⇒ `HandshakeFailed`（内层 `MalformedResponse`）、raw + error 仍 `BridgeException`；

@@ -13,6 +13,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\NewManga.CoreClient\NewManga.CoreClient.csproj" />
+    <!-- Test-only fake host_bridge; see doc/reviews/BRIDGE-FAKE-HARNESS-DESIGN-2026-11-16.md.
+         Referenced as a project so its .exe lands next to the test assembly (HostBridgeClient cannot
+         receive AdditionalArguments, and .cmd wrappers do not run under UseShellExecute=false). -->
+    <ProjectReference Include="..\FakeBridgeHost\FakeBridgeHost.csproj" />
   </ItemGroup>
 
   <ItemGroup>
