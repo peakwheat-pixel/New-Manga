@@ -2940,3 +2940,32 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   （`NEWMANGA_CAPTURE_RESIDUAL2_PNGS` 这个环境变量名，`git grep` 一下就能找到）。
   **这与第 3 次（只搜 git 索引）、第 7 次（只搜 `*.axaml`）是同一类："我枚举的" ≠ "全部存在的"。**
   **⇒ 固化规则：说"做尽"之前，先 grep 一遍仓库里有没有别人已经做过的同类能力。**
+## 290. ★★★ READER-OVERLAY-HEADLESS-PNG-1：**沉浸阅读器视觉证据取得**（headless 渲染，测试通过）（2026-11-15，DSH，goal 轮次 91）
+
+- **承诺兑现**：按上一轮 4 步计划执行，**全部完成**。
+- **★ 关键技术链（三步全部核实）**：
+  1. `Residual2Evidence.cs:133-137`：`public static Bitmap Capture(Window window)
+     { window.UpdateLayout(); Dispatcher.UIThread.RunJobs(); return window.CaptureRenderedFrame() ?? throw ...; }`
+     —— **任意 `Window` 都能截图**；
+  2. `ReaderWorkbenchPages.cs:2583`：`public sealed class ReaderWindow : Window` —— **它是 Window**；
+  3. `MainWindow.axaml.cs:251`：`public ReaderWindow? LastImmersiveWindow { get; private set; }`
+     —— **F11 后的沉浸窗口可从生产 public 方法拿到**。
+- **★ 结果**：新增独立测试 `ImmersiveReaderVisualEvidenceTests`（**不动既有断言、不加 skip**），
+  `dotnet test --filter FullyQualifiedName~ImmersiveReaderVisualEvidenceTests` → **1 passed / 0 failed / 0 skipped / 887 ms**。
+  产出 `verification/READER-OVERLAY-HEADLESS-PNG-1/immersive-reader.png`（**11,883 B / 1024×768**，
+  sha256 `BD5435BA…E5182`）。
+- **★ 目视确认（必须人眼过）**——图里可见**完整沉浸阅读器 chrome**：
+  `Esc 退出 · F 键 · H 隐藏 UI` / `BOOK-FIXTURE-1 日漫_JA 测试书 · 第 1 章 · 8 页 · webtoon 长滚动` /
+  `书: … · 章: 第 1 章` / 右上 `沉浸模式 (Esc/H/F)`。
+  内容区是 `FakeBook` 的 **1px PNG 被拉伸成深红色**（**测试夹具，不是真实漫画**）。
+- **★ 严格界定（写进证据文件）**：
+  | 证明 | 不证明 |
+  |---|---|
+  | `ReaderWindow` 能渲染出非空帧 | ~~真实显示器物理显示效果~~ |
+  | chrome（工具栏/书名/章节/页数/模式）渲染正确 | ~~真实漫画页解码/绘制~~ |
+  | 生产入口 `TryHandleGlobalKey(Key.F11)` 能打开它 | ~~用户手动按 F11 的交互体验~~ |
+  签署：**NOT_RUN**（视觉签署仍需人）。
+- **⇒ 意义**：`GATE3-READER-OVERLAY-1` 里"PostMessage 无效、需人工"的结论**在"取证"层面被绕过** ——
+  **视觉证据有了**，虽然它是 headless 渲染而非物理屏幕截图。
+- **★ 这一轮验证了我上一轮的自我批评是对的**：我上一轮说"做尽"没核实，
+  本轮 grep 一下就找到了 `CaptureRenderedFrame` 这条现成路径。**"我枚举的" ≠ "全部存在的"。**
