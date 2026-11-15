@@ -1,0 +1,24 @@
+# 包内启动验证日志（head=e2c9fd058）
+# env: Windows 11
+# command: <pkg>/NewManga.App.exe --sidecar-dir=<pkg>/core-sidecar --data-root <iso>/data --log-dir <iso>/logs --theme-home <iso>/theme-home
+
+## host.log
+2026-11-15T14:08:51.0462244+00:00 INFO single-instance acquired: Global\NewManga.Host (abandoned_recovered=False)
+2026-11-15T14:08:51.0544336+00:00 INFO mode=ReadWrite reason=parity reached and no legacy shell running
+2026-11-15T14:08:51.0548464+00:00 INFO first-run backup skipped: catalog database not present yet
+2026-11-15T14:08:52.8879739+00:00 INFO core_service ready (1 wire frames)
+2026-11-15T14:08:53.0598396+00:00 INFO host_bridge ready (1 wire frames)
+2026-11-15T14:08:53.0602398+00:00 INFO credential port ready (Windows Credential Manager)
+2026-11-15T14:08:53.0640014+00:00 INFO host-control session opened (host_RTQdYogjKlq1ywuWKycmLXxL5yPdI7wncmMfESdSuR0)
+2026-11-15T14:08:53.0738633+00:00 INFO self-check status=Passed code=- detail=core_protocol=2.3 required_minor=3 capabilities=[library.list_books,source.read/1,source.resolve-secret/1,source.read.run/1,source.reattest/1,library.delete.preview/1,library.trash.read/1,library.trash.write/1,source.sync.scan/1,source.sync.plan/1,source.sync.apply/1,source.sync.relink/1,source.sync.repoint/1,source.sync.resync/1,source.sync.operation/1,source.sync.enumerate/1,source.sync.plan-materialization/1]
+2026-11-15T14:08:53.0755007+00:00 INFO source scan scheduler started interval=900s max_targets=8 max_bytes=268435456 cold_start_enumeration=True
+2026-11-15T14:08:53.0778287+00:00 INFO source watch started enabled=True max_watches=256 buffer=65536 debounce_ms=2000
+2026-11-15T14:08:53.0778436+00:00 INFO source watcher armed enabled=true max_watches=256 debounce_ms=2000
+2026-11-15T14:08:53.0878491+00:00 INFO source scan refresh targets=0 skipped=0 added=0 updated=0
+
+## startup.log
+2026-11-15T14:08:50.142Z INFO startup-diagnostics: sink v1 installed (G:\CODEX\New Manga.workspace\task-envs\RELEASE-PACKAGE-BUNDLE-1\smoke/logs\startup.log)
+2026-11-15T14:08:50.146Z INFO startup-diagnostics: isolation log-dir=G:\CODEX\New Manga.workspace\task-envs\RELEASE-PACKAGE-BUNDLE-1\smoke/logs appdata=C:\Users\49745\AppData\Roaming cwd=G:\CODEX\New Manga
+2026-11-15T14:08:50.167Z INFO startup: shell=Default requested=builtin.current-v2 effective=builtin.current-v2 fallback=False
+2026-11-15T14:08:50.167Z INFO startup: theme.frontendId 'builtin.current-v2' (persisted appearance settings) selects the Current V2 shell
+[Binding]An error occurred binding 'Source' to 'CurrentPage.Image' at 'CurrentPage': 'Value is null.' (Image #47024465)

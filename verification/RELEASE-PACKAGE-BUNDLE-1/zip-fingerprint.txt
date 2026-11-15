@@ -1,0 +1,13 @@
+# zip 指纹
+path: G:\CODEX\New Manga.workspace\artifacts\release\NewManga-e2c9fd058-win-x64.zip
+size_bytes: 727663988
+size_mb: 694
+sha256: 
+374579a86635f3fc0edc2091a5e50f48d4a726ab77c4768154479117c47fc83a
+entries: 1046
+
+# 抽样校验
+NewManga.App.exe: True
+core-sidecar/core_service.exe: True
+Run-NewManga.cmd: True
+core-sidecar/models/: True
