@@ -2223,3 +2223,24 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **证据卫生**：跑驱动前快照 `verification/` **14516 个受控文件**，跑完复查 **`polluted=0`**。
 - **教训**：**"同一个测试类里两个相邻测试"不等于同因** —— 这是本项目第 2 次犯（第一次是 §12.4 的 FullSyncChain）。
   这次我本来也要写"两个都是环境"，是**真跑驱动**才发现只有 Park 是环境。
+## 255. ★ E9-FEASIBILITY-2 + ZCode 裁决：**方案 E（一个判别分支即可解锁）**，我的核心前提被推翻（2026-11-15，DSH，goal 轮次 56）
+
+- **★ 我又错了一次（第 11 次"先猜后查"）**：写可行性评估时我断言"**zip 源的 registry root 是父目录**"
+  （D:\manga），并据此认为需要新增 egistry_id → container_path 持久化。
+- **ZCode 裁决直接推翻**，并给出代码依据：
+  - `SourceImportModels.cs:243-252` 的 `RegisterRoot(path)` 写的 `roots` 数组**只有 `path` 一项**；
+  - `SourceImportModels.cs:800-809` `IssueGrantsAsync`：`var path = Path.GetFullPath(source.Path)` →
+    `FindOrRegisterRootAsync(path)` → `IssueAsync(..., path, kind, ...)` ⇒ **registry root 与 sourcePath 是同一个值**；
+  - `SourceScanScheduler.cs:1640-1658` 同样以容器文件路径调 `IssueAsync`。
+- **我自己复核了这三处**（未盲信裁决）：确认**属实**。⇒ **oots[0] 对非 folder 源本来就是容器路径，
+  不需要任何新持久化。** 我把前提写错了 README，已就地更正并登记。
+- **裁决结论：方案 E** —— `MintRecoveryGrantsAsync` 加**判别分支**：
+  folder 走现状；非 folder 且 `File.Exists(roots[0])` → 以 `roots[0]` 为 `sourcePath` 重铸
+  （identity/物理 facts 验证链原样保留）；`Directory.Exists(roots[0])` + 容器 kind → 维持 typed 拒绝。
+  **契约零改动**（`verify_pins` 18/18 不动）。方案 A（我建议的）被否决 —— 它解决**不存在的问题**，还引入漂移面。
+- **裁决认定"值得做"**：zip/cbz/pdf 是 C-16 五种 kind 之一、**AD-003 引用导入的主场景，首发已支持**；
+  E-9 挡的是**正常同步完成链**（apply 后 ACK 必败 → gate 停 pending → 新 binding 永不可读），不是崩溃边角。
+- **裁决要求**：解锁后 4 个被挡测试**翻回正向断言**（含 `CrashPoint_Recover`），
+  `crash-ack.ps1` 须实测达 `CRASH_POINT=SATISFIED`；交付须含 **zip 正向恢复用例 + "目录 root + 容器 kind 仍拒绝"负例**。
+- **教训**：我把"roots"这个词的字面直觉当成了事实，**没读 RegisterRoot 的实现与调用方**。
+  这是同一个模式的第 11 次；**而这次是外部裁决替我抓住的**。
