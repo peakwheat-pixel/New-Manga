@@ -165,7 +165,8 @@
 
 | 项 | 为什么未完成 |
 |---|---|
-| **AC7 四页可达性** | 需在**打包产物**上逐页导航 ⇒ **需 GUI 启动** ⇒ 同 §3 的根因，Agent 做不到。**且未用 headless 证据冒充。** |
+| **AC7 四页可达性** | **已部分完成**：`GATE4-PAGES-UPGRADE-1` 在**安装产物**上真实到达 **3/4 页**（书架/工作台/设置，截图与哈希经我实测核对，见 `GATE4-AC7-UPGRADE-VERIFY-1`）；**阅读器在空库下未到达**（`reader.png` 与 `bookshelf.png` 哈希相同，README 已如实标 `NOT_REACHABLE`）。补齐需先在隔离数据根里导入一本书。 |
+| **升级/回退矩阵** | **已完成，但只是"标签回退"**：6 步实测（S1 装 0.1.0 → S2 覆盖升级 0.1.1 → S3 卸 → S4 装 0.1.0 → S5 清理），**六次动作全程用户数据根哈希 `6ae4d6da…d9b2` 不变**。**但 README §5.1 自陈**：0.1.0 包是复制 0.1.1 只改 `VERSION.json.version`，**exe/sidecar 字节一个都不动** ⇒ **"标签回退"，不是"跨版本二进制回退"**。 |
 | **签名** | **不是"要买证书"**：有 **SignPath Foundation 免费 OSS 通道**，`P0-1/2/3/5` **已在 `public-release` 分支完成**；**只差 P0-4 两步**：①默认分支改 `public-release`；②Actions 手动 Run 一次 `build-release`（`sign=false`）。**实测 `gh` 未认证、无 token** ⇒ Agent 做不到。证据：`verification/SIGNING-PATH-AUDIT-1/` |
 | **F11 视觉** | **阅读器的 GUI 逻辑已被 13 个 headless 测试覆盖**（`F11HotkeyTests` 9 + `V2ImmersiveReaderTests` 4），驱动的是**生产 public 方法** `TryHandleGlobalKey`。**只剩"全屏/无边框视觉表现"未被机器验证** ⇒ 需人看一眼。证据：`verification/READER-ENTRY-PATH-1/` |
 
