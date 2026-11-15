@@ -77,3 +77,32 @@
   清单说"远端 `main` 未动"，但那是 **2026-10-28** 的记录，**可能已变化**。
 - **未提交 SignPath 申请**（需真实身份与邮箱，属用户动作）。
 - 未验证 `public-release` 分支是否仍在（需远端访问）。
+
+## 6. 核实"两步 GitHub"是否真的需人（2026-11-15）
+
+我在别处把 P0-4 的两步标为"需人"。**按纪律要核实，不能凭印象。**
+
+实测：
+
+```
+(Get-Command gh).Source  -> C:\Program Files\GitHub CLI\gh.exe   （gh 已安装）
+gh auth status           -> You are not logged into any GitHub hosts. To log in, run: gh auth login
+$env:GH_TOKEN            -> unset
+$env:GITHUB_TOKEN        -> unset
+git remote -v            -> origin  https://github.com/peakwheat-pixel/New-Manga.git
+```
+
+**⇒ 结论：确认需人。**
+
+- `gh` **已安装**，但**未认证**；
+- **没有任何 token 环境变量**；
+- 我不能、也不应该代持 GitHub 凭据（项目纪律：Agent 不代持账号/token/密钥）。
+
+**⇒ 这两步（切默认分支 + 手动 Run 一次 workflow）必须由仓库所有者完成。这不是我的推测，是实测。**
+
+**我能做、且已做的部分**：
+- 定位到 SignPath 免费通道（`SIGNPATH-APPLICATION.md`）；
+- 确认 P0-1/2/3/5 **已在 `public-release` 分支完成**；
+- 确认只差 P0-4 的两步；
+- **提供确切的操作路径**（Settings → Branches → 默认分支改 `public-release`；
+  Actions → `build-release` → Run，`version=0.1.0`、`sign=false`）。

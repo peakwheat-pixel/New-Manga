@@ -2531,3 +2531,17 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   ③`Start-Process -WindowStyle Normal`+`Get-Process`；④`cmd /c start` 分离式。**全部挂起**。对照实验 20 ms 正常。
 - **结论**：条件 3 的"真实设备走查"**在本执行环境下不可自动化，需人工**。
   **这不是"没试就说需人"，而是试了 4 种、做了对照实验、定位到根因之后才下的结论。**
+## 270. ★ 核实"两步 GitHub"**确实需人** —— `gh` 未认证、无 token（2026-11-15，DSH，goal 轮次 71）
+
+- **动机**：我在多处把条件 4 的 P0-4 两步标为"需人"。按纪律**必须核实**，不能凭印象。
+- **实测**：
+  - `(Get-Command gh).Source` → `C:\Program Files\GitHub CLI\gh.exe`（**已安装**）
+  - `gh auth status` → **`You are not logged into any GitHub hosts.`**
+  - `` → **unset**；`` → **unset**
+  - `git remote -v` → `origin https://github.com/peakwheat-pixel/New-Manga.git`
+- **⇒ 结论：确认需人。** `gh` 已装但未认证、无 token，且**我不应代持 GitHub 凭据**（项目纪律）。
+  **这不是推测，是实测。**
+- **我能做且已做的**：定位 SignPath 免费通道；确认 P0-1/2/3/5 已在 `public-release` 完成；
+  确认只差 P0-4；**给出确切操作路径**（Settings→Branches→默认分支改 `public-release`；
+  Actions→`build-release`→Run，`version=0.1.0`、`sign=false`）。
+- **这是本轮最后一项"需人"核实。至此六条件的每一项阻塞都有实测依据。**
