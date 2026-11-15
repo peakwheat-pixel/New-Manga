@@ -594,3 +594,35 @@ un-binding-models-<hash>）。真冲突是 ModelSidecarFixture.CopyDatabase 在
 `
 	est.ps1 会依次跑多个测试项目，此前 CoreClient 一失败脚本就 throw，**从未跑到 Host.Tests**。
 ⇒ 这是**被前面的失败遮住**的既有问题。下一轮诊断。
+
+### Host.Tests 的 3 个失败与本卡无关（2026-11-16 续，已排除）
+
+**三个证据**：
+
+1. **Host 源码零改动**：git log --oneline b8113e740..HEAD -- apps/desktop-avalonia/src/NewManga.Host 为空；
+2. **三个测试单跑全部 EXIT=0**（Export_GrantRegisters... / Import_IntoNewChapter... /
+   Fea11WatchHostRuntimeTests.Ready_ArmsWatcher）；
+3. **整个 Host.Tests 直接跑也全绿**，但 	est.ps1 下有 3 失败：
+
+| 运行方式 | 失败 | 通过 | 跳过 | 总计 |
+|---|---|---|---|---|
+| dotnet test Host.Tests.csproj | **0** | 331 | **74** | 405 |
+| 	est.ps1 | **3** | 358 | **44** | 405 |
+
+passed + skipped 都是 405，但**分布差 30** ⇒ 	est.ps1 的额外环境变量让 30 个原本 skip 的测试
+变成实际执行，其中 3 个失败。
+
+**失败签名**：
+- 两个 GrantIssuerTests：[FILE_IDENTITY_CHANGED] Import source reference was rejected
+  （scanner.py:170 "granted folder member identity drifted"）
+- Fea11WatchHostRuntimeTests：SOURCE_REGISTRY_BUSY
+  （SourceAccessRegistry.cs:346 拿不到锁 / :71 Generation 乐观并发失配）
+
+**已排除**：alpha.png 未被污染（git 干净、单提交）；dataRoot 与 MutexName 均 per-test 唯一；
+非本轮改动。
+
+**定性**：	est.ps1 特有环境（更高并行度、更多测试实际执行）下的**既有并发 flaky**，
+不是回归、不是稳定失败。**但它本身是真实的健壮性问题**（SourceAccessRegistry 的锁与
+identity 检查对并发不友好），应独立立卡，**不在本卡范围**。
+
+**本轮不改代码**：改 SourceAccessRegistry 的并发语义属产品行为变更，需专门范围冻结。
