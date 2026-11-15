@@ -543,3 +543,30 @@ ows.Add(capability_verdict) 证据 |
 可能解释（未验证）：两个组 C 测试共享 fixture/data root；此前 Fea12* 在准备阶段就失败、
 提前退出，改变了后续数据状态；现在它们真正执行了命令，WithoutInjectedBindings 的前置条件随之变化。
 **属行为改变引起的连带暴露，不是本轮引入的产品缺陷。** 下一轮需读该测试断言确认。
+
+### 组 C 的 flaky 已修复（2026-11-16 续，失败数 2 -> 1）
+
+**两个组 C 失败性质不同**：
+| 测试 | 错误 | 性质 |
+|---|---|---|
+| WithoutInjectedBindings_... | IOException: 另一个程序已锁定文件的一部分 于 library.db-shm | **flaky（文件锁）** |
+| WithInjectedBindings_... | Assert.Contains("failed", colorStates) 失败 | 断言期望过时 |
+
+**先确认 flaky 再动手**：单跑 3 次全部 EXIT=0 ⇒ 不是稳定失败。
+
+**根因不是共享 data root**：两者 data root 不同（
+un-binding-baseline-<hash> vs
+
+un-binding-models-<hash>）。真冲突是 ModelSidecarFixture.CopyDatabase 在
+**sidecar 进程还活着时**复制 library.db-shm / -wal，而 SQLite 在 checkpoint 期间
+对这些文件持有**瞬态锁**。
+
+**修法**：新增 CopyWithRetry（只对 IOException 重试，最多 10 次 × 100ms；
+长期占用的锁仍会在最后一次抛出，不吞真实错误）。
+
+**验证**：两测试一起跑 3 次 → 每次只 1 failed；完整 test.ps1 **失败 1 / 通过 255**（原 2 / 254）。
+
+**只剩最后一个**：ModelsBuild_BookRun_WithInjectedBindings_OcrNoLongerProviderNotConfigured。
+性质已在 R73 用 step_runs 账本证明：color=completed(3, 无 error_code)、
+	ranslate=failed/PROVIDER_NOT_CONFIGURED。测试断言「color 必 failed」而过时。
+修法需同步调整 erification/RUN-BINDING-FIX-1/tools/check_run_binding.py:84。

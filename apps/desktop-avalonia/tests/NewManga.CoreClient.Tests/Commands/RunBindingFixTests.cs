@@ -632,7 +632,31 @@ internal static class ModelSidecarFixture
             var source = Path.Combine(dataRoot, "library.db" + suffix);
             if (File.Exists(source))
             {
-                File.Copy(source, destination + suffix, overwrite: true);
+                CopyWithRetry(source, destination + suffix);
+            }
+        }
+    }
+
+    /// <summary>
+    /// SIDECAR-SCHEMA-STALE-1 (DSH 2026-11-16): the sidecar process is still alive when the evidence copy
+    /// is taken, and SQLite keeps a transient lock on library.db-shm/-wal while checkpointing. A plain
+    /// File.Copy therefore fails intermittently with "another program has locked part of the file"
+    /// (observed as a flaky ModelsBuild_BookRun_* failure). Retry briefly instead of failing the run --
+    /// the lock clears on its own, and a genuinely held lock still surfaces after the final attempt.
+    /// </summary>
+    private static void CopyWithRetry(string source, string destination)
+    {
+        const int attempts = 10;
+        for (var attempt = 1; ; attempt++)
+        {
+            try
+            {
+                File.Copy(source, destination, overwrite: true);
+                return;
+            }
+            catch (IOException) when (attempt < attempts)
+            {
+                Thread.Sleep(100);
             }
         }
     }
