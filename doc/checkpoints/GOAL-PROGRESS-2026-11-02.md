@@ -2998,3 +2998,26 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **⇒ 新教训**：**核实"某功能有没有"时，测试目录是仅次于源码的第一手证据，且往往更直接。**
   我第 7 次误判（"只搜 `.axaml` 说控件不存在"）**本可以更早被避免** ——
   **如果我先 grep 测试目录，就会发现 `ReaderVisibleControlsTests` 一直在那里。**
+## 293. ★★ L-R1-1-VISUAL-EVIDENCE-1：**四项控件的视觉证据** —— 一条环境变量就产出了（2026-11-15，DSH，goal 轮次 94）
+
+- **动机**：上一轮说"若继续，可渲染书签面板等状态"。本轮先 grep，**发现根本不用写新测试**。
+- **★ 一条命令**：`="1"` +
+  `dotnet test …--filter "FullyQualifiedName~FluentPageTests"`
+  → **10 passed / 0 failed / 0 skipped / 1 s**，
+  产出 `verification/FEA-06-RESIDUAL-1/png/`：`shelf.png` 82 KB / `workbench.png` 31 KB /
+  **`reader.png` 34 KB（1180×780，sha256 `ce5a79c2fcb4…`）** / `settings.png` 52 KB。
+- **★ 目视确认 `reader.png` —— L-R1-1 四项控件全部可见**：
+  | 区域 | 控件 |
+  |---|---|
+  | 顶部工具栏 | `返回` · `阅读器` · **`单页 / 双页`** · **`反向翻页`** · `全屏` · **`书签`** |
+  | 左侧浮动条 | **`放大`** · **`缩小`** · **`适合页面`** · `反向翻页` · `全屏` · `隐藏浮动工具条` |
+  | 底部操作栏 | `上一页` · `下一页` · **`缩小`** · **`放大`** · **`适合页面`** · **`重置进度`** |
+  | 内容区 | `本章节暂无页面` / `返回书架选择其他章节` |
+  | 状态栏 | 左下 `Fluent · builtin.fluent · 阅读器 · Medium` |
+- **⇒ 四项现在同时有三重证据**：源码（`ReaderPageView.cs`）+ 行为测试（`ReaderVisibleControlsTests`）
+  + **视觉证据（本图）**。
+- **★ 我的方法论错误（第 12 次）**：上一轮我还在"计划写新测试渲染书签面板"，
+  **而 `NEWMANGA_CAPTURE_FLUENT_PNGS=1` 一条命令就能产出四页图 —— 它一直在那里**。
+  **这与第 11 次（`CaptureRenderedFrame`）、第 7 次（`*.axaml`）、第 3 次（git 索引）同源：
+  我反复在"自己从头推理"，而不是"先 grep 仓库里已有的能力"。已是第 4 次同类错误。**
+  **⇒ 升级为硬规则：任何"要写新东西"的念头出现时，先花 30 秒 grep 环境变量名、测试类名、关键 API。**
