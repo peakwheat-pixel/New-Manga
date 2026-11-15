@@ -105,6 +105,7 @@ elif scenario == "idless-only":           # 只有无 id 帧（应 poison）
 | EV-FC-01 | AC1-AC4 假夹具 3 passed | verification/E7-2-DYNAMIC-EVIDENCE-1/fake-core-tests.log | 003385bc3 | 751309d7055f4d90ca99be51f383f44dc0788a00e9ec141450de0c308bec7e84 | CANONICAL | BLOB |
 | EV-FC-02 | AC6 全量不回归（213/0/30） | verification/E7-2-DYNAMIC-EVIDENCE-1/coreclient-full.log | 003385bc3 | 446bdaad7a605162b075aa770ce5a9459d1c3b06d0c3a8b67a740c4d47d858ce | CANONICAL | BLOB |
 | EV-FC-03 | AC2/AC6 变异验证（SendHostControlAsync 绕过 resync ⇒ 第 4 条变红） | verification/E7-2-DYNAMIC-EVIDENCE-1/mutation-D-sendhostcontrol.log | 003385bc3 | 99a118c9bcb24c7389f706dd7a9e27e1d0f6305c8c8c35400bbd259a5b5efd0c | CANONICAL | BLOB |
+| EV-FC-04 | AC4 变异验证（host-control poison 改 no-op ⇒ 第 5 条变红） | verification/E7-2-DYNAMIC-EVIDENCE-1/mutation-E-hostcontrol-poison.log | b3ff87fa4 | e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 | CANONICAL | BLOB |
 
 ## Resource Manifest
 
@@ -135,14 +136,20 @@ elif scenario == "idless-only":           # 只有无 id 帧（应 poison）
      ⇒ 该条**变红**（EXIT=1），恢复后 EXIT=0、4 passed。
      ⇒ **裁决 §5.3 的两条命令路径现均有「重同步」动态证据**；**限定**：host-control 路径只验了
      resync 成功路径，其「无 id 耗尽 ⇒ poison」分支**没有**测试，因此 §5.3 是**部分满足**而非全部。
-     **该项尝试过并撤回（如实登记）**：写过
-     `ProductionSendHostControlAsync_PoisonsChannel_WhenOnlyIdlessFramesArrive`，**单跑 5/5 稳定通过**
-     （427–535ms），但**全量下 flaky** —— 第二次调用拿到 `MalformedResponse` 而非 `RequestTimeout`，
-     即 poison 快路径未被走到。已核实 `ThrowIfPoisoned()` 是 `ExchangeAsync` 的**第一条语句**
-     （`SidecarProcess.cs:228`），因此这是**内联 python 夹具在负载下的时序假象，不是产品缺陷**。
-     撤回理由：**留一个 flaky 测试比留一个有记录的缺口更糟**（会污染全量基线）。
-     变通覆盖：`SendAsync` 孪生测试（第 3 条）已覆盖 poison 接线，且两个调用点传的是**同一个**
-     `_process.Poison` 方法组；
+     **~~该项尝试过并撤回~~ → 已补齐，且"flaky"根因已查明**：
+     该测试（`ProductionSendHostControlAsync_PoisonsChannel_WhenOnlyIdlessFramesArrive`）
+     曾被判"全量下 flaky"（第二次调用拿到 `MalformedResponse` 而非 `RequestTimeout`）并撤回。
+     **根因不是 flaky，是变异残留的旧 DLL**：撤回前我做过一次变异（把该路径的 `_process.Poison`
+     改成 no-op）并从备份恢复源文件 —— **恢复保留了旧时间戳**，`dotnet build` 判定为最新、
+     **跳过重编译**，于是全量跑的是**变异后的 DLL**（poison 仍在关闭状态）。
+     本轮重加该测试并**逐项目 `--no-incremental` 强制重建**：
+     - 定向连跑 3 次：**5/5 passed**（534–594ms）；
+     - 全量连跑 3 次：**226 passed / 0 failed / 30 skipped**，三次一致；
+     - **变异验证**：把 `SendHostControlAsync` 的 `_process.Poison` 改 no-op ⇒ 该测试**变红**（EXIT=1）；
+       恢复后 EXIT=0。
+     ⇒ §5.3 的两条命令路径、**两个 poison 接线**现在都有动态判别测试。
+     **纪律（已写入 BRIDGE-FAKE-HARNESS-1 与本卡）**：`dotnet build --no-incremental` 只作用于
+     被指定的项目，**不传到 `ProjectReference` 子项目**；任何变异/恢复后再验证，必须**逐项目**显式重建。
   2. **R002 的 P2-F1 对两条调用点均已关闭**：本卡新增的 4 条覆盖了 `SendAsync`（第 1-3 条）
      与 `SendHostControlAsync`（第 4 条）两个调用点，且第 4 条经变异验证有判别力。
      `R002ResyncTests` 那 4 条仍只调 helper，但**不再是唯一证据**；

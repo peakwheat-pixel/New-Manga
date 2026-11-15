@@ -1,0 +1,12 @@
+# 全量第 1 次
+EXIT=0
+已通过! - 失败:     0，通过:   226，已跳过:    30，总计:   256，持续时间: 42 s - NewManga.CoreClient.Tests.dll (net9.0)
+
+# 全量第 2 次
+EXIT=0
+已通过! - 失败:     0，通过:   226，已跳过:    30，总计:   256，持续时间: 42 s - NewManga.CoreClient.Tests.dll (net9.0)
+
+# 全量第 3 次
+EXIT=0
+已通过! - 失败:     0，通过:   226，已跳过:    30，总计:   256，持续时间: 42 s - NewManga.CoreClient.Tests.dll (net9.0)
+

@@ -3,7 +3,7 @@ id: BRIDGE-FAKE-HARNESS-1
 title: 冻结 bridge 假 sidecar 夹具并补两处调用点的 poison 动态证据（E-7 #2 / bridge 侧）
 kind: governance
 governance_version: 3
-status: closed_with_limitations
+status: done
 suggested_owner: DSH
 owner: DSH
 reviewer: （见 review-r1）
@@ -88,7 +88,7 @@ allowed_paths:
 - [x] **AC1 夹具冻结**：选定方案（A 或 B）并记录理由；能通过 `HostBridgeClient.StartAsync` 的握手。 <<MET>>
 - [x] **AC2 bridge poison 动态证据**：真实 `StartAsync` → `SendAsync` 链上，坏帧 ⇒ 首调 `MalformedResponse`、 <<MET>>
       次调 `RequestTimeout`（poisoned 快路径），且**请求计数**证明次调未写入。
-- [ ] **AC3 core host-control poison 动态证据**：`SendHostControlAsync` + `idless-only` ⇒ 首调 `MalformedResponse`、次调 `RequestTimeout`。 **本轮未做**（本卡的夹具是 bridge 专用 .exe；core 侧复用内联 python 夹具，但那条用例在 `E7-2-DYNAMIC-EVIDENCE-1` 因全量 flaky 撤回过，需先解决 flaky 根因，见未关闭项 1）。 <<BLOCKED: 本卡夹具为 bridge 专用；core 侧同类用例需先解决全量 flaky 根因>>
+- [x] **AC3 core host-control poison 动态证据**：`SendHostControlAsync` + `idless-only` ⇒ 首调 `MalformedResponse`、次调 `RequestTimeout`。**已达成**：该测试重新加回 `FakeCoreServiceIntegrationTests`，定向连跑 3 次 5/5；全量连跑 3 次 226/0/30；变异验证（该路径 `_process.Poison` 改 no-op）**变红**。 <<MET>>
 - [x] **AC4 变异判别力**：两处接线各自改 no-op ⇒ 至少一条测试变红（**必须 `--no-incremental` 强制重建**）。 <<MET>>
 - [x] **AC5 不回归**：全量 0 failed；四件套 PASS。 <<MET>>
 - [x] **AC6 独立复核**：固定 head 交独立上下文 Review。 <<MET>>

@@ -175,14 +175,48 @@ for raw in sys.stdin:
         Assert.Equal("{\"ok\":true}", response.Result?.GetRawText());
     }
 
-    // NOT COVERED (attempted and withdrawn, r2 P2): the host-control path's fail-closed branch --
-    // id-less frames exhausting the resync budget -> poison. A test for it passed in isolation
-    // (5/5, 427-535 ms) but was FLAKY under the full suite: the second call returned MalformedResponse
-    // instead of RequestTimeout, i.e. the poisoned-channel fast path was not taken. ThrowIfPoisoned IS
-    // the first statement of ExchangeAsync (SidecarProcess.cs:228), so this is a timing/load artefact of
-    // the inline-python fixture, not a product defect -- and a flaky test is worse than a documented gap.
-    // The SendAsync twin (ProductionSendAsync_PoisonsChannel_WhenOnlyIdlessFramesArrive) does cover the
-    // poison wiring, and both call sites pass the same _process.Poison method group.
+    /// <summary>
+    /// E-7 #2 core-side gap: the host-control path was only proven for the resync SUCCESS case. Its
+    /// fail-closed branch — id-less frames exhausting the resync budget — must poison too, otherwise
+    /// removing <c>_process.Poison</c> from that call site would survive every test.
+    /// </summary>
+    /// <remarks>
+    /// This test was previously written, observed "flaky" under the full suite (second call returned
+    /// MalformedResponse instead of RequestTimeout), and withdrawn. Root cause was NOT flakiness: a
+    /// mutation run had restored the source file from a backup, which preserves the old timestamp, so
+    /// <c>dotnet build</c> skipped recompilation and the suite ran against the MUTATED DLL (poison
+    /// removed). Re-added here with the lesson applied: always rebuild with <c>--no-incremental</c>
+    /// per project before trusting a mutation-or-revert result.
+    /// </remarks>
+    [Fact]
+    public async Task ProductionSendHostControlAsync_PoisonsChannel_WhenOnlyIdlessFramesArrive()
+    {
+        using var fake = FakeCore.Start("idless-only");
+        await using var client = await CoreServiceClient.StartAsync(fake.Options());
+
+        var failure = await Assert.ThrowsAsync<SidecarException>(() =>
+            client.SendHostControlAsync(
+                "TestHostControl",
+                static _ => { },
+                TimeSpan.FromSeconds(10),
+                session: null));
+
+        Assert.Equal(SidecarErrorCode.MalformedResponse, failure.Code);
+        Assert.Contains("resynchronised", failure.Message, StringComparison.OrdinalIgnoreCase);
+
+        // Same discriminator as the SendAsync twin: the poisoned-channel fast path surfaces
+        // RequestTimeout (ThrowIfPoisoned is the first statement of ExchangeAsync), NOT another
+        // MalformedResponse from a second resync attempt.
+        var next = await Assert.ThrowsAsync<SidecarException>(() =>
+            client.SendHostControlAsync(
+                "TestHostControl",
+                static _ => { },
+                TimeSpan.FromSeconds(5),
+                session: null));
+
+        Assert.Equal(SidecarErrorCode.RequestTimeout, next.Code);
+        Assert.Contains("restart required", next.Message, StringComparison.OrdinalIgnoreCase);
+    }
 
     /// <summary>Inline-Python fake core_service: writes the script, starts it, exposes client options.</summary>
     private sealed class FakeCore : IDisposable
