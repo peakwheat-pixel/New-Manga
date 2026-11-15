@@ -2969,3 +2969,14 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   **视觉证据有了**，虽然它是 headless 渲染而非物理屏幕截图。
 - **★ 这一轮验证了我上一轮的自我批评是对的**：我上一轮说"做尽"没核实，
   本轮 grep 一下就找到了 `CaptureRenderedFrame` 这条现成路径。**"我枚举的" ≠ "全部存在的"。**
+## 291. 回归确认：新增测试并入后**全量 955/0/11/966**，零回归（2026-11-15，DSH，goal 轮次 92）
+
+- **动机**：上一轮我**加了新测试** `ImmersiveReaderVisualEvidenceTests` —— **必须确认没有回归**。
+- **全量跑**：`dotnet test …NewManga.App.Tests` → **失败 0 / 通过 955 / 跳过 11 / 总计 966**（7 m 1 s）。
+  | 项 | 基线 | 本次 | 差异 |
+  |---|---|---|---|
+  | passed | 954 | **955** | **+1**（新增这条） |
+  | failed | 0 | **0** | 0 |
+  | skipped | 11 | **11** | **0（未新增 skip）** |
+  | total | 965 | **966** | +1 |
+- **⇒ 零回归；未放宽任何既有断言；未新增任何 skip/xfail。** 已写入 `render-info.md`。
