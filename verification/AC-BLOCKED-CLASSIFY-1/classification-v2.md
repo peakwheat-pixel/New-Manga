@@ -6,13 +6,13 @@
 
 | 分类 | 条数 | 能否由 Agent 闭合 |
 |---|---:|---|
-| `ARCHIVE` | 15 | 否（对象已退役，历史存档） |
-| `WITHDRAWN` | 6 | 否（方案撤回/已裁决） |
+| `ARCHIVE` | 13 | 否（对象已退役，历史存档） |
+| `WITHDRAWN` | 9 | 否（方案撤回/已裁决） |
 | `HUMAN` | 5 | 否（需人眼/物理设备） |
 | `RERUN` | 10 | **是**（当前架构复跑/复算） |
 | `DOC` | 9 | **是**（补文档/证据/登记） |
 | `IMPL` | 22 | **是**（写代码/测试；工作量见各条） |
-| `MECHANISM_NA` | 5 | 否（要求本身不适用，建议改判 NA） |
+| `MECHANISM_NA` | 4 | 否（要求本身不适用，建议改判 NA） |
 
 **可由 Agent 闭合合计：RERUN + DOC + IMPL = 41 条。**
 
@@ -20,7 +20,7 @@
 
 | # | 卡 | 行 | AC | 分类 | 判定依据 |
 |---|---|---:|---|---|---|
-| 1 | `V11R-C-2` | 39 | AC6 | **MECHANISM_NA** | GAP-3 跟随系统强调色在 V1 未接入（DEVIATIONS 已登记为已知限制） |
+| 1 | `V11R-C-2` | 39 | AC6 | **WITHDRAWN** | GAP-3「跟随系统强调色」在 V1 明确未接入（DEVIATIONS.md 登记为已知限制）→ 范围撤回 |
 | 2 | `CHAPTER-MANUAL-SORT` | 85 | AC10 | **RERUN** | CoreClient 与 Python 套件本轮未跑，可在当前架构复跑 |
 | 3 | `V11R-D-1` | 51 | AC8 | **IMPL** | **当前树 live gap**：app.axaml:20 仍 include 旧 AppStyles.axaml（固定 Transitions），需退役旧样式或改 Transitions，非旧架构存档 |
 | 4 | `FEA-04` | 90 | AC1 | **IMPL** | 范围冻结完成、实现未开始（8 条同源），实现需另立卡 |
@@ -61,7 +61,7 @@
 | 39 | `GOV-PIN-LINEAGE-1` | 92 | AC5 | **WITHDRAWN** | 同上 |
 | 40 | `GOV-PIN-LINEAGE-1` | 96 | AC6 | **WITHDRAWN** | 同上 |
 | 41 | `V11R-A-3` | 36 | AC4 | **IMPL** | 契约测试未补断言（口径待 Lead 裁决后落实现） |
-| 42 | `V11R-C-3` | 41 | ? | **IMPL** | 缺 tag 存在后的 -DryRun 证据，可补跑 |
+| 42 | `V11R-C-3` | 41 | R1 | **IMPL** | 缺 tag 存在后的 -DryRun 证据，可补跑 |
 | 43 | `M2-REGION-RETYPE-CORE` | 28 | AC2 | **ARCHIVE** | Rust command/allowlist 三视图仅存于冻结的 apps/desktop（LEGACY_FROZEN:5-6） |
 | 44 | `M2-REGION-RETYPE-CORE` | 29 | AC3 | **RERUN** | 11 断言用例在树内（tests/editing/*），缺本轮复跑 |
 | 45 | `M2-REGION-RETYPE-CORE` | 31 | AC5 | **ARCHIVE** | M2-AC5 GATE 25/25 属旧 Tauri clean-start 打包面（LEGACY_FROZEN:23） |
@@ -90,12 +90,12 @@
 | 68 | `FEA-07-AC5-NATIVE-1` | 55 | AC-N4 | **HUMAN** | 恢复点逐项还原校验（卡面 :135 记未逐项还原），需真机操作 |
 | 69 | `FEA-07-AC5-NATIVE-1` | 56 | AC-N5 | **DOC** | r2 复审未闭环，需补独立 Review |
 | 70 | `P20-MEM-OPT-1` | 38 | AC2 | **ARCHIVE** | 旧 Tauri/WebView2 卡（allowed_paths 含 Tauri 侧、证据为 m2rc1-desktop/msedgewebview2）；AD-002 已退役该壳 |
-| 71 | `P20-MEM-OPT-1` | 39 | AC3 | **ARCHIVE** | 同上；卡面 :107-109 明记 AC3/AC4 随 AC2 目标消解不再适用 |
-| 72 | `P20-MEM-OPT-1` | 40 | AC4 | **ARCHIVE** | 同上 |
+| 71 | `P20-MEM-OPT-1` | 39 | AC3 | **WITHDRAWN** | 卡面 :107-109 明记 AC3/AC4 随 AC2 目标消解而不再适用（用户裁决不实施） |
+| 72 | `P20-MEM-OPT-1` | 40 | AC4 | **WITHDRAWN** | 同上（卡面 :107-109 明记未执行且不再适用） |
 
 ## 原 blocked 理由（完整，供核对）
 
-### 1. `V11R-C-2` L39 AC6 → **MECHANISM_NA**
+### 1. `V11R-C-2` L39 AC6 → **WITHDRAWN**
 
 > GAP-3「跟随系统强调色」仅作用域生效、不写设置文件、不跨重启保持（verification/V11R-C-2/DEVIATIONS.md GAP-3；AppearanceSectionView.axaml:59 注明 V1 未接入 OS 取色）；其余子项有 test:AppearanceSettings_ApplyImmediately_AndPersist@apps/desktop-avalonia/tests/NewManga.App.Tests/V2ThemeStudioTests.cs:776
 
@@ -259,7 +259,7 @@
 
 > AC4 要求补强 CommandParityContractTests：本卡交付明确未改该文件（verification/V11R-A-3/README.md:95-96 自述『git diff 无这些文件；66→76 改造归 V11R-F0-1』，CommandContractV11RTests.cs:12-14 同述），改由新增 CommandContractV11RTests 承载；该新类只断言 channel/minor/证据列，ContractRow(:199-206) 无 params 字段 ⇒ 『参数特判』无断言。HEAD 的 CommandParityContractTests 由 V11R-F0-1 改造（同文件 :13-16），非本卡交付。口径待 Lead 裁决
 
-### 42. `V11R-C-3` L41 ? → **IMPL**
+### 42. `V11R-C-3` L41 R1 → **IMPL**
 
 > tag 已存在（git tag -l v11r-pre-retire → annotated，指向 df883f2ce；verification/V11R-C-3/R1-tag.txt:7），但两项未满足：①未用 rollback-theme-retire.ps1 -CreateTag，改用直接 git tag（R1-tag.txt:10-13 自述脚本会继续 checkout）；②缺『tag 存在后的 -DryRun』证据——唯一 dry-run 是 tag 创建前的 READY 包 verification/V11R-C-3-READY/rollback-dry-run.log:9（tag exists=False），tag 创建于 2026-10-30T03:18:13 晚于该日志；doc/reviews/V11R-THEME-L3-r1-independent.md:79,125 明确要求补一次 tag 存在的 DryRun
 
@@ -375,10 +375,10 @@
 
 > 正文阈值 ≤350 MB 未达成：实测空闲稳态 443.3 MB（卡面 :28「超 26%」）；本卡执行结果 :93-95 记「AC2 —— 经用户裁决后无需实施」，用户 2026-10-18 把 P20 的 AC3 阈值改为 480 MB（AC 正文 350 MB 未被改写，故按正文判未达成）；且缺「优化前后对照的多轮采样（含 CSV 时序）」——verification/P20-MEM-OPT-1 实测仅有单轮 ac1-probe-20261018-072149 快照（process-tree.json/probe-trace.log），无优化后时序 CSV；EmptyWorkingSet 方案因指标操纵被拦截回退（:97-105）
 
-### 71. `P20-MEM-OPT-1` L39 AC3 → **ARCHIVE**
+### 71. `P20-MEM-OPT-1` L39 AC3 → **WITHDRAWN**
 
 > 未执行：卡面 :107-109 明记「AC3/AC4 —— 随 AC2 目标消解而不再适用；未执行」；无 P20 AC2 冷启动（≤2.0 s / Core ≤3.5 s）与 AC4（交互 ≤50 ms、60 FPS）的同方法复测对照数据入库
 
-### 72. `P20-MEM-OPT-1` L40 AC4 → **ARCHIVE**
+### 72. `P20-MEM-OPT-1` L40 AC4 → **WITHDRAWN**
 
 > 未执行：卡面 :107-109 明列未执行；缺四页可达复测、bundle 与 resources 的 core_service.exe SHA-256 相等复核、启动 smoke 窗口可达证据（verification/P20-MEM-OPT-1 仅 5 个 pin：process-tree.json、probe-trace.log、probe-process-tree.ps1、experiment-steady-after-trim.ps1、test-interaction-and-pages.ps1，脚本存在但无本次运行产物）

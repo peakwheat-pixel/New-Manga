@@ -1,6 +1,7 @@
-# 四件套实测（P2-05 要求入库）
+# 四件套实测（P2-05 要求入库；r2 P3-03 修正：完整记录 WARN 行）
 
 ## check.ps1（全局）
+WARN: 存在 12 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
 WARN: doc/STATUS.md 已达到预算的 80%：3115 bytes / 27 lines
 WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6960 bytes / 63 lines
 Governance check: PASS (3 warnings)

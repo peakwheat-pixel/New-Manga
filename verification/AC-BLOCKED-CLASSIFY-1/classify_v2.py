@@ -51,8 +51,8 @@ D: dict[tuple[str, int], tuple[str, str]] = {
     ("P19", 38): ("ARCHIVE", "Tauri 2.12 不校验顶层未知键属旧壳框架限制"),
     ("P19", 39): ("ARCHIVE", "旧壳 E2E（msedgewebview2 分区断言）已冻结"),
     ("P20-MEM-OPT-1", 38): ("ARCHIVE", "旧 Tauri/WebView2 卡（allowed_paths 含 Tauri 侧、证据为 m2rc1-desktop/msedgewebview2）；AD-002 已退役该壳"),
-    ("P20-MEM-OPT-1", 39): ("ARCHIVE", "同上；卡面 :107-109 明记 AC3/AC4 随 AC2 目标消解不再适用"),
-    ("P20-MEM-OPT-1", 40): ("ARCHIVE", "同上"),
+    ("P20-MEM-OPT-1", 39): ("WITHDRAWN", "卡面 :107-109 明记 AC3/AC4 随 AC2 目标消解而不再适用（用户裁决不实施）"),
+    ("P20-MEM-OPT-1", 40): ("WITHDRAWN", "同上（卡面 :107-109 明记未执行且不再适用）"),
     # ---- WITHDRAWN：方案撤回 / 已裁决 ----
     ("GOV-PIN-LINEAGE-1", 77): ("WITHDRAWN", "r27 撤回原方案、r28 停止改造，本 Task 未实施任何 AC（卡 :208-209）"),
     ("GOV-PIN-LINEAGE-1", 81): ("WITHDRAWN", "同上（check.ps1 未修改，卡 :287-292）"),
@@ -111,7 +111,7 @@ D: dict[tuple[str, int], tuple[str, str]] = {
     ("M2-SFX-CORRECTION-EXPORTER", 35): ("IMPL", "T1b 批量产物尚不存在，需先生产"),
     ("FEA-07-AC5-NATIVE-1", 53): ("IMPL", "Inspector 浮窗子项 NA；「快捷键不重复执行」需补断言"),
     # ---- MECHANISM_NA：要求本身不适用 ----
-    ("V11R-C-2", 39): ("MECHANISM_NA", "GAP-3 跟随系统强调色在 V1 未接入（DEVIATIONS 已登记为已知限制）"),
+    ("V11R-C-2", 39): ("WITHDRAWN", "GAP-3「跟随系统强调色」在 V1 明确未接入（DEVIATIONS.md 登记为已知限制）→ 范围撤回"),
     ("V11R-C-1", 31): ("MECHANISM_NA", "headless 库卡，SCREEN_SPECS 无引擎章节；屏幕验收面无对象（同卡 AC2/3/5 已判 NA）"),
     ("V11R-C-1", 36): ("MECHANISM_NA", "同上：headless 库卡无「关键屏」，截图要求无对象"),
     ("V11R-C-1", 37): ("MECHANISM_NA", "同上"),
@@ -121,12 +121,16 @@ D: dict[tuple[str, int], tuple[str, str]] = {
 LINE_RE = re.compile(r"^( *)- \[ \] (.*?)<!--\s*blocked:\s*(.*?)\s*-->\s*$")
 AC_PATTERNS = [
     re.compile(r"\*\*(AC[0-9A-Za-z._-]+)"),
+    re.compile(r"\*\*(R[0-9]+)\b"),
     re.compile(r"\*\*AC\s*[（(]?([①②③④⑤⑥⑦⑧⑨⑩])"),
     re.compile(r"\*\*AC\s*([0-9]+)"),
 ]
 
 
 def ac_id(body: str) -> str:
+    m = re.match(r"\s*(R[0-9]+)\b", body)
+    if m:
+        return m.group(1)
     for pat in AC_PATTERNS:
         m = pat.search(body)
         if m:
