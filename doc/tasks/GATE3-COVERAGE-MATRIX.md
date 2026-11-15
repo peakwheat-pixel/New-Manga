@@ -132,7 +132,7 @@ Gate 条件 3 = "补齐**可安全执行的**完整 GUI / Core / Host 关键流�
 | EV-G3M-05 | 独立复核 r1（REJECT） | doc/reviews/GATE3-COVERAGE-MATRIX-review-r1.md | 7f510afd7 | 48780822e047fe53df324ab569d32d120e3715228949be1a58daa2af82ad8e96 | CANONICAL | BLOB |
 | EV-G3M-06 | 独立复核 r2（REJECT） | doc/reviews/GATE3-COVERAGE-MATRIX-review-r2.md | 7f510afd7 | 6db33b2090449b5c7212d36f991b48f56e9f2c5ccfb255a4ce2bc3a7cabc4c0c | CANONICAL | BLOB |
 | EV-G3M-07 | 独立复核 r3（ACCEPT_WITH_LIMITATIONS） | doc/reviews/GATE3-COVERAGE-MATRIX-review-r3.md | 7f510afd7 | f92c453fbf0b800df5744c564d2535aabfb31264d01ddb35350901eb698ffaf0 | CANONICAL | BLOB |
-| EV-AC3-08 | AC3 可执行性标注（测试属性分类统计） | verification/GATE3-COVERAGE-MATRIX/ac3-test-attribute-census.md | PIN_PENDING | a760a01c5be59e69abe80b664572047cd1b118cbc7e7a700b8c72f42b20862d5 | CANONICAL | BLOB |
+| EV-AC3-08 | AC3 可执行性标注（测试属性分类统计） | verification/GATE3-COVERAGE-MATRIX/ac3-test-attribute-census.md | 0e8166954 | ef5d5892738fd5fcb18d2f7fbe7b81d065605f52c6a6f098bea572ddb43058ed | CANONICAL | BLOB |
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
