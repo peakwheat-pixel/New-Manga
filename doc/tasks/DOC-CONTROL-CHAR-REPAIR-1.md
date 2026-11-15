@@ -39,7 +39,8 @@ allowed_paths:
 ## Acceptance Criteria
 
 - [ ] **AC1 全量清点与判定**：113 处逐处判定，给出「位置 → 替换值 → 判定依据」；
-      自动验证（还原后 token 在仓库词表或 git commit 可解析）覆盖 ≥80%，其余逐条人工判定。- [ ] **AC2 零残留**：修复后 `doc/tasks/**` 的 `[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]` 命中数为 **0**。
+      自动验证（还原后 token 在仓库词表或 git commit 可解析）覆盖 ≥80%，其余逐条人工判定。
+- [ ] **AC2 零残留**：修复后 `doc/tasks/**` 的 `[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]` 命中数为 **0**。
 - [ ] **AC3 语义保真**：只替换控制符所在字节，其余字节逐字不变；`git diff` 行数 == 受影响行数，
       且每行的差异仅为该控制符。
 - [ ] **AC4 可 grep 性**：修复后 `grep -r "verification"` / `"apps/"` / `"frozen"` / `"vitest"` 在

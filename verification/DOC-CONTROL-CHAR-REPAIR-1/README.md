@@ -18,9 +18,9 @@ Task：`DOC-CONTROL-CHAR-REPAIR-1`（Owner：DSH；独立复核 `ctrlchar-review
 2. **映射候选**：`0x0B→v`、`0x07→a`、`0x08→b`、`0x0C→f`、`0x1B→e`、`0x00→0`。
 3. **验证驱动**：把候选替入后取该位置 ASCII token，检查是否存在于
    （a）仓库文本 token 集合（782,253 条），或（b）`git cat-file -t` 可解析的 commit。
-   **修正后约 95 / 113 = 84.1% 可由自动验证覆盖**（r1 复核计算；其中 5 个 commit
+   **最终树重算：102 / 113 = 90.3% 可由自动验证覆盖**（词表已排除 `doc/tasks/**` 以避免自证循环；其中 5 个 commit
    `0e752fbad`、`075dc1682`、`04b657131`、`09d7e76c1`、`0e1f71151` 实测 `git cat-file -t` = commit）。
-4. **人工判定 18 处**：token 是路径/文件名/短 sha 前缀（词表未收录但上下文唯一可判）；
+4. **人工判定 11 处**：token 是路径/文件名/短 sha 前缀（词表未收录但上下文唯一可判）；
    其中 **2 处**（`GOV-EVIDENCE-DIR-SWEEP-1.md:48/:56`）原文是**两字节 `\a`**
    （`G:\CODEX\New Manga.workspace\archive\...` 的路径分隔符被转义）。
 5. **完备性反查**：对 `0x00` 的候选集必须包含数字 `0`，并用 `git cat-file -t` 反证
@@ -57,7 +57,7 @@ Task：`DOC-CONTROL-CHAR-REPAIR-1`（Owner：DSH；独立复核 `ctrlchar-review
 | 涉及文件 | **65** |
 | 残留控制符 | **0** |
 | 无法唯一判定 | 0 |
-| 自动验证覆盖 | ≈ **84.1%**（≥ AC1 的 80% 门槛） |
+| 自动验证覆盖 | **102/113 = 90.3%**（词表排除 `doc/tasks/**`；≥ AC1 的 80% 门槛） |
 
 **差异最小化**（r1 逐字节复核确认）：65 个卡文件行数不变；97 个受影响行
 **全部只由控制符替换推导出**；未受影响行 100% 逐字节相同。
@@ -100,5 +100,5 @@ AC 注释里的 418 个 `test:`/`grep:` 定位符全部不受影响（控制符�
 cd "G:\CODEX\New Manga"
 python "G:\CODEX\New Manga.workspace\tasks\DOC-CONTROL-CHAR-REPAIR-1\scan.py"
 python "G:\CODEX\New Manga.workspace\tasks\DOC-CONTROL-CHAR-REPAIR-1\repair.py" --dry-run
-# 逐处判定表（113 行）：本卡提交时复制到本目录 control-char-inventory.md
+# 逐处判定表（113 行）：见本目录 control-char-inventory.md（逐处判定表）与 verify-final.log（机器可读）
 ```
