@@ -2562,3 +2562,24 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **诚实要点**：文档明确写"Gate 仍 `BLOCKED`"、"条件 5 `NOT_RUN`"、
   "技术侧已无可自动化项"，**没有把任何 BLOCKED/PARTIAL/NOT_RUN 写成通过**。
 - **这是本会话第一次以"可移交产物"而非"证据追加"的形式收口。**
+## 272. ★★ INSTALLER-MATRIX-1 状态纠正：**我在同一轮里连错两次**（2026-11-15，DSH，goal 轮次 73）
+
+- **起因**：按纪律「依赖矩阵或旧记录前必须先核实现」，我去核实 `INSTALLER-MATRIX-1`。
+  发现卡片 `status: done`，但其 §测试要求 表格 **AC1–AC7 全是 `NOT_RUN`**、Handoff/Review/实际测试**全"尚无"**。
+- **★ 我的第一次错误**：我**没查实物证据**就断定"七项 AC 一项都没实测，却被标成 done"，
+  直接把 `status: done` 改成 `in_progress` 并写下那段断言。**这是错的。**
+- **★ 我的第二次错误**：随后查 `verification/INSTALLER-MATRIX-1/README.md`（**r1 REJECT 后重做版**）才发现：
+  - **AC1 stage ✅ 848.15 MB / 1037 files**
+  - **AC2 VERSION.json ✅**（`repo_head` 用 exe 内嵌 `ProductVersion` 自证）
+  - **AC3 setup.exe ✅ `NewManga-0.1.1-setup.exe` 621.9 MB，sha256 `0c041599…58f06`，makensis v3.13**
+  - **AC4 clean install ✅ `/S` exit 0；848 MB；HKCU `New Manga 0.1.1`；Start Menu 两个快捷方式**
+  - **AC5 安装后启动 ✅ exit 0；`ProductVersion = 0.1.1+71cecb95a…`；core_service/host_bridge/credential ready；self-check Passed**
+  - **AC6 卸载 ✅ `/S` exit 0；程序目录/HKCU/StartMenu 全清理；用户数据根清单 SHA-256 前后完全一致 `6ae4d6da…46d9b2`（532 文件）**
+  - **AC7 四页可达性 ❌ NOT_RUN**（未在打包产物上逐页导航，**未用 headless 证据冒充**）
+  - AC8 ✅
+  **⇒ AC1–AC6 真做过。我改状态时没先读证据，只是碰巧结论（`in_progress`）因为 AC7 未做而仍然正确。**
+- **已更正**：卡片换上新横幅（列真实 AC 结果 + **原样登记我这两次失误**），`disposition` 改为
+  "AC1–AC6 已有实测证据；AC7 仍 NOT_RUN"；`status` 保持 `in_progress`。
+- **教训（第 6 次同模式）**：这次我甚至是在**执行"先核实现"这条纪律的过程中**犯的 ——
+  我核实了**卡片的表**，却**没核实卡片的实物证据目录**。
+  **"核实现"必须包括：表格文本、实物证据目录、以及两者是否一致。**

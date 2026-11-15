@@ -3,8 +3,8 @@ id: INSTALLER-MATRIX-1
 title: 用旧 sidecar 跑通安装/卸载矩阵（条件 4 的机制验证）
 kind: evidence
 governance_version: 3
-status: done
-disposition: "Gate 条件 4：setup.exe + clean install + 启动 + 卸载 + 用户数据根保护"
+status: in_progress
+disposition: "Gate 条件 4：setup.exe + clean install + 启动 + 卸载 + 用户数据根保护。AC1–AC6 已有实测证据（见 verification/INSTALLER-MATRIX-1/README.md）；AC7 四页可达性仍 NOT_RUN。"
 approval: DSH 2026-11-15（makensis 已具备；sidecar 沿用 2026-10-23 版并标注 E-2）
 suggested_owner: DSH
 owner: DSH
@@ -31,6 +31,35 @@ allowed_paths:
 ---
 
 # INSTALLER-MATRIX-1：安装/卸载矩阵（条件 4）
+
+> ## ★ 状态澄清（2026-11-15，DSH）—— 含我自己的两次失误
+>
+> **本卡的表在很长时间里全部写着 `NOT_RUN`，但实物证据显示 AC1–AC6 其实已经跑过。**
+> 依据：`verification/INSTALLER-MATRIX-1/README.md`（**r1 REJECT 后重做版**，所有数字为重做后实测值）。
+>
+> | AC | 真实结果（来自证据 README） |
+> |---|---|
+> | AC1 stage | ✅ **848.15 MB / 1037 files** |
+> | AC2 `VERSION.json` | ✅ `repo_head` 用 exe 内嵌 `ProductVersion` 自证 |
+> | AC3 `setup.exe` | ✅ `NewManga-0.1.1-setup.exe` **621.9 MB**，sha256 `0c041599…58f06`，`makensis v3.13` |
+> | AC4 clean install | ✅ `/S` exit 0；848 MB；HKCU `New Manga 0.1.1`；Start Menu 两个快捷方式 |
+> | AC5 安装后启动 | ✅ exit 0；`ProductVersion = 0.1.1+71cecb95a…`；`core_service ready` + `host_bridge ready` + `self-check Passed` |
+> | AC6 卸载 | ✅ `/S` exit 0；程序目录/HKCU/StartMenu 全清理；**用户数据根清单 SHA-256 前后完全一致** `6ae4d6da…46d9b2`（532 文件） |
+> | **AC7 四页可达性** | ❌ **NOT_RUN**（未在打包产物上逐页导航；**未用 headless 证据冒充**） |
+> | AC8 不虚报 | ✅ 产物全在 workspace；仓库仅文本 |
+>
+> **⇒ 真实状态：AC1–AC6 已通过，AC7 未做。所以本卡是 `in_progress`，不是 `done`。**
+>
+> ### ★ 我在同一轮里的两次失误（原样登记）
+> 1. **第一次**：我看到本卡表格全是 `NOT_RUN`，就把 `status: done` 直接改成 `in_progress`，
+>    并写下"七项 AC 一项都没有实测记录，却被标成 done"——**这是错的**。
+>    我没有查 `verification/INSTALLER-MATRIX-1/` 的实物证据就下了结论。
+> 2. **第二次**：发现实物证据后，我才知道 AC1–AC6 真做过。
+>    **正确做法本应是先读证据、再改状态。**
+>
+> **⇒ 结论没变（`in_progress` 是对的，因为 AC7 未做），但我的理由是错的，过程是错的。**
+> **这正是本项目反复出现的模式：先下结论，后查证据。**
+
 
 ## 目标
 
