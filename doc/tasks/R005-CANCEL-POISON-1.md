@@ -54,9 +54,12 @@ catch (OperationCanceledException) when (!cancellationToken.IsCancellationReques
 - [ ] **AC1 测试先行且先红**：新增 `SidecarCancellationPoisonTests`，用「PowerShell 假子进程（不读 stdin、
       不写 stdout）」构造「请求已写出但无响应」；断言「取消后下一次 `ExchangeAsync` 立即 fail-closed」。
       在**未修改**的 `SidecarProcess` 上必须 **FAIL**，并记录红日志。
-- [ ] **AC2 修复精确**：`ExchangeAsync` 的取消处理在**超时与主动取消两种情况下都置 `_poisoned`**；
-      主动取消仍重抛 `OperationCanceledException`（调用方可区分「我取消了」与「超时了」）。
-      **不得**改动 `ReadNextResponseLineAsync`（它不写请求，取消不会造成请求/响应错配）。
+      另需覆盖**第二分支**：`CallerCancellation_DuringEventSkip_PoisonsChannel`（事件帧已到达、
+      真响应未读时取消），修复前同样必须 FAIL。
+- [ ] **AC2 修复精确（含第二 poison 分支）**：**两处**取消处理在**超时与主动取消两种情况下都置 `_poisoned`**——
+      ① `ExchangeAsync`；② `ReadNextResponseLineAsync`（它在事件帧跳过循环里被调用，此时请求已写出、
+      真响应未读，取消同样会残留 → r1 P2-01 指出初版漏了它）。主动取消仍重抛 `OperationCanceledException`
+      （调用方可区分「我取消了」与「超时了」）。超时路径的错误码/消息不变。
 - [ ] **AC3 修后绿**：同一测试通过，且耗时明显短于红时（不再白等一次完整超时）。
 - [ ] **AC4 超时路径不变**：对照测试 `Timeout_StillPoisonsChannel_Unchanged` 通过。
 - [ ] **AC5 不回归**：`NewManga.CoreClient.Tests` 全量 **0 failed**；四件套 PASS。

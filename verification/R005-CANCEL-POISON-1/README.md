@@ -66,22 +66,50 @@ catch (OperationCanceledException)
 }
 ```
 
-**未改动** `ReadNextResponseLineAsync` 的取消分支 —— 它不写请求，取消不会造成请求/响应错配。
+### 3.1 **初版漏了第二个 poison 分支（r1 P2-01）**
+
+初版只修了 `ExchangeAsync`，并写下一句论证：
+
+> `ReadNextResponseLineAsync` 不写请求，取消不会造成请求/响应错配。
+
+**这句是错的。** `ReadNextResponseLineAsync` 的两个调用点
+（`CoreServiceClient.cs:706`、`:2440`）都在**事件帧跳过循环**里：
+
+```csharp
+var frame = await _process.ExchangeAsync(line, ...);   // 请求已写出，拿到的是「事件帧」
+var responseLine = frame.ResponseLine;
+for (var skipped = 0; skipped < 16 && CoreProtocol.IsEventFrame(responseLine); skipped++)
+{
+    responseLine = await _process.ReadNextResponseLineAsync(timeout, cancellationToken);  // ← 此处
+}
+```
+
+也就是说：进入 `ReadNextResponseLineAsync` 时，**请求早已写出，而命令真正的响应还没读**。
+此时取消 → 不 poison → 真正的响应留在流里 → 下一次交换读到它 → **与第一分支完全相同的错位**。
+「不写请求所以安全」的说法把「本方法不写」误当成「窗口内没写过」。
+
+**已镜像修复**，同一结构（两种结果都 poison，主动取消重抛 OCE）。
+第二分支的新测试 `CallerCancellation_DuringEventSkip_PoisonsChannel` 在修复前 **FAIL**，
+修复后通过 —— 与第一分支同样满足「先红后绿」。
+
 完整 diff 见 `fix.diff`。
 
 ## 4. 修后绿
 
 ```
-已通过! - 失败: 0，通过: 2，已跳过: 0，总计: 2，持续时间: 8 s
+第一分支修复后：已通过! - 失败: 0，通过: 2，已跳过: 0，总计: 2，持续时间: 8 s
+第二分支修复后：已通过! - 失败: 0，通过: 3，已跳过: 0，总计: 3，持续时间: 11 s
 ```
 
-耗时 **13s → 8s**：additionally 证明下一次调用不再白等 5 秒超时，而是立即 fail-closed。
+耗时 **13s → 8s**：证明下一次调用不再白等 5 秒超时，而是立即 fail-closed。
+第二分支（事件帧跳过）在修复前单独跑为 **1 failed / 2 passed / 16s**，修复后 3 passed / 11s。
 
 ## 5. 不回归
 
 ```
-不带 sidecar 环境变量的 CoreClient 全量：
-  已通过! - 失败: 0，通过: 194，已跳过: 30，总计: 224，耗时 29s，EXIT=0
+不带 sidecar 环境变量的 CoreClient 全量（第二分支修复后）：
+  已通过! - 失败: 0，通过: 195，已跳过: 30，总计: 225，耗时 33s，EXIT=0
+（第一分支修复后为 194/0/30/224；+1 来自第二分支新增的第三条测试）
 ```
 
 > 卡面历史基线是 `189/0/27`（`PIPE-EXCLUSIVE-TRANSPORT-1` 时期）；此后其它卡加入新测试，
@@ -107,7 +135,9 @@ generate_api_inventory.py --check → OK (1/80/6=87)
 
 ## 7. 边界（不淡化）
 
-- 本卡**只**修 R-005。E-7 另外四项（`_pipeGate` 未统一、fail-open、R-002 错配重同步、
-  `Dispose`/`StopAsync` 在租约外）**仍开** ⇒ **「并发安全」仍不可宣称**。
+- 本卡修的是 R-005 的**两个 poison 分支**（`ExchangeAsync` 与 `ReadNextResponseLineAsync`）。
+  E-7 另外四项（`_pipeGate` 未统一、fail-open、R-002 错配重同步、`Dispose`/`StopAsync` 在租约外）**仍开**
+  ⇒ **「并发安全」仍不可宣称**。
+- 取消后通道进入 poison 状态，需**重启 sidecar** 才能恢复（`ThrowIfPoisoned` 无自动重建）。
 - 修复依赖「请求行确实已写出」这一前提；`_stdin.WriteLineAsync` 失败的分支仍走 `ProcessExitedFailure`，
   未改动。

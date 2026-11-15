@@ -319,9 +319,20 @@ public sealed class SidecarProcess : IAsyncDisposable
         {
             line = await _stdout.ReadLineAsync(timeoutSource.Token).ConfigureAwait(false);
         }
-        catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
+        catch (OperationCanceledException)
         {
+            // E-7 / R-005 (second poison site): this method is only ever called AFTER an ExchangeAsync
+            // wrote a request and returned an event frame -- the command's real response is still unread
+            // (see the event-skip loops in CoreServiceClient). Cancelling here therefore leaves a pending
+            // response on the wire exactly like cancelling inside ExchangeAsync does, so both outcomes
+            // poison. The "only reads, never writes, so it cannot desynchronise" reading was wrong: the
+            // write already happened; this is the read that has not.
             _poisoned = true;
+            if (cancellationToken.IsCancellationRequested)
+            {
+                throw;
+            }
+
             throw new SidecarException(
                 SidecarErrorCode.RequestTimeout,
                 Spec.Name,
