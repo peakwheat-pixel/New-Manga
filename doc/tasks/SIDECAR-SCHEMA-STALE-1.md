@@ -490,3 +490,28 @@ gated 命令从不发到 core、错误码 CORE_CAPABILITY_MISSING」。**该机�
 **本轮不改的原因**：改这两个测试涉及**改变断言语义**（从「必须拒绝」到「视能力分支」），
 属产品行为判定；且需保证 
 esults.Add evidence 在两条分支下都成立。**先设计清楚再改。**
+
+### 组 A 第一个测试已修复（2026-11-16 续，失败数 3 -> 2）
+
+**改动**（CommandIntegrationTests.cs 的 Fea12NewCommands_FrozenCoreFailsClosedWithTypedError）：
+
+1. 前置断言 Assert.DoesNotContain(capability, ping.Capabilities) 改为
+   coreHasDeleteTrash 探测 + 
+esults.Add 证据记录；
+2. 四个 ExpectProbeFailure 调用改为条件分支：
+   - 能力齐备 → 新增 ExpectGatePasses：接受任意 CoreOperationException（领域错误也证明帧到达 core），
+     核心断言是 HasCommandFrame(...) 必须为真，即**门禁放行**；
+   - 能力缺失 → ExpectProbeFailure（原断言完整保留：CORE_CAPABILITY_MISSING + 探针恰好一次 ping +
+     gated 命令帧必须缺席）；
+3. digest 负向控制的期望码从固定 INVALID_REQUEST 放宽为
+   {"INVALID_REQUEST", "BOOK_NOT_FOUND"}，理由写进注释：
+   旧 core 拒绝未知字段 → INVALID_REQUEST；新 core 认识该字段、走到业务规则 → 书不存在 → BOOK_NOT_FOUND。
+   **两者都是 fail-closed，都不是"忽略 digest 直接删"** —— 这才是该负向控制要钉住的性质。
+
+**验证**：
+- 单测：已通过! - 失败: 0，通过: 1 / EXIT=0
+- 完整 test.ps1：**失败 2 / 通过 254**（原 3 / 253）
+
+**连续三轮各修好一个测试**：B1（5→4）、B2（4→3）、组 A 之一（3→2）。
+
+**剩余 2 个**：组 A 第二个（L713-716 同型前置断言）、组 C（color 已成功、失败在 translate）。

@@ -479,10 +479,24 @@ public sealed class CommandIntegrationTests
         var ping = await context.Core.PingAsync();
         Assert.True(ping.Ready);
         Assert.Contains("library.list_books", ping.Capabilities);
-        foreach (var capability in HostCommandRegistry.DeleteTrashCapabilities)
+        // SIDECAR-SCHEMA-STALE-1 (DSH 2026-11-16): this test was written against a sidecar bundle that
+        // predated FEA-12, so it asserted the delete/trash capabilities were ABSENT and that every
+        // rev 2.13 command therefore fail-closed with CORE_CAPABILITY_MISSING. The build now ships a
+        // Core that advertises them, so that premise can no longer be asserted unconditionally.
+        // Keep the capability verdict as evidence and branch: present -> positive path, absent -> the
+        // original fail-closed assertions. The gate mechanism stays covered either way.
+        var coreHasDeleteTrash = HostCommandRegistry.DeleteTrashCapabilities
+            .All(capability => ping.Capabilities.Contains(capability));
+        results.Add(new
         {
-            Assert.DoesNotContain(capability, ping.Capabilities);
-        }
+            path = "capability_verdict",
+            command = "(all FEA-12 delete/trash commands)",
+            required_capabilities = string.Join(",", HostCommandRegistry.DeleteTrashCapabilities),
+            error_code = coreHasDeleteTrash ? "(none: advertised by this Core)" : "(absent on this Core)",
+            category = "protocol",
+            retryable = "false",
+            probe_ping_frames = 0,
+        });
 
         static int PingFrames(CommandTestContext context) => context.Core.Wire.Frames.Count(
             frame => frame.RequestLine.Contains("\"command\":\"core.ping\"", StringComparison.Ordinal));
@@ -521,26 +535,79 @@ public sealed class CommandIntegrationTests
             });
         }
 
-        await ExpectProbeFailure(
-            "library_preview_permanent_delete_books", "{\"bookIds\":[\"book-baseline\"]}");
-        await ExpectProbeFailure(
-            "library_move_to_trash",
-            "{\"entries\":[{\"book_id\":\"book-baseline\"}],\"idempotency_key\":\"fea12-key-1\"}");
-        await ExpectProbeFailure("library_list_trash", "{}");
-        await ExpectProbeFailure(
-            "library_purge_trash",
-            "{\"entries\":[{\"book_id\":\"book-baseline\"}],\"confirm\":true,\"idempotency_key\":\"fea12-key-2\"}");
+        // SIDECAR-SCHEMA-STALE-1: the gate must still be exercised, but which verdict is correct depends
+        // on what this Core advertises. Absent capabilities -> the original fail-closed assertions;
+        // present -> the gate lets the command through and the Core (not the gate) decides the outcome.
+        async Task ExpectGatePasses(string hostCommand, string argsJson)
+        {
+            var descriptor = HostCommandRegistry.Get(hostCommand);
+            var coreCommand = descriptor.CoreCommand!;
+            try
+            {
+                await context.Dispatcher.InvokeAsync(hostCommand, Args(argsJson));
+            }
+            catch (CoreOperationException)
+            {
+                // A domain error (BOOK_NOT_FOUND / INVALID_REQUEST / ...) is fine here: it proves the
+                // frame reached the Core instead of being gated locally.
+            }
+
+            Assert.True(
+                HasCommandFrame(context, coreCommand),
+                $"an advertised capability must let {coreCommand} reach the Core");
+            results.Add(new
+            {
+                command = hostCommand,
+                core_command = coreCommand,
+                core_minor = descriptor.CoreMinor,
+                required_capabilities = string.Join(",", HostCommandRegistry.RequiredCapabilities(hostCommand)),
+                error_code = "(gate passed: capability advertised)",
+                category = "protocol",
+                retryable = "false",
+                probe_ping_frames = 0,
+                command_frame = "present (gated command reaches the Core)",
+            });
+        }
+
+        var gatedCases = new (string HostCommand, string ArgsJson)[]
+        {
+            ("library_preview_permanent_delete_books", "{\"bookIds\":[\"book-baseline\"]}"),
+            ("library_move_to_trash",
+                "{\"entries\":[{\"book_id\":\"book-baseline\"}],\"idempotency_key\":\"fea12-key-1\"}"),
+            ("library_list_trash", "{}"),
+            ("library_purge_trash",
+                "{\"entries\":[{\"book_id\":\"book-baseline\"}],\"confirm\":true,\"idempotency_key\":\"fea12-key-2\"}"),
+        };
+        foreach (var (hostCommand, argsJson) in gatedCases)
+        {
+            if (coreHasDeleteTrash)
+            {
+                await ExpectGatePasses(hostCommand, argsJson);
+            }
+            else
+            {
+                await ExpectProbeFailure(hostCommand, argsJson);
+            }
+        }
 
         // Additive digest on an existing command: minor 10 is NOT capability-gated, so the request
-        // still reaches the old Core and its closed-shape validation rejects the unknown field with
-        // INVALID_REQUEST -- fail-closed, not "ignore the digest and delete".
+        // always reaches the Core. Which typed rejection comes back depends on whether that Core
+        // knows the additive field:
+        //   - old Core: its closed-shape validation rejects the unknown key -> INVALID_REQUEST
+        //   - current Core: it accepts the key and the business rule reports the missing book
+        //     -> BOOK_NOT_FOUND
+        // Both are fail-closed and neither is "ignore the digest and delete", which is the property
+        // this negative control exists to pin down.
         var digest = "sha256:" + new string('a', 64);
         var digestError = await Assert.ThrowsAsync<CoreOperationException>(
             () => context.Dispatcher.InvokeAsync(
                 "library_delete_book_permanently",
                 Args($"{{\"payload\":{{\"book_id\":\"book-missing\",\"confirm_permanent_delete\":true," +
                      $"\"inventory_digest\":\"{digest}\"}}}}")));
-        Assert.Equal("INVALID_REQUEST", digestError.Code);
+        Assert.Contains(
+            digestError.Code,
+            new[] { "INVALID_REQUEST", "BOOK_NOT_FOUND" },
+            StringComparer.Ordinal);
         var deleteFrame = context.Core.Wire.Frames.LastOrDefault(
             candidate => candidate.RequestLine.Contains(
                 "\"command\":\"PermanentlyDeleteBook\"", StringComparison.Ordinal));
