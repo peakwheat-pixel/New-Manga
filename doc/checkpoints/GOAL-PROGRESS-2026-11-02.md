@@ -2617,3 +2617,30 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **§9 诚实列出本复评的 4 项局限**：①条件 1 未逐项重跑；②CoreClient 是继承基线未重跑；
   ③未访问远端核实可见性（`gh` 未认证）；④**AC1–AC6 只读了汇总表，未逐个复核 sha256 与 JSON 原始数据**
   （该表标注"r1 REJECT 后重做"，说明其数字曾被独立复核挑战过一次）。
+## 275. ★ INSTALLER-EVIDENCE-VERSION-AUDIT-1：复核原始 JSON —— 发现**两份证据来自不同版本 run**（2026-11-15，DSH，goal 轮次 76）
+
+- **动机**：执行复评 §9 局限 4 的自我修正（"AC1–AC6 只读了汇总表，未逐个复核 sha256 与 JSON 原始数据"）。
+- **★ 发现一：两份证据版本不同**
+  - `verification/NSIS-INSTALLER-1/install-phase.json`：`registry_display_version = **0.1.0**`，
+    包名 `NewManga-0.1.0-setup.exe`；
+  - `verification/INSTALLER-MATRIX-1/README.md`：描述 **0.1.1** 重做版。
+  **⇒ 两次不同的 run。** 我在复评 §2.1b / 交接文档里引用的 `6ae4d6da…` 是 README（0.1.1）的数字，
+  而原始 JSON（0.1.0）里是 `fdf52d87…`。**两者都对，但不能混为一谈** —— 这一点此前没说清。
+- **★ 发现二：0.1.0 run 的原始证据比汇总表更完整** —— 逐条复核：
+  **install-phase 37 条断言全 pass**，含四个许可文件 sha256 逐位相符、installed_exe_is_gui_subsystem=2、
+  Start Menu 目标路径、HKCU 四个注册表项、**data_root_durable_unchanged_after_install 与
+  data_root_durable_untouched_by_launch 均 expected==actual**、pp_host_ready（2.48 s）、
+  pp_main_window handle 19730986 title='New Manga'；
+  **uninstall-phase 19 条断言全 pass**，含**卸载全清理**、**HKLM/Program Files 未被污染**、
+  **einstall_exit_code=0 且 einstall_app_sha_matches**、
+  **data_root_durable_unchanged_after_uninstall/after_reinstall/final 全为 df52d87… 不变**。
+- **★ 发现三（措辞精确化）**：`install-phase.json` 里 `data_root_after_install_digest=44f2bfed…`
+  与 `data_root_after_launch_digest=9de15a8d…` **不同** ——
+  说明**应用启动会改动非 durable 部分（日志/缓存）**，而 **`data_root_durable_*` 全程不变**。
+  **我此前说"用户数据根 SHA-256 前后完全一致"没区分这两个层级，措辞不够精确。**
+- **★ 发现四（新缺口）**：`INSTALLER-MATRIX-1`（**0.1.1**）目录下**只有** `build-info.republished.json`/
+  `publish-manifest`/`manifest-singlefile`/`manifest-summary`/`smoke-singlefile` 与两个 `.log`，
+  **没有 `install-phase.json`/`uninstall-phase.json`**
+  ⇒ **0.1.1 那轮的 AC4/AC5/AC6 只有汇总表，无原始断言数据**。
+  **⇒ 若只有汇总表而无原始数据，0.1.1 的 AC1–AC6 证据强度低于 0.1.0。这是需要后续确认的缺口。**
+- **对 Gate 判定：不改变**（条件 4 仍 PARTIAL，AC7 未做），但**提高了证据强度并暴露了两个此前未说清的问题**（版本混用、durable/非 durable 未区分）。
