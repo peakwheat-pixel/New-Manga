@@ -1,2 +1,7 @@
+# command: pytest tests/editing/test_region_retype.py tests/providers/test_retype_redetect_persistence.py tests/pipeline/test_retype_candidate_persistence.py -q -p no:cacheprovider --tb=short
+# env: Windows 11 / pwsh 7 / Python 3.14 / pytest 9.1.1 / QT_QPA_PLATFORM unset
+# result: 27 passed / 0 failed / 0 skipped
+# EXIT=0
+
 ...........................                                              [100%]
 27 passed in 0.39s

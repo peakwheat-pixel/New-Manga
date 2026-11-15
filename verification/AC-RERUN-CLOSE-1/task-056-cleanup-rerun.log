@@ -1,2 +1,7 @@
+# command: pytest tests/maintenance/test_cleanup.py -q -p no:cacheprovider --tb=short
+# env: Windows 11 / pwsh 7 / Python 3.14 / pytest 9.1.1 / QT_QPA_PLATFORM unset
+# result: 12 passed / 0 failed / 0 skipped
+# EXIT=0
+
 ............                                                             [100%]
 12 passed in 0.26s
