@@ -14,7 +14,7 @@
 | 1 | 剩余 finding 处置并验证 | ✅ **8/8 全部关闭** | 无 | `doc/reviews/MAINT-1-GATE-CONDITION-1-FINDING-ADJUDICATION-2026-11-14.md` |
 | 2 | `AUDIT-11-INC-001` 远端可见性 | ✅ **MET**（调查已完成） | 处置动作需 Owner 授权 | `doc/reviews/SEC-01` / `SEC-02` |
 | 3 | 完整 GUI/Core/Host 流程矩阵 | **部分** | **真实设备走查** | `doc/reviews/GATE3-COVERAGE-MATRIX*`、`verification/GATE3-FOUR-PAGE-WALKTHROUGH-1/` |
-| 4 | Windows 包 + install/启动/升级回退/四页/卸载矩阵 | **两项残留** | **GitHub 两步** + **按一次 F11** | `doc/tasks/INSTALLER-MATRIX-1.md`、`verification/SIGNING-PATH-AUDIT-1/`、`verification/READER-ENTRY-PATH-1/` |
+| 4 | Windows 包 + install/启动/升级回退/四页/卸载矩阵 | **部分**（AC1–AC6 已验证；AC7 未做） | **四页导航（AC7）** + **GitHub 两步** + **按一次 F11** | `verification/INSTALLER-MATRIX-1/README.md`（AC1–AC6 实测）、`verification/SIGNING-PATH-AUDIT-1/`、`verification/READER-ENTRY-PATH-1/` |
 | 5 | 代表性质量基线 | **`NOT_RUN`** | **人工 GT** | `verification/GATE5-GT-AUDIT-1/`、`audit/V1-FULL-AUDIT/reports/05_OCR_SFX_TRANSLATION_REVIEW.md:20` |
 | 6 | 门禁 + 独立最终 Review | ✅ **MET** | 无 | 四件套绿；见 §4 |
 
@@ -31,6 +31,28 @@
 | **提供后怎么验证** | 截图或人工确认四页可达；落 `verification/GATE3-FOUR-PAGE-WALKTHROUGH-1/` |
 | **成本** | ~2 分钟 |
 | **为什么 Agent 做不到（实测）** | 已穷尽 4 种自动化途径（`Start-Process`+轮询、`Start-Process`+`WaitForExit`、`Start-Process -WindowStyle`、`cmd /c start` 分离式）**全部挂起**；**对照实验**：`cmd /c echo` 20 ms 正常 ⇒ 根因是 **GUI 进程无法在本 shell 的窗口站初始化**（Agent 的 shell 由后台进程派发，可能不在 `WinSta0\Default`） |
+
+### 2.1b 条件 4：安装/启动/卸载/数据保护 —— **已验证（AC1–AC6）**
+
+此前我在多处把条件 4 说成"两项残留"，**低估了已完成的部分**。
+实物证据 `verification/INSTALLER-MATRIX-1/README.md`（r1 REJECT 后**重做版**，数字均为重做后实测）：
+
+| AC | 结果 |
+|---|---|
+| AC1 stage | ✅ **848.15 MB / 1037 files** |
+| AC2 `VERSION.json` | ✅ `repo_head` 用 exe 内嵌 `ProductVersion` 自证 |
+| AC3 `setup.exe` | ✅ `NewManga-0.1.1-setup.exe` **621.9 MB**，sha256 `0c041599…58f06`，`makensis v3.13` |
+| AC4 clean install | ✅ `/S` exit 0；程序目录 848 MB；HKCU `New Manga 0.1.1`；Start Menu 两个快捷方式 |
+| AC5 安装后启动 | ✅ exit 0；`ProductVersion = 0.1.1+71cecb95a…`（= 当时 head）；`core_service ready` + `host_bridge ready` + `credential port ready` + `self-check Passed`（`core_protocol=2.3`） |
+| AC6 卸载 | ✅ `/S` exit 0；程序目录/HKCU/StartMenu 全部清理；**用户数据根清单 SHA-256 前后完全一致** `6ae4d6da…46d9b2`（532 文件，按 `路径\|大小\|mtime` 排序后取 SHA-256） |
+| **AC7 四页可达性** | ❌ **NOT_RUN**（未在打包产物上逐页导航；**未用 headless 证据冒充**） |
+| AC8 不虚报 | ✅ 产物全在 workspace；仓库仅文本 |
+
+**⇒ 条件 4 的"安装 / 启动 / 卸载 / 用户数据保护"这一大块是已验证的，且 AC6 证明了卸载不碰用户数据根。**
+
+**⚠️ 但注意**：`doc/tasks/INSTALLER-MATRIX-1.md` 的 §测试要求 表格**长期停在 `NOT_RUN`（未回流）**，
+与实物证据矛盾。该表已于 2026-11-15 按实物证据更正，`status` 由 `done` 回退为 `in_progress`（因 AC7 未做）。
+**读那张表时要看它的 §测试要求 上方的澄清横幅。**
 
 ### 2.2 条件 4a：签名路径的 GitHub 两步
 
@@ -76,7 +98,7 @@
 
 | 选项 | 含义 | 后果 |
 |---|---|---|
-| **A. 做那 4 件小事**（< 10 分钟） | 条件 3/4/5 全部可收口 | Gate 可重新评估 |
+| **A. 做那几件小事**（< 10 分钟） | 条件 3（四页走查）、条件 4 AC7（四页导航）+ GitHub 两步 + F11 视觉、条件 5 的 GT 判断 | Gate 可重新评估 |
 | **B. 只接受 `NOT_RUN`** | 条件 5 明确记为 `NOT_RUN` 并说明 | 条件 5 不会变成 MET，但**状态诚实**，不再阻塞其他判断 |
 | **C. 开"自动翻译"功能卡** | 条件 5 ③ UI 端到端目前**未实现**（无自动翻译 Host 命令） | 这是**新功能开发**，不属 Gate 维护范围；需 Owner 授权 |
 | **D. 维持当前状态** | Gate 停在 `BLOCKED`，本文件即为交付 | 六条状态清楚、证据齐全 |
