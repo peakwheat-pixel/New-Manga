@@ -61,6 +61,21 @@
 
 **⇒ 没有发现第三个"被我误判为需人、实际可做"的项。**
 
+### ★★ 本结论已被证伪（2026-11-15，独立复核 agent-8）
+
+**上面这句"没有发现第三个"是错的。第三个就是 `yolo11s-seg.onnx`。**
+
+- 我写"全盘搜索过、工作区不存在" —— **实际文件一直在仓库里**：
+  `apps/desktop/src-tauri/target/{debug,release}/resources/core-sidecar/models/detector/yolo11s-seg.onnx`
+  （旧 Tauri 线的构建产物；**`target/` 被 `.gitignore` 忽略，所以 `git grep`/索引搜索看不到** ——
+  这就是我"搜过"却失败的具体原因）。
+- SHA-256 `944e8114…acd418d` 与 `detection_sfx.py:131` 的 `SFX_WEIGHTS_SHA256` **逐位一致**；
+  `onnxruntime` **实测可加载**（输入 `[1,3,1024,1024]` 与 `SFX_DEFAULT_IMGSZ` 一致）。
+- **已复制进新 sidecar 并三重验证**，详见 `verification/GATE4-MODEL-RECOVERED-1/README.md`。
+
+**⇒ 本卡的方法论结论必须改写**：我声称"逐项回到代码/实测核实"，但这一项**我只做了索引搜索**，
+**没有做文件系统搜索**（`Get-ChildItem -Recurse`）。**"搜索"的定义没想清，就等于没搜。**
+
 ## ★ 边界补充（独立复核指出，2026-11-15）
 
 以下两项**不在 Gate 六条件字面内**，但位于本次审计的边界上，此前未列入总表：

@@ -2394,3 +2394,28 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   `acknowledge_once=1` 是写死字符串，但 10 项 CHECK 均为计算、且该脚本是既有代码非本轮改动）。
 - **复核者自陈未做**：未亲跑 `dotnet test`（只读约束下构建会写 obj/bin）；`journal_present`/`verify_pins` 未亲算。
 - **登记**：`doc/reviews/E9-FILE-ROOT-RECOVERY-1-REVIEW.md`。
+## 264. ★★ 独立复核 **REJECT**：`yolo11s-seg.onnx` **一直在仓库里** —— 我第 3 次误判，模型已恢复并验证可加载（2026-11-15，DSH，goal 轮次 65）
+
+- **动机**：上一轮承诺"对剩余未经独立复核的交付逐个补派复核"。派 `subagent_zcode`（agent-8）复核三份，
+  结论 **REJECT**（交付 2 被证伪）。
+- **★★ 复核者的重大发现**：我在 `BLOCKED-ITEM-AUDIT-1` 里写 `yolo11s-seg.onnx`
+  "训练产物，**工作区确实不存在（全盘搜索过）**"，**这是事实性错误**。
+  **文件一直在仓库里**：`apps/desktop/src-tauri/target/{debug,release}/resources/core-sidecar/models/detector/yolo11s-seg.onnx`
+  —— 旧 Tauri 线的构建产物；**`target/` 被 `.gitignore` 忽略，所以 `git grep`/索引搜索看不到**。
+  **这就是我"搜过"却失败的具体原因：我只搜了 Git 索引，没做文件系统递归搜索。**
+- **我自己复核确认**：SHA-256 = `944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d`，
+  与 `detection_sfx.py:131` 的 `SFX_WEIGHTS_SHA256` **逐位一致**；长度 40824255。
+- **★ 已修复并三重验证**：复制到新 sidecar 的 `models/detector/` 后，SHA 仍与 pin 一致、长度一致，
+  且 **onnxruntime 1.24.4 实测 `LOADED OK`**，输入 `[1,3,1024,1024]`（**与 `SFX_DEFAULT_IMGSZ = 1024` 一致**），
+  输出 `output0 [1,40,21504]` / `output1 [1,32,256,256]`。
+  **⇒ 不只是文件在位，是模型真的能被推理引擎加载且尺寸匹配。**
+- **对条件 4 的影响**：**`yolo11s-seg.onnx` 不再是用户阻塞**。
+  条件 4 从"三项残留（模型/证书需用户，reader 需 F11）"降为
+  **"两项残留（证书需用户；reader 需 F11；模型已就位并验证可加载）"**。
+- **复核的其他结论**：交付 1（CrashPoint 性质）**ACCEPT**；交付 3（章节排序）**ACCEPT_WITH_LIMITATIONS** ——
+  指出我把 `runtime.py:865` 的 `sort_order=source_order`（**页面导入**）错当成章节 reorder 的链路，
+  真实链路是 `service.py:209-225 reorder_chapters` → `update_chapters_atomic`。**该引用错位待下一轮更正。**
+- **★ 方法论结论必须改写**：我声称"逐项回到代码/实测核实"，但这一项**只做了索引搜索**。
+  **"搜索"的定义没想清，就等于没搜。**
+- **这是第 3 次同模式错误**（`L-F1-3` 没读裁决原文、`E-9` 没读 `RegisterRoot` 实现、
+  **`yolo11s-seg.onnx` 只搜 Git 索引**）。**三次都是外部裁决替我抓住的。**
