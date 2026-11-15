@@ -81,7 +81,7 @@ S5 拆分（`LEGACY-SHELL-REMOVAL-1` BLOCKED 段）。D4 安全（S5-A/B）与 C
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| task-env | G:/CODEX/New Manga.workspace/task-envs/RELEASE-PACKAGE-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/RELEASE-PACKAGE-1 | 待填 | 待关闭时核 |
+| task-env | G:/CODEX/New Manga.workspace/task-envs/RELEASE-PACKAGE-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/RELEASE-PACKAGE-1 | G:/CODEX/New Manga.workspace/task-envs/RELEASE-PACKAGE-1/out/package-summary.json | 已核（2026-11-15）：package-summary.json、NewManga-0.1.0-win-x64.zip 等存在 |
 
 ## Closeout Record
 

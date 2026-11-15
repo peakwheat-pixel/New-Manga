@@ -133,7 +133,20 @@ allowed_paths:
 | E-REVIEW | AC8 | `doc/reviews/FEA-04-r3.md` | f4d8a32ec | 47602000a4b26cd7a2eaf71517101b064b469b62a8e9e997e4a4f92b796fd9d7 | CANONICAL |
 | E-PINS | 治理 | `verification/FEA-04/verify-pins.log` | 43bce62e4 | 70527bd2b72ba75eb142961e9ee8194297a24ecae1acce1677b907a5ffec932b | SOURCE_PIN |
 | E-DIFFCHK | 治理 | `verification/FEA-04/git-diff-check.log` | 43bce62e4 | 65c3001346de5863040830601e9295050dabb717d434cedc86344ae4c6fc960e | SOURCE_PIN |
-| E-SCOPE | AC8 | `doc/reviews/FEA-04-scope-r1/r2/r3.md` | f4d8a32ec | `-` | SOURCE_PIN |
+| E-SCOPE-R1 | AC1-AC8 范围冻结复核 r1 | doc/reviews/FEA-04-scope-r1.md | 43bce62e4 | 4ffa061d1f75adf251958b7628e66860baf423c28a94afcdc1e574fbbe0e4d8a | CANONICAL |
+| E-SCOPE-R2 | AC1-AC8 范围冻结复核 r2 | doc/reviews/FEA-04-scope-r2.md | 43bce62e4 | 7cc6ec97be968d99920fdd83753334b80f5171504502204702ec819f0393f71a | CANONICAL |
+| E-SCOPE-R3 | AC1-AC8 范围冻结复核（最终） | doc/reviews/FEA-04-scope-r3.md | 43bce62e4 | 8e073c04e652032927f9763c146b4fb5844630e2061c8bf3665d6114d278f001 | CANONICAL |
+| E-LOG-01 | 构建/测试过程日志 | verification/FEA-04/baseline-build-retry.log | 43bce62e4 | 1e0d81a7028a7e284d5a1b6df8ff3c3cff44aded9ee0eef7f77c21a162cd242c | SOURCE_PIN |
+| E-LOG-02 | 构建/测试过程日志 | verification/FEA-04/baseline-build.log | 43bce62e4 | 01033eb120e754fbafc689c4bbc10fa12ed99e65843460b200b77678874a0c38 | SOURCE_PIN |
+| E-LOG-03 | 构建/测试过程日志 | verification/FEA-04/baseline-test-no-build.log | 43bce62e4 | 076063b6b96bd9f6670d5a95700638ea350269e1f3814a48f01b6991d23de8bd | SOURCE_PIN |
+| E-LOG-04 | 构建/测试过程日志 | verification/FEA-04/governance-check.log | 43bce62e4 | 7c7aaea14f610d43eb9fae454932bf1ec9cb585321084913404fc6f45a6ee7fe | SOURCE_PIN |
+| E-LOG-05 | 构建/测试过程日志 | verification/FEA-04/implementation-build-config-retry.log | 43bce62e4 | 9e3ad3b471505c3e327b0c22b5430dacf752295da91d669e5e76dc1fdbf22624 | SOURCE_PIN |
+| E-LOG-06 | 构建/测试过程日志 | verification/FEA-04/implementation-build-final.log | 43bce62e4 | 30b25f97786330b81ec35cb9085e5b1ef64de45293731791c254884e03730cb3 | SOURCE_PIN |
+| E-LOG-07 | 构建/测试过程日志 | verification/FEA-04/implementation-build-nuget-path-retry.log | 43bce62e4 | a0c5e169a98c761fa2bb88548ddcb08fd168b792742a857967136572a106fb80 | SOURCE_PIN |
+| E-LOG-08 | 构建/测试过程日志 | verification/FEA-04/implementation-build.log | 43bce62e4 | 8b781cf361a667529dc61f5d7d84f629eba301e75787bcc1e1491b24a98ada03 | SOURCE_PIN |
+| E-LOG-09 | 构建/测试过程日志 | verification/FEA-04/implementation-test-no-build-final.log | 43bce62e4 | fb46372f0c92c3c46e3c5ce3172a57b201e0969f55bcfc22bb6f74ba41757aed | SOURCE_PIN |
+| E-LOG-10 | 构建/测试过程日志 | verification/FEA-04/implementation-test-no-build.log | 43bce62e4 | 5e328d72e7b99ea5aa3af035d27bec787f4000cced14738d709d1d228dbc30be | SOURCE_PIN |
+| E-LOG-11 | 构建/测试过程日志 | verification/FEA-04/nuget-profile-path-probe.log | 43bce62e4 | e4fd622ecb3f12e60f80e30b918ff7f2d1c6df7e6911239f4c480c0d32e76812 | SOURCE_PIN |
 
 ## Resource Manifest
 
@@ -142,7 +155,7 @@ allowed_paths:
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | doc-task | `doc/tasks/FEA-04.md` | NOT_APPLICABLE | - | - | 范围冻结；未访问用户数据 |
-| worktree/branch | G:/CODEX/New Manga.workspace/FEA-04 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/FEA-04 | 分支 feat/fea-04（delivery 43bce62e4，已合并 f4d8a32ec） | 已集成；worktree 保留，未清理/prune |
+| worktree/branch | G:/CODEX/New Manga.workspace/FEA-04 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/FEA-04 | G:/CODEX/New Manga.workspace/FEA-04/.git | worktree 存在（feat/fea-04 @43bce62e4）；已集成 f4d8a32ec，保留未 prune |
 
 ## Closeout Record
 

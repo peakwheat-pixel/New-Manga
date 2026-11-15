@@ -70,7 +70,7 @@ allowed_paths:
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| task-env | G:/CODEX/New Manga.workspace/task-envs/MICA-FIX-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/MICA-FIX-1 | 待填 | 待关闭时核 |
+| task-env | G:/CODEX/New Manga.workspace/task-envs/MICA-FIX-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/MICA-FIX-1 | G:/CODEX/New Manga.workspace/task-envs/MICA-FIX-1/solid.bmp | 已核（2026-11-15）：solid.bmp / pattern.bmp 各 8,294,454B 存在 |
 
 ## Closeout Record
 

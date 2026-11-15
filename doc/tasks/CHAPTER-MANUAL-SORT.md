@@ -166,6 +166,8 @@ AC3（缓存失效集成）与 AC5（真实 GUI 拖拽）为 `NOT_RUN`，**不�
 | EV-CMS-05 | 独立复核（ACCEPT_WITH_LIMITATIONS） | doc/reviews/CHAPTER-MANUAL-SORT-review-r1.md | c459b279f | a91b5fdc0e114aecc5087ddd8566ca7ef95361d7d1bec85682d70f4fe318f95f | CANONICAL | BLOB |
 | EV-CMS-06 | Gate 条件 1 口径（6+1+1）与条件 2 更正 | doc/reviews/MAINT-1-RELEASE-GATE-ASSESSMENT-2026-11-14.md | c459b279f | 1cdf467695a63e9064b9cf789c83d672cde3acfb00f2099facc05ea3cb3966a7 | CANONICAL | BLOB |
 | EV-CMS-07 | 既有缺陷登记 E-1…E-5 | doc/reviews/MAINT-1-EXISTING-FINDINGS-2026-11-14.md | c459b279f | b07e5865d34b153b7ac360865c91caecfef52d498120c95e9b5bc7456fdc6899 | CANONICAL | BLOB |
+| EV-CMS-08 | AC6 四件套日志 | verification/CHAPTER-MANUAL-SORT/four-pieces.log | ed8b56c9f | 55011c422eb2c1d77b88819fcf52cce003f413ea8e519b93c557b58bd0ba9aaa | CANONICAL | BLOB |
+| EV-CMS-09 | AC3 待启用集成测试（NOT_RUN 期间的保留件） | verification/CHAPTER-MANUAL-SORT/pending-host-cache-test.cs.txt | ed8b56c9f | edcd685204d2b521966084e1b5a7a26991cf8b6110b17f98dfdee40afe78a230 | SOURCE_PIN | BLOB |
 
 ## Resource Manifest
 

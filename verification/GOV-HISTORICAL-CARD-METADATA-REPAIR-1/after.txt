@@ -1,0 +1,46 @@
+# 6 张 gv3 历史卡 check.ps1 -TaskPath 结果（修复后）
+# HEAD=ed8b56c9f  台账已重生成
+
+## CHAPTER-MANUAL-SORT
+  Governance scope: 15 current documents; no historical directory scan.
+  WARN: 存在 12 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+  WARN: doc/STATUS.md 已达到预算的 80%：3160 bytes / 27 lines
+  WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6960 bytes / 63 lines
+  Governance check: PASS (3 warnings)
+
+## FEA-04
+  Governance scope: 15 current documents; no historical directory scan.
+  WARN: 存在 12 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+  WARN: doc/STATUS.md 已达到预算的 80%：3160 bytes / 27 lines
+  WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6960 bytes / 63 lines
+  Governance check: PASS (3 warnings)
+
+## GATE3-COVERAGE-MATRIX
+  Governance scope: 15 current documents; no historical directory scan.
+  WARN: 存在 12 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+  WARN: doc/STATUS.md 已达到预算的 80%：3160 bytes / 27 lines
+  WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6960 bytes / 63 lines
+  Governance check: PASS (3 warnings)
+
+## RELEASE-PACKAGE-1
+  Governance scope: 15 current documents; no historical directory scan.
+  WARN: 存在 12 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+  WARN: doc/STATUS.md 已达到预算的 80%：3160 bytes / 27 lines
+  WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6960 bytes / 63 lines
+  Governance check: PASS (3 warnings)
+
+## MICA-FIX-1
+  Governance scope: 15 current documents; no historical directory scan.
+  WARN: 存在 12 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+  WARN: doc/STATUS.md 已达到预算的 80%：3160 bytes / 27 lines
+  WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6960 bytes / 63 lines
+  Governance check: PASS (3 warnings)
+
+## FEA-07-AC5-NATIVE-1
+  Governance scope: 15 current documents; no historical directory scan.
+  WARN: 存在 12 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+  WARN: doc/STATUS.md 已达到预算的 80%：3160 bytes / 27 lines
+  WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6960 bytes / 63 lines
+  WARN: evidence_dir 含未登记过程文件（归入 workspace 或列为 SOURCE_PIN）：G:\CODEX\New Manga\verification\FEA-07-AC5-NATIVE-1\evidence\app-uia-20261109-103332.json, G:\CODEX\New Manga\verification\FEA-07-AC5-NATIVE-1\evidence\display-state-physical-unplug-20261109-101616.json, G:\CODEX\New Manga\verification\FEA-07-AC5-NATIVE-1\evidence\displays-after-extra-attempts-20261109-105328.json, G:\CODEX\New Manga\verification\FEA-07-AC5-NATIVE-1\evidence\displays-baseline-20261109-083909.json, G:\CODEX\New Manga\verification\FEA-07-AC5-NATIVE-1\evidence\displays-baseline-20261109-083933.json, G:\CODEX\New Manga\verification\FEA-07-AC5-NATIVE-1\evidence\displays-baseline2-20261109-083942.json, G:\CODEX\New Manga\verification\FEA-07-AC5-NATIVE-1\evidence\displays-debug1-20261109-084246.json, G:\CODEX\New Manga\verification\FEA-07-AC5-NATIVE-1\evidence\displays-drag-20261109-085526.json
+  Governance check: PASS (4 warnings)
+
