@@ -2464,3 +2464,24 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   | **GUI 逻辑**（开关/Esc 阶梯/回到原页/PageCount） | ✅ **已验证** | `F11HotkeyTests`(9) + `V2ImmersiveReaderTests`(4)，headless 全绿，**驱动的是生产 public 方法** |
   | **真实桌面渲染**（全屏/无边框/视觉） | ❌ **需人工按 F11 看一眼** | headless 判不了视觉 |
 - **本轮无代码改动**（裁决明确"仓库本轮无需代码改动"）。
+## 267. ★ GATE5-GT-AUDIT-1：条件 5 **"需人工 GT"有权威书面依据**（V1 审计 :20），且"真实权重"这一项我已补上（2026-11-15，DSH，goal 轮次 68）
+
+- **承诺兑现**：上一轮说"用文件系统搜索 + 读代码挖条件 5 的人工 GT"。找到了权威依据。
+- **★ 依据**：`audit/V1-FULL-AUDIT/reports/05_OCR_SFX_TRANSLATION_REVIEW.md`
+  - `:8` AUDIT-04 OCR 缺项列的是 "**真实权重、人工 GT、日/韩文准确率、真实 CPU infer**"
+  - `:9` AUDIT-05 SFX 缺 "**真实权重、GT、UI NOT_RUN**"
+  - `:20` **质量判据总纲**：「**Mock、合成素材或 fake engine 的成功结果只支持其明确覆盖的代码路径，
+    不是识别准确率、真实模型效果或付费服务通过证据。**」
+- **⇒ "条件 5 需人工 GT"的判断题是对的**，且**不是我一个人拍脑袋** —— V1 审计自己就把"人工 GT/GT"列为缺失。
+  这与 `L-F1-3`/`E-9`/`yolo11s-seg.onnx` 三次误判的区别在于：**这次我有书面判据，那三次我都没查就下结论**。
+- **★ 但其中"真实权重"一项已补**：`GATE4-MODEL-RECOVERED-1` 恢复了 `yolo11s-seg.onnx`（SHA 与 pin 逐位一致），
+  本轮进一步跑了**真实推理**（不是加载测试）：
+  `REAL_INFER_OK`；`output0 (1,40,21504) min=-1.5078 max=1019.9860 finite=True`；
+  `output1 (1,32,256,256) min=-0.2785 max=3.8497 finite=True`；`detector_output_nonfinite=0`。
+  坐标上限 `1019.99 ≈ 1024` 图幅，数值域合理 ⇒ **证明"真实权重能跑通且数值健康"**。
+- **★ 必须诚实**：该推理用的是 `numpy.random.default_rng(20261115)` 的**随机张量**，
+  **不是真实漫画页面、没有 ground truth**。按 V1 审计 `:20` 的判据，
+  **随机输入的输出不能作为准确率证据**。**我没有把这写成"质量已验证"。**
+- **条件 5 准确拆分**：①模型/API **适配已验证**（两条 provider 真实调用 + 真实权重可推理）；
+  ②**代表性质量基线 NOT_RUN**（需人工 GT）；③UI 端到端**未实现**（不属 Gate 范围）。
+- **结论**：条件 5 ② 只能由人给 ground truth。**到此为止，不再消耗轮次去挖。**
