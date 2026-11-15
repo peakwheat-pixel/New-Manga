@@ -2419,3 +2419,26 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   **"搜索"的定义没想清，就等于没搜。**
 - **这是第 3 次同模式错误**（`L-F1-3` 没读裁决原文、`E-9` 没读 `RegisterRoot` 实现、
   **`yolo11s-seg.onnx` 只搜 Git 索引**）。**三次都是外部裁决替我抓住的。**
+## 265. ★ SIGNING-PATH-AUDIT-1：签名**不需要买证书** —— 有 SignPath 免费通道，只差两步 GitHub 操作（2026-11-15，DSH，goal 轮次 66）
+
+- **承诺兑现**：上一轮说"下一轮用文件系统搜索 + 读代码，而不是索引搜索和推测"挖签名与 reader 两项。本轮先挖签名。
+- **★ 我此前的说法不准确**：我在 `GATE4-REMAINING-1` / `BLOCKED-ITEM-AUDIT-1` 里写
+  "installer unsigned = **BLOCKED（需用户提供签名证书）**" —— 把**已在推进的免费路径**说成了"要买证书"。
+- **实际发现（读代码 + 文件系统搜索）**：
+  1. `build-installer.ps1:3` 写 "Build the per-user, **unsigned** NSIS installer"；
+     `:239` 写 "authenticode: {0} (**unsigned release by design**)"，并把 `authenticode_status`
+     写进 `build-info.json` 供证据 pin —— **unsigned 是明确设计 + 明确记录，不是疏漏**。
+  2. **文件系统递归搜索** `*.pfx/*.p12/*.cer/*.crt/*.snk/*.p7b` —— **零结果**（这次是真搜了文件系统，非索引）。
+     ⇒ 本机确实没有证书。
+  3. **但有 SignPath 免费 OSS 签名通道**：`doc/release/SIGNPATH-APPLICATION.md`（185 行申请草案）+
+     `SIGNPATH-APPLICATION-CHECKLIST.md`（73 行中文指引）。清单的**执行状态**写着：
+     **P0-1/P0-2/P0-3/P0-5 已在 `public-release` 分支完成**（许可四件套+README+产品源码树+CI 草案，
+     raw 全 200）；**P0-4 只差两步**：①GitHub 默认分支改 `public-release`；②Actions 手动 Run 一次
+     `build-release`（`sign=false`）。因 `gh` 未认证、无 `GH_TOKEN`，Agent 未代持 token、未伪造 Run。
+- **⇒ 条件 4 的签名项性质被我说错了**：应改为
+  **「需仓库所有者在 GitHub 做两步 + 提交 SignPath 申请」**，**不是"需提供证书"**，更不是"要花钱"。
+- **这是第 4 次"把可推进的事说成需人/需买"**：`L-F1-3`（没读裁决原文）、`E-9`（没读 `RegisterRoot`）、
+  `yolo11s-seg.onnx`（只搜索引）、**签名（没查 SignPath 路径）**。
+  **前三次都是外部裁决替我抓住的；这次是我按承诺主动去查的。**
+- **未做（诚实）**：未核实 GitHub **当前**默认分支（`gh` 未认证，只读仓库内文档，未访问远端；
+  清单的"远端 `main` 未动"是 2026-10-28 的记录，**可能已变**）；未提交申请（需真实身份/邮箱）。
