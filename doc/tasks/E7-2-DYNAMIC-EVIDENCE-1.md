@@ -74,7 +74,7 @@ elif scenario == "idless-only":           # 只有无 id 帧（应 poison）
 ## Acceptance Criteria
 
 - [x] **AC1 完成握手**：假 sidecar 能让 `CoreServiceClient.StartAsync` 通过（`core.ping` ready + 协议主版本匹配）。 <<MET>>
-- [x] **AC2 R-002 动态证据**：错 id 帧在生产链上被丢弃、调用方拿到匹配帧。 <<MET>>
+- [x] **AC2 R-002 动态证据**：错 id 帧在生产链上被丢弃、调用方拿到匹配帧。**两条命令路径均有覆盖**：`SendAsync`（第 1 条）+ `SendHostControlAsync`（第 4 条，变异验证：绕过 resync ⇒ 该条变红）。 <<MET>>
 - [x] **AC3 E-7 #2 动态证据（成功路径）**：无 id 帧被丢弃、随后匹配帧成功。 <<MET>>
 - [x] **AC4 E-7 #2 动态证据（失败路径）**：只有无 id 帧 ⇒ `MalformedResponse` + 后续调用 poison。**r1 P1 修正**：初版只断言消息含 "poisoned" —— 但「channel poisoned」(RequestTimeout) 与「out of step, channel poisoned」(MalformedResponse) 两条消息**都含**该词，删掉整个 poison 钩子仍是绿的（复核用变异测试实测为存活变异）。现改为断言 **`next.Code == RequestTimeout`** + "restart required"，从错误码上区分两条路径。 <<MET>>
 - [x] **AC5 不改 csproj / 不留二进制夹具**：Python 脚本内联在测试里、运行时写临时文件。 <<MET>>
@@ -125,11 +125,14 @@ elif scenario == "idless-only":           # 只有无 id 帧（应 poison）
 - **门禁**：假夹具 **3 passed / 324ms**；全量 **213 passed / 0 failed / 30 skipped / EXIT=0**；
   `check.ps1` PASS (3 warnings)｜`verify_pins` 18/18｜`api_inventory` 1/80/6=87。
 - **未关闭项（不淡化）**：
-  1. **`SendHostControlAsync` 路径仍无动态证据** —— 裁决 §5.3 点名了两条命令路径，本卡只覆盖
-     `SendAsync`。尝试补第 4 条时，`SendHostControlAsync` 的 payload 写入契约与 `SendAsync` 不同，
-     直接传 `WireJson.EmptyObject` 触发 `Cannot write the start of an object without a property name`；
-     需单独分析其 payload builder。**已撤掉该测试并留注释说明原因**，不留下失败或静默删除的测试。
-     ⇒ **裁决 §5.3 只能算部分满足**；
+  1. ~~**`SendHostControlAsync` 路径仍无动态证据**~~ —— **已在本轮补上**：
+     根因是 `SendHostControlAsync` 自己写了 `"payload": {` 与收尾 `}`，所以它的 `payload` 委托
+     只需写**成员**；传 `WireJson.EmptyObject`（自带 `{}`）才会触发
+     `Cannot write the start of an object without a property name`。改用空委托 `static _ => { }` 后
+     第 4 条 `ProductionSendHostControlAsync_AlsoResynchronises` 通过。
+     **变异验证判别力**：把 `SendHostControlAsync` 的 resync 改回 `Parse` + `EnsureResponseBelongsToRequest`
+     ⇒ 该条**变红**（EXIT=1），恢复后 EXIT=0、4 passed。
+     ⇒ **裁决 §5.3 的两条命令路径现均有动态证据**；
   2. **R002 的 P2-F1 只能对 `SendAsync` 关闭**：`R002ResyncTests` 那 4 条仍只调 helper，
      本卡新增的 3 条覆盖了 `SendAsync` 调用点，`SendHostControlAsync` 调用点仍未覆盖；
   3. **CI 风险（r1 P2）**：夹具依赖 PATH 上的 `python`（`where.exe` 解析）。无 python 时**显式抛

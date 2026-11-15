@@ -149,11 +149,31 @@ for raw in sys.stdin:
         Assert.Contains("restart required", next.Message, StringComparison.OrdinalIgnoreCase);
     }
 
-    // NOTE (r1 P2, deliberately deferred): the ruling names BOTH command paths, but
-    // SendHostControlAsync writes its payload differently from SendAsync and the naive
-    // WireJson.EmptyObject construction failed with "Cannot write the start of an object without a
-    // property name". Adding that case needs its own payload builder analysis -- recorded as an open
-    // gap on the task card rather than shipping a red or deleted-but-unmentioned test.
+    /// <summary>
+    /// r1 P2: the Codex ruling (§5.3) names BOTH command paths. The three tests above exercise
+    /// <see cref="CoreServiceClient.SendAsync"/>; this one proves the second call site
+    /// (<c>SendHostControlAsync</c>) resynchronises too.
+    /// </summary>
+    /// <remarks>
+    /// <c>SendHostControlAsync</c> already writes <c>"payload": {</c> and the closing brace itself, so its
+    /// <c>payload</c> delegate must write <b>members only</b>. Passing <c>WireJson.EmptyObject</c> (which
+    /// opens its own object) raised "Cannot write the start of an object without a property name" -- hence
+    /// the no-op delegate below.
+    /// </remarks>
+    [Fact]
+    public async Task ProductionSendHostControlAsync_AlsoResynchronises()
+    {
+        using var fake = FakeCore.Start("mismatch-then-match");
+        await using var client = await CoreServiceClient.StartAsync(fake.Options());
+
+        var response = await client.SendHostControlAsync(
+            "TestHostControl",
+            static _ => { },
+            TimeSpan.FromSeconds(10),
+            session: null);
+
+        Assert.Equal("{\"ok\":true}", response.Result?.GetRawText());
+    }
 
     /// <summary>Inline-Python fake core_service: writes the script, starts it, exposes client options.</summary>
     private sealed class FakeCore : IDisposable

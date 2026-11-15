@@ -1,0 +1,10 @@
+# 变异测试：SendHostControlAsync 绕过 resync（验证第 4 条测试的判别力）
+head: d289264f2（变异注入于工作树，未提交）
+env: Windows 11 / pwsh 7 / dotnet 10.0.401
+timestamp: 2026-11-16T02:01:02+08:00
+mutation: 把 SendHostControlAsync 的 ReadResponseForRequestAsync 调用替换为 CoreProtocol.Parse + EnsureResponseBelongsToRequest
+command: dotnet test --filter FullyQualifiedName~FakeCoreServiceIntegrationTests
+result: EXIT=1（第 4 条 ProductionSendHostControlAsync_AlsoResynchronises 变红）
+restored: CoreServiceClient.cs 已从备份恢复，git status 中无该文件改动
+after-restore: EXIT=0（4 passed）
+
