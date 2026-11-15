@@ -49,7 +49,7 @@ Gate 条件 3 = "补齐**可安全执行的**完整 GUI / Core / Host 关键流�
 - [x] **AC1 矩阵结构**：至少覆盖四页（书架 / 工作台 / 阅读器 / 设置）× 关键流程 <!-- verified: file:doc/reviews/MAINT-1-GATE-CONDITION-3-MATRIX-2026-11-15.md + grep:流程 \ 页面 | 书架 | 工作台 | 阅读器 | 设置@doc/reviews/MAINT-1-GATE-CONDITION-3-MATRIX-2026-11-15.md:58 + 同文:13-17（§0 声明 GUI/Host/CoreClient 三层）+ :92-124（Host 生命周期/恢复 由 §4.2 类级承接：HostRuntimeIntegrationTests:105、HostReaderProgressIntegrationTests:106、StartupSelfCheckTests:107） -->
       （进入与空态、错误态、只读、导入、导出、阅读进度、阅读偏好、书签、Region 编辑、
       主题/外观、快捷键、焦点与 a11y、Host 生命周期/恢复）。
-- [ ] **AC2 逐格代码依据**：每格写 `测试名 (文件:行)` 并**说明该测试断言了什么**； <!-- blocked: 缺 4 格 `测试名 (文件:行)`+断言说明：Region 编辑/阅读偏好/主题外观/整书进度仍只有类名或方法名（doc/reviews/MAINT-1-GATE-CONDITION-3-MATRIX-2026-11-15.md:66-70）；矩阵 §7 自认仅 12 格逐行核对断言、其余为类摘要+方法名（同文:190）；r3 复核 R3-008 判「AC2 仍未满足」（doc/reviews/GATE3-COVERAGE-MATRIX-review-r3.md:62）；任务卡自认「部分修」（doc/tasks/GATE3-COVERAGE-MATRIX.md:118） -->
+- [ ] **AC2 逐格代码依据**：每格写 `测试名 (文件:行)` 并**说明该测试断言了什么**； <!-- blocked: 缺 4 格 `测试名 (文件:行)`+断言说明：Region 编辑/阅读偏好/主题外观/整书进度仍只有类名或方法名（doc/reviews/MAINT-1-GATE-CONDITION-3-MATRIX-2026-11-15.md:66-70）；矩阵 §7 自认仅 12 格逐行核对断言、其余为类摘要+方法名（同文:190）；r3 复核 R3-008 判「AC2 仍未满足」（doc/reviews/GATE3-COVERAGE-MATRIX-review-r3.md:62）；任务卡自认「部分修」（doc/tasks/GATE3-COVERAGE-MATRIX.md:118） --> <!-- progress: 2026-11-16 DSH 已补 4 格（Region 编辑/阅读偏好/主题外观/整书进度）的测试名+文件:行+断言，见 verification/GATE3-COVERAGE-MATRIX/ac2-four-cells-progress.md；整卡其余格仍缺逐行断言说明，故 AC2 仍未关闭 -->
       不得仅凭测试方法名推断覆盖面。
 - [x] **AC3 可执行性标注**：明确区分 `[AvaloniaFact]`（headless 可跑）、`[Fact]`（纯逻辑）、 <!-- verified: 2026-11-16 DSH —— 全量统计落盘 verification/GATE3-COVERAGE-MATRIX/ac3-test-attribute-census.md：AvaloniaFact 601 / Fact 980 / SidecarFact 30 / Theory 76 / AvaloniaTheory 20（318 文件，合计 1707，无重复计数）。原 blocked 理由（已解决）：缺 `[Fact]`（纯逻辑）分类：§2 只给出 `[AvaloniaFact]` 62 文件（doc/reviews/MAINT-1-GATE-CONDITION-3-MATRIX-2026-11-15.md:35）与 4 类 sidecar gate 7 个（同文:36），全库无 [Fact] 计数/分类（grep:纯逻辑 0 命中），且未逐格标 gate 属性；r1 复核 AC3 判 PARTIAL（doc/reviews/GATE3-COVERAGE-MATRIX-review-r1.md:47），r2 R-007 仍 PARTIAL/OPEN（doc/reviews/GATE3-COVERAGE-MATRIX-review-r2.md:46） --> <!-- verified: 2026-11-16 DSH —— 全量统计落盘 verification/GATE3-COVERAGE-MATRIX/ac3-test-attribute-census.md：AvaloniaFact 601 / Fact 980 / SidecarFact 30 / Theory 76 / AvaloniaTheory 20（318 文件，合计 1707，无重复计数） -->
       `[SidecarFact]`/`[HostSidecarFact]`（需真实 sidecar → 本环境 E-2 阻塞）。
@@ -133,6 +133,7 @@ Gate 条件 3 = "补齐**可安全执行的**完整 GUI / Core / Host 关键流�
 | EV-G3M-06 | 独立复核 r2（REJECT） | doc/reviews/GATE3-COVERAGE-MATRIX-review-r2.md | 7f510afd7 | 6db33b2090449b5c7212d36f991b48f56e9f2c5ccfb255a4ce2bc3a7cabc4c0c | CANONICAL | BLOB |
 | EV-G3M-07 | 独立复核 r3（ACCEPT_WITH_LIMITATIONS） | doc/reviews/GATE3-COVERAGE-MATRIX-review-r3.md | 7f510afd7 | f92c453fbf0b800df5744c564d2535aabfb31264d01ddb35350901eb698ffaf0 | CANONICAL | BLOB |
 | EV-AC3-08 | AC3 可执行性标注（测试属性分类统计） | verification/GATE3-COVERAGE-MATRIX/ac3-test-attribute-census.md | 0e8166954 | ef5d5892738fd5fcb18d2f7fbe7b81d065605f52c6a6f098bea572ddb43058ed | CANONICAL | BLOB |
+| EV-AC2-09 | AC2 进展（4 格已补测试名+断言；整体仍未关闭） | verification/GATE3-COVERAGE-MATRIX/ac2-four-cells-progress.md | PIN_PENDING | f03aa52ef680e828c9ff61bdd64c534edf00a415347eb4e9e19aece263a9f122 | CANONICAL | BLOB |
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
