@@ -1,0 +1,10 @@
+# 四件套实测（2026-11-15，HEAD b4910e143）
+# env: Windows 11 / pwsh 7 / Python 3.14
+
+FAIL: TASK_LEDGER 已过期：声明 642 个 Task，实际 643 个（重跑 tools/governance/task_ledger.py --write）
+FAIL: TASK_LEDGER 已过期：声明 11 个非终态 Task，实际 12 个（重跑 tools/governance/task_ledger.py --write）
+Governance check: FAIL (2 errors, 3 warnings)
+
+PIN AUDIT: PASS (all 18)
+
+OK: rendered counts match FEA-C07 doc
