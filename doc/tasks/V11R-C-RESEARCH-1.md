@@ -16,7 +16,9 @@ integration_commit:
 delivery_head: ba59a6c0d
 canonical_evidence_status: complete
 resource_closeout_status: complete
-evidence_dir: verification/V11R-C-RESEARCH-1
+evidence_dir: doc/design/theming/RESEARCH_V1.md
+# AC-CHECKBOX-AUTHORITY-1 B4 更正（2026-11-15）：原值 verification/V11R-C-RESEARCH-1 不存在；
+# 真正交付物是 doc/design/theming/RESEARCH_V1.md（108 行 / 10137 B），已核实其章节覆盖 AC1-AC4。
 allowed_paths:
   - doc/design/theming/
   - verification/V11R-C-RESEARCH-1/
@@ -31,11 +33,11 @@ allowed_paths:
 SukiUI、FluentAvalonia、Semi.Avalonia、PleasantUI、Avalonia（主题/资源系统）。
 
 ## Acceptance Criteria
-- [ ] AC1 `doc/design/theming/RESEARCH_V1.md`：逐项目记录版本、许可证（精确 SPDX + 义务）、主题架构（令牌/资源/变体/动态切换机制）、视觉表现、控件一致性、个性化能力、维护活跃度（近 12 月提交/发布/issue 响应）、Avalonia 11.3.x 兼容性、与 GPL-3.0 分发的兼容结论。
-- [ ] AC2 对比矩阵 + 明确建议：可借鉴什么、可复用哪些（许可证允许时）、**禁止简单拼装**的理由与边界。
-- [ ] AC3 给出与新 `NewManga.ThemeEngine` 契约（`doc/plan/V11R_AVALONIA_CONTRACT.md` §4）的映射建议：哪些机制可直接采用、哪些必须自研。
-- [ ] AC4 结论必须可被验证：每条事实附 URL/版本/日期；无法核实的标 UNVERIFIED。
-- [ ] AC5 不修改任何生产代码；不引入依赖。
+- [x] AC1 `doc/design/theming/RESEARCH_V1.md`：逐项目记录版本、许可证（精确 SPDX + 义务）、主题架构（令牌/资源/变体/动态切换机制）、视觉表现、控件一致性、个性化能力、维护活跃度（近 12 月提交/发布/issue 响应）、Avalonia 11.3.x 兼容性、与 GPL-3.0 分发的兼容结论。 <!-- verified: file:doc/design/theming/RESEARCH_V1.md §1 事实表(版本/SPDX/架构/维护活跃) + §2 逐项目评估 -->
+- [x] AC2 对比矩阵 + 明确建议：可借鉴什么、可复用哪些（许可证允许时）、**禁止简单拼装**的理由与边界。 <!-- verified: file:doc/design/theming/RESEARCH_V1.md §3 对比矩阵 + §4 为什么不拼装 + §0 结论先行(R-03) -->
+- [x] AC3 给出与新 `NewManga.ThemeEngine` 契约（`doc/plan/V11R_AVALONIA_CONTRACT.md` §4）的映射建议：哪些机制可直接采用、哪些必须自研。 <!-- verified: file:doc/design/theming/RESEARCH_V1.md §5 对新 Theme Engine 的映射建议；契约 doc/plan/V11R_AVALONIA_CONTRACT.md 存在 -->
+- [x] AC4 结论必须可被验证：每条事实附 URL/版本/日期；无法核实的标 UNVERIFIED。 <!-- verified: file:doc/design/theming/RESEARCH_V1.md 含 URL/版本/日期 与 4 处 UNVERIFIED 标记；§6 取证与局限 -->
+- [ ] AC5 不修改任何生产代码；不引入依赖。 <!-- blocked: 文档声明『V1 不引入任何第三方 UI/主题框架依赖』(RESEARCH_V1.md:8)；但『不修改生产代码』该卡无 commit 字段，无法独立验证 -->
 
 ## 交付与运行记录
 - Handoff：尚无。
