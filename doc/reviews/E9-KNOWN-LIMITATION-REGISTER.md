@@ -68,14 +68,32 @@ ZCode 明确核实过 `AcknowledgeAsync:468` 与 `RecoverAsync:581` 是同一路
 可选动作（需裁决）：按与 `ProductionDispatcherFullSyncChain` 相同的方式改为断言 typed 拒绝，
 标记 `KNOWN-LIMITATION-E9`；**或**保持红并计入"E-9 未登记影响"清单。
 
-**另两个 `Fea11HostAuthIpcTests.CrashPoint_Park/Recover` 与本限制无关**：
-它们缺 `NEWMANGA_FEA11_CRASH_STATE` 环境变量（环境类，非缺陷）。
+### ★ 更正（2026-11-15，`FEA11-CRASH-STATE-1` 实测）—— 两种场景必须分开写
 
-**不得**静默改绿；回退限制时须还原为成功断言。
+此前把 `CrashPoint_Park` / `CrashPoint_Recover` 都归因为"缺 `NEWMANGA_FEA11_CRASH_STATE` 环境变量"。
+**这个说法只对一种场景成立**。实测后必须分成两栏：
 
-## 引用
+| 场景 | `CrashPoint_Park` | `CrashPoint_Recover` | 归因 |
+|---|---|---|---|
+| **全量 `dotnet test`（未设 `CRASH_STATE`）** | **fail**（`Assert`："NEWMANGA_FEA11_CRASH_STATE is required"） | **fail**（同上） | **环境**（两个都是测试自身的前置断言失败） |
+| **真实驱动 `crash-ack.ps1`（驱动自己设 `CRASH_STATE`）** | **通过** —— 跑到 `core-committed` 并被成功 kill | **FAIL：`SourceAccessException : SOURCE_PLAN_UNAVAILABLE`** | **E-9**（`RecoverAsync` → `MintRecoveryGrantsAsync`） |
 
-- 产品裁决：`doc/reviews/E9-PRODUCT-ADJUDICATION-zcode-2026-11-15.md`
-- 缺陷登记：`doc/reviews/MAINT-1-EXISTING-FINDINGS-2026-11-14.md` 的 **E-9**
-- 路径不可得证据：`verification/E9-PATH-AVAILABILITY-1/README.md`
-- 测试口径证据：`verification/E9-KNOWN-LIMITATION-TESTS-1/README.md`
+**驱动实测输出**（`verification/FEA-11-HOST-AUTH-3/tools/crash-ack.ps1`，301 行：park → kill 整棵进程树 → recover）：
+
+```
+NewManga.Host.Sources.SourceAccessException : SOURCE_PLAN_UNAVAILABLE
+  at SourceOperationCoordinator.MintRecoveryGrantsAsync(...)
+  at SourceOperationCoordinator.RecoverAsync(...)
+  at Fea11HostAuthIpcTests.CrashPoint_Recover()
+CRASH_POINT=NOT_SATISFIED recover_exit=1
+EXIT=12
+```
+
+**结论**：
+- 全量套件里的 2 个 fail **确实是环境**（前置断言），**不是** E-9；
+- **但 `CrashPoint_Recover` 一旦在正确环境下真跑，就会撞上 E-9** ⇒ **它必须计入"被 E-9 挡住的测试"**（此前漏记）。
+- **不得**为变绿而放宽断言；E-9 解锁后该驱动应能达到 `CRASH_POINT=SATISFIED`。
+
+**另注**：`crash-ack.ps1` 的文件头注释（2026-11-09）写着
+"depends on the gated tests ... which are NOT implemented yet -> this driver currently reports NOT_RUN"
+—— **该注释已过时**：两个测试都已实现，驱动能真实执行到 recover 阶段（只是在 E-9 下 recover 必然被拒）。

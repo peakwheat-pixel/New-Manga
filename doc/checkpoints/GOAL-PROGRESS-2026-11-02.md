@@ -2204,3 +2204,22 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **过程中的错误**：第一版补丁用 `return;` 跳过旧代码，留下**不可达代码**编译失败；
   第二版按行号删除**跨了方法边界**，删坏了相邻方法。第三版改用**内容匹配**替换才成功。
   **教训**：改多行代码时不要用行号/`return` 兜底，要用**内容锚点**做整块替换。
+## 254. ★ FEA11-CRASH-STATE-1：跑真实 crash 驱动，发现 `CrashPoint_Recover` **也撞 E-9**（我此前归因不完整）（2026-11-15，DSH，goal 轮次 55）
+
+- **先读代码**：`NEWMANGA_FEA11_CRASH_STATE` **只被测试自己读**（`Fea11HostAuthIpcTests.cs:90/148`），**不是产品开关**。
+  `CrashPoint_Park` **从不自己结束** —— 它 block 等**外部 kill 整棵进程树**。
+- **找到现成驱动**：`verification/FEA-11-HOST-AUTH-3/tools/crash-ack.ps1`（301 行，park → kill → recover → 幂等）。
+  其文件头注释（2026-11-09）说"两个 CrashPoint 测试 **NOT implemented yet**" —— **注释已过时**，两个都已实现。
+- **★ 实测跑驱动**：`CRASH_POINT=NOT_SATISFIED recover_exit=1`，原因是
+  **`SourceAccessException : SOURCE_PLAN_UNAVAILABLE`**，栈顶 `MintRecoveryGrantsAsync` → `RecoverAsync`。
+- **★ 更正我的归因**：我上一轮把 `CrashPoint_Park/Recover` 都归为"缺 `CRASH_STATE` 环境变量" —— **只对一种场景成立**。
+  **必须分两栏**：
+  | 场景 | Park | Recover | 归因 |
+  |---|---|---|---|
+  | 全量 `dotnet test`（未设 `CRASH_STATE`） | fail（前置 assert） | fail（同） | **环境** |
+  | 真实驱动（驱动自己设 `CRASH_STATE`） | **通过**（跑到 core-committed 并被成功 kill） | **FAIL: SOURCE_PLAN_UNAVAILABLE** | **E-9** |
+  ⇒ **`CrashPoint_Recover` 必须计入"被 E-9 挡住的测试"**（此前漏记），已补登。
+- **E-9 解锁后**该驱动应能达到 `CRASH_POINT=SATISFIED`。
+- **证据卫生**：跑驱动前快照 `verification/` **14516 个受控文件**，跑完复查 **`polluted=0`**。
+- **教训**：**"同一个测试类里两个相邻测试"不等于同因** —— 这是本项目第 2 次犯（第一次是 §12.4 的 FullSyncChain）。
+  这次我本来也要写"两个都是环境"，是**真跑驱动**才发现只有 Park 是环境。
