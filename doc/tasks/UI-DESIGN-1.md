@@ -49,7 +49,7 @@ evidence_dir: verification/UI-DESIGN-1
 
 ## Acceptance Criteria
 
-- [x] **AC1 四页覆盖**：产出 `doc/design/AD001_FOUR_PAGE_UI_BASELINE.md`，对 **Bookshelf / Workbench / Reader / Settings** <!-- verified: file:doc/design/AD001_FOUR_PAGE_UI_BASELINE.md (70117B) + grep:^## 2. 书架 / ^## 3. 工作台 / ^## 4. 阅读器 / ^## 5. 设置@doc/design/AD001_FOUR_PAGE_UI_BASELINE.md:67,135,248,310 (四页各自成节) + 每页六要素逐项命中、五态矩阵 loading/empty/error/disabled/progress 齐全 :105,:179,:282,:343（最小窗口 1024x680 与伸缩行为见 :49） + file:verification/UI-DESIGN-1/selfcheck-output.txt:83-120 ((d) 逐项 PASS) + 同文件 :122 RESULT: ALL CHECKS PASS -->
+- [x] **AC1 四页覆盖**：产出 `doc/design/AD001_FOUR_PAGE_UI_BASELINE.md`，对 **Bookshelf / Workbench / Reader / Settings** <!-- verified: file:doc/design/AD001_FOUR_PAGE_UI_BASELINE.md (70117B) + grep:## 2. 书架@doc/design/AD001_FOUR_PAGE_UI_BASELINE.md:67 + grep:## 3. 工作台@doc/design/AD001_FOUR_PAGE_UI_BASELINE.md:135 + grep:## 4. 阅读器@doc/design/AD001_FOUR_PAGE_UI_BASELINE.md:248 + grep:## 5. 设置@doc/design/AD001_FOUR_PAGE_UI_BASELINE.md:310 + file:verification/UI-DESIGN-1/selfcheck-output.txt:122 (RESULT: ALL CHECKS PASS) -->
       四页**各自成节**，每节至少包含：区域职责、布局结构（含最小窗口尺寸与伸缩行为）、组件分解、
       **状态矩阵**（loading / empty / error / disabled / progress）、交互清单、键盘与焦点路径。
 - [x] **AC2 一级导航 Shell**：冻结 App Shell（一级导航 Rail 或等价形态）与四页切换语义，明确 <!-- verified: grep:四页切换语义（冻结）@doc/design/AD001_FOUR_PAGE_UI_BASELINE.md:41 (切换不销毁页面/不停止运行中任务 + 依据 08 AC-NAV-003/04 §30/契约 M2-C1 §2/P11 §7.1) + grep:最小窗口尺寸与伸缩行为（冻结）@doc/design/AD001_FOUR_PAGE_UI_BASELINE.md:49 + grep:依据：08 AC-NAV-003@doc/design/AD001_FOUR_PAGE_UI_BASELINE.md:45（未以 LEGACY 单独作依据） + file:verification/UI-DESIGN-1/selfcheck-output.txt:122 -->
