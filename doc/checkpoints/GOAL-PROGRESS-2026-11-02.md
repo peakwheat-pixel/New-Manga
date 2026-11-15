@@ -2284,3 +2284,24 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **为什么没做**：负例需要构造"registry root 是目录、但 sourceKind 是容器型"的 fixture，
   而 `IpcFixture.ApplyAsync` 走完整链路（scan/plan/apply），插入假 root 需要额外探索；
   本轮跨时已超 12 小时，选择**先交付可完成的部分并如实登记缺口**，而不是仓促写一个无效测试。
+## 258. ★ E9-NEGATIVE-TEST-1：负例测试已补（6 个），**实测 4 个 kind 全部变红**（2026-11-15，DSH，goal 轮次 59）
+
+- **做法**：把判别条件从 `MintRecoveryGrantsAsync` 内部提取为 **`internal static bool IsRecoverableRoot(sourceKind, root)`**
+  （行为完全不变，只是让判别可测）；配 `AssemblyInfo.cs` 的 `InternalsVisibleTo("NewManga.Host.Tests")`。
+- **测试**（`RecoveryRootPredicateTests.cs`，6 个）：folder+目录→true；
+  zip+不存在路径→false、创建后→true；**Theory（zip/cbz/pdf/image）**：目录 root→false 且同目录真实文件→true
+  —— **每个用例都同时断言"目录被拒"与"文件被接受"，所以不会因为一律拒绝而通过**。
+- **★ 判别力实测**：把 `IsRecoverableRoot` 临时改成无条件 `true;` →
+  **4 个 Theory 用例全部变红**（`zip/image/pdf/cbz: a DIRECTORY root must not be treated as a container`）；
+  已还原，`PROBE`=0。
+- **回归**：全量 Host.Tests **2 failed / 353 passed / 50 skipped / 405**
+  （对上轮 `2/347/50/399`：**passed +6、total +6** 正是新增用例；failed 仍 2 个环境类；**skip 未增加**）。
+- **★ 我自己造成的错误（已修复并登记）**：之前那次 `Set-Content System.Management.Automation.Internal.Host.InternalHost` 的报错里，
+  `System.Management.Automation.Internal.Host.InternalHost` 是 PowerShell **只读内置变量**，其**值**被当成了路径，
+  于是仓库根目录被创建了一个名为 **`System.Management.Automation.Internal.Host.InternalHost`** 的垃圾文件（369 B）。
+  本轮 `git status` 时发现，已 `git rm --cached` + 删除。
+  **教训**：PowerShell 自动变量（`System.Management.Automation.Internal.Host.InternalHost`/`C:\Users\49745`/`26204` 等）不能用作路径变量。
+- **剩余局限（诚实）**：这些测的是**判别函数**，不是**整条 ACK/Recovery 调用链在目录 root 下的端到端行为**。
+  端到端负例需构造"journal 指向目录 root 的 registry"，而 journal 由生产链路写入、测试无法篡改 ⇒
+  **端到端负例仍未做**；但生产唯一写 journal 的路径只传用户选中的 path，
+  该场景需**人为构造非法注册**才会出现，**判别函数层的测试已守住"即使出现也不会误放行"**。

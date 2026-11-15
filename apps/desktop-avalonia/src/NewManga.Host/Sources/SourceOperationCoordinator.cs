@@ -188,6 +188,22 @@ public sealed class SourceOperationCoordinator
     /// Authorize/Issue validation still applies; no journal grant id is reused and no locator,
     /// kind or path is guessed (a multi-root registry fails closed).
     /// </summary>
+    /// <summary>
+    /// E9-FILE-ROOT-RECOVERY-1: may this registry root serve as the container path for a recovery re-mint?
+    ///
+    /// A folder source's root *is* its container, so it is always usable. A container source
+    /// (zip/cbz/pdf/image) needs its root to be the container FILE itself -- production registers
+    /// exactly that (see SourceImportModels.IssueGrantsAsync, which passes the same `path` to both
+    /// FindOrRegisterRootAsync and IssueAsync). If a caller ever registers a DIRECTORY for a container
+    /// kind, this returns false and the caller keeps refusing typed instead of handing a directory to
+    /// DescribeContainer (which would surface as a misleading file-system error).
+    ///
+    /// Extracted as a pure predicate so the negative case can be pinned by a test that fails if the
+    /// guard is ever widened to accept everything.
+    /// </summary>
+    internal static bool IsRecoverableRoot(string sourceKind, string root) =>
+        string.Equals(sourceKind, "folder", StringComparison.Ordinal) || File.Exists(root);
+
     private async Task<IReadOnlyList<string>> MintRecoveryGrantsAsync(
         JournalEntry entry,
         CancellationToken cancellationToken)
@@ -293,8 +309,7 @@ public sealed class SourceOperationCoordinator
             // a container kind, roots[0] would not be a file, and handing it to DescribeContainer would
             // fail with a misleading file-system error. Requiring File.Exists keeps the fail-closed
             // stance -- a typed refusal is honest, a guessed directory is a lie.
-            if (!string.Equals(sourceKind, "folder", StringComparison.Ordinal)
-                && !File.Exists(roots[0]))
+            if (!IsRecoverableRoot(sourceKind, roots[0]))
             {
                 throw new SourceAccessException("SOURCE_PLAN_UNAVAILABLE");
             }

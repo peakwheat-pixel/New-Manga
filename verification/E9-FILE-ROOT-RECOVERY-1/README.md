@@ -92,3 +92,67 @@ EXIT=0
 - **负例测试未加**：裁决要求"目录 root + 容器 kind 仍须 typed 拒绝"要有测试固定住。
   当前**只有代码逻辑**（`File.Exists`），**没有测试**。⇒ 若有人把条件改成无条件放行，现有测试**不会红**。
 - `E9-KNOWN-LIMITATION-REGISTER.md` **尚未按裁决回退**（仍写着限制成立）。
+## 5. 负例测试已补（`E9-NEGATIVE-TEST-1`，2026-11-15）
+
+上一节 §4 登记"负例测试未加"。**本节补上。**
+
+### 5.1 做法：把判别条件提取为 internal 纯函数
+
+原实现把判别写在 `MintRecoveryGrantsAsync` 内部，方法私有、依赖多，**无法在不改可见性的前提下单测**。
+改为提取：
+
+```csharp
+internal static bool IsRecoverableRoot(string sourceKind, string root) =>
+    string.Equals(sourceKind, "folder", StringComparison.Ordinal) || File.Exists(root);
+```
+
+调用点变为 `if (!IsRecoverableRoot(sourceKind, roots[0])) throw ...`。
+**行为完全不变**（同样的两个分支），只是把判别变成可测的纯函数。
+
+配套：`src/NewManga.Host/AssemblyInfo.cs` 新增 `[assembly: InternalsVisibleTo("NewManga.Host.Tests")]`
+（沿用 `NewManga.App` 已有的同一模式）。
+
+### 5.2 测试（`RecoveryRootPredicateTests.cs`，6 个）
+
+| 测试 | 断言 |
+|---|---|
+| `FolderRoot_IsAlwaysUsable_BecauseTheRootIsTheContainer` | folder + 目录 root → **true**（folder 的 root 就是容器） |
+| `ContainerRoot_MustBeAnExistingFile` | zip + 不存在的路径 → **false**；创建该文件后 → **true** |
+| `DirectoryRoot_ForAContainerKind_StaysRejected`（Theory：zip/cbz/pdf/image） | 目录 root → **false**；同目录下的真实文件 → **true** |
+
+**每个 Theory 用例都同时断言"目录被拒"和"文件被接受"** —— 这样测试**不会因为一律拒绝而通过**。
+
+### 5.3 判别力（实测）
+
+把 `IsRecoverableRoot` 临时改成无条件 `true;`：
+
+```
+zip: a DIRECTORY root must not be treated as a container
+image: a DIRECTORY root must not be treated as a container
+pdf: a DIRECTORY root must not be treated as a container
+cbz: a DIRECTORY root must not be treated as a container
+```
+
+**4 个用例全部变红，消息准确**。已还原（`PROBE` 计数 0）。
+
+### 5.4 回归
+
+全量 Host.Tests（`NEWMANGA_FEA11_IPC=1` + `NEWMANGA_BUILD_PYTHON`）：
+
+```
+2 failed / 353 passed / 50 skipped / 405
+```
+
+- 对上一轮（`2 failed / 347 passed / 50 skipped / 399`）：**passed +6、total +6**（正是新增的 6 个用例）；
+- **failed 仍为 2**（`CrashPoint_Park` / `CrashPoint_Recover`，缺 `NEWMANGA_FEA11_CRASH_STATE` 的**前置 assert**，环境类）；
+- **skip 未增加**（仍 50）。
+
+### 5.5 剩余局限（诚实）
+
+**上述负例测的是"判别函数"本身，不是"整条 ACK/Recovery 调用链在目录 root 下的行为"。**
+端到端负例需要构造"journal 指向一个目录 root 的 registry"，而 journal 是 apply 时由生产链路写入、
+测试无法篡改 —— 要做就得改产品代码或写一个全新的 fixture 链，成本远超收益。
+
+**⇒ 这条端到端负例仍未做**，但它覆盖的是"产品的 journal 是否可能指向目录 root"这一命题，
+而生产唯一写 journal 的路径（`IssueGrantsAsync`）**只传用户选中的那个 path**，
+所以该场景需要**人为构造非法注册**才会出现。**判别函数层的测试已经守住"即使出现也不会误放行"。**
