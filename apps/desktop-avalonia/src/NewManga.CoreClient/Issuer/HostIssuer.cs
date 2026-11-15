@@ -560,7 +560,7 @@ public static class HostIssuer
                 throw new HostIssuerException("REF_SCOPE_DENIED", "cannot read import source identity");
             }
 
-            ulong index = ((ulong)info.FileIndexHigh << 32) | info.FileIndexLow;
+            ulong index = NormalizeFileId(((ulong)info.FileIndexHigh << 32) | info.FileIndexLow);
             var size = ((long)info.FileSizeHigh << 32) | info.FileSizeLow;
             var reparse = (info.FileAttributes & 0x400) != 0;
             return (info.VolumeSerialNumber, index, size, reparse);
@@ -593,13 +593,36 @@ public static class HostIssuer
                 throw new HostIssuerException("REF_SCOPE_DENIED", "cannot read import folder identity");
             }
 
-            return (info.VolumeSerialNumber, ((ulong)info.FileIndexHigh << 32) | info.FileIndexLow);
+            return (info.VolumeSerialNumber,
+                NormalizeFileId(((ulong)info.FileIndexHigh << 32) | info.FileIndexLow));
         }
         finally
         {
             CloseHandle(handle);
         }
     }
+
+    /// <summary>
+    /// FILE_IDENTITY_CHANGED fix (HOST-CONCURRENCY-FLAKY-1, DSH 2026-11-16): NTFS file indices are
+    /// 64-bit unsigned, but the frozen Core compares them AFTER normalization. The authoritative
+    /// definition lives in <c>src/application/importing/referenced/identity.py</c>:
+    /// <code>
+    /// _VOLUME_MASK = 0xFFFFFFFF          # matches BY_HANDLE_FILE_INFORMATION.dwVolumeSerialNumber
+    /// _FILE_MASK   = (1 &lt;&lt; 53) - 1      # C-17 N/G integer family: exactly representable
+    /// def normalize_identity(volume_serial, file_id):
+    ///     return (int(volume_serial) &amp; _VOLUME_MASK, int(file_id) &amp; _FILE_MASK)
+    /// </code>
+    /// Its contract says "every producer and every comparator calls normalize_identity -- never the
+    /// raw st_ino", and it names the Windows handle probe (this file) as a producer. Emitting the raw
+    /// 64-bit index here therefore made <c>scanner.py</c>'s masked comparison fail with
+    /// FILE_IDENTITY_CHANGED whenever the index exceeded 2^53 -- which is the common case for newly
+    /// created files (measured 6/7 in verification/HOST-CONCURRENCY-FLAKY-1/st-ino-measured.md).
+    /// Volume serial needs no mask here: <c>dwVolumeSerialNumber</c> is already 32-bit.
+    /// </summary>
+    internal const ulong FileIdMask = (1UL << 53) - 1;
+
+    /// <summary>Applies the C-17 / identity.py 53-bit file-id normalization.</summary>
+    internal static ulong NormalizeFileId(ulong rawFileId) => rawFileId & FileIdMask;
 
     private static int NaturalCompare(string left, string right)
     {

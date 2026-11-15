@@ -80,7 +80,7 @@ if (entry.Generation != expectedGeneration) throw new SourceAccessException("SOU
 - [x] **AC2 失败复现**：在受控条件下稳定复现 3 个失败（如提高并行度或多跑几轮），并保存日志。 <<MET>>
 - [x] **AC3 根因判定**：区分「锁粒度不足」「identity 检查过严」「测试间共享状态」三类，给出代码级依据。 <<MET>>
 - [x] **AC4 修复或登记**：修复（需先范围冻结，因为改并发语义属产品行为变更），或明确登记为已知限制并给出可执行的处置步骤。 <<PARTIAL: SOURCE_REGISTRY_BUSY 已修（3->2 failed）；FILE_IDENTITY_CHANGED 属独立根因，待办>>
-- [ ] **AC5 不影响既有基线**：`dotnet test` 直接跑仍全绿（331/0/74）。
+- [x] **AC5 不影响既有基线**：`dotnet test` 直接跑仍全绿（331/0/74）。 <!-- App.Tests 962/0/4 不退化基线 955/0/11；CoreClient 256/0/0；Host 361/0/44 --> <<MET>>
 - [ ] **AC6 独立复核**：固定 head 交独立上下文 Review。
 
 ## 禁止范围
@@ -144,6 +144,8 @@ fileLock = new FileStream(... "registry.v1.lock", ..., FileShare.None);   // ←
 | EV-HCF-11 | st_ino 探针脚本（可复算） | verification/HOST-CONCURRENCY-FLAKY-1/probe_st_ino.py | 062918039 | PIN_PENDING | CANONICAL | BLOB |
 | EV-HCF-12 | 探针原始输出 | verification/HOST-CONCURRENCY-FLAKY-1/st-ino-probe-output.log | 062918039 | PIN_PENDING | CANONICAL | BLOB |
 | EV-HCF-13 | **根因铁证**：Host producer 未 mask | verification/HOST-CONCURRENCY-FLAKY-1/root-cause-proven.md | 4b1198443 | PIN_PENDING | CANONICAL | BLOB |
+| EV-HCF-14 | **test.ps1 首次全绿** EXIT=0 | verification/HOST-CONCURRENCY-FLAKY-1/after-identity-fix.log | c75740cb9 | PIN_PENDING | CANONICAL | BLOB |
+| EV-HCF-15 | CoreClient -warnaserror 编译 | verification/HOST-CONCURRENCY-FLAKY-1/build-r99.log | c75740cb9 | PIN_PENDING | CANONICAL | BLOB |
 
 ## Resource Manifest
 
@@ -389,3 +391,64 @@ C# 镜像需在注释中指向该文件作为权威。
 理由：根因已定位到该文件第 563 行，另立卡会产生跨卡的同一缺陷片段。
 
 本轮**仅扩展范围并记录证据，未改代码**；实施下一轮进行。
+
+## 修复完成：	est.ps1 首次全绿（2026-11-16，本会话最大里程碑）
+
+### 改动（HostIssuer.cs，25 行）
+
+在两处 identity 源头套用 53 位归一化：
+
+`csharp
+// :563 文件 identity
+ulong index = NormalizeFileId(((ulong)info.FileIndexHigh << 32) | info.FileIndexLow);
+
+// :596 目录 identity
+return (info.VolumeSerialNumber,
+    NormalizeFileId(((ulong)info.FileIndexHigh << 32) | info.FileIndexLow));
+`
+
+新增（注释完整引用 identity.py 作为权威定义）：
+
+`csharp
+internal const ulong FileIdMask = (1UL << 53) - 1;
+internal static ulong NormalizeFileId(ulong rawFileId) => rawFileId & FileIdMask;
+`
+
+**VolumeSerialNumber 无需 mask**：dwVolumeSerialNumber 本身是 32 位。
+
+### 验证：	est.ps1 EXIT=0（首次）
+
+`
+已通过! - 失败: 0，通过: 256，已跳过: 0，总计: 256    (NewManga.CoreClient.Tests)
+已通过! - 失败: 0，通过: 361，已跳过: 44，总计: 405   (NewManga.Host.Tests)
+已通过! - 失败: 0，通过: 962，已跳过: 4，总计: 966    (NewManga.App.Tests)
+
+TEST PASS (Debug): 1579/1627 passed, 48 skipped
+`
+
+| 项目 | 修复前 | 修复后 |
+|---|---|---|
+| CoreClient.Tests | 0 failed / 256 passed | 0 / 256 |
+| Host.Tests | **2 failed** / 359 passed | **0 / 361** |
+| App.Tests | 0 / 962 | 0 / 962 |
+| **整体** | **EXIT=1** | **EXIT=0** |
+
+App.Tests 962 passed / 0 failed / 4 skipped —— **不退化基线 955/0/11**（通过数 +7）。
+
+### AC 状态
+
+- AC1 MET / AC2 MET / AC3 MET / **AC4 现在 MET**（两处缺陷都已修并验证）/ **AC5 MET**
+- AC6（独立上下文复核）待做
+
+### 这个缺陷的真实影响（复述，重要）
+
+不是测试问题：任何用户**新导入**的源文件，NTFS FileIndex 大概率 > 2^53（实测 6/7），
+scanner.py 的 masked 比较会稳定报 FILE_IDENTITY_CHANGED。
+**这是本会话唯一一个确认影响真实用户的产品缺陷。**
+
+### 附带发现（下一轮处理）
+
+跑 	est.ps1 会重新生成 erification/READER-OVERLAY-HEADLESS-PNG-1/immersive-reader.png
+与 
+ender-info.md（测试副作用），本轮已 git checkout 还原、未混入本次提交。
+这属于 test 污染工作区的既有问题，应独立登记。
