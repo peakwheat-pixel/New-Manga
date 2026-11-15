@@ -75,3 +75,29 @@
 - 未**运行** UI 测试验证这些控件的真实可见性（`F11HotkeyTests` 等是 headless 的，与本卡的静态核实互补）。
 - 未核实 `FEA-14-READ-2` 的 limitation 是否已被后来的某张卡正式关闭（本卡只证明"代码里有控件"，
   不证明"那张 limitation 卡被走完流程关闭"）。
+
+## 6. ★ 补充（2026-11-15 晚）：**这四项早有真实测试覆盖，我的静态核实是多余的**
+
+在 `READER-OVERLAY-HEADLESS-PNG-1` 之后我继续 grep，发现 **`ReaderVisibleControlsTests.cs`（171 行）已存在**，
+且测的正是 `L-R1-1` 的内容：
+
+| 测试（`[AvaloniaFact]`） | 覆盖的项 |
+|---|---|
+| `:30` `Reader_ShowsWholeBookProgressFromTheHostProjection` | **整书进度**（显示） |
+| `:44` `Reader_HidesWholeBookProgressWhenTheHostHasNoProjection` | **整书进度**（无投影时隐藏） |
+| `:58` `Reader_BookmarkPanel_ListsExistingAndAddsAndDeletes` | **书签面板**（列出/添加/删除） |
+| `:95` `Reader_ResetProgress_RequiresExplicitConfirmation` | **reset 确认** |
+
+且 `ReaderPreferencePersistenceTests.cs:49` 覆盖 **偏好持久化**（`ToggleDoublePagePersistingAsync`）。
+
+**这些测试驱动的是真实的 `ReaderPageView` 生产控件**（`view.BookmarkPanelHost` 是 public 属性，
+`FindButtonIn(view.BookmarkPanelHost, "添加当前页书签")` 直接点真按钮），
+**不是我那种"读源码看有没有"的静态推断。**
+
+**⇒ 我在 §1 做的静态核实（读 `ReaderPageView.cs` 找 `FluentUi.Button`）是正确但不必要的**：
+本可以直接引用这四个测试。
+
+**⇒ 这也说明我第 7 次误判（"只搜 `.axaml` 说控件不存在"）本可以更早被避免** ——
+**如果我先 grep 测试目录，就会发现 `ReaderVisibleControlsTests` 一直在那里。**
+
+**新增教训：核实"某功能有没有"时，测试目录是仅次于源码的第一手证据，且往往更直接。**

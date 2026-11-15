@@ -2980,3 +2980,21 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   | skipped | 11 | **11** | **0（未新增 skip）** |
   | total | 965 | **966** | +1 |
 - **⇒ 零回归；未放宽任何既有断言；未新增任何 skip/xfail。** 已写入 `render-info.md`。
+## 292. L-R1-1 补充：**这四项早有真实测试覆盖，我的静态核实是多余的**（2026-11-15，DSH，goal 轮次 93）
+
+- **动机**：上一轮做完沉浸阅读器 headless 渲染后继续 grep，想看看还有没有同类能力。
+- **★ 发现**：`ReaderVisibleControlsTests.cs`（171 行，4 个 `[AvaloniaFact]`）**已存在**，测的正是 L-R1-1：
+  | 测试 | 覆盖 |
+  |---|---|
+  | `:30` `Reader_ShowsWholeBookProgressFromTheHostProjection` | **整书进度**（显示） |
+  | `:44` `Reader_HidesWholeBookProgressWhenTheHostHasNoProjection` | **整书进度**（无投影时隐藏） |
+  | `:58` `Reader_BookmarkPanel_ListsExistingAndAddsAndDeletes` | **书签面板**（列出/添加/删除） |
+  | `:95` `Reader_ResetProgress_RequiresExplicitConfirmation` | **reset 确认** |
+  且 `ReaderPreferencePersistenceTests.cs:49` 覆盖**偏好持久化**。
+- **这些测试驱动真实生产控件**（`view.BookmarkPanelHost` 是 public 属性，
+  `FindButtonIn(view.BookmarkPanelHost, "添加当前页书签")` 直接点真按钮），
+  **不是我那种"读源码看有没有"的静态推断。**
+- **⇒ 我在 `L-R1-1-UI-WIRING-VERIFY-1` §1 做的静态核实是正确但不必要的** —— 本可以直接引用这四个测试。
+- **⇒ 新教训**：**核实"某功能有没有"时，测试目录是仅次于源码的第一手证据，且往往更直接。**
+  我第 7 次误判（"只搜 `.axaml` 说控件不存在"）**本可以更早被避免** ——
+  **如果我先 grep 测试目录，就会发现 `ReaderVisibleControlsTests` 一直在那里。**
