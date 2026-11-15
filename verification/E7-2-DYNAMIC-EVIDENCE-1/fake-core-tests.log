@@ -1,11 +1,10 @@
 # fake-core
-head: 33408b248
-tree: clean
-timestamp: 2026-11-16T02:10:32+08:00
+head: 6eb2745f7（工作树）
+timestamp: 2026-11-16T02:15:08+08:00
 command: dotnet test --filter FullyQualifiedName~FakeCoreServiceIntegrationTests
 EXIT: 0
 
 G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.CoreClient.Tests\bin\Debug\net9.0\NewManga.CoreClient.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
 总共 1 个测试文件与指定模式相匹配。
 
-已通过! - 失败:     0，通过:     4，已跳过:     0，总计:     4，持续时间: 427 ms - NewManga.CoreClient.Tests.dll (net9.0)
+已通过! - 失败:     0，通过:     4，已跳过:     0，总计:     4，持续时间: 432 ms - NewManga.CoreClient.Tests.dll (net9.0)

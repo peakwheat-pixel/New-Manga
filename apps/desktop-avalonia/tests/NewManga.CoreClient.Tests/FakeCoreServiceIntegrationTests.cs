@@ -175,6 +175,15 @@ for raw in sys.stdin:
         Assert.Equal("{\"ok\":true}", response.Result?.GetRawText());
     }
 
+    // NOT COVERED (attempted and withdrawn, r2 P2): the host-control path's fail-closed branch --
+    // id-less frames exhausting the resync budget -> poison. A test for it passed in isolation
+    // (5/5, 427-535 ms) but was FLAKY under the full suite: the second call returned MalformedResponse
+    // instead of RequestTimeout, i.e. the poisoned-channel fast path was not taken. ThrowIfPoisoned IS
+    // the first statement of ExchangeAsync (SidecarProcess.cs:228), so this is a timing/load artefact of
+    // the inline-python fixture, not a product defect -- and a flaky test is worse than a documented gap.
+    // The SendAsync twin (ProductionSendAsync_PoisonsChannel_WhenOnlyIdlessFramesArrive) does cover the
+    // poison wiring, and both call sites pass the same _process.Poison method group.
+
     /// <summary>Inline-Python fake core_service: writes the script, starts it, exposes client options.</summary>
     private sealed class FakeCore : IDisposable
     {

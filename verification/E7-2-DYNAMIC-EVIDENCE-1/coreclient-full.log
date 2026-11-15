@@ -1,8 +1,7 @@
 # test
-head: 33408b248
-tree: clean
+head: 6eb2745f7（工作树）
 env: Windows 11 / pwsh 7 / dotnet 10.0.401 / python Python 3.14.6
-timestamp: 2026-11-16T02:10:30+08:00
+timestamp: 2026-11-16T02:15:06+08:00
 command: dotnet test apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/NewManga.CoreClient.Tests.csproj
 EXIT: 0
 

@@ -134,8 +134,15 @@ elif scenario == "idless-only":           # 只有无 id 帧（应 poison）
      **变异验证判别力**：把 `SendHostControlAsync` 的 resync 改回 `Parse` + `EnsureResponseBelongsToRequest`
      ⇒ 该条**变红**（EXIT=1），恢复后 EXIT=0、4 passed。
      ⇒ **裁决 §5.3 的两条命令路径现均有「重同步」动态证据**；**限定**：host-control 路径只验了
-     resync 成功路径，其「无 id 耗尽 ⇒ poison」分支**没有**测试（把该路径的 `_process.Poison`
-     改成 no-op 会存活），因此 §5.3 是**部分满足**而非全部；
+     resync 成功路径，其「无 id 耗尽 ⇒ poison」分支**没有**测试，因此 §5.3 是**部分满足**而非全部。
+     **该项尝试过并撤回（如实登记）**：写过
+     `ProductionSendHostControlAsync_PoisonsChannel_WhenOnlyIdlessFramesArrive`，**单跑 5/5 稳定通过**
+     （427–535ms），但**全量下 flaky** —— 第二次调用拿到 `MalformedResponse` 而非 `RequestTimeout`，
+     即 poison 快路径未被走到。已核实 `ThrowIfPoisoned()` 是 `ExchangeAsync` 的**第一条语句**
+     （`SidecarProcess.cs:228`），因此这是**内联 python 夹具在负载下的时序假象，不是产品缺陷**。
+     撤回理由：**留一个 flaky 测试比留一个有记录的缺口更糟**（会污染全量基线）。
+     变通覆盖：`SendAsync` 孪生测试（第 3 条）已覆盖 poison 接线，且两个调用点传的是**同一个**
+     `_process.Poison` 方法组；
   2. **R002 的 P2-F1 对两条调用点均已关闭**：本卡新增的 4 条覆盖了 `SendAsync`（第 1-3 条）
      与 `SendHostControlAsync`（第 4 条）两个调用点，且第 4 条经变异验证有判别力。
      `R002ResyncTests` 那 4 条仍只调 helper，但**不再是唯一证据**；
