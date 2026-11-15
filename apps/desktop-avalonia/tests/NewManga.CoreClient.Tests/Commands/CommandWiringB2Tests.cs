@@ -368,10 +368,29 @@ public sealed class CommandWiringB2Tests
         var bookTwoId = bookTwo.GetProperty("book_id").GetString();
         Assert.NotEqual(bookOneId, bookTwoId);
 
+        // FEA-12-PREREQ-1 / M2-C1 rev 2.13 §5.11.1a: the frozen Core's closed-shape batch delete
+        // requires the exact key set {book_ids, confirmed_book_ids, confirm_count,
+        // confirm_permanent_delete, inventory_digest, inventory_digests}, and the digests must be
+        // the Core-computed ones (PD-02/PD-04). The Host never synthesizes them, so the caller takes
+        // them from the read-only preview first -- the same flow the product UI uses.
+        var batchPreview = await Run(
+            "library_preview_permanent_delete_books",
+            $"{{\"bookIds\":[\"{bookOneId}\"]}}");
+        var batchDigest = batchPreview.GetProperty("inventoryDigest").GetString();
+        var batchBookDigest = batchPreview
+            .GetProperty("inventoryDigests")
+            .GetProperty(bookOneId!)
+            .GetString();
+        Assert.False(string.IsNullOrWhiteSpace(batchDigest), "preview must return a collection digest");
+        Assert.False(string.IsNullOrWhiteSpace(batchBookDigest), "preview must return a per-book digest");
+        Assert.StartsWith("sha256:", batchDigest!, StringComparison.Ordinal);
+
         var batch = await Run(
             "library_delete_books_permanently",
             $"{{\"book_ids\":[\"{bookOneId}\"],\"confirmed_book_ids\":[\"{bookOneId}\"]," +
-            "\"confirm_count\":1,\"confirm_permanent_delete\":true}");
+            "\"confirm_count\":1,\"confirm_permanent_delete\":true," +
+            $"\"inventory_digest\":\"{batchDigest}\"," +
+            $"\"inventory_digests\":{{\"{bookOneId}\":\"{batchBookDigest}\"}}}}");
         Assert.Equal(1, batch.GetProperty("requested_count").GetInt32());
         Assert.Equal(1, batch.GetProperty("completed_count").GetInt32());
         var batchItems = batch.GetProperty("items");
