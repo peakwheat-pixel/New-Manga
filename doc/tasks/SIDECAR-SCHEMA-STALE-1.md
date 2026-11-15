@@ -354,3 +354,44 @@ TARGET_NOT_FOUND 有 message+details）⇒ **这条错误本身不带诊断信�
 
 **下一步（纯代码对比）**：读 HostCommandDispatcher.cs 里 library_delete_book_permanently
 的 payload 构造 + core 侧 PermanentlyDeleteBook 的必需字段校验，找出少写/写错的字段。
+
+### 组 B 根因确定（2026-11-16 续）—— 测试未传 inventory_digest
+
+**完整因果链（全部代码证据）**：
+
+1. **测试的调用**（CommandWiringB1Tests.cs:236-238）：
+   `csharp
+   var deletedBook = await Run("library_delete_book_permanently",
+       $"{{\"payload\":{{\"book_id\":\"{bookId}\",\"confirm_permanent_delete\":true}}}}");
+   `
+   **没有 inventory_digest。**
+
+2. **dispatcher 的构造**（HostCommandDispatcher.cs:619-638）注释原文：
+   > additive digest passthrough only -- never synthesized or enforced here (the Core stays
+   > the semantic authority) ... Optional: a legacy caller that omits it is still forwarded
+   > unchanged (**the new Core fail-closes with INVALID_REQUEST**)
+   => **这是有意的设计**，不是 bug。
+
+3. **wire log 实证**（帧 #527/#543/#559/#575）：请求 payload 里确实没有 inventory_digest，
+   响应 {"code":"INVALID_REQUEST","category":"validation","retryable":false}（无 message/details）。
+
+4. **core 校验**（service.py:426-496）：要求 sha256: 前缀的 INVENTORY_DIGEST_PREFIX。
+
+**定性：测试期望过时，与组 A / 组 C 完全同类。**
+
+| 组 | 测试假设 | 实际 |
+|---|---|---|
+| A Fea12* | 旧 core 不含 FEA-12 命令 | core 已含 |
+| B B1/B2 | 删除不需要 inventory_digest | 新 core 要求它（fail-closed 是设计） |
+| C RunBindingFix | 失败边界在 color | 实际在 	ranslate |
+
+**三组统一性质**：测试写的时候产品行为是 X，现在变成 Y，测试没跟上。
+根因是 	est.ps1（配 sidecar 夹具）长期因 legacy v6 副本握手失败而从未真正运行，
+这些过时断言一直没被暴露。
+
+**修法（下一轮）**：CommandWiringB1Tests.cs:411-426 已有 inventory_digest 的正确用法样板
+（DigestA / withDigest / legacy），把 :236-238 的调用改成带 digest 即可。
+**纯测试改动**，不改产品代码（dispatcher 的 passthrough 设计正确）。
+
+**组 B 调查教训（67–74 共 8 轮）**：前 6 轮手搓 probe / 改测试加诊断，5 次同类错误、0 进展；
+后 2 轮读仓库自带的 wire log + 源码注释，两轮收敛。**仓库自带的证据比自造 probe 更可靠。**
