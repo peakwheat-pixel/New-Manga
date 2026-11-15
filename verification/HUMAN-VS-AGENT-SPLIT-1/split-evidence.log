@@ -1,0 +1,11 @@
+# 33 条人侧甄别 — 依据原文摘录
+head: 087364874
+timestamp: 2026-11-16T03:11:19+08:00
+
+## MICA-FIX-1 AC2（HUMAN 拆分）
+- [ ] **AC2 诊断输出**：启动时（或 `--diagnostics`）输出 `ActualTransparencyLevel` 与 `WindowMaterialKind` 到日志/证据，证明确实拿到 Mica 而非回退 None。 <!-- blocked: **独立复核 P2-08**：AC2 唯一证据是 two-wallpapers.json 内的 diagnostics_log
+
+## FEA-07 AC-N5（不是 HUMAN：证据已齐，缺 Review）
+- **AC-N5**：证据齐（`verification/FEA-07-AC5-NATIVE-1/README.md`、`evidence/matrix-summary.json`、截图）；**独立 Review 与 AC5 行翻转待完成**。
+
+## FEA-07 AC-N2（浮窗已 NA，主体需补快捷键断言）
