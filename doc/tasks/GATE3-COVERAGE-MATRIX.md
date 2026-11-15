@@ -133,7 +133,7 @@ Gate 条件 3 = "补齐**可安全执行的**完整 GUI / Core / Host 关键流�
 | EV-G3M-06 | 独立复核 r2（REJECT） | doc/reviews/GATE3-COVERAGE-MATRIX-review-r2.md | 7f510afd7 | 6db33b2090449b5c7212d36f991b48f56e9f2c5ccfb255a4ce2bc3a7cabc4c0c | CANONICAL | BLOB |
 | EV-G3M-07 | 独立复核 r3（ACCEPT_WITH_LIMITATIONS） | doc/reviews/GATE3-COVERAGE-MATRIX-review-r3.md | 7f510afd7 | f92c453fbf0b800df5744c564d2535aabfb31264d01ddb35350901eb698ffaf0 | CANONICAL | BLOB |
 | EV-AC3-08 | AC3 可执行性标注（测试属性分类统计） | verification/GATE3-COVERAGE-MATRIX/ac3-test-attribute-census.md | 0e8166954 | ef5d5892738fd5fcb18d2f7fbe7b81d065605f52c6a6f098bea572ddb43058ed | CANONICAL | BLOB |
-| EV-AC2-09 | AC2 进展（4 格已补测试名+断言；整体仍未关闭） | verification/GATE3-COVERAGE-MATRIX/ac2-four-cells-progress.md | PIN_PENDING | f03aa52ef680e828c9ff61bdd64c534edf00a415347eb4e9e19aece263a9f122 | CANONICAL | BLOB |
+| EV-AC2-09 | AC2 进展（4 格已补测试名+断言；整体仍未关闭） | verification/GATE3-COVERAGE-MATRIX/ac2-four-cells-progress.md | e3df0cc6c | f03aa52ef680e828c9ff61bdd64c534edf00a415347eb4e9e19aece263a9f122 | CANONICAL | BLOB |
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
