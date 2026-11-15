@@ -2185,3 +2185,22 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **★ 我又踩了同一个坑**：跑 opt-in IPC 测试**改写了 `verification/FEA-09-UI-1/ipc/` 下 4 个证据文件** ——
   这正是我在 checkpoint 240 登记过的错误。已 `git reset` + `git checkout` **还原**，校验与 HEAD 一致（`git diff --stat` 为空）。
   **教训升级**：跑 opt-in IPC 测试前**必须先记下 `verification/` 的哈希**，或把 `NEWMANGA_EVIDENCE_DIR` 指到 workspace。
+## 253. E9-BLOCKED-TESTS-ALIGN-1：2 个未改造的 E-9 被挡测试改为断言 typed 拒绝，全量 failed **8 → 2**（2026-11-15，DSH，goal 轮次 54）
+
+- **改动**：`Fea11HostAuthIpcTests` 的 `Ack_SendsAFreshAuthorization_...` 与
+  `Recovery_UsesAFreshAuthorization_...` 原先期望**成功**（`acknowledged`/`recovered`），
+  在 E-9 下必然失败。按 `Fea11Residual4AIpcTests.ProductionDispatcherFullChain` 的**既有先例**改为
+  **断言 typed 拒绝**（`SourceAccessException` + `Code == "SOURCE_PLAN_UNAVAILABLE"`），
+  并**保留所有仍有效的断言**（apply→core-committed、pending gate→SOURCE_ACCESS_DENIED、wrong digest→INVALID_REQUEST）。
+- **新增断言（收紧而非放松）**：journal 仍 `core-committed`、行数不变、**第二次调用同样被拒（幂等）**、
+  gate 仍 pending、**源文件哈希不变**。测试体内写明 `KNOWN-LIMITATION-E9` 与"E-9 解锁时必须还原为成功断言"。
+- **实测**：全量 Host.Tests（opt-in `FEA11_IPC` + `BUILD_PYTHON`）**8 failed → 2 failed**
+  （结果：`2 failed / 346 passed / 50 skipped / 398`）。
+  **剩余 2 个**是 `CrashPoint_Park/Recover`（缺 `NEWMANGA_FEA11_CRASH_STATE`，环境类），与本卡无关。
+  **skip 31→50 是 opt-in 组合差异**（本次少设 3 个变量），**不是回归**，且两次总数不同（399 vs 398），**不得直接对比**。
+- **判别力**：若 E-9 被修复，这 2 个测试会**变红**（`Assert.ThrowsAsync` 收不到异常）—— 正是要的守护方向。
+- **证据卫生（这次做对了）**：跑 opt-in 前先对 `verification/` 下 **14515 个受控文件**做 SHA 快照，
+  跑完复查 **`polluted_files=0`**。这是对上一轮污染事故的直接补救。
+- **过程中的错误**：第一版补丁用 `return;` 跳过旧代码，留下**不可达代码**编译失败；
+  第二版按行号删除**跨了方法边界**，删坏了相邻方法。第三版改用**内容匹配**替换才成功。
+  **教训**：改多行代码时不要用行号/`return` 兜底，要用**内容锚点**做整块替换。
