@@ -1,0 +1,20 @@
+# 集成复验（AC7，2026-11-15 DSH 补做）
+# env: Windows 11 / pwsh 7 / Python 3.14
+
+## 命令 1: python -B tools/governance/tests/test_residual_runtime_identity.py
+
+----------------------------------------------------------------------
+Ran 12 tests in 35.977s
+
+FAILED (failures=3)
+EXIT=1
+
+## 命令 2: pwsh -NoProfile -File tools/governance/check.ps1
+WARN: doc/STATUS.md 已达到预算的 80%：3115 bytes / 27 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6960 bytes / 63 lines
+Governance check: PASS (3 warnings)
+EXIT=0
+
+## 命令 3: git diff --check
+(no output)
+EXIT=0

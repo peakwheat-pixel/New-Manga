@@ -37,7 +37,7 @@ SukiUI、FluentAvalonia、Semi.Avalonia、PleasantUI、Avalonia（主题/资源�
 - [x] AC2 对比矩阵 + 明确建议：可借鉴什么、可复用哪些（许可证允许时）、**禁止简单拼装**的理由与边界。 <!-- verified: file:doc/design/theming/RESEARCH_V1.md §3 对比矩阵 + §4 为什么不拼装 + §0 结论先行(R-03) -->
 - [x] AC3 给出与新 `NewManga.ThemeEngine` 契约（`doc/plan/V11R_AVALONIA_CONTRACT.md` §4）的映射建议：哪些机制可直接采用、哪些必须自研。 <!-- verified: file:doc/design/theming/RESEARCH_V1.md §5 对新 Theme Engine 的映射建议；契约 doc/plan/V11R_AVALONIA_CONTRACT.md 存在 -->
 - [x] AC4 结论必须可被验证：每条事实附 URL/版本/日期；无法核实的标 UNVERIFIED。 <!-- verified: file:doc/design/theming/RESEARCH_V1.md 含 URL/版本/日期 与 4 处 UNVERIFIED 标记；§6 取证与局限 -->
-- [ ] AC5 不修改任何生产代码；不引入依赖。 <!-- blocked: 文档声明『V1 不引入任何第三方 UI/主题框架依赖』(RESEARCH_V1.md:8)；但『不修改生产代码』该卡无 commit 字段，无法独立验证 -->
+- [x] AC5 不修改任何生产代码；不引入依赖。 <!-- verified: 用 `delivery_head: ba59a6c0d` 独立核验——`git show --stat ba59a6c0d` = **10 个 doc 文件 / 0 个生产文件**（602 insertions 全在 doc/design、doc/plan、doc/tasks）；该提交不含 src/apps/tests 任何路径，故「不修改任何生产代码」成立；「不引入依赖」见 RESEARCH_V1.md:8 的声明，且该提交未触碰任何依赖清单文件。日志 verification/AC-DOC-CLOSE-1/v11r-c-research-ac5-verify.log -->
 
 ## 交付与运行记录
 - Handoff：尚无。

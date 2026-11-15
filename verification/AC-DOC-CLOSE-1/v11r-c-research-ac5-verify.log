@@ -1,0 +1,23 @@
+# V11R-C-RESEARCH-1 AC5 核验
+# command: git show --stat ba59a6c0d
+# env: git (Windows)
+
+commit ba59a6c0d1317250f37590ea2d63cd2a895adcc2
+Author: peakwheat-pixel <peak.wheat@gmail.com>
+Date:   Fri Oct 30 00:35:47 2026 +0800
+
+    docs(v11r): theming research, Avalonia screen specs, and wave-2/3 task cards
+
+ doc/design/theming/RESEARCH_V1.md | 108 ++++++++++++++++++++++++++++++++++++++
+ doc/plan/V11R_SCREEN_SPECS.md     | 102 +++++++++++++++++++++++++++++++++++
+ doc/tasks/V11R-B-1.md             |  49 +++++++++++++++++
+ doc/tasks/V11R-B-2.md             |  49 +++++++++++++++++
+ doc/tasks/V11R-B-3.md             |  49 +++++++++++++++++
+ doc/tasks/V11R-B-4.md             |  49 +++++++++++++++++
+ doc/tasks/V11R-B-5.md             |  49 +++++++++++++++++
+ doc/tasks/V11R-C-1.md             |  49 +++++++++++++++++
+ doc/tasks/V11R-C-2.md             |  49 +++++++++++++++++
+ doc/tasks/V11R-C-3.md             |  49 +++++++++++++++++
+ 10 files changed, 602 insertions(+)
+
+# result: 10 files changed, 602 insertions(+), 0 deletions(-)，全部为 doc/ 路径，0 生产文件

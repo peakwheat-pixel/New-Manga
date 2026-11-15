@@ -1,0 +1,45 @@
+errors=167  protected=5485
+
+按 code 分布：
+  TABLE_SCHEMA_INCOMPLETE  53
+  DECL_RELATIVE_UNRESOLVED 27
+  DECL_ENV                 20
+  DECL_GLOB                16
+  DECL_DESTINATION_UNRESOLVED 12
+  TABLE_DELIMITER          10
+  DECL_UNKNOWN_DISPOSITION 10
+  DECL_TRAVERSAL           7
+  FILE_UNREADABLE          4
+  DECL_RELATIVE_AMBIGUOUS  2
+  JSON_PARSE               2
+  TABLE_ROW_ARITY          1
+  DECL_BARE_NAME           1
+  DECL_MISSING_SOURCE      1
+  SOURCE_DRIFT             1
+
+按文件（前 25）：
+     3  doc/tasks/FEA-06-RESIDUAL-1.md
+     3  doc/tasks/FEA-06-RESIDUAL-2.md
+     3  doc/tasks/FEA-07-AC5-NATIVE-1.md
+     3  doc/tasks/P19.md
+     3  verification/FEA-07-RESIDUAL-3/RESOURCE-MANIFEST.json
+     3  verification/P19-UI-FIX-1/resource-manifest.json
+     2  doc/tasks/EXPORT-E2E-CLOSE-1.md
+     2  doc/tasks/FEA-00A-PREP-1.md
+     2  doc/tasks/FEA-01-FREEZE-1.md
+     2  doc/tasks/FEA-06.md
+     2  doc/tasks/FEA-07-RESIDUAL-2.md
+     2  doc/tasks/FEA-07-RESIDUAL-4.md
+     2  doc/tasks/FEA-07.md
+     2  doc/tasks/FEA-08.md
+     2  doc/tasks/FEA-11-L-R11-GATE-UNIFY-1.md
+     2  doc/tasks/FEA-11-L-R11-GATE-UNIFY-PREREQ-1.md
+     2  doc/tasks/FEA-11-L-S1-B-RECOVERY-REAUTH-1.md
+     2  doc/tasks/FEA-11-L-S1-REGISTRY-RESILIENCE-1-PREREQ-1.md
+     2  doc/tasks/FEA-11-L-S1-REGISTRY-RESILIENCE-1.md
+     2  doc/tasks/FEA-11-L-S4-B-1-SCAN-EXEC-RECOVERY-1.md
+     2  doc/tasks/FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1.md
+     2  doc/tasks/FEA-11-L-S4-B-AUTO-RECOVERY-1.md
+     2  doc/tasks/FEA-11-L-S4-B-PREREQ-1.md
+     2  doc/tasks/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1.md
+     2  doc/tasks/FEA-11-RUN-GRANT-1-PREREQ-1.md
