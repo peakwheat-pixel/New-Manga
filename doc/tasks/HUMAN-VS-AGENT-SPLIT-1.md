@@ -9,7 +9,7 @@ owner: DSH
 reviewer: 未派（甄别卡，输出为原文摘录与归属判断，不需实现复核）
 depends_on:
   - AC-BLOCKED-CLOSE-1
-integration_commit: PENDING
+integration_commit: 22d3c08f8
 approval: 用户 2026-11-15「全部授权」；目标 D「剩余仅物理设备/人眼/外部账号类事项逐条登记」
 base_commit: 087364874
 branch: main
@@ -99,7 +99,7 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class | sha256_basis |
 |---|---|---|---|---|---|---|
-| EV-HVA-01 | AC1/AC2/AC3 原文摘录（AC2、AC-N2、AC-N5） | verification/HUMAN-VS-AGENT-SPLIT-1/split-evidence.log | 087364874 | cf0b847a42a8e80952438ea78a926f8d5e5956614130de16df7a044499373e31 | CANONICAL | BLOB |
+| EV-HVA-01 | AC1/AC2/AC3 原文摘录（AC2、AC-N2、AC-N5） | verification/HUMAN-VS-AGENT-SPLIT-1/split-evidence.log | 22d3c08f8 | cf0b847a42a8e80952438ea78a926f8d5e5956614130de16df7a044499373e31 | CANONICAL | BLOB |
 
 ## Resource Manifest
 
