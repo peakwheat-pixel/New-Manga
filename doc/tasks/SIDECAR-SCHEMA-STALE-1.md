@@ -456,3 +456,37 @@ payload 为 {"bookIds":[...]}（camelCase，dispatcher 用 RejectUnknownKeys 强
 
 **剩余 4 个失败**：组 A ×2（测试期望过时）、组 C ×1（color 已成功、失败在 translate）、
 组 B 的 B2 ×1（大概率同类，未验证）。**仍不宣称 test 全绿，test.ps1 仍 EXIT=1。**
+
+### 组 A 失败点精确定位（2026-11-16 续）
+
+**失败位置不是我以为的地方**。Fea12NewCommands_FrozenCoreFailsClosedWithTypedError
+（CommandIntegrationTests.cs:474）开头：
+
+`csharp
+foreach (var capability in HostCommandRegistry.DeleteTrashCapabilities)
+{
+    Assert.DoesNotContain(capability, ping.Capabilities);   // ← L484：失败在这
+}
+`
+
+**前置断言失败**（core 现在确实声明了 FEA-12 能力），不是后面
+ExpectProbeFailure 里的 CORE_CAPABILITY_MISSING 断言失败。
+
+**测试原本意图仍正确**（:495-522）：验证能力门禁「探针恰好一次 core.ping、
+gated 命令从不发到 core、错误码 CORE_CAPABILITY_MISSING」。**该机制仍重要**，
+只是当前 sidecar 无法再复现「旧 core」场景。
+
+**已有关键覆盖**：L628 附近用**构造的异常**验证同一机制，不依赖真实旧 core。
+⇒ 这个 [SidecarFact] 的独特价值（真实 core 上验证）前提已消失。
+
+**两种修法（下一轮，倾向 A）**：
+- **A 条件化分支**：检测 core 是否声明能力 → 是则验证正向执行、否则验证 fail-closed。
+  保留对两种 core 的判别力，未来 bundle 回退也不失效。
+- **B 改名 + 登记**：改为正向验证，注明原 fail-closed 场景已由构造异常用例覆盖。
+
+**同组另一测试** Fea12Core_DeleteTrashCapabilityProbe_OldCoreFailsClosedBeforeAnyCommandFrame
+（:310 附近）应属同类，待下一轮确认。
+
+**本轮不改的原因**：改这两个测试涉及**改变断言语义**（从「必须拒绝」到「视能力分支」），
+属产品行为判定；且需保证 
+esults.Add evidence 在两条分支下都成立。**先设计清楚再改。**
