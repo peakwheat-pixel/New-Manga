@@ -74,7 +74,7 @@ if ($needsPrepare) {
     # Remove first: robocopy /E layers new files over old ones, and a mixed _internal tree makes
     # core_service.exe die at startup with "Failed to import encodings module".
     if (Test-Path $SidecarDirectory) { Remove-Item -LiteralPath $SidecarDirectory -Recurse -Force }
-    & (Join-Path $PSScriptRoot 'prepare-sidecar.ps1') -Destination $SidecarDirectory -Source $buildBundle
+    & (Join-Path $PSScriptRoot 'prepare-sidecar.ps1') -Destination $SidecarDirectory -Source $buildBundle -IncludeModels
 } else {
     Write-Host "sidecar fixture: up to date at $SidecarDirectory"
 }

@@ -13,6 +13,10 @@
 #>
 [CmdletBinding()]
 param(
+    # SIDECAR-SCHEMA-STALE-1 P2 (DSH 2026-11-16): models/ used to be excluded unconditionally, which broke
+    # RunBindingFixTests.ModelsBuild_* -- without the detector/OCR weights the run never leaves 'pending'.
+    # Pass -IncludeModels for callers that exercise a models build.
+    [switch]$IncludeModels,
     # SIDECAR-SCHEMA-STALE-1 P0-2 (DSH 2026-11-16, per r1 review): the default used to point at
     # 'apps/desktop/src-tauri/target/release/resources/core-sidecar' -- the RETIRED Tauri shell (AD-002).
     # That stale 2026-10-23 tree is what made his fixture copy carry schema v6 while the source tree is at
@@ -44,7 +48,13 @@ foreach ($exe in @('core_service.exe', 'host_bridge.exe', 'catalog_loader.exe'))
 
 New-Item -ItemType Directory -Force -Path $Destination | Out-Null
 # /E recurse, exclude models+python (not used by these entries), no ACL copy -> destination label wins.
-$robocopyArgs = @($Source, $Destination, '/E', '/XD', 'models', 'python', '/NFL', '/NDL', '/NJH', '/NJS', '/NP')
+# SIDECAR-SCHEMA-STALE-1 P2 (DSH 2026-11-16): the blanket models exclusion broke
+# RunBindingFixTests.ModelsBuild_*, which needs the detector/OCR weights to finish a run -- without them
+# the detect step fail-closes with PROVIDER_NOT_CONFIGURED and the task stays 'pending' forever. Callers
+# that exercise a models build must pass -IncludeModels.
+$excluded = @('/XD', 'python')
+if (-not $IncludeModels) { $excluded = @('/XD', 'models', 'python') }
+$robocopyArgs = @($Source, $Destination, '/E') + $excluded + @('/NFL', '/NDL', '/NJH', '/NJS', '/NP')
 & robocopy @robocopyArgs | Out-Null
 if ($LASTEXITCODE -ge 8) {
     throw "robocopy failed with exit code $LASTEXITCODE (source=$Source destination=$Destination)"
