@@ -122,7 +122,7 @@ latest_known = max(migration.schema_version for migration in migrations)
 
 | evidence_id | AC/Gate | path | commit | sha256 | class | sha256_basis |
 |---|---|---|---|---|---|---|
-| EV-SSS-01 | AC1/AC2/AC3 版本对照与影响面证据 | verification/SIDECAR-SCHEMA-STALE-1/version-check.log | 69fed50bc | 6bd67a5c04854af2fed4bd2444af4ec87f12df1ffd7845a45bbbed027473bb00 | CANONICAL | BLOB |
+| EV-SSS-01 | AC1/AC2/AC3 版本对照与影响面证据 | verification/SIDECAR-SCHEMA-STALE-1/version-check.log | 4f786190c | cee05df9c31944d9165c898a33da24ca31f1b7ebb212574584a2fe0750d5f219 | CANONICAL | BLOB |
 
 ## Resource Manifest
 
