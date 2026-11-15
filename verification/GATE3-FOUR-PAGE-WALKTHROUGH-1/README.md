@@ -258,3 +258,67 @@ captured 5/5 pages
 **⇒ 这与 `MAINT-1-RELEASE-GATE-ASSESSMENT` §6.2 的判断完全一致**
 （"没有自动翻译命令，UI 侧没有调用 provider 的接线"）——
 **现在有了真实界面的目视证据，不再是纯代码推断。**
+
+## 11. ★★ 在**安装产物**上跑通 5/5 页（2026-11-15）
+
+### 11.1 安装产物身份已核对
+
+`%LOCALAPPDATA%\Programs\NewManga\app\NewManga.App.exe`：
+
+```
+bytes   = 99,554,850
+version = 0.1.1+71cecb95a10c42ffe02d1396ab065e1fc9c43ca9
+sha256  = a3ec2133b5da3f61
+```
+
+与 `GATE4-PAGES-UPGRADE-1` 声称的 `0.1.1+71cecb95a…` / `a3ec2133…9230` **完全一致**。
+
+### 11.2 脚本改进（修掉 §10.1 的"截早了"）
+
+1. **新增 `-AppExe` 参数**：可对任意 exe 取证（源码构建 / 安装产物）；
+2. **新增 Host 就绪轮询**（替代固定 `SettleMs`）：
+   轮询 `host.log` 直到出现 `core_service ready` 或 `host_bridge ready`，最多 `-HostReadyTimeoutSeconds`（默认 40）。
+
+### 11.3 结果：5/5 页，且 Host 已就绪
+
+```
+page=bookshelf  captured=True
+page=library    captured=True
+page=reader     captured=True
+page=settings   captured=True
+page=workbench  captured=True
+captured 5/5 pages -> ...\GATE3-FOUR-PAGE-WALKTHROUGH-1\installed
+```
+
+`installed/host.log` 实测：**`core_service ready: True`**、**`host_bridge ready: True`**。
+
+哈希（全部不同）：
+
+| 文件 | 字节 | sha256（前 16） |
+|---|---|---|
+| page-bookshelf.png | 49,761 | `a84df09c3b1bc7a3` |
+| page-library.png | 51,008 | `33f002e3e4747d32` |
+| page-reader.png | 49,613 | `f0d01944a59076d1` |
+| page-settings.png | 65,436 | `3d0bd1e8672cdf21` |
+| page-workbench.png | 56,684 | `4e77993d2396aacf` |
+
+### 11.4 ★ 目视确认 `installed/page-bookshelf.png`
+
+- 标题栏 **`New Manga`**；导航 **`资料柜 1 / 工位 2 / 控制台 3`**（高亮资料柜）
+- **`资料柜 1 / 1 作品`**
+- **有书**：`家族战记` · `169 页`
+- 右侧：`阅读进度 读到第 2 / 169 页 · 1%`；`章节账本 01 17卷 / 169 页`；页列表 `001 001.jpg` … `015 015.jpg`
+- **底部：`Host 就绪`**（不再是 `Host 启动中...`）
+
+### 11.5 ★ 更正 §10.1/§10.2 的两个"发现"
+
+- **§10.1「截早了」**：**已修复**（Host 就绪轮询），本次 bookshelf 底部是 `Host 就绪`。
+- **§10.2「数据状态不一致」**：**是我误判**。`0 / 0 作品` 不是"不同数据根"，
+  而是**截图时 Host 还没就绪、书还没加载**。就绪后同一数据根显示 `1 / 1 作品`。
+  **⇒ 我此前把它列为"待查的不一致"，实际是时序问题。**
+
+### 11.6 仍未解决
+
+- **阅读器 overlay**（F11 后的沉浸窗口）仍未截到；
+- 未验证 `--presentation-host` / `--theme` / 其它 shell 变体；
+- **未验证 schema/variant 差异下的表现**。

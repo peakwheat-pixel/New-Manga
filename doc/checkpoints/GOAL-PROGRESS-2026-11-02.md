@@ -2802,3 +2802,24 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   "OCR 原文 / 机器翻译 / 人工译文 / 终端" **全部"能力待接入"**，底部 **`流水线投影未接入 · NOT_WIRED`**。
   **⇒ 与 `MAINT-1-RELEASE-GATE-ASSESSMENT` §6.2 的判断完全一致**，
   且**现在有了真实界面的目视证据，不再是纯代码推断**。
+## 283. ★★ 在**安装产物**上跑通 5/5 页，且 Host 就绪 —— 并更正我上一轮的两个"发现"（2026-11-15，DSH，goal 轮次 84）
+
+- **安装产物身份已核对**：`%LOCALAPPDATA%\Programs\NewManga\app\NewManga.App.exe`
+  —— `bytes=99,554,850`、`version=0.1.1+71cecb95a10c42ffe02d1396ab065e1fc9c43ca9`、`sha256=a3ec2133b5da3f61`，
+  与 `GATE4-PAGES-UPGRADE-1` 声称的完全一致。
+- **脚本改进（修掉 §10.1 的"截早了"）**：新增 `-AppExe`（可对任意 exe 取证）+
+  **Host 就绪轮询**（轮询 `host.log` 直到 `core_service ready`/`host_bridge ready`，最多 40 s）。
+- **结果：5/5 页，且 Host 已就绪** —— `installed/host.log` 实测
+  **`core_service ready: True`**、**`host_bridge ready: True`**。
+  哈希全不同：bookshelf 49,761 / library 51,008 / reader 49,613 / settings 65,436 / workbench 56,684。
+- **★ 目视确认 `installed/page-bookshelf.png`**：`New Manga`、
+  `资料柜 1 / 工位 2 / 控制台 3`（高亮资料柜）、**`资料柜 1 / 1 作品`**、
+  **有书** `家族战记 · 169 页`、`阅读进度 读到第 2 / 169 页 · 1%`、
+  `章节账本 01 17卷 / 169 页` + 页列表 `001 001.jpg`…`015 015.jpg`、
+  **底部 `Host 就绪`**（不再是 `Host 启动中...`）。
+- **★ 更正我上一轮的两个"发现"**：
+  1. **§10.1「截早了」→ 已修复**（Host 就绪轮询生效）；
+  2. **§10.2「数据状态不一致」→ 是我误判**。`0 / 0 作品` 不是"不同数据根"，
+     而是**截图时 Host 还没就绪、书还没加载**；就绪后同一数据根显示 `1 / 1 作品`。
+     **我把它列为"待查的不一致"，实际是时序问题。**
+- **仍未解决**：阅读器 overlay（F11 后的沉浸窗口）仍未截到；未验 `--presentation-host`/`--theme`/其它 shell 变体。

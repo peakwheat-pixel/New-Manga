@@ -1,0 +1,60 @@
+2026-11-15T02:18:04.4575818+00:00 INFO single-instance acquired: Global\NewManga.Host (abandoned_recovered=False)
+2026-11-15T02:18:04.4648232+00:00 INFO mode=ReadWrite reason=parity reached and no legacy shell running
+2026-11-15T02:18:04.4661039+00:00 INFO first-run backup skipped: backup already exists
+2026-11-15T02:18:04.8739332+00:00 INFO core_service ready (1 wire frames)
+2026-11-15T02:18:04.9856356+00:00 INFO host_bridge ready (1 wire frames)
+2026-11-15T02:18:04.9860501+00:00 INFO credential port ready (Windows Credential Manager)
+2026-11-15T02:18:04.9892340+00:00 INFO host-control session opened (host_UkqHcOsobn0rb7GHTOrF_WUOsy3SfdVJokLSCZ2-_XM)
+2026-11-15T02:18:04.9996828+00:00 INFO self-check status=Passed code=- detail=core_protocol=2.3 required_minor=3 capabilities=[library.list_books,source.read/1,source.resolve-secret/1,source.read.run/1,source.reattest/1,library.delete.preview/1,library.trash.read/1,library.trash.write/1,source.sync.scan/1,source.sync.plan/1,source.sync.apply/1,source.sync.relink/1,source.sync.repoint/1,source.sync.resync/1,source.sync.operation/1,source.sync.enumerate/1,source.sync.plan-materialization/1]
+2026-11-15T02:18:05.0011989+00:00 INFO source scan scheduler started interval=900s max_targets=8 max_bytes=268435456 cold_start_enumeration=True
+2026-11-15T02:18:05.0030593+00:00 INFO source watch started enabled=True max_watches=256 buffer=65536 debounce_ms=2000
+2026-11-15T02:18:05.0030713+00:00 INFO source watcher armed enabled=true max_watches=256 debounce_ms=2000
+2026-11-15T02:18:05.0119324+00:00 INFO source scan refresh targets=0 skipped=0 added=0 updated=0
+2026-11-15T02:18:17.9885532+00:00 INFO single-instance acquired: Global\NewManga.Host (abandoned_recovered=False)
+2026-11-15T02:18:17.9955666+00:00 INFO mode=ReadWrite reason=parity reached and no legacy shell running
+2026-11-15T02:18:17.9967875+00:00 INFO first-run backup skipped: backup already exists
+2026-11-15T02:18:18.4029262+00:00 INFO core_service ready (1 wire frames)
+2026-11-15T02:18:18.5119296+00:00 INFO host_bridge ready (1 wire frames)
+2026-11-15T02:18:18.5121163+00:00 INFO credential port ready (Windows Credential Manager)
+2026-11-15T02:18:18.5151794+00:00 INFO host-control session opened (host_HTqfScw8mdWqv0E6CDQhRpHZnL-ZuAcBWPrV1hQOCow)
+2026-11-15T02:18:18.5240941+00:00 INFO self-check status=Passed code=- detail=core_protocol=2.3 required_minor=3 capabilities=[library.list_books,source.read/1,source.resolve-secret/1,source.read.run/1,source.reattest/1,library.delete.preview/1,library.trash.read/1,library.trash.write/1,source.sync.scan/1,source.sync.plan/1,source.sync.apply/1,source.sync.relink/1,source.sync.repoint/1,source.sync.resync/1,source.sync.operation/1,source.sync.enumerate/1,source.sync.plan-materialization/1]
+2026-11-15T02:18:18.5254540+00:00 INFO source scan scheduler started interval=900s max_targets=8 max_bytes=268435456 cold_start_enumeration=True
+2026-11-15T02:18:18.5271998+00:00 INFO source watch started enabled=True max_watches=256 buffer=65536 debounce_ms=2000
+2026-11-15T02:18:18.5272119+00:00 INFO source watcher armed enabled=true max_watches=256 debounce_ms=2000
+2026-11-15T02:18:18.5359898+00:00 INFO source scan refresh targets=0 skipped=0 added=0 updated=0
+2026-11-15T02:18:31.4746594+00:00 INFO single-instance acquired: Global\NewManga.Host (abandoned_recovered=False)
+2026-11-15T02:18:31.4817154+00:00 INFO mode=ReadWrite reason=parity reached and no legacy shell running
+2026-11-15T02:18:31.4828968+00:00 INFO first-run backup skipped: backup already exists
+2026-11-15T02:18:31.8873685+00:00 INFO core_service ready (1 wire frames)
+2026-11-15T02:18:32.0006389+00:00 INFO host_bridge ready (1 wire frames)
+2026-11-15T02:18:32.0008641+00:00 INFO credential port ready (Windows Credential Manager)
+2026-11-15T02:18:32.0040569+00:00 INFO host-control session opened (host_EKm57aFLfT-bsS_SA6EVJWv3teBoBnknUutKmiCTkJI)
+2026-11-15T02:18:32.0131007+00:00 INFO self-check status=Passed code=- detail=core_protocol=2.3 required_minor=3 capabilities=[library.list_books,source.read/1,source.resolve-secret/1,source.read.run/1,source.reattest/1,library.delete.preview/1,library.trash.read/1,library.trash.write/1,source.sync.scan/1,source.sync.plan/1,source.sync.apply/1,source.sync.relink/1,source.sync.repoint/1,source.sync.resync/1,source.sync.operation/1,source.sync.enumerate/1,source.sync.plan-materialization/1]
+2026-11-15T02:18:32.0144979+00:00 INFO source scan scheduler started interval=900s max_targets=8 max_bytes=268435456 cold_start_enumeration=True
+2026-11-15T02:18:32.0161524+00:00 INFO source watch started enabled=True max_watches=256 buffer=65536 debounce_ms=2000
+2026-11-15T02:18:32.0161628+00:00 INFO source watcher armed enabled=true max_watches=256 debounce_ms=2000
+2026-11-15T02:18:32.0249314+00:00 INFO source scan refresh targets=0 skipped=0 added=0 updated=0
+2026-11-15T02:18:44.9674145+00:00 INFO single-instance acquired: Global\NewManga.Host (abandoned_recovered=False)
+2026-11-15T02:18:44.9745371+00:00 INFO mode=ReadWrite reason=parity reached and no legacy shell running
+2026-11-15T02:18:44.9757260+00:00 INFO first-run backup skipped: backup already exists
+2026-11-15T02:18:45.3863475+00:00 INFO core_service ready (1 wire frames)
+2026-11-15T02:18:45.4977974+00:00 INFO host_bridge ready (1 wire frames)
+2026-11-15T02:18:45.4979885+00:00 INFO credential port ready (Windows Credential Manager)
+2026-11-15T02:18:45.5012090+00:00 INFO host-control session opened (host_Yurdr8IJNm3BeHIYe_tbW07j4hP3OZA5dF4EazJ0iCs)
+2026-11-15T02:18:45.5104576+00:00 INFO self-check status=Passed code=- detail=core_protocol=2.3 required_minor=3 capabilities=[library.list_books,source.read/1,source.resolve-secret/1,source.read.run/1,source.reattest/1,library.delete.preview/1,library.trash.read/1,library.trash.write/1,source.sync.scan/1,source.sync.plan/1,source.sync.apply/1,source.sync.relink/1,source.sync.repoint/1,source.sync.resync/1,source.sync.operation/1,source.sync.enumerate/1,source.sync.plan-materialization/1]
+2026-11-15T02:18:45.5121475+00:00 INFO source scan scheduler started interval=900s max_targets=8 max_bytes=268435456 cold_start_enumeration=True
+2026-11-15T02:18:45.5137831+00:00 INFO source watch started enabled=True max_watches=256 buffer=65536 debounce_ms=2000
+2026-11-15T02:18:45.5137941+00:00 INFO source watcher armed enabled=true max_watches=256 debounce_ms=2000
+2026-11-15T02:18:45.5231804+00:00 INFO source scan refresh targets=0 skipped=0 added=0 updated=0
+2026-11-15T02:18:58.3991203+00:00 INFO single-instance acquired: Global\NewManga.Host (abandoned_recovered=False)
+2026-11-15T02:18:58.4060379+00:00 INFO mode=ReadWrite reason=parity reached and no legacy shell running
+2026-11-15T02:18:58.4072354+00:00 INFO first-run backup skipped: backup already exists
+2026-11-15T02:18:58.8150962+00:00 INFO core_service ready (1 wire frames)
+2026-11-15T02:18:58.9244034+00:00 INFO host_bridge ready (1 wire frames)
+2026-11-15T02:18:58.9245935+00:00 INFO credential port ready (Windows Credential Manager)
+2026-11-15T02:18:58.9276968+00:00 INFO host-control session opened (host_xkdmSqRctCtSGnsn40Ct8A7pY5hHUBsCEFB4Upc5joY)
+2026-11-15T02:18:58.9366501+00:00 INFO self-check status=Passed code=- detail=core_protocol=2.3 required_minor=3 capabilities=[library.list_books,source.read/1,source.resolve-secret/1,source.read.run/1,source.reattest/1,library.delete.preview/1,library.trash.read/1,library.trash.write/1,source.sync.scan/1,source.sync.plan/1,source.sync.apply/1,source.sync.relink/1,source.sync.repoint/1,source.sync.resync/1,source.sync.operation/1,source.sync.enumerate/1,source.sync.plan-materialization/1]
+2026-11-15T02:18:58.9380536+00:00 INFO source scan scheduler started interval=900s max_targets=8 max_bytes=268435456 cold_start_enumeration=True
+2026-11-15T02:18:58.9397353+00:00 INFO source watch started enabled=True max_watches=256 buffer=65536 debounce_ms=2000
+2026-11-15T02:18:58.9397474+00:00 INFO source watcher armed enabled=true max_watches=256 debounce_ms=2000
+2026-11-15T02:18:58.9481364+00:00 INFO source scan refresh targets=0 skipped=0 added=0 updated=0

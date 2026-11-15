@@ -22,6 +22,8 @@ param(
     [int]$SettleMs = 2200,
     [int]$Width = 1416,
     [int]$Height = 939,
+    [string]$AppExe = '',
+    [int]$HostReadyTimeoutSeconds = 40,
     [switch]$SkipBuild
 )
 
@@ -98,7 +100,11 @@ function Save-WindowCapture {
     return $null
 }
 
-$appExe = Join-Path $repoRoot 'apps\desktop-avalonia\src\NewManga.App\bin\Debug\net9.0\NewManga.App.exe'
+if ([string]::IsNullOrWhiteSpace($AppExe)) {
+    $appExe = Join-Path $repoRoot 'apps\desktop-avalonia\src\NewManga.App\bin\Debug\net9.0\NewManga.App.exe'
+} else {
+    $appExe = $AppExe
+}
 if (-not (Test-Path $appExe)) {
     $candidate = Get-ChildItem -Recurse -Filter 'NewManga.App.exe' -Path (Join-Path $repoRoot 'apps\desktop-avalonia\src') -ErrorAction SilentlyContinue |
         Sort-Object LastWriteTime -Descending | Select-Object -First 1
@@ -139,7 +145,19 @@ foreach ($page in $pages) {
     }
 
     Start-Sleep -Milliseconds $SettleMs
-    $title = [FpNative]::GetWindowTextLength($handle) -gt 0 ? '' : ''
+    # page-bookshelf.png was captured while the status bar still said "Host 启动中...".
+    # Poll host.log for the ready marker instead of relying on a fixed sleep.
+    $hostLog = Join-Path $OutputRoot 'host.log'
+    $deadline = (Get-Date).AddSeconds($HostReadyTimeoutSeconds)
+    while ((Get-Date) -lt $deadline) {
+        if (Test-Path $hostLog) {
+            $tail = Get-Content $hostLog -Raw -ErrorAction SilentlyContinue
+            if ($tail -and ($tail -match 'host_bridge ready' -or $tail -match 'core_service ready')) { break }
+        }
+        if ($proc.HasExited) { break }
+        Start-Sleep -Milliseconds 300
+    }
+    $title = ''
     $reason = Save-WindowCapture -Handle $handle -Path $png
     $captured = (Test-Path $png)
 
