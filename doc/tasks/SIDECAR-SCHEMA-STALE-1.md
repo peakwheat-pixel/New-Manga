@@ -243,6 +243,27 @@ color 全部成功，真正失败的是 	ranslate。测试 :411 断言 color 必
 其注释「chain still stops at color」已不成立；投影层显示 pending 是因为
 测试自己注释所述的「earlier stages stay pending」（已被越过），与账本自洽。
 
+
+
+#### ⚠️ 组 B 的定性已撤销（2026-11-16，本人自查推翻）
+
+下方「组 B = settings 域命令返回 UNKNOWN_COMMAND」的结论**是错的**，原因在我自己的 probe：
+我发的是**点号** settings.network_profiles_create，而 core 注册的是**下划线**
+settings_network_profiles_create。点号被拒是正确行为，不是缺陷。
+
+用正确格式重跑（probe_b1_fixed.py）B1 前 6 条全部正常，含第 6 条 settings_network_profiles_create = ok。
+
+三条反证推翻「settings 未挂载」的推断：
+- core_service.py:471-491 的 _P15_SETTINGS_COMMANDS 含 19 个 settings 命令；
+- core_service.py:1252 有 self._p15_settings = P15SettingsCommands(core)；
+- HostCommandRegistry.cs:311 映射正确（下划线）、HostCommandDispatcher.cs:704-711 payload 构造正确。
+
+另更正：capabilities 只有 17 个是**能力声明**（如 library.list_books），
+**不等于命令面**（66 条快照），两者不能互相证明。
+
+**组 B 当前仍未定位**：确定的是失败发生在 Host 侧到 core 之间，
+应读 HostCommandDispatcher.InvokeAsync 里 INVALID_REQUEST 的抛出点与判定条件。
+
 **组 B = settings 域命令返回 UNKNOWN_COMMAND**。按 B1 顺序实测：
 
 `
