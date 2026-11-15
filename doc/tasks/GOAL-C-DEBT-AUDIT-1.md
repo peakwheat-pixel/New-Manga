@@ -7,7 +7,7 @@ status: done
 suggested_owner: DSH
 owner: DSH
 reviewer: （见 r1）
-integration_commit: PENDING
+integration_commit: 876dcfd88
 canonical_evidence_status: complete
 resource_closeout_status: complete
 depends_on:
@@ -109,7 +109,7 @@ $historicalAcExempt = ($htmlAcStyle -and $metadata['governance_version'] -eq '3'
 
 | evidence_id | AC/Gate | path | commit | sha256 | class | sha256_basis |
 |---|---|---|---|---|---|---|
-| EV-GCD-01 | AC1/AC3/AC4 复算证据（残留 0；blocked 16→12） | verification/GOAL-C-DEBT-AUDIT-1/audit.log | 1f3bd0d84 | PIN_PENDING | CANONICAL | BLOB |
+| EV-GCD-01 | AC1/AC3/AC4 复算证据（残留 0；blocked 16→12） | verification/GOAL-C-DEBT-AUDIT-1/audit.log | 876dcfd88 | 42d1c8fafc1e76326ac3679e40ee4882de5eaddb22482c7767dd64c168f7f52d | CANONICAL | BLOB |
 
 ## Resource Manifest
 
