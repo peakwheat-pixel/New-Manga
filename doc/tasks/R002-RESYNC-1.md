@@ -134,10 +134,10 @@ PowerShell 子进程在收到请求后输出两行：
 
 | evidence_id | AC/Gate | path | commit | sha256 | class | sha256_basis |
 |---|---|---|---|---|---|---|
-| EV-R002-01 | AC1/AC3/AC4 证据总述 | verification/R002-RESYNC-1/README.md | 994f58730 | PIN_PENDING | CANONICAL | BLOB |
-| EV-R002-02 | AC4 新建测试绿（4 passed） | verification/R002-RESYNC-1/test-green.log | 994f58730 | PIN_PENDING | CANONICAL | BLOB |
-| EV-R002-03 | AC5 全量不回归（203/0/30） | verification/R002-RESYNC-1/coreclient-full.log | 994f58730 | PIN_PENDING | CANONICAL | BLOB |
-| EV-R002-04 | AC3 修复 diff（两处调用点 + helper） | verification/R002-RESYNC-1/fix.diff | 994f58730 | PIN_PENDING | CANONICAL | BLOB |
+| EV-R002-01 | AC1/AC3/AC4 证据总述 | verification/R002-RESYNC-1/README.md | 99b0aef1d | fe44d01752c33534bb81ae8ddca7e442c9007a0fe837b0d51bef1b8ce5b3720d | CANONICAL | BLOB |
+| EV-R002-02 | AC4 新建测试绿（4 passed） | verification/R002-RESYNC-1/test-green.log | 99b0aef1d | afb1acab351036ba10b864bfcf14c135900c53afd9551a74f44ce6f25448394a | CANONICAL | BLOB |
+| EV-R002-03 | AC5 全量不回归（203/0/30） | verification/R002-RESYNC-1/coreclient-full.log | 99b0aef1d | e2abde13e8ad87ee55907c91b1a5a4217245c03241827ac0185ba843731e9ca4 | CANONICAL | BLOB |
+| EV-R002-04 | AC3 修复 diff（两处调用点 + helper） | verification/R002-RESYNC-1/fix.diff | 99b0aef1d | 84a626b982499f0ecb6c76577f883dbc8cfdc95e705816f8ede73a4d0a2da8a0 | CANONICAL | BLOB |
 
 ## Resource Manifest
 
