@@ -80,8 +80,8 @@ allowed_paths:
 - [x] **AC5 视图拖拽手势**：书架章节列表支持鼠标拖拽重排（拖拽超过阈值才触发，单击仍为选中章节），拖放结束调用 `ReorderChapterAsync`。 <!-- verified: grep:DragDrop.SetAllowDrop@apps/desktop-avalonia/src/NewManga.App/Views/Fluent/ShelfPageView.cs:161 + grep:DoDragDropAsync@apps/desktop-avalonia/src/NewManga.App/Views/Fluent/ShelfPageView.cs:601 -->
 - [x] **AC6 契约零变化**：`ListChapters` 仍按 `sort_order` 返回；wire 命令、字段、DTO 与 `M2-C1`/`C-07` 字节不变（`generate_api_inventory.py --check` 仍 `1/80/6=87`；`verify_pins.ps1` 18/18）。 <!-- verified: gate:inventory 1/80/6=87 + pins 18/18 @2026-11-15 -->
 - [x] **AC7 新增章节排末尾**：在已有手动顺序的书中新增章节后，新章节位于列表末尾（固定既有 `max+1` 行为，防回归）。 <!-- verified: test:test_chapter_created_after_manual_reorder_lands_at_the_end@tests/storage/test_chapter_reorder_atomic.py:134 -->
-- [x] **AC8 失败与刷新不假装成功**：重排失败、并发冲突（`INVALID_REQUEST`）或刷新后，UI 不得显示未落库的顺序；错误路径有可见文案。 <!-- verified: test:ReorderChapter_WhenTheWriteFails_KeepsTheVisibleOrderAndSaysSo@ShelfChapterReorderTests.cs:50 -->
-- [x] **AC9 并发保护**：同一实例内的重入拖拽（前一次 in-flight 未完成）不得产生交叠写入；被拒绝/失败时 UI 保持已落库顺序。 <!-- verified: test:ReorderChapter_WhileAWriteIsInFlight_RefusesTheSecondDrag@ShelfChapterReorderTests.cs:128 -->
+- [x] **AC8 失败与刷新不假装成功**：重排失败、并发冲突（`INVALID_REQUEST`）或刷新后，UI 不得显示未落库的顺序；错误路径有可见文案。 <!-- verified: test:ReorderChapter_WhenTheWriteFails_KeepsTheVisibleOrderAndSaysSo@apps/desktop-avalonia/tests/NewManga.App.Tests/ShelfChapterReorderTests.cs:50 -->
+- [x] **AC9 并发保护**：同一实例内的重入拖拽（前一次 in-flight 未完成）不得产生交叠写入；被拒绝/失败时 UI 保持已落库顺序。 <!-- verified: test:ReorderChapter_WhileAWriteIsInFlight_RefusesTheSecondDrag@apps/desktop-avalonia/tests/NewManga.App.Tests/ShelfChapterReorderTests.cs:128 -->
 - [ ] **AC10 不回归**：`App.Tests`、`CoreClient.Tests` 与 Python 相关测试全绿；无新增 skip/xfail、无放宽既有断言。 <!-- blocked: App.Tests 955/0/11/966 通过(2026-11-15)；CoreClient 与 Python 套件本轮未跑 -->
 
 ## 允许修改范围
