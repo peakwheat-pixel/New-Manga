@@ -50,13 +50,13 @@
 
 ## 5. 真实剩余工作（按风险排序）
 
-| 优先级 | 项 | 为何排这个位置 |
-|---|---|---|
-| **P1** | **4 / R-005 取消失步** | 最现实的触发路径：任何一次 `CancellationToken` 取消都会让流永久失步，且**不置 poison**（无法自愈） |
-| **P1** | **3 / R-002 错配无重同步** | 协议按行一次一响应，抛错即 off-by-one，后续所有调用错位 |
-| P2 | **5 / Dispose 与在途命令竞态** | `StopAsync` 不持 lease，在途命令得 `ProcessExited`（表现为随机失败） |
-| P2 | **1 / 统一到传输层租约** | 架构一致性；`ExchangeAsync` 仍 `public` 是「未来直调即绕过」的根因 |
-| P3 | **2 / fail-open 收紧** | 需要先定「缺失 id 时应 fail-closed 还是允许」的契约，属设计决策 |
+| 优先级 | 项 | 为何排这个位置 | 建议范围 |
+|---|---|---|---|---|
+| **P1** | **4 / R-005 取消失步** | 最现实的触发路径：任何一次 `CancellationToken` 取消都会让流永久失步，且**不置 poison**（无法自愈） | 把 `when (!cancellationToken.IsCancellationRequested)` 的 poison 分支扩展到**主动取消**（或统一在 `finally` 判定「请求已写出但响应未读」时置 poison）；测试：发出请求后立即 cancel，断言下次调用得 `POISONED` 而非读到残留帧 |
+| **P1** | **3 / R-002 错配无重同步** | 协议按行一次一响应，抛错即 off-by-one，后续所有调用错位 | `SidecarProcess` 增 `DrainUntilAsync(expectedId, maxFrames)`；`CoreServiceClient` 错配时先有界 drain，超限再 poison；测试：「迟到旧响应」场景后续调用仍取到正确响应（**当前代码上必须先红**） |
+| P2 | **5 / Dispose 与在途命令竞态** | `StopAsync` 不持 lease，在途命令得 `ProcessExited`（表现为随机失败） | `DisposeAsync` 内先 `AcquireExchangeLeaseAsync` 再 Stop/Dispose（或显式记录「不做租约、以 poison 语义豁免」并加注释说明理由） |
+| P2 | **1 / 统一到传输层租约** | 架构一致性；`ExchangeAsync` 仍 `public` 是「未来直调即绕过」的根因 | `CoreServiceClient` 的 `_pipeGate` 换成 `AcquireExchangeLeaseAsync`；`ExchangeAsync` 降为 `internal`（或加 `[Obsolete]` 引导） |
+| P3 | **2 / fail-open 收紧** | 需要先定「缺失 id 时应 fail-closed 还是允许」的契约，属设计决策 | 先由 DSH 出契约判定（缺 id ⇒ fail-closed 或允许+记 warn），再据契约改 `EnsureResponseBelongsToRequest` 与 bridge 侧 |
 
 ## 6. 第 5 次同类错误（如实记录）
 

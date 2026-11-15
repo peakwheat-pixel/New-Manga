@@ -27,8 +27,9 @@ L42: await _exchangeGate.WaitAsync(cancellationToken).ConfigureAwait(false);
 L43: return new ExchangeLease(_exchangeGate);
 L219: public async Task<WireFrame> ExchangeAsync(
 
-## d) SendRawAsync 故意不校验 id（设计如此）
+## d) [已撤回框定] SendRawAsync 是测试钩子，不构成 E-7 第 2 项的证据
 CoreServiceClient.cs:2385 comment: request_id (if any), so we do not validate the id here
+（注：该注释描述的是测试钩子；E-7 第 2 项指生产路径，见下）
 
 ## e) 错配抛异常、无重同步（仍开）
 L2411: $"response request_id '{actual}' does not match request '{requestId}': "
@@ -52,3 +53,21 @@ L2630: await _process.DisposeAsync().ConfigureAwait(false);
 ## 权威枚举来源
 doc/tasks/PIPE-EXCLUSIVE-TRANSPORT-1.md:123-129
 doc/reviews/MAINT-1-EXISTING-FINDINGS-2026-11-14.md:162-168
+
+
+## 2) 生产路径 fail-open（仍开，r2 补录）
+# file: CoreServiceClient.cs
+L2406: if (response.RequestId is { } actual && !string.Equals(actual, requestId, StringComparison.Ordinal))
+# file: Bridge/HostBridgeClient.cs
+L322: if (expectedId is { } wanted
+L323: && root.TryGetProperty("id", out var actualId)
+L324: && actualId.ValueKind == JsonValueKind.Number
+L325: && actualId.TryGetInt32(out var actual)
+L326: && actual != wanted)
+L327: {
+L328: throw new SidecarException(
+L329: SidecarErrorCode.MalformedResponse,
+L330: SidecarSpec.HostBridgeName,
+L331: $"{method}: response id {actual} does not match request {wanted} "
+L332: + "(the host_bridge pipe returned another command's response)");
+L333: }
