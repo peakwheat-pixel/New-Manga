@@ -198,3 +198,30 @@ scripts/test.ps1 **仍未全绿**：schema/管道/encodings 三类错误已归�
 **5 failed / 251 passed**（INVALID_REQUEST、pending 超时等），
 判断为新 bundle 与 v14 源码对齐后暴露的**测试期望过时**问题，需独立诊断。
 本卡**不宣称 test 全绿**。
+
+### 组 C 已精确定位（2026-11-16，读源码得出，非推断）
+
+`RunBindingFixTests.ModelsBuild_BookRun_WithInjectedBindings_OcrNoLongerProviderNotConfigured`（`RunBindingFixTests.cs:347`）：
+
+| 行 | 断言 | 实测 |
+|---|---|---|
+| `:401` | `Assert.Equal("completed_with_failures", terminal)` | 通过 |
+| `:408` | `Assert.DoesNotContain("failed", ocrStates)` | 通过（OCR 成功） |
+| `:410` | `Assert.True(byType.TryGetValue("color", out colorStates))` | 通过（有 color 步骤） |
+| `:411` | `Assert.Contains("failed", colorStates)` | **失败** —— `colorStates` 全是 `"pending"` |
+
+测试意图（源码注原文）：OCR 成功 → chain 前进到 color → color 因 **stub analyzer 失败**而 `failed`。
+实测：整条 run 确实 `completed_with_failures`、OCR 确实无 failed，**但 color 不是 failed 而是 pending**。
+
+**三种待区分的假设**（下轮处理，本轮不下结论）：
+a) chain 根本没跑到 color；b) color 跑了但失败没被写成 `failed`；c) 投影层把 `failed` 映射成 `pending`。
+
+区分手段就在测试里：`:386` 会把 `library.db` 复制到 evidence，`:383-385` 指出
+`verification/RUN-BINDING-FIX-1/tools/check_run_binding.py` 断言精确的 per-step error codes。
+⇒ 下一步读那份 `library.db` 与 `check_run_binding.py`，**而不是继续从 stderr 推断**。
+
+### 组 B 仍未定位
+
+`CommandWiringB1/B2Tests` 的 `[INVALID_REQUEST]`：测试在 `Run()` 循环里调用，异常不带命令名。
+本轮尝试插入临时诊断（打印 `name`）时，脚本锚点不匹配未生效，**未能在本轮定位**。
+下一步需按实际缩进重新插入诊断，或直接在 `HostCommandDispatcher.InvokeAsync` 抛异常时附带命令名。
