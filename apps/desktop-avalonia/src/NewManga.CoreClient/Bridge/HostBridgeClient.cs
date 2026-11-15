@@ -291,7 +291,19 @@ public sealed class HostBridgeClient : IAsyncDisposable
 
         using var lease = await _process.AcquireExchangeLeaseAsync(cancellationToken).ConfigureAwait(false);
         var frame = await _process.ExchangeAsync(line, escapeNonAscii: true, timeout, cancellationToken).ConfigureAwait(false);
-        return ParseResponse(method, frame.ResponseLine, requestId);
+        // E-7 bridge-side (Codex ruling 2026-11-16 §3.2): the parser only judges and throws; the call site
+        // that HOLDS the process must disable the channel. Otherwise the channel looks reusable while an
+        // unattributable frame may still be queued. Runs before the lease is released, so a queued request
+        // cannot write ahead of the poison. Business BridgeExceptions keep the session usable.
+        try
+        {
+            return ParseResponse(method, frame.ResponseLine, requestId);
+        }
+        catch (SidecarException ex) when (ex.Code == SidecarErrorCode.MalformedResponse)
+        {
+            _process.Poison();
+            throw;
+        }
     }
 
     private int NextRequestId() => Interlocked.Increment(ref _requestCounter);
@@ -319,17 +331,40 @@ public sealed class HostBridgeClient : IAsyncDisposable
             // PIPE-EXCLUSIVE-TRANSPORT-1 / E-7 (window 4): a response carrying a DIFFERENT id means this
             // pipe handed back another command's answer. Ignoring that is how a caller can silently read
             // someone else's payload.
-            if (expectedId is { } wanted
-                && root.TryGetProperty("id", out var actualId)
-                && actualId.ValueKind == JsonValueKind.Number
-                && actualId.TryGetInt32(out var actual)
-                && actual != wanted)
+            //
+            // E-7 bridge-side fail-closed (Codex ruling 2026-11-16 §3.1): the old predicate was
+            // `expectedId is {} && TryGetProperty("id", ...) && Number && TryGetInt32 && actual != wanted`,
+            // which SHORT-CIRCUITED to "accept" whenever the id was absent or not an Int32 -- so a
+            // production command silently accepted an id-less frame. Now a production response
+            // (expectedId != null) must carry exactly the expected Int32; missing / wrong-typed /
+            // mismatched are all MalformedResponse. `raw` (expectedId == null) keeps its
+            // observe-whatever-came-back semantics, per the ruling's hole 1.
+            if (expectedId is { } wanted)
             {
-                throw new SidecarException(
-                    SidecarErrorCode.MalformedResponse,
-                    SidecarSpec.HostBridgeName,
-                    $"{method}: response id {actual} does not match request {wanted} "
-                    + "(the host_bridge pipe returned another command's response)");
+                if (!root.TryGetProperty("id", out var actualId))
+                {
+                    throw new SidecarException(
+                        SidecarErrorCode.MalformedResponse,
+                        SidecarSpec.HostBridgeName,
+                        $"{method}: response is missing id (expected Int32 {wanted})");
+                }
+
+                if (actualId.ValueKind != JsonValueKind.Number || !actualId.TryGetInt32(out var actual))
+                {
+                    throw new SidecarException(
+                        SidecarErrorCode.MalformedResponse,
+                        SidecarSpec.HostBridgeName,
+                        $"{method}: response id is not an Int32 JSON number "
+                        + $"(expected {wanted}; kind {actualId.ValueKind})");
+                }
+
+                if (actual != wanted)
+                {
+                    throw new SidecarException(
+                        SidecarErrorCode.MalformedResponse,
+                        SidecarSpec.HostBridgeName,
+                        $"{method}: response id {actual} does not match request {wanted}");
+                }
             }
 
             if (root.TryGetProperty("error", out var error) && error.ValueKind == JsonValueKind.Object)

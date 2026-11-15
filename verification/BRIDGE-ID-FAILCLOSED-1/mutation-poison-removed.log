@@ -1,0 +1,13 @@
+# 变异测试：删掉 SendAsync 的 _process.Poison()
+head: 8b4bc2748（变异在工作树）
+timestamp: 2026-11-16T02:27:31+08:00
+mutation: catch (SidecarException) { _process.Poison(); throw; } -> catch { throw; }
+command: dotnet test NewManga.CoreClient.Tests（全量）
+result: EXIT=0
+判定：
+**存活**（无测试覆盖 poison 接线）
+
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.CoreClient.Tests\bin\Debug\net9.0\NewManga.CoreClient.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+
+已通过! - 失败:     0，通过:   222，已跳过:    30，总计:   252，持续时间: 42 s - NewManga.CoreClient.Tests.dll (net9.0)

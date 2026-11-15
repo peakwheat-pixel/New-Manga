@@ -1,0 +1,141 @@
+diff --git a/apps/desktop-avalonia/src/NewManga.CoreClient/Bridge/HostBridgeClient.cs b/apps/desktop-avalonia/src/NewManga.CoreClient/Bridge/HostBridgeClient.cs
+index a55e7bb90..b2b300b77 100644
+--- a/apps/desktop-avalonia/src/NewManga.CoreClient/Bridge/HostBridgeClient.cs
++++ b/apps/desktop-avalonia/src/NewManga.CoreClient/Bridge/HostBridgeClient.cs
+@@ -291,7 +291,19 @@ public sealed class HostBridgeClient : IAsyncDisposable
+ 
+         using var lease = await _process.AcquireExchangeLeaseAsync(cancellationToken).ConfigureAwait(false);
+         var frame = await _process.ExchangeAsync(line, escapeNonAscii: true, timeout, cancellationToken).ConfigureAwait(false);
+-        return ParseResponse(method, frame.ResponseLine, requestId);
++        // E-7 bridge-side (Codex ruling 2026-11-16 §3.2): the parser only judges and throws; the call site
++        // that HOLDS the process must disable the channel. Otherwise the channel looks reusable while an
++        // unattributable frame may still be queued. Runs before the lease is released, so a queued request
++        // cannot write ahead of the poison. Business BridgeExceptions keep the session usable.
++        try
++        {
++            return ParseResponse(method, frame.ResponseLine, requestId);
++        }
++        catch (SidecarException ex) when (ex.Code == SidecarErrorCode.MalformedResponse)
++        {
++            _process.Poison();
++            throw;
++        }
+     }
+ 
+     private int NextRequestId() => Interlocked.Increment(ref _requestCounter);
+@@ -319,17 +331,40 @@ public sealed class HostBridgeClient : IAsyncDisposable
+             // PIPE-EXCLUSIVE-TRANSPORT-1 / E-7 (window 4): a response carrying a DIFFERENT id means this
+             // pipe handed back another command's answer. Ignoring that is how a caller can silently read
+             // someone else's payload.
+-            if (expectedId is { } wanted
+-                && root.TryGetProperty("id", out var actualId)
+-                && actualId.ValueKind == JsonValueKind.Number
+-                && actualId.TryGetInt32(out var actual)
+-                && actual != wanted)
++            //
++            // E-7 bridge-side fail-closed (Codex ruling 2026-11-16 §3.1): the old predicate was
++            // `expectedId is {} && TryGetProperty("id", ...) && Number && TryGetInt32 && actual != wanted`,
++            // which SHORT-CIRCUITED to "accept" whenever the id was absent or not an Int32 -- so a
++            // production command silently accepted an id-less frame. Now a production response
++            // (expectedId != null) must carry exactly the expected Int32; missing / wrong-typed /
++            // mismatched are all MalformedResponse. `raw` (expectedId == null) keeps its
++            // observe-whatever-came-back semantics, per the ruling's hole 1.
++            if (expectedId is { } wanted)
+             {
+-                throw new SidecarException(
+-                    SidecarErrorCode.MalformedResponse,
+-                    SidecarSpec.HostBridgeName,
+-                    $"{method}: response id {actual} does not match request {wanted} "
+-                    + "(the host_bridge pipe returned another command's response)");
++                if (!root.TryGetProperty("id", out var actualId))
++                {
++                    throw new SidecarException(
++                        SidecarErrorCode.MalformedResponse,
++                        SidecarSpec.HostBridgeName,
++                        $"{method}: response is missing id (expected Int32 {wanted})");
++                }
++
++                if (actualId.ValueKind != JsonValueKind.Number || !actualId.TryGetInt32(out var actual))
++                {
++                    throw new SidecarException(
++                        SidecarErrorCode.MalformedResponse,
++                        SidecarSpec.HostBridgeName,
++                        $"{method}: response id is not an Int32 JSON number "
++                        + $"(expected {wanted}; kind {actualId.ValueKind})");
++                }
++
++                if (actual != wanted)
++                {
++                    throw new SidecarException(
++                        SidecarErrorCode.MalformedResponse,
++                        SidecarSpec.HostBridgeName,
++                        $"{method}: response id {actual} does not match request {wanted}");
++                }
+             }
+ 
+             if (root.TryGetProperty("error", out var error) && error.ValueKind == JsonValueKind.Object)
+diff --git a/apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Bridge/BridgeResponseIdValidationTests.cs b/apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Bridge/BridgeResponseIdValidationTests.cs
+index b6f099f9e..cf31d7eb3 100644
+--- a/apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Bridge/BridgeResponseIdValidationTests.cs
++++ b/apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Bridge/BridgeResponseIdValidationTests.cs
+@@ -39,15 +39,56 @@ public sealed class BridgeResponseIdValidationTests
+     }
+ 
+     /// <summary>
+-    /// Known limitation (r1 复核 R-002): an id-less (or non-numeric id) response still passes — the
+-    /// validation is fail-open for those shapes. Pinned so a future fail-closed change is deliberate.
++    /// E-7 bridge-side fail-closed (Codex ruling 2026-11-16 §4): this used to pin the FAIL-OPEN behaviour
++    /// for an id-less response. The ruling made a production response require the exact Int32 id, so a
++    /// missing id is now a typed rejection. Migrated from <c>MissingId_CurrentlyFailsOpen_DocumentedLimitation</c>.
+     /// </summary>
+     [Fact]
+-    public void MissingId_CurrentlyFailsOpen_DocumentedLimitation()
++    public void MissingId_ThrowsMalformedResponse()
+     {
+         var line = "{\"result\":{\"ok\":true}}";
+ 
+-        var result = HostBridgeClient.ParseResponse("Ping", line, expectedId: 1);
++        var error = Assert.Throws<SidecarException>(
++            () => HostBridgeClient.ParseResponse("Ping", line, expectedId: 1));
++
++        Assert.Equal(SidecarErrorCode.MalformedResponse, error.Code);
++        Assert.Contains("missing id", error.Message, StringComparison.Ordinal);
++        Assert.Contains("1", error.Message, StringComparison.Ordinal);
++    }
++
++    /// <summary>
++    /// The ruling's hole 2 also covers "present but unusable": a non-Int32 id/kind must be rejected, not
++    /// silently accepted. (<c>null</c> and strings/objects/arrays/floats are all non-Int32 numbers here.)
++    /// </summary>
++    [Theory]
++    [InlineData("null")]
++    [InlineData("\"1\"")]
++    [InlineData("true")]
++    [InlineData("{}")]
++    [InlineData("[]")]
++    [InlineData("1.5")]
++    [InlineData("99999999999999999999")]
++    public void NonInt32Id_ThrowsMalformedResponse(string idJson)
++    {
++        var line = "{\"id\":" + idJson + ",\"result\":{\"ok\":true}}";
++
++        var error = Assert.Throws<SidecarException>(
++            () => HostBridgeClient.ParseResponse("Ping", line, expectedId: 1));
++
++        Assert.Equal(SidecarErrorCode.MalformedResponse, error.Code);
++        Assert.Contains("not an Int32", error.Message, StringComparison.Ordinal);
++    }
++
++    /// <summary>
++    /// Ruling §4 / hole 1: <c>expectedId: null</c> (the <c>raw</c> call site) must KEEP the
++    /// observe-whatever-came-back semantics — an id-less frame is still returned there.
++    /// </summary>
++    [Fact]
++    public void RawWithNoExpectedId_StillObservesIdlessFrame()
++    {
++        const string line = "{\"result\":{\"ok\":true}}";
++
++        var result = HostBridgeClient.ParseResponse("raw", line);
+ 
+         Assert.Equal(JsonValueKind.Object, result.ValueKind);
+     }
