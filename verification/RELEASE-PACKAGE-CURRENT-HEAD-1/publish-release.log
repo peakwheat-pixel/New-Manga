@@ -1,0 +1,6 @@
+== singlefile ==
+[singlefile] result=PASS exit=0 elapsed=11.2s artifact=94.94 MB sha256=07DD80F0BC531150...
+   smoke: pass=True exit=0 exit_kind=natural host_ready=True reason=
+
+publish: 1/1 PASS, 0 expected-failure(s), 0 FAIL
+  - singlefile: PASS

@@ -1,0 +1,9 @@
+# sidecar bundle 可用性核证
+# env: Windows 11 / Python 3.14
+
+bundle: apps/desktop-avalonia/build/sidecar/core-sidecar/core-sidecar
+size: 792 MB / 1024 文件
+probe: core_service.exe --stdio + core.ping -> 有响应（PROTOCOL_VERSION_UNSUPPORTED 因未带协议头，属探针格式问题）
+stderr: [core.schema] schema v14 already current; this session performed no write
+
+# 结论：sidecar 可启动并响应，可用于打包冒烟
