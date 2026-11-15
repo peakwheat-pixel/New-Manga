@@ -71,10 +71,10 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class | sha256_basis |
 |---|---|---|---|---|---|---|
-| EV-ADC-01 | AC1/AC2/AC3/AC4 证据总述（WORKTREE_ENV=Windows11+pwsh7+Python3.14） | verification/AC-DOC-CLOSE-1/README.md | c1f9d966b | 40f11617bc5b01e59e4355e52969f37bca9d2fa7dbf51a139e32b6511011e33b | CANONICAL | WORKTREE |
-| EV-ADC-02 | AC1 V11R-C-RESEARCH 核验（0 生产文件）（WORKTREE_ENV=Windows11+pwsh7+Python3.14） | verification/AC-DOC-CLOSE-1/v11r-c-research-ac5-verify.log | c1f9d966b | 6ae8aa2888bbe0b6ac9ec3572483c6d98c724eb79dfdafabc5aa59668eef3898 | CANONICAL | WORKTREE |
-| EV-ADC-03 | AC2 集成复验实测（3 failures / EXIT=1）（WORKTREE_ENV=Windows11+pwsh7+Python3.14） | verification/AC-DOC-CLOSE-1/gov-residual-integration-reverify.log | c1f9d966b | 1fb49a6a874e9867244ba27b7455a02d6697b051d822fa7b2f28ebf0ab7d4417 | CANONICAL | WORKTREE |
-| EV-ADC-04 | AC4 声明错误分布（167 = 160 + 7 裁定身份）（WORKTREE_ENV=Windows11+pwsh7+Python3.14） | verification/AC-DOC-CLOSE-1/decl-error-distribution.log | c1f9d966b | 86138fe483aa46e3c3fbdc92c5e5a2c03907ec95ba653e181c95061adee21d37 | CANONICAL | WORKTREE |
+| EV-ADC-01 | AC1/AC2/AC3/AC4 证据总述（WORKTREE_ENV=Windows11+pwsh7+Python3.14） | verification/AC-DOC-CLOSE-1/README.md | 4c41ed959 | 40f11617bc5b01e59e4355e52969f37bca9d2fa7dbf51a139e32b6511011e33b | CANONICAL | BLOB |
+| EV-ADC-02 | AC1 V11R-C-RESEARCH 核验（0 生产文件）（WORKTREE_ENV=Windows11+pwsh7+Python3.14） | verification/AC-DOC-CLOSE-1/v11r-c-research-ac5-verify.log | 4c41ed959 | f5fd4fba6a8f8addcd9cfa00295fbf650e81423c1e51e5836ab306dd64a7a573 | CANONICAL | BLOB |
+| EV-ADC-03 | AC2 集成复验实测（3 failures / EXIT=1）（WORKTREE_ENV=Windows11+pwsh7+Python3.14） | verification/AC-DOC-CLOSE-1/gov-residual-integration-reverify.log | 4c41ed959 | df42c652cb50eca76a7e3cc2a195bec8036392322c2cdc9fa7ac65e90783d011 | CANONICAL | BLOB |
+| EV-ADC-04 | AC4 声明错误分布（167 = 160 + 7 裁定身份）（WORKTREE_ENV=Windows11+pwsh7+Python3.14） | verification/AC-DOC-CLOSE-1/decl-error-distribution.log | 4c41ed959 | 6d8ec725dff5599f6c806727fb90d6fce43ebc66e64aa004409962abf842c8d2 | CANONICAL | BLOB |
 
 ## Resource Manifest
 

@@ -76,9 +76,9 @@ AC8 由 `blocked` 改判 `verified`，附「新壳机制点 + 测试通过数 + 
 
 | evidence_id | AC/Gate | path | commit | sha256 | class | sha256_basis |
 |---|---|---|---|---|---|---|
-| EV-AC8-01 | AC1/AC3 核证总述（WORKTREE_ENV=Windows11+dotnet9） | verification/V11R-D-1-AC8-CLOSE-1/README.md | 654cd3e97 | 01505648eec8189397dc2fc1606fb01c30a00d13beeacb4be632c707f4f3e35c | CANONICAL | WORKTREE |
-| EV-AC8-02 | AC2 reduced-motion 测试（13 passed）（WORKTREE_ENV=Windows11+dotnet9） | verification/V11R-D-1-AC8-CLOSE-1/motion-tests.log | 654cd3e97 | 33799cecabb2af06b0bc7bfcfcca42d04a9ad92be407a7864c3642e43bbe70c1 | CANONICAL | WORKTREE |
-| EV-AC8-03 | AC1 默认壳与范围边界（V2 无动画 + FEA-00:25）（WORKTREE_ENV=Windows11+dotnet9） | verification/V11R-D-1-AC8-CLOSE-1/default-shell-and-scope.txt | 654cd3e97 | 1417d75ebeb0f323b66fed71429c7a8cbee25eb4f7376fb94fde4d84e2700979 | CANONICAL | WORKTREE |
+| EV-AC8-01 | AC1/AC3 核证总述（WORKTREE_ENV=Windows11+dotnet9） | verification/V11R-D-1-AC8-CLOSE-1/README.md | 4c41ed959 | 01505648eec8189397dc2fc1606fb01c30a00d13beeacb4be632c707f4f3e35c | CANONICAL | BLOB |
+| EV-AC8-02 | AC2 reduced-motion 测试（13 passed）（WORKTREE_ENV=Windows11+dotnet9） | verification/V11R-D-1-AC8-CLOSE-1/motion-tests.log | 4c41ed959 | b542e5236e8a41be9bb8bfbab172f89bf02e76a6b3255e8c0f0c77da6ed09031 | CANONICAL | BLOB |
+| EV-AC8-03 | AC1 默认壳与范围边界（V2 无动画 + FEA-00:25）（WORKTREE_ENV=Windows11+dotnet9） | verification/V11R-D-1-AC8-CLOSE-1/default-shell-and-scope.txt | 4c41ed959 | 2b799290a7367e37ccfc7c3102c8427ce8be6ad3233fb4476ba40c7ac007d8f4 | CANONICAL | BLOB |
 
 ## Resource Manifest
 

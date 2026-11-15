@@ -77,11 +77,11 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class | sha256_basis |
 |---|---|---|---|---|---|---|
-| EV-RRC-01 | AC1/AC2 改判对照（WORKTREE_ENV=Windows11+pwsh7+Python3.14） | verification/AC-RERUN-CLOSE-1/README.md | e476f210a | 2ce4354b21a058a8abecc4b5f0330dcec848d08c5a9c7fefc1f6e7265d11f5ba | CANONICAL | WORKTREE |
-| EV-RRC-02 | AC1 全仓复算日志（3569 passed）（WORKTREE_ENV=Windows11+pwsh7+Python3.14） | verification/AC-RERUN-CLOSE-1/full-suite-run1.log | e476f210a | e4883e02a22964da7003e7c8db2e6250506ce7a12bdd6b0bcc9ea83bfd449e14 | CANONICAL | WORKTREE |
-| EV-RRC-03 | AC2 M2-REGION 27 passed（WORKTREE_ENV=Windows11+pwsh7+Python3.14） | verification/AC-RERUN-CLOSE-1/m2-region-retype-rerun.log | e476f210a | e818d4865a7bcd083beb45d23c1c6f0f708ae34e28375ece49ea6e21d02aaea7 | CANONICAL | WORKTREE |
-| EV-RRC-04 | AC2 TASK-056 cleanup 12 passed（WORKTREE_ENV=Windows11+pwsh7+Python3.14） | verification/AC-RERUN-CLOSE-1/task-056-cleanup-rerun.log | e476f210a | e05a9a4d082483c58a1f7b9e5e4cdd5f897fb55a1f2ae5914a24d481000e40c1 | CANONICAL | WORKTREE |
-| EV-RRC-05 | AC2 CHAPTER 5 passed（WORKTREE_ENV=Windows11+pwsh7+Python3.14） | verification/AC-RERUN-CLOSE-1/chapter-manual-sort-rerun.log | e476f210a | 04d88e272ff93994a02669905ae7e234fe4794a35eee2c0524674e2a311155e4 | CANONICAL | WORKTREE |
+| EV-RRC-01 | AC1/AC2 改判对照（WORKTREE_ENV=Windows11+pwsh7+Python3.14） | verification/AC-RERUN-CLOSE-1/README.md | 4c41ed959 | 2ce4354b21a058a8abecc4b5f0330dcec848d08c5a9c7fefc1f6e7265d11f5ba | CANONICAL | BLOB |
+| EV-RRC-02 | AC1 全仓复算日志（3569 passed）（WORKTREE_ENV=Windows11+pwsh7+Python3.14） | verification/AC-RERUN-CLOSE-1/full-suite-run1.log | 4c41ed959 | 25eca7fa12d97d63432152d4e368b921a43fbd861aeb83f528d76addd1b74f5a | CANONICAL | BLOB |
+| EV-RRC-03 | AC2 M2-REGION 27 passed（WORKTREE_ENV=Windows11+pwsh7+Python3.14） | verification/AC-RERUN-CLOSE-1/m2-region-retype-rerun.log | 4c41ed959 | 839d6cb81ee30ef7bb4bb4b2317b29188f6674d5ffba344a650c0e6403fd9a92 | CANONICAL | BLOB |
+| EV-RRC-04 | AC2 TASK-056 cleanup 12 passed（WORKTREE_ENV=Windows11+pwsh7+Python3.14） | verification/AC-RERUN-CLOSE-1/task-056-cleanup-rerun.log | 4c41ed959 | b27ea8c0c846bae879324f20926ce4c766257656f5989efd91f359850942d627 | CANONICAL | BLOB |
+| EV-RRC-05 | AC2 CHAPTER 5 passed（WORKTREE_ENV=Windows11+pwsh7+Python3.14） | verification/AC-RERUN-CLOSE-1/chapter-manual-sort-rerun.log | 4c41ed959 | 50c7262860e0c7f68db878c8a3974ec467dfc5300ea478e2dc74058b05e1e573 | CANONICAL | BLOB |
 
 ## Resource Manifest
 

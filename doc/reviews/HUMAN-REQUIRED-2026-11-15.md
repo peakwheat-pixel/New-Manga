@@ -100,3 +100,41 @@
 - **Agent**：其余 67 条 `blocked` 里，**41 条可由 Agent 闭合**（`RERUN` 10 / `DOC` 9 / `IMPL` 22），
   另有 `MECHANISM_NA` 5 条待 DSH 裁决是否改判 `not-applicable`。
 - 本清单**不阻塞**目标 A（四件套）与目标 C（其余技术债）的推进。
+
+---
+
+## 6. Release Gate 侧的人侧输入（2026-11-15 补充）
+
+以下三项来自 `RELEASE-GATE-DISPOSITION-1` 的六条判定，是 **Gate 解锁不可替代的人工环节**。
+编号接续上文。
+
+### H-06 远端可见性检查（Gate 条件 2：`AUDIT-11-INC-001`）
+
+- **为什么必须人做**：`gh auth status` 未认证、`GH_TOKEN`/`GITHUB_TOKEN` 未设置 —— Agent 无远端访问凭据。
+- **最小步骤**：任选其一 ——
+  （a）在 GitHub 网页侧确认目标仓库的**可见性**（public / private / internal）并截图回传；
+  （b）给 Agent 配置只读 token（`GH_TOKEN`），由 Agent 执行只读查询。
+- **预估**：约 2 分钟。
+
+### H-08 Windows 安装矩阵 + 签名（Gate 条件 4）
+
+- **为什么必须人做**：clean install / 升级回退 / 卸载需要真实用户环境（注册表、文件系统、快捷方式）；
+  安装器**签名**需要代码签名证书。
+- **Agent 能做的前置**：用 `tools/ci/publish-release.ps1` 在当前 HEAD 重新打包 + singlefile + `-Smoke`
+  （脚本自带「启动 exe + 隔离数据根 + host.log ready + exit 0」的真实窗口冒烟）——
+  这能替换掉不绑定当前基线的 `0.1.1` 旧证据，但**不等于**安装矩阵。
+- **最小步骤**：拿到当轮产出的 zip 后，在一台 Win11 机器上做：全新安装 → 启动 → 升级到下一个包 →
+  回退 → 四页可达 → 卸载；记录每步结果。
+- **预估**：约 30 分钟（含下载与两次安装）。
+
+### H-09 翻译质量基线或「接受有边界限制」（Gate 条件 5）
+
+- **为什么必须人做**：质量达标需要**人工 GT**；无 GT 不得宣称准确率达标。
+  另外「Owner 明确接受有边界限制」这句本身就是人的决定。
+- **已有**：产品自身 `OpenAiTranslationProvider` + `StdlibTransport` 对 DeepSeek 的一次真实翻译
+  （`deepseek-chat`、763/738ms、`valid_protocol=True`、`region-1 → 你好，你好吗？`、
+  `region-2（sfx, ドガ）→ 轰`），证据 `verification/MAINT-1-RELEASE-MONITOR/model-api-verification.log`。
+- **最小步骤**：二选一 ——
+  （a）提供 20–50 条代表性 region 的人工标准译文（可给一个文件），Agent 跑对比并出报告；
+  （b）明确一句「接受当前有边界限制，不以质量基线作为发布阻断」。
+- **预估**：约 1 分钟（选 b）；选 a 取决于 GT 准备量。
