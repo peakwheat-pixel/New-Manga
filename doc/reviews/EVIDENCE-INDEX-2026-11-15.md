@@ -117,3 +117,59 @@
 ## 6. 一句话
 
 **每一份证据都能被第三人独立打开复核；每一处"未完成"都写明了为什么；我自己的每一次误判都留在上面。**
+
+---
+
+## 7. 补充（2026-11-15 晚）：GUI 突破后新增的证据
+
+上面 §1 写的是 GUI 突破**之前**的状态。突破之后新增了三类证据，一并列出。
+
+### 7.1 真实 GUI 启动方式与四页截图（条件 3 / 条件 4 AC7）
+
+| 项 | 证据 |
+|---|---|
+| **根因** | `Start-Process` cmdlet 在本环境挂起；`[System.Diagnostics.Process]::Start(ProcessStartInfo)` 正常（**26 ms 返回，窗口 3 s 内出现**） |
+| **源码构建 5/5 页** | `verification/GATE3-FOUR-PAGE-WALKTHROUGH-1/`（bookshelf/library/reader/settings/workbench） |
+| **安装产物 5/5 页** | `verification/GATE3-FOUR-PAGE-WALKTHROUGH-1/installed/`（`host.log` 实测 `core_service ready`+`host_bridge ready`） |
+| **`--page` 映射语义** | `settings`→控制台空间、`reader`→资料柜空间（阅读器是 Library 内 overlay，需 F11） |
+
+### 7.2 沉浸阅读器 headless 渲染（条件 3）
+
+`verification/READER-OVERLAY-HEADLESS-PNG-1/`：
+
+- 新增独立测试 `ImmersiveReaderVisualEvidenceTests`（**不动既有断言、不加 skip**）
+- `Window.CaptureRenderedFrame()` + `MainWindow.LastImmersiveWindow`（`ReaderWindow : Window`）
+- 产出 `immersive-reader.png`（11,883 B / 1024×768）
+- **目视确认**：`Esc 退出 · F 键 · H 隐藏 UI` / 书名章节页数 / `沉浸模式 (Esc/H/F)` 全部渲染
+- **全量回归**：955 passed / 0 failed / 11 skipped / 966（基线 954/0/11/965，**+1 且零 skip 增量**）
+
+### 7.3 L-R1-1 四项控件的视觉证据（条件 1）
+
+`verification/L-R1-1-VISUAL-EVIDENCE-1/`：
+
+- 一条环境变量 `NEWMANGA_CAPTURE_FLUENT_PNGS=1` 产出四页图（`verification/FEA-06-RESIDUAL-1/png/`）
+- `reader.png`（1180×780）里**四项控件全部可见**：`书签` / `单页·双页` / `反向翻页` / `重置进度` / `放大·缩小·适合页面`
+- 另有既有测试 `ReaderVisibleControlsTests`（4 个 `[AvaloniaFact]`）覆盖同样四项
+
+### 7.4 ★ 一个事故（必须留在索引里）
+
+`verification/CAPTURE-VAR-OVERWRITE-INCIDENT-1/`：
+
+- 我为"扫剩余 capture 变量"跑了 `NEWMANGA_CAPTURE_RESIDUAL3_PNGS=1`，
+  **覆盖了 `FEA-06-RESIDUAL-3` 的 5 个既有证据文件**
+- **已 `git checkout` 回退**，`git diff HEAD` 无差异、`git status` clean
+- **实质零损害，但过程违规**（第 14 次同类错误；第 13 次是同一天上一轮）
+
+**为什么把事故也放进索引**：这是"证据清单"的一部分 ——
+读者要知道**哪些目录被触碰过**，以及**为什么可以相信它们现在是原样**。
+
+### 7.5 错误总数更新
+
+§4 记了 10 个，本轮之后是 **14 个**（新增 11–14：说"做尽"没 grep、计划写新测试、写别人目录后验、覆盖既有证据）。
+
+### 7.6 方法论结论更新
+
+§5 的 7 条之外，新增第 8 条：
+
+8. **任何 `NEWMANGA_CAPTURE_*` 运行前，先读它的写盘路径并 `git status` 该目录** ——
+   这些变量是**覆盖式写入**，不是增量。第 14 次错误就是这么来的。
