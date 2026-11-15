@@ -1,0 +1,4 @@
+2026-11-15T02:20:39.1755762+00:00 INFO single-instance acquired: Global\NewManga.Host (abandoned_recovered=False)
+2026-11-15T02:20:39.1826114+00:00 INFO mode=ReadWrite reason=parity reached and no legacy shell running
+2026-11-15T02:20:39.1837513+00:00 INFO first-run backup skipped: backup already exists
+2026-11-15T02:20:39.1847695+00:00 ERROR code=SidecarBundleMissing sidecar=sidecar-bundle [SidecarBundleMissing] sidecar-bundle: no sidecar directory with core_service.exe and host_bridge.exe found in 2 candidate locations: G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\bin\Debug\net9.0\core-sidecar; G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\bin\Debug\net9.0\resources\core-sidecar

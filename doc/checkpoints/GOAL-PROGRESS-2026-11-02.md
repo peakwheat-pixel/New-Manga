@@ -2823,3 +2823,24 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
      而是**截图时 Host 还没就绪、书还没加载**；就绪后同一数据根显示 `1 / 1 作品`。
      **我把它列为"待查的不一致"，实际是时序问题。**
 - **仍未解决**：阅读器 overlay（F11 后的沉浸窗口）仍未截到；未验 `--presentation-host`/`--theme`/其它 shell 变体。
+## 284. GATE3-READER-OVERLAY-1：尝试 PostMessage 发 F11 触发沉浸阅读器 —— **未成功**（2026-11-15，DSH，goal 轮次 85）
+
+- **动机**：GUI 已能启动（突破），尝试**不靠物理按键**打开阅读器 overlay。
+  依据：`LibraryImmersiveReader` 命令 → `ImmersiveReaderRequested` 事件 → `App.axaml.cs:512-534` 惰性建窗。
+- **实测**：
+  `handle=2034366 title='New Manga'` → `post_down=True post_up=True`（**PostMessage 调用成功**）
+  → `after_post: handle=2034366 title='New Manga'`（**窗口无变化**）。
+- **⇒ 失败**。可能原因（**未验证**）：①Avalonia 键盘输入可能走 `WM_INPUT`/Raw Input，
+  而非同步 `WM_KEYDOWN`；②需前台/焦点（前次探测 `foreground_matches=False`）；
+  ③沉浸窗口若是新顶层窗口，`MainWindowHandle` 不变是预期，**但我没枚举到新窗口**
+  —— `EnumWindows` 在本环境对该进程返回 **0 个可见窗口**，说明枚举本身受限。
+- **★ 我放弃的方式（诚实）**：写过一个完整探测脚本 `tools/e2e/probe-reader-overlay.ps1`
+  （`EnumWindows`+`PostMessage`+`PrintWindow`），**被我自己改坏了两次**
+  （Python 字符串续行写成字面量 `\
+`），**已删除**；最终用 inline 命令跑通 `PostMessage` 部分。
+  **我也没有继续尝试 Raw Input / 键盘钩子** —— 那更接近"伪造输入"，且在无交互桌面下更可能失败。
+- **因此**：**阅读器 overlay 的真实截图仍未取得**。条件 3 / 条件 4 AC7 的"阅读器页"仍只能依赖
+  `F11HotkeyTests`(9) + `V2ImmersiveReaderTests`(4) 的 headless 覆盖（**驱动生产 public 方法**），
+  **但不含真实窗口视觉证据**。**这一项仍需人工按一次 F11。我试了，没成功，如实登记。**
+- **本卡零截图**：`verification/GATE3-READER-OVERLAY-1/` 下只有探测日志与说明，**没有 PNG**
+  —— 因为窗口没变成阅读器，截出来只会是资料柜。

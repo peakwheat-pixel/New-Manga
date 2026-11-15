@@ -1,0 +1,3 @@
+probe_down=True post_up=True
+after_post: handle=2034366 title='New Manga' (unchanged)
+overlay_detected=False
