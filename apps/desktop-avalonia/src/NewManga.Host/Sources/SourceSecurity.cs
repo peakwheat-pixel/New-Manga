@@ -133,6 +133,26 @@ internal static class SourceSecurity
         if (handle.IsInvalid) throw new SourceAccessException("SOURCE_ACCESS_DENIED");
         return Identity(handle);
     }
+
+    /// <summary>Mirror of <c>identity.py</c>'s <c>_FILE_MASK</c> (C-17 N/G integer family).</summary>
+    public const ulong CoreFileIdMask = (1UL << 53) - 1;
+
+    /// <summary>
+    /// FILE_IDENTITY_CHANGED fix (HOST-CONCURRENCY-FLAKY-1 AC6 P0-1, DSH 2026-11-16): the 53-bit
+    /// file-id normalization from the frozen identity contract
+    /// (<c>src/application/importing/referenced/identity.py</c>: <c>_FILE_MASK = (1 &lt;&lt; 53) - 1</c>;
+    /// mirrored in <c>NewManga.CoreClient.Issuer.HostIssuer.NormalizeFileId</c>).
+    /// <para>
+    /// Apply this ONLY where a raw handle identity is handed to something that compares it against a
+    /// Core-normalized value -- i.e. the <c>source-read</c> grant facts written by
+    /// <see cref="SourceReadCoordinator"/>. Do NOT apply it inside <see cref="Identity"/>: that value is
+    /// also persisted into <c>registry.v1.dat</c> as <c>SourceRoot.FileId</c> and compared there, so
+    /// masking the producer would make every pre-existing registry fail its root check with
+    /// SOURCE_REGISTRY_UNAVAILABLE.
+    /// </para>
+    /// </summary>
+    public static ulong NormalizeFileId(ulong rawFileId) => rawFileId & CoreFileIdMask;
+
     [StructLayout(LayoutKind.Sequential)] private struct FileInfo
     {
         public uint Attributes;

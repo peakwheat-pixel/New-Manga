@@ -401,7 +401,11 @@ public sealed class SourceReadCoordinator(
             if (after != before) throw new SourceAccessException("FILE_IDENTITY_CHANGED");
             return new JsonObject
             {
-                ["volume_serial"] = before.Volume, ["file_id"] = before.Id,
+                // HOST-CONCURRENCY-FLAKY-1 AC6 P0-1: the Core compares these facts against its own
+                // normalize_identity()-masked values (scanner.py:163-171), so the wire value must be
+                // masked here. The raw identity stays untouched for the registry's own root check.
+                ["volume_serial"] = before.Volume,
+                ["file_id"] = SourceSecurity.NormalizeFileId(before.Id),
                 ["size"] = before.Size, ["sha256"] = digest,
             };
         }
@@ -621,8 +625,13 @@ public sealed class SourceReadCoordinator(
                             ["entry_key"] = "entry-" + ordinal, ["entry_id"] = null,
                             ["locator"] = sourceKind == "folder" ? Path.GetRelativePath(path, member).Replace('\\', '/') : Path.GetFileName(member),
                             ["ordinal"] = ordinal++, ["path"] = member,
-                            ["facts"] = new JsonObject { ["volume_serial"] = before.Volume, ["file_id"] = before.Id,
+                            ["facts"] = new JsonObject {
+                                ["volume_serial"] = before.Volume,
+                                // HOST-CONCURRENCY-FLAKY-1 AC6 P0-1: mask to the Core's 53-bit
+                                // file-id family; see SourceSecurity.NormalizeFileId.
+                                ["file_id"] = SourceSecurity.NormalizeFileId(before.Id),
                                 ["size"] = before.Size, ["sha256"] = digest }
+
                         });
                     }
                 }

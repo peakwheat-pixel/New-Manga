@@ -76,11 +76,11 @@ if (entry.Generation != expectedGeneration) throw new SourceAccessException("SOU
 
 ## Acceptance Criteria
 
-- [x] **AC1 并发路径澄清**：确认 `SourceAccessRegistry` 的锁作用域（进程级/实例级）、`_lockName` 生成方式、xUnit 并行配置。 <<MET>>
+- [x] **AC1 并发路径澄清**：确认 `SourceAccessRegistry` 的锁作用域（进程级/实例级）、`_lockName` 生成方式、xUnit 并行配置。 <!-- 锁作用域与 _lockName 已澄清（per-dataRoot 唯一）；但「xUnit 并行配置」这一项诊断里全篇未提，且 NewManga.Host.Tests/AssemblyInfo.cs:1 是 DisableTestParallelization = true —— 直接证伪原「并行导致竞争」叙事。缺陷本身真实（零超时），但归因口径需更正 --> <<PARTIAL: 并行叙事已被 AssemblyInfo 证伪，归因改为「零超时」>>
 - [x] **AC2 失败复现**：在受控条件下稳定复现 3 个失败（如提高并行度或多跑几轮），并保存日志。 <<MET>>
 - [x] **AC3 根因判定**：区分「锁粒度不足」「identity 检查过严」「测试间共享状态」三类，给出代码级依据。 <<MET>>
-- [x] **AC4 修复或登记**：修复（需先范围冻结，因为改并发语义属产品行为变更），或明确登记为已知限制并给出可执行的处置步骤。 <<PARTIAL: SOURCE_REGISTRY_BUSY 已修（3->2 failed）；FILE_IDENTITY_CHANGED 属独立根因，待办>>
-- [x] **AC5 不影响既有基线**：`dotnet test` 直接跑仍全绿（331/0/74）。 <!-- App.Tests 962/0/4 不退化基线 955/0/11；CoreClient 256/0/0；Host 361/0/44 --> <<MET>>
+- [x] **AC4 修复或登记**：修复（需先范围冻结，因为改并发语义属产品行为变更），或明确登记为已知限制并给出可执行的处置步骤。 <!-- HostIssuer + SourceAccessRegistry 已修；但 AC6 复核（review-ac6.md P0-1）发现SourceSecurity.Identity 的 raw file index 经 SourceReadCoordinator 流入 source-read grant，仍是 raw vs masked。已补 SourceReadCoordinator:404/624 的归一化（不动 Identity 本体以保registry.v1.dat 兼容），TileChannel.cs:437 的同源风险待评估 --> <<PARTIAL: 三处 producer 已修两处 + source-read 路径已补；TileChannel 同源风险待评估>>
+- [x] **AC5 不影响既有基线**：`dotnet test` 直接跑仍全绿（331/0/74）。 <!-- 修复后以 test.ps1 全量验证：CoreClient 256/0/0、Host 361/0/44、App 962/0/4，TEST PASS 1579/1627（见 after-p0-fix.log）。裸跑 331/0/74 是修复前数字，修复后未单独重跑裸跑（test.ps1 是该环境的超集） --> <<PARTIAL: 以 test.ps1 全量替代裸跑验证，未单独重跑裸跑>>
 - [ ] **AC6 独立复核**：固定 head 交独立上下文 Review。
 
 ## 禁止范围
@@ -131,21 +131,21 @@ fileLock = new FileStream(... "registry.v1.lock", ..., FileShare.None);   // ←
 
 | evidence_id | AC/Gate | path | commit | sha256 | class | sha256_basis |
 |---|---|---|---|---|---|---|
-| EV-HCF-01 | AC1/AC3 代码摘录与诊断 | verification/HOST-CONCURRENCY-FLAKY-1/code-evidence.log | 25e8f5492 | PIN_PENDING | CANONICAL | BLOB |
-| EV-HCF-02 | AC2 受控复现（2/2 稳定） | verification/HOST-CONCURRENCY-FLAKY-1/ac2-repro.md | 84b4a2456 | PIN_PENDING | CANONICAL | BLOB |
-| EV-HCF-03 | AC2 复现日志第 1 轮 | verification/HOST-CONCURRENCY-FLAKY-1/repro-1.log | 84b4a2456 | PIN_PENDING | CANONICAL | BLOB |
-| EV-HCF-04 | AC2 复现日志第 2 轮 | verification/HOST-CONCURRENCY-FLAKY-1/repro-2.log | 84b4a2456 | PIN_PENDING | CANONICAL | BLOB |
-| EV-HCF-05 | AC4 修复后 test.ps1 全量 | verification/HOST-CONCURRENCY-FLAKY-1/after-fix.log | fbf704a37 | PIN_PENDING | CANONICAL | BLOB |
-| EV-HCF-06 | AC4 Host 项目 -warnaserror 编译 | verification/HOST-CONCURRENCY-FLAKY-1/build.log | fbf704a37 | PIN_PENDING | CANONICAL | BLOB |
-| EV-HCF-07 | **定性更正**：裸跑 EXIT=0 实为 SKIP | verification/HOST-CONCURRENCY-FLAKY-1/correction-skip-vs-pass.md | e66323bf2 | PIN_PENDING | CANONICAL | BLOB |
-| EV-HCF-08 | 单跑 detailed 日志（4 条 SKIP 证据） | verification/HOST-CONCURRENCY-FLAKY-1/solo-detail.log | e66323bf2 | PIN_PENDING | CANONICAL | BLOB |
-| EV-HCF-09 | FILE_IDENTITY_CHANGED 口径契约与缺口定位 | verification/HOST-CONCURRENCY-FLAKY-1/file-identity-diagnosis.md | ac434d911 | PIN_PENDING | CANONICAL | BLOB |
-| EV-HCF-10 | st_ino 超出 53 位实测（6/7） | verification/HOST-CONCURRENCY-FLAKY-1/st-ino-measured.md | 062918039 | PIN_PENDING | CANONICAL | BLOB |
-| EV-HCF-11 | st_ino 探针脚本（可复算） | verification/HOST-CONCURRENCY-FLAKY-1/probe_st_ino.py | 062918039 | PIN_PENDING | CANONICAL | BLOB |
-| EV-HCF-12 | 探针原始输出 | verification/HOST-CONCURRENCY-FLAKY-1/st-ino-probe-output.log | 062918039 | PIN_PENDING | CANONICAL | BLOB |
-| EV-HCF-13 | **根因铁证**：Host producer 未 mask | verification/HOST-CONCURRENCY-FLAKY-1/root-cause-proven.md | 4b1198443 | PIN_PENDING | CANONICAL | BLOB |
-| EV-HCF-14 | **test.ps1 首次全绿** EXIT=0 | verification/HOST-CONCURRENCY-FLAKY-1/after-identity-fix.log | c75740cb9 | PIN_PENDING | CANONICAL | BLOB |
-| EV-HCF-15 | CoreClient -warnaserror 编译 | verification/HOST-CONCURRENCY-FLAKY-1/build-r99.log | c75740cb9 | PIN_PENDING | CANONICAL | BLOB |
+| EV-HCF-01 | AC1/AC3 代码摘录与诊断 | verification/HOST-CONCURRENCY-FLAKY-1/code-evidence.log | 84b4a2456 | PIN_PENDING | CANONICAL | BLOB |
+| EV-HCF-02 | AC2 受控复现（2/2 稳定） | verification/HOST-CONCURRENCY-FLAKY-1/ac2-repro.md | fbf704a37 | PIN_PENDING | CANONICAL | BLOB |
+| EV-HCF-03 | AC2 复现日志第 1 轮 | verification/HOST-CONCURRENCY-FLAKY-1/repro-1.log | fbf704a37 | PIN_PENDING | CANONICAL | BLOB |
+| EV-HCF-04 | AC2 复现日志第 2 轮 | verification/HOST-CONCURRENCY-FLAKY-1/repro-2.log | fbf704a37 | PIN_PENDING | CANONICAL | BLOB |
+| EV-HCF-05 | AC4 修复后 test.ps1 全量 | verification/HOST-CONCURRENCY-FLAKY-1/after-fix.log | e66323bf2 | PIN_PENDING | CANONICAL | BLOB |
+| EV-HCF-06 | AC4 Host 项目 -warnaserror 编译 | verification/HOST-CONCURRENCY-FLAKY-1/build.log | e66323bf2 | PIN_PENDING | CANONICAL | BLOB |
+| EV-HCF-07 | **定性更正**：裸跑 EXIT=0 实为 SKIP | verification/HOST-CONCURRENCY-FLAKY-1/correction-skip-vs-pass.md | ac434d911 | PIN_PENDING | CANONICAL | BLOB |
+| EV-HCF-08 | 单跑 detailed 日志（4 条 SKIP 证据） | verification/HOST-CONCURRENCY-FLAKY-1/solo-detail.log | ac434d911 | PIN_PENDING | CANONICAL | BLOB |
+| EV-HCF-09 | FILE_IDENTITY_CHANGED 口径契约与缺口定位 | verification/HOST-CONCURRENCY-FLAKY-1/file-identity-diagnosis.md | 062918039 | PIN_PENDING | CANONICAL | BLOB |
+| EV-HCF-10 | st_ino 超出 53 位实测（6/7） | verification/HOST-CONCURRENCY-FLAKY-1/st-ino-measured.md | 4b1198443 | PIN_PENDING | CANONICAL | BLOB |
+| EV-HCF-11 | st_ino 探针脚本（可复算） | verification/HOST-CONCURRENCY-FLAKY-1/probe_st_ino.py | 4b1198443 | PIN_PENDING | CANONICAL | BLOB |
+| EV-HCF-12 | 探针原始输出 | verification/HOST-CONCURRENCY-FLAKY-1/st-ino-probe-output.log | 4b1198443 | PIN_PENDING | CANONICAL | BLOB |
+| EV-HCF-13 | **根因铁证**：Host producer 未 mask | verification/HOST-CONCURRENCY-FLAKY-1/root-cause-proven.md | c75740cb9 | PIN_PENDING | CANONICAL | BLOB |
+| EV-HCF-14 | **test.ps1 首次全绿** EXIT=0 | verification/HOST-CONCURRENCY-FLAKY-1/after-identity-fix.log | 277406eeb | PIN_PENDING | CANONICAL | BLOB |
+| EV-HCF-15 | CoreClient -warnaserror 编译 | verification/HOST-CONCURRENCY-FLAKY-1/build-r99.log | 277406eeb | PIN_PENDING | CANONICAL | BLOB |
 
 ## Resource Manifest
 
