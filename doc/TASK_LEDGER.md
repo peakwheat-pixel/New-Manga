@@ -21,8 +21,8 @@ Arithmetic note: `task files` = `terminal` + `non-terminal` + `(none)` rows. A `
 
 | status | count | terminal |
 |---|---:|---|
-| `done` | 541 | yes |
-| `closed_with_limitations` | 60 | yes |
+| `done` | 540 | yes |
+| `closed_with_limitations` | 61 | yes |
 | `cancelled` | 21 | yes |
 | `historical` | 11 | yes |
 | `superseded` | 9 | yes |

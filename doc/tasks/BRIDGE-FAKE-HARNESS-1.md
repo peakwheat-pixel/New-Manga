@@ -3,11 +3,11 @@ id: BRIDGE-FAKE-HARNESS-1
 title: 冻结 bridge 假 sidecar 夹具并补两处调用点的 poison 动态证据（E-7 #2 / bridge 侧）
 kind: governance
 governance_version: 3
-status: done
+status: closed_with_limitations
 suggested_owner: DSH
 owner: DSH
 reviewer: （见 review-r1）
-integration_commit: PENDING
+integration_commit: ed22b3b05
 canonical_evidence_status: complete
 resource_closeout_status: complete
 depends_on:
@@ -88,7 +88,7 @@ allowed_paths:
 - [x] **AC1 夹具冻结**：选定方案（A 或 B）并记录理由；能通过 `HostBridgeClient.StartAsync` 的握手。 <<MET>>
 - [x] **AC2 bridge poison 动态证据**：真实 `StartAsync` → `SendAsync` 链上，坏帧 ⇒ 首调 `MalformedResponse`、 <<MET>>
       次调 `RequestTimeout`（poisoned 快路径），且**请求计数**证明次调未写入。
-- [ ] **AC3 core host-control poison 动态证据**：`SendHostControlAsync` + `idless-only` ⇒ 首调 `MalformedResponse`、次调 `RequestTimeout`。 **本轮未做**（本卡的夹具是 bridge 专用 .exe；core 侧复用内联 python 夹具，但那条用例在 `E7-2-DYNAMIC-EVIDENCE-1` 因全量 flaky 撤回过，需先解决 flaky 根因，见未关闭项 1）。
+- [ ] **AC3 core host-control poison 动态证据**：`SendHostControlAsync` + `idless-only` ⇒ 首调 `MalformedResponse`、次调 `RequestTimeout`。 **本轮未做**（本卡的夹具是 bridge 专用 .exe；core 侧复用内联 python 夹具，但那条用例在 `E7-2-DYNAMIC-EVIDENCE-1` 因全量 flaky 撤回过，需先解决 flaky 根因，见未关闭项 1）。 <<BLOCKED: 本卡夹具为 bridge 专用；core 侧同类用例需先解决全量 flaky 根因>>
 - [x] **AC4 变异判别力**：两处接线各自改 no-op ⇒ 至少一条测试变红（**必须 `--no-incremental` 强制重建**）。 <<MET>>
 - [x] **AC5 不回归**：全量 0 failed；四件套 PASS。 <<MET>>
 - [x] **AC6 独立复核**：固定 head 交独立上下文 Review。 <<MET>>
@@ -105,10 +105,10 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class | sha256_basis |
 |---|---|---|---|---|---|---|
-| EV-BFH-01 | AC1/AC2 假夹具 3 passed | verification/BRIDGE-FAKE-HARNESS-1/fake-bridge-tests.log | 0d2ff175a | PIN_PENDING | CANONICAL | BLOB |
-| EV-BFH-02 | AC4 变异判别力（删 Poison ⇒ 2 红） | verification/BRIDGE-FAKE-HARNESS-1/mutation-bridge-poison.log | 0d2ff175a | PIN_PENDING | CANONICAL | BLOB |
-| EV-BFH-03 | AC5 全量不回归（225/0/30） | verification/BRIDGE-FAKE-HARNESS-1/coreclient-full.log | 0d2ff175a | PIN_PENDING | CANONICAL | BLOB |
-| EV-BFH-04 | AC1 方案冻结文档 | doc/reviews/BRIDGE-FAKE-HARNESS-DESIGN-2026-11-16.md | 0d2ff175a | PIN_PENDING | CANONICAL | BLOB |
+| EV-BFH-01 | AC1/AC2 假夹具 3 passed | verification/BRIDGE-FAKE-HARNESS-1/fake-bridge-tests.log | ed22b3b05 | 6d59ef0b39ee42e1ece625994107094abeb53e7882224fd11f35e875419722ef | CANONICAL | BLOB |
+| EV-BFH-02 | AC4 变异判别力（删 Poison ⇒ 2 红） | verification/BRIDGE-FAKE-HARNESS-1/mutation-bridge-poison.log | ed22b3b05 | bc494e555eb1b42d610377830449706ea4c717b33fe85282fc9eaa421b8f1dc9 | CANONICAL | BLOB |
+| EV-BFH-03 | AC5 全量不回归（225/0/30） | verification/BRIDGE-FAKE-HARNESS-1/coreclient-full.log | ed22b3b05 | 660021622f7117d731b434355b5119ccb754adbd237e770c23a1e41668238f1e | CANONICAL | BLOB |
+| EV-BFH-04 | AC1 方案冻结文档 | doc/reviews/BRIDGE-FAKE-HARNESS-DESIGN-2026-11-16.md | ed22b3b05 | e1813ea958b1ca609bcab0b69b0b66cd5465a27b7739ffa7ec6f8aab1b0943b9 | CANONICAL | BLOB |
 
 ## Resource Manifest
 
