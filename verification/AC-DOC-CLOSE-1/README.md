@@ -68,13 +68,25 @@ AC7 要求三条命令真实运行并记录 EXIT，且**集成复验后**才 don
 已把日志移到本卡证据目录 `verification/AC-DOC-CLOSE-1/gov-residual-integration-reverify.log`，
 该卡 `-TaskPath` 错误数从 **7 回落至 6**（剩余 6 条均在基线即存在）。
 
-## 4. 新登记技术债（AC4）
+## 4. 新登记技术债（AC4，r1 复核 P2-1 修正口径）
 
-**仓库级声明扫描 167 处错误**（见上表）——这是独立的技术债，影响：
-- `test_residual_runtime_identity.py` 的 3 个测试；
-- 「仓库声明无错误」这一治理前提。
+仓库级声明扫描共 **167 处**，其中 **7 处是 residual 策略的裁定身份**（`RRI-01`…`RRI-07`，
+分别对应 `worktrees/P19-AC3-1`、`temp/p19-ac2-*` 等），**必须原样保留**：
 
-建议后续立卡：`GOV-DECLARATION-SCAN-CLEANUP-1`（清理历史卡的表格 schema / 声明路径 / 环境变量声明）。
+```python
+# tools/governance/clean_workspace.py:2172
+require(len(removed) == 7 and len(index.errors) == 7, "ERROR_MISMATCH",
+        "residual identity batch does not cover exactly the seven errors")
+```
+
+⇒ **可清理的是 160 处非裁定错误**；清理后 raw scan **必须恰好剩这 7 条**，
+否则会触发 `SOURCE_DRIFT` / `ERROR_MISMATCH`。
+
+建议后续立卡 `GOV-DECLARATION-SCAN-CLEANUP-1`，目标口径为 **160 处清理 + 7 处保留**。
+
+> 披露（r1 P3-3）：`verify_final.py` 的 **EXIT=1** 来自 8 条**先存** `diff 增删` FAIL
+> （`V11R-B-1…B-5`、`V11R-C-1`、`MICA-FIX-1`、`FEA-07-AC5-NATIVE-1` 的 numstat 口径），
+> 父提交同样存在，非本轮引入；计数部分（40/260/189/65/6）可信。
 
 ## 5. 计数与不回归
 
