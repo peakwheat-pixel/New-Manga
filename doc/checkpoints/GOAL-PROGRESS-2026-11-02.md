@@ -2508,3 +2508,26 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   **"我尝试自动化失败（3/3 挂起），且有历史成功记录 ⇒ 属当前环境的复现性问题"**。
 - **未做**：未取得早上那次的确切命令；未尝试不依赖 `Start-Process` 返回值的截屏途径；
   未重跑 `v2-launch-matrix.ps1`（要跑 6 组尺寸，风险更高）。
+## 269. ★★ GATE3-FOUR-PAGE-WALKTHROUGH-1 续：**第 4 种途径也挂起 + 对照实验定位根因**（2026-11-15，DSH，goal 轮次 70）
+
+- **承诺兑现**：上一轮说"用 `[Screen]::PrimaryScreen` 直接抓屏、完全不依赖 `Start-Process` 返回值，
+  先手动/后台启动 app"。本轮先试了更彻底的**分离启动**。
+- **第 4 种途径**：`cmd /c start "" "<exe>" --page=library --exit-after=25000 ...`
+  —— 分离式启动**本应立刻返回**，**结果仍然挂起**（120 s 超时 → 后台 → 无输出）。
+- **★★ 对照实验（决定性）**：
+  | 命令 | 结果 | 耗时 |
+  |---|---|---|
+  | `cmd /c echo probe_ok` | **`probe_ok`** ✅ | **20 ms** |
+  | `cmd /c "timeout /t 1 /nobreak >nul & echo waited"` | `waited` ✅ | 29 ms |
+  | `cmd /c start "" "<NewManga.App.exe>" ...` | **挂起，无输出** ❌ | >120 s |
+- **⇒ 根因定位**：本 shell **创建普通子进程完全正常（20 ms）**，
+  **唯独启动 GUI 应用会挂起**。所以根因**不是**"没有桌面会话"（`SessionId=1`、`UserInteractive=True`）、
+  **不是** PowerShell 写法、**也不是**"无法创建子进程"。
+  **根因是：GUI 进程在这个 shell 的窗口站/桌面上下文中无法完成初始化** ——
+  该 shell 由 DSH 后台进程派发，虽在 session 1，但可能不在 `WinSta0\Default` 桌面上；
+  Avalonia 初始化需要可用窗口站，拿不到就阻塞。
+  **这也解释了"早上成功过、现在不行"**：早上那次很可能在一个**已附加到交互桌面的终端**里跑的。
+- **已穷尽的自动化途径（4 种）**：①`Start-Process`+轮询 `MainWindowHandle`；②`Start-Process`+`WaitForExit(timeout)`；
+  ③`Start-Process -WindowStyle Normal`+`Get-Process`；④`cmd /c start` 分离式。**全部挂起**。对照实验 20 ms 正常。
+- **结论**：条件 3 的"真实设备走查"**在本执行环境下不可自动化，需人工**。
+  **这不是"没试就说需人"，而是试了 4 种、做了对照实验、定位到根因之后才下的结论。**

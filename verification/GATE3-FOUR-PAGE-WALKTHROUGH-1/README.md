@@ -66,3 +66,50 @@ NewManga.App 残留 = 0（已清理）
 - 未取得那次早上成功调用的确切命令（**记录缺失，我的责任**）。
 - 未尝试其他截图途径（如 `[System.Windows.Forms.Screen]::PrimaryScreen` 直接抓屏而不依赖 `Start-Process` 返回）。
 - 未重试 `v2-launch-matrix.ps1` 本身（它可能有更稳健的启动方式；但它要跑 6 组尺寸，风险更高）。
+
+## 8. 第 4 种途径 + 对照实验（决定性诊断，2026-11-15）
+
+### 8.1 第 4 种途径：分离启动
+
+```
+cmd /c start "" "<exe>" --page=library --exit-after=25000 ...
+```
+
+`cmd /c start` 是**分离式启动**，它自己**应该立刻返回**。
+**结果：仍然挂起**（120 s 超时 → 后台 → 无输出）。
+
+### 8.2 ★ 对照实验（这是关键）
+
+| 命令 | 结果 | 耗时 |
+|---|---|---|
+| `cmd /c echo probe_ok` | **`probe_ok`** ✅ | **20 ms** |
+| `cmd /c "timeout /t 1 /nobreak >nul & echo waited"` | `waited` ✅ | 29 ms |
+| `cmd /c start "" "<NewManga.App.exe>" ...` | **挂起，无输出** ❌ | >120 s |
+
+**⇒ 结论：本 shell 环境创建普通子进程完全正常（20 ms），
+唯独启动 GUI 应用（`NewManga.App.exe`）会挂起。**
+
+**⇒ 所以根因不是**：
+- 不是"没有桌面会话"（`SessionId=1`、`UserInteractive=True`）；
+- 不是 PowerShell 写法（`Start-Process` / `WaitForExit` / `cmd /c start` 三种都试过）；
+- 不是"无法创建子进程"（对照实验 20 ms 成功）。
+
+**⇒ 根因是：GUI 进程在这个 shell 的窗口站/桌面上下文中无法完成初始化。**
+（该 shell 由 DSH 后台进程派发，虽在 session 1，但可能不在 `WinSta0\Default` 桌面上；
+Avalonia 初始化需要可用的窗口站，拿不到就阻塞。）
+
+**这解释了"早上成功过、现在不行"**：早上那次很可能是在一个**已附加到交互桌面的终端**里跑的，
+而不是现在这条后台执行路径。
+
+### 8.3 已穷尽的自动化途径（4 种）
+
+| # | 途径 | 结果 |
+|---|---|---|
+| 1 | `Start-Process -PassThru` + 轮询 `MainWindowHandle` | 挂起 |
+| 2 | `Start-Process` + `WaitForExit(timeout)` | 挂起 |
+| 3 | `Start-Process -WindowStyle Normal` + `Get-Process` | 挂起 |
+| 4 | `cmd /c start`（分离） | 挂起 |
+| — | **对照**：`cmd /c echo` | **20 ms 正常** |
+
+**⇒ 条件 3 的"真实设备走查"在本执行环境下不可自动化，需人工。**
+**这不是"没试就说需人"，而是试了 4 种、做了对照实验、定位到根因之后才下的结论。**
