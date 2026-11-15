@@ -1,0 +1,18 @@
+# sidecar schema 版本落后 — 核实证据
+head: 69fed50bc
+timestamp: 2026-11-16T03:26:54+08:00
+
+## 1) 源码最新 schema 版本
+  SCHEMA_VERSION_V14 = 14
+  default_migrations 含: Migration(SCHEMA_VERSION_V14, MIGRATION_V14_NAME, MIGRATION_V14_SQL),
+
+## 2) sidecar bundle 运行时报的版本
+  RuntimeError: database schema v14 is newer than this application knows (v6); refusing to run
+  出处: G:/CODEX/New Manga.workspace/tasks/B1-DOC-CLOSE-1/test-ps1.log 的 stderr tail
+
+## 3) sidecar exe 构建时间
+  core_service.exe  400098 B  2026/11/15 3:16:55
+
+## 4) 两个测试口径的差异
+  四件套（无 sidecar 夹具）: 233 总 / 203 passed / 0 failed / 30 skipped
+  scripts/test.ps1（配夹具）: 256 总 / 253 passed / 3 failed / 0 skipped
