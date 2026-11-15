@@ -114,8 +114,8 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class | sha256_basis |
 |---|---|---|---|---|---|---|
-| EV-DC2-01 | AC1/AC2 扫描明细（16 文件逐处上下文） | verification/DOC-CTRLCHAR-FIX-2/scan.out | b631e2b24 | 07c0c022d3dfa753ff5bb441edc289d53e3a268a80c67995c9962eac65a60d5a | CANONICAL | BLOB |
-| EV-DC2-02 | AC4/AC6 失败记录与回滚后状态 | verification/DOC-CTRLCHAR-FIX-2/eval-report.log | b631e2b24 | 35ce498909f61d620b25bf748458db26729f8128fdf0cb582fa63745780266c3 | CANONICAL | BLOB |
+| EV-DC2-01 | AC1/AC2 扫描明细（16 文件逐处上下文） | verification/DOC-CTRLCHAR-FIX-2/scan.out | 79c3f324c | 07c0c022d3dfa753ff5bb441edc289d53e3a268a80c67995c9962eac65a60d5a | CANONICAL | BLOB |
+| EV-DC2-02 | AC4/AC6 失败记录与回滚后状态 | verification/DOC-CTRLCHAR-FIX-2/eval-report.log | 79c3f324c | 35ce498909f61d620b25bf748458db26729f8128fdf0cb582fa63745780266c3 | CANONICAL | BLOB |
 
 ## Resource Manifest
 
