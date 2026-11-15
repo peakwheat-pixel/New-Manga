@@ -41,6 +41,24 @@
 **可复核性**：L-L1-2 我做了**四项独立核实**（commit 可达性 / SQL ORDER BY / 调用链 / 测试存在性），
 不是抄记录。
 
+### 1.1 ★ 逐项复核结果（2026-11-15，消除 §9 局限 1 的尝试）
+
+| finding | 复核方式 | 结果 |
+|---|---|---|
+| **L-F1-2** | 打开 `tests/core/test_font_wire.py` | ✅ `:92` `test_font_wire_delete_failure_is_typed_and_retryable`；`:86` 注释明标 `MAINT-2-C1-BATCH-1 AC2 (C1-2 / L-F1-2)` |
+| **L-L1-4** | 打开 `src/application/library/service.py` | ✅ `:28-33` `MAX_SQLITE_INTEGER`/`MAX_IMPORT_ORDER`（带 why-one-less 注释）；`:298` 注释明标 `AC6 (R3-001)` |
+| **L-AI1-6** | 实测 `reassign_references` 命中数 + 打开测试 | ✅ `src/**` **命中 0**；`tests/storage/test_prompt_templates.py:221` 有 **`assert not hasattr(...)`** —— **能变红**的反向断言 |
+| **L-L1-2** | 前卡 `L-L1-2-CONSTRAINT-VERIFY-1` | ✅ 四项核实通过 |
+| **L-F1-3** | ZCode 裁决 + CLOSE-1 | ✅ 替代判据被接受 |
+| **L-R1-1 / L-R2-1** | — | ⚠️ **未核实 UI 行为**：需**真实窗口**观察控件是否接线；Agent 无法启动 GUI（§3 根因）。仅核实了"被归并进一张 UI 卡"这一处置事实 |
+| **L-L1-1** | — | ⚠️ **未查契约评估记录**，不声称已核实 |
+
+**⇒ 精确表述**：8 项中 **5 项**已逐项/逐行核实；**2 项（UI 控件）受 GUI 限制未核实行为**；**1 项未查契约记录**。
+
+**⇒ 这仍是"条件 1 是否真的 MET"的一个保留点**：L-R1-1/L-R2-1 的验收依赖 headless 测试而非真实窗口。
+
+**证据**：`verification/CONDITION1-FINDINGS-RECHECK-1/`。
+
 ---
 
 ## 2. 条件 2 —— 远端可见性调查（AUDIT-11-INC-001）
@@ -247,8 +265,9 @@ goal 要求"直至 Release Gate **可评估通过**"。**"可评估"这一目标
 
 ## 9. 本复评的局限（诚实）
 
-1. **条件 1 的 8 项 finding**：我核对了处置裁决与 L-L1-2 的实现，但**未逐项重跑每项 finding 的原始验证步骤** ——
-   这部分依赖既有 review 记录（可在 `MAINT-1-GATE-CONDITION-1-FINDING-ADJUDICATION` 中追溯）。
+1. ~~**条件 1 的 8 项 finding**：未逐项重跑。~~
+   **→ 已部分消除（2026-11-15）**：5 项已逐项/逐行核实（见 §1.1）。
+   **剩余局限**：L-R1-1/L-R2-1 的 UI 行为**需真实窗口**（Agent 无法启动 GUI），L-L1-1 未查契约评估记录。
 2. **CoreClient 测试**：192/0/30/222 是**继承基线**，本会话未重跑。
 3. **条件 2 的远端状态**：`gh` 未认证，**未访问远端核实**"仓库当前是否仍公开可见" ——
    该结论来自 SEC-01/02 的历史调查（2026-11-14 前后）。

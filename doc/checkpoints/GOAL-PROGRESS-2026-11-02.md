@@ -2669,3 +2669,25 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **同时更正我的两处措辞不精确**：①`6ae4d6da…` 是 0.1.1（README）的数字，0.1.0 原始 JSON 是 `fdf52d87…`；
   ②"用户数据根 SHA-256 前后完全一致"**没区分** `data_root_durable`（全程不变）与
   `data_root`（含日志/缓存，启动后由 `44f2bfed…` 变 `9de15a8d…`）。
+## 277. ★ CONDITION1-FINDINGS-RECHECK-1：逐项核实 8 项 finding —— **5 项已核 / 2 项受 GUI 限制 / 1 项未查**（2026-11-15，DSH，goal 轮次 78）
+
+- **动机**：消除复评 §9 局限 1（"条件 1 未逐项重跑，依赖既有 review 记录"）。
+- **★ 逐行核实三项 IMPL-NOW（不是"文档说完成了"）**：
+  - **L-F1-2**：打开 `tests/core/test_font_wire.py` —— `:92`
+    `def test_font_wire_delete_failure_is_typed_and_retryable`；`:86` 注释明标
+    `MAINT-2-C1-BATCH-1 AC2 (C1-2 / L-F1-2)` ✅
+  - **L-L1-4**：打开 `src/application/library/service.py` —— `:28-33` 定义
+    `MAX_SQLITE_INTEGER = 2**63 - 1` / `MAX_IMPORT_ORDER = MAX_SQLITE_INTEGER - 1`（带 why-one-less 注释）；
+    `:298` 注释明标 `AC6 (R3-001)` ✅
+  - **L-AI1-6**：**实测 `reassign_references` 在 `src/**` 命中 0**；
+    `tests/storage/test_prompt_templates.py:221` 有 **`assert not hasattr(SqlitePromptTemplateStore, "reassign_references")`**
+    + 消息 "dead N-01 helper is back" —— **这是能变红的反向断言**（有人加回死方法就会失败）✅
+- **另两项**：**L-L1-2** 前卡已四项核实；**L-F1-3** ZCode 裁决接受替代判据。
+- **★ 未消除的部分（诚实）**：
+  | 项 | 为什么 |
+  |---|---|
+  | **L-R1-1 / L-R2-1（UI 控件）** | 需**真实窗口**观察控件是否接线；**Agent 无法启动 GUI**（§3 的 4 途径 + 对照实验）。<br>**本轮只核实了"被归并进一张 UI 卡"这一处置事实，没核实 UI 行为本身。** |
+  | **L-L1-1（DTO 投影）** | **未查契约评估/UNFREEZE 记录**，不声称已核实 |
+- **⇒ 精确表述**：8 项中 **5 项已逐项/逐行核实**；**2 项受 GUI 限制未核实行为**；**1 项未查契约记录**。
+  **⇒ 这仍是"条件 1 是否真的 MET"的保留点**：L-R1-1/L-R2-1 的验收依赖 headless 测试而非真实窗口。
+- **已同步**：`RELEASE-GATE-RE-ASSESSMENT` 新增 **§1.1 逐项复核结果**，§9 局限 1 标记为**部分消除**（剩余两项写明）。
