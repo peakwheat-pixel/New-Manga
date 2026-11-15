@@ -30,7 +30,7 @@ Start-Sleep -Seconds 30
 | 场景 | 观测到的结果 |
 |---|---|
 | **在途交换 + 并发 StopAsync** | **`SidecarException`，`Code = ProcessExited`** |
-| **StopAsync 完成后的新交换** | `SidecarException`（`ProcessExited` 或 `IoFailure`），**fail-fast 不挂起** |
+| **StopAsync 完成后的新交换** | `SidecarException`，**`ProcessExited`**（精确；`IoFailure` 无 throw 点、已不作为容忍项），**fail-fast 不挂起** |
 | 是否有 BCL 异常泄漏给调用方 | **没有**（两条测试都走 `SidecarException` 分支；若泄漏，
 测试会 `Assert.Fail("leaked a non-SidecarException")`） |
 
@@ -41,7 +41,8 @@ Start-Sleep -Seconds 30
 ## 4. 书面判定（AC4）
 
 **① E-7 第 5 项的表述是否准确？—— 准确。**
-「在途命令会得 `ProcessExited`」与实测完全一致。
+「在途命令会得 `ProcessExited`」与实测一致 —— **但仅在该窗口之外准确**：
+若子进程已写出**一行不完整 JSON**，调用方见到的是 `MalformedResponse`（见 §4④ 与 F-5 的边界说明）。
 
 **② 这算不算缺陷？—— 部分算，但风险低于清单暗示。**
 - `ProcessExited` 是**明确、可处理**的错误码：进程确实退出了，调用方能区分它与超时、与协议错误；
@@ -79,6 +80,21 @@ Start-Sleep -Seconds 30
   （前一轮 195，+4 = 本卡原有的两条 + r1 要求补的两条）
 check.ps1 PASS (3 warnings)｜verify_pins 18/18｜api_inventory 1/80/6=87
 ```
+
+## 6.1 数据来源与测试边界（r2 F-4 / F-5）
+
+**F-4：`16/16 ProcessExited` 的来源。** 这个数字来自 **r1 复核者**在仓库外跑的探针
+（`probe-b.log`：E1A 6 次 + E1B 10 次），不是本卡自测。已把该日志复制进证据目录
+（`r1-probe-b.log`）以便复算；本卡自测覆盖的是 4 条 `[Fact]`。
+
+**F-5：半行回归测试钉住的是什么。** `HalfWrittenResponseLine_SurfacesMalformedResponse_NotProcessExited`
+的夹具是「子进程**主动写一行截断的 JSON**」，**没有经过 stop/kill**。所以它钉住的行为是：
+
+> 一行内容不完整（但不是半行传输）⇒ `ReadLineAsync` 返回该整行 ⇒ `CoreProtocol.Parse` 抛 `MalformedResponse`。
+
+它**不区分成因**：无论是子进程故意写残行，还是被杀时只写了一半，对 `ReadLineAsync` 来说都是
+「一行拿到了但内容不完整」。如果未来 shutdown 路径改用别的 EOF 处理（例如读到 null 就返回
+`ProcessExited` 而不再尝试解析），**这条测试不会变红** —— 这是它作为回归的已知局限，已记录。
 
 ## 7. 边界（不淡化）
 

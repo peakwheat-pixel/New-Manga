@@ -1,0 +1,92 @@
+probe start 2026-11-15T23:57:12.8298876+08:00
+powershell = C:\WINDOWS\system32\WindowsPowerShell\v1.0\powershell.exe
+--- E0 request-delivered-read-parked ---
+  iter0: requestDeliveredToChild=True childSaw='{"id":1}' inFlight=SidecarException.ProcessExited
+  iter1: requestDeliveredToChild=True childSaw='{"id":1}' inFlight=SidecarException.ProcessExited
+  iter2: requestDeliveredToChild=True childSaw='{"id":1}' inFlight=SidecarException.ProcessExited
+--- E1 dispose-vs-inflight ---
+  E1A iter0: inFlight=SidecarException.ProcessExited dispose=<no-exception>
+  E1A iter1: inFlight=SidecarException.ProcessExited dispose=<no-exception>
+  E1A iter2: inFlight=SidecarException.ProcessExited dispose=<no-exception>
+  E1A iter3: inFlight=SidecarException.ProcessExited dispose=<no-exception>
+  E1A iter4: inFlight=SidecarException.ProcessExited dispose=<no-exception>
+  E1A iter5: inFlight=SidecarException.ProcessExited dispose=<no-exception>
+  E1B iter0: inFlight=SidecarException.ProcessExited stop=<no-exception> dispose=<no-exception>
+  E1B iter1: inFlight=SidecarException.ProcessExited stop=<no-exception> dispose=<no-exception>
+  E1B iter2: inFlight=SidecarException.ProcessExited stop=<no-exception> dispose=<no-exception>
+  E1B iter3: inFlight=SidecarException.ProcessExited stop=<no-exception> dispose=<no-exception>
+  E1B iter4: inFlight=SidecarException.ProcessExited stop=<no-exception> dispose=<no-exception>
+  E1B iter5: inFlight=SidecarException.ProcessExited stop=<no-exception> dispose=<no-exception>
+  E1B iter6: inFlight=SidecarException.ProcessExited stop=<no-exception> dispose=<no-exception>
+  E1B iter7: inFlight=SidecarException.ProcessExited stop=<no-exception> dispose=<no-exception>
+  E1B iter8: inFlight=SidecarException.ProcessExited stop=<no-exception> dispose=<no-exception>
+  E1B iter9: inFlight=SidecarException.ProcessExited stop=<no-exception> dispose=<no-exception>
+--- E2 new-exchange-during-stop ---
+  E2 delay=  0ms iter0: SidecarException.ProcessExited
+  E2 delay=  0ms iter1: SidecarException.ProcessExited
+  E2 delay=  0ms iter2: SidecarException.ProcessExited
+  E2 delay=  5ms iter0: SidecarException.ProcessExited
+  E2 delay=  5ms iter1: SidecarException.ProcessExited
+  E2 delay=  5ms iter2: SidecarException.ProcessExited
+  E2 delay= 20ms iter0: SidecarException.ProcessExited
+  E2 delay= 20ms iter1: SidecarException.ProcessExited
+  E2 delay= 20ms iter2: SidecarException.ProcessExited
+  E2 delay= 50ms iter0: SidecarException.ProcessExited
+  E2 delay= 50ms iter1: SidecarException.ProcessExited
+  E2 delay= 50ms iter2: SidecarException.ProcessExited
+  E2 delay= 90ms iter0: SidecarException.ProcessExited
+  E2 delay= 90ms iter1: SidecarException.ProcessExited
+  E2 delay= 90ms iter2: SidecarException.ProcessExited
+  E2 delay=130ms iter0: SidecarException.ProcessExited
+  E2 delay=130ms iter1: SidecarException.ProcessExited
+  E2 delay=130ms iter2: SidecarException.ProcessExited
+  E2 delay=170ms iter0: SidecarException.ProcessExited
+  E2 delay=170ms iter1: SidecarException.ProcessExited
+  E2 delay=170ms iter2: SidecarException.ProcessExited
+  E2 delay=190ms iter0: SidecarException.ProcessExited
+  E2 delay=190ms iter1: SidecarException.ProcessExited
+  E2 delay=190ms iter2: SidecarException.ProcessExited
+  E2 delay=210ms iter0: SidecarException.ProcessExited
+  E2 delay=210ms iter1: SidecarException.ProcessExited
+  E2 delay=210ms iter2: SidecarException.ProcessExited
+  E2 delay=300ms iter0: SidecarException.ProcessExited
+  E2 delay=300ms iter1: SidecarException.ProcessExited
+  E2 delay=300ms iter2: SidecarException.ProcessExited
+--- E3 half-line-on-kill ---
+  E3 iter0: exchange=<no-exception> halfLine='{"id":1,"resu' Parse=SidecarException.MalformedResponse
+  E3 iter1: exchange=<no-exception> halfLine='{"id":1,"resu' Parse=SidecarException.MalformedResponse
+  E3 iter2: exchange=<no-exception> halfLine='{"id":1,"resu' Parse=SidecarException.MalformedResponse
+--- E3b StreamReader EOF semantics ---
+  unterminated='{"id":1,"resu' second=<null>
+--- E4 post-stop / post-dispose ---
+  E4 iter0: stop=<no-exception> postStop=SidecarException.ProcessExited postStop2=SidecarException.ProcessExited postDispose=SidecarException.ProcessExited
+  E4 iter1: stop=<no-exception> postStop=SidecarException.ProcessExited postStop2=SidecarException.ProcessExited postDispose=SidecarException.ProcessExited
+  E4 iter2: stop=<no-exception> postStop=SidecarException.ProcessExited postStop2=SidecarException.ProcessExited postDispose=SidecarException.ProcessExited
+  E4 iter3: stop=<no-exception> postStop=SidecarException.ProcessExited postStop2=SidecarException.ProcessExited postDispose=SidecarException.ProcessExited
+--- E5 true-concurrent stop-vs-new-exchange ---
+  E5 done
+=== SUMMARY (key :: exception/code => count) ===
+E1A dispose :: <no-exception> => 6
+E1A inFlight(during product DisposeAsync) :: SidecarException.ProcessExited => 6
+E1B dispose :: <no-exception> => 10
+E1B inFlight(stop200+dispose) :: SidecarException.ProcessExited => 10
+E1B stop :: <no-exception> => 10
+E2 newExchangeAt+0ms :: SidecarException.ProcessExited => 3
+E2 newExchangeAt+130ms :: SidecarException.ProcessExited => 3
+E2 newExchangeAt+170ms :: SidecarException.ProcessExited => 3
+E2 newExchangeAt+190ms :: SidecarException.ProcessExited => 3
+E2 newExchangeAt+20ms :: SidecarException.ProcessExited => 3
+E2 newExchangeAt+210ms :: SidecarException.ProcessExited => 3
+E2 newExchangeAt+300ms :: SidecarException.ProcessExited => 3
+E2 newExchangeAt+50ms :: SidecarException.ProcessExited => 3
+E2 newExchangeAt+5ms :: SidecarException.ProcessExited => 3
+E2 newExchangeAt+90ms :: SidecarException.ProcessExited => 3
+E3 CoreProtocol.Parse(halfLine) :: SidecarException.MalformedResponse => 3
+E3 ExchangeAsync(halfLine) :: <no-exception> => 3
+E3b unterminatedLineReturned :: <text> => 1
+E4 post-dispose exchange :: SidecarException.ProcessExited => 4
+E4 post-stop exchange (2nd) :: SidecarException.ProcessExited => 4
+E4 post-stop exchange :: SidecarException.ProcessExited => 4
+E5 concurrent StopAsync :: <no-exception> => 60
+E5 concurrent newExchange :: SidecarException.ProcessExited => 60
+probe end 2026-11-15T23:58:22.4820721+08:00
