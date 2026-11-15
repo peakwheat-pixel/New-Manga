@@ -1,9 +1,11 @@
 ---
 task_id: AC-CHECKBOX-AUTHORITY-1
 owner: DSH
-status: in_progress
+status: done
 created: 2026-11-15
 scope: 全项目 AC 勾选一致性清理（用户 2026-11-15 指示：AC 勾选要成为权威信号）
+canonical_evidence_status: complete
+resource_closeout_status: complete
 ---
 
 # AC 勾选成为权威信号：清理规范与执行
@@ -194,5 +196,33 @@ AC 正文未改（两类已批准例外见下方）；`git diff --numstat` 逐�
 `\e`→`0x1B`、`\0`→`0x00`），使卡面文本不可 grep（`verification` 写成 `erification`）。
 本任务**只修 AC 行内** 6 处（`V11R-B-1…B-5`、`V11R-C-1` 的 AC7 行，每处 1 字节），
 其余 59 个文件与非 AC 行**不动**（超出「只加注释」授权）。详见 `LEAD-DECISIONS.md` §九。
+
+## 8. Closeout Record
+
+- Closeout：2026-11-15，DSH（Lead / Architect / Integrator）。
+- **结果**：40 张卡 / 260 条 AC 全部有可审计标注 —— **182 `verified` / 72 `blocked` / 6 `not-applicable`**，
+  **裸 `[x]` = 0**。
+- **交付提交**：`0e7bc1fc5`（全量标注 + 治理规则）、`6042ee529`（定位符行号/格式修正）、
+  `895f3c852`（定位符全部展开为完整路径）、`a6a4845d7`（独立复核 r1 返修）。
+- **核实工具**（派生产物，在 `G:\CODEX\New Manga.workspace\tasks\AC-CHECKBOX-AUTHORITY-1\`，不入 Git）：
+  `scan_ac.py`（逐卡 AC 状态）、`verify_final.py --base <commit>`（正文/EOL/file: 全量校验）、
+  `verify_locators.py`（`test:`/`grep:` 定位符全量回读，当前 418/418 行内命中）。
+- **独立复核**：`ac-review`（独立上下文子 agent，未参与实现）审 `0e7bc1fc5` →
+  **CHANGES_REQUESTED**（P0/P1/P2/P3 = 0/3/8/8）→ 逐项处置见 §7.9，报告 `reviews/ac-review-r1.md`。
+  该复核**发现并纠正了一处已发布的虚报**（MICA AC1），是本任务最有价值的输入。
+- **门禁**（四次提交后实测）：`check.ps1` **PASS (3 warnings)**｜`verify_pins.ps1` **PASS (18/18)**｜
+  `generate_api_inventory.py --check` **OK (1/80/6=87)**｜`dotnet test App.Tests` **955 通过 / 0 失败 / 11 跳过**。
+- **未关闭项 / 已知限制（不淡化）**：
+  1. `MICA-FIX-1` AC1 最初的 `verified` 是**已发布的虚报**（截图实为 ChatGPT 桌面窗口），
+     由独立复核发现并降级为 `blocked`；原样登记，不淡化。
+  2. `doc/tasks/**` 65 个文件存在控制字符损坏（§7.8），本任务只修 6 处 AC 行内，其余另立 Task。
+  3. 6 张 `governance_version: 3` 历史终态卡在 `check.ps1 -TaskPath` 下仍 FAIL —— 既有状态，
+     非本次引入，见 `09_COLLABORATION.md` §4.3.1「已知门禁边界」。
+  4. `RELEASE-PACKAGE-1.md` 含 NUL 字节，git 视为 binary（既有）。
+  5. 72 条 `blocked` 涉及旧架构退出、真机/人工判断、本轮禁跑复验等缺口；其处置**不在本任务范围**。
+- **语义提醒**：本任务的 `[x]` 表示「该卡范围内的 AC 已达成或有可审计实物依据」，
+  **不等于**产品当前能力或 Release Gate 通过；运行状态仍以 [STATUS](../STATUS.md) 与
+  [REBASELINE_PLAN](../REBASELINE_PLAN.md) 为准。
+
 
 
