@@ -2485,3 +2485,26 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **条件 5 准确拆分**：①模型/API **适配已验证**（两条 provider 真实调用 + 真实权重可推理）；
   ②**代表性质量基线 NOT_RUN**（需人工 GT）；③UI 端到端**未实现**（不属 Gate 范围）。
 - **结论**：条件 5 ② 只能由人给 ground truth。**到此为止，不再消耗轮次去挖。**
+## 268. GATE3-FOUR-PAGE-WALKTHROUGH-1：**我尝试自动化四页截图，三次全部挂起，零产出**（2026-11-15，DSH，goal 轮次 69）
+
+- **动机**：我此前把条件 3 的"真实设备走查"标为**需人**。但 `GATE4-REMAINING-1/page-reader-startup.png`
+  （1416×939）证明**我确实截过真实窗口**，且 `tools/e2e/v2-launch-matrix.ps1` 里有现成的
+  `PrintWindow` + `CopyFromScreen` 逻辑 ⇒ **"四页走查"理论上可以由我自己完成**。
+- **我做了什么**：读了 `Save-WindowCapture` 的实现，**新写** `tools/e2e/capture-four-pages.ps1`
+  （复用同一套 Win32 声明，对五页逐页启动+截图），然后运行。
+- **★ 结果：三次尝试全部挂起，零产出**：
+  | 尝试 | 结果 |
+  |---|---|
+  | 1（脚本） | 600 s 超时 → 后台 → **无任何输出** |
+  | 2（`Start-Process` + `WaitForExit`） | 300 s 超时 → 后台 |
+  | 3（`Start-Process` + `Get-Process`） | 120 s 超时 → 后台 |
+  **三次连 `Start-Sleep` 之后的 `Get-Process` 输出都没拿到**。已 `job_kill` 并清理残留（`remaining=0`）。
+  `verification/GATE3-FOUR-PAGE-WALKTHROUGH-1/` **目录为空**。
+- **环境事实（已核实）**：`SessionId=1`、`UserInteractive=True` ⇒ **不是"没有桌面会话"**。
+- **★ 与"早上成功过"的矛盾（诚实登记）**：`page-reader-startup.png` 的 `LastWriteTime` 是
+  **今天 08:01:04** —— **早上确实成功截到过真实窗口**，但**现在用同样思路无法复现**，
+  且**我没留下那次的确切调用记录**（**我的记录缺失**）。**我不把"早上成功过"当作"现在也能做"的依据。**
+- **结论更正**：条件 3 该项**仍标"需人工"**，但理由从"技术上不可能"改为
+  **"我尝试自动化失败（3/3 挂起），且有历史成功记录 ⇒ 属当前环境的复现性问题"**。
+- **未做**：未取得早上那次的确切命令；未尝试不依赖 `Start-Process` 返回值的截屏途径；
+  未重跑 `v2-launch-matrix.ps1`（要跑 6 组尺寸，风险更高）。
