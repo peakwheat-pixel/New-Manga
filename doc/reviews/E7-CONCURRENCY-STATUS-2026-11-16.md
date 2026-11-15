@@ -1,61 +1,74 @@
-# E-7 并发项 — 现状精确核实（2026-11-16，DSH）
+# E-7 并发项 — 现状精确核实（2026-11-16，DSH）｜**r1 复核后重写**
 
-**目的**：`PIPE-EXCLUSIVE-TRANSPORT-1` 卡面把 AC1/AC2/AC4/AC5 标为 `[~]`（PARTIAL/NOT MET），
-多份后续文档据此宣称「E-7 仍有 5 项开放、并发安全不可宣称」。本文件**逐项读代码核实**，
-判断哪些已修、哪些只是架构未统一（功能无缺陷）、哪些真开放。
+**结论先行（r1 更正后的正确版本）**：
 
-**方法**：只读代码 + 交叉对照卡面与测试；**不**凭 grep 关键词下结论（本轮已因此误判两次）。
+> **「E-7 仍有 5 项开放、并发安全不可宣称」在本 head 上仍然准确。**
+> 5 项**全部仍开**。本报告初版曾错误地宣称「不是 5 项，而是 1+1+1」——那个更正**方向反了**，见 §4。
+
+**权威枚举**（两处独立文档一致，本报告以此为准）：
+- `doc/tasks/PIPE-EXCLUSIVE-TRANSPORT-1.md:123-129`
+- `doc/reviews/MAINT-1-EXISTING-FINDINGS-2026-11-14.md:162-168`
 
 ---
 
-## 1. E-7 五项逐项核实
+## 1. 权威 5 项的逐项核实（全部仍开）
 
-| # | 卡面/文档的表述 | 代码实测 | 判定 |
+| # | 权威表述 | 代码实测 | 判定 |
 |---|---|---|---|
-| a | `HostBridgeClient` 同型无锁管道 | `Bridge/HostBridgeClient.cs:269`（`SendRawAsync`）与 `:292`（`SendAsync`）**均** `using var lease = await _process.AcquireExchangeLeaseAsync(...)` | **已修** |
-| b | `SendRawAsync` 锁外 | `CoreServiceClient.cs:2386` `await _pipeGate.WaitAsync(...)` → `:2396` `_pipeGate.Release()` | **已修** |
-| c | 独占未下沉传输层 | `Transport/SidecarProcess.cs:34` `_exchangeGate`(SemaphoreSlim(1,1))、`:40-43` `AcquireExchangeLeaseAsync` 暴露 lease；**但** `CoreServiceClient` 仍用私有 `_pipeGate`（`:426`），未改用 lease | **部分**：传输层已有原语且 Fluent 侧已用；Core 侧未统一 |
-| d | 无 `request_id` 时 fail-open | `CoreServiceClient.cs:2385` 注释明写「request_id (if any), so we do not validate the id here」—— `SendRawAsync` 路径**故意不校验** | **仍开，但属设计**（负向证据 hook） |
-| e | 错配后无重同步（R-002） | `CoreServiceClient.cs:2400-2411` 错配时**抛 `SidecarException`**；无「丢弃直到匹配 id」逻辑 | **仍开**（真缺口） |
+| **1** | `CoreServiceClient` 仍用自己的 `_pipeGate`，未改用传输层租约；`ExchangeAsync` 仍 `public` ⇒ 未来直调绕过独占（AC1 PARTIAL / AC2 NOT MET） | `CoreServiceClient.cs:426` `_pipeGate`；`SidecarProcess.ExchangeAsync` 为 `public`（`:219`），且**内部不加锁**（无 `_exchangeGate.WaitAsync`） | **仍开** |
+| **2** | 无 `request_id` 时 fail-open；bridge 仅校验数字 id（AC4 后半 NOT MET） | `EnsureResponseBelongsToRequest`（`CoreServiceClient.cs:~2406` 判据）对**缺失** `request_id` 直接放过（配合 `CoreProtocol.cs:63-65`）；`HostBridgeClient.ParseResponse`（`:322-333`）仅校验数字 `id`，`:272` 的 `SendRawAsync` 不传 `expectedId` | **仍开（生产路径）** |
+| **3** | **R-002**：id 错配后无重同步，流中可能残留一帧（AC5 NOT MET） | `CoreServiceClient.cs:2408-2413` 错配时抛 `SidecarException`，无 drain/poison；协议按行一次一响应 ⇒ 抛错后本次响应残留，下一次读到上一条 = **永久 off-by-one** | **仍开** |
+| **4** | **R-005**：取消（`CancellationToken`）后流状态可能永久失步 | `SidecarProcess.cs:250-258`：`catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)` —— **只有超时才 `_poisoned = true`**；**调用方主动取消**时该 filter 不匹配 ⇒ 异常直抛、**不置 poison** ⇒ 流状态未定义 | **仍开** |
+| **5** | `Dispose`/`StopAsync` 在租约外，在途命令会得 `ProcessExited` | `CoreServiceClient.DisposeAsync`（`:2620-2631`）：直接 `await _process.StopAsync()` → `await _process.DisposeAsync()`，**两处都不持 lease** | **仍开** |
 
-### 关键澄清：`ExchangeAsync` 本身不加锁
+## 2. 关键机制澄清（理解 1–5 的前提）
 
-`SidecarProcess.ExchangeAsync`（`:219`）**不做** `_exchangeGate.WaitAsync` —— 独占必须由调用方持 lease 实现。
-⇒ 两个客户端目前是**各自加锁**：Fluent 侧用传输层 lease（a/b 已修），Core 侧用私有 `_pipeGate`（b 已修）。
-**功能上都有保护**；差别只在「新调用方若忘记加锁会撕裂」这一架构风险。
+`SidecarProcess.ExchangeAsync`（`:219`）**本身不加锁** —— 它只做 `ThrowIfPoisoned` → 写 stdin → 读 stdout 一行。
+独占必须由调用方通过 `AcquireExchangeLeaseAsync`（`:40-43`，底层 `_exchangeGate` SemaphoreSlim(1,1)，`:34`）持 lease 实现。
 
----
+⇒ 由此可推出第 1 项为何是缺口：`ExchangeAsync` 是 `public` 且不自锁，「未来任何直调即绕过独占」。
+当前两条管道各自加锁（Fluent 侧走传输层 lease、Core 侧走私有 `_pipeGate`），**功能有保护但机制未统一**。
 
-## 2. 真实剩余工作（按价值排序）
+## 3. 已在的修复（不属于 5 项，供参照，不是本报告的"更正"）
 
-| 优先级 | 项 | 性质 | 建议 |
-|---|---|---|---|
-| **P1** | **e：R-002 重同步** | 真缺口：id 错配抛异常后，pipe 里可能残留旧响应，下一次 `ExchangeAsync` 会读到它 → **后续所有调用错位** | 在 lease 范围内实现「丢弃直到匹配 id 或 poison session」 |
-| P2 | c：Core 侧改用传输层 lease | 架构一致性，功能无缺陷 | 把 `_pipeGate` 换成 `AcquireExchangeLeaseAsync`，删重复锁 |
-| P3 | d：`SendRawAsync` fail-open | **设计如此**（负向证据 hook，明确不校验） | 不改；但应在文档中写明「非生产路径」 |
+这两项在 `MAINT-1:158-159`、`GOAL-PROGRESS:1571-1572` 中**早已记为已修**，从未计入 5 项：
 
----
+- `HostBridgeClient` 已用传输层 lease：`Bridge/HostBridgeClient.cs:269`/`:292`，
+  全文件仅 2 处 `ExchangeAsync`（`:270`/`:293`）且都在 lease 之下；其余公开方法走 `SendAsync`，**无绕过路径**。
+- `CoreServiceClient.SendRawAsync` 已持 `_pipeGate`：`:2386` Wait → `:2387-2393` try → `:2394-2397` finally Release。
 
-## 3. 对既有文档的更正
+## 4. r1 复核指出的错误（本报告初版，已更正）
 
-- `PIPE-EXCLUSIVE-TRANSPORT-1` 卡面 AC1 写「`CoreServiceClient` 仍用 `_pipeGate`，未统一」—— **仍成立**（c）；
-  但 AC2 写「core 侧两处仍直调 `ExchangeAsync`」—— 若指 `SendRawAsync`，其**已在 `_pipeGate` 内**（b 已修）。
-- 多份文档（含 `RELEASE-GATE-DISPOSITION` §3）沿用「E-7 仍有 5 项开放」的表述 —— **不准确**：
-  实际是 **1 项真缺口（e）+ 1 项架构未统一（c）+ 1 项设计如此（d）**。
+| 错误 | 说明 |
+|---|---|
+| **P1：§3「不是 5 项而是 1+1+1」** | 我把卡面 AC1/AC2/AC4/AC5 的 `[~]` 行当成"5 项"，并把 a/b（早已修、从未计入）也纳进来"更正"，**方向反了**；还漏了 R-005 与 Dispose 两项，把开放项从 5 降到 3。**已按权威枚举重写为 §1。** |
+| **P2：d 归类为「设计如此」** | 初版引 `CoreServiceClient.cs:2384-2385` 的注释论证 fail-open 是故意的 —— 但那注释描述的是**测试钩子** `SendRawAsync`（全仓无生产调用者）。第 2 项指的是**生产路径** `EnsureResponseBelongsToRequest` 对缺失 `request_id` 放过。**归为「设计如此」掩盖了生产路径残余风险**，已改判为「仍开」。 |
+| **P2：AC2 解读错位** | 初版把 AC2「core 侧两处仍直调 `ExchangeAsync`」误读为 `SendRawAsync`；实指 `CoreServiceClient.cs:699-701` 与 `:2431`。AC2 `[~]` 仍成立。 |
 
----
+**保留的部分**：a（HostBridgeClient 已用 lease）、b（SendRawAsync 已持锁）、c（两把 gate 分属独立管道、无双重锁）、
+以及「`ExchangeAsync` 本身不加锁」四项代码结论经 r1 复核确认准确，无需返工。
 
-## 4. 本轮的自我更正记录
+## 5. 真实剩余工作（按风险排序）
 
-本轮我先用 `grep "SemaphoreSlim|lock"` 查 `HostBridgeClient`，无命中便判「无锁」——
-实际上它用的是 `AcquireExchangeLeaseAsync`（lease 模式，不经 `lock` 关键字）。
-**这是我第 4 次因「只搜关键词就读到一半」而误判**（前三次：`0x00` 映射、默认壳、手工绕过 `package.ps1`）。
-已在本文件开头把方法改为「读完整实现」。
+| 优先级 | 项 | 为何排这个位置 |
+|---|---|---|
+| **P1** | **4 / R-005 取消失步** | 最现实的触发路径：任何一次 `CancellationToken` 取消都会让流永久失步，且**不置 poison**（无法自愈） |
+| **P1** | **3 / R-002 错配无重同步** | 协议按行一次一响应，抛错即 off-by-one，后续所有调用错位 |
+| P2 | **5 / Dispose 与在途命令竞态** | `StopAsync` 不持 lease，在途命令得 `ProcessExited`（表现为随机失败） |
+| P2 | **1 / 统一到传输层租约** | 架构一致性；`ExchangeAsync` 仍 `public` 是「未来直调即绕过」的根因 |
+| P3 | **2 / fail-open 收紧** | 需要先定「缺失 id 时应 fail-closed 还是允许」的契约，属设计决策 |
 
-## 5. 下一轮建议
+## 6. 第 5 次同类错误（如实记录）
 
-实现 **e（R-002 重同步）**：这是唯一真正的并发安全缺口，也是「并发安全不可宣称」的直接来源。
-范围建议：
-- 在 `SidecarProcess` 提供 `DrainUntilAsync(int expectedId)` 或等价物；
-- `CoreServiceClient` 在 id 错配时先尝试丢弃到匹配 id（有上限），失败再 poison；
-- 测试：构造「迟到的旧响应」场景，断言后续调用仍取到正确响应。
+初版方法里我写了「读完整实现，不只 grep」，但 §3 的错恰恰是**另一种"读到一半"**：
+我读了卡面 AC 行，**没去找「5 项」的权威枚举定义**（它在同一张卡的「未达成」小节里，`PIPE-EXCLUSIVE-TRANSPORT-1.md:123-129`，
+以及 `MAINT-1:162-168` 有同样的列表）。
+
+前四次：`0x00` 映射猜错 → 默认壳看错分支 → 手工绕过 `package.ps1` → grep 无 `lock` 判「无锁」。
+**这一次是：把"看起来像清单的行"当成了权威清单，而没找原始定义。**
+
+⇒ 归纳一条可执行的纪律：**凡要复述「N 项」这类枚举，必须先定位它的定义处并逐条对照，不得从二手行文里反推。**
+
+## 7. 本轮范围
+
+**不修改任何 `.cs`**（本卡只做状态核实）。四件套已复跑：`check` PASS(3w) / `pins` 18/18 / `inventory` 1/80/6=87。
