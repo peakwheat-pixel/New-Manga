@@ -79,10 +79,10 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class | sha256_basis |
 |---|---|---|---|---|---|---|
-| EV-RPB-01 | AC1/AC2/AC3/AC4 证据总述 | verification/RELEASE-PACKAGE-BUNDLE-1/README.md | 53d803e04 | PLACEHOLDER_SHA | CANONICAL | BLOB |
-| EV-RPB-02 | AC1 正规包清单 | verification/RELEASE-PACKAGE-BUNDLE-1/bundle-manifest.txt | 53d803e04 | 8c304152eafce970dc39e39efffe16bded3ff3788d7a01b440f8ace1abbb3792 | CANONICAL | BLOB |
-| EV-RPB-03 | AC2 包内启动日志（host.log） | verification/RELEASE-PACKAGE-BUNDLE-1/launch-verification.log | 53d803e04 | 84a1c4b3a3bd3d0a9b7dcf252fb167b502b7b6968233f6b5d52535f1d0d5122b | CANONICAL | BLOB |
-| EV-RPB-04 | AC3 zip 指纹 | verification/RELEASE-PACKAGE-BUNDLE-1/zip-fingerprint.txt | 53d803e04 | d8d7f7ad4d3bc943f80521d5a5e8fd504af6cb52aab1ede9eb3f4b800a1f2a0f | CANONICAL | BLOB |
+| EV-RPB-01 | AC1/AC2/AC3/AC4 证据总述 | verification/RELEASE-PACKAGE-BUNDLE-1/README.md | 551df987b | c46ef9760eda6ac903375fbb0addb7740a23413fc7597298d69b6daa592de369 | CANONICAL | BLOB |
+| EV-RPB-02 | AC1 正规包清单 | verification/RELEASE-PACKAGE-BUNDLE-1/bundle-manifest.txt | 551df987b | ab22e33690317f69bde31f574a59b3031a0e6efbf251ccc8e9ffdf648d1d319e | CANONICAL | BLOB |
+| EV-RPB-03 | AC2 包内启动日志（host.log） | verification/RELEASE-PACKAGE-BUNDLE-1/launch-verification.log | 551df987b | a6d9b12cf4d20f473df4595bf01cce5ebe919628ccd7d092a9d0acd2ee531ec1 | CANONICAL | BLOB |
+| EV-RPB-04 | AC3 zip 指纹 | verification/RELEASE-PACKAGE-BUNDLE-1/zip-fingerprint.txt | 551df987b | 34dff84a8c03702d35b194e2511b3c9eb29d93c8465c87835ed2baf213ea5122 | CANONICAL | BLOB |
 
 ## Resource Manifest
 
