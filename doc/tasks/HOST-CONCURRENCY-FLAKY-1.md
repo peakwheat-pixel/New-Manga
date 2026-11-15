@@ -16,6 +16,7 @@ evidence_dir: verification/HOST-CONCURRENCY-FLAKY-1
 allowed_paths:
   - doc/tasks/HOST-CONCURRENCY-FLAKY-1.md
   - apps/desktop-avalonia/src/NewManga.Host/Sources/**
+  - apps/desktop-avalonia/src/NewManga.CoreClient/Issuer/**
   - apps/desktop-avalonia/tests/NewManga.Host.Tests/**
   - verification/HOST-CONCURRENCY-FLAKY-1/**
 ---
@@ -142,6 +143,7 @@ fileLock = new FileStream(... "registry.v1.lock", ..., FileShare.None);   // ←
 | EV-HCF-10 | st_ino 超出 53 位实测（6/7） | verification/HOST-CONCURRENCY-FLAKY-1/st-ino-measured.md | 062918039 | PIN_PENDING | CANONICAL | BLOB |
 | EV-HCF-11 | st_ino 探针脚本（可复算） | verification/HOST-CONCURRENCY-FLAKY-1/probe_st_ino.py | 062918039 | PIN_PENDING | CANONICAL | BLOB |
 | EV-HCF-12 | 探针原始输出 | verification/HOST-CONCURRENCY-FLAKY-1/st-ino-probe-output.log | 062918039 | PIN_PENDING | CANONICAL | BLOB |
+| EV-HCF-13 | **根因铁证**：Host producer 未 mask | verification/HOST-CONCURRENCY-FLAKY-1/root-cause-proven.md | 4b1198443 | PIN_PENDING | CANONICAL | BLOB |
 
 ## Resource Manifest
 
@@ -342,3 +344,48 @@ mask 不改变数值 —— 这正是"用既有文件没事、用新建临时文
 2. source_read_refs.py:1080 的 GrantFacts(*numbers, ...) 是否 mask。
 
 下一轮抓 IPC 报文里的 ile_id 与 os.stat() 值对比定论。
+
+## 根因铁证（2026-11-16）—— 三环链路全部定位到行
+
+| 环 | 位置 | 行为 |
+|---|---|---|
+| 1 producer | `NewManga.CoreClient/Issuer/HostIssuer.cs:563` | `ulong index = ((ulong)info.FileIndexHigh << 32) \| info.FileIndexLow;` —— **完整 64 位，未 mask** |
+| 2 透传 | `src/infrastructure/resource_channel/source_read_refs.py:1068` | `numbers = (raw["volume_serial"], raw["file_id"], raw["size"])` —— **原样透传；该文件里 `normalize_identity` 一次都没出现** |
+| 3 comparator | `src/application/importing/referenced/scanner.py:163` | `_stat_folder_entry` 返回 `normalize_identity(st_dev, st_ino)` —— **mask 到 53 位** |
+
+比较处 `scanner.py:168`：`if dev != expected_volume or ino != facts.file_id or size != facts.size`
+⇒ **mask 后的 `ino` 对比未 mask 的 `facts.file_id`**。
+
+### 违约条款
+
+`identity.py:3-9` 明确点名 **"the Windows handle probe"** 与 **"the grant scope"** 都是 producer，
+都必须 `normalize_identity`。`HostIssuer.cs:563` 正是 Windows handle probe 的实现 ——
+**它就是违约的 producer**。
+
+### 影响面：不只是测试
+
+`st-ino-measured.md` 已实测 `%TEMP%` 新建文件 `st_ino > 2^53` 达 6/7。
+⇒ 任何用户**新导入**的源文件都会稳定报 `FILE_IDENTITY_CHANGED`
+（"Import source reference was rejected"）。
+**这是本会话发现的第一个可能直接影响真实用户的缺陷**（此前修的都是测试期望过时）。
+
+### 修法方向（Contract 要求）
+
+```csharp
+// HostIssuer.cs:563
+const ulong FileIdMask = (1UL << 53) - 1;
+ulong index = (((ulong)info.FileIndexHigh << 32) | info.FileIndexLow) & FileIdMask;
+```
+
+还需检查 `DirectoryIdentity`（`HostIssuer.cs:596`）是否走同一比较口径。
+**常量单一事实来源**：`_VOLUME_MASK` / `_FILE_MASK` 现只在 `identity.py` 定义，
+C# 镜像需在注释中指向该文件作为权威。
+
+### 范围变更（本轮裁决并记录）
+
+`HostIssuer.cs` 位于 `NewManga.CoreClient/Issuer/`，**超出本卡原 `allowed_paths`**
+（原只授权 `NewManga.Host/Sources/**`）。按治理规则由 DSH 作为 Lead/Integrator 裁决
+**扩展 `allowed_paths` 增加 `apps/desktop-avalonia/src/NewManga.CoreClient/Issuer/**`**，
+理由：根因已定位到该文件第 563 行，另立卡会产生跨卡的同一缺陷片段。
+
+本轮**仅扩展范围并记录证据，未改代码**；实施下一轮进行。
