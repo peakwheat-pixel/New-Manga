@@ -3034,3 +3034,30 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **⇒ 四张图是新增，没有替换任何历史证据。**
 - **★ 但顺序错了**：**应该提交前就查，而不是提交后才查**。**写入别人的目录前应先确认那里有什么。**
   这是**第 13 次同类疏忽（先做后验）**。
+## 295. 🔴 CAPTURE-VAR-OVERWRITE-INCIDENT-1：**我覆盖了既有证据，已回退**（第 14 次同类错误，2026-11-15，DSH，goal 轮次 96）
+
+- **我做了什么**：按上一轮自己提的计划"扫剩余 capture 变量"，跑了
+  `="1"` + `FluentResidual3VisualEvidenceTests`。
+  测试通过（1/0/0/2 s），**但 `git status` 显示**：
+  `M verification/FEA-06-RESIDUAL-3/visuals/05-workbench-batch-matrix.png` /
+  `07-reader-single.png` / `08-reader-double.png` / `09-reader-webtoon.png` / `inventory.md`。
+  **⇒ 我覆盖了 `FEA-06-RESIDUAL-3` 的 5 个既有证据文件。**
+- **已回退**：`git checkout -- verification/FEA-06-RESIDUAL-3`
+  → `git status` 无输出、`git diff --stat HEAD` 无输出 ⇒ **恢复 HEAD 原字节，零残留**。
+- **★ 为什么会发生**：`FluentResidual3VisualEvidenceTests:95` 的注释写得清楚：
+  "`NEWMANGA_CAPTURE_RESIDUAL3_PNGS=1` 才写 9 张图 + inventory 到**本卡证据目录**" ——
+  **"本卡"是 FEA-06-RESIDUAL-3，不是我的。我读到了这句话，但没问"那个目录里有东西吗？我会覆盖吗？"**
+- **★ 这是同一个错误的第 14 次**：
+  | # | 错误 | 类型 |
+  |---|---|---|
+  | 3 | 只搜 `git grep` | 搜索范围不完整 |
+  | 7 | 只搜 `*.axaml` | 搜索范围不完整 |
+  | 11 | 说"做尽"没 grep | 搜索范围不完整 |
+  | 12 | 计划写新测试（一条 env 就够） | 搜索范围不完整 |
+  | **13** | 写 `FEA-06-RESIDUAL-1/png/` 后才查 | **先做后验** |
+  | **14** | 跑 capture 前没查写盘目标 | **先做后验** |
+  **⇒ 13 与 14 是同一天、连续两轮的同一个错误。上一轮我刚写"写入别人的目录前应先确认那里有什么"，下一轮就违反了它。**
+- **我原本该做**：跑任何 `NEWMANGA_CAPTURE_*` 前 ①读测试的写盘路径 ②`git status`+`ls` 该目录
+  ③若受版本控制且已有内容就先确认 ④跑完**先看有没有意外改动，再看产出**。
+  **我这次是第 4 步才做，而且是在测试通过、以为一切正常之后。**
+- **影响**：既有证据**已恢复、零影响**；pin 未变；门禁未变；卡片结论不受影响。**实质零损害，但过程违规，必须登记。**
