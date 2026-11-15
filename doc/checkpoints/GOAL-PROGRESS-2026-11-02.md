@@ -2338,3 +2338,22 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   ②代表性质量基线 **NOT_RUN**（需人工 GT）；③**UI 端到端 未实现**（需自动翻译功能卡，**不在 Gate 范围**）。
 - **★ 两次误判的共同模式（已固化）**：`L-F1-3` 是**没读裁决原文**；`E-9` 是**没读 `RegisterRoot` 的实现**。
   **共同点：我都没读关键的那一行，就下了"做不到/要更多"的结论。**
+## 261. L-L1-2-CONSTRAINT-VERIFY-1：核实"第二优先"已落地且**遵守 hard 约束**（2026-11-15，DSH，goal 轮次 62）
+
+- **动机**：goal 的**第二优先**是"按外部裁决落地功能：**章节手动排序**；**wire 顺序保持 `sort_order`，
+  排序在 UI/Host 消费层做，不得擅自改 wire 顺序**"。STATUS 说 8/8 已关闭，但**三指针不回流**已在这项目出现 3 次，
+  ⇒ 逐条核实是否真落地、且是否**遵守那两条硬约束**。
+- **核实结果（全部通过）**：
+  1. **卡片 `CHAPTER-MANUAL-SORT` = `done`**；`integration_commit c459b279f` **可达性实测**：
+     `git cat-file -t` → `commit`；`git merge-base --is-ancestor c459b279f HEAD` → **是祖先**（EXIT 0），
+     **不是孤儿/被改写的 commit**。
+  2. **wire 顺序仍按 `sort_order`**：`library.py:1200/1228` 的 `ORDER BY c.sort_order, c.import_order, c.chapter_id`
+     —— **主键是 `sort_order`**，后两个只是**并列 tie-breaker**（确定性需要）。
+     语义依据 `service.py:167`：「`sort_order` is the display/read order and must stay unique」——
+     该字段本就是显示顺序，故"手动排序 = 改它"**符合语义**，不是改 wire 契约。
+  3. **排序决策在 UI/Host 层**：`ShelfViewModel.ReorderChapterAsync`（UI）→ `HostController.ReorderChaptersAsync`（Host）
+     → `runtime.py:865`（Core 只持久化）。**wire 层没有加重排逻辑。**
+  4. **有测试**：C# `LibraryMetadataPortTests`；Python `test_chapter_reorder_atomic.py`（**测原子性**）。
+- **结论**：**第二优先已落地且合规**，不是"指针说 done 但其实没做"的又一起。
+- **方法学说明**：这次我**先核实现（git 可达性 + SQL ORDER BY + 调用链 + 测试存在性）再下结论**，
+  没有凭 STATUS 的"8/8"就认定。
