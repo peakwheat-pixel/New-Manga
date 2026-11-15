@@ -2691,3 +2691,27 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **⇒ 精确表述**：8 项中 **5 项已逐项/逐行核实**；**2 项受 GUI 限制未核实行为**；**1 项未查契约记录**。
   **⇒ 这仍是"条件 1 是否真的 MET"的保留点**：L-R1-1/L-R2-1 的验收依赖 headless 测试而非真实窗口。
 - **已同步**：`RELEASE-GATE-RE-ASSESSMENT` 新增 **§1.1 逐项复核结果**，§9 局限 1 标记为**部分消除**（剩余两项写明）。
+## 278. ★★ L-R1-1-UI-WIRING-VERIFY-1：控件**确实接线** —— 但我为此连错两次（第 7 次误判）（2026-11-15，DSH，goal 轮次 79）
+
+- **承诺兑现**：上一轮说"静态核查 L-R1-1/L-R2-1 的控件是否真接线"。
+- **★ 结论（先行）**：**四项控件全部接线**，证据在
+  `apps/desktop-avalonia/src/NewManga.App/Views/Fluent/ReaderPageView.cs`（**737 行，C# 代码构建 UI**）：
+  - **书签面板** `:279` "书签" → `ToggleBookmarkPanel`；`:291` "添加当前页书签"；`:295` "关闭书签面板"；
+    `:338` "删除"；`:60` `Border _bookmarkPanelHost`；`:152` `BuildBookmarkPanel()`
+  - **整书进度** `:414` "上一页" → `PreviousAsync()`；`:419` "下一页" → `NextAsync()`；`:616` 页码跳转
+  - **reset 确认** `:424` "重置进度"；`:153` "确认重置进度" → `ConfirmResetAsync()`；`:154` "取消"
+  - **偏好应用** `:275` "单页/双页" → `ToggleDoublePagePersistingAsync()`；`:276` "反向翻页" →
+    `ToggleDirectionPersistingAsync()`；`:393-395` 缩放 → `ZoomByPersistingAsync()`/`ResetZoomPersistingAsync()`
+- **★ 我为此犯的两次方法错误（原样登记）**：
+  1. **只搜 `.axaml`**：书签 0 命中、偏好 0 命中、重置只在 `ImportDockView`（源授权）、进度只在文案里；
+     又读了 `ReaderOverlay.axaml`（123 行，只有 7 个 Command）确认无这四项
+     ⇒ **我断言"阅读器这四项控件在 XAML 里不存在"并宣布"L-R1-1/L-R2-1 确实没接线"。这是错的。**
+  2. **搜 C# 后自己推翻**：Reader UI **不在 XAML 里，而是 C# 代码构建**。
+- **★ 这次错误为什么危险**：我当时**准备把它当"真缺陷"去改 STATUS**，即差一步就把一个
+  **正确完成的功能登记成缺陷**、并可能触发一次不必要的返工。
+- **错误模式归类**：**第 3 次（`yolo11s-seg.onnx` 只搜 `git grep` 漏 gitignore）与第 7 次是同一类** ——
+  **"我以为搜索覆盖了全部"，其实只覆盖了会让我看到"不存在"的那一半。**
+  **`*.axaml` 之于 C# 构建的 UI，正如 `git grep` 之于 gitignore 的文件。**
+- **已同步**：`RELEASE-GATE-RE-ASSESSMENT` §1.1 该行由 "⚠️ 未核实" 改为 "✅ 已接线（含行号）"；
+  结论由"2 项受 GUI 限制"改为"**6 项已核 / 1 项未查 / UI 真实窗口可见性仍未验**"。
+  **保留点收窄但不消失** —— 静态证明"控件已构建并绑定"≠"真实窗口里能看见"。
