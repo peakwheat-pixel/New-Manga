@@ -122,7 +122,14 @@ foreach ($page in $pages) {
     )
     if ($SidecarDir) { $args += "--sidecar-dir=$SidecarDir" }
 
-    $proc = Start-Process -FilePath $appExe -ArgumentList $args -PassThru
+    # NOTE: Start-Process (the cmdlet) HANGS in this environment (4 attempts, incl. cmd /c start).
+    # [System.Diagnostics.Process]::Start(ProcessStartInfo) returns in ~26 ms and the window appears.
+    # Same approach as verification/GATE4-PAGES-UPGRADE-1/capture-page.ps1:92.
+    $psi = New-Object System.Diagnostics.ProcessStartInfo
+    $psi.FileName = $appExe
+    $psi.UseShellExecute = $false
+    foreach ($a in $args) { $psi.ArgumentList.Add($a) }
+    $proc = [System.Diagnostics.Process]::Start($psi)
     $handle = Get-TopLevelWindow -Process $proc -TimeoutSeconds $TimeoutSeconds
 
     if ($handle -eq [IntPtr]::Zero) {

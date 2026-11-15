@@ -2759,3 +2759,26 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   条件 4 判 PARTIAL 的剩余理由**收窄为**：①阅读器空库未到达；②跨版本二进制升级未验证；③签名；④0.1.1 原始断言缺失。
 - **诚实边界**：我**只核了哈希与字节数，没有看图** —— 按该 README §2 的教训，
   "必须人眼过一遍"，所以我**不能证明图里是 NewManga 界面**，只能证明"文件与 README 声称的一致"。
+## 281. ★★★ 突破：**找到 GUI 启动的正确方式，5/5 页真截图** —— 我此前的根因诊断是错的（2026-11-15，DSH，goal 轮次 82）
+
+- **★ 根因（正确版）**：**`Start-Process` cmdlet 在本环境挂起；`[System.Diagnostics.Process]::Start(ProcessStartInfo)` 正常。**
+  实测：`Process.Start` **返回 26 ms**，窗口 3 s 内出现（`handle=789264`、`title='New Manga'`）。
+  而 `Start-Process -PassThru` / `Start-Process`+`WaitForExit` / `-WindowStyle Normal` / `cmd /c start` **四种全部挂起**。
+- **★ 我的诊断错误（登记）**：我在 `GATE3-FOUR-PAGE-WALKTHROUGH-1` §8 写"根因是 GUI 进程无法在本 shell 的窗口站初始化"。
+  **这个结论是错的。** 真实原因是 `Start-Process` **这个 cmdlet** 的行为；
+  我**推断了一个听起来合理的根因，却没去试别人代码里已经成功的方式**。
+  **线索一直在**：`GATE4-PAGES-UPGRADE-1/capture-page.ps1:92` 用的是 `[System.Diagnostics.Process]::Start()`。
+  **如果我先读那个脚本，能省掉好几轮。**
+- **★ 结果：5/5 页截图成功**（改 `tools/e2e/capture-four-pages.ps1` 用 `Process.Start`）：
+  bookshelf 31,589 / library 49,824 / reader 49,727 / settings 65,956 / workbench 56,640（哈希全不同）。
+- **★ 但"哈希不同"不能当证据 —— 我逐张看了图**（记取 `GATE4-PAGES-UPGRADE-1` §2 那次"四张全是桌面、哈希却全不同"的教训）：
+  - `page-settings.png`：标题栏 `New Manga`、导航 `资料柜 1 / 工位 2 / 控制台 3`（高亮控制台）、
+    面包屑 `控制台 › 家族战记 › 17卷`、左侧 `控制台 设置中心 · 9 分区`、底部 `Host 就绪`；
+  - `page-reader.png`：`资料柜 1 / 1 作品`、**有书** `家族战记 169 页`、
+    `阅读进度 读到第 2 / 169 页 · 1%`、右侧章节账本与页列表。
+  **⇒ 两张都是真实 NewManga 界面。**
+- **★ 附带发现 `--page` 的映射语义**：`--page=settings` → **控制台（SpaceId.Console）**（设置是控制台里的"外观"分区，
+  **不是独立一级页面**）；`--page=reader` → **资料柜（SpaceId.Library）**（阅读器是 **Library 内的 overlay**，需 F11）。
+  **⇒ 这解释了 `GATE4-PAGES-UPGRADE-1` 为什么把 reader 标 `NOT_REACHABLE` —— 它的判断是对的。**
+- **仍未解决**：阅读器 overlay 本身（按 F11 后的沉浸窗口）仍未截到；未在安装产物上跑；未验 `--presentation-host`/`--theme` 变体。
+- **安全核查**：日志里 `secret` 20 次命中**全是命令名 `source.resolve-secret/1`**，不是凭据；`sk-`/`api_key`/`token`/`password`/`Bearer` **均 0**；绝对路径 13 处（开发机路径，沿用既有先例）。

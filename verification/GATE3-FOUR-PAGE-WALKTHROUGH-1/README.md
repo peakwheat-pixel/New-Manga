@@ -113,3 +113,104 @@ Avalonia 初始化需要可用的窗口站，拿不到就阻塞。）
 
 **⇒ 条件 3 的"真实设备走查"在本执行环境下不可自动化，需人工。**
 **这不是"没试就说需人"，而是试了 4 种、做了对照实验、定位到根因之后才下的结论。**
+
+## 9. ★★ 突破：找到 GUI 启动的正确方式，**5/5 页截图成功**（2026-11-15）
+
+### 9.1 根因：`Start-Process` cmdlet 挂起，`Process.Start` 正常
+
+我此前的 4 次尝试全部挂起，**都是因为用了 `Start-Process` cmdlet 或 `cmd /c start`**。
+
+读到 `verification/GATE4-PAGES-UPGRADE-1/capture-page.ps1:92` 后发现它用的是：
+
+```powershell
+$process = [System.Diagnostics.Process]::Start($psi)   # ProcessStartInfo，不是 cmdlet
+```
+
+**实测对比**：
+
+| 方式 | 结果 |
+|---|---|
+| `Start-Process -PassThru` | **挂起**（>600 s） |
+| `Start-Process` + `WaitForExit` | **挂起**（>300 s） |
+| `Start-Process -WindowStyle Normal` | **挂起**（>120 s） |
+| `cmd /c start`（分离式） | **挂起**（>120 s） |
+| **`[System.Diagnostics.Process]::Start($psi)`** | ✅ **返回 26 ms**，窗口 3 s 内出现，`title='New Manga'`，`handle=789264` |
+| 对照：`cmd /c echo` | 20 ms 正常 |
+
+**⇒ 根因不是"窗口站"，是 `Start-Process` cmdlet 在本环境的行为问题。**
+**我此前把根因推断为"GUI 进程无法在窗口站初始化"，那个诊断是错的**（虽然对照实验本身有效）。
+
+### 9.2 结果：5/5 页截图成功
+
+改 `tools/e2e/capture-four-pages.ps1` 用 `Process.Start` 后：
+
+```
+page=bookshelf  captured=True
+page=library    captured=True
+page=reader     captured=True
+page=settings   captured=True
+page=workbench  captured=True
+captured 5/5 pages
+```
+
+**哈希（全部不同）**：
+
+| 文件 | 字节 | sha256（前 16） |
+|---|---|---|
+| page-bookshelf.png | 31,589 | `6f26a9f9a498fcb5` |
+| page-library.png | 49,824 | `75715b1ab863d5d6` |
+| page-reader.png | 49,727 | `950f5d571dbac1b2` |
+| page-settings.png | 65,956 | `7d972b8103524396` |
+| page-workbench.png | 56,640 | `e864cb5ffbaf1310` |
+
+### 9.3 ★ 但"哈希不同"不能当证据 —— 我看了图
+
+按 `GATE4-PAGES-UPGRADE-1` §2 的教训（**它第一版四张图全是桌面，哈希却各不相同**），
+我**逐张看了图**：
+
+**`page-settings.png`**（1,432×978）：
+- 标题栏 **`New Manga`**
+- 顶部导航：**`资料柜 1 / 工位 2 / 控制台 3`**（当前高亮"控制台 3"）
+- 面包屑：`控制台 › 家族战记 › 17卷`
+- 左侧：`控制台 设置中心 · 9 分区`（任务与队列 / Provider 与凭据 / 网络与代理 / 模型与设备 /
+  缓存与版本清理 / 备份与恢复 / 插件与 Hooks / 诊断与日志 / 外观）
+- 右侧：`任务与队列`，`run_id` 输入框、"读取 Run"按钮
+- 底部：**`Host 就绪`**
+
+**`page-reader.png`**（1,432×978）：
+- 同样是 `New Manga`，当前高亮 **`资料柜 1`**
+- `资料柜 1 / 1 作品`
+- **有书**：`家族战记`，`169 页`，`阅读进度 读到第 2 / 169 页 · 1%`
+- 右侧章节账本 `01 17卷 / 169 页` + 页列表 `001 001.jpg` … `015 015.jpg`
+
+**⇒ 两张都是真实的 NewManga 界面，不是桌面。**
+
+### 9.4 ★ 一个重要发现：`--page` 的映射语义
+
+| 传入 | 实际到达 | 说明 |
+|---|---|---|
+| `--page=settings` | **控制台（`SpaceId.Console`）** | 设置是控制台空间里的"外观"分区，**不是独立一级页面** |
+| `--page=reader` | **资料柜（`SpaceId.Library`）** | 阅读器是 **Library 空间内的 overlay**，需 F11 打开 |
+| `--page=bookshelf` / `library` | 资料柜 | — |
+| `--page=workbench` | 工位 | — |
+
+**⇒ 这与 `App.axaml.cs:452-453` 的注释一致**（"reader is an overlay inside Library"，`settings` 映射到 console 空间）。
+**⇒ 所以"四页"的准确含义是：资料柜 / 工位 / 控制台 / 阅读器（overlay）**，
+**而 `--page=reader` 只能到 Library 外壳，进 overlay 仍需 F11。**
+
+**这解释了 `GATE4-PAGES-UPGRADE-1` 为什么把 reader 标 `NOT_REACHABLE`** —— 它的判断是对的。
+
+### 9.5 仍未解决
+
+- **阅读器 overlay 本身**（按 F11 后的沉浸窗口）**仍未截到** —— 需要真实按键或前述的 CLI 参数（裁决已否决加参数）。
+- 未在**安装产物**上跑（本卡用的是**源码构建的 exe**）；`GATE4-PAGES-UPGRADE-1` 用的是安装产物，二者互补。
+- 未验证 `--presentation-host` / `--theme` 等变体。
+
+### 9.6 我的诊断错误（登记）
+
+我在 §8 里写"根因是 GUI 进程无法在本 shell 的窗口站初始化"。**这个结论是错的。**
+
+**实际根因**：`Start-Process` **cmdlet** 在本 shell 环境挂起；`[System.Diagnostics.Process]::Start(ProcessStartInfo)` 正常。
+
+**为什么错**：我用 4 种方式都失败后，**推断**了一个听起来合理的根因（窗口站），
+却没有去试**别人代码里已经成功的方式**。**如果我先读 `capture-page.ps1`，能省掉这几轮。**
