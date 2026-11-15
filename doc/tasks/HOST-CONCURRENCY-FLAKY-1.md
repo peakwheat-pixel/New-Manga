@@ -76,7 +76,7 @@ if (entry.Generation != expectedGeneration) throw new SourceAccessException("SOU
 ## Acceptance Criteria
 
 - [x] **AC1 并发路径澄清**：确认 `SourceAccessRegistry` 的锁作用域（进程级/实例级）、`_lockName` 生成方式、xUnit 并行配置。 <<MET>>
-- [ ] **AC2 失败复现**：在受控条件下稳定复现 3 个失败（如提高并行度或多跑几轮），并保存日志。
+- [x] **AC2 失败复现**：在受控条件下稳定复现 3 个失败（如提高并行度或多跑几轮），并保存日志。 <<MET>>
 - [x] **AC3 根因判定**：区分「锁粒度不足」「identity 检查过严」「测试间共享状态」三类，给出代码级依据。 <<MET>>
 - [ ] **AC4 修复或登记**：修复（需先范围冻结，因为改并发语义属产品行为变更），或明确登记为已知限制并给出可执行的处置步骤。
 - [ ] **AC5 不影响既有基线**：`dotnet test` 直接跑仍全绿（331/0/74）。
@@ -131,9 +131,32 @@ fileLock = new FileStream(... "registry.v1.lock", ..., FileShare.None);   // ←
 | evidence_id | AC/Gate | path | commit | sha256 | class | sha256_basis |
 |---|---|---|---|---|---|---|
 | EV-HCF-01 | AC1/AC3 代码摘录与诊断 | verification/HOST-CONCURRENCY-FLAKY-1/code-evidence.log | 25e8f5492 | PIN_PENDING | CANONICAL | BLOB |
+| EV-HCF-02 | AC2 受控复现（2/2 稳定） | verification/HOST-CONCURRENCY-FLAKY-1/ac2-repro.md | 84b4a2456 | PIN_PENDING | CANONICAL | BLOB |
+| EV-HCF-03 | AC2 复现日志第 1 轮 | verification/HOST-CONCURRENCY-FLAKY-1/repro-1.log | 84b4a2456 | PIN_PENDING | CANONICAL | BLOB |
+| EV-HCF-04 | AC2 复现日志第 2 轮 | verification/HOST-CONCURRENCY-FLAKY-1/repro-2.log | 84b4a2456 | PIN_PENDING | CANONICAL | BLOB |
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | agent-output | verification/HOST-CONCURRENCY-FLAKY-1/ | NOT_APPLICABLE | - | - | 新增证据，无迁移/归档 |
+
+## AC2 复现结论（2026-11-16）
+
+**2/2 稳定复现**，失败集合与顺序完全一致（同 R87）。
+
+**关键定性修正**：这**不是偶发 flaky**，而是 	est.ps1 完整环境下的**确定性触发**：
+
+| 运行方式 | 失败 | 通过 | 跳过 |
+|---|---|---|---|
+| dotnet test（裸环境） | 0 | 331 | 74 |
+| 	est.ps1（完整环境） | 3 | 358 | 44 |
+
+	est.ps1:102-134 的 fixture 变量（NEWMANGA_S4_FIXTURES / BOOK_FIXTURE_ROOT /
+S4_REGION_FIXTURE / MODELS_SIDECAR_DIR / CORE_TILE_E2E / EVIDENCE_DIR /
+CORECLIENT_SIDECAR_DIR）让 30 个原本 self-skip 的测试实际执行，
+并行下对 SourceAccessRegistry 的访问密度上升，命中 WaitOne(0) 的零超时窗口。
+
+**对 AC4 的影响**：修复方向（WaitOne(boundedTimeout) + 有界重试）**必须做**，
+不能只登记为已知限制 —— 那等于承认 	est.ps1 永久红。
+若 AC4 决定不改产品代码，必须在 Release Gate 层面明确接受该后果并写入已知限制清单。
