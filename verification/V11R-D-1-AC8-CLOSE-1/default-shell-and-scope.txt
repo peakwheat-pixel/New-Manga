@@ -1,0 +1,18 @@
+# AC8 核证：默认壳与受支持界面边界
+# env: Windows 11 / git
+
+## ① 默认壳 = builtin.current-v2 (AppShellV2)
+# command: grep 'presentation-host|current-v2|shell' apps/desktop-avalonia/src/NewManga.App/AppOptions.cs
+AppOptions.cs:80: public string Shell { get; private set; } = DefaultShellId;   (v2)
+FrontendSelector.cs:9: /// The Current V2 shell (builtin.current-v2) — the fail-safe default.
+
+## ② V2 壳动画声明计数 = 0
+# command: grep -r 'Transition|Animation|Duration|MotionTimings|MotionMode' apps/desktop-avalonia/src/NewManga.App/Shell/V2
+命中数 = 0  => 无动画可禁，reduced-motion 自然满足
+
+## ③ Fluent 壳（第二受支持界面）mechanism
+MotionResolver.cs:76-89 / MotionTimings.cs:62-65 / FluentShellSurface.axaml.cs:714-742,790-820 / FluentMotionScope.cs:26-39
+
+## ④ 旧壳边界（FEA-00:25 原文）
+doc/design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md:25
+旧代码构建的 Avalonia --shell=legacy 只是已有诊断/发布回退入口，不自动成为第三个受支持界面；Tauri/React 与 PySide6/QML 不进入新方案。
