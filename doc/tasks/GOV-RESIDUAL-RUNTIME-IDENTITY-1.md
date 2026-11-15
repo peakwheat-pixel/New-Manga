@@ -36,12 +36,12 @@ allowed_paths:
 
 ## Acceptance Criteria
 
-- [ ] AC1 七项错误以 `python -B tools/governance/clean_workspace.py --audit-declarations` 在生产 `main` 实跑复现，完整身份（code/message/file/locator）、原文行、归属 Task 逐项固定，且计数与 exit code 记录真实命令与 EXIT。
-- [ ] AC2 每项涉及的历史 `%TEMP%`/`%APPDATA%` 展开值给出可核验来源证据，并显式区分 FACT / INFERENCE / UNKNOWN；不得用当前环境变量值直接推断历史值。字节级交叉校验（当前文件 SHA-256 与历史记录比对）逐项给出相等/不等结论。
-- [ ] AC3 每项的错误归属、引用链（Task/Review/Handoff/证据）与「可证明的实际路径」记录；实际路径存在性以只读文件系统检查结论为准。
-- [ ] AC4 用只读保护评估证明每一项的「现存真实资源」与「保护缺口」结论；保护评估不改解析器、不修改仓库，脚本随证据入库可复现。
-- [ ] AC5 交付逐项矩阵：事实/推论/未知、是否需要保护、是否可由技术方案解决、需用户裁决对象与最小裁决；本 Task 不实施清理、不改原件、不改解析器语义。
-- [ ] AC6 `pwsh -NoProfile -File tools/governance/check.ps1` 与 `git diff --check` 真实运行并记录 EXIT；固定 head 交独立 Reviewer；集成复验后才可 done。
+- [x] AC1 七项错误以 `python -B tools/governance/clean_workspace.py --audit-declarations` 在生产 `main` 实跑复现，完整身份（code/message/file/locator）、原文行、归属 Task 逐项固定，且计数与 exit code 记录真实命令与 EXIT。 <!-- verified: file:verification/GOV-RESIDUAL-RUNTIME-IDENTITY-1/raw/audit-run.log（:1 CMD=、:2 2627/1926/7/276、:11 EXIT_CODE=2）+ file:verification/GOV-RESIDUAL-RUNTIME-IDENTITY-1/raw/declaration-audit.json（errors=7，逐条含 code/message/file/locator）+ file:verification/GOV-RESIDUAL-RUNTIME-IDENTITY-1/matrix.md:20（E1 完整身份）+ :22（归属 Task），E1-E7 同构见 :16-99 -->
+- [x] AC2 每项涉及的历史 `%TEMP%`/`%APPDATA%` 展开值给出可核验来源证据，并显式区分 FACT / INFERENCE / UNKNOWN；不得用当前环境变量值直接推断历史值。字节级交叉校验（当前文件 SHA-256 与历史记录比对）逐项给出相等/不等结论。 <!-- verified: file:verification/GOV-RESIDUAL-RUNTIME-IDENTITY-1/historical-env-evidence.json（:7 method 明示当前 env 仅对照不作历史证明；:18/:39 class=FACT 附 tracked 证据路径/行/引文；:73/:81/:89 equal=true、:97 equal=false+delta 解释；:139/:145 class=UNKNOWN）+ file:verification/GOV-RESIDUAL-RUNTIME-IDENTITY-1/matrix.md:94-95（%TEMP%/%APPDATA% 历史展开值与 4 个数据文件字节交叉校验逐项相等/不等结论） -->
+- [x] AC3 每项的错误归属、引用链（Task/Review/Handoff/证据）与「可证明的实际路径」记录；实际路径存在性以只读文件系统检查结论为准。 <!-- verified: file:verification/GOV-RESIDUAL-RUNTIME-IDENTITY-1/matrix.md:20-24（E1 完整身份/原文/归属/引用/实际路径）+ :22/:37/:52/:63/:77/:91（E1-E7 逐项归属）+ :103-113（汇总判定 7 行）+ file:verification/GOV-RESIDUAL-RUNTIME-IDENTITY-1/verification-log.txt:57-70（Test-Path / git worktree list 只读检查结果） -->
+- [x] AC4 用只读保护评估证明每一项的「现存真实资源」与「保护缺口」结论；保护评估不改解析器、不修改仓库，脚本随证据入库可复现。 <!-- verified: file:verification/GOV-RESIDUAL-RUNTIME-IDENTITY-1/probe-protected.py + file:verification/GOV-RESIDUAL-RUNTIME-IDENTITY-1/raw/protection-evaluation.json + file:verification/GOV-RESIDUAL-RUNTIME-IDENTITY-1/matrix.md:97（APPDATA 四路径 hits=0 唯一缺口）+ file:verification/GOV-RESIDUAL-RUNTIME-IDENTITY-1/verification-log.txt:92-93（probe 仅 no-op finalize，生产 clean_workspace.py 未改）+ git:diff --name-only 43a7d73c8..bb04c78d4 无 tools/governance/clean_workspace.py、doc/tasks/P19.md、两份 resource-manifest.json（空输出） -->
+- [x] AC5 交付逐项矩阵：事实/推论/未知、是否需要保护、是否可由技术方案解决、需用户裁决对象与最小裁决；本 Task 不实施清理、不改原件、不改解析器语义。 <!-- verified: file:verification/GOV-RESIDUAL-RUNTIME-IDENTITY-1/matrix.md:103-119（7 项汇总判定：现存真实资源/保护缺口/技术可解/需用户裁决；结论明写不实施清理、不改原件、不改解析器语义）+ :9（FACT/INFERENCE/UNKNOWN 口径）+ git:diff --name-only 43a7d73c8..bb04c78d4 无历史原件与解析器改动（空输出） -->
+- [x] AC6 `pwsh -NoProfile -File tools/governance/check.ps1` 与 `git diff --check` 真实运行并记录 EXIT；固定 head 交独立 Reviewer；集成复验后才可 done。 <!-- verified: file:verification/GOV-RESIDUAL-RUNTIME-IDENTITY-1/verification-log.txt:27（EXIT_CODE=2）、:107-108（check.ps1 PASS 2 warnings / EXIT 0）、:110-111（git diff --check EXIT_CODE=0）+ file:doc/reviews/GOV-RESIDUAL-RUNTIME-IDENTITY-1-8e31aaa1d-zcode-r2.md:6-7（reviewed_head 8e31aaa1d；decision approved，Reviewer zcode）+ file:verification/GOV-RESIDUAL-RUNTIME-IDENTITY-1/integration-validation.json:7-29（review approved；governance PASS exit 0；diff_check_exit 0；7 errors 均为历史身份） -->
 
 ## 允许修改范围
 

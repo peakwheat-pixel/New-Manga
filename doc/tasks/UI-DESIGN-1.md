@@ -49,29 +49,29 @@ evidence_dir: verification/UI-DESIGN-1
 
 ## Acceptance Criteria
 
-- [ ] **AC1 四页覆盖**：产出 `doc/design/AD001_FOUR_PAGE_UI_BASELINE.md`，对 **Bookshelf / Workbench / Reader / Settings**
+- [x] **AC1 四页覆盖**：产出 `doc/design/AD001_FOUR_PAGE_UI_BASELINE.md`，对 **Bookshelf / Workbench / Reader / Settings** <!-- verified: file:doc/design/AD001_FOUR_PAGE_UI_BASELINE.md (70117B) + grep:^## 2. 书架 / ^## 3. 工作台 / ^## 4. 阅读器 / ^## 5. 设置@doc/design/AD001_FOUR_PAGE_UI_BASELINE.md:67,135,248,310 (四页各自成节) + 每页六要素逐项命中、五态矩阵 loading/empty/error/disabled/progress 齐全 :105,:179,:282,:343（最小窗口 1024x680 与伸缩行为见 :49） + file:verification/UI-DESIGN-1/selfcheck-output.txt:83-120 ((d) 逐项 PASS) + 同文件 :122 RESULT: ALL CHECKS PASS -->
       四页**各自成节**，每节至少包含：区域职责、布局结构（含最小窗口尺寸与伸缩行为）、组件分解、
       **状态矩阵**（loading / empty / error / disabled / progress）、交互清单、键盘与焦点路径。
-- [ ] **AC2 一级导航 Shell**：冻结 App Shell（一级导航 Rail 或等价形态）与四页切换语义，明确
+- [x] **AC2 一级导航 Shell**：冻结 App Shell（一级导航 Rail 或等价形态）与四页切换语义，明确 <!-- verified: grep:四页切换语义（冻结）@doc/design/AD001_FOUR_PAGE_UI_BASELINE.md:41 (切换不销毁页面/不停止运行中任务 + 依据 08 AC-NAV-003/04 §30/契约 M2-C1 §2/P11 §7.1) + grep:最小窗口尺寸与伸缩行为（冻结）@doc/design/AD001_FOUR_PAGE_UI_BASELINE.md:49 + grep:依据：08 AC-NAV-003@doc/design/AD001_FOUR_PAGE_UI_BASELINE.md:45（未以 LEGACY 单独作依据） + file:verification/UI-DESIGN-1/selfcheck-output.txt:122 -->
       "切换不销毁页面/不停止运行中任务"是否作为新架构要求，并给出依据（CURRENT 或 REQUIREMENT 来源；LEGACY 不得单独作为依据）。
-- [ ] **AC3 契约绑定表**：对每个需要数据的 UI 元素，列出其依赖的**已冻结**命令/事件，
+- [x] **AC3 契约绑定表**：对每个需要数据的 UI 元素，列出其依赖的**已冻结**命令/事件， <!-- verified: grep:## 6. 契约绑定表@doc/design/AD001_FOUR_PAGE_UI_BASELINE.md:370 (W1–W32，逐条 文件 + 章节/行 引用) + file:verification/UI-DESIGN-1/selfcheck-output.txt:8-48 ((a) 35/35 逐字命中原始日志) + 同文件 :122 RESULT: ALL CHECKS PASS -->
       并逐条给出 `文件 + 章节/行` 引用；引用必须**逐字**可在该契约文件中检索到（供 AC8 机器核验）。
-- [ ] **AC4 wire 缺口表**：AC3 中无法映射到已冻结 wire 的交互**全部**进入 `## Wire Gap List`，
+- [x] **AC4 wire 缺口表**：AC3 中无法映射到已冻结 wire 的交互**全部**进入 `## Wire Gap List`， <!-- verified: grep:## 7. Wire Gap List@doc/design/AD001_FOUR_PAGE_UI_BASELINE.md:415 (I1 注记 :419-427；表头 :429 含 页面/交互/期望语义/当前缺口/建议后续动作，24 条真缺口) + file:verification/UI-DESIGN-1/selfcheck-output.txt:118 (binding 32 / gap 24) + 同文件 :122 RESULT: ALL CHECKS PASS + file:verification/UI-DESIGN-1/dsh-review-r1.md:96 (I1 CONVERGED approved) -->
       每条包含：页面、交互、期望语义、当前缺口、建议后续动作（契约 Task / 已有 Task 覆盖）。
       **不得**以 mock、私有路径或绕过 Tauri IPC 的方式在设计中消解缺口。
-- [ ] **AC5 边界合规**：显式声明并逐条自证：React 侧不直接访问 SQLite / 任意 OS 路径 / 模型；
+- [x] **AC5 边界合规**：显式声明并逐条自证：React 侧不直接访问 SQLite / 任意 OS 路径 / 模型； <!-- verified: grep:## 9. 边界合规自证（逐条）@doc/design/AD001_FOUR_PAGE_UI_BASELINE.md:517 (九条：不直接 SQLite/不接触 OS 路径/不接触模型/大图 tile 模型不走普通 JSON-Base64 IPC/UI 不写持久化/事件不作真值/Secret 边界/源文件保护/不发明 wire :519-529) + file:verification/UI-DESIGN-1/selfcheck-output.txt:122 + file:verification/UI-DESIGN-1/dsh-review-r1.md:51 (Review 逐 AC 判定 AC5 PASS) -->
       大图、tile、模型权重不经普通 JSON/Base64 IPC；UI 不写持久化状态（写入仅由 Python Core 权威执行）。
-- [ ] **AC6 设计令牌**：给出新架构的设计令牌（色彩、字体/字号、间距、密度、圆角、焦点环、DPI 处理），
+- [x] **AC6 设计令牌**：给出新架构的设计令牌（色彩、字体/字号、间距、密度、圆角、焦点环、DPI 处理）， <!-- verified: grep:## 8. 设计令牌（新架构自有取值）@doc/design/AD001_FOUR_PAGE_UI_BASELINE.md:458 (色彩 :462 / 字体字号 :484 / 间距密度 :490 / 圆角描边 :496 / 交互态 :501 / 焦点环 :506 / DPI :510；:460 显式声明自有取值与 LEGACY 仅参考非绑定) + file:verification/UI-DESIGN-1/dsh-review-r1.md:51 (AC6 PASS) -->
       明确声明其**为新架构自有取值**，并说明与 LEGACY 值的关系（可参考、非绑定）。
-- [ ] **AC7 非目标与边界**：单列"不做"清单：不新增一级页面、不改变四页区域划分、不新增产品功能、
+- [x] **AC7 非目标与边界**：单列"不做"清单：不新增一级页面、不改变四页区域划分、不新增产品功能、 <!-- verified: grep:## 10. 非目标（不做清单）@doc/design/AD001_FOUR_PAGE_UI_BASELINE.md:533 (十条：不新增一级页面/不改四页区域划分/不新增产品功能/不裁决发布门槛含 P18 JA-KO/不改 AD-001 契约依赖/不写产品代码 等 :537-546) + file:verification/UI-DESIGN-1/selfcheck-output.txt:122 + file:verification/UI-DESIGN-1/dsh-review-r1.md:51 (AC7 PASS) -->
       **不裁决产品发布门槛**（如 P18 语言支持门槛属用户裁决）、不修改 AD-001/契约/依赖、不写产品代码。
-- [ ] **AC8 自检可核验**：可复现的自检证据：
+- [x] **AC8 自检可核验**：可复现的自检证据： <!-- verified: file:verification/UI-DESIGN-1/selfcheck-output.txt:8-48 (a 35/35) :50-72 (b 20/20 本地链接) :74-81 (c 写入范围 PASS，19 项 dirty 零命中) :83-120 (d 结构打勾) :122 RESULT: ALL CHECKS PASS + file:verification/UI-DESIGN-1/selfcheck.ps1 (10279B) + file:verification/UI-DESIGN-1/dsh-review-r1.md:44,47,92 (Reviewer 独立复跑 exit 0；主仓 4dcd5a949 的 19 项 dirty 逐项一致) + file:verification/UI-DESIGN-1/selfcheck-BLOCKED.md (Owner 期 BLOCKED 如实登记) -->
       (a) 每个 AC3 引用的命令/事件名在对应契约文件中 `Select-String` 命中，输出原始日志；
       (b) 文档内全部本地 Markdown 链接解析成功；
       (c) `git diff --name-only` 与 `git status --porcelain` 证明写入未越出"允许修改范围"，
           且**未触碰**用户既有 19 项 dirty 路径；
       (d) 四页 AC1 清单逐项打勾表。
-- [ ] **AC9 交付**：Handoff（[模板](../templates/HANDOFF.md)）、固定 commit、`NOT_RUN` 项如实标注；Coordinator 集成。
+- [x] **AC9 交付**：Handoff（[模板](../templates/HANDOFF.md)）、固定 commit、`NOT_RUN` 项如实标注；Coordinator 集成。 <!-- verified: file:doc/handoffs/UI-DESIGN-1-zcode.md:6,18 (delivery_head=aaf00e59e；git cat-file 为 commit 且 is-ancestor HEAD=0) + file:doc/tasks/UI-DESIGN-1.md:174-186 (Canonical Evidence E1–E9) + integration_commit 9e1221e1b (git cat-file commit；is-ancestor HEAD=0) + file:verification/UI-DESIGN-1/dsh-review-r1.md:51 (AC9 PASS，Coordinator 补足) + file:verification/UI-DESIGN-1/commit-BLOCKED.md (Owner 期提交阻塞如实登记；本卡无 NOT_RUN 项) -->
 
 ## 允许修改范围
 

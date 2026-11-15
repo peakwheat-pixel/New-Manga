@@ -162,6 +162,51 @@ Reviewer 只能靠肉眼。本项目已多次发生「AC 全部做完、一个�
 这些 Task 一律保持 v2，不补标、不因本节变红。**本门禁只阻止新增此类缺陷，不清算存量。**
 存量由后续专项 Task 处理。
 
+### 4.3.1 存量 AC 的权威化标注（HTML 注释形式，2026-11-15 用户指示）
+
+**为什么另立一节。** 2026-11-15 用户指示「AC 勾选要成为权威信号」。§4.3 的 `<<STATUS>>`
+门禁只约束 `governance_version: 3` 的新 Task 且**明确不回溯**；而历史上 40 张
+`done` / `closed_with_limitations` 卡（共 260 条 AC）全部处于「一个框都没勾」的状态。
+专项清理 Task `AC-CHECKBOX-AUTHORITY-1` 为这些存量卡建立可审计的勾选依据，本节固定其口径。
+
+**标注形式。** 存量卡（v1/v2，及 §4.3 引入前的 v3 卡）的 AC 行末追加**行内 HTML 注释**，
+不使用 `<<STATUS>>`：
+
+```
+- [x] **AC1 ……** <!-- verified: test:test_reorder_rolls_back_every_row@tests/storage/x.py:56 -->
+- [x] **AC2 ……** <!-- verified: grep:ONE repository transaction@src/application/library/service.py:216 -->
+- [x] **AC3 ……** <!-- not-applicable: 本卡无数据面；依据 doc/AD-002_TARGET_DESKTOP_ARCHITECTURE.md -->
+- [ ] **AC4 ……** <!-- blocked: Host sidecar 早于命令引入，缓存失效集成 NOT_RUN（verification/X/README.md:111） -->
+```
+
+**禁止裸 `[x]`。** 无注释的 `[x]` 视为未标注缺陷。`verified` / `not-applicable` 必须勾选，
+`blocked` 必须不勾选；三者都必须带非空原因。
+
+**依据取值（必须可复现，第三人可独立重跑）**：
+`grep:<pattern>@<path>:<line>`｜`test:<test-id>@<path>:<line>`｜`file:<path>`（可附 sha256）｜
+`gate:check|pins|inventory`｜`human:<who>@<date>`。
+**`human:` 只能记录真实发生过的人工裁决**（写明裁决者与日期），Agent 不得冒充人工判断。
+
+**判定口径（防「为勾而勾」）：**
+
+| 情形 | 标注 |
+|---|---|
+| AC 的**全部子项**都有可复现实物证据 | `verified` |
+| 部分子项未达成 / `NOT_RUN` / `PARTIAL` | `blocked`，并**点名缺哪项** |
+| 范围冻结 / 设计 / 研究卡（AC 属下游实现验收） | `blocked: 实现未开始`，指向本卡冻结产物 |
+| 旧架构（Tauri/React/WebView2 等）已退出、AD-002 未承接 | `blocked` 或 `not-applicable` + 架构依据文档 |
+| 需人眼/真机判断（视觉、手感） | `blocked: 需人工判断`，不得冒充 |
+
+**权威优先级（与本 Task 直接相关）：** `evidence_dir` 是**证据目录指针**，不是 AC 结论。
+当 `evidence_dir` 存在而 AC 未勾选时，两者**不构成矛盾**；但反过来，
+**当 AC 行内注释与 `evidence_dir`/卡面 `status` 不一致时，以 AC 行内注释为准**——
+因为注释记录了逐条判定与缺口，`status: done` 可能只表示范围冻结或设计交付。
+
+**与 §4.3 的关系。** 两者不并存于同一行：新 Task 继续按 §4.3 用 `<<STATUS>>`（受 `check.ps1` 门禁）；
+存量卡按本节用 HTML 注释。若存量卡已带 `<<...>>`（如 `FEA-04`、`FEA-07-AC5-NATIVE-1`、
+`GOV-PIN-LINEAGE-1`），按 `FEA-04` 先例处理：把原标记移入注释（写作 `原标 <<PARTIAL: ……>>` 保留原字节语义），
+行末改用本节形式。**清理只允许追加行内注释与勾选符号，不得改写 AC 正文、`status` 或 `evidence_dir`。**
+
 ### 4.4 语义改动的核验前置
 
 **任何会改变校验语义或既有判定结果的裁定，在作为实施授权生效前，必须有覆盖相应

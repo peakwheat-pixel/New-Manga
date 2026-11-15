@@ -34,10 +34,10 @@ evidence_dir: verification/P20-MEM-OPT-1
 
 ## Acceptance Criteria
 
-- [ ] AC1：**成因定位**——按 WebView2 进程**类型**（browser/renderer/gpu/utility/crashpad 等）分解 6 个进程的 Working Set 与数量，指出可优化的具体来源（进程数为何高于基线、是否有可合并的 WebView 实例、GPU 进程是否因多显示适配器重复创建）。
-- [ ] AC2：**降至阈值内**——空闲稳态（不加载大模型，整棵**本应用**进程树 Working Set 严格总和）**≤ 350 MB**，且给出优化前后对照的多轮采样（含 CSV 时序）。
-- [ ] AC3：**不回归其他阈值**——`P20` 的 AC2 冷启动（≤2.0 s / Core ≤3.5 s）与 AC4（交互 ≤50 ms、60 FPS）**不得因本次优化而退化**；同样方法复测并给出对照。
-- [ ] AC4：**功能与发布 Gate 不受影响**——四个一级页面可达；`bundle` 与 `resources` 的 `core_service.exe` SHA-256 仍相等；启动 smoke 窗口可达。
+- [x] AC1：**成因定位**——按 WebView2 进程**类型**（browser/renderer/gpu/utility/crashpad 等）分解 6 个进程的 Working Set 与数量，指出可优化的具体来源（进程数为何高于基线、是否有可合并的 WebView 实例、GPU 进程是否因多显示适配器重复创建）。 <!-- verified: grep:PROC msedgewebview2.exe@verification/P20-MEM-OPT-1/ac1-probe-20261018-072149/probe-trace.log:8（逐进程类型见 :5-15 wvType：browser(embedded main) 117.22MB / renderer 86.98MB / gpu-process 70.45MB / utility network 36.78MB / utility storage 19.32MB / crashpad-handler 13.01MB）+ grep:TOTAL_OWNED_COUNT = 11@verification/P20-MEM-OPT-1/ac1-probe-20261018-072149/probe-trace.log:16 + grep:TOTAL_WORKING_SET = 459.2 MB@verification/P20-MEM-OPT-1/ac1-probe-20261018-072149/probe-trace.log:17 + grep:WEBVIEW_TOTAL_WS@verification/P20-MEM-OPT-1/ac1-probe-20261018-072149/probe-trace.log:19（原行 WEBVIEW_TOTAL_WS 与 = 之间为双空格，故 pattern 只取标识符） + file:verification/P20-MEM-OPT-1/ac1-probe-20261018-072149/process-tree.json（CommandLine 可分辨 --type=gpu-process/--type=renderer；全程仅 1 个嵌入式 browser 实例与 1 个 gpu-process，无重复 WebView 实例/隐藏窗口） -->
+- [ ] AC2：**降至阈值内**——空闲稳态（不加载大模型，整棵**本应用**进程树 Working Set 严格总和）**≤ 350 MB**，且给出优化前后对照的多轮采样（含 CSV 时序）。 <!-- blocked: 正文阈值 ≤350 MB 未达成：实测空闲稳态 443.3 MB（卡面 :28「超 26%」）；本卡执行结果 :93-95 记「AC2 —— 经用户裁决后无需实施」，用户 2026-10-18 把 P20 的 AC3 阈值改为 480 MB（AC 正文 350 MB 未被改写，故按正文判未达成）；且缺「优化前后对照的多轮采样（含 CSV 时序）」——verification/P20-MEM-OPT-1 实测仅有单轮 ac1-probe-20261018-072149 快照（process-tree.json/probe-trace.log），无优化后时序 CSV；EmptyWorkingSet 方案因指标操纵被拦截回退（:97-105） -->
+- [ ] AC3：**不回归其他阈值**——`P20` 的 AC2 冷启动（≤2.0 s / Core ≤3.5 s）与 AC4（交互 ≤50 ms、60 FPS）**不得因本次优化而退化**；同样方法复测并给出对照。 <!-- blocked: 未执行：卡面 :107-109 明记「AC3/AC4 —— 随 AC2 目标消解而不再适用；未执行」；无 P20 AC2 冷启动（≤2.0 s / Core ≤3.5 s）与 AC4（交互 ≤50 ms、60 FPS）的同方法复测对照数据入库 -->
+- [ ] AC4：**功能与发布 Gate 不受影响**——四个一级页面可达；`bundle` 与 `resources` 的 `core_service.exe` SHA-256 仍相等；启动 smoke 窗口可达。 <!-- blocked: 未执行：卡面 :107-109 明列未执行；缺四页可达复测、bundle 与 resources 的 core_service.exe SHA-256 相等复核、启动 smoke 窗口可达证据（verification/P20-MEM-OPT-1 仅 5 个 pin：process-tree.json、probe-trace.log、probe-process-tree.ps1、experiment-steady-after-trim.ps1、test-interaction-and-pages.ps1，脚本存在但无本次运行产物） -->
 
 ## 允许修改范围
 

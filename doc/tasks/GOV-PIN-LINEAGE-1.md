@@ -74,26 +74,26 @@ r25 §8 的原文：
 
 ## Acceptance Criteria
 
-- [ ] **AC1 — 冻结并核验 pin 清单**：以 `verification/GOV-PIN-LINEAGE-1/pin-inventory.json` <<BLOCKED: r27 撤回原方案、r28 停止改造，本 Task 未实施任何 AC>>
+- [ ] **AC1 — 冻结并核验 pin 清单**：以 `verification/GOV-PIN-LINEAGE-1/pin-inventory.json` <!-- blocked: 原标 <<BLOCKED: r27 撤回原方案、r28 停止改造，本 Task 未实施任何 AC>>；本卡 status:closed_with_limitations 指 r27 撤回原方案、r28 停止改造后收口，非 AC 实施完成（doc/tasks/GOV-PIN-LINEAGE-1.md:208-209）；63 个 TIME_BASED + 6 个 LINE_ENDING 的逐条 pinned-blob 核验记录未产出（诊断侧仅见 verification/GOV-PIN-LINEAGE-1/ac1-pin-only-verification.json） -->
   为输入，逐条核验 63 个 `TIME_BASED` 与 6 个 `LINE_ENDING` pin 的
   `pinned_commit:path` Git blob。记录 Task、evidence_id、原 SHA、blob SHA、是否相符。
   **不得覆盖任何原 pin。**
-- [ ] **AC2 — 修正历史 pin 校验语义**：`tools/governance/check.ps1` 对有有效 Git commit <<BLOCKED: r27 撤回原方案、r28 停止改造，本 Task 未实施任何 AC>>
+- [ ] **AC2 — 修正历史 pin 校验语义**：`tools/governance/check.ps1` 对有有效 Git commit <!-- blocked: 原标 <<BLOCKED: r27 撤回原方案、r28 停止改造，本 Task 未实施任何 AC>>；本卡 status:closed_with_limitations 指方案撤回后收口，非 AC 实施完成；tools/governance/check.ps1 未修改（doc/tasks/GOV-PIN-LINEAGE-1.md:287-292「明确未做」），历史 blob 校验语义与工作区漂移诊断均未实施 -->
   的仓库内 pin，以该 commit 中该路径的 blob SHA-256 与 pinned SHA 比较；
   **不得用当前工作区 SHA 代替历史 blob SHA**。pin commit/blob 缺失或 blob 不符时
   保留现有 error 语义。**工作区漂移另报为独立诊断（warning/info），不与 pin 有效性混同。**
-- [ ] **AC3 — 处理 6 项行尾样本**：对 6 个 `LINE_ENDING` pin 验证 pinned blob SHA <<BLOCKED: r27 撤回原方案、r28 停止改造，本 Task 未实施任何 AC>>
+- [ ] **AC3 — 处理 6 项行尾样本**：对 6 个 `LINE_ENDING` pin 验证 pinned blob SHA <!-- blocked: 原标 <<BLOCKED: r27 撤回原方案、r28 停止改造，本 Task 未实施任何 AC>>；本卡 status:closed_with_limitations 指方案撤回后收口，非 AC 实施完成；6 项 LINE_ENDING pin 的 pinned-blob 验证与 LF 诊断复核未执行（doc/tasks/GOV-PIN-LINEAGE-1.md:287-292） -->
   与原 SHA 相符，并复核 LF normalization 诊断；**不重算或覆盖任何 pin，
   不修改 `.gitattributes`**。无法复现的项作为未解释异常报告，**不得计为通过**。
-- [ ] **AC4 — 保留 23 项诊断边界**：逐项记录 `MISSING_FILE` 的 commit 可解析性、 <<BLOCKED: r27 撤回原方案、r28 停止改造，本 Task 未实施任何 AC>>
+- [ ] **AC4 — 保留 23 项诊断边界**：逐项记录 `MISSING_FILE` 的 commit 可解析性、 <!-- blocked: 原标 <<BLOCKED: r27 撤回原方案、r28 停止改造，本 Task 未实施任何 AC>>；本卡 status:closed_with_limitations 指方案撤回后收口，非 AC 实施完成；23 项 MISSING_FILE 的 commit/路径/blob 状态与 hash 对照及来源链核对未按 AC 交付（doc/tasks/GOV-PIN-LINEAGE-1.md:287-292） -->
   commit 中路径/blob 状态及 hash 对照，并核对 Task/Handoff/manifest 中的来源引用；
   **只有来源链支持时才判为前缀错误或仓外证据**。
   不得改写 P02 Task、重建/复制/移动/删除证据，**不把未诊断项写成已解决**。
-- [ ] **AC5 — 回归保护既有门禁**：为以下情况建立确定性用例：历史 blob 匹配但工作区修改、 <<BLOCKED: r27 撤回原方案、r28 停止改造，本 Task 未实施任何 AC>>
+- [ ] **AC5 — 回归保护既有门禁**：为以下情况建立确定性用例：历史 blob 匹配但工作区修改、 <!-- blocked: 原标 <<BLOCKED: r27 撤回原方案、r28 停止改造，本 Task 未实施任何 AC>>；本卡 status:closed_with_limitations 指方案撤回后收口，非 AC 实施完成；六类回归夹具未建立，checker 既有夹具与 v3 AC gate、Resource Manifest 门禁未被专门回归（doc/tasks/GOV-PIN-LINEAGE-1.md:287-292） -->
   LF/CRLF 转换、commit 缺失、commit 中路径缺失、blob hash 不符、工作区与 pin 一致。
   运行 checker 自身既有夹具与相关 Task-scoped 检查，**证明 v3 AC gate、Resource Manifest
   等无关门禁不被绕过**。
-- [ ] **AC6 — 交付 registry 与独立 Review**：提交单一机器可读 lineage registry 与摘要、 <<BLOCKED: r27 撤回原方案、r28 停止改造，本 Task 未实施任何 AC>>
+- [ ] **AC6 — 交付 registry 与独立 Review**：提交单一机器可读 lineage registry 与摘要、 <!-- blocked: 原标 <<BLOCKED: r27 撤回原方案、r28 停止改造，本 Task 未实施任何 AC>>；本卡 status:closed_with_limitations 指方案撤回后收口，非 AC 实施完成；lineage registry、最小 checker diff、测试证据、Handoff 与独立 Review 均未交付（doc/reviews 无 GOV-PIN-LINEAGE-1 审查报告；doc/tasks/GOV-PIN-LINEAGE-1.md:205-221 收口记录） -->
   **最小 checker diff**、测试证据、Handoff；registry 覆盖 63+6 条，保留逐项来源与结论。
   由**未编写该 checker/registry 的 Reviewer** 对固定 delivery head 独立 Review。
 

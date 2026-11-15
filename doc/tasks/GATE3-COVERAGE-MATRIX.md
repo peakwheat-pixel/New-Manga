@@ -46,17 +46,17 @@ Gate 条件 3 = "补齐**可安全执行的**完整 GUI / Core / Host 关键流�
 
 ## Acceptance Criteria
 
-- [ ] **AC1 矩阵结构**：至少覆盖四页（书架 / 工作台 / 阅读器 / 设置）× 关键流程
+- [x] **AC1 矩阵结构**：至少覆盖四页（书架 / 工作台 / 阅读器 / 设置）× 关键流程 <!-- verified: file:doc/reviews/MAINT-1-GATE-CONDITION-3-MATRIX-2026-11-15.md + grep:流程 \ 页面 | 书架 | 工作台 | 阅读器 | 设置@doc/reviews/MAINT-1-GATE-CONDITION-3-MATRIX-2026-11-15.md:58 + 同文:13-17（§0 声明 GUI/Host/CoreClient 三层）+ :92-124（Host 生命周期/恢复 由 §4.2 类级承接：HostRuntimeIntegrationTests:105、HostReaderProgressIntegrationTests:106、StartupSelfCheckTests:107） -->
       （进入与空态、错误态、只读、导入、导出、阅读进度、阅读偏好、书签、Region 编辑、
       主题/外观、快捷键、焦点与 a11y、Host 生命周期/恢复）。
-- [ ] **AC2 逐格代码依据**：每格写 `测试名 (文件:行)` 并**说明该测试断言了什么**；
+- [ ] **AC2 逐格代码依据**：每格写 `测试名 (文件:行)` 并**说明该测试断言了什么**； <!-- blocked: 缺 4 格 `测试名 (文件:行)`+断言说明：Region 编辑/阅读偏好/主题外观/整书进度仍只有类名或方法名（doc/reviews/MAINT-1-GATE-CONDITION-3-MATRIX-2026-11-15.md:66-70）；矩阵 §7 自认仅 12 格逐行核对断言、其余为类摘要+方法名（同文:190）；r3 复核 R3-008 判「AC2 仍未满足」（doc/reviews/GATE3-COVERAGE-MATRIX-review-r3.md:62）；任务卡自认「部分修」（doc/tasks/GATE3-COVERAGE-MATRIX.md:118） -->
       不得仅凭测试方法名推断覆盖面。
-- [ ] **AC3 可执行性标注**：明确区分 `[AvaloniaFact]`（headless 可跑）、`[Fact]`（纯逻辑）、
+- [ ] **AC3 可执行性标注**：明确区分 `[AvaloniaFact]`（headless 可跑）、`[Fact]`（纯逻辑）、 <!-- blocked: 缺 `[Fact]`（纯逻辑）分类：§2 只给出 `[AvaloniaFact]` 62 文件（doc/reviews/MAINT-1-GATE-CONDITION-3-MATRIX-2026-11-15.md:35）与 4 类 sidecar gate 7 个（同文:36），全库无 [Fact] 计数/分类（grep:纯逻辑 0 命中），且未逐格标 gate 属性；r1 复核 AC3 判 PARTIAL（doc/reviews/GATE3-COVERAGE-MATRIX-review-r1.md:47），r2 R-007 仍 PARTIAL/OPEN（doc/reviews/GATE3-COVERAGE-MATRIX-review-r2.md:46） -->
       `[SidecarFact]`/`[HostSidecarFact]`（需真实 sidecar → 本环境 E-2 阻塞）。
-- [ ] **AC4 NOT_RUN 归因**：每个 NOT_RUN 格写具体原因（E-2 sidecar / 需真实窗口与人工操作 /
+- [ ] **AC4 NOT_RUN 归因**：每个 NOT_RUN 格写具体原因（E-2 sidecar / 需真实窗口与人工操作 / <!-- blocked: §3 的 ❌ 格已清零（doc/reviews/MAINT-1-GATE-CONDITION-3-MATRIX-2026-11-15.md:160、:257），但 Host/Core 层 100 项 NOT_RUN 的归因仍是未核实的类名推断：§4.2 表头自认「未逐条核实」（同文:94）、§4.4 自认无法可靠切分 E-2 子集（:153-154）、§7 自认逐类归属未逐条核实 attribute（:194）；r3 复核 R3-006 指出 3 处性质错标（GrantIssuer/StartupSelfCheck/Fea11Watch 实为 [HostSidecarFact]，doc/reviews/GATE3-COVERAGE-MATRIX-review-r3.md:60），末版矩阵未改 -->
       功能未实现 / 无对应测试），不得留空或写"未覆盖"了事。
-- [ ] **AC5 零改动**：不修改任何生产代码或既有测试；`git diff` 只含本文档与三指针。
-- [ ] **AC6 结论诚实**：矩阵末尾给出**条件 3 的可判定结论**，明确哪些是"有覆盖且无夹具可跑"、
+- [x] **AC5 零改动**：不修改任何生产代码或既有测试；`git diff` 只含本文档与三指针。 <!-- verified: git:diff --name-status d86f185ca..7f510afd7 仅 12 个 doc/**+verification/** 文件（三指针 STATUS/REBASELINE_PLAN/TASK_LEDGER + 本卡 + review r1-r3 + Gate 评估 + 3 份 skip/四件套证据），0 处 src/**、0 处既有 tests/**；r1 复核 AC5 判 PASS（doc/reviews/GATE3-COVERAGE-MATRIX-review-r1.md:49）+ file:verification/GATE3-COVERAGE-MATRIX/four-pieces.log -->
+- [x] **AC6 结论诚实**：矩阵末尾给出**条件 3 的可判定结论**，明确哪些是"有覆盖且无夹具可跑"、 <!-- verified: 矩阵 §5 给出可判定结论「条件 3 不能判 MET」（doc/reviews/MAINT-1-GATE-CONDITION-3-MATRIX-2026-11-15.md:169），§5.3 分列「被 skip 的集成面 111 / 真无覆盖=限定范围内 0 个 ❌ 格 / 人工范畴」三类（:164-168），§10.1 给出「无夹具即可执行、0 skip」的 5 个类（:266）；「有覆盖但需 E-2」桶已由 §11 更正为 opt-in 归因（:297-304），未把 NOT_RUN 汇总成「基本覆盖」 -->
       哪些是"有覆盖但需 E-2"、哪些是"完全无覆盖"；**不得**把 NOT_RUN 汇总成"基本覆盖"。
 
 ## 允许修改范围

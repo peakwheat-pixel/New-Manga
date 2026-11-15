@@ -29,12 +29,12 @@ integration_commit: cd57ee4
 
 ## Acceptance Criteria
 
-- [ ] **AC ①（先取证）**：用探针复现两条现状（无 target 的 run 累积；文件删除失败后的孤儿文件），留证。
-- [ ] **AC ②（R-04 方案）**：把待删文件清单**持久化**（例如写入既有 batch manifest 或等价记录），使失败后可**重试清理**；给出"删除失败 → 重试成功"的用例。
-- [ ] **AC ③（R-03 方案）**：明确 `pipeline_runs` 的保留/清理策略并实现（传播删除 或 明确保留 + 提供清理入口 + 记录理由）；给出"页永久删除后不再残留无 target run（或残留可被清理入口回收）"的用例。
-- [ ] **AC ④（TRIGGER 纪律）**：涉及删除/级联的改动**必须先枚举 `sqlite_master` 的 TRIGGER** 并证明不被触发器拒绝（TASK-044 的教训）；证据入 `verification/TASK-053/**`。
-- [ ] **AC ⑤（判别力 + 不回归）**：新用例对修前失败；`tests/storage/**`、`tests/core/**` 既有断言逐条不变；全仓 passed 不减少；≥5 次逐次记录（不设 `QT_QPA_PLATFORM`）。
-- [ ] **AC ⑥** Handoff + `verification/TASK-053/**` + 独立子对话 Review + 集成 + STATUS 台账行。
+- [x] **AC ①（先取证）**：用探针复现两条现状（无 target 的 run 累积；文件删除失败后的孤儿文件），留证。 <!-- verified: file:verification/TASK-053/prefix-probe.log:11(PRE-FIX EVIDENCE: REPRODUCED；R-04 孤儿文件 L4-8 + R-03 无 target run 累积 L9) + file:verification/TASK-053/postfix-probe.log:11(NOT REPRODUCED) + file:verification/TASK-053/r03_r04_probe.py -->
+- [x] **AC ②（R-04 方案）**：把待删文件清单**持久化**（例如写入既有 batch manifest 或等价记录），使失败后可**重试清理**；给出"删除失败 → 重试成功"的用例。 <!-- verified: test:test_file_failure_leaves_retryable_pending_entry@tests/storage/test_run_files_leak.py:96 + test:test_retry_is_idempotent_when_files_are_already_gone@tests/storage/test_run_files_leak.py:128 + test:test_successful_purge_clears_its_pending_entry@tests/storage/test_run_files_leak.py:147 + grep:def retry_pending_purges@src/application/maintenance/trash.py:228 + grep:pending_purges@src/application/maintenance/trash.py:307 -->
+- [x] **AC ③（R-03 方案）**：明确 `pipeline_runs` 的保留/清理策略并实现（传播删除 或 明确保留 + 提供清理入口 + 记录理由）；给出"页永久删除后不再残留无 target run（或残留可被清理入口回收）"的用例。 <!-- verified: test:test_targetless_run_survives_page_purge_by_policy@tests/storage/test_run_files_leak.py:201 + test:test_purge_targetless_runs_reclaims_and_cascades@tests/storage/test_run_files_leak.py:222 + test:test_active_targetless_run_is_never_reclaimed@tests/storage/test_run_files_leak.py:255 + grep:class RunLedgerMaintenance@src/application/maintenance/ports.py:95 + grep:class SqliteRunLedgerMaintenance@src/infrastructure/sqlite/pipeline.py:1819 -->
+- [x] **AC ④（TRIGGER 纪律）**：涉及删除/级联的改动**必须先枚举 `sqlite_master` 的 TRIGGER** 并证明不被触发器拒绝（TASK-044 的教训）；证据入 `verification/TASK-053/**`。 <!-- verified: test:test_documented_triggers_survive_and_never_refuse_the_reclaim@tests/storage/test_run_files_leak.py:278 + grep:trg_media_artifacts_current_not_clearable@verification/TASK-053/prefix-probe.log:3 + grep:trg_regions_current_not_clearable@verification/TASK-053/postfix-probe.log:3（修前/修后枚举一致） -->
+- [x] **AC ⑤（判别力 + 不回归）**：新用例对修前失败；`tests/storage/**`、`tests/core/**` 既有断言逐条不变；全仓 passed 不减少；≥5 次逐次记录（不设 `QT_QPA_PLATFORM`）。 <!-- verified: file:verification/TASK-053/full-suite-run1.log:16(880 passed EXIT=0；run1-5 同) + file:verification/TASK-053/revision-full-suite-run1.log(881 passed EXIT=0；run1-5) + git diff --numstat 8bf8da3..cd57ee4 -- tests/storage tests/core（5/82/304 行全为新增、0 删除） + file:doc/reviews/TASK-053-16340b5.md:45（守卫用例判别力实证：修前树 1 failed/EXIT=1） -->
+- [x] **AC ⑥** Handoff + `verification/TASK-053/**` + 独立子对话 Review + 集成 + STATUS 台账行。 <!-- verified: file:doc/handoffs/TASK-053-delivery.md + file:verification/TASK-053/ + file:doc/reviews/TASK-053-3b58736.md + file:doc/reviews/TASK-053-16340b5.md + git show 45dddcd69:doc/STATUS.md:221（集成台账行；当前 HEAD 的 STATUS 已被 rebaseline 重写，不再含 TASK-053） -->
 
 ## 允许修改范围
 

@@ -30,11 +30,11 @@ M2-AC1 已于 `f162193b` 集成，但其样本预先创建 Region，没有覆盖
 
 ## Acceptance Criteria
 
-- [ ] **AC1 — 可复现：** 使用临时 SQLite、production Pipeline 装配和成功的确定性 detector/OCR，在 regionless page 上稳定复现最终 `LOCK_CHANGED`；保存可独立运行的复现脚本及先红日志。
-- [ ] **AC2 — 状态链：** 记录 detect 前后 `PlanUnit.target_id/region_id/unit_id`、`StepRun.input_refs/lock_snapshot`、catalog current 状态及最终错误，证明错误发生的具体比较点。
-- [ ] **AC3 — 反事实分析：** 说明 Region 创建后正确 snapshot/rebind 应发生的位置，并分析多 Region fan-out、终态计数和进程重启恢复的影响；不得用单 Region 特例掩盖这些语义。
-- [ ] **AC4 — 修复建议：** 报告最小产品修复路径、需要修改的共享 seam、回归与负向测试矩阵、持久化/恢复风险；任何修复必须由后续 Task 单独释放。
-- [ ] **AC5 — 证据纪律：** 所有命令记录 shell、解释器、固定 HEAD、EXIT；`FAIL`、`BLOCKED`、`NOT_RUN` 分开报告。提交 Handoff 并固定可供非作者 Review 的 delivery head。
+- [x] **AC1 — 可复现：** 使用临时 SQLite、production Pipeline 装配和成功的确定性 detector/OCR，在 regionless page 上稳定复现最终 `LOCK_CHANGED`；保存可独立运行的复现脚本及先红日志。 <!-- verified: file:verification/DIAG-M2-REGIONLESS-LOCK-CHANGED-001/reproduce.py + file:verification/DIAG-M2-REGIONLESS-LOCK-CHANGED-001/reproduce-run-01.log:187（8/8 [PASS] + VERDICT: DEFECT_REPRODUCED） + file:verification/DIAG-M2-REGIONLESS-LOCK-CHANGED-001/integration-b5ac097f/replay.log（集成 head 复跑同判定） -->
+- [x] **AC2 — 状态链：** 记录 detect 前后 `PlanUnit.target_id/region_id/unit_id`、`StepRun.input_refs/lock_snapshot`、catalog current 状态及最终错误，证明错误发生的具体比较点。 <!-- verified: file:verification/DIAG-M2-REGIONLESS-LOCK-CHANGED-001/reproduce-run-01.log（AC2-A/C PlanUnit → AC2-G StepRun.input_refs/lock_snapshot → AC2-H final error_code=LOCK_CHANGED） + grep:expected None, found@verification/DIAG-M2-REGIONLESS-LOCK-CHANGED-001/reproduce-run-01.log:156 -->
+- [x] **AC3 — 反事实分析：** 说明 Region 创建后正确 snapshot/rebind 应发生的位置，并分析多 Region fan-out、终态计数和进程重启恢复的影响；不得用单 Region 特例掩盖这些语义。 <!-- verified: grep:多 Region fan-out@doc/research/DIAG-M2-REGIONLESS-LOCK-CHANGED-001.md:68 + grep:重启/恢复会自愈@doc/research/DIAG-M2-REGIONLESS-LOCK-CHANGED-001.md:70 + grep:终态计数@doc/research/DIAG-M2-REGIONLESS-LOCK-CHANGED-001.md:73 + file:verification/DIAG-M2-REGIONLESS-LOCK-CHANGED-001/dsh-dispatch/diag-result.md（§5.1-5.3 L134-157 完整反事实分析） -->
+- [x] **AC4 — 修复建议：** 报告最小产品修复路径、需要修改的共享 seam、回归与负向测试矩阵、持久化/恢复风险；任何修复必须由后续 Task 单独释放。 <!-- verified: file:verification/DIAG-M2-REGIONLESS-LOCK-CHANGED-001/dsh-dispatch/diag-result.md:159-181（§5.4：最小修复路径 L161 + 共享 seam L162 + 回归 R0-R5 L163-169 + 负向 N1-N7 L170-177 + 持久化风险 R-a-R-c L178-181） + grep:最小修复 = @doc/research/DIAG-M2-REGIONLESS-LOCK-CHANGED-001.md:79 -->
+- [x] **AC5 — 证据纪律：** 所有命令记录 shell、解释器、固定 HEAD、EXIT；`FAIL`、`BLOCKED`、`NOT_RUN` 分开报告。提交 Handoff 并固定可供非作者 Review 的 delivery head。 <!-- verified: file:verification/DIAG-M2-REGIONLESS-LOCK-CHANGED-001/reproduce-run-01.log:1-3（shell/interpreter/HEAD 头） + file:verification/DIAG-M2-REGIONLESS-LOCK-CHANGED-001/pytest-affected-run-01.log:1-3 + file:verification/DIAG-M2-REGIONLESS-LOCK-CHANGED-001/integration-b5ac097f/integration.md:10-19（三条命令 EXIT=0 + post-integration replay） + file:doc/handoffs/DIAG-M2-REGIONLESS-LOCK-CHANGED-001-5789b30b.md + grep:delivery_head: 7a03ac5f@doc/tasks/DIAG-M2-REGIONLESS-LOCK-CHANGED-001.md:17（FAIL/BLOCKED/NOT_RUN 分列：doc/research/DIAG-M2-REGIONLESS-LOCK-CHANGED-001.md:55,83-87） -->
 
 ## 允许修改范围
 

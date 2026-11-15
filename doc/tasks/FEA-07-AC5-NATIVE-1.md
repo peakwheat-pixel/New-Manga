@@ -49,11 +49,11 @@ out_of_scope:
 
 ## Acceptance Criteria（冻结）
 
-- [ ] **AC-N1（混合 DPI 拓扑）**：2K 置原生 2560×1440、4K 置原生 3840×2160，扩展排列；在两屏分别设置 100%/125%/150%/175%/200%（4K）与 100%/125%/150%（2K），逐组合记录每屏 `dpi/scale/rect/primary`；应用窗口在两屏间移动后 DPI 正确切换（无模糊/无错位）。 <<PARTIAL: 7/15 混合 DPI 组合已执行（4K 100/125/150/175/200 × 2K 100/125/150 子集），DPI 切换与屏幕内 containment 全部通过；其余组合与「无模糊/无错位」客观断言未做>>
-- [ ] **AC-N2（浮动窗口归属）**：Inspector 浮窗置于副屏 → 可见/可操作；主窗与浮窗跨屏拖动不丢屏外；目标屏不支持浮动时安全停靠（回主窗）；快捷键不重复执行。 <<PARTIAL: 主窗跨屏归属/可见/contained 已验；Inspector 浮窗不存在（RegisterSecondary 零生产调用）→ 该子项 NOT_APPLICABLE；中文 IME 组合输入已验（命令面板输入「你好」）；快捷键「不重复执行」未单独断言>>
-- [ ] **AC-N3（拔屏/换主屏）**：OS 级禁用副屏（并尽量物理拔线）→ 第二窗口内容回主窗对应页面；未 flush 编辑态 fail-closed 留在主窗缓冲（不丢不覆盖）；换主屏后布局/全屏状态正确。 <<PARTIAL: OS 级拔屏（DisplaySwitch /internal）已验且自动迁移窗口；物理拔屏已执行：拔后主窗被系统最小化（需手动恢复，D-AC5-1）、恢复后回主屏、重插后自动回 4K 原几何；未 flush 编辑态 fail-closed 未执行>>
-- [ ] **AC-N4（manifest/PerMonitorV2 与提交恢复）**：发布 manifest 实际启用 PerMonitorV2（读实际 exe manifest 断言，不只看 csproj）；混合 DPI 下窗口位置/大小提交与恢复正确；恢复点（分辨率/缩放/排列/主屏）在结束时逐项还原并校验。 <<PARTIAL: PerMonitorV2（app.manifest + exe 内嵌）与跨 DPI 几何保持已验；换主屏双向 rc=0 且应用存活；重启窗口几何持久化 → NOT_APPLICABLE（产品无实现）；恢复点按用户决定保留原生 2K>>
-- [ ] **AC-N5（证据/审查/翻转）**：真实桌面截图（每案例 ≥1，含两块屏与窗口位置）+ 逐案例 JSON + 恢复点 JSON + 失败/跳过原因；独立上下文 Review；`FEA-07` AC5 行 append-only 从 `NOT_APPLICABLE` 翻 `[x] <<PARTIAL: 证据/工具齐；r1 Review changes_requested 已处置，r2 复审未完成>>
+- [ ] **AC-N1（混合 DPI 拓扑）**：2K 置原生 2560×1440、4K 置原生 3840×2160，扩展排列；在两屏分别设置 100%/125%/150%/175%/200%（4K）与 100%/125%/150%（2K），逐组合记录每屏 `dpi/scale/rect/primary`；应用窗口在两屏间移动后 DPI 正确切换（无模糊/无错位）。 <!-- blocked: 原标 <<PARTIAL: 7/15 混合 DPI 组合已执行（4K 100/125/150/175/200 × 2K 100/125/150 子集），DPI 切换与屏幕内 containment 全部通过；其余组合与「无模糊/无错位」客观断言未做>>；卡面 L138 复判「AC-N1: PARTIAL」、L120 记未做组合为 NOT_RUN，故未达成本卡验收 -->
+- [ ] **AC-N2（浮动窗口归属）**：Inspector 浮窗置于副屏 → 可见/可操作；主窗与浮窗跨屏拖动不丢屏外；目标屏不支持浮动时安全停靠（回主窗）；快捷键不重复执行。 <!-- blocked: 原标 <<PARTIAL: 主窗跨屏归属/可见/contained 已验；Inspector 浮窗不存在（RegisterSecondary 零生产调用）→ 该子项 NOT_APPLICABLE；中文 IME 组合输入已验（命令面板输入「你好」）；快捷键「不重复执行」未单独断言>>；卡面 L139 复判「PARTIAL/NA」、L145 记 Inspector 浮窗不存在，故未达成本卡验收 -->
+- [ ] **AC-N3（拔屏/换主屏）**：OS 级禁用副屏（并尽量物理拔线）→ 第二窗口内容回主窗对应页面；未 flush 编辑态 fail-closed 留在主窗缓冲（不丢不覆盖）；换主屏后布局/全屏状态正确。 <!-- blocked: 原标 <<PARTIAL: OS 级拔屏（DisplaySwitch /internal）已验且自动迁移窗口；物理拔屏已执行：拔后主窗被系统最小化（需手动恢复，D-AC5-1）、恢复后回主屏、重插后自动回 4K 原几何；未 flush 编辑态 fail-closed 未执行>>；卡面 L140 复判「PARTIAL」、L125 记 physical/未 flush 子项 NOT_RUN，故未达成本卡验收 -->
+- [ ] **AC-N4（manifest/PerMonitorV2 与提交恢复）**：发布 manifest 实际启用 PerMonitorV2（读实际 exe manifest 断言，不只看 csproj）；混合 DPI 下窗口位置/大小提交与恢复正确；恢复点（分辨率/缩放/排列/主屏）在结束时逐项还原并校验。 <!-- blocked: 原标 <<PARTIAL: PerMonitorV2（app.manifest + exe 内嵌）与跨 DPI 几何保持已验；换主屏双向 rc=0 且应用存活；重启窗口几何持久化 → NOT_APPLICABLE（产品无实现）；恢复点按用户决定保留原生 2K>>；卡面 L141 复判「PARTIAL/NA」、L135 记恢复点未逐项还原，故未达成本卡验收 -->
+- [ ] **AC-N5（证据/审查/翻转）**：真实桌面截图（每案例 ≥1，含两块屏与窗口位置）+ 逐案例 JSON + 恢复点 JSON + 失败/跳过原因；独立上下文 Review；`FEA-07` AC5 行 append-only 从 `NOT_APPLICABLE` 翻 `[x] <!-- blocked: 原标 <<PARTIAL: 证据/工具齐；r1 Review changes_requested 已处置，r2 复审未完成>>；卡面 L142 复判「PARTIAL」、L147 记 AC5 行保持 NOT_APPLICABLE，独立 Review 未闭环，故未达成本卡验收 -->
 
 ## 实现口径
 
