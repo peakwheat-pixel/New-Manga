@@ -13,7 +13,14 @@
 #>
 [CmdletBinding()]
 param(
-    [string]$Source = $( if ($env:NEWMANGA_REPO_ROOT) { Join-Path $env:NEWMANGA_REPO_ROOT 'apps/desktop/src-tauri/target/release/resources/core-sidecar' } else { Join-Path (Split-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) -Parent) 'apps/desktop/src-tauri/target/release/resources/core-sidecar' } ),
+    # SIDECAR-SCHEMA-STALE-1 P0-2 (DSH 2026-11-16, per r1 review): the default used to point at
+    # 'apps/desktop/src-tauri/target/release/resources/core-sidecar' -- the RETIRED Tauri shell (AD-002).
+    # That stale 2026-10-23 tree is what made his fixture copy carry schema v6 while the source tree is at
+    # v14, so every sidecar test failed handshake. Provide one of:
+    #   -Source <dir>                  explicit packaged sidecar (contains core_service.exe)
+    #   NEWMANGA_SIDECAR_SOURCE=<dir>  override the default
+    #   (default)                      the Avalonia build, i.e. staging/m2ac5 output
+    [string]$Source = $( if ($env:NEWMANGA_SIDECAR_SOURCE) { $env:NEWMANGA_SIDECAR_SOURCE } else { Join-Path (Split-Path $PSScriptRoot -Parent) 'build/sidecar/core-sidecar/core-sidecar' }),
     [string]$Destination = $( $v11rRepo = (Split-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) -Parent); if ($env:NEWMANGA_WORKSPACE_ROOT) { Join-Path $env:NEWMANGA_WORKSPACE_ROOT 'task-envs/HOST-CORECLIENT-1/sidecar-copy' } else { Join-Path (Join-Path (Split-Path $v11rRepo -Parent) ((Split-Path $v11rRepo -Leaf) + '.workspace')) 'task-envs/HOST-CORECLIENT-1/sidecar-copy' } )
 )
 

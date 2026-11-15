@@ -36,8 +36,47 @@ $evidence = if ($CanonicalEvidence) {
 $testEvidence = Join-Path $evidence 'test'
 New-Item -ItemType Directory -Force -Path $testEvidence | Out-Null
 
-if (-not (Test-Path (Join-Path $SidecarDirectory 'core_service.exe'))) {
-    & (Join-Path $PSScriptRoot 'prepare-sidecar.ps1') -Destination $SidecarDirectory
+# SIDECAR-SCHEMA-STALE-1 P0-2 (DSH 2026-11-16, per r1 review): the fixture copy used to be created once
+# and then never refreshed ("copy exists => use it"), so a 2026-10-23 legacy Tauri copy (schema v6) kept
+# being used long after the build bundle advanced to v14 -- every sidecar test failed handshake with
+# "database schema v14 is newer than this application knows (v6)".
+#
+# Now the copy is validated against the build bundle's build-manifest.json and re-created when it is
+# missing, has no manifest, or was built from a different git_head / schema_version.
+$buildBundle = Join-Path (Split-Path $PSScriptRoot -Parent) 'build/sidecar/core-sidecar/core-sidecar'
+$buildManifestPath = Join-Path $buildBundle 'build-manifest.json'
+$fixtureManifestPath = Join-Path $SidecarDirectory 'build-manifest.json'
+
+$needsPrepare = $true
+$prepareReason = 'fixture core_service.exe missing'
+if (Test-Path (Join-Path $SidecarDirectory 'core_service.exe')) {
+    if (-not (Test-Path $fixtureManifestPath)) {
+        $prepareReason = 'fixture has no build-manifest.json (cannot prove its schema)'
+    } elseif (-not (Test-Path $buildManifestPath)) {
+        # The build bundle predates the manifest. Fall back to the old behaviour but say so loudly.
+        Write-Warning "sidecar fixture: build bundle has no build-manifest.json under $buildBundle; keeping the existing fixture (rebuild with packaging/m2ac5/build_sidecar.ps1 -Force to enable freshness checking)"
+        $needsPrepare = $false
+    } else {
+        $fx = Get-Content $fixtureManifestPath -Raw | ConvertFrom-Json
+        $bd = Get-Content $buildManifestPath -Raw | ConvertFrom-Json
+        if ($fx.schema_version -ne $bd.schema_version) {
+            $prepareReason = "fixture schema v$($fx.schema_version) != build bundle v$($bd.schema_version)"
+        } elseif ($fx.git_head -ne $bd.git_head) {
+            $prepareReason = "fixture built from HEAD $($fx.git_head) != build bundle HEAD $($bd.git_head)"
+        } else {
+            $needsPrepare = $false
+        }
+    }
+}
+
+if ($needsPrepare) {
+    Write-Host "sidecar fixture: refreshing $SidecarDirectory ($prepareReason)"
+    # Remove first: robocopy /E layers new files over old ones, and a mixed _internal tree makes
+    # core_service.exe die at startup with "Failed to import encodings module".
+    if (Test-Path $SidecarDirectory) { Remove-Item -LiteralPath $SidecarDirectory -Recurse -Force }
+    & (Join-Path $PSScriptRoot 'prepare-sidecar.ps1') -Destination $SidecarDirectory -Source $buildBundle
+} else {
+    Write-Host "sidecar fixture: up to date at $SidecarDirectory"
 }
 
 $env:NEWMANGA_CORECLIENT_SIDECAR_DIR = (Resolve-Path $SidecarDirectory).Path
