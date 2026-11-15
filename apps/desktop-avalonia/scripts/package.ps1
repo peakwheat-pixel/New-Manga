@@ -38,6 +38,35 @@ Pop-Location
 # Layout: <stage>/app/core-sidecar/ — the packaged SidecarLocator probes
 # <app dir>/core-sidecar first, so the built sidecar rides beside the exe.
 if(-not (Test-Path (Join-Path $SidecarDir 'core_service.exe'))){throw "sidecar bundle missing under SidecarDir: $SidecarDir (run packaging/m2ac5/build_sidecar.ps1 -Force first)"}
+
+# SIDECAR-SCHEMA-STALE-1 (DSH 2026-11-16): the sidecar carries its own copy of the SQLite schema
+# migrations. If the bundle is older than the source tree, the packaged app starts, the sidecar opens the
+# data root, sees a NEWER schema than it knows and fail-closes ("database schema vN is newer than this
+# application knows (vM); refusing to run") -- i.e. the installed product simply does not work.
+#
+# The bundle therefore has to declare which schema it was built against. build_sidecar.ps1 writes that
+# into build-manifest.json; we refuse to package when the declaration is missing or stale.
+$sidecarManifest = Join-Path $SidecarDir 'build-manifest.json'
+if(-not (Test-Path $sidecarManifest)){
+    throw ("sidecar bundle has no build-manifest.json under $SidecarDir -- it cannot prove which schema it understands. Rebuild it with packaging/m2ac5/build_sidecar.ps1 -Force (that script writes the manifest).")
+}
+$sidecarManifestInfo = Get-Content $sidecarManifest -Raw | ConvertFrom-Json
+$sidecarSchema = $sidecarManifestInfo.schema_version
+if($null -eq $sidecarSchema){throw "sidecar build-manifest.json does not declare schema_version: $sidecarManifest"}
+
+# Read the newest schema version the *source tree* knows.
+$schemaPy = Join-Path $repo 'src/infrastructure/sqlite/schema.py'
+if(-not (Test-Path $schemaPy)){throw "cannot read source schema version: $schemaPy not found"}
+$sourceSchema = (Select-String -Path $schemaPy -Pattern 'SCHEMA_VERSION_V(\d+)\s*=' -AllMatches |
+    ForEach-Object { $_.Matches } | ForEach-Object { [int]$_.Groups[1].Value } |
+    Measure-Object -Maximum).Maximum
+if($null -eq $sourceSchema){throw "no SCHEMA_VERSION_V<n> constants found in $schemaPy"}
+
+if([int]$sidecarSchema -ne [int]$sourceSchema){
+    throw ("sidecar bundle is built against schema v$sidecarSchema but the source tree is at v$sourceSchema. The packaged app would fail at startup. Rebuild the bundle: packaging/m2ac5/build_sidecar.ps1 -Force.")
+}
+Write-Host ("sidecar schema check: v{0} == source v{0} (HEAD={1})" -f $sidecarSchema, $sidecarManifestInfo.git_head)
+
 $sidecarDst=Join-Path $stage 'app/core-sidecar'
 New-Item -ItemType Directory -Force $sidecarDst|Out-Null
 $roboArgs=@($SidecarDir,$sidecarDst,'/E','/NFL','/NDL','/NJH','/NJS','/NP')

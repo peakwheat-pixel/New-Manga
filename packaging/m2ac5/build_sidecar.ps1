@@ -356,5 +356,31 @@ Copy-MangaOcrOnnx -Bundle $bundle -OcrWeightsSource $OcrWeightsSource
 if ($BundlePythonRuntime) {
     Copy-PluginPythonRuntime -Bundle $bundle -RuntimeDir $BundlePythonRuntime
 }
+# SIDECAR-SCHEMA-STALE-1 (DSH 2026-11-16): record WHICH schema this bundle understands.
+# The sidecar ships its own copy of the SQLite migrations, so a stale bundle makes the packaged app
+# fail-closed at startup ("database schema vN is newer than this application knows"). package.ps1
+# refuses to package without this manifest, and refuses when its schema_version != the source tree's.
+$manifestRepoRoot = (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent)
+$schemaSourcePath = Join-Path $manifestRepoRoot 'src/infrastructure/sqlite/schema.py'
+$schemaVersionForManifest = $null
+if (Test-Path $schemaSourcePath) {
+    $schemaVersionForManifest = (Select-String -Path $schemaSourcePath -Pattern 'SCHEMA_VERSION_V(\d+)\s*=' -AllMatches |
+        ForEach-Object { $_.Matches } | ForEach-Object { [int]$_.Groups[1].Value } |
+        Measure-Object -Maximum).Maximum
+}
+if ($null -eq $schemaVersionForManifest) {
+    throw "build_sidecar: cannot determine schema version from $schemaSourcePath -- refusing to produce an unlabelled bundle"
+}
+$manifest = [ordered]@{
+    schema_version     = [int]$schemaVersionForManifest
+    git_head           = $gitHead
+    pyinstaller        = $pyinstallerVersion
+    built_at_utc       = (Get-Date).ToUniversalTime().ToString('o')
+    schema_source_path = 'src/infrastructure/sqlite/schema.py'
+}
+$manifestPath = Join-Path $bundle 'build-manifest.json'
+($manifest | ConvertTo-Json -Depth 4) | Set-Content -LiteralPath $manifestPath -Encoding utf8
+Write-Host "build_sidecar: schema manifest -> $manifestPath (schema v$schemaVersionForManifest)"
+
 Write-Host "build_sidecar: OK -> $bundle (HEAD=$gitHead, pyinstaller=$pyinstallerVersion)"
 
