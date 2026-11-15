@@ -32,3 +32,23 @@ CoreServiceClient.cs:2385 comment: request_id (if any), so we do not validate th
 
 ## e) 错配抛异常、无重同步（仍开）
 L2411: $"response request_id '{actual}' does not match request '{requestId}': "
+
+## 4) R-005 取消不置 poison（仍开）
+# file: Transport/SidecarProcess.cs
+L197: catch (OperationCanceledException)
+L250: catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
+L252: _poisoned = true;
+L310: catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)
+L312: _poisoned = true;
+L373: catch (OperationCanceledException)
+L385: catch (Exception ex) when (ex is InvalidOperationException or OperationCanceledException)
+L409: catch (Exception ex) when (ex is AggregateException or OperationCanceledException)
+
+## 5) Dispose/StopAsync 无 lease（仍开）
+# file: CoreServiceClient.cs
+L2629: await _process.StopAsync().ConfigureAwait(false);
+L2630: await _process.DisposeAsync().ConfigureAwait(false);
+
+## 权威枚举来源
+doc/tasks/PIPE-EXCLUSIVE-TRANSPORT-1.md:123-129
+doc/reviews/MAINT-1-EXISTING-FINDINGS-2026-11-14.md:162-168
