@@ -81,15 +81,28 @@
 | `GOAL-C-DEBT-AUDIT-1` | done |
 | `AC-BLOCKED-CLOSE-1` | done |
 | `HUMAN-VS-AGENT-SPLIT-1` | done |
-| `HOST-CONCURRENCY-FLAKY-1` | **新建**，AC1–AC5 MET，AC6 复核进行中 |
+| `HOST-CONCURRENCY-FLAKY-1` | **新建**，AC1–AC5 PARTIAL/MET 见卡面（AC6 复核 CHANGES_REQUESTED 已处置），AC6 待重审 |
 
 ## 本会话发现的真实产品缺陷（非测试问题）
 
-**1 个**：`HostIssuer.cs` 未套用 53 位 file-id 归一化 ⇒ 用户新导入的源文件
-（NTFS FileIndex > 2^53，实测 6/7）会稳定报 `FILE_IDENTITY_CHANGED`
-（"Import source reference was rejected"）。
+**1 个（经代码链路核对）**：`HostIssuer.cs:563` 未套用 53 位 file-id 归一化 ⇒
+当 NTFS file index 超过 2^53 时，用户新导入的源文件会报 `FILE_IDENTITY_CHANGED`
+（"Import source reference was rejected"）。实测 `%TEMP%` 新建文件 6/7 超过 2^53
+⇒ **新建文件场景下高概率触发，但不是「任何情况」**（`alpha.png` 的
+`st_ino = 844424931403221 < 2^53` 长期可用即是反例；**AC6 复核已指出原「稳定报」表述过强**）。
+
+**AC6 复核（reviewer-hcf，CHANGES_REQUESTED）后又补修了一处遗漏 producer**：
+`SourceSecurity.Identity` 的 raw file index 经 `SourceReadCoordinator` 流入
+**source-read grant facts**，Py 侧 `source_read_refs.py:1068/1080` 原样透传，
+在 `scanner.py:168` 与 masked 值对撞 ⇒ 同签名错误。
+已在 `SourceReadCoordinator.cs:404/624` 归一化；**刻意不动 `SourceSecurity.Identity` 本体**，
+因为该值还被 `SourceAccessRegistry.cs:49/137` 持久化到 `registry.v1.dat` 作
+`SourceRoot.FileId` 并在 `:140-141` 校验，单边 mask 会让既有 registry 全部
+`SOURCE_REGISTRY_UNAVAILABLE`（此点由复核者提示）。
 
 **其余 6 处修复均为测试期望过时**（产品行为正确、测试未跟上 sidecar 演进）。
+
+**「唯一一个」无法核验**：需审计全部门卡才能确认；复核者已注明此点未能独立验证。
 
 ## 本会话的错误账（6 次同类）
 
