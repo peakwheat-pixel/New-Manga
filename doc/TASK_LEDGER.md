@@ -6,12 +6,12 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 
 | metric | value |
 |---|---:|
-| task files | 653 |
-| terminal | 640 |
+| task files | 654 |
+| terminal | 641 |
 | non-terminal | 12 |
 | non-terminal named in the plan | 7 |
 | non-terminal outside the plan | 5 |
-| task files tracked by git | 652 |
+| task files tracked by git | 653 |
 | task files untracked (drafts) | 1 |
 | non-terminal tracked by git | 11 |
 
@@ -21,7 +21,7 @@ Arithmetic note: `task files` = `terminal` + `non-terminal` + `(none)` rows. A `
 
 | status | count | terminal |
 |---|---:|---|
-| `done` | 539 | yes |
+| `done` | 540 | yes |
 | `closed_with_limitations` | 60 | yes |
 | `cancelled` | 21 | yes |
 | `historical` | 11 | yes |
@@ -40,7 +40,7 @@ Arithmetic note: `task files` = `terminal` + `non-terminal` + `(none)` rows. A `
 |---|---|---|
 | `GIT-CLEAN-PUBLICATION-DIAG-1` | `approved` | mentioned |
 | `FEA11-ENTRY-MISSING-1` | `blocked` | no |
-| `BRIDGE-ID-FAILCLOSED-1` | `in_progress` | no |
+| `BRIDGE-FAKE-HARNESS-1` | `in_progress` | no |
 | `GATE3-MATRIX-EXPAND-1` | `in_progress` | no |
 | `GATE3-SETTINGS-SHORTCUT-1` | `in_progress` | no |
 | `INSTALLER-MATRIX-1` | `in_progress` | no |

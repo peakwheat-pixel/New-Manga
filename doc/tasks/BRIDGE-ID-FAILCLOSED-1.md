@@ -3,10 +3,13 @@ id: BRIDGE-ID-FAILCLOSED-1
 title: 按 Codex 裁决把 bridge 侧 id 校验改为 fail-closed（洞 2），并对不可归属响应 poison 通道
 kind: defect
 governance_version: 3
-status: in_progress
+status: done
 suggested_owner: DSH
 owner: DSH
-reviewer: null
+reviewer: bridge-id-review（独立上下文子 agent，APPROVED_WITH_LIMITATIONS 0/1/3/3）
+integration_commit: 6f6fdda13
+canonical_evidence_status: complete
+resource_closeout_status: complete
 depends_on:
   - E7-2-DYNAMIC-EVIDENCE-1
 approval: Codex 裁决 2026-11-16（doc/reviews/E-7-BRIDGE-ID-RULING-codex-2026-11-16.md）；用户 2026-11-15「全部授权」
@@ -98,12 +101,13 @@ catch (SidecarException ex) when (ex.Code == SidecarErrorCode.MalformedResponse)
 
 ## Acceptance Criteria
 
-- [ ] **AC1 洞 2 收紧**：`expectedId != null` 时响应必须有精确匹配的 `Int32 id`，否则 `MalformedResponse`。
-- [ ] **AC2 洞 1 保留**：`expectedId == null`（raw）对无 id 帧仍返回结果。
-- [ ] **AC3 生产调用点 poison**：`SendAsync` 捕获 `MalformedResponse` 后先 `_process.Poison()` 再抛，且在租约释放前。
-- [ ] **AC4 测试迁移**：第 3 条按裁决改名并反转断言；新增 7 形态参数化与 raw 保留用例。
-- [ ] **AC5 不回归**：全量 **222 / 0 / 30**；四件套 PASS。
-- [ ] **AC6 独立复核**：固定 head 交独立上下文 Review。
+- [x] **AC1 洞 2 收紧**：`expectedId != null` 时响应必须有精确匹配的 `Int32 id`，否则 `MalformedResponse`。 <<MET>>
+- [x] **AC2 洞 1 保留**：`expectedId == null`（raw）对无 id 帧仍返回结果。 <<MET>>
+- [x] **AC3 生产调用点 poison**：`SendAsync` 捕获 `MalformedResponse` 后先 `_process.Poison()` 再抛，且在租约释放前（`using var lease` 作用域内）。 <<MET>>
+  > **限定（r1 F-01）**：接线**已实施**，但**无测试覆盖** —— 变异实测「删掉 `_process.Poison()` ⇒ 全量仍 222 passed / EXIT 0（存活）」。动态证据由 `BRIDGE-FAKE-HARNESS-1` 承接（DSH 裁决 2026-11-16）。
+- [x] **AC4 测试迁移**：第 3 条按裁决改名并反转断言；新增 7 形态参数化与 raw 保留用例。 <<MET>>
+- [x] **AC5 不回归**：全量 **222 / 0 / 30**；四件套 PASS。 <<MET>>
+- [x] **AC6 独立复核**：固定 head 交独立上下文 Review。 <<MET>>
 
 ## 允许修改范围
 
@@ -124,6 +128,43 @@ catch (SidecarException ex) when (ex.Code == SidecarErrorCode.MalformedResponse)
 | 全量 | `dotnet test …NewManga.CoreClient.Tests.csproj` | 222 / 0 / 30 |
 | 四件套 | check / pins / inventory | PASS / 18-18 / 87 |
 
-## 证据
+## Canonical Evidence
 
-裁决文件、全量日志、变异日志、修复 diff 写入 `doc/reviews/` 与 `verification/BRIDGE-ID-FAILCLOSED-1/`。
+| evidence_id | AC/Gate | path | commit | sha256 | class | sha256_basis |
+|---|---|---|---|---|---|---|
+| EV-BID-01 | AC4/AC5 全量不回归（222/0/30） | verification/BRIDGE-ID-FAILCLOSED-1/coreclient-full.log | 6f6fdda13 | 781725c5ba400238d93df77bbb658c7f372190f32bc755e9b84b14285dbcb853 | CANONICAL | BLOB |
+| EV-BID-02 | AC1/AC3 修复 diff | verification/BRIDGE-ID-FAILCLOSED-1/fix.diff | 6f6fdda13 | 720b1091477677e982a8d22c5049d1754892aaa15835b6843b9b862a8b05956b | CANONICAL | BLOB |
+| EV-BID-03 | AC3 变异证据（删 Poison ⇒ **存活**） | verification/BRIDGE-ID-FAILCLOSED-1/mutation-poison-removed.log | 6f6fdda13 | 96498aa69946e9d1f7aa8f618539304f7d4754e71b9b8514bb1c3444d9ca7764 | CANONICAL | BLOB |
+
+## Resource Manifest
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| agent-output | verification/BRIDGE-ID-FAILCLOSED-1/ | NOT_APPLICABLE | — | — | 新增证据，无迁移/归档 |
+
+## Closeout Record
+
+- Closeout：2026-11-16，DSH；实现 `6f6fdda13`。
+- **裁决采纳**：Codex 2026-11-16（`doc/reviews/E-7-BRIDGE-ID-RULING-codex-2026-11-16.md`），
+  verdict「洞 1 保留；洞 2 fail-closed；立即拒绝并 poison，不新增重同步」。DSH 以其名义集成。
+- **结果**：
+  - `ParseResponse` 三段式严格判据（缺失 / 非 Int32 / 值不匹配，各自独立 `MalformedResponse`）；
+  - `expectedId == null`（raw）**保持观察语义**（洞 1）；
+  - `SendAsync` 在**租约释放前**捕获 `MalformedResponse` ⇒ `_process.Poison()` ⇒ 重抛；
+    业务 `BridgeException` 不进该 catch；`SendRawAsync` 不套；
+  - 测试迁移：第 3 条**改名并反转断言**；新增 7 形态参数化 + raw 保留用例。
+- **独立复核**：`bridge-id-review` **APPROVED_WITH_LIMITATIONS**（0/1/3/3）。它用**强制重建后的反射探测**
+  逐字验证三类错误消息与裁决一致，并做了反向变异（收紧 raw ⇒ RED；`kind` 顺序反 ⇒ 5 红），
+  证明 parser 层测试**有判别力**。
+- **r1 的方法学告警（已采纳为纪律）**：从备份恢复源文件会保留旧时间戳，`dotnet build` 可能**跳过重编译**，
+  导致测试跑的是上一次变异的 DLL。**后续所有变异验证必须 `dotnet build --no-incremental` 强制重建。**
+- **门禁**：定向 **11 passed**；全量 **222 passed / 0 failed / 30 skipped / EXIT=0**；
+  `check.ps1` PASS (3 warnings)｜`verify_pins` 18/18｜`api_inventory` 1/80/6=87。
+- **未关闭项（不淡化）**：
+  1. **F-01：poison 接线无测试覆盖**（变异存活已实测）。**DSH 裁决转由 `BRIDGE-FAKE-HARNESS-1` 承接**，
+     理由：夹具冻结是独立工作量，且 core 侧同类缺口（host-control poison 分支）共用同一瓶颈；
+  2. **`E-7 #2` 继续开放**，本卡**不得**被引用为「bridge 侧会话安全」的证据；
+  3. 裁决 §4 还要求的这些边界仍未覆盖：error 信封先于 id 校验、匹配 id 的业务错误不 poison、
+     握手期非法 id ⇒ `HandshakeFailed`（内层 `MalformedResponse`）、raw + error 仍 `BridgeException`；
+  4. **`-TaskPath` 曾 FAIL**（「当前 DAG 未登记非终态 Task」，`check.ps1:702`）—— 标 `done` 后消解。
+
