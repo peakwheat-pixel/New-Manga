@@ -7,7 +7,7 @@ status: done
 suggested_owner: DSH
 owner: DSH
 reviewer: （见 r1）
-integration_commit: PENDING
+integration_commit: 747f1eed0
 canonical_evidence_status: complete
 resource_closeout_status: complete
 depends_on:
@@ -96,7 +96,7 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class | sha256_basis |
 |---|---|---|---|---|---|---|
-| EV-ECS2-01 | AC5 引用核实（12 项存在性 + 7 张卡状态） | verification/E7-CONCURRENCY-STATUS-2/citation-check.log | dd5dc1519 | PIN_PENDING | CANONICAL | BLOB |
+| EV-ECS2-01 | AC5 引用核实（12 项存在性 + 7 张卡状态） | verification/E7-CONCURRENCY-STATUS-2/citation-check.log | 747f1eed0 | db9b2e4c22ca345923c8462367c3773d362d2d40a6773432cdef6a49bb65c04b | CANONICAL | BLOB |
 
 ## Resource Manifest
 
