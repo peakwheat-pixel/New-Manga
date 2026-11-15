@@ -124,7 +124,7 @@ allowed_paths:
 - 当前指针清理：释放时补 DAG/STATUS 指针。
 ## Review（DSH 集成复核，2026-10-27）— PASS
 
-- 证据：11 项 64-hex pin 全对；check.ps1 -TaskPath PASS；env 8.74GB 于 workspace 	ask-envs/INFER-BASELINE-EP-1（PRESERVE_REFERENCED）。
+- 证据：11 项 64-hex pin 全对；check.ps1 -TaskPath PASS；env 8.74GB 于 workspace task-envs/INFER-BASELINE-EP-1（PRESERVE_REFERENCED）。
 - 三档实测（10 页真实页，warm-up1+4 中位，ms/页）：YOLO11s-seg CPU 161.42/DML 26.48/CUDA 27.71；RT-DETR-v2 ONNX-CPU 168.95/DML 22.95/CUDA 25.28（torch-CPU 251.78/torch-CUDA 40.82）；PP-OCRv4 CPU 135.85/DML 250.92/CUDA 496.09（**GPU 反而慢**）；manga-ocr CPU 72.52/DML 97.87/CUDA 23.17；LaMa 512 CPU 1161.19/**DML 失败**/CUDA 76.92。
 - 启动：ORT import 66–89ms、会话 78–4479ms；torch import 1292–1313ms + 模型 2823–3321ms（比 ORT 多 ~4.1–4.6s）。
 - 导出：RT-DETR-v2 fixed/dynamic 均成功（opset17/163.7MB），但**动态图 ORT 不可加载** → 发 fixed；manga-ocr encoder/decoder 与 torch **逐字符 100% 一致**，generate() 整图失败 → 解码循环留 Python；YOLO/PP-OCR/LaMa 上游 ONNX（重导 NOT_RUN）。

@@ -112,7 +112,7 @@ allowed_paths:
 - 2026-11-02：设计基线独立复核 **r5 approved**（P0/P1=0，P2×16）；AC1–AC4 MET；**AC5（用户确认）未进行**——待用户确认后由 DSH 冻结并在 Closeout 记录。
 ## AC5 处置记录（DSH 裁决，2026-11-02）
 
-- **独立 Review**：doc/reviews/FEA-04b-scope-r1.md … 5.md（r5 **approved**，P0/P1=0，P2×16 接受）。
+- **独立 Review**：doc/reviews/FEA-04b-scope-r1.md … 5.md（r5 **approved**，P0/P1=0，P2×16 接受）。
 - **用户确认**：用户在本次自主推进目标下未回复确认（<<PARTIAL>> 持续两轮）；按目标「不卡住」规则，Codex/ZCode 通道均不可用（Codex helper_unknown_error、ZCode 未安装），故由 DSH 裁决：以 **r5 approved 独立复核 + DSH 冻结**视为满足「用户确认」的前置；用户后续如提出修改，走设计基线版本 v1.1 修订流程（不阻塞 FEA-06）。
 - **DSH 冻结**：doc/design/fluent-v1/ 标记 frozen v1.0.0（README.md 状态行），FEA-06 以该版本为唯一设计输入。
 - 依据：目标轮次 4/5 用户裁决（"不卡住"）+ 2026-10-31 Review 独立性裁决（上下文独立）+ 故障转移候选仅 ZCode（不可用）。

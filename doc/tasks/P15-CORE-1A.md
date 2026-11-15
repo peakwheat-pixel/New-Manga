@@ -37,7 +37,7 @@ P15-CORE-1 因契约 §5.2 的 TestNetworkProfile 目标缺口**失败关闭**�
   **AC3 待审说明**：真实 `build_production_handlers` 是 Pipeline step handler 注册表，定义于 `src/infrastructure/providers/handlers.py`；`core_assembly` 使用其键初始化 Pipeline `known_steps`。新增 IPC 命令已注册在 `core_service` command dispatch，所需 Store 在 `core_assembly` 装配。将 IPC 命令塞入 Pipeline step 表会改变既有步骤语义；AC3 的指定注册点需要独立 Reviewer / Coordinator adjudication 后才能勾选。
 
 ## 允许 / 禁止范围
-- **允许**：src/**（Python Core）、	ests/core/**（新增与必要修改，**不得弱化既有断言**）、本 Task、doc/handoffs/P15-CORE-1A-*.md、verification/P15-CORE-1A/**
+- **允许**：src/**（Python Core）、tests/core/**（新增与必要修改，**不得弱化既有断言**）、本 Task、doc/handoffs/P15-CORE-1A-*.md、verification/P15-CORE-1A/**
 - **禁止**：不得实现 G22 凭据面、G23 Network 面与 `settings_network_profiles_test`（分别属 1B/1C）
 - 契约 **wire 已冻结**（doc/contracts/P15_SETTINGS_IPC_CONTRACT.md）：命令名/参数/结果/错误**逐字一致**，**不得**改名或增删字段；若发现契约问题**停下上报**，不得自行改契约；
 - **不得**改 apps/desktop/**、Schema/迁移/依赖；不改 doc/STATUS.md / doc/REBASELINE_PLAN.md；不触碰用户 19 项 dirty；不 push/merge/

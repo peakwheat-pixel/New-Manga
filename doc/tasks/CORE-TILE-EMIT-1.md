@@ -91,4 +91,4 @@ allowed_paths:
 - 摘要一致率 **100%**（2/2 tile，digest_mismatches=0）；中文/unicode 路径通过，manifest 纯 ASCII。
 - 契约：Core 输出通过 TILE-CHANNEL-CONTRACT-V1；Host 真实产物消费通过。
 - 遗留转后续：Core 渲染管线何时调用 emit（独立 Core 集成任务）；阅读器切真实产物与安装 smoke 联合验证（S5-D）。
-- 集成：7b07da6a4；范围仅 src/**+	ests/**+证据+文档，Host 契约与旧壳未动。
+- 集成：7b07da6a4；范围仅 src/**+tests/**+证据+文档，Host 契约与旧壳未动。

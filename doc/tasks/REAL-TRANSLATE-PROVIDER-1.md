@@ -124,7 +124,7 @@ allowed_paths:
 ## Review（DSH 集成复核，2026-10-28）— PASS（AC3 BLOCKED 额度）
 
 - AC1/AC2/AC4/AC5 MET；key 入 Windows vault（profile 3819f991…）、临时文件即删、oc_sk_ 0 命中、孤儿条目已清。
-- AC3 BLOCKED：额度（429/402），装配链路正确、typed 降级正确、0 条翻译未伪造；充值后 	ools/run_translate_probe.py 复验。
+- AC3 BLOCKED：额度（429/402），装配链路正确、typed 降级正确、0 条翻译未伪造；充值后 tools/run_translate_probe.py 复验。
 - 发现待定位：Host library_start_run 经 dispatcher 对该 sidecar 返回 INVALID_REQUEST（直连 Core 可用）→ 需专项诊断。
 - 集成：6bf084222。
 

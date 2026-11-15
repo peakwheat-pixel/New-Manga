@@ -201,6 +201,6 @@ allowed_paths:
 eeds sidecar fixture 原因（已抽查 ScriptFact/HostSidecarFact 属性）。
 - 证据 pin：per-project TRX 与 MANIFEST 均为完整 64-hex；旧单一 
 esults-Debug.trx 已删除，与卡内 E 表一致。
-- 集成：分支 	ask/HOST-CORECLIENT-1 合入 main；范围仅 apps/desktop-avalonia/** + verification/HOST-CORECLIENT-1/** + 文档；未改旧壳/Python Core。
+- 集成：分支 task/HOST-CORECLIENT-1 合入 main；范围仅 apps/desktop-avalonia/** + verification/HOST-CORECLIENT-1/** + 文档；未改旧壳/Python Core。
 - 结论：**修复验收 PASS**（closeout 下一轮完成）；
 esource_closeout_status=complete（~1GB 无标签 sidecar 副本按 PRESERVE_REFERENCED 保留，删除需另行授权）。

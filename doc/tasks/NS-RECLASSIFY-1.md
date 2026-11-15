@@ -96,8 +96,8 @@ allowed_paths:
 **分类统计（42 条 NS）**：IMPLEMENTED **35**（high 26 / medium 16）、NEEDS_IMPLEMENTATION **7**、NEEDS_MODEL 0、BLOCKED 0。
 
 - AC1：按旧壳签名构造 payload，对冻结双 sidecar 逐条探测（54 次原始探测），区分成功/typed 域错误/缺契约；实证冻结 core_service sha256 e0a1eff8…f6f14bc0（与 S2 同二进制）、协议 2.3；P15 settings 需 minor 7、Create 需 8、**DELETE 面需 minor 10**（3–12 扫描）。
-- AC2：eclassification.json 42 条逐条 current/proposed/confidence/evidence/reason/s2_probe/residual；另附 probe-results.json、REPORT.md（§5 应用顺序与风险）、probe-spec.json、	ools/**、esource-manifest.json。
-- 典型误分类（S2 探针错）：library_save_reading_progress（错误 payload）、esolve_page_resource（假 page_id）、list_region_revisions/set_region_type/estore_region_revision/erender_page（PascalCase 命令名、非法枚举、假 id；合法枚举 narration/note/other/sfx/speech/title）、以及一整批 settings/provider/network/credential/plugins/backup/cleanup/run 编排面**S2 从未探测就写死 NS**。
+- AC2：eclassification.json 42 条逐条 current/proposed/confidence/evidence/reason/s2_probe/residual；另附 probe-results.json、REPORT.md（§5 应用顺序与风险）、probe-spec.json、tools/**、esource-manifest.json。
+- 典型误分类（S2 探针错）：library_save_reading_progress（错误 payload）、esolve_page_resource（假 page_id）、list_region_revisions/set_region_type/estore_region_revision/erender_page（PascalCase 命令名、非法枚举、假 id；合法枚举 narration/note/other/sfx/speech/title）、以及一整批 settings/provider/network/credential/plugins/backup/cleanup/run 编排面**S2 从未探测就写死 NS**。
 - 7 条 NEEDS_IMPLEMENTATION：2 条 host-local shell 动作（library_reveal_export_folder、plugins_open_directory）+ 5 条 import/export（Core 有 ImportPages/StartExport/GetExportSnapshot/CancelExport，但 grant 需 host_issuer 签发；Avalonia Host 未实现签发）——**原因是 Host 侧未实现，不是 Core 未实现**。
 - AC3：未改产品源码/registry/parity 快照/冻结证据（探测在私有 data root，原件零修改）。
 - AC4：check.ps1 -TaskPath PASS；7 条 64-hex pin。

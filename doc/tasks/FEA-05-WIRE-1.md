@@ -132,5 +132,5 @@ Host 命令统一下划线（§8 解析器正则 `^[a-z][a-z0-9_]*$`）；参数
 ## Closeout Record
 
 - 2026-11-02 / DSH：v1 → v2（r1）→ v3（r2）→ v4（r3）→ **v5（r4）**：映射表按 `drafts.py`/`domain/drafts/entities.py` 真实签名重写；W-4 冻结错误/Token 传输；契约文档头部与 §8 一致性要求；W-6/W-7 裁决登记。待 r4 复核。
-- 2026-11-02：范围复核 **r7 approved**（P0=0/P1=0/P2×9 接受遗留）；置 eady，交 Codex 实现（suggested_owner: codex）。
+- 2026-11-02：范围复核 **r7 approved**（P0=0/P1=0/P2×9 接受遗留）；置 eady，交 Codex 实现（suggested_owner: codex）。
 - 2026-11-02 / DSH：实现完成（d9d7dde41）经 **impl-r1（P1×5）→ impl-r2（P1×1）→ impl-r3 approved（P0/P1=0，P2×10 接受遗留）**；AC1–AC7 MET（AC3 N/A）；全量 sln **931/0/60**、pytest **900 passed**、C# 契约 80/80、verify_pins 15/15；置 done。

@@ -79,7 +79,7 @@ allowed_paths:
 - 当前指针清理：释放时已更新 STATUS/PLAN/LEDGER。
 ## BLOCKED（2026-10-27，实现方排查 + DSH 裁决）
 
-**阻塞事实（repo 实测，非猜测）**：S5 第 1–2 步依赖的机制**只存在于待退役的旧 Rust 资源通道**（esource_protocol.rs/host_issuer.rs）；新 C# Host 侧 grep 	ile|digest = 0 命中，缺四块能力：① tile 通道与 per-tile SHA-256；② ≤1s 授权缓存 + revoke 失效事件；③ handle 路径重导/containment（越界/junction/reparse）；④ 大页 ≥60ms/哈希 ≤10% 的测量路径。因此 D4 六项无法证明绿，且实机 smoke（Mica 像素/工作集/IME）与安装 smoke 本会话无法诚实产出。
+**阻塞事实（repo 实测，非猜测）**：S5 第 1–2 步依赖的机制**只存在于待退役的旧 Rust 资源通道**（esource_protocol.rs/host_issuer.rs）；新 C# Host 侧 grep tile|digest = 0 命中，缺四块能力：① tile 通道与 per-tile SHA-256；② ≤1s 授权缓存 + revoke 失效事件；③ handle 路径重导/containment（越界/junction/reparse）；④ 大页 ≥60ms/哈希 ≤10% 的测量路径。因此 D4 六项无法证明绿，且实机 smoke（Mica 像素/工作集/IME）与安装 smoke 本会话无法诚实产出。
 
 **DSH 裁决**：不跳步、不删旧机制（正确停在安全边界）。拆分为四个 Task 依次释放：
 - **S5-A HOST-TILE-CHANNEL-1**（ready，先做）：Host tile 通道 + per-tile digest + ≤1s 授权缓存 + containment；覆盖 D4-2/4（revoke/expiry/篡改保尺寸）。

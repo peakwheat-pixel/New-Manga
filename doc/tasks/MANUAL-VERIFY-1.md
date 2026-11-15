@@ -96,7 +96,7 @@ AD-002 S0–S5 与后端瘦身/推理基线/发布件已全部完成（`FINAL-VA
 **下一步（需释放 Task）**
 1. MICA-FIX-1：Mica 可见化（透明背景 + ActualTransparencyLevel 诊断 + 深浅壁纸 A/B 截图）。
 2. DPI-DYNAMIC-1：跨屏拖动按 WM_DPICHANGED 重渲染（消除位图拉伸）。
-3. BOOK-FIXTURE-1：在隔离数据根导入一本书（用 	est_assets/comic_golden_suite），用于 webtoon 工作集与 Esc/H 的自动化复测。
+3. BOOK-FIXTURE-1：在隔离数据根导入一本书（用 test_assets/comic_golden_suite），用于 webtoon 工作集与 Esc/H 的自动化复测。
 ## 用户人工确认（2026-10-27）
 
 - **AC4 微软拼音 20 字**：用户回复「人工确认，输入法正常」→ 记为 **USER_CONFIRMED / MET**（用户未附截图，按用户确认口径记录）。

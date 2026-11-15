@@ -100,7 +100,7 @@ RUN-OCR-DIAG-1 实证：OCR `PROVIDER_NOT_CONFIGURED` 根因是 Core `pipeline_d
 - 当前指针清理：释放时已更新 STATUS/PLAN/LEDGER。
 ## Review（DSH 集成复核，2026-10-27）— PASS
 
-- 合并冲突仅 scripts/test.ps1（S4 fixture 种子 vs models sidecar 环境）→ 保留双方两块，无冲突标记；DSH 复跑 	est.ps1 **173/173**。
+- 合并冲突仅 scripts/test.ps1（S4 fixture 种子 vs models sidecar 环境）→ 保留双方两块，无冲突标记；DSH 复跑 test.ps1 **173/173**。
 - 接线：HostCommandDispatcher.library_start_run → WriteStartRunOverrides/RunBindingDefaults；默认注入 {"ocr":"manga-ocr"}；用户显式优先；NEWMANGA_RUN_PROVIDER_BINDINGS 可配置/关闭；非对象 → INVALID_ARGUMENTS 且 0 Core 帧。
 - 同构建 8 页 A/B：注入后 ocr **3/3 completed、0 条 PROVIDER_NOT_CONFIGURED**；关闭注入 → 3/3 PROVIDER_NOT_CONFIGURED；链停 color（属 CORE 修复、冻结 exe 未重打包）；**未写成整链通**。
 - 集成：692347b58。

@@ -89,7 +89,7 @@ REPACK-3（repo_head dd2408869）之后合入了 PDF-EXPORT-UI-1（PDF 面板）
 原 base `84dd38978`：`MainWindow.axaml.cs(593) error CS1061: SettingsPage 未包含 ApplyLayout`（`152538e34` 引入调用、未提交实现）；已上报 Lead，修复提交 `4be1c3f4f` 回退未落地主题 API（UI 文件→`4ea86e03a`，Mac 主题测试移出），其后 `f1b89c5e5` 为 ledger 提交；本任务以 `f1b89c5e5` 出包。
 ## Review（DSH 集成复核，2026-10-28）— PASS（AC3 PARTIAL）
 
-- 新包：base 103,330,812B sha cbd1b9e1…；models **725,339,894B** sha aaa02c8b…；sidecar 新 sha（未复用）；epo_head=f1b89c5e5；torch-free PASS。
+- 新包：base 103,330,812B sha cbd1b9e1…；models **725,339,894B** sha aaa02c8b…；sidecar 新 sha（未复用）；epo_head=f1b89c5e5；torch-free PASS。
 - 全流程真机：安装 2,545ms、Host 就绪 1,100ms、console 0；UI 导入（9→10 页）；阅读/滚动；沉浸全屏；**PDF 导出 20,728,075B sha c0a97eb3…b210（3 页、%PDF-1.7+ToUnicode）**；**ZIP 7,070,562B sha 72d81db9…945c**；打开导出目录 2.9s。
 - 稳定性：WM_CLOSE 4,268ms、0 残留、卸载干净、注册表 0；2 条历史凭据残留仅上报。
 - 回归：干净 worktree test.ps1 **232/232**；pytest **0F/2773P/10S**；check PASS；16 条 pin。

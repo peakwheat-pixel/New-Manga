@@ -1,0 +1,129 @@
+# doc/tasks 控制字符修复：前后统计
+head: 819298e99
+timestamp: 2026-11-16T02:59:10+08:00
+
+## 修复前（在父提交 819298e99 上统计）
+TAB = 33 处（29 文件）
+孤立 CR = 20 处（13 文件）
+VT = 0
+
+## 修复后
+TAB = 0
+孤立 CR = 0
+仍有问题的文件 = 0
+
+## 改动规模
+37 files changed, 44 insertions(+), 44 deletions(-)（对称，无意外增删）
+
+## 33 处 TAB 的上下文抽样（全部为字母 t 的位置）
+src/**+<TAB>ests/**        -> src/**+tests/**
+main 上 <TAB>sc exit 0     -> main 上 tsc exit 0
+<TAB>itle                  -> title
+复跑 <TAB>est.ps1           -> 复跑 test.ps1
+分支 <TAB>ask/HOST-CORECLIENT -> 分支 task/HOST-CORECLIENT
+<TAB>ools/**               -> tools/**
+<TAB>okens.json            -> tokens.json
+<TAB>ranslate PR           -> translate PR
+<TAB>rue/pm                -> true/pm
+
+## pin 安全性
+verify_pins 只校验 doc/plan/**，不碰 doc/tasks/**
+修改前后 verify_pins 均 18/18 PASS（实测）
+ doc/tasks/CORE-PIPELINE-FIX-1.md        | 2 +-
+ doc/tasks/CORE-TILE-EMIT-1.md           | 2 +-
+ doc/tasks/DESIGN-V2-IMPL-1.md           | 2 +-
+ doc/tasks/DPI-DYNAMIC-1.md              | 2 +-
+ doc/tasks/FEA-04b.md                    | 2 +-
+ doc/tasks/FEA-05-WIRE-1.md              | 2 +-
+ doc/tasks/FEA-09.md                     | 2 +-
+ doc/tasks/FEAT-CREATE-2.md              | 2 +-
+ doc/tasks/FEAT-CREATE-3.md              | 2 +-
+ doc/tasks/FLAKY-PYTEST-1.md             | 2 +-
+ doc/tasks/GRANT-ISSUER-1.md             | 2 +-
+ doc/tasks/HOST-CORECLIENT-1.md          | 2 +-
+ doc/tasks/INFER-BASELINE-EP-1.md        | 2 +-
+ doc/tasks/LEGACY-SHELL-REMOVAL-1.md     | 2 +-
+ doc/tasks/MANUAL-VERIFY-1.md            | 2 +-
+ doc/tasks/NS-RECLASSIFY-1.md            | 4 ++--
+ doc/tasks/P15-CORE-1A.md                | 2 +-
+ doc/tasks/REAL-TRANSLATE-PROVIDER-1.md  | 2 +-
+ doc/tasks/RELEASE-REPACK-2.md           | 2 +-
+ doc/tasks/RELEASE-REPACK-3.md           | 2 +-
+ doc/tasks/RELEASE-REPACK-4.md           | 2 +-
+ doc/tasks/RELEASE-REPACK-5.md           | 2 +-
+ doc/tasks/RUN-BINDING-FIX-1.md          | 2 +-
+ doc/tasks/RUN-EXPORT-E2E-1.md           | 6 +++---
+ doc/tasks/RUN-OCR-DIAG-1.md             | 2 +-
+ doc/tasks/RUN-STORE-CACHE-RACE-FIX-1.md | 4 ++--
+ doc/tasks/SCHEDULER-THREAD-DIAG-1.md    | 2 +-
+ doc/tasks/THEME-MACOS-1.md              | 4 ++--
+ doc/tasks/THEME-MACOS-2.md              | 6 +++---
+ doc/tasks/TRANSLATE-PROVIDER-1.md       | 2 +-
+ doc/tasks/UPGRADE-SCHEMA-MIGRATION-1.md | 2 +-
+ doc/tasks/V11R-B-1.md                   | 2 +-
+ doc/tasks/V11R-B-2.md                   | 2 +-
+ doc/tasks/V11R-B-3.md                   | 2 +-
+ doc/tasks/V11R-B-4.md                   | 2 +-
+ doc/tasks/V11R-B-5.md                   | 2 +-
+ doc/tasks/V11R-C-1.md                   | 2 +-
+ 37 files changed, 44 insertions(+), 44 deletions(-)
+diff --git a/doc/tasks/CORE-PIPELINE-FIX-1.md b/doc/tasks/CORE-PIPELINE-FIX-1.md
+index 448814cf8..cc6b0daa4 100644
+--- a/doc/tasks/CORE-PIPELINE-FIX-1.md
++++ b/doc/tasks/CORE-PIPELINE-FIX-1.md
+@@ -110,6 +110,6 @@ RUN-OCR-DIAG-1 实证两个 Core 侧阻断点：
+ 
+ - 改动入 main：ed85c4173 已含 color 装配注入 + handle_detect 语义 + 相关测试；剩余 src/application/tasks/service.py、handlers 补充、测试与证据由 DSH 提交 $c1。
+ - DSH 定向复跑 6 个相关测试文件：**73 passed**；实现方全量 pytest **3F/2753P/9S**（失败集合同基线、0 新增）。
+-- 同构建 8 页复验（frozen core_service.exe 2b36bfeb… 未改，PyInstaller 无法原地补丁，重打包属发布步骤）：pages1–3 detect/ocr/**color 3/3 completed**、term_extract 通过，止于 	ranslate PROVIDER_NOT_CONFIGURED（未到 render）；pages4–8 completed(0 region)；负向 policy=fail 保持旧 INVALID_INPUT。
++- 同构建 8 页复验（frozen core_service.exe 2b36bfeb… 未改，PyInstaller 无法原地补丁，重打包属发布步骤）：pages1–3 detect/ocr/**color 3/3 completed**、term_extract 通过，止于 translate PROVIDER_NOT_CONFIGURED（未到 render）；pages4–8 completed(0 region)；负向 policy=fail 保持旧 INVALID_INPUT。
+ - 遗留：① translate 未接入（Run 止于此，需 provider slice）；② 可复现独立异常——python -m bootstrap.core_service 调度线程内 detect StepRun 卡 running、下游 regionless ocr 报 INVALID_INPUT（进程内 execute_run 正常）：建议另开诊断 Task；③ 冻结 exe 未重打包（发布步）。
+ - 集成：aac638781。
+diff --git a/doc/tasks/CORE-TILE-EMIT-1.md b/doc/tasks/CORE-TILE-EMIT-1.md
+index b9b91a722..9322557e4 100644
+--- a/doc/tasks/CORE-TILE-EMIT-1.md
++++ b/doc/tasks/CORE-TILE-EMIT-1.md
+@@ -91,4 +91,4 @@ allowed_paths:
+ - 摘要一致率 **100%**（2/2 tile，digest_mismatches=0）；中文/unicode 路径通过，manifest 纯 ASCII。
+ - 契约：Core 输出通过 TILE-CHANNEL-CONTRACT-V1；Host 真实产物消费通过。
+ - 遗留转后续：Core 渲染管线何时调用 emit（独立 Core 集成任务）；阅读器切真实产物与安装 smoke 联合验证（S5-D）。
+-- 集成：7b07da6a4；范围仅 src/**+	ests/**+证据+文档，Host 契约与旧壳未动。
++- 集成：7b07da6a4；范围仅 src/**+tests/**+证据+文档，Host 契约与旧壳未动。
+diff --git a/doc/tasks/DESIGN-V2-IMPL-1.md b/doc/tasks/DESIGN-V2-IMPL-1.md
+index 7986ef6ec..e0880d62b 100644
+--- a/doc/tasks/DESIGN-V2-IMPL-1.md
++++ b/doc/tasks/DESIGN-V2-IMPL-1.md
+@@ -106,7 +106,7 @@ allowed_paths:
+ - 实际测试：2026-10-25，worktree `DESIGN-V2-IMPL-1`，tsc exit 0，vitest 52 文件 / 489 passed。
+ - 2026-10-25 DSH：实现 + P1 修复 + P0 回归修复完成。0e752fbad 通过四轮审查（初审 → 修复 → 打回 → 复审通过 → 增量复审通过）。
+ - 2026-10-25 用户：执行 AC11 真机验证，5 项全部正常（含首轮暴露的『点击后方向键失效』，修复后复测通过）。
+-- 2026-10-25 DSH：合并 agent/dsh/design-v2-impl-1 → main，集成 commit e1fd738a7；合并后 main 上 	sc exit 0、vitest 52 文件 / 490 passed。
++- 2026-10-25 DSH：合并 agent/dsh/design-v2-impl-1 → main，集成 commit e1fd738a7；合并后 main 上 tsc exit 0、vitest 52 文件 / 490 passed。
+ 
+ ## Canonical Evidence
+ 
+diff --git a/doc/tasks/DPI-DYNAMIC-1.md b/doc/tasks/DPI-DYNAMIC-1.md
+index aa14deed7..326bb15c5 100644
+--- a/doc/tasks/DPI-DYNAMIC-1.md
++++ b/doc/tasks/DPI-DYNAMIC-1.md
+@@ -79,7 +79,7 @@ allowed_paths:
+ - 当前指针清理：释放时已更新 STATUS/PLAN/LEDGER。
+ ## Review（DSH 集成复核，2026-10-27）— PASS（AC1/AC2 PARTIAL：环境阻塞）
+ 
+-- 改动：Program.cs 在 Avalonia 初始化前显式 SetProcessDpiAwarenessContext(PER_MONITOR_AWARE_V2)（旧系统降级忽略）；app.manifest 已声明 	rue/pm+PerMonitorV2（双保险）；MainWindow.axaml.cs 监听 RenderScaling 变化 → InvalidateMeasure/InvalidateVisual + Render 优先级再触发，并写 scaling a -> b 到 %APPDATA%\com.newmanga.desktop\logs\window-material.log。
++- 改动：Program.cs 在 Avalonia 初始化前显式 SetProcessDpiAwarenessContext(PER_MONITOR_AWARE_V2)（旧系统降级忽略）；app.manifest 已声明 true/pm+PerMonitorV2（双保险）；MainWindow.axaml.cs 监听 RenderScaling 变化 → InvalidateMeasure/InvalidateVisual + Render 优先级再触发，并写 scaling a -> b 到 %APPDATA%\com.newmanga.desktop\logs\window-material.log。
+ - 回归（DSH 复跑）：scripts/test.ps1 **102/102**（清理遗留进程后，之前 mutex 失败确认为环境残留）；vitest **60/567**；pytest **3F/2739P/9S（0 新增失败）**。
+ - **AC1/AC2 PARTIAL**：真机 100%↔200% 拖动 **NOT_RUN**——本机 4K 屏（PHL 279M1RV）当前物理未连接（WmiMonitorID 仅 Mi TV Active，其余 Unknown），无法构造 200% 屏。
+ - 复核条件：用户接回 4K 屏并设 200% 后，按原步骤拖动一次，检查 GetDpiForWindow=192/96、日志 scaling 1 -> 2 / 2 -> 1、截图与 verification/MANUAL-VERIFY-1/app-start-on-dpr2.png 同锐度。
+diff --git a/doc/tasks/FEA-04b.md b/doc/tasks/FEA-04b.md
+index f9f7f4a44..b191e94fb 100644
+--- a/doc/tasks/FEA-04b.md
++++ b/doc/tasks/FEA-04b.md
+@@ -112,7 +112,7 @@ allowed_paths:
+ - 2026-11-02：设计基线独立复核 **r5 approved**（P0/P1=0，P2×16）；AC1–AC4 MET；**AC5（用户确认）未进行**——待用户确认后由 DSH 冻结并在 Closeout 记录。
+ ## AC5 处置记录（DSH 裁决，2026-11-02）
+ 
+-- **独立 Review**：doc/reviews/FEA-04b-scope-r1.md … 
+5.md（r5 **approved**，P0/P1=0，P2×16 接受）。
++- **独立 Review**：doc/reviews/FEA-04b-scope-r1.md … 5.md（r5 **approved**，P0/P1=0，P2×16 接受）。
+ - **用户确认**：用户在本次自主推进目标下未回复确认（<<PARTIAL>> 持续两轮）；按目标「不卡住」规则，Codex/ZCode 通道均不可用（Codex helper_unknown_error、ZCode 未安装），故由 DSH 裁决：以 **r5 approved 独立复核 + DSH 冻结**视为满足「用户确认」的前置；用户后续如提出修改，走设计基线版本 v1.1 修订流程（不阻塞 FEA-06）。

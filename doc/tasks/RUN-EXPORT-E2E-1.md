@@ -84,12 +84,12 @@ S2 遗留的 42 条 NOT_SUPPORTED 中含 Run/Export 类命令；10 条最小集�
 - 当前指针清理：释放时已更新 STATUS/PLAN/LEDGER。
 ## Review（DSH 集成复核，2026-10-27）— PASS（AC2/AC3 BLOCKED，如实记录）
 
-- **接线 9 条**（Core-backed minor=3）：library_start_run/control_run/esume_blocked_run/get_run_snapshot/get_task_projection/etry_failed_targets/start_export/cancel_export/get_export_snapshot；library_reveal_export_folder 留 NS（host-local）。
+- **接线 9 条**（Core-backed minor=3）：library_start_run/control_run/esume_blocked_run/get_run_snapshot/get_task_projection/etry_failed_targets/start_export/cancel_export/get_export_snapshot；library_reveal_export_folder 留 NS（host-local）。
 - AC1：无模型 probe（冻结 sidecar+BOOK-FIXTURE 副本）：StartRun 被接受、1.5s 终态 completed_with_failures、8 页 typed PROVIDER_NOT_CONFIGURED；未知 id → TARGET_NOT_FOUND/EXPORT_NOT_FOUND；集成测试 6 类 typed 断言。
-- **AC2 BLOCKED**：StartExport → typed EXPORT_INPUT_UNAVAILABLE（fixture 仅 original 页，Core 只导 translated）+ 	arget_ref 需 host-control RegisterExportTarget grant（HOST-ISSUER 未迁移）。无产物、未伪造。
+- **AC2 BLOCKED**：StartExport → typed EXPORT_INPUT_UNAVAILABLE（fixture 仅 original 页，Core 只导 translated）+ target_ref 需 host-control RegisterExportTarget grant（HOST-ISSUER 未迁移）。无产物、未伪造。
 - **AC3 BLOCKED（部分链）**：models 包：页1–3 detect 真实完成（ONNX），OCR → PROVIDER_NOT_CONFIGURED；页4–8 detect INVALID_INPUT；run 3.1s（热）/6.5s（冷）终态 completed_with_failures；未到 translate/render、无可见产物。
 - AC4：--check PASS（66 命令零漂移，sha 4c6a4da0… 未变）；registry **24→33 IMPLEMENTED / 42→33 NOT_SUPPORTED**；DSH 复跑 test.ps1 见执行记录；vitest 60/567；pytest 3F/2739P/9S 无新增。
 - AC5：check.ps1 PASS；13 条 pin；Handoff+Record Decision。
 - 基线说明：卡面 base 171529b5d 早于卡创建，实际基于释放提交 04b657131。
-- **后续（DSH 裁决）**：AC2 闭环需 (a) 翻译/渲染链产出 translated 页 (b) Host grant 通道；AC3 闭环需单独诊断 OCR PROVIDER_NOT_CONFIGURED 与 detect INVALID_INPUT；etry_failed_targets 未构造重试场景。
+- **后续（DSH 裁决）**：AC2 闭环需 (a) 翻译/渲染链产出 translated 页 (b) Host grant 通道；AC3 闭环需单独诊断 OCR PROVIDER_NOT_CONFIGURED 与 detect INVALID_INPUT；etry_failed_targets 未构造重试场景。
 - 集成：7af27bbe3。

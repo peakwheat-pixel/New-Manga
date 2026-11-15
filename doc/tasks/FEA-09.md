@@ -319,7 +319,7 @@ out_of_scope:
 | 2026-11-03 | **referenced 生产 resolve 增量（DSH）**：SourceReadGrantRegistry.find_for_source + 
 eader.render_entry_png + 
 esolve.resolve_referenced_rendition + core_service referenced 分支发布 rendition（确定性 key、幂等、typed 失败、无 raw/无任意路径）；新增 4 测试；pytest tests/fea09 **96 passed**、check PASS、pins 17/17。AC-6/AC-7 仅部分推进，不标 MET。 | 
-erification/FEA-09/logs/dsh-referenced-resolve.log；	ests/fea09/test_referenced_resolve.py |
+erification/FEA-09/logs/dsh-referenced-resolve.log；tests/fea09/test_referenced_resolve.py |
 | 2026-11-03 | **密码链路 + rendition cache/预算（DSH）**：生产 Runtime 注入 `read_secret`；`reader._check_decode_budget`；`resolve` cache 元数据；`library.upsert_rendition_cache` + core resolve 写 cache 行；新增 cache/预算测试。`pytest tests/fea09` **98 passed**、check PASS、pins 17/17。 | `verification/FEA-09/logs/dsh-referenced-resolve.log`；`tests/fea09/test_referenced_resolve.py` |
 | 2026-11-03 | **AC-6 真实 Host↔Core IPC（DSH）**：新增 Host.Tests Fea09RealIpcTests（真实 stdio Python Core + 生产 CoreServiceClient/Host coordinators）；物理身份 grant 回退；NEWMANGA_FEA09_IPC=1 下 **1 passed**（16 frames、receipt completed、rendition 发布）；默认全量自跳过（53/29）。证据 
 erification/FEA-09/ipc/。 | `verification/FEA-09/logs/dsh-real-ipc.log` |

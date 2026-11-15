@@ -113,7 +113,7 @@ RUN-EXPORT-E2E-1 用 models 包跑 Run 链，观察：
 
 - **OCR 根因**：**不是**模型缺失/EP/输入，而是 Core step provider binding 未配置——pipeline_defaults.provider_bindings_json='{}'，handlers.py:1068-1074 _chain() 取不到 ocr 键 → ProviderNotConfigured。排除证据：权重 sha256 与 provider pin 逐字节一致、detect 已用 DirectML 跑通、错误早于输入。
 - **因果实证**：仅加 overrides.provider_bindings={"ocr":"manga-ocr"} → **ocr 步骤 completed**（provider=manga-ocr/local-manga-ocr-onnx/cpu，13/13 region 有 text）。
-- **第 2 阻断点**：color 步骤 PROVIDER_FAILED: '_StubStyleAnalyzer' object has no attribute 'analyze'（core_service.py:654/715 ↔ 	ranslation/color/service.py:30；现成 PillowSourceStyleAnalyzer 可替换）。
+- **第 2 阻断点**：color 步骤 PROVIDER_FAILED: '_StubStyleAnalyzer' object has no attribute 'analyze'（core_service.py:654/715 ↔ translation/color/service.py:30；现成 PillowSourceStyleAnalyzer 可替换）。
 - **detect INVALID_INPUT 根因**：检测器正常返回 **0 候选**（8 页候选 13/6/7/0/0/0/0/0，返回 ok 无错误），页 4 目视是无文字全彩插画；Core 把"0 候选"映射成 INVALID_INPUT（handlers.py:296）→ 应改 completed(0 region)/skipped。
 - **建议（最小改动排序）**：① Host 侧 StartRun 带 overrides.provider_bindings（**零 Core 改动，已实证**）→ RUN-EXPORT AC3 可从 BLOCKED 变 PARTIAL；② 新装默认本地绑定（需契约裁决）；③ 补 color analyzer 组装（1 处）→ 可到 translate；④ 空检测语义改完成/跳过（需裁决）；⑤ Export 闭环（grant + translated 产物）。
 - 诊断用 models 包 sidecar 2b36bfeb…4ec519b（与 AC11 副本不同构建，结论仅对该构建成立）；数据根 BOOK-FIXTURE 私有副本；真实 %APPDATA% 零触碰。

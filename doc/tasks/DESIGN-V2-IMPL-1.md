@@ -106,7 +106,7 @@ allowed_paths:
 - 实际测试：2026-10-25，worktree `DESIGN-V2-IMPL-1`，tsc exit 0，vitest 52 文件 / 489 passed。
 - 2026-10-25 DSH：实现 + P1 修复 + P0 回归修复完成。0e752fbad 通过四轮审查（初审 → 修复 → 打回 → 复审通过 → 增量复审通过）。
 - 2026-10-25 用户：执行 AC11 真机验证，5 项全部正常（含首轮暴露的『点击后方向键失效』，修复后复测通过）。
-- 2026-10-25 DSH：合并 agent/dsh/design-v2-impl-1 → main，集成 commit e1fd738a7；合并后 main 上 	sc exit 0、vitest 52 文件 / 490 passed。
+- 2026-10-25 DSH：合并 agent/dsh/design-v2-impl-1 → main，集成 commit e1fd738a7；合并后 main 上 tsc exit 0、vitest 52 文件 / 490 passed。
 
 ## Canonical Evidence
 

@@ -85,7 +85,7 @@ packaging/**、apps/desktop-avalonia/scripts/**、apps/desktop-avalonia/docs/**�
 - 当前指针清理：释放时已更新 STATUS/PLAN/LEDGER。
 ## Review（DSH 集成复核，2026-10-28）— PASS（AC3 PARTIAL：导入 BLOCKED 转诊断）
 
-- 新包：base 103,374,546B sha 7e178f29…；models **725,382,787B** sha 41b330f5…（新 sidecar，未复用；torch-free）；epo_head=6120f91e5。
+- 新包：base 103,374,546B sha 7e178f29…；models **725,382,787B** sha 41b330f5…（新 sidecar，未复用；torch-free）；epo_head=6120f91e5。
 - 主题：全新安装后设置页 **9 packs**（6 legacy + macOS 风 Sonoma/**Launchpad（底部 Dock）**/**Split（左侧 Sidebar）**）——比任务预期 7 多 2，属合并后超集，**口径按实际 9 接受**；三套切换生效并截图。
 - 冒烟：书架/阅读/沉浸 Esc-H（真实 keybd_event，H/Esc 截图 sha 均变化）/导出 ZIP **7,070,562B** sha 5cfffa9f… 成功。
 - **导入 BLOCKED（转 IMPORT-TRIAGE-1）**：Register/RevokeImportSource 有、无 ImportPages；UI 卡「正在导入文件…」>40s；已复现于书架/工作台/默认主题/重复 fixture；面板与控制器相对 REPACK-4 无 diff。

@@ -80,4 +80,4 @@ missing-manifest-resource-facts.md`（实测）。**本表不构成任何删除/
 
 - 关闭：2026-10-17（dsh）。Reviewer=dsh（approved，verification/FEAT-CREATE-3/dsh-review-r1.md）。合并 771501231（--no-ff；首次因幻影行尾项被拒，清除后重试成功）。
 - 复核：PRODUCTION_COMMANDS.len()==51 **4 处一致**；probe **7** / AC1 **6** 冻结面 3 组断言未变；BindProfileCredential 不在 production 面；两命令 + CREATE_PRODUCTION_ONLY_COMMANDS + handler 齐备；build.rs/capabilities/gen-schemas/permissions 四处同步；packaged **12/0** 无回归。
-- **如实登记**：Owner 的证据含 ust-source-tests-build-blocked.log —— 其 **Rust source 套件在 worktree 内构建受阻**（无增量 target，全量重建超时/失败），故本 Task 的 source 套件结果**未取得完整通过证据**；integration 后需在主仓复跑确认。
+- **如实登记**：Owner 的证据含 ust-source-tests-build-blocked.log —— 其 **Rust source 套件在 worktree 内构建受阻**（无增量 target，全量重建超时/失败），故本 Task 的 source 套件结果**未取得完整通过证据**；integration 后需在主仓复跑确认。

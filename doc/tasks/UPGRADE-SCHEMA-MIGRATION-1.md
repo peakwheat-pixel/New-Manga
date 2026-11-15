@@ -97,7 +97,7 @@ allowed_paths:
 ## Closeout Record
 
 - Closed：2026-10-29 as **done**（3 轮独立 Review：FAIL→FAIL→PASS；round 3 P0=0、P1=0、4×P2 不阻塞）。
-- 交付：	ests/storage/test_upgrade_schema_data.py（11 用例）——v1–v5 逐版本合成旧数据库并逐代 seed；v5 四张重建表
+- 交付：tests/storage/test_upgrade_schema_data.py（11 用例）——v1–v5 逐版本合成旧数据库并逐代 seed；v5 四张重建表
   （pipeline_run_targets/pipeline_tasks/step_runs/step_result_candidates）全部有数据并逐列断言；全列 EXPECTED 断言；结构/索引/外键检查；
   FROZEN_V1_TABLES 防回归；逐版本幂等。
 - 集成：main 61601dc8c（代码 43a76b204）。
