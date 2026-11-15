@@ -114,10 +114,17 @@ python tools/generate_api_inventory.py --check              # 1/80/6=87
 dotnet test apps/desktop-avalonia/tests/NewManga.App.Tests  # 955/0/11/966
 ```
 
-**两块要留意的"记录卫生"问题**（不是缺陷，是表格陈旧）：
+**一块要留意的约定**（**我此前误称为"记录卫生问题"，已更正**）：
 
-- `doc/tasks/CHAPTER-MANUAL-SORT.md`：`status: done` 但 **AC1–AC10 全未勾**（实现确实完整，见 `CHAPTER-MANUAL-SORT-VERIFY-1`）
-- `doc/tasks/GATE4-PAGES-UPGRADE-1.md`：`status: done` 但 AC 表停在 `NOT_RUN`（实物证据在 workspace）
+**本项目大量卡片是 `status: done` 但 AC 勾选未打** —— 全量扫描：**633 张有 `status` 的卡里，40 张是这种形态**（6.3%）。
+抽样 3 张（`EXPORT-IPC-1` / `FEA-04` / `GATE3-COVERAGE-MATRIX`），**`evidence_dir` 全部真实存在**。
+
+**⇒ 这是项目惯例：`evidence_dir` 是权威证据指针，`- [ ]`/`- [x]` 更像规划期清单。**
+
+**核对一张卡的状态，应先看 `evidence_dir`，而不是数 AC 勾选。**
+
+（结论的依据：`verification/AC-CHECKBOX-CONVENTION-AUDIT-1/`。这是我在本轮更正的**第 16 次错误**：
+把正常做法说成异常，并写进了交接文档。）
 
 ---
 
