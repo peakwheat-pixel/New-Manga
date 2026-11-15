@@ -75,9 +75,9 @@ if (entry.Generation != expectedGeneration) throw new SourceAccessException("SOU
 
 ## Acceptance Criteria
 
-- [ ] **AC1 并发路径澄清**：确认 `SourceAccessRegistry` 的锁作用域（进程级/实例级）、`_lockName` 生成方式、xUnit 并行配置。
+- [x] **AC1 并发路径澄清**：确认 `SourceAccessRegistry` 的锁作用域（进程级/实例级）、`_lockName` 生成方式、xUnit 并行配置。 <<MET>>
 - [ ] **AC2 失败复现**：在受控条件下稳定复现 3 个失败（如提高并行度或多跑几轮），并保存日志。
-- [ ] **AC3 根因判定**：区分「锁粒度不足」「identity 检查过严」「测试间共享状态」三类，给出代码级依据。
+- [x] **AC3 根因判定**：区分「锁粒度不足」「identity 检查过严」「测试间共享状态」三类，给出代码级依据。 <<MET>>
 - [ ] **AC4 修复或登记**：修复（需先范围冻结，因为改并发语义属产品行为变更），或明确登记为已知限制并给出可执行的处置步骤。
 - [ ] **AC5 不影响既有基线**：`dotnet test` 直接跑仍全绿（331/0/74）。
 - [ ] **AC6 独立复核**：固定 head 交独立上下文 Review。
@@ -93,3 +93,47 @@ if (entry.Generation != expectedGeneration) throw new SourceAccessException("SOU
 本卡与 `SIDECAR-SCHEMA-STALE-1` 是**独立**问题：
 后者是 sidecar schema 与测试期望对齐（已把 CoreClient.Tests 修到全绿），
 前者是 Host 层并发健壮性。**不要把两个问题混在一张卡里。**
+
+## 诊断结论（AC1 / AC3，2026-11-16）
+
+**AC1 完成**：`_lockName` 由 `dataRoot` 的 SHA256 派生（`SourceAccessRegistry.cs:31-32`），
+配合 `HostFixture.CreateOptions` 的 `dataRoot = NewDataRoot(testName)` ⇒ **per-test 唯一**。
+**不是跨测试抢同一把锁。**
+
+**AC3 部分完成**，根因是**同进程内竞争 + 零超时**：
+
+```csharp
+// SourceAccessRegistry.cs:344
+try { acquired = mutex.WaitOne(0); }          // ← 零超时，不重试
+if (!acquired) throw new SourceAccessException("SOURCE_REGISTRY_BUSY");   // :346
+...
+fileLock = new FileStream(... "registry.v1.lock", ..., FileShare.None);   // ← 独占文件锁，失败同样立即 BUSY
+```
+
+外加 `:71` 的 `Generation` 乐观并发失配也抛同一码、同样无重试。
+
+**`Fea11WatchHostRuntimeTests` 为何暴露**：测试线程 `Register(...)` 与 `HostRuntime` 的
+**后台 watcher 线程**在同一 dataRoot 上竞争同一把 mutex / 文件锁，
+`WaitOne(0)` 不等 ⇒ 任一方立即失败。
+
+**`FILE_IDENTITY_CHANGED`**：机制关联已指出（两个 `GrantIssuerTests` 同样走 grant/import 路径），
+但**需 AC2 受控复现**才能确认到代码级，本轮不下定论。
+
+**修复方向（供 AC4，本轮不实施）**：`WaitOne(0)` → `WaitOne(boundedTimeout)`、
+`FileShare.None` 失败改有界重试。关键语义更正：
+`SOURCE_REGISTRY_BUSY` 应是「**合理等待后仍然忙**」，而非「**这一次抢占失败了**」。
+当前实现把瞬时竞争与真正繁忙混为一谈。
+
+详见 `verification/HOST-CONCURRENCY-FLAKY-1/ac1-ac3-diagnosis.md`。
+
+## Canonical Evidence
+
+| evidence_id | AC/Gate | path | commit | sha256 | class | sha256_basis |
+|---|---|---|---|---|---|---|
+| EV-HCF-01 | AC1/AC3 代码摘录与诊断 | verification/HOST-CONCURRENCY-FLAKY-1/code-evidence.log | 25e8f5492 | PIN_PENDING | CANONICAL | BLOB |
+
+## Resource Manifest
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| agent-output | verification/HOST-CONCURRENCY-FLAKY-1/ | NOT_APPLICABLE | - | - | 新增证据，无迁移/归档 |

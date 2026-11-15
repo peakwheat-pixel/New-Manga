@@ -1,0 +1,36 @@
+# AC1/AC3 关键代码摘录（可复算）
+head: 25e8f5492
+timestamp: 2026-11-16T04:55:09+08:00
+
+## AC1: _lockName 由 dataRoot 的 SHA256 派生（per-test 唯一）
+src/NewManga.Host/Sources/SourceAccessRegistry.cs:31-32
+  var digest = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(normalized.ToUpperInvariant()))).ToLowerInvariant()[..16];
+  _lockName = "NewManga.Host.SourceAccessRegistry." + digest;
+
+## AC3: Locked<T> 的零超时与独占文件锁
+src/NewManga.Host/Sources/SourceAccessRegistry.cs:334-358
+  private T Locked<T>(Func<T> action)
+  {
+  Mutex mutex;
+  try { mutex = new Mutex(false, "Global\\" + _lockName); }
+  catch (UnauthorizedAccessException) { mutex = new Mutex(false, "Local\\" + _lockName); }
+  using (mutex)
+  {
+  var acquired = false;
+  try
+  {
+  try { acquired = mutex.WaitOne(0); }
+  catch (AbandonedMutexException) { acquired = true; }
+  if (!acquired) throw new SourceAccessException("SOURCE_REGISTRY_BUSY");
+  SourceSecurity.RejectReparseAncestors(_directory);
+  FileStream fileLock;
+  try { fileLock = new FileStream(Path.Combine(_directory, "registry.v1.lock"), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None); }
+  catch (IOException) { throw new SourceAccessException("SOURCE_REGISTRY_BUSY"); }
+  using (fileLock) return action();
+  }
+  catch (SourceAccessException) { throw; }
+  catch (Exception error) when (error is IOException or UnauthorizedAccessException or System.Security.SecurityException)
+  { throw new SourceAccessException("SOURCE_REGISTRY_UNAVAILABLE"); }
+  finally { if (acquired) mutex.ReleaseMutex(); }
+  }
+  }
