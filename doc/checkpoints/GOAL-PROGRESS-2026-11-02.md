@@ -3077,3 +3077,24 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   - **§7.5** 错误总数由 10 → **14**；
   - **§7.6** 方法论新增第 8 条：**任何 `NEWMANGA_CAPTURE_*` 运行前先读写盘路径并 `git status` 该目录
     —— 这些变量是覆盖式写入，不是增量。**
+## 297. ★★ CHAPTER-MANUAL-SORT-VERIFY-1：**goal 第二优先我一度漏了，本轮补核实 —— 裁决 A 的卡确实落地**（2026-11-15，DSH，goal 轮次 98）
+
+- **★ 我的疏漏**：goal 明确写"【第二优先】按 `MAINT-1-EXTERNAL-ADJUDICATION` 的裁决执行章节手动排序"，
+  但我在前若干轮**专注 Gate 六条，没有回来核实"裁决 A 的卡是否真的落地"**。本轮补上。
+- **裁决只有 29 行、两个裁决**：**A = 手动拖拽排序**（开 1 张候选卡，**保持 wire 顺序为 `sort_order`、
+  在 UI/Host 消费层排序**）；**B = 保持现状**（不开卡）。
+- **卡片表面状态**：`CHAPTER-MANUAL-SORT.md` `status: done` / `canonical_evidence_status: complete`，
+  **但 AC1–AC10 全部 `- [ ]` 未勾**（与 `GATE4-PAGES-UPGRADE-1` 同样的记录卫生问题）。
+- **★ 逐项核实实现（不看勾选，看代码）—— 全部存在**：
+  | AC | 证据 |
+  |---|---|
+  | AC1 原子持久化 | `src/application/library/service.py:212` `def reorder_chapters`、`:323` `reorder_chapters_strict` |
+  | AC1/AC2 原子性测试 | **`tests/storage/test_chapter_reorder_atomic.py`**（文件名就点明 atomic） |
+  | AC4 VM 语义 | `ShelfViewModel.cs:275` `ReorderChapterAsync` |
+  | **AC5 拖拽手势** | `ShelfPageView.cs:161-163` DragDrop 三事件、`:601` `DoDragDropAsync`、`:614` 章节按钮允许拖放、`:638` → `ReorderChapterAsync` |
+  | AC3/AC6 消费层 | `HostController.cs:639` / `IHostController.cs:223` / `NullHostController.cs:116` |
+  | Wire | `src/bootstrap/core_service.py:7212` `elif command == "ReorderChapters":` —— **新增命令，不改 `list_chapters` 顺序**（符合裁决 A 的契约边界） |
+  | 测试 | `tests/library/test_chapters.py`、`tests/core/test_library_wire.py`、`FakeHostController.cs` |
+- **⇒ 裁决 A 完整落地；裁决 B 按裁决保持现状、未改动 —— 两者都符合。goal 第二优先实际已完成。**
+- **未做（诚实）**：未逐字节比 AC6 的 `M2-C1`/`C-07` 载体（但 `generate_api_inventory --check` 与 pins 18/18 间接支持）；
+  未跑 `test_chapter_reorder_atomic.py`（只静态核实）；**未改那张卡的 AC 勾选**（不越权改别人的证据）。
