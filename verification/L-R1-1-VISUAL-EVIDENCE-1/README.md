@@ -72,3 +72,20 @@ dotnet test apps/desktop-avalonia/tests/NewManga.App.Tests/NewManga.App.Tests.cs
 **⇒ 这已经是第 4 次同类错误（3/7/11/12）。**
 
 **⇒ 我把它升级为硬规则：任何"要写新东西"的念头出现时，先花 30 秒 grep 环境变量名、测试类名、关键 API。**
+
+## 5. 写入位置的安全核查（我写到别的卡的目录里了）
+
+`FluentPageTests` 的写盘目标是 **`verification/FEA-06-RESIDUAL-1/png/`** ——
+**那是 `FEA-06-RESIDUAL-1` 卡片的证据目录，不是我的**。
+
+**我核实了没有覆盖任何既有证据**：
+
+| 检查 | 结果 |
+|---|---|
+| `git log --all -- verification/FEA-06-RESIDUAL-1/png` | **只有 `5f0b0d9e7`（我这一次提交）** ⇒ 该子目录是本轮**新建**的 |
+| `git status verification/FEA-06-RESIDUAL-1` | 无输出 ⇒ 没有未提交的改动残留 |
+| `FluentPageTests` 是否有 `Directory.Delete` / 清空逻辑 | **没有** ⇒ 不会删除既有文件 |
+
+**⇒ 这四张图是新增，没有替换任何历史证据。**
+**但严格说，我应该在提交前就查这一步，而不是提交后才查** ——
+**写入别的卡的目录前应先确认那里有什么。** 这是第 13 次同类疏忽（先做后验）。

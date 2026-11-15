@@ -3021,3 +3021,16 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   **这与第 11 次（`CaptureRenderedFrame`）、第 7 次（`*.axaml`）、第 3 次（git 索引）同源：
   我反复在"自己从头推理"，而不是"先 grep 仓库里已有的能力"。已是第 4 次同类错误。**
   **⇒ 升级为硬规则：任何"要写新东西"的念头出现时，先花 30 秒 grep 环境变量名、测试类名、关键 API。**
+## 294. 写入位置安全核查 — **没覆盖既有证据**（但顺序错了：先提交后核查）（2026-11-15，DSH，goal 轮次 95）
+
+- **背景**：`FluentPageTests` 的写盘目标是 `verification/FEA-06-RESIDUAL-1/png/` ——
+  **那是 `FEA-06-RESIDUAL-1` 卡片的证据目录，不是我的**。我提交后才想起要核查。
+- **核查结果（安全）**：
+  | 检查 | 结果 |
+  |---|---|
+  | `git log --all -- verification/FEA-06-RESIDUAL-1/png` | **只有 `5f0b0d9e7`（我这次提交）** ⇒ 该子目录本轮**新建** |
+  | `git status verification/FEA-06-RESIDUAL-1` | 无输出 ⇒ 无未提交残留 |
+  | `FluentPageTests` 有无 `Directory.Delete`/清空逻辑 | **无** ⇒ 不删既有文件 |
+- **⇒ 四张图是新增，没有替换任何历史证据。**
+- **★ 但顺序错了**：**应该提交前就查，而不是提交后才查**。**写入别人的目录前应先确认那里有什么。**
+  这是**第 13 次同类疏忽（先做后验）**。
