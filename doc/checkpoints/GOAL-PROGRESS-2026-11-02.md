@@ -2879,3 +2879,27 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   ④核对 stage 的 `VERSION.json` 与 exe 内嵌 `ProductVersion` 一致
   （0.1.0 证据里这是 AC2 的核心断言）。
   **这能把 0.1.1 从"只有汇总"提升到"包级可复核"，仍不等于"逐条断言"。下一轮先做这个。**
+## 287. ★★ INSTALLER-011-PACKAGE-AUDIT-1：0.1.1 包级静态核实 —— 发现**交付包确实缺 SFX 权重**（零风险，不动系统）（2026-11-15，DSH，goal 轮次 88）
+
+- **承诺兑现**：上一轮提出零风险替代（只做包级静态核实），本轮执行。
+- **★ 三条链全部对上**：
+  1. **setup.exe sha256 实测 = build-info 声称**：
+     `0c0415993b6deab7027baee941f683487a263a0e0fb65c2cd16040ee4c358f06`（652,107,016 B / 621.9 MB）；
+     uild-info 还给出 `authenticode_status=NotSigned`、`product_version=0.1.1`、
+     `stage.file_count=1037`、`stage.bytes=889353540`、`makensis v3.13`。
+  2. **stage ↔ 已安装 exe 一致**：`stage/VERSION.json` 的
+     `app_build.exe_sha256=a3ec2133…9230` / `exe_bytes=99554850` / `repo_head=71cecb95a…`，
+     与机器上已装 exe 的 `ProductVersion`、字节数、sha256 前 16 位**全对**。
+  3. **★ 但交付包缺 SFX 权重**：已安装目录里 `rtdetr`(163.7 MB) + `manga-ocr` 两个(112+327.5 MB) 都在，
+     **`yolo11s-seg.onnx` count = 0**；而 stage 的 `VERSION.json` 已经**诚实自陈**：
+     `sidecar_build.known_limitation = "sfx weights (yolo11s-seg.onnx) are NOT present, so sfx_detect_probe
+     fails closed with PROVIDER_NOT_CONFIGURED; the other four entry points are intact"`，
+     且 `models` 字段还自我更正 "'none (no model weights in this variant)' claim, **which was WRONG for this build**"。
+- **★ 更正我此前的表述**：`GATE4-MODEL-RECOVERED-1` 只把权重补进
+  `apps/desktop-avalonia/build/sidecar/...`（**源码构建链**），**不影响已安装的 0.1.1 包**，也没重打包。
+  我此前在 STATUS 写"模型已就位并验证可加载"**容易让人以为交付包也完整了**。
+  已更正为"**源码构建链**就位并可加载；**交付的 0.1.1 包仍缺，VERSION.json 已自陈 fails closed**"。
+- **对条件 4 的准确表述**：交付包的 SFX 权重是**明确声明的降级**（`fails closed`，其余四个 entry point 完好），
+  **不是"包坏了"**；要补齐需**重打包 + 重装**（会动用户机器，本轮不做）。
+- **未做**：未重打包/重装；`manifest-summary.json`/`smoke-singlefile.json` 在这目录下**不存在**
+  （实际是 `manifest-singlefile.json`），本轮未核其内部一致性。
