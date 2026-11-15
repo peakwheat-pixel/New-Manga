@@ -331,6 +331,24 @@ public sealed class SourceAccessRegistry
         }
     }
 
+    /// <summary>
+    /// HOST-CONCURRENCY-FLAKY-1 (DSH 2026-11-16): how long a registry operation waits for the
+    /// cross-process lock before reporting SOURCE_REGISTRY_BUSY.
+    /// </summary>
+    /// <remarks>
+    /// Every operation reloads the registry under this lock, so two callers in the same process
+    /// (e.g. a Host caller and the file watcher thread) are guaranteed to contend. The previous
+    /// implementation used <c>WaitOne(0)</c> and a single non-retrying <c>FileShare.None</c> open,
+    /// which turned that ordinary contention into an immediate SOURCE_REGISTRY_BUSY -- observed as a
+    /// deterministic failure of the Host tests whenever the full fixture set runs in parallel.
+    /// SOURCE_REGISTRY_BUSY now means "still busy after a bounded wait", which is what callers can
+    /// act on; the lock is still released by the same owner, so mutual exclusion is unchanged.
+    /// </remarks>
+    internal const int LockWaitMillis = 5000;
+
+    /// <summary>Retry interval while waiting for the exclusive lock file.</summary>
+    internal const int LockRetryMillis = 25;
+
     private T Locked<T>(Func<T> action)
     {
         Mutex mutex;
@@ -341,19 +359,41 @@ public sealed class SourceAccessRegistry
             var acquired = false;
             try
             {
-                try { acquired = mutex.WaitOne(0); }
+                try { acquired = mutex.WaitOne(LockWaitMillis); }
                 catch (AbandonedMutexException) { acquired = true; }
                 if (!acquired) throw new SourceAccessException("SOURCE_REGISTRY_BUSY");
                 SourceSecurity.RejectReparseAncestors(_directory);
-                FileStream fileLock;
-                try { fileLock = new FileStream(Path.Combine(_directory, "registry.v1.lock"), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None); }
-                catch (IOException) { throw new SourceAccessException("SOURCE_REGISTRY_BUSY"); }
-                using (fileLock) return action();
+                using (AcquireLockFile()) return action();
             }
             catch (SourceAccessException) { throw; }
             catch (Exception error) when (error is IOException or UnauthorizedAccessException or System.Security.SecurityException)
             { throw new SourceAccessException("SOURCE_REGISTRY_UNAVAILABLE"); }
             finally { if (acquired) mutex.ReleaseMutex(); }
+        }
+    }
+
+    /// <summary>
+    /// Opens registry.v1.lock exclusively, retrying briefly. A transient IOException means another
+    /// owner is inside the critical section right now, not that the registry is unusable.
+    /// </summary>
+    private FileStream AcquireLockFile()
+    {
+        var path = Path.Combine(_directory, "registry.v1.lock");
+        var deadline = Environment.TickCount64 + LockWaitMillis;
+        while (true)
+        {
+            try
+            {
+                return new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+            }
+            catch (IOException) when (Environment.TickCount64 < deadline)
+            {
+                Thread.Sleep(LockRetryMillis);
+            }
+            catch (IOException)
+            {
+                throw new SourceAccessException("SOURCE_REGISTRY_BUSY");
+            }
         }
     }
 }

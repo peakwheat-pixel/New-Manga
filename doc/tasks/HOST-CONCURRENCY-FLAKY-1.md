@@ -78,7 +78,7 @@ if (entry.Generation != expectedGeneration) throw new SourceAccessException("SOU
 - [x] **AC1 并发路径澄清**：确认 `SourceAccessRegistry` 的锁作用域（进程级/实例级）、`_lockName` 生成方式、xUnit 并行配置。 <<MET>>
 - [x] **AC2 失败复现**：在受控条件下稳定复现 3 个失败（如提高并行度或多跑几轮），并保存日志。 <<MET>>
 - [x] **AC3 根因判定**：区分「锁粒度不足」「identity 检查过严」「测试间共享状态」三类，给出代码级依据。 <<MET>>
-- [ ] **AC4 修复或登记**：修复（需先范围冻结，因为改并发语义属产品行为变更），或明确登记为已知限制并给出可执行的处置步骤。
+- [x] **AC4 修复或登记**：修复（需先范围冻结，因为改并发语义属产品行为变更），或明确登记为已知限制并给出可执行的处置步骤。 <<PARTIAL: SOURCE_REGISTRY_BUSY 已修（3->2 failed）；FILE_IDENTITY_CHANGED 属独立根因，待办>>
 - [ ] **AC5 不影响既有基线**：`dotnet test` 直接跑仍全绿（331/0/74）。
 - [ ] **AC6 独立复核**：固定 head 交独立上下文 Review。
 
@@ -134,6 +134,8 @@ fileLock = new FileStream(... "registry.v1.lock", ..., FileShare.None);   // ←
 | EV-HCF-02 | AC2 受控复现（2/2 稳定） | verification/HOST-CONCURRENCY-FLAKY-1/ac2-repro.md | 84b4a2456 | PIN_PENDING | CANONICAL | BLOB |
 | EV-HCF-03 | AC2 复现日志第 1 轮 | verification/HOST-CONCURRENCY-FLAKY-1/repro-1.log | 84b4a2456 | PIN_PENDING | CANONICAL | BLOB |
 | EV-HCF-04 | AC2 复现日志第 2 轮 | verification/HOST-CONCURRENCY-FLAKY-1/repro-2.log | 84b4a2456 | PIN_PENDING | CANONICAL | BLOB |
+| EV-HCF-05 | AC4 修复后 test.ps1 全量 | verification/HOST-CONCURRENCY-FLAKY-1/after-fix.log | fbf704a37 | PIN_PENDING | CANONICAL | BLOB |
+| EV-HCF-06 | AC4 Host 项目 -warnaserror 编译 | verification/HOST-CONCURRENCY-FLAKY-1/build.log | fbf704a37 | PIN_PENDING | CANONICAL | BLOB |
 
 ## Resource Manifest
 
@@ -160,3 +162,61 @@ CORECLIENT_SIDECAR_DIR）让 30 个原本 self-skip 的测试实际执行，
 **对 AC4 的影响**：修复方向（WaitOne(boundedTimeout) + 有界重试）**必须做**，
 不能只登记为已知限制 —— 那等于承认 	est.ps1 永久红。
 若 AC4 决定不改产品代码，必须在 Release Gate 层面明确接受该后果并写入已知限制清单。
+
+## AC4 实施记录（2026-11-16，已做范围冻结）
+
+### 冻结的范围（改什么）
+
+pps/desktop-avalonia/src/NewManga.Host/Sources/SourceAccessRegistry.cs 的 Locked<T>() 及新增 AcquireLockFile()：
+
+| 改动 | 原来 | 现在 |
+|---|---|---|
+| mutex 等待 | mutex.WaitOne(0)（零超时） | mutex.WaitOne(LockWaitMillis)（5000ms） |
+| 文件锁 | 单次 FileShare.None open，失败立即 BUSY | AcquireLockFile() 有界重试（25ms 间隔，直到同一 deadline） |
+| 常量 | 无 | internal const int LockWaitMillis = 5000 / LockRetryMillis = 25 |
+
+### 明确不改（冻结边界）
+
+- **不动** Generation 乐观并发语义（:71）—— 它抛 SOURCE_REGISTRY_BUSY 是"状态被别人改了"，
+  属于另一个语义，本轮不改；
+- **不动** _lockName 的生成方式（AC1 已证明 per-dataRoot 唯一）；
+- **不动** HostErrorCodes 的错误码集合；
+- **不动** 调用方（HostRuntime / watcher）的任何代码。
+
+### 语义变化（这是产品行为变更，需记录）
+
+> SOURCE_REGISTRY_BUSY 的含义从「这一次抢占失败了」变成
+> 「**在 5000ms 内多次尝试仍未获得锁**」。
+
+这个新语义与 HostErrorCodes.cs:27 把 BUSY 归类为可重试错误的既定契约**一致** ——
+原来的实现反而与该契约矛盾（一次抢占失败就报"忙"，调用方重试也未必有意义）。
+
+### 验证结果：3 failed -> 2 failed
+
+	est.ps1 全量（含 CoreClient + Host.Tests）：
+
+`
+已通过! - 失败: 0，通过: 256，已跳过: 0，总计: 256   (NewManga.CoreClient.Tests)
+失败!  - 失败: 2，通过: 359，已跳过: 44，总计: 405   (NewManga.Host.Tests)   <- 原 3 failed / 358
+`
+
+**Fea11WatchHostRuntimeTests.Ready_ArmsWatcher_RealFileEventProducesHint_DisposeDisarms 已修好**
+（SOURCE_REGISTRY_BUSY 消失），passed 358 -> 359。
+
+NewManga.Host 项目 -warnaserror 编译通过。
+
+### 剩余 2 个失败属于**另一个根因**
+
+`
+GrantIssuerTests.Export_GrantRegisters_ThenCoreFailsTyped_OnMissingTranslatedPages
+GrantIssuerTests.Import_IntoNewChapter_Executes_AndRegistersGrant
+`
+
+错误仍是 [FILE_IDENTITY_CHANGED] Import source reference was rejected
+（scanner.py:170 "granted folder member identity drifted"）。
+
+**这与锁无关** —— 是身份校验判定「授权文件夹里的文件指纹变了」。
+两测试在 	est.ps1 下才失败、裸跑通过，说明是**并行下身份快照与文件读取的时序问题**，
+需下一轮按同样的方法（读 scanner.py 的 identity 计算与比较逻辑）定位。
+
+**AC4 标 PARTIAL**：锁问题已修并验证；identity 问题待办。
