@@ -2644,3 +2644,28 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   ⇒ **0.1.1 那轮的 AC4/AC5/AC6 只有汇总表，无原始断言数据**。
   **⇒ 若只有汇总表而无原始数据，0.1.1 的 AC1–AC6 证据强度低于 0.1.0。这是需要后续确认的缺口。**
 - **对 Gate 判定：不改变**（条件 4 仍 PARTIAL，AC7 未做），但**提高了证据强度并暴露了两个此前未说清的问题**（版本混用、durable/非 durable 未区分）。
+## 276. ★ 证据版本问题查清：**0.1.1 无原始断言数据**（2026-11-15，DSH，goal 轮次 77）
+
+- **承诺兑现**：上一轮说"查 workspace 里是否有 0.1.1 原始数据 + 读 `verify.json`"。两项都查了。
+- **`verify.json` 确认是 0.1.0（2026-10-28）**：
+  `installer.path = ...NewManga-0.1.0-setup.exe`，`sha256 = ebad8662…53691`，`bytes = 68611208`，
+  `ac = "AC2/AC3"`，`generated_at_utc = 2026年10月28日 7:02:18`。
+  **并给出汇总表里没有的实测耗时**：`install_seconds=6.81` / `file_count=1970` / `bytes=226130010` /
+  `uninstall_seconds=0.73` / **`reinstall_seconds=6.57`** / `final_uninstall_seconds=0.72`。
+- **workspace 搜索确认**：`install-phase.json`/`uninstall-phase.json` 只命中
+  `agent-output\\dsh\\FEA-06-RESIDUAL-2\\...capture-clone\\`、`FEA-00A-IMPL-1\\`、`FEA-02-CORE\\`
+  —— **全是其他卡的 worktree 副本（同属 NSIS-INSTALLER-1 的 0.1.0 证据）**，**没有 0.1.1 的**。
+- **★ 结论**：
+  | 版本 | 原始断言 | 汇总 | 证据强度 |
+  |---|---|---|---|
+  | **0.1.0**（2026-10-28） | ✅ phase×2 + verify（**37+19 断言全 pass**） | ✅ | **高** |
+  | **0.1.1**（当前交付版本） | ❌ **不存在** | ✅ 仅 README | **中** |
+  **⇒ 条件 4 的准确表述**：AC1–AC6 **在 0.1.0 上可逐条复核**；**在 0.1.1 上只有汇总表**。
+- **补强 0.1.1 证据需重跑安装/卸载矩阵**，而 AC5 要求**启动应用并等 host ready**
+  ⇒ **需 GUI 启动 ⇒ 与 AC7 同一前置条件，Agent 做不到**。
+- **已同步更正**：①`INSTALLER-EVIDENCE-VERSION-AUDIT-1` 追加 §7（verify.json + workspace + 三版本对照）；
+  ②`RELEASE-GATE-RE-ASSESSMENT` 新增 **§4.1b 证据版本问题**，并把 §9 局限 4 **标记为已消除**
+  （剩余局限改为"0.1.1 的 AC1–AC6 无法逐条复核"）。
+- **同时更正我的两处措辞不精确**：①`6ae4d6da…` 是 0.1.1（README）的数字，0.1.0 原始 JSON 是 `fdf52d87…`；
+  ②"用户数据根 SHA-256 前后完全一致"**没区分** `data_root_durable`（全程不变）与
+  `data_root`（含日志/缓存，启动后由 `44f2bfed…` 变 `9de15a8d…`）。

@@ -91,3 +91,62 @@ data_root_after_launch_digest     = 9de15a8d…
   **⇒ 0.1.1 那轮的原始断言数据在仓库里可能不存在**，只有汇总表。
   **这是需要后续确认的缺口**（若只有汇总表而无原始数据，则 0.1.1 的 AC1–AC6 证据强度低于 0.1.0）。
 - 未复核 `verify.json`（13 KB）。
+
+## 7. 续查（2026-11-15）：`verify.json` 与 workspace
+
+### 7.1 `verify.json`（13 KB）—— 确认为 **0.1.0 / 2026-10-28**
+
+```
+installer.path   = ...task-envs\NSIS-INSTALLER-1\out\NewManga-0.1.0-setup.exe
+installer.bytes  = 68611208
+installer.sha256 = ebad86624a0add5393b8a28d258e2334c23fd13ee52f0a0f0b598a5ba9753691
+ac               = "AC2/AC3"
+generated_at_utc = 2026年10月28日 7:02:18
+```
+
+**度量**（这是汇总表里没有的实测耗时）：
+
+| 指标 | 值 |
+|---|---|
+| install_seconds | **6.81** |
+| install_file_count | **1970** |
+| install_bytes | **226130010** |
+| uninstall_seconds | **0.73** |
+| reinstall_seconds | **6.57** |
+| final_uninstall_seconds | **0.72** |
+
+**⇒ 确认：`verification/NSIS-INSTALLER-1/` 整组证据是 0.1.0（2026-10-28）的，
+不是 `INSTALLER-MATRIX-1/README.md` 描述的 0.1.1 重做版。**
+
+### 7.2 workspace 搜索 —— **没有 0.1.1 的 phase JSON**
+
+`Get-ChildItem -Recurse -Include install-phase.json,uninstall-phase.json -Path G:\CODEX\New Manga.workspace`
+只命中：
+
+- `agent-output\dsh\FEA-06-RESIDUAL-2\impl-r4-review\capture-clone\verification\NSIS-INSTALLER-1\*`
+- `FEA-00A-IMPL-1\verification\NSIS-INSTALLER-1\*`
+- `FEA-02-CORE\verification\NSIS-INSTALLER-1\*`
+
+**全部是其他卡的 worktree 副本（同属 NSIS-INSTALLER-1 的 0.1.0 证据），没有 0.1.1 的。**
+
+### 7.3 结论：**0.1.1 的 AC4/AC5/AC6 只有汇总表**
+
+| 版本 | 原始断言 JSON | 汇总表 | 证据强度 |
+|---|---|---|---|
+| **0.1.0**（2026-10-28） | ✅ `install-phase.json`(37 断言) + `uninstall-phase.json`(19) + `verify.json` | ✅ | **高**（可逐条复核） |
+| **0.1.1**（重做版） | ❌ **不存在**（仓库与 workspace 都没有） | ✅ `INSTALLER-MATRIX-1/README.md` | **中**（只能看汇总） |
+
+**⇒ 这是 Gate 条件 4 的**真实证据状态**，此前未被说清。**
+
+### 7.4 对判定的影响（诚实）
+
+**条件 4 仍判 PARTIAL**（AC7 未做），但需要补充一句：
+
+> **AC1–AC6 的"已验证"在 0.1.0 版本上是可逐条复核的；
+> 在 0.1.1（当前交付版本）上只有汇总表，原始断言数据缺失。**
+
+**若要补强 0.1.1 的证据**，需要重跑一次安装/卸载矩阵并保留 phase JSON
+—— **但那需要 GUI 启动（AC5 要启动应用并等 host ready），Agent 在本环境做不到**
+（见 `GATE3-FOUR-PAGE-WALKTHROUGH-1` §8 的 4 途径 + 对照实验）。
+
+**⇒ 因此：0.1.1 的原始断言补强，也依赖人工执行一次安装/卸载矩阵。这与 AC7 是同一个前置条件。**
