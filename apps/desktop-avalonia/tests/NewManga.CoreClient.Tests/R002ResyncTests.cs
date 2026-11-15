@@ -94,25 +94,40 @@ public sealed class R002ResyncTests
         Assert.True(poisoned, "an unresynchronisable pipe must be poisoned so later calls fail closed");
     }
 
+    /// <summary>
+    /// E-7 #2 (Codex ruling 2026-11-16, fail-closed): a response WITHOUT a request id is NO LONGER accepted
+    /// as belonging to the request. This test previously pinned the fail-open behaviour; it now pins the
+    /// ruling's behaviour — such a frame is a mismatch, gets discarded by the bounded drain, and the
+    /// exchange succeeds only once the genuinely matching frame arrives.
+    /// </summary>
     [Fact]
-    public async Task ResponseWithoutRequestId_IsAcceptedWithoutDraining()
+    public async Task ResponseWithoutRequestId_IsTreatedAsMismatch_AndDrained()
     {
-        // The frozen core omits request_id on some frames; those belong to the request by definition.
-        var called = false;
+        // Event frames carry no request_id either, but they are excluded upstream by IsEventFrame, so use a
+        // plain (non-event) frame with a missing id.
+        var frames = new Queue<string>(new[]
+        {
+            "{\"result\":{\"ok\":\"wrong-owner\"}}",
+            Response("req-7", "{\"ok\":true}"),
+        });
+
+        var poisoned = false;
+        var drained = 0;
         var response = await CoreServiceClient.ReadResponseForRequestAsync(
-            "{\"result\":{\"ok\":true}}",
+            frames.Dequeue(),
             "req-7",
             _ =>
             {
-                called = true;
-                return Task.FromResult(Response("req-7"));
+                drained++;
+                return Task.FromResult(frames.Dequeue());
             },
-            () => { },
+            () => poisoned = true,
             CoreServiceClient.ResyncMaxDrainFrames,
             stderrLogPath: null,
             CancellationToken.None);
 
-        Assert.Null(response.RequestId);
-        Assert.False(called, "a response without a request id must not trigger draining");
+        Assert.Equal("req-7", response.RequestId);
+        Assert.Equal(1, drained);
+        Assert.False(poisoned);
     }
 }

@@ -2456,11 +2456,25 @@ public sealed class CoreServiceClient : IAsyncDisposable
     }
 
     /// <summary>
-    /// A response belongs to the request when it carries no request id at all (the frozen core omits it on
-    /// some frames) or when the id matches exactly. A DIFFERENT id is what R-002 is about.
+    /// A response belongs to the request only when it carries that exact request id.
+    ///
+    /// <para><b>E-7 #2 — fail-closed (Codex ruling 2026-11-16).</b> This used to treat "no request_id"
+    /// as belonging to the request (fail-open). The ruling rejected that for the production path: holding
+    /// the exchange lease only proves the pipe is used serially, it does NOT prove the response belongs to
+    /// this command — a damaged response, a duplicate frame, or a resync that stopped early all still land
+    /// in the caller's hands under fail-open. Event frames are already excluded upstream by
+    /// <c>CoreProtocol.IsEventFrame</c>, so they do not need the leniency either.</para>
+    ///
+    /// <para><c>SendRawAsync</c> deliberately does NOT go through this method: it is the raw-wire
+    /// observation hook and keeps "return whatever came back" semantics (ruling: no new opt-out switch).</para>
+    ///
+    /// <para>Consequence accepted by the ruling: a response that genuinely lacks an id (the frozen core
+    /// emits <c>request_id: null</c> for requests that did not supply one) is now treated as a mismatched
+    /// frame — it is discarded by the bounded resync and, if no matching frame arrives within the budget,
+    /// the channel is poisoned instead of silently handing over an unverifiable payload.</para>
     /// </summary>
     private static bool BelongsToRequest(CoreResponse response, string requestId) =>
-        response.RequestId is not { } actual || string.Equals(actual, requestId, StringComparison.Ordinal);
+        response.RequestId is { } actual && string.Equals(actual, requestId, StringComparison.Ordinal);
 
     internal static void EnsureResponseBelongsToRequest(
         CoreResponse response, string requestId, string? stderrLogPath)
