@@ -25,6 +25,7 @@ allowed_paths:
   - apps/desktop-avalonia/**
   - scripts/**
   - verification/RELEASE-PACKAGE-1/**
+  - doc/handoffs/RELEASE-PACKAGE-1-handoff.md  # 依 ADJ-HANDOFF-SCOPE-2026-11-16.md 扩范围
   - G:/CODEX/New Manga.workspace/task-envs/RELEASE-PACKAGE-1/**
   - G:/CODEX/New Manga.workspace/worktrees/RELEASE-PACKAGE-1/**
 ---
@@ -42,7 +43,7 @@ S5 拆分（`LEGACY-SHELL-REMOVAL-1` BLOCKED 段）。D4 安全（S5-A/B）与 C
 - [x] **AC3 许可一致性**：包内 `LICENSE`/`NOTICE`/`THIRD_PARTY_LICENSES` 与仓库一致（逐字节比对）；字体仅系统栈；AGPL 组件处置结论落文档。 <!-- verified: 包内三许可文件 sha256 与 8ff3d288d 检出逐字节一致（LICENSE cde3a5c4、NOTICE 6b3d9bd0、THIRD_PARTY 72927e68，磁盘副本复算相同）；字体仅系统栈（msyh 等不得随包）与 AGPL-3.0 处置结论均落文档：file:verification/RELEASE-PACKAGE-1/package-summary.json + file:THIRD_PARTY_LICENSES.md；卡面「测试要求」表（L59-64）为旧计划态、全 NOT_RUN/待填；本注释依据的是证据目录实物（独立复核 P2-03 要求披露） -->
 - [x] **AC4 自动化安装 smoke**：安装→启动→书架→退出无残留（可在无人值守下完成的部分），日志与进程表为证。 <!-- verified: AC4a 安装/二次安装幂等、卸载无残留、数据根未被改动；AC4b 从安装目录启动、窗口句柄存在、无控制台窗口、exit_code=0、无残留进程；启动后 window.png 显示书架页且 wire 记录 ListBooks 请求：file:verification/RELEASE-PACKAGE-1/smoke/install-verify.json + file:verification/RELEASE-PACKAGE-1/smoke/install-smoke.json + file:verification/RELEASE-PACKAGE-1/smoke/smoke.json + file:verification/RELEASE-PACKAGE-1/smoke/window.png；卡面「测试要求」表（L59-64）为旧计划态、全 NOT_RUN/待填；本注释依据的是证据目录实物（独立复核 P2-03 要求披露） -->
 - [x] **AC5 实机人工核验清单**：产出 `MANUAL_VERIFY.md`（Mica 取色、DPR2 400% 像素、进程工作集峰值 ≤1.5GB、微软拼音 20 字、沉浸阅读 Esc），标注需用户在真机执行。 <!-- verified: MANUAL_VERIFY.md 已交付 5 项清单（Mica 取色/DPR2 400% 像素/工作集峰值≤1.5GB/微软拼音 20 字/沉浸阅读 Esc）并标注 NOT_RUN by agent、需用户真机执行；5 项人工核验本身仍待用户执行（AC 验收面=清单交付）：file:apps/desktop-avalonia/docs/MANUAL_VERIFY.md + grep:NOT_RUN by agent@apps/desktop-avalonia/docs/MANUAL_VERIFY.md:3；卡面「测试要求」表（L59-64）为旧计划态、全 NOT_RUN/待填；本注释依据的是证据目录实物（独立复核 P2-03 要求披露） -->
-- [ ] **AC6 门禁**：`check.ps1 -TaskPath` PASS；`scripts/test.ps1` 全绿；pytest 相对基线无新增失败；证据 64-hex pin；Handoff。 <!-- blocked: 缺 Handoff：doc/handoffs 无 RELEASE-PACKAGE-1-*.md（分支 task/RELEASE-PACKAGE-1 与 worktree 亦无）；check.ps1 -TaskPath、scripts/test.ps1、pytest 均无归档日志（证据目录只有 9 条产物证据；64-hex pin 9/9 已复算一致）：file:verification/RELEASE-PACKAGE-1/package-summary.json --> <!-- progress: 2026-11-16 DSH —— `check.ps1 -TaskPath` 已跑并归档 PASS 日志，见 G:/CODEX/New Manga.workspace/tasks/B1-DOC-CLOSE-1/RELEASE-PACKAGE-1-check-taskpath.log（仓外派生，故不进 evidence_dir）；剩余缺口 = Handoff 文件（`doc/handoffs/RELEASE-PACKAGE-1-handoff.md` 不存在），该文件位于 `doc/handoffs/**`、**不在本卡 allowed_paths 内**，需专门授权后方可补写 -->
+- [ ] **AC6 门禁**：`check.ps1 -TaskPath` PASS；`scripts/test.ps1` 全绿；pytest 相对基线无新增失败；证据 64-hex pin；Handoff。 <!-- blocked: 缺 Handoff：doc/handoffs 无 RELEASE-PACKAGE-1-*.md（分支 task/RELEASE-PACKAGE-1 与 worktree 亦无）；check.ps1 -TaskPath、scripts/test.ps1、pytest 均无归档日志（证据目录只有 9 条产物证据；64-hex pin 9/9 已复算一致）：file:verification/RELEASE-PACKAGE-1/package-summary.json --> <!-- progress: 2026-11-16 DSH —— `check.ps1 -TaskPath` 已跑并归档 PASS 日志，见 G:/CODEX/New Manga.workspace/tasks/B1-DOC-CLOSE-1/RELEASE-PACKAGE-1-check-taskpath.log（仓外派生，故不进 evidence_dir）；剩余缺口 = Handoff 文件（`doc/handoffs/RELEASE-PACKAGE-1-handoff.md` 不存在），该文件位于 `doc/handoffs/**`、**不在本卡 allowed_paths 内**，需专门授权后方可补写 --> <!-- progress: 2026-11-16 DSH —— Handoff 已补（doc/handoffs/RELEASE-PACKAGE-1-handoff.md），check.ps1 -TaskPath PASS 已归档；test.ps1/pytest 本轮 NOT_RUN 已在 Handoff 如实登记 -->
 
 ## 允许修改范围
 
