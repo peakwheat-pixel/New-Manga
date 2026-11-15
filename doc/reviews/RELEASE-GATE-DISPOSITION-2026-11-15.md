@@ -98,6 +98,30 @@
 | `generate_api_inventory.py --check` | OK（1/80/6 = 87），EXIT 0 |
 | `App.Tests` 基线 | 955 passed / 0 failed / 11 skipped（沿用既有基线；本轮未重跑全量） |
 
+### 3.1 条件 6 独立最终 Review 的结论（已回）
+
+独立子 agent `gate6-final-review`（未参与实现）对 `b4910e143` 的复核结论：
+**`CONDITION_6_PARTIAL`**（P0/P1/P2/P3 = 0/2/4/4）。
+
+**机械部分成立**：`check` PASS / `pins` 18-18 / `inventory` 87 / `-TaskPath` 5-5 PASS；
+`b4910e143` 的 ledger 算术（642 文件 / 11 非终态）与仓外复算一致
+（直接在工作区跑 `check.ps1` 曾 FAIL 2 errors，根因是**并发草稿** `RELEASE-GATE-DISPOSITION-1.md`
+被 `Get-ChildItem doc/tasks/*.md` 计入、而 ledger 尚未重生成 —— 已在定稿时消除）。
+
+**5 项欠缺**（条件 6 因此不能判关闭）：
+
+| # | 欠缺 | 处置 |
+|---|---|---|
+| 1 | 证据包一致性：`four-pieces.log` 记录 FAIL 而文档写 PASS，且无命令/EXIT/时间戳 | **已修**：重写为含 command / head / EXIT / timestamp |
+| 2 | `App.Tests` 定性复跑：954 passed / **1 failed** / 11 skipped（`PerformanceBaselineTests.HotSwitch…` median p95 **1014.0ms > 1000ms**） | **已核实为满载 flaky**：该测试**单独复跑通过**（1 passed / 0 failed / 24s）；非本轮引入（7 个 commit 零 `.cs`/`.axaml`/测试改动）。已登记为环境敏感项 |
+| 3 | 3 个 Task 共 **12 条 `WORKTREE` pin 与所钉 commit 的 blob 不一致**（`i/lf` vs `w/crlf`），`WORKTREE_ENV` 缺 Git 版本与 `core.autocrlf` | **已修**：12 条改为 `BLOB` 口径（对齐 `GOV-HISTORICAL-CARD-METADATA-REPAIR-1` 的正确范式） |
+| 4 | 三指针漂移：`PLAN:58`「BLOCKED：无」vs ledger 有 blocked；`PLAN:56` SIDECAR `done` vs 卡面 `in_progress`；4 张 `in_progress` 卡不在 DAG；本卡未登记 STATUS/PLAN | **部分修**：本卡登记；PLAN/STATUS 漂移因预算（3200/7000 bytes 已近上限）单独记录 |
+| 5 | 需在**定稿 head** 上重锚一次轻量 Review | 待定稿后执行 |
+
+> **`verify_final.py` 的 EXIT=1 已确认**：来自 8 条**先存** numstat FAIL
+> （`V11R-B-1…B-5`、`V11R-C-1`、`MICA-FIX-1`、`FEA-07-AC5-NATIVE-1`），非本轮引入。
+> 复核者一度测得 EXIT=0，是因其用了不同调用方式；本表以直接调用为准。
+
 ## 4. 与人协作的最小集（汇总进 HUMAN-REQUIRED）
 
 | 编号 | 事项 | 归属 |

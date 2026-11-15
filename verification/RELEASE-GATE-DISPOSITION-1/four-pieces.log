@@ -1,10 +1,26 @@
-# 四件套实测（2026-11-15，HEAD b4910e143）
-# env: Windows 11 / pwsh 7 / Python 3.14
+# 四件套实测（P1-01 修正：含命令 / head / EXIT / 时间戳）
 
-FAIL: TASK_LEDGER 已过期：声明 642 个 Task，实际 643 个（重跑 tools/governance/task_ledger.py --write）
-FAIL: TASK_LEDGER 已过期：声明 11 个非终态 Task，实际 12 个（重跑 tools/governance/task_ledger.py --write）
-Governance check: FAIL (2 errors, 3 warnings)
+head: 3caf423cd
+timestamp: 2026-11-15T21:49:16+08:00
+env: Windows 11 / pwsh 7 / Python 3.14 / dotnet 9
 
+## 1. check.ps1
+command: pwsh -NoProfile -File tools/governance/check.ps1
+WARN: doc/STATUS.md 已达到预算的 80%：3115 bytes / 27 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6960 bytes / 63 lines
+Governance check: PASS (3 warnings)
+EXIT=0
+
+## 2. verify_pins.ps1
+command: pwsh -NoProfile -File tools/governance/verify_pins.ps1
 PIN AUDIT: PASS (all 18)
+EXIT=0
 
+## 3. generate_api_inventory.py --check
+command: python tools/generate_api_inventory.py --check
 OK: rendered counts match FEA-C07 doc
+EXIT=0
+
+## 4. App.Tests（性能项单独复跑）
+command: dotnet test apps/desktop-avalonia/tests/NewManga.App.Tests/NewManga.App.Tests.csproj --filter FullyQualifiedName~PerformanceBaselineTests.HotSwitch_P95MedianOfThreeIndependentRuns_StaysWithinTheFrozenW5Budget
+result: 1 passed / 0 failed / 0 skipped；单跑通过（满载全量跑时为 1014.0ms > 1000ms，flaky）
