@@ -1,6 +1,6 @@
 ---
 id: HOST-CONCURRENCY-FLAKY-1
-title: Host.Tests 在 test.ps1 并行环境下的并发 flaky —— SourceAccessRegistry 的 BUSY 与 FILE_IDENTITY_CHANGED
+title: test.ps1 环境的 Host.Tests 失败 —— SourceAccessRegistry 锁等待缺陷（已修）+ FILE_IDENTITY_CHANGED（待定位）
 kind: defect
 governance_version: 3
 status: proposed
@@ -136,6 +136,8 @@ fileLock = new FileStream(... "registry.v1.lock", ..., FileShare.None);   // ←
 | EV-HCF-04 | AC2 复现日志第 2 轮 | verification/HOST-CONCURRENCY-FLAKY-1/repro-2.log | 84b4a2456 | PIN_PENDING | CANONICAL | BLOB |
 | EV-HCF-05 | AC4 修复后 test.ps1 全量 | verification/HOST-CONCURRENCY-FLAKY-1/after-fix.log | fbf704a37 | PIN_PENDING | CANONICAL | BLOB |
 | EV-HCF-06 | AC4 Host 项目 -warnaserror 编译 | verification/HOST-CONCURRENCY-FLAKY-1/build.log | fbf704a37 | PIN_PENDING | CANONICAL | BLOB |
+| EV-HCF-07 | **定性更正**：裸跑 EXIT=0 实为 SKIP | verification/HOST-CONCURRENCY-FLAKY-1/correction-skip-vs-pass.md | e66323bf2 | PIN_PENDING | CANONICAL | BLOB |
+| EV-HCF-08 | 单跑 detailed 日志（4 条 SKIP 证据） | verification/HOST-CONCURRENCY-FLAKY-1/solo-detail.log | e66323bf2 | PIN_PENDING | CANONICAL | BLOB |
 
 ## Resource Manifest
 
@@ -220,3 +222,44 @@ GrantIssuerTests.Import_IntoNewChapter_Executes_AndRegistersGrant
 需下一轮按同样的方法（读 scanner.py 的 identity 计算与比较逻辑）定位。
 
 **AC4 标 PARTIAL**：锁问题已修并验证；identity 问题待办。
+
+## ⚠️ 定性更正（2026-11-16，本轮自查推翻了本卡原有定性）
+
+**我此前把裸跑 EXIT=0 当作「测试通过」，这是错的。**
+
+用 --logger "console;verbosity=detailed" 单跑 GrantIssuerTests，实际输出是：
+
+`
+[xUnit.net] ...Export_GrantRegisters_ThenCoreFailsTyped_OnMissingTranslatedPages [SKIP]
+[xUnit.net] ...Import_IntoNewChapter_Executes_AndRegistersGrant [SKIP]
+[xUnit.net] ...ShellActions_Open_Whitelisted_... [SKIP]
+[xUnit.net] ...ShellActions_RealOpener_... [SKIP]
+
+已跳过 ... [1 ms]
+`
+
+⇒ **裸跑时这 3 个测试是 SKIP，根本没执行**；dotnet test 的 EXIT=0 不区分 passed 与 skipped。
+
+### 更正后的正确结论
+
+| 环境 | 状态 |
+|---|---|
+| 裸 dotnet test | **SKIP**（缺 NEWMANGA_* fixture 变量） |
+| 	est.ps1 | **实际执行** |
+
+- **SOURCE_REGISTRY_BUSY（Fea11）**：是被 skip 掩盖的**真实锁等待缺陷**，本轮已修并验证
+  （3 failed -> 2 failed，passed 358 -> 359）。**修复有效，保留。**
+- **FILE_IDENTITY_CHANGED（2 个 GrantIssuerTests）**：**不是 flaky、不是并发**，
+  而是这两个测试**第一次真正执行**时暴露的**真实失败**。需要单独定位：
+  注册时 Host 记录的 ile_id 与导入时 Python st_ino
+  （scanner.py:163 _stat_folder_entry -> st_dev/st_ino/st_size）口径是否一致。
+
+### AC2 的效力下调
+
+AC2 只证明了「在会执行这些测试的环境下运行就会失败」，**不证明并发相关**。
+AC2 的 MET 保留（复现事实成立），但**据此得出的"并发 flaky"定性作废**。
+
+### 共同根因（本会话第 6 次同类错误）
+
+把「命令成功退出」当成「被测行为正确」。判断测试通过必须看具体结果行
+（已通过 / 失败 / 已跳过），EXIT=0 只说明没有失败，不说明跑过了。
