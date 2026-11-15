@@ -138,6 +138,7 @@ fileLock = new FileStream(... "registry.v1.lock", ..., FileShare.None);   // ←
 | EV-HCF-06 | AC4 Host 项目 -warnaserror 编译 | verification/HOST-CONCURRENCY-FLAKY-1/build.log | fbf704a37 | PIN_PENDING | CANONICAL | BLOB |
 | EV-HCF-07 | **定性更正**：裸跑 EXIT=0 实为 SKIP | verification/HOST-CONCURRENCY-FLAKY-1/correction-skip-vs-pass.md | e66323bf2 | PIN_PENDING | CANONICAL | BLOB |
 | EV-HCF-08 | 单跑 detailed 日志（4 条 SKIP 证据） | verification/HOST-CONCURRENCY-FLAKY-1/solo-detail.log | e66323bf2 | PIN_PENDING | CANONICAL | BLOB |
+| EV-HCF-09 | FILE_IDENTITY_CHANGED 口径契约与缺口定位 | verification/HOST-CONCURRENCY-FLAKY-1/file-identity-diagnosis.md | ac434d911 | PIN_PENDING | CANONICAL | BLOB |
 
 ## Resource Manifest
 
@@ -263,3 +264,39 @@ AC2 的 MET 保留（复现事实成立），但**据此得出的"并发 flaky"�
 
 把「命令成功退出」当成「被测行为正确」。判断测试通过必须看具体结果行
 （已通过 / 失败 / 已跳过），EXIT=0 只说明没有失败，不说明跑过了。
+
+## FILE_IDENTITY_CHANGED 定位（2026-11-16）
+
+**契约**（identity.py:3-9 原文）：每个 producer 与每个 comparator 都必须调用
+
+ormalize_identity，**绝不用原始 st_ino**。归一化规则：
+
+`python
+_VOLUME_MASK = 0xFFFFFFFF        # 与 dwVolumeSerialNumber 一致
+_FILE_MASK   = (1 << 53) - 1     # 53 位，C-17 N/G 整数族可精确表示
+`
+
+**比较点是对的**：scanner.py:163-171 的 dev/ino 来自 _stat_folder_entry，
+其尾部已 
+eturn normalize_identity(info.st_dev, info.st_ino) + (size,)。
+
+**缺口在 producer 侧**，两个强候选：
+
+1. HostIssuer.cs:591-596 的 Windows handle probe 返回
+   (info.VolumeSerialNumber, ((ulong)info.FileIndexHigh << 32) | info.FileIndexLow)
+   —— **完整 64 位，未 mask 到 53 位**；
+2. source_read_refs.py:1080 的 GrantFacts(*numbers, raw["sha256"])
+   —— 
+umbers 是否经 
+ormalize_identity 尚未确认。
+
+若未 mask 的 64 位值经 IPC 进入 grant scope，比较时 ino（已 mask）与
+acts.file_id（未 mask）就会不等 ⇒ FILE_IDENTITY_CHANGED。
+
+**这解释了"偶发"**：FileIndex ≤ 2^53 时两者相同；	est.ps1 下创建更多临时文件，
+命中 > 2^53 的 index 概率上升。
+
+**这是假设，未经实测验证。** 下一轮需抓取两侧实际数值确认，再决定修 Host 侧（契约要求的 A）
+还是 core 侧反序列化（纵深防御的 B）。
+
+**本轮不改代码**：改哪一侧取决于实测数据，不靠猜。
