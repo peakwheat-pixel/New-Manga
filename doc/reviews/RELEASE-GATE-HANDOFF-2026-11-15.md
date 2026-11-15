@@ -30,7 +30,7 @@
 | **谁能提供** | 仓库所有者（在本机交互式终端里） |
 | **提供后怎么验证** | 截图或人工确认四页可达；落 `verification/GATE3-FOUR-PAGE-WALKTHROUGH-1/` |
 | **成本** | ~2 分钟 |
-| **为什么 Agent 做不到（实测）** | 已穷尽 4 种自动化途径（`Start-Process`+轮询、`Start-Process`+`WaitForExit`、`Start-Process -WindowStyle`、`cmd /c start` 分离式）**全部挂起**；**对照实验**：`cmd /c echo` 20 ms 正常 ⇒ 根因是 **GUI 进程无法在本 shell 的窗口站初始化**（Agent 的 shell 由后台进程派发，可能不在 `WinSta0\Default`） |
+| **为什么 Agent 做不到（实测）** | **★ 已于 2026-11-15 推翻并解决**：此前用 `Start-Process`、`Start-Process`+`WaitForExit`、`Start-Process -WindowStyle`、`cmd /c start` 四种方式都挂起，我据此推断是"窗口站问题"—— **那个诊断是错的**。真正原因是 **`Start-Process` cmdlet 在本环境挂起**；改用 **`[System.Diagnostics.Process]::Start(ProcessStartInfo)`** 后 26 ms 返回、窗口 3 s 内出现。**现在 Agent 已能自行启动 GUI 并截图**（见 `verification/GATE3-FOUR-PAGE-WALKTHROUGH-1/` §9–§11：源码构建与前文安装产物上各 5/5 页真截图，且 Host 就绪）。 |
 
 ### 2.1b 条件 4：安装/启动/卸载/数据保护 —— **已验证（AC1–AC6）**
 
