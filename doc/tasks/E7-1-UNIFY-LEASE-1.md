@@ -110,9 +110,9 @@ E-7 第 1 项只点名 `ExchangeAsync`，扩大可见性变更面没有收益。
 
 | evidence_id | AC/Gate | path | commit | sha256 | class | sha256_basis |
 |---|---|---|---|---|---|---|
-| EV-E71-01 | AC4 全量不回归（203/0/30） | verification/E7-1-UNIFY-LEASE-1/coreclient-full.log | 879c2bc96 | 4fbb9575b7c7fe9035db4022f704af62b875278f7bf49dade277066ea62a8c17 | CANONICAL | BLOB |
-| EV-E71-02 | AC1/AC2 编译（internal 变更生效） | verification/E7-1-UNIFY-LEASE-1/build.log | 879c2bc96 | 7237c8c92a5f6759a3ebd72bc2c04665882362ab5211705709b24ee776f37dd2 | CANONICAL | BLOB |
-| EV-E71-03 | AC1/AC2/AC3 修复 diff | verification/E7-1-UNIFY-LEASE-1/fix.diff | 879c2bc96 | f08ed1e2b51d5017962f730ea06de7fd0db1a57a7f14c36b62ade44f1ff0b004 | CANONICAL | BLOB |
+| EV-E71-01 | AC4 全量不回归（203/0/30） | verification/E7-1-UNIFY-LEASE-1/coreclient-full.log | 4ac123241 | af51c8e81dd8aad849e5a1fe45e881fc7da33f6a22ec850d5df2bdf8868cc6e2 | CANONICAL | BLOB |
+| EV-E71-02 | AC1/AC2 编译（internal 变更生效） | verification/E7-1-UNIFY-LEASE-1/build.log | 4ac123241 | c52f956ac52f1149db3b43dea8b4ac1b08f168c1debce320a3eeedb87e1899a4 | CANONICAL | BLOB |
+| EV-E71-03 | AC1/AC2/AC3 修复 diff | verification/E7-1-UNIFY-LEASE-1/fix.diff | 4ac123241 | f08ed1e2b51d5017962f730ea06de7fd0db1a57a7f14c36b62ade44f1ff0b004 | CANONICAL | BLOB |
 
 ## Resource Manifest
 
