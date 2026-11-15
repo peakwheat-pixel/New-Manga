@@ -437,6 +437,16 @@ public sealed class SidecarProcess : IAsyncDisposable
         _process.Dispose();
     }
 
+    /// <summary>
+    /// E-7 / R-002: lets the caller (CoreServiceClient) poison the channel when a response stream could
+    /// not be resynchronised to the request id. Kept as an explicit hook instead of exposing the field so
+    /// the reason for poisoning stays visible at the call site.
+    /// </summary>
+    internal void Poison()
+    {
+        _poisoned = true;
+    }
+
     private void ThrowIfPoisoned()
     {
         if (_poisoned)

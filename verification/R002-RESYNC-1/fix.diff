@@ -1,0 +1,154 @@
+diff --git a/apps/desktop-avalonia/src/NewManga.CoreClient/CoreServiceClient.cs b/apps/desktop-avalonia/src/NewManga.CoreClient/CoreServiceClient.cs
+index 2e68a66f1..c91bc58d1 100644
+--- a/apps/desktop-avalonia/src/NewManga.CoreClient/CoreServiceClient.cs
++++ b/apps/desktop-avalonia/src/NewManga.CoreClient/CoreServiceClient.cs
+@@ -699,16 +699,15 @@ public sealed class CoreServiceClient : IAsyncDisposable
+         var frame = await _process
+             .ExchangeAsync(line, escapeNonAscii: true, timeout, cancellationToken)
+             .ConfigureAwait(false);
+-        var responseLine = frame.ResponseLine;
+-        for (var skipped = 0; skipped < 16 && CoreProtocol.IsEventFrame(responseLine); skipped++)
+-        {
+-            responseLine = await _process
+-                .ReadNextResponseLineAsync(timeout, cancellationToken)
+-                .ConfigureAwait(false);
+-        }
+-
+-        var response = CoreProtocol.Parse(responseLine);
+-        EnsureResponseBelongsToRequest(response, requestId, _options.StderrLogPath);
++        var response = await ReadResponseForRequestAsync(
++                frame.ResponseLine,
++                requestId,
++                ct => _process.ReadNextResponseLineAsync(timeout, ct),
++                _process.Poison,
++                ResyncMaxDrainFrames,
++                _options.StderrLogPath,
++                cancellationToken)
++            .ConfigureAwait(false);
+         if (response.Error is { } error)
+         {
+             throw new CoreOperationException(
+@@ -2400,6 +2399,71 @@ public sealed class CoreServiceClient : IAsyncDisposable
+     /// CORE-PIPE-EXCLUSIVE-1 / E-6: a response carrying a DIFFERENT request_id means the pipe handed back
+     /// another command's answer. Silently accepting it is how an empty chapter list reached the reader.
+     /// </summary>
++    /// <summary>
++    /// E-7 / R-002: how many extra response frames may be discarded while looking for the response that
++    /// belongs to <paramref name="requestId"/>. Deliberately the same bound as the event-frame skip loop,
++    /// so there is one number to reason about rather than two.
++    /// </summary>
++    internal const int ResyncMaxDrainFrames = 16;
++
++    /// <summary>
++    /// E-7 / R-002: turns the first response line into the response for <paramref name="requestId"/>,
++    /// discarding event frames and — the R-002 fix — any response that carries a DIFFERENT request id.
++    ///
++    /// <para>Before this, a mismatched id threw immediately and left the real response on the wire, so the
++    /// next command read its predecessor's answer: a permanent off-by-one until the sidecar restarted.</para>
++    ///
++    /// <para>Bounded on purpose: after <paramref name="maxDrainFrames"/> discarded frames the pipe is
++    /// considered unresynchronisable, the channel is poisoned and the caller fails closed — better than
++    /// silently handing every subsequent command the wrong payload.</para>
++    /// </summary>
++    internal static async Task<CoreResponse> ReadResponseForRequestAsync(
++        string firstLine,
++        string requestId,
++        Func<CancellationToken, Task<string>> readNextLine,
++        Action poisonChannel,
++        int maxDrainFrames,
++        string? stderrLogPath,
++        CancellationToken cancellationToken)
++    {
++        ArgumentNullException.ThrowIfNull(readNextLine);
++        ArgumentNullException.ThrowIfNull(poisonChannel);
++
++        var line = firstLine;
++        for (var frames = 0; ; frames++)
++        {
++            var response = CoreProtocol.Parse(line);
++
++            // An EVENT frame is a single-direction notification: it carries no request id and must never be
++            // mistaken for "a response without an id that therefore belongs to us" (the first version of
++            // this helper did exactly that, and R002ResyncTests caught it).
++            if (!CoreProtocol.IsEventFrame(line) && BelongsToRequest(response, requestId))
++            {
++                return response;
++            }
++
++            if (frames >= maxDrainFrames)
++            {
++                poisonChannel();
++                throw new SidecarException(
++                    SidecarErrorCode.MalformedResponse,
++                    SidecarSpec.CoreServiceName,
++                    $"response request_id could not be resynchronised to '{requestId}' within "
++                    + $"{maxDrainFrames} response frames; the core pipe is out of step, channel poisoned",
++                    stderrLogPath);
++            }
++
++            line = await readNextLine(cancellationToken).ConfigureAwait(false);
++        }
++    }
++
++    /// <summary>
++    /// A response belongs to the request when it carries no request id at all (the frozen core omits it on
++    /// some frames) or when the id matches exactly. A DIFFERENT id is what R-002 is about.
++    /// </summary>
++    private static bool BelongsToRequest(CoreResponse response, string requestId) =>
++        response.RequestId is not { } actual || string.Equals(actual, requestId, StringComparison.Ordinal);
++
+     internal static void EnsureResponseBelongsToRequest(
+         CoreResponse response, string requestId, string? stderrLogPath)
+     {
+@@ -2431,18 +2495,18 @@ public sealed class CoreServiceClient : IAsyncDisposable
+         var frame = await _process.ExchangeAsync(line, escapeNonAscii: true, timeout, cancellationToken).ConfigureAwait(false);
+ 
+         // READER-PROGRESS-1: core_service pushes event frames (ReadingProgressChanged …) on the same
+-        // stdout pipe *before* the command response. Skip them until the response envelope arrives
+-        // (bounded so a broken sidecar still fails fast instead of hanging).
+-        var responseLine = frame.ResponseLine;
+-        for (var skipped = 0; skipped < 16 && CoreProtocol.IsEventFrame(responseLine); skipped++)
+-        {
+-            responseLine = await _process
+-                .ReadNextResponseLineAsync(timeout, cancellationToken)
+-                .ConfigureAwait(false);
+-        }
+-
+-        var response = CoreProtocol.Parse(responseLine);
+-        EnsureResponseBelongsToRequest(response, requestId, _options.StderrLogPath);
++        // stdout pipe *before* the command response. E-7 / R-002 additionally requires resynchronising
++        // when a response carries a DIFFERENT request id (otherwise the real response stays on the wire
++        // and the next command reads it — a permanent off-by-one). Both are handled inside the helper.
++        var response = await ReadResponseForRequestAsync(
++                frame.ResponseLine,
++                requestId,
++                ct => _process.ReadNextResponseLineAsync(timeout, ct),
++                _process.Poison,
++                ResyncMaxDrainFrames,
++                _options.StderrLogPath,
++                cancellationToken)
++            .ConfigureAwait(false);
+         if (response.Error is { } error)
+         {
+             throw new CoreOperationException(error.Code, error.Category, error.Retryable, error.Message, response.RequestId ?? requestId);
+diff --git a/apps/desktop-avalonia/src/NewManga.CoreClient/Transport/SidecarProcess.cs b/apps/desktop-avalonia/src/NewManga.CoreClient/Transport/SidecarProcess.cs
+index f450e572c..57fe239d6 100644
+--- a/apps/desktop-avalonia/src/NewManga.CoreClient/Transport/SidecarProcess.cs
++++ b/apps/desktop-avalonia/src/NewManga.CoreClient/Transport/SidecarProcess.cs
+@@ -437,6 +437,16 @@ public sealed class SidecarProcess : IAsyncDisposable
+         _process.Dispose();
+     }
+ 
++    /// <summary>
++    /// E-7 / R-002: lets the caller (CoreServiceClient) poison the channel when a response stream could
++    /// not be resynchronised to the request id. Kept as an explicit hook instead of exposing the field so
++    /// the reason for poisoning stays visible at the call site.
++    /// </summary>
++    internal void Poison()
++    {
++        _poisoned = true;
++    }
++
+     private void ThrowIfPoisoned()
+     {
+         if (_poisoned)
