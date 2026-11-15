@@ -3,10 +3,13 @@ id: R002-RESYNC-1
 title: 修复 R-002 —— id 错配后无重同步导致管道永久 off-by-one
 kind: defect
 governance_version: 3
-status: in_progress
+status: done
 suggested_owner: DSH
 owner: DSH
-reviewer: null
+reviewer: r002-review（独立上下文子 agent，APPROVED_WITH_LIMITATIONS）
+integration_commit: 994f58730
+canonical_evidence_status: complete
+resource_closeout_status: complete
 depends_on:
   - E7-5-SHUTDOWN-RACE-1
 approval: 用户 2026-11-15「全部授权、持续自动推进」；目标 B 的产品门槛收敛
@@ -17,6 +20,7 @@ evidence_dir: verification/R002-RESYNC-1
 allowed_paths:
   - doc/tasks/R002-RESYNC-1.md
   - apps/desktop-avalonia/src/NewManga.CoreClient/CoreServiceClient.cs
+  - apps/desktop-avalonia/src/NewManga.CoreClient/Transport/SidecarProcess.cs
   - apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/R002ResyncTests.cs
   - doc/STATUS.md
   - doc/TASK_LEDGER.md
@@ -98,13 +102,13 @@ PowerShell 子进程在收到请求后输出两行：
 
 ## Acceptance Criteria
 
-- [ ] **AC1 设计判断先落盘**：Q1–Q6 六个取舍在卡内写明（本文件即为该判定）。
-- [ ] **AC2 测试先红**：`R002ResyncTests` 构造「先错 id、再对 id」两帧，修改前 **FAIL**。
-- [ ] **AC3 实现有界重同步**：`CoreServiceClient` 在 id 错配时有界 drain（上限 16），
+- [x] **AC1 设计判断先落盘**：Q1–Q6 六个取舍在卡内写明（本文件即为该判定）。 <<MET>>
+- [x] **AC2 测试先红**：`R002ResyncTests` 构造「先错 id、再对 id」两帧，修改前 **FAIL**。 <<MET>>
+- [x] **AC3 实现有界重同步**：`CoreServiceClient` 在 id 错配时有界 drain（上限 16）， <<MET>>
       跳过事件帧，找到匹配 id 的响应即返回；**超限 poison**。
-- [ ] **AC4 修后绿 + 超限用例**：重同步用例通过；另有一条「drain 超限 ⇒ poison」用例。
-- [ ] **AC5 不回归**：`NewManga.CoreClient.Tests` 全量 **0 failed**；四件套 PASS。
-- [ ] **AC6 独立复核**：固定 head 交独立上下文 Review。
+- [x] **AC4 修后绿 + 超限用例**：重同步用例通过；另有一条「drain 超限 ⇒ poison」用例。 <<MET>>
+- [x] **AC5 不回归**：`NewManga.CoreClient.Tests` 全量 **0 failed**；四件套 PASS。 <<MET>>
+- [x] **AC6 独立复核**：固定 head 交独立上下文 Review。 <<MET>>
 
 ## 允许修改范围
 
@@ -126,6 +130,46 @@ PowerShell 子进程在收到请求后输出两行：
 | 全量不回归 | `dotnet test …NewManga.CoreClient.Tests.csproj` | 0 failed |
 | 四件套 | check / pins / inventory | PASS / 18-18 / 87 |
 
-## 证据
+## Canonical Evidence
 
-设计判断（本文件 §设计判断）、红/绿日志、全量日志写入 `verification/R002-RESYNC-1/`。
+| evidence_id | AC/Gate | path | commit | sha256 | class | sha256_basis |
+|---|---|---|---|---|---|---|
+| EV-R002-01 | AC1/AC3/AC4 证据总述 | verification/R002-RESYNC-1/README.md | 994f58730 | PIN_PENDING | CANONICAL | BLOB |
+| EV-R002-02 | AC4 新建测试绿（4 passed） | verification/R002-RESYNC-1/test-green.log | 994f58730 | PIN_PENDING | CANONICAL | BLOB |
+| EV-R002-03 | AC5 全量不回归（203/0/30） | verification/R002-RESYNC-1/coreclient-full.log | 994f58730 | PIN_PENDING | CANONICAL | BLOB |
+| EV-R002-04 | AC3 修复 diff（两处调用点 + helper） | verification/R002-RESYNC-1/fix.diff | 994f58730 | PIN_PENDING | CANONICAL | BLOB |
+
+## Resource Manifest
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| agent-output | verification/R002-RESYNC-1/ | NOT_APPLICABLE | — | — | 新增证据，无迁移/归档 |
+
+## Closeout Record
+
+- Closeout：2026-11-16，DSH；实现 `994f58730` + r1 返修（本提交）。
+- **结果**：R-002 修好 —— 两个方法（`SendHostControlAsync`、`SendAsync`）都改为经
+  `ReadResponseForRequestAsync`：错配帧被有界 drain（上限 16）、事件帧跳过、超限 **poison**
+  并抛 `MalformedResponse`。相对旧行为：错配容忍度从 **0 提升到 16**。
+- **行为变化（复核确认不是回归）**：旧逻辑在 >16 事件帧时**同样失败**（事件帧被当响应 ⇒
+  `RequireResult` 抛 `INVALID_RESPONSE`，且真响应残留 ⇒ 永久失步）⇒ 不存在「旧成功/新 poison」场景。
+- **独立复核**：`r002-review` **APPROVED_WITH_LIMITATIONS**（0/0/2/5），确认缺陷真实、修复正确、
+  两处调用点无遗漏（`git grep` 只剩定义 1 处 + 测试 3 处）、`Poison()` 无副作用、越界清洁。
+  - P2-F2（交接门槛）→ 已补 AC 标记 / Canonical Evidence / reviewer / status；
+  - P3-F3（`allowed_paths` 漏列 `SidecarProcess.cs`）→ 已补；
+  - P3-F5（E-6 注释悬空错挂在 `ResyncMaxDrainFrames` 前，且 `EnsureResponseBelongsToRequest`
+    已成生产死代码）→ 悬空注释已删除；该方法保留并由测试承载 E-7 #2 的 fail-open 文档化用例；
+  - P3-F7（poison 对外表现为 `RequestTimeout`、消息不点名 resync）→ 已记录在未关闭项。
+- **门禁**：新建测试 4 passed / 8 ms；全量 **203 passed / 0 failed / 30 skipped / EXIT=0**；
+  `check.ps1` PASS (3 warnings)｜`verify_pins` 18/18｜`api_inventory` 1/80/6=87。
+- **未关闭项（不淡化）**：
+  1. **P2-F1：4 条测试只直接调 `internal static` helper，没有任何测试证明两个调用点真的在用它。**
+     若未来某调用点改回直接判断，测试仍会全绿。可行收口办法是删除 `EnsureResponseBelongsToRequest`
+     让「改回直接调用」**编译失败**，但那会牵动 `PipeResponsePairingValidationTests` 的 3 条用例
+     （其中一条是 E-7 #2 的 fail-open 文档化用例），属跨卡改造，**本卡未做**；
+  2. **E-7 仍未完成**：`_pipeGate` 未统一 + `ExchangeAsync` 仍 `public`、无 `request_id` 时 fail-open
+     ⇒ **「并发安全」仍不可宣称**；
+  3. **poison 后无自动恢复**，对外错误码仍是 `RequestTimeout`（`ThrowIfPoisoned` 既有行为），
+     消息不点名「重同步失败」；
+  4. 16 帧预算由事件帧与错配帧**共享**；不可解析帧会直接抛出而不 poison（下一帧读取可自愈）。
+

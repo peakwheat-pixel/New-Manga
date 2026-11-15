@@ -2396,10 +2396,6 @@ public sealed class CoreServiceClient : IAsyncDisposable
         }
     }
     /// <summary>
-    /// CORE-PIPE-EXCLUSIVE-1 / E-6: a response carrying a DIFFERENT request_id means the pipe handed back
-    /// another command's answer. Silently accepting it is how an empty chapter list reached the reader.
-    /// </summary>
-    /// <summary>
     /// E-7 / R-002: how many extra response frames may be discarded while looking for the response that
     /// belongs to <paramref name="requestId"/>. Deliberately the same bound as the event-frame skip loop,
     /// so there is one number to reason about rather than two.
