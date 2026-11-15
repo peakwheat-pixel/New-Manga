@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using NewManga.CoreClient.Diagnostics;
 using NewManga.CoreClient.Transport;
+using NewManga.CoreClient.Wire;
 using Xunit;
 
 namespace NewManga.CoreClient.Tests;
@@ -99,15 +100,112 @@ public sealed class SidecarShutdownRaceTests
             var failure = await Assert.ThrowsAsync<SidecarException>(() =>
                 sidecar.ExchangeAsync("{\"id\":2}", escapeNonAscii: false, TimeSpan.FromSeconds(5)));
 
-            Assert.True(
-                failure.Code is SidecarErrorCode.ProcessExited or SidecarErrorCode.IoFailure,
-                "post-stop exchange surfaced an unexpected code: " + failure.Code);
+            // r1 P2-1: assert the EXACT code. SidecarErrorCode.IoFailure has no throw site anywhere in the
+            // product (it only appears in the message template), so tolerating it here would be a dead
+            // allowance that can never fail -- a future change could regress silently.
+            Assert.Equal(SidecarErrorCode.ProcessExited, failure.Code);
         }
         finally
         {
             await sidecar.DisposeAsync();
         }
     }
+
+    /// <summary>
+    /// r1 P2-3: the "half-written response" window is NOT an unreproducible narrow race — it reproduces
+    /// deterministically. The child writes a TRUNCATED JSON line and flushes it; <c>ReadLineAsync</c>
+    /// returns that complete-but-invalid line, and <c>CoreProtocol.Parse</c> rejects it.
+    /// </summary>
+    /// <remarks>
+    /// This pins the real answer to "what does an in-flight command see when shutdown lands mid-response?":
+    /// not always <c>ProcessExited</c> (which is what the E-7 #5 line says) but <c>MalformedResponse</c> when
+    /// the child managed to emit a partial line first. Both are typed and handleable; the point is that the
+    /// E-7 wording is only accurate outside this window.
+    /// </remarks>
+    [Fact]
+    public async Task HalfWrittenResponseLine_SurfacesMalformedResponse_NotProcessExited()
+    {
+        var pidFile = NewPidFile();
+        var spec = HalfLineSpec("shutdown-halfline", pidFile);
+        await using var sidecar = await SidecarProcess.StartAsync(spec);
+        await ReadPidAsync(pidFile);
+
+        // The child immediately emits an unterminated-JSON line (still a full *line*), then parks.
+        // ExchangeAsync itself only reads a line and wraps it in a WireFrame -- the JSON rejection happens
+        // in CoreProtocol.Parse, which is where CoreServiceClient calls it. So drive the same two steps.
+        var frame = await sidecar.ExchangeAsync(
+            "{\"id\":1}",
+            escapeNonAscii: false,
+            TimeSpan.FromSeconds(10));
+
+        Assert.Equal("{\"id\":1,\"resu", frame.ResponseLine);
+
+        var failure = Assert.Throws<SidecarException>(() => CoreProtocol.Parse(frame.ResponseLine));
+
+        Assert.Equal(SidecarErrorCode.MalformedResponse, failure.Code);
+    }
+
+    /// <summary>
+    /// r1 P2-2: the product's real shutdown path is <c>CoreServiceClient.DisposeAsync</c>
+    /// (HostRuntime calls it without holding <c>_pipeGate</c>). The first test used
+    /// <c>await inFlight</c> before <c>await stop</c>, which structurally avoids that path. This one
+    /// disposes while an exchange is genuinely in flight.
+    /// </summary>
+    [Fact]
+    public async Task DisposeWhileExchangeInFlight_DoesNotLeakBclException()
+    {
+        var pidFile = NewPidFile();
+        var spec = SlowRespondingSpec("shutdown-dispose", pidFile);
+        var sidecar = await SidecarProcess.StartAsync(spec);
+        await ReadPidAsync(pidFile);
+
+        var inFlight = sidecar.ExchangeAsync(
+            "{\"id\":1}",
+            escapeNonAscii: false,
+            TimeSpan.FromSeconds(30));
+
+        await Task.Delay(500);
+
+        // Dispose concurrently with the in-flight exchange (the product path), then collect its outcome.
+        var dispose = sidecar.DisposeAsync().AsTask();
+
+        Exception? observed = null;
+        try
+        {
+            await inFlight;
+        }
+        catch (Exception ex)
+        {
+            observed = ex;
+        }
+
+        await dispose;
+
+        Assert.NotNull(observed);
+        // Whatever we see must be a typed SidecarException: callers only catch that.
+        var failure = Assert.IsType<SidecarException>(observed);
+        Assert.Equal(SidecarErrorCode.ProcessExited, failure.Code);
+    }
+
+    private static SidecarSpec HalfLineSpec(string name, string pidFile) => new()
+    {
+        Name = name,
+        ExecutablePath = PowerShellPath(),
+        AdditionalArguments = new[]
+        {
+            "-NoProfile",
+            "-NonInteractive",
+            "-Command",
+            // Emit a truncated JSON line (no closing braces) as a complete line, then park.
+            $"$PID | Set-Content -LiteralPath '{pidFile}'; "
+                + "[Console]::Out.WriteLine('{\"id\":1,\"resu'); "
+                + "[Console]::Out.Flush(); "
+                + "Start-Sleep -Seconds 30",
+        },
+        StderrLogPath = NewStderrLog(name),
+        StartupTimeout = TimeSpan.FromSeconds(10),
+        RequestTimeout = TimeSpan.FromSeconds(10),
+    };
 
     private static SidecarSpec SlowRespondingSpec(string name, string pidFile) => new()
     {

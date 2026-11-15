@@ -34,9 +34,9 @@ Start-Sleep -Seconds 30
 | 是否有 BCL 异常泄漏给调用方 | **没有**（两条测试都走 `SidecarException` 分支；若泄漏，
 测试会 `Assert.Fail("leaked a non-SidecarException")`） |
 
-诊断先用了宽松断言（`ProcessExited or IoFailure or RequestTimeout`）通过；
-随后改成**精确断言** `Assert.Equal(SidecarErrorCode.ProcessExited, ...)` 复跑仍通过
-⇒ 观测值确定是 `ProcessExited`，不是三者之一。
+诊断先用了宽松断言通过，随后改**精确断言**复跑仍通过 ⇒ 观测值确定是 `ProcessExited`。
+
+> **r1 P2-1 更正**：另一条测试仍保留 `ProcessExited or IoFailure`，而 **`SidecarErrorCode.IoFailure` 在全仓没有任何 throw 点**（只出现在 `SidecarException.cs:53` 的消息模板）⇒ 那是**死容忍**，未来行为变化不会让测试变红。已改为精确断言。
 
 ## 4. 书面判定（AC4）
 
@@ -51,12 +51,19 @@ Start-Sleep -Seconds 30
 
 **③ 是否需要改产品代码？—— 本轮判定：不需要**（理由见下）。
 
-**④ 未能覆盖的残余窗口（如实登记）**：
-真正可能产生**误导性错误码**的窗口是**「子进程正在写响应时被 kill」** ⇒ 读到半行 ⇒
-`CoreProtocol.Parse` 失败 ⇒ `MalformedResponse`（而不是 `ProcessExited`）。
-本轮夹具让子进程在 5s 后才写，而 stop 发生在 0.5s，所以**没有命中这个窗口**。
-该窗口极窄（写一行是微秒级），且要稳定复现需要精确时序控制（例如让子进程在写入中途被挂起）
-—— 本轮未做，**登记为残余**。
+**④ 半行窗口：r1 复核证明它**可稳定复现**，不是窄竞态。**
+
+子进程写一行**不完整 JSON**（`{"id":1,"resu`）并 flush；`ReadLineAsync` 会把这**一整行**返回，
+随后 `CoreProtocol.Parse` 抛 `MalformedResponse`（**不是** `ProcessExited`）。这是确定性的，
+不需要精确时序控制。
+
+⇒ **E-7 #5 的表述因此只在该窗口之外准确**：「在途命令会得 `ProcessExited`」成立；
+但若子进程已写出一行不完整响应，调用方拿到的是 `MalformedResponse`。两者都是 typed、可处理，
+差别只在错误码。
+
+本轮把该行为固化为测试 `HalfWrittenResponseLine_SurfacesMalformedResponse_NotProcessExited`。
+（注意：`ExchangeAsync` 本身只读一行、**不解析 JSON**；`MalformedResponse` 来自调用方的
+`CoreProtocol.Parse` —— 测试按同样两步驱动。）
 
 ## 5. 处置
 
@@ -67,15 +74,16 @@ Start-Sleep -Seconds 30
 ## 6. 不回归
 
 ```
-诊断测试：        2 passed / 1s
-全量（不带 sidecar）：197 passed / 0 failed / 30 skipped / 34s / EXIT=0
-  （前一轮 195，+2 = 本卡新增的两条）
+诊断测试：        4 passed / 8s
+全量（不带 sidecar）：199 passed / 0 failed / 30 skipped / EXIT=0
+  （前一轮 195，+4 = 本卡原有的两条 + r1 要求补的两条）
 check.ps1 PASS (3 warnings)｜verify_pins 18/18｜api_inventory 1/80/6=87
 ```
 
 ## 7. 边界（不淡化）
 
-- 本卡**没有修任何东西**，只核证 + 固化；
+- 本卡**没有改任何产品代码**，只核证 + 固化（新增 4 条测试）；
+- r1 指出的「真实关停路径是 `CoreServiceClient.DisposeAsync`，`HostRuntime` 不持 `_pipeGate`」已用 `DisposeWhileExchangeInFlight_DoesNotLeakBclException` 覆盖：**实测 16/16 `ProcessExited`，dispose 从不抛**，未发现缺陷；
 - **E-7 另外四项仍开**：`_pipeGate` 未统一 + `ExchangeAsync` 仍 `public`、无 `request_id` 时 fail-open、
   R-002 错配无重同步、以及本项的「写响应中被杀的半行窗口」⇒ **「并发安全」仍不可宣称**；
 - 「不需要改代码」是**基于本轮实测**的判断，不等于证明该项在任何时序下都安全。
