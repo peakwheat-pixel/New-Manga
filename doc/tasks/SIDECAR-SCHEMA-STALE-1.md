@@ -225,3 +225,41 @@ a) chain 根本没跑到 color；b) color 跑了但失败没被写成 `failed`�
 `CommandWiringB1/B2Tests` 的 `[INVALID_REQUEST]`：测试在 `Run()` 循环里调用，异常不带命令名。
 本轮尝试插入临时诊断（打印 `name`）时，脚本锚点不匹配未生效，**未能在本轮定位**。
 下一步需按实际缩进重新插入诊断，或直接在 `HostCommandDispatcher.InvokeAsync` 抛异常时附带命令名。
+
+### 组 B / 组 C 全部定性（2026-11-16 续，均来自读证据）
+
+**组 C = 测试期望过时**。读权威账本 step_runs（最新 
+un-binding-models-library.db）：
+
+| step_type | status | error_code | count |
+|---|---|---|---|
+| color | **completed** | — | 3 |
+| detect | completed | — | 8 |
+| ocr | completed | — | 3 |
+| 	erm_extract | completed | — | 3 |
+| 	ranslate | **failed** | PROVIDER_NOT_CONFIGURED | 3 |
+
+color 全部成功，真正失败的是 	ranslate。测试 :411 断言 color 必 failed，
+其注释「chain still stops at color」已不成立；投影层显示 pending 是因为
+测试自己注释所述的「earlier stages stay pending」（已被越过），与账本自洽。
+
+**组 B = settings 域命令返回 UNKNOWN_COMMAND**。按 B1 顺序实测：
+
+`
+[1] backup.create              ok
+[2] backup.delete              ok
+[3] cleanup.retry_pending      ok
+[4] plugins.audit_list         ok
+[5] plugins.set_plugin_enabled PLUGIN_NOT_FOUND（符合预期）
+[6] settings.network_profiles_create  UNKNOWN_COMMAND  ← 失败点
+`
+
+**矛盾**：settings_commands.py:127/150、core_service.py:482 都注册了该命令，
+但 core.ping 的 capabilities **只有 17 个、不含任何 settings/network 命令**。
+⇒ 生产组装可能未挂 settings 域（或挂的表与 known-command 列表不一致），需读
+ssemble_production_core / ssemble_core_services 确认。
+
+影响面：B1 的 13 条里有 **7 条是 settings 命令**，全部同一域；B2 大概率同理。
+
+**为什么从未暴露**：测试夹具此前一直用 2026-10-23 legacy v6 副本，握手即失败，
+根本没跑到这些命令。
