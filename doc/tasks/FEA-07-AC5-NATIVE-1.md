@@ -169,7 +169,7 @@ out_of_scope:
 | EV-AC5-P02 | AC-N3（物理拔屏） | verification/FEA-07-AC5-NATIVE-1/evidence/physical-state-after-replug-20261109-103127.json | - | 2ae901ca671f84fb33fa8b923e8ffb2213ee826a8114f51a5c5115df414c01a3 | CANONICAL |
 | EV-AC5-P03 | AC-N3（物理拔屏） | verification/FEA-07-AC5-NATIVE-1/evidence/physical-state-after-unplug-restored-window-20261109-102834.json | - | 7d6a2cc54a701ba52386c1443253f7ba6df50d40b052712748ea6c9a5e1c5677 | CANONICAL |
 | EV-AC5-P04 | AC-N3 / 缺陷 | verification/FEA-07-AC5-NATIVE-1/evidence/physical-unplug-before.log | - | 17b14460587876746b4d179272fb310a9f97a536b8f3ae1c403103fc19dd5c02 | CANONICAL |
-| EV-AC5-P05 | AC-N3 / 缺陷 | verification/FEA-07-AC5-NATIVE-1/DEFECTS.md | - | 2407dd2cd02f97eeb003e393c837d6f662e99d76f6afa423b4e1d34fdf33b9ba | CANONICAL |
+| EV-AC5-P05 | AC-N3 / 缺陷 | verification/FEA-07-AC5-NATIVE-1/DEFECTS.md | 61e324e1d | 2407dd2cd02f97eeb003e393c837d6f662e99d76f6afa423b4e1d34fdf33b9ba | CANONICAL |
 
 | EV-AC5-EX01 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/extra-fullscreen-20261109-103425.json | - | 8dc8fa4c68555eacb8f09e954b4eae9d722debbdc1273e202011bd5873a1c6a9 | CANONICAL |
 | EV-AC5-EX02 | 追加原生子项 | verification/FEA-07-AC5-NATIVE-1/evidence/extra-fullscreen-20261109-103453.json | - | 6038a0ddbae43f0176bc31a8720654e6221ca1d284028f4cde06271cf64bb165 | CANONICAL |
