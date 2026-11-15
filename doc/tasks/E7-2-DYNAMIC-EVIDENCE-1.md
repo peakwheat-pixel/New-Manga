@@ -7,7 +7,7 @@ status: done
 suggested_owner: DSH
 owner: DSH
 reviewer: fake-core-review（独立上下文子 agent，APPROVED_WITH_LIMITATIONS）
-integration_commit: PENDING
+integration_commit: 21655bfd8
 canonical_evidence_status: complete
 resource_closeout_status: complete
 depends_on:
@@ -102,8 +102,8 @@ elif scenario == "idless-only":           # 只有无 id 帧（应 poison）
 
 | evidence_id | AC/Gate | path | commit | sha256 | class | sha256_basis |
 |---|---|---|---|---|---|---|
-| EV-FC-01 | AC1-AC4 假夹具 3 passed | verification/E7-2-DYNAMIC-EVIDENCE-1/fake-core-tests.log | 939f1811d | 741445b441e16daa743544912840e85b57e4e9c24d6f017d6cdf1ca42ac7e010 | CANONICAL | BLOB |
-| EV-FC-02 | AC6 全量不回归（213/0/30） | verification/E7-2-DYNAMIC-EVIDENCE-1/coreclient-full.log | 939f1811d | 40e9d74445a91eb75b7edd59e448129b52a61567b2375d32cdeb6c28d1beb7b4 | CANONICAL | BLOB |
+| EV-FC-01 | AC1-AC4 假夹具 3 passed | verification/E7-2-DYNAMIC-EVIDENCE-1/fake-core-tests.log | 21655bfd8 | 46ebc690cfe6efa8d158b118cd8ebf6cf583520c3e27de460a92a9ca1ec5d886 | CANONICAL | BLOB |
+| EV-FC-02 | AC6 全量不回归（213/0/30） | verification/E7-2-DYNAMIC-EVIDENCE-1/coreclient-full.log | 21655bfd8 | 4f163520894f58970a69f07644bee5af02f32816f95b6754bbcf5623b81624b5 | CANONICAL | BLOB |
 
 ## Resource Manifest
 
