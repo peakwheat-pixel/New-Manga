@@ -1,19 +1,30 @@
-# 可分发包清单
-head: e2c9fd058
-generated: 
-2026-11-15T22:10:48+08:00
+# 正规包清单（package.ps1 -WithModels）
+# generated: 
+2026-11-15T22:32:49+08:00
+
+stage: G:\CODEX\New Manga.workspace\task-envs\FINAL-VALIDATION-1\out\NewManga-0.2.0-dev-win-x64-models
 
 ## 包根目录
-d---- core-sidecar 1
+d---- app 1
+-a--- install.ps1 2783
 -a--- LICENSE 34674
+-a--- LICENSE_AUDIT.md 1979
 -a--- LICENSE-AGPL-3.0.txt 35184
--a--- NewManga.App.exe 99554850
+-a--- MANUAL_VERIFY.md 3376
+-a--- migrate-legacy-dryrun.ps1 791
 -a--- NOTICE.md 3444
--a--- README.md 1206
--a--- RELEASE-e2c9fd058.md 1206
--a--- Run-NewManga.cmd 174
+-a--- package-manifest.json 200484
+-a--- THIRD_PARTY_LICENSES.md 4769
+-a--- uninstall.ps1 1071
+-a--- UPGRADE.md 3831
+-a--- VERSION.json 1048
 
-## core-sidecar 顶层
+## app/
+d---- core-sidecar 1
+-a--- NewManga.App.exe 37338109
+-a--- VERSION.json 1048
+
+## app/core-sidecar 顶层
 d---- _internal 1
 d---- models 1
 -a--- acceptance_bridge.exe 400233
@@ -21,20 +32,3 @@ d---- models 1
 -a--- core_service.exe 400098
 -a--- host_bridge.exe 398122
 -a--- sfx_detect_probe.exe 400521
-
-## models
-171618071 \core-sidecar\models\detector\rtdetr-v2-fixed.onnx
-40824255 \core-sidecar\models\detector\yolo11s-seg.onnx
-77161 \core-sidecar\models\ocr\manga-ocr-onnx\config.json
-117480262 \core-sidecar\models\ocr\manga-ocr-onnx\decoder_model.onnx
-343454249 \core-sidecar\models\ocr\manga-ocr-onnx\encoder_model.onnx
-273 \core-sidecar\models\ocr\manga-ocr-onnx\generation_config.json
-376 \core-sidecar\models\ocr\manga-ocr-onnx\preprocessor_config.json
-132 \core-sidecar\models\ocr\manga-ocr-onnx\special_tokens_map.json
-1520 \core-sidecar\models\ocr\manga-ocr-onnx\tokenizer_config.json
-30216 \core-sidecar\models\ocr\manga-ocr-onnx\vocab.txt
-
-## 汇总
-文件数: 1031
-总大小: 886.7 MB
-NewManga.App.exe sha256: 07dd80f0bc5311503cca13b299014250343152807661ea3dd002db459b33ae74
