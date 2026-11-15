@@ -301,3 +301,28 @@ message 为 null 所以显示默认串。
 **关键缺口**：CoreOperationException 只保留 code，core 的 rror.details
 （通常含 phase / ction / message_key，如 SETTINGS_INVALID_INPUT）**在异常消息里丢失**。
 ⇒ 下一步应从 **wire 层抓 core 的原始 error 对象**（含 details），而不是从异常 message 猜。
+
+### 组 B 诊断的第 5 次失效（2026-11-16 续，必须记录）
+
+为从 **wire 层**抓 core 原始 rror.details（WireFrame.ResponseLine，WireLog.cs:9-18），
+我用脚本在 CommandWiringB1Tests.cs 的 Run() 第一条语句处插入诊断块。**做错了**：
+
+原代码：
+`csharp
+var result = await context.Dispatcher.InvokeAsync(name, Args(argsJson));
+Assert.Equal(HostCommandStatus.Implemented, result.Status);   // 断言在后
+`
+我替换为：
+`csharp
+try {{ var r = await context.Dispatcher.InvokeAsync(...); return r.Value; }}  // return 在断言之前
+catch (Exception diagEx) {{ ...Console.WriteLine...; throw; }}
+`
+=> **断言被完全跳过，测试"通过"了。**
+
+发现方式：插入后跑测试，EXIT=1 但**没有 TEMP-DIAG 输出、日志里也没有失败详情** ——
+这个"太干净"的结果本身是信号。已 git checkout 撤销，确认断言顺序完好（:131-133）。
+
+**纪律**：观测行为不得改变被观测对象。加日志不能改控制流。
+正确做法是**零侵入**：打开 WireLogPath 跑完读 NDJSON，或只在测试末尾统一 dump frames。
+
+**组 B 本轮零进展。**
