@@ -7,7 +7,7 @@ status: done
 suggested_owner: DSH
 owner: DSH
 reviewer: fake-core-review（独立上下文子 agent，APPROVED_WITH_LIMITATIONS）
-integration_commit: 003385bc3
+integration_commit: 24fc1465c
 canonical_evidence_status: complete
 resource_closeout_status: complete
 depends_on:
@@ -102,11 +102,11 @@ elif scenario == "idless-only":           # 只有无 id 帧（应 poison）
 
 | evidence_id | AC/Gate | path | commit | sha256 | class | sha256_basis |
 |---|---|---|---|---|---|---|
-| EV-FC-01 | AC1-AC4 假夹具 3 passed | verification/E7-2-DYNAMIC-EVIDENCE-1/fake-core-tests.log | 8d3162c63 | 2b60db81fb991304e58a038146918e01829280bf8e86055d7c65bc557dafcd9b | CANONICAL | BLOB |
-| EV-FC-02 | AC6 全量不回归（213/0/30） | verification/E7-2-DYNAMIC-EVIDENCE-1/coreclient-full.log | 8d3162c63 | 981492067390d981d5f178362cae731f9841a96dfbf92ac22c8319c44d739a27 | CANONICAL | BLOB |
-| EV-FC-03 | AC2/AC6 变异验证（SendHostControlAsync 绕过 resync ⇒ 第 4 条变红） | verification/E7-2-DYNAMIC-EVIDENCE-1/mutation-D-sendhostcontrol.log | 8d3162c63 | 99a118c9bcb24c7389f706dd7a9e27e1d0f6305c8c8c35400bbd259a5b5efd0c | CANONICAL | BLOB |
-| EV-FC-04 | AC4 变异验证（host-control poison 改 no-op ⇒ 第 5 条变红） | verification/E7-2-DYNAMIC-EVIDENCE-1/mutation-E-hostcontrol-poison.log | 8d3162c63 | d770c1934e39dc42fdeac81fad79881e367bda4c2d1c0273aaaee06a0ebec25a | CANONICAL | BLOB |
-| EV-FC-05 | AC 过程证据（稳定性复跑） | verification/E7-2-DYNAMIC-EVIDENCE-1/three-runs-stability.log | 8d3162c63 | 0e68425e5c49f765e4f37a9406c73047c6599e44edeba75513d9984ac6a4d692 | CANONICAL | BLOB |
+| EV-FC-01 | AC1-AC4 假夹具 3 passed | verification/E7-2-DYNAMIC-EVIDENCE-1/fake-core-tests.log | 24fc1465c | 2b60db81fb991304e58a038146918e01829280bf8e86055d7c65bc557dafcd9b | CANONICAL | BLOB |
+| EV-FC-02 | AC6 全量不回归（213/0/30） | verification/E7-2-DYNAMIC-EVIDENCE-1/coreclient-full.log | 24fc1465c | 981492067390d981d5f178362cae731f9841a96dfbf92ac22c8319c44d739a27 | CANONICAL | BLOB |
+| EV-FC-03 | AC2/AC6 变异验证（SendHostControlAsync 绕过 resync ⇒ 第 4 条变红） | verification/E7-2-DYNAMIC-EVIDENCE-1/mutation-D-sendhostcontrol.log | 24fc1465c | 99a118c9bcb24c7389f706dd7a9e27e1d0f6305c8c8c35400bbd259a5b5efd0c | CANONICAL | BLOB |
+| EV-FC-04 | AC4 变异验证（host-control poison 改 no-op ⇒ 第 5 条变红） | verification/E7-2-DYNAMIC-EVIDENCE-1/mutation-E-hostcontrol-poison.log | 24fc1465c | d770c1934e39dc42fdeac81fad79881e367bda4c2d1c0273aaaee06a0ebec25a | CANONICAL | BLOB |
+| EV-FC-05 | AC 过程证据（稳定性复跑） | verification/E7-2-DYNAMIC-EVIDENCE-1/three-runs-stability.log | 24fc1465c | 0e68425e5c49f765e4f37a9406c73047c6599e44edeba75513d9984ac6a4d692 | CANONICAL | BLOB |
 
 ## Resource Manifest
 
