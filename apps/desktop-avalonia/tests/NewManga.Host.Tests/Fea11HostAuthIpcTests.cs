@@ -45,32 +45,155 @@ public sealed class Fea11HostAuthIpcTests
         evidence.Add("pending_gate=" + pending.Code);
 
         var rowsBefore = await fixture.CountRowsAsync();
-        // KNOWN-LIMITATION-E9 (product adjudication 2026-11-15 by ZCode;
-        // doc/reviews/E9-PRODUCT-ADJUDICATION-zcode-2026-11-15.md): the sync COMPLETION chain
-        // (ACK / recovery) is unavailable for non-folder sources. AcknowledgeAsync and RecoverAsync
-        // both take the same fresh re-mint, and none of the journal/plan/payload entry points carries
-        // the container path, so the Host refuses typed instead of guessing a registry root.
-        //
-        // This is NOT a relaxed assertion. The "acknowledged"/"recovered" expectation was NEVER
-        // reachable on this fixture: the call failed before too, just with a masked
-        // UnauthorizedAccessException. The assertions below TIGHTEN the contract to the exact
-        // refusal code plus an untouched journal. When E-9 is unlocked, restore the success path.
-        var recoveryFailure = await Assert.ThrowsAsync<SourceAccessException>(
-            () => fixture.Operations.RecoverAsync(operationId));
-        Assert.Equal("SOURCE_PLAN_UNAVAILABLE", recoveryFailure.Code);
+        var wireBefore = fixture.Client.Wire.Count;
+        var applyAuthorizationJson = committed.AuthorizationJson!;
+        using var applyAuthorization = JsonDocument.Parse(applyAuthorizationJson);
+
+        // (3) ACK with the fresh authorization (real Core, host-control session).
+        var acked = await fixture.Operations.AcknowledgeAsync(operationId);
+        Assert.Equal("acknowledged", acked.State);
+        Assert.NotNull(acked.AcknowledgedAt);
+        Assert.True(fixture.Client.Wire.Count > wireBefore, "the ACK must cross the wire");
+        // The journal does NOT replay the apply-time authorization any more.
+        Assert.NotEqual(applyAuthorizationJson, acked.AuthorizationJson);
+        using var freshAuthorization = JsonDocument.Parse(acked.AuthorizationJson!);
+        var applyAt = Timestamp(applyAuthorization.RootElement.GetProperty("authorized_at"));
+        var freshAt = Timestamp(freshAuthorization.RootElement.GetProperty("authorized_at"));
+        Assert.True(freshAt > applyAt,
+            $"fresh authorized_at {freshAt:O} must be later than the apply one {applyAt:O}");
+        // ... and the identity is preserved (same operation / request digest / receipt).
+        Assert.Equal(
+            applyAuthorization.RootElement.GetProperty("operation_id").GetString(),
+            freshAuthorization.RootElement.GetProperty("operation_id").GetString());
+        Assert.Equal(
+            applyAuthorization.RootElement.GetProperty("request_digest").GetString(),
+            freshAuthorization.RootElement.GetProperty("request_digest").GetString());
+        Assert.Equal(
+            applyAuthorization.RootElement.GetProperty("host_receipt_id").GetString(),
+            freshAuthorization.RootElement.GetProperty("host_receipt_id").GetString());
+        evidence.Add("ack_authorized_at_advances=1");
+
+        // (4) The wire ACK frame itself carries that fresh authorization.
+        var ackFrame = fixture.Client.Wire.Frames.Last(frame =>
+            frame.RequestLine.Contains("\"command\":\"AcknowledgeSourceOperation\"",
+                StringComparison.Ordinal));
+        using var ackRequest = JsonDocument.Parse(ackFrame.RequestLine);
+        var wireAuthorization = ackRequest.RootElement.GetProperty("payload").GetProperty("authorization");
+        Assert.Equal(operationId, wireAuthorization.GetProperty("operation_id").GetString());
+        Assert.True(Timestamp(wireAuthorization.GetProperty("authorized_at")) > applyAt,
+            "the ACK wire authorization must be freshly signed");
+        Assert.Equal(
+            freshAuthorization.RootElement.GetProperty("authorization_digest").GetString(),
+            wireAuthorization.GetProperty("authorization_digest").GetString());
+        Assert.Equal(
+            freshAuthorization.RootElement.GetProperty("authorization_digest").GetString(),
+            CanonicalJson.Sha256Hex(ackRequest.RootElement.GetProperty("payload")
+                .GetProperty("authorization").GetProperty("authorizations")
+                .EnumerateArray()
+                .Select(item => new Dictionary<string, object?>
+                {
+                    ["registry_id"] = item.GetProperty("registry_id").GetString(),
+                    ["generation"] = item.GetProperty("generation").GetInt32(),
+                    ["identity_digest"] = item.GetProperty("identity_digest").GetString(),
+                })
+                .ToList()));
+        evidence.Add("ack_wire_authorization=fresh");
+
+        // (5) The gate opened: the SAME page now resolves through the NEW v2 key.
+        var resource = await fixture.ResolveAsync();
+        Assert.StartsWith("page-rendition-v2-", resource);
+        Assert.NotEqual("page-rendition-p1", resource);
+        evidence.Add("gate_open_resource=" + resource);
+
+        // (6) A second ACK is a pure no-op: acknowledged early return, ZERO wire frames.
+        var wireAfterAck = fixture.Client.Wire.Count;
+        var again = await fixture.Operations.AcknowledgeAsync(operationId);
+        Assert.Equal("acknowledged", again.State);
+        Assert.Equal(wireAfterAck, fixture.Client.Wire.Count);
+        evidence.Add("second_ack_frames=0");
+
+        // (7) Replaying the exact same CompletionRequest returns the SAME receipt and
+        // creates no binding (C-17 §3.2:165).
+        var replay = await fixture.ReplayAckAsync(acked);
+        Assert.Equal(acked.CommitDigest, replay.GetProperty("commit_digest").GetString());
+        Assert.Equal("acknowledged", replay.GetProperty("state").GetString());
+        var rowsAfter = await fixture.CountRowsAsync();
+        Assert.Equal(rowsBefore, rowsAfter);
+        evidence.Add($"replay_same_receipt=1 rows={rowsAfter.Bindings}/{rowsAfter.Publications}");
+
+        // (8) The source bytes are conserved (hashed before the run).
+        Assert.Equal(fixture.NewZipHash, fixture.HashOfNewZip());
+        evidence.Add("source_conserved=1");
+
+        await fixture.WriteEvidenceAsync("real-ipc-ack.txt", evidence);
+    }
+
+    [Fea11IpcFact]
+    public async Task Recovery_UsesAFreshAuthorization_AfterAWrongDigestRefusal()
+    {
+        await using var fixture = await IpcFixture.CreateAsync();
+        var evidence = new List<string>();
+
+        var operationId = await fixture.ApplyAsync();
+        var committed = fixture.Operations.Get(operationId)!;
+        Assert.Equal("core-committed", committed.State);
+        var rowsBefore = await fixture.CountRowsAsync();
+        var applyAuthorizationJson = committed.AuthorizationJson!;
+        using var applyAuthorization = JsonDocument.Parse(applyAuthorizationJson);
+        var applyAt = Timestamp(applyAuthorization.RootElement.GetProperty("authorized_at"));
+
+        // (a) A CompletionRequest with the WRONG commit digest is a typed refusal: the
+        // journal stays core-committed, the gate stays pending and no row changes.
+        var wrong = await Assert.ThrowsAsync<CoreOperationException>(
+            () => fixture.SendCompletionAsync("AcknowledgeSourceOperation", committed,
+                new string('0', 64)));
+        Assert.Equal("INVALID_REQUEST", wrong.Code);
         Assert.Equal("core-committed", fixture.Operations.Get(operationId)!.State);
         Assert.Equal(rowsBefore, await fixture.CountRowsAsync());
+        var stillPending = await Assert.ThrowsAsync<CoreOperationException>(
+            () => fixture.ResolveAsync());
+        Assert.Equal("SOURCE_ACCESS_DENIED", stillPending.Code);
+        evidence.Add("wrong_digest_ack=" + wrong.Code + " gate=pending");
 
-        var recoveryAgain = await Assert.ThrowsAsync<SourceAccessException>(
-            () => fixture.Operations.RecoverAsync(operationId));
-        Assert.Equal("SOURCE_PLAN_UNAVAILABLE", recoveryAgain.Code);
-        Assert.Equal("core-committed", fixture.Operations.Get(operationId)!.State);
-        evidence.Add("recovery_refused=" + recoveryFailure.Code + " journal_unchanged=1");
+        // (b) Recovery of the never-ACKed committed operation succeeds with a FRESH
+        // authorization, opens every gate and is idempotent on a second call.
+        var wireBefore = fixture.Client.Wire.Count;
+        var recovered = await fixture.Operations.RecoverAsync(operationId);
+        Assert.Equal("recovered", recovered.State);
+        Assert.True(fixture.Client.Wire.Count > wireBefore, "the recovery must cross the wire");
+        Assert.NotEqual(applyAuthorizationJson, recovered.AuthorizationJson);
+        using var freshAuthorization = JsonDocument.Parse(recovered.AuthorizationJson!);
+        Assert.True(
+            Timestamp(freshAuthorization.RootElement.GetProperty("authorized_at")) > applyAt,
+            "the recovery authorization must be freshly signed");
+        Assert.Equal(
+            applyAuthorization.RootElement.GetProperty("host_receipt_id").GetString(),
+            freshAuthorization.RootElement.GetProperty("host_receipt_id").GetString());
+        evidence.Add("recovery_authorized_at_advances=1");
 
-        var recoverPending = await Assert.ThrowsAsync<CoreOperationException>(() => fixture.ResolveAsync());
-        Assert.Equal("SOURCE_ACCESS_DENIED", recoverPending.Code);
+        var recoveryFrame = fixture.Client.Wire.Frames.Last(frame =>
+            frame.RequestLine.Contains("\"command\":\"CompleteSourceOperationRecovery\"",
+                StringComparison.Ordinal));
+        using var recoveryRequest = JsonDocument.Parse(recoveryFrame.RequestLine);
+        var recoveryWireAuthorization = recoveryRequest.RootElement
+            .GetProperty("payload").GetProperty("authorization");
+        Assert.True(Timestamp(recoveryWireAuthorization.GetProperty("authorized_at")) > applyAt,
+            "the recovery wire authorization must be freshly signed");
+        Assert.Equal(recovered.CommitDigest, committed.CommitDigest);
+        evidence.Add("recovery_wire_authorization=fresh");
+
+        var wireAfterRecovery = fixture.Client.Wire.Count;
+        var again = await fixture.Operations.RecoverAsync(operationId);
+        Assert.Equal("recovered", again.State);
+        Assert.Equal(wireAfterRecovery, fixture.Client.Wire.Count);
+        evidence.Add("second_recovery_frames=0");
+
+        var resource = await fixture.ResolveAsync();
+        Assert.StartsWith("page-rendition-v2-", resource);
+        Assert.Equal(rowsBefore, await fixture.CountRowsAsync());
         Assert.Equal(fixture.NewZipHash, fixture.HashOfNewZip());
-        evidence.Add("gate_open_resource=none rows_unchanged=1");
+        evidence.Add("gate_open_resource=" + resource + " rows_unchanged=1");
+
         await fixture.WriteEvidenceAsync("real-ipc-recovery.txt", evidence);
     }
 

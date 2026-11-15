@@ -279,19 +279,22 @@ public sealed class SourceOperationCoordinator
                 throw new SourceAccessException("SOURCE_ACCESS_DENIED");
             }
 
-            // E9-RECOVERY-PATH-FIX-1 (finding E-9, P2): a registry ROOT is an authorization boundary --
-            // a directory the caller may read -- NOT the container file this grant is about. Passing
-            // roots[0] as sourcePath only works for sourceKind=="folder", where the root *is* the
-            // container; for zip/cbz/pdf/image it hands a directory to DescribeContainer, which fails with
-            // UnauthorizedAccessException (masked as SOURCE_ENTRY_MISSING before MINT-FAILURE-DIAG-1).
+            // E9-FILE-ROOT-RECOVERY-1 (finding E-9): a registry ROOT is the path the user selected when
+            // the source was registered -- `SourceImportModels.IssueGrantsAsync` passes the SAME `path`
+            // to `FindOrRegisterRootAsync` (which registers it as the root) and to `IssueAsync` (as
+            // sourcePath), and `SourceImportModels.RegisterRoot` writes `roots = [path]`.
             //
-            // Neither JournalEntry (AuthorizationJson -> registry_id/generation/identity_digest) nor
-            // SourceSyncPlanMaterialization (source_id/version_id/content_digest/entries) records the
-            // container path, so there is NO authoritative path to use here. Refuse typed rather than
-            // guess one: a typed refusal is honest, a guessed directory is a lie that shows up as a
-            // misleading file-system error. Recording the container path is a contract change
-            // (UNFREEZE) and must be decided elsewhere -- see finding E-9.
-            if (!string.Equals(sourceKind, "folder", StringComparison.Ordinal))
+            // So for a container source (zip/cbz/pdf/image) roots[0] is the container FILE itself, not
+            // its parent directory. The earlier revision of this method assumed the opposite and refused
+            // every non-folder source typed; that premise was wrong (proven by the call sites above) and
+            // is corrected here.
+            //
+            // We still refuse typed instead of guessing: if a caller ever registers a DIRECTORY root for
+            // a container kind, roots[0] would not be a file, and handing it to DescribeContainer would
+            // fail with a misleading file-system error. Requiring File.Exists keeps the fail-closed
+            // stance -- a typed refusal is honest, a guessed directory is a lie.
+            if (!string.Equals(sourceKind, "folder", StringComparison.Ordinal)
+                && !File.Exists(roots[0]))
             {
                 throw new SourceAccessException("SOURCE_PLAN_UNAVAILABLE");
             }

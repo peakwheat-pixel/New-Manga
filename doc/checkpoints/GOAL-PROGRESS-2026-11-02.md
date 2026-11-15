@@ -2244,3 +2244,26 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   `crash-ack.ps1` 须实测达 `CRASH_POINT=SATISFIED`；交付须含 **zip 正向恢复用例 + "目录 root + 容器 kind 仍拒绝"负例**。
 - **教训**：我把"roots"这个词的字面直觉当成了事实，**没读 RegisterRoot 的实现与调用方**。
   这是同一个模式的第 11 次；**而这次是外部裁决替我抓住的**。
+## 256. ★★ E9-FILE-ROOT-RECOVERY-1：E-9 **已解锁**，`crash-ack.ps1` 由 `NOT_SATISFIED` → **PASS**（2026-11-15，DSH，goal 轮次 57）
+
+- **一处判别分支即解锁**（依据 ZCode 裁决）：`MintRecoveryGrantsAsync` 把
+  "非 folder 一律拒绝"改为"非 folder 且 `!File.Exists(roots[0])` 才拒绝"。
+  **fail-closed 保留**（容器 kind + 目录 root 仍 typed 拒绝）。**契约零改动**（`verify_pins` 18/18）。
+- **同时更正了我自己写的错误注释**：旧注释断言"registry ROOT 是授权边界（目录）……没有任何权威路径可用"，
+  那是基于我的错误前提；新注释写明 `IssueGrantsAsync` 把**同一个 path** 同时给 root 与 sourcePath。
+- **三条独立验收证据**：
+  1. **解锁直接证据**：改代码后、翻回断言前，那 2 个"必须拒绝"的测试**变红**
+     （`Assert.Throws() Failure: No exception was thrown`）⇒ 拒绝消失。
+  2. **全量 Host.Tests**：**2 failed / 347 passed / 50 skipped** —— 剩余 2 个是 `CrashPoint_*`
+     缺 `CRASH_STATE` 的**前置 assert**（环境类）；**E-9 原先挡住的 2 个测试已通过**，
+     断言**翻回原始正向断言**（`acknowledged`/`recovered`），**未放宽**。
+  3. **★ 真实崩溃点驱动**：`crash-ack.ps1` 从 `CRASH_POINT=NOT_SATISFIED / EXIT=12`
+     变为 **`CRASH_POINT=PASS / EXIT=0`**，10 项 CHECK 全 1:
+     `acknowledge_once / gates_open / rows_unchanged / second_call_idempotent / commit_digest_match /
+     distinct_host_pid / distinct_core_session / fresh_grant / source_sha256_unchanged / sidecar_proven_dead`。
+- **证据卫生**：跑前快照 **14517** 个受控文件，跑完 **`polluted=0`**。
+- **仍未做（诚实）**：①**负例测试未加** —— 裁决要求"目录 root + 容器 kind 仍须拒绝"要有测试固定住，
+  当前**只有代码逻辑没有测试**，若有人把条件改成无条件放行，**现有测试不会红**；
+  ②`E9-KNOWN-LIMITATION-REGISTER` **尚未按裁决回退**（仍写着限制成立）。
+- **意义**：E-9 从"永久限制"变成"已解锁"。我此前把它当成 Gate 的技术死结、还建议用户接受限制，
+  **根因是我没读 `RegisterRoot` 的实现**。这是本项目"先猜后查"代价最大的一次。
