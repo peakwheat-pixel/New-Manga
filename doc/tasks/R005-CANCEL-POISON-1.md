@@ -97,12 +97,17 @@ catch (OperationCanceledException) when (!cancellationToken.IsCancellationReques
 
 | evidence_id | AC/Gate | path | commit | sha256 | class | sha256_basis |
 |---|---|---|---|---|---|---|
-| EV-R005-01 | AC1/AC2/AC3/AC4 证据总述 | verification/R005-CANCEL-POISON-1/README.md | PIN_PENDING | PIN_PENDING | CANONICAL | BLOB |
-| EV-R005-02 | AC1 第一分支红日志 | verification/R005-CANCEL-POISON-1/test-red.log | PIN_PENDING | PIN_PENDING | CANONICAL | BLOB |
-| EV-R005-03 | AC1 第二分支红日志 | verification/R005-CANCEL-POISON-1/test-red2-eventskip.log | PIN_PENDING | PIN_PENDING | CANONICAL | BLOB |
-| EV-R005-04 | AC3 修后绿（3 passed） | verification/R005-CANCEL-POISON-1/test-green3-final.log | PIN_PENDING | PIN_PENDING | CANONICAL | BLOB |
-| EV-R005-05 | AC5 全量不回归（195/0/30） | verification/R005-CANCEL-POISON-1/coreclient-no-sidecar-final.log | PIN_PENDING | PIN_PENDING | CANONICAL | BLOB |
-| EV-R005-06 | AC2 修复 diff（两分支） | verification/R005-CANCEL-POISON-1/fix.diff | PIN_PENDING | PIN_PENDING | CANONICAL | BLOB |
+| EV-R005-01 | AC1/AC2/AC3/AC4 证据总述 | verification/R005-CANCEL-POISON-1/README.md | 2ef08110c | 29ea0710a3ce7fee2c3bd470ba2db8c16d55c33abd2245749d39ffa4734ff4a4 | CANONICAL | BLOB |
+| EV-R005-02 | AC1 第一分支红日志 | verification/R005-CANCEL-POISON-1/test-red.log | 2ef08110c | e066509b9418b2b7ff427c2a2f530338d23f175de5ed94d54e83a637b235c90a | CANONICAL | BLOB |
+| EV-R005-03 | AC1 第二分支红日志 | verification/R005-CANCEL-POISON-1/test-red2-eventskip.log | 2ef08110c | 84996f5b6e86c10619d892f8c66e2b3c16911942d6e7b98272316d78307b26f7 | CANONICAL | BLOB |
+| EV-R005-04 | AC3 修后绿（3 passed） | verification/R005-CANCEL-POISON-1/test-green3-final.log | 2ef08110c | d27518b9f6506b1b618357f2979d2902b95324ec26113e64116202bf817eaad2 | CANONICAL | BLOB |
+| EV-R005-05 | AC5 全量不回归（195/0/30） | verification/R005-CANCEL-POISON-1/coreclient-no-sidecar-final.log | 2ef08110c | f0f0721cd517b15254e1794959123226a27e6822ee5942bd345993295e8edecb | CANONICAL | BLOB |
+| EV-R005-06 | AC2 修复 diff（两分支） | verification/R005-CANCEL-POISON-1/fix.diff | 2ef08110c | a88ad6251be3d94820da32321d0cfb24758c109a2be1566b3189ac63e087fae5 | CANONICAL | BLOB |
+| EV-R005-07 | AC 过程证据（中间态/对照） | verification/R005-CANCEL-POISON-1/coreclient-full.log | 2ef08110c | e3649d94fe131a9a7e3690e10965da51c590ca07cab3d23d5d7001e3efb8e7ef | CANONICAL | BLOB |
+| EV-R005-08 | AC 过程证据（中间态/对照） | verification/R005-CANCEL-POISON-1/coreclient-no-sidecar.log | 2ef08110c | 7cf6fdc00736ad21af40f8427fd9dfc7f3d03418060702953c560154b3ec82d5 | CANONICAL | BLOB |
+| EV-R005-09 | AC 过程证据（中间态/对照） | verification/R005-CANCEL-POISON-1/coreclient-no-sidecar-after2.log | 2ef08110c | f0f0721cd517b15254e1794959123226a27e6822ee5942bd345993295e8edecb | CANONICAL | BLOB |
+| EV-R005-10 | AC 过程证据（中间态/对照） | verification/R005-CANCEL-POISON-1/test-green.log | 2ef08110c | f439fc5c5e0391d06213b1d992aae20aa78e40b1e03c9a6e06a185fcd7ba0337 | CANONICAL | BLOB |
+| EV-R005-11 | AC 过程证据（中间态/对照） | verification/R005-CANCEL-POISON-1/test-green2-eventskip.log | 2ef08110c | d27518b9f6506b1b618357f2979d2902b95324ec26113e64116202bf817eaad2 | CANONICAL | BLOB |
 
 ## Resource Manifest
 
