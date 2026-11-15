@@ -108,7 +108,7 @@ RUN-OCR-DIAG-1 实证两个 Core 侧阻断点：
 - 当前指针清理：关闭时由 DSH 更新 STATUS/PLAN/LEDGER。
 ## Review（DSH 集成复核，2026-10-27）— PASS
 
-- 改动入 main：d85c4173 已含 color 装配注入 + handle_detect 语义 + 相关测试；剩余 src/application/tasks/service.py、handlers 补充、测试与证据由 DSH 提交 $c1。
+- 改动入 main：ed85c4173 已含 color 装配注入 + handle_detect 语义 + 相关测试；剩余 src/application/tasks/service.py、handlers 补充、测试与证据由 DSH 提交 $c1。
 - DSH 定向复跑 6 个相关测试文件：**73 passed**；实现方全量 pytest **3F/2753P/9S**（失败集合同基线、0 新增）。
 - 同构建 8 页复验（frozen core_service.exe 2b36bfeb… 未改，PyInstaller 无法原地补丁，重打包属发布步骤）：pages1–3 detect/ocr/**color 3/3 completed**、term_extract 通过，止于 	ranslate PROVIDER_NOT_CONFIGURED（未到 render）；pages4–8 completed(0 region)；负向 policy=fail 保持旧 INVALID_INPUT。
 - 遗留：① translate 未接入（Run 止于此，需 provider slice）；② 可复现独立异常——python -m bootstrap.core_service 调度线程内 detect StepRun 卡 running、下游 regionless ocr 报 INVALID_INPUT（进程内 execute_run 正常）：建议另开诊断 Task；③ 冻结 exe 未重打包（发布步）。

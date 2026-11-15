@@ -112,7 +112,7 @@ allowed_paths:
 - **判定：主线 macos-sonoma 已达标，未新增 pack/id**——7 packs、默认仍 saber-purple、Light/Dark 双 token+material、AppBg/HeaderBg/Accent/MicaFallback 全映射、圆角 12/14/8/6 + 柔和阴影、交通灯仅视觉。
 - 补齐：恢复 9 项 ThemeMacosTests + 2 项审计（字体许可：0 字体二进制；交通灯：装饰/缩放/客户区不变）+ 真机截图 + 启动 hook（--theme/--variant/--page，缺省不变）。
 - 数字：test.ps1 **243/243**（61/56/126）；vitest 60/567；pytest **0F/2773P/10S**；热切换 **p95=10.456ms**（max 15.830，48 samples）；对比度 Light 正文 15.457/16.830、次要 4.658/5.071、nav 8.521；Dark 正文 15.311/12.800、次要 5.806/4.853、nav 9.290。
-- 真机截图 4 张：erification/THEME-MACOS-2/real-app-{bookshelf,settings}-{light,dark}.png（背景采样 #F5F5F7 / #1E1E1E）。
+- 真机截图 4 张：verification/THEME-MACOS-2/real-app-{bookshelf,settings}-{light,dark}.png（背景采样 #F5F5F7 / #1E1E1E）。
 - 遗留：冲突 worktree 的外部 WIP（Lead 另行处置）；launchpad/split 不在范围。
 - 集成：ec7316738。
 ## 合并实现（择优裁决，2026-10-28，DSH）
@@ -121,10 +121,10 @@ allowed_paths:
 
 | 版本 | 内容 | 裁决 |
 |---|---|---|
-| 外部 	ask/THEME-MACOS-2（ e1f71151） | 三套布局主题（Sonoma / **Launchpad** / **Split**）：ThemePack.cs +425 行（LayoutProfiles）、Pages.cs +412（SettingsPage/BookshelfPage.ApplyLayout）、MainWindow +6、ThemeLayoutsTests.cs 909 行 | **采用**（功能 richer） |
-| saber 	ask/THEME-MACOS-2-saber（faec8f54） | macos-sonoma 达标判定、9 项 ThemeMacosTests、2 项审计（字体许可/交通灯）、4 张真机截图、p95 10.456ms、对比度数据 | **保留**（证据/审计） |
+| 外部 	ask/THEME-MACOS-2（e1f71151） | 三套布局主题（Sonoma / **Launchpad** / **Split**）：ThemePack.cs +425 行（LayoutProfiles）、Pages.cs +412（SettingsPage/BookshelfPage.ApplyLayout）、MainWindow +6、ThemeLayoutsTests.cs 909 行 | **采用**（功能 richer） |
+| saber 	ask/THEME-MACOS-2-saber（bfaec8f54） | macos-sonoma 达标判定、9 项 ThemeMacosTests、2 项审计（字体许可/交通灯）、4 张真机截图、p95 10.456ms、对比度数据 | **保留**（证据/审计） |
 
-- 冲突处置：代码冲突取外部实现；ThemePack.cs 与 MainWindow.axaml 取 84dd38978 的布局版（外部实现依赖）；文档保留本卡版本；外部证据另存 erification/THEME-MACOS-2-external/；外部 Handoff 存档为 doc/handoffs/THEME-MACOS-2-external-handoff.md。
+- 冲突处置：代码冲突取外部实现；ThemePack.cs 与 MainWindow.axaml 取 84dd38978 的布局版（外部实现依赖）；文档保留本卡版本；外部证据另存 verification/THEME-MACOS-2-external/；外部 Handoff 存档为 doc/handoffs/THEME-MACOS-2-external-handoff.md。
 - 合并后验证：dotnet build OK；	est.ps1 **249/249**（含外部 ThemeLayoutsTests）。
 - 遗留：macos-launchpad / macos-split 布局未做真机截图验收（仅测试覆盖）；如需发布级验收另开小卡。
 - integration_commit: 828c7c68e。

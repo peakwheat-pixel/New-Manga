@@ -117,7 +117,7 @@ out_of_scope:
 
 | resource_type | 资源 | disposition | 目标 | 完整性 | 引用/进程检查结果 |
 |---|---|---|---|---|---|
-| 无删除/移动/归档 | - | NOT_APPLICABLE | - | - | 本卡仅改契约/冻结记录/矩阵/载体/证据；仓内 0 删除/0 移动/0 归档；2A 证据与 erification/FEA-09 并发改动均未进入本卡提交（显式 pathspec）；工作区 tmp blob 副本无独有数据，保留 |
+| 无删除/移动/归档 | - | NOT_APPLICABLE | - | - | 本卡仅改契约/冻结记录/矩阵/载体/证据；仓内 0 删除/0 移动/0 归档；2A 证据与 verification/FEA-09 并发改动均未进入本卡提交（显式 pathspec）；工作区 tmp blob 副本无独有数据，保留 |
 
 ## Closeout Record（2026-11-07）
 

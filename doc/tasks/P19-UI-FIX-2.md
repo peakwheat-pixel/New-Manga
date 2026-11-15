@@ -104,7 +104,7 @@ missing-manifest-resource-facts.md`（实测）。**本表不构成任何删除/
 
 ## Closeout Record
 
-- 关闭：2026-10-17（dsh）。Reviewer=dsh（approved，erification/P19-UI-FIX-2/dsh-review-r1.md）。
-- 合并 bec0b030（--no-ff，无冲突）；delivery_head 1fab8017。
+- 关闭：2026-10-17（dsh）。Reviewer=dsh（approved，verification/P19-UI-FIX-2/dsh-review-r1.md）。
+- 合并 ebec0b030（--no-ff，无冲突）；delivery_head f1fab8017。
 - 复核要点：顶栏导入现有 import-dialog+import-unavailable-notice；三类入口（toolbar/empty-state/book-detail）行为一致有测试；AC4 GUI 前后对比 + sidecar hash 前后 + **用户数据保全检查** 齐备。
 - **记录缺陷（未尽事项）**：**未产出 doc/handoffs/P19-UI-FIX-2-*.md**（AC5 要求）。受让人未补写，Coordinator 不代写以免伪造执行方自述——如实登记，不阻断集成。

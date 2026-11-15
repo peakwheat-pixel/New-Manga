@@ -84,7 +84,7 @@ allowed_paths:
 
 - 修复内容：根窗口/TitleBar 去不透明背景；Mica 时 Transparent + 标题栏半透明 scrim；回退仍不透明 MicaFallback。
 - **AC2 PASS**（实测日志）：material=Mica; requested=Mica,Blur,None; actual=Mica（两次启动一致）→ 证明拿到 Mica 而非 None。
-- **AC1 PASS**（真机 A/B）：同窗口置于纯色壁纸 vs 图案壁纸，标题栏取样色 **#FFFFFF → #F0EBF7**（数值化色差），截图 erification/MICA-FIX-1/mica/titlebar-{solid,pattern}.png；壁纸已恢复。
+- **AC1 PASS**（真机 A/B）：同窗口置于纯色壁纸 vs 图案壁纸，标题栏取样色 **#FFFFFF → #F0EBF7**（数值化色差），截图 verification/MICA-FIX-1/mica/titlebar-{solid,pattern}.png；壁纸已恢复。
 - **AC3 PARTIAL**：Win10 真机不可得（NOT_RUN）；WindowMaterial.Choose(10,19045)→Opaque 单测覆盖，回退背景不透明。
 - **AC4 PASS**：DSH 复跑 scripts/test.ps1 **102/102**；旧壳 vitest **60/567**；pytest **3F/2739P/9S**（0 新增失败）。
 - **AC5 PASS**：check.ps1 -TaskPath PASS；证据 pin 已入库；Handoff 见 doc/handoffs/MICA-FIX-1-handoff.md。

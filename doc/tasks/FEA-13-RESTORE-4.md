@@ -133,6 +133,6 @@ out_of_scope:
 - **Review**：r1 changes_requested（P0=0/**P1=2**/P2=6/P3=5；AC4 FAIL）→ 处置；r2 **approve**（FIXED 8 / PARTIAL 5 / OPEN 0；无新增 P0/P1；AC1–AC6 全 MET）。
 - **P1 修复**：merge 路径补齐跨库门禁（BACKUP_DATABASE_MISMATCH）与 run 门禁（BACKUP_RESTORE_BUSY）；L-5 增加 pipeline 命令入口门（Prepare/Accept/Start/Control…）。
 - **P3 残余处置**：死 mode 校验已删；pipeline 门与 BUSY 门补用例；README 口径/COMMIT→marker 窗口/wire 预览缺口/C# 骨架/C# 测试等登记后续。
-- **门禁**：备份/恢复面 9 文件 **98 passed**（EXIT 0）；变异①defer 覆盖 **1 failed/6 passed**、②关闭 L-5 **1 failed/6 passed**、③关闭跨库门禁 **1 failed/6 passed**（均 EXIT 1，复原后 14 passed）；dotnet build 0/0；check.ps1 默认 + -TaskPath PASS（3 warnings）；erify_pins 18/18。
+- **门禁**：备份/恢复面 9 文件 **98 passed**（EXIT 0）；变异①defer 覆盖 **1 failed/6 passed**、②关闭 L-5 **1 failed/6 passed**、③关闭跨库门禁 **1 failed/6 passed**（均 EXIT 1，复原后 14 passed）；dotnet build 0/0；check.ps1 默认 + -TaskPath PASS（3 warnings）；verify_pins 18/18。
 - **交付/集成**：实现 `f9ebce677`；r2 返修 `fcccf4604`（`integration_commit`）；本收口提交仅翻转状态与指针。
 - **边界**：0 契约字节、0 pin；diff ⊆ allowed_paths（含 ADJ 裁决文档）。

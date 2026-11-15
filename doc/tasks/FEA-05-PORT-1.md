@@ -122,4 +122,4 @@ allowed_paths:
 - Closeout date / DSH：待关闭时填写。
 - 2026-11-02：范围复核 r1（P0×2/P1×1）→ r2（P0=0/P1×2）→ r3（P1×1）→ **r4 approved（P0/P1=0，P2×3 接受遗留）**；置 
 eady，DSH 实现（Codex 通道故障）。
-- 2026-11-02 / DSH：FEA-05-PORT-1 完成（24600bbee）——范围 r1–r4（r4 approved）、实现 impl-r1–r3（r3 approved，P0/P1=0，P2×11 接受）；UNFREEZE 两冻结物（Region 契约 v1.6、C-07 pin 3fdb44e4…）经独立复核通过；全量 sln **949/0/57**；erify_pins 15/15；置 done。
+- 2026-11-02 / DSH：FEA-05-PORT-1 完成（24600bbee）——范围 r1–r4（r4 approved）、实现 impl-r1–r3（r3 approved，P0/P1=0，P2×11 接受）；UNFREEZE 两冻结物（Region 契约 v1.6、C-07 pin 3fdb44e4…）经独立复核通过；全量 sln **949/0/57**；verify_pins 15/15；置 done。

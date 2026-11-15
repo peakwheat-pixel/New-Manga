@@ -121,7 +121,7 @@ out_of_scope:
 
 - **2026-11-09 / DSH（关账）**：AC1–AC6 全部 MET；C-09 SC-B07 的 ②③⑤⑥ 落地（④ 独立裁决）。
 - **Review**：r1 独立子代理 **approved**（P0=0/P1=0/P2=3/P3=9）→ 处置；r2 独立子代理 **approved**（FIXED 7 / PARTIAL 5 / OPEN 0；无新增 P0/P1）→ 5 项 PARTIAL 逐项处置（负测、page-original 断言、日志头、措辞收窄、旧包覆盖更正）。
-- **门禁**：备份相关 5 文件 **66 passed**（EXIT 0）；变异① 1 failed/5 passed（EXIT 1）、变异② 1 failed（EXIT 1）、复原 27 passed（EXIT 0）；check.ps1 默认 + -TaskPath PASS（3 warnings）；erify_pins 18/18。
+- **门禁**：备份相关 5 文件 **66 passed**（EXIT 0）；变异① 1 failed/5 passed（EXIT 1）、变异② 1 failed（EXIT 1）、复原 27 passed（EXIT 0）；check.ps1 默认 + -TaskPath PASS（3 warnings）；verify_pins 18/18。
 - **残余**：base-writer 字节 golden（片 2/后续）；SC-B07 ④ 独立裁决；wire envelope 端到端（另案）；core_service.py:6959-6962 注释更新（另案，片内仅允许映射一行）。
 - **交付/集成**：实现 `ac1882fc8`；r2 返修 `389f30309`；r3 处置 `7fc975e46`（`integration_commit`）。本收口提交仅翻转状态与指针。
 - **边界**：0 契约字节、0 pin 重算、0 C# 改动；diff ⊆ allowed_paths（`core_service.py` 仅映射一行 + 注释未动）。

@@ -342,7 +342,7 @@ erification/FEA-09/ipc/。 | `verification/FEA-09/logs/dsh-real-ipc.log` |
 | R1-I011 | P2 | **FIXED**：旧台账归档 `history/EV-2026-11-03.md`；`tools/rebuild_ev.py` 从 git ls-files 生成 57 行唯一 ID/0 PENDING 台账；合成目录去跟踪+gitignore；历史缺失 50 条单列 | closeout |
 
 **批次 1 完成后**：pytest/check/pins + 定向 real IPC 复跑；**全部批次完成后**：新的独立实现复核（不得由本会话自审）→ DSH 最终集成。
-| 2026-11-03 | **实现 Review r1 批次 1 返修（DSH）**：I002 grant 四维绑定（ind_imported_entry/
+| 2026-11-03 | **实现 Review r1 批次 1 返修（DSH）**：I002 grant 四维绑定（bind_imported_entry/
 ind_bound_for_source，删除身份回退）、I007 解码预算前置、I009 plan 项目/策略绑定、I010 typed 存储原因；I001 经 Codex 独立裁决选 **B（UNFREEZE 前置）**，归档 doc/reviews/FEA-09-I001-adjudication.md。pytest tests/fea09 **103 passed**；library 63/import_formats 32/m2rc 110/core_service 6 PASS；真实 IPC 1 passed。 | `verification/FEA-09/logs/dsh-review-batch1.log` |
 | 2026-11-03 | **实现 Review r1 批次 2 返修（DSH）**：I003 部分重试逐页补齐、I004 真加密 PDF（含 pdfium 密码编码修复）、I006 folder resolve 绑定生效。pytest tests/fea09 **106 passed**；library/reading_export/import_formats/p09 全 PASS；真实 IPC 1 passed。 | `verification/FEA-09/logs/dsh-review-batch2.log` |
 | 2026-11-03 | **实现 Review r1 批次 3a：R1-I008**（DSH）：resolve 拆分 prepare/render；生产装配 RenditionCache（derived_root 尊重 M2RC1_DERIVED_ROOT）；命中不解码、metadata source-renditions/、损坏重建。pytest tests/fea09 **107 passed**；m2rc 110/core_service 6/library+reading 204 PASS；真实 IPC 1 passed。 | `verification/FEA-09/logs/dsh-review-batch3a.log` |

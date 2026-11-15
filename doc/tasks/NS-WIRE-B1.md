@@ -107,7 +107,7 @@ backup_delete、cleanup_retry_pending、library_control_run、library_delete_boo
 - 13 条全部对冻结 core_service 真实执行：**11 success + 2 typed 域错误**（PLUGIN_NOT_FOUND/TARGET_NOT_FOUND，证明 handler 在跑）；每条请求行（minor 可见）入证据。
 - 版本坑按证据落地：P15=minor 7、DELETE=minor 10、CREATE=minor 8；错误 minor 被 INVALID_REQUEST 拒（独立探针）。
 - 参数边界 15 个非法用例全 INVALID_ARGUMENTS 且 **0 Core 帧**；delete 兼容旧壳 payload:{...} 与内联两种调用。
-- parity：xtract-command-surface.py --check PASS 零漂移；契约 **33/33 → 46 IMPLEMENTED / 20 NOT_SUPPORTED**（13 条 changed，coverage 100）。
+- parity：extract-command-surface.py --check PASS 零漂移；契约 **33/33 → 46 IMPLEMENTED / 20 NOT_SUPPORTED**（13 条 changed，coverage 100）。
 - 回归：DSH 复跑 scripts/test.ps1 见执行记录（实现方报 161/161：44/42/75）；vitest 60/567；pytest 3F/2746P/9S 无新增。
 - AC5：check.ps1 -TaskPath PASS；13 条 64-hex pin；Handoff + Record Decision（minor/参数边界策略）。
 - 遗留（记录不阻塞）：剩余 20 条 NS（medium 11 + 其它 Task 9）；Avalonia 设置页 UI 入口未接（后续 UI Task）；minor 硬编码随 Core 升级需重跑 probe-b1.py。

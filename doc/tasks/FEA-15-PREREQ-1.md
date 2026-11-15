@@ -96,7 +96,7 @@ out_of_scope:
 
 - **2026-11-09 / DSH（关账）**：AC1–AC4 全部 MET；2 个既有 App.Tests 失败消除（V2Conformance / FluentPage），FEA-15 前置测试债清理完成。
 - **Review**：r1 独立子代理 **approved**（P0=0/P1=0/P2=1/P3=4）→ 处置：R-001 allowed_paths 补治理指针 + AC4 措辞；R-002 注释/out_of_scope 口径；R-003 去重断言改域名规则 Assert.Empty(Conflicts)；R-004 死 using 删除 + using 排序；R-005 证据措辞对齐。
-- **门禁**：目标 2 用例 **2 passed**（改后复跑）；V2ImmersiveReaderTests 3 passed；dotnet build 0/0；App.Tests 全量 **838 passed / 0 failed / 11 skipped**（改动仅为注释/using/断言，全量重跑取自信任 EV + 本次目标回归）；check.ps1 默认 + -TaskPath PASS；erify_pins 18/18。
+- **门禁**：目标 2 用例 **2 passed**（改后复跑）；V2ImmersiveReaderTests 3 passed；dotnet build 0/0；App.Tests 全量 **838 passed / 0 failed / 11 skipped**（改动仅为注释/using/断言，全量重跑取自信任 EV + 本次目标回归）；check.ps1 默认 + -TaskPath PASS；verify_pins 18/18。
 - **变异**：literal brush 恢复 → V2Conformance RED；断言 17 → FluentPage RED；复原（-t:Rebuild）后 2 passed。
 - **交付/集成**：实现 `f7134ba83`（`integration_commit`）；本收口提交含 R-001…R-005 处置与指针翻转。
 - **边界**：0 契约字节、0 pin；diff ⊆ allowed_paths（含生命周期指针三文件）。

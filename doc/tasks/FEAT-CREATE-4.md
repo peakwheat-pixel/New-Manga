@@ -86,6 +86,6 @@ missing-manifest-resource-facts.md`（实测）。**本表不构成任何删除/
 
 ## Closeout Record
 
-- 关闭：2026-10-17（dsh）。Reviewer=dsh（approved）。合并 cd509fd9（--no-ff，无冲突）。
+- 关闭：2026-10-17（dsh）。Reviewer=dsh（approved）。合并 fcd509fd9（--no-ff，无冲突）。
 - 复核要点：前端真调 library_create_book×11 / create_chapter×9（形状符 §5.10）；空书架 + 新建作品 **GUI 实测 IsEnabled=True**；前端 **278 passed**（基线 274 → +4）；isolation_copy=PASS source_unchanged=true（**用户真实数据未变**）；构建链（npm build → sidecar 重建 → cargo）完成。
 - **DAG 效果**：创建能力四段链（FEAT-CREATE-1..4）全部 done → **P19 的 AC2 主流程具备真实前置能力**。

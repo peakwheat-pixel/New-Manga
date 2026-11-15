@@ -96,7 +96,7 @@ SETTINGS-PROFILE-UI-1 的「Provider 绑定」scope=book/chapter 仍需手填 id
 ## Review（DSH 集成复核，2026-10-27）— PASS
 
 - scope=book/chapter：书籍下拉（library_list_books → Snapshot.Books 书名）+ 章节下拉（list_chapters 章名）；选书自动加载并默认首章；切 scope 重置；未选齐禁用提交；空库/无章节空态；手填 id 输入已移除。
-- 证据：5 项 headless（chapter 全链 chapter_id=chapter-2、book scope ook_id=book-0、空库 0 调用、无章+重置、选章后可绑定）。
+- 证据：5 项 headless（chapter 全链 chapter_id=chapter-2、book scope book_id=book-0、空库 0 调用、无章+重置、选章后可绑定）。
 - 回归：DSH 复跑 test.ps1 见执行记录（实现方报 215/215：61/55/99）；vitest 60/567；pytest 3F/2772P/9S（0 新增）；check.ps1 -TaskPath PASS；11 条 pin。
 - 遗留：真实 Core 读取由 READER-LIBRARY-WIRE-1/CHAPTER-SELECTOR-1 冻结 sidecar 覆盖（本卡用 seam）；书架列表进设置页刷新（无跨页 live）；book scope 不显示章节。
 - 集成：093cc691d。

@@ -147,7 +147,7 @@ out_of_scope:
 
 ### Closeout 补充（2026-11-07；记录修正）
 
-- 独立 Review r1 在提交后对边界说明补一句事实澄清（工作树并发文件归属），文件 sha256 由 2e2079cd… 变为 540f9f3c…；卡 EV-16 已重签到 5e4a572ab 提交。**不改变** AC-G1…G8 判定、reviewed_head 0bafc89e、approved 结论与任何实现/测试/证据字节。
+- 独立 Review r1 在提交后对边界说明补一句事实澄清（工作树并发文件归属），文件 sha256 由 2e2079cd… 变为 540f9f3c…；卡 EV-16 已重签到 5e4a572ab 提交。**不改变** AC-G1…G8 判定、reviewed_head a0bafc89e、approved 结论与任何实现/测试/证据字节。
 
 ### Closeout 补充（2026-11-07；证据格式登记）
 

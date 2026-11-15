@@ -176,4 +176,4 @@ AD-002 §4；DISPLAY-PERF 决策书 G2–G5；S3 已完成主窗/主题/书架�
 - 三个硬数字复核采信实现方证据（我复跑了测试与治理；性能数字为其可复跑脚本产出、证据已 pin）：fit 利用率 **0.99**、翻页首帧 **p95 1.05ms**、webtoon 滚动 **p95 0ms**、解码缓存 **93.8MB**、DPR2+400% 整数设备像素无插值、竖排/横排 1:1。
 - 口径说明（接受为限制并记入 S5 前置）：① headless 无 Skia 像素回读 → 1:1/DPR2 以几何+配置+fixture sha 断言，**真机像素 smoke 进 S5 Gate**；② webtoon 内存为解码字节口径，进程工作集峰值进 S5 Gate；③ 工作台 tile 预览占位，Core tile 通道在 S5 落地（ADR-0002）。
 - 范围裁决：10 条 NS（S4-A/B/C）PLANNED，随 S5 及后续批次接线，不阻塞 S5。
-- 集成：55b7f42c6；范围仅 pps/desktop-avalonia/** + 证据 + 文档。
+- 集成：55b7f42c6；范围仅 apps/desktop-avalonia/** + 证据 + 文档。

@@ -179,4 +179,4 @@ allowed_paths:
 - parity：快照 66 条 100% 有归属（16 实现 + 50 显式 NOT_SUPPORTED 带逐条原因）；实现项 16/16 对冻结 sidecar 真实执行通过；中文往返与 5c75 转义证据有效；--check 防漂移。
 - 口径纠偏：命令面以**运行时 PRODUCTION_COMMANDS（66）**为准，任务卡内 36/14/7/4/2/1 的指示性求和（64）作废，已记入 Handoff。
 - **范围裁决（DSH）**：S2 以"快照 100% 归属 + 16 条真实接线"收口，50 条 NS 按类分批进 S3/S4（settings/plugins/backup/cleanup → region/reader 写 → Run/Export）；S3 任务卡必须为书架/设置页所需命令列出 NS 清单并逐批接线。
-- 集成：5a11fa7d9；范围仅 pps/desktop-avalonia/** + 证据 + 文档；未改旧壳/Python Core。
+- 集成：5a11fa7d9；范围仅 apps/desktop-avalonia/** + 证据 + 文档；未改旧壳/Python Core。

@@ -86,7 +86,7 @@ allowed_paths:
 - 当前指针清理：释放时已更新 STATUS/PLAN/LEDGER。
 ## Review（DSH 集成复核，2026-10-27）— PASS（AC3 PARTIAL）
 
-- 建书：book 14340ddad0ed472fbe687fe12340c5d8（8 页 1200×1660、webtoon_vertical、1 章），隔离根 8.1MB，二次运行 xisting 幂等。
+- 建书：book 14340ddad0ed472fbe687fe12340c5d8（8 页 1200×1660、webtoon_vertical、1 章），隔离根 8.1MB，二次运行 existing 幂等。
 - 校验：冻结 core_service 协议 2.3 复核 ListBooks/list_chapters/GetReaderProjection 全 PASS；发布件 --data-root smoke 命中隔离根、wire 2 次 ListBooks 含 book_id、exit 0、无残留。
 - 真实 %APPDATA% 前后指纹一致（未污染）。
 - 回归：DSH 复跑 scripts/test.ps1 **102/102**；pytest **3F/2739P/9S（0 新增）**。

@@ -92,7 +92,7 @@ allowed_paths:
 
 ## Review（DSH 集成复核，2026-10-27）— PASS
 
-- 合并：cde098e5；DSH 复跑 scripts/test.ps1 → **110/110 passed / 0 skipped**。
+- 合并：bcde098e5；DSH 复跑 scripts/test.ps1 → **110/110 passed / 0 skipped**。
 - AC1：阅读器接真实书库（ListChapters/GetReaderProjection/ResolvePageResource + 资源通道 + TileChannel 摘要校验）；fixture 回退保留。
 - AC2：沉浸入口（工具栏+双击）→ ReaderWindow；实现方真机实测 **Esc 关闭（窗口 2→1）**、**H 隐藏 HUD**（截图 03/04/05）、F/方向键 headless 覆盖（8 项新测）。
 - AC3：BOOK-FIXTURE 隔离根真机截图 01–05 + live-evidence.json + wire 日志（27 次读命令、bridge issue/resolve/revoke 各 25）。

@@ -33,7 +33,7 @@ allowed_paths:
 # RELEASE-REPACK-5：第五次重打包（含三布局主题）
 
 ## 背景
-REPACK-4（repo_head 1b89c5e5）之后，main 已合并 **THEME-MACOS-2 三布局实现**（Sonoma/Launchpad/Split，superset，test 249/249，HEAD \$h\）。REPACK-4 包不含该主题，需要重新出包。
+REPACK-4（repo_head f1b89c5e5）之后，main 已合并 **THEME-MACOS-2 三布局实现**（Sonoma/Launchpad/Split，superset，test 249/249，HEAD \$h\）。REPACK-4 包不含该主题，需要重新出包。
 
 ## Acceptance Criteria
 
@@ -44,7 +44,7 @@ REPACK-4（repo_head 1b89c5e5）之后，main 已合并 **THEME-MACOS-2 三布�
 - [x] **AC5**：Launchpad/Split 仅截图记录，不做完整视觉验收。→ 已记录 `screens/02-theme-macos-launchpad.png`、`02-theme-macos-split.png`。
 
 ## 允许修改范围
-packaging/**、pps/desktop-avalonia/scripts/**、pps/desktop-avalonia/docs/**、本卡、STATUS/PLAN/LEDGER、erification/RELEASE-REPACK-5/**、workspace。
+packaging/**、apps/desktop-avalonia/scripts/**、apps/desktop-avalonia/docs/**、本卡、STATUS/PLAN/LEDGER、verification/RELEASE-REPACK-5/**、workspace。
 
 ## 禁止范围
 不改 Core/协议/Host 契约/旧壳、不 push、不 gc/prune；不得复用旧 exe 冒充新构建；不伪造截图/数字；禁止 \git add -A\。

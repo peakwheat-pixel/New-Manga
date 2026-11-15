@@ -43,7 +43,7 @@ RELEASE-REPACK-5（HEAD \6120f91e5\，含三布局主题合并）真机烟测中
 - [x] ~~AC5 门禁~~：修好时 `test.ps1` ≥249、pytest 无新增、check PASS、64-hex pin、Handoff（含 Evidence 与 Record Decision）。 <<NOT_APPLICABLE: 无代码改动，check.ps1 PASS、pin 已入库>>
 
 ## 允许修改范围
-\pps/desktop-avalonia/**\（仅诊断/最小修复）、本卡、STATUS/PLAN/LEDGER、\
+\apps/desktop-avalonia/**\（仅诊断/最小修复）、本卡、STATUS/PLAN/LEDGER、\
 erification/IMPORT-TRIAGE-1/**\、workspace。
 
 ## 禁止范围

@@ -170,4 +170,4 @@ AD-002 §3/§4、`ui-spec/SABER_UI_SPEC.md` + `tokens-saber-purple.json`（已�
 - AC3：书卡列数 VM 计算（1400→7）、空态/无结果态、hover/详情入口齐全（headless UI 断言）。
 - AC4 范围裁决：13 条命令接线 + S2 的 50 NS 中登记 **8 条 PLANNED**（S3-A/B/C，0/8 完成）——本卡以"骨架 + 台账 + 页面标注原因"收口，8 条 NS 接线随 S4/S5 批次推进，不阻塞 S4。
 - 遗留：真机 Mica/无控制台未重新 publish 验证（打包参数同 S1/S2，S5 安装包 Gate 统一复验）；截图证据以资源色差分替代 Skia 截图（可接受）。
-- 集成：657d36817；范围仅 pps/desktop-avalonia/** + 证据 + 文档 + 一处 S2 证据目录纠偏（与 closeout 逐字节一致）。
+- 集成：657d36817；范围仅 apps/desktop-avalonia/** + 证据 + 文档 + 一处 S2 证据目录纠偏（与 closeout 逐字节一致）。

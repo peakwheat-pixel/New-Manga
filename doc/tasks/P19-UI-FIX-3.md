@@ -45,7 +45,7 @@ evidence_dir: verification/P19-UI-FIX-3
 
 ## 阻塞（2026-10-17，Coordinator 采信）
 
-硬门核对证明创建能力从未实现（契约仍 proposal、host/Core 无 create）。用户已裁决 **A1：立项 FEAT-CREATE-1..4** 补齐该能力，本 UI Task 由该功能链取代 → locked。证据：erification/P19-UI-FIX-3/hard-gate-conclusion.md。
+硬门核对证明创建能力从未实现（契约仍 proposal、host/Core 无 create）。用户已裁决 **A1：立项 FEAT-CREATE-1..4** 补齐该能力，本 UI Task 由该功能链取代 → blocked。证据：verification/P19-UI-FIX-3/hard-gate-conclusion.md。
 
 ## Resource Manifest
 

@@ -100,7 +100,7 @@ READER-LIBRARY-WIRE-1 已把阅读器接真实书库，但 `SaveReadingProgress`
 
 - AC1：翻页/离开阅读器/关闭主窗与沉浸窗均调 SaveReadingProgress（chapter_id+mode+page_id；scroll_offset_y/elapsed 仅有效时发，对齐旧壳）；重开走 GetReaderProjection(start_position=resume) 恢复；失败 typed（NotReady/ReadOnly/Failed）不阻塞 UI。
 - AC2：多书独立、页数变少钳制（Core _remap + 客户端 clamp）、只读 Host 不发 Core 请求、无 Core→NotReady。
-- AC3（真机）：BOOK-FIXTURE 隔离根两会话——A 翻页保存（607fc…，elapsed 34.64s）→关闭；B 重启 resume 回同页、**恢复期零写入/DB 行不变**；证据 erification/READER-PROGRESS-1/**（截图 01/02、live-evidence.json、wire 日志、DB 快照）。
+- AC3（真机）：BOOK-FIXTURE 隔离根两会话——A 翻页保存（a607fc…，elapsed 34.64s）→关闭；B 重启 resume 回同页、**恢复期零写入/DB 行不变**；证据 verification/READER-PROGRESS-1/**（截图 01/02、live-evidence.json、wire 日志、DB 快照）。
 - AC4：DSH 复跑 scripts/test.ps1（私有证据目录）→ 见执行记录（实现方报 **131/131**：40/40/51）；vitest 60/567；pytest 3F/2739P/9S（0 新增）。
 - AC5：check.ps1 -TaskPath PASS；11 条 64-hex pin；Handoff。
 - **真机额外修复 3 个真实缺陷**：① Core ReadingProgressChanged 事件帧混响应流 → INVALID_RESPONSE；② webtoon 恢复期 ScrollChanged 覆盖刚恢复的行（已抑制）；③ 重复同位置写导致 elapsed 双计（改发送时刻采样 + 合并）。

@@ -89,7 +89,7 @@ evidence_dir: verification/P19-UI-FIX-1
 
 ## Closeout Record
 
-- 关闭：2026-10-17（dsh）。Reviewer=dsh（批准，erification/P19-UI-FIX-1/dsh-review-r1.md）。
+- 关闭：2026-10-17（dsh）。Reviewer=dsh（批准，verification/P19-UI-FIX-1/dsh-review-r1.md）。
 - 交付 done；合并 8a0afacea（--no-ff，无冲突）。
 - 复核要点：未开放分区 IsEnabled=False+Invoke=blocked 且可见性与原因保留；导入改显式可见反馈（非静默）；前端 274 采信 Owner 日志（我本人 -4058 未复现，已登记）。
 - 遗留：P19 主流程验收须记录「空书架无法导入」这一产品约束；前端套件需 R3 独立复跑。

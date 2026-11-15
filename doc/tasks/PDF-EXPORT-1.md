@@ -106,7 +106,7 @@ allowed_paths:
 ## Review（DSH 集成复核，2026-10-27）— PASS（验收纠偏）
 
 - **结论：PDF 早已实现**（src/infrastructure/export/qt_free.py QtFreePdfComposer，core_assembly.py:1374 生产接线；扩展点 PdfComposer/ExportFormat.PDF/StartExport format=pdf+grant）；**未新增 Pillow composer**（正确——Pillow PDF 有损且无文本层）。
-- image_only 3 页：**8,696,282B** sha256 975b87d4…8d2eae；pymupdf 逐页尺寸 1200×1660/1200×1660/1200×726 与 DB 一致；%PDF-1.7+%%EOF；xport_history.export_type=pdf。
+- image_only 3 页：**8,696,282B** sha256 975b87d4…8d2eae；pymupdf 逐页尺寸 1200×1660/1200×1660/1200×726 与 DB 一致；%PDF-1.7+%%EOF；export_history.export_type=pdf。
 - searchable_dual_layer 3 页：21,106,403B，**文本层 277/204/120 字符**（CJK 可搜索）。
 - engine 级整书 8 页（3 译文+5 原图 fallback）：26,755,308B，8 页尺寸逐页匹配。
 - 回归：pytest 3F/2772P/9S（逐项一致）；export+architecture 29 passed（Qt-free 断言）；**干净 worktree 10273c9ce 上 test.ps1 225/225**（主工作树 40 项失败系并发 Agent 未提交 UI 改动，与本卡零交集，日志留证）。

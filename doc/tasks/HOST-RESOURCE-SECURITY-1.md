@@ -183,7 +183,7 @@ S5 拆分（`LEGACY-SHELL-REMOVAL-1` BLOCKED 段）、[ADR-0002](../design/ADR-0
 ## Review（DSH 集成复核，2026-10-27）— PASS
 
 - 单命令验收：scripts/test.ps1 → **101/101**；vitest 60/567、pytest 基线不变。
-- D4 四项实测复核采信（证据 pin + 可复跑）：等长改写且 mtime 复原 → TileDigestMismatch（alidation_uses_mtime=false）；issue+read 两处 dotdot/UNC/junction/symlink → 拒绝；同 size 替换 → TileIdentityMismatch；8×256KiB 冷读+digest **2.259ms**、digest **1.33% of 60ms 预算**（G5 口径，未沿用缓存口径）。
+- D4 四项实测复核采信（证据 pin + 可复跑）：等长改写且 mtime 复原 → TileDigestMismatch（validation_uses_mtime=false）；issue+read 两处 dotdot/UNC/junction/symlink → 拒绝；同 size 替换 → TileIdentityMismatch；8×256KiB 冷读+digest **2.259ms**、digest **1.33% of 60ms 预算**（G5 口径，未沿用缓存口径）。
 - tile 契约已冻结（TILE-CHANNEL-CONTRACT-V1.md，Host 侧结构 + 版本化入口）。
 - 遗留转后续：Core 侧 tile 生成/per-tile digest 下发 → CORE-TILE-EMIT-1；真机磁盘冷读/IME/安装 smoke → S5-D；旧壳归档 → S5-C（前置=本卡+S5-D）。
-- 集成：744eccb61；范围仅 pps/desktop-avalonia/** + 证据 + 文档。
+- 集成：744eccb61；范围仅 apps/desktop-avalonia/** + 证据 + 文档。

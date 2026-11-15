@@ -178,6 +178,6 @@ S5 拆分（见 `LEGACY-SHELL-REMOVAL-1` BLOCKED 段）、[ADR-0002](../design/A
 
 - 单命令验收：scripts/test.ps1 → **95/95 passed / 0 skipped**；vitest 60/567、pytest 3F/2687P/9S 基线不变。
 - 四个数字采信（可复跑脚本 + 证据 pin）：revoke 时延 **0.071ms**、缓存命中 0.667、篡改保尺寸 → TileDigestMismatch、等长重写 → TileDigestMismatch；附加 4MiB 冷读+摘要 **2.523ms**、identity 替换 → TileIdentityMismatch。
-- 实现方未放宽校验、未动旧壳/Core，范围仅 pps/desktop-avalonia/** + 证据 + 文档。
+- 实现方未放宽校验、未动旧壳/Core，范围仅 apps/desktop-avalonia/** + 证据 + 文档。
 - **遗留转 S5-B**：digest 开销比 5.39×（缓存口径，非 G5 ≤10%）→ 按"页加载预算内占比"重测；Core 侧 tile 生成/digest 下发契约待冻结；真机 smoke/IME 留 S5-D。
-- 集成： 9d7e76c1。
+- 集成：e9d7e76c1。

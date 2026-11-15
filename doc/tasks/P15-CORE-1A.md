@@ -37,17 +37,17 @@ P15-CORE-1 因契约 §5.2 的 TestNetworkProfile 目标缺口**失败关闭**�
   **AC3 待审说明**：真实 `build_production_handlers` 是 Pipeline step handler 注册表，定义于 `src/infrastructure/providers/handlers.py`；`core_assembly` 使用其键初始化 Pipeline `known_steps`。新增 IPC 命令已注册在 `core_service` command dispatch，所需 Store 在 `core_assembly` 装配。将 IPC 命令塞入 Pipeline step 表会改变既有步骤语义；AC3 的指定注册点需要独立 Reviewer / Coordinator adjudication 后才能勾选。
 
 ## 允许 / 禁止范围
-- **允许**：src/**（Python Core）、	ests/core/**（新增与必要修改，**不得弱化既有断言**）、本 Task、doc/handoffs/P15-CORE-1A-*.md、erification/P15-CORE-1A/**
+- **允许**：src/**（Python Core）、	ests/core/**（新增与必要修改，**不得弱化既有断言**）、本 Task、doc/handoffs/P15-CORE-1A-*.md、verification/P15-CORE-1A/**
 - **禁止**：不得实现 G22 凭据面、G23 Network 面与 `settings_network_profiles_test`（分别属 1B/1C）
 - 契约 **wire 已冻结**（doc/contracts/P15_SETTINGS_IPC_CONTRACT.md）：命令名/参数/结果/错误**逐字一致**，**不得**改名或增删字段；若发现契约问题**停下上报**，不得自行改契约；
-- **不得**改 pps/desktop/**、Schema/迁移/依赖；不改 doc/STATUS.md / doc/REBASELINE_PLAN.md；不触碰用户 19 项 dirty；不 push/merge/
+- **不得**改 apps/desktop/**、Schema/迁移/依赖；不改 doc/STATUS.md / doc/REBASELINE_PLAN.md；不触碰用户 19 项 dirty；不 push/merge/
 eset。
 
 ## 安全硬红线
 Secret / 明文凭据 / 认证头 / CredentialRef / 原始响应 / 路径 / 异常文本**不得**出现在任何**返回、错误、事件**中；错误只走契约 **§9 封闭投影**的键集；CredentialRef 不得进入普通 settings DTO。
 
 ## 测试与证据
-- 覆盖本范围全部 AC，**必须含反例**（非法键/类型、未授权引用、缺省路径等）；python -m pytest tests/core -q -p no:cacheprovider **全绿且不回归**（基线 **407 passed**，用 G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Scripts\python.exe）；归档原始日志 + 退出码到 erification/P15-CORE-1A/**；
+- 覆盖本范围全部 AC，**必须含反例**（非法键/类型、未授权引用、缺省路径等）；python -m pytest tests/core -q -p no:cacheprovider **全绿且不回归**（基线 **407 passed**，用 G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Scripts\python.exe）；归档原始日志 + 退出码到 verification/P15-CORE-1A/**；
 - 固定 commit + doc/handoffs/P15-CORE-1A-*.md + Canonical Evidence（status: in_review；**BL-15** delivery_head 不自引用；**BL-17** commit 列**原样** git rev-parse HEAD；**BL-19** class 仅 CANONICAL/SOURCE_PIN；**BL-16/RV-P15-04** sha256 按磁盘字节且**须能从主仓库验证**；**BL-18** 不得自请审查冒充独立 Review）。
 
 ## 依赖、风险与阻塞

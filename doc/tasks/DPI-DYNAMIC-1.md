@@ -79,11 +79,11 @@ allowed_paths:
 - 当前指针清理：释放时已更新 STATUS/PLAN/LEDGER。
 ## Review（DSH 集成复核，2026-10-27）— PASS（AC1/AC2 PARTIAL：环境阻塞）
 
-- 改动：Program.cs 在 Avalonia 初始化前显式 SetProcessDpiAwarenessContext(PER_MONITOR_AWARE_V2)（旧系统降级忽略）；pp.manifest 已声明 	rue/pm+PerMonitorV2（双保险）；MainWindow.axaml.cs 监听 RenderScaling 变化 → InvalidateMeasure/InvalidateVisual + Render 优先级再触发，并写 scaling a -> b 到 %APPDATA%\com.newmanga.desktop\logs\window-material.log。
+- 改动：Program.cs 在 Avalonia 初始化前显式 SetProcessDpiAwarenessContext(PER_MONITOR_AWARE_V2)（旧系统降级忽略）；app.manifest 已声明 	rue/pm+PerMonitorV2（双保险）；MainWindow.axaml.cs 监听 RenderScaling 变化 → InvalidateMeasure/InvalidateVisual + Render 优先级再触发，并写 scaling a -> b 到 %APPDATA%\com.newmanga.desktop\logs\window-material.log。
 - 回归（DSH 复跑）：scripts/test.ps1 **102/102**（清理遗留进程后，之前 mutex 失败确认为环境残留）；vitest **60/567**；pytest **3F/2739P/9S（0 新增失败）**。
 - **AC1/AC2 PARTIAL**：真机 100%↔200% 拖动 **NOT_RUN**——本机 4K 屏（PHL 279M1RV）当前物理未连接（WmiMonitorID 仅 Mi TV Active，其余 Unknown），无法构造 200% 屏。
-- 复核条件：用户接回 4K 屏并设 200% 后，按原步骤拖动一次，检查 GetDpiForWindow=192/96、日志 scaling 1 -> 2 / 2 -> 1、截图与 erification/MANUAL-VERIFY-1/app-start-on-dpr2.png 同锐度。
-- 集成：6241b6c8；未 push。
+- 复核条件：用户接回 4K 屏并设 200% 后，按原步骤拖动一次，检查 GetDpiForWindow=192/96、日志 scaling 1 -> 2 / 2 -> 1、截图与 verification/MANUAL-VERIFY-1/app-start-on-dpr2.png 同锐度。
+- 集成：a6241b6c8；未 push。
 ## Review 补充（DSH 真机拖动验证，2026-10-27）
 
 4K 屏接回后（DISPLAY2 = 3840×2160 @200%），用发布候选包实测：

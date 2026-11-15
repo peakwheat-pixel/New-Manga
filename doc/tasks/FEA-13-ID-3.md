@@ -117,6 +117,6 @@ ull、绕过门禁、注释假陈述 | **已修**：_NmbakMigrationBackup 传 da
 - **2026-11-09 / DSH（关账）**：AC1–AC6 全部 MET；C-01b SC-18 身份原语落地（无新 DDL，schema v9）。
 - **Review**：r1 独立子代理 changes_requested（P0=0/P1=0/P2=1/P3=4；R-001 pre-migration 钩子未传身份）→ 处置；r2 独立子代理 **approved**（FIXED 3 / PARTIAL 2 / OPEN 0；无新增 P0/P1；AC3 由 PARTIAL 转 MET）。
 - **P3 残余处置**：N-001 卡表截断已修；N-002 死 import 已删；N-003 注释区分「全新库 no-op」与「旧库首次升级写 null」；R-003 的「no write」日志句与 R-005 的 C# 解析测试/wire 行同步登记后续（README）。
-- **门禁**：备份面 7 文件 **82 passed**（EXIT 0）；变异（关闭跨库门禁）1 failed/7 passed（EXIT 1，复原后 8 passed）；dotnet build 0/0；Host 备份相邻 3 passed/1 skipped；check.ps1 默认 + -TaskPath PASS（3 warnings）；erify_pins 18/18。
+- **门禁**：备份面 7 文件 **82 passed**（EXIT 0）；变异（关闭跨库门禁）1 failed/7 passed（EXIT 1，复原后 8 passed）；dotnet build 0/0；Host 备份相邻 3 passed/1 skipped；check.ps1 默认 + -TaskPath PASS（3 warnings）；verify_pins 18/18。
 - **交付/集成**：实现 `3d8b5507e`；r2 返修 `67bccb08d`（`integration_commit`）；本收口提交仅翻转状态、指针与 P3 nit 修复。
 - **边界**：0 契约字节、0 pin 重算；diff ⊆ allowed_paths（core_service.py 仅映射一行）。

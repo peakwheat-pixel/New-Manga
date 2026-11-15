@@ -66,7 +66,7 @@ D01 §5；D02 §6.1；D06 §19～22/53/69；D07 §107。D 编号对应 [文档�
 ## 交付与运行记录
 
 - Handoff：[TASK-018-6c33e7f](../handoffs/TASK-018-6c33e7f.md)（首轮交付）、[TASK-018-d7c10d4](../handoffs/TASK-018-d7c10d4.md)（修订切片）。
-- Review：[doc/reviews/TASK-018-6c33e7f.md](../reviews/TASK-018-6c33e7f.md)（pproved，R-001～R-007）；修订切片复审为 changes_requested（仅文档口径，代码无需改动）。
+- Review：[doc/reviews/TASK-018-6c33e7f.md](../reviews/TASK-018-6c33e7f.md)（approved，R-001～R-007）；修订切片复审为 changes_requested（仅文档口径，代码无需改动）。
 - 实际执行/实验/测试：见 [研究记录](../research/TASK-018.md)、[实验日志](../../verification/TASK-018/experiment-log.md)、[修订取证](../../verification/TASK-018/revision-d7c10d4.md)、[集成验证](../../verification/TASK-018/integration-4d189ce.md)。
 - 最近状态：2026-09-17 用户批准释放；`ready`，Owner=DeepSeek Harness，Reviewer=Codex，base=`dce95ac`，branch=`agent/deepseek/TASK-018-mask-inpainting-experiment`，worktree=`G:/CODEX/New Manga.worktrees/TASK-018-deepseek`。TASK-003/004 均为 `done`；实验尚未开始，全部计划测试仍为 NOT_RUN。
 

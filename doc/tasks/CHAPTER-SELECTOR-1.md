@@ -104,7 +104,7 @@ READER-LIBRARY-WIRE-1 完成书库接线但固定第一本书第一章；多章/
 
 - AC1：阅读器工具栏「书/章」上下文 + 章节下拉（真实 list_chapters）+ 上一/下一章（单章隐藏、边界禁用）；切章重新投影。真机：书 A 第 1 章 8 页 →「下一章」→ 第二章 4 页（wire GetReaderProjection chapter_id 更替）。
 - AC2：书卡双击/详情「进入阅读」打开**该** bookId（不再固定第一本第一章）；切书/切章前 flush 进度。真机：书架 2 本 → 第二本 3 页。
-- AC3：headless 12 项（ReaderChapterSelectorTests）+ Host 真 sidecar 2 项；真机双书三章数据根（BOOK-FIXTURE 副本扩展，源 fixture 未改）；证据 erification/CHAPTER-SELECTOR-1/**。
+- AC3：headless 12 项（ReaderChapterSelectorTests）+ Host 真 sidecar 2 项；真机双书三章数据根（BOOK-FIXTURE 副本扩展，源 fixture 未改）；证据 verification/CHAPTER-SELECTOR-1/**。
 - AC4：DSH 复跑 scripts/test.ps1 → 见执行记录（实现方报 **145/145**：40/42/63）；vitest 60/567；pytest 3F/2739P/9S。
 - AC5：check.ps1 -TaskPath PASS；14 条 64-hex pin；Handoff。
 - **真机额外修复 3 个真实缺陷**：① 工具栏/下拉/滚动条点击误翻页（改为仅页图/webtoon 栈按压翻页）；② 工具栏按钮在黑色 chrome 上不可读（主题化）；③ 章标签重复「第 N 章」前缀。

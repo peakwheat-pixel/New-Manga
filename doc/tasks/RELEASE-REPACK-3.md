@@ -89,11 +89,11 @@ RELEASE-SMOKE-1 发现 REPACK-2 包 `repo_head=0f4b836a5` **早于** IMPORT-EXPO
 allowed_paths，请 DSH 确认接受或改由 CREDENTIAL-PORT-1 承接。
 ## Review（DSH 集成复核，2026-10-27）— PASS
 
-- 新包：base zip 103,326,248B / models **725,334,588B**；新 sidecar base 65d7b55a…、models 8cfc9080…（旧  91a201d…/c5531930…，无复用）；VERSION epo_head=dd2408869；torch-free PASS。
+- 新包：base zip 103,326,248B / models **725,334,588B**；新 sidecar base 65d7b55a…、models 8cfc9080…（旧 e91a201d…/c5531930…，无复用）；VERSION epo_head=dd2408869；torch-free PASS。
 - 全流程真机：安装 **2.45s**、Host 就绪 **1.13s**、console 0；书架 8 页 → **UI 导入 1 文件（8→9 页，DB pages=9）** → 阅读 → 滚动 → 进度 13.55%/87.37s → 沉浸全屏 → **导出 ZIP 7,070,562B sha256 d77ecf88…36f7** → 打开导出目录 2.9s。**PDF UI 未验**（PDF-EXPORT-UI-1 未实现，面板仍仅 ZIP）——如实。
 - **Mica/DPI 结论（纠正 smoke）**：OS = **Windows 11 26H2 build 26300.9711**（注册表 ProductName 遗留字段误写 Win10）；**Mica actual=Mica**（首帧 None→约 60s 后 Mica，与 MICA-FIX-1 一致）；主屏 2560×1440@100%、副屏 3840×2160@150% → **4K@200% NOT_AVAILABLE**（DPI=192 属此前 DPR2 仿真证据，仍需真实 200% 环境复验）。
 - 稳定性：WM_CLOSE 4.16s、0 残留；卸载干净；注册表 0；2 条历史/他 Agent 凭据残留仅上报。
 - 回归：干净 worktree test.ps1 **234/234 PASS**；pytest 3F/2772P/9S（基线失败集合一致，无新增）；check PASS；12 条 pin。
-- **裁决（超范围改动）**：接受 pps/desktop-avalonia/src/NewManga.Host/HostCredentialCoordinator.cs 的 Utf8JsonWriter(Indented) 改动——为解 Release PublishTrimmed **error IL2026**，未改 Host 契约；已记入本卡 Handoff，不转 CREDENTIAL-PORT-1。
+- **裁决（超范围改动）**：接受 apps/desktop-avalonia/src/NewManga.Host/HostCredentialCoordinator.cs 的 Utf8JsonWriter(Indented) 改动——为解 Release PublishTrimmed **error IL2026**，未改 Host 契约；已记入本卡 Handoff，不转 CREDENTIAL-PORT-1。
 - 遗留：PDF UI（PDF-EXPORT-UI-1 在途）；4K@200% 需真实环境；IME/键盘 Esc-H 待用户前台确认。
 - 集成：4290afb1b。

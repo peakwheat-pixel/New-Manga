@@ -45,7 +45,7 @@ Codex r20 §2.2 裁定：
 - [x] **AC3 引用核查**：对每个 `ARCHIVE` 候选，确认**没有**任何已入库文档、 <<MET>>
   Task、Review、pin 或 Plan/STATUS 引用它。**有引用者一律 `PRESERVE_UNKNOWN`。**
 - [x] **AC4 执行移动（仅 ARCHIVE 项）**：把 `ARCHIVE` 项移入 <<NOT_APPLICABLE: 逐文件判定结果为 0 个 ARCHIVE，无文件需移动>>
-  `G:\CODEX\New Manga.workspacerchive\<task>\`，记录原路径、hash 与移动时间。
+  `G:\CODEX\New Manga.workspace\archive\<task>\`，记录原路径、hash 与移动时间。
   **移动前必须 `git status` 确认该文件未入库且有备份。**
 - [x] **AC5 交付与 Review**：生成 Handoff；由 Antigravity 对固定 delivery head 独立 Review。 <<MET>>
   Review 必须核对：**没有把有引用的文件移走**，且每个 `ARCHIVE` 判定都有内容依据。
@@ -53,7 +53,7 @@ Codex r20 §2.2 裁定：
 ## 允许修改范围
 
 - 两个 Task 的 Canonical Evidence 表（仅补列 `REGISTER` 项）。
-- `G:\CODEX\New Manga.workspacerchive\`（仅移入 `ARCHIVE` 项）。
+- `G:\CODEX\New Manga.workspace\archive\`（仅移入 `ARCHIVE` 项）。
 - `verification/GOV-EVIDENCE-DIR-SWEEP-1/`。
 - 本 Task 自身文件、Handoff、Review。
 

@@ -107,14 +107,14 @@ S2 交付时 66 条生产命令中 16 条已实现、50 条显式 NOT_SUPPORTED�
 - 当前指针清理：释放时已更新 STATUS/PLAN/LEDGER。
 ## Review（DSH 集成复核，2026-10-27）— PASS
 
-- **8/8 接线 IMPLEMENTED**：settings_update_section、settings_provider_profiles_list、settings_network_profiles_list、settings_resolve_overrides、ackup_create、plugins_set_enabled、cleanup_run、library_get_reader_projection。
+- **8/8 接线 IMPLEMENTED**：settings_update_section、settings_provider_profiles_list、settings_network_profiles_list、settings_resolve_overrides、backup_create、plugins_set_enabled、cleanup_run、library_get_reader_projection。
 - 关键发现（已记录）：P15 settings 面 Core 硬拒 minor≠7（probe 反证 minor3→INVALID_REQUEST）；registry 三条固定 minor=7；dispatcher 按旧壳签名做参数边界校验与负载翻译（INVALID_ARGUMENTS），Core 业务错误码透传。
-- parity：xtract-command-surface.py --check PASS（66 命令零漂移，Rust 快照 sha 4c6a4da0… 未变）；**16→24 IMPLEMENTED / 50→42 NOT_SUPPORTED**。
-- 证据：command-list.json、probe-results.json（8 路由直连+2 负例；reader projection 在 BOOK-FIXTURE-1 上 8 页成功）、parity-update.json、vidence/。
+- parity：extract-command-surface.py --check PASS（66 命令零漂移，Rust 快照 sha 4c6a4da0… 未变）；**16→24 IMPLEMENTED / 50→42 NOT_SUPPORTED**。
+- 证据：command-list.json、probe-results.json（8 路由直连+2 负例；reader projection 在 BOOK-FIXTURE-1 上 8 页成功）、parity-update.json、evidence/。
 - 回归（DSH 复跑 scripts/test.ps1）：见执行记录；vitest 60/567、pytest 3F/2739P/9S 基线不变。
-- 基线说明：任务卡 base 原写 230164c5c（早于卡片创建，治理 FAIL），实际分支基于释放提交 50ab8fc5；已按实现方记录更正。
+- 基线说明：任务卡 base 原写 230164c5c（早于卡片创建，治理 FAIL），实际分支基于释放提交 b50ab8fc5；已按实现方记录更正。
 - 遗留：S4-A/B/C 10 条仍 NS（后续批次）；reader projection 成功路径依赖 BOOK-FIXTURE 数据根；cleanup 仅空缓存、backup 仅创建。
 ## 集成验证补记（2026-10-27T04:44Z）
 
-- DSH 在 main 上复跑 pps/desktop-avalonia/scripts/test.ps1 → **TEST PASS (Debug): 110/110 passed, 0 skipped**（此前一次失败为遗留进程锁日志/并行抢占所致，清理后复现全绿）。
+- DSH 在 main 上复跑 apps/desktop-avalonia/scripts/test.ps1 → **TEST PASS (Debug): 110/110 passed, 0 skipped**（此前一次失败为遗留进程锁日志/并行抢占所致，清理后复现全绿）。
 - 结论：AC4 由实现方证据 + DSH 复跑双重确认。

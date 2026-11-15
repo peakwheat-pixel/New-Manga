@@ -29,4 +29,4 @@ allowed_paths:
 
 ## Review（DSH，2026-10-28）— PASS
 
-仅补证、未重打包、未改源码；证据 erification/VERIFY-RECHECK-1/**。4K 遗留：需 Mi TV 被识别为可用输出后另测。
+仅补证、未重打包、未改源码；证据 verification/VERIFY-RECHECK-1/**。4K 遗留：需 Mi TV 被识别为可用输出后另测。

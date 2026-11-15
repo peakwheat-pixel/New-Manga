@@ -67,9 +67,9 @@ AD-002 S0–S5 与后端瘦身/推理基线/发布件已全部完成（`FINAL-VA
 
 | AC | 结果 | 证据 |
 |---|---|---|
-| AC1 Mica | **PARTIAL / 未确认** | 截图 pp-start-on-dpr2.png、pp-on-4k-dpr2.png（标题栏为不透明白）；DWM DWMWA_SYSTEMBACKDROP_TYPE=0，但 **S0 spike 应用同样=0** → 该属性不是有效探针；代码确实请求 Mica（MainWindow.axaml TransparencyLevelHint="Mica,Blur,None"，Win11 分支 Mica 优先）。结论：**代码请求了 Mica，但窗口视觉上不透明白，Mica 是否实际生效无法用现有探针确证**，需人眼对比壁纸或加 Avalonia ActualTransparencyLevel 诊断输出 |
-| AC2 DPR2 | **PASS（真机 200%，非模拟）** | 4K 屏 200% 下启动：窗口 DPI=**192**，UI 尺寸正常、文字锐利（pp-start-on-dpr2.png，2560×1640 设备像素）；Settings 缩放选中项读回 **200%**、逻辑分辨率 1920×1080 |
-| AC2b 跨屏动态 DPI | **发现缺陷** | 从 100% 屏拖到 200% 屏后内容被 DWM 位图拉伸（pp-on-4k-dpr2.png，3600×1090 设备像素但内容 2× 放大且发虚）→ 运行中 WM_DPICHANGED 未重渲染 |
+| AC1 Mica | **PARTIAL / 未确认** | 截图 app-start-on-dpr2.png、app-on-4k-dpr2.png（标题栏为不透明白）；DWM DWMWA_SYSTEMBACKDROP_TYPE=0，但 **S0 spike 应用同样=0** → 该属性不是有效探针；代码确实请求 Mica（MainWindow.axaml TransparencyLevelHint="Mica,Blur,None"，Win11 分支 Mica 优先）。结论：**代码请求了 Mica，但窗口视觉上不透明白，Mica 是否实际生效无法用现有探针确证**，需人眼对比壁纸或加 Avalonia ActualTransparencyLevel 诊断输出 |
+| AC2 DPR2 | **PASS（真机 200%，非模拟）** | 4K 屏 200% 下启动：窗口 DPI=**192**，UI 尺寸正常、文字锐利（app-start-on-dpr2.png，2560×1640 设备像素）；Settings 缩放选中项读回 **200%**、逻辑分辨率 1920×1080 |
+| AC2b 跨屏动态 DPI | **发现缺陷** | 从 100% 屏拖到 200% 屏后内容被 DWM 位图拉伸（app-on-4k-dpr2.png，3600×1090 设备像素但内容 2× 放大且发虚）→ 运行中 WM_DPICHANGED 未重渲染 |
 | AC3 工作集 | **PARTIAL** | DPR2 主屏启动后 10s 采样：NewManga.App 峰值 **143.6 MB**、core_service 37.5 MB、host_bridge 22.0 MB；**webtoon 滚动峰值未测**（隔离数据根无书，无法进入长条阅读） |
 | AC4 微软拼音 20 字 | **NOT_RUN（需用户）** | 合成输入无法驱动真 IME |
 | AC5 沉浸 Esc/H | **NOT_RUN（无书）** | 空书架，无法进入阅读器验证键位 |
@@ -82,7 +82,7 @@ AD-002 S0–S5 与后端瘦身/推理基线/发布件已全部完成（`FINAL-VA
 **AC1 Mica —— 判定 FAIL（代码证据充分）**
 - MainWindow.axaml:10 根窗口 Background="{DynamicResource AppBg}"、:18 TitleBar Background="{DynamicResource HeaderBg}" → 两层**不透明背景**把 Mica 完全盖住；TransparencyLevelHint="Mica,Blur,None" 实际不可见。
 - 与截图一致：标题栏为不透明白，壁纸区域在窗口外。修复方向：Mica 生效时把根/标题栏背景改透明或半透明（如 #00FFFFFF），仅 Win10 回退用 MicaFallback；并加 ActualTransparencyLevel 诊断输出。
-- 证据：pp-start-on-dpr2.png、pp-on-4k-dpr2.png、代码位置如上。
+- 证据：app-start-on-dpr2.png、app-on-4k-dpr2.png、代码位置如上。
 
 **AC3 工作集 —— PARTIAL**
 - 空载：App **142.9 MB**；进入阅读器页后峰值 **146.3 MB**；sidecar：core_service 37.9 MB、host_bridge 22.1 MB。
@@ -114,5 +114,5 @@ AD-002 S0–S5 与后端瘦身/推理基线/发布件已全部完成（`FINAL-VA
 ## Closeout（2026-10-27，DSH）
 
 - 5 项全部 PASS（AC1–AC5）；用户人工确认 IME（AC4）。
-- 关联修复：MICA-FIX-1（93aaaeb8c）、DPI-DYNAMIC-1（6241b6c8 + 真机 96→192→96）、READER-LIBRARY-WIRE-1（cde098e5，工作集 395.1MB + Esc/H）。
+- 关联修复：MICA-FIX-1（93aaaeb8c）、DPI-DYNAMIC-1（a6241b6c8 + 真机 96→192→96）、READER-LIBRARY-WIRE-1（bcde098e5，工作集 395.1MB + Esc/H）。
 - 遗留项集中登记于 AD002-FOLLOWUPS-1（proposed）。

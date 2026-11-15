@@ -294,7 +294,7 @@ owner **自行执行了 git commit**（`bae81ad29` 实现、`95d483888` 文档�
 
 AC5 所用脚本 `run-desktop-close-verification.ps1` **只向 stdout 打印、不写任何文件**（脚本内无 `OutDir`/`Out-File`/`Start-Transcript`；经核实 `verification/P20-CLOSE-BOUND-1` 下**从未存在** `ac5-*` 目录）。而 Coordinator 此前在本 Task 中引用了 `ac5-20261018-1156` 与 `ac5-20261018-1245` 作为证据 —— **这两个目录从未被创建，该证据不存在**。这是**虚假证据引用**，由 Codex R3 的 N2 发现，Coordinator 如实撤回。
 
-**已修正**：c5-20261018-1256，由 Coordinator 用 `Tee-Object` 捕获完整 stdout 并落盘：
+**已修正**：ac5-20261018-1256，由 Coordinator 用 `Tee-Object` 捕获完整 stdout 并落盘：
 - `ac5-console.log`（脚本原始输出）
 - `ac5-metadata.txt`（exit_code、release sha256、HEAD、shell、时间戳，并注明脚本本身不落盘）
 - 实测：退出 **78.61 ms**（上界 5000 ms）、**残留进程 0**、exit 0。

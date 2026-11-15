@@ -120,9 +120,9 @@ out_of_scope:
 
 - **2026-11-09 / DSH（关账）**：AC1–AC6 全部 MET（AC2 的 missed_or_due 已实现）；FEA-13 最后一片完成。
 - **Review**：r1 独立子代理 approved_with_conditions（P0=0/P1=0/P2=3/P3=6）→ 处置 P2×3；r2 独立子代理 **approved**（P0=0/P1=0/P2=0；S5-003/S5-006 FIXED，其余 PARTIAL/OPEN 均 P3 已登记）。
-- **r2 P3 处置**：books==0 写 mpty_library receipt；not-due 的 
+- **r2 P3 处置**：books==0 写 empty_library receipt；not-due 的 
 ext_due 改为从 last 起算；保留三类覆盖补专用用例；README 口径统一（111 passed）。
-- **门禁**：备份面 10 文件 **111 passed**（EXIT 0）；变异①D4 保护 **1 failed**、②disabled 忽略 **1 failed**（均 EXIT 1，复原后 15 passed）；check.ps1 默认 + -TaskPath PASS；erify_pins 18/18。
+- **门禁**：备份面 10 文件 **111 passed**（EXIT 0）；变异①D4 保护 **1 failed**、②disabled 忽略 **1 failed**（均 EXIT 1，复原后 15 passed）；check.ps1 默认 + -TaskPath PASS；verify_pins 18/18。
 - **交付/集成**：实现 `4befab5f3`；r2 返修 `74fca0f11`（`integration_commit`）；本收口提交含 P3 残余修复与指针翻转。
 - **残余（P3 登记）**：_prune_automatic_backups/_package_age_hours 死代码、weekday 未参与判定、治理指针越 allowed_paths、sqlite3.Error 穿透、AC4 弱用例。
 - **边界**：0 契约字节、0 pin、0 DDL；Host 无定时器。

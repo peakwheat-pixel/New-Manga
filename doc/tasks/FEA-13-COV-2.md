@@ -125,8 +125,8 @@ out_of_scope:
 
 - **2026-11-09 / DSH（关账）**：AC1–AC6 全部 MET；C-09 SC-B01a 覆盖清单二期落地（SC-B01 ④ 单列 FEA-13-SRC-6）。
 - **Review**：r1 独立子代理 changes_requested（P0=0/P1=1/P2=3/P3=4）→ 处置；r1b 另一独立子代理 changes_requested（P0=0/P1=1/P2=3/P3=3，P1 独立吻合）→ 同批处置；r2 独立子代理 **approved**（FIXED 5 / PARTIAL 3 / OPEN 0；无新增 P0/P1）。
-- **P1 修复**：空 drafts/plugins 不再阻断 create/restore/pre-migration（_present_categories + mpty_categories；仅真实收集错误失败）。
+- **P1 修复**：空 drafts/plugins 不再阻断 create/restore/pre-migration（_present_categories + empty_categories；仅真实收集错误失败）。
 - **P3 残余处置**：N-001 已同步 BK2-1 措辞（④ 单列裁决）；N-002 已加 junction/reparse point 防护；R-005 已补**真实**「复制包内 extras 字节写回」变异日志；R-004 由 FEA-13-COV-2-sc01-decision.md 裁决；性能/IO 优化（逐成员 read、extractall extras）登记至片 5。
-- **门禁**：备份面 6 文件 **74 passed**（EXIT 0）；变异① 1 failed/3 passed、变异②（真实写回）1 failed/7 passed（均 EXIT 1，复原后 8 passed）；check.ps1 默认 + -TaskPath PASS（3 warnings）；erify_pins 18/18；ledger 一致。
+- **门禁**：备份面 6 文件 **74 passed**（EXIT 0）；变异① 1 failed/3 passed、变异②（真实写回）1 failed/7 passed（均 EXIT 1，复原后 8 passed）；check.ps1 默认 + -TaskPath PASS（3 warnings）；verify_pins 18/18；ledger 一致。
 - **交付/集成**：实现 `00f14179a`；r2 返修 `f86105707`（`integration_commit`）；本收口提交仅翻转状态与指针。
 - **边界**：0 契约字节、0 pin 重算；diff ⊆ allowed_paths（core_assembly.py 仅 data_root 传参一处）。

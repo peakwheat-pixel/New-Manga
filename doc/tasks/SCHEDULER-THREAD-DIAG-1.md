@@ -101,8 +101,8 @@ CORE-PIPELINE-FIX-1 报告可复现异常：经 `python -m bootstrap.core_servic
 - 当前指针清理：关闭时由 DSH 更新 STATUS/PLAN/LEDGER。
 ## Review（DSH 集成复核，2026-10-27）— PASS（根因明确，latent 生产缺陷）
 
-- 复现稳定性：source 同拓扑 GetTaskProjection(fresh=True) 每 100ms 轮询 → **3/3 复现**；resh=False/不轮询 → 2/2 干净；**frozen sidecar 2b36bfeb… 实测同样复现**（shipped binary 含竞态）。
-- 根因：SqlitePipelineStore._cache 跨线程共享可变 dict；efresh() 读 DB 后替换 _cache[run_id] 为克隆 → 执行线程提交只落克隆、xecute_run 局部对象未回填（regionless ocr → INVALID_INPUT）、旧对象随后整份回写导致 StepRun 回退 running（last-writer-wins）。代码点 core_service.py:3236 → service.py:1394/1531/1454 → sqlite/pipeline.py:415。
+- 复现稳定性：source 同拓扑 GetTaskProjection(fresh=True) 每 100ms 轮询 → **3/3 复现**；fresh=False/不轮询 → 2/2 干净；**frozen sidecar 2b36bfeb… 实测同样复现**（shipped binary 含竞态）。
+- 根因：SqlitePipelineStore._cache 跨线程共享可变 dict；efresh() 读 DB 后替换 _cache[run_id] 为克隆 → 执行线程提交只落克隆、execute_run 局部对象未回填（regionless ocr → INVALID_INPUT）、旧对象随后整份回写导致 StepRun 回退 running（last-writer-wins）。代码点 core_service.py:3236 → service.py:1394/1531/1454 → sqlite/pipeline.py:415。
 - 影响面：GUI 当前无 viewmodel 轮询调用点（不触发），但 Host 集成测试/诊断工具会触发 → **latent 生产缺陷，重打包不能视为已修**。
 - 建议已立项：RUN-STORE-CACHE-RACE-FIX-1（视图读与执行缓存分离 + owner/CAS 加固 + 并发回归）。
 - 集成：ae7fe3334。
