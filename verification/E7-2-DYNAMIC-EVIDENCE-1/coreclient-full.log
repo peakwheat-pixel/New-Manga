@@ -1,7 +1,7 @@
 # test
-head: bed4023ab（工作树）
+head: 939f1811d（返修工作树；本证据在返修提交前生成）
 env: Windows 11 / pwsh 7 / dotnet 10.0.401 / python Python 3.14.6
-timestamp: 2026-11-16T01:45:22+08:00
+timestamp: 2026-11-16T01:58:08+08:00
 command: dotnet test apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/NewManga.CoreClient.Tests.csproj
 EXIT: 0
 

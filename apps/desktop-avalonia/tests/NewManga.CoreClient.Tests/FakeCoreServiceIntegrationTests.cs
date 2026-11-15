@@ -20,8 +20,9 @@ namespace NewManga.CoreClient.Tests;
 /// </list>
 ///
 /// <para>The fake sidecar is an inline Python script written to a temp file at test time (so the test
-/// project needs no .csproj changes and no committed fixture binary). It must be told a scenario via the
-/// <c>FAKE_CORE_SCENARIO</c> environment variable.</para>
+/// project needs no .csproj changes and no committed fixture binary). The scenario is passed as the
+/// script's first <b>command-line argument</b> -- <c>CoreServiceOptions</c> exposes no environment map,
+/// so an env-var based scenario is not possible here.</para>
 /// </summary>
 public sealed class FakeCoreServiceIntegrationTests
 {
@@ -131,6 +132,12 @@ for raw in sys.stdin:
 
         // Fail-closed: the channel is now poisoned, so the next command must fail immediately rather
         // than quietly reading whatever is left on the wire.
+        //
+        // r1 P1: asserting only on the substring "poisoned" was a surviving mutant — BOTH the
+        // "channel poisoned" path (ThrowIfPoisoned → RequestTimeout) and the "out of step, channel
+        // poisoned" resync-exhausted path (MalformedResponse) contain that word, so deleting the whole
+        // poison hook kept this test green. Assert the CODE (which distinguishes the two paths) and that
+        // the failure is immediate (no resync attempt, hence RequestTimeout rather than MalformedResponse).
         var next = await Assert.ThrowsAsync<SidecarException>(() =>
             client.SendAsync(
                 "TestCommand",
@@ -138,8 +145,15 @@ for raw in sys.stdin:
                 WireJson.EmptyObject,
                 TimeSpan.FromSeconds(5)));
 
-        Assert.Contains("poisoned", next.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal(SidecarErrorCode.RequestTimeout, next.Code);
+        Assert.Contains("restart required", next.Message, StringComparison.OrdinalIgnoreCase);
     }
+
+    // NOTE (r1 P2, deliberately deferred): the ruling names BOTH command paths, but
+    // SendHostControlAsync writes its payload differently from SendAsync and the naive
+    // WireJson.EmptyObject construction failed with "Cannot write the start of an object without a
+    // property name". Adding that case needs its own payload builder analysis -- recorded as an open
+    // gap on the task card rather than shipping a red or deleted-but-unmentioned test.
 
     /// <summary>Inline-Python fake core_service: writes the script, starts it, exposes client options.</summary>
     private sealed class FakeCore : IDisposable
