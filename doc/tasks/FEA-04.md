@@ -38,6 +38,11 @@ allowed_paths:
 
 # FEA-04 Current 适配（范围冻结 v3，待独立复核）
 
+> **AC-CHECKBOX-AUTHORITY-1 语义登记（2026-11-15）**：本卡是**范围冻结卡**。
+> `status: done` 表示**范围冻结与 scope 复核完成**（见 `review_appointment`、`doc/reviews/FEA-04-scope-r1/r2`），
+> **不代表 AC1–AC8 已满足** —— 那些是**下游实现**的验收条件，本卡只冻结范围。
+> 因此本条下述 AC 一律标 `blocked: 实现未开始`，不冒充完成。
+
 ## 来源与授权
 
 1. 方案 §12.1 `:642`：S1 `FEA-04` Current 适配——`Frontends.Current`、V2 state/route/VM adapter、**保留旧入口**；验收「行为不退化；无 VM 私有第二份业务真值；关闭/重建不 Dispose Host，不隐式 Start」。
@@ -82,14 +87,14 @@ allowed_paths:
 
 ## 验收标准（冻结版）
 
-- [ ] **AC1 旧入口保留**：公开签名/路由不变；`git diff` 只允许内部实现 + 适配层新增，每处改动 Handoff 说明。 <<PARTIAL: 范围冻结；实现未开始>>
-- [ ] **AC2 行为基线不退化**：`dotnet test apps/desktop-avalonia/NewManga.sln --no-build --settings apps/desktop-avalonia/tests/NewManga.runsettings` 在 `91be6c134` 的逐工程计数为基线；实现后同命令逐工程 ≥ 基线（Handoff 附前后表）。 <<PARTIAL: 范围冻结；实现未开始>>
-- [ ] **AC3 无第二份业务真值**：VM 私有状态清单（Handoff）逐项区分 UI 态/业务态；业务态读取统一经 R-STATE-1 的权威源；新增私有缓存/registry 字段零个或逐项说明。 <<PARTIAL: 范围冻结；实现未开始>>
-- [ ] **AC4 §15.3 六项迁出**：S1–S6 每项「现状→新权威→断言」；**未迁出项必须在 Handoff 明确登记**（不得静默省略）。 <<PARTIAL: 范围冻结；实现未开始>>
-- [ ] **AC5 fail-closed preflight**：Q-20 五个 blocker 各有用例；存在任一 blocker → `allowed=false` + 对应 `PreflightBlocker` + 零 Host/Core 副作用；无 blocker → `allowed=true` 且不触发新 Run。 <<PARTIAL: 范围冻结；实现未开始>>
-- [ ] **AC6 生命周期**：关闭/重建内容前后 `hostBefore`/`hostAfter` 满足 `ReferenceEquals(hostBefore, hostAfter)`；`FakeHostController.StartCalls`/`HostController.StartRequests` 计数不增。 <<PARTIAL: 范围冻结；实现未开始>>
-- [ ] **AC7 回归与证据**：sln 测试日志、基线对照表、preflight blocker 矩阵入 `verification/FEA-04/**`。 <<PARTIAL: 范围冻结；实现未开始>>
-- [ ] **AC8 独立复核**：本卡冻结版的范围复核 approved（P0/P1=0，报告见 `doc/reviews/FEA-04-scope-r*.md`）；实现复核 `doc/reviews/FEA-04-r1.md` approved（P0/P1=0）。 <<PARTIAL: 范围冻结；待派发>>
+- [ ] **AC1 旧入口保留**：公开签名/路由不变；`git diff` 只允许内部实现 + 适配层新增，每处改动 Handoff 说明。 <!-- blocked: 原标 <<PARTIAL: 范围冻结；实现未开始>>；status:done 指范围冻结完成，非实现完成 -->
+- [ ] **AC2 行为基线不退化**：`dotnet test apps/desktop-avalonia/NewManga.sln --no-build --settings apps/desktop-avalonia/tests/NewManga.runsettings` 在 `91be6c134` 的逐工程计数为基线；实现后同命令逐工程 ≥ 基线（Handoff 附前后表）。 <!-- blocked: 原标 <<PARTIAL: 范围冻结；实现未开始>>；status:done 指范围冻结完成，非实现完成 -->
+- [ ] **AC3 无第二份业务真值**：VM 私有状态清单（Handoff）逐项区分 UI 态/业务态；业务态读取统一经 R-STATE-1 的权威源；新增私有缓存/registry 字段零个或逐项说明。 <!-- blocked: 原标 <<PARTIAL: 范围冻结；实现未开始>>；status:done 指范围冻结完成，非实现完成 -->
+- [ ] **AC4 §15.3 六项迁出**：S1–S6 每项「现状→新权威→断言」；**未迁出项必须在 Handoff 明确登记**（不得静默省略）。 <!-- blocked: 原标 <<PARTIAL: 范围冻结；实现未开始>>；status:done 指范围冻结完成，非实现完成 -->
+- [ ] **AC5 fail-closed preflight**：Q-20 五个 blocker 各有用例；存在任一 blocker → `allowed=false` + 对应 `PreflightBlocker` + 零 Host/Core 副作用；无 blocker → `allowed=true` 且不触发新 Run。 <!-- blocked: 原标 <<PARTIAL: 范围冻结；实现未开始>>；status:done 指范围冻结完成，非实现完成 -->
+- [ ] **AC6 生命周期**：关闭/重建内容前后 `hostBefore`/`hostAfter` 满足 `ReferenceEquals(hostBefore, hostAfter)`；`FakeHostController.StartCalls`/`HostController.StartRequests` 计数不增。 <!-- blocked: 原标 <<PARTIAL: 范围冻结；实现未开始>>；status:done 指范围冻结完成，非实现完成 -->
+- [ ] **AC7 回归与证据**：sln 测试日志、基线对照表、preflight blocker 矩阵入 `verification/FEA-04/**`。 <!-- blocked: 原标 <<PARTIAL: 范围冻结；实现未开始>>；status:done 指范围冻结完成，非实现完成 -->
+- [ ] **AC8 独立复核**：本卡冻结版的范围复核 approved（P0/P1=0，报告见 `doc/reviews/FEA-04-scope-r*.md`）；实现复核 `doc/reviews/FEA-04-r1.md` approved（P0/P1=0）。 <!-- blocked: 原标 <<PARTIAL: 范围冻结；实现未开始>>；status:done 指范围冻结完成，非实现完成 -->
 
 ## L 前置适用性判定
 
