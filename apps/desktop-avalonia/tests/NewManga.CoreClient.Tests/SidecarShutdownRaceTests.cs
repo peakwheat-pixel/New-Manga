@@ -147,7 +147,7 @@ public sealed class SidecarShutdownRaceTests
 
     /// <summary>
     /// r1 P2-2: the product's real shutdown path is <c>CoreServiceClient.DisposeAsync</c>
-    /// (HostRuntime calls it without holding <c>_pipeGate</c>). The first test used
+    /// (HostRuntime calls it without holding the exchange lease). The first test used
     /// <c>await inFlight</c> before <c>await stop</c>, which structurally avoids that path. This one
     /// disposes while an exchange is genuinely in flight.
     /// </summary>

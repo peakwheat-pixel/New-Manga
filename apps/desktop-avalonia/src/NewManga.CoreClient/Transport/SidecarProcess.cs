@@ -213,7 +213,10 @@ public sealed class SidecarProcess : IAsyncDisposable
         return sidecar;
     }
 
-    public Task<WireFrame> ExchangeAsync(string requestLine, CancellationToken cancellationToken = default) =>
+    // E-7 #1: both overloads are internal. This 2-arg convenience overload has no callers today, but
+    // leaving it public reintroduced exactly the hazard the item is about -- any assembly could call it
+    // and bypass the exchange lease. Test access is covered by InternalsVisibleTo.
+    internal Task<WireFrame> ExchangeAsync(string requestLine, CancellationToken cancellationToken = default) =>
         ExchangeAsync(requestLine, escapeNonAscii: true, Spec.RequestTimeout, cancellationToken);
 
     internal async Task<WireFrame> ExchangeAsync(

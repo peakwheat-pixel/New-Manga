@@ -55,7 +55,7 @@ public sealed class BridgeResponseIdValidationTests
 
 /// <summary>
 /// PIPE-EXCLUSIVE-TRANSPORT-1 r1 复核 R-004: <c>CoreServiceClient.SendRawAsync</c> was put behind
-/// <c>_pipeGate</c>, but no test failed when that gate was removed. This drives the raw hook concurrently
+/// the client's own gate (<c>_pipeGate</c>, since removed by E-7 #1 in favour of the transport lease), but no test failed when that gate was removed. This drives the raw hook concurrently
 /// with a normal command and requires both to keep their own responses.
 /// </summary>
 public sealed class RawSendPipeExclusivityTests

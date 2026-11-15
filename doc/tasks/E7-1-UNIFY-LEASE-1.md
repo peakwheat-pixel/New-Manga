@@ -6,7 +6,7 @@ governance_version: 3
 status: done
 suggested_owner: DSH
 owner: DSH
-reviewer: （待派 r1）
+reviewer: e7-1-review（独立上下文子 agent，r1 为 CHANGES_REQUESTED，已返修）
 integration_commit: cd7f8ccf7
 canonical_evidence_status: complete
 resource_closeout_status: complete
@@ -79,11 +79,11 @@ E-7 第 1 项只点名 `ExchangeAsync`，扩大可见性变更面没有收益。
 
 - [x] **AC1 独占统一**：`CoreServiceClient._pipeGate` 字段删除，3 处交换改为 <<MET>>
       `AcquireExchangeLeaseAsync` + 显式 `Dispose()`。
-- [x] **AC2 可见性收紧**：`SidecarProcess.ExchangeAsync` 为 `internal`；程序集外无法直调。 <<MET>>
+- [x] **AC2 可见性收紧**：`SidecarProcess.ExchangeAsync` 的**两个重载**都是 `internal`；程序集外无法直调。（r1 P1：初版只降了 4 参重载，2 参 `public` 重载漏改；全仓 16 个调用点全是 4 参，2 参重载 0 调用者。） <<MET>>
 - [x] **AC3 无残留**：`grep _pipeGate` 在 `src/**` 无命中（注释中的历史提及已改写）。 <<MET>>
-- [x] **AC4 不回归**：`NewManga.CoreClient.Tests` 全量 **203 / 0 / 30**；并发相关用例全绿。 <<MET>>
+- [x] **AC4 不回归**：`NewManga.CoreClient.Tests` 全量 **203 passed / 0 failed / 30 skipped**。**措辞更正（r1 P2）**：其中 `PipeResponsePairingTests.ConcurrentCommands_DoNotCrossResponses`、`BridgePipeExclusivityTests.*`、`RawSendPipeExclusivityTests.*` 是 `[SidecarFact]`，在**无夹具模式下 SKIP**，并未执行；实际执行且为绿的是 `SidecarCancellationPoisonTests`(3) 与 `SidecarShutdownRaceTests`(4)。r1 用本机夹具实跑子集为 6 通过 / 1 失败（失败是旧 core 不识别 `source_list_scan_targets`，与本改动无关）。**不得**把 skip 说成绿。 <<MET>>
 - [x] **AC5 前提核实**：确认 `ExchangeLease.Dispose()` 幂等（不双释放）。 <<MET>>
-- [x] **AC6 独立复核**：固定 head 交独立上下文 Review。 <<MET>>
+- [x] **AC6 独立复核**：`e7-1-review` 已完成 r1，verdict **CHANGES_REQUESTED**（0/1/3/4）；其 P1（2 参重载漏改）与 P2（AC4 skip 当绿、AC6 自证、证据头矛盾）已在本轮返修处置。 <<MET>>
 
 ## 允许修改范围
 
@@ -124,7 +124,8 @@ E-7 第 1 项只点名 `ExchangeAsync`，扩大可见性变更面没有收益。
 - **结果**：
   - **AC1**：`CoreServiceClient._pipeGate` 字段删除；3 处交换（`SendHostControlAsync`、`SendRawAsync`、
     `SendAsync`）改为 `AcquireExchangeLeaseAsync` + 显式 `lease.Dispose()`；
-  - **AC2**：`SidecarProcess.ExchangeAsync` 由 `public` 降为 `internal`（程序集外无法直调）；
+  - **AC2**：`SidecarProcess.ExchangeAsync` 的**两个重载**都降为 `internal`（程序集外无法直调）。
+    **r1 P1 更正**：初版只改了 4 参重载，2 参 `public` 重载漏改，导致当时的 Closeout 断言「程序集外无法直调」是**事实错误**；返修已补。；
   - **AC3**：`src/**` 中 `_pipeGate` 命中 **0**；`SendRawAsync` 的历史注释已改写（原称「bypass _pipeGate」）；
   - **AC5**：核实 `ExchangeLease.Dispose()` 幂等（`Interlocked.Exchange(ref _gate, null)` + `gate?.Release()`），
     显式 dispose 不会双释放。

@@ -74,11 +74,18 @@ index 1ac720755..0e3014f17 100644
      }
  
 diff --git a/apps/desktop-avalonia/src/NewManga.CoreClient/Transport/SidecarProcess.cs b/apps/desktop-avalonia/src/NewManga.CoreClient/Transport/SidecarProcess.cs
-index 57fe239d6..a10d75cb8 100644
+index 57fe239d6..6205bbf6a 100644
 --- a/apps/desktop-avalonia/src/NewManga.CoreClient/Transport/SidecarProcess.cs
 +++ b/apps/desktop-avalonia/src/NewManga.CoreClient/Transport/SidecarProcess.cs
-@@ -216,7 +216,7 @@ public sealed class SidecarProcess : IAsyncDisposable
-     public Task<WireFrame> ExchangeAsync(string requestLine, CancellationToken cancellationToken = default) =>
+@@ -213,10 +213,13 @@ public sealed class SidecarProcess : IAsyncDisposable
+         return sidecar;
+     }
+ 
+-    public Task<WireFrame> ExchangeAsync(string requestLine, CancellationToken cancellationToken = default) =>
++    // E-7 #1: both overloads are internal. This 2-arg convenience overload has no callers today, but
++    // leaving it public reintroduced exactly the hazard the item is about -- any assembly could call it
++    // and bypass the exchange lease. Test access is covered by InternalsVisibleTo.
++    internal Task<WireFrame> ExchangeAsync(string requestLine, CancellationToken cancellationToken = default) =>
          ExchangeAsync(requestLine, escapeNonAscii: true, Spec.RequestTimeout, cancellationToken);
  
 -    public async Task<WireFrame> ExchangeAsync(
@@ -86,3 +93,29 @@ index 57fe239d6..a10d75cb8 100644
          string requestLine,
          bool escapeNonAscii,
          TimeSpan timeout,
+diff --git a/apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Bridge/BridgeResponseIdValidationTests.cs b/apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Bridge/BridgeResponseIdValidationTests.cs
+index 8c3029ac4..b6f099f9e 100644
+--- a/apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Bridge/BridgeResponseIdValidationTests.cs
++++ b/apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Bridge/BridgeResponseIdValidationTests.cs
+@@ -55,7 +55,7 @@ public sealed class BridgeResponseIdValidationTests
+ 
+ /// <summary>
+ /// PIPE-EXCLUSIVE-TRANSPORT-1 r1 复核 R-004: <c>CoreServiceClient.SendRawAsync</c> was put behind
+-/// <c>_pipeGate</c>, but no test failed when that gate was removed. This drives the raw hook concurrently
++/// the client's own gate (<c>_pipeGate</c>, since removed by E-7 #1 in favour of the transport lease), but no test failed when that gate was removed. This drives the raw hook concurrently
+ /// with a normal command and requires both to keep their own responses.
+ /// </summary>
+ public sealed class RawSendPipeExclusivityTests
+diff --git a/apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/SidecarShutdownRaceTests.cs b/apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/SidecarShutdownRaceTests.cs
+index f40106f5e..5334f4955 100644
+--- a/apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/SidecarShutdownRaceTests.cs
++++ b/apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/SidecarShutdownRaceTests.cs
+@@ -147,7 +147,7 @@ public sealed class SidecarShutdownRaceTests
+ 
+     /// <summary>
+     /// r1 P2-2: the product's real shutdown path is <c>CoreServiceClient.DisposeAsync</c>
+-    /// (HostRuntime calls it without holding <c>_pipeGate</c>). The first test used
++    /// (HostRuntime calls it without holding the exchange lease). The first test used
+     /// <c>await inFlight</c> before <c>await stop</c>, which structurally avoids that path. This one
+     /// disposes while an exchange is genuinely in flight.
+     /// </summary>
