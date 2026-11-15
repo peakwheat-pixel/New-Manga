@@ -284,3 +284,20 @@ settings_network_profiles_create。点号被拒是正确行为，不是缺陷。
 
 **为什么从未暴露**：测试夹具此前一直用 2026-10-23 legacy v6 副本，握手即失败，
 根本没跑到这些命令。
+
+### 组 B 排除记录（2026-11-16 续，读代码 + 实测）
+
+已**排除**的四条（都不成立）：
+1. 不是产品缺陷 —— _P15_SETTINGS_COMMANDS 含 19 个 settings 命令、P15SettingsCommands 已实例化；
+2. 不是命令名格式错 —— 下划线格式实测 ok；
+3. 不是 registry 映射错 —— HostCommandRegistry.cs:311 正确；
+4. 不是 WriteOptionalBool 的 bug —— HostCommandDispatcher.cs:1435 遇 null **return（不写）**，
+   实现正确。（我曾误以为它写 null，实为我的 probe 自己传了 null，绕过 dispatcher 直发 core。）
+
+**已确证**：[INVALID_REQUEST] 来自 CoreProtocol.cs:131
+ase($"[{code}] {message ?? "core operation failed"}") —— 即 **core 响应里的 rror.code**，
+message 为 null 所以显示默认串。
+
+**关键缺口**：CoreOperationException 只保留 code，core 的 rror.details
+（通常含 phase / ction / message_key，如 SETTINGS_INVALID_INPUT）**在异常消息里丢失**。
+⇒ 下一步应从 **wire 层抓 core 的原始 error 对象**（含 details），而不是从异常 message 猜。
