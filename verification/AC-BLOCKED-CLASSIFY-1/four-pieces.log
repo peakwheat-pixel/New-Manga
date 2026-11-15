@@ -1,0 +1,13 @@
+# 四件套实测（P2-05 要求入库）
+
+## check.ps1（全局）
+WARN: doc/STATUS.md 已达到预算的 80%：3115 bytes / 27 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6960 bytes / 63 lines
+Governance check: PASS (3 warnings)
+
+## verify_pins.ps1
+OK FEA01 0370c18932b1
+PIN AUDIT: PASS (all 18)
+
+## generate_api_inventory.py --check
+OK: rendered counts match FEA-C07 doc
