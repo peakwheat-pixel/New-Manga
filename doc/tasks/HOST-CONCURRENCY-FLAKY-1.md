@@ -146,6 +146,9 @@ fileLock = new FileStream(... "registry.v1.lock", ..., FileShare.None);   // ←
 | EV-HCF-13 | **根因铁证**：Host producer 未 mask | verification/HOST-CONCURRENCY-FLAKY-1/root-cause-proven.md | c75740cb9 | PIN_PENDING | CANONICAL | BLOB |
 | EV-HCF-14 | **test.ps1 首次全绿** EXIT=0 | verification/HOST-CONCURRENCY-FLAKY-1/after-identity-fix.log | 277406eeb | PIN_PENDING | CANONICAL | BLOB |
 | EV-HCF-15 | CoreClient -warnaserror 编译 | verification/HOST-CONCURRENCY-FLAKY-1/build-r99.log | 277406eeb | PIN_PENDING | CANONICAL | BLOB |
+| EV-HCF-16 | AC6 独立复核报告（CHANGES_REQUESTED + P0/P1/P2） | verification/HOST-CONCURRENCY-FLAKY-1/review-ac6.md | bbeb28dcb | ca480b624833edee8201ba76ed927f08b464dab4f908a3db65361f44e137fbee | CANONICAL | BLOB |
+| EV-HCF-17 | P0-1 修复后 test.ps1 全量（仍 EXIT=0） | verification/HOST-CONCURRENCY-FLAKY-1/after-p0-fix.log | bbeb28dcb | c9ff683c687acb564a6a9d9fec10221a862a03741af3e689b17420f421ad695d | CANONICAL | BLOB |
+| EV-HCF-18 | P0-1 修复的 Host -warnaserror 编译 | verification/HOST-CONCURRENCY-FLAKY-1/build-p0.log | bbeb28dcb | 5a1e95234be694cb71a90e80efa57321672d506ec82996e60803220b32880cef | CANONICAL | BLOB |
 
 ## Resource Manifest
 
@@ -452,3 +455,71 @@ scanner.py 的 masked 比较会稳定报 FILE_IDENTITY_CHANGED。
 与 
 ender-info.md（测试副作用），本轮已 git checkout 还原、未混入本次提交。
 这属于 test 污染工作区的既有问题，应独立登记。
+
+## AC6 复核处置（2026-11-16，本轮）
+
+独立上下文复核者 **reviewer-hcf**（只读；`git status --porcelain` 全程为空）
+结论 **CHANGES_REQUESTED**。报告：`verification/HOST-CONCURRENCY-FLAKY-1/review-ac6.md`（361 行）。
+
+### 复核确认成立的部分（保留原修复）
+
+- 两处原修复**正确、应保留**：`HostIssuer.cs:563/596-597` 归一化、
+  `SourceAccessRegistry.cs:362/379-398` 有界等待；
+- `FileIdMask = (1UL << 53) - 1` 与 `identity.py:20` 数值一致；
+  `dwVolumeSerialNumber` 是 `uint` ⇒ C# 侧 `_VOLUME_MASK` 是 no-op；
+- **测试证据是真绿、不是 skip 冒充 pass**：复核者用 log 里的 `trx_sha256` 校验磁盘 TRX，
+  三个哈希逐一相同；解析 `results-host.trx` 得 405 = 361 Passed + 44 NotExecuted + 0 Failed，
+  两个曾失败的 `GrantIssuerTests` 是 `Passed` 且有真实执行时长（0.758s / 0.609s）。
+
+### P0-1（已修）：producer 遗漏
+
+发现 `HostIssuer` 只修了 3 处 handle probe 中的 1 处。
+`SourceSecurity.Identity` 的 raw file index 经 `SourceReadCoordinator` 流入
+**source-read grant facts**，Py 侧 `source_read_refs.py:1068/1080` 原样透传，
+在 `scanner.py:168` 与 masked 值对撞 ⇒ 同签名 `FILE_IDENTITY_CHANGED`。
+
+**修法采纳复核者关键提醒**：不在 `SourceSecurity.Identity` 内 mask —— 该值还被
+`SourceAccessRegistry.cs:49/137` 持久化到 `registry.v1.dat` 作 `SourceRoot.FileId`
+并在 `:140-141` 校验，单边 mask 会让既有 registry 全部 `SOURCE_REGISTRY_UNAVAILABLE`。
+改为在**写入 wire facts 的两处**（`SourceReadCoordinator.cs:404/624`）归一化。
+
+验证：`test.ps1` 仍 **EXIT=0**（1579/1627），Host `-warnaserror` 编译通过。
+
+### P1（已修）：证据 pin 表 15/15 行 commit 全错
+
+原表的 `commit` 填的是"该证据入库前的父提交"，`git cat-file -e` 对多数行返回 128（不存在）。
+最严重的是 EV-HCF-14/15 把"修复后首次全绿"的日志钉在修复提交**之前**。
+
+根因：`apply_card_r98.py:20-46` 用当时 HEAD 填 commit，blob 不存在就写 `PIN_PENDING`。
+**`check.ps1` 仍 PASS(3w)，说明检查器不校验 pin 的 commit 归属。**
+
+已用 `git log --diff-filter=A -- <path>` 反查实际引入 commit 并全部更正；
+本轮新增 EV-HCF-16/17/18 亦按同一规则填写。**15 行已全部通过 `git cat-file -e` 校验。**
+
+### AC 标记更正（按复核）
+
+| AC | 原 | 现 | 理由 |
+|---|---|---|---|
+| AC1 | MET | **PARTIAL** | 诊断全篇未提 xUnit 并行配置，而 `NewManga.Host.Tests/AssemblyInfo.cs:1` 是 `DisableTestParallelization = true` —— **直接证伪「并行导致竞争」叙事** |
+| AC4 | MET | **PARTIAL** | AC6 发现遗漏 producer（P0-1），已补修但 `TileChannel.cs:437` 同源风险待评估 |
+| AC5 | MET | **PARTIAL** | 证据目录原有 331/0/74 是修复前数字；修复后以 `test.ps1` 全量替代裸跑验证，未单独重跑裸跑 |
+
+**叙事更正（重要）**：`AssemblyInfo.cs:1` 的 `DisableTestParallelization = true` 证明
+Host.Tests **本来就不并行**。所以本卡早前「并行导致 `SOURCE_REGISTRY_BUSY`」的归因是错的。
+**缺陷本身真实**（`WaitOne(0)` 零超时 + `FileShare.None` 单次 open），修复有效，
+但**触发条件是「同进程内多线程」而非「测试并行」** —— 后者在 Host.Tests 中被显式禁用。
+
+### 过度声明更正
+
+原文「任何用户新导入都会稳定报 `FILE_IDENTITY_CHANGED`」**过强**。
+复核指出触发取决于 NTFS 64 位 file ID 的复用序列是否使值 > 2^53；
+`alpha.png` 的 `st_ino = 844424931403221 < 2^53` 长期可用即是反例。
+**正确表述**：当 file index 超过 2^53 时必然失败；实测样本 6/7 超过，
+故在新建文件场景下**高概率**触发，而非"任何情况"。
+
+### 复核者未能独立验证的项（如实记录）
+
+- 未重跑 `test.ps1`/`dotnet test`（只读约束）⇒ 绿是 TRX 级强证据，
+  但"运行树 == `277406eeb`"只能间接推断；
+- P0 是代码级链路核对，端到端需 opt-in `NEWMANGA_FEA11_IPC=1`（会起真实 Core），未跑；
+- "本会话唯一一个产品缺陷"需审计全部门卡，未核。
