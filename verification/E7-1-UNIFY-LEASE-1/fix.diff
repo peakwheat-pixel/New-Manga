@@ -1,0 +1,88 @@
+diff --git a/apps/desktop-avalonia/src/NewManga.CoreClient/CoreServiceClient.cs b/apps/desktop-avalonia/src/NewManga.CoreClient/CoreServiceClient.cs
+index 1ac720755..0e3014f17 100644
+--- a/apps/desktop-avalonia/src/NewManga.CoreClient/CoreServiceClient.cs
++++ b/apps/desktop-avalonia/src/NewManga.CoreClient/CoreServiceClient.cs
+@@ -423,7 +423,8 @@ public sealed class CoreServiceClient : IAsyncDisposable
+     /// gate for the WHOLE request/response cycle, including the event-frame skipping loop, because that
+     /// loop reads the same shared stream.
+     /// </summary>
+-    private readonly SemaphoreSlim _pipeGate = new(1, 1);
++    // E-7 #1: exclusivity now comes from the transport (SidecarProcess.AcquireExchangeLeaseAsync),
++    // so the client no longer keeps its own second gate.
+ 
+     /// <summary>GRANT-ISSUER-1: the host-control session opened at startup (null until opened).</summary>
+     public HostSessionInfo? HostSession { get; private set; }
+@@ -693,7 +694,7 @@ public sealed class CoreServiceClient : IAsyncDisposable
+         });
+ 
+         // CORE-PIPE-EXCLUSIVE-1: same exclusive gate as the app channel -- one shared pipe.
+-        await _pipeGate.WaitAsync(cancellationToken).ConfigureAwait(false);
++        var lease = await _process.AcquireExchangeLeaseAsync(cancellationToken).ConfigureAwait(false);
+         try
+         {
+         var frame = await _process
+@@ -718,7 +719,7 @@ public sealed class CoreServiceClient : IAsyncDisposable
+         }
+         finally
+         {
+-            _pipeGate.Release();
++            lease.Dispose();
+         }
+     }
+ 
+@@ -2379,10 +2380,11 @@ public sealed class CoreServiceClient : IAsyncDisposable
+     /// <summary>Raw escaping test hook (AC3 negative): sends the line verbatim, never throws on Core errors.</summary>
+     public async Task<CoreResponse> SendRawAsync(string rawJsonLine, CancellationToken cancellationToken = default)
+     {
+-        // PIPE-EXCLUSIVE-TRANSPORT-1 / E-7 (window 2): this hook used to bypass _pipeGate entirely, so a raw
+-        // frame could race every normal command on the same stdin/stdout pair. The raw line carries its own
+-        // request_id (if any), so we do not validate the id here -- but the pipe must still be exclusive.
+-        await _pipeGate.WaitAsync(cancellationToken).ConfigureAwait(false);
++        // PIPE-EXCLUSIVE-TRANSPORT-1 / E-7 (window 2): this hook used to bypass the client gate entirely,
++        // so a raw frame could race every normal command on the same stdin/stdout pair. The raw line
++        // carries its own request_id (if any), so we do not validate the id here -- but the pipe must
++        // still be exclusive. E-7 #1: exclusivity comes from the transport lease for every caller now.
++        var lease = await _process.AcquireExchangeLeaseAsync(cancellationToken).ConfigureAwait(false);
+         try
+         {
+             var frame = await _process
+@@ -2392,7 +2394,7 @@ public sealed class CoreServiceClient : IAsyncDisposable
+         }
+         finally
+         {
+-            _pipeGate.Release();
++            lease.Dispose();
+         }
+     }
+     /// <summary>
+@@ -2485,7 +2487,7 @@ public sealed class CoreServiceClient : IAsyncDisposable
+         var line = CoreProtocol.BuildRequest(requestId, command, minor, payload);
+ 
+         // CORE-PIPE-EXCLUSIVE-1: hold the pipe for the entire cycle (write + read + event-frame skipping).
+-        await _pipeGate.WaitAsync(cancellationToken).ConfigureAwait(false);
++        var lease = await _process.AcquireExchangeLeaseAsync(cancellationToken).ConfigureAwait(false);
+         try
+         {
+         var frame = await _process.ExchangeAsync(line, escapeNonAscii: true, timeout, cancellationToken).ConfigureAwait(false);
+@@ -2512,7 +2514,7 @@ public sealed class CoreServiceClient : IAsyncDisposable
+         }
+         finally
+         {
+-            _pipeGate.Release();
++            lease.Dispose();
+         }
+     }
+ 
+diff --git a/apps/desktop-avalonia/src/NewManga.CoreClient/Transport/SidecarProcess.cs b/apps/desktop-avalonia/src/NewManga.CoreClient/Transport/SidecarProcess.cs
+index 57fe239d6..a10d75cb8 100644
+--- a/apps/desktop-avalonia/src/NewManga.CoreClient/Transport/SidecarProcess.cs
++++ b/apps/desktop-avalonia/src/NewManga.CoreClient/Transport/SidecarProcess.cs
+@@ -216,7 +216,7 @@ public sealed class SidecarProcess : IAsyncDisposable
+     public Task<WireFrame> ExchangeAsync(string requestLine, CancellationToken cancellationToken = default) =>
+         ExchangeAsync(requestLine, escapeNonAscii: true, Spec.RequestTimeout, cancellationToken);
+ 
+-    public async Task<WireFrame> ExchangeAsync(
++    internal async Task<WireFrame> ExchangeAsync(
+         string requestLine,
+         bool escapeNonAscii,
+         TimeSpan timeout,

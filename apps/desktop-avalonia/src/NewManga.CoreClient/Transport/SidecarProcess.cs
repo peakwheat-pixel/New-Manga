@@ -216,7 +216,7 @@ public sealed class SidecarProcess : IAsyncDisposable
     public Task<WireFrame> ExchangeAsync(string requestLine, CancellationToken cancellationToken = default) =>
         ExchangeAsync(requestLine, escapeNonAscii: true, Spec.RequestTimeout, cancellationToken);
 
-    public async Task<WireFrame> ExchangeAsync(
+    internal async Task<WireFrame> ExchangeAsync(
         string requestLine,
         bool escapeNonAscii,
         TimeSpan timeout,
