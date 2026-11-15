@@ -171,9 +171,12 @@ response.RequestId is { } actual && string.Equals(actual, requestId, StringCompa
 - **门禁**：定向 **14 passed**；全量 **210 passed / 0 failed / 30 skipped / EXIT=0**；
   `check.ps1` PASS (3 warnings)｜`verify_pins` 18/18｜`api_inventory` 1/80/6=87。
 - **未关闭项（不淡化）**：
-  1. **裁决 §5.3 的动态证据缺口**：真实 `SendAsync`/`SendHostControlAsync` 调用链的假 sidecar 测试
-     未做（`StartAsync` 需 `core.ping` 握手），以及「错 id→无 id→匹配」「无 id 耗尽→poison」
-     「事件+无 id 混排」「raw idless 观察」等用例 ⇒ **`E-7 #2` 整项不得据此关闭**；
+   1. **裁决 §5.3 的动态证据缺口 —— 部分关闭**：`E7-2-DYNAMIC-EVIDENCE-1`（commit `5794fa6c4`） 建了内联 python 假 `core_service`
+      （能过 `core.ping` 握手），在**两个真实调用点**上验证：`SendAsync` 覆盖重同步 / 无 id 丢弃 /
+      无 id 耗尽 poison；`SendHostControlAsync` 覆盖重同步（经变异验证有判别力）。
+      **仍缺**（如实保留）：host-control 路径的「无 id 耗尽 ⇒ poison」分支无测试（尝试过，全量下
+      flaky 已撤回并登记）；「错 id→无 id→匹配」多帧混合、事件帧+无 id 混排、raw idless 观察
+      等 §5.3 用例仍未做 ⇒ **`E-7 #2` 整项不得据此关闭**；
   2. **bridge 侧**同类 fail-open（`HostBridgeClient.ParseResponse` 在 `expectedId == null` 时不校验）
      **未处理**，需另一份裁决；
   3. `R002-RESYNC-1` 的 P2-F1（测试不覆盖调用点）仍未关闭；

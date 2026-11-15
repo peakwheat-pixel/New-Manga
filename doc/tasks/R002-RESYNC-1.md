@@ -163,10 +163,14 @@ PowerShell 子进程在收到请求后输出两行：
 - **门禁**：新建测试 4 passed / 8 ms；全量 **203 passed / 0 failed / 30 skipped / EXIT=0**；
   `check.ps1` PASS (3 warnings)｜`verify_pins` 18/18｜`api_inventory` 1/80/6=87。
 - **未关闭项（不淡化）**：
-  1. **P2-F1：4 条测试只直接调 `internal static` helper，没有任何测试证明两个调用点真的在用它。**
-     若未来某调用点改回直接判断，测试仍会全绿。可行收口办法是删除 `EnsureResponseBelongsToRequest`
-     让「改回直接调用」**编译失败**，但那会牵动 `PipeResponsePairingValidationTests` 的 3 条用例
-     （其中一条是 E-7 #2 的 fail-open 文档化用例），属跨卡改造，**本卡未做**；
+  1. ~~**P2-F1：4 条测试只直接调 `internal static` helper，没有任何测试证明两个调用点真的在用它。**~~
+     **已由跨卡工作关闭**：`E7-2-DYNAMIC-EVIDENCE-1`（commit `5794fa6c4`） 新增 4 条测试，经 `CoreServiceClient.StartAsync`（含 `core.ping`
+     握手）→ public `SendAsync` / `SendHostControlAsync` 驱动**两个真实调用点**：
+     - `SendAsync` 调用点：重同步 / 无 id 丢弃 / 无 id 耗尽 poison 三条；
+     - `SendHostControlAsync` 调用点：重同步一条，且**经变异验证**（把该路径改回
+       `Parse` + `EnsureResponseBelongsToRequest` ⇒ 该条变红）。
+     ⇒ 现在任一调用点若改回直接判断，测试会红。**本卡的 4 条 `R002ResyncTests` 仍只调 helper，
+     但已不再是唯一证据**；
   2. **E-7 仍未完成**：`_pipeGate` 未统一 + `ExchangeAsync` 仍 `public`、无 `request_id` 时 fail-open
      ⇒ **「并发安全」仍不可宣称**；
   3. **poison 后无自动恢复**，对外错误码仍是 `RequestTimeout`（`ThrowIfPoisoned` 既有行为），

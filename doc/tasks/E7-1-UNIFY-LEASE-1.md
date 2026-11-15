@@ -141,7 +141,8 @@ E-7 第 1 项只点名 `ExchangeAsync`，扩大可见性变更面没有收益。
      `EnsureResponseBelongsToRequest` 均把「无 id」视为属于本请求）—— 需先定契约（fail-closed 还是允许）；
   2. `AcquireExchangeLeaseAsync` / `ReadNextResponseLineAsync` 仍 `public`（E-7 #1 只点名
      `ExchangeAsync`）；
-  3. `R002-RESYNC-1` 的 P2-F1 仍未关闭（测试不覆盖调用点）；
+  3. ~~`R002-RESYNC-1` 的 P2-F1 仍未关闭（测试不覆盖调用点）~~ —— **已关闭**：`E7-2-DYNAMIC-EVIDENCE-1`（commit `5794fa6c4`） 用两个真实调用点
+     （`SendAsync` / `SendHostControlAsync`）的动态证据覆盖，且后者经变异验证；
   4. `tools/perf/wire_serialisation_probe.py:12` 仍把已删除的 `CoreServiceClient._pipeGate`
      当作串行判据（r1 R-005 第 3 处 / r2 R2-002）—— 该文件不在本卡 `allowed_paths` 内，**未改**，
      已登记为残余；它只影响该探针的说明文字，不影响产品行为。
