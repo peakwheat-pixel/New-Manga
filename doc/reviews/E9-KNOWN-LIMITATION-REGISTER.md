@@ -48,9 +48,30 @@ ZCode 明确核实过 `AcknowledgeAsync:468` 与 `RecoverAsync:581` 是同一路
 
 ## 被这条限制挡住的测试
 
-`Fea11Residual4AIpcTests.ProductionDispatcherFullSyncChain_NewKeyOldDigestConserved`
-（opt-in `NEWMANGA_FEA11_IPC=1`）—— 已按裁决改为断言 typed 拒绝，标记
-`KNOWN-LIMITATION-E9`；**不得**静默改绿，回退限制时须还原为成功断言。
+**已按裁决改造（断言 typed 拒绝）**：
+
+- `Fea11Residual4AIpcTests.ProductionDispatcherFullSyncChain_NewKeyOldDigestConserved`
+  （opt-in `NEWMANGA_FEA11_IPC=1`）—— 改为断言 typed 拒绝，标记 `KNOWN-LIMITATION-E9`。
+
+**★ 2026-11-15 补登（`GATE3-MATRIX-EXTEND-1` 实测发现，此前未登记）**：
+
+在 `NEWMANGA_FEA11_IPC=1` 下实测 Host.Tests 为 **8 failed / 360 passed / 31 skipped / 399**，
+其中**两个失败**的直接原因是 E-9，但**从未登记在本文件**：
+
+| 测试 | 实测失败原因 |
+|---|---|
+| `Fea11HostAuthIpcTests.Ack_SendsAFreshAuthorization_ThenOpensTheGateExactlyOnce` | `SourceAccessException : SOURCE_PLAN_UNAVAILABLE` |
+| `Fea11HostAuthIpcTests.Recovery_UsesAFreshAuthorization_AfterAWrongDigestRefusal` | `SourceAccessException : SOURCE_PLAN_UNAVAILABLE` |
+
+**处置口径**：这两个测试**尚未按裁决改造**，仍是**原始的"应当成功"断言**，因此在 E-9 下必然失败。
+**不得**为了让它们变绿而放宽断言或改 skip。
+可选动作（需裁决）：按与 `ProductionDispatcherFullSyncChain` 相同的方式改为断言 typed 拒绝，
+标记 `KNOWN-LIMITATION-E9`；**或**保持红并计入"E-9 未登记影响"清单。
+
+**另两个 `Fea11HostAuthIpcTests.CrashPoint_Park/Recover` 与本限制无关**：
+它们缺 `NEWMANGA_FEA11_CRASH_STATE` 环境变量（环境类，非缺陷）。
+
+**不得**静默改绿；回退限制时须还原为成功断言。
 
 ## 引用
 

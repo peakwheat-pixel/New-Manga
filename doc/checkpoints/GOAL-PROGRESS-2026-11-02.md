@@ -2166,3 +2166,22 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   ③installer unsigned = **BLOCKED（用户提供签名证书）**。每项都写了「缺什么 + 谁能提供 + 提供后怎么验证」四元组。
 - **本轮做的对的地方**：**先读全部参数再下结论**，并用**真实截图**替代"我分析过代码所以不行"。
   这正是前几轮反复出错的地方。
+## 252. ★ GATE3-MATRIX-EXTEND-1：实测发现 **2 个 E-9 被挡的测试从未登记**（2026-11-15，DSH，goal 轮次 53）
+
+- **先核实再动手**：读 `MAINT-1-GATE-CONDITION-3-MATRIX`（514 行）发现条件 3 的矩阵**已相当完整** ——
+  §9.1 **❌/⚠️ 均已清零**；§10 已扩容 4 个 GUI 流程（回收站 47 / 源恢复 18 / 沉浸 4 / F11 9 / 命令面板 1 = **80 通过**）。
+  **我差点基于印象去做重复工作。**
+- **重跑 Host.Tests（开 opt-in）实测**：**8 failed / 360 passed / 31 skipped / 399**
+  （旧记录是 15 failed / 1 skipped —— skip 口径已不同，**不得直接对比**）。**fail 从 15 降到 8**。
+- **8 个失败的归因（逐个单跑确认，不靠推测）**：
+  - **Fea11HostAuthIpcTests.Ack_SendsAFreshAuthorization_...** → `SourceAccessException : SOURCE_PLAN_UNAVAILABLE` = **E-9**
+  - **Fea11HostAuthIpcTests.Recovery_UsesAFreshAuthorization_...** → **同上 E-9**
+  - CrashPoint_Park / CrashPoint_Recover → 缺 `NEWMANGA_FEA11_CRASH_STATE`（环境）
+  - `Fea09*` ×4 → Python 缺 torch 等（环境）
+- **★ 真实缺口**：`E9-KNOWN-LIMITATION-REGISTER` 里**只登记了 1 个测试**
+  （`ProductionDispatcherFullSyncChain`），而上面**这 2 个同样是 E-9 挡住的、却从未登记** —— 已补登，
+  并写明"它们仍是原始的**应当成功**断言，因此在 E-9 下必然失败；**不得**为变绿而放宽断言或加 skip"，
+  另给了两条可选处置（按同法改为断言 typed 拒绝 / 保持红并计入清单）。
+- **★ 我又踩了同一个坑**：跑 opt-in IPC 测试**改写了 `verification/FEA-09-UI-1/ipc/` 下 4 个证据文件** ——
+  这正是我在 checkpoint 240 登记过的错误。已 `git reset` + `git checkout` **还原**，校验与 HEAD 一致（`git diff --stat` 为空）。
+  **教训升级**：跑 opt-in IPC 测试前**必须先记下 `verification/` 的哈希**，或把 `NEWMANGA_EVIDENCE_DIR` 指到 workspace。
