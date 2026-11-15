@@ -146,8 +146,8 @@ response.RequestId is { } actual && string.Equals(actual, requestId, StringCompa
 
 | evidence_id | AC/Gate | path | commit | sha256 | class | sha256_basis |
 |---|---|---|---|---|---|---|
-| EV-E72-01 | AC1/AC4 全量不回归（210/0/30） | verification/E7-2-FAILCLOSED-1/coreclient-full.log | 6b847ab91 | addf180eec0c913bbb8feea25a8d2814d21b372f0defc6226eab9b37a9c07c11 | CANONICAL | BLOB |
-| EV-E72-02 | AC1/AC2/AC3/AC4 修复 diff | verification/E7-2-FAILCLOSED-1/fix.diff | 6b847ab91 | b13bd6dae09125bc8e780295fc3c3f3718c6c630ef2e51daab967cec434c604f | CANONICAL | BLOB |
+| EV-E72-01 | AC1/AC4 全量不回归（210/0/30） | verification/E7-2-FAILCLOSED-1/coreclient-full.log | 1aa27c0cb | 7a16ee7f203a16944307eb2cdab0d13da752a7849b4c4ca98f5fe36d6904b89a | CANONICAL | BLOB |
+| EV-E72-02 | AC1/AC2/AC3/AC4 修复 diff | verification/E7-2-FAILCLOSED-1/fix.diff | 1aa27c0cb | faca1bf24dc5eb87617648db419d3fd2116a0a3f0308ecd0c0a40bd1c48a69bb | CANONICAL | BLOB |
 
 ## Resource Manifest
 
