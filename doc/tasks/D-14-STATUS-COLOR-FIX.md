@@ -83,7 +83,7 @@ commit + `verification/D-14-STATUS-COLOR-FIX/impl-verification.log` + `doc/hando
 
 ## Closeout Record
 
-- **终态**：done；关闭 2026-11-03；implementation 5ecc1e4c6，evidence/corrections e75dc1682，integration e36a7442b。
+- **终态**：done；关闭 2026-11-03；implementation 5ecc1e4c6，evidence/corrections 075dc1682，integration e36a7442b。
 - **复核链**：impl-r1 changes_requested（P1=3 证据纪律）→ impl-r2 changes_requested（P1=1/P2=5）→ DSH 补正 → impl-r3 **approved**（ZCode CLI，P0=0/P1=0/P2=2）。
 - **集成**：build 0/0；全量 **1292/0/57**（首次 CoreClient flake，重跑通过并记录）；check PASS(3)；pins 15/15；旧四 PNG 未变；禁止范围 diff=0。
 - **残项（不阻断）**：STATUS/Task 生命周期与 Handoff 风险章节已按 r3 P2 补正；全仓若干历史 md 字符损坏（14 个）与 V2 NotStarted 前景分裂、FEA-06 旧特判/注释属仓库既有债，登记后续。

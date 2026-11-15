@@ -92,6 +92,6 @@ allowed_paths:
 - AC3：EP 矩阵新增 7 项单测（DML only / CUDA+DML / CPU only / 空 providers / torch-only / snapshot），test_devices 28 passed。
 - AC4：DSH 复跑 scripts/test.ps1 与 pytest 见执行记录；实现方报 pytest **3F/2746P/9S**（+7，0 新增失败）、test.ps1 **149/149**；闭包 torch-free 断言 PASS。
 - AC5：check.ps1 -TaskPath PASS；8 条 64-hex pin；Handoff。
-- 基线说明：任务卡 base 原写 171529b5d（早于卡片创建），实际基于释放提交 e4b657131；已更正。
+- 基线说明：任务卡 base 原写 171529b5d（早于卡片创建），实际基于释放提交 04b657131；已更正。
 - 遗留（记录不阻塞）：① CUDA-torch 开发机路径本机无法实测（单测覆盖）；② 设备名取自注册表（本机 3 个虚拟适配器，按显存最大者选）；③ VERSION.json.devices 为打包环境能力，实时探测仍在 Core 内、未新增 IPC（契约冻结）。
 - 集成：3bb082627。

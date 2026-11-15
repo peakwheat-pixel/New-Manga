@@ -121,7 +121,7 @@ allowed_paths:
 
 | 版本 | 内容 | 裁决 |
 |---|---|---|
-| 外部 	ask/THEME-MACOS-2（e1f71151） | 三套布局主题（Sonoma / **Launchpad** / **Split**）：ThemePack.cs +425 行（LayoutProfiles）、Pages.cs +412（SettingsPage/BookshelfPage.ApplyLayout）、MainWindow +6、ThemeLayoutsTests.cs 909 行 | **采用**（功能 richer） |
+| 外部 	ask/THEME-MACOS-2（0e1f71151） | 三套布局主题（Sonoma / **Launchpad** / **Split**）：ThemePack.cs +425 行（LayoutProfiles）、Pages.cs +412（SettingsPage/BookshelfPage.ApplyLayout）、MainWindow +6、ThemeLayoutsTests.cs 909 行 | **采用**（功能 richer） |
 | saber 	ask/THEME-MACOS-2-saber（bfaec8f54） | macos-sonoma 达标判定、9 项 ThemeMacosTests、2 项审计（字体许可/交通灯）、4 张真机截图、p95 10.456ms、对比度数据 | **保留**（证据/审计） |
 
 - 冲突处置：代码冲突取外部实现；ThemePack.cs 与 MainWindow.axaml 取 84dd38978 的布局版（外部实现依赖）；文档保留本卡版本；外部证据另存 verification/THEME-MACOS-2-external/；外部 Handoff 存档为 doc/handoffs/THEME-MACOS-2-external-handoff.md。

@@ -88,7 +88,7 @@ allowed_paths:
 - 当前指针清理：释放时已更新 STATUS/PLAN/LEDGER。
 ## Review（DSH 集成复核，2026-10-27）— PASS
 
-- AC1：REPACK-1 base ed499bd7…/models 9fcb9e87… → 新 base e91a201d… / models c5531930…（均 399,492B；bundle 195,375,520 / 868,862,035B）；torch-free 858 modules、0 shadowing ICU。
+- AC1：REPACK-1 base ed499bd7…/models 9fcb9e87… → 新 base 091a201d… / models c5531930…（均 399,492B；bundle 195,375,520 / 868,862,035B）；torch-free 858 modules、0 shadowing ICU。
 - AC2 同构建 8 页全链（identity 绑定，真实 wire）：run **terminal=completed 86.43s**；step_runs translate/segment/mask_refine/inpaint/**render 各 22/22** completed；**0 条 PROVIDER_NOT_CONFIGURED**；页 4–8 completed(0)。每步耗时：detect 4.40 / ocr 5.58 / color 5.25 / term 1.35 / translate 1.16 / segment 8.54 / mask 15.99 / inpaint 29.76 / render 13.85s。
 - AC3 并发：同构建 wire 并发 GetTaskProjection **658 次@100ms** → stuck_running=0、regionless=0、PNC=0；epro_scheduler.py PASS。
 - AC4：base zip 102,981,645B / models 724,989,976B；install×2/卸载×2 幂等、license 一致、console=0、exit 0、sidecar 随包；VERSION.json.sidecar_build 两包实测正确；**UPGRADE.md 已补「构建识别」**（含 identity experimental 声明/覆盖升级），packaging README §2.1 同步。

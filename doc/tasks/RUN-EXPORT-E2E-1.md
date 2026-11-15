@@ -90,6 +90,6 @@ S2 遗留的 42 条 NOT_SUPPORTED 中含 Run/Export 类命令；10 条最小集�
 - **AC3 BLOCKED（部分链）**：models 包：页1–3 detect 真实完成（ONNX），OCR → PROVIDER_NOT_CONFIGURED；页4–8 detect INVALID_INPUT；run 3.1s（热）/6.5s（冷）终态 completed_with_failures；未到 translate/render、无可见产物。
 - AC4：--check PASS（66 命令零漂移，sha 4c6a4da0… 未变）；registry **24→33 IMPLEMENTED / 42→33 NOT_SUPPORTED**；DSH 复跑 test.ps1 见执行记录；vitest 60/567；pytest 3F/2739P/9S 无新增。
 - AC5：check.ps1 PASS；13 条 pin；Handoff+Record Decision。
-- 基线说明：卡面 base 171529b5d 早于卡创建，实际基于释放提交 e4b657131。
+- 基线说明：卡面 base 171529b5d 早于卡创建，实际基于释放提交 04b657131。
 - **后续（DSH 裁决）**：AC2 闭环需 (a) 翻译/渲染链产出 translated 页 (b) Host grant 通道；AC3 闭环需单独诊断 OCR PROVIDER_NOT_CONFIGURED 与 detect INVALID_INPUT；etry_failed_targets 未构造重试场景。
 - 集成：7af27bbe3。

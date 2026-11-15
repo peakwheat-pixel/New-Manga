@@ -89,7 +89,7 @@ allowed_paths:
 - S5 本卡保持 blocked 直至 A+B 完成；归档与发布不得提前。
 ## Record Decision + Review（2026-10-27）
 
-- **D4 六项**：D4-2/4 由 S5-A（e9d7e76c1）覆盖，D4-1/3/5/6 由 S5-B（744eccb61）全 PASS。
+- **D4 六项**：D4-2/4 由 S5-A（09d7e76c1）覆盖，D4-1/3/5/6 由 S5-B（744eccb61）全 PASS。
 - **tile 通道**：Host 侧 S5-A/S5-B + Core 侧 CORE-TILE-EMIT-1（7b07da6a4，摘要一致率 100%、pytest 0 新增失败）。
 - **旧壳处置裁决（DSH）**：**原位冻结**（apps/desktop/LEGACY_FROZEN.md）而非整体移动——原因：历史 Task/证据 pin 大量引用 apps/desktop/**，移动会破坏无损引用；治理要求被引用文件留原路径。彻底归档需单独授权 + 引用迁移清单。
 - **发布件**：RELEASE-PACKAGE-1（8ff3d288d）：22.9MB zip、安装/卸载幂等、许可逐字节一致、AC4b 启动 smoke PASS、MANUAL_VERIFY.md 5 项真机待用户执行。

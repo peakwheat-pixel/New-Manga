@@ -93,7 +93,7 @@ S5 拆分（`LEGACY-SHELL-REMOVAL-1` BLOCKED 段）。D4 安全（S5-A/B）与 C
 - 当前指针清理：释放时已更新 STATUS/PLAN/LEDGER。
 ## Review（DSH 集成复核，2026-10-27）— PASS（AC4 拆分裁决）
 
-- 单命令：scripts/test.ps1 → **102/102**；包产物 **22.9MB**（≤150MB，sha256 ee47fb7…b42f3a）。
+- 单命令：scripts/test.ps1 → **102/102**；包产物 **22.9MB**（≤150MB，sha256 0ee47fb7…b42f3a）。
 - AC1/AC2/AC3 通过：一键 package.ps1；UPGRADE.md（SemVer/数据根不变/首启备份/Tauri dry-run，writes=0）；包内三件套与仓库逐字节一致（CRLF 差异仅主 repo vs worktree 检出所致，安装副本校验 true）。
 - AC4 拆分（DSH 裁决）：AC4a 自动化全绿；AC4b 以新写 install-smoke.ps1 通过（窗口句柄、无控制台、退出码 0、无残留），**明确不复用旧 smoke wire 断言**。sidecar 未随包（服务/模型分离），故 AC4b 不依赖 sidecar。
 - AC5：MANUAL_VERIFY.md 已入库，5 项（Mica/DPR2 400%/工作集≤1.5GB/IME 20 字/沉浸 Esc）标 **NOT_RUN·需用户真机执行**——本卡接受为"清单交付"，不视为验证通过。
