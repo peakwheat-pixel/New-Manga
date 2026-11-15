@@ -19,6 +19,7 @@ allowed_paths:
   - doc/reviews/E7-2-FAILOPEN-RULING-codex-2026-11-16.md
   - apps/desktop-avalonia/src/NewManga.CoreClient/CoreServiceClient.cs
   - apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/R002ResyncTests.cs
+  - apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Commands/PipeResponsePairingValidationTests.cs
   - doc/STATUS.md
   - doc/TASK_LEDGER.md
   - verification/E7-2-FAILCLOSED-1/**
@@ -63,15 +64,24 @@ response.RequestId is { } actual && string.Equals(actual, requestId, StringCompa
 
 - **`SendRawAsync` 不改**：它是原始 wire 观察钩子，走 `CoreProtocol.Parse` 直接返回，
   **从不经过 `BelongsToRequest`** ⇒ 裁决要求的「保留原始语义、不新增 opt-out 开关」已天然满足；
-- **`EnsureResponseBelongsToRequest` 不改**：按裁决「仅改它不足」，且它已无生产调用
-  （由 `PipeResponsePairingValidationTests` 承载 E-7 #2 的历史判据文档化）；
+- ~~`EnsureResponseBelongsToRequest` 不改~~ —— **该判断错误（r1 F1 指出）**：裁决原文 §5.1 是
+  「它**若保留，应复用同一严格谓词**」、§5.3 是「**不能只改 Ensure，也不能只改 Parse**」，
+  我把它误读为「可以不改 Ensure」。**返修已改**：`EnsureResponseBelongsToRequest` 现在复用
+  同一个 `BelongsToRequest` 严格谓词（无/非法 id ⇒ `MalformedResponse`），
+  `BelongsToRequest` 由 `private` 改为 `internal` 以共享（仍非 public，不违反裁决「不加新公开 API」）；
 - 事件帧排除守卫 `!CoreProtocol.IsEventFrame(line)` 不变。
 
 ### 测试影响（契约变更，测试随之改）
 
-`R002ResyncTests.ResponseWithoutRequestId_IsAcceptedWithoutDraining`
-→ 改名为 `ResponseWithoutRequestId_IsTreatedAsMismatch_AndDrained`：
-无 id 的非事件帧现在被当作错配帧 drain，拿到真正匹配的响应后才成功（断言 `drained == 1`、未 poison）。
+两处旧断言都已迁移（裁决 §5.3 要求「必须同时迁移」）：
+
+1. `R002ResyncTests.ResponseWithoutRequestId_IsAcceptedWithoutDraining`
+   → `ResponseWithoutRequestId_IsTreatedAsMismatch_AndDrained`
+   （无 id 的非事件帧被 drain 1 次，拿到匹配响应后才成功，未 poison）；
+2. `PipeResponsePairingValidationTests.MissingRequestId_CurrentlyFailsOpen_DocumentedLimitation`
+   → `MissingRequestId_ThrowsTypedMalformedResponse`（无 id ⇒ `MalformedResponse`，消息含 `<missing>`）；
+   并新增 `NonStringOrEmptyRequestId_ThrowsTypedMalformedResponse`（`null`/数字/布尔/对象/数组/空串
+   六种形态参数化）与 `BelongsToRequest_IsStrict_ForMissingAndMismatchedIds`（谓词与判据一致性）。
 
 ## 目标（一个可观察结果）
 
@@ -104,6 +114,29 @@ response.RequestId is { } actual && string.Equals(actual, requestId, StringCompa
 | 定向 | `--filter "R002ResyncTests\|PipeResponsePairingValidationTests"` | 7 passed |
 | 全量 | `dotnet test …NewManga.CoreClient.Tests.csproj` | 203 / 0 / 30 |
 | 四件套 | check / pins / inventory | PASS / 18-18 / 87 |
+
+## 裁决 §5.3 的未实施项（如实登记，不淡化）
+
+裁决要求在**真实的 `SendAsync` / `SendHostControlAsync` 调用链**上各有确定性假 sidecar 测试，
+覆盖「握手后注入坏帧与正常匹配帧」，以证明生产调用点确实使用严格 helper。
+
+**本轮未做**：`CoreServiceClient.StartAsync` 会先发 `core.ping` 并要求 `Ready` + 协议主版本匹配，
+假 sidecar 需实现完整握手协议；本轮无此夹具预算。风险由 r1 复核的静态确认部分覆盖
+（`BelongsToRequest` 全仓唯一生产调用点是 `ReadResponseForRequestAsync:2438`，
+而 `ReadResponseForRequestAsync` 被两处调用点使用），但**没有动态证据**。
+
+⇒ 这属于本卡**已知缺口**；`E-7 #2` 整项**不得**据此关闭。
+
+## 残余清单
+
+| 项 | 状态 |
+|---|---|
+| `EnsureResponseBelongsToRequest` 严格化 + 两处旧断言迁移 | ✅ 本轮完成 |
+| 非法 id 六种形态覆盖 | ✅ 本轮完成 |
+| 真实调用链（`SendAsync`/`SendHostControlAsync`）的假 sidecar 测试 | ❌ 未做（见上） |
+| **bridge 侧**同类 fail-open（`HostBridgeClient.ParseResponse` 在 `expectedId == null` 时不校验） | ❌ 不在本卡范围，需另一份裁决 |
+| `AcquireExchangeLeaseAsync` / `ReadNextResponseLineAsync` 仍 `public` | ❌ E7-1 明确不做 |
+| `R002-RESYNC-1` 的 P2-F1（测试不覆盖调用点） | ❌ 仍未关闭 |
 
 ## 证据
 

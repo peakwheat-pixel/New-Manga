@@ -2473,19 +2473,22 @@ public sealed class CoreServiceClient : IAsyncDisposable
     /// frame — it is discarded by the bounded resync and, if no matching frame arrives within the budget,
     /// the channel is poisoned instead of silently handing over an unverifiable payload.</para>
     /// </summary>
-    private static bool BelongsToRequest(CoreResponse response, string requestId) =>
+    internal static bool BelongsToRequest(CoreResponse response, string requestId) =>
         response.RequestId is { } actual && string.Equals(actual, requestId, StringComparison.Ordinal);
 
     internal static void EnsureResponseBelongsToRequest(
         CoreResponse response, string requestId, string? stderrLogPath)
     {
-        if (response.RequestId is { } actual && !string.Equals(actual, requestId, StringComparison.Ordinal))
+        // E-7 #2 (Codex ruling 2026-11-16 §5.1): if this judge is kept it MUST reuse the same strict
+        // predicate as production -- it used to let a null request_id through, which contradicted the
+        // fail-closed policy for exactly the same case.
+        if (!BelongsToRequest(response, requestId))
         {
             throw new SidecarException(
                 SidecarErrorCode.MalformedResponse,
                 SidecarSpec.CoreServiceName,
-                $"response request_id '{actual}' does not match request '{requestId}': "
-                + "the core pipe returned another command's response",
+                $"response request_id '{response.RequestId ?? "<missing>"}' does not match request "
+                + $"'{requestId}': the core pipe returned another command's response",
                 stderrLogPath);
         }
     }

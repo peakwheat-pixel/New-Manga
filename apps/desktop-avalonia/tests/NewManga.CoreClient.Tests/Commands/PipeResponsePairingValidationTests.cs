@@ -50,17 +50,59 @@ public sealed class PipeResponsePairingValidationTests
     }
 
     /// <summary>
-    /// Known limitation (r1 复核 R-001): a frame WITHOUT a request_id currently passes the check
-    /// (fail-open). This fact documents the current behaviour so that any future change to fail-closed
-    /// has to update it deliberately rather than silently.
+    /// E-7 #2 (Codex ruling 2026-11-16 §5.1/§5.3): this used to document fail-open for a frame WITHOUT a
+    /// request_id. The ruling made the production predicate strict and requires the kept judge to reuse it,
+    /// so a missing id is now a typed rejection instead of being accepted.
     /// </summary>
     [Fact]
-    public void MissingRequestId_CurrentlyFailsOpen_DocumentedLimitation()
+    public void MissingRequestId_ThrowsTypedMalformedResponse()
     {
         var response = CoreProtocol.Parse(
             "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"result\":[],\"error\":null}");
 
         Assert.Null(response.RequestId);
-        CoreServiceClient.EnsureResponseBelongsToRequest(response, "req-1", stderrLogPath: null);
+
+        var error = Assert.Throws<SidecarException>(
+            () => CoreServiceClient.EnsureResponseBelongsToRequest(response, "req-1", stderrLogPath: null));
+
+        Assert.Equal(SidecarErrorCode.MalformedResponse, error.Code);
+        Assert.Contains("<missing>", error.Message, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// E-7 #2 裁决 §5.3: every non-string shape of request_id must be rejected, not just the missing key.
+    /// (The parser maps all of these to a null RequestId.)
+    /// </summary>
+    [Theory]
+    [InlineData("null")]
+    [InlineData("123")]
+    [InlineData("true")]
+    [InlineData("{}")]
+    [InlineData("[]")]
+    [InlineData("\"\"")]
+    public void NonStringOrEmptyRequestId_ThrowsTypedMalformedResponse(string requestIdJson)
+    {
+        var response = CoreProtocol.Parse(
+            "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":"
+            + requestIdJson + ",\"result\":[],\"error\":null}");
+
+        // "" parses as an empty STRING (not null) and therefore fails the equality check; the others
+        // parse as null and fail the "must be present" part of the strict predicate. Both are rejections.
+        var error = Assert.Throws<SidecarException>(
+            () => CoreServiceClient.EnsureResponseBelongsToRequest(response, "req-1", stderrLogPath: null));
+
+        Assert.Equal(SidecarErrorCode.MalformedResponse, error.Code);
+    }
+
+    /// <summary>
+    /// The strict predicate itself (shared by the production resync path and the kept judge) must agree
+    /// with the judge for the same inputs.
+    /// </summary>
+    [Fact]
+    public void BelongsToRequest_IsStrict_ForMissingAndMismatchedIds()
+    {
+        Assert.False(CoreServiceClient.BelongsToRequest(CoreProtocol.Parse("{\"result\":[]}"), "req-1"));
+        Assert.False(CoreServiceClient.BelongsToRequest(ResponseWithId("req-999"), "req-1"));
+        Assert.True(CoreServiceClient.BelongsToRequest(ResponseWithId("req-1"), "req-1"));
     }
 }
