@@ -9,7 +9,7 @@ owner: DSH
 reviewer: 未派（本卡为状态核实卡，输出为可复算统计，不需实现复核）
 depends_on:
   - GOAL-C-DEBT-AUDIT-1
-integration_commit: PENDING
+integration_commit: 9c160b546
 approval: 用户 2026-11-15「全部授权」；目标 C「AC blocked 项中可归因闭合项」
 base_commit: 56c9b0474
 branch: main
@@ -101,8 +101,8 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class | sha256_basis |
 |---|---|---|---|---|---|---|
-| EV-ABC-01 | AC1/AC2/AC3 逐条状态核实输出 | verification/AC-BLOCKED-CLOSE-1/state-verified.out | 56c9b0474 | b03b2b8934df85963d84a5a71daf21e669fb25e5fbdaf81401cae85a64b77233 | CANONICAL | BLOB |
-| EV-ABC-02 | AC6 可复现脚本 | verification/AC-BLOCKED-CLOSE-1/verify_state.py | 56c9b0474 | 421f2df4a9e945f63c34caf7457ec842a6e6ca8db91314fa32457fc89427ed05 | CANONICAL | BLOB |
+| EV-ABC-01 | AC1/AC2/AC3 逐条状态核实输出 | verification/AC-BLOCKED-CLOSE-1/state-verified.out | 9c160b546 | b03b2b8934df85963d84a5a71daf21e669fb25e5fbdaf81401cae85a64b77233 | CANONICAL | BLOB |
+| EV-ABC-02 | AC6 可复现脚本 | verification/AC-BLOCKED-CLOSE-1/verify_state.py | 9c160b546 | 421f2df4a9e945f63c34caf7457ec842a6e6ca8db91314fa32457fc89427ed05 | CANONICAL | BLOB |
 
 ## Resource Manifest
 
