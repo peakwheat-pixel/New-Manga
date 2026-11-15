@@ -1,12 +1,14 @@
 # build
-head: 70427cd98（注意：本证据在返修提交前的代码上生成；返修只改可见性与注释）
-timestamp: 
-2026-11-16T00:53:46+08:00
+head: 6fb193391
+tree: clean
+env: Windows 11 / pwsh 7 / dotnet 10.0.401
+timestamp: 2026-11-16T01:03:55+08:00
 command: dotnet build apps/desktop-avalonia/src/NewManga.CoreClient/NewManga.CoreClient.csproj
-EXIT=0
+EXIT: 0
+
 
 已成功生成。
     0 个警告
     0 个错误
 
-已用时间 00:00:00.62
+已用时间 00:00:00.61

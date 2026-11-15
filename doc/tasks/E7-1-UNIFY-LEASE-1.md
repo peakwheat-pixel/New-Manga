@@ -6,7 +6,7 @@ governance_version: 3
 status: done
 suggested_owner: DSH
 owner: DSH
-reviewer: e7-1-review（独立上下文子 agent，r1 为 CHANGES_REQUESTED，已返修）
+reviewer: e7-1-review（r1，CHANGES_REQUESTED）+ e7-1-review-r2（r2，APPROVED_WITH_LIMITATIONS）
 integration_commit: 879c2bc96
 canonical_evidence_status: complete
 resource_closeout_status: complete
@@ -21,6 +21,8 @@ allowed_paths:
   - doc/tasks/E7-1-UNIFY-LEASE-1.md
   - apps/desktop-avalonia/src/NewManga.CoreClient/CoreServiceClient.cs
   - apps/desktop-avalonia/src/NewManga.CoreClient/Transport/SidecarProcess.cs
+  - apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Bridge/BridgeResponseIdValidationTests.cs
+  - apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/SidecarShutdownRaceTests.cs
   - doc/STATUS.md
   - doc/TASK_LEDGER.md
   - verification/E7-1-UNIFY-LEASE-1/**
@@ -125,19 +127,22 @@ E-7 第 1 项只点名 `ExchangeAsync`，扩大可见性变更面没有收益。
   - **AC1**：`CoreServiceClient._pipeGate` 字段删除；3 处交换（`SendHostControlAsync`、`SendRawAsync`、
     `SendAsync`）改为 `AcquireExchangeLeaseAsync` + 显式 `lease.Dispose()`；
   - **AC2**：`SidecarProcess.ExchangeAsync` 的**两个重载**都降为 `internal`（程序集外无法直调）。
-    **r1 P1 更正**：初版只改了 4 参重载，2 参 `public` 重载漏改，导致当时的 Closeout 断言「程序集外无法直调」是**事实错误**；返修已补。；
+    **r1 P1 更正**：初版只改了 4 参重载，2 参 `public` 重载漏改，导致当时的 Closeout 断言「程序集外无法直调」是**事实错误**；返修已补。
   - **AC3**：`src/**` 中 `_pipeGate` 命中 **0**；`SendRawAsync` 的历史注释已改写（原称「bypass _pipeGate」）；
   - **AC5**：核实 `ExchangeLease.Dispose()` 幂等（`Interlocked.Exchange(ref _gate, null)` + `gate?.Release()`），
     显式 dispose 不会双释放。
 - **结构收益**：原来两条管道各有一层客户端私有 gate + 传输层 lease 名为「可选」；现在**只有传输层一层**，
   且它与 `SidecarProcess` 实例绑定 —— 与「谁拥有这条管道」的事实一致。配合 `ExchangeAsync` 变 `internal`，
   「新调用方忘记加锁即撕裂」这个结构性风险源被消除。
-- **门禁**：`dotnet build` EXIT=0；全量 **203 passed / 0 failed / 30 skipped / EXIT=0**（41s）；
+- **门禁**：`dotnet build` EXIT=0；全量 **203 passed / 0 failed / 30 skipped / EXIT=0**（41s，r2 实测同为 41s）；
   `check.ps1` PASS (3 warnings)｜`verify_pins` 18/18｜`api_inventory` 1/80/6=87。
 - **未关闭项（不淡化）**：
   1. **E-7 #2 仍开**：无 `request_id` 时 fail-open（`BelongsToRequest` 与
      `EnsureResponseBelongsToRequest` 均把「无 id」视为属于本请求）—— 需先定契约（fail-closed 还是允许）；
   2. `AcquireExchangeLeaseAsync` / `ReadNextResponseLineAsync` 仍 `public`（E-7 #1 只点名
      `ExchangeAsync`）；
-  3. `R002-RESYNC-1` 的 P2-F1 仍未关闭（测试不覆盖调用点）。
+  3. `R002-RESYNC-1` 的 P2-F1 仍未关闭（测试不覆盖调用点）；
+  4. `tools/perf/wire_serialisation_probe.py:12` 仍把已删除的 `CoreServiceClient._pipeGate`
+     当作串行判据（r1 R-005 第 3 处 / r2 R2-002）—— 该文件不在本卡 `allowed_paths` 内，**未改**，
+     已登记为残余；它只影响该探针的说明文字，不影响产品行为。
 
