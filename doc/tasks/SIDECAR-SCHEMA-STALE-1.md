@@ -326,3 +326,31 @@ catch (Exception diagEx) {{ ...Console.WriteLine...; throw; }}
 正确做法是**零侵入**：打开 WireLogPath 跑完读 NDJSON，或只在测试末尾统一 dump frames。
 
 **组 B 本轮零进展。**
+
+### 组 B 定位完成（2026-11-16 续，零侵入读 wire log）
+
+**方法**：SidecarFixture.cs:312 一直在配 WireLogPath，	est.ps1 每次跑自动写 NDJSON
+（vidence-rerun/wire/commands-ns-b1-core-service.ndjson，831,949 B / 576 帧）。
+前 6 轮手搓 probe 连败 5 次；这轮只读该文件，一轮定位。
+
+**结果**：576 帧里只有 **4 帧**含 INVALID_REQUEST，全是同一条命令：
+
+请求：
+`json
+{"command":"PermanentlyDeleteBook","version":{"major":2,"minor":10},
+ "payload":{"book_id":"38075dfb...","confirm_permanent_delete":true}}
+`
+响应（**无 message、无 details**）：
+`json
+{"result":null,"error":{"code":"INVALID_REQUEST","category":"validation","retryable":false}}
+`
+
+同 log 里其它 typed error 都带诊断（PLUGIN_NOT_FOUND 有 message、
+TARGET_NOT_FOUND 有 message+details）⇒ **这条错误本身不带诊断信息**，
+正是 CoreOperationException.Message 只能显示 [INVALID_REQUEST] core operation failed 的原因。
+
+**命令频次**：B1 的 13 条 + CreateBook + PermanentlyDeleteBook 各跑 36 次，
+**只有 PermanentlyDeleteBook 被拒**。
+
+**下一步（纯代码对比）**：读 HostCommandDispatcher.cs 里 library_delete_book_permanently
+的 payload 构造 + core 侧 PermanentlyDeleteBook 的必需字段校验，找出少写/写错的字段。
