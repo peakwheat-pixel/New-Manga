@@ -84,14 +84,14 @@ R-005 的教训是「理解不准就动手会返修」。第 5 项的表述只�
 
 | evidence_id | AC/Gate | path | commit | sha256 | class | sha256_basis |
 |---|---|---|---|---|---|---|
-| EV-E75-01 | AC1-AC4 证据总述与书面判定 | verification/E7-5-SHUTDOWN-RACE-1/README.md | PIN_PENDING | 26400b7732b8b64e5c192fdd635808bbf88d8fac324d2cc1a95734198710d521 | CANONICAL | BLOB |
+| EV-E75-01 | AC1-AC4 证据总述与书面判定 | verification/E7-5-SHUTDOWN-RACE-1/README.md | 6f8cf83a2 | 26400b7732b8b64e5c192fdd635808bbf88d8fac324d2cc1a95734198710d521 | CANONICAL | BLOB |
 | EV-E75-02 | AC1 精确错误码探针 | verification/E7-5-SHUTDOWN-RACE-1/probe-exact-code.log | 1edc69c49 | a4b564f8750a70d4cb36149488a546f8850c4491c8e907f18ecc4ba0ac495714 | CANONICAL | BLOB |
 | EV-E75-03 | AC1/AC2/AC3 最终绿（4 passed） | verification/E7-5-SHUTDOWN-RACE-1/final-green2.log | 1edc69c49 | 2c81006a7cb4996ddcc8f45a451106f3e8e4a6925c12001989b89118ecb5e632 | CANONICAL | BLOB |
 | EV-E75-04 | AC5 全量不回归（199/0/30） | verification/E7-5-SHUTDOWN-RACE-1/coreclient-full-final2.log | 1edc69c49 | e3e63e60fb5aab924ebbb381931a38920af4480474d1d70682613065fc8aae41 | CANONICAL | BLOB |
 | EV-E75-05 | AC 过程证据（中间态/诊断） | verification/E7-5-SHUTDOWN-RACE-1/coreclient-full-final.log | 1edc69c49 | 19e1c6ee412aa4b0713fd0dbd49881bd0061ea6b06754cf385d9a3355f74d719 | CANONICAL | BLOB |
 | EV-E75-06 | AC 过程证据（中间态/诊断） | verification/E7-5-SHUTDOWN-RACE-1/diagnostic.log | 1edc69c49 | b8ccba57e35b59703ac9aff8899f0b6e8b00546c2aad7fad4c42ef9c4979a29d | CANONICAL | BLOB |
 | EV-E75-07 | AC 过程证据（中间态/诊断） | verification/E7-5-SHUTDOWN-RACE-1/final-green.log | 1edc69c49 | c8555ada8d6bd723701043992980d043b502ba3bb7fb1f99192d6668084e13b1 | CANONICAL | BLOB |
-| EV-E75-08 | F-4 r1 探针日志（16/16 的原始来源） | verification/E7-5-SHUTDOWN-RACE-1/r1-probe-b.log | 7bd558855 | PIN_PENDING | CANONICAL | BLOB |
+| EV-E75-08 | F-4 r1 探针日志（16/16 的原始来源） | verification/E7-5-SHUTDOWN-RACE-1/r1-probe-b.log | 6f8cf83a2 | 70926c55e72151525e14c3b62802ba9832b8c85a05bb4b0b9681c70b7c831618 | CANONICAL | BLOB |
 
 ## Resource Manifest
 
