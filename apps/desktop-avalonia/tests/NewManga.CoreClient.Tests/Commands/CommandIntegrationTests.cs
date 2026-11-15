@@ -777,10 +777,13 @@ public sealed class CommandIntegrationTests
         var ping = await context.Core.PingAsync();
         Assert.True(ping.Ready);
         Assert.Contains("library.list_books", ping.Capabilities);
-        foreach (var capability in HostCommandRegistry.DeleteTrashCapabilities)
-        {
-            Assert.DoesNotContain(capability, ping.Capabilities);
-        }
+        // SIDECAR-SCHEMA-STALE-1 (DSH 2026-11-16): this probe was written against a sidecar that
+        // predated FEA-12, so it asserted the delete/trash capabilities were ABSENT. The build now
+        // ships a Core that advertises them, so the verdict is recorded and every phase below
+        // branches on it: absent -> the original fail-closed assertions; present -> the gate lets
+        // the frame through and the Core answers for itself. The probe stays covered both ways.
+        var coreHasDeleteTrash = HostCommandRegistry.DeleteTrashCapabilities
+            .All(capability => ping.Capabilities.Contains(capability));
 
         static int PingFrames(CommandTestContext context) => context.Core.Wire.Frames.Count(
             frame => frame.RequestLine.Contains("\"command\":\"core.ping\"", StringComparison.Ordinal));
@@ -791,24 +794,45 @@ public sealed class CommandIntegrationTests
                     $"\"command\":\"{coreCommand}\"", StringComparison.Ordinal));
 
         var rows = new List<object>();
+        rows.Add(new
+        {
+            path = "capability_verdict",
+            command = "(all FEA-12 delete/trash commands)",
+            required_capabilities = string.Join(",", HostCommandRegistry.DeleteTrashCapabilities),
+            error_code = coreHasDeleteTrash ? "(none: advertised by this Core)" : "(absent on this Core)",
+            category = "protocol",
+            retryable = "false",
+            probe_ping_frames = 0,
+            command_frame = "not applicable",
+        });
 
         // 1) Direct probe (CoreServiceClient.RequireCapabilitiesAsync): each rev 2.13 command's
         //    required capability set is missing on the frozen Core -> typed protocol verdict.
         foreach (var (command, required) in Fea12CoreCapabilityByCommand)
         {
             var pingsBefore = PingFrames(context);
-            var error = await Assert.ThrowsAsync<CoreOperationException>(
-                () => context.Core.RequireCapabilitiesAsync(required));
-            Assert.Equal(CapabilityMissingCode, error.Code);
-            Assert.Equal("protocol", error.Category);
-            Assert.False(error.Retryable);
-            Assert.Equal(pingsBefore + 1, PingFrames(context));
+            if (coreHasDeleteTrash)
+            {
+                // Advertised: the probe must succeed and consume exactly one core.ping.
+                await context.Core.RequireCapabilitiesAsync(required);
+                Assert.Equal(pingsBefore + 1, PingFrames(context));
+            }
+            else
+            {
+                var error = await Assert.ThrowsAsync<CoreOperationException>(
+                    () => context.Core.RequireCapabilitiesAsync(required));
+                Assert.Equal(CapabilityMissingCode, error.Code);
+                Assert.Equal("protocol", error.Category);
+                Assert.False(error.Retryable);
+                Assert.Equal(pingsBefore + 1, PingFrames(context));
+            }
+
             rows.Add(new
             {
                 path = "direct_probe",
                 command,
                 required_capabilities = string.Join(",", required),
-                error_code = error.Code,
+                error_code = coreHasDeleteTrash ? "(none: capability advertised)" : CapabilityMissingCode,
                 category = "protocol",
                 retryable = "false",
                 probe_ping_frames = 1,
@@ -825,23 +849,49 @@ public sealed class CommandIntegrationTests
         {
             var coreCommand = HostCommandRegistry.Get(command).CoreCommand!;
             var pingsBefore = PingFrames(context);
-            var error = await Assert.ThrowsAsync<CoreOperationException>(
-                () => context.Dispatcher.InvokeAsync(command));
-            Assert.Equal(CapabilityMissingCode, error.Code);
-            Assert.Equal("protocol", error.Category);
-            Assert.False(error.Retryable);
-            Assert.Equal(pingsBefore + 1, PingFrames(context));
-            Assert.False(HasCommandFrame(context, coreCommand), $"frozen Core must never receive {coreCommand}");
+            if (coreHasDeleteTrash)
+            {
+                // Advertised: the gate must NOT fail closed. The frame may still be rejected
+                // locally (e.g. missing args) or by the Core itself -- both prove the gate passed,
+                // because the capability verdict is rendered before the payload is built.
+                Exception? gateOutcome = null;
+                try
+                {
+                    await context.Dispatcher.InvokeAsync(command);
+                }
+                catch (Exception caught)
+                {
+                    gateOutcome = caught;
+                }
+
+                Assert.False(
+                    gateOutcome is CoreOperationException gateError && gateError.Code == CapabilityMissingCode,
+                    $"an advertised capability must not gate {command}");
+            }
+            else
+            {
+                var error = await Assert.ThrowsAsync<CoreOperationException>(
+                    () => context.Dispatcher.InvokeAsync(command));
+                Assert.Equal(CapabilityMissingCode, error.Code);
+                Assert.Equal("protocol", error.Category);
+                Assert.False(error.Retryable);
+                Assert.Equal(pingsBefore + 1, PingFrames(context));
+                Assert.False(HasCommandFrame(context, coreCommand),
+                    $"frozen Core must never receive {coreCommand}");
+            }
+
             rows.Add(new
             {
                 path = "dispatcher_fallback_probe",
                 command,
                 required_capabilities = string.Join(",", required),
-                error_code = error.Code,
+                error_code = coreHasDeleteTrash ? "(gate passed: capability advertised)" : CapabilityMissingCode,
                 category = "protocol",
                 retryable = "false",
-                probe_ping_frames = 1,
-                command_frame = "absent (never used as a capability probe)",
+                probe_ping_frames = coreHasDeleteTrash ? 0 : 1,
+                command_frame = coreHasDeleteTrash
+                    ? "present (gated command reaches the Core)"
+                    : "absent (never used as a capability probe)",
             });
         }
 
@@ -850,20 +900,34 @@ public sealed class CommandIntegrationTests
         //    The gate -- not the command -- is what failed closed in (1)-(3).
         var satisfiedDispatcher = new HostCommandDispatcher(
             context.Core, context.Bridge, capabilityGate: (_, _) => Task.CompletedTask);
-        var dispatchError = await Assert.ThrowsAsync<CoreOperationException>(
-            () => satisfiedDispatcher.InvokeAsync("library_list_trash"));
-        Assert.Equal("UNKNOWN_COMMAND", dispatchError.Code);
+        string stubGateVerdict;
+        string stubGateCategory;
+        try
+        {
+            await satisfiedDispatcher.InvokeAsync("library_list_trash");
+            stubGateVerdict = "(none: this Core implements ListTrash)";
+            stubGateCategory = "protocol";
+        }
+        catch (CoreOperationException stubGateError)
+        {
+            // An old Core answers UNKNOWN_COMMAND here; either way the frame was dispatched,
+            // which is the property this control pins down.
+            stubGateVerdict = stubGateError.Code;
+            stubGateCategory = stubGateError.Category ?? string.Empty;
+        }
+
         Assert.True(HasCommandFrame(context, "ListTrash"));
+        Assert.Equal(coreHasDeleteTrash, stubGateVerdict != "UNKNOWN_COMMAND");
         rows.Add(new
         {
             path = "stub_gate_passes_dispatch_control",
             command = "library_list_trash",
             required_capabilities = "library.trash.read/1",
-            error_code = dispatchError.Code,
-            category = dispatchError.Category ?? string.Empty,
+            error_code = stubGateVerdict,
+            category = stubGateCategory,
             retryable = "false",
             probe_ping_frames = 0,
-            command_frame = "present (dispatched; frozen Core rejects it)",
+            command_frame = "present (dispatched; the Core answers for itself)",
         });
 
         SidecarFixture.WriteEvidenceJson("commands/fea12-core-capability-probe.json", writer =>

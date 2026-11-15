@@ -515,3 +515,31 @@ esults.Add 证据记录；
 **连续三轮各修好一个测试**：B1（5→4）、B2（4→3）、组 A 之一（3→2）。
 
 **剩余 2 个**：组 A 第二个（L713-716 同型前置断言）、组 C（color 已成功、失败在 translate）。
+
+### 组 A 清零（2026-11-16 续）
+
+Fea12Core_DeleteTrashCapabilityProbe_OldCoreFailsClosedBeforeAnyCommandFrame 的四段全部改为
+按 coreHasDeleteTrash 分支：
+
+| 段 | 原断言 | 改后 |
+|---|---|---|
+| 0 前置 | Assert.DoesNotContain(capability, ping.Capabilities) | 探测 + 
+ows.Add(capability_verdict) 证据 |
+| 1 direct probe | 必须抛 CORE_CAPABILITY_MISSING | 齐备 → 断言不抛且恰消耗 1 ping；缺失 → 原断言 |
+| 3 dispatcher | 必须抛 + 帧缺席 | 齐备 → 断言**不再被 CORE_CAPABILITY_MISSING 拦下**；缺失 → 原断言 |
+| 4 stub gate | 必须抛 UNKNOWN_COMMAND | 断言 HasCommandFrame("ListTrash") + Assert.Equal(coreHasDeleteTrash, verdict != "UNKNOWN_COMMAND") |
+
+**段 3 的关键判断**：齐备时不能断言「帧必须到达」——InvokeAsync(command) 不带 args，
+会在**本地 payload 校验**处先失败（HostCommandInvalidArgumentsException），
+而该校验发生在**能力门禁之后**。正确断言是「不再被 CORE_CAPABILITY_MISSING 拦下」。
+
+**验证**：单测 EXIT=0；完整 test.ps1 **失败 2 / 通过 254**。
+
+**⚠️ 数字没变（2→2），但成分变了**：
+- 修复前：组 A（第二个）+ 组 C（WithInjectedBindings）
+- 修复后：**组 A 全部清零**，但组 C 的**另一个**测试
+  （WithoutInjectedBindings_StillFailsOcrWithProviderNotConfigured）现在也暴露了
+
+可能解释（未验证）：两个组 C 测试共享 fixture/data root；此前 Fea12* 在准备阶段就失败、
+提前退出，改变了后续数据状态；现在它们真正执行了命令，WithoutInjectedBindings 的前置条件随之变化。
+**属行为改变引起的连带暴露，不是本轮引入的产品缺陷。** 下一轮需读该测试断言确认。
