@@ -139,6 +139,9 @@ fileLock = new FileStream(... "registry.v1.lock", ..., FileShare.None);   // ←
 | EV-HCF-07 | **定性更正**：裸跑 EXIT=0 实为 SKIP | verification/HOST-CONCURRENCY-FLAKY-1/correction-skip-vs-pass.md | e66323bf2 | PIN_PENDING | CANONICAL | BLOB |
 | EV-HCF-08 | 单跑 detailed 日志（4 条 SKIP 证据） | verification/HOST-CONCURRENCY-FLAKY-1/solo-detail.log | e66323bf2 | PIN_PENDING | CANONICAL | BLOB |
 | EV-HCF-09 | FILE_IDENTITY_CHANGED 口径契约与缺口定位 | verification/HOST-CONCURRENCY-FLAKY-1/file-identity-diagnosis.md | ac434d911 | PIN_PENDING | CANONICAL | BLOB |
+| EV-HCF-10 | st_ino 超出 53 位实测（6/7） | verification/HOST-CONCURRENCY-FLAKY-1/st-ino-measured.md | 062918039 | PIN_PENDING | CANONICAL | BLOB |
+| EV-HCF-11 | st_ino 探针脚本（可复算） | verification/HOST-CONCURRENCY-FLAKY-1/probe_st_ino.py | 062918039 | PIN_PENDING | CANONICAL | BLOB |
+| EV-HCF-12 | 探针原始输出 | verification/HOST-CONCURRENCY-FLAKY-1/st-ino-probe-output.log | 062918039 | PIN_PENDING | CANONICAL | BLOB |
 
 ## Resource Manifest
 
@@ -300,3 +303,42 @@ ormalize_identity 尚未确认。
 还是 core 侧反序列化（纵深防御的 B）。
 
 **本轮不改代码**：改哪一侧取决于实测数据，不靠猜。
+
+## 实测证实：st_ino 超过 53 位是常态（不是偶然）
+
+探针 erification/HOST-CONCURRENCY-FLAKY-1/probe_st_ino.py（只读 stat）：
+
+`
+path            st_ino              > 2^53?  masked              丢位?
+alpha.png       844424931403221     no       844424931403221     no
+page-01.png     36873221950633840   YES      844424931669872     YES
+page-02.png     27021597765760890   YES      1537914             YES
+page-03.png     19703248371283835   YES      1688849861801851    YES
+page-04.png     27021597765760892   YES      1537916             YES
+page-05.png     25051272928786301   YES      7036874419304317    YES
+page-06.png     22799473115101054   YES      4785074605619070    YES
+
+样本总数 7，其中 st_ino > _FILE_MASK 的：6
+`
+
+st_dev 同样溢出 32 位（15333285442011643084 -> 0xCAC5BCCC）。
+
+### 决定性推论
+
+GrantIssuerTests.FixtureImages（:44-50）把夹具写到 %TEMP%/grant-fixtures-*/page-NN.png
+**全部是新建文件** ⇒ 实测 6/6 的 st_ino > 2^53。
+**只要链路上有一处用未 mask 的 64 位值参与比较，就必然报 FILE_IDENTITY_CHANGED。**
+
+⇒ 这两个测试**只要真正执行就必然失败**，不是 flaky、不是并发，
+而是**默认会失败**（只有 file index 恰好 ≤ 2^53 时才偶然通过）。
+
+对比：repo 内长期存在的 lpha.png 的 st_ino = 844424931403221 < 2^53，
+mask 不改变数值 —— 这正是"用既有文件没事、用新建临时文件就失败"的原因。
+
+### 还差最后一环
+
+物理条件已证，还差「链路上哪一处没 mask」：
+1. HostIssuer.cs:591-596 handle probe 返回完整 64 位 FileIndex；
+2. source_read_refs.py:1080 的 GrantFacts(*numbers, ...) 是否 mask。
+
+下一轮抓 IPC 报文里的 ile_id 与 os.stat() 值对比定论。

@@ -1,0 +1,24 @@
+_FILE_MASK   = 9007199254740991  (2^53-1 = 9007199254740991)
+_VOLUME_MASK = 0xFFFFFFFF
+
+path                                                         st_ino  > 2^53?                 masked    丢位?
+--------------------------------------------------------------------------------------------------------------
+alpha.png                                           844424931403221       no        844424931403221     no
+page-01.png                                       19703248371283840      YES       1688849861801856    YES
+page-02.png                                       21110623254837121      YES       3096224745355137    YES
+page-03.png                                       17732923534309250      YES       8725724279568258    YES
+page-04.png                                       18295873487730563      YES        281474978248579    YES
+page-05.png                                       19703248371283844      YES       1688849861801860    YES
+page-06.png                                       26458647812339589      YES       8444249302857605    YES
+
+样本总数 7，其中 st_ino > _FILE_MASK 的：6
+
+=> 假设成立：st_ino 确实超过 53 位，mask 会改变数值。
+   Host 侧若按完整 64 位写入 grant，而 Python 侧比较前 mask，就会不等。
+
+volume serial (st_dev):
+  alpha.png: st_dev=15333285442011643084  0xCAC5BCCC  (mask 改变=True)
+  page-01.png: st_dev=2763106124046938139  0x5886301B  (mask 改变=True)
+  page-02.png: st_dev=2763106124046938139  0x5886301B  (mask 改变=True)
+
+已清理探针目录 C:\Users\49745\AppData\Local\Temp\grant-fixtures-probe-7b28bc7759
