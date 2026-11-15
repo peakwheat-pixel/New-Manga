@@ -2370,3 +2370,27 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   余量从超预算 172 字节变为**富余 334 字节**。
 - **教训**：之前我为了塞进预算，把条件状态**笼统化**成"条件 3/4/5 未满足" ——
   这是**为预算牺牲准确性**，方向错了。正确做法是**压缩重复内容（卡片清单），保留状态精度**。
+## 263. ★ E-9 修复落地**独立复核**：ACCEPT_WITH_LIMITATIONS，未发现实质错误（2026-11-15，DSH，goal 轮次 64）
+
+- **动机**：goal 纪律要求"**独立复核必须判两件事：对不对，以及有没有测试能固定住**"。
+  E-9 解锁 + 负例测试**此前未经独立复核** —— 这是真实缺口，本轮补上。
+- **派 `subagent_zcode`（agent-7，只读，独立上下文）**，结论 **ACCEPT_WITH_LIMITATIONS**。
+- **五条主张全部独立核实**：
+  - **A 成立**：`IsRecoverableRoot` 与原 inline 条件经 **diff 逐字比对为 De Morgan 等价，无语义漂移**；
+    `Ordinal` 大小写敏感沿袭文件内既有惯例；`roots[0]` 空白时 `File.Exists` 为 false → typed 拒绝，**fail-closed 正确**。
+  - **B 成立**：复核者**独立复算** 10 项 CHECK 全成立（pid 14064→29708、session 6348→53b5、sha256/db_counts 相同、
+    grant 无交集、`second_call=recovered, frames=0`、gate_open=true）；并指出**归档目录只在全过后才创建**
+    （`:268-288`）⇒ 目录存在即证明 PASS 路径真实执行；wire 日志 **0 个** `SOURCE_PLAN_UNAVAILABLE`。
+  - **C 基本成立但表述不精确**：见下。
+  - **D 成立**：第三种做法（Trait 分类/独立 playlist）技术上存在但**比 skip 更隐蔽或改"全量"语义**，不优于保持 fail。
+  - **E Gate 范围内成立**，枚举边界有小漏。
+- **★ 复核指正我一处低估**：无条件 `true` 时**实际 5/6 变红**，不是 4/6 —— 我漏算了
+  `ContainerRoot_MustBeAnExistingFile` 的**前半段**也会红。而唯一不红的
+  `FolderRoot_IsAlwaysUsable` **判别方向相反**（谓词若被**收紧**为只留 `File.Exists`，只有它会红）。
+  ⇒ **6 用例合计对"放宽"与"收紧"双向都有判别力**。**已更正** §5.3。
+- **复核指出的枚举边界**（我已补入审计）：①**E-7 开放部分**（管道并发窗口 4 处 + 5 项未修，**纯技术可做**）；
+  ②条件 2 的处置动作（SEC-01/02）**需 Owner 显式授权**（真等待授权）。**两项均非误判**。
+- **复核者明确"未发现 DSH 的实质错误"**；仅两处小瑕疵（判别力表述保守低估 + `crash-ack.ps1:290` 的
+  `acknowledge_once=1` 是写死字符串，但 10 项 CHECK 均为计算、且该脚本是既有代码非本轮改动）。
+- **复核者自陈未做**：未亲跑 `dotnet test`（只读约束下构建会写 obj/bin）；`journal_present`/`verify_pins` 未亲算。
+- **登记**：`doc/reviews/E9-FILE-ROOT-RECOVERY-1-REVIEW.md`。

@@ -133,7 +133,14 @@ pdf: a DIRECTORY root must not be treated as a container
 cbz: a DIRECTORY root must not be treated as a container
 ```
 
-**4 个用例全部变红，消息准确**。已还原（`PROBE` 计数 0）。
+**4 个 Theory 用例全部变红，消息准确**。已还原（`PROBE` 计数 0）。
+
+**★ 更正（独立复核指出，2026-11-15）**：实际 kill count 是 **5/6**，不是 4/6。
+除 4 个 Theory 外，`ContainerRoot_MustBeAnExistingFile` 的**前半段**
+（`Assert.False(IsRecoverableRoot("zip", 不存在的路径))`）在无条件 `true` 下**同样会红**。
+只有 `FolderRoot_IsAlwaysUsable_BecauseTheRootIsTheContainer` 不变红 —— 但它的判别方向相反：
+若谓词被**收紧**为只留 `File.Exists(root)`（去掉 folder 分支），**只有它会红**。
+**⇒ 6 个用例合计对"放宽"与"收紧"两个方向都有判别力**，我原先只说了放宽方向且低估了数量。
 
 ### 5.4 回归
 
