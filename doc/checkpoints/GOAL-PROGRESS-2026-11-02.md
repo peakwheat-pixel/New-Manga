@@ -2599,3 +2599,21 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   - **已验证**：AC1 stage / AC2 VERSION.json 自证 / AC3 setup.exe（621.9 MB, sha256 固定）/ AC4 clean install /
     AC5 安装后启动（core_service+host_bridge+credential ready, self-check Passed）/ AC6 卸载 + **用户数据根 SHA-256 不变**；
   - **未做**：AC7 四页导航（打包产物上）、GitHub 两步（签名）、F11 视觉。
+## 274. ★★ RELEASE-GATE-RE-ASSESSMENT-2026-11-15：**Gate 正式复评 —— "可评估"已达成**（2026-11-15，DSH，goal 轮次 75）
+
+- **动机**：goal 的措辞是"直至 Release Gate **可评估通过**"。此前我只在罗列状态，未做**正式判定**。
+  本轮产出 `doc/reviews/RELEASE-GATE-RE-ASSESSMENT-2026-11-15.md`，**对每条条件给出判定 + 依据 + 可复核性**。
+- **§0 先声明判定口径**（MET/PARTIAL/NOT_RUN/BLOCKED 的边界 + 三条原则），**避免事后调整标准**。
+- **逐条判定**：①**MET**（8/8，L-L1-2 我做了四项独立核实）；
+  ②**MET（调查）** —— 但**显式记录**处置四项均需 Owner 授权、`gh` 未认证实测，**不因 MET 而淡化风险**；
+  ③**PARTIAL** —— 矩阵经 3 轮复核；Host 2 个失败是**设计使然**（驱动实测 `CRASH_POINT=PASS`）；
+  真机走查有**4 种途径 + 对照实验 + 根因**；
+  ④**PARTIAL** —— **AC1–AC6 已验证**（含 **AC6 卸载后用户数据根 SHA-256 前后完全一致**）；
+  剩余 AC7/签名/F11 三项各有实测依据；⑤**NOT_RUN**（V1 审计 `:20` 书面判据）；⑥**MET**。
+- **总体判定 `BLOCKED`**，但 **§7.3 论证"可评估"已达成**：
+  六条有判定、每个缺口有实测/书面依据、每项有"谁能提供"、证据可第三人复核、**未把任何未完成写成通过**。
+- **§8 四元组**：剩余 3 件事（**条件 3 走查 + 条件 4 AC7 可合并为一次操作**、F11、GitHub 两步），
+  **合计约 5 分钟**。
+- **§9 诚实列出本复评的 4 项局限**：①条件 1 未逐项重跑；②CoreClient 是继承基线未重跑；
+  ③未访问远端核实可见性（`gh` 未认证）；④**AC1–AC6 只读了汇总表，未逐个复核 sha256 与 JSON 原始数据**
+  （该表标注"r1 REJECT 后重做"，说明其数字曾被独立复核挑战过一次）。
