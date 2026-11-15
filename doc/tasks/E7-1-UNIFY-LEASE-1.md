@@ -7,7 +7,7 @@ status: done
 suggested_owner: DSH
 owner: DSH
 reviewer: e7-1-review（独立上下文子 agent，r1 为 CHANGES_REQUESTED，已返修）
-integration_commit: cd7f8ccf7
+integration_commit: 879c2bc96
 canonical_evidence_status: complete
 resource_closeout_status: complete
 depends_on:
@@ -108,9 +108,9 @@ E-7 第 1 项只点名 `ExchangeAsync`，扩大可见性变更面没有收益。
 
 | evidence_id | AC/Gate | path | commit | sha256 | class | sha256_basis |
 |---|---|---|---|---|---|---|
-| EV-E71-01 | AC4 全量不回归（203/0/30） | verification/E7-1-UNIFY-LEASE-1/coreclient-full.log | cd7f8ccf7 | e2abde13e8ad87ee55907c91b1a5a4217245c03241827ac0185ba843731e9ca4 | CANONICAL | BLOB |
-| EV-E71-02 | AC1/AC2 编译（internal 变更生效） | verification/E7-1-UNIFY-LEASE-1/build.log | cd7f8ccf7 | 4f5881ece2d6f9efd2c4e9ad1abd3d85adabaa2060c6a0586e5f228e3dc8e5a9 | CANONICAL | BLOB |
-| EV-E71-03 | AC1/AC2/AC3 修复 diff | verification/E7-1-UNIFY-LEASE-1/fix.diff | cd7f8ccf7 | 2035313ca83a705088b963aaf56de6aa4dd9603ee9a7332ecac0a6a5e03dffb5 | CANONICAL | BLOB |
+| EV-E71-01 | AC4 全量不回归（203/0/30） | verification/E7-1-UNIFY-LEASE-1/coreclient-full.log | 879c2bc96 | 4fbb9575b7c7fe9035db4022f704af62b875278f7bf49dade277066ea62a8c17 | CANONICAL | BLOB |
+| EV-E71-02 | AC1/AC2 编译（internal 变更生效） | verification/E7-1-UNIFY-LEASE-1/build.log | 879c2bc96 | 7237c8c92a5f6759a3ebd72bc2c04665882362ab5211705709b24ee776f37dd2 | CANONICAL | BLOB |
+| EV-E71-03 | AC1/AC2/AC3 修复 diff | verification/E7-1-UNIFY-LEASE-1/fix.diff | 879c2bc96 | f08ed1e2b51d5017962f730ea06de7fd0db1a57a7f14c36b62ade44f1ff0b004 | CANONICAL | BLOB |
 
 ## Resource Manifest
 
