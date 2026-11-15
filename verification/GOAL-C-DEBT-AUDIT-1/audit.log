@@ -1,0 +1,18 @@
+# 目标 C 三项技术债核实 — 复算证据
+head: 1f3bd0d84
+timestamp: 2026-11-16T03:00:43+08:00
+
+## 第 1 项：控制字符残留
+TAB = 0
+孤立 CR = 0
+
+## 第 3 项：blocked AC 统计
+全量扫 <<BLOCKED: = 16（含说明文字误匹配）
+精确口径（行首 - [ ] **AC）= 12
+差异 = 4 处为说明文字误匹配
+
+## 第 2 项：豁免实现位置
+L853: $htmlAcStyle = ($taskText -match '(?m)^[ \t]*-[ \t]*\[[ xX]\][^\r\n]*\*\*AC[0-9A-Za-z._-]*[^\r\n]*<!--\s*(verified|not-applicable|
+L854: $historicalAcExempt = ($htmlAcStyle -and $metadata['governance_version'] -eq '3' -and $taskStatus -in @('done', 'closed_with_limit
+L863: if (-not $historicalAcExempt -and ($taskStatus -eq 'done' -or ($taskStatus -eq 'approved' -and $hasIntegrationCommit)) -and $taskT
+L928: if ($metadata['governance_version'] -eq '3' -and $taskStatus -in @('in_review', 'approved', 'done', 'closed_with_limitations') -an
