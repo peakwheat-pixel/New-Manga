@@ -1,74 +1,71 @@
-# E-7 并发项 — 现状精确核实（2026-11-16，DSH）｜**r1 复核后重写**
+# E-7 并发安全 — 状态更新（2026-11-16，第 2 版）
 
-**结论先行（r1 更正后的正确版本）**：
+- 作者：DSH（Lead / Integrator）
+- 取代：`doc/reviews/E7-CONCURRENCY-STATUS-2026-11-16.md`（第 1 版，五项"全部仍开"）
+- 基线：`dd5dc1519`
+- 范围：只陈述**已落盘的事实与证据**；不关闭 E-7 本项以外的任何 Gate
 
-> **「E-7 仍有 5 项开放、并发安全不可宣称」在本 head 上仍然准确。**
-> 5 项**全部仍开**。本报告初版曾错误地宣称「不是 5 项，而是 1+1+1」——那个更正**方向反了**，见 §4。
+## 1. 五项逐项终态
 
-**权威枚举**（两处独立文档一致，本报告以此为准）：
-- `doc/tasks/PIPE-EXCLUSIVE-TRANSPORT-1.md:123-129`
-- `doc/reviews/MAINT-1-EXISTING-FINDINGS-2026-11-14.md:162-168`
+先给结论：**五项全部有处置**。下表每行的「动态证据」列都指**能实际执行、且经变异验证有判别力**的测试。
 
----
-
-## 1. 权威 5 项的逐项核实（全部仍开）
-
-| # | 权威表述 | 代码实测 | 判定 |
-|---|---|---|---|
-| **1** | `CoreServiceClient` 仍用自己的 `_pipeGate`，未改用传输层租约；`ExchangeAsync` 仍 `public` ⇒ 未来直调绕过独占（AC1 PARTIAL / AC2 NOT MET） | `CoreServiceClient.cs:426` `_pipeGate`；`SidecarProcess.ExchangeAsync` 为 `public`（`:219`），且**内部不加锁**（无 `_exchangeGate.WaitAsync`） | **仍开** |
-| **2** | 无 `request_id` 时 fail-open；bridge 仅校验数字 id（AC4 后半 NOT MET） | `EnsureResponseBelongsToRequest`（`CoreServiceClient.cs:~2406` 判据）对**缺失** `request_id` 直接放过（配合 `CoreProtocol.cs:63-65`）；`HostBridgeClient.ParseResponse`（`:322-333`）仅校验数字 `id`，`:272` 的 `SendRawAsync` 不传 `expectedId` | **仍开（生产路径）** |
-| **3** | **R-002**：id 错配后无重同步，流中可能残留一帧（AC5 NOT MET） | `CoreServiceClient.cs:2408-2413` 错配时抛 `SidecarException`，无 drain/poison；协议按行一次一响应 ⇒ 抛错后本次响应残留，下一次读到上一条 = **永久 off-by-one** | **仍开** |
-| **4** | **R-005**：取消（`CancellationToken`）后流状态可能永久失步 | `SidecarProcess.cs:250-258`：`catch (OperationCanceledException) when (!cancellationToken.IsCancellationRequested)` —— **只有超时才 `_poisoned = true`**；**调用方主动取消**时该 filter 不匹配 ⇒ 异常直抛、**不置 poison** ⇒ 流状态未定义 | **仍开** |
-| **5** | `Dispose`/`StopAsync` 在租约外，在途命令会得 `ProcessExited` | `CoreServiceClient.DisposeAsync`（`:2620-2631`）：直接 `await _process.StopAsync()` → `await _process.DisposeAsync()`，**两处都不持 lease** | **仍开** |
-
-## 2. 关键机制澄清（理解 1–5 的前提）
-
-`SidecarProcess.ExchangeAsync`（`:219`）**本身不加锁** —— 它只做 `ThrowIfPoisoned` → 写 stdin → 读 stdout 一行。
-独占必须由调用方通过 `AcquireExchangeLeaseAsync`（`:40-43`，底层 `_exchangeGate` SemaphoreSlim(1,1)，`:34`）持 lease 实现。
-
-⇒ 由此可推出第 1 项为何是缺口：`ExchangeAsync` 是 `public` 且不自锁，「未来任何直调即绕过独占」。
-当前两条管道各自加锁（Fluent 侧走传输层 lease、Core 侧走私有 `_pipeGate`），**功能有保护但机制未统一**。
-
-## 3. 已在的修复（不属于 5 项，供参照，不是本报告的"更正"）
-
-这两项在 `MAINT-1:158-159`、`GOAL-PROGRESS:1571-1572` 中**早已记为已修**，从未计入 5 项：
-
-- `HostBridgeClient` 已用传输层 lease：`Bridge/HostBridgeClient.cs:269`/`:292`，
-  全文件仅 2 处 `ExchangeAsync`（`:270`/`:293`）且都在 lease 之下；其余公开方法走 `SendAsync`，**无绕过路径**。
-- `CoreServiceClient.SendRawAsync` 已持 `_pipeGate`：`:2386` Wait → `:2387-2393` try → `:2394-2397` finally Release。
-
-## 4. r1 复核指出的错误（本报告初版，已更正）
-
-| 错误 | 说明 |
-|---|---|
-| **P1：§3「不是 5 项而是 1+1+1」** | 我把卡面 AC1/AC2/AC4/AC5 的 `[~]` 行当成"5 项"，并把 a/b（早已修、从未计入）也纳进来"更正"，**方向反了**；还漏了 R-005 与 Dispose 两项，把开放项从 5 降到 3。**已按权威枚举重写为 §1。** |
-| **P2：d 归类为「设计如此」** | 初版引 `CoreServiceClient.cs:2384-2385` 的注释论证 fail-open 是故意的 —— 但那注释描述的是**测试钩子** `SendRawAsync`（全仓无生产调用者）。第 2 项指的是**生产路径** `EnsureResponseBelongsToRequest` 对缺失 `request_id` 放过。**归为「设计如此」掩盖了生产路径残余风险**，已改判为「仍开」。 |
-| **P2：AC2 解读错位** | 初版把 AC2「core 侧两处仍直调 `ExchangeAsync`」误读为 `SendRawAsync`；实指 `CoreServiceClient.cs:699-701` 与 `:2431`。AC2 `[~]` 仍成立。 |
-
-**保留的部分**：a（HostBridgeClient 已用 lease）、b（SendRawAsync 已持锁）、c（两把 gate 分属独立管道、无双重锁）、
-以及「`ExchangeAsync` 本身不加锁」四项代码结论经 r1 复核确认准确，无需返工。
-
-## 5. 真实剩余工作（按风险排序）
-
-| 优先级 | 项 | 为何排这个位置 | 建议范围 |
+| # | 原问题（`PIPE-EXCLUSIVE-TRANSPORT-1.md:123-129` 原文） | 处置 | 卡 | 动态证据 |
 |---|---|---|---|---|
-| **P1** | **4 / R-005 取消失步** | 最现实的触发路径：任何一次 `CancellationToken` 取消都会让流永久失步，且**不置 poison**（无法自愈） | 把 `when (!cancellationToken.IsCancellationRequested)` 的 poison 分支扩展到**主动取消**（或统一在 `finally` 判定「请求已写出但响应未读」时置 poison）；测试：发出请求后立即 cancel，断言下次调用得 `POISONED` 而非读到残留帧 |
-| **P1** | **3 / R-002 错配无重同步** | 协议按行一次一响应，抛错即 off-by-one，后续所有调用错位 | `SidecarProcess` 增 `DrainUntilAsync(expectedId, maxFrames)`；`CoreServiceClient` 错配时先有界 drain，超限再 poison；测试：「迟到旧响应」场景后续调用仍取到正确响应（**当前代码上必须先红**） |
-| P2 | **5 / Dispose 与在途命令竞态** | `StopAsync` 不持 lease，在途命令得 `ProcessExited`（表现为随机失败） | `DisposeAsync` 内先 `AcquireExchangeLeaseAsync` 再 Stop/Dispose（或显式记录「不做租约、以 poison 语义豁免」并加注释说明理由） |
-| P2 | **1 / 统一到传输层租约** | 架构一致性；`ExchangeAsync` 仍 `public` 是「未来直调即绕过」的根因 | `CoreServiceClient` 的 `_pipeGate` 换成 `AcquireExchangeLeaseAsync`；`ExchangeAsync` 降为 `internal`（或加 `[Obsolete]` 引导） |
-| P3 | **2 / fail-open 收紧** | 需要先定「缺失 id 时应 fail-closed 还是允许」的契约，属设计决策 | 先由 DSH 出契约判定（缺 id ⇒ fail-closed 或允许+记 warn），再据契约改 `EnsureResponseBelongsToRequest` 与 bridge 侧 |
+| 1 | `CoreServiceClient` 仍用 `_pipeGate`，未改用传输层租约；`ExchangeAsync` 仍 `public` | **已修**：删除 `_pipeGate`（3 处改为 `AcquireExchangeLeaseAsync`）；`ExchangeAsync` **两个重载**都降 `internal` | `E7-1-UNIFY-LEASE-1` | 全量并发用例（`SidecarCancellationPoisonTests` 3 + `SidecarShutdownRaceTests` 4） |
+| 2a | 无 `request_id` 时 fail-open（core 侧） | **已修**：`BelongsToRequest` 改严格相等；`EnsureResponseBelongsToRequest` 复用同一谓词 | `E7-2-FAILCLOSED-1` | `FakeCoreServiceIntegrationTests` 5 条（含两条 poison，**各经变异验证**） |
+| 2b | bridge 仅校验数字 id（bridge 侧） | **已修**：`ParseResponse` 三段式严格判据（缺失/非 Int32/错配）；生产调用点 `_process.Poison()` | `BRIDGE-ID-FAILCLOSED-1` + `BRIDGE-FAKE-HARNESS-1` | `FakeBridgeHostIntegrationTests` 3 条（**变异验证：删 Poison ⇒ 2 红**） |
+| 3 | id 错配后无重同步（R-002），流中可能残留一帧 | **已修**：有界重同步（上限 16 帧）+ 超限 poison；两处调用点都改 | `R002-RESYNC-1` | `R002ResyncTests` 4 条 + 生产链 2 条 |
+| 4 | 取消（`CancellationToken`）后流状态可能永久失步（R-005） | **已修**：两个 poison 站点都改为「取消 ⇒ poison ⇒ 重抛 OCE」 | `R005-CANCEL-POISON-1` | `SidecarCancellationPoisonTests` 3 条 |
+| 5 | `Dispose`/`StopAsync` 在租约外，在途命令会得 `ProcessExited` | **已核证**：**未改代码**（风险确认为可接受）；固化为 4 条回归 | `E7-5-SHUTDOWN-RACE-1` | `SidecarShutdownRaceTests` 4 条 |
 
-## 6. 第 5 次同类错误（如实记录）
+### 判定依据的强度（逐项标注，不混用）
 
-初版方法里我写了「读完整实现，不只 grep」，但 §3 的错恰恰是**另一种"读到一半"**：
-我读了卡面 AC 行，**没去找「5 项」的权威枚举定义**（它在同一张卡的「未达成」小节里，`PIPE-EXCLUSIVE-TRANSPORT-1.md:123-129`，
-以及 `MAINT-1:162-168` 有同样的列表）。
+- **「已修」** = 改动落盘 + 有会变红的测试（多数经**变异验证**：故意破坏后测试变红）；
+- **「已核证」** = 未改代码，但行为被测试钉住，且**删掉保护会变红**；
+- 第 2a/2b 的 poison 接线、第 3 的重同步边界，都做了**变异测试**（把接线改 no-op ⇒ 测试红）。
 
-前四次：`0x00` 映射猜错 → 默认壳看错分支 → 手工绕过 `package.ps1` → grep 无 `lock` 判「无锁」。
-**这一次是：把"看起来像清单的行"当成了权威清单，而没找原始定义。**
+## 2. 「并发安全」现在可以怎么表述
 
-⇒ 归纳一条可执行的纪律：**凡要复述「N 项」这类枚举，必须先定位它的定义处并逐条对照，不得从二手行文里反推。**
+### 可以说的（有证据）
 
-## 7. 本轮范围
+> 共享 stdin/stdout 管道的**独占**由传输层租约（`SidecarProcess.AcquireExchangeLeaseAsync`）保证，
+> 且 `ExchangeAsync` 已降为 `internal`，程序集外无法绕过。
+> 错误响应的**归属**在 core 与 bridge 两侧都 fail-closed（严格 id 匹配 + 有界重同步 + 超限 poison）。
+> 取消与关停路径产生的是**typed `SidecarException`**，不会泄漏 BCL 异常。
+> 上述每一条都有能变红的测试；三处 `poison` 接线各自经变异验证。
 
-**不修改任何 `.cs`**（本卡只做状态核实）。四件套已复跑：`check` PASS(3w) / `pins` 18/18 / `inventory` 1/80/6=87。
+### 不能说的（仍然不成立）
+
+- ❌ 「并发安全已完全达成」—— 仍有下列残余；
+- ❌ 「E-7 本项可以关闭」—— 本报告不是关闭依据，只是状态更新；
+- ❌ 「单测通过 ⇒ 真实 sidecar 下也安全」—— 见残余 3。
+
+## 3. 残余清单（按风险排序，如实保留）
+
+| # | 残余 | 风险 | 说明 |
+|---|---|---|---|
+| 1 | `AcquireExchangeLeaseAsync` / `ReadNextResponseLineAsync` 仍 `public` | 中 | `E7-1` 只点名 `ExchangeAsync`；这两个仍可被程序集外调用，租约可被外部持有 |
+| 2 | `tools/perf/wire_serialisation_probe.py:12` 仍把已删除的 `CoreServiceClient._pipeGate` 当串行判据 | 低 | 只影响探针说明文字，不影响产品行为；不在任何卡的 `allowed_paths` 内 |
+| 3 | **未见真实 sidecar 下的长稳压测** | **中** | 所有并发结论都来自假夹具与单测；793MB 真实 sidecar 的竞态窗口未测 |
+| 4 | bridge 侧仍缺的边界：error 信封先于 id 校验、匹配 id 的业务错误**不** poison、握手期非法 id ⇒ `HandshakeFailed`、raw + error 仍 `BridgeException`、**请求计数**证明次调未写入 | 低-中 | 裁决 §4 要求，`BRIDGE-FAKE-HARNESS-1` 未做 |
+| 5 | 假 bridge 用 `DerivedRoot` 路径末段编码场景 | 低 | 若未来 `DerivedRoot` 变成真实目录扫描，约定会失效 |
+| 6 | `E7-5` 的「stop 进行中新交换」当前靠 `HasExited` + 两处宽 catch **偶然正确**，无显式状态保证 | 低 | 建议的显式 `_stopping` 守卫未做 |
+
+## 4. 本轮的方法学教训（值得后续复用）
+
+这十几轮里反复出现同一类失效，现已固化为可执行纪律：
+
+| 纪律 | 触发它的错误 |
+|---|---|
+| **变异测试是判据，不是补充**：任何「测试已覆盖 X」的声明，必须能回答「把 X 弄坏，它红吗？」 | 多次写出"能过但抓不住回归"的测试 |
+| **`--no-incremental` 不传给 `ProjectReference` 子项目**：变异/恢复后必须**逐项目**显式重建 | 两次因旧 DLL 误判（一次 bridge 旧 exe，一次把"必然失败"当成 flaky） |
+| **往 `evidence_dir` 加文件必须同时登记 EV 行** | 本会话第 5 次；最后用自动扫描脚本收干净 |
+| **读到否定式约束（「不能只做 X」）要问"还必须做什么"**，不是"那 X 可以不做" | 误读 Codex 裁决 §5.3，被 r1 判 CHANGES_REQUESTED |
+| **改 A 时回头看依赖 A 的 B** | 卡内未关闭项自相矛盾、跨三张卡的过期表述 |
+| **对一条不稳定的测试，先说"我不确定"再决定"撤回/修"** | 把变异残留当 flaky，撤回了本该保留的测试（本轮已修正） |
+
+## 5. 本报告不做什么
+
+- 不关闭 `E-7`（本项由 `PIPE-EXCLUSIVE-TRANSPORT-1` 的限定条承接）；
+- 不改变 Release Gate；
+- 不宣称残余 3（真实 sidecar 长稳压测）已覆盖 —— 那是需要真实夹具与更长运行时间的工作。

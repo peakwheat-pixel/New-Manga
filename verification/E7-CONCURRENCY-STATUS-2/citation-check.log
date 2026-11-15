@@ -1,0 +1,27 @@
+# E-7 状态第 2 版：引用核实
+head: dd5dc1519
+timestamp: 2026-11-16T02:55:25+08:00
+
+## 证据文件存在性（12 项）
+OK   apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/FakeCoreServiceIntegrationTests.cs
+OK   apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/FakeBridgeHostIntegrationTests.cs
+OK   apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/R002ResyncTests.cs
+OK   apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/SidecarCancellationPoisonTests.cs
+OK   apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/SidecarShutdownRaceTests.cs
+OK   doc/tasks/E7-1-UNIFY-LEASE-1.md
+OK   doc/tasks/E7-2-FAILCLOSED-1.md
+OK   doc/tasks/BRIDGE-ID-FAILCLOSED-1.md
+OK   doc/tasks/BRIDGE-FAKE-HARNESS-1.md
+OK   doc/tasks/R002-RESYNC-1.md
+OK   doc/tasks/R005-CANCEL-POISON-1.md
+OK   doc/tasks/E7-5-SHUTDOWN-RACE-1.md
+缺失=0
+
+## 卡状态
+E7-1-UNIFY-LEASE-1.md: status=done AC=6/6
+E7-2-FAILCLOSED-1.md: status=done AC=6/6
+BRIDGE-ID-FAILCLOSED-1.md: status=done AC=6/6
+BRIDGE-FAKE-HARNESS-1.md: status=done AC=6/6
+R002-RESYNC-1.md: status=done AC=6/6
+R005-CANCEL-POISON-1.md: status=done AC=6/6
+E7-5-SHUTDOWN-RACE-1.md: status=done AC=6/6
