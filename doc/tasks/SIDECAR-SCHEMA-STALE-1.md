@@ -395,3 +395,37 @@ TARGET_NOT_FOUND 有 message+details）⇒ **这条错误本身不带诊断信�
 
 **组 B 调查教训（67–74 共 8 轮）**：前 6 轮手搓 probe / 改测试加诊断，5 次同类错误、0 进展；
 后 2 轮读仓库自带的 wire log + 源码注释，两轮收敛。**仓库自带的证据比自造 probe 更可靠。**
+
+### 组 B 完全闭环（2026-11-16 续）—— core 要求键集合精确匹配
+
+**证据链（已闭合）**：
+
+1. 测试（CommandWiringB1Tests.cs:236-238）发的 payload 键集合 = {book_id, confirm_permanent_delete}，
+   **无 inventory_digest**；
+2. dispatcher（:619-638）把 digest 当 **optional**，省略时不写，
+   注释明说「legacy caller that omits it ... the new Core fail-closes with INVALID_REQUEST」——
+   **设计如此**；
+3. 分流层（core_service.py:7015）_DELETE_PROTOCOL_MINOR = 10 与请求 minor:10 一致 ⇒ **不是 minor 问题**；
+4. **根因**（core_service.py:2285 _validate_single_delete_payload）：
+   `python
+   if not isinstance(raw_payload, dict) or set(raw_payload) != {
+       "book_id", "confirm_permanent_delete", "inventory_digest",
+   }:
+       return None, self._delete_error("INVALID_REQUEST", "validation")
+   ...
+   if not is_inventory_digest(raw_payload.get("inventory_digest")):
+       return None, self._delete_error("INVALID_REQUEST", "validation")
+   `
+   **键集合必须精确等于这三项，digest 必须符合 sha256: 格式。**
+   测试少了 digest ⇒ 集合不等 ⇒ 第一步即返回 INVALID_REQUEST（无 message/details，
+   与 wire log 帧 #527/#543/#559/#575 完全一致）。
+
+**定性**：测试期望过时（与组 A / 组 C 同类）。产品行为正确（PD-02/PD-04：确认绑定到 Core 计算的 digest）。
+
+**修法（下一轮）**：测试须先取真实 digest 再删除。线索：PreviewPermanentDeleteBooks
+属 preview 家族（minor 11）；CommandIntegrationTests.cs:537 用的是**假 digest** 且期望
+INVALID_REQUEST（负向控制，本来就该失败）。B1 的 :236-238 是**正向路径**，需真 digest。
+⇒ 先确认「单书 inventory digest 由哪个命令返回」，再改测试。
+
+**本轮不改测试的原因**：用假 digest 改会把它改成**另一个错误的期望**
+（假 digest 会得到 BOOK_DELETE_STALE_PREVIEW 而非成功）。**先确认数据来源，再改断言。**
