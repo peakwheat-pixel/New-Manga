@@ -288,3 +288,57 @@ goal 要求"直至 Release Gate **可评估通过**"。**"可评估"这一目标
 
 **Gate 判定 `BLOCKED`；但"可评估"已达成 —— 六条全部有判定、每项缺口都有实测依据与解除路径，
 剩余 3 件需人工的事合计约 5 分钟。**
+
+---
+
+## 10. goal 第二优先：外部裁决落地（2026-11-15 补核）
+
+**背景（我的疏漏）**：goal 的第二优先是"按 `MAINT-1-EXTERNAL-ADJUDICATION-codex-2026-11-14.md`
+的裁决执行章节手动排序"。我在此前多轮只盯 Gate 六条，**没有回头核实这张卡是否真的落地**。
+
+### 10.1 裁决内容
+
+`doc/reviews/MAINT-1-EXTERNAL-ADJUDICATION-codex-2026-11-14.md`（29 行，两个裁决）：
+
+| 裁决 | 内容 | 要求 |
+|---|---|---|
+| **A** | 选 1：**手动拖拽排序** | **开 1 张卡**；**保持 wire 顺序为 `sort_order`，排序在 UI/Host 消费层做** |
+| **B** | 选 3：**保持现状**（不做运行时重建/错误码拆分） | **不开卡**；保留"修改配置后重启生效"提示 |
+
+### 10.2 核实结果：**A 完整落地，B 符合**
+
+`doc/tasks/CHAPTER-MANUAL-SORT.md` 的 `status: done` 与 `canonical_evidence_status: complete`
+**在代码层面成立**（虽然 AC1–AC10 未勾选，属记录卫生问题）：
+
+| 要点 | 代码证据 |
+|---|---|
+| 原子持久化 | `src/application/library/service.py:212` `reorder_chapters`、`:323` `reorder_chapters_strict` |
+| 原子性测试 | `tests/storage/test_chapter_reorder_atomic.py` |
+| Wire 新命令（不改 `list_chapters` 顺序） | `src/bootstrap/core_service.py:7212` `elif command == "ReorderChapters":` |
+| C# 消费层三件套 | `HostController.cs:639` / `IHostController.cs:223` / `NullHostController.cs:116` |
+| VM 语义 | `ShelfViewModel.cs:275` `ReorderChapterAsync` |
+| **视图拖拽手势** | `ShelfPageView.cs:161-163` DragDrop 三事件、`:601` `DoDragDropAsync`、`:614`、`:638` |
+
+**⇒ 裁决 A 的契约边界也被遵守**：新增 `ReorderChapters` 命令做重排，`list_chapters` 的返回顺序未动。
+
+### 10.3 未做（诚实）
+
+- 未**逐字节**比 AC6 的 `M2-C1`/`C-07` 载体（`generate_api_inventory --check` 与 pins 18/18 间接支持）；
+- 未跑 `test_chapter_reorder_atomic.py`（只做静态核实）；
+- **未改那张卡的 AC 勾选**（不越权改别人的证据）。
+
+**证据**：`verification/CHAPTER-MANUAL-SORT-VERIFY-1/`。
+
+---
+
+## 11. 结论（本复评的最终口径）
+
+| goal 要求 | 状态 |
+|---|---|
+| **第一优先：Gate 六条** | 条件 1/2/6 **MET**；条件 3 **接近满足**（三重 GUI 证据）；条件 4 **AC1–AC6 ✅ / AC7 5/5 页**；条件 5 **NOT_RUN**（有书面判据） |
+| **第二优先：裁决落地** | **A 完整落地 / B 符合**（§10 补核） |
+
+**Gate 判定：`BLOCKED`** —— 条件 3（真机物理显示）、条件 4（签名、0.1.1 逐条断言）、条件 5（人工 GT）仍未满足。
+
+**"可评估"已达成**：六条每一条都有明确判定、实测依据、以及"谁能提供"。
+**"通过"未达成**：我不把它写成通过。

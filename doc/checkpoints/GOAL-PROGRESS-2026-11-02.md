@@ -3098,3 +3098,15 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **⇒ 裁决 A 完整落地；裁决 B 按裁决保持现状、未改动 —— 两者都符合。goal 第二优先实际已完成。**
 - **未做（诚实）**：未逐字节比 AC6 的 `M2-C1`/`C-07` 载体（但 `generate_api_inventory --check` 与 pins 18/18 间接支持）；
   未跑 `test_chapter_reorder_atomic.py`（只静态核实）；**未改那张卡的 AC 勾选**（不越权改别人的证据）。
+## 298. 文档同步：复评加 §10（第二优先）+ §11（最终口径），索引加 §8（2026-11-15，DSH，goal 轮次 99）
+
+- **`RELEASE-GATE-RE-ASSESSMENT-2026-11-15.md` 新增**：
+  - **§10 goal 第二优先补核**：说明我的疏漏、裁决 A/B 的内容、A 完整落地的 6 项代码证据、
+    **裁决 A 的契约边界被遵守**（新增 `ReorderChapters` 命令，`list_chapters` 返回顺序未动）、
+    以及"未做"三项（未逐字节比载体 / 未跑原子性测试 / 未改别人卡的 AC 勾选）；
+  - **§11 结论（最终口径）**：第一优先 = 条件 1/2/6 **MET**、条件 3 **接近**、条件 4 **AC1–AC6 ✅ / AC7 5/5**、
+    条件 5 **NOT_RUN**；第二优先 = **A 完整落地 / B 符合**。
+    **Gate 判定 `BLOCKED`**；**"可评估"已达成、"通过"未达成，不写成通过**。
+- **`EVIDENCE-INDEX-2026-11-15.md` 新增 §8**：goal 第二优先的证据（`CHAPTER-MANUAL-SORT-VERIFY-1`）+
+  该卡的记录卫生问题（`status: done` 但 AC 全未勾，与 `GATE4-PAGES-UPGRADE-1` 同一模式）。
+- **⇒ 至此复评与索引都覆盖了 goal 的两条优先级。**

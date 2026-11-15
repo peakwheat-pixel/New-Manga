@@ -173,3 +173,18 @@
 
 8. **任何 `NEWMANGA_CAPTURE_*` 运行前，先读它的写盘路径并 `git status` 该目录** ——
    这些变量是**覆盖式写入**，不是增量。第 14 次错误就是这么来的。
+
+---
+
+## 8. goal 第二优先的证据（外部裁决落地）
+
+`verification/CHAPTER-MANUAL-SORT-VERIFY-1/`：
+
+- 裁决 A（手动拖拽排序）**完整落地**：原子持久化 `service.py:212/:323`、原子性测试
+  `test_chapter_reorder_atomic.py`、wire 新命令 `core_service.py:7212`、C# 三件套、
+  VM `ShelfViewModel.cs:275`、**视图拖拽 `ShelfPageView.cs:161-163/:601/:614/:638`**；
+- 裁决 B（保持现状）**符合**（未做改动）；
+- **契约边界被遵守**：新增 `ReorderChapters` 命令，`list_chapters` 返回顺序未动。
+
+**这张卡的记录卫生问题**：`status: done` + `canonical_evidence_status: complete`，
+但 AC1–AC10 全未勾 —— 与 `GATE4-PAGES-UPGRADE-1` 同一模式。
