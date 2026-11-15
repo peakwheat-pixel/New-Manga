@@ -2715,3 +2715,26 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **已同步**：`RELEASE-GATE-RE-ASSESSMENT` §1.1 该行由 "⚠️ 未核实" 改为 "✅ 已接线（含行号）"；
   结论由"2 项受 GUI 限制"改为"**6 项已核 / 1 项未查 / UI 真实窗口可见性仍未验**"。
   **保留点收窄但不消失** —— 静态证明"控件已构建并绑定"≠"真实窗口里能看见"。
+## 279. ★ CONDITION1-FINDINGS-RECHECK-2：`L-L1-1` 核实通过 —— **条件 1 的 8 项全部核完**（2026-11-15，DSH，goal 轮次 80）
+
+- **承诺兑现**：上一轮说"下一轮查 L-L1-1，把条件 1 的 8 项全部核到底"。
+- **`L-L1-1`（`ChapterSummary` 不投影 `kind`）—— 已解决**：
+  1. **契约侧有 UNFREEZE 载体**：`doc/reviews/CONTRACT-UNFREEZE-2026-11-14-M2C1.md`
+     —— `:5` **DSH 2026-11-14 裁决「批准方案 A（契约 additive 修订）」**（依据 `M2-C1:194` 的
+     `ListRegions` additive widening 先例）；`:12` `list_chapters` result 行**追加两个字段**；
+     `:31` `kind` 来源 `chapters.chapter_type`（v1 起既有列）；`:35` **"实现必须总是返回 kind"**。
+  2. **实现侧已投影**：`apps/desktop-avalonia/src/NewManga.CoreClient/CoreServiceClient.cs`：
+     `record ChapterSummary(string ChapterId, string Title, string ChapterNumber, int SortOrder,
+     string? Kind = null, long? CustomRank = null)`；`Parse` 注释写明
+     "the four frozen keys are required ... while `kind`/`custom_rank` are **OPTIONAL**:
+     an absent field, an explicit null and an older four-key Core all read as null"，
+     且 **"testable without a live sidecar"**。
+- **⇒ 8/8 全部有**我亲自打开过的**代码/测试证据**：
+  L-R1-1/L-R2-1（`ReaderPageView.cs` 737 行 C# 构建 UI，四控件全在）／
+  L-F1-2（`test_font_wire.py:92` + `:86` 注释）／L-F1-3（ZCode 裁决）／
+  **L-L1-1（UNFREEZE 载体 + record 投影）**／L-L1-2（前卡四项核实）／
+  L-L1-4（`service.py:28-33` + `:298`）／L-AI1-6（**0 命中 + 反向断言**）。
+- **唯一保留点**：**UI 的"真实窗口可见性"未验** —— 静态证明"控件已构建并绑定 Command"
+  ≠"真实窗口里用户能看到"。**这与条件 3 / 条件 4 AC7 是同源缺口，不是条件 1 独有。**
+- **已同步**：`RELEASE-GATE-RE-ASSESSMENT` §1.1 表格 8 行全部更新为 ✅（含证据），
+  结论改为"**8 项全部已逐项/逐行核实**；唯一保留点是真实窗口可见性"，§9 局限 1 已消除。
