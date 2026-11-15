@@ -2305,3 +2305,19 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   端到端负例需构造"journal 指向目录 root 的 registry"，而 journal 由生产链路写入、测试无法篡改 ⇒
   **端到端负例仍未做**；但生产唯一写 journal 的路径只传用户选中的 path，
   该场景需**人为构造非法注册**才会出现，**判别函数层的测试已守住"即使出现也不会误放行"**。
+## 259. CRASHPOINT-FAIL-NATURE-1 + STATUS 指针修正：**拒绝把 fail 转 skip**；再修两处不回流（2026-11-15，DSH，goal 轮次 60）
+
+- **★ 我主动否决了自己上一轮的建议**：我曾提议 `CRASHPOINT-SKIP-ALIGN-1`（把 2 个 CrashPoint fail 转成 skip）。
+  **这触碰纪律红线** —— "不得新增 skip/xfail"。而且转 skip 会**降低**可见性：
+  现在每次全量都看到 "2 failed" 会提醒人去确认驱动是否仍 PASS；skip 化后就"看不见"了。
+  **⇒ 不做。** 改为写清性质（`verification/CRASHPOINT-FAIL-NATURE-1/README.md`）：
+  - 这 2 个是**两阶段驱动的一半**，`CrashPoint_Park` **永不自行结束**（等外部 kill 整棵进程树），
+    必须由 `crash-ack.ps1` 编排；单独进全量时缺 `NEWMANGA_FEA11_CRASH_STATE` ⇒ **在第一行前置 assert 就失败**；
+  - **它们确实被覆盖**：`crash-ack.ps1` 实测 `CRASH_POINT=PASS`，**10 项 CHECK 全 1**；
+  - **正确读法**："2 个需外部驱动的测试在当前入口缺前置条件"，**不是**"2 个产品缺陷"。
+- **★ 又修两处"实现进展不自动回流"**（STATUS，均为我之前只改卡片没改指针）：
+  ①`INSTALLER-MATRIX-1` 在 STATUS 里仍标 **`in_progress`**（我只改了卡片 → done）⇒ 已改 `done`；
+  ②既有缺陷登记只列 **E-1/E-2/E-3**，而实际已有 E-1…E-9（E-6/E-8/E-9 已修、E-7 部分）⇒ 已更新概述。
+- **STATUS 现 3156/3200**（比改前 3192 更小，因为两处替换都更短），check PASS。
+- **这是同一模式的第 3 次**（前两次：STATUS 基线 931→953、E-8 状态未回流）。
+  **教训固化**：每次改卡片状态后，**必须同时 grep STATUS/PLAN 里同一张卡的字样**。
