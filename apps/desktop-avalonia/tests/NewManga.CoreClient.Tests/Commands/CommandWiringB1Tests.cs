@@ -233,9 +233,22 @@ public sealed class CommandWiringB1Tests
         // ---- permanent delete face (protocol minor 10) -------------------------------------
         var book = await Run("library_create_book", "{\"title\":\"NS-WIRE-B1 delete probe\"}");
         var bookId = book.GetProperty("book_id").GetString();
+        // FEA-12-PREREQ-1 / M2-C1 rev 2.13 §5.11.1a: the frozen Core binds the confirmation to a
+        // Core-computed per-book inventory digest (PD-02/PD-04), and its closed-shape validation
+        // rejects any payload whose key set is not exactly
+        // {book_id, confirm_permanent_delete, inventory_digest}. The Host never synthesizes the
+        // digest (the Core stays the semantic authority), so the caller obtains it from the
+        // read-only deletion preview first -- exactly what the product UI does.
+        var preview = await Run(
+            "library_preview_permanent_delete_books",
+            $"{{\"bookIds\":[\"{bookId}\"]}}");
+        var digest = preview.GetProperty("inventoryDigests").GetProperty(bookId!).GetString();
+        Assert.False(string.IsNullOrWhiteSpace(digest), "preview must return a per-book digest");
+        Assert.StartsWith("sha256:", digest!, StringComparison.Ordinal);
         var deletedBook = await Run(
             "library_delete_book_permanently",
-            $"{{\"payload\":{{\"book_id\":\"{bookId}\",\"confirm_permanent_delete\":true}}}}");
+            $"{{\"payload\":{{\"book_id\":\"{bookId}\",\"confirm_permanent_delete\":true," +
+            $"\"inventory_digest\":\"{digest}\"}}}}");
         Assert.Equal(bookId, deletedBook.GetProperty("book_id").GetString());
         Assert.True(deletedBook.GetProperty("deleted").GetBoolean());
 

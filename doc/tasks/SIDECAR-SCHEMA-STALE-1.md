@@ -429,3 +429,30 @@ INVALID_REQUEST（负向控制，本来就该失败）。B1 的 :236-238 是**�
 
 **本轮不改测试的原因**：用假 digest 改会把它改成**另一个错误的期望**
 （假 digest 会得到 BOOK_DELETE_STALE_PREVIEW 而非成功）。**先确认数据来源，再改断言。**
+
+### 组 B 的 B1 部分已修复（2026-11-16 续，本会话首个真正修好的测试）
+
+**改动**：CommandWiringB1Tests.cs:234-253 —— 删除前插入 preview 取 digest：
+
+`csharp
+var preview = await Run("library_preview_permanent_delete_books",
+    $"{{\"bookIds\":[\"{bookId}\"]}}");
+var digest = preview.GetProperty("inventoryDigests").GetProperty(bookId!).GetString();
+Assert.False(string.IsNullOrWhiteSpace(digest), "preview must return a per-book digest");
+Assert.StartsWith("sha256:", digest!, StringComparison.Ordinal);
+var deletedBook = await Run("library_delete_book_permanently",
+    $"{{\"payload\":{{\"book_id\":\"{bookId}\",\"confirm_permanent_delete\":true," +
+    $"\"inventory_digest\":\"{digest}\"}}}}");
+`
+
+**依据**：core_service.py:2127-2134 的 handle_preview_permanent_delete_books 返回
+{"inventoryDigests": {book_id: digest}, ...}；Host 命令 library_preview_permanent_delete_books
+payload 为 {"bookIds":[...]}（camelCase，dispatcher 用 RejectUnknownKeys 强制）。
+顺手加了两条断言（digest 非空 + sha256: 前缀），证明拿到的是**真实** digest。
+
+**验证**：
+- 单测 B1：已通过! - 失败: 0，通过: 1 / EXIT=0
+- 完整 test.ps1：**失败 4 / 通过 252**（原 5 / 251）—— **本会话首个实质进展**
+
+**剩余 4 个失败**：组 A ×2（测试期望过时）、组 C ×1（color 已成功、失败在 translate）、
+组 B 的 B2 ×1（大概率同类，未验证）。**仍不宣称 test 全绿，test.ps1 仍 EXIT=1。**
