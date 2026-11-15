@@ -1,4 +1,28 @@
-# E-9 已知限制登记（非冻结契约）
+# E-9 已知限制登记 —— **已解锁（2026-11-15）**
+
+> ## ★ 状态：**已解锁**，不再成立
+>
+> **解锁日期**：2026-11-15
+> **解锁 commit**：`366704138`
+> **解锁方式**：`SourceOperationCoordinator.MintRecoveryGrantsAsync` 增加**判别分支** ——
+> 非 folder 源只要 `File.Exists(roots[0])` 即放行（`roots[0]` 对容器源就是容器文件本身）。
+> **依据**：`doc/reviews/E9-UNLOCK-ADJUDICATION-zcode-2026-11-15.md`（方案 E）。
+> **验收**：`crash-ack.ps1` 由 `CRASH_POINT=NOT_SATISFIED / EXIT=12`
+> 变为 **`CRASH_POINT=PASS / EXIT=0`**（10 项 CHECK 全 1）；
+> 原先被挡的 2 个测试断言**翻回正向**并通过。
+>
+> **本文件保留为历史证据，不得删除。** 下文记录的是**限制曾经成立时的真实情况**，
+> 用于回答"为什么当初会拒绝"以及"如果将来退化该怎么判断"。
+>
+> **★ 本文件最初的核心论断是错的，已在正文中更正**：
+> 原文断言"registry ROOT 是目录，不是容器"—— 实际上
+> `SourceImportModels.IssueGrantsAsync` 把**同一个 path** 同时传给 `FindOrRegisterRootAsync`（注册为 root）
+> 与 `IssueAsync`（作为 sourcePath），且 `RegisterRoot` 写 `roots = [path]`。
+> **路径从来就在 `roots[0]` 里。**
+>
+> **回退条件**：若将来把"容器源"的注册方式改成"注册父目录"，本限制会**重新成立** ——
+> 那时 `File.Exists(roots[0])` 为假，typed 拒绝会重新触发。这正是保留 `fail-closed` 的价值。
+
 
 **状态：已由 ZCode 裁决采纳（2026-11-15）；本文件是登记入口，不是契约本体。**
 

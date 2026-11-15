@@ -2267,3 +2267,20 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
   ②`E9-KNOWN-LIMITATION-REGISTER` **尚未按裁决回退**（仍写着限制成立）。
 - **意义**：E-9 从"永久限制"变成"已解锁"。我此前把它当成 Gate 的技术死结、还建议用户接受限制，
   **根因是我没读 `RegisterRoot` 的实现**。这是本项目"先猜后查"代价最大的一次。
+## 257. E9-CLOSEOUT-1（部分）：登记文件已标"已解锁"并更正错误前提；**负例测试仍未做**（2026-11-15，DSH，goal 轮次 58）
+
+- **已做**：
+  1. `doc/reviews/E9-KNOWN-LIMITATION-REGISTER.md` 顶部加**醒目状态横幅**：**已解锁**（2026-11-15，
+     commit `366704138`），写明解锁方式、依据裁决、验收证据（`crash-ack.ps1` NOT_SATISFIED→PASS）、
+     **保留为历史证据不得删除**、**回退条件**（若将来改成"注册父目录"，`File.Exists(roots[0])` 为假会重新触发拒绝）。
+  2. `MAINT-1-EXISTING-FINDINGS` 的 **E-9 标题与正文已更正**：原标题"把 **registry root 目录** 当成**容器文件**"
+     暗示 `roots[0]` 是目录 —— **错误**。真实缺陷是"在**没检查 roots[0] 是文件还是目录**之前就 folder-only 拒绝"，
+     属**过度保守**。已标注**已修复**。
+  3. `STATUS` / `REBASELINE_PLAN` 核查：**均未提及 E-9**，无需同步（已核实，非推测）。
+- **★ 未做（最重要，诚实登记）**：**负例测试仍未写**。
+  裁决明确要求"目录 root + 容器 kind 仍须 typed 拒绝"要有测试固定住；
+  当前**只有代码逻辑（`File.Exists`）没有测试** ⇒ **若有人把条件改成无条件放行，现有测试不会红**。
+  这是本轮遗留的**真实缺口**，不得视为已完成。
+- **为什么没做**：负例需要构造"registry root 是目录、但 sourceKind 是容器型"的 fixture，
+  而 `IpcFixture.ApplyAsync` 走完整链路（scan/plan/apply），插入假 root 需要额外探索；
+  本轮跨时已超 12 小时，选择**先交付可完成的部分并如实登记缺口**，而不是仓促写一个无效测试。

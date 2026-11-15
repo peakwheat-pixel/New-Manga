@@ -211,7 +211,19 @@ headless UI 测试**不读** `startup.log` 的绑定诊断；此前也没有在*
 单独建卡：①在 `StudioPageViewModel` 补齐缺失属性（或用 `AvaloniaProperty`/`StyledProperty` 适配）；
 ②**加一个能固定住的测试**：解析 `startup.log`（或订阅 Avalonia 的 binding-error 事件），
 一旦出现 `[Binding] An error occurred` 就失败 —— 这样同类问题今后不会静默复发。
-## E-9：source 恢复路径把 **registry root 目录** 当成**容器文件**（P2，2026-11-15 定位）
+## E-9：source 恢复路径对容器源 typed 拒绝（**已修复**，2026-11-15 定位 / 2026-11-15 解锁）
+
+**状态：已修复（commit `366704138`）。** 修复方式与经过见
+`doc/reviews/E9-UNLOCK-ADJUDICATION-zcode-2026-11-15.md` 与
+`verification/E9-FILE-ROOT-RECOVERY-1/README.md`。
+`crash-ack.ps1` 由 `NOT_SATISFIED` 转为 `PASS`。
+
+**⚠️ 原标题与本节的初始论断有误，已更正**：原文写"把 **registry root 目录** 当成**容器文件**"，
+暗示 `roots[0]` 是个目录。**错误**。`SourceImportModels.IssueGrantsAsync` 把**同一个 `path`**
+同时传给 `FindOrRegisterRootAsync`（注册为 root）与 `IssueAsync`（作为 sourcePath），
+`RegisterRoot` 写 `roots = [path]` ⇒ **对容器源 `roots[0]` 就是容器文件本身**。
+真实缺陷是：`MintRecoveryGrantsAsync` 在**没检查 `roots[0]` 是文件还是目录**之前就做了 folder-only 拒绝
+—— 属**过度保守**，不是"路径不存在"。
 
 **严重度：P2（恢复路径对非 folder 来源必然失败）；证据：完整调用栈 + 代码 + 实测异常。**
 
