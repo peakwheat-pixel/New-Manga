@@ -845,6 +845,13 @@ if ($TaskPath -and (Test-Path -LiteralPath $TaskPath -PathType Leaf)) {
             }
             $integrationCommit = $metadata['integration_commit']
             $hasIntegrationCommit = $integrationCommit -and $integrationCommit -notmatch '^(?i:null|pending|todo|-)$'
+            # §4.3.1（GOV-CHECKER-HISTORICAL-AC-EXEMPT-1）：存量卡清理采用行内 HTML 注释标注
+            # （<!-- verified|not-applicable|blocked: … -->）。含该形式且为 gv3 终态卡时，改按 §4.3.1
+            # 口径校验；不含该形式的卡一律走原 §4.3 逻辑（门禁不削弱）。
+            # 作用域收窄到 `**AC` 行（独立复核 r1 的 R-01）：非 AC 的 checkbox 行不参与判定，
+            # 否则「零 AC 行 + 非 AC 行带注释」可绕过「未找到任何 AC 行」，或反向误分派。
+            $htmlAcStyle = ($taskText -match '(?m)^[ \t]*-[ \t]*\[[ xX]\][^\r\n]*\*\*AC[0-9A-Za-z._-]*[^\r\n]*<!--\s*(verified|not-applicable|blocked)\s*:')
+            $historicalAcExempt = ($htmlAcStyle -and $metadata['governance_version'] -eq '3' -and $taskStatus -in @('done', 'closed_with_limitations'))
             $terminalStatus = $taskStatus -in @('done', 'closed_with_limitations', 'cancelled', 'superseded', 'historical')
             $closeoutRequired = $terminalStatus -or ($taskStatus -eq 'approved' -and $hasIntegrationCommit)
             if ($taskStatus -eq 'done' -and -not $hasIntegrationCommit) { Add-Error 'DONE 必须记录 integration_commit。' }
@@ -853,7 +860,7 @@ if ($TaskPath -and (Test-Path -LiteralPath $TaskPath -PathType Leaf)) {
                 if ($metadata['resource_closeout_status'] -ne 'complete') { Add-Error '终态或已集成的 approved Task 必须设置 resource_closeout_status: complete。' }
             }
             if ($closeoutRequired) {
-                if (($taskStatus -eq 'done' -or ($taskStatus -eq 'approved' -and $hasIntegrationCommit)) -and $taskText -match '(?m)^\s*-\s*\[ \]') { Add-Error 'DONE 不能保留未完成 Acceptance Criteria；范围未完成时使用 closed_with_limitations。' }
+                if (-not $historicalAcExempt -and ($taskStatus -eq 'done' -or ($taskStatus -eq 'approved' -and $hasIntegrationCommit)) -and $taskText -match '(?m)^\s*-\s*\[ \]') { Add-Error 'DONE 不能保留未完成 Acceptance Criteria；范围未完成时使用 closed_with_limitations。' }
                 $manifestSection = Get-Section $taskText 'Resource Manifest'
                 $resourceRows = @(Get-TableRows $manifestSection)
                 $externalManifestUsed = $false
@@ -918,7 +925,32 @@ if ($TaskPath -and (Test-Path -LiteralPath $TaskPath -PathType Leaf)) {
                     }
                 }
             }
-            if ($metadata['governance_version'] -eq '3' -and $taskStatus -in @('in_review', 'approved', 'done', 'closed_with_limitations')) {
+            if ($metadata['governance_version'] -eq '3' -and $taskStatus -in @('in_review', 'approved', 'done', 'closed_with_limitations') -and $historicalAcExempt) {
+                # §4.3.1 口径：每个 AC 行必须有三种 HTML 注释之一；勾选与 kind 一致；原因非空；禁止裸 [x]。
+                $htmlAcMatches = @([regex]::Matches($taskText, '(?m)^[ \t]*-[ \t]*\[([ xX])\][^\r\n]*\*\*AC[0-9A-Za-z._-]*[^\r\n]*\r?$'))
+                $htmlAcCount = 0
+                foreach ($hm in $htmlAcMatches) {
+                    $hLine = $hm.Value.TrimEnd([char]13)
+                    $hChecked = ($hm.Groups[1].Value -ne ' ')
+                    $hLabel = if ($hLine -match '\*\*(AC[0-9A-Za-z._-]+)') { $matches[1] } else { 'AC?' }
+                    $hMark = [regex]::Match($hLine, '<!--\s*(verified|not-applicable|blocked)\s*:\s*(.*?)\s*-->[ \t]*$')
+                    if (-not $hMark.Success) {
+                        if ($hChecked) { Add-Error "§4.3.1 裸 [x]（缺 verified/not-applicable/blocked 注释）：$($taskId) $hLabel" }
+                        else { Add-Error "§4.3.1 AC 缺注释：$($taskId) $hLabel" }
+                        continue
+                    }
+                    $hKind = $hMark.Groups[1].Value
+                    $hReason = $hMark.Groups[2].Value.Trim()
+                    if (-not $hReason) { Add-Error "§4.3.1 注释原因为空：$($taskId) $hLabel" }
+                    if ($hKind -eq 'blocked') {
+                        if ($hChecked) { Add-Error "§4.3.1 blocked 不得勾选：$($taskId) $hLabel" }
+                    } elseif (-not $hChecked) {
+                        Add-Error "§4.3.1 $hKind 必须勾选：$($taskId) $hLabel"
+                    }
+                    $htmlAcCount++
+                }
+                if ($htmlAcCount -eq 0) { Add-Error 'lifecycle v3 Task 进入 REVIEW/DONE 时未找到任何 AC 行。' }
+            } elseif ($metadata['governance_version'] -eq '3' -and $taskStatus -in @('in_review', 'approved', 'done', 'closed_with_limitations')) {
                 # §4.3 AC 状态标记门禁：每个 AC 必须有合法 <<STATUS>>，且与勾选一致。
                 $acMatches = @([regex]::Matches($taskText, '(?m)^[ \t]*-[ \t]*\[([ xX])\][ \t]*\*\*AC[^\r\n]*\r?$'))
                 if ($acMatches.Count -eq 0) {

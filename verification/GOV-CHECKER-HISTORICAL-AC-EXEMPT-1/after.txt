@@ -1,0 +1,9 @@
+# check.ps1 -TaskPath 改动后（GOV-CHECKER-HISTORICAL-AC-EXEMPT-1）
+
+CHAPTER-MANUAL-SORT            AC门禁=0  其它=1  | Governance check: FAIL (1 errors, 3 warnings)
+FEA-04                         AC门禁=0  其它=3  | Governance check: FAIL (3 errors, 3 warnings)
+GATE3-COVERAGE-MATRIX          AC门禁=0  其它=0  | Governance check: PASS (3 warnings)
+RELEASE-PACKAGE-1              AC门禁=0  其它=1  | Governance check: FAIL (1 errors, 3 warnings)
+MICA-FIX-1                     AC门禁=0  其它=1  | Governance check: FAIL (1 errors, 3 warnings)
+FEA-07-AC5-NATIVE-1            AC门禁=0  其它=1  | Governance check: FAIL (1 errors, 4 warnings)
+ADJ-B-RESTART-HINT-1           AC门禁=1  其它=5  | Governance check: FAIL (6 errors, 3 warnings)

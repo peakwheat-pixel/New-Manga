@@ -212,21 +212,24 @@ Reviewer 只能靠肉眼。本项目已多次发生「AC 全部做完、一个�
 当 `evidence_dir` 存在而 AC 未勾选时，两者**不构成矛盾**；但反过来，
 **当 AC 行内注释与 `evidence_dir`/卡面 `status` 不一致时，以 AC 行内注释为准**——
 因为注释记录了逐条判定与缺口，`status: done` 可能只表示范围冻结或设计交付。
-（注意：`check.ps1:856` 对 `done` + 任一 `[ ]` 仍会报「DONE 不能保留未完成 AC」。该门禁与本节口径
-并存：门禁管**当前 Task**，本节管**历史终态卡的注释**；两者互不替代，冲突时以本节为准并登记。）
+（注意：`check.ps1:861` 的「DONE 不能保留未完成 AC」对**当前 Task** 仍生效；
+对使用本节 HTML 注释形式的**历史终态卡**，已由 `GOV-CHECKER-HISTORICAL-AC-EXEMPT-1` 豁免，见下段。）
 
 **与 §4.3 的关系（含门禁边界，独立复核 r1 更正）。** 新 Task 继续按 §4.3 用 `<<STATUS>>`；
 存量卡按本节用 HTML 注释，`<<...>>` **不再作为行末门禁标记**。若存量卡已带 `<<...>>`
 （如 `FEA-04`、`FEA-07-AC5-NATIVE-1`、`GOV-PIN-LINEAGE-1`），按 `FEA-04` 先例把原标记移入注释
 （写作 `原标 <<PARTIAL: ……>>` 保留原字节语义）。
 
-**已知门禁边界（不掩盖）。** `check.ps1` 的 §4.3 门禁用行末锚 `<<...>>$`，因此 6 张
-`governance_version: 3` 的历史终态卡（`CHAPTER-MANUAL-SORT`、`FEA-04`、`GATE3-COVERAGE-MATRIX`、
-`RELEASE-PACKAGE-1`、`MICA-FIX-1`、`FEA-07-AC5-NATIVE-1`）在 `check.ps1 -TaskPath` 下会报
-「AC 状态标记缺失」，其中 5 张 `done` 卡另报「DONE 不能保留未完成 AC」。
-**该 FAIL 在本节引入前的父版本同样存在**（当时无任何标记），**不是本次清理引入的回归**，
-也不由本次清理修复：全局 `check.ps1` 只扫 15 个 current documents，不覆盖这些历史卡。
-后续如需消除，应为 `check.ps1` 增加「历史终态卡豁免」并另立 Task。
+**历史终态卡豁免（已实现，`GOV-CHECKER-HISTORICAL-AC-EXEMPT-1`）。** `check.ps1` 的 §4.3 门禁用行末锚
+`<<...>>$`，与本节 HTML 注释形式不相容。该 Task（2026-11-15）已为
+「含本节 HTML 注释 ∧ `governance_version: 3` ∧ `status ∈ {done, closed_with_limitations}`」的卡
+增加 §4.3.1 校验分支（三种 `kind` + 勾选一致 + 原因非空 + 禁裸 `[x]`），并豁免其
+「DONE 不能保留未完成 AC」。**原 §4.3 分支原样保留**，对不含 HTML 注释的卡照常生效；
+反例 `ADJ-B-RESTART-HINT-1`（gv3 终态、无注释）实测仍 FAIL。
+
+**该豁免不覆盖非 AC 缺陷。** 6 张卡中 5 张仍有各自的历史缺陷（`evidence_dir` 未登记文件、
+`Resource manifest` 待填、`Canonical` 路径缺失、证据 SHA 不匹配），需另立 Task 处理；
+本豁免只消除 AC 门禁这一条冲突。
 
 **清理边界。** 只允许追加行内注释与勾选符号；不得改写 AC 正文、`status` 或 `evidence_dir`。
 

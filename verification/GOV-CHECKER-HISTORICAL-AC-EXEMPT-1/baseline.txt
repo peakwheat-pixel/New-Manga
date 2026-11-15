@@ -1,0 +1,11 @@
+# check.ps1 -TaskPath 基线（改动前，HEAD b8113e740）
+
+CHAPTER-MANUAL-SORT                        Governance check: FAIL (14 errors, 3 warnings)  (FAIL 行 14)
+FEA-04                                     Governance check: FAIL (14 errors, 3 warnings)  (FAIL 行 14)
+GATE3-COVERAGE-MATRIX                      Governance check: FAIL (9 errors, 3 warnings)  (FAIL 行 9)
+RELEASE-PACKAGE-1                          Governance check: FAIL (10 errors, 3 warnings)  (FAIL 行 10)
+MICA-FIX-1                                 Governance check: FAIL (9 errors, 3 warnings)  (FAIL 行 9)
+FEA-07-AC5-NATIVE-1                        Governance check: FAIL (8 errors, 4 warnings)  (FAIL 行 8)
+ADJ-B-RESTART-HINT-1                       Governance check: FAIL (8 errors, 3 warnings)  (FAIL 行 8)
+
+check.ps1 sha256 = 1A6F7AB38E1B3FAD80C9C282880C74E77BBBB81E6300653AF3678D0694A6CFF2
