@@ -104,7 +104,7 @@ latest_known = max(migration.schema_version for migration in migrations)
 - [x] **AC2 影响面判定**：明确四件套不受影响、Gate 条件 4 受影响、包不可用。 <<MET>>
 - [x] **AC3 门禁盲区记录**：说明"四件套跳过 sidecar 测试"导致未被发现。 <<MET>>
 - [x] **AC4 打包加一致性校验**：`package.ps1` 在打包前比对 sidecar schema 版本与源码最新版本，不一致则失败并给出明确指示。 <!-- 实施于 package.ps1：读 bundle 的 build-manifest.json，缺失则拒绝打包；存在则比对 manifest.schema_version 与源码 schema.py 的 SCHEMA_VERSION_V<n> 最大值，不等则拒绝。两个场景实测：① 无 manifest → EXIT=1「cannot prove which schema it understands」；② manifest 声明 v6 而源码 v14 → EXIT=1「built against schema v6 but the source tree is at v14 ... Rebuild the bundle」。build_sidecar.ps1 已改为构建时写入该 manifest。 --> <<MET>>
-- [ ] **AC5 重建或登记**：重建 sidecar bundle（或明确登记为需专门构建轮次，附操作步骤）。 <<BLOCKED: sidecar 重建需 PyInstaller 完整构建（约 800MB / 1000+ 文件），属专门构建轮次；操作步骤见本卡「修复方向」>>
+- [x] **AC5 重建或登记**：重建 sidecar bundle（或明确登记为需专门构建轮次，附操作步骤）。 <!-- 2026-11-16 DSH：已用 build venv（Python 3.14.6 + PyInstaller 6.22.3）执行 packaging/m2ac5/build_sidecar.ps1 -Force 重建成功，bundle 835.3MB，build-manifest.json 写入 schema_version=14；package.ps1 安全阀由拒绝转为放行（sidecar schema check: v14 == source v14）；test.ps1 重跑后 schema v14/v6 错误归零。详见 workspace/tasks/SIDECAR-SCHEMA-STALE-1/rebuild-report.md --> <<MET>>
 - [ ] **AC6 独立复核**：固定 head 交独立上下文 Review。 <<BLOCKED: 待 AC4/AC5 实施后一并送审>>
 
 ## 禁止范围
