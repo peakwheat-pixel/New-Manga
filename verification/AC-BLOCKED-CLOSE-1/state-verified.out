@@ -1,0 +1,47 @@
+可闭合候选：41 条
+
+  # 卡                                         L AC       类别     当前状态       行内容摘要
+----------------------------------------------------------------------------------------------------------------------------------
+  2 CHAPTER-MANUAL-SORT                      85 AC10     RERUN  未勾[ ]      - [ ] **AC10 不回归**：`App.Tests`、`CoreClient.Tests` 与 Python 相关测试全绿；无新增 
+  3 V11R-D-1                                 51 AC8      IMPL   已勾[x]      - [x] AC8 reduced-motion 生效；焦点环 2px accent（outline，不用阴影）；对比度符合 DESIGN_
+  4 FEA-04                                   90 AC1      IMPL   未勾[ ]      - [ ] **AC1 旧入口保留**：公开签名/路由不变；`git diff` 只允许内部实现 + 适配层新增，每处改动 Handoff 
+  5 FEA-04                                   91 AC2      IMPL   未勾[ ]      - [ ] **AC2 行为基线不退化**：`dotnet test apps/desktop-avalonia/NewManga.sln 
+  6 FEA-04                                   92 AC3      IMPL   未勾[ ]      - [ ] **AC3 无第二份业务真值**：VM 私有状态清单（Handoff）逐项区分 UI 态/业务态；业务态读取统一经 R-STAT
+  7 FEA-04                                   93 AC4      IMPL   未勾[ ]      - [ ] **AC4 §15.3 六项迁出**：S1–S6 每项「现状→新权威→断言」；**未迁出项必须在 Handoff 明确登记**（
+  8 FEA-04                                   94 AC5      IMPL   未勾[ ]      - [ ] **AC5 fail-closed preflight**：Q-20 五个 blocker 各有用例；存在任一 blocker 
+  9 FEA-04                                   95 AC6      IMPL   未勾[ ]      - [ ] **AC6 生命周期**：关闭/重建内容前后 `hostBefore`/`hostAfter` 满足 `ReferenceEqu
+ 10 FEA-04                                   96 AC7      IMPL   未勾[ ]      - [ ] **AC7 回归与证据**：sln 测试日志、基线对照表、preflight blocker 矩阵入 `verification
+ 11 FEA-04                                   97 AC8      IMPL   未勾[ ]      - [ ] **AC8 独立复核**：本卡冻结版的范围复核 approved（P0/P1=0，报告见 `doc/reviews/FEA-04
+ 13 V11R-C-1                                 34 AC4      IMPL   未勾[ ]      - [ ] AC4 无裸色值/裸字号/裸间距/阴影/渐变/模糊；全部 {DynamicResource Nm.*}（dotnet build
+ 16 V11R-B-5                                 31 AC1      DOC    未勾[ ]      - [ ] AC1 屏幕/模块按 SCREEN_SPECS 对应章节的布局、组件、状态、数据源实现；**无 Mock 冒充真实**（未接入能
+ 17 V11R-B-5                                 32 AC2      IMPL   未勾[ ]      - [ ] AC2 上下文保留：空间/模式切换不重建 ViewModel、不丢 selection/滚动/筛选。 <!-- blocked:
+ 18 V11R-B-5                                 33 AC3      IMPL   未勾[ ]      - [ ] AC3 状态完备：idle/loading/ready/empty/error/partial 均可触发并有就地呈现（DESIG
+ 19 V11R-B-5                                 34 AC4      IMPL   未勾[ ]      - [ ] AC4 无裸色值/裸字号/裸间距/阴影/渐变/模糊；全部 {DynamicResource Nm.*}（dotnet build
+ 20 V11R-B-4                                 33 AC3      IMPL   未勾[ ]      - [ ] AC3 状态完备：idle/loading/ready/empty/error/partial 均可触发并有就地呈现（DESIG
+ 21 V11R-B-4                                 34 AC4      IMPL   未勾[ ]      - [ ] AC4 无裸色值/裸字号/裸间距/阴影/渐变/模糊；全部 {DynamicResource Nm.*}（dotnet build
+ 22 V11R-B-3                                 34 AC4      IMPL   未勾[ ]      - [ ] AC4 无裸色值/裸字号/裸间距/阴影/渐变/模糊；全部 {DynamicResource Nm.*}（dotnet build
+ 30 GOV-RESIDUAL-RUNTIME-IDENTITY-IMPL-1     51 AC6      IMPL   未勾[ ]      - [ ] AC6 负例全部 fail-closed 且有测试：policy 摘要错误、policy 正文篡改、origin 字节漂移、`A
+ 31 GOV-RESIDUAL-RUNTIME-IDENTITY-IMPL-1     52 AC7      DOC    未勾[ ]      - [ ] AC7 `python -B tools/governance/tests/test_residual_runtime_iden
+ 32 GATE3-COVERAGE-MATRIX                    52 AC2      DOC    未勾[ ]      - [ ] **AC2 逐格代码依据**：每格写 `测试名 (文件:行)` 并**说明该测试断言了什么**； <!-- blocked: 缺
+ 33 GATE3-COVERAGE-MATRIX                    54 AC3      DOC    未勾[ ]      - [ ] **AC3 可执行性标注**：明确区分 `[AvaloniaFact]`（headless 可跑）、`[Fact]`（纯逻辑）、
+ 34 GATE3-COVERAGE-MATRIX                    56 AC4      DOC    未勾[ ]      - [ ] **AC4 NOT_RUN 归因**：每个 NOT_RUN 格写具体原因（E-2 sidecar / 需真实窗口与人工操作 / 
+ 41 V11R-A-3                                 36 AC4      IMPL   未勾[ ]      - [ ] AC4 补强 `CommandParityContractTests`：66 条注册命令全部有 parity 断言（含参数特判与
+ 42 V11R-C-3                                 41 R1       IMPL   未勾[ ]      - [ ] R1 建回滚 tag `v11r-pre-retire`（`tools/v11r/rollback-theme-retire.p
+ 44 M2-REGION-RETYPE-CORE                    29 AC3      RERUN  已勾[x]      - [x] AC3 11 条断言落测：C1-C7（人工优先写通道不互斥/AI 侧 Revision+Lock 双守卫 fail-closed
+ 46 M2-REGION-RETYPE-CORE                    32 AC6      RERUN  未勾[ ]      - [ ] AC6 回归：三套件基线不回退（pytest 三套件 627+1sk 口径+cargo+vitest）；m2_acceptanc
+ 47 RUN-IPC-1                                65 AC4      IMPL   未勾[ ]      - [ ] **AC4 证据**：① **allowlist 断言**——6 条在生产面存在、在 probe/AC1 面不存在（含原始日志）
+ 48 RELEASE-PACKAGE-1                        45 AC6      DOC    未勾[ ]      - [ ] **AC6 门禁**：`check.ps1 -TaskPath` PASS；`scripts/test.ps1` 全绿；pyte
+ 49 M2-SFX-CORRECTION-EXPORTER               35 AC4      IMPL   未勾[ ]      - [ ] AC4 导出格式：T1a manifest+YOLO seg 导出双形态（与 T1b 产物同构，训练侧零适配）；输出外部树 tr
+ 50 TASK-056                                 29 ①        RERUN  已勾[x]      - [x] **AC ①（范围与安全边界）**：明确列出"可清理"与"永不清理"（用户源文件、current/pinned revision
+ 51 TASK-056                                 30 ②        RERUN  已勾[x]      - [x] **AC ②（预览与结果）**：清理前可统计将删除的对象与字节数；执行后返回结构化结果（成功/失败/跳过及原因）。 <!-- v
+ 52 TASK-056                                 31 ③        RERUN  已勾[x]      - [x] **AC ③（瓦片缓存跨代回收）**：把 TASK-045 R-005 的"升版遗留旧瓦片"纳入回收范围（一次性清理 `tile
+ 53 TASK-056                                 32 ④        RERUN  已勾[x]      - [x] **AC ④（幂等与失败）**：重复清理幂等；文件删除失败不得静默（可诊断 + 可重试，复用 TASK-053 的清单化思路）。
+ 54 TASK-056                                 33 ⑤        RERUN  已勾[x]      - [x] **AC ⑤（不回归 + 判别力）**：全仓 passed 不减少；≥5 次逐次记录（不设 `QT_QPA_PLATFORM`）
+ 56 V11R-C-RESEARCH-1                        40 AC5      DOC    已勾[x]      - [x] AC5 不修改任何生产代码；不引入依赖。 <!-- verified: 用 `delivery_head: ba59a6c0d`
+ 58 MICA-FIX-1                               40 AC2      RERUN  未勾[ ]      - [ ] **AC2 诊断输出**：启动时（或 `--diagnostics`）输出 `ActualTransparencyLevel` 
+ 60 MICA-FIX-1                               42 AC4      RERUN  未勾[ ]      - [ ] **AC4 回归**：`scripts/test.ps1` 全绿（含新增 UI 测试）；旧壳 vitest 60/567；pyt
+ 61 MICA-FIX-1                               43 AC5      DOC    未勾[ ]      - [ ] **AC5 门禁**：`check.ps1 -TaskPath` PASS；证据 64-hex pin；Handoff + Re
+ 66 FEA-07-AC5-NATIVE-1                      53 AC-N2    IMPL   未勾[ ]      - [ ] **AC-N2（浮动窗口归属）**：Inspector 浮窗置于副屏 → 可见/可操作；主窗与浮窗跨屏拖动不丢屏外；目标屏不支持
+ 69 FEA-07-AC5-NATIVE-1                      56 AC-N5    DOC    未勾[ ]      - [ ] **AC-N5（证据/审查/翻转）**：真实桌面截图（每案例 ≥1，含两块屏与窗口位置）+ 逐案例 JSON + 恢复点 JSO
+
+合计 41 条：已勾 8 / 未勾 33 / 行未定位 0 / 文件缺失 0
