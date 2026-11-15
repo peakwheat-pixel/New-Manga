@@ -570,3 +570,27 @@ un-binding-models-<hash>）。真冲突是 ModelSidecarFixture.CopyDatabase 在
 性质已在 R73 用 step_runs 账本证明：color=completed(3, 无 error_code)、
 	ranslate=failed/PROVIDER_NOT_CONFIGURED。测试断言「color 必 failed」而过时。
 修法需同步调整 erification/RUN-BINDING-FIX-1/tools/check_run_binding.py:84。
+
+### CoreClient.Tests 首次全绿（2026-11-16 续，里程碑）
+
+**最后一个 CoreClient 失败已修复**（ModelsBuild_BookRun_WithInjectedBindings_OcrNoLongerProviderNotConfigured）：
+- 原断言「color 必 failed」→ 改为「color **无** failed 且链已越过 color」；
+- **保留原意图**：测试要证明的是「OCR 不再报 PROVIDER_NOT_CONFIGURED」，
+  OCR 成功靠「链走过了 OCR」证明；边界后移到 translate 后，改为断言 color 全 completed + 链越过。
+- 证据记录同步：新增 ailure_boundary = "translate (PROVIDER_NOT_CONFIGURED); color = completed"。
+
+**验证**：
+`
+已通过! - 失败: 0，通过: 256，已跳过: 0，总计: 256   (NewManga.CoreClient.Tests)
+`
+从 R63 的 **5 failed / 251 passed** 降到 **0 / 256**，历时 R77/78/81/82/83/85 六轮。
+
+**新暴露：NewManga.Host.Tests 有 3 个失败**（不是本轮引入）：
+`
+失败! - 失败: 3，通过: 358，已跳过: 44，总计: 405
+  GrantIssuerTests.Export_GrantRegisters_ThenCoreFailsTyped_OnMissingTranslatedPages
+  GrantIssuerTests.Import_IntoNewChapter_Executes_AndRegistersGrant
+  Fea11WatchHostRuntimeTests.Ready_ArmsWatcher_RealFileEventProducesHint_DisposeDisarms
+`
+	est.ps1 会依次跑多个测试项目，此前 CoreClient 一失败脚本就 throw，**从未跑到 Host.Tests**。
+⇒ 这是**被前面的失败遮住**的既有问题。下一轮诊断。

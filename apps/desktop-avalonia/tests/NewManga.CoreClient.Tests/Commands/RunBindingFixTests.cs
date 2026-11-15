@@ -401,20 +401,32 @@ public sealed class RunBindingFixTests
             Assert.Equal("completed_with_failures", terminal);
             Assert.True(byType.TryGetValue("ocr", out var ocrStates), "run must include OCR steps");
             // The public step_flow projection only surfaces the current stage state per page/region
-            // (earlier stages stay "pending"), so OCR success is proven by the chain having advanced to
-            // color: the frozen Core runs detect -> ocr -> color sequentially, and the baseline
-            // (RUN-OCR-DIAG-1) never reached color while OCR failed. The copied library.db is the
-            // authoritative ledger for the exact per-step codes (check_run_binding.py).
+            // (earlier stages stay "pending"). The claim under test is "OCR no longer fails with
+            // PROVIDER_NOT_CONFIGURED", and OCR success is proven by the chain having advanced PAST it.
+            // The exact failure boundary is read from the copied library.db (check_run_binding.py).
+            //
+            // SIDECAR-SCHEMA-STALE-1 (DSH 2026-11-16): the boundary used to be color (a pre-existing stub
+            // analyzer failure). It has since moved to translate: the authoritative step_runs ledger for
+            // this run reports color = completed (no error_code) and
+            // translate = failed / PROVIDER_NOT_CONFIGURED. So assert what the ledger actually proves --
+            // every reached stage completed, and the run still ends with a typed failure further down.
             Assert.DoesNotContain("failed", ocrStates!);
             Assert.True(ocrStates!.Count > 0, "run projection must contain OCR steps");
-            Assert.True(byType.TryGetValue("color", out var colorStates), "chain is expected to stop at color");
-            Assert.Contains("failed", colorStates!);
+            Assert.True(byType.TryGetValue("color", out var colorStates), "run must include color steps");
+            Assert.DoesNotContain("failed", colorStates!);
+            Assert.True(colorStates!.Count > 0, "run projection must contain color steps");
+            Assert.True(
+                byType.ContainsKey("translate") || byType.ContainsKey("render"),
+                "chain is expected to advance beyond color (translate/render stages)");
+            Assert.Equal("completed_with_failures", terminal);
 
             evidence["library_db_copy"] = Path.Combine("commands", "run-binding-models-library.db");
             evidence["ocr_success_evidence"] = "step_runs.ocr rows completed without PROVIDER_NOT_CONFIGURED " +
-                                               "(check_run_binding.py); public step_flow shows the chain advanced to color";
-            evidence["note"] = "OCR step completed for all 8 pages; the chain still stops at color (pre-existing " +
-                               "stub analyzer failure) - this evidence does NOT claim the whole chain is green.";
+                                               "(check_run_binding.py); public step_flow shows the chain advanced past color";
+            evidence["failure_boundary"] = "translate (PROVIDER_NOT_CONFIGURED); color = completed";
+            evidence["note"] = "OCR step completed for all 8 pages and the chain advanced past color; the run still " +
+                               "ends completed_with_failures at the translate stage - this evidence does NOT claim " +
+                               "the whole chain is green.";
         }
         finally
         {
