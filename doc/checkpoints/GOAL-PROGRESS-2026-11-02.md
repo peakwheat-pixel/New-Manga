@@ -2149,3 +2149,20 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
 - **裁决者判定"无虚报"**：PERF-1 自declares 并发未做、PERF-2 主动作废 2.8x 数字、
   PERF-3 论证数据仍无效并登记第 9 次教训、PERF-4 明写 `VERDICT=SERIALISED` 是机械输出**不可引用** ——
   **已测/不可用/未测出边界清晰，两次自我纠正均有留痕**。
+## 251. ★ GATE4-REMAINING-1：`--page=reader` **实测证明只切空间**（截图取证），三项残留分类完毕（2026-11-15，DSH，goal 轮次 52）
+
+- **先读完 `AppOptions` 全部 16 个参数**（我曾因不知道 `--exit-after` 白卡两轮）：
+  `--data-root`/`--log-dir`/`--sidecar-dir`/`--mutex-name`/`--theme-home`/`--frontend`/`--theme`/
+  `--theme-id`/`--shell`/`--variant`/`--page`/`--exit-after`/`--width`/`--height`/
+  `--presentation-host`/`--legacy-shell-check`/`--demo-write` —— **没有任何"注入按键/启动即开阅读器"的入口**。
+  `AllowedStartupPages` 确实包含 `reader`。
+- **★ 实测取证（不是推断）**：`--page=reader --exit-after=15000` 跑真实 App 并 `PrintWindow` 截图，
+  **界面上是「资料柜」页面**（标签 `资料柜 1 | 工位 2 | 控制台 3`、中央 `书架还是空的`、右侧 `选择一本作品`），
+  **阅读器根本没打开**。证据：`verification/GATE4-REMAINING-1/page-reader-startup.png`。
+- **为什么决定性**：`startup.log` 里**确实有** `[Binding] ... CurrentPage.Image`（说明 `ReaderOverlay` **被构建了**），
+  但**截图证明它不可见**（被 Library 空间覆盖）⇒ `--page=reader` 只切 `SpaceId.Library`。
+  看阅读器必须按 **F11**，而 F11 需真实交互（`GATE4-READER-PAGE-1` 已证非交互进程做不到）。
+- **三项残留分类完毕**：①`reader` 页 = **NEEDS_INTERACTION**（已实测）；②`yolo11s-seg.onnx` = **BLOCKED（用户提供模型文件）**；
+  ③installer unsigned = **BLOCKED（用户提供签名证书）**。每项都写了「缺什么 + 谁能提供 + 提供后怎么验证」四元组。
+- **本轮做的对的地方**：**先读全部参数再下结论**，并用**真实截图**替代"我分析过代码所以不行"。
+  这正是前几轮反复出错的地方。
