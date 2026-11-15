@@ -2917,3 +2917,26 @@ nm.fluent.visual/1 manifest + ThemeValidator 测试。
      推翻诊断后要清理传播它的文档 / 截图必须人眼过 / 卡片表格普遍陈旧 / **低估也是失真**）；
   6. **一句话**：「每一份证据都能被第三人独立打开复核；每一处"未完成"都写明了为什么；我自己的每一次误判都留在上面。」
 - **这是本会话的收尾产物。** 技术侧零风险可做项已做尽；剩余全部依赖 GUI 输入、GitHub 凭据或人工判断。
+## 289. ★ READER-OVERLAY-HEADLESS-PNG-PLAN-1：**复核"做尽"结论时发现新路径** —— 仓库里已有 headless 截图基础设施（2026-11-15，DSH，goal 轮次 90）
+
+- **动机**：上一轮我断言"零风险可做项已做尽"。本轮**复核这个结论**，发现**它没做核实**。
+- **★ 发现**：`apps/desktop-avalonia/tests/NewManga.App.Tests/FluentResidual2VisualEvidenceTests.cs`（392 行）
+  **已在 headless 下把控件渲染成 PNG**：
+  `:31` `CaptureCommand = "='1'; dotnet test ..."`；
+  `:108` `if (Environment.GetEnvironmentVariable("NEWMANGA_CAPTURE_RESIDUAL2_PNGS") == "1") Write(shots);`；
+  `:374` `shot.Image.Save(path);`。
+- **⇒ 推论**：既然 headless 能渲染任意可视控件，那 `F11HotkeyTests` 里的 `window.LastImmersiveWindow`
+  **也可能能渲染成 PNG** —— 它已经断言了 `immersive.IsVisible` / `PageCount == 8` / Esc 能关闭，
+  **只缺"把它画出来"**。
+- **⇒ 若成功**：①条件 3 的"真实设备走查"可补上**阅读器 overlay 的视觉证据**；
+  ②条件 4 AC7 的"阅读器那一格"可从 `NOT_REACHABLE` 变成**有图**。
+- **难度评估（诚实）**：需**新增独立测试**（不动既有断言、不加 skip）；
+  技术风险中：顶层 `Window` 在 headless 下能否 `RenderTargetBitmap` 渲染**需验证**；
+  可能触发既有 Avalonia headless 限制。
+- **已写下下一轮的 4 步计划**（读 `Write(shots)` 实现 → 读 `LastImmersiveWindow` 类型 →
+  写独立测试 → 跑并**目视确认**）。
+- **★ 我的方法论错误（第 11 次）**：**"做尽"这个断言本身没做核实** ——
+  我只**枚举了想到的途径**（真实窗口 + `PostMessage`），**没有 grep 仓库里已有的能力**
+  （`NEWMANGA_CAPTURE_RESIDUAL2_PNGS` 这个环境变量名，`git grep` 一下就能找到）。
+  **这与第 3 次（只搜 git 索引）、第 7 次（只搜 `*.axaml`）是同一类："我枚举的" ≠ "全部存在的"。**
+  **⇒ 固化规则：说"做尽"之前，先 grep 一遍仓库里有没有别人已经做过的同类能力。**
