@@ -84,11 +84,14 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class | sha256_basis |
 |---|---|---|---|---|---|---|
-| EV-RPC-01 | AC1/AC2/AC3/AC5 证据总述 | verification/RELEASE-PACKAGE-CURRENT-HEAD-1/README.md | 8997b8e23 | （见提交后 pin） | CANONICAL | BLOB |
+| EV-RPC-00 | AC1-AC5 证据说明（不影响判定） | verification/RELEASE-PACKAGE-CURRENT-HEAD-1/README.md | 3085962e2 | 85cbaf683e95c8502ff461398e22c7bf5e85fa79eb9ca28ad06ec6013d9c7a41 | CANONICAL | BLOB |
 | EV-RPC-02 | AC1 打包 manifest（git_head/尺寸/sha256） | verification/RELEASE-PACKAGE-CURRENT-HEAD-1/manifest-singlefile.json | 8997b8e23 | 95930d923c8e39370265bc3ff9648bbd4c1fbdafc5c004d0514e3cfec92d61cd | CANONICAL | BLOB |
 | EV-RPC-03 | AC2 冒烟结果（window_found/host_ready/natural exit） | verification/RELEASE-PACKAGE-CURRENT-HEAD-1/smoke-singlefile.json | 8997b8e23 | edc12e2cf9eac1c99cc1c994f0e793fbad2dfec3a73577aaec6bc57f7dfa549d | CANONICAL | BLOB |
 | EV-RPC-04 | AC2 真实窗口截图 | verification/RELEASE-PACKAGE-CURRENT-HEAD-1/published-singlefile.png | 8997b8e23 | 149f79fca4832de8fa6c5422694de7278fdb248319f0aae637762f1a50bedb22 | CANONICAL | BLOB |
 | EV-RPC-05 | AC1 打包完整日志 | verification/RELEASE-PACKAGE-CURRENT-HEAD-1/publish-release.log | 8997b8e23 | 1a4da218b8c064462b5a5ea1ba3d65b296cbd792cb7606e0f5f8205b9006575c | CANONICAL | BLOB |
+| EV-RPC-06 | AC3 打包构建日志 | verification/RELEASE-PACKAGE-CURRENT-HEAD-1/build-singlefile.log | 3085962e2 | aa5ba258cda93957247d419a67283ee99545c0f5d2c56de3d471b7376e5a68b9 | CANONICAL | BLOB |
+| EV-RPC-07 | AC1/AC3 多模式汇总 | verification/RELEASE-PACKAGE-CURRENT-HEAD-1/manifest-summary.json | 3085962e2 | 6199525c795894b136e54a87a4fc68b3390546bd91170cb302da6a3db1ebf78b | CANONICAL | BLOB |
+| EV-RPC-08 | AC1 sidecar 可用性核证 | verification/RELEASE-PACKAGE-CURRENT-HEAD-1/sidecar-availability.log | 3085962e2 | c26b8b84dcc5e8f9ee62e4cc98cff3338aad400a9bff45425254ecbc5367f174 | CANONICAL | BLOB |
 
 ## Resource Manifest
 
