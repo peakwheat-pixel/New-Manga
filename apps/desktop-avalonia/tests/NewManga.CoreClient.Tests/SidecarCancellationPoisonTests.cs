@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using NewManga.CoreClient.Diagnostics;
 using NewManga.CoreClient.Transport;
+using NewManga.CoreClient.Wire;
 using Xunit;
 
 namespace NewManga.CoreClient.Tests;
@@ -73,7 +74,8 @@ public sealed class SidecarCancellationPoisonTests
             "{\"id\":1}",
             escapeNonAscii: false,
             TimeSpan.FromSeconds(15));
-        Assert.Contains("ReadingProgressChanged", eventFrame.ResponseLine, StringComparison.Ordinal);
+        Assert.Contains("\"event_type\"", eventFrame.ResponseLine, StringComparison.Ordinal);
+        Assert.True(CoreProtocol.IsEventFrame(eventFrame.ResponseLine), "fixture line must parse as an event frame");
 
         using var cancellation = new CancellationTokenSource();
         var skipping = sidecar.ReadNextResponseLineAsync(TimeSpan.FromSeconds(30), cancellation.Token);
@@ -140,7 +142,9 @@ public sealed class SidecarCancellationPoisonTests
             // Emit exactly one line, then stay silent: models "event frame arrived, command response
             // still pending".
             $"$PID | Set-Content -LiteralPath '{pidFile}'; "
-                + "[Console]::Out.WriteLine('{\"event\":\"ReadingProgressChanged\"}'); "
+                // CoreProtocol.IsEventFrame requires an "event_type" key and NO "request_id",
+                // so the fixture must emit that exact shape to be a real event frame.
+                + "[Console]::Out.WriteLine('{\"event_type\":\"ReadingProgressChanged\"}'); "
                 + "[Console]::Out.Flush(); "
                 + "Start-Sleep -Seconds 30",
         },

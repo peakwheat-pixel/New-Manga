@@ -107,7 +107,7 @@ for (var skipped = 0; skipped < 16 && CoreProtocol.IsEventFrame(responseLine); s
 ## 5. 不回归
 
 ```
-不带 sidecar 环境变量的 CoreClient 全量（第二分支修复后）：
+不带 sidecar 环境变量的 CoreClient 全量（最终，含真实事件帧夹具）：
   已通过! - 失败: 0，通过: 195，已跳过: 30，总计: 225，耗时 33s，EXIT=0
 （第一分支修复后为 194/0/30/224；+1 来自第二分支新增的第三条测试）
 ```
@@ -138,6 +138,8 @@ generate_api_inventory.py --check → OK (1/80/6=87)
 - 本卡修的是 R-005 的**两个 poison 分支**（`ExchangeAsync` 与 `ReadNextResponseLineAsync`）。
   E-7 另外四项（`_pipeGate` 未统一、fail-open、R-002 错配重同步、`Dispose`/`StopAsync` 在租约外）**仍开**
   ⇒ **「并发安全」仍不可宣称**。
-- 取消后通道进入 poison 状态，需**重启 sidecar** 才能恢复（`ThrowIfPoisoned` 无自动重建）。
+- 取消后通道进入 poison 状态，需**重启 sidecar** 才能恢复（`ThrowIfPoisoned` 无自动重建）；
+  其消息已由 "poisoned after a timeout" 改为 "poisoned after a timeout or caller cancellation"。
+- 夹具在 `%TEMP%` 留 pid 文件/stderr 目录（与既有 `SidecarLifecycleTests` 同款模式，已记录）。
 - 修复依赖「请求行确实已写出」这一前提；`_stdin.WriteLineAsync` 失败的分支仍走 `ProcessExitedFailure`，
   未改动。

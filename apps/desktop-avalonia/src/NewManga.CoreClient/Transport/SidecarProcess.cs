@@ -444,7 +444,7 @@ public sealed class SidecarProcess : IAsyncDisposable
             throw new SidecarException(
                 SidecarErrorCode.RequestTimeout,
                 Spec.Name,
-                "sidecar channel is poisoned after a timeout; restart required",
+                "sidecar channel is poisoned after a timeout or caller cancellation; restart required",
                 Spec.StderrLogPath);
         }
     }
