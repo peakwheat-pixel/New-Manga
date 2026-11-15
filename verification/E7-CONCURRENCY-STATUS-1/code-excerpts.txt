@@ -1,0 +1,34 @@
+# E-7 核实证据：代码摘录
+# env: Windows 11 / git
+# head: 
+649e520b7
+
+## a) HostBridgeClient 用 lease（已修）
+# file: apps/desktop-avalonia/src/NewManga.CoreClient/Bridge/HostBridgeClient.cs
+L269: using var lease = await _process.AcquireExchangeLeaseAsync(cancellationToken).ConfigureAwait(false);
+L292: using var lease = await _process.AcquireExchangeLeaseAsync(cancellationToken).ConfigureAwait(false);
+
+## b) CoreServiceClient.SendRawAsync 在 _pipeGate 内（已修）
+# file: apps/desktop-avalonia/src/NewManga.CoreClient/CoreServiceClient.cs
+L426: private readonly SemaphoreSlim _pipeGate = new(1, 1);
+L696: await _pipeGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+L722: _pipeGate.Release();
+L2383: // PIPE-EXCLUSIVE-TRANSPORT-1 / E-7 (window 2): this hook used to bypass _pipeGate entirely, so a raw
+L2386: await _pipeGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+L2396: _pipeGate.Release();
+L2428: await _pipeGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+L2455: _pipeGate.Release();
+
+## c) 传输层独占原语（部分：Core 侧未统一）
+# file: apps/desktop-avalonia/src/NewManga.CoreClient/Transport/SidecarProcess.cs
+L34: private readonly SemaphoreSlim _exchangeGate = new(1, 1);
+L40: public async Task<IDisposable> AcquireExchangeLeaseAsync(CancellationToken cancellationToken = default)
+L42: await _exchangeGate.WaitAsync(cancellationToken).ConfigureAwait(false);
+L43: return new ExchangeLease(_exchangeGate);
+L219: public async Task<WireFrame> ExchangeAsync(
+
+## d) SendRawAsync 故意不校验 id（设计如此）
+CoreServiceClient.cs:2385 comment: request_id (if any), so we do not validate the id here
+
+## e) 错配抛异常、无重同步（仍开）
+L2411: $"response request_id '{actual}' does not match request '{requestId}': "
