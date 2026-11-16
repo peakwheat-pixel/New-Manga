@@ -14,8 +14,8 @@ depends_on:
 base_commit: 13d295f69
 branch: main
 worktree: G:/CODEX/New Manga
-integration_commit: 41a68b00d
-delivery_head: 41a68b00d
+integration_commit: 9a2e7fea3
+delivery_head: 9a2e7fea3
 canonical_evidence_status: complete
 resource_closeout_status: complete
 evidence_dir: verification/GATE3-MATRIX-EXPAND-1
@@ -96,8 +96,7 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) | sha256_basis |
 |---|---|---|---|---|---|---|
-| EV-G3MX-01 | AC1-AC5 矩阵 §10 | doc/reviews/MAINT-1-GATE-CONDITION-3-MATRIX-2026-11-15.md | f9be610de | 50a654d30ecae2c43cc419430d28164e0d8abd8a0259b949b060f0615fe90d17 | CANONICAL | raw |
-| EV-G3MX-02 | AC1-AC5 卡片自述 | doc/tasks/GATE3-MATRIX-EXPAND-1.md | eb8b5c82a | 1a614cc8c7ea1d814599d7daa1115841a74db14e030cfa8eecbac2577d2d5369 | CANONICAL | raw |
+| EV-G3MX-01 | AC1-AC5 矩阵 §10 | doc/reviews/MAINT-1-GATE-CONDITION-3-MATRIX-2026-11-15.md | 9a2e7fea3 | 197c3c1ac90cb29e142c5a8cbb572f1c3c06e234df501687883121ea0b628017 | CANONICAL | BLOB |
 
 ## Resource Manifest
 

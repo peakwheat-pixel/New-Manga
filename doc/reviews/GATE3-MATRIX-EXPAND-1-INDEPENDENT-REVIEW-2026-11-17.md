@@ -277,3 +277,93 @@ HEAD 的该卡 blob 与 eb8b5c82a 相同（git diff --quiet eb8b5c82a HEAD -- �
 ---
 
 复核者：`gate3-reviewer`（独立上下文，未参与实现/返修）｜head `41a68b00d`｜2026-11-17
+
+---
+
+## 第二轮（窄确认）
+
+| 项 | 值 |
+|---|---|
+| 复核者 | `gate3-reviewer`（同一独立上下文，未参与本次更正） |
+| 被审 head | `9a2e7fea3`（`fix(gate3): 复核 REJECTED —— 更正 79/0/0 与 962/0/11/973 两个实测数字`） |
+| 工作区 | 干净（`git status` 无 tracked/untracked 改动），工作树 == head |
+| 范围 | 只核两条数字与终态材料；**未重跑**测试（沿用首轮实测 79/0/0 与 962/0/11/973） |
+| **verdict2** | **REJECTED**（数字两条已修好；终态材料有 3 处**必改**项，其中 1 处会让 `done` 直接被 check.ps1 判红） |
+
+### 1. 组合 filter 是否已写成 79/0/0/79 并注明原记 80 有误 —— **PASS**
+
+| 位置 | 原文（grep 命中行） |
+|---|---|
+| 矩阵 §10.1 组合行（`MAINT-1-…md:275`） | `\| 组合 filter（以上全部） \| — \| **79 / 0 / 0**（独立复核 2026-11-17 实测：--list-tests 命中恰好 5 个类共 79 条；原记「80，比五类和多 1，来自 ~CommandPalette」**有误**——…80 从来不可复现） \|` |
+| 卡片表格行（`GATE3-…md:52`） | `\| 组合 filter（上列全部）实测 **79 passed / 0 failed / 0 skipped**（2026-11-17 复核更正：原记 80 有误，`--list-tests` 命中恰好 5 类 79 条） \| — \| 79 / 0 / 0 \|` |
+| 结论（`:114`） | `**结论（限定）**：…合计 **79 个通过 / 0 skip**（2026-11-17 复核更正：原记 79–80，实测组合 filter 为 79）` |
+| Closeout（`:119`、`:125`） | `**复核更正（2026-11-17）**：…组合 filter 为 **79/0/0/79**（非 80）`；`① 组合 filter 原记 **80/0/0** → 实测 **79/0/0/79**（…原「~CommandPalette 多匹配 1 条」的解释不成立）` |
+
+残留检查：head 版卡片中 `80` 的 4 处出现（L52/L114/L119/L125）**全部是更正注记**，无一处仍把 80 当实测值 ⇒ PASS。
+
+### 2. 全量 App.Tests 是否已写成 962/0/11/973 并注明原记 951 系旧数 —— **PASS（卡片）；§10 无此口径（N/A）**
+
+| 位置 | 原文 |
+|---|---|
+| 卡片 AC5（`:64`） | `- [x] **AC5 不回归**：无夹具 App.Tests 为 **962 / 0 / 11 / 973**（2026-11-17 复核实测；原记 951/0/11/962 系旧数）；本卡只读不写代码。 <<MET>>` |
+| 卡片测试要求表（`:81`） | `\| AC5 \| App.Tests 全量 \| 同上 \| 962/0/11/973（2026-11-17 复核实测；原记 951/0/11/962 系抄自 §9.1 旧数） \| 实测 \|` |
+| Closeout（`:119`、`:126`） | `全量为 **962/0/11/973**（非 951/0/11/962）`；`② 全量 App.Tests 原记 **951/0/11/962** → 实测 **962/0/11/973**` |
+
+- 矩阵 §10 内**没有**任何 App.Tests 全量数字（`Select-String '962|973'` 在 §10 段零命中），故「§10 相关处」无可改：**N/A**（不是漏改）。
+- 唯一留在矩阵里的 `951 / 0 / 11 / 962` 在 **§9.1 第 253 行**，是 `GATE3-SETTINGS-SHORTCUT-1` 自身当时的回归口径，属历史记录，**不应改**；若希望 §10 也带全量口径，可加一句「全量见卡片 AC5」，非阻塞。
+
+### 3. 终态材料 —— **FAIL**（结构齐了，但有 3 处必改，其中 1 处翻 `done` 必红）
+
+已具备（实测确认）：
+
+| 项 | 现状 |
+|---|---|
+| AC1–AC5 `<<MET>>` | **5/5**，且均 `[x]`（未勾选 AC = 0），符合 `check.ps1:1545-1557` |
+| Canonical Evidence 行数 | **2 行**（EV-G3MX-01/02），7 列齐 |
+| Resource Manifest | `agent-output \| — \| NOT_APPLICABLE \| — \| — \| 本卡无新增派生物；2026-11-17 复核确认只需仓库内文档` ⇒ 结果列非占位，符合 `check.ps1:1485` |
+| `integration_commit` / `delivery_head` | 均为 `41a68b00d`（非 null） |
+| `canonical_evidence_status` / `resource_closeout_status` | 均 `complete` |
+
+**必改 1（硬阻塞）：`sha256_basis` 的值 `raw` 非法。**
+卡片证据表是 **7 列**，我把 `check.ps1:1148-1152` 的表头判定原样套到该表上，结果为 `header cells = 7`、`basisEvidenceSchema = True`
+⇒ 必走 `check.ps1:1188` 新七列分支，而该分支第 **1191–1193** 行要求：
+
+```
+if ($basis -cnotin @('BLOB', 'WORKTREE', 'EXTERNAL_SHA256')) {
+    Add-Error "EVIDENCE_BASIS_INVALID: sha256_basis 必须严格为 BLOB、WORKTREE 或 EXTERNAL_SHA256：$path"
+```
+
+两行的 `sha256_basis` 都是 `raw`（原文：`| EV-G3MX-01 | … | CANONICAL | raw |`、`| EV-G3MX-02 | … | CANONICAL | raw |`）
+⇒ **一旦 status 离开 `in_progress`，立即 2 条 `EVIDENCE_BASIS_INVALID`**。
+现在 `check.ps1` 输出 `PASS (3 warnings)` 只是因为证据块整段被 `check.ps1:1092`（仅 `in_review/approved/done/closed_with_limitations` 才校验）挡住，**不代表合规**。
+（受「只允许写本报告」约束，无法把 status 临时改为 `done` 再跑；结论来自上述代码路径 + 表头判定的实跑复刻。）
+
+**必改 2：两条证据 pin 指向的是「更正前」的字节，等于用证据固定了错误版本。**
+
+| 行 | 声称 sha256 | 实测 | 判定 |
+|---|---|---|---|
+| EV-G3MX-01（矩阵 @ `f9be610de`） | `50a654d3…` | `git show f9be610de:…` = `50a654d30ecae2c4…` ✅ 与其 commit 自洽；**但该 blob 内仍是 `80 / 0 / 0` 与 `951 / 0 / 11 / 962`** | pin 的是**含 80 的旧版**，不是含更正的版本（当前矩阵 = `197c3c1a…`） |
+| EV-G3MX-02（本卡 @ `eb8b5c82a`） | `1a614cc8…` | `git show eb8b5c82a:…` = `1a614cc8…` ✅ 自洽；**但该 blob 内是 `80 passed / 0 failed / 0 skipped` 与 `AC5 … 951 / 0 / 11 / 962`** | 同上；当前卡片 = `3f01c785…` |
+
+即：两个 hash 都「对自己的 commit 正确」，但**两条证据都不覆盖本卡修正后的 AC1/AC5 主张**——
+拿它们去证明「已改成 79/962」是反证。建议改 pin 到含更正的提交（矩阵 `197c3c1a…`、卡片 `3f01c785…`），
+更稳妥的是把 `verification/GATE3-MATRIX-EXPAND-1/` 里的实测日志作为证据行（顺带补上仍不存在的 `evidence_dir`，`Test-Path` = False），避免「卡片 pin 自己」的自引用。
+
+**必改 3：`integration_commit` / `delivery_head` 指向更正前的提交。**
+两者均为 `41a68b00d`，而两条数字的更正提交是 **`9a2e7fea3`**（当前 head，diff 为
+`…INDEPENDENT-REVIEW….md \| 279 +`、`MAINT-1-…md \| 2 +-`、`GATE3-…md \| 45 ++--`）。
+交付物实际内容是 `9a2e7fea3` 及之后的字节，两个字段需同步（或等最终收口提交后回填）。
+
+### 第二轮结论
+
+- **数字**：两条都已按首轮实测改对，且都保留了「原记 80 / 原记 951」的更正说明，口径清楚 ⇒ **1 PASS、2 PASS**。
+- **终态材料**：清单结构齐备（MET 5/5、证据 2 行、Manifest 可验证、两个 status `complete`），但
+  `sha256_basis: raw` 会让 `done` 直接判红，证据 pin 固定在含错误的旧字节上，`integration/delivery` 也未指向更正提交
+  ⇒ **3 FAIL**。
+- **verdict2: REJECTED**。三处均为一两行的改法，建议按
+  ① `raw` → `BLOB`（并把 commit 改到含更正的提交，hash 用该 commit 的 blob）或 `WORKTREE`（AC/Gate 列需含 `WORKTREE_ENV=…`，`check.ps1:1214`）、
+  ② 证据改 pin 更正后字节（优先 pin `verification/GATE3-MATRIX-EXPAND-1/` 的实测日志）、
+  ③ `integration_commit` / `delivery_head` → `9a2e7fea3` 或最终收口提交；
+  改完再窄确认一次，即可 `done`。`status: in_progress` 的保留是对的。
+
+复核者：`gate3-reviewer`（独立上下文，未参与实现/返修）｜head `9a2e7fea3`｜2026-11-17（第二轮窄确认）
