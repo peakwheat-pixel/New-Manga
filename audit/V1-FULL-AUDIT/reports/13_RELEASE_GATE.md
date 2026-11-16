@@ -30,3 +30,16 @@
 - 完成当前交付 head 的 Canonical Evidence / default governance / TaskPath / verify_pins / API inventory 门禁，并取得独立最终 Review（AC3/AC4 收口后）。
 
 **当前决定：不建议发布，不满足 PASS 或 CONDITIONAL。**
+
+## 条件 6 登记（append-only，2026-11-16，DSH R16）
+
+条件 6 = 上文 `:30` 的「完成当前交付 head 的 Canonical Evidence / default governance / TaskPath / verify_pins /
+API inventory 门禁，并取得独立最终 Review（AC3/AC4 收口后）」。
+
+- **独立最终 Review 已登记**：`doc/reviews/MAINT-1-GATE-CONDITION-6-FINAL-REVIEW-2026-11-14.md`（182 行，
+  引入 `d38c624f7`），verdict `MECHANICAL_PASS / CONDITION_6_NOT_CLOSABLE`（`:4`）；其四项完成态缺口
+  （① MAINT-1 无 Canonical Evidence 载体 ② 交付 head 未冻结 ③ 三指针精度 ④ 本 Review 未登记）已逐项关闭。
+- **判定（仅条件 6）**：由「未关闭 / `NOT CLOSABLE`」改为 **已关闭**；逐项实测（命令 + EXIT + 文件:行）见
+  `doc/reviews/MAINT-1-GATE-CONDITION-6-CLOSURE-2026-11-16.md`。
+- **其余阻断依据不变**：本文件 `:7-15` 的 7 条阻断与 `:32` 的发布决定**未改**，Gate 总体仍 **BLOCKED**
+  （条件 3 人眼目视 / 条件 4 签名与真机安装矩阵 / 条件 5 人工 GT 质量基线 仍开放）。

@@ -352,3 +352,19 @@ App 通过 962 / 失败 0 / 跳过 4 —— **不退化基线 955/0/11**（通�
 **六条条件逐条有判定：条件 1 已关闭、条件 2 调查已关闭（处置需人判）、条件 3/4/5/6 未关闭；
 其中条件 6 是唯一「Agent 可独立关闭」的一条，条件 3/4/5 各差一次人的动作（合计约 35 分钟 + 1 个决定）。
 Gate 仍 `BLOCKED`，但已完全「可评估」。**
+
+---
+
+## 12. 条件 6 改判：**未关闭 → 已关闭**（append-only，2026-11-16，R16）
+
+> 本节只追加，不改写 §6 与 §11 的任何字节。§6 是当轮判定快照；§11 的「条件 3/4/5/6 未关闭」在条件 6 一项上由本节取代。
+
+| 动作（§6 原文 L229-237） | 状态 | 实测证据 |
+|---|---|---|
+| ① 冻结交付 head + 在其上重跑四件套 | 完成 | 卡面 frontmatter `delivery_head` 已落值；命令 / head / 时点 / EXIT 见 `verification/MAINT-1-RELEASE-MONITOR/condition6-closeout/gates.log` 与收口报告 §4 |
+| ② 给 MAINT-1 补载体 | 完成 | 卡面新增 `## Canonical Evidence`（7 列 / `BLOB`）、`## Resource Manifest`、`## Closeout Record`；`integration_commit` / `delivery_head` / `canonical_evidence_status` / `resource_closeout_status` 四字段落值 |
+| ③ 登记独立最终 Review | 完成 | `doc/reviews/MAINT-1-GATE-CONDITION-6-FINAL-REVIEW-2026-11-14.md` 已 append-only 登记到卡面「轮次 36」与 `audit/V1-FULL-AUDIT/reports/13_RELEASE_GATE.md`「条件 6 登记」段 |
+| ④ 修 §3.2-③（P2-2）+ 处置 P1-1 | 完成 | **重核后实况与 §6 原表述不同**：PLAN 表外枚举混入终态卡 `AC-CHECKBOX-AUTHORITY-1` 且漏 5 张非终态卡；`BLOCKED：无` 与 `FEA11-ENTRY-MISSING-1(blocked)` 字面冲突。修后 13/13 张非终态卡 `-TaskPath` 全 PASS（PLAN 6960 B / 64 行）。P1-1 的 Errata 已在 `MAINT-1-FEA-LINE-CLOSEOUT-v2-2026-11-14.md:58-66` 落盘，另两处摘要复核无「8/8 MET」断言 ⇒ 不改字节。详见收口报告 §2/§3 |
+
+- **判定**：条件 6 = **已关闭**（机械门禁 + 独立最终 Review + 登记 + 精度修复齐备）。
+- **不变**：条件 3/4/5 仍开放 ⇒ §7「Gate 总体 `BLOCKED`」继续有效；`13_RELEASE_GATE.md:32` 的发布决定不改。

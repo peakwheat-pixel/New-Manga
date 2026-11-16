@@ -5,7 +5,7 @@
 ## 当前程序
 - **FEA 线**（S0–S5 终态；limitation 已逐条处置）：[FEA-00 方案](design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md)；V11R 收官（v0.1.1）。
 - 当前 Task：[MAINT-1-RELEASE-MONITOR](tasks/MAINT-1-RELEASE-MONITOR.md) `in_progress`（伞形哨位）；4 张 GOV/DOC 卡 `done`（40 卡/260 AC；6 张历史卡 `-TaskPath` 全 PASS）；并行的 [HOST-CONCURRENCY-FLAKY-1](tasks/HOST-CONCURRENCY-FLAKY-1.md) `closed_with_limitations`（AC1–AC6 MET；三轮复核 ACCEPTED）；Gate 六条判定见 [RELEASE-GATE-DISPOSITION](reviews/RELEASE-GATE-DISPOSITION-2026-11-15.md)；明细见 [TASK_LEDGER](TASK_LEDGER.md)。
-- **Release Gate `BLOCKED`**：条件 1 **8/8 关闭**；2 **调查完成**（处置需 Owner）；3 缺阅读器 overlay 视觉（人眼）；4 缺安装矩阵/签名（portable 包已验证）；**5 NOT_RUN**（无人工 GT）；6 机械 PASS、完成态未收口。逐条见 [Gate 六条映射](reviews/RELEASE-GATE-SIX-CONDITIONS-2026-11-16.md)。
+- **Release Gate `BLOCKED`**：条件 1 **8/8 关闭**；2 **调查完成**（处置需 Owner）；3 缺阅读器 overlay 视觉（人眼）；4 缺安装矩阵/签名（portable 包已验证）；**5 NOT_RUN**（无人工 GT）；**6 已关闭**（[收口复评](reviews/MAINT-1-GATE-CONDITION-6-CLOSURE-2026-11-16.md)）。逐条见 [Gate 六条映射](reviews/RELEASE-GATE-SIX-CONDITIONS-2026-11-16.md)。
 - **既有缺陷登记**（接手会话新发现）：[MAINT-1-EXISTING-FINDINGS](reviews/MAINT-1-EXISTING-FINDINGS-2026-11-14.md)（E-1…E-9；E-6/E-8/E-9 已修，E-7 部分）。
 - **目标 C（2026-11-16）**：可行动项 41 → **闭合 41 / 0 剩余**（`GOV-RESIDUAL` AC7 经独立复核 approved 后闭合；三层阻塞由 Ruling A/C/D 全部解除）。后续债务见 `GOV-DECLARATION-SCAN-CLEANUP-1` AC3（154 条，Ruling B 范围，非原 41 条）。
 

@@ -25,6 +25,8 @@ allowed_paths:
   - doc/REBASELINE_PLAN.md
   - doc/TASK_LEDGER.md
   - doc/reviews/MAINT-1-*.md
+  - doc/reviews/RELEASE-GATE-SIX-CONDITIONS-2026-11-16.md
+  - audit/V1-FULL-AUDIT/reports/13_RELEASE_GATE.md
   - tools/governance/task_ledger.py
   - doc/tasks/CHAPTER-SELECTOR-1.md
   - doc/tasks/FEA-11-HOST-AUTH-4.md
@@ -341,3 +343,63 @@ NEW-MANGA-V1-FULL-AUDIT 与 R1–R4 整改、SEC-01/02/03、CORE-01、AUDIT-07/0
 - **L2 最终：`BLOCKED`（Core 侧 vision provider 解析缺口）**；四次尝试（book/detect、region/planning 门、page/ocr 缺模型、page/远程视觉）全部穷尽
 - **建议下一步**：开一张小诊断卡查 `src/infrastructure/providers/**` 的 vision OCR registry 就绪/解析路径（很可能属真实缺陷）；或回到 D（用户提供 ONNX 模型）
 - **Gate 条件 5 维持「部分」**：两条 provider 路径已验；Core→落库未证明，且现在有明确的缺陷指向
+
+### 轮次 36（2026-11-16，DSH R16）—— Gate 条件 6 收口：载体 / 登记 / 三指针精度 / P1-1
+
+- **冻结交付 head + 四件套实测**：在本轮开工前的 clean head 上重跑四件套并留证（命令 / head / 时点 / EXIT 见
+  `doc/reviews/MAINT-1-GATE-CONDITION-6-CLOSURE-2026-11-16.md` §5 与
+  `verification/MAINT-1-RELEASE-MONITOR/condition6-closeout/gates.log`）。不再有「复核期间 head 被推动」的漂移：
+  交付 head 以 frontmatter `delivery_head` 为唯一权威。
+- **补载体**：本卡新增 `## Canonical Evidence`、`## Resource Manifest`、`## Closeout Record` 三节；frontmatter
+  `integration_commit` / `delivery_head` / `canonical_evidence_status` / `resource_closeout_status` 已落值。
+- **登记独立最终 Review**：`doc/reviews/MAINT-1-GATE-CONDITION-6-FINAL-REVIEW-2026-11-14.md`（182 行，引入
+  `d38c624f7`，verdict `MECHANICAL_PASS / CONDITION_6_NOT_CLOSABLE`）已以 append-only 方式登记于本卡与
+  `audit/V1-FULL-AUDIT/reports/13_RELEASE_GATE.md` 的条件 6 段。
+- **§3.2-③（P2-2）重核后修复（非照抄）**：2026-11-16 的 PLAN 表外枚举列了 5 个节点，其中
+  `AC-CHECKBOX-AUTHORITY-1` 已是终态，同时漏掉 5 张非终态卡（`DOC-CTRLCHAR-FIX-1`、`GATE3-MATRIX-EXPAND-1`、
+  `GATE3-SETTINGS-SHORTCUT-1`、`INSTALLER-MATRIX-1` 均 `in_progress`，`FEA11-ENTRY-MISSING-1` 为 `blocked`），
+  且 `BLOCKED：无` 与后者字面冲突。修后：`BLOCKED：FEA11-ENTRY-MISSING-1`，表外枚举含全部无 DAG 行的非终态卡
+  （含 `GOV-DECLARATION-SCAN-CLEANUP-1`），13/13 张非终态卡 `-TaskPath` 由 5 FAIL 转全 PASS；
+  PLAN 6960 B / 64 行（保留 40 B 余量，回应 P2-5 零余量）。证据：
+  `verification/MAINT-1-RELEASE-MONITOR/condition6-closeout/p2-2-before-after.log`。
+- **P1-1 重核与处置**：`doc/reviews/MAINT-1-FEA-LINE-CLOSEOUT-v2-2026-11-14.md` 的 Errata（`:58-66`，append-only）
+  已把 DoD §3 收窄为「8 项均已实现 + AC8 按裁切口径 PARTIAL + r1 的 P2-3 已修」，明写**不等于 8/8 MET**。
+  本轮另核两处重复口径：`doc/reviews/MAINT-1-FEA-POST-ROADMAP-2026-11-14.md:8` 与
+  `verification/MAINT-2-C1-BATCH-1/README.md:5` 均未出现「8/8 MET」断言（后者原文即写 AC8 = PARTIAL），
+  故**不改其字节**，仅在此登记指针；轮次 24 的历史记录按 Errata 读。
+- **未翻转**：Release Gate 总体仍 `BLOCKED`（条件 3/4/5 开放）；本卡作为伞形哨位保持 `in_progress`。
+
+## Canonical Evidence
+
+本卡是长期维护哨位（`in_progress`），下表是 Gate 条件 6 与既有 AC 的唯一当前证据。`BLOB` 口径 = 校验
+`commit:path` 的 Git blob 原始字节（sha256 为该 blob 的 SHA-256，不是工作树字节）。逐条三口径复算
+（路径存在 / sha256 重算 / `git cat-file -e`）由 `tools/governance/check.ps1 -TaskPath` 对 review/done 卡执行；
+本卡停留 `in_progress`，故另以
+`verification/MAINT-1-RELEASE-MONITOR/condition6-closeout/README.md` 记录手工复算结果。
+
+| evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class | sha256_basis |
+|---|---|---|---|---|---|---|
+| EV-MR-1 | AC1–AC4 维护记录 | verification/MAINT-1-RELEASE-MONITOR/MAINTENANCE-RECORD.md | 6a408e5aa | 39c3ba2ef917705a20b52f4ba0a79e23f7cb93f047bb6f8bafae4b0ef7c91614 | CANONICAL | BLOB |
+| EV-MR-2 | 条件 5 ① 真实 API 适配 | verification/MAINT-1-RELEASE-MONITOR/model-api-verification.log | 6a408e5aa | 120fe35b56222a7ef2229ecf8e6f27cb3684fe0e9a3cdc417b50dc3b1a30f38c | CANONICAL | BLOB |
+| EV-MR-3 | 条件 6 独立最终 Review | doc/reviews/MAINT-1-GATE-CONDITION-6-FINAL-REVIEW-2026-11-14.md | 6a408e5aa | fd1c3d995c6bf11f0a2c47b9c3e4adaac5be0c7d554ec1e4f072f4c11d688613 | CANONICAL | BLOB |
+| EV-MR-4 | P1-1 处置载体（Errata :58-66） | doc/reviews/MAINT-1-FEA-LINE-CLOSEOUT-v2-2026-11-14.md | 6a408e5aa | f7a5d0ad6cd664efd19259ab00a09d7a424a60b9ca5f3d7b066708411964d79a | CANONICAL | BLOB |
+
+## Resource Manifest
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| worktree | 无独立 worktree；全程在主线工作树 `G:/CODEX/New Manga` | NOT_APPLICABLE | — | — | `git worktree list` 显示本卡无专属 worktree；未创建、未删除 |
+| task-env | `G:/CODEX/New Manga.workspace/task-envs/HOST-CORECLIENT-1/sidecar-copy` | PRESERVE_REFERENCED | 原路径 | 由 HOST-CORECLIENT-1 持有 | P2 UI 冒烟只读取该 sidecar，未改写；仍被 HOST-CORECLIENT-1 引用 ⇒ 不迁移 |
+| temp | `%TEMP%/newmanga-p2-*`（8 个隔离 data-root/theme-home 目录） | DELETE_SAFE | 已删除 | 8 目录 / 1,523,132 B | 均无当前引用与进程占用；删除后复查数量 0 |
+| artifact | `apps/desktop-avalonia/**` 下 `bin/obj` 构建产物 | DELETE_SAFE（可重建） | 仓库内忽略目录 | — | 由 `test.ps1` 重建；不入库、不归档 |
+| agent-output | 无 | NOT_APPLICABLE | — | — | 本卡未使用 `workspace/agent-output` |
+| dataset/model | 无新增；ONNX 权重沿用 `GATE4-MODEL-RECOVERED-1` 既有 pin | PRESERVE_REFERENCED | 原路径 | pin 见该 Task 的 Canonical Evidence | 本卡未复制、未删除任何权重 |
+
+## Closeout Record
+
+- Closeout date / DSH：2026-11-16 / DSH（R16）
+- canonical_evidence_status：`complete`（条件 6 与 AC1–AC4 的当前证据见上表；三口径复算零 FAIL）
+- resource_closeout_status：`complete`（见 Resource Manifest：无 worktree 操作；temp 8 目录已按 DELETE_SAFE 清理；其余为 PRESERVE/NOT_APPLICABLE）
+- 删除、迁移、归档数量/字节数：删除 8 目录 / 1,523,132 B（temp）；迁移 0；归档 0
+- 未关闭项及保留原因：Release Gate 条件 3（阅读器 overlay 人眼目视）、条件 4（签名 + 真机安装矩阵）、条件 5（人工 GT 质量基线）仍开放，均非本卡可单方关闭；本卡作为伞形哨位保持 `in_progress`，不冒充 `done`
+- 当前指针清理：STATUS / Plan / TASK_LEDGER / rolling checkpoint（NEXT-SESSION-STARTER）已更新至本轮

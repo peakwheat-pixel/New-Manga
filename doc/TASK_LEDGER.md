@@ -9,8 +9,8 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | task files | 664 |
 | terminal | 650 |
 | non-terminal | 13 |
-| non-terminal named in the plan | 7 |
-| non-terminal outside the plan | 6 |
+| non-terminal named in the plan | 13 |
+| non-terminal outside the plan | 0 |
 | task files tracked by git | 664 |
 | task files untracked (drafts) | 0 |
 | non-terminal tracked by git | 13 |
@@ -39,17 +39,17 @@ Arithmetic note: `task files` = `terminal` + `non-terminal` + `(none)` rows. A `
 | task | status | in plan |
 |---|---|---|
 | `GIT-CLEAN-PUBLICATION-DIAG-1` | `approved` | mentioned |
-| `FEA11-ENTRY-MISSING-1` | `blocked` | no |
-| `DOC-CTRLCHAR-FIX-1` | `in_progress` | no |
-| `GATE3-MATRIX-EXPAND-1` | `in_progress` | no |
-| `GATE3-SETTINGS-SHORTCUT-1` | `in_progress` | no |
-| `INSTALLER-MATRIX-1` | `in_progress` | no |
+| `FEA11-ENTRY-MISSING-1` | `blocked` | mentioned |
+| `DOC-CTRLCHAR-FIX-1` | `in_progress` | mentioned |
+| `GATE3-MATRIX-EXPAND-1` | `in_progress` | mentioned |
+| `GATE3-SETTINGS-SHORTCUT-1` | `in_progress` | mentioned |
+| `INSTALLER-MATRIX-1` | `in_progress` | mentioned |
 | `MAINT-1-RELEASE-MONITOR` | `in_progress` | own row |
 | `SIDECAR-REBUILD-1` | `in_progress` | own row |
 | `GIT-CLEAN-PUBLICATION-1` | `in_review` | mentioned |
 | `GIT-CLEAN-RUST-ISOLATION-1` | `in_review` | mentioned |
 | `GIT-CLEAN-CORE-ENV-2` | `proposed` | mentioned |
-| `GOV-DECLARATION-SCAN-CLEANUP-1` | `proposed` | no |
+| `GOV-DECLARATION-SCAN-CLEANUP-1` | `proposed` | mentioned |
 | `GIT-CLEAN-RUST-CAPACITY-DESIGN-1` | `ready` | mentioned |
 
 ## What this ledger does not say
