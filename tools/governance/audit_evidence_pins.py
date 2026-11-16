@@ -178,9 +178,12 @@ def registry_eligible(registry_doc, entry, cache={}):
             if status and status.group(1).lower() in ("done", "closed_with_limitations"):
                 for line in body.split("\n"):
                     if line.startswith("| %s |" % entry.get("evidence_id")):
-                        cells = [c.strip().strip("`") for c in line.strip().strip("|").split("|")]
+                        cells = [c.strip().strip("`").strip() for c in line.strip().strip("|").split("|")]
+                        def norm_commit(v):
+                            v = str(v).strip()
+                            return "-" if v in ("", "-", "null", "none") else v
                         if (len(cells) >= 6 and cells[2] == entry.get("path")
-                                and cells[3] == entry.get("commit")
+                                and norm_commit(cells[3]) == norm_commit(entry.get("commit"))
                                 and cells[4].lower() == str(entry.get("sha256")).lower()
                                 and cells[5].upper() == str(entry.get("class")).upper()):
                             ok = True

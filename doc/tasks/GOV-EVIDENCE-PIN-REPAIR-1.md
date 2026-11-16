@@ -77,7 +77,7 @@ DSH 按 Q3 实现巡检后发现这不是孤例，因此本卡目标定为：
 - [ ] **AC4 逐条判定与例外登记**（依据 Q1=B 裁定）：445 条逐条归因（T1 重建摘要 / T2 补摘要 / T3 核实迁移 / T4 逐项），
   每行以**精确行指纹**（卡路径 + Task ID + Evidence ID + 原行全部字段 + 历史错误类型）登记；
   不可恢复者逐条申请 warning 例外（禁通配、禁按类整批）；每批后 FAIL 数单调不增。
-  <<PARTIAL: 分诊 T1 122 / T2 211 / T3 109 / T4 3 已出；batch 1 完成 FEA-11-HOST-AUTH-2 的 7 条并落地 AC7 门禁改动；随后**三次口径修正**（①接受 blob 的原始/LF/CRLF 形态、②同上用于 EV-01/03、③承认「commit-only」是旧 schema 的合法 pin）把待判量从 445 压到 **98**（SHA_MISMATCH 31 / PATH_MISSING 53 / 无摘要且无 blob 2 / commit 不可解析 12，分布 34 张卡）；余 98 条逐条判定未开始>>
+  <<PARTIAL: 分诊 T1 122 / T2 211 / T3 109 / T4 3 已出；batch 1 完成 FEA-11-HOST-AUTH-2 的 7 条并落地 AC7 门禁改动；随后**三次口径修正**（①接受 blob 的原始/LF/CRLF 形态、②同上用于 EV-01/03、③承认「commit-only」是旧 schema 的合法 pin）把待判量从 445 压到 **98**（SHA_MISMATCH 31 / PATH_MISSING 53 / 无摘要且无 blob 2 / commit 不可解析 12，分布 34 张卡）；batch 2 完成 P02PRE-R1H-H2-COLLECTOR（31 errors → PASS：27 条例外 + 5 处 Resource 单元修正），并对全仓逐行登记 67 条（理由分 4 类逐行写）+ 规范化指纹比较；现巡检 FAIL **51**、EXEMPTED 50。余 51 条（含 4 条无摘要无法登记）待继续>>
 - [ ] **AC5 独立复核**：上下文独立 Reviewer（未参与实施）复核；`check.ps1` 与 `-TaskPath` 均 PASS。 <<PARTIAL: 未开始>>
 - [x] **AC7 门禁接受 blob 行尾形态**（依据 2026-11-16 裁定 Q1=A）：六列历史行接受 commit blob 的
   原始/LF/CRLF 三种**精确**形态；七列显式 basis 不变；新行必须七列；行尾推断仅限冻结基线中已存在的行；

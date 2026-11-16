@@ -230,7 +230,13 @@ Gate 剩下的是条件 3（人眼目视 overlay）/ 4（签名 + 真机安装�
   是**合法 pin**；我的工具此前判 FAIL。修正后全仓待判 **445 → 98**（SHA_MISMATCH 31 / PATH_MISSING 53 /
   无摘要且无 blob 2 / commit 不可解析 12，34 张卡；集中在 P02PRE-R1H-H2-COLLECTOR 27、P02-NEW-TIME-X6 15）。
 - **教训（三次同类）**：判「证据失效」前必须先把该 schema 的**合法表示集**穷举完（原始/LF/CRLF × blob/工作树；commit-only 也是合法形态）。
-- **待做（AC4/AC5）**：余 **98** 条（SHA_NOT_64_HEX 214 / PATH_MISSING 53 / SHA_MISMATCH 31 / COMMIT_NOT_FOUND 12）按类逐条归因 → 逐条登记或修 pin → 上下文独立复核；另需就「check.ps1 是否接受 blob 的 EOL 形态」取得裁定（当前门禁只比对原始 blob 与当前工作树，会把这些有效 pin 判红）。
+- **AC4 batch 2（R8）**：`P02PRE-R1H-H2-COLLECTOR` 31 errors → **PASS**(41w)（27 条仓外产物逐条例外 + 5 处 Resource 单元改 ALREADY_ABSENT）；
+  并对全仓逐行登记 67 条（理由四类：历史可复现但 commit 列缺记载 3 / 仓外已清理 17 / 仓内已删 45 / 仓内漂移 6），
+  登记表共 **99** 条。同时修掉指纹比较的两处实现缺陷（未剥离反引号、空 commit 与 `-` 不等价；非十六进制 commit 统一记 `-`）。
+  现巡检 FAIL **51** / EXEMPTED 50（门禁与工具一致）。
+- **已知未完成**：51 条待判（多在 `P02-NEW-TIME-X6`(15, superseded)、`GOV-EVIDENCE-UNIQUE-1`(4)，其余每卡≤3）；
+  4 条无摘要行因登记表 schema 要求 64 位摘要而**无法登记**（需 schema 扩展或改行，后者被 append-only 禁止）；AC5 复核未做。
+- **待做（AC4/AC5）**：余 **51** 条（SHA_NOT_64_HEX 214 / PATH_MISSING 53 / SHA_MISMATCH 31 / COMMIT_NOT_FOUND 12）按类逐条归因 → 逐条登记或修 pin → 上下文独立复核；另需就「check.ps1 是否接受 blob 的 EOL 形态」取得裁定（当前门禁只比对原始 blob 与当前工作树，会把这些有效 pin 判红）。
 - ⚠️ 已更正事实：EV-11 的值是 **64 位**合法 sha256（不是题述的 40 位），真正问题是本仓无任何字节表示能复现它。
 
 ### 队列 4 —— HUMAN-REQUIRED 等待项（不阻塞 Agent）

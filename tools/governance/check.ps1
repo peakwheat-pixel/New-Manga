@@ -129,7 +129,8 @@ function Get-EvidenceException([string]$ErrorType, [string]$TaskId, [string]$Evi
         return $null
     }
     $cardRel = [IO.Path]::GetRelativePath($repoRoot, $TaskPath).Replace('\', '/')
-    $key = @($cardRel, $TaskId, $EvidenceId, $Path, $Commit, $Sha, $Class, $ErrorType) -join '|'
+    $commitKey = if ($Commit -match '^[0-9a-fA-F]{7,40}$') { $Commit } else { '' }
+    $key = @($cardRel, $TaskId, $EvidenceId, $Path, $commitKey, $Sha, $Class, $ErrorType) -join '|'
     if (-not $script:evidenceExceptionIndex.ContainsKey($key)) { return $null }
     $entry = $script:evidenceExceptionIndex[$key]
     if (-not (Test-EvidenceExceptionEligibility $entry)) {
@@ -295,11 +296,14 @@ function Get-BaselineRowEligible([string]$CardRelative, [string]$EvidenceId, $Ce
             $escape = [regex]::Escape($EvidenceId)
             $rowLine = [regex]::Match($text, "(?m)^\|\s*$escape\s*\|.*$")
             if ($rowLine.Success) {
-                $base = @($rowLine.Value.Trim().Trim('|').Split('|') | ForEach-Object { $_.Trim().Trim('`') })
-                if ($base.Count -ge 6 -and $Cells.Count -ge 6 -and
-                    $base[2] -eq $Cells[2] -and $base[3] -eq $Cells[3] -and
-                    $base[4].ToLowerInvariant() -eq $Cells[4].ToLowerInvariant() -and
-                    $base[5].ToUpperInvariant() -eq $Cells[5].ToUpperInvariant()) {
+                $base = @($rowLine.Value.Trim().Trim('|').Split('|') | ForEach-Object { $_.Trim().Trim('`').Trim() })
+                $now = @($Cells | ForEach-Object { ([string]$_).Trim().Trim('`').Trim() })
+                $normCommit = { param($v) $x = ([string]$v).Trim(); if ($x -in @('', '-', 'null', 'none')) { '-' } else { $x } }
+                if ($base.Count -ge 6 -and $now.Count -ge 6 -and
+                    $base[2] -eq $now[2] -and
+                    (& $normCommit $base[3]) -eq (& $normCommit $now[3]) -and
+                    $base[4].ToLowerInvariant() -eq $now[4].ToLowerInvariant() -and
+                    $base[5].ToUpperInvariant() -eq $now[5].ToUpperInvariant()) {
                     $ok = $true
                 }
             }

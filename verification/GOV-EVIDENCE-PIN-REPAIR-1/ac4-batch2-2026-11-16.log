@@ -1,0 +1,37 @@
+# GOV-EVIDENCE-PIN-REPAIR-1 · AC4 batch 2 证据（P02PRE-R1H-H2-COLLECTOR 收口 + 全仓批量登记）
+# head: 35f87d915
+# at_utc: 2026-11-16T15:56:09Z
+# os: Windows 10.0.26200 ; PowerShell 7.6.8 ; Python 3.14.6
+
+## 1. batch 2 主体：P02PRE-R1H-H2-COLLECTOR（31 errors → PASS）
+# 27 条证据行：全部是「仓外产物 + commit 列为 -」：25 条是已清理的 worktree 文件、2 条仓内文件已删/已变。
+#   逐条核实：外部路径 os.path.exists=False（0/25 存在）；仓库历史中无该摘要的任何 blob（raw/LF/CRLF）。
+#   ⇒ 逐条登记例外（EXC-P02PREH2-01…27），理由按行给出（哪个 worktree、为何不可恢复）。
+# 4 条 Resource 行：外部目录已清理但 disposition 仍是 PRESERVE_* ⇒ 改 ALREADY_ABSENT，并把外仓 manifest 指针
+#   改指本卡 checkpoint.md（可验证），末列注明改动原因。**Resource 不走例外通道**（裁定明确）。
+# 结果：check.ps1 -TaskPath 该卡 **PASS (41 warnings)**。
+
+## 2. 全仓批量登记（逐行指纹，不是按类豁免）
+# 登记表条目：99（= FEA-11 5 条 + P02PRE 27 条 + 批量 67 条）
+# 批量登记的理由分成四类，**每行单独写**：
+#   RECOVERABLE_IN_HISTORY 3：摘要能在历史 blob 的某形态下复现，但原行 commit 列为 - ⇒ 门禁无法自证
+#   EXTERNAL_GONE 17：仓外产物已清理，仓库无 blob
+#   IN_REPO_GONE 45：仓内路径已删除且无 blob
+#   IN_REPO_DRIFT 6：仓内文件现存但摘要不同（记录值来自未入仓的工作副本）
+# 另有 4 条因 sha256 单元格不是 64 位十六进制而**无法登记**（schema 拒绝），留待单独处理。
+
+## 3. 门禁/工具的规范化修正（本轮发现的实现缺陷）
+# ① 登记表与门禁的指纹比较未剥离反引号、也未把空 commit 与 `-` 视为同一值 ⇒ 大量本应命中的条目失效。
+#    已在 check.ps1（Get-BaselineRowEligible / Get-EvidenceException）与巡检工具两侧统一规范化；
+#    并把「非十六进制 commit」（如 `(见提交)`）统一记为 `-`，避免 schema 拒绝。
+# ② 登记表 schema 对 sha256 要求 64 位小写十六进制 ⇒ 无摘要的历史行不能登记（4 条），这是设计限制，已记录。
+
+## 4. 当前待判（巡检口径）
+# FAIL **51** 行 / 22 张卡：{'SHA_MISMATCH': 20, 'PATH_MISSING': 17, 'SHA_NOT_64_HEX': 2, 'COMMIT_NOT_FOUND': 12}
+# EXEMPTED 50（门禁与工具均已认可）、WARN 268（212 commit-only 合法 pin + 56 blob/工作树不一致）
+# 集中：P02-NEW-TIME-X6 15（该卡 status=superseded，门禁不校验）、GOV-EVIDENCE-UNIQUE-1 4，其余每卡 ≤3。
+
+## 5. 已知未完成
+# ① 51 条仍待逐条判定（多为 card/task_id 指纹与登记项不一致或资格校验未通过）；
+# ② 4 条无摘要行无法走登记表，需要 schema 扩展或改行（后者被 append-only 禁止）；
+# ③ AC5 整卡独立复核未做。
