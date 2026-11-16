@@ -5,8 +5,9 @@
 ## 当前程序
 - **FEA 线**（S0–S5 终态；limitation 已逐条处置）：[FEA-00 方案](design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md)；V11R 收官（v0.1.1）。
 - 当前 Task：[MAINT-1-RELEASE-MONITOR](tasks/MAINT-1-RELEASE-MONITOR.md) `in_progress`（伞形哨位）；4 张 GOV/DOC 卡 `done`（40 卡/260 AC；6 张历史卡 `-TaskPath` 全 PASS）；并行的 [HOST-CONCURRENCY-FLAKY-1](tasks/HOST-CONCURRENCY-FLAKY-1.md) `closed_with_limitations`（AC1–AC6 MET；三轮复核 ACCEPTED）；Gate 六条判定见 [RELEASE-GATE-DISPOSITION](reviews/RELEASE-GATE-DISPOSITION-2026-11-15.md)；明细见 [TASK_LEDGER](TASK_LEDGER.md)。
-- **Release Gate `BLOCKED`**：条件 1 **8/8 已关闭**；条件 2 **调查完成**（处置需 Owner 授权）；条件 3 部分（矩阵完整 + 5/5 页真截图，唯阅读器 overlay 视觉待人眼）；条件 4 部分（含 sidecar 的 portable 包已产出并验证启动；安装矩阵/签名仍缺）；**条件 5 NOT_RUN**（无人工 GT）；条件 6 = 机械 PASS、完成态未收口（差冻结 head + MAINT-1 载体 + Review 登记）。逐条判定与证据见 [Gate 六条映射](reviews/RELEASE-GATE-SIX-CONDITIONS-2026-11-16.md)。
+- **Release Gate `BLOCKED`**：条件 1 **8/8 关闭**；2 **调查完成**（处置需 Owner）；3 缺阅读器 overlay 视觉（人眼）；4 缺安装矩阵/签名（portable 包已验证）；**5 NOT_RUN**（无人工 GT）；6 机械 PASS、完成态未收口。逐条见 [Gate 六条映射](reviews/RELEASE-GATE-SIX-CONDITIONS-2026-11-16.md)。
 - **既有缺陷登记**（接手会话新发现）：[MAINT-1-EXISTING-FINDINGS](reviews/MAINT-1-EXISTING-FINDINGS-2026-11-14.md)（E-1…E-9；E-6/E-8/E-9 已修，E-7 部分）。
+- **目标 C（2026-11-16）**：可行动项 41 → **闭合 16 / open 25**（本轮 6：`RELEASE-PACKAGE-1` AC6、`CHAPTER-MANUAL-SORT` AC10、`M2-REGION-RETYPE-CORE` AC6、`MICA-FIX-1` AC4、`FEA-07-AC5-NATIVE-1` AC-N2/N5）。剩余大块：`FEA-04` 8（另立卡）、`V11R-B-*` 7、`GATE3-COVERAGE-MATRIX` 2、`GOV-RESIDUAL` 2。
 
 ## 近期完成
 - FEA 收口 DoD v2 达成（[报告](reviews/MAINT-1-FEA-LINE-CLOSEOUT-v2-2026-11-14.md)）；ACCEPT-1 / PIN-BASIS-ENFORCE-1 / DIAG-ACL-1 `closed_with_limitations`；PIN-POLICY-1 `done`。
