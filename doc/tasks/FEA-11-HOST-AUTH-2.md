@@ -130,7 +130,7 @@ out_of_scope:
 
 ## Resource Manifest
 
-| resource_type | source_path | disposition | destination_path | verification/FEA-11-HOST-AUTH-2/resource-manifest.json | reference/process check and result |原 manifest 指针不可达，改指 verification/FEA-11-HOST-AUTH-2/resource-manifest.json 
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | worktree | — | NOT_APPLICABLE | — | — | 未创建 linked worktree；另注：NOT_APPLICABLE（main；base `2849001a8`，impl `f7016d3fb`） |
 | temp | `G:\CODEX\New Manga.workspace\FEA-11\review-host-auth-2\`（reviewer pristine + 日志） | PRESERVE_REFERENCED | `G:\CODEX\New Manga.workspace\FEA-11\review-host-auth-2` | `verification/FEA-11-HOST-AUTH-2/RESOURCE-MANIFEST.json` | 仓外；reviewer 已逐字节复原（sha256 MATCH），工作树 clean；保留供审计 |

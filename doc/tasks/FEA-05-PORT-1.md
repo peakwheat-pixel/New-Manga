@@ -116,7 +116,7 @@ allowed_paths:
 
 无 worktree（main 直接实现）；资源处置在收口时登记。
 
-| resource_type | source_path | disposition | destination_path | verification/FEA-05-PORT-1/app-tests.log | reference/process check and result |原 manifest 指针不可达，改指 verification/FEA-05-PORT-1/app-tests.log 
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | doc-only | — | NOT_APPLICABLE | — | — | 本卡只改仓库内文档/代码，未创建仓外 worktree、task-env、临时目录或用户数据；2026-11-17 补登表格（原为说明性文字，门禁要求逐项填写） |
 

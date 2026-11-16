@@ -120,7 +120,7 @@ out_of_scope:
 |---|---|---|---|---|---|
 | worktree | NOT_APPLICABLE（main；base `9b0683822`） | NOT_APPLICABLE | — | — | 未创建 worktree |
 | agent-output | `G:\CODEX\New Manga.workspace\agent-output\fea-status-2026-11-09` | PRESERVE_REFERENCED | `G:\CODEX\New Manga.workspace\agent-output\fea-status-2026-11-09` | `verification/FEA-DOC-RECONCILE-1/agent-output-manifest.md` | 目录存在；6 个产物哈希见 manifest；被本卡 §来源引用，保留 |
-| temp | C:/Users/49745/AppData/Local/Temp | PRESERVE_USER_DATA | — | verification/FEA-DOC-RECONCILE-1/agent-output-manifest.md | 截图用临时 profile，OS 清理 |2026-11-17 复核：来源仍存在（DELETE_SAFE 不成立）⇒ 改 PRESERVE_USER_DATA；原 manifest 指针不可达，改指 verification/FEA-DOC-RECONCILE-1/agent-output-manifest.md 
+| temp | C:/Users/49745/AppData/Local/Temp | PRESERVE_USER_DATA | — | verification/FEA-DOC-RECONCILE-1/agent-output-manifest.md | 截图用临时 profile，OS 清理2026-11-17 复核：来源仍存在（DELETE_SAFE 不成立）⇒ 改 PRESERVE_USER_DATA；原 manifest 指针不可达，改指 verification/FEA-DOC-RECONCILE-1/agent-output-manifest.md |
 | build/artifact | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 本轮无构建 |
 | user-data | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 未访问用户数据 |
 

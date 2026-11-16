@@ -134,7 +134,7 @@ pwsh -NoProfile -File tools/governance/check.ps1
 
 本 Task 只改两个 Task 文件的 AC 行，不处置资源。交付时逐项登记并注明 `NOT_APPLICABLE`。
 
-| resource_type | source_path | disposition | destination_path | verification/GOV-SOURCE-RECORDS-1/ac1-tracing.md | reference/process check and result |原 manifest 指针不可达，改指 verification/GOV-SOURCE-RECORDS-1/ac1-tracing.md 
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | worktree | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-SOURCE-RECORDS-1.md` | 本 Task 只改两个 Task 文件的 AC 行 |
 | task-env | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-SOURCE-RECORDS-1.md` | 本 Task 只改两个 Task 文件的 AC 行 |

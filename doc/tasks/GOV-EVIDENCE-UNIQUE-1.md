@@ -125,7 +125,7 @@ allowed_paths:
 
 冻结 ready 前登记实际 Task worktree 路径；task-env、dataset、artifact、temp、agent-output、exchange 逐项核实。不适用需有目录核实依据；未知、dirty、被引用或用户数据一律保留。
 
-| resource_type | source_path | disposition | destination_path | verification/GOV-EVIDENCE-UNIQUE-1/ac1-input-freeze-and-criteria.md | reference/process check and result |原 manifest 指针不可达，改指 verification/GOV-EVIDENCE-UNIQUE-1/ac1-input-freeze-and-criteria.md 
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | worktree | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-EVIDENCE-UNIQUE-1.md` | frontmatter `worktree: null`；在主 checkout 执行 |
 | task-env | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-EVIDENCE-UNIQUE-1.md` | 无专用 task environment |

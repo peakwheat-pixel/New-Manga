@@ -102,10 +102,10 @@ Each released AC/Gate points to the frozen input package, independent Review, pi
 
 ## Resource Manifest
 
-| resource_type | source_path | disposition | destination_path | verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/checkpoint.md | reference/process check and result |原 manifest 指针不可达，改指 verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/checkpoint.md 
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | root worktree | G:/CODEX/New Manga | PRESERVE_USER_DATA | G:/CODEX/New Manga | verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/resource-closeout-r1.json | Root main/index pinned; all dirty/untracked content untouched and unstaged. |
-| H1 review integration worktree | G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW | PRESERVE_UNKNOWN | G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW | verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/resource-closeout-r1.json | Clean at integrated evidence commit a715b249; final closeout commit separately verified clean. |2026-11-17 复核：目标路径已不存在 ⇒ 处置改 PRESERVE_UNKNOWN（ALREADY_ABSENT 不在允许枚举内，2026-11-17 更正） 
+| H1 review integration worktree | G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW | PRESERVE_UNKNOWN | G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW | verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/resource-closeout-r1.json | Clean at integrated evidence commit a715b249; final closeout commit separately verified clean.2026-11-17 复核：目标路径已不存在 ⇒ 处置改 PRESERVE_UNKNOWN（ALREADY_ABSENT 不在允许枚举内，2026-11-17 更正） |
 | agent-output | G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW | verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/resource-closeout-r1.json | Five exact DSH request/response/exit/stderr/meta files retained; no matching process. |
 | task-env | NOT_APPLICABLE | NOT_APPLICABLE | - | - | No task-specific environment created. |
 | dataset/model/test-material | NOT_APPLICABLE | NOT_APPLICABLE | - | - | No dataset, model, or test material created. |

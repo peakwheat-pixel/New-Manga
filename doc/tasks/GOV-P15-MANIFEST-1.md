@@ -85,7 +85,7 @@ pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/P15.md
 
 本 Task 自身不处置资源；但须在 closeout 中说明它为何不改变 `P15` 的既有资源结论。
 
-| resource_type | source_path | disposition | destination_path | verification/GOV-P15-MANIFEST-1/ac1-ac4-manifest-restoration.md | reference/process check and result |原 manifest 指针不可达，改指 verification/GOV-P15-MANIFEST-1/ac1-ac4-manifest-restoration.md 
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | worktree | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-P15-MANIFEST-1.md` | 只重建一个 JSON 文件 |
 | task-env | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-P15-MANIFEST-1.md` | 只重建一个 JSON 文件 |

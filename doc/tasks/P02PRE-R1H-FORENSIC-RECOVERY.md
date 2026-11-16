@@ -71,10 +71,10 @@ RESUME: HEAD 与 checkpoint 一致；main/common-dir 已核对。root 有大量�
 | e10 | final Handoff | doc/handoffs/P02PRE-R1H-FORENSIC-RECOVERY-R2.md | - | e3cce251b0c4490d7343dd86a0c8dad09fa671920768715ce94690582370fdea | CANONICAL |
 ## Resource Manifest
 
-| resource_type | source_path | disposition | destination_path | verification/P02PRE-R1H-FORENSIC-RECOVERY/checkpoint.md | reference/process check and result |原 manifest 指针不可达，改指 verification/P02PRE-R1H-FORENSIC-RECOVERY/checkpoint.md 
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | root worktree | G:/CODEX/New Manga | PRESERVE_USER_DATA | G:/CODEX/New Manga | verification/P02PRE-R1H-FORENSIC-RECOVERY/resource-closeout-r2.json | Root main/head/index and dirty/untracked inventory pinned; none staged or changed by integration. |
-| forensic integration worktree | G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-FORENSIC-RECOVERY-INTEGRATION | PRESERVE_UNKNOWN | G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-FORENSIC-RECOVERY-INTEGRATION | verification/P02PRE-R1H-FORENSIC-RECOVERY/resource-closeout-r2.json | Exact diagnostic evidence integrated at 66646580; final closeout worktree verified clean. |2026-11-17 复核：目标路径已不存在 ⇒ 处置改 PRESERVE_UNKNOWN（ALREADY_ABSENT 不在允许枚举内，2026-11-17 更正） 
+| forensic integration worktree | G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-FORENSIC-RECOVERY-INTEGRATION | PRESERVE_UNKNOWN | G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-FORENSIC-RECOVERY-INTEGRATION | verification/P02PRE-R1H-FORENSIC-RECOVERY/resource-closeout-r2.json | Exact diagnostic evidence integrated at 66646580; final closeout worktree verified clean.2026-11-17 复核：目标路径已不存在 ⇒ 处置改 PRESERVE_UNKNOWN（ALREADY_ABSENT 不在允许枚举内，2026-11-17 更正） |
 | agent-output | G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-FORENSIC-RECOVERY | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-FORENSIC-RECOVERY | verification/P02PRE-R1H-FORENSIC-RECOVERY/resource-closeout-r2.json | 15 locator/Review/pin artifacts inventoried and retained; no matching process. |
 | source sessions | C:/Users/49745/.codex/sessions/2026/10/12 | PRESERVE_UNKNOWN | C:/Users/49745/.codex/sessions/2026/10/12 | verification/P02PRE-R1H-FORENSIC-RECOVERY/method-manifest.json | Only 23 pinned files rehashed (23/23 match); other user/task session data left untouched. |
 | task-env | NOT_APPLICABLE | NOT_APPLICABLE | - | - | None created. |

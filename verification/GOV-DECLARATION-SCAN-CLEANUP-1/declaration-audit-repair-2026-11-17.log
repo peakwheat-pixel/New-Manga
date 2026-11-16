@@ -1,0 +1,24 @@
+# GOV-DECLARATION-SCAN-CLEANUP-1 · 声明审计回归与修复（2026-11-17，R20）
+# head: c4aa32608
+# at_utc: 2026-11-16T19:57:54Z
+# command: python -B tools/governance/clean_workspace.py --audit-declarations --out <dir>
+# os: Windows 10.0.26200 ; PowerShell 7.6.8 ; Python 3.14.6
+
+## 回归（我造成的）
+# 全仓复测发现声明审计从 0 error 变成 **23 error**：21 条 TABLE_HEADER_ARITY + 2 条 TABLE_ROW_ARITY。
+# 根因：我在 batch 5 的批量脚本里，把若干卡 Resource Manifest **表头行**当数据行改写（第 5 列塞进路径、
+# 丢掉尾 `|`），另外把说明文字直接追加到数据行末尾形成第 7 列。
+
+## 修复（只动 Resource Manifest 的表头/行形状，不动任何 Canonical Evidence 行）
+# 1. 21 张卡的表头恢复为规范六列；
+# 2. 32 行缺尾 `|` 补回；
+# 3. 31 行「第 7 列」合并回第 6 列（保留原文，未丢信息）。
+# 验证：git diff -U0 中没有任何 `| EV…`/`| E-…` 证据行被改动。
+
+## 结果
+# declarations: 6870
+# protected_roots: 5657（要求 ≥5593）
+# errors: 0（此前 23）
+# warnings: 820
+# report_sha256: 49cea5b6ba9204cfa32ff88d7f2fd0b12a429f96fac2c3c840cdfbd2413e8c37
+# 全局 check.ps1：PASS(3w)

@@ -88,7 +88,7 @@ pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/EXPORT-REVE
 本 Task **会移动文件**，Resource Manifest 必须逐项登记每个被移动文件的
 原路径、目标路径、hash 与引用核查结论。
 
-| resource_type | source_path | disposition | destination_path | verification/GOV-EVIDENCE-DIR-SWEEP-1/ac1-ac2-inventory.json | reference/process check and result |原 manifest 指针不可达，改指 verification/GOV-EVIDENCE-DIR-SWEEP-1/ac1-ac2-inventory.json 
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | worktree | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-EVIDENCE-DIR-SWEEP-1.md` | 本 Task 未移动任何文件 |
 | task-env | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-EVIDENCE-DIR-SWEEP-1.md` | 本 Task 未移动任何文件 |
