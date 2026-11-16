@@ -67,3 +67,9 @@ verification/FEA-08/**/*.json text eol=lf
 verification/FEA-08/**/*.log text eol=lf
 verification/FEA-08/**/*.md text eol=lf
 verification/FEA-08/**/*.txt text eol=lf
+
+# EVIDENCE-MANIFEST bulk evidence (Codex ruling 2026-11-17): the manifest records the RAW
+# SHA-256 of every file in the evidence dir, so a checkout must reproduce the blob bytes
+# exactly.  With core.autocrlf=true a text file would otherwise come back as CRLF and every
+# manifest entry would fail -- the same trap already fixed for the FEA-08 text evidence.
+verification/DISPLAY-PERF-DECISION-1/** -text
