@@ -1,0 +1,55 @@
+# GOV-RESIDUAL-RUNTIME-IDENTITY-IMPL-1 AC6 第 7 类负例证据（2026-11-16，DSH）
+# head_at_measure: 63e69316312c3e4e406fbfa8760313a2d57c0337
+
+## 原 blocked 理由
+#   「7 类负例中 6 类有测试（test_residual_runtime_identity.py:182/220/187/194/200/206），
+#    第 7 类「保护集合回退」缺负例：clean_workspace.py:2191-2195 的 PROTECTION_REGRESSION 守卫
+#    只有 :149 的正面断言」
+
+## 本轮补齐：第 7 类负例已写入并跑通
+
+新增 `FixtureBehaviour.test_protection_set_regression_fails_closed`
+（`tools/governance/tests/test_residual_runtime_identity.py`），断言
+`PROTECTION_REGRESSION` 守卫会 fail-closed（最终错误数 8、末项 code 为 `PROTECTION_REGRESSION`）。
+
+### 注入方式为什么必须限制在解释层内部（踩坑记录）
+#   第一版在全局范围让 `_register_protective` 丢根 —— 结果守卫**不触发**。
+#   实测根因：`_register_protective` 也被**更早的声明扫描阶段**调用，
+#   全局丢根先把 pre-stage 索引本身弄坏了（实测 residual 阶段拿到的 protected 由 37 变 36，
+#   被丢的根根本不在里面）⇒ 那样测的是**错的东西**。
+#   最终版本用一个 active 开关，只在 `_apply_residual_runtime_identity` 执行期间丢根，
+#   且丢的是**该函数自己收到的 pre-stage 保护集合**里的根。
+
+## 7 类负例对照（全部有测试）
+
+| # | 负例类别 | 用例 | 状态 |
+|---:|---|---|---|
+| 1 | policy 摘要错误 | `test_wrong_digest_fails_closed` (`:182`) | PASS |
+| 2 | policy 正文篡改 | `test_tampered_policy_body_fails_closed` (`:220`) | PASS |
+| 3 | origin 字节漂移 | `test_origin_drift_fails_closed` (`:187`) | PASS |
+| 4 | `ALREADY_ABSENT` 目标复活 | `test_present_absent_target_fails_closed` (`:194`) | PASS |
+| 5 | 保护目标缺失 | `test_missing_preserve_target_fails_closed` (`:200`) | PASS |
+| 6 | 未绑定错误存在 | `test_unbound_error_blocks_the_stage` (`:206`) | PASS |
+| 7 | **保护集合回退** | **`test_protection_set_regression_fails_closed`（本轮新增）** | **PASS** |
+
+## 变红验证（已做并还原）
+#   把 `clean_workspace.py` 的两条 PROTECTION_REGRESSION 守卫条件改成恒真（`require(True, ...)`）：
+#     结果 FAILED，`AssertionError: 0 != 8`
+#   ⇒ 证明本用例**真的依赖这两条守卫**，不是空转。
+#   还原后 `git diff -- tools/governance/clean_workspace.py` 为空（产品源码零改动），
+#   `FixtureBehaviour` rc=0。
+
+## FixtureBehaviour 全量实测（rc=0）
+
+
+## ProductionScan 的 3 条失败：**预先存在，与 AC6 无关**
+#   实测 `ProductionScan` 有 3 条失败（`test_protection_set_did_not_shrink` 报 `167 != 7`、
+#   `test_user_data_root_is_now_protected` 报缺 `catalog` 保护等）。
+#   **已用 HEAD 版本的测试文件（未含本轮改动）复跑，同样 3 条失败** ⇒ 与本次改动无关，
+#   属真实仓库的声明漂移（AC7 blocked 所记的 160/154 处历史声明错误），归 AC7 范围。
+#   原始输出（rc=1）：
+
+
+## 结论
+#   AC6 要求的「7 类负例全部 fail-closed 且有测试」**已满足**；
+#   ProductionScan 的真实仓库漂移是 AC7 的阻塞项，不影响 AC6 的负例覆盖判定。

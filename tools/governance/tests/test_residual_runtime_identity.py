@@ -217,6 +217,55 @@ class FixtureBehaviour(unittest.TestCase):
         self.assertEqual(len(index.errors), 9)
         self.assertEqual(index.errors[-1]["code"], "ERROR_MISMATCH")
 
+    def test_protection_set_regression_fails_closed(self):
+        """AC6 第 7 类负例：**保护集合回退**必须 fail-closed（`PROTECTION_REGRESSION`）。
+
+        该类此前只有正面断言（`ProductionScan.test_protection_set_did_not_shrink`），
+        没有负例 —— 也就是说「守卫真的会拦」从未被证明过。本用例补上。
+
+        注入的范围必须**严格限制在解释层内部**：`_register_protective` 也被更早的
+        声明扫描阶段调用，若在全局范围内丢根，会先把 pre-stage 索引本身弄坏
+        （实测 residual 阶段拿到的 protected 由 37 变 36，被丢的根根本不在里面，
+        守卫自然不触发 —— 那样测的就是错的东西）。所以用一个 active 开关，
+        只在 `_apply_residual_runtime_identity` 执行期间丢根，且丢的是**该函数自己
+        收到的 pre-stage 保护集合**里的根。
+
+        触发的是 `clean_workspace.py` 的两条 `PROTECTION_REGRESSION` 守卫
+        （`all(root in staged.protected ...)` 与 `len(staged.protected) >= len(index.protected)`），
+        不是绕开守卫去断言别的代码。
+        """
+        original_register = guard.ProtectionIndex._register_protective
+        real_stage = guard._apply_residual_runtime_identity
+        state = {"active": False, "dropped": None, "pops": 0}
+
+        def regressing_register(index_self, declaration):
+            original_register(index_self, declaration)
+            if state["active"] and state["dropped"] is not None:
+                if index_self.protected.pop(state["dropped"], None) is not None:
+                    state["pops"] += 1
+
+        def tracking_stage(index, scanned):
+            # 进入解释层时，从它自己的 pre-stage 保护集合里挑一个根作为被丢掉的根
+            state["dropped"] = sorted(index.protected)[0] if index.protected else None
+            state["active"] = True
+            try:
+                return real_stage(index, scanned)
+            finally:
+                state["active"] = False
+
+        with mock.patch.object(guard.ProtectionIndex, "_register_protective",
+                               regressing_register), \
+                mock.patch.object(guard, "_apply_residual_runtime_identity",
+                                  tracking_stage):
+            index, _ = self.fixture.scan()
+
+        self.assertIsNotNone(state["dropped"],
+                             "解释层的 pre-stage 保护集合不能为空，否则本负例无从退化")
+        self.assertGreater(state["pops"], 0,
+                           "退化注入必须真的生效过，否则本负例是空转")
+        self.assertEqual(len(index.errors), 8)
+        self.assertEqual(index.errors[-1]["code"], "PROTECTION_REGRESSION")
+
     def test_tampered_policy_body_fails_closed(self):
         data = json.loads((self.fixture.root / POLICY_REL).read_text(encoding="utf-8"))
         data["bindings"][0]["provenance"] += "!"
