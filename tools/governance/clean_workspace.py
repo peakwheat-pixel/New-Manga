@@ -105,6 +105,27 @@ NON_PROTECTIVE = frozenset({"DELETE_SAFE", "NOT_APPLICABLE", "ALREADY_ABSENT"})
 DISPOSITION_RE = re.compile(
     r"^(DELETE_SAFE|MIGRATE|ARCHIVE|ALREADY_ABSENT|NOT_APPLICABLE|PRESERVE_[A-Z0-9_]+)$")
 
+# Legacy Resource Manifest disposition tokens, mapped to the canonical closed
+# vocabulary.  Ruling: Codex adjudication 2026-11-16 (GOV-DECLARATION-SCAN-CLEANUP-1
+# AC3, Q3) -- a *precise, closed* alias table, not a relaxed grammar:
+#   * matching is exact and case sensitive on the raw cell value (no strip of
+#     affixes, no case folding, no fuzzy match);
+#   * only the five tokens below are accepted; every other unknown token keeps
+#     failing closed with DECL_UNKNOWN_DISPOSITION;
+#   * every application is reported as a warning that records raw AND canonical
+#     value, so the original spelling stays auditable;
+#   * the canonical target must be a real disposition (PRESERVE_UNKNOWN and
+#     PRESERVE_REFERENCED are protective, PRESERVE_IN_REPO is protective,
+#     ALREADY_ABSENT is non-protective) -- protection semantics are therefore
+#     unchanged by the mapping itself.
+DISPOSITION_ALIASES = {
+    "PRESERVE": "PRESERVE_UNKNOWN",
+    "READ_ONLY_REFERENCED": "PRESERVE_REFERENCED",
+    "MODIFIED_IN_PLACE": "PRESERVE_IN_REPO",
+    "RESTORED_IN_PLACE": "PRESERVE_IN_REPO",
+    "NOT_CREATED_NO_SCRATCH": "ALREADY_ABSENT",
+}
+
 # Managed area names below the workspace root.  A declaration that resolves to
 # one of these roots (or above) is a generalised declaration (rule 3).
 WORKSPACE_SUBDIRS = frozenset({
@@ -999,7 +1020,17 @@ class ProtectionIndex(object):
 
     def add_declaration(self, raw, disposition, source_file, locator):
         text = clean_cell(raw)
-        disp = clean_cell(disposition).upper()
+        raw_disposition = clean_cell(disposition)
+        canonical = DISPOSITION_ALIASES.get(raw_disposition)
+        if canonical is not None:
+            disp = canonical
+            self.add_warning(
+                "DISPOSITION_ALIAS_APPLIED",
+                "legacy disposition %r mapped to canonical %r (closed alias "
+                "table; raw token preserved for audit)" % (raw_disposition, canonical),
+                source_file, locator)
+        else:
+            disp = raw_disposition.upper()
         if _is_placeholder(text):
             if disp == "NOT_APPLICABLE":
                 return None

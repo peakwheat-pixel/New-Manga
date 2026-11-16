@@ -1,0 +1,56 @@
+# GOV-DECLARATION-SCAN-CLEANUP-1 · AC3 batch 1（Q3 封闭别名表）证据
+# head: ac34da5a5352b921360a31328a79f499634a1ee8
+# at_utc: 2026-11-16T11:09:11Z
+# os: Windows 10.0.26200 ; PowerShell 7.6.8 ; Python Python 3.14.6
+# ruling: doc/reviews/GOV-DECLARATION-SCAN-CLEANUP-1-AC3-CODEX-RULING-2026-11-16.md（Codex 2026-11-16，APPROVED_WITH_CONDITIONS，Q3）
+
+## 0. 基线（冻结快照，仓外原始 JSON）
+# 报告 report_sha256 = afddd7ccb94fe75471e6e33f3d60aeca4fb5e61d1f10e3aa4d2ee8f073d04962  generated_at = 2026-11-16T15:55:51+08:00
+# errors=154 warnings=732 declarations=6755 protected_roots=5593
+# code 分布（基线）: {'DECL_BARE_NAME': 1, 'DECL_DESTINATION_UNRESOLVED': 11, 'DECL_ENV': 16, 'DECL_GLOB': 16, 'DECL_MISSING_SOURCE': 1, 'DECL_RELATIVE_AMBIGUOUS': 1, 'DECL_RELATIVE_UNRESOLVED': 26, 'DECL_TRAVERSAL': 7, 'DECL_UNKNOWN_DISPOSITION': 8, 'FILE_UNREADABLE': 1, 'JSON_PARSE': 2, 'TABLE_DELIMITER': 10, 'TABLE_ROW_ARITY': 1, 'TABLE_SCHEMA_INCOMPLETE': 53}
+
+## 1. 改了什么（源码，可 diff 复核）
+# tools/governance/clean_workspace.py:
+#   + DISPOSITION_ALIASES = {PRESERVE->PRESERVE_UNKNOWN, READ_ONLY_REFERENCED->PRESERVE_REFERENCED,
+#                            MODIFIED_IN_PLACE->PRESERVE_IN_REPO, RESTORED_IN_PLACE->PRESERVE_IN_REPO,
+#                            NOT_CREATED_NO_SCRATCH->ALREADY_ABSENT}   （精确、区分大小写、封闭）
+#   + add_declaration(): 别名命中时用 canonical 值，并写 DISPOSITION_ALIAS_APPLIED 警告（记录 raw + canonical）
+#   DISPOSITION_RE 未改（仍是封闭枚举；未列 token 仍 fail-closed）
+# 新增测试 tools/governance/tests/test_disposition_aliases.py（9 项）
+
+## 2. 新增测试
+# command: python -B -m unittest discover -s tools/governance/tests -p test_disposition_aliases.py -v
+test_alias_matching_is_case_sensitive (test_disposition_aliases.DispositionAliasTable.test_alias_matching_is_case_sensitive) ... ok
+test_alias_table_is_exactly_the_five_adjudicated_tokens (test_disposition_aliases.DispositionAliasTable.test_alias_table_is_exactly_the_five_adjudicated_tokens) ... ok
+test_frozen_grammar_still_accepts_any_preserve_suffix_without_alias (test_disposition_aliases.DispositionAliasTable.test_frozen_grammar_still_accepts_any_preserve_suffix_without_alias) ... ok
+test_modified_and_restored_in_place_map_to_preserve_in_repo (test_disposition_aliases.DispositionAliasTable.test_modified_and_restored_in_place_map_to_preserve_in_repo) ... ok
+test_not_created_no_scratch_maps_to_already_absent_without_protection (test_disposition_aliases.DispositionAliasTable.test_not_created_no_scratch_maps_to_already_absent_without_protection) ... ok
+test_only_universal_cell_trim_is_a_normalised_before_matching (test_disposition_aliases.DispositionAliasTable.test_only_universal_cell_trim_is_a_normalised_before_matching) ... ok
+test_preserve_maps_to_preserve_unknown_and_still_protects (test_disposition_aliases.DispositionAliasTable.test_preserve_maps_to_preserve_unknown_and_still_protects) ... ok
+test_read_only_referenced_maps_to_preserve_referenced (test_disposition_aliases.DispositionAliasTable.test_read_only_referenced_maps_to_preserve_referenced) ... ok
+test_unlisted_tokens_still_fail_closed (test_disposition_aliases.DispositionAliasTable.test_unlisted_tokens_still_fail_closed) ... ok
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.009s
+
+OK
+EXIT=0
+
+## 3. 审计（改后）
+# command: python -B tools/governance/clean_workspace.py --audit-declarations --out <tmp>
+# after: errors=147 warnings=740 declarations=6762 protected_roots=5598
+# code 分布（改后）: {'DECL_BARE_NAME': 1, 'DECL_DESTINATION_UNRESOLVED': 11, 'DECL_ENV': 16, 'DECL_GLOB': 16, 'DECL_MISSING_SOURCE': 1, 'DECL_RELATIVE_AMBIGUOUS': 1, 'DECL_RELATIVE_UNRESOLVED': 27, 'DECL_TRAVERSAL': 7, 'FILE_UNREADABLE': 1, 'JSON_PARSE': 2, 'TABLE_DELIMITER': 10, 'TABLE_ROW_ARITY': 1, 'TABLE_SCHEMA_INCOMPLETE': 53}
+EXIT=2
+
+## 4. 读数与解释
+- `DECL_UNKNOWN_DISPOSITION` 8 -> 0；`errors` 154 -> 147（净 -7）。
+- `DECL_RELATIVE_UNRESOLVED` 26 -> 27（+1）：别名让 `doc/tasks/REAL-TRANSLATE-PROVIDER-1.md` 的 disposition 合法后，
+  该行 source 单元（Windows Credential Manager 描述文本，非路径）暴露出真实的声明缺陷 ⇒ 转入 B2 处置。
+  这不是用别名消音，而是把被错误 disposition 掩盖的缺陷显式化（与裁决 Q3「记录原始值与规范值」一致）。
+- `protected_roots` 5593 -> 5598（+5，未缩小）；`declarations` 6755 -> 6762（+7，别名行开始注册保护）。
+- `warnings` 732 -> 740（+8 = 8 条 DISPOSITION_ALIAS_APPLIED 警告，逐条记录 raw→canonical）。
+
+## 5. 已知既有失败（本轮未引入，已核实）
+- `python -B -m unittest tools.governance.tests.test_canonical_evidence_basis` 在 **HEAD 未含本轮改动** 时同样 9 failures
+  （用 `git stash push -u -- tools/governance/clean_workspace.py tools/governance/tests/test_disposition_aliases.py` 复现）。
+  ⇒ 属**既有债务**，不是本轮回归；登记待查（不在 AC3 的 B1/B2/B3 桶内，属工具测试自身缺口）。

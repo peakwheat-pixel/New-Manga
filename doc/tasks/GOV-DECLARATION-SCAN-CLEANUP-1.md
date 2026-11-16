@@ -93,6 +93,17 @@ allowed_paths:
       回填前后两轮 `--audit-declarations` JSON（baseline/after）；测试日志含命令/EXIT/解释器头
       （`09_COLLABORATION.md:359` 证据纪律）；`check.ps1` PASS、`git diff --check` EXIT=0。
       完成后**回填 `GOV-RESIDUAL` 的 AC6/AC7** 并恢复其 `status`。
+- [ ] **AC7 B2 单元级数据修复**（AC3 的 B2 批；依据 Codex 2026-11-16 裁决 Q4）：67 条**未钉住**的 B2 逐条按
+      `allowed_cells` 清单修复 Resource Manifest 单元（仅所列表单元，同文件其他字节不得变），每次改前复核活 pin；
+      12 条活 pin B2 与 3 条活 pin B3 **保持原始字节**、转「可审计保留态」（原始错误码以警告态继续显示 + pin 依据）。
+      验收判据：AC7 清单逐条唯一、改动只落在列明单元、错误数按批单调不增、基线保护根集合 ⊆ 最终集合。
+      依据：`doc/reviews/GOV-DECLARATION-SCAN-CLEANUP-1-AC3-CODEX-RULING-2026-11-16.md` §Q4。 <<PARTIAL: B2 批未开始；裁定已落盘，Q3 别名批已实施>>
+
+> **AC5 补充（追加式，仅适用于 AC3 本轮；依据 Codex 2026-11-16 裁决 Q4）**：既有 AC5 的核验范围
+> `a6608dd4b..HEAD` 及其结论**保持原样、不追溯修改**。自声明归属表冻结提交（`ac3-baseline-disposition-2026-11-16.md`）起，
+> `doc/tasks/*` 的字节保护**仅**对 AC7 精确列明的 Resource Manifest 单元开放 —— 只允许 `allowed_cells` 所列替换，
+> 同一文件其他字节不得变化。本补充**不**授权修改任何 `verification/**` 历史文件、任何 `RESOURCE-MANIFEST.json` 字节、
+> 或 RRI-01…RRI-07。违反本补充即 AC5 与本补充同时失效。
 
 ## 允许修改范围
 

@@ -65,7 +65,19 @@ pwsh -NoProfile -File apps/desktop-avalonia/scripts/test.ps1
 
 ## 2. 下一步队列（按建议顺序，可直接接手）
 
-### 队列 0 —— **`GOV-DECLARATION-SCAN-CLEANUP-1` AC3：154 条声明债务归零**（R16 后最高优先）
+### 队列 0 —— **`GOV-DECLARATION-SCAN-CLEANUP-1` AC3：154 → 0**（进行中：已 154→147）
+
+**进度（R17）**：裁定已由 **Codex** 出（`APPROVED_WITH_CONDITIONS`，见
+`doc/reviews/GOV-DECLARATION-SCAN-CLEANUP-1-AC3-CODEX-RULING-2026-11-16.md`）；
+归属表已冻结（`verification/GOV-DECLARATION-SCAN-CLEANUP-1/ac3-baseline-disposition-2026-11-16.md`，154 行逐条
+带 err_id/桶/活 pin）；**batch 1（Q3 封闭别名表）已实施**：`errors 154→147`、`warnings 732→740`、
+`protected_roots 5593→5598`、`declarations 6755→6762`，`DECL_UNKNOWN_DISPOSITION 8→0`；
+证据 `verification/GOV-DECLARATION-SCAN-CLEANUP-1/ac3-batch1-alias-2026-11-16.log`。
+**下一步（严格按裁决顺序）**：Q2 4 条 raw 绑定 → Q1 64 条表级绑定（须证明保护根集合不缩）→
+12 条活 pin B2 + 3 条活 pin B3 转「可审计保留态」（原始错误码以警告态可见）→ AC7 的 67 条单元修复 →
+AC6 集成复验 + 上下文独立 Review。**卡已加 AC7**（`<<PARTIAL>>`）与 AC5 追加式窄例外。
+
+### 队列 0 附录 —— 原 R16 评估（保留）
 
 R16 已在 A2 head 上复核并重推归属表（**不要再用 Ruling B 的 166 条旧数**）：
 
@@ -905,3 +917,20 @@ AC1 的 blocked 理由由**原作者**写成完整的 NA 结论（headless 库�
 **最高优先 = §2 队列 0（`GOV-DECLARATION-SCAN-CLEANUP-1` AC3）**；但它**不能直接开工**：154 条里 12 条被活 pin 钉死，
 必须先出「活 pin B2 走解释层绑定 + B3 规则口径 + scope 扩到 doc/tasks」的裁定。估时 4–6 轮（B3 1 → B1 1–2 → B2 2–3）。
 评估已落盘：`doc/reviews/GOV-DECLARATION-SCAN-CLEANUP-1-AC3-BASELINE-REDERIVATION-2026-11-16.md`。
+
+---
+
+## 3p. R17（本轮）—— AC3 开工：Codex 裁决 + Q3 别名批
+
+- **裁决**：Codex（`codex-cli 0.162.0` / `gpt-6-luna` / xhigh，会话 `01a1e3fd…`）出 `APPROVED_WITH_CONDITIONS`，
+  四问逐条：Q1 逐表 `template_bindings`；Q2 逐文件 `raw_non_declaration_bindings`（带 `expected_diagnostics`）；
+  Q3 **封闭别名表**（5 个精确 token）；Q4 AC5 追加式窄例外 + 新增 AC7（单元级 `allowed_cells`）。
+  ⚠️ 裁决者自述其 Windows 进程被 **错误 740** 拒绝启动 ⇒ **未独立复核字节**，只按请求文事实裁定；已在采纳记录里如实保留。
+- **归属表冻结**：`verification/GOV-DECLARATION-SCAN-CLEANUP-1/ac3-baseline-disposition-2026-11-16.md`，
+  按审计 JSON 原始顺序 154 行（ERR-001…154），带 code/桶/位置/活 pin；锚定 `report_sha256`。
+- **batch 1（Q3）**：`DISPOSITION_ALIASES` + `DISPOSITION_ALIAS_APPLIED` 警告 + 9 项测试（含「未列 token 仍 fail-closed」、
+  「大小写不折叠」负例）。实测 **154→147**，`protected_roots` **不缩反增 5**。
+  同时**暴露** 1 条被错误 disposition 掩盖的真实缺陷（Credential Manager 描述文本当路径）⇒ 转 B2，不做消音。
+- **顺带发现（登记，不在 AC3 桶内）**：`tools/governance/tests/test_canonical_evidence_basis.py` 在
+  **HEAD 未含本轮改动** 时同样 **9 failures**（用 `git stash` 复现）⇒ 既有债务，非本轮回归。
+- **AC 变更**：新增 **AC7**（B2 单元级修复，`<<PARTIAL>>`）+ **AC5 追加式窄例外**（不追溯改写原核验）。
