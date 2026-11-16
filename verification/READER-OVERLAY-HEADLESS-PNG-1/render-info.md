@@ -1,6 +1,6 @@
 # READER-OVERLAY-HEADLESS-PNG-1
 
-渲染 HEAD：`96c54844401f7f73cb7d60fb796f5b6994cf4c09`
+渲染 HEAD：`a1233003bc10a5facde6d294339f60b6ada0344b`
 
 | 项 | 值 |
 |---|---|
@@ -14,3 +14,21 @@
 
 **这张图是 headless 渲染，不是真实显示器截图。** 它证明 `ReaderWindow` 的内容树能渲染出非空帧，
 不证明真实窗口在物理屏幕上的显示效果。签署：NOT_RUN。
+
+## 全量测试回归确认
+
+新增的 `ImmersiveReaderVisualEvidenceTests` 已并入 App 测试项目，**全量跑通**：
+
+```
+dotnet test apps/desktop-avalonia/tests/NewManga.App.Tests/NewManga.App.Tests.csproj
+已通过! - 失败: 0，通过: 955，已跳过: 11，总计: 966，持续时间: 7 m 1 s
+```
+
+| 项 | 基线（本会话早前） | 本次 | 差异 |
+|---|---|---|---|
+| passed | 954 | **955** | **+1**（新增的这一条） |
+| failed | 0 | **0** | 0 |
+| skipped | 11 | **11** | 0（**未新增 skip**） |
+| total | 965 | **966** | +1 |
+
+**⇒ 零回归；未放宽任何既有断言；未新增任何 skip/xfail。**

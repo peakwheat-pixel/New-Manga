@@ -49,7 +49,33 @@
 
 ## 4. 四件套实测（命令 / head / 时点 / EXIT）
 
-（本节在证据入库的同一提交中追加；原始日志见 `verification/MAINT-1-RELEASE-MONITOR/condition6-closeout/gates.log`。）
+- **冻结交付 head**：`45af570079eeaa57bb731e766caa82a480e7d0cd` —— 载体、登记与精度修复的最终**内容**提交。其后的提交只追加
+  `verification/**` 证据与卡面登记字段（`delivery_head` / 三口径行），零源码、零测试、零契约、零 pin 字节。
+- **工作区状态**：四件套启动时 `git status --porcelain` 为空（clean）。
+- **时点**：`2026-11-16T07:25:49Z` 起（四项快速门禁）→ `2026-11-16T07:34:28Z`（.NET 全量结束）。
+- **原始日志**：`verification/MAINT-1-RELEASE-MONITOR/condition6-closeout/gates.log`（含 `# head:` / `# at_utc:` /
+  `# command:` 头与逐步 `EXIT=`，未删改）。
+
+| # | 命令 | EXIT | 判定行（原文） |
+|---:|---|---:|---|
+| 1 | `pwsh -NoProfile -File tools/governance/check.ps1` | 0 | `Governance check: PASS (3 warnings)` |
+| 2 | `pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/MAINT-1-RELEASE-MONITOR.md` | 0 | `Governance check: PASS (3 warnings)` |
+| 3 | `pwsh -NoProfile -File tools/governance/verify_pins.ps1` | 0 | `PIN AUDIT: PASS (all 18)` |
+| 4 | `python -B tools/generate_api_inventory.py --check` | 0 | `OK: rendered counts match FEA-C07 doc`（`1/80/6 = 87`） |
+| 5 | `pwsh -NoProfile -File apps/desktop-avalonia/scripts/test.ps1` | 0 | `TEST PASS (Debug): 1591/1639 passed, 48 skipped` |
+
+逐项目（.NET）：CoreClient 256/0/0、Host 364/0/44、App **969/0/4**。
+
+**与旧记录的关系（不做绿洗）**：
+
+- 2026-11-16 的 `RELEASE-GATE-SIX-CONDITIONS` §6.3 记录的是 `1582/1630`（App 962/0/4），本 head 为 `1591/1639`
+  （App 969/0/4）：通过数 +9、失败 0、`skipped` 仍 **48**（未新增 skip），总计 +9 来自这期间合入的测试。
+- 3 条 warning 与基线同量：非终态 Task 13 个（r38 不得据此批量关闭）、STATUS 3174 B、PLAN 6960 B 均达预算 80%。
+- **未放宽任何断言、未改任何阈值、未删任何用例**：四件套命令与 `check.ps1` 内的预算/规则一字未动（本卡只改文档与证据）。
+
+**测试副作用（已处置）**：`ImmersiveReaderVisualEvidenceTests` 每次全量测试都会重写
+`verification/READER-OVERLAY-HEADLESS-PNG-1/render-info.md`。本轮在提交前用
+`git checkout 6a408e5aa -- <该文件>` 恢复基线字节，`git diff 6a408e5aa -- <该文件>` 为空（净零改动）。
 
 ## 5. 结论与边界
 

@@ -1,0 +1,34 @@
+# §3.2-③（P2-2）三指针精度：修复前后逐卡实测
+# task: MAINT-1-RELEASE-MONITOR / Gate condition 6-③
+# head: 45af570079eeaa57bb731e766caa82a480e7d0cd
+# at_utc: 2026-11-16T07:26:20Z
+# command: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/<ID>.md
+# interpreter: PowerShell 7.6.8 (pwsh 7.6.8) ; Python 3.14.6
+# 说明：BEFORE = 把 doc/REBASELINE_PLAN.md 临时换成 6a408e5aa 的 blob（6990 B / 64 行）后实测；
+#       AFTER  = 恢复本 head 的 PLAN（6960 B / 64 行）后实测。两次都在本 head 的工作树上执行。
+# PLAN BEFORE: 6990 bytes / 64 lines (6a408e5aa blob)
+## BEFORE（PLAN 表外枚举缺 6 张非终态卡）
+DOC-CTRLCHAR-FIX-1                     rc=1 FAIL: 当前 DAG 未登记非终态 Task：DOC-CTRLCHAR-FIX-1
+FEA11-ENTRY-MISSING-1                  rc=1 FAIL: 当前 DAG 未登记非终态 Task：FEA11-ENTRY-MISSING-1
+GATE3-MATRIX-EXPAND-1                  rc=1 FAIL: 当前 DAG 未登记非终态 Task：GATE3-MATRIX-EXPAND-1
+GATE3-SETTINGS-SHORTCUT-1              rc=1 FAIL: 当前 DAG 未登记非终态 Task：GATE3-SETTINGS-SHORTCUT-1
+INSTALLER-MATRIX-1                     rc=1 FAIL: 当前 DAG 未登记非终态 Task：INSTALLER-MATRIX-1
+GOV-DECLARATION-SCAN-CLEANUP-1         rc=0 Governance check: PASS (3 warnings)
+# PLAN AFTER: 6960 bytes / 64 lines
+# restore check: sha256 c2519417775b46b7… == pre-experiment sha256
+## AFTER（PLAN 表外枚举 = 无 DAG 行的全部非终态卡；BLOCKED 如实登记）
+DOC-CTRLCHAR-FIX-1                     rc=0 Governance check: PASS (3 warnings)
+FEA11-ENTRY-MISSING-1                  rc=0 Governance check: PASS (3 warnings)
+GATE3-MATRIX-EXPAND-1                  rc=0 Governance check: PASS (3 warnings)
+GATE3-SETTINGS-SHORTCUT-1              rc=0 Governance check: PASS (3 warnings)
+INSTALLER-MATRIX-1                     rc=0 Governance check: PASS (3 warnings)
+GOV-DECLARATION-SCAN-CLEANUP-1         rc=0 Governance check: PASS (3 warnings)
+MAINT-1-RELEASE-MONITOR                rc=0 Governance check: PASS (3 warnings)
+SIDECAR-REBUILD-1                      rc=0 Governance check: PASS (3 warnings)
+GIT-CLEAN-PUBLICATION-DIAG-1           rc=0 Governance check: PASS (3 warnings)
+GIT-CLEAN-PUBLICATION-1                rc=0 Governance check: PASS (3 warnings)
+GIT-CLEAN-RUST-ISOLATION-1             rc=0 Governance check: PASS (3 warnings)
+GIT-CLEAN-CORE-ENV-2                   rc=0 Governance check: PASS (3 warnings)
+GIT-CLEAN-RUST-CAPACITY-DESIGN-1       rc=0 Governance check: PASS (3 warnings)
+
+# 汇总：BEFORE 5/6 FAIL -> AFTER 0/13 FAIL

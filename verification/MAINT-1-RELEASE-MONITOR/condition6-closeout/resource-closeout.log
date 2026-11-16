@@ -1,0 +1,15 @@
+# Resource closeout: MAINT-1 temp data roots
+# head: 6a408e5aae72fd6c204369be67192f49e364071a
+# at_utc: 
+2026-11-16T07:12:02Z
+# interpreter: PowerShell 7.6.8 / Windows
+DELETE_SAFE  C:\Users\49745\AppData\Local\Temp\newmanga-p2-bookshelf-e2caedba  380788 B
+DELETE_SAFE  C:\Users\49745\AppData\Local\Temp\newmanga-p2-reader-bccaf5ca  380769 B
+DELETE_SAFE  C:\Users\49745\AppData\Local\Temp\newmanga-p2-settings-50880475  380784 B
+DELETE_SAFE  C:\Users\49745\AppData\Local\Temp\newmanga-p2-theme-bookshelf-e2caedba   B
+DELETE_SAFE  C:\Users\49745\AppData\Local\Temp\newmanga-p2-theme-reader-bccaf5ca   B
+DELETE_SAFE  C:\Users\49745\AppData\Local\Temp\newmanga-p2-theme-settings-50880475   B
+DELETE_SAFE  C:\Users\49745\AppData\Local\Temp\newmanga-p2-theme-workbench-ed69829f   B
+DELETE_SAFE  C:\Users\49745\AppData\Local\Temp\newmanga-p2-workbench-ed69829f  380791 B
+# total: 8 dirs / 1523132 bytes
+# after: 0 dirs remaining
