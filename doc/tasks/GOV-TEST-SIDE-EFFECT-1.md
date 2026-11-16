@@ -3,7 +3,7 @@ id: GOV-TEST-SIDE-EFFECT-1
 title: "测试侧效治理：阅读器 overlay 证据不得写在仓库内（每次全量测试污染工作树）"
 kind: governance
 governance_version: 3
-status: in_progress
+status: done
 approval: dsh_lead_release_2026-11-17_test_side_effect
 suggested_owner: DSH
 owner: DSH
@@ -12,10 +12,10 @@ depends_on: [MAINT-1-RELEASE-MONITOR]
 base_commit: 46f146730
 branch: main
 worktree: main
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: e0b57eaff
+delivery_head: e0b57eaff
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/GOV-TEST-SIDE-EFFECT-1
 allowed_paths:
   - doc/tasks/GOV-TEST-SIDE-EFFECT-1.md
@@ -77,3 +77,12 @@ allowed_paths:
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | doc-only | — | NOT_APPLICABLE | — | — | 本卡只改仓库内代码与文档，未创建仓外资源 |
+
+## Closeout Record
+
+- **收口时间**：2026-11-17；integration commit `e0b57eaff`。
+- **做法**：测试输出目录改为可配置（env `NEWMANGA_READER_OVERLAY_EVIDENCE_DIR`），`test.ps1` 默认指向本次运行证据根，
+  `-CanonicalEvidence` 仍指仓库内规范路径；断言、渲染与「不得 skip」语义一行未改。
+- **实测**：全量 `test.ps1 -Configuration Debug` → `TEST PASS 1591/1639 passed, 48 skipped`，exit 0；
+  跑完后 `git status --porcelain verification/READER-OVERLAY-HEADLESS-PNG-1` 为空。
+- **证据**：`verification/GOV-TEST-SIDE-EFFECT-1/ac3-no-side-effect-2026-11-17.log`。
