@@ -110,6 +110,17 @@ out_of_scope:
 | EV-15 | AC-F2（fixture 工具） | verification/FEA-11-HOST-AUTH-2/tools/build_plan_body.py | - | 8e39aed36be5e50e4b85d5f254a37c622da99ea5f3bd2dc7e72880208f3f8b53 | CANONICAL |
 | EV-16 | AC-F2（行数核对工具） | verification/FEA-11-HOST-AUTH-2/tools/count_bindings.py | - | 23b31c4cd3f580e629c8135d1ee1011758006d2991c6de7c54767459b85816b4 | CANONICAL |
 | EV-17 | AC-F5（交付说明） | verification/FEA-11-HOST-AUTH-2/README.md | - | 32b51373f53e3f4bdd9dcdbeda07ea9191253a686c67324c8407802193ab7fb8 | CANONICAL |
+| EV-11-supersede | re-home 载体（取代 EV-11） | doc/tasks/FEA-11-HOST-AUTH-3.md | f1a2e8805a9575c9838f9f18d89de5480e053f8d | e1c529bd6cc72b8de0648f9402ff03349bf8d17b00df951f9d95c9e638c959c0 | CANONICAL |
+| EV-12-supersede | re-home 载体（取代 EV-12） | doc/tasks/FEA-11-HOST-AUTH-4.md | 53ce9d55c516f714518f4f9c41ed2cb1c87b3eda | 4ec9662de82158b4132d275c979cc78cf34be02bc486103a8e22a2c423114633 | CANONICAL |
+| EV-13-supersede | re-home 载体（取代 EV-13） | doc/tasks/FEA-11-HOST-AUTH-5.md | 5ec365f145a31ffe95a4f32159f40c6106700875 | a83791cbd882b15998dfadece7cd6d32d7841e85e7e660b5167e97c895ac68cc | CANONICAL |
+
+> **证据 supersession 说明（DSH，2026-11-16；依据 Codex 裁定 Q1=D，append-only）**
+> 
+> `EV-11` / `EV-12` / `EV-13` 三行是 re-home 载体的早期摘要：它们的 64 位 sha256 在本仓**没有任何字节表示**
+> 能复现（commit 列是 `-`，当前工作树、LF、CRLF 三种形态都不匹配）。为保留历史事实，这三行**逐字不动**；
+> 另以 `EV-11-supersede` / `EV-12-supersede` / `EV-13-supersede` 追加当前状态：commit 为可解析的完整 40 位对象名，
+> sha256 = `git cat-file blob <commit>:<path>` 的字节摘要（与本行所示字节数一致），可机械复核。
+> 复核方式：`python -B tools/governance/audit_evidence_pins.py --cards doc/tasks/FEA-11-HOST-AUTH-2.md`。
 
 ## Resource Manifest
 

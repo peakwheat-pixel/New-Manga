@@ -65,7 +65,10 @@ DSH 按 Q3 实现巡检后发现这不是孤例，因此本卡目标定为：
   （确认真实失效 vs 工具误报）。 <<MET>>
 - [ ] **AC3 EV-11 修复**（裁定 Q1/Q2）：append-only 追加 `EV-11-supersede`（有效 commit + 64 位 sha256 且等于
   `git cat-file blob <commit>:<path>`）+ 表下说明「旧值在本仓无任何字节表示可复现，已被取代」；
-  原行字节逐字不变；`check.ps1` 对该卡 PASS。 <<PARTIAL: 未开始>>
+  原行字节逐字不变；`check.ps1` 对该卡 PASS。
+  <<PARTIAL: 前四款已完成（EV-11/12/13 三条 supersede 行 + 说明、0 删除、工具复核 SUPERSEDED=3）；
+  唯「check.ps1 对该卡 PASS」不可达——该卡在单卡校验下**改动前就已 7 errors**（5 条 SHA 不匹配 + 2 条 Resource manifest 为「—」），
+  append-only 不会让逐行校验转绿。可选路径：①改写原始行（裁定禁止）②让 check.ps1 支持 supersession（门禁变更，需另行裁定）。>>
 - [ ] **AC4 逐条判定**：445 条失败逐条归类（真实失效 ⇒ supersede；历史形态 ⇒ 记录可接受依据），
   每批后 FAIL 数单调不增；判定表与巡检 JSON 一一对应。 <<PARTIAL: 未开始>>
 - [ ] **AC5 独立复核**：上下文独立 Reviewer（未参与实施）复核；`check.ps1` 与 `-TaskPath` 均 PASS。 <<PARTIAL: 未开始>>

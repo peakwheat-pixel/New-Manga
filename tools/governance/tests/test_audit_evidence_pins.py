@@ -94,5 +94,44 @@ class RealRepoTests(unittest.TestCase):
         self.assertIn("FEA-11-HOST-AUTH-3.md", out)
 
 
+class SupersedeTests(unittest.TestCase):
+    """Append-only supersession (Codex ruling Q1=D) must be recognised, and the
+    replacement row itself must be a verifiable pin."""
+
+    def test_supersede_rows_replace_the_original_verdict(self):
+        import contextlib
+        import io
+        import json
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as tmp:
+            out = pathlib.Path(tmp) / "sweep.json"
+            buf = io.StringIO()
+            with contextlib.redirect_stdout(buf):
+                rc = sweep.main(["--cards", "doc/tasks/FEA-11-HOST-AUTH-2.md",
+                                 "--json", str(out)])
+            self.assertEqual(rc, 1)  # the card still has other unpinned defects
+            data = json.loads(out.read_text(encoding="utf-8"))
+        by_id = {r["id"]: r for r in data["rows"] if r.get("id")}
+        for old in ("EV-11", "EV-12", "EV-13"):
+            replacement = by_id[old + "-supersede"]
+            self.assertEqual(replacement["verdict"], "PASS",
+                             "the supersede row itself must be a verifiable pin")
+            self.assertEqual(by_id[old]["verdict"], "SUPERSEDED")
+            self.assertIn(("SUPERSEDED_BY_" + old.upper()), by_id[old]["code"])
+
+    def test_supersede_does_not_hide_a_broken_replacement(self):
+        # judge() must reject a supersede-like row whose digest matches nothing
+        import hashlib
+        data = b"x\n"
+        reps = {"WORKTREE": hashlib.sha256(data).hexdigest(),
+                "LF": hashlib.sha256(data).hexdigest(),
+                "CRLF": hashlib.sha256(data.replace(b"\n", b"\r\n")).hexdigest()}
+        r = {"card": "c", "line": 1, "path": "p", "id": "EV-X-supersede",
+             "commit": "-", "digests": ["f" * 64], "recorded_cell": "f" * 64}
+        verdict, code, _, _ = sweep.judge(r, None, reps, False)
+        self.assertEqual((verdict, code), ("FAIL", "SHA_MISMATCH"))
+
+
 if __name__ == "__main__":
     unittest.main()

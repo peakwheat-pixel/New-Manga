@@ -114,6 +114,7 @@ def collect(cards):
                 recorded_cell = clean(cells[sha_i]).lower()
                 digests = HEX64.findall(recorded_cell)
                 rows.append({"card": rel_card, "line": line_no, "path": rel,
+                             "id": clean(cells[0]) if cells else "",
                              "commit": commit, "recorded_cell": recorded_cell,
                              "digests": digests})
     return rows
@@ -208,6 +209,7 @@ def main(argv=None):
             continue
         commit, path = r["commit"], r["path"]
         base = {"card": r["card"], "line": r["line"], "path": path, "commit": commit,
+                "id": r.get("id", ""),
                 "recorded": ",".join(d[:16] for d in r["digests"])}
         commit_shaped = bool(COMMIT.match(commit))
         blob = None
@@ -223,18 +225,39 @@ def main(argv=None):
         verdict, code, detail, basis = judge(r, blob, representations(path), commit_shaped)
         results.append(dict(base, verdict=verdict, code=code, detail=detail, basis=basis))
 
+    # Append-only supersession (ruling Q1=D): a FAIL row whose path also carries a
+    # PASS row whose id ends with "-supersede" is documented, not silently dropped.
+    replacements = {}
+    for r in results:
+        if r.get("verdict") == "PASS" and r.get("id", "").lower().endswith("-supersede"):
+            replacements.setdefault(r["path"], r["id"])
+    superseded = []
+    for r in results:
+        if r.get("verdict") == "FAIL" and r["path"] in replacements:
+            r["detail"] = "%s; superseded by %s" % (r["detail"], replacements[r["path"]])
+            r["code"] = "SUPERSEDED_BY_" + replacements[r["path"]].upper()
+            r["verdict"] = "SUPERSEDED"
+            superseded.append(r)
+
     fails = [r for r in results if r.get("verdict") == "FAIL"]
+    superseded = [r for r in results if r.get("verdict") == "SUPERSEDED"]
     warns = [r for r in results if r.get("verdict") == "WARN"]
     print("evidence pin sweep: %d canonical row(s) in %d card(s)"
           % (len(results), len(cards)))
-    print("  FAIL: %d   WARN: %d" % (len(fails), len(warns)))
+    print("  FAIL: %d   SUPERSEDED: %d   WARN: %d"
+          % (len(fails), len(superseded), len(warns)))
     for r in fails:
         print("  FAIL %-38s %-22s %s:%s  %s"
               % (r["card"].split("/")[-1], r["code"], (r["path"] or "")[:42],
                  r.get("line", "?"), r["detail"]))
+    for r in superseded:
+        print("  SUPERSEDED %-30s %-22s %s:%s  %s"
+              % (r["card"].split("/")[-1], r["code"], (r["path"] or "")[:42],
+                 r.get("line", "?"), r["detail"]))
     if args.json:
         Path(args.json).write_text(
-            json.dumps({"rows": results, "fail": len(fails), "warn": len(warns)},
+            json.dumps({"rows": results, "fail": len(fails),
+                        "superseded": len(superseded), "warn": len(warns)},
                        ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         print("  json:", args.json)
     return 1 if fails else 0

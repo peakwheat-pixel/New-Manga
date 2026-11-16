@@ -1,0 +1,45 @@
+# GOV-EVIDENCE-PIN-REPAIR-1 · AC3 证据（EV-11/12/13 append-only supersession）
+# head: 8db997f94
+# at_utc: 2026-11-16T13:26:29Z
+# os: Windows 10.0.26200 ; PowerShell 7.6.8 ; Python 3.14.6
+
+## 1. 做了什么（append-only，零删除）
+# 在 doc/tasks/FEA-11-HOST-AUTH-2.md 的 Canonical Evidence 表末尾追加 3 行 + 1 段说明：
+#   EV-11-supersede / EV-12-supersede / EV-13-supersede —— 每条：可解析的完整 40 位 commit、64 位 sha256、class=CANONICAL
+#   （sha256 = sha256(git cat-file blob <commit>:<path>)，且该 blob 与当前工作树字节逐字节相同）
+# git diff --stat: 1 file changed, 11 insertions(+) —— **0 deletions**；
+# 逐行比对：原有 3 行（EV-11/12/13）在改动后仍逐字存在。
+
+## 2. 新行锚点（可机械复核）
+# EV-11-supersede doc/tasks/FEA-11-HOST-AUTH-3.md commit=f1a2e8805a9575c9838f9f18d89de5480e053f8d
+#                    sha256=e1c529bd6cc72b8de0648f9402ff03349bf8d17b00df951f9d95c9e638c959c0 (24593 B)
+# EV-12-supersede doc/tasks/FEA-11-HOST-AUTH-4.md commit=53ce9d55c516f714518f4f9c41ed2cb1c87b3eda
+#                    sha256=4ec9662de82158b4132d275c979cc78cf34be02bc486103a8e22a2c423114633 (3205 B)
+# EV-13-supersede doc/tasks/FEA-11-HOST-AUTH-5.md commit=5ec365f145a31ffe95a4f32159f40c6106700875
+#                    sha256=a83791cbd882b15998dfadece7cd6d32d7841e85e7e660b5167e97c895ac68cc (5883 B)
+
+## 3. 巡检工具结果（该卡）
+# command: python -B tools/governance/audit_evidence_pins.py --cards doc/tasks/FEA-11-HOST-AUTH-2.md
+evidence pin sweep: 20 canonical row(s) in 1 card(s)
+  FAIL: 2   SUPERSEDED: 3   WARN: 0
+  FAIL ... apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs:96
+  FAIL ... apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11HostAuthTests.cs:98
+  SUPERSEDED ... doc/tasks/FEA-11-HOST-AUTH-3.md:106  superseded by EV-11-supersede
+  SUPERSEDED ... doc/tasks/FEA-11-HOST-AUTH-4.md:107  superseded by EV-12-supersede
+  SUPERSEDED ... doc/tasks/FEA-11-HOST-AUTH-5.md:108  superseded by EV-13-supersede
+# 新增 2 项测试：supersede 行本身必须是可验证 pin；伪造 supersede 行不得掩盖失效。
+# command: python -B -m unittest tools.governance.tests.test_audit_evidence_pins  →  Ran 14 ... OK
+
+## 4. 必须如实登记的发现：`check.ps1 -TaskPath` 对这张卡**本来就不通过**
+# command: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/FEA-11-HOST-AUTH-2.md  (EXIT=1)
+# 用 git stash 暂存我的改动后重跑（即改动前的基线）以及改动后重跑，两次输出**都是 7 errors**：
+#   FAIL: Evidence SHA-256 不匹配 ×5（EV-01/EV-03 两个源文件 + EV-11/12/13 三份 re-home 载体）
+#   FAIL: Resource 最终路径未验证：—
+#   FAIL: Resource manifest 不存在：—
+# 结论：
+#   ① 这张 `done` 卡在 check.ps1 的**单卡校验**下长期是红的；全局 check.ps1 的 15 份文档作用域从未覆盖它，
+#      所以此前「全局 PASS」并不能代表这张卡干净 —— 这一点本身就是本次巡检的价值。
+#   ② append-only supersession **不会**让 check.ps1 转绿：它逐行校验原始证据行，没有 supersede 概念。
+#      因此卡片里「AC3 完成后 check.ps1 对该卡 PASS」这一条（源自裁定 Q2 的证据要求）在 append-only 前提下
+#      **不可满足**，除非①改写原始行（裁定禁止）或②让 check.ps1 支持 supersession（属门禁变更，需另行裁定）。
+#   ③ 本卡 AC3 因此保留 PARTIAL：修复内容已完成且可复核，但该验收子句未达成，原因与两条可选路径如上。
