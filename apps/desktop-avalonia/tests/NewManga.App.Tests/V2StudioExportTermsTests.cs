@@ -393,6 +393,78 @@ public sealed class V2StudioExportTermsTests
         StudioFixtures.WindowOf(view).Close();
     }
 
+    // ------------------------------------------------------------------
+    // V11R-B-5 AC3 状态完备 —— added 2026-11-16 (DSH).
+    //
+    // AC3 asks that idle/loading/ready/empty/error/partial are all REACHABLE and每个都有就地呈现
+    // (DESIGN_SYSTEM §7). The Export surface does not use the six-state vocabulary literally; it uses
+    // StudioExportPhase, so the mapping is stated here explicitly instead of being implied:
+    //
+    //   idle    -> Phase=Idle,                      就地呈现 PhaseText「预检未加载」
+    //   loading -> Phase=Loading（瞬时，靠发布序列观察）, 就地呈现 PhaseText「正在读取预检数据…」
+    //   ready   -> Phase=Ready,                     就地呈现 PhaseText「预检就绪 · 可导出 N 页」
+    //   empty   -> Phase=Ready 且 ExportablePageIds 为空, 就地呈现「可导出 0 页」+ HistoryEmptyText
+    //   error   -> Phase=Failed（StartExport 被拒）, 就地呈现 PhaseText「导出失败」+ HasError/ErrorText
+    //   partial -> Phase=Ready 但未确认/过期计数无读取面, 就地呈现「—」+ 非空 tooltip（不伪造 0）
+    //
+    // Reading "loading was reached" from the published PropertyChanged sequence (rather than blocking
+    // the read) is deliberate: it pins the state machine, not the number of awaits inside the frame.
+    // ------------------------------------------------------------------
+
+    [AvaloniaFact]
+    public async Task ExportSurface_ReachesAllSixDesignSystemStates_WithInPlacePresentation()
+    {
+        var (view, host, vm, window) = await OpenAsync();
+        var export = vm.Export;
+
+        var phases = new List<StudioExportPhase>();
+        export.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName == nameof(StudioExportViewModel.Phase))
+            {
+                phases.Add(export.Phase);
+            }
+        };
+
+        // ---- idle -------------------------------------------------------
+        Assert.Equal(StudioExportPhase.Idle, export.Phase);
+        Assert.Equal("预检未加载", export.PhaseText);
+        Assert.False(export.HasError);
+
+        // ---- loading (transient) + ready --------------------------------
+        Assert.True(await export.RefreshPreflightAsync());
+        Assert.Contains(StudioExportPhase.Loading, phases);
+        Assert.Equal(StudioExportPhase.Ready, export.Phase);
+        Assert.StartsWith("预检就绪", export.PhaseText, StringComparison.Ordinal);
+        Assert.True(export.TranslatedPageCount > 0);
+
+        // ---- partial: a read face that does not exist yet must say so, never fake a zero ----
+        Assert.Null(export.UnconfirmedPageCount);
+        Assert.Equal("—", export.UnconfirmedText);
+        Assert.False(string.IsNullOrWhiteSpace(export.UnconfirmedTooltip));
+        Assert.Null(export.StalePageCount);
+        Assert.Equal("—", export.StaleText);
+
+        // ---- error: a refused StartExport surfaces a typed reason in place ----
+        host.ScriptedStartResults.Enqueue(null);
+        Assert.Null(await export.StartExportAsync());
+        Assert.Equal(StudioExportPhase.Failed, export.Phase);
+        Assert.Equal("导出失败", export.PhaseText);
+        Assert.True(export.HasError);
+        Assert.Contains("StartExport 被拒绝", export.ErrorText!, StringComparison.Ordinal);
+
+        // ---- empty: ready but nothing exportable, and the history says so ----
+        host.TranslatedPagesByChapter["ch-1"] = Array.Empty<string>();
+        host.ExportHistory = new List<ExportHistoryEntry>();
+        Assert.True(await export.RefreshPreflightAsync());
+        Assert.Equal(StudioExportPhase.Ready, export.Phase);
+        Assert.Empty(export.ExportablePageIds);
+        Assert.Contains("可导出 0 页", export.PhaseText, StringComparison.Ordinal);
+        Assert.Equal("还没有导出记录", export.HistoryEmptyText);
+
+        StudioFixtures.WindowOf(view).Close();
+    }
+
     [AvaloniaFact]
     public async Task ToolsOverlay_OpensAndCloses_KeyboardEscape()
     {
