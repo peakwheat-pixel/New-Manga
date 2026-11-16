@@ -1,0 +1,3129 @@
+{
+  "head": "8db997f94",
+  "total": 445,
+  "groups": {
+    "T1_PATH_EXISTS_DIGEST_MISMATCH": [
+      {
+        "card": "doc/tasks/ARCH-DOC-REBASELINE.md",
+        "line": 185,
+        "path": "doc/tasks/PDF-STREAM-FIX-1.md",
+        "commit": "5a0e9aed1",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/DISPLAY-PERF-DECISION-1.md",
+        "line": 120,
+        "path": "doc/design/DISPLAY_PERF_DECISION_1.md",
+        "commit": "",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/ENV-BUNDLE-1.md",
+        "line": 132,
+        "path": "packaging/m2ac5/README.md",
+        "commit": "c6fda8a09c1a8248ec6617369f9fdf9e1cef79ec",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/ENV-BUNDLE-1.md",
+        "line": 133,
+        "path": "packaging/m2ac5/requirements-build.txt",
+        "commit": "c6fda8a09c1a8248ec6617369f9fdf9e1cef79ec",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/ENV-BUNDLE-1.md",
+        "line": 134,
+        "path": "packaging/m2ac5/build_sidecar.ps1",
+        "commit": "c6fda8a09c1a8248ec6617369f9fdf9e1cef79ec",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/ENV-BUNDLE-1.md",
+        "line": 135,
+        "path": "apps/desktop/src-tauri/src/main.rs",
+        "commit": "c6fda8a09c1a8248ec6617369f9fdf9e1cef79ec",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/ENV-BUNDLE-1.md",
+        "line": 136,
+        "path": "apps/desktop/src-tauri/src/library_bridge.rs",
+        "commit": "c6fda8a09c1a8248ec6617369f9fdf9e1cef79ec",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/EXPORT-REVEAL-1.md",
+        "line": 119,
+        "path": "doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
+        "commit": "b1e4d87d49295b1a76453b6960060be2a648f8f8",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/FEA-01-FREEZE-1.md",
+        "line": 69,
+        "path": "doc/plan/FEA-CONTRACT-FROZEN-FEA01.md",
+        "commit": "bf1c8eb00",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/FEA-05-PORT-1.md",
+        "line": 104,
+        "path": "doc/plan/FEA-C07_API_INVENTORY.md",
+        "commit": "24600bbee",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/FEA-05-PORT-1.md",
+        "line": 105,
+        "path": "doc/plan/FEA-CONTRACT-FROZEN-C07.md",
+        "commit": "24600bbee",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/FEA-05-PORT-1.md",
+        "line": 106,
+        "path": "apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandRegistry.cs",
+        "commit": "24600bbee",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/FEA-06-PREREQ-1.md",
+        "line": 106,
+        "path": "verification/FEA-06-PREREQ-1/appearance-tests.log",
+        "commit": "177e145fa",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/FEA-06-PREREQ-1.md",
+        "line": 109,
+        "path": "verification/FEA-06-PREREQ-1/motion-tests.log",
+        "commit": "177e145fa",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/FEA-06-PREREQ-1.md",
+        "line": 111,
+        "path": "verification/FEA-06-PREREQ-1/sln-test.log",
+        "commit": "177e145fa",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/FEA-06-PREREQ-1.md",
+        "line": 112,
+        "path": "verification/FEA-06-PREREQ-1/build.log",
+        "commit": "177e145fa",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/FEA-06-PREREQ-2.md",
+        "line": 125,
+        "path": "apps/desktop-avalonia/src/NewManga.DesignSystem/Theming/DesignSystemThemeManager.cs",
+        "commit": "92cac5ab1",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/FEA-06-RESIDUAL-1.md",
+        "line": 177,
+        "path": "apps/desktop-avalonia/tests/NewManga.App.Tests/FluentPageTests.cs",
+        "commit": "ce0bee67d",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/FEA-06-RESIDUAL-3.md",
+        "line": 90,
+        "path": "apps/desktop-avalonia/src/NewManga.App/Views/Fluent/ReaderPageView.cs",
+        "commit": "ddc29ecb3",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/FEA-06-RESIDUAL-3.md",
+        "line": 91,
+        "path": "apps/desktop-avalonia/src/NewManga.App/Views/Fluent/ShelfPageView.cs",
+        "commit": "ddc29ecb3",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/FEA-07-RESIDUAL-2.md",
+        "line": 125,
+        "path": "apps/desktop-avalonia/tests/NewManga.App.Tests/FakeHostController.cs",
+        "commit": "a03a6794a",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/FEA-07-RESIDUAL-3.md",
+        "line": 128,
+        "path": "apps/desktop-avalonia/src/NewManga.App/Views/MainWindow.axaml.cs",
+        "commit": "8e9420f41",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/FEA-11-HOST-AUTH-2.md",
+        "line": 96,
+        "path": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs",
+        "commit": "f7016d3fb",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/FEA-11-HOST-AUTH-2.md",
+        "line": 98,
+        "path": "apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11HostAuthTests.cs",
+        "commit": "f7016d3fb",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/FEA-11-HOST-AUTH-2.md",
+        "line": 106,
+        "path": "doc/tasks/FEA-11-HOST-AUTH-3.md",
+        "commit": "-",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/FEA-11-HOST-AUTH-2.md",
+        "line": 107,
+        "path": "doc/tasks/FEA-11-HOST-AUTH-4.md",
+        "commit": "-",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/FEA-11-HOST-AUTH-2.md",
+        "line": 108,
+        "path": "doc/tasks/FEA-11-HOST-AUTH-5.md",
+        "commit": "-",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/FEA-11-PREREQ-1.md",
+        "line": 124,
+        "path": "doc/plan/FEA-C17_SOURCE_SYNC_DRAFT.md",
+        "commit": "e94c4b8d8f8c0baae857d3335d7aa6f2533a84c6",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/FEA-11-RESIDUAL-4A.md",
+        "line": 147,
+        "path": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs",
+        "commit": "fbe337f95",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/FEA-11-RESIDUAL-4A.md",
+        "line": 148,
+        "path": "apps/desktop-avalonia/src/NewManga.CoreClient/Commands/HostCommandDispatcher.cs",
+        "commit": "fbe337f95",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/FEA-11-RESIDUAL-4A.md",
+        "line": 149,
+        "path": "apps/desktop-avalonia/src/NewManga.Host/HostRuntime.cs",
+        "commit": "fbe337f95",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/FEA-11-RESIDUAL-4A.md",
+        "line": 151,
+        "path": "apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11SourceIpcTests.cs",
+        "commit": "fbe337f95",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/FEA-11-RESIDUAL-4A.md",
+        "line": 154,
+        "path": "tests/fea11/conftest.py",
+        "commit": "fbe337f95",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/FEA-11-SCAN-2-PREREQ-1.md",
+        "line": 103,
+        "path": "doc/plan/FEA-C17_SOURCE_SYNC_DRAFT.md",
+        "commit": "7451bfaaa",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/FEA-11-SCAN-2-PREREQ-1.md",
+        "line": 104,
+        "path": "doc/plan/FEA-CONTRACT-FROZEN-C17.md",
+        "commit": "7451bfaaa",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/FEA-11-SCAN-2-PREREQ-1.md",
+        "line": 105,
+        "path": "doc/plan/FEA-CONTRACT_FREEZE_MATRIX.md",
+        "commit": "7451bfaaa",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/FEA-12-PREREQ-1.md",
+        "line": 176,
+        "path": "doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
+        "commit": "-",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/FEA-12-UI-RESIDUAL-2.md",
+        "line": 127,
+        "path": "apps/desktop-avalonia/tests/NewManga.App.Tests/FakeHostController.cs",
+        "commit": "85356c22a",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/FEA-CONTRACT-WRAP-1.md",
+        "line": 76,
+        "path": "doc/PLAN-HISTORY.md",
+        "commit": "-",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/FEA-D07-UNBLOCK.md",
+        "line": 75,
+        "path": "doc/plan/FEA-CONTRACT-FROZEN-C09.md",
+        "commit": "-",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/FEA-DOC-RECONCILE-1.md",
+        "line": 106,
+        "path": "doc/STATUS.md",
+        "commit": "-",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/FEA-DOC-RECONCILE-1.md",
+        "line": 107,
+        "path": "doc/REBASELINE_PLAN.md",
+        "commit": "-",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/FEA-GOV-10.md",
+        "line": 57,
+        "path": "doc/plan/FEA-C07_API_INVENTORY.md",
+        "commit": "(见提交)",
+        "code": "COMMIT_NOT_FOUND"
+      },
+      {
+        "card": "doc/tasks/FEA-GOV-11.md",
+        "line": 70,
+        "path": "doc/plan/FEA-CONTRACT-FROZEN-C01b.md",
+        "commit": "-",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/FEA-GOV-4.md",
+        "line": 63,
+        "path": "doc/plan/FEA-C02_V11R_AMENDMENT_DRAFT.md",
+        "commit": "(见提交)",
+        "code": "COMMIT_NOT_FOUND"
+      },
+      {
+        "card": "doc/tasks/FEA-GOV-4.md",
+        "line": 64,
+        "path": "doc/plan/FEA-C03_PRESENTATION_SETTINGS_DRAFT.md",
+        "commit": "(见提交)",
+        "code": "COMMIT_NOT_FOUND"
+      },
+      {
+        "card": "doc/tasks/FEA-GOV-4.md",
+        "line": 65,
+        "path": "doc/plan/FEA-C11_TASK_TABLE_ALIGNMENT_DRAFT.md",
+        "commit": "(见提交)",
+        "code": "COMMIT_NOT_FOUND"
+      },
+      {
+        "card": "doc/tasks/FEA-GOV-5.md",
+        "line": 63,
+        "path": "doc/plan/FEA-C04b_DELETE_PROTOCOL_DRAFT.md",
+        "commit": "(见提交)",
+        "code": "COMMIT_NOT_FOUND"
+      },
+      {
+        "card": "doc/tasks/FEA-GOV-5.md",
+        "line": 64,
+        "path": "doc/plan/FEA-C05_PAGE_VISIBILITY_DRAFT.md",
+        "commit": "(见提交)",
+        "code": "COMMIT_NOT_FOUND"
+      },
+      {
+        "card": "doc/tasks/FEA-GOV-5.md",
+        "line": 65,
+        "path": "doc/plan/FEA-C06_SOURCE_AUTH_DRAFT.md",
+        "commit": "(见提交)",
+        "code": "COMMIT_NOT_FOUND"
+      },
+      {
+        "card": "doc/tasks/FEA-GOV-7.md",
+        "line": 63,
+        "path": "doc/plan/FEA-C08_RUN_SNAPSHOT_DRAFT.md",
+        "commit": "(见提交)",
+        "code": "COMMIT_NOT_FOUND"
+      },
+      {
+        "card": "doc/tasks/FEA-GOV-7.md",
+        "line": 64,
+        "path": "doc/plan/FEA-C09_DELETE_BACKUP_MIGRATION_DRAFT.md",
+        "commit": "(见提交)",
+        "code": "COMMIT_NOT_FOUND"
+      },
+      {
+        "card": "doc/tasks/FEA-GOV-7.md",
+        "line": 65,
+        "path": "doc/plan/FEA-C12_CHECKER_SCOPE_DRAFT.md",
+        "commit": "(见提交)",
+        "code": "COMMIT_NOT_FOUND"
+      },
+      {
+        "card": "doc/tasks/FEA-GOV-8.md",
+        "line": 59,
+        "path": "doc/plan/FEA-CONTRACT_FREEZE_MATRIX.md",
+        "commit": "(见提交)",
+        "code": "COMMIT_NOT_FOUND"
+      },
+      {
+        "card": "doc/tasks/FEA-GOV-9.md",
+        "line": 61,
+        "path": "doc/handoffs/NIGHT-SHIFT-2026-11-01.md",
+        "commit": "(见提交)",
+        "code": "COMMIT_NOT_FOUND"
+      },
+      {
+        "card": "doc/tasks/FEAT-IMPORT-MULTI-1.md",
+        "line": 77,
+        "path": "apps/desktop/src-tauri/src/main.rs",
+        "commit": "8b1a1da1774d418ed7e28ac6eb983028cf73b74b",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/GOV-AC-GATE-1.md",
+        "line": 101,
+        "path": "doc/09_COLLABORATION.md",
+        "commit": "fbf459f28",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/GOV-AC-GATE-1.md",
+        "line": 106,
+        "path": "doc/reviews/GOV-AC-GATE-1-bf088bb01-antigravity-r1.md",
+        "commit": "29a30408b",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/GOV-AC-GATE-1.md",
+        "line": 107,
+        "path": "doc/reviews/GOV-AC-GATE-1-bf088bb01-antigravity-r2.md",
+        "commit": "23f5d84b0",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/GOV-DEBT-CLEANUP-2.md",
+        "line": 117,
+        "path": "doc/reviews/GOV-DEBT-CLEANUP-2-94c8dcdab-antigravity-r2.md",
+        "commit": "2636301fe",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/GOV-EVIDENCE-DIR-SWEEP-1.md",
+        "line": 84,
+        "path": "doc/reviews/GOV-EVIDENCE-DIR-SWEEP-1-c5cec3f63-antigravity-r1.md",
+        "commit": "b25af8142",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/GOV-EVIDENCE-UNIQUE-1.md",
+        "line": 119,
+        "path": "doc/reviews/GOV-EVIDENCE-UNIQUE-1-3b62f7937-antigravity-r1.md",
+        "commit": "c41a40a09",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/GOV-EVIDENCE-UNIQUE-1.md",
+        "line": 120,
+        "path": "doc/reviews/GOV-EVIDENCE-UNIQUE-1-3b62f7937-antigravity-r2.md",
+        "commit": "0a9e809e2",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/GOV-EVIDENCE-UNIQUE-1.md",
+        "line": 121,
+        "path": "doc/reviews/GOV-EVIDENCE-UNIQUE-1-3b62f7937-antigravity-r3.md",
+        "commit": "ef4aadfee",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/GOV-EVIDENCE-UNIQUE-1.md",
+        "line": 122,
+        "path": "doc/reviews/GOV-EVIDENCE-UNIQUE-1-3b62f7937-antigravity-r4.md",
+        "commit": "90377dd22",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/GOV-P15-MANIFEST-1.md",
+        "line": 79,
+        "path": "doc/reviews/GOV-P15-MANIFEST-1-6eec515a5-antigravity-r1.md",
+        "commit": "bfbb7b1a9",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/GOV-P15-MANIFEST-1.md",
+        "line": 80,
+        "path": "doc/reviews/GOV-P15-MANIFEST-1-2f9d549d5-antigravity-r2.md",
+        "commit": "bfbb7b1a9",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/GOV-P15-MANIFEST-1.md",
+        "line": 81,
+        "path": "doc/reviews/GOV-P15-MANIFEST-1-2f9d549d5-antigravity-r3.md",
+        "commit": "68e696306",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/GOV-RESOURCE-MANIFEST-JSON-1.md",
+        "line": 101,
+        "path": "tools/governance/tests/run-resource-manifest-cases.py",
+        "commit": "a2ca297f1",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/GOV-SOURCE-RECORDS-1.md",
+        "line": 131,
+        "path": "doc/reviews/GOV-SOURCE-RECORDS-1-cc373560c-antigravity-r1.md",
+        "commit": "7f9f5ae46",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/HOST-CORE-1.md",
+        "line": 124,
+        "path": "tests/core/test_host_control.py",
+        "commit": "97c2d559c6155375ce67da7da922d62a26971100",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/HOST-CORE-1.md",
+        "line": 128,
+        "path": "doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
+        "commit": "97c2d559c6155375ce67da7da922d62a26971100",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 99,
+        "path": "verification/HOST-CORECLIENT-1/publish/publish_files.json",
+        "commit": "c1efb938f5b12c989b406316a8eabd62e0a34a6a",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 137,
+        "path": "verification/HOST-CORECLIENT-1/publish/publish.log",
+        "commit": "9126090eb",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/HOST-ISSUER-1-C1.md",
+        "line": 106,
+        "path": "doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
+        "commit": "af6fa705de54489ce32811cdc8dd3be51a1fd999",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/HOST-ISSUER-1.md",
+        "line": 268,
+        "path": "apps/desktop/src-tauri/src/host_issuer.rs",
+        "commit": "2ad590a31ac2271db7de45f349d94eeaa494775c",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/HOST-ISSUER-1.md",
+        "line": 269,
+        "path": "apps/desktop/src-tauri/src/library_bridge.rs",
+        "commit": "2ad590a31ac2271db7de45f349d94eeaa494775c",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/HOST-ISSUER-1.md",
+        "line": 270,
+        "path": "apps/desktop/src-tauri/src/main.rs",
+        "commit": "2ad590a31ac2271db7de45f349d94eeaa494775c",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/HOST-ISSUER-1.md",
+        "line": 271,
+        "path": "apps/desktop/src-tauri/build.rs",
+        "commit": "2ad590a31ac2271db7de45f349d94eeaa494775c",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/HOST-ISSUER-1.md",
+        "line": 272,
+        "path": "apps/desktop/src-tauri/capabilities/m2rc1-commands.json",
+        "commit": "2ad590a31ac2271db7de45f349d94eeaa494775c",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/HOST-ISSUER-1.md",
+        "line": 273,
+        "path": "doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
+        "commit": "8a990a345c91b4e36cc0bfc6549104b454b24556",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/HOST-TTL-BOUNDARY-1.md",
+        "line": 157,
+        "path": "doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
+        "commit": "af6fa705de54489ce32811cdc8dd3be51a1fd999",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-FORENSIC-RECOVERY.md",
+        "line": 70,
+        "path": "verification/P02PRE-R1H-FORENSIC-RECOVERY/resource-closeout-r2.json",
+        "commit": "-",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW.md",
+        "line": 100,
+        "path": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/resource-closeout-r1.json",
+        "commit": "-",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+        "line": 190,
+        "path": "verification/P02PRE-R1H-H2-COLLECTOR/source-review-r3-adjudication.md",
+        "commit": "-",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+        "line": 201,
+        "path": "verification/P02PRE-R1H-H2-COLLECTOR/checkpoint.md",
+        "commit": "-",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-H2-RUN.md",
+        "line": 95,
+        "path": "verification/P02PRE-R1H-H2-RUN/preflight-freeze-r1.md",
+        "commit": "-",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE.md",
+        "line": 85,
+        "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/checkpoint.md",
+        "commit": "-",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE.md",
+        "line": 87,
+        "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/review-request-r1.md",
+        "commit": "-",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/P09-AC3-DELETE-1.md",
+        "line": 149,
+        "path": "doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
+        "commit": "694de50789de4e9b6ecde831364ddbca167fcb44",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/P09-AC3-DELETE-HARDEN-1.md",
+        "line": 134,
+        "path": "src/bootstrap/core_service.py",
+        "commit": "51bd814d11f6903160788a6ac315da33d26b63f5",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/P09-AC3-DELETE-HARDEN-1.md",
+        "line": 137,
+        "path": "apps/desktop/frontend/src/library/client.ts",
+        "commit": "c66fa6e9ea48a4f46c3186dc569131cbe364d9af",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/P09-FU2.md",
+        "line": 121,
+        "path": "doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
+        "commit": "9fe6ac5cd116474de1006b4ab4b1e5341b71cf41",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/P09.md",
+        "line": 128,
+        "path": "verification/P09/evidence/AC3-source-hashes.json",
+        "commit": "8ab617f2e996e99a4a4ddac82fe71863d4b0684e",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/P12-C1.md",
+        "line": 113,
+        "path": "doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
+        "commit": "919ca24731f5aaf50f1b46e8fe61c214b94c4b71",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/P12-C1.md",
+        "line": 124,
+        "path": "src/infrastructure/sqlite/library.py",
+        "commit": "dc254fa93ca00cf7bde417d6c02ee178fc179606",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/P13-C1.md",
+        "line": 112,
+        "path": "doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
+        "commit": "ed79a2b778e13e8aa892014eb16a38be4e27fdf7",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/P13-C1.md",
+        "line": 122,
+        "path": "src/application/tasks/service.py",
+        "commit": "c33033dc02c4373d3a3a35333a2c7aeac03c7ce6",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/P13-C1.md",
+        "line": 123,
+        "path": "src/application/tasks/store.py",
+        "commit": "c33033dc02c4373d3a3a35333a2c7aeac03c7ce6",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/P13-C1.md",
+        "line": 124,
+        "path": "src/application/tasks/projection.py",
+        "commit": "c33033dc02c4373d3a3a35333a2c7aeac03c7ce6",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/P13-C1.md",
+        "line": 125,
+        "path": "src/bootstrap/core_service.py",
+        "commit": "c33033dc02c4373d3a3a35333a2c7aeac03c7ce6",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/P15-C1-FU1.md",
+        "line": 72,
+        "path": "doc/contracts/P15_SETTINGS_IPC_CONTRACT.md",
+        "commit": "eeae29831b4f20b7ddf0e93897d3b99e806b8ccf",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/P15-C1-FU1.md",
+        "line": 76,
+        "path": "doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
+        "commit": "82ce23bd50e4c53c3e546a392f4e984e7102a097",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/P15-C1-FU2.md",
+        "line": 53,
+        "path": "doc/contracts/P15_SETTINGS_IPC_CONTRACT.md",
+        "commit": "26fb0e762311766eb669c52eb38efdfd359b27bd",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/P15-C1.md",
+        "line": 89,
+        "path": "doc/contracts/P15_SETTINGS_IPC_CONTRACT.md",
+        "commit": "8d083ee186ee23b86c4db948f32df12d7120939d",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/P15-CORE-1C.md",
+        "line": 65,
+        "path": "src/bootstrap/core_assembly.py",
+        "commit": "52b0974ade0250c7cec016de9b909ef00b5370cc",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/P15-CORE-1C.md",
+        "line": 66,
+        "path": "src/bootstrap/core_service.py",
+        "commit": "52b0974ade0250c7cec016de9b909ef00b5370cc",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/P15-CORE-1C.md",
+        "line": 67,
+        "path": "src/bootstrap/settings_commands.py",
+        "commit": "52b0974ade0250c7cec016de9b909ef00b5370cc",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/P15-CORE-1C.md",
+        "line": 76,
+        "path": "doc/contracts/P15_SETTINGS_IPC_CONTRACT.md",
+        "commit": "5f5431b8718b2753e851121909ce3796207b1e72",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/P15.md",
+        "line": 94,
+        "path": "apps/desktop/frontend/src/settings/SettingsPage.test.tsx",
+        "commit": "e5f1a719bdaf482da027498671490c585a376bd3",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/P15.md",
+        "line": 95,
+        "path": "apps/desktop/frontend/src/settings/client.p15.test.ts",
+        "commit": "e5f1a719bdaf482da027498671490c585a376bd3",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/P16-C1.md",
+        "line": 123,
+        "path": "doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
+        "commit": "196f50d45bc55eedfae87603b8887fd98ddcbf62",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/P16-C1.md",
+        "line": 133,
+        "path": "doc/AD-001_TARGET_DESKTOP_ARCHITECTURE.md",
+        "commit": "ff9633b5b09d8a898f92722a728edd3ff14da2d5",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/P16.md",
+        "line": 141,
+        "path": "doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
+        "commit": "093430c75a46d28ed759ec646039bf2f55e3d429",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/P20-AC4-FPS-1.md",
+        "line": 120,
+        "path": "apps/desktop/frontend/src/main.tsx",
+        "commit": "01129315100928751546c9608456868f5085fa8c",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/P20-CLOSE-BOUND-1.md",
+        "line": 99,
+        "path": "apps/desktop/src-tauri/src/library_bridge.rs",
+        "commit": "835f4bb17df565581a76cf66062760cdd3c85a9e",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/P20-CLOSE-BOUND-1.md",
+        "line": 120,
+        "path": "verification/P20-CLOSE-BOUND-1/codex-review-r6.md",
+        "commit": "-",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/P20-ISOLATION-1.md",
+        "line": 232,
+        "path": "apps/desktop/src-tauri/src/library_bridge.rs",
+        "commit": "e16f538f7f0cf119c3a27a95f107b6c113f465b6",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/P22-REBASE-1.md",
+        "line": 144,
+        "path": "apps/desktop/src-tauri/src/library_bridge.rs",
+        "commit": "61c806c9e17d3c756b15b328dfc95f5aa5a6c72f",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/P22-REBASE-1.md",
+        "line": 146,
+        "path": "apps/desktop/src-tauri/src/library_bridge.rs",
+        "commit": "4e5c71d9f0a6191c85002fc287d55454e3bfcde8",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/SEC-FIX-PATH-ECHO-1.md",
+        "line": 69,
+        "path": "src/bootstrap/core_service.py",
+        "commit": "022f4d73773a2d9bdafa04f16d4cca96af5c37ad",
+        "code": "SHA_MISMATCH"
+      },
+      {
+        "card": "doc/tasks/SEC-FIX-PATH-ECHO-1.md",
+        "line": 70,
+        "path": "tests/core/test_core_service_settings.py",
+        "commit": "022f4d73773a2d9bdafa04f16d4cca96af5c37ad",
+        "code": "SHA_MISMATCH"
+      }
+    ],
+    "T2_PATH_EXISTS_NO_DIGEST": [
+      {
+        "card": "doc/tasks/DETECT-TILING-1.md",
+        "line": 112,
+        "path": "verification/P09-GOVERNANCE-DEBT-20261019/codex-adjudicate-tiling-closeout-r36.md",
+        "commit": "1746927ec",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/DEV-PREVIEW-1.md",
+        "line": 147,
+        "path": "apps/desktop/frontend/src/main.tsx",
+        "commit": "8ac00b97b644cdf6dcfb3124c9099c6e994e8b22",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/DEV-PREVIEW-1.md",
+        "line": 148,
+        "path": "apps/desktop/frontend/src/dev/devMockBridge.ts",
+        "commit": "8ac00b97b644cdf6dcfb3124c9099c6e994e8b22",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/DEV-PREVIEW-1.md",
+        "line": 149,
+        "path": "apps/desktop/src-tauri/tauri.dev.conf.json",
+        "commit": "8ac00b97b644cdf6dcfb3124c9099c6e994e8b22",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/DEV-PREVIEW-1.md",
+        "line": 150,
+        "path": "apps/desktop/src-tauri/build.rs",
+        "commit": "8ac00b97b644cdf6dcfb3124c9099c6e994e8b22",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/DEV-PREVIEW-1.md",
+        "line": 154,
+        "path": "apps/desktop/src-tauri/tauri.conf.json",
+        "commit": "8ac00b97b644cdf6dcfb3124c9099c6e994e8b22",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/DEV-PREVIEW-1.md",
+        "line": 155,
+        "path": "packaging/m2ac5/build_sidecar.ps1",
+        "commit": "8ac00b97b644cdf6dcfb3124c9099c6e994e8b22",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/ENV-BUNDLE-1-FU1.md",
+        "line": 178,
+        "path": "verification/ENV-BUNDLE-1-FU1/dsh-review-r1.md",
+        "commit": "a88242d5f3f69a625cbd7fd4a9e89d5f27e27daa",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/EVENTS-FWD-1.md",
+        "line": 126,
+        "path": "verification/EVENTS-FWD-1/dsh-review-r1.md",
+        "commit": "b0432a89f",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/EVENTS-FWD-1.md",
+        "line": 127,
+        "path": "verification/EVENTS-FWD-1/resource-manifest.json",
+        "commit": "19412ff70",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/EXPORT-IPC-1.md",
+        "line": 114,
+        "path": "verification/EXPORT-IPC-1/resource-manifest.json",
+        "commit": "19412ff70",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-02-CORE.md",
+        "line": 107,
+        "path": "verification/FEA-02-CORE/collect-test-results.ps1",
+        "commit": "5efb8f58c",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-02-CORE.md",
+        "line": 108,
+        "path": "verification/FEA-02-CORE/verify-boundaries.ps1",
+        "commit": "5efb8f58c",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-11-AC4-GAPS-1.md",
+        "line": 205,
+        "path": "tests/fea11/test_source_sync.py",
+        "commit": "95815ff7a",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-11-AC4-GAPS-1.md",
+        "line": 206,
+        "path": "tests/fea11/test_source_sync_storage.py",
+        "commit": "95815ff7a",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-12-CORE.md",
+        "line": 228,
+        "path": "verification/FEA-12-CORE/core-py-implementation-record.md",
+        "commit": "44718d3c9",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-12-CORE.md",
+        "line": 229,
+        "path": "verification/FEA-12-CORE/evidence/core-py-inventory-digest-golden.json",
+        "commit": "44718d3c9",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-12-CORE.md",
+        "line": 230,
+        "path": "verification/FEA-12-CORE/evidence/core-py-isolation-scan.json",
+        "commit": "44718d3c9",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-12-CORE.md",
+        "line": 231,
+        "path": "verification/FEA-12-CORE/logs/core-py-ac1-move-to-trash.log",
+        "commit": "44718d3c9",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-12-CORE.md",
+        "line": 232,
+        "path": "verification/FEA-12-CORE/logs/core-py-ac2-restore.log",
+        "commit": "44718d3c9",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-12-CORE.md",
+        "line": 233,
+        "path": "verification/FEA-12-CORE/logs/core-py-ac3-recycle-read.log",
+        "commit": "44718d3c9",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-12-CORE.md",
+        "line": 234,
+        "path": "verification/FEA-12-CORE/logs/core-py-ac4-preview.log",
+        "commit": "44718d3c9",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-12-CORE.md",
+        "line": 235,
+        "path": "verification/FEA-12-CORE/logs/core-py-ac5-digest-binding.log",
+        "commit": "44718d3c9",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-12-CORE.md",
+        "line": 236,
+        "path": "verification/FEA-12-CORE/logs/core-py-ac6-transaction-rollback.log",
+        "commit": "44718d3c9",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-12-CORE.md",
+        "line": 237,
+        "path": "verification/FEA-12-CORE/logs/core-py-ac7-protection-boundary.log",
+        "commit": "44718d3c9",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-12-CORE.md",
+        "line": 238,
+        "path": "verification/FEA-12-CORE/logs/core-py-ac8-pd08-shared.log",
+        "commit": "44718d3c9",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-12-CORE.md",
+        "line": 239,
+        "path": "verification/FEA-12-CORE/logs/core-py-ac9-c17-x1.log",
+        "commit": "44718d3c9",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-12-CORE.md",
+        "line": 240,
+        "path": "verification/FEA-12-CORE/logs/core-py-ac10-protection-policy.log",
+        "commit": "44718d3c9",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-12-CORE.md",
+        "line": 241,
+        "path": "verification/FEA-12-CORE/logs/core-py-ac11-python-wire.log",
+        "commit": "44718d3c9",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-12-CORE.md",
+        "line": 242,
+        "path": "verification/FEA-12-CORE/logs/core-py-ac12-isolation.log",
+        "commit": "44718d3c9",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-12-CORE.md",
+        "line": 243,
+        "path": "verification/FEA-12-CORE/logs/gates-core-py.log",
+        "commit": "44718d3c9",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-12-CORE.md",
+        "line": 244,
+        "path": "verification/FEA-12-CORE/logs/core-py-pytest-related.log",
+        "commit": "44718d3c9",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-12-CORE.md",
+        "line": 245,
+        "path": "verification/FEA-12-CORE/logs/core-py-pytest-full.log",
+        "commit": "44718d3c9",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-12-CORE.md",
+        "line": 246,
+        "path": "verification/FEA-12-CORE/logs/core-py-pins.log",
+        "commit": "44718d3c9",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-12-CORE.md",
+        "line": 247,
+        "path": "verification/FEA-12-CORE/logs/core-py-check.log",
+        "commit": "44718d3c9",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-12-CORE.md",
+        "line": 248,
+        "path": "verification/FEA-12-CORE/scripts/core_py_inventory_digest.py",
+        "commit": "44718d3c9",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-12-CORE.md",
+        "line": 249,
+        "path": "verification/FEA-12-CORE/scripts/core_py_isolation_scan.py",
+        "commit": "44718d3c9",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-12-CORE.md",
+        "line": 250,
+        "path": "doc/handoffs/FEA-12-CORE-core-py.md",
+        "commit": "a4c04d03c",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-12-CORE.md",
+        "line": 251,
+        "path": "verification/FEA-12-CORE/core-host-capability-probe.json",
+        "commit": "fc7125586",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-12-CORE.md",
+        "line": 252,
+        "path": "verification/FEA-12-CORE/core-host-implementation-record.md",
+        "commit": "fc7125586",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-12-CORE.md",
+        "line": 253,
+        "path": "verification/FEA-12-CORE/core-host-old-core-negative-control.json",
+        "commit": "fc7125586",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-12-CORE.md",
+        "line": 254,
+        "path": "verification/FEA-12-CORE/logs/core-host-baseline-negative-control-oldhost.log",
+        "commit": "fc7125586",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-12-CORE.md",
+        "line": 255,
+        "path": "verification/FEA-12-CORE/logs/core-host-check.log",
+        "commit": "fc7125586",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-12-CORE.md",
+        "line": 256,
+        "path": "verification/FEA-12-CORE/logs/core-host-dotnet-command-filter.log",
+        "commit": "fc7125586",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-12-CORE.md",
+        "line": 257,
+        "path": "verification/FEA-12-CORE/logs/core-host-dotnet-full-1.log",
+        "commit": "fc7125586",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-12-CORE.md",
+        "line": 258,
+        "path": "verification/FEA-12-CORE/logs/core-host-dotnet-full-2.log",
+        "commit": "fc7125586",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-12-CORE.md",
+        "line": 259,
+        "path": "verification/FEA-12-CORE/logs/core-host-dotnet-sidecar-negative.log",
+        "commit": "fc7125586",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-12-CORE.md",
+        "line": 260,
+        "path": "verification/FEA-12-CORE/logs/core-host-pins.log",
+        "commit": "fc7125586",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-12-CORE.md",
+        "line": 261,
+        "path": "verification/FEA-12-CORE/logs/gates-core-host.log",
+        "commit": "fc7125586",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-12-CORE.md",
+        "line": 264,
+        "path": "doc/reviews/CONTRACT-UNFREEZE-2026-11-05.md",
+        "commit": "fc9833479",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-12-DSIM-1.md",
+        "line": 97,
+        "path": "src/application/maintenance/recycle_gateway.py",
+        "commit": "d5925957b",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-12-DSIM-1.md",
+        "line": 98,
+        "path": "src/infrastructure/filesystem/simulated_recycle_bin.py",
+        "commit": "d5925957b",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-12-DSIM-1.md",
+        "line": 99,
+        "path": "tests/fea12/test_recycle_gateway_sim.py",
+        "commit": "d5925957b",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-12-DSIM-1.md",
+        "line": 100,
+        "path": "src/application/maintenance/__init__.py",
+        "commit": "d5925957b",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/GOV-AC-GATE-1.md",
+        "line": 102,
+        "path": "tools/governance/check.ps1",
+        "commit": "fbf459f28",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/GOV-RESOURCE-MANIFEST-JSON-1.md",
+        "line": 100,
+        "path": "tools/governance/tests/fixtures/resource-manifest/cases.json",
+        "commit": "7350da5e9",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/HOST-ISSUER-1-C1.md",
+        "line": 111,
+        "path": "doc/tasks/HOST-ISSUER-1.md",
+        "commit": "6a5051dcafa549f200730a4f9824d83d187f07a2",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/HOST-TTL-BOUNDARY-1.md",
+        "line": 147,
+        "path": "verification/HOST-TTL-BOUNDARY-1/ac6-rust-concurrency-diagnostic-6284f6f.jsonl",
+        "commit": "a4bc60dca0f31c61605ba45281dc4b511caf184e",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/HOST-TTL-BOUNDARY-1.md",
+        "line": 154,
+        "path": "verification/HOST-TTL-BOUNDARY-1/ac6-export-rust-concurrency-diagnostic-7fbce30.jsonl",
+        "commit": "fdf974645f4d3fdcabacbda5a8bf1b1678572398",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/HOST-TTL-BOUNDARY-1.md",
+        "line": 159,
+        "path": "verification/HOST-TTL-BOUNDARY-1/dsh-review-r1.md",
+        "commit": "775bf0ea9a82032631d29450eac0a8e67d3b59f7",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/M2-PROD-DETECT-ENV-1.md",
+        "line": 115,
+        "path": "verification/M2-PROD-DETECT-ENV-1/environment-restoration.md",
+        "commit": "9464003cd",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/M2-PROD-DETECT-ENV-1.md",
+        "line": 116,
+        "path": "tests/providers/test_detection_manga_real.py",
+        "commit": "a016d38cb",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/M2-PROD-DETECT-ENV-1.md",
+        "line": 117,
+        "path": "src/infrastructure/providers/detection_manga.py",
+        "commit": "ed86cc465",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/M2-PROD-DETECT-ENV-1.md",
+        "line": 119,
+        "path": "verification/M2-PROD-DETECT-ENV-1/dsh-zcode-review-r193.md",
+        "commit": "d4d0f46ab",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION.md",
+        "line": 99,
+        "path": "verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/codex-ac3-resolution-verify-20261013T2002Z.md",
+        "commit": "f298467add132373f391e4ec9335d84b53052378",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION.md",
+        "line": 104,
+        "path": "verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/codex-selftest-ac3-branch-res-20261013T2002Z.env.txt",
+        "commit": "f298467add132373f391e4ec9335d84b53052378",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION.md",
+        "line": 116,
+        "path": "verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/dsh-review-ac3-branch-p2-bounded-prompt.md",
+        "commit": "f298467add132373f391e4ec9335d84b53052378",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION.md",
+        "line": 120,
+        "path": "verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/dsh-review-ac3-branch-resolution-summary.md",
+        "commit": "f298467add132373f391e4ec9335d84b53052378",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION.md",
+        "line": 122,
+        "path": "verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/evidence-manifest-ac3-branch-res-r1.json",
+        "commit": "61812549b49b4f8470dc3dcc7920026d60c63612",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/P02-NEW-TIME-X6-BUILD-CARGO.md",
+        "line": 127,
+        "path": "verification/P02-NEW-TIME-X6-BUILD-CARGO/canonical-evidence-manifest-r1.json",
+        "commit": "77463b41315b33ce11240f2a7d24419d26bb05a6",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW.md",
+        "line": 87,
+        "path": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/task-contract-r1.md",
+        "commit": "c676274d2ed84dea72cd11231b20ea416d4f2342",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW.md",
+        "line": 89,
+        "path": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/h2-run-task-r1.md",
+        "commit": "c676274d2ed84dea72cd11231b20ea416d4f2342",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW.md",
+        "line": 93,
+        "path": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/dsh-review-request-r1.md",
+        "commit": "a715b249718a4119a428d56975c308642ff47b00",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW.md",
+        "line": 96,
+        "path": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/applicability-matrix-r1.md",
+        "commit": "a715b249718a4119a428d56975c308642ff47b00",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW.md",
+        "line": 97,
+        "path": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/codex-adjudication-r1.md",
+        "commit": "a715b249718a4119a428d56975c308642ff47b00",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW.md",
+        "line": 98,
+        "path": "verification/P02PRE-R1H-H1-CURRENT-INPUT-REVIEW/codex-handoff-r1.md",
+        "commit": "a715b249718a4119a428d56975c308642ff47b00",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-H2-RUN.md",
+        "line": 100,
+        "path": "verification/P02PRE-R1H-H2-RUN/checkpoint.md",
+        "commit": "06990b7993d042ae5e74ab479e291e494b622588",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-H2-RUN.md",
+        "line": 137,
+        "path": "verification/P02PRE-R1H-H2-RUN/codex-handoff-r2.md",
+        "commit": "e24abda53baff2807bc5a236c91ddbc403a44505",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE.md",
+        "line": 99,
+        "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/review-input-pins-r2.json",
+        "commit": "54a710a1f6e0df937e7164e7d135fa98c735b36a",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE.md",
+        "line": 102,
+        "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/post-review-pins-r2.json",
+        "commit": "939c859c9a10e809f9aaee2ccc986bcf154b296e",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE.md",
+        "line": 103,
+        "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/dsh-review-run-r2.json",
+        "commit": "939c859c9a10e809f9aaee2ccc986bcf154b296e",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE.md",
+        "line": 106,
+        "path": "verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/integration-gate-r2.json",
+        "commit": "1c10a4e1aa75f704ed66c54a7e173c4c635bdc81",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/P09-AC3-DELETE-1.md",
+        "line": 150,
+        "path": "verification/P09-AC3-DELETE-1/evidence/p09_ac3_delete_evidence.json",
+        "commit": "d9f7a628c7c0b9e00d91a1bddd102daec76139c5",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/P09-AC3-DELETE-HARDEN-1.md",
+        "line": 133,
+        "path": "src/infrastructure/sqlite/library.py",
+        "commit": "a73bf6b10b76b2bcdd2b7ed4f843608c661d8c6e",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/P09-FU2.md",
+        "line": 123,
+        "path": "doc/tasks/P09.md",
+        "commit": "9fe6ac5cd116474de1006b4ab4b1e5341b71cf41",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/P10.md",
+        "line": 136,
+        "path": "doc/04_USER_FLOW.md",
+        "commit": "2f4144b4ae53220e768071ee5e2a53a42fd990d0",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/P11-PROJECTION-TEST-ALIGN-1.md",
+        "line": 109,
+        "path": "tests/workbench/test_projection.py",
+        "commit": "9c594cd4f",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/P11-PROJECTION-TEST-ALIGN-1.md",
+        "line": 110,
+        "path": "verification/P11-PROJECTION-TEST-ALIGN-1/matrix-alignment.md",
+        "commit": "9c594cd4f",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/P11-PROJECTION-TEST-ALIGN-1.md",
+        "line": 111,
+        "path": "verification/TEST-ENV-ASSUMPTIONS-1/dsh-zcode-review-r189.md",
+        "commit": "b047e5947",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/P11-PROJECTION-TEST-ALIGN-1.md",
+        "line": 112,
+        "path": "verification/P11-PROJECTION-TEST-ALIGN-1/r101-r102-closure.md",
+        "commit": "871a0171d",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/P12-C1.md",
+        "line": 119,
+        "path": "doc/tasks/P09.md",
+        "commit": "58e70f0bba6292aa731338bd4077d1cafa4fc7b3",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/P12.md",
+        "line": 127,
+        "path": "verification/P12/dsh-review-r1.md",
+        "commit": "78d782376",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/P12.md",
+        "line": 128,
+        "path": "verification/P12/resource-manifest.json",
+        "commit": "19412ff70",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/P13-C1.md",
+        "line": 120,
+        "path": "doc/04_USER_FLOW.md",
+        "commit": "c33033dc02c4373d3a3a35333a2c7aeac03c7ce6",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/P13-C1.md",
+        "line": 121,
+        "path": "doc/tasks/P13.md",
+        "commit": "c33033dc02c4373d3a3a35333a2c7aeac03c7ce6",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/P14.md",
+        "line": 142,
+        "path": "verification/P14/resource-manifest.json",
+        "commit": "19412ff70",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/P15-C1-FU1.md",
+        "line": 79,
+        "path": "verification/P15-C1-FU1/resource-manifest.json",
+        "commit": "19412ff70",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/P15-C1-FU2.md",
+        "line": 59,
+        "path": "verification/P15-C1-FU2/resource-manifest.json",
+        "commit": "19412ff70",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/P15-C1.md",
+        "line": 94,
+        "path": "verification/P15-C1/resource-manifest.json",
+        "commit": "19412ff70",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/P16-C1.md",
+        "line": 130,
+        "path": "doc/04_USER_FLOW.md",
+        "commit": "ff9633b5b09d8a898f92722a728edd3ff14da2d5",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/P17.md",
+        "line": 108,
+        "path": "verification/P17/pytest.log",
+        "commit": "55b9ff3f88dd98859c7ef816e2dbd00d7b84d97c",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/P17.md",
+        "line": 110,
+        "path": "verification/P17/cargo-packaged.log",
+        "commit": "55b9ff3f88dd98859c7ef816e2dbd00d7b84d97c",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/P19-BOOT-1.md",
+        "line": 101,
+        "path": "verification/P19-BOOT-1/resource-manifest.json",
+        "commit": "215ff93c1",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/P19-UI-FIX-1.md",
+        "line": 68,
+        "path": "verification/P19-UI-FIX-1/frontend-npm-test-final.log",
+        "commit": "5dd4b2af0a0c1da00d49d7267ddac11d718cd94c",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/P19-UI-FIX-1.md",
+        "line": 69,
+        "path": "verification/P19-UI-FIX-1/frontend-npm-build-final.log",
+        "commit": "5dd4b2af0a0c1da00d49d7267ddac11d718cd94c",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/P22-REBASE-1.md",
+        "line": 145,
+        "path": "doc/handoffs/P22-REBASE-1-antigravity-20261015.md",
+        "commit": "5181facbb095be8c7a45924b699d4e3a481aeb50",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/P22-REBASE-1.md",
+        "line": 147,
+        "path": "doc/tasks/P22-REBASE-1.md",
+        "commit": "4e5c71d9f0a6191c85002fc287d55454e3bfcde8",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/PDF-STREAM-FIX-1.md",
+        "line": 99,
+        "path": "src/infrastructure/export/qt_free.py",
+        "commit": "662ba150e",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/PDF-STREAM-FIX-1.md",
+        "line": 100,
+        "path": "tests/export/test_pdf_stream_integrity.py",
+        "commit": "09676cc19",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/PDF-STREAM-FIX-1.md",
+        "line": 101,
+        "path": "verification/PDF-STREAM-FIX-1/p1-1-stderr-capture-experiment.md",
+        "commit": "09676cc19",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/PDF-STREAM-FIX-1.md",
+        "line": 102,
+        "path": "verification/PDF-STREAM-FIX-1/ac5-regression-baseline-comparison.md",
+        "commit": "09676cc19",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/PDF-STREAM-FIX-1.md",
+        "line": 103,
+        "path": "verification/PDF-STREAM-FIX-1/dsh-zcode-review.md",
+        "commit": "09676cc19",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/PRODUCT-IDENTITY-1.md",
+        "line": 125,
+        "path": "verification/PRODUCT-IDENTITY-1/README.md",
+        "commit": "874eec3cb",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/PRODUCT-IDENTITY-1.md",
+        "line": 126,
+        "path": "verification/UIUX-V2-RUNTIME-NARROW-1/run-i5/report.json",
+        "commit": "874eec3cb",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/PRODUCT-IDENTITY-1.md",
+        "line": 127,
+        "path": "apps/desktop/src-tauri/tauri.conf.json",
+        "commit": "874eec3cb",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/PRODUCT-IDENTITY-1.md",
+        "line": 128,
+        "path": "apps/desktop/src-tauri/Cargo.toml",
+        "commit": "874eec3cb",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/PRODUCT-IDENTITY-1.md",
+        "line": 129,
+        "path": "apps/desktop/src-tauri/src/main.rs",
+        "commit": "874eec3cb",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/PRODUCT-IDENTITY-1.md",
+        "line": 130,
+        "path": "apps/desktop/frontend/e2e/uiux-v2/lib/env.mjs",
+        "commit": "874eec3cb",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/READER-IPC-1.md",
+        "line": 119,
+        "path": "verification/READER-IPC-1/resource-manifest.json",
+        "commit": "19412ff70",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/REALUSE-DATA-SAFETY-1.md",
+        "line": 141,
+        "path": "tests/infrastructure/test_preview_namespace_rebind.py",
+        "commit": "38f09ac90",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/REALUSE-DATA-SAFETY-1.md",
+        "line": 142,
+        "path": "tests/core/test_core_namespace_bootstrap.py",
+        "commit": "38f09ac90",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/REALUSE-DATA-SAFETY-1.md",
+        "line": 143,
+        "path": "tests/infrastructure/test_nmbak_startup_backup.py",
+        "commit": "75aeff349",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/REALUSE-DATA-SAFETY-1.md",
+        "line": 144,
+        "path": "tests/storage/test_nmbak_backup.py",
+        "commit": "75aeff349",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/REALUSE-DATA-SAFETY-1.md",
+        "line": 145,
+        "path": "apps/desktop-avalonia/tests/NewManga.App.Tests/V2ConsoleUiTests.cs",
+        "commit": "811078ebb",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/REALUSE-DATA-SAFETY-1.md",
+        "line": 146,
+        "path": "tests/infrastructure/test_upgrade_legacy_layout.py",
+        "commit": "ff3dee029",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/REALUSE-DATA-SAFETY-1.md",
+        "line": 147,
+        "path": "src/infrastructure/sqlite/upgrade_legacy_layout.py",
+        "commit": "ff3dee029",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/REALUSE-DATA-SAFETY-1.md",
+        "line": 148,
+        "path": "apps/desktop-avalonia/tests/NewManga.Host.Tests/HostUnitTests.cs",
+        "commit": "b1ff8921f",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/REALUSE-DATA-SAFETY-1.md",
+        "line": 149,
+        "path": "src/bootstrap/core_assembly.py",
+        "commit": "b1ff8921f",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/REALUSE-DATA-SAFETY-1.md",
+        "line": 150,
+        "path": "doc/reviews/REALUSE-DATA-SAFETY-1-antigravity-r1.md",
+        "commit": "04ad20725",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/REALUSE-DATA-SAFETY-1.md",
+        "line": 151,
+        "path": "doc/reviews/REALUSE-DATA-SAFETY-1-antigravity-r2.md",
+        "commit": "c1a89ed36",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/REALUSE-DATA-SAFETY-2.md",
+        "line": 91,
+        "path": "apps/desktop-avalonia/tests/NewManga.App.Tests/V2StudioBatchTests.cs",
+        "commit": "5acbc9b88",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/REALUSE-DATA-SAFETY-2.md",
+        "line": 92,
+        "path": "apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Studio/StudioBatchViewModel.cs",
+        "commit": "5acbc9b88",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/REALUSE-DATA-SAFETY-2.md",
+        "line": 93,
+        "path": "apps/desktop-avalonia/src/NewManga.App/Views/V2/Studio/Controls/StudioBatchControls.cs",
+        "commit": "5acbc9b88",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/REALUSE-DATA-SAFETY-2.md",
+        "line": 94,
+        "path": "apps/desktop-avalonia/tests/NewManga.App.Tests/V2ShellUiTests.cs",
+        "commit": "e9b80d896",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/REALUSE-DATA-SAFETY-2.md",
+        "line": 95,
+        "path": "apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Shell/AppShellViewModel.cs",
+        "commit": "e9b80d896",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/REALUSE-DATA-SAFETY-2.md",
+        "line": 96,
+        "path": "apps/desktop-avalonia/src/NewManga.App/Services/HostController.cs",
+        "commit": "e9b80d896",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/REALUSE-DATA-SAFETY-2.md",
+        "line": 97,
+        "path": "apps/desktop-avalonia/src/NewManga.Host/StartupSelfCheck.cs",
+        "commit": "e9b80d896",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/REALUSE-DATA-SAFETY-2.md",
+        "line": 98,
+        "path": "apps/desktop-avalonia/tests/NewManga.Host.Tests/StartupSelfCheckTests.cs",
+        "commit": "e9b80d896",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/REALUSE-DATA-SAFETY-2.md",
+        "line": 99,
+        "path": "apps/desktop-avalonia/tests/NewManga.App.Tests/StartupSelfCheckUiTests.cs",
+        "commit": "e9b80d896",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/REALUSE-DATA-SAFETY-2.md",
+        "line": 100,
+        "path": "apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Console/ConsoleViewModel.cs",
+        "commit": "e9b80d896",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/REALUSE-DATA-SAFETY-2.md",
+        "line": 101,
+        "path": "apps/desktop-avalonia/tests/NewManga.App.Tests/HostControllerRetryTests.cs",
+        "commit": "f0e207db5",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/REALUSE-DATA-SAFETY-2.md",
+        "line": 102,
+        "path": "doc/reviews/REALUSE-DATA-SAFETY-2-antigravity-r1.md",
+        "commit": "f0e207db5",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/REALUSE-DATA-SAFETY-3.md",
+        "line": 88,
+        "path": "apps/desktop-avalonia/src/NewManga.App/Shell/V2/RunStatusMonitor.cs",
+        "commit": "8b5530608",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/REALUSE-DATA-SAFETY-3.md",
+        "line": 89,
+        "path": "apps/desktop-avalonia/tests/NewManga.App.Tests/RunIndexTests.cs",
+        "commit": "8b5530608",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/REALUSE-DATA-SAFETY-3.md",
+        "line": 90,
+        "path": "apps/desktop-avalonia/tests/NewManga.App.Tests/V2ConsoleUiTests.cs",
+        "commit": "8b5530608",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/REALUSE-DATA-SAFETY-3.md",
+        "line": 91,
+        "path": "apps/desktop-avalonia/tests/NewManga.App.Tests/StartupReadDedupTests.cs",
+        "commit": "569e4fa56",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/REALUSE-DATA-SAFETY-3.md",
+        "line": 92,
+        "path": "apps/desktop-avalonia/src/NewManga.App/Services/HostController.cs",
+        "commit": "4b9b53bb0",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/REALUSE-DATA-SAFETY-3.md",
+        "line": 93,
+        "path": "apps/desktop-avalonia/tests/NewManga.App.Tests/CoreStateTextTests.cs",
+        "commit": "569e4fa56",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/REALUSE-DATA-SAFETY-3.md",
+        "line": 94,
+        "path": "doc/reviews/REALUSE-DATA-SAFETY-3-antigravity-r1.md",
+        "commit": "4b9b53bb0",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/REALUSE-DATA-SAFETY-4.md",
+        "line": 84,
+        "path": "apps/desktop-avalonia/src/NewManga.CoreClient/CoreServiceClient.cs",
+        "commit": "282ad43fa",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/REALUSE-DATA-SAFETY-4.md",
+        "line": 85,
+        "path": "apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Console/ConsoleViewModel.cs",
+        "commit": "6ea2e817a",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/REALUSE-DATA-SAFETY-4.md",
+        "line": 86,
+        "path": "apps/desktop-avalonia/tests/NewManga.App.Tests/V2ConsoleUiTests.cs",
+        "commit": "4238fdbb8",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/REALUSE-DATA-SAFETY-4.md",
+        "line": 87,
+        "path": "doc/reviews/REALUSE-DATA-SAFETY-4-antigravity-r1.md",
+        "commit": "3844851e8",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/REALUSE-DATA-SAFETY-4.md",
+        "line": 88,
+        "path": "doc/proposals/REALUSE-DATA-SAFETY-4-device-status-contract.md",
+        "commit": "4238fdbb8",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/REALUSE-DATA-SAFETY-5.md",
+        "line": 93,
+        "path": "apps/desktop-avalonia/src/NewManga.App/AppOptions.cs",
+        "commit": "f25120e17",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/REALUSE-DATA-SAFETY-5.md",
+        "line": 94,
+        "path": "apps/desktop-avalonia/tests/NewManga.App.Tests/AppOptionsCliRobustnessTests.cs",
+        "commit": "f25120e17",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/REALUSE-DATA-SAFETY-5.md",
+        "line": 95,
+        "path": "apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Studio/StudioBatchViewModel.cs",
+        "commit": "f25120e17",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/REALUSE-DATA-SAFETY-5.md",
+        "line": 96,
+        "path": "apps/desktop-avalonia/src/NewManga.Host/DataSafety.cs",
+        "commit": "f25120e17",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/REALUSE-DATA-SAFETY-5.md",
+        "line": 97,
+        "path": "README.md",
+        "commit": "f25120e17",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/RUN-IPC-1.md",
+        "line": 137,
+        "path": "verification/RUN-IPC-1/resource-manifest.json",
+        "commit": "19412ff70",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/SEARCHABLE-PDF-CJK-1.md",
+        "line": 189,
+        "path": "src/infrastructure/export/qt_free.py",
+        "commit": "590118987",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/SEARCHABLE-PDF-CJK-1.md",
+        "line": 190,
+        "path": "verification/SEARCHABLE-PDF-CJK-1/font-embedding-license-review.md",
+        "commit": "c5e87d2ce",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/SEARCHABLE-PDF-CJK-1.md",
+        "line": 191,
+        "path": "tests/export/test_searchable_cjk_font.py",
+        "commit": "590118987",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/SEARCHABLE-PDF-CJK-1.md",
+        "line": 192,
+        "path": "tests/export/test_searchable_korean_e2e.py",
+        "commit": "2a6a35726",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/SEARCHABLE-PDF-CJK-1.md",
+        "line": 193,
+        "path": "verification/SEARCHABLE-PDF-CJK-1/ac3-subsetting-feasibility.md",
+        "commit": "8593f81c6",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/SEARCHABLE-PDF-CJK-1.md",
+        "line": 194,
+        "path": "verification/SEARCHABLE-PDF-CJK-1/ac4-font-cost-scaling.md",
+        "commit": "dfed15eef",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/SEARCHABLE-PDF-CJK-1.md",
+        "line": 195,
+        "path": "tests/export/test_searchable_font_cost.py",
+        "commit": "dfed15eef",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/SEARCHABLE-PDF-CJK-1.md",
+        "line": 196,
+        "path": "verification/SEARCHABLE-PDF-CJK-1/dsh-zcode-review.md",
+        "commit": "2a6a35726",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/SEC-FMT-IMPL-1.md",
+        "line": 144,
+        "path": "tests/security/test_sec_fmt_001_zip_slip.py",
+        "commit": "415ea885d",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/SEC-FMT-IMPL-1.md",
+        "line": 145,
+        "path": "tests/security/test_sec_fmt_002_xxe.py",
+        "commit": "2edfd2890",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/SEC-FMT-IMPL-1.md",
+        "line": 146,
+        "path": "tests/security/test_sec_fmt_003_magic.py",
+        "commit": "4411c8edd",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/SEC-FMT-IMPL-1.md",
+        "line": 147,
+        "path": "tests/security/test_sec_fmt_004_long_path.py",
+        "commit": "2edfd2890",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/SEC-FMT-IMPL-1.md",
+        "line": 148,
+        "path": "verification/SEC-FMT-IMPL-1/ac5-final-after-pdf-fix.md",
+        "commit": "1730670df",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/SEC-FMT-IMPL-1.md",
+        "line": 149,
+        "path": "verification/SEC-FMT-IMPL-1/dsh-zcode-review.md",
+        "commit": "4759f7c38",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/SEC-FMT-IMPL-1.md",
+        "line": 150,
+        "path": "verification/SEC-FMT-IMPL-1/guard-on-attack-path.md",
+        "commit": "820739cab",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/SEC-FMT-IMPL-1.md",
+        "line": 151,
+        "path": "verification/SEC-FMT-IMPL-1/r1-xml-parsing-scope.md",
+        "commit": "25115d198",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/TEST-ENV-ASSUMPTIONS-1.md",
+        "line": 109,
+        "path": "tests/providers/env_sim.py",
+        "commit": "20b087d7e",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/TEST-ENV-ASSUMPTIONS-1.md",
+        "line": 110,
+        "path": "tests/providers/test_devices.py",
+        "commit": "20b087d7e",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/TEST-ENV-ASSUMPTIONS-1.md",
+        "line": 111,
+        "path": "tests/providers/test_bootstrap_providers.py",
+        "commit": "20b087d7e",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/TEST-ENV-ASSUMPTIONS-1.md",
+        "line": 112,
+        "path": "tests/providers/test_registry_readiness.py",
+        "commit": "20b087d7e",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/TEST-ENV-ASSUMPTIONS-1.md",
+        "line": 113,
+        "path": "verification/TEST-ENV-ASSUMPTIONS-1/two-sided-coverage.md",
+        "commit": "20b087d7e",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/TEST-ENV-ASSUMPTIONS-1.md",
+        "line": 114,
+        "path": "verification/TEST-ENV-ASSUMPTIONS-1/dsh-zcode-review-r189.md",
+        "commit": "b047e5947",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/UI-DESIGN-1.md",
+        "line": 185,
+        "path": "doc/handoffs/UI-DESIGN-1-zcode.md",
+        "commit": "aaf00e59e",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/UI-DESIGN-1.md",
+        "line": 186,
+        "path": "verification/UI-DESIGN-1/dsh-review-r1.md",
+        "commit": "3f312c5dc",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/UIUX-V2-RUNTIME-NARROW-1.md",
+        "line": 126,
+        "path": "verification/UIUX-V2-RUNTIME-NARROW-1/run-i4/report.json",
+        "commit": "46afe3cfe",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/UIUX-V2-RUNTIME-NARROW-1.md",
+        "line": 127,
+        "path": "verification/UIUX-V2-RUNTIME-NARROW-1/README.md",
+        "commit": "46afe3cfe",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/UIUX-V2-RUNTIME-NARROW-1.md",
+        "line": 128,
+        "path": "verification/UIUX-V2-RUNTIME-NARROW-1/run-i3-shots/11-900x700-dpr2-shelf.png",
+        "commit": "46afe3cfe",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/UIUX-V2-RUNTIME-NARROW-1.md",
+        "line": 129,
+        "path": "verification/UIUX-V2-RUNTIME-NARROW-1/run-i3-shots/12-1280x800-dpr2-shelf.png",
+        "commit": "46afe3cfe",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/UIUX-V2-RUNTIME-NARROW-1.md",
+        "line": 130,
+        "path": "verification/UIUX-V2-RUNTIME-NARROW-1/review-dsh-narrow-r1.md",
+        "commit": "46afe3cfe",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/UIUX-V2-RUNTIME-NARROW-1.md",
+        "line": 131,
+        "path": "verification/UIUX-V2-RUNTIME-NARROW-1/resource-manifest.json",
+        "commit": "46afe3cfe",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/UIUX-V2-RUNTIME-NARROW-1.md",
+        "line": 132,
+        "path": "apps/desktop/frontend/src/ui/ui.css",
+        "commit": "e9a409927",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/UIUX-V2-RUNTIME-NARROW-1.md",
+        "line": 133,
+        "path": "apps/desktop/frontend/src/pages/pages.css",
+        "commit": "e9a409927",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/UIUX-V2-RUNTIME-NARROW-1.md",
+        "line": 134,
+        "path": "apps/desktop/frontend/e2e/uiux-v2/run.mjs",
+        "commit": "46afe3cfe",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/UIUX-V2-RUNTIME-NARROW-1.md",
+        "line": 135,
+        "path": "doc/handoffs/UIUX-V2-RUNTIME-NARROW-1-handoff.md",
+        "commit": "e9a409927",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+        "line": 247,
+        "path": "verification/WORKSPACE-CONSOLIDATION-1/inventory.json",
+        "commit": "3fe6b9a40",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+        "line": 248,
+        "path": "verification/WORKSPACE-CONSOLIDATION-1/inventory.md",
+        "commit": "3fe6b9a40",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+        "line": 249,
+        "path": "verification/WORKSPACE-CONSOLIDATION-1/archive-manifest.json",
+        "commit": "3fe6b9a40",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+        "line": 250,
+        "path": "verification/WORKSPACE-CONSOLIDATION-1/worktree-removal.json",
+        "commit": "3fe6b9a40",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+        "line": 251,
+        "path": "verification/WORKSPACE-CONSOLIDATION-1/branch-deletion.json",
+        "commit": "3fe6b9a40",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+        "line": 252,
+        "path": "verification/WORKSPACE-CONSOLIDATION-1/workspace-cleanup.json",
+        "commit": "3fe6b9a40",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+        "line": 253,
+        "path": "doc/WORKTREE_SAFETY_INVENTORY.md",
+        "commit": "3fe6b9a40",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+        "line": 254,
+        "path": "tools/governance/consolidate.py",
+        "commit": "3fe6b9a40",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+        "line": 255,
+        "path": "tools/governance/archive_branches.py",
+        "commit": "3fe6b9a40",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+        "line": 256,
+        "path": "tools/governance/remove_worktrees.py",
+        "commit": "3fe6b9a40",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+        "line": 257,
+        "path": "tools/governance/delete_branches.py",
+        "commit": "3fe6b9a40",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+        "line": 258,
+        "path": "tools/governance/clean_workspace.py",
+        "commit": "3fe6b9a40",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+        "line": 259,
+        "path": "verification/M2-RC2/release-22a2c2bf.md",
+        "commit": "811fc2ea4",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+        "line": 260,
+        "path": "verification/M2-RC2/release-validation-22a2c2bf.md",
+        "commit": "811fc2ea4",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+        "line": 261,
+        "path": "verification/WORKSPACE-CONSOLIDATION-1/worktree-removal-dryrun.json",
+        "commit": "3fe6b9a40",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+        "line": 262,
+        "path": "verification/WORKSPACE-CONSOLIDATION-1/branch-deletion-dryrun.json",
+        "commit": "3fe6b9a40",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/WORKSPACE-CONSOLIDATION-1.md",
+        "line": 263,
+        "path": "verification/WORKSPACE-CONSOLIDATION-1/workspace-cleanup-dryrun.json",
+        "commit": "3fe6b9a40",
+        "code": "SHA_NOT_64_HEX"
+      }
+    ],
+    "T4_NEITHER": [
+      {
+        "card": "doc/tasks/DEV-PREVIEW-1.md",
+        "line": 151,
+        "path": "tools/dev/dev-preview.ps1",
+        "commit": "8ac00b97b644cdf6dcfb3124c9099c6e994e8b22",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-05-WIRE-1.md",
+        "line": 126,
+        "path": "-",
+        "commit": "-",
+        "code": "SHA_NOT_64_HEX"
+      },
+      {
+        "card": "doc/tasks/FEA-GOV-6.md",
+        "line": 67,
+        "path": "-",
+        "commit": "-",
+        "code": "SHA_NOT_64_HEX"
+      }
+    ],
+    "T3_PATH_GONE": [
+      {
+        "card": "doc/tasks/FEA-05-PORT-1.md",
+        "line": 107,
+        "path": "apps/desktop-avalonia/src/NewManga.App/Services/IHostController.cs` + `HostController.cs` + `NullHostController.cs",
+        "commit": "24600bbee",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/FEA-05-PORT-1.md",
+        "line": 108,
+        "path": "apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Commands/DraftCommandRegistryTests.cs` + `NewManga.App.Tests/DraftPortDefaultTests.cs",
+        "commit": "24600bbee",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/FEA-06-PREREQ-1.md",
+        "line": 107,
+        "path": "apps/desktop-avalonia/src/NewManga.App/Services/AppearanceCoordinator.cs",
+        "commit": "177e145fa",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 93,
+        "path": "verification/HOST-CORECLIENT-1/build/dotnet-build-Debug.log",
+        "commit": "c1efb938f5b12c989b406316a8eabd62e0a34a6a",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 94,
+        "path": "verification/HOST-CORECLIENT-1/test/dotnet-test-Debug.log",
+        "commit": "c1efb938f5b12c989b406316a8eabd62e0a34a6a",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 95,
+        "path": "verification/HOST-CORECLIENT-1/test/results-coreclient.trx",
+        "commit": "c1efb938f5b12c989b406316a8eabd62e0a34a6a",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 96,
+        "path": "verification/HOST-CORECLIENT-1/test/results-host.trx",
+        "commit": "c1efb938f5b12c989b406316a8eabd62e0a34a6a",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 97,
+        "path": "verification/HOST-CORECLIENT-1/test/results-app.trx",
+        "commit": "c1efb938f5b12c989b406316a8eabd62e0a34a6a",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 98,
+        "path": "verification/HOST-CORECLIENT-1/test/vitest-baseline.log",
+        "commit": "c1efb938f5b12c989b406316a8eabd62e0a34a6a",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 100,
+        "path": "verification/HOST-CORECLIENT-1/wire/core-chinese-roundtrip.json",
+        "commit": "c1efb938f5b12c989b406316a8eabd62e0a34a6a",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 101,
+        "path": "verification/HOST-CORECLIENT-1/wire/core-raw-utf8-negative.json",
+        "commit": "c1efb938f5b12c989b406316a8eabd62e0a34a6a",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 102,
+        "path": "verification/HOST-CORECLIENT-1/wire/host-bridge-lifecycle.json",
+        "commit": "c1efb938f5b12c989b406316a8eabd62e0a34a6a",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 103,
+        "path": "verification/HOST-CORECLIENT-1/diagnostics/startup-timeout.json",
+        "commit": "c1efb938f5b12c989b406316a8eabd62e0a34a6a",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 104,
+        "path": "verification/HOST-CORECLIENT-1/host/runtime-readonly.json",
+        "commit": "c1efb938f5b12c989b406316a8eabd62e0a34a6a",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 105,
+        "path": "verification/HOST-CORECLIENT-1/host/second-instance.json",
+        "commit": "c1efb938f5b12c989b406316a8eabd62e0a34a6a",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 106,
+        "path": "verification/HOST-CORECLIENT-1/legacy-shell/runtime-readonly.json",
+        "commit": "c1efb938f5b12c989b406316a8eabd62e0a34a6a",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 107,
+        "path": "verification/HOST-CORECLIENT-1/smoke/smoke.json",
+        "commit": "c1efb938f5b12c989b406316a8eabd62e0a34a6a",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 109,
+        "path": "verification/HOST-CORECLIENT-1/MANIFEST.json",
+        "commit": "c1efb938f5b12c989b406316a8eabd62e0a34a6a",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 110,
+        "path": "verification/HOST-CORECLIENT-1/test/dotnet-test-Debug-no-fixture.log",
+        "commit": "c1efb938f5b12c989b406316a8eabd62e0a34a6a",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 111,
+        "path": "verification/HOST-CORECLIENT-1/test/no-fixture-summary.json",
+        "commit": "c1efb938f5b12c989b406316a8eabd62e0a34a6a",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 112,
+        "path": "verification/HOST-CORECLIENT-1/test/summary.json",
+        "commit": "c1efb938f5b12c989b406316a8eabd62e0a34a6a",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 113,
+        "path": "verification/HOST-CORECLIENT-1/host-logs/runtime-legacy-running/wire/core-service.ndjson",
+        "commit": "9126090eb",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 114,
+        "path": "verification/HOST-CORECLIENT-1/host-logs/runtime-legacy-running/wire/host-bridge.ndjson",
+        "commit": "9126090eb",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 115,
+        "path": "verification/HOST-CORECLIENT-1/host-logs/runtime-missing-sidecar/host.log",
+        "commit": "9126090eb",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 116,
+        "path": "verification/HOST-CORECLIENT-1/host-logs/runtime-parity-roundtrip/core_service.stderr.log",
+        "commit": "9126090eb",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 118,
+        "path": "verification/HOST-CORECLIENT-1/host-logs/runtime-parity-roundtrip/host.log",
+        "commit": "9126090eb",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 119,
+        "path": "verification/HOST-CORECLIENT-1/host-logs/runtime-parity-roundtrip/wire/core-service.ndjson",
+        "commit": "9126090eb",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 120,
+        "path": "verification/HOST-CORECLIENT-1/host-logs/runtime-parity-roundtrip/wire/host-bridge.ndjson",
+        "commit": "9126090eb",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 121,
+        "path": "verification/HOST-CORECLIENT-1/host-logs/runtime-readonly/core_service.stderr.log",
+        "commit": "9126090eb",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 123,
+        "path": "verification/HOST-CORECLIENT-1/host-logs/runtime-readonly/host.log",
+        "commit": "9126090eb",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 124,
+        "path": "verification/HOST-CORECLIENT-1/host-logs/runtime-readonly/wire/core-service.ndjson",
+        "commit": "9126090eb",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 125,
+        "path": "verification/HOST-CORECLIENT-1/host-logs/runtime-readonly/wire/host-bridge.ndjson",
+        "commit": "9126090eb",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 126,
+        "path": "verification/HOST-CORECLIENT-1/host-logs/runtime-second-instance/host.log",
+        "commit": "9126090eb",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 127,
+        "path": "verification/HOST-CORECLIENT-1/legacy-shell/detected.json",
+        "commit": "9126090eb",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 131,
+        "path": "verification/HOST-CORECLIENT-1/logs/core-chinese/core_service.stderr.log",
+        "commit": "9126090eb",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 132,
+        "path": "verification/HOST-CORECLIENT-1/logs/core-ping/core_service.stderr.log",
+        "commit": "9126090eb",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 133,
+        "path": "verification/HOST-CORECLIENT-1/logs/core-raw-utf8/core_service.stderr.log",
+        "commit": "9126090eb",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 134,
+        "path": "verification/HOST-CORECLIENT-1/logs/core-wire-shape/core_service.stderr.log",
+        "commit": "9126090eb",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 138,
+        "path": "verification/HOST-CORECLIENT-1/smoke/host.log",
+        "commit": "9126090eb",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 139,
+        "path": "verification/HOST-CORECLIENT-1/smoke/wire/core-service.ndjson",
+        "commit": "9126090eb",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 140,
+        "path": "verification/HOST-CORECLIENT-1/smoke/wire/host-bridge.ndjson",
+        "commit": "9126090eb",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 141,
+        "path": "verification/HOST-CORECLIENT-1/wire/bridge-errors.ndjson",
+        "commit": "9126090eb",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 142,
+        "path": "verification/HOST-CORECLIENT-1/wire/bridge-lifecycle.ndjson",
+        "commit": "9126090eb",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 143,
+        "path": "verification/HOST-CORECLIENT-1/wire/bridge-wire.ndjson",
+        "commit": "9126090eb",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 144,
+        "path": "verification/HOST-CORECLIENT-1/wire/core-chinese.ndjson",
+        "commit": "9126090eb",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 145,
+        "path": "verification/HOST-CORECLIENT-1/wire/core-ping.json",
+        "commit": "9126090eb",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 146,
+        "path": "verification/HOST-CORECLIENT-1/wire/core-ping.ndjson",
+        "commit": "9126090eb",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 147,
+        "path": "verification/HOST-CORECLIENT-1/wire/core-raw-utf8.ndjson",
+        "commit": "9126090eb",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 148,
+        "path": "verification/HOST-CORECLIENT-1/wire/core-wire-shape.json",
+        "commit": "9126090eb",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 149,
+        "path": "verification/HOST-CORECLIENT-1/wire/core-wire-shape.ndjson",
+        "commit": "9126090eb",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 150,
+        "path": "verification/HOST-CORECLIENT-1/wire/host-bridge-errors.json",
+        "commit": "9126090eb",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 151,
+        "path": "verification/HOST-CORECLIENT-1/diagnostics/missing-exe.json",
+        "commit": "9126090eb",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 152,
+        "path": "verification/HOST-CORECLIENT-1/diagnostics/request-timeout.json",
+        "commit": "9126090eb",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 153,
+        "path": "verification/HOST-CORECLIENT-1/diagnostics/spawn-failed.json",
+        "commit": "9126090eb",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 154,
+        "path": "verification/HOST-CORECLIENT-1/host/runtime-chinese-roundtrip.json",
+        "commit": "9126090eb",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 155,
+        "path": "verification/HOST-CORECLIENT-1/host/runtime-missing-sidecar.json",
+        "commit": "9126090eb",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 156,
+        "path": "verification/HOST-CORECLIENT-1/host-logs/runtime-legacy-running/core_service.stderr.log",
+        "commit": "9126090eb",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/HOST-CORECLIENT-1.md",
+        "line": 158,
+        "path": "verification/HOST-CORECLIENT-1/host-logs/runtime-legacy-running/host.log",
+        "commit": "9126090eb",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION.md",
+        "line": 117,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/dsh-review-ac3-branch-p2-bounded-result.md",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION.md",
+        "line": 118,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/dsh-review-ac3-branch-p2-bounded-stderr.txt",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION.md",
+        "line": 119,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/verification/P02-NEW-TIME-BASELINE-AC3-BRANCH-RESOLUTION/dsh-review-ac3-branch-p2-bounded.exit",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION.md",
+        "line": 96,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/tools/p02/p02-new-time-baseline.ps1",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION.md",
+        "line": 97,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION/tools/p02/p02-new-time-baseline-selftest.ps1",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02-NEW-TIME-X6.md",
+        "line": 120,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6/verification/P02-NEW-TIME-X6/executor/p02-new-time-x6.ps1",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02-NEW-TIME-X6.md",
+        "line": 121,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6/verification/P02-NEW-TIME-X6/executor/p02-new-time-x6-selftest.ps1",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02-NEW-TIME-X6.md",
+        "line": 127,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6/verification/P02-NEW-TIME-X6/protocol/x6-execution-protocol-r2.md",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02-NEW-TIME-X6.md",
+        "line": 128,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6/verification/P02-NEW-TIME-X6/output-target-inventory-r2.json",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02-NEW-TIME-X6.md",
+        "line": 129,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6/doc/handoffs/P02-NEW-TIME-X6-3c707261.md",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02-NEW-TIME-X6.md",
+        "line": 130,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6/verification/P02-NEW-TIME-X6/dsh-source-review-input-manifest-r1.json",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02-NEW-TIME-X6.md",
+        "line": 131,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6/verification/P02-NEW-TIME-X6/dsh-source-review-input-manifest-r2.json",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02-NEW-TIME-X6.md",
+        "line": 132,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6/verification/P02-NEW-TIME-X6/dsh-source-review-input-manifest-r3.json",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02-NEW-TIME-X6.md",
+        "line": 133,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6/verification/P02-NEW-TIME-X6/dsh-source-review-r1.md",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02-NEW-TIME-X6.md",
+        "line": 134,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6/verification/P02-NEW-TIME-X6/codex-source-review-adjudication-r1.md",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02-NEW-TIME-X6.md",
+        "line": 135,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6/verification/P02-NEW-TIME-X6/dsh-source-review-r2.md",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02-NEW-TIME-X6.md",
+        "line": 136,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6/verification/P02-NEW-TIME-X6/codex-source-review-adjudication-r2.md",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02-NEW-TIME-X6.md",
+        "line": 137,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6/verification/P02-NEW-TIME-X6/dsh-selftest-t-review-r3.md",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02-NEW-TIME-X6.md",
+        "line": 138,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6/verification/P02-NEW-TIME-X6/codex-selftest-t-review-adjudication-r3.md",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02-NEW-TIME-X6.md",
+        "line": 143,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6/verification/P02-NEW-TIME-X6/codex-ac2-verification-r2.md",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+        "line": 162,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR/doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+        "line": 163,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR/verification/P02PRE-R1H-H2-COLLECTOR/parser-only-20261013T124646-pwsh766-zcode.md",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+        "line": 164,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR/verification/P02PRE-R1H-H2-COLLECTOR/parser-only-20261013T134255-pwsh766-zcode-r2.md",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+        "line": 165,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR/verification/P02PRE-R1H-H2-COLLECTOR/pure-selftest-20261013T124646-pwsh766-zcode.md",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+        "line": 166,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR/verification/P02PRE-R1H-H2-COLLECTOR/pure-selftest-20261013T134255-pwsh766-zcode-r2.md",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+        "line": 167,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR/verification/P02PRE-R1H-H2-COLLECTOR/zcode-p02pre-r1h-h2-collector-handoff-20261013-r2.md",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+        "line": 168,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR/verification/P02PRE-R1H-H2-COLLECTOR/zcode-p02pre-r1h-h2-collector-handoff-20261013.md",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+        "line": 185,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3/verification/P02PRE-R1H-H2-COLLECTOR/parser-only-20261013T144300-pwsh766-antigravity-r3.md",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+        "line": 186,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3/verification/P02PRE-R1H-H2-COLLECTOR/pure-selftest-20261013T144300-pwsh766-antigravity-r3.md",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+        "line": 192,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3/verification/P02PRE-R1H-H2-COLLECTOR/antigravity-p02pre-r1h-h2-collector-handoff-20261013-r4.md",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+        "line": 193,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3/verification/P02PRE-R1H-H2-COLLECTOR/parser-only-20261013T152500-pwsh766-antigravity-r4.md",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+        "line": 194,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3/verification/P02PRE-R1H-H2-COLLECTOR/pure-selftest-20261013T152500-pwsh766-antigravity-r4.md",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+        "line": 212,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3/verification/P02PRE-R1H-H2-COLLECTOR/antigravity-p02pre-r1h-h2-collector-handoff-20261013-r5.md",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+        "line": 213,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3/verification/P02PRE-R1H-H2-COLLECTOR/parser-only-20261013T155500-pwsh766-antigravity-r5.md",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+        "line": 214,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3/verification/P02PRE-R1H-H2-COLLECTOR/pure-selftest-20261013T155500-pwsh766-antigravity-r5.md",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+        "line": 234,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3/tools/p02/h1-raw-pre-run.ps1",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+        "line": 235,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3/verification/P02PRE-R1H-H2-COLLECTOR/antigravity-p02pre-r1h-h2-collector-handoff-20261013-r6.md",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+        "line": 236,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3/verification/P02PRE-R1H-H2-COLLECTOR/parser-only-20261013T163600-pwsh766-antigravity-r6.md",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+        "line": 237,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3/verification/P02PRE-R1H-H2-COLLECTOR/pure-selftest-20261013T163600-pwsh766-antigravity-r6.md",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+        "line": 258,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3/tools/p02/h1-raw-pre-run.ps1",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+        "line": 259,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3/tools/p02/h1-raw-pre-run-selftest.ps1",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+        "line": 260,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3/doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+        "line": 261,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3/verification/P02PRE-R1H-H2-COLLECTOR/antigravity-p02pre-r1h-h2-collector-handoff-20261013-r7.md",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+        "line": 262,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3/verification/P02PRE-R1H-H2-COLLECTOR/parser-only-20261013T172200-pwsh766-antigravity-r7.md",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-H2-COLLECTOR.md",
+        "line": 263,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3/verification/P02PRE-R1H-H2-COLLECTOR/pure-selftest-20261013T172200-pwsh766-antigravity-r7.md",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-H2-RUN.md",
+        "line": 87,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-INTEGRATION/tools/p02/h1-raw-pre-run.ps1",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P02PRE-R1H-H2-RUN.md",
+        "line": 88,
+        "path": "G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-INTEGRATION/tools/p02/h1-raw-pre-run-selftest.ps1",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P09-MANAGED-READ-ROOT-TRUST-1.md",
+        "line": 197,
+        "path": "verification/P09-MANAGED-READ-ROOT-TRUST-1/logs/suite-security.log`（带头+EXIT）",
+        "commit": "d305c5845",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P09-MANAGED-READ-ROOT-TRUST-1.md",
+        "line": 198,
+        "path": "verification/P09-MANAGED-READ-ROOT-TRUST-1/logs/suite-core.log`（带头+EXIT）",
+        "commit": "d305c5845",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P09-MANAGED-READ-ROOT-TRUST-1.md",
+        "line": 199,
+        "path": "verification/P09-MANAGED-READ-ROOT-TRUST-1/logs/baseline/baseline-core.log`（历史基线）",
+        "commit": "d305c5845",
+        "code": "PATH_MISSING"
+      },
+      {
+        "card": "doc/tasks/P20-CLOSE-BOUND-1.md",
+        "line": 118,
+        "path": "apps/desktop/src-tauri/target/release/m2rc1-desktop.exe",
+        "commit": "-",
+        "code": "PATH_MISSING"
+      }
+    ]
+  }
+}

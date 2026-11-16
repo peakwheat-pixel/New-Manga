@@ -203,8 +203,18 @@ Gate 剩下的是条件 3（人眼目视 overlay）/ 4（签名 + 真机安装�
   全仓基线 **7,080 行 / 445 FAIL / 103 卡**（SHA_MISMATCH 110、SHA_NOT_64_HEX 214、PATH_MISSING 109、
   COMMIT_NOT_FOUND 12），4 类各抽样 1 条均为**真实失效**；全仓耗时 183.4 s ⇒ **不并入 check.ps1**。
   证据：`verification/GOV-EVIDENCE-PIN-REPAIR-1/ac1-ac2-baseline-2026-11-16.log`。
-- **待做（AC3–AC6）**：EV-11（及同表 HOST-AUTH-4/5 两行）append-only 修复 → 445 条逐条判定（真实失效 ⇒ supersede；
-  历史形态 ⇒ 记录可接受依据）→ 上下文独立复核 → 门禁决策。
+- **已完成（AC3 内容部分）**：`FEA-11-HOST-AUTH-2` 追加 `EV-11/12/13-supersede`（完整 commit + 64 位 sha256 = blob、
+  与工作树逐字节一致；git diff 11 insertions / **0 deletions**）；巡检新增 supersede 语义 + 2 项测试。
+- **新裁定（门禁例外通道）**：`doc/reviews/GOV-EVIDENCE-PIN-REPAIR-1-GATE-RULING-2026-11-16.md`
+  （`APPROVED_WITH_CONDITIONS`，**Q1=B**：不让 check.ps1 自动识别 supersede，改**逐行受控 allowlist**；
+  资格基线冻结 `8db997f9…`；一行一指纹；替代行仍严格校验；Resource 不受豁免；卡片转非终态即失效）。
+  ⇒ 巡检工具的 `SUPERSEDED` 只是**诊断**，不构成门禁通过。
+- **AC4 分诊已出**（`verification/GOV-EVIDENCE-PIN-REPAIR-1/ac4-triage-2026-11-16.{md,json}`）：
+  T1 122 / T2 211 / T3 109 / T4 3（共 445 / 103 卡），只用于排期，**不构成豁免**。
+- **事实更正**：`check.ps1 -TaskPath doc/tasks/FEA-11-HOST-AUTH-2.md` 在本次改动**之前**就已是 7 errors
+  （5 条 SHA 不匹配 + 2 条 Resource「—」），全局 check 的 15 文档作用域从未覆盖它。
+- **待做（AC4/AC6）**：实现版本化 allowlist + `check.ps1` 精确匹配降级（正例≥2/负例≥2、耗时<10s）→
+  逐条归因 445 行并逐条登记例外 → 上下文独立复核。
 - ⚠️ 已更正事实：EV-11 的值是 **64 位**合法 sha256（不是题述的 40 位），真正问题是本仓无任何字节表示能复现它。
 
 ### 队列 4 —— HUMAN-REQUIRED 等待项（不阻塞 Agent）

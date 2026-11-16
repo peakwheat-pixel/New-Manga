@@ -68,11 +68,17 @@ DSH 按 Q3 实现巡检后发现这不是孤例，因此本卡目标定为：
   原行字节逐字不变；`check.ps1` 对该卡 PASS。
   <<PARTIAL: 前四款已完成（EV-11/12/13 三条 supersede 行 + 说明、0 删除、工具复核 SUPERSEDED=3）；
   唯「check.ps1 对该卡 PASS」不可达——该卡在单卡校验下**改动前就已 7 errors**（5 条 SHA 不匹配 + 2 条 Resource manifest 为「—」），
-  append-only 不会让逐行校验转绿。可选路径：①改写原始行（裁定禁止）②让 check.ps1 支持 supersession（门禁变更，需另行裁定）。>>
-- [ ] **AC4 逐条判定**：445 条失败逐条归类（真实失效 ⇒ supersede；历史形态 ⇒ 记录可接受依据），
-  每批后 FAIL 数单调不增；判定表与巡检 JSON 一一对应。 <<PARTIAL: 未开始>>
+  append-only 不会让逐行校验转绿。**后续裁定已闭环**（`doc/reviews/GOV-EVIDENCE-PIN-REPAIR-1-GATE-RULING-2026-11-16.md`，Q1=B）：
+  不走「check.ps1 自动识别 supersede」，而是**逐行受控 allowlist**（资格基线冻结在 `8db997f9…`），
+  命中才降级为带理由的 warning；本卡 AC4 负责逐条裁定与登记。另 2 条 Resource 错误同理（allowlist 不覆盖 Resource，需单独修）。>>
+- [ ] **AC4 逐条判定与例外登记**（依据 Q1=B 裁定）：445 条逐条归因（T1 重建摘要 / T2 补摘要 / T3 核实迁移 / T4 逐项），
+  每行以**精确行指纹**（卡路径 + Task ID + Evidence ID + 原行全部字段 + 历史错误类型）登记；
+  不可恢复者逐条申请 warning 例外（禁通配、禁按类整批）；每批后 FAIL 数单调不增。
+  <<PARTIAL: 已完成机器分诊 T1 122 / T2 211 / T3 109 / T4 3（见 ac4-triage-2026-11-16），逐条裁定与登记未开始>>
 - [ ] **AC5 独立复核**：上下文独立 Reviewer（未参与实施）复核；`check.ps1` 与 `-TaskPath` 均 PASS。 <<PARTIAL: 未开始>>
-- [ ] **AC6 门禁决策**：按实测耗时决定是否并入 `check.ps1`（默认不并入），并记录理由。 <<PARTIAL: 未开始>>
+- [ ] **AC6 例外通道落地**（依据 Q1=B 裁定）：版本化 allowlist（一行一指纹）+ `check.ps1` 精确匹配降级为 warning；
+  替代行仍走严格校验；卡片重开/转非终态即失效；正例 ≥2 / 负例 ≥2（含跨路径、错误 blob、重复替代、非终态拒绝）；
+  默认 `check.ps1` 仍需 < 10 s 并记录前后耗时。 <<PARTIAL: 设计已定，实现与测试未开始>>
 
 ## 测试要求
 
