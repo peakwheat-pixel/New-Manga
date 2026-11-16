@@ -245,7 +245,7 @@ Gate 剩下的是条件 3（人眼目视 overlay）/ 4（签名 + 真机安装�
   9 张卡补 Resource Manifest 表格；FEA-GOV-5 AC1 补勾选与 verified 注释；3 张卡按当前 blob 追加新证据行。
   本轮 9 张卡全部 PASS（**注意**：33 张有登记项的卡里仍有 16 张因 Resource Manifest/证据目录等问题 FAIL，见 AC5 复核）（2 条多路径行仅巡检工具建模限制、2 条空壳行按裁定 Q3 保留）。
   登记表 **114** 条；例外通道测试 10/10、EOL 测试 7/7 全过。
-- **AC4 batch 5（R11）**：33 张有登记项的卡 **32 PASS / 1 FAIL**（此前 16 FAIL）。手法全是元数据修正：
+- **AC4 batch 5（R11）**：33 张有登记项的卡 **32 PASS / 1 FAIL**（更早一轮 16 FAIL，上一轮 1 FAIL）。手法全是元数据修正：
   PRESERVE_* 目标已消失 → ALREADY_ABSENT；DELETE_SAFE 声明不实 → PRESERVE_USER_DATA；manifest 指针改指仓内可验证文件；
   补 Resource Manifest 表格；integration_commit/closeout 补齐；两处摘要漂移更新并把原值留在末列。
   连带修：改别人的卡导致 FEA-DOC-RECONCILE-1 的钉失配 → 逐条例外；批量脚本误改表头 → 已恢复。

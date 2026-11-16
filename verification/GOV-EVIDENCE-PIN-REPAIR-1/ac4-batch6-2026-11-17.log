@@ -14,7 +14,7 @@
 #   ⑥ 解析失败 / 目录缺失 / 非 research → 失败关闭。
 
 ## 2. DISPLAY-PERF-DECISION-1 收口
-# ① 生成 `verification/DISPLAY-PERF-DECISION-1/EVIDENCE-MANIFEST.json`：246 个文件逐条（路径 + sha256），36,949 B；
+# ① 生成 `verification/DISPLAY-PERF-DECISION-1/EVIDENCE-MANIFEST.json`：246 个文件逐条（路径 + sha256），36,949 B —— 【更正】随后复核发现其中 1 个是 .pyc 编译缓存（非证据），已移到 workspace archive，清单现为 245 条；
 # ② Canonical Evidence 增记 `EV-BULK-MANIFEST` 行（commit `-`，按当前字节校验）；
 # ③ 按裁定 Q2=A 重写 Resource Manifest：只保留真实路径行，叙述移出表格；两个已消失的资源改 PRESERVE_UNKNOWN
 #    （实测：`ALREADY_ABSENT` **不在**允许的 disposition 枚举里，之前我在别的卡上的用法因此被门禁判为无效）。

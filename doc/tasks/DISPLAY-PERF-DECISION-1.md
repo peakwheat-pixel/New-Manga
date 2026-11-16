@@ -135,7 +135,7 @@ allowed_paths:
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| evidence-dir | verification/DISPLAY-PERF-DECISION-1 | PRESERVE_REFERENCED | verification/DISPLAY-PERF-DECISION-1 | verification/DISPLAY-PERF-DECISION-1/EVIDENCE-MANIFEST.json | 246 个文件由 EVIDENCE-MANIFEST.json 逐文件覆盖；2026-11-17 复核 |
+| evidence-dir | verification/DISPLAY-PERF-DECISION-1 | PRESERVE_REFERENCED | verification/DISPLAY-PERF-DECISION-1 | verification/DISPLAY-PERF-DECISION-1/EVIDENCE-MANIFEST.json | 245 个文件由 EVIDENCE-MANIFEST.json 逐文件覆盖（最初 246，2026-11-17 复核把 1 个 .pyc 编译缓存移出证据目录）；2026-11-17 复核 |
 | task-env | G:/CODEX/New Manga.workspace/task-envs/DISPLAY-PERF-DECISION-1 | PRESERVE_UNKNOWN | verification/DISPLAY-PERF-DECISION-1 | verification/DISPLAY-PERF-DECISION-1/EVIDENCE-MANIFEST.json | 已随工作区清理不可达；原处置 PRESERVE_REFERENCED 改为 ALREADY_ABSENT |
 | build-artifact | apps/desktop/src-tauri/target/release/new-manga.exe | PRESERVE_UNKNOWN | verification/DISPLAY-PERF-DECISION-1 | verification/DISPLAY-PERF-DECISION-1/EVIDENCE-MANIFEST.json | 旧架构构建产物，已不存在；基线另存于 evidence-dir |
 

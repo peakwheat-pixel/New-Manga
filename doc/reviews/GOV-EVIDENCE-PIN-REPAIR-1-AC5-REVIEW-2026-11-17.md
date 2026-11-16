@@ -173,3 +173,17 @@ verdict2: **REJECTED**
 - **P2-4（metadata 陈旧）**：batch6 log head `c6efa31b6`（实际 batch6 提交 `0e128ea78`，目标 head `c86736375`）、size 36,949 vs 当前 37,044；AC3 log head 8db/旧锚点。
 
 **第二轮结论**：Q2 的 `Get-BaselineRowEligible` 任意非 hex 归一化已修（PASS）；全 `-` 探针与 13+8 测试通过；33 张 gate 全 PASS；registry 2 条理由已更正。但 AC6 例外资格仍保留归一化/摘要抽取（P1-1）、batch6 manifest 9/246 无 blob 且 note 不实（P1-2）、多处不实/陈旧陈述未更正（P1-3），加上实际两行/15 条/4 条巡检遗留（P2）；因此 **AC5 第二轮仍为 REJECTED**，不能判 MET。建议先修 P1-1/P1-2 与 P1-3，再对 clean checkout 重跑 `check.ps1` 与 21 项测试。本 Review 只读，未 commit/push，未修改除本文件以外的任何文件。
+
+## 第三轮（窄确认）
+
+verdict3: **REJECTED**
+
+本轮对象 `f12104a4ae47df9847f239eef4f4201cf9ed5ed3`；只读，未改其它文件。
+
+| # | 检查 | 结论 | 实际命令与结果 |
+|---|---|---|---|
+| 1 | P1-1 资格校验：commit 逐字、摘要有序列表 | **PASS** | 代码 `check.ps1:122-137`：仅 `''` 与 `-` 等价；`$commitOk = ($baseCommit -eq $entryCommit)`；`$shaOk` 按 `$entryList -join ','` 与单元格内 64-hex 有序列表比较。临时 clone（`f12104a4a`，fixture 手法）实测：①把 `EXC-BATCH2-015` 的 commit 从 `(见提交)` 改为 `(另见提交)` 后，`check.ps1 -TaskPath doc/tasks/FEA-GOV-4.md` 不再出现 `EXEMPTED[EXC-BATCH2-015]`，改为 `FAIL: Evidence commit 格式无效：doc/plan/FEA-C02_V11R_AMENDMENT_DRAFT.md`；②把 `EXC-BATCH6-111` 的 3 个摘要顺序反转后，`check.ps1 -TaskPath doc/tasks/FEA-05-PORT-1.md` 不再出现 `EXEMPTED[EXC-BATCH6-111]`，改为 `FAIL: Evidence SHA-256 格式无效：apps/.../IHostController.cs…`。顺序/取值确实必须一致；代码仍从单元格抽取 64-hex（为兼容多文件散文路径），不绑定分隔符，但这不是本轮要求的“任意非 hex 互等”。 |
+| 2 | P5 陈旧陈述：handoff / batch4 / 246 vs 245 | **FAIL** | 已更正：handoff `:258` 已改为“此前的「本仓无任何字节表示能复现」是错的——记录值恰等于 closeout `5cbec0e8` 下 blob”；batch4 log `:19` 已补“复核后更正：当时还包含 commit/sha 归一化与空壳行过滤”。**未一致**：`EVIDENCE-MANIFEST.json` 实为 **245** 条、handoff `:252` 也写 245；但 `doc/tasks/DISPLAY-PERF-DECISION-1.md:138` 仍写“**246** 个文件”，`ac4-batch6...log:17` 仍写“**246** 个文件 / 36,949 B”；handoff `:246` 仍写“33 张里仍有 **16 张 FAIL**”，与 `:252` “33 PASS/0 FAIL”矛盾。246 vs 245 不一致 ⇒ FAIL。 |
+| 3 | P6 批量清单 245 条全部 HEAD blob | **PASS** | `EVIDENCE-MANIFEST.json` 现有 **245** 条；Python 逐条 `git cat-file -e HEAD:<path>`：**HEAD blob missing = 0**；实际 evidence dir 245 个文件，集合与清单完全相等；manifest note 已改为“文件字节；目录 `-text` 固定；pyc 已移入 workspace archive”。命令结果：`count 245 / head_blob_missing 0 / actual_files 245 / set_equal True`。 |
+
+**第三轮结论**：P1-1 已真修（commit 逐字 + 摘要有序列表；散文变更/顺序反转均不再豁免）；P6 的 245 条全部 HEAD blob 成立。P5 仍 FAIL：handoff/batch4 的两处文字已更正，但 246 vs 245 计数未统一（DISPLAY 卡 `:138`、batch6 log `:17` 仍 246），handoff `:246` 仍保留“16 FAIL”与 `:252` 矛盾。因此 **verdict3 = REJECTED**；只需把 246 改为 245、修正 handoff `:246` 后即可复核通过。本 Review 只读，未 commit/push，未修改除本文件以外的任何文件。
