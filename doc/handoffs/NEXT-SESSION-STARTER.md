@@ -186,7 +186,10 @@ Gate 剩下的是条件 3（人眼目视 overlay）/ 4（签名 + 真机安装�
 - ~~`doc/tasks/M2-REGION-RETYPE-CORE.md` 重复 `integration_commit` 键~~ → **R24 已删除**（保留真实值 d8019810）
 - `doc/REBASELINE_PLAN.md` 第 56/58 行漂移（**R16 已修**：表外枚举补齐 9 张非终态卡、`BLOCKED：FEA11-ENTRY-MISSING-1`、
   `SIDECAR-REBUILD-1` 行改 `in_progress`；现 6972/7000 bytes、64/64 lines，**加行前必须先压缩**）
-- `test.ps1` 改写 `verification/READER-OVERLAY-HEADLESS-PNG-1/` 下 2 个文件（未修；每轮跑完全量测试后必须复原并核 `git diff 6a408e5aa -- <该目录>` 为空）
+- ~~`test.ps1` 改写 `verification/READER-OVERLAY-HEADLESS-PNG-1/`~~ → **R15 已修**（`GOV-TEST-SIDE-EFFECT-1`）：
+  该测试改为从 `NEWMANGA_READER_OVERLAY_EVIDENCE_DIR` 取输出目录，`test.ps1` 非 `-CanonicalEvidence` 时指向 workspace 证据根；
+  实测全量 `test.ps1`（1591/1639 passed, 48 skipped, exit 0）后 `git status --porcelain verification/READER-OVERLAY-HEADLESS-PNG-1` **为空**；
+  证据：`verification/GOV-TEST-SIDE-EFFECT-1/ac3-no-side-effect-2026-11-17.log`。
 - ~~**EOL 前提**~~ → **R24 已根治**：Codex 裁定 `doc/reviews/GOV-EOL-PIN-1-EXT-CODEX-RULING-2026-11-16.md`
   （`APPROVED_WITH_CONDITIONS`，Q1=A/Q2=C）→ `.gitattributes` 只给 `doc/REBASELINE_PLAN.md` / `doc/STATUS.md`
   加 `text eol=lf`（未扩大、未提预算）；实测新鲜 clone：6939 B / 3156 B、0 个 CRLF 行、`check.ps1` PASS。

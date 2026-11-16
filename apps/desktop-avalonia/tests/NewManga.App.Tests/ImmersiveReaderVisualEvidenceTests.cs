@@ -82,7 +82,13 @@ public sealed class ImmersiveReaderVisualEvidenceTests
             $"captured frame has invalid size {bitmap.PixelSize}");
 
         var root = Residual2Evidence.Root;
-        var output = Path.Combine(root, "verification", "READER-OVERLAY-HEADLESS-PNG-1");
+        // GOV-TEST-SIDE-EFFECT-1: the canonical evidence lives in the repo, but a plain test run
+        // (test.ps1 without -CanonicalEvidence) must not rewrite those pinned bytes. The runner
+        // points this at its own evidence root; unset means "repo path", i.e. the old behaviour.
+        var overlayOverride = Environment.GetEnvironmentVariable("NEWMANGA_READER_OVERLAY_EVIDENCE_DIR");
+        var output = string.IsNullOrWhiteSpace(overlayOverride)
+            ? Path.Combine(root, "verification", "READER-OVERLAY-HEADLESS-PNG-1")
+            : Path.Combine(overlayOverride, "READER-OVERLAY-HEADLESS-PNG-1");
         Directory.CreateDirectory(output);
         var path = Path.Combine(output, "immersive-reader.png");
         bitmap.Save(path);

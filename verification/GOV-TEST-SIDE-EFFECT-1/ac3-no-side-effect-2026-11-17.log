@@ -1,0 +1,14 @@
+# GOV-TEST-SIDE-EFFECT-1 · AC3 证据：跑完 test.ps1 后仓库证据目录无改动
+# head: 46f146730
+# at_utc: 2026-11-16T18:35:09Z
+# os: Windows 10.0.26200 ; PowerShell 7.6.8 ; Python 3.14.6
+# command: git status --porcelain verification/READER-OVERLAY-HEADLESS-PNG-1（运行 test.ps1 前后各一次）
+
+## before
+# (empty)
+## test.ps1
+# exit=0
+# TEST PASS (Debug): 1591/1639 passed, 48 skipped
+## after
+# (empty)
+# 结论：after 为空 ⇒ 该测试不再写入仓库证据目录（AC3 达成）

@@ -33,6 +33,10 @@ $evidence = if ($CanonicalEvidence) {
 } else {
     $( $v11rRepo = (Split-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) -Parent); if ($env:NEWMANGA_WORKSPACE_ROOT) { Join-Path $env:NEWMANGA_WORKSPACE_ROOT 'task-envs/HOST-RESOURCE-SECURITY-1/evidence-rerun' } else { Join-Path (Join-Path (Split-Path $v11rRepo -Parent) ((Split-Path $v11rRepo -Leaf) + '.workspace')) 'task-envs/HOST-RESOURCE-SECURITY-1/evidence-rerun' } )
 }
+# GOV-TEST-SIDE-EFFECT-1: the reader-overlay evidence test writes PNG + render-info.md. With the
+# canonical repo path that dirties the worktree on every run (and a reviewer rerun would silently
+# overwrite pinned evidence). Point it at this run's evidence root; -CanonicalEvidence keeps the repo.
+$env:NEWMANGA_READER_OVERLAY_EVIDENCE_DIR = $evidence
 $testEvidence = Join-Path $evidence 'test'
 New-Item -ItemType Directory -Force -Path $testEvidence | Out-Null
 
