@@ -183,13 +183,16 @@ Gate 剩下的是条件 3（人眼目视 overlay）/ 4（签名 + 真机安装�
 
 ### 队列 3 —— 队列 5 小债（低优先）
 
-- `doc/tasks/M2-REGION-RETYPE-CORE.md` 重复 `integration_commit` 键
+- ~~`doc/tasks/M2-REGION-RETYPE-CORE.md` 重复 `integration_commit` 键~~ → **R24 已删除**（保留真实值 d8019810）
 - `doc/REBASELINE_PLAN.md` 第 56/58 行漂移（**R16 已修**：表外枚举补齐 9 张非终态卡、`BLOCKED：FEA11-ENTRY-MISSING-1`、
   `SIDECAR-REBUILD-1` 行改 `in_progress`；现 6972/7000 bytes、64/64 lines，**加行前必须先压缩**）
 - `test.ps1` 改写 `verification/READER-OVERLAY-HEADLESS-PNG-1/` 下 2 个文件（未修；每轮跑完全量测试后必须复原并核 `git diff 6a408e5aa -- <该目录>` 为空）
-- **EOL 前提（R16 复核实测，未修）**：`core.autocrlf=true` ⇒ fresh checkout 后的 `doc/REBASELINE_PLAN.md`（7024 B）与
-  `doc/STATUS.md`（3205 B）会**超预算**。根治需 `.gitattributes` 的 `doc/** text eol=lf`；在那之前，恢复 doc 字节一律用
-  `git cat-file blob` + 二进制写，不要用 `git checkout`。
+- ~~**EOL 前提**~~ → **R24 已根治**：Codex 裁定 `doc/reviews/GOV-EOL-PIN-1-EXT-CODEX-RULING-2026-11-16.md`
+  （`APPROVED_WITH_CONDITIONS`，Q1=A/Q2=C）→ `.gitattributes` 只给 `doc/REBASELINE_PLAN.md` / `doc/STATUS.md`
+  加 `text eol=lf`（未扩大、未提预算）；实测新鲜 clone：6939 B / 3156 B、0 个 CRLF 行、`check.ps1` PASS。
+  同时按 Q2=C 给 14 条 WORKTREE 口径保留态登记「经验证的对照摘要」（`sha256_alt` + `alt_kind`），
+  校验只接受这两个精确摘要且告警写 `pin_basis`。证据：`verification/GOV-EOL-PIN-1-EXT/eol-execution-2026-11-16.log`。
+  **仍建议**：恢复 doc 字节优先用 `git cat-file blob` + 二进制写（LF 规则只覆盖这两份）。
 - ~~`doc/tasks/RELEASE-PACKAGE-1.md` 含 NUL 字节~~ → **R1 实测 NUL=0，已不存在**
 
 ### 队列 4 —— HUMAN-REQUIRED 等待项（不阻塞 Agent）
