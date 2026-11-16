@@ -1,10 +1,11 @@
 # 新会话启动包 — New Manga 目标续接
 
-- 生成时间：2026-11-16 10:30 (+08:00)（上一版 08:45，本版为 R1 之后更新）
+- 生成时间：2026-11-16 11:25 (+08:00)（本版为 R2 之后更新）
 - 生成者：DSH（lead）
-- **当前 head：`27639beaf`**（main，**已 push**，upstream = origin/main，ahead/behind = 0/0）
+- **当前 head：`8b00f3474`**（main，**已 push**，upstream = origin/main，ahead/behind = 0/0）
 - 工作区：干净（`git status --porcelain` 为空）
-- **本轮（R1）起点**：`9ce819ae7` → **终点 `27639beaf`**，6 个 commit 已推送
+- **R1**：`9ce819ae7` → `dd029b73f`（7 commit，目标 A/B/D 达成）
+- **R2（本轮）**：`dd029b73f` → `8b00f3474`（8 commit）—— 目标 C 闭合 **10 条** AC
 
 > 本文是**给下一个会话的唯一起点**。不要重读历史对话；按「下一步队列」推进即可。
 
@@ -14,10 +15,11 @@
 
 | 项 | 状态 |
 |---|---|
-| HEAD | `27639beaf`（main，已 push，0/0） |
-| 四件套 | **全绿**：`check.ps1` PASS(3w) / `verify_pins` 18/18 / `api_inventory` 1/80/6=87 / `test.ps1` EXIT=0 **1582/1630 passed, 48 skipped**（App 962/0/4，基线 955/0/11 不退化） |
+| HEAD | `8b00f3474`（main，已 push，0/0） |
+| 四件套 | **全绿**：`check.ps1` PASS(3w) / `verify_pins` 18/18 / `api_inventory` 1/80/6=87 / `test.ps1` EXIT=0 **1585/1633 passed, 48 skipped**（App 965/0/4，基线 955/0/11 不退化） |
 | 上一 goal | 已用尽 100 轮（见 `GOAL-WRAPUP-R100.md`） |
-| 本 goal | 60 轮上限，已用 1 轮 |
+| 本 goal | 60 轮上限 |
+| 目标 C | 可行动项 41 → **闭合 18 / open 23** |
 
 复跑四件套：
 
@@ -35,43 +37,53 @@ pwsh -NoProfile -File apps/desktop-avalonia/scripts/test.ps1
 
 ---
 
-## 1. 原目标与达成情况（R1 更新）
+## 1. 原目标与达成情况（R2 更新）
 
 | 目标 | 状态 | 缺口 |
 |---|---|---|
 | **A** 四件套持续通过 | ✅ **达成** | — |
 | **B** Release Gate 六条逐条判定 + 映射表 | ✅ **达成（R1）** | — 见 `doc/reviews/RELEASE-GATE-SIX-CONDITIONS-2026-11-16.md` |
-| **C** 已登记技术债清零 | ⚠️ **未达成** | **AC blocked 剩 33 条可闭合项**（分类 DOC 8 / RERUN 5 / IMPL 20；`FEA-04` 独占 8 条需另立实现卡） |
-| **D** 剩余仅 HUMAN-REQUIRED 登记 | ✅ **达成（R1）** | `MICA-FIX-1` AC2 判定部分已并入 `H-01`；新增 `H-10`（阅读器 overlay）；`H-08` 签名表述已更正 |
+| **C** 已登记技术债清零 | ⚠️ **未达成（R2 推进 41→18 闭合 / 23 open）** | 剩 **23 条**：`FEA-04` 8（需另立实现卡）+ `V11R-B-5` 3 + `GOV-RESIDUAL` 2 + `GATE3-COVERAGE-MATRIX` 2 + `V11R-C-1` 2 + 其余 6 条各 1 |
+| **D** 剩余仅 HUMAN-REQUIRED 登记 | ✅ **达成（R1，R2 又收窄 H-02）** | `MICA-FIX-1` AC2 判定并入 `H-01`；新增 `H-10`（阅读器 overlay）；`H-08` 签名表述更正；**`H-02` 由 3 大项收窄为 3 小项**（ADJ §7.21） |
 
 ---
 
 ## 2. 下一步队列（按建议顺序，可直接接手）
 
-### 队列 1 —— **目标 C：剩余 33 条可闭合 AC**（R1 后升为最高优先）
+### 队列 1 —— **目标 C：剩余 23 条可闭合 AC**（R2 后，仍是最高优先）
 
 素材：
-- `doc/reviews/AC-BLOCKED-CLOSE-AUDIT-2026-11-16.md`（41 条已核实可闭合，8 条已处置 ⇒ 剩 33）
+- `doc/reviews/AC-BLOCKED-CLOSE-AUDIT-2026-11-16.md`（41 条可行动项）
 - `verification/AC-BLOCKED-CLASSIFY-1/classification-v2.md`（384 行，**逐条明细 + 判定依据**）
-- `doc/reviews/HUMAN-VS-AGENT-SPLIT-2026-11-16.md`（33 条中仅 1 条确属 HUMAN，1 条含 HUMAN 子项）
+- `doc/reviews/HUMAN-VS-AGENT-SPLIT-2026-11-16.md`
 
-分类（按 classification-v2）：
-| 批 | 类别 | 条数 | 风险 |
-|---|---|---:|---|
-| B1 | `DOC` 纯文档补齐 | 8 | 低 |
-| B2 | `RERUN` 重跑取证 | 5 | 中（依赖测试环境） |
-| B3 | `IMPL` 小额缺口（裸间距/断言/负例） | 12 | 中 |
-| B4 | `FEA-04` 8 条 | 8 | **高（是实现而非补证据，需另立实现卡）** |
+**R2 已闭合 10 条**（不要重复做）：
+`RELEASE-PACKAGE-1` AC6 / `CHAPTER-MANUAL-SORT` AC10 / `M2-REGION-RETYPE-CORE` AC6 / `MICA-FIX-1` AC4 /
+`FEA-07-AC5-NATIVE-1` AC-N2 + AC-N5 / `V11R-B-3` AC4 / `V11R-B-4` AC4 / `V11R-B-5` AC4 / `V11R-C-1` AC4。
 
-⚠️ **实际待做 6 条 DOC 已逐条核实当前状态**（R1 已定位，可直接接手）：
-- `V11R-B-5` AC1（需在 `doc/plan/V11R_SCREEN_SPECS.md` 补导出预检/术语章节）
-- `GOV-RESIDUAL-RUNTIME-IDENTITY-IMPL-1` AC7（需真实跑三命令 + 独立 Reviewer；**实为 RERUN+IMPL**）
-- `GATE3-COVERAGE-MATRIX` AC2（补 4 格 `测试名 (文件:行)`+断言；已有 progress 稿 `verification/GATE3-COVERAGE-MATRIX/ac2-four-cells-progress.md`）
-- `GATE3-COVERAGE-MATRIX` AC4（逐条核实 100 项 NOT_RUN 归因）
-- `RELEASE-PACKAGE-1` **AC6（当前在 L46，注意行号已从 L45 漂移）** —— 缺 Handoff 文件，可补写
-- `FEA-07-AC5-NATIVE-1` AC-N5（补独立 Review 并翻转 AC5 行）
+**剩余 23 条，按可动手性排序**：
 
-⚠️ 另：`RELEASE-PACKAGE-1.md` **实测 NUL=0**，队列 5 的「NUL 字节」债项**不存在**（可结案）。
+| 优先 | 卡 | 未勾 AC | 性质 | R2 已核实的入手点 |
+|---:|---|---|---|---|
+| 1 | `FEA-04` | AC1–AC8（8） | **实现** | **需另立实现卡**；范围已冻结、实现未开始 |
+| 2 | `V11R-B-5` | AC1 / AC2 / AC3（3） | DOC + IMPL | AC1 = `doc/plan/V11R_SCREEN_SPECS.md` 缺导出预检/术语章节；AC2 = 上下文保留断言；AC3 = 六态 |
+| 3 | `GOV-RESIDUAL-RUNTIME-IDENTITY-IMPL-1` | AC6 / AC7（2） | IMPL + RERUN | AC7 **实际不可闭合**：需清理 160 处历史声明错误（7 处裁定身份必须保留），会碰历史证据字节 ⇒ 建议改判 `BLOCKED` 并写明 |
+| 4 | `GATE3-COVERAGE-MATRIX` | AC2 / AC4（2） | DOC（大） | AC2 已有 progress 稿 `verification/GATE3-COVERAGE-MATRIX/ac2-four-cells-progress.md`（4 格已补），但整张矩阵仍缺逐行断言说明；AC4 需核 100 项 NOT_RUN 归因 |
+| 5 | `V11R-B-4` | AC3（1） | IMPL | 六态（partial 状态无断言，赋值点已存在） |
+| 6 | `V11R-C-1` | AC6 / AC7（2） | IMPL+DOC | 引擎卡；AC6 = 单测/截图，AC7 = 证据目录整理 |
+| 7 | `MICA-FIX-1` | AC2（1） | RERUN | 需跑 `--diagnostics` 留原始日志（会起 GUI，Agent 可用 `[System.Diagnostics.Process]::Start`） |
+| 8 | `V11R-A-3` | AC4（1） | IMPL | `CommandParityContractTests` 66 条 parity 断言 |
+| 9 | `RUN-IPC-1` | AC4（1） | IMPL | typed 拒绝单测 + allowlist 断言 |
+| 10 | `V11R-C-3` | R1（1） | IMPL | 建回滚 tag `v11r-pre-retire` 并跑 `-DryRun` |
+| 11 | `M2-SFX-CORRECTION-EXPORTER` | AC4（1） | IMPL | T1b 批量产物尚不存在，需先生产 |
+
+⚠️ **R2 发现的重要事实**：
+- `RELEASE-PACKAGE-1.md` **实测 NUL=0** ⇒ 队列 5 的「NUL 字节」债项**不存在**，已结案；
+- `V11R-B-3/B-4/B-5/C-1` 四张卡有**先存 v2 结构性欠账**（无 Canonical Evidence 表 / Resource Manifest /
+  `evidence_dir` 有未登记文件），`-TaskPath` 会 FAIL。**这不是本轮引入的**，需单独立卡补表；
+  全局 `check.ps1` 不受影响（仍 PASS）。
+- 裸值类 AC 的准确口径是「**无未登记**的裸间距」，由两个可执行测试守护
+  （`V2StudioConformanceTests` 白名单 + `R14ContractTests`），不是「零裸值」。
 
 ### 队列 2 —— 目标 B 的延伸（可选）
 
@@ -107,7 +119,31 @@ pwsh -NoProfile -File apps/desktop-avalonia/scripts/test.ps1
 
 ---
 
-## 4. 关键技术事实（R1 新增/更正）
+## 3b. R2（本轮）完成的事 —— 目标 C 闭合 10 条 AC
+
+| # | AC | 卡 | 依据要点 |
+|---:|---|---|---|
+| 1 | AC6 | `RELEASE-PACKAGE-1` | 五判据全满足：`check -TaskPath` PASS / `test.ps1` EXIT=0 / pytest 3569P·0F·10S vs 基线 3360P·10S / 9 条 pin / Handoff 已有。**并澄清** B1-DOC-CLOSE-1 那次 3 failed 是 sidecar schema v6 vs 数据根 v14 的**环境问题**，非代码回归 |
+| 2 | AC10 | `CHAPTER-MANUAL-SORT` | App 962/0/4 + CoreClient 256/0/0 + pytest 3569P/0F/10S，skip 未增 |
+| 3 | AC6 | `M2-REGION-RETYPE-CORE` | pytest 三套件 **1665P/0F/4S**（基线 650/1）+ `m2_acceptance` **37**（要求 35）；cargo/vitest 旧壳退役 ⇒ NA |
+| 4 | AC4 | `MICA-FIX-1` | `test.ps1` 1582/1630 0 failed；pytest **failed 3→0**；旧壳 vitest ⇒ NA（`apps/desktop/package.json` 不存在） |
+| 5 | AC-N2 | `FEA-07-AC5-NATIVE-1` | **新增 `V2KeyDispatchOnceTests`（3 facts）+ 变红验证**：注入重复全局手势 ⇒ 3/3 红且报「按键冲突 Ctrl+1」 |
+| 6 | AC-N5 | `FEA-07-AC5-NATIVE-1` | **独立复核 `reviewer-fea07b` ACCEPTED（带 limitation）**；并修掉该卡 3 类 pin 缺陷（commit 错配 / WORKTREE 口径 / 旧版 README） |
+| 7–9 | AC4 ×3 | `V11R-B-3` / `V11R-B-4` / `V11R-B-5` | 由**两个可执行一致性测试**守护（`V2StudioConformanceTests` 白名单 + `R14ContractTests`），裸值均在**已登记白名单**内 |
+| 10 | AC4 | `V11R-C-1` | 引擎卡无 `.axaml` ⇒ 子项 NA；唯一 hex `#1F1F1F` 经核为**冻结 Fluent baseline 的 theme-layer 常量**（注释明写故意不入 token 字典） |
+
+**R2 踩到并更正的错误（务必记住）**：
+1. 我先按「分类行的行号」统计，报出 **33 条 open**，实际逐卡核对后是 **23 条** ——
+   分类文档的行号已漂移、且部分条目早已 `[x]`。**统计必须逐卡读真实 checkbox，不能信派生快照。**
+2. 我写的 `UnboundGesture_DispatchesNothing` 断言「Ctrl+D1 在 Studio/Batch 不匹配」**实测红** ——
+   因为 `Ctrl+D1` 声明为 `Space=null`（**全局**），每个作用域都绑定。**是断言错，不是产品 bug**；
+   已改为正确口径的 `GlobalShortcuts_ResolveInEveryScope_SpaceScopedOnesDoNotLeak`。
+3. 一度把 `FEA-07` 的 `EV-AC5-03/04/05` 判为「sha 错」，实为 **WORKTREE 口径**（CRLF）；
+   同一文件工作区哈希 = 声明值，而 blob 哈希不同 —— **又一次 `core.autocrlf` 陷阱**。
+
+---
+
+## 4. 关键技术事实（R1/R2 累积）
 
 ### 4.1 file identity 53 位契约（已闭环）
 
@@ -207,5 +243,6 @@ pwsh -NoProfile -File apps/desktop-avalonia/scripts/test.ps1
 
 ## 8. 一句话交接
 
-**目标 A/B/D 已达成（R1）；只剩目标 C 的 33 条可闭合 AC。**
-**最高优先是队列 1 —— 其中 6 条 DOC 的当前状态已在本文 §2 逐条定位，可直接开工；`FEA-04` 8 条需另立实现卡。**
+**目标 A/B/D 已达成；目标 C 由 41 条可行动项推进到「闭合 18 / open 23」（R2 闭合 10 条）。**
+**最高优先仍是队列 1 —— §2 已按「可动手性」把剩余 23 条排成表并逐条给出入手点。**
+**`FEA-04` 的 8 条是实现工作，必须另立实现卡，不要在目标 C 里硬啃。**
