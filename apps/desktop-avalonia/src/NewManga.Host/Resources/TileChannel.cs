@@ -427,6 +427,26 @@ internal static class FinalPath
 
 internal static class FileIdentity
 {
+    /// <summary>
+    /// Raw (un-normalized) 64-bit NTFS file index of an open handle.
+    /// </summary>
+    /// <remarks>
+    /// HOST-CONCURRENCY-FLAKY-1 AC6 (reviewer-hcf2, 2026-11-16): unlike <c>HostIssuer.FileIdentity</c>
+    /// and the <c>source-read</c> grant facts written by <see cref="Sources.SourceReadCoordinator"/>,
+    /// this value is <b>never</b> compared against a Core-normalized identity. Both sides of every
+    /// comparison here come from this same method inside one Host process:
+    /// <list type="bullet">
+    /// <item><c>Issue()</c> records it once, <c>ReadTile()</c> re-reads and compares (self-consistency
+    /// of the same file across issue/read);</item>
+    /// <item>the optional <c>TileGrantRequest.VolumeSerial/FileIndex</c> cross-check is never supplied
+    /// by the only production call site (<c>HostRuntime</c>), so those branches do not fire;</item>
+    /// <item><c>TileGrantView</c> never leaves the Host and carries no identity fields.</item>
+    /// </list>
+    /// So the 53-bit normalization from <c>identity.py</c> does NOT apply here. If a future change
+    /// ever feeds <c>BridgeGrant.VolumeSerial/FileIndex</c> (which ARE Core-normalized) into
+    /// <c>TileGrantRequest</c>, this method must be normalized too or the comparison will
+    /// false-positive with <c>TileIdentityMismatch</c> for any file whose raw index exceeds 2^53.
+    /// </remarks>
     public static (long VolumeSerial, long FileIndex) Read(SafeFileHandle handle)
     {
         if (!NativeMethods.GetFileInformationByHandle(handle, out var info))

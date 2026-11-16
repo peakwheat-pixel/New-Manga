@@ -369,7 +369,13 @@ public sealed class SourceReadCoordinator(
     /// budget and identity drift stay typed). Every member entry of the grant carries these
     /// facts — never a member digest, which the Core refuses typed.
     /// </summary>
-    private static JsonObject DescribeContainer(string path, long maxBytes)
+    /// <remarks>
+    /// HOST-CONCURRENCY-FLAKY-1 AC6: <c>internal</c> rather than <c>private</c> so
+    /// <c>NewManga.Host.Tests</c> (has InternalsVisibleTo) can pin the wire contract directly:
+    /// <c>file_id</c> must be the 53-bit-normalized value, never the raw handle index. Exposing a
+    /// pure static fact-builder adds no behavioural surface.
+    /// </remarks>
+    internal static JsonObject DescribeContainer(string path, long maxBytes)
     {
         SourceSecurity.RejectReparseAncestors(path);
         FileStream stream;

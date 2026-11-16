@@ -9,8 +9,8 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 | task files | 662 |
 | terminal | 648 |
 | non-terminal | 13 |
-| non-terminal named in the plan | 7 |
-| non-terminal outside the plan | 6 |
+| non-terminal named in the plan | 8 |
+| non-terminal outside the plan | 5 |
 | task files tracked by git | 662 |
 | task files untracked (drafts) | 0 |
 | non-terminal tracked by git | 13 |
@@ -27,11 +27,11 @@ Arithmetic note: `task files` = `terminal` + `non-terminal` + `(none)` rows. A `
 | `historical` | 11 | yes |
 | `superseded` | 9 | yes |
 | `in_progress` | 6 | no |
-| `in_review` | 2 | no |
-| `proposed` | 2 | no |
+| `in_review` | 3 | no |
 | `(none)` | 1 | no |
 | `approved` | 1 | no |
 | `blocked` | 1 | no |
+| `proposed` | 1 | no |
 | `ready` | 1 | no |
 
 ## Non-terminal tasks
@@ -48,8 +48,8 @@ Arithmetic note: `task files` = `terminal` + `non-terminal` + `(none)` rows. A `
 | `SIDECAR-REBUILD-1` | `in_progress` | own row |
 | `GIT-CLEAN-PUBLICATION-1` | `in_review` | mentioned |
 | `GIT-CLEAN-RUST-ISOLATION-1` | `in_review` | mentioned |
+| `HOST-CONCURRENCY-FLAKY-1` | `in_review` | own row |
 | `GIT-CLEAN-CORE-ENV-2` | `proposed` | mentioned |
-| `HOST-CONCURRENCY-FLAKY-1` | `proposed` | no |
 | `GIT-CLEAN-RUST-CAPACITY-DESIGN-1` | `ready` | mentioned |
 
 ## What this ledger does not say

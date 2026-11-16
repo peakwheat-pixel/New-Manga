@@ -343,6 +343,12 @@ public sealed class SourceAccessRegistry
     /// deterministic failure of the Host tests whenever the full fixture set runs in parallel.
     /// SOURCE_REGISTRY_BUSY now means "still busy after a bounded wait", which is what callers can
     /// act on; the lock is still released by the same owner, so mutual exclusion is unchanged.
+    /// <para>
+    /// Worst-case total wait: this mutex wait (5000 ms) plus the exclusive lock-file retry window in
+    /// <see cref="AcquireLockFile"/> (another 5000 ms deadline) ≈ <b>10 s</b>. The two deadlines are
+    /// deliberately independent so that a caller which owns the mutex is not also rushed through the
+    /// physical file lock; do not report 5 s as the operation's upper bound.
+    /// </para>
     /// </remarks>
     internal const int LockWaitMillis = 5000;
 

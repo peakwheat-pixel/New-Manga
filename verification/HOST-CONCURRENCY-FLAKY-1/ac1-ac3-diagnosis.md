@@ -96,12 +96,29 @@ if (entry.Generation != expectedGeneration) throw new SourceAccessException("SOU
 
 ⇒ `SOURCE_REGISTRY_BUSY` 是**同进程内并发访问**的必然结果，不是环境噪声。
 
-## `FILE_IDENTITY_CHANGED` 的关联
+## `FILE_IDENTITY_CHANGED` 的关联（此节归因已于 2026-11-16 更正）
 
 `scanner.py:170` 的 `"granted folder member identity drifted"`。
-两个 `GrantIssuerTests` 也走 grant/import 路径，同样会读写 registry；
-它们在 `test.ps1` 下与其它 30 个新执行的测试并行，
-更可能与自己的 watcher/后台任务撞在同一 dataRoot 上，导致 identity 校验读到中间态。
+两个 `GrantIssuerTests` 也走 grant/import 路径，同样会读写 registry。
+
+> **⚠️ 更正（2026-11-16，HOST-CONCURRENCY-FLAKY-1 AC6 二次复核 reviewer-hcf2）**
+>
+> 本节原先写的是「它们在 `test.ps1` 下与其它 30 个新执行的测试**并行**，更可能与自己的
+> watcher/后台任务撞在同一 dataRoot 上，导致 identity 校验读到中间态」。
+>
+> **那个归因是错的，已作废。** 两点事实：
+>
+> 1. **Host.Tests 本来就不并行**：`apps/desktop-avalonia/tests/NewManga.Host.Tests/AssemblyInfo.cs:1`
+>    是 `[assembly: Xunit.CollectionBehavior(DisableTestParallelization = true)]`
+>    ⇒ 「与其它 30 个测试并行」在 xUnit 层面**不可能发生**。
+> 2. `FILE_IDENTITY_CHANGED` 的根因经后续实测确认**与并发无关**：是 Host 侧 producer 用
+>    **未归一化的 64 位 NTFS file index**，而 Python 侧 comparator 用
+>    `normalize_identity()` **masked 到 53 位**的值，两侧口径不一致 ⇒ 值 > 2^53 时必然不等
+>    （详见 `root-cause-proven.md`、`st-ino-measured.md`，修复见卡面「根因铁证」与「修复完成」节）。
+>
+> 保留保留结论：**`SOURCE_REGISTRY_BUSY` 的触发条件是「同进程内多线程」（测试线程 vs
+> `HostRuntime` 后台 watcher 线程），不是「测试并行」** —— 上一节（`为什么偏偏是
+> Fea11WatchHostRuntimeTests 暴露`）描述的就是这条单测试内的线程竞争，成立。
 
 **这一条需要 AC2（受控复现）才能确认到代码级**，本轮只记录关联性。
 

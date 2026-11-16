@@ -1139,6 +1139,17 @@ public sealed class Fea11ScanIpcTests
     private sealed record FileIdentity(ulong Volume, ulong FileId, long Size);
 
     /// <summary>Real file identity (volume serial + file index + size), the facts the Host grant carries.</summary>
+    /// <remarks>
+    /// HOST-CONCURRENCY-FLAKY-1 AC6 (reviewer-hcf2 P2-N1): the file id must be the SAME 53-bit
+    /// normalized value the production grant producers emit — <see cref="HostIssuer"/> for import
+    /// grants and <see cref="SourceReadCoordinator"/> for source-read grants. The Core stores
+    /// <c>source_locations.volume_serial/file_id</c> from those already-masked facts
+    /// (<c>runtime.py:618-621</c>, <c>service.py:746-760</c>) and compares them as plain integers
+    /// (<c>service.py:733-737</c>, <c>reattest.py:221-226</c>, <c>source_read_refs.py:639-657</c>).
+    /// This helper is fixture-only (opt-in <c>NEWMANGA_FEA11_IPC=1</c> tests, not run by
+    /// <c>test.ps1</c>), but writing a raw 64-bit index here would resurrect the exact raw-vs-masked
+    /// mismatch for any %TEMP%-created fixture with <c>st_ino &gt; 2^53</c>.
+    /// </remarks>
     private static FileIdentity ReadFileIdentity(string path)
     {
         using var handle = File.OpenHandle(path, FileMode.Open, FileAccess.Read, FileShare.Read);
@@ -1147,7 +1158,7 @@ public sealed class Fea11ScanIpcTests
             throw new InvalidOperationException("GetFileInformationByHandle failed");
         }
 
-        var fileId = ((ulong)info.IndexHigh << 32) | info.IndexLow;
+        var fileId = SourceSecurity.NormalizeFileId(((ulong)info.IndexHigh << 32) | info.IndexLow);
         var size = ((long)info.SizeHigh << 32) | info.SizeLow;
         return new FileIdentity(info.Volume, fileId, size);
     }
