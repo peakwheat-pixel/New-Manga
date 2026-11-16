@@ -66,9 +66,9 @@ allowed_paths:
 | M2 | AC1/AC2 | verification/MICA-FIX-1/mica/titlebar-solid.png | c795cdb34 | 7ce9ed83b3cd4702f1a1cfba3f8abe7686371d4c16acd736d6d4ba15c65f3bf7 | CANONICAL |
 | M3 | AC1/AC2 | verification/MICA-FIX-1/mica/two-wallpapers.json | c795cdb34 | 655d8d6b1a9a774271606301e0c7b0abe27a978dabf103a04652a6bc6f209443 | CANONICAL |
 | M4 | AC4 | verification/MICA-FIX-1/ac4-regression-2026-11-16.log | 7519d0302 | 7392b609523fb9fe8fb0109210d115a5d97f55738b591dfe5f9f5452b6d3e391 | CANONICAL |
-| M5 | AC2 | verification/MICA-FIX-1/ac2/window-material.log | PENDING_SUBMIT | 0c0c65e881c18b5a0526278a0cdd319920a406520316acc023e24a0c48b80d8d | CANONICAL |
-| M6 | AC2 | verification/MICA-FIX-1/ac2/startup.log | PENDING_SUBMIT | dd61240f68e588dfac979aa8cbaf39478409ca8d6f0d05f371b5d222af43e2a5 | CANONICAL |
-| M7 | AC2 | verification/MICA-FIX-1/ac2/host.log | PENDING_SUBMIT | 6f399c5f92a4c8366fe902213e75f5b7884ce85dd06a380664a84c1f0c92d660 | CANONICAL |
+| M5 | AC2 | verification/MICA-FIX-1/ac2/window-material.log | 08777bbc8 | 0c0c65e881c18b5a0526278a0cdd319920a406520316acc023e24a0c48b80d8d | CANONICAL |
+| M6 | AC2 | verification/MICA-FIX-1/ac2/startup.log | 08777bbc8 | dd61240f68e588dfac979aa8cbaf39478409ca8d6f0d05f371b5d222af43e2a5 | CANONICAL |
+| M7 | AC2 | verification/MICA-FIX-1/ac2/host.log | 08777bbc8 | 6f399c5f92a4c8366fe902213e75f5b7884ce85dd06a380664a84c1f0c92d660 | CANONICAL |
 |---|---|---|---|---|---|
 
 ## Resource Manifest
