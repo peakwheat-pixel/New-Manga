@@ -1,13 +1,14 @@
 # 新会话启动包 — New Manga 目标续接
 
-- 生成时间：2026-11-16 12:30 (+08:00)（本版为 R4 之后更新）
+- 生成时间：2026-11-16 12:45 (+08:00)（本版为 R5 之后更新）
 - 生成者：DSH（lead）
-- **当前 head：`8900dcbdb`**（main，**已 push**，upstream = origin/main，ahead/behind = 0/0）
+- **当前 head：`a8ffd8a3d`**（main，**已 push**，upstream = origin/main，ahead/behind = 0/0）
 - 工作区：干净（`git status --porcelain` 为空）
 - **R1**：`9ce819ae7` → `dd029b73f`（7 commit，目标 A/B/D 达成）
 - **R2**：`dd029b73f` → `5f2664c2e`（8 commit）—— 目标 C 闭合 10 条
 - **R3**：`5f2664c2e` → `bfbf95a82`（3 commit）—— 目标 C 再闭合 2 条
-- **R4（本轮）**：`bfbf95a82` → `8900dcbdb`（5 commit）—— 闭合 MICA-FIX-1 AC2；**AC7 书面裁决落盘 + 开清理卡**
+- **R4**：`bfbf95a82` → `8900dcbdb`（5 commit）—— 闭合 `MICA-FIX-1` AC2；**AC7 书面裁决落盘 + 开清理卡**
+- **R5（本轮）**：`8900dcbdb` → `a8ffd8a3d`（2 commit）—— 闭合 `V11R-A-3` AC4（该卡 **6/6 全闭合**）
 
 > 本文是**给下一个会话的唯一起点**。不要重读历史对话；按「下一步队列」推进即可。
 
@@ -17,11 +18,11 @@
 
 | 项 | 状态 |
 |---|---|
-| HEAD | `8900dcbdb`（main，已 push，0/0） |
+| HEAD | `a8ffd8a3d`（main，已 push，0/0） |
 | 四件套 | **全绿**：`check.ps1` PASS(3w) / `verify_pins` 18/18 / `api_inventory` 1/80/6=87 / `test.ps1` EXIT=0 **1587/1635 passed, 48 skipped**（App 967/0/4，基线 955/0/11 不退化） |
 | 上一 goal | 已用尽 100 轮（见 `GOAL-WRAPUP-R100.md`） |
 | 本 goal | 60 轮上限 |
-| 目标 C | 可行动项 41 → **闭合 21 / open 20**（其中 **2 条已裁决 BLOCKED**：`GOV-RESIDUAL` AC6/AC7） |
+| 目标 C | 可行动项 41 → **闭合 22 / open 19**（其中 **2 条已裁决 BLOCKED**：`GOV-RESIDUAL` AC6/AC7） |
 
 复跑四件套：
 
@@ -152,6 +153,32 @@ R3：`V11R-C-3` R1（补 tag 存在后的 `-DryRun` + limitation L-C3-1）/ `V11
 
 ---
 
+## 3d. R5（本轮）完成的事 —— `V11R-A-3` AC4（该卡 6/6 全闭合）
+
+| # | 事项 | 结果 |
+|---:|---|---|
+| 1 | **Lead 裁决 AC4 口径** | 原 blocked 理由明写「**口径待 Lead 裁决**」。裁决：AC4 的实质要求是「66 条有 parity 断言（含参数特判与 minor 预期）」，**不是**「必须改 `CommandParityContractTests` 这个文件名」——该文件的 66→76 改造归 `V11R-F0-1`（已完成），本卡由 `CommandContractV11RTests` 承载属合理分工 |
+| 2 | **补唯一真实缺口「参数特判」** | 给 `ContractRow` 加 `Params`（契约表第 7 列）；新增 2 个 fact：**(a)** 66 行逐行断言参数契约非空且归入 **5 种文档化形态**（pass-through 12 / typed 39 / no-params 5 / host-local 6 / core-fieldset 4，词表由代码派生，第 6 种即 fail）；**(b)** 从契约派生「带 `!` 的必填参数」（typed `name!: type` 与 core-fieldset `{name!, x?}` 两种都收），逐条发**空 payload** 断言**一律被拒且无一静默接受**，并记录拒在哪层 |
+| 3 | **实测结果** | **39** 条命令声明必填 → **37** 条 dispatcher 边界拒（`INVALID_ARGUMENTS`，断言**发帧数不变**）+ **2** 条 Core 拒（`INVALID_REQUEST`，断言**恰好 1 帧**）+ **0** 条静默接受 |
+| 4 | **变红验证（两个都做了）** | (i) `parameters` 改 `string.Empty` ⇒ fact (a) 红，报 `C001 settings_get does not declare its parameter contract`；(ii) 移除 dispatcher 对 `list_region_revisions` 的 `region_id` 强制 ⇒ fact (b) 红。**均已还原**，`git diff` 证实产品源码零改动 |
+
+### finding A-1（登记，不掩盖）
+
+`C040 library_delete_book_permanently` / `C041 library_delete_books_permanently` 的契约单元格写「由 Core field-set 校验」，
+但实测 **dispatcher 先拒**（无害的双层加固）⇒ 是**契约描述精度**问题，不是行为缺陷。
+契约 `V11R_COMMAND_CONTRACT_V1.md` 是**冻结件**，本轮**不改其字节**；测试对**反向漂移**
+（typed 声明却只有 Core 拒 = dispatcher 漏检）仍硬失败并点名命令。
+
+### R5 的方法论教训
+
+- **`.md` 文件的行尾不统一**：`V11R-A-3.md` 是 **LF**，而 `.cs` 文件是 **CRLF**。
+  用 `\r\n` 切分的补丁会静默失败 —— 打补丁前先测行尾（`ReadAllBytes` 数 CRLF/LF）。
+- **PowerShell 里做多行文本替换很脆**（引号/括号转义）；改用 Python 脚本做仓库文件的精确改写，
+  并且**先断言锚点存在**再写盘，避免「静默无操作」。
+- 一次失败的补丁曾把 `ContractDocument` 整块切掉；**止损方式是 `git checkout -- <file>` 从零重打一个合并脚本**，
+  而不是在坏状态上继续叠补丁。
+
+---
 ## 3c. R4（本轮）完成的事
 
 | # | 事项 | 结果 |
