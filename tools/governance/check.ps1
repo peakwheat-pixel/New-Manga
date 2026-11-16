@@ -44,12 +44,14 @@ function Initialize-EvidenceExceptions([string]$RegistryPath) {
     $script:evidenceExceptionBaseline = $baseline
     $entryKeys = @('id', 'card', 'task_id', 'evidence_id', 'path', 'commit', 'sha256', 'class',
                    'error_type', 'reason', 'ruling', 'expires_when')
-    $allowedTypes = @('SHA_MISMATCH', 'PATH_MISSING', 'COMMIT_PATH_MISSING', 'COMMIT_FORMAT', 'SHA_MULTI')
+    # optional, only meaningful for line-fingerprint hooks (ruling 2026-11-17 Q1=D)
+    $optionalKeys = @('line', 'row_sha256')
+    $allowedTypes = @('SHA_MISMATCH', 'PATH_MISSING', 'COMMIT_PATH_MISSING', 'COMMIT_FORMAT', 'SHA_MULTI', 'STRUCT_MISSING_FIELDS')
     $seenIds = @{}
     foreach ($e in @($doc.entries)) {
         $enames = @($e.PSObject.Properties.Name)
         $missing = @($entryKeys | Where-Object { $enames -notcontains $_ })
-        $extra = @($enames | Where-Object { $entryKeys -notcontains $_ })
+        $extra = @($enames | Where-Object { ($entryKeys + $optionalKeys) -notcontains $_ })
         if ($missing.Count -gt 0 -or $extra.Count -gt 0) {
             Add-Error "EVIDENCE_EXCEPTION_SCHEMA: 条目字段必须恰为 $($entryKeys -join ',')：$($e.id)"
             continue
@@ -60,6 +62,16 @@ function Initialize-EvidenceExceptions([string]$RegistryPath) {
         }
         if (([string]$e.path) -match '[\*\?\[\]]' -or ([string]$e.evidence_id) -match '[\*\?\[\]]') {
             Add-Error "EVIDENCE_EXCEPTION_WILDCARD: 登记项不得含通配符：$($e.id)"
+            continue
+        }
+        $lineFingerprint = ([string]$e.error_type -eq 'STRUCT_MISSING_FIELDS')
+        if ($lineFingerprint) {
+            $rowHash = ([string]$e.row_sha256).ToLowerInvariant()
+            if ($rowHash -notmatch '^[0-9a-f]{64}$' -or -not $e.line) {
+                Add-Error "EVIDENCE_EXCEPTION_ROW_INVALID: STRUCT_MISSING_FIELDS 条目必须带 line 与 64 位 row_sha256：$($e.id)"
+                continue
+            }
+            $script:evidenceExceptions += $e
             continue
         }
         $shaValues = @($e.sha256 | ForEach-Object { ([string]$_).Trim().ToLowerInvariant() })
@@ -114,7 +126,21 @@ function Test-EvidenceExceptionEligibility($Entry) {
             $statusLine = [regex]::Match($cardText, '(?m)^status:\s*(\S+)\s*$')
             $terminal = $statusLine.Success -and
                 (@('done', 'closed_with_limitations') -contains $statusLine.Groups[1].Value.ToLowerInvariant())
-            if ($terminal) {
+            if ($terminal -and [string]$Entry.error_type -eq 'STRUCT_MISSING_FIELDS') {
+                # Line-fingerprint hooks identify the row by its exact text, so eligibility
+                # means "that same row text still exists in the frozen baseline card".
+                $hit = $false
+                foreach ($line in ($cardText -split '\r?\n')) {
+                    if ($line -notmatch '^\s*\|') { continue }
+                    $cells = @($line.Trim().Trim('|').Split('|') | ForEach-Object { $_.Trim().Trim('`').Trim() })
+                    if ($cells.Count -lt 6) { continue }
+                    $text = ($cells -join ' | ')
+                    $hash = [Convert]::ToHexString([System.Security.Cryptography.SHA256]::HashData(
+                        [Text.Encoding]::UTF8.GetBytes($text))).ToLowerInvariant()
+                    if ($hash -eq ([string]$Entry.row_sha256).ToLowerInvariant()) { $hit = $true; break }
+                }
+                if ($hit) { $ok = $true }
+            } elseif ($terminal) {
                 $escape = [regex]::Escape([string]$Entry.evidence_id)
                 $rowLine = [regex]::Match($cardText, "(?m)^\|\s*$escape\s*\|.*$")
                 if ($rowLine.Success) {
@@ -148,6 +174,22 @@ function Test-EvidenceExceptionEligibility($Entry) {
     }
     $script:evidenceExceptionEligibility[$id] = $ok
     return [bool]$ok
+}
+
+function Get-EvidenceExceptionByRow([string]$ErrorType, [string]$CardRelative, [string]$TaskId,
+                                   [int]$Line, [string]$RowSha256) {
+    foreach ($candidate in $script:evidenceExceptions) {
+        if ([string]$candidate.error_type -ne $ErrorType) { continue }
+        if ($candidate.card -ne $CardRelative -or $candidate.task_id -ne $TaskId) { continue }
+        if ([int]$candidate.line -ne $Line) { continue }
+        if (([string]$candidate.row_sha256).ToLowerInvariant() -ne $RowSha256) { continue }
+        if (-not (Test-EvidenceExceptionEligibility $candidate)) {
+            Add-Warning "EVIDENCE_EXCEPTION_INELIGIBLE: 登记项 $($candidate.id) 在资格基线中不成立，仍按错误处理。"
+            return $null
+        }
+        return $candidate
+    }
+    return $null
 }
 
 function Get-EvidenceException([string]$ErrorType, [string]$TaskId, [string]$EvidenceId,
@@ -1053,13 +1095,45 @@ if ($TaskPath -and (Test-Path -LiteralPath $TaskPath -PathType Leaf)) {
                 # Ruling Q3 (2026-11-16): a row made only of placeholders carries no
                 # evidence at all and must stay a structural error.  Get-TableRows drops
                 # rows whose first cell is `-`, so this is checked on the raw section.
+                $cardRel = [IO.Path]::GetRelativePath($repoRoot, $TaskPath).Replace([char]92, '/')
                 foreach ($rawEvidenceLine in ($evidenceSection -split '\r?\n')) {
                     if ($rawEvidenceLine -notmatch '^\s*\|') { continue }
+                    # separator row: must contain a run of at least three dashes (a `| - |` row
+                    # is data, not a separator)
+                    if ($rawEvidenceLine -match '^\s*\|[\s:\-|]*---[\s:\-|]*\|\s*$') { continue }
                     $rawCells = @($rawEvidenceLine.Trim().Trim('|').Split('|') |
                         ForEach-Object { ([string]$_).Trim().Trim('`').Trim() })
                     if ($rawCells.Count -lt 6) { continue }
-                    if (@($rawCells | Where-Object { $_ -ne '-' -and $_ -ne '' }).Count -eq 0) {
+                    if ($rawCells[0] -eq 'evidence_id') { continue }                        # header row
+                    $placeholders = @($rawCells | Where-Object { $_ -ne '-' -and $_ -ne '' }).Count -eq 0
+                    if ($placeholders) {
                         Add-Error "Canonical Evidence 行结构非法：整行为占位符：$($rawCells -join ' | ')"
+                        continue
+                    }
+                    # Ruling Q1=D: class never substitutes for id/path/sha256, and such a row is
+                    # not evidence.  Checked on the raw line because Get-TableRows drops rows
+                    # whose first cell is a dash.
+                    if ((@('-', '') -contains $rawCells[0]) -or (@('-', '') -contains $rawCells[2]) -or
+                        (@('-', '') -contains $rawCells[4])) {
+                        # Ruling Q1=D: such a row is invalid and is NOT evidence.  It is an
+                        # error only when the card has no other complete row; otherwise it is
+                        # reported as a warning and cannot satisfy the evidence requirement.
+                        $rowText = ($rawCells -join ' | ')
+                        $validRows = 0
+                        foreach ($probe in ($evidenceSection -split '\r?\n')) {
+                            if ($probe -notmatch '^\s*\|') { continue }
+                            if ($probe -match '^\s*\|[\s:\-|]*---[\s:\-|]*\|\s*$') { continue }
+                            $pc = @($probe.Trim().Trim('|').Split('|') | ForEach-Object { $_.Trim().Trim('`').Trim() })
+                            if ($pc.Count -lt 6 -or $pc[0] -eq 'evidence_id') { continue }
+                            if ((@('-', '') -contains $pc[0]) -or (@('-', '') -contains $pc[2]) -or
+                                (@('-', '') -contains $pc[4])) { continue }
+                            $validRows++
+                        }
+                        if ($validRows -gt 0) {
+                            Add-Warning "Canonical Evidence 行缺必填字段（不计作证据；本卡另有 $validRows 条完整行）：$rowText"
+                        } else {
+                            Add-Error "Canonical Evidence 行缺必填字段（evidence_id/path/sha256）：$rowText"
+                        }
                     }
                 }
                 $headerLine = @($evidenceSection -split '\r?\n' | Where-Object { $_ -match '^\s*\|.*\|\s*$' } | Select-Object -First 1)
@@ -1087,8 +1161,18 @@ if ($TaskPath -and (Test-Path -LiteralPath $TaskPath -PathType Leaf)) {
                         else { Add-Error 'Canonical Evidence 表格需要 6 列。' }
                         continue
                     }
-                    if (@($row | ForEach-Object { ([string]$_).Trim() } | Where-Object { $_ -ne '-' -and $_ -ne '' }).Count -eq 0) {
-                        Add-Error "Canonical Evidence 行结构非法：整行为占位符：$($row -join ' | ')"
+                    $rowCells = @($row | ForEach-Object { ([string]$_).Trim().Trim('`').Trim() })
+                    if (@($rowCells | Where-Object { $_ -ne '-' -and $_ -ne '' }).Count -eq 0) {
+                        Add-Error "Canonical Evidence 行结构非法：整行为占位符：$($rowCells -join ' | ')"
+                        continue
+                    }
+                    # Ruling Q1=D (2026-11-17): class never substitutes for id/path/sha256.
+                    # Such a row is invalid and does not count as evidence at all.
+                    $missingField = $rowCells.Count -lt 6 -or
+                        (@('-', '') -contains $rowCells[0]) -or (@('-', '') -contains $rowCells[2]) -or
+                        (@('-', '') -contains $rowCells[4])
+                    if ($missingField) {
+                        Add-Error "Canonical Evidence 行缺必填字段（evidence_id/path/sha256 不得为空或占位）：$($rowCells -join ' | ')"
                         continue
                     }
                     # Legacy rows often wrap cells in backticks; strip them once so

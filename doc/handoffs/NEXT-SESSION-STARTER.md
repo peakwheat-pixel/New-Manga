@@ -265,6 +265,19 @@ Gate 剩下的是条件 3（人眼目视 overlay）/ 4（签名 + 真机安装�
 - ⚠️ 已更正事实（2026-11-17 第二次更正）：EV-11 的值是 **64 位**合法 sha256；此前的「本仓无任何字节表示能复现」是**错的** ——
   记录值恰等于 closeout 提交 `5cbec0e8` 下该文件 blob 的原始字节（已逐字核实），原行的问题是 commit 列缺记载。
 
+### 队列 3c —— 带 class 占位行 + superseded 卡口径（R16 已裁决定案）
+
+- 裁定：`doc/reviews/GOV-EVIDENCE-PIN-REPAIR-1-PLACEHOLDER-RULING-2026-11-17.md`（Codex，Q1=D/Q2=A）。
+- 实现：门禁在 Canonical Evidence **原始行**上检查必填字段；缺字段行**不计作证据**，
+  本卡另有完整行时只报 warning，全卡无完整行则报 error；分隔行判定要求至少三个连字符（避免把 `| - | …` 当分隔行）。
+- 实测：`FEA-05-WIRE-1` / `FEA-GOV-6` PASS(4w)（其中一条 warning 即该无效行）；例外通道测试 13/13。
+- `superseded` 卡的 15 条：门禁不校验，巡检标 `NOT_ENFORCED`，逐条可见、不进失败计数。
+
+### 队列 3d —— `GIT-CLEAN-RUST-CAPACITY-DESIGN-1`（ZCode 设计已交付）
+
+- ZCode（headless plan，session `sess_be120ee8…`）交付 `verification/GIT-CLEAN-RUST-CAPACITY-DESIGN-1/DESIGN.md`（10.7 KB，含 AC1 资源链/AC2 注入方案/AC3 R2-F02..05 修订）；
+- 待做：AC4 = 新 head + 独立复核（Codex 或独立子 agent），判 可释放 / BLOCKED；本卡仍 `ready`，未 done、未集成。
+
 ### 队列 4 —— HUMAN-REQUIRED 等待项（不阻塞 Agent）
 
 `doc/reviews/HUMAN-REQUIRED-2026-11-15.md` 现有 `H-01`…`H-10`，
