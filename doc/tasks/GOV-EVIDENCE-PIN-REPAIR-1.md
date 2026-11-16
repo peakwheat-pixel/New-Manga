@@ -79,6 +79,10 @@ DSH 按 Q3 实现巡检后发现这不是孤例，因此本卡目标定为：
   不可恢复者逐条申请 warning 例外（禁通配、禁按类整批）；每批后 FAIL 数单调不增。
   <<PARTIAL: 分诊 T1 122 / T2 211 / T3 109 / T4 3 已出；batch 1 完成 FEA-11-HOST-AUTH-2 的 7 条（5 条例外 + 2 处 Resource 单元修正，该卡 7 errors → PASS）；随后修正巡检口径（接受 commit blob 的原始/LF/CRLF 三种精确形态）⇒ 全仓 FAIL **440 → 310**（130 条是原本有效、被我误判的 worktree 口径 pin）；余 310 条待判（SHA_NOT_64_HEX 214 / PATH_MISSING 53 / SHA_MISMATCH 31 / COMMIT_NOT_FOUND 12）>>
 - [ ] **AC5 独立复核**：上下文独立 Reviewer（未参与实施）复核；`check.ps1` 与 `-TaskPath` 均 PASS。 <<PARTIAL: 未开始>>
+- [ ] **AC7 门禁接受 blob 行尾形态**（依据 2026-11-16 裁定 Q1=A）：六列历史行接受 commit blob 的
+  原始/LF/CRLF 三种**精确**形态；七列显式 basis 不变；新行必须七列；行尾推断仅限冻结基线中已存在的行；
+  三种形态都不匹配仍报错（不自动降级）。必测 3 正 4 负；门禁耗时验收 < 10 s。
+  <<PARTIAL: 裁定已入库（doc/reviews/GOV-EVIDENCE-PIN-REPAIR-1-EOL-GATE-RULING-2026-11-16.md），实现与测试未开始>>
 - [x] **AC6 例外通道落地**（依据 Q1=B 裁定）：版本化 allowlist（一行一指纹）+ `check.ps1` 精确匹配降级为 warning；
   替代行仍走严格校验；卡片重开/转非终态即失效；正例 ≥2 / 负例 ≥2（含跨路径、错误 blob、重复替代、非终态拒绝）；
   默认 `check.ps1` 仍需 < 10 s 并记录前后耗时。 <<MET>>

@@ -219,7 +219,10 @@ Gate 剩下的是条件 3（人眼目视 overlay）/ 4（签名 + 真机安装�
   `check.ps1` 1.18 s（改动前 1.19 s，< 10 s 要求满足）。证据：`verification/GOV-EVIDENCE-PIN-REPAIR-1/ac6-exception-channel-2026-11-16.log`。
 - **AC4 进度（R6）**：口徑修訂後全仓 FAIL **445 → 310**。关键发现：我在 batch 1 两次把「记录值不可复现」写进例外理由，都是因为只 hash 了**原始 blob**；实测 130 条「路径已清理/摘要不符」的行，记录值恰好等于 commit blob 的 **CRLF 形态**（EV-01/EV-03 就是 closeout 提交 f7016d3fb 下 blob 的 CRLF 形态）⇒ 它们是**有效的 worktree 口径 pin**。巡检工具已接受 blob 的原始/LF/CRLF 三种精确形态（`BLOB_EOL_MATCH`），五条例外理由全部改写为已核实事实。
 - **教训（写进 STARTER 供后续复用）**：断言「某摘要不可复现」之前，必须穷举所有登记表示（原始/LF/CRLF × blob/工作树）；只查一种就会把有效 pin 判成缺陷。
-- **待做（AC4/AC5）**：余 310 条（SHA_NOT_64_HEX 214 / PATH_MISSING 53 / SHA_MISMATCH 31 / COMMIT_NOT_FOUND 12）按类逐条归因 → 逐条登记或修 pin → 上下文独立复核；另需就「check.ps1 是否接受 blob 的 EOL 形态」取得裁定（当前门禁只比对原始 blob 与当前工作树，会把这些有效 pin 判红）。
+- **新裁定（EOL 门禁）**：`doc/reviews/GOV-EVIDENCE-PIN-REPAIR-1-EOL-GATE-RULING-2026-11-16.md`（`APPROVED_WITH_CONDITIONS`，Q1=A）：
+  六列历史行接受 commit blob 的**原始/LF/CRLF 三种精确形态**；七列显式 basis 不变；新行必须七列；
+  行尾推断仅限冻结基线中已存在且字段未变的行；三种都不匹配仍报错。**实现与 3 正 4 负测试未开始（卡片 AC7）**。
+- **待做（AC4/AC5/AC7）**：余 310 条（SHA_NOT_64_HEX 214 / PATH_MISSING 53 / SHA_MISMATCH 31 / COMMIT_NOT_FOUND 12）按类逐条归因 → 逐条登记或修 pin → 上下文独立复核；另需就「check.ps1 是否接受 blob 的 EOL 形态」取得裁定（当前门禁只比对原始 blob 与当前工作树，会把这些有效 pin 判红）。
 - ⚠️ 已更正事实：EV-11 的值是 **64 位**合法 sha256（不是题述的 40 位），真正问题是本仓无任何字节表示能复现它。
 
 ### 队列 4 —— HUMAN-REQUIRED 等待项（不阻塞 Agent）
