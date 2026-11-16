@@ -1,0 +1,97 @@
+# RUN-IPC-1 AC4 复核证据（2026-11-16，DSH）
+# head: 13701130fe8ab90a85ee09c38317bd86e275df73
+# at_utc: 2026-11-16T04:52:23Z
+#
+# AC4 原 blocked 理由声称缺三样东西。本轮逐项实测复核，结论：**该 blocked 理由已过期**。
+
+## ① allowlist 断言（6 条在生产面存在、在 probe/AC1 面不存在）
+
+cargo 运行面 = **NOT_APPLICABLE**：AD-002 已退役 Tauri/React/WebView2（见 doc/AD-002_TARGET_DESKTOP_ARCHITECTURE.md:30、
+apps/desktop/LEGACY_FROZEN.md:5-6），apps/desktop/package.json 不存在 ⇒ 旧壳的 cargo/vitest 不在当前四件套门禁内。
+故采用**静态复核**（可直接重跑）：
+
+### 1) 六条命令常量（apps/desktop/src-tauri/src/main.rs:290-297）
+    pub const RUN_PRODUCTION_ONLY_COMMANDS: &[&str] = &[
+        "library_start_run", "library_control_run", "library_resume_blocked_run",
+        "library_get_run_snapshot", "library_get_task_projection", "library_retry_failed_targets",
+    ];
+
+### 2) 六条全在 PRODUCTION_COMMANDS（main.rs:70-165）
+  实测 6/6 = True（逐条字符串匹配 PRODUCTION_COMMANDS 块）。
+
+### 3) 六条在 probe / AC1 面 0 命中
+    \git grep -c "<name>" -- apps/desktop/src-tauri/src/probe_surface.rs apps/desktop/src-tauri/src/ac1_bridge.rs\
+    ⇒ library_start_run / library_control_run / library_resume_blocked_run /
+      library_get_run_snapshot / library_get_task_projection / library_retry_failed_targets
+      **各 0 命中（6/6）**。
+
+### 4) 机制层保证（main.rs:321-345）
+   command_allowlist(probe_mode, ac1_mode) 在生产面原样返回 PRODUCTION_COMMANDS；
+   在 probe/AC1 面**逐族过滤**（含 !RUN_PRODUCTION_ONLY_COMMANDS.contains(command)）⇒ 结构上不可能进入 probe/AC1。
+
+### 5) 钉住该不变式的 Rust 测试（仍存在，只是当前不跑）
+   main.rs:2748 run_transport_commands_are_exact_and_production_only
+   main.rs:2606 production_only_commands_stay_off_both_frozen_test_surfaces
+
+## ② host 层 typed 拒绝单测（原称「缺」）
+
+实测**全部已有且通过**（见下方原始测试输出）：
+
+| 拒绝面 | typed code | 测试位置 | 结果 |
+|---|---|---|---|
+| StartRun 空 scope | INVALID_REQUEST | RunControllerTests.cs:311-313 | 已通过 |
+| 未知 run id（读/控制/恢复/重试 5 面） | TARGET_NOT_FOUND ×5 | RunControllerTests.cs:316-329 | 已通过 |
+| 本地取消 | CANCELLED | RunControllerTests.cs:332-335 | 已通过 |
+| **StartRun 同键不同请求** | **IDEMPOTENCY_KEY_REUSED** | RunControllerTests.cs:383-389 | 已通过 |
+| **ControlRun 非法转移** | **INVALID_RUN_TRANSITION** | RunControllerTests.cs:426-427 | 已通过 |
+| ControlRun 冻结转移表（pause/stop/restart 非法项） | 拒绝（null） | RunControllerTests.cs:98-115 | 已通过 |
+| 缺强制 idempotency_key | 本地拒绝 | RunControllerTests.cs:251 | 已通过 |
+| 只读面 | 只读拒绝 | RunControllerTests.cs:437 | 已通过 |
+
+## ③ 成功 Run 真实往返（原称 NOT_RUN，无 book/chapter/page 与 Provider 夹具）
+
+**已 NOT_RUN → PASS**：RunControllerHostIntegrationTests.RunCommands_StartSuccessfulRun_ProjectRealPerPageState_AndReuseKey
+（[RunBookFixtureFact]：真实 sidecar + BOOK-FIXTURE 数据根，**实跑 6s 通过**）：
+- C056 StartRun → 真实 RunId、Status=pending、LastError=null
+- 同键同指纹复用 → **同一 RunId**
+- C059 GetRunSnapshot → Targets.Count == pages.Count（真实 Core 投影）
+- C060 GetTaskProjection → Rows.Count == pages.Count、Counts.Total == pages.Count、StepFlow 非空
+  （轮询 ≤40×250ms 等 Core 规划，不伪造即时状态）
+
+## 原始测试输出
+
+### RunControllerHostIntegrationTests（3/3 通过，EXIT=0）
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 9.0.11)
+[xUnit.net 00:00:00.06]   Discovering: NewManga.App.Tests
+[xUnit.net 00:00:00.12]   Discovered:  NewManga.App.Tests
+[xUnit.net 00:00:00.12]   Starting:    NewManga.App.Tests
+  已通过 NewManga.App.Tests.RunControllerHostIntegrationTests.RunCommands_WhenReadOnly_PublishHostReadOnly [626 ms]
+  已通过 NewManga.App.Tests.RunControllerHostIntegrationTests.RunCommands_StartSuccessfulRun_ProjectRealPerPageState_AndReuseKey [6 s]
+[xUnit.net 00:00:07.71]   Finished:    NewManga.App.Tests
+  已通过 NewManga.App.Tests.RunControllerHostIntegrationTests.RunCommands_MapCoreErrors_AndReuseIdempotencyKeys [567 ms]
+
+测试运行成功。
+测试总数: 3
+     通过数: 3
+总时间: 7.9985 秒
+
+
+### 补充两条（2/2 通过，EXIT=0）
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 9.0.11)
+[xUnit.net 00:00:00.05]   Discovering: NewManga.App.Tests
+[xUnit.net 00:00:00.12]   Discovered:  NewManga.App.Tests
+[xUnit.net 00:00:00.12]   Starting:    NewManga.App.Tests
+[xUnit.net 00:00:00.15]   Finished:    NewManga.App.Tests
+  已通过 NewManga.App.Tests.RunControllerHostLocalFailureTests.RunWrites_MissingMandatoryIdempotencyKey_AreRefusedLocally [6 ms]
+  已通过 NewManga.App.Tests.RunControllerNullFakeTests.NullController_ControlRun_FollowsTheFrozenTransitionTable [4 ms]
+
+测试运行成功。
+测试总数: 2
+     通过数: 2
+总时间: 0.4452 秒
