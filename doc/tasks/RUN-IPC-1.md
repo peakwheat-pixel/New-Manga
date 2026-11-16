@@ -139,13 +139,13 @@ evidence_dir: verification/RUN-IPC-1
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| worktree | G:/CODEX/New Manga.workspace/worktrees/RUN-IPC-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees/RUN-IPC-1 | verification/RUN-IPC-1/resource-manifest.json | 本 Task 独立 worktree；closeout 时按 Worktree Safety Inventory 复核后填写 |
+| worktree | G:/CODEX/New Manga.workspace/worktrees/RUN-IPC-1 | DELETE_SAFE | - | verification/RUN-IPC-1/resource-manifest.json | **2026-11-16 DSH 复核并更正**：该 worktree **已不存在** —— `Test-Path` = False，且不在 `git worktree list` 输出中；系 `ad7ce5047`（"governance: prune 41 orphaned worktree admin entries"）清理掉的孤儿管理项。**交付未丢**：`git merge-base --is-ancestor 5642b2a72 HEAD` = 0 ⇒ 交付提交已在 main。故 destination 置 `-`（无保留路径）；原 `PRESERVE_REFERENCED` 记录已与事实不符，本次据实更正。 |
 
 ## Closeout Record
 
 - Closeout date / Coordinator：2026-10-16（dsh, epoch 6）。Reviewer=**antigravity**（独立于 Owner=dsh；已由 `route-agent.py` 机器排除 Owner，并在**独立 Reviewer 工作树** `worktrees/RUN-IPC-1-review` 内审查，未触碰 Owner 工作树）。
 - canonical_evidence_status：`complete`。7 条证据 pin 已按**磁盘字节**逐个复算（治理检查器校验的是磁盘文件）。**更正 1 条**：`evidence-layering.md` 的 owner pin 为 Git **blob（LF）** 哈希 `edc8c24f…`，而 Windows 签出后磁盘为 **CRLF**，实测 `a28ca284…` → 按磁盘值更正（Reviewer 亦独立发现并在 NIT-1 中记录该跨平台差异）。
-- resource_closeout_status：`complete`（worktree `PRESERVE_REFERENCED`）。删除、迁移、归档数量/字节数：0。
+- resource_closeout_status：`complete`（worktree 行 **2026-11-16 据实更正为 `DELETE_SAFE` / destination `-`**：该 worktree 已被 `ad7ce5047` 的孤儿管理项 prune 清掉，交付 `5642b2a72` 已在 main）。删除、迁移、归档数量/字节数：0（本次仅更正记录，未动任何文件）。
 - 交付：`done`。集成 `c3929bcc3`（`--no-ff`，**无冲突**——Owner 已先在自身分支 `git merge main` 并完成语义级解析）；delivery_head（分支实际 HEAD）`de3caf93adf44fdda226a5f9ad013cbe7739e0f4`。
 - Review：R1 判定 **approved**，**无 blocking / 无 non-blocking**，仅 2 条 NIT（跨平台行尾哈希、build.rs 计数注释的更准确表述）；Reviewer **独立复跑**三套件并复算 pin。
 - **合并与解析（本 Task 的关键风险点）**：`library_bridge.rs`、`packaged_sidecar_tests.rs`、生成的 `gen/schemas/capabilities.json` 三方冲突已**语义级**解析并**保留两侧全部功能**——EVENTS-FWD-1 的后台读线程解复用/事件投影/`set_event_sink`（含 Mock 实现）与 RUN-IPC-1 的六个 Run 通道方法、fail-closed 默认与各实现**并存**；两个 frozen-bundle 测试都保留；生成 schema 取并集（18+6 Run+4 probe+3 AC1+2 event = 33 项）。**合并后重跑**：source **82 passed / 0 failed / 1 ignored**、frozen 打包 **10 passed / 0 failed**（含 EVENTS 的 4 个 `test_events_fwd_*`、`same_channel_concurrent_round_trips`、TTL 两个往返、本 Task 的 Run wire 测试与事件 sink 测试）。
