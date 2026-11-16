@@ -1,0 +1,368 @@
+{
+  "task": "V11R-A-3",
+  "ac": "AC4 \u53C2\u6570\u7279\u5224\uFF1A\u58F0\u660E\u4E86\u5FC5\u586B\u53C2\u6570\u7684\u547D\u4EE4\uFF0C\u7A7A payload \u4E00\u5F8B\u88AB\u62D2\uFF08\u5E76\u8BB0\u5F55\u62D2\u5728\u54EA\u4E00\u5C42\uFF09",
+  "commands_with_required_params": 39,
+  "refused_at_dispatcher": 37,
+  "refused_by_core": 2,
+  "silently_accepted": 0,
+  "refused_at_dispatcher_detail": [
+    {
+      "id": "C002",
+      "command": "settings_update_section",
+      "declaration_form": "typed",
+      "required": [
+        "section",
+        "values"
+      ]
+    },
+    {
+      "id": "C008",
+      "command": "backup_restore",
+      "declaration_form": "typed",
+      "required": [
+        "backup_id",
+        "confirm_restore"
+      ]
+    },
+    {
+      "id": "C009",
+      "command": "backup_delete",
+      "declaration_form": "typed",
+      "required": [
+        "backup_id"
+      ]
+    },
+    {
+      "id": "C011",
+      "command": "plugins_set_enabled",
+      "declaration_form": "typed",
+      "required": [
+        "enabled"
+      ]
+    },
+    {
+      "id": "C012",
+      "command": "plugins_set_plugin_enabled",
+      "declaration_form": "typed",
+      "required": [
+        "plugin_id",
+        "enabled"
+      ]
+    },
+    {
+      "id": "C016",
+      "command": "settings_provider_profiles_create",
+      "declaration_form": "typed",
+      "required": [
+        "provider_id",
+        "display_name",
+        "endpoint",
+        "model",
+        "enabled",
+        "capabilities"
+      ]
+    },
+    {
+      "id": "C017",
+      "command": "settings_provider_profiles_update",
+      "declaration_form": "typed",
+      "required": [
+        "profile_id",
+        "display_name",
+        "endpoint",
+        "model",
+        "enabled",
+        "capabilities"
+      ]
+    },
+    {
+      "id": "C018",
+      "command": "settings_provider_profiles_delete",
+      "declaration_form": "typed",
+      "required": [
+        "profile_id"
+      ]
+    },
+    {
+      "id": "C019",
+      "command": "settings_provider_bindings_set",
+      "declaration_form": "typed",
+      "required": [
+        "capability",
+        "profile_id",
+        "scope"
+      ]
+    },
+    {
+      "id": "C020",
+      "command": "settings_provider_bindings_clear",
+      "declaration_form": "typed",
+      "required": [
+        "capability",
+        "scope"
+      ]
+    },
+    {
+      "id": "C021",
+      "command": "settings_provider_bindings_resolve",
+      "declaration_form": "typed",
+      "required": [
+        "capability"
+      ]
+    },
+    {
+      "id": "C022",
+      "command": "settings_provider_run_snapshot_get",
+      "declaration_form": "typed",
+      "required": [
+        "run_id"
+      ]
+    },
+    {
+      "id": "C024",
+      "command": "settings_network_profiles_create",
+      "declaration_form": "typed",
+      "required": [
+        "display_name",
+        "mode"
+      ]
+    },
+    {
+      "id": "C025",
+      "command": "settings_network_profiles_update",
+      "declaration_form": "typed",
+      "required": [
+        "network_profile_id",
+        "display_name",
+        "mode",
+        "verify_tls",
+        "allow_proxy_failure_direct_fallback"
+      ]
+    },
+    {
+      "id": "C026",
+      "command": "settings_network_profiles_delete",
+      "declaration_form": "typed",
+      "required": [
+        "network_profile_id"
+      ]
+    },
+    {
+      "id": "C027",
+      "command": "settings_network_profiles_test",
+      "declaration_form": "typed",
+      "required": [
+        "network_profile_id"
+      ]
+    },
+    {
+      "id": "C028",
+      "command": "settings_network_profile_default_set",
+      "declaration_form": "typed",
+      "required": [
+        "network_profile_id"
+      ]
+    },
+    {
+      "id": "C040",
+      "command": "library_delete_book_permanently",
+      "declaration_form": "fieldset",
+      "required": [
+        "book_id",
+        "confirm_permanent_delete"
+      ]
+    },
+    {
+      "id": "C041",
+      "command": "library_delete_books_permanently",
+      "declaration_form": "fieldset",
+      "required": [
+        "book_ids",
+        "confirmed_book_ids",
+        "confirm_count",
+        "confirm_permanent_delete"
+      ]
+    },
+    {
+      "id": "C042",
+      "command": "set_region_type",
+      "declaration_form": "typed",
+      "required": [
+        "region_id",
+        "new_region_type"
+      ]
+    },
+    {
+      "id": "C044",
+      "command": "list_region_revisions",
+      "declaration_form": "typed",
+      "required": [
+        "region_id"
+      ]
+    },
+    {
+      "id": "C045",
+      "command": "restore_region_revision",
+      "declaration_form": "typed",
+      "required": [
+        "region_id",
+        "revision_no",
+        "expected_revision"
+      ]
+    },
+    {
+      "id": "C046",
+      "command": "rerender_page",
+      "declaration_form": "typed",
+      "required": [
+        "page_id"
+      ]
+    },
+    {
+      "id": "C047",
+      "command": "resolve_page_resource",
+      "declaration_form": "typed",
+      "required": [
+        "page_id"
+      ]
+    },
+    {
+      "id": "C050",
+      "command": "library_get_reader_projection",
+      "declaration_form": "typed",
+      "required": [
+        "chapter_id",
+        "mode",
+        "start_position"
+      ]
+    },
+    {
+      "id": "C051",
+      "command": "library_save_reading_progress",
+      "declaration_form": "typed",
+      "required": [
+        "chapter_id",
+        "mode",
+        "page_id"
+      ]
+    },
+    {
+      "id": "C052",
+      "command": "issue_resource_url",
+      "declaration_form": "typed",
+      "required": [
+        "resource_id",
+        "revision"
+      ]
+    },
+    {
+      "id": "C053",
+      "command": "revoke_ref",
+      "declaration_form": "typed",
+      "required": [
+        "opaque_id"
+      ]
+    },
+    {
+      "id": "C054",
+      "command": "revoke_resource_refs",
+      "declaration_form": "typed",
+      "required": [
+        "resource_id"
+      ]
+    },
+    {
+      "id": "C056",
+      "command": "library_start_run",
+      "declaration_form": "typed",
+      "required": [
+        "command",
+        "idempotency_key",
+        "scope"
+      ]
+    },
+    {
+      "id": "C057",
+      "command": "library_control_run",
+      "declaration_form": "typed",
+      "required": [
+        "run_id",
+        "action"
+      ]
+    },
+    {
+      "id": "C059",
+      "command": "library_get_run_snapshot",
+      "declaration_form": "typed",
+      "required": [
+        "run_id"
+      ]
+    },
+    {
+      "id": "C060",
+      "command": "library_get_task_projection",
+      "declaration_form": "typed",
+      "required": [
+        "run_id"
+      ]
+    },
+    {
+      "id": "C061",
+      "command": "library_retry_failed_targets",
+      "declaration_form": "typed",
+      "required": [
+        "run_id",
+        "idempotency_key"
+      ]
+    },
+    {
+      "id": "C064",
+      "command": "library_start_export",
+      "declaration_form": "typed",
+      "required": [
+        "book_id",
+        "format",
+        "stale_policy",
+        "target_ref",
+        "format_options",
+        "chapter_ids",
+        "ordered_page_ids"
+      ]
+    },
+    {
+      "id": "C065",
+      "command": "library_cancel_export",
+      "declaration_form": "typed",
+      "required": [
+        "export_id"
+      ]
+    },
+    {
+      "id": "C066",
+      "command": "library_get_export_snapshot",
+      "declaration_form": "typed",
+      "required": [
+        "export_id"
+      ]
+    }
+  ],
+  "refused_by_core_detail": [
+    {
+      "id": "C036",
+      "command": "library_create_book",
+      "declaration_form": "fieldset",
+      "required": [
+        "title"
+      ]
+    },
+    {
+      "id": "C037",
+      "command": "create_chapter",
+      "declaration_form": "fieldset",
+      "required": [
+        "book_id",
+        "title"
+      ]
+    }
+  ]
+}

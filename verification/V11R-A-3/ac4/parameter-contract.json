@@ -1,0 +1,410 @@
+{
+  "task": "V11R-A-3",
+  "ac": "AC4 \u53C2\u6570\u7279\u5224\uFF08\u58F0\u660E\u9762\uFF09",
+  "baseline_rows": 66,
+  "shapes": [
+    "pass-through",
+    "typed-params",
+    "no-params",
+    "host-local",
+    "core-fieldset"
+  ],
+  "rows": [
+    {
+      "id": "C001",
+      "command": "settings_get",
+      "shape": "pass-through",
+      "declared": "\u900F\u4F20\uFF08Core \u6821\u9A8C\uFF1B\u5B9E\u6D4B\u7A7A payload\uFF09"
+    },
+    {
+      "id": "C002",
+      "command": "settings_update_section",
+      "shape": "typed-params",
+      "declared": "\u0060section!: string\u0060 \u0060values!: object\u0060"
+    },
+    {
+      "id": "C003",
+      "command": "cleanup_preview",
+      "shape": "pass-through",
+      "declared": "\u900F\u4F20\uFF08Core \u6821\u9A8C\uFF1B\u5B9E\u6D4B\u7A7A payload\uFF09"
+    },
+    {
+      "id": "C004",
+      "command": "cleanup_run",
+      "shape": "no-params",
+      "declared": "\u0060{}\u0060\uFF08\u65E0\u53C2\u6570\uFF1BDispatcher \u4E22\u5F03\u8F93\u5165\uFF09"
+    },
+    {
+      "id": "C005",
+      "command": "cleanup_retry_pending",
+      "shape": "no-params",
+      "declared": "\u0060{}\u0060\uFF08\u65E0\u53C2\u6570\uFF1BDispatcher \u4E22\u5F03\u8F93\u5165\uFF09"
+    },
+    {
+      "id": "C006",
+      "command": "backup_create",
+      "shape": "typed-params",
+      "declared": "\u0060backup_type?: string\u0060"
+    },
+    {
+      "id": "C007",
+      "command": "backup_list",
+      "shape": "pass-through",
+      "declared": "\u900F\u4F20\uFF08Core \u6821\u9A8C\uFF1B\u5B9E\u6D4B\u7A7A payload\uFF09"
+    },
+    {
+      "id": "C008",
+      "command": "backup_restore",
+      "shape": "typed-params",
+      "declared": "\u0060backup_id!: string\u0060 \u0060confirm_restore!: bool\u0060"
+    },
+    {
+      "id": "C009",
+      "command": "backup_delete",
+      "shape": "typed-params",
+      "declared": "\u0060backup_id!: string\u0060"
+    },
+    {
+      "id": "C010",
+      "command": "plugins_list",
+      "shape": "pass-through",
+      "declared": "\u900F\u4F20\uFF08Core \u6821\u9A8C\uFF1B\u5B9E\u6D4B\u7A7A payload\uFF09"
+    },
+    {
+      "id": "C011",
+      "command": "plugins_set_enabled",
+      "shape": "typed-params",
+      "declared": "\u0060enabled!: bool\u0060"
+    },
+    {
+      "id": "C012",
+      "command": "plugins_set_plugin_enabled",
+      "shape": "typed-params",
+      "declared": "\u0060plugin_id!: string\u0060 \u0060enabled!: bool\u0060"
+    },
+    {
+      "id": "C013",
+      "command": "plugins_audit_list",
+      "shape": "typed-params",
+      "declared": "\u0060limit?: int\u0060"
+    },
+    {
+      "id": "C014",
+      "command": "plugins_open_directory",
+      "shape": "host-local",
+      "declared": "\u89C1 Host \u5B9E\u73B0\uFF08Host-local \u53C2\u6570\u6821\u9A8C\uFF09"
+    },
+    {
+      "id": "C015",
+      "command": "settings_provider_profiles_list",
+      "shape": "pass-through",
+      "declared": "\u900F\u4F20\uFF08Core \u6821\u9A8C\uFF09"
+    },
+    {
+      "id": "C016",
+      "command": "settings_provider_profiles_create",
+      "shape": "typed-params",
+      "declared": "\u0060provider_id!: string\u0060 \u0060display_name!: string\u0060 \u0060endpoint!: string\u0060 \u0060model!: string\u0060 \u0060enabled!: bool\u0060 \u0060capabilities!: string[]\u0060 \u0060network_profile_id?: nullable-string\u0060"
+    },
+    {
+      "id": "C017",
+      "command": "settings_provider_profiles_update",
+      "shape": "typed-params",
+      "declared": "\u0060profile_id!: string\u0060 \u0060display_name!: string\u0060 \u0060endpoint!: string\u0060 \u0060model!: string\u0060 \u0060enabled!: bool\u0060 \u0060capabilities!: string[]\u0060 \u0060network_profile_id?: nullable-string\u0060"
+    },
+    {
+      "id": "C018",
+      "command": "settings_provider_profiles_delete",
+      "shape": "typed-params",
+      "declared": "\u0060profile_id!: string\u0060"
+    },
+    {
+      "id": "C019",
+      "command": "settings_provider_bindings_set",
+      "shape": "typed-params",
+      "declared": "\u0060capability!: string\u0060 \u0060profile_id!: string\u0060 \u0060scope!: object\u0060"
+    },
+    {
+      "id": "C020",
+      "command": "settings_provider_bindings_clear",
+      "shape": "typed-params",
+      "declared": "\u0060capability!: string\u0060 \u0060scope!: object\u0060"
+    },
+    {
+      "id": "C021",
+      "command": "settings_provider_bindings_resolve",
+      "shape": "typed-params",
+      "declared": "\u0060capability!: string\u0060 \u0060book_id?: string\u0060 \u0060chapter_id?: string\u0060 \u0060run_id?: string\u0060"
+    },
+    {
+      "id": "C022",
+      "command": "settings_provider_run_snapshot_get",
+      "shape": "typed-params",
+      "declared": "\u0060run_id!: string\u0060"
+    },
+    {
+      "id": "C023",
+      "command": "settings_network_profiles_list",
+      "shape": "no-params",
+      "declared": "\u0060{}\u0060\uFF08\u65E0\u53C2\u6570\uFF1BDispatcher \u4E22\u5F03\u8F93\u5165\uFF09"
+    },
+    {
+      "id": "C024",
+      "command": "settings_network_profiles_create",
+      "shape": "typed-params",
+      "declared": "\u0060display_name!: string\u0060 \u0060mode!: string\u0060 \u0060proxy_endpoint?: nullable-string\u0060 \u0060verify_tls?: bool\u0060 \u0060confirm_disable_tls_verification?: bool\u0060 \u0060allow_proxy_failure_direct_fallback?: bool\u0060"
+    },
+    {
+      "id": "C025",
+      "command": "settings_network_profiles_update",
+      "shape": "typed-params",
+      "declared": "\u0060network_profile_id!: string\u0060 \u0060display_name!: string\u0060 \u0060mode!: string\u0060 \u0060verify_tls!: bool\u0060 \u0060allow_proxy_failure_direct_fallback!: bool\u0060 \u0060proxy_endpoint?: nullable-string\u0060 \u0060confirm_disable_tls_verification?: bool\u0060"
+    },
+    {
+      "id": "C026",
+      "command": "settings_network_profiles_delete",
+      "shape": "typed-params",
+      "declared": "\u0060network_profile_id!: string\u0060"
+    },
+    {
+      "id": "C027",
+      "command": "settings_network_profiles_test",
+      "shape": "typed-params",
+      "declared": "\u0060network_profile_id!: string\u0060 \u0060provider_profile_id?: string\u0060"
+    },
+    {
+      "id": "C028",
+      "command": "settings_network_profile_default_set",
+      "shape": "typed-params",
+      "declared": "\u0060network_profile_id!: string\u0060"
+    },
+    {
+      "id": "C029",
+      "command": "settings_network_profile_default_clear",
+      "shape": "no-params",
+      "declared": "\u0060{}\u0060\uFF08\u65E0\u53C2\u6570\uFF1BDispatcher \u4E22\u5F03\u8F93\u5165\uFF09"
+    },
+    {
+      "id": "C030",
+      "command": "settings_network_profile_resolve",
+      "shape": "typed-params",
+      "declared": "\u0060provider_profile_id?: string\u0060"
+    },
+    {
+      "id": "C031",
+      "command": "settings_resolve_overrides",
+      "shape": "typed-params",
+      "declared": "\u0060book_id?: string\u0060 \u0060chapter_id?: string\u0060 \u0060run_id?: string\u0060 \u0060keys?: string[]\u0060"
+    },
+    {
+      "id": "C032",
+      "command": "credential_put",
+      "shape": "host-local",
+      "declared": "\u89C1 Host \u5B9E\u73B0\uFF08Host-local \u53C2\u6570\u6821\u9A8C\uFF09"
+    },
+    {
+      "id": "C033",
+      "command": "credential_clear",
+      "shape": "host-local",
+      "declared": "\u89C1 Host \u5B9E\u73B0\uFF08Host-local \u53C2\u6570\u6821\u9A8C\uFF09"
+    },
+    {
+      "id": "C034",
+      "command": "library_list_books",
+      "shape": "pass-through",
+      "declared": "\u900F\u4F20\uFF08Core \u6821\u9A8C\uFF1B\u5B9E\u6D4B\u7A7A payload\uFF09"
+    },
+    {
+      "id": "C035",
+      "command": "library_list_recycle_bin_books",
+      "shape": "pass-through",
+      "declared": "\u900F\u4F20\uFF08Core \u6821\u9A8C\uFF1B\u5B9E\u6D4B\u7A7A payload\uFF09"
+    },
+    {
+      "id": "C036",
+      "command": "library_create_book",
+      "shape": "core-fieldset",
+      "declared": "\u0060{title!}\u0060\uFF08Core \u0060_CREATE_FIELDS\u0060\uFF0C:244-247\uFF09"
+    },
+    {
+      "id": "C037",
+      "command": "create_chapter",
+      "shape": "core-fieldset",
+      "declared": "\u0060{book_id!, title!, chapter_number?}\u0060\uFF08Core \u0060_CREATE_FIELDS\u0060\uFF0C:244-247\uFF09"
+    },
+    {
+      "id": "C038",
+      "command": "library_import_file",
+      "shape": "host-local",
+      "declared": "\u89C1 Host \u5B9E\u73B0\uFF08Host-local \u53C2\u6570\u6821\u9A8C\uFF09"
+    },
+    {
+      "id": "C039",
+      "command": "library_import_folder",
+      "shape": "host-local",
+      "declared": "\u89C1 Host \u5B9E\u73B0\uFF08Host-local \u53C2\u6570\u6821\u9A8C\uFF09"
+    },
+    {
+      "id": "C040",
+      "command": "library_delete_book_permanently",
+      "shape": "core-fieldset",
+      "declared": "\u0060{book_id!, confirm_permanent_delete!}\u0060\uFF08core_service.py:1341-1352\uFF09"
+    },
+    {
+      "id": "C041",
+      "command": "library_delete_books_permanently",
+      "shape": "core-fieldset",
+      "declared": "\u0060{book_ids!, confirmed_book_ids!, confirm_count!, confirm_permanent_delete!}\u0060\uFF08core_service.py:1360\u002B\uFF09"
+    },
+    {
+      "id": "C042",
+      "command": "set_region_type",
+      "shape": "typed-params",
+      "declared": "\u0060region_id!: string\u0060 \u0060new_region_type!: string\u0060 \u0060expected_revision?: int\u0060"
+    },
+    {
+      "id": "C043",
+      "command": "list_regions",
+      "shape": "pass-through",
+      "declared": "\u900F\u4F20\uFF08Core \u6821\u9A8C\uFF1B\u5B9E\u6D4B payload\uFF1A\u0060{page_id}\u0060\uFF09"
+    },
+    {
+      "id": "C044",
+      "command": "list_region_revisions",
+      "shape": "typed-params",
+      "declared": "\u0060region_id!: string\u0060"
+    },
+    {
+      "id": "C045",
+      "command": "restore_region_revision",
+      "shape": "typed-params",
+      "declared": "\u0060region_id!: string\u0060 \u0060revision_no!: int\u0060 \u0060expected_revision!: int\u0060"
+    },
+    {
+      "id": "C046",
+      "command": "rerender_page",
+      "shape": "typed-params",
+      "declared": "\u0060page_id!: string\u0060"
+    },
+    {
+      "id": "C047",
+      "command": "resolve_page_resource",
+      "shape": "typed-params",
+      "declared": "\u0060page_id!: string\u0060"
+    },
+    {
+      "id": "C048",
+      "command": "list_chapters",
+      "shape": "pass-through",
+      "declared": "\u900F\u4F20\uFF08Core \u6821\u9A8C\uFF1B\u5B9E\u6D4B payload\uFF1A\u0060{book_id}\u0060\uFF09"
+    },
+    {
+      "id": "C049",
+      "command": "list_chapter_pages",
+      "shape": "pass-through",
+      "declared": "\u900F\u4F20\uFF08Core \u6821\u9A8C\uFF1B\u5B9E\u6D4B payload\uFF1A\u0060{chapter_id}\u0060\uFF09"
+    },
+    {
+      "id": "C050",
+      "command": "library_get_reader_projection",
+      "shape": "typed-params",
+      "declared": "\u0060chapter_id!: string\u0060 \u0060mode!: string\u0060 \u0060start_position!: string\u0060"
+    },
+    {
+      "id": "C051",
+      "command": "library_save_reading_progress",
+      "shape": "typed-params",
+      "declared": "\u0060chapter_id!: string\u0060 \u0060mode!: string\u0060 \u0060page_id!: string\u0060 \u0060scroll_offset_y?: double\u0060 \u0060elapsed_seconds_delta?: double\u0060"
+    },
+    {
+      "id": "C052",
+      "command": "issue_resource_url",
+      "shape": "typed-params",
+      "declared": "\u0060resource_id!: string\u0060 \u0060revision!: string\u0060"
+    },
+    {
+      "id": "C053",
+      "command": "revoke_ref",
+      "shape": "typed-params",
+      "declared": "\u0060opaque_id!: string\u0060"
+    },
+    {
+      "id": "C054",
+      "command": "revoke_resource_refs",
+      "shape": "typed-params",
+      "declared": "\u0060resource_id!: string\u0060"
+    },
+    {
+      "id": "C055",
+      "command": "core_ping",
+      "shape": "pass-through",
+      "declared": "\u900F\u4F20\uFF08Core \u6821\u9A8C\uFF1B\u5B9E\u6D4B\u7A7A payload\uFF09"
+    },
+    {
+      "id": "C056",
+      "command": "library_start_run",
+      "shape": "typed-params",
+      "declared": "\u0060command!: string\u0060 \u0060idempotency_key!: string\u0060 \u0060scope!: object\u0060 \u0060overrides?: object\u0060"
+    },
+    {
+      "id": "C057",
+      "command": "library_control_run",
+      "shape": "typed-params",
+      "declared": "\u0060run_id!: string\u0060 \u0060action!: string\u0060 \u0060idempotency_key?: string\u0060"
+    },
+    {
+      "id": "C058",
+      "command": "library_resume_blocked_run",
+      "shape": "pass-through",
+      "declared": "\u900F\u4F20\uFF08Core \u6821\u9A8C\uFF09"
+    },
+    {
+      "id": "C059",
+      "command": "library_get_run_snapshot",
+      "shape": "typed-params",
+      "declared": "\u0060run_id!: string\u0060"
+    },
+    {
+      "id": "C060",
+      "command": "library_get_task_projection",
+      "shape": "typed-params",
+      "declared": "\u0060run_id!: string\u0060"
+    },
+    {
+      "id": "C061",
+      "command": "library_retry_failed_targets",
+      "shape": "typed-params",
+      "declared": "\u0060run_id!: string\u0060 \u0060idempotency_key!: string\u0060"
+    },
+    {
+      "id": "C062",
+      "command": "library_reveal_export_folder",
+      "shape": "host-local",
+      "declared": "\u89C1 Host \u5B9E\u73B0\uFF08Host-local \u53C2\u6570\u6821\u9A8C\uFF09"
+    },
+    {
+      "id": "C063",
+      "command": "library_get_export_history",
+      "shape": "no-params",
+      "declared": "\u0060{}\u0060\uFF08\u65E0\u53C2\u6570\uFF1BDispatcher \u4E22\u5F03\u8F93\u5165\uFF09"
+    },
+    {
+      "id": "C064",
+      "command": "library_start_export",
+      "shape": "typed-params",
+      "declared": "\u0060book_id!: string\u0060 \u0060format!: string\u0060 \u0060stale_policy!: string\u0060 \u0060target_ref!: string\u0060 \u0060format_options!: object\u0060 \u0060chapter_ids!: string[]\u0060 \u0060ordered_page_ids!: string[]\u0060"
+    },
+    {
+      "id": "C065",
+      "command": "library_cancel_export",
+      "shape": "typed-params",
+      "declared": "\u0060export_id!: string\u0060"
+    },
+    {
+      "id": "C066",
+      "command": "library_get_export_snapshot",
+      "shape": "typed-params",
+      "declared": "\u0060export_id!: string\u0060"
+    }
+  ]
+}

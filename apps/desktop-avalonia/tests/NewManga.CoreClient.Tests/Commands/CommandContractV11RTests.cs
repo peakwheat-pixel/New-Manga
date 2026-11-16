@@ -1,7 +1,9 @@
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using NewManga.CoreClient.Bridge;
 using NewManga.CoreClient.Commands;
 using NewManga.CoreClient.Tests.Support;
+using NewManga.CoreClient.Wire;
 
 namespace NewManga.CoreClient.Tests.Commands;
 
@@ -164,6 +166,271 @@ public sealed class CommandContractV11RTests
         Assert.Contains("start-run-minor-probe.json", text, StringComparison.Ordinal);
     }
 
+    // ------------------------------------------------------------------
+    // V11R-A-3 AC4「参数特判」 - added 2026-11-16 (DSH).
+    //
+    // AC4 asks for parity assertions over all 66 registered commands "including parameter
+    // special-cases and expected minor". The 66-row coverage and the expected minor were already
+    // pinned by BaselineRows_CoverC001ToC066_* and DeclaredCoreRows_KeepTheRegisteredProtocolMinor;
+    // the missing half was the PARAMETER contract: the 「入参（校验/实测）」 column was parsed by
+    // nobody, so a command could declare `section!: string` and silently accept a payload without it.
+    //
+    // Fact 1 pins the declaration side (every row declares its parameters, in one of five documented
+    // shapes). Fact 2 pins the enforcement side and is the real special-case assertion: an empty
+    // payload is never accepted for a command that declares required parameters - and it records
+    // WHICH layer refuses it, because the contract genuinely uses two mechanisms.
+    // ------------------------------------------------------------------
+
+    [Fact]
+    public void EveryBaselineRow_DeclaresItsParameterContract_InTheDocumentedVocabulary()
+    {
+        var classified = new List<(string Id, string Command, string Kind, string Declared)>();
+
+        foreach (var row in Document.Value.BaselineRows)
+        {
+            Assert.False(
+                string.IsNullOrWhiteSpace(row.Params),
+                $"{row.Id} {row.Command} does not declare its parameter contract («入参» column is empty)");
+
+            var declared = row.Params;
+            string kind;
+            if (declared.StartsWith("透传", StringComparison.Ordinal))
+            {
+                kind = "pass-through";
+            }
+            else if (declared.StartsWith("见 Host 实现", StringComparison.Ordinal))
+            {
+                kind = "host-local";
+            }
+            else if (declared.Contains("无参数", StringComparison.Ordinal))
+            {
+                kind = "no-params";
+            }
+            else if (Regex.IsMatch(declared, "^`\\{[^}]+\\}`"))
+            {
+                // `` `{title!}`（Core `_CREATE_FIELDS`，…） `` - the required set is declared by a Core
+                // field-set constant instead of an inline C# shape.
+                kind = "core-fieldset";
+            }
+            else if (Regex.IsMatch(declared, "`[a-z_]+[!?]?\\s*:"))
+            {
+                kind = "typed-params";
+            }
+            else
+            {
+                Assert.Fail($"{row.Id} {row.Command} declares parameters in an undocumented shape: {declared}");
+                kind = "unreachable";
+            }
+
+            classified.Add((row.Id, row.Command, kind, declared));
+        }
+
+        Assert.Equal(Document.Value.BaselineRows.Count, classified.Count);
+
+        // A column where every row says the same thing would be decorative, not a contract.
+        var kinds = classified.Select(row => row.Kind).Distinct(StringComparer.Ordinal).ToList();
+        Assert.True(
+            kinds.Count >= 3,
+            "the «入参» column must distinguish parameter shapes, saw only: " + string.Join(", ", kinds));
+
+        Assert.Contains(classified, row => row.Kind == "typed-params");
+
+        WriteParameterEvidence(classified, kinds);
+    }
+
+    [SidecarFact]
+    public async Task EveryDeclaredRequiredParameter_IsRefused_AndNeverSilentlyAccepted()
+    {
+        // Required parameters are the ones the contract marks with a trailing '!'. Two declaration
+        // forms carry them, and BOTH must be refused:
+        //   `` `section!: string` ``          -> typed, refused at the dispatcher boundary;
+        //   `` `{title!, chapter_number?}` ``  -> Core field-set, refused by the Core itself.
+        // The invariant that matters is that an empty payload is NEVER accepted for a command that
+        // declares required parameters. Which layer refuses it is recorded, not assumed.
+        var withRequired = new List<(string Id, string Command, string[] Required, string Form)>();
+        foreach (var row in Document.Value.BaselineRows)
+        {
+            var required = new List<string>();
+            var form = "none";
+            foreach (Match typed in Regex.Matches(row.Params, "`([a-z_]+)!\\s*:"))
+            {
+                required.Add(typed.Groups[1].Value);
+                form = "typed";
+            }
+
+            foreach (Match set in Regex.Matches(row.Params, "\\{([^}]*)\\}"))
+            {
+                var fromFieldSet = 0;
+                foreach (Match name in Regex.Matches(set.Groups[1].Value, "([a-z_]+)!"))
+                {
+                    required.Add(name.Groups[1].Value);
+                    fromFieldSet++;
+                }
+
+                if (fromFieldSet > 0)
+                {
+                    form = form == "typed" ? "typed+fieldset" : "fieldset";
+                }
+            }
+
+            var names = required.Distinct(StringComparer.Ordinal).ToArray();
+            if (names.Length > 0)
+            {
+                withRequired.Add((row.Id, row.Command, names, form));
+            }
+        }
+
+        Assert.NotEmpty(withRequired);
+
+        await using var context = await ParameterProbeContext.StartAsync("commands-v11r-a3-required-params");
+
+        var accepted = new List<string>();
+        var atDispatcher = new List<(string Id, string Command, string[] Required, string Form)>();
+        var atCore = new List<(string Id, string Command, string[] Required, string Form)>();
+        foreach (var (id, command, required, form) in withRequired)
+        {
+            var framesBefore = context.Core.Wire.Frames.Count;
+            try
+            {
+                await context.Dispatcher.InvokeAsync(command, Args("{}"));
+                accepted.Add($"{id} {command} (required: {string.Join(",", required)})");
+            }
+            catch (HostCommandInvalidArgumentsException error)
+            {
+                Assert.Equal("INVALID_ARGUMENTS", error.Code);
+                // Refused BEFORE the frame: the dispatcher owns this rejection.
+                Assert.Equal(framesBefore, context.Core.Wire.Frames.Count);
+                atDispatcher.Add((id, command, required, form));
+            }
+            catch (CoreOperationException error)
+            {
+                Assert.Equal("INVALID_REQUEST", error.Code);
+                // Refused BY the Core: exactly one frame went out and came back typed-failed.
+                Assert.Equal(framesBefore + 1, context.Core.Wire.Frames.Count);
+                atCore.Add((id, command, required, form));
+            }
+        }
+
+        Assert.True(
+            accepted.Count == 0,
+            "commands that declare required parameters yet ACCEPT an empty payload: "
+            + string.Join("; ", accepted));
+        Assert.Equal(withRequired.Count, atDispatcher.Count + atCore.Count);
+
+        // Direction that MUST hold: a command declaring inline typed parameters has to be refused by
+        // the dispatcher - that is what «the dispatcher enforces these» means. If that ever regresses,
+        // this names the command instead of quietly letting a frame through.
+        //
+        // The opposite direction (a Core-field-set command that the dispatcher ALSO refuses) is harmless
+        // hardening, so it is recorded rather than asserted. It does happen today: C040/C041 are declared
+        // against a Core field-set yet the dispatcher refuses them first, i.e. those contract cells
+        // under-describe the wiring. Registered as finding A-1 in the card instead of being tolerated.
+        foreach (var (id, command, _, form) in atCore)
+        {
+            Assert.True(
+                form is "fieldset" or "typed+fieldset",
+                $"{id} {command} declares inline typed parameters ({form}) "
+                + "but ONLY the Core refused it - the dispatcher is supposed to enforce those");
+        }
+
+        WriteRequiredParameterEvidence(atDispatcher, atCore);
+    }
+
+    private static JsonElement Args(string json)
+    {
+        using var document = JsonDocument.Parse(json);
+        return document.RootElement.Clone();
+    }
+
+    private static void WriteParameterEvidence(
+        IReadOnlyList<(string Id, string Command, string Kind, string Declared)> all,
+        IReadOnlyList<string> kinds)
+    {
+        var directory = Environment.GetEnvironmentVariable("NEWMANGA_EVIDENCE_DIR");
+        if (string.IsNullOrWhiteSpace(directory))
+        {
+            return;
+        }
+
+        var target = Path.Combine(directory, "contract-v11r");
+        Directory.CreateDirectory(target);
+        using var stream = File.Create(Path.Combine(target, "parameter-contract.json"));
+        using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions { Indented = true });
+        writer.WriteStartObject();
+        writer.WriteString("task", "V11R-A-3");
+        writer.WriteString("ac", "AC4 参数特判（声明面）");
+        writer.WriteNumber("baseline_rows", all.Count);
+        writer.WriteStartArray("shapes");
+        foreach (var kind in kinds)
+        {
+            writer.WriteStringValue(kind);
+        }
+
+        writer.WriteEndArray();
+        writer.WriteStartArray("rows");
+        foreach (var row in all)
+        {
+            writer.WriteStartObject();
+            writer.WriteString("id", row.Id);
+            writer.WriteString("command", row.Command);
+            writer.WriteString("shape", row.Kind);
+            writer.WriteString("declared", row.Declared);
+            writer.WriteEndObject();
+        }
+
+        writer.WriteEndArray();
+        writer.WriteEndObject();
+    }
+
+    private static void WriteRequiredParameterEvidence(
+        IReadOnlyList<(string Id, string Command, string[] Required, string Form)> atDispatcher,
+        IReadOnlyList<(string Id, string Command, string[] Required, string Form)> atCore)
+    {
+        var directory = Environment.GetEnvironmentVariable("NEWMANGA_EVIDENCE_DIR");
+        if (string.IsNullOrWhiteSpace(directory))
+        {
+            return;
+        }
+
+        var target = Path.Combine(directory, "contract-v11r");
+        Directory.CreateDirectory(target);
+        using var stream = File.Create(Path.Combine(target, "parameter-enforcement.json"));
+        using var writer = new Utf8JsonWriter(stream, new JsonWriterOptions { Indented = true });
+        writer.WriteStartObject();
+        writer.WriteString("task", "V11R-A-3");
+        writer.WriteString("ac", "AC4 参数特判：声明了必填参数的命令，空 payload 一律被拒（并记录拒在哪一层）");
+        writer.WriteNumber("commands_with_required_params", atDispatcher.Count + atCore.Count);
+        writer.WriteNumber("refused_at_dispatcher", atDispatcher.Count);
+        writer.WriteNumber("refused_by_core", atCore.Count);
+        writer.WriteNumber("silently_accepted", 0);
+
+        void WriteRows(string name, IReadOnlyList<(string Id, string Command, string[] Required, string Form)> rows)
+        {
+            writer.WriteStartArray(name);
+            foreach (var row in rows)
+            {
+                writer.WriteStartObject();
+                writer.WriteString("id", row.Id);
+                writer.WriteString("command", row.Command);
+                writer.WriteString("declaration_form", row.Form);
+                writer.WriteStartArray("required");
+                foreach (var parameter in row.Required)
+                {
+                    writer.WriteStringValue(parameter);
+                }
+
+                writer.WriteEndArray();
+                writer.WriteEndObject();
+            }
+
+            writer.WriteEndArray();
+        }
+
+        WriteRows("refused_at_dispatcher_detail", atDispatcher);
+        WriteRows("refused_by_core_detail", atCore);
+        writer.WriteEndObject();
+    }
+
     private static string ChannelName(HostCommandChannel channel) => channel switch
     {
         HostCommandChannel.CoreService => "core",
@@ -203,7 +470,8 @@ public sealed class CommandContractV11RTests
         string Channel,
         int? Minor,
         string Status,
-        string Evidence);
+        string Evidence,
+        string Params);
 
     private sealed record PendingRow(string Id, string Name, string Status);
 
@@ -274,6 +542,8 @@ public sealed class CommandContractV11RTests
                     var minorText = cells[5].Trim();
                     var status = cells[10].Trim().Trim('*').Trim();
                     var evidence = cells[11].Trim();
+                    // cells[6] is the 「入参（校验/实测）」 column - the declared parameter contract.
+                    var parameters = cells[6].Trim();
                     baseline.Add(new ContractRow(
                         id,
                         command,
@@ -281,7 +551,8 @@ public sealed class CommandContractV11RTests
                         channel,
                         int.TryParse(minorText, out var minor) ? minor : null,
                         status,
-                        evidence));
+                        evidence,
+                        parameters));
                 }
                 else if (index > 66 && section.StartsWith("## 8.", StringComparison.Ordinal))
                 {
@@ -295,4 +566,55 @@ public sealed class CommandContractV11RTests
             return new ContractDocument(text, baseline, pending);
         }
     }
+    /// <summary>
+    /// Minimal dispatcher fixture for the AC4 enforcement fact: a real Core sidecar + real bridge, so
+    /// «refused at the dispatcher boundary» means what it says and frame counts are real.
+    /// Mirrors the per-file fixture pattern already used by CommandWiringB1/B2 and CommandIntegrationTests.
+    /// </summary>
+    private sealed class ParameterProbeContext : IAsyncDisposable
+    {
+        private ParameterProbeContext(
+            SidecarFixture.CommandEnvironment environment,
+            CoreServiceClient core,
+            HostBridgeClient bridge,
+            HostCommandDispatcher dispatcher)
+        {
+            Environment = environment;
+            Core = core;
+            Bridge = bridge;
+            Dispatcher = dispatcher;
+        }
+
+        public SidecarFixture.CommandEnvironment Environment { get; }
+
+        public CoreServiceClient Core { get; }
+
+        public HostBridgeClient Bridge { get; }
+
+        public HostCommandDispatcher Dispatcher { get; }
+
+        public static async Task<ParameterProbeContext> StartAsync(string name)
+        {
+            var environment = SidecarFixture.CreateCommandEnvironment(name);
+            var core = await CoreServiceClient.StartAsync(environment.CoreOptions);
+            try
+            {
+                var bridge = await HostBridgeClient.StartAsync(environment.BridgeOptions);
+                return new ParameterProbeContext(environment, core, bridge, new HostCommandDispatcher(core, bridge));
+            }
+            catch
+            {
+                await core.DisposeAsync();
+                throw;
+            }
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            await Bridge.DisposeAsync();
+            await Core.DisposeAsync();
+            SidecarFixture.TryDeleteDirectory(Environment.DataRoot);
+        }
+    }
+
 }
