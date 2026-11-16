@@ -1,0 +1,43 @@
+# V11R-C-3 R1 补充证据 —— tag 存在后的 -DryRun（2026-11-16）
+# 补齐 doc/reviews/V11R-THEME-L3-r1-independent.md:79,125 要求的「tag 存在后补一次 DryRun」
+# command: pwsh -NoProfile -File tools/v11r/rollback-theme-retire.ps1 -DryRun
+# head: 5f2664c2ee2779017168418905e3aae1633655e4
+# at_utc: 2026-11-16T03:28:35Z
+
+## tag 状态（确认真实存在且为 annotated）
+
+tag 名称        : v11r-pre-retire
+tag 对象类型    : tag
+tag 对象 sha    : befd16859bb0291016184e07feb929a6c3010e15
+tag 指向 commit : df883f2ceec98d2fa521c10ec1e5d4ce2bdafb1e
+（对比 verification/V11R-C-3/R1-tag.txt 记录：指向 df883f2ce…，一致）
+
+## DryRun 原始输出（tag exists=True）
+
+DRY RUN - no files, refs or settings are changed.
+repo     : G:/CODEX/New Manga
+branch   : main @ 5f2664c2ee2779017168418905e3aae1633655e4
+dirty    : False
+mode     : checkout
+tag      : v11r-pre-retire (exists=True)
+settings : C:\Users\49745\AppData\Roaming\NewManga\theme-settings.json (restore=False, reset=False)
+artifacts: C:\Users\49745\AppData\Local\Temp\v11r-c3-rollback\20261116-112835
+decisions:
+  - tag exists; the execute path switches/resets to it
+planned actions:
+  - backup settings: C:\Users\49745\AppData\Roaming\NewManga\theme-settings.json -> C:\Users\49745\AppData\Local\Temp\v11r-c3-rollback\20261116-112835 (when the file exists)
+  - git switch --create rollback/v11r-c3-20261116-112835 v11r-pre-retire
+  - dotnet build apps/desktop-avalonia/src/NewManga.App/NewManga.App.csproj -warnaserror
+  - verify old theme symbols are back: git grep ThemePackService (count > 0)
+  - verify settings JSON parses; write report.json
+EXIT_CODE=0
+
+EXIT=0
+
+## 判读
+
+- 	ag : v11r-pre-retire (exists=True) ⇒ 回滚点 tag 确实存在（这是此前唯一缺的判据）；
+- decisions: tag exists; the execute path switches/resets to it ⇒ 执行路径会切到该 tag；
+- planned actions 完整列出：备份 settings → git switch --create rollback/v11r-c3-<ts> v11r-pre-retire
+  → dotnet build … -warnaserror → 校验旧主题符号回归（git grep ThemePackService 计数>0）→ 写 report.json；
+- DRY RUN - no files, refs or settings are changed + dirty: False ⇒ 本次未改动任何文件/引用/设置。
