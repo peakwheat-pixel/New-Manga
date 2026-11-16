@@ -1,8 +1,8 @@
 # 新会话启动包 — New Manga 目标续接
 
-- 生成时间：2026-11-16 13:40 (+08:00)（本版为 R10 之后更新）
+- 生成时间：2026-11-16 13:55 (+08:00)（本版为 R11 之后更新）
 - 生成者：DSH（lead）
-- **当前 head：`2e575c8f6`**（main，**已 push**，upstream = origin/main，ahead/behind = 0/0）
+- **当前 head：`691753f9d`**（main，**已 push**，upstream = origin/main，ahead/behind = 0/0）
 - 工作区：干净（`git status --porcelain` 为空）
 - **R1**：`9ce819ae7` → `dd029b73f`（7 commit，目标 A/B/D 达成）
 - **R2**：`dd029b73f` → `5f2664c2e`（8 commit）—— 目标 C 闭合 10 条
@@ -13,7 +13,8 @@
 - **R7**：`759b49730` → `650b2605e`（4 commit）—— 闭合 `V11R-C-1` **AC1/AC6/AC7**（该卡 **7/7 全闭合**）并补齐结构性表格，**门禁转全绿**
 - **R8**：`650b2605e` → `b11689068`（3 commit）—— 闭合 `V11R-B-5` **AC1/AC2**（补 SCREEN_SPECS §6.5 + 上下文保留断言 + 结构性表格）
 - **R9**：`b11689068` → `26519c9fd`（2 commit）—— 闭合 `V11R-B-5` **AC3**（六态显式映射 + 两条变红验证）；**该卡 7/7 且门禁全绿**
-- **R10（本轮）**：`26519c9fd` → `2e575c8f6`（3 commit）—— 闭合 `GATE3-COVERAGE-MATRIX` **AC2/AC4**；**该卡 6/6 且门禁全绿**
+- **R10**：`26519c9fd` → `2e575c8f6`（3 commit）—— 闭合 `GATE3-COVERAGE-MATRIX` **AC2/AC4**；**该卡 6/6 且门禁全绿**
+- **R11（本轮）**：`2e575c8f6` → `691753f9d`（3 commit）—— 立 `FEA-04-IMPL-1` 实现卡 + 闭合 `M2-SFX` **AC4**；**目标 C 41 条全部有处置**
 
 > 本文是**给下一个会话的唯一起点**。不要重读历史对话；按「下一步队列」推进即可。
 
@@ -23,11 +24,11 @@
 
 | 项 | 状态 |
 |---|---|
-| HEAD | `2e575c8f6`（main，已 push，0/0） |
+| HEAD | `691753f9d`（main，已 push，0/0） |
 | 四件套 | **全绿**：`check.ps1` PASS(3w) / `verify_pins` 18/18 / `api_inventory` 1/80/6=87 / `test.ps1` EXIT=0 **1587/1635 passed, 48 skipped**（App 967/0/4，基线 955/0/11 不退化） |
 | 上一 goal | 已用尽 100 轮（见 `GOAL-WRAPUP-R100.md`） |
 | 本 goal | 60 轮上限 |
-| 目标 C | 可行动项 41 → **闭合 30 / open 11**（其中 **2 条已裁决 BLOCKED**：`GOV-RESIDUAL` AC6/AC7） |
+| 目标 C | 可行动项 41 **全部有处置** = 闭合 **31** + BLOCKED **2** + 移交实现卡 **8**；**无「无路径项」残留** |
 
 复跑四件套：
 
@@ -158,6 +159,58 @@ R3：`V11R-C-3` R1（补 tag 存在后的 `-DryRun` + limitation L-C3-1）/ `V11
 
 ---
 
+## 3j. R11（本轮）完成的事 —— 目标 C **41 条全部有处置**
+
+### 1) 立 `FEA-04-IMPL-1`：把 8 条「无路径项」变成有路径项
+
+`doc/tasks/FEA-04.md` 是**范围冻结卡**，它自己写着（`AC-CHECKBOX-AUTHORITY-1`，2026-11-15）：
+> `status: done` 表示**范围冻结与 scope 复核完成**，**不代表 AC1–AC8 已满足** —— 那些是**下游实现**的验收条件。
+
+⇒ 这 8 条不是欠账，是**缺一张实现卡**。新卡 `doc/tasks/FEA-04-IMPL-1.md`（`proposed`，`depends_on: [FEA-04]`）：
+- **不重开范围**：规则一律引用 FEA-04（R-CURRENT/R-STATE/R-SWITCH/§15.3/Q-16…Q-20），不复制第二份定义；
+- **AC1–AC8 逐条承继**（语义不变、不新增不弱化），每条标注依据的规则编号；
+- **建议 6 批 B0–B5**，B0 = 先在 `91be6c134` 上量出逐工程基线（**否则 AC2 无法判定**）；
+- **禁止 6 条**：不重开范围 / 不实现 wire / 不做切换执行与 Fluent 启动 / 不新建工程不改 sln /
+  不弱化既有断言 / 不硬编码用户路径；
+- **关账口径**：FEA-04 的 AC1–AC8 继续 `[ ]`（实测 8/8 未变），只有实现卡达成 + 独立复核 approved 后
+  **依据其证据**依次翻。
+
+### 2) `M2-SFX-CORRECTION-EXPORTER` AC4 收口 —— 原 blocked 前提**不成立**
+
+原 block：「T1b 产物尚不存在，「与 T1b 产物同构、训练侧零适配」无法验证」。
+**实测：T1b 产物就在本机** —— `training_data/sfx-v1/manifest.train.json`（216280 B，
+`kind=sfx-data-infra/manifest@1`）、`manifest.full.json`、`sfx-v1/` 下四个子目录。
+
+**「同构」是构造性成立，不是碰巧像**：T1b 产物与本导出物都由 `sfx_data_infra.atomicio.write_manifest` 写、
+由同一个 `SampleRecord.to_dict()` 产出，训练侧读取走同一个 `load_manifest` ⇒ 同一套 IO 模块。
+
+**新增判别力测试** `test_manifest_is_structurally_identical_to_the_shared_writer`：
+容器形状 / 每样本键集合 == `SampleRecord.to_dict()` / 辅助册同构 / **跨产物逐一相等**。
+缺失 T1b 产物时 `pytest.skip` —— 因为 `training_data/` 被 `.gitignore:13` 排除，**刻意不把 gitignored 产物做成硬依赖**。
+
+**变红验证**：往 `to_dict()` 注入 `red_proof_extra` ⇒ FAILED，报
+`T1b-only=[] exporter_only=['red_proof_extra']` —— **`T1b-only=[]` 反证了原状下两者键集合完全相同**。
+还原后 **12 passed**，产品源码零改动。
+
+### 3) 目标 C 的最终记账（这是本轮最重要的一句话）
+
+| 处置类别 | 条数 | 说明 |
+|---|---:|---|
+| **已闭合** | **31** | 逐条有证据 + 独立复核/实测 + 变红验证（多数） |
+| **已裁决 BLOCKED** | **2** | `GOV-RESIDUAL` AC6/AC7；解锁 = **Ruling A**（HIE P22 tracked 化三选一），书面裁决已落盘 |
+| **已移交实现卡** | **8** | `FEA-04` AC1–AC8 → `FEA-04-IMPL-1`（`proposed`，路径已建立） |
+| **合计** | **41** | **无「无路径项」残留** |
+
+⚠️ **口径必须说清**：目标 C 的原文是「AC blocked 剩余 33 条可闭合项**处置完**」。
+现在的状态是「**41 条全部有处置**」（闭合/裁决/移交三类），**不是「全部闭合」** ——
+8 条在实现卡里仍 open、2 条是 BLOCKED。**不得写成「目标 C 清零」**。
+
+### 4) 判据来源提醒（本轮踩过）
+
+`M2-SFX` AC4 的原 block 说「T1b 产物不存在」，实际存在 —— **blocked 理由也会过期**。
+⇒ 处理任何 blocked AC 前，**先实测它声称缺的前提**，不要直接相信注释；本轮靠这一点直接关掉了 1 条。
+
+---
 ## 3i. R10（本轮）完成的事 —— `GATE3-COVERAGE-MATRIX` AC2/AC4（该卡 **6/6 全闭合 + 门禁全绿**）
 
 ### AC4：把「类名推断」换成**权威口径**
