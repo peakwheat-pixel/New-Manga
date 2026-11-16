@@ -195,6 +195,18 @@ Gate 剩下的是条件 3（人眼目视 overlay）/ 4（签名 + 真机安装�
   **仍建议**：恢复 doc 字节优先用 `git cat-file blob` + 二进制写（LF 规则只覆盖这两份）。
 - ~~`doc/tasks/RELEASE-PACKAGE-1.md` 含 NUL 字节~~ → **R1 实测 NUL=0，已不存在**
 
+### 队列 3b —— **`GOV-EVIDENCE-PIN-REPAIR-1`（R24 新释放，in_progress）**
+
+- 来由：Codex 裁定（`doc/reviews/GOV-EVIDENCE-PIN-REPAIR-1-CODEX-RULING-2026-11-16.md`，`APPROVED_WITH_CONDITIONS`）
+  Q1=D：先建独立修复卡、再对终态卡 **append-only** 追加 `EV-11-supersede`；Q3 要求提供只读巡检。
+- **已完成（AC1/AC2）**：`tools/governance/audit_evidence_pins.py`（只读，12 项测试，`judge()` 纯函数）；
+  全仓基线 **7,080 行 / 445 FAIL / 103 卡**（SHA_MISMATCH 110、SHA_NOT_64_HEX 214、PATH_MISSING 109、
+  COMMIT_NOT_FOUND 12），4 类各抽样 1 条均为**真实失效**；全仓耗时 183.4 s ⇒ **不并入 check.ps1**。
+  证据：`verification/GOV-EVIDENCE-PIN-REPAIR-1/ac1-ac2-baseline-2026-11-16.log`。
+- **待做（AC3–AC6）**：EV-11（及同表 HOST-AUTH-4/5 两行）append-only 修复 → 445 条逐条判定（真实失效 ⇒ supersede；
+  历史形态 ⇒ 记录可接受依据）→ 上下文独立复核 → 门禁决策。
+- ⚠️ 已更正事实：EV-11 的值是 **64 位**合法 sha256（不是题述的 40 位），真正问题是本仓无任何字节表示能复现它。
+
 ### 队列 4 —— HUMAN-REQUIRED 等待项（不阻塞 Agent）
 
 `doc/reviews/HUMAN-REQUIRED-2026-11-15.md` 现有 `H-01`…`H-10`，

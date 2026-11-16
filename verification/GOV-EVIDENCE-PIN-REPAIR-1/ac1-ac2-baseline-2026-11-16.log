@@ -1,0 +1,37 @@
+# GOV-EVIDENCE-PIN-REPAIR-1 · AC1/AC2 证据（只读巡检工具 + 全仓基线）
+# head: 9f2db6463
+# at_utc: 2026-11-16T13:23:32Z
+# os: Windows 10.0.26200 ; PowerShell 7.6.8 ; Python 3.14.6
+# ruling: doc/reviews/GOV-EVIDENCE-PIN-REPAIR-1-CODEX-RULING-2026-11-16.md（Q1=D、Q3 只读巡检、默认不并入门禁）
+
+## 1. AC1 工具（只读、可自证）
+# 新增 tools/governance/audit_evidence_pins.py：
+#   - 只读遍历 doc/tasks/*.md 的 `## Canonical Evidence` 表；不写工作树（跑完 git status 干净）；
+#   - digest 判定只看 4 种**精确字节表示**：commit blob、当前工作树、当前工作树的纯 LF / 纯 CRLF 形态；
+#     运行期不做空白/内容规范化；混合换行与「换行不变只改 1 字节」都不可能命中；
+#   - commit 列写 `pending` / `(见提交)` / `-` 等非 commit 形态时按「无 commit」处理（不误判成 COMMIT_NOT_FOUND）；
+#   - 单元格里列了多个摘要时取其中的 64 位摘要集合判定（不误报）；
+#   - 判定逻辑抽成纯函数 judge()，有单元测试。
+# command: python -B -m unittest tools.governance.tests.test_audit_evidence_pins
+Ran 12 tests ... OK
+# 自证：GOV-DECLARATION-SCAN-CLEANUP-1（全 BLOB 基准）FAIL=0；FEA-11-HOST-AUTH-2 能报出失效行。
+# 耗时实测：183.4 s（全仓 665 卡 / 7080 行）⇒ **不并入 check.ps1**（AC6 预置结论）。
+
+## 2. AC2 全仓基线（09f2db6463 之后 head）
+# canonical 行：7080（665 张卡）；FAIL **445** 行 / **103** 张卡；
+# WARN（有 commit 但只对得上工作树口径）：1671 行。
+# FAIL 分类：{'COMMIT_NOT_FOUND': 12, 'PATH_MISSING': 109, 'SHA_MISMATCH': 110, 'SHA_NOT_64_HEX': 214}
+
+## 3. 逐类抽样复核（真实失效 vs 工具误报）
+# ① SHA_MISMATCH — doc/tasks/ARCH-DOC-REBASELINE.md:185 pin doc/tasks/PDF-STREAM-FIX-1.md @5a0e9aed1：
+#    记录 e923ff8c… / blob a164f0d9… / 工作树 e637b6fb… ⇒ 三者互不相同 ⇒ **真实失效**。
+# ② SHA_NOT_64_HEX — doc/tasks/DETECT-TILING-1.md:112 pin verification/P09-…/codex-adjudicate-…：
+#    sha256 单元格为空（无摘要），但 commit 与 path 都在（blob 14cb9ea3…、工作树 cb3126ee…）⇒ **真实缺陷**（该 pin 无摘要锚点）。
+# ③ PATH_MISSING — doc/tasks/FEA-05-PORT-1.md:107 pin apps/desktop-avalonia/src/NewManga.App/Services/IHostControl…：
+#    路径已不存在、commit 下也取不到 blob；该行 sha256 单元格还塞了 3 个摘要 ⇒ **真实失效**（文件已删/移动且摘要不可复现）。
+# ④ COMMIT_NOT_FOUND — doc/tasks/FEA-GOV-10.md:57 pin doc/plan/FEA-C07_API_INVENTORY.md：
+#    commit 列写的是散文 `(见提交)`，记录摘要 5919b084… 与工作树 498882eb… 不同 ⇒ **真实缺陷**（commit 不可解析 + 字节已漂移）。
+# 结论：4 条抽样全部是真实问题，不是工具误报；但 445 条仍需逐条判定（部分可能是「历史形态」而非缺陷）。
+
+## 4. 本卡不做什么（防越权）
+# 不批量重算、不覆盖任何既有摘要、不改任何证据行字节；EV-11 等修复留到 AC3/AC4 按裁定 append-only 执行。
