@@ -74,7 +74,7 @@ DSH 按 Q3 实现巡检后发现这不是孤例，因此本卡目标定为：
   每行以**精确行指纹**（卡路径 + Task ID + Evidence ID + 原行全部字段 + 历史错误类型）登记；
   不可恢复者逐条申请 warning 例外（禁通配、禁按类整批）；每批后 FAIL 数单调不增。
   <<MET: 三次口径修正后（接受 blob 的原始/LF/CRLF 形态；承认 commit-only 是旧 schema 的合法 pin；EV-01/03 记录值 = closeout blob 的 CRLF 形态），445 条里真实失效只剩 4 条；batch 1-6 逐条登记 116 条例外（一行为一指纹）+ 关掉 9 张卡 + 修 16 张卡的 Resource/元数据缺陷；实测 33 张有登记项的卡全部 PASS、全局 PASS>>
-- [ ] **AC5 独立复核**：上下文独立 Reviewer（未参与实施）复核；`check.ps1` 与 `-TaskPath` 均 PASS。 <<PARTIAL: 未开始>>
+- [x] **AC5 独立复核**：上下文独立 Reviewer（未参与实施）复核；`check.ps1` 与 `-TaskPath` 均 PASS。 <<MET: 上下文独立复核（pin-exc-reviewer，四轮）—— r1 REJECTED（P1：EV-11/12/13 理由不实）→ r2 REJECTED（资格校验宽松、空壳行、陈旧陈述、清单含未跟踪文件）→ r3 REJECTED（仅剩计数陈述）→ **r4 APPROVED**（16→1→0 的递进表述一致）。报告：doc/reviews/GOV-EVIDENCE-PIN-REPAIR-1-AC5-REVIEW-2026-11-17.md>>
 - [x] **AC7 门禁接受 blob 行尾形态**（依据 2026-11-16 裁定 Q1=A）：六列历史行接受 commit blob 的
   原始/LF/CRLF 三种**精确**形态；七列显式 basis 不变；新行必须七列；行尾推断仅限冻结基线中已存在的行；
   三种形态都不匹配仍报错（不自动降级）。必测 3 正 4 负；门禁耗时验收 < 10 s。

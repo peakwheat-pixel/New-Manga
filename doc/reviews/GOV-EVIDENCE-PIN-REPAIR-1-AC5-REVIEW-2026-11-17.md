@@ -187,3 +187,17 @@ verdict3: **REJECTED**
 | 3 | P6 批量清单 245 条全部 HEAD blob | **PASS** | `EVIDENCE-MANIFEST.json` 现有 **245** 条；Python 逐条 `git cat-file -e HEAD:<path>`：**HEAD blob missing = 0**；实际 evidence dir 245 个文件，集合与清单完全相等；manifest note 已改为“文件字节；目录 `-text` 固定；pyc 已移入 workspace archive”。命令结果：`count 245 / head_blob_missing 0 / actual_files 245 / set_equal True`。 |
 
 **第三轮结论**：P1-1 已真修（commit 逐字 + 摘要有序列表；散文变更/顺序反转均不再豁免）；P6 的 245 条全部 HEAD blob 成立。P5 仍 FAIL：handoff/batch4 的两处文字已更正，但 246 vs 245 计数未统一（DISPLAY 卡 `:138`、batch6 log `:17` 仍 246），handoff `:246` 仍保留“16 FAIL”与 `:252` 矛盾。因此 **verdict3 = REJECTED**；只需把 246 改为 245、修正 handoff `:246` 后即可复核通过。本 Review 只读，未 commit/push，未修改除本文件以外的任何文件。
+
+## 第四轮（计数确认）
+
+verdict4: **APPROVED**
+
+本轮对象 `c19b3f1bf4b2050d712f608053b7c36f13b8b76c`；只读，未改其它文件。
+
+| # | 检查 | 结论 | 行号与原位依据 |
+|---|---|---|---|
+| 1 | DISPLAY 卡 Resource Manifest 行 | **PASS** | `doc/tasks/DISPLAY-PERF-DECISION-1.md:138` 现写“**245** 个文件由 EVIDENCE-MANIFEST.json 逐文件覆盖（最初 246，2026-11-17 复核把 1 个 .pyc 编译缓存移出证据目录）”；245 且注明最初 246。 |
+| 2 | batch6 log 246→245 | **PASS** | `verification/GOV-EVIDENCE-PIN-REPAIR-1/ac4-batch6-2026-11-17.log:17` 现写“246 个文件逐条…——【更正】随后复核发现其中 1 个是 .pyc 编译缓存（非证据），已移到 workspace archive，清单现为 245 条”；246 已明确标注随后更正为 245。 |
+| 3 | handoff 16/1/33 一致性 | **PASS** | `doc/handoffs/NEXT-SESSION-STARTER.md:248`：“32 PASS / 1 FAIL（更早一轮 16 FAIL，上一轮 1 FAIL）”；`:252`：“33 PASS / 0 FAIL”。`:246` 的“16 FAIL”位于 batch4 历史段，`:248` 已明确将其标为“更早一轮”，与 252 的 33/0 构成 16→1→0 的历史递进，不再矛盾。 |
+
+**第四轮结论**：三点均成立，`verdict4 = APPROVED`；本轮未发现新的计数/陈述不一致。本 Review 只读，未 commit/push，未修改除本文件以外的任何文件。
