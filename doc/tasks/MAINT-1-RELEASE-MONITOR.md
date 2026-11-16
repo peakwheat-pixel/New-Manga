@@ -13,10 +13,10 @@ depends_on: [PUBLISH-FIX-1]
 base_commit: ef5881ffe
 branch: main
 worktree: G:/CODEX/New Manga
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 45af57007
+delivery_head: 45af57007
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/MAINT-1-RELEASE-MONITOR
 allowed_paths:
   - verification/MAINT-1-RELEASE-MONITOR/**
@@ -368,6 +368,10 @@ NEW-MANGA-V1-FULL-AUDIT 与 R1–R4 整改、SEC-01/02/03、CORE-01、AUDIT-07/0
   `verification/MAINT-2-C1-BATCH-1/README.md:5` 均未出现「8/8 MET」断言（后者原文即写 AC8 = PARTIAL），
   故**不改其字节**，仅在此登记指针；轮次 24 的历史记录按 Errata 读。
 - **未翻转**：Release Gate 总体仍 `BLOCKED`（条件 3/4/5 开放）；本卡作为伞形哨位保持 `in_progress`。
+- **冻结值与实测（回填）**：交付 head `45af57007`；证据提交 `3cc4e1186`；四件套 EXIT 全 0
+  （`check` PASS 3w / `pins` 18/18 / `inventory` `1/80/6=87` / `.NET` **1591/1639 passed, 48 skipped**，App 969/0/4）。
+  三口径（path 存在 / Git blob sha256 重算 / `git cat-file -e`）见
+  `verification/MAINT-1-RELEASE-MONITOR/condition6-closeout/threeway.log`。
 
 ## Canonical Evidence
 
@@ -383,6 +387,10 @@ NEW-MANGA-V1-FULL-AUDIT 与 R1–R4 整改、SEC-01/02/03、CORE-01、AUDIT-07/0
 | EV-MR-2 | 条件 5 ① 真实 API 适配 | verification/MAINT-1-RELEASE-MONITOR/model-api-verification.log | 6a408e5aa | 120fe35b56222a7ef2229ecf8e6f27cb3684fe0e9a3cdc417b50dc3b1a30f38c | CANONICAL | BLOB |
 | EV-MR-3 | 条件 6 独立最终 Review | doc/reviews/MAINT-1-GATE-CONDITION-6-FINAL-REVIEW-2026-11-14.md | 6a408e5aa | fd1c3d995c6bf11f0a2c47b9c3e4adaac5be0c7d554ec1e4f072f4c11d688613 | CANONICAL | BLOB |
 | EV-MR-4 | P1-1 处置载体（Errata :58-66） | doc/reviews/MAINT-1-FEA-LINE-CLOSEOUT-v2-2026-11-14.md | 6a408e5aa | f7a5d0ad6cd664efd19259ab00a09d7a424a60b9ca5f3d7b066708411964d79a | CANONICAL | BLOB |
+| EV-C6-1 | 条件 6-①② 四件套实测（冻结 head） | verification/MAINT-1-RELEASE-MONITOR/condition6-closeout/gates.log | 3cc4e1186 | eaf8c759b0ed132e02b3aa3650a406939bae60d925c82b595300c0be35a84b46 | CANONICAL | BLOB |
+| EV-C6-2 | 条件 6-③ P2-2 前后实测 | verification/MAINT-1-RELEASE-MONITOR/condition6-closeout/p2-2-before-after.log | 3cc4e1186 | 63b093ed8b0f2ed6f52fce50064458e8d7e1231de4d018245131d98af75664f3 | CANONICAL | BLOB |
+| EV-C6-3 | 资源核销（8 个 temp 数据根删除） | verification/MAINT-1-RELEASE-MONITOR/condition6-closeout/resource-closeout.log | 3cc4e1186 | e161401eca1c7e069c883b53a3ba7fbf8d729574b2d51bc4cb5de0d2885ac171 | CANONICAL | BLOB |
+| EV-C6-4 | 条件 6 收口复评报告 | doc/reviews/MAINT-1-GATE-CONDITION-6-CLOSURE-2026-11-16.md | 3cc4e1186 | d983a652b9633547c96388d54259e78f21dbf2ccbeec391ae8410c061c28b79e | CANONICAL | BLOB |
 
 ## Resource Manifest
 
@@ -398,7 +406,8 @@ NEW-MANGA-V1-FULL-AUDIT 与 R1–R4 整改、SEC-01/02/03、CORE-01、AUDIT-07/0
 ## Closeout Record
 
 - Closeout date / DSH：2026-11-16 / DSH（R16）
-- canonical_evidence_status：`complete`（条件 6 与 AC1–AC4 的当前证据见上表；三口径复算零 FAIL）
+- integration_commit：`45af57007`（内容提交）｜delivery_head：`45af57007`（四件套实测所在 head）｜证据提交：`3cc4e1186`
+- canonical_evidence_status：`complete`（条件 6 与 AC1–AC4 的当前证据见上表；`threeway.log` 三口径零 FAIL）
 - resource_closeout_status：`complete`（见 Resource Manifest：无 worktree 操作；8 个 temp 数据根已删除并记为 `ALREADY_ABSENT`；其余为 PRESERVE_REFERENCED / DELETE_SAFE / NOT_APPLICABLE）
 - 删除、迁移、归档数量/字节数：删除 8 目录 / 1,523,132 B（temp）；迁移 0；归档 0
 - 未关闭项及保留原因：Release Gate 条件 3（阅读器 overlay 人眼目视）、条件 4（签名 + 真机安装矩阵）、条件 5（人工 GT 质量基线）仍开放，均非本卡可单方关闭；本卡作为伞形哨位保持 `in_progress`，不冒充 `done`

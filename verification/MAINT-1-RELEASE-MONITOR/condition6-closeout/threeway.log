@@ -1,0 +1,25 @@
+# MAINT-1 Canonical Evidence 三口径复算
+# task: MAINT-1-RELEASE-MONITOR
+# at_utc: 2026-11-16T07:36:25Z
+# interpreter: Python 3.14.6 ; git 2.52.0.windows.1 (pwsh 7.6.8)
+# 三口径：① 路径在 commit 树内可读 ② Git blob 的 SHA-256 重算与登记值一致 ③ git cat-file -e <commit>:<path> EXIT=0
+# rows: 8
+
+PASS EV-MR-1  verification/MAINT-1-RELEASE-MONITOR/MAINTENANCE-RECORD.md
+      commit=6a408e5aa cat-file-e=0 sha256_expected=39c3ba2ef917705a… sha256_actual=39c3ba2ef917705a basis=BLOB
+PASS EV-MR-2  verification/MAINT-1-RELEASE-MONITOR/model-api-verification.log
+      commit=6a408e5aa cat-file-e=0 sha256_expected=120fe35b56222a7e… sha256_actual=120fe35b56222a7e basis=BLOB
+PASS EV-MR-3  doc/reviews/MAINT-1-GATE-CONDITION-6-FINAL-REVIEW-2026-11-14.md
+      commit=6a408e5aa cat-file-e=0 sha256_expected=fd1c3d995c6bf11f… sha256_actual=fd1c3d995c6bf11f basis=BLOB
+PASS EV-MR-4  doc/reviews/MAINT-1-FEA-LINE-CLOSEOUT-v2-2026-11-14.md
+      commit=6a408e5aa cat-file-e=0 sha256_expected=f7a5d0ad6cd664ef… sha256_actual=f7a5d0ad6cd664ef basis=BLOB
+PASS EV-C6-1  verification/MAINT-1-RELEASE-MONITOR/condition6-closeout/gates.log
+      commit=3cc4e1186 cat-file-e=0 sha256_expected=eaf8c759b0ed132e… sha256_actual=eaf8c759b0ed132e basis=BLOB
+PASS EV-C6-2  verification/MAINT-1-RELEASE-MONITOR/condition6-closeout/p2-2-before-after.log
+      commit=3cc4e1186 cat-file-e=0 sha256_expected=63b093ed8b0f2ed6… sha256_actual=63b093ed8b0f2ed6 basis=BLOB
+PASS EV-C6-3  verification/MAINT-1-RELEASE-MONITOR/condition6-closeout/resource-closeout.log
+      commit=3cc4e1186 cat-file-e=0 sha256_expected=e161401eca1c7e06… sha256_actual=e161401eca1c7e06 basis=BLOB
+PASS EV-C6-4  doc/reviews/MAINT-1-GATE-CONDITION-6-CLOSURE-2026-11-16.md
+      commit=3cc4e1186 cat-file-e=0 sha256_expected=d983a652b9633547… sha256_actual=d983a652b9633547 basis=BLOB
+
+RESULT: 8/8 PASS, 0 FAIL
