@@ -1,14 +1,15 @@
 # 新会话启动包 — New Manga 目标续接
 
-- 生成时间：2026-11-16 12:45 (+08:00)（本版为 R5 之后更新）
+- 生成时间：2026-11-16 13:00 (+08:00)（本版为 R6 之后更新）
 - 生成者：DSH（lead）
-- **当前 head：`a8ffd8a3d`**（main，**已 push**，upstream = origin/main，ahead/behind = 0/0）
+- **当前 head：`759b49730`**（main，**已 push**，upstream = origin/main，ahead/behind = 0/0）
 - 工作区：干净（`git status --porcelain` 为空）
 - **R1**：`9ce819ae7` → `dd029b73f`（7 commit，目标 A/B/D 达成）
 - **R2**：`dd029b73f` → `5f2664c2e`（8 commit）—— 目标 C 闭合 10 条
 - **R3**：`5f2664c2e` → `bfbf95a82`（3 commit）—— 目标 C 再闭合 2 条
 - **R4**：`bfbf95a82` → `8900dcbdb`（5 commit）—— 闭合 `MICA-FIX-1` AC2；**AC7 书面裁决落盘 + 开清理卡**
-- **R5（本轮）**：`8900dcbdb` → `a8ffd8a3d`（2 commit）—— 闭合 `V11R-A-3` AC4（该卡 **6/6 全闭合**）
+- **R5**：`8900dcbdb` → `a8ffd8a3d`（2 commit）—— 闭合 `V11R-A-3` AC4（该卡 **6/6 全闭合**）
+- **R6（本轮）**：`a8ffd8a3d` → `759b49730`（4 commit）—— 闭合 `RUN-IPC-1` AC4；**该卡门禁首次全绿**（顺带据实更正资源行）
 
 > 本文是**给下一个会话的唯一起点**。不要重读历史对话；按「下一步队列」推进即可。
 
@@ -18,11 +19,11 @@
 
 | 项 | 状态 |
 |---|---|
-| HEAD | `a8ffd8a3d`（main，已 push，0/0） |
+| HEAD | `759b49730`（main，已 push，0/0） |
 | 四件套 | **全绿**：`check.ps1` PASS(3w) / `verify_pins` 18/18 / `api_inventory` 1/80/6=87 / `test.ps1` EXIT=0 **1587/1635 passed, 48 skipped**（App 967/0/4，基线 955/0/11 不退化） |
 | 上一 goal | 已用尽 100 轮（见 `GOAL-WRAPUP-R100.md`） |
 | 本 goal | 60 轮上限 |
-| 目标 C | 可行动项 41 → **闭合 22 / open 19**（其中 **2 条已裁决 BLOCKED**：`GOV-RESIDUAL` AC6/AC7） |
+| 目标 C | 可行动项 41 → **闭合 23 / open 18**（其中 **2 条已裁决 BLOCKED**：`GOV-RESIDUAL` AC6/AC7） |
 
 复跑四件套：
 
@@ -153,6 +154,47 @@ R3：`V11R-C-3` R1（补 tag 存在后的 `-DryRun` + limitation L-C3-1）/ `V11
 
 ---
 
+## 3e. R6（本轮）完成的事 —— `RUN-IPC-1` AC4（**该卡门禁首次全绿**）
+
+### 核心结论：AC4 的 blocked 理由**三项主张全部已过期**
+
+| 原 blocked 主张 | 实测结论 |
+|---|---|
+| ① allowlist 断言缺（含原始日志） | **静态复核通过**：`main.rs:290-297` 恰为那 6 条；6/6 全在 `PRODUCTION_COMMANDS`（`:70-165`）；6/6 在 `probe_surface.rs`/`ac1_bridge.rs` **各 0 命中**；`command_allowlist(probe,ac1)`（`:321-345`）逐族过滤且含 `!RUN_PRODUCTION_ONLY_COMMANDS.contains(...)` ⇒ 结构上不可能进 probe/AC1；钉住它的 Rust 测试仍在（`:2748`/`:2606`）。cargo 运行面 **NA**（AD-002 退役 Tauri，`package.json` 不存在） |
+| ② 缺 host 层 typed 拒绝单测 | **全部已有并实测通过**：`INVALID_REQUEST`、`TARGET_NOT_FOUND`×5、`CANCELLED`、**`IDEMPOTENCY_KEY_REUSED`**、**`INVALID_RUN_TRANSITION`**、冻结转移表、缺 key 本地拒绝、只读面拒绝 |
+| ③ 成功 Run 往返 NOT_RUN（无夹具） | **NOT_RUN → PASS**：`[RunBookFixtureFact]`（真实 sidecar + BOOK-FIXTURE）**实跑 6s 通过**，C056→真实 RunId、同键复用同一 RunId、C059 targets==pages、C060 rows==pages 且 StepFlow 非空 |
+
+**本轮实跑**：`RunControllerHostIntegrationTests` 3/3 + 补充 2 条 2/2，均 EXIT=0。
+
+### 顺带修掉一处**陈旧的资源记录**（`check.ps1` 因此转全绿）
+
+资源清单原先写 worktree `PRESERVE_REFERENCED` 于
+`G:/CODEX/New Manga.workspace/worktrees/RUN-IPC-1`，但该目录**已不存在**：
+`Test-Path` = False、不在 `git worktree list`、系 `ad7ce5047`
+（"prune 41 orphaned worktree admin entries"）清掉的孤儿管理项。
+**交付未丢**：`git merge-base --is-ancestor 5642b2a72 HEAD` = 0。
+⇒ 据实改为 `DELETE_SAFE` / destination `-`，并同步更正 Closeout Record。
+**结果：`check.ps1 -TaskPath doc/tasks/RUN-IPC-1.md` 由 FAIL(1) 变 PASS(3w) —— 该卡首次全绿。**
+
+### ⚠️ R6 最重要的方法论教训：证据文件必须 **LF-only**
+
+第一版证据用 PowerShell here-string 写成 **CRLF**，于是 worktree sha 与 blob sha 不同：
+- worktree `91c77c4a…`（CRLF）
+- blob `dd78a0af…`（`core.autocrlf=true` 转 LF）
+
+我按项目规则填了 **blob sha**（正确），但 `check.ps1` 在**这条 v2 卡路径上按磁盘/工作区字节取哈希**
+⇒ 报 `Evidence SHA-256 不匹配`。
+**解法**：把证据文件规范化为 **LF-only**，使 worktree 与 blob 哈希相同，两种口径同时成立。
+（FEA-07 / MICA-FIX-1 之所以能一次过，正是因为那些文件本来就是 LF。）
+⇒ **今后写证据文件一律 LF-only**，尤其是用 PowerShell 生成时。
+
+### 另一个坑：PowerShell here-string 会吞反引号后的字符
+
+我用 `python -c "@'...'@"` 时，`` `verification/...` `` 里的反引号是 PowerShell 转义符，
+结果路径被写成 `erification/...`（吃掉 `v`）⇒ `Canonical evidence 路径缺失`。
+**结论：改仓库文件一律用 Python 脚本文件（`write` 工具落盘后 `python <script>`），不要用 `pwsh -c` 内联 Python。**
+
+---
 ## 3d. R5（本轮）完成的事 —— `V11R-A-3` AC4（该卡 6/6 全闭合）
 
 | # | 事项 | 结果 |
