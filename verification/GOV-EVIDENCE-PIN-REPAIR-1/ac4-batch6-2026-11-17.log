@@ -1,0 +1,31 @@
+# GOV-EVIDENCE-PIN-REPAIR-1 · AC4 batch 6 证据（EVIDENCE-MANIFEST 机制 + 33/33 卡全绿）
+# head: c6efa31b6
+# at_utc: 2026-11-16T17:51:17Z
+# os: Windows 10.0.26200 ; PowerShell 7.6.8 ; Python 3.14.6
+# ruling: doc/reviews/GOV-EVIDENCE-PIN-REPAIR-1-BULK-EVIDENCE-RULING-2026-11-17.md（Q1=A / Q2=A / Q4=仅 research）
+
+## 1. 新机制（check.ps1）
+# 当 `evidence_dir/EVIDENCE-MANIFEST.json` 存在时：
+#   ① 只允许 `kind: research`（其他类型报 EVIDENCE_MANIFEST_NOT_ALLOWED）；
+#   ② 门禁**自行递归枚举**目录内全部普通文件（-Force，含隐藏）并逐个重算 SHA-256；
+#   ③ 与 manifest 条目**精确集合相等**：未列出 → INCOMPLETE；列出但不存在 → MISSING_FILE；摘要不符 → HASH_MISMATCH；
+#   ④ 路径拒绝绝对路径 / `..` / 通配符 / 重复（INVALID）；符号链接跳过；
+#   ⑤ manifest 自身必须以 Canonical Evidence 行登记（NOT_REGISTERED），并按其当前字节校验；
+#   ⑥ 解析失败 / 目录缺失 / 非 research → 失败关闭。
+
+## 2. DISPLAY-PERF-DECISION-1 收口
+# ① 生成 `verification/DISPLAY-PERF-DECISION-1/EVIDENCE-MANIFEST.json`：246 个文件逐条（路径 + sha256），36,949 B；
+# ② Canonical Evidence 增记 `EV-BULK-MANIFEST` 行（commit `-`，按当前字节校验）；
+# ③ 按裁定 Q2=A 重写 Resource Manifest：只保留真实路径行，叙述移出表格；两个已消失的资源改 PRESERVE_UNKNOWN
+#    （实测：`ALREADY_ABSENT` **不在**允许的 disposition 枚举里，之前我在别的卡上的用法因此被门禁判为无效）。
+# ④ 结果：该卡 **PASS (4 warnings)**。
+
+## 3. 实测
+# 33 张有登记项的卡：**33 PASS / 0 FAIL**（本轮起点 1 FAIL，上轮起点 16 FAIL）
+# 全局 check.ps1 PASS(3w)
+# 新增测试 `tools/governance/tests/test_bulk_evidence_manifest.py`：8 项（1 正 + 7 负）全过 ——
+#   完整清单通过；未列出文件/缺文件/摘要不符/路径逃逸/重复路径/未登记 manifest/非 research 卡 各自失败。
+
+## 4. 未完成
+# · AC5 需要第二轮独立复核（上一轮 REJECTED 的 6 条：4 条已修、1 条（16 卡）本轮已清、1 条（15 条 superseded 卡口径）待裁定）；
+# · 其他卡上仍存在 `ALREADY_ABSENT` 用法（P02PRE 等），虽当前通过，但与枚举不符，需统一改为 PRESERVE_UNKNOWN（下一轮）。

@@ -249,7 +249,9 @@ Gate 剩下的是条件 3（人眼目视 overlay）/ 4（签名 + 真机安装�
   PRESERVE_* 目标已消失 → ALREADY_ABSENT；DELETE_SAFE 声明不实 → PRESERVE_USER_DATA；manifest 指针改指仓内可验证文件；
   补 Resource Manifest 表格；integration_commit/closeout 补齐；两处摘要漂移更新并把原值留在末列。
   连带修：改别人的卡导致 FEA-DOC-RECONCILE-1 的钉失配 → 逐条例外；批量脚本误改表头 → 已恢复。
-- **剩余 1 张**：`DISPLAY-PERF-DECISION-1` —— 证据目录 235 个文件无法逐行登记 + manifest 行是散文，需**批量证据登记口径**（下一轮提请裁定）。
+- **AC4 batch 6（R12）**：按裁定实现 `evidence_dir/EVIDENCE-MANIFEST.json` 批量证据机制（仅 research；门禁递归枚举并重算，精确集合相等；8 项测试全过），`DISPLAY-PERF-DECISION-1` 以 246 文件清单收口 ⇒ **33 张有登记项的卡 33 PASS / 0 FAIL**。
+  注意：`ALREADY_ABSENT` **不是**允许的 disposition（实测被门禁拒绝），已消失资源应写 `PRESERVE_UNKNOWN`；
+  其他卡上遗留的 ALREADY_ABSENT 用法需统一（虽当前通过）。
 - **待做（AC5）**：第二轮整卡独立复核
 - **待做（旧清单）**：剩余按卡处理 —— ①同一行还需补登记 SHA_MISMATCH；②`FEA-GOV-10` 等卡缺 `## Resource Manifest` 整节；
   ③2 条多摘要行应登记 SHA_MULTI，2 条空壳行按裁定保留错误。余 **51** 条（SHA_NOT_64_HEX 214 / PATH_MISSING 53 / SHA_MISMATCH 31 / COMMIT_NOT_FOUND 12）按类逐条归因 → 逐条登记或修 pin → 上下文独立复核；另需就「check.ps1 是否接受 blob 的 EOL 形态」取得裁定（当前门禁只比对原始 blob 与当前工作树，会把这些有效 pin 判红）。

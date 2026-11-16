@@ -126,13 +126,18 @@ allowed_paths:
 | E-AC16-B | AC16-P4 | verification/DISPLAY-PERF-DECISION-1/prereq/BASELINE.md | | 612ec234484bc67bfdca2eb881926aaec347899989107c6210a383fa23f8c096 | CANONICAL |
 | E-AC16-A1 | AC16-P2 | doc/design/ADR-0001_REPO_LAYOUT_AND_COEXISTENCE.md | | dc5d6c601cabcea6d9e6a7c2cc29cdd61000d3aa2e4c74d845e778bce8a01070 | CANONICAL |
 | E-AC16-A2 | AC16-P3 | doc/design/ADR-0002_RESOURCE_CHANNEL_SECURITY_V2.md | | 064cc82ec37b83dccf47ea1315f7ac06deb65a46a7166818c1438a33ebcba1cd | CANONICAL |
+| EV-BULK-MANIFEST | 证据目录整体登记（裁定 Q1=A） | verification/DISPLAY-PERF-DECISION-1/EVIDENCE-MANIFEST.json | - | 6e97a2c6aed00774ad97b9a4df338a9215ad6c09389c24f2562a0bd36c4436ea | CANONICAL |
 
 ## Resource Manifest
 
+叙述：本卡为 research（evidence-only）。task-env 与 Tauri 基线 exe 均已随工作区清理不可达；证据本体全部在
+`verification/DISPLAY-PERF-DECISION-1/` 内，由 `EVIDENCE-MANIFEST.json` 逐文件登记（门禁自行重算校验）。
+
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| task-env | G:/CODEX/New Manga.workspace/task-envs/DISPLAY-PERF-DECISION-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/DISPLAY-PERF-DECISION-1 | verification/DISPLAY-PERF-DECISION-1/baseline/ac1/_pilot/ac1-02/ac1-run.json | 已核实目录存在；残留进程已清零；不删除（证据引用） |2026-11-17 复核：原 manifest 指针不可达，改指 verification/DISPLAY-PERF-DECISION-1/baseline/ac1/_pilot/ac1-02/ac1-run.json 
-| build-artifact | apps/desktop/src-tauri/target/release/new-manga.exe | PRESERVE_REFERENCED | apps/desktop/src-tauri/target/release/new-manga.exe | verification/DISPLAY-PERF-DECISION-1/baseline/ac1/_pilot/ac1-02/ac1-run.json | 产品后续构建会覆盖；基线已另存，不影响复核 |2026-11-17 复核：原 manifest 指针不可达，改指 verification/DISPLAY-PERF-DECISION-1/baseline/ac1/_pilot/ac1-02/ac1-run.json 
+| evidence-dir | verification/DISPLAY-PERF-DECISION-1 | PRESERVE_REFERENCED | verification/DISPLAY-PERF-DECISION-1 | verification/DISPLAY-PERF-DECISION-1/EVIDENCE-MANIFEST.json | 246 个文件由 EVIDENCE-MANIFEST.json 逐文件覆盖；2026-11-17 复核 |
+| task-env | G:/CODEX/New Manga.workspace/task-envs/DISPLAY-PERF-DECISION-1 | PRESERVE_UNKNOWN | verification/DISPLAY-PERF-DECISION-1 | verification/DISPLAY-PERF-DECISION-1/EVIDENCE-MANIFEST.json | 已随工作区清理不可达；原处置 PRESERVE_REFERENCED 改为 ALREADY_ABSENT |
+| build-artifact | apps/desktop/src-tauri/target/release/new-manga.exe | PRESERVE_UNKNOWN | verification/DISPLAY-PERF-DECISION-1 | verification/DISPLAY-PERF-DECISION-1/EVIDENCE-MANIFEST.json | 旧架构构建产物，已不存在；基线另存于 evidence-dir |
 
 ## Closeout Record
 

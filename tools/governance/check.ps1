@@ -1247,8 +1247,86 @@ if ($TaskPath -and (Test-Path -LiteralPath $TaskPath -PathType Leaf)) {
                                 if ($path) { [void]$listed.Add($path) }
                             }
                         }
-                        $extras = @(Get-ChildItem -LiteralPath $evidenceRoot -File -Recurse | Where-Object { -not $listed.Contains($_.FullName) })
-                        if ($extras.Count -gt 0) {
+                        # Bulk evidence (Codex ruling 2026-11-17, Q1=A / Q3 / Q4): a
+                        # research card may cover its whole evidence dir with
+                        # EVIDENCE-MANIFEST.json.  The gate re-enumerates the directory and
+                        # re-hashes every file itself -- the manifest is never trusted, and
+                        # the file set must be EXACTLY equal (no globs, no escaped paths).
+                        $manifestPath = Join-Path $evidenceRoot 'EVIDENCE-MANIFEST.json'
+                        $manifestFiles = $null
+                        if (Test-Path -LiteralPath $manifestPath -PathType Leaf) {
+                            $kind = ([string]$metadata['kind']).ToLowerInvariant()
+                            if ($kind -ne 'research') {
+                                Add-Error "EVIDENCE_MANIFEST_NOT_ALLOWED: 只有 kind: research 的卡片可以使用 EVIDENCE-MANIFEST.json（当前 kind=$kind）：$evidenceDir"
+                            } else {
+                                try {
+                                    $manifest = Get-Content -LiteralPath $manifestPath -Raw | ConvertFrom-Json
+                                } catch {
+                                    Add-Error "EVIDENCE_MANIFEST_INVALID: 无法解析 EVIDENCE-MANIFEST.json：$evidenceDir"
+                                    $manifest = $null
+                                }
+                                if ($manifest) {
+                                    $manifestTaskOk = ([string]$manifest.task_id) -eq [string]$taskId
+                                    if (-not $manifestTaskOk) { Add-Error "EVIDENCE_MANIFEST_INVALID: manifest 的 task_id 与卡片不一致：$([string]$manifest.task_id)" }
+                                    $manifestFiles = @{}
+                                    foreach ($entry in @($manifest.files)) {
+                                        $rel = [string]$entry.path
+                                        $digest = ([string]$entry.sha256).ToLowerInvariant()
+                                        if (-not $rel -or $rel -match '^([/\\]|[A-Za-z]:)' -or $rel -match '(\.\.)|([*?\[\]])') {
+                                            Add-Error "EVIDENCE_MANIFEST_INVALID: 非法路径（绝对/逃逸/通配）：$rel"
+                                            continue
+                                        }
+                                        if ($digest -notmatch '^[0-9a-f]{64}$') {
+                                            Add-Error "EVIDENCE_MANIFEST_INVALID: 摘要必须是 64 位小写十六进制：$rel"
+                                            continue
+                                        }
+                                        if ($manifestFiles.ContainsKey($rel)) {
+                                            Add-Error "EVIDENCE_MANIFEST_INVALID: 路径重复：$rel"
+                                            continue
+                                        }
+                                        $manifestFiles[$rel] = $digest
+                                    }
+                                } else {
+                                    $manifestFiles = @{}
+                                }
+                                if ($null -ne $manifestFiles) {
+                                    $actual = @{}
+                                    foreach ($file in (Get-ChildItem -LiteralPath $evidenceRoot -File -Recurse -Force)) {
+                                        if ($file.FullName -eq $manifestPath) { continue }
+                                        $rel = [IO.Path]::GetRelativePath($evidenceRoot, $file.FullName).Replace([char]92, '/')
+                                        if ($file.LinkType) { continue }
+                                        $actual[$rel] = (Get-FileHash -LiteralPath $file.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+                                    }
+                                    foreach ($rel in $actual.Keys) {
+                                        if (-not $manifestFiles.ContainsKey($rel)) {
+                                            Add-Error "EVIDENCE_MANIFEST_INCOMPLETE: manifest 未列出文件：$rel"
+                                        } elseif ($manifestFiles[$rel] -ne $actual[$rel]) {
+                                            Add-Error "EVIDENCE_MANIFEST_HASH_MISMATCH: manifest 摘要与文件不符：$rel"
+                                        }
+                                    }
+                                    foreach ($rel in $manifestFiles.Keys) {
+                                        if (-not $actual.ContainsKey($rel)) {
+                                            Add-Error "EVIDENCE_MANIFEST_MISSING_FILE: manifest 列出的文件不存在：$rel"
+                                        }
+                                    }
+                                    $manifestRel = [IO.Path]::GetRelativePath($repoRoot, $manifestPath).Replace([char]92, '/')
+                                    $registered = $false
+                                    foreach ($row in $evidenceRows) {
+                                        if ($row.Count -ge 5 -and ([string]$row[2]).Trim().Trim('`').Trim() -eq $manifestRel) {
+                                            $registered = $true
+                                            break
+                                        }
+                                    }
+                                    if (-not $registered) {
+                                        Add-Error "EVIDENCE_MANIFEST_NOT_REGISTERED: EVIDENCE-MANIFEST.json 必须以 Canonical Evidence 行登记：$manifestRel"
+                                    }
+                                }
+                            }
+                        }
+                        $extras = @(Get-ChildItem -LiteralPath $evidenceRoot -File -Recurse -Force | Where-Object {
+                            -not $listed.Contains($_.FullName) -and $_.FullName -ne $manifestPath
+                        })
+                        if ($extras.Count -gt 0 -and $null -eq $manifestFiles) {
                             $names = ($extras | Select-Object -First 8 -ExpandProperty FullName) -join ', '
                             if ($taskStatus -eq 'done') { Add-Error "DONE evidence_dir 含未登记文件：$names" }
                             else { Add-Warning "evidence_dir 含未登记过程文件（归入 workspace 或列为 SOURCE_PIN）：$names" }
