@@ -1,0 +1,685 @@
+# CHAPTER-MANUAL-SORT AC10 —— 不回归复跑（2026-11-16）
+# command1: pwsh -NoProfile -File apps/desktop-avalonia/scripts/test.ps1
+# command2: python -m pytest tests -q
+# head: 5cad9db8ab56bb141b5003c076a6854e33856883
+# at_utc: 2026-11-16T02:52:25Z
+# AC10 判据: App.Tests / CoreClient.Tests / Python 全绿；无新增 skip/xfail；无放宽既有断言
+# App.Tests     : 962 passed / 0 failed / 4 skipped（基线 955/0/11 ⇒ 通过 +7、skip -7）
+# CoreClient    : 256 passed / 0 failed / 0 skipped
+# Python(pytest): 3569 passed / 0 failed / 10 skipped（基线 10 skipped 持平）
+# 无新增 skip：App 4<11、CoreClient 0、pytest 10=10；无 xfail 变更；未改动任何既有断言（本卡证据只读复跑）
+
+===== test.ps1 =====
+sidecar fixture: up to date at G:\CODEX\New Manga.workspace\task-envs\HOST-CORECLIENT-1\sidecar-copy
+    0 个错误
+
+已用时间 00:00:06.59
+{
+  "ac": "AC3/AC4",
+  "strip_image": "4000x60000",
+  "tile": "4000x2048",
+  "tile_count": 30,
+  "device_raster_claim": "4000x2048 device rasters",
+  "typography_vertical": "48820436433a9a30a5eecbe73a4033a22ecaba0863f33e70830399369874fafe",
+  "typography_horizontal": "3292b5776805cf863f27538b3f83019d716b81c5c91f31fe32eb90d4e1e0f226",
+  "fixtures_meta": "G:\\CODEX\\New Manga.workspace\\task-envs\\UI-WORKBENCH-READER-1\\fixtures\\meta.json",
+  "reuses_s0_method": true
+}
+[core.schema] applied 8 migration(s) up to v14; schema bootstrap is the only write a read-only session performs (user rows and managed originals are never modified)
+{
+  "status": "created",
+  "title": "BOOK-FIXTURE-1 日漫_JA 测试书",
+  "data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\S4-CMD-BATCH-1\\region-fixture",
+  "source": "book-fixture",
+  "source_data_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\BOOK-FIXTURE-1\\isolated-data",
+  "book_id": "14340ddad0ed472fbe687fe12340c5d8",
+  "chapter_id": "240bdba549b74281bfc6d901b1a7abd7",
+  "chapter_title": "第 1 章",
+  "chapter_type": "webtoon",
+  "page_id": "f52f2772e8044557a72e82f5ea6ab932",
+  "page_width": 1200,
+  "page_height": 1660,
+  "page_count": 8,
+  "page_ids": [
+    "f52f2772e8044557a72e82f5ea6ab932",
+    "4f8a24147b3044deabf4f5a2dd83b84f",
+    "a607fc4ca3034f47b5bc43d59f94f2ca",
+    "6814353f6d8544d6945ad5748d518f47",
+    "f54739037525486e8704db23db5c0dc1",
+    "c239be827f3a4448848d2c42bffc05d1",
+    "7a39226851774f01a4cdb89bcf118296",
+    "221d772e601e480e8e7508dfe9aff380"
+  ],
+  "source_filenames": [
+    "ja_Pepper-and-Carrot_by-David-Revoy_E04P02.jpg",
+    "ja_Pepper-and-Carrot_by-David-Revoy_E04P03.jpg",
+    "ja_Pepper-and-Carrot_by-David-Revoy_E04P06.jpg",
+    "ja_Pepper-and-Carrot_by-David-Revoy_E20P01.jpg",
+    "ja_Pepper-and-Carrot_by-David-Revoy_E20P02.jpg",
+    "ja_Pepper-and-Carrot_by-David-Revoy_E20P03.jpg",
+    "ja_Pepper-and-Carrot_by-David-Revoy_E20P04.jpg",
+    "ja_Pepper-and-Carrot_by-David-Revoy_E20P05.jpg"
+  ],
+  "region_id": "d510972e0eae44668069ab1bee802bad",
+  "region_revision_no": 3,
+  "region_type": "speech",
+  "region_text": "S4 区域排版测试文本",
+  "clean_artifact_id": "823038e0804c4dbda8944928533c2995",
+  "clean_revision_no": 1,
+  "library_db_sha256": "cfdf87265b0ba268e1abb93ad603df911a46293b8e6399c6ba63e799eab93801",
+  "import_report": null
+}
+{"ok": true, "manifest": "G:\\CODEX\\New Manga.workspace\\task-envs\\CORE-TILE-EMIT-1\\e2e\\artifact\\tile-manifest.json", "size": 15566, "tiles": 2, "resource_id": "page:9b5bdfb35a06fd2a"}
+PASS: production command surface matches snapshot (66 commands, domains={'resource': 3, 'workbench': 12, 'library': 8, 'settings': 33, 'region': 6, 'reader': 4})
+{
+  "ac": "AC1/AC3",
+  "region_fixture": "",
+  "region_fixture_meta": null,
+  "sidecar": "G:\\CODEX\\New Manga.workspace\\task-envs\\HOST-CORECLIENT-1\\sidecar-copy\\core_service.exe",
+  "sidecar_sha256": "ed1601b2202d0ed603ad7f25a731822ef179d666b25b46d38c6b9d370ecb06a5",
+  "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\newmanga-s2-probe-7acc7ced",
+  "core_stderr": "[core.schema] applied 14 migration(s) up to v14; schema bootstrap is the only write a read-only session performs (user rows and managed originals are never modified)\r\n[core.derived_gc] orphan_files_removed=0 dead_rows_removed=0\r\n",
+  "probes": [
+    {
+      "command": "core.ping",
+      "minor": 3,
+      "request_payload": {},
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-1\",\"result\":{\"status\":\"ready\",\"protocol_version\":{\"major\":2,\"minor\":3},\"capabilities\":[\"library.list_books\",\"source.read/1\",\"source.resolve-secret/1\",\"source.read.run/1\",\"source.reattest/1\",\"library.delete.preview/1\",\"library.trash.read/1\",\"library.trash.write/1\",\"source.sync.scan/1\",\"source.sync.plan/1\",\"source.sync.apply/1\",\"source.sync.relink/1\",\"source.sync.repoint/1\",\"source.sync.resync/1\",\"source.sync.operation/1\",\"source.sync.enumerate/1\",\"source.sync.plan-materialization/1\"]},\"error\":null}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null
+    },
+    {
+      "command": "ListBooks",
+      "minor": 3,
+      "request_payload": {},
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-2\",\"result\":[],\"error\":null}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null
+    },
+    {
+      "command": "ListRecycleBinBooks",
+      "minor": 3,
+      "request_payload": {},
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-3\",\"result\":[],\"error\":null}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null
+    },
+    {
+      "command": "CreateBook",
+      "minor": 8,
+      "request_payload": {
+        "title": "命令面探测・日本語テスト"
+      },
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":8},\"request_id\":\"probe-4\",\"result\":{\"book_id\":\"1526d2003abd4a6880b02c7a9035df18\",\"title\":\"\\u547d\\u4ee4\\u9762\\u63a2\\u6d4b\\u30fb\\u65e5\\u672c\\u8a9e\\u30c6\\u30b9\\u30c8\",\"original_title\":\"\",\"is_favorite\":false,\"is_archived\":false,\"page_count\":null,\"created_at\":\"2026-11-16T02:29:45.299+00:00\",\"updated_at\":\"2026-11-16T02:29:45.299+00:00\"},\"error\":null}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null
+    },
+    {
+      "command": "CreateChapter",
+      "minor": 8,
+      "request_payload": {
+        "book_id": "1526d2003abd4a6880b02c7a9035df18",
+        "chapter_number": "1",
+        "title": "第1章"
+      },
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":8},\"request_id\":\"probe-5\",\"result\":{\"chapter_id\":\"174c6af4fc564a1490fbd38ee2574610\",\"title\":\"\\u7b2c1\\u7ae0\",\"chapter_number\":\"1\",\"sort_order\":1},\"error\":null}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null
+    },
+    {
+      "command": "ListChapters",
+      "minor": 3,
+      "request_payload": {
+        "book_id": "1526d2003abd4a6880b02c7a9035df18"
+      },
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-6\",\"result\":null,\"error\":{\"code\":\"UNKNOWN_COMMAND\",\"category\":\"validation\",\"message\":\"Unknown command: 'ListChapters'\",\"retryable\":false}}",
+      "ok": false,
+      "error_code": "UNKNOWN_COMMAND",
+      "error_category": "validation"
+    },
+    {
+      "command": "ListChapterPages",
+      "minor": 3,
+      "request_payload": {
+        "chapter_id": "174c6af4fc564a1490fbd38ee2574610"
+      },
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-7\",\"result\":null,\"error\":{\"code\":\"UNKNOWN_COMMAND\",\"category\":\"validation\",\"message\":\"Unknown command: 'ListChapterPages'\",\"retryable\":false}}",
+      "ok": false,
+      "error_code": "UNKNOWN_COMMAND",
+      "error_category": "validation"
+    },
+    {
+      "command": "settings.get",
+      "minor": 3,
+      "request_payload": {},
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-8\",\"result\":{\"settings\":{}},\"error\":null}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null
+    },
+    {
+      "command": "backup.list",
+      "minor": 3,
+      "request_payload": {},
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-9\",\"result\":[],\"error\":null}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null
+    },
+    {
+      "command": "plugins.list",
+      "minor": 3,
+      "request_payload": {},
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-10\",\"result\":{\"global_enabled\":false,\"plugins\":[]},\"error\":null}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null
+    },
+    {
+      "command": "cleanup.preview",
+      "minor": 3,
+      "request_payload": {},
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-11\",\"result\":{\"targets\":[],\"total_bytes\":0,\"pending_cleanups\":0},\"error\":null}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null
+    },
+    {
+      "command": "GetExportHistory",
+      "minor": 3,
+      "request_payload": {},
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-12\",\"result\":{\"exports\":[]},\"error\":null}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null
+    },
+    {
+      "command": "ListRegions",
+      "minor": 3,
+      "request_payload": {},
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-13\",\"result\":null,\"error\":{\"code\":\"UNKNOWN_COMMAND\",\"category\":\"validation\",\"message\":\"Unknown command: 'ListRegions'\",\"retryable\":false}}",
+      "ok": false,
+      "error_code": "UNKNOWN_COMMAND",
+      "error_category": "validation"
+    },
+    {
+      "command": "ListRegionRevisions",
+      "minor": 3,
+      "request_payload": {},
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-14\",\"result\":null,\"error\":{\"code\":\"UNKNOWN_COMMAND\",\"category\":\"validation\",\"message\":\"Unknown command: 'ListRegionRevisions'\",\"retryable\":false}}",
+      "ok": false,
+      "error_code": "UNKNOWN_COMMAND",
+      "error_category": "validation"
+    },
+    {
+      "command": "ResolvePageResource",
+      "minor": 3,
+      "request_payload": {},
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-15\",\"result\":null,\"error\":{\"code\":\"UNKNOWN_COMMAND\",\"category\":\"validation\",\"message\":\"Unknown command: 'ResolvePageResource'\",\"retryable\":false}}",
+      "ok": false,
+      "error_code": "UNKNOWN_COMMAND",
+      "error_category": "validation"
+    },
+    {
+      "command": "list_chapters",
+      "minor": 3,
+      "request_payload": {
+        "book_id": "probe-book"
+      },
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-16\",\"result\":{\"chapters\":[]},\"error\":null}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null
+    },
+    {
+      "command": "list_chapter_pages",
+      "minor": 3,
+      "request_payload": {
+        "chapter_id": "probe-chapter"
+      },
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-17\",\"result\":{\"pages\":[]},\"error\":null}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null
+    },
+    {
+      "command": "list_regions",
+      "minor": 3,
+      "request_payload": {
+        "page_id": "probe-page"
+      },
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-18\",\"result\":{\"regions\":[],\"page_size\":null},\"error\":null}",
+      "ok": true,
+      "error_code": null,
+      "error_category": null
+    },
+    {
+      "command": "list_region_revisions",
+      "minor": 3,
+      "request_payload": {
+        "region_id": "probe-region"
+      },
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-19\",\"result\":null,\"error\":{\"code\":\"TARGET_NOT_FOUND\",\"category\":\"not_found\",\"message\":\"region not found\",\"retryable\":false}}",
+      "ok": false,
+      "error_code": "TARGET_NOT_FOUND",
+      "error_category": "not_found"
+    },
+    {
+      "command": "rerender_page",
+      "minor": 3,
+      "request_payload": {
+        "page_id": "probe-page"
+      },
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-20\",\"result\":null,\"error\":{\"code\":\"TARGET_NOT_FOUND\",\"category\":\"not_found\",\"message\":\"page not found\",\"retryable\":false}}",
+      "ok": false,
+      "error_code": "TARGET_NOT_FOUND",
+      "error_category": "not_found"
+    },
+    {
+      "command": "resolve_page_resource",
+      "minor": 3,
+      "request_payload": {
+        "page_id": "probe-page"
+      },
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-21\",\"result\":null,\"error\":{\"code\":\"PAGE_NOT_FOUND\",\"category\":\"not_found\",\"message\":\"page or its managed original is not available\",\"retryable\":false}}",
+      "ok": false,
+      "error_code": "PAGE_NOT_FOUND",
+      "error_category": "not_found"
+    },
+    {
+      "command": "set_region_type",
+      "minor": 3,
+      "request_payload": {
+        "new_region_type": "probe",
+        "region_id": "probe-region"
+      },
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-22\",\"result\":null,\"error\":{\"code\":\"INVALID_REQUEST\",\"category\":\"validation\",\"message\":\"set_region_type requires 'new_region_type': one of ['narration', 'note', 'other', 'sfx', 'speech', 'title']\",\"retryable\":false}}",
+      "ok": false,
+      "error_code": "INVALID_REQUEST",
+      "error_category": "validation"
+    },
+    {
+      "command": "restore_region_revision",
+      "minor": 3,
+      "request_payload": {
+        "revision_no": 1,
+        "region_id": "probe-region",
+        "expected_revision": 1
+      },
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-23\",\"result\":null,\"error\":{\"code\":\"TARGET_NOT_FOUND\",\"category\":\"not_found\",\"message\":\"region not found\",\"retryable\":false}}",
+      "ok": false,
+      "error_code": "TARGET_NOT_FOUND",
+      "error_category": "not_found"
+    },
+    {
+      "command": "GetReaderProjection",
+      "minor": 3,
+      "request_payload": {
+        "start_position": 0,
+        "chapter_id": "probe-chapter",
+        "mode": "scroll"
+      },
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-24\",\"result\":null,\"error\":{\"code\":\"INVALID_REQUEST\",\"category\":\"validation\",\"message\":\"Reader request is invalid\",\"retryable\":false}}",
+      "ok": false,
+      "error_code": "INVALID_REQUEST",
+      "error_category": "validation"
+    },
+    {
+      "command": "SaveReadingProgress",
+      "minor": 3,
+      "request_payload": {
+        "position": 0,
+        "chapter_id": "probe-chapter"
+      },
+      "raw_request_ascii": true,
+      "response_raw": "{\"protocol\":\"new-manga.core\",\"version\":{\"major\":2,\"minor\":3},\"request_id\":\"probe-25\",\"result\":null,\"error\":{\"code\":\"INVALID_REQUEST\",\"category\":\"validation\",\"message\":\"Reading progress request is invalid\",\"retryable\":false}}",
+      "ok": false,
+      "error_code": "INVALID_REQUEST",
+      "error_category": "validation"
+    }
+  ],
+  "at_utc": "2026-11-16T02:29:45.3643223Z"
+}
+probe evidence: G:\CODEX\New Manga.workspace\task-envs\HOST-RESOURCE-SECURITY-1\evidence-rerun\parity\core-command-probe.json
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.CoreClient.Tests\bin\Debug\net9.0\NewManga.CoreClient.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+结果文件: G:\CODEX\New Manga.workspace\task-envs\HOST-RESOURCE-SECURITY-1\evidence-rerun\test\results-coreclient.trx
+
+已通过! - 失败:     0，通过:   256，已跳过:     0，总计:   256，持续时间: 1 m 12 s - NewManga.CoreClient.Tests.dll (net9.0)
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.Host.Tests\bin\Debug\net9.0\NewManga.Host.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+[xUnit.net 00:00:00.40]     NewManga.Host.Tests.Fea09UiImportIpcTests.AesZipPlanIsTypedUnsupportedOverRealStdio [SKIP]
+[xUnit.net 00:00:00.40]     NewManga.Host.Tests.Fea09UiImportIpcTests.CancelKeepsCommittedPagesOverRealStdio [SKIP]
+[xUnit.net 00:00:00.40]     NewManga.Host.Tests.Fea09UiImportIpcTests.EncryptedZipPasswordRetryOverRealStdio [SKIP]
+[xUnit.net 00:00:00.40]     NewManga.Host.Tests.Fea09UiImportIpcTests.PlanPreviewConfirmAndReceiptOverRealStdio [SKIP]
+[xUnit.net 00:00:00.40]     NewManga.Host.Tests.Fea09UiImportIpcTests.WriteEvidenceAndAssertZeroPasswordLeakage [SKIP]
+  已跳过 NewManga.Host.Tests.Fea09UiImportIpcTests.AesZipPlanIsTypedUnsupportedOverRealStdio [1 ms]
+  已跳过 NewManga.Host.Tests.Fea09UiImportIpcTests.CancelKeepsCommittedPagesOverRealStdio [1 ms]
+  已跳过 NewManga.Host.Tests.Fea09UiImportIpcTests.EncryptedZipPasswordRetryOverRealStdio [1 ms]
+  已跳过 NewManga.Host.Tests.Fea09UiImportIpcTests.PlanPreviewConfirmAndReceiptOverRealStdio [1 ms]
+  已跳过 NewManga.Host.Tests.Fea09UiImportIpcTests.WriteEvidenceAndAssertZeroPasswordLeakage [1 ms]
+[xUnit.net 00:00:01.35]     NewManga.Host.Tests.SourceRecoveryIpcTests.SamePathReplacement_IsRecoveredOnlyByAnExplicitReauthorization [SKIP]
+  已跳过 NewManga.Host.Tests.SourceRecoveryIpcTests.SamePathReplacement_IsRecoveredOnlyByAnExplicitReauthorization [1 ms]
+[xUnit.net 00:00:15.16]     NewManga.Host.Tests.Fea09UiImportIpcProductionTests.A_OrdinarySuccessAndWholeSourceSkip [SKIP]
+[xUnit.net 00:00:15.16]     NewManga.Host.Tests.Fea09UiImportIpcProductionTests.B_AesTypedUnsupported [SKIP]
+[xUnit.net 00:00:15.16]     NewManga.Host.Tests.Fea09UiImportIpcProductionTests.C_SingleEncryptedSourceWrongPasswordThenRetry [SKIP]
+[xUnit.net 00:00:15.16]     NewManga.Host.Tests.Fea09UiImportIpcProductionTests.D_CancelAfterOneCommitThenRetryConservesPages [SKIP]
+[xUnit.net 00:00:15.16]     NewManga.Host.Tests.Fea09UiImportIpcProductionTests.E_ChangedSourceBeforeConfirmIsRejectedByRealCore [SKIP]
+[xUnit.net 00:00:15.16]     NewManga.Host.Tests.Fea09UiImportIpcProductionTests.F_FolderUsesHostEnumerationAndOrdering [SKIP]
+[xUnit.net 00:00:15.16]     NewManga.Host.Tests.Fea09UiImportIpcProductionTests.G_SecretCapabilityMissingCleansUp [SKIP]
+[xUnit.net 00:00:15.16]     NewManga.Host.Tests.Fea09UiImportIpcProductionTests.H_SecretRegistrationRefusedCleansUp [SKIP]
+[xUnit.net 00:00:15.16]     NewManga.Host.Tests.Fea09UiImportIpcProductionTests.I_SecretStartRefusedCleansUp [SKIP]
+  已跳过 NewManga.Host.Tests.Fea09UiImportIpcProductionTests.A_OrdinarySuccessAndWholeSourceSkip [1 ms]
+  已跳过 NewManga.Host.Tests.Fea09UiImportIpcProductionTests.B_AesTypedUnsupported [1 ms]
+  已跳过 NewManga.Host.Tests.Fea09UiImportIpcProductionTests.C_SingleEncryptedSourceWrongPasswordThenRetry [1 ms]
+  已跳过 NewManga.Host.Tests.Fea09UiImportIpcProductionTests.D_CancelAfterOneCommitThenRetryConservesPages [1 ms]
+  已跳过 NewManga.Host.Tests.Fea09UiImportIpcProductionTests.E_ChangedSourceBeforeConfirmIsRejectedByRealCore [1 ms]
+  已跳过 NewManga.Host.Tests.Fea09UiImportIpcProductionTests.F_FolderUsesHostEnumerationAndOrdering [1 ms]
+  已跳过 NewManga.Host.Tests.Fea09UiImportIpcProductionTests.G_SecretCapabilityMissingCleansUp [1 ms]
+  已跳过 NewManga.Host.Tests.Fea09UiImportIpcProductionTests.H_SecretRegistrationRefusedCleansUp [1 ms]
+  已跳过 NewManga.Host.Tests.Fea09UiImportIpcProductionTests.I_SecretStartRefusedCleansUp [1 ms]
+[xUnit.net 00:00:15.16]     NewManga.Host.Tests.Fea09UiImportIpcProductionTests.J_SecretReplanFailedCleansUp [SKIP]
+[xUnit.net 00:00:15.16]     NewManga.Host.Tests.Fea09UiImportIpcProductionTests.Z_AuditRequestsResponsesLogsRegistryExceptionsAndEvidence [SKIP]
+[xUnit.net 00:00:15.56]     NewManga.Host.Tests.SourceRegistryResilienceTests.Ipc_MixedRegistry_ListRegisterMintSucceedAndMissingRootIsTyped [SKIP]
+  已跳过 NewManga.Host.Tests.Fea09UiImportIpcProductionTests.J_SecretReplanFailedCleansUp [1 ms]
+  已跳过 NewManga.Host.Tests.Fea09UiImportIpcProductionTests.Z_AuditRequestsResponsesLogsRegistryExceptionsAndEvidence [1 ms]
+  已跳过 NewManga.Host.Tests.SourceRegistryResilienceTests.Ipc_MixedRegistry_ListRegisterMintSucceedAndMissingRootIsTyped [1 ms]
+[xUnit.net 00:00:15.73]     NewManga.Host.Tests.Fea09RealIpcTests.ReferencedImportAndResolveOverRealStdio [SKIP]
+[xUnit.net 00:00:16.82]     NewManga.Host.Tests.Fea12TrashUiIpcTests.TrashFlow_OverRealIpc_DisclosesBindsDigestAndNeverUsesPurgeOrBatch [SKIP]
+  已跳过 NewManga.Host.Tests.Fea09RealIpcTests.ReferencedImportAndResolveOverRealStdio [1 ms]
+  已跳过 NewManga.Host.Tests.Fea12TrashUiIpcTests.TrashFlow_OverRealIpc_DisclosesBindsDigestAndNeverUsesPurgeOrBatch [1 ms]
+[xUnit.net 00:00:17.02]     NewManga.Host.Tests.Fea11ScanIpcTests.RealImportThenEnumeration_SharedSource_UsesAllScope_AndCoreSourceId [SKIP]
+[xUnit.net 00:00:17.02]     NewManga.Host.Tests.Fea11ScanIpcTests.PeriodicScan_DetectsMissingThenChanged_WithZeroCoreWrites [SKIP]
+  已跳过 NewManga.Host.Tests.Fea11ScanIpcTests.RealImportThenEnumeration_SharedSource_UsesAllScope_AndCoreSourceId [1 ms]
+  已跳过 NewManga.Host.Tests.Fea11ScanIpcTests.PeriodicScan_DetectsMissingThenChanged_WithZeroCoreWrites [1 ms]
+[xUnit.net 00:00:17.02]     NewManga.Host.Tests.Fea11ScanIpcTests.ReauthorizedSource_IsReattested_ThenEnumerated_WithoutReimport [SKIP]
+[xUnit.net 00:00:17.02]     NewManga.Host.Tests.Fea11ScanIpcTests.ColdStartEnumeration_WithoutAppRegistration_IsReadOnly [SKIP]
+[xUnit.net 00:00:17.02]     NewManga.Host.Tests.Fea11HostAuthIpcTests.Recovery_UsesAFreshAuthorization_AfterAWrongDigestRefusal [SKIP]
+[xUnit.net 00:00:17.02]     NewManga.Host.Tests.Fea11HostAuthIpcTests.CrashPoint_Park [SKIP]
+[xUnit.net 00:00:17.02]     NewManga.Host.Tests.Fea11HostAuthIpcTests.Ack_SendsAFreshAuthorization_ThenOpensTheGateExactlyOnce [SKIP]
+[xUnit.net 00:00:17.02]     NewManga.Host.Tests.Fea11HostAuthIpcTests.CrashPoint_Recover [SKIP]
+  已跳过 NewManga.Host.Tests.Fea11ScanIpcTests.ReauthorizedSource_IsReattested_ThenEnumerated_WithoutReimport [1 ms]
+  已跳过 NewManga.Host.Tests.Fea11ScanIpcTests.ColdStartEnumeration_WithoutAppRegistration_IsReadOnly [1 ms]
+  已跳过 NewManga.Host.Tests.Fea11HostAuthIpcTests.Recovery_UsesAFreshAuthorization_AfterAWrongDigestRefusal [1 ms]
+  已跳过 NewManga.Host.Tests.Fea11HostAuthIpcTests.CrashPoint_Park [1 ms]
+  已跳过 NewManga.Host.Tests.Fea11HostAuthIpcTests.Ack_SendsAFreshAuthorization_ThenOpensTheGateExactlyOnce [1 ms]
+  已跳过 NewManga.Host.Tests.Fea11HostAuthIpcTests.CrashPoint_Recover [1 ms]
+[xUnit.net 00:00:18.19]     NewManga.Host.Tests.Fea11RunGrantIpcTests.FolderSourceMintsABindableGrantThroughTheProductionRange [SKIP]
+[xUnit.net 00:00:18.19]     NewManga.Host.Tests.Fea11RunGrantIpcTests.MintBindResolveAndRevoke_TypedWithNoPathLeak [SKIP]
+[xUnit.net 00:00:18.19]     NewManga.Host.Tests.Fea11RunGrantIpcTests.ReauthorizedLiveEntry_RunRangeResolvesAndBindsOverRealIpc [SKIP]
+[xUnit.net 00:00:18.19]     NewManga.Host.Tests.Fea11RunGrantIpcTests.RenewalMintsAndRebindsTheSameScopeTwice [SKIP]
+[xUnit.net 00:00:18.19]     NewManga.Host.Tests.Fea11RunGrantIpcTests.ProductionScanVersionChannelDrivesImageFolderAndEveryArchiveMember [SKIP]
+[xUnit.net 00:00:18.19]     NewManga.Host.Tests.Fea11RunGrantIpcTests.ContainerMemberEntriesAuthorizeEveryMemberOverRealIpc [SKIP]
+[xUnit.net 00:00:18.19]     NewManga.Host.Tests.Fea11RunGrantIpcTests.CoreAdvertisesTheRunAuthorizationCapability_AndRefusesWithoutGrants [SKIP]
+  已跳过 NewManga.Host.Tests.Fea11RunGrantIpcTests.FolderSourceMintsABindableGrantThroughTheProductionRange [1 ms]
+  已跳过 NewManga.Host.Tests.Fea11RunGrantIpcTests.MintBindResolveAndRevoke_TypedWithNoPathLeak [1 ms]
+  已跳过 NewManga.Host.Tests.Fea11RunGrantIpcTests.ReauthorizedLiveEntry_RunRangeResolvesAndBindsOverRealIpc [1 ms]
+  已跳过 NewManga.Host.Tests.Fea11RunGrantIpcTests.RenewalMintsAndRebindsTheSameScopeTwice [1 ms]
+  已跳过 NewManga.Host.Tests.Fea11RunGrantIpcTests.ProductionScanVersionChannelDrivesImageFolderAndEveryArchiveMember [1 ms]
+  已跳过 NewManga.Host.Tests.Fea11RunGrantIpcTests.ContainerMemberEntriesAuthorizeEveryMemberOverRealIpc [1 ms]
+  已跳过 NewManga.Host.Tests.Fea11RunGrantIpcTests.CoreAdvertisesTheRunAuthorizationCapability_AndRefusesWithoutGrants [1 ms]
+[xUnit.net 00:00:18.72]     NewManga.Host.Tests.Fea11Residual4AIpcTests.ProductionDispatcherMissingCapabilityFailsClosed [SKIP]
+[xUnit.net 00:00:18.72]     NewManga.Host.Tests.Fea11Residual4AIpcTests.ProductionDispatcherFullSyncChain_NewKeyOldDigestConserved [SKIP]
+[xUnit.net 00:00:18.72]     NewManga.Host.Tests.Fea11Residual4AIpcTests.ProductionDispatcherHostControlPayloadIsFlattened [SKIP]
+[xUnit.net 00:00:18.72]     NewManga.Host.Tests.Fea11Residual4AIpcTests.ProductionDispatcherFailureRecordIsFlattenedAndKeepsGatesPending [SKIP]
+  已跳过 NewManga.Host.Tests.Fea11Residual4AIpcTests.ProductionDispatcherMissingCapabilityFailsClosed [1 ms]
+  已跳过 NewManga.Host.Tests.Fea11Residual4AIpcTests.ProductionDispatcherFullSyncChain_NewKeyOldDigestConserved [1 ms]
+  已跳过 NewManga.Host.Tests.Fea11Residual4AIpcTests.ProductionDispatcherHostControlPayloadIsFlattened [1 ms]
+  已跳过 NewManga.Host.Tests.Fea11Residual4AIpcTests.ProductionDispatcherFailureRecordIsFlattenedAndKeepsGatesPending [1 ms]
+[xUnit.net 00:00:27.72]     NewManga.Host.Tests.Fea10RunIpcTests.PrepareAcceptAndReplayAfterCoreRestart [SKIP]
+  已跳过 NewManga.Host.Tests.Fea10RunIpcTests.PrepareAcceptAndReplayAfterCoreRestart [1 ms]
+[xUnit.net 00:00:37.08]     NewManga.Host.Tests.Fea11SourceIpcTests.ScanWithAHostIssuedGrant_WorksEndToEnd [SKIP]
+  已跳过 NewManga.Host.Tests.Fea11SourceIpcTests.ScanWithAHostIssuedGrant_WorksEndToEnd [1 ms]
+[xUnit.net 00:00:37.08]     NewManga.Host.Tests.Fea11SourceIpcTests.FullSyncChain_PublishesNewGeneration_AndResolvesV2 [SKIP]
+[xUnit.net 00:00:37.14]     NewManga.Host.Tests.Fea11SourceIpcTests.HostControlSurfaceRefusesWithoutGrant_AndUnknownOperationsTyped [SKIP]
+  已跳过 NewManga.Host.Tests.Fea11SourceIpcTests.FullSyncChain_PublishesNewGeneration_AndResolvesV2 [1 ms]
+  已跳过 NewManga.Host.Tests.Fea11SourceIpcTests.HostControlSurfaceRefusesWithoutGrant_AndUnknownOperationsTyped [1 ms]
+[xUnit.net 00:00:37.39]     NewManga.Host.Tests.Fea07Residual3IpcTests.A03_RealHostCore_FiftyRoundTripsAndAckReplay_KeepProtectedColumnsIdentical [SKIP]
+  已跳过 NewManga.Host.Tests.Fea07Residual3IpcTests.A03_RealHostCore_FiftyRoundTripsAndAckReplay_KeepProtectedColumnsIdentical [1 ms]
+结果文件: G:\CODEX\New Manga.workspace\task-envs\HOST-RESOURCE-SECURITY-1\evidence-rerun\test\results-host.trx
+
+已通过! - 失败:     0，通过:   364，已跳过:    44，总计:   408，持续时间: 36 s - NewManga.Host.Tests.dll (net9.0)
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+[xUnit.net 00:00:04.09]     NewManga.App.Tests.PerformanceBaselineTests.Gated_HotSwitch_UiThreadSchedulingGapStaysWithinThePerfGateBudget [SKIP]
+  已跳过 NewManga.App.Tests.PerformanceBaselineTests.Gated_HotSwitch_UiThreadSchedulingGapStaysWithinThePerfGateBudget [1 ms]
+[xUnit.net 00:03:57.78]     NewManga.App.Tests.StartupDiagnosticsTests.RealProcessLaunchMatrix_ExitZeroAndDiagnosableStartupLog [SKIP]
+  已跳过 NewManga.App.Tests.StartupDiagnosticsTests.RealProcessLaunchMatrix_ExitZeroAndDiagnosableStartupLog [1 ms]
+[xUnit.net 00:04:42.18]     NewManga.App.Tests.Fea07Residual3CrashTests.Park_ProductionSwitchStopsBetweenPersistedTargetAndJournalCommit [SKIP]
+[xUnit.net 00:04:42.18]     NewManga.App.Tests.Fea07Residual3CrashTests.Recover_NewProcessRollsBackAndAdoptsTheLatestProtectedState [SKIP]
+  已跳过 NewManga.App.Tests.Fea07Residual3CrashTests.Park_ProductionSwitchStopsBetweenPersistedTargetAndJournalCommit [1 ms]
+  已跳过 NewManga.App.Tests.Fea07Residual3CrashTests.Recover_NewProcessRollsBackAndAdoptsTheLatestProtectedState [1 ms]
+结果文件: G:\CODEX\New Manga.workspace\task-envs\HOST-RESOURCE-SECURITY-1\evidence-rerun\test\results-app.trx
+
+已通过! - 失败:     0，通过:   962，已跳过:     4，总计:   966，持续时间: 4 m 53 s - NewManga.App.Tests.dll (net9.0)
+{
+  "ac": "AC1/AC2/AC3/AC4/AC5/AC6",
+  "command": "pwsh -NoProfile -File apps/desktop-avalonia/scripts/test.ps1",
+  "evidence_root": "G:\\CODEX\\New Manga.workspace\\task-envs\\HOST-RESOURCE-SECURITY-1\\evidence-rerun",
+  "configuration": "Debug",
+  "fixture": "NEWMANGA_CORECLIENT_SIDECAR_DIR (AC11 unlabelled copy)",
+  "sidecar_directory": "G:\\CODEX\\New Manga.workspace\\task-envs\\HOST-CORECLIENT-1\\sidecar-copy",
+  "projects": [
+    {
+      "project": "coreclient",
+      "total": 256,
+      "passed": 256,
+      "failed": 0,
+      "skipped": 0,
+      "trx": "test/results-coreclient.trx",
+      "trx_sha256": "63842200f126607c9f3247d75b98e422896f4699cac710eca176b73073a6f761"
+    },
+    {
+      "project": "host",
+      "total": 408,
+      "passed": 364,
+      "failed": 0,
+      "skipped": 44,
+      "trx": "test/results-host.trx",
+      "trx_sha256": "8cd92c569ae5e3a393c682fdc06ba0825bcb4b3dbdcdb2e628c8a031ab471cef"
+    },
+    {
+      "project": "app",
+      "total": 966,
+      "passed": 962,
+      "failed": 0,
+      "skipped": 4,
+      "trx": "test/results-app.trx",
+      "trx_sha256": "2b75fe1f4550a31ea05b9d01604c820ee00696027de9ded3da1028930fe314ce"
+    }
+  ],
+  "totals": {
+    "total": 1630.0,
+    "passed": 1582.0,
+    "failed": 0.0,
+    "skipped": 48.0
+  },
+  "at_utc": "2026-11-16T02:36:33.8637070Z"
+}
+log: G:\CODEX\New Manga.workspace\task-envs\HOST-RESOURCE-SECURITY-1\evidence-rerun\test\dotnet-test-Debug.log
+evidence root: G:\CODEX\New Manga.workspace\task-envs\HOST-RESOURCE-SECURITY-1\evidence-rerun (use -CanonicalEvidence only when regenerating pins)
+summary: G:\CODEX\New Manga.workspace\task-envs\HOST-RESOURCE-SECURITY-1\evidence-rerun\test\summary.json
+TEST PASS (Debug): 1582/1630 passed, 48 skipped
+
+
+===== pytest =====
+........................................................................ [  2%]
+........................................................................ [  4%]
+........................................................................ [  6%]
+........................................................................ [  8%]
+........................................................................ [ 10%]
+........................................................................ [ 12%]
+........................................................................ [ 14%]
+........................................................................ [ 16%]
+........................................................................ [ 18%]
+........................................................................ [ 20%]
+........................................................................ [ 22%]
+........................................................................ [ 24%]
+........................................................................ [ 26%]
+........................................................................ [ 28%]
+........................................................................ [ 30%]
+........................................................................ [ 32%]
+........................................................................ [ 34%]
+........................................................................ [ 36%]
+........................................................................ [ 38%]
+........................................................................ [ 40%]
+........................................................................ [ 42%]
+........................................................................ [ 44%]
+........................................................................ [ 46%]
+........................................................................ [ 48%]
+........................................................................ [ 50%]
+........................................................................ [ 52%]
+........................................................................ [ 54%]
+........................................................................ [ 56%]
+........................................................................ [ 58%]
+..................................................................s..... [ 60%]
+........................................................................ [ 62%]
+..................sssss................................................. [ 64%]
+........................................................................ [ 66%]
+........................................................................ [ 68%]
+........................................................................ [ 70%]
+........................................................................ [ 72%]
+........................................................................ [ 74%]
+........................................................................ [ 76%]
+........................................................................ [ 78%]
+....................................s................................... [ 80%]
+........................................................................ [ 82%]
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+........................................................................ [ 84%]
+........................................................................ [ 86%]
+........................................................................ [ 88%]
+........................................................................ [ 90%]
+........................................................................ [ 92%]
+........................................................................ [ 94%]
+........................................................................ [ 96%]
+........................................................................ [ 98%]
+................................................                         [100%]
+============================== warnings summary ===============================
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_scan_same_container_direct_continuation without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_scan_changed_container_diff_classifications without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_scan_same_mtime_size_bytes_changed_discovered without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_scan_expired_grant_typed_refusal without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_scan_scope_all_requires_frozen_reference_books without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_missing_source_observation_path without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_stale_apply_zero_write_baseline without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests\fea11\test_source_scan.py:1
+  G:\CODEX\New Manga\tests\fea11\test_source_scan.py:1: PytestWarning: usefixtures() in tests/fea11/test_source_scan.py::test_full_sync_publishes_new_generation_and_gates without arguments has no effect
+    """AC11-1/AC11-2 evidence: scan/diff classification, totals=details, plan
+
+tests/core/test_rc4_stdio_render_preview.py::test_production_stdio_decodes_nmfr_renders_text_and_publishes_readable_preview
+  G:\CODEX\New Manga\tests\core\test_rc4_stdio_render_preview.py:245: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+    for px in rendered.crop((20, 20, 150, 120)).convert("RGB").getdata()
+
+tests/fea11/test_source_run_grant.py::test_container_grant_duplicate_member_locators_are_legitimate
+  C:\Python314\Lib\zipfile\__init__.py:1730: UserWarning: Duplicate name: 'same.png'
+    return self._open_to_write(zinfo, force_zip64=force_zip64)
+
+tests/rendering/test_pillow_rendering.py::test_pillow_compositor_draws_centered_stroked_text_into_real_png
+  G:\CODEX\New Manga\tests\rendering\test_pillow_rendering.py:94: DeprecationWarning: Image.Image.getdata is deprecated and will be removed in Pillow 14 (2027-10-15). Use get_flattened_data instead.
+    for red, green, blue, _alpha in image.getdata()
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+3569 passed, 10 skipped, 11 warnings in 285.13s (0:04:45)
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+
+EXIT=0

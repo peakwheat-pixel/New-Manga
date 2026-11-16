@@ -1,0 +1,10 @@
+# M2-REGION-RETYPE-CORE AC6 —— m2_acceptance 单测复跑
+# command: python -m pytest tests/m2_acceptance -q
+# head: 5cad9db8ab56bb141b5003c076a6854e33856883
+# at_utc: 2026-11-16T02:51:50Z
+# AC6 要求 35 passed；本次 37 passed（含新增 2 条）
+
+.....................................                                    [100%]
+37 passed in 22.22s
+
+EXIT=0

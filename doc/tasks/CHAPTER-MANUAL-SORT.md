@@ -82,7 +82,7 @@ allowed_paths:
 - [x] **AC7 新增章节排末尾**：在已有手动顺序的书中新增章节后，新章节位于列表末尾（固定既有 `max+1` 行为，防回归）。 <!-- verified: test:test_chapter_created_after_manual_reorder_lands_at_the_end@tests/storage/test_chapter_reorder_atomic.py:134 -->
 - [x] **AC8 失败与刷新不假装成功**：重排失败、并发冲突（`INVALID_REQUEST`）或刷新后，UI 不得显示未落库的顺序；错误路径有可见文案。 <!-- verified: test:ReorderChapter_WhenTheWriteFails_KeepsTheVisibleOrderAndSaysSo@apps/desktop-avalonia/tests/NewManga.App.Tests/ShelfChapterReorderTests.cs:50 -->
 - [x] **AC9 并发保护**：同一实例内的重入拖拽（前一次 in-flight 未完成）不得产生交叠写入；被拒绝/失败时 UI 保持已落库顺序。 <!-- verified: test:ReorderChapter_WhileAWriteIsInFlight_RefusesTheSecondDrag@apps/desktop-avalonia/tests/NewManga.App.Tests/ShelfChapterReorderTests.cs:128 -->
-- [ ] **AC10 不回归**：`App.Tests`、`CoreClient.Tests` 与 Python 相关测试全绿；无新增 skip/xfail、无放宽既有断言。 <!-- blocked: App.Tests 955/0/11/966 通过(2026-11-15)；CoreClient 与 Python 套件本轮未跑 -->
+- [x] **AC10 不回归**：`App.Tests`、`CoreClient.Tests` 与 Python 相关测试全绿；无新增 skip/xfail、无放宽既有断言。 <!-- verified: 2026-11-16 DSH 全量复跑（head 见日志头）：① App.Tests 962 passed / 0 failed / 4 skipped（基线 955/0/11 ⇒ 通过 +7、skip -7）；② CoreClient.Tests 256 passed / 0 failed / 0 skipped；③ Python `python -m pytest tests -q` 3569 passed / 0 failed / 10 skipped（skip 与基线 10 持平）⇒ 三面全绿、0 failed；④ 无新增 skip（4<11、0、10=10）、无 xfail 变更、未改动任何既有断言（本轮只做只读复跑）。file:verification/CHAPTER-MANUAL-SORT/ac10-no-regression-2026-11-16.log（含 test.ps1 与 pytest 两份原始日志 + EXIT=0） -->
 
 ## 允许修改范围
 
@@ -168,6 +168,7 @@ AC3（缓存失效集成）与 AC5（真实 GUI 拖拽）为 `NOT_RUN`，**不�
 | EV-CMS-07 | 既有缺陷登记 E-1…E-5 | doc/reviews/MAINT-1-EXISTING-FINDINGS-2026-11-14.md | c459b279f | b07e5865d34b153b7ac360865c91caecfef52d498120c95e9b5bc7456fdc6899 | CANONICAL | BLOB |
 | EV-CMS-08 | AC6 四件套日志 | verification/CHAPTER-MANUAL-SORT/four-pieces.log | ed8b56c9f | 55011c422eb2c1d77b88819fcf52cce003f413ea8e519b93c557b58bd0ba9aaa | CANONICAL | BLOB |
 | EV-CMS-09 | AC3 待启用集成测试（NOT_RUN 期间的保留件） | verification/CHAPTER-MANUAL-SORT/pending-host-cache-test.cs.txt | ed8b56c9f | edcd685204d2b521966084e1b5a7a26991cf8b6110b17f98dfdee40afe78a230 | SOURCE_PIN | BLOB |
+| EV-CMS-10 | **AC10 不回归全量复跑**（App 962/0/4、CoreClient 256/0/0、pytest 3569/0/10） | verification/CHAPTER-MANUAL-SORT/ac10-no-regression-2026-11-16.log | PENDING_SUBMIT | e0118a932e9d1beeec0d829954db8195cbb957dec29f6d0163bf448f3d1d9781 | CANONICAL | BLOB |
 
 ## Resource Manifest
 
