@@ -209,3 +209,33 @@ Review 链 r1 approved（P2 升 P1：真实 AppData 写入）→ 返修 → r2 c
 - r2 = `changes_requested`：P1=1（N-001 原生证据壳错误）、P2=2（N-002 证据未绑定壳/args、N-003 `IsVisible` 分支零测试）、P3=6。
 - 整改：legacy 壳原生复测（F11→全屏、Esc 恢复，JSON 记录 `shell/args`）；补静默不可见回归（`ImmersiveShowOverride = _ => { }`）与 `TryOpenImmersiveReader()==false` 断言；失败提示统一走 `RefreshStatusText()`（N-008）；证据表去空行重排（N-005）；修正 `approval` 去重（N-007）；D-AC5-2 记录在 `verification/FEA-07-AC5-NATIVE-1/DEFECTS.md` **追加**「D-AC5-2 更正」段（原文保留、append-only；`-32000` 属 D-AC5-1）；display 试验产物移出仓库（N-009）。
 - 关账口径：AC5 `PARTIAL`（legacy 成功路径已验证；物理 2K/4K 复测时不在系统中，全屏落在 1920×1080；v2 默认壳无入口）；不写 PASS。
+### 7.21 `FEA-07-AC5-NATIVE-1` AC-N2 / AC-N5 收口与 pin 口径修复（2026-11-16）
+
+- 独立上下文复核：`reviewer-fea07b`（全新子 agent，只读，未复用作者会话），结论 **ACCEPTED（带 limitation）**；
+  报告 `verification/FEA-07-AC5-NATIVE-1/review-ac-n5-2026-11-16.md`（EV-AC5-07）。
+- **AC-N5** 由 `[ ] <<blocked>>` → `[x] <<MET>>`：证据（74 张真桌面 PNG / 逐案例 JSON / 恢复点 JSON / 失败原因）
+  + 独立 Review + FEA-07 AC5 行注记三者齐备。
+- **AC-N2** 由 `[ ] <<blocked>>` → `[x] <<MET>>`：本轮补齐其唯一缺口「快捷键不重复执行」——
+  新增 `V2KeyDispatchOnceTests`（3 facts：同作用域内每个手势只被一个命令认领、全局命令处处可达、
+  空间命令不跨界），并做**变红验证**（临时把 `Help` 也绑到全局 `Ctrl+D1` ⇒ 3/3 红，
+  报 `按键冲突 Ctrl+1: 「space.library」与「help.shortcuts」的作用域重叠` ⇒ 还原后 3/3 绿）。
+- **`FEA-07` AC5 行 marker 不变**（仍 `[x] <<NOT_APPLICABLE: …>>`，**不改为 MET**）；只追加 2026-11-16 注记收窄口径。
+  已取证项增加「中文 IME 组合输入」「快捷键不重复执行」；仍 `NOT_RUN` 项逐条进
+  `FEA-07-AC5-NATIVE-1` 卡尾 **L-N1…L-N5**（两块屏同框 2/7、Inspector 浮窗 NA、混合 DPI 7/15、
+  未保存内容人工拔线、全屏 F11）。
+- **人侧残项收窄**：`HUMAN-REQUIRED` 的 `H-02` 由 3 大项收窄为 3 小项（剩余 8 组 DPI、
+  「无模糊/无错位」主观断言、人工拔线 + 恢复点确认）；阅读器 overlay 另见 `H-10`。
+- **pin 口径修复（本轮抓出 + 全表复验）**：卡内 Canonical Evidence 表存在 3 类历史缺陷，
+  均按 BLOB 口径重算并修正 —— ① `EV-AC5-02` commit 与 sha 不配对（`0bcdeb9fc` → `c42b72f55`）；
+  ② `EV-AC5-03/04/05` 的 sha 是 **WORKTREE 口径**（CRLF）而非 BLOB，且 04/05 缺 commit
+  （→ BLOB 值 + `9e1734ccf`）；③ `EV-AC5-06` pin 的是 3773 B 旧版 README，现行 9226 B 版未被覆盖
+  （→ `eff2b63d2` + `88ffe64d…`）。
+  根因：`core.autocrlf=true` 下工作区 CRLF、blob LF，两者 SHA-256 不同；**本卡此后一律 BLOB 口径**。
+
+### 7.22 `FEA-07` AC5 行「保持 `- [ ]`」记录的历史性与现状区分（2026-11-16）
+
+- `doc/tasks/FEA-07.md` 的「AC 状态变更记录」表中有一行写「AC5 … **保持 `- [ ]`**」，
+  记录的是 **2026-11-08** 当时的决定；此后 R4b 已把 AC5 行置 `- [x]`，二者并存会造成误读。
+- 处置：**不改历史记录字节**，在该行内加删除线 + 「2026-11-16 更正：本行记录的是 2026-11-08 当时的决定，
+  现已不是现状」+ 指向现状（`- [x]` + `<<NOT_APPLICABLE: …>>`）与 L-N1…L-N5。
+- 口径：`NOT_APPLICABLE` 仍是 AC5 的唯一登记（用户 2026-11-08 授权豁免继续有效），**不写 MERGE/MET**。

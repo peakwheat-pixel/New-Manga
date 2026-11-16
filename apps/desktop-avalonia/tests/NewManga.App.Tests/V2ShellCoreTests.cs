@@ -337,3 +337,146 @@ public sealed class V2PinyinTests
         Assert.Equal("yglc", PinyinIndex.InitialsOf("夜光列车"));
     }
 }
+
+/// <summary>
+/// FEA-07-AC5-NATIVE-1 AC-N2 (DSH 2026-11-16): the "快捷键不重复执行" sub-requirement.
+///
+/// AC-N2 requires that a floating Inspector window never causes a shortcut to run twice. The
+/// floating window itself is NOT_APPLICABLE (`WindowBroker.RegisterSecondary` has zero production
+/// callers — L-R4a-1), so the reachable half of the requirement is the dispatch contract: within any
+/// one scope (space × mode) a single key press must resolve to <b>exactly one</b> command. If two
+/// commands ever claimed the same gesture inside an overlapping scope, `TryMatch` would pick the
+/// first one and the second would silently never fire — or, if a future dispatcher iterated instead
+/// of first-matching, it would fire twice. These facts pin the invariant either way.
+///
+/// The failure mode this guards is real and cheap to introduce: adding a command to
+/// <c>ShellCommands.Definitions</c> with a gesture already used in the same scope.
+/// </summary>
+public sealed class V2KeyDispatchOnceTests
+{
+    private static IEnumerable<(SpaceId Space, StudioMode Mode)> AllScopes()
+    {
+        foreach (var space in Enum.GetValues<SpaceId>())
+        {
+            foreach (var mode in Enum.GetValues<StudioMode>())
+            {
+                yield return (space, mode);
+            }
+        }
+    }
+
+    [Fact]
+    public void EveryScope_ResolvesEachGestureToExactlyOneCommand()
+    {
+        var map = KeyMap.Default;
+
+        foreach (var (space, mode) in AllScopes())
+        {
+            // Group the gestures visible in this scope by (key, masked modifiers).
+            var byGesture = new Dictionary<(Key, KeyModifiers), List<string>>();
+            foreach (var definition in map.ForScope(space, mode))
+            {
+                foreach (var gesture in definition.Gestures)
+                {
+                    var key = (gesture.Key, gesture.Modifiers);
+                    if (!byGesture.TryGetValue(key, out var owners))
+                    {
+                        byGesture[key] = owners = new List<string>();
+                    }
+
+                    owners.Add(definition.Id);
+                }
+            }
+
+            // (a) No gesture is claimed by two commands in the same scope: that is the "重复执行"
+            //     shape (one press, two candidate handlers).
+            foreach (var (gesture, owners) in byGesture)
+            {
+                Assert.True(
+                    owners.Count == 1,
+                    $"作用域 {space}/{mode} 中的 {ShortcutText.Format(gesture.Item1, gesture.Item2)} " +
+                    $"被 {owners.Count} 个命令同时认领（{string.Join(", ", owners)}）" +
+                    "—— 一次按键会产生重复执行");
+            }
+
+            // (b) TryMatch agrees: exactly one command, and it is the sole owner recorded above.
+            foreach (var (gesture, owners) in byGesture)
+            {
+                var matched = map.TryMatch(gesture.Item1, gesture.Item2, space, mode, out var command);
+                Assert.True(matched, $"{space}/{mode} 中已注册的手势未能匹配：{ShortcutText.Format(gesture.Item1, gesture.Item2)}");
+                Assert.Equal(owners[0], command.Id);
+            }
+        }
+    }
+
+    [Fact]
+    public void SinglePress_YieldsOneCommand_NotTwo()
+    {
+        // The concrete case the AC names: a global shortcut pressed once inside a scope where it is
+        // bound must produce one dispatch (one command), never a duplicate.
+        var map = KeyMap.Default;
+        var dispatched = new List<string>();
+
+        void PressOnce(Key key, KeyModifiers modifiers, SpaceId space, StudioMode mode)
+        {
+            // A dispatcher is allowed to look the gesture up more than once; what must not happen is
+            // that the SAME press resolves to two different commands (that is what "runs twice" means
+            // for a user) -- so record the resolved ids and assert on their distinct count.
+            if (map.TryMatch(key, modifiers, space, mode, out var command))
+            {
+                dispatched.Add(command.Id);
+            }
+        }
+
+        PressOnce(Key.K, KeyModifiers.Control, SpaceId.Studio, StudioMode.Batch);
+        PressOnce(Key.D1, KeyModifiers.Control, SpaceId.Library, StudioMode.Page);
+        PressOnce(Key.F1, KeyModifiers.None, SpaceId.Library, StudioMode.Page);
+
+        Assert.Equal(3, dispatched.Count);
+        Assert.Equal(dispatched.Count, dispatched.Distinct(StringComparer.Ordinal).Count());
+        Assert.Equal(
+            new[] { ShellCommandIds.CommandPalette, ShellCommandIds.SpaceLibrary, ShellCommandIds.Help },
+            dispatched.ToArray());
+    }
+
+    [Fact]
+    public void GlobalShortcuts_ResolveInEveryScope_SpaceScopedOnesDoNotLeak()
+    {
+        // Two halves of the dispatch contract, both relevant to "a press runs once, in the right place":
+        //  * a GLOBAL command (Space == null) must resolve in every space/mode — otherwise a user's
+        //    global shortcut would silently die after switching space;
+        //  * a SPACE-SCOPED command must NOT resolve outside its space — otherwise one press could be
+        //    claimed by a command from a different page.
+        var map = KeyMap.Default;
+
+        var globals = new (Key Key, KeyModifiers Modifiers, string Id)[]
+        {
+            (Key.D1, KeyModifiers.Control, ShellCommandIds.SpaceLibrary),
+            (Key.D2, KeyModifiers.Control, ShellCommandIds.SpaceStudio),
+            (Key.D3, KeyModifiers.Control, ShellCommandIds.SpaceConsole),
+            (Key.K, KeyModifiers.Control, ShellCommandIds.CommandPalette),
+            (Key.F1, KeyModifiers.None, ShellCommandIds.Help),
+        };
+
+        foreach (var (space, mode) in AllScopes())
+        {
+            foreach (var (key, modifiers, expectedId) in globals)
+            {
+                Assert.True(
+                    map.TryMatch(key, modifiers, space, mode, out var command),
+                    $"全局快捷键 {ShortcutText.Format(key, modifiers)} 在 {space}/{mode} 未匹配 —— 切空间后会失灵");
+                Assert.Equal(expectedId, command.Id);
+            }
+        }
+
+        // Tab toggles the studio mode only: it is bound in Studio (both modes) and nowhere else.
+        Assert.True(map.TryMatch(Key.Tab, KeyModifiers.None, SpaceId.Studio, StudioMode.Page, out _));
+        Assert.True(map.TryMatch(Key.Tab, KeyModifiers.None, SpaceId.Studio, StudioMode.Batch, out _));
+        Assert.False(map.TryMatch(Key.Tab, KeyModifiers.None, SpaceId.Console, StudioMode.Page, out _));
+        Assert.False(map.TryMatch(Key.Tab, KeyModifiers.None, SpaceId.Library, StudioMode.Page, out _));
+
+        // J/K object navigation is a Library shortcut and must not fire in Console/Studio.
+        Assert.False(map.TryMatch(Key.J, KeyModifiers.None, SpaceId.Console, StudioMode.Page, out _));
+        Assert.False(map.TryMatch(Key.J, KeyModifiers.None, SpaceId.Studio, StudioMode.Batch, out _));
+    }
+}

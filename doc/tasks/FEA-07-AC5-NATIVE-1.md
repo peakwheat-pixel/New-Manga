@@ -50,10 +50,10 @@ out_of_scope:
 ## Acceptance Criteria（冻结）
 
 - [ ] **AC-N1（混合 DPI 拓扑）**：2K 置原生 2560×1440、4K 置原生 3840×2160，扩展排列；在两屏分别设置 100%/125%/150%/175%/200%（4K）与 100%/125%/150%（2K），逐组合记录每屏 `dpi/scale/rect/primary`；应用窗口在两屏间移动后 DPI 正确切换（无模糊/无错位）。 <!-- blocked: 原标 <<PARTIAL: 7/15 混合 DPI 组合已执行（4K 100/125/150/175/200 × 2K 100/125/150 子集），DPI 切换与屏幕内 containment 全部通过；其余组合与「无模糊/无错位」客观断言未做>>；卡面 L138 复判「AC-N1: PARTIAL」、L120 记未做组合为 NOT_RUN，故未达成本卡验收 -->
-- [ ] **AC-N2（浮动窗口归属）**：Inspector 浮窗置于副屏 → 可见/可操作；主窗与浮窗跨屏拖动不丢屏外；目标屏不支持浮动时安全停靠（回主窗）；快捷键不重复执行。 <!-- blocked: 原标 <<PARTIAL: 主窗跨屏归属/可见/contained 已验；Inspector 浮窗不存在（RegisterSecondary 零生产调用）→ 该子项 NOT_APPLICABLE；中文 IME 组合输入已验（命令面板输入「你好」）；快捷键「不重复执行」未单独断言>>；卡面 L139 复判「PARTIAL/NA」、L145 记 Inspector 浮窗不存在，故未达成本卡验收 -->
+- [x] **AC-N2（浮动窗口归属）**：Inspector 浮窗置于副屏 → 可见/可操作；主窗与浮窗跨屏拖动不丢屏外；目标屏不支持浮动时安全停靠（回主窗）；快捷键不重复执行。 <!-- verified: 2026-11-16 DSH。四个子项逐项处置：(a) Inspector 浮窗置于副屏 = **NOT_APPLICABLE** —— 浮窗在产品中不存在（`WindowBroker.RegisterSecondary` 零生产调用，仅测试引用），故「置于副屏」无对象；(b) 主窗跨屏拖动不丢屏外 = 已验，7 组混合 DPI 拖动证据（`evidence/drag-mixed-dpi-*.json` + mon1/mon2 截图 + `matrix-summary.json`），EV-AC5-02；(c) 目标屏不支持浮动时安全停靠 = 随 (a) 无对象；(d) **快捷键不重复执行 = 本轮补断言** `V2KeyDispatchOnceTests`（3 facts）：每个作用域内同一手势只被一个命令认领（`owners.Count == 1`）、全局命令处处可达而空间命令不跨界；并做过**变红验证**（临时把 Help 也绑到全局 Ctrl+D1 ⇒ 3/3 红，报 `按键冲突 Ctrl+1: 「space.library」与「help.shortcuts」的作用域重叠`）。file:apps/desktop-avalonia/tests/NewManga.App.Tests/V2ShellCoreTests.cs（V2KeyDispatchOnceTests）。limitation 见卡尾「L-N 清单」L-N2。 -->
 - [ ] **AC-N3（拔屏/换主屏）**：OS 级禁用副屏（并尽量物理拔线）→ 第二窗口内容回主窗对应页面；未 flush 编辑态 fail-closed 留在主窗缓冲（不丢不覆盖）；换主屏后布局/全屏状态正确。 <!-- blocked: 原标 <<PARTIAL: OS 级拔屏（DisplaySwitch /internal）已验且自动迁移窗口；物理拔屏已执行：拔后主窗被系统最小化（需手动恢复，D-AC5-1）、恢复后回主屏、重插后自动回 4K 原几何；未 flush 编辑态 fail-closed 未执行>>；卡面 L140 复判「PARTIAL」、L125 记 physical/未 flush 子项 NOT_RUN，故未达成本卡验收 -->
 - [ ] **AC-N4（manifest/PerMonitorV2 与提交恢复）**：发布 manifest 实际启用 PerMonitorV2（读实际 exe manifest 断言，不只看 csproj）；混合 DPI 下窗口位置/大小提交与恢复正确；恢复点（分辨率/缩放/排列/主屏）在结束时逐项还原并校验。 <!-- blocked: 原标 <<PARTIAL: PerMonitorV2（app.manifest + exe 内嵌）与跨 DPI 几何保持已验；换主屏双向 rc=0 且应用存活；重启窗口几何持久化 → NOT_APPLICABLE（产品无实现）；恢复点按用户决定保留原生 2K>>；卡面 L141 复判「PARTIAL/NA」、L135 记恢复点未逐项还原，故未达成本卡验收 -->
-- [ ] **AC-N5（证据/审查/翻转）**：真实桌面截图（每案例 ≥1，含两块屏与窗口位置）+ 逐案例 JSON + 恢复点 JSON + 失败/跳过原因；独立上下文 Review；`FEA-07` AC5 行 append-only 从 `NOT_APPLICABLE` 翻 `[x] <!-- blocked: 原标 <<PARTIAL: 证据/工具齐；r1 Review changes_requested 已处置，r2 复审未完成>>；卡面 L142 复判「PARTIAL」、L147 记 AC5 行保持 NOT_APPLICABLE，独立 Review 未闭环，故未达成本卡验收 -->
+- [x] **AC-N5（证据/审查/翻转）**：真实桌面截图（每案例 ≥1，含两块屏与窗口位置）+ 逐案例 JSON + 恢复点 JSON + 失败/跳过原因；独立上下文 Review；`FEA-07` AC5 行 append-only 从 `NOT_APPLICABLE` 翻 `[x] <!-- verified: 2026-11-16 DSH。四项逐项处置：(a) 真实桌面截图 = 74 张真桌面 PNG（非 Avalonia 离屏渲染；抽样 4 张经独立复核亲眼看：`085421-straddle.png` 6400×2160 拼接可见壁纸/图标/任务栏时钟 8:54 且主窗右缘跨过两屏拼接缝；`102803-after-physical-unplug.png` 与 JSON `window=null` 自洽），7/7 拖动案例各 2 张 mon1/mon2；(b) 逐案例 JSON = 独立复核抽核 14 个文件全部存在且字段齐全（`drag-mixed-dpi-20261109-100932.json` 等）；(c) 恢复点 JSON = `display-state-before-native-20261109-084020.json` 全文核实（2 屏模式/DPI/坐标/主屏齐全）+ 6 份 after/truth-check；(d) 失败/跳过原因 = README 限制节、matrix notes、`DEFECTS.md` D-AC5-1/D-AC5-2 均写明且含 append-only 更正，未把 skip 写 PASS；(e) **独立上下文 Review = 本轮完成** `reviewer-fea07b`（全新上下文、只读、未复用作者会话），结论 **ACCEPTED（带 limitation）**，报告 EV-AC5-07；复核同时抓出并已修正本卡 3 类 pin 缺陷（见卡尾「pin 修复记录」）；(f) FEA-07 AC5 行 = 已 `[x]`，本轮按 ADJ §7.17 收窄 append-only 追加注记（不改为 MET）。limitation 见卡尾「L-N 清单」L-N5。 -->
 
 ## 实现口径
 
@@ -150,11 +150,12 @@ out_of_scope:
 
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
-| EV-AC5-02 | AC-N1/N2/N3 | verification/FEA-07-AC5-NATIVE-1/evidence/matrix-summary.json | 0bcdeb9fc | ac328dd8f480f637fc246d24fa15ce8bc72fe374b611f742fa4a0cf510609a80 | CANONICAL |
-| EV-AC5-03 | AC-N3 | verification/FEA-07-AC5-NATIVE-1/evidence/undock-os-20261109-093322.json | 0bcdeb9fc | 03b829e1c32629a8552080406f83ef245133e42750f5bd1d1ac1f6efe150f5b2 | CANONICAL |
-| EV-AC5-04 | AC-N4 | verification/FEA-07-AC5-NATIVE-1/evidence/exe-manifest.txt | - | 6585d60816068d1f0f89be7fce6f868d87c7233fa08013b51e7cd87a14dc158a | CANONICAL |
-| EV-AC5-05 | AC-N4 | verification/FEA-07-AC5-NATIVE-1/evidence/window-persistence-20261109-101115.json | - | 49465a71c57713c5c97ed1be934f610760524f48d2991a8298bc3af8d42e3556 | CANONICAL |
-| EV-AC5-06 | AC-N5 | verification/FEA-07-AC5-NATIVE-1/README.md | 0bcdeb9fc | 4aec163ec936e192d7a7989634da03e3d6224bcf4d4bd52d0c155aafcea3f15e | CANONICAL |
+| EV-AC5-02 | AC-N1/N2/N3 | verification/FEA-07-AC5-NATIVE-1/evidence/matrix-summary.json | c42b72f55 | ac328dd8f480f637fc246d24fa15ce8bc72fe374b611f742fa4a0cf510609a80 | CANONICAL |
+| EV-AC5-03 | AC-N3 | verification/FEA-07-AC5-NATIVE-1/evidence/undock-os-20261109-093322.json | 0bcdeb9fc | 348ecd070d7d4c87c257c64f0648ed9c65fe28c60d79b75d4ffb63c2ca4a8da5 | CANONICAL |
+| EV-AC5-04 | AC-N4 | verification/FEA-07-AC5-NATIVE-1/evidence/exe-manifest.txt | 9e1734ccf | e9f6164bce13b8b9edd1dd96daeddf9c11bcf14d6cdfc2d845c9948b3542c735 | CANONICAL |
+| EV-AC5-05 | AC-N4 | verification/FEA-07-AC5-NATIVE-1/evidence/window-persistence-20261109-101115.json | 9e1734ccf | c5d279ebf386ea53a49bde028fe0ba35e690367345fcdcf086cdb7e6a897f4df | CANONICAL |
+| EV-AC5-06 | AC-N5 | verification/FEA-07-AC5-NATIVE-1/README.md | eff2b63d2 | 88ffe64dfcae1f76366e56b8dc426c9fb83e737552dfea9921569367ebfba826 | CANONICAL |
+| EV-AC5-07 | **AC-N5 独立复核（ACCEPTED，带 limitation）** | verification/FEA-07-AC5-NATIVE-1/review-ac-n5-2026-11-16.md | PENDING_SUBMIT | dd373bd386e18c6cc777961134ef1bc6f35b7dbb07846bd2ca5adac08a47d055 | CANONICAL |
 
 | EV-AC5-P01 | 过程记录 | verification/FEA-07-AC5-NATIVE-1/evidence/display-state-before-native-20261109-084020.json | - | 2482237f8a64d272fbd29ecec127011f6851d0c50ffab562a07a94cd2d5b626c | CANONICAL |
 | EV-AC5-P02 | 过程记录 | verification/FEA-07-AC5-NATIVE-1/evidence/display-state-after-aoc-native-20261109-084031.json | - | b38d7962e0412e3f66229eb67a903efd9a4a58ca511ab26821ee823335064b34 | CANONICAL |
@@ -317,3 +318,31 @@ out_of_scope:
 - 自动化：`SendInput`（rc=2 事件）、`PostMessage WM_KEYUP/DOWN`（rc=3）均只造成主窗最小化；100ms 轮询 4 分钟无新顶层窗口（`evidence/watch-immersive-20261109-140944.json`）。
 - 推断：`OpenImmersiveReader()` 的 `window.Show()`（FullScreen + 无边框 `ReaderWindow`）在本会话未完成；主窗被系统最小化而非恢复 ⇒ 产品缺陷候选（需本地控制台复现）。
 - AC5「全屏切换」子项：**`NOT_RUN`**（不写 PASS）。
+---
+
+## L-N 清单（AC-N2 / AC-N5 的具名 limitation，2026-11-16）
+
+本卡 AC-N2 与 AC-N5 已按 §4.3 置 `[x] <<MET>>`（依据见各行注释），但**不是**「原生矩阵全部跑完」。
+以下 limitation 逐条登记，后续读者不得据此宣称「FEA-07 AC5 原生矩阵已完整验证」：
+
+| 编号 | limitation | 为什么不写成未达成 | 后续 |
+|---|---|---|---|
+| **L-N1** | 「两块屏同框」整桌面拼接图仅 **2/7** 拖动案例；其余 5 例用**分屏对**（mon1 + mon2 各一张）覆盖两屏与窗口位置 | AC-N5 的判据是「每案例 ≥1 截图，含两块屏与窗口位置」；分屏对**合起来**满足该判据，且 `matrix-summary.json` 逐例记录了落屏坐标可交叉核对 | 若未来要求「同框」口径，需补 5 张拼接图（真机，属 H-02 残项） |
+| **L-N2** | Inspector 浮窗子项 **NOT_APPLICABLE**（产品无浮窗，`RegisterSecondary` 零生产调用） | 无对象可验 ≠ 未验；按 §4.3 `NOT_APPLICABLE` 的语义登记 | 若将来实现浮窗，需新卡补验 |
+| **L-N3** | 混合 DPI 只完成 **7/15** 组合；「无模糊/无错位」是**主观视觉判断**，无机器断言 | 已完成的 7 组有真实截图与坐标证据；剩余 8 组需真机逐组设置，Agent 不可替代 | 保留在 `HUMAN-REQUIRED` 的 `H-02`（已收窄为 3 小项） |
+| **L-N4** | 「未保存内容 → 物理拔屏」的 fail-closed 只在**自动化脚本**下验过（`unsaved-edit-unplug-*.json`），未做人工拔线 | 脚本证据可复核；人工拔线属 `H-02` | 同 L-N3 |
+| **L-N5** | 全屏（F11）本会话 **`NOT_RUN`**（D-AC5-2：主窗被最小化、沉浸窗口未出），未写 PASS | 已如实登记为缺陷候选并附 wire 旁证；`FEA-07-IMMERSIVE-F11-1` 另有 9 个 headless 测试覆盖逻辑面 | 视觉确认登记为 `H-10`（阅读器 overlay） |
+
+### pin 修复记录（2026-11-16，独立复核 reviewer-fea07b 抓出 + DSH 全表复验）
+
+本轮对卡内 Canonical Evidence 表做了**全表 BLOB 口径复验**，发现并修正 3 类缺陷（均为**历史遗留**，非本轮引入）：
+
+| 行 | 原状 | 缺陷 | 修正 |
+|---|---|---|---|
+| `EV-AC5-02` | commit `0bcdeb9fc` | commit 与 sha 不配对：`0bcdeb9fc` 的 blob 是 `dc6bd9ca…`，声明值 `ac328dd8…` 实际由 **`c42b72f55`** 引入 | commit → `c42b72f55` |
+| `EV-AC5-03` | sha `03b829e1…` | **WORKTREE 口径**（CRLF 工作区字节）而非 BLOB 口径 | sha → `348ecd07…`（BLOB） |
+| `EV-AC5-04` / `EV-AC5-05` | commit `-`；sha 为 worktree 口径 | 同上传口径问题，且缺 commit | commit → `9e1734ccf`；sha → BLOB 值 |
+| `EV-AC5-06` | README pin 的是 **3773 B 旧版**（`4aec163e…`，内部自洽） | 现行 README（9226 B，含 §5 物理拔屏 / §6 IME·换主屏·未 flush / §7 全屏 NOT_RUN）**未被 pin 覆盖** | commit → `eff2b63d2`；sha → `88ffe64d…`（现行版） |
+
+⇒ 根因同本项目已记录的形态：`core.autocrlf=true` 下工作区是 CRLF、blob 是 LF，两者 SHA-256 不同；
+pin 若按工作区算就会与 `git cat-file blob` 口径不符。**本卡此后的 pin 一律按 BLOB 口径**。
