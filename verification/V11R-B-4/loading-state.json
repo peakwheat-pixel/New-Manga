@@ -1,0 +1,6 @@
+{
+  "ac": "AC3 loading \u6001\uFF1A\u5F00\u59CB\u5904\u7406\u65F6\u5148\u7F6E Loading\uFF0C\u968F\u540E\u7531\u8BFB\u56DE\u7ED3\u679C\u843D\u5230 Ready/Partial",
+  "observed_state_sequence": "Loading -\u003E Ready -\u003E Partial",
+  "loading_observed": true,
+  "settled_state": "Partial"
+}

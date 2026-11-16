@@ -911,4 +911,110 @@ public sealed class V2StudioBatchTests
 
         StudioFixtures.WindowOf(view).Close();
     }
+
+    // ------------------------------------------------------------------
+    // AC3 状态完备（idle/loading/ready/empty/error/partial）—— DSH 2026-11-16
+    //
+    // AC3 的原 blocked 理由（V11R-B-4:33）指出：NoRun / Error / Ready 已有测试，但
+    //   * Partial 只有赋值路径（StudioBatchViewModel.cs:673
+    //     `State = Projection is null ? Error : Partial`）**无任何断言**；
+    //   * Loading 仅在 :1166 赋值，同样**无断言**。
+    // 这两个 fact 把缺的两态钉住。它们不是同义反复：
+    //   * Partial 的断言依赖「先成功读到 projection（Ready）再让它变 null」——
+    //     少了 :673 的 `Projection is null ?` 分支判别，实现会退化成 Error，测试立刻红；
+    //   * Loading 的断言依赖「状态序列里真的出现过 Loading」——
+    //     删掉 :1166 的赋值，序列里就没有 Loading，测试立刻红。
+    // ------------------------------------------------------------------
+
+    [AvaloniaFact]
+    public async Task PartialState_ProjectionDisappearsAfterAReadyRead_KeepsTheLastPayloadAndSaysSo()
+    {
+        var (view, host, vm) = StudioFixtures.Open();
+        Assert.True(await view.LoadAndRenderAsync("book-0", "ch-1"));
+        vm.RequestMode(StudioWorkspaceMode.Batch);
+        StudioFixtures.Pump();
+        var batch = vm.Batch;
+        batch.SetRunId("run-partial");
+
+        // (1) A good projection first: this is what makes "Partial" distinguishable from "Error".
+        host.ScriptedTaskProjections.Enqueue(Projection(TenStages));
+        Assert.True(await batch.RefreshAsync());
+        Assert.Equal(StudioBatchRunState.Ready, batch.State);
+        var lastGoodRows = batch.Rows.Count;
+        Assert.True(lastGoodRows > 0, "precondition: the Ready read must have produced rows");
+
+        // (2) The projection disappears while a previous payload exists -> Partial (not Error).
+        host.ScriptedTaskProjections.Enqueue(null);
+        Assert.False(await batch.RefreshAsync());
+        Assert.Equal(StudioBatchRunState.Partial, batch.State);
+        Assert.NotEqual(StudioBatchRunState.Error, batch.State);
+
+        // (3) 就地呈现：保留上一份 payload（不把矩阵清空成空态），并给出可读原因。
+        Assert.True(batch.Rows.Count > 0, "Partial must keep the last good payload visible, not blank the matrix");
+        Assert.True(batch.ShowsEmptyState == false, "Partial is not the empty state");
+        Assert.False(string.IsNullOrWhiteSpace(batch.ErrorText), "Partial must explain why the payload is stale");
+        StudioFixtures.Pump();
+
+        StudioEvidence.Write(Task, "partial-state.json", writer =>
+        {
+            writer.WriteStartObject();
+            writer.WriteString("ac", "AC3 partial 态：读失败但保留上一份 payload，且就地呈现原因");
+            writer.WriteString("state", batch.State.ToString());
+            writer.WriteNumber("rows_after_partial", batch.Rows.Count);
+            writer.WriteNumber("rows_from_last_ready_read", lastGoodRows);
+            writer.WriteBoolean("shows_empty_state", batch.ShowsEmptyState);
+            writer.WriteString("error_text", batch.ErrorText);
+            writer.WriteEndObject();
+        });
+
+        StudioFixtures.WindowOf(view).Close();
+    }
+
+    [AvaloniaFact]
+    public async Task LoadingState_IsObservableInTheRunStartTransition()
+    {
+        var (view, host, vm) = StudioFixtures.Open();
+        Assert.True(await view.LoadAndRenderAsync("book-0", "ch-1"));
+        vm.RequestMode(StudioWorkspaceMode.Batch);
+        StudioFixtures.Pump();
+        var batch = vm.Batch;
+
+        // Record every State value the VM publishes, so "Loading was reached" is observable
+        // even though the transition ends in another state.
+        var seen = new List<StudioBatchRunState>();
+        batch.PropertyChanged += (_, args) =>
+        {
+            if (args.PropertyName == nameof(StudioBatchViewModel.State))
+            {
+                seen.Add(batch.State);
+            }
+        };
+
+        host.ScriptedStartRuns.Enqueue(new RunStartInfo("run-loading", "running"));
+        host.ScriptedTaskProjections.Enqueue(Projection(TenStages));
+
+        var started = await batch.StartProcessingAsync();
+        StudioFixtures.Pump();
+
+        Assert.NotNull(started);
+        // The AC3 requirement is that Loading is *reachable and observable* — this is what we pin.
+        Assert.Contains(StudioBatchRunState.Loading, seen);
+        // ...and that it is transient, not stuck: the transition must settle somewhere else.
+        // (Which of Ready/Partial it settles on depends on how many projection reads the frame makes,
+        // so asserting one specific target would pin the read count rather than the state machine.)
+        Assert.NotEqual(StudioBatchRunState.Loading, batch.State);
+        Assert.Contains(batch.State, new[] { StudioBatchRunState.Ready, StudioBatchRunState.Partial });
+
+        StudioEvidence.Write(Task, "loading-state.json", writer =>
+        {
+            writer.WriteStartObject();
+            writer.WriteString("ac", "AC3 loading 态：开始处理时先置 Loading，随后由读回结果落到 Ready/Partial");
+            writer.WriteString("observed_state_sequence", string.Join(" -> ", seen));
+            writer.WriteBoolean("loading_observed", seen.Contains(StudioBatchRunState.Loading));
+            writer.WriteString("settled_state", batch.State.ToString());
+            writer.WriteEndObject();
+        });
+
+        StudioFixtures.WindowOf(view).Close();
+    }
 }
