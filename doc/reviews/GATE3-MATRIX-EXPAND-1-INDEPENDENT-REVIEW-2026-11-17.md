@@ -367,3 +367,81 @@ if ($basis -cnotin @('BLOB', 'WORKTREE', 'EXTERNAL_SHA256')) {
   改完再窄确认一次，即可 `done`。`status: in_progress` 的保留是对的。
 
 复核者：`gate3-reviewer`（独立上下文，未参与实现/返修）｜head `9a2e7fea3`｜2026-11-17（第二轮窄确认）
+
+---
+
+## 第三轮（终态窄确认）
+
+| 项 | 值 |
+|---|---|
+| 复核者 | `gate3-reviewer`（同一独立上下文，未参与本次更正） |
+| 被审 head | `1795c1eea`（`fix(gate3): 处置第二轮窄确认的 3 处终态问题（basis token / 重钉 / integration head）`） |
+| 工作区 | 干净（`git status` 无输出） |
+| 范围 | 只核第二轮列出的 3 处终态问题；**未重跑**测试（沿用 79/0/0、962/0/11/973） |
+| **verdict3** | **ACCEPTED** |
+
+### 1. `sha256_basis` 是否已从 `raw` 改为 BLOB 且在允许枚举内 —— **PASS**
+
+卡片第 99 行原文：
+
+```
+| EV-G3MX-01 | AC1-AC5 矩阵 §10 | doc/reviews/MAINT-1-GATE-CONDITION-3-MATRIX-2026-11-15.md | 9a2e7fea3 | 197c3c1ac90cb29e142c5a8cbb572f1c3c06e234df501687883121ea0b628017 | CANONICAL | BLOB |
+```
+
+- `BLOB` ∈ `check.ps1:1191` 允许集 `{BLOB, WORKTREE, EXTERNAL_SHA256}` ✅。
+- BLOB 分支的附加要求逐条满足：`commit` 为有效十六进制（`9a2e7fea3`，`check.ps1:1204`）✅；
+  路径在仓库内（`check.ps1:1208`）✅；blob 可读取（`check.ps1:1210`）✅。
+
+### 2. 证据 pin 是否重钉到更正后字节、自钉行是否删除 —— **PASS**
+
+- **哈希实测一致**。`Get-GitBlobSha256`（`check.ps1`）的实现是 `git cat-file blob <commit>:<path>`
+  的内容 SHA-256（我读了函数体确认，不是 git 对象哈希）。我按同一语义复算：
+
+  ```
+  git show 9a2e7fea3:doc/reviews/MAINT-1-GATE-CONDITION-3-MATRIX-2026-11-15.md → sha256
+  = 197c3c1ac90cb29e142c5a8cbb572f1c3c06e234df501687883121ea0b628017   ← 与卡片声称逐字相同
+  ```
+
+  且该值 = 当前工作树矩阵文件哈希（矩阵自 `9a2e7fea3` 后无改动：
+  `git diff --stat 9a2e7fea3..HEAD -- 矩阵` 为空）⇒ **pin 的正是含 §10.1「79 / 0 / 0 … 原记 80 有误」更正的那一版字节**，
+  不再是第二轮指出的含 `80 / 0 / 0` 的 `f9be610de` 旧版（旧值 `50a654d3…` 已不再出现）。
+- **自钉行已删除**：证据表只有 `EV-G3MX-01` 一行；第二轮存在的 `EV-G3MX-02`（本卡自指、pin `eb8b5c82a`
+  含 `80`/`951`）已不存在 ⇒ 自引用问题消除。
+
+### 3. `integration_commit` / `delivery_head` 是否已改为 `9a2e7fea3` —— **PASS**
+
+```
+integration_commit: 9a2e7fea3
+delivery_head: 9a2e7fea3
+```
+
+两者均非 `null`/`pending`，满足 `check.ps1:1435` 的 DONE 要求。
+
+### 翻转 `done` 前的可复算核对（本轮附做，未改文件）
+
+| 规则 | 现状 |
+|---|---|
+| `check.ps1:1531-1557` AC 标记 | `L60-L64` 五条全 `[x]` + `<<MET>>`（5/5），`MET` 未附原因 ✅ |
+| `check.ps1:1441` 无未勾选 AC | `checked=5 / unchecked=0` ✅ |
+| `check.ps1:1188-1212` 七列 BLOB 校验 | 列数 7、basis `BLOB`、commit/hash 均匹配 ✅ |
+| `check.ps1:1485` Resource Manifest | `NOT_APPLICABLE` + 结果列「本卡无新增派生物；2026-11-17 复核确认只需仓库内文档」✅ |
+| `check.ps1:1435/1436/1438` | `integration_commit` 有值；两个 `*_status: complete` ✅ |
+| `check.ps1:1329` `evidence_dir` | 目录 `verification/GATE3-MATRIX-EXPAND-1/` 仍**不存在**，但规则只在目录存在时校验清单，**不报错**（非阻塞） |
+
+三条数字口径未回退（head 版复读）：`L52` 组合 filter `79 passed / 0 failed / 0 skipped` + 「原记 80 有误」；
+`L64` AC5 `962 / 0 / 11 / 973` + 「原记 951/0/11/962」；`L81`、`L118`、`L124-125` 同步。
+
+### 第三轮结论
+
+- 3 处终态问题**全部修复且可复算**：`raw → BLOB`、pin 重钉到更正后字节（哈希逐字匹配）、自钉行删除、
+  `integration_commit`/`delivery_head → 9a2e7fea3`。
+- **verdict3: ACCEPTED**。`status: in_progress` 按项目规则保留到第三方接受后再翻 —— 这一处置正确；
+  本报告即为该接受依据。
+- **翻转提交时建议顺手处理（均非阻塞、不影响本裁决）**：
+  ① 第 130 行「**状态**：仍 `in_progress`，等第三轮窄确认…」改为已确认/已收口，避免与 `status: done` 自相矛盾；
+  ② `delivery_head` 可指向翻转后的最终提交（当前 `9a2e7fea3` 不含 `1795c1eea` 才对卡片做的 BLOB/单证据行改动，
+     语义上更准确的 delivery head 是最终那一版）；`integration_commit` 保持 `9a2e7fea3` 亦可解释为集成点。
+  ③ 若日后要补 AC5 全量数字的落盘证据，可在 `verification/GATE3-MATRIX-EXPAND-1/` 放本次两段输出并加证据行
+     （现无该目录也不阻塞）。
+
+复核者：`gate3-reviewer`（独立上下文，未参与实现/返修）｜head `1795c1eea`｜2026-11-17（第三轮终态窄确认）

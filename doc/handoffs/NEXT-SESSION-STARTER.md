@@ -1070,7 +1070,7 @@ AC1 的 blocked 理由由**原作者**写成完整的 NA 结论（headless 库�
 |---|---|---|---|
 | `MAINT-1-RELEASE-MONITOR` | in_progress | 伞形哨位；Gate 3/4/5 待人类输入 | 人工 |
 | `SIDECAR-REBUILD-1` | in_progress | AC5/AC6 未勾；capabilities 17 / 13 失败拆 E-6 | Agent 可续 |
-| `GATE3-MATRIX-EXPAND-1` | in_progress | AC1–AC5 全勾但无 `<<MET>>` 标记、无 Review、无 Resource Manifest → 需按终态要求整理 + 独立复核 | Agent 可续 |
+| ~~`GATE3-MATRIX-EXPAND-1`~~ | **done（R19）** | 三轮独立复核（REJECTED→REJECTED→ACCEPTED）；更正 80→79、951→962 两个实测数字；终态材料补齐 | 已完成 |
 | `GATE3-SETTINGS-SHORTCUT-1` | in_progress | 同上（AC1–AC6 全勾） | Agent 可续 |
 | `DOC-CTRLCHAR-FIX-1` | in_progress | AC1–AC6 全未勾 | Agent 可续 |
 | `INSTALLER-MATRIX-1` | in_progress | 安装矩阵/签名，属 Gate 条件 4 | 人工（签名/GT） |

@@ -3,7 +3,7 @@ id: GATE3-MATRIX-EXPAND-1
 title: 条件 3 矩阵扩容 —— 把 §0 未纳的 4 个 GUI 流程纳入评估
 kind: evidence
 governance_version: 3
-status: in_progress
+status: done
 disposition: "条件 3 矩阵 §0 明确说 4 页×13 类不等于整个产品 GUI；回收站/命令面板/源恢复/沉浸未评估"
 approval: DSH 2026-11-15
 suggested_owner: DSH
@@ -14,8 +14,8 @@ depends_on:
 base_commit: 13d295f69
 branch: main
 worktree: G:/CODEX/New Manga
-integration_commit: 9a2e7fea3
-delivery_head: 9a2e7fea3
+integration_commit: 1795c1eea
+delivery_head: 1795c1eea
 canonical_evidence_status: complete
 resource_closeout_status: complete
 evidence_dir: verification/GATE3-MATRIX-EXPAND-1
@@ -127,4 +127,4 @@ allowed_paths:
 - 终态材料已补齐：AC1–AC5 加 `<<MET>>`、Canonical Evidence 两条（矩阵文档 + 本卡）、Resource Manifest 改为可验证行、integration/delivery head 与两个 status。
 - **已知副作用**：直接 `dotnet test`（不经 `scripts/test.ps1`）仍会改写 `verification/READER-OVERLAY-HEADLESS-PNG-1/render-info.md`；
   `test.ps1` 已修（R15），直接调用需自行复原（复核者已用 `git checkout` 复原）。
-- **状态**：仍 `in_progress`，等第三轮窄确认（只核 79 与 962 两个数字）后再收口。
+- **状态**：第三轮窄确认 **ACCEPTED**（2026-11-17），本卡收口为 `done`。
