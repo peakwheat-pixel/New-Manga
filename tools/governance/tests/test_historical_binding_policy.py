@@ -173,7 +173,66 @@ class HistoricalBindingPolicy(unittest.TestCase):
                     self.assertEqual(blob.returncode, 0)
                     self.assertEqual(hashlib.sha256(blob.stdout).hexdigest(), pin["sha256"])
                 else:
-                    self.assertEqual(hashlib.sha256(raw).hexdigest(), pin["sha256"])
+                    # exactly two registered digests; the live bytes must match one
+                    self.assertIn(hashlib.sha256(raw).hexdigest(),
+                                  {pin["sha256"], pin["sha256_alt"]},
+                                  "live bytes match neither registered digest")
+
+    def test_worktree_alt_digest_is_a_pure_line_ending_transform(self):
+        """Ruling Q2=C: the counterpart digest is the same bytes with only
+        CRLF<->LF applied, and its LF form must equal the committed blob."""
+        import subprocess
+        for item in self.policy.get("pinned_defect_retentions", []):
+            pin = item["pin"]
+            if pin["channel"] != "WORKTREE":
+                self.assertEqual(set(pin), {"card", "evidence_id", "commit",
+                                            "sha256", "channel", "path"})
+                continue
+            with self.subTest(item=item["id"]):
+                self.assertEqual(set(pin), {"card", "evidence_id", "commit", "sha256",
+                                            "channel", "path", "sha256_alt", "alt_kind"})
+                self.assertIn(pin["alt_kind"], ("LF", "CRLF"))
+                self.assertNotEqual(pin["sha256"], pin["sha256_alt"])
+                raw = (REPO / pin["path"]).read_bytes()
+                self.assertEqual(hashlib.sha256(raw).hexdigest(), pin["sha256"])
+                if pin["alt_kind"] == "CRLF":
+                    self.assertNotIn(b"\r", raw)
+                    alt_bytes = raw.replace(b"\n", b"\r\n")
+                    lf_bytes = raw
+                else:
+                    alt_bytes = raw.replace(b"\r\n", b"\n")
+                    lf_bytes = alt_bytes
+                    self.assertNotIn(b"\r", alt_bytes)
+                self.assertEqual(hashlib.sha256(alt_bytes).hexdigest(), pin["sha256_alt"])
+                blob = subprocess.run(["git", "-C", str(REPO), "cat-file", "blob",
+                                       "HEAD:%s" % pin["path"]], capture_output=True)
+                self.assertEqual(blob.returncode, 0)
+                self.assertEqual(lf_bytes, blob.stdout,
+                                 "LF form must be byte-identical to the committed blob")
+
+    def test_retention_rejects_content_change_and_mixed_eol(self):
+        """Negative: a one-byte content change, a mixed-EOL variant and another
+        record's digest must all fail against the two registered digests."""
+        item = next(i for i in self.policy["pinned_defect_retentions"]
+                    if i["pin"]["channel"] == "WORKTREE")
+        pin = item["pin"]
+        raw = (REPO / pin["path"]).read_bytes()
+        allowed = {pin["sha256"], pin["sha256_alt"]}
+        pos = raw.index(b"\n") + 1 if b"\n" in raw else 0
+        mutated = raw[:pos] + (b"X" if raw[pos:pos + 1] != b"X" else b"Y") + raw[pos + 1:]
+        self.assertNotIn(hashlib.sha256(mutated).hexdigest(), allowed,
+                         "a one-byte content change must not be accepted")
+        mixed = raw.replace(b"\n", b"\r\n", 1)
+        self.assertNotIn(hashlib.sha256(mixed).hexdigest(), allowed,
+                         "a mixed-EOL variant must not be accepted")
+        for other in self.policy["pinned_defect_retentions"]:
+            if other["pin"]["path"] == pin["path"]:
+                continue
+            foreign = {other["pin"]["sha256"]}
+            if "sha256_alt" in other["pin"]:
+                foreign.add(other["pin"]["sha256_alt"])
+            self.assertTrue(foreign.isdisjoint(allowed),
+                            "digests must stay bound to their own record")
 
     def test_pinned_retention_only_covers_real_b2_codes(self):
         b2_ok = {"DECL_RELATIVE_UNRESOLVED", "DECL_ENV", "DECL_GLOB",

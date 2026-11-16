@@ -39,6 +39,13 @@ doc/handoffs/GOV-EOL-PIN-1-*.md text eol=lf
 # breaks when autocrlf rewrites a file, and the fix is to stop the rewriting.
 doc/tasks/*.md text eol=lf
 
+# GOV-EOL-PIN-1 延伸（Codex 裁定 2026-11-16：Q1=A，只允许这两条精确路径，不得扩大为 doc/*.md）：
+# 这两份是受字节预算门禁约束的当前指针文档，core.autocrlf=true 下 fresh checkout 会变 CRLF，
+# REBASELINE_PLAN.md 由 6939 B 涨到 7003 B（>7000 B 预算）而直接 FAIL；因此固定 LF 签出。
+# 注意：提高预算不是替代方案（会放宽内容长度门禁）。
+doc/REBASELINE_PLAN.md text eol=lf
+doc/STATUS.md text eol=lf
+
 # GOV-UNTRACKED-BACKLOG-DISPOSITION-1: the disposition evidence is sha256-recorded, so
 # pin LF on checkout exactly like the GOV-UNTRACKED-BACKLOG-1 pins above. The relocated
 # anomaly payloads are the opposite case: their SHA-256 *is* the original content

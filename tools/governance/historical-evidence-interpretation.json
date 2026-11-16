@@ -1768,7 +1768,9 @@
         "commit": null,
         "sha256": "4ea62822594e29c479f304d3fab4893811da569b8e573ee999ca838d685db1b2",
         "channel": "WORKTREE",
-        "path": "doc/tasks/FEA-07-IMMERSIVE-F11-1.md"
+        "path": "doc/tasks/FEA-07-IMMERSIVE-F11-1.md",
+        "sha256_alt": "c82a3f2351d075a3845e0b84fe284a3d603a428e81c97af16c096f0b1e7e4ffa",
+        "alt_kind": "CRLF"
       },
       "classification": "B2",
       "interpretation": "pinned_defect_retained",
@@ -1828,7 +1830,9 @@
         "commit": null,
         "sha256": "014316d2dcd98b383d224f44ad42f12fadd1c7fe0b1b77a028119e8f404cf8b8",
         "channel": "WORKTREE",
-        "path": "verification/FEA-07-RESIDUAL-2/RESOURCE-MANIFEST.json"
+        "path": "verification/FEA-07-RESIDUAL-2/RESOURCE-MANIFEST.json",
+        "sha256_alt": "f6e82d30332d97854576c2c4e0aac01243708a4775faf4a54426f013615acc8d",
+        "alt_kind": "CRLF"
       },
       "classification": "B2",
       "interpretation": "pinned_defect_retained",
@@ -1848,7 +1852,9 @@
         "commit": null,
         "sha256": "d97f06178e2baf3c6ec712fb346a9fc9d88b6e2a06550290b6c8000a9f50244d",
         "channel": "WORKTREE",
-        "path": "verification/FEA-07-RESIDUAL-3/RESOURCE-MANIFEST.json"
+        "path": "verification/FEA-07-RESIDUAL-3/RESOURCE-MANIFEST.json",
+        "sha256_alt": "0570f5ddb69fc55bf94772ebf8d4759fad94f6c121b3ca1b9bf9e04f375f56e6",
+        "alt_kind": "CRLF"
       },
       "classification": "B2",
       "interpretation": "pinned_defect_retained",
@@ -1868,7 +1874,9 @@
         "commit": null,
         "sha256": "d97f06178e2baf3c6ec712fb346a9fc9d88b6e2a06550290b6c8000a9f50244d",
         "channel": "WORKTREE",
-        "path": "verification/FEA-07-RESIDUAL-3/RESOURCE-MANIFEST.json"
+        "path": "verification/FEA-07-RESIDUAL-3/RESOURCE-MANIFEST.json",
+        "sha256_alt": "0570f5ddb69fc55bf94772ebf8d4759fad94f6c121b3ca1b9bf9e04f375f56e6",
+        "alt_kind": "CRLF"
       },
       "classification": "B2",
       "interpretation": "pinned_defect_retained",
@@ -1888,7 +1896,9 @@
         "commit": null,
         "sha256": "d97f06178e2baf3c6ec712fb346a9fc9d88b6e2a06550290b6c8000a9f50244d",
         "channel": "WORKTREE",
-        "path": "verification/FEA-07-RESIDUAL-3/RESOURCE-MANIFEST.json"
+        "path": "verification/FEA-07-RESIDUAL-3/RESOURCE-MANIFEST.json",
+        "sha256_alt": "0570f5ddb69fc55bf94772ebf8d4759fad94f6c121b3ca1b9bf9e04f375f56e6",
+        "alt_kind": "CRLF"
       },
       "classification": "B2",
       "interpretation": "pinned_defect_retained",
@@ -1908,7 +1918,9 @@
         "commit": null,
         "sha256": "77b2d1a54d908145723788bfc879c30dea6375cc2a383b80fa20a9456644b1e5",
         "channel": "WORKTREE",
-        "path": "verification/FEA-11-AC4-GAPS-1/RESOURCE-MANIFEST.json"
+        "path": "verification/FEA-11-AC4-GAPS-1/RESOURCE-MANIFEST.json",
+        "sha256_alt": "b0cb6b10e00c54d64033c1142ae5b2a14484e885e365791c55ebd549a10942a5",
+        "alt_kind": "CRLF"
       },
       "classification": "B2",
       "interpretation": "pinned_defect_retained",
@@ -1928,7 +1940,9 @@
         "commit": null,
         "sha256": "c19ccbe64239aff933879651791270f260b56ea21e7dd83c91326fdeacba9779",
         "channel": "WORKTREE",
-        "path": "verification/FEA-11-HOST-AUTH-2/RESOURCE-MANIFEST.json"
+        "path": "verification/FEA-11-HOST-AUTH-2/RESOURCE-MANIFEST.json",
+        "sha256_alt": "8ed3aae325cccb6d05ddc0a1bcaa28903ec0ec0bd5a0fe37e0aa25a4ad75bd14",
+        "alt_kind": "CRLF"
       },
       "classification": "B2",
       "interpretation": "pinned_defect_retained",
@@ -1948,7 +1962,9 @@
         "commit": "3eda60ac8",
         "sha256": "8ded4d9ba786dbabf5a9705455c6ef91cd09353024c8272e3656cc260ebd26f8",
         "channel": "WORKTREE",
-        "path": "verification/FEA-11-RENDITION-1/RESOURCE-MANIFEST.json"
+        "path": "verification/FEA-11-RENDITION-1/RESOURCE-MANIFEST.json",
+        "sha256_alt": "f130cbb2ab3851cb4c9426c1cad9bd4f3535f4e9d5224368b4ca363a550b123b",
+        "alt_kind": "LF"
       },
       "classification": "B2",
       "interpretation": "pinned_defect_retained",
@@ -1968,7 +1984,9 @@
         "commit": "3eda60ac8",
         "sha256": "8ded4d9ba786dbabf5a9705455c6ef91cd09353024c8272e3656cc260ebd26f8",
         "channel": "WORKTREE",
-        "path": "verification/FEA-11-RENDITION-1/RESOURCE-MANIFEST.json"
+        "path": "verification/FEA-11-RENDITION-1/RESOURCE-MANIFEST.json",
+        "sha256_alt": "f130cbb2ab3851cb4c9426c1cad9bd4f3535f4e9d5224368b4ca363a550b123b",
+        "alt_kind": "LF"
       },
       "classification": "B2",
       "interpretation": "pinned_defect_retained",
@@ -1988,7 +2006,9 @@
         "commit": "8e1883655",
         "sha256": "35c1015a83598eea9eee23be2d259f2dc5193a4ffe1a42182c95724e11ffacb2",
         "channel": "WORKTREE",
-        "path": "verification/FEA-11-RUN-GRANT-2/RESOURCE-MANIFEST.json"
+        "path": "verification/FEA-11-RUN-GRANT-2/RESOURCE-MANIFEST.json",
+        "sha256_alt": "b44b24ab848bd23e5ad4a8af69b2724d4c525919d9a0c055847ded0765ba3813",
+        "alt_kind": "LF"
       },
       "classification": "B2",
       "interpretation": "pinned_defect_retained",
@@ -2008,7 +2028,9 @@
         "commit": "8e1883655",
         "sha256": "35c1015a83598eea9eee23be2d259f2dc5193a4ffe1a42182c95724e11ffacb2",
         "channel": "WORKTREE",
-        "path": "verification/FEA-11-RUN-GRANT-2/RESOURCE-MANIFEST.json"
+        "path": "verification/FEA-11-RUN-GRANT-2/RESOURCE-MANIFEST.json",
+        "sha256_alt": "b44b24ab848bd23e5ad4a8af69b2724d4c525919d9a0c055847ded0765ba3813",
+        "alt_kind": "LF"
       },
       "classification": "B2",
       "interpretation": "pinned_defect_retained",
@@ -2028,7 +2050,9 @@
         "commit": "323001fec",
         "sha256": "1c78ec610f5bec011a7850d3bd0697e43f9d482360b72c3dcc9e90247dc80ed7",
         "channel": "WORKTREE",
-        "path": "verification/FEA-12-UI-RESIDUAL-1/RESOURCE-MANIFEST.json"
+        "path": "verification/FEA-12-UI-RESIDUAL-1/RESOURCE-MANIFEST.json",
+        "sha256_alt": "b65ee69f81d8017ac62d3be14cf32c67939d82db917117232246598d85833769",
+        "alt_kind": "CRLF"
       },
       "classification": "B2",
       "interpretation": "pinned_defect_retained",
@@ -2048,7 +2072,9 @@
         "commit": "1ecd613325cf69db7900fabb5fedb2302e47e84f",
         "sha256": "27e8b3f7d0a611f9dfd079ab9f21685aeae65f46ce84363700ca400cedf0abd1",
         "channel": "WORKTREE",
-        "path": "verification/FEA-15-ACCEPT-1/resource-manifest.json"
+        "path": "verification/FEA-15-ACCEPT-1/resource-manifest.json",
+        "sha256_alt": "df1a4687ee86f87f43d2a802802a23a993591f4f525fecd5e2b5c5ca73131337",
+        "alt_kind": "CRLF"
       },
       "classification": "B2",
       "interpretation": "pinned_defect_retained",
@@ -2069,7 +2095,9 @@
         "commit": "7d4c7764c",
         "sha256": "ff7d7fc01305024b8acc7001f703d3f2b341e44fc316a077b93f883a040e653e",
         "channel": "WORKTREE",
-        "path": "archive/history/legacy-shell/README.md"
+        "path": "archive/history/legacy-shell/README.md",
+        "sha256_alt": "6fb7a87cb1ef2a72118fb7a198fad7405105683d2c7e9f1b9b7fc2aaf09d4b22",
+        "alt_kind": "LF"
       },
       "classification": "B2",
       "interpretation": "pinned_defect_retained"
