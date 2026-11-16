@@ -306,6 +306,34 @@ class FixtureBehaviour(unittest.TestCase):
         self.assertEqual(len(index.errors), 8)
         self.assertEqual(index.errors[-1]["code"], "PROTECTION_REGRESSION")
 
+    def test_missing_adjudicated_identity_fails_closed(self):
+        """Ruling C 负例①：**7 条裁定身份里少一条**必须 fail-closed 到 `ERROR_MISMATCH`。
+
+        独立复核（gov-residual-ac7-reviewer）指出：Ruling C §5 要求的两条负例中，
+        ①「少一条身份 ⇒ ERROR_MISMATCH」**当时缺失**（只有 ② 被 `test_unbound_error_blocks_the_stage`
+        以另一种形态覆盖，且那个用例名与断言方向相反）。本用例补上 ①。
+
+        构造：把 policy 第 1 条绑定声明的错误身份 message 改成一个**仓库里不存在**的身份，
+        并同步重批 fixture 的 digest（否则先撞的是 `POLICY_DIGEST_MISMATCH`，测不到目标分支）。
+        期望：`ERROR_MISMATCH`（该身份在 `index.errors` 里 `count != 1`），且**零身份被降级** ——
+        即 fail-closed 在删掉「全仓恰好 7 条」耦合之后仍然成立。
+        """
+        data = json.loads((self.fixture.root / POLICY_REL).read_text(encoding="utf-8"))
+        original = data["bindings"][0]["errors"][0]["message"]
+        data["bindings"][0]["errors"][0]["message"] = original + " (identity drifted)"
+        self.fixture.write_policy(data)
+        self.fixture.git("add", "-A")
+        self.fixture.digest = canonical_digest(data)
+
+        index, _ = self.fixture.scan()
+        codes = [e["code"] for e in index.errors]
+        self.assertIn("ERROR_MISMATCH", codes,
+                      "a missing adjudicated error identity must fail closed")
+        self.assertNotIn("POLICY_DIGEST_MISMATCH", codes,
+                         "the fixture digest must be re-batched, otherwise this tests the wrong branch")
+        self.assertEqual(len(residual_warnings(index)), 0,
+                         "no identity may be downgraded when an adjudicated identity is missing")
+
     def test_tampered_policy_body_fails_closed(self):
         data = json.loads((self.fixture.root / POLICY_REL).read_text(encoding="utf-8"))
         data["bindings"][0]["provenance"] += "!"

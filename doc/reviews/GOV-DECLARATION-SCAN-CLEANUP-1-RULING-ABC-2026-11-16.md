@@ -224,10 +224,81 @@ clean_workspace.py:2194  require(len(staged.protected) >= len(index.protected), 
 
 ---
 
+## Ruling D（可变 task 卡的绑定语义）—— 判：**带行级身份的行级为权威**
+
+> 本项**不在**原三项 Ruling 范围内，是 **Ruling A 修好之后才暴露**的第四层问题。
+> 按 §4.4「核验结果与假设不符则假设作废」，不掩盖、不并入 C，单独立项裁定。
+
+### 现象
+
+Ruling A（含三处同源漂移）修好后，`--audit-declarations` 改报：
+
+```
+code    SOURCE_DRIFT
+message residual identity origin changed: doc/tasks/P19.md
+file    tools/governance/residual-runtime-identity.json
+```
+
+### 实测（决定性）
+
+`residual-runtime-identity.json` 的 `RRI-01/02/03` 同时绑 `doc/tasks/P19.md` 的**两种身份**：
+
+| 绑定 | (a) 整文件 `origin_raw_sha256` + `origin_byte_length` | (b) 行级 `origin_line` + `origin_line_raw_sha256` |
+|---|---|---|
+| RRI-01 | `243093ab…` / **18443** | `:112` / `a85eb6cc…` |
+| RRI-02 | `243093ab…` / **18443** | `:113` / `3af662e2…` |
+| RRI-03 | `243093ab…` / **18443** | `:114` / `428b9224…` |
+
+当前 `doc/tasks/P19.md` 是 **21306 字节 / 159 行** —— 被提交
+`0e7bc1fc5`（"feat(gov): AC 勾选权威化全量完成 —— 40 张卡 260 条 AC 全部可审计标注"）**合法追加**内容后变长。
+
+**逐条实测 (a)/(b) 是否仍成立**：
+
+- **(a) 全部失效**：实际 sha `5cd6343a…` ≠ 声明 `243093ab…`；实际 21306 ≠ 声明 18443。
+- **(b) 三份全部仍匹配**：`:112 a85eb6cc…` ✅ / `:113 3af662e2…` ✅ / `:114 428b9224…` ✅
+  —— 行号未移、行内容逐字节未变，且每行仍能找到对应的 `declared_text`。
+
+### 裁定
+
+**带行级身份的绑定，以行级为权威**；整文件 sha / 字节长度**只在没有行级身份时**作为身份依据。
+
+### 理由
+
+1. **整文件 sha 对可变卡是过宽绑定，不是更严的保护。** `doc/tasks/*` 是**活的治理文档**，
+   每次 AC 标注、每次指针同步都会改它。用整文件 sha 绑它，等于要求「卡上别处永不变」——
+   而事实已经变了（`0e7bc1fc5`），以后还会变。它把**每一次合法的治理批量编辑**都变成 fail-closed，
+   长期效果是逼人放宽检查（绿洗），而不是保护任何东西。
+2. **行级身份已经足够**。声明身份 = 「哪个文件的第几行的哪段文本」。
+   `origin_line`（行号）+ `origin_line_raw_sha256`（该行字节）+ `declared_text`（该行文本）
+   三者合起来把这条声明钉死；行号漂移或行内容改动都会被抓到（本轮负例 `test_origin_drift_fails_closed`
+   已实测：**改动被绑定的那一行**会 fail-closed 到 `SOURCE_DRIFT`）。
+3. **整文件 sha 原本的用途对「冻结证据」成立、对「活卡」不成立**。HIE 那 4 条绑的是一次性证据产物
+   （`verification/**` 下不该再变），整文件 sha 合理；RRI 这 3 条绑的是仍在演进的 task 卡，前提不同，
+   不能套同一把尺子。
+
+### 反向风险与为何仍 fail-closed
+
+有人会问：卡上**别处**被改动，现在不再报错了，安全吗？——安全，因为
+**别处的改动不属于这条声明的身份**；而只要**被绑定的那段声明**变了（哪怕只是行号挪动），
+行级校验立刻 `SOURCE_DRIFT`。本裁定的效果是「把检查对准身份」，不是「取消检查」。
+
+### 实施
+
+`clean_workspace.py`：把整文件 sha/字节长度校验包进 `if not has_line:` 分支；
+带 `origin_line` 的绑定走行级校验（该校验原本就存在，未改动）。
+
+### 执行状态
+
+**已在 R15 执行并验证**：`SOURCE_DRIFT`（该条）= 0，`RRI-04..07` 的整文件 sha 仍照常校验（它们没有行级身份）。
+改动后 `errors` 保持 162（Ruling D 自身不减少错误，只是解除误报），随后 Ruling C 才把 residual 层放开。
+
+---
+
 ## 执行顺序（冻结）
 
 1. **Ruling A**（消除 L1，1 处政策字段 + 1 处常量）—— **已完成**（R14）。
-2. **Ruling C**（消除 L3 绝对计数耦合，含两条新负例）—— 未开始。
+2. **Ruling D**（可变卡绑定语义）—— **已完成**（R15）。
+3. **Ruling C**（消除 L3 绝对计数耦合，含两条新负例）—— **已完成**（R15）。
 3. **Ruling B**（166 条分类与分批处置，B1 → B3 → B2）—— 未开始；**必须先落 B1/B2/B3 归属表**。
 4. 以上三步完成后，`GOV-DECLARATION-SCAN-CLEANUP-1` 的 AC2/AC3/AC4 才有判定地面；
    AC1（本裁定落盘）在本文提交后即可闭合。

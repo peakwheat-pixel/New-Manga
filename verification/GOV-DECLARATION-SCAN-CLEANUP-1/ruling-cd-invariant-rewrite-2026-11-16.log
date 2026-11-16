@@ -1,31 +1,26 @@
-# Ruling C + D 实施证据：L3 绝对计数耦合重写 + 可变卡绑定修正（2026-11-16，DSH）
-# base_head: 70b984ab74ec02e8fdc3e85b2e7557718b76278c
+# Ruling C + D 实施证据（2026-11-16，DSH）
+# head_at_measure: fac378de4
+# env: Python 3.14.6 | pwsh 7.6.8 | git version 2.52.0.windows.1 | cwd = G:\CODEX\New Manga
+#
+# ⚠️ 本文件有一次更正（P2-5，独立复核 gov-residual-ac7-reviewer 指出）：
+#    第一版在本节写「测试原始输出（rc=0）」但**正文为空** —— 因为 `unittest` 把报告写到
+#    **stderr**，而生成脚本只捕获了 stdout。这使该证据**无法单独复核**（违反
+#    09_COLLABORATION.md:359 的证据纪律）。现已改为同时捕获 stdout+stderr 并重生成。
+#    复核结论里指出的「git grep "Ran 13 tests" 全仓零命中」在当时是真的，现已修正。
 
-## Ruling C（已落盘于 doc/reviews/GOV-DECLARATION-SCAN-CLEANUP-1-RULING-ABC-2026-11-16.md）
-#   把「residual 层可应用」从「全仓错误恰好 7 条」改为**成员不变量**。
-#   本轮实施两处（行号取改前快照）：
+## Ruling C（落盘于 doc/reviews/GOV-DECLARATION-SCAN-CLEANUP-1-RULING-ABC-2026-11-16.md）
+#   把「residual 层可应用」从「全仓错误恰好 7 条」改为**成员不变量**。实施两处（行号取改前快照）：
 #     :2177 require(len(removed) == 7 and len(index.errors) == 7, "ERROR_MISMATCH", ...)
-#        -> require(len(removed) == 7, ...)      # 7 条身份的逐条命中已在其上方校验
+#        -> require(len(removed) == 7, ...)
 #     :2194 require(not staged.errors, "POLICY_INVALID", ...)
 #        -> require(not [e for e in staged.errors if e in removed], "POLICY_INVALID", ...)
-#           断言本层该保证的事（7 条裁定身份确实被移除），而不是「全仓已无错误」这一仓库前提。
 
-## Ruling D（本轮新出，**重要**：Ruling A 之后才暴露的第二类过宽绑定）
-#   现象：Ruling A 修好后，audit 报 SOURCE_DRIFT「residual identity origin changed: doc/tasks/P19.md」。
-#   实测：residual 政策 RRI-01/02/03 同时绑定 doc/tasks/P19.md 的
-#         (a) 整文件 raw_sha256 = 243093ab… + byte_length = 18443，与
-#         (b) 行级 origin_line = :112/:113/:114 + origin_line_raw_sha256。
-#         `doc/tasks/P19.md` 是**可变的 task 卡**，被 `0e7bc1fc5`
-#         （"feat(gov): AC 勾选权威化全量完成 —— 40 张卡 260 条 AC 全部可审计标注"）
-#         合法追加内容后变为 **21306 字节** ⇒ (a) 失效。
-#         **而 (b) 的三份行级 sha 实测全部仍匹配**（行号未移、行内容未变）：
-#           RRI-01 :112 a85eb6cc… 匹配 / RRI-02 :113 3af662e2… 匹配 / RRI-03 :114 428b9224… 匹配
-#   ⇒ 整文件 sha 对**可变卡**是**过宽绑定**：它要求「卡上别处永不变」，
-#     把每次治理批量编辑都变成 fail-closed，不是更严的保护。
-#   裁定：带行级身份的绑定以**行级为权威**；整文件 sha/字节长度只在**没有行级身份**时作为身份依据。
-#   实施：clean_workspace.py 的 `if not has_line:` 分支包住整文件校验。
+## Ruling D（本轮新出）—— Ruling A 修好后暴露的第二类过宽绑定
+#   RRI-01/02/03 同时绑 doc/tasks/P19.md 的 (a) 整文件 sha+18443 字节 与 (b) 行级 :112/:113/:114+行 sha。
+#   该卡被 0e7bc1fc5（40 卡 AC 标注全量）合法追加到 21306 字节 ⇒ (a) 失效；(b) 三份行级 sha 实测全部仍匹配。
+#   ⇒ 整文件 sha 对**可变 task 卡**属过宽绑定。改为「带行级身份时以行级为权威」。
 
-## 五步实测（同一条命令 --audit-declarations，逐层收窄）
+## 五步实测（同一条命令 --audit-declarations）
 
 | 步骤 | errors | SOURCE_DRIFT | POLICY_INVALID | ERROR_MISMATCH | residual | protected_roots | PRESERVE_USER_DATA |
 |---|---:|---:|---:|---:|---:|---:|---:|
@@ -34,25 +29,73 @@
 | + Ruling D（可变卡行级权威） | 162 | 0 | 0 | 1 | 0 | 5582 | 18 |
 | **+ Ruling C（成员不变量）** | **154** | **0** | **0** | **0** | **7** | **5585** | **21** |
 
-## AC2 四条判据逐项核验（全部成立）
-# 1) `--audit-declarations` 不再产出 SOURCE_DRIFT      : 0            ✅
-# 2) residual 层不再早退（DECL_RESIDUAL_RUNTIME_PRESERVED = 7）      ✅
-#    实测 7 条 id 恰为 RRI-01..RRI-07
-# 3) APPDATA catalog/data/derived 三根重新出现在保护索引中            ✅
-#    **按路径核验**（不是只比计数）：直接读 ProtectionIndex，三根均为 IN：
-#      c:/users/49745/appdata/roaming/com.newmanga.m2rc1.desktop/{catalog,data,derived}
-#    protected_roots 5582 -> 5585（+3）；PRESERVE_USER_DATA 18 -> 21（+3）
-# 4) P09/P14 既有绑定未被破坏：HIE-T01/HIE-O01/HIE-O02 三条 raw_sha256 仍全部匹配  ✅
+## AC2 四条判据（全部成立）
+# 1) SOURCE_DRIFT = 0
+# 2) DECL_RESIDUAL_RUNTIME_PRESERVED = 7（id 恰为 RRI-01..RRI-07）
+# 3) APPDATA catalog/data/derived 三根**按路径**回归保护索引（直接读 ProtectionIndex 三根均 IN）；
+#    protected_roots 5582 -> 5585（+3）；PRESERVE_USER_DATA 18 -> 21（+3），两者一致
+# 4) P09/P14 既有绑定未破坏（HIE-T01/O01/O02 raw_sha256 仍全部匹配）
 
 ## AC7 三条命令（此前命令 1 为 EXIT=1，现全部 0）
-#   python -B tools/governance/tests/test_residual_runtime_identity.py  -> EXIT=0（13 tests OK）
-#   pwsh -NoProfile -File tools/governance/check.ps1                    -> EXIT=0（PASS）
-#   git diff --check                                                   -> EXIT=0
+#   [1] PYTHONPATH=tools/governance python -B tools/governance/tests/test_residual_runtime_identity.py
+#       EXIT=0
+#   [2] pwsh -NoProfile -File tools/governance/check.ps1
+#       EXIT=0
+#   [3] git diff --check
+#       EXIT=0
 
-### 测试原始输出（rc=0）
+### [1] 原始输出 —— STDOUT
+---8<--- stdout begin ---8<---
+(empty)
+---8<--- stdout end ---8<---
 
+### [1] 原始输出 —— STDERR（unittest 报告在这里；上一版漏抓的就是这一段）
+---8<--- stderr begin ---8<---
+rning: Enable tracemalloc to get the object allocation traceback
+G:\CODEX\New Manga\tools\governance\clean_workspace.py:2292: ResourceWarning: unclosed file <_io.BufferedReader name='g:\\codex\\new manga\\verification\\WORKSPACE-CONSOLIDATION-1\\worktree-removal.json'>
+  io.open(absolute, "rb").read()).hexdigest()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+G:\CODEX\New Manga\tools\governance\clean_workspace.py:2292: ResourceWarning: unclosed file <_io.BufferedReader name='g:\\codex\\new manga\\verification\\WORKSPACE-DECLARATION-REMEDIATION-1\\audit-after.json'>
+  io.open(absolute, "rb").read()).hexdigest()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+G:\CODEX\New Manga\tools\governance\clean_workspace.py:2292: ResourceWarning: unclosed file <_io.BufferedReader name='g:\\codex\\new manga\\verification\\WORKSPACE-DECLARATION-REMEDIATION-1\\audit-before.json'>
+  io.open(absolute, "rb").read()).hexdigest()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+G:\CODEX\New Manga\tools\governance\clean_workspace.py:2292: ResourceWarning: unclosed file <_io.BufferedReader name='g:\\codex\\new manga\\verification\\WORKSPACE-DECLARATION-REMEDIATION-1\\evidence\\audit-snapshots.json'>
+  io.open(absolute, "rb").read()).hexdigest()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+G:\CODEX\New Manga\tools\governance\clean_workspace.py:2292: ResourceWarning: unclosed file <_io.BufferedReader name='g:\\codex\\new manga\\verification\\WORKSPACE-DECLARATION-REMEDIATION-1\\evidence\\environment.json'>
+  io.open(absolute, "rb").read()).hexdigest()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+G:\CODEX\New Manga\tools\governance\clean_workspace.py:2292: ResourceWarning: unclosed file <_io.BufferedReader name='g:\\codex\\new manga\\verification\\WORKSPACE-DECLARATION-REMEDIATION-1\\evidence\\protection-delta.json'>
+  io.open(absolute, "rb").read()).hexdigest()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+G:\CODEX\New Manga\tools\governance\clean_workspace.py:2292: ResourceWarning: unclosed file <_io.BufferedReader name='g:\\codex\\new manga\\verification\\WORKSPACE-DECLARATION-REMEDIATION-1\\evidence\\triage-summary.json'>
+  io.open(absolute, "rb").read()).hexdigest()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+G:\CODEX\New Manga\tools\governance\clean_workspace.py:2292: ResourceWarning: unclosed file <_io.BufferedReader name='g:\\codex\\new manga\\verification\\WORKSPACE-DECLARATION-REMEDIATION-1\\incident-replay-clean-workspace.json'>
+  io.open(absolute, "rb").read()).hexdigest()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+G:\CODEX\New Manga\tools\governance\clean_workspace.py:2292: ResourceWarning: unclosed file <_io.BufferedReader name='g:\\codex\\new manga\\verification\\WORKSPACE-DECLARATION-REMEDIATION-1\\incident-replay-remove-worktrees.json'>
+  io.open(absolute, "rb").read()).hexdigest()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+G:\CODEX\New Manga\tools\governance\clean_workspace.py:2292: ResourceWarning: unclosed file <_io.BufferedReader name='g:\\codex\\new manga\\verification\\WORKSPACE-DECLARATION-REMEDIATION-1\\non-declaration-json-exceptions.json'>
+  io.open(absolute, "rb").read()).hexdigest()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+test_all_seven_errors_are_resolved (__main__.ProductionScan.test_all_seven_errors_are_resolved) ... ok
+test_no_wildcard_or_temp_expansion (__main__.ProductionScan.test_no_wildcard_or_temp_expansion) ... ok
+test_protection_set_did_not_shrink (__main__.ProductionScan.test_protection_set_did_not_shrink) ... ok
+test_user_data_root_is_now_protected (__main__.ProductionScan.test_user_data_root_is_now_protected) ... ok
 
-### check.ps1 输出
+----------------------------------------------------------------------
+Ran 13 tests in 20.816s
+
+OK
+
+---8<--- stderr end ---8<---
+
+### [2] check.ps1 原始输出
+---8<--- begin ---8<---
 Governance scope: 15 current documents; no historical directory scan.
 Task: doc\tasks\MAINT-1-RELEASE-MONITOR.md
 WARN: 存在 13 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
@@ -61,15 +104,18 @@ WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6990 bytes / 64 lines
 Governance check: PASS (3 warnings)
 
 
-## 测试断言同步（Ruling C 的必然连带项，全部改为成员/行为断言）
-#   ProductionScan.test_all_seven_errors_are_resolved   : `errors == []` -> 7 条身份不在 errors 且 residual warning == 7
-#   ProductionScan.test_protection_set_did_not_shrink   : `len(before.errors) == 7` -> 7 条身份必须都在前像中
-#   FixtureBehaviour.test_unbound_error_blocks_the_stage: `9 条含 ERROR_MISMATCH` -> **无关错误不再阻塞**：
-#                                                         无 ERROR_MISMATCH、7 条照常降级、无关错误原样留下
-#   FixtureBehaviour.test_origin_drift_fails_closed     : 文件尾追加换行 -> **改动被绑定行**；
-#                                                         断言 `SOURCE_DRIFT` 而非绝对条数（原写法把两种效应混在一起）
+---8<--- end ---8<---
 
-## 字节保留
-#   `verification/**` 与 `doc/tasks/*` 零改动；4 条 HIE 绑定 + RRI-04..07 的 raw_sha256 全部未动。
-#   改的是：clean_workspace.py（不变量）、historical-evidence-interpretation.json（Ruling A 的 1 字段 + 1 message）、
-#   tests/test_residual_runtime_identity.py（断言同步）。
+### [3] git diff --check 原始输出
+---8<--- begin ---8<---
+stdout: (empty)
+stderr: warning: in the working copy of 'doc/reviews/GOV-DECLARATION-SCAN-CLEANUP-1-RULING-ABC-2026-11-16.md', LF will be replaced by CRLF the next time Git touches it
+
+---8<--- end ---8<---
+
+## 独立复核引用（勿混用 head）
+#   被审实现 head = **983243488**（amend 后）。复核报告
+#   doc/reviews/GOV-RESIDUAL-AC7-IMPL-REVIEW-2026-11-16.md 明确记录：
+#   `54b1167ee` 是 amend **前**的悬空 commit，其 HIE digest 常量与同 tree 的政策不自洽
+#   （c91bbef8… ≠ 5cc68358…，以它为 head 时 HIE 层必然 POLICY_DIGEST_MISMATCH）。
+#   ⇒ 所有关闭记录/Handoff/台账必须引用 **983243488**，不得写 54b1167ee。
