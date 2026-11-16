@@ -202,3 +202,175 @@ Windows Job Object（kill-on-close）可结构性兜底全部后代，但需要 
 ---
 
 以上就是修订后的完整 DESIGN v2（含「本次修订对照」开篇节）。四条 P1 的闭合方式概括：**P1-1** 用 TA..TD 四入口全表 + F5 + 「共同前置 P」重构论证（不可达结论保留，支柱换掉）；**P1-2** 撤销 797 处不可编译断言，改用 555 后的局部变量断言 + `worker_flags` 聚合 join 账本；**P1-3** B 自写 pidfile 给出完整发现→taskkill→复核链，fail-loud 兜底；**P1-4** `finish()` 显式收尾读返回值 + thread-local 账本，断言时序与并行污染同时修复。
+
+---
+
+## DSH 集成附记 v3（2026-11-17）：第二轮复核余 P1=2，ZCode 已给修订段（待第三轮确认）
+
+第二轮复核（同一独立复核者，head `759687d59`）：**verdict2: BLOCKED**，P1-2 与 P1-4 仍不成立（P1-1、P1-3 已 PASS）。
+
+ZCode 第三轮修订（session `sess_d2430af2-3d80-4fbe-a6e0-7b51c2578cfe`，仅替换受影响章节）：
+
+- **P1-2**：fault 场景 `for id in &identities`（按引用遍历，`ChildIdentity` 无 `Clone`），
+  聚合 join 账本断言保留在循环之后、peak 断言之前；`assert_pid_gone` 本就收 `&ChildIdentity`，调用改为 `assert_pid_gone(scenario, id)`。
+- **P1-4**：`RegistryTestGuard` 增加 `cleaned: bool` 幂等短路（`finish(self)` → `cleanup()` 后 Drop 再进一次时零副作用返回）；
+  slot 清除改为 **owner-aware**（只清 owner 是本线程的 slot，二次执行时不会误清别的测试的 override）；账本只在非短路分支累加一次。
+
+以下为 ZCode 修订段原文（v3 候选），未经第三轮复核，**仍未释放**。
+
+
+# P1-2 / P1-4 修订段落（DESIGN v2 → v3，只替换受影响章节）
+
+## 修订段 1：P1-2 —— 替换 DESIGN.md §3.4 第 2 点
+
+**改法**：fault 场景 807 循环改为**按引用遍历**（`&identities`），聚合断言位置**保持不变**（`assert_pid_gone` 循环之后、811 peak 断言之前）。`ChildIdentity`（stress:118-133）无 `Clone` derive，克隆方案需额外改测试面，不取；`assert_pid_gone` 签名（195：`fn assert_pid_gone(scenario: &str, id: &ChildIdentity)`）本就收引用，按引用遍历是最小改法。[建议]
+
+```rust
+// multichannel_stress_tests.rs（fault 场景，原 805-809 修订）：
+let identities = take_ledger();                                              // 805 原样
+assert_eq!(identities.len(), 20, "OS identity checks must cover all fault channels");  // 806 原样
+for id in &identities {          // 807 原 `for id in identities`（按值 move）→ 改借用
+    assert_pid_gone(scenario, id);   // 808 原 `&id` → `id`（id 已是 &ChildIdentity）
+}
+// 新插入（809 之后、811 peak 断言之前）——聚合 join 账本断言：
+let all_workers_finished_and_joined = identities
+    .iter()
+    .all(|id| id.worker_flags.iter().all(|f| f.load(Ordering::SeqCst)));
+assert!(
+    all_workers_finished_and_joined,
+    "join ledger: all 20x2 fault reader/writer workers must be finished+joined"
+);
+```
+
+**断言位置说明** [推断]：
+
+- **留在循环后（不前移）**：`assert_pid_gone`（195-233）内部 199-202 先做 ≤`CLEANUP_BUDGET`(30s) 有界等待，204 逐 id 断言 `worker_finished_joined` 全 true、205 断言 handle 槽清零。循环后读 `worker_flags` 时每 id 已逐个通过该断言——聚合读数**零额外等待、纯汇总**；失败只能归因于 PID ledger/flags 保活语义（235-239）被破坏，正是该断言要抓的缺陷类别。
+- **不移到 move 之前**：199-202 的等待发生在逐 id 断言内部，循环**前**读 flags 存在假阴性窗口（某 worker 尚未置位，聚合先失败——失败为真但归因错误为「读得太早」），且丢失「逐 id 已等待」的时序保证。
+- `joined_flags`（661 定义、764 push）维持原状：它记录 Drop **前**的 pre-drop 标志，定位是机制证据，不承担 post-drop join 账本职责（本轮复核已确认其不可替代）。
+- **判别力诚实边界**：204 已逐 id 断言同一事实，聚合断言不引入新观察点；其价值是 (a) 单条汇总 ledger 防将来削弱 204 断言面的回归，(b) 与 §3.4 第 3 点的 797 行注释配合，杜绝 `20*2` 结构常量被误读为运行时 join 计数。
+- **real-core 侧（574-578）不改**：v2「real-core 自动获得同等证据」经 199-205 的逐 id 断言即成立；`for id in identities`（576）后无对 `identities` 的再使用，无 E0382 问题。若实施时希望 real-core 也加同款聚合断言，**必须**同步把 576 改为 `for id in &identities`（调用改 `assert_pid_gone(scenario, id)`）——两选项二选一，实施时定案。[建议]
+
+**§0 对照表 P1-2 行**追加一句：「fault 侧 807 循环改 `&identities` 借用遍历（E0382 修复），聚合断言位置不变」。
+
+---
+
+## 修订段 2：P1-4b —— 替换 DESIGN.md §3.3 修订点 1/2/3，并改写第 4 点断言
+
+**改法**：`cleaned: bool` done 标记为主修复（cleanup 一次性执行）+ slot 清除改 **owner-aware** 为纵深防御；`finish` 不采用 `ManuallyDrop`/`mem::forget`。[建议]
+
+**1. 结构体（6069-6072）加一个字段，`acquire()`（6096-6099）初始化为 `false`**：
+
+```rust
+struct RegistryTestGuard {
+    _exclusive: Option<std::sync::MutexGuard<'static, ()>>,
+    registry: TestRegistry,
+    cleaned: bool,   // P1-4b：cleanup 一次性执行标记
+}
+```
+
+**2. cleanup 提取（原 Drop 主体 6118-6145）+ 开头幂等短路 + owner-aware slot 清除**：
+
+```rust
+fn cleanup(&mut self) -> (usize, usize) {
+    if self.cleaned {
+        // P1-4b：finish(self) 返回时 self 析构会再次进入这里；
+        // 此时 EXCLUSIVE 已释放、slot 可能已属别的测试——必须零副作用返回。
+        return (0, 0);
+    }
+    self.cleaned = true;
+    let (reaped, remaining) = self.reap_now(Duration::from_millis(2000));
+    if remaining > 0 {
+        eprintln!(
+            "[registry-test] guard drop: reaped {reaped}, {remaining} worker(s) still unfinished (their bounded test threads will detach and end on their own)"
+        );
+        // 账本只在此非短路分支累加——天然只记一次（修复二次累加）
+        TEST_GUARD_DROP_UNRECLAIMED.with(|c| c.set(c.get() + remaining));
+    }
+    {
+        let mut slot = TEST_REGISTRY_OVERRIDE
+            .lock()
+            .unwrap_or_else(|poisoned| poisoned.into_inner());
+        // P1-4b 纵深防御：只清 owner 仍是本线程的 slot
+        // （比较方式同既有安装验证 6087-6089）
+        let mine = slot
+            .as_ref()
+            .map(|(owner, _)| *owner == std::thread::current().id())
+            .unwrap_or(false);
+        if mine {
+            *slot = None;
+            assert!(
+                slot.is_none(),
+                "RegistryTestGuard: TEST_REGISTRY_OVERRIDE could not be cleared"
+            );
+        }
+        // owner 非本线程 = 另一测试在 EXCLUSIVE 释放后合法安装的 override，
+        // 不属于本 guard，绝不清除，也不视为本 guard 的失败。
+    }
+    IN_REGISTRY_TEST.with(|flag| flag.set(false));
+    drop(self._exclusive.take());
+    (reaped, remaining)
+}
+```
+
+相对现有 Drop 的**唯一行为变化**：slot 清除从无条件 `*slot = None`（6133）变为 owner 检查后清除。首次 cleanup 运行时 slot 必然 owner==本线程（EXCLUSIVE 仍持有、串行保证），清除行为与现状一致；owner mismatch 只可能出现在二次执行场景，不清是正确语义。[推断]
+
+**3. `finish` 与 `Drop`**：
+
+```rust
+fn finish(mut self) -> GuardFinishReport {
+    let (reaped, remaining) = self.cleanup();   // 唯一一次完整 cleanup（cleaned 置 true）
+    let mut arc_released = false;
+    let deadline = Instant::now() + Duration::from_secs(2);
+    while Instant::now() < deadline {
+        if Arc::strong_count(&self.registry) == 1 { arc_released = true; break; }
+        std::thread::sleep(Duration::from_millis(10));
+    }
+    if Arc::strong_count(&self.registry) == 1 { arc_released = true; }
+    GuardFinishReport { reaped, remaining, arc_released }
+    // 返回值移出后 self 析构 → Drop::drop → cleanup() 二次进入 →
+    // cleaned 已为 true，短路返回 (0,0)：不碰 slot、不 reap、不记账、
+    // _exclusive 已 None；registry Arc 随字段正常析构释放。
+}
+
+impl Drop for RegistryTestGuard {
+    fn drop(&mut self) {
+        let _ = self.cleanup();
+    }
+}
+```
+
+不采用 `mem::forget(self)`/`ManuallyDrop` 的理由 [推断]：forget 会跳过**全部**字段析构——registry Arc 泄漏，且正确性依赖「cleanup 必已先跑」的隐含前提；ManuallyDrop 需 unsafe 或同样放弃字段析构。done 标记让 panic unwind 路径（Drop 首次执行）与显式路径共享同一段幂等逻辑，全安全代码、零泄漏。
+
+**4. 时序（P1-4b 修复后的完整链）** [推断]：
+
+- **正常路径**：`guard.finish()` 进入（EXCLUSIVE 持有、slot owner=本线程）→ cleanup#1（cleaned=true → reap_now(2s) → 账本仅 remaining>0 时累加 → owner 检查 mine=true 清 slot+验证 → `IN_REGISTRY_TEST=false` → 释放 EXCLUSIVE）→ Arc 等待 ≤2s（此窗口另一测试 acquire 并安装自己的 slot——合法，互不干扰）→ report 移出 → `self` 析构 → Drop → cleanup#2 **短路**（返回 (0,0)，零副作用）→ 调用方拿到 report。
+- **panic unwind**：guard 局部变量 drop → cleanup#1 完整执行（同上）→ 无 Arc 等待（兜底要快）。catch_unwind 返回时 unwind 已跑完 guard Drop，账本已写。
+
+**5. 断言（测试 a，替换 v2 §3.3 第 4 点）**：
+
+```rust
+let report = guard.finish();
+assert_eq!(report.remaining, 0, "guard finish: no unreclaimed workers allowed");
+assert!(report.arc_released, "guard finish: registry Arc must be back to 1");
+TEST_GUARD_DROP_UNRECLAIMED.with(|c| assert_eq!(c.get(), 0));
+```
+
+- **时序依据** [推断]：Rust 语义上按值参数 `self` 在返回值移出之后、调用方语句结束之前析构——`finish()` 返回时 cleanup#2 已执行（被短路），账本断言**即刻可读**，不存在「断言先于 drop」的恒真窗口。
+- **账本断言的回归探针作用**：`report.remaining==0` ⇒ cleanup#1 未记账；若 done 短路将来失效（回归），cleanup#2 会二次 reap/记账或触碰他人 slot——账本 >0 或其他测试失败即可被抓。
+- 测试 b（`catch_unwind` 后**同线程**读 thread-local 断言）与既有 4 个 acquire 点迁移（9462/9498/9561/9666 → `guard.finish()`）维持 v2 原文不变。
+
+**6. P2-8 随本修订一并闭合**：finish 的 Arc 等待仍在 EXCLUSIVE 释放后进行（不占串行锁），其与第二次 cleanup 的组合危害已由「done 短路 + owner-aware」双层消除。§0 对照表 P1-4 行追加「done 短路 + owner-aware slot 清除，P2-8 一并闭合」，P2 处置一览补 P2-8 行。
+
+风险披露：cleanup#1 中途 panic（如 slot 清除验证 assert 失败）时 Drop 不会重入同一 guard（正在 unwind 中），与 v1/v2 相同，非新增风险；owner-aware 后该 assert 仅在 mine 分支内，触发面更小。全部改动位于 `#[cfg(test)] mod tests`（6042 起），生产零改动。
+
+---
+
+## 是否需同步改 DSH 附记
+
+- **Task 卡**（`doc/tasks/GIT-CLEAN-RUST-CAPACITY-DESIGN-1.md`）：AC3 只有需求级一句「guard正常/异常收尾和Arc所有权；实际线程join账本」，**不含机制级描述，无需改**。
+- **复核报告**（`doc/reviews/…2026-11-17.md`）：历史 Review 按治理规则保持原字节，**不改**。
+- **需改的只有 DESIGN.md 自身**：§3.3（上述修订段 2 替换）、§3.4 第 2 点（修订段 1 替换）、§0 对照表 P1-2/P1-4 两行补注、P2 一览补 P2-8。`checkpoint.md` 无相关内容，不改。
+
+---
+
+**推荐下一步**：本两段修订交 DSH 集成落盘为 DESIGN v3（建议一并按 P2-11 冻结 design-only head + 补 `HANDOFF.md`），并派第三轮上下文独立 design-reviewer 复核（只读 v3 + `1829a38`，重点核两片段可编译性、finish 返回时序、owner-aware 语义）。本会话只读，无文件改动、无 commit。

@@ -144,3 +144,121 @@ Get-FileHash -Algorithm SHA256 "$p\apps\desktop\src-tauri\src\main.rs"
 3. **修 P1-3**：给 B 明确 PID 发现/清理路径（sidecar 写 PID 文件或 stdout，测试读取；30s 内 taskkill + 复核）；B 只继承 stdin，stdout/stderr DEVNULL。
 4. **修 P1-4**：R2-F03 测试 a 明确先 `drop(registry_guard)` 再断言，并用 per-test 账本/串行区避免全局 Atomic 污染；否则该断言恒真或偶发。
 5. 修 P2-1..P2-6 后可再次提交独立复核；在 P1 全闭合前，本设计不应按“可释放完整设计切片”定案。
+
+---
+
+## 第二轮复核（v2）
+
+- **复核者**：子 agent `design-reviewer`（同一独立上下文；未参与 v2 修订）。
+- **被复核 head2**：`759687d59bf345adc4892613e19c3c9253f7c239`（主仓 `759687d59`，仅改 `DESIGN.md` 与 Task 卡）；代码基准仍为 `1829a38a41587a0d680001a40d206886afb0911d`。
+- **复核时间**：2026-11-17T03:20:00+08:00。
+- **只读声明**：本次只读 v2 与 `1829a38` 代码；未改任何文件（仅本报告追加）、未 commit/push/集成、未运行 Rust/压力测试。
+
+**verdict2: BLOCKED**——P1-1、P1-3 已实质修复；P1-2 仍会编译失败，P1-4 引入了新的 double-cleanup 竞态，故仍不能释放。
+
+| P1 | v2 结果 | 关键证据 |
+|---|---|---|
+| P1-1 | **PASS** | v2 §1.3 列出 TA=3980、TB=4004、TC=4115、TD=4139 四入口，并补 F5；`git grep` 与代码一致；4004/4139 确在 `if let Err(e) = spawn_res`（3999/4134）分支内。1.5 以“共同前置 P + TA/TC 或 TB/TD”重构，F5 不放宽 P，论证逐分支完整。 |
+| P1-2 | **FAIL** | real-core 在 555 后的真实局部变量断言可编译；但 fault 聚合断言写在 `for id in identities`（807，按值移动）之后，却使用 `identities.iter()`，按 v2 的插入点仍是 `E0382: use of moved value`。`joined_flags` 是 661/764 的 pre-drop 标志，不能替代 post-drop join 证据。 |
+| P1-3 | **PASS（附 P2-7）** | B 自写 pidfile、测试 ≤2s 发现、`run_taskkill_bounded(5s)`、`wait_for_pid_exit(10s)`、缺文件 fail-loud：PID 发现与清理机制本身可执行，未把不可行写成可行；落点需按 P2-7 保住 `TempDir` 生命周期。 |
+| P1-4 | **FAIL（新 P1-4b）** | `finish(self)` 内 `cleanup()` 后 `self` 仍在返回时 Drop，`Drop` 会再次 `cleanup()`；`cleanup` 无条件清 `TEST_REGISTRY_OVERRIDE`。`finish` 已释放 EXCLUSIVE 并最多等 Arc 2s，期间另一测试可安装自己的 slot，随后第二次 cleanup 会把它清掉；`remaining>0` 时还会二次累加 thread-local 账本。 |
+
+### P1-1 复核细节（PASS）
+
+```powershell
+git -C "G:\CODEX\New Manga" rev-parse HEAD
+# 759687d59bf345adc4892613e19c3c9253f7c239
+git -C "G:\CODEX\New Manga" show --stat --oneline 759687d59
+# DESIGN.md 240 +-, Task 卡 4 +-
+$p="G:\CODEX\New Manga.workspace\task-envs\GIT-CLEAN-RUST-ISOLATION-1\source-r2"
+git -C $p grep -n "track_unreaped_worker(" 1829a38 -- apps/desktop/src-tauri/src
+# 1861, 1882, 3980, 4004, 4115, 4139, 9472, ...
+```
+
+`git -C $p show 1829a38:apps/desktop/src-tauri/src/library_bridge.rs` 的 3999-4004 / 4134-4139 明确显示：
+
+```text
+3999: if let Err(e) = spawn_res {
+4000:     let err_msg = format!("failed to spawn reader-join-bounded-reaper: {e}");
+4001:     eprintln!("[shutdown] {err_msg}");
+4002:     if let Ok(mut h_lock) = handle_shared.lock() {
+4003:         let mut h_opt = h_lock.take();
+4004:         let tracked = track_unreaped_worker("reader", ...);
+4134: if let Err(e) = spawn_res {
+4139:     let tracked = track_unreaped_worker("writer", ...);
+```
+
+因此 v2 的 TA..TD 全表与 F5 成立；“首次 track 只能经 TA..TD、1861 只是 refused handle 重投递”也与代码一致。  
+P2 备注：F2 只写“cancel 双失败”并以“DUPLICATE_SAME_ACCESS 句柄有效”为理由；但 `2321-2324` 的 DuplicateHandle 失败会把 `writer_thread_handle` 置负，`1555-1557` 的 cancel 会失败——这是同属“资源面/不可注入”的 F2 子情形，建议并入 F2 或另列 F6，不影响 P1-1 通过。
+
+### P1-2 复核细节（FAIL）
+
+v2 §3.4 的 fault 断言插入点如下（`git -C $p show 1829a38:apps/desktop/src-tauri/src/multichannel_stress_tests.rs`）：
+
+```text
+805: let identities = take_ledger();
+806: assert_eq!(identities.len(), 20, "OS identity checks must cover all fault channels");
+807: for id in identities {
+808:     assert_pid_gone(scenario, &id);
+809: }
+```
+
+`for id in identities` 按值移动 `Vec<ChildIdentity>`；v2 §3.4 却把
+
+```rust
+let all_workers_finished_and_joined = identities.iter()
+    .all(|id| id.worker_flags.iter().all(|f| f.load(Ordering::SeqCst)));
+```
+
+写在 806-809 **之后**、811 之前。该插入点会编译失败（`identities` 已 move）。修法只有两种：把聚合断言移到 807 之前，或把循环改成 `for id in &identities`；v2 未写这一步。  
+另外，`joined_flags` 是真实变量（661 定义、764 push），但存的是 Drop **前**的 `writer_joined_pre_drop`/`reader_joined_pre_drop`，不是 post-drop join 账本；不能作为替代证据。  
+real-core 侧 v2 要求在 555 `});` 后断言 `threads_spawned == threads_joined`：变量确实在 417/418 定义、463/532/554 累加，**这一段可编译**；它只证明测试 helper 线程 join，v2 已如实注明。P1-2 的失败点是 fault 侧聚合断言，不是这一处。
+
+### P1-3 复核细节（PASS，附 P2-7）
+
+v2 §2.2 的链路逐项可执行：B 脚本 `open(sys.argv[1],'w').write(str(os.getpid()))` 写 pidfile；测试 ≤2s 轮询；`run_taskkill_bounded` 在 `3308` 存在且接受 `u32` PID；`wait_for_pid_exit` 在 `170-179` 存在；`pid_still_alive` 在 `146-159` 检查 `status.success()`，失败按存活 fail-safe。缺 pidfile 时 fail-loud 并给人工 `wmic` 指引，没有静默跳过。
+
+P2-7：pidfile 在 `dir.path().join("escape_b.pid")`，而既有 fault Drop 循环在 `769` 执行 `drop(lab.dir)`；v2 说“L1 场景函数尾部”才读取 pidfile，却未说明保留 `TempDir` 或提前读取。若照既有循环先删目录，pidfile 会消失。实施时必须：读取 PID 后再 `drop(lab.dir)`，或把 `TempDir` 保活到 B 清理完成；否则 pidfile 方案在时序上仍不可执行。另建议给 B 清理加 RAII/`defer` 兜底，保证 panic 路径也执行 taskkill。
+
+### P1-4 复核细节（FAIL，新 P1-4b）
+
+v2 §3.3 把 `Drop` 主体抽成 `cleanup()`，新增：
+
+```text
+fn finish(mut self) -> GuardFinishReport {
+    ... self.cleanup() ...
+    ... Arc::strong_count(&self.registry) 等待 ≤2s ...
+    return report;
+}
+impl Drop { fn drop(&mut self) { self.cleanup(); } }
+```
+
+Rust 中 `finish(self)` 返回前会正常 drop `self`，因此 `Drop::drop` 会第二次调用 `cleanup()`。而现有 `cleanup` 的 slot 清除（`library_bridge.rs:6129-6139`）是无条件 `*slot = None`；`finish` 的 `cleanup` 已先释放 `TEST_REGISTRY_EXCLUSIVE`，再等 Arc 最多 2s。等待窗口内另一 registry 测试可取得 EXCLUSIVE 并安装自己的 override；随后第二次 `cleanup` 会清掉**别人的** slot，导致测试互相污染。若第一次 `cleanup` 的 `remaining>0`，第二次还会再次累加 thread-local 账本。
+
+修法：`finish` 用 `std::mem::ManuallyDrop`/`mem::forget` 抑制 Drop，或给 guard 加 `finished: bool` 让 `cleanup` 只执行一次；同时把 slot 清除改成仅当 slot owner 仍是当前线程时才清。v2 的“断言读 finish 返回值 + thread-local 账本”方向正确，但没有处理这次 double cleanup，故 P1-4 仍未闭合。
+
+### v2 新增/剩余 P2
+
+- **P2-7**：pidfile 的 `TempDir` 生命周期（见上）；L1 清理须在 `drop(lab.dir)` 前读取 PID，或保活目录。
+- **P2-8**：`finish` 的 Arc 等待在释放 EXCLUSIVE 后进行，本身可接受；但与 P1-4b 的第二次 cleanup 组合会跨测试清 slot，必须一起修。
+- **P2-9**：v2 §3.5 写“默认套件 153→157（F03 测试 a/b 合并计入 F05 的两个新测试后总计 +4）”，但 F03 test a 是迁移既有测试、不是新增；按字面 +3（F03 b + F05 两个），需在实施清单里重新核对，避免测试计数口径错误。
+- **P2-10**：v2 §1.4 的“TA..TD 四入口均未执行”仍是从 `peak=0` 反推的 [推断]，R2 日志没有“四入口调用计数”；建议改为“四入口均未观察到 accepted worker”或补 log 证据。
+- **P2-11**：head `759687d59` 只改 `DESIGN.md` + Task 卡，仍无 `HANDOFF.md`；v2 §5 要求的 design-only head/HANDOFF 尚未落盘，AC4 的交付面仍待 Codex/DSH 补齐。
+
+### 第二轮命令摘录
+
+```powershell
+cd "G:\CODEX\New Manga"
+git rev-parse HEAD
+# 759687d59bf345adc4892613e19c3c9253f7c239
+git show --stat --oneline 759687d59
+# doc/tasks/... 4 +- ; verification/.../DESIGN.md 240 +-
+$p="G:\CODEX\New Manga.workspace\task-envs\GIT-CLEAN-RUST-ISOLATION-1\source-r2"
+git -C $p grep -n "track_unreaped_worker(" 1829a38 -- apps/desktop/src-tauri/src
+git -C $p show 1829a38:apps/desktop/src-tauri/src/library_bridge.rs
+# 3999-4004, 4134-4139; 6118-6145; 3199-3205
+git -C $p show 1829a38:apps/desktop/src-tauri/src/multichannel_stress_tests.rs
+# 795-809: for id in identities; 661/764: joined_flags; 170-179: wait_for_pid_exit
+```
+
+**verdict2: BLOCKED**（P1 剩余 2 条：P1-2 编译失败、P1-4b double cleanup；P1-1、P1-3 已修复，P1-3 需落 P2-7 生命周期修正）。
