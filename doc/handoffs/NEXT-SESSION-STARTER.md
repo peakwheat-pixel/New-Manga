@@ -1,12 +1,13 @@
 # 新会话启动包 — New Manga 目标续接
 
-- 生成时间：2026-11-16 11:58 (+08:00)（本版为 R3 之后更新）
+- 生成时间：2026-11-16 12:30 (+08:00)（本版为 R4 之后更新）
 - 生成者：DSH（lead）
-- **当前 head：`bfbf95a82`**（main，**已 push**，upstream = origin/main，ahead/behind = 0/0）
+- **当前 head：`8900dcbdb`**（main，**已 push**，upstream = origin/main，ahead/behind = 0/0）
 - 工作区：干净（`git status --porcelain` 为空）
 - **R1**：`9ce819ae7` → `dd029b73f`（7 commit，目标 A/B/D 达成）
 - **R2**：`dd029b73f` → `5f2664c2e`（8 commit）—— 目标 C 闭合 10 条
-- **R3（本轮）**：`5f2664c2e` → `bfbf95a82`（3 commit）—— 目标 C 再闭合 2 条
+- **R3**：`5f2664c2e` → `bfbf95a82`（3 commit）—— 目标 C 再闭合 2 条
+- **R4（本轮）**：`bfbf95a82` → `8900dcbdb`（5 commit）—— 闭合 MICA-FIX-1 AC2；**AC7 书面裁决落盘 + 开清理卡**
 
 > 本文是**给下一个会话的唯一起点**。不要重读历史对话；按「下一步队列」推进即可。
 
@@ -16,11 +17,11 @@
 
 | 项 | 状态 |
 |---|---|
-| HEAD | `bfbf95a82`（main，已 push，0/0） |
+| HEAD | `8900dcbdb`（main，已 push，0/0） |
 | 四件套 | **全绿**：`check.ps1` PASS(3w) / `verify_pins` 18/18 / `api_inventory` 1/80/6=87 / `test.ps1` EXIT=0 **1587/1635 passed, 48 skipped**（App 967/0/4，基线 955/0/11 不退化） |
 | 上一 goal | 已用尽 100 轮（见 `GOAL-WRAPUP-R100.md`） |
 | 本 goal | 60 轮上限 |
-| 目标 C | 可行动项 41 → **闭合 20 / open 21** |
+| 目标 C | 可行动项 41 → **闭合 21 / open 20**（其中 **2 条已裁决 BLOCKED**：`GOV-RESIDUAL` AC6/AC7） |
 
 复跑四件套：
 
@@ -151,6 +152,37 @@ R3：`V11R-C-3` R1（补 tag 存在后的 `-DryRun` + limitation L-C3-1）/ `V11
 
 ---
 
+## 3c. R4（本轮）完成的事
+
+| # | 事项 | 结果 |
+|---:|---|---|
+| 1 | **`MICA-FIX-1` AC2 收口** | 用仓库内构建产物**真实启动**（全隔离 `--data-root/--log-dir/--theme-home/--mutex-name` + `--exit-after=15000`，`exit_code=0`、16s 自然退出），捕获 `window-material.log` 原文 `material=Mica; requested=Mica,Blur,None; actual=Mica` ⇒ 确证拿到 **Mica 而非回退 None**。证据 `verification/MICA-FIX-1/ac2/{window-material.log,startup.log,host.log}`（EV M5/M6/M7）。**limitation L-MICA-1**：该文件由 **legacy 壳**的 `MainWindow` 写出（**V2 默认壳不写**），故取证用 `--shell=legacy`；V2 壳 Mica 的**视觉**仍需人眼（`H-01`），**不宣称 AC1 已验** |
+| 2 | **`GOV-RESIDUAL` AC7 书面裁决** | 派 `adjudicator-decl`（全新上下文、只读）出裁决 → **BLOCKED**，落 `doc/reviews/GOV-RESIDUAL-AC7-ADJUDICATION-2026-11-16.md`（34943 B，署名，末行 FINAL） |
+| 3 | **卡面裁定** | AC7 重写 blocked 理由（三层阻塞 + 三条路径裁决 + 点名缺口）；AC6 补记「裁决确认其为真」并注明**不能**用 `test_protection_set_did_not_shrink` 替代；`status: done → closed_with_limitations`（解决 frontmatter 与「集成复验后才 done」的冲突） |
+| 4 | **新卡 `GOV-DECLARATION-SCAN-CLEANUP-1`** | `proposed`；写死三层定位 + 三选一 Ruling A / B(1/2/3) / C(相对不变量) + **硬禁止四条** + 建议拆三张子卡；附带登记 R-1 / **R-2（路径硬编码跨机必红）** / EV-03·EV-04 复现性疑点 |
+
+### ⚠️ R4 最重要的认知更正（务必内化）
+
+我派发裁决时把 AC7 描述成「需清理 160 处历史声明错误」。**裁决者实测推翻了它**：
+
+> **第一层阻塞不是 160 条历史错误**。`tools/governance/historical-evidence-interpretation.json` 把
+> `verification/P22/codex-p22-task-r4-malformed-snapshot-7ebd7d40.md` 绑定为 **untracked**，但提交
+> `ee755d4bb`（2026-10-22「406-file evidence backlog」）把它入库成 **tracked** ⇒ 产出唯一一条 `SOURCE_DRIFT`。
+> 而 `clean_workspace.py:1986-1988` 见 HIE 政策错误就让 **residual 层整段早退**
+> （7 条裁定身份未降级、APPDATA 三根未注册、`DECL_RESIDUAL_RUNTIME_PRESERVED` warning=0）。
+> **仅这一条就足以让 3 个测试全红。先清 160 条是错的顺序，会白做一轮。**
+
+⇒ **前进顺序必须是 L1（HIE 漂移）→ L2（159 条分类）→ L3（不变量重写）**，且 L1 前必须先有 Ruling A。
+
+### R4 另外两条实测事实
+
+- **`test_user_data_root_is_now_protected` 不是独立缺陷**：裁决者做受控实验（字节相同 origin + 真实 APPDATA
+  目标 + 内存 patched digest）→ `errors=0 / residual warnings=7 / 三根各命中 1` ⇒ 它是 L1 的下游症状，
+  修 L1+L2 后自动绿，**不要为它单独立卡**。
+- **AC6 与 AC7 同属性**：AC6 缺的第 7 类「保护集合回退」负例，正好是 L3 不变量重写的产物 ⇒
+  清理卡 Ruling C 顺带把 AC6 一起解掉。
+
+---
 ## 4. 关键技术事实（R1/R2 累积）
 
 ### 4.1 file identity 53 位契约（已闭环）
