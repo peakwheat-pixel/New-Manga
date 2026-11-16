@@ -1,0 +1,34 @@
+# GOV-EVIDENCE-PIN-REPAIR-1 · AC4 batch 1 证据（FEA-11-HOST-AUTH-2：7 errors → 0）
+# head: 8fe6b7ca8
+# at_utc: 2026-11-16T14:05:00Z
+# os: Windows 10.0.26200 ; PowerShell 7.6.8 ; Python 3.14.6
+
+## 1. 逐条结论（5 条证据 + 2 条 Resource）
+# EV-01 apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs
+#   ⇒ 调查：该路径在**全部 22 个历史 blob** 中都没有等于记录值 a4213091… 的字节 ⇒ 记录值不可复现、无法重 pin
+#   ⇒ 处置：登记受控例外 EXC-FEA11HA2-01（error_type=SHA_MISMATCH）
+# EV-03 apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11HostAuthTests.cs
+#   ⇒ 调查：该路径 **12 个历史 blob** 中都没有 2e7bdab9… ⇒ 同上
+#   ⇒ 处置：登记 EXC-FEA11HA2-02
+# EV-11/12/13 doc/tasks/FEA-11-HOST-AUTH-{3,4,5}.md
+#   ⇒ 处置：已由同表 EV-11/12/13-supersede 行取代（完整 commit + 64 位 sha256 = commit blob，2026-11-16 追加）
+#   ⇒ 登记 EXC-FEA11HA2-03/04/05（reason 明确引用对应 supersede 行）
+# Resource row `worktree`：source 由描述性文本改为占位 `—`（原文本移入末列，未丢失）
+# Resource row `test-fixture`：`sha256/manifest` 由 `—` 补为 verification/FEA-11-HOST-AUTH-2/RESOURCE-MANIFEST.json；
+#   destination 由 `—` 补为 verification/FEA-11-HOST-AUTH-2/tools（PRESERVE_REFERENCED 要求最终路径可验证）
+#   —— 这两处是 Resource Manifest 的结构性占位，裁定明确「例外通道不覆盖 Resource」，故按单元修正而非登记例外。
+
+## 2. 结果
+# check.ps1 -TaskPath doc/tasks/FEA-11-HOST-AUTH-2.md  →  PASS (8 warnings)  EXIT=0
+#   （8 = 5 条 EXEMPTED + 3 条全局 warning；改动前为 FAIL 7 errors）
+# 只读巡检：python -B tools/governance/audit_evidence_pins.py --cards doc/tasks/FEA-11-HOST-AUTH-2.md
+#   → FAIL 0 / EXEMPTED 5 / SUPERSEDED 0 / WARN 0（工具现会读取登记表并区分 EXEMPTED）
+# 该卡 git diff（相对本批之前）：2 lines changed（2 个 Resource 单元格），证据行 0 改动、supersede 行保持原样
+
+## 3. 登记表状态
+# tools/governance/evidence-pin-exceptions.json：entries = 5（全部属于本卡），
+# 其余 443 条 FAIL 尚无结论 ⇒ AC4 未完成。
+
+## 4. 待独立复核（AC5 的一部分）
+# 本批 5 条登记 + 2 处 Resource 单元修正需上下文独立复核：
+# ①每条例外是否真的「不可复现」；②supersede 行是否满足裁定条件 3；③Resource 单元修正是否越界。

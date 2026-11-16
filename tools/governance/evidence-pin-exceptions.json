@@ -1,5 +1,76 @@
 {
   "schema_version": 1,
   "eligibility_baseline": "8db997f94683c6c959c30ba672af6df5d1bbc977",
-  "entries": []
+  "entries": [
+    {
+      "id": "EXC-FEA11HA2-01",
+      "card": "doc/tasks/FEA-11-HOST-AUTH-2.md",
+      "task_id": "FEA-11-HOST-AUTH-2",
+      "evidence_id": "EV-01",
+      "path": "apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs",
+      "commit": "f7016d3fb",
+      "sha256": "a4213091e2b2857d5b1263fd2cd659210eb07efe84383711f7b0c13542e9bfdb",
+      "class": "SOURCE_PIN",
+      "error_type": "SHA_MISMATCH",
+      "reason": "记录的 sha256 在该路径全部 22 个历史 blob 中都不存在（字节从未入仓），无法重 pin；按裁定 Q1=B 逐条申请例外",
+      "ruling": "doc/reviews/GOV-EVIDENCE-PIN-REPAIR-1-GATE-RULING-2026-11-16.md",
+      "expires_when": "卡片重开或该 source pin 被重新验证时"
+    },
+    {
+      "id": "EXC-FEA11HA2-02",
+      "card": "doc/tasks/FEA-11-HOST-AUTH-2.md",
+      "task_id": "FEA-11-HOST-AUTH-2",
+      "evidence_id": "EV-03",
+      "path": "apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11HostAuthTests.cs",
+      "commit": "f7016d3fb",
+      "sha256": "2e7bdab927851b1cff7d9fe1b99de2b389ab10d4d2bfe73d74b84b236352683d",
+      "class": "SOURCE_PIN",
+      "error_type": "SHA_MISMATCH",
+      "reason": "记录的 sha256 在该路径全部 12 个历史 blob 中都不存在（字节从未入仓），无法重 pin；按裁定 Q1=B 逐条申请例外",
+      "ruling": "doc/reviews/GOV-EVIDENCE-PIN-REPAIR-1-GATE-RULING-2026-11-16.md",
+      "expires_when": "卡片重开或该 source pin 被重新验证时"
+    },
+    {
+      "id": "EXC-FEA11HA2-03",
+      "card": "doc/tasks/FEA-11-HOST-AUTH-2.md",
+      "task_id": "FEA-11-HOST-AUTH-2",
+      "evidence_id": "EV-11",
+      "path": "doc/tasks/FEA-11-HOST-AUTH-3.md",
+      "commit": "-",
+      "sha256": "4a7e1ca8bacfebcd74b5347eb1bed9b6fa8bd49e2e480ffc904296389413a82c",
+      "class": "CANONICAL",
+      "error_type": "SHA_MISMATCH",
+      "reason": "原行记录值在本仓无任何字节表示可复现；已由同表 EV-11-supersede 行取代（该行 commit 可解析、sha256 = commit blob）",
+      "ruling": "doc/reviews/GOV-EVIDENCE-PIN-REPAIR-1-GATE-RULING-2026-11-16.md",
+      "expires_when": "卡片重开或该 re-home 载体被重新验证时"
+    },
+    {
+      "id": "EXC-FEA11HA2-04",
+      "card": "doc/tasks/FEA-11-HOST-AUTH-2.md",
+      "task_id": "FEA-11-HOST-AUTH-2",
+      "evidence_id": "EV-12",
+      "path": "doc/tasks/FEA-11-HOST-AUTH-4.md",
+      "commit": "-",
+      "sha256": "60a3d02a4d45ab16147458ab9dfce6526b7b9b006029c6abf32f7c0b38a54c00",
+      "class": "CANONICAL",
+      "error_type": "SHA_MISMATCH",
+      "reason": "原行记录值在本仓无任何字节表示可复现；已由同表 EV-12-supersede 行取代（该行 commit 可解析、sha256 = commit blob）",
+      "ruling": "doc/reviews/GOV-EVIDENCE-PIN-REPAIR-1-GATE-RULING-2026-11-16.md",
+      "expires_when": "卡片重开或该 re-home 载体被重新验证时"
+    },
+    {
+      "id": "EXC-FEA11HA2-05",
+      "card": "doc/tasks/FEA-11-HOST-AUTH-2.md",
+      "task_id": "FEA-11-HOST-AUTH-2",
+      "evidence_id": "EV-13",
+      "path": "doc/tasks/FEA-11-HOST-AUTH-5.md",
+      "commit": "-",
+      "sha256": "cdc51f9640d23d62f5437bfa2a4a1b15ceab98c73e2961f6b5b4394ace2653c5",
+      "class": "CANONICAL",
+      "error_type": "SHA_MISMATCH",
+      "reason": "原行记录值在本仓无任何字节表示可复现；已由同表 EV-13-supersede 行取代（该行 commit 可解析、sha256 = commit blob）",
+      "ruling": "doc/reviews/GOV-EVIDENCE-PIN-REPAIR-1-GATE-RULING-2026-11-16.md",
+      "expires_when": "卡片重开或该 re-home 载体被重新验证时"
+    }
+  ]
 }

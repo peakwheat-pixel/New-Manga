@@ -126,9 +126,9 @@ out_of_scope:
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| worktree | NOT_APPLICABLE（main；base `2849001a8`，impl `f7016d3fb`） | NOT_APPLICABLE | — | — | 未创建 linked worktree |
+| worktree | — | NOT_APPLICABLE | — | — | 未创建 linked worktree；另注：NOT_APPLICABLE（main；base `2849001a8`，impl `f7016d3fb`） |
 | temp | `G:\CODEX\New Manga.workspace\FEA-11\review-host-auth-2\`（reviewer pristine + 日志） | PRESERVE_REFERENCED | `G:\CODEX\New Manga.workspace\FEA-11\review-host-auth-2` | `verification/FEA-11-HOST-AUTH-2/RESOURCE-MANIFEST.json` | 仓外；reviewer 已逐字节复原（sha256 MATCH），工作树 clean；保留供审计 |
-| test-fixture | verification/FEA-11-HOST-AUTH-2/tools | PRESERVE_REFERENCED | — | — | gated fixture 在 workspace；`crash-ack.ps1` 为未实现骨架，随 `FEA-11-HOST-AUTH-3` |
+| test-fixture | verification/FEA-11-HOST-AUTH-2/tools | PRESERVE_REFERENCED | verification/FEA-11-HOST-AUTH-2/tools | verification/FEA-11-HOST-AUTH-2/RESOURCE-MANIFEST.json | gated fixture 在 workspace；`crash-ack.ps1` 为未实现骨架，随 `FEA-11-HOST-AUTH-3` |
 | user-data | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 只用隔离临时数据根，未触碰真实数据 |
 | tracked-side-effect | `verification/FEA-09/logs/wire-redacted.ndjson` | NOT_APPLICABLE | — | — | 全量 .NET 既有副作用；每次跑后 `git checkout -- verification/FEA-09` 恢复 |
 

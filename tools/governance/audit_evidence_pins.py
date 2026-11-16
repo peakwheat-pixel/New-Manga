@@ -96,6 +96,11 @@ def collect(cards):
         rel_card = "doc/tasks/" + card.name
         try:
             text = card.read_text(encoding="utf-8", errors="replace")
+            card_id = ""
+            for line in text.split("\n")[:40]:
+                if line.startswith("id:"):
+                    card_id = line.split(":", 1)[1].strip()
+                    break
         except OSError as exc:
             rows.append({"card": rel_card, "verdict": "FAIL", "code": "UNREADABLE",
                          "detail": str(exc), "path": "", "commit": "", "recorded": ""})
@@ -115,9 +120,43 @@ def collect(cards):
                 digests = HEX64.findall(recorded_cell)
                 rows.append({"card": rel_card, "line": line_no, "path": rel,
                              "id": clean(cells[0]) if cells else "",
+                             "card_id": card_id,
                              "commit": commit, "recorded_cell": recorded_cell,
                              "digests": digests})
     return rows
+
+
+REGISTRY = Path(__file__).resolve().parent / "evidence-pin-exceptions.json"
+
+
+def load_registry():
+    """Registered historical exceptions (Codex ruling Q1=B). Diagnostics only:
+    the gate decides on its own; this only labels rows so triage matches it."""
+    if not REGISTRY.exists():
+        return {}
+    doc = json.loads(REGISTRY.read_text(encoding="utf-8"))
+    index = {}
+    for e in doc.get("entries", []):
+        commit = "" if str(e.get("commit")) == "-" else str(e.get("commit"))
+        key = (e.get("card"), e.get("task_id"), e.get("evidence_id"), e.get("path"),
+               commit, str(e.get("sha256", "")).lower(), str(e.get("class", "")).upper(),
+               e.get("error_type"))
+        index[key] = e
+    return index
+
+
+def registry_match(registry, row, error_type):
+    if not registry:
+        return None
+    commit = "" if row.get("commit") in ("", "-") else row["commit"]
+    key = (row.get("card"), row.get("card_id"), row.get("id"), row.get("path"), commit,
+           (row.get("digests") or [""])[0].lower(),
+           "", error_type)
+    for (card, task, eid, path, c, sha, klass, etype), entry in registry.items():
+        if (card, task, eid, path, c, sha, etype) == (key[0], key[1], key[2], key[3],
+                                                      key[4], key[5], error_type):
+            return entry
+    return None
 
 
 def batch_blobs(queries):
@@ -198,6 +237,7 @@ def main(argv=None):
         cards = [c for c in cards if c.name in wanted]
 
     rows = collect(cards)
+    registry = load_registry()
     queries = sorted({"%s:%s" % (r["commit"], r["path"]) for r in rows
                       if r.get("commit") and COMMIT.match(r["commit"])})
     blobs = batch_blobs(queries)
@@ -223,6 +263,11 @@ def main(argv=None):
             if not commits_exist[key]:
                 commit_shaped = False
         verdict, code, detail, basis = judge(r, blob, representations(path), commit_shaped)
+        if verdict == "FAIL":
+            entry = registry_match(registry, r, code)
+            if entry:
+                verdict = "EXEMPTED"
+                detail = "%s; registered as %s (%s)" % (detail, entry["id"], entry["reason"])
         results.append(dict(base, verdict=verdict, code=code, detail=detail, basis=basis))
 
     # Append-only supersession (ruling Q1=D): a FAIL row whose path also carries a
@@ -240,16 +285,21 @@ def main(argv=None):
             superseded.append(r)
 
     fails = [r for r in results if r.get("verdict") == "FAIL"]
+    exempted = [r for r in results if r.get("verdict") == "EXEMPTED"]
     superseded = [r for r in results if r.get("verdict") == "SUPERSEDED"]
     warns = [r for r in results if r.get("verdict") == "WARN"]
     print("evidence pin sweep: %d canonical row(s) in %d card(s)"
           % (len(results), len(cards)))
-    print("  FAIL: %d   SUPERSEDED: %d   WARN: %d"
-          % (len(fails), len(superseded), len(warns)))
+    print("  FAIL: %d   EXEMPTED: %d   SUPERSEDED: %d   WARN: %d"
+          % (len(fails), len(exempted), len(superseded), len(warns)))
     for r in fails:
         print("  FAIL %-38s %-22s %s:%s  %s"
               % (r["card"].split("/")[-1], r["code"], (r["path"] or "")[:42],
                  r.get("line", "?"), r["detail"]))
+    for r in exempted:
+        print("  EXEMPTED %-32s %s:%s  %s"
+              % (r["card"].split("/")[-1], (r["path"] or "")[:42], r.get("line", "?"),
+                 r["detail"][:100]))
     for r in superseded:
         print("  SUPERSEDED %-30s %-22s %s:%s  %s"
               % (r["card"].split("/")[-1], r["code"], (r["path"] or "")[:42],
@@ -257,6 +307,7 @@ def main(argv=None):
     if args.json:
         Path(args.json).write_text(
             json.dumps({"rows": results, "fail": len(fails),
+                        "exempted": len(exempted),
                         "superseded": len(superseded), "warn": len(warns)},
                        ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         print("  json:", args.json)
