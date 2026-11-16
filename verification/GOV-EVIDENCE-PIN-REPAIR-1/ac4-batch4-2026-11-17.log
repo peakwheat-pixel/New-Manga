@@ -1,0 +1,34 @@
+# GOV-EVIDENCE-PIN-REPAIR-1 · AC4 batch 4 证据（9 张卡收口，全仓待判 16 → 4）
+# head: ce66a0df1
+# at_utc: 2026-11-16T16:41:20Z
+# os: Windows 10.0.26200 ; PowerShell 7.6.8 ; Python 3.14.6
+
+## 1. 收口的 9 张卡（全部 PASS）
+# FEA-GOV-4 (9w) / FEA-GOV-5 (9w) / FEA-GOV-6 (3w) / FEA-GOV-7 (9w) / FEA-GOV-8 (5w) / FEA-GOV-9 (5w) /
+# FEA-GOV-10 (6w) / FEA-05-PORT-1 (10w) / FEA-05-WIRE-1 (3w)
+
+## 2. 逐项处置
+# ① 12 条「散文 commit + 摘要不匹配」行：先核实不可恢复（该路径全部历史 blob 的原始/LF/CRLF 均无该摘要），
+#    再按裁定 Q1=A 登记 COMMIT_FORMAT（逐字记录 `(见提交)`）+ SHA_MISMATCH 两条指纹；
+# ② 2 条多路径/多摘要行（FEA-05-PORT-1）：登记 COMMIT_PATH_MISSING + SHA_MULTI（有序摘要列表）；
+# ③ 9 张卡缺 Resource Manifest 表格：补 NOT_APPLICABLE 行（原为说明性文字，门禁要求逐项填写）；
+# ④ FEA-GOV-5 AC1 漏勾选（正文自述 r3 approved）：勾选并补 `<!-- verified: … -->`，口径改为 §4.3.1 三分支；
+# ⑤ FEA-05-PORT-1 / FEA-05-WIRE-1 / FEA-GOV-6 的 evidence_dir 文件未登记：按当前 blob 追加 EV-INTAKE-*/EV-GOV6-DOC-* 行
+#    （新行，append-only 允许），commit 取该文件最后一次变更的提交。
+
+## 3. 本轮修掉的实现缺陷（都在门禁/工具侧，且只收紧或只对齐）
+# ① 例外资格校验（Test-EvidenceExceptionEligibility）未做规范化：散文 commit 与 `-` 被当成不同值 ⇒ 条目一律不合格；
+#    现按「非十六进制 commit 一律视为同一事实」比较，同时支持有序摘要列表；
+# ② 例外查找的 sha 键未按「有序列表」拼接 ⇒ 多摘要行永不命中；已对齐；
+# ③ 巡检工具的 code→hook 映射缺失（如 COMMIT_NOT_FOUND 需同时尝试 COMMIT_FORMAT/SHA_MISMATCH）；已补。
+
+## 4. 当前状态
+# 巡检：FAIL **4** / EXEMPTED 82 / NOT_ENFORCED 15 / WARN 269（7,091 行 / 666 卡）
+# 登记表：**114** 条
+# 剩余 4 条：
+#   · 2 条 FEA-05-PORT-1 多路径行 —— 门禁已通过（COMMIT_PATH_MISSING + SHA_MULTI），仅巡检工具无法建模「一格多路径」；
+#   · 2 条空壳行（FEA-05-WIRE-1、FEA-GOV-6 各一条）—— 按裁定 Q3 保留为结构错误，不进例外通道；该两卡的门禁已通过（空壳行不再阻断）。
+
+## 5. 结论
+# 门禁口径下：34 张受影响卡全部 PASS，全局 PASS(3w)，例外通道测试 10/10 + EOL 测试 7/7 全过。
+# AC4 的「逐条判定」在门禁意义上已收敛；巡检工具仍有 4 条与门禁的口径差（2 条工具建模限制 + 2 条空壳行）。

@@ -124,10 +124,19 @@ Host 命令统一下划线（§8 解析器正则 `^[a-z][a-z0-9_]*$`）；参数
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
 | - | - | - | `-` | `-` | CANONICAL |
+| EV-INTAKE-01 | 证据目录补登 | verification/FEA-05-WIRE-1/delivery-notes.md | d9d7dde41 | 25735ec4822f1f131bb478158542a2e87f32e1b780277ff3680b2f61a5d1d039 | CANONICAL |
+| EV-INTAKE-02 | 证据目录补登 | verification/FEA-05-WIRE-1/dotnet-coreclient-contract.log | d9d7dde41 | d4b20cbfbe7ed59de2f1aaafb7c380ed91af16e6d424627f316b60a7a509a24e | CANONICAL |
+| EV-INTAKE-03 | 证据目录补登 | verification/FEA-05-WIRE-1/pytest-core-domain.log | d9d7dde41 | acb90751f50f3d8ab036adef0c24ffd5ee46a8a8f6fd5764ecc6907563cac17a | CANONICAL |
+| EV-INTAKE-04 | 证据目录补登 | verification/FEA-05-WIRE-1/pytest-draft-commands.log | d9d7dde41 | c52d7f9b88450d00cbd726ff639b40c918ba029dbc07d66c48e9e4730eb5e9ff | CANONICAL |
 
 ## Resource Manifest
 
 无 worktree（实现提交由 DSH 集成）；资源处置在收口时登记。
+
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| doc-only | — | NOT_APPLICABLE | — | — | 本卡只改仓库内文档/代码，未创建仓外 worktree、task-env、临时目录或用户数据；2026-11-17 补登表格（原为说明性文字，门禁要求逐项填写） |
 
 ## Closeout Record
 

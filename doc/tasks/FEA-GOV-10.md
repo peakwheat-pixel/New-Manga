@@ -61,6 +61,10 @@ FEA-01 契约清单中 C-07（`doc/plan/FEA-C07_API_INVENTORY.md`，54 个成员
 
 治理 Task：无 worktree、无临时产物；资源处置在收口时登记。
 
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| doc-only | — | NOT_APPLICABLE | — | — | 本卡只改仓库内文档/代码，未创建仓外 worktree、task-env、临时目录或用户数据；2026-11-17 补登表格（原为说明性文字，门禁要求逐项填写） |
+
 ## 独立 Review
 
 - r1 [review](../reviews/FEA-GOV-10-review.md) → r2 [r2](../reviews/FEA-GOV-10-r2.md) **approved**（共处置 1 P1 + 7 P2）

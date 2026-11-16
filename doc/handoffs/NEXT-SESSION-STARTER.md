@@ -240,7 +240,13 @@ Gate 剩下的是条件 3（人眼目视 overlay）/ 4（签名 + 真机安装�
   Q1=A/Q2=A/Q3=结构非法）新增两个例外钩子 **COMMIT_FORMAT**（散文 commit，逐字记录才降级）与 **SHA_MULTI**（有序摘要列表），
   并把整行 `-` 判为「行结构非法」且不进例外通道；同时修掉「单元格反引号未剥离导致条目永不命中」的实现缺陷。
   登记表 97 条（PATH_MISSING 51 / SHA_MISMATCH 34 / COMMIT_FORMAT 12）。
-- **待做（AC4/AC5）**：剩余按卡处理 —— ①同一行还需补登记 SHA_MISMATCH；②`FEA-GOV-10` 等卡缺 `## Resource Manifest` 整节；
+- **AC4 batch 4（R10）**：9 张卡收口（`FEA-GOV-4/5/6/7/8/9/10`、`FEA-05-PORT-1`、`FEA-05-WIRE-1` 全部 PASS）。
+  手法：12 条散文 commit 行登记 COMMIT_FORMAT+SHA_MISMATCH 双指纹；2 条多路径/多摘要行登记 SHA_MULTI+COMMIT_PATH_MISSING；
+  9 张卡补 Resource Manifest 表格；FEA-GOV-5 AC1 补勾选与 verified 注释；3 张卡按当前 blob 追加新证据行。
+  门禁口径下 **34 张受影响卡全部 PASS**，全仓待判 **16 → 4**（2 条多路径行仅巡检工具建模限制、2 条空壳行按裁定 Q3 保留）。
+  登记表 **114** 条；例外通道测试 10/10、EOL 测试 7/7 全过。
+- **待做（AC5）**：整卡上下文独立复核（AC4 已在门禁口径收敛）
+- **待做（旧清单）**：剩余按卡处理 —— ①同一行还需补登记 SHA_MISMATCH；②`FEA-GOV-10` 等卡缺 `## Resource Manifest` 整节；
   ③2 条多摘要行应登记 SHA_MULTI，2 条空壳行按裁定保留错误。余 **51** 条（SHA_NOT_64_HEX 214 / PATH_MISSING 53 / SHA_MISMATCH 31 / COMMIT_NOT_FOUND 12）按类逐条归因 → 逐条登记或修 pin → 上下文独立复核；另需就「check.ps1 是否接受 blob 的 EOL 形态」取得裁定（当前门禁只比对原始 blob 与当前工作树，会把这些有效 pin 判红）。
 - ⚠️ 已更正事实：EV-11 的值是 **64 位**合法 sha256（不是题述的 40 位），真正问题是本仓无任何字节表示能复现它。
 

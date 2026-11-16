@@ -107,10 +107,18 @@ allowed_paths:
 | E-FEA05P-PORTS | AC2 | `apps/desktop-avalonia/src/NewManga.App/Services/IHostController.cs` + `HostController.cs` + `NullHostController.cs` | `24600bbee` | `82c78323f571fe9a882f042ab3826b1c2b41d9fb55dddc010ffbe039e2e89cc1` / `faa9d540a780b986ee9bf8a825ed0cbf29a1a09510191156531e2a1189d33d0d` / `41c1059e625c277d169b93811a89aa0153f442aeb4c71dea8e7015710d884ab9` | CANONICAL |
 | E-FEA05P-TESTS | AC2/AC4 | `apps/desktop-avalonia/tests/NewManga.CoreClient.Tests/Commands/DraftCommandRegistryTests.cs` + `NewManga.App.Tests/DraftPortDefaultTests.cs` | `24600bbee` | `4df7999b0bb23321b9a808a01d1eb965a35f4eb5c5a689334da0b444c23f8486` / `338e002dd9d5e2bec45948d28e5499075a79219ed261a0d594625aa9b3401c0d` | CANONICAL |
 | E-FEA05P-SLN | AC6 | `verification/FEA-05-PORT-1/sln-test.log` | `24600bbee` | `f303d1cd231d5d92745252d9b8eed3f92c186509edcc3fc41575cba2c3a4397f` | CANONICAL |
+| EV-INTAKE-01 | 证据目录补登 | verification/FEA-05-PORT-1/app-tests.log | 24600bbee | 4d78f618f10a3f2f406706f1c33799e1faf877572c7cc376698c63ba28e68919 | CANONICAL |
+| EV-INTAKE-02 | 证据目录补登 | verification/FEA-05-PORT-1/build.log | 24600bbee | f9828b80596dc45d9545fb52b7f1424e9b65292d705e2a3b8bb5a867a8aa47aa | CANONICAL |
+| EV-INTAKE-03 | 证据目录补登 | verification/FEA-05-PORT-1/coreclient-test.log | 24600bbee | 529167ffde8cd6a0d05db3b8768702c49c3581d71bf63189bcb0afead58a8cd8 | CANONICAL |
+| EV-INTAKE-04 | 证据目录补登 | verification/FEA-05-PORT-1/delivery-notes.md | 24600bbee | 4ead590ab2d0e103f60fb523fed49c4081f68fa1ef21fda065e8fb790cf36e6c | CANONICAL |
 
 ## Resource Manifest
 
 无 worktree（main 直接实现）；资源处置在收口时登记。
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| doc-only | — | NOT_APPLICABLE | — | — | 本卡只改仓库内文档/代码，未创建仓外 worktree、task-env、临时目录或用户数据；2026-11-17 补登表格（原为说明性文字，门禁要求逐项填写） |
 
 ## 备注（收口时 DSH 处理）
 

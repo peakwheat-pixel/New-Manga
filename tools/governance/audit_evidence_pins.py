@@ -193,6 +193,16 @@ def registry_eligible(registry_doc, entry, cache={}):
     return ok
 
 
+CODE_TO_HOOKS = {
+    "COMMIT_NOT_FOUND": ("COMMIT_FORMAT", "SHA_MISMATCH"),
+    "SHA_MISMATCH": ("SHA_MISMATCH",),
+    "PATH_MISSING": ("PATH_MISSING", "COMMIT_PATH_MISSING"),
+    "SHA_NOT_64_HEX": ("SHA_MULTI",),
+    "COMMIT_PATH_MISSING": ("COMMIT_PATH_MISSING",),
+    "BLOB_MISMATCH_WORKTREE": ("SHA_MISMATCH",),
+}
+
+
 def registry_match(registry, row, error_type):
     if not registry:
         return None
@@ -200,15 +210,27 @@ def registry_match(registry, row, error_type):
     if row.get("card_status") not in ("done", "closed_with_limitations"):
         return None
     commit = "" if row.get("commit") in ("", "-") else row["commit"]
-    key = (row.get("card"), row.get("card_id"), row.get("id"), row.get("path"), commit,
-           (row.get("digests") or [""])[0].lower(),
-           "", error_type)
-    for (card, task, eid, path, c, sha, klass, etype), entry in registry.items():
-        if (card, task, eid, path, c, sha, etype) == (key[0], key[1], key[2], key[3],
-                                                      key[4], key[5], error_type):
-            if registry_eligible(_REGISTRY_DOC, entry):
-                return entry
-            return None
+    digests = [d.lower() for d in (row.get("digests") or [])]
+    sha = (",".join(digests) if len(digests) > 1 else (digests[0] if digests else ""))
+    card = row.get("card")
+    task = row.get("card_id")
+    eid = row.get("id")
+    path = row.get("path")
+    klass = ""
+    # The sweep names an error after what it observed; the gate names it after the
+    # rule it tripped, and one row may need more than one hook (a prose commit also
+    # yields a digest mismatch).  Accept any registered hook that this row explains.
+    hooks = [error_type] + list(CODE_TO_HOOKS.get(error_type, ()))
+    for (c_card, c_task, c_eid, c_path, c_commit, c_sha, c_klass, c_type), entry in registry.items():
+        if (c_card, c_task, c_eid, c_path) != (card, task, eid, path):
+            continue
+        if c_type not in hooks:
+            continue
+        entry_commit = "" if str(entry.get("commit")) in ("", "-") else str(entry.get("commit"))
+        if c_commit not in ("", entry_commit):
+            continue
+        if registry_eligible(_REGISTRY_DOC, entry):
+            return entry
     return None
 
 

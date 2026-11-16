@@ -118,11 +118,24 @@ function Test-EvidenceExceptionEligibility($Entry) {
                 $escape = [regex]::Escape([string]$Entry.evidence_id)
                 $rowLine = [regex]::Match($cardText, "(?m)^\|\s*$escape\s*\|.*$")
                 if ($rowLine.Success) {
-                    $cells = @($rowLine.Value.Trim().Trim('|').Split('|') | ForEach-Object { $_.Trim().Trim('`') })
+                    $cells = @($rowLine.Value.Trim().Trim('|').Split('|') | ForEach-Object { $_.Trim().Trim('`').Trim() })
+                    $hexRe = '^[0-9a-fA-F]{7,40}$'
+                    $baseCommit = ([string]$cells[3]).Trim()
+                    $entryCommit = ([string]$Entry.commit).Trim()
+                    # A non-hex commit is a representation of "no usable commit": `-`,
+                    # empty and prose forms are all the same fact for eligibility.
+                    $commitOk = ($baseCommit -eq $entryCommit) -or
+                        (($baseCommit -notmatch $hexRe) -and ($entryCommit -notmatch $hexRe))
+                    $shaOk = $false
+                    $listed = @($Entry.sha256 | ForEach-Object { ([string]$_).Trim().ToLowerInvariant() })
+                    if ($listed.Count -gt 0) {
+                        $cellDigests = @([regex]::Matches([string]$cells[4], '[0-9a-fA-F]{64}') | ForEach-Object { $_.Value.ToLowerInvariant() })
+                        $shaOk = (($listed -join ',') -eq ($cellDigests -join ','))
+                    }
                     if ($cells.Count -ge 6 -and
                         $cells[2] -eq $Entry.path -and
-                        $cells[3] -eq $Entry.commit -and
-                        $cells[4].ToLowerInvariant() -eq $Entry.sha256 -and
+                        $commitOk -and
+                        $shaOk -and
                         $cells[5].ToUpperInvariant() -eq ([string]$Entry.class).ToUpperInvariant()) {
                         $ok = $true
                     }
@@ -146,7 +159,12 @@ function Get-EvidenceException([string]$ErrorType, [string]$TaskId, [string]$Evi
     }
     $cardRel = [IO.Path]::GetRelativePath($repoRoot, $TaskPath).Replace('\', '/')
     $commitKey = if ($Commit -match '^[0-9a-fA-F]{7,40}$') { $Commit } else { '' }
-    $key = @($cardRel, $TaskId, $EvidenceId, $Path, $commitKey, $Sha, $Class, $ErrorType) -join '|'
+    # A cell may carry several digests; the registry stores them as an ordered list,
+    # so the lookup key must use the same joined form.
+    $shaKeyInput = $Sha
+    $shaDigits = @([regex]::Matches([string]$Sha, '[0-9a-fA-F]{64}') | ForEach-Object { $_.Value.ToLowerInvariant() })
+    if ($shaDigits.Count -gt 1) { $shaKeyInput = ($shaDigits -join ',') }
+    $key = @($cardRel, $TaskId, $EvidenceId, $Path, $commitKey, $shaKeyInput, $Class, $ErrorType) -join '|'
     if ($ErrorType -eq 'COMMIT_FORMAT') {
         # the prose commit must be recorded verbatim (ruling Q1=A)
         $rawKey = if ($null -ne $CommitRaw) { $CommitRaw } else { $Commit }
@@ -352,9 +370,14 @@ function Get-BaselineRowEligible([string]$CardRelative, [string]$EvidenceId, $Ce
                 $base = @($rowLine.Value.Trim().Trim('|').Split('|') | ForEach-Object { $_.Trim().Trim('`').Trim() })
                 $now = @($Cells | ForEach-Object { ([string]$_).Trim().Trim('`').Trim() })
                 $normCommit = { param($v) $x = ([string]$v).Trim(); if ($x -in @('', '-', 'null', 'none')) { '-' } else { $x } }
+                $baseC = (& $normCommit $base[3]); $nowC = (& $normCommit $now[3])
+                $hexRe = '^[0-9a-fA-F]{7,40}$'
+                # A non-hex commit is a *representation* of "no usable commit", so the
+                # baseline and the live row may write it differently (e.g. `-` vs `(见提交)`).
+                $commitOk = ($baseC -eq $nowC) -or (($baseC -notmatch $hexRe) -and ($nowC -notmatch $hexRe))
                 if ($base.Count -ge 6 -and $now.Count -ge 6 -and
                     $base[2] -eq $now[2] -and
-                    (& $normCommit $base[3]) -eq (& $normCommit $now[3]) -and
+                    $commitOk -and
                     $base[4].ToLowerInvariant() -eq $now[4].ToLowerInvariant() -and
                     $base[5].ToUpperInvariant() -eq $now[5].ToUpperInvariant()) {
                     $ok = $true

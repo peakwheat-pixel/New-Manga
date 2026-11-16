@@ -65,11 +65,19 @@ FEA-GOV-5 完成：C-04b `approved`、C-05（页可见性）、C-06（授权面�
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
 | - | - | - | `-` | `-` | CANONICAL |
+| EV-GOV6-DOC-01 | AC1-AC4 草案 | doc/plan/FEA-C05_PAGE_VISIBILITY_DRAFT.md | 7f2fed824 | f6e6f3cb1fe19b253688f14ddf55f106b8bb89d3d3ab946a185cc12c34dc4714 | CANONICAL |
+| EV-GOV6-DOC-02 | AC1-AC4 草案 | doc/plan/FEA-C06_SOURCE_AUTH_DRAFT.md | 7317837d5 | 75f8e2b4eb808a7b33f503ae64e6455a390587a552a2689df9ce2ae133341c84 | CANONICAL |
+| EV-GOV6-DOC-03 | AC1-AC4 草案 | doc/plan/FEA-C08_RUN_SNAPSHOT_DRAFT.md | 90e81f5cb | 453f993c1a16eab9db783f5b3a24710ac6e24b9a290a2b05bcba45f463fa8517 | CANONICAL |
+| EV-GOV6-DOC-04 | AC1-AC4 草案 | doc/plan/FEA-C09_DELETE_BACKUP_MIGRATION_DRAFT.md | 1e0a98734 | dc51226b336ce6af60fb6586bdeeb3660dff07011b415c52ac41d042cb9a4ec6 | CANONICAL |
+| EV-GOV6-DOC-05 | AC1-AC4 草案 | doc/plan/FEA-C12_CHECKER_SCOPE_DRAFT.md | db6322191 | f498358601436c746129123db294750bd00c4a7321f185f8057b3bcc9eff7612 | CANONICAL |
 
 ## Resource Manifest
 
 治理 Task：无 worktree、无临时产物；资源处置在收口时登记。
 
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| doc-only | — | NOT_APPLICABLE | — | — | 本卡只改仓库内文档，未创建仓外资源；2026-11-17 补登表格（原为说明性文字） |
 ## 独立 Review
 
 - C-05/C-06：r1 [review](../reviews/FEA-GOV-6-c05-c06-review.md) → r2 [r2](../reviews/FEA-GOV-6-c05-c06-r2.md) → r3 [r3](../reviews/FEA-GOV-6-c05-c06-r3.md) **approved**（共处置 6 P1 + 17 P2）

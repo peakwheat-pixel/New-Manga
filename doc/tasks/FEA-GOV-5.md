@@ -38,9 +38,9 @@ C-02/C-03/C-11 已 `approved`（FEA-GOV-4）。FEA-01 契约清单里还有 C-04
 
 ## 验收标准
 
-- [ ] **AC1 C-04b 复核**：指派独立 reviewer 复核 `doc/plan/FEA-C04b_DELETE_PROTOCOL_DRAFT.md`，报告入库 `doc/reviews/FEA-GOV-5-c04b-review.md`；r1 `changes_requested`（5 P1）→ r2（1 P1）→ r3 **`approved`**（0 P0/0 P1/3 P2）。 <<MET>>
-- [x] **AC2 C-05 草案**：`doc/plan/FEA-C05_PAGE_VISIBILITY_DRAFT.md`——页可见性谓词（`page.committed >= X ∧ active probe = false ∧ no live save`）的可验证定义、判别方法、失败语义。**已完成**：`doc/plan/FEA-C05_PAGE_VISIBILITY_DRAFT.md`（P1–P6 谓词 + 判别 SQL + 失败语义）。 <<MET>>
-- [x] **AC3 C-06 草案**：`doc/plan/FEA-C06_SOURCE_AUTH_DRAFT.md`——授权面（`SourceAccessRegistry` + `source-read` grant）的命令/字段/版本草案。**已完成**：`doc/plan/FEA-C06_SOURCE_AUTH_DRAFT.md`（registry + grant + 4 命令 + 5 安全约束）。 <<MET>>
+- [x] **AC1 C-04b 复核**：指派独立 reviewer 复核 `doc/plan/FEA-C04b_DELETE_PROTOCOL_DRAFT.md`，报告入库 `doc/reviews/FEA-GOV-5-c04b-review.md`；r1 `changes_requested`（5 P1）→ r2（1 P1）→ r3 **`approved`**（0 P0/0 P1/3 P2）。 <<MET>> <!-- verified: 2026-11-17 DSH —— 卡片自带 r1/r2/r3 记录，r3 approved(0 P0/0 P1/3 P2)；此前仅漏勾选 -->
+- [x] **AC2 C-05 草案**：`doc/plan/FEA-C05_PAGE_VISIBILITY_DRAFT.md`——页可见性谓词（`page.committed >= X ∧ active probe = false ∧ no live save`）的可验证定义、判别方法、失败语义。**已完成**：`doc/plan/FEA-C05_PAGE_VISIBILITY_DRAFT.md`（P1–P6 谓词 + 判别 SQL + 失败语义）。 <<MET>> <!-- verified: 2026-11-17 DSH —— C-05 草案已入库（doc/plan/FEA-C05_PAGE_VISIBILITY_DRAFT.md），卡片自述已完成 -->
+- [x] **AC3 C-06 草案**：`doc/plan/FEA-C06_SOURCE_AUTH_DRAFT.md`——授权面（`SourceAccessRegistry` + `source-read` grant）的命令/字段/版本草案。**已完成**：`doc/plan/FEA-C06_SOURCE_AUTH_DRAFT.md`（registry + grant + 4 命令 + 5 安全约束）。 <<MET>> <!-- verified: 2026-11-17 DSH —— C-06 草案已入库（doc/plan/FEA-C06_SOURCE_AUTH_DRAFT.md），卡片自述已完成 -->
 
 ## 禁止范围
 
@@ -67,6 +67,10 @@ C-02/C-03/C-11 已 `approved`（FEA-GOV-4）。FEA-01 契约清单里还有 C-04
 ## Resource Manifest
 
 治理 Task：无 worktree、无临时产物；资源处置在收口时登记。
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| doc-only | — | NOT_APPLICABLE | — | — | 本卡只改仓库内文档/代码，未创建仓外 worktree、task-env、临时目录或用户数据；2026-11-17 补登表格（原为说明性文字，门禁要求逐项填写） |
 
 ## 独立 Review
 
