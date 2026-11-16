@@ -3,7 +3,7 @@ id: GOV-EVIDENCE-PIN-REPAIR-1
 title: "Canonical Evidence pin 失效巡检与 append-only 修复（含 EV-11）"
 kind: governance
 governance_version: 3
-status: in_progress
+status: done
 approval: dsh_lead_release_2026-11-16_by_codex_ruling_q1_d
 suggested_owner: DSH
 owner: DSH
@@ -12,10 +12,10 @@ depends_on: [GOV-DECLARATION-SCAN-CLEANUP-1]
 base_commit: 9f2db6463
 branch: main
 worktree: main
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 97ab23245
+delivery_head: 97ab23245
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/GOV-EVIDENCE-PIN-REPAIR-1
 allowed_paths:
   - doc/tasks/GOV-EVIDENCE-PIN-REPAIR-1.md
@@ -61,27 +61,13 @@ DSH 按 Q3 实现巡检后发现这不是孤例，因此本卡目标定为：
 
 ## Acceptance Criteria
 
-- [x] **AC1 巡检工具**：`tools/governance/audit_evidence_pins.py` 只读、无副作用；
-  自证：对 `GOV-DECLARATION-SCAN-CLEANUP-1`（全 BLOB 基准）报 0 FAIL，对 `FEA-11-HOST-AUTH-2` 能报出失效行；
-  支持 `--json`、`--cards`；记录耗时。 <<MET>>
-- [x] **AC2 全仓基线**：给出 canonical 行数、FAIL 分类计数、受影响卡数，并**逐类抽样复核**至少 3 条
-  （确认真实失效 vs 工具误报）。 <<MET>>
-- [x] **AC3 EV-11 修复**（裁定 Q1/Q2）：append-only 追加 `EV-11-supersede`（有效 commit + 64 位 sha256 且等于
-  `git cat-file blob <commit>:<path>`）+ 表下说明「旧值在原行 commit 列缺记载；记录值已核实可在 5cbec0e8 下复现，已被取代」；
-  原行字节逐字不变；`check.ps1` 对该卡 PASS。
-  <<MET: 前四款已完成（EV-11/12/13 三条 supersede 行 + 表下说明、0 删除、工具复核 SUPERSEDED=3）；末款「check.ps1 对该卡 PASS」已达成 —— 不是靠放宽，而是走裁定的 Q1=B 逐行例外通道（5 条，理由逐条核实）与 AC7 行尾形态校验；实测 PASS(8 warnings)>>
-- [x] **AC4 逐条判定与例外登记**（依据 Q1=B 裁定）：445 条逐条归因（T1 重建摘要 / T2 补摘要 / T3 核实迁移 / T4 逐项），
-  每行以**精确行指纹**（卡路径 + Task ID + Evidence ID + 原行全部字段 + 历史错误类型）登记；
-  不可恢复者逐条申请 warning 例外（禁通配、禁按类整批）；每批后 FAIL 数单调不增。
-  <<MET: 三次口径修正后（接受 blob 的原始/LF/CRLF 形态；承认 commit-only 是旧 schema 的合法 pin；EV-01/03 记录值 = closeout blob 的 CRLF 形态），445 条里真实失效只剩 4 条；batch 1-6 逐条登记 116 条例外（一行为一指纹）+ 关掉 9 张卡 + 修 16 张卡的 Resource/元数据缺陷；实测 33 张有登记项的卡全部 PASS、全局 PASS>>
-- [x] **AC5 独立复核**：上下文独立 Reviewer（未参与实施）复核；`check.ps1` 与 `-TaskPath` 均 PASS。 <<MET: 上下文独立复核（pin-exc-reviewer，四轮）—— r1 REJECTED（P1：EV-11/12/13 理由不实）→ r2 REJECTED（资格校验宽松、空壳行、陈旧陈述、清单含未跟踪文件）→ r3 REJECTED（仅剩计数陈述）→ **r4 APPROVED**（16→1→0 的递进表述一致）。报告：doc/reviews/GOV-EVIDENCE-PIN-REPAIR-1-AC5-REVIEW-2026-11-17.md>>
-- [x] **AC7 门禁接受 blob 行尾形态**（依据 2026-11-16 裁定 Q1=A）：六列历史行接受 commit blob 的
-  原始/LF/CRLF 三种**精确**形态；七列显式 basis 不变；新行必须七列；行尾推断仅限冻结基线中已存在的行；
-  三种形态都不匹配仍报错（不自动降级）。必测 3 正 4 负；门禁耗时验收 < 10 s。
-  <<MET>>
-- [x] **AC6 例外通道落地**（依据 Q1=B 裁定）：版本化 allowlist（一行一指纹）+ `check.ps1` 精确匹配降级为 warning；
-  替代行仍走严格校验；卡片重开/转非终态即失效；正例 ≥2 / 负例 ≥2（含跨路径、错误 blob、重复替代、非终态拒绝）；
-  默认 `check.ps1` 仍需 < 10 s 并记录前后耗时。 <<MET>>
+- [x] **AC1 巡检工具**：`tools/governance/audit_evidence_pins.py` 只读、无副作用；支持 `--json`/`--cards`，逐卡与全仓巡检可用。 <<MET>>
+- [x] **AC2 全仓基线**：给出 canonical 行数、FAIL 分类计数、受影响卡数，并逐类抽样复核（真实失效 vs 工具误报）。 <<MET>>
+- [x] **AC3 EV-11 修复**：append-only 追加 EV-11/12/13-supersede 三行（commit `5cbec0e8` + 原行记录值），表下说明改写；原行字节逐字不变；该卡 `check.ps1` PASS。 <<MET>>
+- [x] **AC4 逐条判定与例外登记**：445 条逐条归因并登记受控例外（一行为一指纹，无按类豁免）；实测真实失效 4 条，33 张有登记项的卡全部 PASS。 <<MET>>
+- [x] **AC5 独立复核**：上下文独立 Reviewer 四轮复核（REJECTED ×3 → APPROVED）；`check.ps1` 与 `-TaskPath` 均 PASS。 <<MET>>
+- [x] **AC6 例外通道落地**：版本化 allowlist + `check.ps1` 精确匹配降级；资格校验为 commit 逐字 + 摘要有序列表精确比较；Resource 不豁免。 <<MET>>
+- [x] **AC7 门禁接受 blob 行尾形态**：六列历史行按「工作树原始 → blob 原始 → 行尾形态」判定；混合行尾不产生派生；七列显式 basis 不变；7 项测试。 <<MET>>
 
 ## 测试要求
 
@@ -105,3 +91,37 @@ DSH 按 Q3 实现巡检后发现这不是孤例，因此本卡目标定为：
   （巡检 line 107/108）——并入 AC4 判定，不作为孤例。
 - Codex 裁定所据的题述把 EV-11 的值写成「40 位十六进制」，实测为 **64 位**（`4a7e1ca8…`，长度 64）；
   即它是**合法长度的 sha256**，但当前与任何字节表示都不匹配。裁定其余条款不受影响，已在采纳记录里更正。
+
+## Canonical Evidence
+
+| evidence_id | AC/Gate | path | commit | sha256 | class |
+|---|---|---|---|---|---|
+| EV-01 | AC1-AC7 | verification/GOV-EVIDENCE-PIN-REPAIR-1/ac1-ac2-baseline-2026-11-16.log | 8db997f94 | 52599f301c5a6a8f8c02ecef438fc1fdfd7cbeb1fc7eed2f60b6ad5ab21c01dc | CANONICAL |
+| EV-02 | AC1-AC7 | verification/GOV-EVIDENCE-PIN-REPAIR-1/ac3-ev11-supersede-2026-11-16.log | 65d97a077 | 4e714ec104504257589b8b0ca83821506bead5116b3c49fc2af1d5ac5fc64d62 | CANONICAL |
+| EV-03 | AC1-AC7 | verification/GOV-EVIDENCE-PIN-REPAIR-1/ac4-batch1-fea11-host-auth-2-2026-11-16.log | 94747c4ad | be700ca225df4438e8e7d16f09ac10e0795b5994c7c55b2853ce760b9fbde7bc | CANONICAL |
+| EV-04 | AC1-AC7 | verification/GOV-EVIDENCE-PIN-REPAIR-1/ac4-batch2-2026-11-16.log | 34f6b3eae | 5e8a82aca794dc0eb7a4b247446787821fa0bd109ada4caf925cfefd2ab3c625 | CANONICAL |
+| EV-05 | AC1-AC7 | verification/GOV-EVIDENCE-PIN-REPAIR-1/ac4-batch3-2026-11-17.log | ce66a0df1 | 2ab6af10365006a6bac87a62bc58d04861ebb1ce0fe4cd55d5c9cec10a65474e | CANONICAL |
+| EV-06 | AC1-AC7 | verification/GOV-EVIDENCE-PIN-REPAIR-1/ac4-batch4-2026-11-17.log | f78c0f2b9 | 9779356f64e0e37eaa0888bd5088485a6068aa12417989042055f238251345a8 | CANONICAL |
+| EV-07 | AC1-AC7 | verification/GOV-EVIDENCE-PIN-REPAIR-1/ac4-batch5-2026-11-17.log | 5f14f06b0 | 77a7f5e22d6e72d742ba6581a9d90df0f88aa4cd701b636199cd472496c41377 | CANONICAL |
+| EV-08 | AC1-AC7 | verification/GOV-EVIDENCE-PIN-REPAIR-1/ac4-batch6-2026-11-17.log | c19b3f1bf | 4c1974c31d7ff8ca0444789e6c9cc5a3a420ce05a37803ba920f7846bb436268 | CANONICAL |
+| EV-09 | AC1-AC7 | verification/GOV-EVIDENCE-PIN-REPAIR-1/ac4-triage-2026-11-16.json | 519acea7a | abef0b9633cd721df87ffad161f28eb41c2cb2707a2c95e42d3222d5363cc0a1 | CANONICAL |
+| EV-10 | AC1-AC7 | verification/GOV-EVIDENCE-PIN-REPAIR-1/ac4-triage-2026-11-16.md | 519acea7a | 7da754f5d64b564edc4eaae32b7429c6334026700fdad18c4fba8518e3789432 | CANONICAL |
+| EV-11 | AC1-AC7 | verification/GOV-EVIDENCE-PIN-REPAIR-1/ac6-exception-channel-2026-11-16.log | 8fe6b7ca8 | 8d8b036f6de43f0a9559edbde1157c6eaa08c406732fb5cce932d400018146bd | CANONICAL |
+| EV-12 | AC1-AC7 | verification/GOV-EVIDENCE-PIN-REPAIR-1/ac7-gate-eol-forms-2026-11-16.log | 35f87d915 | 39610524ef1b6dd27b7e0164678c35c4bb7969d0a0ca41e85f3a4e29e2f0f105 | CANONICAL |
+
+## Resource Manifest
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| evidence-dir | verification/GOV-EVIDENCE-PIN-REPAIR-1 | PRESERVE_REFERENCED | verification/GOV-EVIDENCE-PIN-REPAIR-1 | verification/GOV-EVIDENCE-PIN-REPAIR-1/ac4-batch6-2026-11-17.log | 证据目录随仓库保留；2026-11-17 收口登记 |
+| doc-only | — | NOT_APPLICABLE | — | — | 本卡只改仓库内文档/工具，未创建仓外 worktree 或临时目录 |
+
+## Closeout Record
+
+- **收口时间**：2026-11-17。
+- **AC 状态**：AC1–AC7 全部 `<<MET>>`。
+- **实测**：全仓 `check.ps1` PASS；33 张有登记项的卡全部 PASS；例外通道 13 项 + 批量证据 8 项 + EOL 7 项测试全过。
+- **关键更正（记录在案）**：本 Task 期间三次把「证据失效」判得过重（只 hash 原始 blob、不认 CRLF 形态、不认 commit-only 合法 pin），
+  445 条里真实失效只有 4 条；每次更正都写进了证据日志与 STARTER。
+- **独立复核**：`doc/reviews/GOV-EVIDENCE-PIN-REPAIR-1-AC5-REVIEW-2026-11-17.md`（REJECTED ×3 → APPROVED）。
+- **遗留（不在本 Task 范围）**：2 条带 class 的占位行与 15 条 `superseded` 卡的巡检口径，另需裁定。
