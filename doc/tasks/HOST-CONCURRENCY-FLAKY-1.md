@@ -159,6 +159,9 @@ fileLock = new FileStream(... "registry.v1.lock", ..., FileShare.None);   // ←
 | EV-HCF-16 | AC6 独立复核报告（CHANGES_REQUESTED + P0/P1/P2） | verification/HOST-CONCURRENCY-FLAKY-1/review-ac6.md | bbeb28dcb | ca480b624833edee8201ba76ed927f08b464dab4f908a3db65361f44e137fbee | CANONICAL | BLOB |
 | EV-HCF-17 | P0-1 修复后 test.ps1 全量（仍 EXIT=0） | verification/HOST-CONCURRENCY-FLAKY-1/after-p0-fix.log | bbeb28dcb | c9ff683c687acb564a6a9d9fec10221a862a03741af3e689b17420f421ad695d | CANONICAL | BLOB |
 | EV-HCF-18 | P0-1 修复的 Host -warnaserror 编译 | verification/HOST-CONCURRENCY-FLAKY-1/build-p0.log | bbeb28dcb | 5a1e95234be694cb71a90e80efa57321672d506ec82996e60803220b32880cef | CANONICAL | BLOB |
+| EV-HCF-19 | **AC6 二次独立复核报告**（CHANGES_REQUESTED；代码侧放行） | verification/HOST-CONCURRENCY-FLAKY-1/review-ac6-2nd.md | f1f9db9e4 | 62b4e36e940d986d989e5d959c2757e2a19262cd6c352f070f6eadee6b0d2d11 | CANONICAL | BLOB |
+| EV-HCF-20 | 返修后全量 test.ps1（EXIT=0；Host 364 = 361+3） | verification/HOST-CONCURRENCY-FLAKY-1/after-ac6-2nd-fix.log | f1f9db9e4 | bf3d8ef02de3bcc2bca8dfa0bc94b45cae44663efbb66afe79c95a123fd9b713 | CANONICAL | BLOB |
+| EV-HCF-21 | AC1/AC3 诊断（含「并行叙事」更正） | verification/HOST-CONCURRENCY-FLAKY-1/ac1-ac3-diagnosis.md | f1f9db9e4 | a65415bab851acd6a52999badb41ca8f49c4f4b723a7c7dad1a6b8ce69915107 | CANONICAL | BLOB |
 
 ## Resource Manifest
 
