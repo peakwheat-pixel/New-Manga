@@ -1,0 +1,63 @@
+# Ruling A 执行证据：L1（HIE P22 追踪状态漂移）清除（2026-11-16，DSH）
+# base_head: a6608dd4b2f318cc2943a9743b029f9094129e88
+
+## Ruling 依据
+#   doc/reviews/GOV-DECLARATION-SCAN-CLEANUP-1-RULING-ABC-2026-11-16.md §Ruling A
+#   采纳方案 (i)：更新 HIE 绑定到 tracked 形态 + 重批 HISTORICAL_EVIDENCE_DIGEST
+
+## 改动（仅 2 个治理文件，历史证据零字节）
+# 1) tools/governance/historical-evidence-interpretation.json
+#      HIE-O03.expected_tracking: "untracked" -> "tracked"
+#    理由：该文件已被 ee755d4bb（"commit the remaining 406-file evidence backlog"）入库为 tracked；
+#          政策记录的是过期的期望，事实在前，政策应追上事实。
+# 2) tools/governance/clean_workspace.py
+#      HISTORICAL_EVIDENCE_DIGEST: 3f4cae13...4b7d -> 5cc68358...aadd
+#      口径 = sha256(canonical_json)，sort_keys=True, separators=(",",":")（本轮实测已复现旧值一致）
+# 3) tools/governance/clean_workspace.py:1848-1850
+#      原先硬编码 expected_tracking == ("untracked" if number == 3 else "tracked")
+#      -> 政策驱动的取值合法性校验 expected_tracking in ("tracked","untracked")
+#    理由：该处是 policy 之外的**第二份真值**，必然随 ee755d4bb 过期；且与 read():1718 的
+#          tracked(relative) == (expected_tracking == "tracked")（SOURCE_DRIFT）功能重复。
+#          字段值与真实状态的比对仍由 read() 负责 ⇒ fail-by-default 不变，仅去重。
+
+## 三条绑定的字节核验（改前实测，全部仍匹配）
+#   HIE-T01  sha_ok=True  tracked  expected=tracked
+#   HIE-O01  sha_ok=True  tracked  expected=tracked
+#   HIE-O02  sha_ok=True  tracked  expected=tracked
+#   HIE-O03  sha_ok=True  tracked  expected=untracked  <-- 唯一漂移（仅「期望」字段）
+#   ⇒ 历史证据的 raw_sha256 一个都没变；被改的是政策与常量，不是证据产物。
+
+## 三步实测（同命令 python -B tools/governance/clean_workspace.py --audit-declarations --out <dir>）
+
+| 指标 | 基线（改前） | 只改 policy+digest | 完整执行（+去硬编码） |
+|---|---:|---:|---:|
+| errors | 167 | — | 167 |
+| warnings | 721 | — | 721 |
+| SOURCE_DRIFT | 1 | 0 | **0** |
+| POLICY_INVALID | 0 | 1 | **0** |
+| ERROR_MISMATCH | 0 | 0 | **1** |
+| DECL_RESIDUAL_RUNTIME_PRESERVED | 0 | 0 | 0 |
+| protected_roots | 5582 | 5582 | **5582** |
+| declarations | 6729 | — | 6729 |
+
+（中间态「只改 policy+digest」实测：SOURCE_DRIFT=0、POLICY_INVALID=1 —— 这是本轮发现第二处真值重复的关键证据。）
+
+## 结论
+# 1. **L1 已彻底清除**：两条同义错误（SOURCE_DRIFT / POLICY_INVALID）均归零。
+# 2. **L3 成为唯一剩余阻塞**：ERROR_MISMATCH=1，即 clean_workspace.py:2172
+#    `require(len(removed) == 7 and len(index.errors) == 7, ...)` 的「全仓错误恰好 7 条」耦合。
+#    这正是 Ruling C 要改的那处。
+# 3. **residual 层仍未恢复**（DECL_RESIDUAL_RUNTIME_PRESERVED=0）：
+#    按 §4.4「核验结果与假设不符则假设作废」，此处更正裁定文的假设 ——
+#    **A 是必要不充分条件；A + C 才解 GOV-DECLARATION-SCAN-CLEANUP-1 AC2。**
+# 4. protected_roots = 5582 未缩小（未违反「不得缩小」约束）。
+
+## 回归
+#   FixtureBehaviour           : 9 tests / OK（含 R13 新增的第 7 类负例，未受影响）
+#   ProductionScan             : 4 tests / FAILED(failures=3) —— **与改前完全一致**，
+#                                属真实仓库声明漂移（靠 Ruling C 恢复 residual 层后才会改变）
+
+## 提交子树（git status --porcelain）
+M tools/governance/clean_workspace.py
+ M tools/governance/historical-evidence-interpretation.json
+?? doc/reviews/GOV-DECLARATION-SCAN-CLEANUP-1-RULING-ABC-2026-11-16.md

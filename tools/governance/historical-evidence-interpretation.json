@@ -186,7 +186,7 @@
     {
       "id": "HIE-O03",
       "origin_file": "verification/P22/codex-p22-task-r4-malformed-snapshot-7ebd7d40.md",
-      "expected_tracking": "untracked",
+      "expected_tracking": "tracked",
       "raw_sha256": "7ebd7d40e7334c9422f4bf126a29b3d0f49300e2bdbac86cedfdb1ed74ee98c9",
       "byte_length": 21531,
       "strict_utf8": true,

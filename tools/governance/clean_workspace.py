@@ -1666,7 +1666,7 @@ def _apply_broad_preservation(index, scanned):
 
 HISTORICAL_EVIDENCE_POLICY = "tools/governance/historical-evidence-interpretation.json"
 HISTORICAL_EVIDENCE_DIGEST = (
-    "3f4cae13b0848ed105b5ba59c7538c8456c991b1403596ca64b68b63381e4b7d")
+    "5cc683589476c689c00d7eb8c5740b8c8f8533ec69300ad7f92052c501cdaadd")
 
 
 HISTORICAL_BROAD_DEPENDENCY_DIGEST = (
@@ -1845,8 +1845,13 @@ def _apply_historical_evidence_interpretation(index, scanned):
                   "strict_utf8 utf8_bom c0_bytes source_guard parser_snapshot errors "
                   + ("fence rows" if number == 0 else "nul_offsets"))
             origin = b["origin_file"]
-            require(b["expected_tracking"] ==
-                    ("untracked" if number == 3 else "tracked"), "POLICY_INVALID",
+            # Ruling A（2026-11-16，DSH）：这里原先硬编码「第 4 条必须 untracked」——
+            # 那是 policy 之外的**第二份真值**，`ee755d4bb` 把 P22 快照入库后它就过期，
+            # 且与 `read()` 里的 `tracked(relative) == (expected_tracking == "tracked")`
+            # （`SOURCE_DRIFT`）重复。现改为**政策驱动**：只校验取值合法，
+            # 字段值与真实跟踪状态的比对仍由 `read()` 负责（fail-closed 不变）。
+            require(b["expected_tracking"] in ("tracked", "untracked"),
+                    "POLICY_INVALID",
                     "historical source tracking policy changed")
             raw = read(origin, b["expected_tracking"])
             require(sha(raw) == b["raw_sha256"]
