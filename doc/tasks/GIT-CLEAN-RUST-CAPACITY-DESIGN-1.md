@@ -3,7 +3,7 @@ id: GIT-CLEAN-RUST-CAPACITY-DESIGN-1
 title: Rust真实容量注入与残余测试收紧设计
 kind: design
 governance_version: 3
-status: in_review
+status: done
 approval: dsh_takeover_continues_2026-10-25
 suggested_owner: ZCode
 owner: ZCode
@@ -12,10 +12,10 @@ depends_on: []
 base_commit: 1829a38a41587a0d680001a40d206886afb0911d
 branch: codex/git-clean-rust-capacity-design-1
 worktree: G:/CODEX/New Manga.workspace/task-envs/GIT-CLEAN-RUST-CAPACITY-DESIGN-1/source
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: 3a21ff7f0
+delivery_head: 3a21ff7f0
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/GIT-CLEAN-RUST-CAPACITY-DESIGN-1
 allowed_paths:
   - doc/tasks/GIT-CLEAN-RUST-CAPACITY-DESIGN-1.md
@@ -57,15 +57,15 @@ planned：静态核对代码调用链、设计反例、输入head/source SHA、d
 | evidence_id | AC/Gate | path | commit | sha256 | class |
 |---|---|---|---|---|---|
 | IN-01 | source/scope | G:/CODEX/New Manga/verification/GIT-CLEAN-RUST-ISOLATION-1/r2/dsh-review-r2.md | - | a0bba91a300baa3543ceb9e7140c94d93e7860ae999c36b2d1ef7b21a8ac3829 | SOURCE_PIN |
+| EV-DESIGN-01 | AC1-AC4 | verification/GIT-CLEAN-RUST-CAPACITY-DESIGN-1/checkpoint.md | f632f801b | e9453214a1d241841ef2888fd6b8b77d749dc7d30639549624e09b0e4bfa309e | CANONICAL |
+| EV-DESIGN-02 | AC1-AC4 | verification/GIT-CLEAN-RUST-CAPACITY-DESIGN-1/DESIGN.md | - | b8bf2f87204afcf39fee8503b4f513dec4781ffb1d47660299a321c4a6af92bc | CANONICAL |
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| isolated-repo/task-env | G:/CODEX/New Manga.workspace/task-envs/GIT-CLEAN-RUST-CAPACITY-DESIGN-1 | PRESERVE_REFERENCED | — | base1829a38 | 新独立repo无remote，不清理 |
-| source/evidence | Rust r2及冻结包 | PRESERVE_REFERENCED | — | 原Task pins | 只读 |
-| dataset/model/user-data | — | NOT_APPLICABLE | — | — | 不使用 |
-| agent-output/exchange | G:/CODEX/New Manga.workspace/task-envs/GIT-CLEAN-RUST-CAPACITY-DESIGN-1/dispatch-zcode-r1 | PRESERVE_REFERENCED | — | 待派发 | 本地CLI |
+| evidence-dir | verification/GIT-CLEAN-RUST-CAPACITY-DESIGN-1 | PRESERVE_REFERENCED | verification/GIT-CLEAN-RUST-CAPACITY-DESIGN-1 | verification/GIT-CLEAN-RUST-CAPACITY-DESIGN-1/DESIGN.md | 设计文档随仓库保留；2026-11-17 收口登记 |
+| isolated-repo/task-env | G:/CODEX/New Manga.workspace/task-envs/GIT-CLEAN-RUST-CAPACITY-DESIGN-1 | PRESERVE_UNKNOWN | verification/GIT-CLEAN-RUST-CAPACITY-DESIGN-1/DESIGN.md | verification/GIT-CLEAN-RUST-CAPACITY-DESIGN-1/DESIGN.md | 新独立 repo 无 remote，未清理；本卡未改动它 |
 
 ## 交付与运行记录
 
@@ -83,3 +83,11 @@ DSH 接任 Lead / Architect / Integrator（见 `doc/GOVERNANCE_TAKEOVER_2026-10-
   - 备选方案「改 Owner 为 Codex」未被采用：该 Task 是本轮被明确绕开的环境线，不应重新拉回实施队列。
 
 本 Task 仍是设计切片：只允许设计文档与来源说明，不实施、不改产品或测试源码、不运行压力。设计若确认 32 饱和在不变生产语义下不可达，须给可证伪机制与证据要求，保留 AC3 BLOCKED，交 DSH 裁决；不得以假 worker、人工延迟或修改生产 MAX/锁/背压来凑 32。当前不因本 Task 存在而阻塞干净快照 push 的独立审查。
+
+## Closeout Record
+
+- **收口时间**：2026-11-17；integration commit `3a21ff7f0`。
+- **交付物**：`verification/GIT-CLEAN-RUST-CAPACITY-DESIGN-1/DESIGN.md`（v2 正文 + DSH 附记 v3/v4）。
+- **独立复核**：`doc/reviews/GIT-CLEAN-RUST-CAPACITY-DESIGN-1-INDEPENDENT-REVIEW-2026-11-17.md`（三轮：v1 BLOCKED 4 P1 → v2 BLOCKED 2 P1 → **v3 RELEASABLE，P1=0**）。
+- **边界**：本卡只交设计 —— 产品源码零改动、Rust/压力测试未跑、未集成、未实施。实施须另立 Task 并重新冻结范围与新 Appointment。
+- **遗留 P2（随实施处理）**：补 `GuardFinishReport` 结构定义；修正「Drop 不会重入」措辞；评估 `cleaned=true` 后 panic 路径。
