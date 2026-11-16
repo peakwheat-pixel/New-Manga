@@ -148,10 +148,10 @@ allowed_paths:
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| worktree | 无 linked worktree；main checkout `G:\CODEX\New Manga` | NOT_APPLICABLE | 同一仓库 checkout | `669a4ae02` | `git worktree list` 仅 main checkout；未创建/删除 worktree；全部验证在 main 内联完成。 |
+| worktree | —` | NOT_APPLICABLE | 同一仓库 checkout | `669a4ae02` | `git worktree list` 仅 main checkout；未创建/删除 worktree；全部验证在 main 内联完成。 |
 | verification artifacts | `verification/FEA-06-RESIDUAL-1/**` | PRESERVE_REFERENCED | `verification/FEA-06-RESIDUAL-1/integration-verification.log` | `d6b5d34f9f0abdaa6bd1cd48234d0f131c49f596ae34701b3aa5120b7e8633e2` | 全部日志/矩阵/索引被 Task/Review/Handoff/Closeout 引用；集成日志 SHA-256 与登记一致；历史批次日志字节保留。 |
-| task-env / dataset / model / test-material | 未创建 / 未使用 | NOT_APPLICABLE | - | - | 未创建 task-env；未引入 dataset/model/test-material；测试使用 FakeHost/临时根。 |
-| temp | 测试 `%TEMP%` 临时根 | NOT_APPLICABLE | - | - | 每个测试使用唯一临时目录并在 dispose 清理；未写真实 `%APPDATA%`。 |
+| task-env / dataset / model / test-material | — | NOT_APPLICABLE | - | - | 未创建 task-env；未引入 dataset/model/test-material；测试使用 FakeHost/临时根。 |
+| temp | C:/Users/49745/AppData/Local/Temp | DELETE_SAFE | - | - | 每个测试使用唯一临时目录并在 dispose 清理；未写真实 `%APPDATA%`。 |
 | agent-output / exchange | `G:\CODEX\New Manga.workspace\FEA-06-RESIDUAL-1\`（派生 prompt/结果日志） | PRESERVE_REFERENCED | `verification/FEA-06-RESIDUAL-1/current-evidence-index.md` | `761ac17218d3166cc4632b828dc0dcdcdce3f3c1f345509e8655ef2b04d9a421` | prompt/结果日志保留在 workspace；当前证据索引入库并登记 SHA，不覆盖历史。 |
 | user data | 未访问 | NOT_APPLICABLE | - | - | 未访问用户源文件/AppData/DB；旧 FEA-06 证据 PNG 字节零漂移。 |
 ## 实施记录（Batch A，2026-11-02）

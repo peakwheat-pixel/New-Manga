@@ -121,7 +121,7 @@ E-2：仓库 sidecar 构建于 **2026-10-23**，早于多条现行命令（如 `
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| artifact | 待填（workspace\task-envs\SIDECAR-REBUILD-1） | PRESERVE_REFERENCED | 同左 | 待填 | 新 sidecar，供后续卡使用 |
+| artifact | G:/CODEX/New Manga.workspace/task-envs/SIDECAR-REBUILD-1 | PRESERVE_REFERENCED | 同左 | 待填 | 新 sidecar，供后续卡使用 |
 
 ## Closeout Record
 

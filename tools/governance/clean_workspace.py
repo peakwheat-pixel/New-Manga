@@ -1697,7 +1697,7 @@ def _apply_broad_preservation(index, scanned):
 
 HISTORICAL_EVIDENCE_POLICY = "tools/governance/historical-evidence-interpretation.json"
 HISTORICAL_EVIDENCE_DIGEST = (
-    "e2186de34cec23893a5a73707277eb2075fdbb828564eb4e8cf2eca967d59228")
+    "a0fc430f3b15bcef31ad0cb1a0358b7b4834cae3b9a5e43f895b37df413c4fd3")
 
 # Approved binding identity set (member invariant).  Adding a binding is a
 # visible code+policy edit, never a widened numeric window.  Order matters:
@@ -2065,11 +2065,12 @@ def _apply_historical_evidence_interpretation(index, scanned):
             require(retention["classification"] == "B2"
                     and retention["interpretation"] == "pinned_defect_retained",
                     "POLICY_INVALID", "pinned retention classification changed")
-            exact(retention["pin"], "card evidence_id commit sha256 channel")
+            exact(retention["pin"], "card evidence_id commit sha256 channel path")
             require(retention["pin"]["channel"] in ("BLOB", "WORKTREE"),
                     "POLICY_INVALID", "pinned retention channel changed")
             origin = retention["origin_file"]
-            raw = read(origin)
+            pin_path = retention["pin"]["path"]
+            raw = read(pin_path)
             if retention["pin"]["channel"] == "BLOB":
                 commit = retention["pin"]["commit"]
                 require(isinstance(commit, str)
@@ -2077,13 +2078,13 @@ def _apply_historical_evidence_interpretation(index, scanned):
                         "pinned retention blob commit missing")
                 blob = subprocess.run(
                     ["git", "-C", index.repo_root, "cat-file", "blob",
-                     "%s:%s" % (commit, origin)], capture_output=True)
+                     "%s:%s" % (commit, pin_path)], capture_output=True)
                 require(blob.returncode == 0 and
                         sha(blob.stdout) == retention["pin"]["sha256"], "SOURCE_DRIFT",
-                        "pinned retention blob changed: %s" % origin)
+                        "pinned retention blob changed: %s" % pin_path)
             else:
                 require(sha(raw) == retention["pin"]["sha256"], "SOURCE_DRIFT",
-                        "pinned retention worktree bytes changed: %s" % origin)
+                        "pinned retention worktree bytes changed: %s" % pin_path)
             error = retention["error"]
             exact(error, "code message file locator")
             require(error["file"] == origin and index.errors.count(error) == 1

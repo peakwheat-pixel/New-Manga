@@ -103,7 +103,7 @@ allowed_paths:
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| artifact | 待填（workspace\task-envs\GATE4-READER-PAGE-1） | PRESERVE_REFERENCED | 同左 | 待填 | 截图与数据根副本 |
+| artifact | G:/CODEX/New Manga.workspace/task-envs/GATE4-READER-PAGE-1 | PRESERVE_REFERENCED | 同左 | 待填 | 截图与数据根副本 |
 
 ## Closeout Record
 

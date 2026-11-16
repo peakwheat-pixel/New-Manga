@@ -112,7 +112,7 @@ allowed_paths:
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| artifact | 待填（workspace\task-envs\GATE4-PAGES-UPGRADE-1） | PRESERVE_REFERENCED | 同左 | 待填 | 截图与 setup，按需保留 |
+| artifact | G:/CODEX/New Manga.workspace/task-envs/GATE4-PAGES-UPGRADE-1 | PRESERVE_REFERENCED | 同左 | 待填 | 截图与 setup，按需保留 |
 
 ## Closeout Record
 

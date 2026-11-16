@@ -172,8 +172,8 @@ allowed_paths:
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| worktree | NOT_APPLICABLE（main 工作树实施） | NOT_APPLICABLE | — | — | 无 worktree 创建/删除/prune |
-| artifact/temp/agent-output/dataset | NOT_APPLICABLE（实现与证据均在仓库内；pytest 使用 `:memory:`/`tmp_path`） | NOT_APPLICABLE | — | — | 无本任务专属仓外资源；pytest 缓存已用 `-p no:cacheprovider` 规避 |
+| worktree | — | NOT_APPLICABLE | — | — | 无 worktree 创建/删除/prune |
+| artifact/temp/agent-output/dataset | — | NOT_APPLICABLE | — | — | 无本任务专属仓外资源；pytest 缓存已用 `-p no:cacheprovider` 规避；带说明的 NA 改纯占位 + NA（说明保留在本行末列） |
 | evidence | verification/FEA-11-LINEAGE-1/logs/gates.log、gates-r2.log、gates-r3.log | PRESERVE_REFERENCED | verification/FEA-11-LINEAGE-1/logs | verification/FEA-11-LINEAGE-1/logs/gates-r3.log | 当前 Task/Review 引用；原位保留不清理 |
 | 代码/测试 | src/application/{editing,sources,rendering,export}/**、src/infrastructure/sqlite/**、src/infrastructure/providers/handlers.py、src/application/tasks/service.py、src/bootstrap/{core_assembly,core_service}.py、tests/fea11/** | PRESERVE_REFERENCED | src | verification/FEA-11-LINEAGE-1/logs/gates-r3.log | 已集成 main（delivery `90a8c8218`）；不回滚；行级证据见 EV-2 |
 

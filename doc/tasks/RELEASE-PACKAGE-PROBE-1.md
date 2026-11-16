@@ -124,7 +124,7 @@ Gate 条件 4 = "对当前固定产品 commit 生成并固定 Windows 包，完�
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| artifact | 待填（workspace\artifacts\publish） | PRESERVE_REFERENCED | 同左 | 待填 | 本卡产物，不在仓库 |
+| artifact | G:/CODEX/New Manga.workspace/artifacts/publish | PRESERVE_REFERENCED | 同左 | 待填 | 本卡产物，不在仓库 |
 
 ## Closeout Record
 

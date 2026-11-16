@@ -187,7 +187,7 @@ out_of_scope:
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | worktree | NOT_APPLICABLE（main；base `89ef7a868`，impl `fbe337f95`） | NOT_APPLICABLE | — | — | 未创建 linked worktree |
-| temp | `G:\CODEX\New Manga.workspace\FEA-11\fixtures\r4a-*`（gated IPC 隔离数据根） | PRESERVE_REFERENCED | `G:\CODEX\New Manga.workspace\FEA-11\fixtures` | `verification/FEA-11-RESIDUAL-4A/RESOURCE-MANIFEST.json` | 仓外隔离根；不触碰真实数据；保留供审计 |
+| temp | `G:/CODEX/New Manga.workspace/FEA-11/fixtures | PRESERVE_REFERENCED | `G:\CODEX\New Manga.workspace\FEA-11\fixtures` | `verification/FEA-11-RESIDUAL-4A/RESOURCE-MANIFEST.json` | 仓外隔离根；不触碰真实数据；保留供审计 |
 | test-fixture | `tests/fea11/**` + Host.Tests（headless/gated） | NOT_APPLICABLE | — | — | 无真实用户数据；gated 用临时根 |
 | user-data | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 未触碰真实用户数据/AppData/外部卷/回收站 |
 | tracked-side-effect | `verification/FEA-09/logs/wire-redacted.ndjson` | NOT_APPLICABLE | — | — | 既有副作用；每次全量后 `git checkout -- verification/FEA-09` |

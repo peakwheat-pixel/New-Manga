@@ -115,8 +115,8 @@ out_of_scope:
 |---|---|---|---|---|---|
 | worktree | `G:\CODEX\New Manga.workspace\worktrees\FEA-14-SET-1-p3`（detached，P3 + r2/r3 修复的隔离构建树） | NOT_APPLICABLE | — | — | 保留原位：提交已全部快进进入 main，无独有提交，按 WORKTREE_SAFETY_INVENTORY 暂不删除；仅用于构建/测试 |
 | temp | `G:\CODEX\New Manga.workspace\temp\FEA-14-familynames-probe`、`...\temp\FEA-14-planning` | NOT_APPLICABLE | — | — | 仓外探针/规划（被证据引用），保留原位；只读被测程序集，不污染仓库 |
-| build | worktree `bin/obj`（可重建） | NOT_APPLICABLE | — | 无 | 不在仓库、不被证据引用 |
-| user-data | `%APPDATA%\NewManga`（真实目录，只读访问） | NOT_APPLICABLE | — | `logs/appdata-redline.log` 记录 sha256/size/mtime | 测试前后 `UNCHANGED`；未写入 |
+| build | — | NOT_APPLICABLE | — | 无 | 不在仓库、不被证据引用 |
+| user-data | `C:/Users/49745/AppData/Roaming/NewManga | PRESERVE_USER_DATA | — | `logs/appdata-redline.log` 记录 sha256/size/mtime | 测试前后 `UNCHANGED`；未写入 |
 
 ## Canonical Evidence
 

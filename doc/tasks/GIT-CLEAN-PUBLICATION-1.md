@@ -139,9 +139,9 @@ Canonical evidence已固定为仓外SHA pin，不伪造主仓commit；候选deli
 |---|---|---|---|---|---|
 | worktree | G:/CODEX/New Manga | PRESERVE_REFERENCED | — | 固定源commit | 只写治理/本Task证据，不删除 |
 | task-env | G:/CODEX/New Manga.workspace/task-envs/GIT-CLEAN-PUBLICATION-1 | PRESERVE_REFERENCED | — | 待生成 | 使用治理规定task-envs，取代早期方案的拟议task-env单数路径 |
-| artifact | 上述task-env/source-export | PRESERVE_REFERENCED | — | 待生成manifest与独立commit | 独立Git仓库，非linked worktree；候选分支codex/clean-source-snapshot |
+| artifact | G:/CODEX/New Manga.workspace/task-envs/GIT-CLEAN-PUBLICATION-1 | PRESERVE_REFERENCED | — | 待生成manifest与独立commit | 独立Git仓库，非linked worktree；候选分支codex/clean-source-snapshot |
 | dataset/model/test-material | 既有169个JPEG及其外层blob | PRESERVE_USER_DATA | — | 原审计禁止上传清单 | 只读取指纹，不复制素材，不删除 |
-| temp/build | 上述task-env中的缓存/输出 | PRESERVE_REFERENCED | — | 待测试记录 | 不自动清理 |
+| temp/build | G:/CODEX/New Manga.workspace/task-envs/GIT-CLEAN-PUBLICATION-1 | PRESERVE_REFERENCED | — | 待测试记录 | 不自动清理 |
 | agent-output/exchange | — | NOT_APPLICABLE | — | — | 无派发或外部传输 |
 
 ## Rolling checkpoint

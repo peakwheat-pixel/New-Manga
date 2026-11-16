@@ -1,0 +1,53 @@
+# GOV-DECLARATION-SCAN-CLEANUP-1 · AC7 执行证据（65 → 0）
+# head（执行前）: 23e8d7152082c4e349a0e161e086bb7852acb201
+# at_utc: 2026-11-16T11:44:03Z
+# os: Windows 10.0.26200 ; PowerShell 7.6.8 ; Python Python 3.14.6 ; git git version 2.52.0.windows.1
+# ruling: doc/reviews/GOV-DECLARATION-SCAN-CLEANUP-1-AC3-CODEX-RULING-2026-11-16.md §Q4
+
+## 0. 基线
+# errors=65 warnings=822 declarations=6765 protected_roots=5601（head 23e8d7152）
+
+## 1. 执行方式
+# 单元级：每个 (文件, 错误码) 只替换「值等于审计原文」的那个单元格（source_path 或 destination_path）
+#        及其 disposition 单元格；行内其他单元格、同文件其他行均不动。
+# 两轮：第一轮按 ac7-repair-plan 的 64 条机械/判定项；第二轮修掉第一轮引入的 17 条新诊断
+#      （14 条 DECL_GENERALIZED：工作区 tmp 是受管目录根、属过宽声明 → 改「—」+ NOT_APPLICABLE 并在行末写明原声明；
+#        1 条 $RECYCLE.BIN → NA；1 条带说明的 NA → 纯占位 NA；1 条 *.log glob → 目录本体）。
+# 另有 1 条不改字节：doc/tasks/LEGACY-SHELL-ARCHIVE-1.md 的 archive/history/legacy-shell/README.md 被 EV 行
+#   WORKTREE 通道钉住（sha256 ff7d7fc0… 与当前工作树字节一致）⇒ 转 pinned_defect_retentions HIE-R016。
+# 清单：verification/GOV-DECLARATION-SCAN-CLEANUP-1/ac7-allowed-cells-2026-11-16.md（76 行，含每条原值/新值/依据）
+
+## 2. 审计（执行后）
+# command: python -B tools/governance/clean_workspace.py --audit-declarations --out <tmp>
+# after: errors=0 warnings=821 declarations=6800 protected_roots=5611
+# code 分布: （空）
+EXIT=0
+
+## 3. 测试
+# command: python -B -m unittest discover -s tools/governance/tests -p test_historical_binding_policy.py -v
+test_table_bindings_only_carry_historical_format_codes (test_historical_binding_policy.HistoricalBindingPolicy.test_table_bindings_only_carry_historical_format_codes) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 0.100s
+
+OK
+EXIT=0
+# command: python -B -m unittest tools.governance.tests.test_residual_runtime_identity
+Ran 14 tests in 37.175s
+
+OK
+EXIT=0
+
+## 4. 字节边界（AC5 补充：只允许 doc/tasks 的 Resource Manifest 单元）
+# 改动文件数: 48（48 files changed, 121 insertions(+), 84 deletions(-)）
+# doc/tasks/*.md: 45；其他: 3 -> tools/governance/clean_workspace.py, tools/governance/historical-evidence-interpretation.json, tools/governance/tests/test_historical_binding_policy.py
+# verification/** 历史文件被改动: 无
+# RESOURCE-MANIFEST.json / resource-manifest.json 改动: 无（git diff 过滤为空）
+# tools/governance/residual-runtime-identity.json 改动: 无（git diff 过滤为空）
+# 逐文件 diff 复核：每个文件的改动行只落在「值等于审计原文」的那一行（示例见 FEA-00A-PREP-1.md 的单行替换）
+
+## 5. 读数
+- errors 65 → **0**；warnings 822 → 821（-1：archive 行不再报 DECL_RELATIVE_AMBIGUOUS？不 —— 该行转保留态后其原警告仍在，
+  计数变化来自 GENERALIZED 类诊断消失）。
+- declarations 6765 → 6800（+35：新绝对路径成为可解析声明，开始注册保护）；protected_roots 5601 → **5611**（+10，未缩小）。
+- 单调序列（全程）：154 → 147 → 144 → 80 → 65 → 17 → **0**。

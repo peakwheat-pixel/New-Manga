@@ -171,9 +171,9 @@ out_of_scope:
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| worktree | NOT_APPLICABLE（main；base `0a39a78f0`，impl `85207730e`/`bacf6c307`/`a03a6794a`） | NOT_APPLICABLE | — | — | 未创建/未删除 linked worktree；main 内联实施 |
+| worktree | — | NOT_APPLICABLE | — | — | 未创建/未删除 linked worktree；main 内联实施 |
 | evidence | `verification/FEA-07-RESIDUAL-2/**` | PRESERVE_REFERENCED | `verification/FEA-07-RESIDUAL-2` | `verification/FEA-07-RESIDUAL-2/RESOURCE-MANIFEST.json` | 被本卡 Canonical Evidence 与 `doc/tasks/FEA-07.md` R4a 回填引用；原地保留，不归档 |
-| temp | `%TEMP%/nm-fea07-perf-*`、`%TEMP%/nm-fea07-draft-window-*`、`%TEMP%/nm-fea07-window-lifecycle-*` | NOT_APPLICABLE | — | — | 测试临时根（appearance store / switch journal / theme home），测试 Dispose 清理；不写仓库或用户数据 |
+| temp | `C:/Users/49745/AppData/Local/Temp` | DELETE_SAFE | — | — | 测试临时根（appearance store / switch journal / theme home），测试 Dispose 清理；不写仓库或用户数据 |
 | test-fixture | `tests/NewManga.App.Tests/FakeHostController.cs` | NOT_APPLICABLE | — | — | 仅测试侧加法探针（`DisposeCalls`/`DisposeException`/`DraftWriteLog`），生产行为不变 |
 | user-data | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 未触碰真实 `%APPDATA%`/用户源文件/外部卷/回收站 |
 | tracked-side-effect | `verification/FEA-09/logs/wire-redacted.ndjson` | NOT_APPLICABLE | — | — | 既有副作用（`NewManga.CoreClient.Tests` 全量运行时重写）；每次全量后 `git checkout -- verification/FEA-09`，零 diff |

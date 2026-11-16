@@ -154,6 +154,7 @@ class HistoricalBindingPolicy(unittest.TestCase):
                 self.assertEqual(item["classification"], "B2")
                 self.assertEqual(item["interpretation"], "pinned_defect_retained")
                 self.assertIn(item["pin"]["channel"], ("BLOB", "WORKTREE"))
+                self.assertTrue(item["pin"].get("path"), "pin must name the protected file")
                 self.assertEqual(item["error"]["file"], item["origin_file"])
 
     def test_pinned_retention_pins_still_verify(self):
@@ -161,7 +162,7 @@ class HistoricalBindingPolicy(unittest.TestCase):
         for item in self.policy.get("pinned_defect_retentions", []):
             pin = item["pin"]
             with self.subTest(item=item["id"]):
-                rel = item["origin_file"]
+                rel = pin.get("path", item["origin_file"])
                 raw = (REPO / rel).read_bytes()
                 if pin["channel"] == "BLOB":
                     commit = pin["commit"]

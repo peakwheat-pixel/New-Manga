@@ -77,7 +77,7 @@ FEA-01 §1 门禁链：用户裁决 → 方案修订+新 hash 复审 → C-01…
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | doc-task | - | NOT_APPLICABLE | - | - | 仓库内无 worktree/task-env/artifact/build/temp；未访问用户数据 |
-| temp-scripts | ..\New Manga.workspace\tmp | PRESERVE_UNKNOWN | ..\New Manga.workspace\tmp | verification/FEA-D06-GAP/workspace-tmp-manifest.md | 共享清单 32 项；无进程占用；delete/move/migrate/archive 均为 0 |
+| temp-scripts | — | NOT_APPLICABLE | — | verification/FEA-D06-GAP/workspace-tmp-manifest.md | 共享清单 32 项；无进程占用；delete/move/migrate/archive 均为 0；工作区 tmp 是受管目录根 ⇒ DECL_GENERALIZED（过宽声明）；改为 NA，原声明见本行说明 |
 
 ## Closeout Record
 

@@ -67,7 +67,12 @@ pwsh -NoProfile -File apps/desktop-avalonia/scripts/test.ps1
 
 ### 队列 0 —— **`GOV-DECLARATION-SCAN-CLEANUP-1` AC3：154 → 0**（进行中：已 154→147）
 
-**进度（R20，最新）**：`errors 154→65`；B1 64 / B3 11 已清零，**15 条活 pin B2 转可审计保留态**
+**进度（R21，最新）**：**`errors 154→0`**（AC3 与 AC7 均 `[x] <<MET>>`）。B1 64 / B3 11 清零；16 条活 pin B2 转可审计保留态
+（`DECL_PINNED_DEFECT_RETAINED`，新增 HIE-R016 覆盖 `LEGACY-SHELL-ARCHIVE-1` 的 archive 证据行，WORKTREE 通道）；
+其余 64 条未钉住 B2 按 `ac7-allowed-cells-2026-11-16.md` 做单元级修复（45 张卡、48 文件、+121/−84 行），
+`protected_roots 5593→5611`、`declarations 6765→6800`。**剩 AC6**（固定 head + 上下文独立 Review + 前后两轮 JSON 回填）。
+
+**进度（R20）**：`errors 154→65`；B1 64 / B3 11 已清零，**15 条活 pin B2 转可审计保留态**
 （`DECL_PINNED_DEFECT_RETAINED` 警告保留原始错误码 + pin 卡片/证据/commit/sha），剩 **65 条未钉住 B2** 待 AC7；
 `protected_roots 5593→5601`。**新登记的治理缺陷**：`doc/tasks/FEA-11-HOST-AUTH-2.md` 的 `EV-11` 对
 `doc/tasks/FEA-11-HOST-AUTH-3.md` 的 pin **已失效**（钉 4a7e1ca8…，实测 worktree 6b540148… / blob 21818135…）⇒ 不作活 pin 处理，
@@ -93,7 +98,9 @@ JSON 绑定带「一旦变合法 JSON 即 RECORD_DRIFT」的 fail-closed 条件�
 带 err_id/桶/活 pin）；**batch 1（Q3 封闭别名表）已实施**：`errors 154→147`、`warnings 732→740`、
 `protected_roots 5593→5598`、`declarations 6755→6762`，`DECL_UNKNOWN_DISPOSITION 8→0`；
 证据 `verification/GOV-DECLARATION-SCAN-CLEANUP-1/ac3-batch1-alias-2026-11-16.log`。
-**下一步（严格按裁决顺序）**：~~Q2~~、~~Q1~~、~~活 pin 保留态~~ 已完成 → **AC7：65 条未钉住 B2 的单元修复**。
+**下一步**：**AC6 集成复验**（唯一剩余 AC）——固定 head → 交上下文独立 Reviewer（Codex 或 DSH 派的新子 agent）→
+回填 baseline/after 两轮 `--audit-declarations` JSON → 回填 `GOV-RESIDUAL` 的 AC6/AC7。
+> 历史（已完成）：**AC7 单元修复**。
 **修复计划已落盘**：`verification/GOV-DECLARATION-SCAN-CLEANUP-1/ac7-repair-plan-2026-11-16.md`
 （46 条机械可执行 + 19 条需判定；每条含 ERR-id / 文件 / locator / 字段 / 现值 / 拟改为 / 拟 disposition / 置信与说明）。
 下一轮照该表逐文件应用（只改值匹配的单元格），每批后重跑 audit 记录单调下降，65→0 后进 AC6

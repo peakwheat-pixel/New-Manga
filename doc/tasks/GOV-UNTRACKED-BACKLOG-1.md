@@ -138,7 +138,7 @@ verification/P02/dsh-appcontainer-contract-r3-review-attempt1.status.txt
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | untracked backlog | `verification/`、`.orchestrator/`、`doc/`、`archive/` 下的 1591 个未入库文件 | `PRESERVE_UNKNOWN` | `verification/P02` | `doc/tasks/GOV-UNTRACKED-BACKLOG-1.md` | 本 Task 只读盘点，未删除/移动/归档任何一项；137 项被已入库文档引用，一律留原路径 |
-| CON (reserved name) | `CON` | `PRESERVE_REFERENCED` | `CON` | `8241373a2cc3ac428786e92b23a5872952cf7635e8a5153cac660560c4ac8714` | 34778 bytes，SHA-256 8241373A2CC3AC428786E92B23A5872952CF7635E8A5153CAC660560C4AC8714；内容为真实 SFX 哈希清单，不得删除 |
+| CON (reserved name) | `—` | NOT_APPLICABLE | `CON` | `8241373a2cc3ac428786e92b23a5872952cf7635e8a5153cac660560c4ac8714` | 34778 bytes，SHA-256 8241373A2CC3AC428786E92B23A5872952CF7635E8A5153CAC660560C4AC8714；内容为真实 SFX 哈希清单，不得删除 |
 | evidence dir | `verification/GOV-UNTRACKED-BACKLOG-1/` | `PRESERVE_REFERENCED` | `verification/GOV-UNTRACKED-BACKLOG-1/` | `9611a6c0be6a9d91d58a060003f1338c51e7ef7aeb7561f23f3d1e36b50b8945` | 6 份证据，均为本 Task AC 直接产物 |
 | agent output | 仓外 agent-output，非本 Task 交付物 | `NOT_APPLICABLE` | — | `doc/tasks/GOV-UNTRACKED-BACKLOG-1.md` | 派发产物不入库 |
 

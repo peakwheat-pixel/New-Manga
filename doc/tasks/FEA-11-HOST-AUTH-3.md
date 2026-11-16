@@ -169,7 +169,7 @@ out_of_scope:
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | worktree | NOT_APPLICABLE（main；base `e9ab2ef7c`） | NOT_APPLICABLE | — | — | 未创建 worktree |
-| temp | pytest / gated IPC 临时目录 | NOT_APPLICABLE | — | — | 测试隔离 |
+| temp | C:/Users/49745/AppData/Local/Temp | DELETE_SAFE | — | — | 测试隔离 |
 | build | `apps/desktop-avalonia/**/bin,obj` | NOT_APPLICABLE | — | — | 既有 ignore |
 | user-data | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 未访问真实库 |
 

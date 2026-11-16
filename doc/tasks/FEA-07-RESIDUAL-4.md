@@ -122,9 +122,9 @@ E4/E5 在静默树执行（运行期间不写 `verification/**`）；证据在�
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | worktree | NOT_APPLICABLE（main；base `77a7459ab`） | NOT_APPLICABLE | — | — | 未创建 worktree |
-| temp | `%TEMP%\nm-legacy-ui-<guid>`（测试隔离根，进程退出清理） | NOT_APPLICABLE | — | — | 仅测试临时目录；进程退出删除 |
+| temp | `C:/Users/49745/AppData/Local/Temp | DELETE_SAFE | — | — | 仅测试临时目录；进程退出删除 |
 | build | `apps/desktop-avalonia/**/bin,obj`（既有构建产物） | NOT_APPLICABLE | — | — | 仓库既有 ignore；未额外归档 |
-| user-data | 真实 `%APPDATA%` 只读比较 | NOT_APPLICABLE | — | — | 未写入；harness delta=0 |
+| user-data | C:/Users/49745/AppData/Roaming/com.newmanga.desktop | PRESERVE_USER_DATA | — | — | 未写入；harness delta=0 |
 | evidence | `verification/FEA-07-RESIDUAL-4/**` | PRESERVE_REFERENCED | `verification/FEA-07-RESIDUAL-4` | `verification/FEA-07-RESIDUAL-4/README.md` | 目录存在；EV 表 9 个 sha256 已登记 |
 
 ## Closeout Record

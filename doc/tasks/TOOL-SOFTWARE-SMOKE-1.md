@@ -133,7 +133,7 @@ GUI 内 Hook 需要检测权重、结论无法自动断言）；`GUI-PLUGIN-SAND
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | worktree | G:/CODEX/New Manga | NOT_APPLICABLE | — | — | 使用主 worktree，无新 worktree |
-| temp | `%TEMP%/nm-software-smoke-*`、`%TEMP%/nm-bundled-hook-*` | NOT_APPLICABLE | — | — | 临时目录不是保留资源：全量运行目录在 finally 清理；repack 脚本自建目录由工具在前后快照后删除（canonical 清理 1 个）；评审前遗留 3 个 `nm-bundled-hook-*` 已删除，2026-10-23 复查计数 0 |
+| temp | `C:/Users/49745/AppData/Local/Temp` | DELETE_SAFE | — | — | 临时目录不是保留资源：全量运行目录在 finally 清理；repack 脚本自建目录由工具在前后快照后删除（canonical 清理 1 个）；评审前遗留 3 个 `nm-bundled-hook-*` 已删除，2026-10-23 复查计数 0 |
 | agent-output | — | NOT_APPLICABLE | — | — | 未产生 agent-output 资源；证据只入 `verification/TOOL-SOFTWARE-SMOKE-1/` |
 
 ## Closeout Record

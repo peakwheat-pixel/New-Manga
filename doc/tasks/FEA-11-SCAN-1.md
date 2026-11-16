@@ -265,7 +265,7 @@ r1 Review：`doc/reviews/FEA-11-SCAN-1-r1.md`（session `074cebe5-157b-4d75-833d
 |---|---|---|---|---|---|
 | worktree | NOT_APPLICABLE（main 工作树实施） | NOT_APPLICABLE | — | — | 未创建独立 worktree |
 | agent-output | `G:\CODEX\New Manga.workspace\FEA-11-SCAN-1\`（门禁/测试原始日志） | PRESERVE_REFERENCED | `G:\CODEX\New Manga.workspace\FEA-11-SCAN-1` | G:\CODEX\New Manga.workspace\FEA-11-SCAN-1\api-inventory-r2.log | 原始日志为仓内 `logs/` 证据的上游副本；仓内证据已按 sha256 pin；保留不清理 |
-| temp | `G:\CODEX\New Manga.workspace\FEA-11\fixtures\ipc-*`（隔离 IPC fixture，含真实 zip/v8 DB） | PRESERVE_REFERENCED | `G:\CODEX\New Manga.workspace\FEA-11\fixtures` | G:\CODEX\New Manga.workspace\FEA-11\fixtures\ipc-001a2d8bb8d94f398a21bfb73ae216b3\library.db | 隔离根由冻结 seed 脚本守卫（只允许 FEA-11 fixtures 下 library.db）；无真实用户数据；保留（pytest/fixture 自清理策略） |
+| temp | `G:/CODEX/New Manga.workspace/FEA-11/fixtures | PRESERVE_REFERENCED | `G:\CODEX\New Manga.workspace\FEA-11\fixtures` | G:\CODEX\New Manga.workspace\FEA-11\fixtures\ipc-001a2d8bb8d94f398a21bfb73ae216b3\library.db | 隔离根由冻结 seed 脚本守卫（只允许 FEA-11 fixtures 下 library.db）；无真实用户数据；保留（pytest/fixture 自清理策略） |
 | agent-output | `G:\CODEX\New Manga.workspace\agent-output\fea11-scan-1\FEA-11-SCAN-1\`（check 日志等过程输出） | PRESERVE_REFERENCED | `G:\CODEX\New Manga.workspace\agent-output\fea11-scan-1\FEA-11-SCAN-1` | G:\CODEX\New Manga.workspace\agent-output\fea11-scan-1\FEA-11-SCAN-1\check-final.log | check 日志避免仓内自指（FEA-12-PREREQ-1 R-003 先例）；保留 |
 
 ## Closeout Record

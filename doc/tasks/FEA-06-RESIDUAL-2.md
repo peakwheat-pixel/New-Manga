@@ -337,10 +337,10 @@ pwsh -NoProfile -File tools\governance\verify_pins.ps1
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| worktree | 无 linked worktree；main checkout `G:\CODEX\New Manga` | NOT_APPLICABLE | 同一仓库 checkout | `832103393` | `git worktree list` 仅 main；未创建/删除 worktree。 |
+| worktree | —` | NOT_APPLICABLE | 同一仓库 checkout | `832103393` | `git worktree list` 仅 main；未创建/删除 worktree。 |
 | verification artifacts | `verification/FEA-06-RESIDUAL-2/**` | PRESERVE_REFERENCED | `verification/FEA-06-RESIDUAL-2/visuals/visual-inventory.md` | `e76b2f5fed7a80fc5f52ce2e28dd35b656e8a931f3884781f006098cfbffed74` | 172 PNG + inventory + expected-tokens + 各日志被 Task/Review/Handoff/Closeout 引用；旧 `verification/FEA-06/**` 字节未动。 |
-| task-env / dataset / model / test-material | 未创建 / 未使用 | NOT_APPLICABLE | - | - | 未创建 task-env；测试使用 FakeHost 内存 fixture，不接触用户数据。 |
-| temp | 测试 `%TEMP%` 临时根 | NOT_APPLICABLE | - | - | 每次运行临时根并在测试内清理；未写真实 `%APPDATA%`。 |
+| task-env / dataset / model / test-material | — | NOT_APPLICABLE | - | - | 未创建 task-env；测试使用 FakeHost 内存 fixture，不接触用户数据。 |
+| temp | C:/Users/49745/AppData/Local/Temp | DELETE_SAFE | - | - | 每次运行临时根并在测试内清理；未写真实 `%APPDATA%`。 |
 | agent-output / exchange | `G:\CODEX\New Manga.workspace\FEA-06-RESIDUAL-2\`（prompt/结果日志） | PRESERVE_REFERENCED | `verification/FEA-06-RESIDUAL-2/integration-verification.log` | `92a7c8573d3570ae88209bc535c7de403ae35aa2e0a75e9a3e9b9b11f10bac9c` | prompt/结果日志保留在 workspace；集成日志入库并登记 SHA。 |
 | user data | 未访问 | NOT_APPLICABLE | - | - | 未访问用户源文件/AppData/DB；旧四 PNG SHA 未变。 |
 

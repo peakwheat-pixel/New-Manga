@@ -138,7 +138,7 @@ out_of_scope:
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | temp | `G:\CODEX\New Manga.workspace\FEA-14-READ-1\`（隔离数据根/迁移副本） | NOT_APPLICABLE | — | — | 仓外，不提交 |
-| user-data | `%APPDATA%\com.newmanga.desktop` | NOT_APPLICABLE | — | — | 只读指纹（测试用隔离根） |
+| user-data | `C:/Users/49745/AppData/Roaming/com.newmanga.desktop` | PRESERVE_USER_DATA | — | — | 只读指纹（测试用隔离根） |
 | build | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 复用现有 .NET / Python 环境 |
 | worktree | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 主树实现 |
 

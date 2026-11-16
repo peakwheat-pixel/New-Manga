@@ -84,7 +84,7 @@ FEA-15 集成验收要求「隔离干净构建/安装/双 UI 回归/升级与回
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | worktree | NOT_APPLICABLE（main；base `25c0a1ecc`） | NOT_APPLICABLE | — | — | 未创建 worktree |
-| temp | pytest/dotnet 临时目录 | NOT_APPLICABLE | — | — | 测试隔离 |
+| temp | C:/Users/49745/AppData/Local/Temp | DELETE_SAFE | — | — | 测试隔离 |
 | build | `apps/desktop-avalonia/**/bin,obj` | NOT_APPLICABLE | — | — | 既有 ignore |
 | user-data | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 未访问真实库 |
 

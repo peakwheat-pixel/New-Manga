@@ -264,8 +264,8 @@ out_of_scope:
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | worktree | NOT_APPLICABLE（main；base `b6cd53260`） | NOT_APPLICABLE | — | — | 未创建 worktree |
-| temp | `%TEMP%\nm-fea07-*`（应用隔离根/截图中转） | NOT_APPLICABLE | — | — | 关闭应用后由 OS 清理；不触真实书籍/DB |
-| display-settings | 2K/4K 模式与缩放（临时切换） | NOT_APPLICABLE | 2K 100% / 4K 150%；AOC 保留原生 2560×1440（用户决定） | NOT_APPLICABLE | 每次切换有 before/after DPI 采样；恢复点 `verification/FEA-07-AC5-NATIVE-1/evidence/display-state-before-native-20261109-084020.json` 保留 |
+| temp | `C:/Users/49745/AppData/Local/Temp | DELETE_SAFE | — | — | 关闭应用后由 OS 清理；不触真实书籍/DB |
+| display-settings | — | NOT_APPLICABLE | — | NOT_APPLICABLE | 每次切换有 before/after DPI 采样；恢复点 `verification/FEA-07-AC5-NATIVE-1/evidence/display-state-before-native-20261109-084020.json` 保留 |
 | user-data | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 应用均用隔离 `--data-root` |
 | tracked-side-effect | 无 | NOT_APPLICABLE | — | — | 无 |
 

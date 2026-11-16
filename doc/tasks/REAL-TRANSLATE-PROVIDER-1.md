@@ -111,7 +111,7 @@ allowed_paths:
 |---|---|---|---|---|---|
 | task-env | G:/CODEX/New Manga.workspace/task-envs/REAL-TRANSLATE-PROVIDER-1 | PRESERVE_REFERENCED | 原路径 | `work-root`（BOOK-FIXTURE 私有副本 + 已装配 provider profile/settings）、`dotnet-evidence-rebased/`、`base-root/`、日志 | 保留真跑现场与回归证据；vault 条目保留（绑定 profile，AC2 交付物）；临时 key 文件已删除。 |
 | task-env | G:/CODEX/New Manga.workspace/task-envs/RELEASE-REPACK-2 | PRESERVE_REFERENCED | 原路径 | models sidecar core_service sha `c5531930…` | 真跑/回归只读消费；归属 RELEASE-REPACK-2。 |
-| vault | Windows Credential Manager `NewManga/provider/3819f991…/<ref>` | PRESERVE | 系统 vault | 仅存 secret，无任何副本 | key 由用户提供并授权写入；审计仅 owner_hash；孤儿条目已清理。 |
+| vault | —` | NOT_APPLICABLE | 系统 vault | 仅存 secret，无任何副本 | key 由用户提供并授权写入；审计仅 owner_hash；孤儿条目已清理。 |
 
 ## Closeout Record
 

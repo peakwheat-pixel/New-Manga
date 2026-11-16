@@ -137,7 +137,7 @@ allowed_paths:
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| artifact | 待填（workspace\task-envs\INSTALLER-MATRIX-1） | PRESERVE_REFERENCED | 同左 | 待填 | stage + setup.exe，不在仓库 |
+| artifact | G:/CODEX/New Manga.workspace/task-envs/INSTALLER-MATRIX-1 | PRESERVE_REFERENCED | 同左 | 待填 | stage + setup.exe，不在仓库 |
 
 ## Closeout Record
 

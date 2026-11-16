@@ -79,7 +79,7 @@ commit + `verification/D-14-STATUS-COLOR-FIX/impl-verification.log` + `doc/hando
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | verification artifacts | verification/D-14-STATUS-COLOR-FIX/** | PRESERVE_REFERENCED | verification/D-14-STATUS-COLOR-FIX/integration-verification.log | e36a7442b（commit） | 集成日志被 Task/Review/Handoff 引用；SHA/pins 见 Task Canonical Evidence。 |
-| worktree/task-env/dataset/model/test-material/temp/user data | 未创建/未访问 | NOT_APPLICABLE | - | - | 未创建 worktree/task-env；未访问用户数据；测试默认零写入。 |
+| worktree/task-env/dataset/model/test-material/temp/user data | — | NOT_APPLICABLE | - | - | 未创建 worktree/task-env；未访问用户数据；测试默认零写入。 |
 
 ## Closeout Record
 

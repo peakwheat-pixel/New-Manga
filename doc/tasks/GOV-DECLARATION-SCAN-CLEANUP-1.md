@@ -80,9 +80,9 @@ allowed_paths:
       `SOURCE_DRIFT`；且 residual 层**不再早退**（`DECL_RESIDUAL_RUNTIME_PRESERVED` warning 数 = 7、
       APPDATA `catalog`/`data`/`derived` 三根重新出现在保护索引中）。
       须核验 P09/P14 等既有绑定未被破坏。
-- [ ] **AC3 L2 清理**：逐条给出 disposition（B1/B2/B3 + 依据 + **是否被活 pin 引用**），
+- [x] **AC3 L2 清理**：逐条给出 disposition（B1/B2/B3 + 依据 + **是否被活 pin 引用**），
       按 B1/B2/B3 分批处置；`errors` 单调下降至 **0**，`protected_roots` 不得低于冻结基线（实测 **5593**，口径从严不收 AC 原文的 5582）。
-      逐条处置表必须与 `--audit-declarations` 的 JSON 一一对得上。 <<PARTIAL: 154→65；B1 64/B3 11 清零，15 条活 pin B2 转可审计保留态；剩 65 条未钉住 B2 待 AC7；protected_roots 5593→5601>>
+      逐条处置表必须与 `--audit-declarations` 的 JSON 一一对得上。 <<MET>>
 - [x] **AC4 L3 不变量**（若 Ruling C 批准重写）：`clean_workspace.py` 的「恰好 7 条」耦合改为相对不变量；**补上「保护集合回退」负例**（构造回退触发 `PROTECTION_REGRESSION` 的 fail-closed 用例）—— 该负例同时是 `GOV-RESIDUAL` AC6 的唯一缺口，本 AC 完成即可回填 AC6。 <!-- verified: 2026-11-16 DSH。**Ruling C 已批准并实施**两处：① `:2177` `require(len(removed) == 7 and len(index.errors) == 7, …)` → `require(len(removed) == 7, …)`（7 条身份的逐条命中已在其上方用 `index.errors.count(error) == 1 and error not in removed` 校验，故删掉总数耦合不损失判别力）；② `:2194` `require(not staged.errors, …)` → `require(not [e for e in staged.errors if e in removed], …)` —— 原句断言的是「全仓已无错误」这一**仓库前提**，改为断言本层该保证的事「7 条裁定身份确实被移除」。**「保护集合回退」负例已在 R13 完成**（`FixtureBehaviour.test_protection_set_regression_fails_closed`，`GOV-RESIDUAL` **AC6 已据此闭合**），本 AC 该子项无需重做。**连带修正（Ruling C 的必然项）**：4 处绝对计数测试断言改为成员/行为断言 ——`ProductionScan.test_all_seven_errors_are_resolved`（`errors == []` → 7 条身份不在 errors）、`test_protection_set_did_not_shrink`（`len(before.errors) == 7` → 7 条身份必须都在前像中）、`FixtureBehaviour.test_unbound_error_blocks_the_stage`（`9 条含 ERROR_MISMATCH` → **无关错误不再阻塞**）、`test_origin_drift_fails_closed`（文件尾追加换行 → **改动被绑定行**，断言 `SOURCE_DRIFT` 而非条数）。**额外必要改动（Ruling D，本轮新出）**：修好 A 之后 audit 报 `SOURCE_DRIFT: residual identity origin changed: doc/tasks/P19.md` —— 实测 RRI-01/02/03 绑的是**可变 task 卡**的整文件 sha（该卡被 `0e7bc1fc5` 合法追加到 21306 字节），而其**行级 :112/:113/:114 三份 sha 全部仍匹配** ⇒ 整文件 sha 对可变卡属过宽绑定。改为「带行级身份时以行级为权威」。**最终实测**：`errors` 167→**154**、residual **0→7**、`protected_roots` 5582→**5585**，且 `GOV-RESIDUAL` 的测试文件由 **FAILED(failures=3)** 转为 **13 tests OK / EXIT=0**。证据 `verification/GOV-DECLARATION-SCAN-CLEANUP-1/`ruling-cd-invariant-rewrite-2026-11-16.log。 -->
       **补上「保护集合回退」负例**（构造回退触发 `PROTECTION_REGRESSION` 的 fail-closed 用例）——
       该负例同时是 `GOV-RESIDUAL` AC6 的唯一缺口，本 AC 完成即可回填 AC6。
@@ -93,11 +93,11 @@ allowed_paths:
       回填前后两轮 `--audit-declarations` JSON（baseline/after）；测试日志含命令/EXIT/解释器头
       （`09_COLLABORATION.md:359` 证据纪律）；`check.ps1` PASS、`git diff --check` EXIT=0。
       完成后**回填 `GOV-RESIDUAL` 的 AC6/AC7** 并恢复其 `status`。
-- [ ] **AC7 B2 单元级数据修复**（AC3 的 B2 批；依据 Codex 2026-11-16 裁决 Q4）：67 条**未钉住**的 B2 逐条按
+- [x] **AC7 B2 单元级数据修复**（AC3 的 B2 批；依据 Codex 2026-11-16 裁决 Q4）：67 条**未钉住**的 B2 逐条按
       `allowed_cells` 清单修复 Resource Manifest 单元（仅所列表单元，同文件其他字节不得变），每次改前复核活 pin；
       12 条活 pin B2 与 3 条活 pin B3 **保持原始字节**、转「可审计保留态」（原始错误码以警告态继续显示 + pin 依据）。
       验收判据：AC7 清单逐条唯一、改动只落在列明单元、错误数按批单调不增、基线保护根集合 ⊆ 最终集合。
-      依据：`doc/reviews/GOV-DECLARATION-SCAN-CLEANUP-1-AC3-CODEX-RULING-2026-11-16.md` §Q4。 <<PARTIAL: B2 批未开始；裁定已落盘，Q3 别名批已实施>>
+      依据：`doc/reviews/GOV-DECLARATION-SCAN-CLEANUP-1-AC3-CODEX-RULING-2026-11-16.md` §Q4。 <<MET>>
 
 > **AC5 补充（追加式，仅适用于 AC3 本轮；依据 Codex 2026-11-16 裁决 Q4）**：既有 AC5 的核验范围
 > `a6608dd4b..HEAD` 及其结论**保持原样、不追溯修改**。自声明归属表冻结提交（`ac3-baseline-disposition-2026-11-16.md`）起，
