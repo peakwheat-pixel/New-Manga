@@ -43,6 +43,13 @@ allowed_paths:
 > **不代表 AC1–AC8 已满足** —— 那些是**下游实现**的验收条件，本卡只冻结范围。
 > 因此本条下述 AC 一律标 `blocked: 实现未开始`，不冒充完成。
 
+> **下游实现卡已建立（2026-11-16，DSH，append-only）**：
+> AC1–AC8 的**实现**已在 **`doc/tasks/FEA-04-IMPL-1.md`** 立项承接（`status: proposed`，`depends_on: [FEA-04]`）。
+> 本卡的 AC1–AC8 **继续保持 `[ ]` + `blocked: 实现未开始`，不翻转** ——
+> 本卡 `done` 只表示「范围冻结 + scope 复核」完成（见上条语义登记），**不冒充实现完成**。
+> 关账口径：`FEA-04-IMPL-1` 达成并独立复核 approved 后，本卡 AC1–AC8 才**依据其证据**依次翻 `[x]`。
+> 在此之前，任何一方都不得声称「FEA-04 已实现」。
+
 ## 来源与授权
 
 1. 方案 §12.1 `:642`：S1 `FEA-04` Current 适配——`Frontends.Current`、V2 state/route/VM adapter、**保留旧入口**；验收「行为不退化；无 VM 私有第二份业务真值；关闭/重建不 Dispose Host，不隐式 Start」。
