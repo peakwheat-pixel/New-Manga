@@ -1,6 +1,6 @@
-# GOV-EVIDENCE-PIN-REPAIR-1 · AC4 batch 1 证据（含独立复核更正，2026-11-17 修订）
-# head: 3fd04d4cb
-# at_utc: 2026-11-16T14:36:15Z
+# GOV-EVIDENCE-PIN-REPAIR-1 · AC4 batch 1 证据（含独立复核 P1/P2 更正；最终修订见文件尾）
+# head(初版生成时): 3fd04d4cb ; 本次修订基线: dc4d1b529
+# at_utc: 2026-11-16T14:41Z（初版生成）; 修订: 见 git log
 # os: Windows 10.0.26200 ; PowerShell 7.6.8 ; Python 3.14.6
 # reviewer: doc/reviews/GOV-EVIDENCE-PIN-REPAIR-1-AC4-BATCH1-REVIEW-2026-11-16.md（pin-exc-reviewer，独立上下文）
 
@@ -37,3 +37,8 @@
 # python -B -m unittest tools.governance.tests.test_evidence_exceptions → Ran 10 ... OK
 # python -B -m unittest tools.governance.tests.test_audit_evidence_pins → Ran 15 ... OK
 # 全仓巡检 → 7,083 rows / FAIL 440 / EXEMPTED 5 / WARN 1,671
+
+## 4. 复核 P2 收尾（本轮）
+# ① 巡检工具现在同样要求**当前** status 为终态，且资格缓存 key 改为完整行指纹（避免粗 key 复用）。
+# ② 本文件头已更正：记录初版 head 与修订基线，不再声称单一 head。
+# ③ 复核 §5 结论：APPROVED_WITH_FINDINGS —— 5 条例外可按更正后理由采纳。

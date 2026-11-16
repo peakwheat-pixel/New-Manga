@@ -97,6 +97,11 @@ def collect(cards):
         try:
             text = card.read_text(encoding="utf-8", errors="replace")
             card_id = ""
+            card_status = ""
+            for line in text.split("\n")[:40]:
+                if line.startswith("status:"):
+                    card_status = line.split(":", 1)[1].strip().lower()
+                    break
             for line in text.split("\n")[:40]:
                 if line.startswith("id:"):
                     card_id = line.split(":", 1)[1].strip()
@@ -121,6 +126,7 @@ def collect(cards):
                 rows.append({"card": rel_card, "line": line_no, "path": rel,
                              "id": clean(cells[0]) if cells else "",
                              "card_id": card_id,
+                             "card_status": card_status,
                              "commit": commit, "recorded_cell": recorded_cell,
                              "digests": digests})
     return rows
@@ -159,7 +165,8 @@ def registry_eligible(registry_doc, entry, cache={}):
     terminal card at the frozen baseline."""
     baseline = registry_doc.get("eligibility_baseline", "")
     card = entry.get("card", "")
-    key = (baseline, card, entry.get("evidence_id"))
+    key = (baseline, card, entry.get("evidence_id"), entry.get("path"),
+           entry.get("commit"), str(entry.get("sha256")).lower(), str(entry.get("class")).upper())
     if key in cache:
         return cache[key]
     ok = False
@@ -184,6 +191,9 @@ def registry_eligible(registry_doc, entry, cache={}):
 
 def registry_match(registry, row, error_type):
     if not registry:
+        return None
+    # an exception lapses as soon as the card is reopened (ruling condition 4)
+    if row.get("card_status") not in ("done", "closed_with_limitations"):
         return None
     commit = "" if row.get("commit") in ("", "-") else row["commit"]
     key = (row.get("card"), row.get("card_id"), row.get("id"), row.get("path"), commit,

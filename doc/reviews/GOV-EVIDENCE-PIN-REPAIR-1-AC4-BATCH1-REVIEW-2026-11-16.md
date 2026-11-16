@@ -132,3 +132,40 @@ Resource Manifest 完全不在例外范围内，且单测覆盖了“无登记�
 **建议下一步**：由 DSH 处理 R-01（重裁 EV-11/12/13）并顺带修正 R-02…R-06；重裁后重跑两条 `check.ps1` 命令与
 `python -B -m unittest tools.governance.tests.test_evidence_exceptions tools.governance.tests.test_audit_evidence_pins`，
 再按新 head 送独立复核。本 Review 只读，未 commit/push，也未修改除本文件以外的任何文件。
+
+## §5 收敛复核
+
+本节只复核 `dc4d1b529d6b73519e2bf801358b9689118c4489`（父 `3fd04d4cb`）对上述 P1/P2 的处置；原 §1–§4 的
+REJECTED 仍只对该时的 `3fd04d4cb` 有效。
+
+verdict: **APPROVED_WITH_FINDINGS**
+
+| 检查项 | 结论 | 实测/证据 |
+|---|---|---|
+| 1. P1：三条 `-supersede` 行 | **PASS** | 113–115 行 commit 均为 `5cbec0e822af224809f3d898c82fe30a025b5ab1`；sha256 分别是原行值 `4a7e1ca8…` / `60a3d02a…` / `cdc51f96…`；`sha256(git cat-file blob 5cbec0e8:<path>)` 三条逐字相等；17 条非 supersede 证据行与 `3fd04d4cb` **逐字节相同**；原三行保留 |
+| 1b. 表下说明 | **PASS** | 117–127 行已改为“溯源补全”，明确“并非不可复现”“不是『摘要造假』或『字节消失』” |
+| 1c. 严格校验/门禁 | **PASS** | `check.ps1 -TaskPath` → `PASS (8 warnings)`、EXIT 0、2091 ms；5 条 EXEMPTED 仅对应原行；巡检 JSON 中三条 supersede 行为 `PASS/BLOB_MATCH` |
+| 2. 例外理由 | **PASS（措辞备注）** | 43/57/71 行改为“原行 commit 列缺记载 / 摘要已核实可在 5cbec0e822af 复现 / append-only 禁止改写”；15/29 行 EV-01/03 改为“该路径全部 22/12 个历史 blob 中不存在”；仍保留一句等价的路径级“该路径从未以这些字节入仓”，已被 22/12 blob 检查证实 |
+| 3a. 当前 status 门禁 + 测试 | **PASS** | `Get-EvidenceException` 新增当前 status 检查（`done`/`closed_with_limitations` 才降级）；`test_exception_lapses_when_the_card_is_reopened` 通过（定向 2 tests，39.075 s，OK） |
+| 3b. “余 443” → 440 | **PASS（备注）** | GOV 卡 80 行改为“全仓余 **440** 条”；log 39 行 `FAIL 440`；log 30 行只把“余 443”作为更正引述保留，不是当前断言 |
+| 3c. 巡检工具资格 + FEA-05 强断言 | **PASS（残余见 P2-N2/N3）** | audit `registry_eligible` 复用基线终态/逐字行；FEA-11 → `FAIL 0 / EXEMPTED 5`，FEA-05 → `FAIL 5 / EXEMPTED 0`；`test_undocumented_broken_card_still_fails` 通过；把基线改为 `0*40` 后 `registry_match` 返回 `None` |
+| 4. diff 范围/无放宽/无其它证据行 | **PASS** | `git diff 3fd04d4cb dc4d1b529` 仅 FEA 卡（3 条 supersede 行 + 说明）、GOV 卡计数、registry 理由、`check.ps1` 收紧、audit 资格、测试、log；FEA 卡 17 条非 supersede 证据行逐字节未变；无测试删除；另新增本报告文件 |
+
+### §5.1 新发现（不阻断）
+
+- **P2-N1（文档/证据元数据）**：batch log 仍写 `# head: 3fd04d4cb`，但 log 的 §0/§3 记录的是 `dc4d1b529` 的更正结果；
+  且 log/卡 note 写“2026-11-17 修订”，实际 `dc4d1b529` 的 commit 时间为 **2026-11-16 22:36:27 +0800**。影响：仅凭 log 头
+  无法复现当前结果；建议把 head 改为 `dc4d1b529`（或写 `3fd04d4cb → dc4d1b529`），日期改为 2026-11-16。
+- **P2-N2（诊断工具，残余）**：audit 的 `registry_eligible` 只读取**基线卡** status，不读当前卡状态。卡片重开后工具仍会
+  显示 `EXEMPTED`，而 `check.ps1` 已不会降级（新增当前 status 检查）；卡 note 推荐用该工具复核，重开场景可能误导。
+  建议工具同样读取当前卡 `status`，或明确标注“仅基线资格，非门禁等价”。
+- **P2-N3（潜在）**：`registry_eligible(..., cache={})` 的 key 只含 `(baseline, card, evidence_id)`，未含
+  path/commit/sha/class；若未来同一 `evidence_id` 有多条登记项或同进程多次更换 registry，可能复用旧资格。当前 5 条
+  登记项唯一，未触发；建议 key 补全，或在 `load_registry` 时重置。
+- 备注：EV-01/03 的 reason 仍有一句路径级“从未以这些字节入仓”；该断言已被 22/12 个历史 blob 的实测证实，若要求
+  字面只保留“N blob 中不存在”，可删去该从句；不阻断。
+
+**收敛结论**：P1 已真修（三条 supersede 行严格通过，溯源补全成立，原证据行未改字节）；三项 P2 已修（当前 status
+门禁 + 测试、440 计数、巡检资格/FEA-05 强断言）；diff 未放宽门禁、未改其它证据行。P2-N1…N3 为文档/诊断残余，
+不阻断 5 条例外与 AC6 通道，故本次为 **APPROVED_WITH_FINDINGS**；5 条例外（EV-01/03/11/12/13）现在可按更正后的
+理由采纳。建议下一批顺手修正 log head/日期、工具当前状态与缓存 key；无需重做本批门禁。
