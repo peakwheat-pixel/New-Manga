@@ -512,3 +512,76 @@ Fea07Residual3CrashTests.Recover_NewProcessRollsBackAndAdoptsTheLatestProtectedS
 - **未把门禁改常开**（CI/产品策略；Perf 单测 21 s，开常开会显著拉长默认套件）。
 - `Recover_…` 未单独实测，标为**推断**。
 - 基线未变（953/0/11 无夹具、957/0/4 带夹具）。
+
+## 16. NOT_RUN 逐条归因（2026-11-16，DSH）—— 权威口径，取代 §4.2/§4.3 的类名推断
+
+> 被审 head：`262909c62237e0838c4d8eb59a7fbb86a1309d85`。本节回应 `GATE3-COVERAGE-MATRIX` **AC4** 的阻塞理由
+> 「Host/Core 层 100 项 NOT_RUN 的归因仍是未核实的类名推断 …… r3 R3-006 指出 3 处性质错标」。
+> 做法：**实测 SKIP 行 + 源码 attribute/gate 变量反查**，不靠类名推断。
+
+### 16.1 口径更正：「100 项」已过期，当前实测 **48**
+
+| 套件 | passed | failed | skipped | 命令 |
+|---|---:|---:|---:|---|
+| `NewManga.Host.Tests` | 364 | 0 | **44** | `dotnet test tests/NewManga.Host.Tests` |
+| `NewManga.App.Tests` | 969 | 0 | **4** | `dotnet test tests/NewManga.App.Tests` |
+| `NewManga.CoreClient.Tests` | 258 | 0 | **0** | `dotnet test tests/NewManga.CoreClient.Tests` |
+| **合计** | 1591 | **0** | **48** | `scripts/test.ps1` → `TEST PASS 1591/1639` |
+
+⇒ 旧文的「100 项」（§4.1：Host 74 + CoreClient 26）**已不成立**：CoreClient 已 26→0，
+Host 已 74→44。**本节之后，任何「100 项 NOT_RUN」的说法都应视为过期。**
+
+### 16.2 Host 44 个 skip：全部按 **实测的 fact attribute + gate 变量**归因
+
+| 测试类 | skip 数 | 实测 fact attribute | gate 变量（源码反查） |
+|---|---:|---|---|
+| `Fea09UiImportIpcProductionTests` | 11 | `ProductionIpcFact` | `NEWMANGA_FEA09_IPC=1` |
+| `Fea11RunGrantIpcTests` | 7 | `Fea11RunGrantIpcFact` | `NEWMANGA_FEA11_IPC=1` |
+| `Fea09UiImportIpcTests` | 5 | `UiIpcFact` | `NEWMANGA_FEA09_IPC=1` |
+| `Fea11HostAuthIpcTests` | 4 | `Fea11IpcFact` | `NEWMANGA_FEA11_IPC=1`（+ `FEA11_CRASH_STATE`/`CRASH_NEGATIVE` 两个子变量） |
+| `Fea11Residual4AIpcTests` | 4 | `Fea11Residual4AIpcFact` | `NEWMANGA_FEA11_IPC=1` |
+| `Fea11ScanIpcTests` | 4 | `Fea11ScanIpcFact` | `NEWMANGA_FEA11_IPC=1` |
+| `Fea11SourceIpcTests` | 3 | `Fea11IpcFact`（+ 1 个 `[Fact]` 已执行） | `NEWMANGA_FEA11_IPC=1` |
+| `Fea07Residual3IpcTests` | 1 | `Fea07Residual3A03Fact` | `NEWMANGA_FEA07_A03=1` |
+| `Fea09RealIpcTests` | 1 | `PythonIpcFact` | `NEWMANGA_FEA09_IPC=1` |
+| `Fea10RunIpcTests` | 1 | `Fea10IpcFact` | `NEWMANGA_FEA10_IPC=1` |
+| `Fea12TrashUiIpcTests` | 1 | `Fea12IpcFact` | `NEWMANGA_FEA12_UI_IPC=1` |
+| `SourceRecoveryIpcTests` | 1 | `RecoveryIpcFact` | `NEWMANGA_FEA11_IPC=1` |
+| `SourceRegistryResilienceTests` | 1 | `SourceRegistryIpcFact`（+ 1 个 `[Fact]` 已执行） | `NEWMANGA_FEA11_IPC=1` |
+| **合计** | **44** | 13 个类 / 12 种 gate attribute | — |
+
+**归因性质统一为「按设计 gated，需 opt-in 环境开关」**，不是「sidecar 缺失」、不是「无覆盖」。
+§11.2 已实测：开 `NEWMANGA_*=1` 后 Host 由 349/2~3/44 → **379/15/1**（`skip 44→1`，43 个真的执行）。
+§11.3 已逐条归因那 15 个失败（3 环境 / 2 缺 crash 变量 / 7+ schema 版本 / 2 原有）。
+⇒ Host 侧 NOT_RUN **不需要再推断**，需要的是「要不要开 opt-in 跑」。
+
+### 16.3 App 4 个 skip：同样逐条（含 1 条本轮已实跑通过）
+
+| 测试 | skip 数 | gate 变量 | 说明 |
+|---|---:|---|---|
+| `StartupDiagnosticsTests.RealProcessLaunchMatrix_ExitZeroAndDiagnosableStartupLog` | 1 | `NEWMANGA_FEA07_STARTUP_PROCESS=1` + 交互桌面 | **本轮已实跑通过**（`R4`：设为 1 后 1/1 passed，1m5s），证明它是**可执行**而非「不可覆盖」 |
+| `PerformanceBaselineTests.Gated_HotSwitch_UiThreadSchedulingGapStaysWithinThePerfGateBudget` | 1 | `NEWMANGA_FEA07_PERF=1` | 指标 load-sensitive，默认套件只**记录**不断言；断言在 gated 用例里 |
+| `Fea07Residual3CrashTests.Park_ProductionSwitchStopsBetweenPersistedTargetAndJournalCommit` | 1 | `NEWMANGA_FEA07_CRASH=1` + `NEWMANGA_FEA07_CRASH_PHASE=park` | 跨进程崩溃注入，须经 `verification/FEA-07-RESIDUAL-3/tools/crash-switch.ps1` 外部驱动 |
+| `Fea07Residual3CrashTests.Recover_NewProcessRollsBackAndAdoptsTheLatestProtectedState` | 1 | `NEWMANGA_FEA07_CRASH=1` + `NEWMANGA_FEA07_CRASH_PHASE=recover` | 同上 |
+
+### 16.4 §4.2 三行**过期**更正（r3 R3-006 的观察正确，但结论应改为「表过期」）
+
+r3 R3-006 指出 3 处「性质错标」。本轮逐类实测后确认：**这 3 个类当前 skip 数均为 0**，
+所以 §4.2 把它们列为 skip 来源是**过期残留**，而不是「attribute 性质写错」：
+
+| §4.2 旧行 | 旧记 skip | **当前实测** | 源码真实 attribute | 结论 |
+|---|---:|---:|---|---|
+| `GrantIssuerTests` | 4 | **0** | `[HostSidecarFact]`（`:63/:117/:186`） | 旧行过期（该类的 sidecar 门禁当前满足 ⇒ 已执行） |
+| `StartupSelfCheckTests` | 3 | **0** | `[Fact]`（普通测试，`:27/:35/:48`） | 旧行过期；且它**从不 skip**，本不该出现在 skip 表里 |
+| `Fea11WatchHostRuntimeTests` | 1 | **0** | `[HostSidecarFact]`（`:21`） | 旧行过期 |
+
+⇒ 三行均已不再贡献 skip。**r3 的担心（性质靠猜测）是对的，真正的修法是换口径重测**（本节 §16.2），
+而不是去改那三个类的 attribute。
+
+### 16.5 结论（供 AC4 判定）
+
+- 每个当前 skip 格都有**两重依据**：实测 SKIP 行（证明它真的 skip）+ 源码 attribute/gate 变量反查（证明为什么 skip）；
+- 48 = Host 44 + App 4 + CoreClient 0，**无一项是「未核实」状态**；
+- 性质统一为「按设计 gated」：需要的是**环境开关或交互桌面**，不是缺覆盖；
+- 「100 项」口径作废；后续引用请用 **48**（并在套件变化后重测，不要沿用本节数字）。
+
