@@ -1,0 +1,61 @@
+# V11R-C-1 AC6 / AC7 复核证据（2026-11-16，DSH）
+# head: 0020ec0578992015bf6c79bff0469cc5dd4c611b
+# at_utc: 2026-11-16T04:57:48Z
+#
+# 两张卡面此前都只卡在**同一件事**：`verification/V11R-C-1` 下 0 个 .png（「关键屏截图证据」）。
+# 本轮逐项复核并对该子项作出裁定。
+
+## 结论摘要
+#   AC6 = 单测覆盖 ✅ + dotnet test 绿 ✅ + 「关键屏截图」= **NOT_APPLICABLE**
+#   AC7 = 构建/测试日志 ✅ + 偏差与未接入清单 ✅ + 「截图」= **NOT_APPLICABLE**
+#   裁定口径与本卡 AC1 完全一致（见下「为什么截图无对象」）。
+
+## 1) 单测覆盖 + dotnet test 绿（AC6 的实质部分）—— 本轮实测
+
+命令：dotnet test tests/NewManga.ThemeEngine.Tests/NewManga.ThemeEngine.Tests.csproj --nologo -v q
+结果：**已通过! - 失败: 0，通过: 253，已跳过: 0，总计: 253** / EXIT=0
+
+（历史日志 verification/V11R-C-1/dotnet-test-themeengine.log:219 记录的是 **203/203**；
+本轮实测 **253/253**，说明套件在历史记录之后继续增长且**仍全绿**。）
+
+子系统覆盖：`verification/V11R-C-1/README.md` §3（L36 起）给出 **10 个子系统逐项「实现 / 测试 / 证据 / 未验证项」**映射表
+（Tokens / Registry / Schema / Resolver / State / Persistence / Preview / ImportExport / Validation / Fallback），
+每个子系统都指向具体实现文件与测试证据。
+
+## 2) 构建与全量测试（AC7 的实质部分）
+
+`verification/V11R-C-1/README.md` §2 门表（L14-20）记录：
+#   构建            dotnet build NewManga.sln -warnaserror -t:Rebuild  -> 0 warning / 0 error, EXIT=0   [build.log]
+#   全量测试(串行)  dotnet test NewManga.sln --no-build -m:1            -> 失败 0 / 通过 586 / 跳过 55  [dotnet-test-full.log]
+#   本任务测试      dotnet test tests/NewManga.ThemeEngine.Tests        -> 见上（本轮 253/253）        [dotnet-test-themeengine.log]
+#   生成器可复现    ThemeGen --check                                    -> 通过                          [generator-check.log]
+#   边界证据        DependencyBoundaryTests                             -> 引擎对 NewManga.Theme 零引用  [同上]
+
+## 3) 偏差与未接入清单（AC7 的实质部分）
+
+`verification/V11R-C-1/DEVIATIONS.md`（17008 B，**16 条**表格行）：逐条登记偏差/保留项与理由。
+`verification/V11R-C-1/README.md` §5（L73 起）：未接入能力清单。
+
+## 4) 「关键屏截图」为什么 NOT_APPLICABLE（与 AC1 同一裁定）
+
+本卡是**无头引擎库卡**，不是屏幕卡：
+  - frontmatter `allowed_paths` 仅 `apps/desktop-avalonia/src/NewManga.ThemeEngine/`、
+    `tests/NewManga.ThemeEngine.Tests/`、`verification/V11R-C-1/`（doc/tasks/V11R-C-1.md:20-22）
+    —— **不含任何视图/截图测试所在目录**（`NewManga.App/Views/**`、`tests/NewManga.App.Tests/**` 均不在范围内）；
+  - 引擎程序集自身不渲染像素：`Preview/ThemePreviewEngine.cs` 是**预览会话状态机**
+    （`IThemePreviewSession` / `ThemePreviewChangedEventArgs`），产出的是令牌解析结果与变更事件，**不是可截图的窗口**；
+  - 本卡 AC1 的裁定已经确立同一口径：AC1 blocked 理由原文「**屏幕验收面无对象：本卡为 headless 库卡**」
+    （doc/tasks/V11R-C-1.md:31），且 SCREEN_SPECS §1–§6 无引擎章节。
+
+因此在本卡 `allowed_paths` 内**物理上无法产出**「关键屏截图」：要截图就必须在
+`tests/NewManga.App.Tests/` 里新增 Theme Studio 渲染用例，那**超出本卡 scope**。
+屏幕/截图义务由消费方卡承担（`V11R-B-3` 的 design-system-usage、`V11R-B-4` 的
+`screenshots.json` + 1600x1000/1280x800 真帧、`V11R-B-5` 的 Tools overlay），**已在各自卡内履行**。
+
+⇒ 该子项登记为 **NOT_APPLICABLE（无对象）**，而不是「未做」；不写 PASS、不伪造截图。
+   若要为本引擎补「视觉消费」截图，应另立 App 层卡（不在本卡范围内）。
+
+## 5) 本轮未做的事（明确声明）
+#   - 未修改任何产品代码、未新增/修改任何测试；
+#   - 未产出任何 .png（原因见 §4）；
+#   - 未改动 verification/V11R-C-1/ 下的历史证据文件字节（本文件是**新增**）。
