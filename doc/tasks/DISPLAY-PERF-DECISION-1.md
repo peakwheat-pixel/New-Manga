@@ -129,7 +129,7 @@ allowed_paths:
 
 ## Resource Manifest
 
-| resource_type | source_path | disposition | destination_path | verification/DISPLAY-PERF-DECISION-1/baseline/ac1/_pilot/ac1-02/ac1-run.json | reference/process check and result |2026-11-17 复核：原 manifest 指针不可达，改指 verification/DISPLAY-PERF-DECISION-1/baseline/ac1/_pilot/ac1-02/ac1-run.json 
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | task-env | G:/CODEX/New Manga.workspace/task-envs/DISPLAY-PERF-DECISION-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/DISPLAY-PERF-DECISION-1 | verification/DISPLAY-PERF-DECISION-1/baseline/ac1/_pilot/ac1-02/ac1-run.json | 已核实目录存在；残留进程已清零；不删除（证据引用） |2026-11-17 复核：原 manifest 指针不可达，改指 verification/DISPLAY-PERF-DECISION-1/baseline/ac1/_pilot/ac1-02/ac1-run.json 
 | build-artifact | apps/desktop/src-tauri/target/release/new-manga.exe | PRESERVE_REFERENCED | apps/desktop/src-tauri/target/release/new-manga.exe | verification/DISPLAY-PERF-DECISION-1/baseline/ac1/_pilot/ac1-02/ac1-run.json | 产品后续构建会覆盖；基线已另存，不影响复核 |2026-11-17 复核：原 manifest 指针不可达，改指 verification/DISPLAY-PERF-DECISION-1/baseline/ac1/_pilot/ac1-02/ac1-run.json 
