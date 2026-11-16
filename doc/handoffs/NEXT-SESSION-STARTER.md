@@ -1,8 +1,8 @@
 # 新会话启动包 — New Manga 目标续接
 
-- 生成时间：2026-11-16 13:20 (+08:00)（本版为 R8 之后更新）
+- 生成时间：2026-11-16 13:25 (+08:00)（本版为 R9 之后更新）
 - 生成者：DSH（lead）
-- **当前 head：`b11689068`**（main，**已 push**，upstream = origin/main，ahead/behind = 0/0）
+- **当前 head：`26519c9fd`**（main，**已 push**，upstream = origin/main，ahead/behind = 0/0）
 - 工作区：干净（`git status --porcelain` 为空）
 - **R1**：`9ce819ae7` → `dd029b73f`（7 commit，目标 A/B/D 达成）
 - **R2**：`dd029b73f` → `5f2664c2e`（8 commit）—— 目标 C 闭合 10 条
@@ -11,7 +11,8 @@
 - **R5**：`8900dcbdb` → `a8ffd8a3d`（2 commit）—— 闭合 `V11R-A-3` AC4（该卡 **6/6 全闭合**）
 - **R6**：`a8ffd8a3d` → `759b49730`（4 commit）—— 闭合 `RUN-IPC-1` AC4；**该卡门禁首次全绿**（顺带据实更正资源行）
 - **R7**：`759b49730` → `650b2605e`（4 commit）—— 闭合 `V11R-C-1` **AC1/AC6/AC7**（该卡 **7/7 全闭合**）并补齐结构性表格，**门禁转全绿**
-- **R8（本轮）**：`650b2605e` → `b11689068`（3 commit）—— 闭合 `V11R-B-5` **AC1/AC2**（补 SCREEN_SPECS §6.5 + 上下文保留断言 + 结构性表格）
+- **R8**：`650b2605e` → `b11689068`（3 commit）—— 闭合 `V11R-B-5` **AC1/AC2**（补 SCREEN_SPECS §6.5 + 上下文保留断言 + 结构性表格）
+- **R9（本轮）**：`b11689068` → `26519c9fd`（2 commit）—— 闭合 `V11R-B-5` **AC3**（六态显式映射 + 两条变红验证）；**该卡 7/7 且门禁全绿**
 
 > 本文是**给下一个会话的唯一起点**。不要重读历史对话；按「下一步队列」推进即可。
 
@@ -21,11 +22,11 @@
 
 | 项 | 状态 |
 |---|---|
-| HEAD | `b11689068`（main，已 push，0/0） |
+| HEAD | `26519c9fd`（main，已 push，0/0） |
 | 四件套 | **全绿**：`check.ps1` PASS(3w) / `verify_pins` 18/18 / `api_inventory` 1/80/6=87 / `test.ps1` EXIT=0 **1587/1635 passed, 48 skipped**（App 967/0/4，基线 955/0/11 不退化） |
 | 上一 goal | 已用尽 100 轮（见 `GOAL-WRAPUP-R100.md`） |
 | 本 goal | 60 轮上限 |
-| 目标 C | 可行动项 41 → **闭合 27 / open 14**（其中 **2 条已裁决 BLOCKED**：`GOV-RESIDUAL` AC6/AC7） |
+| 目标 C | 可行动项 41 → **闭合 28 / open 13**（其中 **2 条已裁决 BLOCKED**：`GOV-RESIDUAL` AC6/AC7） |
 
 复跑四件套：
 
@@ -156,6 +157,52 @@ R3：`V11R-C-3` R1（补 tag 存在后的 `-DryRun` + limitation L-C3-1）/ `V11
 
 ---
 
+## 3h. R9（本轮）完成的事 —— `V11R-B-5` AC3（该卡 **7/7 全闭合 + 门禁全绿**）
+
+### 做法：**先把映射口径写死，再断言**
+
+Export 面**不用** DESIGN_SYSTEM §7 的六态字面词表（它用 `StudioExportPhase`），
+所以测试注释里**先写明映射**才断言 —— 后来人能核对口径而不是猜：
+
+| §7 态 | Export 表征 | 就地呈现 |
+|---|---|---|
+| `idle` | `Phase=Idle` | 「预检未加载」 |
+| `loading` | `Phase=Loading`（瞬时，从 **PropertyChanged 发布序列**观察） | 「正在读取预检数据…」 |
+| `ready` | `Phase=Ready` | 「预检就绪 · 可导出 N 页」 |
+| `empty` | `Phase=Ready` 且 `ExportablePageIds` 空 | 「可导出 0 页」+ `HistoryEmptyText`「还没有导出记录」 |
+| `error` | `Phase=Failed`（StartExport 被拒） | 「导出失败」+ `HasError`/`ErrorText` 含「StartExport 被拒绝」 |
+| `partial` | `Phase=Ready` 但未确认/过期**无读取面** | `—` + **非空 tooltip**，计数为 `null` **不伪造 0** |
+
+### 为什么从发布序列读 `loading`（重要方法论）
+
+`loading` 是瞬态。若靠「阻塞读取」观察，测试就绑到了**帧内 await 次数**上；
+从 `PropertyChanged` 序列读，钉的是**状态机**。
+⇒ **这正是 R3 在 `V11R-B-4` 踩过的坑**（当时我写「settle 必须是 Ready」而实测是 Partial，
+原因就是读次数变了）。本轮刻意避开，并且变红验证证明它真的依赖状态机。
+
+### 变红验证（两条，均已还原，产品源码零改动）
+
+1. 删掉 `Phase = StudioExportPhase.Loading` 赋值 ⇒ 红：`Assert.Contains() Failure: Item not found in collection`
+2. 把「StartExport 被拒」分支的 `Phase = Failed` 改成 `Ready` ⇒ 红：`Expected: Failed / Actual: Ready`
+
+### 至此本次会话已有三张卡「补 AC + 补结构性表格 ⇒ 门禁全绿」
+
+`RUN-IPC-1`（R6）、`V11R-C-1`（R7，7/7）、`V11R-B-5`（R9，7/7）。
+**这条路径已被验证三次，可放心用于剩余的 open AC 卡。**
+
+### ⚠️ 目标 C 剩余 13 条的真实结构（下一轮据此排期）
+
+| 卡 | 未勾 | 性质 | 备注 |
+|---|---|---|---|
+| `FEA-04` | 8 | **实现** | 必须另立实现卡；范围已冻结（`doc/tasks/FEA-04.md:88-97`） |
+| `GATE3-COVERAGE-MATRIX` | 2 | DOC（大） | AC2 逐格断言说明 / AC4 100 项 NOT_RUN 归因 |
+| `GOV-RESIDUAL-RUNTIME-IDENTITY-IMPL-1` | 2 | **已裁决 BLOCKED** | 解锁前提 = **Ruling A**（HIE P22 漂移三选一）；不做 A 全白做 |
+| `M2-SFX-CORRECTION-EXPORTER` | 1 | IMPL | 需先生产 T1b 批量产物 |
+
+⇒ **能靠「补断言 + 补表格」推掉的只剩 `GATE3-COVERAGE-MATRIX` 的 2 条（大文档）**；
+其余要么需另立卡（`FEA-04`）、要么被 Ruling 阻塞（`GOV-RESIDUAL`）、要么缺前置产物（`M2-SFX`）。
+
+---
 ## 3g. R8（本轮）完成的事 —— `V11R-B-5` AC1/AC2
 
 ### AC1：原 block 是「**无章节可核对**」，缺口在**被我冻结的规格文件**里
