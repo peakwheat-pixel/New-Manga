@@ -1,8 +1,8 @@
 # 新会话启动包 — New Manga 目标续接
 
-- 生成时间：2026-11-16 14:15 (+08:00)（本版为 R13 之后更新）
+- 生成时间：2026-11-16 14:20 (+08:00)（本版为 R14 之后更新）
 - 生成者：DSH（lead）
-- **当前 head：`dd7619675`**（main，**已 push**，upstream = origin/main，ahead/behind = 0/0）
+- **当前 head：`df2f7aef6`**（main，**已 push**，upstream = origin/main，ahead/behind = 0/0）
 - 工作区：干净（`git status --porcelain` 为空）
 - **R1**：`9ce819ae7` → `dd029b73f`（7 commit，目标 A/B/D 达成）
 - **R2**：`dd029b73f` → `5f2664c2e`（8 commit）—— 目标 C 闭合 10 条
@@ -16,7 +16,8 @@
 - **R10**：`26519c9fd` → `2e575c8f6`（3 commit）—— 闭合 `GATE3-COVERAGE-MATRIX` **AC2/AC4**；**该卡 6/6 且门禁全绿**
 - **R11**：`2e575c8f6` → `691753f9d`（3 commit）—— 立 `FEA-04-IMPL-1` 实现卡 + 闭合 `M2-SFX` **AC4**；目标 C 41 条全部有处置
 - **R12**：`691753f9d` → `bfa74707e`（4 commit）—— 推翻 R11 的判断：`FEA-04` 实现早已交付，8 条 AC 依据既有证据闭合；撤销 `FEA-04-IMPL-1`
-- **R13（本轮）**：`bfa74707e` → `dd7619675`（3 commit）—— 闭合 `GOV-RESIDUAL` **AC6**（补第 7 类「保护集合回退」负例 + 变红验证）。目标 C → **闭合 40 / 仅剩 1 BLOCKED**
+- **R13**：`bfa74707e` → `dd7619675`（3 commit）—— 闭合 `GOV-RESIDUAL` **AC6**（补第 7 类「保护集合回退」负例 + 变红验证）。目标 C → 闭合 40 / 仅剩 1 BLOCKED
+- **R14（本轮）**：`dd7619675` → `df2f7aef6`（2 commit）—— **三项 Ruling A/B/C 落盘 + Ruling A 执行**（L1 清除，`SOURCE_DRIFT` 1→0）；`GOV-DECLARATION-SCAN-CLEANUP-1` **AC1 闭合**
 
 > 本文是**给下一个会话的唯一起点**。不要重读历史对话；按「下一步队列」推进即可。
 
@@ -26,11 +27,11 @@
 
 | 项 | 状态 |
 |---|---|
-| HEAD | `dd7619675`（main，已 push，0/0） |
+| HEAD | `df2f7aef6`（main，已 push，0/0） |
 | 四件套 | **全绿**：`check.ps1` PASS(3w) / `verify_pins` 18/18 / `api_inventory` 1/80/6=87 / `test.ps1` EXIT=0 **1587/1635 passed, 48 skipped**（App 967/0/4，基线 955/0/11 不退化） |
 | 上一 goal | 已用尽 100 轮（见 `GOAL-WRAPUP-R100.md`） |
 | 本 goal | 60 轮上限 |
-| 目标 C | 可行动项 41 → **闭合 40 / 仅剩 1 条 BLOCKED**（`GOV-RESIDUAL` AC7，解锁=Ruling A） |
+| 目标 C | 可行动项 41 → **闭合 40 / 仅剩 1 条 BLOCKED**（`GOV-RESIDUAL` AC7）；**解锁路径已开工**：Ruling A 已执行、清理卡 AC1 闭合 |
 
 复跑四件套：
 
@@ -161,6 +162,66 @@ R3：`V11R-C-3` R1（补 tag 存在后的 `-DryRun` + limitation L-C3-1）/ `V11
 
 ---
 
+## 3m. R14（本轮）完成的事 —— 三项 Ruling 落盘 + Ruling A 执行（L1 清除）
+
+### 1) 三项书面裁定已落盘
+`doc/reviews/GOV-DECLARATION-SCAN-CLEANUP-1-RULING-ABC-2026-11-16.md`（署名 DSH / Lead）：
+
+- **Ruling A = 方案 (i)**：`HIE-O03.expected_tracking` → `tracked` + 重批 `HISTORICAL_EVIDENCE_DIGEST`
+  （`3f4cae13…4b7d` → `5cc68358…aadd`）。
+  否决 (ii)：`git rm --cached` 会反悔 `ee755d4bb` 的 406 文件入库决策 —— **应让政策追上事实，不是让事实退回政策**。
+  否决 (iii)：tracking-agnostic 会把真实 fail-closed 削弱成 fail-open。
+- **Ruling B = 按 error code 冻结三分类**：B1 历史形态 **64** / B2 真实缺陷 **86** / B3 规则误报 **16** = **166**。
+  两条硬约束：先冻结归属表再实施；B2 修数据前须实测是否被**活 pin** 引用（被引用者只登记不修）。
+- **Ruling C = 批准重写为「成员不变量」**：保留 `len(removed)==7`，把 `len(index.errors)==7` 换成
+  「7 条裁定错误身份必须全部存在」的三元组成员检查，缺失仍 `ERROR_MISMATCH`（**fail-closed 不变**）。
+  附 §4.4 两项实测：受影响调用面（精确形式全仓仅 `:2172`；生产调用点仅 `:2303`）+ 基线错误矩阵。
+
+### 2) Ruling A 已执行 —— 且发现了**第二处真值重复**
+
+**只改政策字段不够**：改完后 `SOURCE_DRIFT` 换成了同义错误 `POLICY_INVALID`
+（"historical source tracking policy changed"）。
+
+根因：`clean_workspace.py:1848-1850` 把「第 4 条必须 `untracked`」**硬编码**在扫描器里 ——
+这是 policy 之外的**第二份真值**，必然随 `ee755d4bb` 过期，且与 `read():1718` 的检查**功能重复**。
+处置：改为政策驱动的取值合法性校验（`expected_tracking in ("tracked","untracked")`），
+字段值与真实状态的比对仍由 `read()` 负责 ⇒ **fail-closed 不变，仅去重**。
+
+**三步实测（同一条命令，逐步收窄）**：
+
+| 步骤 | `SOURCE_DRIFT` | `POLICY_INVALID` | `ERROR_MISMATCH` | residual warning | `protected_roots` |
+|---|:--:|:--:|:--:|:--:|:--:|
+| 基线 | **1** | 0 | 0 | **0** | 5582 |
+| 改 policy + digest | **0** | **1** | 0 | 0 | 5582 |
+| 完整执行 | **0** | **0** | **1** | 0 | **5582（未缩小）** |
+
+⇒ **L1 已彻底清除；L3 成为唯一剩余阻塞**（`ERROR_MISMATCH` = `:2172` 的绝对计数耦合，正是 Ruling C 要改的）。
+**这精确验证了裁决书的三层模型**，并实证「L1 确实是第一层」：清掉它之后才暴露出 L3。
+
+### 3) ⚠️ 诚实更正：A 单独**不能**解 AC2
+原设想「做 Ruling A 就能恢复 residual 层」经实测**不成立** —— residual warning 仍为 0，
+因为 `ERROR_MISMATCH` 在 residual 层可应用**之前**就把它挡住了。
+按 §4.4「核验结果与假设不符则假设作废」，已在裁定文中更正为：
+**A 是必要不充分条件；A + C 才解 `GOV-DECLARATION-SCAN-CLEANUP-1` AC2。**
+
+### 4) 字节保留核验（硬约束，可机械核对）
+`git status` 实测只有 `clean_workspace.py` 与 `historical-evidence-interpretation.json` 两个治理文件被改；
+`verification/**` 与 `doc/tasks/*` **零改动**；4 条绑定 `raw_sha256` **仍全部匹配**
+⇒ Ruling A 全程**未触碰任何历史证据字节**。
+
+### 5) 进度
+- `GOV-DECLARATION-SCAN-CLEANUP-1`：**AC1 闭合（1/6）**；AC2 需 A+C，AC3 需 Ruling B 实施，AC4 需 C 实施。
+- 目标 C：仍 **40 闭合 / 1 BLOCKED**（`GOV-RESIDUAL` AC7 未闭合），但**解锁路径已从「未开工」变为「A 完成、C 待做」**。
+
+### 下一轮建议（明确、可执行）
+**做 Ruling C 的实施**（`clean_workspace.py:2172` 成员不变量 + 两条新负例）。
+理由：① 它是 AC2 的最后一块；② 改动面收敛（`git grep` 实测精确形式全仓仅 1 处、生产调用点仅 1 处）；
+③ 完成后 residual 层应恢复（warning=7 + APPDATA 三根回归），即 **AC2 可判**，并可能连带解除
+`GOV-RESIDUAL` AC7（其测试文件 3 条 ProductionScan 失败正是靠 residual 层恢复才可能转绿）。
+**注意**：实施 C 时必须同步复核 `tests/test_residual_runtime_identity.py:184/191/197/203/217/266/275`
+的 `len(index.errors) == 8/9` 期望值 —— 它们是绝对计数断言，正是 C 要改掉的那类耦合。
+
+---
 ## 3l. R13（本轮）完成的事 —— `GOV-RESIDUAL` AC6（目标 C 只剩 1 条）
 
 ### AC6 的唯一缺口：第 7 类负例「保护集合回退」
