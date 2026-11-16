@@ -1,8 +1,8 @@
 # 新会话启动包 — New Manga 目标续接
 
-- 生成时间：2026-11-16 13:55 (+08:00)（本版为 R11 之后更新）
+- 生成时间：2026-11-16 14:05 (+08:00)（本版为 R12 之后更新）
 - 生成者：DSH（lead）
-- **当前 head：`691753f9d`**（main，**已 push**，upstream = origin/main，ahead/behind = 0/0）
+- **当前 head：`bfa74707e`**（main，**已 push**，upstream = origin/main，ahead/behind = 0/0）
 - 工作区：干净（`git status --porcelain` 为空）
 - **R1**：`9ce819ae7` → `dd029b73f`（7 commit，目标 A/B/D 达成）
 - **R2**：`dd029b73f` → `5f2664c2e`（8 commit）—— 目标 C 闭合 10 条
@@ -14,7 +14,8 @@
 - **R8**：`650b2605e` → `b11689068`（3 commit）—— 闭合 `V11R-B-5` **AC1/AC2**（补 SCREEN_SPECS §6.5 + 上下文保留断言 + 结构性表格）
 - **R9**：`b11689068` → `26519c9fd`（2 commit）—— 闭合 `V11R-B-5` **AC3**（六态显式映射 + 两条变红验证）；**该卡 7/7 且门禁全绿**
 - **R10**：`26519c9fd` → `2e575c8f6`（3 commit）—— 闭合 `GATE3-COVERAGE-MATRIX` **AC2/AC4**；**该卡 6/6 且门禁全绿**
-- **R11（本轮）**：`2e575c8f6` → `691753f9d`（3 commit）—— 立 `FEA-04-IMPL-1` 实现卡 + 闭合 `M2-SFX` **AC4**；**目标 C 41 条全部有处置**
+- **R11**：`2e575c8f6` → `691753f9d`（3 commit）—— 立 `FEA-04-IMPL-1` 实现卡 + 闭合 `M2-SFX` **AC4**；目标 C 41 条全部有处置
+- **R12（本轮）**：`691753f9d` → `bfa74707e`（4 commit）—— **推翻 R11 的判断**：`FEA-04` 实现早已交付，8 条 AC 依据既有证据闭合；**撤销 `FEA-04-IMPL-1`**。目标 C → **闭合 39 / 仅剩 2 BLOCKED**
 
 > 本文是**给下一个会话的唯一起点**。不要重读历史对话；按「下一步队列」推进即可。
 
@@ -24,11 +25,11 @@
 
 | 项 | 状态 |
 |---|---|
-| HEAD | `691753f9d`（main，已 push，0/0） |
+| HEAD | `bfa74707e`（main，已 push，0/0） |
 | 四件套 | **全绿**：`check.ps1` PASS(3w) / `verify_pins` 18/18 / `api_inventory` 1/80/6=87 / `test.ps1` EXIT=0 **1587/1635 passed, 48 skipped**（App 967/0/4，基线 955/0/11 不退化） |
 | 上一 goal | 已用尽 100 轮（见 `GOAL-WRAPUP-R100.md`） |
 | 本 goal | 60 轮上限 |
-| 目标 C | 可行动项 41 **全部有处置** = 闭合 **31** + BLOCKED **2** + 移交实现卡 **8**；**无「无路径项」残留** |
+| 目标 C | 可行动项 41 → **闭合 39 / 仅剩 2 条已裁决 BLOCKED**（`GOV-RESIDUAL` AC6/AC7，解锁=Ruling A） |
 
 复跑四件套：
 
@@ -159,6 +160,56 @@ R3：`V11R-C-3` R1（补 tag 存在后的 `-DryRun` + limitation L-C3-1）/ `V11
 
 ---
 
+## 3k. R12（本轮）完成的事 —— **推翻我自己的判断**：FEA-04 早已实现
+
+### 我上轮错在哪
+
+R11 我建 `FEA-04-IMPL-1` 时，依据是 `FEA-04` 卡面写「AC1–AC8 一律标 `blocked: 实现未开始`」，
+推断「实现还没开始，需要一张实现卡」。**我没有先核实实现是否已交付。**
+
+### 核实结果：代码 / 测试 / 证据 / 复核 **四者全在**
+
+| 项 | 位置 |
+|---|---|
+| 代码 | `Shell/V2/Frontends/CurrentFrontend.cs`(12493 B)、`CurrentSessionMemento.cs`(4112 B)、`Views/V2/Route/CurrentRouteAdapter.cs`(1642 B) |
+| 测试 | `tests/NewManga.App.Tests/FEA04CurrentAdapterTests.cs`(16804 B，17 项) |
+| 证据 | `verification/FEA-04/`：baseline-comparison / preflight-blocker-matrix / lifecycle-assertions / sln-test-results / build-test-raw.log(176 行) / git-diff-check / governance-check / verify-pins |
+| 复核 | **`doc/reviews/FEA-04-r3.md` = approved（P0=0 / P1=0）**，r3 `:105`「AC1–AC7 在 head 均有实测/证据支撑（独立复跑 931/0/60、0 failed）」 |
+
+⇒ `FEA-04` 的 8 条 AC **逐条依据既有证据闭合**（`-TaskPath` 转 **PASS**）。
+
+### 两处必须诚实登记的措辞矛盾（都写进了 AC 注释）
+
+1. **AC2 基线 commit 不一致**：AC 写 `91be6c134`，但该 commit 的 build 因 **NuGet 路径问题 BLOCKED（14 errors）**，
+   基线测试 NOT_RUN；**实际基线改用 `68c72ba57`**（914/0/60，App 396/403）vs 实现 931/0/60（App 413/420）。
+   实质判据（同命令、同 runsettings、逐工程 ≥ 基线、failed=0、skipped 不变、无删除弱化）成立，但替换原因必须载明。
+2. **AC8 点名 `FEA-04-r1.md` approved，而 r1 实为 `changes_requested`**：
+   其意图（实现面独立复核、P0/P1=0）由 **r3 approved** 满足（r1→r2→r3 收敛）。
+   r3 的边界声明（不构成集成批准、不覆盖 A0/B 类未执行项）一并保留。
+
+### `FEA-04-IMPL-1` 已撤销（保留痕迹，不删）
+
+`status: closed_with_limitations`；卡首**撤销横幅**写明「本卡前提是错的、我未核实实现是否已交付」；
+8 条 AC 记 `NOT_APPLICABLE`；原始 AC 文本以「原拟｜」保留不改；
+`verification/FEA-04-IMPL-1/RETRACTION.md` 记录原因 + 核实证据表 + 教训。
+`FEA-04` 内我上轮加的指针**已划掉并更正**（append-only 留痕）。
+
+### ⚠️ 这是**同一类错的第二次**
+
+| 轮次 | 场景 | 我的错 |
+|---|---|---|
+| R11 | `M2-SFX` AC4 | 相信「T1b 产物不存在」，实际存在 |
+| R12 | `FEA-04` AC1–AC8 | 相信「实现未开始」，实际早已交付 |
+
+⇒ **铁律（已写入队列第 0 条）：处理任何 blocked AC 前，先核「代码 / 测试 / 证据 / 复核」四者是否已存在，
+再决定是「补证据」还是「立新卡」。blocked 注释是线索，不是事实。**
+
+### 目标 C 现状（本轮的最大成果）
+
+**41 条 → 闭合 39 / 仅剩 2 条已裁决 BLOCKED**（`GOV-RESIDUAL` AC6/AC7）。
+**无「无路径项」、无「未处置项」。** 那 2 条的唯一解锁前提是 **Ruling A**（HIE P22 tracked 化三选一）。
+
+---
 ## 3j. R11（本轮）完成的事 —— 目标 C **41 条全部有处置**
 
 ### 1) 立 `FEA-04-IMPL-1`：把 8 条「无路径项」变成有路径项
