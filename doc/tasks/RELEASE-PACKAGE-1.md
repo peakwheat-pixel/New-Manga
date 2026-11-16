@@ -76,9 +76,9 @@ S5 拆分（`LEGACY-SHELL-REMOVAL-1` BLOCKED 段）。D4 安全（S5-A/B）与 C
 | R7-src | AC1–AC4b | verification/RELEASE-PACKAGE-1/smoke/window.png | 8ff3d288d | 08c87990db33e7ffa8b1041c67a18930d37e540f45edb6be9bda2a81bd2fd06b | CANONICAL |
 | R8-src | AC1–AC4b | verification/RELEASE-PACKAGE-1/smoke/wire/core-service.ndjson | 8ff3d288d | ff8ad80e9daf57eec3faa4bf53f44ff15549f2f7fdd1a09b257eb34da26801d2 | CANONICAL |
 | R9-src | AC1–AC4b | verification/RELEASE-PACKAGE-1/smoke/wire/host-bridge.ndjson | 8ff3d288d | a251682de8f2c7610853aa6b4910f3e38c854558a30bf66bf8e780b7cb7c7c89 | CANONICAL |
-| R10-gate | AC6 | verification/RELEASE-PACKAGE-1/ac6-check-taskpath-2026-11-16.log | PENDING_SUBMIT | 76fb800267f6dcb275b06356d6203b5b7801a5bdad3e634247c2120fd8501975 | CANONICAL |
-| R11-gate | AC6 | verification/RELEASE-PACKAGE-1/ac6-test-ps1-2026-11-16.log | PENDING_SUBMIT | c2b1ef4c1c9b409c7ec0218f74b0c159831750e445ca52b14f04aea7de4b9f1f | CANONICAL |
-| R12-gate | AC6 | verification/RELEASE-PACKAGE-1/ac6-pytest-2026-11-16.log | PENDING_SUBMIT | 85561f9d37d3626641e1212ef56334477c1f45abcd02c59acce69430ba47a970 | CANONICAL |
+| R10-gate | AC6 | verification/RELEASE-PACKAGE-1/ac6-check-taskpath-2026-11-16.log | 9d6c58a21 | 76fb800267f6dcb275b06356d6203b5b7801a5bdad3e634247c2120fd8501975 | CANONICAL |
+| R11-gate | AC6 | verification/RELEASE-PACKAGE-1/ac6-test-ps1-2026-11-16.log | 9d6c58a21 | c2b1ef4c1c9b409c7ec0218f74b0c159831750e445ca52b14f04aea7de4b9f1f | CANONICAL |
+| R12-gate | AC6 | verification/RELEASE-PACKAGE-1/ac6-pytest-2026-11-16.log | 9d6c58a21 | 85561f9d37d3626641e1212ef56334477c1f45abcd02c59acce69430ba47a970 | CANONICAL |
 |---|---|---|---|---|---|
 
 ## Resource Manifest
