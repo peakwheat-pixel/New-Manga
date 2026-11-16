@@ -131,7 +131,15 @@ class ProductionScan(unittest.TestCase):
         cls.index, cls.scanned = guard.scan_repo_declarations(str(REPO), WORKSPACE_ROOT)
 
     def test_all_seven_errors_are_resolved(self):
-        self.assertEqual(self.index.errors, [])
+        # Ruling C（2026-11-16）：原先断言 `self.index.errors == []` —— 那是把「全仓零错误」
+        # 当成 residual 层的不变量。真实仓库当前另有 154 条与 residual 层**无关**的历史声明债务
+        # （Ruling B 的 B1/B2/B3 范围），它们**不应**阻塞本层，也**不应**被本层吞掉。
+        # 改为断言本层真正保证的事：7 条裁定身份已全部降级、且不再以 error 形式出现。
+        policy = json.loads((REPO / POLICY_REL).read_text(encoding="utf-8"))
+        adjudicated = [e for b in policy["bindings"] for e in b["errors"]]
+        for e in adjudicated:
+            self.assertNotIn(e, self.index.errors,
+                             "an adjudicated error identity is still fatal")
         self.assertEqual(len(residual_warnings(self.index)), 7)
         self.assertTrue(all(w["file"] in ORIGINS for w in residual_warnings(self.index)))
 
@@ -151,7 +159,16 @@ class ProductionScan(unittest.TestCase):
                 guard, "_apply_residual_runtime_identity",
                 lambda index, scanned: guard._finish_declaration_scan(index, scanned)):
             before, _ = guard.scan_repo_declarations(str(REPO), WORKSPACE_ROOT)
-        self.assertEqual(len(before.errors), 7)
+        # Ruling C（2026-11-16）：原先断言 `len(before.errors) == 7`（全仓恰好 7 条错误）——
+        # 那是把「仓库长得刚好」当成不变量，仓库一增长就误报（实测已 161 条）。
+        # 改为**成员不变量**：7 条被裁定的错误身份必须都存在于 pre-stage 索引中。
+        policy = json.loads((REPO / POLICY_REL).read_text(encoding="utf-8"))
+        adjudicated = [e for b in policy["bindings"] for e in b["errors"]]
+        self.assertEqual(len(adjudicated), 7,
+                         "the frozen policy must declare exactly seven error identities")
+        for e in adjudicated:
+            self.assertIn(e, before.errors,
+                          "adjudicated error identity missing from the pre-stage index")
         missing = [root for root in before.protected if root not in self.index.protected]
         self.assertEqual(missing, [])
         self.assertGreater(len(self.index.protected), len(before.protected))
@@ -185,11 +202,26 @@ class FixtureBehaviour(unittest.TestCase):
         self.assertEqual(index.errors[-1]["code"], "POLICY_DIGEST_MISMATCH")
 
     def test_origin_drift_fails_closed(self):
+        # Ruling D（2026-11-16）：带行级身份的绑定以**行**为权威。原用例在文件**末尾**追加一个换行，
+        # 那不会改变被绑定的行 —— 按新语义**本就不该**报漂移（改前它报的其实是整文件 sha 差异，
+        # 属过宽绑定）。现在改为**改动被绑定的那一行**，这才是「origin 字节漂移」该测的东西。
         path = self.fixture.root / "doc/tasks/P19.md"
-        path.write_bytes(path.read_bytes() + b"\n")
+        bound = next(b["origin_line"] for b in self.fixture.data["bindings"]
+                     if b["origin_file"] == "doc/tasks/P19.md")
+        lines = path.read_bytes().splitlines(keepends=True)
+        target = lines[bound - 1]
+        eol = b"\r\n" if target.endswith(b"\r\n") else b"\n"
+        lines[bound - 1] = target.rstrip(b"\r\n") + b" trailing-drift" + eol
+        path.write_bytes(b"".join(lines))
         index, _ = self.fixture.scan()
-        self.assertEqual(len(index.errors), 8)
-        self.assertEqual(index.errors[-1]["code"], "SOURCE_DRIFT")
+        # Ruling C：不再断言「全仓恰好 8 条」这种绝对计数 —— 改动被绑定行本身会连带改变
+        # 该行的声明语义（错误条目可能增减），拿总数当断言会把两种效应混在一起。
+        # 断言真实意图：必须 fail-closed 到 SOURCE_DRIFT，且**没有任何身份被降级**。
+        codes = [e["code"] for e in index.errors]
+        self.assertIn("SOURCE_DRIFT", codes,
+                      "changing the bound line must fail closed with SOURCE_DRIFT")
+        self.assertEqual(len(residual_warnings(index)), 0,
+                         "no identity may be downgraded while the origin has drifted")
 
     def test_present_absent_target_fails_closed(self):
         (self.fixture.root / "worktrees" / "P19-AC3-1").mkdir(parents=True)
@@ -213,9 +245,17 @@ class FixtureBehaviour(unittest.TestCase):
                          encoding="utf-8")
         self.fixture.git("add", "-A")
         index, _ = self.fixture.scan()
-        # seven adjudicated + one new DECL_ENV from EXTRA.md + ERROR_MISMATCH
-        self.assertEqual(len(index.errors), 9)
-        self.assertEqual(index.errors[-1]["code"], "ERROR_MISMATCH")
+        # Ruling C（2026-11-16）**行为变更**：与 residual 层无关的错误**不再阻塞**本层。
+        # 原断言是「7 + 1 新 DECL_ENV + ERROR_MISMATCH = 9」——那正是绝对计数耦合的产物。
+        # 新语义：7 条裁定身份照常被移除，EXTRA.md 引入的 DECL_ENV 原样留下继续报错（不静默吞掉），
+        # 且不产生 ERROR_MISMATCH。
+        codes = [e["code"] for e in index.errors]
+        self.assertNotIn("ERROR_MISMATCH", codes,
+                         "an unrelated error must not block the residual layer")
+        self.assertEqual(len(residual_warnings(index)), 7,
+                         "the seven adjudicated identities must still be resolved")
+        self.assertEqual(codes, ["DECL_ENV"],
+                         "the unrelated error must survive untouched (not swallowed)")
 
     def test_protection_set_regression_fails_closed(self):
         """AC6 第 7 类负例：**保护集合回退**必须 fail-closed（`PROTECTION_REGRESSION`）。

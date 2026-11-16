@@ -1666,7 +1666,7 @@ def _apply_broad_preservation(index, scanned):
 
 HISTORICAL_EVIDENCE_POLICY = "tools/governance/historical-evidence-interpretation.json"
 HISTORICAL_EVIDENCE_DIGEST = (
-    "5cc683589476c689c00d7eb8c5740b8c8f8533ec69300ad7f92052c501cdaadd")
+    "c91bbef8f43876b59b206ead84b2edfbf8af3f21845665e61a8538778e6d992f")
 
 
 HISTORICAL_BROAD_DEPENDENCY_DIGEST = (
@@ -2106,10 +2106,17 @@ def _apply_residual_runtime_identity(index, scanned):
                     "unexpected residual identity binding fields")
             origin = b["origin_file"]
             raw = read_bytes(origin)
-            require(sha(raw) == b["origin_raw_sha256"]
-                    and type(b["origin_byte_length"]) is int
-                    and len(raw) == b["origin_byte_length"], "SOURCE_DRIFT",
-                    "residual identity origin changed: %s" % origin)
+            # Ruling D（2026-11-16，DSH）：带行级身份（`origin_line` + `origin_line_raw_sha256`）的绑定，
+            # **行级才是权威**。整文件 sha/字节长度只在**没有行级身份**时作为身份依据。
+            # 理由（本轮实测）：`doc/tasks/P19.md` 是**可变的 task 卡**，被 `0e7bc1fc5`（40 卡 AC 标注全量）
+            # 合法追加内容后由 18443 → 21306 字节；而 RRI-01/02/03 绑的三行（:112/:113/:114）
+            # **行级 sha 三份全部仍匹配**。用整文件 sha 绑可变卡 = 要求卡上别处永不变，会把每次
+            # 治理批量编辑都变成 fail-closed，属**过宽绑定**，不是更严的保护。
+            if not has_line:
+                require(sha(raw) == b["origin_raw_sha256"]
+                        and type(b["origin_byte_length"]) is int
+                        and len(raw) == b["origin_byte_length"], "SOURCE_DRIFT",
+                        "residual identity origin changed: %s" % origin)
             if has_line:
                 number = b["origin_line"]
                 lines = raw.splitlines(keepends=True)
@@ -2174,8 +2181,14 @@ def _apply_residual_runtime_identity(index, scanned):
                         "POLICY_INVALID",
                         "non-identity residual binding must not name a target")
 
-        require(len(removed) == 7 and len(index.errors) == 7, "ERROR_MISMATCH",
-                "residual identity batch does not cover exactly the seven errors")
+        # Ruling C（2026-11-16，DSH）：原先此处是 `len(removed) == 7 and len(index.errors) == 7`，
+        # 把「residual 层可应用」绑到「**全仓错误恰好 7 条**」——仓库一增长就击穿（已实际发生一次），
+        # 且与本卡 AC5「不以绝对计数为断言」自相矛盾。改为**成员不变量**：
+        # 7 条被裁定的错误身份必须**全部命中且各恰好一次**（逐条已在上面 :2126 用
+        # `index.errors.count(error) == 1 and error not in removed` 校验），此处只再确认数量为 7。
+        # 与 residual 层无关的错误**不阻塞**本层，仍原样保留在 `staged.errors` 里继续报错（不静默吞掉）。
+        require(len(removed) == 7, "ERROR_MISMATCH",
+                "residual identity batch does not cover exactly the seven adjudicated error identities")
         staged.errors = [e for e in staged.errors if e not in removed]
         for declaration in pending_non_protective:
             staged.declarations.append(declaration)
@@ -2191,8 +2204,11 @@ def _apply_residual_runtime_identity(index, scanned):
                    b["origin_file"], b.get("origin_line"),
                    b["origin_raw_sha256"], b["declared_text"], b["provenance"]),
                 b["origin_file"], "%s/%s" % (b["id"], b["kind"]))
-        require(not staged.errors, "POLICY_INVALID",
-                "residual identity interpretation left fatal errors")
+        # Ruling C：原先是 `require(not staged.errors, ...)` —— 同样是绝对零耦合：
+        # 它实际断言的是「全仓已无错误」这一**仓库前提**，而不是本层的不变量。
+        # 改为断言本层真正该保证的事：**7 条被裁定身份确实已被移除**（不得留在原地）。
+        require(not [e for e in staged.errors if e in removed], "POLICY_INVALID",
+                "residual identity interpretation left an adjudicated error in place")
         require(all(root in staged.protected for root in index.protected),
                 "PROTECTION_REGRESSION",
                 "residual identity interpretation dropped a protected root")

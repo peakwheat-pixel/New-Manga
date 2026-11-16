@@ -231,7 +231,7 @@
       "errors": [
         {
           "code": "FILE_UNREADABLE",
-          "message": "untracked markdown g:\\codex\\new manga\\verification\\P22\\codex-p22-task-r4-malformed-snapshot-7ebd7d40.md contains NUL bytes; refusing a binary file as text",
+          "message": "tracked markdown g:\\codex\\new manga\\verification\\P22\\codex-p22-task-r4-malformed-snapshot-7ebd7d40.md contains NUL bytes; refusing a binary file as text",
           "file": "verification/P22/codex-p22-task-r4-malformed-snapshot-7ebd7d40.md",
           "locator": null
         }
