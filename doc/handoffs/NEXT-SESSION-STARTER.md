@@ -275,8 +275,11 @@ Gate 剩下的是条件 3（人眼目视 overlay）/ 4（签名 + 真机安装�
 
 ### 队列 3d —— `GIT-CLEAN-RUST-CAPACITY-DESIGN-1`（ZCode 设计已交付）
 
-- ZCode（headless plan，session `sess_be120ee8…`）交付 `verification/GIT-CLEAN-RUST-CAPACITY-DESIGN-1/DESIGN.md`（10.7 KB，含 AC1 资源链/AC2 注入方案/AC3 R2-F02..05 修订）；
-- 待做：AC4 = 新 head + 独立复核（Codex 或独立子 agent），判 可释放 / BLOCKED；本卡仍 `ready`，未 done、未集成。
+- **已完成（R17-R18）**：ZCode 交付设计 → 独立复核三轮（v1 BLOCKED 4 P1 → v2 BLOCKED 2 P1 → **v3 RELEASABLE，P1=0**）；
+  DESIGN.md 现为 v2 正文 + DSH 附记 v3/v4；量测：`verification/GIT-CLEAN-RUST-CAPACITY-DESIGN-1/DESIGN.md`（37.9 KB）。
+- 卡片 AC1-AC4 全 MET，`status: in_review`（**设计可释放，但未实施**：产品源码零改动、压力测试未跑）。
+- **待做**：①DSH 集成裁决（approve / 立实施 Task，实施须重新冻结范围并新 Appointment）；②P2 三条随实施处理
+  （补 `GuardFinishReport` 结构定义、修正「Drop 不会重入」措辞、评估 `cleaned=true` 后 panic 路径）。
 
 ### 队列 4 —— HUMAN-REQUIRED 等待项（不阻塞 Agent）
 

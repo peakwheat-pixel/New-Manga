@@ -374,3 +374,19 @@ TEST_GUARD_DROP_UNRECLAIMED.with(|c| assert_eq!(c.get(), 0));
 ---
 
 **推荐下一步**：本两段修订交 DSH 集成落盘为 DESIGN v3（建议一并按 P2-11 冻结 design-only head + 补 `HANDOFF.md`），并派第三轮上下文独立 design-reviewer 复核（只读 v3 + `1829a38`，重点核两片段可编译性、finish 返回时序、owner-aware 语义）。本会话只读，无文件改动、无 commit。
+
+---
+
+## DSH 集成附记 v4（2026-11-17）：第三轮复核 **RELEASABLE**，设计切片收口
+
+第三轮窄确认（同一独立复核者，head `ab6a0e6ef`）：**verdict3: RELEASABLE**，P1 剩余 **0**（仅余 P2）。
+
+- **P1-2 PASS**：`ChildIdentity`（`multichannel_stress_tests.rs:118-133`）无 `Clone`；`assert_pid_gone`（:195）收 `&ChildIdentity`；
+  `for id in &identities` + `assert_pid_gone(scenario, id)` 类型匹配，循环后 `identities.iter()` 仍可借用，无 E0382。
+- **P1-4 PASS**：`cleaned` 首次 cleanup 置位后，`finish`→Drop 的 cleanup#2 短路；账本只累加一次、slot 仅 owner-aware 清除、
+  `_exclusive` 不会二次 take，EXCLUSIVE 释放后的 Arc 等待不再误清他测 slot。
+- **遗留 P2（不阻断发布，属实施任务）：** ①补 `GuardFinishReport` 结构定义；②修正「Drop 不会重入」措辞（实际会进入但被短路）；
+  ③评估 `cleaned=true` 后理论 panic 路径的清理短路。
+
+**结论**：本设计**可释放**（releasable），但**仍未实施**：产品源码零改动、压力测试未跑。实施须另立 Task 并重新冻结范围。
+

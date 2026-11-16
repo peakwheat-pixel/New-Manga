@@ -262,3 +262,84 @@ git -C $p show 1829a38:apps/desktop/src-tauri/src/multichannel_stress_tests.rs
 ```
 
 **verdict2: BLOCKED**（P1 剩余 2 条：P1-2 编译失败、P1-4b double cleanup；P1-1、P1-3 已修复，P1-3 需落 P2-7 生命周期修正）。
+
+---
+
+## 第三轮复核（v3，窄确认）
+
+- **复核者**：子 agent `design-reviewer`（同一独立上下文；只读）。
+- **被复核 head3**：`ab6a0e6ef22f83393ecc8601cb04279da65eb2ba`（v3 修订段位于 `DESIGN.md` 的「DSH 集成附记 v3」之后，`## 修订段 1/2`）。
+- **复核时间**：2026-11-17T03:31:00+08:00。
+- **范围**：只核 P1-2、P1-4；P1-1/P1-3 已在 v2 判 PASS，不重做。代码基准仍为 `1829a38`。
+- **只读声明**：未改任何文件（仅本报告追加）、未 commit/push/集成、未运行 Rust/压力测试。
+
+**verdict3: RELEASABLE**（P1-2、P1-4 均 PASS；P1 剩余 0。以下 P2 只影响实现细节，不阻断本轮窄确认）。
+
+| P1 | v3 结果 | 关键证据 |
+|---|---|---|
+| P1-2 | **PASS（可编译）** | `ChildIdentity`（stress:118-133）无 `Clone`/`Copy`；`assert_pid_gone`（195）签名收 `&ChildIdentity`；807 改 `for id in &identities`，808 传 `id`；循环后 `identities.iter()` 仍合法。 |
+| P1-4 | **PASS（副作用消除）** | `cleaned` 在 6075/6096-6099 初始化 false；`cleanup()` 首行短路（275-279），置位后才做 reap/账本/slot/EXCLUSIVE（280-311）；`finish` 的 cleanup#2 短路，Drop 不再二次生效；owner-aware 只清本线程 slot。 |
+
+### P1-2 复核细节（PASS）
+
+核对行号/签名：
+
+```powershell
+$p="G:\CODEX\New Manga.workspace\task-envs\GIT-CLEAN-RUST-ISOLATION-1\source-r2"
+git -C $p show 1829a38:apps/desktop/src-tauri/src/multichannel_stress_tests.rs
+# 118-133: struct ChildIdentity（无 derive Clone）
+# 195: fn assert_pid_gone(scenario: &str, id: &ChildIdentity)
+# 197: f.load(Ordering::SeqCst)（Ordering 已在作用域）
+```
+
+v3 代码段（DESIGN.md:228-243）：
+
+```rust
+for id in &identities {                 // 807：&Vec<ChildIdentity> 迭代出 &ChildIdentity
+    assert_pid_gone(scenario, id);     // 808：参数类型完全匹配
+}
+let all_workers_finished_and_joined = identities
+    .iter()                            // 借用已结束，identities 未被 move
+    .all(|id| id.worker_flags.iter().all(|f| f.load(Ordering::SeqCst)));
+```
+
+`ChildIdentity` 无 `Clone` 不影响借用；`id.worker_flags` 在 `&ChildIdentity` 下自动解引用为 `Vec<Arc<AtomicBool>>`，`.iter()` 得到 `&Arc<AtomicBool>`，`.load` 经 `Deref` 到 `AtomicBool`；与 197 行同样写法。插入点在 `for` 循环之后、811 `peak` 断言之前，`identities` 仍存活。**无 E0382，可编译。**
+
+### P1-4 复核细节（PASS）
+
+v3 结构/代码段（DESIGN.md:259-339）核对：
+
+- `cleaned: bool` 加入 `RegistryTestGuard`（264-268）；`acquire()` 现有 `Self { _exclusive: Some(exclusive), registry }`（`library_bridge.rs:6096-6099`）需补 `cleaned: false`，v3 已明写。
+- `cleanup()`（274-312）第一行 `if self.cleaned { return (0, 0); }`，随后才 `self.cleaned = true`；`reap_now`、账本累加（287）、slot 清除（290-308）、`IN_REGISTRY_TEST=false`（309）、`drop(self._exclusive.take())`（310）全部在非短路分支内。
+- `finish(self)`（320-333）只调用一次完整 `cleanup()`；返回后 `self` 析构进入 `Drop`（335-339），第二次 `cleanup()` 因 `cleaned==true` 短路返回 `(0,0)`。
+- `Drop` 的 `let _ = self.cleanup();` 在 panic unwind 路径同样先经过 `cleaned` 检查；`cleaned` 在首行之后立即置位，不存在“panic 路径不置位”的窗口。
+
+逐项副作用：
+
+1. **账本二次累加**：只在 `remaining > 0` 的非短路 cleanup#1 中 `TEST_GUARD_DROP_UNRECLAIMED` 一次；cleanup#2 短路，不再累加。PASS。
+2. **误清别的测试 slot**：owner-aware `mine` 检查（295-299）只在 `*owner == current` 时 `*slot = None`；而 cleanup#2 根本短路。即使将来短路失效，owner 不符也不清。PASS。
+3. **EXCLUSIVE 释放时序**：cleanup#1 的 `drop(self._exclusive.take())` 只执行一次；cleanup#2 短路前不碰 `_exclusive`；`finish` 在 EXCLUSIVE 释放后才等 Arc，期间别的测试可合法安装 slot，不会被二次 cleanup 清除。PASS。
+
+**新问题检查**：
+
+- `cleaned` 在 panic 路径：首行检查后立即置 true；若 `reap_now`/后续步骤 panic，`finish` 的 `self` 在 unwind 中会 Drop 并短路，不会二次 reap/记账/清 slot；`_exclusive` 作为字段最终仍随 `self` 字段析构释放，不会二次 take。
+- 注意：v3 风险段“Drop 不会重入同一 guard（正在 unwind 中）”表述不准确——`finish` 的 `self` 在 unwind 中**会**进入 Drop，只是被 `cleaned` 短路。行为正确，文字应改为“Drop 会进入但被幂等短路”。
+- v3 片段未展示 `struct GuardFinishReport` 定义；v2 只在 `fn finish(...) -> GuardFinishReport` 处引用。实施时必须补该结构体（或改成元组返回），否则 `finish` 本身不可编译。P2。
+- `cleanup#1` 若在 `cleaned=true` 之后、slot 清除之前 panic（当前代码路径只有 `reap_now` 等，实际触发面很低），Drop 短路会跳过剩余清理；若担心该理论路径，可把 `cleaned=true` 移到 slot/EXCLUSIVE 清理之后，或加 `catch_unwind` 兜底。P2，不阻断。
+
+### 第三轮命令摘录
+
+```powershell
+cd "G:\CODEX\New Manga"
+git rev-parse HEAD
+# ab6a0e6ef22f83393ecc8601cb04279da65eb2ba
+git show --stat --oneline ab6a0e6ef
+# DESIGN.md 174 +- ; Task 卡 4 +- ; 本复核报告 118 +-
+$p="G:\CODEX\New Manga.workspace\task-envs\GIT-CLEAN-RUST-ISOLATION-1\source-r2"
+git -C $p show 1829a38:apps/desktop/src-tauri/src/multichannel_stress_tests.rs
+# 118-133, 195-233, 805-809
+git -C $p show 1829a38:apps/desktop/src-tauri/src/library_bridge.rs
+# 6096-6099 acquire；6118-6145 Drop；6129-6139 无条件 slot clear
+```
+
+**verdict3: RELEASABLE**（P1-2、P1-4 均闭合；P1 剩余 0。P2：补 `GuardFinishReport` 定义、修“Drop 不会重入”措辞、评估 `cleaned` 置位点与理论 panic 路径）。

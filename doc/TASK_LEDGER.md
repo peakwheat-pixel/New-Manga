@@ -27,12 +27,11 @@ Arithmetic note: `task files` = `terminal` + `non-terminal` + `(none)` rows. A `
 | `historical` | 11 | yes |
 | `superseded` | 9 | yes |
 | `in_progress` | 6 | no |
-| `in_review` | 2 | no |
+| `in_review` | 3 | no |
 | `(none)` | 1 | no |
 | `approved` | 1 | no |
 | `blocked` | 1 | no |
 | `proposed` | 1 | no |
-| `ready` | 1 | no |
 
 ## Non-terminal tasks
 
@@ -47,9 +46,9 @@ Arithmetic note: `task files` = `terminal` + `non-terminal` + `(none)` rows. A `
 | `MAINT-1-RELEASE-MONITOR` | `in_progress` | own row |
 | `SIDECAR-REBUILD-1` | `in_progress` | own row |
 | `GIT-CLEAN-PUBLICATION-1` | `in_review` | mentioned |
+| `GIT-CLEAN-RUST-CAPACITY-DESIGN-1` | `in_review` | mentioned |
 | `GIT-CLEAN-RUST-ISOLATION-1` | `in_review` | mentioned |
 | `GIT-CLEAN-CORE-ENV-2` | `proposed` | mentioned |
-| `GIT-CLEAN-RUST-CAPACITY-DESIGN-1` | `ready` | mentioned |
 
 ## What this ledger does not say
 
