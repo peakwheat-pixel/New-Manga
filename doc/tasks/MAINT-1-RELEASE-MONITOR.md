@@ -388,18 +388,18 @@ NEW-MANGA-V1-FULL-AUDIT 与 R1–R4 整改、SEC-01/02/03、CORE-01、AUDIT-07/0
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| worktree | 无独立 worktree；全程在主线工作树 `G:/CODEX/New Manga` | NOT_APPLICABLE | — | — | `git worktree list` 显示本卡无专属 worktree；未创建、未删除 |
-| task-env | `G:/CODEX/New Manga.workspace/task-envs/HOST-CORECLIENT-1/sidecar-copy` | PRESERVE_REFERENCED | 原路径 | 由 HOST-CORECLIENT-1 持有 | P2 UI 冒烟只读取该 sidecar，未改写；仍被 HOST-CORECLIENT-1 引用 ⇒ 不迁移 |
-| temp | `%TEMP%/newmanga-p2-*`（8 个隔离 data-root/theme-home 目录） | DELETE_SAFE | 已删除 | 8 目录 / 1,523,132 B | 均无当前引用与进程占用；删除后复查数量 0 |
-| artifact | `apps/desktop-avalonia/**` 下 `bin/obj` 构建产物 | DELETE_SAFE（可重建） | 仓库内忽略目录 | — | 由 `test.ps1` 重建；不入库、不归档 |
-| agent-output | 无 | NOT_APPLICABLE | — | — | 本卡未使用 `workspace/agent-output` |
-| dataset/model | 无新增；ONNX 权重沿用 `GATE4-MODEL-RECOVERED-1` 既有 pin | PRESERVE_REFERENCED | 原路径 | pin 见该 Task 的 Canonical Evidence | 本卡未复制、未删除任何权重 |
+| worktree | — | NOT_APPLICABLE | — | — | 无独立 worktree：全程在主线工作树 `G:/CODEX/New Manga`；`git worktree list` 无本卡专属条目 |
+| task-env | G:/CODEX/New Manga.workspace/task-envs/HOST-CORECLIENT-1/sidecar-copy | PRESERVE_REFERENCED | — | 由 HOST-CORECLIENT-1 持有 | P2 UI 冒烟只读取该 sidecar，未改写；仍被 HOST-CORECLIENT-1 引用 ⇒ 不迁移 |
+| temp | C:/Users/49745/AppData/Local/Temp/newmanga-p2-bookshelf-e2caedba | ALREADY_ABSENT | — | 8 目录 / 1,523,132 B | 8 个隔离数据根已删除，逐项见 `condition6-closeout/resource-closeout.log`；删除后复查 0 残留 |
+| artifact | apps/desktop-avalonia | DELETE_SAFE | — | — | `bin/obj` 构建产物可重建；不入库、不归档 |
+| agent-output | — | NOT_APPLICABLE | — | — | 本卡未使用 `workspace/agent-output` |
+| dataset/model | — | NOT_APPLICABLE | — | — | 本卡未复制、未删除模型权重；ONNX 权重 pin 见 GATE4-MODEL-RECOVERED-1 的 Canonical Evidence |
 
 ## Closeout Record
 
 - Closeout date / DSH：2026-11-16 / DSH（R16）
 - canonical_evidence_status：`complete`（条件 6 与 AC1–AC4 的当前证据见上表；三口径复算零 FAIL）
-- resource_closeout_status：`complete`（见 Resource Manifest：无 worktree 操作；temp 8 目录已按 DELETE_SAFE 清理；其余为 PRESERVE/NOT_APPLICABLE）
+- resource_closeout_status：`complete`（见 Resource Manifest：无 worktree 操作；8 个 temp 数据根已删除并记为 `ALREADY_ABSENT`；其余为 PRESERVE_REFERENCED / DELETE_SAFE / NOT_APPLICABLE）
 - 删除、迁移、归档数量/字节数：删除 8 目录 / 1,523,132 B（temp）；迁移 0；归档 0
 - 未关闭项及保留原因：Release Gate 条件 3（阅读器 overlay 人眼目视）、条件 4（签名 + 真机安装矩阵）、条件 5（人工 GT 质量基线）仍开放，均非本卡可单方关闭；本卡作为伞形哨位保持 `in_progress`，不冒充 `done`
 - 当前指针清理：STATUS / Plan / TASK_LEDGER / rolling checkpoint（NEXT-SESSION-STARTER）已更新至本轮
