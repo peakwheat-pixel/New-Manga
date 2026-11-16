@@ -337,7 +337,7 @@ pwsh -NoProfile -File tools\governance\verify_pins.ps1
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| worktree | —` | NOT_APPLICABLE | 同一仓库 checkout | `832103393` | `git worktree list` 仅 main；未创建/删除 worktree。 |
+| worktree | — | NOT_APPLICABLE | 同一仓库 checkout | `832103393` | `git worktree list` 仅 main；未创建/删除 worktree。 |
 | verification artifacts | `verification/FEA-06-RESIDUAL-2/**` | PRESERVE_REFERENCED | `verification/FEA-06-RESIDUAL-2/visuals/visual-inventory.md` | `e76b2f5fed7a80fc5f52ce2e28dd35b656e8a931f3884781f006098cfbffed74` | 172 PNG + inventory + expected-tokens + 各日志被 Task/Review/Handoff/Closeout 引用；旧 `verification/FEA-06/**` 字节未动。 |
 | task-env / dataset / model / test-material | — | NOT_APPLICABLE | - | - | 未创建 task-env；测试使用 FakeHost 内存 fixture，不接触用户数据。 |
 | temp | C:/Users/49745/AppData/Local/Temp | DELETE_SAFE | - | - | 每次运行临时根并在测试内清理；未写真实 `%APPDATA%`。 |

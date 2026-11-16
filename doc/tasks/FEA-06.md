@@ -261,7 +261,7 @@ allowed_paths:
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| worktree | —` | NOT_APPLICABLE | 同一仓库 checkout | `b0388df9ae2bb087649b44cf25a0921b2116934e` | 直接在 main 实施；不创建/删除 worktree。 |
+| worktree | — | NOT_APPLICABLE | 同一仓库 checkout | `b0388df9ae2bb087649b44cf25a0921b2116934e` | 直接在 main 实施；不创建/删除 worktree。 |
 | verification artifacts | `verification/FEA-06/**` | PRESERVE_REFERENCED | 同路径 | `verification/FEA-06/evidence-index.md` | 证据被 Task 与 Handoff 引用；交 DSH 在集成窗口复核资源处置。 |
 | task-env / user data | — | NOT_APPLICABLE | - | - | 未写产品数据或用户源文件；无独立环境需清理。 |
 

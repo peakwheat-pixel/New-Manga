@@ -97,7 +97,7 @@ READ-1 已交付 Core schema v10、wire P9–P15 与 `IHostController` 七方法
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | temp | `G:\CODEX\New Manga.workspace\FEA-14-READ-2\`（如需要） | NOT_APPLICABLE | — | — | 仓外，不提交 |
-| user-data | `C:/Users/49745/AppData/Roaming/com.newmanga.desktop` | PRESERVE_USER_DATA | — | — | 只读；测试用 FakeHostController |
+| user-data | C:/Users/49745/AppData/Roaming/com.newmanga.desktop | PRESERVE_USER_DATA | — | — | 只读；测试用 FakeHostController |
 | build | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 复用现有 .NET/Avalonia 环境 |
 | worktree | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 主树实现 |
 

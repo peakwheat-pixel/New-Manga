@@ -30,6 +30,8 @@ allowed_paths:
   - doc/STATUS.md
   - doc/REBASELINE_PLAN.md
   - doc/TASK_LEDGER.md
+  - doc/handoffs/NEXT-SESSION-STARTER.md   # 三指针之一（每轮更新）
+  - doc/tasks/*.md   # 仅 AC7 allowed_cells 列明的 Resource Manifest 单元（见 AC5 补充）
 ---
 
 # GOV-DECLARATION-SCAN-CLEANUP-1：声明扫描债务清理
@@ -98,6 +100,22 @@ allowed_paths:
       12 条活 pin B2 与 3 条活 pin B3 **保持原始字节**、转「可审计保留态」（原始错误码以警告态继续显示 + pin 依据）。
       验收判据：AC7 清单逐条唯一、改动只落在列明单元、错误数按批单调不增、基线保护根集合 ⊆ 最终集合。
       依据：`doc/reviews/GOV-DECLARATION-SCAN-CLEANUP-1-AC3-CODEX-RULING-2026-11-16.md` §Q4。 <<MET>>
+
+## AC6 复核处置（2026-11-16，R21）
+
+- 独立复核 `ac6-reviewer`（新上下文、只读、未参与实施）判 `APPROVED_WITH_FINDINGS`：**AC3 的 `<<MET>>` 成立**，
+  AC7 需返修。报告：`doc/reviews/GOV-DECLARATION-SCAN-CLEANUP-1-AC6-REVIEW-2026-11-16.md`。
+- **P1（已修）**：首版单元匹配用「短键前缀兼容」，把 `doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md` 的 main-worktree
+  source（`G:/CODEX/New Manga`）误改成 FEA-15 目录。**audit 仍为 0，说明「errors=0」不能替代语义正确性**。
+  处置：45 个文件整体还原到 `23e8d7152` 字节后**严格重放**（完整单元格键 + 仅在 message 硬截断时容忍 ≥60 字符前缀 +
+  整格重建），重放后该文件只剩 1 行改动（`*.log` → 目录本体）。
+- **P2（已修）**：13 处未闭合反引号 ⇒ 整格重建后逐行奇偶实测 **0 处不平衡**；
+  末列附注/`FEA-11-LINEAGE-1` 的 NA 改写等**超列明单元**的改动，改为由 diff 反向生成 `allowed_cells`（99 单元 / 45 文件）后全部列明；
+  `NEXT-SESSION-STARTER` 属三指针更新对象，已补进 `allowed_paths`；baseline/after 两轮审计 JSON 已入库
+  （`ac3-baseline-audit-2026-11-16.json` / `ac3-after-audit-2026-11-16.json`）。
+- warnings 821 → 822 的 +1（`DECL_SOURCE_NOT_A_PATH`）已如实登记：首版误改该格**消掉**了这条警告，重放恢复原文后警告随之回来。
+
+## 允许修改范围（本轮实际使用）
 
 > **AC5 补充（追加式，仅适用于 AC3 本轮；依据 Codex 2026-11-16 裁决 Q4）**：既有 AC5 的核验范围
 > `a6608dd4b..HEAD` 及其结论**保持原样、不追溯修改**。自声明归属表冻结提交（`ac3-baseline-disposition-2026-11-16.md`）起，

@@ -67,7 +67,12 @@ pwsh -NoProfile -File apps/desktop-avalonia/scripts/test.ps1
 
 ### 队列 0 —— **`GOV-DECLARATION-SCAN-CLEANUP-1` AC3：154 → 0**（进行中：已 154→147）
 
-**进度（R21，最新）**：**`errors 154→0`**（AC3 与 AC7 均 `[x] <<MET>>`）。B1 64 / B3 11 清零；16 条活 pin B2 转可审计保留态
+**进度（R22，最新）**：复核 P1（FEA-15 误配）与 P2（13 处未闭合反引号等）已返修 —— 45 个文件整体还原到 `23e8d7152`
+后用**严格匹配**（完整单元格键 + ≥60 字符前缀容忍 + 整格重建）重放；实测 errors **0**、declarations 6800、
+protected_roots 5611、warnings 822（+1 是恢复真实的 `DECL_SOURCE_NOT_A_PATH`）；`ac7-allowed-cells` 改为**由 diff 反向生成**
+（99 单元格 / 45 文件）。⚠️ 教训：**audit=0 不能替代语义正确性** —— 短键前缀匹配会把 `G:/CODEX/New Manga` 误吸成更长路径。
+
+**进度（R21）**：**`errors 154→0`**（AC3 与 AC7 均 `[x] <<MET>>`）。B1 64 / B3 11 清零；16 条活 pin B2 转可审计保留态
 （`DECL_PINNED_DEFECT_RETAINED`，新增 HIE-R016 覆盖 `LEGACY-SHELL-ARCHIVE-1` 的 archive 证据行，WORKTREE 通道）；
 其余 64 条未钉住 B2 按 `ac7-allowed-cells-2026-11-16.md` 做单元级修复（45 张卡、48 文件、+121/−84 行），
 `protected_roots 5593→5611`、`declarations 6765→6800`。**剩 AC6**（固定 head + 上下文独立 Review + 前后两轮 JSON 回填）。

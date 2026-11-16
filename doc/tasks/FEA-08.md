@@ -194,8 +194,8 @@ R7 交付：全部文件 pin @ R7 证据 commit（见 git log 与下表 commit �
 | prototype（非 Git） | `G:\CODEX\New Manga.workspace\FEA-08\prototype\` | PRESERVE_REFERENCED | 原地（workspace） | `verification/FEA-08/prototype_hashes.txt`（16 脚本 SHA-256） | 复现证据生成所需；被 Task/Handoff/EV 引用 |
 | temp（合成） | `G:\CODEX\New Manga.workspace\FEA-08\tmp\` | DELETE_SAFE | 已删除 | `results/run_all_log.json`（tmp_removed/tmp_remaining=[]） | run_all 末尾实际清理（含失败路径 finally）；tmp 当前为空 |
 | artifact（生成侧） | `G:\CODEX\New Manga.workspace\FEA-08\out\` | DELETE_SAFE | 原地保留（可再生） | 无 pin（入库副本见 verification/FEA-08） | 由 run_all 再生；不作为证据源；失败时 `run_all_failure.json` 只留 workspace |
-| agent-output | G:/CODEX/New Manga.workspace/FEA-08` | PRESERVE_REFERENCED | 原地（workspace） | 无 | 派发/原始日志，非 Canonical |
-| 回收站合成条目 | — | NOT_APPLICABLE | 已还原并删除 | `results/h5_results.json` restore_log | 5 条还原后删除；G: 0→0、leftover=0；C: 用户条目 2 条未触碰；回收站卷不是仓库资源；$ 触发 ENV 规则，改为 NA |
+| agent-output | G:/CODEX/New Manga.workspace/FEA-08 | PRESERVE_REFERENCED | 原地（workspace） | 无 | 派发/原始日志，非 Canonical |
+| 回收站合成条目 | — | NOT_APPLICABLE | 已还原并删除 | `results/h5_results.json` restore_log | 5 条还原后删除；G: 0→0、leftover=0；C: 用户条目 2 条未触碰 |
 | evidence（仓库） | `verification/FEA-08/**` | NOT_APPLICABLE | 仓库内 | EV 表（72 项） | Canonical Evidence |
 | 门禁原始日志（仓库） | `verification/FEA-08/logs/gates-raw/**` | NOT_APPLICABLE | 仓库内 | EV 表 + `gates-raw-manifest.json` | 版本化原始输出（命令/EXIT/shell/解释器）供审计（F08I2-007） |
 

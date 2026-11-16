@@ -132,7 +132,7 @@ FEA-14 S5 FONT 切片（FEA-00 §12.2/§15.6）需要字体库数据面：安装
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
 | temp | `G:\CODEX\New Manga.workspace\FEA-14-FONT-1\`（字体 fixture/数据根） | NOT_APPLICABLE | — | — | 仓外，不提交 |
-| user-data | `C:/Users/49745/AppData/Roaming/com.newmanga.desktop` | PRESERVE_USER_DATA | — | — | 只读；测试用隔离根 |
+| user-data | C:/Users/49745/AppData/Roaming/com.newmanga.desktop | PRESERVE_USER_DATA | — | — | 只读；测试用隔离根 |
 | build | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 复用现有环境 |
 | worktree | NOT_APPLICABLE | NOT_APPLICABLE | — | — | 主树实现 |
 
