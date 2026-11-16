@@ -67,15 +67,24 @@ pwsh -NoProfile -File apps/desktop-avalonia/scripts/test.ps1
 
 ### 队列 0 —— **`GOV-DECLARATION-SCAN-CLEANUP-1` AC3：154 → 0**（进行中：已 154→147）
 
+**进度（R18，最新）**：**B3 11 条已全部清零**，`errors 154→144`、`protected_roots 5593→5601`。
+batch 2 把 HIE 层的绝对计数耦合改成成员不变量（`HISTORICAL_EVIDENCE_BINDING_IDS` / 派生 `removed`/`pending` /
+`HISTORICAL_EVIDENCE_KEEP`），新增 HIE-O04（NUL markdown）与 HIE-O05/O06（不可解析 JSON）三条 `raw_non_declaration_bindings`，
+JSON 绑定带「一旦变合法 JSON 即 RECORD_DRIFT」的 fail-closed 条件，`HISTORICAL_EVIDENCE_DIGEST` 已重批；
+新测试 `test_historical_binding_policy.py`（10 项）。证据 `ac3-batch2-raw-bindings-2026-11-16.log`。
+⚠️ 踩坑：`test_architecture_assertions` 会往 `doc/STATUS.md` 追加一段散文再跑 check.ps1 ⇒ STATUS 必须留 ≥17 B 余量
+（我一度涨到 3190 B 使该测试转红，已压回 3161 B）。
+
 **进度（R17）**：裁定已由 **Codex** 出（`APPROVED_WITH_CONDITIONS`，见
 `doc/reviews/GOV-DECLARATION-SCAN-CLEANUP-1-AC3-CODEX-RULING-2026-11-16.md`）；
 归属表已冻结（`verification/GOV-DECLARATION-SCAN-CLEANUP-1/ac3-baseline-disposition-2026-11-16.md`，154 行逐条
 带 err_id/桶/活 pin）；**batch 1（Q3 封闭别名表）已实施**：`errors 154→147`、`warnings 732→740`、
 `protected_roots 5593→5598`、`declarations 6755→6762`，`DECL_UNKNOWN_DISPOSITION 8→0`；
 证据 `verification/GOV-DECLARATION-SCAN-CLEANUP-1/ac3-batch1-alias-2026-11-16.log`。
-**下一步（严格按裁决顺序）**：Q2 4 条 raw 绑定 → Q1 64 条表级绑定（须证明保护根集合不缩）→
-12 条活 pin B2 + 3 条活 pin B3 转「可审计保留态」（原始错误码以警告态可见）→ AC7 的 67 条单元修复 →
+**下一步（严格按裁决顺序）**：~~Q2~~（已完成，B3 清零）→ **Q1 64 条表级绑定**（须证明保护根集合不缩）→
+12 条活 pin B2 转「可审计保留态」（原始错误码以警告态可见）→ AC7 的 67 条单元修复 →
 AC6 集成复验 + 上下文独立 Review。**卡已加 AC7**（`<<PARTIAL>>`）与 AC5 追加式窄例外。
+剩余 errors = 144 = B1 64 + B2 79 + （B2 里 12 条活 pin）。
 
 ### 队列 0 附录 —— 原 R16 评估（保留）
 

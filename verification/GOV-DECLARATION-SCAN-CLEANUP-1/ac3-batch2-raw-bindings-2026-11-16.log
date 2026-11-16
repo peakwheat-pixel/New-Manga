@@ -1,0 +1,126 @@
+# GOV-DECLARATION-SCAN-CLEANUP-1 · AC3 batch 2（Q2 raw 绑定 + HIE 成员不变量）证据
+# head: 0290293923fb2257ba3de041e4b8b56d8369f1dd
+# at_utc: 2026-11-16T11:22:36Z
+# os: Windows 10.0.26200 ; PowerShell 7.6.8 ; Python Python 3.14.6 ; git git version 2.52.0.windows.1
+# ruling: doc/reviews/GOV-DECLARATION-SCAN-CLEANUP-1-AC3-CODEX-RULING-2026-11-16.md（Q1 粒度 / Q2 raw 绑定 / Q3 已实施 / Q4 顺序）
+
+## 0. 基线（batch 2 之前，head 029029392 之后实测）
+# errors=147 warnings=740 declarations=6762 protected_roots=5598
+
+## 1. 改了什么
+# tools/governance/historical-evidence-interpretation.json
+#   + 三个新 raw_non_declaration_bindings：HIE-O04（verification/FEA-06-PREREQ-1/delivery-notes.md，含 6 个 NUL 字节）、
+#     HIE-O05/HIE-O06（verification/FEA-07-AC5-NATIVE-1/evidence/displays-baseline-20261109-08390{8,9}.json，不可解析 JSON）
+#   + 全部绑定新增 format 字段（markdown / json），使诊断类型与绑定形式一一对应
+# tools/governance/clean_workspace.py
+#   + 绝对计数 -> 成员不变量：
+#       len(template) == 1 / len(raw) == 3 / len(guards) == 2  =>  HISTORICAL_EVIDENCE_BINDING_IDS 元组 + guard ID 元组
+#       len(removed) == 5 / len(pending) == 6                  =>  由 bindings/reference_guards 派生（sum(len(errors)) / len(bindings)+len(guards)）
+#       keep = PRESERVE_UNKNOWN if number == 3                 =>  HISTORICAL_EVIDENCE_KEEP 显式 ID 映射
+#   + format=json 分支：不 replay markdown；要求 _json_source_is_unparsable(raw) 为真（一旦该文件变成合法 JSON 就 RECORD_DRIFT 失败），
+#     并要求 nul_offsets==[]、errors==1 且 code==JSON_PARSE、locator is None
+#   + HISTORICAL_EVIDENCE_DIGEST 依据新政策重批（c91bbef8… -> 9e6c0474…）
+# 新增测试 tools/governance/tests/test_historical_binding_policy.py（10 项）
+
+## 2. 新测试
+# command: python -B -m unittest discover -s tools/governance/tests -p test_historical_binding_policy.py -v
+test_binding_ids_match_the_approved_member_invariant (test_historical_binding_policy.HistoricalBindingPolicy.test_binding_ids_match_the_approved_member_invariant) ... ok
+test_bound_diagnostic_matches_the_binding_format (test_historical_binding_policy.HistoricalBindingPolicy.test_bound_diagnostic_matches_the_binding_format) ... ok
+test_control_and_nul_offsets_are_exact (test_historical_binding_policy.HistoricalBindingPolicy.test_control_and_nul_offsets_are_exact) ... ok
+test_digest_constant_is_rebased_after_every_policy_edit (test_historical_binding_policy.HistoricalBindingPolicy.test_digest_constant_is_rebased_after_every_policy_edit) ... ok
+test_every_binding_has_the_uniform_format_field (test_historical_binding_policy.HistoricalBindingPolicy.test_every_binding_has_the_uniform_format_field) ... ok
+test_json_bindings_are_only_legitimate_while_unparsable (test_historical_binding_policy.HistoricalBindingPolicy.test_json_bindings_are_only_legitimate_while_unparsable) ... ok
+test_json_source_helper_accepts_a_valid_document (test_historical_binding_policy.HistoricalBindingPolicy.test_json_source_helper_accepts_a_valid_document) ... ok
+test_keep_map_only_names_bound_ids (test_historical_binding_policy.HistoricalBindingPolicy.test_keep_map_only_names_bound_ids) ... ok
+test_raw_identity_matches_the_bytes_on_disk (test_historical_binding_policy.HistoricalBindingPolicy.test_raw_identity_matches_the_bytes_on_disk) ... ok
+test_reference_guard_ids_match_the_approved_member_invariant (test_historical_binding_policy.HistoricalBindingPolicy.test_reference_guard_ids_match_the_approved_member_invariant) ... ok
+
+----------------------------------------------------------------------
+Ran 10 tests in 0.004s
+
+OK
+EXIT=0
+
+## 3. 既有 residual identity 测试（HIE 下游）
+# command: python -B -m unittest tools.governance.tests.test_residual_runtime_identity
+..........G:\CODEX\New Manga\tools\governance\clean_workspace.py:804: ResourceWarning: unclosed file <_io.BufferedReader name='g:/codex/new manga\\verification\\P02-NEW-TIME-BASELINE-AC3-HELPER-OUTPUT-RESOLUTION\\dsh-review-preflight-r1.json'>
+  actual = hashlib.sha256(io.open(absolute, "rb").read()).hexdigest()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+G:\CODEX\New Manga\tools\governance\clean_workspace.py:804: ResourceWarning: unclosed file <_io.BufferedReader name='g:/codex/new manga\\verification\\P02-NEW-TIME-X6-AC1-AC7\\runs\\p02-newtime-ac-20261014-i1\\ac5-keyboard-a2\\runner-execution.json'>
+  actual = hashlib.sha256(io.open(absolute, "rb").read()).hexdigest()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+G:\CODEX\New Manga\tools\governance\clean_workspace.py:804: ResourceWarning: unclosed file <_io.BufferedReader name='g:/codex/new manga\\verification\\P02-NEW-TIME-X6-AC1-AC7\\runs\\p02-newtime-ac-20261014-i1\\ac6-contrast\\runner-execution.json'>
+  actual = hashlib.sha256(io.open(absolute, "rb").read()).hexdigest()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+G:\CODEX\New Manga\tools\governance\clean_workspace.py:804: ResourceWarning: unclosed file <_io.BufferedReader name='g:/codex/new manga\\verification\\P02\\antigravity-dispatch-r1.stdout.json'>
+  actual = hashlib.sha256(io.open(absolute, "rb").read()).hexdigest()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+G:\CODEX\New Manga\tools\governance\clean_workspace.py:804: ResourceWarning: unclosed file <_io.BufferedReader name='g:/codex/new manga\\verification\\P02\\zcode-dispatch-env-smoke-20261012-152149.stdout.json'>
+  actual = hashlib.sha256(io.open(absolute, "rb").read()).hexdigest()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+G:\CODEX\New Manga\tools\governance\clean_workspace.py:804: ResourceWarning: unclosed file <_io.BufferedReader name='g:/codex/new manga\\verification\\P02\\zcode-dispatch-env-smoke-a6-20261012-152336.stdout.json'>
+  actual = hashlib.sha256(io.open(absolute, "rb").read()).hexdigest()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+G:\CODEX\New Manga\tools\governance\clean_workspace.py:804: ResourceWarning: unclosed file <_io.BufferedReader name='g:/codex/new manga\\verification\\P02\\zcode-dispatch-smoke-20261012.stdout.json'>
+  actual = hashlib.sha256(io.open(absolute, "rb").read()).hexdigest()
+...[truncated 8048 lines; 取尾部摘要]...
+  io.open(absolute, "rb").read()).hexdigest()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+G:\CODEX\New Manga\tools\governance\clean_workspace.py:2381: ResourceWarning: unclosed file <_io.BufferedReader name='g:\\codex\\new manga\\verification\\WORKSPACE-CONSOLIDATION-1\\worktree-removal-dryrun.json'>
+  io.open(absolute, "rb").read()).hexdigest()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+G:\CODEX\New Manga\tools\governance\clean_workspace.py:2381: ResourceWarning: unclosed file <_io.BufferedReader name='g:\\codex\\new manga\\verification\\WORKSPACE-CONSOLIDATION-1\\worktree-removal.json'>
+  io.open(absolute, "rb").read()).hexdigest()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+G:\CODEX\New Manga\tools\governance\clean_workspace.py:2381: ResourceWarning: unclosed file <_io.BufferedReader name='g:\\codex\\new manga\\verification\\WORKSPACE-DECLARATION-REMEDIATION-1\\audit-after.json'>
+  io.open(absolute, "rb").read()).hexdigest()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+G:\CODEX\New Manga\tools\governance\clean_workspace.py:2381: ResourceWarning: unclosed file <_io.BufferedReader name='g:\\codex\\new manga\\verification\\WORKSPACE-DECLARATION-REMEDIATION-1\\audit-before.json'>
+  io.open(absolute, "rb").read()).hexdigest()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+G:\CODEX\New Manga\tools\governance\clean_workspace.py:2381: ResourceWarning: unclosed file <_io.BufferedReader name='g:\\codex\\new manga\\verification\\WORKSPACE-DECLARATION-REMEDIATION-1\\evidence\\audit-snapshots.json'>
+  io.open(absolute, "rb").read()).hexdigest()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+G:\CODEX\New Manga\tools\governance\clean_workspace.py:2381: ResourceWarning: unclosed file <_io.BufferedReader name='g:\\codex\\new manga\\verification\\WORKSPACE-DECLARATION-REMEDIATION-1\\evidence\\environment.json'>
+  io.open(absolute, "rb").read()).hexdigest()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+G:\CODEX\New Manga\tools\governance\clean_workspace.py:2381: ResourceWarning: unclosed file <_io.BufferedReader name='g:\\codex\\new manga\\verification\\WORKSPACE-DECLARATION-REMEDIATION-1\\evidence\\protection-delta.json'>
+  io.open(absolute, "rb").read()).hexdigest()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+G:\CODEX\New Manga\tools\governance\clean_workspace.py:2381: ResourceWarning: unclosed file <_io.BufferedReader name='g:\\codex\\new manga\\verification\\WORKSPACE-DECLARATION-REMEDIATION-1\\evidence\\triage-summary.json'>
+  io.open(absolute, "rb").read()).hexdigest()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+G:\CODEX\New Manga\tools\governance\clean_workspace.py:2381: ResourceWarning: unclosed file <_io.BufferedReader name='g:\\codex\\new manga\\verification\\WORKSPACE-DECLARATION-REMEDIATION-1\\incident-replay-clean-workspace.json'>
+  io.open(absolute, "rb").read()).hexdigest()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+G:\CODEX\New Manga\tools\governance\clean_workspace.py:2381: ResourceWarning: unclosed file <_io.BufferedReader name='g:\\codex\\new manga\\verification\\WORKSPACE-DECLARATION-REMEDIATION-1\\incident-replay-remove-worktrees.json'>
+  io.open(absolute, "rb").read()).hexdigest()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+G:\CODEX\New Manga\tools\governance\clean_workspace.py:2381: ResourceWarning: unclosed file <_io.BufferedReader name='g:\\codex\\new manga\\verification\\WORKSPACE-DECLARATION-REMEDIATION-1\\non-declaration-json-exceptions.json'>
+  io.open(absolute, "rb").read()).hexdigest()
+ResourceWarning: Enable tracemalloc to get the object allocation traceback
+....
+----------------------------------------------------------------------
+Ran 14 tests in 25.145s
+
+OK
+EXIT=0
+
+## 4. 审计（改后）
+# command: python -B tools/governance/clean_workspace.py --audit-declarations --out <tmp>
+# after: errors=144 warnings=743 declarations=6765 protected_roots=5601
+# code 分布: {'DECL_BARE_NAME': 1, 'DECL_DESTINATION_UNRESOLVED': 11, 'DECL_ENV': 16, 'DECL_GLOB': 16, 'DECL_MISSING_SOURCE': 1, 'DECL_RELATIVE_AMBIGUOUS': 1, 'DECL_RELATIVE_UNRESOLVED': 27, 'DECL_TRAVERSAL': 7, 'TABLE_DELIMITER': 10, 'TABLE_ROW_ARITY': 1, 'TABLE_SCHEMA_INCOMPLETE': 53}
+EXIT=2
+
+## 5. 读数
+- B3 **11 条已全部清零**：DECL_UNKNOWN_DISPOSITION 8（batch 1 别名）+ FILE_UNREADABLE 1 + JSON_PARSE 2（本批绑定）。
+- errors 147 -> **144**（-3）；warnings 740 -> 743（+3 = 3 条新 DECL_HISTORICAL_EVIDENCE_PRESERVED，逐条记录 origin/locator/raw_sha256/keep/original_codes）。
+- protected_roots 5598 -> **5601**（+3，未缩小）；declarations 6762 -> 6765（+3）。
+- 三条绑定都按 Codex Q2 的 fail-closed 条件：raw_sha256/byte_length/c0_bytes/nul_offsets/诊断码任一不符即报错；
+  且 JSON 绑定只在该文件**仍然不可解析**时成立（变合法即 RECORD_DRIFT）。
+
+## 6. 本轮自查抓到并修掉的一条回归（如实登记）
+- `test_architecture_assertions.test_historical_prose_is_not_a_conflicting_assertion` 会把一段历史散文追加到 `doc/STATUS.md`
+  再跑 `check.ps1`，要求仍 PASS。我上一批把 STATUS 涨到 3190 B，追加后 3207 B > 3200 ⇒ 该测试转红。
+- 处置：把 STATUS 的 AC3 行压缩为 `154→144（B3 11 条已清零; …）` -> 3161 B，重跑该文件 31 tests **OK**。
+- 教训：STATUS 的可用余量不只是给下一次编辑，还要容纳该测试的探针追加（约 +17 B / +1 行）。

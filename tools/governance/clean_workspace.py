@@ -1697,15 +1697,42 @@ def _apply_broad_preservation(index, scanned):
 
 HISTORICAL_EVIDENCE_POLICY = "tools/governance/historical-evidence-interpretation.json"
 HISTORICAL_EVIDENCE_DIGEST = (
-    "c91bbef8f43876b59b206ead84b2edfbf8af3f21845665e61a8538778e6d992f")
+    "9e6c04749226571d500422e65f4a604c7ae67e0f5e999953d5ac985e65b73f64")
+
+# Approved binding identity set (member invariant).  Adding a binding is a
+# visible code+policy edit, never a widened numeric window.  Order matters:
+# template bindings first, then raw non-declaration bindings.
+HISTORICAL_EVIDENCE_TEMPLATE_ID = "HIE-T01"
+HISTORICAL_EVIDENCE_BINDING_IDS = (
+    "HIE-T01", "HIE-O01", "HIE-O02", "HIE-O03",
+    "HIE-O04", "HIE-O05", "HIE-O06")
+HISTORICAL_EVIDENCE_REFERENCE_GUARD_IDS = ("HIE-REF01", "HIE-REF02")
+# The one binding that preserves an untracked historical snapshot; every other
+# source is referenced in place.  Explicit per-ID map, not a positional rule.
+HISTORICAL_EVIDENCE_KEEP = {"HIE-O03": "PRESERVE_UNKNOWN"}
 
 
 HISTORICAL_BROAD_DEPENDENCY_DIGEST = (
     "0d19cd0fa0374b7970a128d7af845541efd4c86e14b158bd6185dbbc261708b3")
 
 
+def _json_source_is_unparsable(raw):
+    """True when ``raw`` is not valid JSON (BOM-tolerant, mirroring the scanner)."""
+    try:
+        text = raw.decode("utf-8")
+    except UnicodeDecodeError:
+        return True
+    if text.startswith("\ufeff"):
+        text = text[1:]
+    try:
+        json.loads(text)
+    except ValueError:
+        return True
+    return False
+
+
 def _apply_historical_evidence_interpretation(index, scanned):
-    """Preserve four exact raw sources before interpreting their five errors."""
+    """Preserve exact raw sources before interpreting their adjudicated errors."""
     if any(e["file"] == BROAD_PRESERVATION_POLICY for e in index.errors):
         return index, scanned
 
@@ -1862,19 +1889,23 @@ def _apply_historical_evidence_interpretation(index, scanned):
             stderr=subprocess.PIPE)
         require(sha(blob) == approved["source_facts_raw_sha256"], "SOURCE_DRIFT",
                 "approved historical facts blob changed")
-        require(len(policy["template_bindings"]) == 1
-                and len(policy["raw_non_declaration_bindings"]) == 3
-                and len(policy["reference_guards"]) == 2, "POLICY_INVALID",
-                "historical binding set changed")
         bindings = policy["template_bindings"] + policy["raw_non_declaration_bindings"]
-        require([b["id"] for b in bindings] ==
-                ["HIE-T01", "HIE-O01", "HIE-O02", "HIE-O03"],
+        # Member invariant, not an absolute count (Ruling C style): the approved
+        # binding identity set is explicit, so adding a binding is a visible
+        # policy edit here instead of silently widening a numeric window.
+        require([b["id"] for b in bindings] == list(HISTORICAL_EVIDENCE_BINDING_IDS),
                 "POLICY_INVALID", "historical binding IDs changed")
+        require(len(policy["reference_guards"]) ==
+                len(HISTORICAL_EVIDENCE_REFERENCE_GUARD_IDS), "POLICY_INVALID",
+                "historical reference guard set changed")
         removed, pending, warnings, existing = [], [], [], []
         for number, b in enumerate(bindings):
+            template = b["id"] == HISTORICAL_EVIDENCE_TEMPLATE_ID
             exact(b, "id origin_file expected_tracking raw_sha256 byte_length "
                   "strict_utf8 utf8_bom c0_bytes source_guard parser_snapshot errors "
-                  + ("fence rows" if number == 0 else "nul_offsets"))
+                  "format" + (" fence rows" if template else " nul_offsets"))
+            require(b["format"] in ("markdown", "json"), "POLICY_INVALID",
+                    "historical binding format changed")
             origin = b["origin_file"]
             # Ruling A（2026-11-16，DSH）：这里原先硬编码「第 4 条必须 untracked」——
             # 那是 policy 之外的**第二份真值**，`ee755d4bb` 把 P22 快照入库后它就过期，
@@ -1895,17 +1926,27 @@ def _apply_historical_evidence_interpretation(index, scanned):
             require(json.dumps(b["c0_bytes"], sort_keys=True) ==
                     json.dumps(controls, sort_keys=True), "SOURCE_DRIFT",
                     "historical control-byte identity changed")
-            text = raw.decode("utf-8", errors="strict")
             isolated = ProtectionIndex(index.repo_root, index.ws_root)
-            parse_markdown_declarations(isolated, text, origin)
-            require(snapshot(isolated) == b["parser_snapshot"], "RECORD_DRIFT",
-                    "historical isolated parse changed: %s" % origin)
-            keep = "PRESERVE_UNKNOWN" if number == 3 else "PRESERVE_REFERENCED"
+            if b["format"] == "markdown":
+                text = raw.decode("utf-8", errors="strict")
+                parse_markdown_declarations(isolated, text, origin)
+                require(snapshot(isolated) == b["parser_snapshot"], "RECORD_DRIFT",
+                        "historical isolated parse changed: %s" % origin)
+            else:
+                # A JSON binding is only legitimate while the file really is
+                # unparsable: the moment it becomes valid JSON it must be
+                # scanned again (fail closed instead of staying silent).
+                require(_json_source_is_unparsable(raw), "RECORD_DRIFT",
+                        "bound historical JSON is parsable and must be scanned")
+                require(snapshot(isolated) == b["parser_snapshot"] ==
+                        dict(declarations=[], errors=[], warnings=[]), "RECORD_DRIFT",
+                        "historical JSON binding is not declaration-free")
+            keep = HISTORICAL_EVIDENCE_KEEP.get(b["id"], "PRESERVE_REFERENCED")
             guard = guard_identity(b["source_guard"], origin, keep)
             locator = b["id"] + "/raw-file"
             pending.append(Declaration(guard["abs"], keep, origin, locator,
                                        guard["normalized"], guard["real"]))
-            if number == 0:
+            if template:
                 require(len(isolated.declarations) == 1
                         and len(isolated.errors) == len(isolated.warnings) == 2
                         and len(b["errors"]) == 2, "RECORD_DRIFT",
@@ -1934,6 +1975,13 @@ def _apply_historical_evidence_interpretation(index, scanned):
                         "historical template original protection missing")
                 for d in existing:
                     targets[d["normalized"]] = d["real_normalized"]
+            elif b["format"] == "json":
+                require(snapshot(isolated) == dict(declarations=[], errors=[], warnings=[])
+                        and b["nul_offsets"] == []
+                        and len(b["errors"]) == 1
+                        and b["errors"][0]["code"] == "JSON_PARSE"
+                        and b["errors"][0]["locator"] is None,
+                        "RECORD_DRIFT", "historical JSON diagnostic shape changed")
             else:
                 require(snapshot(isolated) == dict(declarations=[], errors=[], warnings=[])
                         and b["nul_offsets"] == [c["offset"] for c in controls
@@ -1948,14 +1996,18 @@ def _apply_historical_evidence_interpretation(index, scanned):
                         and error not in removed, "ERROR_MISMATCH",
                         "historical error identity is missing, duplicated or changed")
                 removed.append(error)
-            warning_locator = ("global 228,229/line 7,8/" + b["id"] if number == 0
-                               else b["id"] + "/bytes " +
-                               ",".join(str(n) for n in b["nul_offsets"]))
+            if template:
+                warning_locator = "global 228,229/line 7,8/" + b["id"]
+            elif b["format"] == "json":
+                warning_locator = b["id"] + "/json-parse"
+            else:
+                warning_locator = (b["id"] + "/bytes " +
+                                   ",".join(str(n) for n in b["nul_offsets"]))
             warnings.append((origin, warning_locator, b, keep))
         for n, ref in enumerate(policy["reference_guards"], 1):
             exact(ref, "id origin_file origin_global_line origin_parser_locator "
                   "path_rel abs normalized real keep")
-            require(ref["id"] == "HIE-REF%02d" % n
+            require(ref["id"] == HISTORICAL_EVIDENCE_REFERENCE_GUARD_IDS[n - 1]
                     and ref["origin_file"] == bindings[0]["origin_file"],
                     "POLICY_INVALID", "historical reference context changed")
             guard = guard_identity({k: ref[k] for k in ("abs", "normalized", "real", "keep")},
@@ -1964,7 +2016,13 @@ def _apply_historical_evidence_interpretation(index, scanned):
                                           ref["origin_parser_locator"], ref["id"])
             pending.append(Declaration(guard["abs"], guard["keep"], ref["origin_file"],
                                        locator, guard["normalized"], guard["real"]))
-        require(len(removed) == 5 and len(pending) == 6, "POLICY_INVALID",
+        # Derived expectations (member invariant): every adjudicated error is
+        # removed exactly once, and every binding/guard contributes exactly one
+        # preserved identity.  No absolute totals are hardcoded here.
+        expected_removals = sum(len(b["errors"]) for b in bindings)
+        expected_pending = len(bindings) + len(policy["reference_guards"])
+        require(len(removed) == expected_removals
+                and len(pending) == expected_pending, "POLICY_INVALID",
                 "incomplete historical preservation batch")
         staged = copy.copy(index)
         staged.declarations = list(index.declarations)

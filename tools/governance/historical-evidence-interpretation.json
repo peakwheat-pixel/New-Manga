@@ -14,6 +14,7 @@
       "id": "HIE-T01",
       "origin_file": "verification/P09-GOVERNANCE-DEBT-20261019/codex-closeout-p19-view-r12.md",
       "expected_tracking": "tracked",
+      "format": "markdown",
       "raw_sha256": "dcc528c1dd803961e55e42d34ba7ed14232089fedc1673f87eadc825b4970baa",
       "byte_length": 23845,
       "strict_utf8": true,
@@ -113,6 +114,7 @@
       "id": "HIE-O01",
       "origin_file": "verification/P14/owner-initiated-dsh-self-review-r1.md",
       "expected_tracking": "tracked",
+      "format": "markdown",
       "raw_sha256": "df4de2411355fe050593b170a4b8602d95c87a716abe3686a416b574a80e0608",
       "byte_length": 3288,
       "strict_utf8": true,
@@ -150,6 +152,7 @@
       "id": "HIE-O02",
       "origin_file": "verification/P14/owner-initiated-dsh-self-review-r2.md",
       "expected_tracking": "tracked",
+      "format": "markdown",
       "raw_sha256": "122b34494203dbd8557565affc3113182844c0b987251a8757c134515837626a",
       "byte_length": 3433,
       "strict_utf8": true,
@@ -187,6 +190,7 @@
       "id": "HIE-O03",
       "origin_file": "verification/P22/codex-p22-task-r4-malformed-snapshot-7ebd7d40.md",
       "expected_tracking": "tracked",
+      "format": "markdown",
       "raw_sha256": "7ebd7d40e7334c9422f4bf126a29b3d0f49300e2bdbac86cedfdb1ed74ee98c9",
       "byte_length": 21531,
       "strict_utf8": true,
@@ -240,6 +244,207 @@
         12330,
         20486
       ]
+    },
+    {
+      "id": "HIE-O04",
+      "origin_file": "verification/FEA-06-PREREQ-1/delivery-notes.md",
+      "expected_tracking": "tracked",
+      "format": "markdown",
+      "raw_sha256": "03912d898dd26a4b4c068c4685adddeb8c352a156a078315d4e5569cb7ea0439",
+      "byte_length": 9339,
+      "strict_utf8": true,
+      "utf8_bom": false,
+      "c0_bytes": [
+        {
+          "offset": 173,
+          "byte": 7
+        },
+        {
+          "offset": 327,
+          "byte": 7
+        },
+        {
+          "offset": 343,
+          "byte": 7
+        },
+        {
+          "offset": 363,
+          "byte": 7
+        },
+        {
+          "offset": 967,
+          "byte": 7
+        },
+        {
+          "offset": 1525,
+          "byte": 8
+        },
+        {
+          "offset": 1707,
+          "byte": 8
+        },
+        {
+          "offset": 1734,
+          "byte": 7
+        },
+        {
+          "offset": 3512,
+          "byte": 7
+        },
+        {
+          "offset": 3569,
+          "byte": 12
+        },
+        {
+          "offset": 4038,
+          "byte": 8
+        },
+        {
+          "offset": 4837,
+          "byte": 7
+        },
+        {
+          "offset": 5040,
+          "byte": 12
+        },
+        {
+          "offset": 5181,
+          "byte": 12
+        },
+        {
+          "offset": 5398,
+          "byte": 0
+        },
+        {
+          "offset": 5418,
+          "byte": 0
+        },
+        {
+          "offset": 5438,
+          "byte": 0
+        },
+        {
+          "offset": 6007,
+          "byte": 12
+        },
+        {
+          "offset": 6489,
+          "byte": 12
+        },
+        {
+          "offset": 6993,
+          "byte": 8
+        },
+        {
+          "offset": 7078,
+          "byte": 12
+        },
+        {
+          "offset": 7708,
+          "byte": 12
+        },
+        {
+          "offset": 7847,
+          "byte": 0
+        },
+        {
+          "offset": 7865,
+          "byte": 0
+        },
+        {
+          "offset": 7883,
+          "byte": 0
+        }
+      ],
+      "source_guard": {
+        "abs": "G:/CODEX/New Manga/verification/FEA-06-PREREQ-1/delivery-notes.md",
+        "normalized": "g:/codex/new manga/verification/fea-06-prereq-1/delivery-notes.md",
+        "real": "g:/codex/new manga/verification/fea-06-prereq-1/delivery-notes.md",
+        "keep": "PRESERVE_REFERENCED"
+      },
+      "parser_snapshot": {
+        "declarations": [],
+        "errors": [],
+        "warnings": []
+      },
+      "errors": [
+        {
+          "code": "FILE_UNREADABLE",
+          "message": "tracked markdown g:\\codex\\new manga\\verification\\FEA-06-PREREQ-1\\delivery-notes.md contains NUL bytes; refusing a binary file as text",
+          "file": "verification/FEA-06-PREREQ-1/delivery-notes.md",
+          "locator": null
+        }
+      ],
+      "nul_offsets": [
+        5398,
+        5418,
+        5438,
+        7847,
+        7865,
+        7883
+      ]
+    },
+    {
+      "id": "HIE-O05",
+      "origin_file": "verification/FEA-07-AC5-NATIVE-1/evidence/displays-baseline-20261109-083908.json",
+      "expected_tracking": "tracked",
+      "format": "json",
+      "raw_sha256": "c8d2847354640e21b8b9fb9d75ec763af88e35b43cc1f4d9f4838da1ad764476",
+      "byte_length": 729,
+      "strict_utf8": true,
+      "utf8_bom": false,
+      "c0_bytes": [],
+      "source_guard": {
+        "abs": "G:/CODEX/New Manga/verification/FEA-07-AC5-NATIVE-1/evidence/displays-baseline-20261109-083908.json",
+        "normalized": "g:/codex/new manga/verification/fea-07-ac5-native-1/evidence/displays-baseline-20261109-083908.json",
+        "real": "g:/codex/new manga/verification/fea-07-ac5-native-1/evidence/displays-baseline-20261109-083908.json",
+        "keep": "PRESERVE_REFERENCED"
+      },
+      "parser_snapshot": {
+        "declarations": [],
+        "errors": [],
+        "warnings": []
+      },
+      "errors": [
+        {
+          "code": "JSON_PARSE",
+          "message": "unparsable tracked JSON declaration file; protection cannot be enumerated and it is not in the explicit path+sha256 non-declaration exception manifest: tracked JSON g:\\codex\\new manga\\verification\\FEA-07-AC5-NATIVE-1\\evidence\\displays-baseline-20261109-083908.json is not valid JSON: Invalid \\escape: line 5 column 18 (char 279)",
+          "file": "verification/FEA-07-AC5-NATIVE-1/evidence/displays-baseline-20261109-083908.json",
+          "locator": null
+        }
+      ],
+      "nul_offsets": []
+    },
+    {
+      "id": "HIE-O06",
+      "origin_file": "verification/FEA-07-AC5-NATIVE-1/evidence/displays-baseline-20261109-083909.json",
+      "expected_tracking": "tracked",
+      "format": "json",
+      "raw_sha256": "33ac94e1d6cc9bef614c222278ed5e2eda2236c62a6d38bc252b59e98a6d16e7",
+      "byte_length": 732,
+      "strict_utf8": true,
+      "utf8_bom": true,
+      "c0_bytes": [],
+      "source_guard": {
+        "abs": "G:/CODEX/New Manga/verification/FEA-07-AC5-NATIVE-1/evidence/displays-baseline-20261109-083909.json",
+        "normalized": "g:/codex/new manga/verification/fea-07-ac5-native-1/evidence/displays-baseline-20261109-083909.json",
+        "real": "g:/codex/new manga/verification/fea-07-ac5-native-1/evidence/displays-baseline-20261109-083909.json",
+        "keep": "PRESERVE_REFERENCED"
+      },
+      "parser_snapshot": {
+        "declarations": [],
+        "errors": [],
+        "warnings": []
+      },
+      "errors": [
+        {
+          "code": "JSON_PARSE",
+          "message": "unparsable tracked JSON declaration file; protection cannot be enumerated and it is not in the explicit path+sha256 non-declaration exception manifest: tracked JSON g:\\codex\\new manga\\verification\\FEA-07-AC5-NATIVE-1\\evidence\\displays-baseline-20261109-083909.json is not valid JSON: Invalid \\escape: line 5 column 18 (char 279)",
+          "file": "verification/FEA-07-AC5-NATIVE-1/evidence/displays-baseline-20261109-083909.json",
+          "locator": null
+        }
+      ],
+      "nul_offsets": []
     }
   ],
   "reference_guards": [
