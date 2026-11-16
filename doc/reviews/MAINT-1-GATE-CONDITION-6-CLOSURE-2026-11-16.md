@@ -32,8 +32,11 @@
 - **修复动作**：`doc/REBASELINE_PLAN.md:59` 的 `BLOCKED：无` → `BLOCKED：FEA11-ENTRY-MISSING-1`；
   `:60` 表外枚举改为「无 DAG 行的全部非终态卡」（9 张，含 `GOV-DECLARATION-SCAN-CLEANUP-1`），删去终态卡
   `AC-CHECKBOX-AUTHORITY-1`；`GIT-CLEAN-RUST-CAPACITY-DESIGN-1` 由 `:59` 的 READY 声明登记。
-- **预算**：PLAN 由 6990 B 降到 **6960 B / 64 行**（为腾字节压缩 8 处历史行冗余措辞，语义、状态与 commit hash 未变），
-  留 40 B 余量回应 P2-5「零余量」。
+- **预算**：PLAN 由 6990 B 压到 **6972 B / 64 行**（留 28 B 余量回应 P2-5「零余量」）。压缩只落在**冗余措辞**上：
+  子卡描述（拖拽排序 / 偏好落库 / E-1 断言口径）、重复的 `delivery` 字样、一处日期后缀与 `明细` 二字；
+  **status / limitation / NOT_RUN / 根因 等披露性字样一律保留** —— 初版曾连带删掉 4 处（`AC3 limitation`、`根因 UNKNOWN`、
+  `仅部分证据`、`NOT_RUN 见卡面`）与 2 个 `done`，经独立复核 P1-2 指出后**已全部恢复**（见 §6）。
+  同时修掉一处既有精度缺陷：`SIDECAR-REBUILD-1` 行原写 `done`，其卡与台账均为 `in_progress`，已改为 `in_progress`。
 - **证据**：`verification/MAINT-1-RELEASE-MONITOR/condition6-closeout/p2-2-before-after.log`（13 张卡逐张 rc + 判定）。
 
 ## 3. P1-1 重核：DoD §3 把 AC8 PARTIAL 计入「达成」
@@ -64,7 +67,7 @@
 | 4 | `python -B tools/generate_api_inventory.py --check` | 0 | `OK: rendered counts match FEA-C07 doc`（`1/80/6 = 87`） |
 | 5 | `pwsh -NoProfile -File apps/desktop-avalonia/scripts/test.ps1` | 0 | `TEST PASS (Debug): 1591/1639 passed, 48 skipped` |
 
-逐项目（.NET）：CoreClient 256/0/0、Host 364/0/44、App **969/0/4**。
+逐项目（.NET，取自 `gates.log` 的「已通过/失败/跳过/总计」行）：CoreClient **258/0/0**、Host **364/0/44**、App **969/0/4**。
 
 **与旧记录的关系（不做绿洗）**：
 
@@ -85,3 +88,30 @@
    条件 5（人工 GT 质量基线）仍开放，不因条件 6 关闭而改变。
 4. **独立性**：本报告由实施方 DSH 撰写；结论另由**上下文独立**的子 agent 在冻结 head 上复核，报告落 `doc/reviews/`，
    由 DSH 以 Lead 名义采纳（2026-10-31 口径：独立 = 上下文独立）。
+
+## 6. 独立复核（上下文独立子 agent）与 findings 处置
+
+- 复核者：`c6-reviewer`（DSH 派发的新上下文子 agent，**未参与实施**，只读；按 2026-10-31 口径「独立 = 上下文独立」）。
+- 报告：`doc/reviews/MAINT-1-GATE-CONDITION-6-CLOSURE-REVIEW-2026-11-16.md`。
+- **verdict：`APPROVED_WITH_FINDINGS`**：7 项复核项 5 PASS / 2 FAIL，**P0 = 0**，两项 P1 均为文档级。
+
+| finding | 复核意见 | 本轮处置 |
+|---|---|---|
+| **P1-1** | 交付 head 与载体完成态错位：`45af57007` 上 frontmatter 四字段仍 `null/pending`、`EV-C6-*` 尚不存在，载体实际在 `b18a2ef90` 完成 | **已处置**：`integration_commit` 改为 `b18a2ef90`（载体完成提交），`delivery_head` 明确为「四件套实测所在树」`45af57007`；卡面 Closeout 新增「回填顺序」段（提交无法自证 ⇒ 逐代登记），并引用复核者在 `b18a2ef90` 上的独立复跑结果 |
+| **P1-2** | PLAN 压缩删除了披露性字样（`根因 UNKNOWN` / `仅部分证据` / `AC3 limitation` / `NOT_RUN 见卡面`）与 2 个 `done`，与「语义未变」的表述不符 | **已处置**：4 处披露字样 + 2 个 `done` **全部恢复**；§2 措辞改为如实列出只压缩冗余措辞，并登记初版误删与恢复过程 |
+| P2-a | EOL 前提：fresh checkout 下 PLAN/STATUS 会因 CRLF 超出预算（`git checkout` 写 CRLF） | **登记（不修）**：属仓库级 `.gitattributes` 议题，不在本卡授权内；写入 `NEXT-SESSION-STARTER` 队列 3 与陷阱区。本轮所有 doc 均为 LF，预算实测通过 = 6972/3200… 见 §4 |
+| P2-b | `gates.log` 的 `started_utc` 与 .NET `elapsed` 相差约 55 s（两项之间的切换开销） | **登记**：以 `finished_utc` + `elapsed=461 s` 为准，`started_utc` 为约值 |
+| P2-c | `render-info.md` 的测试副作用曾在 `45af57007` 被提交 | **已处置**：`3cc4e1186` 恢复为 `6a408e5aa` 基线字节；`git diff 6a408e5aa HEAD -- verification/READER-OVERLAY-HEADLESS-PNG-1/` 为空 |
+| P2-d | Closeout 里「NEXT-SESSION-STARTER 已更新」在载体提交上不成立 | **已处置**：改为「在本轮收尾提交中更新」 |
+| P2-e | 报告写 CoreClient `256`，日志实为 `258` | **已处置**：§4 改为 258/0/0 |
+| P2-f | 指向 `GATE4-MODEL-RECOVERED-1` 的 Canonical Evidence 属悬空引用 | **已处置**：卡面 Manifest 改为指向证据目录 `verification/GATE4-MODEL-RECOVERED-1/` |
+| P2-g | PLAN `SIDECAR-REBUILD-1` 行写 `done`，其卡与台账为 `in_progress` | **已处置**：改为 `in_progress`（见 §2） |
+
+- **未处置项口径**：P2-a 需 `.gitattributes` 级改动（改变全仓 checkout 行为），不在本卡授权与风险预算内 ⇒ 如实登记为下一轮前置债，
+  **不**通过放宽预算或改 `check.ps1` 掩盖。
+- **结论不变**：条件 6 成立；Gate 总体仍 `BLOCKED`（条件 3/4/5 开放）。
+
+## 7. 采纳声明
+
+本报告由 DSH 以 Lead / Integrator 名义采纳，采纳依据 = `c6-reviewer` 的 `APPROVED_WITH_FINDINGS`（P0=0）+ 上述 P1 全部处置 +
+P2 逐条处置/登记。复核者未参与实施，满足「上下文独立」口径。

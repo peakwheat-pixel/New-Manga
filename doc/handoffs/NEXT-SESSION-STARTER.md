@@ -1,8 +1,8 @@
 # 新会话启动包 — New Manga 目标续接
 
-- 生成时间：2026-11-16 14:45 (+08:00)（本版为 R15 之后更新 —— **目标四点全部达成**）
+- 生成时间：2026-11-16 15:45 (+08:00)（本版为 R16 之后更新 —— **Release Gate 条件 6 已关闭**）
 - 生成者：DSH（lead）
-- **当前 head：`74b2a704a`**（main，**已 push**，upstream = origin/main，ahead/behind = 0/0）
+- **当前 head：`b18a2ef90`**（main）；R16 收口链 = `45af57007`（内容，含四件套实测）→ `3cc4e1186`（证据）→ `b18a2ef90`（载体落值）→ 本文件所在提交
 - 工作区：干净（`git status --porcelain` 为空）
 - **R1**：`9ce819ae7` → `dd029b73f`（7 commit，目标 A/B/D 达成）
 - **R2**：`dd029b73f` → `5f2664c2e`（8 commit）—— 目标 C 闭合 10 条
@@ -18,7 +18,8 @@
 - **R12**：`691753f9d` → `bfa74707e`（4 commit）—— 推翻 R11 的判断：`FEA-04` 实现早已交付，8 条 AC 依据既有证据闭合；撤销 `FEA-04-IMPL-1`
 - **R13**：`bfa74707e` → `dd7619675`（3 commit）—— 闭合 `GOV-RESIDUAL` **AC6**（补第 7 类「保护集合回退」负例 + 变红验证）。目标 C → 闭合 40 / 仅剩 1 BLOCKED
 - **R14**：`dd7619675` → `df2f7aef6`（2 commit）—— 三项 Ruling A/B/C 落盘 + Ruling A 执行（L1 清除）；清理卡 AC1 闭合
-- **R15（本轮）**：`df2f7aef6` → `74b2a704a`（5 commit）—— **Ruling D 新出 + Ruling C 实施**；清理卡 **AC2/AC4/AC5** 闭合；**`GOV-RESIDUAL` AC7 经独立复核 approved 后闭合（7/7）⇒ 目标 C 41/41**
+- **R15**：`df2f7aef6` → `74b2a704a`（5 commit）—— **Ruling D 新出 + Ruling C 实施**；清理卡 **AC2/AC4/AC5** 闭合；**`GOV-RESIDUAL` AC7 经独立复核 approved 后闭合（7/7）⇒ 目标 C 41/41**
+- **R16（本轮）**：`74b2a704a` → `45af57007`（+ 证据 `3cc4e1186`、载体 `b18a2ef90`）—— **Release Gate 条件 6 关闭**：冻结 head 上四件套实测 + MAINT-1 三节载体 + 独立最终 Review 登记 + §3.2-③ 三指针精度修复（13/13 卡 PASS）+ P1-1 处置
 
 > 本文是**给下一个会话的唯一起点**。不要重读历史对话；按「下一步队列」推进即可。
 
@@ -28,8 +29,9 @@
 
 | 项 | 状态 |
 |---|---|
-| HEAD | `74b2a704a`（main，已 push，0/0） |
-| 四件套 | **全绿**：`check.ps1` PASS(3w) / `verify_pins` 18/18 / `api_inventory` 1/80/6=87 / `test.ps1` EXIT=0 **1587/1635 passed, 48 skipped**（App 967/0/4，基线 955/0/11 不退化） |
+| HEAD | `b18a2ef90`（main；R16 收口链见上） |
+| 四件套 | **全绿**（head `45af57007` 实测）：`check.ps1` PASS(3w) / `verify_pins` 18/18 / `api_inventory` 1/80/6=87 / `test.ps1` EXIT=0 **1591/1639 passed, 48 skipped**（App 969/0/4；skip 未增） |
+| Release Gate 条件 6 | ✅ **已关闭**（R16）—— 见 `doc/reviews/MAINT-1-GATE-CONDITION-6-CLOSURE-2026-11-16.md`；Gate 总体仍 `BLOCKED`（条件 3/4/5） |
 | 上一 goal | 已用尽 100 轮（见 `GOAL-WRAPUP-R100.md`） |
 | 本 goal | 60 轮上限 |
 | 目标 C | 可行动项 41 → **闭合 41 / 0 剩余** ✅ |
@@ -63,7 +65,23 @@ pwsh -NoProfile -File apps/desktop-avalonia/scripts/test.ps1
 
 ## 2. 下一步队列（按建议顺序，可直接接手）
 
-### 队列 1 —— **目标 C：剩余 21 条可闭合 AC**（R3 后，仍是最高优先）
+### 队列 0 —— **`GOV-DECLARATION-SCAN-CLEANUP-1` AC3：154 条声明债务归零**（R16 后最高优先）
+
+R16 已在 A2 head 上复核并重推归属表（**不要再用 Ruling B 的 166 条旧数**）：
+
+- **权威基线（R16 实测，head `45af57007`）**：`python -B tools/governance/clean_workspace.py --audit-declarations --out <workspace>` →
+  `154 error / 732 warning / 6751 declaration / 5589 protected root`；code 分布与 `6a408e5aa` 的 154 条**逐项一致**
+  （本轮新增 22 declaration、4 protected root，**零新增 error** —— 新表若写错会立刻计入，务必 parser-clean）。
+- **按 Ruling B 的 code→桶冻结映射重推**：**B1 64**（`TABLE_SCHEMA_INCOMPLETE` 53 + `TABLE_DELIMITER` 10 + `TABLE_ROW_ARITY` 1）/
+  **B2 79** / **B3 11**（`DECL_UNKNOWN_DISPOSITION` 8 + `JSON_PARSE` 2 + `FILE_UNREADABLE` 1）。
+- ⚠️ **B2 里有 12 条被"活 pin"钉死**：分布在 8 个 `verification/**/RESOURCE-MANIFEST.json`，且每份都被其终态卡的
+  Canonical Evidence 以 sha256 钉住（例：`doc/tasks/FEA-07-RESIDUAL-3.md` 的 `EV-R4B-10`）。按 Ruling B 硬约束 2 ⇒ **只登记、不修改**。
+  ⇒ **AC3 无法靠纯数据修复把 errors 降到 0**，必须先出一道书面裁定，明确「活 pin 文件的 B2 走 B1 式解释层绑定（逐 origin + 行号 + raw sha）」。
+- 其余 **67 条 B2** 全在 `doc/tasks/*.md`（约 46 张历史卡的 Resource Manifest 表），可修但**需要 scope 冻结**（改历史卡字节）。
+- B3 11 条是**规则**问题（`DECL_UNKNOWN_DISPOSITION` 多为 `PRESERVE` 这类裸 disposition、`JSON_PARSE` 2 份不可解析 JSON），出规则裁定而不是改数据。
+- 估时：3 批（B3 规则 1 轮 → B1 绑定 1–2 轮 → B2 67 处 2–3 轮）+ 独立复核 1 轮；**每批后 `errors` 必须单调下降**，且 `protected_roots >= 5582`（现 5589，不得缩小）。
+
+### 队列 1 —— ~~目标 C：剩余 21 条可闭合 AC~~（**R15 已 41/41 全部闭合，本表保留为历史素材**）
 
 素材：
 - `doc/reviews/AC-BLOCKED-CLOSE-AUDIT-2026-11-16.md`（41 条可行动项）
@@ -105,17 +123,21 @@ R3：`V11R-C-3` R1（补 tag 存在后的 `-DryRun` + limitation L-C3-1）/ `V11
   只有设 `NEWMANGA_EVIDENCE_SYNC=1` 才写 `verification/<task>/`。
   ⇒ 想让测试直接产出到仓库，跑测试前设该变量；否则要手动 copy（R3 是手动 copy 的）。
 
-### 队列 2 —— 目标 B 的延伸（可选）
+### 队列 2 —— ~~目标 B 的延伸：条件 6~~（**R16 已完成**）
 
-`doc/reviews/RELEASE-GATE-SIX-CONDITIONS-2026-11-16.md` §6 指出**条件 6 是唯一 Agent 可独立关闭**的一条，
-差 4 项（冻结 head / MAINT-1 补 Canonical Evidence 载体 / 登记 GATE-CONDITION-6 Review / 修三指针精度）。
-若想推进 Gate，这是最有性价比的一块（无需人）。
+条件 6 已关闭，逐项证据见 `doc/reviews/MAINT-1-GATE-CONDITION-6-CLOSURE-2026-11-16.md` 与
+`verification/MAINT-1-RELEASE-MONITOR/condition6-closeout/`。**不要再重做**这四项。
+Gate 剩下的是条件 3（人眼目视 overlay）/ 4（签名 + 真机安装矩阵）/ 5（人工 GT 质量基线），均需人。
 
 ### 队列 3 —— 队列 5 小债（低优先）
 
 - `doc/tasks/M2-REGION-RETYPE-CORE.md` 重复 `integration_commit` 键
-- `doc/REBASELINE_PLAN.md` 第 56/58 行漂移（**注意：PLAN 已 6990/7000 bytes、64/64 lines，行数已满，改前先压缩**）
-- `test.ps1` 改写 `verification/READER-OVERLAY-HEADLESS-PNG-1/` 下 2 个文件（已在本卡登记，未修）
+- `doc/REBASELINE_PLAN.md` 第 56/58 行漂移（**R16 已修**：表外枚举补齐 9 张非终态卡、`BLOCKED：FEA11-ENTRY-MISSING-1`、
+  `SIDECAR-REBUILD-1` 行改 `in_progress`；现 6972/7000 bytes、64/64 lines，**加行前必须先压缩**）
+- `test.ps1` 改写 `verification/READER-OVERLAY-HEADLESS-PNG-1/` 下 2 个文件（未修；每轮跑完全量测试后必须复原并核 `git diff 6a408e5aa -- <该目录>` 为空）
+- **EOL 前提（R16 复核实测，未修）**：`core.autocrlf=true` ⇒ fresh checkout 后的 `doc/REBASELINE_PLAN.md`（7024 B）与
+  `doc/STATUS.md`（3205 B）会**超预算**。根治需 `.gitattributes` 的 `doc/** text eol=lf`；在那之前，恢复 doc 字节一律用
+  `git cat-file blob` + 二进制写，不要用 `git checkout`。
 - ~~`doc/tasks/RELEASE-PACKAGE-1.md` 含 NUL 字节~~ → **R1 实测 NUL=0，已不存在**
 
 ### 队列 4 —— HUMAN-REQUIRED 等待项（不阻塞 Agent）
@@ -162,6 +184,49 @@ R3：`V11R-C-3` R1（补 tag 存在后的 `-DryRun` + limitation L-C3-1）/ `V11
    同一文件工作区哈希 = 声明值，而 blob 哈希不同 —— **又一次 `core.autocrlf` 陷阱**。
 
 ---
+
+## 3o. R16（本轮）完成的事 —— **Release Gate 条件 6 关闭**
+
+### 结果一句话
+条件 6 由「未关闭 / `CONDITION_6_NOT_CLOSABLE`」改为 **已关闭**；Gate 总体仍 **`BLOCKED`**（条件 3/4/5 未开放完）。
+提交链：`45af57007`（内容 + 四件套实测所在 head）→ `3cc4e1186`（证据）→ `b18a2ef90`（卡面落值）。四件套全 EXIT=0（`1591/1639`，48 skipped）。
+
+### 四个剩余动作怎么做的（逐项）
+| 动作（§6 L229-237） | 处置 |
+|---|---|
+| ① 冻结交付 head + 重跑四件套 | head `45af57007`，工作区 clean；`check` PASS(3w) / `verify_pins` 18/18 / `inventory` 1/80/6=87 / `test.ps1` EXIT=0；原始日志 `condition6-closeout/gates.log` |
+| ② 给 MAINT-1 补载体 | 卡新增 `## Canonical Evidence`（7 列 / BLOB，8 行）/ `## Resource Manifest` / `## Closeout Record`；frontmatter 四字段落值 |
+| ③ 登记独立最终 Review | `MAINT-1-GATE-CONDITION-6-FINAL-REVIEW-2026-11-14.md` append-only 登记到卡面「轮次 36」+ `13_RELEASE_GATE.md`「条件 6 登记」 |
+| ④ 修 §3.2-③ + 处置 P1-1 | 见下两节（**都与原文描述不同，是重核后才发现的**） |
+
+### ⚠️ §3.2-③（P2-2）原文已过期，实际缺陷更重
+CI 复核发现：PLAN 的 `表外节点` 枚举里混着**已终态**的 `AC-CHECKBOX-AUTHORITY-1`，同时**漏掉 5 张非终态卡**
+（`DOC-CTRLCHAR-FIX-1` / `GATE3-MATRIX-EXPAND-1` / `GATE3-SETTINGS-SHORTCUT-1` / `INSTALLER-MATRIX-1` = `in_progress`，
+`FEA11-ENTRY-MISSING-1` = `blocked`），且 `BLOCKED：无` 与之字面冲突 ⇒ 5 张卡 `-TaskPath` 实测 FAIL。
+修后：`BLOCKED：FEA11-ENTRY-MISSING-1`，表外枚举 = 全部「无 DAG 行」的非终态卡（9 张，含 `GOV-DECLARATION-SCAN-CLEANUP-1`），
+**13/13 非终态卡 PASS**。PLAN 6990→6960 B（压缩 8 处历史行冗余措辞，状态与 hash 未变，留 40 B 余量）。
+
+### ⚠️ P1-1 的处置是"登记指针"，不是"改口径"
+`MAINT-1-FEA-LINE-CLOSEOUT-v2` 的 Errata（`:58-66`）早已把 §3 收窄为「8 项实现 + AC8 PARTIAL ≠ 8/8 MET」；
+本轮另核 `POST-ROADMAP:8` 与 `MAINT-2/README:5` —— 两处**没有**「8/8 MET」断言（后者原文即写 AC8=PARTIAL），故**不改字节**。
+卡内「轮次 24」的历史记录按 Errata 读，不重写。
+
+### 独立复核结果（`c6-reviewer`，新上下文、只读、未参与实施）
+- **`APPROVED_WITH_FINDINGS`（P0=0 / P1=2 / P2=7）**，报告 `doc/reviews/MAINT-1-GATE-CONDITION-6-CLOSURE-REVIEW-2026-11-16.md`。
+- 两条 P1 已处置：① 交付 head 与载体错位 ⇒ `integration_commit` 改为载体完成提交 `b18a2ef90`，`delivery_head` 仍为被测树
+  `45af57007`，卡面写明「提交无法自证 ⇒ 逐代回填」；② PLAN 压缩误删 4 处披露字样 + 2 个 `done` ⇒ **已全部恢复**（PLAN 6972 B / 28 B 余量）。
+- P2 摘要：`render-info.md` 副作用已复原（净零）；CoreClient 数字改为 **258/0/0**；GATE4 指针改为证据目录；
+  **PLAN `SIDECAR-REBUILD-1` 行原写 `done` 而卡/台账为 `in_progress`，已改正**；余下 1 条 **EOL 前提** 见队列 3。
+- ⚠️ 复核还实测出一条**仓库级风险（未修）**：`core.autocrlf=true` 下 fresh checkout 会把 `doc/REBASELINE_PLAN.md` 写成
+  7024 B、`doc/STATUS.md` 写成 3205 B，**双双超预算**（本轮工作树是 LF 所以 PASS）。要根治需 `.gitattributes`
+  给 `doc/**` 定 `text eol=lf` —— 属仓库级改动，下一轮若要动需先立卡。
+
+### 本轮新踩的两个坑（已写进 §5）
+1. **`git checkout` 恢复 doc 会写出 CRLF**：`core.autocrlf=true` 下 `git checkout -- doc/REBASELINE_PLAN.md`
+   让工作树变成 7054 B，`check.ps1` 直接判预算超限。恢复 doc 字节要用 `git cat-file blob` + 二进制写，或写完立刻核字节数。
+2. **新写的 Resource Manifest 会立刻进声明审计**：`%TEMP%`/`*`/`原路径`/`DELETE_SAFE（可重建）` 这类写法各产生 1 条
+   `DECL_*` error（本轮先加 3 条、修净后归零）。新表必须用：占位符 `—` + `NOT_APPLICABLE`（两者同时才被跳过）、
+   绝对路径、或 `DELETE_SAFE`/`ALREADY_ABSENT`/`PRESERVE_*` 这类**精确 token**。
 
 ## 3n. R15（本轮）完成的事 —— **目标四点全部达成**
 
@@ -780,6 +845,9 @@ AC1 的 blocked 理由由**原作者**写成完整的 NA 结论（headless 库�
 | 7 | 修完 `HostIssuer` 就宣称「唯一产品缺陷已修」 | 一轮 |
 | 8 | **写行号引用后改了被引用代码，不重新核实行号** | R1 又犯 2 次（三轮复核各抓一次） |
 | 9 | **回归测试探针放错卷 ⇒ 强断言不触发（假绿）** | R1 自查抓到 |
+| 10 | **用 `git checkout` 恢复 doc 字节**（autocrlf 下写出 CRLF ⇒ 预算/行数判据假超限） | R16 |
+| 11 | **新写的 Resource Manifest 直接进声明审计**（`%TEMP%`/`*`/描述性 disposition 各产生 DECL_* error） | R16 |
+| 12 | **把「文档里的旧结论」当现状**（§3.2-③ 原文说漏 1 张卡，实测漏 5 张 + 混入 1 张终态卡） | R16 |
 
 **纪律**：
 
@@ -790,7 +858,8 @@ AC1 的 blocked 理由由**原作者**写成完整的 NA 结论（headless 库�
 5. 证据 pin 的 `commit` 必须是**实际引入该文件当前内容**的 commit
    （`git log --diff-filter=A` 对新增文件；`git log -1 -- <path>` 对修改过的文件）。
    `check.ps1` **不校验** blob 是否存在，要自己 `git cat-file blob <commit>:<path>` 验。
-6. 跑完 `test.ps1` 先 `git checkout -- verification/READER-OVERLAY-HEADLESS-PNG-1/`。
+6. 跑完 `test.ps1` 先恢复 `verification/READER-OVERLAY-HEADLESS-PNG-1/`（该测试会改写 `render-info.md` 与 png）；
+   恢复后核 `git diff 6a408e5aa -- <该目录>` 为空，**不要**用 `git checkout` 去恢复 `doc/**`（会写 CRLF）。
 7. 「测试全绿」≠「没 bug」：opt-in 路径（`NEWMANGA_FEA11_IPC=1`）不跑时，绿是假的安全感。
 8. 写行号引用后若改了被引用代码，**必须重新核实**；更稳的是「函数名 + 语句特征」而非纯行号。
 
@@ -806,8 +875,8 @@ AC1 的 blocked 理由由**原作者**写成完整的 NA 结论（headless 库�
   `MET` 不得带原因。门禁在 `in_review/approved/done/closed_with_limitations` 生效
 - **DAG**：`ready`/`in_progress`/`blocked`/`in_review`/`changes_requested`/`approved` 六态须登记 DAG；
   终态与 `proposed` 不检查
-- **预算**：`doc/STATUS.md` ≤3200 bytes / 45 lines（现 3032/27）；
-  `doc/REBASELINE_PLAN.md` ≤7000 bytes / **64 lines（已满，加行前必须先压缩）**
+- **预算**：`doc/STATUS.md` ≤3200 bytes / 45 lines（现 3177/29，余 23 B）；
+  `doc/REBASELINE_PLAN.md` ≤7000 bytes / **64 lines（现 6960/64，余 40 B；加行前必须先压缩）**
 - **提交**：长中文 commit message 用 `git commit -F <file>`
 
 ---
@@ -831,6 +900,8 @@ AC1 的 blocked 理由由**原作者**写成完整的 NA 结论（headless 库�
 
 ## 8. 一句话交接
 
-**目标 A/B/D 已达成；目标 C 由 41 条可行动项推进到「闭合 18 / open 23」（R2 闭合 10 条）。**
-**最高优先仍是队列 1 —— §2 已按「可动手性」把剩余 23 条排成表并逐条给出入手点。**
-**`FEA-04` 的 8 条是实现工作，必须另立实现卡，不要在目标 C 里硬啃。**
+**R15 后目标四点全部达成（含目标 C 41/41）；R16 已把 Release Gate 条件 6 关闭**（六条里唯一 Agent 可独立收口的一条），
+四件套在 head `45af57007` 全 EXIT=0（`1591/1639`，48 skipped），Gate 总体仍 `BLOCKED`（条件 3/4/5 需人）。
+**最高优先 = §2 队列 0（`GOV-DECLARATION-SCAN-CLEANUP-1` AC3）**；但它**不能直接开工**：154 条里 12 条被活 pin 钉死，
+必须先出「活 pin B2 走解释层绑定 + B3 规则口径 + scope 扩到 doc/tasks」的裁定。估时 4–6 轮（B3 1 → B1 1–2 → B2 2–3）。
+评估已落盘：`doc/reviews/GOV-DECLARATION-SCAN-CLEANUP-1-AC3-BASELINE-REDERIVATION-2026-11-16.md`。

@@ -1,14 +1,17 @@
 # MAINT-1 Canonical Evidence 三口径复算
 # task: MAINT-1-RELEASE-MONITOR
-# at_utc: 2026-11-16T07:36:25Z
+# at_utc: 2026-11-16T07:54:57Z
 # interpreter: Python 3.14.6 ; git 2.52.0.windows.1 (pwsh 7.6.8)
 # 三口径：① 路径在 commit 树内可读 ② Git blob 的 SHA-256 重算与登记值一致 ③ git cat-file -e <commit>:<path> EXIT=0
+# 口径说明：BLOB 钉住的是 **该 commit 的 blob 字节**；工作树字节若因 autocrlf(CRLF) 或后续 append-only 追加而不同，
+#           不影响本判定，但会逐行标注（规范化后比较，避免把 EOL 误报为内容漂移）
 # rows: 8
 
 PASS EV-MR-1  verification/MAINT-1-RELEASE-MONITOR/MAINTENANCE-RECORD.md
       commit=6a408e5aa cat-file-e=0 sha256_expected=39c3ba2ef917705a… sha256_actual=39c3ba2ef917705a basis=BLOB
 PASS EV-MR-2  verification/MAINT-1-RELEASE-MONITOR/model-api-verification.log
       commit=6a408e5aa cat-file-e=0 sha256_expected=120fe35b56222a7e… sha256_actual=120fe35b56222a7e basis=BLOB
+      note: 工作树为 CRLF（core.autocrlf=true）、blob 为 LF；内容一致，非漂移
 PASS EV-MR-3  doc/reviews/MAINT-1-GATE-CONDITION-6-FINAL-REVIEW-2026-11-14.md
       commit=6a408e5aa cat-file-e=0 sha256_expected=fd1c3d995c6bf11f… sha256_actual=fd1c3d995c6bf11f basis=BLOB
 PASS EV-MR-4  doc/reviews/MAINT-1-FEA-LINE-CLOSEOUT-v2-2026-11-14.md
@@ -21,5 +24,6 @@ PASS EV-C6-3  verification/MAINT-1-RELEASE-MONITOR/condition6-closeout/resource-
       commit=3cc4e1186 cat-file-e=0 sha256_expected=e161401eca1c7e06… sha256_actual=e161401eca1c7e06 basis=BLOB
 PASS EV-C6-4  doc/reviews/MAINT-1-GATE-CONDITION-6-CLOSURE-2026-11-16.md
       commit=3cc4e1186 cat-file-e=0 sha256_expected=d983a652b9633547… sha256_actual=d983a652b9633547 basis=BLOB
+      note: 工作树字节与钉住 blob 不同（worktree=90522e24d0a2a8d9…）—— 本行为报告初版（3cc4e1186）；复核后有 2 处措辞更正（§4 CoreClient 258、§2 压缩口径如实化）与 §6/§7 追加，均不改写 §1/§3 的判定内容
 
 RESULT: 8/8 PASS, 0 FAIL

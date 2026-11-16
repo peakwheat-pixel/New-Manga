@@ -13,7 +13,7 @@ depends_on: [PUBLISH-FIX-1]
 base_commit: ef5881ffe
 branch: main
 worktree: G:/CODEX/New Manga
-integration_commit: 45af57007
+integration_commit: b18a2ef90
 delivery_head: 45af57007
 canonical_evidence_status: complete
 resource_closeout_status: complete
@@ -368,8 +368,9 @@ NEW-MANGA-V1-FULL-AUDIT 与 R1–R4 整改、SEC-01/02/03、CORE-01、AUDIT-07/0
   `verification/MAINT-2-C1-BATCH-1/README.md:5` 均未出现「8/8 MET」断言（后者原文即写 AC8 = PARTIAL），
   故**不改其字节**，仅在此登记指针；轮次 24 的历史记录按 Errata 读。
 - **未翻转**：Release Gate 总体仍 `BLOCKED`（条件 3/4/5 开放）；本卡作为伞形哨位保持 `in_progress`。
-- **冻结值与实测（回填）**：交付 head `45af57007`；证据提交 `3cc4e1186`；四件套 EXIT 全 0
-  （`check` PASS 3w / `pins` 18/18 / `inventory` `1/80/6=87` / `.NET` **1591/1639 passed, 48 skipped**，App 969/0/4）。
+- **冻结值与实测（回填）**：交付 head `45af57007`（四件套实测所在树）；证据提交 `3cc4e1186`；载体完成提交 `b18a2ef90`
+  （= `integration_commit`）。四件套 EXIT 全 0（`check` PASS 3w / `pins` 18/18 / `inventory` `1/80/6=87` /
+  `.NET` **1591/1639 passed, 48 skipped**：CoreClient 258/0/0、Host 364/0/44、App 969/0/4）。
   三口径（path 存在 / Git blob sha256 重算 / `git cat-file -e`）见
   `verification/MAINT-1-RELEASE-MONITOR/condition6-closeout/threeway.log`。
 
@@ -401,14 +402,17 @@ NEW-MANGA-V1-FULL-AUDIT 与 R1–R4 整改、SEC-01/02/03、CORE-01、AUDIT-07/0
 | temp | C:/Users/49745/AppData/Local/Temp/newmanga-p2-bookshelf-e2caedba | ALREADY_ABSENT | — | 8 目录 / 1,523,132 B | 8 个隔离数据根已删除，逐项见 `condition6-closeout/resource-closeout.log`；删除后复查 0 残留 |
 | artifact | apps/desktop-avalonia | DELETE_SAFE | — | — | `bin/obj` 构建产物可重建；不入库、不归档 |
 | agent-output | — | NOT_APPLICABLE | — | — | 本卡未使用 `workspace/agent-output` |
-| dataset/model | — | NOT_APPLICABLE | — | — | 本卡未复制、未删除模型权重；ONNX 权重 pin 见 GATE4-MODEL-RECOVERED-1 的 Canonical Evidence |
+| dataset/model | — | NOT_APPLICABLE | — | — | 本卡未复制、未删除模型权重；ONNX 权重证据在 `verification/GATE4-MODEL-RECOVERED-1/`（属该 Task 的证据目录，本卡只读引用） |
 
 ## Closeout Record
 
 - Closeout date / DSH：2026-11-16 / DSH（R16）
-- integration_commit：`45af57007`（内容提交）｜delivery_head：`45af57007`（四件套实测所在 head）｜证据提交：`3cc4e1186`
+- integration_commit：`b18a2ef90`（载体完成：frontmatter 落值 + EV-C6 行）｜delivery_head：`45af57007`（四件套实测所在树）｜证据提交：`3cc4e1186`
+  · **回填顺序（提交无法自证，故逐代登记）**：`45af57007` 内容 + 四件套实测 → `3cc4e1186` 追加证据文件 → `b18a2ef90` 落本卡字段与三口径行。
+    三者是同一交付的连续快照，任一提交都不可能在自己的树里写出自己的 hash；读者应以**本卡当前树**为权威载体、
+    以 `45af57007` 为被测树。独立复核者已在 `b18a2ef90` 上亲跑 `check` / `-TaskPath` / `pins` / `inventory` 全 PASS（见复核报告 §1）。
 - canonical_evidence_status：`complete`（条件 6 与 AC1–AC4 的当前证据见上表；`threeway.log` 三口径零 FAIL）
 - resource_closeout_status：`complete`（见 Resource Manifest：无 worktree 操作；8 个 temp 数据根已删除并记为 `ALREADY_ABSENT`；其余为 PRESERVE_REFERENCED / DELETE_SAFE / NOT_APPLICABLE）
 - 删除、迁移、归档数量/字节数：删除 8 目录 / 1,523,132 B（temp）；迁移 0；归档 0
 - 未关闭项及保留原因：Release Gate 条件 3（阅读器 overlay 人眼目视）、条件 4（签名 + 真机安装矩阵）、条件 5（人工 GT 质量基线）仍开放，均非本卡可单方关闭；本卡作为伞形哨位保持 `in_progress`，不冒充 `done`
-- 当前指针清理：STATUS / Plan / TASK_LEDGER / rolling checkpoint（NEXT-SESSION-STARTER）已更新至本轮
+- 当前指针清理：STATUS / Plan / TASK_LEDGER 已更新至本轮；`NEXT-SESSION-STARTER` 在本轮收尾提交中更新（不晚于本提交之后的第一个提交）
