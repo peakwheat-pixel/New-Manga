@@ -3,7 +3,7 @@ id: GOV-DECLARATION-SCAN-CLEANUP-1
 title: 声明扫描债务清理（HIE P22 漂移 + 159 条历史声明 + 绝对计数不变量）—— 解除 GOV-RESIDUAL AC6/AC7 的 BLOCKED
 kind: governance
 governance_version: 3
-status: proposed
+status: done
 approval: 2026-11-16 独立书面裁决（doc/reviews/GOV-RESIDUAL-AC7-ADJUDICATION-2026-11-16.md §2(c) 判为唯一推荐主路径）；待 DSH 三项 Ruling A/B/C
 suggested_owner: DSH
 owner: null
@@ -12,10 +12,10 @@ depends_on: []
 base_commit: 517072586
 branch: main
 worktree: null
-integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+integration_commit: a66d2530e
+delivery_head: a66d2530e
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/GOV-DECLARATION-SCAN-CLEANUP-1
 allowed_paths:
   - doc/tasks/GOV-DECLARATION-SCAN-CLEANUP-1.md
@@ -127,7 +127,7 @@ allowed_paths:
       `SOURCE_DRIFT`；且 residual 层**不再早退**（`DECL_RESIDUAL_RUNTIME_PRESERVED` warning 数 = 7、
       APPDATA `catalog`/`data`/`derived` 三根重新出现在保护索引中）。
       须核验 P09/P14 等既有绑定未被破坏。
-- [x] **AC3 L2 清理**：逐条给出 disposition（B1/B2/B3 + 依据 + **是否被活 pin 引用**），
+- [x] **AC3 L2 清理**：逐条给出 disposition（B1/B2/B3 + 依据 + **是否被活 pin 引用**）， <!-- verified: 2026-11-16 DSH —— errors 154→0（单调 154→147→144→80→65→0）；protected_roots 5593→5611；逐条处置表 ac3-disposition-map -->
       按 B1/B2/B3 分批处置；`errors` 单调下降至 **0**，`protected_roots` 不得低于冻结基线（实测 **5593**，口径从严不收 AC 原文的 5582）。
       逐条处置表必须与 `--audit-declarations` 的 JSON 一一对得上。 <<MET>>
 - [x] **AC4 L3 不变量**（若 Ruling C 批准重写）：`clean_workspace.py` 的「恰好 7 条」耦合改为相对不变量；**补上「保护集合回退」负例**（构造回退触发 `PROTECTION_REGRESSION` 的 fail-closed 用例）—— 该负例同时是 `GOV-RESIDUAL` AC6 的唯一缺口，本 AC 完成即可回填 AC6。 <!-- verified: 2026-11-16 DSH。**Ruling C 已批准并实施**两处：① `:2177` `require(len(removed) == 7 and len(index.errors) == 7, …)` → `require(len(removed) == 7, …)`（7 条身份的逐条命中已在其上方用 `index.errors.count(error) == 1 and error not in removed` 校验，故删掉总数耦合不损失判别力）；② `:2194` `require(not staged.errors, …)` → `require(not [e for e in staged.errors if e in removed], …)` —— 原句断言的是「全仓已无错误」这一**仓库前提**，改为断言本层该保证的事「7 条裁定身份确实被移除」。**「保护集合回退」负例已在 R13 完成**（`FixtureBehaviour.test_protection_set_regression_fails_closed`，`GOV-RESIDUAL` **AC6 已据此闭合**），本 AC 该子项无需重做。**连带修正（Ruling C 的必然项）**：4 处绝对计数测试断言改为成员/行为断言 ——`ProductionScan.test_all_seven_errors_are_resolved`（`errors == []` → 7 条身份不在 errors）、`test_protection_set_did_not_shrink`（`len(before.errors) == 7` → 7 条身份必须都在前像中）、`FixtureBehaviour.test_unbound_error_blocks_the_stage`（`9 条含 ERROR_MISMATCH` → **无关错误不再阻塞**）、`test_origin_drift_fails_closed`（文件尾追加换行 → **改动被绑定行**，断言 `SOURCE_DRIFT` 而非条数）。**额外必要改动（Ruling D，本轮新出）**：修好 A 之后 audit 报 `SOURCE_DRIFT: residual identity origin changed: doc/tasks/P19.md` —— 实测 RRI-01/02/03 绑的是**可变 task 卡**的整文件 sha（该卡被 `0e7bc1fc5` 合法追加到 21306 字节），而其**行级 :112/:113/:114 三份 sha 全部仍匹配** ⇒ 整文件 sha 对可变卡属过宽绑定。改为「带行级身份时以行级为权威」。**最终实测**：`errors` 167→**154**、residual **0→7**、`protected_roots` 5582→**5585**，且 `GOV-RESIDUAL` 的测试文件由 **FAILED(failures=3)** 转为 **13 tests OK / EXIT=0**。证据 `verification/GOV-DECLARATION-SCAN-CLEANUP-1/`ruling-cd-invariant-rewrite-2026-11-16.log。 -->
@@ -136,11 +136,11 @@ allowed_paths:
 - [x] **AC5 不碰历史字节（硬约束，可机械核验）**：`git diff` 中**不得**出现 `doc/tasks/*`（除本卡与`GOV-RESIDUAL` 卡）、`verification/**` 下历史文件、任何 `RESOURCE-MANIFEST.json` 的字节改动；`tools/governance/residual-runtime-identity.json` 的 RRI-01…RRI-07 身份**逐字节不变**。 <!-- verified: 2026-11-16 DSH，机械核验（范围 = 本卡提交 `a6608dd4b..HEAD`）。四条逐项实测：① `doc/tasks/*` 下只有 `doc/tasks/GOV-DECLARATION-SCAN-CLEANUP-1.md`（本卡，允许）；② `verification/**` 下**无任何 `M`（修改）记录**，只有 2 个 `A`（新增）本卡证据文件（`ruling-a-l1-execution-*.log`、`ruling-cd-invariant-rewrite-*.log`）⇒ 历史证据零修改；③ `git diff --name-only -- '*RESOURCE-MANIFEST.json' '*resource-manifest.json'` **为空**；④ `git diff --name-only -- tools/governance/residual-runtime-identity.json` **为空** ⇒ RRI 身份逐字节不变。**另测**：`historical-evidence-interpretation.json` 所绑 4 条 origin 的 `raw_sha256` 逐条实测仍全部匹配（Ruling A 改的是政策字段与常量，不是证据产物）。⇒ 本卡全程**未触碰任何历史证据字节**。 -->
       `GOV-RESIDUAL` 卡）、`verification/**` 下历史文件、任何 `RESOURCE-MANIFEST.json` 的字节改动；
       `tools/governance/residual-runtime-identity.json` 的 RRI-01…RRI-07 身份**逐字节不变**。
-- [ ] **AC6 集成复验 + 独立复核**：固定 head 交**上下文独立** Reviewer（2026-10-31 口径；作者可派子 agent）；
+- [x] **AC6 集成复验 + 独立复核**：固定 head 交**上下文独立** Reviewer（2026-10-31 口径；作者可派子 agent）； <!-- verified: 2026-11-16 DSH —— 独立复核 ac6-reviewer 三轮（§1/§5/§6）最终两项 P1 PASS；baseline/after 两轮 JSON 入库 -->
       回填前后两轮 `--audit-declarations` JSON（baseline/after）；测试日志含命令/EXIT/解释器头
       （`09_COLLABORATION.md:359` 证据纪律）；`check.ps1` PASS、`git diff --check` EXIT=0。
       完成后**回填 `GOV-RESIDUAL` 的 AC6/AC7** 并恢复其 `status`。
-- [x] **AC7 B2 单元级数据修复**（AC3 的 B2 批；依据 Codex 2026-11-16 裁决 Q4）：67 条**未钉住**的 B2 逐条按
+- [x] **AC7 B2 单元级数据修复**（AC3 的 B2 批；依据 Codex 2026-11-16 裁决 Q4）：67 条**未钉住**的 B2 逐条按 <!-- verified: 2026-11-16 DSH —— 95 个 Resource Manifest 单元（44 文件）+ 16 条保留态；allowed_cells 由 diff 反向生成 -->
       `allowed_cells` 清单修复 Resource Manifest 单元（仅所列表单元，同文件其他字节不得变），每次改前复核活 pin；
       12 条活 pin B2 与 3 条活 pin B3 **保持原始字节**、转「可审计保留态」（原始错误码以警告态继续显示 + pin 依据）。
       验收判据：AC7 清单逐条唯一、改动只落在列明单元、错误数按批单调不增、基线保护根集合 ⊆ 最终集合。
@@ -225,3 +225,61 @@ allowed_paths:
 | AC4 | 同上 + 新增回退负例 | 仓库 | NOT_RUN | 待填 |
 | AC5 | `git diff --name-only` / `git diff --check` | 仓库 | NOT_RUN | 待填 |
 | AC6 | `pwsh -NoProfile -File tools/governance/check.ps1` | 仓库 | NOT_RUN | 待填 |
+
+## Canonical Evidence
+
+| evidence_id | AC/Gate | path | commit | sha256 | class | sha256_basis |
+|---|---|---|---|---|---|---|
+| EV-DECL-1 | AC3 | verification/GOV-DECLARATION-SCAN-CLEANUP-1/ac3-baseline-audit-2026-11-16.json | `a66d2530e` | `1a653bf82415c0912e10a58ab0a63240279791bb18ea3850c933fb534d16698b` | CANONICAL | BLOB |
+| EV-DECL-2 | AC3 | verification/GOV-DECLARATION-SCAN-CLEANUP-1/ac3-baseline-disposition-2026-11-16.md | `a66d2530e` | `17002ad23e4da8bd93fd4e9b1e28c5d1f3c8136a35faaa4a800ce4aa48a01649` | CANONICAL | BLOB |
+| EV-DECL-3 | AC3 | verification/GOV-DECLARATION-SCAN-CLEANUP-1/ac3-batch1-alias-2026-11-16.log | `a66d2530e` | `d7a1835576a3424b93b143cbe73bf9a1b800bde3e6abd05fefd325aae487f327` | CANONICAL | BLOB |
+| EV-DECL-4 | AC3 | verification/GOV-DECLARATION-SCAN-CLEANUP-1/ac3-batch2-raw-bindings-2026-11-16.log | `a66d2530e` | `a1a7bc10acc12bdc0b303e50ba576c191fa06a581b2570c6bfde5f5f895ebd5b` | CANONICAL | BLOB |
+| EV-DECL-5 | AC3 | verification/GOV-DECLARATION-SCAN-CLEANUP-1/ac3-batch3-table-bindings-2026-11-16.log | `a66d2530e` | `192a656428aa1aa63b57a253957b4317e270b113f60d4ccba2cfca51f1f387ae` | CANONICAL | BLOB |
+| EV-DECL-6 | AC3 | verification/GOV-DECLARATION-SCAN-CLEANUP-1/ac3-batch4-pinned-retention-2026-11-16.log | `a66d2530e` | `4d42ae6c406d61c4ebdddefa7cabea34e804f683066c7b1809eee3b32b5c8198` | CANONICAL | BLOB |
+| EV-DECL-7 | AC3 | verification/GOV-DECLARATION-SCAN-CLEANUP-1/ac3-disposition-map-2026-11-16.md | `a66d2530e` | `7ccd051df383a4c4ad1b52611e2a1c9761881fce87eb5c99a129642b0b3203b0` | CANONICAL | BLOB |
+| EV-DECL-8 | AC7 | verification/GOV-DECLARATION-SCAN-CLEANUP-1/ac7-allowed-cells-2026-11-16.md | `a66d2530e` | `9605defc36e14d4f86564ee283c4662ca4055162b4e78b909473332c4cd24609` | CANONICAL | BLOB |
+| EV-DECL-9 | AC7 | verification/GOV-DECLARATION-SCAN-CLEANUP-1/ac7-execution-2026-11-16.log | `a66d2530e` | `cfea6d728d2965ce3c5b23e2204a1c3096b98d3a9d690a00a363b1752033764c` | CANONICAL | BLOB |
+| EV-DECL-10 | AC3/AC6 | verification/GOV-DECLARATION-SCAN-CLEANUP-1/ac3-after-audit-2026-11-16.json | `a66d2530e` | `b0a46c804de7e90c58d7c71c97954affed0a67757397b1a717e65be4e0572aa6` | CANONICAL | BLOB |
+| EV-DECL-11 | AC3 裁决 | doc/reviews/GOV-DECLARATION-SCAN-CLEANUP-1-AC3-CODEX-RULING-2026-11-16.md | `a66d2530e` | `fd3ae515e0ed8b5808b63200e640ea8486c8a03b6357e57a2f427727053a5f1a` | CANONICAL | BLOB |
+| EV-DECL-12 | AC6 复核 | doc/reviews/GOV-DECLARATION-SCAN-CLEANUP-1-AC6-REVIEW-2026-11-16.md | `a66d2530e` | `7bc5923cca822ddc77d0af4dd9f85a35747934d73f0a640461ceeee2feae248d` | CANONICAL | BLOB |
+| EV-DECL-13 | AC3 政策 | tools/governance/historical-evidence-interpretation.json | `a66d2530e` | `38ec34637660af5f68d0c13940b1f0a746f92fbe612bc0ff9fc2f0593f898be8` | CANONICAL | BLOB |
+| EV-DECL-14 | AC3 机制 | tools/governance/clean_workspace.py | `a66d2530e` | `9ce5ea7a79e2a7f0b6d7d6a150ba880314ddb6419210a022cb235491699f7e9a` | CANONICAL | BLOB |
+
+| EV-DECL-15 | AC3 | verification/GOV-DECLARATION-SCAN-CLEANUP-1/ac7-repair-plan-2026-11-16.md | `a66d2530e` | `600ba10c8853f099c076e5fe261bc73098d8112bd7864da0832dac33761c0bd7` | CANONICAL | BLOB |
+| EV-DECL-16 | AC3 | verification/GOV-DECLARATION-SCAN-CLEANUP-1/ruling-a-l1-execution-2026-11-16.log | `a66d2530e` | `5573b6c2200ef546d455fff86ba15489b81c3cbe8f623113631c112086d3345b` | CANONICAL | BLOB |
+| EV-DECL-17 | AC3 | verification/GOV-DECLARATION-SCAN-CLEANUP-1/ruling-cd-invariant-rewrite-2026-11-16.log | `a66d2530e` | `99f04031565834a1b1b408bb5d86f936bbdc7532c3f8ec09f6e4b95934216966` | CANONICAL | BLOB |
+## Resource Manifest
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| policy | tools/governance/historical-evidence-interpretation.json | PRESERVE_REFERENCED | tools/governance/historical-evidence-interpretation.json | `38ec34637660af5f68d0c13940b1f0a746f92fbe612bc0ff9fc2f0593f898be8` | 解释层政策：别名表 + raw 绑定 + 表绑定 + 活 pin 保留态；由 `HISTORICAL_EVIDENCE_DIGEST` 锚定，重批后所有绑定 fail-closed 复核 |
+| tool | tools/governance/clean_workspace.py | PRESERVE_REFERENCED | tools/governance/clean_workspace.py | `9ce5ea7a79e2a7f0b6d7d6a150ba880314ddb6419210a022cb235491699f7e9a` | 声明扫描器；新增表级绑定、pin path 通道与 `PROTECTION_REGRESSION` 超集断言 |
+| test | tools/governance/tests/test_historical_binding_policy.py | PRESERVE_REFERENCED | tools/governance/tests/test_historical_binding_policy.py | `5f6761fb422c81b84ab2093431c0b4043015b85b19f9e49d5d52dab61ca8a3c1` | 16 项（含表绑定 ID 连续/块字节精确/pin 仍可复验） |
+| evidence | verification/GOV-DECLARATION-SCAN-CLEANUP-1 | PRESERVE_REFERENCED | verification/GOV-DECLARATION-SCAN-CLEANUP-1 | verification/GOV-DECLARATION-SCAN-CLEANUP-1/ac7-execution-2026-11-16.log | 本卡全部日志/JSON/清单；含 baseline 与 after 两轮审计 JSON |
+| doc | doc/tasks/（45 张历史卡） | PRESERVE_REFERENCED | doc/tasks | verification/GOV-DECLARATION-SCAN-CLEANUP-1/ac7-allowed-cells-2026-11-16.md | AC7 只改 Resource Manifest 单元（95 单元），清单见 `ac7-allowed-cells-2026-11-16.md`；其余字节未变 |
+| review | doc/reviews/GOV-DECLARATION-SCAN-CLEANUP-1-AC3-CODEX-RULING-2026-11-16.md | PRESERVE_REFERENCED | doc/reviews/ | `fd3ae515e0ed8b5808b63200e640ea8486c8a03b6357e57a2f427727053a5f1a` | Codex 裁决（APPROVED_WITH_CONDITIONS）；含其自述限制（错误 740 导致未独立复核字节） |
+| review | doc/reviews/GOV-DECLARATION-SCAN-CLEANUP-1-AC6-REVIEW-2026-11-16.md | PRESERVE_REFERENCED | doc/reviews/ | `7bc5923cca822ddc77d0af4dd9f85a35747934d73f0a640461ceeee2feae248d` | 上下文独立子 agent `ac6-reviewer` 三轮复核（§1/§5/§6），最终两项 P1 PASS |
+| temp | — | NOT_APPLICABLE | — | — | 本卡所有临时审计输出写在仓外 `G:\CODEX\New Manga.workspace\tmp-dsh\`，不随仓库保留 |
+
+## Closeout Record
+
+- **关闭结论**：`--audit-declarations` 的 errors **154 → 0**；`protected_roots` **5593 → 5611**（全程未低于 5593）；
+  `declarations` 6755 → 6800；warnings 743 → 822（以上为冻结 head `a66d2530e` 的读数）。
+- **关闭提交后的复测（如实）**：本卡新增的 `## Resource Manifest` 本身也是声明表，被扫描器解析后
+  变成 `declarations 6828 / protected_roots 5629 / warnings 823`（仍然 **0 error**，保护根只增不减；
+  +18 根来自 policy/tool/test/evidence/两份 review 与 `doc/tasks` 目录被登记为保护资源）。
+  仓内 `ac3-after-audit-2026-11-16.json` 记录的是**最终**这一轮（6828/5629/0/823）。单调序列：154 → 147（别名）→ 144（raw 绑定）→ 80（表绑定）→
+  65（活 pin 保留态）→ 0（AC7 单元修复）。
+- **机制（4 类，全部 fail-closed 且有测试）**：① 封闭别名表（5 token）；② 逐文件 raw 绑定（NUL 文本 1 + 不可解析 JSON 2）；
+  ③ 表级绑定 64 条（逐表 block_sha256 + header/第二行/行数 + 该表精确诊断）；④ 活 pin 保留态 16 条
+  （`DECL_PINNED_DEFECT_RETAINED` 保留原始错误码 + pin 卡片/证据/commit/sha256/channel）。
+- **未改动字节**：`verification/**` 历史文件 0 修改；`*RESOURCE-MANIFEST.json` 与
+  `tools/governance/residual-runtime-identity.json` diff 为空；只改 45 张卡的 95 个 Resource Manifest 单元。
+- **独立复核**：上下文独立子 agent `ac6-reviewer`（未参与实现）判 `APPROVED_WITH_FINDINGS`；两轮 P1 返修后
+  两项 P1 均 PASS；剩余 P2（`allowed_paths` 去重/说明）在本关闭提交内处理。
+- **登记未修的既有缺陷（不属本卡范围）**：`doc/tasks/FEA-11-HOST-AUTH-2.md` 的 `EV-11` 对
+  `doc/tasks/FEA-11-HOST-AUTH-3.md` 的 pin 已失效（钉 `4a7e1ca8…`，实测 worktree `6b540148…` / blob `21818135…`）；
+  修它需改终态证据行，另立治理动作。
+- **已知限制**：pin 校验存在 WORKTREE 与 BLOB 两条字节通道（`core.autocrlf=true` 导致两者不同），保留态记录实际通道；
+  若有人整文件规范化换行，WORKTREE 通道的保留态会 fail-closed 报 `SOURCE_DRIFT`（这是有意行为，不是漏洞）。
+- **闭环指针**：`doc/STATUS.md`、`doc/REBASELINE_PLAN.md`、`doc/TASK_LEDGER.md`、`doc/handoffs/NEXT-SESSION-STARTER.md`。

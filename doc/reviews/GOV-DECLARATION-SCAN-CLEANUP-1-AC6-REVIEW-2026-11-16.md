@@ -266,3 +266,27 @@ reviewer: ac6-reviewer（同一独立上下文；未参与 f1a2e8805 之后的�
 ### 5.4 结论
 
 本次返修**真实修好了上一轮的 P1（main-worktree 误配）和 P2（13 处反引号）**，审计仍为 0/6800/5611/822、16/16 pin 仍可复验、+1 warning 解释成立；但收敛不能判 `APPROVED`：新增的 `allowed_paths: doc/tasks/*.md` 通配违反 Codex §Q4 的精确路径要求（P1-5.1），已入库的 after JSON 仍是 821 的 f1a2 版而非 314 的 822（P1-5.2）；另有 allowed_cells 卡片行截断/未列、列序号口径、STARTER 事后授权等 P2。**AC3 的 `<<MET>>` 继续成立；AC7 的语义修复在 45 张卡上成立；AC6 关闭前应先处置 P1-5.1/P1-5.2（并重生成 822 after JSON），再复跑本收敛检查。**
+
+## §6 二轮收敛确认（2026-11-16，head a66d2530e）
+
+verdict: APPROVED_WITH_FINDINGS
+reviewed_head: a66d2530e4d646854a4287d183b8f80f1e499b5e（父 314aafbda）
+reviewer: ac6-reviewer（同一独立上下文；未参与 a66d2530e 的返修）
+
+### 6.1 三项结论
+
+| # | 项 | 结论 | 证据 |
+|---:|---|---|---|
+| 1 | P1-5.1：`allowed_paths` 无 `doc/tasks/*.md` 通配；45 条精确路径与 `23e8d7152→a66d2530e` 的 diff 文件集一致（卡自身除外） | **PASS（核心）/ P2（有效列表重复与额外）** | 新增块确实是 **45 条精确路径**（D-14…TOOL-SOFTWARE-SMOKE，含卡自身），无 `*` 通配；与 `git diff --name-only 23e8d7152 a66d2530e -- doc/tasks` 的 45 文件逐一对应。但 frontmatter 原有卡自身条目 + 新增块又列了一次卡自身 ⇒ **47 条 doc/tasks 条目 / 46 唯一**；另保留 `doc/tasks/GOV-RESIDUAL-RUNTIME-IDENTITY-IMPL-1.md`（不在本次 diff，若 AC6 回填需要可说明保留理由） |
+| 2 | P1-5.2：`ac3-after-audit-2026-11-16.json` 是当前 head 真实结果（0 / 822 / 6800 / 5611，sha `26225e7b` 开头，且非 821/f736…） | **PASS** | 仓内 after JSON：errors=0、warnings=822、declarations=6800、protected_roots=5611、`report_sha256=26225e7b3c6da8f46e722f6cedfddf0dea78f2b4ae44289a7de5ea31a522aa2d`、`generated_at=2026-11-16T20:19:27+08:00`；在 a66d2530e 独立重跑 audit 得到**完全相同的 counts 与 report_sha256**；不是首版 821/`f7364159…` |
+| 3 | P2：allowed-cells (a) 旧值不再截断、(b) 明确「列位置 = 表内单元格序号」、(c) 卡自身结构性编辑单列 §2 | **PASS（a/b/c）/ P2（§2 的 45 条表述与有效列表不一致）** | (a) §1 的 95 个表单元格旧值完整（无 112 字符截断），原截断的卡 AC 行已移出表；(b) 第 4 行明确「「列位置」= 该行在本表内第几个单元格（从 0 起）」；(c) 第 107 行起 `## 2. 本卡结构性编辑（非 Resource Manifest 单元）` 单列 `allowed_paths` 精确化、`## AC6 复核处置`、AC 标记。P2：§2 写「45 条精确文件路径」，但有效 frontmatter 为 47 条/46 唯一（同第 1 项） |
+
+### 6.2 详细实测
+
+- **allowed_paths**：`git diff 23e8d7152 a66d2530e -- doc/tasks/GOV-DECLARATION-SCAN-CLEANUP-1.md` 显示新增块以注释「AC7 逐单元授权的 45 张历史卡（**不是** doc/tasks/*.md 通配…）」开头，后接 45 条 `- doc/tasks/…` 精确路径；无 `doc/tasks/*.md`。diff 文件集也是 45 个 `doc/tasks` 文件，新增块与之一一对应。有效 frontmatter 的 `doc/tasks` 条目为 47（46 唯一）：卡自身在原条目和新增块各出现一次；`GOV-RESIDUAL-RUNTIME-IDENTITY-IMPL-1.md` 为原有保留项、不在本次 diff（AC6 回填 GOV-RESIDUAL 时可能需要，建议在 §2 说明）。
+- **after JSON**：仓内 `verification/GOV-DECLARATION-SCAN-CLEANUP-1/ac3-after-audit-2026-11-16.json` 已从首版 821/`f7364159…` 更新为 822/`26225e7b…`；`generated_at` 为 20:19:27。独立重跑 `python -B tools/governance/clean_workspace.py --audit-declarations --out <仓外>` 得到 `6800 declaration(s), 5611 protected root(s), 0 error(s), 822 warning(s)`，`report_sha256` 与仓内 after JSON 完全相同；不是 821/f736 首版。
+- **allowed-cells**：114 行；§1「Resource Manifest 单元（95 个，覆盖 44 个文件）」；原第 88/90 行的 112 字符截断已消失（这两条卡 AC 行不再作为表行，而在 §2 结构性摘要中）；第 4 行给出 0 起的「列位置」定义；§2 第 107-113 行列卡自身结构性编辑。§2 的「45 条精确文件路径」与有效 47/46 的差异见第 1 项；§2 对卡 AC 行的旧值用 `[ ] <<PARTIAL>>` 摘要而非完整原文，作为“结构性编辑摘要”可接受，但不宜再称“旧值逐字”。
+
+### 6.3 结论
+
+**P1-5.1（通配）与 P1-5.2（after JSON 过期）均已真实修复；P2 allowed-cells 的 (a)(b)(c) 也成立。** 唯一未闭合的是 allowed_paths 的**有效集合**：新增块本身是 45 条精确路径且与 diff 一致，但原 frontmatter 保留了卡自身条目、导致 47 条/46 唯一，另有 `GOV-RESIDUAL` 保留项（不在本次 diff）。这属于 P2（无未授权文件改动、无通配、45 条新增路径正确），故 **verdict = APPROVED_WITH_FINDINGS**；若要求字面「45 条精确集合」，删去重复的卡自身条目（并说明 GOV-RESIDUAL 保留理由）即可，不需要重开 P1。**AC3/AC7 的 `<<MET>>` 在语义上继续成立；AC6 可在完成这一处列表去重/说明后关闭。**

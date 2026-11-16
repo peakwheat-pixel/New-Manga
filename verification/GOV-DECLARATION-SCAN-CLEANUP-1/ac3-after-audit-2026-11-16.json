@@ -2,7 +2,7 @@
   "schema_version": 1,
   "tool": "clean_workspace.py",
   "mode": "declaration_audit",
-  "generated_at": "2026-11-16T20:19:27+08:00",
+  "generated_at": "2026-11-16T20:27:45+08:00",
   "scan": {
     "markdown": 3255,
     "json": 2634,
@@ -11,29 +11,29 @@
     "json_parse_fatal": 2,
     "tracked_declaration_files": 15396,
     "untracked_declaration_files": 0,
-    "declarations": 6800,
+    "declarations": 6828,
     "errors": 0,
-    "warnings": 822
+    "warnings": 823
   },
   "counts": {
-    "declarations": 6800,
-    "protected_roots": 5611,
+    "declarations": 6828,
+    "protected_roots": 5629,
     "by_disposition": {
       "ALREADY_ABSENT": 5,
       "ARCHIVE": 4,
       "DELETE_SAFE": 27,
-      "DESTINATION_PIN": 638,
-      "EVIDENCE_PIN": 5211,
+      "DESTINATION_PIN": 645,
+      "EVIDENCE_PIN": 5225,
       "MIGRATE": 2,
       "NOT_APPLICABLE": 111,
       "PRESERVE_IN_REPO": 5,
       "PRESERVE_QUARANTINED": 1,
-      "PRESERVE_REFERENCED": 721,
+      "PRESERVE_REFERENCED": 728,
       "PRESERVE_UNKNOWN": 46,
       "PRESERVE_USER_DATA": 29
     },
     "errors": 0,
-    "warnings": 822
+    "warnings": 823
   },
   "errors": [],
   "warnings": [
@@ -1440,6 +1440,12 @@
       "message": "destination 'NOT_APPLICABLE' is descriptive text, not a path; it is not protection",
       "file": "doc/tasks/GOV-DECLARATION-RESIDUAL-32-AUDIT-1.md",
       "locator": "line 5"
+    },
+    {
+      "code": "TABLE_NOT_CANONICAL_EVIDENCE",
+      "message": "table at line 19 does not declare canonical-evidence identity columns; skipped as narrative",
+      "file": "doc/tasks/GOV-DECLARATION-SCAN-CLEANUP-1.md",
+      "locator": null
     },
     {
       "code": "DECL_SOURCE_NOT_A_PATH",
@@ -4970,5 +4976,5 @@
       "locator": "RRI-07/PRESERVE_ROOTS"
     }
   ],
-  "report_sha256": "26225e7b3c6da8f46e722f6cedfddf0dea78f2b4ae44289a7de5ea31a522aa2d"
+  "report_sha256": "8318bdda57e079e1d32b7bc0cbe48a3ea410d49fb90c35fa93229e8a294f8d70"
 }

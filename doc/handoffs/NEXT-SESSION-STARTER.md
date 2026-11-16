@@ -67,7 +67,12 @@ pwsh -NoProfile -File apps/desktop-avalonia/scripts/test.ps1
 
 ### 队列 0 —— **`GOV-DECLARATION-SCAN-CLEANUP-1` AC3：154 → 0**（进行中：已 154→147）
 
-**进度（R22，最新）**：复核 P1（FEA-15 误配）与 P2（13 处未闭合反引号等）已返修 —— 45 个文件整体还原到 `23e8d7152`
+**进度（R23，最新）**：`GOV-DECLARATION-SCAN-CLEANUP-1` **已关闭（status: done）**——AC6 独立复核 `ac6-reviewer` 三轮收敛后
+两项 P1 全 PASS；卡片补齐 `## Canonical Evidence`（17 行 BLOB 基准）/`## Resource Manifest`/`## Closeout Record`。
+最终读数（关闭后复测）：**errors 0 / declarations 6828 / protected_roots 5629 / warnings 823**（比冻结 head 多的 +18 根，
+来自卡片自身 Resource Manifest 被解析为声明表）。仓内 `ac3-after-audit-2026-11-16.json` 记录这一最终轮（sha `8318bdda`）。
+
+**进度（R22）**：复核 P1（FEA-15 误配）与 P2（13 处未闭合反引号等）已返修 —— 45 个文件整体还原到 `23e8d7152`
 后用**严格匹配**（完整单元格键 + ≥60 字符前缀容忍 + 整格重建）重放；实测 errors **0**、declarations 6800、
 protected_roots 5611、warnings 822（+1 是恢复真实的 `DECL_SOURCE_NOT_A_PATH`）；`ac7-allowed-cells` 改为**由 diff 反向生成**
 （99 单元格 / 45 文件）。⚠️ 教训：**audit=0 不能替代语义正确性** —— 短键前缀匹配会把 `G:/CODEX/New Manga` 误吸成更长路径。
