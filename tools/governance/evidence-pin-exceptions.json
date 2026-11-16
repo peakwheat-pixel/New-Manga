@@ -1574,7 +1574,7 @@
       ],
       "class": "CANONICAL",
       "error_type": "COMMIT_PATH_MISSING",
-      "reason": "path 单元格是多个路径的拼接（历史写法），commit 下自然找不到该拼接路径；真实文件另由 -supersede/新行确认 ⇒ 逐条登记",
+      "reason": "path 单元格是多个路径的拼接（历史写法），commit 下自然找不到该拼接路径；拼接内的真实文件是否仍在库中未逐项确认 ⇒ 逐条登记例外",
       "ruling": "doc/reviews/GOV-EVIDENCE-PIN-REPAIR-1-EXCEPTION-HOOKS-RULING-2026-11-16.md",
       "expires_when": "卡片重开或该证据被重新采集时"
     },
@@ -1608,7 +1608,7 @@
       ],
       "class": "CANONICAL",
       "error_type": "COMMIT_PATH_MISSING",
-      "reason": "path 单元格是多个路径的拼接（历史写法），commit 下自然找不到该拼接路径；真实文件另由 -supersede/新行确认 ⇒ 逐条登记",
+      "reason": "path 单元格是多个路径的拼接（历史写法），commit 下自然找不到该拼接路径；拼接内的真实文件是否仍在库中未逐项确认 ⇒ 逐条登记例外",
       "ruling": "doc/reviews/GOV-EVIDENCE-PIN-REPAIR-1-EXCEPTION-HOOKS-RULING-2026-11-16.md",
       "expires_when": "卡片重开或该证据被重新采集时"
     }

@@ -154,6 +154,60 @@ class ExceptionRegistryTests(unittest.TestCase):
         self.assertNotIn("EXEMPTED[", out)
         self.assertIn("Evidence SHA-256 不匹配", out)
 
+    def test_prose_commit_is_downgraded_only_with_the_exact_text(self):
+        clone = self.clone()
+        entry = {"id": "EXC-TEST-CF", "card": "doc/tasks/FEA-GOV-10.md", "task_id": "FEA-GOV-10",
+                 "evidence_id": "E-C07", "path": "doc/plan/FEA-C07_API_INVENTORY.md",
+                 "commit": "(见提交)",
+                 "sha256": "5919b084c906f5cdc79d7e6e1b425f05347d915a77bb5c50f9f97f09c3960b5f",
+                 "class": "CANONICAL", "error_type": "COMMIT_FORMAT",
+                 "reason": "test", "ruling": "test", "expires_when": "test"}
+        self.write_registry(clone, [entry])
+        out = self.check(clone, "doc/tasks/FEA-GOV-10.md")
+        self.assertIn("EXEMPTED[EXC-TEST-CF]", out)
+        # a different prose value must not match
+        clone2 = self.clone()
+        self.write_registry(clone2, [dict(entry, commit="(见其它提交)")])
+        out2 = self.check(clone2, "doc/tasks/FEA-GOV-10.md")
+        self.assertNotIn("EXEMPTED[EXC-TEST-CF]", out2)
+        self.assertIn("Evidence commit 格式无效", out2)
+
+    def test_multi_digest_cell_requires_the_exact_ordered_list(self):
+        clone = self.clone()
+        card = "doc/tasks/FEA-05-PORT-1.md"
+        text = (clone / card).read_text(encoding="utf-8")
+        row = next(l for l in text.split("\n") if l.startswith("| E-FEA05P-PORTS |"))
+        cells = [c.strip().strip("`").strip() for c in row.strip().strip("|").split("|")]
+        import re as _re
+        digests = [d.lower() for d in _re.findall(r"[0-9a-fA-F]{64}", cells[4])]
+        entry = {"id": "EXC-TEST-MULTI", "card": card, "task_id": "FEA-05-PORT-1",
+                 "evidence_id": "E-FEA05P-PORTS", "path": cells[2], "commit": cells[3],
+                 "sha256": digests, "class": cells[5].upper(), "error_type": "SHA_MULTI",
+                 "reason": "test", "ruling": "test", "expires_when": "test"}
+        self.write_registry(clone, [entry])
+        out = self.check(clone, card)
+        self.assertIn("EXEMPTED[EXC-TEST-MULTI]", out)
+        clone2 = self.clone()
+        self.write_registry(clone2, [dict(entry, sha256=list(reversed(digests)))])
+        out2 = self.check(clone2, card)
+        self.assertNotIn("EXEMPTED[EXC-TEST-MULTI]", out2)
+
+    def test_all_placeholder_row_is_a_structural_error(self):
+        clone = self.clone()
+        card = clone / "doc/tasks/FEA-11-HOST-AUTH-2.md"
+        lines = card.read_text(encoding="utf-8").split("\n")
+        start = next(i for i, l in enumerate(lines) if l.strip().startswith("## Canonical Evidence"))
+        last = start
+        for i in range(start, len(lines)):
+            if lines[i].startswith("|"):
+                last = i
+            elif lines[i].strip().startswith("## ") and i > start:
+                break
+        lines.insert(last + 1, "| - | - | - | - | - | - |")
+        card.write_text("\n".join(lines), encoding="utf-8", newline="\n")
+        out = self.check(clone, "doc/tasks/FEA-11-HOST-AUTH-2.md")
+        self.assertIn("Canonical Evidence 行结构非法", out)
+
     def test_wildcard_entry_is_rejected(self):
         clone = self.clone()
         entry = self.entry_for(clone, "EV-11")

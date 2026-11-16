@@ -243,7 +243,7 @@ Gate 剩下的是条件 3（人眼目视 overlay）/ 4（签名 + 真机安装�
 - **AC4 batch 4（R10）**：9 张卡收口（`FEA-GOV-4/5/6/7/8/9/10`、`FEA-05-PORT-1`、`FEA-05-WIRE-1` 全部 PASS）。
   手法：12 条散文 commit 行登记 COMMIT_FORMAT+SHA_MISMATCH 双指纹；2 条多路径/多摘要行登记 SHA_MULTI+COMMIT_PATH_MISSING；
   9 张卡补 Resource Manifest 表格；FEA-GOV-5 AC1 补勾选与 verified 注释；3 张卡按当前 blob 追加新证据行。
-  门禁口径下 **34 张受影响卡全部 PASS**，全仓待判 **16 → 4**（2 条多路径行仅巡检工具建模限制、2 条空壳行按裁定 Q3 保留）。
+  本轮 9 张卡全部 PASS（**注意**：33 张有登记项的卡里仍有 16 张因 Resource Manifest/证据目录等问题 FAIL，见 AC5 复核）（2 条多路径行仅巡检工具建模限制、2 条空壳行按裁定 Q3 保留）。
   登记表 **114** 条；例外通道测试 10/10、EOL 测试 7/7 全过。
 - **待做（AC5）**：整卡上下文独立复核（AC4 已在门禁口径收敛）
 - **待做（旧清单）**：剩余按卡处理 —— ①同一行还需补登记 SHA_MISMATCH；②`FEA-GOV-10` 等卡缺 `## Resource Manifest` 整节；

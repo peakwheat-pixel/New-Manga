@@ -371,10 +371,9 @@ function Get-BaselineRowEligible([string]$CardRelative, [string]$EvidenceId, $Ce
                 $now = @($Cells | ForEach-Object { ([string]$_).Trim().Trim('`').Trim() })
                 $normCommit = { param($v) $x = ([string]$v).Trim(); if ($x -in @('', '-', 'null', 'none')) { '-' } else { $x } }
                 $baseC = (& $normCommit $base[3]); $nowC = (& $normCommit $now[3])
-                $hexRe = '^[0-9a-fA-F]{7,40}$'
-                # A non-hex commit is a *representation* of "no usable commit", so the
-                # baseline and the live row may write it differently (e.g. `-` vs `(见提交)`).
-                $commitOk = ($baseC -eq $nowC) -or (($baseC -notmatch $hexRe) -and ($nowC -notmatch $hexRe))
+                # Ruling condition 4 is byte-for-byte: if the cell text changed, the row
+                # is NOT the frozen row and no inference may be derived from it.
+                $commitOk = ($baseC -eq $nowC)
                 if ($base.Count -ge 6 -and $now.Count -ge 6 -and
                     $base[2] -eq $now[2] -and
                     $commitOk -and
@@ -1048,6 +1047,18 @@ if ($TaskPath -and (Test-Path -LiteralPath $TaskPath -PathType Leaf)) {
             if ($taskStatus -in @('in_review', 'approved', 'done', 'closed_with_limitations')) {
                 $evidenceSection = Get-Section $taskText 'Canonical Evidence'
                 $evidenceRows = @(Get-TableRows $evidenceSection)
+                # Ruling Q3 (2026-11-16): a row made only of placeholders carries no
+                # evidence at all and must stay a structural error.  Get-TableRows drops
+                # rows whose first cell is `-`, so this is checked on the raw section.
+                foreach ($rawEvidenceLine in ($evidenceSection -split '\r?\n')) {
+                    if ($rawEvidenceLine -notmatch '^\s*\|') { continue }
+                    $rawCells = @($rawEvidenceLine.Trim().Trim('|').Split('|') |
+                        ForEach-Object { ([string]$_).Trim().Trim('`').Trim() })
+                    if ($rawCells.Count -lt 6) { continue }
+                    if (@($rawCells | Where-Object { $_ -ne '-' -and $_ -ne '' }).Count -eq 0) {
+                        Add-Error "Canonical Evidence 行结构非法：整行为占位符：$($rawCells -join ' | ')"
+                    }
+                }
                 $headerLine = @($evidenceSection -split '\r?\n' | Where-Object { $_ -match '^\s*\|.*\|\s*$' } | Select-Object -First 1)
                 $headerCells = @()
                 if ($headerLine.Count -gt 0) {
