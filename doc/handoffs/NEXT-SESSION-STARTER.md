@@ -1,11 +1,12 @@
 # 新会话启动包 — New Manga 目标续接
 
-- 生成时间：2026-11-16 11:25 (+08:00)（本版为 R2 之后更新）
+- 生成时间：2026-11-16 11:58 (+08:00)（本版为 R3 之后更新）
 - 生成者：DSH（lead）
-- **当前 head：`8b00f3474`**（main，**已 push**，upstream = origin/main，ahead/behind = 0/0）
+- **当前 head：`bfbf95a82`**（main，**已 push**，upstream = origin/main，ahead/behind = 0/0）
 - 工作区：干净（`git status --porcelain` 为空）
 - **R1**：`9ce819ae7` → `dd029b73f`（7 commit，目标 A/B/D 达成）
-- **R2（本轮）**：`dd029b73f` → `8b00f3474`（8 commit）—— 目标 C 闭合 **10 条** AC
+- **R2**：`dd029b73f` → `5f2664c2e`（8 commit）—— 目标 C 闭合 10 条
+- **R3（本轮）**：`5f2664c2e` → `bfbf95a82`（3 commit）—— 目标 C 再闭合 2 条
 
 > 本文是**给下一个会话的唯一起点**。不要重读历史对话；按「下一步队列」推进即可。
 
@@ -15,11 +16,11 @@
 
 | 项 | 状态 |
 |---|---|
-| HEAD | `8b00f3474`（main，已 push，0/0） |
-| 四件套 | **全绿**：`check.ps1` PASS(3w) / `verify_pins` 18/18 / `api_inventory` 1/80/6=87 / `test.ps1` EXIT=0 **1585/1633 passed, 48 skipped**（App 965/0/4，基线 955/0/11 不退化） |
+| HEAD | `bfbf95a82`（main，已 push，0/0） |
+| 四件套 | **全绿**：`check.ps1` PASS(3w) / `verify_pins` 18/18 / `api_inventory` 1/80/6=87 / `test.ps1` EXIT=0 **1587/1635 passed, 48 skipped**（App 967/0/4，基线 955/0/11 不退化） |
 | 上一 goal | 已用尽 100 轮（见 `GOAL-WRAPUP-R100.md`） |
 | 本 goal | 60 轮上限 |
-| 目标 C | 可行动项 41 → **闭合 18 / open 23** |
+| 目标 C | 可行动项 41 → **闭合 20 / open 21** |
 
 复跑四件套：
 
@@ -37,53 +38,60 @@ pwsh -NoProfile -File apps/desktop-avalonia/scripts/test.ps1
 
 ---
 
-## 1. 原目标与达成情况（R2 更新）
+## 1. 原目标与达成情况（R3 更新）
 
 | 目标 | 状态 | 缺口 |
 |---|---|---|
 | **A** 四件套持续通过 | ✅ **达成** | — |
 | **B** Release Gate 六条逐条判定 + 映射表 | ✅ **达成（R1）** | — 见 `doc/reviews/RELEASE-GATE-SIX-CONDITIONS-2026-11-16.md` |
-| **C** 已登记技术债清零 | ⚠️ **未达成（R2 推进 41→18 闭合 / 23 open）** | 剩 **23 条**：`FEA-04` 8（需另立实现卡）+ `V11R-B-5` 3 + `GOV-RESIDUAL` 2 + `GATE3-COVERAGE-MATRIX` 2 + `V11R-C-1` 2 + 其余 6 条各 1 |
+| **C** 已登记技术债清零 | ⚠️ **未达成（R2+R3 推进 41→20 闭合 / 21 open）** | 剩 **21 条**：`FEA-04` 8（需另立实现卡）+ `V11R-B-5` 3 + `GOV-RESIDUAL` 2 + `GATE3-COVERAGE-MATRIX` 2 + `V11R-C-1` 2 + 其余 4 条各 1 |
 | **D** 剩余仅 HUMAN-REQUIRED 登记 | ✅ **达成（R1，R2 又收窄 H-02）** | `MICA-FIX-1` AC2 判定并入 `H-01`；新增 `H-10`（阅读器 overlay）；`H-08` 签名表述更正；**`H-02` 由 3 大项收窄为 3 小项**（ADJ §7.21） |
 
 ---
 
 ## 2. 下一步队列（按建议顺序，可直接接手）
 
-### 队列 1 —— **目标 C：剩余 23 条可闭合 AC**（R2 后，仍是最高优先）
+### 队列 1 —— **目标 C：剩余 21 条可闭合 AC**（R3 后，仍是最高优先）
 
 素材：
 - `doc/reviews/AC-BLOCKED-CLOSE-AUDIT-2026-11-16.md`（41 条可行动项）
 - `verification/AC-BLOCKED-CLASSIFY-1/classification-v2.md`（384 行，**逐条明细 + 判定依据**）
 - `doc/reviews/HUMAN-VS-AGENT-SPLIT-2026-11-16.md`
 
-**R2 已闭合 10 条**（不要重复做）：
-`RELEASE-PACKAGE-1` AC6 / `CHAPTER-MANUAL-SORT` AC10 / `M2-REGION-RETYPE-CORE` AC6 / `MICA-FIX-1` AC4 /
+**已闭合 12 条**（不要再做）：
+R2：`RELEASE-PACKAGE-1` AC6 / `CHAPTER-MANUAL-SORT` AC10 / `M2-REGION-RETYPE-CORE` AC6 / `MICA-FIX-1` AC4 /
 `FEA-07-AC5-NATIVE-1` AC-N2 + AC-N5 / `V11R-B-3` AC4 / `V11R-B-4` AC4 / `V11R-B-5` AC4 / `V11R-C-1` AC4。
+R3：`V11R-C-3` R1（补 tag 存在后的 `-DryRun` + limitation L-C3-1）/ `V11R-B-4` AC3（补 partial/loading 断言 + 变红验证）。
 
-**剩余 23 条，按可动手性排序**：
+⚠️ **进度统计的教训（R2 踩过、R3 又需注意）**：**不要信 `classification-v2.md` 的行号**——
+它已漂移，且部分条目早已 `[x]`。统计必须**逐卡读真实 checkbox**（R2 因此把 23 报成 33）。
 
-| 优先 | 卡 | 未勾 AC | 性质 | R2 已核实的入手点 |
+**剩余 21 条，按可动手性排序**：
+
+| 优先 | 卡 | 未勾 AC | 性质 | 已核实的入手点 |
 |---:|---|---|---|---|
-| 1 | `FEA-04` | AC1–AC8（8） | **实现** | **需另立实现卡**；范围已冻结、实现未开始 |
-| 2 | `V11R-B-5` | AC1 / AC2 / AC3（3） | DOC + IMPL | AC1 = `doc/plan/V11R_SCREEN_SPECS.md` 缺导出预检/术语章节；AC2 = 上下文保留断言；AC3 = 六态 |
-| 3 | `GOV-RESIDUAL-RUNTIME-IDENTITY-IMPL-1` | AC6 / AC7（2） | IMPL + RERUN | AC7 **实际不可闭合**：需清理 160 处历史声明错误（7 处裁定身份必须保留），会碰历史证据字节 ⇒ 建议改判 `BLOCKED` 并写明 |
+| 1 | `FEA-04` | AC1–AC8（8） | **实现** | **需另立实现卡**；范围已冻结（`:88-97`，8 条均 `- [ ] **ACn …**`） |
+| 2 | `V11R-B-5` | AC1 / AC2 / AC3（3） | DOC + IMPL | AC1 = `doc/plan/V11R_SCREEN_SPECS.md`（102 行）缺导出预检/术语章节；**AC2/AC3 是 Export/Terms 页**（Tools overlay），需针对该子 VM 取证——可仿 `V11R-B-3` 的 `ContextRetention_PageBatchSwitch_*`（`V2StudioPageTests.cs:508`）与 `V11R-B-4` 的六态写法 |
+| 3 | `GOV-RESIDUAL-RUNTIME-IDENTITY-IMPL-1` | AC6 / AC7（2） | IMPL + RERUN | AC7 **实际不可闭合**：需清理 160 处历史声明错误（7 处裁定身份必须保留），会碰历史证据字节 ⇒ 建议改判 `BLOCKED` 并写明；AC6 = 第 7 类「保护集合回退」负例测试 |
 | 4 | `GATE3-COVERAGE-MATRIX` | AC2 / AC4（2） | DOC（大） | AC2 已有 progress 稿 `verification/GATE3-COVERAGE-MATRIX/ac2-four-cells-progress.md`（4 格已补），但整张矩阵仍缺逐行断言说明；AC4 需核 100 项 NOT_RUN 归因 |
-| 5 | `V11R-B-4` | AC3（1） | IMPL | 六态（partial 状态无断言，赋值点已存在） |
-| 6 | `V11R-C-1` | AC6 / AC7（2） | IMPL+DOC | 引擎卡；AC6 = 单测/截图，AC7 = 证据目录整理 |
-| 7 | `MICA-FIX-1` | AC2（1） | RERUN | 需跑 `--diagnostics` 留原始日志（会起 GUI，Agent 可用 `[System.Diagnostics.Process]::Start`） |
-| 8 | `V11R-A-3` | AC4（1） | IMPL | `CommandParityContractTests` 66 条 parity 断言 |
-| 9 | `RUN-IPC-1` | AC4（1） | IMPL | typed 拒绝单测 + allowlist 断言 |
-| 10 | `V11R-C-3` | R1（1） | IMPL | 建回滚 tag `v11r-pre-retire` 并跑 `-DryRun` |
-| 11 | `M2-SFX-CORRECTION-EXPORTER` | AC4（1） | IMPL | T1b 批量产物尚不存在，需先生产 |
+| 5 | `V11R-C-1` | AC6 / AC7（2） | IMPL+DOC | 引擎卡；AC6 = 单测/截图，AC7 = 证据目录整理 |
+| 6 | `MICA-FIX-1` | AC2（1） | RERUN | 需跑 `--diagnostics` 留原始日志（会起 GUI，Agent 可用 `[System.Diagnostics.Process]::Start`）；人眼判定已并入 `H-01` |
+| 7 | `V11R-A-3` | AC4（1） | IMPL | `CommandParityContractTests` 66 条 parity 断言 |
+| 8 | `RUN-IPC-1` | AC4（1） | IMPL | typed 拒绝单测（`ControlRun` 非法 action → `INVALID_REQUEST`；`StartRun` 幂等键复用 → `IDEMPOTENCY_KEY_REUSED`）+ allowlist 断言；AC4-3 成功往返仍 NOT_RUN（缺夹具） |
+| 9 | `M2-SFX-CORRECTION-EXPORTER` | AC4（1） | IMPL | T1b 批量产物尚不存在，需先生产 |
 
-⚠️ **R2 发现的重要事实**：
+⚠️ **R2/R3 发现的重要事实**：
 - `RELEASE-PACKAGE-1.md` **实测 NUL=0** ⇒ 队列 5 的「NUL 字节」债项**不存在**，已结案；
-- `V11R-B-3/B-4/B-5/C-1` 四张卡有**先存 v2 结构性欠账**（无 Canonical Evidence 表 / Resource Manifest /
-  `evidence_dir` 有未登记文件），`-TaskPath` 会 FAIL。**这不是本轮引入的**，需单独立卡补表；
-  全局 `check.ps1` 不受影响（仍 PASS）。
+- **225 张终态 lifecycle v2 卡没有 `## Canonical Evidence` 节**（实测 `doc/tasks/*.md` 中
+  `status: done|closed_with_limitations` 共 608 张，其中 225 张无该节）。`check.ps1 -TaskPath <某张这类卡>`
+  因此会报 `EVIDENCE_BASIS_HEADER_INVALID` / 「必须列出 canonical evidence」/「必须逐项填写 Resource Manifest」。
+  **不要把这类 FAIL 当成本轮引入的回归**：治理 §4.3 明确 v1/v2 Task「保持原状，不回溯补标」，
+  且**全局 `check.ps1` 不受影响（PASS）**。⇒ **不要逐卡补表**（225 张不现实），本卡族已多次踩到这个噪音。
 - 裸值类 AC 的准确口径是「**无未登记**的裸间距」，由两个可执行测试守护
   （`V2StudioConformanceTests` 白名单 + `R14ContractTests`），不是「零裸值」。
+- **Studio 证据落点**：`StudioEvidence.Write` 默认写 `%TEMP%/newmanga-evidence/<task>/`，
+  只有设 `NEWMANGA_EVIDENCE_SYNC=1` 才写 `verification/<task>/`。
+  ⇒ 想让测试直接产出到仓库，跑测试前设该变量；否则要手动 copy（R3 是手动 copy 的）。
 
 ### 队列 2 —— 目标 B 的延伸（可选）
 
