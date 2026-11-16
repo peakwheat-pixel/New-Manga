@@ -255,8 +255,18 @@ def judge(row, blob, reps, commit_shaped):
     if not digests:
         return "FAIL", "SHA_NOT_64_HEX", "no 64-hex digest in the sha256 cell", None
     recorded = set(digests)
-    if blob is not None and hashlib.sha256(blob).hexdigest() in recorded:
-        return "PASS", "BLOB_MATCH", "", "BLOB"
+    if blob is not None:
+        lf = blob.replace(b"\r\n", b"\n")
+        forms = {
+            "BLOB": hashlib.sha256(blob).hexdigest(),
+            "BLOB_LF": hashlib.sha256(lf).hexdigest(),
+            "BLOB_CRLF": hashlib.sha256(lf.replace(b"\n", b"\r\n")).hexdigest(),
+        }
+        for basis, digest in forms.items():
+            if digest in recorded:
+                code = "BLOB_MATCH" if basis == "BLOB" else "BLOB_EOL_MATCH"
+                return "PASS", code, "" if basis == "BLOB" else \
+                    "recorded digest matches the %s form of the commit blob" % basis, basis
     for basis in ("WORKTREE", "LF", "CRLF"):
         if reps.get(basis) in recorded:
             if blob is not None:

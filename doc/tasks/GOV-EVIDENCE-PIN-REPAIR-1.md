@@ -77,7 +77,7 @@ DSH 按 Q3 实现巡检后发现这不是孤例，因此本卡目标定为：
 - [ ] **AC4 逐条判定与例外登记**（依据 Q1=B 裁定）：445 条逐条归因（T1 重建摘要 / T2 补摘要 / T3 核实迁移 / T4 逐项），
   每行以**精确行指纹**（卡路径 + Task ID + Evidence ID + 原行全部字段 + 历史错误类型）登记；
   不可恢复者逐条申请 warning 例外（禁通配、禁按类整批）；每批后 FAIL 数单调不增。
-  <<PARTIAL: 分诊 T1 122 / T2 211 / T3 109 / T4 3 已出；batch 1 完成 FEA-11-HOST-AUTH-2 的 7 条（5 条例外 + 2 处 Resource 单元修正，该卡 7 errors → PASS）；全仓余 **440** 条待判>>
+  <<PARTIAL: 分诊 T1 122 / T2 211 / T3 109 / T4 3 已出；batch 1 完成 FEA-11-HOST-AUTH-2 的 7 条（5 条例外 + 2 处 Resource 单元修正，该卡 7 errors → PASS）；随后修正巡检口径（接受 commit blob 的原始/LF/CRLF 三种精确形态）⇒ 全仓 FAIL **440 → 310**（130 条是原本有效、被我误判的 worktree 口径 pin）；余 310 条待判（SHA_NOT_64_HEX 214 / PATH_MISSING 53 / SHA_MISMATCH 31 / COMMIT_NOT_FOUND 12）>>
 - [ ] **AC5 独立复核**：上下文独立 Reviewer（未参与实施）复核；`check.ps1` 与 `-TaskPath` 均 PASS。 <<PARTIAL: 未开始>>
 - [x] **AC6 例外通道落地**（依据 Q1=B 裁定）：版本化 allowlist（一行一指纹）+ `check.ps1` 精确匹配降级为 warning；
   替代行仍走严格校验；卡片重开/转非终态即失效；正例 ≥2 / 负例 ≥2（含跨路径、错误 blob、重复替代、非终态拒绝）；

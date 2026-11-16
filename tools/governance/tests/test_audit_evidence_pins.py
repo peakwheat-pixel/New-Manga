@@ -100,7 +100,10 @@ class RealRepoTests(unittest.TestCase):
         # sweep reports zero FAIL and lists the EXEMPTED rows
         rc, out = self.run_sweep("doc/tasks/FEA-11-HOST-AUTH-2.md")
         self.assertEqual(rc, 0, out)
-        self.assertIn("EXEMPTED: 5", out)
+        # EV-01/EV-03 verify on their own (recorded digest = CRLF form of the commit
+        # blob); only the rows whose commit cell is `-` still need the registry.
+        self.assertIn("FAIL: 0", out)
+        self.assertIn("EXEMPTED: 3", out)
         self.assertIn("FEA-11-HOST-AUTH-3.md", out)
 
 

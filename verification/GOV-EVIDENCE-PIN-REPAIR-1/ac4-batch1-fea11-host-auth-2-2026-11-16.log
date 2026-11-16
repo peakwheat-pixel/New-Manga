@@ -17,8 +17,9 @@
 #   ③ 表下说明整段重写，明确「不是摘要造假、不是字节消失」。
 
 ## 1. 逐条结论（5 条证据 + 2 条 Resource）
-# EV-01 SourceOperationCoordinator.cs：该路径**全部 22 个历史 blob** 中都不存在记录值 ⇒ 该路径从未以这些字节入仓；登记 EXC-FEA11HA2-01
-# EV-03 Fea11HostAuthTests.cs：该路径 **12 个历史 blob** 中都不存在 ⇒ 同上；登记 EXC-FEA11HA2-02
+# EV-01 SourceOperationCoordinator.cs：**记录值 = closeout 提交 f7016d3fb 下该文件 blob 的 CRLF 形态**的 SHA-256（逐字节相等）；
+#   ⇒ 这是 worktree 口径 pin，pin 本身有效；门禁只比对原始 blob 或当前工作树，故无法自证 ⇒ 登记 EXC-FEA11HA2-01
+# EV-03 Fea11HostAuthTests.cs：同上（记录值 = f7016d3fb 下 blob 的 CRLF 形态，逐字节相等）⇒ 登记 EXC-FEA11HA2-02
 # EV-11/12/13：**可复现**（见 §0），由 -supersede 行补全溯源；原行登记 EXC-FEA11HA2-03/04/05（理由已更正）
 # Resource `worktree`：source 由描述文本改占位 `—`，原文本移入末列（未丢信息）
 # Resource `test-fixture`：sha256/manifest 补 RESOURCE-MANIFEST.json；destination 补 verification/FEA-11-HOST-AUTH-2/tools
@@ -42,3 +43,13 @@
 # ① 巡检工具现在同样要求**当前** status 为终态，且资格缓存 key 改为完整行指纹（避免粗 key 复用）。
 # ② 本文件头已更正：记录初版 head 与修订基线，不再声称单一 head。
 # ③ 复核 §5 结论：APPROVED_WITH_FINDINGS —— 5 条例外可按更正后理由采纳。
+
+## 5. 第二次更正（同一盲区，2026-11-16 深夜）
+# 修 tool 时发现：我两次「历史 blob 中不存在」的结论都只 hash 了**原始 blob 字节**，
+# 从未 hash 它的 **CRLF 形态**。实测 EV-01/EV-03 的记录值恰等于 closeout 提交 f7016d3fb 下该文件 blob 的 CRLF 形态；
+# 另有 130 条同类的「路径已清理」行（HOST-CORECLIENT-1 等）记录值也是 blob 的 CRLF 形态。
+# ⇒ 这些 pin 是**有效的 worktree 口径 pin**，不是造假、不是字节消失；此前把它们判为「不可复现」是我的口径错误。
+# 处置：①巡检工具接受 commit blob 的三种精确形态（原始 / 纯 LF / 纯 CRLF），并输出 BLOB_EOL_MATCH；
+#       ②五条例外理由全部改写为「记录值 = <commit> 下 blob 的 <形态>，逐字节核实相等；门禁表示集不含该形态」；
+#       ③全仓重测：FAIL **440 → 310**（= 130 条被误判的合法 pin 归位）。
+# 这条盲区值得记住：**「某摘要不可复现」必须穷举所有登记的字节表示（原始/LF/CRLF × blob/工作树）后再下结论。**
