@@ -43,12 +43,12 @@ allowed_paths:
 > **不代表 AC1–AC8 已满足** —— 那些是**下游实现**的验收条件，本卡只冻结范围。
 > 因此本条下述 AC 一律标 `blocked: 实现未开始`，不冒充完成。
 
-> **下游实现卡已建立（2026-11-16，DSH，append-only）**：
-> AC1–AC8 的**实现**已在 **`doc/tasks/FEA-04-IMPL-1.md`** 立项承接（`status: proposed`，`depends_on: [FEA-04]`）。
-> 本卡的 AC1–AC8 **继续保持 `[ ]` + `blocked: 实现未开始`，不翻转** ——
-> 本卡 `done` 只表示「范围冻结 + scope 复核」完成（见上条语义登记），**不冒充实现完成**。
-> 关账口径：`FEA-04-IMPL-1` 达成并独立复核 approved 后，本卡 AC1–AC8 才**依据其证据**依次翻 `[x]`。
-> 在此之前，任何一方都不得声称「FEA-04 已实现」。
+> ~~**下游实现卡已建立（2026-11-16，DSH）**~~ **—— 该判断已被同日核实推翻，本节作废（append-only 保留痕迹）**：
+> 我当时据「AC1–AC8 标 `blocked: 实现未开始`」推断需要实现卡，**未先核实实现是否已交付**。
+> 核实结果：实现早已交付（`Shell/V2/Frontends/CurrentFrontend.cs`、`Views/V2/Route/CurrentRouteAdapter.cs`、
+> `FEA04CurrentAdapterTests.cs`，证据 `verification/FEA-04/`，复核 `doc/reviews/FEA-04-r3.md` **approved P0=0/P1=0**）。
+> ⇒ **本卡 AC1–AC8 已依据既有证据逐条闭合**（见各 AC 注释）；我建的 `FEA-04-IMPL-1` 已**撤销**（`closed_with_limitations`，
+> 全部 AC 记 `NOT_APPLICABLE`），保留该卡只为留下这次误判的痕迹。
 
 ## 来源与授权
 
@@ -94,14 +94,14 @@ allowed_paths:
 
 ## 验收标准（冻结版）
 
-- [ ] **AC1 旧入口保留**：公开签名/路由不变；`git diff` 只允许内部实现 + 适配层新增，每处改动 Handoff 说明。 <!-- blocked: 原标 <<PARTIAL: 范围冻结；实现未开始>>；status:done 指范围冻结完成，非实现完成 -->
-- [ ] **AC2 行为基线不退化**：`dotnet test apps/desktop-avalonia/NewManga.sln --no-build --settings apps/desktop-avalonia/tests/NewManga.runsettings` 在 `91be6c134` 的逐工程计数为基线；实现后同命令逐工程 ≥ 基线（Handoff 附前后表）。 <!-- blocked: 原标 <<PARTIAL: 范围冻结；实现未开始>>；status:done 指范围冻结完成，非实现完成 -->
-- [ ] **AC3 无第二份业务真值**：VM 私有状态清单（Handoff）逐项区分 UI 态/业务态；业务态读取统一经 R-STATE-1 的权威源；新增私有缓存/registry 字段零个或逐项说明。 <!-- blocked: 原标 <<PARTIAL: 范围冻结；实现未开始>>；status:done 指范围冻结完成，非实现完成 -->
-- [ ] **AC4 §15.3 六项迁出**：S1–S6 每项「现状→新权威→断言」；**未迁出项必须在 Handoff 明确登记**（不得静默省略）。 <!-- blocked: 原标 <<PARTIAL: 范围冻结；实现未开始>>；status:done 指范围冻结完成，非实现完成 -->
-- [ ] **AC5 fail-closed preflight**：Q-20 五个 blocker 各有用例；存在任一 blocker → `allowed=false` + 对应 `PreflightBlocker` + 零 Host/Core 副作用；无 blocker → `allowed=true` 且不触发新 Run。 <!-- blocked: 原标 <<PARTIAL: 范围冻结；实现未开始>>；status:done 指范围冻结完成，非实现完成 -->
-- [ ] **AC6 生命周期**：关闭/重建内容前后 `hostBefore`/`hostAfter` 满足 `ReferenceEquals(hostBefore, hostAfter)`；`FakeHostController.StartCalls`/`HostController.StartRequests` 计数不增。 <!-- blocked: 原标 <<PARTIAL: 范围冻结；实现未开始>>；status:done 指范围冻结完成，非实现完成 -->
-- [ ] **AC7 回归与证据**：sln 测试日志、基线对照表、preflight blocker 矩阵入 `verification/FEA-04/**`。 <!-- blocked: 原标 <<PARTIAL: 范围冻结；实现未开始>>；status:done 指范围冻结完成，非实现完成 -->
-- [ ] **AC8 独立复核**：本卡冻结版的范围复核 approved（P0/P1=0，报告见 `doc/reviews/FEA-04-scope-r*.md`）；实现复核 `doc/reviews/FEA-04-r1.md` approved（P0/P1=0）。 <!-- blocked: 原标 <<PARTIAL: 范围冻结；实现未开始>>；status:done 指范围冻结完成，非实现完成 -->
+- [x] **AC1 旧入口保留**：公开签名/路由不变；`git diff` 只允许内部实现 + 适配层新增，每处改动 Handoff 说明。 <!-- verified: 2026-11-02 DSH 实测 + 实现复核 r1 已核；2026-11-16 DSH 归档本注释。**依据**：旧构造入口与 `ShellDeepLink` **保留**，新增 `Current`/route API 为**增量**；`dotnet build` 0 error；**公开成员无删除**（实现复核 r1 已核，见 `doc/reviews/FEA-04-r1.md`）；`git diff --check` PASS/exit 0（证据 `verification/FEA-04/`git-diff-check.log）；逐处改动说明见 `doc/handoffs/FEA-04-68c72ba57.md` §文件清单 / §逐项设计取舍。 -->
+- [x] **AC2 行为基线不退化**：`dotnet test apps/desktop-avalonia/NewManga.sln --no-build --settings apps/desktop-avalonia/tests/NewManga.runsettings` 在 `91be6c134` 的逐工程计数为基线；实现后同命令逐工程 ≥ 基线（Handoff 附前后表）。 <!-- verified: 2026-11-02 DSH 实测。**基线测量点与 AC 原文不一致，必须说清**：AC 写的是 `91be6c134`，但该 commit 的 build 因 NuGet 路径问题 **BLOCKED（14 errors）**，基线测试 `--no-build` 因此 NOT_RUN（证据 `verification/FEA-04/`见 baseline-build.log / baseline-comparison.md §注）。**实际基线改用 `68c72ba57`（范围冻结 v3）**：**914 passed / 0 failed / 60 skipped**（App 396/403）；实现 head：**931 / 0 / 60**（App 413/420）—— **既有工程 passed 全部 ≥ 基线、failed 均为 0、skipped 不变**；App 420 = 403 + 新增 `FEA04CurrentAdapterTests` 17 项（全通过）；**无既有测试被删除或弱化**。逐工程前后表见 `verification/FEA-04/`baseline-comparison.md 与 sln-test-results.md；原始日志 build-test-raw.log。⇒ 以「同一命令、同一 runsettings、逐工程 ≥ 基线」的**实质判据**看，AC2 成立；基线 commit 的替换属**环境阻塞导致的可执行性折衷**，已在证据里载明，不掩盖。 -->
+- [x] **AC3 无第二份业务真值**：VM 私有状态清单（Handoff）逐项区分 UI 态/业务态；业务态读取统一经 R-STATE-1 的权威源；新增私有缓存/registry 字段零个或逐项说明。 <!-- verified: 实现复核 r3 已核（`doc/reviews/FEA-04-r3.md``：AC3 在 head 有实测/证据支撑）。**依据**：`doc/handoffs/FEA-04-68c72ba57.md` **§VM 私有状态与第二真值审计**（逐项盘点 UI 态 vs 业务态）+ 其 AC 对照表 `:95` 记「MET（复核 r3）：VM 私有状态清单 + `_runProjection` 登记」。r1 曾指出 S3/S5 退化为「仅门面」（`RunMonitor<T>` 无生产消费者、Batch 投影回落到 VM 私有 `_projection`），该 P1 已在 r2/r3 处置，r3 判 `approved`（P0=0/P1=0）。 -->
+- [x] **AC4 §15.3 六项迁出**：S1–S6 每项「现状→新权威→断言」；**未迁出项必须在 Handoff 明确登记**（不得静默省略）。 <!-- verified: 实现复核 r3 **closed**。**依据**：`doc/handoffs/FEA-04-68c72ba57.md` **§S1–S6 迁出对照**（逐项「现状字段 / 新权威 / 断言」表）+ 文末 **§未迁出登记（AC4 / IMPL-01，DSH r2 处置）**：S3/S5 子项明确登记为**未迁出**并写明「现状 / 未迁出原因 / 后续」，正是 AC4 要求的「未迁出项必须在 Handoff 明确登记，不得静默省略」。r3 报告 `:21` 记：「Handoff `:162-171` 新增『未迁出登记』（S3/S5 逐项现状/原因/后续，`:171` 明确覆盖 Codex 段相反表述，**满足 AC4**）」。 -->
+- [x] **AC5 fail-closed preflight**：Q-20 五个 blocker 各有用例；存在任一 blocker → `allowed=false` + 对应 `PreflightBlocker` + 零 Host/Core 副作用；无 blocker → `allowed=true` 且不触发新 Run。 <!-- verified: 17/17 用例已执行通过。**依据**：`verification/FEA-04/`**preflight-blocker-matrix.md** —— 五个冻结 Code（`PENDING_REGION_TYPE`/`PENDING_CONFIRMATION`/`UNFLUSHED_RUN_KEY`/`UNMAPPED_READER_ANCHOR`/`UNMAPPED_SHELL_STATE`）各列 Source / 派生谓词 / **用例名** / 验证状态；clear path 用例 `Console_selection_and_filters_are_rebuildable_session_state_not_preflight_blockers` 覆盖 `Allowed=true` 且比较前后 Host 计数；副作用计数记录 `StartCalls`/`StartRequests`/`RefreshCalls`/`ReaderLoadCount`/`RunSnapshotRequests`/`TaskProjectionRequests`/`StartRunRequests`/`SetRegionTypeCalls`/`LifecycleLog`；实现无切换执行入口、preflight 不调用 `IHostController`/Core。 -->
+- [x] **AC6 生命周期**：关闭/重建内容前后 `hostBefore`/`hostAfter` 满足 `ReferenceEquals(hostBefore, hostAfter)`；`FakeHostController.StartCalls`/`HostController.StartRequests` 计数不增。 <!-- verified: 用例已执行通过。**依据**：`verification/FEA-04/`**lifecycle-assertions.md** —— 关闭/重建 AppShell 内容断言 `ReferenceEquals(hostBefore, hostAfter)` 且 `FakeHostController.LifecycleLog` 无 Dispose 记录；`StartCalls`/`StartRequests` 在 preflight 与切换准备前后计数不增；`CurrentFrontend.For(controller)` 仅缓存门面、**不创建/销毁 Host**，`Preflight` 纯读 memento、零 Host 调用；`RunStatusMonitor` 保持既有 Host 轮询（1s），Current 属性仅为共享门面引用、**不接管 Host 生命周期**。**注**：r1 遗留 P2 IMPL-05 指出「AC6 断言机制缺 Dispose spy、lifecycle 文档高估」，实际断言改用 `LifecycleLog` 无 Dispose 记录（等价判别力）；该 P2 维持接受遗留，不改变 AC6 判定。 -->
+- [x] **AC7 回归与证据**：sln 测试日志、基线对照表、preflight blocker 矩阵入 `verification/FEA-04/**`。 <!-- verified: 2026-11-02 DSH 实测。**依据**：`verification/FEA-04/` 下齐备 —— `baseline-comparison.md`（基线对照表）、`preflight-blocker-matrix.md`（blocker 矩阵）、`lifecycle-assertions.md`、`sln-test-results.md`、**`build-test-raw.log`（176 行原始 build+test 日志，六工程 `已通过!` 行与 931/0/60 一致）**、`git-diff-check.log`、`governance-check.log`、`verify-pins.log`。r3 `:45` 记「`build-test-raw.log` 已入库（176 行：build 段 1-24、test 段 26-176，六工程 `已通过!` 行与 931/0/60 一致）」。 -->
+- [x] **AC8 独立复核**：本卡冻结版的范围复核 approved（P0/P1=0，报告见 `doc/reviews/FEA-04-scope-r*.md`）；实现复核 `doc/reviews/FEA-04-r1.md` approved（P0/P1=0）。 <!-- verified: 范围复核 r1–r3 已闭环；**实现复核链 r1(changes_requested P1=4) → r2(P0=0/P1=2 处置中) → r3=approved (P0=0/P1=0)**。**AC 原文点名 `FEA-04-r1.md` approved，但 r1 实为 `changes_requested`** —— 该点名的意图是「实现面经独立复核、P0/P1=0」，由 **`doc/reviews/FEA-04-r3.md`（conclusion: approved, counts P0=0/P1=0, reviewed_head `af9625e7e`）** 满足；r3 `:105` 明记「对 reviewed_head `af9625e7e` 的判定：`approved` …… 依据：**AC1–AC7 在 head 均有实测/证据支撑**（本席位独立复跑 931/0/60、0 failed）」。r3 `:107` 的**边界声明**同时保留：只审实现交付、不构成集成批准、不覆盖 A0/B 类未执行项（UI/真机/真实 sidecar）。⇒ AC8 成立，但「点名 r1」与「r1 实为 CR」的措辞矛盾在此如实登记，不掩盖。 -->
 
 ## L 前置适用性判定
 
