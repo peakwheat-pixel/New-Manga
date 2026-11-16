@@ -3,16 +3,18 @@ id: HOST-CONCURRENCY-FLAKY-1
 title: test.ps1 环境下的 Host.Tests 失败 —— SOURCE_REGISTRY_BUSY 零超时缺陷（已修）+ FILE_IDENTITY_CHANGED 53 位口径缺口（已定位并修复）
 kind: defect
 governance_version: 3
-status: in_review
+status: closed_with_limitations
 suggested_owner: DSH
 owner: DSH
-reviewer: "reviewer-hcf (AC6 一轮, 277406eeb, CHANGES_REQUESTED) / reviewer-hcf2 (AC6 二轮, 9ce819ae7, CHANGES_REQUESTED→已返修); 三轮待派"
+reviewer: "reviewer-hcf (一轮, 277406eeb, CHANGES_REQUESTED) / reviewer-hcf2 (二轮, 9ce819ae7, CHANGES_REQUESTED) / reviewer-hcf3 (三轮, a4ceea811, ACCEPTED)"
 depends_on: []
 approval: 用户 2026-11-15「全部授权」；本卡由 SIDECAR-SCHEMA-STALE-1 的 R87 诊断派生
 base_commit: 54fd6f77a
 branch: main
 worktree: G:/CODEX/New Manga
 evidence_dir: verification/HOST-CONCURRENCY-FLAKY-1
+canonical_evidence_status: complete
+resource_closeout_status: complete
 allowed_paths:
   - doc/tasks/HOST-CONCURRENCY-FLAKY-1.md
   - apps/desktop-avalonia/src/NewManga.Host/Sources/**
@@ -24,6 +26,12 @@ allowed_paths:
 ---
 
 # HOST-CONCURRENCY-FLAKY-1：Host.Tests 的并发 flaky
+
+> **⚠️ 标题口径说明（2026-11-16，三次复核 P2-4）**：标题里的「并发 flaky」是**任务立案时的历史名**。
+> 经 AC2 受控复现与后续实测，本卡最终确认的两个缺陷**都不是偶发 flaky**：
+> ① `SOURCE_REGISTRY_BUSY` 是「零超时把瞬时竞争当繁忙」的确定性触发；
+> ② `FILE_IDENTITY_CHANGED` 是 raw/masked 53 位口径缺口（与并发无关）。
+> 标题保留原名以便 `git log` 与历史文档引用可追溯。
 
 ## 怎么发现的
 
@@ -89,9 +97,9 @@ xUnit 的并行集合配置（**已确认 `DisableTestParallelization = true`**�
 - [x] **AC1 并发路径澄清**：确认 `SourceAccessRegistry` 的锁作用域（进程级/实例级）、`_lockName` 生成方式、xUnit 并行配置。 <!-- 三项全部澄清：①_lockName 由 dataRoot 的 SHA256 派生（SourceAccessRegistry.cs:31-32），HostFixture 的 dataRoot 每测试唯一 ⇒ per-test 唯一，不是跨测试抢同一把锁；②锁是 Global 命名 mutex（`UnauthorizedAccessException` 时回退 Local）+ registry.v1.lock 独占文件锁 ⇒ 进程级互斥；③xUnit 配置实测 NewManga.Host.Tests/AssemblyInfo.cs:1 = [assembly: Xunit.CollectionBehavior(DisableTestParallelization = true)] ⇒ Host 测试不并行。原「xUnit 并行导致互相触发」叙事已被 ③ 证伪，真实触发条件是同进程内多线程（测试线程 vs HostRuntime 后台 watcher），见「叙事更正」节。 --> <<MET>>
 - [x] **AC2 失败复现**：在受控条件下稳定复现 3 个失败（如提高并行度或多跑几轮），并保存日志。 <<MET>>
 - [x] **AC3 根因判定**：区分「锁粒度不足」「identity 检查过严」「测试间共享状态」三类，给出代码级依据。 <<MET>>
-- [x] **AC4 修复或登记**：修复（需先范围冻结，因为改并发语义属产品行为变更），或明确登记为已知限制并给出可执行的处置步骤。 <!-- 三处 producer 全部处置：①HostIssuer.cs:563（file）/ :596-597（dir）已套 NormalizeFileId（import grant 路径）；②SourceReadCoordinator.cs:408 / :632 已套 SourceSecurity.NormalizeFileId（source-read wire facts 路径，AC6 复核 P0-1）；③SourceSecurity.Identity 本体刻意保持 raw —— 该值被 SourceAccessRegistry.cs:49/137-141 持久化进 registry.v1.dat 作 SourceRoot.FileId 并校验，mask 会让既有 dataRoot 的 registry 全部 SOURCE_REGISTRY_UNAVAILABLE。TileChannel.cs:437 经 AC6 二次复核判定**不参与跨语言 identity 比较**（FileIdentity 只在 Issue/ReadTile 内同源 raw 自比；TileGrantView 不含 identity 字段；唯一生产调用点 HostRuntime.cs:1044-1050 不传 VolumeSerial/FileIndex），故不需修，已在代码内加契约注释。回归测试 HostFileIdNormalizationTests 固定常量与 wire 口径（已做回退红测验证）。 --> <<MET>>
-- [x] **AC5 不影响既有基线**：全量 `test.ps1` 在当前 HEAD 仍全绿 1579/1627 passed / 0 failed / 48 skipped，App.Tests 962/0/4 不退化基线 955/0/11。 <!-- 判据改写（AC6 复核 P1-2 给的两个选项之一）：原判据「裸跑 dotnet test 仍全绿（331/0/74）」本身不成立 —— 裸跑缺 NEWMANGA_* fixture 变量，两个 GrantIssuerTests 是 SKIP 而非 passed（见 correction-skip-vs-pass.md）。改用 test.ps1 全量（是该环境的超集）作为判据；证据 after-p0-fix.log（二次复核通道）与本次返修后的全量运行。 --> <<MET>>
-- [ ] **AC6 独立复核**：固定 head 交独立上下文 Review。 <!-- 已做两轮独立上下文复核：reviewer-hcf 审 277406eeb 结论 CHANGES_REQUESTED（P0-1/P1-1..P1-4/P2-1..P2-5）；reviewer-hcf2 审 9ce819ae7 结论 CHANGES_REQUESTED（认定代码侧可放行、文档/证据/门禁需再修一轮）。已按二次复核 findings 返修：控制字符 17 处、证据 sha256 15 行、卡面自相矛盾与旧表述、AC 标记合规、P2-3/P2-4/P2-5、P2-N1/P2-N4、新增回归测试。待第三次复核确认后勾选。 --> <<PARTIAL: 二次复核 CHANGES_REQUESTED 已按 findings 逐条返修，待第三次独立复核对返修结果确认>>
+- [x] **AC4 修复或登记**：修复（需先范围冻结，因为改并发语义属产品行为变更），或明确登记为已知限制并给出可执行的处置步骤。 <!-- 三处 producer 全部处置：①HostIssuer.cs:563（file）/ :596-597（dir）已套 NormalizeFileId（import grant 路径）；②SourceReadCoordinator.cs:414 / :632 已套 SourceSecurity.NormalizeFileId（source-read wire facts 路径，AC6 复核 P0-1）；③SourceSecurity.Identity 本体刻意保持 raw —— 该值被 SourceAccessRegistry.cs:49/137-141 持久化进 registry.v1.dat 作 SourceRoot.FileId 并校验，mask 会让既有 dataRoot 的 registry 全部 SOURCE_REGISTRY_UNAVAILABLE。TileChannel.cs:457 经 AC6 二次复核判定**不参与跨语言 identity 比较**（FileIdentity 只在 Issue/ReadTile 内同源 raw 自比；TileGrantView 不含 identity 字段；唯一生产调用点 HostRuntime.cs:1044-1050 不传 VolumeSerial/FileIndex），故不需修，已在代码内加契约注释。回归测试 HostFileIdNormalizationTests 固定常量与 wire 口径（已做回退红测验证）。 --> <<MET>>
+- [x] **AC5 不影响既有基线**：全量 `test.ps1` 在当前 HEAD 仍全绿（返修前 1579/1627；返修后 **1582/1630** passed / 0 failed / 48 skipped，App.Tests 962/0/4 不退化基线 955/0/11）。 <!-- 判据改写（AC6 复核 P1-2 给的两个选项之一）：原判据「裸跑 dotnet test 仍全绿（331/0/74）」本身不成立 —— 裸跑缺 NEWMANGA_* fixture 变量，两个 GrantIssuerTests 是 SKIP 而非 passed（见 correction-skip-vs-pass.md）。改用 test.ps1 全量（是该环境的超集）作为判据；证据 after-p0-fix.log（1579/1627）与返修后 after-ac6-2nd-fix.log（1582/1630，Host 364 = 361+3 新测试，EXIT=0）。三次复核 P2-2 指出此处曾只写旧数，已补两值。 --> <<MET>>
+- [x] **AC6 独立复核**：固定 head 交独立上下文 Review。 <!-- 三轮独立上下文复核，全部未参与实现、只读被审 head、互不复用上下文：①reviewer-hcf 审 277406eeb → CHANGES_REQUESTED（P0-1 遗漏 producer + P1-1..P1-4 + P2-1..P2-5）；②reviewer-hcf2 审 9ce819ae7 → CHANGES_REQUESTED（代码侧放行，文档/证据/门禁需再修一轮）；③reviewer-hcf3 审 a4ceea811 → **ACCEPTED**（21/21 证据 pin 的 commit+sha256 独立通过、§4.3 门禁在 in_review 下 PASS、新回归测试经其实跑 2 次 3/3 绿且回退必然红、二次复核 12 条 must-fix 全部闭环）。报告见 EV-HCF-16/19/22。三次复核新发现的 P2 细节已在本轮逐项清扫（行号第三次同步、AC5 双数、18 处计数、旧口径作废标注、覆盖缺口与三指针口径登记）。 --> <<MET>>
 
 ## 禁止范围
 
@@ -161,7 +169,7 @@ fileLock = new FileStream(... "registry.v1.lock", ..., FileShare.None);   // ←
 | EV-HCF-18 | P0-1 修复的 Host -warnaserror 编译 | verification/HOST-CONCURRENCY-FLAKY-1/build-p0.log | bbeb28dcb | 5a1e95234be694cb71a90e80efa57321672d506ec82996e60803220b32880cef | CANONICAL | BLOB |
 | EV-HCF-19 | **AC6 二次独立复核报告**（CHANGES_REQUESTED；代码侧放行） | verification/HOST-CONCURRENCY-FLAKY-1/review-ac6-2nd.md | f1f9db9e4 | 62b4e36e940d986d989e5d959c2757e2a19262cd6c352f070f6eadee6b0d2d11 | CANONICAL | BLOB |
 | EV-HCF-20 | 返修后全量 test.ps1（EXIT=0；Host 364 = 361+3） | verification/HOST-CONCURRENCY-FLAKY-1/after-ac6-2nd-fix.log | f1f9db9e4 | bf3d8ef02de3bcc2bca8dfa0bc94b45cae44663efbb66afe79c95a123fd9b713 | CANONICAL | BLOB |
-| EV-HCF-21 | AC1/AC3 诊断（含「并行叙事」更正） | verification/HOST-CONCURRENCY-FLAKY-1/ac1-ac3-diagnosis.md | f1f9db9e4 | a65415bab851acd6a52999badb41ca8f49c4f4b723a7c7dad1a6b8ce69915107 | CANONICAL | BLOB |
+| EV-HCF-21 | AC1/AC3 诊断（含「并行叙事」更正） | verification/HOST-CONCURRENCY-FLAKY-1/ac1-ac3-diagnosis.md | PENDING_SUBMIT | a0909bb9f8fad161fdae9dec232550ed4f3321cab371c3e8714a3c890cf24aa7 | CANONICAL | BLOB |
 
 ## Resource Manifest
 
@@ -183,7 +191,10 @@ fileLock = new FileStream(... "registry.v1.lock", ..., FileShare.None);   // ←
 test.ps1:102-134 的 fixture 变量（NEWMANGA_S4_FIXTURES / BOOK_FIXTURE_ROOT /
 S4_REGION_FIXTURE / MODELS_SIDECAR_DIR / CORE_TILE_E2E / EVIDENCE_DIR /
 CORECLIENT_SIDECAR_DIR）让 30 个原本 self-skip 的测试实际执行，
-并行下对 SourceAccessRegistry 的访问密度上升，命中 WaitOne(0) 的零超时窗口。
+~~并行下对 SourceAccessRegistry 的访问密度上升，命中 WaitOne(0) 的零超时窗口。~~
+> **⚠️ 此句归因已作废（2026-11-16，三次复核 P2-4）**：Host.Tests 的 xUnit 并行已被
+> `AssemblyInfo.cs:1` 显式禁用；真实机制是**同一测试进程内**多线程（测试线程 + HostRuntime
+> 后台 watcher）对 registry 的并发访问，命中 `WaitOne(0)` 的零超时窗口。见 AC1 与「叙事更正」节。
 
 **对 AC4 的影响**：修复方向（WaitOne(boundedTimeout) + 有界重试）**必须做**，
 不能只登记为已知限制 —— 那等于承认 test.ps1 永久红。
@@ -242,7 +253,9 @@ GrantIssuerTests.Import_IntoNewChapter_Executes_AndRegistersGrant
 （scanner.py:170 "granted folder member identity drifted"）。
 
 **这与锁无关** —— 是身份校验判定「授权文件夹里的文件指纹变了」。
-两测试在 test.ps1 下才失败、裸跑通过，说明是**并行下身份快照与文件读取的时序问题**，
+~~两测试在 test.ps1 下才失败、裸跑通过，说明是**并行下身份快照与文件读取的时序问题**，~~
+> **⚠️ 此归因已作废（2026-11-16，三次复核 P2-4）**：根因是 raw 64 位 file index 与
+> masked 53 位 comparator 的口径缺口，**与并发/时序无关**；见「根因铁证」节。
 需下一轮按同样的方法（读 scanner.py 的 identity 计算与比较逻辑）定位。
 
 **AC4 标 PARTIAL**：锁问题已修并验证；identity 问题待办。
@@ -515,7 +528,7 @@ App.Tests 962 passed / 0 failed / 4 skipped —— **不退化基线 955/0/11**�
 **修法采纳复核者关键提醒**：不在 `SourceSecurity.Identity` 内 mask —— 该值还被
 `SourceAccessRegistry.cs:49/137` 持久化到 `registry.v1.dat` 作 `SourceRoot.FileId`
 并在 `:140-141` 校验，单边 mask 会让既有 registry 全部 `SOURCE_REGISTRY_UNAVAILABLE`。
-改为在**写入 wire facts 的两处**（`SourceReadCoordinator.cs:408` / `:632`；修复提交时为 `:404` / `:624`，后因加注释偏移 +4/+8）归一化。
+改为在**写入 wire facts 的两处**（`SourceReadCoordinator.cs:414` / `:638`；修复提交时为 `:404` / `:624`，后因加注释两次偏移，当前为 `:414` / `:638`）归一化。
 
 验证：`test.ps1` 仍 **EXIT=0**（1579/1627），Host `-warnaserror` 编译通过。
 
@@ -536,7 +549,7 @@ App.Tests 962 passed / 0 failed / 4 skipped —— **不退化基线 955/0/11**�
 | AC | 一轮复核前 | 一轮复核后 | 二轮复核后（现状） | 理由 |
 |---|---|---|---|---|
 | AC1 | MET | PARTIAL | **MET** | 一轮指出「xUnit 并行配置」未澄清且并行叙事被 `AssemblyInfo.cs:1` 证伪 ⇒ 降级合理。返修时把三项（锁作用域 / `_lockName` / xUnit 配置）逐一写进 AC 行并删除旧叙事，缺项已补齐 ⇒ 恢复 MET |
-| AC4 | MET | PARTIAL | **MET** | 一轮指出遗漏 producer（P0-1）⇒ 降级合理。返修：`SourceReadCoordinator.cs:408/:632` 已归一化；`TileChannel.cs:437` 经二轮复核判定**不参与跨语言比较、不需修**；新增回归测试并做回退红测 ⇒ 恢复 MET |
+| AC4 | MET | PARTIAL | **MET** | 一轮指出遗漏 producer（P0-1）⇒ 降级合理。返修：`SourceReadCoordinator.cs:414/:638` 已归一化；`TileChannel.cs:457` 经二轮复核判定**不参与跨语言比较、不需修**；新增回归测试并做回退红测 ⇒ 恢复 MET |
 | AC5 | MET | PARTIAL | **MET** | 原判据「裸跑 331/0/74」本身不成立（裸跑是 SKIP）。二轮复核给的二选一里选了**改写判据**为「全量 `test.ps1` 1579/1627 / 0 failed、App 不退化 955/0/11」，并在 AC 行写明 ⇒ 恢复 MET |
 
 **叙事更正（重要）**：`AssemblyInfo.cs:1` 的 `DisableTestParallelization = true` 证明
@@ -576,8 +589,8 @@ Host.Tests **本来就不并行**。所以本卡早前「并行导致 `SOURCE_RE
 
 | 维度 | 复核判定 |
 |---|---|
-| **P0-1 补修正确性** | ✅ **独立验证通过（正确且完整）**：`:408` / `:632` 均套 `SourceSecurity.NormalizeFileId`；`Identity` 本体保持 raw 与声称一致；全 producer 穷举后**无遗漏**；Python 侧 `scanner.py` / `source_strict_read.py` / `handle_resolver.py` 全部 masked，而 `source_read_refs.py:1068/1080` 原样透传 ⇒ **两侧现在必然相等** |
-| **`TileChannel.cs:437` 同源风险** | ✅ **明确结论：不参与跨语言 identity 比较，不构成同源风险，不需修**。`Issue`/`ReadTile` 是同进程同源 raw 自比；`TileGrantView`/`ToView` 不含 identity 字段；唯一生产调用点 `HostRuntime.cs:1044-1050` 不传 `VolumeSerial/FileIndex`；`BridgeGrant` 两字段虽来自 Core masked 值但生产代码零消费 |
+| **P0-1 补修正确性** | ✅ **独立验证通过（正确且完整）**：`:414` / `:638` 均套 `SourceSecurity.NormalizeFileId`；`Identity` 本体保持 raw 与声称一致；全 producer 穷举后**无遗漏**；Python 侧 `scanner.py` / `source_strict_read.py` / `handle_resolver.py` 全部 masked，而 `source_read_refs.py:1068/1080` 原样透传 ⇒ **两侧现在必然相等** |
+| **`TileChannel.cs:457` 同源风险** | ✅ **明确结论：不参与跨语言 identity 比较，不构成同源风险，不需修**。`Issue`/`ReadTile` 是同进程同源 raw 自比；`TileGrantView`/`ToView` 不含 identity 字段；唯一生产调用点 `HostRuntime.cs:1044-1050` 不传 `VolumeSerial/FileIndex`；`BridgeGrant` 两字段虽来自 Core masked 值但生产代码零消费 |
 | **不改 `Identity` 的取舍** | ✅ 正确（跨语言边界归一、Host 持久化本体保持原语义）。但指出作者「既有**用户** registry 会失效」表述过强：`v0.1.1` tag 不含该文件（`995d80ca5` 引入），影响面实为本机 dataRoot + 持久化语义变更 |
 | **证据 commit 列** | ✅ **18/18 全部修对**：`git cat-file -e` = 0，且与实际引入提交逐一相同；EV-14/15 因果顺序正确（日志早于提交 49 秒） |
 | **证据 sha256 列** | ❌ 15 行仍 `PIN_PENDING`（P1-1 剩余） |
@@ -595,7 +608,7 @@ Host.Tests **本来就不并行**。所以本卡早前「并行导致 `SOURCE_RE
 | P1-N1 勾选/标记不合规 | AC1/AC4/AC5 → `[x]` + `<<MET>>`（依据进行内注释）；AC6 → `[ ]` + `<<PARTIAL: 原因>>`（待三轮确认） | Acceptance Criteria |
 | P1-3 并行叙事 | 正文「xUnit 并行」段加删除线 + 更正块（`AssemblyInfo.cs:1` = `DisableTestParallelization = true`）；「待验证」三项改为已确认；`verification/HOST-CONCURRENCY-FLAKY-1/ac1-ac3-diagnosis.md` 的 `:103` 同步更正 | 本卡「初步判断」节 + 诊断文件 |
 | P1-4 绝对化表述 | 两处「任何用户 / 唯一一个」下调为「超过 2^53 必然失败；新建场景高概率触发」，并注明「唯一一个」不可核验 | 「影响面」「缺陷真实影响」两节 |
-| P2-1 控制字符 | 17 处词内控制字符全部还原：`<TAB>est.ps1`→`test.ps1`（11）、`<BEL>pps`→`apps`、`<BEL>lpha`→`alpha`、`<FF>ile_id`→`file_id`（2）、`<FF>acts.`→`facts.`、`<VT>erification`→`verification`（2）；另修复原文缺字的 `ender-info.md`→`render-info.md`。**字节级复扫零残留** | 本卡 |
+| P2-1 控制字符 | **18 处**词内控制字符全部还原：`<TAB>est.ps1`→`test.ps1`（11）、`<BEL>pps`→`apps`（1）、`<BEL>lpha`→`alpha`（1）、`<FF>ile_id`→`file_id`（2）、`<FF>acts.`→`facts.`（1）、`<VT>erification`→`verification`（2）；另修复原文缺字的 `ender-info.md`→`render-info.md`。**字节级复扫零残留**（三次复核实测旧 blob 为 18 处，此前误记 17，已更正） | 本卡 |
 | P2-2 front-matter/标题 | `status: proposed → in_review`；`owner: null → DSH`；`reviewer:` 记录两轮复核与待派三轮；`title` 去掉「（待定位）」 | front-matter |
 | P2-3 最坏等待 | `SourceAccessRegistry` 的 `LockWaitMillis` 注释补「mutex 5000ms + 文件锁 5000ms ⇒ **最坏 ≈10s**，不得按 5s 宣称」 | 源码注释 |
 | P2-4 常量一致性测试 | 新增 `HostFileIdNormalizationTests`：`CoreFileIdMask == (1<<53)-1`、`NormalizeFileId` 的 mask/幂等/边界、`DescribeContainer` 的 wire facts 必为 masked | 新增测试文件 |
@@ -603,7 +616,7 @@ Host.Tests **本来就不并行**。所以本卡早前「并行导致 `SOURCE_RE
 | P2-N1 opt-in helper 口径 | `Fea11ScanIpcTests.ReadFileIdentity` 改为返回 `SourceSecurity.NormalizeFileId(...)`，与生产 grant 同口径（附完整因果注释） | 测试 helper |
 | P2-N2 无直接回归测试 | **已补**：`DescribeContainer` 由 `private` 改 `internal` 供测试（纯静态 fact-builder，零行为面）；新测试**做了回退红测**（详见下） | 新增测试 + 源码可见性 |
 | P2-N3 日志缺 EXIT 头 | 本轮证据日志以 `EXIT=0` 收尾（`test.ps1` 已有 `TEST PASS` 行） | EV-HCF-20 |
-| P2-N4 行号漂移 | 处置节 `:404/624` 改为 `:408/:632` 并注明原值；AC4 行注释用新行号 | 本卡 |
+| P2-N4 行号漂移 | 处置节 `:404/624` 改为 `:408/:632` 并注明原值；AC4 行注释用新行号。**（三次复核再指出：同提交注释又把它推到 `:414/:638`、`TileChannel.cs:457`，已第三次同步）** | 本卡 |
 
 ### 补测试时我差点又犯的同一类错（记录）
 
@@ -614,7 +627,7 @@ Host.Tests **本来就不并行**。所以本卡早前「并行导致 `SOURCE_RE
 再用**临时回退实现**做红测确认：
 
 ```
-回退 :408 为 ["file_id"] = before.Id
+回退 :414 为 ["file_id"] = before.Id
   → 失败 DescribeContainer_EmitsNormalizedFileId_NotTheRawHandleIndex
     Assert.Equal() Failure: Expected 5348024557882020 / Actual 59391220086327972
 还原后 → 3/3 通过
@@ -631,4 +644,56 @@ Host.Tests **本来就不并行**。所以本卡早前「并行导致 `SOURCE_RE
 2. **`v0.1.1` 发布语义上的影响面**：二次复核指出「既有用户 registry」表述过强，本卡已按新表述记录，
    但未改动 `SourceAccessRegistry` 的持久化语义（也不需要）。
 3. **第三次复核**：本卡 AC6 需第三轮独立上下文复核确认返修结果后，才能把 AC6 标 `<<MET>>` 并关闭。
+
+---
+
+## AC6 三次复核结论与定案（reviewer-hcf3，2026-11-16）
+
+### 复核安排（上下文独立，第三轮）
+
+- 复核者：**`reviewer-hcf3`**（全新上下文子 agent，**未复用**前两轮会话/推理；前两轮报告只用于读取「要求」）
+- 被审 head：`a4ceea811`
+- 复核方式：只读；**唯一执行动作** = `dotnet test --filter "FullyQualifiedName~HostFileIdNormalizationTests"`（跑 2 次，只写 `%TEMP%`）
+- 报告：`verification/HOST-CONCURRENCY-FLAKY-1/review-ac6-3rd.md`（194 行，EV-HCF-22）
+
+### 结论：**ACCEPTED**
+
+| 复核项 | 判定 |
+|---|---|
+| 21 行证据 pin（commit + sha256） | ✅ **全量通过**：逐行 `git cat-file -e`=0；sha256 用 `git cat-file blob` 原始字节实算（`cmd` 二进制重定向规避 `core.autocrlf`）；21/21 的 pin blob 与被审 head blob 逐字节相同 |
+| §4.3 AC 标记门禁 | ✅ `check.ps1 -TaskPath` 在 `status: in_review`（门禁生效态）下 **PASS (3 warnings)** |
+| 控制字符 | ✅ 旧 blob 实测 **18 处**（此前误记 17，已更正），当前 **0 残留** |
+| 新回归测试回归价值 | ✅ 非同义反复（测试内强制 `raw > 2^53`）；`%TEMP%` 新建文件实测 **12/12** raw > 2^53（G: workspace 卷 0/6）；复核者独立复算红测数值 `59391220086327972 & (2^53-1) = 5348024557882020` 与作者报告一致；**实跑 2 次均 3/3 绿** |
+| 代码侧行为变化 | ✅ 无（`DescribeContainer` 仅 `private→internal`，其余改动逐行为注释/口径） |
+| 二次复核 12 条 must-fix | ✅ 全部闭环 |
+
+### 三次复核新发现的 P2（本轮已逐项清扫）
+
+| # | 问题 | 处置 |
+|---|---|---|
+| P2-1 | 行号**第三次**漂移：`:408/:632` 实为 `:414/:638`；`TileChannel.cs:437` 实为 `:457`（同提交注释所致） | 全卡面已同步为 `:414/:638/:457`，并注明历史值 |
+| P2-2 | AC5 只写旧总数 1579/1627 | 改为「返修前 1579/1627；返修后 1582/1630」 |
+| P2-3 | 控制字符计数「17 处」实为 18 | 已更正为 18 并列出分项 |
+| P2-4 | 旧「并行」叙述残留（L186、L245、`SourceAccessRegistry.cs:343`、`ac1-ac3-diagnosis.md:123`、标题） | 四处全部加显式作废标注；`ac1-ac3-diagnosis.md` 的重复词与旧收尾一并清理 |
+| P2-5 | 回归测试只 pin `:414`，`:638`（批量 entries 写入点）无直接测试 | 见下方 limitation L-2（**登记，不在本轮补测**） |
+| P2-6 | 返修提交动了两份卡外 doc（PLAN/STATUS/TASK_LEDGER）；`REBASELINE_PLAN` 依赖列与卡面 `depends_on: []` 口径不一 | 三指针更新属 Lead 生命周期职责（DSH 身份）；依赖口径已统一为 `depends_on: []`（本卡是独立缺陷卡，PLAN 那列是「上游来源」而非阻塞依赖），见下方 L-4 |
+| P2-7 | `GOAL-WRAPUP-R100.md:84` 状态行陈旧 | 已更新为三轮复核后的终态 |
+| P3 | `HostErrorCodes.cs:27` 引用不精确（`RetryableCodes` 在 `:15`） | 已在卡面注明 |
+
+### 定案：`closed_with_limitations`
+
+本卡 6 条 AC 全部 `<<MET>>`，但保留三条**已登记 limitation**（不冒充已消除）：
+
+| 编号 | limitation | 为什么不是缺陷 | 后续处置 |
+|---|---|---|---|
+| **L-1** | **P0-1 的端到端运行时行为未实跑**：覆盖 source-read 路径的 `Fea11*IpcTests` 是 `NEWMANGA_FEA11_IPC=1` opt-in（会起真实 Python Core、写 workspace），`test.ps1` 不设该变量。三轮复核均因此只做了「静态链路 + 单文件 wire facts 层」验证 | 修复本身由 6 条独立证据支撑：契约原文（`identity.py:3-9`）、三环链路逐行定位（`root-cause-proven.md`）、53 位实测（`st-ino-measured.md` 6/7）、补偿链路核对（Python comparator 全 masked）、回归测试（含回退红测）、全量不退化 | 恢复 opt-in IPC 测试运行时一并验证（另一卡） |
+| **L-2** | 回归测试只 pin `DescribeContainer`（`:414`）；批量 folder entries 的第二个写入点 `:638` 无直接测试，只回退 `:638` 不会被抓住 | 两处写的是**同一表达式** `SourceSecurity.NormalizeFileId(before.Id)`；`:638` 已在三轮复核的代码核对中确认正确 | 建议后续把两处收敛到同一 helper 后测 helper（或补一条 entries 路径 pin） |
+| **L-3** | `Fea11ScanIpcTests.ReadFileIdentity` 的口径修正**无法实跑验证**（opt-in + 会起真实 Core），仅静态判断 | 4 处消费点全部是 fixture DB 写入，无 raw 断言；静态判断结论是「方向正确、未发现破坏点」 | 同 L-1，随 opt-in 测试恢复一并验证 |
+| **L-4** | `REBASELINE_PLAN` 的依赖列写 `SIDECAR-SCHEMA-STALE-1`，与卡面 `depends_on: []` 表述不同 | 两者语义不同：卡面 `depends_on` = 阻塞依赖；PLAN 那列 = 上游来源（本卡由该卡的 R87 诊断派生）。已在 PLAN 行注为「来源」 | 无需动作；口径已在本节说明 |
+
+### 为什么判 `closed_with_limitations` 而不是 `done`
+
+AC1–AC6 字面要求全部满足且有可复核证据；但 L-1/L-3 的「opt-in 路径未实跑」是**真实的验证缺口**，
+若标 `done` 会暗示「端到端已验证」。按本卡自己反复强调的纪律（「测试全绿 ≠ 没 bug；
+当测试覆盖不到那条路径时，绿是假的安全感」），保留为 `closed_with_limitations` 更诚实。
 

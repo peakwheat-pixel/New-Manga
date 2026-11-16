@@ -340,7 +340,9 @@ public sealed class SourceAccessRegistry
     /// (e.g. a Host caller and the file watcher thread) are guaranteed to contend. The previous
     /// implementation used <c>WaitOne(0)</c> and a single non-retrying <c>FileShare.None</c> open,
     /// which turned that ordinary contention into an immediate SOURCE_REGISTRY_BUSY -- observed as a
-    /// deterministic failure of the Host tests whenever the full fixture set runs in parallel.
+    /// deterministic failure of the Host tests whenever the full fixture set runs (which puts more
+    /// concurrent Host callers and watcher threads inside one test process — xUnit parallelism itself
+    /// is DISABLED for this assembly, see NewManga.Host.Tests/AssemblyInfo.cs).
     /// SOURCE_REGISTRY_BUSY now means "still busy after a bounded wait", which is what callers can
     /// act on; the lock is still released by the same owner, so mutual exclusion is unchanged.
     /// <para>

@@ -81,7 +81,10 @@
 | `GOAL-C-DEBT-AUDIT-1` | done |
 | `AC-BLOCKED-CLOSE-1` | done |
 | `HUMAN-VS-AGENT-SPLIT-1` | done |
-| `HOST-CONCURRENCY-FLAKY-1` | **新建**，AC1–AC5 PARTIAL/MET 见卡面（AC6 复核 CHANGES_REQUESTED 已处置），AC6 待重审 |
+| `HOST-CONCURRENCY-FLAKY-1` | **新建**，AC1–AC5 PARTIAL/MET 见卡面（AC6 复核 CHANGES_REQUESTED 已处置），AC6 待重审。
+  **后续（2026-11-16 更新）**：经三轮独立上下文复核后定案 **`closed_with_limitations`** ——
+  AC1–AC6 全部 `<<MET>>`；三轮复核依次 CHANGES_REQUESTED / CHANGES_REQUESTED / **ACCEPTED**；
+  保留 L-1…L-4 四条 limitation（端到端 opt-in 未实跑、`:638` 写入点无直测等），见卡面「AC6 三次复核结论与定案」节 |
 
 ## 本会话发现的真实产品缺陷（非测试问题）
 

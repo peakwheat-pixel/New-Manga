@@ -116,11 +116,13 @@ if (entry.Generation != expectedGeneration) throw new SourceAccessException("SOU
 >    `normalize_identity()` **masked 到 53 位**的值，两侧口径不一致 ⇒ 值 > 2^53 时必然不等
 >    （详见 `root-cause-proven.md`、`st-ino-measured.md`，修复见卡面「根因铁证」与「修复完成」节）。
 >
-> 保留保留结论：**`SOURCE_REGISTRY_BUSY` 的触发条件是「同进程内多线程」（测试线程 vs
+> 保留结论：**`SOURCE_REGISTRY_BUSY` 的触发条件是「同进程内多线程」（测试线程 vs
 > `HostRuntime` 后台 watcher 线程），不是「测试并行」** —— 上一节（`为什么偏偏是
 > Fea11WatchHostRuntimeTests 暴露`）描述的就是这条单测试内的线程竞争，成立。
 
-**这一条需要 AC2（受控复现）才能确认到代码级**，本轮只记录关联性。
+> **⚠️ 下方这句旧收尾已作废（2026-11-16）**：~~`FILE_IDENTITY_CHANGED` 需要 AC2（受控复现）才能
+> 确认到代码级，本轮只记录关联性。~~ 后续实测已把根因确认到行（见 `root-cause-proven.md` 与卡面
+> 「根因铁证」节）：不是并发/时序，而是 raw 64 位 index 与 masked 53 位 comparator 的口径缺口。
 
 ## 修复方向（供 AC4 范围冻结参考，本轮不实施）
 
