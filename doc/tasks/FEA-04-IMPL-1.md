@@ -166,7 +166,7 @@ allowed_paths:
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |
 |---|---|---|---|---|---|
 
-| EV-IMPL1-RETRACT | 撤销记录 | `verification/FEA-04-IMPL-1/RETRACTION.md` | PENDING_SUBMIT | `6c9231988c932cff3b3e6116d1cb5ce15237e59d485c7cfab8bd40413f00e297` | `CANONICAL` |
+| EV-IMPL1-RETRACT | 撤销记录 | `verification/FEA-04-IMPL-1/RETRACTION.md` | 28f146037 | `6c9231988c932cff3b3e6116d1cb5ce15237e59d485c7cfab8bd40413f00e297` | `CANONICAL` |
 
 ## Resource Manifest
 
