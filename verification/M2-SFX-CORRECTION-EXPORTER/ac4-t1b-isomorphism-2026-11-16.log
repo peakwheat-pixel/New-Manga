@@ -1,0 +1,73 @@
+# M2-SFX-CORRECTION-EXPORTER AC4 复核证据（2026-11-16，DSH）
+# head: 0541c921726c2af8ca9f340ea117facab34bb6d7
+# at_utc: 2026-11-16T05:44:27Z
+
+## 原 blocked 理由
+#   「T1b（批量数据生产）产物尚不存在，「与 T1b 产物同构、训练侧零适配」无法验证」
+#   （Lead 裁决：w7 报告 §需裁决 5）
+#   已核实的只是 T1a 格式面：test_manifest_files_are_t1a_format / test_yolo_seg_labels
+
+## 本轮结论：**该 blocked 理由的前提不成立** —— T1b 产物存在于本机，且已**实测对账通过**
+
+### 1) T1b 产物确实存在（本机）
+#   training_data/sfx-v1/manifest.train.json   216280 B   kind=sfx-data-infra/manifest@1
+#   training_data/sfx-v1/manifest.full.json    253363 B
+#   training_data/sfx-v1/sfx-v1/ 下有 assets / backgrounds / fonts / synthetic 四个子目录
+#   样本记录键集合：annotation_status, boxes, created_at, group, image, provenance,
+#                   sample_id, schema_version, split
+
+### 2) 「同构」是**构造性**成立，不是碰巧像
+#   T1b 产物与本导出物都由 sfx_data_infra.atomicio.write_manifest 写、由同一个
+#   SampleRecord.to_dict() 产出；训练侧读取走同一个 load_manifest。
+#   ⇒ 同一套 IO 模块 ⇒ 形状同源；「训练侧零适配」是这套共享 IO 的直接后果。
+
+### 3) 本轮新增的判别力测试
+#   experiments/M2-SFX-CORRECTION-EXPORTER/tests/test_export.py
+#     :: test_manifest_is_structurally_identical_to_the_shared_writer
+#   断言链：
+#     (1) 容器形状 == 共享写入器承诺（kind / schema_version / sample_count / 必备键）；
+#     (2) **每个**导出样本的键集合 == 共享记录类 SampleRecord.to_dict() 的键集合（不是手搓 dict）；
+#     (3) 辅助册同源同构（双册都走 write_manifest）；
+#     (4) **跨产物对账**：若本机存在 T1b 产物，断言 T1b 与导出物的
+#         kind / schema_version / 样本键集合**逐一相等**；不存在则 pytest.skip（不失败）——
+#         因为 training_data/ 被 .gitignore:13 排除，干净克隆里必然没有。
+
+### 4) 变红验证（已做并还原）
+#   往 SampleRecord.to_dict() 注入一个多余键 red_proof_extra：
+#     结果 FAILED，报错原文：
+#       AssertionError: T1b 样本键集合与导出物不相同 ⇒ 训练侧需要适配（AC4 不成立）：
+#         T1b-only=[] exporter-only=['red_proof_extra']
+#   这条失败同时**反证**了原状：T1b-only=[] ⇒ 原状下 T1b 没有导出物缺的键；
+#   还原后 12 passed，git diff 证实产品源码零改动（只有测试文件）。
+
+### 5) 原始 pytest 输出（rc=0）
+============================= test session starts =============================
+platform win32 -- Python 3.14.6, pytest-9.1.1, pluggy-1.6.0 -- C:\Python314\python.exe
+cachedir: .pytest_cache
+rootdir: G:\CODEX\New Manga
+configfile: pytest.ini
+plugins: anyio-4.14.2
+collecting ... collected 12 items
+
+experiments/M2-SFX-CORRECTION-EXPORTER/tests/test_export.py::test_export_exit_shape PASSED [  8%]
+experiments/M2-SFX-CORRECTION-EXPORTER/tests/test_export.py::test_manifest_files_are_t1a_format PASSED [ 16%]
+experiments/M2-SFX-CORRECTION-EXPORTER/tests/test_export.py::test_manifest_is_structurally_identical_to_the_shared_writer PASSED [ 25%]
+experiments/M2-SFX-CORRECTION-EXPORTER/tests/test_export.py::test_yolo_seg_labels PASSED [ 33%]
+experiments/M2-SFX-CORRECTION-EXPORTER/tests/test_export.py::test_yolo_scope_all_includes_auxiliary PASSED [ 41%]
+experiments/M2-SFX-CORRECTION-EXPORTER/tests/test_export.py::test_dataset_yaml_names_order PASSED [ 50%]
+experiments/M2-SFX-CORRECTION-EXPORTER/tests/test_export.py::test_images_copied_per_split PASSED [ 58%]
+experiments/M2-SFX-CORRECTION-EXPORTER/tests/test_export.py::test_ac6_training_set_builder_consumes PASSED [ 66%]
+experiments/M2-SFX-CORRECTION-EXPORTER/tests/test_export.py::test_ac6_builder_refuses_forbidden_splits PASSED [ 75%]
+experiments/M2-SFX-CORRECTION-EXPORTER/tests/test_export.py::test_split_inheritance_from_registry PASSED [ 83%]
+experiments/M2-SFX-CORRECTION-EXPORTER/tests/test_export.py::test_dedup_registry_drops_duplicate_in_export PASSED [ 91%]
+experiments/M2-SFX-CORRECTION-EXPORTER/tests/test_export.py::test_export_deterministic PASSED [100%]
+
+============================= 12 passed in 5.03s ==============================
+
+
+## 诚实边界
+#   - 上表 (4) 的跨产物对账在**本机**执行通过；在**干净克隆**里会自动 skip
+#     （T1b 产物被 .gitignore 排除），那时仍成立的是 (1)-(3) 的构造性证明。
+#     这是刻意设计：不把 gitignored 产物变成硬依赖。
+#   - 「训练侧零适配」的实证来自 (2) 的键集合相等 + 训练侧走同一 load_manifest
+#     （后者由既有 test_manifest_files_are_t1a_format 覆盖），不是靠叙述。

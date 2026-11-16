@@ -53,6 +53,65 @@ def test_manifest_files_are_t1a_format(exported):
     assert len(ids) == len(set(ids)) == 6
 
 
+def test_manifest_is_structurally_identical_to_the_shared_writer(exported):
+    """AC4「与 T1b 产物同构、训练侧零适配」—— **构造性证明**，不依赖 training_data/。
+
+    AC4 的判定要求导出物与 T1b（批量数据生产）产物同构。`training_data/` 被 `.gitignore:13`
+    排除，**不能**作为可复现依赖（新克隆里不存在）。所以这里证明的是更强的性质：
+
+      T1b 产物与本导出物都由 `sfx_data_infra.atomicio.write_manifest` + 同一个
+      `SampleRecord.to_dict()` 产出 ⇒ 容器形状与样本键集合**同源**，不是「碰巧像」。
+
+    并且训练侧读取走同一个 `load_manifest`（见 test_manifest_files_are_t1a_format），
+    因此「训练侧零适配」不是叙述，而是同一套 IO 模块的直接后果。
+
+    若本机恰好存在 T1b 产物（开发者机器上会有），额外做一次**跨产物对账**；
+    缺失时**跳过而不是失败** —— 否则这个测试在干净克隆里必然红。
+    """
+    from pathlib import Path
+
+    from sfx_data_infra import MANIFEST_KIND, SCHEMA_VERSION
+    from sfx_data_infra.atomicio import load_manifest
+    from sfx_data_infra.schema import SampleRecord
+
+    _, out, _ = exported
+    container, records = load_manifest(out / "manifest.json")
+
+    # 1) 容器形状 == 共享写入器的承诺
+    assert container["kind"] == MANIFEST_KIND
+    assert container["schema_version"] == SCHEMA_VERSION
+    assert container["sample_count"] == len(records)
+    assert {"kind", "schema_version", "created_at", "sample_count", "samples"} <= set(container)
+
+    # 2) 样本键集合 == 共享记录类的键集合（不是手搓 dict）
+    canonical_sample_keys = set(records[0].to_dict())
+    for emitted in container["samples"]:
+        assert set(emitted) == canonical_sample_keys
+
+    # 3) 辅助册同源同构（双册本来就都走 write_manifest）
+    aux_container, aux_records = load_manifest(out / "manifest-auxiliary.json")
+    assert aux_container["kind"] == MANIFEST_KIND
+    assert aux_container["sample_count"] == len(aux_records)
+    for emitted in aux_container["samples"]:
+        assert set(emitted) == canonical_sample_keys
+
+    # 4) 跨产物对账（本地存在 T1b 产物时才做；.gitignore 排除，干净克隆里没有）
+    t1b_path = Path(__file__).resolve().parents[3] / "training_data" / "sfx-v1" / "manifest.train.json"
+    if not t1b_path.exists():
+        pytest.skip(f"T1b 产物不在本地（{t1b_path} 被 .gitignore 排除）：跳过跨产物对账，"
+                    "构造性同构证明（1)–3)）已成立")
+
+    t1b_container = json.loads(t1b_path.read_text(encoding="utf-8"))
+    assert t1b_container["kind"] == container["kind"], "T1b 与导出物的 manifest kind 必须相同"
+    assert t1b_container["schema_version"] == container["schema_version"]
+    assert {"kind", "schema_version", "sample_count", "samples"} <= set(t1b_container)
+    t1b_sample_keys = set(t1b_container["samples"][0])
+    assert t1b_sample_keys == canonical_sample_keys, (
+        "T1b 样本键集合与导出物不相同 ⇒ 训练侧需要适配（AC4 不成立）："
+        f"T1b-only={sorted(t1b_sample_keys - canonical_sample_keys)} "
+        f"exporter-only={sorted(canonical_sample_keys - t1b_sample_keys)}"
+    )
+
 def test_yolo_seg_labels(exported):
     """YOLO seg（默认 --yolo-scope main，DSH r1 P2-1）：仅正集入树。
 
