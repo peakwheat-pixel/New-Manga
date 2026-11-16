@@ -320,10 +320,6 @@
       "sha256": "612ec234484bc67bfdca2eb881926aaec347899989107c6210a383fa23f8c096"
     },
     {
-      "path": "routes/__pycache__/typesetting_sample.cpython-314.pyc",
-      "sha256": "6fd170adc23fc34d21123202bb49c6b7eec99eb46fc1af6b31a8f5b4fe3118be"
-    },
-    {
       "path": "routes/_probe_bubble.py",
       "sha256": "5b1bd4d618f886adcfef38640ffd71f32cc3dec4a68593a9777578ef079dcf41"
     },
@@ -988,5 +984,5 @@
       "sha256": "49e8372fd910892b967b1c864457810073023ee4f927b5dd6ce54458cfa73957"
     }
   ],
-  "note": "sha256 = Git blob bytes (LF); the dir is pinned -text so checkout reproduces them"
+  "note": "sha256 = 文件字节；目录已 `-text` 固定（签出即等于 blob）。`routes/__pycache__/typesetting_sample.cpython-314.pyc` 是编译缓存（生成物，非证据），2026-11-17 复核后移入 G:/CODEX/New Manga.workspace/archive/DISPLAY-PERF-DECISION-1-pycache/ 并从清单移除。"
 }

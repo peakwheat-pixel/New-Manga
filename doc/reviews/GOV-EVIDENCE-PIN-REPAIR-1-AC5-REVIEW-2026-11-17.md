@@ -146,3 +146,30 @@ P0：无。P1：P1-1…P1-4。P2：P2-1…P2-5。
 
 因此整卡 AC5 结论为 **REJECTED**；AC4 的“收敛”仅是“证据 pin 口径下 4 条剩余”的部分结论，不能升级为
 “34 卡完整门禁全绿”。本 Review 只读，未 commit/push，未修改除本文件以外的任何文件。
+
+## 第二轮
+
+verdict2: **REJECTED**
+
+本轮对象 `c867363756b1e63f089ff6a9b1dd18ef93737ca4`（含 batch5/batch6 与后续修正）；只读复核，未改其它文件。
+
+| # | 检查 | 结论 | 实测证据 |
+|---|---|---|---|
+| 1 | `Get-BaselineRowEligible` 是否逐字相等 | **PASS（窄归一化仍在）** | `check.ps1:365-380`：`$commitOk = ($baseC -eq $nowC)`，任意非 hex 不再互相相等；仅保留 `''/null/none→-` 的四形态 `$normCommit`（P2-3）。13 条 COMMIT_FORMAT 的 `(见提交)` 在基线/当前均逐字一致。**但** `Test-EvidenceExceptionEligibility`（`check.ps1:120-140`）仍是任意非 hex commit 互等 + 从 sha 单元格抽取 64-hex 后比较，上一轮 P1-3 未修（P1-1）。 |
+| 2 | 原始行空壳行检测 | **PASS（按你给的全 `-` 探针）；实际两行仍残留** | 临时 clone（`c86736375`，未改仓库）在 `FEA-05-WIRE-1` 的 Canonical Evidence 表加 `| - | - | - | - | - | - |` 后，`check.ps1 -TaskPath` 输出 `FAIL: Canonical Evidence 行结构非法：整行为占位符：- | - | - | - | - | -`；raw scan 位于 `check.ps1:1053-1061`，不依赖 `Get-TableRows`。但实际两行 `FEA-05-WIRE-1.md:126` / `FEA-GOV-6.md:67` 是 `| - | - | - | - | - | CANONICAL |`，class 非 `-`，该“全占位”条件不覆盖；巡检仍 FAIL 2（P2-1）。 |
+| 3 | `tools/governance/tests/` 新钩子测试 | **PASS（覆盖名义成立；边界仍缺）** | `test_evidence_exceptions.py` 13 项，含 `test_prose_commit_is_downgraded_only_with_the_exact_text`、`test_multi_digest_cell_requires_the_exact_ordered_list`、`test_all_placeholder_row_is_a_structural_error`；`test_bulk_evidence_manifest.py` 8 项，含未列出/缺文件/摘要不符/路径逃逸/重复/未登记/非 research。实跑两模块：`Ran 21 tests in 470.985s` → OK。**但**没有覆盖“基线 commit 任意非 hex 互等”与“sha 单元格分隔符/原始字节变化”；P1-1 的代码弱化因此未被测试捕获。 |
+| 4 | 33 张有登记项的卡全部 PASS | **PASS（33/33 gate PASS）** | 从 registry 的 card 去重得 33 张，逐一 `check.ps1 -TaskPath`：**0 FAIL**（上轮 16 FAIL 已修）。注意：`P02-NEW-TIME-X6` 的 15 条登记项仍为 `NOT_ENFORCED`（该卡 `superseded`，batch6 log 自述“待裁定”）；巡检仍有 4 FAIL（2 多路径 + 2 空壳），gate PASS 不等于巡检 4 条消失（P2-2）。 |
+| 5 | 不实/陈旧陈述是否更正 | **FAIL** | 已更正：registry `EXC-BATCH6-112/114` 的理由已改为“真实文件是否仍在库中未逐项确认”（不再声称已确认）；batch4 log 第 34 行已更正“34 张全 PASS”为“16 FAIL”。**未更正/新增**：GOV 卡 `:70` 仍称“旧值在本仓无任何字节表示可复现”；handoff `:258` 仍称“真正问题是本仓无任何字节表示能复现它”；handoff `:246` 仍写“33 张仍有 16 FAIL”，与 `:252` “33 PASS/0 FAIL”自相矛盾；`ac3-ev11-supersede` log 仍以 `head: 8db997f94` 与旧锚点 `f1a2e880…/53ce9d55…/5ec365f…` 记录；batch4 log `:19` “只收紧或只对齐”仍与 `Test-EvidenceExceptionEligibility` 的归一化/抽取不符；新 manifest note 称“Git blob bytes … checkout reproduces them”对 9 个 ignored 文件不实（见第 6 项）；batch6 log `:2` head 仍为 `c6efa31b6`、`:20` 仍写 36,949 B（当前 37,044 B）。 |
+| 6 | `EVIDENCE-MANIFEST.json` 边界 | **FAIL（机制边界 PASS；246 条 blob 一致性 FAIL）** | 机制：仅 research（`check.ps1:1259` + `test_non_research_card...`）、门禁自行枚举重算（1292-1304）、精确集合相等（1301-1309）、路径逃逸拒绝（1272-1280）、manifest 自身登记（1312-1321）均 PASS；8 项测试 PASS；`DISPLAY-PERF-DECISION-1` 当前 `check.ps1` PASS (5 warnings)。**但** 246 条中 **237 条与 HEAD blob 字节一致，9 条不在 HEAD**（`routes/__pycache__/typesetting_sample.cpython-314.pyc`、`spike/build/*.log` 等 8 个 build 日志；均被 `.gitignore:1/5` 忽略，`git ls-files` 238、manifest 246）；246/246 仅与当前 worktree 字节一致。`.gitattributes:75` 的 `-text` 只固定 tracked 文件，clean checkout 不会有这 9 个文件 ⇒ `EVIDENCE_MANIFEST_MISSING_FILE`，manifest note 的“blob bytes / checkout reproduces”为 false。 |
+
+### 第二轮 Findings
+
+- **P1-1（AC6 精确性未修）**：`Test-EvidenceExceptionEligibility` 仍把任意非 hex commit 视为相等、并从 sha 单元格抽取摘要比较（`check.ps1:120-140`）；这与裁定 Q1=A/Q2=A“commit 原文逐字、摘要绑定原始单元格字节”不符。13 个新测试只覆盖 hook 的精确文本，未覆盖该弱化，故“13 项通过”不足以证明 AC6。
+- **P1-2（batch6 manifest 不可复现）**：246 条中 9 条无 HEAD blob（ignored 的 pycache/build 日志），manifest note 与 batch6 “任意签出下可复现”的 claim 不实；完整 `DISPLAY` 卡只在当前脏工作区 PASS，clean checkout 会因缺文件失败。建议：删除这 9 条/把文件纳入版本控制，或把 manifest 机制明确限定为“当前工作区快照”并改 note/裁定。
+- **P1-3（不实/陈旧陈述仍存）**：GOV 卡 70、handoff 258、AC3 log 锚点、batch4 log 19、handoff 246 vs 252 矛盾；新增 manifest note 与 batch6 log head/size。registry EXC-BATCH6-112/114 已更正，batch4 log 34 已更正。
+- **P2-1（实际两行未覆盖）**：`FEA-05-WIRE-1:126`、`FEA-GOV-6:67` 的 `CANONICAL` 占位行不被全 `-` raw 检查捕获；巡检仍 FAIL 2，gate PASS。若要按 Q3“保持结构错误”，应把“id/path/commit/sha 全为 `-` 仅 class 非空”也判结构非法。
+- **P2-2（遗留 15+4）**：15 条 P02-NEW-TIME-X6（`superseded`）仍为 NOT_ENFORCED；巡检 4 FAIL（2 多路径 + 2 空壳）仍存在；batch6 log 已自述 15 条待裁定，但 33/33 gate PASS 不能掩盖这两组。
+- **P2-3（`Get-BaselineRowEligible` 窄归一化）**：仍把 `''/null/none` 归一为 `-`；与“逐字相等”仍有差距（当前 13 条 COMMIT_FORMAT 未触发）。
+- **P2-4（metadata 陈旧）**：batch6 log head `c6efa31b6`（实际 batch6 提交 `0e128ea78`，目标 head `c86736375`）、size 36,949 vs 当前 37,044；AC3 log head 8db/旧锚点。
+
+**第二轮结论**：Q2 的 `Get-BaselineRowEligible` 任意非 hex 归一化已修（PASS）；全 `-` 探针与 13+8 测试通过；33 张 gate 全 PASS；registry 2 条理由已更正。但 AC6 例外资格仍保留归一化/摘要抽取（P1-1）、batch6 manifest 9/246 无 blob 且 note 不实（P1-2）、多处不实/陈旧陈述未更正（P1-3），加上实际两行/15 条/4 条巡检遗留（P2）；因此 **AC5 第二轮仍为 REJECTED**，不能判 MET。建议先修 P1-1/P1-2 与 P1-3，再对 clean checkout 重跑 `check.ps1` 与 21 项测试。本 Review 只读，未 commit/push，未修改除本文件以外的任何文件。

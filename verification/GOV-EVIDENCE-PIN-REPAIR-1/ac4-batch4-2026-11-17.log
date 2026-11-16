@@ -16,7 +16,7 @@
 # ⑤ FEA-05-PORT-1 / FEA-05-WIRE-1 / FEA-GOV-6 的 evidence_dir 文件未登记：按当前 blob 追加 EV-INTAKE-*/EV-GOV6-DOC-* 行
 #    （新行，append-only 允许），commit 取该文件最后一次变更的提交。
 
-## 3. 本轮修掉的实现缺陷（都在门禁/工具侧，且只收紧或只对齐）
+## 3. 本轮修掉的实现缺陷（都在门禁/工具侧，且只收紧或只对齐（复核后更正：当时还包含 commit/sha 归一化与空壳行过滤，后者已单独修正））
 # ① 例外资格校验（Test-EvidenceExceptionEligibility）未做规范化：散文 commit 与 `-` 被当成不同值 ⇒ 条目一律不合格；
 #    现按「非十六进制 commit 一律视为同一事实」比较，同时支持有序摘要列表；
 # ② 例外查找的 sha 键未按「有序列表」拼接 ⇒ 多摘要行永不命中；已对齐；

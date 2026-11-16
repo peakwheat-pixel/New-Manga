@@ -67,7 +67,7 @@ DSH 按 Q3 实现巡检后发现这不是孤例，因此本卡目标定为：
 - [x] **AC2 全仓基线**：给出 canonical 行数、FAIL 分类计数、受影响卡数，并**逐类抽样复核**至少 3 条
   （确认真实失效 vs 工具误报）。 <<MET>>
 - [ ] **AC3 EV-11 修复**（裁定 Q1/Q2）：append-only 追加 `EV-11-supersede`（有效 commit + 64 位 sha256 且等于
-  `git cat-file blob <commit>:<path>`）+ 表下说明「旧值在本仓无任何字节表示可复现，已被取代」；
+  `git cat-file blob <commit>:<path>`）+ 表下说明「旧值在原行 commit 列缺记载；记录值已核实可在 5cbec0e8 下复现，已被取代」；
   原行字节逐字不变；`check.ps1` 对该卡 PASS。
   <<PARTIAL: 前四款已完成（EV-11/12/13 三条 supersede 行 + 说明、0 删除、工具复核 SUPERSEDED=3）；
   唯「check.ps1 对该卡 PASS」不可达——该卡在单卡校验下**改动前就已 7 errors**（5 条 SHA 不匹配 + 2 条 Resource manifest 为「—」），

@@ -119,19 +119,22 @@ function Test-EvidenceExceptionEligibility($Entry) {
                 $rowLine = [regex]::Match($cardText, "(?m)^\|\s*$escape\s*\|.*$")
                 if ($rowLine.Success) {
                     $cells = @($rowLine.Value.Trim().Trim('|').Split('|') | ForEach-Object { $_.Trim().Trim('`').Trim() })
-                    $hexRe = '^[0-9a-fA-F]{7,40}$'
+                    # Ruling condition 4 + review P1-1: the comparison is VERBATIM.  The
+                    # only tolerated difference is an empty commit cell vs `-` (both mean
+                    # "no commit recorded"); prose is compared as prose, and the digest cell
+                    # must equal the registered list exactly (same values, same order).
                     $baseCommit = ([string]$cells[3]).Trim()
                     $entryCommit = ([string]$Entry.commit).Trim()
-                    # A non-hex commit is a representation of "no usable commit": `-`,
-                    # empty and prose forms are all the same fact for eligibility.
-                    $commitOk = ($baseCommit -eq $entryCommit) -or
-                        (($baseCommit -notmatch $hexRe) -and ($entryCommit -notmatch $hexRe))
-                    $shaOk = $false
-                    $listed = @($Entry.sha256 | ForEach-Object { ([string]$_).Trim().ToLowerInvariant() })
-                    if ($listed.Count -gt 0) {
-                        $cellDigests = @([regex]::Matches([string]$cells[4], '[0-9a-fA-F]{64}') | ForEach-Object { $_.Value.ToLowerInvariant() })
-                        $shaOk = (($listed -join ',') -eq ($cellDigests -join ','))
-                    }
+                    if ($baseCommit -eq '' ) { $baseCommit = '-' }
+                    if ($entryCommit -eq '') { $entryCommit = '-' }
+                    $commitOk = ($baseCommit -eq $entryCommit)
+                    $entryList = @($Entry.sha256 | ForEach-Object { ([string]$_).Trim().ToLowerInvariant() })
+                    # The digest cell must carry exactly the registered ordered digest list.
+                    # A cell may also embed prose/paths (legacy multi-file rows), so the
+                    # comparison is on the ordered list actually present in the cell; the
+                    # order and the values both have to match, and nothing else is folded.
+                    $cellDigests = @([regex]::Matches([string]$cells[4], '[0-9a-fA-F]{64}') | ForEach-Object { $_.Value.ToLowerInvariant() })
+                    $shaOk = ($entryList.Count -gt 0) -and (($entryList -join ',') -eq ($cellDigests -join ','))
                     if ($cells.Count -ge 6 -and
                         $cells[2] -eq $Entry.path -and
                         $commitOk -and
