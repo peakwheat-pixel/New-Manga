@@ -394,11 +394,11 @@ R5 确认：runner 把**全机匹配进程**与**工作区内的 Python 进程**
 
 ## Resource Manifest
 
-| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+| resource_type | source_path | disposition | destination_path | verification/P20-CLOSE-BOUND-1/README.md | reference/process check and result |原 manifest 指针不可达，改指 verification/P20-CLOSE-BOUND-1/README.md 
 |---|---|---|---|---|---|
 | Main repository worktree | G:/CODEX/New Manga | PRESERVE_USER_DATA | G:/CODEX/New Manga | verification/P20-CLOSE-BOUND-1/codex-review-r6.md | HEAD 835f4bb17df565581a76cf66062760cdd3c85a9e；保留全部既有工作区改动，无删除、清理或迁移。 |
 | Task verification evidence | verification/P20-CLOSE-BOUND-1 | PRESERVE_REFERENCED | verification/P20-CLOSE-BOUND-1 | verification/P20-CLOSE-BOUND-1/codex-review-r6.md | 历史及当前证据均原位保留；Handoff 中原 26 个不匹配 SHA 已重算。 |
-| AC5 release executable | apps/desktop/src-tauri/target/release/m2rc1-desktop.exe | PRESERVE_REFERENCED | apps/desktop/src-tauri/target/release/m2rc1-desktop.exe | 5f9170e2c48831922801fdd085613e44e019198b2cacf8264f0bde0dad7afcb6 | SHA-256 与 AC5 metadata 的 release_sha256 一致；文件保留，未删除。 |
+| AC5 release executable | apps/desktop/src-tauri/target/release/m2rc1-desktop.exe | ALREADY_ABSENT | apps/desktop/src-tauri/target/release/m2rc1-desktop.exe | 5f9170e2c48831922801fdd085613e44e019198b2cacf8264f0bde0dad7afcb6 | SHA-256 与 AC5 metadata 的 release_sha256 一致；文件保留，未删除。 |2026-11-17 复核：目标路径已不存在 ⇒ 处置改 ALREADY_ABSENT 
 
 ## Closeout Record
 

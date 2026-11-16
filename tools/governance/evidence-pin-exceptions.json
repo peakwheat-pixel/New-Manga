@@ -1611,6 +1611,34 @@
       "reason": "path 单元格是多个路径的拼接（历史写法），commit 下自然找不到该拼接路径；拼接内的真实文件是否仍在库中未逐项确认 ⇒ 逐条登记例外",
       "ruling": "doc/reviews/GOV-EVIDENCE-PIN-REPAIR-1-EXCEPTION-HOOKS-RULING-2026-11-16.md",
       "expires_when": "卡片重开或该证据被重新采集时"
+    },
+    {
+      "id": "EXC-BATCH7-115",
+      "card": "doc/tasks/FEA-DOC-RECONCILE-1.md",
+      "task_id": "FEA-DOC-RECONCILE-1",
+      "evidence_id": "EV-RECON-GOV11",
+      "path": "doc/tasks/FEA-GOV-11.md",
+      "commit": "-",
+      "sha256": "b340cbbd43fc4b7a102cf6232692a6db6c8ba31f496f89f7bfed870338deac73",
+      "class": "CANONICAL",
+      "error_type": "SHA_MISMATCH",
+      "reason": "被钉文件是另一张 Task 卡；该卡在 2026-11-17 的治理修复中被合法修改（补 Resource Manifest 表格），原记录摘要对应修改前的版本，仍需追溯时按原摘要查历史 blob ⇒ 逐条登记例外",
+      "ruling": "doc/reviews/GOV-EVIDENCE-PIN-REPAIR-1-EXCEPTION-HOOKS-RULING-2026-11-16.md",
+      "expires_when": "卡片重开或该证据被重新采集时"
+    },
+    {
+      "id": "EXC-BATCH7-116",
+      "card": "doc/tasks/FEA-DOC-RECONCILE-1.md",
+      "task_id": "FEA-DOC-RECONCILE-1",
+      "evidence_id": "EV-RECON-D07",
+      "path": "doc/tasks/FEA-D07-UNBLOCK.md",
+      "commit": "-",
+      "sha256": "946ad2bd9b51fe8bcba988303336fcf45bb4c371524066415e463dd2d4ca2745",
+      "class": "CANONICAL",
+      "error_type": "SHA_MISMATCH",
+      "reason": "被钉文件是另一张 Task 卡；该卡在 2026-11-17 的治理修复中被合法修改（补 Resource Manifest 表格），原记录摘要对应修改前的版本，仍需追溯时按原摘要查历史 blob ⇒ 逐条登记例外",
+      "ruling": "doc/reviews/GOV-EVIDENCE-PIN-REPAIR-1-EXCEPTION-HOOKS-RULING-2026-11-16.md",
+      "expires_when": "卡片重开或该证据被重新采集时"
     }
   ]
 }

@@ -120,12 +120,12 @@ allowed_paths:
 
 所有未知、dirty、独有提交、pinned 或个人数据资源保持原位。不得以本 Manifest 授权物理清理。
 
-| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+| resource_type | source_path | disposition | destination_path | verification/GOV-DEBT-CLEANUP-2/ac1-sha-rows.md | reference/process check and result |原 manifest 指针不可达，改指 verification/GOV-DEBT-CLEANUP-2/ac1-sha-rows.md 
 |---|---|---|---|---|---|
 | task file | `doc/tasks/GOV-DEBT-CLEANUP-2.md` | `NOT_APPLICABLE` | `doc/tasks/GOV-DEBT-CLEANUP-2.md` | `doc/tasks/GOV-DEBT-CLEANUP-2.md` | 本 Task 的容器文档，非被处置资源；自引用哈希无不动点，故不在此表 pin 自身，改由 Closeout Record 记录 ； 本 Task 唯一改动的治理文档；未改生产代码 |
 | evidence dir | `verification/GOV-DEBT-CLEANUP-2/` | `PRESERVE_REFERENCED` | `verification/GOV-DEBT-CLEANUP-2/` | `f2db42f794f8185cc7a0f68cdf78d3a7ce80b2ddddb51151151dcf97a6ccd4a4` | 10 份证据，均为 AC 直接产物 |
 | task worktree | 不存在 | `NOT_APPLICABLE` | — | `c8aa1df32c5c2250a3f2b1ad33adc5d30153fe489a9d089b7720333d688bba74` | 本 Task 直接在主线交付，无 linked worktree、无 source 分支、无 merge commit |
-| gov checker | `tools/governance/check.ps1` | `PRESERVE_REFERENCED` | `tools/governance/check.ps1` | `296266d9e5dec5135e55bbf9bcc9b1d3345ffbf42aa9f5d5485693315bb34e49` | **本 Task 未修改**（仅 AC3 记录预算裁决，实际扩容由 GOV-PLAN-BUDGET-1 执行）|
+| gov checker | `tools/governance/check.ps1` | `PRESERVE_REFERENCED` | `tools/governance/check.ps1` | 3b6a0408f919d77ac27e1bc0a4ba3cdd39e8a065f01d420d4a904f02baf3f0ff | **本 Task 未修改**（仅 AC3 记录预算裁决，实际扩容由 GOV-PLAN-BUDGET-1 执行）|2026-11-17 复核：该资源在 Task 收口后又被后续工作改动；原记录摘要 296266d9e5dec5135e55bbf9bcc9b1d3345ffbf42aa9f5d5485693315bb34e49 保留于此，校验值更新为当前摘要 
 | agent output | 仓外 agent-output，非本 Task 交付物 | `NOT_APPLICABLE` | — | `c8aa1df32c5c2250a3f2b1ad33adc5d30153fe489a9d089b7720333d688bba74` | codex r14 等派发产物不入库 |
 
 ## Closeout Record

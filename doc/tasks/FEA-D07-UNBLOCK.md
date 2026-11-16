@@ -84,6 +84,9 @@ allowed_paths:
 - 构建产物：NOT_APPLICABLE
 - 资源处置：NOT_APPLICABLE
 
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| doc-only | — | NOT_APPLICABLE | — | — | 本卡只改仓库内文档/代码，未创建仓外 worktree、task-env、临时目录或用户数据；2026-11-17 补登表格 |
 ## Closeout Record
 
 - 待关闭时填写。

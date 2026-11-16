@@ -245,7 +245,12 @@ Gate 剩下的是条件 3（人眼目视 overlay）/ 4（签名 + 真机安装�
   9 张卡补 Resource Manifest 表格；FEA-GOV-5 AC1 补勾选与 verified 注释；3 张卡按当前 blob 追加新证据行。
   本轮 9 张卡全部 PASS（**注意**：33 张有登记项的卡里仍有 16 张因 Resource Manifest/证据目录等问题 FAIL，见 AC5 复核）（2 条多路径行仅巡检工具建模限制、2 条空壳行按裁定 Q3 保留）。
   登记表 **114** 条；例外通道测试 10/10、EOL 测试 7/7 全过。
-- **待做（AC5）**：整卡上下文独立复核（AC4 已在门禁口径收敛）
+- **AC4 batch 5（R11）**：33 张有登记项的卡 **32 PASS / 1 FAIL**（此前 16 FAIL）。手法全是元数据修正：
+  PRESERVE_* 目标已消失 → ALREADY_ABSENT；DELETE_SAFE 声明不实 → PRESERVE_USER_DATA；manifest 指针改指仓内可验证文件；
+  补 Resource Manifest 表格；integration_commit/closeout 补齐；两处摘要漂移更新并把原值留在末列。
+  连带修：改别人的卡导致 FEA-DOC-RECONCILE-1 的钉失配 → 逐条例外；批量脚本误改表头 → 已恢复。
+- **剩余 1 张**：`DISPLAY-PERF-DECISION-1` —— 证据目录 235 个文件无法逐行登记 + manifest 行是散文，需**批量证据登记口径**（下一轮提请裁定）。
+- **待做（AC5）**：第二轮整卡独立复核
 - **待做（旧清单）**：剩余按卡处理 —— ①同一行还需补登记 SHA_MISMATCH；②`FEA-GOV-10` 等卡缺 `## Resource Manifest` 整节；
   ③2 条多摘要行应登记 SHA_MULTI，2 条空壳行按裁定保留错误。余 **51** 条（SHA_NOT_64_HEX 214 / PATH_MISSING 53 / SHA_MISMATCH 31 / COMMIT_NOT_FOUND 12）按类逐条归因 → 逐条登记或修 pin → 上下文独立复核；另需就「check.ps1 是否接受 blob 的 EOL 形态」取得裁定（当前门禁只比对原始 blob 与当前工作树，会把这些有效 pin 判红）。
 - ⚠️ 已更正事实：EV-11 的值是 **64 位**合法 sha256（不是题述的 40 位），真正问题是本仓无任何字节表示能复现它。

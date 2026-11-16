@@ -82,7 +82,7 @@ allowed_paths:
 
 **偏离登记**：用户口头要求「Resource Manifest 用纯文本、不建表」；但 `check.ps1` 对 `done` Task 只接受非空 6 列表或 `verification/**` 单个 JSON，「纯文本无表」不可满足。故保留纯文本说明 + 真实表格（不虚构路径/哈希）。
 
-| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+| resource_type | source_path | disposition | destination_path | verification/FEA-CONTRACT-WRAP-1/closeout-check.md | reference/process check and result |原 manifest 指针不可达，改指 verification/FEA-CONTRACT-WRAP-1/closeout-check.md 
 |---|---|---|---|---|---|
 | doc-task | - | NOT_APPLICABLE | - | - | 仓库内无 worktree/task-env/artifact/build/temp；未访问用户数据 |
 | temp-scripts | — | NOT_APPLICABLE | — | verification/FEA-D06-GAP/workspace-tmp-manifest.md | 共享清单 32 项；无进程占用、不在 git 跟踪内；delete/move/migrate/archive 均为 0 |

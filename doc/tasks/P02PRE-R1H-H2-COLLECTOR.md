@@ -284,7 +284,7 @@ Codex 在 detached linked worktree G:/CODEX/New Manga.workspace/worktrees/P02PRE
 | r7-integration-selftest-stderr | R7 integration pure selftest stderr | G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-H2-COLLECTOR/repair-r7/integration-check/selftest.stderr.log | - | e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 | SOURCE_PIN |
 ## Resource Manifest
 
-| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+| resource_type | source_path | disposition | destination_path | verification/P02PRE-R1H-H2-COLLECTOR/checkpoint.md | reference/process check and result |原 manifest 指针不可达，改指 verification/P02PRE-R1H-H2-COLLECTOR/checkpoint.md 
 |---|---|---|---|---|---|
 | ZCode source worktree | G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR | ALREADY_ABSENT | G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR | verification/P02PRE-R1H-H2-COLLECTOR/checkpoint.md | Interrupted Owner's uncommitted patch remains in this source worktree; preserved without cleanup. |；2026-11-16 复核：该外部目录已随 worktree/临时目录清理，处置改 ALREADY_ABSENT；原外仓 manifest 指针不可达，改指本卡 checkpoint 
 | Antigravity Owner worktree | G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3 | ALREADY_ABSENT | G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-H2-COLLECTOR-ANTIGRAVITY-R3 | verification/P02PRE-R1H-H2-COLLECTOR/checkpoint.md | Clean at docs head c763efa27db0f10949a52416f1374e88173a31e2; cited by R7 review and H2-RUN. |；2026-11-16 复核：该外部目录已随 worktree/临时目录清理，处置改 ALREADY_ABSENT；原外仓 manifest 指针不可达，改指本卡 checkpoint 

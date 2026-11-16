@@ -110,7 +110,7 @@ python tools/governance/tests/run-<新用例>.py
 
 交付时逐项登记；新增夹具须证明写在临时目录。
 
-| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+| resource_type | source_path | disposition | destination_path | verification/GOV-AC-GATE-1/ac1-ac4-protocol-and-gate.md | reference/process check and result |原 manifest 指针不可达，改指 verification/GOV-AC-GATE-1/ac1-ac4-protocol-and-gate.md 
 |---|---|---|---|---|---|
 | worktree | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-AC-GATE-1.md` | 本 Task 只改协议、检查器与测试 |
 | task-env | — | `NOT_APPLICABLE` | — | `doc/tasks/GOV-AC-GATE-1.md` | 本 Task 只改协议、检查器与测试 |

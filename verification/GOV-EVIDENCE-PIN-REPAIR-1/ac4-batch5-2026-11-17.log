@@ -1,0 +1,30 @@
+# GOV-EVIDENCE-PIN-REPAIR-1 · AC4 batch 5 证据（16 张卡的 Resource/元数据缺陷 → 1 张剩余）
+# head: dc96a726b
+# at_utc: 2026-11-16T17:33:13Z
+# os: Windows 10.0.26200 ; PowerShell 7.6.8 ; Python 3.14.6
+
+## 1. 处置手法（全是元数据修正，未改任何证据行字节、未改历史结论）
+# ① `Resource 最终路径未验证`（14 条，8 张卡）：目标路径已不存在但处置仍是 PRESERVE_* ⇒ 逐行改 ALREADY_ABSENT 并在末列写复核说明；
+# ② `DELETE_SAFE 来源仍存在`（3 条）：声明与实际相反 ⇒ 改 PRESERVE_USER_DATA；
+# ③ `Resource manifest 不存在`（4 条）：manifest 单元格是散文或外仓路径 ⇒ 改指仓内可验证的清单/证据文件，原指针写进末列；
+# ④ `必须逐项填写 Resource Manifest`（4 张卡）：补标准表格；P16-C1 另补一行可验证的 resource-manifest.json 行（原 worktree 已清理）；
+# ⑤ `integration_commit` / `resource_closeout_status`（DISPLAY 卡）：null/pending ⇒ 填真实提交与 complete；
+# ⑥ 两处 Resource 摘要漂移（GOV-DEBT-CLEANUP-2 钉 check.ps1、P02PRE-R1H-P2-1 钉用户 workspace.json）：
+#    文件在本轮被改动 ⇒ 更新校验值，**原摘要写进末列保留**（不掩盖历史值）。
+
+## 2. 本轮自己造成的连带问题（已修）
+# 我改 FEA-GOV-11 / FEA-D07-UNBLOCK 两张卡时，FEA-DOC-RECONCILE-1 里钉这两份文件的证据行随之失配 ⇒
+# 逐条登记 SHA_MISMATCH 例外（2 条，理由写明是「被钉文件在本轮被合法修改」）；
+# 另外我的批量脚本误把 FEA-DOC-RECONCILE-1 的表头当成数据行改写，已恢复表头原文。
+
+## 3. 实测
+# 33 张有登记项的卡：**32 PASS / 1 FAIL**（此前 16 FAIL）
+# 剩余 DISPLAY-PERF-DECISION-1（2 errors）：
+#   · `DONE evidence_dir 含未登记文件`：该卡证据目录有 235 个文件，逐行登记不现实；
+#   · `必须逐项填写 Resource Manifest`：其 manifest 行的 source 列是说明性散文（非路径），解析器不接受。
+#   ⇒ 需要一条**批量证据登记**口径（例如允许证据目录附带 manifest 文件代替逐行登记），下一轮提请裁定。
+# 全局 check.ps1 PASS(3w)；登记表 116 条。
+
+## 4. 遗留
+# · DISPLAY-PERF-DECISION-1 的两个错误（需裁定）；
+# · AC5 需要第二轮独立复核。

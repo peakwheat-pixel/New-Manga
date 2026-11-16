@@ -109,10 +109,10 @@ H1 v2 的 15 项 source references 中，2 项只保留可复核的 status span�
 
 ## Resource Manifest
 
-| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+| resource_type | source_path | disposition | destination_path | verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/checkpoint.md | reference/process check and result |原 manifest 指针不可达，改指 verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/checkpoint.md 
 |---|---|---|---|---|---|
 | Codex integration worktree | G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE-INTEGRATION | DELETE_SAFE | - | verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/resource-closeout-r2.json | Removed with ordinary git worktree remove after D13 reachability and refreshed inventory checks; no force or prune; integration branch ref retained. |
-| task worktree | G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE | verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/resource-closeout-r2.json | Preserved at the exact DSH R2 workspace path; Task branch and all integration commits retained; clean after closeout. |
+| task worktree | G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE | ALREADY_ABSENT | G:/CODEX/New Manga.workspace/worktrees/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE | verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/resource-closeout-r2.json | Preserved at the exact DSH R2 workspace path; Task branch and all integration commits retained; clean after closeout. |2026-11-17 复核：目标路径已不存在 ⇒ 处置改 ALREADY_ABSENT 
 | Codex home candidate paths | C:/Users/49745/.codex | PRESERVE_USER_DATA | C:/Users/49745/.codex | verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/store-inventory-r1.json | 87 immediate-child names/metadata only; no candidate path; source content and credentials untouched. |
 | task-env | NOT_APPLICABLE | NOT_APPLICABLE | - | - | none planned |
 | dataset/model/test-material | NOT_APPLICABLE | NOT_APPLICABLE | - | - | none planned |
@@ -121,7 +121,7 @@ H1 v2 的 15 项 source references 中，2 项只保留可复核的 status span�
 | agent-output | G:/CODEX/New Manga.workspace/agent-output/codex/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE | DELETE_SAFE | - | verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/resource-closeout-r2.json | Removed after all 9 files (125,739 B) matched their recorded size and SHA-256. |
 | DSH reviewer session R1 | C:/Users/49745/.dsh/sessions/--G-CODEX-New~0020Manga--/session-0d8247ab-4125-4b25-8212-bdfbb049e58b | PRESERVE_USER_DATA | C:/Users/49745/.dsh/sessions/--G-CODEX-New~0020Manga--/session-0d8247ab-4125-4b25-8212-bdfbb049e58b | verification/P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE/resource-closeout-r2.json | Session file hash verified; mounted registration and transcript preserved. |
 | DSH reviewer session R2 | C:/Users/49745/.dsh/sessions/--G-CODEX-New~0020Manga.workspace-worktrees-P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE--/session-1a2300e3-122f-4e74-80b3-7d74dbb44852/session.v4.jsonl.zstd | PRESERVE_USER_DATA | C:/Users/49745/.dsh/sessions/--G-CODEX-New~0020Manga.workspace-worktrees-P02PRE-R1H-P2-1-EXTERNAL-HARNESS-TRACE--/session-1a2300e3-122f-4e74-80b3-7d74dbb44852/session.v4.jsonl.zstd | 2BD1AB41AE4CA85E4472C02859AEC81D145D20A26D67247AA0F80F907EE2627A | Workspace id 601ad288621a414292a148020d7f9f6b; 147,166-byte transcript preserved and hash verified. |
-| DSH workspace registration | C:/Users/49745/.dsh/storages/workspace.json | PRESERVE_USER_DATA | C:/Users/49745/.dsh/storages/workspace.json | 070CD7ED3154316528D2946591D55DE43C2CF5998DBC35B67DA3796666D41865 | R1/R2 sessions remain registered; registry preserved and hash verified. |
+| DSH workspace registration | C:/Users/49745/.dsh/storages/workspace.json | PRESERVE_USER_DATA | C:/Users/49745/.dsh/storages/workspace.json | a8775bdbd1b5a2063a46232aeafa24405932ce6a292029cff42163ded963e8b0 | R1/R2 sessions remain registered; registry preserved and hash verified. |2026-11-17 复核：该资源在 Task 收口后又被后续工作改动；原记录摘要 070CD7ED3154316528D2946591D55DE43C2CF5998DBC35B67DA3796666D41865 保留于此，校验值更新为当前摘要 
 | exchange | NOT_APPLICABLE | NOT_APPLICABLE | - | - | no exchange planned |
 
 ## Closeout Record

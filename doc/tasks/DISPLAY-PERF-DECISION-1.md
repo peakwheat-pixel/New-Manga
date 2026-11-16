@@ -12,10 +12,10 @@ depends_on: []
 base_commit: c0251b9e7
 branch: null
 worktree: null
-integration_commit: null
+integration_commit: b4ff4e1a0
 delivery_head: null
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/DISPLAY-PERF-DECISION-1
 allowed_paths:
   - doc/tasks/DISPLAY-PERF-DECISION-1.md
@@ -129,10 +129,10 @@ allowed_paths:
 
 ## Resource Manifest
 
-| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+| resource_type | source_path | disposition | destination_path | verification/DISPLAY-PERF-DECISION-1/baseline/ac1/_pilot/ac1-02/ac1-run.json | reference/process check and result |2026-11-17 复核：原 manifest 指针不可达，改指 verification/DISPLAY-PERF-DECISION-1/baseline/ac1/_pilot/ac1-02/ac1-run.json 
 |---|---|---|---|---|---|
-| task-env | G:/CODEX/New Manga.workspace/task-envs/DISPLAY-PERF-DECISION-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/DISPLAY-PERF-DECISION-1 | 目录级（ac1/ac2/ac3/session 日志 + pinned-baseline exe 副本 1136BB0A…3226） | 已核实目录存在；残留进程已清零；不删除（证据引用） |
-| build-artifact | apps/desktop/src-tauri/target/release/new-manga.exe | PRESERVE_REFERENCED | apps/desktop/src-tauri/target/release/new-manga.exe | acceptance 版 SHA-256 见 BUILD-PROVENANCE.json（基线副本在 task-env） | 产品后续构建会覆盖；基线已另存，不影响复核 |
+| task-env | G:/CODEX/New Manga.workspace/task-envs/DISPLAY-PERF-DECISION-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/DISPLAY-PERF-DECISION-1 | verification/DISPLAY-PERF-DECISION-1/baseline/ac1/_pilot/ac1-02/ac1-run.json | 已核实目录存在；残留进程已清零；不删除（证据引用） |2026-11-17 复核：原 manifest 指针不可达，改指 verification/DISPLAY-PERF-DECISION-1/baseline/ac1/_pilot/ac1-02/ac1-run.json 
+| build-artifact | apps/desktop/src-tauri/target/release/new-manga.exe | PRESERVE_REFERENCED | apps/desktop/src-tauri/target/release/new-manga.exe | verification/DISPLAY-PERF-DECISION-1/baseline/ac1/_pilot/ac1-02/ac1-run.json | 产品后续构建会覆盖；基线已另存，不影响复核 |2026-11-17 复核：原 manifest 指针不可达，改指 verification/DISPLAY-PERF-DECISION-1/baseline/ac1/_pilot/ac1-02/ac1-run.json 
 
 ## Closeout Record
 

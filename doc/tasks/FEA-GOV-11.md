@@ -77,6 +77,9 @@ FEA-GOV-10 完成：**11 份已起草契约全部 `approved`**（C-01b/C-02/C-03
 
 治理 Task：无 worktree、无临时产物；资源处置在收口时登记。
 
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| doc-only | — | NOT_APPLICABLE | — | — | 本卡只改仓库内文档/代码，未创建仓外 worktree、task-env、临时目录或用户数据；2026-11-17 补登表格 |
 ## Closeout Record
 
 - Closeout date / DSH：待关闭时填写。
