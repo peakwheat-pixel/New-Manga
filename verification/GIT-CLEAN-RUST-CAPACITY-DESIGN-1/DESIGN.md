@@ -142,3 +142,25 @@ worker 必须在「kill child（pipe 断）+ `CancelSynchronousIo` + `CancelIoEx
 ---
 
 **推荐下一步**：本设计正文交 DSH 独审（Codex 冻结本 Task 新 head + Appointment）；独审通过后由 Codex 另冻实施 Task 承载 L1 对照实验与 R2-F02..05 收紧，实测数据回填后再裁定 AC3 口径。无需我方再执行其他操作。
+
+---
+
+## DSH 集成附记（2026-11-17）：独立复核判 **BLOCKED**，需修订后重审
+
+复核报告：`doc/reviews/GIT-CLEAN-RUST-CAPACITY-DESIGN-1-INDEPENDENT-REVIEW-2026-11-17.md`
+（复核者：上下文独立子 agent `design-reviewer`，未参与设计）。**verdict: BLOCKED，P1=4 / P2=6**。
+
+必须在下一版 DESIGN 中修正的 4 条 P1（原文摘要，括注 DSH 核对结论）：
+
+1. **AC1 的“唯一 track 入口（3980/4115）”不完整** —— 漏掉 `4004/4139` 两条 **reaper 线程 spawn 失败**的 track 路径。
+   因此“32 饱和结构性不可达”的排除表不是逐分支成立；需把该分支作为 F5 列入并说明可构造性。
+2. **R2-F04 的断言点不存在** —— 要求断言 `multichannel_stress_tests.rs:797` 的 `threads_spawned/threads_joined`，
+   但该函数只有常量 `20*2`，修订**不可编译**；需改为实际可得的账本或先引入账本变量。
+3. **AC2-L1 的 B 孙进程清理不可执行** —— B 由 sidecar 再派生，没有 PID 发现通路，
+   `taskkill /F /PID` 无从下手；现有 120s/30s 循环只覆盖 A 侧 worker。
+4. **R2-F03 测试 a 的账本断言位置错误** —— 按字面在 guard 隐式 drop 前执行，账本恒为 0；
+   需显式 drop + per-test 账本，断言才有意义。
+
+**结论**：本设计当前**不可释放**；卡片 `GIT-CLEAN-RUST-CAPACITY-DESIGN-1` 保持 `ready`，不集成、不实施。
+下一版由 ZCode 修订后重新送独立复核（不得自审）。
+
