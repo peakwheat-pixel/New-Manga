@@ -11,6 +11,126 @@ $warnings = [System.Collections.Generic.List[string]]::new()
 function Add-Error([string]$Message) { $script:errors.Add($Message) }
 function Add-Warning([string]$Message) { $script:warnings.Add($Message) }
 
+$script:evidenceExceptions = @()
+$script:evidenceExceptionIndex = @{}
+$script:evidenceExceptionEligibility = @{}
+$script:evidenceExceptionBaseline = $null
+
+# Historical-pin exceptions (Codex ruling Q1=B, doc/reviews/GOV-EVIDENCE-PIN-REPAIR-1-GATE-RULING-2026-11-16.md).
+# A row may only be downgraded to a warning when the registry entry matches the row on EVERY
+# field AND the row provably existed, unchanged, in a terminal card at the frozen baseline.
+function Initialize-EvidenceExceptions([string]$RegistryPath) {
+    if (-not (Test-Path -LiteralPath $RegistryPath -PathType Leaf)) { return }
+    try { $doc = (Get-Content -LiteralPath $RegistryPath -Raw) | ConvertFrom-Json }
+    catch { Add-Error 'EVIDENCE_EXCEPTION_REGISTRY_INVALID: 例外登记表不是合法 JSON。'; return }
+    $required = @('schema_version', 'eligibility_baseline', 'entries')
+    $names = @($doc.PSObject.Properties.Name)
+    foreach ($k in $required) {
+        if ($names -notcontains $k) { Add-Error "EVIDENCE_EXCEPTION_REGISTRY_INVALID: 缺少字段 $k"; return }
+    }
+    $extraTop = @($names | Where-Object { $required -notcontains $_ })
+    if ($extraTop.Count -gt 0) { Add-Error "EVIDENCE_EXCEPTION_REGISTRY_INVALID: 未登记字段 $($extraTop -join ',')"; return }
+    if ([string]$doc.schema_version -ne '1') { Add-Error 'EVIDENCE_EXCEPTION_REGISTRY_INVALID: schema_version 必须为 1'; return }
+    $baseline = [string]$doc.eligibility_baseline
+    if ($baseline -notmatch '^[0-9a-f]{40}$') {
+        Add-Error "EVIDENCE_EXCEPTION_BASELINE_INVALID: 资格基线必须是完整 40 位 commit：$baseline"; return
+    }
+    & git -C $repoRoot cat-file -e "${baseline}^{commit}" 2>$null
+    if ($LASTEXITCODE -ne 0) {
+        Add-Error "EVIDENCE_EXCEPTION_BASELINE_UNRESOLVED: 资格基线在本仓不可解析：$baseline"; return
+    }
+    $script:evidenceExceptionBaseline = $baseline
+    $entryKeys = @('id', 'card', 'task_id', 'evidence_id', 'path', 'commit', 'sha256', 'class',
+                   'error_type', 'reason', 'ruling', 'expires_when')
+    $allowedTypes = @('SHA_MISMATCH', 'PATH_MISSING', 'COMMIT_PATH_MISSING')
+    $seenIds = @{}
+    foreach ($e in @($doc.entries)) {
+        $enames = @($e.PSObject.Properties.Name)
+        $missing = @($entryKeys | Where-Object { $enames -notcontains $_ })
+        $extra = @($enames | Where-Object { $entryKeys -notcontains $_ })
+        if ($missing.Count -gt 0 -or $extra.Count -gt 0) {
+            Add-Error "EVIDENCE_EXCEPTION_SCHEMA: 条目字段必须恰为 $($entryKeys -join ',')：$($e.id)"
+            continue
+        }
+        if ($allowedTypes -notcontains [string]$e.error_type) {
+            Add-Error "EVIDENCE_EXCEPTION_ERROR_TYPE: 不允许的登记错误类型：$($e.id)"
+            continue
+        }
+        if (([string]$e.path) -match '[\*\?\[\]]' -or ([string]$e.evidence_id) -match '[\*\?\[\]]') {
+            Add-Error "EVIDENCE_EXCEPTION_WILDCARD: 登记项不得含通配符：$($e.id)"
+            continue
+        }
+        if (([string]$e.sha256) -notmatch '^[0-9a-f]{64}$') {
+            Add-Error "EVIDENCE_EXCEPTION_SHA_INVALID: 登记项的 sha256 必须是 64 位小写十六进制：$($e.id)"
+            continue
+        }
+        if (([string]$e.commit) -notmatch '^([0-9a-f]{7,40}|-)$') {
+            Add-Error "EVIDENCE_EXCEPTION_COMMIT_INVALID: 登记项的 commit 必须是 7-40 位十六进制或 -：$($e.id)"
+            continue
+        }
+        if ($seenIds.ContainsKey([string]$e.id)) {
+            Add-Error "EVIDENCE_EXCEPTION_DUPLICATE_ID: 登记项 id 重复：$($e.id)"; continue
+        }
+        $seenIds[[string]$e.id] = $true
+        $commitKey = if ([string]$e.commit -eq '-') { '' } else { [string]$e.commit }
+        $key = @($e.card, $e.task_id, $e.evidence_id, $e.path, $commitKey, $e.sha256,
+                 $e.class, $e.error_type) -join '|'
+        if ($script:evidenceExceptionIndex.ContainsKey($key)) {
+            Add-Error "EVIDENCE_EXCEPTION_DUPLICATE_ROW: 同一行指纹被登记两次：$($e.id)"; continue
+        }
+        $script:evidenceExceptionIndex[$key] = $e
+        $script:evidenceExceptions += $e
+    }
+}
+
+function Test-EvidenceExceptionEligibility($Entry) {
+    $id = [string]$Entry.id
+    if ($script:evidenceExceptionEligibility.ContainsKey($id)) {
+        return [bool]$script:evidenceExceptionEligibility[$id]
+    }
+    $ok = $false
+    $baseline = $script:evidenceExceptionBaseline
+    if ($baseline) {
+        & git -C $repoRoot cat-file -e "${baseline}:$($Entry.card)" 2>$null
+        if ($LASTEXITCODE -eq 0) {
+            $cardText = ((& git -C $repoRoot cat-file blob "${baseline}:$($Entry.card)" 2>$null) -join "`n")
+            $statusLine = [regex]::Match($cardText, '(?m)^status:\s*(\S+)\s*$')
+            $terminal = $statusLine.Success -and
+                (@('done', 'closed_with_limitations') -contains $statusLine.Groups[1].Value.ToLowerInvariant())
+            if ($terminal) {
+                $escape = [regex]::Escape([string]$Entry.evidence_id)
+                $rowLine = [regex]::Match($cardText, "(?m)^\|\s*$escape\s*\|.*$")
+                if ($rowLine.Success) {
+                    $cells = @($rowLine.Value.Trim().Trim('|').Split('|') | ForEach-Object { $_.Trim().Trim('`') })
+                    if ($cells.Count -ge 6 -and
+                        $cells[2] -eq $Entry.path -and
+                        $cells[3] -eq $Entry.commit -and
+                        $cells[4].ToLowerInvariant() -eq $Entry.sha256 -and
+                        $cells[5].ToUpperInvariant() -eq ([string]$Entry.class).ToUpperInvariant()) {
+                        $ok = $true
+                    }
+                }
+            }
+        }
+    }
+    $script:evidenceExceptionEligibility[$id] = $ok
+    return [bool]$ok
+}
+
+function Get-EvidenceException([string]$ErrorType, [string]$TaskId, [string]$EvidenceId,
+                              [string]$Path, [string]$Commit, [string]$Sha, [string]$Class) {
+    if ($script:evidenceExceptions.Count -eq 0) { return $null }
+    $cardRel = [IO.Path]::GetRelativePath($repoRoot, $TaskPath).Replace('\', '/')
+    $key = @($cardRel, $TaskId, $EvidenceId, $Path, $Commit, $Sha, $Class, $ErrorType) -join '|'
+    if (-not $script:evidenceExceptionIndex.ContainsKey($key)) { return $null }
+    $entry = $script:evidenceExceptionIndex[$key]
+    if (-not (Test-EvidenceExceptionEligibility $entry)) {
+        Add-Warning "EVIDENCE_EXCEPTION_INELIGIBLE: 登记项 $($entry.id) 在资格基线中不成立（行不存在、字段已变或卡片当时非终态），仍按错误处理。"
+        return $null
+    }
+    return $entry
+}
+
 function Resolve-LocalPath([string]$Value, [string]$BaseDirectory) {
     $path = $Value.Trim().Trim('`').Trim('<', '>')
     if ([string]::IsNullOrWhiteSpace($path)) { return $null }
@@ -669,6 +789,8 @@ foreach ($budget in @(
     elseif ($bytes -ge [math]::Floor($budget.Bytes * 0.8) -or $lineCount -ge [math]::Floor($budget.Lines * 0.8)) { Add-Warning "$($budget.Path) 已达到预算的 80%：$bytes bytes / $lineCount lines" }
 }
 
+Initialize-EvidenceExceptions (Join-Path $repoRoot 'tools/governance/evidence-pin-exceptions.json')
+
 if ($TaskPath -and (Test-Path -LiteralPath $TaskPath -PathType Leaf)) {
     $taskText = Get-Content -LiteralPath $TaskPath -Raw
     $metadata = Get-FrontMatter $taskText
@@ -787,7 +909,12 @@ if ($TaskPath -and (Test-Path -LiteralPath $TaskPath -PathType Leaf)) {
 
                     # Legacy six-column rows retain r194's original semantics.
                     $evidencePath = Resolve-LocalPath $path $repoRoot
-                    if (-not $evidencePath -or -not (Test-Path -LiteralPath $evidencePath -PathType Leaf)) { Add-Error "Canonical evidence 路径缺失：$path"; continue }
+                    if (-not $evidencePath -or -not (Test-Path -LiteralPath $evidencePath -PathType Leaf)) {
+                        $ex = Get-EvidenceException 'PATH_MISSING' $taskId $row[0] $path $commit $sha $class
+                        if ($ex) { Add-Warning "EXEMPTED[$($ex.id)]: Canonical evidence 路径缺失：$path —— $($ex.reason)" }
+                        else { Add-Error "Canonical evidence 路径缺失：$path" }
+                        continue
+                    }
                     if ($commit -match '^(?i:null|pending|todo|-)$') { $commit = '' }
                     if ($sha -match '^(?i:null|pending|todo|-)$') { $sha = '' }
                     if (-not $commit -and -not $sha) { Add-Error "Evidence 必须有 commit 或 SHA-256 pin：$path" }
@@ -798,7 +925,11 @@ if ($TaskPath -and (Test-Path -LiteralPath $TaskPath -PathType Leaf)) {
                             if ($repoRelative -eq '..' -or $repoRelative.StartsWith('../')) { Add-Error "仓外 evidence 不能用仓库 commit pin：$path" }
                             else {
                                 & git -C $repoRoot cat-file -e "${commit}:$repoRelative" 2>$null
-                                if ($LASTEXITCODE -ne 0) { Add-Error "Evidence commit 不含所 pin 文件：$commit`:$repoRelative" }
+                                if ($LASTEXITCODE -ne 0) {
+                                    $ex = Get-EvidenceException 'COMMIT_PATH_MISSING' $taskId $row[0] $path $commit $sha $class
+                                    if ($ex) { Add-Warning "EXEMPTED[$($ex.id)]: Evidence commit 不含所 pin 文件：$commit`:$repoRelative —— $($ex.reason)" }
+                                    else { Add-Error "Evidence commit 不含所 pin 文件：$commit`:$repoRelative" }
+                                }
                             }
                         }
                     }
@@ -818,7 +949,11 @@ if ($TaskPath -and (Test-Path -LiteralPath $TaskPath -PathType Leaf)) {
                                         if ($blobSha -eq $sha) { $matches = $true }
                                     }
                                 }
-                                if (-not $matches) { Add-Error "Evidence SHA-256 不匹配：$path" }
+                                if (-not $matches) {
+                                    $ex = Get-EvidenceException 'SHA_MISMATCH' $taskId $row[0] $path $commit $sha $class
+                                    if ($ex) { Add-Warning "EXEMPTED[$($ex.id)]: Evidence SHA-256 不匹配：$path —— $($ex.reason)" }
+                                    else { Add-Error "Evidence SHA-256 不匹配：$path" }
+                                }
                             }
                         }
                     }

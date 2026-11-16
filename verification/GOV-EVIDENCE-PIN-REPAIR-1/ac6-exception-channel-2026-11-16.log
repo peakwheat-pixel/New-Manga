@@ -1,0 +1,48 @@
+# GOV-EVIDENCE-PIN-REPAIR-1 · AC6 证据（受控例外通道落地，裁定 Q1=B）
+# head: 519acea7a
+# at_utc: 2026-11-16T14:02:31Z
+# os: Windows 10.0.26200 ; PowerShell 7.6.8 ; Python 3.14.6
+# ruling: doc/reviews/GOV-EVIDENCE-PIN-REPAIR-1-GATE-RULING-2026-11-16.md（Q1=B：逐行受控 allowlist）
+
+## 1. 新增登记表（版本化、一行一指纹）
+# tools/governance/evidence-pin-exceptions.json：
+#   { schema_version: 1, eligibility_baseline: <冻结 40 位 commit>, entries: [] }
+#   条目字段恰为 12 个：id / card / task_id / evidence_id / path / commit / sha256 / class /
+#                          error_type / reason / ruling / expires_when
+#   允许的 error_type 只有 SHA_MISMATCH / PATH_MISSING / COMMIT_PATH_MISSING；commit 允许 `-`（历史行确实无 commit）
+
+## 2. check.ps1 改动（最小面）
+# + Initialize-EvidenceExceptions：加载并**严格校验**登记表（字段集必须精确相等、id 唯一、
+#   指纹不得重复、禁通配符、sha256 必须 64 位小写、commit 必须 7-40 位或 -、基线必须可解析为 commit）；
+# + Test-EvidenceExceptionEligibility：对每条登记项，用 `git cat-file blob <baseline>:<card>` 取基线卡，
+#   要求 ①基线时卡片 status ∈ {done, closed_with_limitations} ②该 evidence_id 的行在基线中存在，
+#   且 path/commit/sha256/class **逐字相等**；不满足 ⇒ 打印 EVIDENCE_EXCEPTION_INELIGIBLE 并**仍报错**（fail-closed）。
+# + 命中且可资格校验通过 ⇒ 该行降级为 `EXEMPTED[<id>]: <原错误> —— <reason>` 警告；否则照旧 Add-Error。
+# 覆盖的三处历史错误点：路径缺失 / commit 不含所 pin 文件 / SHA-256 不匹配。
+# 未改动：证据表结构校验、Resource Manifest 校验、其他一切门禁。
+
+## 3. 测试（9 项，全过）
+# command: python -B -m unittest tools.governance.tests.test_evidence_exceptions -v
+Ran 9 tests ... OK（每个用例在仓内临时 clone 中跑真实 check.ps1）
+# 正例：①精确匹配 ⇒ 该行从 FAIL 变为 EXEMPTED 警告；②无登记表/空登记表 ⇒ 行为完全不变。
+# 负例：③任一字段改动 ⇒ 不生效仍然 FAIL；④基线之后新增的行 ⇒ EVIDENCE_EXCEPTION_INELIGIBLE 且仍 FAIL；
+#       ⑤通配符条目 ⇒ EVIDENCE_EXCEPTION_WILDCARD；⑥基线不可解析 ⇒ EVIDENCE_EXCEPTION_BASELINE_UNRESOLVED；
+#       ⑦同一指纹登记两次 ⇒ EVIDENCE_EXCEPTION_DUPLICATE_ROW；⑧随仓发布的登记表自身 schema 合法。
+
+## 4. 全量回归
+# command: python -B -m unittest discover -s tools/governance/tests -p test_*.py
+Ran 118 tests ... OK (skipped=2)
+
+## 5. 耗时（裁定要求 < 10 s 并记录前后）
+# global check.ps1（空登记表）：1.18 s ；改动前同一命令 1.19 s ⇒ 无可测退化
+# -TaskPath 该卡（含 5 条历史错误、无登记项）：1.69 s
+
+## 6. 与裁定的对应
+# 条件 1（资格基线冻结）：eligibility_baseline = 8db997f94683c6c959c30ba672af6df5d1bbc977（裁定指定值）；
+#   条目仅当行在基线终态卡中逐字存在才生效 —— 由 Test-EvidenceExceptionEligibility 在门禁内强制，而非仅靠流程。
+# 条件 2（精确登记、禁通配/禁整批）：schema 与指纹校验 + 逐行精确匹配；不存在按类别或按 status 放行的路径。
+# 条件 3（替代行要求）：替代行不参与豁免判定；它自身按原有严格规则校验（supersede 行若错照样报错）。
+# 条件 4（只降级为明确 warning、卡片重开即失效）：命中输出 EXEMPTED 警告；卡片转非终态后证据区不再被校验，
+#   且基线判定要求 status 为终态 ⇒ 重开后即使再运行也不会命中（同一指纹在非终态卡上无校验意义）。
+# 条件 5（逐项 DSH 裁定 + 独立上下文复核）：登记表当前 **entries 为空**；实际登记在 AC4 逐条裁定后进行，
+#   并纳入 AC5 独立复核范围。

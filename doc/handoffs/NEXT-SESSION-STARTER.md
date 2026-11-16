@@ -213,8 +213,11 @@ Gate 剩下的是条件 3（人眼目视 overlay）/ 4（签名 + 真机安装�
   T1 122 / T2 211 / T3 109 / T4 3（共 445 / 103 卡），只用于排期，**不构成豁免**。
 - **事实更正**：`check.ps1 -TaskPath doc/tasks/FEA-11-HOST-AUTH-2.md` 在本次改动**之前**就已是 7 errors
   （5 条 SHA 不匹配 + 2 条 Resource「—」），全局 check 的 15 文档作用域从未覆盖它。
-- **待做（AC4/AC6）**：实现版本化 allowlist + `check.ps1` 精确匹配降级（正例≥2/负例≥2、耗时<10s）→
-  逐条归因 445 行并逐条登记例外 → 上下文独立复核。
+- **已完成（AC6）**：受控例外通道落地 —— `tools/governance/evidence-pin-exceptions.json`（schema_version 1，
+  资格基线 `8db997f9…`，当前 entries 为空）+ `check.ps1` 精确匹配降级（资格校验在门禁内执行：基线终态卡 + 行逐字存在 + 字段全等；
+  不满足即 `EVIDENCE_EXCEPTION_INELIGIBLE` 并仍报错）。9 项测试全过；全量 118 tests OK；
+  `check.ps1` 1.18 s（改动前 1.19 s，< 10 s 要求满足）。证据：`verification/GOV-EVIDENCE-PIN-REPAIR-1/ac6-exception-channel-2026-11-16.log`。
+- **待做（AC4/AC5）**：按 T1→T2→T3→T4 逐条归因 445 行 → **逐条**登记例外（或重建/重 pin）→ 上下文独立复核。
 - ⚠️ 已更正事实：EV-11 的值是 **64 位**合法 sha256（不是题述的 40 位），真正问题是本仓无任何字节表示能复现它。
 
 ### 队列 4 —— HUMAN-REQUIRED 等待项（不阻塞 Agent）

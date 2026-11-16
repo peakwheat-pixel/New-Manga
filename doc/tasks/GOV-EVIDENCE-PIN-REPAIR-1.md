@@ -20,6 +20,9 @@ evidence_dir: verification/GOV-EVIDENCE-PIN-REPAIR-1
 allowed_paths:
   - doc/tasks/GOV-EVIDENCE-PIN-REPAIR-1.md
   - tools/governance/audit_evidence_pins.py
+  - tools/governance/evidence-pin-exceptions.json
+  - tools/governance/tests/test_evidence_exceptions.py
+  - tools/governance/check.ps1   # 仅新增受控例外通道（不动其它门禁）
   - tools/governance/tests/test_audit_evidence_pins.py
   - doc/tasks/FEA-11-HOST-AUTH-2.md
   - doc/reviews/GOV-EVIDENCE-PIN-REPAIR-1-*.md
@@ -76,9 +79,9 @@ DSH 按 Q3 实现巡检后发现这不是孤例，因此本卡目标定为：
   不可恢复者逐条申请 warning 例外（禁通配、禁按类整批）；每批后 FAIL 数单调不增。
   <<PARTIAL: 已完成机器分诊 T1 122 / T2 211 / T3 109 / T4 3（见 ac4-triage-2026-11-16），逐条裁定与登记未开始>>
 - [ ] **AC5 独立复核**：上下文独立 Reviewer（未参与实施）复核；`check.ps1` 与 `-TaskPath` 均 PASS。 <<PARTIAL: 未开始>>
-- [ ] **AC6 例外通道落地**（依据 Q1=B 裁定）：版本化 allowlist（一行一指纹）+ `check.ps1` 精确匹配降级为 warning；
+- [x] **AC6 例外通道落地**（依据 Q1=B 裁定）：版本化 allowlist（一行一指纹）+ `check.ps1` 精确匹配降级为 warning；
   替代行仍走严格校验；卡片重开/转非终态即失效；正例 ≥2 / 负例 ≥2（含跨路径、错误 blob、重复替代、非终态拒绝）；
-  默认 `check.ps1` 仍需 < 10 s 并记录前后耗时。 <<PARTIAL: 设计已定，实现与测试未开始>>
+  默认 `check.ps1` 仍需 < 10 s 并记录前后耗时。 <<MET>>
 
 ## 测试要求
 
