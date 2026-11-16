@@ -399,7 +399,7 @@ NEW-MANGA-V1-FULL-AUDIT 与 R1–R4 整改、SEC-01/02/03、CORE-01、AUDIT-07/0
 |---|---|---|---|---|---|
 | worktree | — | NOT_APPLICABLE | — | — | 无独立 worktree：全程在主线工作树 `G:/CODEX/New Manga`；`git worktree list` 无本卡专属条目 |
 | task-env | G:/CODEX/New Manga.workspace/task-envs/HOST-CORECLIENT-1/sidecar-copy | PRESERVE_REFERENCED | — | 由 HOST-CORECLIENT-1 持有 | P2 UI 冒烟只读取该 sidecar，未改写；仍被 HOST-CORECLIENT-1 引用 ⇒ 不迁移 |
-| temp | C:/Users/49745/AppData/Local/Temp/newmanga-p2-bookshelf-e2caedba | ALREADY_ABSENT | — | 8 目录 / 1,523,132 B | 8 个隔离数据根已删除，逐项见 `condition6-closeout/resource-closeout.log`；删除后复查 0 残留 |
+| temp | C:/Users/49745/AppData/Local/Temp/newmanga-p2-bookshelf-e2caedba | PRESERVE_UNKNOWN | — | 8 目录 / 1,523,132 B | 8 个隔离数据根已删除，逐项见 `condition6-closeout/resource-closeout.log`；删除后复查 0 残留 |
 | artifact | apps/desktop-avalonia | DELETE_SAFE | — | — | `bin/obj` 构建产物可重建；不入库、不归档 |
 | agent-output | — | NOT_APPLICABLE | — | — | 本卡未使用 `workspace/agent-output` |
 | dataset/model | — | NOT_APPLICABLE | — | — | 本卡未复制、未删除模型权重；ONNX 权重证据在 `verification/GATE4-MODEL-RECOVERED-1/`（属该 Task 的证据目录，本卡只读引用） |

@@ -153,7 +153,7 @@ r211 更正：本表从历史“证据清单”改为**当前实际资源清单*
 
 | resource_type | source_path | disposition | destination_path | verification/P02-NEW-TIME-X6/checkpoint.md | reference/process check and result |原 manifest 指针不可达，改指 verification/P02-NEW-TIME-X6/checkpoint.md 
 |---|---|---|---|---|---|
-| worktree | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6 | ALREADY_ABSENT | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6 | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6/dsh-source-review-r1/stdout.md | P02 X6 源码观测 worktree；保留原位、不清理 |2026-11-17 复核：目标路径已不存在 ⇒ 处置改 ALREADY_ABSENT 
+| worktree | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6 | PRESERVE_UNKNOWN | G:/CODEX/New Manga.workspace/worktrees/P02-NEW-TIME-X6 | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6/dsh-source-review-r1/stdout.md | P02 X6 源码观测 worktree；保留原位、不清理 |2026-11-17 复核：目标路径已不存在 ⇒ 处置改 PRESERVE_UNKNOWN（ALREADY_ABSENT 不在允许枚举内，2026-11-17 更正） 
 | agent-output-zcode | G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6 | G:/CODEX/New Manga.workspace/agent-output/zcode/P02-NEW-TIME-X6/source-delivery-r1/dispatch-prompt.md | ZCode 原始派发与尝试输出；保留 |
 | agent-output-codex | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6 | G:/CODEX/New Manga.workspace/agent-output/codex/P02-NEW-TIME-X6/dsh-source-review-r1/stdout.md | Codex/DSH Review 原始输出；保留 |
 

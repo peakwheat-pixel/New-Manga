@@ -211,7 +211,7 @@ Task 表行号来自 R5b 审计时（`34fe1069f`）；base `b8a1e51` 实际行�
 
 | resource_type | source_path | disposition | destination_path | verification/P09-MANAGED-READ-ROOT-TRUST-1/AC-RESULTS.md | reference/process check and result |原 manifest 指针不可达，改指 verification/P09-MANAGED-READ-ROOT-TRUST-1/AC-RESULTS.md 
 |---|---|---|---|---|---|
-| worktree | `G:/CODEX/New Manga.workspace/worktrees/P09-MANAGED-READ-ROOT-TRUST-1` | ALREADY_ABSENT | 本路径 | verification/P09-MANAGED-READ-ROOT-TRUST-1/AC-RESULTS.md | 本 Task 交付；删除须 Codex 按 Worktree Safety Inventory 另行授权 |2026-11-17 复核：目标路径已不存在 ⇒ 处置改 ALREADY_ABSENT；原 manifest 指针不可达，改指 verification/P09-MANAGED-READ-ROOT-TRUST-1/AC-RESULTS.md 
+| worktree | `G:/CODEX/New Manga.workspace/worktrees/P09-MANAGED-READ-ROOT-TRUST-1` | PRESERVE_UNKNOWN | 本路径 | verification/P09-MANAGED-READ-ROOT-TRUST-1/AC-RESULTS.md | 本 Task 交付；删除须 Codex 按 Worktree Safety Inventory 另行授权 |2026-11-17 复核：目标路径已不存在 ⇒ 处置改 PRESERVE_UNKNOWN（ALREADY_ABSENT 不在允许枚举内，2026-11-17 更正）；原 manifest 指针不可达，改指 verification/P09-MANAGED-READ-ROOT-TRUST-1/AC-RESULTS.md 
 | temp（探针 scratch） | `G:/CODEX/New Manga.workspace/temp/P09-MANAGED-READ-ROOT-TRUST-1/`（ac1/ac3 的 base 源码快照与 driver，R-004） | NOT_APPLICABLE | — | — | 探针自建自清（`finally: shutil.rmtree`）；不写仓库、不用系统 `%TEMP%` |
 | scratch（AC5 探针夹具） | `verification/P09-MANAGED-READ-ROOT-TRUST-1/_scratch/` | NOT_APPLICABLE | — | — | `ac5-run-delete-probes.py` 前后清理（先 `os.rmdir` 移除 junction 再删目录）；证据目录中无残留 |
 | agent-output | - | NOT_APPLICABLE | — | — | 证据全部在 `verification/P09-MANAGED-READ-ROOT-TRUST-1/` ；原 source_path 说明： 无（本 Task 不在仓外新建 agent-output；只读引用 SP-01/SP-02） |
