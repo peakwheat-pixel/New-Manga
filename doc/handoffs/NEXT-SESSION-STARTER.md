@@ -93,8 +93,11 @@ JSON 绑定带「一旦变合法 JSON 即 RECORD_DRIFT」的 fail-closed 条件�
 带 err_id/桶/活 pin）；**batch 1（Q3 封闭别名表）已实施**：`errors 154→147`、`warnings 732→740`、
 `protected_roots 5593→5598`、`declarations 6755→6762`，`DECL_UNKNOWN_DISPOSITION 8→0`；
 证据 `verification/GOV-DECLARATION-SCAN-CLEANUP-1/ac3-batch1-alias-2026-11-16.log`。
-**下一步（严格按裁决顺序）**：~~Q2~~、~~Q1~~、~~活 pin 保留态~~ 已完成 → **AC7：65 条未钉住 B2 的单元修复**
-（先落 `allowed_cells` 清单：逐条 file+locator+字段+旧值+新值；改前复核活 pin）→ AC6 集成复验 + 上下文独立 Review。
+**下一步（严格按裁决顺序）**：~~Q2~~、~~Q1~~、~~活 pin 保留态~~ 已完成 → **AC7：65 条未钉住 B2 的单元修复**。
+**修复计划已落盘**：`verification/GOV-DECLARATION-SCAN-CLEANUP-1/ac7-repair-plan-2026-11-16.md`
+（46 条机械可执行 + 19 条需判定；每条含 ERR-id / 文件 / locator / 字段 / 现值 / 拟改为 / 拟 disposition / 置信与说明）。
+下一轮照该表逐文件应用（只改值匹配的单元格），每批后重跑 audit 记录单调下降，65→0 后进 AC6
+（固定 head + 上下文独立 Review + 前后两轮 JSON 回填）。
 **卡已加 AC7**（`<<PARTIAL>>`）与 AC5 追加式窄例外。剩余 errors = **80 = B2 80**（其中 12 条活 pin 只登记）。
 
 ### 队列 0 附录 —— 原 R16 评估（保留）
