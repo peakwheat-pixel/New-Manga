@@ -195,7 +195,11 @@ Gate 剩下的是条件 3（人眼目视 overlay）/ 4（签名 + 真机安装�
   **仍建议**：恢复 doc 字节优先用 `git cat-file blob` + 二进制写（LF 规则只覆盖这两份）。
 - ~~`doc/tasks/RELEASE-PACKAGE-1.md` 含 NUL 字节~~ → **R1 实测 NUL=0，已不存在**
 
-### 队列 3b —— **`GOV-EVIDENCE-PIN-REPAIR-1`（R24 新释放，in_progress）**
+### 队列 3b —— **`GOV-EVIDENCE-PIN-REPAIR-1`（R24 释放，R14 已 `done` 收口）**
+
+> **收口摘要（2026-11-17）**：AC1–AC7 全 `<<MET>>`；四轮上下文独立复核（REJECTED ×3 → APPROVED）；
+> 证据 pin 待判 **445 → 4**（2 条带 class 的占位行 + 2 条多路径行仅巡检工具建模限制）；33 张有登记项的卡全部 PASS；
+> 例外通道 13 项 + 批量证据 8 项 + EOL 7 项测试全过；全局门禁 PASS。以下为过程记录，保留备查。
 
 - 来由：Codex 裁定（`doc/reviews/GOV-EVIDENCE-PIN-REPAIR-1-CODEX-RULING-2026-11-16.md`，`APPROVED_WITH_CONDITIONS`）
   Q1=D：先建独立修复卡、再对终态卡 **append-only** 追加 `EV-11-supersede`；Q3 要求提供只读巡检。
