@@ -1,8 +1,8 @@
 # 新会话启动包 — New Manga 目标续接
 
-- 生成时间：2026-11-16 13:20 (+08:00)（本版为 R7 之后更新）
+- 生成时间：2026-11-16 13:20 (+08:00)（本版为 R8 之后更新）
 - 生成者：DSH（lead）
-- **当前 head：`650b2605e`**（main，**已 push**，upstream = origin/main，ahead/behind = 0/0）
+- **当前 head：`b11689068`**（main，**已 push**，upstream = origin/main，ahead/behind = 0/0）
 - 工作区：干净（`git status --porcelain` 为空）
 - **R1**：`9ce819ae7` → `dd029b73f`（7 commit，目标 A/B/D 达成）
 - **R2**：`dd029b73f` → `5f2664c2e`（8 commit）—— 目标 C 闭合 10 条
@@ -10,7 +10,8 @@
 - **R4**：`bfbf95a82` → `8900dcbdb`（5 commit）—— 闭合 `MICA-FIX-1` AC2；**AC7 书面裁决落盘 + 开清理卡**
 - **R5**：`8900dcbdb` → `a8ffd8a3d`（2 commit）—— 闭合 `V11R-A-3` AC4（该卡 **6/6 全闭合**）
 - **R6**：`a8ffd8a3d` → `759b49730`（4 commit）—— 闭合 `RUN-IPC-1` AC4；**该卡门禁首次全绿**（顺带据实更正资源行）
-- **R7（本轮）**：`759b49730` → `650b2605e`（4 commit）—— 闭合 `V11R-C-1` **AC1/AC6/AC7**（该卡 **7/7 全闭合**）并补齐结构性表格，**门禁转全绿**
+- **R7**：`759b49730` → `650b2605e`（4 commit）—— 闭合 `V11R-C-1` **AC1/AC6/AC7**（该卡 **7/7 全闭合**）并补齐结构性表格，**门禁转全绿**
+- **R8（本轮）**：`650b2605e` → `b11689068`（3 commit）—— 闭合 `V11R-B-5` **AC1/AC2**（补 SCREEN_SPECS §6.5 + 上下文保留断言 + 结构性表格）
 
 > 本文是**给下一个会话的唯一起点**。不要重读历史对话；按「下一步队列」推进即可。
 
@@ -20,11 +21,11 @@
 
 | 项 | 状态 |
 |---|---|
-| HEAD | `650b2605e`（main，已 push，0/0） |
+| HEAD | `b11689068`（main，已 push，0/0） |
 | 四件套 | **全绿**：`check.ps1` PASS(3w) / `verify_pins` 18/18 / `api_inventory` 1/80/6=87 / `test.ps1` EXIT=0 **1587/1635 passed, 48 skipped**（App 967/0/4，基线 955/0/11 不退化） |
 | 上一 goal | 已用尽 100 轮（见 `GOAL-WRAPUP-R100.md`） |
 | 本 goal | 60 轮上限 |
-| 目标 C | 可行动项 41 → **闭合 25 / open 16**（其中 **2 条已裁决 BLOCKED**：`GOV-RESIDUAL` AC6/AC7） |
+| 目标 C | 可行动项 41 → **闭合 27 / open 14**（其中 **2 条已裁决 BLOCKED**：`GOV-RESIDUAL` AC6/AC7） |
 
 复跑四件套：
 
@@ -155,6 +156,56 @@ R3：`V11R-C-3` R1（补 tag 存在后的 `-DryRun` + limitation L-C3-1）/ `V11
 
 ---
 
+## 3g. R8（本轮）完成的事 —— `V11R-B-5` AC1/AC2
+
+### AC1：原 block 是「**无章节可核对**」，缺口在**被我冻结的规格文件**里
+
+原 blocked 理由：SCREEN_SPECS 无导出预检/术语章节（`grep '预检|术语'` 0 命中）⇒ AC1 无从核对。
+**这是 2026-10-30 冻结 `V11R_SCREEN_SPECS.md` 时的遗漏**（我冻结的）。
+
+本轮增补（**additive，不改既有章节字节**）：
+- `## 6.5 导出预检 + 术语与约束（ui-studio）`（`:86`）—— 表头明写「冻结时遗漏该工作面……按其已交付实现**如实回填**，不新增需求」；
+- 文末 `## 修订记录`（`:126`）。
+
+**内容全部来自本卡已交付实现**（逐项对照源码写的，不是凭空设计）：
+`StudioExportFormat`=Zip/Pdf、`StudioPdfContentMode`=ImageOnly/SearchableDualLayer、
+`StudioExportScope`=Chapter/SelectedPages、`StudioStalePolicy`=Abort/ContinueExisting、
+`StudioExportPhase` 8 态、`StudioTermsSection`=Terms/DoNotTranslate/Conflicts、
+NOT_WIRED 时**零伪造行 & 搜索禁用**、预检未确认/过期显示 `—` 且**禁止伪造 0**。
+
+### AC2：补「模式切换不重建 VM / 不丢状态」的实证
+
+新增 `ExportSurface_KeepsViewModelSelectionAndOptions_AcrossStudioModeSwitches`：
+**Page → Batch → Page 两次真实切换**后断言 `Assert.Same(export, vm.Export)` +
+`Phase` 仍 Ready + `TranslatedPageCount` 不变 + `Format`/`PdfContent`/`Scope` 保留 + selection 逐项保留。
+
+**变红验证**：临时让 `RequestMode` 切模式时重置导出态 ⇒ 测试红，报 `Expected: Ready / Actual: Idle`；还原后绿。
+
+### 两处 Lead 扩权（都是**范围缺陷**，不是我想扩）
+
+1. `doc/plan/V11R_SCREEN_SPECS.md` —— AC1 的**前置文档**，此前不在卡内；
+2. `apps/desktop-avalonia/tests/NewManga.App.Tests/V2StudioExportTermsTests.cs` ——
+   **本卡自己的测试文件**，由交付提交 `e3e928869`/`b309606aa` 引入，但当时 `allowed_paths` 漏列。
+
+⇒ 教训：**AC 引用的前置文档/测试文件必须出现在 `allowed_paths`**，否则 AC 会卡在「无可核对/无可修改」。
+冻结规格文件缺章节时，正确的做法是**additive 回填 + 修订记录**，而不是把 AC 判 NA 或改写既有字节。
+
+### 结构性表格配方再验证
+
+按 R7 配方给 `V11R-B-5` 补 `## Canonical Evidence`（13 行）+ `## Resource Manifest`：
+`-TaskPath` 由 **5 条 FAIL → 1 条**（仅剩 AC3 未闭合，属实）。
+⇒ 配方在第二张卡上同样一次成功，可直接用于批量。
+
+### 踩坑记录（本轮）
+
+- **Python 脚本里用「整文件锚点 + replace」时，锚点必须与文件的真实行尾一致**；
+  本轮 `patch_b5_ac2.py` 的锚点因行尾/格式不匹配而 `AssertionError`，
+  但我此前已被 *同一脚本的前一步* 打印「成功」，导致误以为 `allowed_paths` 已改。
+  ⇒ **凡「改结构」的补丁，改完必须回读文件确认**（本轮之后我在每次 flip 后都 `Get-Content` 回读）。
+- 一次 `write` 误把脚本落到仓库根（`workspace_dummy_ignore.py`），已 `Move-Item` 到 workspace 并确认仓库 `git status` 干净。
+  ⇒ **派生脚本一律直接写到 `G:\CODEX\New Manga.workspace\`，不要先落到仓库再搬。**
+
+---
 ## 3f. R7（本轮）完成的事 —— `V11R-C-1` 三 AC 收口 + 结构性表格补齐（**该卡门禁转全绿**）
 
 ### 1) AC6/AC7：两张卡此前都只卡在同一件事 —— 证据目录 0 个 `.png`
