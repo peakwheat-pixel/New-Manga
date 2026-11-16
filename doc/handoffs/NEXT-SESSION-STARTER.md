@@ -1,15 +1,16 @@
 # 新会话启动包 — New Manga 目标续接
 
-- 生成时间：2026-11-16 13:00 (+08:00)（本版为 R6 之后更新）
+- 生成时间：2026-11-16 13:20 (+08:00)（本版为 R7 之后更新）
 - 生成者：DSH（lead）
-- **当前 head：`759b49730`**（main，**已 push**，upstream = origin/main，ahead/behind = 0/0）
+- **当前 head：`650b2605e`**（main，**已 push**，upstream = origin/main，ahead/behind = 0/0）
 - 工作区：干净（`git status --porcelain` 为空）
 - **R1**：`9ce819ae7` → `dd029b73f`（7 commit，目标 A/B/D 达成）
 - **R2**：`dd029b73f` → `5f2664c2e`（8 commit）—— 目标 C 闭合 10 条
 - **R3**：`5f2664c2e` → `bfbf95a82`（3 commit）—— 目标 C 再闭合 2 条
 - **R4**：`bfbf95a82` → `8900dcbdb`（5 commit）—— 闭合 `MICA-FIX-1` AC2；**AC7 书面裁决落盘 + 开清理卡**
 - **R5**：`8900dcbdb` → `a8ffd8a3d`（2 commit）—— 闭合 `V11R-A-3` AC4（该卡 **6/6 全闭合**）
-- **R6（本轮）**：`a8ffd8a3d` → `759b49730`（4 commit）—— 闭合 `RUN-IPC-1` AC4；**该卡门禁首次全绿**（顺带据实更正资源行）
+- **R6**：`a8ffd8a3d` → `759b49730`（4 commit）—— 闭合 `RUN-IPC-1` AC4；**该卡门禁首次全绿**（顺带据实更正资源行）
+- **R7（本轮）**：`759b49730` → `650b2605e`（4 commit）—— 闭合 `V11R-C-1` **AC1/AC6/AC7**（该卡 **7/7 全闭合**）并补齐结构性表格，**门禁转全绿**
 
 > 本文是**给下一个会话的唯一起点**。不要重读历史对话；按「下一步队列」推进即可。
 
@@ -19,11 +20,11 @@
 
 | 项 | 状态 |
 |---|---|
-| HEAD | `759b49730`（main，已 push，0/0） |
+| HEAD | `650b2605e`（main，已 push，0/0） |
 | 四件套 | **全绿**：`check.ps1` PASS(3w) / `verify_pins` 18/18 / `api_inventory` 1/80/6=87 / `test.ps1` EXIT=0 **1587/1635 passed, 48 skipped**（App 967/0/4，基线 955/0/11 不退化） |
 | 上一 goal | 已用尽 100 轮（见 `GOAL-WRAPUP-R100.md`） |
 | 本 goal | 60 轮上限 |
-| 目标 C | 可行动项 41 → **闭合 23 / open 18**（其中 **2 条已裁决 BLOCKED**：`GOV-RESIDUAL` AC6/AC7） |
+| 目标 C | 可行动项 41 → **闭合 25 / open 16**（其中 **2 条已裁决 BLOCKED**：`GOV-RESIDUAL` AC6/AC7） |
 
 复跑四件套：
 
@@ -154,6 +155,58 @@ R3：`V11R-C-3` R1（补 tag 存在后的 `-DryRun` + limitation L-C3-1）/ `V11
 
 ---
 
+## 3f. R7（本轮）完成的事 —— `V11R-C-1` 三 AC 收口 + 结构性表格补齐（**该卡门禁转全绿**）
+
+### 1) AC6/AC7：两张卡此前都只卡在同一件事 —— 证据目录 0 个 `.png`
+
+| 部分 | 结论 |
+|---|---|
+| AC6 单测覆盖 + `dotnet test` 绿 | **已满足**。本轮实跑 `tests/NewManga.ThemeEngine.Tests` → **失败 0 / 通过 253 / 跳过 0 / 总计 253**，EXIT=0（历史日志记 203/203，说明套件之后继续增长且仍全绿）；10 子系统逐项对照见 `verification/V11R-C-1/README.md` §3 |
+| AC7 构建/测试日志 + 偏差清单 | **已满足**。`build.log`（0 warning/0 error）、`dotnet-test-full.log`（586 通过/0 失败）、`generator-check.log`、`DEVIATIONS.md`（16 条）+ README §5 |
+| 「关键屏截图」 | **NOT_APPLICABLE（无对象）** —— 见下 |
+
+**为什么截图无对象**（口径与该卡 AC1 完全一致，AC1 的 blocked 理由原文即「屏幕验收面无对象：本卡为 headless 库卡」）：
+- `allowed_paths` 仅 `src/NewManga.ThemeEngine/` + `tests/NewManga.ThemeEngine.Tests/` + `verification/V11R-C-1/`
+  —— **不含任何视图/截图测试目录**；
+- 引擎不渲染像素：`Preview/ThemePreviewEngine.cs` 是**预览会话状态机**，产出令牌解析结果与变更事件，不是可截图的窗口；
+- SCREEN_SPECS §1–§6 无引擎章节。
+
+⇒ 要截图必须往 `tests/NewManga.App.Tests/` 加 Theme Studio 用例，**超出本卡 scope**。
+屏幕/截图义务由消费方卡履行（`V11R-B-3` design-system-usage、`V11R-B-4` `screenshots.json` + 1600x1000/1280x800 真帧、
+`V11R-B-5` Tools overlay），已在各自卡内履行。**不把未做写成 PASS、不伪造截图。**
+
+### 2) AC1：应用本卡**既有裁定**，不是新裁决
+
+AC1 的 blocked 理由由**原作者**写成完整的 NA 结论（headless 库卡 + SCREEN_SPECS 无引擎章节）。
+本轮只按 §4.3 把它落成 `[x]` + `not-applicable` 标记，**未新增或改变任何判定**。
+⇒ **`V11R-C-1` 现在 7/7 AC 全部 `[x]`。**
+
+### 3) ⭐ 关键发现：pin 口径有**双通道**，225 张存量卡因此**可以脚本化补齐**
+
+`check.ps1` 的哈希校验接受**二者之一**：
+
+1. `worktreeSha == sha`（磁盘口径），**或**
+2. `Get-GitBlobSha256 $commit $repoRel == sha`（**BLOB 口径**，但要求 `commit` 列是**真实含该 blob 的提交**）
+
+⇒ 按项目规则用 **BLOB sha**、`commit` 取 `git log -1 --format=%h -- <path>`（其 blob 即当前内容），
+**两条通道同时可验证**，且**不需要改任何历史文件字节**。
+
+这**直接解决了 R6 踩到的困境**：R6 时我的证据文件是 CRLF、磁盘 sha ≠ blob sha，只能靠把**新**文件规范化成 LF 绕过；
+但**对存量历史证据不能这么做**（会改历史字节）。现在不必了。
+
+**可复用配方（供批量处理那 225 张结构性欠账卡）**：
+```
+对每张卡：
+  files  = verification/<id>/ 下全部文件
+  每文件：
+    sha    = sha256(git cat-file blob HEAD:<path>)   # BLOB 口径
+    commit = git log -1 --format=%h -- <path>         # 含该 blob 的真实提交
+  生成旧六列 Canonical Evidence 表 + 一行 NOT_APPLICABLE 资源清单
+  插到卡尾（`## 交付与运行记录` 之前或最后一节之前）
+```
+本轮在 `V11R-C-1` 上验证：13 个文件一次生成，`-TaskPath` 由 **FAIL(4) → PASS(3 warnings)**。
+
+---
 ## 3e. R6（本轮）完成的事 —— `RUN-IPC-1` AC4（**该卡门禁首次全绿**）
 
 ### 核心结论：AC4 的 blocked 理由**三项主张全部已过期**
