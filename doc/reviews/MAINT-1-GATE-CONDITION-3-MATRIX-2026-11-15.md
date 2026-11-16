@@ -272,7 +272,7 @@ App 的 4 个（带夹具仍 skip）经差集确认是 **opt-in gated**（性能
 | **沉浸阅读窗口** | `V2ImmersiveReaderTests` | **4 / 0 / 0** |
 | **F11 沉浸开关** | `F11HotkeyTests` | **9 / 0 / 0** |
 | **命令面板（焦点/键盘）** | `FluentCommandPaletteFocusTests` | **1 / 0 / 0** |
-| 组合 filter（以上全部） | — | **80 / 0 / 0**（比五类和 79 多 1，来自 `~CommandPalette` 另匹配到的类；不据此外推） |
+| 组合 filter（以上全部） | — | **79 / 0 / 0**（独立复核 2026-11-17 实测：`--list-tests` 命中恰好 5 个类共 79 条；原记「80，比五类和多 1，来自 `~CommandPalette`」**有误**——filter 里并无该词，且这 5 个测试文件自 `eb8b5c82a` 起零改动，80 从来不可复现） |
 
 **重要**：这五个类**不需要 sidecar**（0 skipped），所以它们是**当前环境就能反复复跑**的覆盖，
 不是"等环境"的空白 —— 这一点与 §3 里那些 `[SidecarFact]` 的格不同。
