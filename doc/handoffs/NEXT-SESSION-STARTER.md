@@ -1080,3 +1080,17 @@ AC1 的 blocked 理由由**原作者**写成完整的 NA 结论（headless 库�
 | `GIT-CLEAN-CORE-ENV-2` | proposed | 未激活 | 需 DSH 释放 |
 
 **结论**：Agent 侧仍有可执行项（上表标「Agent 可续」的 6 张），但每张都要按终态要求整理证据 + 独立复核 + 收口，单轮只能推进 1–2 张。
+
+### 队列 6 —— R20 终局核验（四件套 + 证据巡检）
+
+| 项 | 命令 | 结果 |
+|---|---|---|
+| 治理门禁 | `pwsh -NoProfile -File tools/governance/check.ps1` | **PASS (3 warnings)** |
+| 声明审计 | `python -B tools/governance/clean_workspace.py --audit-declarations --out <dir>` | **0 error**；6,870 declarations；**protected_roots 5,657**（要求 ≥5593） |
+| Pin 审计 | `pwsh -NoProfile -File tools/governance/verify_pins.ps1` | **PASS (all 18)** |
+| 证据巡检 | `python -B tools/governance/audit_evidence_pins.py` | **FAIL 0** / EXEMPTED 84 / NOT_ENFORCED 15 / WARN 273（7,113 行 / 667 卡） |
+| 治理测试 | `python -B -m unittest tools.governance.tests.{test_evidence_exceptions,test_bulk_evidence_manifest,test_audit_evidence_pins,test_evidence_eol_forms}` | 全过（13 + 8 + 15 + 7） |
+
+**R20 修掉的回归**：我此前批量脚本改坏了 21 张卡的 Resource Manifest 表头/行形状，导致声明审计
+23 error；已恢复表头、补尾 `|`、合并第 7 列（未动任何 Canonical Evidence 行），审计回 0。
+证据：`verification/GOV-DECLARATION-SCAN-CLEANUP-1/declaration-audit-{2026-11-17-post-repair.json,repair-2026-11-17.log}`。

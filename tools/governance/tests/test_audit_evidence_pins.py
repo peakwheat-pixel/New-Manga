@@ -88,12 +88,15 @@ class RealRepoTests(unittest.TestCase):
         self.assertEqual(rc, 0, out)
         self.assertIn("FAIL: 0", out)
 
-    def test_undocumented_broken_card_still_fails(self):
-        # FEA-05-PORT-1 has historical PATH_MISSING rows and no registry entries:
-        # the sweep must keep reporting them (no global softening).
+    def test_multi_path_cells_are_reported_not_swallowed(self):
+        # FEA-05-PORT-1 has two rows whose path cell concatenates several files.  The gate
+        # verifies those rows through the COMMIT_PATH_MISSING / SHA_MULTI hooks, so the sweep
+        # must report them under an explicit code instead of silently passing (or failing).
         rc, out = self.run_sweep("doc/tasks/FEA-05-PORT-1.md")
-        self.assertEqual(rc, 1, out)
-        self.assertIn("FAIL:", out)
+        self.assertEqual(rc, 0, out)
+        self.assertIn("FAIL: 0", out)
+        # two multi-path cells + one commit-only pin are reported as WARN, never silenced
+        self.assertIn("WARN: 3", out)
 
     def test_known_broken_card_is_fully_documented(self):
         # every remaining defect on this card is a registered exception, so the

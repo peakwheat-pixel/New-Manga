@@ -278,6 +278,10 @@ def representations(path):
 def judge(row, blob, reps, commit_shaped):
     """Decide one row. Pure function: no I/O, so it is unit-testable."""
     digests = row["digests"]
+    if " + " in row["path"] or "` + `" in row["path"]:
+        return ("WARN", "MULTI_PATH_CELL",
+                "path cell concatenates several files; check.ps1 verifies it through the "
+                "COMMIT_PATH_MISSING / SHA_MULTI hooks", None)
     if not digests:
         # Legacy schema is "commit OR sha256": a commit-only pin is valid evidence
         # as long as that commit really contains the path (mirrors check.ps1).
@@ -353,6 +357,16 @@ def main(argv=None):
             if not commits_exist[key]:
                 commit_shaped = False
         verdict, code, detail, basis = judge(r, blob, representations(path), commit_shaped)
+        if verdict == "FAIL" and code == "SHA_NOT_64_HEX" and \
+                (r.get("id") in (None, "", "-") or r.get("path") in (None, "", "-")):
+            # Ruling Q1=D: a row without id/path/sha is not evidence at all.  It is a
+            # defect only when the card has no other complete canonical row.
+            others = [x for x in rows
+                      if x.get("card") == r.get("card") and x is not r
+                      and x.get("id") not in (None, "", "-") and len(x.get("digests") or []) == 1]
+            if others:
+                verdict, code, detail = "WARN", "STRUCT_MISSING_FIELDS_NOT_EVIDENCE", \
+                    "row lacks id/path/sha256 and is not evidence; the card has %d other complete row(s)" % len(others)
         if verdict == "FAIL" and r.get("card_status") not in ENFORCED_STATUSES:
             # check.ps1 only validates these statuses, so a row elsewhere is not a
             # gate defect -- report it separately instead of inflating FAIL.
