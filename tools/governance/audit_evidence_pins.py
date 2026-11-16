@@ -253,7 +253,12 @@ def judge(row, blob, reps, commit_shaped):
     """Decide one row. Pure function: no I/O, so it is unit-testable."""
     digests = row["digests"]
     if not digests:
-        return "FAIL", "SHA_NOT_64_HEX", "no 64-hex digest in the sha256 cell", None
+        # Legacy schema is "commit OR sha256": a commit-only pin is valid evidence
+        # as long as that commit really contains the path (mirrors check.ps1).
+        if blob is not None:
+            return ("WARN", "COMMIT_ONLY",
+                    "no sha256 recorded; the pin is commit-only", "BLOB")
+        return "FAIL", "SHA_NOT_64_HEX", "no 64-hex digest and no readable commit blob", None
     recorded = set(digests)
     if blob is not None:
         lf = blob.replace(b"\r\n", b"\n")

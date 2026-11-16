@@ -222,7 +222,15 @@ Gate 剩下的是条件 3（人眼目视 overlay）/ 4（签名 + 真机安装�
 - **新裁定（EOL 门禁）**：`doc/reviews/GOV-EVIDENCE-PIN-REPAIR-1-EOL-GATE-RULING-2026-11-16.md`（`APPROVED_WITH_CONDITIONS`，Q1=A）：
   六列历史行接受 commit blob 的**原始/LF/CRLF 三种精确形态**；七列显式 basis 不变；新行必须七列；
   行尾推断仅限冻结基线中已存在且字段未变的行；三种都不匹配仍报错。**实现与 3 正 4 负测试未开始（卡片 AC7）**。
-- **待做（AC4/AC5/AC7）**：余 310 条（SHA_NOT_64_HEX 214 / PATH_MISSING 53 / SHA_MISMATCH 31 / COMMIT_NOT_FOUND 12）按类逐条归因 → 逐条登记或修 pin → 上下文独立复核；另需就「check.ps1 是否接受 blob 的 EOL 形态」取得裁定（当前门禁只比对原始 blob 与当前工作树，会把这些有效 pin 判红）。
+- **已完成（AC7，R7）**：门禁接受 blob 行尾形态 —— `check.ps1` 六列历史行现在按「工作树原始 → blob 原始 → 行尾形态」顺序判定，
+  行尾推断仅限冻结基线中已存在且字段未变的行；**混合行尾不产生派生形态**；七列显式 basis 不变；
+  命中行尾形态会输出可见 warning。7 项测试全过（3 正 4 负），全局门禁 **1.10 s**。
+  效果：`HOST-CORECLIENT-1` FAIL 55 → PASS(60w)；`FEA-11-HOST-AUTH-2` 只剩 3 条 registry 例外。
+- **第三次口径修正（重要）**：旧六列 schema 的语义是「commit **或** sha256」，所以 `sha256=null` 而 commit 有效的行
+  是**合法 pin**；我的工具此前判 FAIL。修正后全仓待判 **445 → 98**（SHA_MISMATCH 31 / PATH_MISSING 53 /
+  无摘要且无 blob 2 / commit 不可解析 12，34 张卡；集中在 P02PRE-R1H-H2-COLLECTOR 27、P02-NEW-TIME-X6 15）。
+- **教训（三次同类）**：判「证据失效」前必须先把该 schema 的**合法表示集**穷举完（原始/LF/CRLF × blob/工作树；commit-only 也是合法形态）。
+- **待做（AC4/AC5）**：余 **98** 条（SHA_NOT_64_HEX 214 / PATH_MISSING 53 / SHA_MISMATCH 31 / COMMIT_NOT_FOUND 12）按类逐条归因 → 逐条登记或修 pin → 上下文独立复核；另需就「check.ps1 是否接受 blob 的 EOL 形态」取得裁定（当前门禁只比对原始 blob 与当前工作树，会把这些有效 pin 判红）。
 - ⚠️ 已更正事实：EV-11 的值是 **64 位**合法 sha256（不是题述的 40 位），真正问题是本仓无任何字节表示能复现它。
 
 ### 队列 4 —— HUMAN-REQUIRED 等待项（不阻塞 Agent）

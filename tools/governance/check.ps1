@@ -15,6 +15,8 @@ $script:evidenceExceptions = @()
 $script:evidenceExceptionIndex = @{}
 $script:evidenceExceptionEligibility = @{}
 $script:evidenceExceptionBaseline = $null
+# Frozen eligibility baseline for historical six-column inference (Codex ruling 2026-11-16)
+$script:frozenEvidenceBaseline = '8db997f94683c6c959c30ba672af6df5d1bbc977'
 
 # Historical-pin exceptions (Codex ruling Q1=B, doc/reviews/GOV-EVIDENCE-PIN-REPAIR-1-GATE-RULING-2026-11-16.md).
 # A row may only be downgraded to a warning when the registry entry matches the row on EVERY
@@ -175,6 +177,136 @@ function Get-TableRows([string]$Section) {
         if ($cells.Count -gt 0 -and $cells[0] -notmatch '^[-: ]+$' -and $cells[0] -notmatch '^(?i:evidence_id|resource_type)$') { $rows.Add($cells) }
     }
     return $rows
+}
+
+$script:blobFormCache = @{}
+$script:baselineCardCache = @{}
+$script:baselineRowCache = @{}
+
+# Byte-level EOL forms (Codex ruling Q1=A, 2026-11-16): only CRLF<->LF is
+# applied.  The derivation is refused for bytes containing NUL or a lone CR, so
+# a mixed or binary payload can never match through a transformation.
+function Get-ByteForms([byte[]]$Bytes) {
+    if ($null -eq $Bytes) { return $null }
+    foreach ($b in $Bytes) { if ($b -eq 0) { return $null } }
+    $lf = [System.Collections.Generic.List[byte]]::new()
+    $crlfPairs = 0
+    $bareLf = 0
+    for ($i = 0; $i -lt $Bytes.Length; $i++) {
+        if ($Bytes[$i] -eq 13) {
+            if ($i + 1 -ge $Bytes.Length -or $Bytes[$i + 1] -ne 10) { return $null }  # lone CR
+            $crlfPairs++
+            continue
+        }
+        if ($Bytes[$i] -eq 10) {
+            if ($i -eq 0 -or $Bytes[$i - 1] -ne 13) { $bareLf++ }
+        }
+        $lf.Add($Bytes[$i])
+    }
+    # Ruling condition 3: a MIXED payload has no derived form at all -- only its
+    # exact raw bytes may match.
+    if ($crlfPairs -gt 0 -and $bareLf -gt 0) {
+        $shaOnly = [System.Security.Cryptography.SHA256]::Create()
+        try { return @{ Raw = [Convert]::ToHexString($shaOnly.ComputeHash($Bytes)).ToLowerInvariant() } }
+        finally { $shaOnly.Dispose() }
+    }
+    $lfBytes = $lf.ToArray()
+    $crlf = [System.Collections.Generic.List[byte]]::new()
+    foreach ($b in $lfBytes) {
+        if ($b -eq 10) { $crlf.Add(13) }
+        $crlf.Add($b)
+    }
+    $sha = [System.Security.Cryptography.SHA256]::Create()
+    try {
+        return @{
+            Raw = [Convert]::ToHexString($sha.ComputeHash($Bytes)).ToLowerInvariant()
+            LF = [Convert]::ToHexString($sha.ComputeHash($lfBytes)).ToLowerInvariant()
+            CRLF = [Convert]::ToHexString($sha.ComputeHash($crlf.ToArray())).ToLowerInvariant()
+        }
+    } finally { $sha.Dispose() }
+}
+
+function Get-GitBlobBytes([string]$Commit, [string]$RepoRelativePath) {
+    $process = [System.Diagnostics.Process]::new()
+    $memory = [System.IO.MemoryStream]::new()
+    try {
+        $startInfo = [System.Diagnostics.ProcessStartInfo]::new()
+        $startInfo.FileName = 'git'
+        $startInfo.WorkingDirectory = $repoRoot
+        $startInfo.UseShellExecute = $false
+        $startInfo.RedirectStandardOutput = $true
+        $startInfo.RedirectStandardError = $true
+        [void]$startInfo.ArgumentList.Add('cat-file')
+        [void]$startInfo.ArgumentList.Add('blob')
+        [void]$startInfo.ArgumentList.Add("${Commit}:$RepoRelativePath")
+        $process.StartInfo = $startInfo
+        if (-not $process.Start()) { return $null }
+        $process.StandardOutput.BaseStream.CopyTo($memory)
+        [void]$process.StandardError.ReadToEnd()
+        $process.WaitForExit()
+        if ($process.ExitCode -ne 0) { return $null }
+        return $memory.ToArray()
+    } catch { return $null } finally {
+        $memory.Dispose()
+        $process.Dispose()
+    }
+}
+
+function Get-GitBlobForms([string]$Commit, [string]$RepoRelativePath) {
+    $key = "${Commit}:$RepoRelativePath"
+    if ($script:blobFormCache.ContainsKey($key)) { return $script:blobFormCache[$key] }
+    $forms = Get-ByteForms (Get-GitBlobBytes $Commit $RepoRelativePath)
+    $script:blobFormCache[$key] = $forms
+    return $forms
+}
+
+function Get-WorktreeForms([string]$Path) {
+    if (-not $Path -or -not (Test-Path -LiteralPath $Path -PathType Leaf)) { return $null }
+    try { return Get-ByteForms ([IO.File]::ReadAllBytes($Path)) } catch { return $null }
+}
+
+function Get-BaselineCardText([string]$CardRelative) {
+    if ($script:baselineCardCache.ContainsKey($CardRelative)) {
+        return $script:baselineCardCache[$CardRelative]
+    }
+    $text = $null
+    $baseline = $script:frozenEvidenceBaseline
+    if (-not $baseline) { $baseline = $script:evidenceExceptionBaseline }
+    if ($baseline) {
+        & git -C $repoRoot cat-file -e "${baseline}:$CardRelative" 2>$null
+        if ($LASTEXITCODE -eq 0) {
+            $text = ((& git -C $repoRoot cat-file blob "${baseline}:$CardRelative" 2>$null) -join "`n")
+        }
+    }
+    $script:baselineCardCache[$CardRelative] = $text
+    return $text
+}
+
+# Six-column EOL inference is only allowed for rows that already existed, byte for
+# byte, in a terminal card at the frozen baseline (ruling condition 4).
+function Get-BaselineRowEligible([string]$CardRelative, [string]$EvidenceId, $Cells) {
+    $key = "$CardRelative|$EvidenceId"
+    if ($script:baselineRowCache.ContainsKey($key)) { return [bool]$script:baselineRowCache[$key] }
+    $ok = $false
+    $text = Get-BaselineCardText $CardRelative
+    if ($text) {
+        $status = [regex]::Match($text, '(?m)^status:\s*(\S+)\s*$')
+        if ($status.Success -and (@('done', 'closed_with_limitations') -contains $status.Groups[1].Value.ToLowerInvariant())) {
+            $escape = [regex]::Escape($EvidenceId)
+            $rowLine = [regex]::Match($text, "(?m)^\|\s*$escape\s*\|.*$")
+            if ($rowLine.Success) {
+                $base = @($rowLine.Value.Trim().Trim('|').Split('|') | ForEach-Object { $_.Trim().Trim('`') })
+                if ($base.Count -ge 6 -and $Cells.Count -ge 6 -and
+                    $base[2] -eq $Cells[2] -and $base[3] -eq $Cells[3] -and
+                    $base[4].ToLowerInvariant() -eq $Cells[4].ToLowerInvariant() -and
+                    $base[5].ToUpperInvariant() -eq $Cells[5].ToUpperInvariant()) {
+                    $ok = $true
+                }
+            }
+        }
+    }
+    $script:baselineRowCache[$key] = $ok
+    return [bool]$ok
 }
 
 function Get-GitBlobSha256([string]$Commit, [string]$RepoRelativePath) {
@@ -913,55 +1045,89 @@ if ($TaskPath -and (Test-Path -LiteralPath $TaskPath -PathType Leaf)) {
                         continue
                     }
 
-                    # Legacy six-column rows retain r194's original semantics.
+                    # Legacy six-column rows (r194 semantics + the 2026-11-16 EOL ruling):
+                    #   * a missing WORKTREE path is not an error by itself -- the commit
+                    #     blob is tried first (ruling condition 6);
+                    #   * the recorded digest must equal one EXACT byte representation:
+                    #     worktree raw, blob raw, or -- for rows that already existed in a
+                    #     terminal card at the frozen baseline -- the pure LF / CRLF form of
+                    #     those same bytes.  Nothing else is ever normalised.
                     $evidencePath = Resolve-LocalPath $path $repoRoot
-                    if (-not $evidencePath -or -not (Test-Path -LiteralPath $evidencePath -PathType Leaf)) {
-                        $ex = Get-EvidenceException 'PATH_MISSING' $taskId $row[0] $path $commit $sha $class
-                        if ($ex) { Add-Warning "EXEMPTED[$($ex.id)]: Canonical evidence 路径缺失：$path —— $($ex.reason)" }
-                        else { Add-Error "Canonical evidence 路径缺失：$path" }
-                        continue
+                    $worktreeExists = [bool]($evidencePath -and (Test-Path -LiteralPath $evidencePath -PathType Leaf))
+                    $repoRel = $null
+                    if ($evidencePath) {
+                        $candidate = [IO.Path]::GetRelativePath($repoRoot, $evidencePath).Replace('\', '/')
+                        if ($candidate -ne '..' -and -not $candidate.StartsWith('../')) { $repoRel = $candidate }
                     }
+                    $cardRel = [IO.Path]::GetRelativePath($repoRoot, $TaskPath).Replace('\', '/')
                     if ($commit -match '^(?i:null|pending|todo|-)$') { $commit = '' }
                     if ($sha -match '^(?i:null|pending|todo|-)$') { $sha = '' }
                     if (-not $commit -and -not $sha) { Add-Error "Evidence 必须有 commit 或 SHA-256 pin：$path" }
+                    $commitValid = $false
                     if ($commit) {
                         if ($commit -notmatch '^[0-9a-fA-F]{7,40}$') { Add-Error "Evidence commit 格式无效：$path" }
+                        elseif (-not $repoRel) { Add-Error "仓外 evidence 不能用仓库 commit pin：$path" }
                         else {
-                            $repoRelative = [IO.Path]::GetRelativePath($repoRoot, $evidencePath).Replace('\', '/')
-                            if ($repoRelative -eq '..' -or $repoRelative.StartsWith('../')) { Add-Error "仓外 evidence 不能用仓库 commit pin：$path" }
-                            else {
-                                & git -C $repoRoot cat-file -e "${commit}:$repoRelative" 2>$null
-                                if ($LASTEXITCODE -ne 0) {
-                                    $ex = Get-EvidenceException 'COMMIT_PATH_MISSING' $taskId $row[0] $path $commit $sha $class
-                                    if ($ex) { Add-Warning "EXEMPTED[$($ex.id)]: Evidence commit 不含所 pin 文件：$commit`:$repoRelative —— $($ex.reason)" }
-                                    else { Add-Error "Evidence commit 不含所 pin 文件：$commit`:$repoRelative" }
-                                }
-                            }
+                            & git -C $repoRoot cat-file -e "${commit}:$repoRel" 2>$null
+                            if ($LASTEXITCODE -ne 0) {
+                                $ex = Get-EvidenceException 'COMMIT_PATH_MISSING' $taskId $row[0] $path $commit $sha $class
+                                if ($ex) { Add-Warning "EXEMPTED[$($ex.id)]: Evidence commit 不含所 pin 文件：$commit`:$repoRel —— $($ex.reason)" }
+                                else { Add-Error "Evidence commit 不含所 pin 文件：$commit`:$repoRel" }
+                            } else { $commitValid = $true }
                         }
                     }
                     if ($sha) {
-                        if ($sha -notmatch '^[0-9a-f]{64}$') { Add-Error "Evidence SHA-256 格式无效：$path" }
-                        if ($sha) {
-                            if ($sha -notmatch '^[0-9a-f]{64}$') { Add-Error "Evidence SHA-256 格式无效：$path" }
-                            else {
-                                # Keep the legacy OR predicate: current worktree bytes may match,
-                                # or the committed blob may match when the commit contains the path.
+                        if ($sha -notmatch '^[0-9a-f]{64}$') {
+                            Add-Error "Evidence SHA-256 格式无效：$path"
+                        } else {
+                            $matches = $false
+                            $matchBasis = ''
+                            if ($worktreeExists) {
                                 $worktreeSha = (Get-FileHash -LiteralPath $evidencePath -Algorithm SHA256).Hash.ToLowerInvariant()
-                                $matches = ($worktreeSha -eq $sha)
-                                if (-not $matches -and $commit) {
-                                    $repoRel = [IO.Path]::GetRelativePath($repoRoot, $evidencePath).Replace('\', '/')
-                                    if ($repoRel -ne '..' -and -not $repoRel.StartsWith('../')) {
-                                        $blobSha = Get-GitBlobSha256 $commit $repoRel
-                                        if ($blobSha -eq $sha) { $matches = $true }
+                                if ($worktreeSha -eq $sha) { $matches = $true; $matchBasis = 'WORKTREE' }
+                            }
+                            if (-not $matches -and $commitValid) {
+                                $blobSha = Get-GitBlobSha256 $commit $repoRel
+                                if ($blobSha -eq $sha) { $matches = $true; $matchBasis = 'BLOB' }
+                            }
+                            # EOL forms: only for historical rows that existed, unchanged, in a
+                            # terminal card at the frozen baseline (ruling condition 4).
+                            if (-not $matches -and (Get-BaselineRowEligible $cardRel $row[0] $row)) {
+                                if ($worktreeExists) {
+                                    $forms = Get-WorktreeForms $evidencePath
+                                    if ($forms) {
+                                        foreach ($form in @('LF', 'CRLF')) {
+                                            if ($forms[$form] -eq $sha) { $matches = $true; $matchBasis = "WORKTREE_$form"; break }
+                                        }
                                     }
                                 }
-                                if (-not $matches) {
+                                if (-not $matches -and $commitValid) {
+                                    $blobForms = Get-GitBlobForms $commit $repoRel
+                                    if ($blobForms) {
+                                        foreach ($form in @('LF', 'CRLF')) {
+                                            if ($blobForms[$form] -eq $sha) { $matches = $true; $matchBasis = "BLOB_$form"; break }
+                                        }
+                                    }
+                                }
+                            }
+                            if (-not $matches) {
+                                if (-not $worktreeExists -and -not $commit) {
+                                    $ex = Get-EvidenceException 'PATH_MISSING' $taskId $row[0] $path $commit $sha $class
+                                    if ($ex) { Add-Warning "EXEMPTED[$($ex.id)]: Canonical evidence 路径缺失：$path —— $($ex.reason)" }
+                                    else { Add-Error "Canonical evidence 路径缺失：$path" }
+                                } else {
                                     $ex = Get-EvidenceException 'SHA_MISMATCH' $taskId $row[0] $path $commit $sha $class
                                     if ($ex) { Add-Warning "EXEMPTED[$($ex.id)]: Evidence SHA-256 不匹配：$path —— $($ex.reason)" }
                                     else { Add-Error "Evidence SHA-256 不匹配：$path" }
                                 }
+                            } elseif ($matchBasis -notin @('WORKTREE', 'BLOB')) {
+                                Add-Warning "Evidence SHA-256 以行尾形态匹配（$matchBasis）：$path"
                             }
                         }
+                    } elseif (-not $worktreeExists) {
+                        $ex = Get-EvidenceException 'PATH_MISSING' $taskId $row[0] $path $commit $sha $class
+                        if ($ex) { Add-Warning "EXEMPTED[$($ex.id)]: Canonical evidence 路径缺失：$path —— $($ex.reason)" }
+                        else { Add-Error "Canonical evidence 路径缺失：$path" }
                     }
                 }
                 $evidenceDir = $metadata['evidence_dir']

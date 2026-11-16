@@ -106,18 +106,16 @@ class ExceptionRegistryTests(unittest.TestCase):
     # ---------------------------------------------------------------- positive
     def test_exact_match_is_downgraded_to_a_warning(self):
         clone = self.clone()
-        self.write_registry(clone, [self.entry_for(clone, "EV-01")])
+        self.write_registry(clone, [self.entry_for(clone, "EV-11")])
         out = self.check(clone)
-        self.assertIn("EXEMPTED[EXC-TEST-EV-01]", out)
+        self.assertIn("EXEMPTED[EXC-TEST-EV-11]", out)
         # the row itself must no longer fail (the warning text still quotes the message)
-        self.assertNotIn(
-            "FAIL: Evidence SHA-256 不匹配：apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs",
-            out)
+        self.assertNotIn("FAIL: Evidence SHA-256 不匹配：doc/tasks/FEA-11-HOST-AUTH-3.md", out)
 
     # ---------------------------------------------------------------- negative
     def test_any_field_change_disables_the_exception(self):
         clone = self.clone()
-        entry = self.entry_for(clone, "EV-01")
+        entry = self.entry_for(clone, "EV-11")
         entry["sha256"] = "0" * 64
         self.write_registry(clone, [entry])
         out = self.check(clone)
@@ -146,7 +144,7 @@ class ExceptionRegistryTests(unittest.TestCase):
     def test_exception_lapses_when_the_card_is_reopened(self):
         # ruling condition 4: reopening the card must invalidate the exception
         clone = self.clone()
-        self.write_registry(clone, [self.entry_for(clone, "EV-01")])
+        self.write_registry(clone, [self.entry_for(clone, "EV-11")])
         card = clone / CARD
         text = card.read_text(encoding="utf-8")
         self.assertIn("status: done", text)
@@ -158,7 +156,7 @@ class ExceptionRegistryTests(unittest.TestCase):
 
     def test_wildcard_entry_is_rejected(self):
         clone = self.clone()
-        entry = self.entry_for(clone, "EV-01")
+        entry = self.entry_for(clone, "EV-11")
         entry["path"] = "apps/desktop-avalonia/**"
         self.write_registry(clone, [entry])
         out = self.check(clone)
@@ -174,8 +172,8 @@ class ExceptionRegistryTests(unittest.TestCase):
 
     def test_duplicate_fingerprint_is_rejected(self):
         clone = self.clone()
-        entry = self.entry_for(clone, "EV-01")
-        second = dict(entry, id="EXC-TEST-EV-01-B")
+        entry = self.entry_for(clone, "EV-11")
+        second = dict(entry, id="EXC-TEST-EV-11-B")
         self.write_registry(clone, [entry, second])
         out = self.check(clone)
         self.assertIn("EVIDENCE_EXCEPTION_DUPLICATE_ROW", out)

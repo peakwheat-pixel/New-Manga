@@ -1,0 +1,39 @@
+# GOV-EVIDENCE-PIN-REPAIR-1 · AC7 证据（门禁接受 blob 行尾形态，裁定 Q1=A）
+# head: 86add17cf
+# at_utc: 2026-11-16T15:23:27Z
+# os: Windows 10.0.26200 ; PowerShell 7.6.8 ; Python 3.14.6
+# ruling: doc/reviews/GOV-EVIDENCE-PIN-REPAIR-1-EOL-GATE-RULING-2026-11-16.md
+
+## 1. 改了什么（check.ps1 六列历史行分支）
+# - 新增 Get-ByteForms：只做 CRLF<->LF 的字节变换；含 NUL 或裸 CR ⇒ 拒绝派生；
+#   **混合行尾（既有 CRLF 又有裸 LF）⇒ 只保留原始形态**，不产生派生形态（裁定条件 3）。
+# - 新增 Get-GitBlobBytes/Get-GitBlobForms/Get-WorktreeForms：字节级读取（Process+MemoryStream，不经文本管道），按 commit:path 缓存。
+# - 新增 Get-BaselineRowEligible：只有「冻结基线 8db997f9… 中已存在、字段逐字未变、当时卡为终态」的行才允许行尾推断。
+# - 六列分支重写：工作树缺失不再直接报错（先尝试提交 blob）；判定顺序 = 工作树原始 → blob 原始 → 行尾形态（仅历史行）；
+#   命中行尾形态时输出 `Evidence SHA-256 以行尾形态匹配（<basis>）` 警告（透明可见）；三种形态都不匹配仍报错。
+# - 七列表（显式 sha256_basis）分支**未改动**，仍只校验原始字节。
+
+## 2. 测试（7 项，全过）
+# command: python -B -m unittest tools.governance.tests.test_evidence_eol_forms -v
+Ran 7 tests ... OK
+# 正例 3：①HOST-CORECLIENT-1 的 blob CRLF/LF 形态匹配通过（且 60 warnings 透明列出）
+#        ②同一张卡的工作树路径已清理，仍能通过提交 blob 校验（不再报「路径缺失」）
+#        ③无 commit 的行接受工作树 CRLF 形态（合成 fixture，临时把冻结基线指向 fixture 提交以单测机制）
+# 负例 4：④改 1 个内容字节仍 FAIL；⑤混合行尾仍 FAIL（派生形态被拒绝）；⑥随机摘要仍 FAIL；
+#        ⑦基线之后新增的六列行不得推断（用真实冻结基线，行判 FAIL）
+
+## 3. 实测影响（门禁）
+# 全局 check.ps1：1.10 s（改动前 1.18–1.29 s，仍 << 10 s）
+# doc/tasks/HOST-CORECLIENT-1.md：FAIL 55 → **PASS (60 warnings)**，其中 57 条为「行尾形态匹配」
+# doc/tasks/FEA-11-HOST-AUTH-2.md：PASS (8 warnings)，EV-01/EV-03 改由 BLOB_CRLF 原生通过，仅剩 3 条 registry 例外
+# doc/tasks/FEA-05-PORT-1.md：仍 7 errors（真实缺陷，未受影响）
+
+## 4. 顺带修正的第三处口径错误（重要）
+# 复查 FEA-12-CORE（门禁 PASS 而工具 35 FAIL）发现：旧六列 schema 的语义是「commit **或** sha256」，
+# 因此 `sha256=null` 但 commit 有效的行是**合法 pin**，不是缺陷；我的工具此前把它们判 FAIL。
+# 修正后全仓 FAIL **310 → 98**（WARN 268 = 212 条 commit-only 合法 pin + 56 条 blob/工作树不一致）。
+# 至此三轮口径修正合计把「初始 445」压到 **98 条真实待判**（SHA_MISMATCH 31 / PATH_MISSING 53 / 无摘要且无 blob 2 / commit 不可解析 12）。
+
+## 5. 教训（第三次同类）
+# 三次都是我拿**比项目定义更严**的口径去判历史行：①只查原始 blob 不看 CRLF 形态；②同前（EV-01/03）；
+# ③不认「commit-only」这种旧 schema 的合法形态。结论：**判缺陷前必须先把该 schema 的合法表示集穷举完**。
