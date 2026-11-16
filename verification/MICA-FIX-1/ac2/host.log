@@ -1,0 +1,4 @@
+2026-11-16T04:09:13.7079554+00:00 INFO single-instance acquired: Local\NewManga.Ac2Legacy.120139be2e40 (abandoned_recovered=False)
+2026-11-16T04:09:13.7190896+00:00 INFO mode=ReadWrite reason=parity reached and no legacy shell running
+2026-11-16T04:09:13.7194194+00:00 INFO first-run backup skipped: catalog database not present yet
+2026-11-16T04:09:13.7204379+00:00 ERROR code=SidecarBundleMissing sidecar=sidecar-bundle [SidecarBundleMissing] sidecar-bundle: no sidecar directory with core_service.exe and host_bridge.exe found in 2 candidate locations: G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\core-sidecar; G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\resources\core-sidecar
