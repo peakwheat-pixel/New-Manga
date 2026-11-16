@@ -169,7 +169,8 @@ fileLock = new FileStream(... "registry.v1.lock", ..., FileShare.None);   // ←
 | EV-HCF-18 | P0-1 修复的 Host -warnaserror 编译 | verification/HOST-CONCURRENCY-FLAKY-1/build-p0.log | bbeb28dcb | 5a1e95234be694cb71a90e80efa57321672d506ec82996e60803220b32880cef | CANONICAL | BLOB |
 | EV-HCF-19 | **AC6 二次独立复核报告**（CHANGES_REQUESTED；代码侧放行） | verification/HOST-CONCURRENCY-FLAKY-1/review-ac6-2nd.md | f1f9db9e4 | 62b4e36e940d986d989e5d959c2757e2a19262cd6c352f070f6eadee6b0d2d11 | CANONICAL | BLOB |
 | EV-HCF-20 | 返修后全量 test.ps1（EXIT=0；Host 364 = 361+3） | verification/HOST-CONCURRENCY-FLAKY-1/after-ac6-2nd-fix.log | f1f9db9e4 | bf3d8ef02de3bcc2bca8dfa0bc94b45cae44663efbb66afe79c95a123fd9b713 | CANONICAL | BLOB |
-| EV-HCF-21 | AC1/AC3 诊断（含「并行叙事」更正） | verification/HOST-CONCURRENCY-FLAKY-1/ac1-ac3-diagnosis.md | PENDING_SUBMIT | a0909bb9f8fad161fdae9dec232550ed4f3321cab371c3e8714a3c890cf24aa7 | CANONICAL | BLOB |
+| EV-HCF-21 | AC1/AC3 诊断（含「并行叙事」更正） | verification/HOST-CONCURRENCY-FLAKY-1/ac1-ac3-diagnosis.md | 1b92403a0 | a0909bb9f8fad161fdae9dec232550ed4f3321cab371c3e8714a3c890cf24aa7 | CANONICAL | BLOB |
+| EV-HCF-22 | **AC6 三次独立复核报告（ACCEPTED）**：21/21 pin + 门禁 PASS + 回归测试实跑绿且能变红 | verification/HOST-CONCURRENCY-FLAKY-1/review-ac6-3rd.md | 1b92403a0 | 917224f3a7531433415efa346f7e1cbac2735b4fc531727a6f26c1f9eee5c5ff | CANONICAL | BLOB |
 
 ## Resource Manifest
 
