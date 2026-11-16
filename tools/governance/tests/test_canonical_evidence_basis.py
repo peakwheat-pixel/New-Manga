@@ -1,6 +1,7 @@
 """Discriminate legacy six-column pins from explicit seven-column byte bases."""
 import hashlib
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -151,6 +152,18 @@ class CanonicalEvidenceBasisTests(unittest.TestCase):
             ),
             encoding="utf-8",
             newline="\n",
+        )
+        # The fixture card changes a terminal Task into a non-terminal one, so the
+        # clone's ledger no longer matches its own Task set.  Regenerate it inside
+        # the throw-away clone; this keeps the fixture self-consistent without
+        # touching any assertion (the checked invariants stay exactly the same).
+        subprocess.run(
+            [sys.executable, "-B", "tools/governance/task_ledger.py", "--write"],
+            cwd=self.repo_root,
+            check=True,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
         )
         result = subprocess.run(
             ["pwsh", "-NoProfile", "-File", str(self.check), "-TaskPath", "doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md"],

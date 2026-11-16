@@ -1,0 +1,28 @@
+# 治理工具测试债清零：test_canonical_evidence_basis 9 失败 → 18/18 OK，全量 93/93 OK
+# head: 6697cbf29
+# at_utc: 2026-11-16T12:36:06Z
+# os: Windows 10.0.26200 ; PowerShell 7.6.8 ; Python 3.14.6
+
+## 1. 根因（不是断言问题，是 fixture 自洽问题）
+# 该测试类 setUpClass 用 `git clone --shared` + `git checkout --detach <head>` 造一个仓内临时仓，
+# 然后把 doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md 改写成 fixture 卡（status: in_review）后跑 check.ps1 -TaskPath。
+# 真实仓里这张卡现在是 closed_with_limitations（终态），fixture 把它改回非终态 ⇒ 临时仓里非终态 Task 变成 13 个，
+# 而临时仓的 TASK_LEDGER（来自被检 head）只声明 12 个 ⇒ check.ps1 报 `TASK_LEDGER 已过期` ⇒ FIXTURE_PROCESS_EXIT=1。
+# 即：失败随真实仓的任务状态漂移而出现，不是 pin 基准逻辑坏了（9 条失败都止步于同一处 FAIL）。
+
+## 2. 修法（不弱化任何断言）
+# 在 run_fixture 写完 fixture 卡之后、跑 check.ps1 之前，于**临时仓内**执行：
+#   python -B tools/governance/task_ledger.py --write
+# => 临时仓的台账与它自己的 Task 集一致；assert_basis_passes 的四条断言原样保留（EXIT=0 / PASS / 无 EVIDENCE_BASIS_ / 无 SHA 不匹配）。
+# 只改了 fixture 的准备工作；没有跳过检查、没有放宽期望、没有删除用例。
+
+## 3. 实测
+# command: python -B -m unittest tools.governance.tests.test_canonical_evidence_basis
+# 修前: Ran 18 tests, 9 FAIL；修后: Ran 18 tests, OK
+# command: python -B -m unittest discover -s tools/governance/tests -p test_*.py
+# 修前: Ran 93 tests, FAILED (failures=10)；修后: Ran 93 tests, **OK**（exit 0）
+
+## 4. 同一提交内的顺带修复
+# doc/tasks/M2-REGION-RETYPE-CORE.md frontmatter 有两个 integration_commit 键（d8019810 与 null）——
+# 删除后面的空值，保留真实值 d8019810；该卡是 lifecycle v1 的历史 done 卡，只动这一个键。
+# check.ps1 -TaskPath 该卡: PASS(4w) EXIT=0（4 条 warning 含 lifecycle v1 提示，属既有）。

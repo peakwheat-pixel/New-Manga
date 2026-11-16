@@ -13,7 +13,6 @@ depends_on: [M2-REGION-RETYPE-CONTRACT]
 base_commit: 1b765007
 branch: agent/zcode/M2-REGION-RETYPE-CORE
 worktree: G:/CODEX/New Manga.worktrees/M2-REGION-RETYPE-CORE-zcode
-integration_commit: null
 ---
 
 # M2-REGION-RETYPE-CORE：Region 改标 Core 实现（T5b）
