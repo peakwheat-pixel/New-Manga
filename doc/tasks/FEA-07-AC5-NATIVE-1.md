@@ -155,7 +155,7 @@ out_of_scope:
 | EV-AC5-04 | AC-N4 | verification/FEA-07-AC5-NATIVE-1/evidence/exe-manifest.txt | 9e1734ccf | e9f6164bce13b8b9edd1dd96daeddf9c11bcf14d6cdfc2d845c9948b3542c735 | CANONICAL |
 | EV-AC5-05 | AC-N4 | verification/FEA-07-AC5-NATIVE-1/evidence/window-persistence-20261109-101115.json | 9e1734ccf | c5d279ebf386ea53a49bde028fe0ba35e690367345fcdcf086cdb7e6a897f4df | CANONICAL |
 | EV-AC5-06 | AC-N5 | verification/FEA-07-AC5-NATIVE-1/README.md | eff2b63d2 | 88ffe64dfcae1f76366e56b8dc426c9fb83e737552dfea9921569367ebfba826 | CANONICAL |
-| EV-AC5-07 | **AC-N5 独立复核（ACCEPTED，带 limitation）** | verification/FEA-07-AC5-NATIVE-1/review-ac-n5-2026-11-16.md | PENDING_SUBMIT | dd373bd386e18c6cc777961134ef1bc6f35b7dbb07846bd2ca5adac08a47d055 | CANONICAL |
+| EV-AC5-07 | **AC-N5 独立复核（ACCEPTED，带 limitation）** | verification/FEA-07-AC5-NATIVE-1/review-ac-n5-2026-11-16.md | b123ea6fc | dd373bd386e18c6cc777961134ef1bc6f35b7dbb07846bd2ca5adac08a47d055 | CANONICAL |
 
 | EV-AC5-P01 | 过程记录 | verification/FEA-07-AC5-NATIVE-1/evidence/display-state-before-native-20261109-084020.json | - | 2482237f8a64d272fbd29ecec127011f6851d0c50ffab562a07a94cd2d5b626c | CANONICAL |
 | EV-AC5-P02 | 过程记录 | verification/FEA-07-AC5-NATIVE-1/evidence/display-state-after-aoc-native-20261109-084031.json | - | b38d7962e0412e3f66229eb67a903efd9a4a58ca511ab26821ee823335064b34 | CANONICAL |
