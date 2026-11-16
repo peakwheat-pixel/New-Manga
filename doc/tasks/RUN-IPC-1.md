@@ -133,7 +133,7 @@ evidence_dir: verification/RUN-IPC-1
 | EVID-RUNIPC-REVIEW | AC1-AC6 | `verification/RUN-IPC-1/antigravity-review-r1.md` | `40450fde07d72890bfae15e9ae738634ffbf530c` | `76bf66faec2179ab45ec6043a0dc75719bc94c6dc61cd9f78b5c62a904b4052e` | `CANONICAL` |
 | EVID-RUNIPC-POSTMERGE-SRC | AC5（合并后） | `verification/RUN-IPC-1/post-merge-source.log` | `de3caf93adf44fdda226a5f9ad013cbe7739e0f4` | `433f8199b44636612a4bade2dea32f02214895caadfa2c30e716bb38426aeb6d` | `CANONICAL` |
 | EVID-RUNIPC-POSTMERGE-PKG | AC4③/AC5（合并后） | `verification/RUN-IPC-1/post-merge-packaged.log` | `de3caf93adf44fdda226a5f9ad013cbe7739e0f4` | `1d97c5819b931263d7c48f1b74d875ee9e3a345e7b7de8d1783cc53a5f72cbd7` | `CANONICAL` |
-| EVID-RUNIPC-AC4-REVERIFY | AC4 ①②③ | `verification/RUN-IPC-1/ac4/ac4-reverify-2026-11-16.log` | PENDING_SUBMIT | `dd78a0afc717162bf062b20c426b2853a1cb2fa29860ebecaca0078e66844fd1` | `CANONICAL` |
+| EVID-RUNIPC-AC4-REVERIFY | AC4 ①②③ | `verification/RUN-IPC-1/ac4/ac4-reverify-2026-11-16.log` | 06369280b | `dd78a0afc717162bf062b20c426b2853a1cb2fa29860ebecaca0078e66844fd1` | `CANONICAL` |
 | EV-RES-MANIFEST | Resource | `verification/RUN-IPC-1/resource-manifest.json` | 19412ff70 | - | CANONICAL |
 ## Resource Manifest
 
