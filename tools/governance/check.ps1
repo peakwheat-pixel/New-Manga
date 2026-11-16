@@ -44,7 +44,7 @@ function Initialize-EvidenceExceptions([string]$RegistryPath) {
     $script:evidenceExceptionBaseline = $baseline
     $entryKeys = @('id', 'card', 'task_id', 'evidence_id', 'path', 'commit', 'sha256', 'class',
                    'error_type', 'reason', 'ruling', 'expires_when')
-    $allowedTypes = @('SHA_MISMATCH', 'PATH_MISSING', 'COMMIT_PATH_MISSING')
+    $allowedTypes = @('SHA_MISMATCH', 'PATH_MISSING', 'COMMIT_PATH_MISSING', 'COMMIT_FORMAT', 'SHA_MULTI')
     $seenIds = @{}
     foreach ($e in @($doc.entries)) {
         $enames = @($e.PSObject.Properties.Name)
@@ -62,11 +62,25 @@ function Initialize-EvidenceExceptions([string]$RegistryPath) {
             Add-Error "EVIDENCE_EXCEPTION_WILDCARD: 登记项不得含通配符：$($e.id)"
             continue
         }
-        if (([string]$e.sha256) -notmatch '^[0-9a-f]{64}$') {
+        $shaValues = @($e.sha256 | ForEach-Object { ([string]$_).Trim().ToLowerInvariant() })
+        if ($shaValues.Count -eq 0 -or $shaValues.Count -gt 8) {
+            Add-Error "EVIDENCE_EXCEPTION_SHA_INVALID: 登记项的 sha256 必须是 1-8 个摘要：$($e.id)"
+            continue
+        }
+        $shaBad = @($shaValues | Where-Object { $_ -notmatch '^[0-9a-f]{64}$' })
+        if ($shaBad.Count -gt 0) {
             Add-Error "EVIDENCE_EXCEPTION_SHA_INVALID: 登记项的 sha256 必须是 64 位小写十六进制：$($e.id)"
             continue
         }
-        if (([string]$e.commit) -notmatch '^([0-9a-f]{7,40}|-)$') {
+        $proseCommit = ([string]$e.error_type -eq 'COMMIT_FORMAT')
+        if ($proseCommit) {
+            # ruling Q1=A: the prose commit must be recorded verbatim, so any
+            # non-empty text is allowed for this hook (and only this hook).
+            if ([string]::IsNullOrWhiteSpace([string]$e.commit)) {
+                Add-Error "EVIDENCE_EXCEPTION_COMMIT_INVALID: COMMIT_FORMAT 登记项必须逐字记录异常的 commit 原文：$($e.id)"
+                continue
+            }
+        } elseif (([string]$e.commit) -notmatch '^([0-9a-f]{7,40}|-)$') {
             Add-Error "EVIDENCE_EXCEPTION_COMMIT_INVALID: 登记项的 commit 必须是 7-40 位十六进制或 -：$($e.id)"
             continue
         }
@@ -75,7 +89,8 @@ function Initialize-EvidenceExceptions([string]$RegistryPath) {
         }
         $seenIds[[string]$e.id] = $true
         $commitKey = if ([string]$e.commit -eq '-') { '' } else { [string]$e.commit }
-        $key = @($e.card, $e.task_id, $e.evidence_id, $e.path, $commitKey, $e.sha256,
+        $shaKey = (($shaValues) -join ',')
+        $key = @($e.card, $e.task_id, $e.evidence_id, $e.path, $commitKey, $shaKey,
                  $e.class, $e.error_type) -join '|'
         if ($script:evidenceExceptionIndex.ContainsKey($key)) {
             Add-Error "EVIDENCE_EXCEPTION_DUPLICATE_ROW: 同一行指纹被登记两次：$($e.id)"; continue
@@ -120,7 +135,8 @@ function Test-EvidenceExceptionEligibility($Entry) {
 }
 
 function Get-EvidenceException([string]$ErrorType, [string]$TaskId, [string]$EvidenceId,
-                              [string]$Path, [string]$Commit, [string]$Sha, [string]$Class) {
+                              [string]$Path, [string]$Commit, [string]$Sha, [string]$Class,
+                              [string]$CommitRaw = $null, [string]$ShaRaw = $null) {
     if ($script:evidenceExceptions.Count -eq 0) { return $null }
     # Ruling condition 4: an exception lapses as soon as the card is reopened.
     $currentStatus = ''
@@ -131,6 +147,43 @@ function Get-EvidenceException([string]$ErrorType, [string]$TaskId, [string]$Evi
     $cardRel = [IO.Path]::GetRelativePath($repoRoot, $TaskPath).Replace('\', '/')
     $commitKey = if ($Commit -match '^[0-9a-fA-F]{7,40}$') { $Commit } else { '' }
     $key = @($cardRel, $TaskId, $EvidenceId, $Path, $commitKey, $Sha, $Class, $ErrorType) -join '|'
+    if ($ErrorType -eq 'COMMIT_FORMAT') {
+        # the prose commit must be recorded verbatim (ruling Q1=A)
+        $rawKey = if ($null -ne $CommitRaw) { $CommitRaw } else { $Commit }
+        $found = $null
+        foreach ($candidate in $script:evidenceExceptions) {
+            if ($candidate.card -eq $cardRel -and $candidate.task_id -eq $TaskId -and
+                $candidate.evidence_id -eq $EvidenceId -and $candidate.path -eq $Path -and
+                $candidate.class.ToUpperInvariant() -eq $Class -and
+                [string]$candidate.error_type -eq 'COMMIT_FORMAT' -and
+                [string]$candidate.commit -eq $rawKey) { $found = $candidate; break }
+        }
+        if (-not $found) { return $null }
+        if (-not (Test-EvidenceExceptionEligibility $found)) {
+            Add-Warning "EVIDENCE_EXCEPTION_INELIGIBLE: 登记项 $($found.id) 在资格基线中不成立，仍按错误处理。"
+            return $null
+        }
+        return $found
+    }
+    if ($ErrorType -eq 'SHA_MULTI') {
+        $rawDigests = @([regex]::Matches([string]$ShaRaw, '[0-9a-fA-F]{64}') | ForEach-Object { $_.Value.ToLowerInvariant() })
+        $joined = $rawDigests -join ','
+        $found = $null
+        foreach ($candidate in $script:evidenceExceptions) {
+            $listed = @($candidate.sha256 | ForEach-Object { ([string]$_).Trim().ToLowerInvariant() })
+            if ($candidate.card -eq $cardRel -and $candidate.task_id -eq $TaskId -and
+                $candidate.evidence_id -eq $EvidenceId -and $candidate.path -eq $Path -and
+                $candidate.class.ToUpperInvariant() -eq $Class -and
+                [string]$candidate.error_type -eq 'SHA_MULTI' -and
+                (($listed -join ',') -eq $joined)) { $found = $candidate; break }
+        }
+        if (-not $found) { return $null }
+        if (-not (Test-EvidenceExceptionEligibility $found)) {
+            Add-Warning "EVIDENCE_EXCEPTION_INELIGIBLE: 登记项 $($found.id) 在资格基线中不成立，仍按错误处理。"
+            return $null
+        }
+        return $found
+    }
     if (-not $script:evidenceExceptionIndex.ContainsKey($key)) { return $null }
     $entry = $script:evidenceExceptionIndex[$key]
     if (-not (Test-EvidenceExceptionEligibility $entry)) {
@@ -997,10 +1050,19 @@ if ($TaskPath -and (Test-Path -LiteralPath $TaskPath -PathType Leaf)) {
                         else { Add-Error 'Canonical Evidence 表格需要 6 列。' }
                         continue
                     }
-                    $path = $row[2]
-                    $commit = [string]$row[3]
-                    $sha = ([string]$row[4]).ToLowerInvariant()
-                    $class = $row[5].ToUpperInvariant()
+                    if (@($row | ForEach-Object { ([string]$_).Trim() } | Where-Object { $_ -ne '-' -and $_ -ne '' }).Count -eq 0) {
+                        Add-Error "Canonical Evidence 行结构非法：整行为占位符：$($row -join ' | ')"
+                        continue
+                    }
+                    # Legacy rows often wrap cells in backticks; strip them once so
+                    # every downstream comparison (and the exception fingerprint) is
+                    # against the same normalised text.
+                    $path = ([string]$row[2]).Trim().Trim('`').Trim()
+                    $commitRaw = ([string]$row[3]).Trim().Trim('`').Trim()
+                    $shaRaw = ([string]$row[4]).Trim().Trim('`').Trim()
+                    $commit = $commitRaw
+                    $sha = $shaRaw.ToLowerInvariant()
+                    $class = ([string]$row[5]).Trim().Trim('`').Trim().ToUpperInvariant()
                     if ($class -notin @('CANONICAL', 'SOURCE_PIN')) { Add-Error "Evidence class 无效：$class" }
                     if ($basisEvidenceSchema) {
                         if ($row.Count -ne 7) { Add-Error 'EVIDENCE_BASIS_ROW_ARITY: 新七列表的每行必须恰好有 7 列。'; continue }
@@ -1069,7 +1131,11 @@ if ($TaskPath -and (Test-Path -LiteralPath $TaskPath -PathType Leaf)) {
                     if (-not $commit -and -not $sha) { Add-Error "Evidence 必须有 commit 或 SHA-256 pin：$path" }
                     $commitValid = $false
                     if ($commit) {
-                        if ($commit -notmatch '^[0-9a-fA-F]{7,40}$') { Add-Error "Evidence commit 格式无效：$path" }
+                        if ($commit -notmatch '^[0-9a-fA-F]{7,40}$') {
+                            $ex = Get-EvidenceException 'COMMIT_FORMAT' $taskId $row[0] $path $commit $sha $class $commitRaw $shaRaw
+                            if ($ex) { Add-Warning "EXEMPTED[$($ex.id)]: Evidence commit 格式无效：$path（原文 `"$commit`"）—— $($ex.reason)" }
+                            else { Add-Error "Evidence commit 格式无效：$path" }
+                        }
                         elseif (-not $repoRel) { Add-Error "仓外 evidence 不能用仓库 commit pin：$path" }
                         else {
                             & git -C $repoRoot cat-file -e "${commit}:$repoRel" 2>$null
@@ -1082,7 +1148,9 @@ if ($TaskPath -and (Test-Path -LiteralPath $TaskPath -PathType Leaf)) {
                     }
                     if ($sha) {
                         if ($sha -notmatch '^[0-9a-f]{64}$') {
-                            Add-Error "Evidence SHA-256 格式无效：$path"
+                            $ex = Get-EvidenceException 'SHA_MULTI' $taskId $row[0] $path $commit $sha $class $commitRaw $shaRaw
+                            if ($ex) { Add-Warning "EXEMPTED[$($ex.id)]: Evidence SHA-256 格式无效（多摘要单元格）：$path —— $($ex.reason)" }
+                            else { Add-Error "Evidence SHA-256 格式无效：$path" }
                         } else {
                             $matches = $false
                             $matchBasis = ''

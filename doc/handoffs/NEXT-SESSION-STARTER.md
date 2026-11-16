@@ -236,7 +236,12 @@ Gate 剩下的是条件 3（人眼目视 overlay）/ 4（签名 + 真机安装�
   现巡检 FAIL **51** / EXEMPTED 50（门禁与工具一致）。
 - **已知未完成**：51 条待判（多在 `P02-NEW-TIME-X6`(15, superseded)、`GOV-EVIDENCE-UNIQUE-1`(4)，其余每卡≤3）；
   4 条无摘要行因登记表 schema 要求 64 位摘要而**无法登记**（需 schema 扩展或改行，后者被 append-only 禁止）；AC5 复核未做。
-- **待做（AC4/AC5）**：余 **51** 条（SHA_NOT_64_HEX 214 / PATH_MISSING 53 / SHA_MISMATCH 31 / COMMIT_NOT_FOUND 12）按类逐条归因 → 逐条登记或修 pin → 上下文独立复核；另需就「check.ps1 是否接受 blob 的 EOL 形态」取得裁定（当前门禁只比对原始 blob 与当前工作树，会把这些有效 pin 判红）。
+- **AC4 batch 3（R9）**：按新裁定（`doc/reviews/GOV-EVIDENCE-PIN-REPAIR-1-EXCEPTION-HOOKS-RULING-2026-11-16.md`，
+  Q1=A/Q2=A/Q3=结构非法）新增两个例外钩子 **COMMIT_FORMAT**（散文 commit，逐字记录才降级）与 **SHA_MULTI**（有序摘要列表），
+  并把整行 `-` 判为「行结构非法」且不进例外通道；同时修掉「单元格反引号未剥离导致条目永不命中」的实现缺陷。
+  登记表 97 条（PATH_MISSING 51 / SHA_MISMATCH 34 / COMMIT_FORMAT 12）。
+- **待做（AC4/AC5）**：剩余按卡处理 —— ①同一行还需补登记 SHA_MISMATCH；②`FEA-GOV-10` 等卡缺 `## Resource Manifest` 整节；
+  ③2 条多摘要行应登记 SHA_MULTI，2 条空壳行按裁定保留错误。余 **51** 条（SHA_NOT_64_HEX 214 / PATH_MISSING 53 / SHA_MISMATCH 31 / COMMIT_NOT_FOUND 12）按类逐条归因 → 逐条登记或修 pin → 上下文独立复核；另需就「check.ps1 是否接受 blob 的 EOL 形态」取得裁定（当前门禁只比对原始 blob 与当前工作树，会把这些有效 pin 判红）。
 - ⚠️ 已更正事实：EV-11 的值是 **64 位**合法 sha256（不是题述的 40 位），真正问题是本仓无任何字节表示能复现它。
 
 ### 队列 4 —— HUMAN-REQUIRED 等待项（不阻塞 Agent）

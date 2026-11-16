@@ -28,6 +28,7 @@ REPO = Path(__file__).resolve().parents[2]
 HEX64 = re.compile(r"[0-9a-f]{64}")
 COMMIT = re.compile(r"^[0-9a-f]{7,40}$")
 CANONICAL_CLASSES = ("CANONICAL", "SOURCE_PIN")
+ENFORCED_STATUSES = ("in_review", "approved", "done", "closed_with_limitations")
 
 
 def split_row(line):
@@ -330,6 +331,10 @@ def main(argv=None):
             if not commits_exist[key]:
                 commit_shaped = False
         verdict, code, detail, basis = judge(r, blob, representations(path), commit_shaped)
+        if verdict == "FAIL" and r.get("card_status") not in ENFORCED_STATUSES:
+            # check.ps1 only validates these statuses, so a row elsewhere is not a
+            # gate defect -- report it separately instead of inflating FAIL.
+            verdict, detail = "NOT_ENFORCED", "card status is not evidence-enforced by check.ps1"
         if verdict == "FAIL":
             entry = registry_match(registry, r, code)
             if entry:
@@ -353,12 +358,13 @@ def main(argv=None):
 
     fails = [r for r in results if r.get("verdict") == "FAIL"]
     exempted = [r for r in results if r.get("verdict") == "EXEMPTED"]
+    not_enforced = [r for r in results if r.get("verdict") == "NOT_ENFORCED"]
     superseded = [r for r in results if r.get("verdict") == "SUPERSEDED"]
     warns = [r for r in results if r.get("verdict") == "WARN"]
     print("evidence pin sweep: %d canonical row(s) in %d card(s)"
           % (len(results), len(cards)))
-    print("  FAIL: %d   EXEMPTED: %d   SUPERSEDED: %d   WARN: %d"
-          % (len(fails), len(exempted), len(superseded), len(warns)))
+    print("  FAIL: %d   EXEMPTED: %d   SUPERSEDED: %d   NOT_ENFORCED: %d   WARN: %d"
+          % (len(fails), len(exempted), len(superseded), len(not_enforced), len(warns)))
     for r in fails:
         print("  FAIL %-38s %-22s %s:%s  %s"
               % (r["card"].split("/")[-1], r["code"], (r["path"] or "")[:42],

@@ -1,0 +1,26 @@
+# GOV-EVIDENCE-PIN-REPAIR-1 · AC4 batch 3 证据（新增两个例外钩子 + 指纹规范化）
+# head: 34f6b3eae
+# at_utc: 2026-11-16T16:13:40Z
+# os: Windows 10.0.26200 ; PowerShell 7.6.8 ; Python 3.14.6
+# ruling: doc/reviews/GOV-EVIDENCE-PIN-REPAIR-1-EXCEPTION-HOOKS-RULING-2026-11-16.md（APPROVED_WITH_CONDITIONS：Q1=A/Q2=A/Q3=结构非法）
+
+## 1. 新增两个例外钩子（按裁定）
+# ① COMMIT_FORMAT：`commit` 单元格是散文（如 `(见提交)`）时，只有登记项**逐字记录该散文**才降级为 warning；
+#    schema 对这类条目放宽 commit 字段（仅限该 error_type），其余仍要求十六进制或 `-`。
+# ② SHA_MULTI：`sha256` 单元格含多个摘要时，登记项按**有序列表**绑定；只有列表中每个摘要都不匹配任何精确表示才降级。
+# ③ 空壳行（整行 `-`）：新增「行结构非法」错误，**不进例外通道**（裁定 Q3）。
+
+## 2. 指纹规范化（本轮修掉的实现缺陷）
+# - 单元格在解析时统一剥离反引号（此前 `` `(见提交)` `` 与 `(见提交)` 不相等 ⇒ 条目永不命中）；
+# - 登记项的 commit 也统一剥离反引号；
+# - 「非十六进制 commit」不再一律折叠成 `-`（COMMIT_FORMAT 条目必须保留原文）。
+
+## 3. 实测
+# 登记表：97 条（PATH_MISSING 51 / SHA_MISMATCH 34 / COMMIT_FORMAT 12）；2 条 BLOB_EOL_MATCH 已删除（那些行现已门禁原生通过）
+# 全局 check.ps1 PASS(3w)；例外通道测试 10/10 OK；本卡 -TaskPath PASS(3w)
+# FEA-GOV-10 等 7 张卡：COMMIT_FORMAT 钩子已生效（出现 EXEMPTED），但仍剩两类问题，见 §4
+
+## 4. 剩余问题（下一轮，逐卡处理）
+# ① 同一行往往还伴随 `SHA-256 不匹配`：例外按 error_type 分开登记 ⇒ 需为同一行再登记一条 SHA_MISMATCH；
+# ② 部分卡（如 FEA-GOV-10）缺 `## Resource Manifest` 整节 ⇒ 门禁要求逐项填写；需追加该节（追节不改证据字节）；
+# ③ 2 条多摘要行（FEA-05-PORT-1）与 2 条空壳行（FEA-05-WIRE-1、FEA-GOV-6）仍需处理：前者登记 SHA_MULTI，后者按裁定保留错误。
