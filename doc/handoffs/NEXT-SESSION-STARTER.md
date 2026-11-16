@@ -1,8 +1,8 @@
 # 新会话启动包 — New Manga 目标续接
 
-- 生成时间：2026-11-16 14:20 (+08:00)（本版为 R14 之后更新）
+- 生成时间：2026-11-16 14:45 (+08:00)（本版为 R15 之后更新 —— **目标四点全部达成**）
 - 生成者：DSH（lead）
-- **当前 head：`df2f7aef6`**（main，**已 push**，upstream = origin/main，ahead/behind = 0/0）
+- **当前 head：`74b2a704a`**（main，**已 push**，upstream = origin/main，ahead/behind = 0/0）
 - 工作区：干净（`git status --porcelain` 为空）
 - **R1**：`9ce819ae7` → `dd029b73f`（7 commit，目标 A/B/D 达成）
 - **R2**：`dd029b73f` → `5f2664c2e`（8 commit）—— 目标 C 闭合 10 条
@@ -17,7 +17,8 @@
 - **R11**：`2e575c8f6` → `691753f9d`（3 commit）—— 立 `FEA-04-IMPL-1` 实现卡 + 闭合 `M2-SFX` **AC4**；目标 C 41 条全部有处置
 - **R12**：`691753f9d` → `bfa74707e`（4 commit）—— 推翻 R11 的判断：`FEA-04` 实现早已交付，8 条 AC 依据既有证据闭合；撤销 `FEA-04-IMPL-1`
 - **R13**：`bfa74707e` → `dd7619675`（3 commit）—— 闭合 `GOV-RESIDUAL` **AC6**（补第 7 类「保护集合回退」负例 + 变红验证）。目标 C → 闭合 40 / 仅剩 1 BLOCKED
-- **R14（本轮）**：`dd7619675` → `df2f7aef6`（2 commit）—— **三项 Ruling A/B/C 落盘 + Ruling A 执行**（L1 清除，`SOURCE_DRIFT` 1→0）；`GOV-DECLARATION-SCAN-CLEANUP-1` **AC1 闭合**
+- **R14**：`dd7619675` → `df2f7aef6`（2 commit）—— 三项 Ruling A/B/C 落盘 + Ruling A 执行（L1 清除）；清理卡 AC1 闭合
+- **R15（本轮）**：`df2f7aef6` → `74b2a704a`（5 commit）—— **Ruling D 新出 + Ruling C 实施**；清理卡 **AC2/AC4/AC5** 闭合；**`GOV-RESIDUAL` AC7 经独立复核 approved 后闭合（7/7）⇒ 目标 C 41/41**
 
 > 本文是**给下一个会话的唯一起点**。不要重读历史对话；按「下一步队列」推进即可。
 
@@ -27,11 +28,11 @@
 
 | 项 | 状态 |
 |---|---|
-| HEAD | `df2f7aef6`（main，已 push，0/0） |
+| HEAD | `74b2a704a`（main，已 push，0/0） |
 | 四件套 | **全绿**：`check.ps1` PASS(3w) / `verify_pins` 18/18 / `api_inventory` 1/80/6=87 / `test.ps1` EXIT=0 **1587/1635 passed, 48 skipped**（App 967/0/4，基线 955/0/11 不退化） |
 | 上一 goal | 已用尽 100 轮（见 `GOAL-WRAPUP-R100.md`） |
 | 本 goal | 60 轮上限 |
-| 目标 C | 可行动项 41 → **闭合 40 / 仅剩 1 条 BLOCKED**（`GOV-RESIDUAL` AC7）；**解锁路径已开工**：Ruling A 已执行、清理卡 AC1 闭合 |
+| 目标 C | 可行动项 41 → **闭合 41 / 0 剩余** ✅ |
 
 复跑四件套：
 
@@ -162,6 +163,64 @@ R3：`V11R-C-3` R1（补 tag 存在后的 `-DryRun` + limitation L-C3-1）/ `V11
 
 ---
 
+## 3n. R15（本轮）完成的事 —— **目标四点全部达成**
+
+### 结果一句话
+`GOV-RESIDUAL` 的 **AC6/AC7 双 BLOCKED 全部解除**，该卡 **7/7 全闭合**；目标 C 由 40/41 → **41/41**。
+
+### 本轮做了什么（按发生顺序，含两次「以为做完了其实没完」）
+
+1. **Ruling A 之后又冒出两处同源漂移**（三层模型比裁决书写的更深）：
+   - `clean_workspace.py:1848-1850` 把「第 4 条必须 untracked」**硬编码**在扫描器里 = policy 之外的第二份真值；
+   - policy 里声明的那条错误 **message 文本**也写着 `untracked markdown …`（实际已 `tracked markdown …`）。
+   ⇒ 同一个事实（tracking 状态）被复制在**三个地方**，`ee755d4bb` 一次入库就三连漂移。
+2. **新出 Ruling D**：Ruling A 修好后 audit 报 `residual identity origin changed: doc/tasks/P19.md`。
+   实测 RRI-01/02/03 同时绑整文件 sha（18443 B）与行级 :112/:113/:114；该卡被 `0e7bc1fc5`
+   合法追加到 21306 B ⇒ 整文件 sha 失效，**而行级三份 sha 全部仍匹配**。
+   裁定：**带行级身份时以行级为权威** —— 整文件 sha 对活卡是**过宽绑定**，不是更严的保护。
+3. **Ruling C 实施**：`:2177` 去掉 `and len(index.errors) == 7`；`:2194` 的 `not staged.errors`
+   （同样是绝对零耦合）换成「7 条裁定身份确实被移除」。
+4. **结果**：`errors` 167→**154**、residual **0→7**、`protected_roots` 5582→**5585**、
+   `PRESERVE_USER_DATA` 18→**21**；APPDATA 三根**按路径核验**回到保护索引。
+5. **独立复核**（`gov-residual-ac7-reviewer`，DSH fresh 上下文独立，只读）：
+   **`approved`（P0=0 / P1=0 / P2=5）**，报告 31332 B。复核席位亲自复跑三条命令并另用独立探针
+   验证「守卫替换不是绿洗」。
+
+### ⚠️ 本轮最该记住的两件事
+
+**(1) 复核抓到我一条「假证据」。** 我交付的证据日志里「测试原始输出」段**是空的** ——
+因为 `unittest` 把报告写到 **stderr**，而我的生成脚本只捕获了 stdout。复核用
+`git grep "Ran 13 tests"` 全仓零命中把它揪出来。
+⇒ **教训：任何「原始输出」类证据，必须 grep 回来确认它真的在文件里**，不能因为脚本没报错就以为抓到了。
+（这与 R13「注入范围偏了测试会以绿的形式说谎」是同一类错误：**工具没报错 ≠ 结果正确**。）
+
+**(2) 我给的被审 head 是错的。** 我告诉复核 `54b1167ee`，但那是我 `git commit --amend` **前**的悬空 commit
+（其 HIE digest 常量与同 tree 政策不自洽，以它为 head 时 HIE 层必然 `POLICY_DIGEST_MISMATCH`）。
+复核把 `reviewed_head` 固定为 **`983243488`** 并警告不可引用悬空 hash。
+⇒ **教训：`--amend` 后必须立刻 `git rev-parse` 取新 hash 再对外引用；记录 head 前先确认它可达（`git branch --contains`）。**
+
+### 未处置的 3 个 P2（已登记，非阻塞）
+- **P2-2**：两处替换守卫在当前控制流下**不可触发**（dead guard，不是 fail-open；真正防线是 `:2133`），
+  且 `:2187` 注释行号写错。
+- **P2-3**：Ruling D 未覆盖风险 —— P19.md **非绑定行**漂移不再被本层拦截；
+  RRI-01..03 的 `origin_raw_sha256`/`byte_length` 成了**不被校验的旧值**（18443 vs 实际 21306）；
+  缺「尾追加应通过 / 无行级整文件绑定的整文件漂移应失败」两个测试。
+- **P2-1** 已处置（head 统一记 `983243488`）。
+
+### 目标四点状态（本轮后）
+| 目标 | 状态 |
+|---|---|
+| A 四件套 | ✅ check.ps1 PASS(3w) / verify_pins 18/18 / api_inventory 1/80/6=87 / 本轮**未动 .NET**，App.Tests 基线 969/0/4 不受影响 |
+| B Gate 六条映射表 | ✅ `doc/reviews/RELEASE-GATE-SIX-CONDITIONS-2026-11-16.md`（23532 B），六条逐条显式判定（已关闭 1 / 调查关闭 1 / 未关闭 4，标注需人判·需人眼·Agent） |
+| **C 技术债清零** | ✅ **41/41 闭合** |
+| D HUMAN-REQUIRED | ✅ `HUMAN-REQUIRED-2026-11-15.md`(13896 B) + `HUMAN-VS-AGENT-SPLIT-2026-11-16.md` |
+
+### 剩余可做（不属于原 41 条，属后续增量）
+- `GOV-DECLARATION-SCAN-CLEANUP-1`：**5/6**（AC3 = Ruling B 的 154 条分类处置，多天级；AC6 = 集成复验）
+- Release Gate **条件 6** 的 4 项「Agent 可全部关闭」项（映射表 L28 明确标注无需人）
+- 3 个 P2 跟随项
+
+---
 ## 3m. R14（本轮）完成的事 —— 三项 Ruling 落盘 + Ruling A 执行（L1 清除）
 
 ### 1) 三项书面裁定已落盘
