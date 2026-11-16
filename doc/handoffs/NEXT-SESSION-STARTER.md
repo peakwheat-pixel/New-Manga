@@ -1,8 +1,8 @@
 # 新会话启动包 — New Manga 目标续接
 
-- 生成时间：2026-11-16 14:05 (+08:00)（本版为 R12 之后更新）
+- 生成时间：2026-11-16 14:15 (+08:00)（本版为 R13 之后更新）
 - 生成者：DSH（lead）
-- **当前 head：`bfa74707e`**（main，**已 push**，upstream = origin/main，ahead/behind = 0/0）
+- **当前 head：`dd7619675`**（main，**已 push**，upstream = origin/main，ahead/behind = 0/0）
 - 工作区：干净（`git status --porcelain` 为空）
 - **R1**：`9ce819ae7` → `dd029b73f`（7 commit，目标 A/B/D 达成）
 - **R2**：`dd029b73f` → `5f2664c2e`（8 commit）—— 目标 C 闭合 10 条
@@ -15,7 +15,8 @@
 - **R9**：`b11689068` → `26519c9fd`（2 commit）—— 闭合 `V11R-B-5` **AC3**（六态显式映射 + 两条变红验证）；**该卡 7/7 且门禁全绿**
 - **R10**：`26519c9fd` → `2e575c8f6`（3 commit）—— 闭合 `GATE3-COVERAGE-MATRIX` **AC2/AC4**；**该卡 6/6 且门禁全绿**
 - **R11**：`2e575c8f6` → `691753f9d`（3 commit）—— 立 `FEA-04-IMPL-1` 实现卡 + 闭合 `M2-SFX` **AC4**；目标 C 41 条全部有处置
-- **R12（本轮）**：`691753f9d` → `bfa74707e`（4 commit）—— **推翻 R11 的判断**：`FEA-04` 实现早已交付，8 条 AC 依据既有证据闭合；**撤销 `FEA-04-IMPL-1`**。目标 C → **闭合 39 / 仅剩 2 BLOCKED**
+- **R12**：`691753f9d` → `bfa74707e`（4 commit）—— 推翻 R11 的判断：`FEA-04` 实现早已交付，8 条 AC 依据既有证据闭合；撤销 `FEA-04-IMPL-1`
+- **R13（本轮）**：`bfa74707e` → `dd7619675`（3 commit）—— 闭合 `GOV-RESIDUAL` **AC6**（补第 7 类「保护集合回退」负例 + 变红验证）。目标 C → **闭合 40 / 仅剩 1 BLOCKED**
 
 > 本文是**给下一个会话的唯一起点**。不要重读历史对话；按「下一步队列」推进即可。
 
@@ -25,11 +26,11 @@
 
 | 项 | 状态 |
 |---|---|
-| HEAD | `bfa74707e`（main，已 push，0/0） |
+| HEAD | `dd7619675`（main，已 push，0/0） |
 | 四件套 | **全绿**：`check.ps1` PASS(3w) / `verify_pins` 18/18 / `api_inventory` 1/80/6=87 / `test.ps1` EXIT=0 **1587/1635 passed, 48 skipped**（App 967/0/4，基线 955/0/11 不退化） |
 | 上一 goal | 已用尽 100 轮（见 `GOAL-WRAPUP-R100.md`） |
 | 本 goal | 60 轮上限 |
-| 目标 C | 可行动项 41 → **闭合 39 / 仅剩 2 条已裁决 BLOCKED**（`GOV-RESIDUAL` AC6/AC7，解锁=Ruling A） |
+| 目标 C | 可行动项 41 → **闭合 40 / 仅剩 1 条 BLOCKED**（`GOV-RESIDUAL` AC7，解锁=Ruling A） |
 
 复跑四件套：
 
@@ -160,6 +161,59 @@ R3：`V11R-C-3` R1（补 tag 存在后的 `-DryRun` + limitation L-C3-1）/ `V11
 
 ---
 
+## 3l. R13（本轮）完成的事 —— `GOV-RESIDUAL` AC6（目标 C 只剩 1 条）
+
+### AC6 的唯一缺口：第 7 类负例「保护集合回退」
+
+原 blocked：「7 类负例中 6 类有测试（`test_residual_runtime_identity.py:182/220/187/194/200/206`），
+第 7 类『保护集合回退』缺负例：`clean_workspace.py:2191-2195` 的 `PROTECTION_REGRESSION` 守卫
+只有 `:149` 的**正面**断言」。
+
+新增 `FixtureBehaviour.test_protection_set_regression_fails_closed`：
+断言两条 `PROTECTION_REGRESSION` 守卫会 fail-closed（最终错误数 8、末项 code = `PROTECTION_REGRESSION`）。
+**7 类负例现已全部有测试**，`FixtureBehaviour` **9/9 绿**（rc=0）。
+
+### 变红验证（已做并还原）
+把两条守卫条件改成恒真 `require(True, ...)` ⇒ 测试 FAILED，报 `AssertionError: 0 != 8`
+⇒ 证明用例**真的依赖这两条守卫**而非空转；还原后产品源码 `git diff` 为空。
+
+### ⚠️ 本轮最有价值的踩坑（写进了测试注释与证据）
+
+**第一版测试跑绿了，但它是空的。** 我在全局范围让 `_register_protective` 丢根 —— 守卫**没触发**（错误数 0）。
+
+实测根因：`_register_protective` **也被更早的声明扫描阶段调用**。全局丢根先把 **pre-stage 索引本身**弄坏了
+（residual 阶段拿到的 `protected` 由 37 变 36，被丢的根根本不在里面）⇒ 守卫看的是「被污染的输入」，
+自然拦不住，**那样测的是错的东西**。
+
+修法：用 active 开关把退化**严格限定在 `_apply_residual_runtime_identity` 执行期间**，
+且丢的是**该函数自己收到的 pre-stage 保护集合**里的根。
+
+⇒ **教训：注入式负例测试必须核对「注入的范围」是否只在被测守卫的作用域内；
+范围偏了，测试会以「绿」的形式说谎。**（本轮靠 `dropped_in_index=False` 的调试输出才发现。）
+
+### 与 AC7 的边界（不要混）
+`ProductionScan` 有 3 条失败（`test_protection_set_did_not_shrink` 报 `167 != 7`、缺 `catalog` 保护等）。
+**已用 HEAD 版本测试文件（不含本轮改动）复跑，同样 3 条失败** ⇒ 预先存在，属真实仓库声明漂移，
+**归 AC7 的 blocked 范围**，不影响 AC6 的负例覆盖判定。
+
+### 目标 C 现状：**41 → 闭合 40 / 仅剩 1 条 BLOCKED**
+
+| 处置 | 条数 |
+|---|---:|
+| 已闭合 | **40** |
+| 已裁决 BLOCKED | **1**（`GOV-RESIDUAL` AC7） |
+| 合计 | 41 |
+
+**A / B / D 三项目标均已达成。** 唯一未达的是 C 的最后 1 条，它的解锁前提只有一条：**Ruling A**
+（P22 快照被 `ee755d4bb` tracked 化后，冻结的 HIE 绑定怎么办 —— 三选一）。
+
+### 下一轮建议（重要）
+**要么出 Ruling A，要么写「无需下一步操作」并停。**
+除 Ruling A 外，已无任何可由 Agent 在现有授权内推进的目标项。
+**不要再去找 blocked AC「顺手修」** —— R11/R12 两次教训说明，那类动作最容易撞上过期注释或已完成的实现；
+若真要碰，先核「代码 / 测试 / 证据 / 复核」四者。
+
+---
 ## 3k. R12（本轮）完成的事 —— **推翻我自己的判断**：FEA-04 早已实现
 
 ### 我上轮错在哪
