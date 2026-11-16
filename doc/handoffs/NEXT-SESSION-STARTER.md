@@ -67,7 +67,13 @@ pwsh -NoProfile -File apps/desktop-avalonia/scripts/test.ps1
 
 ### 队列 0 —— **`GOV-DECLARATION-SCAN-CLEANUP-1` AC3：154 → 0**（进行中：已 154→147）
 
-**进度（R19，最新）**：**B1 64 与 B3 11 已全部清零**，`errors 154→80`（只剩 B2 80）、`protected_roots 5593→5601`。
+**进度（R20，最新）**：`errors 154→65`；B1 64 / B3 11 已清零，**15 条活 pin B2 转可审计保留态**
+（`DECL_PINNED_DEFECT_RETAINED` 警告保留原始错误码 + pin 卡片/证据/commit/sha），剩 **65 条未钉住 B2** 待 AC7；
+`protected_roots 5593→5601`。**新登记的治理缺陷**：`doc/tasks/FEA-11-HOST-AUTH-2.md` 的 `EV-11` 对
+`doc/tasks/FEA-11-HOST-AUTH-3.md` 的 pin **已失效**（钉 4a7e1ca8…，实测 worktree 6b540148… / blob 21818135…）⇒ 不作活 pin 处理，
+单独登记，修它需动终态证据行（另立治理动作）。
+
+**进度（R19）**：**B1 64 与 B3 11 已全部清零**，`errors 154→80`（只剩 B2 80）、`protected_roots 5593→5601`。
 batch 3 新增顶层 `table_bindings`（64 条，逐表：section + table_start + block_sha256（原始字节含 CRLF）+ header/第二行/行数
 + 该表精确诊断），代码按 (origin, section, start) 定位唯一表并只移除该表诊断，另加 `PROTECTION_REGRESSION` 超集断言；
 `HISTORICAL_EVIDENCE_DIGEST` 再重批。逐条处置映射见 `ac3-disposition-map-2026-11-16.md`（154 行，带机制）。
@@ -87,8 +93,8 @@ JSON 绑定带「一旦变合法 JSON 即 RECORD_DRIFT」的 fail-closed 条件�
 带 err_id/桶/活 pin）；**batch 1（Q3 封闭别名表）已实施**：`errors 154→147`、`warnings 732→740`、
 `protected_roots 5593→5598`、`declarations 6755→6762`，`DECL_UNKNOWN_DISPOSITION 8→0`；
 证据 `verification/GOV-DECLARATION-SCAN-CLEANUP-1/ac3-batch1-alias-2026-11-16.log`。
-**下一步（严格按裁决顺序）**：~~Q2~~、~~Q1~~ 已完成 → **12 条活 pin B2 转「可审计保留态」**（原始错误码以警告态可见）→
-**AC7 的 67 条未钉住 B2 单元修复**（需先落 `allowed_cells` 清单）→ AC6 集成复验 + 上下文独立 Review。
+**下一步（严格按裁决顺序）**：~~Q2~~、~~Q1~~、~~活 pin 保留态~~ 已完成 → **AC7：65 条未钉住 B2 的单元修复**
+（先落 `allowed_cells` 清单：逐条 file+locator+字段+旧值+新值；改前复核活 pin）→ AC6 集成复验 + 上下文独立 Review。
 **卡已加 AC7**（`<<PARTIAL>>`）与 AC5 追加式窄例外。剩余 errors = **80 = B2 80**（其中 12 条活 pin 只登记）。
 
 ### 队列 0 附录 —— 原 R16 评估（保留）

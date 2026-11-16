@@ -144,6 +144,48 @@ class HistoricalBindingPolicy(unittest.TestCase):
                 self.assertNotIn(key, seen, "a B1 diagnostic is bound twice")
                 seen.add(key)
 
+    def test_pinned_retentions_are_a_contiguous_member_sequence(self):
+        items = self.policy.get("pinned_defect_retentions", [])
+        self.assertTrue(items, "pinned B2 defects must be listed explicitly")
+        self.assertEqual([r["id"] for r in items],
+                         ["HIE-R%03d" % n for n in range(1, len(items) + 1)])
+        for item in items:
+            with self.subTest(item=item["id"]):
+                self.assertEqual(item["classification"], "B2")
+                self.assertEqual(item["interpretation"], "pinned_defect_retained")
+                self.assertIn(item["pin"]["channel"], ("BLOB", "WORKTREE"))
+                self.assertEqual(item["error"]["file"], item["origin_file"])
+
+    def test_pinned_retention_pins_still_verify(self):
+        import subprocess
+        for item in self.policy.get("pinned_defect_retentions", []):
+            pin = item["pin"]
+            with self.subTest(item=item["id"]):
+                rel = item["origin_file"]
+                raw = (REPO / rel).read_bytes()
+                if pin["channel"] == "BLOB":
+                    commit = pin["commit"]
+                    self.assertRegex(commit or "", r"^[0-9a-f]{7,40}$")
+                    blob = subprocess.run(
+                        ["git", "-C", str(REPO), "cat-file", "blob",
+                         "%s:%s" % (commit, rel)], capture_output=True)
+                    self.assertEqual(blob.returncode, 0)
+                    self.assertEqual(hashlib.sha256(blob.stdout).hexdigest(), pin["sha256"])
+                else:
+                    self.assertEqual(hashlib.sha256(raw).hexdigest(), pin["sha256"])
+
+    def test_pinned_retention_only_covers_real_b2_codes(self):
+        b2_ok = {"DECL_RELATIVE_UNRESOLVED", "DECL_ENV", "DECL_GLOB",
+                 "DECL_DESTINATION_UNRESOLVED", "DECL_TRAVERSAL",
+                 "DECL_RELATIVE_AMBIGUOUS", "DECL_BARE_NAME", "DECL_MISSING_SOURCE"}
+        seen = set()
+        for item in self.policy.get("pinned_defect_retentions", []):
+            code = item["error"]["code"]
+            self.assertIn(code, b2_ok, item["id"])
+            key = (item["origin_file"], code, item["error"]["message"])
+            self.assertNotIn(key, seen, "a pinned defect is retained twice")
+            seen.add(key)
+
     def test_keep_map_only_names_bound_ids(self):
         bound = {b["id"] for b in self.bindings}
         self.assertTrue(set(guard.HISTORICAL_EVIDENCE_KEEP) <= bound)

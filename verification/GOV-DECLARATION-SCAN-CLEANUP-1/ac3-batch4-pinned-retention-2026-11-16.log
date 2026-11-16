@@ -1,0 +1,52 @@
+# GOV-DECLARATION-SCAN-CLEANUP-1 · AC3 batch 4（活 pin B2 审计保留态，80 → 65）证据
+# head: e6f45cbbe302ee10fc895e3377fcedbc5aff3027
+# at_utc: 2026-11-16T11:32:55Z
+# os: Windows 10.0.26200 ; PowerShell 7.6.8 ; Python Python 3.14.6 ; git git version 2.52.0.windows.1
+# ruling: doc/reviews/GOV-DECLARATION-SCAN-CLEANUP-1-AC3-CODEX-RULING-2026-11-16.md §Q4（被 pin 者只登记；原始错误码须以可审计形态继续可见）
+
+## 0. 基线（batch 4 之前）
+# errors=80 warnings=807 declarations=6765 protected_roots=5601
+
+## 1. 改了什么
+# policy 新增 pinned_defect_retentions（15 条）：每条 origin_file + error{code,message,file,locator} +
+#   pin{card,evidence_id,commit,sha256,channel} + classification=B2 + interpretation=pinned_defect_retained
+#   其中 channel 在生成时实测判定：WORKTREE（钉的是工作树/CRLF 字节）13 条、BLOB（钉的是 commit 里的 blob）2 条
+# code：逐条校验 (a) 钉住字节仍与 pin sha256 一致（BLOB 用 git cat-file blob 的**原始字节**，工作树用 read_bytes）
+#   (b) 错误身份在本次扫描中恰好出现一次  => 移除该 error，改发 DECL_PINNED_DEFECT_RETAINED 警告，
+#   警告正文保留 original_code / original_locator / pin_card / pin_evidence / pin_channel / pin_commit / pin_sha256 / message
+#   任一不匹配 => SOURCE_DRIFT / ERROR_MISMATCH 致命失败（fail-closed）。
+# 测试新增 3 项（ID 连续、pin 仍可复验、只覆盖真实 B2 code 且同一缺陷不被保留两次）=> 16/16 OK。
+
+## 2. 新测试
+test_raw_identity_matches_the_bytes_on_disk (test_historical_binding_policy.HistoricalBindingPolicy.test_raw_identity_matches_the_bytes_on_disk) ... ok
+test_reference_guard_ids_match_the_approved_member_invariant (test_historical_binding_policy.HistoricalBindingPolicy.test_reference_guard_ids_match_the_approved_member_invariant) ... ok
+test_table_binding_block_bytes_are_exact (test_historical_binding_policy.HistoricalBindingPolicy.test_table_binding_block_bytes_are_exact) ... ok
+test_table_bindings_are_a_contiguous_member_sequence (test_historical_binding_policy.HistoricalBindingPolicy.test_table_bindings_are_a_contiguous_member_sequence) ... ok
+test_table_bindings_only_carry_historical_format_codes (test_historical_binding_policy.HistoricalBindingPolicy.test_table_bindings_only_carry_historical_format_codes) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 0.097s
+
+OK
+EXIT=0
+
+## 3. 审计（改后）
+# after: errors=65 warnings=822 declarations=6765 protected_roots=5601
+# code 分布: {'DECL_BARE_NAME': 1, 'DECL_DESTINATION_UNRESOLVED': 8, 'DECL_ENV': 15, 'DECL_GLOB': 11, 'DECL_RELATIVE_AMBIGUOUS': 1, 'DECL_RELATIVE_UNRESOLVED': 22, 'DECL_TRAVERSAL': 7}
+# DECL_PINNED_DEFECT_RETAINED 警告数: 15
+EXIT=2
+
+## 4. 读数
+- errors 80 → **65**（15 条活 pin B2 转可审计保留态）；warnings 807 → 822（+15）。
+- 剩余 65 条**全部**是 `doc/tasks/*.md` 里的未钉住 B2 ⇒ AC7 单元修复对象。
+- declarations 6765 与 protected_roots 5601 **都不变**（保留态只搬移诊断，不改保护面）。
+- 这 15 条的真实缺陷**没有被隐藏**：每条都以 `DECL_PINNED_DEFECT_RETAINED` 警告继续显示原始错误码、原始 locator、
+  pin 卡片/证据号/commit/sha256 与原始 message；缺失或哈希不符会让扫描致命失败。
+
+## 5. 本轮新发现的治理缺陷（**不在** B1/B2/B3 三桶内，独立登记）
+- `doc/tasks/FEA-11-HOST-AUTH-2.md` 的 `EV-11`（re-home 载体）把 `doc/tasks/FEA-11-HOST-AUTH-3.md` 钉在
+  sha256 `4a7e1ca8bacf…`，而该文件**当前**字节（worktree `6b540148…` / HEAD blob `21818135…`）都不匹配
+  ⇒ **该 Canonical Evidence pin 已失效（stale）**，不是「活 pin」。
+- 处置：**不**把它当活 pin、**不**伪造保留态；该文件的 B2 错误进入 AC7 的单元修复清单，
+  同时把「EV-11 stale pin」作为独立 finding 登记（修复它需要动 FEA-11-HOST-AUTH-2 的终态证据行，属另一项治理动作，
+  不在本卡 AC3 授权内）。

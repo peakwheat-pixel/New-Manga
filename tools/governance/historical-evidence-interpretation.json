@@ -1752,5 +1752,292 @@
         }
       ]
     }
+  ],
+  "pinned_defect_retentions": [
+    {
+      "origin_file": "doc/tasks/FEA-07-IMMERSIVE-F11-1.md",
+      "error": {
+        "code": "DECL_RELATIVE_UNRESOLVED",
+        "message": "declared relative path '复测期间做过模式/缩放试验（ChangeDisplaySettingsEx / Settings UIA）' is not an existing repo top-level entry; identity is ambiguous",
+        "file": "doc/tasks/FEA-07-IMMERSIVE-F11-1.md",
+        "locator": "line 5"
+      },
+      "pin": {
+        "card": "FEA-DOC-RECONCILE-1",
+        "evidence_id": "EV-RECON-IMMERSIVE",
+        "commit": null,
+        "sha256": "4ea62822594e29c479f304d3fab4893811da569b8e573ee999ca838d685db1b2",
+        "channel": "WORKTREE"
+      },
+      "classification": "B2",
+      "interpretation": "pinned_defect_retained",
+      "id": "HIE-R001"
+    },
+    {
+      "origin_file": "doc/tasks/FEA-07.md",
+      "error": {
+        "code": "DECL_RELATIVE_UNRESOLVED",
+        "message": "declared relative path '无 linked worktree；main checkout G:\\\\CODEX\\\\New Manga' is not an existing repo top-level entry; identity is ambiguous",
+        "file": "doc/tasks/FEA-07.md",
+        "locator": "line 4"
+      },
+      "pin": {
+        "card": "FEA-07-RESIDUAL-3",
+        "evidence_id": "EV-R4B-07",
+        "commit": "8e9420f41",
+        "sha256": "c64b6a97427ef8c37b1f40569d5182d0476dd2742e8a945bc3a3cf5fea40b3eb",
+        "channel": "BLOB"
+      },
+      "classification": "B2",
+      "interpretation": "pinned_defect_retained",
+      "id": "HIE-R002"
+    },
+    {
+      "origin_file": "doc/tasks/FEA-07.md",
+      "error": {
+        "code": "DECL_RELATIVE_UNRESOLVED",
+        "message": "declared relative path '未创建 / 未访问' is not an existing repo top-level entry; identity is ambiguous",
+        "file": "doc/tasks/FEA-07.md",
+        "locator": "line 6"
+      },
+      "pin": {
+        "card": "FEA-07-RESIDUAL-3",
+        "evidence_id": "EV-R4B-07",
+        "commit": "8e9420f41",
+        "sha256": "c64b6a97427ef8c37b1f40569d5182d0476dd2742e8a945bc3a3cf5fea40b3eb",
+        "channel": "BLOB"
+      },
+      "classification": "B2",
+      "interpretation": "pinned_defect_retained",
+      "id": "HIE-R003"
+    },
+    {
+      "origin_file": "verification/FEA-07-RESIDUAL-2/RESOURCE-MANIFEST.json",
+      "error": {
+        "code": "DECL_GLOB",
+        "message": "declared path '%TEMP%/nm-fea07-perf-*, %TEMP%/nm-fea07-draft-window-*, %TEMP%/nm-fea07-window-lifecycle-*' contains a glob wildcard",
+        "file": "verification/FEA-07-RESIDUAL-2/RESOURCE-MANIFEST.json",
+        "locator": "$.resources[2].disposition"
+      },
+      "pin": {
+        "card": "FEA-07-RESIDUAL-2",
+        "evidence_id": "EV-R4A-12",
+        "commit": null,
+        "sha256": "014316d2dcd98b383d224f44ad42f12fadd1c7fe0b1b77a028119e8f404cf8b8",
+        "channel": "WORKTREE"
+      },
+      "classification": "B2",
+      "interpretation": "pinned_defect_retained",
+      "id": "HIE-R004"
+    },
+    {
+      "origin_file": "verification/FEA-07-RESIDUAL-3/RESOURCE-MANIFEST.json",
+      "error": {
+        "code": "DECL_ENV",
+        "message": "declared path '%APPDATA%\\\\NewManga、%APPDATA%\\\\com.newmanga.desktop' contains an environment variable or shell home token",
+        "file": "verification/FEA-07-RESIDUAL-3/RESOURCE-MANIFEST.json",
+        "locator": "$.resources[5].disposition"
+      },
+      "pin": {
+        "card": "FEA-07-RESIDUAL-3",
+        "evidence_id": "EV-R4B-10",
+        "commit": null,
+        "sha256": "d97f06178e2baf3c6ec712fb346a9fc9d88b6e2a06550290b6c8000a9f50244d",
+        "channel": "WORKTREE"
+      },
+      "classification": "B2",
+      "interpretation": "pinned_defect_retained",
+      "id": "HIE-R005"
+    },
+    {
+      "origin_file": "verification/FEA-07-RESIDUAL-3/RESOURCE-MANIFEST.json",
+      "error": {
+        "code": "DECL_GLOB",
+        "message": "declared path 'G:\\\\CODEX\\\\New Manga.workspace\\\\FEA-07-RESIDUAL-3\\\\（fixtures/a03-*、crash/*、startup-matrix/*、mutation-backup/）' contains a glob wildcard",
+        "file": "verification/FEA-07-RESIDUAL-3/RESOURCE-MANIFEST.json",
+        "locator": "$.resources[3].disposition"
+      },
+      "pin": {
+        "card": "FEA-07-RESIDUAL-3",
+        "evidence_id": "EV-R4B-10",
+        "commit": null,
+        "sha256": "d97f06178e2baf3c6ec712fb346a9fc9d88b6e2a06550290b6c8000a9f50244d",
+        "channel": "WORKTREE"
+      },
+      "classification": "B2",
+      "interpretation": "pinned_defect_retained",
+      "id": "HIE-R006"
+    },
+    {
+      "origin_file": "verification/FEA-07-RESIDUAL-3/RESOURCE-MANIFEST.json",
+      "error": {
+        "code": "DECL_RELATIVE_UNRESOLVED",
+        "message": "declared relative path 'NOT_APPLICABLE（main checkout G:\\\\CODEX\\\\New Manga；base 8855baaac）' is not an existing repo top-level entry; identity is ambiguous",
+        "file": "verification/FEA-07-RESIDUAL-3/RESOURCE-MANIFEST.json",
+        "locator": "$.resources[0].disposition"
+      },
+      "pin": {
+        "card": "FEA-07-RESIDUAL-3",
+        "evidence_id": "EV-R4B-10",
+        "commit": null,
+        "sha256": "d97f06178e2baf3c6ec712fb346a9fc9d88b6e2a06550290b6c8000a9f50244d",
+        "channel": "WORKTREE"
+      },
+      "classification": "B2",
+      "interpretation": "pinned_defect_retained",
+      "id": "HIE-R007"
+    },
+    {
+      "origin_file": "verification/FEA-11-AC4-GAPS-1/RESOURCE-MANIFEST.json",
+      "error": {
+        "code": "DECL_DESTINATION_UNRESOLVED",
+        "message": "declared relative path 'Same source location (G:\\\\CODEX\\\\New Manga.workspace\\\\FEA-11-AC4-GAPS-1\\\\)' is not an existing repo top-level entry; identity is ambiguous",
+        "file": "verification/FEA-11-AC4-GAPS-1/RESOURCE-MANIFEST.json",
+        "locator": "$.resources[1].destination_path"
+      },
+      "pin": {
+        "card": "FEA-11-AC4-GAPS-1",
+        "evidence_id": "EV-FEA11GAPS1-RESOURCE",
+        "commit": null,
+        "sha256": "77b2d1a54d908145723788bfc879c30dea6375cc2a383b80fa20a9456644b1e5",
+        "channel": "WORKTREE"
+      },
+      "classification": "B2",
+      "interpretation": "pinned_defect_retained",
+      "id": "HIE-R008"
+    },
+    {
+      "origin_file": "verification/FEA-11-HOST-AUTH-2/RESOURCE-MANIFEST.json",
+      "error": {
+        "code": "DECL_GLOB",
+        "message": "declared path 'verification/FEA-11-HOST-AUTH-2/tools/* + Host.Tests fixtures' contains a glob wildcard",
+        "file": "verification/FEA-11-HOST-AUTH-2/RESOURCE-MANIFEST.json",
+        "locator": "$.resources[2].disposition"
+      },
+      "pin": {
+        "card": "FEA-11-HOST-AUTH-2",
+        "evidence_id": "EV-08",
+        "commit": null,
+        "sha256": "c19ccbe64239aff933879651791270f260b56ea21e7dd83c91326fdeacba9779",
+        "channel": "WORKTREE"
+      },
+      "classification": "B2",
+      "interpretation": "pinned_defect_retained",
+      "id": "HIE-R009"
+    },
+    {
+      "origin_file": "verification/FEA-11-RENDITION-1/RESOURCE-MANIFEST.json",
+      "error": {
+        "code": "DECL_DESTINATION_UNRESOLVED",
+        "message": "declared relative path 'Same source location (G:\\\\CODEX\\\\New Manga.workspace\\\\FEA-11-RENDITION-1\\\\\\\\)' is not an existing repo top-level entry; identity is ambiguous",
+        "file": "verification/FEA-11-RENDITION-1/RESOURCE-MANIFEST.json",
+        "locator": "$.resources[1].destination_path"
+      },
+      "pin": {
+        "card": "FEA-11-RENDITION-1",
+        "evidence_id": "EV-7",
+        "commit": "3eda60ac8",
+        "sha256": "8ded4d9ba786dbabf5a9705455c6ef91cd09353024c8272e3656cc260ebd26f8",
+        "channel": "WORKTREE"
+      },
+      "classification": "B2",
+      "interpretation": "pinned_defect_retained",
+      "id": "HIE-R010"
+    },
+    {
+      "origin_file": "verification/FEA-11-RENDITION-1/RESOURCE-MANIFEST.json",
+      "error": {
+        "code": "DECL_GLOB",
+        "message": "declared path 'tests/fea11/test_source_rendition_*.py（tmp_path 运行时生成）' contains a glob wildcard",
+        "file": "verification/FEA-11-RENDITION-1/RESOURCE-MANIFEST.json",
+        "locator": "$.resources[2].disposition"
+      },
+      "pin": {
+        "card": "FEA-11-RENDITION-1",
+        "evidence_id": "EV-7",
+        "commit": "3eda60ac8",
+        "sha256": "8ded4d9ba786dbabf5a9705455c6ef91cd09353024c8272e3656cc260ebd26f8",
+        "channel": "WORKTREE"
+      },
+      "classification": "B2",
+      "interpretation": "pinned_defect_retained",
+      "id": "HIE-R011"
+    },
+    {
+      "origin_file": "verification/FEA-11-RUN-GRANT-2/RESOURCE-MANIFEST.json",
+      "error": {
+        "code": "DECL_MISSING_SOURCE",
+        "message": "resource row has placeholder source '-' with disposition 'PRESERVE_REFERENCED'",
+        "file": "verification/FEA-11-RUN-GRANT-2/RESOURCE-MANIFEST.json",
+        "locator": "$.resources[3].disposition"
+      },
+      "pin": {
+        "card": "FEA-11-RUN-GRANT-2",
+        "evidence_id": "EV-18",
+        "commit": "8e1883655",
+        "sha256": "35c1015a83598eea9eee23be2d259f2dc5193a4ffe1a42182c95724e11ffacb2",
+        "channel": "WORKTREE"
+      },
+      "classification": "B2",
+      "interpretation": "pinned_defect_retained",
+      "id": "HIE-R012"
+    },
+    {
+      "origin_file": "verification/FEA-11-RUN-GRANT-2/RESOURCE-MANIFEST.json",
+      "error": {
+        "code": "DECL_RELATIVE_UNRESOLVED",
+        "message": "declared relative path 'NOT_APPLICABLE（未触碰真实用户数据 / AppData / 外部卷 / 回收站）' is not an existing repo top-level entry; identity is ambiguous",
+        "file": "verification/FEA-11-RUN-GRANT-2/RESOURCE-MANIFEST.json",
+        "locator": "$.resources[4].disposition"
+      },
+      "pin": {
+        "card": "FEA-11-RUN-GRANT-2",
+        "evidence_id": "EV-18",
+        "commit": "8e1883655",
+        "sha256": "35c1015a83598eea9eee23be2d259f2dc5193a4ffe1a42182c95724e11ffacb2",
+        "channel": "WORKTREE"
+      },
+      "classification": "B2",
+      "interpretation": "pinned_defect_retained",
+      "id": "HIE-R013"
+    },
+    {
+      "origin_file": "verification/FEA-12-UI-RESIDUAL-1/RESOURCE-MANIFEST.json",
+      "error": {
+        "code": "DECL_DESTINATION_UNRESOLVED",
+        "message": "declared relative path 'Same source location (G:\\\\CODEX\\\\New Manga.workspace\\\\FEA-12-UI-RESIDUAL-1\\\\)' is not an existing repo top-level entry; identity is ambiguous",
+        "file": "verification/FEA-12-UI-RESIDUAL-1/RESOURCE-MANIFEST.json",
+        "locator": "$.resources[1].destination_path"
+      },
+      "pin": {
+        "card": "FEA-12-UI-RESIDUAL-1",
+        "evidence_id": "EV-10",
+        "commit": "323001fec",
+        "sha256": "1c78ec610f5bec011a7850d3bd0697e43f9d482360b72c3dcc9e90247dc80ed7",
+        "channel": "WORKTREE"
+      },
+      "classification": "B2",
+      "interpretation": "pinned_defect_retained",
+      "id": "HIE-R014"
+    },
+    {
+      "origin_file": "verification/FEA-15-ACCEPT-1/resource-manifest.json",
+      "error": {
+        "code": "DECL_GLOB",
+        "message": "declared path '用户级 AppContainer profiles（具体实例与路径未知；*）' contains a glob wildcard",
+        "file": "verification/FEA-15-ACCEPT-1/resource-manifest.json",
+        "locator": "$.resources[5].disposition"
+      },
+      "pin": {
+        "card": "FEA-15-ACCEPT-1",
+        "evidence_id": "SRC-26",
+        "commit": "1ecd613325cf69db7900fabb5fedb2302e47e84f",
+        "sha256": "27e8b3f7d0a611f9dfd079ab9f21685aeae65f46ce84363700ca400cedf0abd1",
+        "channel": "WORKTREE"
+      },
+      "classification": "B2",
+      "interpretation": "pinned_defect_retained",
+      "id": "HIE-R015"
+    }
   ]
 }

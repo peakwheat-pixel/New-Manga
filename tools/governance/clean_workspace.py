@@ -1697,7 +1697,7 @@ def _apply_broad_preservation(index, scanned):
 
 HISTORICAL_EVIDENCE_POLICY = "tools/governance/historical-evidence-interpretation.json"
 HISTORICAL_EVIDENCE_DIGEST = (
-    "e8e9b3e3a1f372a6425493563129f491fda7211d9d5c8d65c982fd2a7dc06eec")
+    "e2186de34cec23893a5a73707277eb2075fdbb828564eb4e8cf2eca967d59228")
 
 # Approved binding identity set (member invariant).  Adding a binding is a
 # visible code+policy edit, never a widened numeric window.  Order matters:
@@ -1828,7 +1828,8 @@ def _apply_historical_evidence_interpretation(index, scanned):
         policy = json.loads(read(HISTORICAL_EVIDENCE_POLICY).decode("utf-8"),
                             object_pairs_hook=_unique_preservation_object)
         exact(policy, "schema_version purpose approved_design template_bindings "
-              "raw_non_declaration_bindings reference_guards table_bindings")
+              "raw_non_declaration_bindings reference_guards table_bindings "
+              "pinned_defect_retentions")
         require(type(policy["schema_version"]) is int
                 and policy["schema_version"] == 1
                 and policy["purpose"] == "PRESERVE_EXACT_HISTORICAL_EVIDENCE",
@@ -1899,6 +1900,7 @@ def _apply_historical_evidence_interpretation(index, scanned):
                 len(HISTORICAL_EVIDENCE_REFERENCE_GUARD_IDS), "POLICY_INVALID",
                 "historical reference guard set changed")
         removed, pending, warnings, existing = [], [], [], []
+        staged_retentions = []
         for number, b in enumerate(bindings):
             template = b["id"] == HISTORICAL_EVIDENCE_TEMPLATE_ID
             exact(b, "id origin_file expected_tracking raw_sha256 byte_length "
@@ -2050,6 +2052,46 @@ def _apply_historical_evidence_interpretation(index, scanned):
                                                          table["table_start"]),
                              table, "PRESERVE_REFERENCED", "table",
                              table["block_sha256"]))
+        # Pinned-defect retention (B2 rows whose file is byte-pinned as evidence):
+        # the defect is real and stays visible, but it may not be repaired
+        # because repairing it would invalidate a live pin.  Each entry must
+        # prove the pin (exact blob or exact worktree bytes) and the exact
+        # diagnostic identity; the error is moved to an auditable warning that
+        # keeps the ORIGINAL code, message and pin basis.
+        for position, retention in enumerate(policy["pinned_defect_retentions"], 1):
+            exact(retention, "id origin_file error pin classification interpretation")
+            require(retention["id"] == "HIE-R%03d" % position, "POLICY_INVALID",
+                    "pinned retention IDs changed")
+            require(retention["classification"] == "B2"
+                    and retention["interpretation"] == "pinned_defect_retained",
+                    "POLICY_INVALID", "pinned retention classification changed")
+            exact(retention["pin"], "card evidence_id commit sha256 channel")
+            require(retention["pin"]["channel"] in ("BLOB", "WORKTREE"),
+                    "POLICY_INVALID", "pinned retention channel changed")
+            origin = retention["origin_file"]
+            raw = read(origin)
+            if retention["pin"]["channel"] == "BLOB":
+                commit = retention["pin"]["commit"]
+                require(isinstance(commit, str)
+                        and re.match(r"^[0-9a-f]{7,40}$", commit), "POLICY_INVALID",
+                        "pinned retention blob commit missing")
+                blob = subprocess.run(
+                    ["git", "-C", index.repo_root, "cat-file", "blob",
+                     "%s:%s" % (commit, origin)], capture_output=True)
+                require(blob.returncode == 0 and
+                        sha(blob.stdout) == retention["pin"]["sha256"], "SOURCE_DRIFT",
+                        "pinned retention blob changed: %s" % origin)
+            else:
+                require(sha(raw) == retention["pin"]["sha256"], "SOURCE_DRIFT",
+                        "pinned retention worktree bytes changed: %s" % origin)
+            error = retention["error"]
+            exact(error, "code message file locator")
+            require(error["file"] == origin and index.errors.count(error) == 1
+                    and error not in removed, "ERROR_MISMATCH",
+                    "pinned retention error identity changed: %s" % origin)
+            removed.append(error)
+            staged_retentions.append((origin, retention))
+
         for n, ref in enumerate(policy["reference_guards"], 1):
             exact(ref, "id origin_file origin_global_line origin_parser_locator "
                   "path_rel abs normalized real keep")
@@ -2066,7 +2108,8 @@ def _apply_historical_evidence_interpretation(index, scanned):
         # removed exactly once, and every binding/guard contributes exactly one
         # preserved identity.  No absolute totals are hardcoded here.
         expected_removals = (sum(len(b["errors"]) for b in bindings)
-                             + sum(len(t["errors"]) for t in policy["table_bindings"]))
+                             + sum(len(t["errors"]) for t in policy["table_bindings"])
+                             + len(policy["pinned_defect_retentions"]))
         expected_pending = len(bindings) + len(policy["reference_guards"])
         require(len(removed) == expected_removals
                 and len(pending) == expected_pending, "POLICY_INVALID",
@@ -2093,6 +2136,17 @@ def _apply_historical_evidence_interpretation(index, scanned):
                    keep, ",".join(e["code"] for e in b["errors"]),
                    json.dumps(roots)),
                 origin, locator)
+        for origin, retention in staged_retentions:
+            pin = retention["pin"]
+            staged.add_warning("DECL_PINNED_DEFECT_RETAINED",
+                "policy=%s origin=%s original_code=%s original_locator=%s "
+                "pin_card=%s pin_evidence=%s pin_channel=%s pin_commit=%s pin_sha256=%s "
+                "message=%s"
+                % (HISTORICAL_EVIDENCE_POLICY, origin, retention["error"]["code"],
+                   retention["error"]["locator"], pin["card"], pin["evidence_id"],
+                   pin["channel"], pin["commit"], pin["sha256"],
+                   retention["error"]["message"]),
+                origin, retention["id"])
         result = _finish_declaration_scan(staged, scanned)
         for relative in list(snapshots):
             read(relative, tracking[relative])
