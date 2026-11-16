@@ -65,7 +65,7 @@ allowed_paths:
 | M1 | AC1/AC2 | verification/MICA-FIX-1/mica/titlebar-pattern.png | c795cdb34 | 64965c49227ddfc78c5c1447084f340fe355cd529c4e28f56c01ff1f179456b0 | CANONICAL |
 | M2 | AC1/AC2 | verification/MICA-FIX-1/mica/titlebar-solid.png | c795cdb34 | 7ce9ed83b3cd4702f1a1cfba3f8abe7686371d4c16acd736d6d4ba15c65f3bf7 | CANONICAL |
 | M3 | AC1/AC2 | verification/MICA-FIX-1/mica/two-wallpapers.json | c795cdb34 | 655d8d6b1a9a774271606301e0c7b0abe27a978dabf103a04652a6bc6f209443 | CANONICAL |
-| M4 | AC4 | verification/MICA-FIX-1/ac4-regression-2026-11-16.log | PENDING_SUBMIT | 7392b609523fb9fe8fb0109210d115a5d97f55738b591dfe5f9f5452b6d3e391 | CANONICAL |
+| M4 | AC4 | verification/MICA-FIX-1/ac4-regression-2026-11-16.log | 7519d0302 | 7392b609523fb9fe8fb0109210d115a5d97f55738b591dfe5f9f5452b6d3e391 | CANONICAL |
 |---|---|---|---|---|---|
 
 ## Resource Manifest

@@ -168,7 +168,7 @@ AC3（缓存失效集成）与 AC5（真实 GUI 拖拽）为 `NOT_RUN`，**不�
 | EV-CMS-07 | 既有缺陷登记 E-1…E-5 | doc/reviews/MAINT-1-EXISTING-FINDINGS-2026-11-14.md | c459b279f | b07e5865d34b153b7ac360865c91caecfef52d498120c95e9b5bc7456fdc6899 | CANONICAL | BLOB |
 | EV-CMS-08 | AC6 四件套日志 | verification/CHAPTER-MANUAL-SORT/four-pieces.log | ed8b56c9f | 55011c422eb2c1d77b88819fcf52cce003f413ea8e519b93c557b58bd0ba9aaa | CANONICAL | BLOB |
 | EV-CMS-09 | AC3 待启用集成测试（NOT_RUN 期间的保留件） | verification/CHAPTER-MANUAL-SORT/pending-host-cache-test.cs.txt | ed8b56c9f | edcd685204d2b521966084e1b5a7a26991cf8b6110b17f98dfdee40afe78a230 | SOURCE_PIN | BLOB |
-| EV-CMS-10 | **AC10 不回归全量复跑**（App 962/0/4、CoreClient 256/0/0、pytest 3569/0/10） | verification/CHAPTER-MANUAL-SORT/ac10-no-regression-2026-11-16.log | PENDING_SUBMIT | e0118a932e9d1beeec0d829954db8195cbb957dec29f6d0163bf448f3d1d9781 | CANONICAL | BLOB |
+| EV-CMS-10 | **AC10 不回归全量复跑**（App 962/0/4、CoreClient 256/0/0、pytest 3569/0/10） | verification/CHAPTER-MANUAL-SORT/ac10-no-regression-2026-11-16.log | 7519d0302 | e0118a932e9d1beeec0d829954db8195cbb957dec29f6d0163bf448f3d1d9781 | CANONICAL | BLOB |
 
 ## Resource Manifest
 
