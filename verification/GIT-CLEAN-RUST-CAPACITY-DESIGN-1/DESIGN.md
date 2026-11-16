@@ -1,22 +1,33 @@
-# GIT-CLEAN-RUST-CAPACITY-DESIGN-1 · DESIGN（ZCode 设计交付，DSH 集成）
+# GIT-CLEAN-RUST-CAPACITY-DESIGN-1 · DESIGN（v2，ZCode 修订版，DSH 集成）
 
-- **交付者**：ZCode（`zcode.cjs` headless，`--mode plan`，session `sess_be120ee8-a555-4c37-84cb-62539081bfd3`）
-- **派发者/集成者**：DSH（Lead）
-- **交付时间**：2026-11-17
-- **输入**：`1829a38a41587a0d680001a40d206886afb0911d`；`verification/GIT-CLEAN-RUST-ISOLATION-1/r2/dsh-review-r2.md`
-- **性质**：只读设计（未改产品源码、未跑压力测试）；已标注 `[实测]`/`[推断]`/`[建议]`
-- **未做**：独立复核（AC4）与实施 — 均不在本次切片内
+> **版本说明**：v1 于 2026-11-17 被上下文独立复核判 **BLOCKED**（P1=4，报告
+> `doc/reviews/GIT-CLEAN-RUST-CAPACITY-DESIGN-1-INDEPENDENT-REVIEW-2026-11-17.md`）。
+> 本 v2 由 ZCode 针对 4 条 P1 + 6 条 P2 修订（session `sess_e7e80041-fdd8-4db6-a48f-86d3eed3e62b`），
+> 仍属**只读设计**：未改产品源码、未跑压力测试、未实施。v1 原文保留在 git 历史（commit `d37f7c4df`）。
 
----
-
-代码核实完毕。所有关键符号、行号、分支均已对照 `1829a38` 精确字节（三文件 SHA256 与评审记录一致）。以下是设计交付正文。
+核对完毕。所有 P1 涉及的代码事实已在 `1829a38` 隔离仓逐一对齐（track 四调用点 3980/4004/4115/4139、fault ledger 行 796-799 的常量与 `joined_flags`、`resources_for_test` 的 Arc 克隆序、`assert_pid_gone` 195-233 既有 flags 断言、guard Drop 6118-6145、acquire 点 9462/9498/9561/9666、sidecar 脚本 333-344、`run_taskkill_bounded` 3305-3323）。下面是修订版设计全文。
 
 ---
 
-# DESIGN.md — Rust 真实容量注入与残余测试收紧设计（GIT-CLEAN-RUST-CAPACITY-DESIGN-1）
+# DESIGN.md v2 — Rust 真实容量注入与残余测试收紧设计（GIT-CLEAN-RUST-CAPACITY-DESIGN-1，修订版）
 
-**基准**：`1829a38a41587a0d680001a40d206886afb0911d`（隔离仓 `source-r2` 工作树，三 Rust 文件 SHA256 复算一致：`library_bridge.rs=145a6a2a…`、`multichannel_stress_tests.rs=dd2dfeaa…`、`main.rs=b315e632…`）。
-**性质**：只读设计交付。标注口径：`[实测]`=DSH r2 Review 记录的运行事实；`[推断]`=读 `1829a38` 代码的静态结论；`[建议]`=本设计提出、未实施。
+- **修订者**：ZCode（设计 Owner；本版为对 2026-11-17 独立复核 BLOCKED 判定的修订）
+- **响应**：`doc/reviews/GIT-CLEAN-RUST-CAPACITY-DESIGN-1-INDEPENDENT-REVIEW-2026-11-17.md`（P1=4 全部处置，P2=6 一并处置）
+- **基准**：`1829a38a41587a0d680001a40d206886afb0911d`（隔离仓 `source-r2`，三 Rust 文件 SHA256 复算一致：`library_bridge.rs=145a6a2a…`、`multichannel_stress_tests.rs=dd2dfeaa…`、`main.rs=b315e632…`）
+- **性质**：只读设计（未改源码、未跑测试）。标注口径：`[实测]`=DSH r2 Review 记录的运行事实；`[推断]`=读 `1829a38` 代码/MSDN 的静态结论；`[建议]`=本设计提出、未实施。
+
+---
+
+## 0. 本次修订对照（v1 → v2）
+
+| P1 | 复核意见（摘要） | v2 处置 | 所在节/行 |
+|---|---|---|---|
+| **P1-1** AC1 分支不全 | 「唯一 track 入口 3980/4115」漏 4004/4139（reaper spawn 失败直接 track）；排除表须逐分支 | 1.3 表改为**四个 track 入口 TA..TD**（3980/4004/4115/4139，另有 1861 holder 重投递不产生新 worker）；1.5 补 **F5**；论证重构为「共同前置 P + 两条后续分支」，删除「唯一 track 入口/唯一反证窗口」措辞；完整排除论证见 1.5 结论段 | §1.3 / §1.5 |
+| **P1-2** R2-F04 断言点不存在 | 797 处无 `threads_spawned/threads_joined`（只有常量 `20*2`），修订不可编译 | 797 断言**撤销**。改为：(a) `run_real_core_scenario` 在 scope 结束后对**真实局部变量**断言（可编译）；(b) fault 侧真实 join 账本 = `ChildIdentity.worker_flags`（`resources_for_test` 3200-3205 已暴露 4 个 Arc，Drop 后存活），在 `assert_pid_gone` 循环后加聚合断言；797 行保留打印并加注释澄清其为结构常量 | §3.4 |
+| **P1-3** AC2-L1 B 清理不可执行 | B 无 PID 发现通路，`taskkill /F /PID` 无从下手 | L1 v2 脚本让 **B 自写 pidfile**（argv 传路径）；测试收尾有界发现（≤2s）→ `run_taskkill_bounded`（5s）→ `wait_for_pid_exit`（10s）复核，全部计入 wall 预算；pidfile 缺失 = fail-loud + 人工处置指引；Job Object 评估后不采用（理由见 §2.3） | §2.2 / §2.3 |
+| **P1-4** R2-F03 断言位置错误 | 字面在 guard 隐式 drop 前执行，账本恒 0；全局 Atomic 有并行污染 | guard 新增 `finish(self) -> GuardFinishReport`（显式消耗，返回 reaped/remaining/arc_released，**断言读返回值**）；Drop 走共享 `cleanup()` 并写 **thread-local** 账本（每测试一线程，天然隔离，兼修 P2-5）；测试 b 经 `catch_unwind` 后**同线程**读 thread-local 断言；既有 4 个 acquire 点全部迁移到 `finish()` | §3.3 |
+
+P2 处置一览：P2-1→§1.3 注 a（taskkill /T 表述改写）；P2-2→§1.4 首句；P2-3→§2.2（A/B 全 DEVNULL）；P2-4→§3.5（mpsc 握手）；P2-5→§3.3（thread-local）；P2-6→§5 交付说明（design-only head + HANDOFF，Codex/DSH 执行）。
 
 ---
 
@@ -24,143 +35,170 @@
 
 ### 1.1 每 channel 资源清单（`StdioLibraryChannel::adopt_child`，library_bridge.rs:2106-2380）
 
-| 资源 | 创建点 | 归属 |
-|---|---|---|
-| 真实 OS 子进程 `child: Arc<Mutex<Child>>` | 2103（stress 经 `spawn_with_startup_ping`:multichannel_stress_tests.rs:299-307 / fault 经 `adopt_child_for_test`:368） | channel |
-| stdin 写端 + stdout 读端（真实 pipe，raw handle 存 `raw_stdin_handle`/`raw_stdout_handle`:2146-2149） | `Child` spawn 继承 | channel |
-| writer 线程 `stdio-library-writer`（2264-2346） | 循环 `writer_rx.recv()` → `stdin.write_all`+`flush`（2332-2342）；**写错误即 break**（2335-2337） | channel 持 `writer_join_handle` |
-| reader 线程 `stdio-library-reader`（2156-2262） | 循环 `read_line`（2223）；`Ok(0)`/`Err` → drain pending + `on_down` + break（2225-2256） | channel 持 `reader_join_handle` |
-| 线程退出钩子 | `ThreadFinishedGuard` 置 `*_finished`（2159/2267，1339-1345）；`Reader/WriterHandleCleaner` 清 handle 槽位并 `CloseHandle` 线程句柄（2160-2178/2268-2286） | 线程自身 |
+与 v1 相同（复核 A2/A3 全 PASS），不重复：真实 OS 子进程（2103）、stdin/stdout raw handle（2146-2149）、writer 线程 `stdio-library-writer`（2264-2346，写错误即 break 2335-2337）、reader 线程 `stdio-library-reader`（2156-2262，`Ok(0)`/`Err` → drain+on_down+break 2224-2255）、`ThreadFinishedGuard`（1339-1345）与 `Reader/WriterHandleCleaner`（2160-2178/2268-2286）。
 
-### 1.2 请求阻塞路径（fault 场景 Phase 2，实测 20/20）
+### 1.2 请求阻塞路径（fault 场景 Phase 2，[实测] 20/20）
 
-`round_trip_timeout`（2842）→ `exchange_expected_minor_timeout`（2665）→ `write_stdin_raw_timeout`（2499-2526）：请求发 `writer_tx`，调用方 `reply_rx.recv_timeout(3s)` 超时返回 `"stdin write timed out"`（2513-2515）。**超时只放弃等待，不取消 writer**——writer 仍阻塞在 2332 的 `write_all`（4MB pad，multichannel_stress_tests.rs:712），reader 阻塞在 2223 `read_line`。此时 `is_writer_finished()==false`、`is_reader_finished()==false`（729-730 记录的 blocked-phase 证据，[实测] 20/20 为 true）。
+与 v1 相同：`round_trip_timeout`（2842）→ `exchange_expected_minor_timeout`（2665）→ `write_stdin_raw_timeout`（2499-2526），3s 超时返回 `"stdin write timed out"`（2513-2515）；writer 仍阻塞在 2332 `write_all`（4MB pad，stress:712），reader 阻塞在 2223 `read_line`；729-730 的 blocked-phase 证据 [实测] 20/20 为 true。
 
 ### 1.3 Drop 时序链（`shutdown_and_kill_with_deadline`:3427，Drop impl:4171-4202，默认 deadline 2400ms:4176）
 
-| 步骤 | 行号 | 动作 | 对阻塞 worker 的解除机制 | track 是否可达 |
-|---|---|---|---|---|
-| 幂等 guard | 3429 | `shutdown_executed` CAS；重入分支只补 kill（3432-3535） | — | — |
-| 1 drain pending | 3539-3613 | 清空超时请求的 sender | 释放调用方，不触碰 worker | 否 |
-| 2 CloseHostSession | 3615-3640 | 240ms 有界 | fault 无 session，跳过 | 否 |
-| 3 core.shutdown 写 | 3642-3656 | 60ms 有界（writer 阻塞时该写排队后丢弃） | 无效但无害 | 否 |
-| 4 kill child | 3658-3693（锁可得：`wait_timeout_or_kill_with_reap`:3216，graceful 1000ms → `child.kill()`:3254 → reap 400ms）；锁不可得：taskkill /F /T fallback（3755-3782） | **child 死 → sidecar 的 stdin 读端全关 → writer `write_all` 立即 broken-pipe 失败 → 2335 break** | 否（writer 已解锁） |
-| 5 join reader | 3895-4027：先 `cancel_active_pipes()`（3896 → `cancel_worker_io`:1550-1568 = `CancelSynchronousIo`(线程) + `CancelIoEx`(pipe)）；100ms join 窗口（3903-3919） | child 死 → stdout EOF → reader `Ok(0)` break（2225） | 否（reader 已解锁） |
-| 6 join writer | 4029-4162：`send(Shutdown)`（4035）+ `cancel_active_pipes`（4036）；80ms join 窗口（4038-4054） | 同上 | 否 |
-| 5/6 兜底 reaper | 若 join 窗口内未结束：spawn detached `reader/writer-join-bounded-reaper`（3932/4067），200ms 内反复 `cancel_worker_io` + 轮询 finished（3941-3971/4076-4106）；**仍不结束才 `track_unreaped_worker`**（3980/4115） | 唯一 track 入口 | **是（本链未到达）** |
-| track 内部 | 1748-1809：锁 10×50ms 重试（1761）；容量满 → 对在册 worker 发 cancel + prune（1767-1778）→ 仍满则 20ms 等待重试；10 次后 **refuse，handle 留调用者**（1787-1796 take、1806-1807 false） | — | — |
-| refused 兜底 | `spawn_persistent_holder`（3983-3989/4118-4124 → 1825-1878）：50ms→500ms 指数退避**无限重试** track；spawn 失败则同步 join（1871-1877） | — | — |
-| 尾部 | `reap_unreaped_workers(50ms)`（4164-4167）；Drop 后 `reap(20ms)`（4200）+ `CloseHandle` 线程句柄（4180-4197） | reap = prune + cancel + join（1906-1949） | — |
+前 4 步与 v1 相同（复核 A4 PASS）：幂等 guard（3429）→ drain pending（3539-3613）→ CloseHostSession（3615-3640）→ core.shutdown（3642-3656）→ kill child（3658-3693；锁不可得走 taskkill /F /T fallback 3755-3782）。第 5/6 步修订如下：
+
+| 步骤 | 行号 | 动作 | 对阻塞 worker 的解除机制 |
+|---|---|---|---|
+| 5 join reader | 3895-4027：**先** `cancel_active_pipes()`（3896 = `cancel_worker_io`:1550-1568，`CancelSynchronousIo`(线程)+`CancelIoEx`(pipe) 各一次），再 100ms join 窗口轮询 finished（3903-3919） | child 死 → stdout EOF → reader break（2225）；或 cancel 解除 |
+| 6 join writer | 4029-4162：**先** `send(Shutdown)`（4035）+ `cancel_active_pipes()`（4036），再 80ms join 窗口（4038-4054） | child 死 → stdin 读端全关 → `write_all` broken-pipe（2335 break）；或 Shutdown 解除 `recv`、cancel 解除 `write_all` |
+| 5/6 窗口耗尽 | worker 未 finished → spawn detached reaper（3932/4067），200ms 内反复 `cancel_worker_io` + 轮询（3941-3971/4076-4106） | 反复 cancel |
+
+**track 入口全表**（`git grep -n "track_unreaped_worker("` 的全部生产调用点）：
+
+| 入口 | 行号 | 触发条件 | 前置 |
+|---|---|---|---|
+| TA | 3980 | reader reaper 200ms 内 reader 仍未 finished | 前置 P（见下）+ 熬过 200ms 反复 cancel |
+| TB | **4004** | **reader reaper 线程 spawn 失败**（3999 `if let Err(e) = spawn_res`）→ 锁回 handle 后**立即** track，**不经历** 200ms 反复 cancel | 前置 P + F5 |
+| TC | 4115 | writer reaper 200ms 内 writer 仍未 finished | 前置 P + 熬过 200ms 反复 cancel |
+| TD | **4139** | **writer reaper 线程 spawn 失败**（4134）→ 立即 track | 前置 P + F5 |
+
+另：1861（`spawn_persistent_holder` 循环内）是对 **refused handle 的重投递**，不引入新 worker，handle 最终来源仍是 TA..TD；1882 附近为测试辅助面。**首次** track 只能经 TA..TD。
+
+> 注 a（P2-1，改写 v1 表述）：`run_taskkill_bounded`（3308-3323）只构造 `taskkill /F /T /PID` 命令并检查其输出；「按父链快照 BFS 枚举进程树」是 **Windows taskkill /T 在调用时刻的 OS 行为**，不是本仓 Rust 代码——正因如此，父先退出的孙进程（B 的 PPID 已死）**不在该快照的可枚举链上**，这是 §2 L1 实验的机制前提。[推断]
+
+track 内部（1748-1809）与 refused 兜底 holder（1825-1878，50→500ms 退避无限重试、spawn 失败同步 join 1871-1877）同 v1（复核抽样 PASS）。
 
 ### 1.4 为什么「20 真实 pipe、峰 0」
 
-- 场景矩阵冻结 **20 channel**（multichannel_stress_tests.rs:652-657）= 20 对真实 pipe = **40 个 reader/writer worker 候选**。`MAX_UNREAPED_WORKERS=32`（1606）是 **registry 的 worker 容量**，不是 channel 数；20×2=40>32 的设计意图是“若 track 路径可达即可触界”。
-- [实测] 结果：Drop 串行逐 channel（753-770），第 4 步 kill child 即解除 write_all（broken pipe），第 5/6 步 EOF+cancel 解除 read_line，两 worker 均在 join 窗口内 finished+joined（`worker_finished_joined=[true×4]`、`peak_registry=0`、exit101 于 819-822）。**track 分支（3980/4115）从未执行**。这是“未泄漏 worker”的设计结果，不是容量证据——`peak>=32` 按设计故意失败。
+**20 是冻结测试场景矩阵的上限（stress:652-657 `for idx in 0..20`），不是生产 channel cap——代码中不存在生产 channel 数量上限**（P2-2 明示）。20 对真实 pipe = 40 个 reader/writer worker 候选；`MAX_UNREAPED_WORKERS=32`（1606）是 registry 的 worker 容量。40>32 的设计意图是「若 track 可达即可触界」。
 
-### 1.5 到 32 需要的故障前提（逐分支排除，[推断]）
+[实测]（R2 Review）：Drop 串行逐 channel（753-770），kill child 解除 `write_all`、EOF+cancel 解除 `read_line`，两 worker 均在 join 窗口内 finished+joined（`worker_finished_joined=[true×4]`、`peak_registry=0`、exit101 于 819-822）。**TA..TD 四入口均未执行**——这是「未泄漏 worker」的设计结果，不是容量证据；`peak>=32` 按设计故意失败（819-822 原样保留）。
 
-worker 必须在「kill child（pipe 断）+ `CancelSynchronousIo` + `CancelIoEx`（第 5/6 步一次 + 200ms reaper 内反复）」全部之后仍不结束。候选前提：
+### 1.5 到 32 的完整排除论证（[推断]，逐分支）
+
+**共同前置 P**（到达 TA..TD 任一入口的必要条件）：worker 线程在「kill child（pipe 断）→ `send(Shutdown)`（writer）→ `cancel_active_pipes()` 一次（3896/4036）→ join 窗口（100/80ms）轮询」之后仍未 finished。
+
+P 的候选成立条件：
 
 | 前提 | 可行性 | 排除理由 |
 |---|---|---|
-| F1 child 死后 stdin 读端仍开（第三方进程继承读端） | 真实 OS 可构造（见 AC2-L1） | **单独不够**：writer_thread_handle 由 DuplicateHandle 在线程启动时写入（2320），线程阻塞期间非 0（Cleaner 只在线程退出时清零，2268-2286），`CancelSynchronousIo` 对阻塞在内核 WriteFile 的同步 IO 有效（1553-1560）→ writer 仍会被解除 |
-| F2 cancel 双失败（CancelSynchronousIo 与 CancelIoEx 均 OS 级失败） | 不可确定性构造 | 同进程 DUPLICATE_SAME_ACCESS 句柄有效；无生产级注入面，不改生产无法触发；不能作为 Gate |
-| F3 worker 阻塞在非 IO 等待 | 当前代码不存在 | writer 阻塞点仅 `write_all`/`recv`（recv 由 4035 send(Shutdown) 解除）；reader 仅 `read_line`。无第四形态 |
-| F4 调度饥饿（cancel 生效但 200ms 内线程未跑到） | 非确定性 | 竞态，不可作 Gate |
+| F1 stdin 读端被第三方进程持有（child 死后 `write_all` 不 broken） | 真实 OS 可构造（§2 L1） | **单独不够**：writer_thread_handle 由 DuplicateHandle 在线程启动时写入（2320），线程阻塞期间非 0（Cleaner 只在线程退出清零，2268-2286）；join 窗口前已发出一次 `CancelSynchronousIo`，对阻塞在内核同步 WriteFile 的线程有效（MSDN 语义，[推断]）→ writer 仍在窗口内结束 |
+| F2 cancel 双失败（`CancelSynchronousIo` 与 `CancelIoEx` 均 OS 级失败） | 不可确定性构造 | 同进程 DUPLICATE_SAME_ACCESS 句柄有效；无生产注入面，不改生产无法触发；不能作 Gate |
+| F3 worker 阻塞在非 IO 等待 | 当前代码不存在 | writer 阻塞点仅 `write_all`/`recv`（后者由 4035 Shutdown 解除）；reader 仅 `read_line`；无第四形态 |
+| F4 调度饥饿（cancel 生效但窗口内线程未跑到） | 非确定性 | 竞态，不可作 Gate |
 
-**结论（AC1）**：在冻结生产语义 + 真实 worker/pipe + 测试侧仅能构造外部进程故障的约束下，32 饱和**结构性不可达**：shutdown 的层层解除先于 track 到达。唯一未闭环的反证窗口是 F1+「cancel 对该形态无效」的组合——AC2-L1 实验专门检验它。
+P 成立后的两条后续分支：
+
+| 分支 | 前提 | 可行性 | 排除理由 |
+|---|---|---|---|
+| 走 TA/TC | P + 200ms reaper 反复 cancel 后仍不结束 | 非确定 | 反复 cancel ⊇ 窗口前那次 cancel 的解除面；解除不了只剩 F2/F4 |
+| 走 TB/TD（**F5**） | P + reaper 线程 spawn 失败 | 不可确定性构造 | OS 线程创建失败仅见于地址空间/句柄/内存耗尽，与 F2 同属资源面，无注入面；不改生产无法触发；不能作 Gate |
+
+**结论（AC1，修订）**：到 32 需要「≥32 个 worker 同时满足前置 P」且 P 之后落入 TA/TC 或 TB/TD 任一分支。P 的唯一确定性构造途径是 F1，而 F1 单独不成立（窗口前的 cancel 已覆盖）；F5 只改变 P 之后的路径（跳过 200ms 反复 cancel），**不放宽 P 本身**——四入口共享 P，P 不可达则四入口全不可达。故 32 饱和**结构性不可达**的论证在补入 TB/TD 后仍然成立，但其支柱是「前置 P 不可确定性构造 + 两条后续分支均不可构造」，而**不是** v1 错称的「track 入口唯一」。确定性反证窗口收敛于 F1 组合（F1 + cancel 对该形态无效）——它同时是四入口的共同反证点，由 §2 L1 实验检验：若 L1 中 writer 熬过前置 P，则 reaper spawn 成功时经 TA/TC、失败时经 TB/TD，**两条都会进 registry 且 `peak>0`**，L1 对 P 的检验不被 F5 干扰。
 
 ---
 
 ## AC2 可实现的注入方案（不改生产语义）
 
-### 分层定义（真实 → 替身，严格区分）
+### 2.1 分层定义（真实 → 替身，严格区分）
 
-**L0 真实 worker+pipe（现状，保留）**：real Core 1/8/20 graceful、20 concurrent cancel（`kill_and_wait_for_test`:3177-3190 断言 kill+wait）、fault 20 blocked-pipe。[实测] 已全跑；只证明正常/取消回收。
+**L0 真实 worker+pipe（现状，保留）**：real Core 1/8/20 graceful、20 concurrent cancel、fault 20 blocked-pipe。[实测] 已全跑；只证明正常/取消回收。
 
-**L1 真实 pipe + 强故障 sidecar v2 [建议]**——「逃逸读端持有者」实验，F1 的可证伪对照：
-- sidecar 脚本改为：应答首个 ping 后，spawn A（`subprocess` 继承 stdin 读端），A 再 spawn B（再继承读端）后 A 立即退出，sidecar sleep。B 的 PPID 指向已退出的 A；`run_taskkill_bounded` 的 `/T` 按父链快照 BFS（3318-3323），从 sidecar 根**枚举不到 B** → child 树死后 B 仍持读端 → writer 的 `write_all` 不 broken，持续阻塞。
-- **预注册判据（防 cherry-picking）**：预期 `peak==0` 且 writer 在 cancel 后结束（机制同 1.5 排除表）；若实测 `peak>0`，即为「AC3 真实可达」的反证，立即原样上报，两种结果都记录。
-- 边界证据：沿用 sampler（10ms 采样 `unreaped_worker_count`，426-434/666-674）、`unreaped_worker_names`、capacity warning 行（1780）。
-- 预算与停止：`SCENARIO_WALL_LIMIT=120s`（:50）+ `CLEANUP_BUDGET=30s`（:51）in-test 断言（827-830/823-826）；sampler 绝对上限 180s（:55）防 unwind 死锁。**清理条件**：B 进程带 argv 标记（同 `stress_mark`:349 模式），测试收尾在 CLEANUP_BUDGET 内显式 `taskkill /F /PID` 清 B，不留给环境；停止条件 = `remaining==0` 或 30s 耗尽（783-791）。
-- 定位声明：仍是 `FAULT_INJECTION` 真实 OS 进程/管道，非真实 Core；不构成生产饱和通过证据，只为定案 F1。
+**L3 test-only 观察/调度（r2 已有）**：`TEST_REGISTRY_OVERRIDE`/`TEST_THREAD_REGISTRY`/`IN_REGISTRY_TEST`（1638-1656）、`RegistryTestGuard`（6069-6145）、holder 继承（1840-1848）、`resources_for_test`（3199-3205）。
 
-**L2 registry 语义边界（真实 OS 线程、直接 track）[建议]**——扩展 `ac2_saturated_registry_answers_boundedly_and_never_loses_the_handle`（9665-9715）：fill **32** 个真实 sleep 线程 + 第 **33** 个，断言：`track_unreaped_worker` 第 33 个返回 false 且 handle 留在调用者（refused 证据，9710-9712 已 join 证明 handle 活着）；`unreaped_worker_count()==32`（accepted 证据）；触发 1767-1784 capacity 分支（cancel 在册 + prune + 等待）。**明确标注**：这是人工阻塞替身（sleep 线程），证明 32 边界的 accepted/refused/holder 语义，**不是**生产饱和，不得写进 AC3 通过依据（任务卡禁止范围）。
+### 2.2 L1 真实 pipe + 强故障 sidecar v2 [建议] ——「逃逸读端持有者」实验（F1 的可证伪对照）
 
-**L3 test-only 观察/调度（r2 已有）**：`TEST_REGISTRY_OVERRIDE`/`TEST_THREAD_REGISTRY`/`IN_REGISTRY_TEST`（1641-1656）、`RegistryTestGuard`（6069-6145）、holder 继承（1840-1848）、ledger/sampler。AC3 各修订把它们从“打印”升为“断言”（见下）。
+新增 L1 专用常量 `FAULT_SIDECAR_V2_SCRIPT` 与 `spawn_fault_sidecar_channel_v2`（**不动**既有 `FAULT_SIDECAR_SCRIPT`/`spawn_fault_sidecar_channel`，既有 fault 场景字节不变）：
 
-### 结构性不可达的处置
+- **脚本 v2**：应答首个 ping（协议同 v1，333-341）后：sidecar 用 `subprocess.Popen([sys.executable, "-c", WRAPPER, pidfile, mark_b], stdin=sys.stdin, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)` spawn 中间进程 A；WRAPPER 内再以同样姿势 spawn B（B 脚本：`open(sys.argv[1],'w').write(str(os.getpid())); time.sleep(3600)`，argv[1]=pidfile、argv[2]=mark_b）后 A 立即退出；sidecar 随后 `time.sleep(3600)`。argv[1]/argv[2] 由测试经 `cmd.arg()` 传入（同 349-353 现有 argv 通道）。
+- **继承面收敛（P2-3）**：A 与 B 的 stdout/stderr 一律 `DEVNULL`，**只**经 `stdin=sys.stdin` 继承 sidecar 的 stdin 读端；sidecar 自身 stdout（应答通道）不受污染 → child 死后 reader 仍正常 EOF，实验保持「writer 单独阻塞」的 F1 形态。
+- **PID 发现通路（P1-3 修复）**：B 自己把 PID 写入测试传入的 pidfile（`dir.path().join("escape_b.pid")`，per-channel TempDir 内）。测试**持有 pidfile 路径**（自己构造的），无需按命令行扫描进程表。
+- **预注册判据（防 cherry-picking）**：预期 `peak==0` 且 writer 在 cancel 后结束、reader 经 EOF 正常 finished（blocked-phase 采集点 729-730 + post-Drop `worker_flags`）；若实测 `peak>0`，即为「前置 P 真实可达 → AC3 反证」，原样上报，两种结果都记录。**若 reader 也未在清理后 finished = 注入形态漂移（stdout 继承泄漏），停下诊断，不解读数据。**
+- **B 的清理（可执行版）**：L1 场景函数尾部、wall 断言（827-830）之前：
+  1. pidfile 有界发现：≤2s/10ms 步进等待文件出现并 parse `u32`；**超时或 parse 失败 = 测试失败（fail-loud）**，并在失败消息中附人工处置指引（`wmic process get ProcessId,CommandLine` 按 `mark_b` 前缀 `m2rc1-fault-b-` 定位后手动 taskkill）——自动化通路只承诺 pidfile 成功写出的情形，缺文件时诚实失败而非静默跳过。
+  2. `run_taskkill_bounded(b_pid, 5s)`（3308，B 无子进程，`/T` 无害）：Err = 测试失败。
+  3. `assert!(wait_for_pid_exit(b_pid, 10s))`（已有 helper 170-179）复核消失。
+  全部计入 `SCENARIO_WALL_LIMIT=120s`（:50）口径；sampler 绝对上限 180s（:55）防 unwind 死锁不变。
+- **定位声明**：仍是 `FAULT_INJECTION` 真实 OS 进程/管道，非真实 Core；不构成生产饱和通过证据，只为定案前置 P（F1 组合）。
 
-若 L1 实测 `peak==0`（预期）：AC3 维持 **BLOCKED**，交付物 = L1 对照数据 + L2 语义边界证明 + 1.5 排除表，交 Codex/用户裁定 AC 口径（是否改口径为「不可达证明+边界验证」），不放宽 `peak>=32`（819-822 原样保留）。
+### 2.3 B 清理的备选方案评估（不采用 Job Object）
 
----
+Windows Job Object（kill-on-close）可结构性兜底全部后代，但需要 `CreateJobObjectW/AssignProcessToJobObject/SetInformationJobObject` 的 win32 调用面（新依赖或手写 syscall），且须在 `Command::spawn` 前介入进程创建参数——超出「最小修订、不改生产」边界。pidfile 方案在纯测试代码内闭合 P1-3 的发现通路，故为主案；Job Object 登记为后续增强候选（另立 Task，须依赖许可核查）。
 
-## AC3 R2-F02..05 最小修订
+### 2.4 L2 registry 语义边界（真实 OS 线程、直接 track）[建议]
 
-### R2-F02：fault 断言硬化（multichannel_stress_tests.rs:729-737）
+同 v1（复核 B6 PASS）：扩展 `ac2_saturated_registry_answers_boundedly_and_never_loses_the_handle`（9665-9715）：fill 32 个真实 sleep 线程 + 第 33 个，断言 refused/accepted/holder 语义（9710-9712 handle 不丢、1767-1784 capacity 分支真实触发）。**明确标注**：人工阻塞替身，证明 32 边界语义，不是生产饱和，不得写进 AC3 通过依据。
 
-- **修订**（全部在 `#[ignore]` stress 函数内）：`assert!(res.is_err())`（734）之前加两条硬断言：`assert!(writer_unfinished && reader_unfinished)`、`assert!(err_detail.contains("stdin write timed out"))`。post-Drop 所有权已有分层：pre-drop flags（756-757/764）+ post-Drop `assert_pid_gone` 的 flags/handles/句柄信号/PID 检查（199-232）+ `remaining_final==0`（823-826）；补一行注释明确 pre/post 分界，不改语义。
-- **测试计划**：重跑 fault 场景一次；预期 20/20 新断言通过、仍在 819-822 处 exit101（BLOCKED 保留）。若新断言失败 = 注入形态漂移，停下诊断。
-- **不改变生产的证明**：diff 仅该 cfg(test) 场景文件；生产 `cfg(not(test))` 字节不变；默认套件 153/6/12 口径不变（场景被 `#[ignore]`）。
+### 2.5 结构性不可达的处置
 
-### R2-F03：guard 收尾账本与 Arc 生命周期（library_bridge.rs:6118-6145，cfg(test)）
-
-- **修订**：guard drop 的 `remaining>0` 分支（6124-6128）从 eprintln 升级：`TEST_GUARD_DROP_UNRECLAIMED`（新增 AtomicUsize）累加；slot 清除后（6139 之后）有界等待 holder 放 Arc：`strong_count(&self.registry)>1` 时最多等 2s（10ms 步进），结果记入 `TEST_GUARD_DROP_ARC_HELD`。**仅当账本非 0 才等待**，正常路径零成本。
-- **新测试 a**：ac4/ac1/ac2 正常路径结尾断言 `TEST_GUARD_DROP_UNRECLAIMED==0`（guard drop 的 remaining==0 成为断言）。
-- **新测试 b**：panic 路径——guarded 测试内 `catch_unwind(AssertUnwindSafe(..))` 中途 panic，断言 guard drop 账本仍为 0（非 0 = 测试失败，暴露 detach）。
-- **覆盖调用者**：所有 `RegistryTestGuard::acquire()` 调用点（9462/9498/9561/9666 等 registry 语义测试）经测试 a 间接全覆盖。
-- **不改变生产**：guard 与账本全在 `#[cfg(test)]` tests 模块（6048 起模块内）；生产 `with_unreaped_registry`（1727-1731）字节不动。风险披露：最坏拉长 registry 语义测试串行 +2s（EXCLUSIVE 锁内），正常为零。
-
-### R2-F04：线程账本断言 + tasklist fail-safe（multichannel_stress_tests.rs:417,565,797；library_bridge.rs:8549-8567）
-
-- **修订 1**：两处 ledger 行（565、797）后加 `assert_eq!(threads_spawned, threads_joined)`（`threads_spawned` 计数已含 ping/cancel worker + sampler：417-418/485/554）。
-- **修订 2**：child_lock 测试两处裸 `Command::new("tasklist")`（8549-8553、8559-8563）改用等价断言 `assert!(!pid_still_alive(pid))`——`pid_still_alive`（146-159）已检查 `status.success()` 且失败按“存活”fail-safe，tasklist 失败时孙进程消失检查**不再假性通过**。helper 在 stress 文件（同 bin 的 cfg(test) 模块），需提为 `pub(crate)` 或在 library_bridge tests 模块放同一 8 行实现（建议前者，单一来源）。
-- **测试计划**：child_lock 属默认套件 → 重跑默认 153 口径；两 stress 场景抽跑核 ledger 断言。taskkill/tasklist 失败注入无法确定性构造（不改生产），fail-safe 语义以代码审查 + 可选手动对照（临时 PATH 遮蔽 tasklist，可选非 Gate）。
-- **不改变生产**：两处均为 cfg(test) 测试代码。
-
-### R2-F05：fail-closed 直接分支与 owner mismatch（library_bridge.rs:1706-1727，cfg(test)）
-
-- **修订**：新增两测试（不动 `with_unreaped_registry` 本体）：
-  - **fail-closed 正分支**：`RegistryTestGuard::acquire()` 后，辅助线程持 `TEST_REGISTRY_OVERRIDE` 锁 ≥60ms；owner 线程 `catch_unwind(AssertUnwindSafe(|| with_unreaped_registry(|r| registry_count(r))))` → 断言 panic 且消息含 `fail-closed`（1717-1721 的 30ms 锁超时 None 分支被真实触发）。
-  - **owner mismatch 分支**：guard 持有期间，非 owner 线程调 `with_unreaped_registry`（如 `unreaped_worker_count`）→ 断言不 panic、作用于 global（1712-1714 `_ =>` 分支）、私有 registry 状态不变；同时确认 owner 线程自身走 override 正常分支（现有 ac 测试已覆盖，此处补 mismatch 侧）。
-- **测试计划**：默认套件内新增，预期 153→155；`catch_unwind` 用 `AssertUnwindSafe`，panic 输出噪音可接受（或临时静默 hook）。
-- **不改变生产**：`cfg(not(test))` 版本（1727-1731）零改动，`cargo check` 生产路径不变。
+若 L1 实测 `peak==0`（预期）：AC3 维持 **BLOCKED**，交付物 = L1 对照数据 + L2 语义边界证明 + §1.5 完整排除论证（含 F5），交 Codex/用户裁定 AC 口径；`peak>=32`（819-822）原样保留不放宽。
 
 ---
 
-## 结论与裁定项
+## AC3 R2-F02..05 最小修订（v2）
+
+### 3.1 R2-F02：fault 断言硬化（multichannel_stress_tests.rs:729-737）——维持 v1（复核 C1 PASS）
+
+`assert!(res.is_err())`（734）前加 `assert!(writer_unfinished && reader_unfinished)` 与 `assert!(err_detail.contains("stdin write timed out"))`；补一行注释明确 pre/post 分界（756-764 pre-drop flags / 195-233 post-Drop 检查）。测试计划与生产不变性声明同 v1。
+
+### 3.2（v1 §R2-F04 修订 2，位置调整）child_lock tasklist → `pid_still_alive`——维持 v1（复核 C4 PASS）
+
+两处裸 `Command::new("tasklist")`（library_bridge.rs:8549-8553、8559-8563）改 `assert!(!pid_still_alive(pid))` / `assert!(!pid_still_alive(grandchild_pid))`；`pid_still_alive`（stress:146-159）已 `status.success()` 检查且失败按存活 fail-safe。helper 提 `pub(crate)`（同 bin 的 cfg(test) 模块，main.rs:42-44 已证可行），单一来源。
+
+### 3.3 R2-F03：guard 显式收尾 + thread-local 账本（library_bridge.rs:6069-6145，cfg(test)）[建议]
+
+**修订（P1-4 + P2-5）**：
+
+1. 把现 `Drop for RegistryTestGuard`（6118-6145）的主体提为私有 `fn cleanup(&mut self) -> (usize, usize)`：`reap_now(2000ms)` → `remaining>0` 时 eprintln **并累加 thread-local `TEST_GUARD_DROP_UNRECLAIMED: Cell<usize>`** → 清 override slot（含验证）→ 清 `IN_REGISTRY_TEST` → 释放 EXCLUSIVE。返回 `(reaped, remaining)`。
+2. 新增 `fn finish(mut self) -> GuardFinishReport`（`GuardFinishReport { reaped, remaining, arc_released }`）：调 `cleanup()` 后，若 `Arc::strong_count(&self.registry) > 1`（holder 线程仍持 clone），有界等待 ≤2s/10ms 步进；`arc_released = strong_count==1`；返回报告，`self` 连同最后一个 Arc 在返回时释放。
+3. `impl Drop` 改为 `fn drop(&mut self) { self.cleanup(); }`——panic unwind 走同一路径并写 thread-local；Drop 路径不做 Arc 等待（panic 兜底要快）。
+4. **测试 a（正常路径，断言位置修复）**：`let report = guard.finish(); assert_eq!(report.remaining, 0); assert!(report.arc_released);`——断言读 `finish` 的**返回值**，时序上必然后于 reap；不依赖任何隐式 drop。既有 4 个 acquire 点（9462/9498/9561/9666）全部从 `let _registry_guard = …` 迁移为 `let guard = …; …; let report = guard.finish(); assert_eq!(report.remaining, 0);`（ac2 在 9711-9713 已先 sleep 4100ms+reap，迁移后 remaining 必为 0）。
+5. **测试 b（panic 路径）**：`catch_unwind(AssertUnwindSafe(|| { let _g = RegistryTestGuard::acquire(); panic!(…) }))` → `assert!(result.is_err())` → **同线程** `TEST_GUARD_DROP_UNRECLAIMED.with(|c| assert_eq!(c.get(), 0))`。catch_unwind 返回时 unwind 已跑完 guard 的 Drop（局部变量先销毁），账本已写；Rust 每个测试独占线程，thread_local 天然 per-test 隔离——**不再存在「断言先于 drop 执行」的恒真窗口，也无全局 Atomic 并行污染**。
+6. **不改变生产**：全部位于 `#[cfg(test)] mod tests`（6042 起）；生产 `with_unreaped_registry`（cfg(not(test)) 1727-1731）字节不动。风险披露：`finish` 的 Arc 等望最坏 +2s（EXCLUSIVE 已释放后才等，不占串行锁）；正常路径零成本。
+
+### 3.4 R2-F04：真实线程账本断言（P1-2 重做）[建议]
+
+**v1 撤销项**：不在 multichannel_stress_tests.rs:797 断言 `threads_spawned/threads_joined`——该行所在 fault 函数**没有**这两个变量（797-798 只打印结构常量 `channel_reader_writer_threads=20*2` 与 pre-drop 的 `joined_flags`），v1 的写法不可编译。
+
+**修订（全部可编译、断言真实观察点）**：
+
+1. **helper 账本（real-core 场景）**：`run_real_core_scenario` 在 scope 结束（555 `});`，全部 ping/cancel/sampler worker 已 join）与 557 wall 计算之间加 `assert_eq!(threads_spawned, threads_joined)`（变量即 417-418 的局部计数器，463/532/554 累加点不变）。**注明语义**：它只证明「场景自建的测试 helper 线程全部 join」，**不是** channel reader/writer 的 join 证据。
+2. **reader/writer join 账本（fault 与 real-core 通用通路）**：`ChildIdentity.worker_flags`（131）持有 `resources_for_test()`（3200-3205）返回的 4 个 Arc——`[reader_finished, writer_finished, reader_joined, writer_joined]`——在 channel Drop 后仍存活（PID ledger 235-239 正为此保活）。fault 场景在 `take_ledger()`（805）+ 逐 id `assert_pid_gone`（806-809，其 199-205 已对每 channel 有界等待并断言 `both reader/writer must finish AND be joined` + handle 槽清零）**之后**、peak 断言（811）之前，加聚合账本断言：
+   ```rust
+   let all_workers_finished_and_joined = identities.iter()
+       .all(|id| id.worker_flags.iter().all(|f| f.load(Ordering::SeqCst)));
+   assert!(all_workers_finished_and_joined,
+       "join ledger: all 20x2 fault reader/writer workers must be finished+joined");
+   ```
+   此时每个 id 已各自通过 `assert_pid_gone` 的 30s 有界等待，聚合断言零额外等待、纯账本汇总。real-core 场景（574 起同一 `assert_pid_gone` 通路）自动获得同等证据。
+3. **797-799 行**：保留原样，上方加注释：「`channel_reader_writer_threads` 是场景结构常量（20×2），非运行时计数；真实 join 证据见下方 `assert_pid_gone` 与聚合 join ledger」。
+4. **child_lock 项**：见 §3.2。
+5. **测试计划**：默认套件跑 §3.2（153 口径）；两 stress 场景抽跑核新断言，预期 helper 账本与聚合 join 账本全过、fault 仍于 819-822 exit101（BLOCKED 保留）。若聚合 join 断言失败 = 存在未 join 的 reader/writer（holder 退避超 30s 或泄漏），停下诊断——这正是该断言要抓的缺陷类别。
+6. **不改变生产**：两文件改动均在 `#[cfg(test)]` 面；`resources_for_test` 既有签名不动。
+
+### 3.5 R2-F05：fail-closed 直接分支与 owner mismatch（library_bridge.rs:1706-1727，cfg(test)）[建议]
+
+维持 v1 两测试，补 **P2-4 握手**：fail-closed 测试中辅助线程改为「lock 拿到后经 `mpsc::channel` 发信号再持锁 ≥60ms」；owner 线程 `rx.recv()` 确认已持锁后才 `catch_unwind(AssertUnwindSafe(|| with_unreaped_registry(...)))` 断言 panic 含 `fail-closed`（1716-1721 的 30ms 超时 None 分支确定性触发）；结束后有界 join 辅助线程（≤1s，超时 = 测试失败）。owner mismatch 分支维持 v1（1712-1714 `_ =>` 走 global、私有 registry 状态不变）。预期默认套件 153→157（F03 测试 a/b 合并计入 F05 的两个新测试后总计 +4，以实施时清单为准）。
+
+---
+
+## 4. 结论与裁定项
 
 **判断**：
-1. 本设计（AC1 时序链/分支排除表、AC2 分层方案、AC3 四项最小修订）为**可释放**的完整设计切片——但按任务卡 AC4，须由 Codex 冻结新 head SHA 并新 Appointment 交 DSH 独审后才能定案；本交付不自批。
-2. 父 Task（GIT-CLEAN-RUST-ISOLATION-1）AC3 真实 32 饱和：**读代码推断 + r2 实测（peak=0）支持结构性不可达**；唯一反证窗口（F1 组合）由 AC2-L1 检验。在 L1 落地实测前，AC3 维持 BLOCKED。
+1. 本 v2 设计对 4 条 P1 逐条闭合（§0 对照表）、6 条 P2 一并处置，为**可释放**的完整设计切片——按任务卡 AC4，仍须由 Codex 冻结新 head SHA 并新 Appointment 交独立复核（上下文独立、只读被审 head）后才能定案；本交付不自批。
+2. 父 Task（GIT-CLEAN-RUST-ISOLATION-1）AC3 真实 32 饱和：**读代码推断 + r2 实测（peak=0）支持结构性不可达**，且论证已覆盖全部四个 track 入口（TA..TD）；确定性反证窗口收敛于共同前置 P 的 F1 组合，由 AC2-L1 检验。L1 落地实测前 AC3 维持 BLOCKED。
 
 **需 Codex/用户裁定**：
-1. **AC3 口径**：若 L1 实测 `peak==0`，是否将 AC3 改判「结构性不可达证明 + L2 边界语义验证」或永久 BLOCKED——这是 AC 修订，只能用户/Codex 裁定，本设计无权自改。
-2. **实施范围冻结**：L1/L2/R2-F02..05 若采纳，须另立实施 Task（Codex 冻 SHA），不能由本设计 Task 直接实施。
-3. **F04 helper 共享方式**：`pid_still_alive` 提 `pub(crate)`（跨 cfg(test) 模块）vs 就地复制，二选一（建议前者）。
+1. AC3 口径（同 v1：L1 实测 `peak==0` 后是否改判「不可达证明 + L2 边界验证」或永久 BLOCKED）。
+2. 实施范围冻结：L1 v2/L2/R2-F02..05 若采纳，另立实施 Task（Codex 冻 SHA）。
+3. §3.2 helper 共享方式：`pub(crate)` 单一来源（建议）vs 就地复制。
+
+## 5. 交付说明（P2-6 处置，Codex/DSH 侧执行）
+
+本 v2 落盘时应冻结 **design-only head**：仅含 `verification/GIT-CLEAN-RUST-CAPACITY-DESIGN-1/DESIGN.md`（v2 全文）、新增 `HANDOFF.md`（记录设计基准 `1829a38`、复核报告引用、v1→v2 修订对照）与 Task 卡 `allowed_paths` 更新；不再混入 `check.ps1`/starter 等其它治理改动（v1 交付 commit `3ca77fc` 的教训，见复核 P2-6）。
 
 ---
 
-**推荐下一步**：本设计正文交 DSH 独审（Codex 冻结本 Task 新 head + Appointment）；独审通过后由 Codex 另冻实施 Task 承载 L1 对照实验与 R2-F02..05 收紧，实测数据回填后再裁定 AC3 口径。无需我方再执行其他操作。
+**推荐下一步**：本 v2 全文交 DSH 派发新的上下文独立 design-reviewer 子 agent 复核（只读本 v2 + `1829a38`，重点核 §0 对照表四条 P1 是否闭合）；复核通过后由 Codex 冻结实施 Task 承载 L1 v2 对照实验与 R2-F02..05。本会话只读，无文件改动、无 commit。
 
 ---
 
-## DSH 集成附记（2026-11-17）：独立复核判 **BLOCKED**，需修订后重审
-
-复核报告：`doc/reviews/GIT-CLEAN-RUST-CAPACITY-DESIGN-1-INDEPENDENT-REVIEW-2026-11-17.md`
-（复核者：上下文独立子 agent `design-reviewer`，未参与设计）。**verdict: BLOCKED，P1=4 / P2=6**。
-
-必须在下一版 DESIGN 中修正的 4 条 P1（原文摘要，括注 DSH 核对结论）：
-
-1. **AC1 的“唯一 track 入口（3980/4115）”不完整** —— 漏掉 `4004/4139` 两条 **reaper 线程 spawn 失败**的 track 路径。
-   因此“32 饱和结构性不可达”的排除表不是逐分支成立；需把该分支作为 F5 列入并说明可构造性。
-2. **R2-F04 的断言点不存在** —— 要求断言 `multichannel_stress_tests.rs:797` 的 `threads_spawned/threads_joined`，
-   但该函数只有常量 `20*2`，修订**不可编译**；需改为实际可得的账本或先引入账本变量。
-3. **AC2-L1 的 B 孙进程清理不可执行** —— B 由 sidecar 再派生，没有 PID 发现通路，
-   `taskkill /F /PID` 无从下手；现有 120s/30s 循环只覆盖 A 侧 worker。
-4. **R2-F03 测试 a 的账本断言位置错误** —— 按字面在 guard 隐式 drop 前执行，账本恒为 0；
-   需显式 drop + per-test 账本，断言才有意义。
-
-**结论**：本设计当前**不可释放**；卡片 `GIT-CLEAN-RUST-CAPACITY-DESIGN-1` 保持 `ready`，不集成、不实施。
-下一版由 ZCode 修订后重新送独立复核（不得自审）。
-
+以上就是修订后的完整 DESIGN v2（含「本次修订对照」开篇节）。四条 P1 的闭合方式概括：**P1-1** 用 TA..TD 四入口全表 + F5 + 「共同前置 P」重构论证（不可达结论保留，支柱换掉）；**P1-2** 撤销 797 处不可编译断言，改用 555 后的局部变量断言 + `worker_flags` 聚合 join 账本；**P1-3** B 自写 pidfile 给出完整发现→taskkill→复核链，fail-loud 兜底；**P1-4** `finish()` 显式收尾读返回值 + thread-local 账本，断言时序与并行污染同时修复。

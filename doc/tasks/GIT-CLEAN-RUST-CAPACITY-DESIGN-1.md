@@ -31,10 +31,10 @@ allowed_paths:
 
 ## Acceptance Criteria
 
-- [ ] **AC1**：根据实际spawn/round_trip/Drop/cancel/reaper/holder/track代码画清资源与时序链，逐分支说明为什么当前20真实pipe峰0、32目标需要何种故障前提，引用具体行/符号。 <<PARTIAL: DESIGN 已交付并被复核判 BLOCKED（4 条 P1）；待 ZCode 修订后重审>>
+- [ ] **AC1**：根据实际spawn/round_trip/Drop/cancel/reaper/holder/track代码画清资源与时序链，逐分支说明为什么当前20真实pipe峰0、32目标需要何种故障前提，引用具体行/符号。 <<PARTIAL: v1 被独立复核判 BLOCKED（4 条 P1）；v2 已交付（逐条修订 + P2 6 条处置），待第二轮独立复核>>
 - [ ] **AC2**：提出不改生产语义的可实现注入方案，区分真实worker/管道、test-only观察或调度、人工阻塞替身，明确accepted/refused/holder及32边界证据、120s+30s预算、清理与停止条件；若结构性不可达则给可证伪机制与对照，保留AC3 BLOCKED，不自动改AC。 <<PARTIAL: DESIGN.md AC2 段已给出注入方案与可证伪条件；待独立复核判定真实性>>
 - [ ] **AC3**：R2-F02..05各给最小修订及有意义测试计划：精确timeout/unfinished硬断言；guard正常/异常收尾和Arc所有权；实际线程join账本与tasklist状态；fail-closed直接分支/owner mismatch。覆盖所有调用者与不改变生产的证明。 <<PARTIAL: DESIGN.md AC3 段已给 R2-F02..05 最小修订与测试计划；未实施、未复核>>
-- [ ] **AC4**：独立新head只增加DESIGN/HANDOFF与来源说明，产品源码/依赖零改动；Codex冻结SHA并新Appointment DSH独审，输出可释放或BLOCKED的明确裁决。 <<BLOCKED: 独立复核（design-reviewer，2026-11-17）判 BLOCKED，P1=4：AC1 track 分支不全（漏 4004/4139）、R2-F04 断言点不存在（不可编译）、AC2-L1 的 B 孙进程无 PID 通路、R2-F03 账本断言位置错误；需修订后重审>>
+- [ ] **AC4**：独立新head只增加DESIGN/HANDOFF与来源说明，产品源码/依赖零改动；Codex冻结SHA并新Appointment DSH独审，输出可释放或BLOCKED的明确裁决。 <<PARTIAL: v1 复核判 BLOCKED（4 条 P1）；v2 已交付修订，第二轮独立复核待做>>
 
 ## 允许修改范围
 
