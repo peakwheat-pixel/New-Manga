@@ -1063,3 +1063,20 @@ AC1 的 blocked 理由由**原作者**写成完整的 NA 结论（headless 库�
 - **顺带发现（登记，不在 AC3 桶内）**：`tools/governance/tests/test_canonical_evidence_basis.py` 在
   **HEAD 未含本轮改动** 时同样 **9 failures**（用 `git stash` 复现）⇒ 既有债务，非本轮回归。
 - **AC 变更**：新增 **AC7**（B2 单元级修复，`<<PARTIAL>>`）+ **AC5 追加式窄例外**（不追溯改写原核验）。
+
+### 队列 5 —— 剩余非终态卡清单（R18 实测，11 张）
+
+| 卡 | 状态 | 剩余工作 | 谁可做 |
+|---|---|---|---|
+| `MAINT-1-RELEASE-MONITOR` | in_progress | 伞形哨位；Gate 3/4/5 待人类输入 | 人工 |
+| `SIDECAR-REBUILD-1` | in_progress | AC5/AC6 未勾；capabilities 17 / 13 失败拆 E-6 | Agent 可续 |
+| `GATE3-MATRIX-EXPAND-1` | in_progress | AC1–AC5 全勾但无 `<<MET>>` 标记、无 Review、无 Resource Manifest → 需按终态要求整理 + 独立复核 | Agent 可续 |
+| `GATE3-SETTINGS-SHORTCUT-1` | in_progress | 同上（AC1–AC6 全勾） | Agent 可续 |
+| `DOC-CTRLCHAR-FIX-1` | in_progress | AC1–AC6 全未勾 | Agent 可续 |
+| `INSTALLER-MATRIX-1` | in_progress | 安装矩阵/签名，属 Gate 条件 4 | 人工（签名/GT） |
+| `FEA11-ENTRY-MISSING-1` | blocked | 依赖 FEA-11 入口缺失 | 待裁定 |
+| `GIT-CLEAN-PUBLICATION-DIAG-1` | approved | 待集成 | Agent 可续（需先看卡） |
+| `GIT-CLEAN-PUBLICATION-1` / `GIT-CLEAN-RUST-ISOLATION-1` | in_review | 待复核/集成 | Agent 可续 |
+| `GIT-CLEAN-CORE-ENV-2` | proposed | 未激活 | 需 DSH 释放 |
+
+**结论**：Agent 侧仍有可执行项（上表标「Agent 可续」的 6 张），但每张都要按终态要求整理证据 + 独立复核 + 收口，单轮只能推进 1–2 张。
