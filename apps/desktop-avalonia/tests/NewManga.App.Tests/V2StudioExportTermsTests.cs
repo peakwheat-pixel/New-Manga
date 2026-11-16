@@ -338,6 +338,61 @@ public sealed class V2StudioExportTermsTests
         });
     }
 
+    // ------------------------------------------------------------------
+    // V11R-B-5 AC2 上下文保留 —— added 2026-11-16 (DSH).
+    //
+    // AC2 asks that switching space/mode neither rebuilds the ViewModel nor loses
+    // selection/scroll/filter. The Export + Terms surface lives in Studio, so the switch under test
+    // is Page <-> Batch. The assertion that matters is identity: `vm.Export` must be the SAME
+    // instance afterwards (a rebuilt one would silently drop the preflight result and every option),
+    // plus the concrete state the user had chosen.
+    // ------------------------------------------------------------------
+
+    [AvaloniaFact]
+    public async Task ExportSurface_KeepsViewModelSelectionAndOptions_AcrossStudioModeSwitches()
+    {
+        var (view, host, vm, window) = await OpenAsync();
+        var export = vm.Export;
+
+        Assert.True(await export.RefreshPreflightAsync());
+        Assert.Equal(StudioExportPhase.Ready, export.Phase);
+
+        export.Format = StudioExportFormat.Pdf;
+        export.PdfContent = StudioPdfContentMode.SearchableDualLayer;
+        export.Scope = StudioExportScope.SelectedPages;
+        vm.Selection.SetSelectedPages(new[] { "p2", "p3" });
+        StudioFixtures.Pump();
+
+        var formatBefore = export.Format;
+        var pdfBefore = export.PdfContent;
+        var scopeBefore = export.Scope;
+        var selectedBefore = vm.Selection.SelectedPageIds.ToArray();
+        var translatedBefore = export.TranslatedPageCount;
+
+        // Page -> Batch -> Page: two switches, i.e. the mode really changed and changed back.
+        vm.RequestMode(StudioWorkspaceMode.Batch);
+        StudioFixtures.Pump();
+        vm.RequestMode(StudioWorkspaceMode.Page);
+        StudioFixtures.Pump();
+
+        // (a) not rebuilt
+        Assert.Same(export, vm.Export);
+
+        // (b) the preflight result survived (a rebuilt VM would be back at Idle with 0 pages)
+        Assert.Equal(StudioExportPhase.Ready, export.Phase);
+        Assert.Equal(translatedBefore, export.TranslatedPageCount);
+
+        // (c) every option the user picked survived
+        Assert.Equal(formatBefore, export.Format);
+        Assert.Equal(pdfBefore, export.PdfContent);
+        Assert.Equal(scopeBefore, export.Scope);
+
+        // (d) the shared selection survived, so the SelectedPages scope is still meaningful
+        Assert.Equal(selectedBefore, vm.Selection.SelectedPageIds.ToArray());
+
+        StudioFixtures.WindowOf(view).Close();
+    }
+
     [AvaloniaFact]
     public async Task ToolsOverlay_OpensAndCloses_KeyboardEscape()
     {

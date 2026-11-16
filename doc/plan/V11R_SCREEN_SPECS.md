@@ -83,6 +83,27 @@
 | 数据 | `IThemeService`/`IThemeRegistry`/`IThemePreviewEngine`/`IThemeValidator`（契约 §4） |
 | 验收 | 7 分区齐全；切换主题即时反映到书架/工作台/阅读器预览；应用后全局生效且重启保持；取消后完全恢复；导入非法包有逐条错误且不崩溃；旧主题 ID 迁移到默认；高对比与减少动效生效 |
 
+## 6.5 导出预检 + 术语与约束（`ui-studio`）
+
+> **2026-11-16 增补（DSH）**：本文件 2026-10-30 冻结时遗漏了这一工作面（原文 grep `预检|术语` 0 命中），
+> 导致 `V11R-B-5` 的 AC1「按 SCREEN_SPECS 对应章节」**无章节可核对**。本次按
+> `doc/tasks/V11R-B-5.md` 已交付的实现**如实回填**规格，不新增需求、不改既有章节字节。
+> 修订记录见文末「修订记录」。
+
+| 项 | 规格 |
+|---|---|
+| 文件 | `ViewModels/V2/Studio/StudioExportViewModel.cs`、`ViewModels/V2/Studio/StudioTermsViewModel.cs`、`Views/V2/Studio/Controls/StudioToolsOverlay.cs`（Tool 面板宿主，`Grid`，由 `StudioWorkspaceViewModel` 驱动） |
+| 布局 | Studio 内的 **Tools 覆盖层**（不占 Page/Batch 模式的主体三栏）。上：标题条 + 关闭（`Esc` 逐级退出）；中：**导出预检**区（计数卡 + 选项区）与**历史**区（列表）；下：**术语与约束**区（三个页签）。未接入能力的区域显示**显式横幅**而非空白 |
+| 导出选项组件 | ①**格式**：`StudioExportFormat` = `Zip` / `Pdf`（`FormatText` 显示 `ZIP`/`PDF`）；②**PDF 内容**（仅 PDF 时可用）：`StudioPdfContentMode` = `ImageOnly` / `SearchableDualLayer`；③**范围**：`StudioExportScope` = `Chapter`（整章）/ `SelectedPages`（仅选中页，`SelectedPageCount` 与 `ScopeText` 反映）；④**过期页策略**：`StudioStalePolicy` = `Abort` / `ContinueExisting`，两者都可选且**必须带 tooltip 说明后果**（`StalePolicyTooltip`/`ContinueExistingTooltip`） |
+| 预检计数 | 已翻译页 `TranslatedPageCount` / 可导出页 `ExportablePageIds`；**未确认**与**过期**页没有读取面时一律显示 `—` + 说明（`UnconfirmedText`/`UnconfirmedTooltip`/`StaleTooltip`），**禁止伪造 0** |
+| 导出状态机 | `StudioExportPhase` = `Idle` / `Loading` / `Ready` / `Running` / `Completed` / `Failed` / `Cancelled` / `NotWired`；`PhaseText` 逐态文案；`CanStart`/`CanCancel`/`IsTerminal` 派生自状态；运行中轮询快照（`PollInterval`） |
+| 历史区 | 每行 `ExportHistoryEntry`：格式、页数、状态（`StudioStateKind` 经 `StudioStates.Glyph/Label/StyleClass`，颜色取 `Nm.Color.Status.*`）、文件名、完成时间、sha 前缀、tooltip；**无历史时显示空态**而非假行 |
+| 术语与约束 | 三个页签 `StudioTermsSection` = `Terms`（术语表）/ `DoNotTranslate`（不译表）/ `Conflicts`（冲突提示），`SectionText` 给中文名；数据源 `StudioTermsViewModel` 目前接 `NotWiredTermsSource`（`IsWired=false`） |
+| **未接入的诚实呈现** | 术语源未接入时：横幅标题 `能力待接入 · NOT_WIRED`、`CapabilityNote` 说明原因、搜索框占位改为「搜索不可用（未接入）」且 `IsSearchEnabled=false`、`Rows` 为空且**零伪造行**（`RowCount=0`，不得返回编造术语） |
+| 数据 | 仅经 `IHostController`/`IRunController`：预检读 `GetTranslatedPages`/`GetExportPreflight`、历史读 `GetExportHistory`、启停调 `StartExport`/`CancelExport` 并轮询 `GetExportSnapshot`；术语面等待专用契约（当前未接入）。**禁止 ViewModel 直连 CoreClient/DB/文件系统** |
+| 状态七态 | 按 §0：每屏必须实现 `idle/loading/ready/empty/error/partial`（导出用 `StudioExportPhase` 映射，术语区用 `NotWired` 诚实表达未接入），错误就地 + 可重试 |
+| 验收 | ①预检计数来自真实读取，未确认/过期显示 `—`+说明；②四种选项（格式/PDF 内容/范围/过期策略）都可选并**真实传入** Host；③`Abort` 与 `ContinueExisting` 两值都能选且带后果说明；④启动导出→轮询→完成/失败/取消三态可见，取消后无残留；⑤只读 Host 时**不能启动**并说明原因；⑥历史来自真实 `GetExportHistory`，空时显示空态；⑦术语区未接入时显示 NOT_WIRED 横幅、搜索禁用、**零伪造行**；⑧窗口 1600/1280/1024 三档不崩 |
+
 ## 7. 交付顺序与依赖
 
 ```
@@ -100,3 +121,12 @@ V11R-D-1 (M0 骨架) ──▶ V11R-B-1 Shell+Library ──▶ V11R-B-2 Console
 | `Views/V2/Studio/**`、`ViewModels/V2/Studio/**`、`Shell/V2/Studio/**` | `ui-studio` |
 | 公共控件（≥2 屏使用） | 先本地后上收 `NewManga.DesignSystem.Controls`（由 `design-platform` 上收，见契约 §3.2） |
 | `MainWindow.axaml` 切换承载 `AppShellV2` | 仅 `V11R-INT-1`（DSH） |
+---
+
+## 修订记录
+
+| 日期 | 变更 | 原因 |
+|---|---|---|
+| 2026-10-30 | v1 冻结（§0–§8） | DSH 冻结 |
+| 2026-11-16 | **增补 §6.5 导出预检 + 术语与约束** | 2026-10-30 冻结时遗漏该工作面，致 `V11R-B-5` AC1 无章节可核对；本次按其已交付实现如实回填，**不改既有章节字节** |
+
