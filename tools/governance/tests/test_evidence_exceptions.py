@@ -143,6 +143,19 @@ class ExceptionRegistryTests(unittest.TestCase):
         self.assertNotIn("EXEMPTED[EXC-TEST-EV-99]", out)
         self.assertIn("EVIDENCE_EXCEPTION_INELIGIBLE", out)
 
+    def test_exception_lapses_when_the_card_is_reopened(self):
+        # ruling condition 4: reopening the card must invalidate the exception
+        clone = self.clone()
+        self.write_registry(clone, [self.entry_for(clone, "EV-01")])
+        card = clone / CARD
+        text = card.read_text(encoding="utf-8")
+        self.assertIn("status: done", text)
+        card.write_text(text.replace("status: done", "status: in_review", 1),
+                        encoding="utf-8", newline="\n")
+        out = self.check(clone)
+        self.assertNotIn("EXEMPTED[", out)
+        self.assertIn("Evidence SHA-256 不匹配", out)
+
     def test_wildcard_entry_is_rejected(self):
         clone = self.clone()
         entry = self.entry_for(clone, "EV-01")

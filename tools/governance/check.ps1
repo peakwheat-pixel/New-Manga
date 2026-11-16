@@ -120,6 +120,12 @@ function Test-EvidenceExceptionEligibility($Entry) {
 function Get-EvidenceException([string]$ErrorType, [string]$TaskId, [string]$EvidenceId,
                               [string]$Path, [string]$Commit, [string]$Sha, [string]$Class) {
     if ($script:evidenceExceptions.Count -eq 0) { return $null }
+    # Ruling condition 4: an exception lapses as soon as the card is reopened.
+    $currentStatus = ''
+    if ($metadata -and $metadata.ContainsKey('status')) { $currentStatus = ([string]$metadata['status']).ToLowerInvariant() }
+    if (@('done', 'closed_with_limitations') -notcontains $currentStatus) {
+        return $null
+    }
     $cardRel = [IO.Path]::GetRelativePath($repoRoot, $TaskPath).Replace('\', '/')
     $key = @($cardRel, $TaskId, $EvidenceId, $Path, $Commit, $Sha, $Class, $ErrorType) -join '|'
     if (-not $script:evidenceExceptionIndex.ContainsKey($key)) { return $null }

@@ -1,34 +1,39 @@
-# GOV-EVIDENCE-PIN-REPAIR-1 · AC4 batch 1 证据（FEA-11-HOST-AUTH-2：7 errors → 0）
-# head: 8fe6b7ca8
-# at_utc: 2026-11-16T14:05:00Z
+# GOV-EVIDENCE-PIN-REPAIR-1 · AC4 batch 1 证据（含独立复核更正，2026-11-17 修订）
+# head: 3fd04d4cb
+# at_utc: 2026-11-16T14:36:15Z
 # os: Windows 10.0.26200 ; PowerShell 7.6.8 ; Python 3.14.6
+# reviewer: doc/reviews/GOV-EVIDENCE-PIN-REPAIR-1-AC4-BATCH1-REVIEW-2026-11-16.md（pin-exc-reviewer，独立上下文）
+
+## 0. 独立复核抓到的 P1（我错了，已修）
+# 初版把 EV-11/12/13 的例外理由写成「本仓无任何字节表示可复现」。**这是错的**：
+#   实测 git cat-file blob 5cbec0e822af224809f3d898c82fe30a025b5ab1:<path> 的 SHA-256 与三行记录值**逐字相等**
+#   （该 commit = 2026-11-08 `docs(fea-11-host-auth-2): closeout done`，是基线与 head 的祖先）。
+# 根因：初版只检查了「commit 列 / 当前工作树 / LF / CRLF」四种**当前可见**表示，从未检索历史 blob；
+#   把「当前看不到」误当成「本仓不存在」，并写进了例外理由。
+# 更正后的处置：
+#   ① 三条 -supersede 行改为**溯源补全** —— commit 写成 5cbec0e8…、sha256 保留**原行记录值**，
+#      于是「原摘要 + 其真实出处」同时可机械复核（门禁对该行照常严格校验并通过）；
+#   ② 例外理由改为「原行 commit 列缺记载，摘要已核实可在 5cbec0e8… 复现，append-only 禁止改写原行」；
+#   ③ 表下说明整段重写，明确「不是摘要造假、不是字节消失」。
 
 ## 1. 逐条结论（5 条证据 + 2 条 Resource）
-# EV-01 apps/desktop-avalonia/src/NewManga.Host/Sources/SourceOperationCoordinator.cs
-#   ⇒ 调查：该路径在**全部 22 个历史 blob** 中都没有等于记录值 a4213091… 的字节 ⇒ 记录值不可复现、无法重 pin
-#   ⇒ 处置：登记受控例外 EXC-FEA11HA2-01（error_type=SHA_MISMATCH）
-# EV-03 apps/desktop-avalonia/tests/NewManga.Host.Tests/Fea11HostAuthTests.cs
-#   ⇒ 调查：该路径 **12 个历史 blob** 中都没有 2e7bdab9… ⇒ 同上
-#   ⇒ 处置：登记 EXC-FEA11HA2-02
-# EV-11/12/13 doc/tasks/FEA-11-HOST-AUTH-{3,4,5}.md
-#   ⇒ 处置：已由同表 EV-11/12/13-supersede 行取代（完整 commit + 64 位 sha256 = commit blob，2026-11-16 追加）
-#   ⇒ 登记 EXC-FEA11HA2-03/04/05（reason 明确引用对应 supersede 行）
-# Resource row `worktree`：source 由描述性文本改为占位 `—`（原文本移入末列，未丢失）
-# Resource row `test-fixture`：`sha256/manifest` 由 `—` 补为 verification/FEA-11-HOST-AUTH-2/RESOURCE-MANIFEST.json；
-#   destination 由 `—` 补为 verification/FEA-11-HOST-AUTH-2/tools（PRESERVE_REFERENCED 要求最终路径可验证）
-#   —— 这两处是 Resource Manifest 的结构性占位，裁定明确「例外通道不覆盖 Resource」，故按单元修正而非登记例外。
+# EV-01 SourceOperationCoordinator.cs：该路径**全部 22 个历史 blob** 中都不存在记录值 ⇒ 该路径从未以这些字节入仓；登记 EXC-FEA11HA2-01
+# EV-03 Fea11HostAuthTests.cs：该路径 **12 个历史 blob** 中都不存在 ⇒ 同上；登记 EXC-FEA11HA2-02
+# EV-11/12/13：**可复现**（见 §0），由 -supersede 行补全溯源；原行登记 EXC-FEA11HA2-03/04/05（理由已更正）
+# Resource `worktree`：source 由描述文本改占位 `—`，原文本移入末列（未丢信息）
+# Resource `test-fixture`：sha256/manifest 补 RESOURCE-MANIFEST.json；destination 补 verification/FEA-11-HOST-AUTH-2/tools
+#   （PRESERVE_REFERENCED 要求最终路径可验证；例外通道明确不覆盖 Resource，故按单元修正）
 
-## 2. 结果
-# check.ps1 -TaskPath doc/tasks/FEA-11-HOST-AUTH-2.md  →  PASS (8 warnings)  EXIT=0
-#   （8 = 5 条 EXEMPTED + 3 条全局 warning；改动前为 FAIL 7 errors）
-# 只读巡检：python -B tools/governance/audit_evidence_pins.py --cards doc/tasks/FEA-11-HOST-AUTH-2.md
-#   → FAIL 0 / EXEMPTED 5 / SUPERSEDED 0 / WARN 0（工具现会读取登记表并区分 EXEMPTED）
-# 该卡 git diff（相对本批之前）：2 lines changed（2 个 Resource 单元格），证据行 0 改动、supersede 行保持原样
+## 2. 复核提出的 P2 与处置
+# ① 卡片非终态仍降级 ⇒ 已修：check.ps1 的 Get-EvidenceException 现在要求**当前** status ∈ {done, closed_with_limitations}
+#    （裁定条件 4）；新增测试 test_exception_lapses_when_the_card_is_reopened（把 status 改成 in_review 后例外失效）。
+# ② 计数错误（卡/日志写「余 443」）⇒ 更正为：全仓 canonical 7,083 行，FAIL **440**、EXEMPTED 5、WARN 1,671。
+# ③ 巡检工具的 EXEMPTED 未复用门禁资格 ⇒ 已修：工具现在做同样的基线/终态/逐字行校验；不合格的登记项不产生 EXEMPTED。
+# ④ 工具测试被弱化 ⇒ 已修：恢复强断言 —— 用无登记项的 doc/tasks/FEA-05-PORT-1.md 断言「未登记的历史失效行仍然 FAIL」。
 
-## 3. 登记表状态
-# tools/governance/evidence-pin-exceptions.json：entries = 5（全部属于本卡），
-# 其余 443 条 FAIL 尚无结论 ⇒ AC4 未完成。
-
-## 4. 待独立复核（AC5 的一部分）
-# 本批 5 条登记 + 2 处 Resource 单元修正需上下文独立复核：
-# ①每条例外是否真的「不可复现」；②supersede 行是否满足裁定条件 3；③Resource 单元修正是否越界。
+## 3. 实测
+# check.ps1 -TaskPath doc/tasks/FEA-11-HOST-AUTH-2.md → PASS (8 warnings)，其中 5 条为 EXEMPTED（含更正后的理由）
+# 全局 check.ps1 → PASS (3 warnings)
+# python -B -m unittest tools.governance.tests.test_evidence_exceptions → Ran 10 ... OK
+# python -B -m unittest tools.governance.tests.test_audit_evidence_pins → Ran 15 ... OK
+# 全仓巡检 → 7,083 rows / FAIL 440 / EXEMPTED 5 / WARN 1,671

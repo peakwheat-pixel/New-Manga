@@ -88,6 +88,13 @@ class RealRepoTests(unittest.TestCase):
         self.assertEqual(rc, 0, out)
         self.assertIn("FAIL: 0", out)
 
+    def test_undocumented_broken_card_still_fails(self):
+        # FEA-05-PORT-1 has historical PATH_MISSING rows and no registry entries:
+        # the sweep must keep reporting them (no global softening).
+        rc, out = self.run_sweep("doc/tasks/FEA-05-PORT-1.md")
+        self.assertEqual(rc, 1, out)
+        self.assertIn("FAIL:", out)
+
     def test_known_broken_card_is_fully_documented(self):
         # every remaining defect on this card is a registered exception, so the
         # sweep reports zero FAIL and lists the EXEMPTED rows

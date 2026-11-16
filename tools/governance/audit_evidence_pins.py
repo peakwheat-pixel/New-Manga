@@ -127,14 +127,17 @@ def collect(cards):
 
 
 REGISTRY = Path(__file__).resolve().parent / "evidence-pin-exceptions.json"
+_REGISTRY_DOC = {}
 
 
 def load_registry():
     """Registered historical exceptions (Codex ruling Q1=B). Diagnostics only:
     the gate decides on its own; this only labels rows so triage matches it."""
+    global _REGISTRY_DOC
     if not REGISTRY.exists():
         return {}
     doc = json.loads(REGISTRY.read_text(encoding="utf-8"))
+    _REGISTRY_DOC = doc
     index = {}
     for e in doc.get("entries", []):
         commit = "" if str(e.get("commit")) == "-" else str(e.get("commit"))
@@ -143,6 +146,40 @@ def load_registry():
                e.get("error_type"))
         index[key] = e
     return index
+
+
+def git_show(rev_path):
+    r = subprocess.run(["git", "-C", str(REPO), "cat-file", "blob", rev_path],
+                       capture_output=True)
+    return r.stdout if r.returncode == 0 else None
+
+
+def registry_eligible(registry_doc, entry, cache={}):
+    """Same eligibility the gate enforces: the row existed, unchanged, in a
+    terminal card at the frozen baseline."""
+    baseline = registry_doc.get("eligibility_baseline", "")
+    card = entry.get("card", "")
+    key = (baseline, card, entry.get("evidence_id"))
+    if key in cache:
+        return cache[key]
+    ok = False
+    if len(baseline) == 40 and card:
+        text = git_show("%s:%s" % (baseline, card))
+        if text:
+            body = text.decode("utf-8", "replace")
+            status = re.search(r"(?m)^status:\s*(\S+)\s*$", body)
+            if status and status.group(1).lower() in ("done", "closed_with_limitations"):
+                for line in body.split("\n"):
+                    if line.startswith("| %s |" % entry.get("evidence_id")):
+                        cells = [c.strip().strip("`") for c in line.strip().strip("|").split("|")]
+                        if (len(cells) >= 6 and cells[2] == entry.get("path")
+                                and cells[3] == entry.get("commit")
+                                and cells[4].lower() == str(entry.get("sha256")).lower()
+                                and cells[5].upper() == str(entry.get("class")).upper()):
+                            ok = True
+                        break
+    cache[key] = ok
+    return ok
 
 
 def registry_match(registry, row, error_type):
@@ -155,7 +192,9 @@ def registry_match(registry, row, error_type):
     for (card, task, eid, path, c, sha, klass, etype), entry in registry.items():
         if (card, task, eid, path, c, sha, etype) == (key[0], key[1], key[2], key[3],
                                                       key[4], key[5], error_type):
-            return entry
+            if registry_eligible(_REGISTRY_DOC, entry):
+                return entry
+            return None
     return None
 
 

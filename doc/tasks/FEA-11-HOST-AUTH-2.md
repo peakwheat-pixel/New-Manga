@@ -110,16 +110,22 @@ out_of_scope:
 | EV-15 | AC-F2（fixture 工具） | verification/FEA-11-HOST-AUTH-2/tools/build_plan_body.py | - | 8e39aed36be5e50e4b85d5f254a37c622da99ea5f3bd2dc7e72880208f3f8b53 | CANONICAL |
 | EV-16 | AC-F2（行数核对工具） | verification/FEA-11-HOST-AUTH-2/tools/count_bindings.py | - | 23b31c4cd3f580e629c8135d1ee1011758006d2991c6de7c54767459b85816b4 | CANONICAL |
 | EV-17 | AC-F5（交付说明） | verification/FEA-11-HOST-AUTH-2/README.md | - | 32b51373f53e3f4bdd9dcdbeda07ea9191253a686c67324c8407802193ab7fb8 | CANONICAL |
-| EV-11-supersede | re-home 载体（取代 EV-11） | doc/tasks/FEA-11-HOST-AUTH-3.md | f1a2e8805a9575c9838f9f18d89de5480e053f8d | e1c529bd6cc72b8de0648f9402ff03349bf8d17b00df951f9d95c9e638c959c0 | CANONICAL |
-| EV-12-supersede | re-home 载体（取代 EV-12） | doc/tasks/FEA-11-HOST-AUTH-4.md | 53ce9d55c516f714518f4f9c41ed2cb1c87b3eda | 4ec9662de82158b4132d275c979cc78cf34be02bc486103a8e22a2c423114633 | CANONICAL |
-| EV-13-supersede | re-home 载体（取代 EV-13） | doc/tasks/FEA-11-HOST-AUTH-5.md | 5ec365f145a31ffe95a4f32159f40c6106700875 | a83791cbd882b15998dfadece7cd6d32d7841e85e7e660b5167e97c895ac68cc | CANONICAL |
+| EV-11-supersede | re-home 载体（溯源补全：记录值在 5cbec0e822af 可复现；取代 EV-11） | doc/tasks/FEA-11-HOST-AUTH-3.md | 5cbec0e822af224809f3d898c82fe30a025b5ab1 | 4a7e1ca8bacfebcd74b5347eb1bed9b6fa8bd49e2e480ffc904296389413a82c | CANONICAL |
+| EV-12-supersede | re-home 载体（溯源补全：记录值在 5cbec0e822af 可复现；取代 EV-12） | doc/tasks/FEA-11-HOST-AUTH-4.md | 5cbec0e822af224809f3d898c82fe30a025b5ab1 | 60a3d02a4d45ab16147458ab9dfce6526b7b9b006029c6abf32f7c0b38a54c00 | CANONICAL |
+| EV-13-supersede | re-home 载体（溯源补全：记录值在 5cbec0e822af 可复现；取代 EV-13） | doc/tasks/FEA-11-HOST-AUTH-5.md | 5cbec0e822af224809f3d898c82fe30a025b5ab1 | cdc51f9640d23d62f5437bfa2a4a1b15ceab98c73e2961f6b5b4394ace2653c5 | CANONICAL |
 
-> **证据 supersession 说明（DSH，2026-11-16；依据 Codex 裁定 Q1=D，append-only）**
+> **证据 supersession 说明（DSH，2026-11-17 修订；依据 Codex 裁定 Q1=D，append-only）**
 > 
-> `EV-11` / `EV-12` / `EV-13` 三行是 re-home 载体的早期摘要：它们的 64 位 sha256 在本仓**没有任何字节表示**
-> 能复现（commit 列是 `-`，当前工作树、LF、CRLF 三种形态都不匹配）。为保留历史事实，这三行**逐字不动**；
-> 另以 `EV-11-supersede` / `EV-12-supersede` / `EV-13-supersede` 追加当前状态：commit 为可解析的完整 40 位对象名，
-> sha256 = `git cat-file blob <commit>:<path>` 的字节摘要（与本行所示字节数一致），可机械复核。
+> `EV-11` / `EV-12` / `EV-13` 三行是 re-home 载体的早期摘要，**commit 列缺失**（记为 `-`）。
+> 2026-11-16 的独立复核更正了最初判断：这三个摘要**并非不可复现** —— 在 closeout 提交
+> `5cbec0e822af224809f3d898c82fe30a025b5ab1`（2026-11-08 `docs(fea-11-host-auth-2): closeout done`）下，
+> `git cat-file blob <commit>:<path>` 的 SHA-256 与三行记录值**逐字相等**。
+> 
+> 因此 `EV-11-supersede` / `EV-12-supersede` / `EV-13-supersede` 三行改为**溯源补全**：commit 列写上该提交，
+> sha256 列保留原行的记录值（而不是当前工作树的新摘要），使「原摘要 + 其真实出处」同时可机械复核。
+> 原三行仍逐字保留；它们当前的失败原因是 **commit 列缺记载**（门禁在 `-` 时只比对工作树，而工作树已被后续任务修改），
+> 不是「摘要造假」或「字节消失」。
+> 
 > 复核方式：`python -B tools/governance/audit_evidence_pins.py --cards doc/tasks/FEA-11-HOST-AUTH-2.md`。
 
 ## Resource Manifest
