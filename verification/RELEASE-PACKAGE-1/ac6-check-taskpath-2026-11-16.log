@@ -1,0 +1,13 @@
+# RELEASE-PACKAGE-1 AC6 —— check.ps1 -TaskPath 归档
+# command: pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/RELEASE-PACKAGE-1.md
+# head: dd029b73f114cf238674ef6519253e76e59fbd37
+# at_utc: 2026-11-16T02:37:05Z
+
+Governance scope: 15 current documents; no historical directory scan.
+Task: doc\tasks\RELEASE-PACKAGE-1.md
+WARN: 存在 12 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3032 bytes / 27 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6990 bytes / 64 lines
+Governance check: PASS (3 warnings)
+
+EXIT=0

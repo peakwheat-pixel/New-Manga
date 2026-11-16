@@ -43,7 +43,7 @@ S5 拆分（`LEGACY-SHELL-REMOVAL-1` BLOCKED 段）。D4 安全（S5-A/B）与 C
 - [x] **AC3 许可一致性**：包内 `LICENSE`/`NOTICE`/`THIRD_PARTY_LICENSES` 与仓库一致（逐字节比对）；字体仅系统栈；AGPL 组件处置结论落文档。 <!-- verified: 包内三许可文件 sha256 与 8ff3d288d 检出逐字节一致（LICENSE cde3a5c4、NOTICE 6b3d9bd0、THIRD_PARTY 72927e68，磁盘副本复算相同）；字体仅系统栈（msyh 等不得随包）与 AGPL-3.0 处置结论均落文档：file:verification/RELEASE-PACKAGE-1/package-summary.json + file:THIRD_PARTY_LICENSES.md；卡面「测试要求」表（L59-64）为旧计划态、全 NOT_RUN/待填；本注释依据的是证据目录实物（独立复核 P2-03 要求披露） -->
 - [x] **AC4 自动化安装 smoke**：安装→启动→书架→退出无残留（可在无人值守下完成的部分），日志与进程表为证。 <!-- verified: AC4a 安装/二次安装幂等、卸载无残留、数据根未被改动；AC4b 从安装目录启动、窗口句柄存在、无控制台窗口、exit_code=0、无残留进程；启动后 window.png 显示书架页且 wire 记录 ListBooks 请求：file:verification/RELEASE-PACKAGE-1/smoke/install-verify.json + file:verification/RELEASE-PACKAGE-1/smoke/install-smoke.json + file:verification/RELEASE-PACKAGE-1/smoke/smoke.json + file:verification/RELEASE-PACKAGE-1/smoke/window.png；卡面「测试要求」表（L59-64）为旧计划态、全 NOT_RUN/待填；本注释依据的是证据目录实物（独立复核 P2-03 要求披露） -->
 - [x] **AC5 实机人工核验清单**：产出 `MANUAL_VERIFY.md`（Mica 取色、DPR2 400% 像素、进程工作集峰值 ≤1.5GB、微软拼音 20 字、沉浸阅读 Esc），标注需用户在真机执行。 <!-- verified: MANUAL_VERIFY.md 已交付 5 项清单（Mica 取色/DPR2 400% 像素/工作集峰值≤1.5GB/微软拼音 20 字/沉浸阅读 Esc）并标注 NOT_RUN by agent、需用户真机执行；5 项人工核验本身仍待用户执行（AC 验收面=清单交付）：file:apps/desktop-avalonia/docs/MANUAL_VERIFY.md + grep:NOT_RUN by agent@apps/desktop-avalonia/docs/MANUAL_VERIFY.md:3；卡面「测试要求」表（L59-64）为旧计划态、全 NOT_RUN/待填；本注释依据的是证据目录实物（独立复核 P2-03 要求披露） -->
-- [ ] **AC6 门禁**：`check.ps1 -TaskPath` PASS；`scripts/test.ps1` 全绿；pytest 相对基线无新增失败；证据 64-hex pin；Handoff。 <!-- blocked: 缺 Handoff：doc/handoffs 无 RELEASE-PACKAGE-1-*.md（分支 task/RELEASE-PACKAGE-1 与 worktree 亦无）；check.ps1 -TaskPath、scripts/test.ps1、pytest 均无归档日志（证据目录只有 9 条产物证据；64-hex pin 9/9 已复算一致）：file:verification/RELEASE-PACKAGE-1/package-summary.json --> <!-- progress: 2026-11-16 DSH —— `check.ps1 -TaskPath` 已跑并归档 PASS 日志，见 G:/CODEX/New Manga.workspace/tasks/B1-DOC-CLOSE-1/RELEASE-PACKAGE-1-check-taskpath.log（仓外派生，故不进 evidence_dir）；剩余缺口 = Handoff 文件（`doc/handoffs/RELEASE-PACKAGE-1-handoff.md` 不存在），该文件位于 `doc/handoffs/**`、**不在本卡 allowed_paths 内**，需专门授权后方可补写 --> <!-- progress: 2026-11-16 DSH —— Handoff 已补（doc/handoffs/RELEASE-PACKAGE-1-handoff.md），check.ps1 -TaskPath PASS 已归档；test.ps1 **已补跑（EXIT=1）**：253 passed / 3 failed / 0 skipped —— 3 个失败全部停在 core.ping **握手阶段**，stderr 为 RuntimeError: database schema v14 is newer than this application knows (v6); refusing to run（测试数据根数据库 v14 vs sidecar bundle 认识的 v6）。**非代码回归**：失败点在 CoreServiceClient.StartAsync → SidecarProcess.ExchangeAsync 之前，尚未进入任何命令逻辑；且四件套口径（无 sidecar 夹具）为 203/0/30 全绿，差异全部来自那 30 个 sidecar 测试。修复方向（均不在本卡 allowed_paths 内）：重建 sidecar bundle 认识 v14，或用干净 data root。分析全文见 G:/CODEX/New Manga.workspace/tasks/B1-DOC-CLOSE-1/test-ps1-failure-analysis.md；原始日志见同目录 test-ps1.log。**AC6 因此保持未勾** -->
+- [x] **AC6 门禁**：`check.ps1 -TaskPath` PASS；`scripts/test.ps1` 全绿；pytest 相对基线无新增失败；证据 64-hex pin；Handoff。 <!-- verified: 五个子判据全部满足（2026-11-16，head dd029b73f）：① check.ps1 -TaskPath PASS，归档 file:verification/RELEASE-PACKAGE-1/ac6-check-taskpath-2026-11-16.log；② 全量 test.ps1 EXIT=0 → TEST PASS 1582/1630 passed / 0 failed / 48 skipped（CoreClient 256/0/0、Host 364/0/44、App 962/0/4），归档 file:verification/RELEASE-PACKAGE-1/ac6-test-ps1-2026-11-16.log；③ pytest 3569 passed / 0 failed / 10 skipped vs 基线 3360 passed / 10 skipped（基线出处 doc/reviews/2C-LONG-RUN-RENEWAL-scope-r1.md:420）⇒ 无新增失败，归档 file:verification/RELEASE-PACKAGE-1/ac6-pytest-2026-11-16.log；④ 证据 64-hex pin 9/9 已复算一致（原 blocked 理由已逐项核实）；⑤ Handoff 已补 file:doc/handoffs/RELEASE-PACKAGE-1-handoff.md。历史注：B1-DOC-CLOSE-1 曾在 head eaf82396d 报 3 failed，经核为 sidecar bundle 认识 schema v6、测试数据根为 v14 的**环境/数据版本**问题（三条调用栈全部停在 core.ping 握手，未进入任何命令逻辑），非代码回归；当前 head 用默认 sidecar fixture 重跑 0 failed。 -->
 
 ## 允许修改范围
 
@@ -76,6 +76,9 @@ S5 拆分（`LEGACY-SHELL-REMOVAL-1` BLOCKED 段）。D4 安全（S5-A/B）与 C
 | R7-src | AC1–AC4b | verification/RELEASE-PACKAGE-1/smoke/window.png | 8ff3d288d | 08c87990db33e7ffa8b1041c67a18930d37e540f45edb6be9bda2a81bd2fd06b | CANONICAL |
 | R8-src | AC1–AC4b | verification/RELEASE-PACKAGE-1/smoke/wire/core-service.ndjson | 8ff3d288d | ff8ad80e9daf57eec3faa4bf53f44ff15549f2f7fdd1a09b257eb34da26801d2 | CANONICAL |
 | R9-src | AC1–AC4b | verification/RELEASE-PACKAGE-1/smoke/wire/host-bridge.ndjson | 8ff3d288d | a251682de8f2c7610853aa6b4910f3e38c854558a30bf66bf8e780b7cb7c7c89 | CANONICAL |
+| R10-gate | AC6 | verification/RELEASE-PACKAGE-1/ac6-check-taskpath-2026-11-16.log | PENDING_SUBMIT | 76fb800267f6dcb275b06356d6203b5b7801a5bdad3e634247c2120fd8501975 | CANONICAL |
+| R11-gate | AC6 | verification/RELEASE-PACKAGE-1/ac6-test-ps1-2026-11-16.log | PENDING_SUBMIT | c2b1ef4c1c9b409c7ec0218f74b0c159831750e445ca52b14f04aea7de4b9f1f | CANONICAL |
+| R12-gate | AC6 | verification/RELEASE-PACKAGE-1/ac6-pytest-2026-11-16.log | PENDING_SUBMIT | 85561f9d37d3626641e1212ef56334477c1f45abcd02c59acce69430ba47a970 | CANONICAL |
 |---|---|---|---|---|---|
 
 ## Resource Manifest
@@ -86,10 +89,12 @@ S5 拆分（`LEGACY-SHELL-REMOVAL-1` BLOCKED 段）。D4 安全（S5-A/B）与 C
 
 ## Closeout Record
 
-- Closeout date / DSH：待关闭时填写。
-- canonical_evidence_status：`pending`。
-- resource_closeout_status：`pending`。
-- 删除、迁移、归档数量/字节数：待关闭时填写。
+- Closeout date / DSH：2026-11-16（AC6 收口；head `dd029b73f`）。
+- canonical_evidence_status：`complete`（9 条产物证据 + 3 条 AC6 门禁证据，共 12 条，均 64-hex pin/BLOB）。
+- resource_closeout_status：`complete`（`task-envs/RELEASE-PACKAGE-1` PRESERVE_REFERENCED，未删除/未迁移）。
+- 删除、迁移、归档数量/字节数：0 / 0 / 0（本轮只新增 3 个门禁日志与卡面/Closeout 更新，无资源处置）。
+- 剩余 limitation：本卡 AC1–AC6 全部达成；实际"人工核验 5 项"（AC5 的验收面只是清单交付）
+  仍在 `HUMAN-REQUIRED` 的 `H-08`（安装矩阵）/`H-01`（Mica）中等待人执行，不影响本卡 AC。
 - 未关闭项及保留原因：待关闭时填写。
 - 当前指针清理：释放时已更新 STATUS/PLAN/LEDGER。
 ## Review（DSH 集成复核，2026-10-27）— PASS（AC4 拆分裁决）
