@@ -1697,7 +1697,7 @@ def _apply_broad_preservation(index, scanned):
 
 HISTORICAL_EVIDENCE_POLICY = "tools/governance/historical-evidence-interpretation.json"
 HISTORICAL_EVIDENCE_DIGEST = (
-    "9e6c04749226571d500422e65f4a604c7ae67e0f5e999953d5ac985e65b73f64")
+    "e8e9b3e3a1f372a6425493563129f491fda7211d9d5c8d65c982fd2a7dc06eec")
 
 # Approved binding identity set (member invariant).  Adding a binding is a
 # visible code+policy edit, never a widened numeric window.  Order matters:
@@ -1828,7 +1828,7 @@ def _apply_historical_evidence_interpretation(index, scanned):
         policy = json.loads(read(HISTORICAL_EVIDENCE_POLICY).decode("utf-8"),
                             object_pairs_hook=_unique_preservation_object)
         exact(policy, "schema_version purpose approved_design template_bindings "
-              "raw_non_declaration_bindings reference_guards")
+              "raw_non_declaration_bindings reference_guards table_bindings")
         require(type(policy["schema_version"]) is int
                 and policy["schema_version"] == 1
                 and policy["purpose"] == "PRESERVE_EXACT_HISTORICAL_EVIDENCE",
@@ -1998,12 +1998,58 @@ def _apply_historical_evidence_interpretation(index, scanned):
                 removed.append(error)
             if template:
                 warning_locator = "global 228,229/line 7,8/" + b["id"]
+                mode = "template"
             elif b["format"] == "json":
                 warning_locator = b["id"] + "/json-parse"
+                mode = "raw-nondeclaration"
             else:
                 warning_locator = (b["id"] + "/bytes " +
                                    ",".join(str(n) for n in b["nul_offsets"]))
-            warnings.append((origin, warning_locator, b, keep))
+                mode = "raw-nondeclaration"
+            warnings.append((origin, warning_locator, b, keep, mode,
+                             b["raw_sha256"]))
+        # Table-level bindings (B1): one historical table each.  They name the
+        # exact table by (origin, section, first line, block hash, header,
+        # delimiter, row count) and neutralise ONLY the diagnostics recorded for
+        # that table -- never other tables or declarations of the same file.
+        for position, table in enumerate(policy["table_bindings"], 1):
+            exact(table, "id origin_file section table_start row_count "
+                  "header_verbatim second_line_verbatim block_sha256 classification "
+                  "interpretation errors")
+            require(table["id"] == "HIE-B%03d" % position, "POLICY_INVALID",
+                    "historical table binding IDs changed")
+            require(table["classification"] == "B1"
+                    and table["interpretation"] == "historical_format_preserved",
+                    "POLICY_INVALID", "historical table classification changed")
+            require(table["section"] in ("Resource Manifest", "Canonical Evidence"),
+                    "POLICY_INVALID", "historical table section changed")
+            origin = table["origin_file"]
+            raw = read(origin)
+            text = raw.decode("utf-8", errors="strict")
+            section = section_text(text, table["section"])
+            require(bool(section), "RECORD_DRIFT",
+                    "historical table section missing: %s" % origin)
+            block = dict(iter_table_blocks(section)).get(table["table_start"])
+            require(block is not None and len(block) >= 2, "RECORD_DRIFT",
+                    "historical table is missing: %s#%s"
+                    % (origin, table["table_start"]))
+            require(sha("\n".join(block).encode("utf-8")) == table["block_sha256"]
+                    and block[0] == table["header_verbatim"]
+                    and block[1] == table["second_line_verbatim"]
+                    and len(block) - 2 == table["row_count"], "RECORD_DRIFT",
+                    "historical table bytes changed: %s#%s"
+                    % (origin, table["table_start"]))
+            for error in table["errors"]:
+                exact(error, "code message file locator")
+                require(error["file"] == origin and index.errors.count(error) == 1
+                        and error not in removed, "ERROR_MISMATCH",
+                        "historical table error identity changed: %s" % origin)
+                removed.append(error)
+            warnings.append((origin,
+                             "%s/section %s/table %d" % (table["id"], table["section"],
+                                                         table["table_start"]),
+                             table, "PRESERVE_REFERENCED", "table",
+                             table["block_sha256"]))
         for n, ref in enumerate(policy["reference_guards"], 1):
             exact(ref, "id origin_file origin_global_line origin_parser_locator "
                   "path_rel abs normalized real keep")
@@ -2019,7 +2065,8 @@ def _apply_historical_evidence_interpretation(index, scanned):
         # Derived expectations (member invariant): every adjudicated error is
         # removed exactly once, and every binding/guard contributes exactly one
         # preserved identity.  No absolute totals are hardcoded here.
-        expected_removals = sum(len(b["errors"]) for b in bindings)
+        expected_removals = (sum(len(b["errors"]) for b in bindings)
+                             + sum(len(t["errors"]) for t in policy["table_bindings"]))
         expected_pending = len(bindings) + len(policy["reference_guards"])
         require(len(removed) == expected_removals
                 and len(pending) == expected_pending, "POLICY_INVALID",
@@ -2033,13 +2080,18 @@ def _apply_historical_evidence_interpretation(index, scanned):
         staged._repo_tops = set(index._repo_tops) if index._repo_tops is not None else None
         for d in pending:
             staged._register_protective(d)
-        for origin, locator, b, keep in warnings:
+        # Fail-closed superset invariant (Codex ruling Q1): interpreting
+        # historical shapes may never shrink the protected set.
+        require(set(index.protected) <= set(staged.protected),
+                "PROTECTION_REGRESSION",
+                "historical preservation shrank the protected set")
+        for origin, locator, b, keep, mode, binding_digest in warnings:
             roots = [d.normalized for d in pending if d.source_file == origin]
             staged.add_warning("DECL_HISTORICAL_EVIDENCE_PRESERVED",
-                "mode=%s policy=%s origin=%s locator=%s raw_sha256=%s keep=%s original_codes=%s guard_roots=%s"
-                % ("template" if b is bindings[0] else "raw-nondeclaration",
-                   HISTORICAL_EVIDENCE_POLICY, origin, locator, b["raw_sha256"], keep,
-                   ",".join(e["code"] for e in b["errors"]), json.dumps(roots)),
+                "mode=%s policy=%s origin=%s locator=%s binding_sha256=%s keep=%s original_codes=%s guard_roots=%s"
+                % (mode, HISTORICAL_EVIDENCE_POLICY, origin, locator, binding_digest,
+                   keep, ",".join(e["code"] for e in b["errors"]),
+                   json.dumps(roots)),
                 origin, locator)
         result = _finish_declaration_scan(staged, scanned)
         for relative in list(snapshots):

@@ -1,0 +1,64 @@
+# GOV-DECLARATION-SCAN-CLEANUP-1 · AC3 batch 3（Q1 表级绑定，B1 64 → 0）证据
+# head: 8c48af934934b3d65cec70c42e03b7a121e555f3
+# at_utc: 2026-11-16T11:28:49Z
+# os: Windows 10.0.26200 ; PowerShell 7.6.8 ; Python Python 3.14.6 ; git git version 2.52.0.windows.1
+# ruling: doc/reviews/GOV-DECLARATION-SCAN-CLEANUP-1-AC3-CODEX-RULING-2026-11-16.md §Q1（逐表绑定；须证明保护根不缩）
+
+## 0. 基线（batch 3 之前）
+# errors=144 warnings=743 declarations=6765 protected_roots=5601
+
+## 1. 改了什么
+# tools/governance/historical-evidence-interpretation.json：新增顶层 table_bindings（64 条），每条记录
+#   id / origin_file / section(Resource Manifest|Canonical Evidence) / table_start / row_count /
+#   header_verbatim / second_line_verbatim / block_sha256（该表原始字节，含 CRLF，不做规范化）/
+#   classification=B1 / interpretation=historical_format_preserved / errors（该表精确诊断，含 message）
+# tools/governance/clean_workspace.py：
+#   + exact(policy, ...) 允许 table_bindings；HISTORICAL_EVIDENCE_DIGEST 重批
+#   + 表级处理循环：按 (origin_file, section, table_start) 定位唯一表，逐字节校验 block_sha256/header/第二行/行数，
+#     只移除该表记录的诊断；不注册声明、不影响同文件其他表
+#   + 新增 fail-closed 超集断言：set(index.protected) ⊆ set(staged.protected) 否则 PROTECTION_REGRESSION
+#   + 警告消息的字段名由 raw_sha256 改为 binding_sha256（模板/raw 绑定与表绑定共用），mode 增加 table
+# 新增测试 3 项（表绑定 ID 连续、块字节精确、只含历史形态 code 且同一诊断不被绑定两次）
+
+## 2. 新测试
+# command: python -B -m unittest discover -s tools/governance/tests -p test_historical_binding_policy.py -v
+test_json_source_helper_accepts_a_valid_document (test_historical_binding_policy.HistoricalBindingPolicy.test_json_source_helper_accepts_a_valid_document) ... ok
+test_keep_map_only_names_bound_ids (test_historical_binding_policy.HistoricalBindingPolicy.test_keep_map_only_names_bound_ids) ... ok
+test_raw_identity_matches_the_bytes_on_disk (test_historical_binding_policy.HistoricalBindingPolicy.test_raw_identity_matches_the_bytes_on_disk) ... ok
+test_reference_guard_ids_match_the_approved_member_invariant (test_historical_binding_policy.HistoricalBindingPolicy.test_reference_guard_ids_match_the_approved_member_invariant) ... ok
+test_table_binding_block_bytes_are_exact (test_historical_binding_policy.HistoricalBindingPolicy.test_table_binding_block_bytes_are_exact) ... ok
+test_table_bindings_are_a_contiguous_member_sequence (test_historical_binding_policy.HistoricalBindingPolicy.test_table_bindings_are_a_contiguous_member_sequence) ... ok
+test_table_bindings_only_carry_historical_format_codes (test_historical_binding_policy.HistoricalBindingPolicy.test_table_bindings_only_carry_historical_format_codes) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.018s
+
+OK
+EXIT=0
+
+## 3. 审计（改后）
+# command: python -B tools/governance/clean_workspace.py --audit-declarations --out <tmp>
+# after: errors=80 warnings=807 declarations=6765 protected_roots=5601
+# code 分布: {'DECL_BARE_NAME': 1, 'DECL_DESTINATION_UNRESOLVED': 11, 'DECL_ENV': 16, 'DECL_GLOB': 16, 'DECL_MISSING_SOURCE': 1, 'DECL_RELATIVE_AMBIGUOUS': 1, 'DECL_RELATIVE_UNRESOLVED': 27, 'DECL_TRAVERSAL': 7}
+EXIT=2
+
+## 4. 读数
+- B1 **64 → 0**（TABLE_SCHEMA_INCOMPLETE 53 + TABLE_DELIMITER 10 + TABLE_ROW_ARITY 1 全部转为表级绑定）。
+- errors 144 → **80**（= B2 80；B2 基线 79 + 别名批暴露的 1 条真实缺陷）。
+- warnings 743 → 807（+64 = 每条表绑定一条 DECL_HISTORICAL_EVIDENCE_PRESERVED，含 origin/locator/binding_sha256/original_codes）。
+- declarations 6765 不变、protected_roots **5601 不变** —— 与设计一致：表绑定只删除诊断，不注册也不移除任何保护根。
+
+## 5. 「绑定不缩保护根」的两条论证（不含主观判断）
+1. **结构保证**：表绑定只写入 `removed`，不写入 `pending`/`declarations`；`expected_pending` 由
+   `len(bindings)+len(reference_guards)` 派生（不含表绑定），若表绑定意外注册声明，该等式立即失败。
+2. **运行期断言**：HIE 阶段新增 `set(index.protected) ⊆ set(staged.protected)`，否则 `PROTECTION_REGRESSION` 致命失败；
+   本轮扫描未触发该错误（errors 中无 PROTECTION_REGRESSION）。
+3. 计数侧：protected_roots 5593（冻结基线）→ 5598（batch 1）→ 5601（batch 2/3），单调不降。
+   （注：审计 JSON 只输出 `protected_roots` 计数，不输出根集合，故集合级基线对比无法事后重建；此处不宣称做过该对比。）
+
+## 6. 踩坑记录（如实）
+- 首版绑定用 `Path.read_text()` 生成 → 该 API 会做通用换行转换，而扫描器用 `read_bytes().decode()`；
+  该文件工作树含 CRLF（112 处）⇒ block_sha256 全部不匹配，HIE 阶段整体 RECORD_DRIFT、errors 反弹到 160。
+  修正为按原始字节生成后 errors 降到 80。教训：任何「原始字节」哈希都必须用 read_bytes，不能用 read_text。
+- 另：这些表**没有合法分隔行**（正是 TABLE_DELIMITER 的成因），因此字段名不叫 delimiter_verbatim 而叫
+  second_line_verbatim（如实描述它锚定的是块的第 2 行）。

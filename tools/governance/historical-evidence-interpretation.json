@@ -470,5 +470,1287 @@
       "real": "g:/codex/new manga/verification/gov-resource-manifest-same-location-1",
       "keep": "PRESERVE_REFERENCED"
     }
+  ],
+  "table_bindings": [
+    {
+      "id": "HIE-B001",
+      "origin_file": "doc/tasks/CHAPTER-SELECTOR-1.md",
+      "section": "Canonical Evidence",
+      "table_start": 2,
+      "row_count": 21,
+      "header_verbatim": "| evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |\r",
+      "second_line_verbatim": "| C1 | AC3 | verification/CHAPTER-SELECTOR-1/runtime-logs/chapter-selector-data.py | 126d05518 | 67902e4e1472a17b4bd24b9380e3fea2c5d4c8d43d55b02a9615c01732c96246 | CANONICAL |\r",
+      "block_sha256": "837fa28e30878909e3bf8a4ea417a576c24eb981b1f138618f4bf5bd998bb70b",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_DELIMITER",
+          "message": "table at line 2 has an invalid delimiter row",
+          "file": "doc/tasks/CHAPTER-SELECTOR-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B002",
+      "origin_file": "doc/tasks/DESIGN-V2-IMPL-1.md",
+      "section": "Canonical Evidence",
+      "table_start": 2,
+      "row_count": 7,
+      "header_verbatim": "| evidence_id | AC/Gate | path（仓库相对路径） | commit | sha256 | class |",
+      "second_line_verbatim": "|---|---|---|---|---|---|",
+      "block_sha256": "227cd8514525ffde06133a13a9afacbeba91be2d82be5fe71ccc700ff7688370",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection",
+          "file": "doc/tasks/DESIGN-V2-IMPL-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B003",
+      "origin_file": "doc/tasks/EXPORT-E2E-CLOSE-1.md",
+      "section": "Canonical Evidence",
+      "table_start": 2,
+      "row_count": 15,
+      "header_verbatim": "| evidence_id | AC/Gate | path（仓库相对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |",
+      "second_line_verbatim": "|---|---|---|---|---|---|",
+      "block_sha256": "b7a58aee233912606653f68a7614ecf6d14b333414e3f498e2b2155c19cda778",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection",
+          "file": "doc/tasks/EXPORT-E2E-CLOSE-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B004",
+      "origin_file": "doc/tasks/F11-HOTKEY-1.md",
+      "section": "Canonical Evidence",
+      "table_start": 2,
+      "row_count": 19,
+      "header_verbatim": "| evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |",
+      "second_line_verbatim": "| F1 | AC3 | verification/F11-HOTKEY-1/runtime-logs/core-service.stderr.log | ec94991c3 | f9bf37a4bbf2620164a2e563db17b136f7da1026aa9c5495af818cd71f89776b | CANONICAL |",
+      "block_sha256": "fd7e4a8492c4bcc9bf800119bd4dffc158959380b787b5022e2e96ed80252aca",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_DELIMITER",
+          "message": "table at line 2 has an invalid delimiter row",
+          "file": "doc/tasks/F11-HOTKEY-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B005",
+      "origin_file": "doc/tasks/FEA-09-UI-1.md",
+      "section": "Canonical Evidence",
+      "table_start": 4,
+      "row_count": 45,
+      "header_verbatim": "| evidence_id | 证据说明 | 仓库路径 | commit | sha256 | class |\r",
+      "second_line_verbatim": "|---|---|---|---|---|---|\r",
+      "block_sha256": "6fd55c460af8055b4c72de0fbab10c7fe5a3633fd1d0e791ddf55f6b85b88584",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 4 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection",
+          "file": "doc/tasks/FEA-09-UI-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B006",
+      "origin_file": "doc/tasks/FEA-11-HOST-AUTH-1.md",
+      "section": "Canonical Evidence",
+      "table_start": 2,
+      "row_count": 12,
+      "header_verbatim": "| evidence_id | AC/Gate | path（仓库相对路径） | commit | sha256 | class |",
+      "second_line_verbatim": "|---|---|---|---|---|---|",
+      "block_sha256": "5c49965f1bed03e12f158b27d73c2d4e5ebd6736876254e5de53b8924f516254",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection",
+          "file": "doc/tasks/FEA-11-HOST-AUTH-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B007",
+      "origin_file": "doc/tasks/FEA-11-L-R11-GATE-UNIFY-1.md",
+      "section": "Canonical Evidence",
+      "table_start": 2,
+      "row_count": 30,
+      "header_verbatim": "| evidence_id | AC | 路径 | commit | sha256 | class |",
+      "second_line_verbatim": "|---|---|---|---|---|---|",
+      "block_sha256": "aa9da3742a053c442aadec7a076fb7fdaf30a3d528810dfbb466fe3bb7ebd379",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection",
+          "file": "doc/tasks/FEA-11-L-R11-GATE-UNIFY-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B008",
+      "origin_file": "doc/tasks/FEA-11-L-R11-GATE-UNIFY-1.md",
+      "section": "Resource Manifest",
+      "table_start": 2,
+      "row_count": 1,
+      "header_verbatim": "| resource_type | 资源 | disposition | 目标 | 完整性 | 引用/进程检查结果 |",
+      "second_line_verbatim": "|---|---|---|---|---|---|",
+      "block_sha256": "4c4bb52bd0a2beaa2deeb6d22af262ba07befe9e15862d71653bba2fc517c604",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares resource identity columns but lacks source_path; incomplete resource schemas cannot be trusted for protection",
+          "file": "doc/tasks/FEA-11-L-R11-GATE-UNIFY-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B009",
+      "origin_file": "doc/tasks/FEA-11-L-R11-GATE-UNIFY-PREREQ-1.md",
+      "section": "Canonical Evidence",
+      "table_start": 2,
+      "row_count": 6,
+      "header_verbatim": "| evidence_id | AC | 路径 | commit | sha256 | class |",
+      "second_line_verbatim": "|---|---|---|---|---|---|",
+      "block_sha256": "3a53e6c1cc397eebabcae1a029e957a2fd1341244a73506c5c207d3bbaabf1f4",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection",
+          "file": "doc/tasks/FEA-11-L-R11-GATE-UNIFY-PREREQ-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B010",
+      "origin_file": "doc/tasks/FEA-11-L-R11-GATE-UNIFY-PREREQ-1.md",
+      "section": "Resource Manifest",
+      "table_start": 2,
+      "row_count": 1,
+      "header_verbatim": "| resource_type | 资源 | disposition | 目标 | 完整性 | 引用/进程检查结果 |",
+      "second_line_verbatim": "|---|---|---|---|---|---|",
+      "block_sha256": "3bf61a8ce9e0b654165a7b75f80656983644cf1424e0d8a018c074629740464d",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares resource identity columns but lacks source_path; incomplete resource schemas cannot be trusted for protection",
+          "file": "doc/tasks/FEA-11-L-R11-GATE-UNIFY-PREREQ-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B011",
+      "origin_file": "doc/tasks/FEA-11-L-S1-B-RECOVERY-REAUTH-1.md",
+      "section": "Canonical Evidence",
+      "table_start": 2,
+      "row_count": 14,
+      "header_verbatim": "| evidence_id | AC | 路径 | commit | sha256 | class |\r",
+      "second_line_verbatim": "|---|---|---|---|---|---|\r",
+      "block_sha256": "5a66751420aaa6b903a1eb6ae3316ba03178c33ca2fe465554e8f39f7a315d5c",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection",
+          "file": "doc/tasks/FEA-11-L-S1-B-RECOVERY-REAUTH-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B012",
+      "origin_file": "doc/tasks/FEA-11-L-S1-B-RECOVERY-REAUTH-1.md",
+      "section": "Resource Manifest",
+      "table_start": 2,
+      "row_count": 1,
+      "header_verbatim": "| resource_type | 资源 | disposition | 目标 | 完整性 | 引用/进程检查结果 |\r",
+      "second_line_verbatim": "|---|---|---|---|---|---|\r",
+      "block_sha256": "a17f0d34e56e3a634324204f270c56f22bd8806e31e86c356056520f67b5fb69",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares resource identity columns but lacks source_path; incomplete resource schemas cannot be trusted for protection",
+          "file": "doc/tasks/FEA-11-L-S1-B-RECOVERY-REAUTH-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B013",
+      "origin_file": "doc/tasks/FEA-11-L-S1-REGISTRY-RESILIENCE-1-PREREQ-1.md",
+      "section": "Canonical Evidence",
+      "table_start": 2,
+      "row_count": 11,
+      "header_verbatim": "| evidence_id | AC | 路径 | commit | sha256 | class |\r",
+      "second_line_verbatim": "|---|---|---|---|---|---|\r",
+      "block_sha256": "fc07d66322aa3a4cf2513029a397974a437c95e87473c56a86202544d338d27f",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection",
+          "file": "doc/tasks/FEA-11-L-S1-REGISTRY-RESILIENCE-1-PREREQ-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B014",
+      "origin_file": "doc/tasks/FEA-11-L-S1-REGISTRY-RESILIENCE-1-PREREQ-1.md",
+      "section": "Resource Manifest",
+      "table_start": 2,
+      "row_count": 1,
+      "header_verbatim": "| resource_type | 资源 | disposition | 目标 | 完整性 | 引用/进程检查结果 |\r",
+      "second_line_verbatim": "|---|---|---|---|---|---|\r",
+      "block_sha256": "ced536f4c56e44533a33761076fbc28d82c9357e655cc767ab481d8ff468f218",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares resource identity columns but lacks source_path; incomplete resource schemas cannot be trusted for protection",
+          "file": "doc/tasks/FEA-11-L-S1-REGISTRY-RESILIENCE-1-PREREQ-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B015",
+      "origin_file": "doc/tasks/FEA-11-L-S1-REGISTRY-RESILIENCE-1.md",
+      "section": "Canonical Evidence",
+      "table_start": 2,
+      "row_count": 15,
+      "header_verbatim": "| evidence_id | AC | 路径 | commit | sha256 | class |\r",
+      "second_line_verbatim": "|---|---|---|---|---|---|\r",
+      "block_sha256": "04b3ddced4c4b6042808cea6c78fd1d827be346ecd199bbc082324f8431a8a76",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection",
+          "file": "doc/tasks/FEA-11-L-S1-REGISTRY-RESILIENCE-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B016",
+      "origin_file": "doc/tasks/FEA-11-L-S1-REGISTRY-RESILIENCE-1.md",
+      "section": "Resource Manifest",
+      "table_start": 2,
+      "row_count": 1,
+      "header_verbatim": "| resource_type | 资源 | disposition | 目标 | 完整性 | 引用/进程检查结果 |\r",
+      "second_line_verbatim": "|---|---|---|---|---|---|\r",
+      "block_sha256": "bc415a7eb4532bf844a5b28d91a149fb78c5155a3e54683a9f078763bd0e0b51",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares resource identity columns but lacks source_path; incomplete resource schemas cannot be trusted for protection",
+          "file": "doc/tasks/FEA-11-L-S1-REGISTRY-RESILIENCE-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B017",
+      "origin_file": "doc/tasks/FEA-11-L-S4-B-1-SCAN-EXEC-RECOVERY-1.md",
+      "section": "Canonical Evidence",
+      "table_start": 2,
+      "row_count": 19,
+      "header_verbatim": "| evidence_id | AC | 路径 | commit | sha256 | class |\r",
+      "second_line_verbatim": "|---|---|---|---|---|---|\r",
+      "block_sha256": "7f6c156e327e8eeadd6ed83361d0d1295361c482958d5dc054a9f170ef8f25b3",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection",
+          "file": "doc/tasks/FEA-11-L-S4-B-1-SCAN-EXEC-RECOVERY-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B018",
+      "origin_file": "doc/tasks/FEA-11-L-S4-B-1-SCAN-EXEC-RECOVERY-1.md",
+      "section": "Resource Manifest",
+      "table_start": 2,
+      "row_count": 1,
+      "header_verbatim": "| resource_type | 资源 | disposition | 目标 | 完整性 | 引用/进程检查结果 |\r",
+      "second_line_verbatim": "|---|---|---|---|---|---|\r",
+      "block_sha256": "2f8b2ec885d455420169f03ef560f23d2724c267be789874a7a7d1d349a1905b",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares resource identity columns but lacks source_path; incomplete resource schemas cannot be trusted for protection",
+          "file": "doc/tasks/FEA-11-L-S4-B-1-SCAN-EXEC-RECOVERY-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B019",
+      "origin_file": "doc/tasks/FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1.md",
+      "section": "Canonical Evidence",
+      "table_start": 2,
+      "row_count": 19,
+      "header_verbatim": "| evidence_id | AC | 路径 | commit | sha256 | class |\r",
+      "second_line_verbatim": "|---|---|---|---|---|---|\r",
+      "block_sha256": "63ae646cfad9d70d0a2a70b2b3817fb8ce29a0dba8d765e6e55c4c42cbd74f40",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection",
+          "file": "doc/tasks/FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B020",
+      "origin_file": "doc/tasks/FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1.md",
+      "section": "Resource Manifest",
+      "table_start": 2,
+      "row_count": 1,
+      "header_verbatim": "| resource_type | 资源 | disposition | 目标 | 完整性 | 引用/进程检查结果 |\r",
+      "second_line_verbatim": "|---|---|---|---|---|---|\r",
+      "block_sha256": "49dd77252da0f23dc5be3e66d35e955b13502d86fbed7faa5e893cfdb2c626f6",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares resource identity columns but lacks source_path; incomplete resource schemas cannot be trusted for protection",
+          "file": "doc/tasks/FEA-11-L-S4-B-2-RUN-RANGE-RESOLVE-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B021",
+      "origin_file": "doc/tasks/FEA-11-L-S4-B-AUTO-RECOVERY-1.md",
+      "section": "Canonical Evidence",
+      "table_start": 2,
+      "row_count": 18,
+      "header_verbatim": "| evidence_id | AC | 路径 | commit | sha256 | class |\r",
+      "second_line_verbatim": "|---|---|---|---|---|---|\r",
+      "block_sha256": "60fd1e429cbbe7081bd145077a8734fcbe96b14eb494933d61807f10fe3d9f44",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection",
+          "file": "doc/tasks/FEA-11-L-S4-B-AUTO-RECOVERY-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B022",
+      "origin_file": "doc/tasks/FEA-11-L-S4-B-AUTO-RECOVERY-1.md",
+      "section": "Resource Manifest",
+      "table_start": 2,
+      "row_count": 1,
+      "header_verbatim": "| resource_type | 资源 | disposition | 目标 | 完整性 | 引用/进程检查结果 |\r",
+      "second_line_verbatim": "|---|---|---|---|---|---|\r",
+      "block_sha256": "8bd6d8ab2381bf1624748f399a3ee4c3f3e431e3e086e057271577ac4aa86528",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares resource identity columns but lacks source_path; incomplete resource schemas cannot be trusted for protection",
+          "file": "doc/tasks/FEA-11-L-S4-B-AUTO-RECOVERY-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B023",
+      "origin_file": "doc/tasks/FEA-11-L-S4-B-PREREQ-1.md",
+      "section": "Canonical Evidence",
+      "table_start": 2,
+      "row_count": 8,
+      "header_verbatim": "| evidence_id | AC | 路径 | commit | sha256 | class |\r",
+      "second_line_verbatim": "|---|---|---|---|---|---|\r",
+      "block_sha256": "eaff7ec6fb923b7bcfeb8aca2ed5a61ab39f7eba762e619675f01171fc086a0b",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection",
+          "file": "doc/tasks/FEA-11-L-S4-B-PREREQ-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B024",
+      "origin_file": "doc/tasks/FEA-11-L-S4-B-PREREQ-1.md",
+      "section": "Resource Manifest",
+      "table_start": 2,
+      "row_count": 1,
+      "header_verbatim": "| resource_type | 资源 | disposition | 目标 | 完整性 | 引用/进程检查结果 |\r",
+      "second_line_verbatim": "|---|---|---|---|---|---|\r",
+      "block_sha256": "5effe4ca4585f19f0f2d166643951c4f8fa1679d39d64259dabe6e3cb2b25ab8",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares resource identity columns but lacks source_path; incomplete resource schemas cannot be trusted for protection",
+          "file": "doc/tasks/FEA-11-L-S4-B-PREREQ-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B025",
+      "origin_file": "doc/tasks/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1.md",
+      "section": "Canonical Evidence",
+      "table_start": 2,
+      "row_count": 12,
+      "header_verbatim": "| evidence_id | AC | 路径 | commit | sha256 | class |\r",
+      "second_line_verbatim": "|---|---|---|---|---|---|\r",
+      "block_sha256": "52d26eecdd69b18e86b7938902d96b8053731b596d090ac42348d8228a3084c8",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection",
+          "file": "doc/tasks/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B026",
+      "origin_file": "doc/tasks/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1.md",
+      "section": "Resource Manifest",
+      "table_start": 2,
+      "row_count": 1,
+      "header_verbatim": "| resource_type | 资源 | disposition | 目标 | 完整性 | 引用/进程检查结果 |\r",
+      "second_line_verbatim": "|---|---|---|---|---|---|\r",
+      "block_sha256": "883d70204df69ddcef0008a9df800060d2d0c872f4a8204fd6e59d9a151613b4",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares resource identity columns but lacks source_path; incomplete resource schemas cannot be trusted for protection",
+          "file": "doc/tasks/FEA-11-L-S4-LOCATION-AUTH-REFRESH-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B027",
+      "origin_file": "doc/tasks/FEA-11-RUN-GRANT-1-PREREQ-1.md",
+      "section": "Canonical Evidence",
+      "table_start": 2,
+      "row_count": 11,
+      "header_verbatim": "| evidence_id | AC | 路径 | commit | sha256 | class |",
+      "second_line_verbatim": "|---|---|---|---|---|---|",
+      "block_sha256": "292f28fc26a9d4b97d6c8a4f05742c0cdbc862b5b391fc26970767a78ced1ccf",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection",
+          "file": "doc/tasks/FEA-11-RUN-GRANT-1-PREREQ-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B028",
+      "origin_file": "doc/tasks/FEA-11-RUN-GRANT-1-PREREQ-1.md",
+      "section": "Resource Manifest",
+      "table_start": 2,
+      "row_count": 1,
+      "header_verbatim": "| resource_type | 资源 | disposition | 目标 | 完整性 | 引用/进程检查结果 |",
+      "second_line_verbatim": "|---|---|---|---|---|---|",
+      "block_sha256": "fae6fc17b42f9ba067ae80a83e8cb9c7ec79f2b10ceacd73c847e1d1f7129e7a",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares resource identity columns but lacks source_path; incomplete resource schemas cannot be trusted for protection",
+          "file": "doc/tasks/FEA-11-RUN-GRANT-1-PREREQ-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B029",
+      "origin_file": "doc/tasks/FEA-11-RUN-GRANT-1.md",
+      "section": "Canonical Evidence",
+      "table_start": 2,
+      "row_count": 16,
+      "header_verbatim": "| evidence_id | AC | 路径 | commit | sha256 | class |",
+      "second_line_verbatim": "|---|---|---|---|---|---|",
+      "block_sha256": "a0126b87d91bee693b79f9f05258b7b10151a46a3f36e52a661afc5f874ff3da",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection",
+          "file": "doc/tasks/FEA-11-RUN-GRANT-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B030",
+      "origin_file": "doc/tasks/FEA-11-RUN-GRANT-2.md",
+      "section": "Canonical Evidence",
+      "table_start": 2,
+      "row_count": 18,
+      "header_verbatim": "| evidence_id | AC | 路径 | commit | sha256 | class |\r",
+      "second_line_verbatim": "|---|---|---|---|---|---|\r",
+      "block_sha256": "e6ae20291ce7e554a0216a5f84aaa08995a251b423ffc8b734f5448c38794493",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection",
+          "file": "doc/tasks/FEA-11-RUN-GRANT-2.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B031",
+      "origin_file": "doc/tasks/FEA-11-RUN-GRANT-2A.md",
+      "section": "Canonical Evidence",
+      "table_start": 2,
+      "row_count": 17,
+      "header_verbatim": "| evidence_id | AC | 路径 | commit | sha256 | class |\r",
+      "second_line_verbatim": "|---|---|---|---|---|---|\r",
+      "block_sha256": "030ad57000ba3da7a3f0199798158854c9c90e75fc68e4449d6a0e94edb0ec7f",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection",
+          "file": "doc/tasks/FEA-11-RUN-GRANT-2A.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B032",
+      "origin_file": "doc/tasks/FEA-11-RUN-GRANT-2B-PREREQ-1.md",
+      "section": "Canonical Evidence",
+      "table_start": 2,
+      "row_count": 11,
+      "header_verbatim": "| evidence_id | AC | 路径 | commit | sha256 | class |\r",
+      "second_line_verbatim": "|---|---|---|---|---|---|\r",
+      "block_sha256": "65f360d7e9579640ffc9fa6269347eefa9f112ab089fadba92587abb14609a09",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection",
+          "file": "doc/tasks/FEA-11-RUN-GRANT-2B-PREREQ-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B033",
+      "origin_file": "doc/tasks/FEA-11-RUN-GRANT-2B-PREREQ-1.md",
+      "section": "Resource Manifest",
+      "table_start": 2,
+      "row_count": 1,
+      "header_verbatim": "| resource_type | 资源 | disposition | 目标 | 完整性 | 引用/进程检查结果 |\r",
+      "second_line_verbatim": "|---|---|---|---|---|---|\r",
+      "block_sha256": "6bf755d00cee0bb75029adc9c908b7179dba70973ca3c3fed8d8a4ae9a1eff6e",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares resource identity columns but lacks source_path; incomplete resource schemas cannot be trusted for protection",
+          "file": "doc/tasks/FEA-11-RUN-GRANT-2B-PREREQ-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B034",
+      "origin_file": "doc/tasks/FEA-11-RUN-GRANT-2C-PREREQ-1.md",
+      "section": "Canonical Evidence",
+      "table_start": 2,
+      "row_count": 8,
+      "header_verbatim": "| evidence_id | AC | 路径 | commit | sha256 | class |\r",
+      "second_line_verbatim": "|---|---|---|---|---|---|\r",
+      "block_sha256": "731783922d442139fdd5b3d8ff3698c4730f97d8bd717cffb499ca8a6c4ff42b",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection",
+          "file": "doc/tasks/FEA-11-RUN-GRANT-2C-PREREQ-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B035",
+      "origin_file": "doc/tasks/FEA-11-RUN-GRANT-2C-PREREQ-1.md",
+      "section": "Resource Manifest",
+      "table_start": 2,
+      "row_count": 1,
+      "header_verbatim": "| resource_type | 资源 | disposition | 目标 | 完整性 | 引用/进程检查结果 |\r",
+      "second_line_verbatim": "|---|---|---|---|---|---|\r",
+      "block_sha256": "cc81142bfda3b81925277a2ca8894f61c7088188acb12e49ff973960c1b83269",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares resource identity columns but lacks source_path; incomplete resource schemas cannot be trusted for protection",
+          "file": "doc/tasks/FEA-11-RUN-GRANT-2C-PREREQ-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B036",
+      "origin_file": "doc/tasks/FEA-11-RUN-GRANT-2C.md",
+      "section": "Canonical Evidence",
+      "table_start": 2,
+      "row_count": 22,
+      "header_verbatim": "| evidence_id | AC | 路径 | commit | sha256 | class |\r",
+      "second_line_verbatim": "|---|---|---|---|---|---|\r",
+      "block_sha256": "179f30bf820f522b619aa7818da76104f76ab86f7b7db4ca626d32d69a69fc79",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection",
+          "file": "doc/tasks/FEA-11-RUN-GRANT-2C.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B037",
+      "origin_file": "doc/tasks/FEA-11-RUN-GRANT-2C.md",
+      "section": "Resource Manifest",
+      "table_start": 2,
+      "row_count": 1,
+      "header_verbatim": "| resource_type | 资源 | disposition | 目标 | 完整性 | 引用/进程检查结果 |\r",
+      "second_line_verbatim": "|---|---|---|---|---|---|\r",
+      "block_sha256": "fc8618fa7cd217378329d4d139e73debbcc40fcfeadcdd4f03ea2149a037f3b7",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares resource identity columns but lacks source_path; incomplete resource schemas cannot be trusted for protection",
+          "file": "doc/tasks/FEA-11-RUN-GRANT-2C.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B038",
+      "origin_file": "doc/tasks/FEA-11-SCAN-RH-1.md",
+      "section": "Canonical Evidence",
+      "table_start": 2,
+      "row_count": 39,
+      "header_verbatim": "| evidence_id | AC | 路径 | commit | sha256 | class |",
+      "second_line_verbatim": "|---|---|---|---|---|---|",
+      "block_sha256": "d5a93d43c1f520313ce5717676eb7afc6e052e153812135499c594d99ea5534a",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection",
+          "file": "doc/tasks/FEA-11-SCAN-RH-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B039",
+      "origin_file": "doc/tasks/FEA-11-SCAN-RH-1.md",
+      "section": "Resource Manifest",
+      "table_start": 2,
+      "row_count": 1,
+      "header_verbatim": "| resource_type | 资源 | disposition | 目标 | 完整性 | 引用/进程检查结果 |",
+      "second_line_verbatim": "|---|---|---|---|---|---|",
+      "block_sha256": "eaab9494bb3308fedf078abf8bc113960102850345be6fdc883ce48817a2a6a8",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares resource identity columns but lacks source_path; incomplete resource schemas cannot be trusted for protection",
+          "file": "doc/tasks/FEA-11-SCAN-RH-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B040",
+      "origin_file": "doc/tasks/FEA-12-CORE-C04B-INDEX-L4-1.md",
+      "section": "Canonical Evidence",
+      "table_start": 2,
+      "row_count": 21,
+      "header_verbatim": "| evidence_id | AC | 路径 | commit | sha256 | class |",
+      "second_line_verbatim": "|---|---|---|---|---|---|",
+      "block_sha256": "a245131c9954eaaf411be5007836c4a6ba2e3a226ae3de5ec5a3338db705ddba",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection",
+          "file": "doc/tasks/FEA-12-CORE-C04B-INDEX-L4-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B041",
+      "origin_file": "doc/tasks/FEA-12-CORE-C04B-INDEX-L4-1.md",
+      "section": "Resource Manifest",
+      "table_start": 2,
+      "row_count": 1,
+      "header_verbatim": "| resource_type | 资源 | disposition | 目标 | 完整性 | 引用/进程检查结果 |",
+      "second_line_verbatim": "|---|---|---|---|---|---|",
+      "block_sha256": "24a2da3f9bef491881c654b4ca9cd96e36d1f727738a0239ae57711ff4e54115",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares resource identity columns but lacks source_path; incomplete resource schemas cannot be trusted for protection",
+          "file": "doc/tasks/FEA-12-CORE-C04B-INDEX-L4-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B042",
+      "origin_file": "doc/tasks/FEA-12-CORE-C04B-RESIDUAL-1.md",
+      "section": "Canonical Evidence",
+      "table_start": 2,
+      "row_count": 7,
+      "header_verbatim": "| evidence_id | AC | 路径 | commit | sha256 | class |",
+      "second_line_verbatim": "|---|---|---|---|---|---|",
+      "block_sha256": "5c078a00ce6ec238eb5d4c148eefc9e6f399acde597ffe699c2795369ef6c2b7",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection",
+          "file": "doc/tasks/FEA-12-CORE-C04B-RESIDUAL-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B043",
+      "origin_file": "doc/tasks/FEA-12-CORE-C04B-RESIDUAL-1.md",
+      "section": "Resource Manifest",
+      "table_start": 2,
+      "row_count": 1,
+      "header_verbatim": "| resource_type | 资源 | disposition | 目标 | 完整性 | 引用/进程检查结果 |",
+      "second_line_verbatim": "|---|---|---|---|---|---|",
+      "block_sha256": "def98c7afa8117170ba0f4a40ab0202eed66c39c3653950655016090cea2631d",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares resource identity columns but lacks source_path; incomplete resource schemas cannot be trusted for protection",
+          "file": "doc/tasks/FEA-12-CORE-C04B-RESIDUAL-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B044",
+      "origin_file": "doc/tasks/FEA-12-CORE-C04B-RESIDUAL-2.md",
+      "section": "Canonical Evidence",
+      "table_start": 2,
+      "row_count": 10,
+      "header_verbatim": "| evidence_id | AC | 路径 | commit | sha256 | class |",
+      "second_line_verbatim": "|---|---|---|---|---|---|",
+      "block_sha256": "75109b9be2fec96e5f563bda14261896706d203e586d8c3d7c200635cf39b3e2",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection",
+          "file": "doc/tasks/FEA-12-CORE-C04B-RESIDUAL-2.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B045",
+      "origin_file": "doc/tasks/FEA-12-CORE-C04B-RESIDUAL-2.md",
+      "section": "Resource Manifest",
+      "table_start": 2,
+      "row_count": 1,
+      "header_verbatim": "| resource_type | 资源 | disposition | 目标 | 完整性 | 引用/进程检查结果 |",
+      "second_line_verbatim": "|---|---|---|---|---|---|",
+      "block_sha256": "99c020cd39340e51fbed16ccd57572dbb15936679f256d31a8ca100c88e9d767",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares resource identity columns but lacks source_path; incomplete resource schemas cannot be trusted for protection",
+          "file": "doc/tasks/FEA-12-CORE-C04B-RESIDUAL-2.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B046",
+      "origin_file": "doc/tasks/FEA-12-CORE-C04B-RESIDUAL-3.md",
+      "section": "Canonical Evidence",
+      "table_start": 2,
+      "row_count": 16,
+      "header_verbatim": "| evidence_id | AC | 路径 | commit | sha256 | class |",
+      "second_line_verbatim": "|---|---|---|---|---|---|",
+      "block_sha256": "4f47d7747aeceb87dccc73a89493d92cf0787443dba06008c51e73e11e8e425e",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection",
+          "file": "doc/tasks/FEA-12-CORE-C04B-RESIDUAL-3.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B047",
+      "origin_file": "doc/tasks/FEA-12-CORE-C04B-RESIDUAL-3.md",
+      "section": "Resource Manifest",
+      "table_start": 2,
+      "row_count": 1,
+      "header_verbatim": "| resource_type | 资源 | disposition | 目标 | 完整性 | 引用/进程检查结果 |",
+      "second_line_verbatim": "|---|---|---|---|---|---|",
+      "block_sha256": "a0ab614cc7c1a50a9b52391e94b658f06ce3b387dfef3f825dcab65782a78bec",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares resource identity columns but lacks source_path; incomplete resource schemas cannot be trusted for protection",
+          "file": "doc/tasks/FEA-12-CORE-C04B-RESIDUAL-3.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B048",
+      "origin_file": "doc/tasks/FEA-12-UI.md",
+      "section": "Resource Manifest",
+      "table_start": 2,
+      "row_count": 5,
+      "header_verbatim": "| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |\r",
+      "second_line_verbatim": "|---|---|---|---|---|---|\r",
+      "block_sha256": "8308f978d99df1c2e7e15a72a31c1dc550d85528d401aa3d448d9043f0fef09e",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_ROW_ARITY",
+          "message": "table row at line 7 has 7 columns, header has 6; non-standard tables cannot be trusted for protection",
+          "file": "doc/tasks/FEA-12-UI.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B049",
+      "origin_file": "doc/tasks/GPU-ORT-PROBE-1.md",
+      "section": "Canonical Evidence",
+      "table_start": 2,
+      "row_count": 16,
+      "header_verbatim": "| evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |",
+      "second_line_verbatim": "| G1 | AC2 | verification/GPU-ORT-PROBE-1/device-probe-buildenv.json | 064e4fe22 | bfd588390c996f5ecdf43db00ccd016753e23e8b5a9fe8acfbf6519668c72b3a | CANONICAL |",
+      "block_sha256": "4d383204317abf5de5e09ea1af7324a2cf4c87ddd63fc9c771c187c39d94f40c",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_DELIMITER",
+          "message": "table at line 2 has an invalid delimiter row",
+          "file": "doc/tasks/GPU-ORT-PROBE-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B050",
+      "origin_file": "doc/tasks/GRANT-ISSUER-1.md",
+      "section": "Canonical Evidence",
+      "table_start": 2,
+      "row_count": 33,
+      "header_verbatim": "| evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |",
+      "second_line_verbatim": "| G1 | AC | verification/GRANT-ISSUER-1/command-list.json | | d5c6d5455b2f724184fbd925be5c3c1f6d78b2a28664f6cccd808402257b9fbe | SOURCE_PIN |",
+      "block_sha256": "8d4febd9b889a2df5756881b61b9ccd74653f8994c5cf63e8869f7b5f66f56e9",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_DELIMITER",
+          "message": "table at line 2 has an invalid delimiter row",
+          "file": "doc/tasks/GRANT-ISSUER-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B051",
+      "origin_file": "doc/tasks/IMPORT-EXPORT-UI-1.md",
+      "section": "Canonical Evidence",
+      "table_start": 2,
+      "row_count": 38,
+      "header_verbatim": "| evidence_id | AC/Gate | path（仓库相对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |",
+      "second_line_verbatim": "|---|---|---|---|---|---|",
+      "block_sha256": "d4924bac1ffbfd3e18b400d4303b0c9a81ca1a6b89ae41d37ca7e5c9d5a1ad06",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection",
+          "file": "doc/tasks/IMPORT-EXPORT-UI-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B052",
+      "origin_file": "doc/tasks/MICA-FIX-1.md",
+      "section": "Canonical Evidence",
+      "table_start": 2,
+      "row_count": 7,
+      "header_verbatim": "| evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |",
+      "second_line_verbatim": "| M1 | AC1/AC2 | verification/MICA-FIX-1/mica/titlebar-pattern.png | c795cdb34 | 64965c49227ddfc78c5c1447084f340fe355cd529c4e28f56c01ff1f179456b0 | CANONICAL |",
+      "block_sha256": "00529b27c488499699effd9a58c13bc34b6cf3cf8673291fbf2a163b7e38eb78",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_DELIMITER",
+          "message": "table at line 2 has an invalid delimiter row",
+          "file": "doc/tasks/MICA-FIX-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B053",
+      "origin_file": "doc/tasks/NS-WIRE-A1.md",
+      "section": "Canonical Evidence",
+      "table_start": 2,
+      "row_count": 28,
+      "header_verbatim": "| evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |",
+      "second_line_verbatim": "| N1 | AC1–AC4 | verification/NS-WIRE-A1/command-list.json | 14e855407 | f6c9df117ae6c8b346312c3776cacdc6bff643c7bbca43555907880f771b2d82 | CANONICAL |",
+      "block_sha256": "5ad701e09a663b2ef4153b794dded4d6db30508a64bc259e81f9eebe73d77ac8",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_DELIMITER",
+          "message": "table at line 2 has an invalid delimiter row",
+          "file": "doc/tasks/NS-WIRE-A1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B054",
+      "origin_file": "doc/tasks/NS-WIRE-B2.md",
+      "section": "Canonical Evidence",
+      "table_start": 4,
+      "row_count": 13,
+      "header_verbatim": "| evidence_id | AC/Gate | path（仓库相对路径） | commit | sha256 | class |",
+      "second_line_verbatim": "|---|---|---|---|---|---|",
+      "block_sha256": "844a4c094a5dbb0a335bc990a0c7140c8a6fe51582f9021ddd08541caf08fd42",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 4 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection",
+          "file": "doc/tasks/NS-WIRE-B2.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B055",
+      "origin_file": "doc/tasks/PLUGIN-RUNTIME-SANDBOX-1.md",
+      "section": "Canonical Evidence",
+      "table_start": 2,
+      "row_count": 7,
+      "header_verbatim": "|Evidence ID|AC|Path|Commit|SHA-256|Class|\r",
+      "second_line_verbatim": "|---|---|---|---|---|---|\r",
+      "block_sha256": "827f6dd879d7dc1c3fe258d149699aab5f20584620a2ebf0f736527df8818ed6",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares canonical-evidence identity columns but lacks evidence_id; incomplete schemas cannot be trusted for protection",
+          "file": "doc/tasks/PLUGIN-RUNTIME-SANDBOX-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B056",
+      "origin_file": "doc/tasks/READER-PROGRESS-1.md",
+      "section": "Canonical Evidence",
+      "table_start": 2,
+      "row_count": 19,
+      "header_verbatim": "| evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |",
+      "second_line_verbatim": "| R1 | AC3 | verification/READER-PROGRESS-1/runtime-logs/core-service.stderr.log | 10a0308c1 | 0eb44abf506ae9b058de56af0a2c443b1c7942c7a562c0053923ace0ee57a83c | CANONICAL |",
+      "block_sha256": "be564bbdafd06ee82946ebe34734abe31a737fbb18b62dc57b187202f686bb01",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_DELIMITER",
+          "message": "table at line 2 has an invalid delimiter row",
+          "file": "doc/tasks/READER-PROGRESS-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B057",
+      "origin_file": "doc/tasks/REAL-TRANSLATE-PROVIDER-1.md",
+      "section": "Canonical Evidence",
+      "table_start": 2,
+      "row_count": 30,
+      "header_verbatim": "| evidence_id | AC/Gate | path（仓库相对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |",
+      "second_line_verbatim": "|---|---|---|---|---|---|",
+      "block_sha256": "d14abbf80f0d4f03b57a167645463d02b32edfeb326790b2ad50bcf7fba4a38d",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection",
+          "file": "doc/tasks/REAL-TRANSLATE-PROVIDER-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B058",
+      "origin_file": "doc/tasks/RELEASE-PACKAGE-1.md",
+      "section": "Canonical Evidence",
+      "table_start": 2,
+      "row_count": 12,
+      "header_verbatim": "| evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) |",
+      "second_line_verbatim": "| R1-src | AC1–AC4b | verification/RELEASE-PACKAGE-1/package-summary.json | 8ff3d288d | 08eedf6222a4fe838189ccbf7b8989a1aa709a59c25b90df498a701cddcdbeef | CANONICAL |",
+      "block_sha256": "463f175c932cef9ad00abe1940921bf07b92b3453c3d6ab152df09557ac4d988",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_DELIMITER",
+          "message": "table at line 2 has an invalid delimiter row",
+          "file": "doc/tasks/RELEASE-PACKAGE-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B059",
+      "origin_file": "doc/tasks/RUN-STORE-CACHE-RACE-FIX-1.md",
+      "section": "Canonical Evidence",
+      "table_start": 2,
+      "row_count": 26,
+      "header_verbatim": "| ID | AC/场景 | path | commit | sha256 (64-hex) | 类型 |",
+      "second_line_verbatim": "|---|---|---|---|---|---|",
+      "block_sha256": "4c2e951cf7d08d12a0978388289ff67bc6a052c3ccbd65e414eadeaab711c145",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares canonical-evidence identity columns but lacks evidence_id; incomplete schemas cannot be trusted for protection",
+          "file": "doc/tasks/RUN-STORE-CACHE-RACE-FIX-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B060",
+      "origin_file": "doc/tasks/SETTINGS-OPEN-B-1.md",
+      "section": "Canonical Evidence",
+      "table_start": 2,
+      "row_count": 20,
+      "header_verbatim": "| evidence_id | AC/Gate | path | commit | sha256 | class |",
+      "second_line_verbatim": "|EV-B1-CORE-PYTEST-B1-TARGETED-RAW|AC1-AC5|verification/SETTINGS-OPEN-B-1/core-pytest-b1-targeted-raw.txt|bb4b6a2bd4605613f5414c8792392ffe4bdf0a94|7ece5a5af1dc57a180ec3d53935d88af53a6ab7be52c41089a9d59d101e8daaf|CANONICAL|",
+      "block_sha256": "27c6aeb3eb48728f979450fa22519b887319ab04c9e5fb8b81bcd9aa63caa631",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_DELIMITER",
+          "message": "table at line 2 has an invalid delimiter row",
+          "file": "doc/tasks/SETTINGS-OPEN-B-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B061",
+      "origin_file": "doc/tasks/SETTINGS-OPEN-B-2.md",
+      "section": "Canonical Evidence",
+      "table_start": 2,
+      "row_count": 15,
+      "header_verbatim": "| evidence_id | AC/Gate | path | commit | sha256 | class |",
+      "second_line_verbatim": "|EV-B2-GUI-SMOKE|AC1-AC5|verification/SETTINGS-OPEN-B-2/gui-smoke.md|bb4b6a2bd4605613f5414c8792392ffe4bdf0a94|a4506241c6baf0dfcbe6ef07f137c0ac619e42a9a873a3f891540838297f62a6|CANONICAL|",
+      "block_sha256": "2a4f0c513353e133c5fa4eeb7d8d971ffcab2d6a4f5ee08131c7ec4f7c66453e",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_DELIMITER",
+          "message": "table at line 2 has an invalid delimiter row",
+          "file": "doc/tasks/SETTINGS-OPEN-B-2.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B062",
+      "origin_file": "doc/tasks/UIUX-V2-RUNTIME-1.md",
+      "section": "Canonical Evidence",
+      "table_start": 2,
+      "row_count": 19,
+      "header_verbatim": "| evidence_id | AC/Gate | path（仓库相对路径） | commit | sha256 | class |\r",
+      "second_line_verbatim": "|---|---|---|---|---|---|\r",
+      "block_sha256": "b62994281e9f82872beaf27832ca70044d05d5ae06672957d9ce64e7b5cbf6ba",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection",
+          "file": "doc/tasks/UIUX-V2-RUNTIME-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B063",
+      "origin_file": "doc/tasks/UIUX-V2-RUNTIME-REALCORE-1.md",
+      "section": "Canonical Evidence",
+      "table_start": 2,
+      "row_count": 31,
+      "header_verbatim": "| evidence_id | AC/Gate | path（仓库相对路径） | commit | sha256 | class |",
+      "second_line_verbatim": "|---|---|---|---|---|---|",
+      "block_sha256": "ae7206aa0b7c2aa163ca002564dac5cc2036fa26aeeb9b2bf55f5bf7968049d5",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection",
+          "file": "doc/tasks/UIUX-V2-RUNTIME-REALCORE-1.md",
+          "locator": null
+        }
+      ]
+    },
+    {
+      "id": "HIE-B064",
+      "origin_file": "doc/tasks/UIUX-V2-RUNTIME-REALCORE-2.md",
+      "section": "Canonical Evidence",
+      "table_start": 2,
+      "row_count": 13,
+      "header_verbatim": "| evidence_id | AC | path（仓库相对路径） | commit | sha256 | class |",
+      "second_line_verbatim": "|---|---|---|---|---|---|",
+      "block_sha256": "013ac9ef4c0aceec07ef0dbeaa64034ac1276a2951077fb0b6d2b23169c8468a",
+      "classification": "B1",
+      "interpretation": "historical_format_preserved",
+      "errors": [
+        {
+          "code": "TABLE_SCHEMA_INCOMPLETE",
+          "message": "table at line 2 declares canonical-evidence identity columns but lacks path; incomplete schemas cannot be trusted for protection",
+          "file": "doc/tasks/UIUX-V2-RUNTIME-REALCORE-2.md",
+          "locator": null
+        }
+      ]
+    }
   ]
 }

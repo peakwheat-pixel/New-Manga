@@ -67,7 +67,13 @@ pwsh -NoProfile -File apps/desktop-avalonia/scripts/test.ps1
 
 ### 队列 0 —— **`GOV-DECLARATION-SCAN-CLEANUP-1` AC3：154 → 0**（进行中：已 154→147）
 
-**进度（R18，最新）**：**B3 11 条已全部清零**，`errors 154→144`、`protected_roots 5593→5601`。
+**进度（R19，最新）**：**B1 64 与 B3 11 已全部清零**，`errors 154→80`（只剩 B2 80）、`protected_roots 5593→5601`。
+batch 3 新增顶层 `table_bindings`（64 条，逐表：section + table_start + block_sha256（原始字节含 CRLF）+ header/第二行/行数
++ 该表精确诊断），代码按 (origin, section, start) 定位唯一表并只移除该表诊断，另加 `PROTECTION_REGRESSION` 超集断言；
+`HISTORICAL_EVIDENCE_DIGEST` 再重批。逐条处置映射见 `ac3-disposition-map-2026-11-16.md`（154 行，带机制）。
+⚠️ 新坑：任何「原始字节」哈希必须 `read_bytes()`，`read_text()` 会做换行转换 ⇒ block 哈希全崩、HIE 整体 RECORD_DRIFT（errors 反弹到 160）。
+
+**进度（R18）**：**B3 11 条已全部清零**，`errors 154→144`、`protected_roots 5593→5601`。
 batch 2 把 HIE 层的绝对计数耦合改成成员不变量（`HISTORICAL_EVIDENCE_BINDING_IDS` / 派生 `removed`/`pending` /
 `HISTORICAL_EVIDENCE_KEEP`），新增 HIE-O04（NUL markdown）与 HIE-O05/O06（不可解析 JSON）三条 `raw_non_declaration_bindings`，
 JSON 绑定带「一旦变合法 JSON 即 RECORD_DRIFT」的 fail-closed 条件，`HISTORICAL_EVIDENCE_DIGEST` 已重批；
@@ -81,10 +87,9 @@ JSON 绑定带「一旦变合法 JSON 即 RECORD_DRIFT」的 fail-closed 条件�
 带 err_id/桶/活 pin）；**batch 1（Q3 封闭别名表）已实施**：`errors 154→147`、`warnings 732→740`、
 `protected_roots 5593→5598`、`declarations 6755→6762`，`DECL_UNKNOWN_DISPOSITION 8→0`；
 证据 `verification/GOV-DECLARATION-SCAN-CLEANUP-1/ac3-batch1-alias-2026-11-16.log`。
-**下一步（严格按裁决顺序）**：~~Q2~~（已完成，B3 清零）→ **Q1 64 条表级绑定**（须证明保护根集合不缩）→
-12 条活 pin B2 转「可审计保留态」（原始错误码以警告态可见）→ AC7 的 67 条单元修复 →
-AC6 集成复验 + 上下文独立 Review。**卡已加 AC7**（`<<PARTIAL>>`）与 AC5 追加式窄例外。
-剩余 errors = 144 = B1 64 + B2 79 + （B2 里 12 条活 pin）。
+**下一步（严格按裁决顺序）**：~~Q2~~、~~Q1~~ 已完成 → **12 条活 pin B2 转「可审计保留态」**（原始错误码以警告态可见）→
+**AC7 的 67 条未钉住 B2 单元修复**（需先落 `allowed_cells` 清单）→ AC6 集成复验 + 上下文独立 Review。
+**卡已加 AC7**（`<<PARTIAL>>`）与 AC5 追加式窄例外。剩余 errors = **80 = B2 80**（其中 12 条活 pin 只登记）。
 
 ### 队列 0 附录 —— 原 R16 评估（保留）
 

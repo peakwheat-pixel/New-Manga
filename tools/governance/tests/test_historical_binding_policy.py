@@ -104,6 +104,46 @@ class HistoricalBindingPolicy(unittest.TestCase):
         self.assertFalse(guard._json_source_is_unparsable(b'\xef\xbb\xbf{"a": 1}'))
         self.assertTrue(guard._json_source_is_unparsable(b'{"a": "\\q"}'))
 
+    def test_table_bindings_are_a_contiguous_member_sequence(self):
+        tables = self.policy["table_bindings"]
+        self.assertTrue(tables, "B1 table bindings must be listed explicitly")
+        self.assertEqual([t["id"] for t in tables],
+                         ["HIE-B%03d" % n for n in range(1, len(tables) + 1)])
+        for table in tables:
+            with self.subTest(table=table["id"]):
+                self.assertEqual(table["classification"], "B1")
+                self.assertEqual(table["interpretation"], "historical_format_preserved")
+                self.assertIn(table["section"], ("Resource Manifest", "Canonical Evidence"))
+
+    def test_table_binding_block_bytes_are_exact(self):
+        for table in self.policy["table_bindings"]:
+            with self.subTest(table=table["id"]):
+                raw = (REPO / table["origin_file"]).read_bytes()
+                text = raw.decode("utf-8")
+                section = guard.section_text(text, table["section"])
+                block = dict(guard.iter_table_blocks(section)).get(table["table_start"])
+                self.assertIsNotNone(block)
+                self.assertGreaterEqual(len(block), 2)
+                self.assertEqual(hashlib.sha256("\n".join(block).encode("utf-8")).hexdigest(),
+                                 table["block_sha256"])
+                self.assertEqual(block[0], table["header_verbatim"])
+                self.assertEqual(block[1], table["second_line_verbatim"])
+                self.assertEqual(len(block) - 2, table["row_count"])
+
+    def test_table_bindings_only_carry_historical_format_codes(self):
+        allowed = {"TABLE_SCHEMA_INCOMPLETE", "TABLE_DELIMITER", "TABLE_ROW_ARITY",
+                   "TABLE_HEADER_ARITY", "TABLE_INCOMPLETE",
+                   "TABLE_DUPLICATE_IDENTITY_COLUMN"}
+        seen = set()
+        for table in self.policy["table_bindings"]:
+            for error in table["errors"]:
+                self.assertIn(error["code"], allowed, error)
+                self.assertEqual(error["file"], table["origin_file"])
+                self.assertIsNone(error["locator"])
+                key = (error["file"], error["code"], error["message"])
+                self.assertNotIn(key, seen, "a B1 diagnostic is bound twice")
+                seen.add(key)
+
     def test_keep_map_only_names_bound_ids(self):
         bound = {b["id"] for b in self.bindings}
         self.assertTrue(set(guard.HISTORICAL_EVIDENCE_KEEP) <= bound)
