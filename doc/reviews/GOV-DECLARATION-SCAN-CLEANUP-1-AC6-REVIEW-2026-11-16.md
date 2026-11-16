@@ -215,3 +215,54 @@ git diff --check 23e8d7152 f1a2e8805
 ## 4. 结论（一句话）
 
 **AC3 的 `<<MET>>` 成立**（154→0、6800/5611/821、16/16 pin 可复验且原始错误码可见、规则未被放宽）；**AC7 的 `<<MET>>` 当前不严格成立**——`FEA-15-PIN-BASIS-ENFORCE-1.md:362` 有一处未列入 `allowed_cells` 且语义错误的源路径改写（P1），另有 13 处未闭合反引号和 14 处末列附注超出“仅列明单元”的字面约束，需按 F-1～F-4 定点返修并重跑 audit/单元级 diff 后，AC7 才能维持 `[x] <<MET>>`。
+
+## §5 返修收敛复核（2026-11-16，第二轮）
+
+verdict: APPROVED_WITH_FINDINGS
+reviewed_head: 314aafbdadf06e1543816718feadffa559ac0f95（父 f1a2e8805；push 后新 head）
+reviewer: ac6-reviewer（同一独立上下文；未参与 f1a2e8805 之后的返修）
+
+### 5.1 逐项结论
+
+| # | 收敛项 | 结论 | 证据 |
+|---:|---|---|---|
+| 1 | P1 是否真修好：`FEA-15-PIN-BASIS-ENFORCE-1.md` 只应有 `*.log` glob 一行改动，main-worktree source 回到 `G:/CODEX/New Manga` | **PASS** | `git diff 23e8d7152 314aafbda -- doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md` 只有 1 行（`:370` glob → 目录本体）；main-worktree 行未出现在 diff 中，已回到 `G:/CODEX/New Manga` |
+| 2 | P2 反引号：`git diff 23e8d7152 314aafbda -- doc/tasks` 每个新增行反引号奇偶 | **PASS** | 78 个新增行，**0 个奇数反引号**；上一轮 13 处未闭合全部消失 |
+| 3 | `allowed_cells` 反向生成（99 单元格/45 文件）：抽样旧值→新值一致、无未列明单元格、无“不存在路径写成 `PRESERVE_*`” | **PASS（表单元格）/ P2（卡片行与列表完整性）** | 抽 10 个表单元格（行 10/11/34/35/58/60/63/41/43/52）全部与 diff 精确匹配；**95/95 个 Resource Manifest 表单元格**均被列明且匹配，无未列明表单元格；36 个路径型新值全部 `EXISTS`，0 个缺失，0 个 `PRESERVE_*`+缺失。P2 见 5.3：2 个卡片行旧值截断、2 行 `allowed_paths` 插入未列、`列序号` 口径错 |
+| 4 | 审计与不变量：errors=0；declarations/protected_roots/warnings；16 条 retention pin | **PASS（独立 audit）/ P1（已入库 after JSON 过期）** | 独立 audit EXIT=0：**6800 / 5611 / 0 / 822**；16/16 retention pin 重算匹配（WORKTREE `read_bytes` / BLOB `git cat-file`）。但仓内 `ac3-after-audit-2026-11-16.json` 仍是 **821，report_sha256=f7364159…**（19:39:45，f1a2 版），与新 head 的 822 / `26225e7b…` 不一致 |
+| 5 | 范围：只含 45 doc/tasks + tools + 本卡文档/新增证据；manifest/RRI 空；verification 既有文件 0 修改 | **PASS（文件集/边界）/ P1（allowed_paths 通配）/ P2（STARTER 事后授权）** | 55 文件 = 45 `doc/tasks` + 3 tools + 4 verification（全部 **A**）+ `doc/STATUS.md` + `doc/handoffs/NEXT-SESSION-STARTER.md` + 本复核报告；`*RESOURCE-MANIFEST.json`/`resource-manifest.json`/`residual-runtime-identity.json` diff **0 行**；verification 无 M/D；`git diff --check` EXIT=0。P1 见 5.3：卡片把 `doc/tasks/*.md` 加入 `allowed_paths` |
+| 6 | warnings +1 的解释：首版误改消掉 `DECL_SOURCE_NOT_A_PATH`，重放恢复原文后回来 | **PASS** | 旧 821 → 新 822；warning 集合差分 **+1 / -0**，唯一新增即 `doc/tasks/FEA-11-LINEAGE-1.md` 的 `source 'NOT_APPLICABLE（main 工作树实施）'`；`f1a2e8805` 该行为 `—`，`314aafbda` 恢复原文，解释成立 |
+
+### 5.2 详细实测
+
+**P1 修复**：`git diff 23e8d7152 314aafbda -- doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md` 只有一个 hunk，`agent-output logs` 行由 `G:/CODEX/New Manga.workspace/FEA-15-PIN-BASIS-ENFORCE-1/*.log` 改为目录本体；「main worktree」行（`:362`）已不在 diff 中，即 source 回到 `G:/CODEX/New Manga`。`git diff f1a2e8805 314aafbda -- doc/tasks/FEA-11-LINEAGE-1.md` 显示 `:175` 由 `—` 恢复为 `NOT_APPLICABLE（main 工作树实施）`，同时 `:176` 去掉首版追加的末列附注；`23e8d7152→314aafbda` 的该文件只剩 `:176` 一行合法修复。
+
+**反引号**：对 `git diff 23e8d7152 314aafbda -- doc/tasks` 的 78 个新增行逐行 `count("`")`，奇数行 0；上一轮的 `—``、`` `C:/.../Temp `` 等 13 处全部不再是新增行形态。
+
+**allowed_cells**：文件 `verification/GOV-DECLARATION-SCAN-CLEANUP-1/ac7-allowed-cells-2026-11-16.md` 共 99 行 / 45 文件。其中 **95 行是 Resource Manifest 表单元格，4 行是卡片 AC3/AC7 行**。抽查 10 个表单元格（含 source、destination、disposition）全部与 `23e8d7152→314aafbda` 的逐格 diff 精确匹配；独立比对显示 **95/95 个表单元格**均有列明、无未列明表单元格。路径语义：36 个路径型新值全部可解析（`Test-Path` / `Path.exists` 为真），0 个缺失；6 个抽检新值（`C:/Users/49745/AppData/Local/Temp`、`C:/Users/49745/AppData/Roaming/com.newmanga.desktop`、`G:/CODEX/New Manga.workspace/FEA-08`、`G:/CODEX/New Manga.workspace/FEA-15-A2-1/out/NewManga-0.1.1-win-x64`、`verification/FEA-11-HOST-AUTH-2/tools`、`tests/fea11`）均存在；所有 `PRESERVE_*` 新值均存在。
+
+**审计/不变量**：独立 `--audit-declarations`（仓外 `ac6-review-2026-11-16-r2`）EXIT=0，`declaration audit: 6800 declaration(s), 5611 protected root(s), 0 error(s), 822 warning(s)`；16/16 retention pin 重算匹配，16 条 `DECL_PINNED_DEFECT_RETAINED` 仍在 warnings。仓内 `ac3-after-audit-2026-11-16.json` 是 19:39:45 的 f1a2 版（821 / `f7364159…`），不是 314 的 822 / `26225e7b…`；`ac7-execution-2026-11-16.log:14` 已写 822，形成日志/证据文件不一致。
+
+**范围/边界**：`git diff --stat 23e8d7152 314aafbda` 为 55 文件；`git diff --name-status -- verification/` 只有 4 个 **A**（baseline/after audit JSON、allowed-cells、execution log），无 M/D/R；manifest/RRI 过滤 diff 0 行；`git diff --check` EXIT=0。文件集符合“45 doc/tasks + tools + 本卡文档/新证据”，但卡片 frontmatter 新增 `doc/tasks/*.md` 与 `doc/handoffs/NEXT-SESSION-STARTER.md`：前者把 AC5 补充的精确路径授权扩成整目录通配，后者是对首版 F-5 的事后补授权。
+
+**+1 warning**：旧 audit 821 → 新 audit 822；warning 多重集合差分新增 1 条、删除 0 条，新增项恰为 `DECL_SOURCE_NOT_A_PATH` + `doc/tasks/FEA-11-LINEAGE-1.md` + `NOT_APPLICABLE（main 工作树实施）`。`f1a2e8805` 与 `314aafbda` 的该行分别为 `—` 与恢复后的原文，解释与字节事实一致。
+
+### 5.3 Findings（本轮）
+
+**P0**：无。
+
+**P1**：
+
+- **P1-5.1 `allowed_paths` 扩成 `doc/tasks/*.md` 通配**：`doc/tasks/GOV-DECLARATION-SCAN-CLEANUP-1.md` 的 frontmatter 在 314 新增 `doc/tasks/*.md`（注释称“仅 AC7 allowed_cells 列明的 Resource Manifest 单元”）。Codex 裁决 §Q4 明确要求 `allowed_paths` 是 67 条对应文件的**精确路径集合**，并明确“**不得授权整个 `doc/tasks/*.md`**、整张表或整行随意改动”。注释不能改变 frontmatter 的授权面；应改为 45 个精确文件路径（或删除该通配后由精确清单承担）。
+- **P1-5.2 已入库 after 审计 JSON 过期**：仓内 `verification/.../ac3-after-audit-2026-11-16.json` 是 **821 warnings / `f7364159…`** 的 f1a2 版（`generated_at=19:39:45`），而新 head 独立 audit 是 **822 / `26225e7b…`**；`ac7-execution-2026-11-16.log` 也写 822。AC6 的 baseline/after 证据必须对应固定 head；应重跑并入库 822 版 after JSON（或在报告中明确 821 是 pre-fix、822 才是 after）。
+
+**P2**：
+
+- **P2-5.1 allowed_cells 列表不完整/不精确**：99 行 = 95 个表单元格 + 4 个卡片 AC 行；卡片新增的 2 行 `allowed_paths`（`doc/handoffs/NEXT-SESSION-STARTER.md`、`doc/tasks/*.md`）和 `## AC6 复核处置` 新节未列入；第 88/90 行旧值被截断到 112 字符（如 `…剩 65 条未钉住 `、`…裁定已落盘，Q`），与真实旧行不完全一致。表单元格 95/95 已覆盖，故不影响 AC7 单元修复的机械核验，但“99 单元格全部列明”的说法不成立。
+- **P2-5.2 `列序号` 口径错**：allowed_cells 表头称“列序号按该表表头”，实际是“该行被改单元格的序号”（如行 63 写 `1`，实际是表第 2 列 source_path；行 11 写 `2`，实际是第 3 列 disposition；卡片行写 `0`）。应改名或改为真实表列号，避免复核者误读。
+- **P2-5.3 STARTER/STATUS 的事后声明**：`doc/handoffs/NEXT-SESSION-STARTER.md` 通过新增 `allowed_paths` 条目正式化（首版 F-5 的形式问题被消除，但属事后自我授权）；`doc/STATUS.md:10` 已写“复核 P1/P2 已返修”，而本轮仍发现 P1-5.1/P1-5.2，STATUS 的时点表述略超前。
+- **P2-5.4 covered 范围表述**：`ac7-execution` 日志把“其他代码/政策”写为 5 个（STATUS、STARTER、3 个 tools），但 23e8→314 实际还包含 4 个 verification 新证据和本复核报告；日志的“45 文件/5 其他”是 AC7 子集口径，建议在 AC6 回填时统一为 55 文件全量口径（本复核报告自身是否计入可由 DSH 定）。
+
+### 5.4 结论
+
+本次返修**真实修好了上一轮的 P1（main-worktree 误配）和 P2（13 处反引号）**，审计仍为 0/6800/5611/822、16/16 pin 仍可复验、+1 warning 解释成立；但收敛不能判 `APPROVED`：新增的 `allowed_paths: doc/tasks/*.md` 通配违反 Codex §Q4 的精确路径要求（P1-5.1），已入库的 after JSON 仍是 821 的 f1a2 版而非 314 的 822（P1-5.2）；另有 allowed_cells 卡片行截断/未列、列序号口径、STARTER 事后授权等 P2。**AC3 的 `<<MET>>` 继续成立；AC7 的语义修复在 45 张卡上成立；AC6 关闭前应先处置 P1-5.1/P1-5.2（并重生成 822 after JSON），再复跑本收敛检查。**

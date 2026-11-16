@@ -31,7 +31,52 @@ allowed_paths:
   - doc/REBASELINE_PLAN.md
   - doc/TASK_LEDGER.md
   - doc/handoffs/NEXT-SESSION-STARTER.md   # 三指针之一（每轮更新）
-  - doc/tasks/*.md   # 仅 AC7 allowed_cells 列明的 Resource Manifest 单元（见 AC5 补充）
+  # AC7 逐单元授权的 45 张历史卡（**不是** doc/tasks/*.md 通配；只允许 allowed_cells 列明的 Resource Manifest 单元）：
+  - doc/tasks/D-14-STATUS-COLOR-FIX.md
+  - doc/tasks/FEA-00A-PREP-1.md
+  - doc/tasks/FEA-01-FREEZE-1.md
+  - doc/tasks/FEA-06-RESIDUAL-1.md
+  - doc/tasks/FEA-06-RESIDUAL-2.md
+  - doc/tasks/FEA-06.md
+  - doc/tasks/FEA-07-AC5-NATIVE-1.md
+  - doc/tasks/FEA-07-RESIDUAL-2.md
+  - doc/tasks/FEA-07-RESIDUAL-4.md
+  - doc/tasks/FEA-07-V2-F11-1.md
+  - doc/tasks/FEA-08.md
+  - doc/tasks/FEA-11-HOST-AUTH-2.md
+  - doc/tasks/FEA-11-HOST-AUTH-3.md
+  - doc/tasks/FEA-11-LINEAGE-1.md
+  - doc/tasks/FEA-11-RENDITION-1.md
+  - doc/tasks/FEA-11-RESIDUAL-4A.md
+  - doc/tasks/FEA-11-SCAN-1.md
+  - doc/tasks/FEA-14-AI-1.md
+  - doc/tasks/FEA-14-EDIT-1.md
+  - doc/tasks/FEA-14-FONT-1.md
+  - doc/tasks/FEA-14-LIB-1.md
+  - doc/tasks/FEA-14-READ-1.md
+  - doc/tasks/FEA-14-READ-2.md
+  - doc/tasks/FEA-14-SET-1.md
+  - doc/tasks/FEA-15-A2-1.md
+  - doc/tasks/FEA-15-A3-1.md
+  - doc/tasks/FEA-15-A4-1.md
+  - doc/tasks/FEA-15-PIN-BASIS-ENFORCE-1.md
+  - doc/tasks/FEA-15-PREREQ-2.md
+  - doc/tasks/FEA-C10-DRAFT.md
+  - doc/tasks/FEA-C11-PREREQ-1.md
+  - doc/tasks/FEA-C14-DRAFT.md
+  - doc/tasks/FEA-CONTRACT-WRAP-1.md
+  - doc/tasks/FEA-D06-GAP.md
+  - doc/tasks/FEA-DOC-RECONCILE-1.md
+  - doc/tasks/GATE4-PAGES-UPGRADE-1.md
+  - doc/tasks/GATE4-READER-PAGE-1.md
+  - doc/tasks/GIT-CLEAN-PUBLICATION-1.md
+  - doc/tasks/GOV-DECLARATION-SCAN-CLEANUP-1.md
+  - doc/tasks/GOV-UNTRACKED-BACKLOG-1.md
+  - doc/tasks/INSTALLER-MATRIX-1.md
+  - doc/tasks/REAL-TRANSLATE-PROVIDER-1.md
+  - doc/tasks/RELEASE-PACKAGE-PROBE-1.md
+  - doc/tasks/SIDECAR-REBUILD-1.md
+  - doc/tasks/TOOL-SOFTWARE-SMOKE-1.md
 ---
 
 # GOV-DECLARATION-SCAN-CLEANUP-1：声明扫描债务清理

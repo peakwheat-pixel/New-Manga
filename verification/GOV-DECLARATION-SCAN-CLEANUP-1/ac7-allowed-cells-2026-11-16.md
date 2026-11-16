@@ -1,9 +1,12 @@
-# GOV-DECLARATION-SCAN-CLEANUP-1 · AC7 `allowed_cells`（本轮实际改动，逐单元）
+# GOV-DECLARATION-SCAN-CLEANUP-1 · AC7 `allowed_cells`（由 diff 反向生成，逐单元）
 
-- 生成方式：对 `23e8d7152..HEAD` 的 `doc/tasks/**` diff 做**逐单元格**比较（不是照抄计划）。
-- 每行 = 一个被改写的单元格（列序号按该表表头）；未列出的单元格/行/表/正文**未变**。
+- 生成方式：对 `23e8d7152..HEAD` 的 `doc/tasks/**` diff 做**逐单元格**比较（不是照抄计划，也不是按行猜）。
+- 「列位置」= 该行在本表内第几个单元格（从 0 起）；未列出的单元格、行、表与正文**未变**。
+- 本卡自身的结构性编辑（`allowed_paths` 精确化、`## AC6 复核处置` 节、AC3/AC7 标记）单列在 §2，不属 Resource Manifest 单元。
 
-| # | 文件 | 列序号 | 旧值 | 新值 |
+## 1. Resource Manifest 单元（95 个，覆盖 44 个文件）
+
+| # | 文件 | 列位置 | 旧值 | 新值 |
 |---:|---|---:|---|---|
 | 1 | `doc/tasks/D-14-STATUS-COLOR-FIX.md` | 1 | `未创建/未访问` | `—` |
 | 2 | `doc/tasks/FEA-00A-PREP-1.md` | 1 | `..\New Manga.workspace\tmp` | `—` |
@@ -91,18 +94,21 @@
 | 84 | `doc/tasks/GATE4-READER-PAGE-1.md` | 1 | `待填（workspace\task-envs\GATE4-READER-PAGE-1）` | `G:/CODEX/New Manga.workspace/task-envs/GATE4-READER-PAGE-1` |
 | 85 | `doc/tasks/GIT-CLEAN-PUBLICATION-1.md` | 1 | `上述task-env/source-export` | `G:/CODEX/New Manga.workspace/task-envs/GIT-CLEAN-PUBLICATION-1` |
 | 86 | `doc/tasks/GIT-CLEAN-PUBLICATION-1.md` | 1 | `上述task-env中的缓存/输出` | `G:/CODEX/New Manga.workspace/task-envs/GIT-CLEAN-PUBLICATION-1` |
-| 87 | `doc/tasks/GOV-DECLARATION-SCAN-CLEANUP-1.md` | 0 | `- [ ] **AC3 L2 清理**：逐条给出 disposition（B1/B2/B3 + 依据 + **是否被活 pin 引用**），` | `- [x] **AC3 L2 清理**：逐条给出 disposition（B1/B2/B3 + 依据 + **是否被活 pin 引用**），` |
-| 88 | `doc/tasks/GOV-DECLARATION-SCAN-CLEANUP-1.md` | 0 | `逐条处置表必须与 `--audit-declarations` 的 JSON 一一对得上。 <<PARTIAL: 154→65；B1 64/B3 11 清零，15 条活 pin B2 转可审计保留态；剩 65 条未钉住 ` | `逐条处置表必须与 `--audit-declarations` 的 JSON 一一对得上。 <<MET>>` |
-| 89 | `doc/tasks/GOV-DECLARATION-SCAN-CLEANUP-1.md` | 0 | `- [ ] **AC7 B2 单元级数据修复**（AC3 的 B2 批；依据 Codex 2026-11-16 裁决 Q4）：67 条**未钉住**的 B2 逐条按` | `- [x] **AC7 B2 单元级数据修复**（AC3 的 B2 批；依据 Codex 2026-11-16 裁决 Q4）：67 条**未钉住**的 B2 逐条按` |
-| 90 | `doc/tasks/GOV-DECLARATION-SCAN-CLEANUP-1.md` | 0 | `依据：`doc/reviews/GOV-DECLARATION-SCAN-CLEANUP-1-AC3-CODEX-RULING-2026-11-16.md` §Q4。 <<PARTIAL: B2 批未开始；裁定已落盘，Q` | `依据：`doc/reviews/GOV-DECLARATION-SCAN-CLEANUP-1-AC3-CODEX-RULING-2026-11-16.md` §Q4。 <<MET>>` |
-| 91 | `doc/tasks/GOV-UNTRACKED-BACKLOG-1.md` | 1 | ``CON`` | `—` |
-| 92 | `doc/tasks/GOV-UNTRACKED-BACKLOG-1.md` | 2 | ``PRESERVE_REFERENCED`` | `NOT_APPLICABLE` |
-| 93 | `doc/tasks/INSTALLER-MATRIX-1.md` | 1 | `待填（workspace\task-envs\INSTALLER-MATRIX-1）` | `G:/CODEX/New Manga.workspace/task-envs/INSTALLER-MATRIX-1` |
-| 94 | `doc/tasks/REAL-TRANSLATE-PROVIDER-1.md` | 1 | `Windows Credential Manager `NewManga/provider/3819f991…/<ref>`` | `—` |
-| 95 | `doc/tasks/REAL-TRANSLATE-PROVIDER-1.md` | 2 | `PRESERVE` | `NOT_APPLICABLE` |
-| 96 | `doc/tasks/RELEASE-PACKAGE-PROBE-1.md` | 1 | `待填（workspace\artifacts\publish）` | `G:/CODEX/New Manga.workspace/artifacts/publish` |
-| 97 | `doc/tasks/SIDECAR-REBUILD-1.md` | 1 | `待填（workspace\task-envs\SIDECAR-REBUILD-1）` | `G:/CODEX/New Manga.workspace/task-envs/SIDECAR-REBUILD-1` |
-| 98 | `doc/tasks/TOOL-SOFTWARE-SMOKE-1.md` | 1 | ``%TEMP%/nm-software-smoke-*`、`%TEMP%/nm-bundled-hook-*`` | `C:/Users/49745/AppData/Local/Temp` |
-| 99 | `doc/tasks/TOOL-SOFTWARE-SMOKE-1.md` | 2 | `NOT_APPLICABLE` | `DELETE_SAFE` |
+| 87 | `doc/tasks/GOV-UNTRACKED-BACKLOG-1.md` | 1 | ``CON`` | `—` |
+| 88 | `doc/tasks/GOV-UNTRACKED-BACKLOG-1.md` | 2 | ``PRESERVE_REFERENCED`` | `NOT_APPLICABLE` |
+| 89 | `doc/tasks/INSTALLER-MATRIX-1.md` | 1 | `待填（workspace\task-envs\INSTALLER-MATRIX-1）` | `G:/CODEX/New Manga.workspace/task-envs/INSTALLER-MATRIX-1` |
+| 90 | `doc/tasks/REAL-TRANSLATE-PROVIDER-1.md` | 1 | `Windows Credential Manager `NewManga/provider/3819f991…/<ref>`` | `—` |
+| 91 | `doc/tasks/REAL-TRANSLATE-PROVIDER-1.md` | 2 | `PRESERVE` | `NOT_APPLICABLE` |
+| 92 | `doc/tasks/RELEASE-PACKAGE-PROBE-1.md` | 1 | `待填（workspace\artifacts\publish）` | `G:/CODEX/New Manga.workspace/artifacts/publish` |
+| 93 | `doc/tasks/SIDECAR-REBUILD-1.md` | 1 | `待填（workspace\task-envs\SIDECAR-REBUILD-1）` | `G:/CODEX/New Manga.workspace/task-envs/SIDECAR-REBUILD-1` |
+| 94 | `doc/tasks/TOOL-SOFTWARE-SMOKE-1.md` | 1 | ``%TEMP%/nm-software-smoke-*`、`%TEMP%/nm-bundled-hook-*`` | `C:/Users/49745/AppData/Local/Temp` |
+| 95 | `doc/tasks/TOOL-SOFTWARE-SMOKE-1.md` | 2 | `NOT_APPLICABLE` | `DELETE_SAFE` |
 
-合计 **99** 个单元格 / **45** 个文件。
+## 2. 本卡结构性编辑（非 Resource Manifest 单元）
+
+- `doc/tasks/GOV-DECLARATION-SCAN-CLEANUP-1.md`：
+  - frontmatter `allowed_paths` 由 `doc/tasks/*.md` 通配替换为 **45 条精确文件路径**（复核 P1-5.1）；
+  - 新增 `## AC6 复核处置（2026-11-16，R21）` 一节（复核 P1/P2 的处置记录）；
+  - AC3 由 `[ ] <<PARTIAL>>` → `[x] <<MET>>`；AC7 由 `[ ] <<PARTIAL>>` → `[x] <<MET>>`；
+  - 新增 `## 允许修改范围（本轮实际使用）` 与 `> AC5 补充` 段（追加式）。
+

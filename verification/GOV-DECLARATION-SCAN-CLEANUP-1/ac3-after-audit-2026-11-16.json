@@ -2,18 +2,18 @@
   "schema_version": 1,
   "tool": "clean_workspace.py",
   "mode": "declaration_audit",
-  "generated_at": "2026-11-16T19:39:45+08:00",
+  "generated_at": "2026-11-16T20:19:27+08:00",
   "scan": {
-    "markdown": 3254,
-    "json": 2632,
+    "markdown": 3255,
+    "json": 2634,
     "unparsable_json": 2,
     "json_non_declaration": 69,
     "json_parse_fatal": 2,
-    "tracked_declaration_files": 15392,
+    "tracked_declaration_files": 15396,
     "untracked_declaration_files": 0,
     "declarations": 6800,
     "errors": 0,
-    "warnings": 821
+    "warnings": 822
   },
   "counts": {
     "declarations": 6800,
@@ -33,7 +33,7 @@
       "PRESERVE_USER_DATA": 29
     },
     "errors": 0,
-    "warnings": 821
+    "warnings": 822
   },
   "errors": [],
   "warnings": [
@@ -600,6 +600,12 @@
       "message": "source 'NOT_APPLICABLE' is descriptive text, not a path; skipped without protection",
       "file": "doc/tasks/FEA-11-HOST-AUTH-3.md",
       "locator": "line 7"
+    },
+    {
+      "code": "DECL_SOURCE_NOT_A_PATH",
+      "message": "source 'NOT_APPLICABLE（main 工作树实施）' is descriptive text, not a path; skipped without protection",
+      "file": "doc/tasks/FEA-11-LINEAGE-1.md",
+      "locator": "line 4"
     },
     {
       "code": "DECL_DESTINATION_PROSE",
@@ -4964,5 +4970,5 @@
       "locator": "RRI-07/PRESERVE_ROOTS"
     }
   ],
-  "report_sha256": "f73641599e76cf26f143bdc152b03e1b1cbdc5406250c7022826afc649cdd24a"
+  "report_sha256": "26225e7b3c6da8f46e722f6cedfddf0dea78f2b4ae44289a7de5ea31a522aa2d"
 }
