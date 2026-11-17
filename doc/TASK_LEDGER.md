@@ -26,8 +26,8 @@ Arithmetic note: `task files` = `terminal` + `non-terminal` + `(none)` rows. A `
 | `cancelled` | 21 | yes |
 | `historical` | 11 | yes |
 | `superseded` | 9 | yes |
-| `in_progress` | 5 | no |
-| `in_review` | 2 | no |
+| `in_review` | 4 | no |
+| `in_progress` | 3 | no |
 | `(none)` | 1 | no |
 | `approved` | 1 | no |
 | `blocked` | 1 | no |
@@ -39,11 +39,11 @@ Arithmetic note: `task files` = `terminal` + `non-terminal` + `(none)` rows. A `
 |---|---|---|
 | `GIT-CLEAN-PUBLICATION-DIAG-1` | `approved` | mentioned |
 | `FEA11-ENTRY-MISSING-1` | `blocked` | mentioned |
-| `DOC-CTRLCHAR-FIX-1` | `in_progress` | mentioned |
-| `GATE3-SETTINGS-SHORTCUT-1` | `in_progress` | mentioned |
 | `INSTALLER-MATRIX-1` | `in_progress` | mentioned |
 | `MAINT-1-RELEASE-MONITOR` | `in_progress` | own row |
 | `SIDECAR-REBUILD-1` | `in_progress` | own row |
+| `DOC-CTRLCHAR-FIX-1` | `in_review` | mentioned |
+| `GATE3-SETTINGS-SHORTCUT-1` | `in_review` | mentioned |
 | `GIT-CLEAN-PUBLICATION-1` | `in_review` | mentioned |
 | `GIT-CLEAN-RUST-ISOLATION-1` | `in_review` | mentioned |
 | `GIT-CLEAN-CORE-ENV-2` | `proposed` | mentioned |
