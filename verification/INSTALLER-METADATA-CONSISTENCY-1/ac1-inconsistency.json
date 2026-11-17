@@ -1,0 +1,55 @@
+{
+  "stage": "G:\\CODEX\\New Manga.workspace\\task-envs\\INSTALLER-MATRIX-1\\stage\\NewManga-0.1.1-win-x64",
+  "version_json_sha256": "c8459587974b028f30bcdd8048764b00fbdd734159a1e03a96f292de6eb78fd9",
+  "package_manifest_sha256": "68752b31fdc7ca62edf0cd8708dc70ac6c4f74040185fa0695e85ea4a8744b1c",
+  "version_json_bytes": 2518,
+  "package_manifest_bytes": 381448,
+  "onnx_count": 3,
+  "onnx_bytes": 632552582,
+  "onnx": [
+    {
+      "path": "app/core-sidecar/models/detector/rtdetr-v2-fixed.onnx",
+      "bytes": 171618071
+    },
+    {
+      "path": "app/core-sidecar/models/ocr/manga-ocr-onnx/decoder_model.onnx",
+      "bytes": 117480262
+    },
+    {
+      "path": "app/core-sidecar/models/ocr/manga-ocr-onnx/encoder_model.onnx",
+      "bytes": 343454249
+    }
+  ],
+  "comparison": [
+    {
+      "field": "version",
+      "version_json": "0.1.1",
+      "package_manifest": "0.1.0",
+      "verdict": "MISMATCH"
+    },
+    {
+      "field": "variant",
+      "version_json": "base",
+      "package_manifest": "base",
+      "verdict": "ok"
+    },
+    {
+      "field": "models_bundled",
+      "version_json": "(VERSION.json 无该字段；models 文本声明 BUNDLED)",
+      "package_manifest": "False",
+      "verdict": "MISMATCH（对实物）"
+    },
+    {
+      "field": "models_bytes",
+      "version_json": "实物 632552582 B（3 个 .onnx）",
+      "package_manifest": "0",
+      "verdict": "MISMATCH（对实物）"
+    },
+    {
+      "field": "files",
+      "version_json": "—",
+      "package_manifest": "1968",
+      "verdict": "n/a"
+    }
+  ]
+}

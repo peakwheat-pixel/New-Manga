@@ -1,0 +1,21 @@
+# INSTALLER-METADATA-CONSISTENCY-1 · AC1 实测（2026-11-17）
+
+# head: 7f59ae461
+# interpreter: python 3 (hashlib/json)
+# command: python -B <workspace>\tmp\r23\collect-metadata.py
+
+`VERSION.json` sha256 = c8459587974b028f30bcdd8048764b00fbdd734159a1e03a96f292de6eb78fd9（2518 B）
+`package-manifest.json` sha256 = 68752b31fdc7ca62edf0cd8708dc70ac6c4f74040185fa0695e85ea4a8744b1c（381448 B）
+
+| 字段 | VERSION.json | package-manifest.json | 判定 |
+|---|---|---|---|
+| version | 0.1.1 | 0.1.0 | MISMATCH |
+| variant | base | base | ok |
+| models_bundled | (VERSION.json 无该字段；models 文本声明 BUNDLED) | False | MISMATCH（对实物） |
+| models_bytes | 实物 632552582 B（3 个 .onnx） | 0 | MISMATCH（对实物） |
+| files | — | 1968 | n/a |
+
+实物：`app/core-sidecar/models/` 下 **3 个 .onnx / 632552582 B**
+- `app/core-sidecar/models/detector/rtdetr-v2-fixed.onnx` — 171618071 B
+- `app/core-sidecar/models/ocr/manga-ocr-onnx/decoder_model.onnx` — 117480262 B
+- `app/core-sidecar/models/ocr/manga-ocr-onnx/encoder_model.onnx` — 343454249 B

@@ -1,0 +1,8 @@
+verify-package-manifest: stage=G:\CODEX\New Manga.workspace\task-envs\INSTALLER-MATRIX-1\stage\NewManga-0.1.1-win-x64 repo=G:\CODEX\New Manga
+
+verify-package-manifest: FAILED with 5 problem(s)
+  FAIL: package-manifest.json version mismatch: manifest=0.1.0 VERSION.json=0.1.1
+  FAIL: package-manifest.json models_bundled mismatch: manifest=False actual=True (3 onnx files)
+  FAIL: package-manifest.json models_bytes mismatch: manifest=0 actual=632552582
+  FAIL: package-manifest.json lists 1968 file(s) but the stage holds 1036 (excluding the manifest itself)
+  FAIL: package-manifest.json lists 1041 file(s) that are not in the stage (e.g. app/core-sidecar/python/plugin-python.sha256, app/core-sidecar/python/plugin-python.txt, app/core-sidecar/python/python.exe, app/core-sidecar/python/python3.dll, app/core-sidecar/python/python312.dll)

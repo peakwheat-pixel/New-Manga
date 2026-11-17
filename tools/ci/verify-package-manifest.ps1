@@ -134,6 +134,65 @@ if ($null -eq $declaredBundled) {
     }
 }
 
+# ------------------------------------------------------------------------------- package-manifest.json cross-check
+# INSTALLER-METADATA-CONSISTENCY-1: this file ships as the package's own description, yet nothing
+# compared it with VERSION.json or with the files on disk. The 2026-11-15 stage carried a
+# package-manifest.json from 2026-10-28 saying version 0.1.0 / models_bundled false / models_bytes 0
+# while the very same stage had 3 onnx / 632,552,582 B and VERSION.json said 0.1.1. Every check below
+# is a failure, never a warning.
+$manifestPath = Join-Path $StageDir 'package-manifest.json'
+if (-not (Test-Path -LiteralPath $manifestPath)) {
+    Add-Failure "package-manifest.json not found at $manifestPath (the package must describe itself)"
+} else {
+    try {
+        $manifest = Get-Content -LiteralPath $manifestPath -Raw | ConvertFrom-Json
+    } catch {
+        Add-Failure "package-manifest.json is not valid JSON: $manifestPath"
+        $manifest = $null
+    }
+    if ($manifest) {
+        if ([string]$manifest.version -ne [string]$version.version) {
+            Add-Failure "package-manifest.json version mismatch: manifest=$($manifest.version) VERSION.json=$($version.version)"
+        }
+        if ([string]$manifest.variant -ne [string]$version.variant) {
+            Add-Failure "package-manifest.json variant mismatch: manifest=$($manifest.variant) VERSION.json=$($version.variant)"
+        }
+        if ($null -eq $manifest.models_bundled) {
+            Add-Failure "package-manifest.json has no models_bundled field"
+        } elseif ([bool]$manifest.models_bundled -ne ($onnx.Count -gt 0)) {
+            Add-Failure "package-manifest.json models_bundled mismatch: manifest=$($manifest.models_bundled) actual=$($onnx.Count -gt 0) ($($onnx.Count) onnx files)"
+        }
+        if ($null -eq $manifest.models_bytes) {
+            Add-Failure "package-manifest.json has no models_bytes field"
+        } elseif ([int64]$manifest.models_bytes -ne $onnxBytes) {
+            Add-Failure "package-manifest.json models_bytes mismatch: manifest=$($manifest.models_bytes) actual=$onnxBytes"
+        }
+        # The manifest must describe the stage that is on disk, not an older build of it.
+        # package.ps1 enumerates the stage BEFORE writing package-manifest.json, so the manifest
+        # itself is legitimately absent from its own list: exclude it from the on-disk count.
+        $listed = @($manifest.files)
+        $actualFiles = @(Get-ChildItem -LiteralPath $StageDir -Recurse -File |
+            Where-Object { -not ($_.FullName -eq $manifestPath) })
+        if ($listed.Count -ne $actualFiles.Count) {
+            Add-Failure "package-manifest.json lists $($listed.Count) file(s) but the stage holds $($actualFiles.Count) (excluding the manifest itself)"
+        }
+        $actualPaths = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::OrdinalIgnoreCase)
+        foreach ($file in $actualFiles) {
+            [void]$actualPaths.Add($file.FullName.Substring($StageDir.Length + 1).Replace('\', '/'))
+        }
+        $missing = [System.Collections.Generic.List[string]]::new()
+        foreach ($entry in $listed) {
+            $rel = [string]$entry.path
+            if (-not $rel) { Add-Failure "package-manifest.json has an entry with no path"; continue }
+            if (-not $actualPaths.Contains($rel)) { $missing.Add($rel) }
+        }
+        if ($missing.Count -gt 0) {
+            $preview = ($missing | Select-Object -First 5) -join ', '
+            Add-Failure "package-manifest.json lists $($missing.Count) file(s) that are not in the stage (e.g. $preview)"
+        }
+    }
+}
+
 # ------------------------------------------------------------------------------- report
 if ($failures.Count -gt 0) {
     Write-Host ''
