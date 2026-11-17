@@ -250,31 +250,37 @@ DSH 接管基线提交 `a3c936f68748047aee41c4c60d732adc5bdf55f7`（仅 `AGENTS.
 - **结果**：`892b946..e8147c6`，`push exit=0`，2 秒；远端 `clean-snapshot-20261026` = `e8147c6c8a7edde4e5784999454acb5732a869fb`。
 - **推送前验证**（快照目录内独立跑）：`tsc --noEmit` exit 0；`vitest` **60 files / 567 passed**；875 tracked files；禁区泄漏检查通过。
 - **远端 main**：仍为 `6a68fdeb9`，**未推**；本地 `main`=`b488f2ab4` 领先 2945 提交，保持本地。
+
 ## Closeout Record（2026-11-17，DSH 执行 CP-1/CP-2/CP-3/CP-5）
 
-- **Canonical Evidence**：\complete\（59 行，复核者实测 59/59 sha256 MATCH）。
-- **Resource Manifest**：\complete\（CP-2，见上表 12 行 + \RESOURCE-MANIFEST.json\；全部原地保留）。
-- **CP-1 收口依据**：本 Task 的交付物是**独立干净源码快照 + 固定交付 SHA + push 记录**，该目标已由 \34a90d001cce1fa966aec7d2b032bb5ad1cf148\（733 tracked、单 root、无 remote）与 2026-10-25/26、2026-11-02 的推送记录完成。
-  剩余 **AC4 的前端/Rust 部分属已被 AD-002 取代的 Tauri/React 旧栈**（\AGENTS.md\ 产品边界：Tauri/React 仅保留为历史证据，不再释放实现/诊断任务）；
-  **Python Core 仍属当前架构**，其 3 项 Hook 失败（沙箱无法授予 \python.exe\ 访问，\icacls\ 错误码 UNKNOWN）**仍作为 limitation 保留，不冒充已被 AD-002 取代**。
-  ⇒ 故本卡按 \closed_with_limitations\ 收口，**不置 \done\**，也**不宣称产品发布验收或 Gate 通过**。
-- **CP-3 指针**：\doc/STATUS.md\ 的 \clean-snapshot-20261026\ 已由不可解析的 \892b946e\ 更正为 \8147c6c\；\doc/TASK_LEDGER.md\ 由脚本重生成；\doc/REBASELINE_PLAN.md\ 表外节点随之收敛。
+- **Canonical Evidence**：complete（59 行，复核者实测 59/59 sha256 MATCH）。
+- **Resource Manifest**：complete（CP-2，见上表 12 行 + `RESOURCE-MANIFEST.json`；全部原地保留）。
+- **CP-1 收口依据**：本 Task 的交付物是独立干净源码快照 + 固定交付 SHA + push 记录，该目标已由 `e34a90d001cce1fa966aec7d2b032bb5ad1cf148`（733 tracked、单 root、无 remote）与 2026-10-25/26、2026-11-02 的推送记录完成。
+  剩余 **AC4 的前端/Rust 部分属已被 AD-002 取代的 Tauri/React 旧栈**（`AGENTS.md` 产品边界：Tauri/React 仅保留为历史证据，不再释放实现/诊断任务）；
+  **Python Core 仍属当前架构**，其 3 项 Hook 失败（沙箱无法授予 `python.exe` 访问，`icacls` 错误码 UNKNOWN）仍作为 limitation 保留，不冒充已被 AD-002 取代。
+  ⇒ 故本卡按 `closed_with_limitations` 收口，不置 `done`，也不宣称产品发布验收或 Gate 通过。
+- **CP-3 指针**：`doc/STATUS.md` 的 `clean-snapshot-20261026` 已由不可解析的 `892b946e` 更正为 `e8147c6c`；`doc/TASK_LEDGER.md` 由脚本重生成；`doc/REBASELINE_PLAN.md` 表外节点随之收敛。
 - **CP-5 限制清单**：见下节 L-1…L-12（逐条可核）。
-- **删除/迁移/归档**：**0**（全部 PRESERVE_*，未清理任何候选、缓存、证据或用户素材）。
-- **CP-6**：只置 \closed_with_limitations\；AC4 保持 \<<BLOCKED>>\、AC5 保持 \<<PARTIAL>>\，原字节未改。
+- **删除/迁移/归档**：0（全部 PRESERVE_*，未清理任何候选、缓存、证据或用户素材）。
+- **F-01 自伤与修复（2026-11-17，如实登记）**：本收口段的**初版**由 PowerShell here-string 写入，其中的反引号被当作转义符，
+  导致 `529febcf9` 引入 **16 个控制字符 + 106 个反斜杠**（把 `e34a90d`、`e8147c6c`、`verification/`、`test_assets`、`rust-default-parallel-r2` 等标识符打断）。
+  该缺陷由独立验证者 `verifier-gcp1-close` 抓出（报告 `doc/reviews/GIT-CLEAN-PUBLICATION-1-CLOSEOUT-VERIFICATION-2026-11-17.md` F-01，P1）；
+  **已整段重写并实测 `doc/tasks` 控制字符 = 0、反斜杠 = 0**。教训：写含反引号的 Markdown 一律用文件工具或 Python 显式写字节，不得用 PowerShell 双引号 here-string。
+- **CP-6**：只置 `closed_with_limitations`；AC4 保持 `<<BLOCKED>>`、AC5 保持 `<<PARTIAL>>`，原字节未改。
+- **数值口径说明（复核 F-02/F-03）**：`RESOURCE-MANIFEST.json` 覆盖 task-env 内 **16 个目录**（排除各仓库的 `.git/`），统计口径为 **28,920 文件 / 3,898,062,555 B**；同 16 目录**含 `.git`** 的磁盘实测为 **32,454 文件**（差额 3,534 为 4 个 `source-export` 的 `.git` 内部文件），manifest 不 attest 候选对象库。
+  `worktree` / DIAG task-env / `user-material` 三行的 `sha256/manifest` 仅表示"以该 manifest 为口径锚点 + 路径存在性已实测"，不表示这三处各自的逐文件摘要已被该 manifest 覆盖。
 
 ## 收口限制清单（L-1…L-12，来自 reviewer-gcp1 复核，全部保留）
 
-1. **L-1｜AC4 保持 BLOCKED**：Core 771 passed / 3 failed（同一参数化用例 3 组参数，\core-tests-r2.log\），r4 默认并发 151/2/1/12 exit 101（DIAG \ust-default-parallel-r2\），packaged 12/0/154 exit 0 仅为 DIAG 对 e34 packaged 源码的独立验证。
-2. **L-2｜AC5 保持 PARTIAL**：\delivery_head=e34a90d\、\HANDOFF.md\、59 项 Canonical Evidence 已形成，但产品级 Gate 未闭、后续快照 head 无独立 Review 绑定。
-3. **L-3｜快照时点**：\delivery_head\ 是源 main \349e61f\（2026-10-24）的快照，不含之后的 AD-002/Avalonia/FEA 提交，不得当作当前产品代码。
-4. **L-4｜日志证据纪律**：\erification/GIT-CLEAN-PUBLICATION-1/\ 的 19 个原始 \.log\ 无 EXIT/shell/venv 头；\eview-package-r2\ 的 19 个 envelope 是事后整理且 \env=UNRECORDED\。
-5. **L-5｜交付介质**：候选 live 工作树含 ignored \
-ode_modules\（约 84 MB）、\dist\、\erification/P04/diagnostic_p22_692_1792842383784.jsonl\；只允许 Git tracked 对象/分支交付，禁止复制或压缩 live 目录。
-6. **L-6｜后续 head 的审查缺口**：2026-10-26（\892b9469→e8147c6\）与 2026-11-02（\c7d488e\）两次快照分支推送有用户直接授权记录，但没有覆盖这些精确 head 的独立 Review/Appointment；唯一 push-gate Review 绑定 \34a90d\。
-7. **L-7｜远端未现场核验**：收口时仍未对远端做现场 \ls-remote\（复核时 proxy 失败 exit 128）；远端 refs 只能由本地记录与 \publish/clean-snapshot-20261026\/\20261102\ 副本间接核验。
-8. **L-8｜STATUS hash**：原 \892b946e\ 不可解析 —— **已在 CP-3 更正为 \8147c6c\**（本条保留为历史记录）。
-9. **L-9｜分项计数**：2026-10-26 卡面 \	est_assets(81)\ 与实测 86 不符（283+243+226+81+18+14+5=870≠875）；总量 875 正确，分项未改（冻结记录只读）。
-10. **L-10｜生成物字段**：\SOURCE_MANIFEST.json\ 的 \generated_files[5]\（\xperiments/TASK-016/samples/manifest.json\）缺 \generator\ 字段；来源仅由 \RESULT.md\ 文字闭合，不改候选字节。
-11. **L-11｜证据绑定口径**：Core 771/3 实测于 r2 \1e6935\、前端 435 实测于 r3 \87accae\，不是 e34 同 head 重跑；绑定依赖 tree 等价（\src=1571a2ca84…\、\	ests/core=da2f41fb16…\、\pps/desktop/frontend=662ad099f9…\）。
-12. **L-12｜产品 Gate 与远端 main 时间线**：安装包/签名/真实 GUI/模型/完整审计仍 \NOT_RUN\；远端 main 在 2026-10-29 记录为 \6a68fdeb\、2026-11-02 记录为 \1c1f5a5\，本卡未记录该变化来源，不得把 10-25 的「main 未变」外推到 11-02 之后。
+1. **L-1｜AC4 保持 BLOCKED**：Core 771 passed / 3 failed（同一参数化用例 3 组参数，`core-tests-r2.log`），r4 默认并发 151/2/1/12 exit 101（DIAG `rust-default-parallel-r2`），packaged 12/0/154 exit 0 仅为 DIAG 对 e34 packaged 源码的独立验证。
+2. **L-2｜AC5 保持 PARTIAL**：`delivery_head=e34a90d`、`HANDOFF.md`、59 项 Canonical Evidence 已形成，但产品级 Gate 未闭、后续快照 head 无独立 Review 绑定。
+3. **L-3｜快照时点**：`delivery_head` 是源 main `349e61f`（2026-10-24）的快照，不含之后的 AD-002/Avalonia/FEA 提交，不得当作当前产品代码。
+4. **L-4｜日志证据纪律**：`verification/GIT-CLEAN-PUBLICATION-1/` 的 19 个原始 `.log` 无 EXIT/shell/venv 头；`review-package-r2` 的 19 个 envelope 是事后整理且 `venv=UNRECORDED`。
+5. **L-5｜交付介质**：候选 live 工作树含 ignored `node_modules`（约 84 MB）、`dist`、`verification/P04/diagnostic_p22_692_1792842383784.jsonl`；只允许 Git tracked 对象/分支交付，禁止复制或压缩 live 目录。
+6. **L-6｜后续 head 的审查缺口**：2026-10-26（`892b9469→e8147c6`）与 2026-11-02（`ac7d488e`）两次快照分支推送有用户直接授权记录，但没有覆盖这些精确 head 的独立 Review/Appointment；唯一 push-gate Review 绑定 `e34a90d`。
+7. **L-7｜远端未现场核验**：收口时仍未对远端做现场 `ls-remote`（复核时 proxy 失败 exit 128）；远端 refs 只能由本地记录与 `publish/clean-snapshot-20261026`/`20261102` 副本间接核验。
+8. **L-8｜STATUS hash**：原 `892b946e` 不可解析 —— 已在 CP-3 更正为 `e8147c6c`（本条保留为历史记录）。
+9. **L-9｜分项计数**：2026-10-26 卡面 `test_assets(81)` 与实测 86 不符（283+243+226+81+18+14+5=870≠875）；总量 875 正确，分项未改（冻结记录只读）。
+10. **L-10｜生成物字段**：`SOURCE_MANIFEST.json` 的 `generated_files[5]`（`experiments/TASK-016/samples/manifest.json`）缺 `generator` 字段；来源仅由 `RESULT.md` 文字闭合，不改候选字节。
+11. **L-11｜证据绑定口径**：Core 771/3 实测于 r2 `b1e6935`、前端 435 实测于 r3 `87accae`，不是 e34 同 head 重跑；绑定依赖 tree 等价（`src=1571a2ca84…`、`tests/core=da2f41fb16…`、`apps/desktop/frontend=662ad099f9…`）。
+12. **L-12｜产品 Gate 与远端 main 时间线**：安装包/签名/真实 GUI/模型/完整审计仍 `NOT_RUN`；远端 main 在 2026-10-29 记录为 `6a68fdeb`、2026-11-02 记录为 `b1c1f5a5`，本卡未记录该变化来源，不得把 10-25 的「main 未变」外推到 11-02 之后。
