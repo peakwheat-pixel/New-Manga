@@ -2,7 +2,7 @@
 
 - 生成时间：2026-11-17 20:25 (+08:00)（本版为 **R22** 之后更新 —— 条件 3 关闭 + F11 样式修复）
 - 生成者：DSH（lead）
-- **当前 head：`2a495266a`**（main）；R18–R24 见 §3r–§3x（最新：ZCode 许可裁定采纳 + 生成器/护栏口径对齐）
+- **当前 head：`a5e57958b`**（main）；R18–R25 见 §3r–§3y（最新：方向 A 落地——AGPL 声明/NSIS 变体化/合规出包）
 - 工作区：干净（`git status --porcelain` 为空）
 - **R1**：`9ce819ae7` → `dd029b73f`（7 commit，目标 A/B/D 达成）
 - **R2**：`dd029b73f` → `5f2664c2e`（8 commit）—— 目标 C 闭合 10 条
@@ -1261,6 +1261,51 @@ reviewer-pvd 实测证明：**即使补上 sidecar 的 `build-manifest.json`，�
 - `MAINT-1-RELEASE-MONITOR`（in_progress，长期哨位）
 - `RELEASE-GATE4-SIGNED-MATRIX-1`（proposed；**先合规重建包** + 真证书）
 - `LICENSE-VARIANT-DECLARATION-1`（**blocked**：等用户选 A/B）
+
+---
+## 3y. R25（自动推进轮）—— ZCode 选向 A，许可证声明/NSIS/生成器全线落地
+
+### 结果一句话
+ZCode 第二次调用给出 **DECISION: A**（保留权重、整包 **AGPL-3.0**）。DSH 按 A 执行到底：
+**models 变体从干净 `package.ps1` 到护栏通过再到 `setup.exe` 出包，全程 EXIT=0**；旧的不合规包仍被护栏拒绝。
+
+### 提交链（main，均已 push、0 0）
+`02c3aaeda`（方向 A 全量改动 + 证据）→ `a5e57958b`（卡收口 + STATUS closed 10→13）。
+
+### 1) ZCode 的选向（原文）
+```
+DECISION: A
+REASON: 项目边界已明文预设「集成 AGPL-3.0 组件（如 Ultralytics）则整体按 AGPL-3.0 声明」，
+        且权重随包开箱可用是既有产品裁决（NSIS 438MiB 先例），移除权重属功能倒退。
+NEXT: 先在 THIRD_PARTY_LICENSES.md 把三项权重「[待核实]」核实落定为 AGPL-3.0，随后改 installer.nsi:60/:72/:73/:103。
+```
+**DSH 没有执行 NEXT 的前半句**：三项权重上游许可客观上未一手核实，写成「已核实 AGPL-3.0」就是伪造事实。
+改按同一裁定书 **R4 的保守出口**：未核实 ⇒ **整包声明 AGPL-3.0**（过度声明是安全方向），文档仍如实标「待核实」。
+
+### 2) 落地清单
+| 文件 | 改动 |
+|---|---|
+| `NOTICE.md` | models 权重表改为实际 3 个 ONNX（字节+sha256 前 16 位）；说明保守 AGPL；更正先前「yolo11s-seg」错误描述 |
+| `apps/desktop-avalonia/docs/LICENSE_AUDIT.md` | 变体表与 §3 按实物重写；标注待核实与保守结论；附「名为 base 实装 632 MB 权重却声明 GPL」的更正 |
+| `THIRD_PARTY_LICENSES.md` | §3 加「整包许可结论（保守策略）」段 |
+| `packaging/nsis/installer.nsi` | 四处硬编码改为 `${VARIANT_NAME}`/`${VARIANT_LICENSE}`；内容短语在脚本内推导（**中文不走命令行**，否则乱码） |
+| `build-installer.ps1` | 从 stage `VERSION.json` 取变体传 makensis；**有权重但 license≠AGPL-3.0 直接 throw**；build-info 的 variant/license 按实际记录 |
+| `package.ps1` | `package-manifest.json` 的 `models_bytes` 改 onnx 口径（+`models_dir_bytes`）；`bundled_weights_license` 由实际文件生成（不再硬编码 yolo11s-seg） |
+
+### 3) 实测（绿/红）
+- **绿（models 变体）**：`package.ps1 -WithModels` → `license=AGPL-3.0`、3 onnx / **632,552,582 B**、`app_build` 有值；护栏 **`OK / EXIT=0`**；
+  `build-installer.ps1` → `INST_EXIT=0`，`setup.exe` **652,157,341 B / sha256 `a4b11458…`**，`build-info.variant=models`。
+- **红（旧 stage）**：`INSTALLER-MATRIX-1` 那个 base 名 + 632 MB 权重 + GPL 声明 → 护栏 **EXIT=1（8 条 FAIL）**。
+
+### 4) 本轮踩坑（都记在证据里）
+- `installer.nsi` 的 `!define VARIANT_*` 一开始放在**首次使用之后** → NSIS 报未定义；已移到 `VIAddVersionKey` 之前。
+- `/DVARIANT_CONTENT=含模型权重…` 经命令行传给 makensis 变成**乱码**（日志可见 `��ģ��Ȩ��`）⇒ 改成只传 ASCII，中文在 `.nsi` 内推导。
+- `build-info.json` 的 `variant`/`license` 原为硬编码 `base`/空 → 改由 stage `VERSION.json` 读；中途因 `$variant` 作用域未定义报错，改用 `$script:` 前缀。
+- AC 标记再次踩「`<<MET>>` 不得附原因」→ 已改回纯 `<<MET>>`。
+
+### 5) 非终态卡（2 张）
+- `MAINT-1-RELEASE-MONITOR`（in_progress）
+- `RELEASE-GATE4-SIGNED-MATRIX-1`（proposed；现已有**合规 models 包**可作矩阵输入，但仍需真证书）
 
 ---
 ## 4. 关键技术事实（R1/R2 累积）
