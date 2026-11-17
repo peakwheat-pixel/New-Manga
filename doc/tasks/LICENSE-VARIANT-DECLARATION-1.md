@@ -127,6 +127,13 @@ DSH 已按用户授权把选向交给 ZCode，但第二次调用**正文截断**
 | EV-LVD-10 | AC6 新 setup.exe 内的文件清单（含四份文档的字节数与 mtime） | verification/LICENSE-VARIANT-DECLARATION-1/ac6-setup-contents.log | 354a2536f | 202a9185faf75d9a514c34092e5b55383d2c8af3af058c8be7d02f2232d28339 | CANONICAL | BLOB |
 | EV-LVD-11 | AC7 向导欢迎页实拍（models / 含模型权重 / AGPL-3.0） | verification/LICENSE-VARIANT-DECLARATION-1/ac7-wizard-welcome.png | 8bbc4ae48 | 0ccf76e70e7c9ba8c167dc1a2ce53a3e2972ff1629af1d44c4aa2d90bfdfaab4 | CANONICAL | BLOB |
 | EV-LVD-12 | AC7 向导许可页实拍（正文中文正常） | verification/LICENSE-VARIANT-DECLARATION-1/ac7-wizard-license.png | 8bbc4ae48 | 153c7b89c3707f07ee299218c9802cfbe54122c7242522da136481e44f7a5436 | CANONICAL | BLOB |
+| EV-LVD-13 | AC8 三项权重本地不可自证（ONNX 无许可元数据） | verification/WEIGHTS-LICENSE-PROVENANCE-1/ac1-onnx-metadata-probe.log | 49d1486b1 | c930d3f70ff499f2113b8b826844812cc704071b914a722251ce3e2f1bb18ec8 | CANONICAL | BLOB |
+| EV-LVD-14 | AC8 上游声明来源（URL + 抓取日期） | verification/WEIGHTS-LICENSE-PROVENANCE-1/weights-licenses.json | 49d1486b1 | 1af45a6f4a5773052a89f47b6e7649f05de0e3b5a89c7a02a2a9cbccc29d34f7 | CANONICAL | BLOB |
+| EV-LVD-15 | AC9 新 GPL 包内六份许可文件与仓库逐字节相同 | verification/WEIGHTS-LICENSE-PROVENANCE-1/ac2-gpl-package-docs-match.log | 49d1486b1 | 04c729d6536b0631eabfcce52279f373767ef66ca8a94deacf5784336e6ff397 | CANONICAL | BLOB |
+| EV-LVD-16 | AC9 新安装器 build-info（license=GPL-3.0-or-later / sha256） | verification/WEIGHTS-LICENSE-PROVENANCE-1/ac2-installer-build-info.json | 49d1486b1 | 2648c3fcbec65c748e24a4088d761eee0c6aeb74ed30cbbf9c6724df489477ce | CANONICAL | BLOB |
+| EV-LVD-17 | AC9 向导欢迎页实拍（GPL-3.0-or-later） | verification/WEIGHTS-LICENSE-PROVENANCE-1/ac2-wizard-welcome-gpl.png | 49d1486b1 | 1f77a6e9109c4c6e656ed22e4174a82d19139379f6312320d2d257a351ad6882 | CANONICAL | BLOB |
+| EV-LVD-18 | AC9 向导许可页实拍（含 Apache 副本清单） | verification/WEIGHTS-LICENSE-PROVENANCE-1/ac2-wizard-license-gpl.png | 49d1486b1 | 28433d582d4e5cded71c3f12f7feb8a0b74b1161b3f1d2ad37bec1fff531db46 | CANONICAL | BLOB |
+| EV-LVD-19 | AC8/AC9 收紧裁定全文与采纳记录 | doc/reviews/ZCODE-RULING-INSTALLER-LICENSE-2026-11-17.md | 49d1486b1 | c7460973dd8178381e269813a31fd0394670b7bf8deeb148cb42e3ee5b014947 | CANONICAL | BLOB |
 
 ## Resource Manifest
 
@@ -181,3 +188,24 @@ fail-closed 探针（合成 stage 在 `license=GPL-3.0-or-later` 下 `BUILD_EXIT
 2. 安装向导**实际渲染**未目验（只验证 makensis 编译 + 变体定义送达 + LegalCopyright 版本资源）；
 3. `setup.exe` **未签名**（`authenticode=NotSigned`）—— 条件 4 仍需真证书；
 4. 条件 4 必须在**这个新包**上重跑矩阵，旧结果不可沿用。
+
+## 2026-11-17 收紧为 GPL-3.0-or-later（ZCode TIGHTEN_TO_GPL，已执行）
+
+**触发事实**：① 整包 AGPL 的唯一事实源 `yolo11s-seg.onnx` **已不在 sidecar**；② 现有三项权重的 ONNX **无可读许可元数据**（本地无法自证）；
+③ 上游三方来源（HF 模型卡 / nixpkgs / 百度 AI Studio + Roboflow）**均声明 Apache-2.0**（登记于 `verification/WEIGHTS-LICENSE-PROVENANCE-1/weights-licenses.json`，含 URL 与抓取日期）。
+
+**裁定**：ZCode 第三次调用 → `TIGHTEN_TO_GPL`（全文与采纳记录见 `doc/reviews/ZCODE-RULING-INSTALLER-LICENSE-2026-11-17.md` 末节）。
+
+**执行结果**：
+- `package.ps1`：`$licenseDeclaration` 恒为 `GPL-3.0-or-later`；许可清单加入 `LICENSE-Apache-2.0.txt`（新增仓库根文件，10,174 B，sha256 `0d542e0c…`）。
+- `build-installer.ps1`：硬校验**反转** —— 含 ONNX 时必须 ① `license=GPL-3.0-or-later`、② 该权重的 THIRD_PARTY 行不含「待核实」且含「Apache-2.0」、③ stage 内有 Apache 全文副本，否则 throw。
+- 文档：`NOTICE.md`（变体表 + 结论段 + 五件套 + 「两变体许可相同」）、`THIRD_PARTY_LICENSES.md` §3、`LICENSE_AUDIT.md` 全部同步。
+- **重新打包 + 重新取证**：models 变体 `license=GPL-3.0-or-later`、3 onnx / 632,552,582 B、护栏 `EXIT=0`；
+  新 `setup.exe` **652,037,404 B / sha256 `6f9a45f32ea3450efcfb565fe83db25ee98ed6345934c2c183f86c9208283f08`**；
+  从 exe 抽出**六份**许可文件与仓库逐字节 **SAME=True**；向导实拍「models 变体（含模型权重，按 **GPL-3.0-or-later** 分发）」、许可页正文中文正常且清单已含 Apache 副本。
+
+**新增限制/注意**：
+1. **Apache-2.0 是上游声明**，本仓库**不做法律认定**；本地 ONNX 无许可元数据，结论只以上游声明为依据。
+2. **防回归**：若将来重新打入任何 AGPL 权重（如 `yolo11s-seg.onnx`），必须同时把 `NOTICE.md` 变体表 + `package.ps1` 判定改回 AGPL；`THIRD_PARTY_LICENSES.md` §3 的 AGPL 依据段已保留。
+3. 第一版 r27 打包曾产出「AGPL 文案」的旧截图（脚本路径指向旧 exe）—— 已重截，**以 `ac2-wizard-*-gpl.png` 为准**。
+4. `setup.exe` 仍未签名；条件 4 仍需真证书（清单见 `doc/reviews/RELEASE-GATE4-EXECUTION-CHECKLIST-2026-11-17.md`）。
