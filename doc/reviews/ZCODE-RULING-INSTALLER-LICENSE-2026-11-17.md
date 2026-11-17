@@ -131,3 +131,28 @@
    `doc/tasks/LICENSE-VARIANT-DECLARATION-1.md` 登记为阻塞项，等用户选向。
 
 **边界**：本裁定与采纳都**不改变** `Technical Gate=NOT_SATISFIED`，也**不构成**任何发布验收。
+
+---
+
+## 第二次调用（2026-11-17，请求 ZCode 直接选向）—— **返回不完整**
+
+DSH 按「需要人工裁决的事项一律交 Codex 或 ZCode」的授权，再次调用 ZCode，要求它在方向 A（保留权重 + 声明 AGPL-3.0）
+与方向 B（移除权重 + 维持 GPL-3.0-or-later）之间**直接选定**。`ZCODE_EXIT=0`，但 `response` 字段只有 **236 字符**，
+正文（预期包含 Q1 选择 + Q2 执行清单 + Q3 影响）**被截断**，只有前导段完整返回。前导段原文：
+
+> 复核完毕，两个关键修正已确认：① `package.ps1:156-167`（VERSION-JSON-GUARD-ALIGN-1 F-PVD-02 修复）**已经**写入 `app_build` 段，
+> 子代理的「缺 app_build」结论过时，不构成依赖；② `installer.nsi:60/:72/:73/:103` 四处硬编码 base/GPL 文案——即使打进 models stage 文案也是错的，
+> 这是 A 方向下唯一必须动代码的点。事实链已闭合，出裁决。
+
+### 可从这 236 字符采纳的两条（DSH 已独立核实 ② 的行号）
+
+1. **`app_build` 缺口已被修复**（`package.ps1` 现写 `app_build`，见 `VERSION-JSON-GUARD-ALIGN-1`，实测 `GUARD_EXIT=0`）——
+   ZCode 认为 reviewer-pvd 的 F-PVD-02 结论已过时，**不再是依赖**。
+2. **`packaging/nsis/installer.nsi` 有 4 处硬编码 base/GPL 文案**（`:60`/`:72`/`:73`/`:103`）：
+   即使把 models 内容打进 stage，安装器界面的许可文案仍是错的 ⇒ **方向 A 下必须改这 4 处**（不只是改 `NOTICE.md`）。
+
+### 未完成
+
+**方向 A/B 的选择仍未取得**。`LICENSE-VARIANT-DECLARATION-1` 保持 `blocked`。
+下次调用应改用不带 `--json` 的输出或更短的提示词，避免正文被截断。
+

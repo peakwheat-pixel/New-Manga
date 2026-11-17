@@ -12,6 +12,7 @@ reviewer: null
 depends_on:
   - INSTALLER-MATRIX-1
   - INSTALLER-METADATA-CONSISTENCY-1
+  - VERSION-JSON-GUARD-ALIGN-1
 base_commit: null
 branch: null
 worktree: null
@@ -91,3 +92,21 @@ DSH 按「需要人工裁决交 Codex/ZCode」的授权只能拿到**规则**，
 - Handoff：尚无。
 - Review：尚无（须独立上下文）。
 - 实际测试：尚无。
+
+## 2026-11-17 追加：ZCode 第二次调用的两条可用修正
+
+（第二次调用的正文被截断，只有 236 字符前导段；原文见 `doc/reviews/ZCODE-RULING-INSTALLER-LICENSE-2026-11-17.md` 末节。）
+
+1. **`app_build` 缺口已修**（`VERSION-JSON-GUARD-ALIGN-1`，实测 `package.ps1 exit=0` → 护栏 `OK / EXIT=0`）⇒ 不再是本卡的依赖障碍。
+2. **`packaging/nsis/installer.nsi` 有 4 处硬编码 base/GPL 文案**（DSH 已核实行号）：
+   - `:60` `VIAddVersionKey "LegalCopyright" "GPL-3.0-or-later (base) / AGPL-3.0 for the models package…"`
+   - `:72` `MUI_WELCOMEPAGE_TEXT "本安装包为 base 变体（不含模型权重，按 GPL-3.0-or-later 分发）…"`
+   - `:73` `MUI_LICENSEPAGE_TEXT_TOP "base 变体整体按 GPL-3.0-or-later 分发…"`
+   - `:103` `FileWrite $InstallLog "variant=base (GPL-3.0-or-later; unsigned)…"`
+
+   ⇒ **方向 A 下必须同时改这 4 处**（把「base/GPL」改成与实际变体一致），否则安装向导与安装日志仍在对接收方作错误声明。
+   这使得 AC2 的范围从「四份文档」扩到「四份文档 + `installer.nsi` 四处」。
+
+## 仍缺：方向选择
+
+DSH 已按用户授权把选向交给 ZCode，但第二次调用**正文截断**，未取得 A/B 结论。本卡继续 `blocked`；下次调用改用不带 `--json` 的输出或更短提示词。
