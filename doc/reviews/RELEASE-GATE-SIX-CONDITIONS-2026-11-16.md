@@ -375,3 +375,15 @@ Gate 仍 `BLOCKED`，但已完全「可评估」。**
 
 - **判定**：条件 6 = **已关闭**（机械门禁 + 独立最终 Review + 登记 + 精度修复齐备）。
 - **不变**：条件 3/4/5 仍开放 ⇒ §7「Gate 总体 `BLOCKED`」继续有效；`13_RELEASE_GATE.md:32` 的发布决定不改。
+
+---
+
+## 2026-11-18 更正：条件 4 的真实状态（不修改上文原始行）
+
+上文「条件 4 差**真实证书 + 真实 Windows 矩阵**（外部资源）」在 2026-11-18 已过时，**仅作历史记录保留**。
+
+- **用户裁决**（2026-11-18）：本项目**不需要证书**（`doc/reviews/USER-RULING-2026-11-18-NO-SIGNING.md`）⇒ 证书不再是条件 4 的前置。
+- **矩阵已执行并复核**：`RELEASE-GATE4-SIGNED-MATRIX-1` 的 AC1–AC6 已完成，独立复核两轮（首轮 `ACCEPTED_WITH_FINDINGS`，P1×2 已实质关闭），
+  复核者明确「条件 4 可以 `closed_with_limitations`」。证据：`verification/RELEASE-GATE4-SIGNED-MATRIX-1/`；
+  报告：`doc/reviews/RELEASE-GATE4-MATRIX-REVIEW-2026-11-18.md`。
+- **限制**：单机非 VM 快照、既有数据根、只覆盖 0.1.0↔0.1.1、未签名、AC4 用隔离数据根——均已在卡面登记。
