@@ -263,3 +263,68 @@ python -c "…json + os.walk + hashlib.sha256…"   # missing=0 / added=0 / mism
 # 治理
 pwsh -NoProfile -File tools/governance/check.ps1 -TaskPath doc/tasks/RELEASE-GATE4-SIGNED-MATRIX-1.md
 ```
+
+---
+
+# P1 复检追加（2026-11-18，reviewer-g4）
+
+> 只复核 P1-01 / P1-02 的处置，未重做整轮复核，未重装/卸载任何东西。复核目标 head = **`bf7859965`**；复核时实际 HEAD 已到 `dc1caccbb`（仅补登 EV-G4-11/12，doc-only），P1 判定以 `bf7859965` 为准。
+
+## 12. P1-01：AC5 用真实历史 0.1.0 包重做 —— **CLOSED**（附 caveat）
+
+### 12.1 实测核对
+
+- 历史包指纹：`G:\CODEX\New Manga.workspace\task-envs\GATE4-PAGES-UPGRADE-1\out-0.1.0\NewManga-0.1.0-setup.exe`
+  = **652,164,075 B / sha256 `1d573ab4…` / setup FileVersion=0.1.0**，与新日志第 8 行一致。
+- 历史 stage 的 app exe：`…\stage-0.1.0\NewManga-0.1.0-win-x64\app\NewManga.App.exe`
+  = **99,554,850 B / sha256 `a3ec2133b5da3f619b752c818371ba54867b4c150fdba65b8c22d8b17f739230`**，与新日志第 21/40 行一致；`FileVersion=0.1.1.0`、`ProductVersion=0.1.1+71cecb95a10c42ffe02d1396ab065e1fc9c43ca9`。
+- 历史包构建点 `71cecb95` = **2026-11-15 04:44** 的真实旧提交（`git merge-base --is-ancestor 71cecb95 HEAD` 为真）；`71cecb95..bf7859965` 的产品面差异为 **55 files / +3,860 / −208**（含 Host/Python 测试、`packaging/nsis/installer.nsi` 等），不是同源重构。
+- 0.1.1 stage exe = 37,344,576 B / `c2bf9265…`（新日志第 30 行），与既有一致。
+- 回退后 app exe 回到 `a3ec2133…`（新日志第 40 行），与首次 0.1.0 相同。
+- 数据根五步：第 13/20/29/39/47 行均为 **530 文件 / 684,197,540 B**；当前机器确已卸载（程序目录/卸载项/Start Menu 均不存在），数据根仍 530 / 684,197,540 B。
+- Start Menu：新日志第 22-24/31-33/41-43 行在三次安装后均记录 `New Manga.lnk` 2,304 B + `卸载 New Manga.lnk` 1,279 B（附 sha256）。
+
+### 12.2 判定
+
+**P1-01 CLOSED。** 这次用的是真实旧包、真实旧二进制（99.5 MB 旧构建 vs 37.3 MB 单文件构建，构建 commit `71cecb95` vs `292f2e77`），升级/回退是真卸载重装；不是上一轮那种同源改标签。
+
+**必须写入 limitation 的 caveat**：
+
+1. 历史 0.1.0 的 app **也自报** `FileVersion=0.1.1.0`、`ProductVersion=0.1.1+71cecb95…`。因此「0.1.0」是**安装器/包级版本**，不是应用自报版本；若 Gate 的「版本」要求应用可见版本变化，这一项仍未满足；若要求真实旧二进制升级/回退，已满足。
+2. 新日志**未打印收尾卸载的 ExitCode**：脚本 `ac5-real-upgrade.ps1:101` 计算了 `$u4`，但日志第 45-49 行没有输出它，而第 56 行声称「全部 ExitCode=0」。补一行 `卸载 ExitCode=$u4` 即可。
+3. 升级/回退后**没有启动 app 读取数据**；AC5 的 AC 文本不要求，但「真实跨版本兼容」若要更强，需补一次启动/读取，或写入 limitation。
+
+## 13. P1-02：Start Menu 证据补正 —— **CLOSED**
+
+- `ac3-clean-install.log` 的 diff **只在末尾追加 9 行**（第 22-29 行），原第 1-20 行逐字保留，原「Start Menu 项: 0（）」未被覆盖；追加说明与实际原因一致（`ac3-install.ps1:68-69` 的 `-Filter '*NewManga*'` 漏了目录名 `New Manga` 中的空格）。
+- 卡面 AC3 行已改为引用 `ac5-upgrade-rollback-real.log`，保留「原 0 项是过滤串写错」的更正说明；两个 `.lnk` 的 2,304 / 1,279 B 在新日志第 23-24/32-33/42-43 行有字节与 sha256，**不再是未背书数字**。
+- `ac6-uninstall.log` 仍证明卸载后 Start Menu 目录被清理（存在=False）。
+
+**残余 P2（不阻断）**：
+
+1. AC3 那次 0.1.1 干净安装本身仍没有 Start Menu 快照；现有尺寸来自**同一 0.1.1 安装器**在 AC5 重做中的第 2 步（新日志第 31-33 行）。作为等价证据可接受，但不是同一次安装实例；若要严格同实例，补一条 AC3 安装后的 Start Menu 快照。
+2. 三次安装的 `.lnk` **sha256 各不相同**（2,304/1,279 B 稳定）；这通常是 `.lnk` 内嵌目标/时间等元数据所致，但日志未说明，容易被误读为捷径内容不一致。建议加一句「尺寸稳定、sha256 随安装时间变化」。
+
+**P1-02 CLOSED。**
+
+## 14. 五条 limitation 是否足够
+
+方向正确，但按我上一轮标准，**需要两处补充、一处措辞修正**：
+
+1. **补充**：历史 0.1.0 的 app 自报 `FileVersion 0.1.1.0`（见 §12.2）；AC5 未在升级/回退后启动应用读取数据。
+2. **补充（P2-01/P2-02）**：卡面 P2 段写 P2-01/P2-02「见下方 limitation」，但五条 limitation 里**没有**这两项——AC6 未明写卸载的是 0.1.0；`ac6-dataroot-before.json` 是 AC1 安装前基线，不是 AC6 卸载前清单。要么补进 limitation，要么删掉这个悬空引用。
+3. **措辞**：limitation 3 的「历史 0.1.0 包属旧构建（base 变体）」应补一句「其 app 自报 0.1.1.0；0.1.0 为包/安装器标签」，否则读者会以为应用版本也变成了 0.1.0。
+
+其余四条（单机/无 VM 快照、既有数据根、未签名、AC4 隔离数据根）表述可以保留。
+
+## 15. 条件 4 能否 `closed_with_limitations`
+
+**可以。** 两条 P1 已实质关闭；下面只是关闭登记前建议补齐的 **P2/登记项**，不构成新的阻断性证据缺口：
+
+1. 新 AC5 日志补收尾卸载 `ExitCode`（或不再声称未展示的那一项）。
+2. limitation 3 补「app 自报 0.1.1.0 + 未启动应用读取数据」；并解决 P2-01/P2-02 的悬空「见下方 limitation」引用。
+3. Canonical Evidence 补钉：修改后的 `ac3-clean-install.log` 在 `bf7859965` 的新 blob 为 `b2969af65dd09e83292b0708b40475335b5749148b8a8ff935d6ecb4edf98b81`，而 EV-G4-02 仍指 `12bb456fa` 的旧 blob `7c72e576…`——建议新增一条 EV 或在 EV-G4-02 注明「含追加更正前的 12bb456fa 版本」；本次追加会改变复核报告字节，EV-G4-12 的 `f5a6f76e…` 需随新提交重钉（EV-G4-11 已与 `ac5-upgrade-rollback-real.log` 的 `e769ca2e…` 匹配）。
+4. `doc/reviews/RELEASE-GATE-SIX-CONDITIONS-2026-11-16.md:31` 仍把「真实证书」列为条件 4 缺口（P2-07）；关闭前同步该行或注明已被 `MAINT-1` 的 2026-11-18 更正覆盖。
+5. 可选：给 AC3 补一条同实例 Start Menu 快照，或明确接受「同一安装器、另一安装实例」的等价证据。
+
+除这些 P2/登记项外，**没有发现阻止 `closed_with_limitations` 的新证据缺口**；条件 4 可关闭，但仍**不得**写成无条件 `closed` 或「条件 4 通过」的更强结论，且不改变 `Technical Gate=NOT_SATISFIED`。

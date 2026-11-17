@@ -3,12 +3,12 @@ id: RELEASE-GATE4-SIGNED-MATRIX-1
 title: Gate 条件 4 —— Authenticode 签名 + 真实 Windows 安装矩阵
 kind: infra
 governance_version: 3
-status: in_progress
+status: closed_with_limitations
 disposition: "Gate 条件 4 的真实签名与跨版本矩阵：INSTALLER-MATRIX-1 只做了旧 sidecar 的机制验证（无签名、AC7 NOT_RUN、跨版本未证明）"
 approval: DSH 2026-11-17（按 Codex 裁定 Q3 释放范围；执行前需冻结签名凭据与环境可用性）
 suggested_owner: DSH
-owner: null
-reviewer: null
+owner: DSH
+reviewer: reviewer-g4（DSH 子 agent，独立上下文；两轮复核：2026-11-18）
 depends_on:
   - INSTALLER-MATRIX-1
 base_commit: null
@@ -16,8 +16,8 @@ branch: null
 worktree: null
 integration_commit: null
 delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/RELEASE-GATE4-SIGNED-MATRIX-1
 allowed_paths:
   - doc/tasks/RELEASE-GATE4-SIGNED-MATRIX-1.md
@@ -48,16 +48,13 @@ Release Gate 条件 4 要求「对当前固定产品 commit 生成并固定 Wind
 
 ## Acceptance Criteria
 
-- [x] **AC1 环境与包冻结**：记录真实 Windows 环境（版本/构建）与安装包 hash（大小/sha256）、测试机标识；**不需要证书身份或时间戳服务器**
-  （2026-11-18 用户裁决：本项目不需要证书）。 <<MET>>
-- [x] **AC2 未签名状态如实披露**：`Get-AuthenticodeSignature` 结果必须记录为 `NotSigned`，并在安装说明/发布页写明 SmartScreen 会提示；
-  **不得**暗示曾验证签名，**不得**用自签名或跳过时间戳来"凑"。 <<MET>>
-  （原 AC2「Authenticode 签名可验证」按 2026-11-18 用户裁决作废，见 `doc/reviews/USER-RULING-2026-11-18-NO-SIGNING.md`。）
+- [x] **AC1 环境与包冻结**：记录真实 Windows 环境（版本/构建）与安装包 hash（大小/sha256）、测试机标识；**不需要证书身份或时间戳服务器**（2026-11-18 用户裁决：本项目不需要证书）。 <<MET>>
+- [x] **AC2 未签名状态如实披露**：`Get-AuthenticodeSignature` 结果必须记录为 `NotSigned`，并在安装说明/发布页写明 SmartScreen 会提示；**不得**暗示曾验证签名，**不得**用自签名或跳过时间戳来"凑"（原 AC2「签名可验证」按 2026-11-18 用户裁决作废，见 `doc/reviews/USER-RULING-2026-11-18-NO-SIGNING.md`）。 <<MET>>
 - [x] **AC3 clean install**：在干净环境执行静默安装，记录 exit code、安装后文件清单与哈希、HKCU 卸载项、Start Menu 快捷方式。 <<MET>>
-- [x] **AC4 四页可达（打包产物）**：从**安装后的 exe** 依次到达书架 / 工作台 / 阅读器 / 设置，用截图或可核验的 UI 自动化证据证明；不得用 headless 渲染冒充真实窗口（Codex Q3 条件 3 同理）。
+- [x] **AC4 四页可达（打包产物）**：从**安装后的 exe** 依次到达书架 / 工作台 / 阅读器 / 设置，用截图或可核验的 UI 自动化证据证明；不得用 headless 渲染冒充真实窗口（Codex Q3 条件 3 同理）。 <<MET>>
 - [x] **AC5 跨版本升级与回退**：安装上一版本 → 覆盖安装当前版本 → 回退到上一版本，逐步记录版本号、文件哈希与用户数据根清单；**只改版本标签的“回退”不算**。 <<MET>>
 - [x] **AC6 卸载与用户数据保护**：静默卸载后程序目录/HKCU/StartMenu 清理，`%APPDATA%\com.newmanga.desktop` 文件清单+哈希前后一致。 <<MET>>
-- [ ] **AC7 边界与不虚报**：产物全部在 workspace / 目标机，**不提交二进制**；**不宣称 `Technical Gate` 或条件 4 通过**；条件 5 的质量基线与本卡无关。
+- [x] **AC7 边界与不虚报**：产物全部在 workspace / 目标机，**不提交二进制**；**不宣称 `Technical Gate` 或条件 4 通过**；条件 5 的质量基线与本卡无关。 <<MET>>
 
 ## 允许修改范围
 
@@ -137,12 +134,43 @@ Release Gate 条件 4 要求「对当前固定产品 commit 生成并固定 Wind
 - **P1-01（已修，重做 AC5）**：原 AC5 用的「0.1.0」是同日同源重构包，其 app 仍自报 `FileVersion 0.1.1.0`、`ProductVersion 0.1.1+292f2e77…` ⇒ 只验证了**安装器级**回退。
   已改用**真实历史 0.1.0 包**（`1d573ab4…`，app exe 99,554,850 B / `a3ec2133…`）重跑，app 二进制与当前 0.1.1（37,344,576 B / `c2bf9265…`）**确实不同**，回退后 exe 与首次 0.1.0 一致。
 - **P1-02（已修，补正证据）**：AC3 日志的 `Start Menu 项: 0` 是采集脚本过滤串漏空格所致；正确证据（两个 `.lnk` + 字节 + sha256）见 `ac5-upgrade-rollback-real.log`，AC3 日志已**追加**更正说明（原字节保留）。
-- **P2 处置**：P2-01（AC6 未写明卸载的是 0.1.0）/P2-02（JSON 是 AC1 安装前基线而非卸载前清单）——见下方 limitation；P2-03（测试要求表 NOT_RUN）如实保留；P2-04（截图无版本号）已在本段说明：**截图证明的是"页面可达"，不承担版本标识职责**，版本由注册表与 exe 指纹证明。
+- **P2 处置**：P2-01 / P2-02 已**逐条列入下方 Limitations 第 6、7 项**；P2-03（测试要求表 NOT_RUN）如实保留；P2-04（截图无版本号）说明见本段末尾；P2-05/P2-06 见 Limitations 第 8 项。
 
 ### Limitations（关闭条件 4 时必须一并登记）
 
 1. **单机、非全新 VM、无快照**：全部在本机（HOME-MY，Win11 10.0.26300）执行；没有干净 VM/快照，"干净"是**先卸载到 0 文件**达成的，不是镜像级干净。
 2. **用户数据根是既有真实数据**（530 文件 / 684,197,540 B），不是新建空库；因此验证的是"卸载/升级**不动**既有数据"，未验证"空数据根首次安装"。
 3. **AC5 只覆盖 0.1.0 ↔ 0.1.1 两版**，未覆盖更早版本或跨多个大版本的升级链；历史 0.1.0 包属旧构建（base 变体），升级到 models 变体后文件数 1,040 与干净安装一致，但**未逐一比对每个文件来源**。
+   - **版本标识 caveat（复核者指出）**：历史 0.1.0 包的 **app exe 自身也自报 `FileVersion=0.1.1.0`**（`ProductVersion=0.1.1+71cecb95…`）；
+     0.1.0 是**安装器/包级标签**，不是 app 内嵌版本。跨版本的判据是 **app 二进制不同**（99,554,850 B `a3ec2133…` vs 37,344,576 B `c2bf9265…`，构建自真实旧提交 `71cecb95`）。
+   - **升级/回退后未启动 app 读取数据**：只验证了安装/卸载的文件与注册表状态，没有在 0.1.0→0.1.1 升级后启动应用确认既有 530 文件库可读。
 4. **未签名**（用户裁决不需要）；SmartScreen 提示未在截图中复现。
 5. **AC4 用隔离数据根副本**，未在真实用户数据根下走四页。
+6. **P2-01**：AC6 卸载日志没有明写"卸载的是 0.1.0"（AC5 收尾时装的是 0.1.0）；`ac6-uninstall.log` 的起点快照显示程序目录 1,040 文件对应的是 0.1.0 安装，但日志本身未加这句说明。
+7. **P2-02**：`ac6-dataroot-before.json` 是 **AC1 安装前基线**（更早），不是 AC6 卸载前的即时清单；AC6 脚本在卸载前另行建了内存表用于逐文件比对，两者结论一致（丢失 0 / 新增 0 / 变化 0），但 JSON 本身不是"卸载前"那一刻的。
+8. **P2-06**：AC3 那次 0.1.1 安装本身没有同实例的 Start Menu 快照；现有 `.lnk` 尺寸/sha256 来自**同一安装器的另一次安装**（AC5 重做中的 0.1.1 安装），属等价证据但非同实例。三次安装的 `.lnk` sha256 不同而尺寸稳定，原因是快捷方式内嵌了安装路径/时间戳类字段，尺寸不变。
+
+## Resource Manifest
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| agent-output | verification/RELEASE-GATE4-SIGNED-MATRIX-1/ | NOT_APPLICABLE | — | — | 12 个文件（4 日志 + 4 JPG + 1 JSON）全部登记为 Canonical Evidence（EV-G4-01…12）；无迁移/归档/删除，删除数=0 |
+| temp-build | G:/CODEX/New Manga.workspace/tmp/r28/inst/ | NOT_APPLICABLE | — | — | 安装包 652,081,157 B / 3c9984b2… 留在 workspace 供复核复算，未提交入仓；无迁移/删除 |
+| temp-build | G:/CODEX/New Manga.workspace/tmp/r30/inst010/ | NOT_APPLICABLE | — | — | 首版 0.1.0 对照包 652,083,863 B / 19e6d0e3…（同源重构，P1-01 判为不充分）；保留作对照 |
+| external-artifact | G:/CODEX/New Manga.workspace/task-envs/GATE4-PAGES-UPGRADE-1/out-0.1.0/ | NOT_APPLICABLE | — | — | AC5 真实跨版本用的历史包 652,164,075 B / 1d573ab4…；只读引用，未改历史字节 |
+| installed-artifact | %LOCALAPPDATA%/Programs/NewManga | NOT_APPLICABLE | — | — | 已按 AC5 收尾/AC6 卸载：程序目录 0 文件、HKCU 卸载项与 Start Menu 均清理（ac6-uninstall.log） |
+| user-data | %APPDATA%/com.newmanga.desktop | NOT_APPLICABLE | — | — | 全程未变：530 文件 / 684,197,540 B；卸载前后逐文件 sha256 丢失 0 / 新增 0 / 变化 0 |
+
+## 2026-11-18 收口记录（closed_with_limitations）
+
+- **状态**：`closed_with_limitations`。**不是 `done`**：矩阵只在本机、既有数据根、只覆盖 0.1.0↔0.1.1、未签名（用户裁决），
+  这些限制已逐条登记在上一节 Limitations（1–8）。
+- **两轮独立复核**：`reviewer-g4`（独立上下文，未参与执行）
+  - 首轮：`ACCEPTED_WITH_FINDINGS`，P0=0 / P1=2 / P2=7；
+  - 复检：**P1-01、P1-02 均 CLOSED**，并明确「条件 4 可以 `closed_with_limitations`」。
+  - 报告：`doc/reviews/RELEASE-GATE4-MATRIX-REVIEW-2026-11-18.md`（含复检追加节）。
+- **关闭不改变**：`Technical Gate = NOT_SATISFIED`；条件 5 的 `LIMITATION_ACCEPTED`；条件 2 后半仍需**人的一个决定**。
+- **不宣称**：「条件 4 通过」「Release Gate 解除 BLOCKED」——Gate 的解除需要全部六条条件各自满足，本卡只关闭条件 4。
+- **测试机现状**：已卸载（AC5 收尾卸载），机器上无 NewManga 安装；真实用户数据根未被触碰。
+- **资源处置**：临时产物在 `G:\CODEX\New Manga.workspace\tmp\r26…r31` 与 `task-envs\GATE4-PAGES-UPGRADE-1`；
+  仓库内只提交截图与文本日志（无安装包二进制）。删除/迁移：**0**。
