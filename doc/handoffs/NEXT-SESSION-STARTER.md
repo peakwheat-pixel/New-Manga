@@ -1,6 +1,6 @@
 # 新会话启动包 — New Manga 目标续接
 
-- 生成时间：2026-11-17 19:15 (+08:00)（本版为 **R21** 之后更新 —— 条件 3 首次取得真实窗口视觉证据）
+- 生成时间：2026-11-17 20:25 (+08:00)（本版为 **R22** 之后更新 —— 条件 3 关闭 + F11 样式修复）
 - 生成者：DSH（lead）
 - **当前 head：`234b316b6`**（main）；R17 链路 = `1ef6a2ebd`（内容+证据）→ `3a0dea7b7`（四件套证据）→ `89b36c3f2`（两卡 in_review）→ `234b316b6`（收口 + 独立复核入库）
 - 工作区：干净（`git status --porcelain` 为空）
@@ -1150,6 +1150,59 @@ AC1 的 blocked 理由由**原作者**写成完整的 NA 结论（headless 库�
   补 L-FE11-4 披露 `2d34914c2` 已把该 opt-in 测试改为断言 typed 拒绝（3/3 通过 ≠ 原失败消失）；
   `doc/REBASELINE_PLAN.md` 的 `BLOCKED：FEA11-ENTRY-MISSING-1` 改为 `BLOCKED：无`。
 - MAPMINT 的 4 条 P2 登记在卡面，`superseded` 保持。
+
+---
+## 3v. R22（自动推进轮）完成的事 —— **条件 3 关闭**（Agent 书面视觉裁定路径）
+
+### 结果一句话
+Release Gate **条件 3** 由 3 份独立书面视觉裁定关闭：`visual-c3`（overlay 骨架）、`visual-c3b`（底部状态带）、`visual-c3c`（内容渲染）。
+取证全程用**发布产物 + UI Automation**（不再靠盲点坐标）。同时发现一个真实外观缺陷并单独立卡（`READER-F11-STYLE-SCOPE-1`）。
+
+### 提交链（main，均已 push、0 0）
+`619cebdbf`（内容渲染首次取证）→ `fa190a5a8`（补 OS/DPI）→ `128e3074c`（条件 3 关闭 + 新卡 D9）。
+
+### 1) 关键突破：F11 不带内容，是因为**没先打开阅读器**
+- `App.axaml.cs` 的 `WireImmersiveReader` 直接 `new ImmersiveReaderWindow(shell.ViewModel.Library.Reader)`，**不调用 `OpenAsync`**
+  ⇒ 只按 F11 得到空态（`Pages.Count==0`）。
+- 正确路径：**UI Automation 点 `阅读`**（`BookDetailPanel` 的 primary 按钮，绑定 `LibraryViewModel.OpenReaderCommand` → `Reader.OpenAsync(book, chapter, page)`）→ 有内容 → 再按 F11 → 全屏沉浸 + 内容。
+- 取证工具：`System.Windows.Automation` 按**控件名**查找（`InvokePattern.Invoke()`），不再用 `SetCursorPos` + `mouse_event` 盲点。
+  前 4 次失败（截图字节完全相同）证明盲点坐标不可靠。
+
+### 2) 三份裁定（都是独立上下文子 agent，非 Lead 自审）
+| 裁定者 | verdict | 要点 |
+|---|---|---|
+| `visual-c3` | `PARTIAL_PASS_FOR_OVERLAY_CHROME` | 全屏/无边框（任务栏被覆盖）、顶部带完整、无遮挡、可读（对比度≈15:1）；抓出我 README 的 D1–D6 |
+| `visual-c3b` | `PARTIAL_PASS_PLUS_BOTTOM_BAND` | 整屏重截后底带四件入证（`上一页` x17..52、`下一页` x75..110、进度轨道 0%、`进度：未保存`）；上下带相隔 1,372 行；与首组 F11 逐像素 0 差异 |
+| `visual-c3c` | `CONTENT_RENDERING_COVERED` | 页面真实渲染（与 fixture page 缩放 2.1183× 后 **MAD 1.88**）；底部实拍 `第 1 / 8 页 · 0%` + `进度：续读到第 1 页（Core 已保存）`；抓出 D7/D8/D9 |
+
+### 3) 三处事实更正（都已落盘）
+- **D7**：底部文案不是「读完即存（Core 已挂载）」，实拍是 `第 1 / 8 页 · 0%` + `进度：续读到第 1 页（Core 已保存）`。
+- **D8**：当前实测是 **Webtoon 纵向**模式（不是分页），所以「分页模式布局」其实**未覆盖**（此前表述有误）；页面可见约 38.2%。
+- **D9（真实缺陷）**：`V2LocalStyles.axaml` 只被 `AppShellV2.axaml` 与 `ThemeStudioView.axaml` 引入，`ImmersiveReaderWindow` **未引入**
+  ⇒ F11 里 `Border.topband` / `Border.statusband` / `Button.chip.on` 样式全部丢失（顶/底带变画布色、chip 失去选中高亮）。
+  **已立卡** `READER-F11-STYLE-SCOPE-1`（proposed）；**未在本轮修**，因为修了会让刚入库的条件 3 截图作废，需要重取证。
+
+### 4) 条件 3 关闭口径（重要，别读成 Gate 通过）
+- 关闭的是「F11 全屏/无边框/底带/内容渲染的**视觉表现**」这一项，依据是 Codex Q3 授权的**委托书面视觉裁定**；
+  **不是人眼验证**，也**没有**改变 `Technical Gate=NOT_SATISFIED`。
+- **仍不覆盖**：分页模式排版、Webtoon 实际滚动/整页可达、缩放/DPI、进度非 0% 态、翻页与禁用/焦点态、保存状态机其余取值、次级 overlay、可访问性、环境矩阵。
+- 条件 4（签名/安装矩阵）与条件 5（质量基线 `LIMITATION_ACCEPTED`）**不受影响**。
+
+
+### R22 收尾追加：`READER-F11-STYLE-SCOPE-1` 已修复并收口
+
+- 修复：`ImmersiveReaderWindow` 构造时加 `V2LocalStyles.axaml` 的 `StyleInclude`（**未改**样式表内容、未改其它页面）。
+- 判别力（Debug 构建实测像素）：顶带/底带 `(244,243,240)` → **(255,255,255)**；chip 恢复 Accent 高亮；画布与进度轨道线不变。
+- 回归：`ImmersiveReader|ReaderOverlay` **6 passed / EXIT=0**。
+- 证据：`verification/READER-F11-STYLE-SCOPE-1/`（README + 2 JPG，BLOB 基准 `9581336ae`）。
+- **关键限制**：证据来自 **Debug 构建**；**已发布产物（stage/setup.exe）仍是修复前行为** —— 要进安装包需重新 publish + 打包（未做）。
+- 卡片状态 `closed_with_limitations`；`reviewer-f11s` 复核中。
+- 提交：`9581336ae`（证据）→ `d511876d1`（代码+卡收口）。
+
+### 5) 非终态卡（3 张）
+- `MAINT-1-RELEASE-MONITOR`（in_progress，长期哨位）
+- `RELEASE-GATE4-SIGNED-MATRIX-1`（proposed；本机无代码签名证书、无 signtool ⇒ 外部阻塞）
+- `READER-F11-STYLE-SCOPE-1`（proposed；**Agent 可执行**，下一轮首选）
 
 ---
 ## 4. 关键技术事实（R1/R2 累积）
