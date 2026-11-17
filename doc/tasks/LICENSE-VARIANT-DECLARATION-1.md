@@ -125,6 +125,8 @@ DSH 已按用户授权把选向交给 ZCode，但第二次调用**正文截断**
 | EV-LVD-08 | AC6 包内四份合规文件与仓库逐字节相同（7z 抽出比对） | verification/LICENSE-VARIANT-DECLARATION-1/ac6-setup-docs-match-repo.log | 354a2536f | 0b5fb51f03050623cb314e1b07ecaa3ddac0fbe237f57c44e9f568cf6827f3e9 | CANONICAL | BLOB |
 | EV-LVD-09 | AC6 新 setup.exe 的 build-info（variant=models / license=AGPL-3.0 / sha256） | verification/LICENSE-VARIANT-DECLARATION-1/ac6-installer-build-info.json | 354a2536f | f7f85daf7a12a4b62972f4d82de4f98d1dbe12073382c32b680884aa5f64008e | CANONICAL | BLOB |
 | EV-LVD-10 | AC6 新 setup.exe 内的文件清单（含四份文档的字节数与 mtime） | verification/LICENSE-VARIANT-DECLARATION-1/ac6-setup-contents.log | 354a2536f | 202a9185faf75d9a514c34092e5b55383d2c8af3af058c8be7d02f2232d28339 | CANONICAL | BLOB |
+| EV-LVD-11 | AC7 向导欢迎页实拍（models / 含模型权重 / AGPL-3.0） | verification/LICENSE-VARIANT-DECLARATION-1/ac7-wizard-welcome.png | 8bbc4ae48 | 0ccf76e70e7c9ba8c167dc1a2ce53a3e2972ff1629af1d44c4aa2d90bfdfaab4 | CANONICAL | BLOB |
+| EV-LVD-12 | AC7 向导许可页实拍（正文中文正常） | verification/LICENSE-VARIANT-DECLARATION-1/ac7-wizard-license.png | 8bbc4ae48 | 153c7b89c3707f07ee299218c9802cfbe54122c7242522da136481e44f7a5436 | CANONICAL | BLOB |
 
 ## Resource Manifest
 
