@@ -3,7 +3,7 @@ id: MAPMINT-ERROR-FIDELITY-1
 title: MapMintFailure 兜底保真 —— 内部诊断保留内层异常类型（公共错误码不变）
 kind: fix
 governance_version: 3
-status: proposed
+status: superseded
 disposition: "FEA11-ENTRY-MISSING-1 无法定论的根因：MapMintFailure 的 `_ =>` 兜底丢弃内层异常类型，导致失败原因不可辨"
 approval: DSH 2026-11-17（按 Codex 裁定 Q2 冻结最小范围；不扩公共错误码/wire/Schema）
 suggested_owner: DSH
@@ -16,8 +16,8 @@ branch: null
 worktree: null
 integration_commit: null
 delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/MAPMINT-ERROR-FIDELITY-1
 allowed_paths:
   - doc/tasks/MAPMINT-ERROR-FIDELITY-1.md
@@ -46,12 +46,12 @@ allowed_paths:
 
 ## Acceptance Criteria
 
-- [ ] **AC1 现状取证**：定位 `MapMintFailure` 与其 `_ =>` 兜底分支（给出行号），用现有测试复现「无法区分内层异常类型」。
-- [ ] **AC2 内层类型保真**：兜底路径把内层异常类型（至少 `FileNotFoundException`、`UnauthorizedAccessException`、其他）写入**内部诊断元数据**；不改变 `SOURCE_ENTRY_MISSING` 等公共错误码。
-- [ ] **AC3 公共契约零变更**：`git diff` 证明 wire/Schema/公共错误码表未改；若必须改，**停止**并交 DSH 冻结契约范围。
-- [ ] **AC4 回归断言**：为三类内层异常各加一条映射断言；断言不得把原始绝对路径或敏感消息写入外部错误。
-- [ ] **AC5 判别力**：把保真逻辑回退（临时）→ 新测试**变红**；还原后通过，证明断言有判别力。
-- [ ] **AC6 证据与边界**：跑相关测试套件并记录 pass/fail/skip；不宣称 `FEA11-ENTRY-MISSING-1` 的归因结论已改变。
+- [ ] **AC1 现状取证**：定位 `MapMintFailure` 与其 `_ =>` 兜底分支（给出行号），用现有测试复现「无法区分内层异常类型」。 <<NOT_APPLICABLE: 已由 MINT-FAILURE-DIAG-1（commit c68a67216）交付，本卡不实施>>
+- [ ] **AC2 内层类型保真**：兜底路径把内层异常类型（至少 `FileNotFoundException`、`UnauthorizedAccessException`、其他）写入**内部诊断元数据**；不改变 `SOURCE_ENTRY_MISSING` 等公共错误码。 <<NOT_APPLICABLE: 已由 MINT-FAILURE-DIAG-1（commit c68a67216）交付，本卡不实施>>
+- [ ] **AC3 公共契约零变更**：`git diff` 证明 wire/Schema/公共错误码表未改；若必须改，**停止**并交 DSH 冻结契约范围。 <<NOT_APPLICABLE: 已由 MINT-FAILURE-DIAG-1（commit c68a67216）交付，本卡不实施>>
+- [ ] **AC4 回归断言**：为三类内层异常各加一条映射断言；断言不得把原始绝对路径或敏感消息写入外部错误。 <<NOT_APPLICABLE: 已由 MINT-FAILURE-DIAG-1（commit c68a67216）交付，本卡不实施>>
+- [ ] **AC5 判别力**：把保真逻辑回退（临时）→ 新测试**变红**；还原后通过，证明断言有判别力。 <<NOT_APPLICABLE: 已由 MINT-FAILURE-DIAG-1（commit c68a67216）交付，本卡不实施>>
+- [ ] **AC6 证据与边界**：跑相关测试套件并记录 pass/fail/skip；不宣称 `FEA11-ENTRY-MISSING-1` 的归因结论已改变。 <<NOT_APPLICABLE: 已由 MINT-FAILURE-DIAG-1（commit c68a67216）交付，本卡不实施>>
 
 ## 允许修改范围
 
@@ -83,3 +83,22 @@ allowed_paths:
 - Handoff：尚无。
 - Review：尚无（须独立上下文）。
 - 实际测试：尚无。
+## Canonical Evidence
+
+| evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) | sha256_basis |
+|---|---|---|---|---|---|---|
+| EV-MAP-01 | 全部 AC（已由他卡交付） | verification/MINT-FAILURE-DIAG-1/README.md | c68a67216 | a7c041269c7a73184e639190e376c2722ad786f0870659cd16a73c469e146f5d | CANONICAL | BLOB |
+
+## Resource Manifest
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| agent-output | verification/MAPMINT-ERROR-FIDELITY-1/ | NOT_APPLICABLE | — | — | 本卡未实施、未产生证据目录；能力由他卡交付 |
+
+## Closeout Record（2026-11-17，DSH）
+
+- status：`superseded`（**不是**实现完成，而是「本卡要做的已被别的卡做完」）。
+- **依据**：`MINT-FAILURE-DIAG-1`（commit `c68a67216`，标题即「SOURCE_ENTRY_MISSING 保留原始异常，解除 FEA11-ENTRY-MISSING-1 的 blocked」）已交付：
+  `SourceAccessException.OriginalExceptionType`（保留内层异常类型、`Message` 仍 = `Code`）+ `MapMintFailureDiagnosticsTests`（3 facts，实测 3 passed / EXIT=0）。
+- **本卡教训**：Codex 裁定（Q2）与我建卡时都按「尚无实现」处理，**没有先查代码/测试**；实际实现早已入库。这正是项目反复出现的「先下结论、后查证据」模式，已登记。
+- 删除/迁移/归档：0；**不宣称任何 Gate 通过**。
