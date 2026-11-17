@@ -2,7 +2,7 @@
 
 - 生成时间：2026-11-17 13:05 (+08:00)（本版为 **R17** 之后更新 —— 两卡收口材料 + 37 控制字符 + GCP1 改派复核）
 - 生成者：DSH（lead）
-- **当前 head：`89b36c3f2`**（main）；R17 链路 = `1ef6a2ebd`（内容+证据）→ `3a0dea7b7`（四件套证据）→ `89b36c3f2`（两卡 in_review）→ 本轮收口提交（见 `git log`）
+- **当前 head：`234b316b6`**（main）；R17 链路 = `1ef6a2ebd`（内容+证据）→ `3a0dea7b7`（四件套证据）→ `89b36c3f2`（两卡 in_review）→ `234b316b6`（收口 + 独立复核入库）
 - 工作区：干净（`git status --porcelain` 为空）
 - **R1**：`9ce819ae7` → `dd029b73f`（7 commit，目标 A/B/D 达成）
 - **R2**：`dd029b73f` → `5f2664c2e`（8 commit）—— 目标 C 闭合 10 条
@@ -29,7 +29,7 @@
 
 | 项 | 状态 |
 |---|---|
-| HEAD | `89b36c3f2`（main；R17 链路见上） |
+| HEAD | `234b316b6`（main；R17 链路见上） |
 | 四件套 | **全绿**（head `24c573d1b` 实测，R17）：`check.ps1` PASS(3w) / `verify_pins` 18/18 / 声明审计 0 error（6870→6875 declarations、5657→5661 protected roots）/ 证据巡检 FAIL 0（7,113→7,117 行 / 667 卡）；`test.ps1` EXIT=0 **1591/1639 passed, 48 skipped**（App 969/0/4） |
 | Release Gate 条件 6 | ✅ **已关闭**（R16）—— 见 `doc/reviews/MAINT-1-GATE-CONDITION-6-CLOSURE-2026-11-16.md`；Gate 总体仍 `BLOCKED`（条件 3/4/5） |
 | 上一 goal | 已用尽 100 轮（见 `GOAL-WRAPUP-R100.md`） |
@@ -953,7 +953,7 @@ AC1 的 blocked 理由由**原作者**写成完整的 NA 结论（headless 库�
 `GATE3-SETTINGS-SHORTCUT-1` 与 `DOC-CTRLCHAR-FIX-1` 的终态材料全部补齐并经独立上下文复核；
 `GIT-CLEAN-PUBLICATION-1` 完成**改派后的独立复核**（Antigravity → `reviewer-gcp1`），并修掉它抓到的 STATUS 不可解析 hash。
 
-提交链（main）：`24c573d1b`（起点）→ `1ef6a2ebd`（内容+证据：控制字符 37 处 + GATE3 取证 + GCP1 复核报告）→ `3a0dea7b7`（四件套证据）→ `89b36c3f2`（两卡 CE/Resource/Closeout 补齐 → in_review）→ `定位：收口提交`。
+提交链（main）：`24c573d1b`（起点）→ `1ef6a2ebd`（内容+证据：控制字符 37 处 + GATE3 取证 + GCP1 复核报告）→ `3a0dea7b7`（四件套证据）→ `89b36c3f2`（两卡 CE/Resource/Closeout 补齐 → in_review）→ `234b316b6`（独立复核采纳 + 两卡翻 done）。
 
 ### 1) `DOC-CTRLCHAR-FIX-1`：37 个控制字符（不是 33 TAB + 20 CR）
 - 全量扫描 `doc/tasks` **667 个 .md**：残留 **37 个控制字符 / 5 个文件** ——
