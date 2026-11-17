@@ -2,7 +2,7 @@
 
 - 生成时间：2026-11-17 20:25 (+08:00)（本版为 **R22** 之后更新 —— 条件 3 关闭 + F11 样式修复）
 - 生成者：DSH（lead）
-- **当前 head：`1d2eae9dd`**（main）；R18–R23 见 §3r–§3w（最新：装包元数据护栏加严 + package.ps1 顶层字段修复）
+- **当前 head：`2a495266a`**（main）；R18–R24 见 §3r–§3x（最新：ZCode 许可裁定采纳 + 生成器/护栏口径对齐）
 - 工作区：干净（`git status --porcelain` 为空）
 - **R1**：`9ce819ae7` → `dd029b73f`（7 commit，目标 A/B/D 达成）
 - **R2**：`dd029b73f` → `5f2664c2e`（8 commit）—— 目标 C 闭合 10 条
@@ -1221,6 +1221,46 @@ Release Gate **条件 3** 由 3 份独立书面视觉裁定关闭：`visual-c3`�
 - `MAINT-1-RELEASE-MONITOR`（in_progress，长期哨位）
 - `RELEASE-GATE4-SIGNED-MATRIX-1`（proposed；本机无代码签名证书、无 signtool ⇒ 外部阻塞）
 - `READER-F11-STYLE-SCOPE-1`（proposed；**Agent 可执行**，下一轮首选）
+
+---
+## 3x. R24（自动推进轮）—— ZCode 许可裁定采纳 + 生成器/护栏口径对齐（干净产物首次过闸）
+
+### 结果一句话
+1. **ZCode 裁定已采纳**：现声明 `GPL-3.0-or-later` + 632 MB 权重**非法**；Q2 定为 **P0 发布阻塞**；该 stage **不能**作条件 4 证据。
+2. **`app_build` 缺失与 models 字节口径不一致已修**：干净 `package.ps1` 的 base 变体**首次通过护栏**（`OK / EXIT=0`）。
+
+### 提交链（main，均已 push、0 0）
+`349ccf121`（采纳 ZCode 裁定 + `LICENSE-VARIANT-DECLARATION-1` blocked）→ `45e25b9bb`（reviewer-pvd P1/P2 处置 + `VERSION-JSON-GUARD-ALIGN-1`）→ `03c03a98c`（package.ps1 对齐修复 + 证据）→ `2a495266a`（VJGA 收口）。
+
+### 1) ZCode 裁定要点（`doc/reviews/ZCODE-RULING-INSTALLER-LICENSE-2026-11-17.md`，全文逐字 + DSH 采纳记录）
+- **Q1**：`variant=base` + 632,552,582 B 权重 + `license=GPL-3.0-or-later` = **非法**。判定规则 R1–R4，本案落 **R4**（三项权重台账均「待核实」）。
+  合法出口只有：① 保守声明 **AGPL-3.0**；② 移除权重回归真 base（维持 GPL）。
+- **Q2**：随包 `NOTICE.md`/`LICENSE_AUDIT.md` 与实物相反 = **P0 发布阻塞**（对接收方的虚假合规披露），不是「文档待更新」。
+- **Q3**：该包**不能**作为条件 4 证据；修复后必须在新包字节上重跑。⇒ 条件 4 的等待项变成「**先产出合规新包 → 再签名 → 再跑矩阵**」。
+- 权重上游许可的**法律属性证据不足**，ZCode 与 DSH 都不认定。
+- 方向 A/B 属**用户产品裁决** ⇒ `LICENSE-VARIANT-DECLARATION-1` 置 `blocked`，卡面写明「用户只需回答一句」。
+
+### 2) 生成器/护栏对齐（`VERSION-JSON-GUARD-ALIGN-1`，closed_with_limitations）
+reviewer-pvd 实测证明：**即使补上 sidecar 的 `build-manifest.json`，干净 `package.ps1` 产物仍过不了闸** ——
+① 不产出 `app_build`（护栏 `:63` 缺即 FAIL）；② `$modelsBytes`（目录全量 632,662,260 B）≠ 护栏口径（`*.onnx` 632,552,582 B，差 109,678 B）。
+
+修复：`package.ps1` 新增 `app_build`（`exe_sha256`/`exe_bytes`/`repo_head`，head 取 **exe `ProductVersion` 内嵌 40-hex**）；
+`models_bundled_bytes` 改用 `$modelsOnnxBytes`（与护栏同口径），另存 `models_dir_bytes` 保留全量口径。
+
+**实测**：fixture sidecar（5 exe + `build-manifest.json` v14）+ `package.ps1 -NoTrim` → `PKG_EXIT=0`，产出 `VERSION.json` 含
+`app_build={exe_sha256=3b4d2578…; exe_bytes=82,912,672; repo_head=45e25b9bb…}`，护栏 **`OK / EXIT=0`**；
+删掉 `app_build` 的同构 stage → 护栏 `FAILED with 3 problem(s)`（首条 `no app_build section`）。
+
+**限制**：models 变体端到端未跑（需复制 632 MB 权重再打包）；`repo_head` 依赖 exe 内嵌 head（缺失时回退 `git rev-parse`，会导致护栏 FAIL，属 fail-closed）。
+
+### 3) 途中踩坑（已记）
+- `package.ps1` 模板分隔写成 `|` → 被 PowerShell 当**管道符**，报 `术语 'sidecar=bundled: …' 不会被识别为 cmdlet`；改回 `;` 后通过。
+- Codex 裁决 40 分钟仅 7s CPU、零输出（疑似鉴权/网络），已终止改派 ZCode（`zcode.cjs --mode plan --json`，约 12 分钟出裁定）。
+
+### 4) 非终态卡（3 张）
+- `MAINT-1-RELEASE-MONITOR`（in_progress，长期哨位）
+- `RELEASE-GATE4-SIGNED-MATRIX-1`（proposed；**先合规重建包** + 真证书）
+- `LICENSE-VARIANT-DECLARATION-1`（**blocked**：等用户选 A/B）
 
 ---
 ## 4. 关键技术事实（R1/R2 累积）
