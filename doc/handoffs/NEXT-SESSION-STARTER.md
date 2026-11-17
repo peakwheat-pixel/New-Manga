@@ -1,6 +1,6 @@
 # 新会话启动包 — New Manga 目标续接
 
-- 生成时间：2026-11-17 18:45 (+08:00)（本版为 **R20** 之后更新 —— 两条 P2 工具项结案）
+- 生成时间：2026-11-17 19:15 (+08:00)（本版为 **R21** 之后更新 —— 条件 3 首次取得真实窗口视觉证据）
 - 生成者：DSH（lead）
 - **当前 head：`234b316b6`**（main）；R17 链路 = `1ef6a2ebd`（内容+证据）→ `3a0dea7b7`（四件套证据）→ `89b36c3f2`（两卡 in_review）→ `234b316b6`（收口 + 独立复核入库）
 - 工作区：干净（`git status --porcelain` 为空）
@@ -1109,6 +1109,47 @@ AC1 的 blocked 理由由**原作者**写成完整的 NA 结论（headless 库�
 ### 4) 非终态卡（2 张）
 - `MAINT-1-RELEASE-MONITOR`：`in_progress`（长期哨位，已登记条件 3/4/5 处置）。
 - `RELEASE-GATE4-SIGNED-MATRIX-1`：`proposed`，**外部资源阻塞** —— 实测本机 `Cert:\CurrentUser\My` 与 `Cert:\LocalMachine\My` **均无代码签名证书**，`signtool.exe` 不存在。
+
+---
+## 3u. R21（自动推进轮）完成的事 —— 条件 3 首次拿到真实窗口视觉证据（两次裁定）
+
+### 结果一句话
+用**发布产物**在真实桌面会话（2560×1440 / 100% / 48px 任务栏）启动应用并触发 F11，**首次取得沉浸阅读器 overlay 的真实截图**；
+经两名独立裁定者先后裁定：主裁定 `PARTIAL_PASS_FOR_OVERLAY_CHROME`、补充裁定 `PARTIAL_PASS_PLUS_BOTTOM_BAND`。
+**条件 3 仍不是 MET** —— 内容渲染（选中页面）仍零证据。
+
+### 提交链（main，均已 push、0 0）
+`7d475df74`（首次 F11 截图 + 卡片状态推进）→ `2d3732723`（reviewer-fea11 三条 P1 处置）→ `f1860fe4b`（主视觉裁定 + D1–D6 更正）→ `7d6e8b83d`（整屏重截）→ `6a004f689`（补充裁定 + README 口径澄清）。
+
+### 1) 取证方法（可复现）
+- 产物：`workspace/task-envs/INSTALLER-MATRIX-1/stage/NewManga-0.1.1-win-x64/app/NewManga.App.exe`
+  （sha256 `a3ec2133b5da3f619b752c818371ba54867b4c150fdba65b8c22d8b17f739230`，99,554,850 B）。
+- 数据根：`BOOK-FIXTURE-1/isolated-data` 的**副本**（不碰真实 `%APPDATA%`）；`--data-root` + `--log-dir`。
+- 关键坑：`Start-Process -ArgumentList @('--data-root', $p, ...)` 在**路径含空格**时会被拆成两个参数 ⇒ 应用 exit 2。
+  必须传**带引号的单一字符串**（`'--data-root "…" --log-dir "…"'`）。
+- 截图两种矩形：`GetWindowRect`（`(-8,-8,2576×1408)`，图里有 8px 黑带，是**几何产物**不是应用边框）；
+  `PrimaryScreen.Bounds`（2560×1440，**才能覆盖窗口底缘与底部状态带**）。
+
+### 2) 主裁定（`visual-c3`）：`PARTIAL_PASS_FOR_OVERLAY_CHROME`
+- **通过**：全屏/无边框（任务栏被覆盖）、顶部带控件完整未越界、无黑边/无整幅遮挡、可读（对比度约 15:1）。
+- **不覆盖**：底部状态带（第一组矩形止于 y=1399）、内容渲染。
+- 抓出我 README 的 6 处表述错误（D1–D6）：最重的是「右下翻页控件点」（图上无像素支持）、空态文案写错、`阅读` 是 Title 不是控件。
+
+### 3) 补充裁定（`visual-c3b`）：`PARTIAL_PASS_PLUS_BOTTOM_BAND`
+- 整屏重截后底部带**首次全要素入证**：`上一页` x17..52、`下一页` x75..110、进度条轨道 x128..2456（**0% 填充**）、
+  进度文本 `—`、保存状态 `进度：未保存` x2486..2551；边距 左17/右8/下16 行 ⇒ 未越界未裁切。
+- 上下两带相隔 **1,372 行** ink=0 ⇒ 互不遮挡；整屏 2560×1440 **等于**物理屏；与第一组 F11 重叠区 **0/3,584,000 px 差异**。
+- **仍不覆盖**：内容渲染、进度条非零态、`上一页`/`下一页` 交互与禁用/焦点态、保存状态机其余取值、窗口与屏边界严格重合、次级 overlay/可访问性。
+
+### 4) 条件 3 现状：`PARTIAL_WINDOW_EVIDENCE`（较此前 `AGENT_ADJUDICATION_PENDING` 有实质推进）
+**还差一步**：选中具体页面后按 F11，覆盖「内容渲染 / 分页 vs Webtoon 排版 / 缩放裁切」。
+本轮两次尝试点选页列表/书卡**都没命中**（截图字节完全相同可证），下一步改用 **UI Automation**（按名称找控件）而不是盲点坐标。
+
+### 5) 同期处置（reviewer-fea11）
+- 三条 P1 全部处置：L-FE11-1 改为「根因已由 `FEA11-RECOVERY-ROOT-PATH-1`(done, `6cb4cc5fb`) 定位为 E-9，但本卡不声称修复」；
+  补 L-FE11-4 披露 `2d34914c2` 已把该 opt-in 测试改为断言 typed 拒绝（3/3 通过 ≠ 原失败消失）；
+  `doc/REBASELINE_PLAN.md` 的 `BLOCKED：FEA11-ENTRY-MISSING-1` 改为 `BLOCKED：无`。
+- MAPMINT 的 4 条 P2 登记在卡面，`superseded` 保持。
 
 ---
 ## 4. 关键技术事实（R1/R2 累积）
