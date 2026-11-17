@@ -80,7 +80,8 @@ allowed_paths:
 - canonical_evidence_status：`complete`；resource_closeout_status：`complete`；删除/迁移/归档：**0**。
 - **收口依据**：本卡 `blocked` 的唯一前提是「`MapMintFailure` 的 `_ =>` 兜底丢弃内层异常类型」。该前提已被 `MINT-FAILURE-DIAG-1`（`c68a67216`）解除；且触发本卡的 opt-in 测试在当前 head 连续 3 次通过。
 - **限制清单**：
-  1. **L-FE11-1｜历史根因未复现**：基线 `414e3e8d1` 的那次失败在当前 head 无法复现，**根因未定位**；本卡只登记「不可复现」，不声称已修复某缺陷。
+  1. **L-FE11-1｜根因已定位，但本卡不声称该测试场景已修复**：基线 `414e3e8d1` 的那次失败，根因由 `FEA11-RECOVERY-ROOT-PATH-1`（done，`6cb4cc5fb`）定位为 **产品缺陷 E-9（P2）：恢复路径把 registry root（目录）当成容器路径**；`MINT-FAILURE-DIAG-1` 另外补齐了内层异常类型的可观测性。**但本卡不声称 E-9 已修复，也不声称「原失败已消失」**——见 L-FE11-4。
   2. **L-FE11-2｜结论已被超越**：卡面「结论 / 为什么标 blocked / 边界」三节是 2026-11-15 时点记录，保留原字节；当前事实以本节与 AC 为准。
+  4. **L-FE11-4｜AC3 的测试口径已被改判**：`2d34914c2` 已把 `ProductionDispatcherFullSyncChain_NewKeyOldDigestConserved` 从「断言 ACK 成功链」改为「断言 `SOURCE_PLAN_UNAVAILABLE` 的 typed 拒绝」（ZCode 裁决）。因此 2026-11-17 的 **3/3 通过只证明「当前口径下该测试稳定通过」**，**不能**当作「原始失败已复现/已消失」或「E-9 已修复」的证据。
   3. **L-FE11-3｜不改条件 3**：本卡不解条件 3 的其余缺口（人眼/AGENT 视觉裁定、真机走查）。
 - **边界**：`Technical Gate=NOT_SATISFIED` 不变。

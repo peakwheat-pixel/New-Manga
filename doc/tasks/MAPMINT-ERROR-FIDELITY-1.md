@@ -102,3 +102,13 @@ allowed_paths:
   `SourceAccessException.OriginalExceptionType`（保留内层异常类型、`Message` 仍 = `Code`）+ `MapMintFailureDiagnosticsTests`（3 facts，实测 3 passed / EXIT=0）。
 - **本卡教训**：Codex 裁定（Q2）与我建卡时都按「尚无实现」处理，**没有先查代码/测试**；实际实现早已入库。这正是项目反复出现的「先下结论、后查证据」模式，已登记。
 - 删除/迁移/归档：0；**不宣称任何 Gate 通过**。
+
+## 2026-11-17 复核登记（reviewer-fea11，ACCEPTED_WITH_FINDINGS，P0=0 / P1=0 / P2=4）
+
+报告：`doc/reviews/FEA11-ENTRY-MISSING-1-CLOSEOUT-REVIEW-2026-11-17.md`（B 节）。`superseded` **可保持**，不重开实现。P2 差额如实登记：
+
+- **P2-M-1**：AC5 的「回退让测试变红」只有 commit/README 自述，**没有原始 red 日志**。
+- **P2-M-2**：AC3「公共契约零变更」未覆盖 `SourceAccessException` 新增的公共属性/构造参数（诊断属性是新增的公共 API 面）。
+- **P2-M-3**：AC6「不宣称 FEA11 归因结论已改变」与 `MINT-FAILURE-DIAG-1` 的「blocked 已解除」表述存在张力，未逐字对齐。
+- **P2-M-4**：`evidence_dir: verification/MAPMINT-ERROR-FIDELITY-1` 目录**不存在**（本卡从未实施）；`resource_closeout_status: complete` 的依据是「无产物需核销」，不是「已核销某目录」。
+  本卡不再扩张范围：后续若确需归档，由 DSH 另立卡或直接删除该 frontmatter 字段。
