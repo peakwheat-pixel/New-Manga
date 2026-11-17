@@ -1,0 +1,5 @@
+verify-package-manifest: stage=G:\CODEX\New Manga.workspace\tmp\r23\f56\duplicate repo=G:\CODEX\New Manga
+
+verify-package-manifest: FAILED with 2 problem(s)
+  FAIL: package-manifest.json lists 5 file(s) but the stage holds 4 (excluding the manifest itself)
+  FAIL: package-manifest.json repeats 1 path(s) (e.g. VERSION.json)

@@ -1,0 +1,5 @@
+verify-package-manifest: stage=G:\CODEX\New Manga.workspace\tmp\r23\f05b repo=G:\CODEX\New Manga
+
+verify-package-manifest: FAILED with 2 problem(s)
+  FAIL: sidecar_build.core_service_sha256 mismatch: json=6050881163753d32eca2fb1c0c824d9de7852bf62fb808926f5b6fc74a6b52ee actual=55783e8141d01abdd15d7c4b8158b94738bebd2d07e5930c65e30ca43704a77f
+  FAIL: package-manifest.json sha256 mismatch for 1 file(s) (e.g. app/core-sidecar/core_service.exe)

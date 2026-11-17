@@ -1,21 +1,33 @@
-# INSTALLER-METADATA-CONSISTENCY-1 · AC1 实测（2026-11-17）
+# INSTALLER-METADATA-CONSISTENCY-1 · AC1 实测（2026-11-17，reviewer-imc F-01 更正后重生成）
 
-# head: 7f59ae461
-# interpreter: python 3 (hashlib/json)
-# command: python -B <workspace>\tmp\r23\collect-metadata.py
+# interpreter: python 3（hashlib/json，无硬编码结论）
+# command: python -B <workspace>\tmp\r23\collect-metadata2.py
 
-`VERSION.json` sha256 = c8459587974b028f30bcdd8048764b00fbdd734159a1e03a96f292de6eb78fd9（2518 B）
-`package-manifest.json` sha256 = 68752b31fdc7ca62edf0cd8708dc70ac6c4f74040185fa0695e85ea4a8744b1c（381448 B）
+`VERSION.json`        2518 B  sha256 `c8459587974b028f30bcdd8048764b00fbdd734159a1e03a96f292de6eb78fd9`
+`app/VERSION.json`    sha256 `5a8c6abf4330f57d4ecb34f74a92e2c259971e058c0a76710d7fcdee3f7fce67`  两份相同=False
+`package-manifest.json` 381448 B  sha256 `68752b31fdc7ca62edf0cd8708dc70ac6c4f74040185fa0695e85ea4a8744b1c`  mtime 2026-10-28 13:16:59
+
+## 字段对照（全部取自文件本体，不写结论）
 
 | 字段 | VERSION.json | package-manifest.json | 判定 |
 |---|---|---|---|
 | version | 0.1.1 | 0.1.0 | MISMATCH |
-| variant | base | base | ok |
-| models_bundled | (VERSION.json 无该字段；models 文本声明 BUNDLED) | False | MISMATCH（对实物） |
-| models_bytes | 实物 632552582 B（3 个 .onnx） | 0 | MISMATCH（对实物） |
-| files | — | 1968 | n/a |
+| variant | base | base | MATCH |
+| models_bundled | True | False | MISMATCH |
+| models_bytes | 632552582 | 0 | MISMATCH |
+| file_count | 1036 | 1968 | MISMATCH |
 
-实物：`app/core-sidecar/models/` 下 **3 个 .onnx / 632552582 B**
-- `app/core-sidecar/models/detector/rtdetr-v2-fixed.onnx` — 171618071 B
-- `app/core-sidecar/models/ocr/manga-ocr-onnx/decoder_model.onnx` — 117480262 B
-- `app/core-sidecar/models/ocr/manga-ocr-onnx/encoder_model.onnx` — 343454249 B
+- 实物 .onnx：**3 个 / 632552582 B**（VERSION.json 的 `models_bundled=True`、`models_bundled_bytes=632552582` 与实物一致）
+- manifest 列 1968 条；stage 排除 manifest 自身后有 **1036** 个文件
+- manifest 列出但 stage 不存在：**1041** 条
+- stage 存在但 manifest 未列：**109** 条
+- manifest 里含 `app/core-sidecar/python/` 的条目：**1010** 条
+
+## mtime 分布（stage 全部文件）
+
+- 2026-10-27: 9 个文件
+- 2026-10-28: 11 个文件
+- 2026-11-15: 1017 个文件
+
+**结论**：`VERSION.json` 与实物一致（0.1.1 / 3 onnx / 632,552,582 B）；`package-manifest.json` 是 **2026-10-28** 的旧文件（0.1.0 / models_bundled=false / models_bytes=0），
+且描述的是另一套含 `app/core-sidecar/python/*` 的布局；根与 `app` 两份 `VERSION.json` 哈希不同（脚本本应逐字节复制）。

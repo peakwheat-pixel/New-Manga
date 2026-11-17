@@ -42,6 +42,10 @@ if ([string]::IsNullOrWhiteSpace($RepoRoot)) {
 $failures = [System.Collections.Generic.List[string]]::new()
 function Add-Failure([string]$message) { $script:failures.Add($message) }
 
+# reviewer-imc F-04: a trailing separator on -StageDir used to make every relative-path
+# comparison fail ("lists N files that are not in the stage"). Normalize once, trim both ends.
+$StageDir = (Resolve-Path -LiteralPath $StageDir).Path.TrimEnd('\', '/')
+
 function Get-Sha256Lower([string]$path) {
     return (Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash.ToLowerInvariant()
 }
@@ -176,19 +180,54 @@ if (-not (Test-Path -LiteralPath $manifestPath)) {
         if ($listed.Count -ne $actualFiles.Count) {
             Add-Failure "package-manifest.json lists $($listed.Count) file(s) but the stage holds $($actualFiles.Count) (excluding the manifest itself)"
         }
-        $actualPaths = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::OrdinalIgnoreCase)
+        # F-06: compare SETS, not just counts -- a manifest with a duplicated entry could otherwise
+        # hide a file it never lists.
+        $actualByRel = @{}
         foreach ($file in $actualFiles) {
-            [void]$actualPaths.Add($file.FullName.Substring($StageDir.Length + 1).Replace('\', '/'))
+            $rel = $file.FullName.Substring($StageDir.Length + 1).Replace('\', '/')
+            $actualByRel[$rel] = $file
         }
+        $seen = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::OrdinalIgnoreCase)
         $missing = [System.Collections.Generic.List[string]]::new()
+        $duplicates = [System.Collections.Generic.List[string]]::new()
+        $badBytes = [System.Collections.Generic.List[string]]::new()
+        $badHash = [System.Collections.Generic.List[string]]::new()
         foreach ($entry in $listed) {
             $rel = [string]$entry.path
             if (-not $rel) { Add-Failure "package-manifest.json has an entry with no path"; continue }
-            if (-not $actualPaths.Contains($rel)) { $missing.Add($rel) }
+            if (-not $seen.Add($rel)) { $duplicates.Add($rel); continue }
+            if (-not $actualByRel.ContainsKey($rel)) { $missing.Add($rel); continue }
+            $file = $actualByRel[$rel]
+            # F-05: bytes and sha256 per file -- a same-size content swap must not pass.
+            if ($null -ne $entry.bytes -and [int64]$entry.bytes -ne $file.Length) {
+                $badBytes.Add("$rel (manifest=$($entry.bytes) actual=$($file.Length))")
+            }
+            $declared = ([string]$entry.sha256).ToLowerInvariant()
+            if ($declared -and $declared -ne (Get-FileHash -LiteralPath $file.FullName -Algorithm SHA256).Hash.ToLowerInvariant()) {
+                $badHash.Add($rel)
+            }
         }
+        $unlisted = [System.Collections.Generic.List[string]]::new()
+        foreach ($rel in $actualByRel.Keys) { if (-not $seen.Contains($rel)) { $unlisted.Add($rel) } }
         if ($missing.Count -gt 0) {
             $preview = ($missing | Select-Object -First 5) -join ', '
             Add-Failure "package-manifest.json lists $($missing.Count) file(s) that are not in the stage (e.g. $preview)"
+        }
+        if ($duplicates.Count -gt 0) {
+            $preview = ($duplicates | Select-Object -First 5) -join ', '
+            Add-Failure "package-manifest.json repeats $($duplicates.Count) path(s) (e.g. $preview)"
+        }
+        if ($unlisted.Count -gt 0) {
+            $preview = ($unlisted | Select-Object -First 5) -join ', '
+            Add-Failure "package-manifest.json does not list $($unlisted.Count) file(s) present in the stage (e.g. $preview)"
+        }
+        if ($badBytes.Count -gt 0) {
+            $preview = ($badBytes | Select-Object -First 5) -join '; '
+            Add-Failure "package-manifest.json bytes mismatch for $($badBytes.Count) file(s): $preview"
+        }
+        if ($badHash.Count -gt 0) {
+            $preview = ($badHash | Select-Object -First 5) -join ', '
+            Add-Failure "package-manifest.json sha256 mismatch for $($badHash.Count) file(s) (e.g. $preview)"
         }
     }
 }

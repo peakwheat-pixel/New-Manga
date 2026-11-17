@@ -1,9 +1,18 @@
 {
   "stage": "G:\\CODEX\\New Manga.workspace\\task-envs\\INSTALLER-MATRIX-1\\stage\\NewManga-0.1.1-win-x64",
+  "stage_files_total": 1037,
   "version_json_sha256": "c8459587974b028f30bcdd8048764b00fbdd734159a1e03a96f292de6eb78fd9",
-  "package_manifest_sha256": "68752b31fdc7ca62edf0cd8708dc70ac6c4f74040185fa0695e85ea4a8744b1c",
   "version_json_bytes": 2518,
+  "app_version_json_sha256": "5a8c6abf4330f57d4ecb34f74a92e2c259971e058c0a76710d7fcdee3f7fce67",
+  "version_json_pair_identical": false,
+  "package_manifest_sha256": "68752b31fdc7ca62edf0cd8708dc70ac6c4f74040185fa0695e85ea4a8744b1c",
   "package_manifest_bytes": 381448,
+  "package_manifest_mtime": "2026-10-28 13:16:59",
+  "stage_mtime_by_day": {
+    "2026-10-28": 11,
+    "2026-11-15": 1017,
+    "2026-10-27": 9
+  },
   "onnx_count": 3,
   "onnx_bytes": 632552582,
   "onnx": [
@@ -20,36 +29,52 @@
       "bytes": 343454249
     }
   ],
+  "facts": {
+    "version_json_version": "0.1.1",
+    "version_json_variant": "base",
+    "version_json_license": "GPL-3.0-or-later",
+    "version_json_models_bundled": true,
+    "version_json_models_bundled_bytes": 632552582,
+    "manifest_version": "0.1.0",
+    "manifest_variant": "base",
+    "manifest_models_bundled": false,
+    "manifest_models_bytes": 0,
+    "manifest_files_count": 1968,
+    "stage_files_excluding_manifest": 1036,
+    "manifest_paths_missing_in_stage": 1041,
+    "stage_paths_not_in_manifest": 109,
+    "manifest_lists_python_entries": 1010
+  },
   "comparison": [
     {
       "field": "version",
-      "version_json": "0.1.1",
-      "package_manifest": "0.1.0",
+      "version_json_value": "0.1.1",
+      "package_manifest_value": "0.1.0",
       "verdict": "MISMATCH"
     },
     {
       "field": "variant",
-      "version_json": "base",
-      "package_manifest": "base",
-      "verdict": "ok"
+      "version_json_value": "base",
+      "package_manifest_value": "base",
+      "verdict": "MATCH"
     },
     {
       "field": "models_bundled",
-      "version_json": "(VERSION.json 无该字段；models 文本声明 BUNDLED)",
-      "package_manifest": "False",
-      "verdict": "MISMATCH（对实物）"
+      "version_json_value": true,
+      "package_manifest_value": false,
+      "verdict": "MISMATCH"
     },
     {
       "field": "models_bytes",
-      "version_json": "实物 632552582 B（3 个 .onnx）",
-      "package_manifest": "0",
-      "verdict": "MISMATCH（对实物）"
+      "version_json_value": 632552582,
+      "package_manifest_value": 0,
+      "verdict": "MISMATCH"
     },
     {
-      "field": "files",
-      "version_json": "—",
-      "package_manifest": "1968",
-      "verdict": "n/a"
+      "field": "file_count",
+      "version_json_value": 1036,
+      "package_manifest_value": 1968,
+      "verdict": "MISMATCH"
     }
   ]
 }
