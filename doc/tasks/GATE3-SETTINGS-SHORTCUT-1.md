@@ -3,19 +3,19 @@ id: GATE3-SETTINGS-SHORTCUT-1
 title: 闭合条件 3 最后一个 ⚠️ 格（设置空间不吞全局快捷键）
 kind: fix
 governance_version: 3
-status: in_review
+status: done
 disposition: "条件 3 矩阵『设置/快捷键』格 ⚠️：只有『settings 不是 Space 入口』一条，未证明快捷键仍生效"
 approval: DSH 2026-11-15
 suggested_owner: DSH
 owner: DSH
-reviewer: null
+reviewer: reviewer-g3dc（DSH 子 agent，独立上下文，未参与实现；2026-11-17 复核）
 depends_on:
   - GATE3-SIDECAR-COVERAGE-1
 base_commit: 411dada59
 branch: main
 worktree: G:/CODEX/New Manga
-integration_commit: null
-delivery_head: null
+integration_commit: 89b36c3f2
+delivery_head: 89b36c3f2
 canonical_evidence_status: complete
 resource_closeout_status: complete
 evidence_dir: verification/GATE3-SETTINGS-SHORTCUT-1
@@ -100,8 +100,8 @@ if (HandleKeyCore(e.Key, e.KeyModifiers, isTextInputFocused)) { ... }
 ## 交付与运行记录
 
 - Handoff：本卡为测试+文档卡，无独立 Handoff；交付记录见本卡与 `verification/GATE3-SETTINGS-SHORTCUT-1/`。
-- Review：待独立上下文复核（本轮提交 `1ef6a2ebd` 为被审 head）。
-- 实际测试：见上表（2026-11-17 复测，head `24c573d1b`）。
+- Review：`doc/reviews/GATE3-SETTINGS-SHORTCUT-1-INDEPENDENT-REVIEW-2026-11-17.md` —— 复核者 `reviewer-g3dc`（DSH 子 agent，独立上下文，未参与实现），reviewed_head `89b36c3f2`，decision **`ACCEPTED_WITH_FINDINGS`**（P0=0 / P1=0 / P2=2 / P3=2）。两条 P2 已在本轮处置：① AC5 更正理由改为「其后新增 11 个用例」（原写「不同源」不成立）；② 条件 3 矩阵 §5 的「2 个 ⚠️ 格」已加 2026-11-17 更正段，与 §9.1「⚠️ 格：0」一致。
+- 实际测试：见上表（2026-11-17 复测，head `24c573d1b`；被审 head `89b36c3f2`）。
 
 ## Canonical Evidence
 
@@ -128,7 +128,9 @@ if (HandleKeyCore(e.Key, e.KeyModifiers, isTextInputFocused)) { ... }
   - 判别力探针（`ConsoleWorkspaceView.TryHandleKey => true`）→ **1 failed**，失败消息 `Ctrl+K did not open the command palette from Settings`（`SettingsSpaceShortcutTests.cs:64`），**EXIT=1**；按字节还原后源文件 sha256 与注入前一致（`5227fce8…`）、`git status -- <源文件>` 为空；重建后复测 **1 passed，EXIT=0**；
   - 权威 `test.ps1` → **TEST PASS 1591/1639 passed, 48 skipped, EXIT=0**（App 969/0/4/973；Host 364/0/44/408；CoreClient 258/0/0/258）；
   - 无夹具 App.Tests → **962 passed / 0 failed / 11 skipped / 973 total，EXIT=0**。
-- **数字更正（如实登记）**：本卡 AC5 原先写的 `951 / 0 / 11 / 962` 是过期读数；本轮实测为 **962 / 0 / 11 / 973**，原因有二：① 该读数之后仓库新增了 11 个测试（总数 962→973）；② 原写法的 passed 与 total 不同源。已按实测更正 AC5 行。
+- **数字更正（如实登记）**：本卡 AC5 原先写的 `951 / 0 / 11 / 962` 是**时点读数**；本轮实测为 **962 / 0 / 11 / 973**。
+  更正理由只有一条：**该读数之后仓库新增了 11 个运行时用例**（总数 962→973、通过 951→962、skip 仍 11、failed 0），不是口径错误、也不是回归。
+  （原写式 `951+0+11=962` 本身自洽；`GATE3` 独立复核 r1 的 P2-① 已据此更正。）
 - **结论**：条件 3 矩阵的**最后一个 ⚠️ 格**已由 `SettingsSpaceShortcutTests.ConsoleSpace_DoesNotSwallowGlobalShortcuts`（FQN）固定住，且**判别力经探针实测**（吞键即变红）。
   ⇒ **矩阵内 ❌ 与 ⚠️ 格均已清零。**
 - **边界**：这**不等于**条件 3 MET —— 仍有带夹具 skip（Host 44 + App 4，均 opt-in/需真实 IPC）、§0 未纳范围的 GUI 流程（回收站/命令面板之外的源恢复/沉浸等）、以及真机走查。

@@ -1,8 +1,8 @@
 # 新会话启动包 — New Manga 目标续接
 
-- 生成时间：2026-11-16 15:45 (+08:00)（本版为 R16 之后更新 —— **Release Gate 条件 6 已关闭**）
+- 生成时间：2026-11-17 13:05 (+08:00)（本版为 **R17** 之后更新 —— 两卡收口材料 + 37 控制字符 + GCP1 改派复核）
 - 生成者：DSH（lead）
-- **当前 head：`b18a2ef90`**（main）；R16 收口链 = `45af57007`（内容，含四件套实测）→ `3cc4e1186`（证据）→ `b18a2ef90`（载体落值）→ 本文件所在提交
+- **当前 head：`89b36c3f2`**（main）；R17 链路 = `1ef6a2ebd`（内容+证据）→ `3a0dea7b7`（四件套证据）→ `89b36c3f2`（两卡 in_review）→ 本轮收口提交（见 `git log`）
 - 工作区：干净（`git status --porcelain` 为空）
 - **R1**：`9ce819ae7` → `dd029b73f`（7 commit，目标 A/B/D 达成）
 - **R2**：`dd029b73f` → `5f2664c2e`（8 commit）—— 目标 C 闭合 10 条
@@ -29,12 +29,13 @@
 
 | 项 | 状态 |
 |---|---|
-| HEAD | `b18a2ef90`（main；R16 收口链见上） |
-| 四件套 | **全绿**（head `45af57007` 实测）：`check.ps1` PASS(3w) / `verify_pins` 18/18 / `api_inventory` 1/80/6=87 / `test.ps1` EXIT=0 **1591/1639 passed, 48 skipped**（App 969/0/4；skip 未增） |
+| HEAD | `89b36c3f2`（main；R17 链路见上） |
+| 四件套 | **全绿**（head `24c573d1b` 实测，R17）：`check.ps1` PASS(3w) / `verify_pins` 18/18 / 声明审计 0 error（6870→6875 declarations、5657→5661 protected roots）/ 证据巡检 FAIL 0（7,113→7,117 行 / 667 卡）；`test.ps1` EXIT=0 **1591/1639 passed, 48 skipped**（App 969/0/4） |
 | Release Gate 条件 6 | ✅ **已关闭**（R16）—— 见 `doc/reviews/MAINT-1-GATE-CONDITION-6-CLOSURE-2026-11-16.md`；Gate 总体仍 `BLOCKED`（条件 3/4/5） |
 | 上一 goal | 已用尽 100 轮（见 `GOAL-WRAPUP-R100.md`） |
 | 本 goal | 60 轮上限 |
 | 目标 C | 可行动项 41 → **闭合 41 / 0 剩余** ✅ |
+| 非终态卡 | **10 → 8**（R17 收口 `GATE3-SETTINGS-SHORTCUT-1`、`DOC-CTRLCHAR-FIX-1`） |
 
 复跑四件套：
 
@@ -285,10 +286,10 @@ Gate 剩下的是条件 3（人眼目视 overlay）/ 4（签名 + 真机安装�
 ### 队列 5a —— 复核者改派（2026-11-17 用户确认，Lead 执行）
 
 - **决定**：`reviewer: Antigravity` 的非终态卡，一律改派 **ZCode 或上下文独立的新子 agent**；不再使用 Antigravity（2026-10-31 裁决已令其退出 Owner/Reviewer/派发名单）。
-- **适用范围（当前 2 张）**：`GIT-CLEAN-PUBLICATION-1`（in_review）、`GIT-CLEAN-CORE-ENV-2`（proposed，释放时同步改派）。
-- **执行方式**：在**真正指派复核的那一刻**改 `reviewer:` 字段并记录复核者来源（子 agent 名/会话 ID，或 ZCode sessionId）；
-  不得先改字段后补复核。
+- **执行方式**：在**真正指派复核的那一刻**改 `reviewer:` 字段并记录复核者来源（子 agent 名/会话 ID，或 ZCode sessionId）；不得先改字段后补复核。
 - **历史卡不动**：已 `done`/`closed_with_limitations` 卡上的 Antigravity 署名按 2026-10-31 裁决**保持原字节**，不改写。
+- **进度（R17）**：`GIT-CLEAN-PUBLICATION-1` 已改派 `reviewer-gcp1` 并完成复核（`APPROVED_FOR_CLOSEOUT_WITH_LIMITATIONS`，P0/P1=0，12 条限制）；**下一轮按 CP-1…CP-5 收口为 `closed_with_limitations`**。
+- **剩余**：`GIT-CLEAN-CORE-ENV-2`（proposed，释放时同步改派）。
 
 ### 队列 4 —— HUMAN-REQUIRED 等待项（不阻塞 Agent）
 
@@ -946,6 +947,54 @@ AC1 的 blocked 理由由**原作者**写成完整的 NA 结论（headless 库�
   清理卡 Ruling C 顺带把 AC6 一起解掉。
 
 ---
+## 3q. R17（本轮）完成的事 —— 两张卡收口材料 + 37 个控制字符清零 + 改派复核落地
+
+### 结果一句话
+`GATE3-SETTINGS-SHORTCUT-1` 与 `DOC-CTRLCHAR-FIX-1` 的终态材料全部补齐并经独立上下文复核；
+`GIT-CLEAN-PUBLICATION-1` 完成**改派后的独立复核**（Antigravity → `reviewer-gcp1`），并修掉它抓到的 STATUS 不可解析 hash。
+
+提交链（main）：`24c573d1b`（起点）→ `1ef6a2ebd`（内容+证据：控制字符 37 处 + GATE3 取证 + GCP1 复核报告）→ `3a0dea7b7`（四件套证据）→ `89b36c3f2`（两卡 CE/Resource/Closeout 补齐 → in_review）→ `定位：收口提交`。
+
+### 1) `DOC-CTRLCHAR-FIX-1`：37 个控制字符（不是 33 TAB + 20 CR）
+- 全量扫描 `doc/tasks` **667 个 .md**：残留 **37 个控制字符 / 5 个文件** ——
+  BEL(0x07) 8、BS(0x08) 5、TAB(0x09) 12、VT(0x0B) 6、FF(0x0C) 1、孤立 CR(0x0D) 1、ESC(0x1B) 4。
+  ⚠️ 卡面写的「TAB 与孤立 CR」**不完整**：BEL/BS/VT/FF/ESC 同样在吃字母。扫描必须覆盖 0x00–0x1F 与 0x7F。
+- **规律**：每个控制字符恰好占据**后一个单词的首字母位置**，修复 = 还原成那个字母（不是删、不是换空格）。
+  已还原的例子：`est.ps1→test.ps1`、`pps/desktop→apps/desktop`、`uild_sidecar→build_sidecar`、
+  `erify_pins→verify_pins`、`erified→verified`、`rror.code→error.code`、`ailure_boundary→failure_boundary`、
+  `erm_extract→term_extract`、`ranslate→translate`、`ssemble_production_core→assemble_production_core`、
+  `locked≠→blocked≠`、`ction→action`、`vidence-rerun→evidence-rerun`。
+- ⚠️ **一处必须反着卡面规则做**：`doc/tasks/FEA-07.md` 的孤立 CR 位于 `（` 与 `eviewer-fea07b` 之间 ——
+  它吃掉了 `reviewer` 的 `r`。按卡面原规则「删除」会得到 `eviewer-fea07b`（仍错），正确做法是**还原为 `r`**。
+- 校验：与父提交 blob 逐字节比对 **37/37 差异，全部是控制字符→ASCII 字母，5 个文件长度不变**；`git diff --stat` **29/29 对称**。
+- 四件套（修复后）：`check` PASS(3w) / `verify_pins` 18/18 / 声明审计 **0 error, 6875 declarations, 5661 protected roots** / 证据巡检 **FAIL 0, 7117 行, 667 卡**。
+- ⚠️ 与 `DOC-CTRLCHAR-FIX-2` 的边界：FIX-2 判「`doc/` **其它目录**不修」；本轮的 37 处是 **`doc/tasks` 内**、FIX-2 之后新写入或遗漏的字节。
+
+### 2) `GATE3-SETTINGS-SHORTCUT-1`：AC5 的数字被实测推翻
+- 卡面原写「无夹具 App.Tests **951 / 0 / 11 / 962**」⇒ **过期读数**。本轮实测：
+  - 无夹具 App.Tests：**962 passed / 0 failed / 11 skipped / 973 total，EXIT=0**；
+  - 权威 `test.ps1`：**1591/1639 passed、48 skipped、EXIT=0**（App 969/0/4/973；Host 364/0/44/408；CoreClient 258/0/0/258）。
+  - 差异来源：该读数之后仓库新增 11 个测试（962→973），且原写法 passed 与 total 不同源。
+- 判别力探针复做：`ConsoleWorkspaceView.TryHandleKey => true` ⇒ **1 failed**（`SettingsSpaceShortcutTests.cs:64`，`Ctrl+K did not open the command palette from Settings`）/EXIT=1；
+  按字节还原后 sha256 与注入前一致（`5227fce8…`）、该源文件 `git status` 为空；重建后 **1 passed/EXIT=0**。
+- ⚠️ **本轮踩到的坑（务必复用）**：探针注入后**用 `--no-build` 跑全量**会用到带补丁的旧二进制，
+  制造 **3 条假失败**（本卡测试 + `V2ConsoleUiTests` 两条）。**探针之后必须重建**再跑任何全量。
+
+### 3) `GIT-CLEAN-PUBLICATION-1`：改派复核（A2 队列已执行）
+- `reviewer` 已从 Antigravity 改为 **`reviewer-gcp1`（DSH 子 agent，独立上下文，未参与实现）**；
+  Appointment 与结论写入卡面新增段「2026-11-17 改派后独立复核」，历史 Review 字节不动。
+- 结论 **`APPROVED_FOR_CLOSEOUT_WITH_LIMITATIONS`**，P0=0 / P1=0 / P2=5 / P3=5，限制 **L-1…L-12**。
+  复核者亲自实测：Canonical Evidence **59/59 MATCH**、SOURCE_MANIFEST 724/724、禁止对象 338/338 absent、
+  候选 733 tracked / 无 parent / 无 remote / fsck exit 0、P04 pin 6/6；`git ls-remote` proxy 失败 exit 128 ⇒ 远端**未现场核验**。
+- **抓到并已修的真缺陷（F-01/L-8）**：`doc/STATUS.md:22` 原写 `clean-snapshot-20261026=892b946e` ——
+  该 8 位串**不是可解析对象**（真实首提交 `892b9469`，当前 head `e8147c6c`）。已改为 `e8147c6c`（零字节增量）。
+- **未收口**：CP-1…CP-3、CP-5 与 F-02 留待下一轮；**CP 未完成前必须保持 `in_review`**，且**只能置 `closed_with_limitations`，不得 `done`**。
+
+### 本轮预算变化
+- `doc/STATUS.md` 3,167 → **3,107 B**（28 行；压缩第 7 行 60 B，余量 93 B，仍满足 ≥17 B 的测试副作用要求）。
+- `doc/REBASELINE_PLAN.md` 6,913 → **6,861 B**（64 行；表外节点收敛为 7 张非终态卡，余量 139 B）。
+
+---
 ## 4. 关键技术事实（R1/R2 累积）
 
 ### 4.1 file identity 53 位契约（已闭环）
@@ -1073,20 +1122,21 @@ AC1 的 blocked 理由由**原作者**写成完整的 NA 结论（headless 库�
   **HEAD 未含本轮改动** 时同样 **9 failures**（用 `git stash` 复现）⇒ 既有债务，非本轮回归。
 - **AC 变更**：新增 **AC7**（B2 单元级修复，`<<PARTIAL>>`）+ **AC5 追加式窄例外**（不追溯改写原核验）。
 
-### 队列 5 —— 剩余非终态卡清单（R18 实测，11 张）
+### 队列 5 —— 剩余非终态卡清单（R17 实测，**8 张**）
 
 | 卡 | 状态 | 剩余工作 | 谁可做 |
 |---|---|---|---|
 | `MAINT-1-RELEASE-MONITOR` | in_progress | 伞形哨位；Gate 3/4/5 待人类输入 | 人工 |
 | `SIDECAR-REBUILD-1` | in_progress | AC5/AC6 未勾；capabilities 17 / 13 失败拆 E-6 | Agent 可续 |
-| ~~`GATE3-MATRIX-EXPAND-1`~~ | **done（R19）** | 三轮独立复核（REJECTED→REJECTED→ACCEPTED）；更正 80→79、951→962 两个实测数字；终态材料补齐 | 已完成 |
-| `GATE3-SETTINGS-SHORTCUT-1` | in_progress | 同上（AC1–AC6 全勾） | Agent 可续 |
-| `DOC-CTRLCHAR-FIX-1` | in_progress | AC1–AC6 全未勾 | Agent 可续 |
+| ~~`GATE3-MATRIX-EXPAND-1`~~ | **done（R19）** | 三轮独立复核（REJECTED→REJECTED→ACCEPTED） | 已完成 |
+| ~~`GATE3-SETTINGS-SHORTCUT-1`~~ | **done（R17，独立复核 pending 结果见 §3q）** | 6/6 AC；CE 4 行 BLOB；AC5 数字已更正为 962/0/11/973 | 已完成 |
+| ~~`DOC-CTRLCHAR-FIX-1`~~ | **done（R17）** | 6/6 AC；37 控制字符清零；CE 3 行 BLOB | 已完成 |
 | `INSTALLER-MATRIX-1` | in_progress | 安装矩阵/签名，属 Gate 条件 4 | 人工（签名/GT） |
 | `FEA11-ENTRY-MISSING-1` | blocked | 依赖 FEA-11 入口缺失 | 待裁定 |
-| `GIT-CLEAN-PUBLICATION-DIAG-1` | approved | 待集成 | Agent 可续（需先看卡） |
-| `GIT-CLEAN-PUBLICATION-1` / `GIT-CLEAN-RUST-ISOLATION-1` | in_review | 待复核/集成 | Agent 可续 |
-| `GIT-CLEAN-CORE-ENV-2` | proposed | 未激活 | 需 DSH 释放 |
+| `GIT-CLEAN-PUBLICATION-DIAG-1` | approved | 待集成（卡面明确「不集成、不置 done」） | 需 DSH 裁决 |
+| `GIT-CLEAN-PUBLICATION-1` | in_review | **改派复核已 APPROVED_FOR_CLOSEOUT_WITH_LIMITATIONS**；剩 CP-1/CP-2/CP-3/CP-5 → 只能 `closed_with_limitations` | Agent 可续（1 轮可收口） |
+| `GIT-CLEAN-RUST-ISOLATION-1` | in_review | 待复核/集成（reviewer=ZCode 仍有效） | Agent 可续 |
+| `GIT-CLEAN-CORE-ENV-2` | proposed | 未激活；释放时同步改派 reviewer | 需 DSH 释放 |
 
 **结论**：Agent 侧仍有可执行项（上表标「Agent 可续」的 6 张），但每张都要按终态要求整理证据 + 独立复核 + 收口，单轮只能推进 1–2 张。
 

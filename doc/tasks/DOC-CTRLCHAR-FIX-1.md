@@ -3,15 +3,17 @@ id: DOC-CTRLCHAR-FIX-1
 title: 修复 doc/tasks 控制字符损坏（33 处 TAB 实为被吃掉的字母 t、20 处孤立 CR）
 kind: governance
 governance_version: 3
-status: in_review
+status: done
 suggested_owner: DSH
 owner: DSH
-reviewer: null
+reviewer: reviewer-g3dc（DSH 子 agent，独立上下文，未参与实现；2026-11-17 复核）
 depends_on: []
 approval: 用户 2026-11-15「全部授权」；目标 C「doc/tasks 控制字符损坏修复」
 base_commit: 819298e99
 branch: main
 worktree: G:/CODEX/New Manga
+integration_commit: 89b36c3f2
+delivery_head: 89b36c3f2
 canonical_evidence_status: complete
 resource_closeout_status: complete
 evidence_dir: verification/DOC-CTRLCHAR-FIX-1
@@ -22,6 +24,10 @@ allowed_paths:
 ---
 
 # DOC-CTRLCHAR-FIX-1：doc/tasks 控制字符损坏修复
+
+> **阅读顺序提示（2026-11-17）**：本文 §背景～§修复 记录的是 **2026-11-16 首轮**（33 TAB / 20 孤立 CR / 37 文件 / 44-44 行）。
+> **2026-11-17 复测又发现 37 处 / 5 文件**（BEL 8 / BS 5 / TAB 12 / VT 6 / FF 1 / 孤立 CR 1 / ESC 4），已全部修复；
+> 当前权威数字以 **AC1–AC4 与 `## Closeout Record`** 为准（37 处、29 行、残留 0、长度不变）。首轮记录保留以备追溯，不改写。
 
 ## 背景
 
@@ -54,16 +60,29 @@ allowed_paths:
 
 **33 处全部符合**，无例外。⇒ 修复方式是把 TAB 还原为 `t`，而**不是**替换为空格。
 
-## 修复
+## 修复（下表为 **2026-11-16 首轮**；2026-11-17 复测见下方第二张表）
 
-| 项 | 数量 |
+| 项 | 数量（2026-11-16 首轮，commit `1f3bd0d84`） |
 |---|---|
 | 修复文件 | **37 个** |
 | TAB → `t` | **33 处** |
 | 孤立 CR → 删除 | **20 处** |
 | 修复后残留 | **TAB = 0，孤立 CR = 0，有问题文件 = 0** |
 
-`git diff --stat`：**44 insertions / 44 deletions**（**对称**，说明没有意外增删整行）。
+`git diff --stat`（首轮）：**44 insertions / 44 deletions**（**对称**，说明没有意外增删整行）。
+
+### 2026-11-17 复测修复（本轮，commit `1ef6a2ebd`）
+
+| 项 | 数量（2026-11-17 复测） |
+|---|---|
+| 修复文件 | **5 个**（`AC-BLOCKED-CLOSE-1` / `DOC-CTRLCHAR-FIX-2` / `FEA-07` / `HUMAN-VS-AGENT-SPLIT-1` / `SIDECAR-SCHEMA-STALE-1`） |
+| 控制字符 → 还原字母 | **37 处**（BEL 8 / BS 5 / TAB 12 / VT 6 / FF 1 / 孤立 CR 1 / ESC 4） |
+| 修复后残留 | **0**（`doc/tasks` 667 个 `.md` 全量复查） |
+| 字节差异 | **37/37**，全部「控制字符 → ASCII 字母」，5 个文件长度不变 |
+| `git diff --stat` | **29 insertions / 29 deletions**（对称） |
+
+> 首轮只覆盖 TAB 与孤立 CR，未覆盖 BEL/BS/VT/FF/ESC，且首轮之后仓库又写入了新的控制字符 ⇒ 复测仍有 37 处。
+> 两轮合计口径不同，**不要用首轮 33/20 解释当前状态**。
 
 ## 安全前提（改前已核实）
 
@@ -82,7 +101,7 @@ allowed_paths:
 - [x] **AC3 孤立 CR 修复**：残留 0（1 处孤立 CR；该处 CR 占据 `reviewer` 的首字母，故还原为 `r` 而非删除 —— 卡面原「删除」规则对该处不成立，已在 Closeout Record 更正）。 <<MET>>
 - [x] **AC4 无意外改动**：`git diff --stat` 29/29 对称；与 HEAD blob 逐字节比对 37/37 差异全部是「控制字符 → ASCII 字母」，5 个文件长度全部不变。 <<MET>>
 - [x] **AC5 不破坏 pin**：`verify_pins` 仍 18/18；四件套 PASS。 <<MET>>
-- [x] **AC6 独立复核**：固定 head（`1ef6a2ebd`）交独立上下文 Review。 <<MET>>
+- [x] **AC6 独立复核**：固定 head（`89b36c3f2`）交独立上下文 Review。 <<MET>>
 
 ## 允许修改范围
 
@@ -135,3 +154,6 @@ allowed_paths:
   同理，本轮 37 处全部是「控制字符吃掉后一个单词首字母」，必须逐处判断还原字母，不能一律删除或替换为空格。
 - **与 `DOC-CTRLCHAR-FIX-2` 的边界**：FIX-2 判「`doc/` **其它目录**不修」，本卡只处理 `doc/tasks/**`；本轮的 37 处是 FIX-2 之后新写入/遗漏的 `doc/tasks` 字节，不属于 FIX-2 判定的范围。
 - 删除、迁移、归档数量/字节数：0（备份 656 文件仓外保留）。
+- **独立复核**：`doc/reviews/DOC-CTRLCHAR-FIX-1-INDEPENDENT-REVIEW-2026-11-17.md` —— 复核者 `reviewer-g3dc`（DSH 子 agent，独立上下文，未参与实现），reviewed_head `89b36c3f2`，decision **`ACCEPTED_WITH_FINDINGS`**（P0=0 / P1=0 / P2=1 / P3=4）。
+  复核者亲自实测：`doc/tasks` 667 个 `.md` 残留 **0**；父提交 `24c573d1b` **恰好 37 处 / 5 文件**；5 文件 **37/37 差异全部为控制字符→ASCII 字母且长度不变**；`FEA-07` 的孤立 CR→`r` 判为**正确**。
+  P2-① 已在本轮处置：本文 §背景～§修复 原只写首轮 33/20 数字，已在文首加阅读顺序提示、并把「§修复」拆成首轮表与 2026-11-17 复测表。

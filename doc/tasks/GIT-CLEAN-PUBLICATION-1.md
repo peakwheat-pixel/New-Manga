@@ -7,7 +7,7 @@ status: in_review
 approval: user_approved_next_step_2026-10-24
 suggested_owner: Codex
 owner: Codex
-reviewer: Antigravity
+reviewer: reviewer-gcp1（DSH 子 agent，独立上下文，未参与实现；2026-11-17 改派，替代已退出的 Antigravity）
 depends_on: []
 base_commit: 349e61faff5f93067af5d4ce2d9e394e0d665b8c
 branch: main
@@ -214,6 +214,17 @@ DSH 接管基线提交 `a3c936f68748047aee41c4c60d732adc5bdf55f7`（仅 `AGENTS.
 - **未公开内容确认**：远端 `main` 仍为 `6a68fdeb9`（1788 files），`codex/clean-source-snapshot` 仍为 `e34a90d00`，本地 `main`(14002 files 含全部治理材料) **未推送**。
 - **构建快照本地副本**：`G:/CODEX/New Manga.workspace/publish/clean-snapshot-20261026`（可复现此分支）。
 - **本卡 AC4/AC5 状态不受影响**：它描述的是「推 main 的发布 Gate」，本次走的是快照分支口径，不等于本卡通过。
+
+## 2026-11-17 改派后独立复核（reviewer-gcp1）
+
+- **依据**：2026-10-31 用户裁决（Antigravity 退出 Owner/Reviewer/派发名单）+ 2026-11-17 用户确认（凡 `reviewer: Antigravity` 的非终态卡一律改派 ZCode 或上下文独立的新子 agent）。历史 `antigravity-review-push-r1.md` 与 `dsh-review-r1.md` 保持原字节与历史效力。
+- **Appointment**：DSH 于 2026-11-17 指派子 agent `reviewer-gcp1`（独立上下文、未参与本 Task 的实现/诊断/返修/push），只读复核固定候选 head `e34a90d001cce1fa966aec7d2b032bb5ad1cf148`。
+- **Review**：`doc/reviews/GIT-CLEAN-PUBLICATION-1-REASSIGNED-REVIEW-2026-11-17.md`，decision = **`APPROVED_FOR_CLOSEOUT_WITH_LIMITATIONS`**，P0=0 / P1=0 / P2=5 / P3=5，L-1…L-12 共 12 条限制。
+- **实测（复核者亲自跑）**：Canonical Evidence **59/59 sha256 MATCH**；SOURCE_MANIFEST 724/724 一致；338/338 禁止对象 absent；候选 733 tracked、1 个无 parent root、无 remote、`fsck --strict` exit 0；P04 pin 6/6；前端 435 passed、Rust r4 串行 153/0/1/12、Core 771/3、packaged 12/0/154；`git ls-remote` 因 proxy 失败 exit 128 ⇒ 远端现场核验记为 **NOT_VERIFIABLE**。
+- **判定**：AC1–AC3 的 `<<MET>>` 与实测一致；AC4 `<<BLOCKED>>` 与 AC5 `<<PARTIAL>>` **如实、不得改 MET**；可收口为 `closed_with_limitations`，**不得置 `done`**。
+- **收口前置（CP-1…CP-6，未完成前保持 `in_review`）**：CP-1 收口依据（AD-002 已取代 Tauri/React 旧栈，Core 3 项环境失败仍作 limitation）；CP-2 Resource Manifest 实际核销（4 个本地候选、cargo-target、review-package(-r2)、DIAG task-env 共 10 项，全 `PRESERVE_REFERENCED`，`resource_closeout_status: complete`）；CP-3 指针更正；CP-4 reviewer 登记（本段即登记）；CP-5 12 条限制写入卡面；CP-6 只置 `closed_with_limitations`。
+- **本轮已处置**：CP-4 本节 + frontmatter `reviewer` 改派；F-01（`doc/STATUS.md` 的 `892b946e` 不可解析 → 已更正为可解析 head `e8147c6c`）。
+- **本轮未处置（下一轮收口项）**：CP-1 / CP-2 / CP-3（台账与 PLAN 行）/ CP-5；F-02（AC5 行末理由追加更正，需 append-only）；F-03…F-10 与 L-1…L-12。
 
 ## 2026-10-26 快照同步（第二次，用户授权）
 
