@@ -3,11 +3,11 @@ id: GIT-CLEAN-RUST-ISOLATION-1
 title: Rust测试隔离修复与真实多channel饱和验证
 kind: implementation
 governance_version: 3
-status: in_review
+status: closed_with_limitations
 approval: codex_scope_released_user_review_disposition_2026-10-24
 suggested_owner: ZCode
 owner: ZCode
-reviewer: ZCode
+reviewer: reviewer-rustiso（DSH 子 agent，独立上下文，未参与实现；2026-11-17 收口复核）
 depends_on: []
 base_commit: e34a90d001cce1fa966aec7d2b032bb5ad1cf148
 branch: codex/git-clean-rust-isolation-r2
@@ -15,7 +15,7 @@ worktree: G:/CODEX/New Manga.workspace/task-envs/GIT-CLEAN-RUST-ISOLATION-1/sour
 integration_commit: null
 delivery_head: 1829a38a41587a0d680001a40d206886afb0911d
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/GIT-CLEAN-RUST-ISOLATION-1
 allowed_paths:
   - doc/tasks/GIT-CLEAN-RUST-ISOLATION-1.md
@@ -137,9 +137,9 @@ allowed_paths:
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| isolated-repo/build/temp | G:/CODEX/New Manga.workspace/task-envs/GIT-CLEAN-RUST-ISOLATION-1 | PRESERVE_REFERENCED | — | e34基线 | 独立仓库，无远端；禁止清理 |
-| source/evidence | 父e34与DIAG fed及冻结包 | PRESERVE_REFERENCED | — | 原Task pins | 仅只读，不是集成依赖 |
-| user-data/exchange | — | NOT_APPLICABLE | — | — | 不用私有素材，未派发 |
+| isolated-repo/build/temp | G:/CODEX/New Manga.workspace/task-envs/GIT-CLEAN-RUST-ISOLATION-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/GIT-CLEAN-RUST-ISOLATION-1 | G:/CODEX/New Manga.workspace/task-envs/GIT-CLEAN-RUST-ISOLATION-1/RESOURCE-MANIFEST.json | 19 目录 / 10,858 文件 / 190,447,692 B；manifest sha256 52502fd2…；实测存在，未清理 |
+| source/evidence | G:/CODEX/New Manga.workspace/task-envs/GIT-CLEAN-RUST-ISOLATION-1/review-package-r2 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/GIT-CLEAN-RUST-ISOLATION-1/review-package-r2 | G:/CODEX/New Manga.workspace/task-envs/GIT-CLEAN-RUST-ISOLATION-1/RESOURCE-MANIFEST.json | r1/r2 冻结包与交付副本原地保留（仍被 Canonical Evidence 引用）；父 e34 与 DIAG fed 只读不改；实测存在 |
+| user-data/exchange | — | NOT_APPLICABLE | — | — | 不使用私有素材、未派发外部交换 |
 
 ## 交付与运行记录
 
@@ -194,3 +194,26 @@ DSH 接任 Lead / Architect / Integrator（见 `doc/GOVERNANCE_TAKEOVER_2026-10-
   - 本 Task 在本轮不复活、不产生新 head、不进行任何 ZCode 自审；
   - 若将来复活，独立审查必须由**未参与该 head 实现**的 Agent 执行（候选：Codex，或按协作协议记 `reviewer_unavailable` 并等待可用 Reviewer），并在新 `APPOINTMENT.md` 中重新绑定精确 base/head 与唯一 Review 写路径；
   - 备选方案「改 Owner 为 Codex、Reviewer 留 ZCode」未被采用：那会把一个 blocked 的环境线 Task 重新拉回实施队列，与本轮"绕开环境线、聚焦产品收口"的优先级相反。
+
+## 2026-11-17 收口（Codex Legacy 裁定采纳 → `closed_with_limitations`）
+
+- **裁定**：`doc/reviews/GIT-CLEAN-RUST-ISOLATION-1-LEGACY-SCOPE-RULING-2026-11-17.md`（Codex 只读裁定 + DSH 采纳段）。
+- **Q1=(A)**：AC3（真实 32 饱和 / accepted-refused 所有权）的实现面属 **AD-002 已退役的 Tauri/Rust 线**（`AGENTS.md` 产品边界：Tauri/React 仅保留为历史证据，不再释放 Legacy 实现/诊断/修复任务）。**不在旧实现上补测**；本卡按 `closed_with_limitations` 收口，**AC1 保持 `<<PARTIAL>>`、AC3 保持 `<<BLOCKED>>` 原字节未改**。
+- **Q2**：R2-F01…F05 一律登记 `WONT_FIX_LEGACY`（**收口分类，不等于已修复**；`verification/GIT-CLEAN-RUST-ISOLATION-1/r2/DISPOSITION.md` 的原 `open` 状态与字节保持原样）。**不另立**新架构容量卡；若将来新架构复现对应**用户可见**行为，再按 `AGENTS.md` 另立卡，只验证该行为在实际 Host/Python Core 路径上的边界处理与资源归属，不继承 Rust 的 `MAX=32`。
+- **reviewer 改派**：`ZCode`（与 Owner 同一 Agent，存在自审风险）→ **独立上下文子 agent**，来源与身份见 frontmatter 与本节末尾；历史改派记录与 `dsh-review-r1/r2` 字节不动。
+- **资源核销**：`RESOURCE-MANIFEST.json`（task-env 19 目录 / 10,858 文件 / 190,447,692 B，sha256 `52502fd234bd9c711ad200a9d47b541b6096f2fa6f998ee59ca1bf238b79af28`）；全部 `PRESERVE_REFERENCED`，删除/迁移/归档 = 0。
+
+### 收口限制清单（L-R1…L-R7，来自 Codex 裁定 Q3）
+
+1. **L-R1**：AC1 保持 `<<PARTIAL: …R006异常清理及R2-F02..05仍待补>>`；不得把遗留项写成已修复。
+2. **L-R2**：AC3 保持 `<<BLOCKED: …peak0未达32，容量接受/拒绝路径未验证>>`；不得声称达到饱和或已验证 accepted/refused 所有权。
+3. **L-R3**：AC2 的 `MET` 仅适用固定 head `1829a38` 的两次默认并发 `153 passed / 0 failed / 6 ignored / 12 filtered`，不得外推为任意生产负载或新架构容量结论。
+4. **L-R4**：AC4 的 `MET` 只表示交付绑定与审查流程已执行；审查结论仍为 `blocked`，不得据此声称技术验收或集成通过。
+5. **L-R5**：R2-F01…F05 在原 r2 `DISPOSITION.md` 中仍为 `open`；`WONT_FIX_LEGACY` 是收口分类，不表示 finding 已修复或原始记录已关闭。
+6. **L-R6**：fault 回收检查只记录 peak 检查前通过的部分；`remaining=0` 是打印值，peak 失败后的后续断言未执行，不能宣称整个故障场景通过。
+7. **L-R7**：收口未改变生产预算 `MAX=32`，未修改生产实现、registry、契约、Schema 或依赖。
+
+### 边界
+
+本收口**不构成产品发布验收**，不改变任何 Gate 结论，不改变父候选 `e34a90d` / 源 `main`，不 push 候选、不置 `done`、不集成。
+**reviewer 来源**：`reviewer-rustiso`（DSH 子 agent，独立上下文，未参与本卡实现/返修；2026-11-17 收口复核）。
