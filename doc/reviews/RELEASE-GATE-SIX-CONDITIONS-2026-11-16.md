@@ -119,7 +119,7 @@ Owner 决定是否执行 SEC-02 的四项处置：① 删除含素材分支 ② 
 
 > 补齐可安全执行的完整 GUI / Core / Host 关键流程与 Avalonia TestHost；所有 blocked/skipped 项继续保留原结果。
 
-### 判定：**未关闭**（只剩 1 项人眼确认）
+### 判定：**已由 Agent 书面视觉裁定关闭**（2026-11-17；非人眼，按 Codex Q3 的委托裁定路径；限制见下）
 
 | 子项 | 状态 | 证据 |
 |---|---|---|
@@ -127,7 +127,7 @@ Owner 决定是否执行 SEC-02 的四项处置：① 删除含素材分支 ② 
 | skip 分流（App / Host / Sidecar） | ✅ 完成 | `doc/tasks/GATE3-APP-SKIP-TRIAGE-1.md`、`doc/tasks/GATE3-HOST-SKIP-TRIAGE-1.md`、`verification/GATE3-SIDECAR-COVERAGE-1/` |
 | Host 2 个「失败」的设计性质 | ✅ 已固化（不是缺陷） | `verification/CRASHPOINT-FAIL-NATURE-1/`（两阶段驱动的一半，`CrashPoint_Park` 永不自行结束） |
 | **真实 GUI 四页走查（源码构建 + 安装产物）** | ✅ 完成，各 **5/5 页**截图 | `verification/GATE3-FOUR-PAGE-WALKTHROUGH-1/`：`page-bookshelf/library/reader/settings/workbench.png` 两轮（10:13-10:14 与 10:18-10:19），`host.log` 含 `core_service ready` + `host_bridge ready` |
-| **阅读器 overlay（F11 全屏）视觉** | ❌ **未完成** | `verification/GATE3-READER-OVERLAY-1/`（`PostMessage(WM_KEYDOWN, VK_F11)` 实测无效）；`verification/READER-ENTRY-PATH-1/`（GUI 逻辑已由 13 个 headless 测试覆盖，**只剩视觉表现**） |
+| **阅读器 overlay（F11 全屏）视觉** | ✅ **已完成**（2026-11-17，3 份独立书面视觉裁定） | `verification/MAINT-1-RELEASE-MONITOR/condition3/`（6 张真实窗口截图）；裁定 `doc/reviews/MAINT-1-GATE-CONDITION-3-VISUAL-ADJUDICATION-2026-11-17.md`：`PARTIAL_PASS_FOR_OVERLAY_CHROME` / `PARTIAL_PASS_PLUS_BOTTOM_BAND` / `CONTENT_RENDERING_COVERED`；历史失败路径 `verification/GATE3-READER-OVERLAY-1/`（PostMessage 无效）与 `READER-ENTRY-PATH-1` 保留原样 |
 
 ### 剩余动作
 
@@ -138,6 +138,13 @@ public 方法 `TryHandleGlobalKey`，逻辑已验证，只差肉眼确认渲染�
 ### 归属
 
 **需人眼** → `H-02`（真机多屏）相邻项；建议新增/复用为「按一次 F11 并截图」的独立最小步骤。
+
+> **2026-11-17 更正说明**：条件 3 的「阅读器 overlay 视觉」已按 Codex 裁定 Q3 的**委托书面视觉裁定**路径关闭 ——
+> 用发布产物（`NewManga.App.exe` sha256 `a3ec2133…f739230`）在真实桌面会话（Win10 2009 build 26300 / 2560×1440 / 96 dpi）
+> 经 UI Automation 点 `阅读` 打开阅读器后按 `F11` 取证。**这不是人眼验证**，是具名 Agent 的书面视觉判断。
+> 同时发现外观一致性缺陷 `READER-F11-STYLE-SCOPE-1`（D9），已单独立卡，**不影响**「F11 全屏/无边框视觉正常」的结论。
+> 条件 3 判定变化**不改变** `Technical Gate=NOT_SATISFIED`（条件 4/5 仍开）。
+
 
 ---
 

@@ -424,7 +424,7 @@ NEW-MANGA-V1-FULL-AUDIT 与 R1–R4 整改、SEC-01/02/03、CORE-01、AUDIT-07/0
 
 | 条件 | 当前处置 | 下一步（Agent 可推进） | 不可代理的部分 |
 |---|---|---|---|
-| **3｜阅读器 overlay 视觉** | **`PARTIAL_WINDOW_EVIDENCE`**（2026-11-17）—— 发布产物在真实桌面会话（2560×1440 / 48px 任务栏 / 100% 缩放）抓到 F11 全屏 overlay 截图 + 书架截图；独立书面视觉裁定 **`PARTIAL_PASS_FOR_OVERLAY_CHROME`**（`doc/reviews/MAINT-1-GATE-CONDITION-3-VISUAL-ADJUDICATION-2026-11-17.md`）：**通过** = 全屏无边框（任务栏被覆盖）、顶部带控件完整未越界、无黑边/无整幅遮挡、可读（对比度约 15:1）；**不覆盖** = 内容渲染（未选中页面）。**补充裁定 `PARTIAL_PASS_PLUS_BOTTOM_BAND`**（整屏重截 c3-03/04）：底部带 `上一页` x17..52 / `下一页` x75..110 / 进度条 x128..2456（0% 填充）/ `进度：未保存` x2486..2551，上下两带相隔 1,372 行互不遮挡；**仍不覆盖** = 进度条非零态、翻页交互/禁用态、保存状态机其余取值、内容渲染。证据 `verification/MAINT-1-RELEASE-MONITOR/condition3/`（README 已按裁定 D1–D6 更正） | ① 按**全屏窗口矩形**重截（含窗口底缘，覆盖底部状态带）；② 选中页面后按 F11 再截（覆盖内容渲染） | 真实窗口截图必须来自安装/运行产物；不得用 headless 冒充；不得因已有全屏截图就判条件 3 MET；不得把截取矩形的 8px 黑带读作应用边框 |
+| **3｜阅读器 overlay 视觉** | **已由 3 份独立书面视觉裁定关闭**（`visual-c3` = `PARTIAL_PASS_FOR_OVERLAY_CHROME`、`visual-c3b` = `PARTIAL_PASS_PLUS_BOTTOM_BAND`、`visual-c3c` = `CONTENT_RENDERING_COVERED`；证据 `verification/MAINT-1-RELEASE-MONITOR/condition3/`，6 张真实窗口截图 + 3 份裁定；**非人眼验证**，按 Codex Q3 的委托裁定路径）。**仍不覆盖**：分页模式排版（当前实测为 Webtoon 纵向）、Webtoon 实际滚动/整页可达、缩放/DPI、进度非 0% 态、翻页与禁用/焦点态、保存状态机其余取值、次级 overlay、可访问性、环境矩阵 | 若用户要求人眼复核，按同一组证据重看即可（无需重新取证） | 不得把「Agent 书面裁定」写成「人眼已验证」；不得据此把条件 4/5 或 Gate 总体判为通过 |
 | **4｜签名 + 安装矩阵** | `INSTALLER-MATRIX-1` 已 `closed_with_limitations`（旧 sidecar 机制验证；AC7 NOT_RUN；无签名）；真实签名与跨版本矩阵由 **`RELEASE-GATE4-SIGNED-MATRIX-1`（proposed）** 承接 | 取得 Authenticode 证书与干净 Windows 环境后释放该卡；否则停在 AC1 并登记 `NOT_RUN` | 真实证书凭据、真实 Windows 环境 |
 | **5｜人工 GT / 质量基线** | **`LIMITATION_ACCEPTED`** —— 按 Gate 原文允许的替代分支登记：**没有代表性质量基线，不宣称翻译/识别准确率达标**；实测基线仍 `NOT_RUN` | 若将来取得独立人工标注数据，须核代表性/来源/许可与固定哈希后再复评 | 独立人工 GT 数据本身 |
 
@@ -432,3 +432,14 @@ NEW-MANGA-V1-FULL-AUDIT 与 R1–R4 整改、SEC-01/02/03、CORE-01、AUDIT-07/0
 - 三条件的处置**不改变** `Technical Gate=NOT_SATISFIED`；Codex 唯一「需用户裁决」项是**是否把 Gate 总体改为 `SATISFIED`**，DSH 未改、也不代裁决。
 - 不得把 `AGENT_ADJUDICATION_PENDING` 或 `LIMITATION_ACCEPTED` 表述为「条件已通过」。
 - 条件 1（已关闭 8/8）、条件 2（调查完成）、条件 6（已关闭）状态不变。
+
+### 2026-11-17 条件 3 关闭依据（三份裁定）
+
+| 裁定 | verdict | 覆盖 |
+|---|---|---|
+| `visual-c3` | `PARTIAL_PASS_FOR_OVERLAY_CHROME` | 全屏/无边框、顶部带、无遮挡、可读性 |
+| `visual-c3b` | `PARTIAL_PASS_PLUS_BOTTOM_BAND` | 底部状态带四件（`上一页`/`下一页`/进度轨道 0%/`进度：未保存`） |
+| `visual-c3c` | `CONTENT_RENDERING_COVERED` | 页面真实渲染（与 fixture page 缩放 2.1183× 后 MAD 1.88）、底部 `第 1 / 8 页 · 0%` + `进度：续读到第 1 页（Core 已保存）` |
+
+**同时发现并单独立卡的视觉缺陷**：`READER-F11-STYLE-SCOPE-1`（D9：`ImmersiveReaderWindow` 未引入 `V2LocalStyles` ⇒ 顶/底带变画布底色、模式 chip 失去选中高亮；两帧页面重叠区 2,296,160 px 差异 0，差异只在外壳）。
+**条件 3 的关闭不掩盖该缺陷**：它是外观一致性缺陷，不改变「F11 全屏/无边框视觉正常」这一结论。
