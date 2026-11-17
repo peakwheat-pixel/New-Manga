@@ -134,6 +134,13 @@ DSH 已按用户授权把选向交给 ZCode，但第二次调用**正文截断**
 | EV-LVD-17 | AC9 向导欢迎页实拍（GPL-3.0-or-later） | verification/WEIGHTS-LICENSE-PROVENANCE-1/ac2-wizard-welcome-gpl.png | 49d1486b1 | 1f77a6e9109c4c6e656ed22e4174a82d19139379f6312320d2d257a351ad6882 | CANONICAL | BLOB |
 | EV-LVD-18 | AC9 向导许可页实拍（含 Apache 副本清单） | verification/WEIGHTS-LICENSE-PROVENANCE-1/ac2-wizard-license-gpl.png | 49d1486b1 | 28433d582d4e5cded71c3f12f7feb8a0b74b1161b3f1d2ad37bec1fff531db46 | CANONICAL | BLOB |
 | EV-LVD-19 | AC8/AC9 收紧裁定全文与采纳记录 | doc/reviews/ZCODE-RULING-INSTALLER-LICENSE-2026-11-17.md | 49d1486b1 | c7460973dd8178381e269813a31fd0394670b7bf8deeb148cb42e3ee5b014947 | CANONICAL | BLOB |
+| EV-LVD-20 | AC10 干净包六份许可文件与仓库一致 + 无残留 AGPL 表述 | verification/WEIGHTS-LICENSE-PROVENANCE-1/ac3-clean-package-verify.log | 339753383 | 5b10aaa005decb89701a3a900b1d56107490aa806cb540221399d22e74a39069 | CANONICAL | BLOB |
+| EV-LVD-21 | AC10 新护栏对旧 AGPL stage 变红（5 条） | verification/WEIGHTS-LICENSE-PROVENANCE-1/ac3-verifier-red-old-agpl-stage.log | 339753383 | f71b08f42cfc680da2012e4fca28ad1e4ad430246653e309d6aec93a75ac5896 | CANONICAL | BLOB |
+| EV-LVD-22 | AC10 base 变体重打包过闸（license=GPL-3.0-or-later） | verification/WEIGHTS-LICENSE-PROVENANCE-1/ac3-base-variant-guard.log | 339753383 | 177d74b1abafbb42449ac841fb8eac2b5d73589db8abdd57e5489febab47659c | CANONICAL | BLOB |
+| EV-LVD-23 | AC10 base 变体 VERSION.json | verification/WEIGHTS-LICENSE-PROVENANCE-1/ac3-base-version.json | 339753383 | b86712d08a8e6afac85bd093939aa0f81e35d150c0e2a8666ddf8609fa88a108 | CANONICAL | BLOB |
+| EV-LVD-24 | AC10 干净包安装器 build-info | verification/WEIGHTS-LICENSE-PROVENANCE-1/ac3-installer-build-info-clean.json | 339753383 | de0b65a4f49a117f399b4a96d3abd403c01ff85b9d19c1eb35b7ac178b2e1fbe | CANONICAL | BLOB |
+| EV-LVD-25 | AC10 干净包向导欢迎页实拍 | verification/WEIGHTS-LICENSE-PROVENANCE-1/ac3-wizard-welcome-clean.png | 339753383 | 2325544fe934d5afed15b5af01c7fd8b848f7ca6a346450cc09d79904f109e0f | CANONICAL | BLOB |
+| EV-LVD-26 | AC10 干净包向导许可页实拍 | verification/WEIGHTS-LICENSE-PROVENANCE-1/ac3-wizard-license-clean.png | 339753383 | 78ae7d477871f02d6b43d2d91674fb7addc763666df68859ffb9edacb10c8ee2 | CANONICAL | BLOB |
 
 ## Resource Manifest
 
@@ -209,3 +216,30 @@ fail-closed 探针（合成 stage 在 `license=GPL-3.0-or-later` 下 `BUILD_EXIT
 2. **防回归**：若将来重新打入任何 AGPL 权重（如 `yolo11s-seg.onnx`），必须同时把 `NOTICE.md` 变体表 + `package.ps1` 判定改回 AGPL；`THIRD_PARTY_LICENSES.md` §3 的 AGPL 依据段已保留。
 3. 第一版 r27 打包曾产出「AGPL 文案」的旧截图（脚本路径指向旧 exe）—— 已重截，**以 `ac2-wizard-*-gpl.png` 为准**。
 4. `setup.exe` 仍未签名；条件 4 仍需真证书（清单见 `doc/reviews/RELEASE-GATE4-EXECUTION-CHECKLIST-2026-11-17.md`）。
+
+## 2026-11-18 复核处置（reviewer-tgl，ACCEPTED_WITH_FINDINGS，**P0=1** / P1=2 / P2=4）
+
+报告：`doc/reviews/LICENSE-VARIANT-DECLARATION-1-TIGHTEN-REVIEW-2026-11-17.md`。
+
+- **P0-1（已修，发布阻塞级）**：收紧后**随包的三份许可文档仍自相矛盾** —— 复核者在**新 `setup.exe` 内**读到
+  `NOTICE.md:37`「待核实（保守按 AGPL-3.0 声明整包）」、`:45`「故按保守策略整包声明 AGPL-3.0」、`:52`「4 个文件」，
+  `THIRD_PARTY_LICENSES.md` 仍写「models 整体按 AGPL-3.0 / base 仍按 GPL」，`LICENSE_AUDIT.md` 三行仍「待核实」且称「4 项」。
+  **`NOTICE.md` 正是 NSIS 许可页正文来源** ⇒ 接收者滚动许可页会同时看到 GPL 与 AGPL 两种结论。
+  **已修**：三份文档逐处清理（`NOTICE.md` 表格/规则3/文件组、`THIRD_PARTY` 整包结论、`LICENSE_AUDIT` 表格/五件套/权重行），
+  重打包后**包内残留检查 `RESIDUAL: none`**，新 `setup.exe` **652,081,157 B / sha256 `3c9984b2…`**，
+  六份许可文件与仓库 **SAME=True**（`ac3-clean-package-verify.log`）；向导许可页实拍确认为 GPL-3.0-or-later 且清单含 Apache 副本。
+- **P1-1（已修）**：`RELEASE-GATE4-EXECUTION-CHECKLIST` 曾绑定旧 AGPL 包（652,150,501 / `23c04abd…`）⇒ 已改为绑定
+  **652,081,157 / `3c9984b2…`**，并把「包级声明」「向导文案」「包内合规文件」三行一起改准；禁止事项补列三个作废 hash。
+- **P1-2（已修，防线前移）**：原来只有 `build-installer.ps1` 拦「含权重但非 GPL」；
+  现在 `tools/ci/verify-package-manifest.ps1` **也查许可**：含 ONNX 时必须 ①`license=GPL-3.0-or-later`
+  ②每个权重在 `THIRD_PARTY_LICENSES.md` 的行不含「待核实」且含 `Apache-2.0` ③stage 内有 `LICENSE-Apache-2.0.txt`；
+  无权重时 base 必须为 `GPL-3.0-or-later`。**判别力实测**：对旧的 AGPL stage 立刻变红（5 条，`ac3-verifier-red-old-agpl-stage.log`）。
+- **P2-1（已说明）**：`LICENSE-Apache-2.0.txt` 是许可条款正文（10,174 B，止于 `END OF TERMS AND CONDITIONS`），
+  官方发布版另带 `APPENDIX`（使用说明，非条款）—— 已在 `LICENSE_AUDIT.md §2` 写明，**未臆造文本**。
+- **P2-2（已修）**：`installer.nsi` 的 `LegalCopyright` 补上 `LICENSE-Apache-2.0.txt`；许可页清单上一轮已含。
+- **P2-3（已补）**：base 变体也重新打包并过闸（`license=GPL-3.0-or-later`、0 onnx、`EXIT=0`，`ac3-base-*`）。
+- **P2-4（已知）**：`delivery_head` 等卡面字段在每轮收口时会更新；本轮以本节为准。
+
+**仍未关闭**：① 三项权重上游许可**只以上游声明为依据**（本地 ONNX 无可读元数据，本仓库不做法律认定）；
+② `setup.exe` **未签名**（条件 4 唯一外部阻塞）；③ 三项权重的上游 URL 中，`aistudio.baidu.com`（JS 壳）、Roboflow（429）、
+`huggingface.co` 直连被复核者标为「未能独立复核」，但 `hf-mirror`、nixpkgs raw、Kornia 三处**已独立复核通过**。
