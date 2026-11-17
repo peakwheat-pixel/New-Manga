@@ -18,3 +18,12 @@
   - UninstallString="C:\Users\49745\AppData\Local\Programs\NewManga\Uninstall.exe"
   - InstallLocation=C:\Users\49745\AppData\Local\Programs\NewManga
 - Start Menu 项: 0（）
+
+# ---------------------------------------------------------------------------
+# 2026-11-18 更正（reviewer-g4 P1-02）：上面「Start Menu 项: 0」是**采集脚本的过滤串写错**，
+# 不是真的没建快捷方式 —— 实际目录名是 `New Manga`（带空格），脚本却用了 `-Filter '*NewManga*'`。
+# 正确证据见 `ac5-upgrade-rollback-real.log`（每次安装后都记录）：
+#   New Manga.lnk        2,304 B
+#   卸载 New Manga.lnk   1,279 B
+# 且 `ac6-uninstall.log` 证明卸载后该目录被清理（存在=False）。
+# 本条只更正事实，不覆盖上面的原始输出。

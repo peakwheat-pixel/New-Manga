@@ -329,3 +329,16 @@ F11 没送进 shell，因此不会触发阅读器；`after F11` 无新窗口。*
   Provider 凭据，属用户不可替代的实物。
 
 **不得**因为提示已显示就宣称裁决 B 的两个前提都满足。
+
+---
+
+## 2026-11-18 更正：条件 4 已实际执行（不修改上文原始行）
+
+上表第 4 行写「**未完成**；需重新打包 sidecar + 安装器签名」——该判断在 2026-11-18 已过时，**仅作历史记录保留**。
+
+- **用户裁决**：2026-11-18「本项目不需要证书」（`doc/reviews/USER-RULING-2026-11-18-NO-SIGNING.md`）
+  ⇒ 签名**不再是条件 4 的前置**；上文第 220 行「签名：非阻塞」的判断与本裁决一致。
+- **矩阵已执行**：`RELEASE-GATE4-SIGNED-MATRIX-1` 的 AC1–AC6 于 2026-11-18 在本机实测完成
+  （干净安装 → 四页可达 → 真实 0.1.0↔0.1.1 升级与真回退 → 卸载后数据根零变化），
+  证据在 `verification/RELEASE-GATE4-SIGNED-MATRIX-1/`，独立复核见 `doc/reviews/RELEASE-GATE4-MATRIX-REVIEW-2026-11-18.md`（ACCEPTED_WITH_FINDINGS）。
+- **仍未关闭**：等复核者复检 P1 处置；关闭时按 `closed_with_limitations` 登记单机/无快照/既有数据根等限制。

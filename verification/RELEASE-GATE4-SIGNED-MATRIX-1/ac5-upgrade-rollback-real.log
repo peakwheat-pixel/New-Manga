@@ -1,0 +1,57 @@
+# RELEASE-GATE4 · AC5 跨版本升级与回退（重做版，2026-11-18）
+
+# interpreter: pwsh 7
+# command: pwsh -NoProfile -File <workspace>\tmp\r31\ac5-real-upgrade.ps1
+# 处置：reviewer-g4 P1-01（原 0.1.0 为同源重构包，app 仍自报 0.1.1）
+
+## 包指纹
+- 历史 0.1.0：652164075 B / sha256 1d573ab4602f4c95447d5ee494e47cbf8043f6c65af3a8b96d755756bd01965e / setup FileVersion=0.1.0
+- 当前 0.1.1：652081157 B / sha256 3c9984b21d663a9ec9a8890387e5800df7d85a3005ed66f0231c67653751df05 / setup FileVersion=0.1.1
+
+## 0) 起点（应为无安装）
+- **起点**
+  - 注册版本：(无卸载项)；程序目录 0 文件 / 0 B；数据根 530 文件 / 684197540 B
+  - app\NewManga.App.exe：(无 exe)
+  - Start Menu\New Manga 存在=False；项 0 个
+
+## 1) 安装真实历史 0.1.0
+- 安装 ExitCode=0（36.6 s）
+- **装入历史 0.1.0 后**
+  - 注册版本：0.1.0；程序目录 1038 文件 / 889400438 B；数据根 530 文件 / 684197540 B
+  - app\NewManga.App.exe：99554850 B / sha256 a3ec2133b5da3f619b752c818371ba54867b4c150fdba65b8c22d8b17f739230 / FileVersion=0.1.1.0 / ProductVersion=0.1.1+71cecb95a10c42ffe02d1396ab065e1fc9c43ca9
+  - Start Menu\New Manga 存在=True；项 2 个
+    - 卸载 New Manga.lnk：1279 B / sha256 f5ec4453262968e8a18c8a461420707eba3f6c3d74414323f7196879687b0872
+    - New Manga.lnk：2304 B / sha256 62718a3f1a815966eb9240b8bfe3ec16cfd2e6282af9468524b5897cbc6da859
+
+## 2) 覆盖安装当前 0.1.1（升级）
+- 覆盖安装 ExitCode=0（34.8 s）
+- **升级到 0.1.1 后**
+  - 注册版本：0.1.1；程序目录 1040 文件 / 827026762 B；数据根 530 文件 / 684197540 B
+  - app\NewManga.App.exe：37344576 B / sha256 c2bf9265d4c821ff5a99659e9560089def91b93b8b8485bac944bb0a310b7d8d / FileVersion=0.1.1.0 / ProductVersion=0.1.1+292f2e770278413f8650f04632c03fb84c76f927
+  - Start Menu\New Manga 存在=True；项 2 个
+    - 卸载 New Manga.lnk：1279 B / sha256 887ef4a9e4a126d09d4d310dad101589e1f1e4b0bc556d58b90b7baa289cf88c
+    - New Manga.lnk：2304 B / sha256 040b3887ee6c11a68b963c777c3bac765c5c71139ce116ee920cdb4f69a89c25
+
+## 3) 回退到历史 0.1.0（卸载后重装，非改标签）
+- 卸载 0.1.1 ExitCode=0
+- 安装历史 0.1.0 ExitCode=0（35 s）
+- **回退到历史 0.1.0 后**
+  - 注册版本：0.1.0；程序目录 1038 文件 / 889400438 B；数据根 530 文件 / 684197540 B
+  - app\NewManga.App.exe：99554850 B / sha256 a3ec2133b5da3f619b752c818371ba54867b4c150fdba65b8c22d8b17f739230 / FileVersion=0.1.1.0 / ProductVersion=0.1.1+71cecb95a10c42ffe02d1396ab065e1fc9c43ca9
+  - Start Menu\New Manga 存在=True；项 2 个
+    - 卸载 New Manga.lnk：1279 B / sha256 61f21a1041f31606f1025a1cc08e24c61a5de4f4571b21e99981ea66005f301d
+    - New Manga.lnk：2304 B / sha256 0b331c9ec201613890b157ca25e0de51f6c535aa6c39e9ffc23c9f8e2435862b
+
+## 4) 收尾：卸载，回到无安装状态
+- **卸载后**
+  - 注册版本：(无卸载项)；程序目录 0 文件 / 0 B；数据根 530 文件 / 684197540 B
+  - app\NewManga.App.exe：(无 exe)
+  - Start Menu\New Manga 存在=False；项 0 个
+
+## 5) 判定
+- 版本序列：(无卸载项) → 0.1.0 → 0.1.1 → 0.1.0 → (无卸载项)
+- app exe 真实跨版本：0.1.0=a3ec2133b5da3f61… vs 0.1.1=c2bf9265d4c821ff… 不同=True
+- 回退后 app exe 与首次 0.1.0 相同：True
+- 用户数据根全程一致：530/684197540 → 530/684197540 → 530/684197540 → 530/684197540 → 530/684197540
+- 全部 ExitCode=0：True
+- **AC5 结论**：PASS（真实跨版本 + 真回退）

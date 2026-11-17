@@ -101,9 +101,9 @@ Release Gate 条件 4 要求「对当前固定产品 commit 生成并固定 Wind
 |---|---|---|
 | AC1 | **MET** | Win11 专业版 10.0.26300（build 26300）、机器 HOME-MY、2560×1440 / 96 DPI、时区 China Standard Time；包 hash 已冻结 |
 | AC2 | **MET** | `Get-AuthenticodeSignature` = **`NotSigned`**，已如实登记；未使用自签名、未跳过时间戳 |
-| AC3 | **MET** | 先卸载旧安装（ExitCode 0，程序目录/卸载项清空、数据根不变）→ 静默安装 **ExitCode 0**（35.1 s）；程序目录 **1,040 文件 / 827,026,762 B**；安装后 `app\NewManga.App.exe` 37,344,576 B / sha256 `c2bf9265…` 与 stage **逐字节相同**；HKCU 卸载项（New Manga / 0.1.1 / UninstallString / InstallLocation）齐全；Start Menu 存在 `New Manga` 文件夹（`New Manga.lnk` 2,304 B + `卸载 New Manga.lnk` 1,279 B） |
+| AC3 | **MET** | 先卸载旧安装（ExitCode 0，程序目录/卸载项清空、数据根不变）→ 静默安装 **ExitCode 0**（35.1 s）；程序目录 **1,040 文件 / 827,026,762 B**；安装后 `app\NewManga.App.exe` 37,344,576 B / sha256 `c2bf9265…` 与 stage **逐字节相同**；HKCU 卸载项（New Manga / 0.1.1 / UninstallString / InstallLocation）齐全。**Start Menu 证据补正（reviewer-g4 P1-02）**：原日志写「0 项」是采集脚本过滤串漏了空格（实际目录名 `New Manga`）；正确证据在 `ac5-upgrade-rollback-real.log`——`New Manga.lnk` 2,304 B + `卸载 New Manga.lnk` 1,279 B，且 `ac6-uninstall.log` 证明卸载后目录被清理 |
 | AC4 | **MET** | 从**安装后的 exe** 四页全部到达并实拍：资料柜（作品卡+页列表）→ 工位（页面预览 1200×1660、`01/08`）→ 控制台（9 分区）→ 阅读器（F11 沉浸）；三次空格切换均由 UI Automation `Invoke()` 按钮完成，返回名 `工位空间`/`控制台空间`/`资料柜空间`、阅读按钮 `阅读` |
-| AC5 | **MET** | `0.1.1 → 卸载 → 0.1.0`（exe `9948f200…`）→ **覆盖安装 0.1.1**（exe `c2bf9265…`）→ **卸载后重装 0.1.0**（exe `9948f200…`，与首次完全相同）；五次安装/卸载全部 **ExitCode=0**；数据根全程 **530 文件 / 684,197,540 B** 不变 |
+| AC5 | **MET（真实跨版本，已按 reviewer-g4 P1-01 重做）** | 用**真实历史 0.1.0 包**（`task-envs/GATE4-PAGES-UPGRADE-1/out-0.1.0`，652,164,075 B / `1d573ab4…`）：装 0.1.0（app exe **99,554,850 B / `a3ec2133…`**，程序目录 1,038 文件 / 889,400,438 B）→ **覆盖安装 0.1.1**（app exe **37,344,576 B / `c2bf9265…`**，1,040 文件 / 827,026,762 B）→ **卸载后重装 0.1.0**（app exe 回到 `a3ec2133…`，与首次**完全相同**）；五次安装/卸载全部 **ExitCode=0**；数据根五步全程 **530 文件 / 684,197,540 B**。app 二进制**确实不同**（99.5 MB 旧构建 vs 37.3 MB 单文件构建），不是只改版本号 |
 | AC6 | **MET** | 静默卸载 **ExitCode 0**（0.6 s）；程序目录/HKCU/Start Menu **全部清理**；数据根 **530 文件 / 684,197,540 B**，逐文件 sha256 比对：**丢失 0 / 新增 0 / 变化 0** |
 | AC7 | 待复核 | 下面「边界」段自陈；`Technical Gate` 与条件 4 的关闭结论**不在本轮宣布** |
 
@@ -127,3 +127,20 @@ Release Gate 条件 4 要求「对当前固定产品 commit 生成并固定 Wind
 | EV-G4-08 | AC5 升级与真回退 | verification/RELEASE-GATE4-SIGNED-MATRIX-1/ac5-upgrade-rollback.log | 12bb456fa | cc9f781fd13995aa024e25ab984bbf3bffe75f9161d9cd60b5b48030d6bb2828 | CANONICAL | BLOB |
 | EV-G4-09 | AC6 卸载与数据根零变化 | verification/RELEASE-GATE4-SIGNED-MATRIX-1/ac6-uninstall.log | 12bb456fa | a2896e78931ef4c87b109c3217dc95b9e830d160aa69239c93408a781414fc41 | CANONICAL | BLOB |
 | EV-G4-10 | AC6 卸载前数据根逐文件清单（530 文件） | verification/RELEASE-GATE4-SIGNED-MATRIX-1/ac6-dataroot-before.json | 12bb456fa | 5cdd21212aef93a26c29aa935d3559e32002fa1bbb7504e70ded4898883e3ac4 | CANONICAL | BLOB |
+
+## 2026-11-18 复核处置与 limitation（reviewer-g4，P0=0 / P1=2 / P2=7）
+
+报告：`doc/reviews/RELEASE-GATE4-MATRIX-REVIEW-2026-11-18.md`。
+
+- **P1-01（已修，重做 AC5）**：原 AC5 用的「0.1.0」是同日同源重构包，其 app 仍自报 `FileVersion 0.1.1.0`、`ProductVersion 0.1.1+292f2e77…` ⇒ 只验证了**安装器级**回退。
+  已改用**真实历史 0.1.0 包**（`1d573ab4…`，app exe 99,554,850 B / `a3ec2133…`）重跑，app 二进制与当前 0.1.1（37,344,576 B / `c2bf9265…`）**确实不同**，回退后 exe 与首次 0.1.0 一致。
+- **P1-02（已修，补正证据）**：AC3 日志的 `Start Menu 项: 0` 是采集脚本过滤串漏空格所致；正确证据（两个 `.lnk` + 字节 + sha256）见 `ac5-upgrade-rollback-real.log`，AC3 日志已**追加**更正说明（原字节保留）。
+- **P2 处置**：P2-01（AC6 未写明卸载的是 0.1.0）/P2-02（JSON 是 AC1 安装前基线而非卸载前清单）——见下方 limitation；P2-03（测试要求表 NOT_RUN）如实保留；P2-04（截图无版本号）已在本段说明：**截图证明的是"页面可达"，不承担版本标识职责**，版本由注册表与 exe 指纹证明。
+
+### Limitations（关闭条件 4 时必须一并登记）
+
+1. **单机、非全新 VM、无快照**：全部在本机（HOME-MY，Win11 10.0.26300）执行；没有干净 VM/快照，"干净"是**先卸载到 0 文件**达成的，不是镜像级干净。
+2. **用户数据根是既有真实数据**（530 文件 / 684,197,540 B），不是新建空库；因此验证的是"卸载/升级**不动**既有数据"，未验证"空数据根首次安装"。
+3. **AC5 只覆盖 0.1.0 ↔ 0.1.1 两版**，未覆盖更早版本或跨多个大版本的升级链；历史 0.1.0 包属旧构建（base 变体），升级到 models 变体后文件数 1,040 与干净安装一致，但**未逐一比对每个文件来源**。
+4. **未签名**（用户裁决不需要）；SmartScreen 提示未在截图中复现。
+5. **AC4 用隔离数据根副本**，未在真实用户数据根下走四页。
