@@ -1,0 +1,30 @@
+# DOC-CTRLCHAR-FIX-1 · AC5 证据：修复后四件套（含 pin 与声明审计）
+# head: 24c573d1b（工作树含本卡修复与证据；集成提交 1ef6a2ebd）
+# interpreter: pwsh 7 / Python 3 / .NET SDK 9
+# command: check.ps1 ; verify_pins.ps1 ; clean_workspace.py --audit-declarations ; audit_evidence_pins.py
+
+## 1) gov check.ps1
+Task: doc\tasks\MAINT-1-RELEASE-MONITOR.md
+WARN: 存在 10 个非终态 Task（见 TASK_LEDGER）；状态字段不能证明活性，不得据此批量关闭（r38）
+WARN: doc/STATUS.md 已达到预算的 80%：3167 bytes / 28 lines
+WARN: doc/REBASELINE_PLAN.md 已达到预算的 80%：6913 bytes / 64 lines
+Governance check: PASS (3 warnings)
+# EXIT=0
+
+## 2) verify_pins.ps1
+OK C17 cdeee4872e29
+OK FEA01 0370c18932b1
+PIN AUDIT: PASS (all 18)
+# EXIT=0
+
+## 3) 声明审计
+declaration audit: 6875 declaration(s), 5661 protected root(s), 0 error(s), 819 warning(s)
+  report: G:/CODEX/New Manga.workspace/tmp/r17/audit-docctrl/declaration-audit.json
+# EXIT=0
+
+## 4) 证据 pin 巡检（本次运行输出逐字副本）
+evidence pin sweep: 7117 canonical row(s) in 667 card(s)
+  FAIL: 0   EXEMPTED: 84   SUPERSEDED: 0   NOT_ENFORCED: 15   WARN: 273
+# EXIT=0
+
+# 结论：四件套全部通过；doc/tasks 控制字符 37 → 0；doc/tasks 667 个 .md 全部复查。
