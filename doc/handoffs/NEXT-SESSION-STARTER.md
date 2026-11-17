@@ -995,6 +995,43 @@ AC1 的 blocked 理由由**原作者**写成完整的 NA 结论（headless 库�
 - `doc/REBASELINE_PLAN.md` 6,913 → **6,861 B**（64 行；表外节点收敛为 7 张非终态卡，余量 139 B）。
 
 ---
+## 3r. R18（自动推进轮）完成的事 —— 三张非终态卡收口 + Codex 裁定体系
+
+### 结果一句话
+非终态卡 **8 → 4**：`GIT-CLEAN-PUBLICATION-1`、`GIT-CLEAN-RUST-ISOLATION-1`、`SIDECAR-REBUILD-1`、`GIT-CLEAN-CORE-ENV-2` 全部收口；
+用户 2026-11-17 新授权「自动推进 + 人工裁决交 Codex/ZCode」已落地为**外部裁定 → DSH 采纳**流程（两份裁定入库）。
+
+### 提交链（main，均已 push、0 0）
+`1a855c27e`（R17 收口）→ `529febcf9`（GCP1 收口）→ `d8a7f1907`（自伤修复 + Codex 裁定 1）→ `d8f917a2b`（RUST-ISO 收口）→ `ba215b823`（Codex 裁定 2）→ `e08fb63cd`（CORE-ENV-2 收口 + SIDECAR 收口记录重写）。
+
+### 1) `GIT-CLEAN-PUBLICATION-1` → `closed_with_limitations`
+- 按 `reviewer-gcp1` 的 CP-1…CP-6 执行：Resource Manifest 实化为 12 行 + task-env `RESOURCE-MANIFEST.json`（16 目录 / 28,920 文件 / 3,898,062,555 B，sha256 `654a7d8e`）；L-1…L-12 限制全部入卡；AC4 `<<BLOCKED>>`、AC5 `<<PARTIAL>>` 原字节未改。
+- 独立验证 `verifier-gcp1-close`：**ACCEPTED_WITH_FINDINGS**（P0=0/P1=1/P2=2）。**P1 是我自己造成的**：收口段用 PowerShell here-string 写入，反引号被当转义符 ⇒ 16 个控制字符 + 106 个反斜杠。已整段重写修复（`doc/tasks` 控制字符 = 0）。
+
+### 2) `GIT-CLEAN-RUST-ISOLATION-1` → `closed_with_limitations`
+- Codex 裁定 Q1=(A)：AC3 属 AD-002 已退役 Tauri/Rust 线，**不在旧实现补测**；R2-F01…F05 全部 `WONT_FIX_LEGACY`（**不等于已修复**）；不另立新架构容量卡。
+- 复核 `reviewer-rustiso`：**ACCEPTED_WITH_FINDINGS**（P0=0/P1=1/P2=6）。P1 已修：卡面「当前 Reviewer 改派 ZCode」与 frontmatter 矛盾 → 改为显式时点表述；补 `reviewer_kind` 与资源口径（含 `.git` 为 12,666 文件）。
+
+### 3) `SIDECAR-REBUILD-1` → `closed_with_limitations`（记录重写两次，教训最重）
+- 首次收口的理由**两条都错**：① 卡面说「13 个失败未修」——复核实测当日已全部通过（CoreClient 258/0/0、Host 364/0/44；定向 4/4+9/9），修复来自 `CORE-PIPE-EXCLUSIVE-1`（`dff3d41a5`）与 2026-11-16 测试返修；② 卡面说「SFX 权重缺失、需用户提供」——实际存在（40,824,255 B，sha256 `944e8114…`，bundle 内同哈希）。
+- `reviewer-sid` 判 **REJECTED**（P0=2/P1=4），已按 findings 重写：真实限制 = 4 个 `CORE_CAPABILITY_MISSING` 负分支未执行、App.Tests 7 个 sidecar 测试未跑 + publish 冒烟未做、bundle 未计入 manifest 汇总、Host 一条已知 flake。
+- **教训**：进度记录必须写清「时点」；用别的卡修好的东西不能算本卡成果，也不能把别人修好的缺陷留在本卡 limitation 里当借口。
+
+### 4) `GIT-CLEAN-CORE-ENV-2` → `closed_with_limitations`
+- Codex Q1=(B)：V2–V5 变量从未定义、无任何执行；5 条限制入卡（未执行未定论 / AC 原样保留 / ACL 边界 / 重启门槛 / reviewer 改派）。
+
+### 5) 尚未处置（下几轮）
+- **`INSTALLER-MATRIX-1`** → 按 Codex Q3 收口 `closed_with_limitations`（AC7 保持 `NOT_RUN`，另立 `RELEASE-GATE4-SIGNED-MATRIX-1`）。
+- **`FEA11-ENTRY-MISSING-1`** → 保持 `blocked`；另立 `MapMintFailure` 兜底保真最小实现卡（`proposed`）。
+- **`GIT-CLEAN-PUBLICATION-DIAG-1`**（approved）→ 待 DSH 定终态（倾向 `closed_with_limitations`，卡面明确「不集成、不置 done」）。
+- **`MAINT-1-RELEASE-MONITOR`** → 保持 `in_progress`，追加 Gate 条件 3/4/5 的裁定与 `AGENT_ADJUDICATION_PENDING` / `LIMITATION_ACCEPTED` 登记。
+- Codex 唯一「需用户裁决」项：**是否把 `Technical Gate=NOT_SATISFIED` 改为 `SATISFIED`** —— 未改，保持 NOT_SATISFIED。
+
+### 本轮新的硬教训
+1. **禁止用 PowerShell 双引号 here-string 写含反引号的 Markdown** —— 反引号是转义符（`` `e ``=ESC、`` `v ``=VT…），会把标识符打碎。一律用文件工具或 Python 显式写字节，写完立刻扫控制字符。
+2. **收口理由必须当场复测**：卡面旧理由可能已被别的卡修好（SIDECAR 的 13 失败、SFX 权重）。
+
+---
 ## 4. 关键技术事实（R1/R2 累积）
 
 ### 4.1 file identity 53 位契约（已闭环）
