@@ -15,7 +15,7 @@ base_commit: null
 branch: null
 worktree: null
 integration_commit: null
-delivery_head: 9581336ae
+delivery_head: d511876d1
 canonical_evidence_status: complete
 resource_closeout_status: complete
 evidence_dir: verification/READER-F11-STYLE-SCOPE-1
@@ -86,7 +86,7 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) | sha256_basis |
 |---|---|---|---|---|---|---|
-| EV-F11S-01 | AC1/AC3/AC4 修复与像素对照 | verification/READER-F11-STYLE-SCOPE-1/README.md | 9581336ae | fefeba92a5e2ea3d2f4f73332133d6c6a77f6d1e4aacb9ec58a7142e9f7504db | CANONICAL | BLOB |
+| EV-F11S-01 | AC1/AC3/AC4 证据说明 | verification/READER-F11-STYLE-SCOPE-1/README.md | 9581336ae | fefeba92a5e2ea3d2f4f73332133d6c6a77f6d1e4aacb9ec58a7142e9f7504db | CANONICAL | BLOB |
 | EV-F11S-02 | AC4 修复后 F11 整屏 | verification/READER-F11-STYLE-SCOPE-1/rf11s-01-after-f11.jpg | 9581336ae | bd9751dc4b835caa9b1d4f5e77a86ccbe693af3b6b8eca9f64016b310fd98be3 | CANONICAL | BLOB |
 | EV-F11S-03 | AC4 修复后主窗口内阅读器 | verification/READER-F11-STYLE-SCOPE-1/rf11s-02-after-inwindow.jpg | 9581336ae | b7f6bbce33ea7b0c3feaf2b175f787aaef23c84658c30e9f947edc52c5a82dc7 | CANONICAL | BLOB |
 
@@ -104,9 +104,19 @@ allowed_paths:
   顶/底带与模式 chip 的语义类（`topband`/`statusband`/`chip.on`）本就为该控件定义；同一控件在两处外观不一致，且 chip 丢失选中态会让用户无法辨认当前模式。
   没有找到任何"沉浸态应去掉这些样式"的设计依据文件。
 - **AC3 修复**：`ImmersiveReaderWindow` 构造时加 `V2LocalStyles.axaml` 的 `StyleInclude`；**未改**该样式表内容、未改其它页面。
-- **AC4 判别力**：修复前顶/底带 `(244,243,240)`（画布色）→ 修复后 `(255,255,255)`（Panel 白）；chip 恢复 Accent 高亮；画布与进度轨道线不变。
+- **AC4 判别力**：修复前顶/底带 `(244,243,240)`（窗口背景/画布色）→ 修复后 `(255,255,255)`（`Nm.Color.Bg.Panel` 白）；模式 chip 恢复 Accent 高亮（复核实测填充 `(242,236,227)`，与 `Nm.Color.Accent.Muted` over-white 合成值逐通道吻合）；进度轨道线 `(236,234,229)` 不变。**注**：取样点 `(600,60)` 落在页面卡片的白色内边距上，**不是**画布，不能用来证明「画布不变」（reviewer-f11s F-02）。
 - **限制**：
   1. 证据来自 **Debug 构建**；**已发布产物（stage/setup.exe）仍是修复前行为** —— 需重新 publish + 打包才进安装包（不在本卡范围）。
   2. 未覆盖深色主题下同组对照、分页模式下的 chip 高亮、缩放/DPI。
   3. 本次修复使条件 3 的 `c3-06` 截图成为"修复前状态"；条件 3 结论不受影响（全屏/无边框/内容渲染仍成立）。
 - **边界**：不改变任何 Gate 判定；`Technical Gate=NOT_SATISFIED` 不变。
+
+### 2026-11-17 复核处置（reviewer-f11s，ACCEPTED_WITH_FINDINGS，P0=0 / P1=0 / P2=3）
+
+复核者自建 Debug 并**独立复测**：顶带 `(600,20)`、底带 `(300,1410)`、`(2,2)` 均为 `(255,255,255)`；同构建画布 `(244,243,240)`；
+`ImmersiveReader|ReaderOverlay` 6 passed / EXIT=0；`check.ps1` PASS / exit 0。
+
+- **F-01 已修**：`delivery_head` 原写 `9581336ae`（只有证据，无修复代码）→ 改为 **`d511876d1`**（含 `StyleInclude`）。
+- **F-02 已修**：删去把 `(600,60)` 当「画布」的表述（该点是页面卡片白内边距）；判别力改以顶带/底带/chip 三处为准。
+- **F-03 已登记**：本卡建议的回归 filter 会**改写** `verification/READER-OVERLAY-HEADLESS-PNG-1/render-info.md`（已知 `GOV-TEST-SIDE-EFFECT-1`）；
+  复核者已 `git checkout --` 恢复。**跑该 filter 前应先把 `NEWMANGA_READER_OVERLAY_EVIDENCE_DIR` 指向 workspace**，否则会污染既有证据。

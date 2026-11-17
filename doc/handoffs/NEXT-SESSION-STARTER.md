@@ -2,7 +2,7 @@
 
 - 生成时间：2026-11-17 20:25 (+08:00)（本版为 **R22** 之后更新 —— 条件 3 关闭 + F11 样式修复）
 - 生成者：DSH（lead）
-- **当前 head：`234b316b6`**（main）；R17 链路 = `1ef6a2ebd`（内容+证据）→ `3a0dea7b7`（四件套证据）→ `89b36c3f2`（两卡 in_review）→ `234b316b6`（收口 + 独立复核入库）
+- **当前 head：`8f342d01e`**（main）；R17 链路 = `1ef6a2ebd` → `3a0dea7b7` → `89b36c3f2` → `234b316b6`；R18–R22 见 §3r–§3v（最新：条件 3 关闭 + F11 样式修复）
 - 工作区：干净（`git status --porcelain` 为空）
 - **R1**：`9ce819ae7` → `dd029b73f`（7 commit，目标 A/B/D 达成）
 - **R2**：`dd029b73f` → `5f2664c2e`（8 commit）—— 目标 C 闭合 10 条
@@ -35,7 +35,7 @@
 | 上一 goal | 已用尽 100 轮（见 `GOAL-WRAPUP-R100.md`） |
 | 本 goal | 60 轮上限 |
 | 目标 C | 可行动项 41 → **闭合 41 / 0 剩余** ✅ |
-| 非终态卡 | **10 → 8**（R17 收口 `GATE3-SETTINGS-SHORTCUT-1`、`DOC-CTRLCHAR-FIX-1`） |
+| 非终态卡 | **10 → 2**（R17–R22 累计收口 8 张；余 `MAINT-1`（长期哨位）+ `RELEASE-GATE4-SIGNED-MATRIX-1`（待证书）） |
 
 复跑四件套：
 
