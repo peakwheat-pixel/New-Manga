@@ -39,6 +39,11 @@
 | `ocr/manga-ocr-onnx/decoder_model.onnx` | 117,480,262 | `ef7765261e9d1cdc34d89356986c2bbc2a082897f753a89605ae80fdfa61f5e8` | 日文 OCR | 同上 **[待核实，不阻断本卡]** |
 | `ocr/manga-ocr-onnx/{config,generation_config,preprocessor_config,special_tokens_map,tokenizer_config,vocab.*}` | 2–77 KB 级 | 见 `weights-licenses.json` | OCR 配置/词表（非权重） | 随上游 MangaOCR **[待核实，不阻断本卡]** |
 
+**整包许可结论（2026-11-17，按 ZCode 裁定采用保守策略）**：上表 3 个 ONNX 权重（`rtdetr-v2-fixed` 与 `manga-ocr` encoder/decoder）
+的上游许可**均为 `[待核实]`**，`yolo11s-seg.onnx` **当前 sidecar 并不包含**（sfx 权重缺失，`sfx_detect_probe` fail-closed）。
+因此 `models` 变体**整体按 AGPL-3.0 声明**（宁可过度声明，不可漏声明）；`GPL-3.0-or-later` 只适用于**不含任何权重**的 `base` 变体。
+依据：`doc/reviews/ZCODE-RULING-INSTALLER-LICENSE-2026-11-17.md`（Q1 判定规则 R1–R4，本案落 R4；Q2 = P0 发布阻塞）。
+
 **YOLO11s-seg 的 AGPL-3.0 一手依据**：
 1. 该 ONNX 文件自身元数据包含 `Ultralytics YOLO11s-seg model trained on …` 与 `AGPL-3.0 License (https://ultralytics.com/license)`（扫描记录见 `verification/AGPL-RELEASE-1/weights-licenses.json`）。
 2. Ultralytics 官方许可页（https://www.ultralytics.com/license，抓取日期记录于证据 JSON）明确 YOLO 模型按 **AGPL-3.0** 提供。

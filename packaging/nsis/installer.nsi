@@ -55,9 +55,29 @@ VIProductVersion "${VERSION4}"
 VIAddVersionKey "ProductName" "${APP_NAME}"
 VIAddVersionKey "ProductVersion" "${VERSION}"
 VIAddVersionKey "FileVersion" "${VERSION}"
+; ---- Variant identity (LICENSE-VARIANT-DECLARATION-1, 2026-11-17) -----------------
+; The license text used to be hard-coded to "base / GPL-3.0-or-later" in four places, which is a
+; false statement whenever this installer is built from a stage that bundles model weights
+; (ZCode ruling 2026-11-17: bundling weights under a GPL-3.0-or-later claim is illegal and a P0
+; release blocker). The four places now read these defines; build-installer.ps1 passes the real
+; variant of the stage it packages, and the defaults stay "base" so an unknown build is loud, not lying.
+!ifndef VARIANT_NAME
+  !define VARIANT_NAME "base"
+!endif
+!ifndef VARIANT_LICENSE
+  !define VARIANT_LICENSE "GPL-3.0-or-later"
+!endif
+; The content phrase is derived from the (ASCII) variant name inside the script: passing Chinese text
+; through /DVARIANT_CONTENT= arrived as mojibake in the makensis command line, so only ASCII is passed.
+!if "${VARIANT_NAME}" == "models"
+  !define VARIANT_CONTENT "含模型权重"
+!else
+  !define VARIANT_CONTENT "不含模型权重"
+!endif
+
 VIAddVersionKey "CompanyName" "${APP_PUBLISHER}"
 VIAddVersionKey "FileDescription" "${APP_NAME} setup (per-user, unsigned)"
-VIAddVersionKey "LegalCopyright" "GPL-3.0-or-later (base) / AGPL-3.0 for the models package; see LICENSE and LICENSE-AGPL-3.0.txt"
+VIAddVersionKey "LegalCopyright" "${VARIANT_LICENSE} (${VARIANT_NAME}); see LICENSE and LICENSE-AGPL-3.0.txt"
 
 !ifdef ICON_FILE
   Icon "${ICON_FILE}"
@@ -69,8 +89,8 @@ VIAddVersionKey "LegalCopyright" "GPL-3.0-or-later (base) / AGPL-3.0 for the mod
 ; ---- UI ---------------------------------------------------------------------
 !define MUI_ABORTWARNING
 !define MUI_WELCOMEPAGE_TITLE "${APP_NAME} ${VERSION} 安装"
-!define MUI_WELCOMEPAGE_TEXT "本安装包为 base 变体（不含模型权重，按 GPL-3.0-or-later 分发）。安装到当前用户目录，无需管理员权限；用户数据根 %APPDATA%\com.newmanga.desktop 不会被改动。"
-!define MUI_LICENSEPAGE_TEXT_TOP "base 变体整体按 GPL-3.0-or-later 分发。若安装 models 变体（含 Ultralytics YOLO11s-seg 权重），该包整体按 AGPL-3.0 分发。完整文本随包提供：LICENSE、LICENSE-AGPL-3.0.txt、NOTICE.md、THIRD_PARTY_LICENSES.md。"
+!define MUI_WELCOMEPAGE_TEXT "本安装包为 ${VARIANT_NAME} 变体（${VARIANT_CONTENT}，按 ${VARIANT_LICENSE} 分发）。安装到当前用户目录，无需管理员权限；用户数据根 %APPDATA%\com.newmanga.desktop 不会被改动。"
+!define MUI_LICENSEPAGE_TEXT_TOP "${VARIANT_NAME} 变体整体按 ${VARIANT_LICENSE} 分发。完整文本随包提供：LICENSE、LICENSE-AGPL-3.0.txt、NOTICE.md、THIRD_PARTY_LICENSES.md。"
 !define MUI_LICENSEPAGE_TEXT_BOTTOM "点击「我接受」继续安装。"
 !define MUI_FINISHPAGE_RUN "$INSTDIR\app\${APP_EXE}"
 !define MUI_FINISHPAGE_RUN_TEXT "运行 ${APP_NAME}"
@@ -100,7 +120,7 @@ Section "Install" SecInstall
 
   FileOpen $InstallLog "${INSTALL_LOG}" w
   FileWrite $InstallLog "NewManga installer ${VERSION}$\r$\n"
-  FileWrite $InstallLog "variant=base (GPL-3.0-or-later; unsigned)$\r$\n"
+  FileWrite $InstallLog "variant=${VARIANT_NAME} (${VARIANT_LICENSE}; unsigned)$\r$\n"
   FileWrite $InstallLog "install_dir=$INSTDIR$\r$\n"
   FileWrite $InstallLog "data_root_not_touched=%APPDATA%\com.newmanga.desktop$\r$\n"
 

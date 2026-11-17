@@ -1,0 +1,11 @@
+verify-package-manifest: stage=G:\CODEX\New Manga.workspace\task-envs\INSTALLER-MATRIX-1\stage\NewManga-0.1.1-win-x64 repo=G:\CODEX\New Manga
+
+verify-package-manifest: FAILED with 8 problem(s)
+  FAIL: package-manifest.json version mismatch: manifest=0.1.0 VERSION.json=0.1.1
+  FAIL: package-manifest.json models_bundled mismatch: manifest=False actual=True (3 onnx files)
+  FAIL: package-manifest.json models_bytes mismatch: manifest=0 actual=632552582
+  FAIL: package-manifest.json lists 1968 file(s) but the stage holds 1036 (excluding the manifest itself)
+  FAIL: package-manifest.json lists 1041 file(s) that are not in the stage (e.g. app/core-sidecar/python/plugin-python.sha256, app/core-sidecar/python/plugin-python.txt, app/core-sidecar/python/python.exe, app/core-sidecar/python/python3.dll, app/core-sidecar/python/python312.dll)
+  FAIL: package-manifest.json does not list 109 file(s) present in the stage (e.g. app/core-sidecar/_internal/numpy/_core/_multiarray_umath.cp314-win_amd64.pyd, app/core-sidecar/models/ocr/manga-ocr-onnx/encoder_model.onnx, app/core-sidecar/_internal/domain/drafts/__init__.pyc, app/core-sidecar/_internal/application/importing/referenced/secrets.pyc, app/core-sidecar/_internal/application/sources/model.pyc)
+  FAIL: package-manifest.json bytes mismatch for 883 file(s): VERSION.json (manifest=1803 actual=2518); app/NewManga.App.exe (manifest=30234828 actual=99554850); app/VERSION.json (manifest=1803 actual=2063); app/core-sidecar/acceptance_bridge.exe (manifest=399627 actual=400233); app/core-sidecar/catalog_loader.exe (manifest=397554 actual=398143)
+  FAIL: package-manifest.json sha256 mismatch for 892 file(s) (e.g. VERSION.json, app/NewManga.App.exe, app/VERSION.json, app/core-sidecar/acceptance_bridge.exe, app/core-sidecar/catalog_loader.exe)

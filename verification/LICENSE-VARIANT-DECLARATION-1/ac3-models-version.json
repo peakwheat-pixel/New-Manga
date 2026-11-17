@@ -1,0 +1,34 @@
+{
+  "models": "bundled: app/core-sidecar/models (603.4 MiB in-package); no download at run time",
+  "migration": "runtime dry-run script included",
+  "models_bundled_bytes": 632552582,
+  "sidecar": "bundled: app/core-sidecar (core_service/host_bridge/catalog_loader/acceptance_bridge/sfx_detect_probe + _internal + python)",
+  "license": "AGPL-3.0",
+  "models_dir_bytes": 632662260,
+  "app_build": {
+    "exe_sha256": "545d2e7dc21fc1f1fba2dbe16531d0ee6b696ada26c8362985b1289ac40bb082",
+    "exe_bytes": 37344516,
+    "repo_head": "4ca94f0df0ef00924bb817b8061bec7b3f4a8a3e"
+  },
+  "version": "0.1.1",
+  "variant": "models",
+  "devices": null,
+  "license_files": [
+    "LICENSE",
+    "LICENSE-AGPL-3.0.txt",
+    "NOTICE.md",
+    "THIRD_PARTY_LICENSES.md"
+  ],
+  "bundled_weights_license": "AGPL-3.0 (conservative: models/detector/rtdetr-v2-fixed.onnx, models/ocr/manga-ocr-onnx/decoder_model.onnx, models/ocr/manga-ocr-onnx/encoder_model.onnx)",
+  "sidecar_build": {
+    "core_service_sha256": "6050881163753d32eca2fb1c0c824d9de7852bf62fb808926f5b6fc74a6b52ee",
+    "core_service_bytes": 400098,
+    "core_service_built_at_utc": "2026-11-14T19:16:55.3503345Z",
+    "repo_head": "4ca94f0df0ef00924bb817b8061bec7b3f4a8a3e",
+    "variant": "models",
+    "models_bundled": true
+  },
+  "models_bundled": true,
+  "channel": "stable",
+  "data_root": "%APPDATA%\\com.newmanga.desktop"
+}

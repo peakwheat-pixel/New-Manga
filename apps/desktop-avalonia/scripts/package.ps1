@@ -152,7 +152,12 @@ $modelsStrategy=if($modelsBundled){
 # models ships Ultralytics YOLO11s-seg (AGPL-3.0) -> the whole variant is AGPL-3.0; base has no
 # weights -> GPL-3.0-or-later. The AGPL full text rides in both variants (see section 3).
 $licenseDeclaration=if($modelsBundled){'AGPL-3.0'}else{'GPL-3.0-or-later'}
-$bundledWeightsLicense=if($modelsBundled){'AGPL-3.0 (Ultralytics YOLO11s-seg: app/core-sidecar/models/detector/yolo11s-seg.onnx)'}else{'none (no model weights in this variant)'}
+$bundledWeightsLicense=if($modelsBundled){
+  # VERSION-JSON-GUARD-ALIGN-1: name the weights that are ACTUALLY in this sidecar instead of a
+  # hard-coded one (the template used to claim yolo11s-seg even when the detector was rtdetr).
+  $modelFiles=@(Get-ChildItem (Join-Path $sidecarDst 'models') -Recurse -File -Filter '*.onnx' | ForEach-Object { $_.FullName.Substring($sidecarDst.Length+1).Replace('\','/') })
+  'AGPL-3.0 (conservative: ' + ($modelFiles -join ', ') + ')'
+}else{'none (no model weights in this variant)'}
 # VERSION-JSON-GUARD-ALIGN-1 (reviewer-pvd F-PVD-02): the guard requires app_build and there was no
 # generator for it, so no clean package.ps1 output could ever pass. Derive it from the staged exe;
 # repo_head comes from the head the single-file publish embedded in ProductVersion.
@@ -171,7 +176,7 @@ Copy-Item (Join-Path $stage 'VERSION.json') (Join-Path $stage 'app/VERSION.json'
 
 # ---- 6) manifest + zip + budget gate ---------------------------------------
 $files=Get-ChildItem $stage -Recurse -File; $bytes=($files|Measure-Object Length -Sum).Sum
-$manifest=[ordered]@{package=$stageName;version=$Version;variant=$variant;bytes=$bytes;sidecar_bytes=$sidecarBytes;models_bundled=$modelsBundled;models_bytes=$modelsBytes;licenses=$licHashes;files=@()}
+$manifest=[ordered]@{package=$stageName;version=$Version;variant=$variant;bytes=$bytes;sidecar_bytes=$sidecarBytes;models_bundled=$modelsBundled;models_bytes=[int64]$modelsOnnxBytes;models_dir_bytes=[int64]$modelsBytes;licenses=$licHashes;files=@()}
 foreach($f in $files){$manifest.files+=@{path=$f.FullName.Substring($stage.Length+1).Replace('\','/');bytes=$f.Length;sha256=(Get-FileHash $f.FullName -Algorithm SHA256).Hash.ToLower()}}
 $manifest|ConvertTo-Json -Depth 5|Set-Content (Join-Path $stage 'package-manifest.json') -Encoding utf8
 $zip=Join-Path $OutputRoot "$stageName.zip"

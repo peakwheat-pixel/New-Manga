@@ -7,7 +7,17 @@
 | **base**（`NewManga-<ver>-win-x64`） | 应用 + Core sidecar，**不含模型权重** | **GPL-3.0-or-later**（全文见 [LICENSE](LICENSE)） |
 | **models**（`NewManga-<ver>-win-x64-models`） | 应用 + Core sidecar + `app/core-sidecar/models/` 模型权重 | **AGPL-3.0**（GNU Affero General Public License v3.0，全文见 [LICENSE-AGPL-3.0.txt](LICENSE-AGPL-3.0.txt)） |
 
-**models 变体整体按 AGPL-3.0 分发的原因**：该变体随包分发 **Ultralytics YOLO11s-seg** 模型权重（`app/core-sidecar/models/detector/yolo11s-seg.onnx`，40,824,255 B，sha256 `944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d`）。Ultralytics YOLO 模型/代码按 **AGPL-3.0** 许可；该 ONNX 文件自身的元数据即写明 `Ultralytics YOLO11s-seg` 与 `AGPL-3.0 License (https://ultralytics.com/license)`。因此 models 发行包必须整体满足 AGPL-3.0，并随包提供 AGPL-3.0 全文；对应源码（本仓库）与构建脚本同在发行页/仓库提供。
+**models 变体整体按 AGPL-3.0 分发的原因（2026-11-17 修正）**：该变体随包分发以下 **3 个 ONNX 权重**，合计 **632,552,582 B**（`app/core-sidecar/models/` 下另有 6 个 config/vocab 文件共 109,678 B，不入此合计）：
+
+| 文件 | 字节 | sha256（前 16 位） |
+|---|---|---|
+| `models/detector/rtdetr-v2-fixed.onnx` | 171,618,071 | `c7fb5af1a8982416` |
+| `models/ocr/manga-ocr-onnx/encoder_model.onnx` | 343,454,249 | `15fa8155fe9bc1a7` |
+| `models/ocr/manga-ocr-onnx/decoder_model.onnx` | 117,480,262 | `ef7765261e9d1cdc` |
+
+**这三项权重的上游许可尚未一手核实**（`THIRD_PARTY_LICENSES.md` §3 标「待核实」）。按本项目的保守策略（只要随包权重许可未全部核实，就不得按 GPL-3.0-or-later 声明），models 变体**整体按 AGPL-3.0 声明**，并随包提供 AGPL-3.0 全文；对应源码（本仓库）与构建脚本同在发行页/仓库提供。
+
+> 说明（2026-11-17）：本文件此前把 models 变体的权重写成 **Ultralytics YOLO11s-seg**（`models/detector/yolo11s-seg.onnx`）。实测 0.1.1 的 sidecar **不含该文件**（其 `VERSION.json` 的 `sidecar_build.known_limitation` 亦写明 sfx 权重缺失、`sfx_detect_probe` fail-closed），实际随包的是上表三个文件。该错误描述已更正；若将来重新打入 yolo11s-seg，需同时更新本表与 `LICENSE_AUDIT.md`。
 
 base 变体不含任何模型权重；随包携带 `LICENSE-AGPL-3.0.txt` 仅用于说明可选 models 组件（及 YOLO11s-seg 权重）的许可，**不改变 base 变体自身的 GPL-3.0-or-later 声明**。
 
@@ -16,7 +26,8 @@ base 变体不含任何模型权重；随包携带 `LICENSE-AGPL-3.0.txt` 仅用
 | 组件 | 来源 | 许可证 | 使用方式 | 登记状态 |
 |---|---|---|---|---|
 | Saber-Translator | https://github.com/MashiroSaber03/Saber-Translator | GPL-3.0 | **参考**（架构/流程/交互）；当前仓库**未包含其代码** | 待移植时逐文件登记 |
-| Ultralytics YOLO11s-seg 权重 | https://github.com/ultralytics/ultralytics （模型由 Ultralytics 导出/训练） | **AGPL-3.0** | `models` 变体随包分发（`models/detector/yolo11s-seg.onnx`） | 已核实（一手来源与文件元数据见 `THIRD_PARTY_LICENSES.md` §3 与 `verification/AGPL-RELEASE-1/weights-licenses.json`） |
+| rtdetr-v2-fixed / manga-ocr encoder+decoder 权重 | 见 `THIRD_PARTY_LICENSES.md` §3 | **待核实**（保守按 AGPL-3.0 声明整包） | `models` 变体随包分发（3 个 ONNX，632,552,582 B） | 待一手核实 |
+| Ultralytics YOLO11s-seg 权重 | https://github.com/ultralytics/ultralytics | **AGPL-3.0** | **当前 sidecar 不含该文件**（sfx 权重缺失，`sfx_detect_probe` fail-closed）；如将来打入则整包 AGPL-3.0 | 已核实（历史登记保留） |
 | （移植登记区） | — | — | 每移植一个文件在此记：源路径 + commit + 许可头保留 | 空 |
 
 ## 移植规则（强制）

@@ -168,6 +168,32 @@ $argsList = @(
     "/DINSTALL_SIZE_KB=$installSizeKb",
     "/DLICENSE_FILE=$(Join-Path $stageFull 'NOTICE.md')"
 )
+# LICENSE-VARIANT-DECLARATION-1 (2026-11-17): the installer used to hard-code "base / GPL-3.0-or-later"
+# in four places, so any weight-bundling stage produced a package whose wizard told the receiver the
+# opposite of what it ships. Pass the stage's own variant/license so the text can only follow the bytes.
+$stageVersionJson = Join-Path $stageFull 'VERSION.json'
+if (Test-Path -LiteralPath $stageVersionJson) {
+    $stageMeta = Get-Content -LiteralPath $stageVersionJson -Raw | ConvertFrom-Json
+    $stageOnnx = @(Get-ChildItem -LiteralPath (Join-Path $stageFull 'app/core-sidecar') -Recurse -File -Filter '*.onnx' -ErrorAction SilentlyContinue)
+    $stageOnnxBytes = 0L
+    foreach ($onnxFile in $stageOnnx) { $stageOnnxBytes += $onnxFile.Length }
+    $script:variantName = [string]$stageMeta.variant
+    if (-not $script:variantName) { $script:variantName = if ($stageOnnx.Count -gt 0) { 'models' } else { 'base' } }
+    $script:variantLicense = [string]$stageMeta.license
+    if (-not $script:variantLicense) {
+        throw "LICENSE-VARIANT-DECLARATION-1: stage VERSION.json declares no license; refusing to invent one for the installer text"
+    }
+    # Only ASCII reaches makensis: the Chinese phrase is derived in installer.nsi from VARIANT_NAME
+    # (a non-ASCII /DVARIANT_CONTENT= define arrived mojibake on the makensis command line).
+    # A weight-bundling stage must not be described as base/GPL; that combination is what the ZCode
+    # ruling of 2026-11-17 called illegal. Fail closed instead of shipping a wrong licence statement.
+    if ($stageOnnx.Count -gt 0 -and $script:variantLicense -ne 'AGPL-3.0') {
+        throw "LICENSE-VARIANT-DECLARATION-1: stage bundles $($stageOnnx.Count) onnx file(s) but VERSION.json license='$variantLicense'; must be AGPL-3.0"
+    }
+    $argsList += "/DVARIANT_NAME=$script:variantName"
+    $argsList += "/DVARIANT_LICENSE=$script:variantLicense"
+    Write-Host ("installer variant: {0} / {1} / weights={2} onnx / {3:N0} B" -f $script:variantName, $script:variantLicense, $stageOnnx.Count, $stageOnnxBytes)
+}
 if (-not [string]::IsNullOrWhiteSpace($IconPath) -and (Test-Path -LiteralPath $IconPath)) {
     $argsList += "/DICON_FILE=$((Resolve-Path -LiteralPath $IconPath).Path)"
 }
@@ -187,6 +213,14 @@ if ($exitCode -ne 0) {
 }
 if (-not (Test-Path -LiteralPath $exePath)) { throw "makensis reported success but the installer is missing: $exePath" }
 
+# Re-read the packaged stage's VERSION.json for the build record (the guard already verified it).
+$stageVersionMeta = $null
+$stageVersionPath = Join-Path $stageFull 'VERSION.json'
+if (Test-Path -LiteralPath $stageVersionPath) {
+    $stageVersionMeta = Get-Content -LiteralPath $stageVersionPath -Raw | ConvertFrom-Json
+}
+if ($null -eq $stageVersionMeta) { $stageVersionMeta = [pscustomobject]@{ version = ''; variant = ''; license = '' } }
+
 $installer = Get-Item -LiteralPath $exePath
 $installerSha256 = Get-Sha256 $exePath
 $signature = Get-AuthenticodeSignature -LiteralPath $exePath
@@ -194,7 +228,7 @@ $fileVersion = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($exePath)
 
 $buildInfo = [ordered]@{
     task = 'NSIS-INSTALLER-1'
-    variant = 'base'
+    variant = if ($script:variantName) { $script:variantName } else { 'base' }
     version = $Version
     version4 = $Version4
     installer = [ordered]@{
@@ -218,9 +252,9 @@ $buildInfo = [ordered]@{
         manifest_sha256 = $stageManifestSha256
         install_size_kb = $installSizeKb
         version_json = [ordered]@{
-            version = [string]$versionJson.version
-            variant = [string]$versionJson.variant
-            license = [string]$versionJson.license
+            version = [string]$stageVersionMeta.version
+            variant = [string]$stageVersionMeta.variant
+            license = [string]$stageVersionMeta.license
         }
     }
     toolchain = [ordered]@{
