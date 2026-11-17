@@ -15,7 +15,7 @@ base_commit: null
 branch: null
 worktree: null
 integration_commit: null
-delivery_head: 7b47a38d8
+delivery_head: 9c0939f2e
 canonical_evidence_status: complete
 resource_closeout_status: complete
 evidence_dir: verification/INSTALLER-METADATA-CONSISTENCY-1
@@ -102,20 +102,20 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) | sha256_basis |
 |---|---|---|---|---|---|---|
-| EV-IMC-01 | AC1/AC2/AC3/AC4/AC5 证据说明 | verification/INSTALLER-METADATA-CONSISTENCY-1/README.md | 7b47a38d8 | e5fae254039ffab69d403e906589445da1eff81db7065a1bd55f614c983d172b | CANONICAL | BLOB |
-| EV-IMC-02 | AC4 红测（旧 stage 被拒） | verification/INSTALLER-METADATA-CONSISTENCY-1/ac4-red-old-stage.log | 7b47a38d8 | e557f37bb95f21fb04ebcd482083caf87863922df1651ea31abee46d7f6e5c87 | CANONICAL | BLOB |
-| EV-IMC-03 | AC5 绿例（一致元数据通过） | verification/INSTALLER-METADATA-CONSISTENCY-1/ac5-green-consistent-stage.log | 7b47a38d8 | 2a04949710d2dc9601d18671ebd48fd533db4f5a51fc3b2b9cf0fb8733d2ad6f | CANONICAL | BLOB |
-| EV-IMC-05 | AC1 结构化实测（manifest/VERSION 对照） | verification/INSTALLER-METADATA-CONSISTENCY-1/ac1-inconsistency.json | 7b47a38d8 | 15fd10bc6d595047424e5a895b11ce349567be43c50388c65daec8e14ba58d03 | CANONICAL | BLOB |
-| EV-IMC-06 | AC1 可读实测日志 | verification/INSTALLER-METADATA-CONSISTENCY-1/ac1-inconsistency.log | 7b47a38d8 | c86feb0939fc56c58ad5eda7ad96d063cee64d1d6e7f73b35fc10081ae6d5335 | CANONICAL | BLOB |
-| EV-IMC-02 | AC4 红测（旧 stage 被拒） | verification/INSTALLER-METADATA-CONSISTENCY-1/ac4-red-old-stage.log | 7b47a38d8 | e557f37bb95f21fb04ebcd482083caf87863922df1651ea31abee46d7f6e5c87 | CANONICAL | BLOB |
-| EV-IMC-03 | AC5 绿例（一致元数据通过） | verification/INSTALLER-METADATA-CONSISTENCY-1/ac5-green-consistent-stage.log | 7b47a38d8 | 2a04949710d2dc9601d18671ebd48fd533db4f5a51fc3b2b9cf0fb8733d2ad6f | CANONICAL | BLOB |
-| EV-IMC-04 | AC3 修复实现 | tools/ci/verify-package-manifest.ps1 | 7b47a38d8 | 87600784fb1c742b9f6d70268c63610609fc80315f84f881a3fc6bfc0dc22797 | SOURCE_PIN | BLOB |
+| EV-IMC-01 | AC1/AC2/AC3/AC4/AC5 证据说明 | verification/INSTALLER-METADATA-CONSISTENCY-1/README.md | 9c0939f2e | 27180d7c02827241997401f434530ee431015e6720a2d6f0edc9fea31e0a4c82 | CANONICAL | BLOB |
+| EV-IMC-02 | AC4 红测（旧 stage 被拒，8 条） | verification/INSTALLER-METADATA-CONSISTENCY-1/ac4-red-old-stage.log | 9c0939f2e | b462b2b9d7c2204d75c3dc05455d81f4cd189ecef600853e72b7010d67680c3a | CANONICAL | BLOB |
+| EV-IMC-03 | AC5 绿例（一致元数据通过，含尾部反斜杠） | verification/INSTALLER-METADATA-CONSISTENCY-1/ac5-green-consistent-stage.log | 9c0939f2e | 2a04949710d2dc9601d18671ebd48fd533db4f5a51fc3b2b9cf0fb8733d2ad6f | CANONICAL | BLOB |
+| EV-IMC-04 | AC3 修复实现 | tools/ci/verify-package-manifest.ps1 | 9c0939f2e | 4d5b874d4edcf355d9b02f9aa347d8eb1ebf322ede1a67ac303be239c0c42d67 | SOURCE_PIN | BLOB |
+| EV-IMC-05 | AC1 结构化实测 | verification/INSTALLER-METADATA-CONSISTENCY-1/ac1-inconsistency.json | 9c0939f2e | 58b920fc12ea4651d96b89dc18c2ea7ae7bc1cb5f37d2b5328fef7d3b4874048 | CANONICAL | BLOB |
+| EV-IMC-06 | AC1 可读实测日志 | verification/INSTALLER-METADATA-CONSISTENCY-1/ac1-inconsistency.log | 9c0939f2e | d21245a70d3f99894fc5cd4d8e75e664582c62e330deeffb0d3f01dd9b696889 | CANONICAL | BLOB |
+| EV-IMC-07 | AC4 微测 F-05（同尺寸改内容） | verification/INSTALLER-METADATA-CONSISTENCY-1/ac4c-f05-sha256-swap.log | 9c0939f2e | fed2b0a8d85603bb69f4e3f1efdfe1a9c3e56a3dfb1d0528078920de9a8403dd | CANONICAL | BLOB |
+| EV-IMC-08 | AC4 微测 F-06（重复条目） | verification/INSTALLER-METADATA-CONSISTENCY-1/ac4d-f06-duplicate-entry.log | 9c0939f2e | 122110841ffcbb8633e87e5f34603b388fe03866d2715822f1eb9add07e19953 | CANONICAL | BLOB |
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| agent-output | verification/INSTALLER-METADATA-CONSISTENCY-1/ | NOT_APPLICABLE | — | — | 3 个文件（README + 2 日志）已登记于 Canonical Evidence；无迁移/归档/删除 |
+| agent-output | verification/INSTALLER-METADATA-CONSISTENCY-1/ | NOT_APPLICABLE | — | — | **6 个文件**（README + ac1 json/log + ac4 红测 + ac4c/ac4d 两个微测 + ac5 绿例）全部已登记于 Canonical Evidence；无迁移/归档/删除 |
 
 ## Closeout Record（2026-11-17，DSH）
 
