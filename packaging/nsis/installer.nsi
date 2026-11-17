@@ -77,7 +77,7 @@ VIAddVersionKey "FileVersion" "${VERSION}"
 
 VIAddVersionKey "CompanyName" "${APP_PUBLISHER}"
 VIAddVersionKey "FileDescription" "${APP_NAME} setup (per-user, unsigned)"
-VIAddVersionKey "LegalCopyright" "${VARIANT_LICENSE} (${VARIANT_NAME}); see LICENSE and LICENSE-AGPL-3.0.txt"
+VIAddVersionKey "LegalCopyright" "${VARIANT_LICENSE} (${VARIANT_NAME}); see LICENSE, LICENSE-Apache-2.0.txt and LICENSE-AGPL-3.0.txt"
 
 !ifdef ICON_FILE
   Icon "${ICON_FILE}"

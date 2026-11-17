@@ -1,0 +1,8 @@
+verify-package-manifest: stage=G:\CODEX\New Manga.workspace\tmp\r25\pkg\NewManga-0.1.1-win-x64-models repo=G:\CODEX\New Manga
+
+verify-package-manifest: FAILED with 5 problem(s)
+  FAIL: licence mismatch: stage bundles 3 onnx file(s) but VERSION.json license='AGPL-3.0' (expected GPL-3.0-or-later while the bundled weights declare Apache-2.0)
+  FAIL: THIRD_PARTY row for 'models/detector/rtdetr-v2-fixed.onnx' still says 待核实 but the package claims GPL-3.0-or-later
+  FAIL: THIRD_PARTY row for 'models/ocr/manga-ocr-onnx/decoder_model.onnx' still says 待核实 but the package claims GPL-3.0-or-later
+  FAIL: THIRD_PARTY row for 'models/ocr/manga-ocr-onnx/encoder_model.onnx' still says 待核实 but the package claims GPL-3.0-or-later
+  FAIL: stage bundles weights but has no LICENSE-Apache-2.0.txt (Apache-2.0 section 4 requires shipping the licence)

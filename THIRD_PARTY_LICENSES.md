@@ -52,7 +52,7 @@ Apache-2.0 与 GPL-3.0 兼容，且当前 sidecar **不含任何 AGPL 权重** �
 3. Ultralytics 仓库 `LICENSE`（https://raw.githubusercontent.com/ultralytics/ultralytics/main/LICENSE）与 GNU 官方 AGPL-3.0 全文逐字节一致（sha256 `0d96a4ff…`）。
 
 **发行后果（强制）**：
-- **models** 变体包含上述 AGPL-3.0 权重 → **该发行包整体按 AGPL-3.0 分发**；随包附 `LICENSE-AGPL-3.0.txt` 全文，并提供对应源码（本仓库/发行页）。
+- **models** 变体当前随包的 3 个权重**上游均声明 Apache-2.0** → 与 base 一样按 **GPL-3.0-or-later** 分发；随包附 `LICENSE` 与 `LICENSE-Apache-2.0.txt` 全文。（历史：若将来打入任何 AGPL 权重，本节与 `NOTICE.md`、`package.ps1` 必须同时改回 AGPL。）
 - **base** 变体不含任何模型权重 → 仍按 **GPL-3.0-or-later** 分发；其随包的 `LICENSE-AGPL-3.0.txt` 仅作为可选组件许可说明。
 
 RT-DETR / MangaOCR 的权重与配置：**上游均声明 Apache-2.0**（来源见 §3 与 `verification/WEIGHTS-LICENSE-PROVENANCE-1/`；本仓库未做法律认定）。**本地 ONNX 内不含可读许可元数据**（实测），因此该结论只以上游声明为依据。

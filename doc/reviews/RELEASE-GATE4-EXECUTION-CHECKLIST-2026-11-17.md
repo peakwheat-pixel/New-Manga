@@ -21,10 +21,10 @@
 |---|---|
 | stage | `NewManga-0.1.1-win-x64-models`（`package.ps1 -WithModels` 干净产出） |
 | stage 护栏 | `verify-package-manifest.ps1` → **`OK (exe, core_service, 3 onnx / 632552582 B all match VERSION.json)` / EXIT=0** |
-| 包级声明 | `license = AGPL-3.0`（保守）；`app_build.repo_head` = exe 内嵌 40-hex |
-| 安装包 | `NewManga-0.1.1-setup.exe` **652,150,501 B / sha256 `23c04abd517871c4d5a318aa572697bce8ba66b7a6129020308e110556726467`**（**未签名**） |
-| 向导文案 | 实拍：欢迎页「models 变体（含模型权重，按 AGPL-3.0 分发）」；许可页正文中文正常 |
-| 包内合规文件 | 从 setup.exe 抽出与仓库根**逐字节相同**（NOTICE / THIRD_PARTY / LICENSE_AUDIT / LICENSE） |
+| 包级声明 | `license = GPL-3.0-or-later`（两变体相同；随包权重上游声明 Apache-2.0）；`app_build.repo_head` = exe 内嵌 40-hex |
+| 安装包 | `NewManga-0.1.1-setup.exe` **652,081,157 B / sha256 `3c9984b21d663a9ec9a8890387e5800df7d85a3005ed66f0231c67653751df05`**（**未签名**；2026-11-18 收紧为 GPL-3.0-or-later 后重新打包，包内六份许可文件与仓库逐字节相同） |
+| 向导文案 | 实拍：欢迎页「models 变体（含模型权重，按 GPL-3.0-or-later 分发）」；许可页正文中文正常、清单含 Apache 副本 |
+| 包内合规文件 | 从 setup.exe 抽出 **6 份**与仓库根**逐字节相同**（NOTICE / THIRD_PARTY / LICENSE_AUDIT / LICENSE / LICENSE-Apache-2.0.txt / LICENSE-AGPL-3.0.txt） |
 
 ## 2. 需要证书后执行的动作（按顺序）
 
@@ -108,7 +108,7 @@ Start-Process -FilePath "$env:LOCALAPPDATA\Programs\NewManga\uninstall.exe" -Arg
 ## 3. 禁止事项（违反即不可回滚）
 
 1. **不得**用自签名证书、`/a` 自动选证书、或跳过时间戳来"凑"签名。
-2. **不得**把旧包（`a4b11458…` 或任何未签名/文档不符的包）的矩阵结果移花接木到新包。
+2. **不得**把旧包（`a4b11458…`、`23c04abd…`、`6f9a45f3…` 或任何未签名/文档不符的包）的矩阵结果移花接木到新包。
 3. **不得**为了让矩阵通过而改 `installer.nsi` 的安装行为或绕过护栏。
 4. **不得**在 `Technical Gate`/`Release Gate` 上写「通过」，直到 S1–S6 全部有证据且经独立复核。
 

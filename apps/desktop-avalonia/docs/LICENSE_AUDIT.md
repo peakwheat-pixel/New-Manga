@@ -9,9 +9,11 @@
 | **base** | `NewManga-<ver>-win-x64` | **否**（sidecar 复制时排除 `models/`） | **GPL-3.0-or-later**（包内 `LICENSE`） | 不含 AGPL 组件；包内 `LICENSE-AGPL-3.0.txt` 仅说明可选 models 组件的许可 |
 | **models** | `NewManga-<ver>-win-x64-models` | **是**（`app/core-sidecar/models/`，632,662,260 B = 3 个 ONNX 632,552,582 B + 6 个 config/vocab 109,678 B） | **GPL-3.0-or-later**（包内 `LICENSE`）；随包权重上游声明 Apache-2.0（包内 `LICENSE-Apache-2.0.txt`） | 3 个 ONNX 权重**上游均声明 Apache-2.0**（`THIRD_PARTY_LICENSES.md` §3 + `verification/WEIGHTS-LICENSE-PROVENANCE-1/`；本仓库未做法律认定），Apache-2.0 与 GPL-3.0 兼容 |
 
-## 2. 随包文件（base 与 models 均含，4 项）
+## 2. 随包文件（base 与 models 均含，5 项）
 
-`LICENSE`、`LICENSE-AGPL-3.0.txt`、`NOTICE.md`、`THIRD_PARTY_LICENSES.md` —— 均由 `package.ps1` 从仓库根复制并做 SHA-256 逐字节校验（不一致即打包失败）。
+`LICENSE`、`LICENSE-AGPL-3.0.txt`、`LICENSE-Apache-2.0.txt`、`NOTICE.md`、`THIRD_PARTY_LICENSES.md` —— 均由 `package.ps1` 从仓库根复制并做 SHA-256 逐字节校验（不一致即打包失败）。
+
+> `LICENSE-Apache-2.0.txt` 是 Apache-2.0 的**许可条款正文**（10,174 B，截止到 `END OF TERMS AND CONDITIONS`）；官方发布版还带一段 `APPENDIX`（「How to apply the Apache License to your work」），那是**使用说明**而非许可条款，本仓库未收录。若需要与官方全文完全一致，替换该文件即可（`package.ps1` 只做逐字节一致性校验，不校验内容）。
 
 ## 3. 模型权重结论
 
@@ -19,9 +21,9 @@
 
 | 文件 | 字节 | sha256（前 16 位） | 上游许可 |
 |---|---|---|---|
-| `detector/rtdetr-v2-fixed.onnx` | 171,618,071 | `c7fb5af1a8982416` | **待核实** |
-| `ocr/manga-ocr-onnx/encoder_model.onnx` | 343,454,249 | `15fa8155fe9bc1a7` | **待核实** |
-| `ocr/manga-ocr-onnx/decoder_model.onnx` | 117,480,262 | `ef7765261e9d1cdc` | **待核实** |
+| `detector/rtdetr-v2-fixed.onnx` | 171,618,071 | `c7fb5af1a8982416` | **Apache-2.0（上游声明）** |
+| `ocr/manga-ocr-onnx/encoder_model.onnx` | 343,454,249 | `15fa8155fe9bc1a7` | **Apache-2.0（上游声明）** |
+| `ocr/manga-ocr-onnx/decoder_model.onnx` | 117,480,262 | `ef7765261e9d1cdc` | **Apache-2.0（上游声明）** |
 
   合计 **632,552,582 B**；`models/` 目录另有 6 个 config/vocab 文件 **109,678 B**（`package.ps1` 分别记为 `models_bundled_bytes` 与 `models_dir_bytes`）。
   **结论（2026-11-17 收紧）**：三项**上游均声明 Apache-2.0**（来源见 `verification/WEIGHTS-LICENSE-PROVENANCE-1/`；本仓库未做法律认定），

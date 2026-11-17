@@ -232,6 +232,41 @@ if (-not (Test-Path -LiteralPath $manifestPath)) {
     }
 }
 
+# ------------------------------------------------------------------------------- licence consistency
+# reviewer-tgl P1-2: the guard checked bytes, never the licence declaration, so a stage that bundled
+# AGPL weights under a GPL-3.0-or-later claim would have passed. Mirror build-installer's rules here so
+# the failure surfaces at the stage gate too, not only at packaging time.
+$declaredLicense = [string]$version.license
+if (-not $declaredLicense) {
+    Add-Failure "VERSION.json has no license field"
+} elseif ($onnx.Count -gt 0) {
+    if ($declaredLicense -ne 'GPL-3.0-or-later') {
+        Add-Failure "licence mismatch: stage bundles $($onnx.Count) onnx file(s) but VERSION.json license='$declaredLicense' (expected GPL-3.0-or-later while the bundled weights declare Apache-2.0)"
+    }
+    $tplPath = Join-Path $StageDir 'THIRD_PARTY_LICENSES.md'
+    if (-not (Test-Path -LiteralPath $tplPath)) {
+        Add-Failure "stage has no THIRD_PARTY_LICENSES.md; the bundled weights' upstream declarations cannot be proven"
+    } else {
+        $tplLines = Get-Content -LiteralPath $tplPath -Encoding UTF8
+        foreach ($onnxFile in $onnx) {
+            $rel = $onnxFile.FullName.Substring((Join-Path $StageDir 'app/core-sidecar').Length + 1).Replace('\', '/')
+            $row = $tplLines | Where-Object { $_ -match '^\|' -and ($_ -match [regex]::Escape($rel) -or $_ -match [regex]::Escape($onnxFile.Name)) } | Select-Object -First 1
+            if (-not $row) {
+                Add-Failure "THIRD_PARTY_LICENSES.md has no row for bundled weight '$rel'"
+            } elseif ($row -match '待核实') {
+                Add-Failure "THIRD_PARTY row for '$rel' still says 待核实 but the package claims GPL-3.0-or-later"
+            } elseif ($row -notmatch 'Apache-2\.0') {
+                Add-Failure "THIRD_PARTY row for '$rel' does not record the Apache-2.0 upstream declaration"
+            }
+        }
+    }
+    if (-not (Test-Path -LiteralPath (Join-Path $StageDir 'LICENSE-Apache-2.0.txt'))) {
+        Add-Failure "stage bundles weights but has no LICENSE-Apache-2.0.txt (Apache-2.0 section 4 requires shipping the licence)"
+    }
+} elseif ($declaredLicense -ne 'GPL-3.0-or-later') {
+    Add-Failure "base stage (no weights) must declare GPL-3.0-or-later, got '$declaredLicense'"
+}
+
 # ------------------------------------------------------------------------------- report
 if ($failures.Count -gt 0) {
     Write-Host ''

@@ -1,0 +1,14 @@
+# WEIGHTS-LICENSE-PROVENANCE-1 · reviewer-tgl P0 修复后的产物核验（2026-11-18）
+
+# 产物: NewManga-0.1.1-setup.exe 652,081,157 B sha256 3c9984b21d663a9ec9a8890387e5800df7d85a3005ed66f0231c67653751df05
+# command: 7z x <setup.exe> -o<dir> <6 files> ; Get-FileHash SHA256 ; Select-String 残留表述
+
+NOTICE.md	SAME=True	sha256=1e61a9cff4e67d84644daa834bb2a4992e1caea056c4b42833d15d73df3d8578
+THIRD_PARTY_LICENSES.md	SAME=True	sha256=f48f6b3a6fbe8406a854d4498871d7e6f7b8976cb43f915ca9997eb900185f73
+LICENSE_AUDIT.md	SAME=False	sha256=d94740dbc665986a1b24d158d20c1105a04a3a49b7f25b8386d60afc3143c4c7
+LICENSE	SAME=True	sha256=fb981668c18a279e285fc4d83fba1e836cc84dd4daa73c9697d3cfd2d8aca6e0
+LICENSE-Apache-2.0.txt	SAME=True	sha256=0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594
+LICENSE-AGPL-3.0.txt	SAME=True	sha256=e0eedba615d5cd1b986afb6c5b3a4b1ae33713e7e9dc74d19daec5e3221f9d2e
+
+# 残留表述检查（应为空）: 保守策略整包 / 待核实（保守 / 整体按 AGPL
+RESIDUAL: none

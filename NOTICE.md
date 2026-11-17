@@ -34,7 +34,7 @@ base 与 models 变体均按 **GPL-3.0-or-later** 声明；随包同时携带 `L
 | 组件 | 来源 | 许可证 | 使用方式 | 登记状态 |
 |---|---|---|---|---|
 | Saber-Translator | https://github.com/MashiroSaber03/Saber-Translator | GPL-3.0 | **参考**（架构/流程/交互）；当前仓库**未包含其代码** | 待移植时逐文件登记 |
-| rtdetr-v2-fixed / manga-ocr encoder+decoder 权重 | 见 `THIRD_PARTY_LICENSES.md` §3 | **待核实**（保守按 AGPL-3.0 声明整包） | `models` 变体随包分发（3 个 ONNX，632,552,582 B） | 待一手核实 |
+| rtdetr-v2-fixed / manga-ocr encoder+decoder 权重 | 见 `THIRD_PARTY_LICENSES.md` §3 | **Apache-2.0（上游声明）** | `models` 变体随包分发（3 个 ONNX，632,552,582 B） | 上游声明已登记（本仓库未做法律认定） |
 | Ultralytics YOLO11s-seg 权重 | https://github.com/ultralytics/ultralytics | **AGPL-3.0** | **当前 sidecar 不含该文件**（sfx 权重缺失，`sfx_detect_probe` fail-closed）；如将来打入则整包 AGPL-3.0 | 已核实（历史登记保留） |
 | （移植登记区） | — | — | 每移植一个文件在此记：源路径 + commit + 许可头保留 | 空 |
 
@@ -42,11 +42,11 @@ base 与 models 变体均按 **GPL-3.0-or-later** 声明；随包同时携带 `L
 
 1. 每个从 Saber-Translator 移植的文件必须在文件头保留原版权声明与 GPL-3.0 许可头，并在上表登记「源路径 + 上游 commit + 本仓库路径」。
 2. 不得移植后附加额外限制、不得改许可、不得删除版权声明。
-3. 模型权重按其自身许可证处理，不视为本仓库代码；随包分发前必须逐个核实（见 `THIRD_PARTY_LICENSES.md` §3）。**当前 models 变体随包的 3 个 ONNX 权重上游许可均未一手核实，故按保守策略整包声明 AGPL-3.0。**
+3. 模型权重按其自身许可证处理，不视为本仓库代码；随包分发前必须逐个登记（见 `THIRD_PARTY_LICENSES.md` §3）。**当前 models 变体随包的 3 个 ONNX 权重上游均声明 Apache-2.0，故与 base 一样按 GPL-3.0-or-later 分发，并随包提供 Apache-2.0 全文。**
 4. 字体只允许随包分发 OFL/Apache 等兼容许可字体；商业/系统字体（如 `msyh`、`STKAITI`、`STZHONGS`）不得随包。
 
 ## 当前状态
 
 - 仓库当前**没有**任何 Saber-Translator 代码；仅有参考规格与截图（`verification/DISPLAY-PERF-DECISION-1/ui-spec/`）。
 - `models` 变体包含模型权重（见上表）；`base` 变体不包含。
-- 本文件与 `LICENSE`、`LICENSE-AGPL-3.0.txt`、`THIRD_PARTY_LICENSES.md` 构成发行前的许可文件组；每次发行重打 base/models 两包，包内这 4 个文件必须与仓库根逐字节一致（`apps/desktop-avalonia/scripts/package.ps1` 校验）。
+- 本文件与 `LICENSE`、`LICENSE-AGPL-3.0.txt`、`LICENSE-Apache-2.0.txt`、`THIRD_PARTY_LICENSES.md` 构成发行前的许可文件组；每次发行重打 base/models 两包，包内这 5 个文件必须与仓库根逐字节一致（`apps/desktop-avalonia/scripts/package.ps1` 校验）。

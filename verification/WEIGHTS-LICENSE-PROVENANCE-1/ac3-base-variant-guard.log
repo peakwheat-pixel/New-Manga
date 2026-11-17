@@ -1,0 +1,2 @@
+verify-package-manifest: stage=G:\CODEX\New Manga.workspace\tmp\r28\pkgbase\NewManga-0.1.1-win-x64 repo=G:\CODEX\New Manga
+verify-package-manifest: OK (exe, core_service, 0 onnx / 0 B all match VERSION.json)
