@@ -3,12 +3,12 @@ id: LICENSE-VARIANT-DECLARATION-1
 title: base 变体声明 GPL-3.0-or-later 却内置 632 MB 权重 —— 需用户选向（AGPL 声明 / 移除权重）
 kind: fix
 governance_version: 3
-status: blocked
+status: closed_with_limitations
 disposition: "ZCode 裁定（doc/reviews/ZCODE-RULING-INSTALLER-LICENSE-2026-11-17.md）：现声明非法；Q2 定为 P0 发布阻塞。合法出口只有 ①保守声明 AGPL-3.0 ②移除权重回归 base。方向取舍属用户产品裁决，DSH 不自裁"
 approval: DSH 2026-11-17（由 ZCode 裁定触发；方向待用户决定）
 suggested_owner: DSH
-owner: null
-reviewer: null
+owner: DSH
+reviewer: reviewer-lvd（DSH 子 agent，独立上下文；2026-11-17 收口复核）
 depends_on:
   - INSTALLER-MATRIX-1
   - INSTALLER-METADATA-CONSISTENCY-1
@@ -17,9 +17,9 @@ base_commit: null
 branch: null
 worktree: null
 integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+delivery_head: 02c3aaeda
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/LICENSE-VARIANT-DECLARATION-1
 allowed_paths:
   - doc/tasks/LICENSE-VARIANT-DECLARATION-1.md
@@ -53,12 +53,12 @@ DSH 按「需要人工裁决交 Codex/ZCode」的授权只能拿到**规则**，
 
 ## Acceptance Criteria（选向后按分支执行）
 
-- [ ] **AC1 选向登记**：把用户的选择（A 或 B）与本裁定书链接写进卡面。
-- [ ] **AC2 声明一致（A）**：`NOTICE.md` 变体表、`LICENSE_AUDIT.md`、`THIRD_PARTY_LICENSES.md §3`、`installer.nsi` 许可页四处**同时**改为与实物一致；或
+- [x] **AC1 选向登记**：把用户的选择（A 或 B）与本裁定书链接写进卡面。 <<MET>>
+- [x] **AC2 声明一致（A）**：`NOTICE.md` 变体表、`LICENSE_AUDIT.md`、`THIRD_PARTY_LICENSES.md §3`、`installer.nsi` 许可页四处**同时**改为与实物一致；或 <<MET>>
       **AC2'（B）**：从 base stage 移除 `app/core-sidecar/models/` 并用 `package.ps1` 干净重建，`NOTICE` 只做小改。
-- [ ] **AC3 生成器自证**：改后由 `package.ps1` **干净重建**（禁手工补字段），`verify-package-manifest.ps1` **EXIT=0**。
-- [ ] **AC4 判别力**：旧 stage（声明 GPL + 632 MB 权重）在新护栏下仍被拒；新 stage 通过；两者证据并列。
-- [ ] **AC5 不越界**：不改护栏检查集合；不宣称条件 4 通过；不覆盖旧 stage 字节。
+- [x] **AC3 生成器自证**：改后由 `package.ps1` **干净重建**（禁手工补字段），`verify-package-manifest.ps1` **EXIT=0**。 <<MET>>
+- [x] **AC4 判别力**：旧 stage（声明 GPL + 632 MB 权重）在新护栏下仍被拒；新 stage 通过；两者证据并列。 <<MET>>
+- [x] **AC5 不越界**：不改护栏检查集合；不宣称条件 4 通过；不覆盖旧 stage 字节。 <<MET>>
 
 ## 允许修改范围
 
@@ -110,3 +110,38 @@ DSH 按「需要人工裁决交 Codex/ZCode」的授权只能拿到**规则**，
 ## 仍缺：方向选择
 
 DSH 已按用户授权把选向交给 ZCode，但第二次调用**正文截断**，未取得 A/B 结论。本卡继续 `blocked`；下次调用改用不带 `--json` 的输出或更短提示词。
+
+## Canonical Evidence
+
+| evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) | sha256_basis |
+|---|---|---|---|---|---|---|
+| EV-LVD-01 | AC1–AC5 证据说明（含 ZCode DECISION=A 原文） | verification/LICENSE-VARIANT-DECLARATION-1/README.md | 02c3aaeda | 5fe45b10d451b7e9ae8659a412cfa36bea7fd489090e57765cd20d5b979e1129 | CANONICAL | BLOB |
+| EV-LVD-02 | AC3 models 变体 VERSION.json（AGPL-3.0） | verification/LICENSE-VARIANT-DECLARATION-1/ac3-models-version.json | 02c3aaeda | d6d623ff4e09c3f518804733c57efd9ad3a1ed9ec33a4d283cc353bb7ac51843 | CANONICAL | BLOB |
+| EV-LVD-03 | AC3 护栏通过（3 onnx / 632,552,582 B） | verification/LICENSE-VARIANT-DECLARATION-1/ac3-models-guard.log | 02c3aaeda | c7e2291f64435492848a0b1838f98e80289b30ba03e1dff64531205898d75487 | CANONICAL | BLOB |
+| EV-LVD-04 | AC3 安装器 build-info（variant=models / license=AGPL-3.0 / sha256） | verification/LICENSE-VARIANT-DECLARATION-1/ac3-installer-build-info.json | 02c3aaeda | 4601675136f40a74e25af114142d0a3ceb80eb5c829c174936bef700078b4457 | CANONICAL | BLOB |
+| EV-LVD-05 | AC3 NSIS 收到变体定义（无乱码） | verification/LICENSE-VARIANT-DECLARATION-1/ac3-nsis-variant-defines.log | 02c3aaeda | b829772b0f483f786fff5f34184a1bf9b71f14ae08ac2667ef789e2f39b641dd | CANONICAL | BLOB |
+| EV-LVD-06 | AC4 旧 stage 仍被拒（EXIT=1） | verification/LICENSE-VARIANT-DECLARATION-1/ac4-old-stage-still-rejected.log | 02c3aaeda | 88dc4063d0acde324eb662b0ec557f894da21ef5b6fcb87059443dab634b1507 | CANONICAL | BLOB |
+| EV-LVD-07 | AC3 package-manifest（models_bytes=632,552,582） | verification/LICENSE-VARIANT-DECLARATION-1/ac3-models-package-manifest.json | 02c3aaeda | 70a224306f8395f5a220a3a722f806d6e71d47ab214e2fa91836609b7fde042e | CANONICAL | BLOB |
+
+## Resource Manifest
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| agent-output | verification/LICENSE-VARIANT-DECLARATION-1/ | NOT_APPLICABLE | — | — | 7 个文件（README + 6 份实测）全部已登记于 Canonical Evidence；无迁移/归档/删除 |
+
+## Closeout Record（2026-11-17，DSH）
+
+- canonical_evidence_status：`complete`；resource_closeout_status：`complete`；删除/迁移/归档：**0**。
+- **方向 = A**（ZCode 第二次调用，正文完整）：保留权重随包、整包按 **AGPL-3.0** 声明。
+- **AC2**：`NOTICE.md` / `LICENSE_AUDIT.md` / `THIRD_PARTY_LICENSES.md` 三份按实物改写；
+  `installer.nsi` 四处改为读取 `${VARIANT_NAME}`/`${VARIANT_LICENSE}`（中文短语在脚本内推导，避免命令行乱码）；
+  `build-installer.ps1` 从 stage 取变体并**在「有权重 + 非 AGPL」时直接 throw**（fail-closed）。
+- **AC3**：干净 `package.ps1 -WithModels` → `license=AGPL-3.0`、3 onnx / 632,552,582 B，护栏 **EXIT=0**；
+  `build-installer.ps1` → `INST_EXIT=0`，`setup.exe` 652,157,341 B / sha256 `a4b11458…`。
+- **AC4**：旧 stage（base 名 + 632 MB 权重 + GPL 声明）护栏 **EXIT=1**（8 条 FAIL）⇒ 判别力两侧都有。
+- **限制**：
+  1. **未做权重上游许可的「核实认定」**：三项仍标「待核实」，整包 AGPL-3.0 是**保守过度声明**，不是核实结论。
+  2. 安装向导的**实际渲染**未目验（中文文案在 NSIS 中压缩存储，字符串搜索不可靠）；只验证了 makensis 编译成功与变体定义送达。
+  3. `setup.exe` **未签名**（`authenticode=NotSigned`）；Release Gate 条件 4 仍需真证书。
+  4. 未改动旧 stage 任何字节；旧 stage 仍被护栏拒绝。
+- **边界**：不改变 `Technical Gate=NOT_SATISFIED`；不构成任何发布验收。
