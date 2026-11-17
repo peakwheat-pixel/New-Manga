@@ -416,3 +416,19 @@ NEW-MANGA-V1-FULL-AUDIT 与 R1–R4 整改、SEC-01/02/03、CORE-01、AUDIT-07/0
 - 删除、迁移、归档数量/字节数：删除 8 目录 / 1,523,132 B（temp）；迁移 0；归档 0
 - 未关闭项及保留原因：Release Gate 条件 3（阅读器 overlay 人眼目视）、条件 4（签名 + 真机安装矩阵）、条件 5（人工 GT 质量基线）仍开放，均非本卡可单方关闭；本卡作为伞形哨位保持 `in_progress`，不冒充 `done`
 - 当前指针清理：STATUS / Plan / TASK_LEDGER 已更新至本轮；`NEXT-SESSION-STARTER` 在本轮收尾提交中更新（不晚于本提交之后的第一个提交）
+
+## 2026-11-17 Gate 条件 3/4/5 的裁定登记（Codex Q3 + DSH 采纳）
+
+来源：`doc/reviews/CODEX-RULING-CORE-ENV2-FEA11-GATE-2026-11-17.md` Q3 段（Codex 书面裁定；DSH 采纳）。
+本 Task 保持 `in_progress`（长期维护节点），**不关闭**；下列为三条件的当前处置与下一步。
+
+| 条件 | 当前处置 | 下一步（Agent 可推进） | 不可代理的部分 |
+|---|---|---|---|
+| **3｜阅读器 overlay 视觉** | **`AGENT_ADJUDICATION_PENDING`** —— 接受「委托书面视觉裁定」路径，但纯 headless 渲染/截图存在/像素 diff 单独都不够；当前**没有 F11 真实窗口截图**证据 | 在真实窗口触发 F11 取原始截图（记录 exe hash、Windows 版本、分辨率、DPI、操作步骤），交独立 Codex 新上下文或 ZCode 出**具名书面视觉裁定**（全屏/无边框、遮挡、裁切、可读性） | 真实窗口截图必须来自安装/运行产物；不得用 headless 冒充 |
+| **4｜签名 + 安装矩阵** | `INSTALLER-MATRIX-1` 已 `closed_with_limitations`（旧 sidecar 机制验证；AC7 NOT_RUN；无签名）；真实签名与跨版本矩阵由 **`RELEASE-GATE4-SIGNED-MATRIX-1`（proposed）** 承接 | 取得 Authenticode 证书与干净 Windows 环境后释放该卡；否则停在 AC1 并登记 `NOT_RUN` | 真实证书凭据、真实 Windows 环境 |
+| **5｜人工 GT / 质量基线** | **`LIMITATION_ACCEPTED`** —— 按 Gate 原文允许的替代分支登记：**没有代表性质量基线，不宣称翻译/识别准确率达标**；实测基线仍 `NOT_RUN` | 若将来取得独立人工标注数据，须核代表性/来源/许可与固定哈希后再复评 | 独立人工 GT 数据本身 |
+
+**边界**：
+- 三条件的处置**不改变** `Technical Gate=NOT_SATISFIED`；Codex 唯一「需用户裁决」项是**是否把 Gate 总体改为 `SATISFIED`**，DSH 未改、也不代裁决。
+- 不得把 `AGENT_ADJUDICATION_PENDING` 或 `LIMITATION_ACCEPTED` 表述为「条件已通过」。
+- 条件 1（已关闭 8/8）、条件 2（调查完成）、条件 6（已关闭）状态不变。
