@@ -2,7 +2,7 @@
 
 - 生成时间：2026-11-17 20:25 (+08:00)（本版为 **R22** 之后更新 —— 条件 3 关闭 + F11 样式修复）
 - 生成者：DSH（lead）
-- **当前 head：`a5e57958b`**（main）；R18–R25 见 §3r–§3y（最新：方向 A 落地——AGPL 声明/NSIS 变体化/合规出包）
+- **当前 head：`1a026a13f`**（main）；R18–R26 见 §3r–§3z（最新：向导实拍 + 许可页编码修复）
 - 工作区：干净（`git status --porcelain` 为空）
 - **R1**：`9ce819ae7` → `dd029b73f`（7 commit，目标 A/B/D 达成）
 - **R2**：`dd029b73f` → `5f2664c2e`（8 commit）—— 目标 C 闭合 10 条
@@ -1306,6 +1306,42 @@ NEXT: 先在 THIRD_PARTY_LICENSES.md 把三项权重「[待核实]」核实落�
 ### 5) 非终态卡（2 张）
 - `MAINT-1-RELEASE-MONITOR`（in_progress）
 - `RELEASE-GATE4-SIGNED-MATRIX-1`（proposed；现已有**合规 models 包**可作矩阵输入，但仍需真证书）
+
+---
+## 3z. R26（自动推进轮）—— 安装向导实拍：关闭「渲染未目验」，并修掉许可页乱码
+
+### 结果一句话
+在真实桌面会话跑**新产物**向导并实拍欢迎页/许可页：**欢迎页 AGPL 文案正确**；第一次实拍发现**许可页正文乱码**（`NOTICE.md` 无 BOM 被 NSIS 当 ANSI），
+修复后重打包再实拍**中文正常**。全程**只到许可页就结束，未安装**（`%LOCALAPPDATA%\Programs\NewManga` 的 `LastWriteTime` 仍是 `2026/11/15 5:22:18`）。
+
+### 提交链（main，均已 push、0 0）
+`8bbc4ae48`（许可页 BOM 修复 + 两张实拍）→ `1a026a13f`（CE 补登 EV-LVD-11/12）。
+
+### 1) 实拍结论
+- **欢迎页**（`ac7-wizard-welcome.png`）：`本安装包为 models 变体（含模型权重，按 AGPL-3.0 分发）。…用户数据根 %APPDATA%\com.newmanga.desktop 不会被改动。`
+  ⇒ 三个 NSIS 定义全部渲染正确、**无乱码**。
+- **许可页**（`ac7-wizard-license.png`）：顶部 `models 变体整体按 AGPL-3.0 分发…`，正文 `# NOTICE — New Manga` 起中文正常。
+
+### 2) 新发现并已修：INSTALLER-LICENSE-PAGE-ENCODING
+第一次实拍许可页正文是 `誰 獨獨優銳Windows 炒屑潬縵…` 这种乱码 —— 因为 `NOTICE.md` 是 **UTF-8 无 BOM**，NSIS `LicenseData` 无 BOM 时按 ANSI 读。
+（欢迎页不受影响：那里的中文来自 `.nsi` 脚本，NSIS 按 UTF-8 解析脚本。）
+
+**修复**：`build-installer.ps1` 在调 makensis 前，把 stage 的 `NOTICE.md` 以 **UTF-8 with BOM** 写成 `<OutDir>\license-page.txt`
+（BOM 实测 `239,187,191`，4,330 B），`/DLICENSE_FILE` 指向该副本；**包内 `NOTICE.md` 不变**（仍与仓库逐字节相同）。
+重打包：`INST_EXIT=0`，**新产物 652,150,501 B / sha256 `23c04abd…`**。
+
+### 3) 踩坑记录
+- 首次截图脚本用 UIA 找按钮，NSIS 向导**不暴露 UIA 控件**（`texts:` 为空）⇒ 改用 `Alt+N`/`Alt+C` 助记键 + `GetWindowRect` 精确裁窗。
+- 屏幕全屏截图（2560×1440）里向导只有 503×362，文字难辨 ⇒ 改为**按窗口矩形截图**。
+- `Alt+C` 取消在许可页不生效（可能被许可页控件吃掉），最后强制结束进程；已核对**未安装**。
+
+### 4) 仍未覆盖
+安装过程页/完成页、卸载向导、跨版本升级页（本轮只到许可页）；`setup.exe` 仍未签名（条件 4 仍缺真证书）；
+三项权重上游许可仍「待核实」（AGPL 是保守过度声明）。
+
+### 5) 非终态卡（2 张）
+- `MAINT-1-RELEASE-MONITOR`（in_progress）
+- `RELEASE-GATE4-SIGNED-MATRIX-1`（proposed；现有**合规且向导文案正确**的 models 包可作矩阵输入，但仍需真证书）
 
 ---
 ## 4. 关键技术事实（R1/R2 累积）
