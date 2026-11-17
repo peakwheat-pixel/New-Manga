@@ -160,13 +160,25 @@ $logPath = Join-Path $outFull 'build-installer.log'
 $buildInfoPath = Join-Path $outFull 'build-info.json'
 if (Test-Path -LiteralPath $exePath) { Remove-Item -LiteralPath $exePath -Force }
 
+# INSTALLER-LICENSE-PAGE-ENCODING-1 (found by a real wizard capture 2026-11-17): the license page
+# rendered NOTICE.md as mojibake because the shipped file is UTF-8 WITHOUT a BOM and NSIS reads
+# LicenseData as ANSI in that case. Write an identical, BOM-prefixed copy next to the output and hand
+# that to makensis; the packaged NOTICE.md itself is untouched.
+$licensePagePath = Join-Path $outFull 'license-page.txt'
+$noticeSource = Join-Path $stageFull 'NOTICE.md'
+if (-not (Test-Path -LiteralPath $noticeSource)) { throw "license page source missing: $noticeSource" }
+$noticeText = Get-Content -LiteralPath $noticeSource -Raw -Encoding UTF8
+$utf8Bom = New-Object System.Text.UTF8Encoding($true)
+[System.IO.File]::WriteAllText($licensePagePath, $noticeText, $utf8Bom)
+Write-Host ("license page: {0} (UTF-8 BOM, {1} bytes) from {2}" -f $licensePagePath, (Get-Item $licensePagePath).Length, $noticeSource)
+
 $argsList = @(
     "/DVERSION=$Version",
     "/DVERSION4=$Version4",
     "/DSTAGE_DIR=$stageFull",
     "/DOUT_FILE=$exePath",
     "/DINSTALL_SIZE_KB=$installSizeKb",
-    "/DLICENSE_FILE=$(Join-Path $stageFull 'NOTICE.md')"
+    "/DLICENSE_FILE=$licensePagePath"
 )
 # LICENSE-VARIANT-DECLARATION-1 (2026-11-17): the installer used to hard-code "base / GPL-3.0-or-later"
 # in four places, so any weight-bundling stage produced a package whose wizard told the receiver the
@@ -233,6 +245,7 @@ $installer = Get-Item -LiteralPath $exePath
 $installerSha256 = Get-Sha256 $exePath
 $signature = Get-AuthenticodeSignature -LiteralPath $exePath
 $fileVersion = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($exePath)
+
 
 $buildInfo = [ordered]@{
     task = 'NSIS-INSTALLER-1'
