@@ -1,0 +1,28 @@
+# FEA11-ENTRY-MISSING-1 · 复核证据：opt-in 生产链测试在当前 head 通过（2026-11-17）
+
+# head: 9b13eb873（收口前 HEAD）
+# interpreter: pwsh 7 / .NET SDK 9 / xunit
+# command: $env:NEWMANGA_FEA11_IPC="1"; dotnet test apps/desktop-avalonia/tests/NewManga.Host.Tests/NewManga.Host.Tests.csproj -c Debug --no-build --filter "FullyQualifiedName~ProductionDispatcherFullSyncChain_NewKeyOldDigestConserved"
+# note: 该测试是 opt-in（`NEWMANGA_FEA11_IPC=1`），会启动真实 Python Core（当前 checkout 的 src，不用 bundled sidecar）
+
+## 第 1 次
+# 已通过! - 失败: 0，通过: 1，已跳过: 0，总计: 1，持续时间: 2 s
+# EXIT=0
+
+## 第 2 次
+# 已通过! - 失败: 0，通过: 1，已跳过: 0，总计: 1，持续时间: 3 s
+# EXIT=0
+
+## 第 3 次
+# 已通过! - 失败: 0，通过: 1，已跳过: 0，总计: 1，持续时间: 2 s
+# EXIT=0
+
+## 相关既有证据（不改字节，仅引用）
+# verification/MINT-FAILURE-DIAG-1/README.md —— MINT-FAILURE-DIAG-1（commit c68a67216）：
+#   SourceAccessException.OriginalExceptionType 保留内层异常类型；Message 仍严格等于 Code；
+#   新增 MapMintFailureDiagnosticsTests（3 facts，实测 3 passed / 0 failed / EXIT=0）。
+
+# 结论：
+# 1) 本卡 blocked 的唯一前提「内层异常类型被 MapMintFailure 兜底丢弃」已由 MINT-FAILURE-DIAG-1 解除。
+# 2) 触发本卡的失败用例 ProductionDispatcherFullSyncChain_NewKeyOldDigestConserved 在当前 head 连续 3 次通过。
+# 3) 历史一次失败（基线 414e3e8d1）的**根因未复现**：不声称已定位，只登记「当前不可复现」。
