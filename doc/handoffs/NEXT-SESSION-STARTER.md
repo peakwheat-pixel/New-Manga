@@ -1,9 +1,9 @@
 # 新会话启动包 — New Manga 目标续接
 
-- 生成时间：2026-11-18 00:35 (+08:00)（本版为 **R28** 之后更新 —— 许可收紧 + 随包文档清干净 + 条件 4 清单）
+- 生成时间：2026-11-18 02:55 (+08:00)（本版为 **R29** 之后更新 —— 用户裁决不需签名，条件 4 矩阵 AC1–AC6 全部跑通）
 - 生成者：DSH（lead）
 - **一页纸现状（2 分钟读完）**：doc/handoffs/STATE-OF-PROJECT-2026-11-18.md（本文件 130 KB，按轮次累积，别当摘要读）
-- **当前 head：`7d11cbc7d`**（main）；R18–R28 见 §3r–§3ab（最新：许可收紧为 GPL-3.0-or-later、随包文档清干净、条件 4 取证清单已就绪；**唯一外部阻塞 = 真实代码签名证书**）
+- **当前 head：`612adbac2`**（main）；R18–R29 见 §3r–§3ab（最新：**用户裁决不需证书 ⇒ 条件 4 矩阵 AC1–AC6 全部实测通过**，待独立复核）
 - 工作区：干净（`git status --porcelain` 为空）
 - **R1**：`9ce819ae7` → `dd029b73f`（7 commit，目标 A/B/D 达成）
 - **R2**：`dd029b73f` → `5f2664c2e`（8 commit）—— 目标 C 闭合 10 条
@@ -1386,6 +1386,50 @@ ZCode 出 `TIGHTEN_TO_GPL` 裁定，DSH 执行到底：两变体**都改回 GPL-
 ### 6) 非终态卡（2 张）
 - `MAINT-1-RELEASE-MONITOR`（in_progress）
 - `RELEASE-GATE4-SIGNED-MATRIX-1`（proposed；**唯一阻塞 = 真实证书**，其余前置已就绪）
+
+---
+## 3ab. R29 —— 用户裁决「不需要证书」⇒ 条件 4 整套矩阵当天跑完
+
+### 结果一句话
+用户 2026-11-18 裁决 **本项目不需要证书**，条件 4 的签名要求作废、AC1–AC6 立刻变成 Agent 可执行；
+**六项 AC 全部实测通过**（干净安装 → 四页可达 → 0.1.0↔0.1.1 真升级真回退 → 卸载后数据根零变化），证据已入 `verification/RELEASE-GATE4-SIGNED-MATRIX-1/`。
+
+### 提交链（main，均已 push、0 0）
+`5469952f6`（AC1–AC4 + 裁决落盘）→ `12bb456fa`（AC5/AC6 + 六项全 MET）→ `612adbac2`（十条 CE + STATUS 指针）
+
+### 1) 用户裁决（逐字）
+> 本项目不需要证书
+
+落盘：`doc/reviews/USER-RULING-2026-11-18-NO-SIGNING.md`。影响：AC2「签名可验证」**作废**→改「未签名如实际披露」；
+AC1 去掉证书身份；**AC3–AC6 不变**；`INSTALLER-MATRIX-1` 的 `L-IM-3`（无签名）从限制降为**已裁决现状**。
+
+### 2) 矩阵实测（全部本机真跑）
+| AC | 结果 | 关键数字 |
+|---|---|---|
+| AC1 | MET | Win11 专业版 10.0.26300 / HOME-MY / 2560×1440 96 DPI / China Standard Time；包 `652,081,157 B / 3c9984b2…` |
+| AC2 | MET | `Get-AuthenticodeSignature` = **NotSigned**，如实登记 |
+| AC3 | MET | 先清场（旧安装卸载 ExitCode 0）→ 静默安装 **ExitCode 0（35.1 s）**；**1,040 文件 / 827,026,762 B**；安装后 exe `37,344,576 B / c2bf9265…` 与 stage **逐字节相同**；HKCU 卸载项齐全；Start Menu `New Manga` 文件夹（2 个 lnk） |
+| AC4 | MET | 从**安装后 exe** 四页实拍：资料柜 / 工位（`01/08`）/ 控制台（9 分区）/ 阅读器（F11）；切换靠 UIA `Invoke()` 按钮 `工位空间`/`控制台空间`/`资料柜空间` |
+| AC5 | MET | `0.1.1 → 0.1.0(9948f200…) → 覆盖装 0.1.1(c2bf9265…) → 卸载重装 0.1.0(9948f200…)`；五次安装/卸载全 **ExitCode=0**；数据根全程 **530 文件 / 684,197,540 B** |
+| AC6 | MET | 静默卸载 **ExitCode 0（0.6 s）**；程序目录/HKCU/StartMenu 全清；数据根 **530 文件 / 684,197,540 B**，逐文件 sha256：**丢失 0 / 新增 0 / 变化 0** |
+
+### 3) 为做 AC5 额外构建的对照包
+`NewManga-0.1.0-setup.exe` **652,083,863 B / sha256 `19e6d0e3…`**（同源，仅版本号不同）；
+安装后 exe `9948f200…` —— 与 0.1.1 的 `c2bf9265…` 不同，证明"版本确实换了字节"，回退也是真回退。
+
+### 4) 踩坑
+- `Get-AuthenticodeSignature` 的 `StatusMessage` 是一长串中文执行策略提示，**不要**把它当成"签名状态描述"抄进证据；只取 `Status=NotSigned`。
+- Start Menu 过滤串写成 `*NewManga*` 会漏（实际目录名是 `New Manga`，带空格）——AC3 一度误报「Start Menu 项: 0」。
+- `ac1` 日志说"安装前程序目录存在（1038 文件）"，`ac3` 说"安装前 0 文件"——两者都真，因为 `ac3` 先卸载了旧安装；已在 `ac3-clean-install.log` 里写明"清场"。
+
+### 5) 现在的机器状态（重要）
+**测试机当前没有安装任何 NewManga**（AC6 要求卸载）。若要继续用桌面应用，需重新运行
+`G:\CODEX\New Manga.workspace\tmp\r28\inst\NewManga-0.1.1-setup.exe`。
+真实用户数据根 `%APPDATA%\com.newmanga.desktop` **未被触碰**（530 文件 / 684,197,540 B 全程一致）。
+
+### 6) 待办
+- `reviewer-g4` 正在独立复核矩阵证据；结论回来前**不宣布条件 4 关闭**。
+- 复核通过后：条件 4 可关闭 → Release Gate 只剩条件 5 的 `LIMITATION_ACCEPTED`（已按裁定登记）与条件 2 后半的**人的决定**。
 
 ---
 ## 4. 关键技术事实（R1/R2 累积）
