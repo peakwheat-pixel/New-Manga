@@ -154,12 +154,12 @@ Release Gate 条件 4 要求「对当前固定产品 commit 生成并固定 Wind
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| agent-output | verification/RELEASE-GATE4-SIGNED-MATRIX-1/ | NOT_APPLICABLE | — | — | 12 个文件（4 日志 + 4 JPG + 1 JSON）全部登记为 Canonical Evidence（EV-G4-01…12）；无迁移/归档/删除，删除数=0 |
+| agent-output | verification/RELEASE-GATE4-SIGNED-MATRIX-1/ | NOT_APPLICABLE | — | — | 11 个文件（3 份日志 + 2 份重做/对照日志 + 4 张 JPG + 1 份 JSON）全部登记为 Canonical Evidence（EV-G4-01…12，其中 EV-G4-12 为复核报告）；无迁移/归档/删除，删除数=0 |
 | temp-build | G:/CODEX/New Manga.workspace/tmp/r28/inst/ | NOT_APPLICABLE | — | — | 安装包 652,081,157 B / 3c9984b2… 留在 workspace 供复核复算，未提交入仓；无迁移/删除 |
 | temp-build | G:/CODEX/New Manga.workspace/tmp/r30/inst010/ | NOT_APPLICABLE | — | — | 首版 0.1.0 对照包 652,083,863 B / 19e6d0e3…（同源重构，P1-01 判为不充分）；保留作对照 |
 | external-artifact | G:/CODEX/New Manga.workspace/task-envs/GATE4-PAGES-UPGRADE-1/out-0.1.0/ | NOT_APPLICABLE | — | — | AC5 真实跨版本用的历史包 652,164,075 B / 1d573ab4…；只读引用，未改历史字节 |
-| installed-artifact | %LOCALAPPDATA%/Programs/NewManga | NOT_APPLICABLE | — | — | 已按 AC5 收尾/AC6 卸载：程序目录 0 文件、HKCU 卸载项与 Start Menu 均清理（ac6-uninstall.log） |
-| user-data | %APPDATA%/com.newmanga.desktop | NOT_APPLICABLE | — | — | 全程未变：530 文件 / 684,197,540 B；卸载前后逐文件 sha256 丢失 0 / 新增 0 / 变化 0 |
+| installed-artifact | C:/Users/49745/AppData/Local/Programs/NewManga | NOT_APPLICABLE | — | — | 已按 AC5 收尾/AC6 卸载：程序目录 0 文件、HKCU 卸载项与 Start Menu 均清理（ac6-uninstall.log） |
+| user-data | C:/Users/49745/AppData/Roaming/com.newmanga.desktop | NOT_APPLICABLE | — | — | 全程未变：530 文件 / 684,197,540 B；卸载前后逐文件 sha256 丢失 0 / 新增 0 / 变化 0 |
 
 ## 2026-11-18 收口记录（closed_with_limitations）
 
