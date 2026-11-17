@@ -8,7 +8,7 @@ disposition: "E-2 根因消解；条件 3 的 100 个 skip 与条件 4 的 sidec
 approval: DSH 2026-11-15（.workspace 内构建，不动产品代码）
 suggested_owner: DSH
 owner: DSH
-reviewer: null
+reviewer: reviewer-sid（DSH 子 agent，独立上下文，未参与实现；2026-11-17 复核 REJECTED → 已按其 findings 重写收口记录）
 depends_on:
   - RELEASE-PACKAGE-PROBE-1
 base_commit: 6ad457c62
@@ -54,6 +54,8 @@ E-2：仓库 sidecar 构建于 **2026-10-23**，早于多条现行命令（如 `
       必须证明新 sidecar 包含旧 sidecar 缺失的命令（尤其 `ReorderChapters` 所在命令与 FEA-12 delete/trash）。
       若没有差异，本卡**不得**声称 E-2 已解除。
 - [x] **AC4 skip 下降实测**（下降已达成：skip 100→44；**但暴露 13 个失败，见 §5**）：设 `NEWMANGA_CORECLIENT_SIDECAR_DIR=<新 sidecar>` 重跑三项目全量， <<MET>>
+
+> **AC4 追加更正（2026-11-17，独立复核 reviewer-sid 触发）**：AC4 行内「但暴露 13 个失败」是 2026-11-15 的时点事实。**在 2026-11-17 的 head 上，这 13 个测试已全部通过**：用新 sidecar 夹具模式实测 CoreClient **258 / 0 / 0 / 258**、Host **364 / 0 / 44 / 408**（各 EXIT=0），定向复跑原 13 个测试 4/4 + 9/9 全过。修复来源是 **`CORE-PIPE-EXCLUSIVE-1`（E-6，集成 `dff3d41a5`）** 与 2026-11-16 的测试返修，**不是本卡**。
       记录 pass/skip 变化，与基线（App 950/0/11、Host 321/0/74、CoreClient 186/0/26）逐项对比。
       **skip 减少必须是新 sidecar 导致**，不得通过改测试 gate 或跳过实现来达成。
 - [x] **AC5 不回归**：无夹具模式下三项目仍 0 failed（2026-11-17 实测 Host 334/0/74/408、CoreClient 227/0/31/258、App 962/0/11/973 ⇒ **1523 passed / 0 failed / 116 skipped / 1639 total**，三项目 EXIT 均 0）；未新增 skip/xfail、未放宽断言。 <<MET>>
@@ -97,13 +99,14 @@ E-2：仓库 sidecar 构建于 **2026-10-23**，早于多条现行命令（如 `
 - 后续记录日期、commit、环境、结果、遗留项。
 ### 未关闭项（本卡**不得**收口为 done）
 
-- **13 个失败未归因完成**：CoreClient 4 个性质清楚（"Frozen Core" 前提过期，但**不得**删除 ——
-  它们守 `CORE_CAPABILITY_MISSING` fail-closed 语义，需改为显式模拟旧 capabilities）；
-  Host 9 个**归因未做**，其中 `ListChapters_MatchesReaderProjection` 失败为
-  `Assert.NotEmpty() Failure: Collection was empty`，属**数据/夹具层面**差异（schema v14），
-  **不能**归为前提过期。
-- **SFX 权重缺失**：`yolo11s-seg.onnx` 全工作区不存在，是训练产物 ⇒ 需求用户提供（goal blocked 判据）。
-  只影响 `sfx_detect_probe`，不影响 `core_service`。
+> **2026-11-17 时点更正（独立复核触发）**：下列两条原始理由在当日 head 上**已不成立**，保留原文以备追溯，并在下一节给出真实残余。
+
+- ~~13 个失败未归因完成~~：**已于 2026-11-17 复测为全部通过**（CoreClient 258/0/0、Host 364/0/44；定向 4/4 + 9/9）。
+  修复来自 `CORE-PIPE-EXCLUSIVE-1`（E-6，`dff3d41a5`）与 2026-11-16 测试返修（CoreClient 4 个改为按实际 capabilities 分支）。
+  **真实的残余**是：这 4 个测试的 `CORE_CAPABILITY_MISSING` **负分支**在当前新 sidecar 下没有被执行 ⇒ 不能宣称 fail-closed 负路径已验证。
+- ~~SFX 权重缺失~~：**已存在**。`G:\CODEX\New Manga.workspace\task-envs\M2-SFX-DETECT\weights-v2b\yolo11s-seg.onnx`（40,824,255 B，
+  sha256 `944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d`），且当前 bundle 内 `models/detector/yolo11s-seg.onnx` 同哈希。
+  「需用户提供」的旧结论作废。
 - **未做**：App.Tests 的 7 个 sidecar 测试、用新 sidecar 重跑 publish 冒烟（条件 4 下一步）。
 
 ### 自登记：本卡推翻的旧结论
@@ -139,6 +142,7 @@ E-2：仓库 sidecar 构建于 **2026-10-23**，早于多条现行命令（如 `
 | artifact | G:/CODEX/New Manga.workspace/task-envs/SIDECAR-REBUILD-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/SIDECAR-REBUILD-1 | G:/CODEX/New Manga.workspace/task-envs/SIDECAR-REBUILD-1/RESOURCE-MANIFEST.json | 证据/探针目录 170 文件 / 55,837,093 B；manifest sha256 54096522…；实测存在，未清理 |
 | artifact | G:/CODEX/New Manga.workspace/task-envs/m2ac5-build | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/m2ac5-build | G:/CODEX/New Manga.workspace/task-envs/SIDECAR-REBUILD-1/RESOURCE-MANIFEST.json | 构建 venv（63 包，含 torch 2.14.0 cp314、pyinstaller 6.22.3）40,334 文件 / 1,310,861,487 B；实测存在 |
 | artifact | apps/desktop-avalonia/build/sidecar/core-sidecar/core-sidecar | PRESERVE_REFERENCED | apps/desktop-avalonia/build/sidecar/core-sidecar/core-sidecar | G:/CODEX/New Manga.workspace/task-envs/SIDECAR-REBUILD-1/RESOURCE-MANIFEST.json | 新 sidecar bundle（schema v14，build-manifest git_head f7d273d9、pyinstaller 6.22.3）；被 .gitignore:22 忽略，未提交进仓库；实测存在 |
+| bundle-manifest | apps/desktop-avalonia/build/sidecar/core-sidecar/core-sidecar/build-manifest.json | PRESERVE_REFERENCED | apps/desktop-avalonia/build/sidecar/core-sidecar/core-sidecar/build-manifest.json | G:/CODEX/New Manga.workspace/task-envs/SIDECAR-REBUILD-1/RESOURCE-MANIFEST.json | bundle 计 **1,967 文件 / 875,823,531 B**；build-manifest = schema v14 / git_head `f7d273d9` / pyinstaller 6.22.3 / built_at_utc 2026-11-15T19:36:51Z；SFX 权重 `models/detector/yolo11s-seg.onnx` sha256 `944e8114…` 已包含；**未计入 manifest 汇总（manifest 只枚举 task-env 两处）** |
 
 ## Closeout Record（2026-11-17，DSH）
 
@@ -146,9 +150,11 @@ E-2：仓库 sidecar 构建于 **2026-10-23**，早于多条现行命令（如 `
 - resource_closeout_status：`complete`（3 行 `PRESERVE_REFERENCED`；`RESOURCE-MANIFEST.json` 40,504 文件 / 1,366,698,580 B，sha256 `54096522b0a16c52b783ad64cc0e44bdff2625db6df6661da22de39c54202170`）。
 - 删除、迁移、归档数量/字节数：**0**。
 - **实测（2026-11-17 复测）**：AC1–AC4 见 `README.md`；AC5 无夹具三项目 **1523 passed / 0 failed / 116 skipped / 1639**（Host 334/0/74/408、CoreClient 227/0/31/258、App 962/0/11/973，均 EXIT=0）；AC6 本卡 6 个提交零产品代码改动。
-- **为何是 `closed_with_limitations` 而不是 `done`**（卡面既有约束 + 实测）：
-  1. **13 个失败未归因完成**（用新 sidecar 的夹具模式）：CoreClient 4 个性质清楚（"Frozen Core" 前提过期，保留 fail-closed 语义，需改为显式模拟旧 capabilities）；Host 9 个已由第七轮诊断定位根因 = **`request_id` 错配，后台 source 扫描抢走阅读器响应（P1，产品侧）**，本卡范围不含修复。
-  2. **SFX 权重缺失**：`yolo11s-seg.onnx` 全工作区不存在（训练产物），只影响 `sfx_detect_probe`，不影响 `core_service`。
-  3. **未做**：App.Tests 的 7 个 sidecar 测试、用新 sidecar 重跑 publish 冒烟（条件 4 下一步）。
+- **为何是 `closed_with_limitations` 而不是 `done`**（按 2026-11-17 独立复核 `reviewer-sid` 的 REJECTED 意见重写；原两条理由经实测已不成立，见上节更正）：
+  1. **`CORE_CAPABILITY_MISSING` 负分支未被新 sidecar 执行**：CoreClient 的 4 个 fail-closed 测试现在按实际 capabilities 分支，正向通过 ≠ 负向已验证。
+  2. **App.Tests 的 7 个 sidecar 测试未用新 sidecar 跑**；用新 sidecar 重跑 publish 冒烟（条件 4 的下一步）也未做。
+  3. **Resource Manifest 覆盖不全**：本收口补登记 bundle 行（1,967 文件 / 875,823,531 B），但 manifest 文件本身只枚举 task-env 两处；bundle 不计入 manifest 汇总。
+  4. **Host 夹具模式存在 1 条已知 flake**：首次运行 `HostFileIdNormalizationTests` 失败（363/1/44），立即重跑 364/0/44 干净；与 sidecar 无关，属既有环境 flake。
+  5. **13 个失败已通过但非本卡修复**：来源 `CORE-PIPE-EXCLUSIVE-1`（`dff3d41a5`）与 2026-11-16 测试返修；不得记为「本卡修复」。
 - **边界**：本卡**不宣称条件 3/4 已满足**；AC4 的 skip 下降（100→44）与新 sidecar 的因果关系已由 AC3 的 capabilities 差异证明，但 13 个失败必须在后续卡（或 MAINT-1 的 E-6 归因）里处置。
 - 当前指针：STATUS / `REBASELINE_PLAN` / `TASK_LEDGER` 已随收口更新；恢复点为本卡 + `verification/SIDECAR-REBUILD-1/README.md`。
