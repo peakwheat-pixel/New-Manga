@@ -11,6 +11,7 @@
 等 Host 就绪后截图书架页，再发送 `{F11}` 截沉浸阅读器。
 
 - 环境：`query session` → session 1 **Active**；`explorer` 1 个；`[Environment]::UserInteractive=True`。
+- OS：**Windows 10 Pro / 2009 / build 26300**；DPI：**96 dpi（100% 缩放）**；PrimaryScreen **2560×1440**，工作区 **2560×1392**（48 px 任务栏）。
 - 显示：PrimaryScreen **2560×1440**，工作区 **2560×1392**（**48 px 任务栏**，**100% 缩放**）。
 - 截图矩形：`GetWindowRect` = `(-8, -8, 2576×1408)`（最大化窗口含 8 px 不可见边框）。
   ⇒ 图像里上/左各 8 px 黑带、右缘 8 px 桌面像素，**都是截取矩形的几何产物，不是应用边框或阅读器黑边**。
