@@ -1,0 +1,30 @@
+# RELEASE-GATE4 · AC6 卸载与用户数据保护（2026-11-18）
+
+# interpreter: pwsh 7
+# command: pwsh -NoProfile -File <workspace>\tmp\r30\ac6-uninstall.ps1
+
+## 卸载前
+- 程序目录：1040 文件 / 827027191 B
+- 卸载注册项存在：True
+- Start Menu 文件夹存在：True
+- 用户数据根：530 文件 / 684197540 B
+- 卸载前数据根清单：530 个文件（逐文件 sha256 已建表）
+
+## 静默卸载
+- Uninstall.exe ExitCode = **0**（0.6 s）
+
+## 卸载后
+- 程序目录存在：False
+- 卸载注册项存在：False
+- Start Menu 文件夹存在：False
+- 用户数据根：530 文件 / 684197540 B
+- 卸载后丢失文件：0
+- 卸载后新增文件：0
+- 卸载后内容变化文件：0
+
+## 判定
+- 程序目录已清理：True
+- HKCU 卸载项已清理：True
+- Start Menu 快捷方式已清理：True
+- 用户数据根逐文件哈希一致（无丢失/无变化）：True
+- **AC6 结论**：PASS
