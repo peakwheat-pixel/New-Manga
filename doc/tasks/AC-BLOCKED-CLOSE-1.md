@@ -116,12 +116,12 @@ allowed_paths:
 - **核实结果**：classification-v2.md 的 41 条「可闭合」中，**8 条已被后续工作闭合**（[x]），
   **33 条真实待处置**（[ ]），0 条行未定位、0 条文件缺失。
 - **已闭合的 8 条**：V11R-D-1 AC8、M2-REGION-RETYPE-CORE AC3、TASK-056 ①②③④⑤、
-  V11R-C-RESEARCH-1 AC5（末条带 erified 注释 + 可复算依据，已复跑确认）。
+  V11R-C-RESEARCH-1 AC5（末条带 verified 注释 + 可复算依据，已复跑确认）。
 - **33 条分布**：DOC 8 / RERUN 5 / IMPL 20；其中 **FEA-04 独占 8 条**，
   判定依据明写「实现未开始，需另立卡」⇒ 它是唯一需要实现而非补证据的块。
 - **价值**：把「41 条待办」修正为「8 条已闭合 + 33 条待处置」+ 四批处置方案。
   若按历史快照直接开工，会做 8 条无用功。
 - **本卡不改任何历史卡 AC**，也不宣称 33 条可批量关闭。
-- **门禁**：check.ps1 PASS (3 warnings)｜erify_pins 18/18｜pi_inventory 1/80/6=87。
+- **门禁**：check.ps1 PASS (3 warnings)｜verify_pins 18/18｜api_inventory 1/80/6=87。
 - **未关闭项**：33 条待处置本身（B1–B4）不在本卡范围，需后续卡承接；
   FEA-04 的 8 条需要独立的实现卡。

@@ -1,0 +1,10 @@
+# GATE3-SETTINGS-SHORTCUT-1 · AC5 证据：无夹具 App.Tests 全量（干净二进制，探针已还原并重建）
+# head: 24c573d1b
+# interpreter: pwsh 7 / .NET SDK 9 / xunit
+# command: dotnet test apps/desktop-avalonia/tests/NewManga.App.Tests/NewManga.App.Tests.csproj -c Debug --no-build --logger trx（未设置 NEWMANGA_CORECLIENT_SIDECAR_DIR ⇒ 无夹具）
+# note: 本文件是运行结果行的逐字副本；完整 TRX 在 G:\CODEX\New Manga.workspace\tmp\r17\gate3\evidence\app-tests-nofixture-clean.trx
+
+# 结果文件: G:\CODEX\New Manga.workspace\tmp\r17\gate3\evidence\app-tests-nofixture-clean.trx
+# 已通过! - 失败:     0，通过:   962，已跳过:    11，总计:   973，持续时间: 6 m 4 s - NewManga.App.Tests.dll (net9.0)
+# EXIT=0
+# 结论：962 passed / 0 failed / 11 skipped / 973 total，skip 仍为 11（未新增）。

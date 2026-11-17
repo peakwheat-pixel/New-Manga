@@ -1,0 +1,11 @@
+# GATE3-SETTINGS-SHORTCUT-1 · AC5 证据：权威 test.ps1（含 dotnet build -warnaserror 全量重建）
+# head: 24c573d1b
+# interpreter: pwsh 7 / .NET SDK 9
+# command: $env:NEWMANGA_WORKSPACE_ROOT="G:\CODEX\New Manga.workspace"; pwsh -NoProfile -File apps/desktop-avalonia/scripts/test.ps1 -EvidenceDirectory <workspace>\tmp\r17\gate3\testps1
+# note: 本文件是运行输出尾部的逐字副本；完整 summary.json 见同目录 ac5-testps1-summary-2026-11-17.json
+
+# evidence root: G:\CODEX\New Manga.workspace\tmp\r17\gate3\testps1 (use -CanonicalEvidence only when regenerating pins)
+# summary: G:\CODEX\New Manga.workspace\tmp\r17\gate3\testps1\test\summary.json
+# TEST PASS (Debug): 1591/1639 passed, 48 skipped
+# EXIT=0
+# 结论：App=969/0/4/973、Host=364/0/44/408、CoreClient=258/0/0/258（合 1591 passed / 48 skipped / 1639 total）。

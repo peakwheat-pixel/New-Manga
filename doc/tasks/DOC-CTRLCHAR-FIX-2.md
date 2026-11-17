@@ -128,7 +128,7 @@ allowed_paths:
 - Closeout：2026-11-16，DSH。
 - **结论：doc/ 其它 16 个文件的控制字符判定为「不修」**，四项理由见正文。
 - **两次失败的批量尝试已完整记录**（误改 781 文件 / 单文件 106 行），两次均用
-  git checkout -- doc/ 完整回滚，回滚后 git status 干净、erify_pins 18/18、
+  git checkout -- doc/ 完整回滚，回滚后 git status 干净、verify_pins 18/18、
   doc/tasks 上轮的修复不受影响。
 - **保留成果**：扫描脚本（可随时复现残余清单）、16 文件的逐处上下文（scan.out）、
   三类性质分类（字母丢失 / git status 分隔 / 表格分隔）。

@@ -116,8 +116,8 @@ allowed_paths:
 - **澄清一处易误判**：FEA-07-AC5-NATIVE-1 **AC-N5** 字面要求「真实桌面截图含两块屏」看似 HUMAN，
   但卡面明写**证据齐**（README + matrix-summary.json + 截图），缺的只是**独立 Review 与行翻转**
   ⇒ Agent 派子 agent 即可完成，**不是 HUMAN-REQUIRED**。
-- **核心判断**：locked ≠ 人才能做。classification-v2.md 把这 33 条归入 IMPL/RERUN/DOC
+- **核心判断**：blocked ≠ 人才能做。classification-v2.md 把这 33 条归入 IMPL/RERUN/DOC
   正因它们本就可做；整体塞进 HUMAN 清单是**错误归因**。
-- **门禁**：check.ps1 PASS (3 warnings)｜erify_pins 18/18｜pi_inventory 1/80/6=87。
+- **门禁**：check.ps1 PASS (3 warnings)｜verify_pins 18/18｜api_inventory 1/80/6=87。
 - **未关闭项**：31 条 Agent 可做的实际处置（B1–B4）不在本卡范围；
   MICA-FIX-1 AC2 的人侧判定需并入 H-01，本卡**未改** HUMAN-REQUIRED-2026-11-15.md 原文件。

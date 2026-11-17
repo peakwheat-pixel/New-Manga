@@ -1,0 +1,44 @@
+{
+  "ac": "AC1/AC2/AC3/AC4/AC5/AC6",
+  "command": "pwsh -NoProfile -File apps/desktop-avalonia/scripts/test.ps1",
+  "evidence_root": "G:\\CODEX\\New Manga.workspace\\tmp\\r17\\gate3\\testps1",
+  "configuration": "Debug",
+  "fixture": "NEWMANGA_CORECLIENT_SIDECAR_DIR (AC11 unlabelled copy)",
+  "sidecar_directory": "G:\\CODEX\\New Manga.workspace\\task-envs\\HOST-CORECLIENT-1\\sidecar-copy",
+  "projects": [
+    {
+      "project": "coreclient",
+      "total": 258,
+      "passed": 258,
+      "failed": 0,
+      "skipped": 0,
+      "trx": "test/results-coreclient.trx",
+      "trx_sha256": "19b5d721536eca35241a09cebdcdf824f8ee5f866f45c49ea561d039054cabde"
+    },
+    {
+      "project": "host",
+      "total": 408,
+      "passed": 364,
+      "failed": 0,
+      "skipped": 44,
+      "trx": "test/results-host.trx",
+      "trx_sha256": "fd972993184f4a82d0197884f0da6c0915ff863ad5c753c27157e98ed9f94152"
+    },
+    {
+      "project": "app",
+      "total": 973,
+      "passed": 969,
+      "failed": 0,
+      "skipped": 4,
+      "trx": "test/results-app.trx",
+      "trx_sha256": "3a0dad0004d8e9ae55780900f281bc08bf95345ece6186b189c8f7f3276fbba0"
+    }
+  ],
+  "totals": {
+    "total": 1639.0,
+    "passed": 1591.0,
+    "failed": 0.0,
+    "skipped": 48.0
+  },
+  "at_utc": "2026-11-17T04:40:45.5073550Z"
+}

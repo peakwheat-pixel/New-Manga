@@ -3,7 +3,7 @@ id: GATE3-SETTINGS-SHORTCUT-1
 title: 闭合条件 3 最后一个 ⚠️ 格（设置空间不吞全局快捷键）
 kind: fix
 governance_version: 3
-status: in_progress
+status: in_review
 disposition: "条件 3 矩阵『设置/快捷键』格 ⚠️：只有『settings 不是 Space 入口』一条，未证明快捷键仍生效"
 approval: DSH 2026-11-15
 suggested_owner: DSH
@@ -16,8 +16,8 @@ branch: main
 worktree: G:/CODEX/New Manga
 integration_commit: null
 delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/GATE3-SETTINGS-SHORTCUT-1
 allowed_paths:
   - doc/tasks/GATE3-SETTINGS-SHORTCUT-1.md
@@ -66,16 +66,16 @@ if (HandleKeyCore(e.Key, e.KeyModifiers, isTextInputFocused)) { ... }
 
 ## Acceptance Criteria
 
-- [x] **AC1 代码事实**：记录 `ConsoleWorkspaceView.TryHandleKey => false` 与 `HandleKey` 的短路结构（上文）。
+- [x] **AC1 代码事实**：记录 `ConsoleWorkspaceView.TryHandleKey => false` 与 `HandleKey` 的短路结构（上文）。 <<MET>>
 - [x] **AC2 用户行为级测试**：新增 `SettingsSpaceShortcutTests.ConsoleSpace_DoesNotSwallowGlobalShortcuts`：
       用 `Ctrl+D3` 进入 Console → 断言 `State.CurrentSpace == SpaceId.Console`；
       **从 Console 按 `Ctrl+K`** → 断言被处理且 `IsPaletteOpen`；`Esc` 关闭；
-      `Ctrl+D2` 回到 Studio 并断言空间。
+      `Ctrl+D2` 回到 Studio 并断言空间。 <<MET>>
 - [x] **AC3 判别力实测**：把 `ConsoleWorkspaceView.TryHandleKey` 临时改为 `=> true`（吞所有键）→
-      测试**变红**；还原 → 通过。已实测，未留残留（`PROBE` 计数 0）。
-- [x] **AC4 更新矩阵**：该格 **⚠️ → ✅**，附 FQN。
-- [x] **AC5 不回归**：无夹具 App.Tests **951 / 0 / 11 / 962**（新增 1 个测试；**skip 仍 11，未新增**）。
-- [x] **AC6 不虚报**：未发现产品缺陷（设置空间不吞键）；条件 3 仍不判 MET（见 §边界）。
+      测试**变红**；还原 → 通过。已实测，未留残留（`PROBE` 计数 0）。 <<MET>>
+- [x] **AC4 更新矩阵**：该格 **⚠️ → ✅**，附 FQN。 <<MET>>
+- [x] **AC5 不回归**：无夹具 App.Tests **962 / 0 / 11 / 973**（新增 1 个测试；**skip 仍 11，未新增**）；权威 `test.ps1` 全量 **1591/1639、48 skipped、EXIT=0**（App 969/0/4/973、Host 364/0/44/408、CoreClient 258/0/0/258）。 <<MET>>
+- [x] **AC6 不虚报**：未发现产品缺陷（设置空间不吞键）；条件 3 仍不判 MET（见 §边界）。 <<MET>>
 
 ## 允许修改范围
 

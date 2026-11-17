@@ -1,0 +1,96 @@
+# GATE3-SETTINGS-SHORTCUT-1 · AC2/AC3 证据（用户行为级测试 + 判别力探针）
+# head: 24c573d1b7573736b6dc63f8e0a151659211f81a
+# interpreter: pwsh 7 / .NET SDK 9 / xunit Avalonia.Headless
+# command: dotnet test <App.Tests> --filter FullyQualifiedName~SettingsSpaceShortcutTests ; 探针：把 ConsoleWorkspaceView.TryHandleKey 临时改为 => true 后重跑，再按字节还原
+
+## 1) AC2 定向测试（干净源码）
+# command: dotnet test apps/desktop-avalonia/tests/NewManga.App.Tests/NewManga.App.Tests.csproj -c Debug --filter FullyQualifiedName~SettingsSpaceShortcutTests
+  正在确定要还原的项目…
+  所有项目均是最新的，无法还原。
+  NewManga.ApplicationCore -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.ApplicationCore\bin\Debug\net9.0\NewManga.ApplicationCore.dll
+  NewManga.CoreClient -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.CoreClient\bin\Debug\net9.0\NewManga.CoreClient.dll
+  NewManga.Appearance -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Appearance\bin\Debug\net9.0\NewManga.Appearance.dll
+  NewManga.DesignSystem -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.DesignSystem\bin\Debug\net9.0\NewManga.DesignSystem.dll
+  NewManga.Host -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Host\bin\Debug\net9.0\NewManga.Host.dll
+  NewManga.Presentation.Avalonia -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Presentation.Avalonia\bin\Debug\net9.0\NewManga.Presentation.Avalonia.dll
+  NewManga.ThemeEngine -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.ThemeEngine\bin\Debug\net9.0\NewManga.ThemeEngine.dll
+  NewManga.App -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\bin\Debug\net9.0\NewManga.App.dll
+  NewManga.App.Tests -> G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 9.0.11)
+[xUnit.net 00:00:00.06]   Discovering: NewManga.App.Tests
+[xUnit.net 00:00:00.14]   Discovered:  NewManga.App.Tests
+[xUnit.net 00:00:00.14]   Starting:    NewManga.App.Tests
+[xUnit.net 00:00:01.59]   Finished:    NewManga.App.Tests
+  已通过 NewManga.App.Tests.SettingsSpaceShortcutTests.ConsoleSpace_DoesNotSwallowGlobalShortcuts [1 s]
+
+测试运行成功。
+测试总数: 1
+     通过数: 1
+总时间: 1.9292 秒
+# EXIT=0
+
+## 2) AC3 判别力探针（把 Console 空间的 TryHandleKey 改成吞掉所有键）
+# 原始文件 sha256=5227fce80cdeca0dcf743c64a187c976c99160a85c488a4efac88ca6ccdcc3b2
+# patch: ConsoleWorkspaceView.TryHandleKey(...) => false  ==>  => true
+# 注入后 git status:  M apps/desktop-avalonia/src/NewManga.App/ViewModels/V2/Shell/WorkspaceAdapters.cs
+  正在确定要还原的项目…
+  所有项目均是最新的，无法还原。
+  NewManga.Appearance -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Appearance\bin\Debug\net9.0\NewManga.Appearance.dll
+  NewManga.CoreClient -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.CoreClient\bin\Debug\net9.0\NewManga.CoreClient.dll
+  NewManga.ApplicationCore -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.ApplicationCore\bin\Debug\net9.0\NewManga.ApplicationCore.dll
+  NewManga.DesignSystem -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.DesignSystem\bin\Debug\net9.0\NewManga.DesignSystem.dll
+  NewManga.Host -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Host\bin\Debug\net9.0\NewManga.Host.dll
+  NewManga.Presentation.Avalonia -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Presentation.Avalonia\bin\Debug\net9.0\NewManga.Presentation.Avalonia.dll
+  NewManga.ThemeEngine -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.ThemeEngine\bin\Debug\net9.0\NewManga.ThemeEngine.dll
+  NewManga.App -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\bin\Debug\net9.0\NewManga.App.dll
+  NewManga.App.Tests -> G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+[xUnit.net 00:00:01.52]     NewManga.App.Tests.SettingsSpaceShortcutTests.ConsoleSpace_DoesNotSwallowGlobalShortcuts [FAIL]
+  失败 NewManga.App.Tests.SettingsSpaceShortcutTests.ConsoleSpace_DoesNotSwallowGlobalShortcuts [1 s]
+  错误消息:
+   Ctrl+K did not open the command palette from Settings
+  堆栈跟踪:
+     at NewManga.App.Tests.SettingsSpaceShortcutTests.ConsoleSpace_DoesNotSwallowGlobalShortcuts() in G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\SettingsSpaceShortcutTests.cs:line 64
+--- End of stack trace from previous location ---
+
+失败!  - 失败:     1，通过:     0，已跳过:     0，总计:     1，持续时间: 1 s - NewManga.App.Tests.dll (net9.0)
+# EXIT=1
+# 还原后 sha256=5227fce80cdeca0dcf743c64a187c976c99160a85c488a4efac88ca6ccdcc3b2
+# 字节级还原一致=True
+# 还原后 git status: (empty)
+
+## 3) 还原后重建二进制 + 定向测试复确认
+# command: dotnet build NewManga.sln -c Debug ; dotnet test <App.Tests> --filter ... (不带 --no-build 的旧产物已作废)
+
+已成功生成。
+    0 个警告
+    0 个错误
+
+已用时间 00:00:09.33
+# BUILD_EXIT=0
+  正在确定要还原的项目…
+  所有项目均是最新的，无法还原。
+  NewManga.CoreClient -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.CoreClient\bin\Debug\net9.0\NewManga.CoreClient.dll
+  NewManga.Appearance -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Appearance\bin\Debug\net9.0\NewManga.Appearance.dll
+  NewManga.ApplicationCore -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.ApplicationCore\bin\Debug\net9.0\NewManga.ApplicationCore.dll
+  NewManga.DesignSystem -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.DesignSystem\bin\Debug\net9.0\NewManga.DesignSystem.dll
+  NewManga.Host -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Host\bin\Debug\net9.0\NewManga.Host.dll
+  NewManga.ThemeEngine -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.ThemeEngine\bin\Debug\net9.0\NewManga.ThemeEngine.dll
+  NewManga.Presentation.Avalonia -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.Presentation.Avalonia\bin\Debug\net9.0\NewManga.Presentation.Avalonia.dll
+  NewManga.App -> G:\CODEX\New Manga\apps\desktop-avalonia\src\NewManga.App\bin\Debug\net9.0\NewManga.App.dll
+  NewManga.App.Tests -> G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll
+G:\CODEX\New Manga\apps\desktop-avalonia\tests\NewManga.App.Tests\bin\Debug\net9.0\NewManga.App.Tests.dll (.NETCoreApp,Version=v9.0)的测试运行
+总共 1 个测试文件与指定模式相匹配。
+
+已通过! - 失败:     0，通过:     1，已跳过:     0，总计:     1，持续时间: 1 s - NewManga.App.Tests.dll (net9.0)
+# EXIT=0
+
+## 4) 收尾：仓库工作树
+# git status --porcelain:  M doc/tasks/AC-BLOCKED-CLOSE-1.md  M doc/tasks/DOC-CTRLCHAR-FIX-2.md  M doc/tasks/FEA-07.md  M doc/tasks/HUMAN-VS-AGENT-SPLIT-1.md  M doc/tasks/SIDECAR-SCHEMA-STALE-1.md ?? doc/reviews/GIT-CLEAN-PUBLICATION-1-REASSIGNED-REVIEW-2026-11-17.md ?? verification/DOC-CTRLCHAR-FIX-1/ctrlchar-scan-and-fix-2026-11-17.log
+
+# 结论：干净源码 1 passed / EXIT=0；注入 => true 后 1 failed（Ctrl+K did not open the command palette from Settings, SettingsSpaceShortcutTests.cs:64）/ EXIT=1；
+#       按字节还原后 SHA 一致、该源文件 `git status -- <path>` 为空，重建后复测 1 passed / EXIT=0 ⇒ 该测试对「Console 空间吞键」有真实判别力，非空转。
+# 注：第 4 节的 git status 里其余改动来自本轮其它文档/证据变更（DOC-CTRLCHAR-FIX-1 修复与复核报告），与本探针的源文件无关。

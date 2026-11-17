@@ -172,15 +172,15 @@ latest_known = max(migration.schema_version for migration in migrations)
 
 ## 修复（2026-11-16，回应 r1 复核 P0-2）
 
-r1 复核指出：本卡前三轮提交只改 package.ps1 / uild_sidecar.ps1 / 卡面，
+r1 复核指出：本卡前三轮提交只改 package.ps1 / build_sidecar.ps1 / 卡面，
 **没有修真正的缺陷**（测试夹具的选取与刷新逻辑），实质修复只是对 workspace 副本的手工替换，不可复现。
 
 已按复核建议补齐两处：
 
 | 文件 | 改动 |
 |---|---|
-| pps/desktop-avalonia/scripts/prepare-sidecar.ps1:16 | 默认 -Source 从**已退役的 Tauri 路径** pps/desktop/src-tauri/target/release/resources/core-sidecar 改为 Avalonia 构建产物 uild/sidecar/core-sidecar/core-sidecar；新增 NEWMANGA_SIDECAR_SOURCE 覆盖 |
-| pps/desktop-avalonia/scripts/test.ps1:39-73 | 夹具副本不再「存在即用」：读 uild-manifest.json 比对 schema_version 与 git_head，缺失/不等则**先删除再重建**（删除是必要的 —— 
+| apps/desktop-avalonia/scripts/prepare-sidecar.ps1:16 | 默认 -Source 从**已退役的 Tauri 路径** apps/desktop/src-tauri/target/release/resources/core-sidecar 改为 Avalonia 构建产物 build/sidecar/core-sidecar/core-sidecar；新增 NEWMANGA_SIDECAR_SOURCE 覆盖 |
+| apps/desktop-avalonia/scripts/test.ps1:39-73 | 夹具副本不再「存在即用」：读 build-manifest.json 比对 schema_version 与 git_head，缺失/不等则**先删除再重建**（删除是必要的 —— 
 obocopy /E 叠加会让 _internal 混杂，导致 Failed to import encodings module） |
 
 ### 实测（把夹具 manifest 伪造成 v6/旧 head）
@@ -236,10 +236,10 @@ un-binding-models-library.db）：
 | color | **completed** | — | 3 |
 | detect | completed | — | 8 |
 | ocr | completed | — | 3 |
-| 	erm_extract | completed | — | 3 |
-| 	ranslate | **failed** | PROVIDER_NOT_CONFIGURED | 3 |
+| term_extract | completed | — | 3 |
+| translate | **failed** | PROVIDER_NOT_CONFIGURED | 3 |
 
-color 全部成功，真正失败的是 	ranslate。测试 :411 断言 color 必 failed，
+color 全部成功，真正失败的是 translate。测试 :411 断言 color 必 failed，
 其注释「chain still stops at color」已不成立；投影层显示 pending 是因为
 测试自己注释所述的「earlier stages stay pending」（已被越过），与账本自洽。
 
@@ -278,7 +278,7 @@ settings_network_profiles_create。点号被拒是正确行为，不是缺陷。
 **矛盾**：settings_commands.py:127/150、core_service.py:482 都注册了该命令，
 但 core.ping 的 capabilities **只有 17 个、不含任何 settings/network 命令**。
 ⇒ 生产组装可能未挂 settings 域（或挂的表与 known-command 列表不一致），需读
-ssemble_production_core / ssemble_core_services 确认。
+assemble_production_core / assemble_core_services 确认。
 
 影响面：B1 的 13 条里有 **7 条是 settings 命令**，全部同一域；B2 大概率同理。
 
@@ -295,16 +295,16 @@ settings_network_profiles_create。点号被拒是正确行为，不是缺陷。
    实现正确。（我曾误以为它写 null，实为我的 probe 自己传了 null，绕过 dispatcher 直发 core。）
 
 **已确证**：[INVALID_REQUEST] 来自 CoreProtocol.cs:131
-ase($"[{code}] {message ?? "core operation failed"}") —— 即 **core 响应里的 rror.code**，
+base($"[{code}] {message ?? "core operation failed"}") —— 即 **core 响应里的 error.code**，
 message 为 null 所以显示默认串。
 
-**关键缺口**：CoreOperationException 只保留 code，core 的 rror.details
-（通常含 phase / ction / message_key，如 SETTINGS_INVALID_INPUT）**在异常消息里丢失**。
+**关键缺口**：CoreOperationException 只保留 code，core 的 error.details
+（通常含 phase / action / message_key，如 SETTINGS_INVALID_INPUT）**在异常消息里丢失**。
 ⇒ 下一步应从 **wire 层抓 core 的原始 error 对象**（含 details），而不是从异常 message 猜。
 
 ### 组 B 诊断的第 5 次失效（2026-11-16 续，必须记录）
 
-为从 **wire 层**抓 core 原始 rror.details（WireFrame.ResponseLine，WireLog.cs:9-18），
+为从 **wire 层**抓 core 原始 error.details（WireFrame.ResponseLine，WireLog.cs:9-18），
 我用脚本在 CommandWiringB1Tests.cs 的 Run() 第一条语句处插入诊断块。**做错了**：
 
 原代码：
@@ -329,8 +329,8 @@ catch (Exception diagEx) {{ ...Console.WriteLine...; throw; }}
 
 ### 组 B 定位完成（2026-11-16 续，零侵入读 wire log）
 
-**方法**：SidecarFixture.cs:312 一直在配 WireLogPath，	est.ps1 每次跑自动写 NDJSON
-（vidence-rerun/wire/commands-ns-b1-core-service.ndjson，831,949 B / 576 帧）。
+**方法**：SidecarFixture.cs:312 一直在配 WireLogPath，test.ps1 每次跑自动写 NDJSON
+（evidence-rerun/wire/commands-ns-b1-core-service.ndjson，831,949 B / 576 帧）。
 前 6 轮手搓 probe 连败 5 次；这轮只读该文件，一轮定位。
 
 **结果**：576 帧里只有 **4 帧**含 INVALID_REQUEST，全是同一条命令：
@@ -383,10 +383,10 @@ TARGET_NOT_FOUND 有 message+details）⇒ **这条错误本身不带诊断信�
 |---|---|---|
 | A Fea12* | 旧 core 不含 FEA-12 命令 | core 已含 |
 | B B1/B2 | 删除不需要 inventory_digest | 新 core 要求它（fail-closed 是设计） |
-| C RunBindingFix | 失败边界在 color | 实际在 	ranslate |
+| C RunBindingFix | 失败边界在 color | 实际在 translate |
 
 **三组统一性质**：测试写的时候产品行为是 X，现在变成 Y，测试没跟上。
-根因是 	est.ps1（配 sidecar 夹具）长期因 legacy v6 副本握手失败而从未真正运行，
+根因是 test.ps1（配 sidecar 夹具）长期因 legacy v6 副本握手失败而从未真正运行，
 这些过时断言一直没被暴露。
 
 **修法（下一轮）**：CommandWiringB1Tests.cs:411-426 已有 inventory_digest 的正确用法样板
@@ -568,8 +568,8 @@ un-binding-models-<hash>）。真冲突是 ModelSidecarFixture.CopyDatabase 在
 
 **只剩最后一个**：ModelsBuild_BookRun_WithInjectedBindings_OcrNoLongerProviderNotConfigured。
 性质已在 R73 用 step_runs 账本证明：color=completed(3, 无 error_code)、
-	ranslate=failed/PROVIDER_NOT_CONFIGURED。测试断言「color 必 failed」而过时。
-修法需同步调整 erification/RUN-BINDING-FIX-1/tools/check_run_binding.py:84。
+translate=failed/PROVIDER_NOT_CONFIGURED。测试断言「color 必 failed」而过时。
+修法需同步调整 verification/RUN-BINDING-FIX-1/tools/check_run_binding.py:84。
 
 ### CoreClient.Tests 首次全绿（2026-11-16 续，里程碑）
 
@@ -577,7 +577,7 @@ un-binding-models-<hash>）。真冲突是 ModelSidecarFixture.CopyDatabase 在
 - 原断言「color 必 failed」→ 改为「color **无** failed 且链已越过 color」；
 - **保留原意图**：测试要证明的是「OCR 不再报 PROVIDER_NOT_CONFIGURED」，
   OCR 成功靠「链走过了 OCR」证明；边界后移到 translate 后，改为断言 color 全 completed + 链越过。
-- 证据记录同步：新增 ailure_boundary = "translate (PROVIDER_NOT_CONFIGURED); color = completed"。
+- 证据记录同步：新增 failure_boundary = "translate (PROVIDER_NOT_CONFIGURED); color = completed"。
 
 **验证**：
 `
@@ -592,7 +592,7 @@ un-binding-models-<hash>）。真冲突是 ModelSidecarFixture.CopyDatabase 在
   GrantIssuerTests.Import_IntoNewChapter_Executes_AndRegistersGrant
   Fea11WatchHostRuntimeTests.Ready_ArmsWatcher_RealFileEventProducesHint_DisposeDisarms
 `
-	est.ps1 会依次跑多个测试项目，此前 CoreClient 一失败脚本就 throw，**从未跑到 Host.Tests**。
+test.ps1 会依次跑多个测试项目，此前 CoreClient 一失败脚本就 throw，**从未跑到 Host.Tests**。
 ⇒ 这是**被前面的失败遮住**的既有问题。下一轮诊断。
 
 ### Host.Tests 的 3 个失败与本卡无关（2026-11-16 续，已排除）
@@ -602,14 +602,14 @@ un-binding-models-<hash>）。真冲突是 ModelSidecarFixture.CopyDatabase 在
 1. **Host 源码零改动**：git log --oneline b8113e740..HEAD -- apps/desktop-avalonia/src/NewManga.Host 为空；
 2. **三个测试单跑全部 EXIT=0**（Export_GrantRegisters... / Import_IntoNewChapter... /
    Fea11WatchHostRuntimeTests.Ready_ArmsWatcher）；
-3. **整个 Host.Tests 直接跑也全绿**，但 	est.ps1 下有 3 失败：
+3. **整个 Host.Tests 直接跑也全绿**，但 test.ps1 下有 3 失败：
 
 | 运行方式 | 失败 | 通过 | 跳过 | 总计 |
 |---|---|---|---|---|
 | dotnet test Host.Tests.csproj | **0** | 331 | **74** | 405 |
-| 	est.ps1 | **3** | 358 | **44** | 405 |
+| test.ps1 | **3** | 358 | **44** | 405 |
 
-passed + skipped 都是 405，但**分布差 30** ⇒ 	est.ps1 的额外环境变量让 30 个原本 skip 的测试
+passed + skipped 都是 405，但**分布差 30** ⇒ test.ps1 的额外环境变量让 30 个原本 skip 的测试
 变成实际执行，其中 3 个失败。
 
 **失败签名**：
@@ -621,7 +621,7 @@ passed + skipped 都是 405，但**分布差 30** ⇒ 	est.ps1 的额外环境�
 **已排除**：alpha.png 未被污染（git 干净、单提交）；dataRoot 与 MutexName 均 per-test 唯一；
 非本轮改动。
 
-**定性**：	est.ps1 特有环境（更高并行度、更多测试实际执行）下的**既有并发 flaky**，
+**定性**：test.ps1 特有环境（更高并行度、更多测试实际执行）下的**既有并发 flaky**，
 不是回归、不是稳定失败。**但它本身是真实的健壮性问题**（SourceAccessRegistry 的锁与
 identity 检查对并发不友好），应独立立卡，**不在本卡范围**。
 

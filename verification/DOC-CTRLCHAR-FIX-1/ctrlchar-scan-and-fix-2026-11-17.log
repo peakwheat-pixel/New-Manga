@@ -1,0 +1,73 @@
+# DOC-CTRLCHAR-FIX-1 · AC1/AC2/AC3/AC4 证据：doc/tasks/** 控制字符修复
+# head: 24c573d1b
+# interpreter: Python 3 / pwsh 7 (Windows)
+# command: python -B 扫描 doc/tasks/**/*.md 字节级控制字符（排除 LF 与 CRLF 中的 CR）→ 逐处替换为该位置被吃掉的字母 → 复查残留 + 与 HEAD blob 逐字节比对
+
+## AC1 修复前扫描（HEAD blob 原始字节）
+# 控制字符总数: 37 ; 分类: 0x7=8, 0x8=5, 0x9=12, 0xb=6, 0xc=1, 0xd=1, 0x1b=4
+# doc/tasks 全部 .md: 667 个文件；有控制字符的文件: 5 个
+
+| # | file | offset | byte_before | byte_after | 上下文（修复后） |
+|---|---|---|---|---|---|
+| 1 | doc/tasks/AC-BLOCKED-CLOSE-1.md | 5025 | 0x0B | v | …EARCH-1 AC5（末条带 verified 注释 + … |
+| 2 | doc/tasks/AC-BLOCKED-CLOSE-1.md | 5564 | 0x0B | v | …ps1 PASS (3 warnings)｜verify_pins 18/18�… |
+| 3 | doc/tasks/AC-BLOCKED-CLOSE-1.md | 5584 | 0x07 | a | …)｜verify_pins 18/18｜api_inventory 1/80… |
+| 4 | doc/tasks/DOC-CTRLCHAR-FIX-2.md | 5940 | 0x0B | v | …后 git status 干净、verify_pins 18/18�… |
+| 5 | doc/tasks/FEA-07.md | 52982 | 0x0D | r | …�立复核已完成**（reviewer-fea07b，… |
+| 6 | doc/tasks/FEA-07.md | 53057 | 0x0B | v | …带 limitation；报告 verification/FEA-0… |
+| 7 | doc/tasks/HUMAN-VS-AGENT-SPLIT-1.md | 5155 | 0x08 | b | …�� - **核心判断**：blocked ≠ 人才… |
+| 8 | doc/tasks/HUMAN-VS-AGENT-SPLIT-1.md | 5360 | 0x0B | v | …ps1 PASS (3 warnings)｜verify_pins 18/18�… |
+| 9 | doc/tasks/HUMAN-VS-AGENT-SPLIT-1.md | 5380 | 0x07 | a | …)｜verify_pins 18/18｜api_inventory 1/80… |
+| 10 | doc/tasks/SIDECAR-SCHEMA-STALE-1.md | 9363 | 0x08 | b | …交只改 package.ps1 / build_sidecar.ps1 … |
+| 11 | doc/tasks/SIDECAR-SCHEMA-STALE-1.md | 9606 | 0x07 | a | … \| 改动 \| \|---\|---\| \| apps/desktop-avalo… |
+| 12 | doc/tasks/SIDECAR-SCHEMA-STALE-1.md | 9709 | 0x07 | a | …��役的 Tauri 路径** apps/desktop/src-t… |
+| 13 | doc/tasks/SIDECAR-SCHEMA-STALE-1.md | 9799 | 0x08 | b | …� Avalonia 构建产物 build/sidecar/core… |
+| 14 | doc/tasks/SIDECAR-SCHEMA-STALE-1.md | 9883 | 0x07 | a | …DECAR_SOURCE 覆盖 \| \| apps/desktop-avalo… |
+| 15 | doc/tasks/SIDECAR-SCHEMA-STALE-1.md | 9973 | 0x08 | b | …��存在即用」：读 build-manifest.jso… |
+| 16 | doc/tasks/SIDECAR-SCHEMA-STALE-1.md | 12848 | 0x09 | t | …completed \| — \| 3 \| \| term_extract \| com… |
+| 17 | doc/tasks/SIDECAR-SCHEMA-STALE-1.md | 12887 | 0x09 | t | …completed \| — \| 3 \| \| translate \| **fail… |
+| 18 | doc/tasks/SIDECAR-SCHEMA-STALE-1.md | 12983 | 0x09 | t | …��，真正失败的是 translate。测试… |
+| 19 | doc/tasks/SIDECAR-SCHEMA-STALE-1.md | 15028 | 0x07 | a | …��不一致），需读 assemble_productio… |
+| 20 | doc/tasks/SIDECAR-SCHEMA-STALE-1.md | 15055 | 0x07 | a | …emble_production_core / assemble_core_serv… |
+| 21 | doc/tasks/SIDECAR-SCHEMA-STALE-1.md | 15987 | 0x08 | b | …自 CoreProtocol.cs:131 base($"[{code}] {m… |
+| 22 | doc/tasks/SIDECAR-SCHEMA-STALE-1.md | 16073 | 0x1B | e | …即 **core 响应里的 error.code**， me… |
+| 23 | doc/tasks/SIDECAR-SCHEMA-STALE-1.md | 16200 | 0x1B | e | …�保留 code，core 的 error.details （�… |
+| 24 | doc/tasks/SIDECAR-SCHEMA-STALE-1.md | 16235 | 0x07 | a | …ls （通常含 phase / action / message_k… |
+| 25 | doc/tasks/SIDECAR-SCHEMA-STALE-1.md | 16543 | 0x1B | e | …re 层**抓 core 原始 error.details（Wi… |
+| 26 | doc/tasks/SIDECAR-SCHEMA-STALE-1.md | 17716 | 0x09 | t | …直在配 WireLogPath，test.ps1 每次跑… |
+| 27 | doc/tasks/SIDECAR-SCHEMA-STALE-1.md | 17754 | 0x1B | e | …�跑自动写 NDJSON （evidence-rerun/wir… |
+| 28 | doc/tasks/SIDECAR-SCHEMA-STALE-1.md | 20330 | 0x09 | t | …��在 color \| 实际在 translate \|  **三… |
+| 29 | doc/tasks/SIDECAR-SCHEMA-STALE-1.md | 20452 | 0x09 | t | …�没跟上。 根因是 test.ps1（配 sid… |
+| 30 | doc/tasks/SIDECAR-SCHEMA-STALE-1.md | 30907 | 0x09 | t | …d(3, 无 error_code)、 translate=failed/P… |
+| 31 | doc/tasks/SIDECAR-SCHEMA-STALE-1.md | 31019 | 0x0B | v | …� 修法需同步调整 verification/RUN-B… |
+| 32 | doc/tasks/SIDECAR-SCHEMA-STALE-1.md | 31620 | 0x0C | f | …��记录同步：新增 failure_boundary =… |
+| 33 | doc/tasks/SIDECAR-SCHEMA-STALE-1.md | 32298 | 0x09 | t | …esHint_DisposeDisarms ` test.ps1 会依次… |
+| 34 | doc/tasks/SIDECAR-SCHEMA-STALE-1.md | 32908 | 0x09 | t | …接跑也全绿**，但 test.ps1 下有 3 … |
+| 35 | doc/tasks/SIDECAR-SCHEMA-STALE-1.md | 33077 | 0x09 | t | … 331 \| **74** \| 405 \| \| test.ps1 \| **3** \|… |
+| 36 | doc/tasks/SIDECAR-SCHEMA-STALE-1.md | 33172 | 0x09 | t | …但**分布差 30** ⇒ test.ps1 的额外… |
+| 37 | doc/tasks/SIDECAR-SCHEMA-STALE-1.md | 33737 | 0x09 | t | …改动。  **定性**：test.ps1 特有环… |
+
+## AC2/AC3 修复后扫描
+# TAB(0x09)=0  孤立CR(0x0D)=0  VT(0x0B)=0  BEL(0x07)=0  BS(0x08)=0  FF(0x0C)=0  ESC(0x1B)=0  其它控制字符=0
+# 残留总数 = 0
+
+## AC4 无意外改动（与 HEAD blob 逐字节比对）
+| file | 文件长度(修复后) | 字节差异数 | 全部差异均为 控制字符→ASCII字母 且长度不变 |
+|---|---|---|---|
+| doc/tasks/AC-BLOCKED-CLOSE-1.md | 5755 | 3 | YES |
+| doc/tasks/DOC-CTRLCHAR-FIX-2.md | 6330 | 1 | YES |
+| doc/tasks/FEA-07.md | 85971 | 2 | YES |
+| doc/tasks/HUMAN-VS-AGENT-SPLIT-1.md | 5605 | 3 | YES |
+| doc/tasks/SIDECAR-SCHEMA-STALE-1.md | 34149 | 28 | YES |
+
+# 总字节差异 = 37（期望 37）；长度全部不变；异常文件 = 无
+
+## git diff --stat（doc/tasks）
+ doc/tasks/AC-BLOCKED-CLOSE-1.md     |  4 ++--
+ doc/tasks/DOC-CTRLCHAR-FIX-2.md     |  2 +-
+ doc/tasks/FEA-07.md                 |  2 +-
+ doc/tasks/HUMAN-VS-AGENT-SPLIT-1.md |  4 ++--
+ doc/tasks/SIDECAR-SCHEMA-STALE-1.md | 46 ++++++++++++++++++-------------------
+ 5 files changed, 29 insertions(+), 29 deletions(-)
+
+# 说明：29 行改动 / 29 行删除 —— 37 个字节分布在这 29 行内（一处 CR 被还原为字母 r 后使原本被 CR 分开的两段并回一行）。
