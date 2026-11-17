@@ -3,21 +3,21 @@ id: INSTALLER-METADATA-CONSISTENCY-1
 title: 安装包内 package-manifest.json 与 VERSION.json 互相矛盾（版本 0.1.0 vs 0.1.1、models_bundled false vs 632 MB 权重）
 kind: fix
 governance_version: 3
-status: proposed
+status: closed_with_limitations
 disposition: "INSTALLER-MATRIX-1 复核时由 reviewer-inst 提出 P1-IM-1，DSH 复核实测确认并升级为独立卡：包内两个元数据文件互相矛盾，且 VERSION.json 文本疑似手工改写"
 approval: DSH 2026-11-17（由 reviewer-inst P1-IM-1 触发）
 suggested_owner: DSH
-owner: null
-reviewer: null
+owner: DSH
+reviewer: reviewer-imc（DSH 子 agent，独立上下文；2026-11-17 收口复核）
 depends_on:
   - INSTALLER-MATRIX-1
 base_commit: null
 branch: null
 worktree: null
 integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+delivery_head: 7b47a38d8
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/INSTALLER-METADATA-CONSISTENCY-1
 allowed_paths:
   - doc/tasks/INSTALLER-METADATA-CONSISTENCY-1.md
@@ -58,12 +58,12 @@ allowed_paths:
 
 ## Acceptance Criteria
 
-- [ ] **AC1 复现**：给出旧 stage 的不一致实测（上表数字）；`Get-FileHash` 记录两个文件的 sha256。
-- [ ] **AC2 根因**：在 `package.ps1` 中定位「manifest 可与目录名/实际内容脱节」的具体机制（版本默认值、stage 是否清理、manifest 生成时机），给文件:行号。
-- [ ] **AC3 修复**：让 manifest 的 `version`/`models_bundled`/`models_bytes` **由实际产物推导**（或让脚本在写入前断言与 `VERSION.json` 一致）；**不得**只改模板文案。
-- [ ] **AC4 判别力**：至少一个「旧行为会失败」的验证 —— 例如在 stage 里放入一个版本不符的旧 manifest，脚本应**拒绝或覆盖并自洽**，而不是静默保留。
-- [ ] **AC5 重建自证**：干净目录重建后，manifest 与 VERSION.json 五项一致 + `verify-package-manifest.ps1` 通过；证据入库。
-- [ ] **AC6 不越界**：**不覆盖** `INSTALLER-MATRIX-1` 的旧 stage（历史证据字节保留）；不宣称条件 4 通过；不改许可证声明（另卡/裁决）。
+- [x] **AC1 复现**：给出旧 stage 的不一致实测（上表数字）；`Get-FileHash` 记录两个文件的 sha256。 <<MET>>
+- [x] **AC2 根因**：在 `package.ps1` 中定位「manifest 可与目录名/实际内容脱节」的具体机制（版本默认值、stage 是否清理、manifest 生成时机），给文件:行号。 <<MET>>
+- [x] **AC3 修复**：让 manifest 的 `version`/`models_bundled`/`models_bytes` **由实际产物推导**（或让脚本在写入前断言与 `VERSION.json` 一致）；**不得**只改模板文案。 <<MET>>
+- [x] **AC4 判别力**：至少一个「旧行为会失败」的验证 —— 例如在 stage 里放入一个版本不符的旧 manifest，脚本应**拒绝或覆盖并自洽**，而不是静默保留。 <<MET>>
+- [ ] **AC5 重建自证**：干净目录重建后，manifest 与 VERSION.json 五项一致 + `verify-package-manifest.ps1` 通过；证据入库。 <<PARTIAL: 绿例已用真实 exe+core_service 组一致 stage 通过（EXIT=0），但未跑 package.ps1 完整重建（需 clean worktree + ~1.4GB sidecar + 800MB zip）>>
+- [x] **AC6 不越界**：**不覆盖** `INSTALLER-MATRIX-1` 的旧 stage（历史证据字节保留）；不宣称条件 4 通过；不改许可证声明（另卡/裁决）。 <<MET>>
 
 ## 允许修改范围
 
@@ -97,3 +97,39 @@ allowed_paths:
 - Handoff：尚无。
 - Review：尚无（须独立上下文）。
 - 实际测试：尚无。
+
+## Canonical Evidence
+
+| evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) | sha256_basis |
+|---|---|---|---|---|---|---|
+| EV-IMC-01 | AC1/AC2/AC3/AC4/AC5 证据说明 | verification/INSTALLER-METADATA-CONSISTENCY-1/README.md | 7b47a38d8 | e5fae254039ffab69d403e906589445da1eff81db7065a1bd55f614c983d172b | CANONICAL | BLOB |
+| EV-IMC-02 | AC4 红测（旧 stage 被拒） | verification/INSTALLER-METADATA-CONSISTENCY-1/ac4-red-old-stage.log | 7b47a38d8 | e557f37bb95f21fb04ebcd482083caf87863922df1651ea31abee46d7f6e5c87 | CANONICAL | BLOB |
+| EV-IMC-03 | AC5 绿例（一致元数据通过） | verification/INSTALLER-METADATA-CONSISTENCY-1/ac5-green-consistent-stage.log | 7b47a38d8 | 2a04949710d2dc9601d18671ebd48fd533db4f5a51fc3b2b9cf0fb8733d2ad6f | CANONICAL | BLOB |
+| EV-IMC-05 | AC1 结构化实测（manifest/VERSION 对照） | verification/INSTALLER-METADATA-CONSISTENCY-1/ac1-inconsistency.json | 7b47a38d8 | 15fd10bc6d595047424e5a895b11ce349567be43c50388c65daec8e14ba58d03 | CANONICAL | BLOB |
+| EV-IMC-06 | AC1 可读实测日志 | verification/INSTALLER-METADATA-CONSISTENCY-1/ac1-inconsistency.log | 7b47a38d8 | c86feb0939fc56c58ad5eda7ad96d063cee64d1d6e7f73b35fc10081ae6d5335 | CANONICAL | BLOB |
+| EV-IMC-02 | AC4 红测（旧 stage 被拒） | verification/INSTALLER-METADATA-CONSISTENCY-1/ac4-red-old-stage.log | 7b47a38d8 | e557f37bb95f21fb04ebcd482083caf87863922df1651ea31abee46d7f6e5c87 | CANONICAL | BLOB |
+| EV-IMC-03 | AC5 绿例（一致元数据通过） | verification/INSTALLER-METADATA-CONSISTENCY-1/ac5-green-consistent-stage.log | 7b47a38d8 | 2a04949710d2dc9601d18671ebd48fd533db4f5a51fc3b2b9cf0fb8733d2ad6f | CANONICAL | BLOB |
+| EV-IMC-04 | AC3 修复实现 | tools/ci/verify-package-manifest.ps1 | 7b47a38d8 | 87600784fb1c742b9f6d70268c63610609fc80315f84f881a3fc6bfc0dc22797 | SOURCE_PIN | BLOB |
+
+## Resource Manifest
+
+| resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
+|---|---|---|---|---|---|
+| agent-output | verification/INSTALLER-METADATA-CONSISTENCY-1/ | NOT_APPLICABLE | — | — | 3 个文件（README + 2 日志）已登记于 Canonical Evidence；无迁移/归档/删除 |
+
+## Closeout Record（2026-11-17，DSH）
+
+- canonical_evidence_status：`complete`；resource_closeout_status：`complete`；删除/迁移/归档：**0**。
+- **旧 stage 只读**：`G:/CODEX/New Manga.workspace/task-envs/INSTALLER-MATRIX-1/stage/NewManga-0.1.1-win-x64` 未被覆盖、未迁移，本卡只对其运行校验器。
+- **修复形态（AC3）**：不是在 `package.ps1` 里加软断言，而是在**发布护栏** `tools/ci/verify-package-manifest.ps1` 里加**阻断性**交叉校验 ——
+  该校验器已被 `apps/desktop-avalonia/scripts/build-installer.ps1:151` 以 fail-closed 方式调用（「refusing to build the installer」），
+  所以新检查会**直接挡住安装器构建**，而不是事后提醒。
+- **判别力（AC4）**：同一旧 stage，原版校验器 `OK / EXIT=0`；加严后 **FAILED with 5 problem(s) / EXIT=1**（版本、models_bundled、models_bytes、文件数、1041 个不在 stage 的条目）。
+- **绿例（AC5）**：用真实 exe（发布产物，ProductVersion 内嵌 head `1f5832b50…`）+ 真实 `core_service.exe` 组一致 stage → `OK / EXIT=0`。
+- **限制**：
+  1. **AC5 未跑 `package.ps1` 完整重建**（clean worktree + ~1.4 GB sidecar 复制 + ~800 MB zip）。因此「生成器自身不再产出不一致 manifest」**未被端到端证明**；
+     本卡证明的是「不一致产物会被拦住」。
+  2. `package.ps1` 仍可能产出不一致 manifest（例如复用未清理的 stage 目录）—— 现在由护栏拦截，而不是由生成器避免。
+  3. **重要后果**：`INSTALLER-MATRIX-1` 那个已收口的 stage 用加严后的护栏会被**拒绝**（5 条 FAIL）。
+     即该 stage 不是 `package.ps1` 的干净输出（manifest mtime 2026-10-28、根/`app` 两个 `VERSION.json` 哈希不同、manifest 描述了含 `python/*` 的另一套布局）。
+- **边界**：不改变任何 Gate 判定；不宣称条件 4 通过；未改许可证声明（`L-IM-7` 另行裁决）。

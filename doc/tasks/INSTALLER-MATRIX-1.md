@@ -176,3 +176,23 @@ allowed_paths:
   **未修**（属许可裁决 + 打包变更），需 DSH/用户就随包权重许可作出书面决定后才能改。
 
 复核同时确认：**AC7 仍为 `[ ]` + `<<PARTIAL: …NOT_RUN…>>`**（未被改成 MET）；AC1–AC6 数字与证据一致；资源 manifest sha256 `c94feccb…` 一致。
+
+## 2026-11-17 追加登记：加严后的发布护栏会**拒绝**本卡 stage
+
+`INSTALLER-METADATA-CONSISTENCY-1` 给 `tools/ci/verify-package-manifest.ps1` 增加了 `package-manifest.json` 交叉校验后，
+对本卡使用的 stage（`...\INSTALLER-MATRIX-1\stage\NewManga-0.1.1-win-x64`）实测 **FAILED with 5 problem(s) / EXIT=1**：
+
+1. `package-manifest.json` 版本 `0.1.0` ≠ `VERSION.json` 的 `0.1.1`；
+2. `models_bundled: false` ≠ 实物 3 个 onnx；
+3. `models_bytes: 0` ≠ 实物 632,552,582 B；
+4. manifest 列 1,968 个文件，stage 实有 1,036（排除 manifest 自身）；
+5. manifest 列出 1,041 个 stage 里**不存在**的条目（含 `app/core-sidecar/python/*`）。
+
+**这意味着**：该 stage **不是 `package.ps1` 的干净输出** —— `package-manifest.json` 的 mtime 是 **2026-10-28**（stage 其余为 11-15），
+根 `VERSION.json` 与 `app/VERSION.json` **哈希不同**（脚本本应逐字节复制），且 manifest 描述的是另一套含 `python/*` 的布局。
+
+- 本卡的 **AC1–AC6 结论不变**（安装/启动/卸载矩阵当时实测通过，资源和数据一致性证据有效），
+  但「包内元数据描述与实际一致」这一属性**不成立**，其 `L-IM-1..7` 之外再补一条：
+- **L-IM-8｜stage 元数据不自洽**：该 stage 的 `package-manifest.json` 与 `VERSION.json`/实物不一致（见上面 5 条），
+  加严后的护栏会拒绝它；**不覆盖**该 stage（历史证据字节保留），修复与复现见 `INSTALLER-METADATA-CONSISTENCY-1`。
+- **不改变**：条件 4 仍归 `RELEASE-GATE4-SIGNED-MATRIX-1`（proposed）；不宣称签名或 Gate 通过。
