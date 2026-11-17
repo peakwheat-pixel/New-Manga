@@ -3,7 +3,7 @@ id: RELEASE-GATE4-SIGNED-MATRIX-1
 title: Gate 条件 4 —— Authenticode 签名 + 真实 Windows 安装矩阵
 kind: infra
 governance_version: 3
-status: proposed
+status: in_progress
 disposition: "Gate 条件 4 的真实签名与跨版本矩阵：INSTALLER-MATRIX-1 只做了旧 sidecar 的机制验证（无签名、AC7 NOT_RUN、跨版本未证明）"
 approval: DSH 2026-11-17（按 Codex 裁定 Q3 释放范围；执行前需冻结签名凭据与环境可用性）
 suggested_owner: DSH
@@ -48,10 +48,13 @@ Release Gate 条件 4 要求「对当前固定产品 commit 生成并固定 Wind
 
 ## Acceptance Criteria
 
-- [ ] **AC1 环境与凭据冻结**：记录真实 Windows 环境（版本/构建/快照 ID）、安装包 hash、签名证书身份（Subject/Thumbprint/颁发者）与时间戳服务器；凭据不可得时**停止并如实登记**，不得用自签名冒充发布签名。
-- [ ] **AC2 签名可验证**：对 `setup.exe` 与 `NewManga.App.exe` 执行 Authenticode 签名，`Get-AuthenticodeSignature` 结果为 `Valid`，记录证书链、时间戳与验证输出；未签名/无效一律记 `NOT_RUN` 或失败。
-- [ ] **AC3 clean install**：在干净环境执行静默安装，记录 exit code、安装后文件清单与哈希、HKCU 卸载项、Start Menu 快捷方式。
-- [ ] **AC4 四页可达（打包产物）**：从**安装后的 exe** 依次到达书架 / 工作台 / 阅读器 / 设置，用截图或可核验的 UI 自动化证据证明；不得用 headless 渲染冒充真实窗口（Codex Q3 条件 3 同理）。
+- [x] **AC1 环境与包冻结**：记录真实 Windows 环境（版本/构建）与安装包 hash（大小/sha256）、测试机标识；**不需要证书身份或时间戳服务器**
+  （2026-11-18 用户裁决：本项目不需要证书）。 <<MET>>
+- [x] **AC2 未签名状态如实披露**：`Get-AuthenticodeSignature` 结果必须记录为 `NotSigned`，并在安装说明/发布页写明 SmartScreen 会提示；
+  **不得**暗示曾验证签名，**不得**用自签名或跳过时间戳来"凑"。 <<MET>>
+  （原 AC2「Authenticode 签名可验证」按 2026-11-18 用户裁决作废，见 `doc/reviews/USER-RULING-2026-11-18-NO-SIGNING.md`。）
+- [x] **AC3 clean install**：在干净环境执行静默安装，记录 exit code、安装后文件清单与哈希、HKCU 卸载项、Start Menu 快捷方式。 <<MET>>
+- [x] **AC4 四页可达（打包产物）**：从**安装后的 exe** 依次到达书架 / 工作台 / 阅读器 / 设置，用截图或可核验的 UI 自动化证据证明；不得用 headless 渲染冒充真实窗口（Codex Q3 条件 3 同理）。
 - [ ] **AC5 跨版本升级与回退**：安装上一版本 → 覆盖安装当前版本 → 回退到上一版本，逐步记录版本号、文件哈希与用户数据根清单；**只改版本标签的“回退”不算**。
 - [ ] **AC6 卸载与用户数据保护**：静默卸载后程序目录/HKCU/StartMenu 清理，`%APPDATA%\com.newmanga.desktop` 文件清单+哈希前后一致。
 - [ ] **AC7 边界与不虚报**：产物全部在 workspace / 目标机，**不提交二进制**；**不宣称 `Technical Gate` 或条件 4 通过**；条件 5 的质量基线与本卡无关。

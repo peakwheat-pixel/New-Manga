@@ -1,0 +1,30 @@
+# RELEASE-GATE4 · AC4 四页可达（从「安装后的 exe」，2026-11-18）
+
+# interpreter: pwsh 7
+# command: pwsh -NoProfile -File <workspace>\tmp\r30\ac4-four-pages.ps1
+# 被测 exe: %LOCALAPPDATA%\Programs\NewManga\app\NewManga.App.exe
+#   bytes 37,344,576 / sha256 c2bf9265d4c821ff5a99659e9560089def91b93b8b8485bac944bb0a310b7d8d
+#   （与 stage 内 app\NewManga.App.exe 逐字节相同；由 AC3 的静默安装产生）
+# 数据根: 隔离副本（BOOK-FIXTURE-1/isolated-data 的拷贝），**不触碰真实用户数据根**
+# 启动参数: --data-root <隔离副本> --sidecar-dir %LOCALAPPDATA%\Programs\NewManga\app\core-sidecar --log-dir <workspace>
+
+## 逐页结果（均为真实窗口截图，非 headless）
+
+| # | 页面 | 到达方式 | 截图 | 画面证据 |
+|---|---|---|---|---|
+| 1 | 资料柜（书架） | 启动后默认页 | `ac4-page1-bookshelf.jpg` | 作品卡「BOOK-FIXTURE-1 日漫_JA 测试书 / 8 页」、页列表 001–008、右下「Host 就绪」 |
+| 2 | 工位（工作台） | UIA 点击按钮 `工位空间` | `ac4-page2-workbench.jpg` | 页面预览（1200×1660）、页缩略图条、缩放 86%、`01/08`、Region 提示、右下「Host 就绪」 |
+| 3 | 控制台（设置） | UIA 点击按钮 `控制台空间` | `ac4-page3-settings.jpg` | 「设置中心 · 9 分区」全部列出（任务与队列 / Provider 与凭据 / 网络与代理 / 模型与设备 / 缓存与版本清理 / 备份与恢复 / 插件与 Hooks / 诊断与日志 / 外观） |
+| 4 | 阅读器 | 回资料柜 → 点击 `阅读` → `F11` | `ac4-page4-reader.jpg` | 沉浸式阅读窗口（全屏） |
+
+## 关键判定
+
+- 四个一级页面**全部可达**，且都是从**安装后的 exe** 启动的真实窗口（不是 headless、不是 stage 里的 exe）。
+- 三次空间切换均由 UI Automation 定位到按钮并 `Invoke()`，返回的按钮名分别是 `工位空间` / `控制台空间` / `资料柜空间`，阅读按钮为 `阅读`。
+- 控制台页显示「数据经由 Host 读取」等文案，与「Avalonia 不直连数据库」的架构约束一致（画面自证，不是我的推断）。
+- 进程在截图后被正常关闭（F11 退出 + 关闭主窗口），`exited=True`。
+
+## 未覆盖
+
+- 未验证「安装后 exe」在**真实用户数据根**下的四页（本轮用隔离副本，避免动到用户数据）。
+- 未覆盖四页之外的二级界面（Region 编辑、导出、批量等）。

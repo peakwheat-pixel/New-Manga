@@ -1,0 +1,24 @@
+# RELEASE-GATE4 · AC1 环境与包冻结（2026-11-18）
+
+# interpreter: pwsh 7
+# command: pwsh -NoProfile -File <workspace>\tmp\r30\matrix-baseline.ps1
+
+## 环境
+- OS: Microsoft Windows 11 专业版 / 10.0.26300（build 26300）
+- 机器: HOME-MY / 用户: 49745
+- 分辨率: 2560x1440；DPI 96（100%）
+- 时区: China Standard Time
+
+## 安装包（AC1/AC2）
+- 路径: G:\CODEX\New Manga.workspace\tmp\r28\inst\NewManga-0.1.1-setup.exe
+- 字节: 652081157
+- sha256: 3c9984b21d663a9ec9a8890387e5800df7d85a3005ed66f0231c67653751df05
+- Authenticode: **NotSigned**（文件 G:\CODEX\New Manga.workspace\tmp\r28\inst\NewManga-0.1.1-setup.exe 未进行数字签名。无法在当前系统上运行此脚本。有关运行脚本和设置执行策略的详细信息，请参阅 https://go.microsoft.com/fwlink/?LinkID=135170 处的 about_Execution_Policies）
+
+## 安装前状态
+- 程序目录存在: True
+  - 文件数 1038，总字节 889400166
+- 卸载注册项存在: True
+- Start Menu 相关项: 0
+- 用户数据根存在: True
+  - 文件数 530，总字节 684197540（清单 ac6-dataroot-before.json）

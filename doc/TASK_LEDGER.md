@@ -26,16 +26,15 @@ Arithmetic note: `task files` = `terminal` + `non-terminal` + `(none)` rows. A `
 | `cancelled` | 21 | yes |
 | `historical` | 11 | yes |
 | `superseded` | 10 | yes |
+| `in_progress` | 2 | no |
 | `(none)` | 1 | no |
-| `in_progress` | 1 | no |
-| `proposed` | 1 | no |
 
 ## Non-terminal tasks
 
 | task | status | in plan |
 |---|---|---|
 | `MAINT-1-RELEASE-MONITOR` | `in_progress` | own row |
-| `RELEASE-GATE4-SIGNED-MATRIX-1` | `proposed` | mentioned |
+| `RELEASE-GATE4-SIGNED-MATRIX-1` | `in_progress` | mentioned |
 
 ## What this ledger does not say
 

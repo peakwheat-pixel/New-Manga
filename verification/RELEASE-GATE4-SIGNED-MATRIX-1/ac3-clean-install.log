@@ -1,0 +1,20 @@
+# RELEASE-GATE4 · AC3 干净安装（2026-11-18）
+
+## 1) 旧安装卸载（清场，非 AC6 证据）
+- 旧 uninstall.exe ExitCode = 0
+- 清场后：程序目录存在=False，卸载项存在=False
+- 清场后用户数据根：530 文件 / 684197540 B（应与安装前一致）
+
+## 2) 干净静默安装（/S）
+- 安装前程序目录：0 文件 / 0 B
+- installer ExitCode = **0**，耗时 35.1 s
+
+## 3) 安装结果
+- 程序目录：1040 文件 / 827026762 B
+- 安装后 app\NewManga.App.exe：37344576 B / sha256 c2bf9265d4c821ff5a99659e9560089def91b93b8b8485bac944bb0a310b7d8d
+- stage 内 exe sha256 c2bf9265d4c821ff5a99659e9560089def91b93b8b8485bac944bb0a310b7d8d ⇒ 一致=True
+- 卸载注册项存在: True
+  - DisplayName=New Manga；DisplayVersion=0.1.1；Publisher=New Manga
+  - UninstallString="C:\Users\49745\AppData\Local\Programs\NewManga\Uninstall.exe"
+  - InstallLocation=C:\Users\49745\AppData\Local\Programs\NewManga
+- Start Menu 项: 0（）
