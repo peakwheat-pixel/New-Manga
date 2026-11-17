@@ -281,6 +281,15 @@ Gate 剩下的是条件 3（人眼目视 overlay）/ 4（签名 + 真机安装�
 - **待做**：①DSH 集成裁决（approve / 立实施 Task，实施须重新冻结范围并新 Appointment）；②P2 三条随实施处理
   （补 `GuardFinishReport` 结构定义、修正「Drop 不会重入」措辞、评估 `cleaned=true` 后 panic 路径）。
 
+
+### 队列 5a —— 复核者改派（2026-11-17 用户确认，Lead 执行）
+
+- **决定**：`reviewer: Antigravity` 的非终态卡，一律改派 **ZCode 或上下文独立的新子 agent**；不再使用 Antigravity（2026-10-31 裁决已令其退出 Owner/Reviewer/派发名单）。
+- **适用范围（当前 2 张）**：`GIT-CLEAN-PUBLICATION-1`（in_review）、`GIT-CLEAN-CORE-ENV-2`（proposed，释放时同步改派）。
+- **执行方式**：在**真正指派复核的那一刻**改 `reviewer:` 字段并记录复核者来源（子 agent 名/会话 ID，或 ZCode sessionId）；
+  不得先改字段后补复核。
+- **历史卡不动**：已 `done`/`closed_with_limitations` 卡上的 Antigravity 署名按 2026-10-31 裁决**保持原字节**，不改写。
+
 ### 队列 4 —— HUMAN-REQUIRED 等待项（不阻塞 Agent）
 
 `doc/reviews/HUMAN-REQUIRED-2026-11-15.md` 现有 `H-01`…`H-10`，
