@@ -196,3 +196,15 @@ allowed_paths:
 - **L-IM-8｜stage 元数据不自洽**：该 stage 的 `package-manifest.json` 与 `VERSION.json`/实物不一致（见上面 5 条），
   加严后的护栏会拒绝它；**不覆盖**该 stage（历史证据字节保留），修复与复现见 `INSTALLER-METADATA-CONSISTENCY-1`。
 - **不改变**：条件 4 仍归 `RELEASE-GATE4-SIGNED-MATRIX-1`（proposed）；不宣称签名或 Gate 通过。
+
+## 2026-11-17 追加登记（二）：ZCode 裁定 —— 许可声明非法、本卡 stage 不是条件 4 证据
+
+裁定书：`doc/reviews/ZCODE-RULING-INSTALLER-LICENSE-2026-11-17.md`（ZCode，全文逐字落盘，DSH 全文采纳）。
+
+- **L-IM-9｜许可声明与实物不相容（P0 发布阻塞）**：`variant=base` + `license=GPL-3.0-or-later` 却内置 **632,552,582 B** 权重；
+  按裁定书 R1–R4 落在 **R4**（权重台账三项均「待核实」）⇒ **该声明非法**，合法出口只有「保守声明 AGPL-3.0」或「移除权重回归 base」。
+  处置卡：`LICENSE-VARIANT-DECLARATION-1`（`blocked`，等用户选向）。
+- **L-IM-10｜本卡 stage 不是条件 4 证据**：裁定 Q3 = **No** —— 条件 4 要求证据绑定安装包 hash，而 Q1/Q2 的修复必然重打包；
+  旧矩阵对最终包无证据效力。⇒ 条件 4 的等待项从「缺证书」扩展为「**先产出合规新包 → 再签名 → 再跑矩阵**」。
+- 本卡 **AC1–AC6 的矩阵观察仍然有效**（安装/启动/卸载/数据保护在当时的字节上确实通过），但**不能**作为发布证据；
+  与 L-IM-8（元数据不自洽）合并看：该 stage **不可发布、不可作 Gate 证据**，由加严后的护栏负责拒绝（实测 8 条 FAIL）。

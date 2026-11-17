@@ -6,13 +6,13 @@ Reconciliation of every `doc/tasks/*.md` against the plan's node set. r38 §3 es
 
 | metric | value |
 |---|---:|
-| task files | 671 |
+| task files | 672 |
 | terminal | 668 |
-| non-terminal | 2 |
-| non-terminal named in the plan | 2 |
+| non-terminal | 3 |
+| non-terminal named in the plan | 3 |
 | non-terminal outside the plan | 0 |
 | task files tracked by git | 671 |
-| task files untracked (drafts) | 0 |
+| task files untracked (drafts) | 1 |
 | non-terminal tracked by git | 2 |
 
 Arithmetic note: `task files` = `terminal` + `non-terminal` + `(none)` rows. A `(none)` row is a file with no `status:` field (a draft), which is excluded from `non-terminal` because check.ps1 only counts entries whose status exists and is not terminal; adding only `terminal` + `non-terminal` therefore lands one short of `task files`, and that gap is this note, not a counting error.
@@ -27,6 +27,7 @@ Arithmetic note: `task files` = `terminal` + `non-terminal` + `(none)` rows. A `
 | `historical` | 11 | yes |
 | `superseded` | 10 | yes |
 | `(none)` | 1 | no |
+| `blocked` | 1 | no |
 | `in_progress` | 1 | no |
 | `proposed` | 1 | no |
 
@@ -34,6 +35,7 @@ Arithmetic note: `task files` = `terminal` + `non-terminal` + `(none)` rows. A `
 
 | task | status | in plan |
 |---|---|---|
+| `LICENSE-VARIANT-DECLARATION-1` | `blocked` | mentioned |
 | `MAINT-1-RELEASE-MONITOR` | `in_progress` | own row |
 | `RELEASE-GATE4-SIGNED-MATRIX-1` | `proposed` | mentioned |
 
