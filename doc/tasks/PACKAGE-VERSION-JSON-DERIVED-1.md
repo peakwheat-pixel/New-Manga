@@ -70,9 +70,9 @@ allowed_paths:
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1 | 读 `package.ps1:141-151` + 护栏 `:120-122` | 无 | NOT_RUN | 无 |
-| AC3 | 修复前跑护栏（红） | 需要一次 `package.ps1` 产物或模板级证据 | NOT_RUN | 无 |
-| AC4 | `package.ps1 -SidecarDir <既有 sidecar> -OutputRoot <workspace>` + 护栏 | clean worktree、~1.4 GB 复制 | NOT_RUN | 无 |
+| AC1 | 读 `package.ps1:141-151` + 护栏 `:120-122` | 无 | **已做**（见 Closeout） | `verification/PACKAGE-VERSION-JSON-DERIVED-1/README.md` |
+| AC3 | 缺顶层字段的同构 stage 跑护栏 | 隔离目录 | **EXIT=1（3 条 FAIL）** | `ac3-red-missing-toplevel-field.log` |
+| AC4 | `package.ps1 -SidecarDir <既有 sidecar> -OutputRoot <workspace>` + 护栏 | 需 sidecar 有 `build-manifest.json` | **package exit=1（:51）/ 补 manifest 后 package exit=0 但护栏仍 exit=1** | `verification/PACKAGE-VERSION-JSON-DERIVED-1/README.md` |
 
 ## 依赖、风险与阻塞
 
@@ -82,9 +82,9 @@ allowed_paths:
 
 ## 交付与运行记录
 
-- Handoff：尚无。
-- Review：尚无（须独立上下文）。
-- 实际测试：尚无。
+- Handoff：本卡 Closeout（2026-11-17）。
+- Review：`doc/reviews/PACKAGE-VERSION-JSON-DERIVED-1-REVIEW-2026-11-17.md`（reviewer-pvd，ACCEPTED_WITH_FINDINGS，P0=0 / P1=2 / P2=2）。
+- 实际测试：红测 EXIT=1（3 条 FAIL）；AC4 见上表；`Parser::ParseFile` = 0 错误。
 
 ## Canonical Evidence
 
@@ -108,9 +108,25 @@ allowed_paths:
 - **AC3 判别力**：去掉顶层两字段的同构 stage → 护栏 `FAILED with 3 problem(s)`，首条正是
   `VERSION.json has no models_bundled field (must be derived from the stage, not omitted)`。
 - **限制**：
-  1. **AC4 未完成**：既有 stage 的 `app/core-sidecar/` 只有 5 个 exe、**无 `build-manifest.json`**，
-     `package.ps1:51` 因此直接拒绝（要求用 `packaging/m2ac5/build_sidecar.ps1 -Force` 重建 sidecar）。端到端验证需重建 sidecar（重活）。
-  2. 因此「修复后 `package.ps1` 能产出过闸的 stage」**尚未端到端证明**；已证明的是「缺字段必被拒」与「字段已写入」。
+  1. **AC4 未完成，且 reviewer-pvd 实测证伪了「重建 sidecar 即可」的说法**：
+     - 既有 stage 的 `app/core-sidecar/` 只有 5 个 exe、**无 `build-manifest.json`**，`package.ps1:51` 直接拒绝（4.5 s 内 exit=1）；
+     - 复核者补了带 `build-manifest.json`（schema v14）的 sidecar 做忠实 e2e：`package.ps1` **exit=0**，但护栏仍 `exit=1`，
+       报 `VERSION.json has no app_build section` 与 `models_bundled_bytes mismatch（json=1071 / actual=1000）`；
+       干净 base 变体同样报 `no app_build section`。
+     ⇒ **当前 `package.ps1` 的产物无论如何都过不了闸**，本卡只补了顶层 models 两字段，不够。
+  2. **根本缺口（已开后续卡 `VERSION-JSON-GUARD-ALIGN-1`）**：
+     - **F-PVD-02**：`package.ps1` **不产出 `app_build` 段**（全仓无生成器），护栏 `:63` 缺即 FAIL ⇒ base 与 models 变体都过不了；
+     - **F-PVD-01**：`$modelsBytes` 统计 `models/` **全部文件**（632,662,260 B）而护栏只累加 `*.onnx`（632,552,582 B，差 109,678 B 来自 config/vocab），
+       `build_sidecar.ps1:147-169` 会复制这些文件 ⇒ 重建 sidecar 也消不掉。
   3. **新发现（同源事实）**：该 packaged sidecar **不含 `build-manifest.json`**，与 builder（`build_sidecar.ps1:381` 写入 bundle）不一致 ——
      进一步支持「`INSTALLER-MATRIX-1` 的 stage 不是干净脚本输出」的结论（见 `INSTALLER-METADATA-CONSISTENCY-1`、`L-IM-8`）。
 - **边界**：不改 `installer.nsi`、不放宽护栏、不改许可证声明、不改任何 Gate 判定。
+
+### 2026-11-17 复核处置（reviewer-pvd，ACCEPTED_WITH_FINDINGS，P0=0 / P1=2 / P2=2）
+
+- **F-PVD-01（P1）已登记**：`$modelsBytes`（models 目录全部文件 632,662,260 B）与护栏的 `*.onnx` 口径（632,552,582 B）不一致，差 **109,678 B**；
+  重建 sidecar 也消不掉（`build_sidecar.ps1:147-169` 会复制 config/vocab）。→ 归 `VERSION-JSON-GUARD-ALIGN-1`。
+- **F-PVD-02（P1）已登记**：`package.ps1` 不产出 `app_build` 段，护栏 `:63` 缺即 FAIL，**干净 base/models 产物都过不了闸**。→ 归 `VERSION-JSON-GUARD-ALIGN-1`。
+- **F-PVD-03（P2）已改**：AC3 从整条 MET 降为 `<<PARTIAL>>`（红测已证；「修复后同流程 PASS」无证据）。
+- **F-PVD-04（P2）已改**：测试要求表与交付记录更新为实测值。
+- 复核确认：护栏相对基线 **0 删除**（纯新增）；被审区间无 `nsi`/许可证/门禁改动；`check.ps1` PASS / exit 0。
