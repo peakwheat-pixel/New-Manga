@@ -5,7 +5,7 @@
 ## 当前程序
 - **FEA 线**（S0–S5 终态；limitation 已逐条处置）：[FEA-00 方案](design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md)；V11R 收官（v0.1.1）。
 - 当前 Task：[MAINT-1-RELEASE-MONITOR](tasks/MAINT-1-RELEASE-MONITOR.md) `in_progress`（伞位）；8 张 GOV/DOC/EVIDENCE 卡 `done`（含 `GOV-EVIDENCE-PIN-REPAIR-1` 7/7；`GATE3-SETTINGS-SHORTCUT-1`、`DOC-CTRLCHAR-FIX-1`）；`closed_with_limitations` 13 张（HOST-CONCURRENCY / GCP1 / RUST-ISO / CORE-ENV-2 / SIDECAR / INST-MATRIX / PUB-DIAG / FEA11 / F11-STYLE / INST-META / PVD / VJGA / LVD）；Gate 六条见 [RELEASE-GATE-DISPOSITION](reviews/RELEASE-GATE-DISPOSITION-2026-11-15.md)。
-- **Release Gate `BLOCKED`**：条件 1 **8/8 关闭**；2 **调查完成**；3 **3 份独立裁定关闭**（非人眼，见 `MAINT-1`）；4 **矩阵跑完**（AC1–AC6 MET，复核 P1 已处置待复检；不需签名）；5 **LIMITATION_ACCEPTED**（无人工 GT，不宣称准确率）；**6 已关闭**（head `45af57007`）。逐条见 [Gate 六条映射](reviews/RELEASE-GATE-SIX-CONDITIONS-2026-11-16.md)。
+- **Release Gate `BLOCKED`**：条件 1 **8/8 关闭**；2 **调查完成**；3 **3 份独立裁定关闭**（非人眼，见 `MAINT-1`）；4 **`closed_with_limitations`**（AC1–AC6 MET；两轮独立复核 P1 全关；八条限制已登记）；5 **LIMITATION_ACCEPTED**（无人工 GT，不宣称准确率）；**6 已关闭**（head `45af57007`）。逐条见 [Gate 六条映射](reviews/RELEASE-GATE-SIX-CONDITIONS-2026-11-16.md)。
 - **既有缺陷登记**（接手会话新发现）：[MAINT-1-EXISTING-FINDINGS](reviews/MAINT-1-EXISTING-FINDINGS-2026-11-14.md)（E-1…E-9；E-6/E-8/E-9 已修，E-7 部分）。
 - **目标 C（2026-11-16）**：可行动项 41 → **闭合 41 / 0 剩余**（GOV-RESIDUAL AC7 复核 approved；Ruling A/C/D 解除三层阻塞）。声明债务 154→0（根 5593→5657，2026-11-17 复测）。
 

@@ -58,7 +58,7 @@
 |GOV-TEST-SIDE-EFFECT-1|MAINT-1|done|
 ## 当前活动程序
 READY 节点：无；ACTIVE：MAINT-1；BLOCKED：无
-表外节点（状态见 TASK_LEDGER）：RELEASE-GATE4-SIGNED-MATRIX-1
+表外节点（状态见 TASK_LEDGER）：无（`RELEASE-GATE4-SIGNED-MATRIX-1` 已于 2026-11-18 `closed_with_limitations`）
 ## 历史快照（终态节点，非当前 DAG）
 - 终态约束（见 [TASK_LEDGER](TASK_LEDGER.md)）：WORKSPACE：CONSOLIDATION-1 closed_with_limitations（18 项受保护，禁清理/GC/prune）；CLEANUP-TOOL-HARDENING-1 done `368c07809`；DECLARATION-REMEDIATION-1 done `bb7887442`；工具修复不授权删除。
 - 冻结 DAG `fdca2057e`（SHA-256 `1d2c8343…16ed7`）；主线 main；2026-11-06 push `b1c1f5a5→57f62b3f`；此后 push 须门禁全过+用户授权。

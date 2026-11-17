@@ -3,7 +3,7 @@
 - 生成时间：2026-11-18 02:55 (+08:00)（本版为 **R29** 之后更新 —— 用户裁决不需签名，条件 4 矩阵 AC1–AC6 全部跑通）
 - 生成者：DSH（lead）
 - **一页纸现状（2 分钟读完）**：doc/handoffs/STATE-OF-PROJECT-2026-11-18.md（本文件 130 KB，按轮次累积，别当摘要读）
-- **当前 head：`612adbac2`**（main）；R18–R29 见 §3r–§3ab（最新：**用户裁决不需证书 ⇒ 条件 4 矩阵 AC1–AC6 全部实测通过**，待独立复核）
+- **当前 head：见 git**；R18–R30 见 §3r–§3ac（最新：**条件 4 已 `closed_with_limitations`**，两轮独立复核 P1 全关）
 - 工作区：干净（`git status --porcelain` 为空）
 - **R1**：`9ce819ae7` → `dd029b73f`（7 commit，目标 A/B/D 达成）
 - **R2**：`dd029b73f` → `5f2664c2e`（8 commit）—— 目标 C 闭合 10 条

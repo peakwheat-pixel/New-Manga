@@ -14,8 +14,8 @@ depends_on:
 base_commit: null
 branch: null
 worktree: null
-integration_commit: null
-delivery_head: null
+integration_commit: 28e0ef6b3
+delivery_head: 28e0ef6b3
 canonical_evidence_status: complete
 resource_closeout_status: complete
 evidence_dir: verification/RELEASE-GATE4-SIGNED-MATRIX-1
@@ -114,18 +114,18 @@ Release Gate 条件 4 要求「对当前固定产品 commit 生成并固定 Wind
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) | sha256_basis |
 |---|---|---|---|---|---|---|
-| EV-G4-01 | AC1 环境与包冻结 + AC2 未签名披露 | verification/RELEASE-GATE4-SIGNED-MATRIX-1/ac1-environment-and-package.log | 12bb456fa | 473f06b1fef0c4a04388fe339334015a56059ff66ca1bac5178cc6823286c773 | CANONICAL | BLOB |
-| EV-G4-02 | AC3 干净安装（ExitCode 0 / 1,040 文件 / exe 逐字节同 stage） | verification/RELEASE-GATE4-SIGNED-MATRIX-1/ac3-clean-install.log | 12bb456fa | 7c72e5762f34c90febf51752d243803a7a3aee4989a4ceab9bb65f0e7d63b9fc | CANONICAL | BLOB |
-| EV-G4-03 | AC4 四页可达说明 | verification/RELEASE-GATE4-SIGNED-MATRIX-1/ac4-four-pages.log | 12bb456fa | 6af1db0f1076d035ba49115360e21cf18b327dfadbb8340a8e6f5690663f1494 | CANONICAL | BLOB |
-| EV-G4-04 | AC4 资料柜实拍 | verification/RELEASE-GATE4-SIGNED-MATRIX-1/ac4-page1-bookshelf.jpg | 12bb456fa | c1a44f3f31ec2aca8003ebf68f3f454a5513054f48ba03b0d971a24036f62660 | CANONICAL | BLOB |
-| EV-G4-05 | AC4 工位实拍 | verification/RELEASE-GATE4-SIGNED-MATRIX-1/ac4-page2-workbench.jpg | 12bb456fa | 8df06f62f00d98ea3b9fe1f2ca44556080fd647f4ef8385623a13620f63cd3b5 | CANONICAL | BLOB |
-| EV-G4-06 | AC4 控制台实拍 | verification/RELEASE-GATE4-SIGNED-MATRIX-1/ac4-page3-settings.jpg | 12bb456fa | 10761638af40fb86b12edaf2e4a2f90002e1a8acb2825053cdd01a5f855a4b9f | CANONICAL | BLOB |
-| EV-G4-07 | AC4 阅读器实拍 | verification/RELEASE-GATE4-SIGNED-MATRIX-1/ac4-page4-reader.jpg | 12bb456fa | 0de8c1d72d724f8a537d1ee93bc8bf013a40e58a25d69896486c25ffb945814d | CANONICAL | BLOB |
-| EV-G4-08 | AC5 升级与真回退 | verification/RELEASE-GATE4-SIGNED-MATRIX-1/ac5-upgrade-rollback.log | 12bb456fa | cc9f781fd13995aa024e25ab984bbf3bffe75f9161d9cd60b5b48030d6bb2828 | CANONICAL | BLOB |
-| EV-G4-09 | AC6 卸载与数据根零变化 | verification/RELEASE-GATE4-SIGNED-MATRIX-1/ac6-uninstall.log | 12bb456fa | a2896e78931ef4c87b109c3217dc95b9e830d160aa69239c93408a781414fc41 | CANONICAL | BLOB |
-| EV-G4-10 | AC6 卸载前数据根逐文件清单（530 文件） | verification/RELEASE-GATE4-SIGNED-MATRIX-1/ac6-dataroot-before.json | 12bb456fa | 5cdd21212aef93a26c29aa935d3559e32002fa1bbb7504e70ded4898883e3ac4 | CANONICAL | BLOB |
-| EV-G4-11 | AC5 真实跨版本重做（历史 0.1.0 ↔ 当前 0.1.1，含 Start Menu 字节/sha256） | verification/RELEASE-GATE4-SIGNED-MATRIX-1/ac5-upgrade-rollback-real.log | bf7859965 | e769ca2e655a596f55b61cafd795def1b0ea6c90d4458fdb78615bd3865801bd | CANONICAL | BLOB |
-| EV-G4-12 | 条件 4 独立复核报告（ACCEPTED_WITH_FINDINGS，P1=2） | doc/reviews/RELEASE-GATE4-MATRIX-REVIEW-2026-11-18.md | bf7859965 | f5a6f76e81e1559342a5b1146e91ab11dd003cfb29005b5c629917cfd034c610 | CANONICAL | BLOB |
+| EV-G4-01 | AC1 环境与包冻结 + AC2 未签名披露 | verification/RELEASE-GATE4-SIGNED-MATRIX-1/ac1-environment-and-package.log | 28e0ef6b3 | 473f06b1fef0c4a04388fe339334015a56059ff66ca1bac5178cc6823286c773 | CANONICAL | BLOB |
+| EV-G4-02 | AC3 干净安装（ExitCode 0 / 1,040 文件 / exe 逐字节同 stage） | verification/RELEASE-GATE4-SIGNED-MATRIX-1/ac3-clean-install.log | 28e0ef6b3 | b2969af65dd09e83292b0708b40475335b5749148b8a8ff935d6ecb4edf98b81 | CANONICAL | BLOB |
+| EV-G4-03 | AC4 四页可达说明 | verification/RELEASE-GATE4-SIGNED-MATRIX-1/ac4-four-pages.log | 28e0ef6b3 | 6af1db0f1076d035ba49115360e21cf18b327dfadbb8340a8e6f5690663f1494 | CANONICAL | BLOB |
+| EV-G4-04 | AC4 资料柜实拍 | verification/RELEASE-GATE4-SIGNED-MATRIX-1/ac4-page1-bookshelf.jpg | 28e0ef6b3 | c1a44f3f31ec2aca8003ebf68f3f454a5513054f48ba03b0d971a24036f62660 | CANONICAL | BLOB |
+| EV-G4-05 | AC4 工位实拍 | verification/RELEASE-GATE4-SIGNED-MATRIX-1/ac4-page2-workbench.jpg | 28e0ef6b3 | 8df06f62f00d98ea3b9fe1f2ca44556080fd647f4ef8385623a13620f63cd3b5 | CANONICAL | BLOB |
+| EV-G4-06 | AC4 控制台实拍 | verification/RELEASE-GATE4-SIGNED-MATRIX-1/ac4-page3-settings.jpg | 28e0ef6b3 | 10761638af40fb86b12edaf2e4a2f90002e1a8acb2825053cdd01a5f855a4b9f | CANONICAL | BLOB |
+| EV-G4-07 | AC4 阅读器实拍 | verification/RELEASE-GATE4-SIGNED-MATRIX-1/ac4-page4-reader.jpg | 28e0ef6b3 | 0de8c1d72d724f8a537d1ee93bc8bf013a40e58a25d69896486c25ffb945814d | CANONICAL | BLOB |
+| EV-G4-08 | AC5 首版（同源重构包，已被 P1-01 判为不充分，保留作对照） | verification/RELEASE-GATE4-SIGNED-MATRIX-1/ac5-upgrade-rollback.log | 28e0ef6b3 | cc9f781fd13995aa024e25ab984bbf3bffe75f9161d9cd60b5b48030d6bb2828 | CANONICAL | BLOB |
+| EV-G4-09 | AC6 卸载与数据根零变化 | verification/RELEASE-GATE4-SIGNED-MATRIX-1/ac6-uninstall.log | 28e0ef6b3 | a2896e78931ef4c87b109c3217dc95b9e830d160aa69239c93408a781414fc41 | CANONICAL | BLOB |
+| EV-G4-10 | AC6 数据根逐文件清单（530 条） | verification/RELEASE-GATE4-SIGNED-MATRIX-1/ac6-dataroot-before.json | 28e0ef6b3 | 5cdd21212aef93a26c29aa935d3559e32002fa1bbb7504e70ded4898883e3ac4 | CANONICAL | BLOB |
+| EV-G4-11 | AC5 真实跨版本重做（历史 0.1.0 ↔ 当前 0.1.1，含 Start Menu 字节/sha256） | verification/RELEASE-GATE4-SIGNED-MATRIX-1/ac5-upgrade-rollback-real.log | 28e0ef6b3 | c32da0aa9ea6d9317f830c0484827bf86621e197a5980d0de6975a36a6153148 | CANONICAL | BLOB |
+| EV-G4-12 | 条件 4 独立复核报告（首轮 ACCEPTED_WITH_FINDINGS + 复检追加节） | doc/reviews/RELEASE-GATE4-MATRIX-REVIEW-2026-11-18.md | 28e0ef6b3 | 599d469bb6544d6d0885f11d532bea92dccbc79db8fcc1545f7df61b34743040 | CANONICAL | BLOB |
 
 ## 2026-11-18 复核处置与 limitation（reviewer-g4，P0=0 / P1=2 / P2=7）
 
