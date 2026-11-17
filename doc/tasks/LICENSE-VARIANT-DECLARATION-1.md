@@ -122,6 +122,9 @@ DSH 已按用户授权把选向交给 ZCode，但第二次调用**正文截断**
 | EV-LVD-05 | AC3 NSIS 收到变体定义（无乱码） | verification/LICENSE-VARIANT-DECLARATION-1/ac3-nsis-variant-defines.log | 02c3aaeda | b829772b0f483f786fff5f34184a1bf9b71f14ae08ac2667ef789e2f39b641dd | CANONICAL | BLOB |
 | EV-LVD-06 | AC4 旧 stage 仍被拒（EXIT=1） | verification/LICENSE-VARIANT-DECLARATION-1/ac4-old-stage-still-rejected.log | 02c3aaeda | 88dc4063d0acde324eb662b0ec557f894da21ef5b6fcb87059443dab634b1507 | CANONICAL | BLOB |
 | EV-LVD-07 | AC3 package-manifest（models_bytes=632,552,582） | verification/LICENSE-VARIANT-DECLARATION-1/ac3-models-package-manifest.json | 02c3aaeda | 70a224306f8395f5a220a3a722f806d6e71d47ab214e2fa91836609b7fde042e | CANONICAL | BLOB |
+| EV-LVD-08 | AC6 包内四份合规文件与仓库逐字节相同（7z 抽出比对） | verification/LICENSE-VARIANT-DECLARATION-1/ac6-setup-docs-match-repo.log | 354a2536f | 0b5fb51f03050623cb314e1b07ecaa3ddac0fbe237f57c44e9f568cf6827f3e9 | CANONICAL | BLOB |
+| EV-LVD-09 | AC6 新 setup.exe 的 build-info（variant=models / license=AGPL-3.0 / sha256） | verification/LICENSE-VARIANT-DECLARATION-1/ac6-installer-build-info.json | 354a2536f | f7f85daf7a12a4b62972f4d82de4f98d1dbe12073382c32b680884aa5f64008e | CANONICAL | BLOB |
+| EV-LVD-10 | AC6 新 setup.exe 内的文件清单（含四份文档的字节数与 mtime） | verification/LICENSE-VARIANT-DECLARATION-1/ac6-setup-contents.log | 354a2536f | 202a9185faf75d9a514c34092e5b55383d2c8af3af058c8be7d02f2232d28339 | CANONICAL | BLOB |
 
 ## Resource Manifest
 
@@ -145,3 +148,34 @@ DSH 已按用户授权把选向交给 ZCode，但第二次调用**正文截断**
   3. `setup.exe` **未签名**（`authenticode=NotSigned`）；Release Gate 条件 4 仍需真证书。
   4. 未改动旧 stage 任何字节；旧 stage 仍被护栏拒绝。
 - **边界**：不改变 `Technical Gate=NOT_SATISFIED`；不构成任何发布验收。
+
+## 2026-11-17 复核处置（reviewer-lvd，ACCEPTED_WITH_FINDINGS，P0=1 / P1=1 / P2=3）
+
+报告：`doc/reviews/LICENSE-VARIANT-DECLARATION-1-REVIEW-2026-11-17.md`。
+
+- **P0-1（已修，最关键）**：复核者从 `a4b11458…` 那个 `setup.exe` 里抽出三份文档，发现是**修正前**的字节
+  （包内 `NOTICE.md=81ebf5ab…` vs 仓库 `f8aa9731…` 等）—— 我在 22:22–22:24 改完文档，却在 22:46 才打包，且**没有再跑 `package.ps1`**，
+  所以 stage 里仍是旧文档。**该 `setup.exe` 作废，不得发布、不得作条件 4 证据。**
+  复核者还确认：三份 stage 副本经 CRLF 归一化后**逐字节等于 `4ca94f0df` 的 blob**（修正前），时间线自洽。
+  **已修**：先改残留（P1-1），再重跑 `package.ps1 -WithModels` → `build-installer.ps1`，得到新产物
+  **`NewManga-0.1.1-setup.exe` 652,149,104 B / sha256 `b57f7839bc074348c1833fd4f94a6ba8143bf958a30f681a8c1a11fdb12512c1`**；
+  用 `7z x` 从新 exe 抽出四份合规文件与仓库根逐一比对：**全部 SAME=True**
+  （NOTICE `d29f2bdcc955…` / THIRD_PARTY `df7d80bc954a…` / LICENSE_AUDIT `84d89124b7c5…` / LICENSE `fb981668c18a…`）。
+- **P1-1（已修）**：`NOTICE.md:22`、`NOTICE.md:37`、`THIRD_PARTY_LICENSES.md:36/:47/:69` 仍写「models 随包 yolo11s-seg 且已核实」。
+  已改为「该文件当前不在 sidecar 内」「按保守策略整包 AGPL-3.0」「历史登记保留」等与实物一致的表述。
+- **P2-1（已修）**：`installer.nsi` 的默认值 `base`/`GPL-3.0-or-later` 与注释「loud, not lying」矛盾 ⇒ 改为
+  `!ifndef VARIANT_NAME` / `!ifndef VARIANT_LICENSE` 直接 `!error`（实测：不带定义跑 makensis → `EXIT=1` 并打印
+  `VARIANT_NAME is required (-DVARIANT_NAME=models|base)`）。
+- **P2-2（已修）**：变体名与权重未交叉校验 ⇒ `build-installer.ps1` 增加两条 fail-closed：
+  有权重但 `variant≠models`、或 `variant=models` 但无权重，都直接 throw。
+- **P2-3（已修）**：`package.ps1:105/:152` 注释仍写 yolo11s-seg ⇒ 改为「随包权重（上游许可待核实）」。
+
+**复核确认通过的部分**：NSIS 变体化（四处 = `installer.nsi:80/:92/:93/:123`，中文在 `:70–76` 推导）、
+fail-closed 探针（合成 stage 在 `license=GPL-3.0-or-later` 下 `BUILD_EXIT=1` 且不产出 exe）、
+证据链 7/7 blob sha256 全中（并提醒：卡面 `sha256_basis=BLOB` 是对的，**按工作区重算会因 CRLF 假报不符**）。
+
+**仍不成立 / 未覆盖**：
+1. 三项权重上游许可仍「待核实」，AGPL-3.0 是**保守过度声明**；
+2. 安装向导**实际渲染**未目验（只验证 makensis 编译 + 变体定义送达 + LegalCopyright 版本资源）；
+3. `setup.exe` **未签名**（`authenticode=NotSigned`）—— 条件 4 仍需真证书；
+4. 条件 4 必须在**这个新包**上重跑矩阵，旧结果不可沿用。
