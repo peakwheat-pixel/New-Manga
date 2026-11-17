@@ -2,7 +2,7 @@
 
 - 生成时间：2026-11-17 20:25 (+08:00)（本版为 **R22** 之后更新 —— 条件 3 关闭 + F11 样式修复）
 - 生成者：DSH（lead）
-- **当前 head：`8f342d01e`**（main）；R17 链路 = `1ef6a2ebd` → `3a0dea7b7` → `89b36c3f2` → `234b316b6`；R18–R22 见 §3r–§3v（最新：条件 3 关闭 + F11 样式修复）
+- **当前 head：`1d2eae9dd`**（main）；R18–R23 见 §3r–§3w（最新：装包元数据护栏加严 + package.ps1 顶层字段修复）
 - 工作区：干净（`git status --porcelain` 为空）
 - **R1**：`9ce819ae7` → `dd029b73f`（7 commit，目标 A/B/D 达成）
 - **R2**：`dd029b73f` → `5f2664c2e`（8 commit）—— 目标 C 闭合 10 条
@@ -1105,6 +1105,24 @@ AC1 的 blocked 理由由**原作者**写成完整的 NA 结论（headless 库�
 实测本机有交互桌面会话（`query session` → session 1 Active，`explorer` 进程 1 个，`[Environment]::UserInteractive=True`）
 ⇒ **F11 真实窗口截图技术上可试**（启动应用 → 触发 F11 → 抓窗口截图 → 独立 Agent 书面视觉裁定）。
 注意：会短暂占用用户桌面；数据根必须隔离，不能碰真实 `%APPDATA%`。
+
+
+### R23 收尾追加（同轮第二轮）
+
+- **`INSTALLER-METADATA-CONSISTENCY-1` 已收口并被复核**：`reviewer-imc` = `ACCEPTED_WITH_FINDINGS`（P0=0 / **P1=2** / P2=6）。
+  - **F-01（P1，已修）**：我第一版 AC1 证据把「`VERSION.json` 无 `models_bundled` 字段」写成结论 —— **实际它有 `true`/`632552582`**（采集脚本硬编码了结论）。
+    证据已重生成：`VERSION.json` 与实物**一致**，不一致的是 `package-manifest.json`（0.1.0 / false / 0 / mtime 2026-10-28）。
+  - **F-02（P1，已立卡）**：`package.ps1` 不写 `VERSION.json` 顶层字段，护栏缺字段即 FAIL ⇒ 干净产物也过不了闸 → 新卡 `PACKAGE-VERSION-JSON-DERIVED-1`。
+  - **F-04/05/06（P2，已加严）**：`-StageDir` 尾部分隔符归一化；**逐文件 sha256/bytes** 校验；**集合相等** + 重复条目检测。
+    红测从 5 条 FAIL 变 **8 条**；微测：同尺寸改内容 → `sha256 mismatch`；重复条目 → `repeats 1 path(s)`；带尾反斜杠的一致 stage 仍 `OK`。
+- **`PACKAGE-VERSION-JSON-DERIVED-1` 已实现并收口**（`closed_with_limitations`）：
+  - 修复：`package.ps1:151` 模板追加 `models_bundled=$modelsBundled;models_bundled_bytes=[int64]$modelsBytes;`，复用 `:80-81` 的磁盘推导；`PARSE_OK`。
+  - 红测：去掉顶层字段的同构 stage → 护栏首条 FAIL `VERSION.json has no models_bundled field (must be derived from the stage, not omitted)`。
+  - **AC4 端到端 PARTIAL**：既有 stage 的 `app/core-sidecar/` 只有 5 个 exe、**无 `build-manifest.json`**（builder 在 `build_sidecar.ps1:381` 写入），
+    所以 `package.ps1:51` 直接拒绝重打包 ⇒ 端到端需先 `build_sidecar.ps1 -Force` 重建 sidecar（重活，未做）。
+  - 该事实又支持「`INSTALLER-MATRIX-1` 的 stage 不是干净脚本输出」这一结论（L-IM-8）。
+- **Codex 裁决未回**：`codex exec` 跑 40 分钟仅 7s CPU、无输出（疑似卡在鉴权/网络），已终止；改派 **ZCode**（`zcode.cjs --prompt … --mode plan --json`），后台运行中。
+- 提交：`9c0939f2e`（F-01 更正 + F-04/05/06 加严）→ `3ea6ea40d`（F-02 新卡 + 证据重钉）→ `a370a1f39`（package.ps1 修复）→ `2889a0138`（PVD 证据）→ `1d2eae9dd`（PVD 收口）。
 
 ### 4) 非终态卡（2 张）
 - `MAINT-1-RELEASE-MONITOR`：`in_progress`（长期哨位，已登记条件 3/4/5 处置）。
