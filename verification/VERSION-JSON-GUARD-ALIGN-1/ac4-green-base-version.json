@@ -1,0 +1,34 @@
+{
+  "models": "separated: base package ships NO models; the frozen Core reports typed PROVIDER_NOT_CONFIGURED until the pinned models are placed on %APPDATA%\\com.newmanga.desktop\\models (data root) or passed via NEWMANGA_DETECTOR_WEIGHTS / NEWMANGA_MANGA_OCR_WEIGHTS; a separate '-models' package ships the same models in-bundle",
+  "sidecar": "bundled: app/core-sidecar (core_service/host_bridge/catalog_loader/acceptance_bridge/sfx_detect_probe + _internal + python)",
+  "devices": null,
+  "migration": "runtime dry-run script included",
+  "bundled_weights_license": "none (no model weights in this variant)",
+  "models_bundled": false,
+  "models_dir_bytes": 0,
+  "data_root": "%APPDATA%\\com.newmanga.desktop",
+  "version": "0.1.1",
+  "license": "GPL-3.0-or-later",
+  "app_build": {
+    "exe_sha256": "3b4d2578356449a83050e9bf8c209d6f519d43c02ab432f8cc0d20cff385e895",
+    "repo_head": "45e25b9bb762fa62e08e4862f6645283bdab221c",
+    "exe_bytes": 82912672
+  },
+  "sidecar_build": {
+    "core_service_sha256": "6050881163753d32eca2fb1c0c824d9de7852bf62fb808926f5b6fc74a6b52ee",
+    "core_service_bytes": 400098,
+    "core_service_built_at_utc": "2026-11-14T19:16:55.3503345Z",
+    "repo_head": "45e25b9bb762fa62e08e4862f6645283bdab221c",
+    "variant": "base",
+    "models_bundled": false
+  },
+  "channel": "stable",
+  "variant": "base",
+  "models_bundled_bytes": 0,
+  "license_files": [
+    "LICENSE",
+    "LICENSE-AGPL-3.0.txt",
+    "NOTICE.md",
+    "THIRD_PARTY_LICENSES.md"
+  ]
+}

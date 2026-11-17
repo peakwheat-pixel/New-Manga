@@ -79,6 +79,11 @@ $sidecarFiles=Get-ChildItem $sidecarDst -Recurse -File
 $sidecarBytes=($sidecarFiles|Measure-Object Length -Sum).Sum
 $modelsBundled=(Test-Path (Join-Path $sidecarDst 'models'))
 $modelsBytes=if($modelsBundled){(Get-ChildItem (Join-Path $sidecarDst 'models') -Recurse -File|Measure-Object Length -Sum).Sum}else{0}
+# VERSION-JSON-GUARD-ALIGN-1 (reviewer-pvd F-PVD-01): the guard sums *.onnx only, while the
+# directory total above also counts config/vocab files (109,678 B in the 0.1.1 sidecar). Both
+# numbers are real; the ONE that goes into VERSION.json must be the guard's basis.
+$modelsOnnxFiles=if($modelsBundled){@(Get-ChildItem (Join-Path $sidecarDst 'models') -Recurse -File -Filter '*.onnx')}else{@()}
+$modelsOnnxBytes=($modelsOnnxFiles|Measure-Object Length -Sum).Sum; if($null -eq $modelsOnnxBytes){$modelsOnnxBytes=0}
 if($WithModels -and -not $modelsBundled){throw 'WithModels requested but the built sidecar has no models/ directory'}
 
 # ---- 2b) RELEASE-REPACK-1: record which sidecar build the package embeds ----
@@ -148,7 +153,18 @@ $modelsStrategy=if($modelsBundled){
 # weights -> GPL-3.0-or-later. The AGPL full text rides in both variants (see section 3).
 $licenseDeclaration=if($modelsBundled){'AGPL-3.0'}else{'GPL-3.0-or-later'}
 $bundledWeightsLicense=if($modelsBundled){'AGPL-3.0 (Ultralytics YOLO11s-seg: app/core-sidecar/models/detector/yolo11s-seg.onnx)'}else{'none (no model weights in this variant)'}
-@{version=$Version;channel='stable';variant=$variant;data_root='%APPDATA%\com.newmanga.desktop';license=$licenseDeclaration;license_files=$lic;bundled_weights_license=$bundledWeightsLicense;models=$modelsStrategy;models_bundled=$modelsBundled;models_bundled_bytes=[int64]$modelsBytes;sidecar='bundled: app/core-sidecar (core_service/host_bridge/catalog_loader/acceptance_bridge/sfx_detect_probe + _internal + python)';migration='runtime dry-run script included';devices=$deviceProbe;sidecar_build=$sidecarBuildInfo}|ConvertTo-Json|Set-Content (Join-Path $stage 'VERSION.json') -Encoding utf8
+# VERSION-JSON-GUARD-ALIGN-1 (reviewer-pvd F-PVD-02): the guard requires app_build and there was no
+# generator for it, so no clean package.ps1 output could ever pass. Derive it from the staged exe;
+# repo_head comes from the head the single-file publish embedded in ProductVersion.
+$appExe=Join-Path $stage 'app/NewManga.App.exe'
+if(-not (Test-Path -LiteralPath $appExe)){throw 'app_build cannot be derived: packaged exe missing at '+$appExe}
+$appExeSha=(Get-FileHash -LiteralPath $appExe -Algorithm SHA256).Hash.ToLowerInvariant()
+$appExeBytes=(Get-Item -LiteralPath $appExe).Length
+$appProductVersion=(Get-Item -LiteralPath $appExe).VersionInfo.ProductVersion
+$appHead=$null
+if($appProductVersion -match '([0-9a-fA-F]{40})'){$appHead=$Matches[1].ToLowerInvariant()}
+if(-not $appHead){$appHead=(git -C $repo rev-parse HEAD).Trim()}
+@{version=$Version;channel='stable';variant=$variant;data_root='%APPDATA%\com.newmanga.desktop';license=$licenseDeclaration;license_files=$lic;bundled_weights_license=$bundledWeightsLicense;models=$modelsStrategy;models_bundled=$modelsBundled;models_bundled_bytes=[int64]$modelsOnnxBytes;models_dir_bytes=[int64]$modelsBytes;app_build=@{exe_sha256=$appExeSha;exe_bytes=[int64]$appExeBytes;repo_head=$appHead};sidecar='bundled: app/core-sidecar (core_service/host_bridge/catalog_loader/acceptance_bridge/sfx_detect_probe + _internal + python)';migration='runtime dry-run script included';devices=$deviceProbe;sidecar_build=$sidecarBuildInfo}|ConvertTo-Json|Set-Content (Join-Path $stage 'VERSION.json') -Encoding utf8
 # Keep a copy beside the exe too: the single-file host always sees its own directory,
 # so the settings page can render the packaged device probe on every layout.
 Copy-Item (Join-Path $stage 'VERSION.json') (Join-Path $stage 'app/VERSION.json') -Force

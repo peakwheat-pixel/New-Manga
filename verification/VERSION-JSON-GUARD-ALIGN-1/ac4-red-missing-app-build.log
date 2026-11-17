@@ -1,0 +1,6 @@
+verify-package-manifest: stage=G:\CODEX\New Manga.workspace\tmp\r23\red-noapp repo=G:\CODEX\New Manga
+
+verify-package-manifest: FAILED with 3 problem(s)
+  FAIL: VERSION.json has no app_build section
+  FAIL: package-manifest.json bytes mismatch for 1 file(s): VERSION.json (manifest=1522 actual=1322)
+  FAIL: package-manifest.json sha256 mismatch for 1 file(s) (e.g. VERSION.json)
