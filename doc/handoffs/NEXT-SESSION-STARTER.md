@@ -1,6 +1,6 @@
 # 新会话启动包 — New Manga 目标续接
 
-- 生成时间：2026-11-17 13:05 (+08:00)（本版为 **R17** 之后更新 —— 两卡收口材料 + 37 控制字符 + GCP1 改派复核）
+- 生成时间：2026-11-17 18:10 (+08:00)（本版为 **R19** 之后更新 —— 非终态 10→2）
 - 生成者：DSH（lead）
 - **当前 head：`234b316b6`**（main）；R17 链路 = `1ef6a2ebd`（内容+证据）→ `3a0dea7b7`（四件套证据）→ `89b36c3f2`（两卡 in_review）→ `234b316b6`（收口 + 独立复核入库）
 - 工作区：干净（`git status --porcelain` 为空）
@@ -1030,6 +1030,53 @@ AC1 的 blocked 理由由**原作者**写成完整的 NA 结论（headless 库�
 ### 本轮新的硬教训
 1. **禁止用 PowerShell 双引号 here-string 写含反引号的 Markdown** —— 反引号是转义符（`` `e ``=ESC、`` `v ``=VT…），会把标识符打碎。一律用文件工具或 Python 显式写字节，写完立刻扫控制字符。
 2. **收口理由必须当场复测**：卡面旧理由可能已被别的卡修好（SIDECAR 的 13 失败、SFX 权重）。
+
+---
+## 3s. R19（自动推进轮）完成的事 —— 非终态 4 → 2，两份"已被别人做完"的发现
+
+### 结果一句话
+`INSTALLER-MATRIX-1`、`GIT-CLEAN-PUBLICATION-DIAG-1` 收口；`FEA11-ENTRY-MISSING-1` 解除 blocked 并收口；
+新建的 `MAPMINT-ERROR-FIDELITY-1` 经查证**已被 `MINT-FAILURE-DIAG-1` 实现**，判为 `superseded`。
+**非终态卡：4 → 2**（`MAINT-1-RELEASE-MONITOR` in_progress 长期哨位 + `RELEASE-GATE4-SIGNED-MATRIX-1` proposed 待证书）。
+
+### 提交链（main，均已 push、0 0）
+`998e04ae4`（R18 收尾）→ `31dd81832`（INSTALLER/DIAG 收口 + 两张新卡）→ `9b13eb873`（MAINT-1 登记条件 3/4/5）→ `9818e7bad`（FEA11 复跑证据）→ `6619e70b9`（FEA11 收口 + MAPMINT superseded）。
+
+### 1) `INSTALLER-MATRIX-1` → `closed_with_limitations`
+- AC1–AC6 加 `<<MET>>`（stage 848.15 MB / 1037 files；setup.exe 621.9 MB sha256 `0c041599…`；clean-install/启动/卸载全 exit 0；用户数据根 532 文件 `6ae4d6da…` 前后一致）；
+  **AC7 保持 `[ ]` + `<<PARTIAL: NOT_RUN…>>`**（未在打包产物上逐页导航，不以 headless 冒充）；AC8 补勾。
+- 新增限制 L-IM-1…5：旧 sidecar / AC7 NOT_RUN 且与 Gate 映射「四页 5/5」证据不一致 / **无 Authenticode 签名** / 跨版本升级回退未证明 / 不宣称条件 4 通过。
+- 资源核销：task-env 7 目录 / 1,068 文件 / 2,194,905,712 B（manifest sha256 `c94feccb…`）。
+
+### 2) `GIT-CLEAN-PUBLICATION-DIAG-1` → `closed_with_limitations`
+- 遵守卡面「不集成、不置 done」：用 `closed_with_limitations` 而非 `done`；53 行原有 pin 未改。
+- 限制 L-D-1…4（AC3 PARTIAL / 仅诊断未集成 / packaged 只绑 e34 / 真实饱和风险由 RUST-ISO AC3 承载）。
+- 资源核销：13,101 文件 / 1,885,941,148 B（sha256 `529f835e…`）。
+
+### 3) `FEA11-ENTRY-MISSING-1` → `closed_with_limitations`（**blocked 前提已被别人解除**）
+- 卡面说「要定论需要内层异常类型，而它被 `MapMintFailure` 兜底丢弃」。实测：`MINT-FAILURE-DIAG-1`（`c68a67216`）**已交付** `SourceAccessException.OriginalExceptionType` + `MapMintFailureDiagnosticsTests`（3 facts 全过）。
+- 实测：触发本卡的 opt-in 测试 `ProductionDispatcherFullSyncChain_NewKeyOldDigestConserved`（`NEWMANGA_FEA11_IPC=1`）在当前 head **连续 3 次通过**（各 EXIT=0）。
+- 限制：**历史根因未复现**（基线 `414e3e8d1` 那次失败不可复现），只登记「不可复现」，不声称已修复某缺陷。
+
+### 4) `MAPMINT-ERROR-FIDELITY-1` → `superseded`（**我自己 + Codex 都没先查代码**）
+- Codex 裁定 Q2 建议「另立最小实现卡」，我照做并建了卡；随后查证发现 `MINT-FAILURE-DIAG-1` 早已实现同一能力。
+- 教训（写进卡面）：**建卡前必须 `git grep` 目标符号 + 查最近提交**；本次是同一「先下结论、后查证据」模式第 N 次复现。
+
+### 5) `MAINT-1-RELEASE-MONITOR` 的条件登记（Codex Q3）
+- 条件 3：`AGENT_ADJUDICATION_PENDING`（缺 F11 真实窗口截图；纯 headless 不够，需独立 Agent 具名书面视觉裁定）。
+- 条件 4：归 `RELEASE-GATE4-SIGNED-MATRIX-1`（proposed；签证书 + 真实 Windows 矩阵）。
+- 条件 5：`LIMITATION_ACCEPTED`（无代表性质量基线，**不宣称准确率达标**；实测仍 `NOT_RUN`）。
+- `Technical Gate=NOT_SATISFIED` **未改**；Codex 明确「需用户裁决」的唯一项就是 Gate 总体判定。
+
+### 6) 剩余（Agent 侧已基本无项）
+- **`RELEASE-GATE4-SIGNED-MATRIX-1`**：需真实 Authenticode 证书凭据 + 干净 Windows 环境 → **外部资源阻塞**，卡保持 `proposed`。
+- **`MAINT-1`**：长期维护哨位，保持 `in_progress`。
+- 条件 3 的 F11 截图：需要真实窗口运行与截图能力（本会话可尝试，但需 GUI 交互，属可试项）。
+
+### 本轮新教训
+1. **又一次 PowerShell here-string 反引号事故**（STATUS 替换 assert 失败才发现）——含反引号的文本一律用 Python 脚本文件或文件写入工具，不用 `@"..."@`。
+2. **建卡前先 grep**：`MAPMINT-ERROR-FIDELITY-1` 是重复卡，浪费了一次裁定+建卡。
+3. **"blocked" 卡的阻塞前提可能已被别的卡静默解除**：FEA11 的 blocked 是 `MINT-FAILURE-DIAG-1` 解掉的，但卡面没更新。
 
 ---
 ## 4. 关键技术事实（R1/R2 累积）
