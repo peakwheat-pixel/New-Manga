@@ -77,3 +77,25 @@
 - 整屏覆盖：2560×1440 **等于** PrimaryScreen 边界；四角全为画布色；任务栏在 F11 图 91.9% 为纯画布 ⇒ 被全屏窗口覆盖。
 - 与上一组一致性：F11 重叠区 **0 / 3,584,000 px 差异**（逐像素相同）。
 - **仍不覆盖**：内容渲染、进度条非零态、`上一页`/`下一页` 交互与禁用/焦点态、保存状态机其余取值、窗口与物理屏边界严格重合、任务栏色调差异成因、交互/次级 overlay/可访问性。
+
+## 2026-11-17 第三次取证：内容渲染（关闭最后的「不覆盖」）
+
+**关键发现（决定取证方式）**：F11 只是把**已经打开的**阅读器 VM 挂到无边框全屏窗口（`App.axaml.cs` 的 `WireImmersiveReader`
+直接 `new ImmersiveReaderWindow(shell.ViewModel.Library.Reader)`，**不调用 `OpenAsync`**）。
+所以「只按 F11」拿到的是**空态**（`Pages.Count==0`）；必须先 `阅读`（`LibraryViewModel.OpenReaderCommand` → `Reader.OpenAsync(book, chapter, page)`）。
+
+**本次做法**：用 **UI Automation**（不是盲点坐标）按名称精确操作：
+1. 启动发布产物（`--data-root` 指向隔离副本）；
+2. `InvokePattern.Invoke()` 名为 **`阅读`** 的 Button（BookDetailPanel 的 primary 按钮，rect 约 2214,179）；
+3. 等 8 s → 整屏截图（阅读器在**主窗口内**，有内容）；
+4. 发 `{F11}` → 等 8 s → 整屏截图（**沉浸全屏 + 内容**）。
+
+> 备注：此前 4 次失败都是**没有先打开阅读器**（盲点坐标 / 只 Invoke 页行都不够）。全屏 2560×1440。
+
+| 文件 | sha256 | 说明 |
+|---|---|---|
+| `c3-05-reader-open-content.jpg` | `ba7b39fcae4cb634e18e4218f1dad5d4f190a41ece7cebe8cfd3ce7c65cfba6d` | 阅读器在主窗口内、**有页面图像**（JPEG q90；原 PNG 6,089,406 B 在 workspace 保留） |
+| `c3-06-f11-immersive-content.jpg` | `8ce0fc0a1a0c8cfc88b4179105da5083e4486fc0253190946635c749dae15535` | **F11 沉浸全屏 + 有内容**：左上 `返回 (Esc)` + 面包屑 `BOOK-FIXTURE-1 日漫_JA 测试书 / 第 1 章`；右上 `分页`/`Webtoon 纵向`/`RTL`；底部 `上一页`/`下一页`；右下 **`第 1 / 8 页 · 0% · 进度 · 读完即存（Core 已挂载）`**（JPEG q90；原 PNG 6,630,224 B 在 workspace 保留） |
+
+**这一组补上了此前的「内容渲染不覆盖」**：page 图像真实渲染（《Pepper & Carrot》日文版第 1 页）、分页模式布局、进度/保存状态文本均有像素证据。
+仍未覆盖：Webtoon 纵向模式的实际排版、缩放/DPI 变化、进度条**非 0%** 态、`上一页/下一页` 的实际翻页与禁用态、次级 overlay（气泡/题注/SFX）。
