@@ -11,7 +11,7 @@
 等 Host 就绪后截图书架页，再发送 `{F11}` 截沉浸阅读器。
 
 - 环境：`query session` → session 1 **Active**；`explorer` 1 个；`[Environment]::UserInteractive=True`。
-- OS：**Windows 10 Pro / 2009 / build 26300**；DPI：**96 dpi（100% 缩放）**；PrimaryScreen **2560×1440**，工作区 **2560×1392**（48 px 任务栏）。
+- OS：**Microsoft Windows 11 专业版 / 10.0.26300.9711**（`(Get-CimInstance Win32_OperatingSystem).Caption` + `cmd /c ver` 实测）；DPI：**96 dpi（100% 缩放）**；PrimaryScreen **2560×1440**，工作区 **2560×1392**（48 px 任务栏）。
 - 显示：PrimaryScreen **2560×1440**，工作区 **2560×1392**（**48 px 任务栏**，**100% 缩放**）。
 - 截图矩形：`GetWindowRect` = `(-8, -8, 2576×1408)`（最大化窗口含 8 px 不可见边框）。
   ⇒ 图像里上/左各 8 px 黑带、右缘 8 px 桌面像素，**都是截取矩形的几何产物，不是应用边框或阅读器黑边**。
@@ -53,8 +53,11 @@
 
 ## 结论
 
-条件 3 仍**不是 MET**。当前状态：`PARTIAL_WINDOW_EVIDENCE` —— overlay 的**全屏/顶部带/无遮挡/可读性**已有真实截图与书面裁定；
-**底部状态带与内容渲染仍缺**。下一步取证：① 用全屏窗口矩形重截（含底缘）；② 选中页面后按 F11 再截。
+**条件 3 的「F11 全屏/无边框视觉」由三份独立书面视觉裁定确认关闭**（`PARTIAL_PASS_FOR_OVERLAY_CHROME` / `PARTIAL_PASS_PLUS_BOTTOM_BAND` / `CONTENT_RENDERING_COVERED`）；**这不是人眼验证**。
+
+仍未覆盖（不得外推）：**分页模式排版**（实测当前是 Webtoon 纵向）、Webtoon 实际滚动/整页可达、缩放/DPI、进度非 0% 态、实际翻页与禁用/焦点态、保存状态机其余取值、次级 overlay、可访问性、环境矩阵。
+
+**外观一致性缺陷（不影响上述结论，已单独立卡）**：`READER-F11-STYLE-SCOPE-1`（D9）。
 
 ## 2026-11-17 补充取证：整屏重截（覆盖此前缺的窗口底缘）
 
@@ -69,6 +72,19 @@
 此前「右下翻页控件点」的错误描述由本组证据正式替代。内容渲染（选中页面后的画面）**仍未覆盖**。
 
 补充裁定见 `doc/reviews/MAINT-1-GATE-CONDITION-3-VISUAL-ADJUDICATION-2026-11-17.md` 的「补充裁定」节。
+
+> **OS 记录更正（2026-11-17，reviewer-c3 F-1）**：初版写 `Windows 10 Pro / 2009 / build 26300` 是读了注册表遗留字段（`ProductName`/`ReleaseId`）。实测应为 **Windows 11 专业版 / 10.0.26300.9711**。以本次更正为准。
+
+### 原始未压缩 PNG 的 sha256（仓外保留，不提交二进制大文件）
+
+| 仓内 JPEG | 仓外原图 | 原图 sha256 |
+|---|---|---|
+| `c3-01-library.png`（原样） | `..\tmp\r20\f11c\01-library.png` | `c96f2c9ab1c073f9e1e47cbd6196143fa1b659e08cd600348a36a082801c6f1b` |
+| `c3-02-f11-immersive-empty.png`（原样） | `..\tmp\r20\f11c\03-f11-reader.png` | `108258b9ea37a9f3b752ba77766221b14a8b6fe61305c424ca746bb685829e76` |
+| `c3-03-library-fullscreen.png`（原样） | `..\tmp\r20\f11e\01-library-fullscreen.png` | `ef60d9ffc53c2820dcf55d328e2b9f67d26b301d4c7c5285ecc6bdb96d591c66` |
+| `c3-04-f11-immersive-fullscreen.png`（原样） | `..\tmp\r20\f11e\02-f11-immersive-fullscreen.png` | `2183198b8daba875208c92efbbcfdca68374ab398f45a8c300115b072ee3d384` |
+| `c3-05-reader-open-content.jpg`（q90） | `..\tmp\r22\f11c\01-reader-open.png` | `e34b8e81b37bbe003b305417ecf56eb74cd3e37a698ff8a0ff6144ef2ace760b` |
+| `c3-06-f11-immersive-content.jpg`（q90） | `..\tmp\r22\f11c\02-f11.png` | `538d4891fd5cbf00731faffed2d89e1a5415926bb1b7524f2b029f3e098ed549` |
 
 ### 补充裁定要点（visual-c3b，2026-11-17）
 

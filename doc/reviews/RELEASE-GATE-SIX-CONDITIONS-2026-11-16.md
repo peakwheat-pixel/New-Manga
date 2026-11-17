@@ -22,13 +22,13 @@
 |---:|---|---|---|---|
 | 1 | 处置并验证 7/8 项开放 finding | **已关闭** | ✅ 已关闭 | — |
 | 2 | `AUDIT-11-INC-001` 只读远端可见性 | **已关闭（调查）**；处置未授权 | ⚠️ 调查部分已关闭 | **需人判**（处置决定） |
-| 3 | 完整 GUI/Core/Host 流程 + TestHost | **未关闭** | ⚠️ 只剩 1 项人眼 | **需人眼**（1 项）+ Agent 可做 0 项 |
+| 3 | 完整 GUI/Core/Host 流程 + TestHost | **已关闭**（2026-11-17，Agent 书面视觉裁定；非人眼） | ✅ 三份裁定 | Agent 可做 0 项；人眼复核可选 |
 | 4 | Windows 包 + install/启动/升级回退/四页/卸载矩阵 | **未关闭** | ⚠️ 打包已做，安装矩阵未做 | **需人**（签名 2 步 + 真机矩阵）+ Agent 可做 E-7 |
 | 5 | 模型/API 与代表性质量验证 | **未关闭（`NOT_RUN`）** | ❌ | **需人判**（GT 或接受） |
 | 6 | 门禁 + 独立最终 Review | **未关闭**（机械 PASS / 完成态 NOT CLOSABLE） | ✅ **Agent 可全部关闭** | **Agent**（4 项，无需人） |
 
-**⇒ 判定分布**：已关闭 **1**（条件 1）+ 调查关闭 **1**（条件 2 前半）；未关闭 **4**（条件 3/4/5/6）。
-**⇒ 归属分布**：Agent 可独立关闭的只有 **条件 6**；条件 3/4/5 各差**人的一次动作**；条件 2 差**人的一个决定**。
+**⇒ 判定分布**（2026-11-17 更新）：已关闭 **3**（条件 1、条件 3「Agent 书面视觉裁定」、条件 6）；调查关闭 **1**（条件 2 前半）；未关闭 **3**（条件 4、条件 5「`LIMITATION_ACCEPTED`」、条件 2 后半）。
+**⇒ 归属分布**（2026-11-17 更新）：条件 1/3/6 已关闭（条件 3 走 Codex Q3 授权的**委托书面视觉裁定**，非人眼）；条件 4 差**真实证书 + 真实 Windows 矩阵**（外部资源）；条件 5 已按 Gate 原文替代分支登记 `LIMITATION_ACCEPTED`；条件 2 后半差**人的一个决定**。
 
 ---
 
@@ -129,15 +129,15 @@ Owner 决定是否执行 SEC-02 的四项处置：① 删除含素材分支 ② 
 | **真实 GUI 四页走查（源码构建 + 安装产物）** | ✅ 完成，各 **5/5 页**截图 | `verification/GATE3-FOUR-PAGE-WALKTHROUGH-1/`：`page-bookshelf/library/reader/settings/workbench.png` 两轮（10:13-10:14 与 10:18-10:19），`host.log` 含 `core_service ready` + `host_bridge ready` |
 | **阅读器 overlay（F11 全屏）视觉** | ✅ **已完成**（2026-11-17，3 份独立书面视觉裁定） | `verification/MAINT-1-RELEASE-MONITOR/condition3/`（6 张真实窗口截图）；裁定 `doc/reviews/MAINT-1-GATE-CONDITION-3-VISUAL-ADJUDICATION-2026-11-17.md`：`PARTIAL_PASS_FOR_OVERLAY_CHROME` / `PARTIAL_PASS_PLUS_BOTTOM_BAND` / `CONTENT_RENDERING_COVERED`；历史失败路径 `verification/GATE3-READER-OVERLAY-1/`（PostMessage 无效）与 `READER-ENTRY-PATH-1` 保留原样 |
 
-### 剩余动作
+### 剩余动作（2026-11-17：已完成）
 
-在真实窗口里按一次 `F11`，看沉浸阅读器的**全屏/无边框视觉**是否正常。
+~~在真实窗口里按一次 `F11`，看沉浸阅读器的**全屏/无边框视觉**是否正常。~~ **已完成** —— 见本节末「2026-11-17 更正说明」与 `verification/MAINT-1-RELEASE-MONITOR/condition3/`。
 （`READER-ENTRY-PATH-1` 已证明：`F11HotkeyTests` 9 + `V2ImmersiveReaderTests` 4 驱动的是生产
 public 方法 `TryHandleGlobalKey`，逻辑已验证，只差肉眼确认渲染。）
 
 ### 归属
 
-**需人眼** → `H-02`（真机多屏）相邻项；建议新增/复用为「按一次 F11 并截图」的独立最小步骤。
+**归属（2026-11-17 更新）**：原判「需人眼」；现按 Codex Q3 的委托路径由 **3 份独立书面视觉裁定**关闭。若用户要求人眼复核，直接重看同一组 6 张截图即可，**无需重新取证**。
 
 > **2026-11-17 更正说明**：条件 3 的「阅读器 overlay 视觉」已按 Codex 裁定 Q3 的**委托书面视觉裁定**路径关闭 ——
 > 用发布产物（`NewManga.App.exe` sha256 `a3ec2133…f739230`）在真实桌面会话（Win10 2009 build 26300 / 2560×1440 / 96 dpi）

@@ -27,6 +27,7 @@ allowed_paths:
   - doc/STATUS.md
   - doc/TASK_LEDGER.md
   - verification/READER-F11-STYLE-SCOPE-1/**
+  - apps/desktop-avalonia/src/NewManga.App/Shell/V2/ImmersiveReaderWindow.cs
 ---
 
 # READER-F11-STYLE-SCOPE-1：F11 沉浸阅读窗丢失 shell 局部样式
@@ -44,7 +45,7 @@ allowed_paths:
 
 ## Acceptance Criteria
 
-- [ ] **AC1 现状取证**：定位 `V2LocalStyles` 的引入点与 `ImmersiveReaderWindow` 的构造路径（给文件:行号），确认样式缺失的机制。
+- [ ] **AC1 现状取证**：`V2LocalStyles.axaml` 仅被 `AppShellV2.axaml:16` 与 `ThemeStudioView.axaml:19` 引入；`ImmersiveReaderWindow` 由 `App.axaml.cs` 的 `WireImmersiveReader` 在代码里构造（无 XAML StyleInclude）⇒ `Border.topband` / `Border.statusband` / `Button.chip.on` 规则（`V2LocalStyles.axaml:53/58/110/118`）在沉浸窗不生效。 <<PARTIAL: 机制已定位，待判定是否有意设计>>
 - [ ] **AC2 设计判断**：判定「沉浸态顶/底带应为画布色、chip 不带高亮」是**有意设计**还是**缺陷**；若有意，须给出书面依据（设计契约/PR）；若缺陷，进入 AC3。
 - [ ] **AC3 修复（若为缺陷）**：让沉浸窗获得与主窗口一致的局部样式作用域；**不得**改公共样式契约或改其他页面的视觉。
 - [ ] **AC4 回归**：同一页同一状态下重截 F11 与主窗口内阅读器，断言外壳一致（或按 AC2 的设计依据断言差异是预期的）；旧截图与新截图并排入证据。
