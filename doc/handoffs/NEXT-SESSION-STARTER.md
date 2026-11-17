@@ -3,7 +3,7 @@
 - 生成时间：2026-11-18 02:55 (+08:00)（本版为 **R29** 之后更新 —— 用户裁决不需签名，条件 4 矩阵 AC1–AC6 全部跑通）
 - 生成者：DSH（lead）
 - **一页纸现状（2 分钟读完）**：doc/handoffs/STATE-OF-PROJECT-2026-11-18.md（本文件 130 KB，按轮次累积，别当摘要读）
-- **当前 head：见 git**；R18–R30 见 §3r–§3ac（最新：**条件 4 已 `closed_with_limitations`**，两轮独立复核 P1 全关）
+- **当前 head：`c953747bd`**（main）；R18–R30 见 §3r–§3ac（最新：**条件 4 已 `closed_with_limitations`**，两轮独立复核 P1 全关）
 - 工作区：干净（`git status --porcelain` 为空）
 - **R1**：`9ce819ae7` → `dd029b73f`（7 commit，目标 A/B/D 达成）
 - **R2**：`dd029b73f` → `5f2664c2e`（8 commit）—— 目标 C 闭合 10 条
@@ -1430,6 +1430,37 @@ AC1 去掉证书身份；**AC3–AC6 不变**；`INSTALLER-MATRIX-1` 的 `L-IM-3
 ### 6) 待办
 - `reviewer-g4` 正在独立复核矩阵证据；结论回来前**不宣布条件 4 关闭**。
 - 复核通过后：条件 4 可关闭 → Release Gate 只剩条件 5 的 `LIMITATION_ACCEPTED`（已按裁定登记）与条件 2 后半的**人的决定**。
+
+---
+## 3ac. R30 —— 条件 4 关闭为 `closed_with_limitations`（两轮独立复核，P1 全关）
+
+### 结果一句话
+用户裁决「不需要证书」后，条件 4 的矩阵（AC1–AC7）在本机跑完；`reviewer-g4` 两轮独立复核，
+首轮 `ACCEPTED_WITH_FINDINGS`（P0=0 / P1=2），复检**两条 P1 都 CLOSED** 且明确「可以 `closed_with_limitations`」；已据此关闭。
+
+### 提交链（均已 push、0 0）
+`5469952f6`（AC1–AC4）→ `12bb456fa`（AC5/AC6 首版）→ `612adbac2`（CE 登记）→ `d582946eb`（STARTER）
+→ `bf7859965`（P1 处置：真实 AC5 + Start Menu 证据 + limitation + Gate 更正）→ `dc1caccbb`（EV-G4-11/12）
+→ `267800abc`（AC5 日志 ExitCode 措辞更正 + 六条条件文档更正）→ `28e0ef6b3`（**关闭卡**）
+→ `103d1a57f`（CE 表重建重钉 + 三指针）→ `c953747bd`（closed 计数 13→14）
+
+### 1) 两轮复核的关键 finding 与我方处置
+| 项 | 复核发现 | 处置 |
+|---|---|---|
+| P1-01 | 我的「0.1.0」是同源重构包，app 仍自报 0.1.1.0 ⇒ 只验证了安装器级回退 | 改用**真实历史 0.1.0 包**（`1d573ab4…`，app exe 99,554,850 B / `a3ec2133…`，构建自旧提交 `71cecb95`）重跑：`a3ec2133 → c2bf9265 → a3ec2133`，**真实跨版本** |
+| P1-02 | AC3 日志「Start Menu 项: 0」与卡面两个 `.lnk` 矛盾 | 根因是过滤串 `*NewManga*` 漏空格；补 `New Manga.lnk` 2,304 B + `卸载 New Manga.lnk` 1,279 B（含 sha256）到 AC5 重做日志，AC3 日志**追加**更正（原字节保留） |
+| 复检 caveat② | AC5 声称「五次 ExitCode=0」但第 5 次没打印 | 追加更正：只主张前四次 ExitCode=0，第五次以**可观测收尾状态**为准（0 文件、无卸载项、无 Start Menu） |
+| P2-07 | 六条条件文档仍写条件 4 缺「真实证书」 | 追加 2026-11-18 更正段（不改原行） |
+
+### 2) 卡面最终状态
+`closed_with_limitations`；AC1–AC7 全 `<<MET>>`；**12 条 Canonical Evidence**（重钉到 `28e0ef6b3`）；
+Resource Manifest 6 行；**8 条 limitation**（单机无 VM 快照 / 既有数据根 / 只覆盖 0.1.0↔0.1.1 且 app 自报版本是包级标签 /
+升级后未启动 app 读数据 / 未签名 / AC4 用隔离数据根 / AC6 未写明卸载的是 0.1.0 / dataroot-before.json 是 AC1 基线与 Start Menu 等价证据）。
+
+### 3) 现状
+- `Technical Gate = NOT_SATISFIED`（未变）；`Release Gate = BLOCKED`（条件 4 关闭不解除 Gate）。
+- 剩余：条件 5 `LIMITATION_ACCEPTED`、条件 2 后半（**人的一个决定**）。
+- 测试机：**无安装**（AC5 收尾卸载）；真实用户数据根未被触碰（530 文件 / 684,197,540 B）。
 
 ---
 ## 4. 关键技术事实（R1/R2 累积）
