@@ -1,53 +1,56 @@
 # 条件 3 · F11 真实窗口截图证据（2026-11-17，DSH）
 
+> **2026-11-17 更正**：本文件初版对「右下翻页控件」「四角布局」「空态文案」的描述**与像素不符**，
+> 已按独立视觉裁定 `doc/reviews/MAINT-1-GATE-CONDITION-3-VISUAL-ADJUDICATION-2026-11-17.md` 的 D1–D6 逐条更正。
+> 以本版为准。
+
 ## 这次做了什么
 
-用 **INSTALLER-MATRIX-1 的发布产物**（stage 里的 `NewManga.App.exe`，99,554,850 B）在**真实桌面会话**上启动应用，
-数据根指向 `BOOK-FIXTURE-1/isolated-data` 的副本（隔离，不碰真实 `%APPDATA%`），然后：
-1. 等 Host 就绪（20 s）→ 截书架页；
-2. 发送 `{F11}` → 截沉浸阅读器。
+用 **INSTALLER-MATRIX-1 的发布产物**（stage 内 `NewManga.App.exe`，sha256 `a3ec2133b5da3f619b752c818371ba54867b4c150fdba65b8c22d8b17f739230`，99,554,850 B）
+在**真实桌面会话**启动（`NEWMANGA`/`--data-root` 指向 `BOOK-FIXTURE-1/isolated-data` 的副本，隔离、不碰真实 `%APPDATA%`），
+等 Host 就绪后截图书架页，再发送 `{F11}` 截沉浸阅读器。
 
-## 命令与环境（可复现）
-
-```powershell
-$stage = 'G:\CODEX\New Manga.workspace\task-envs\INSTALLER-MATRIX-1\stage\NewManga-0.1.1-win-x64\app'
-$exe   = Join-Path $stage 'NewManga.App.exe'
-# 数据根 = BOOK-FIXTURE-1/isolated-data 的副本；日志根独立
-$args  = '--data-root "<copy>" --log-dir "<out>\logs"'
-Start-Process -FilePath $exe -ArgumentList $args -WorkingDirectory $stage
-# 窗口显示后：ShowWindow(SW_MAXIMIZE) → SetForegroundWindow → 等 20 s
-# 截图：GetWindowRect + Graphics.CopyFromScreen → PNG
-# 然后 SendKeys '{F11}' → 等 5 s → 再截一张
-```
-
-- 会话：`query session` 显示 session 1 **Active**，`explorer` 1 个，`[Environment]::UserInteractive=True`。
-- 窗口：`-8,-8 2576x1408`（最大化；分辨率 2576×1408，任务栏外）。
-- 应用退出后无残留进程（脚本核对过）。
+- 环境：`query session` → session 1 **Active**；`explorer` 1 个；`[Environment]::UserInteractive=True`。
+- 显示：PrimaryScreen **2560×1440**，工作区 **2560×1392**（**48 px 任务栏**，**100% 缩放**）。
+- 截图矩形：`GetWindowRect` = `(-8, -8, 2576×1408)`（最大化窗口含 8 px 不可见边框）。
+  ⇒ 图像里上/左各 8 px 黑带、右缘 8 px 桌面像素，**都是截取矩形的几何产物，不是应用边框或阅读器黑边**。
 
 ## 证据文件
 
 | 文件 | sha256 | 内容 |
 |---|---|---|
-| `c3-01-library.png` | `c96f2c9ab1c073f9e1e47cbd6196143fa1b659e08cd600348a36a082801c6f1b` | 书架页：`书架 1/1 作品`、书卡 `BOOK-FIXTURE-1 日漫 JA 测试书`、右侧章节/页列表 `001…008`（`ja_Pepper-and-Carrot_by-David-Revoy…`）、状态栏 **Host 就绪** |
-| `c3-02-f11-immersive-empty.png` | `108258b9ea37a9f3b752ba77766221b14a8b6fe61305c424ca746bb685829e76` | **F11 沉浸阅读器**：无窗口边框/无标题栏；左上 `返回 (Esc)`、`阅读`；右上 `分页`、`Webtoon 纵向`、`RTL`；右下翻页控件点；中央空态提示「页面不可用：Host 资源通道未输入该页没有图像（不伪造图片）」 |
-| `c3-startup.log` / `c3-host.log` / `c3-core_service.stderr.log` | — | 同一次运行的启动/Host/Core stderr 日志 |
+| `c3-01-library.png` | `c96f2c9ab1c073f9e1e47cbd6196143fa1b659e08cd600348a36a082801c6f1b` | 书架页：`书架 1/1 作品`、书卡 `BOOK-FIXTURE-1 日漫 JA 测试书`、右侧页列表 `001…008`、状态栏 **Host 就绪** |
+| `c3-02-f11-immersive-empty.png` | `108258b9ea37a9f3b752ba77766221b14a8b6fe61305c424ca746bb685829e76` | **F11 沉浸阅读器**（见下「实测像素事实」） |
+| `c3-startup.log` / `c3-host.log` / `c3-core_service.stderr.log` | — | 同一次运行的启动 / Host / Core stderr 日志 |
+
+## 实测像素事实（替代初版的描述）
+
+- **全屏 / 无窗口边框（通过）**：书架图里的 `New Manga` 标题栏、页签/工具带、`─ ☐ ✕` 在 F11 图**全部消失**；
+  同一 `y=1400–1407` 带在书架图是**任务栏**、在 F11 图是**画布** ⇒ 任务栏被全屏窗口覆盖（正证据）。
+- **顶部带控件（通过）**：`返回 (Esc)` x25–83、`阅读` x109–132（**这是 overlay 的 Title 文本，不是控件**）、
+  `分页` x2347–2398、`Webtoon 纵向` x2403–2516、`RTL` x2530–2550；右侧余 17 px，**未越界**。
+- **底部状态带（不覆盖）**：图像 `y≥1330` 的内容像素为 **0** —— 源码里的翻页/进度是**底部整条状态带**
+  （`ReaderOverlay.axaml:100-121`：`上一页`/`下一页`/进度条/保存状态），而本次截取矩形止于屏幕 `y=1399`，
+  该带落在**未被截取到的窗口底缘**。⇒ **初版写的「右下翻页控件点」在图上没有像素支持，已删除该说法。**
+- **裁切与遮挡（通过）**：画布 `#F4F3F0` 占 **98.939%**；非背景像素仅 **4,936 px（0.138%）**；无黑边、无遮罩、无整幅浮层遮挡。
+- **可读性（通过）**：1:1 原生像素（ClearType 彩边可证未缩放）；CJK 字形 11–12 px ⇒ 字号约 13–14 px；对比度约 **15:1**。
+  **可辨但字号偏小。**
+- **空态文案（逐字，与源码/二进制一致）**：`▲ 阻塞` / `页图不可用：Host 资源通道未接入或该页没有图像（不伪造图片）` / `—`
+  （初版写成「页面不可用…未输入该页」，**已按实拍更正**）。
 
 ## 能证明什么 / 不能证明什么
 
-**能证明**：
-- 发布产物能在真实 Windows 桌面会话启动并到 **Host 就绪**；
-- **F11 会把阅读器切到全屏沉浸 overlay**：没有窗口边框/标题栏，控件贴在四角（左上返回/阅读、右上模式、右下翻页），
-  阅读区铺满 2576×1408，**没有裁切**、没有遮挡整幅的浮层；
-- 空数据时给出**诚实的空态提示**，不伪造图片。
+**能证明**：发布产物可在真实桌面会话启动到 Host 就绪；F11 进入**全屏无边框**沉浸 overlay；**顶部带**控件完整可见、未越界；
+画面无黑边/无遮挡；空数据时给出**诚实的空态**、不伪造图片。
 
-**不能证明**（如实登记，不得用这份证据冒充）：
-- **没有页面图像**：本次未选中具体页（脚本的双击未命中书架卡片，截图字节未变可证），
-  因此**阅读内容区的渲染质量、分页/Webtoon 两种模式的布局、缩放与裁切**都**未覆盖**；
-- 未覆盖 IME、题注/气泡、SFX 等 overlay 次级功能；
-- 这是一次**单机单次**观察，不是矩阵。
+**不能证明（不得用本证据冒充）**：
+1. **底部状态带**（`上一页`/`下一页`/进度/保存状态）—— 未被截取，需按**全屏窗口矩形**重截（含窗口底缘）；
+2. **内容渲染** —— 本次未选中任何页面，页面图像、分页 vs Webtoon 排版、缩放与内容裁切**零证据**；
+3. 窗口与物理屏边界的严格重合（截图止于 `y=1399`）；
+4. IME、气泡/题注、SFX 等 overlay 次级功能；
+5. 单机单次观察，**不是矩阵**。
 
 ## 结论
 
-条件 3 的状态从 `AGENT_ADJUDICATION_PENDING`（无任何真实窗口证据）推进为
-**`PARTIAL_WINDOW_EVIDENCE`**：overlay 的**全屏/无边框/控件布局**已有真实截图可裁定；
-**内容渲染**仍缺「选中页面后的 F11 截图」，仍不是 MET。
+条件 3 仍**不是 MET**。当前状态：`PARTIAL_WINDOW_EVIDENCE` —— overlay 的**全屏/顶部带/无遮挡/可读性**已有真实截图与书面裁定；
+**底部状态带与内容渲染仍缺**。下一步取证：① 用全屏窗口矩形重截（含底缘）；② 选中页面后按 F11 再截。
