@@ -1,0 +1,19 @@
+2026-11-17T10:43:27.020Z INFO startup-diagnostics: sink v1 installed (G:\CODEX\New Manga.workspace\tmp\r20\f11c\logs\startup.log)
+2026-11-17T10:43:27.024Z INFO startup-diagnostics: isolation log-dir=G:\CODEX\New Manga.workspace\tmp\r20\f11c\logs appdata=C:\Users\49745\AppData\Roaming cwd=G:\CODEX\New Manga.workspace\task-envs\INSTALLER-MATRIX-1\stage\NewManga-0.1.1-win-x64\app
+2026-11-17T10:43:27.054Z INFO startup: shell=Default requested=builtin.current-v2 effective=builtin.current-v2 fallback=True
+2026-11-17T10:43:27.054Z INFO startup: theme.frontendId 'builtin.current-v2' (persisted appearance settings) selects the Current V2 shell
+2026-11-17T10:43:27.054Z INFO startup: appearance: legacy 'reducedMotion' migrated to 'motion.mode'
+2026-11-17T10:43:27.054Z INFO startup: appearance: legacy theme-settings.json migrated into presentation-settings.json
+2026-11-17T10:43:27.054Z INFO startup: startup fallback: appearance document fell back field-by-field; starting 'builtin.current-v2' (fail-safe)
+2026-11-17T10:43:27.054Z WARN startup fell back to the Current V2 shell: builtin.current-v2
+[Binding]An error occurred binding 'Source' to 'CurrentPage.Image' at 'CurrentPage': 'Value is null.' (Image #7338273)
+[Binding]An error occurred binding 'IsEnabled' to 'IsEnabled' at 'IsEnabled': 'Could not find a matching property accessor for 'IsEnabled' on 'NewManga.App.ViewModels.V2.Studio.StudioPageViewModel'.' (Button #53027730)
+[Binding]An error occurred binding 'IsEnabled' to 'IsEnabled' at 'IsEnabled': 'Could not find a matching property accessor for 'IsEnabled' on 'NewManga.App.ViewModels.V2.Studio.StudioPageViewModel'.' (Button #18271853)
+[Binding]An error occurred binding 'IsEnabled' to 'IsEnabled' at 'IsEnabled': 'Could not find a matching property accessor for 'IsEnabled' on 'NewManga.App.ViewModels.V2.Studio.StudioPageViewModel'.' (Button #36207505)
+[Binding]An error occurred binding 'IsEnabled' to 'IsEnabled' at 'IsEnabled': 'Could not find a matching property accessor for 'IsEnabled' on 'NewManga.App.ViewModels.V2.Studio.StudioPageViewModel'.' (Button #935526)
+[Binding]An error occurred binding 'IsEnabled' to 'IsEnabled' at 'IsEnabled': 'Could not find a matching property accessor for 'IsEnabled' on 'NewManga.App.ViewModels.V2.Studio.StudioPageViewModel'.' (Button #12161847)
+[Binding]An error occurred binding 'IsEnabled' to 'IsEnabled' at 'IsEnabled': 'Could not find a matching property accessor for 'IsEnabled' on 'NewManga.App.ViewModels.V2.Studio.StudioPageViewModel'.' (Button #23886295)
+[Binding]An error occurred binding 'IsEnabled' to 'IsEnabled' at 'IsEnabled': 'Could not find a matching property accessor for 'IsEnabled' on 'NewManga.App.ViewModels.V2.Studio.StudioPageViewModel'.' (Button #42086386)
+[Binding]An error occurred binding 'IsEnabled' to 'IsEnabled' at 'IsEnabled': 'Could not find a matching property accessor for 'IsEnabled' on 'NewManga.App.ViewModels.V2.Studio.StudioPageViewModel'.' (Button #10252118)
+[Binding]An error occurred binding 'Text' to 'ActiveTabLabel' at 'ActiveTabLabel': 'Could not find a matching property accessor for 'ActiveTabLabel' on 'NewManga.App.ViewModels.V2.Studio.StudioPageViewModel'.' (TextBlock #29522533)
+[Binding]An error occurred binding 'Source' to 'CurrentPage.Image' at 'CurrentPage': 'Value is null.' (Image #41031927)

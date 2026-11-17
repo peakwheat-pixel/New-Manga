@@ -424,7 +424,7 @@ NEW-MANGA-V1-FULL-AUDIT 与 R1–R4 整改、SEC-01/02/03、CORE-01、AUDIT-07/0
 
 | 条件 | 当前处置 | 下一步（Agent 可推进） | 不可代理的部分 |
 |---|---|---|---|
-| **3｜阅读器 overlay 视觉** | **`AGENT_ADJUDICATION_PENDING`** —— 接受「委托书面视觉裁定」路径，但纯 headless 渲染/截图存在/像素 diff 单独都不够；当前**没有 F11 真实窗口截图**证据 | 在真实窗口触发 F11 取原始截图（记录 exe hash、Windows 版本、分辨率、DPI、操作步骤），交独立 Codex 新上下文或 ZCode 出**具名书面视觉裁定**（全屏/无边框、遮挡、裁切、可读性） | 真实窗口截图必须来自安装/运行产物；不得用 headless 冒充 |
+| **3｜阅读器 overlay 视觉** | **`PARTIAL_WINDOW_EVIDENCE`**（2026-11-17 推进）—— 已用发布产物在真实桌面会话抓到 **F11 全屏沉浸 overlay 截图** 与书架截图：证据 `verification/MAINT-1-RELEASE-MONITOR/condition3/`（`c3-01-library.png` / `c3-02-f11-immersive-empty.png`，sha256 见该目录 README）；**已可裁定**：全屏/无边框、控件四角布局、无裁切、无整幅遮挡；**仍缺**：选中页面后的 F11 截图（内容渲染/分页/Webtoon 布局/缩放未覆盖） | ① 交独立 Agent 对现有两张截图出**具名书面视觉裁定**；② 取得「选中页后的 F11 截图」后补做内容渲染裁定 | 真实窗口截图必须来自安装/运行产物；不得用 headless 冒充；不得因已有一张全屏截图就判条件 3 MET |
 | **4｜签名 + 安装矩阵** | `INSTALLER-MATRIX-1` 已 `closed_with_limitations`（旧 sidecar 机制验证；AC7 NOT_RUN；无签名）；真实签名与跨版本矩阵由 **`RELEASE-GATE4-SIGNED-MATRIX-1`（proposed）** 承接 | 取得 Authenticode 证书与干净 Windows 环境后释放该卡；否则停在 AC1 并登记 `NOT_RUN` | 真实证书凭据、真实 Windows 环境 |
 | **5｜人工 GT / 质量基线** | **`LIMITATION_ACCEPTED`** —— 按 Gate 原文允许的替代分支登记：**没有代表性质量基线，不宣称翻译/识别准确率达标**；实测基线仍 `NOT_RUN` | 若将来取得独立人工标注数据，须核代表性/来源/许可与固定哈希后再复评 | 独立人工 GT 数据本身 |
 
