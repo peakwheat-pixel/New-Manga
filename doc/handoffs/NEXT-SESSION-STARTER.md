@@ -2,7 +2,7 @@
 
 - 生成时间：2026-11-17 20:25 (+08:00)（本版为 **R22** 之后更新 —— 条件 3 关闭 + F11 样式修复）
 - 生成者：DSH（lead）
-- **当前 head：`1a026a13f`**（main）；R18–R26 见 §3r–§3z（最新：向导实拍 + 许可页编码修复）
+- **当前 head：`f475ea155`**（main）；R18–R27 见 §3r–§3aa（最新：许可收紧为 GPL-3.0-or-later + 条件 4 取证清单）
 - 工作区：干净（`git status --porcelain` 为空）
 - **R1**：`9ce819ae7` → `dd029b73f`（7 commit，目标 A/B/D 达成）
 - **R2**：`dd029b73f` → `5f2664c2e`（8 commit）—— 目标 C 闭合 10 条
@@ -1342,6 +1342,49 @@ NEXT: 先在 THIRD_PARTY_LICENSES.md 把三项权重「[待核实]」核实落�
 ### 5) 非终态卡（2 张）
 - `MAINT-1-RELEASE-MONITOR`（in_progress）
 - `RELEASE-GATE4-SIGNED-MATRIX-1`（proposed；现有**合规且向导文案正确**的 models 包可作矩阵输入，但仍需真证书）
+
+---
+## 3aa. R27（自动推进轮）—— 许可收紧为 GPL-3.0-or-later（ZCode TIGHTEN_TO_GPL，已执行并重打包）
+
+### 结果一句话
+查清了「整包 AGPL」的**唯一事实源已经不在包里**（yolo11s-seg 已移出），三项现役权重**上游均声明 Apache-2.0**（本地 ONNX 无许可元数据、不可自证）；
+ZCode 出 `TIGHTEN_TO_GPL` 裁定，DSH 执行到底：两变体**都改回 GPL-3.0-or-later**、新增并随包 `LICENSE-Apache-2.0.txt`、重打包、重实拍、六份许可文件逐字节核验。
+
+### 提交链（main，均已 push、0 0）
+`49d1486b1`（收紧全量 + 裁定落盘 + 条件 4 清单）→ `f475ea155`（卡面七条 CE 登记）。
+
+### 1) 裁定与证据链
+- 本地实测：3 个 ONNX **无可读许可元数据**（关键词命中全是二进制噪声）⇒ `THIRD_PARTY_LICENSES.md` 的「待核实」在本地**不可消除**（`ac1-onnx-metadata-probe.log`）。
+- 上游声明（只记录、不做法律认定）：manga-ocr（HF 模型卡 `license: apache-2.0`、nixpkgs `asl20`）、RT-DETR（百度 AI Studio、HF `PekingU/rtdetr_r50vd`、Roboflow、Kornia 文档）
+  ⇒ 全部登记在 `verification/WEIGHTS-LICENSE-PROVENANCE-1/weights-licenses.json`（URL + 抓取日期 + 引文）。
+- ZCode 第三次调用：**TIGHTEN_TO_GPL**（全文与采纳记录追加到 `doc/reviews/ZCODE-RULING-INSTALLER-LICENSE-2026-11-17.md` 末节）。
+
+### 2) 执行（不是只登记）
+| 文件 | 改动 |
+|---|---|
+| `package.ps1` | `$licenseDeclaration` **恒为 `GPL-3.0-or-later`**；`$lic` 清单加 `LICENSE-Apache-2.0.txt`；`bundled_weights_license` 按实际文件写「Apache-2.0 upstream declaration…（本仓库不做法律认定）」 |
+| `build-installer.ps1` | 硬校验**反转**：含 ONNX 时必须 ①license=GPL-3.0-or-later ②该权重行不含「待核实」且含 Apache-2.0 ③stage 内有 Apache 全文，否则 throw |
+| `NOTICE.md` | 变体表 models → GPL-3.0-or-later；结论段重写；开头「两变体许可**相同**」；许可清单五件套 |
+| `THIRD_PARTY_LICENSES.md` §3 | 三行「待核实」→「上游声明 Apache-2.0（来源+日期）」；结论段重写；**保留 yolo11s 的 AGPL 依据段作为防回归** |
+| `LICENSE_AUDIT.md` | 变体表/§3/更正记录同步 |
+| `LICENSE-Apache-2.0.txt` | **新增**（10,174 B，sha256 `0d542e0c…`），随包 |
+| `installer.nsi` | 许可页文件清单加 `LICENSE-Apache-2.0.txt` |
+
+### 3) 重打包与实测
+- models 变体：`license=GPL-3.0-or-later`、3 onnx / 632,552,582 B、`models_dir_bytes=632,662,260`、`app_build` 有值；护栏 **EXIT=0**。
+- 新 `setup.exe` **652,037,404 B / sha256 `6f9a45f32ea3450efcfb565fe83db25ee98ed6345934c2c183f86c9208283f08`**；
+  从 exe 抽出**六份**许可文件与仓库逐字节 **SAME=True**；向导欢迎页「models 变体（含模型权重，按 **GPL-3.0-or-later** 分发）」、许可页正文中文正常且清单含 Apache 副本。
+
+### 4) 踩坑（重要）
+- 第一次实拍用的脚本路径仍指向**旧 exe**（r25），截出来的欢迎页还写着 AGPL —— **差点又犯"用错产物"的错**。已改为显式核对脚本里的 exe 路径后再截。
+- 许可页/`NOTICE.md` 又冒出两处与新结论矛盾：文件清单漏 `LICENSE-Apache-2.0.txt`、NOTICE 开头仍说「两变体许可**不同**」→ 都已修并**再重打包一次**。
+
+### 5) 同时产出
+`doc/reviews/RELEASE-GATE4-EXECUTION-CHECKLIST-2026-11-17.md` —— 拿到真实证书后可直接照做的条件 4 取证清单（S1 签名 → S2 干净安装 → S3 四页可达 → S4 升级/回退 → S5 卸载与数据保护 → S6 不虚报），含具体命令与证据路径。
+
+### 6) 非终态卡（2 张）
+- `MAINT-1-RELEASE-MONITOR`（in_progress）
+- `RELEASE-GATE4-SIGNED-MATRIX-1`（proposed；**唯一阻塞 = 真实证书**，其余前置已就绪）
 
 ---
 ## 4. 关键技术事实（R1/R2 累积）
