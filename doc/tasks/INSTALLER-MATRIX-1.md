@@ -3,21 +3,21 @@ id: INSTALLER-MATRIX-1
 title: 用旧 sidecar 跑通安装/卸载矩阵（条件 4 的机制验证）
 kind: evidence
 governance_version: 3
-status: in_progress
+status: closed_with_limitations
 disposition: "Gate 条件 4：setup.exe + clean install + 启动 + 卸载 + 用户数据根保护。AC1–AC6 已有实测证据（见 verification/INSTALLER-MATRIX-1/README.md）；AC7 四页可达性仍 NOT_RUN。"
 approval: DSH 2026-11-15（makensis 已具备；sidecar 沿用 2026-10-23 版并标注 E-2）
 suggested_owner: DSH
 owner: DSH
-reviewer: null
+reviewer: reviewer-inst（DSH 子 agent，独立上下文，未参与实现；2026-11-17 收口复核）
 depends_on:
   - RELEASE-PACKAGE-PROBE-1
 base_commit: fe7da5d92
 branch: main
 worktree: G:/CODEX/New Manga
 integration_commit: null
-delivery_head: null
-canonical_evidence_status: pending
-resource_closeout_status: pending
+delivery_head: 998e04ae4
+canonical_evidence_status: complete
+resource_closeout_status: complete
 evidence_dir: verification/INSTALLER-MATRIX-1
 allowed_paths:
   - doc/tasks/INSTALLER-MATRIX-1.md
@@ -74,22 +74,22 @@ allowed_paths:
 
 ## Acceptance Criteria
 
-- [x] **AC1 stage 就绪**：以 `AGPL-RELEASE-1` 的 stage 为**结构模板**构建新 stage：
+- [x] **AC1 stage 就绪**：以 `AGPL-RELEASE-1` 的 stage 为**结构模板**构建新 stage： <<MET>>
       `app/NewManga.App.exe` = 当前 head 的 publish 产物（sha256 记录）；
       `app/core-sidecar` = `apps/desktop-avalonia/build/sidecar/core-sidecar/core-sidecar`；
       许可/NOTICE 文件齐全。
-- [x] **AC2 VERSION.json 真实**：`sidecar_build.core_service_sha256`/`core_service_bytes`/
+- [x] **AC2 VERSION.json 真实**：`sidecar_build.core_service_sha256`/`core_service_bytes`/ <<MET>>
       `core_service_built_at_utc`/`repo_head` 必须与**实际使用的** sidecar 与 head 一致；
       `app` 的 exe sha256/尺寸同样记录。**不得照抄模板旧值**。
-- [x] **AC3 setup.exe**：`build-installer.ps1` 产出 `NewManga-<ver>-setup.exe`，记录尺寸与 sha256、NSIS 日志。
-- [x] **AC4 clean install**：`/S` 静默安装 → 程序出现在 `%LOCALAPPDATA%\Programs\NewManga`，
+- [x] **AC3 setup.exe**：`build-installer.ps1` 产出 `NewManga-<ver>-setup.exe`，记录尺寸与 sha256、NSIS 日志。 <<MET>>
+- [x] **AC4 clean install**：`/S` 静默安装 → 程序出现在 `%LOCALAPPDATA%\Programs\NewManga`， <<MET>>
       HKCU 卸载项存在，Start Menu 快捷方式存在（若 `.nsi` 声明）。
-- [x] **AC5 安装后启动**：运行**安装目录里的** exe，断言窗口出现且 Host 就绪（用与 publish 冒烟相同的判据）。
-- [x] **AC6 卸载**：静默卸载 → 程序目录与 HKCU 项被清理；
+- [x] **AC5 安装后启动**：运行**安装目录里的** exe，断言窗口出现且 Host 就绪（用与 publish 冒烟相同的判据）。 <<MET>>
+- [x] **AC6 卸载**：静默卸载 → 程序目录与 HKCU 项被清理； <<MET>>
       **`%APPDATA%\com.newmanga.desktop` 用户数据根未被触碰**（安装前后记录其文件清单+哈希对比）。
-- [ ] **AC7 四页可达性（打包产物上）**：至少用截图证明四个一级页面（书架/工作台/阅读器/设置）可从安装产物到达；
+- [ ] **AC7 四页可达性（打包产物上）**：至少用截图证明四个一级页面（书架/工作台/阅读器/设置）可从安装产物到达； <<PARTIAL: 未在打包产物上逐页导航（NOT_RUN）；不以 headless 结果冒充；见 §限制 L-IM-2>>
       若做不到（例如需要真实交互），**如实标 NOT_RUN** 并说明原因，不得用 headless 结果冒充。
-- [ ] **AC8 不虚报**：产物与安装全部在 workspace / `%LOCALAPPDATA%`，**不提交二进制**；
+- [x] **AC8 不虚报**：产物与安装全部在 workspace / `%LOCALAPPDATA%`，**不提交二进制**； <<MET>>
       不得声称条件 4 满足（sidecar 仍旧、无签名）。
 
 ## 允许修改范围
@@ -132,18 +132,34 @@ allowed_paths:
 
 | evidence_id | AC/Gate | path（仓库相对路径或绝对路径） | commit | sha256 | class (`CANONICAL` / `SOURCE_PIN`) | sha256_basis |
 |---|---|---|---|---|---|---|
+| EV-IM-01 | AC1–AC6 / 证据 | verification/INSTALLER-MATRIX-1/build-info.republished.json | 998e04ae4 | 6dac2fcc0df77ac546ccdd8fc8b3b4acf3a58d0ecc98a825edad23555b045ac5 | CANONICAL | BLOB |
+| EV-IM-02 | AC1–AC6 / 证据 | verification/INSTALLER-MATRIX-1/host.log.republished-run | 998e04ae4 | 277829807d0533fcd77b4570d90e0aea092e9944a80264105e410781937ad30b | SOURCE_PIN | BLOB |
+| EV-IM-03 | AC1–AC6 / 证据 | verification/INSTALLER-MATRIX-1/publish-head/build-singlefile.log | 998e04ae4 | ab0e416da6a80b117ee3ac68433d0fa26452fcd487217034a4af08e02c454f68 | SOURCE_PIN | BLOB |
+| EV-IM-04 | AC1–AC6 / 证据 | verification/INSTALLER-MATRIX-1/publish-head/manifest-singlefile.json | 998e04ae4 | 90b8897aeec19c6fe79edb19aefaebc90a6b5c56138469262591db357d898116 | SOURCE_PIN | BLOB |
+| EV-IM-05 | AC1–AC6 / 证据 | verification/INSTALLER-MATRIX-1/publish-head/manifest-summary.json | 998e04ae4 | 2de165cc16675a633382c009535b160ae3aa9f27824a60d95b2f2712877088ef | SOURCE_PIN | BLOB |
+| EV-IM-06 | AC1–AC6 / 证据 | verification/INSTALLER-MATRIX-1/publish-head/published-singlefile.png | 998e04ae4 | 149f79fca4832de8fa6c5422694de7278fdb248319f0aae637762f1a50bedb22 | SOURCE_PIN | BLOB |
+| EV-IM-07 | AC1–AC6 / 证据 | verification/INSTALLER-MATRIX-1/publish-head/smoke-singlefile.json | 998e04ae4 | 8cd0ab1f78d94661a92152600af2d41ee6a95510db9d8950ffbafbebfadea636 | SOURCE_PIN | BLOB |
+| EV-IM-08 | AC1–AC6 / 证据 | verification/INSTALLER-MATRIX-1/publish-manifest.republished.json | 998e04ae4 | 90b8897aeec19c6fe79edb19aefaebc90a6b5c56138469262591db357d898116 | SOURCE_PIN | BLOB |
+| EV-IM-09 | AC1–AC6 / 证据 | verification/INSTALLER-MATRIX-1/README.md | 998e04ae4 | f80bdcd4ef837ec3c7815594b5531b97af8dd05286a479cb0678945923ef27ef | CANONICAL | BLOB |
+| EV-IM-10 | AC1–AC6 / 证据 | verification/INSTALLER-MATRIX-1/startup.log.republished-run | 998e04ae4 | d391ca4e76bebb0c260c32c60311491262cbd3fafcf653d9f9d89b10cdc4d5e3 | SOURCE_PIN | BLOB |
 
 ## Resource Manifest
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| artifact | G:/CODEX/New Manga.workspace/task-envs/INSTALLER-MATRIX-1 | PRESERVE_REFERENCED | 同左 | 待填 | stage + setup.exe，不在仓库 |
+| artifact | G:/CODEX/New Manga.workspace/task-envs/INSTALLER-MATRIX-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/INSTALLER-MATRIX-1 | G:/CODEX/New Manga.workspace/task-envs/INSTALLER-MATRIX-1/RESOURCE-MANIFEST.json | 7 目录 / 1,068 文件 / 2,194,905,712 B（stage + setup.exe + smoke + out 系列）；manifest sha256 `c94feccb…`；产物全部在 workspace，未入仓；实测存在，未清理 |
 
-## Closeout Record
+## Closeout Record（2026-11-17，DSH 执行 Codex Q3 裁定）
 
-- Closeout date / DSH：待关闭时填写。
-- canonical_evidence_status：`pending`。
-- resource_closeout_status：`pending`。
-- 删除、迁移、归档数量/字节数：待关闭时填写；无操作填写 0。
-- 未关闭项及保留原因：待填。
-- 当前指针清理：待关闭时更新 STATUS / Plan / TASK_LEDGER / rolling checkpoint。
+- canonical_evidence_status：`complete`（10 行 BLOB，基准 `998e04ae4`）；resource_closeout_status：`complete`。
+- 删除、迁移、归档数量/字节数：**0**（全部产物原地位于 workspace）。
+- **收口依据**：`doc/reviews/CODEX-RULING-CORE-ENV2-FEA11-GATE-2026-11-17.md` Q3（条件 4 段）。本卡是**旧 sidecar 条件下的机制验证**卡，
+  AC1–AC6 已有实物证据（stage 848.15 MB / 1037 files；setup.exe 621.9 MB sha256 `0c041599…`；clean install / 启动 / 卸载全 exit 0；
+  用户数据根 532 文件清单 SHA-256 前后一致 `6ae4d6da…`）；**AC7 四页可达性仍 `NOT_RUN`**。
+- **限制清单**：
+  1. **L-IM-1｜旧 sidecar**：本卡全程使用 2026-10-23 的旧 sidecar（E-2 时代），不代表当前 sidecar 的行为。
+  2. **L-IM-2｜AC7 NOT_RUN**：未在打包产物上逐页导航四个一级页面；Gate 映射 Review 另称「安装产物四页 5/5」，**两者证据不一致，未对齐**（可能不是同一安装包/head），不得据此把本卡 AC7 改成 MET。
+  3. **L-IM-3｜无签名**：产物**没有 Authenticode 签名**，条件 4 的签名要求未满足。
+  4. **L-IM-4｜跨版本升级/回退未证明**：此前「回退」只改版本标签，完整跨版本矩阵未做。
+  5. **L-IM-5｜不宣称条件 4 通过**：本卡只是机制验证；完整签名 + 真实安装矩阵另立 `RELEASE-GATE4-SIGNED-MATRIX-1`（proposed）。
+- **边界**：`Technical Gate=NOT_SATISFIED` 不变；不得据此宣称条件 4 满足。

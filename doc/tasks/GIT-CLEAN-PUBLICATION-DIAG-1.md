@@ -3,11 +3,11 @@ id: GIT-CLEAN-PUBLICATION-DIAG-1
 title: 干净快照并发与沙箱证据诊断
 kind: research
 governance_version: 3
-status: approved
+status: closed_with_limitations
 approval: user_authorized_review_disposition_2026-10-24
 suggested_owner: Codex
 owner: Codex
-reviewer: DeepSeek Harness
+reviewer: reviewer-inst（DSH 子 agent，独立上下文，未参与实现；2026-11-17 收口复核）
 depends_on: []
 base_commit: e34a90d001cce1fa966aec7d2b032bb5ad1cf148
 branch: codex/git-clean-publication-diag-1
@@ -15,7 +15,7 @@ worktree: G:/CODEX/New Manga.workspace/task-envs/GIT-CLEAN-PUBLICATION-DIAG-1/so
 integration_commit: null
 delivery_head: fed1a9cf3295e5e05f7ffd363ac1075bd22e90b1
 canonical_evidence_status: complete
-resource_closeout_status: pending
+resource_closeout_status: complete
 evidence_dir: verification/GIT-CLEAN-PUBLICATION-DIAG-1
 allowed_paths:
   - verification/GIT-CLEAN-PUBLICATION-DIAG-1/**
@@ -124,10 +124,10 @@ allowed_paths:
 
 | resource_type | source_path | disposition | destination_path | sha256/manifest | reference/process check and result |
 |---|---|---|---|---|---|
-| task-env/artifact/build/temp | G:/CODEX/New Manga.workspace/task-envs/GIT-CLEAN-PUBLICATION-DIAG-1 | PRESERVE_REFERENCED | — | 待实际 manifest | 独立仓库，无远端；所有尝试保留 |
-| source/evidence | G:/CODEX/New Manga.workspace/task-envs/GIT-CLEAN-PUBLICATION-1 | PRESERVE_REFERENCED | — | 父 Task pins | 只读 r4/旧包/测试 DB；只追加 review-package-r2 |
-| user-material | 原仓私有素材 | PRESERVE_USER_DATA | — | 父 Task 禁止对象清单 | 不复制/上传/删除 |
-| exchange | — | NOT_APPLICABLE | — | — | 未派发 |
+| task-env/artifact/build/temp | G:/CODEX/New Manga.workspace/task-envs/GIT-CLEAN-PUBLICATION-DIAG-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/GIT-CLEAN-PUBLICATION-DIAG-1 | G:/CODEX/New Manga.workspace/task-envs/GIT-CLEAN-PUBLICATION-DIAG-1/RESOURCE-MANIFEST.json | 独立仓库（无远端）；13,101 文件 / 1,885,941,148 B；manifest sha256 529f835e…；所有尝试保留，未清理 |
+| source/evidence | G:/CODEX/New Manga.workspace/task-envs/GIT-CLEAN-PUBLICATION-1 | PRESERVE_REFERENCED | G:/CODEX/New Manga.workspace/task-envs/GIT-CLEAN-PUBLICATION-1 | G:/CODEX/New Manga.workspace/task-envs/GIT-CLEAN-PUBLICATION-DIAG-1/RESOURCE-MANIFEST.json | 父 Task 的 r4 候选/冻结包/测试 DB 只读引用；本卡只追加 review-package-r2；实测存在 |
+| user-material | G:/CODEX/New Manga/.tmp.driveupload | PRESERVE_USER_DATA | G:/CODEX/New Manga/.tmp.driveupload | G:/CODEX/New Manga.workspace/task-envs/GIT-CLEAN-PUBLICATION-DIAG-1/RESOURCE-MANIFEST.json | 169 个私有 JPEG / 338 个禁止对象所在本地材料根；只读、不复制、不上传、不删除；实测存在 |
+| exchange | — | NOT_APPLICABLE | — | — | 未派发外部交换 |
 
 ## 交付与运行记录
 
@@ -154,3 +154,16 @@ R-01/R-02/R-03在父Task登记为升级前必补，Owner提供书面说明/交�
 DSH 接任 Lead / Architect / Integrator（见 `doc/GOVERNANCE_TAKEOVER_2026-10-25.md`）。本 Task 的 `approved` 仅对诊断 head `fed1a9cf3295e5e05f7ffd363ac1075bd22e90b1` 的 fed 诊断交付有效，保持原样；不集成本 Task、不置 done、不自动升级父候选，也不作为任何产品发布或并发安全批准。
 
 其冻结证据（DIAG-50..53、SUP-38、三库交叉链、packaged 12 项）可被干净快照的 push-gate 审查引用为环境限制说明；引用不等于把 AC3 PARTIAL 或父 AC4 BLOCKED 改写为通过。DSH 后续任何新父 head 仍需新 Appointment。
+
+## Closeout Record（2026-11-17，DSH 收口）
+
+- canonical_evidence_status：`complete`（53 行原有 pin 保持不变）；resource_closeout_status：`complete`（本收口新增 `RESOURCE-MANIFEST.json`，13,101 文件 / 1,885,941,148 B，sha256 `529f835eda7491043e497fb85161e2a0e7af74c5261c2522157834f7dd60a414`）。
+- 删除、迁移、归档数量/字节数：**0**（诊断副本、冻结包、旧 Review 全部原地保留）。
+- **收口依据**：本卡是**诊断交付**卡。其目标（处置父 Review R-001…R-006）已由 `verification/GIT-CLEAN-PUBLICATION-DIAG-1/RESULT.md` + `dsh-review-r1.md`（decision=approved，仅诊断）完成；
+  卡面 §2026-10-25 已明确「approved 仅对诊断 head `fed1a9cf3` 有效；**不集成本 Task、不置 done、不自动升级父候选**」。父卡 `GIT-CLEAN-PUBLICATION-1` 已于 2026-11-17 收口为 `closed_with_limitations`。
+- **限制清单**：
+  1. **L-D-1｜AC3 保持 PARTIAL**：早期 6 份运行器从未冻结且缺 `tracked_changes`；旧日志环境不可补造，不冒充当时原始头。
+  2. **L-D-2｜仅诊断，未集成**：本卡交付不是产品修复；诊断补丁（`sandbox.py` 失败诊断及 mock 测试）**未集成**到主仓，也不作为并发安全批准。
+  3. **L-D-3｜packaged 证据只绑定 e34**：12 passed / 0 failed / 154 filtered 只对 `e34` 的 packaged 源码成立，不移植到新 head。
+  4. **L-D-4｜远端与真实饱和风险未排除**：`rust-default-parallel-r2` 151/2/1/12（exit 101）记录的默认并发 registry 失败，真实生产饱和风险由 `GIT-CLEAN-RUST-ISOLATION-1` 的 AC3 `<<BLOCKED>>` 承载，本卡不解。
+- **边界**：不改变任何 Gate 结论；`Technical Gate=NOT_SATISFIED` 不变。
