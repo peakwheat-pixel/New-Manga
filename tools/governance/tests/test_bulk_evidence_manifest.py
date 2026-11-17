@@ -43,7 +43,7 @@ class BulkEvidenceManifestTests(unittest.TestCase):
         return dst
 
     # ---------------------------------------------------------------- fixtures
-    def build(self, clone, *, kind="research", files=None, manifest=None, register=True):
+    def build(self, clone, *, kind="research", files=None, manifest=None, register=True, raw_manifest=None):
         ev = clone / "verification" / "GP-BULK-1"
         ev.mkdir(parents=True, exist_ok=True)
         files = files if files is not None else {"a.txt": b"alpha\n", "sub/b.json": b'{"b":1}\n'}
@@ -53,9 +53,12 @@ class BulkEvidenceManifestTests(unittest.TestCase):
             target.write_bytes(data)
         entries = manifest if manifest is not None else [
             {"path": rel, "sha256": hashlib.sha256(data).hexdigest()} for rel, data in files.items()]
-        (ev / "EVIDENCE-MANIFEST.json").write_text(
-            json.dumps({"schema_version": 1, "task_id": "GP-BULK-1", "files": entries}),
-            encoding="utf-8")
+        if raw_manifest is not None:
+            (ev / "EVIDENCE-MANIFEST.json").write_bytes(raw_manifest)
+        else:
+            (ev / "EVIDENCE-MANIFEST.json").write_text(
+                json.dumps({"schema_version": 1, "task_id": "GP-BULK-1", "files": entries}),
+                encoding="utf-8")
         man_digest = hashlib.sha256((ev / "EVIDENCE-MANIFEST.json").read_bytes()).hexdigest()
         rows = ["| evidence_id | AC/Gate | path | commit | sha256 | class |", "|---|---|---|---|---|---|"]
         if register:
@@ -155,6 +158,32 @@ class BulkEvidenceManifestTests(unittest.TestCase):
         out = self.check(clone)
         self.assertIn("EVIDENCE_MANIFEST_NOT_ALLOWED", out)
 
+
+    # ------------------------------------------------- panic paths (fail-closed)
+    def test_malformed_json_fails_closed_without_crash(self):
+        """A manifest that is not valid JSON must be a typed error, never a crash or a pass.
+
+        Panic-path evaluation (2026-11-17 P2 item): check.ps1 wraps the parse in try/catch
+        and adds EVIDENCE_MANIFEST_INVALID. This test pins that behaviour so a future
+        refactor cannot turn a broken manifest into an unhandled exception (gate exits
+        non-zero with no governance verdict) or into a silent pass.
+        """
+        clone = self.clone()
+        self.build(clone, files={"a.txt": b"alpha\n"},
+                   raw_manifest=b'{"schema_version": 1, "task_id": "GP-BULK-1", "files": [')
+        out = self.check(clone)
+        self.assertIn("EVIDENCE_MANIFEST_INVALID", out)
+        self.assertIn("Governance check: FAIL", out)
+
+    def test_files_not_a_list_fails_closed(self):
+        """``files`` must be a list of {path, sha256}; a scalar must never be accepted silently."""
+        clone = self.clone()
+        self.build(clone, files={"a.txt": b"alpha\n"},
+                   raw_manifest=json.dumps(
+                       {"schema_version": 1, "task_id": "GP-BULK-1", "files": "not-a-list"}
+                   ).encode("utf-8"))
+        out = self.check(clone)
+        self.assertNotIn("Governance check: PASS", out)
 
 if __name__ == "__main__":
     unittest.main()
