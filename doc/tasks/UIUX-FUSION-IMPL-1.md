@@ -34,3 +34,15 @@
 
 - 设计规范：`doc/design/redesign-v1/40-fusion/**`
 - 实施证据：`verification/UIUX-FUSION-IMPL-1/**`（截图、测试日志、axe 报告、复核报告）
+
+---
+
+## 2026-11-18 状态澄清（DSH）
+
+本卡是 **governance v3 之前的旧格式卡**（状态写在正文 `- 状态：` 而不是 frontmatter），因此**不在 `doc/TASK_LEDGER.md` 的 v3 生命周期统计内**——
+这也是 `FEA-GOV-9-review.md`（P2-1）与 `FEA-WRAP-CLOSEOUT-r1.md`（WRAP-P2-005）当年记录过的 `(none)` 一类。
+
+- 卡面 `in_progress` 来自 2026-10（基线 `main@65d9efa19`，A+C 融合方案阶段 4）。
+- 其 **UI/UX 范围已由后续程序接续**：`AGENTS.md` 术语节记载「V11R 程序：2026-10-30 的 V1.1 整改 + 全新 UI/UX + Theme Studio 重建轮次，已收官并发布 v0.1.1」；
+  之后 UI 演进按 FEA 线（`doc/design/FLUENT_FRONTEND_ARCHITECTURE_PROPOSAL.md`）推进。
+- **DSH 不再推进本卡**；保留为历史证据，**不覆盖任何既有字节**。若要正式终止，应另立一张 v3 卡做 supersede 登记（需要独立复核），而不是直接改本卡的状态。
