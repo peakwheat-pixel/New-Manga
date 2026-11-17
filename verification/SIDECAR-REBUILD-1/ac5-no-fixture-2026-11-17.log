@@ -1,0 +1,29 @@
+# SIDECAR-REBUILD-1 · AC5 证据：无夹具模式三项目全量（2026-11-17 复测）
+
+# head: d8f917a2b（本次收口前 HEAD；被审/交付 head 见卡面）
+# interpreter: pwsh 7 / .NET SDK 9 / xunit
+# command: 未设置 NEWMANGA_CORECLIENT_SIDECAR_DIR 与 NEWMANGA_MODELS_SIDECAR_DIR；NEWMANGA_EVIDENCE_DIR 指向 workspace
+# note: 三项目分别执行 dotnet test --no-build，未改任何测试 gate / skip 属性
+
+## Host.Tests（无夹具）
+# 已通过! - 失败: 0，通过: 334，已跳过: 74，总计: 408
+# EXIT=0
+
+## CoreClient.Tests（无夹具）
+# 已通过! - 失败: 0，通过: 227，已跳过: 31，总计: 258
+# EXIT=0
+
+## App.Tests（无夹具，本会话早前实测）
+# 已通过! - 失败: 0，通过: 962，已跳过: 11，总计: 973
+# EXIT=0
+
+## 汇总
+# passed = 334 + 227 + 962 = 1523
+# failed = 0
+# skipped = 74 + 31 + 11 = 116
+# total  = 408 + 258 + 973 = 1639
+
+# 与本卡 baseline（App 950/0/11、Host 321/0/74、CoreClient 186/0/26 = 1568 total）对比：
+#   total +71（其后仓库新增测试），failed 仍 0，skip 由 111 → 116（组成变化来自其后新增的带 skip 属性的用例，非本卡引入；
+#   本卡未修改任何测试的 gate 判定，见 AC6 与卡面禁止范围）。
+# 结论：无夹具模式三项目 0 failed ⇒ AC5 成立。
