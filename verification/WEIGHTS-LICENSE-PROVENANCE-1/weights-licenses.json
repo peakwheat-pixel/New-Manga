@@ -1,0 +1,49 @@
+{
+  "purpose": "Upstream license declarations for the three bundled ONNX weights (facts only; this repository makes no legal determination)",
+  "repo_head_at_probe": "3f99d0750",
+  "probed_at_local": "2026-11-17T23:40+08:00",
+  "local_self_verification": "NOT_POSSIBLE: raw byte scan of all three ONNX files found no readable license metadata (only binary noise matching keywords)",
+  "weights": [
+    {
+      "path": "models/detector/rtdetr-v2-fixed.onnx",
+      "bytes": 171618071,
+      "sha256_prefix16": "c7fb5af1a8982416",
+      "upstream_declaration": "Apache-2.0",
+      "sources": [
+        {"url": "https://aistudio.baidu.com/modelsdetail/273?modelId=273", "title": "Baidu AI Studio RT-DETR_HGNetV2_l model page", "quote": "license: Apache License 2.0", "fetched": "2026-11-17"},
+        {"url": "https://huggingface.co/PekingU/rtdetr_r50vd", "title": "HuggingFace model card", "quote": "License: Apache-2.0", "fetched": "2026-11-17"},
+        {"url": "https://playground.roboflow.com/models/baidu/rt-detr", "title": "Roboflow RT-DETR page", "quote": "Apache 2.0", "fetched": "2026-11-17"},
+        {"url": "https://kornia.readthedocs.io/en/v0.7.2/models/rt_detr.html", "title": "Kornia docs RT-DETR", "quote": "Licence: Apache 2.0", "fetched": "2026-11-17"}
+      ]
+    },
+    {
+      "path": "models/ocr/manga-ocr-onnx/encoder_model.onnx",
+      "bytes": 343454249,
+      "sha256_prefix16": "15fa8155fe9bc1a7",
+      "upstream_declaration": "Apache-2.0",
+      "sources": [
+        {"url": "https://repo.model.xfyun.cn/kha-white/manga-ocr-base/raw/commit/1d0bb748d3b7551b2c556f406157459949ad32bc/README.md", "title": "manga-ocr-base model card (mirror of HF README)", "quote": "license: apache-2.0", "fetched": "2026-11-17"},
+        {"url": "https://github.com/NixOS/nixpkgs/blob/release-25.05/pkgs/development/python-modules/manga-ocr/default.nix", "title": "nixpkgs manga-ocr package", "quote": "license = licenses.asl20;", "fetched": "2026-11-17"},
+        {"url": "https://github.com/kha-white/manga_ocr", "title": "manga-ocr upstream repository", "quote": "(code repository referenced by the model card)", "fetched": "2026-11-17"}
+      ]
+    },
+    {
+      "path": "models/ocr/manga-ocr-onnx/decoder_model.onnx",
+      "bytes": 117480262,
+      "sha256_prefix16": "ef7765261e9d1cdc",
+      "upstream_declaration": "Apache-2.0",
+      "sources": [
+        {"url": "https://repo.model.xfyun.cn/kha-white/manga-ocr-base/raw/commit/1d0bb748d3b7551b2c556f406157459949ad32bc/README.md", "title": "manga-ocr-base model card (mirror of HF README)", "quote": "license: apache-2.0", "fetched": "2026-11-17"},
+        {"url": "https://github.com/NixOS/nixpkgs/blob/release-25.05/pkgs/development/python-modules/manga-ocr/default.nix", "title": "nixpkgs manga-ocr package", "quote": "license = licenses.asl20;", "fetched": "2026-11-17"}
+      ]
+    }
+  ],
+  "removed_weight": {
+    "path": "models/detector/yolo11s-seg.onnx",
+    "bytes": 40824255,
+    "sha256_prefix16": "944e8114",
+    "note": "Ultralytics YOLO11s-seg; its own file metadata declared AGPL-3.0. NOT present in the current sidecar. If it is ever bundled again, the package declaration must go back to AGPL-3.0 (NOTICE.md variant table + package.ps1 judgement together)."
+  },
+  "conclusion_used_for_release": "Both variants declared GPL-3.0-or-later (ZCode ruling TIGHTEN_TO_GPL, 2026-11-17). Apache-2.0 is GPL-3.0 compatible; the repository ships LICENSE-Apache-2.0.txt with the package.",
+  "legal_determination": "NONE — this file records what upstream declares, with URLs and dates. The repository does not adjudicate the legal validity of those declarations."
+}

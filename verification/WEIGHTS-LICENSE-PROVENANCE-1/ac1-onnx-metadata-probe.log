@@ -1,0 +1,41 @@
+# WEIGHTS-LICENSE-PROVENANCE-1 · 权重内嵌元数据探测（2026-11-17）
+
+# interpreter: python 3（原始字节扫描，不做 protobuf 解析）
+# command: python -B <workspace>\tmp\r27\probe-weights.py
+
+## rtdetr-v2-fixed.onnx
+- 路径：`G:\CODEX\New Manga.workspace\tmp\r24\sidecar-models\models\detector\rtdetr-v2-fixed.onnx`
+- 字节：171,618,071
+- 命中片段数：**7**
+  - @6176938: `];MIT<`
+  - @17326058: `C8<MIT<`
+  - @38892438: `gPL<FH`
+  - @39928077: `<MIT<se-`
+  - @87578249: `;gPl<)l`
+  - @105119045: `v;MIt;`
+  - @105593449: `6<MIt<%`
+
+## manga-ocr encoder_model.onnx
+- 路径：`G:\CODEX\New Manga.workspace\tmp\r24\sidecar-models\models\ocr\manga-ocr-onnx\encoder_model.onnx`
+- 字节：343,454,249
+- 命中片段数：**10**
+  - @30265554: `<mIT<Z`
+  - @31353847: `MIT<Nq`
+  - @66401287: `=Gpl;SR`
+  - @69886527: `-E=gPL<`
+  - @140122626: `<Gpl;Fp`
+  - @221608418: `D/<gpL<>`
+  - @224003633: `M5)=Gpl`
+  - @245537836: `9;mIT;2`
+  - @260541679: `;MIt<?H`
+  - @308121029: `8;mIt=`
+
+## manga-ocr decoder_model.onnx
+- 路径：`G:\CODEX\New Manga.workspace\tmp\r24\sidecar-models\models\ocr\manga-ocr-onnx\decoder_model.onnx`
+- 字节：117,480,262
+- 命中片段数：**4**
+  - @21086120: `=H5`<Gpl<F`
+  - @40817591: `;MiT<+`
+  - @62720934: `<:Q <MiT`
+  - @72577376: `#(:gPl<O:`
+

@@ -156,3 +156,59 @@ DSH 按「需要人工裁决的事项一律交 Codex 或 ZCode」的授权，再
 **方向 A/B 的选择仍未取得**。`LICENSE-VARIANT-DECLARATION-1` 保持 `blocked`。
 下次调用应改用不带 `--json` 的输出或更短的提示词，避免正文被截断。
 
+---
+
+## 第三次调用：声明变更裁定（TIGHTEN_TO_GPL，2026-11-17）
+
+DSH 把本地实测（三项 ONNX **无可读许可元数据**，原始字节扫描命中全是二进制噪声）与上游声明来源
+（HTTPS URL + 抓取日期，见 `verification/WEIGHTS-LICENSE-PROVENANCE-1/weights-licenses.json`）交给 ZCode 复核。
+ZCode 全文如下（逐字落盘）：
+
+## 声明变更裁定（2026-11-17，基于新实测事实，不重开 ①②）
+
+**Q1：应收紧为 `GPL-3.0-or-later`？——YES。**
+当初整包 AGPL 的唯一事实源是 Ultralytics yolo11s（文件内元数据自带 AGPL-3.0）；该权重已物理移出 sidecar，现随包三项权重经多源交叉（HF 模型卡 yaml / nixpkgs 独立打包认定 / 百度版权方官方页 / Roboflow）均为 Apache-2.0，而 Apache-2.0 与 GPL-3.0 兼容（GPLv3 §7 机制；注意与 GPLv2 不兼容，本包声明是 v3-or-later 不受影响）。AGPL 从来不是法律兜底垫——若上游声明有误它同样非法——它只在「有理由怀疑组件是 AGPL」时才有意义；现在连上游都没人主张 AGPL，维持它属**无依据的过度声明**，还白白施加网络服务传染义务，也与 AGENTS.md「默认 GPL-3.0、仅集成 AGPL 组件时升格」的治理规则相悖。证据等级与 ① 裁定对称：① 采信上游声明判 AGPL，同等级证据现在指向 Apache-2.0，没有理由单向不采信。
+
+**Q2：最小改动清单（文件级）**
+- `THIRD_PARTY_LICENSES.md` §3：三权重行「待核实」→「**上游声明 Apache-2.0**（一手来源 URL+抓取日期登记于证据 JSON；**本仓库未做法律认定**）」——你提议的措辞成立；行 44/53/69 整包声明理由改为 models = GPL-3.0-or-later；yolo11s 历史登记（行 36/47-50）**保留不动**（将来打入则回 AGPL 的防回归依据）。
+- `NOTICE.md`：行 8/10/18/29/37 同步改（models 变体声明 + 删除「未全部核实故不得 GPL」保守策略段）；行 44 四件套清单加入新文件。
+- 新增仓库根 `LICENSE-Apache-2.0.txt`（Apache-2.0 §4 要求向接收者提供许可副本，随包分发）。
+- `verification/…/weights-licenses.json`：登记三项上游声明的一手 URL 与抓取日期（即 `WEIGHTS-LICENSE-PROVENANCE-1` 实测的落点）。
+- `apps/desktop-avalonia/scripts/package.ps1:154`：`$licenseDeclaration` 判定反转（models→GPL-3.0-or-later），行 108 `$lic` 清单加 `LICENSE-Apache-2.0.txt`。
+- `apps/desktop-avalonia/scripts/build-installer.ps1:202-203`：硬校验反转——stage 含 ONNX 时要求 license=GPL-3.0-or-later **且** THIRD_PARTY_LICENSES 有对应非待核实登记（防 yolo11s 无登记回流）。
+- models 变体 `VERSION.json` license 字段；`packaging/nsis/installer.nsi` 文案由 `VARIANT_LICENSE` 参数驱动，**无需改**。
+
+**Q3：重打包 + 重取证？——YES。**
+四件许可文件须与仓库逐字节一致（package.ps1 校验），声明一改 setup.exe 必变；「改了文档不重打包」正是 reviewer-lvd P0 的旧病。重取证范围：新 setup.exe 大小/sha256、欢迎页+许可页实拍（应显示 GPL-3.0-or-later）、docs-match 逐字节日志。
+
+---
+
+```
+DECLARATION: TIGHTEN_TO_GPL
+REASON: AGPL 唯一事实源 yolo11s 已移除，现随包三项权重三源交叉均为 Apache-2.0（GPL-3.0 兼容），维持 AGPL 是无依据过度声明且与项目默认 GPL-3.0 治理规则相悖
+FILES: NOTICE.md、THIRD_PARTY_LICENSES.md、新增 LICENSE-Apache-2.0.txt（随包）、weights-licenses.json（登记上游 URL+抓取日期）、package.ps1:154、build-installer.ps1:202-203、models 变体 VERSION.json；installer.nsi 无需改
+REPACK_REQUIRED: YES
+```
+
+**推荐下一步**：将本裁定登记入 `WEIGHTS-LICENSE-PROVENANCE-1`（目录已实测存在、未提交），随后按 AGPL-RELEASE-1 返修流程执行上述文件修改 → 重打 models/base 双包 → 重取证（实拍+sha256+docs-match）。可转发指令：
+
+```
+按 2026-11-17 ZCode 声明变更裁定（TIGHTEN_TO_GPL）执行：① 修改 NOTICE.md、THIRD_PARTY_LICENSES.md（§3 改「上游声明 Apache-2.0，来源+抓取日期登记于 weights-licenses.json，本仓库未做法律认定」，yolo11s 历史登记保留）；② 新增仓库根 LICENSE-Apache-2.0.txt 并入 package.ps1 $lic 清单；③ package.ps1:154 与 build-installer.ps1:202-203 许可判定/硬校验反转（含 ONNX→须 GPL-3.0-or-later 且有非待核实登记）；④ 重打 base/models 双包，重取 setup.exe sha256/大小、欢迎页与许可页实拍（应显示 GPL-3.0-or-later）、docs-match 逐字节日志；⑤ 裁定原文与上游声明一手 URL+抓取日期落盘 WEIGHTS-LICENSE-PROVENANCE-1 后一并提交。
+```
+
+### DSH 采纳记录（2026-11-17）
+
+**全文采纳**，并已**执行**（不是只登记）：
+
+1. `package.ps1`：`$licenseDeclaration` 改为**恒为 `GPL-3.0-or-later`**（两个变体相同）；许可清单加入 `LICENSE-Apache-2.0.txt`；
+   `bundled_weights_license` 改为按**实际文件**写「Apache-2.0 upstream declaration … (this repo makes no legal determination)」。
+2. `build-installer.ps1`：硬校验**反转** —— stage 含 ONNX 时要求
+   ① `license = GPL-3.0-or-later`；② `THIRD_PARTY_LICENSES.md` 里**该权重的行**不含「待核实」且含「Apache-2.0」；③ stage 内有 `LICENSE-Apache-2.0.txt`。任一条不满足即 throw。
+3. 文档：`NOTICE.md`（变体表 + 许可结论段 + 五件套清单 + 「两变体许可相同」开头）、`THIRD_PARTY_LICENSES.md` §3、`LICENSE_AUDIT.md`
+   同步改为「上游声明 Apache-2.0，本仓库未做法律认定；两变体均 GPL-3.0-or-later」。
+4. **重新打包并重新取证**：新 `setup.exe` **652,037,404 B / sha256 `6f9a45f32ea3…`**；
+   从 exe 抽出**六份**许可文件与仓库逐字节比对 **全部 SAME=True**；向导欢迎页实拍「models 变体（含模型权重，按 **GPL-3.0-or-later** 分发）」、
+   许可页实拍正文中文正常且文件清单已含 `LICENSE-Apache-2.0.txt`。
+5. **防回归**：`THIRD_PARTY_LICENSES.md` §3 保留 yolo11s-seg 的 AGPL 依据段，并写明「若重新打入任何 AGPL 权重，必须同时改回 AGPL」。
+
+**边界**：Apache-2.0 是**上游声明**，本仓库不做法律认定；`setup.exe` 仍未签名（条件 4 仍缺真证书）。

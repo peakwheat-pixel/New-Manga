@@ -197,10 +197,40 @@ if (Test-Path -LiteralPath $stageVersionJson) {
     }
     # Only ASCII reaches makensis: the Chinese phrase is derived in installer.nsi from VARIANT_NAME
     # (a non-ASCII /DVARIANT_CONTENT= define arrived mojibake on the makensis command line).
-    # A weight-bundling stage must not be described as base/GPL; that combination is what the ZCode
-    # ruling of 2026-11-17 called illegal. Fail closed instead of shipping a wrong licence statement.
-    if ($stageOnnx.Count -gt 0 -and $script:variantLicense -ne 'AGPL-3.0') {
-        throw "LICENSE-VARIANT-DECLARATION-1: stage bundles $($stageOnnx.Count) onnx file(s) but VERSION.json license='$variantLicense'; must be AGPL-3.0"
+    # TIGHTEN_TO_GPL (ZCode 2026-11-17): after the AGPL weight (yolo11s-seg) left the sidecar, the three
+    # bundled weights declare Apache-2.0 upstream, so a weight-bundling stage is GPL-3.0-or-later — the
+    # same as base. The guard therefore requires (a) that licence and (b) that THIRD_PARTY_LICENSES.md
+    # actually registers a NON-pending upstream declaration for those weights, so an AGPL weight cannot
+    # slip back in without the paperwork changing first.
+    if ($stageOnnx.Count -gt 0) {
+        if ($script:variantLicense -ne 'GPL-3.0-or-later') {
+            throw "TIGHTEN_TO_GPL: stage bundles $($stageOnnx.Count) onnx file(s) but VERSION.json license='$($script:variantLicense)'; must be GPL-3.0-or-later"
+        }
+        $tpl = Join-Path $stageFull 'THIRD_PARTY_LICENSES.md'
+        if (-not (Test-Path -LiteralPath $tpl)) {
+            throw "TIGHTEN_TO_GPL: stage has no THIRD_PARTY_LICENSES.md; cannot prove the weights' upstream declaration"
+        }
+        $tplLines = Get-Content -LiteralPath $tpl -Encoding UTF8
+        # Check the rows that describe THIS stage's weights, not the whole file: the header sentence and
+        # unrelated dependencies (e.g. pypdfium2) may legitimately still say 待核实.
+        foreach ($onnxFile in $stageOnnx) {
+            $rel = $onnxFile.FullName.Substring((Join-Path $stageFull 'app/core-sidecar').Length + 1).Replace('\', '/')
+            $leaf = $onnxFile.Name
+            $row = $tplLines | Where-Object { $_ -match '^\|' -and ($_ -match [regex]::Escape($rel) -or $_ -match [regex]::Escape($leaf)) } | Select-Object -First 1
+            if (-not $row) {
+                throw "TIGHTEN_TO_GPL: THIRD_PARTY_LICENSES.md has no row for bundled weight '$rel'; register its upstream declaration first"
+            }
+            if ($row -match '待核实') {
+                throw "TIGHTEN_TO_GPL: the THIRD_PARTY row for '$rel' still says 待核实; it cannot ship under GPL-3.0-or-later"
+            }
+            if ($row -notmatch 'Apache-2\.0') {
+                throw "TIGHTEN_TO_GPL: the THIRD_PARTY row for '$rel' does not record the Apache-2.0 upstream declaration"
+            }
+        }
+        $apacheCopy = Join-Path $stageFull 'LICENSE-Apache-2.0.txt'
+        if (-not (Test-Path -LiteralPath $apacheCopy)) {
+            throw "TIGHTEN_TO_GPL: stage is missing LICENSE-Apache-2.0.txt (Apache-2.0 §4 requires shipping the licence copy)"
+        }
     }
     # reviewer-lvd P2: a stage named "base" that actually bundles weights would make the wizard say
     # "base 变体（不含模型权重）" over 632 MB of weights. The variant name must agree with the bytes.

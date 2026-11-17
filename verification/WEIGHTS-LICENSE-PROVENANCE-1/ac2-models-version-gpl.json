@@ -1,0 +1,35 @@
+{
+  "sidecar_build": {
+    "core_service_sha256": "6050881163753d32eca2fb1c0c824d9de7852bf62fb808926f5b6fc74a6b52ee",
+    "core_service_bytes": 400098,
+    "core_service_built_at_utc": "2026-11-14T19:16:55.3503345Z",
+    "repo_head": "3f99d075041b500dd8b9ca10ef170d734a934b02",
+    "variant": "models",
+    "models_bundled": true
+  },
+  "models": "bundled: app/core-sidecar/models (603.4 MiB in-package); no download at run time",
+  "license_files": [
+    "LICENSE",
+    "LICENSE-AGPL-3.0.txt",
+    "LICENSE-Apache-2.0.txt",
+    "NOTICE.md",
+    "THIRD_PARTY_LICENSES.md"
+  ],
+  "models_bundled_bytes": 632552582,
+  "version": "0.1.1",
+  "variant": "models",
+  "sidecar": "bundled: app/core-sidecar (core_service/host_bridge/catalog_loader/acceptance_bridge/sfx_detect_probe + _internal + python)",
+  "bundled_weights_license": "Apache-2.0 upstream declaration for models/detector/rtdetr-v2-fixed.onnx, models/ocr/manga-ocr-onnx/decoder_model.onnx, models/ocr/manga-ocr-onnx/encoder_model.onnx (see THIRD_PARTY_LICENSES.md §3; this repo makes no legal determination)",
+  "migration": "runtime dry-run script included",
+  "channel": "stable",
+  "models_bundled": true,
+  "devices": null,
+  "app_build": {
+    "exe_bytes": 37344535,
+    "repo_head": "3f99d075041b500dd8b9ca10ef170d734a934b02",
+    "exe_sha256": "3a2fb69fcb696dd1177ed4355a2458905bcf0981c58c82a1fb726d0c9fe0d02e"
+  },
+  "data_root": "%APPDATA%\\com.newmanga.desktop",
+  "models_dir_bytes": 632662260,
+  "license": "GPL-3.0-or-later"
+}

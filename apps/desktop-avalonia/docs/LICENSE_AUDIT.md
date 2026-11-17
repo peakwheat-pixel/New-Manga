@@ -7,7 +7,7 @@
 | 发行变体 | 包名 | 是否含模型权重 | 整体分发许可 | 依据 |
 |---|---|---|---|---|
 | **base** | `NewManga-<ver>-win-x64` | **否**（sidecar 复制时排除 `models/`） | **GPL-3.0-or-later**（包内 `LICENSE`） | 不含 AGPL 组件；包内 `LICENSE-AGPL-3.0.txt` 仅说明可选 models 组件的许可 |
-| **models** | `NewManga-<ver>-win-x64-models` | **是**（`app/core-sidecar/models/`，632,662,260 B = 3 个 ONNX 632,552,582 B + 6 个 config/vocab 109,678 B） | **AGPL-3.0**（包内 `LICENSE-AGPL-3.0.txt` 为 GNU AGPL-3.0 官方全文） | 随包 3 个 ONNX 权重的上游许可**尚未一手核实**（`THIRD_PARTY_LICENSES.md` §3「待核实」）；按保守策略整包声明 AGPL-3.0（见 §3） |
+| **models** | `NewManga-<ver>-win-x64-models` | **是**（`app/core-sidecar/models/`，632,662,260 B = 3 个 ONNX 632,552,582 B + 6 个 config/vocab 109,678 B） | **GPL-3.0-or-later**（包内 `LICENSE`）；随包权重上游声明 Apache-2.0（包内 `LICENSE-Apache-2.0.txt`） | 3 个 ONNX 权重**上游均声明 Apache-2.0**（`THIRD_PARTY_LICENSES.md` §3 + `verification/WEIGHTS-LICENSE-PROVENANCE-1/`；本仓库未做法律认定），Apache-2.0 与 GPL-3.0 兼容 |
 
 ## 2. 随包文件（base 与 models 均含，4 项）
 
@@ -24,8 +24,9 @@
 | `ocr/manga-ocr-onnx/decoder_model.onnx` | 117,480,262 | `ef7765261e9d1cdc` | **待核实** |
 
   合计 **632,552,582 B**；`models/` 目录另有 6 个 config/vocab 文件 **109,678 B**（`package.ps1` 分别记为 `models_bundled_bytes` 与 `models_dir_bytes`）。
-  **结论**：三项上游许可均未一手核实 ⇒ 整包**保守声明 AGPL-3.0**（宁可过度声明，不可漏声明）。核实完成后若确认全部为宽松许可，可另行收紧；
-  在此之前 `GPL-3.0-or-later` 声明**不成立**。
+  **结论（2026-11-17 收紧）**：三项**上游均声明 Apache-2.0**（来源见 `verification/WEIGHTS-LICENSE-PROVENANCE-1/`；本仓库未做法律认定），
+  Apache-2.0 与 GPL-3.0 兼容，且 sidecar 内**没有任何 AGPL 权重** ⇒ models 变体按 **GPL-3.0-or-later** 分发，并随包提供 Apache-2.0 全文。
+  **防回归**：若将来重新打入任何 AGPL 权重，本文件的变体表、`NOTICE.md` 与 `package.ps1` 必须同时改回 AGPL。
 - `base` 变体**不随包任何模型权重**（`package.ps1` 复制 sidecar 时排除 `models/`），维持 `GPL-3.0-or-later`。
 - **2026-11-17 更正**：本文件此前把 models 变体的权重写成 `detector/yolo11s-seg.onnx`（40,824,255 B，AGPL-3.0，已核实）。
   实测 0.1.1 的 sidecar **不含该文件**（其 `VERSION.json` 的 `sidecar_build.known_limitation` 写明 sfx 权重缺失、`sfx_detect_probe` fail-closed），

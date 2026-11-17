@@ -105,7 +105,7 @@ Write-Host ("sidecar build: {0} ({1} bytes, HEAD={2})" -f $sidecarBuildInfo.core
 # AGPL-RELEASE-1 + LICENSE-VARIANT-DECLARATION-1: the models variant ships model weights whose upstream
 # AGPL-3.0 full text rides in BOTH variants (base carries it as the optional-component notice;
 # its own declaration stays GPL-3.0-or-later). Every file is copied and SHA-256 verified.
-$lic=@('LICENSE','LICENSE-AGPL-3.0.txt','NOTICE.md','THIRD_PARTY_LICENSES.md')
+$lic=@('LICENSE','LICENSE-AGPL-3.0.txt','LICENSE-Apache-2.0.txt','NOTICE.md','THIRD_PARTY_LICENSES.md')
 $licHashes=@{}
 foreach($n in $lic){
   $src=Join-Path $repo $n; $dst=Join-Path $stage $n
@@ -151,12 +151,18 @@ $modelsStrategy=if($modelsBundled){
 # AGPL-RELEASE-1 AC2/AC4: the package metadata itself must state the variant's overall license.
 # bundled weights -> the whole variant is declared AGPL-3.0 (conservative until upstream licences are
 # weights -> GPL-3.0-or-later. The AGPL full text rides in both variants (see section 3).
-$licenseDeclaration=if($modelsBundled){'AGPL-3.0'}else{'GPL-3.0-or-later'}
+# TIGHTEN_TO_GPL (ZCode 2026-11-17): the ONLY AGPL fact was Ultralytics yolo11s-seg, whose own file
+# metadata said AGPL-3.0. That weight is no longer in the sidecar; the three weights that ARE in it
+# declare Apache-2.0 upstream (HF model card / nixpkgs / Baidu + Roboflow pages, registered in
+# THIRD_PARTY_LICENSES.md §3 and verification/WEIGHTS-LICENSE-PROVENANCE-1/). Apache-2.0 is
+# GPL-3.0-compatible, so both variants are declared GPL-3.0-or-later. If an AGPL weight ever comes
+# back, THIRD_PARTY_LICENSES.md §3 and this line must be switched back together.
+$licenseDeclaration='GPL-3.0-or-later'
 $bundledWeightsLicense=if($modelsBundled){
   # VERSION-JSON-GUARD-ALIGN-1: name the weights that are ACTUALLY in this sidecar instead of a
   # hard-coded one (the template used to claim yolo11s-seg even when the detector was rtdetr).
   $modelFiles=@(Get-ChildItem (Join-Path $sidecarDst 'models') -Recurse -File -Filter '*.onnx' | ForEach-Object { $_.FullName.Substring($sidecarDst.Length+1).Replace('\','/') })
-  'AGPL-3.0 (conservative: ' + ($modelFiles -join ', ') + ')'
+  'Apache-2.0 upstream declaration for ' + ($modelFiles -join ', ') + ' (see THIRD_PARTY_LICENSES.md §3; this repo makes no legal determination)'
 }else{'none (no model weights in this variant)'}
 # VERSION-JSON-GUARD-ALIGN-1 (reviewer-pvd F-PVD-02): the guard requires app_build and there was no
 # generator for it, so no clean package.ps1 output could ever pass. Derive it from the staged exe;

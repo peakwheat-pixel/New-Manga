@@ -34,15 +34,17 @@
 | 文件 | 字节 | sha256 | 用途 | 许可证（核实状态） |
 |---|---|---|---|---|
 | `detector/yolo11s-seg.onnx` | 40,824,255 | `944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d` | SFX 检测 | AGPL-3.0（Ultralytics）**已核实** —— **当前 sidecar 不含该文件**（sfx 权重缺失） |
-| `detector/rtdetr-v2-fixed.onnx` | 171,618,071 | `c7fb5af1a8982416b56955e621c1b10397730807956998066e2fbc132c77bbc3` | 文本/气泡检测 | Apache-2.0（HF 模型卡）**[待核实，不阻断本卡]** |
-| `ocr/manga-ocr-onnx/encoder_model.onnx` | 343,454,249 | `15fa8155fe9bc1a7d25d9bb353debaa4def033d0174e907dbd2dd6d995def85f` | 日文 OCR | MangaOCR 上游 **[待核实，不阻断本卡]** |
-| `ocr/manga-ocr-onnx/decoder_model.onnx` | 117,480,262 | `ef7765261e9d1cdc34d89356986c2bbc2a082897f753a89605ae80fdfa61f5e8` | 日文 OCR | 同上 **[待核实，不阻断本卡]** |
-| `ocr/manga-ocr-onnx/{config,generation_config,preprocessor_config,special_tokens_map,tokenizer_config,vocab.*}` | 2–77 KB 级 | 见 `weights-licenses.json` | OCR 配置/词表（非权重） | 随上游 MangaOCR **[待核实，不阻断本卡]** |
+| `detector/rtdetr-v2-fixed.onnx` | 171,618,071 | `c7fb5af1a8982416b56955e621c1b10397730807956998066e2fbc132c77bbc3` | 文本/气泡检测 | **上游声明 Apache-2.0**（百度 AI Studio 模型页 + HuggingFace `PekingU/rtdetr_r50vd` 模型卡 + Roboflow；来源与抓取日期见 `verification/WEIGHTS-LICENSE-PROVENANCE-1/`；**本仓库未做法律认定**） |
+| `ocr/manga-ocr-onnx/encoder_model.onnx` | 343,454,249 | `15fa8155fe9bc1a7d25d9bb353debaa4def033d0174e907dbd2dd6d995def85f` | 日文 OCR | **上游声明 Apache-2.0**（HF 模型卡 `kha-white/manga-ocr-base` + nixpkgs `asl20`；来源见 `verification/WEIGHTS-LICENSE-PROVENANCE-1/`；**本仓库未做法律认定**） |
+| `ocr/manga-ocr-onnx/decoder_model.onnx` | 117,480,262 | `ef7765261e9d1cdc34d89356986c2bbc2a082897f753a89605ae80fdfa61f5e8` | 日文 OCR | **上游声明 Apache-2.0**（同上来源；**本仓库未做法律认定**） |
+| `ocr/manga-ocr-onnx/{config,generation_config,preprocessor_config,special_tokens_map,tokenizer_config,vocab.*}` | 2–77 KB 级 | 见 `weights-licenses.json` | OCR 配置/词表（非权重） | 随上游 MangaOCR，**上游声明 Apache-2.0**（本仓库未做法律认定） |
 
-**整包许可结论（2026-11-17，按 ZCode 裁定采用保守策略）**：上表 3 个 ONNX 权重（`rtdetr-v2-fixed` 与 `manga-ocr` encoder/decoder）
-的上游许可**均为 `[待核实]`**，`yolo11s-seg.onnx` **当前 sidecar 并不包含**（sfx 权重缺失，`sfx_detect_probe` fail-closed）。
-因此 `models` 变体**整体按 AGPL-3.0 声明**（宁可过度声明，不可漏声明）；`GPL-3.0-or-later` 只适用于**不含任何权重**的 `base` 变体。
-依据：`doc/reviews/ZCODE-RULING-INSTALLER-LICENSE-2026-11-17.md`（Q1 判定规则 R1–R4，本案落 R4；Q2 = P0 发布阻塞）。
+**整包许可结论（2026-11-17，按 ZCode 收紧裁定）**：上表 3 个 ONNX 权重（`rtdetr-v2-fixed` 与 `manga-ocr` encoder/decoder）
+的上游**均声明 Apache-2.0**（来源见本表与 `verification/WEIGHTS-LICENSE-PROVENANCE-1/`，**本仓库未做法律认定**）。
+Apache-2.0 与 GPL-3.0 兼容，且当前 sidecar **不含任何 AGPL 权重** ⇒ **models 与 base 两个变体都按 `GPL-3.0-or-later` 分发**，
+并随包提供 Apache-2.0 全文（`LICENSE-Apache-2.0.txt`）。
+依据：`doc/reviews/ZCODE-RULING-INSTALLER-LICENSE-2026-11-17.md` 的「声明变更裁定（TIGHTEN_TO_GPL）」。
+**防回归**：若将来重新打入任何 AGPL 权重（例如 `yolo11s-seg.onnx`），必须同时把本段、`NOTICE.md` 变体表与 `package.ps1` 的判定改回 AGPL。
 
 **YOLO11s-seg 的 AGPL-3.0 一手依据（历史登记；该文件当前不在 sidecar 内）**：
 1. 该 ONNX 文件自身元数据包含 `Ultralytics YOLO11s-seg model trained on …` 与 `AGPL-3.0 License (https://ultralytics.com/license)`（扫描记录见 `verification/AGPL-RELEASE-1/weights-licenses.json`）。
@@ -53,7 +55,7 @@
 - **models** 变体包含上述 AGPL-3.0 权重 → **该发行包整体按 AGPL-3.0 分发**；随包附 `LICENSE-AGPL-3.0.txt` 全文，并提供对应源码（本仓库/发行页）。
 - **base** 变体不含任何模型权重 → 仍按 **GPL-3.0-or-later** 分发；其随包的 `LICENSE-AGPL-3.0.txt` 仅作为可选组件许可说明。
 
-[待核实] 项（RT-DETR / MangaOCR 配置与权重）不作为本卡阻断项；在下一次发行 Gate 前补成一手结论。
+RT-DETR / MangaOCR 的权重与配置：**上游均声明 Apache-2.0**（来源见 §3 与 `verification/WEIGHTS-LICENSE-PROVENANCE-1/`；本仓库未做法律认定）。**本地 ONNX 内不含可读许可元数据**（实测），因此该结论只以上游声明为依据。
 
 ## 4. 字体
 
@@ -66,7 +68,7 @@
 ## 5. 发行 Gate
 
 - [ ] 每次发行前重跑本表逐项核对（一手 license 文件/模型卡）。
-- [x] models 变体随包权重（rtdetr-v2-fixed + manga-ocr encoder/decoder，上游许可待核实）→ 按保守策略在 `NOTICE` 与发行页明确 **AGPL-3.0**，随包附 `LICENSE-AGPL-3.0.txt` 全文。
+- [x] models 变体随包权重（rtdetr-v2-fixed + manga-ocr encoder/decoder）的上游**均声明 Apache-2.0** ⇒ 两变体均按 **GPL-3.0-or-later** 分发，随包附 `LICENSE`、`LICENSE-Apache-2.0.txt`（以及历史沿革用的 `LICENSE-AGPL-3.0.txt`）全文。
 - [x] （历史）曾经的 `Ultralytics YOLO11s-seg` 权重已不在当前 sidecar 内；其 AGPL-3.0 依据仍保留在上文，供将来重新打入时引用。
 - [ ] base 变体不含权重 → 保持 GPL-3.0-or-later 声明；包内 4 个许可文件与仓库根逐字节一致（`package.ps1` 校验）。
 - [ ] 输出 `THIRD_PARTY_LICENSES` 与源码同包/同页提供。
