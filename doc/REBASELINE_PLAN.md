@@ -53,7 +53,7 @@
 |GATE3-COVERAGE-MATRIX / SETTINGS-ERROR-STATE-1|MAINT-1-RELEASE-MONITOR|done（三层盘点 + 矩阵 ❌ 格清零；零 src；仅部分证据）|
 |PIPE 两卡（E-6/E-7）|SIDECAR-REBUILD-1|done（Host 9→1；见 E-7）|
 |条件 3/4 二十四卡（+E8 四卡：BINDING-1/2/3 + RESIDUAL-1）|MAINT-1|done（E-8：真实 App 10→1 条）|
-|SIDECAR-REBUILD-1|MAINT-1-RELEASE-MONITOR|in_progress（capabilities 17；13 失败拆 E-6）|
+|SIDECAR-REBUILD-1|MAINT-1-RELEASE-MONITOR|closed_with_limitations（capabilities 17；skip 100→44；13 失败归 E-6）|
 |HOST-CONCURRENCY-FLAKY-1|来源 SIDECAR-SCHEMA-STALE-1|closed_with_limitations|
 |GOV-TEST-SIDE-EFFECT-1|MAINT-1|done|
 ## 当前活动程序

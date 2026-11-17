@@ -182,9 +182,9 @@ AC4仅指交付绑定与独审已执行的程序性AC，证据EV-059..061/067；
 
 ## 2026-10-25 DSH 接管后的处置
 
-DSH 接任 Lead / Architect / Integrator（见 `doc/GOVERNANCE_TAKEOVER_2026-10-25.md`）。本 Task 的 Owner/实现作者仍为 ZCode；当前 Reviewer 改派 **ZCode**（同日再次改派，见下节「Reviewer 二次改派」）。DSH r1/r2 两份 Review、r2/DISPOSITION、测试日志、包与源码字节全部保持原样，不改写为通过。
+DSH 接任 Lead / Architect / Integrator（见 `doc/GOVERNANCE_TAKEOVER_2026-10-25.md`）。本 Task 的 Owner/实现作者仍为 ZCode；**截至 2026-10-25 时点** Reviewer 为 **ZCode**（同日再次改派，见下节「Reviewer 二次改派」）——该任命已于 2026-11-17 收口时按「上下文独立」规则改派为 `reviewer-rustiso`（DSH 子 agent，未参与实现），当前权威值以 frontmatter `reviewer` 为准。DSH r1/r2 两份 Review、r2/DISPOSITION、测试日志、包与源码字节全部保持原样，不改写为通过。
 
-当前事实不变：delivery head `1829a38a41587a0d680001a40d206886afb0911d`；默认并发两次 153 passed/0 failed/6 ignored/12 filtered；AC1 PARTIAL、AC3 BLOCKED（真实 32 饱和未达，peak 0/32），R2-F01..05 中部分 open。Task 保持 `in_review`，无当前实施。本 Task 不是干净快照 push 的前置 Gate；其 blocked 结论保留，不能作为产品并发安全或父候选升级的批准。任何新 head 必须按新 Appointment 由非作者独立审查后再进入 DSH 集成裁决；重复失败遵守同一失败上限 2 次，不新增无边界的压力门槛。
+当前事实不变：delivery head `1829a38a41587a0d680001a40d206886afb0911d`；默认并发两次 153 passed/0 failed/6 ignored/12 filtered；AC1 PARTIAL、AC3 BLOCKED（真实 32 饱和未达，peak 0/32），R2-F01..05 中部分 open。**（2026-10-25 时点状态）** Task 当时保持 `in_review`、无当前实施；2026-11-17 已按 Codex Legacy 裁定收口为 `closed_with_limitations`（见文末「2026-11-17 收口」节）。本 Task 不是干净快照 push 的前置 Gate；其 blocked 结论保留，不能作为产品并发安全或父候选升级的批准。任何新 head 必须按新 Appointment 由非作者独立审查后再进入 DSH 集成裁决；重复失败遵守同一失败上限 2 次，不新增无边界的压力门槛。
 
 ## Reviewer 二次改派（2026-10-25）
 
@@ -201,7 +201,7 @@ DSH 接任 Lead / Architect / Integrator（见 `doc/GOVERNANCE_TAKEOVER_2026-10-
 - **Q1=(A)**：AC3（真实 32 饱和 / accepted-refused 所有权）的实现面属 **AD-002 已退役的 Tauri/Rust 线**（`AGENTS.md` 产品边界：Tauri/React 仅保留为历史证据，不再释放 Legacy 实现/诊断/修复任务）。**不在旧实现上补测**；本卡按 `closed_with_limitations` 收口，**AC1 保持 `<<PARTIAL>>`、AC3 保持 `<<BLOCKED>>` 原字节未改**。
 - **Q2**：R2-F01…F05 一律登记 `WONT_FIX_LEGACY`（**收口分类，不等于已修复**；`verification/GIT-CLEAN-RUST-ISOLATION-1/r2/DISPOSITION.md` 的原 `open` 状态与字节保持原样）。**不另立**新架构容量卡；若将来新架构复现对应**用户可见**行为，再按 `AGENTS.md` 另立卡，只验证该行为在实际 Host/Python Core 路径上的边界处理与资源归属，不继承 Rust 的 `MAX=32`。
 - **reviewer 改派**：`ZCode`（与 Owner 同一 Agent，存在自审风险）→ **独立上下文子 agent**，来源与身份见 frontmatter 与本节末尾；历史改派记录与 `dsh-review-r1/r2` 字节不动。
-- **资源核销**：`RESOURCE-MANIFEST.json`（task-env 19 目录 / 10,858 文件 / 190,447,692 B，sha256 `52502fd234bd9c711ad200a9d47b541b6096f2fa6f998ee59ca1bf238b79af28`）；全部 `PRESERVE_REFERENCED`，删除/迁移/归档 = 0。
+- **资源核销**：`RESOURCE-MANIFEST.json`（task-env 19 目录 / 10,858 文件 / 190,447,692 B，**口径 = 排除各仓库 `.git/`；含 `.git` 的磁盘实测为 12,666 文件 / 195,868,326 B**（差 1,808 / 5,420,634 = `source/.git` 899 + `source-r2/.git` 909 个对象文件）；sha256 `52502fd234bd9c711ad200a9d47b541b6096f2fa6f998ee59ca1bf238b79af28`）；全部 `PRESERVE_REFERENCED`，删除/迁移/归档 = 0。
 
 ### 收口限制清单（L-R1…L-R7，来自 Codex 裁定 Q3）
 
@@ -216,4 +216,4 @@ DSH 接任 Lead / Architect / Integrator（见 `doc/GOVERNANCE_TAKEOVER_2026-10-
 ### 边界
 
 本收口**不构成产品发布验收**，不改变任何 Gate 结论，不改变父候选 `e34a90d` / 源 `main`，不 push 候选、不置 `done`、不集成。
-**reviewer 来源**：`reviewer-rustiso`（DSH 子 agent，独立上下文，未参与本卡实现/返修；2026-11-17 收口复核）。
+**reviewer 来源**：`reviewer-rustiso`；`reviewer_kind: subagent`（DSH 子 agent，独立上下文，未参与本卡实现/返修；2026-11-17 收口复核，报告 `doc/reviews/GIT-CLEAN-RUST-ISOLATION-1-CLOSEOUT-REVIEW-2026-11-17.md`，decision `ACCEPTED_WITH_FINDINGS`，P0=0/P1=1/P2=6；P1 与本轮 P2 已处置）。
