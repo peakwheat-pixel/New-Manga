@@ -106,7 +106,7 @@ allowed_paths:
 - **AC3 修复**：`ImmersiveReaderWindow` 构造时加 `V2LocalStyles.axaml` 的 `StyleInclude`；**未改**该样式表内容、未改其它页面。
 - **AC4 判别力**：修复前顶/底带 `(244,243,240)`（窗口背景/画布色）→ 修复后 `(255,255,255)`（`Nm.Color.Bg.Panel` 白）；模式 chip 恢复 Accent 高亮（复核实测填充 `(242,236,227)`，与 `Nm.Color.Accent.Muted` over-white 合成值逐通道吻合）；进度轨道线 `(236,234,229)` 不变。**注**：取样点 `(600,60)` 落在页面卡片的白色内边距上，**不是**画布，不能用来证明「画布不变」（reviewer-f11s F-02）。
 - **限制**：
-  1. 证据来自 **Debug 构建**；**已发布产物（stage/setup.exe）仍是修复前行为** —— 需重新 publish + 打包才进安装包（不在本卡范围）。
+  1. **修复已进入 Release 单文件发布产物**（2026-11-17 按仓库发布配方 publish，`PUBLISH_EXIT=0`，`NewManga.App.exe` 37,344,550 B / sha256 `6dc473b8…ccf7d67`；该产物 F11 截图的 JPEG q90 与本卡 `rf11s-01-after-f11.jpg` **逐字节相同**）。**但**：`INSTALLER-MATRIX-1` 的 stage 产物（2026-11-15 构建）早于本修复且按证据字节规则**未覆盖**；要让 `setup.exe` 带上本修复需重新 publish + NSIS 打包（**未做**，不在本卡范围）。
   2. 未覆盖深色主题下同组对照、分页模式下的 chip 高亮、缩放/DPI。
   3. 本次修复使条件 3 的 `c3-06` 截图成为"修复前状态"；条件 3 结论不受影响（全屏/无边框/内容渲染仍成立）。
 - **边界**：不改变任何 Gate 判定；`Technical Gate=NOT_SATISFIED` 不变。
@@ -120,3 +120,10 @@ allowed_paths:
 - **F-02 已修**：删去把 `(600,60)` 当「画布」的表述（该点是页面卡片白内边距）；判别力改以顶带/底带/chip 三处为准。
 - **F-03 已登记**：本卡建议的回归 filter 会**改写** `verification/READER-OVERLAY-HEADLESS-PNG-1/render-info.md`（已知 `GOV-TEST-SIDE-EFFECT-1`）；
   复核者已 `git checkout --` 恢复。**跑该 filter 前应先把 `NEWMANGA_READER_OVERLAY_EVIDENCE_DIR` 指向 workspace**，否则会污染既有证据。
+
+### 2026-11-17 追加：发布产物验证（不重新打包安装器）
+
+`dotnet publish … -c Release -r win-x64 --self-contained -p:PublishSingleFile=true -p:PublishTrimmed=true …` → `PUBLISH_EXIT=0`；
+产物 `NewManga.App.exe` **37,344,550 B** / sha256 `6dc473b8651ffb5b2ec6b798c7789137c433346b3d50401adcb6ffd89ccf7d67`。
+该产物 F11 实测：顶带/底带/角 `(255,255,255)`、进度轨道线 `(236,234,229)` 不变；截图 JPEG 与本卡证据**逐字节相同**。
+⇒ **修复在发布配方下同样生效**（不是只在 Debug 里成立）。

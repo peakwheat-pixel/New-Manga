@@ -51,3 +51,24 @@ Styles.Add(new StyleInclude(new Uri("avares://NewManga.App/"))
 2. 因修复会改变 F11 外观，**条件 3 的 `c3-06` 截图在修复后属于"修复前状态"**；条件 3 的结论（全屏/无边框/内容渲染正常）不受影响，
    但若将来重截，外观会与本卡证据一致。
 3. 未覆盖：深色主题下的同组对照、其它模式（分页）下的 chip 高亮、缩放/DPI。
+
+## 追加：修复已进入 **Release 单文件发布产物**（2026-11-17）
+
+现状（不是重新打包安装器，而是按仓库发布配方重新 publish 应用）：
+
+```
+dotnet publish apps/desktop-avalonia/src/NewManga.App/NewManga.App.csproj -c Release -r win-x64 `
+  --self-contained -p:PublishSingleFile=true -p:PublishTrimmed=true `
+  -p:IncludeNativeLibrariesForSelfExtract=true -p:PublishReadyToRun=true `
+  -p:EnableCompressionInSingleFile=true -o <workspace>\app
+```
+
+- **PUBLISH_EXIT=0**；产物 `NewManga.App.exe` **37,344,550 B**，sha256 `6dc473b8651ffb5b2ec6b798c7789137c433346b3d50401adcb6ffd89ccf7d67`。
+- 用该产物（`--data-root` 隔离副本、`--sidecar-dir` 指向 INSTALLER-MATRIX-1 stage 的 `core-sidecar`）经 UI Automation 点 `阅读` 再按 `F11`，
+  整屏截图取样：顶带 `(600,20)`/`(1800,20)` = **(255,255,255)**、底带 `(300,1410)`/`(300,1430)` = **(255,255,255)**、
+  `(2,2)` = **(255,255,255)**、进度轨道线 `(300,1420)` = `(236,234,229)`（不变）。
+- 该截图转 JPEG q90 后的 sha256 = **`bd9751dc4b835caa9b1d4f5e77a86ccbe693af3b6b8eca9f64016b310fd98be3`**，
+  **与本目录 `rf11s-01-after-f11.jpg` 逐字节相同** ⇒ Debug 与 Release 发布产物的渲染结果一致，修复确实进了发布配方。
+
+**仍然成立的历史事实**：`INSTALLER-MATRIX-1` 的 stage 产物（`2026-11-15` 构建）**早于本修复**，
+且按证据字节保留规则**未覆盖**；要让 `setup.exe` 带上本修复，需重新 publish + 跑 NSIS 打包（未做）。
