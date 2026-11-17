@@ -1,6 +1,6 @@
 # 新会话启动包 — New Manga 目标续接
 
-- 生成时间：2026-11-17 18:10 (+08:00)（本版为 **R19** 之后更新 —— 非终态 10→2）
+- 生成时间：2026-11-17 18:45 (+08:00)（本版为 **R20** 之后更新 —— 两条 P2 工具项结案）
 - 生成者：DSH（lead）
 - **当前 head：`234b316b6`**（main）；R17 链路 = `1ef6a2ebd`（内容+证据）→ `3a0dea7b7`（四件套证据）→ `89b36c3f2`（两卡 in_review）→ `234b316b6`（收口 + 独立复核入库）
 - 工作区：干净（`git status --porcelain` 为空）
@@ -1077,6 +1077,38 @@ AC1 的 blocked 理由由**原作者**写成完整的 NA 结论（headless 库�
 1. **又一次 PowerShell here-string 反引号事故**（STATUS 替换 assert 失败才发现）——含反引号的文本一律用 Python 脚本文件或文件写入工具，不用 `@"..."@`。
 2. **建卡前先 grep**：`MAPMINT-ERROR-FIDELITY-1` 是重复卡，浪费了一次裁定+建卡。
 3. **"blocked" 卡的阻塞前提可能已被别的卡静默解除**：FEA11 的 blocked 是 `MINT-FAILURE-DIAG-1` 解掉的，但卡面没更新。
+
+---
+## 3t. R20（自动推进轮）完成的事 —— 两条 P2 工具项结案 + 复核 P1 处置
+
+### 结果一句话
+- 两条 P2 工具项**结案**：`ALREADY_ABSENT` 实测**已迁移完毕**（1,106 行 Resource 行中 0 行为该 disposition）；`EVIDENCE-MANIFEST` panic 路径**评估完成并补 2 条 fail-closed 测试**（8 → 10，全绿）。
+- `reviewer-inst` 的两条 P1 已独立复核实证并 append-only 登记进 `INSTALLER-MATRIX-1`。
+- 治理测试全量 **45/45 OK**（13 exceptions + 10 manifest + 15 audit + 7 EOL）。
+
+### 提交链（main，均已 push、0 0）
+`70a946476`（reviewer-inst P1 处置）→ `c9599f761`（P2 工具项结案 + 2 条新测试）。
+
+### 1) reviewer-inst 的两条 P1（我已独立复测确认）
+- **P1-IM-1**：stage 里 `package-manifest.json`（381,448 B）仍写 `version: 0.1.0 / variant: base / models_bundled: false`，而同目录名为 `0.1.1` 且含 **3 个 ONNX 共 632,552,582 B** ⇒ 包内描述与实物不一致（随安装包落盘）。
+- **P1-IM-2**：包为 `variant=base` / `GPL-3.0-or-later` 却内置 632 MB 权重，`NOTICE.md`/`LICENSE_AUDIT.md` 仍写「base 不含权重、models=AGPL」，rtdetr/OCR 上游许可「待核实」。
+- 两条都**未修**（`packaging/**` 在卡禁止范围内、许可属裁决项），已登记为 L-IM-6 / L-IM-7；AC7 仍 `NOT_RUN`，未改任何 AC 标记。
+
+### 2) 两条 P2 工具项（`doc/reviews/GOV-P2-TOOLITEMS-2026-11-17.md`）
+- **ALREADY_ABSENT**：解析 1,106 行 Resource Manifest，**0 行** disposition 仍为 `ALREADY_ABSENT`；15 张卡里剩下的只是历史说明文字（不得改写）。**关闭，无需动作**。
+  ⚠️ 登记一处口径不一致但**不改**：`check.ps1` 外部 JSON manifest 路径允许 `ALREADY_ABSENT`，表格路径不允许 —— 统一两侧属放宽/收紧检查，需单独裁定。
+- **EVIDENCE-MANIFEST panic**：代码已 fail-closed（try/catch + 重新枚举 + 精确集合相等 + 路径/摘要校验 + 符号链接跳过）；现实输入无未捕获 panic，残余风险仅为超大文件内存耗尽（仓库自控，不加固）。
+  补 2 条判别力测试：`test_malformed_json_fails_closed_without_crash`（非法 JSON ⇒ `EVIDENCE_MANIFEST_INVALID` + `Governance check: FAIL`）、`test_files_not_a_list_fails_closed`（`files` 为标量 ⇒ 不得 PASS）。
+  ⚠️ 踩坑：新测试一开始被追加到 `if __name__ == "__main__":` 块里，**只跑 8 条没报错**；用 AST 检查类方法列表才发现。教训：**加测试后必须核「测试数」而不是只看 OK**。
+
+### 3) 条件 3 的可行性（下轮）
+实测本机有交互桌面会话（`query session` → session 1 Active，`explorer` 进程 1 个，`[Environment]::UserInteractive=True`）
+⇒ **F11 真实窗口截图技术上可试**（启动应用 → 触发 F11 → 抓窗口截图 → 独立 Agent 书面视觉裁定）。
+注意：会短暂占用用户桌面；数据根必须隔离，不能碰真实 `%APPDATA%`。
+
+### 4) 非终态卡（2 张）
+- `MAINT-1-RELEASE-MONITOR`：`in_progress`（长期哨位，已登记条件 3/4/5 处置）。
+- `RELEASE-GATE4-SIGNED-MATRIX-1`：`proposed`，**外部资源阻塞** —— 实测本机 `Cert:\CurrentUser\My` 与 `Cert:\LocalMachine\My` **均无代码签名证书**，`signtool.exe` 不存在。
 
 ---
 ## 4. 关键技术事实（R1/R2 累积）
