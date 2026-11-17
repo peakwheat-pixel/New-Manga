@@ -62,10 +62,10 @@ VIAddVersionKey "FileVersion" "${VERSION}"
 ; release blocker). The four places now read these defines; build-installer.ps1 passes the real
 ; variant of the stage it packages, and the defaults stay "base" so an unknown build is loud, not lying.
 !ifndef VARIANT_NAME
-  !define VARIANT_NAME "base"
+  !error "VARIANT_NAME is required (-DVARIANT_NAME=models|base); the installer must not guess which variant it packages"
 !endif
 !ifndef VARIANT_LICENSE
-  !define VARIANT_LICENSE "GPL-3.0-or-later"
+  !error "VARIANT_LICENSE is required (-DVARIANT_LICENSE=AGPL-3.0|GPL-3.0-or-later); refusing to invent a licence statement"
 !endif
 ; The content phrase is derived from the (ASCII) variant name inside the script: passing Chinese text
 ; through /DVARIANT_CONTENT= arrived as mojibake in the makensis command line, so only ASCII is passed.

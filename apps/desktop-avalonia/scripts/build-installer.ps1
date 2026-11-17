@@ -190,6 +190,14 @@ if (Test-Path -LiteralPath $stageVersionJson) {
     if ($stageOnnx.Count -gt 0 -and $script:variantLicense -ne 'AGPL-3.0') {
         throw "LICENSE-VARIANT-DECLARATION-1: stage bundles $($stageOnnx.Count) onnx file(s) but VERSION.json license='$variantLicense'; must be AGPL-3.0"
     }
+    # reviewer-lvd P2: a stage named "base" that actually bundles weights would make the wizard say
+    # "base 变体（不含模型权重）" over 632 MB of weights. The variant name must agree with the bytes.
+    if ($stageOnnx.Count -gt 0 -and $script:variantName -ne 'models') {
+        throw "LICENSE-VARIANT-DECLARATION-1: stage bundles $($stageOnnx.Count) onnx file(s) but variant='$($script:variantName)'; must be 'models'"
+    }
+    if ($stageOnnx.Count -eq 0 -and $script:variantName -eq 'models') {
+        throw "LICENSE-VARIANT-DECLARATION-1: variant='models' but the stage bundles no weights"
+    }
     $argsList += "/DVARIANT_NAME=$script:variantName"
     $argsList += "/DVARIANT_LICENSE=$script:variantLicense"
     Write-Host ("installer variant: {0} / {1} / weights={2} onnx / {3:N0} B" -f $script:variantName, $script:variantLicense, $stageOnnx.Count, $stageOnnxBytes)

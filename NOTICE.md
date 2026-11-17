@@ -19,7 +19,7 @@
 
 > 说明（2026-11-17）：本文件此前把 models 变体的权重写成 **Ultralytics YOLO11s-seg**（`models/detector/yolo11s-seg.onnx`）。实测 0.1.1 的 sidecar **不含该文件**（其 `VERSION.json` 的 `sidecar_build.known_limitation` 亦写明 sfx 权重缺失、`sfx_detect_probe` fail-closed），实际随包的是上表三个文件。该错误描述已更正；若将来重新打入 yolo11s-seg，需同时更新本表与 `LICENSE_AUDIT.md`。
 
-base 变体不含任何模型权重；随包携带 `LICENSE-AGPL-3.0.txt` 仅用于说明可选 models 组件（及 YOLO11s-seg 权重）的许可，**不改变 base 变体自身的 GPL-3.0-or-later 声明**。
+base 变体不含任何模型权重；随包携带 `LICENSE-AGPL-3.0.txt` 仅用于说明可选 models 组件的许可，**不改变 base 变体自身的 GPL-3.0-or-later 声明**。
 
 ## 第三方来源登记
 
@@ -34,7 +34,7 @@ base 变体不含任何模型权重；随包携带 `LICENSE-AGPL-3.0.txt` 仅用
 
 1. 每个从 Saber-Translator 移植的文件必须在文件头保留原版权声明与 GPL-3.0 许可头，并在上表登记「源路径 + 上游 commit + 本仓库路径」。
 2. 不得移植后附加额外限制、不得改许可、不得删除版权声明。
-3. 模型权重按其自身许可证处理，不视为本仓库代码；随包分发前必须逐个核实（见 `THIRD_PARTY_LICENSES.md` §3）。**当前 models 变体随包的 YOLO11s-seg 已核实为 AGPL-3.0，故 models 变体整体按 AGPL-3.0 分发。**
+3. 模型权重按其自身许可证处理，不视为本仓库代码；随包分发前必须逐个核实（见 `THIRD_PARTY_LICENSES.md` §3）。**当前 models 变体随包的 3 个 ONNX 权重上游许可均未一手核实，故按保守策略整包声明 AGPL-3.0。**
 4. 字体只允许随包分发 OFL/Apache 等兼容许可字体；商业/系统字体（如 `msyh`、`STKAITI`、`STZHONGS`）不得随包。
 
 ## 当前状态

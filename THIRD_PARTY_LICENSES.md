@@ -33,7 +33,7 @@
 
 | 文件 | 字节 | sha256 | 用途 | 许可证（核实状态） |
 |---|---|---|---|---|
-| `detector/yolo11s-seg.onnx` | 40,824,255 | `944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d` | SFX 检测 | **AGPL-3.0（Ultralytics YOLO11s-seg）已核实** |
+| `detector/yolo11s-seg.onnx` | 40,824,255 | `944e811410933ad6ff8d32446fcc9eef90fb463794e1874ce83035e83acd418d` | SFX 检测 | AGPL-3.0（Ultralytics）**已核实** —— **当前 sidecar 不含该文件**（sfx 权重缺失） |
 | `detector/rtdetr-v2-fixed.onnx` | 171,618,071 | `c7fb5af1a8982416b56955e621c1b10397730807956998066e2fbc132c77bbc3` | 文本/气泡检测 | Apache-2.0（HF 模型卡）**[待核实，不阻断本卡]** |
 | `ocr/manga-ocr-onnx/encoder_model.onnx` | 343,454,249 | `15fa8155fe9bc1a7d25d9bb353debaa4def033d0174e907dbd2dd6d995def85f` | 日文 OCR | MangaOCR 上游 **[待核实，不阻断本卡]** |
 | `ocr/manga-ocr-onnx/decoder_model.onnx` | 117,480,262 | `ef7765261e9d1cdc34d89356986c2bbc2a082897f753a89605ae80fdfa61f5e8` | 日文 OCR | 同上 **[待核实，不阻断本卡]** |
@@ -44,7 +44,7 @@
 因此 `models` 变体**整体按 AGPL-3.0 声明**（宁可过度声明，不可漏声明）；`GPL-3.0-or-later` 只适用于**不含任何权重**的 `base` 变体。
 依据：`doc/reviews/ZCODE-RULING-INSTALLER-LICENSE-2026-11-17.md`（Q1 判定规则 R1–R4，本案落 R4；Q2 = P0 发布阻塞）。
 
-**YOLO11s-seg 的 AGPL-3.0 一手依据**：
+**YOLO11s-seg 的 AGPL-3.0 一手依据（历史登记；该文件当前不在 sidecar 内）**：
 1. 该 ONNX 文件自身元数据包含 `Ultralytics YOLO11s-seg model trained on …` 与 `AGPL-3.0 License (https://ultralytics.com/license)`（扫描记录见 `verification/AGPL-RELEASE-1/weights-licenses.json`）。
 2. Ultralytics 官方许可页（https://www.ultralytics.com/license，抓取日期记录于证据 JSON）明确 YOLO 模型按 **AGPL-3.0** 提供。
 3. Ultralytics 仓库 `LICENSE`（https://raw.githubusercontent.com/ultralytics/ultralytics/main/LICENSE）与 GNU 官方 AGPL-3.0 全文逐字节一致（sha256 `0d96a4ff…`）。
@@ -66,6 +66,7 @@
 ## 5. 发行 Gate
 
 - [ ] 每次发行前重跑本表逐项核对（一手 license 文件/模型卡）。
-- [x] models 变体含 AGPL 组件（Ultralytics YOLO11s-seg）→ `NOTICE` 与发行页明确 **AGPL-3.0**，随包附 `LICENSE-AGPL-3.0.txt` 全文（AGPL-RELEASE-1 落地）。
+- [x] models 变体随包权重（rtdetr-v2-fixed + manga-ocr encoder/decoder，上游许可待核实）→ 按保守策略在 `NOTICE` 与发行页明确 **AGPL-3.0**，随包附 `LICENSE-AGPL-3.0.txt` 全文。
+- [x] （历史）曾经的 `Ultralytics YOLO11s-seg` 权重已不在当前 sidecar 内；其 AGPL-3.0 依据仍保留在上文，供将来重新打入时引用。
 - [ ] base 变体不含权重 → 保持 GPL-3.0-or-later 声明；包内 4 个许可文件与仓库根逐字节一致（`package.ps1` 校验）。
 - [ ] 输出 `THIRD_PARTY_LICENSES` 与源码同包/同页提供。
