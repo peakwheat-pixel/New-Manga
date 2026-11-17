@@ -21,6 +21,7 @@ allowed_paths:
   - verification/GIT-CLEAN-PUBLICATION-DIAG-1/**
   - verification/GIT-CLEAN-PUBLICATION-1/**
   - doc/tasks/GIT-CLEAN-PUBLICATION-DIAG-1.md
+  - doc/reviews/GIT-CLEAN-PUBLICATION-DIAG-1-*.md
   - doc/tasks/GIT-CLEAN-PUBLICATION-1.md
   - doc/STATUS.md
   - doc/REBASELINE_PLAN.md
@@ -157,7 +158,7 @@ DSH 接任 Lead / Architect / Integrator（见 `doc/GOVERNANCE_TAKEOVER_2026-10-
 
 ## Closeout Record（2026-11-17，DSH 收口）
 
-- canonical_evidence_status：`complete`（53 行原有 pin 保持不变）；resource_closeout_status：`complete`（本收口新增 `RESOURCE-MANIFEST.json`，13,101 文件 / 1,885,941,148 B，sha256 `529f835eda7491043e497fb85161e2a0e7af74c5261c2522157834f7dd60a414`）。
+- canonical_evidence_status：`complete`（53 行原有 pin 保持不变）；resource_closeout_status：`complete`（本收口新增 `RESOURCE-MANIFEST.json`，13,101 文件 / 1,885,941,148 B，sha256 `529f835eda7491043e497fb85161e2a0e7af74c5261c2522157834f7dd60a414`；**计数口径 = 排除全部 `.git` 1,788 文件 / 5,038,900 B 与 manifest 自身**，原始递归为 14,890 / 1,890,980,440）。
 - 删除、迁移、归档数量/字节数：**0**（诊断副本、冻结包、旧 Review 全部原地保留）。
 - **收口依据**：本卡是**诊断交付**卡。其目标（处置父 Review R-001…R-006）已由 `verification/GIT-CLEAN-PUBLICATION-DIAG-1/RESULT.md` + `dsh-review-r1.md`（decision=approved，仅诊断）完成；
   卡面 §2026-10-25 已明确「approved 仅对诊断 head `fed1a9cf3` 有效；**不集成本 Task、不置 done、不自动升级父候选**」。父卡 `GIT-CLEAN-PUBLICATION-1` 已于 2026-11-17 收口为 `closed_with_limitations`。
@@ -167,3 +168,11 @@ DSH 接任 Lead / Architect / Integrator（见 `doc/GOVERNANCE_TAKEOVER_2026-10-
   3. **L-D-3｜packaged 证据只绑定 e34**：12 passed / 0 failed / 154 filtered 只对 `e34` 的 packaged 源码成立，不移植到新 head。
   4. **L-D-4｜远端与真实饱和风险未排除**：`rust-default-parallel-r2` 151/2/1/12（exit 101）记录的默认并发 registry 失败，真实生产饱和风险由 `GIT-CLEAN-RUST-ISOLATION-1` 的 AC3 `<<BLOCKED>>` 承载，本卡不解。
 - **边界**：不改变任何 Gate 结论；`Technical Gate=NOT_SATISFIED` 不变。
+
+## 2026-11-17 复核登记（reviewer-inst，ACCEPTED_WITH_FINDINGS，P0=0 / P1=0 / P2=2）
+
+报告：`doc/reviews/INSTALLER-MATRIX-1-CLOSEOUT-REVIEW-2026-11-17.md`（同一报告含本卡 B 节）。
+
+- **P2-D-1｜manifest 计数口径未写明**：`RESOURCE-MANIFEST.json` 的 13,101 文件 / 1,885,941,148 B **排除**了全部 `.git`（1,788 文件 / 5,038,900 B）与 manifest 自身；原始递归计数为 14,890 / 1,890,980,440。已在 `Closeout Record` 补此口径。
+- **P2-D-2｜`allowed_paths` 缺本卡 Review 通配**：已补 `doc/reviews/GIT-CLEAN-PUBLICATION-DIAG-1-*.md`（复核报告即落到该路径）。
+- 复核确认：AC3 仍 `<<PARTIAL>>`、AC1/AC2/AC4 仍 `<<MET>>`，本卡收口 diff 未改写 AC；`verification/` diff 为空；两卡 `check -TaskPath` 均 PASS(3w)。

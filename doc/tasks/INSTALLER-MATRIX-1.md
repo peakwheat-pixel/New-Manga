@@ -163,3 +163,16 @@ allowed_paths:
   4. **L-IM-4｜跨版本升级/回退未证明**：此前「回退」只改版本标签，完整跨版本矩阵未做。
   5. **L-IM-5｜不宣称条件 4 通过**：本卡只是机制验证；完整签名 + 真实安装矩阵另立 `RELEASE-GATE4-SIGNED-MATRIX-1`（proposed）。
 - **边界**：`Technical Gate=NOT_SATISFIED` 不变；不得据此宣称条件 4 满足。
+
+## 2026-11-17 复核登记（reviewer-inst，ACCEPTED_WITH_FINDINGS，P0=0 / P1=2 / P2=4）
+
+报告：`doc/reviews/INSTALLER-MATRIX-1-CLOSEOUT-REVIEW-2026-11-17.md`。两条 P1 已由 DSH 独立复核实证，作为**追加限制**登记；**不改 AC7**、不重跑矩阵、不宣称条件 4。
+
+- **L-IM-6｜包内 `package-manifest.json` 与包不同步（P1）**：`stage/NewManga-0.1.1-win-x64/package-manifest.json`（381,448 B）仍写
+  `version: 0.1.0`、`variant: base`、`models_bundled: false`，而同一 stage 目录名为 `0.1.1`、且含 3 个 ONNX 权重共 **632,552,582 B**（DSH 实测）。
+  该 manifest 随安装包落盘 ⇒ 用户看到的版本/内容描述与实物不一致。**未修**（`packaging/**` 在本卡禁止范围内），需另立打包修复项。
+- **L-IM-7｜许可证声明与实物不一致（P1）**：包为 `variant=base` / `GPL-3.0-or-later`，却内置 632,552,582 B 权重；
+  随包 `NOTICE.md` / `LICENSE_AUDIT.md` 仍写「base 不含权重、models=AGPL」，且 rtdetr/OCR 权重上游许可「待核实」。
+  **未修**（属许可裁决 + 打包变更），需 DSH/用户就随包权重许可作出书面决定后才能改。
+
+复核同时确认：**AC7 仍为 `[ ]` + `<<PARTIAL: …NOT_RUN…>>`**（未被改成 MET）；AC1–AC6 数字与证据一致；资源 manifest sha256 `c94feccb…` 一致。
