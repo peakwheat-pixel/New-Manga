@@ -127,6 +127,8 @@ Release Gate 条件 4 要求「对当前固定产品 commit 生成并固定 Wind
 | EV-G4-08 | AC5 升级与真回退 | verification/RELEASE-GATE4-SIGNED-MATRIX-1/ac5-upgrade-rollback.log | 12bb456fa | cc9f781fd13995aa024e25ab984bbf3bffe75f9161d9cd60b5b48030d6bb2828 | CANONICAL | BLOB |
 | EV-G4-09 | AC6 卸载与数据根零变化 | verification/RELEASE-GATE4-SIGNED-MATRIX-1/ac6-uninstall.log | 12bb456fa | a2896e78931ef4c87b109c3217dc95b9e830d160aa69239c93408a781414fc41 | CANONICAL | BLOB |
 | EV-G4-10 | AC6 卸载前数据根逐文件清单（530 文件） | verification/RELEASE-GATE4-SIGNED-MATRIX-1/ac6-dataroot-before.json | 12bb456fa | 5cdd21212aef93a26c29aa935d3559e32002fa1bbb7504e70ded4898883e3ac4 | CANONICAL | BLOB |
+| EV-G4-11 | AC5 真实跨版本重做（历史 0.1.0 ↔ 当前 0.1.1，含 Start Menu 字节/sha256） | verification/RELEASE-GATE4-SIGNED-MATRIX-1/ac5-upgrade-rollback-real.log | bf7859965 | e769ca2e655a596f55b61cafd795def1b0ea6c90d4458fdb78615bd3865801bd | CANONICAL | BLOB |
+| EV-G4-12 | 条件 4 独立复核报告（ACCEPTED_WITH_FINDINGS，P1=2） | doc/reviews/RELEASE-GATE4-MATRIX-REVIEW-2026-11-18.md | bf7859965 | f5a6f76e81e1559342a5b1146e91ab11dd003cfb29005b5c629917cfd034c610 | CANONICAL | BLOB |
 
 ## 2026-11-18 复核处置与 limitation（reviewer-g4，P0=0 / P1=2 / P2=7）
 
