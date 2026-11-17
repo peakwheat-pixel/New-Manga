@@ -12,9 +12,9 @@ Release Gate **仍 BLOCKED**，唯一硬阻塞是**真实代码签名证书**，
 
 | 项 | 值 |
 |---|---|
-| HEAD | `7d11cbc7d`（main，`0 0`，工作树干净） |
+| HEAD | `8b1648d84`（main，`0 0`，工作树干净） |
 | 非终态 v3 卡 | **2**：`MAINT-1-RELEASE-MONITOR`（in_progress，伞位）、`RELEASE-GATE4-SIGNED-MATRIX-1`（proposed） |
-| v3 卡统计 | `done` 551 / `closed_with_limitations` 82 / `cancelled` 21 / `superseded` 10 / `historical` 11 |
+| v3 卡统计 | `done` 551 / `closed_with_limitations` **77** / `cancelled` 21 / `superseded` 10 / `historical` 11（另有 `doc/tasks/README.md` 与旧格式卡不计入 v3 统计） |
 | 旧格式卡（v3 前） | `UIUX-FUSION-IMPL-1`（正文写 in_progress、不在 v3 台账）—— 已于 2026-11-18 追加状态澄清，**不推进** |
 | Technical Gate | `NOT_SATISFIED`（未变） |
 | Release Gate | `BLOCKED` |
