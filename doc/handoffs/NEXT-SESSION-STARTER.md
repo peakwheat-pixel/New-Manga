@@ -3,7 +3,7 @@
 - 生成时间：2026-11-18 02:55 (+08:00)（本版为 **R29** 之后更新 —— 用户裁决不需签名，条件 4 矩阵 AC1–AC6 全部跑通）
 - 生成者：DSH（lead）
 - **一页纸现状（2 分钟读完）**：doc/handoffs/STATE-OF-PROJECT-2026-11-18.md（本文件 130 KB，按轮次累积，别当摘要读）
-- **当前 head：`c953747bd`**（main）；R18–R30 见 §3r–§3ac（最新：**条件 4 已 `closed_with_limitations`**，两轮独立复核 P1 全关）
+- **当前 head：`fc8a299d2`**（main）；R18–R31 见 §3r–§3ad（最新：**条件 2 也已关闭**——Owner 选 A 保持现状；Gate 仅剩条件 5 登记项）
 - 工作区：干净（`git status --porcelain` 为空）
 - **R1**：`9ce819ae7` → `dd029b73f`（7 commit，目标 A/B/D 达成）
 - **R2**：`dd029b73f` → `5f2664c2e`（8 commit）—— 目标 C 闭合 10 条
@@ -1461,6 +1461,35 @@ Resource Manifest 6 行；**8 条 limitation**（单机无 VM 快照 / 既有数
 - `Technical Gate = NOT_SATISFIED`（未变）；`Release Gate = BLOCKED`（条件 4 关闭不解除 Gate）。
 - 剩余：条件 5 `LIMITATION_ACCEPTED`、条件 2 后半（**人的一个决定**）。
 - 测试机：**无安装**（AC5 收尾卸载）；真实用户数据根未被触碰（530 文件 / 684,197,540 B）。
+
+---
+## 3ad. R31 —— Gate 条件 2 关闭（Owner 裁决「按 A，保持现状」）
+
+### 结果一句话
+用户先选「B + D（删历史分支 + GitHub 清缓存）」，随后改为 **「条件 2 按 A，保持现状」**。
+DSH 按最终裁决执行：**一个远端字节都没动**，把「Owner 明确接受风险」作为 Gate 原文的第二种满足方式，条件 2 **关闭**。
+
+### 提交
+`fc8a299d2`（裁决落盘 + Gate 映射更正 + STATUS/MAINT-1 同步）
+
+### 1) 裁决内容
+`doc/reviews/USER-RULING-2026-11-18-CONDITION2-OPTION-A.md`：
+- 条件 2 原文是「完成只读调查 **或** Owner 明确接受风险」；调查（`SEC-01`）早已完成，本次补上后者 ⇒ **两条都成立，条件 2 关闭**。
+- **不执行** B（删 `clean-snapshot-*` 等分支）/ C（force-push 改写历史）/ D（GitHub 清缓存）/ E（转私有或删库）。
+- **风险是「接受」不是「消除」**：`.tmp.driveupload` 与素材对象仍可被匿名枚举。
+
+### 2) 我在裁决转向前的只读事实（留档，用于将来重开 B/D）
+- 远端六个分支：`clean-snapshot-20261026`(e8147c6c)、`clean-snapshot-20261029`(22de8608)、`clean-snapshot-20261102`(ac7d488e)、
+  `codex/clean-source-snapshot`(e34a90d0)、`main`、`public-release`(4d6c3fea)。
+- 各分支相对 main 的**独有提交**：`-20261026`=2、`-20261029`=1、`codex/clean-source-snapshot`=1、**`public-release`=15**。
+  ⇒ 若将来真要删分支，**`public-release` 不能盲删**（文档记载 `P0-1/2/3/5` 签名前置工作在该分支）。
+- 认证：`gh auth status` **未登录**、`GH_TOKEN`/`GITHUB_TOKEN` 未设置 ⇒ Agent 本来就无远端写权限，只能出 runbook。
+- 执行后复核：`git ls-remote --heads origin` 仍是这 6 个分支，**未被删除**。
+
+### 3) 现状
+- Gate：条件 1/2/3/4/6 已关闭；条件 5 `LIMITATION_ACCEPTED`；`Release Gate = BLOCKED`（未解除）、`Technical Gate = NOT_SATISFIED`。
+- STATUS：3,179 B（预算 3,200）；为塞进条件 2 的结论，压缩了条件 3/4 的括注（信息已在 `MAINT-1` 与卡面）。
+- 非终态卡：仍只有 `MAINT-1-RELEASE-MONITOR`（in_progress 伞位）。
 
 ---
 ## 4. 关键技术事实（R1/R2 累积）
