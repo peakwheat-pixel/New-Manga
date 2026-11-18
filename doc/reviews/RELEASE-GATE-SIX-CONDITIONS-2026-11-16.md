@@ -387,3 +387,19 @@ Gate 仍 `BLOCKED`，但已完全「可评估」。**
   复核者明确「条件 4 可以 `closed_with_limitations`」。证据：`verification/RELEASE-GATE4-SIGNED-MATRIX-1/`；
   报告：`doc/reviews/RELEASE-GATE4-MATRIX-REVIEW-2026-11-18.md`。
 - **限制**：单机非 VM 快照、既有数据根、只覆盖 0.1.0↔0.1.1、未签名、AC4 用隔离数据根——均已在卡面登记。
+
+---
+
+## 2026-11-18 更正：条件 2 已关闭（Owner 选 A，不修改上文原始行）
+
+上表与「判定分布」里「条件 2 前半关闭 / 后半差人的一个决定」在 2026-11-18 已终结，**上文仅作历史记录保留**。
+
+- **用户裁决**（2026-11-18）：「**条件 2 按 A，保持现状**」——
+  即按 Gate 原文第二种满足方式「由产品 Owner 明确接受该未知风险」。
+  全文见 `doc/reviews/USER-RULING-2026-11-18-CONDITION2-OPTION-A.md`。
+- **条件 2 现状：关闭**。调查（`SEC-01`，`done`）已完成 + Owner 已明确接受风险，两条都成立。
+- **未执行任何远端动作**：B（删历史分支）/ C（force-push）/ D（GitHub 清缓存）/ E（转私有或删库）**一律不做**。
+  实测确认远端六个分支全部保留：`clean-snapshot-20261026`、`clean-snapshot-20261029`、`clean-snapshot-20261102`、
+  `codex/clean-source-snapshot`、`main`、`public-release`。
+- **风险状态**：**接受**，不等于**消除**——历史中的 `.tmp.driveupload` 与素材对象仍可被匿名枚举。
+- **不改变**：`Technical Gate = NOT_SATISFIED`；`Release Gate = BLOCKED`（条件 5 的 `LIMITATION_ACCEPTED` 仍是其自身的登记，不构成解除）。

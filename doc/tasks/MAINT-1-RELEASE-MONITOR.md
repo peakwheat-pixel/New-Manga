@@ -431,7 +431,8 @@ NEW-MANGA-V1-FULL-AUDIT 与 R1–R4 整改、SEC-01/02/03、CORE-01、AUDIT-07/0
 **边界**：
 - 三条件的处置**不改变** `Technical Gate=NOT_SATISFIED`；Codex 唯一「需用户裁决」项是**是否把 Gate 总体改为 `SATISFIED`**，DSH 未改、也不代裁决。
 - 不得把 `AGENT_ADJUDICATION_PENDING` 或 `LIMITATION_ACCEPTED` 表述为「条件已通过」。
-- 条件 1（已关闭 8/8）、条件 2（调查完成）、条件 6（已关闭）状态不变。
+- 条件 1（已关闭 8/8）、条件 6（已关闭）状态不变；**条件 2 于 2026-11-18 由 Owner 裁决「按 A 保持现状」后关闭**
+  （`doc/reviews/USER-RULING-2026-11-18-CONDITION2-OPTION-A.md`；未执行任何远端删除/改写动作）。
 
 ### 2026-11-17 条件 3 关闭依据（三份裁定）
 
